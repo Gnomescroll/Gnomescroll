@@ -291,7 +291,7 @@ class MechListShader
             if(mech_sprite_width[i] == -1)
                 continue;
 
-            //bool empty_row = false;
+            bool empty_row = false;
 
             for(j=0; j<16; j++) //row
             {
@@ -305,7 +305,7 @@ class MechListShader
 
                     if(pixels[4*index + 3] > 128)
                     {
-                        //empty_row = true;
+                        empty_row = true;
                         int height = 16-j;
 
                         mech_sprite_height[i] = height;
@@ -314,10 +314,10 @@ class MechListShader
                         break;
                     }
                 }
-            /*
+            
                 if(empty_row == true)
                 {
-                    for(int _k=0; _k<32; _k++)
+                    for(int _k=0; _k<16; _k++)
                     {
                         int index2 = offset + _k;
                         pixels[4*index2 + 3] = 255;
@@ -326,7 +326,7 @@ class MechListShader
 
                     break;
                 }
-            */
+            
             }
 
         }
@@ -334,7 +334,25 @@ class MechListShader
 
         SDL_UnlockSurface(s);
 
-        //save_surface_to_png(s, "./screenshot/test.png");
+        //save_surface_to_png(s, "./screenshot/mech_surface.png");
+
+        //floating point modifier
+        for(int i=0; i<256; i++)
+        {
+            mech_sprite_width_f[i]  = 1.0;
+            mech_sprite_height_f[i] = 1.0;
+        }
+
+        for(int i=0; i<256; i++)
+        {
+            if(mech_sprite_width[i] != -1)
+                mech_sprite_width_f[i] = ((float) mech_sprite_width[i] ) / 16.0f;
+            if(mech_sprite_height[i] != -1)
+                mech_sprite_height_f[i] = ((float) mech_sprite_height[i] ) / 16.0f;
+
+            //if(mech_sprite_height[i] != -1)
+            //   printf("mech %i: %i \n", i, mech_sprite_height[i] );
+        }
 
     }
 };

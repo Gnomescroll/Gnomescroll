@@ -304,6 +304,8 @@ void draw_tick()
 
 
     visualize_line(); //debug
+    //visualize_bounding_box();
+    t_mech::draw_selected_mech_bounding_box();
 
     GL_ASSERT(GL_BLEND, false);
 
