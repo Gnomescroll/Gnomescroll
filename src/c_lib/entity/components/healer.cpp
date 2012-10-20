@@ -4,12 +4,14 @@
 dont_include_this_file_in_server
 #endif
 
+#include <agent/_interface.hpp>
+
 namespace Components
 {
 
 void HealerComponent::heal_agents_in_range()
 {
-    using ServerState::agent_list;
+    using Agents::agent_list;
     GS_ASSERT(agent_list != NULL);
     if (agent_list == NULL) return;
 
@@ -33,10 +35,10 @@ void HealerComponent::heal_agents_in_range()
         pos = physics->get_position();
     }
         
-    for (int i=0; i<agent_list->n_max; i++)
+    for (unsigned int i=0; i<agent_list->max; i++)
     {
-        Agent_state* a = agent_list->a[i];
-        if (a == NULL) continue;
+        Agent* a = &agent_list->objects[i];
+        if (a->id == agent_list->null_id) continue;
         if (a->status.dead) continue;
         if (a->status.health == AGENT_HEALTH) continue;
         if (vec3_distance_squared(a->get_position(), pos) > rad2) continue;

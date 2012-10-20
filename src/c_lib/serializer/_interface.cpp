@@ -14,25 +14,20 @@ void init()
     verify_config();
 
     // make sure paths exist
-    create_path(DATA_PATH);
-    
+    create_path(DATA_PATH);    
     create_path(MAP_DATA_PATH);
     create_path(MECH_DATA_PATH);
-    
-    //create_path(PLAYER_DATA_PATH);
-    //create_path(CONTAINER_DATA_PATH);
-    //create_path(ITEM_DATA_PATH);
-    
-    //create_path(PLAYER_DATA_PATH    INVALID_DATA_SUBPATH);
-    //create_path(CONTAINER_DATA_PATH INVALID_DATA_SUBPATH);
-    //create_path(ITEM_DATA_PATH      INVALID_DATA_SUBPATH);
+    create_path(PLAYER_DATA_PATH);
+    create_path(CONTAINER_DATA_PATH);
     
     init_map_serializer();
+    init_state();
 
     if (!Options::serializer) return;
-    
-    init_items();
-    init_redis();    
+
+    // ORDER DEPENDENT
+    init_redis();
+    init_players();
 }
 
 void teardown()
@@ -46,8 +41,29 @@ void teardown()
     
     teardown_map_serializer();
 
-    teardown_redis();   // MUST COME FIRST -- all callbacks/data need to return results
-    teardown_items();
+    // TODO -- save all item data, wait for responses
+
+    // ORDER DEPENDENT
+    teardown_redis();
+    teardown_players();
+    teardown_state();
+}
+
+bool load_data()
+{
+    if (!load_default_map()) return false;
+
+    if (!Options::serializer) return true;
+    
+    bool successful_load = load_containers();
+    GS_ASSERT_ABORT(successful_load);
+
+    successful_load = load_mechs();
+    GS_ASSERT_ABORT(successful_load);
+
+    //load_players();
+    
+    return true;
 }
 
 void update()

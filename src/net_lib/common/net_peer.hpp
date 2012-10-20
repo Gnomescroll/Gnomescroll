@@ -45,7 +45,7 @@ class NetPeer
     private:
 
     public:
-    int client_id;
+    ClientID client_id;
     int connected;
     int version;
     DisconnectType disconnect_code;

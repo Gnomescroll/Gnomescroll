@@ -15,9 +15,9 @@ namespace Animations
 {
 
 #if DC_CLIENT
-class Insect_mob_list* insect_mob_list = NULL;
-class HitscanEffect_list* hitscan_effect_list = NULL;
-class MiningLaserEffect_list* mining_laser_effect_list = NULL;
+class InsectMobList* insect_mob_list = NULL;
+class HitscanEffectList* hitscan_effect_list = NULL;
+class MiningLaserEffectList* mining_laser_effect_list = NULL;
 #endif
 
 #if DC_CLIENT
@@ -114,7 +114,7 @@ void mining_laser_beam(Vec3 position, Vec3 orientation, float length)
 #endif
 
 #if DC_SERVER
-void send_play_animation(const char* name, int client_id, struct Vec3 position)
+void send_play_animation(const char* name, ClientID client_id, struct Vec3 position)
 {
     ASSERT_BOXED_POSITION(position);
     int animation_id = get_animation_id(name);
@@ -144,10 +144,10 @@ void broadcast_play_animation(const char* name, struct Vec3 position)
 void init()
 {
     #if DC_CLIENT
-    hitscan_effect_list = new HitscanEffect_list;
-    mining_laser_effect_list = new MiningLaserEffect_list;
+    hitscan_effect_list = new HitscanEffectList;
+    mining_laser_effect_list = new MiningLaserEffectList;
 
-    //insect_mob_list = new Insect_mob_list;
+    //insect_mob_list = new InsectMobList(INSECT_MOB_MAX);
 
     Animations::init_hitscan();
     Animations::init_mining_laser();

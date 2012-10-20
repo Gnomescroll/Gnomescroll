@@ -67,7 +67,7 @@ HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float 
 
 // returns agent id of first agent found in hitscan path
 // returns NULL_AGENT if none found
-int against_agents(Vec3 position, Vec3 direction, float max_distance, int firing_agent_id)
+AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentID firing_agent_id)
 {
     float vox_distance = 1000000.0f;
     class Voxel_hitscan_target target;
@@ -84,10 +84,10 @@ int against_agents(Vec3 position, Vec3 direction, float max_distance, int firing
     if (!hit) return NULL_AGENT;  
     if (target.entity_type != OBJECT_AGENT) return NULL_AGENT;
     if (vox_distance > max_distance) return NULL_AGENT;
-    return target.entity_id;
+    return (AgentID)target.entity_id;
 }
 
-int against_agents(Vec3 position, Vec3 direction, float max_distance)
+AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 {
     return against_agents(position, direction, max_distance, NULL_AGENT);
 }

@@ -13,7 +13,7 @@ dont_include_this_file_in_server
 namespace Toolbelt
 {
 
-void turn_fire_on(int agent_id)
+void turn_fire_on(AgentID agent_id)
 {
     GS_ASSERT(agent_fire_on != NULL);
     if (agent_fire_on == NULL) return;
@@ -34,7 +34,7 @@ void turn_fire_on(int agent_id)
         toolbelt_item_begin_alpha_action_event_handler(agent_id, item_type);
 }
 
-void turn_fire_off(int agent_id)
+void turn_fire_off(AgentID agent_id)
 {
     GS_ASSERT(click_and_hold != NULL);
     if (click_and_hold == NULL) return;
@@ -72,7 +72,7 @@ bool toolbelt_item_begin_alpha_action()
     GS_ASSERT(agent_fire_on != NULL);
     if (agent_fire_on == NULL) return false;
 
-    int agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::playerAgent_state.agent_id;
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return false;
 
@@ -95,7 +95,7 @@ bool toolbelt_item_end_alpha_action()
     GS_ASSERT(click_and_hold != NULL);
     if (click_and_hold == NULL) return false;
 
-    int agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::playerAgent_state.agent_id;
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return false;
 
@@ -126,14 +126,14 @@ void toolbelt_item_end_local_alpha_action_event_handler(int item_type)
     end_local_item(item_type);
 }
 
-void toolbelt_item_begin_alpha_action_event_handler(int agent_id, int item_type)
+void toolbelt_item_begin_alpha_action_event_handler(AgentID agent_id, int item_type)
 {
     GS_ASSERT(agent_id != ClientState::playerAgent_state.agent_id); // use local
     if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
     begin_item(agent_id, item_type);
 }
 
-void toolbelt_item_end_alpha_action_event_handler(int agent_id, int item_type)
+void toolbelt_item_end_alpha_action_event_handler(AgentID agent_id, int item_type)
 {
     GS_ASSERT(agent_id != ClientState::playerAgent_state.agent_id); // use local
     if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
@@ -207,7 +207,7 @@ bool toolbelt_item_beta_action()
     GS_ASSERT(agent_selected_type != NULL)
     if (agent_selected_type == NULL) return false;
 
-    int agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::playerAgent_state.agent_id;
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return false;
 

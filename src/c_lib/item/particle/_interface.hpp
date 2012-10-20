@@ -37,15 +37,15 @@ class Item::Item* create_item_particle(int item_type, float x, float y, float z,
 class Item::Item* create_item_particle(int item_type, Vec3 position, Vec3 momentum);
 
 void broadcast_particle_item_create(ItemParticleID particle_id);
-void send_particle_items_to_client(int client_id);
+void send_particle_items_to_client(ClientID client_id);
 void broadcast_particle_item_state(ItemParticleID particle_id);
 void broadcast_particle_item_destroy(ItemParticleID particle_id);
-void send_particle_item_picked_up(int client_id, int agent_id, ItemParticleID particle_id);
-void broadcast_particle_item_picked_up(int agent_id, ItemParticleID particle_id);
+void send_particle_item_picked_up(ClientID client_id, AgentID agent_id, ItemParticleID particle_id);
+void broadcast_particle_item_picked_up(AgentID agent_id, ItemParticleID particle_id);
 void broadcast_particle_item_pickup_cancelled(ItemParticleID particle_id);
 
 void check_item_pickups();
-void throw_agent_item(int agent_id, ItemID item_id);
+void throw_agent_item(AgentID agent_id, ItemID item_id);
 void dump_container_item(ItemID item_id, float x, float y, float z);
 
 #endif

@@ -488,6 +488,12 @@ void verify_item_dat()
     {
         if (item_attribute_array[i].item_type == NULL_ITEM_TYPE) continue;
 
+        // check name once more
+        const char* item_name = get_item_name(item_attribute_array[i].item_type);
+        size_t item_name_len = strlen(item_name);
+        GS_ASSERT(item_name_len > 0 && item_name_len <= ITEM_NAME_MAX_LENGTH);
+        GS_ASSERT(is_valid_item_name(item_name));
+
         // make sure group is set
         GS_ASSERT(item_attribute_array[i].group != IG_NONE);
     

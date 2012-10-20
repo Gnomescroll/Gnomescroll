@@ -351,7 +351,7 @@ void draw_hud_text()
     {
         if (hud_draw_settings.agent_status)
         {
-            Agent_state* a = ClientState::playerAgent_state.you;
+            Agent* a = ClientState::playerAgent_state.you;
             if (a != NULL)
             {
                 int health = a->status.health;
@@ -461,7 +461,7 @@ void HUD::init()
     GS_ASSERT(help != NULL);
     if (help == NULL) return;
     help->set_text(help_text);
-	help->shadowed = true;
+    help->shadowed = true;
     int help_width = help->get_width();
     help->set_color(255,255,255,255);
     help->set_position(_xres - help_width - 5, _yresf - 5);
@@ -552,7 +552,7 @@ void HUD::init()
         prompt->set_text("");
     prompt->set_color(255,255,255,255);
     prompt->set_position((_xresf - prompt->get_width()) / 2.0f, _yresf);
-	prompt->shadowed = true;
+    prompt->shadowed = true;
 
     error = text_list->create();
     GS_ASSERT(error != NULL);
@@ -666,7 +666,7 @@ void ChatRender::init()
     GS_ASSERT(input != NULL);
     if (input == NULL) return;
     input->set_text("");
-    input->set_color(255,10,10,255);
+    input->set_color(AGENT_DEFAULT_COLOR);
     input->set_position(x_offset, line_height*lines_offset);
     input->shadowed = true;
     
@@ -700,10 +700,9 @@ void ChatRender::set_cursor(const char* text, float x, float y)
 
 void ChatRender::draw_cursor()
 {
-    struct Color color = color_init(100, 150, 100);
+    struct Color color = AGENT_DEFAULT_COLOR;
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL && playerAgent_state.you->status.color_chosen)
-        color = playerAgent_state.you->status.color;
+    if (playerAgent_state.you != NULL) color = playerAgent_state.you->status.color;
     _draw_rect(color, cursor_x, cursor_y, cursor_w, cursor_h);
 }
 
@@ -717,7 +716,7 @@ void ChatRender::draw_input()
 {
     if (!this->inited) return;
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL && playerAgent_state.you->status.color_chosen)
+    if (playerAgent_state.you != NULL)
         this->input->set_color(playerAgent_state.you->status.color);
     this->input->draw();
 }
@@ -728,7 +727,7 @@ void ChatRender::update(bool timeout)
 
     int now = _GET_MS_TIME();
     chat_message_list->sort_by_most_recent();
-    int i=paging_offset;
+    unsigned int i = paging_offset;
     int j=CHAT_MESSAGE_RENDER_MAX-1;
     int n_draw = 0;
     for (; i<chat_message_list->n_filtered; i++)
@@ -765,7 +764,7 @@ void ChatRender::update(bool timeout)
         t->set_color(m->color);
     }
 
-    for (i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text(""));
+    for (int i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text(""));
 }
 
 //void ChatRender::page_up()
@@ -856,13 +855,13 @@ void Scoreboard::update()
     //const float col_width = (_xresf * 0.75f) / N_STATS;
     const float col_width = (_xresf * 0.75f) / 5;
     
-    int i,j=0;
+    unsigned int i,j=0;
     const unsigned char r=255,g=10,b=10,a=255;
-    ClientState::agent_list->filter_none();
-    for (i=0; i<ClientState::agent_list->n_max; i++)
+    Agents::agent_list->filter_none();
+    for (i=0; i<Agents::agent_list->max; i++)
     {
-        Agent_state* agent = ClientState::agent_list->filtered_objects[i];
-        if (i >= ClientState::agent_list->n_filtered || agent==NULL)
+        Agent* agent = Agents::agent_list->filtered_objects[i];
+        if (i >= Agents::agent_list->n_filtered || agent->id == Agents::agent_list->null_id)
         {
             ids[i]->set_text("");
             names[i]->set_text("");

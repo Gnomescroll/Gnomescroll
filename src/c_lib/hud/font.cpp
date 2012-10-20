@@ -61,7 +61,7 @@ void Font::load_font_png()
 
 void Font::parse_font_file()
 {
-    int size = 0;
+    size_t size = 0;
     //char path[strlen(font_path) + strlen(data.file) + 1];
     MALLOX(char, path, strlen(font_path) + strlen(data.file) + 1); //type, name, size
 
@@ -304,7 +304,7 @@ int read_fonts_used()
     char* fn = (char*)malloc(fn_len);
     sprintf(fn, "%s%s", font_path, fonts_used);
 
-    int size = 0;
+    size_t size = 0;
     char* buffer = read_file_to_buffer(fn, &size);
     if (buffer == NULL)
     {

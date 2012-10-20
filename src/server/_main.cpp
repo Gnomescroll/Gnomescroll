@@ -30,27 +30,32 @@ void default_map_gen()
 
 void init(int argc, char* argv[])
 {
-
-//  for(int i=0; i<argc; i++) 
-//      printf("ARG%d: %s \n", i, argv[i]);
+    //for (int i=0; i<argc; i++) 
+        //printf("argument %d: %s\n", i, argv[i]);
 
     init_c_lib(argc, argv);
 
     srand(Options::seed);
 
     bool fast_map = false;
+    #if GS_SERIALIZER
+    if (!serializer::load_data())
+    {
+        if (strcmp(Options::map, "fast") == 0)
+            fast_map = true;
+        else
+        {
+            default_map_gen();
+            t_gen::populate_crystals();
+            t_map::environment_process_startup();
+        }
+    }
+    #else
     if (Options::map[0] == '\0')
     {   // use map gen
-        #if PRODUCTION
-        default_map_gen();
-        #else
         // load map file by default in development mode; decreases startup time
-        const char default_map[] = "./world/map/map-" STR(GS_VERSION) ".map";
-        if (file_exists(default_map))
-            serializer::load_map(default_map);
-        else
+        if (!serializer::load_default_map())
             default_map_gen();
-        #endif
     }
     else if (!strcmp(Options::map, "fast"))
     {
@@ -60,6 +65,7 @@ void init(int argc, char* argv[])
     {   // use map file
         serializer::load_map(Options::map);
     }   
+    #endif
 
     if (fast_map)
     {
@@ -68,16 +74,10 @@ void init(int argc, char* argv[])
 
         //map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
     
-        t_gen::generate_ruins();
-        t_gen::add_terrain_features();
+        //t_gen::generate_ruins();
+        //t_gen::add_terrain_features();
     }
-    else
-    {
-        // do this after map gen / loading until crystals are serialized
-        t_gen::populate_crystals();
-        t_map::environment_process_startup();
-    }
-
+                //t_gen::populate_crystals();
 
     srand((unsigned int)time(NULL));
     
@@ -103,9 +103,9 @@ void tick()
 
     t_map::t_map_send_map_chunks();  //every tick
 
-    if(counter % 15 == 0) 
+    if (counter % 15 == 0) 
     {
-        ServerState::agent_list->update_map_manager_positions();
+        Agents::agent_list->update_map_manager_positions();
         t_map::t_map_manager_update();
         //t_map::t_map_sort_map_chunk_ques();
     }
@@ -113,7 +113,7 @@ void tick()
     Toolbelt::update_toolbelt_items();
     Toolbelt::tick();
 
-    ServerState::agent_list->update_models(); // sets skeleton
+    Agents::agent_list->update_models(); // sets skeleton
     
     Particle::grenade_list->tick();
     ItemParticle::tick();
@@ -158,10 +158,10 @@ int run()
     while (!ServerState::signal_exit)
     {
         tc = 0;
-        while(1)
+        while (1)
         {
             int ti = _GET_TICK();
-            if(ti == 0 || tc > 1) break;
+            if (ti == 0 || tc > 1) break;
 
             tick();
 
@@ -169,12 +169,12 @@ int run()
             break;
         }
 
-        if(tc > 0)
+        if (tc > 0)
         {
             NetServer::flush_to_net();
         }
 
-        if(tc > 1)
+        if (tc > 1)
         {
             printf("Warning:: %i ticks this frame", tc);
         }
@@ -182,15 +182,18 @@ int run()
         if (Options::auth)
             NetServer::check_client_authorizations();
         
-	#if GS_SERIALIZER
+    #if GS_SERIALIZER
         if (serializer::should_save_map)
         {
             serializer::save_map();
             serializer::should_save_map = false;
+            // TODO -- move, testing only
+            serializer::save_containers();
+            serializer::save_mechs();
         }
 
         serializer::update();
-	#endif
+    #endif
 
         #ifdef __GNUC__
         usleep(1000);

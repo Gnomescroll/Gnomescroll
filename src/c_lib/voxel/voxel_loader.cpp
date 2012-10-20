@@ -3,7 +3,7 @@
 #include <common/files.hpp>
 
 //this function will always return on a new line or null
-void check_for_comments(char* s, int* index)
+static void check_for_comments(char* s, size_t* index)
 {   
     while (1)
     {
@@ -19,14 +19,15 @@ void check_for_comments(char* s, int* index)
 void read_skeleton(char* file_name, VoxDat* vox_dat)
 {
     //printf("Loading skeleton: %s \n", file_name);
-    int size;
+    size_t size = 0;
     char* buffer = read_file_to_buffer(file_name, &size);
-    if(buffer == NULL) printf("error reading %s \n", file_name);
+    GS_ASSERT(buffer != NULL);
+    if (buffer == NULL) return;
 
     char* str_tmp = new char[512];
     int n_parts;
     int num_skeleton_nodes;
-    int index = 0;
+    size_t index = 0;
     int read;
 
     //read in number of voxel volumes
@@ -93,7 +94,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
 {
     //printf("Loading voxel model: %s \n", file_name);
-    int size = 0;
+    size_t size = 0;
     char* buffer = read_file_to_buffer(file_name, &size);
     if(buffer == NULL)
     {
@@ -101,7 +102,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
         return;
     }
 
-    int index = 0;
+    size_t index = 0;
     int read;
 
     // dimension
@@ -136,8 +137,8 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     sscanf (buffer+index, "%d %d %d %n", &cr, &cg, &cb, &read);
     index += read;
 
-	vox_dat->set_colorable(part_num, colorable);
-	vox_dat->set_base_color(part_num, cr,cg,cb);
+    vox_dat->set_colorable(part_num, colorable);
+    vox_dat->set_base_color(part_num, cr,cg,cb);
 
 
     int ret;

@@ -57,7 +57,7 @@ int consume_durability(ItemID item_id); // automatically destroys consumed item
 int consume_durability(ItemID item_id, int amount); // automatically destroys consumed item
 int consume_durability(ItemID item_id, int amount, bool auto_destroy);
 
-void agent_quit(int agent_id);
+void agent_quit(AgentID agent_id);
 
 // tests
 void test_item_list_capacity();

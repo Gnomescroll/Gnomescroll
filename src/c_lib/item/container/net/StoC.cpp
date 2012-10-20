@@ -30,13 +30,12 @@ inline void assign_item_container_StoC::handle()
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainerInterface* container = get_container(container_id);
-    ASSERT_NOT_NULL(container);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return;
     ItemContainerType type = (ItemContainerType)container_type;
     switch (type)
     {
         case AGENT_INVENTORY:
-            //player_container_id = container_id;
             player_container = (ItemContainer*)container;
             if (player_container_ui != NULL) delete player_container_ui;
             player_container_ui = new ItemContainerUI(container->id);
@@ -46,7 +45,6 @@ inline void assign_item_container_StoC::handle()
             break;
 
         case AGENT_HAND:
-            //player_hand_id = container_id;
             player_hand = (ItemContainerHand*)container;
             if (player_hand_ui != NULL) delete player_hand_ui;
             player_hand_ui = new ItemContainerHandUI(container->id);
@@ -56,7 +54,6 @@ inline void assign_item_container_StoC::handle()
             break;
 
         case AGENT_TOOLBELT:
-            //player_toolbelt_id = container_id;
             player_toolbelt = (ItemContainer*)container;
             if (player_toolbelt_ui != NULL) delete player_toolbelt_ui;
             player_toolbelt_ui = new ItemContainerUI(container->id);
@@ -67,7 +64,6 @@ inline void assign_item_container_StoC::handle()
             break;
         
         case AGENT_SYNTHESIZER:
-            //player_synthesizer_id = container_id;
             player_synthesizer = (ItemContainerSynthesizer*)container;
             if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
             player_synthesizer_ui = new ItemContainerSynthesizerUI(container->id);
@@ -77,7 +73,6 @@ inline void assign_item_container_StoC::handle()
             break;
         
         case AGENT_ENERGY_TANKS:
-            //player_energy_tanks_id = container_id;
             player_energy_tanks = (ItemContainerEnergyTanks*)container;
             if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
             player_energy_tanks_ui = new ItemContainerEnergyTanksUI(container->id);
@@ -101,7 +96,7 @@ inline void insert_item_in_container_StoC::handle()
     if (item_id == NULL_ITEM) return;
 
     ItemContainerInterface* container = get_container(container_id);
-    ASSERT_NOT_NULL(container);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return;
     
     // we received an message for a container we are not accessing;
@@ -120,7 +115,7 @@ inline void insert_item_in_container_StoC::handle()
 inline void remove_item_from_container_StoC::handle()
 {
     ItemContainerInterface* container = get_container(container_id);
-    ASSERT_NOT_NULL(container);
+    GS_ASSERT(container != NULL);
     if (container == NULL) return;
 
     // we received an message for a container we are not accessing;
@@ -234,14 +229,14 @@ inline void lock_container_StoC::handle()
 
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
-    container->lock(agent_id);
+    container->lock((AgentID)this->agent_id);
 }
 
 inline void unlock_container_StoC::handle()
 {
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
-    container->unlock(agent_id);
+    container->unlock((AgentID)this->agent_id);
 }
 
 inline void smelter_fuel_StoC::handle()

@@ -17,6 +17,8 @@ const char* get_mech_name(int type);
 int get_mech_type_id(const char* name);
 int dat_get_mech_type_id(const char* name);
 
+MechClass get_mech_class(int mech_type);
+
 struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type);
 
 }   // t_mech

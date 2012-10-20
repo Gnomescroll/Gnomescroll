@@ -158,11 +158,11 @@ void HitscanEffect::draw(float delta, Vec3 camera)
 
 /* List */
 
-void HitscanEffect_list::draw()
+void HitscanEffectList::draw()
 {
     if (current_camera == NULL)
     {
-        printf("HitscanEffect_list::draw() -- current_camera is NULL\n");
+        printf("HitscanEffectList::draw() -- current_camera is NULL\n");
         return;
     }
 
@@ -199,7 +199,7 @@ void HitscanEffect_list::draw()
 
 }
 
-void HitscanEffect_list::tick()
+void HitscanEffectList::tick()
 {
     //const int debug = 1;
     const int debug = 0;

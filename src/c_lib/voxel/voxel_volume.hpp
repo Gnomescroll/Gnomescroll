@@ -21,7 +21,7 @@ class Voxel_volume
     Voxel_vertex_list vvl;
     #endif
 
-    int id;
+    int render_id;
     bool draw;
     bool hitscan;
 
@@ -40,7 +40,16 @@ class Voxel_volume
     bool needs_vbo_update;
     bool damaged;
     
-    struct Voxel_hitscan_element vhe;
+    class Voxel_hitscan_element vhe;
+
+    //hitscan registration
+    Voxel_hitscan_list* voxel_hitscan_list;
+
+    #if DC_CLIENT
+    class Voxel_render_list* voxel_render_list;
+    int voxel_render_list_id;
+    void update_vertex_list();
+    #endif
 
     int hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2,  int voxel[3]);
 
@@ -51,17 +60,8 @@ class Voxel_volume
     
     inline struct Vec3 get_center(){ return world_matrix.c; }
 
-    #if DC_CLIENT
-    class Voxel_render_list* voxel_render_list;
-    int voxel_render_list_id;
-    void update_vertex_list();
-    #endif
-
     void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4]);
-
-    //hitscan registration
-    Voxel_hitscan_list* voxel_hitscan_list;
 
     void set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set(unsigned int x, unsigned int y, unsigned int z, Voxel* v);

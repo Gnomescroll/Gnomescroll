@@ -350,7 +350,7 @@ void noise_init()
     assert(tiling_indexes == NULL);
     tiling_indexes = (int*)malloc(2 * TILING_SIZE * sizeof(int));
     for (int i=0; i<TILING_SIZE; i++) tiling_indexes[i] = i;
-    shuffle_int_array(tiling_indexes, TILING_SIZE);
+    shuffle<int>(tiling_indexes, TILING_SIZE);
     //for (int i=0; i<TILING_SIZE; i++) printf("%d\n", tiling_indexes[i]);
     for (int i=0; i<TILING_SIZE; i++) tiling_indexes[i+TILING_SIZE] = tiling_indexes[i];
 }

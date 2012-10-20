@@ -27,7 +27,7 @@ void teardown_map_serializer()
 #if PTHREADS_ENABLED
 //threaded IO
 
-struct THREADED_WRITE_STRUCT
+struct ThreadedWriteData
 {
     char filename[256];
     char* buffer;
@@ -35,7 +35,7 @@ struct THREADED_WRITE_STRUCT
 };
 
 static int _threaded_write_running = 0;
-static struct THREADED_WRITE_STRUCT threaded_write_struct_param;
+static struct ThreadedWriteData threaded_write_data;
 static pthread_t _threaded_write_thread;
 
 void* _threaded_write(void* vptr)
@@ -43,33 +43,30 @@ void* _threaded_write(void* vptr)
     int ti1 = _GET_MS_TIME();
 
     char filename[256]; 
-    strcpy(filename, threaded_write_struct_param.filename);
-    char* buffer = threaded_write_struct_param.buffer;
-    int buffer_size = threaded_write_struct_param.buffer_size;
+    strcpy(filename, threaded_write_data.filename);
+    char* buffer = threaded_write_data.buffer;
+    int buffer_size = threaded_write_data.buffer_size;
 
 
-    if(buffer == NULL)
+    if (buffer == NULL)
     {
         printf("ERROR _threaded_write: t->buffer is NULL!\n");
         return NULL;
     }
 
     FILE *file; 
-    file = fopen(filename, "w+"); // apend file (add text to  a file or create a file if it does not exist. 
-    //size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );
+    file = fopen(filename, "wb+");
     
-    if(file == 0)
+    if (file == 0)
     {
         printf("THREAD WRITE ERROR: cannot open map file %s \n", filename);
         return NULL;
     }
 
-    int ret = fwrite (buffer, buffer_size, 1, file);
-    if(ret != 1)
-    {
-        printf("THREAD WRITE ERROR: fwrite return value != 1\n");
-    }
-    fclose(file); /*done!*/ 
+    int ret = fwrite(buffer, sizeof(char), buffer_size, file);
+    GS_ASSERT(ret == buffer_size);
+    ret = fclose(file); /*done!*/
+    GS_ASSERT(ret == 0);
 
     free(buffer);
 
@@ -80,24 +77,24 @@ void* _threaded_write(void* vptr)
     map_save_completed = true;
     _threaded_write_running = 0;
 
-    threaded_write_struct_param.filename[0] = '\0';
-    threaded_write_struct_param.buffer = NULL;
-    threaded_write_struct_param.buffer_size = 0;
+    threaded_write_data.filename[0] = '\0';
+    threaded_write_data.buffer = NULL;
+    threaded_write_data.buffer_size = 0;
 
     return NULL;
 }
 
 static void threaded_write(const char* filename, char* buffer, int buffer_len)
 {
-    if(_threaded_write_running != 0)
+    if (_threaded_write_running != 0)
     {
         printf("threaded_write failed: previous thread has not finished \n");
         return;
     }
 
-    strcpy(threaded_write_struct_param.filename, filename);
-    threaded_write_struct_param.buffer = buffer;
-    threaded_write_struct_param.buffer_size = buffer_len;
+    strcpy(threaded_write_data.filename, filename);
+    threaded_write_data.buffer = buffer;
+    threaded_write_data.buffer_size = buffer_len;
 
     //pthread_join( _threaded_write_thread, NULL);
     /* Create independent threads each of which will execute function */
@@ -105,7 +102,7 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
     _threaded_write_running = 1;
 
     int ret = pthread_create( &_threaded_write_thread, NULL, _threaded_write, (void*)NULL);
-    if(ret != 0)
+    if (ret != 0)
     {
         printf("threaded_write error: pthread_create returned %i \n", ret);
         _threaded_write_running = 0;
@@ -114,24 +111,34 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
 
 void wait_for_threads()
 {
-    while(_threaded_write_running != 0)
+    while (_threaded_write_running != 0)
         gs_microsleep(100);
 }
 #endif
 
+
 static void load_map_restore_containers()
 {
-    for(int ci=0; ci < 32; ci++)
-    for(int cj=0; cj < 32; cj++)
+    for (int ci=0; ci < 32; ci++)
+    for (int cj=0; cj < 32; cj++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[32*cj+ci];
-        for(int k=0; k<128; k++)
-        for(int i=0; i<16; i++)
-        for(int j=0; j<16; j++)
+        for (int k=0; k<128; k++)
+        for (int i=0; i<16; i++)
+        for (int j=0; j<16; j++)
         {
             int block = mp->e[16*16*k + 16*j + i].block;
-            if(isItemContainer(block))
-                t_map::load_item_container_block(ci*16+i, cj*16+j, k, block);
+            if (!isItemContainer(block)) continue;
+            
+            ItemContainerType container_type = Item::get_container_type_for_block(block);
+            GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+            if (container_type == CONTAINER_TYPE_NONE) continue;    // TODO -- log error
+            class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
+            GS_ASSERT(container != NULL);
+            if (container == NULL) continue;    // TODO -- log error
+            init_container(container);            
+            t_map::create_item_container_block(ci*16+i, cj*16+j, k, container->type, container->id);
+            loaded_containers[container->id] = CONTAINER_LOAD_MAP;
         }
     }
 }
@@ -179,13 +186,13 @@ void BlockSerializer::save(const char* filename)
     strcpy(file_name, filename);
 
     this->file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
-    this->write_buffer = (char*) malloc(file_size);
+    this->write_buffer = (char*)calloc(file_size, sizeof(char));
 
     //push header
     int index = 0;
     push_int(write_buffer, index, version);
 
-    if(write_buffer == NULL)
+    if (write_buffer == NULL)
     {
         printf("BlockSerializer: cannot save map.  malloc failed, out of memory? \n");
         return;
@@ -195,11 +202,11 @@ void BlockSerializer::save(const char* filename)
 
     //serialize
     #if PTHREADS_ENABLED
-    for(int i=0; i<chunk_number; i++) version_array[i] = -1;
+    for (int i=0; i<chunk_number; i++) version_array[i] = -1;
     while (map_save_memcpy_in_progress)
         this->save_iter(2);   //2 ms per iteration
     #else
-    for(int i=0; i < chunk_number; i++)
+    for (int i=0; i < chunk_number; i++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
@@ -209,7 +216,7 @@ void BlockSerializer::save(const char* filename)
     }
     //prepare buffer for saving
 
-    for(int i=0; i<chunk_number; i++)
+    for (int i=0; i<chunk_number; i++)
     {
         memcpy(&this->write_buffer[index], (char*) &this->chunks[i], sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
@@ -234,18 +241,18 @@ void BlockSerializer::save_iter(int max_ms)
     static int _memcpy_count = 0;
 
     _calls++;
-    if(_start_ms == 0)
+    if (_start_ms == 0)
        _start_ms = _GET_MS_TIME();
     int start_ms = _GET_MS_TIME();
 
 
     static int index = 0;
 
-    for(int j=0; j < chunk_number; j++)
+    for (int j=0; j < chunk_number; j++)
     {
         index = (index+1)%chunk_number;
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[index];
-        if(mp->version == version_array[index]) continue;
+        if (mp->version == version_array[index]) continue;
         GS_ASSERT(mp != NULL);
         chunk->xchunk = chunk_number % 16;
         chunk->ychunk = chunk_number / 16;
@@ -258,7 +265,7 @@ void BlockSerializer::save_iter(int max_ms)
 
         int _ctime = _GET_MS_TIME();
 
-        if( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
+        if ( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
             return; //yield after n ms
     }
 
@@ -280,19 +287,16 @@ void BlockSerializer::save_iter(int max_ms)
 
 void BlockSerializer::load(const char* filename)
 {
+    GS_ASSERT_ABORT(t_map::main_map != NULL);
+
     GS_ASSERT(filename != NULL);
     if (filename == NULL) return;
-    
-    if(t_map::main_map == NULL)
-    {
-        printf("ERROR: Attempting to load map before t_map init \n");
-        GS_ABORT();
-    }
 
     int ti1 = _GET_MS_TIME();
-    int filesize;
-    char* buffer = fast_read_file_to_buffer(filename, &filesize);
-    if(buffer == NULL) GS_ABORT();
+    size_t filesize = 0;
+    char* buffer = read_binary_file_to_buffer(filename, &filesize);
+    GS_ASSERT_ABORT(buffer != NULL);
+    if (buffer == NULL) return;
 
     int ti2 = _GET_MS_TIME();
 
@@ -300,24 +304,21 @@ void BlockSerializer::load(const char* filename)
     int index = 0;
     pop_int(buffer, index, _version);
 
-    printf("Map Loader: map_version= %i filesize= %i bytes \n", _version, filesize);
-    if(_version != version)
-    {
-        printf("Error: cannot load map, saved map is version %i and map loader expects %i \n", _version, version);
-        GS_ABORT();
-    }
+    printf("Loading map. Version: %d Filesize: %d\n", _version, filesize);
+    if (_version != version)
+        printf("WARNING: Map version %d does not match build version %d\n", _version, version);
+    GS_ASSERT_ABORT(_version == version);
 
-    if(filesize != prefix_length + chunk_number*sizeof(struct SerializedChunk))
-    {
-        printf("Map Loader error: file sizes do not match!\n");
-        return;
-    }
+    size_t expected_filesize = prefix_length + chunk_number*sizeof(struct SerializedChunk);
+    if (filesize != expected_filesize)
+        printf("WARNING: Map filesize %u does not match expected filesize %u\n", filesize, expected_filesize); 
+    GS_ASSERT_ABORT(filesize == expected_filesize);
 
-    for(int i=0; i<chunk_number; i++)
+    for (int i=0; i<chunk_number; i++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
-        if(mp == NULL) continue;
+        if (mp == NULL) continue;
 
         memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk) );
         index += sizeof(struct SerializedChunk);
@@ -347,9 +348,9 @@ void save_map(const char* filename)
     
     if (file_exists(filename))
     {
-        const char ext[] = ".tmp";
-        char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(ext))*sizeof(char));
-        sprintf(tmp_filename, "%s%s", filename, ext);
+        const char fmt[] = "%s" DATA_TMP_EXT;
+        char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(fmt) - 2)*sizeof(char));
+        sprintf(tmp_filename, fmt, filename);
         map_tmp_name = tmp_filename;
         block_serializer->save(tmp_filename);        
     }
@@ -367,12 +368,24 @@ void load_map(const char* filename)
 
 void save_map()
 {
-    save_map(default_map_file);
+    save_map(map_filename);
 }
 
 void load_map()
 {
-    load_map(default_map_file);
+    load_map(map_filename);
+}
+
+bool load_default_map()
+{
+    if (file_exists(map_filename) && fsize(map_filename) > 0)
+        load_map(map_filename);
+    else
+    if (file_exists(map_filename_backup) && fsize(map_filename_backup) > 0)
+        load_map(map_filename_backup);
+    else
+        return false;
+    return true;
 }
 
 void check_map_save_state()
@@ -386,9 +399,9 @@ void check_map_save_state()
             {
                 if (file_exists(map_final_name))
                 {
-                    const char ext[] = ".bak";
-                    char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(ext))*sizeof(char));
-                    sprintf(map_final_name_bak, "%s%s", map_final_name, ext);
+                    const char fmt[] = "%s" DATA_BACKUP_EXT;
+                    char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(fmt) - 2)*sizeof(char));
+                    sprintf(map_final_name_bak, fmt, map_final_name);
                     rename(map_final_name, map_final_name_bak);
                     free(map_final_name_bak);
                 }

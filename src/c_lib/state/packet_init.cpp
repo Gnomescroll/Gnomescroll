@@ -19,8 +19,6 @@
 namespace PacketInit
 {
 
-typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
-
 void RegisterMessages()
 {
     //version (keep these first in the list)

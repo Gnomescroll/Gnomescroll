@@ -10,8 +10,8 @@
 //#if DC_CLIENT
 void VoxColors::init(int dx, int dy, int dz)
 {
-	GS_ASSERT(this->rgba == NULL);
-	if (this->rgba != NULL) return;
+    GS_ASSERT(this->rgba == NULL);
+    if (this->rgba != NULL) return;
 
     this->n = dx*dy*dz;
     this->rgba = (unsigned char*)malloc(sizeof(unsigned char)*this->n*4);
@@ -19,23 +19,23 @@ void VoxColors::init(int dx, int dy, int dz)
     int x=0,y=0,z=0;
     for (int i=0; i<n; i++)
     {
-		int rgba_index = i*4;
-		this->rgba[rgba_index+0] = 0;
-		this->rgba[rgba_index+1] = 0;
-		this->rgba[rgba_index+2] = 0;
-		this->rgba[rgba_index+3] = 0;
-		
-		int index_index = i * 3;
-		this->index[index_index+0] = x;
-		this->index[index_index+1] = y;
-		this->index[index_index+2] = z;
-		
+        int rgba_index = i*4;
+        this->rgba[rgba_index+0] = 0;
+        this->rgba[rgba_index+1] = 0;
+        this->rgba[rgba_index+2] = 0;
+        this->rgba[rgba_index+3] = 0;
+        
+        int index_index = i * 3;
+        this->index[index_index+0] = x;
+        this->index[index_index+1] = y;
+        this->index[index_index+2] = z;
+        
         x++;
         if (x == dx)
         {
             y++;
             if (y == dy)
-				z++;
+                z++;
         }
         x %= dx;
         y %= dy;
@@ -45,12 +45,12 @@ void VoxColors::init(int dx, int dy, int dz)
 
 void VoxColors::set(int i, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-	GS_ASSERT(i < this->n);
-	if (i >= this->n) return;
-	GS_ASSERT(this->rgba != NULL);
-	if (this->rgba == NULL) return;
-	GS_ASSERT(this->index != NULL);
-	if (this->index == NULL) return;
+    GS_ASSERT(i < this->n);
+    if (i >= this->n) return;
+    GS_ASSERT(this->rgba != NULL);
+    if (this->rgba == NULL) return;
+    GS_ASSERT(this->index != NULL);
+    if (this->index == NULL) return;
 
     int j = i*4;
     this->rgba[j+0] = r;
@@ -58,7 +58,7 @@ void VoxColors::set(int i, int x, int y, int z, unsigned char r, unsigned char g
     this->rgba[j+2] = b;
     this->rgba[j+3] = a;
 
-	j = i * 3;
+    j = i * 3;
     this->index[j+0] = x;
     this->index[j+1] = y;
     this->index[j+2] = z;
@@ -128,9 +128,9 @@ vox_size(vox_size),
 biaxial(biaxial),
 colorable(false)
 {
-	this->base_color.r = 1;
-	this->base_color.g = 1;
-	this->base_color.b = 1;	// dont use 0,0,0 its reserved
+    this->base_color.r = 1;
+    this->base_color.g = 1;
+    this->base_color.b = 1; // dont use 0,0,0 its reserved
     colors.init(dimension_x, dimension_y, dimension_z);
     int len = (int)strlen(filename);
     this->filename = (char*)malloc(sizeof(char) * (len + 1));
@@ -156,8 +156,8 @@ void VoxPart::set_local_matrix()
 
 void VoxDat::init_skeleton(int n_skeleton)
 {
-	GS_ASSERT(!this->voxel_skeleton_inited)
-	if (this->voxel_skeleton_inited) return;
+    GS_ASSERT(!this->voxel_skeleton_inited)
+    if (this->voxel_skeleton_inited) return;
     voxel_skeleton_inited = true;
 
     this->n_skeleton_nodes = n_skeleton;
@@ -170,10 +170,10 @@ void VoxDat::init_skeleton(int n_skeleton)
 
 void VoxDat::reset_skeleton_local_matrix(int node)
 {
-	GS_ASSERT(this->voxel_skeleton_inited)
-	if (!this->voxel_skeleton_inited) return;
+    GS_ASSERT(this->voxel_skeleton_inited)
+    if (!this->voxel_skeleton_inited) return;
 
-	GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
+    GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
     if (node < 0 || node >= this->n_skeleton_nodes) return;
 
     float x,y,z,rx,ry,rz;
@@ -188,10 +188,10 @@ void VoxDat::reset_skeleton_local_matrix(int node)
 
 void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
 {
-	GS_ASSERT(this->voxel_skeleton_inited)
-	if (!this->voxel_skeleton_inited) return;
+    GS_ASSERT(this->voxel_skeleton_inited)
+    if (!this->voxel_skeleton_inited) return;
 
-	GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
+    GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
     if (node < 0 || node >= this->n_skeleton_nodes) return;
 
     vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx,ry,rz);
@@ -205,10 +205,10 @@ void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, floa
 
 void VoxDat::set_skeleton_node_parent(int node, int parent)
 {
-	GS_ASSERT(this->voxel_skeleton_inited)
-	if (!this->voxel_skeleton_inited) return;
+    GS_ASSERT(this->voxel_skeleton_inited)
+    if (!this->voxel_skeleton_inited) return;
 
-	GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
+    GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
     if (node < 0 || node >= this->n_skeleton_nodes) return;
 
     vox_skeleton_transveral_list[node] = parent;
@@ -289,27 +289,27 @@ void VoxDat::set_part_local_matrix( int part_num, float x, float y, float z, flo
 
 void VoxDat::set_colorable(int part, bool colorable)
 {
-	GS_ASSERT(part >= 0 && part < this->n_parts);
-	if (part < 0 || part >= this->n_parts) return;
-	VoxPart* p = vox_part[part];
-	GS_ASSERT(p != NULL);
-	if (p == NULL) return;
-	p->colorable = colorable;
-	GS_ASSERT(!p->colorable || // dont use base color 0,0,0 and say its colorable. undesired effect
-		(p->base_color.r || p->base_color.g || p->base_color.b));
+    GS_ASSERT(part >= 0 && part < this->n_parts);
+    if (part < 0 || part >= this->n_parts) return;
+    VoxPart* p = vox_part[part];
+    GS_ASSERT(p != NULL);
+    if (p == NULL) return;
+    p->colorable = colorable;
+    GS_ASSERT(!p->colorable || // dont use base color 0,0,0 and say its colorable. undesired effect
+        (p->base_color.r || p->base_color.g || p->base_color.b));
 }
 
 void VoxDat::set_base_color(int part, unsigned char r, unsigned char g, unsigned char b)
 {
-	GS_ASSERT(part >= 0 && part < this->n_parts);
-	if (part < 0 || part >= this->n_parts) return;
-	VoxPart* p = vox_part[part];
-	GS_ASSERT(p != NULL);
-	if (p == NULL) return;
-	p->base_color.r = r;
-	p->base_color.g = g;
-	p->base_color.b = b;
-	GS_ASSERT(!p->colorable || (r || g || b)); // dont use base color 0,0,0 and say its colorable. undesired effect
+    GS_ASSERT(part >= 0 && part < this->n_parts);
+    if (part < 0 || part >= this->n_parts) return;
+    VoxPart* p = vox_part[part];
+    GS_ASSERT(p != NULL);
+    if (p == NULL) return;
+    p->base_color.r = r;
+    p->base_color.g = g;
+    p->base_color.b = b;
+    GS_ASSERT(!p->colorable || (r || g || b)); // dont use base color 0,0,0 and say its colorable. undesired effect
 }
 
 void VoxDat::set_skeleton_parent_matrix(int part, int parent)
@@ -338,6 +338,7 @@ void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned 
 VoxDat::VoxDat()
 :
 voxel_volume_inited(false),
+n_parts(0),
 vox_part(NULL),
 vox_volume_local_matrix(NULL),
 vox_skeleton_local_matrix(NULL),
@@ -348,29 +349,29 @@ VoxDat::~VoxDat()
 {
     if (this->vox_part != NULL) 
     {
-		for (int i=0; i<n_parts; i++) 
-			if (this->vox_part[i] != NULL)
-				delete vox_part[i];
-		delete[] vox_part;
-	}
+        for (int i=0; i<n_parts; i++) 
+            if (this->vox_part[i] != NULL)
+                delete vox_part[i];
+        delete[] vox_part;
+    }
     if (this->vox_skeleton_local_matrix != NULL)
-		delete[] this->vox_skeleton_local_matrix;
+        delete[] this->vox_skeleton_local_matrix;
     if (this->vox_volume_local_matrix != NULL)
-		delete[] this->vox_volume_local_matrix;
-	if (this->vox_skeleton_local_matrix_reference != NULL)
-	{
-		for (int i=0; i<this->n_skeleton_nodes; i++)
-			if (this->vox_skeleton_local_matrix_reference[i] != NULL)
-				free(this->vox_skeleton_local_matrix_reference[i]);
-		free(this->vox_skeleton_local_matrix_reference);
-	}
+        delete[] this->vox_volume_local_matrix;
+    if (this->vox_skeleton_local_matrix_reference != NULL)
+    {
+        for (int i=0; i<this->n_skeleton_nodes; i++)
+            if (this->vox_skeleton_local_matrix_reference[i] != NULL)
+                free(this->vox_skeleton_local_matrix_reference[i]);
+        free(this->vox_skeleton_local_matrix_reference);
+    }
 }
 
 void VoxDat::save(char* fn)
 {
-	GS_ASSERT(fn != NULL);
-	if (fn == NULL) return;
-	
+    GS_ASSERT(fn != NULL);
+    if (fn == NULL) return;
+    
     FILE* f = fopen(fn, "w");
     GS_ASSERT(f != NULL);
     if (f == NULL) return;

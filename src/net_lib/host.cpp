@@ -254,11 +254,9 @@ void client_dispatch_network_events()
                     //printf("server received channel 0 message \n");
                     index = 0;
                     process_packet_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        0
-                        ); 
+                        (char*) event.packet -> data,
+                        &index,
+                        event.packet->dataLength);
                     break;
                 case 1:
                     printf("server received channel 1 message \n");
@@ -266,21 +264,17 @@ void client_dispatch_network_events()
                     process_large_messages(
                         (char*) event.packet -> data, 
                         &index, 
-                        event.packet->dataLength, 
-                        0
-                        ); 
+                        event.packet->dataLength); 
                     break;
                 case 3:
                     //printf("client received channel3 message of of size: %i \n", event.packet->dataLength);
 
                     index = 0;
-                    //process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n, int client_id);
+                    //process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n, ClientID client_id);
                     process_client_map_messages(
                         (char*) event.packet -> data, 
                         &index, 
-                        event.packet->dataLength, 
-                        0
-                        ); 
+                        event.packet->dataLength); 
                     break;
                 default:
                     printf("server received unhandled channel %d message\n", event.channelID);
@@ -491,7 +485,7 @@ static void client_connect(ENetEvent* event)
         event->peer->data = nc;
     nc->enet_peer = event->peer;
 
-    if ((int)NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
+    if ((int)NetServer::number_of_clients >= HARD_MAX_CONNECTIONS)
     {   // send a disconnect reason packet
         if (event->peer != NULL && event->peer->data != NULL)
             ((class NetPeer*)event->peer->data)->disconnect_code = DISCONNECT_FULL;
@@ -503,12 +497,12 @@ static void client_connect(ENetEvent* event)
     NetPeerManager* npm = NULL;
 
     static int _client_id_offset = 0;
-    for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++)
+    for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
     {   // find free peer slot
-        int client_id = (_client_id_offset+i) % NetServer::HARD_MAX_CONNECTIONS;
+        int client_id = (_client_id_offset+i) % HARD_MAX_CONNECTIONS;
         if (NetServer::staging_pool[client_id] != NULL || NetServer::pool[client_id] != NULL) continue;
-        _client_id_offset = (client_id + 1) % NetServer::HARD_MAX_CONNECTIONS;
-        nc->client_id = client_id;
+        _client_id_offset = (client_id + 1) % HARD_MAX_CONNECTIONS;
+        nc->client_id = (ClientID)client_id;
         nc->connected = 1;
         NetServer::staging_pool[client_id] = nc;
         GS_ASSERT(event->peer != NULL);
@@ -517,7 +511,7 @@ static void client_connect(ENetEvent* event)
 
         npm = new NetPeerManager;
         NetServer::clients[client_id] = npm; // must be added to array before init
-        npm->init((ClientID)client_id);
+        npm->init(nc->client_id);
         break;
     }
     
@@ -559,8 +553,8 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
     
     NetPeer* nc = (NetPeer*) peer->data;
 
-    int client_id = -1;
-    if (nc != NULL && nc->client_id >= 0 && nc->client_id < NetServer::HARD_MAX_CONNECTIONS)
+    ClientID client_id = NULL_CLIENT;
+    if (nc != NULL && nc->client_id >= 0 && nc->client_id < HARD_MAX_CONNECTIONS)
     {
         NetServer::number_of_clients--;
         client_id = nc->client_id;
@@ -617,7 +611,7 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
     peer->data = NULL;
     
     NetPeerManager* npm = NULL;
-    if (client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS)
+    if (client_id >= 0 && client_id < HARD_MAX_CONNECTIONS)
     {
         npm = NetServer::clients[client_id];
         GS_ASSERT(npm != NULL);
@@ -632,7 +626,7 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
         if (session != NULL) end_session(session);
     }
 
-    if (client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS)
+    if (client_id >= 0 && client_id < HARD_MAX_CONNECTIONS)
     {
         GS_ASSERT(!(NetServer::pool[client_id] != NULL && NetServer::staging_pool[client_id] != NULL));
         NetServer::pool[client_id] = NULL;
@@ -655,13 +649,13 @@ void kill_client(class NetPeer* peer, DisconnectType error_code)
         enet_peer_disconnect(peer->enet_peer, error_code);
     
     // log it
-    int client_id = peer->client_id;
+    ClientID client_id = peer->client_id;
     NetServer::users->record_client_force_disconnect(client_id);
 }
 
 void flush_to_net()
 {
-    for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
+    for (int i=0; i<HARD_MAX_CONNECTIONS ;i++)
     {
         if (NetServer::staging_pool[i] != NULL)
             NetServer::staging_pool[i]->flush_to_net();

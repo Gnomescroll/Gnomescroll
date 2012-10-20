@@ -3,7 +3,7 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
-bool agent_collides_terrain(Agent_state* a)
+bool agent_collides_terrain(Agent* a)
 {
     float h = a->current_height();
     Vec3 p = a->get_position();

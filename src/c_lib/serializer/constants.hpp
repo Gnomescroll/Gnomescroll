@@ -11,95 +11,243 @@
  */
 
 #include <item/container/config/_state.hpp>
+#include <serializer/uuid.hpp>
 
 namespace serializer
 {
 
-// Map and mechs (flat file data)
-#define DATA_PATH "./world/"
-#define INVALID_DATA_SUBPATH "invalid/"
-#define MAP_DATA_PATH  DATA_PATH "map/"
-#define MECH_DATA_PATH DATA_PATH "mechs/"
-#define MAP_DATA_EXT  ".map"
-#define MECH_DATA_EXT ".mch"
-const char default_map_file[] = MAP_DATA_PATH "map-" STR(GS_VERSION) MAP_DATA_EXT;
-const char mech_filename[] = MECH_DATA_PATH "mech-" STR(GS_VERSION) MECH_DATA_EXT;
-
-
-/*
- * REDIS DATA
- */
-
-const int redis_timeout = 300;  // seconds
-const int keep_alive_rate = (300*30)/2; // send keep-alive halfway
+const int REDIS_TIMEOUT   = 300;  // seconds
+const int KEEP_ALIVE_RATE = (REDIS_TIMEOUT*30)/2; // send keep-alive halfway
 
 // Cached data queues
-const unsigned int PLAYER_LOAD_DATA_LIST_HARD_MAX = 128;
-const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX = 128;
-const unsigned int PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX = 8192;
-const unsigned int PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX = 8192;
+const unsigned int PLAYER_LOAD_DATA_LIST_MAX = HARD_MAX_CONNECTIONS * 2;
+const unsigned int PLAYER_CONTAINER_LOAD_DATA_LIST_MAX = PLAYER_LOAD_DATA_LIST_MAX * N_PLAYER_CONTAINERS;
 
-const unsigned int EXPECTED_ITEM_HASH_FIELDS = 7;
+// DONT CHANGE ANYTHING BELOW THIS LINE
 
-// DONT CHANGE THESE
-#define CONTAINER_LOCATION_NAME "container"
-#define PARTICLE_LOCATION_NAME "particle"
+// Paths for server-specific flat-file data
 
-#define PLAYER_CONTAINER_LOCATION_PREFIX "player:"
+#define DATA_PATH "./world/"
 
-#define PLAYER_INVENTORY_LOCATION_SUBNAME "inventory"
+#define DATA_TMP_EXT    ".tmp"
+#define DATA_ERROR_EXT  ".err"
+#define DATA_BACKUP_EXT ".bak"
+
+#define MAP_DATA_PATH  DATA_PATH      "map/"
+#define MECH_DATA_PATH DATA_PATH      "mechs/"
+#define PLAYER_DATA_PATH DATA_PATH    "players/"
+#define CONTAINER_DATA_PATH DATA_PATH "containers/"
+
+#define MAP_DATA_EXT       ".map"
+#define MECH_DATA_EXT      ".mch"
+#define PLAYER_DATA_EXT    ".plr"
+#define CONTAINER_DATA_EXT ".ctr"
+
+// data files
+const char map_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT;
+const char mech_filename[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT;
+const char player_filename[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT;
+const char container_filename[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT;
+
+// backup copy
+const char map_filename_backup[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_BACKUP_EXT;
+const char mech_filename_backup[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_BACKUP_EXT;
+const char player_filename_backup[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_BACKUP_EXT;
+const char container_filename_backup[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_BACKUP_EXT;
+
+// tmp copy
+const char map_filename_tmp[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_TMP_EXT;
+const char mech_filename_tmp[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_TMP_EXT;
+const char player_filename_tmp[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_TMP_EXT;
+const char container_filename_tmp[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_TMP_EXT;
+
+// error files
+const char map_error_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_ERROR_EXT;
+const char mech_error_filename[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_ERROR_EXT;
+const char player_error_filename[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_ERROR_EXT;
+const char container_error_filename[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_ERROR_EXT;
+
+// Format data for items, containers, redis keys
+
+#define LOCATION_NAME_MAX_LENGTH 24
+
+#define UUID_TAG                 "GID"
+#define NAME_TAG                 "NAM"
+#define COLOR_TAG                "RGB"
+#define USER_ID_TAG              "UID"
+#define VERSION_TAG              "VER"
+#define DURABILITY_TAG           "DUR"
+#define STACK_SIZE_TAG           "STA"
+#define MAP_POSITION_TAG         "MAP"
+#define CONTAINER_ID_TAG         "CID"
+#define CONTAINER_SLOT_TAG       "CSL"
+#define CONTAINER_COUNT_TAG      "CNT"
+#define CONTAINER_ITEM_COUNT_TAG "CNT"
+
+#define TAG_DELIMITER                      "="
+#define PROPERTY_DELIMITER                 ";"
+#define CONTAINER_SEPARATOR                "+"
+#define COLOR_COMPONENT_DELIMITER          ","
+#define MAP_POSITION_COMPONENT_DELIMITER   ","
+
+const size_t TAG_LENGTH                                = 3;
+const size_t TAG_DELIMITER_LENGTH                      = sizeof(TAG_DELIMITER)                    - 1;
+const size_t PROPERTY_DELIMITER_LENGTH                 = sizeof(PROPERTY_DELIMITER)               - 1;
+const size_t CONTAINER_SEPARATOR_LENGTH                = sizeof(CONTAINER_SEPARATOR)              - 1;
+const size_t COLOR_COMPONENT_DELIMITER_LENGTH          = sizeof(COLOR_COMPONENT_DELIMITER)        - 1;
+const size_t MAP_POSITION_COMPONENT_DELIMITER_LENGTH   = sizeof(MAP_POSITION_COMPONENT_DELIMITER) - 1;
+
+#define VERSION_LENGTH                4
+#define USER_ID_LENGTH                10
+#define ITEM_UUID_LENGTH              36
+#define CONTAINER_ID_LENGTH           5
+#define CONTAINER_COUNT_LENGTH        5
+#define ITEM_DURABILITY_LENGTH        5
+#define ITEM_STACK_SIZE_LENGTH        5
+#define ITEM_CONTAINER_SLOT_LENGTH    3
+#define CONTAINER_ITEM_COUNT_LENGTH   3
+
+#define MAP_POSITION_COMPONENT_LENGTH 4
+#define MAP_POSITION_LENGTH ((MAP_POSITION_COMPONENT_LENGTH*3) + ((MAP_POSITION_COMPONENT_LENGTH-1)*MAP_POSITION_COMPONENT_DELIMITER_LENGTH))
+
+#define COLOR_COMPONENT_LENGTH        3  // color component (0-255)
+#define COLOR_LENGTH        ((COLOR_COMPONENT_LENGTH*3) + ((COLOR_COMPONENT_LENGTH-1)*COLOR_COMPONENT_DELIMITER_LENGTH))
+
+const size_t ITEM_FIELD_COUNT             = 5;
+const size_t PLAYER_FIELD_COUNT           = 1;
+const size_t CONTAINER_FIELD_COUNT        = 3;
+const size_t CONTAINER_FILE_FIELD_COUNT   = 2;
+const size_t PLAYER_CONTAINER_FIELD_COUNT = 3;
+
+// These values are just for reference and should not be relied upon
+// A line's property count is subject to change, invalidating these lengths for anything saved before the change
+// However, never make them SMALLER
+const size_t PLAYER_LINE_LENGTH =
+       PLAYER_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (PLAYER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + COLOR_LENGTH;
+    
+const size_t PLAYER_CONTAINER_LINE_LENGTH =
+       PLAYER_CONTAINER_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (PLAYER_CONTAINER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + CONTAINER_NAME_MAX_LENGTH
+    + USER_ID_LENGTH
+    + CONTAINER_ITEM_COUNT_LENGTH;
+
+const size_t CONTAINER_LINE_LENGTH =
+       CONTAINER_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (CONTAINER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + CONTAINER_ID_LENGTH
+    + CONTAINER_NAME_MAX_LENGTH
+    + CONTAINER_ITEM_COUNT_LENGTH
+    + MAP_POSITION_LENGTH;
+
+const size_t ITEM_LINE_LENGTH =
+       ITEM_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (ITEM_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + ITEM_UUID_LENGTH
+    + ITEM_NAME_MAX_LENGTH
+    + ITEM_DURABILITY_LENGTH
+    + ITEM_STACK_SIZE_LENGTH
+    + ITEM_CONTAINER_SLOT_LENGTH;
+
+const size_t CONTAINER_FILE_LINE_LENGTH =
+       CONTAINER_FILE_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (CONTAINER_FILE_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + VERSION_LENGTH
+    + CONTAINER_COUNT_LENGTH;
+    
+const char CONTAINER_FILE_HEADER_FMT[] =
+    VERSION_TAG         TAG_DELIMITER
+        "%0" GS_STR(VERSION_LENGTH)         "d"
+        PROPERTY_DELIMITER
+    CONTAINER_COUNT_TAG TAG_DELIMITER
+        "%0" GS_STR(CONTAINER_COUNT_LENGTH) "d";
+        
+const char PLAYER_DATA_FMT[] =
+    COLOR_TAG       TAG_DELIMITER
+        "%0" GS_STR(COLOR_COMPONENT_LENGTH) "d"
+            COLOR_COMPONENT_DELIMITER
+        "%0" GS_STR(COLOR_COMPONENT_LENGTH) "d"
+            COLOR_COMPONENT_DELIMITER
+        "%0" GS_STR(COLOR_COMPONENT_LENGTH) "d";
+
+const char PLAYER_CONTAINER_HEADER_FMT[] =
+    NAME_TAG            TAG_DELIMITER
+        "%-" GS_STR(CONTAINER_NAME_MAX_LENGTH)      "s"
+        PROPERTY_DELIMITER
+    USER_ID_TAG         TAG_DELIMITER
+        "%0" GS_STR(USER_ID_LENGTH)                 "d"
+        PROPERTY_DELIMITER
+    CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER
+        "%0" GS_STR(CONTAINER_ITEM_COUNT_LENGTH)    "d";
+
+const char CONTAINER_HEADER_FMT[] =
+    NAME_TAG            TAG_DELIMITER
+        "%-" GS_STR(CONTAINER_NAME_MAX_LENGTH)     "s"
+        PROPERTY_DELIMITER
+    CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER
+        "%0" GS_STR(CONTAINER_ITEM_COUNT_LENGTH)   "d"
+        PROPERTY_DELIMITER
+    MAP_POSITION_TAG    TAG_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+        PROPERTY_DELIMITER
+    CONTAINER_ID_TAG    TAG_DELIMITER
+        "%0" GS_STR(CONTAINER_ID_LENGTH)           "d";
+    
+const char ITEM_FMT[] =
+    NAME_TAG           TAG_DELIMITER
+        "%-" GS_STR(ITEM_NAME_MAX_LENGTH)       "s"
+        PROPERTY_DELIMITER
+    DURABILITY_TAG     TAG_DELIMITER
+        "%0" GS_STR(ITEM_DURABILITY_LENGTH)     "d"
+        PROPERTY_DELIMITER
+    STACK_SIZE_TAG     TAG_DELIMITER
+        "%0" GS_STR(ITEM_STACK_SIZE_LENGTH)     "d"
+        PROPERTY_DELIMITER
+    CONTAINER_SLOT_TAG TAG_DELIMITER
+        "%0" GS_STR(ITEM_CONTAINER_SLOT_LENGTH) "d"
+        PROPERTY_DELIMITER        
+    UUID_TAG           TAG_DELIMITER
+        "%-" GS_STR(ITEM_UUID_LENGTH)           "s";
+
+#define PLAYER_REDIS_KEY_PREFIX "player:"
+
+#define PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_REDIS_KEY_PREFIX
+
+#define PLAYER_HAND_LOCATION_SUBNAME         "hand"
+#define PLAYER_TOOLBELT_LOCATION_SUBNAME     "toolbelt"
+#define PLAYER_INVENTORY_LOCATION_SUBNAME    "inventory"
+#define PLAYER_SYNTHESIZER_LOCATION_SUBNAME  "synthesizer"
 #define PLAYER_ENERGY_TANKS_LOCATION_SUBNAME "energy_tanks"
-#define PLAYER_SYNTHESIZER_LOCATION_SUBNAME "synthesizer"
-#define PLAYER_TOOLBELT_LOCATION_SUBNAME "toolbelt"
-#define PLAYER_HAND_LOCATION_SUBNAME "hand"
 
-#define PLAYER_INVENTORY_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_INVENTORY_LOCATION_SUBNAME
+#define PLAYER_HAND_LOCATION_NAME         PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_HAND_LOCATION_SUBNAME
+#define PLAYER_TOOLBELT_LOCATION_NAME     PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_TOOLBELT_LOCATION_SUBNAME
+#define PLAYER_INVENTORY_LOCATION_NAME    PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_INVENTORY_LOCATION_SUBNAME
+#define PLAYER_SYNTHESIZER_LOCATION_NAME  PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_SYNTHESIZER_LOCATION_SUBNAME
 #define PLAYER_ENERGY_TANKS_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_ENERGY_TANKS_LOCATION_SUBNAME
-#define PLAYER_SYNTHESIZER_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_SYNTHESIZER_LOCATION_SUBNAME
-#define PLAYER_TOOLBELT_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_TOOLBELT_LOCATION_SUBNAME
-#define PLAYER_HAND_LOCATION_NAME PLAYER_CONTAINER_LOCATION_PREFIX PLAYER_HAND_LOCATION_SUBNAME
-
-const char ITEM_GUID_KEYNAME[] = "global_id";
-const char ITEM_NAME_KEYNAME[] = "name";
-const char ITEM_DURABILITY_KEYNAME[] = "durability";
-const char ITEM_STACK_SIZE_KEYNAME[] = "stack_size";
-const char ITEM_LOCATION_KEYNAME[] = "location";
-const char ITEM_LOCATION_ID_KEYNAME[] = "location_id";
-const char ITEM_CONTAINER_SLOT_KEYNAME[] = "container_slot";
 
 // The following are not safe to store -- they are only valid per compilation. Only strings are safe
 
-typedef enum
+const char* get_player_container_location_name(ItemContainerType container_type)
 {
-    LN_NONE,
-    LN_CONTAINER,
-    LN_PARTICLE,    
-    LN_PLAYER_HAND,
-    LN_PLAYER_INVENTORY,
-    LN_PLAYER_ENERGY_TANKS,
-    LN_PLAYER_TOOLBELT,
-    LN_PLAYER_SYNTHESIZER,
-} LocationNameID;
-
-const char* get_location_name(LocationNameID loc_id)
-{
-    switch (loc_id)
+    switch (container_type)
     {        
-        case LN_CONTAINER:
-            return CONTAINER_LOCATION_NAME;
-        case LN_PARTICLE:
-            return PARTICLE_LOCATION_NAME;
-        case LN_PLAYER_HAND:
+        case AGENT_HAND:
             return PLAYER_HAND_LOCATION_NAME;
-        case LN_PLAYER_ENERGY_TANKS:
-            return PLAYER_ENERGY_TANKS_LOCATION_NAME;
-        case LN_PLAYER_INVENTORY:
-            return PLAYER_INVENTORY_LOCATION_NAME;
-        case LN_PLAYER_SYNTHESIZER:
-            return PLAYER_SYNTHESIZER_LOCATION_NAME;
-        case LN_PLAYER_TOOLBELT:
+        case AGENT_TOOLBELT:
             return PLAYER_TOOLBELT_LOCATION_NAME;
-        case LN_NONE:
+        case AGENT_INVENTORY:
+            return PLAYER_INVENTORY_LOCATION_NAME;
+        case AGENT_SYNTHESIZER:
+            return PLAYER_SYNTHESIZER_LOCATION_NAME;
+        case AGENT_ENERGY_TANKS:
+            return PLAYER_ENERGY_TANKS_LOCATION_NAME;
+            
         default:
             GS_ASSERT(false);
             return NULL;
@@ -108,58 +256,50 @@ const char* get_location_name(LocationNameID loc_id)
     return NULL;
 }
 
-LocationNameID get_player_location_name_id(ItemContainerType container_type)
+inline bool is_valid_location_name_char(char c)
 {
-    switch (container_type)
+    return (isalnum(c) || c == ':' || c == '_' || c == '-');
+}
+
+bool is_valid_location_name(const char* name)
+{
+    int i = 0;
+    char c;
+    while (i < LOCATION_NAME_MAX_LENGTH && (c = name[i]) != '\0')
     {
-
-        case AGENT_INVENTORY:
-            return LN_PLAYER_INVENTORY;
-        case AGENT_TOOLBELT:
-            return LN_PLAYER_TOOLBELT;
-        case AGENT_SYNTHESIZER:
-            return LN_PLAYER_SYNTHESIZER;
-        case AGENT_ENERGY_TANKS:
-            return LN_PLAYER_ENERGY_TANKS;
-        case AGENT_HAND:
-            return LN_PLAYER_HAND;
-
-        default:
-            GS_ASSERT(false);
-            return LN_NONE;
+        if (!is_valid_location_name_char(c))
+            return false;
+        i++;
     }
-    GS_ASSERT(false);
-    return LN_NONE;
+    return (i < LOCATION_NAME_MAX_LENGTH || name[i] == '\0');
 }
 
 void verify_config()
 {
-    GS_ASSERT_ABORT(strcmp(CONTAINER_LOCATION_NAME, "container") == 0);
-    GS_ASSERT_ABORT(strcmp(PARTICLE_LOCATION_NAME, "particle") == 0);
-    GS_ASSERT_ABORT(strcmp(PLAYER_INVENTORY_LOCATION_NAME, "player:inventory") == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_HAND_LOCATION_NAME,         "player:hand")         == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_TOOLBELT_LOCATION_NAME,     "player:toolbelt")     == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_INVENTORY_LOCATION_NAME,    "player:inventory")    == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_SYNTHESIZER_LOCATION_NAME,  "player:synthesizer")  == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_ENERGY_TANKS_LOCATION_NAME, "player:energy_tanks") == 0);
-    GS_ASSERT_ABORT(strcmp(PLAYER_SYNTHESIZER_LOCATION_NAME, "player:synthesizer") == 0);
-    GS_ASSERT_ABORT(strcmp(PLAYER_TOOLBELT_LOCATION_NAME, "player:toolbelt") == 0);
-    GS_ASSERT_ABORT(strcmp(PLAYER_HAND_LOCATION_NAME, "player:hand") == 0);
 
-    GS_ASSERT_ABORT(strcmp(get_location_name(LN_CONTAINER), "container") == 0);
-    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PARTICLE), "particle") == 0);
-    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_INVENTORY), "player:inventory") == 0);
-    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_ENERGY_TANKS), "player:energy_tanks") == 0);
-    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_SYNTHESIZER), "player:synthesizer") == 0);
-    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_TOOLBELT), "player:toolbelt") == 0);
-    GS_ASSERT_ABORT(strcmp(get_location_name(LN_PLAYER_HAND), "player:hand") == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_HAND),         "player:hand")         == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_TOOLBELT),     "player:toolbelt")     == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_INVENTORY),    "player:inventory")    == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_SYNTHESIZER),  "player:synthesizer")  == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_ENERGY_TANKS), "player:energy_tanks") == 0);
 
     // check that all the expected containers are loaded
     // this *could* be in item/container/config, but since the only reason this matters
     // is because of the seriousness of the serializer, i'll leave it here
     GS_ASSERT_ABORT(ItemContainer::container_attributes != NULL);
+    
+    GS_ASSERT_ABORT(N_PLAYER_CONTAINERS == 5);
 
-    bool agent_inventory_found = false;
-    bool agent_toolbelt_found = false;
-    bool agent_synthesizer_found = false;
+    bool agent_hand_found         = false;
+    bool agent_toolbelt_found     = false;
+    bool agent_inventory_found    = false;
+    bool agent_synthesizer_found  = false;
     bool agent_energy_tanks_found = false;
-    bool agent_hand_found = false;
 
     // make sure all container types are loaded
     
@@ -169,20 +309,20 @@ void verify_config()
         if (attr == NULL || !attr->loaded || !attr->attached_to_agent) continue;
         switch (attr->type)
         {
-            case AGENT_INVENTORY:
-                agent_inventory_found = true;
+            case AGENT_HAND:
+                agent_hand_found         = true;
                 break;
             case AGENT_TOOLBELT:
-                agent_toolbelt_found = true;
+                agent_toolbelt_found     = true;
+                break;
+            case AGENT_INVENTORY:
+                agent_inventory_found    = true;
                 break;
             case AGENT_SYNTHESIZER:
-                agent_synthesizer_found = true;
+                agent_synthesizer_found  = true;
                 break;
             case AGENT_ENERGY_TANKS:
                 agent_energy_tanks_found = true;
-                break;
-            case AGENT_HAND:
-                agent_hand_found = true;
                 break;
 
             default:
@@ -195,6 +335,93 @@ void verify_config()
     GS_ASSERT_ABORT(agent_synthesizer_found);
     GS_ASSERT_ABORT(agent_energy_tanks_found);
     GS_ASSERT_ABORT(agent_hand_found);
+
+    // length of location names
+    GS_ASSERT_ABORT(strlen(PLAYER_HAND_LOCATION_NAME)         <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_TOOLBELT_LOCATION_NAME)     <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_INVENTORY_LOCATION_NAME)    <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_SYNTHESIZER_LOCATION_NAME)  <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_ENERGY_TANKS_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_INVENTORY_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_ENERGY_TANKS_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_SYNTHESIZER_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_TOOLBELT_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_HAND_LOCATION_NAME));
+
+    // semicolon ; is reserved for redis key format, which may need to link back to the redis key
+    // space is reserved for string padding
+    // dash - is reserved for uuid
+    // Actually, never ever change the delimiters
+    GS_ASSERT_ABORT(strcmp(TAG_DELIMITER, "=") == 0);
+    GS_ASSERT_ABORT(strstr(TAG_DELIMITER, ":") == NULL);
+    GS_ASSERT_ABORT(strstr(TAG_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strstr(TAG_DELIMITER, "-") == NULL);
+    GS_ASSERT_ABORT(strlen(TAG_DELIMITER) == TAG_DELIMITER_LENGTH);
+    GS_ASSERT_ABORT(strstr(TAG_DELIMITER, PROPERTY_DELIMITER)        == NULL);
+    GS_ASSERT_ABORT(strstr(TAG_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
+    GS_ASSERT_ABORT(TAG_DELIMITER_LENGTH == 1);
+    
+    GS_ASSERT_ABORT(strcmp(PROPERTY_DELIMITER, ";") == 0);
+    GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, ":") == NULL);
+    GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, "-") == NULL);
+    GS_ASSERT_ABORT(strlen(PROPERTY_DELIMITER) == PROPERTY_DELIMITER_LENGTH);
+    GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, TAG_DELIMITER)             == NULL);
+    GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
+    GS_ASSERT_ABORT(PROPERTY_DELIMITER_LENGTH == 1);
+    
+    GS_ASSERT_ABORT(strcmp(COLOR_COMPONENT_DELIMITER, ",") == 0);
+    GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, ":") == NULL);
+    GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, "-") == NULL);
+    GS_ASSERT_ABORT(strlen(COLOR_COMPONENT_DELIMITER) == COLOR_COMPONENT_DELIMITER_LENGTH);
+    GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, TAG_DELIMITER)      == NULL);
+    GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, PROPERTY_DELIMITER) == NULL);
+    GS_ASSERT_ABORT(COLOR_COMPONENT_DELIMITER_LENGTH == 1);
+
+    GS_ASSERT_ABORT(strcmp(MAP_POSITION_COMPONENT_DELIMITER, ",") == 0);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, ":") == NULL);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, " ") == NULL);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, "-") == NULL);
+    GS_ASSERT_ABORT(strlen(MAP_POSITION_COMPONENT_DELIMITER) == MAP_POSITION_COMPONENT_DELIMITER_LENGTH);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, TAG_DELIMITER)      == NULL);
+    GS_ASSERT_ABORT(strstr(MAP_POSITION_COMPONENT_DELIMITER, PROPERTY_DELIMITER) == NULL);
+    GS_ASSERT_ABORT(MAP_POSITION_COMPONENT_DELIMITER_LENGTH == 1);
+
+    GS_ASSERT_ABORT(strcmp(CONTAINER_SEPARATOR, "+") == 0);
+    GS_ASSERT_ABORT(CONTAINER_SEPARATOR_LENGTH == 1);
+
+    GS_ASSERT_ABORT(TAG_LENGTH == 3);
+
+    GS_ASSERT_ABORT(strlen(UUID_TAG)                 == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(NAME_TAG)                 == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(COLOR_TAG)                == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(USER_ID_TAG)              == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(VERSION_TAG)              == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(DURABILITY_TAG)           == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(STACK_SIZE_TAG)           == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(MAP_POSITION_TAG)         == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(CONTAINER_SLOT_TAG)       == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(CONTAINER_COUNT_TAG)      == TAG_LENGTH);
+    GS_ASSERT_ABORT(strlen(CONTAINER_ITEM_COUNT_TAG) == TAG_LENGTH);
+    
+    // THIS NUMBER CAN NEVER GO LOWER
+    GS_ASSERT_ABORT(ITEM_LINE_LENGTH                >= 71);
+    GS_ASSERT_ABORT(PLAYER_LINE_LENGTH              >= 15);
+    GS_ASSERT_ABORT(CONTAINER_LINE_LENGTH           >= 60);
+    GS_ASSERT_ABORT(CONTAINER_FILE_LINE_LENGTH      >= 18);
+    GS_ASSERT_ABORT(PLAYER_CONTAINER_LINE_LENGTH    >= 51);
+
+    GS_ASSERT_ABORT(ITEM_FIELD_COUNT             > 0);
+    GS_ASSERT_ABORT(PLAYER_FIELD_COUNT           > 0);
+    GS_ASSERT_ABORT(CONTAINER_FIELD_COUNT        > 0);
+    GS_ASSERT_ABORT(CONTAINER_FILE_FIELD_COUNT   > 0);
+    GS_ASSERT_ABORT(PLAYER_CONTAINER_FIELD_COUNT > 0);
+
+    // we need to #define ITEM_UUID_LENGTH as a plain integer, so we can use it in the format string
+    // but we really want it to be UUID_STRING_LENGTH
+    GS_ASSERT_ABORT(ITEM_UUID_LENGTH == UUID_STRING_LENGTH);
 }
 
 }   // serializer

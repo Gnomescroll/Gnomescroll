@@ -93,7 +93,7 @@ struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type)
     return &mech_attribute[mech_type];
 }
 
-int get_mech_class(int mech_type)
+MechClass get_mech_class(int mech_type)
 {
     struct MECH_ATTRIBUTE* attr = get_mech_attribute(mech_type);
     GS_ASSERT(attr != NULL);

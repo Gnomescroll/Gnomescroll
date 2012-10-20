@@ -31,6 +31,9 @@ void load_map(const char* filename);
 void save_map();
 void load_map();
 
+// will choose a correct map if available. returns false if no map found
+bool load_default_map();
+
 void check_map_save_state();
 
 void init_map_serializer();

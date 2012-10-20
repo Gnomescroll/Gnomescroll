@@ -19,6 +19,6 @@ extern class ChatServer* chat_server;
 void init_chat_server();
 void teardown_chat_server();
 
-void add_player_to_chat(int client_id);
-void remove_player_from_chat(int client_id);
+void add_player_to_chat(ClientID client_id);
+void remove_player_from_chat(ClientID client_id);
 #endif

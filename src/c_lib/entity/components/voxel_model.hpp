@@ -30,14 +30,15 @@ class VoxelModelComponent: public Component
 
         float get_radius()
         {
-            if (this->vox == NULL) return 1.0f;
-            return vox->get_part(0)->radius;
+            return this->get_radius(0);
         }
         
         float get_radius(int part)
         {
             if (this->vox == NULL) return 1.0f;
-            return vox->get_part(part)->radius;
+            Voxel_volume* vv = vox->get_part(part);
+            if (vv == NULL) return 1.0f;
+            return vv->radius;
         }
 
         struct Vec3 get_center()
@@ -49,13 +50,17 @@ class VoxelModelComponent: public Component
         struct Vec3 get_center(int part)
         {
             if (this->vox == NULL) return vec3_init(0,0,0);
-            return this->vox->get_part(part)->get_center();
+            Voxel_volume* vv = vox->get_part(part);
+            if (vv == NULL) return vec3_init(0,0,0);
+            return vv->get_center();
         }
 
         void ready(Vec3 position, float theta, float phi)
         {
             GS_ASSERT(this->vox == NULL);
             if (this->vox != NULL) return;
+            GS_ASSERT(this->vox_dat != NULL);
+            if (this->vox_dat == NULL) return;
             this->vox = new Voxel_model(this->vox_dat, this->object->id, this->object->type);
             this->set_properties();
             vox->update(position.x, position.y, position.z, theta, phi);

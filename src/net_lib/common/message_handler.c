@@ -5,35 +5,21 @@
 
 #include <net_lib/global.hpp>
 
-#define NET_STATIC_ARRAYS 0
-
-#if NET_STATIC_ARRAYS
-static unsigned int h_client_packet_size[256]; 
-static unsigned int h_server_packet_size[256]; 
-
-static pt2handler handler_array[256];
-
-static pt2handler client_handler_array[256];
-static pt2handler server_handler_array[256];
-#else
 static unsigned int* h_client_packet_size;
 static unsigned int* h_server_packet_size;
 
-static pt2handler* handler_array;
-
-static pt2handler* client_handler_array;
-static pt2handler* server_handler_array;
-#endif
+static pt2handler_client* client_handler_array;
+static pt2handler_server* server_handler_array;
 
 //should disconnect client
-void default_handler_function(char* buff, int n, int* read_bytes, unsigned int client_id)
+void default_handler_function(char* buff, int n, int* read_bytes)
 {
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id!\n");
     *read_bytes = -1;
 }
 
-void register_server_message_handler(int message_id, unsigned int size, pt2handler fptr)
+void register_server_message_handler(int message_id, unsigned int size, pt2handler_server fptr)
 {
     if (message_id > 255 || message_id <0) {printf("register_server_message_handler: message ID invalid!\n");return;}
     GS_ASSERT(server_handler_array != NULL);
@@ -50,7 +36,7 @@ void register_server_message_handler(int message_id, unsigned int size, pt2handl
     server_handler_array[message_id] = fptr;
 }
 
-void register_client_message_handler(int message_id, unsigned int size, pt2handler fptr)
+void register_client_message_handler(int message_id, unsigned int size, pt2handler_client fptr)
 {
     if (message_id >=256 || message_id <0) {printf("register_client_message_handler: message ID invalid!\n");return;}
     GS_ASSERT(client_handler_array != NULL);
@@ -75,15 +61,13 @@ void init_message_handler()
     h_client_packet_size = (unsigned int*) calloc(256, sizeof(unsigned int));
     h_server_packet_size = (unsigned int*) calloc(256, sizeof(unsigned int));
 
-    handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
-    client_handler_array = (pt2handler*) calloc(256, sizeof(pt2handler));
-    server_handler_array =  (pt2handler*) calloc(256, sizeof(pt2handler));
+    client_handler_array = (pt2handler_client*) calloc(256, sizeof(pt2handler_server));
+    server_handler_array =  (pt2handler_server*) calloc(256, sizeof(pt2handler_server));
 
     #endif
 
     for (int i=0;i<256;i++) 
     {
-        handler_array[i] = NULL;
         server_handler_array[i] = NULL;
         client_handler_array[i] = NULL;
         h_server_packet_size[i] = 0;
@@ -92,7 +76,12 @@ void init_message_handler()
 
 }
 
-int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n, unsigned int client_id) 
+#if DC_SERVER
+int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n, ClientID client_id)
+#endif
+#if DC_CLIENT
+int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n)
+#endif
 {
 
     //printf("*n= %i, max_n= %i \n", *n, max_n);
@@ -139,7 +128,7 @@ int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n, uns
             printf("message_handler error: no handler for message_id= %i\n", message_id);
             return -4;
         }
-        client_handler_array[message_id](buff, *n, &read_bytes, client_id);
+        client_handler_array[message_id](buff, *n, &read_bytes);
         #endif
 
         #if DC_SERVER
@@ -178,11 +167,7 @@ int process_packet_messages(char* buff, unsigned int* n, unsigned int max_n, uns
     return -5; //should not happen
 }
 
-
-/*
-    Client to server is safe
-*/
-int process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n, unsigned int client_id) 
+int process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n) 
 {
     #if DC_SERVER
     GS_ASSERT(false);
@@ -201,7 +186,7 @@ int process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n,
             printf("message_handler error: no handler for message_id= %i\n", message_id);
             return -1;
         }
-        client_handler_array[message_id](buff, *n, &read_bytes, max_n);
+        client_handler_array[message_id](buff, *n, &read_bytes);
 
         *n += read_bytes; //works for non fixed sized
         
@@ -210,21 +195,17 @@ int process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n,
 
     } while (*n < max_n);
 
-    //finished procesing messages
-    if (*n == max_n) 
-        return 0; 
-
-    //error that should never occur
-    if (*n > max_n) 
-    {   //error, read past buff 
-        printf("process_client_map_messages: network error!!! Error: read past buffer\n");
-        return -1; 
-    }
-
-    return 0; //should not happen
+    GS_ASSERT(*n == max_n);
+    if (*n != max_n) return -1;
+    return 0;
 }
 
-int process_large_messages(char* buff, unsigned int* n, unsigned int max_n, unsigned int client_id)
+#if DC_SERVER
+int process_large_messages(char* buff, unsigned int* n, unsigned int max_n, ClientID client_id)
+#endif
+#if DC_CLIENT
+int process_large_messages(char* buff, unsigned int* n, unsigned int max_n)
+#endif
 {
     printf("WARNING: process_large_messages, received message on large message channel \n");
     return 0;

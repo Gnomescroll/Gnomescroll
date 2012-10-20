@@ -44,13 +44,13 @@ void init_packets()
 
 int get_block_item_container(int x, int y, int z)
 {
-    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+    if ( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
         | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
     ) GS_ABORT();
 
     class MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
-    if(c == NULL) return NULL_CONTAINER;
+    if (c == NULL) return NULL_CONTAINER;
     return c->chunk_item_container.get(x,y,z); 
 }
 
@@ -218,19 +218,6 @@ void destroy_item_container_block(int x, int y, int z)
     c->chunk_item_container.remove(x,y,z);
 }
 
-void load_item_container_block(int x, int y, int z, int block_type)
-{
-    ItemContainerType container_type = Item::get_container_type_for_block(block_type);
-    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-    if (container_type == CONTAINER_TYPE_NONE) return;
-    ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
-    init_container(container);
-
-    create_item_container_block(x,y,z, container->type, container->id);
-}
-
 void smelter_on(int container_id)
 {
     int p[3] = {0};
@@ -262,7 +249,7 @@ void smelter_off(int container_id)
 /*
     Do on client connect
 */
-void send_client_map_special(int client_id)
+void send_client_map_special(ClientID client_id)
 {
     main_map->control_node_list.send_control_nodes_to_client(client_id);
 }

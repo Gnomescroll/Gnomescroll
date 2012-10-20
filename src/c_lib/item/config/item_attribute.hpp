@@ -1,5 +1,6 @@
 #pragma once
 
+#include <item/common/constants.hpp>
 #include <t_map/common/constants.hpp>
 
 namespace Item
@@ -8,10 +9,12 @@ namespace Item
     {
         public:
 
+        bool loaded;
+
         ItemGroup group;
 
         int item_type;
-    
+
         char* pretty_name;
 
         //IG_PLACER
@@ -63,10 +66,8 @@ namespace Item
         // animation
         int animation_id;
 
-        ItemAttribute()
+        ItemAttribute() : loaded(false), group(IG_NONE), item_type(NULL_ITEM_TYPE)
         {
-            this->item_type = NULL_ITEM_TYPE;
-            this->group = IG_NONE;
         }
 
         void load_defaults(int item_type, ItemGroup group)
@@ -108,6 +109,7 @@ namespace Item
             fuel_burn_rate = 30;
             cube_height = 0;
             animation_id = 0;
+            loaded = false;
         }
     };
 

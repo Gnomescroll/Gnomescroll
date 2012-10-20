@@ -13,7 +13,7 @@ class ItemParticle_list* item_particle_list = NULL;
 
 void init()
 {
-    item_particle_list = new ItemParticle_list;
+    item_particle_list = new ItemParticle_list(MAX_ITEM_PARTICLES);
 }
 
 void teardown()
@@ -39,11 +39,11 @@ void tick()
 
     #if DC_SERVER
     static int tick = 0;
-    for (int i=0; i<item_particle_list->n_max; i++)
+    for (unsigned int i=0; i<item_particle_list->max; i++)
     {
-        if (item_particle_list->a[i] == NULL) continue;
-        if ((tick + item_particle_list->a[i]->broadcast_tick) % ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE == 0)
-            broadcast_particle_item_state(item_particle_list->a[i]->id);
+        if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
+        if ((tick + item_particle_list->objects[i].broadcast_tick) % ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE == 0)
+            broadcast_particle_item_state(item_particle_list->objects[i].id);
     }
     tick++;
     #endif
@@ -169,19 +169,19 @@ void broadcast_particle_item_create(ItemParticleID particle_id)
     msg.broadcast();
 }
 
-static void send_particle_item_create_to_client(ItemParticleID particle_id, int client_id)
+static void send_particle_item_create_to_client(ItemParticleID particle_id, ClientID client_id)
 {
     item_particle_create_StoC msg;
     if (!pack_particle_item_create(particle_id, &msg)) return;
     msg.sendToClient(client_id);
 }
 
-void send_particle_items_to_client(int client_id)
+void send_particle_items_to_client(ClientID client_id)
 {
-    for (int i=0; i<item_particle_list->n_max; i++)
+    for (unsigned int i=0; i<item_particle_list->max; i++)
     {
-        ItemParticle* p = item_particle_list->a[i];
-        if (p == NULL) continue;
+        if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
+        ItemParticle* p = &item_particle_list->objects[i];
         send_particle_item_create_to_client(p->id, client_id);
         if (p->target_agent != NULL_AGENT)
             send_particle_item_picked_up(client_id, p->target_agent, p->id);
@@ -212,7 +212,7 @@ void broadcast_particle_item_destroy(ItemParticleID particle_id)
     msg.broadcast();
 }
 
-void send_particle_item_picked_up(int client_id, int agent_id, ItemParticleID particle_id)
+void send_particle_item_picked_up(ClientID client_id, AgentID agent_id, ItemParticleID particle_id)
 {
     GS_ASSERT(particle_id != NULL_PARTICLE);
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -222,7 +222,7 @@ void send_particle_item_picked_up(int client_id, int agent_id, ItemParticleID pa
     msg.sendToClient(client_id);
 }
 
-void broadcast_particle_item_picked_up(int agent_id, ItemParticleID particle_id)
+void broadcast_particle_item_picked_up(AgentID agent_id, ItemParticleID particle_id)
 {
     GS_ASSERT(particle_id != NULL_PARTICLE);
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -244,7 +244,7 @@ void broadcast_particle_item_pickup_cancelled(ItemParticleID particle_id)
 // split item into new item
 // create particle for it
 // set to be pickup
-static void split_item_particle(Item::Item* item, ItemParticle* particle, int item_type, int stack_size, int target_agent)
+static void split_item_particle(Item::Item* item, ItemParticle* particle, int item_type, int stack_size, AgentID target_agent)
 {
     GS_ASSERT(item != NULL);
     GS_ASSERT(particle != NULL);
@@ -295,10 +295,10 @@ void check_item_pickups()
     static int energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
     
-    for (int i=0; i<item_particle_list->n_max; i++)
+    for (unsigned int i=0; i<item_particle_list->max; i++)
     {
-        if (item_particle_list->a[i] == NULL) continue;
-        ItemParticle* item_particle = item_particle_list->a[i];
+        if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
+        ItemParticle* item_particle = &item_particle_list->objects[i];
         if (!item_particle->can_be_picked_up()) continue;
         GS_ASSERT(item_particle->item_id != NULL_ITEM);
         Item::Item* item = Item::get_item(item_particle->item_id);
@@ -311,7 +311,7 @@ void check_item_pickups()
         GS_ASSERT(item->stack_size > 0);
         GS_ASSERT(item->type != NULL_ITEM_TYPE);
 
-        Agent_state* agent = nearest_living_agent_in_range(
+        Agent* agent = nearest_living_agent_in_range(
             item_particle->verlet.position, ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE);
         if (agent == NULL) continue;
 
@@ -614,12 +614,12 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
     particle->lock_pickup();
 }
 
-void throw_agent_item(int agent_id, ItemID item_id)
+void throw_agent_item(AgentID agent_id, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return;
     
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL)
     {   // we cannot get the agent state, so just destroy the item

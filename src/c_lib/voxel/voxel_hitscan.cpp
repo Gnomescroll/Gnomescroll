@@ -19,8 +19,8 @@ bool Voxel_hitscan_list::hitscan(
     float z = 0.0f;
 
     float radius;
-    struct Voxel_hitscan_element* vhe;
-    struct Voxel_hitscan_element* target_hit;
+    class Voxel_hitscan_element* vhe;
+    class Voxel_hitscan_element* target_hit;
     target_hit = NULL;
     int voxel[3];
 
@@ -76,7 +76,7 @@ bool Voxel_hitscan_list::hitscan(
 
 bool Voxel_hitscan_list::point_collision(Vec3 position, Voxel_hitscan_target* target)
 {
-    struct Voxel_hitscan_element* vhe;
+    class Voxel_hitscan_element* vhe;
     for (int i=0; i<VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         vhe = this->hitscan_list[i];
@@ -90,8 +90,54 @@ bool Voxel_hitscan_list::point_collision(Vec3 position, Voxel_hitscan_target* ta
     return false;
 }
 
+void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
+{
+    GS_ASSERT(this->num_elements < VOXEL_HITSCAN_LIST_SIZE);
+    if (this->num_elements >= VOXEL_HITSCAN_LIST_SIZE) return;
+    
+    for (int i=0; i<VOXEL_HITSCAN_LIST_SIZE; i++)
+        if (hitscan_list[i] == NULL)
+        {
+            this->hitscan_list[i] = &(vv->vhe);
+            this->num_elements++;
+            vv->voxel_hitscan_list = this;
+            return;
+        }
+    GS_ASSERT(false);
+}
+
+void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
+{
+    for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
+        if (this->hitscan_list[i] != NULL && this->hitscan_list[i] == &(vv->vhe))
+        {
+            this->num_elements--;
+            this->hitscan_list[i] = NULL;
+            //printf("Removed voxel volume %i from hitscan list\n", i);
+            vv->voxel_hitscan_list = NULL;
+            return;
+        }
+    GS_ASSERT(false);
+    vv->voxel_hitscan_list = NULL;
+}
+
+Voxel_hitscan_list::Voxel_hitscan_list() : num_elements(0)
+{
+    hitscan_list = (class Voxel_hitscan_element**)calloc(VOXEL_HITSCAN_LIST_SIZE, sizeof(class Voxel_hitscan_element*));
+}
+
+Voxel_hitscan_list::~Voxel_hitscan_list()
+{
+    if (this->hitscan_list != NULL) free(this->hitscan_list);
+    this->hitscan_list = NULL;
+}
+
 void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
 {
+    GS_ASSERT(vhe->entity_id >= 0);
+    GS_ASSERT(vhe->entity_type >= 0);
+    GS_ASSERT(vhe->part_id >= 0);
+    GS_ASSERT(vhe->vv != NULL);
     this->entity_id = vhe->entity_id;
     this->entity_type = vhe->entity_type;
     this->part_id = vhe->part_id;
@@ -100,61 +146,6 @@ void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
 
 void Voxel_hitscan_target::copy_voxel(int voxel[3])
 {
-    for (int i=0; i<3; i++)
-        this->voxel[i] = voxel[i];
+    memcpy(this->voxel, voxel, sizeof(voxel));
 }
 
-void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
-{
-    if(num_elements >= VOXEL_HITSCAN_LIST_SIZE)
-    {
-        printf("Voxel_hitscan_list Error: number of voxel models exceeds VOXEL_HITSCAN_LIST_SIZE \n");
-        return;
-    }
-    int i;
-    for(i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
-    {
-        if(hitscan_list[i] == NULL)
-        {
-            hitscan_list[i] = &(vv->vhe);
-            num_elements++;
-                      
-            vv->voxel_hitscan_list = this;
-            break;
-        }
-    }
-    if (i == VOXEL_HITSCAN_LIST_SIZE) printf("WARNING: register_voxel_hitscan - no space available\n");
-}
-
-void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
-{
-    for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
-    {
-        if (hitscan_list[i] == NULL) continue;
-        if (hitscan_list[i]->vv == vv)
-        {
-            num_elements--;
-            hitscan_list[i] = NULL;
-            //printf("Removed voxel volume %i from hitscan list\n", i);
-            vv->voxel_hitscan_list = NULL;
-            return;
-        }
-    }
-
-    //printf("Voxel_hitscan_list::unregister_voxel_hitscan error, volume was not on list \n");
-    vv->id = -1;
-    vv->voxel_hitscan_list = NULL;
-}
-
-Voxel_hitscan_list::Voxel_hitscan_list()
-:
-num_elements(0)
-{
-    hitscan_list = new Voxel_hitscan_element*[VOXEL_HITSCAN_LIST_SIZE];
-    for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++) hitscan_list[i] = NULL;
-}
-
-Voxel_hitscan_list::~Voxel_hitscan_list()
-{
-    delete[] this->hitscan_list;
-}

@@ -1,0 +1,10 @@
+#skeleton nodes, voxel volumes
+1 1
+#connection matrix
+0 0
+#skeleton_node: anchor x,y,z rotatation x,y,z
+0 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
+#part number, node number, voxel format filename
+0 0 media/voxel/bomb.dcvox
+#voxel: anchor x,y,z rotatation x,y,z
+0 0.000000 0.000000 1.250000  0.500000 0.000000 0.000000

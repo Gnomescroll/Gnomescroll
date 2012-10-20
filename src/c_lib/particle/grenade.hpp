@@ -12,7 +12,7 @@ namespace Particle
 
 
 /* These should be pulled from a dat or something */
-const int GRENADE_MAX = 1024;
+const unsigned int MAX_GRENADES = 1024;
 const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;
 const float GRENADE_DAMAGE_RADIUS = 5.0f;
 const int GRENADE_SPLASH_DAMAGE = 100;
@@ -30,7 +30,7 @@ class Grenade: public ParticleMotion, public BillboardSprite
         int bounce_count;
         void reset();
     public:
-        int owner;  // agent_id
+        AgentID owner;
         int ttl_max;
 
         void tick();
@@ -56,7 +56,8 @@ namespace Particle
 {
 
 #include <common/template/object_list.hpp>
-class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
+
+class GrenadeList: public ObjectList<Grenade>
 {
     private:
         const char* name() { return "Grenade"; }
@@ -64,7 +65,11 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
         void draw();
         void tick();
 
-        Grenade_list() { print_list((char*)this->name(), this); }
+        explicit GrenadeList(unsigned int capacity) :
+            ObjectList<Grenade>(capacity)
+        {
+            this->print();
+        }
 };
  
 int get_grenade_damage(ObjectType type)

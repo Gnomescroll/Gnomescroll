@@ -19,7 +19,10 @@ class Simple_object_list
         
         inline void destroy(int _id);
 
-        inline void print();
+        void print()
+        {
+            printf("%s list instantiated at %p\n", this->name(), this);
+        }
 };
 
 template <class ObjectState, unsigned int hard_cap> 
@@ -32,12 +35,6 @@ Simple_object_list<ObjectState, hard_cap>::Simple_object_list()
 template <class ObjectState, unsigned int hard_cap> 
 Simple_object_list<ObjectState, hard_cap>::~Simple_object_list()
 {
-}
-
-template <class ObjectState, unsigned int hard_cap> 
-inline void Simple_object_list<ObjectState, hard_cap>::print()
-{
-    printf("%s list instantiated at %p\n", this->name(), this);
 }
 
 template <class ObjectState, unsigned int hard_cap>

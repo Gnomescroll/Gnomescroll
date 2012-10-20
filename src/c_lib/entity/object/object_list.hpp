@@ -55,7 +55,7 @@ class ObjectList
         void harvest(); // kill
 
         // network iterators
-        void send_to_client(ObjectType type, int client_id);
+        void send_to_client(ObjectType type, ClientID client_id);
         
     ~ObjectList();
 

@@ -17,7 +17,7 @@ namespace AgentDraw
 
 //static int _last_seq = 0;
 
-void add_snapshot_to_history(Agent_state* g)
+void add_snapshot_to_history(Agent* g)
 {
     //if(g->state_snapshot.seq != snapshot_draw_last_seq) {
         //snapshot_draw_last_seq = g->state_snapshot.seq;
@@ -34,7 +34,7 @@ void add_snapshot_to_history(Agent_state* g)
     //}
 }
 
-void draw_agent(Agent_state* g) {
+void draw_agent(Agent* g) {
 
     //printf("agent draw \n");
     AgentState s = g->get_state();

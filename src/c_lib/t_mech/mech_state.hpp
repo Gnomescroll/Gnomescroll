@@ -87,12 +87,16 @@ struct MECH_LIST
         }
 
         int _mli = mli;
-        while(mla[mli].id != -1)
+        int i = 0;
+        for (; i<mlm; i++)
         {
-            mli = (mli + 1) % mlm;
-            GS_ASSERT(mli != _mli);
+            _mli = (i+mli)%mlm;
+            if (mla[_mli].id == -1) break;
         }
-
+        GS_ASSERT(i != mlm);
+        if (i == mlm) return -1;
+        mli = _mli;
+        
         m.id = mli;   //set id
         mla[mli] = m; //store mech
         mln++;
@@ -116,7 +120,7 @@ struct MECH_LIST
 
 
     #if DC_SERVER
-    void send_mech_list_to_client(int client_id)
+    void send_mech_list_to_client(ClientID client_id)
     {
         for (int i=0; i<mlm; i++)
         {

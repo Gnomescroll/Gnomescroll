@@ -25,6 +25,19 @@ class AgentState
         //float jump_pow;
         
         AgentState();
+
+        AgentState(const AgentState& other)
+        {
+            this->seq = other.seq;
+            this->theta = other.theta;
+            this->phi = other.phi;
+            this->x = other.x;
+            this->y = other.y;
+            this->z = other.z;
+            this->vx = other.vx;
+            this->vy = other.vy;
+            this->vz = other.vz;
+        }
         
         struct Vec3 forward_vector();
         
@@ -62,7 +75,7 @@ struct Agent_collision_box
     float box_r;
 };
 
-class Agent_state
+class Agent
 {
     private:
         void print_cs();
@@ -106,11 +119,46 @@ class Agent_state
         bool in_sight_of(Vec3 source, Vec3 *sink, float failure_rate);
 
         #if DC_SERVER
+        bool temp;
+        
         AgentState camera;    // agent's camera state, sent by client
         bool camera_ready;
         AgentState get_camera_state() { return this->camera; }
         Vec3 get_camera_state_position() { return vec3_init(this->camera.x, this->camera.y, this->camera.z); }
         void set_camera_state(float x, float y, float z, float theta, float phi);
+
+        void spawn_state();
+        void spawn_state(Vec3 p);
+
+        void copy(Agent* other)
+        {
+            if (this == other) return;
+
+            // Things not copied:
+                // temp flag
+            
+            this->id = other->id;
+            this->client_id = other->client_id;
+            this->type = other->type;
+
+            this->box = other->box;
+
+            this->status.copy(&other->status);
+            
+            this->vox = other->vox;
+            other->vox = NULL;
+
+            this->camera = other->camera;
+            this->camera_ready = other->camera_ready;
+
+            this->snapshot_seq = other->snapshot_seq;
+            this->CS_seq = other->CS_seq;
+            this->s = other->s;
+            this->state_snapshot = other->state_snapshot;
+            this->state_rollback = other->state_rollback;
+            memcpy(this->cs, other->cs, sizeof(this->cs));
+        }
+
         #endif
 
         AgentState get_state() { return this->s; }
@@ -121,11 +169,6 @@ class Agent_state
         void set_angles(float theta, float phi);
         void teleport(float x,float y,float z); //should only be used on server
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
-
-        #if DC_SERVER
-        void spawn_state();
-        void spawn_state(Vec3 p);
-        #endif
 
         int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
         int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);    // returns side, as integer. side<0 if failure
@@ -148,7 +191,7 @@ class Agent_state
             return this->vox->get_part(AGENT_PART_TORSO)->get_center();
         }
 
-        //void send_id_to_client(int client_id);
+        //void send_id_to_client(ClientID client_id);
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
 
@@ -187,12 +230,12 @@ class Agent_state
         Vec3 arm_right();
         Vec3 arm_up();
 
-        explicit Agent_state(int id); //default constructor
+        explicit Agent(AgentID id); //default constructor
 
-        ~Agent_state();
+        ~Agent();
 };
 
 class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
-bool agent_collides_terrain(Agent_state* a);
-void force_update_agent_vox(Agent_state* a);
+bool agent_collides_terrain(Agent* a);
+void force_update_agent_vox(Agent* a);

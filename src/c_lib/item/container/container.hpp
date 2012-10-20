@@ -27,7 +27,7 @@ class ItemContainerInterface
         int slot_count;
         ItemID* slot;
         
-        int owner;
+        AgentID owner;
         int chunk;  // TODO -- move to subclass
 
         bool attached_to_agent; // true for containers permanently attached to agents (inventory, synthesizer)
@@ -51,7 +51,7 @@ class ItemContainerInterface
             return this->slot[slot];
         }
 
-        void assign_owner(int owner)
+        void assign_owner(AgentID owner)
         {
             GS_ASSERT(this->attached_to_agent); // should only use this for attached containers
             this->owner = owner;
@@ -109,14 +109,14 @@ class ItemContainerInterface
             return NULL_SLOT;
         }
 
-        virtual bool can_be_opened_by(int agent_id)
+        virtual bool can_be_opened_by(AgentID agent_id)
         {
             GS_ASSERT(!this->attached_to_agent || this->owner != NULL_AGENT);  // agent should be assigned
             if (this->attached_to_agent && this->owner != agent_id) return false;
             return (this->owner == agent_id || this->owner == NULL_AGENT);
         }
         
-        virtual bool lock(int agent_id)
+        virtual bool lock(AgentID agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
             GS_ASSERT(this->can_be_opened_by(agent_id));
@@ -127,7 +127,7 @@ class ItemContainerInterface
             return true;
         }
 
-        virtual bool unlock(int agent_id)
+        virtual bool unlock(AgentID agent_id)
         {
             ASSERT_VALID_AGENT_ID(agent_id);
             GS_ASSERT(this->owner != NULL_AGENT);
@@ -443,6 +443,7 @@ class ItemContainerSmelter: public ItemContainerInterface
         {
             GS_ASSERT(this->is_valid_slot(slot));
             if (!this->is_valid_slot(slot)) return false;
+            GS_ASSERT(item_id != NULL_ITEM);
             if (item_id == NULL_ITEM) return false;
 
             // check fuel slot
@@ -588,13 +589,11 @@ ItemContainerInterface* create_item_container_interface(int ttype, int id)
     return NULL;
 }
 
-const int ITEM_CONTAINER_MAX = 1024;
-const int ITEM_CONTAINER_HARD_MAX = 0xffff;
-
-class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX, ITEM_CONTAINER_HARD_MAX>
+class ItemContainerList: public MultiObject_list<ItemContainerInterface>
 {
     private:
         const char* name() { return "ItemContainer"; }
+        
     public:
 
         #if DC_CLIENT
@@ -607,14 +606,14 @@ class ItemContainerList: public DynamicMultiObjectList<ItemContainerInterface, I
 
         ItemContainerInterface* create(int type, int id)
         {
-            return DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX, ITEM_CONTAINER_HARD_MAX>::create(type, id);
+            return MultiObject_list<ItemContainerInterface>::create(type, id);
         }
         #endif
 
-        ItemContainerList()
-        : DynamicMultiObjectList<ItemContainerInterface, ITEM_CONTAINER_MAX, ITEM_CONTAINER_HARD_MAX>(create_item_container_interface)
+        ItemContainerList(unsigned int capacity)
+        : MultiObject_list<ItemContainerInterface>(capacity, create_item_container_interface)
         {
-            print_list((char*)this->name(), this);
+            this->print();
         }
 };
 

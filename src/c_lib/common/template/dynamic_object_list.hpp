@@ -42,6 +42,11 @@ class DynamicObjectList
         void where();
         void print_members();
 
+        void print()
+        {
+            printf("%s list instantiated at %p\n", this->name(), this);
+        }
+
         DynamicObjectList(); //default constructor
         virtual ~DynamicObjectList(); //default deconstructor
 };

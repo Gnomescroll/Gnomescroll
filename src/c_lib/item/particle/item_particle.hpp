@@ -41,7 +41,7 @@ class ItemParticle
         ItemParticleID id;
         int item_type;
         
-        int target_agent; // when being picked up
+        AgentID target_agent; // when being picked up
         
         // render stuff
         #if DC_CLIENT
@@ -72,7 +72,7 @@ class ItemParticle
         }
         #endif
 
-        void picked_up(int agent_id);
+        void picked_up(AgentID agent_id);
         void pickup_cancelled();
         
         void tick();
@@ -89,7 +89,7 @@ class ItemParticle
 
         void die();
 
-    explicit ItemParticle(int id);
+    explicit ItemParticle(ItemParticleID id);
 
     #if DC_CLIENT
     void init(int item_type, float x, float y, float z, float mx, float my, float mz);
@@ -105,17 +105,21 @@ class ItemParticle
     List Definition
 */
 
-#include <common/template/dynamic_object_list.hpp>
+#include <common/template/object_list.hpp>
 
 namespace ItemParticle
 {
 
-class ItemParticle_list: public DynamicObjectList<ItemParticle, ITEM_PARTICLE_MAX, ITEM_PARTICLE_HARD_MAX>
+class ItemParticle_list: public ObjectList<ItemParticle, ItemParticleID>
 {
     private:
         const char* name() { return "ItemParticle"; }
     public:
-        ItemParticle_list() { print_list((char*)this->name(), this); }
+        ItemParticle_list(unsigned int capacity) :
+            ObjectList<ItemParticle, ItemParticleID>(capacity, NULL_PARTICLE)
+        {
+            this->print();
+        }
 
         void draw();
         void tick();
@@ -143,9 +147,9 @@ void ItemParticle_list::draw()
     glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 
     glBegin(GL_QUADS);
-    for (int i=0; i<this->n_max; i++)
-        if (this->a[i] != NULL && !this->a[i]->is_voxel && this->a[i]->should_draw)
-            this->a[i]->draw();
+    for (unsigned int i=0; i<this->max; i++)
+        if (this->objects[i].id != this->null_id && !this->objects[i].is_voxel && this->objects[i].should_draw)
+            this->objects[i].draw();
     glEnd();
 
     glDisable(GL_ALPHA_TEST);

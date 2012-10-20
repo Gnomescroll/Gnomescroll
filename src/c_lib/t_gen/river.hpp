@@ -57,7 +57,7 @@ static void gen_river(int x, int y, int z, int tile_id)
         }
         
         // randomize ties
-        shuffle_int_array(choices, k);
+        shuffle<int>(choices, k);
         
         // set along column to new point
         int gz = grad_cpy[choices[0]];

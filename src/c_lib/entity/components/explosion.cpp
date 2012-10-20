@@ -88,7 +88,7 @@ void ExplosionComponent::explode()
 
     using Components::OwnerComponent;
     OwnerComponent* owner = (OwnerComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_OWNER);
-    int owner_id = NULL_AGENT;
+    AgentID owner_id = NULL_AGENT;
     if (owner != NULL) owner_id = owner->get_owner();
     
     ServerState::damage_objects_within_sphere(
@@ -114,7 +114,7 @@ bool ExplosionComponent::proximity_check()
         position = physics->get_position();
     }
     
-    Agent_state* agent = nearest_living_agent_model_in_range(position, this->proximity_radius);
+    Agent* agent = nearest_living_agent_model_in_range(position, this->proximity_radius);
     if (agent != NULL)
     {
         using Components::HealthComponent;

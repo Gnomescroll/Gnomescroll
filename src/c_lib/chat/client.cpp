@@ -5,6 +5,7 @@
 
 #include <common/logger.hpp>
 #include <auth/constants.hpp>
+#include <net_lib/client.hpp>
 
 /* ChatMessage */
 
@@ -14,7 +15,8 @@ void ChatMessage::set_name()
         strcpy(name, (char*)"System");
     else
     {
-        Agent_state* a = ClientState::agent_list->get(sender);
+        AgentID agent_id = NetClient::get_agent_id_for_client(this->sender); 
+        Agent* a = Agents::get_agent(agent_id);
         if (a==NULL || a->status.name[0] == '\0')
             strcpy(name, Auth::UNDEFINED_NAME);
         else
@@ -33,10 +35,10 @@ void ChatMessage::set_color()
         this->color = CHAT_PM_COLOR;
     else // global
     {
-        Agent_state *a = ClientState::agent_list->get(this->sender);
-        struct Color color = CHAT_GLOBAL_COLOR;
-        if (a != NULL && a->status.color_chosen)
-            color = a->status.color;
+        AgentID agent_id = NetClient::get_agent_id_for_client(this->sender); 
+        Agent *a = Agents::get_agent(agent_id);
+        struct Color color = AGENT_DEFAULT_COLOR;
+        if (a != NULL) color = a->status.color;
         this->color = color;
     }
 }
@@ -114,12 +116,8 @@ void ChatClientChannel::clear_history()
     this->history = NULL;
 }
 
-ChatClientChannel::ChatClientChannel()
-:
-id(-1),
-history_size(0),
-history(NULL),
-tail(NULL)
+ChatClientChannel::ChatClientChannel() :
+    id(-1), history_size(0), history(NULL), tail(NULL)
 {}
 
 ChatClientChannel::~ChatClientChannel()
@@ -417,11 +415,20 @@ bool ChatInput::route_command()
             chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
             return false;
         }
+
+        if (ClientState::playerAgent_state.you != NULL
+         && colors_equal(ClientState::playerAgent_state.you->status.color, color))
+        {
+            static const char msgfmt[] = "Your color is already %d %d %d";
+            static const size_t msg_len = sizeof(msgfmt) + 3*3 - 3*2;
+            static char msg[msg_len+1] = {'\0'};
+
+            snprintf(msg, msg_len+1, msgfmt, color.r, color.g, color.b);
+            chat_client->send_system_message(msg);
+        }
         
         colorme_CtoS msg;
-        msg.r = color.r;
-        msg.g = color.g;
-        msg.b = color.b;
+        msg.color = color;
         msg.send();
     }
     else
@@ -457,7 +464,7 @@ ChatInput::~ChatInput()
 
 /* ChatClient */
 
-void ChatClient::received_message(int channel, int sender, const char* payload)
+void ChatClient::received_message(int channel, ClientID sender, const char* payload)
 {
     ChatClientChannel* chan = NULL;
 
@@ -649,12 +656,10 @@ void ChatMessageList::sort_by_most_recent()
 
 void ChatMessageList::filter_none()
 {   // moves all non null objects to the filtered list
-    int c = 0;
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->filtered_objects[c++] = this->a[i];
-    }
+    unsigned int c = 0;
+    for (unsigned int i=0; i<this->max; i++)
+        if (this->objects[i].id != this->null_id)
+            this->filtered_objects[c++] = &this->objects[i];
     this->n_filtered = c;
 }
 

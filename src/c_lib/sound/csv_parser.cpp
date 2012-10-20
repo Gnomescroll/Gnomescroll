@@ -38,7 +38,7 @@ const float GS_DEFAULT_MAX_PLAYABLE_DISTANCE = 128.0f;
 
 void parse_sound_triggers(const char *fn)
 {
-    int size = 0;
+    size_t size = 0;
     char *buff = read_file_to_buffer(fn, &size);
     if (buff == NULL)
     {
