@@ -334,7 +334,7 @@ class MechListShader
 
         SDL_UnlockSurface(s);
 
-        save_surface_to_png(s, "./screenshot/mech_surface.png");
+        //save_surface_to_png(s, "./screenshot/mech_surface.png");
 
         //floating point modifier
         for(int i=0; i<256; i++)
@@ -350,8 +350,8 @@ class MechListShader
             if(mech_sprite_height[i] != -1)
                 mech_sprite_height_f[i] = ((float) mech_sprite_height[i] ) / 16.0f;
 
-            if(mech_sprite_height[i] != -1)
-               printf("mech %i: %i \n", i, mech_sprite_height[i] );
+            //if(mech_sprite_height[i] != -1)
+            //   printf("mech %i: %i \n", i, mech_sprite_height[i] );
         }
 
     }
