@@ -33,42 +33,6 @@ bool destroy_agent(AgentID id)
     return true;
 }
 
-#if DC_SERVER
-// returns agent from main pool or tmp pool
-class Agent* get_any_agent(AgentID id)
-{
-    class Agent* agent = agent_list->get(id);
-    if (agent == NULL) agent = agent_list_temp->get(id);
-    return agent;
-}
-
-bool destroy_any_agent(AgentID id)
-{
-    if (destroy_agent(id)) return true;
-    return destroy_temp_agent(id);
-}
-
-class Agent* create_temp_agent(AgentID id)
-{
-    return agent_list_temp->create(id);
-}
-
-bool destroy_temp_agent(AgentID id)
-{
-    return agent_list_temp->destroy(id);
-}
-
-class Agent* load_temp_agent(AgentID id)
-{
-    class Agent* agent = agent_list_temp->get(id);
-    GS_ASSERT(agent != NULL);
-    if (agent == NULL) return NULL;
-    class Agent* loaded_agent = agent_list->load(agent);
-    agent_list_temp->destroy(id);
-    return loaded_agent;
-}
-#endif
-
 void init()
 {
     init_state();

@@ -197,7 +197,7 @@ void NetPeerManager::was_deserialized()
 
 void NetPeerManager::teardown()
 {
-    class Agent* a = NetServer::agents[this->agent_id];
+    class Agent* a = NetServer::agents[this->client_id];
     if (a != NULL)
     {
         bool saved = serializer::save_player(this->user_id, this->agent_id);
@@ -206,7 +206,7 @@ void NetPeerManager::teardown()
         ItemContainer::agent_quit(a->id);
         Toolbelt::agent_quit(a->id);
         Components::owner_component_list->revoke(a->id);
-        Agents::destroy_any_agent(a->id);
+        Agents::destroy_agent(a->id);
     }
     if (this->loaded)
     {

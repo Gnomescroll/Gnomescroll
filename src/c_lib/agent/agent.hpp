@@ -119,8 +119,6 @@ class Agent
         bool in_sight_of(Vec3 source, Vec3 *sink, float failure_rate);
 
         #if DC_SERVER
-        bool temp;
-        
         AgentState camera;    // agent's camera state, sent by client
         bool camera_ready;
         AgentState get_camera_state() { return this->camera; }
@@ -129,36 +127,6 @@ class Agent
 
         void spawn_state();
         void spawn_state(Vec3 p);
-
-        void copy(Agent* other)
-        {
-            if (this == other) return;
-
-            // Things not copied:
-                // temp flag
-            
-            this->id = other->id;
-            this->client_id = other->client_id;
-            this->type = other->type;
-
-            this->box = other->box;
-
-            this->status.copy(&other->status);
-            
-            this->vox = other->vox;
-            other->vox = NULL;
-
-            this->camera = other->camera;
-            this->camera_ready = other->camera_ready;
-
-            this->snapshot_seq = other->snapshot_seq;
-            this->CS_seq = other->CS_seq;
-            this->s = other->s;
-            this->state_snapshot = other->state_snapshot;
-            this->state_rollback = other->state_rollback;
-            memcpy(this->cs, other->cs, sizeof(this->cs));
-        }
-
         #endif
 
         AgentState get_state() { return this->s; }

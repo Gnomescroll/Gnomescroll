@@ -74,22 +74,19 @@ void Agent::teleport(float x,float y,float z)
     this->set_position(x,y,z);
 
     #if DC_SERVER
-    if (!this->temp)
-    {
-        Agent_teleport_message msg;
+    Agent_teleport_message msg;
 
-        msg.id = id;
+    msg.id = id;
 
-        msg.x = s.x;
-        msg.y = s.y;
-        msg.z = s.z;
-        msg.vx = s.vx;
-        msg.vy = s.vy;
-        msg.vz = s.vz;
-        msg.theta = s.theta;
-        msg.phi = s.phi;
-        msg.broadcast();
-    }
+    msg.x = s.x;
+    msg.y = s.y;
+    msg.z = s.z;
+    msg.vx = s.vx;
+    msg.vy = s.vy;
+    msg.vz = s.vz;
+    msg.theta = s.theta;
+    msg.phi = s.phi;
+    msg.broadcast();
 
     t_map::t_map_manager_update_client_position(this->client_id, x,y);
     #endif
@@ -102,22 +99,19 @@ void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, floa
     s.phi = phi;
     
     #if DC_SERVER
-    if (!this->temp)
-    {
-        Agent_teleport_message msg;
+    Agent_teleport_message msg;
 
-        msg.id = id;
+    msg.id = id;
 
-        msg.x = s.x;
-        msg.y = s.y;
-        msg.z = s.z;
-        msg.vx = s.vx;
-        msg.vy = s.vy;
-        msg.vz = s.vz;
-        msg.theta = s.theta;
-        msg.phi = s.phi;
-        msg.broadcast();
-    }
+    msg.x = s.x;
+    msg.y = s.y;
+    msg.z = s.z;
+    msg.vx = s.vx;
+    msg.vy = s.vy;
+    msg.vz = s.vz;
+    msg.theta = s.theta;
+    msg.phi = s.phi;
+    msg.broadcast();
 
     t_map::t_map_manager_update_client_position(this->client_id, x,y);
     #endif
@@ -551,7 +545,6 @@ Agent::Agent(AgentID id) :
     , initial_teleport(false)
     #endif
     #if DC_SERVER
-    , temp(false)
     , camera_ready(false)
     #endif
 {

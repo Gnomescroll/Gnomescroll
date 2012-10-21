@@ -393,25 +393,6 @@ Agent* random_agent_in_range(const Vec3 position, const float radius)
     return agent;
 }
 
-#if DC_SERVER
-class Agent* AgentList::load(class Agent* temp_agent)
-{
-    GS_ASSERT(temp_agent->temp);
-    class Agent* agent = this->get(temp_agent->id);
-    GS_ASSERT(agent == NULL);
-    if (agent != NULL) return NULL;
-    agent = this->create(temp_agent->id);
-    GS_ASSERT(agent != NULL);
-    if (agent == NULL) return NULL;
-
-    agent->copy(agent);
-    agent->temp = false;
-    GS_ASSERT(agent->id == temp_agent->id);
-    
-    return agent;
-}
-#endif
-
 AgentList::AgentList(unsigned int capacity) :
     ObjectList<Agent, AgentID>(capacity, NULL_AGENT),
     check_name_interval(0)

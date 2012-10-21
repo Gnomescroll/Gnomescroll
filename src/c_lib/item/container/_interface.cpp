@@ -1055,7 +1055,7 @@ void agent_quit(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    Agent* a = Agents::get_any_agent(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 

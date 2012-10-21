@@ -75,34 +75,6 @@ class Agent_status {
 
         bool consume_item(ItemID item_id);
 
-        void copy(Agent_status* other)
-        {
-            if (this == other) return;
-
-            // Things not copied:
-            //      Agent* a
-
-            this->health = other->health;
-            this->health_max = other->health_max;
-            this->should_die = other->should_die;
-            this->dead = other->dead;
-            this->respawn_countdown = other->respawn_countdown;
-            this->spawner = other->spawner;
-            
-            this->kills = other->kills;
-            this->deaths = other->deaths;
-            this->suicides = other->suicides;
-            this->slime_kills = other->slime_kills;
-
-            memcpy(this->name, other->name, sizeof(this->name));
-
-            this->vox_crouched = other->vox_crouched;
-            this->lifetime = other->lifetime;
-            this->color = other->color;
-
-            this->voxel_model_restore_throttle = other->voxel_model_restore_throttle;
-        }
-
         #endif
         
         void send_scores(ClientID client_id);

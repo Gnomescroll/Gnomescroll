@@ -15,13 +15,6 @@ class AgentListTemp: public ObjectList<Agent, AgentID>
         {
             this->print();
         }
-
-        class Agent* create(AgentID id)
-        {
-            class Agent* agent = ObjectList<Agent, AgentID>::create(id);
-            if (agent != NULL) agent->temp = true;
-            return agent;
-        }
 };
 #endif
 
