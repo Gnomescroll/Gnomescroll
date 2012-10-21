@@ -118,13 +118,9 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
     };
     for (int i=0; i<N_PLAYER_CONTAINERS; i++)
         if (!serializer::load_player_container(serializer_id, container_types[i]))
-        {
-            // force disconnect player with error
-        }
+            this->deserializer_failed();
     if (!serializer::end_player_load(serializer_id))
-    {
-        // force disconnect player with error
-    }
+        this->deserializer_failed();
 }
 
 #if GS_SERIALIZER
@@ -133,6 +129,7 @@ void NetPeerManager::was_deserialized(class serializer::ParsedPlayerData* data)
 void NetPeerManager::was_deserialized()
 #endif
 {
+    NetServer::kill_client(this->client_id, DISCONNECT_FORCED);
     GS_ASSERT(!this->loaded);
     GS_ASSERT(!this->deserialized);
     if (this->deserialized || this->loaded) return;
@@ -146,6 +143,7 @@ void NetPeerManager::was_deserialized()
 
     this->agent_id = agent->id;
 
+    // Apply serializer data to agent and its containers
     agent->status.identify(this->username);
     if (data != NULL)
         agent->status.set_color_silent(data->color);
@@ -168,6 +166,7 @@ void NetPeerManager::was_deserialized()
         serializer::create_player_container_items_from_data(agent->id, containers, n_containers);
     }
 
+    // Register agent with subsystems and send state 
     add_player_to_chat(this->client_id);
     
     Agents::agent_list->send_to_client(this->client_id);
@@ -187,6 +186,7 @@ void NetPeerManager::was_deserialized()
     msg.color = agent->status.color;
     msg.broadcast();
 
+    // notify client of their agent
     send_player_agent_id_to_client(this->client_id);
     ItemContainer::send_container_assignments_to_agent(agent->id, this->client_id);
 
@@ -197,6 +197,7 @@ void NetPeerManager::was_deserialized()
 
 void NetPeerManager::teardown()
 {
+    GS_ASSERT(false);
     class Agent* a = NetServer::agents[this->client_id];
     if (a != NULL)
     {
@@ -229,8 +230,12 @@ void NetPeerManager::deserializer_failed()
     // TODO
     // abort client, clean up properly
 
+    printf("DESERIALIZER FAILED\n");
+
     GS_ASSERT(!this->deserialized);
     if (this->deserialized) return;
+
+    // 
 }
 
 bool NetPeerManager::failed_to_authorize()
