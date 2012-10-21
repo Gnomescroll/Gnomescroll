@@ -37,8 +37,6 @@ namespace ItemContainer
 
 /* Configuration Loader */ 
 
-// TODO -- container configuration validation
-    
 static class ContainerAttributes* c = NULL;
 
 void add_container(class ContainerAttributes* c)

@@ -93,11 +93,6 @@ static inline bool item_valid(class Item::Item* item)
 
 size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
 {
-    // TODO -- check/acquire global id
-    // just get a global id block from redis periodically
-
-    // TODO -- validate item
-
     class Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return 0;

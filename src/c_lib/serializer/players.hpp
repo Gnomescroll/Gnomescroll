@@ -17,6 +17,9 @@ int begin_player_load(UserID user_id, ClientID client_id);
 bool load_player_container(int player_load_id, ItemContainerType container_type); 
 bool end_player_load(int player_load_id);
 
+// Called from outside this module. NetPeerManager is the only thing that knows about true failure
+void player_load_failed();
+
 class ParsedPlayerData
 {
     public:

@@ -519,7 +519,14 @@ bool end_player_load(int player_load_id)
         "GET " PLAYER_REDIS_KEY_PREFIX "%d", data->user_id);
     
     GS_ASSERT(ret == REDIS_OK);
-    return (ret != REDIS_OK);
+    return (ret == REDIS_OK);
+}
+
+// Called from outside this module. NetPeerManager is the only thing that knows about true failure
+void player_load_failed()
+{
+    if (!Options::serializer) return;
+    clear_item_data();
 }
 
 }   // serializer
