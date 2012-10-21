@@ -20,9 +20,11 @@ void wait_for_threads();
 bool save_player(UserID user_id, AgentID agent_id);
 bool save_player_container(ClientID client_id, int container_id);
 
-int begin_player_load(UserID user_id, ClientID client_id, AgentID agent_id);
-bool load_player_container(int player_load_id, int container_id); 
+int begin_player_load(UserID user_id, ClientID client_id);
+bool load_player_container(int player_load_id, ItemContainerType container_type); 
 bool end_player_load(int player_load_id);
+
+bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers);
 
 }   // serializer
 
@@ -48,8 +50,10 @@ void wait_for_threads(){}
 bool save_player_container(ClientID client_id, int container_id) {}
 
 int begin_player_load(UserID user_id, ClientID client_id) { return 0; }
-bool load_player_container(int player_load_id, int container_id) { return true; } 
+bool load_player_container(int player_load_id, ItemContainerType container_type) { return true; }
 bool end_player_load(int player_load_id) { return true; }
+
+bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers) {}
 
 }   // serializer
 

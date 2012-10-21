@@ -1,6 +1,5 @@
 #include "items.hpp"
 
-#include <item/item.hpp>
 #include <item/_interface.hpp>
 #include <item/container/_interface.hpp>
 #include <item/common/constants.hpp>
@@ -10,6 +9,19 @@
 
 namespace serializer
 {
+
+class ParsedItemDataList* item_load_data_list = NULL; 
+
+void init_items()
+{
+    GS_ASSERT(item_load_data_list == NULL);
+    item_load_data_list = new ParsedItemDataList(PARSED_ITEM_DATA_LIST_MAX);
+}
+
+void teardown_items()
+{
+    if (item_load_data_list != NULL) delete item_load_data_list;
+}
 
 // WARNING -- modifies char* str
 bool parse_item_token(const char* key, const char* val, class ParsedItemData* data)
@@ -137,36 +149,122 @@ int write_container_contents_string(char* buf, size_t buffer_size, const class I
     return (int)ibuf;
 }
 
-class Item::Item* create_item_from_data(class ParsedItemData* data, ItemLocationType location, int location_id)
+static class Item::Item* make_item(class ParsedItemData* data)
 {
-    // TODO -- make sure item can be placed in location (is not occupied etc)
-    
-    // TODO - Apply renaming scheme to get item type
-    int item_type = Item::get_item_type(data->name);
-    GS_ASSERT(item_type != NULL_ITEM_TYPE);
-    if (item_type == NULL_ITEM_TYPE) return NULL;  // TODO -- log error
-
-    // create item
-    class Item::Item* item = Item::create_item_for_loading();
+    class Item::Item* item = Item::create_item(data->item_type);
     GS_ASSERT(item != NULL);
-    if (item == NULL) return NULL; // TODO -- log error. RESERVE ITEM SPACE FOR LOADING
+    if (item == NULL) return NULL; // This is very bad. Has to be impossible
 
     uuid_copy(item->uuid, data->uuid);
-    item->type = item_type;
     item->durability = data->durability;
     item->stack_size = data->stack_size;
     item->container_slot = data->container_slot;
-    item->location = location;
-    item->location_id = location_id;
+    item->location = data->item_location;
 
-    item->init_for_loading();        
+    item->init_from_loading();
 
     return item;
 }
 
-void load_created_items()
+bool create_container_items_from_data(int container_id)
 {
-    // transfer tmp items to main list
+    ASSERT_VALID_CONTAINER_ID(container_id);
+    IF_INVALID_CONTAINER_ID(container_id) return false;
+
+    unsigned int item_space = Item::item_space();
+    GS_ASSERT(item_load_data_list->ct <= item_space);
+    if (item_load_data_list->ct > item_space) return false;
+
+    for (unsigned int i=0; i<item_load_data_list->max; i++)
+    {
+        class ParsedItemData* data = &item_load_data_list->objects[i];
+        if (data->id == item_load_data_list->null_id) continue;
+        
+        class Item::Item* item = make_item(data);
+        GS_ASSERT(item != NULL);
+        if (item == NULL) return false; // Can/should never happen. Critical part
+
+        GS_ASSERT(item->location == IL_CONTAINER);
+        if (item->location != IL_CONTAINER) return false;
+
+        ItemContainer::load_item_into_container(item->id, container_id, item->container_slot);
+    }
+
+    clear_item_data();
+
+    return true;
+}
+
+bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers)
+{
+    for (int i=0; i<n_containers; i++)
+    {
+        ASSERT_VALID_CONTAINER_ID(containers[i]);
+        IF_INVALID_CONTAINER_ID(containers[i]) return false;
+    }
+
+    MALLOX(ItemContainerType, container_types, n_containers);
+    for (int i=0; i<n_containers; i++)
+    {
+        container_types[i] = ItemContainer::get_container_type(containers[i]);
+        GS_ASSERT(container_types[i] != CONTAINER_TYPE_NONE);
+        if (container_types[i] == CONTAINER_TYPE_NONE) return false;
+    }
+
+    unsigned int item_space = Item::item_space();
+    GS_ASSERT(item_load_data_list->ct <= item_space);
+    if (item_load_data_list->ct > item_space) return false;
+
+    for (unsigned int i=0; i<item_load_data_list->max; i++)
+    {
+        class ParsedItemData* data = &item_load_data_list->objects[i];
+        if (data->id == item_load_data_list->null_id) continue;
+
+        class Item::Item* item = make_item(data);
+        GS_ASSERT(item != NULL);
+        if (item == NULL) break; // Can/should never happen. Critical part
+
+        GS_ASSERT(item->location == IL_HAND || item->location == IL_CONTAINER);
+
+        if (item->location == IL_HAND)
+        {
+            item->location_id = agent_id;
+            ItemContainer::load_item_into_hand(item->id, agent_id);
+        }
+        else
+        if (item->location == IL_CONTAINER)
+        {
+            int container_id = NULL_CONTAINER;
+            for (int j=0; j<n_containers; j++)
+                if (container_types[j] == data->item_container_type)
+                {
+                    container_id = containers[j];
+                    break;
+                }
+            GS_ASSERT(container_id != NULL_CONTAINER);
+            item->location_id = container_id;
+            ItemContainer::load_item_into_container(item->id, container_id, item->container_slot);
+        }
+    }
+
+    clear_item_data();
+
+    return true;
+}
+
+class ParsedItemData* create_item_data()
+{
+    return item_load_data_list->create();
+}
+
+void destroy_item_data(ItemID id)
+{
+    item_load_data_list->destroy(id);
+}
+
+void clear_item_data()
+{
+    item_load_data_list->clear();
 }
 
 }   // serializer

@@ -22,7 +22,7 @@ void Item::init(int item_type)
 
 #if DC_SERVER
 
-void Item::init_for_loading()
+void Item::init_from_loading()
 {   // use only by serializer
     // we will set defaults for state properties that are not important enough to serialize
     ItemAttribute* attr = get_item_attributes(this->type);

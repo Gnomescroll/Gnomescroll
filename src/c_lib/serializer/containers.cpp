@@ -198,7 +198,6 @@ static bool process_container_blob(const char* str, size_t filesize)
     i++;
 
     class ParsedContainerData container_data;
-    class ParsedItemData item_data;
     for (int m=0; m<container_file_data.container_count; m++)
     {
         GS_ASSERT(c != '\0');
@@ -241,6 +240,8 @@ static bool process_container_blob(const char* str, size_t filesize)
         GS_ASSERT(container_data.item_count <= container->slot_max);
         if (container_data.item_count > container->slot_max) return false;
 
+        clear_slot_checker();
+        
         // parse contents
         for (int n=0; n<container_data.item_count; n++)
         {
@@ -252,16 +253,25 @@ static bool process_container_blob(const char* str, size_t filesize)
             GS_ASSERT(c == '\n');
             if (c != '\n') return false;
             
-            item_data.reset();
-            parse_line<class ParsedItemData>(&parse_item_token, buf, k, &item_data);
-            GS_ASSERT(item_data.valid);
-            if (!item_data.valid) return false;
-            class Item::Item* item = create_item_from_data(&item_data, IL_CONTAINER, container->id);
-            GS_ASSERT(item != NULL);
-            if (item == NULL) return false;
-            // TODO -- check that we dont clobber an existing slot
-            ItemContainer::load_item_into_container(item->id, container->id, item->container_slot);
+            class ParsedItemData* item_data = create_item_data();
+            parse_line<class ParsedItemData>(&parse_item_token, buf, k, item_data);
+            GS_ASSERT(item_data->valid);
+            if (!item_data->valid) return false;
+
+            item_data->item_location = IL_CONTAINER;
+
+            int item_type = Item::get_item_type(item_data->name);
+            GS_ASSERT(item_type != NULL_ITEM_TYPE);
+            if (item_type == NULL_ITEM_TYPE) return false;
+
+            item_data->item_type = item_type;
+
+            GS_ASSERT(slot_checker[item_data->container_slot] == NULL_ITEM);
+            if (slot_checker[item_data->container_slot] != NULL_ITEM) return false;
+            slot_checker[item_data->container_slot] = item_data->id;
         }
+
+        if (!create_container_items_from_data(container->id)) return false;
 
         // mark container with next phase of loaded status 
         loaded_containers[container->id] = CONTAINER_LOAD_ITEMS;

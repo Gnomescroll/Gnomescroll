@@ -7,6 +7,11 @@ dont_include_this_file_in_client
 #include <agent/constants.hpp>
 #include <item/common/constants.hpp>
 
+#if GS_SERIALIZER
+#include <serializer/players.hpp>
+#endif
+
+
 class NetPeerManager
 {
     public:
@@ -31,11 +36,17 @@ class NetPeerManager
 
     void was_authorized(UserID user_id, time_t expiration_time, const char* username);
 
-    void was_deserialized();    // this will be called internally once everything expected has been loaded
-        
     bool failed_to_authorize();
     bool authorization_expired();
     void failed_authorization_attempt();
+
+    void deserializer_failed();
+
+    #if GS_SERIALIZER
+    void was_deserialized(class serializer::ParsedPlayerData* data);
+    #else
+    void was_deserialized();
+    #endif
     
     void broadcast_disconnect();
 

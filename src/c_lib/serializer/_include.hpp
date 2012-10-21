@@ -4,7 +4,7 @@
 dont_include_this_file_in_client
 #endif
 
-#include <serializer/constants.hpp>
+#include <serializer/constants.cpp>
 
 #if GS_SERIALIZER
 # include <serializer/parse.hpp>

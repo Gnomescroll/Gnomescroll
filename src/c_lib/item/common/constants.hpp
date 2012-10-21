@@ -28,7 +28,7 @@ const int NULL_LOCATION = -1;   // this represents a "not set" value, helpful fo
 const int MAX_STACK_SIZE = 0xffff;
 const int MAX_DURABILITY = 0xffff;
 
-const unsigned int MAX_CONTAINER_SIZE = 0xff - 1;
+const unsigned int MAX_CONTAINER_SIZE = NULL_SLOT;
 
 const int MAX_CONTAINERS = NULL_CONTAINER;
 

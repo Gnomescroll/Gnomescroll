@@ -3,6 +3,7 @@
 #include <serializer/items.hpp>
 #include <serializer/parse.hpp>
 #include <serializer/_state.hpp>
+#include <net_lib/common/net_peer_manager.hpp>
 
 namespace serializer
 {
@@ -33,45 +34,34 @@ void teardown_players()
     }
 }
 
-class ParsedPlayerData
+bool PlayerLoadData::signal_if_loaded()
 {
-    public:
-        struct Color color;
-        bool valid;
+    GS_ASSERT(!this->waiting_for_setup);
+    if (this->waiting_for_setup) return false;
+    if (!this->player_data_loaded) return false;
+    for (int i=0; i<N_PLAYER_CONTAINERS; i++)
+        if (!this->containers_loaded[i]) return false;
 
-    void reset()
-    {
-        this->color = AGENT_DEFAULT_COLOR;
-        this->valid = false;
-    }
+    NetPeerManager* client = NetServer::get_client(this->client_id);
+    GS_ASSERT(client != NULL);
+    if (client == NULL) return false; // TODO -- log error
+    if (client->user_id != this->user_id) return false;
+    client->was_deserialized(&this->player_data);
+    this->loaded = true;
+    return true;
+}
 
-    ParsedPlayerData()
-    {
-        this->reset();
-    }
-};
-
-class ParsedPlayerContainerData
+void PlayerLoadData::load_error()
 {
-    public:
-        char name[LOCATION_NAME_MAX_LENGTH+1];
-        UserID user_id;
-        unsigned int container_count;
-        bool valid;
+    if (this->error) return;
+    this->error = true;
+    NetPeerManager* client = NetServer::get_client(this->client_id);
+    GS_ASSERT(client != NULL);
+    if (client == NULL) return;   // LOG ERROR
+    if (client->user_id != this->user_id) return;
+    client->deserializer_failed();
+}
 
-    void reset()
-    {
-        this->user_id = NULL_USER_ID;
-        this->container_count = -1;
-        memset(this->name, 0, sizeof(this->name));
-        this->valid = false;
-    }
-
-    ParsedPlayerContainerData()
-    {
-        this->reset();
-    }
-};
 
 static bool parse_player_container_token(const char* key, const char* val, class ParsedPlayerContainerData* data)
 {
@@ -162,24 +152,17 @@ static bool parse_player_token(const char* key, const char* val, class ParsedPla
     return true;
 }
 
-void process_player_container_blob(const char* str, class PlayerLoadData* player_load_data, class PlayerContainerLoadData* container_load_data)
+bool process_player_container_blob(const char* str, class PlayerLoadData* player_load_data, class PlayerContainerLoadData* container_load_data)
 {    
     // allocate scratch buffer long enough to hold the largest line
     static const size_t LONGEST_LINE = GS_MAX(ITEM_LINE_LENGTH, PLAYER_CONTAINER_LINE_LENGTH);
     char buf[LONGEST_LINE+1] = {'\0'};
 
     ItemLocationType location = IL_NOWHERE;
-    int location_id = NULL_LOCATION;
     if (container_load_data->container_type == AGENT_HAND)
-    {
         location = IL_HAND;
-        location_id = player_load_data->agent_id;
-    }
     else
-    {
         location = IL_CONTAINER;
-        location_id = container_load_data->container_id;
-    }
 
     // copy container header line
     size_t i = 0;
@@ -188,13 +171,13 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
         buf[i++] = c;
     buf[i] = '\0';
     GS_ASSERT(c == '\n' || c == '\0');
-    if (c != '\0' && c != '\n') return;  // TODO -- log error
+    if (c != '\0' && c != '\n') return false;  // TODO -- log error
     
     // read header
     class ParsedPlayerContainerData container_data;
     parse_line<class ParsedPlayerContainerData>(&parse_player_container_token, buf, i, &container_data);
     GS_ASSERT(container_data.valid);
-    if (!container_data.valid) return;  // TODO -- log error
+    if (!container_data.valid) return false;  // TODO -- log error
     i++;
 
     // Check properties on the container data
@@ -202,20 +185,22 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
     // It doesn't handle missing values (so that the format can remain flexible)
     
     GS_ASSERT(container_data.user_id == player_load_data->user_id);
-    if (container_data.user_id != player_load_data->user_id) return;  // TODO -- log error
+    if (container_data.user_id != player_load_data->user_id) return false;  // TODO -- log error
 
     // make sure location name matches container type
     const char* expected_container_name = ItemContainer::get_container_name(container_load_data->container_type);
     GS_ASSERT(expected_container_name != NULL && strcmp(expected_container_name, container_data.name) == 0);
-    if (expected_container_name == NULL || strcmp(expected_container_name, container_data.name) != 0) return;   // TODO -- log error
+    if (expected_container_name == NULL || strcmp(expected_container_name, container_data.name) != 0) return false;   // TODO -- log error
 
     // make sure container count is less than the container's size
     unsigned int max_slots = ItemContainer::get_container_max_slots(container_load_data->container_type);
     GS_ASSERT(container_data.container_count <= max_slots);
-    if (container_data.container_count > max_slots) return; // TODO -- log error
+    if (container_data.container_count > max_slots) return false; // TODO -- log error
+
+    bool error = false;
+    clear_slot_checker();
 
     // parse items
-    class ParsedItemData item_data;
     for (unsigned int j=0; j<container_data.container_count; j++)
     {
         GS_ASSERT(c != '\0');
@@ -226,29 +211,51 @@ void process_player_container_blob(const char* str, class PlayerLoadData* player
             buf[k++] = c;
         buf[k] = '\0';
         GS_ASSERT(c == '\n');
-        if (c != '\n') break;    // TODO -- log error
+        if (c != '\n')
+        {
+            error = true;
+            break;    // TODO -- log error
+        }
 
-        item_data.reset();
-        parse_line<class ParsedItemData>(&parse_item_token, buf, k, &item_data);
-        GS_ASSERT(item_data.valid);
-        if (!item_data.valid) continue; // TODO -- log error
+        class ParsedItemData* item_data = create_item_data();
+        GS_ASSERT(item_data != NULL);
+        if (item_data == NULL)
+        {
+            error = true;
+            break;  // TODO -- log error
+        }
+
+        parse_line<class ParsedItemData>(&parse_item_token, buf, k, item_data);
+        int item_type = Item::get_item_type(item_data->name);
         
-        GS_ASSERT(item_data.container_slot < max_slots);
-        if (item_data.container_slot >= max_slots) continue;    // TODO -- log error
+        GS_ASSERT(item_data->valid);
+        GS_ASSERT(item_type != NULL_ITEM_TYPE);
+        GS_ASSERT(item_data->container_slot < max_slots);
+        GS_ASSERT(slot_checker[item_data->container_slot] == NULL_ITEM);
 
-        class Item::Item* item = create_item_from_data(&item_data, location, location_id);
-        GS_ASSERT(item != NULL);
-        if (item == NULL) continue; // TODO -- log error
+        if (!item_data->valid || item_data->container_slot >= max_slots
+          || item_type == NULL_ITEM_TYPE || slot_checker[item_data->container_slot] != NULL_ITEM)
+        {
+            error = true;
+            destroy_item_data(item_data->id);
+            continue;  // TODO -- log error
+        }
 
-        if (location == IL_HAND)
-            ItemContainer::load_item_into_hand(item->id, player_load_data->agent_id);
-        else
-        if (location == IL_CONTAINER)
-            ItemContainer::load_item_into_container(item->id, container_load_data->container_id, item->container_slot);
+        // attach post-process data needed for the final item creation
+        item_data->item_type = item_type;
+        item_data->item_location = location;
+        item_data->item_container_type = container_load_data->container_type;
+
+        // put item in the slot checker
+        slot_checker[item_data->container_slot] = item_data->id;
     }
+
+    if (error) clear_item_data();
+
+    return (!error);
 }
 
-void process_player_blob(const char* str, class PlayerLoadData* player_load_data)
+bool process_player_blob(const char* str, class PlayerLoadData* player_load_data)
 {
     static const size_t LONGEST_LINE = PLAYER_LINE_LENGTH;
     char buf[LONGEST_LINE+1] = {'\0'};
@@ -260,19 +267,15 @@ void process_player_blob(const char* str, class PlayerLoadData* player_load_data
         buf[i++] = c;
     buf[i] = '\0';
     GS_ASSERT(c == '\0');
-    if (c != '\0') return;  // TODO -- log error
+    if (c != '\0') return false;  // TODO -- log error
 
     class ParsedPlayerData player_data;
-    parse_line<class ParsedPlayerData>(&parse_player_token, buf, i, &player_data);
-    GS_ASSERT(player_data.valid);
-    if (!player_data.valid) return; // TODO -- log error
+    parse_line<class ParsedPlayerData>(&parse_player_token, buf, i, &player_load_data->player_data);
+    GS_ASSERT(player_load_data->player_data.valid);
+    if (!player_load_data->player_data.valid) return false; // TODO -- log error
     i++;
-
-    class Agent* agent = Agents::get_any_agent(player_load_data->agent_id);
-    GS_ASSERT(agent != NULL);
-    if (agent == NULL) return;  // TODO -- log error
-
-    agent->status.set_color_silent(player_data.color);
+    
+    return true;
 }
 
 void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
@@ -280,11 +283,12 @@ void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     class PlayerLoadData* data = (class PlayerLoadData*)_data;
     redisReply* reply = (redisReply*)_reply;
 
+    bool worked = true;
     if (reply->type == REDIS_REPLY_STRING)
     {
-        process_player_blob(reply->str, data);
-        // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
-        data->player_data_was_loaded();
+        worked = process_player_blob(reply->str, data);
+        if (worked)
+            data->player_data_was_loaded();
     }
     else
     if (reply->type == REDIS_REPLY_NIL)
@@ -292,9 +296,17 @@ void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     else
     if (reply->type == REDIS_REPLY_ERROR)
     {
+        worked = false;
         GS_ASSERT(reply->type != REDIS_REPLY_ERROR);
         printf("Loading player %d failed with redis error: %s\n", data->user_id, reply->str); 
     }
+    else
+    {
+        worked = false;
+        GS_ASSERT(false);
+    }
+
+    if (!worked) data->load_error();
     
     player_load_data_list->destroy(data->id);
 }
@@ -306,21 +318,35 @@ void player_container_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     class PlayerLoadData* player_data = player_load_data_list->get(data->player_data_id);
     GS_ASSERT(player_data != NULL);
     if (player_data == NULL) return;    // TODO -- better handling
-    
+
+    bool worked = true;
     if (reply->type == REDIS_REPLY_STRING)
     {
-        process_player_container_blob(reply->str, player_data, data);
-        // TODO -- catch errors and abort -- yes, players inventory will get corrupted otherwise
-        player_data->container_was_loaded(data->container_id);
+        worked = process_player_container_blob(reply->str, player_data, data);
+        GS_ASSERT(worked);
+        if (worked)
+            player_data->container_was_loaded(data->container_type);
     }
     else
     if (reply->type == REDIS_REPLY_NIL)
-        player_data->container_was_loaded(data->container_id);
+        player_data->container_was_loaded(data->container_type);
     else
     if (reply->type == REDIS_REPLY_ERROR)
     {
+        worked = false;
         GS_ASSERT(reply->type != REDIS_REPLY_ERROR);
-        printf("Loading player %d container %d failed with redis error: %s\n", player_data->user_id, data->container_id, reply->str); 
+        printf("Loading player %d container type %d failed with redis error: %s\n", player_data->user_id, data->container_type, reply->str);
+    }
+    else
+    {
+        worked = false;
+        GS_ASSERT(false);
+    }
+
+    if (!worked)
+    {
+        clear_item_data();
+        player_data->load_error();
     }
 
     player_container_load_data_list->destroy(data->id);
@@ -427,14 +453,12 @@ bool save_player(UserID user_id, AgentID agent_id)
     return (ret == REDIS_OK);
 }
 
-int begin_player_load(UserID user_id, ClientID client_id, AgentID agent_id)
+int begin_player_load(UserID user_id, ClientID client_id)
 {
     if (!Options::serializer) return true;
 
     ASSERT_VALID_USER_ID(user_id);
     IF_INVALID_USER_ID(user_id) return -1;
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return -1;
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return -1;
 
@@ -444,31 +468,28 @@ int begin_player_load(UserID user_id, ClientID client_id, AgentID agent_id)
     
     data->setup_begin();
     data->user_id = user_id;
-    data->agent_id = agent_id;
     data->client_id = client_id;
         
     return data->id;
 }
 
-bool load_player_container(int player_load_id, int container_id)
+bool load_player_container(int player_load_id, ItemContainerType container_type)
 {
     if (!Options::serializer) return true;
 
     class PlayerLoadData* player_data = player_load_data_list->get(player_load_id);
     GS_ASSERT(player_data != NULL);
     if (player_data == NULL) return false;
-    if (!player_data->expect_container(container_id)) return false;
+    if (!player_data->expect_container(container_type)) return false;
 
     class PlayerContainerLoadData* data = player_container_load_data_list->create();
     GS_ASSERT(data != NULL);
     if (data == NULL) return false;
 
-    ItemContainerType container_type = ItemContainer::get_container_type(container_id);
     const char* container_name = get_player_container_location_name(container_type);
     GS_ASSERT(container_name != NULL);
     if (container_name == NULL) return false;
 
-    data->container_id = container_id;
     data->container_type = container_type;
     data->player_data_id = player_data->id;
 

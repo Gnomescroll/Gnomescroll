@@ -253,6 +253,11 @@ ItemID split_item_stack_in_half(ItemID src)
     return new_item->id;
 }
 
+unsigned int item_space()
+{
+    return item_list->space();
+}
+
 class Item* create_item(int item_type)
 {
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
@@ -267,12 +272,6 @@ class Item* create_item(const char* item_name)
     if (item_type == NULL_ITEM_TYPE) return NULL;
     return create_item(item_type);
 }
-
-class Item* create_item_for_loading()
-{   // only used by serializer
-    return item_list->create_for_loading();
-}
-
 
 int consume_stack_item(ItemID item_id, int amount, bool auto_destroy)
 {

@@ -30,7 +30,7 @@ options.logger = true
 options.log_chat = false
 
 -- game --
-options.pvp = false
+options.pvp = true
 options.base_move_rate = 30*60*60 --1hr
 
 -- auth --

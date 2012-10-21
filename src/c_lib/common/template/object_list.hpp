@@ -72,11 +72,26 @@ class ObjectList
         printf("%s list instantiated at %p\n", this->name(), this);
     }
 
+    unsigned int space()
+    {
+        GS_ASSERT(this->ct <= this->max);
+        if (this->ct > this->max) return 0;
+        return this->max - this->ct;
+    }
+
+    void clear()
+    {
+        if (!this->ct) return;
+        for (unsigned int i=0; i<this->max; i++)
+            if (this->objects[i].id != this->null_id)
+                this->destroy(this->objects[i].id);
+    }
+
     virtual ~ObjectList()
     {
         if (this->objects != NULL)
         {
-            for (unsigned int i=0; i<this->ct; i++)
+            for (unsigned int i=0; i<this->max; i++)
                 if (this->objects[i].id != this->null_id)
                     this->objects[i].ObjectState::~ObjectState();
             free(this->objects);

@@ -681,9 +681,9 @@ int* get_player_containers(AgentID agent_id, int* n_containers)
     int n = 0;
     containers[n] = get_agent_hand(agent_id);
     if (containers[n] != NULL_CONTAINER) n++;
-    containers[n] = get_agent_inventory(agent_id);
-    if (containers[n] != NULL_CONTAINER) n++;
     containers[n] = get_agent_toolbelt(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
+    containers[n] = get_agent_inventory(agent_id);
     if (containers[n] != NULL_CONTAINER) n++;
     containers[n] = get_agent_synthesizer(agent_id);
     if (containers[n] != NULL_CONTAINER) n++;
@@ -711,33 +711,40 @@ static void assign_container_to_agent(ItemContainerInterface* container, int* co
     send_container_create(client_id, container->id);
 }
 
-void assign_containers_to_agent(AgentID agent_id, ClientID client_id)
+bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_INVALID_AGENT_ID(agent_id) return false;
     ASSERT_VALID_CLIENT_ID(client_id);
-    IF_INVALID_CLIENT_ID(client_id) return;
+    IF_INVALID_CLIENT_ID(client_id) return false;
     
-    ItemContainer* agent_inventory = (ItemContainer*)item_container_list->create(AGENT_INVENTORY);
-    GS_ASSERT(agent_inventory != NULL);
-    assign_container_to_agent(agent_inventory, agent_inventory_list, agent_id, client_id);
-
     ItemContainerHand* agent_hand = (ItemContainerHand*)item_container_list->create(AGENT_HAND);
     GS_ASSERT(agent_hand != NULL);
-    assign_container_to_agent(agent_hand, agent_hand_list, agent_id, client_id);
-
-    ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)item_container_list->create(AGENT_ENERGY_TANKS);
-    GS_ASSERT(agent_energy_tanks != NULL);
-    assign_container_to_agent(agent_energy_tanks, agent_energy_tanks_list, agent_id, client_id);
-        
-    ItemContainerSynthesizer* agent_synthesizer = (ItemContainerSynthesizer*)item_container_list->create(AGENT_SYNTHESIZER);
-    GS_ASSERT(agent_synthesizer != NULL);
-    assign_container_to_agent(agent_synthesizer, agent_synthesizer_list, agent_id, client_id);
+    if (agent_hand == NULL) return false;
 
     ItemContainer* agent_toolbelt = (ItemContainer*)item_container_list->create(AGENT_TOOLBELT);
     GS_ASSERT(agent_toolbelt != NULL);
+    if (agent_toolbelt == NULL) return false;
+
+    ItemContainer* agent_inventory = (ItemContainer*)item_container_list->create(AGENT_INVENTORY);
+    GS_ASSERT(agent_inventory != NULL);
+    if (agent_inventory == NULL) return false;
+
+    ItemContainerSynthesizer* agent_synthesizer = (ItemContainerSynthesizer*)item_container_list->create(AGENT_SYNTHESIZER);
+    GS_ASSERT(agent_synthesizer != NULL);
+    if (agent_synthesizer == NULL) return false;
+
+    ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)item_container_list->create(AGENT_ENERGY_TANKS);
+    GS_ASSERT(agent_energy_tanks != NULL);
+    if (agent_energy_tanks == NULL) return false;
+        
+    assign_container_to_agent(agent_hand, agent_hand_list, agent_id, client_id);
     assign_container_to_agent(agent_toolbelt, agent_toolbelt_list, agent_id, client_id);
-    // toolbelt contents are added by agent_born
+    assign_container_to_agent(agent_inventory, agent_inventory_list, agent_id, client_id);
+    assign_container_to_agent(agent_synthesizer, agent_synthesizer_list, agent_id, client_id);
+    assign_container_to_agent(agent_energy_tanks, agent_energy_tanks_list, agent_id, client_id);
+
+    return true;
 }
 
 void send_container_assignments_to_agent(AgentID agent_id, ClientID client_id)

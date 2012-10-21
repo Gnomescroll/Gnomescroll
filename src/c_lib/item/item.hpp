@@ -42,7 +42,7 @@ class Item
 
     #if DC_SERVER && GS_SERIALIZER
     uuid_t uuid;
-    void init_for_loading();   // only to be used by serializer
+    void init_from_loading();   // only to be used by serializer
     #endif
     
     void init(int item_type);
@@ -138,13 +138,6 @@ class ItemList: public ObjectList<Item, ItemID>
         #endif
 
         #if DC_SERVER
-        Item* create_for_loading()
-        {   // only used by serializer
-            // make sure to either destroy or init the items before the stack unwinds
-            // otherwise lost items will be trapped in the array and asserts will go nuts
-            return this->create();
-        }
-        
         Item* create_type(int item_type)
         {
             Item* item = this->create();

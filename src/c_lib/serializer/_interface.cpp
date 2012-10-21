@@ -27,6 +27,7 @@ void init()
 
     // ORDER DEPENDENT
     init_redis();
+    init_items();
     init_players();
 }
 
@@ -46,6 +47,7 @@ void teardown()
     // ORDER DEPENDENT
     teardown_redis();
     teardown_players();
+    teardown_items();
     teardown_state();
 }
 
