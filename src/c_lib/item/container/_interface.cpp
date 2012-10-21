@@ -1018,12 +1018,13 @@ static void save_agent_containers(ClientID client_id, AgentID agent_id)
     IF_INVALID_CLIENT_ID(client_id) return;
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
-    
+
+    // TODO -- re-enable hand saving after we have a magic container for lost/purchased items
+    //serializer::save_player_container(client_id, agent_hand_list[agent_id]);
+    serializer::save_player_container(client_id, agent_toolbelt_list[agent_id]);
     serializer::save_player_container(client_id, agent_inventory_list[agent_id]);
     serializer::save_player_container(client_id, agent_synthesizer_list[agent_id]);
-    serializer::save_player_container(client_id, agent_toolbelt_list[agent_id]);
     serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id]);
-    serializer::save_player_container(client_id, agent_hand_list[agent_id]);
 }
 
 void dump_agent_containers(ClientID client_id, AgentID agent_id)
