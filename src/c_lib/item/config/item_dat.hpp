@@ -377,13 +377,13 @@ void load_item_dat()
 
     item_def(57, IG_MECH_PLACER, "crystal_seed");
     sprite_def(i1, 5,1);
-    s.mech_type_id = t_mech::get_mech_type_id("red_crystal");
+    s.mech_type = t_mech::get_mech_type("red_crystal");
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
     item_def(58, IG_MECH_PLACER, "crystal_seed2");
     sprite_def(i1, 5,2);
-    s.mech_type_id = t_mech::get_mech_type_id("blue_crystal");
+    s.mech_type = t_mech::get_mech_type("blue_crystal");
     s.pretty_name = (char*) "Crystal Seed";
     s.max_stack_size = 8;
 
@@ -462,7 +462,7 @@ void load_item_dat()
 
     item_def(72, IG_MECH_PLACER, "acadia_seed");
     sprite_def(p0, 1,2);
-    s.mech_type_id = t_mech::get_mech_type_id("acadia_flower");
+    s.mech_type = t_mech::get_mech_type("acadia_flower");
     s.pretty_name = (char*) "Acadia Seed";
     s.max_stack_size = 64;
 
@@ -473,7 +473,7 @@ void load_item_dat()
 
     item_def(74, IG_MECH_PLACER, "blob_seed");
     sprite_def(p0, 3,2);
-    s.mech_type_id = t_mech::get_mech_type_id("blob_flower");
+    s.mech_type = t_mech::get_mech_type("blob_flower");
     s.pretty_name = (char*) "Blob Seed";
     s.max_stack_size = 64;
 

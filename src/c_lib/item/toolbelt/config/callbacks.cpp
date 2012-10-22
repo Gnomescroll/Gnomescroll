@@ -299,15 +299,15 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
     if (b[2] <= 0) return;  // can't place on nothing
     if (!isSolid(b[0], b[1], b[2]-1)) return;
 
-    int mech_type_id = Item::get_mech_type_id(item_type);
+    MechType mech_type = Item::get_mech_type(item_type);
 
-    ASSERT_VALID_MECH_TYPE(mech_type_id);
-    IF_INVALID_MECH_TYPE(mech_type_id) return;
+    ASSERT_VALID_MECH_TYPE(mech_type);
+    IF_INVALID_MECH_TYPE(mech_type) return;
     
     if (!t_mech::can_place_mech(b[0],b[1],b[2], 0)) return;
 
-    printf("place crystal %d: at %d %d %d\n", mech_type_id, b[0],b[1],b[2]);
-    t_mech::create_crystal(b[0],b[1],b[2], mech_type_id);
+    printf("place crystal %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
+    t_mech::create_crystal(b[0],b[1],b[2], mech_type);
 }
 
 #endif

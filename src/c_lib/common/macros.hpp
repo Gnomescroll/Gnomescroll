@@ -25,8 +25,8 @@
 #define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT((client_id) >= 0 && (client_id) != NULL_CLIENT && (client_id) < HARD_MAX_CONNECTIONS)
 #define IF_INVALID_CLIENT_ID(client_id) if (unlikely((client_id) < 0 || (client_id) == NULL_CLIENT || (client_id) >= HARD_MAX_CONNECTIONS))
 
-#define ASSERT_VALID_MECH_TYPE(mech_type) GS_ASSERT((mech_type) >= 0 && (mech_type) < t_mech::MAX_MECHS)
-#define IF_INVALID_MECH_TYPE(mech_type) if (unlikely((mech_type) < 0 || (mech_type) >= t_mech::MAX_MECHS))
+#define ASSERT_VALID_MECH_TYPE(mech_type) GS_ASSERT((mech_type) >= 0 && (mech_type) < MAX_MECHS && (mech_type) != NULL_MECH_TYPE)
+#define IF_INVALID_MECH_TYPE(mech_type) if (unlikely((mech_type) < 0 || (mech_type) >= MAX_MECHS || (mech_type) == NULL_MECH_TYPE))
 
 #define ASSERT_VALID_CONTAINER_TYPE(container_type) GS_ASSERT((container_type) >= 0 && (container_type) < MAX_CONTAINER_TYPES)
 #define IF_INVALID_CONTAINER_TYPE(container_type) if (unlikely((container_type) < 0 || (container_type) >= MAX_CONTAINER_TYPES))

@@ -153,13 +153,10 @@ static bool parse_map_palette_token(const char* key, const char* val, class Pars
     return true;
 }
 
-// TODO -- also call on init
-// Build these two maps:
-// name -> id wrote
-// id wrote -> true id
-// then, when we deserialize the map, we apply the id_wrote->true_id transform
 bool load_map_palette_file(const char* fn)
 {
+    printf("Loading map palette file %s\n", fn);
+
     size_t size = 0;
     char* str = read_file_to_buffer(fn, &size);
     GS_ASSERT(str != NULL)
@@ -207,6 +204,12 @@ bool load_map_palette_file(const char* fn)
             free(str);
             return false;
         }
+        GS_ASSERT(cube_id_map[palette_data.cube_id] < 0);
+        if (cube_id_map[palette_data.cube_id] >= 0)
+        {   // duplicate entry
+            free(str);
+            return false;
+        }
         cube_id_map[palette_data.cube_id] = actual_cube_id;
         
         if (c == '\0') break;
@@ -217,7 +220,6 @@ bool load_map_palette_file(const char* fn)
     return true;
 }
 
-// TODO -- we can call this on init
 bool save_map_palette_file()
 {
     FILE* f = fopen(map_palette_filename_tmp, "w");
@@ -417,18 +419,18 @@ void BlockSerializer::save_iter(int max_ms)
 }
 #endif
 
-void BlockSerializer::load(const char* filename)
+bool BlockSerializer::load(const char* filename)
 {
     GS_ASSERT_ABORT(t_map::main_map != NULL);
 
     GS_ASSERT(filename != NULL);
-    if (filename == NULL) return;
+    if (filename == NULL) return false;
 
     int ti1 = _GET_MS_TIME();
     size_t filesize = 0;
     char* buffer = read_binary_file_to_buffer(filename, &filesize);
     GS_ASSERT_ABORT(buffer != NULL);
-    if (buffer == NULL) return;
+    if (buffer == NULL) return false;
 
     int ti2 = _GET_MS_TIME();
 
@@ -479,6 +481,8 @@ void BlockSerializer::load(const char* filename)
     free(buffer);
 
     load_map_restore_containers();  //setup containers
+
+    return true;
 }
 
 void save_map(const char* filename)
@@ -504,11 +508,11 @@ void save_map(const char* filename)
 }
 
 
-void load_map(const char* filename)
+bool load_map(const char* filename)
 {
     GS_ASSERT(block_serializer != NULL);
-    if (block_serializer == NULL) return;
-    block_serializer->load(filename);
+    if (block_serializer == NULL) return false;
+    return block_serializer->load(filename);
 }
 
 void save_map()
@@ -516,27 +520,25 @@ void save_map()
     save_map(map_filename);
 }
 
-void load_map()
+bool load_map()
 {
-    load_map(map_filename);
+    return load_map(map_filename);
 }
 
 bool load_default_map()
 {
     if (file_exists(map_filename) && fsize(map_filename) > 0)
     {
-        load_map_palette_file(map_palette_filename);
-        load_map(map_filename);
+        if (!load_map_palette_file(map_palette_filename)) return false;
+        return load_map(map_filename);
     }
     else
     if (file_exists(map_filename_backup) && fsize(map_filename_backup) > 0)
     {
-        load_map_palette_file(map_palette_filename_backup);
-        load_map(map_filename_backup);
+        if (!load_map_palette_file(map_palette_filename_backup)) return false;
+        return load_map(map_filename_backup);
     }
-    else
-        return false;
-    return true;
+    return false;
 }
 
 void check_map_save_state()

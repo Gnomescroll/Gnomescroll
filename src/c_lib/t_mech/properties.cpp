@@ -2,103 +2,93 @@
 
 #include <common/macros.hpp>
 
-/*
-struct MECH_ATTRIBUTE
-{
-    int mech_type;
-    int mech_type_class;
-    int render_type;
-    int sprite_index;
-};
-*/
-
 namespace t_mech
 {
     
-struct MECH_ATTRIBUTE* mech_attribute = NULL;  //index from type to attributes
-
-const int MAX_MECHS = 256;
-const int MECH_NAME_MAX_LENGTH = 64;
-
-char mech_names[MAX_MECHS*MECH_NAME_MAX_LENGTH];
-int mech_name_index[MAX_MECHS] = {-1};
+class MechAttribute* mech_attributes = NULL;  //index from type to attributes
 
 void init_properties()
 {
-    GS_ASSERT(mech_attribute == NULL);
-    mech_attribute = (struct MECH_ATTRIBUTE*) malloc(MAX_MECHS* sizeof(struct MECH_ATTRIBUTE));
-    for(int i=0; i<MAX_MECHS; i++) mech_attribute[i].mech_type = -1;
+    GS_ASSERT(mech_attributes == NULL);
+    mech_attributes = new class MechAttribute[MAX_MECHS];
 }
 
 void tear_down_properties()
 {
-    if (mech_attribute != NULL) free(mech_attribute);
+    if (mech_attributes != NULL) delete[] mech_attributes;
 }
 
-void set_mech_name(int id, const char* name)
+const char* get_mech_name(MechType type)
 {
-    int length = (int)strlen(name);
-
-    GS_ASSERT(length > 0);
-    GS_ASSERT(length < MECH_NAME_MAX_LENGTH);
-    GS_ASSERT(id >= 0 || id < MAX_MECHS);    
-    
-    if (length <= 0 || length >= MECH_NAME_MAX_LENGTH) return;
-    if (id < 0 || id >= MAX_MECHS) return;
-
-    static int str_index = 0;
-
-    for (int i=0; i<MAX_MECHS; i++)    // no duplicate names
-        if (mech_name_index[i] >= 0)
-            GS_ASSERT(strcmp(mech_names+mech_name_index[i], name));
-
-    mech_name_index[id] = str_index;
-
-    memcpy(mech_names+str_index, name, length);
-    str_index += length;
-    mech_names[str_index++] = '\0';
+    class MechAttribute* attr = get_mech_attribute(type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return NULL;
+    return attr->name;
 }
 
-
-const char* get_mech_name(int type)
-{
-    ASSERT_VALID_MECH_TYPE(type);
-    IF_INVALID_MECH_TYPE(type) return NULL;
-    GS_ASSERT(mech_name_index[type] >= 0);
-    if (mech_name_index[type] < 0) return NULL;
-    GS_ASSERT(mech_name_index[type] < MAX_MECHS*MECH_NAME_MAX_LENGTH);
-    if (mech_name_index[type] >= MAX_MECHS*MECH_NAME_MAX_LENGTH) return NULL;
-    
-    return (mech_names + mech_name_index[type]);
-}
-
-int get_mech_type_id(const char* name)
+MechType get_mech_type(const char* name)
 {
     for (int i=0; i<MAX_MECHS; i++)
     {
-        const char* cmp_name = get_mech_name(i);
+        const char* cmp_name = get_mech_name((MechType)i);
         if (cmp_name != NULL && strcmp(name, cmp_name) == 0)
-            return i;
+            return (MechType)i;
     }
     GS_ASSERT_LIMIT(false, 1);
     printf("In function %s:%d -- No mech for name %s\n", __FUNCTION__, __LINE__, name);
-    return -1;
+    return NULL_MECH_TYPE;
 }
 
-struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type)
+class MechAttribute* get_mech_attribute(MechType mech_type)
 {
     ASSERT_VALID_MECH_TYPE(mech_type);
     IF_INVALID_MECH_TYPE(mech_type) return NULL;
-    GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
-    return &mech_attribute[mech_type];
+    if (!mech_attributes[mech_type].loaded) return NULL;
+    return &mech_attributes[mech_type];
 }
 
-MechClass get_mech_class(int mech_type)
+MechClass get_mech_class(MechType mech_type)
 {
-    struct MECH_ATTRIBUTE* attr = get_mech_attribute(mech_type);
+    class MechAttribute* attr = get_mech_attribute(mech_type);
     GS_ASSERT(attr != NULL);
-    if (attr == NULL) return MECH_NONE;
+    if (attr == NULL) return NULL_MECH_CLASS;
     return attr->mech_type_class;
 }
+
+int get_mech_render_type(MechType mech_type)
+{
+    class MechAttribute* attr = get_mech_attribute(mech_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return MECH_RENDER_TYPE_NONE;
+    return attr->render_type;
+}
+
+bool get_mech_type_in_use(MechType mech_type)
+{
+    return (get_mech_attribute(mech_type) != NULL);
+}
+
+static inline bool is_valid_mech_name_character(const char c)
+{
+    return (isalnum(c) || c == '_' || c == '-');
+}
+
+bool is_valid_mech_name(const char* name)
+{
+    if (name == NULL) return false;
+    size_t len = strlen(name);
+    if (len <= 0 || len > MECH_NAME_MAX_LENGTH) return false;
+    for (size_t i=0; i<len; i++)
+        if (!is_valid_mech_name_character(name[i]))
+            return false;
+    return true;
+}
+
+MechType get_compatible_mech_type(const char* name)
+{
+    // TODO -- forward compatible dat
+    return get_mech_type(name);
+}
+
 
 }   // t_mech

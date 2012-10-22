@@ -51,20 +51,14 @@ void init(int argc, char* argv[])
         }
     }
     #else
-    if (Options::map[0] == '\0')
-    {   // use map gen
-        // load map file by default in development mode; decreases startup time
-        if (!serializer::load_default_map())
+    if (strcmp(Options::map, "fast") == 0)
+        fast_map = true;
+    else
+    {   // load map from options if given; else load default map file; else do a map gen
+        if ((Options::map[0] == '\0' || !serializer::load_map(Options::map))
+        && !serializer::load_default_map())
             default_map_gen();
     }
-    else if (!strcmp(Options::map, "fast"))
-    {
-        fast_map = true;
-    }
-    else
-    {   // use map file
-        serializer::load_map(Options::map);
-    }   
     #endif
 
     if (fast_map)
@@ -182,7 +176,7 @@ int run()
         if (Options::auth)
             NetServer::check_client_authorizations();
         
-    #if GS_SERIALIZER
+        #if GS_SERIALIZER
         if (serializer::should_save_map)
         {
             serializer::save_map();
@@ -190,18 +184,13 @@ int run()
             // TODO -- move, testing only
             serializer::save_containers();
             serializer::save_mechs();
+            serializer::save_map_palette_file();
         }
 
         serializer::update();
-    #endif
+        #endif
 
-        #ifdef __GNUC__
-        usleep(1000);
-        #endif
-    
-        #ifdef __MSVC__
-        Sleep(1);
-        #endif
+        gs_millisleep(1000);
     }
 
     if (serializer::should_save_map)

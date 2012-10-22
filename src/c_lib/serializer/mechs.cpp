@@ -3,9 +3,153 @@
 #include <stdint.h>
 
 #include <t_mech/_interface.hpp>
+#include <serializer/_interface.hpp>
 
 namespace serializer
 {
+
+static MechType* mech_type_map = NULL;
+
+void init_mechs()
+{
+    GS_ASSERT(mech_type_map == NULL);
+    mech_type_map = (MechType*)malloc(MAX_MECHS * sizeof(MechType));
+    for (int i=0; i<MAX_MECHS; mech_type_map[i++] = NULL_MECH_TYPE);
+}
+
+void teardown_mechs()
+{
+    if (mech_type_map != NULL) free(mech_type_map);
+}
+
+static bool parse_mech_palette_token(const char* key, const char* val, class ParsedMechPaletteData* data)
+{
+    bool err = false;
+    if (strcmp(MECH_TYPE_TAG, key) == 0)
+    {
+        long long mech_type = parse_int(val, err);
+        ASSERT_VALID_MECH_TYPE(mech_type);
+        IF_INVALID_MECH_TYPE(mech_type) return false;
+        GS_ASSERT(!err);
+        if (err) return false;
+        data->mech_type = (MechType)mech_type;
+    }
+    else
+    if (strcmp(NAME_TAG, key) == 0)
+    {
+        bool valid_name = t_mech::is_valid_mech_name(val);
+        GS_ASSERT(valid_name);
+        if (!valid_name) return false;
+        strncpy(data->name, val, MECH_NAME_MAX_LENGTH);
+        data->name[MECH_NAME_MAX_LENGTH] = '\0';
+    }
+    else
+    {   // unrecognized field
+        GS_ASSERT(false);
+        return false;
+    }
+
+    return true;
+}
+
+bool load_mech_palette_file(const char* fn)
+{
+    printf("Loading mech palette file %s\n", fn);
+
+    size_t size = 0;
+    char* str = read_file_to_buffer(fn, &size);
+    GS_ASSERT(str != NULL)
+    GS_ASSERT(size > 0);
+    if (str == NULL) return false;
+    if (size <= 0)
+    {
+        free(str);
+        return false;
+    }
+
+    // allocate scratch buffer long enough to hold the largest line
+    static const size_t LONGEST_LINE = MECH_PALETTE_LINE_LENGTH;
+    char buf[LONGEST_LINE+1] = {'\0'};
+
+    size_t istr = 0;
+    class ParsedMechPaletteData palette_data;
+    while (istr < size)
+    {    
+        // copy line
+        size_t ibuf = 0;
+        char c = '\0';
+        while ((c = str[istr++]) != '\0' && c != '\n' && ibuf < LONGEST_LINE)
+            buf[ibuf++] = c;
+        buf[ibuf] = '\0';
+        GS_ASSERT(c == '\n' || c == '\0');
+        if (c != '\0' && c != '\n')
+        {
+            free(str);
+            return false;
+        }
+
+        parse_line<class ParsedMechPaletteData>(&parse_mech_palette_token, buf, ibuf, &palette_data);
+        GS_ASSERT(palette_data.valid);
+        if (!palette_data.valid)
+        {
+            free(str);
+            return false;
+        }
+
+        MechType actual_mech_type = t_mech::get_compatible_mech_type(palette_data.name);
+        GS_ASSERT(actual_mech_type != NULL_MECH_TYPE);
+        if (actual_mech_type == NULL_MECH_TYPE)
+        {   // we failed to get a compatible mech type
+            free(str);
+            return false;
+        }
+        GS_ASSERT(mech_type_map[palette_data.mech_type] = NULL_MECH_TYPE);
+        if (mech_type_map[palette_data.mech_type] != NULL_MECH_TYPE)
+        {   // we already loaded this mech (duplicate entry)
+            free(str);
+            return false;
+        }
+        
+        mech_type_map[palette_data.mech_type] = actual_mech_type;
+        
+        if (c == '\0') break;
+    }
+
+    free(str);
+
+    return true;
+}
+
+bool save_mech_palette_file()
+{
+    FILE* f = fopen(mech_palette_filename_tmp, "w");
+    GS_ASSERT(f != NULL);
+    if (f == NULL) return false;
+
+    char buf[MECH_PALETTE_LINE_LENGTH+2] = {'\0'};
+
+    for (int i=0; i<MAX_MECHS; i++)
+    {
+        if (!t_mech::get_mech_type_in_use((MechType)i)) continue;
+        const char* mech_name = t_mech::get_mech_name((MechType)i);
+        if (mech_name == NULL) continue;
+        int len = snprintf(buf, MECH_PALETTE_LINE_LENGTH+1, MECH_PALETTE_FMT, mech_name, i);
+        GS_ASSERT(len >= 0 && (size_t)len < MECH_PALETTE_LINE_LENGTH+1);
+        if (len < 0 || (size_t)len >= MECH_PALETTE_LINE_LENGTH+1) return false;
+        buf[len++] = '\n';
+        buf[len] = '\0';
+        
+        size_t wrote = fwrite(buf, sizeof(char), (size_t)len, f);
+        GS_ASSERT(wrote == (size_t)len);
+        if (wrote != (size_t)len) return false;
+    }
+
+    int ret = fclose(f);
+    GS_ASSERT(ret == 0);
+    if (ret != 0) return false;
+
+    return save_file(mech_palette_filename, mech_palette_filename_tmp, mech_palette_filename_backup);
+}
 
 bool write_mech_file(FILE* f)
 {
@@ -79,6 +223,8 @@ bool write_mech_file(FILE* f)
 
 bool load_mech_file(const char* fn)
 {
+    printf("Loading mech file %s\n", fn);
+    
     size_t size = 0;
     char* buf = read_binary_file_to_buffer(fn, &size);
     GS_ASSERT(buf != NULL);
@@ -119,7 +265,12 @@ bool load_mech_file(const char* fn)
         IF_INVALID_MECH_TYPE(type) return false;
         if (subtype < 0) return false;
 
-        bool placed = t_mech::create_mech(x,y,z, type, subtype);
+        // apply renaming
+        MechType mech_type = mech_type_map[type];
+        ASSERT_VALID_MECH_TYPE(mech_type);
+        IF_INVALID_MECH_TYPE(mech_type) return false;
+
+        bool placed = t_mech::create_mech(x,y,z, mech_type, subtype);
         GS_ASSERT(placed);
         if (!placed) return false;
     }
@@ -127,37 +278,49 @@ bool load_mech_file(const char* fn)
     return true;
 }
 
-void save_mechs()
+bool save_mechs()
 {
+    bool saved_palette = save_mech_palette_file();
+    GS_ASSERT(saved_palette);
+    if (!saved_palette) return false;
+    
     FILE* f = fopen(mech_filename_tmp, "wb");
     GS_ASSERT(f != NULL);
-    if (f == NULL) return;
+    if (f == NULL) return false;
 
     bool wrote = write_mech_file(f);
     GS_ASSERT(wrote);
-    if (!wrote) return;
+    if (!wrote) return false;
 
     int ret = fclose(f);
     GS_ASSERT(ret == 0);
-    if (ret != 0) return;
+    if (ret != 0) return false;
 
     if (file_exists(mech_filename))
     {
         ret = rename(mech_filename, mech_filename_backup);
-        if (ret != 0) return;
+        if (ret != 0) return false;
     }
     
     ret = rename(mech_filename_tmp, mech_filename);
     GS_ASSERT(ret == 0);
+
+    return (ret == 0);
 }
 
 bool load_mechs()
-{
+{    
     if (file_exists(mech_filename) && fsize(mech_filename) > 0)
+    {
+        if (!load_mech_palette_file(mech_palette_filename)) return false;
         return load_mech_file(mech_filename);
+    }
     else
     if (file_exists(mech_filename_backup) && fsize(mech_filename_backup) > 0)
+    {
+        if (!load_mech_palette_file(mech_palette_filename_backup)) return false;
         return load_mech_file(mech_filename_backup);
+    }
     else
         printf("WARNING: No mech file found\n");
     return true;

@@ -141,7 +141,7 @@ int get_item_type(const char* name)
     return NULL_ITEM_TYPE;
 }
 
-int get_versioned_item_type(const char* name)
+int get_compatible_item_type(const char* name)
 {
     // TODO -- implement item renaming/versioning
     return get_item_type(name);
@@ -168,17 +168,6 @@ ItemGroup get_item_group_for_type(int item_type)
     GS_ASSERT(item_type >= 0 && item_type < MAX_ITEM_TYPES);
     if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return IG_ERROR;
     return group_array[item_type];
-}
-
-int dat_get_item_type(const char* name)
-{
-    int type = get_item_type(name);
-    GS_ASSERT(type != NULL_ITEM_TYPE);
-    if(type == NULL_ITEM_TYPE)
-    {
-        printf("ERROR: dat_get_item_type, item %s does not exist \n", name);
-    }
-    return type;
 }
 
 bool item_type_is_voxel(int item_type)
@@ -218,14 +207,14 @@ int get_block_type_id(int item_type)
     return attr->block_type_id;
 }
 
-int get_mech_type_id(int item_type)
+MechType get_mech_type(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return 0;
+    if (item_type == NULL_ITEM_TYPE) return NULL_MECH_TYPE;
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
-    GS_ASSERT(attr->mech_type_id != -1)
-    return attr->mech_type_id;
+    if (attr == NULL) return NULL_MECH_TYPE;
+    GS_ASSERT(attr->mech_type != NULL_MECH_TYPE)
+    return attr->mech_type;
 }
 
 int get_particle_voxel_texture(int item_type)

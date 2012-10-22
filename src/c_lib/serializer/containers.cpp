@@ -230,7 +230,7 @@ static bool process_container_blob(const char* str, size_t filesize)
 
         // check container type
         // TODO -- apply renaming scheme
-        ItemContainerType container_type = ItemContainer::get_type(container_data.name);
+        ItemContainerType container_type = ItemContainer::get_compatible_type(container_data.name);
         GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
         if (container_type == CONTAINER_TYPE_NONE) return false;
         GS_ASSERT(container_type == container->type);

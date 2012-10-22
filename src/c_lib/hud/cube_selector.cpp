@@ -224,10 +224,11 @@ bool CubeSelector::set_block_type(int block_type)
     GS_ASSERT(this->cubes != NULL);
     if (this->cubes == NULL) return false;
     
-    GS_ASSERT(t_map::isValidID(block_type));
+    ASSERT_VALID_CUBE_ID(block_type);
     GS_ASSERT(t_map::isInUse(block_type));
     GS_ASSERT(!t_map::isErrorBlock(block_type));
-    if (!t_map::isValidID(block_type) || !t_map::isInUse(block_type) || t_map::isErrorBlock(block_type)) return false;
+    if (!t_map::isInUse(block_type) || t_map::isErrorBlock(block_type)) return false;
+    IF_INVALID_CUBE_ID(block_type) return false;
 
     for (int i=0; i<this->n_x*this->n_y; i++)
     {
@@ -240,15 +241,14 @@ bool CubeSelector::set_block_type(int block_type)
     return false;
 }
 
-CubeSelector::CubeSelector()
-:
-x(0),y(0),
-size(0),
-mode(0),
-n_x(8), n_y(8),
-pos(0),
-pos_x(0), pos_y(0),
-cubes(NULL)
+CubeSelector::CubeSelector() :
+    x(0),y(0),
+    size(0),
+    mode(0),
+    n_x(8), n_y(8),
+    pos(0),
+    pos_x(0), pos_y(0),
+    cubes(NULL)
 {}
 
 CubeSelector cube_selector;

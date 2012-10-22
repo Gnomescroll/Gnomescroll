@@ -10,7 +10,7 @@ namespace t_mech
 const int MECH_HARD_MAX = 0xffff-1;
 
 static void pack_mech(struct MECH &m, class mech_create_StoC &p);
-static void unpack_mech(struct MECH &m, class mech_create_StoC &p);
+static bool unpack_mech(struct MECH &m, class mech_create_StoC &p);
 
 struct MECH_LIST
 {
@@ -45,7 +45,7 @@ struct MECH_LIST
     bool is_occupied(int x, int y, int z); //check if there is a t_mech on the square already
     
     #if DC_SERVER
-    int handle_block_removal(int x, int y, int z);
+    MechType handle_block_removal(int x, int y, int z);
     #endif
 
     #if DC_CLIENT
@@ -171,9 +171,9 @@ bool MECH_LIST::is_occupied(int x, int y, int z)
 }
 
 #if DC_SERVER
-int MECH_LIST::handle_block_removal(int x, int y, int z)
+MechType MECH_LIST::handle_block_removal(int x, int y, int z)
 {
-    int mech_type = -1;
+    MechType mech_type = NULL_MECH_TYPE;
     for (int i=0; i<mlm; i++)
         if (mla[i].id != -1 && mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
         {

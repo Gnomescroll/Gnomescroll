@@ -519,9 +519,9 @@ void MechListRenderer::push_crystal_vertex(const struct MECH &m)
     if( sphere_fulstrum_test(wx, wy, wz, 0.6f) == false)
         return;
 
-    int tex_id = mech_attribute[m.mech_type].sprite_index;
+    int tex_id = mech_attributes[m.mech_type].sprite_index;
     
-    GS_ASSERT(mech_attribute[m.mech_type].mech_type != -1);
+    GS_ASSERT(mech_attributes[m.mech_type].mech_type != -1);
 
     const float txmargin = 0.0f;
     float tx_min, ty_min, tx_max, ty_max;
@@ -704,7 +704,7 @@ void MechListRenderer::prep_vbo()
     {
         if( mla[i].id == -1) continue;
 
-        switch ( mech_attribute[mla[i].mech_type].render_type)
+        switch (get_mech_render_type(mla[i].render_type))
         {
             case MECH_RENDER_TYPE_0:
                 push_crystal_vertex(mla[i]);

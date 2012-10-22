@@ -22,7 +22,6 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
         pack_u16(&z, buff, buff_n, pack);
     }
     
-    //inline void handle() __attribute((always_inline));
     void handle();
 };
 

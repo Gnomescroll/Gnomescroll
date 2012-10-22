@@ -46,11 +46,11 @@ void wait_for_threads();
 #endif
 
 void save_map(const char* filename);
-void load_map(const char* filename);
+bool load_map(const char* filename);
 
 // uses default map names
 void save_map();
-void load_map();
+bool load_map();
 
 // will choose a correct map if available. returns false if no map found
 bool load_default_map();
@@ -95,7 +95,7 @@ class BlockSerializer
         index += sizeof(uint32_t);
     }
 
-    void load(const char* filename);
+    bool load(const char* filename);
 
     void save(const char* filename);
 

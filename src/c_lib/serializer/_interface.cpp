@@ -25,13 +25,12 @@ void init()
 
     if (!Options::serializer) return;
 
+    init_mechs();
+
     // ORDER DEPENDENT
     init_redis();
     init_items();
     init_players();
-
-    bool saved = save_map_palette_file();
-    GS_ASSERT_ABORT(saved);
 }
 
 void teardown()
@@ -44,7 +43,8 @@ void teardown()
     check_map_save_state();
     
     teardown_map_serializer();
-
+    teardown_mechs();
+    
     // TODO -- save all item data, wait for responses
 
     // ORDER DEPENDENT
@@ -57,6 +57,13 @@ void teardown()
 bool load_data()
 {
     if (!load_default_map()) return false;
+
+    // Actually, save it as palette.new
+    // After the first time the map is saved, rename it to normal
+
+    // we can save the new map palette now that we're done with the old one
+    bool saved = save_map_palette_file();
+    GS_ASSERT_ABORT(saved);
 
     if (!Options::serializer) return true;
     
@@ -91,7 +98,7 @@ bool save_file(const char* fn, const char* fn_tmp, const char* fn_bak)
     }
     int ret = rename(fn_tmp, fn);
     GS_ASSERT(ret == 0);
-    return true;
+    return (ret == 0);
 }
 
 }   // serializer

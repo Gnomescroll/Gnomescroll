@@ -69,30 +69,6 @@ void draw_transparent()
 }
 #endif
 
-/*
-    MECH_CRYSTAL,
-    MECH_CROP,
-    MECH_WIRE,
-    MECH_SWITCH
-*/
-
-/*
-    MECH_CRYSTAL,
-    MECH_CROP,
-    MECH_WIRE,
-    MECH_SWITCH
-*/
-
-/*
-struct MECH_ATTRIBUTE
-{
-    int mech_type;
-    int mech_type_class;
-    int render_type;
-    int sprite_index;
-};
-*/
-
 //pack mech data into packet
 #if DC_SERVER
 static void pack_mech(struct MECH &m, class mech_create_StoC &p)
@@ -104,9 +80,9 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
     p.y = m.y;
     p.z = m.z;
 
-    GS_ASSERT(mech_attribute[m.mech_type].mech_type != -1);
+    GS_ASSERT(mech_attributes[m.mech_type].mech_type != -1);
 
-    switch ( mech_attribute[m.mech_type].mech_type_class)
+    switch (mech_attributes[m.mech_type].mech_type_class)
     {
     case MECH_CRYSTAL:
         break;
@@ -123,18 +99,21 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 
 //handles unpacking
 #if DC_CLIENT
-static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
+static bool unpack_mech(struct MECH &m, class mech_create_StoC &p)
 {
+    ASSERT_VALID_MECH_TYPE(p.mech_type);
+    IF_INVALID_MECH_TYPE(p.mech_type) return false;
+    
     m.id = p.id;
-    m.mech_type = p.mech_type;
+    m.mech_type = (MechType)p.mech_type;
     m.subtype = p.subtype;
     m.x = p.x;
     m.y = p.y;
     m.z = p.z;
 
-    struct MECH_ATTRIBUTE* ma = get_mech_attribute(p.mech_type); 
+    class MechAttribute* ma = get_mech_attribute(m.mech_type); 
 
-    switch ( ma->mech_type_class )
+    switch (ma->mech_type_class)
     {
     case MECH_CRYSTAL:
         //do something
@@ -160,9 +139,9 @@ static void unpack_mech(struct MECH &m, class mech_create_StoC &p)
         break;
     default:
         GS_ASSERT(false);
-        printf("pack_mech error: unhandled mech type\n");
-        break;
-    } 
+        return false;
+    }
+    return true; 
 }
 
 //ray cast and draw outlines
@@ -179,7 +158,7 @@ void client_ray_cast()
 
 
 #if DC_SERVER
-bool create_mech(int x, int y, int z, int mech_type, int subtype)
+bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
 {
     ASSERT_VALID_MECH_TYPE(mech_type);
     IF_INVALID_MECH_TYPE(mech_type) return false;
@@ -187,8 +166,8 @@ bool create_mech(int x, int y, int z, int mech_type, int subtype)
     if (!can_place_mech(x,y,z, 0)) return false;
 
     // TODO -- check valid mech type properly
-    GS_ASSERT(mech_attribute[mech_type].mech_type != -1);
-    if (mech_attribute[mech_type].mech_type == -1) return false;
+    GS_ASSERT(mech_attributes[mech_type].mech_type != -1);
+    if (mech_attributes[mech_type].mech_type == -1) return false;
 
     struct MECH m;
     m.mech_type = mech_type;
@@ -202,12 +181,12 @@ bool create_mech(int x, int y, int z, int mech_type, int subtype)
     return true;
 }
 
-bool create_mech(int x, int y, int z, int mech_type)
+bool create_mech(int x, int y, int z, MechType mech_type)
 {
     return create_mech(x,y,z,mech_type,0);
 }
 
-bool create_crystal(int x, int y, int z, int mech_type)
+bool create_crystal(int x, int y, int z, MechType mech_type)
 {
     MechClass mech_class = get_mech_class(mech_type);
     GS_ASSERT(mech_class == MECH_CRYSTAL);
@@ -300,10 +279,10 @@ void draw_selected_mech_bounding_box()
     struct Vec3 r = vec3_init( sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f );
     struct Vec3 u = vec3_init( 0.0f, 0.0f, 1.0f );
 
-    int tex_id = mech_attribute[m.mech_type].sprite_index;
+    int tex_id = mech_attributes[m.mech_type].sprite_index;
 
-    GS_ASSERT(mech_sprite_width[mech_attribute[m.mech_type].sprite_index] != -1)
-    GS_ASSERT(mech_sprite_height[mech_attribute[m.mech_type].sprite_index] != -1)
+    GS_ASSERT(mech_sprite_width[mech_attributes[m.mech_type].sprite_index] != -1)
+    GS_ASSERT(mech_sprite_height[mech_attributes[m.mech_type].sprite_index] != -1)
 
     float size_w = size*mech_sprite_width_f[tex_id];
     float size_h = 2.0f*size*mech_sprite_height_f[tex_id];
@@ -539,11 +518,11 @@ void send_client_mech_list(ClientID client_id)
 
 void handle_block_removal(int x, int y, int z)
 {
-    int mech_type = mech_list->handle_block_removal(x,y,z);
+    MechType mech_type = mech_list->handle_block_removal(x,y,z);
     IF_INVALID_MECH_TYPE(mech_type) return;
 
     // drop item from mech
-    if(mech_attribute[mech_type].item_drop) 
+    if(mech_attributes[mech_type].item_drop) 
         handle_drop(x,y,z, mech_type);
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <item/common/constants.hpp>
+#include <t_mech/common/common.hpp>
 
 namespace Item
 {
@@ -38,13 +39,11 @@ void set_item_name(int type, const char* name);
 
 const char* get_item_name(int item_type);
 int get_item_type(const char* name);
-int get_versioned_item_type(const char* name);  // will apply name remapping to get the type
+int get_compatible_item_type(const char* name);
 
 const char* get_item_pretty_name(int type);
 
 ItemGroup get_item_group_for_type(int item_type);
-
-int dat_get_item_type(const char* name);
 
 bool item_type_is_voxel(int item_type);
 
@@ -52,7 +51,7 @@ int get_max_stack_size(int item_type);
 int get_max_durability(int item_type);
 
 int get_block_type_id(int item_type);
-int get_mech_type_id(int item_type);
+MechType get_mech_type(int item_type);
 
 int get_particle_voxel_texture(int item_type);
 

@@ -1,8 +1,16 @@
 #pragma once
 
+#define MECH_NAME_MAX_LENGTH 24
+const int MAX_MECHS = 0xff;
+
 typedef enum
 {
-    MECH_NONE = 0,
+    NULL_MECH_TYPE = MAX_MECHS,
+} MechType;
+
+typedef enum
+{
+    NULL_MECH_CLASS = 0,
     MECH_CRYSTAL,
     MECH_CROP,
     MECH_MYCELIUM,
@@ -28,7 +36,7 @@ struct MECH
     int y;
     int z;
 
-    int mech_type;       //mech type
+    MechType mech_type;       //mech type
     int subtype;        //sprite
     MechRenderType render_type;
     
@@ -40,11 +48,27 @@ struct MECH
     float offset_y;
 };
 
-struct MECH_ATTRIBUTE
+typedef enum
 {
-    int mech_type;
-    MechClass mech_type_class;
-    MechRenderType render_type;
-    int sprite_index;
-    bool item_drop; // indicates whether has an item drop set
+    NULL_MECH_SPRITE = 0xff,
+}   MechSpriteIndex;
+
+class MechAttribute
+{
+    public:
+        MechType mech_type;
+        MechClass mech_type_class;
+        MechRenderType render_type;
+        MechSpriteIndex sprite_index;
+        bool item_drop; // indicates whether has an item drop set
+        char name[MECH_NAME_MAX_LENGTH+1];
+        bool loaded;
+
+    MechAttribute() :
+        mech_type(NULL_MECH_TYPE), mech_type_class(NULL_MECH_CLASS),
+        render_type(MECH_RENDER_TYPE_NONE), sprite_index(NULL_MECH_SPRITE),
+        item_drop(false), loaded(false)
+    {
+        memset(this->name, 0, sizeof(this->name));
+    }
 };

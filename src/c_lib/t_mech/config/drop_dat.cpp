@@ -14,20 +14,30 @@ static void add_drop_callback(int id)
 {
     ASSERT_VALID_MECH_TYPE(id);
     IF_INVALID_MECH_TYPE(id) return;
-    GS_ASSERT(mech_attribute != NULL);
-    if (mech_attribute == NULL) return;
-    mech_attribute[id].item_drop = true;
+    GS_ASSERT(mech_attributes != NULL);
+    if (mech_attributes == NULL) return;
+    mech_attributes[id].item_drop = true;
 }
 
 class Item::ItemDropConfig* drop_dat = NULL;
+
+static int get_mech_type_ptr(const char* name)
+{   // hides the MechType from the drop dat
+    return (int)get_mech_type(name);
+}
+
+static const char* get_mech_name_ptr(int mech_type)
+{   // hides the MechType from the drop dat
+    return get_mech_name((MechType)mech_type);
+}
 
 void init_drop_dat()
 {
     GS_ASSERT(drop_dat == NULL);
     drop_dat = new Item::ItemDropConfig;
-    drop_dat->init("mech", MAX_MECHS);
-    drop_dat->get_id_from_name = &get_mech_type_id;
-    drop_dat->get_name_from_id = &get_mech_name;
+    drop_dat->init("mech", MAX_MECHS);  // TODO -- accept NULL_ID parameter
+    drop_dat->get_id_from_name = &get_mech_type_ptr;
+    drop_dat->get_name_from_id = &get_mech_name_ptr;
     drop_dat->add_drop_callback = &add_drop_callback;
 }
 

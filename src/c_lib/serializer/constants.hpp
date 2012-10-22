@@ -12,6 +12,7 @@
 
 #include <serializer/uuid.hpp>
 #include <t_map/common/constants.hpp>
+#include <t_mech/common/common.hpp>
 
 namespace serializer
 {
@@ -47,26 +48,27 @@ const unsigned int PARSED_ITEM_DATA_LIST_MAX = MAX_CONTAINER_SIZE * N_PLAYER_CON
 #define CONTAINER_DATA_EXT ".ctr"
 
 // data files
-const char map_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT;
-const char mech_filename[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT;
-const char player_filename[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT;
-const char container_filename[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT;
-
-const char map_palette_filename[]     = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT;
-const char map_palette_filename_tmp[] = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT DATA_TMP_EXT;
+const char map_filename[]                = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT;
+const char map_filename_tmp[]            = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_TMP_EXT;
+const char map_filename_backup[]         = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_BACKUP_EXT;
+const char map_palette_filename[]        = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT;
+const char map_palette_filename_tmp[]    = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT DATA_TMP_EXT;
 const char map_palette_filename_backup[] = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT DATA_BACKUP_EXT;
 
-// backup copy
-const char map_filename_backup[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_BACKUP_EXT;
-const char mech_filename_backup[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_BACKUP_EXT;
-const char player_filename_backup[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_BACKUP_EXT;
-const char container_filename_backup[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_BACKUP_EXT;
+const char mech_filename[]                = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT;
+const char mech_filename_tmp[]            = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_TMP_EXT;
+const char mech_filename_backup[]         = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_BACKUP_EXT;
+const char mech_palette_filename[]        = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT;
+const char mech_palette_filename_tmp[]    = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT DATA_TMP_EXT;
+const char mech_palette_filename_backup[] = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT DATA_BACKUP_EXT;
 
-// tmp copy
-const char map_filename_tmp[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_TMP_EXT;
-const char mech_filename_tmp[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_TMP_EXT;
-const char player_filename_tmp[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_TMP_EXT;
-const char container_filename_tmp[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_TMP_EXT;
+const char player_filename[]        = PLAYER_DATA_PATH "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT;
+const char player_filename_tmp[]    = PLAYER_DATA_PATH "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT DATA_TMP_EXT;
+const char player_filename_backup[] = PLAYER_DATA_PATH "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT DATA_BACKUP_EXT;
+
+const char container_filename[]        = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT;
+const char container_filename_tmp[]    = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_TMP_EXT;
+const char container_filename_backup[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_BACKUP_EXT;
 
 // error files
 //const char map_error_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_ERROR_EXT;
@@ -84,6 +86,7 @@ const char container_filename_tmp[] = CONTAINER_DATA_PATH "containers-" GS_STR(G
 #define CUBE_ID_TAG              "CUB"
 #define USER_ID_TAG              "UID"
 #define VERSION_TAG              "VER"
+#define MECH_TYPE_TAG            "MCH"
 #define DURABILITY_TAG           "DUR"
 #define STACK_SIZE_TAG           "STA"
 #define MAP_POSITION_TAG         "MAP"
@@ -108,6 +111,7 @@ const size_t MAP_POSITION_COMPONENT_DELIMITER_LENGTH   = sizeof(MAP_POSITION_COM
 #define VERSION_LENGTH                4
 #define USER_ID_LENGTH                10
 #define CUBE_ID_LENGTH                4
+#define MECH_TYPE_LENGTH              4
 #define ITEM_UUID_LENGTH              36
 #define CONTAINER_ID_LENGTH           5
 #define CONTAINER_COUNT_LENGTH        5
@@ -126,6 +130,7 @@ const size_t ITEM_FIELD_COUNT             = 5;
 const size_t PLAYER_FIELD_COUNT           = 1;
 const size_t CONTAINER_FIELD_COUNT        = 3;
 const size_t MAP_PALETTE_FIELD_COUNT      = 2;
+const size_t MECH_PALETTE_FIELD_COUNT     = 2;
 const size_t CONTAINER_FILE_FIELD_COUNT   = 2;
 const size_t PLAYER_CONTAINER_FIELD_COUNT = 3;
 
@@ -172,6 +177,12 @@ const size_t MAP_PALETTE_LINE_LENGTH =
     + (MAP_PALETTE_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
     + CUBE_ID_LENGTH
     + CUBE_NAME_MAX_LENGTH;
+    
+const size_t MECH_PALETTE_LINE_LENGTH =
+       MECH_PALETTE_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (MECH_PALETTE_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + MECH_TYPE_LENGTH
+    + MECH_NAME_MAX_LENGTH;
 
 const char CONTAINER_FILE_HEADER_FMT[] =
     VERSION_TAG         TAG_DELIMITER
@@ -236,7 +247,14 @@ const char MAP_PALETTE_FMT[] =
         "%-" GS_STR(CUBE_NAME_MAX_LENGTH) "s"
         PROPERTY_DELIMITER
     CUBE_ID_TAG TAG_DELIMITER
-        "%0" GS_STR(CUBE_ID_LENGTH)               "d";
+        "%0" GS_STR(CUBE_ID_LENGTH)       "d";
+        
+const char MECH_PALETTE_FMT[] =
+    NAME_TAG    TAG_DELIMITER
+        "%-" GS_STR(MECH_NAME_MAX_LENGTH) "s"
+        PROPERTY_DELIMITER
+    MECH_TYPE_TAG TAG_DELIMITER
+        "%0" GS_STR(MECH_TYPE_LENGTH)       "d";
 
 #define PLAYER_REDIS_KEY_PREFIX "player:"
 

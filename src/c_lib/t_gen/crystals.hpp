@@ -20,7 +20,7 @@ const CrystalClusterMode CRYSTAL_CLUSTER_MODE = CRYSTAL_CLUSTER_LINEAR;
 const int CRYSTAL_CLUSTER_Z_DIFF_MAX = 3;
 
 const int n_crystals = 3;
-int crystals[n_crystals] = {t_map::ERROR_CUBE };
+MechType crystals[n_crystals] = { NULL_MECH_TYPE };
 float crystal_strata[n_crystals*2] = {0};
 
 int rock = t_map::ERROR_CUBE;
@@ -50,9 +50,9 @@ void init_crystals()
 
     // load crystal types
     int i=0;
-    crystals[i++] = t_mech::get_mech_type_id("blue_crystal");
-    crystals[i++] = t_mech::get_mech_type_id("red_crystal");
-    crystals[i++] = t_mech::get_mech_type_id("green_crystal");
+    crystals[i++] = t_mech::get_mech_type("blue_crystal");
+    crystals[i++] = t_mech::get_mech_type("red_crystal");
+    crystals[i++] = t_mech::get_mech_type("green_crystal");
     // TODO -- check that all crystals are not ERROR_MECH
 
     bedrock = t_map::get_cube_id("bedrock");
@@ -93,7 +93,7 @@ int get_crystal_index(int crystal_id)
     return 0;
 }
 
-void place_crystal_cluster(int x, int y, int z, int crystal_id)
+void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
 {
     
     for (int i=x-CRYSTAL_CLUSTER_RADIUS; i<x+CRYSTAL_CLUSTER_RADIUS; i++)
@@ -119,7 +119,7 @@ void place_crystal_cluster(int x, int y, int z, int crystal_id)
     cluster_id++;
 }
 
-int get_crystal_type(float percent_complete)
+MechType get_crystal_type(float percent_complete)
 {
     int i=0;
     for (; i<n_crystals; i++)
@@ -191,7 +191,7 @@ void populate_crystals()
     float inc = 1.0f/(float)ct;
     for (int i=0; i<ct; i++)
     {
-        int crystal_id = get_crystal_type(pct);
+        MechType crystal_id = get_crystal_type(pct);
         int x = loc[3*i+0];
         int y = loc[3*i+1];
         int z = loc[3*i+2];

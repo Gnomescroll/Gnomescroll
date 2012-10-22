@@ -21,7 +21,7 @@ namespace Item
         int block_type_id;   //id of block type that it creates
 
         //IG_MECH_PLACER_PLAYER
-        int mech_type_id;
+        MechType mech_type;
 
         //IG_HITSCAN_WEAPON
         int hitscan_fire_cooldown;      // ms per bullet
@@ -76,8 +76,8 @@ namespace Item
             this->group = group;
             this->item_type = item_type;
 
-            block_type_id = -1; // error value
-            mech_type_id = -1;  // error value
+            block_type_id = t_map::ERROR_CUBE; // error value
+            mech_type = NULL_MECH_TYPE;  // error value
 
             pretty_name = NULL;
             max_durability = NULL_DURABILITY;

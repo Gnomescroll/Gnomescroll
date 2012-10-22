@@ -226,7 +226,7 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         }
 
         parse_line<class ParsedItemData>(&parse_item_token, buf, k, item_data);
-        int item_type = Item::get_item_type(item_data->name);
+        int item_type = Item::get_compatible_item_type(item_data->name);
         
         GS_ASSERT(item_data->valid);
         GS_ASSERT(item_type != NULL_ITEM_TYPE);

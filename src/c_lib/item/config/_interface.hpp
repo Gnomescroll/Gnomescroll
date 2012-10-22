@@ -163,7 +163,7 @@ void end_crafting_recipe();
 void def_crafting_recipe(const char* item_name, int amount)
 {
     if (_cr.reagent_num > 0) end_crafting_recipe();
-    _cr.output = dat_get_item_type(item_name);
+    _cr.output = get_item_type(item_name);
     _cr.output_stack = amount;
 }
 
@@ -180,7 +180,7 @@ void set_crafting_reagent(const char* item_name, int quantity)
     GS_ASSERT(_cr.reagent_num < CRAFT_BENCH_INPUTS_MAX);
     if (_cr.reagent_num >= CRAFT_BENCH_INPUTS_MAX) return;
 
-    int type = dat_get_item_type(item_name);
+    int type = get_item_type(item_name);
     GS_ASSERT(type != NULL_ITEM_TYPE);
     
     // Make sure we aren't adding two types of different stack values
@@ -284,7 +284,7 @@ void end_smelting_recipe();
 void add_smelting_product(const char* item_name, int amount)
 {
     GS_ASSERT(_sr.output_num < SMELTER_OUTPUTS_MAX);
-    _sr.output[_sr.output_num] = dat_get_item_type(item_name);
+    _sr.output[_sr.output_num] = get_item_type(item_name);
     _sr.output_stack[_sr.output_num] = amount;
     _sr.output_num++;    
 }
@@ -311,7 +311,7 @@ void set_smelting_reagent(const char* item_name, int quantity)
     GS_ASSERT(_sr.reagent_num < SMELTER_INPUTS_MAX);
     GS_ASSERT(_sr.output_num < SMELTER_OUTPUTS_MAX);
 
-    int type = dat_get_item_type(item_name);
+    int type = get_item_type(item_name);
     GS_ASSERT(type != NULL_ITEM_TYPE);
     
     // Make sure we aren't adding two types of different stack values
@@ -410,7 +410,7 @@ void synthesizer_item_set(int xslot, int yslot);
 void synthesizer_item_def(const char* item_name, int cost)
 {
     GS_ASSERT(cost != NULL_COST && cost > 0 && count_digits(cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);
-    _current_synthesizer_item_type = dat_get_item_type(item_name);
+    _current_synthesizer_item_type = get_item_type(item_name);
     _current_synthesizer_item_cost = cost;
 }
 

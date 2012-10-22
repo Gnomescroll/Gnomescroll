@@ -266,6 +266,12 @@ ItemContainerType get_type(const char* name)
     return CONTAINER_TYPE_NONE;
 }
 
+ItemContainerType get_compatible_type(const char* name)
+{
+    // TODO -- renaming scheme
+    return get_type(name);
+}
+
 class ContainerAttributes* get_attr(const char* name)
 {
     ItemContainerType type = get_type(name);
