@@ -40,7 +40,6 @@ struct cubeProperties* get_cube(int id) GNOMESCROLL_API;
 
 using namespace t_map;
 
-void set_cube_name(int id, const  char* name, int length);
 void set_cube_name(int id, const char* name);
 
 CubeMaterial get_cube_material(int cube_id);
@@ -51,8 +50,14 @@ int get_cube_id(const char* name);
 int dat_get_cube_id(const char* name);  //use for dat files
 
 inline bool isErrorBlock(int id) __attribute((always_inline));
-inline bool isValidID(int id) __attribute((always_inline));
 inline bool isInUse(int id) __attribute((always_inline));
+
+bool is_valid_cube_name(const char* name);
+
+// applies forward-compatible name versioning to give an id
+// use only for the serializer
+int get_compatible_cube_id(const char* name);
+
 
 }   // t_map
 
@@ -61,7 +66,7 @@ inline bool isInUse(int id) __attribute((always_inline));
     LUA interface
 */
 
-void LUA_set_block_name(int id, const char* name, int length);
+void LUA_set_block_name(int id, const char* name);
 
 void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent);
 void LUA_set_block_max_damage(int id, int max_damage);

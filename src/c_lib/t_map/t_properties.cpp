@@ -2,98 +2,75 @@
 
 #include "t_map.hpp"
 
-
-
 namespace t_map
 {
 
 struct cubeProperties* cube_list = NULL;
 
-char cube_names[MAX_CUBES*64];
-int cube_name_index[MAX_CUBES];
+char* cube_names = NULL;
 
 void init_t_properties()
 {
-    //printf("init_t_properties() \n");
-    
-    if(cube_list != NULL) printf("ERROR: init_t_properties called twice\n");
-
+    GS_ASSERT(cube_list == NULL);
     cube_list = (cubeProperties*) calloc(MAX_CUBES, sizeof(struct cubeProperties));
     for (int i=0; i<MAX_CUBES; cube_list[i++].in_use = false);
 
-    memset(cube_names, 0, 64* MAX_CUBES);
-    memset(cube_name_index, 0, sizeof(int) * MAX_CUBES);
-    //for(int i=0; i<MAX_CUBES*64; i++) cube_names = NULL;
-    //for(int i=0; i<MAX_CUBES; i++) cube_name_index = 0s;
+    GS_ASSERT(cube_names == NULL);
+    cube_names = (char*)calloc(MAX_CUBES*(CUBE_NAME_MAX_LENGTH+1), sizeof(char));
 }
 
 void end_t_properties()
 {
-    free(cube_list);
-    return;
+    if (cube_list != NULL) free(cube_list);
+    if (cube_names != NULL) free(cube_names);
 }
 
 struct cubeProperties* get_cube(int id)
 {
-    if(id < 0) printf("get_cube: error id less than zero \n");
-    if(id >= MAX_CUBES ) printf("get_cube: error id exceeds MAX_CUBES \n");
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return NULL;
     return &cube_list[id];
-}
-
-
-void set_cube_name(int id, const char* name, int length)
-{
-    static int index = 0;
-
-    if(length >= 64)
-    {
-        printf("Error: set_cube_name(), name length greater than 63 characters\n");
-        return;
-    }
-
-    if(index +length + 1 > MAX_CUBES*64)
-    {
-        printf("Error: set_cube_name(), WTF potential overflow\n");
-        return;
-    }
-
-    if(id < 0 || id >= MAX_CUBES)
-    {
-        printf("Error: set_cube_name(), cube id error\n");
-        return;
-    }
-
-    cube_name_index[id] = index;
-
-    memcpy(cube_names+index, name, length);
-    index += length;
-    cube_names[index] = '\0';
-    index++;
 }
 
 void set_cube_name(int id, const char* name)
 {
-    int length = (int)strlen(name);
-    set_cube_name(id, name, length);
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return;
+
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return;
+
+    bool valid_name = is_valid_cube_name(name);
+    GS_ASSERT(valid_name);
+    if (!is_valid_cube_name(name)) return;
+
+    int index = id * (CUBE_NAME_MAX_LENGTH+1);
+    strncpy(&cube_names[index], name, CUBE_NAME_MAX_LENGTH+1);
+    cube_names[index + CUBE_NAME_MAX_LENGTH] = '\0';
 }
 
 const char* get_cube_name(int id)
 {
-    GS_ASSERT(id >= 0 && id < MAX_CUBES);
-    if (id < 0 || id >= MAX_CUBES)
-    {
-        printf("%s:%d, cube id %d invalid\n", __FUNCTION__, __LINE__, id);
-        return NULL;
-    }
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return NULL;
+    if (!isInUse(id)) return NULL;
+    return (cube_names + ((CUBE_NAME_MAX_LENGTH + 1) * id));
+}
 
-    return (cube_names + cube_name_index[id]);
+int get_compatible_cube_id(const char* name)
+{
+    return get_cube_id(name);
+
+    // TODO -- we need a config loader thing for managing block renaming/deletions
 }
 
 int get_cube_id(const char* name)
 {
+    // TODO -- use hashes
     for (int i=0; i<MAX_CUBES; i++)
     {
-        if (strcmp(name, get_cube_name(i)) == 0)
+        const char* other = get_cube_name(i);
+        if (other != NULL && strcmp(name, other) == 0)
             return i;
     }
     GS_ASSERT(false);
@@ -103,9 +80,9 @@ int get_cube_id(const char* name)
 
 int dat_get_cube_id(const char* name)
 {
-    int id = get_cube_id((char*) name);
+    int id = get_cube_id(name);
     GS_ASSERT(id >= 0);
-    if(id < 0)
+    if (id < 0)
     {
         printf("Dat Loading Failure:cube_id, dat failure, cube %s does not exist! \n", name);
         return -1;
@@ -117,9 +94,25 @@ CubeMaterial get_cube_material(int cube_id)
 {
     GS_ASSERT(cube_list != NULL);
     if (cube_list == NULL) return CUBE_MATERIAL_NONE;
-    ASSERT_VALID_BLOCK(cube_id);
-    IF_INVALID_BLOCK(cube_id) return CUBE_MATERIAL_NONE;
+    ASSERT_VALID_CUBE_ID(cube_id);
+    IF_INVALID_CUBE_ID(cube_id) return CUBE_MATERIAL_NONE;
     return cube_list[cube_id].material;
+}
+
+static inline bool is_valid_cube_name_character(const char c)
+{
+    return (isalnum(c) || c == '_' || c == '-');
+}
+
+bool is_valid_cube_name(const char* name)
+{
+    if (name == NULL) return false;
+    size_t len = strlen(name);
+    if (len <= 0 || len > CUBE_NAME_MAX_LENGTH) return false;
+    for (size_t i=0; i<len; i++)
+        if (!is_valid_cube_name_character(name[i]))
+            return false;
+    return true;
 }
 
 }   // t_map
@@ -146,9 +139,9 @@ void LUA_set_block_color_type(int id, int color_type)
     t_map::cube_list[id].color_type = color_type;
 }
 
-void LUA_set_block_name(int id, const char* name, int length)
+void LUA_set_block_name(int id, const char* name)
 {
-    t_map::set_cube_name(id, name, length);
+    t_map::set_cube_name(id, name);
 }
 
 
@@ -161,16 +154,13 @@ namespace t_map
 
 bool isErrorBlock(int id)
 {
-    return (id == 255);
-}
-
-bool isValidID(int id)
-{
-    return (id >=0 && id < MAX_CUBES);
+    return (id == ERROR_CUBE);
 }
 
 bool isInUse(int id)
 {
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return false;
     return cube_list[id].in_use;
 }
 

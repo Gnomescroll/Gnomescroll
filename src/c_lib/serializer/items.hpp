@@ -56,15 +56,6 @@ class ParsedItemDataList: public ObjectList<class ParsedItemData, ItemID>
     public:
         const char* name() { return "ItemLoadData"; }
 
-    // TODO -- reserve enough item space for all players' inventories to fit
-    // How do we keep track of that count?
-    // The transfer_items can check the counters
-    // When any item is created, it has to check whether it can fit
-    // BUT we need to know which location its going to have ahead of time
-
-    // Ok so create_item need to take in location data and check that the item can be created for its location
-    // And transfer_items need to manage the counters
-
     ParsedItemDataList(unsigned int capacity) :
         ObjectList<class ParsedItemData, ItemID>(capacity, NULL_ITEM)
     { this->print(); }

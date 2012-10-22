@@ -12,6 +12,27 @@ struct SerializedChunk
     struct t_map::MAP_ELEMENT data[sizeof(struct t_map::MAP_ELEMENT)*16*16*128];
 };
 
+class ParsedMapPaletteData
+{
+    public:
+        bool valid;
+        
+        int cube_id;
+        char name[CUBE_NAME_MAX_LENGTH+1];
+        
+    void reset()
+    {
+        this->valid = false;
+        this->cube_id = t_map::ERROR_CUBE;
+        memset(this->name, 0, sizeof(this->name));
+    }
+
+    ParsedMapPaletteData()
+    {
+        this->reset();
+    }
+};
+
 extern bool should_save_map;
 extern bool map_save_completed;
 extern char* map_tmp_name;

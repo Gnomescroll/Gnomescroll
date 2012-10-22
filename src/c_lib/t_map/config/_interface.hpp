@@ -59,8 +59,8 @@ int DEFAULT_MAX_DAMAGE = 32;
 
 void cube_def(int id, int type, const char* name, CubeMaterial material)
 {
-    ASSERT_VALID_BLOCK(id);
-    IF_INVALID_BLOCK(id) return;
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return;
 
     GS_ASSERT(!cube_list[id].in_use); // dont overwrite anything
     if (cube_list[id].in_use)

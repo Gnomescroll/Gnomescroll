@@ -70,8 +70,7 @@ static unsigned int strhash(const char* s)
 {
     unsigned int highorder;
     unsigned int h = 0;
-    int i;
-    for (i=0; s[i] != '\0'; i++)
+    for (int i=0; s[i] != '\0'; i++)
     {
          highorder = h & 0xf8000000;    // extract high-order 5 bits from h
                                         // 0xf8000000 is the hexadecimal representation

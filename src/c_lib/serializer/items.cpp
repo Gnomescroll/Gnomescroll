@@ -72,7 +72,6 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
     else
     {   // unrecognized field
         GS_ASSERT(false);
-        data->valid = false;
         return false;
     }
     return true;

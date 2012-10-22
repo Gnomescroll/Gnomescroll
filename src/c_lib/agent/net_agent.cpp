@@ -832,8 +832,8 @@ inline void agent_set_block_CtoS::handle()
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
     int val = attr->block_type_id;
 
+    IF_INVALID_CUBE_ID(val) return;
     if (t_map::isErrorBlock(val)) return;
-    if (!t_map::isValidID(val)) return;
     if (!t_map::isInUse(val)) return;
     
     // do block place checks here later
@@ -894,8 +894,8 @@ inline void admin_set_block_CtoS::handle()
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
+    IF_INVALID_CUBE_ID(val) return;
     if (t_map::isErrorBlock(val)) return;
-    if (!t_map::isValidID(val)) return;
     if (!t_map::isInUse(val)) return;
 
     x = translate_point(x);

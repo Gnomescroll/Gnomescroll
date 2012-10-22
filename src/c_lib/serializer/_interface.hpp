@@ -29,6 +29,9 @@ void player_load_failed();
 
 bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers);
 
+// This is only for the serializer -- it handles the backup copy logic
+bool save_file(const char* fn, const char* fn_tmp, const char* fn_bak);
+
 }   // serializer
 
 #else

@@ -30,10 +30,15 @@ valgrerr*
 zi*
 
 *.map
+*.map.*
 *.plr
+*.plr.*
 *.ctr
+*.ctr.*
 *.mch
+*.mch.*
 *.fab
+*.fab.*
 
 .DS_STORE
 *.so

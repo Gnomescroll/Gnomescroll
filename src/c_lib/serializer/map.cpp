@@ -5,6 +5,8 @@
 namespace serializer
 {
 
+static int* cube_id_map = NULL;
+
 bool should_save_map = false;
 BlockSerializer* block_serializer = NULL;
 
@@ -17,11 +19,16 @@ void init_map_serializer()
 {
     GS_ASSERT(block_serializer == NULL);
     block_serializer = new BlockSerializer;
+
+    GS_ASSERT(cube_id_map == NULL);
+    cube_id_map = (int*)malloc(t_map::MAX_CUBES * sizeof(int));
+    for (int i=0; i<t_map::MAX_CUBES; cube_id_map[i++] = -1);
 }
 
 void teardown_map_serializer()
 {
     if (block_serializer != NULL) delete block_serializer;
+    if (cube_id_map != NULL) free(cube_id_map);
 }
 
 #if PTHREADS_ENABLED
@@ -115,6 +122,131 @@ void wait_for_threads()
         gs_microsleep(100);
 }
 #endif
+
+static bool parse_map_palette_token(const char* key, const char* val, class ParsedMapPaletteData* data)
+{
+    bool err = false;
+    if (strcmp(CUBE_ID_TAG, key) == 0)
+    {
+        long long cube_id = parse_int(val, err);
+        ASSERT_VALID_CUBE_ID(cube_id);
+        IF_INVALID_CUBE_ID(cube_id) return false;
+        GS_ASSERT(!err);
+        if (err) return false;
+        data->cube_id = (int)cube_id;
+    }
+    else
+    if (strcmp(NAME_TAG, key) == 0)
+    {
+        bool valid_name = t_map::is_valid_cube_name(val);
+        GS_ASSERT(valid_name);
+        if (!valid_name) return false;
+        strncpy(data->name, val, CUBE_NAME_MAX_LENGTH);
+        data->name[CUBE_NAME_MAX_LENGTH] = '\0';
+    }
+    else
+    {   // unrecognized field
+        GS_ASSERT(false);
+        return false;
+    }
+
+    return true;
+}
+
+// TODO -- also call on init
+// Build these two maps:
+// name -> id wrote
+// id wrote -> true id
+// then, when we deserialize the map, we apply the id_wrote->true_id transform
+bool load_map_palette_file(const char* fn)
+{
+    size_t size = 0;
+    char* str = read_file_to_buffer(fn, &size);
+    GS_ASSERT(str != NULL)
+    GS_ASSERT(size > 0);
+    if (str == NULL) return false;
+    if (size <= 0)
+    {
+        free(str);
+        return false;
+    }
+
+    // allocate scratch buffer long enough to hold the largest line
+    static const size_t LONGEST_LINE = MAP_PALETTE_LINE_LENGTH;
+    char buf[LONGEST_LINE+1] = {'\0'};
+
+    size_t istr = 0;
+    class ParsedMapPaletteData palette_data;
+    while (istr < size)
+    {    
+        // copy line
+        size_t ibuf = 0;
+        char c = '\0';
+        while ((c = str[istr++]) != '\0' && c != '\n' && ibuf < LONGEST_LINE)
+            buf[ibuf++] = c;
+        buf[ibuf] = '\0';
+        GS_ASSERT(c == '\n' || c == '\0');
+        if (c != '\0' && c != '\n')
+        {
+            free(str);
+            return false;
+        }
+
+        parse_line<class ParsedMapPaletteData>(&parse_map_palette_token, buf, ibuf, &palette_data);
+        GS_ASSERT(palette_data.valid);
+        if (!palette_data.valid)
+        {
+            free(str);
+            return false;
+        }
+
+        int actual_cube_id = t_map::get_compatible_cube_id(palette_data.name);
+        GS_ASSERT(actual_cube_id >= 0);
+        if (actual_cube_id < 0)
+        {   // we failed to get a compatible block type
+            free(str);
+            return false;
+        }
+        cube_id_map[palette_data.cube_id] = actual_cube_id;
+        
+        if (c == '\0') break;
+    }
+
+    free(str);
+
+    return true;
+}
+
+// TODO -- we can call this on init
+bool save_map_palette_file()
+{
+    FILE* f = fopen(map_palette_filename_tmp, "w");
+    GS_ASSERT(f != NULL);
+    if (f == NULL) return false;
+
+    char buf[MAP_PALETTE_LINE_LENGTH+2] = {'\0'};
+
+    for (int i=0; i<t_map::MAX_CUBES; i++)
+    {
+        const char* cube_name = t_map::get_cube_name(i);
+        if (cube_name == NULL) continue;
+        int len = snprintf(buf, MAP_PALETTE_LINE_LENGTH+1, MAP_PALETTE_FMT, cube_name, i);
+        GS_ASSERT(len >= 0 && (size_t)len < MAP_PALETTE_LINE_LENGTH+1);
+        if (len < 0 || (size_t)len >= MAP_PALETTE_LINE_LENGTH+1) return false;
+        buf[len++] = '\n';
+        buf[len] = '\0';
+        
+        size_t wrote = fwrite(buf, sizeof(char), (size_t)len, f);
+        GS_ASSERT(wrote == (size_t)len);
+        if (wrote != (size_t)len) return false;
+    }
+
+    int ret = fclose(f);
+    GS_ASSERT(ret == 0);
+    if (ret != 0) return false;
+
+    return save_file(map_palette_filename, map_palette_filename_tmp, map_palette_filename_backup);
+}
 
 
 static void load_map_restore_containers()
@@ -314,13 +446,26 @@ void BlockSerializer::load(const char* filename)
         printf("WARNING: Map filesize %u does not match expected filesize %u\n", filesize, expected_filesize); 
     GS_ASSERT_ABORT(filesize == expected_filesize);
 
+    // apply block id versioning transformation
+    for (size_t i=0; i<filesize; i++)
+    {
+        char c = buffer[i];
+        ASSERT_VALID_CUBE_ID(c);
+        IF_INVALID_CUBE_ID(c)
+        {
+            free(buffer);
+            GS_ABORT();
+        }
+        buffer[i] = cube_id_map[(unsigned char)c];
+    }
+
     for (int i=0; i<chunk_number; i++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
         if (mp == NULL) continue;
 
-        memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk) );
+        memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
         GS_ASSERT(index == (prefix_length + (i+1)*(int)sizeof(struct SerializedChunk)));
         memcpy(&mp->e, (void*) &chunk->data, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
@@ -379,10 +524,16 @@ void load_map()
 bool load_default_map()
 {
     if (file_exists(map_filename) && fsize(map_filename) > 0)
+    {
+        load_map_palette_file(map_palette_filename);
         load_map(map_filename);
+    }
     else
     if (file_exists(map_filename_backup) && fsize(map_filename_backup) > 0)
+    {
+        load_map_palette_file(map_palette_filename_backup);
         load_map(map_filename_backup);
+    }
     else
         return false;
     return true;

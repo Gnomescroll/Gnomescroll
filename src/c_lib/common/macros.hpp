@@ -25,9 +25,6 @@
 #define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT((client_id) >= 0 && (client_id) != NULL_CLIENT && (client_id) < HARD_MAX_CONNECTIONS)
 #define IF_INVALID_CLIENT_ID(client_id) if (unlikely((client_id) < 0 || (client_id) == NULL_CLIENT || (client_id) >= HARD_MAX_CONNECTIONS))
 
-#define ASSERT_VALID_BLOCK(block_type) GS_ASSERT((block_type) >= 0 && (block_type) < t_map::MAX_CUBES)
-#define IF_INVALID_BLOCK(block_type) if (unlikely((block_type) < 0 || (block_type) >= t_map::MAX_CUBES))
-
 #define ASSERT_VALID_MECH_TYPE(mech_type) GS_ASSERT((mech_type) >= 0 && (mech_type) < t_mech::MAX_MECHS)
 #define IF_INVALID_MECH_TYPE(mech_type) if (unlikely((mech_type) < 0 || (mech_type) >= t_mech::MAX_MECHS))
 
@@ -40,6 +37,9 @@
 
 #define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT((spawner_id) == BASE_SPAWN_ID || ((spawner_id) >= 0 && (spawner_id) < MAX_SPAWNERS));
 #define IF_INVALID_SPAWNER_ID(spawner_id) if (unlikely((spawner_id) != BASE_SPAWN_ID && ((spawner_id) < 0 || (spawner_id) >= MAX_SPAWNERS)))
+
+#define ASSERT_VALID_CUBE_ID(cube_id) GS_ASSERT((cube_id) >= 0 && (cube_id) < t_map::MAX_CUBES);
+#define IF_INVALID_CUBE_ID(cube_id) if (unlikely((cube_id) < 0 || (cube_id) >= t_map::MAX_CUBES))
 
 #define GS_ABORT() \
     do \

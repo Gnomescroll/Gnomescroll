@@ -15,7 +15,9 @@ tmp = '.tmp'
 filefmts = [ ('containers', 'ctr'),
              ('players', 'plr'),
              ('mechs', 'mch'),
-             ('map', 'map') ]
+             ('mechs', 'mch.pal'),
+             ('map', 'map'),
+             ('map', 'map.pal'),]
 
 fmt = '%s-%d.%s'
 

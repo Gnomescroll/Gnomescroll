@@ -15,8 +15,8 @@ namespace t_map
 
 static void add_drop_callback(int block_id)
 {
-    ASSERT_VALID_BLOCK(block_id);
-    IF_INVALID_BLOCK(block_id) return;
+    ASSERT_VALID_CUBE_ID(block_id);
+    IF_INVALID_CUBE_ID(block_id) return;
     GS_ASSERT(cube_list != NULL);
     if (cube_list == NULL) return;
     cube_list[block_id].item_drop = true;

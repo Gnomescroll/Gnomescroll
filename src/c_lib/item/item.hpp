@@ -110,7 +110,7 @@ class ItemList: public ObjectList<Item, ItemID>
 {
     private:
         const char* name() { return "Item"; }
-        
+
     public:
         ItemList(unsigned int capacity) : ObjectList<Item, ItemID>(capacity, NULL_ITEM),
             gas_tick(0)
@@ -141,6 +141,7 @@ class ItemList: public ObjectList<Item, ItemID>
         Item* create_type(int item_type)
         {
             Item* item = this->create();
+            GS_ASSERT(item != NULL);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;

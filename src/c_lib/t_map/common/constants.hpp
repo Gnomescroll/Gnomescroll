@@ -8,8 +8,10 @@ const int ZMAX = 128;
 namespace t_map
 {
 
-const int MAX_CUBES = 256;
-const int ERROR_CUBE = 0xff;
+const int MAX_CUBES = 0xff;
+const int ERROR_CUBE = 0xff-1;
+
+#define CUBE_NAME_MAX_LENGTH 24
 
 const int TERRAIN_MAP_HEIGHT = 128;
 const int TERRAIN_CHUNK_WIDTH = 16;
