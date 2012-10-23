@@ -101,13 +101,6 @@ void set_max_damage(int max_damage)
     p->max_damage = max_damage;
 }
 
-void set_color_type(int color_type)
-{
-    GS_ASSERT(p != NULL);
-    if (p == NULL) return;
-    p->color_type = color_type;
-}
-
 #if DC_SERVER
 void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos) {}
 void push_oriented_texture() {}

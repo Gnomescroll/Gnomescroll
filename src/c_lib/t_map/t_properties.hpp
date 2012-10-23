@@ -25,7 +25,6 @@ class CubeProperties
         CubeMaterial material;
 
         unsigned char max_damage;
-        unsigned char color_type; //flat, discrete and perlin
 
         char name[CUBE_NAME_MAX_LENGTH+1];
 
@@ -45,7 +44,6 @@ class CubeProperties
         this->material = material;
 
         this->max_damage = 32;
-        this->color_type = 0;
         
         memset(this->name, 0, sizeof(this->name));
 

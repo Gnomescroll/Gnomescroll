@@ -464,22 +464,6 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     }
 
     //_set_quad_color_flat(v_list, offset, x, y, z, side);
-/*
-    switch( t_map::cube_properties[tile_id].color_type )
-    {
-        case 0:
-            _set_quad_color_default(v_list, offset, x, y, z, side);
-            break;
-        case 1:
-            _set_quad_color_flat(v_list, offset, x, y, z, side);
-            break;
-        case 2:
-            _set_quad_color_perlin(v_list, offset, x, y, z, side);
-            break;
-        default:
-            break;
-    }  
-*/
 }
 
 
