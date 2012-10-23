@@ -19,6 +19,7 @@ class ItemAttribute
         // All items
         int max_durability;
         int max_stack_size;
+        int sprite;
 
         //IG_PLACER
         int block_type_id;   //id of block type that it creates
@@ -81,6 +82,7 @@ class ItemAttribute
 
         max_durability = NULL_DURABILITY;
         max_stack_size = 1;
+        sprite = ERROR_SPRITE;
         particle_voxel = false;
         particle_voxel_texture = 0;
         firing_range = DEFAULT_FIRING_RANGE;

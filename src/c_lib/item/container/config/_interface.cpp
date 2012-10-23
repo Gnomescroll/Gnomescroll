@@ -357,5 +357,5 @@ bool is_valid_container_name(const char* name)
             return false;
     return true;
 }
-    
+
 }   // ItemContainer

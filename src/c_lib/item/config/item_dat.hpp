@@ -12,7 +12,6 @@ void verify_item_dat();
 
 void load_item_dat()
 {
-    start_item_dat();
     int i0 = texture_alias("./media/sprites/item/i00.png");
     int i1 = texture_alias("./media/sprites/item/i01.png");
     int p0 = texture_alias("./media/sprites/item/p00.png");
@@ -467,6 +466,7 @@ void load_item_dat()
 
 void verify_item_dat()
 {
+    int errct = 0;  // count error items
     for (int i=0; i<MAX_ITEM_TYPES; i++)
     {
         class ItemAttribute* a = &item_attributes[i];
@@ -474,7 +474,8 @@ void verify_item_dat()
         if (!a->loaded) continue;
 
         GS_ASSERT_ABORT(a->item_type != NULL_ITEM_TYPE);
-
+        GS_ASSERT_ABORT(a->item_type == i);
+        
         GS_ASSERT_ABORT(is_valid_item_name(a->name));
 
         // make sure group is set
@@ -496,41 +497,27 @@ void verify_item_dat()
 
         // gas lifetime should be set, if it is a gas
         GS_ASSERT_ABORT(!a->gas || a->gas_lifetime != NULL_GAS_LIFETIME);
+
+        #if DC_CLIENT
+        GS_ASSERT_ABORT(a->group == IG_ERROR || a->particle_voxel || a->sprite != ERROR_SPRITE);
+        #endif
+        
+        if (a->group == IG_ERROR) errct++;
     }
-}
 
+    // only 1 error item allowed
+    GS_ASSERT_ABORT(errct == 1);
 
-int _item_cube_iso_spritesheet_id = -1;
-
-void start_item_dat()
-{
-    #if DC_CLIENT
-    _item_cube_iso_spritesheet_id = LUA_load_item_texture(t_map::block_item_16_surface);
-    #endif
-}
-
-void end_item_dat()
-{
-    _set_attribute();
-    
-    #if DC_CLIENT
-    LUA_save_item_texture();
-    #endif
-}
-
-void iso_block_sprite_def(const char* block_name)
-{
-    #if DC_CLIENT
-    GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id != -1);
-
-    int id = t_map::dat_get_cube_id(block_name);
-
-    int xpos = id % 16;
-    int ypos = id / 16;
-
-    int index = LUA_blit_item_texture(_item_cube_iso_spritesheet_id, xpos+1, ypos+1);
-    sprite_array[_current_item_index] = index; //check
-    #endif
+    for (int i=0; i<MAX_ITEM_TYPES-1; i++)
+    for (int j=i+1; j<MAX_ITEM_TYPES; j++)
+    {
+        class ItemAttribute* a = &item_attributes[i];
+        class ItemAttribute* b = &item_attributes[j];
+        if (!a->loaded || !b->loaded) continue;
+        GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
+        GS_ASSERT_ABORT(a->sprite == ERROR_SPRITE || a->sprite != b->sprite);
+        GS_ASSERT_ABORT(a->item_type != b->item_type);
+    }
 }
 
 }   // Item

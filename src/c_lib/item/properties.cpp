@@ -14,13 +14,12 @@
 namespace Item
 {
 
-int sprite_array[MAX_ITEM_TYPES]; //maps item id to sprite
 class ItemAttribute* item_attributes = NULL;
 class SynthesizerItem* synthesizer_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
 class SmeltingRecipe* smelting_recipe_array = NULL;
 
-ItemContainerType container_block_types[t_map::MAX_CUBES];    // maps block value -> container type
+ItemContainerType container_block_types[t_map::MAX_CUBES]; // maps cube_id -> container type
 
 // buffers for condensing craft bench inputs to unique type,count pairs
 int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
@@ -31,8 +30,6 @@ int craft_recipes_possible_count = 0;
 
 void init_properties()
 {
-    for (int i=0; i<MAX_ITEM_TYPES; sprite_array[i++] = ERROR_SPRITE);
-    
     for (int i=0; i<t_map::MAX_CUBES; container_block_types[i++] = CONTAINER_TYPE_NONE);
 
     GS_ASSERT(item_attributes == NULL);
@@ -77,9 +74,10 @@ int get_sprite_index_for_id(ItemID id)
 int get_sprite_index_for_type(int type)
 {
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
-    GS_ASSERT(type >= 0 && type < MAX_ITEM_TYPES);
-    if (type < 0 || type >= MAX_ITEM_TYPES) return ERROR_SPRITE;
-    return sprite_array[type];
+    class ItemAttribute* attr = get_item_attributes(type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return ERROR_SPRITE;
+    return attr->sprite;
 }
 
 const char* get_item_name(int type)

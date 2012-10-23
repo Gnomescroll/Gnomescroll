@@ -6,7 +6,6 @@
 namespace Item
 {
 
-extern int sprite_array[MAX_ITEM_TYPES];    // TODO -- remove
 extern class ItemAttribute* item_attributes;
 
 extern class SynthesizerItem* synthesizer_item_array;
