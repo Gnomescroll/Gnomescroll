@@ -6,10 +6,8 @@
 namespace Item
 {
 
-extern int sprite_array[MAX_ITEM_TYPES];
-extern int type_array[MAX_ITEM_TYPES];
-extern ItemGroup group_array[MAX_ITEM_TYPES];
-extern class ItemAttribute* item_attribute_array;
+extern int sprite_array[MAX_ITEM_TYPES];    // TODO -- remove
+extern class ItemAttribute* item_attributes;
 
 extern class SynthesizerItem* synthesizer_item_array;
 
@@ -33,9 +31,6 @@ int get_item_fire_rate(int item_type);
 
 int get_sprite_index_for_id(ItemID id);
 int get_sprite_index_for_type(int type);
-
-void set_item_name(int type, const char* name, int length);
-void set_item_name(int type, const char* name);
 
 const char* get_item_name(int item_type);
 int get_item_type(const char* name);

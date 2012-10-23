@@ -304,15 +304,12 @@ inline bool is_valid_location_name_char(char c)
 
 bool is_valid_location_name(const char* name)
 {
-    int i = 0;
-    char c;
-    while (i < LOCATION_NAME_MAX_LENGTH && (c = name[i]) != '\0')
-    {
-        if (!is_valid_location_name_char(c))
+    size_t len = strlen(name);
+    if (len <= 0 || len > LOCATION_NAME_MAX_LENGTH) return false;
+    for (size_t i=0; i<len; i++)
+        if (!is_valid_location_name_char(name[i]))
             return false;
-        i++;
-    }
-    return (i < LOCATION_NAME_MAX_LENGTH || name[i] == '\0');
+    return true;
 }
 
 void verify_config();

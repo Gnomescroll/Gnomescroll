@@ -125,6 +125,11 @@ static long long int parse_int(const char* str, bool& err)
     return val;
 } 
 
+bool is_valid_name_char(char c)
+{   // For string names used in configs. Don't fuck with this
+    return (isalnum(c) || c == '_' || c == '-');
+}
+
 void _test_common()
 {
     GS_ASSERT(str_ends_with("foobar", "bar"));

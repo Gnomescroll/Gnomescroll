@@ -702,9 +702,9 @@ void MechListRenderer::prep_vbo()
 
     for(int i=0; i<mlm; i++)
     {
-        if( mla[i].id == -1) continue;
+        if (mla[i].id == -1) continue;
 
-        switch (get_mech_render_type(mla[i].render_type))
+        switch (mla[i].render_type)
         {
             case MECH_RENDER_TYPE_0:
                 push_crystal_vertex(mla[i]);

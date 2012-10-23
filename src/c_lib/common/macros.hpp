@@ -22,6 +22,9 @@
 #define ASSERT_VALID_ITEM_ID(item_id) GS_ASSERT((item_id) >= 0 && (item_id) < MAX_ITEMS)
 #define IF_INVALID_ITEM_ID(item_id) if (unlikely((item_id) < 0 || (item_id) >= MAX_ITEMS))
 
+#define ASSERT_VALID_ITEM_TYPE(item_type) GS_ASSERT((item_type) >= 0 && (item_type) < MAX_ITEM_TYPES)
+#define IF_INVALID_ITEM_TYPE(item_type) if (unlikely((item_type) < 0 || (item_type) >= MAX_ITEM_TYPES))
+
 #define ASSERT_VALID_CLIENT_ID(client_id) GS_ASSERT((client_id) >= 0 && (client_id) != NULL_CLIENT && (client_id) < HARD_MAX_CONNECTIONS)
 #define IF_INVALID_CLIENT_ID(client_id) if (unlikely((client_id) < 0 || (client_id) == NULL_CLIENT || (client_id) >= HARD_MAX_CONNECTIONS))
 

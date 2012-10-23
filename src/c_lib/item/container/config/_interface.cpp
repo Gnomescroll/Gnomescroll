@@ -348,22 +348,14 @@ const char* get_container_name(ItemContainerType type)
     return attr->name;
 }
 
-inline bool is_valid_container_name_char(char c)
-{
-    return (isalnum(c) || c == '_' || c == '-');
-}
-
 bool is_valid_container_name(const char* name)
 {
-    int i = 0;
-    char c;
-    while (i < CONTAINER_NAME_MAX_LENGTH && (c = name[i]) != '\0')
-    {
-        if (!is_valid_container_name_char(c))
+    size_t len = strlen(name);
+    if (len <= 0 || len > CONTAINER_NAME_MAX_LENGTH) return false;
+    for (size_t i=0; i<len; i++)
+        if (!is_valid_name_char(name[i]))
             return false;
-        i++;
-    }
-    return (i < CONTAINER_NAME_MAX_LENGTH || name[i] == '\0');
+    return true;
 }
     
 }   // ItemContainer

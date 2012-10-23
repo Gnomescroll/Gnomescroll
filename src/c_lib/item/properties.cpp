@@ -15,8 +15,7 @@ namespace Item
 {
 
 int sprite_array[MAX_ITEM_TYPES]; //maps item id to sprite
-ItemGroup group_array[MAX_ITEM_TYPES];
-class ItemAttribute* item_attribute_array = NULL;
+class ItemAttribute* item_attributes = NULL;
 class SynthesizerItem* synthesizer_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
 class SmeltingRecipe* smelting_recipe_array = NULL;
@@ -30,18 +29,14 @@ int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
 class CraftingRecipe* craft_recipes_possible[CRAFT_BENCH_OUTPUTS_MAX];
 int craft_recipes_possible_count = 0;
 
-char item_names[MAX_ITEM_TYPES*(ITEM_NAME_MAX_LENGTH+1)] = {'\0'};
-int item_name_index[MAX_ITEM_TYPES] = {-1};
-
 void init_properties()
 {
     for (int i=0; i<MAX_ITEM_TYPES; sprite_array[i++] = ERROR_SPRITE);
-    for (int i=0; i<MAX_ITEM_TYPES; group_array[i++] = IG_NONE);
     
     for (int i=0; i<t_map::MAX_CUBES; container_block_types[i++] = CONTAINER_TYPE_NONE);
 
-    GS_ASSERT(item_attribute_array == NULL);
-    item_attribute_array = new ItemAttribute[MAX_ITEM_TYPES];
+    GS_ASSERT(item_attributes == NULL);
+    item_attributes = new ItemAttribute[MAX_ITEM_TYPES];
     GS_ASSERT(synthesizer_item_array == NULL);
     synthesizer_item_array = new SynthesizerItem[ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER)];
 
@@ -51,7 +46,7 @@ void init_properties()
 
 void tear_down_properties()
 {
-    if (item_attribute_array    != NULL) delete[] item_attribute_array;
+    if (item_attributes    != NULL) delete[] item_attributes;
     if (synthesizer_item_array != NULL) delete[] synthesizer_item_array;
     if (crafting_recipe_array != NULL) delete[] crafting_recipe_array;
     if (smelting_recipe_array != NULL) delete[] smelting_recipe_array;
@@ -61,7 +56,7 @@ class ItemAttribute* get_item_attributes(int item_type)
 {
     GS_ASSERT(item_type == NULL_ITEM_TYPE || (item_type >= 0 && item_type < MAX_ITEM_TYPES));
     if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return NULL;
-    return &item_attribute_array[item_type];
+    return &item_attributes[item_type];
 }
 
 int get_item_fire_rate(int item_type)
@@ -87,45 +82,12 @@ int get_sprite_index_for_type(int type)
     return sprite_array[type];
 }
 
-//Names
-
-void set_item_name(int id, const char* name, int length)
-{
-    GS_ASSERT(length > 0);
-    GS_ASSERT(length <= ITEM_NAME_MAX_LENGTH);
-    GS_ASSERT(id >= 0 || id < MAX_ITEM_TYPES);    
-    
-    if (length <= 0 || length > ITEM_NAME_MAX_LENGTH) return;
-    if (id < 0 || id >= MAX_ITEM_TYPES) return;
-
-    static int str_index = 0;
-
-    for (int i=0; i<MAX_ITEM_TYPES; i++)    // no duplicate names
-        if (item_name_index[i] >= 0)
-            GS_ASSERT(strcmp(item_names+item_name_index[i], name));
-
-    item_name_index[id] = str_index;
-
-    memcpy(item_names+str_index, name, length);
-    str_index += length;
-    item_names[str_index++] = '\0';
-}
-
-void set_item_name(int id, const char* name)
-{
-    int length = (int)strlen(name);
-    set_item_name(id, name, length);
-}
-
 const char* get_item_name(int type)
 {
-    GS_ASSERT(type >= 0 || type < MAX_ITEM_TYPES);
-    if (type < 0 || type >= MAX_ITEM_TYPES) return NULL;
-    if (item_name_index[type] < 0) return NULL;
-    GS_ASSERT(item_name_index[type] <+ MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH);
-    if (item_name_index[type] > MAX_ITEM_TYPES*ITEM_NAME_MAX_LENGTH) return NULL;
-    
-    return (item_names + item_name_index[type]);
+    class ItemAttribute* attr = get_item_attributes(type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return NULL;
+    return attr->name;
 }
 
 int get_item_type(const char* name)
@@ -165,9 +127,10 @@ const char* get_item_pretty_name(int item_type)
 ItemGroup get_item_group_for_type(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return IG_NONE;
-    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEM_TYPES);
-    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return IG_ERROR;
-    return group_array[item_type];
+    class ItemAttribute* attr = get_item_attributes(item_type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return IG_ERROR;
+    return attr->group;
 }
 
 bool item_type_is_voxel(int item_type)

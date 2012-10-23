@@ -21,84 +21,65 @@ void item_def(int id, ItemGroup group, const char* name);
 void sprite_def(int spritesheet, int xpos, int ypos);
 void sprite_def(int alias);
 int sprite_alias(int spritesheet, int xpos, int ypos);
-void _set_attribute();
 
 void iso_block_sprite_def(const char* block_name);
 void container_block_def(const char* block_name, ItemContainerType container_type);
 
-static bool is_valid_item_name_char(char c)
-{
-    return (isalnum(c) || c == '_' || c == '-');
-}
-
 bool is_valid_item_name(const char* name)
 {
-    int i = 0;
-    char c;
-    while (i < ITEM_NAME_MAX_LENGTH && (c = name[i]) != '\0')
-    {
-        if (!is_valid_item_name_char(c))
+    size_t len = strlen(name);
+    if (len <= 0 || len > ITEM_NAME_MAX_LENGTH) return false;
+    for (size_t i=0; i<len; i++)
+        if (!is_valid_name_char(name[i]))
             return false;
-        i++;
-    }
-    return (i < ITEM_NAME_MAX_LENGTH || name[i] == '\0');
+    return true;
 }
 
-class ItemAttribute s;
+class ItemAttribute* s = NULL;
 
-int _current_item_id = -1;
-
-void item_def(int type, ItemGroup group, const char* name)
-{
-    if (_current_item_id >= 0)
-        _set_attribute();   // locks in old attribute
-
-    GS_ASSERT(type != NULL_ITEM_TYPE);
-    GS_ASSERT(type >= 0 && type < MAX_ITEM_TYPES);
-    GS_ASSERT(group != IG_NONE);
-    if (type == NULL_ITEM_TYPE || type < 0 || type >= MAX_ITEM_TYPES || group == IG_NONE) return;
-    
-    size_t name_len = strlen(name);
-    GS_ASSERT(name_len > 0 && name_len <= ITEM_NAME_MAX_LENGTH);
-    if (name_len <= 0 || name_len > ITEM_NAME_MAX_LENGTH) return;
-    GS_ASSERT(is_valid_item_name(name));
-    if (!is_valid_item_name(name)) return;
-
-    GS_ASSERT(!item_attribute_array[type].loaded);
-    if (item_attribute_array[type].loaded) printf("ALREADY LOADED: %d\n", type);
-    if (item_attribute_array[type].loaded) return;
-    
-    _current_item_id = type;
-
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
-    {
-        // check that this type has not been set yet
-        GS_ASSERT(item_attribute_array[i].item_type != type);
-        // check that this name has not been used yet
-        GS_ASSERT(get_item_name(i) == NULL || strcmp(get_item_name(i), name) != 0); 
-    }
-
-    s.load_defaults(type, group);
-    
-    GS_ASSERT(group_array[type] == IG_NONE)
-    group_array[type] = group;
-
-    set_item_name(type, name);
-}
+int _current_item_index = 0;
 
 void _set_attribute()
 {
-    GS_ASSERT(_current_item_id >= 0 && _current_item_id < MAX_ITEM_TYPES);
-    if (_current_item_id < 0 || _current_item_id >= MAX_ITEM_TYPES) return;
-    item_attribute_array[_current_item_id] = s;
-    item_attribute_array[_current_item_id].loaded = true;
+    GS_ASSERT(s != NULL);
+    if (s == NULL) return;
+    s->loaded = true;
+    _current_item_index++;
 }
 
-ItemContainerType _current_container_type = CONTAINER_TYPE_NONE;
+void item_def(ItemGroup group, const char* name)
+{
+    if (s != NULL)
+        _set_attribute();   // locks in old attribute
+        
+    GS_ASSERT(group != IG_NONE);
+    if (group == IG_NONE) return;
+    
+    GS_ASSERT(is_valid_item_name(name));
+    if (!is_valid_item_name(name)) return;
 
+    int type = _current_item_index;
+
+    GS_ASSERT(type != NULL_ITEM_TYPE);
+    if (type == NULL_ITEM_TYPE) return;
+    ASSERT_VALID_ITEM_TYPE(type);
+    IF_INVALID_ITEM_TYPE(type) return;
+
+    GS_ASSERT(!item_attributes[type].loaded);
+    if (item_attributes[type].loaded) return;
+
+    s = &item_attributes[type];
+
+    s->load_defaults(type, group);
+    strncpy(s->name, name, ITEM_NAME_MAX_LENGTH);
+    s->name[ITEM_NAME_MAX_LENGTH] = '\0';
+}
+
+// TODO -- move to container config
+ItemContainerType _current_container_type = CONTAINER_TYPE_NONE;
 void container_block_def(const char* block_name, ItemContainerType container_type)
 {
-    int val = t_map::get_cube_id((char*)block_name);
+    int val = t_map::get_cube_id(block_name);
     GS_ASSERT(val >= 0 && val < t_map::MAX_CUBES);
     if (val < 0 || val >= t_map::MAX_CUBES) return;
     container_block_types[val] = container_type;
@@ -106,24 +87,36 @@ void container_block_def(const char* block_name, ItemContainerType container_typ
 
 void block_damage_def(CubeMaterial group, int damage)
 {
+    GS_ASSERT(s != NULL);
+    if (s == NULL) return;
     GS_ASSERT(damage >= 0);
     for (int i=0; i<t_map::MAX_CUBES; i++)
         if (t_map::get_cube_material(i) == group)
-            s.block_damage[i] = damage;
+            s->block_damage[i] = damage;
 }
 
 void block_damage_def(int damage)
 {   // apply to all groups
+    GS_ASSERT(s != NULL);
+    if (s == NULL) return;
     GS_ASSERT(damage >= 0);
     for (int i=0; i<t_map::MAX_CUBES; i++)
-        s.block_damage[i] = damage;
+        s->block_damage[i] = damage;
+}
+
+void set_pretty_name(const char* pretty_name)
+{
+    GS_ASSERT(s != NULL);
+    if (s == NULL) return;
+    strncpy(s->pretty_name, pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
+    s->pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH] = '\0';
 }
 
 #if DC_CLIENT
 
 int texture_alias(const char* spritesheet)
 {
-    return LUA_load_item_texture_sheet((char*) spritesheet);
+    return LUA_load_item_texture_sheet(spritesheet);
 }
 
 void sprite_def(int spritesheet, int ypos, int xpos)
@@ -132,7 +125,7 @@ void sprite_def(int spritesheet, int ypos, int xpos)
     // can't check maximums because they are unknown
     
     // check if we have already set this sprite
-    GS_ASSERT(sprite_array[_current_item_id] == ERROR_SPRITE);
+    GS_ASSERT(sprite_array[_current_item_index] == ERROR_SPRITE);
 
     int index = LUA_blit_item_texture(spritesheet, xpos, ypos);
     GS_ASSERT(index != 255);    // failure
@@ -141,7 +134,7 @@ void sprite_def(int spritesheet, int ypos, int xpos)
     if (index != ERROR_SPRITE)
         for (int i=0; i<MAX_ITEM_TYPES; i++) GS_ASSERT(sprite_array[i] != index);
 
-    sprite_array[_current_item_id] = index; //check
+    sprite_array[_current_item_index] = index; //check
 }
 
 #else

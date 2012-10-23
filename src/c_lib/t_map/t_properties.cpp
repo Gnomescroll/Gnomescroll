@@ -99,18 +99,13 @@ CubeMaterial get_cube_material(int cube_id)
     return cube_list[cube_id].material;
 }
 
-static inline bool is_valid_cube_name_character(const char c)
-{
-    return (isalnum(c) || c == '_' || c == '-');
-}
-
 bool is_valid_cube_name(const char* name)
 {
     if (name == NULL) return false;
     size_t len = strlen(name);
     if (len <= 0 || len > CUBE_NAME_MAX_LENGTH) return false;
     for (size_t i=0; i<len; i++)
-        if (!is_valid_cube_name_character(name[i]))
+        if (!is_valid_name_char(name[i]))
             return false;
     return true;
 }
