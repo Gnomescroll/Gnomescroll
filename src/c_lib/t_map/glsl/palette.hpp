@@ -15,12 +15,12 @@ static int cube_texture_palette_debug[256];
 //static unsigned short cube_color_palette_lookup_max[256];
 //static struct ColorElement cube_color_palette[512];
 
-void start_cube_palette(int cube_id);
+void start_cube_palette(CubeID cube_id);
 void end_cube_palette();
 void set_cube_palette_texture(int id, int side, int tex_id);
 
 
-void start_cube_palette(int cube_id)
+void start_cube_palette(CubeID cube_id)
 {
     static int last_cube_id = -1;
     cube_texture_palette_debug[cube_texture_palette_index] = 1;

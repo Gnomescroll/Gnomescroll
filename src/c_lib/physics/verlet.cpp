@@ -57,7 +57,7 @@ bool VerletComponent::bounce()
     return bounced;
 }
 
-int* VerletComponent::bounce(int* collision, int* tile)
+int* VerletComponent::bounce(int* collision, CubeID* tile)
 {   // same as simple bounce, but gets extra metadata on the bounce
     struct Vec3 old_position = this->position;
     struct Vec3 old_velocity = this->velocity;

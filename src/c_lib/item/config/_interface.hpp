@@ -56,7 +56,7 @@ void item_def(ItemGroup group, const char* name)
     if (s == NULL)
     {
         GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id == -1);
-        _item_cube_iso_spritesheet_id = LUA_load_item_texture(t_map::block_item_16_surface);
+        _item_cube_iso_spritesheet_id = load_item_texture(t_map::block_item_16_surface);
     }
     #endif
 
@@ -100,13 +100,13 @@ void container_block_def(const char* block_name, ItemContainerType container_typ
     container_block_types[cube_id] = container_type;
 }
 
-void block_damage_def(CubeMaterial group, int damage)
+void block_damage_def(CubeMaterial material, int damage)
 {
     GS_ASSERT_ABORT(s != NULL);
     if (s == NULL) return;
-    GS_ASSERT_ABORT(damage >= 0);
-    for (int i=0; i<t_map::MAX_CUBES; i++)
-        if (t_map::get_cube_material(i) == group)
+    GS_ASSERT_ABORT(damage >= 0 && damage <= 0xff);
+    for (int i=0; i<MAX_CUBES; i++)
+        if (t_map::get_cube_material((CubeID)i) == material)
             s->block_damage[i] = damage;
 }
 
@@ -115,7 +115,7 @@ void block_damage_def(int damage)
     GS_ASSERT_ABORT(s != NULL);
     if (s == NULL) return;
     GS_ASSERT_ABORT(damage >= 0);
-    for (int i=0; i<t_map::MAX_CUBES; i++)
+    for (int i=0; i<MAX_CUBES; i++)
         s->block_damage[i] = damage;
 }
 
@@ -132,7 +132,7 @@ void end_item_dat()
     _set_attribute();
     
     #if DC_CLIENT
-    LUA_save_item_texture();
+    save_item_texture();
     #endif
 }
 
@@ -140,7 +140,7 @@ void end_item_dat()
 
 int texture_alias(const char* spritesheet)
 {
-    return LUA_load_item_texture_sheet(spritesheet);
+    return load_item_texture_sheet(spritesheet);
 }
 
 void sprite_def(int spritesheet, int ypos, int xpos)
@@ -154,7 +154,7 @@ void sprite_def(int spritesheet, int ypos, int xpos)
     // check if we have already set this sprite
     GS_ASSERT_ABORT(s->sprite == ERROR_SPRITE);
     
-    int sprite = LUA_blit_item_texture(spritesheet, xpos, ypos);
+    int sprite = blit_item_texture(spritesheet, xpos, ypos);
     GS_ASSERT_ABORT(s->group == IG_ERROR || sprite != ERROR_SPRITE);
     if (s->group != IG_ERROR && sprite == ERROR_SPRITE) return;
     
@@ -166,13 +166,13 @@ void iso_block_sprite_def(const char* block_name)
     GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id != -1);
     if (_item_cube_iso_spritesheet_id == -1) return;
     
-    int cube_id = t_map::dat_get_cube_id(block_name);
+    int cube_id = t_map::get_cube_id(block_name);
     ASSERT_VALID_CUBE_ID(cube_id);
     IF_INVALID_CUBE_ID(cube_id) return;
     
     int xpos = (cube_id % 16) + 1;
     int ypos = (cube_id / 16) + 1;
-    int sprite = LUA_blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
+    int sprite = blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
     s->sprite = sprite;
 }
 

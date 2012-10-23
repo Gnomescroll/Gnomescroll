@@ -23,7 +23,7 @@ void load_item_dat()
 
     item_def(IG_PLACER, "regolith");
     iso_block_sprite_def("regolith");
-    s->block_type_id = t_map::dat_get_cube_id("regolith");
+    s->cube_id = t_map::get_cube_id("regolith");
     set_pretty_name("Regolith");
     s->max_stack_size = 64;
     s->particle_voxel = true;
@@ -32,7 +32,7 @@ void load_item_dat()
 
     item_def(IG_PLACER, "rock");
     iso_block_sprite_def("rock");
-    s->block_type_id = t_map::dat_get_cube_id("rock");
+    s->cube_id = t_map::get_cube_id("rock");
     set_pretty_name("Rock");
     s->max_stack_size = 64;
     s->particle_voxel = true;
@@ -127,7 +127,7 @@ void load_item_dat()
 
     item_def(IG_PLACER, "small_storage");
     iso_block_sprite_def("small_storage");
-    s->block_type_id = t_map::dat_get_cube_id("small_storage");
+    s->cube_id = t_map::get_cube_id("small_storage");
     set_pretty_name("Small Storage Block");
     s->max_stack_size = 1;
     s->particle_voxel = true;
@@ -139,7 +139,7 @@ void load_item_dat()
     item_def(IG_PLACER, "small_crafting_bench");
     iso_block_sprite_def("small_crafting_bench");
     set_pretty_name("Small Crafting Bench");
-    s->block_type_id = t_map::dat_get_cube_id("small_crafting_bench");
+    s->cube_id = t_map::get_cube_id("small_crafting_bench");
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("small_crafting_bench");
@@ -272,7 +272,7 @@ void load_item_dat()
     item_def(IG_PLACER, "steel_block_1");
     iso_block_sprite_def("steel_block_1");
     set_pretty_name("Steel Block #1");
-    s->block_type_id = t_map::dat_get_cube_id("steel_block_1");
+    s->cube_id = t_map::get_cube_id("steel_block_1");
     s->max_stack_size = 16;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_1");
@@ -281,7 +281,7 @@ void load_item_dat()
     item_def(IG_PLACER, "steel_block_2");
     set_pretty_name("Steel block #2");
     iso_block_sprite_def("steel_block_2");
-    s->block_type_id = t_map::dat_get_cube_id("steel_block_2");
+    s->cube_id = t_map::get_cube_id("steel_block_2");
     s->max_stack_size = 16;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_2");
@@ -290,7 +290,7 @@ void load_item_dat()
     item_def(IG_PLACER, "steel_block_3");
     set_pretty_name("Steel Block #3");
     iso_block_sprite_def("steel_block_3");
-    s->block_type_id = t_map::dat_get_cube_id("steel_block_3");
+    s->cube_id = t_map::get_cube_id("steel_block_3");
     s->max_stack_size = 16;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_3");
@@ -305,7 +305,7 @@ void load_item_dat()
     item_def(IG_PLACER, "cryofreezer_1");
     iso_block_sprite_def("cryofreezer_1");
     set_pretty_name("Small Cryofreezer");
-    s->block_type_id = t_map::dat_get_cube_id("cryofreezer_1");
+    s->cube_id = t_map::get_cube_id("cryofreezer_1");
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("cryofreezer_1");
@@ -325,7 +325,7 @@ void load_item_dat()
     item_def(IG_PLACER, "smelter_1");
     iso_block_sprite_def("smelter_1");
     set_pretty_name("Simple Smelter");
-    s->block_type_id = t_map::dat_get_cube_id("smelter_1");
+    s->cube_id = t_map::get_cube_id("smelter_1");
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("smelter_1");
@@ -336,7 +336,7 @@ void load_item_dat()
     item_def(IG_PLACER, "control_node");
     iso_block_sprite_def("control_node");
     set_pretty_name("Control Node");
-    s->block_type_id = t_map::dat_get_cube_id("control_node");
+    s->cube_id = t_map::get_cube_id("control_node");
     s->max_stack_size = 8;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("control_node");
@@ -374,7 +374,7 @@ void load_item_dat()
     item_def(IG_PLACER, "crusher");
     iso_block_sprite_def("crusher");
     set_pretty_name("Crusher");
-    s->block_type_id = t_map::dat_get_cube_id("crusher");
+    s->cube_id = t_map::get_cube_id("crusher");
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("crusher");
@@ -494,6 +494,8 @@ void verify_item_dat()
         GS_ASSERT_ABORT(a->particle_voxel || (!a->particle_voxel && a->particle_voxel_texture == 0));
         // particle voxel should have a cube height of 1
         GS_ASSERT_ABORT(!a->particle_voxel || a->cube_height == 1);
+
+        GS_ASSERT_ABORT(!a->particle_voxel || (a->cube_id != NULL_CUBE && a->cube_id != ERROR_CUBE && a->cube_id != EMPTY_CUBE));
 
         // gas lifetime should be set, if it is a gas
         GS_ASSERT_ABORT(!a->gas || a->gas_lifetime != NULL_GAS_LIFETIME);

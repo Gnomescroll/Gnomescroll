@@ -4,7 +4,7 @@
 dont_include_this_file_in_server
 #endif
 
-#include <common/random.h>
+#include <common/random.hpp>
 #include <state/client_state.hpp>
 
 #include <physics/vec3.hpp>

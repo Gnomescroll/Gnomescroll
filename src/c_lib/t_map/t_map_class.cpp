@@ -83,7 +83,7 @@ namespace t_map
         for(int j=0; j<16; j++)
         for(int k=127; k>=0; k--)
         {
-            if( isSolid(e[ (k<<8)+(j<<4)+i ].block) == true)
+            if (isSolid((CubeID)e[(k<<8)+(j<<4)+i].block))
             {
                 this->height_cache[16*j+i] = j+1; //first block above the firs solid block
                 break;
@@ -98,9 +98,9 @@ namespace t_map
 */
 
 
-    int MAP_CHUNK::get_block(int x, int y, int z)
+    CubeID MAP_CHUNK::get_block(int x, int y, int z)
     {
-        return e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+        return (CubeID)e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
     }
 
     struct MAP_ELEMENT MAP_CHUNK::get_element(int x, int y, int z)
@@ -303,12 +303,12 @@ namespace t_map
         struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
         if(e->block == 0) return -1;
-        if (maxDamage(e->block) == 255) return -5;
+        if (maxDamage((CubeID)e->block) == 255) return -5;
         e->damage += dmg;
-        if(e->damage >= maxDamage(e->block) ) 
+        if(e->damage >= maxDamage((CubeID)e->block) ) 
         {
             #if DC_SERVER
-            if(isItemContainer(e->block))
+            if(isItemContainer((CubeID)e->block))
                 destroy_item_container_block(x,y,z);
             #endif
             // destroy block
@@ -353,12 +353,12 @@ namespace t_map
         struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
         
         if(e->block == 0) return -1;
-        if (maxDamage(e->block) == 255) return -5;
+        if (maxDamage((CubeID)e->block) == 255) return -5;
         e->damage += dmg;
-        if(e->damage >= maxDamage(e->block) ) 
+        if(e->damage >= maxDamage((CubeID)e->block) ) 
         {
             #if DC_SERVER
-            if(isItemContainer(e->block))
+            if(isItemContainer((CubeID)e->block))
                 destroy_item_container_block(x,y,z);
             #endif
             // destroy block
@@ -383,7 +383,8 @@ namespace t_map
     #endif
     }
 
-    int Terrain_map::apply_damage(int x, int y, int z, int dmg, int* block_type)
+    // return negative on error, 0 on destruction of underlying block, or total damage so far on block 
+    int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeID* cube_id)
     {
         //printf("set: %i %i %i %i \n", x,y,element.block);
     #if T_MAP_SET_OPTIMIZED
@@ -401,12 +402,12 @@ namespace t_map
         struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
         if(e->block == 0) return -1;
-        if (maxDamage(e->block) == 255) return -5;
+        if (maxDamage((CubeID)e->block) == 255) return -5;
         e->damage += dmg;
-        if(e->damage >= maxDamage(e->block) ) 
+        if(e->damage >= maxDamage((CubeID)e->block) ) 
         {
             #if DC_SERVER
-            if(isItemContainer(e->block))
+            if(isItemContainer((CubeID)e->block))
                 destroy_item_container_block(x,y,z);
             #endif
             // destroy block
@@ -452,15 +453,15 @@ namespace t_map
 
         struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
         
-        *block_type = e->block;
+        *cube_id = (CubeID)e->block;
 
         if(e->block == 0) return -1;
-        if (maxDamage(e->block) == 255) return -5;
+        if (maxDamage((CubeID)e->block) == 255) return -5;
         e->damage += dmg;
-        if(e->damage >= maxDamage(e->block) ) 
+        if(e->damage >= maxDamage((CubeID)e->block) ) 
         {
             #if DC_SERVER
-            if(isItemContainer(e->block))
+            if(isItemContainer((CubeID)e->block))
                 destroy_item_container_block(x,y,z);
             #endif
             // destroy block
@@ -581,12 +582,12 @@ namespace t_map
 /*
     DEPRECATE
 */
-    void Terrain_map::update_heights(int x, int y, int z, int val)
+    void Terrain_map::update_heights(int x, int y, int z, CubeID cube_id)
     {
         z += 1; // heights are not 0 indexed;
         int new_h = -1;
         int h = this->column_heights[x + y*MAP_WIDTH];
-        if (val != 0)
+        if (cube_id != EMPTY_CUBE)
         {   // setting higher block
             if (z > h)
                 new_h = z;
@@ -594,7 +595,7 @@ namespace t_map
         else
         {
             if (z >= h) // deleting top block
-                    new_h = get_highest_solid_block(x,y,z) + 1;
+                new_h = get_highest_solid_block(x,y,z) + 1;
         }
 
         if (new_h == -1) return; // no change in height
@@ -611,42 +612,40 @@ namespace t_map
 /*
     Block Methodss
 */
-    int Terrain_map::get_block(int x, int y, int z)
+    CubeID Terrain_map::get_block(int x, int y, int z)
     {
-
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return 0;
+        GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
+        if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return EMPTY_CUBE;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if(c == NULL) return 0;
-        return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+        if(c == NULL) return EMPTY_CUBE;
+        return (CubeID)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
     }
 
-    void Terrain_map::set_block(int x, int y, int z, int value)
+    void Terrain_map::set_block(int x, int y, int z, CubeID cube_id)
     {
-        if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
-        {
-            GS_ASSERT(false);
-            return;
-        }
+        GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
+        if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-        struct MAP_ELEMENT element = {{{(unsigned char)value, 0,0,0}}};
+        struct MAP_ELEMENT element = {{{(unsigned char)cube_id, 0,0,0}}};
         set_element(x,y,z, element);
         #if DC_CLIENT
-        update_heights(x,y,z,value);
+        update_heights(x,y,z, cube_id);
         #endif
     }
 
 
-#if DC_CLIENT
+    #if DC_CLIENT
     bool Terrain_map::chunk_loaded(int x, int y, int z)
     {
-        GS_ASSERT(z >= 0 && z < 128);
+        GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0);
+        if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -656,7 +655,7 @@ namespace t_map
             return false;
         return true;
     }
-#endif
+    #endif
 
 
 /*

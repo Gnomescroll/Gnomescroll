@@ -1,7 +1,7 @@
 #include "voxel_model.hpp"
 
 #include <common/defines.h>
-#include <common/random.h>
+#include <common/random.hpp>
 #include <physics/affine.hpp>
 #include <physics/quadrant.hpp>
 #include <voxel/voxel_hitscan.hpp>

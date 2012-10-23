@@ -198,10 +198,6 @@ dont_include_this_file_in_server
 /* Awesomium */
 #include <SDL/awesomium/_include.hpp>
 
-/* client side map gen / utils */
-//#include <map_gen/hopcroft-karp.cpp>
-//#include <map_gen/dragon.cpp>
-
 #include <state/client_state.cpp>
 #include <state/packet_init.cpp>
 

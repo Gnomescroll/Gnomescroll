@@ -1,5 +1,7 @@
 #pragma once
 
+#include <t_map/common/types.hpp>
+
 const int ssize = 256;
 const int bsize = 65536;
 const float RAYCAST_SAMPLING_DENSITY = 100.0f;
@@ -14,11 +16,11 @@ void ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval)
     _ray_cast4(p.x, p.y, p.z, f.x, f.y, f.z, interval, &out);
 }
 
-int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);
-//int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);
-int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile, struct Vec3* v_out);
+int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile);
+//int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile);
+int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile, struct Vec3* v_out);
 
-int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side);
+int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, CubeID* tile, int* side);
 
 // args: position and forward vector
 int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);

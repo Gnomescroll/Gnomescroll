@@ -36,3 +36,11 @@ void shuffle(T *array, size_t n)
         array[j] = tmp;
     }
 }
+
+template <typename T>
+T random_choice(T* arr, size_t size)
+{
+    GS_ASSERT(size > 0);
+    if (size == 0) { T t; return t; }
+    return arr[randrange(0,size-1)];
+}

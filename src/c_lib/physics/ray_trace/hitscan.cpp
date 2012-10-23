@@ -22,7 +22,7 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
     float distance=0.0f;
     int collision[3];
     int pre_collision[3];
-    int tile=0;
+    CubeID tile = EMPTY_CUBE;
     int side[3];
 
     int collided = _ray_cast6(x,y,z, vx,vy,vz, max_dist, &distance, collision, pre_collision, &tile, side);
@@ -43,7 +43,7 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
     return &dummy_hitscan_block;
 }
 
-HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance, int side[3], int *tile)
+HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance, int side[3], CubeID *tile)
 {
     HitscanBlock* block = ray_intersect_block(x,y,z, vx,vy,vz);
 
@@ -61,6 +61,8 @@ HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float 
         side[2] = block->side[2];
         *tile = block->tile;
     }
+    else
+        *tile = EMPTY_CUBE;
 
     return target;
 }
@@ -95,7 +97,7 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 HitscanTargetTypes hitscan_against_world(
     Vec3 p, Vec3 v, int ignore_id, ObjectType ignore_type,    // inputs
     class Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
-    int block_pos[3], int side[3], int* tile, float* block_distance // outputs
+    int block_pos[3], int side[3], CubeID* tile, float* block_distance // outputs
 )
 {   // hitscan against voxels
     *vox_distance = 10000000.0f;

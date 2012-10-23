@@ -23,7 +23,7 @@ class ParsedMapPaletteData
     void reset()
     {
         this->valid = false;
-        this->cube_id = t_map::ERROR_CUBE;
+        this->cube_id = ERROR_CUBE;
         memset(this->name, 0, sizeof(this->name));
     }
 

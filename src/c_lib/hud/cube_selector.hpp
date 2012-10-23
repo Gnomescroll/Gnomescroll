@@ -1,5 +1,7 @@
 #pragma once
 
+#include <t_map/common/types.hpp>
+
 namespace HudCubeSelector
 {
 
@@ -7,7 +9,7 @@ const int N_CUBES = 256;
 
 struct cube_select_element
 {
-    int cube_id;
+    CubeID cube_id;
     int tex_id;
 };
 
@@ -32,11 +34,11 @@ class CubeSelector
 
         void init();
         void set_position(float x, float y);
-        void set_block_selector(int pos, int cube_id, int tex_id);
+        void set_block_selector(int pos, CubeID cube_id, int tex_id);
         void set_active_pos(int pos);
         void set_active_id(int id);
         int get_active_pos();
-        int get_active_id();
+        CubeID get_active_id();
         void draw();
 
         void up();
@@ -44,7 +46,7 @@ class CubeSelector
         void left();
         void right();
 
-        bool set_block_type(int block_type);
+        bool set_block_type(CubeID cube_id);
 
         CubeSelector();
 };
@@ -56,4 +58,4 @@ void init();
 
 }   // HudCubeSelector
 
-void set_cube_hud(int hudx, int hudy, int cube_id, int tex_id);
+void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id);

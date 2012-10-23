@@ -5,11 +5,7 @@ const int XMAX = 512;
 const int YMAX = 512;
 const int ZMAX = 128;
 
-namespace t_map
-{
-
 const int MAX_CUBES = 0xff;
-const int ERROR_CUBE = 0xff-1;
 
 #define CUBE_NAME_MAX_LENGTH 24
 
@@ -28,15 +24,6 @@ const int MAP_HEIGHT = 512;
 
 const int MAP_CHUNK_XDIM = MAP_WIDTH/TERRAIN_CHUNK_WIDTH;
 const int MAP_CHUNK_YDIM = MAP_HEIGHT/TERRAIN_CHUNK_WIDTH;
-
-typedef enum
-{
-    CHUNK_HEIGHT_UNCHANGED = 0,
-    CHUNK_HEIGHT_CHANGED = 1,
-    CHUNK_HEIGHT_UNSET = 2
-} ChunkHeightStatus;
-
-} // t_map
 
 const float QUADRANT_DIVIDEf = 256.0f;
 const int QUADRANT_DIVIDEi = 256;

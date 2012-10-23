@@ -147,15 +147,6 @@ dont_include_this_file_in_client
 #include <chat/server.cpp>
 #include <chat/interface.cpp>
 
-/* dungeon/L system/noise */
-//#ifdef DUNGEON
-//#include <map_gen/hopcroft-karp.cpp>
-#include <map_gen/dragon.cpp>
-//#endif
-#include <map_gen/noise.cpp>
-#include <map_gen/map_generator.cpp>
-#include <map_gen/recipes.cpp>
-
 #include <net_lib/_include.hpp>
 
 #include <state/packet_init.cpp>

@@ -192,19 +192,19 @@ void update_map_surface()
     Uint8 r,g,b,a;
 
     int cx,cy;
-    for (int i=0; i<t_map::MAP_CHUNK_XDIM; i++)
-    for (int j=0; j<t_map::MAP_CHUNK_YDIM; j++)
+    for (int i=0; i<MAP_CHUNK_XDIM; i++)
+    for (int j=0; j<MAP_CHUNK_YDIM; j++)
     {
-        if (t_map::main_map->chunk_heights_status[i + j*t_map::MAP_CHUNK_XDIM] != t_map::CHUNK_HEIGHT_CHANGED) continue;
-        for (int m=0; m<t_map::TERRAIN_CHUNK_WIDTH; m++)
+        if (t_map::main_map->chunk_heights_status[i + j*MAP_CHUNK_XDIM] != CHUNK_HEIGHT_CHANGED) continue;
+        for (int m=0; m<TERRAIN_CHUNK_WIDTH; m++)
         {
-            cx = i*t_map::TERRAIN_CHUNK_WIDTH + m;
-            for (int n=0; n<t_map::TERRAIN_CHUNK_WIDTH; n++)
+            cx = i*TERRAIN_CHUNK_WIDTH + m;
+            for (int n=0; n<TERRAIN_CHUNK_WIDTH; n++)
             {
-                cy = j*t_map::TERRAIN_CHUNK_WIDTH + n;
-                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + t_map::MAP_WIDTH*cy]];
+                cy = j*TERRAIN_CHUNK_WIDTH + n;
+                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + MAP_WIDTH*cy]];
                 SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-                ((Uint32*)map_surface->pixels)[cx + t_map::MAP_WIDTH*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+                ((Uint32*)map_surface->pixels)[cx + MAP_WIDTH*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
             }
         }
     }

@@ -597,7 +597,7 @@ void create_container_block_CtoS::handle()
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
     if (attr == NULL) return;
-    int val = attr->block_type_id;
+    CubeID val = attr->cube_id;
 
     ItemContainerType container_type = Item::get_container_type_for_block(val);
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
@@ -629,7 +629,7 @@ void create_container_block_CtoS::handle()
             }
         }
     }
-    t_map::set_fast(x,y,z,0);  // unset
+    t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
 
     if (collides) return;
 
@@ -660,7 +660,9 @@ void admin_create_container_block_CtoS::handle()
     if (a == NULL) return;
     if (a->status.dead) return;
 
-    ItemContainerType container_type = Item::get_container_type_for_block(val);
+    CubeID cube_id = (CubeID)this->val;
+
+    ItemContainerType container_type = Item::get_container_type_for_block(cube_id);
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
@@ -672,10 +674,10 @@ void admin_create_container_block_CtoS::handle()
 
     // TODO -- when this is a /real/ admin tool, remove this check
     // since we're giving it to players, do this check
-    if (!t_map::block_can_be_placed(x,y,z,val)) return;
+    if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
 
     bool collides = false;
-    t_map::set_fast(x,y,z, val); // set temporarily to test against
+    t_map::set_fast(x,y,z, cube_id); // set temporarily to test against
     if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else
     {
@@ -690,7 +692,7 @@ void admin_create_container_block_CtoS::handle()
             }
         }
     }
-    t_map::set_fast(x,y,z,0);  // unset
+    t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
 
     if (collides) return;
 
@@ -698,8 +700,8 @@ void admin_create_container_block_CtoS::handle()
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
 
-    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
-    t_map::broadcast_set_block_palette(x,y,z,val,orientation);
+    t_map::broadcast_set_block_action(x,y,z, cube_id, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_palette(x,y,z,cube_id,orientation);
 
     init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);

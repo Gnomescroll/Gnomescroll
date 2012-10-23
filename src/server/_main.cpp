@@ -1,8 +1,6 @@
 #pragma once
 
 #include <common/time/physics_timer.hpp>
-#include <map_gen/map_generator.hpp>
-#include <map_gen/recipes.hpp>
 
 #include <t_gen/_interface.hpp>
 #include <t_map/_interface.hpp>
@@ -24,7 +22,7 @@ void default_map_gen()
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
 
-    map_gen::rough_floor(512,512,0,3, t_map::dat_get_cube_id("bedrock"));    
+    map_gen::rough_floor(512,512,0,3, t_map::get_cube_id("bedrock"));    
 }
 
 
@@ -63,10 +61,10 @@ void init(int argc, char* argv[])
 
     if (fast_map)
     {
-        map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
-        map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
+        map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
+        map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
 
-        //map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+        //map_gen::floor(512,512, 20,1, t_map::get_cube_id("regolith"));
     
         //t_gen::generate_ruins();
         //t_gen::add_terrain_features();

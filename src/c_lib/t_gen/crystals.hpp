@@ -23,8 +23,8 @@ const int n_crystals = 3;
 MechType crystals[n_crystals] = { NULL_MECH_TYPE };
 float crystal_strata[n_crystals*2] = {0};
 
-int rock = t_map::ERROR_CUBE;
-int bedrock = t_map::ERROR_CUBE;
+int rock = ERROR_CUBE;
+int bedrock = ERROR_CUBE;
 
 float falloffs[CRYSTAL_CLUSTER_RADIUS*2+1] = {1.0f};
 
@@ -56,10 +56,10 @@ void init_crystals()
     // TODO -- check that all crystals are not ERROR_MECH
 
     bedrock = t_map::get_cube_id("bedrock");
-    GS_ASSERT(bedrock != t_map::ERROR_CUBE);
+    GS_ASSERT(bedrock != ERROR_CUBE);
 
     rock = t_map::get_cube_id("rock");
-    GS_ASSERT(rock != t_map::ERROR_CUBE);
+    GS_ASSERT(rock != ERROR_CUBE);
 
     //int top = get_highest_block_of_type(rock) + 1;
 
@@ -143,8 +143,8 @@ void populate_crystals()
      *          place crystal cluster
      */
 
-    GS_ASSERT(rock != t_map::ERROR_CUBE);
-    GS_ASSERT(bedrock != t_map::ERROR_CUBE);
+    GS_ASSERT(rock != ERROR_CUBE);
+    GS_ASSERT(bedrock != ERROR_CUBE);
 
     int ct = 0;
     int ct_max = 1000;

@@ -267,7 +267,7 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     *interval = (float)(i) / max_i;
 }
 
-int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
+int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile) {
     float len = (float)sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x = (int)x0, //truncating conversion
@@ -345,7 +345,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 // loop ticks are capped to raycast_tick_max
 //not used
 #if 0
-int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
+int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile) {
     float len = sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x = (int)x0, //truncating conversion
@@ -427,7 +427,7 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
 
 // loop ticks are capped to raycast_tick_max
 #if 0
-void _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile, struct Vec3* v_out) {
+void _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile, struct Vec3* v_out) {
     float len = sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x = (int)x0, //truncating conversion
@@ -524,7 +524,7 @@ void _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
 }
 #endif
 
-int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile, struct Vec3* v_out) {
+int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile, struct Vec3* v_out) {
     float len = (float)sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x = (int)x0, //truncating conversion
@@ -626,7 +626,7 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
 }
 
 
-int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) {
+int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, CubeID* tile, int* side) {
     // normalize direction
     float len2 = (float)sqrtf( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;
@@ -726,7 +726,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
         *distance = len * (((float)i) / ((float)max_i));
         return 1;
     } else {
-        *tile = 0;
+        *tile = EMPTY_CUBE;
         *distance = 0;
         return 0; //no collision
     }

@@ -5,7 +5,7 @@
 #endif
 
 #include <math.h>
-#include <common/random.h>
+#include <common/random.hpp>
 #include <physics/common.hpp>
 
 #include <physics/constants.hpp>

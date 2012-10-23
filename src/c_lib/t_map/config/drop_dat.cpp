@@ -17,20 +17,31 @@ static void add_drop_callback(int block_id)
 {
     ASSERT_VALID_CUBE_ID(block_id);
     IF_INVALID_CUBE_ID(block_id) return;
-    GS_ASSERT(cube_list != NULL);
-    if (cube_list == NULL) return;
-    cube_list[block_id].item_drop = true;
+    GS_ASSERT(cube_properties != NULL);
+    if (cube_properties == NULL) return;
+    cube_properties[block_id].item_drop = true;
 }
 
 class Item::ItemDropConfig* block_drop_dat = NULL;
+
+// wrappers for the drop dat ptr config
+static int get_cube_id_ptr(const char* name)
+{
+    return (int)get_cube_id(name);
+}
+
+static const char* get_cube_name_ptr(int cube_id)
+{
+    return get_cube_name_ptr((CubeID)cube_id);
+}
 
 void init_block_drop_dat()
 {
     GS_ASSERT(block_drop_dat == NULL);
     block_drop_dat = new Item::ItemDropConfig;
     block_drop_dat->init("block", MAX_CUBES);
-    block_drop_dat->get_id_from_name = &dat_get_cube_id;
-    block_drop_dat->get_name_from_id = &get_cube_name;
+    block_drop_dat->get_id_from_name = &get_cube_id_ptr;
+    block_drop_dat->get_name_from_id = &get_cube_name_ptr;
     block_drop_dat->add_drop_callback = &add_drop_callback;
 }
 
@@ -142,14 +153,14 @@ void load_block_drop_dat()
     b->save_to_file();
 }
 
-void handle_block_drop(int x, int y, int z, int block_type)
+void handle_block_drop(int x, int y, int z, CubeID cube_id)
 {
     GS_ASSERT(block_drop_dat != NULL);
     if (block_drop_dat == NULL) return;
     
-    for (int i=0; i < block_drop_dat->meta_drop_table[block_type].num_drop; i++)
+    for (int i=0; i < block_drop_dat->meta_drop_table[cube_id].num_drop; i++)
     {
-        struct Item::ItemDropTable* cidt = &block_drop_dat->item_drop_table[i+block_drop_dat->meta_drop_table[block_type].index];
+        struct Item::ItemDropTable* cidt = &block_drop_dat->item_drop_table[i+block_drop_dat->meta_drop_table[cube_id].index];
         float p = randf();
 
         if (p <= cidt->drop_cumulative_probabilities[0]) continue;

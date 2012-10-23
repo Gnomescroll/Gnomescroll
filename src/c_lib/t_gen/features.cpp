@@ -5,80 +5,7 @@
 namespace map_gen
 {
 
-void grass(int x, int y, int base, int dirt, int grass)
-{
-    float fx = (float)x + 2.0f,
-           fy = (float)y + 2.0f;
-
-    int i,j,k,n;
-    float d;
-    int dd;
-    for (i=0; i<x; i++)
-    for (j=0; j<y; j++)
-    {
-        k = t_map::get_highest_solid_block(i,j);
-        if (k < 0) continue;
-        t_map::set_fast(i,j,k, grass);
-        if (k != 0) continue;
-        // dirt
-        d = perlin2(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale, x, y, base);
-        dd = (int)(fabs(d) * 100);
-        dd %= (k < 3) ? k : 3;
-        dd += 1;
-        for (n=1; n <= dd; n++) t_map::set_fast(i,j,k-n, dirt);
-    }
-}
-
-void caves(float* noisemap, int x, int y, int z, float threshold, int base)
-{
-    float cutoff;
-    cutoff = percentile_cutoff_calculation(threshold, noisemap, x*y*z);
-
-    float fx = (float)x + 2.0f,
-           fy = (float)y + 2.0f,
-           fz = (float)z + 2.0f;
-
-    seed_noise(572);
-
-    int i,j,k;
-    float n;
-    float ttl=0.0f;
-    int c=0;
-    for (i=0; i < x; i++)
-    for (j=0; j < y; j++)
-    for (k=0; k < z; k++)
-    {
-        n = rmf_perlin3(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, ((float)(k+1)/fz)*znoise_scale, x, y, z, base);
-        c += 1;
-        ttl += n;
-        if (n > cutoff) t_map::set_fast(i,j,k, 2);
-    }
-
-    float avg = ttl / (float)c;
-    printf("ttl: %0.2f, count: %d, avg: %0.2f\n", ttl, c, avg);
-
-    seed_noise(1001);
-    
-    for (i=0; i < x; i++)
-    for (j=0; j < y; j++)
-    for (k=0; k < z; k++)
-    {
-        n = rmf_perlin3(((float)(i+1)/fx)*xnoise_scale, ((float)(j+1)/fy)*ynoise_scale, ((float)(k+1)/fz)*znoise_scale, x, y, z, base);
-        if (n > cutoff && isSolid(t_map::get(i,j,k))) t_map::set_fast(i,j,k, 3);
-    }
-
-    // invert
-    for (i=0; i < x; i++)
-    for (j=0; j < y; j++)
-    for (k=0; k < z; k++)
-    {
-        if (t_map::get(i,j,k) != 3) t_map::set_fast(i,j,k, 2);
-        else                   t_map::set_fast(i,j,k, 0);
-    }
-
-}
-
-void ceiling(int x, int y, int z, int height, int tile)
+void ceiling(int x, int y, int z, int height, CubeID tile)
 {
     int i,j,k;
     z -= 1;
@@ -88,7 +15,7 @@ void ceiling(int x, int y, int z, int height, int tile)
         t_map::set_fast(i,j,k, tile);
 }
 
-void floor(int x, int y, int z_start, int height, int tile)
+void floor(int x, int y, int z_start, int height, CubeID tile)
 {
     int i,j,k;
     for (k=z_start; k<z_start+height; k++)
@@ -98,7 +25,7 @@ void floor(int x, int y, int z_start, int height, int tile)
 }
 
 // white noise floor
-void rough_floor(int x, int y, int z_start, int height, int tile)
+void rough_floor(int x, int y, int z_start, int height, CubeID tile)
 {
     GS_ASSERT(height > 0);
     if (height <= 0) return;
@@ -113,7 +40,7 @@ void rough_floor(int x, int y, int z_start, int height, int tile)
 }
 
 
-void walls(int x, int y, int z_start, int height, int tile)
+void walls(int x, int y, int z_start, int height, CubeID tile)
 {
     int i,j,k;
     for (i=0; i<x; i+=x-1)
@@ -127,7 +54,7 @@ void walls(int x, int y, int z_start, int height, int tile)
         t_map::set_fast(i,j,k,tile);
 }
 
-void box(int x, int y, int z_start, int height, int tile)
+void box(int x, int y, int z_start, int height, CubeID tile)
 {
     walls(x,y,z_start,height,tile);
     map_gen::floor(x,y,z_start, 1, tile);
@@ -167,13 +94,13 @@ void erosion(const int x, const int y, const int passes, const int h_diff, const
                 }
             }
 
-            int tile = t_map::get(i,j,h);
+            CubeID tile = t_map::get(i,j,h);
 
             // redistribute from high to low
             int n = 0;
             while (max_h > h_diff && n < max_iters)
             {
-                t_map::set(i,j,h,0);
+                t_map::set(i,j,h, EMPTY_CUBE);
                 t_map::set(i+dis[max_d],j+djs[max_d],heights[max_d]+1,tile);
                 heights[max_d] += 1;
                 max_h -= 1;

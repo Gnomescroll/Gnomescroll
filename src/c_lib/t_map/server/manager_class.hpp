@@ -239,7 +239,7 @@ void Map_manager::update()
 {
     GS_ASSERT(xpos != 0xffff && ypos != 0xffff);
     //printf("xpos= %i ypos= %i \n", xpos, ypos);
-    if(needs_update == false) return;
+    if (!needs_update) return;
 
     /*
         unsub part

@@ -4,7 +4,7 @@
 dont_include_this_file_in_client
 #endif
 
-#include <common/random.h>
+#include <common/random.hpp>
 #include <item/common/constants.hpp>
 #include <item/common/struct.hpp>
 

@@ -156,7 +156,7 @@ static bool beta_scan_world()
     float collision_point[3];
     int block_pos[3];
     int side[3];
-    int tile;
+    CubeID tile = EMPTY_CUBE;
     float block_distance;
 
     Hitscan::HitscanTargetTypes target_type =

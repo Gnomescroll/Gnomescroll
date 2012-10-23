@@ -13,7 +13,7 @@ extern class SynthesizerItem* synthesizer_item_array;
 extern class CraftingRecipe* crafting_recipe_array;
 extern class SmeltingRecipe* smelting_recipe_array;
 
-extern ItemContainerType container_block_types[t_map::MAX_CUBES]; // maps block value -> container type
+extern ItemContainerType container_block_types[MAX_CUBES]; // maps block value -> container type
 
 // buffers for condensing craft bench inputs to unique type,count pairs
 extern int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
@@ -52,7 +52,7 @@ int get_particle_voxel_texture(int item_type);
 int get_item_cube_height(int item_type);
 
 float get_weapon_range(int weapon_type);
-int get_item_block_damage(int weapon_type, int block_type);
+int get_item_block_damage(int weapon_type, CubeID cube_id);
 int get_item_object_damage(int weapon_type);
 
 int get_synthesizer_item(int xslot, int yslot);
@@ -81,6 +81,6 @@ int* get_selected_smelting_recipe_types(int container_id, int* recipe_count);
 int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available);
 int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count);
 
-ItemContainerType get_container_type_for_block(int block_value);
+ItemContainerType get_container_type_for_block(CubeID cube_id);
 
 }   // Item

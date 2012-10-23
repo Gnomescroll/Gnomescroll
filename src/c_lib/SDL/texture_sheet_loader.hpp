@@ -55,12 +55,12 @@ void teardown();
 }   // TextureSheetLoader
 
 //cube texture sheet api
-int LUA_load_cube_texture_sheet(const char* filename);
-int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y);
-void LUA_save_cube_texture();
+int load_cube_texture_sheet(const char* filename);
+int blit_cube_texture(int sheet_id, int source_x, int source_y);
+void save_cube_texture();
 
 //item texture sheet api
-int LUA_load_item_texture_sheet(const char* filename);
-int LUA_load_item_texture_sheet(struct SDL_Surface* surface);
-int LUA_blit_item_texture(int sheet_id, int source_x, int source_y);
-void LUA_save_item_texture();
+int load_item_texture_sheet(const char* filename);
+int load_item_texture_sheet(struct SDL_Surface* surface);
+int blit_item_texture(int sheet_id, int source_x, int source_y);
+void save_item_texture();

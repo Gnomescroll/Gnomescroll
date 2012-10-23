@@ -464,7 +464,7 @@ void test_octave_2d()
     //m.save_octaves2(8, "test");
 }
 
-void test_octave_2d_map_gen(int tile)
+void test_octave_2d_map_gen(CubeID tile)
 {
     //return;
 

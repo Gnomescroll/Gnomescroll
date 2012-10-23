@@ -136,7 +136,7 @@ int get_lighting(int x,int y,int z, int side)
     return main_map->get_element(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]).light;
 }
 
-inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
+inline int _is_occluded_transparent(int x,int y,int z, int side_num, CubeID _cube_id) 
 {
     int i;
     i = 3*side_num;
@@ -144,9 +144,9 @@ inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_i
     y += s_array[i+1];
     z += s_array[i+2];
 
-    int tile_id =  t_map::get(x,y,z) ;
-    if(tile_id == _tile_id) return 1;
-    return isActive(tile_id);
+    CubeID cube_id =  t_map::get(x,y,z) ;
+    if (cube_id == _cube_id) return 1;
+    return isActive(cube_id);
 }
 
 #define AO_DEBUG 0
@@ -466,7 +466,7 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
 
     //_set_quad_color_flat(v_list, offset, x, y, z, side);
 /*
-    switch( t_map::cube_list[tile_id].color_type )
+    switch( t_map::cube_properties[tile_id].color_type )
     {
         case 0:
             _set_quad_color_default(v_list, offset, x, y, z, side);
@@ -593,11 +593,11 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                 int _y = y + chunk->ypos;
 
                 struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z); //faster
-                int tile_id = element.block;
+                CubeID cube_id = (CubeID)element.block;
 
-                if( !isActive(tile_id) ) continue;
+                if( !isActive(cube_id) ) continue;
 
-                if( !isTransparent(tile_id) )
+                if( !isTransparent(cube_id) )
                 {
                     //for each side
                     //for(int i=0; i<6; i++) if(! _is_occluded(_x,_y,_z,i)) push_buffer1(i, _x,_y,_z, element);
@@ -615,7 +615,8 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                     //active block that does not occlude
                     for(int side_num=0; side_num<6; side_num++) 
                     {
-                        if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id))  push_buffer2(side_num, _x,_y,_z, element);
+                        if(!_is_occluded_transparent(_x,_y,_z,side_num, (CubeID)cube_id))
+                            push_buffer2(side_num, _x,_y,_z, element);
                     }
                 }
 

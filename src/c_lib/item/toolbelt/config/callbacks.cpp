@@ -136,8 +136,8 @@ void select_facing_block(ItemID item_id, int item_type)
 
     int* b = ClientState::playerAgent_state.facing_block();
     if (b == NULL) return;
-    int block_type = t_map::get(b[0], b[1], b[2]);
-    HudCubeSelector::cube_selector.set_block_type(block_type);
+    CubeID cube_id = t_map::get(b[0], b[1], b[2]);
+    HudCubeSelector::cube_selector.set_block_type(cube_id);
 }
 
 #endif

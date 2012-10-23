@@ -119,7 +119,7 @@ static struct { int x,y,z; } last_requested_block = {-1};
 static unsigned int last_request_id = 0;
 static int requested_block_health = 0;
 
-int requested_block_type = 0;
+CubeID requested_cube_id = NULL_CUBE;
 unsigned int requested_block_damage = 0;
 
 bool is_last_requested_block(int x, int y, int z)
@@ -143,8 +143,8 @@ void request_block_damage(int x, int y, int z)
     last_requested_block.y = y;
     last_requested_block.z = z;
     
-    requested_block_type = t_map::get(x,y,z);
-    requested_block_health = maxDamage(requested_block_type);
+    requested_cube_id = t_map::get(x,y,z);
+    requested_block_health = maxDamage(requested_cube_id);
     
     // send packet
     request_block_damage_CtoS msg;
@@ -208,7 +208,7 @@ void destroy_item_container_block(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
-    int val = get(x,y,z);
+    CubeID val = get(x,y,z);
     if (Item::get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;
 
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];

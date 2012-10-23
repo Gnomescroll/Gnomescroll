@@ -33,7 +33,7 @@ int get_requested_block_remaining_health();
 void get_requested_block_position(int* x, int* y, int* z);
 bool is_last_requested_block(int x, int y, int z);
 extern unsigned int requested_block_damage;
-extern int requested_block_type;
+extern CubeID requested_cube_id;
 #endif
 
 #if DC_SERVER

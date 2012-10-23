@@ -21,8 +21,8 @@ void init_map_serializer()
     block_serializer = new BlockSerializer;
 
     GS_ASSERT(cube_id_map == NULL);
-    cube_id_map = (int*)malloc(t_map::MAX_CUBES * sizeof(int));
-    for (int i=0; i<t_map::MAX_CUBES; cube_id_map[i++] = -1);
+    cube_id_map = (int*)malloc(MAX_CUBES * sizeof(int));
+    for (int i=0; i<MAX_CUBES; cube_id_map[i++] = -1);
 }
 
 void teardown_map_serializer()
@@ -228,9 +228,9 @@ bool save_map_palette_file()
 
     char buf[MAP_PALETTE_LINE_LENGTH+2] = {'\0'};
 
-    for (int i=0; i<t_map::MAX_CUBES; i++)
+    for (int i=0; i<MAX_CUBES; i++)
     {
-        const char* cube_name = t_map::get_cube_name(i);
+        const char* cube_name = t_map::get_cube_name((CubeID)i);
         if (cube_name == NULL) continue;
         int len = snprintf(buf, MAP_PALETTE_LINE_LENGTH+1, MAP_PALETTE_FMT, cube_name, i);
         GS_ASSERT(len >= 0 && (size_t)len < MAP_PALETTE_LINE_LENGTH+1);
@@ -261,7 +261,7 @@ static void load_map_restore_containers()
         for (int i=0; i<16; i++)
         for (int j=0; j<16; j++)
         {
-            int block = mp->e[16*16*k + 16*j + i].block;
+            CubeID block = (CubeID)mp->e[16*16*k + 16*j + i].block;
             if (!isItemContainer(block)) continue;
             
             ItemContainerType container_type = Item::get_container_type_for_block(block);

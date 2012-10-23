@@ -14,7 +14,7 @@
 
 #include <common/defines.h>
 #include <math.h>
-#include <common/random.h>
+#include <common/random.hpp>
 
 #include <item/toolbelt/_interface.hpp>
 #include <item/common/constants.hpp>
@@ -987,7 +987,7 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float
 {
     Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();
-    int tile = 0;
+    CubeID tile = NULL_CUBE;
     Hitscan::HitscanTargetTypes target = Hitscan::terrain(p.x, p.y, p.z, v.x, v.y, v.z, solid_pos, distance, side, &tile);
     if (target != Hitscan::HITSCAN_TARGET_BLOCK) return 0;
     open_pos[0] = translate_point(solid_pos[0] + side[0]);

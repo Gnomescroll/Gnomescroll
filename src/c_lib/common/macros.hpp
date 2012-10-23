@@ -41,8 +41,8 @@
 #define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT((spawner_id) == BASE_SPAWN_ID || ((spawner_id) >= 0 && (spawner_id) < MAX_SPAWNERS));
 #define IF_INVALID_SPAWNER_ID(spawner_id) if (unlikely((spawner_id) != BASE_SPAWN_ID && ((spawner_id) < 0 || (spawner_id) >= MAX_SPAWNERS)))
 
-#define ASSERT_VALID_CUBE_ID(cube_id) GS_ASSERT((cube_id) >= 0 && (cube_id) < t_map::MAX_CUBES);
-#define IF_INVALID_CUBE_ID(cube_id) if (unlikely((cube_id) < 0 || (cube_id) >= t_map::MAX_CUBES))
+#define ASSERT_VALID_CUBE_ID(cube_id) GS_ASSERT((cube_id) >= 0 && (cube_id) < MAX_CUBES);
+#define IF_INVALID_CUBE_ID(cube_id) if (unlikely((cube_id) < 0 || (cube_id) >= MAX_CUBES))
 
 #define GS_ABORT() \
     do \

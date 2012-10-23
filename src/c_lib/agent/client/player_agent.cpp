@@ -502,7 +502,7 @@ int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], int si
     if (agent_camera == NULL) return 0;
     Vec3 p = agent_camera->get_position();
     Vec3 v = agent_camera->forward_vector();
-    int tile = 0;
+    CubeID tile = NULL_CUBE;
     Hitscan::HitscanTargetTypes target = Hitscan::terrain(p.x, p.y, p.z, v.x, v.y, v.z, solid_pos, distance, side, &tile);
     if (target != Hitscan::HITSCAN_TARGET_BLOCK) return 0;
     open_pos[0] = translate_point(solid_pos[0] + side[0]);

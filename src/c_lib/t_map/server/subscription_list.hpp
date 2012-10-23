@@ -62,7 +62,7 @@ class MAP_CHUNK_SUBSCRIPTION
         chunk_aliases[i] = chunk_aliases[subscriber_num];
     }
 
-    void send_block_action(int x, int y, int z, int block, int action)
+    void send_block_action(int x, int y, int z, CubeID cube_id, int action)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
@@ -71,7 +71,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.block = block;
+        msg.cube_id = cube_id;
         msg.action = action;
 
         for(int i=0; i < subscriber_num; i++)
@@ -80,7 +80,7 @@ class MAP_CHUNK_SUBSCRIPTION
         }
     }
 
-    void send_set_block(int x, int y, int z, int block)
+    void send_set_block(int x, int y, int z, CubeID cube_id)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
@@ -89,7 +89,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.block = block;
+        msg.cube_id = cube_id;
 
         for(int i=0; i < subscriber_num; i++)
         {
@@ -97,7 +97,7 @@ class MAP_CHUNK_SUBSCRIPTION
         }
     }
 
-    void send_set_block_palette(int x, int y, int z, int block, int palette)
+    void send_set_block_palette(int x, int y, int z, CubeID cube_id, int palette)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
@@ -106,7 +106,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.block = block;
+        msg.cube_id = cube_id;
         msg.palette = palette;
 
         for(int i=0; i < subscriber_num; i++)
@@ -180,10 +180,8 @@ class Terrain_map_subscription
         delete[] chunk;
     }
 
-    void send_block_action(int x, int y, int z, int value, int action)
+    void send_block_action(int x, int y, int z, CubeID value, int action)
     {
-        x = translate_point(x);
-        y = translate_point(y);
         GS_ASSERT(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
 
         int _x = x/16;
@@ -192,24 +190,24 @@ class Terrain_map_subscription
         chunk[xchunk_dim*_y + _x].send_block_action(x,y,z,value,action);
     }
 
-    void send_set_block(int x, int y, int z, int block)
+    void send_set_block(int x, int y, int z, CubeID cube_id)
     {
         GS_ASSERT(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
 
         int _x = x/16;
         int _y = y/16;
 
-        chunk[xchunk_dim*_y + _x].send_set_block(x,y,z,block);
+        chunk[xchunk_dim*_y + _x].send_set_block(x,y,z,cube_id);
     }
 
-    void send_set_block_palette(int x, int y, int z, int block, int palette)
+    void send_set_block_palette(int x, int y, int z, CubeID cube_id, int palette)
     {
         GS_ASSERT(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
 
         int _x = x/16;
         int _y = y/16;
 
-        chunk[xchunk_dim*_y + _x].send_set_block_palette(x,y,z,block,palette);
+        chunk[xchunk_dim*_y + _x].send_set_block_palette(x,y,z,cube_id,palette);
     }
 
     void container_block_create(int chunk_index, int x, int y, int z, int container_type, int container_id)

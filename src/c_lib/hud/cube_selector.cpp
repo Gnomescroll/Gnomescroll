@@ -22,25 +22,26 @@ void CubeSelector::init()
     this->cubes = (struct cube_select_element*)malloc(N_CUBES * sizeof(struct cube_select_element));
     for(int i=0;i<N_CUBES;i++)
     {
-        cubes[i].cube_id = 255;
+        cubes[i].cube_id = NULL_CUBE;
         cubes[i].tex_id = 1;
     }
 }
 
-void CubeSelector::set_block_selector(int pos, int cube_id, int tex_id)
+void CubeSelector::set_block_selector(int pos, CubeID cube_id, int tex_id)
 {
+    GS_ASSERT(cube_id != NULL_CUBE);
     GS_ASSERT(tex_id >= 0);
     GS_ASSERT(pos >= 0 && pos < 64);
     if (tex_id < 0) return;
     if (pos < 0 || pos >= 64) return;
-    
-    GS_ASSERT(cubes[pos].cube_id == 255);
+    if (cube_id == NULL_CUBE) return;
+
+    GS_ASSERT(cubes[pos].cube_id == NULL_CUBE);
     cubes[pos].cube_id = cube_id;
 
-    if (cube_id != 255)
-        for (int i=0; i<64; i++)
-            if (cubes[i].tex_id != 1)
-                GS_ASSERT(cubes[i].tex_id != tex_id); 
+    for (int i=0; i<64; i++)
+        if (cubes[i].tex_id != 1)
+            GS_ASSERT(cubes[i].tex_id != tex_id); 
     
     cubes[pos].tex_id = tex_id;
 }
@@ -51,7 +52,7 @@ void CubeSelector::set_position(float x, float y)
     this->y = y;
 }
 
-int CubeSelector::get_active_id()    //get the cube selected by hud
+CubeID CubeSelector::get_active_id()    //get the cube selected by hud
 {
     return cubes[this->get_active_pos()].cube_id;
 }
@@ -219,20 +220,20 @@ void CubeSelector::vertical(bool up)
     this->set_active_pos(n);
 }
 
-bool CubeSelector::set_block_type(int block_type)
+bool CubeSelector::set_block_type(CubeID cube_id)
 {
     GS_ASSERT(this->cubes != NULL);
     if (this->cubes == NULL) return false;
     
-    ASSERT_VALID_CUBE_ID(block_type);
-    GS_ASSERT(t_map::isInUse(block_type));
-    GS_ASSERT(!t_map::isErrorBlock(block_type));
-    if (!t_map::isInUse(block_type) || t_map::isErrorBlock(block_type)) return false;
-    IF_INVALID_CUBE_ID(block_type) return false;
+    ASSERT_VALID_CUBE_ID(cube_id);
+    GS_ASSERT(t_map::isInUse(cube_id));
+    GS_ASSERT(cube_id != ERROR_CUBE);
+    if (!t_map::isInUse(cube_id) || cube_id == ERROR_CUBE) return false;
+    IF_INVALID_CUBE_ID(cube_id) return false;
 
     for (int i=0; i<this->n_x*this->n_y; i++)
     {
-        if (this->cubes[i].cube_id == block_type)
+        if (this->cubes[i].cube_id == cube_id)
         {
             this->set_active_pos(i);
             return true;
@@ -261,7 +262,7 @@ void init()
 
 }
 
-void set_cube_hud(int hudx, int hudy, int cube_id, int tex_id)
+void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id)
 {
     if(hudx < 1 || hudy < 1 || hudx > 8 || hudy > 8)
     {

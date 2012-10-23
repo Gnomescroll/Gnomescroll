@@ -19,7 +19,7 @@ class SynthesizerItem* synthesizer_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
 class SmeltingRecipe* smelting_recipe_array = NULL;
 
-ItemContainerType container_block_types[t_map::MAX_CUBES]; // maps cube_id -> container type
+ItemContainerType container_block_types[MAX_CUBES]; // maps cube_id -> container type
 
 // buffers for condensing craft bench inputs to unique type,count pairs
 int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
@@ -30,7 +30,7 @@ int craft_recipes_possible_count = 0;
 
 void init_properties()
 {
-    for (int i=0; i<t_map::MAX_CUBES; container_block_types[i++] = CONTAINER_TYPE_NONE);
+    for (int i=0; i<MAX_CUBES; container_block_types[i++] = CONTAINER_TYPE_NONE);
 
     GS_ASSERT(item_attributes == NULL);
     item_attributes = new ItemAttribute[MAX_ITEM_TYPES];
@@ -164,8 +164,8 @@ int get_block_type_id(int item_type)
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
-    GS_ASSERT(attr->block_type_id != -1)
-    return attr->block_type_id;
+    GS_ASSERT(attr->cube_id != -1)
+    return attr->cube_id;
 }
 
 MechType get_mech_type(int item_type)
@@ -206,15 +206,15 @@ float get_weapon_range(int weapon_type)
     return attr->firing_range;
 }
 
-int get_item_block_damage(int weapon_type, int block_type)
+int get_item_block_damage(int weapon_type, CubeID cube_id)
 {
-    ASSERT_VALID_CUBE_ID(block_type);
-    IF_INVALID_CUBE_ID(block_type) return 0;
+    ASSERT_VALID_CUBE_ID(cube_id);
+    IF_INVALID_CUBE_ID(cube_id) return 0;
     if (weapon_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
-    return attr->block_damage[block_type];
+    return attr->block_damage[cube_id];
 }
 
 int get_item_object_damage(int weapon_type)
@@ -545,11 +545,11 @@ int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count)
     return recipe->output_stack;
 }
 
-ItemContainerType get_container_type_for_block(int block_value)
+ItemContainerType get_container_type_for_block(CubeID cube_id)
 {
-    GS_ASSERT(block_value >= 0 && block_value < t_map::MAX_CUBES);
-    if (block_value < 0 || block_value >= t_map::MAX_CUBES) return CONTAINER_TYPE_NONE;
-    return container_block_types[block_value];
+    GS_ASSERT(cube_id >= 0 && cube_id < MAX_CUBES);
+    if (cube_id < 0 || cube_id >= MAX_CUBES) return CONTAINER_TYPE_NONE;
+    return container_block_types[cube_id];
 }
 
 

@@ -593,8 +593,8 @@ inline void hit_block_CtoS::handle()
     //t_map::TerrainModificationAction tma = Item::get_item_terrain_modification_enum(weapon_type);
 
     if (z <= 0) return; // dont damage floor
-    int block = t_map::get(x,y,z);
-    if (block == 0) return;
+    CubeID block = t_map::get(x,y,z);
+    if (block == EMPTY_CUBE) return;
     int block_damage = Item::get_item_block_damage(weapon_type, block);
     if (block_damage <= 0) return;
     t_map::apply_damage_broadcast(x,y,z, block_damage, t_map::TMA_PICK);
@@ -687,7 +687,7 @@ inline void hitscan_block_CtoS::handle()
     int collision[3];
     int pre_collision[3];
     int side[3];
-    int cube;
+    CubeID cube = EMPTY_CUBE;
     const float max_l = 500.0f;
     float distance=0.0f;
 
@@ -716,8 +716,8 @@ inline void hitscan_block_CtoS::handle()
     // WARNING:
     // *must* call this after raycasting, or you will be raycasting altered terrain
     if (p.z <= 0) return; // dont damage floor
-    int block = t_map::get(p.x, p.y, p.z);
-    if (block == 0) return;
+    CubeID block = t_map::get(p.x, p.y, p.z);
+    if (block == EMPTY_CUBE) return;
     static int laser_rifle_type = Item::get_item_type("laser_rifle");
     int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, block);
     if (weapon_block_damage <= 0) return;
@@ -830,11 +830,9 @@ inline void agent_set_block_CtoS::handle()
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
-    int val = attr->block_type_id;
+    CubeID cube_id = attr->cube_id;
 
-    IF_INVALID_CUBE_ID(val) return;
-    if (t_map::isErrorBlock(val)) return;
-    if (!t_map::isInUse(val)) return;
+    if (!t_map::isValidCube(cube_id)) return;
     
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
@@ -844,11 +842,11 @@ inline void agent_set_block_CtoS::handle()
     z = clamp_z(z);
 
     // dont set on existing block
-    if (!t_map::block_can_be_placed(x,y,z,val)) return;
+    if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
 
     // check this player first, most likely to be colliding
     bool collides = false;
-    t_map::set_fast(x,y,z, val); // set temporarily to test against
+    t_map::set_fast(x,y,z, cube_id); // set temporarily to test against
     if (agent_collides_terrain(a))
         collides = true;
     else
@@ -864,24 +862,24 @@ inline void agent_set_block_CtoS::handle()
             }
         }
     }
-    t_map::set_fast(x,y,z,0);  // unset
+    t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
 
     if (collides) return;
     
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
-    t_map::broadcast_set_block(x,y,z, val);
+    t_map::broadcast_set_block(x,y,z, cube_id);
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();
 
-    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_action(x,y,z, cube_id, t_map::TMA_PLACE_BLOCK);
 
     /*
         Handle Special Block Placement
     */
-    static int _control_node = t_map::dat_get_cube_id("control_node");
+    static int _control_node = t_map::get_cube_id("control_node");
 
-    if(val == _control_node) t_map::add_control_node(x,y,z);
+    if(cube_id == _control_node) t_map::add_control_node(x,y,z);
 }
 
 //#if !PRODUCTION
@@ -894,9 +892,9 @@ inline void admin_set_block_CtoS::handle()
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
-    IF_INVALID_CUBE_ID(val) return;
-    if (t_map::isErrorBlock(val)) return;
-    if (!t_map::isInUse(val)) return;
+    CubeID cube_id = (CubeID)this->val;
+    
+    if (!t_map::isValidCube((CubeID)cube_id)) return;
 
     x = translate_point(x);
     y = translate_point(y);
@@ -904,10 +902,10 @@ inline void admin_set_block_CtoS::handle()
 
     // TODO -- when this is a /real/ admin tool, remove this check
     // since we're giving it to players, do this check
-    if (!t_map::block_can_be_placed(x,y,z,val)) return;
+    if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
 
     // check this player first, most likely to be colliding
-    t_map::set_fast(x,y,z, val); // set temporarily to test against
+    t_map::set_fast(x,y,z, cube_id); // set temporarily to test against
     bool collides = agent_collides_terrain(a);
     if (!collides)
     {   // check the rest of the players
@@ -922,16 +920,16 @@ inline void admin_set_block_CtoS::handle()
             }
         }
     }
-    t_map::set_fast(x,y,z,0);  // unset
+    t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
 
     if (collides) return;
     
-    t_map::broadcast_set_block(x,y,z, val);
+    t_map::broadcast_set_block(x,y,z, cube_id);
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();
 
-    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_action(x,y,z, cube_id, t_map::TMA_PLACE_BLOCK);
 }
 //#endif
 

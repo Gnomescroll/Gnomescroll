@@ -22,7 +22,7 @@ class ItemAttribute
         int sprite;
 
         //IG_PLACER
-        int block_type_id;   //id of block type that it creates
+        CubeID cube_id;   //id of block type that it creates
 
         //IG_MECH_PLACER_PLAYER
         MechType mech_type;
@@ -39,7 +39,7 @@ class ItemAttribute
         // weapons
         float firing_range;
         int firing_rate;
-        int block_damage[t_map::MAX_CUBES];
+        int block_damage[MAX_CUBES];
 
         int object_damage;       // if this is nonzero it will be used, otherwise randrange will be used
         int object_damage_min;  // for randrange(min,max);
@@ -77,8 +77,8 @@ class ItemAttribute
 
         memset(this->name, 0, sizeof(this->name));
         memset(this->pretty_name, 0, sizeof(this->pretty_name));
-        block_type_id = t_map::ERROR_CUBE; // error value
-        mech_type = NULL_MECH_TYPE;  // error value
+        cube_id = NULL_CUBE;
+        mech_type = NULL_MECH_TYPE;
 
         max_durability = NULL_DURABILITY;
         max_stack_size = 1;
@@ -88,12 +88,12 @@ class ItemAttribute
         firing_range = DEFAULT_FIRING_RANGE;
         firing_rate = 6;
         // match defaults with fist
-        for (int i=0; i<t_map::MAX_CUBES; i++)
+        for (int i=0; i<MAX_CUBES; i++)
         {
-            if (t_map::get_cube_material(i) == CUBE_MATERIAL_DIRT)
+            if (t_map::get_cube_material((CubeID)i) == CUBE_MATERIAL_DIRT)
                 this->block_damage[i] = 2;
             else
-            if (t_map::get_cube_material(i) == CUBE_MATERIAL_DECORATION)
+            if (t_map::get_cube_material((CubeID)i) == CUBE_MATERIAL_DECORATION)
                 this->block_damage[i] = 4;
             else
                 this->block_damage[i] = 1;

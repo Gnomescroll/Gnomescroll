@@ -5,7 +5,7 @@
 #include <physics/ray_trace/hitscan.hpp>
 #include <physics/ray_trace/handlers.hpp>
 #include <entity/network/packets.hpp>
-#include <common/random.h>
+#include <common/random.hpp>
 #include <agent/_interface.hpp>
 
 namespace Components

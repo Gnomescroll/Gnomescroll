@@ -9,7 +9,7 @@
 #include <t_map/t_properties.hpp>
 
 #include <entity/constants.hpp>
-#include <common/random.h>
+#include <common/random.hpp>
 
 #include <particle/_interface.hpp>
 

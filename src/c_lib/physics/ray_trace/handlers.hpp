@@ -21,7 +21,7 @@ struct HitscanTarget
     int part;
 
     // terrain
-    int cube;
+    CubeID cube;
     int side;
 };
 
