@@ -86,7 +86,7 @@ static void set_mob_robot_box_properties(Object* object)
     target->attacker_properties.agent_damage_max = MONSTER_BOX_AGENT_DAMAGE_MAX;
     //target->attacker_properties.voxel_damage_radius = MONSTER_BOX_VOXEL_DAMAGE_RADIUS;
     target->attacker_properties.agent_protection_duration = MONSTER_BOX_AGENT_IMMUNITY_DURATION;
-    target->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
+    target->attacker_properties.terrain_modification_action = TMA_MONSTER_BOX;
     target->fire_delay_max = MONSTER_BOX_FIRE_DELAY_MAX;
 
     using Components::MotionTargetingComponent;

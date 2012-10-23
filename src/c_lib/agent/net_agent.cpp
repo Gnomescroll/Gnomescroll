@@ -590,14 +590,14 @@ inline void hit_block_CtoS::handle()
     msg.broadcast();
     
     // TODO -- load this from dat
-    //t_map::TerrainModificationAction tma = Item::get_item_terrain_modification_enum(weapon_type);
+    //TerrainModificationAction tma = Item::get_item_terrain_modification_enum(weapon_type);
 
     if (z <= 0) return; // dont damage floor
     CubeID block = t_map::get(x,y,z);
     if (block == EMPTY_CUBE) return;
     int block_damage = Item::get_item_block_damage(weapon_type, block);
     if (block_damage <= 0) return;
-    t_map::apply_damage_broadcast(x,y,z, block_damage, t_map::TMA_PICK);
+    t_map::apply_damage_broadcast(x,y,z, block_damage, TMA_PICK);
 }
 
 inline void hitscan_object_CtoS::handle()
@@ -721,7 +721,7 @@ inline void hitscan_block_CtoS::handle()
     static int laser_rifle_type = Item::get_item_type("laser_rifle");
     int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, block);
     if (weapon_block_damage <= 0) return;
-    t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, t_map::TMA_LASER);
+    t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, TMA_LASER);
 }
 
 inline void hitscan_none_CtoS::handle()
@@ -872,7 +872,7 @@ inline void agent_set_block_CtoS::handle()
     msg.id = a->id;
     msg.broadcast();
 
-    t_map::broadcast_set_block_action(x,y,z, cube_id, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
 
     /*
         Handle Special Block Placement
@@ -929,7 +929,7 @@ inline void admin_set_block_CtoS::handle()
     msg.id = a->id;
     msg.broadcast();
 
-    t_map::broadcast_set_block_action(x,y,z, cube_id, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
 }
 //#endif
 

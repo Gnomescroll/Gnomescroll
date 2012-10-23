@@ -210,7 +210,7 @@ static class Objects::Object* place_object(AgentID agent_id, ItemID item_id, int
     
     // must be placed on solid block
     if (b[2] <= 0) return NULL;  // can't place on nothing
-    if (!isSolid(b[0], b[1], b[2]-1)) return NULL;
+    if (!t_map::isSolid(b[0], b[1], b[2]-1)) return NULL;
     
     // make sure will fit height
     int h = (int)ceil(object_height);
@@ -297,7 +297,7 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
     
     // must be placed on solid block
     if (b[2] <= 0) return;  // can't place on nothing
-    if (!isSolid(b[0], b[1], b[2]-1)) return;
+    if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
 
     MechType mech_type = Item::get_mech_type(item_type);
 

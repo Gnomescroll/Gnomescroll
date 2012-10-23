@@ -200,7 +200,7 @@ void load_block_dat()
     cube_def(SolidCube, "bedrock");
     iso_texture(t1, 10,7);
     push_texture();
-    set_max_damage(255);
+    set_max_damage(INVINCIBLE_CUBE_DAMAGE);
 
     cube_def(SolidCube, "control_node", CUBE_MATERIAL_DECORATION);
     iso_texture(t1, 9,4);
@@ -519,7 +519,8 @@ void load_block_dat()
     side_texture(E, error_block);
     push_texture();
 
-    end_cube_def();
+    end_cube_def();  // finalize
+    verify_config(); // validate
 }
 
 #undef RUINS_DMG

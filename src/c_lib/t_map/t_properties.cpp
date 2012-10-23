@@ -81,36 +81,11 @@ inline bool isValidCube(CubeID cube_id)
     return (cube_id != ERROR_CUBE && cube_id != EMPTY_CUBE && cube_id != NULL_CUBE);
 }
 
-}   // t_map
-
-/*
-    Properties by cube id
-*/
-
-namespace t_map
-{
-
-bool isErrorBlock(CubeID id)
-{
-    return (id == ERROR_CUBE);
-}
-
 bool isInUse(CubeID id)
 {
     ASSERT_VALID_CUBE_ID(id);
     IF_INVALID_CUBE_ID(id) return false;
     return cube_properties[id].in_use;
-}
-
-}   // t_map
-
-// TODO -- put in t_map namespace
-
-bool isActive(CubeID id) 
-{
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return false;
-    return t_map::cube_properties[id].active;
 }
 
 bool isSolid(CubeID id) 
@@ -122,15 +97,19 @@ bool isSolid(CubeID id)
 
 bool isOccludes(CubeID id) 
 {
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return false;
+    // don't check id because this shouldnt be used publicly
     return t_map::cube_properties[id].occludes;
+}
+
+bool isMagic(CubeID id)
+{
+    // don't check id because this shouldnt be used publicly
+    return t_map::cube_properties[id].magic;
 }
 
 bool isTransparent(CubeID id)
 {
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return false;
+    // don't check id because this shouldnt be used publicly
     return t_map::cube_properties[id].transparent;
 }
 
@@ -148,13 +127,6 @@ int maxDamage(CubeID id)
     return t_map::cube_properties[id].max_damage;
 }
 
-// Properties by coordinates
-
-bool isActive(int x, int y, int z)
-{
-    return t_map::cube_properties[t_map::get(x,y,z)].active;
-}
-
 bool isSolid(int x, int y, int z)
 {
     return t_map::cube_properties[t_map::get(x,y,z)].solid;
@@ -163,6 +135,11 @@ bool isSolid(int x, int y, int z)
 bool isOccludes(int x, int y, int z)
 {
     return t_map::cube_properties[t_map::get(x,y,z)].occludes;
+}
+
+bool isMagic(int x, int y, int z)
+{
+    return t_map::cube_properties[t_map::get(x,y,z)].magic;
 }
 
 bool isItemContainer(int x, int y, int z)
@@ -174,3 +151,5 @@ int maxDamage(int x, int y, int z)
 {
     return t_map::cube_properties[t_map::get(x,y,z)].max_damage;
 }
+
+}   // t_map

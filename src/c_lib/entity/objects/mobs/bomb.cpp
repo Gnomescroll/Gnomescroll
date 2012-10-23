@@ -106,7 +106,7 @@ static void set_mob_bomb_properties(Object* object)
     explode->damage = MONSTER_BOMB_EXPLOSION_DAMAGE;
     explode->block_destruction_radius = MONSTER_BOMB_BLOCK_DESTRUCTION_RADIUS;
     explode->block_damage = MONSTER_BOMB_BLOCK_DAMAGE;
-    explode->terrain_modification_action = t_map::TMA_MONSTER_BOMB;
+    explode->terrain_modification_action = TMA_MONSTER_BOMB;
 
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);

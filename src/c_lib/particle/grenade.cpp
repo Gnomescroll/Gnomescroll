@@ -193,7 +193,7 @@ void Grenade::damage_blocks(int multiplier)
 {
     #if DC_SERVER
     using t_map::apply_damage_broadcast;
-    const t_map::TerrainModificationAction action = t_map::TMA_GRENADE;
+    const TerrainModificationAction action = TMA_GRENADE;
 
     Vec3 position = this->get_position();
     int mx = (int)position.x;

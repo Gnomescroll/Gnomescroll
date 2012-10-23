@@ -639,7 +639,7 @@ void create_container_block_CtoS::handle()
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
 
-    t_map::broadcast_set_block_action(x,y,z, val, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_action(x,y,z, val, TMA_PLACE_BLOCK);
     t_map::broadcast_set_block_palette(x,y,z,val,orientation);
 
     init_container(container);
@@ -700,7 +700,7 @@ void admin_create_container_block_CtoS::handle()
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
 
-    t_map::broadcast_set_block_action(x,y,z, cube_id, t_map::TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
     t_map::broadcast_set_block_palette(x,y,z,cube_id,orientation);
 
     init_container(container);

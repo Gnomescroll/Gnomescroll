@@ -3,15 +3,11 @@
 #include <physics/vec3.hpp>
 
 #include <common/defines.h>
+#include <t_map/common/types.hpp>
 #include <t_map/common/constants.hpp>
 #include <t_map/common/map_element.hpp>
 
-#include "t_properties.hpp"
-
-struct MapDimension
-{
-    int x,y,z;
-};
+#include <t_map/t_properties.hpp>
 
 extern struct MapDimension map_dim;
 
@@ -19,19 +15,6 @@ namespace t_map
 {
 
 extern class Terrain_map* main_map;
-
-typedef enum TerrainModificationAction
-{
-    TMA_NONE=0,
-    TMA_PICK,
-    TMA_APPLIER,
-    TMA_GRENADE,
-    TMA_LASER,
-    TMA_TURRET,
-    TMA_MONSTER_BOX,
-    TMA_MONSTER_BOMB,
-    TMA_PLACE_BLOCK,
-} TerrainModificationAction;
  
 void init_t_map();
 void end_t_map();
@@ -58,7 +41,6 @@ void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action)
 void broadcast_set_block(int x, int y, int z, CubeID cube_id);
 void broadcast_set_block_palette(int x, int y, int z, CubeID cube_id, int palette);
 void broadcast_set_palette(int x, int y, int z, int palette);
-
 #endif
 
 void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk

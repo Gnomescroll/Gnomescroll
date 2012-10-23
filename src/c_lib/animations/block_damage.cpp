@@ -140,7 +140,7 @@ void render_block_damage()
     if (x < 0 || y < 0 || z < 0) return;
     CubeID b = t_map::get(x,y,z);
     if (b <= 0) return;
-    if (maxDamage(b) == 0xff) return;   // dont render damage for invincible blocks
+    if (t_map::maxDamage(b) == INVINCIBLE_CUBE_DAMAGE) return;   // dont render damage for invincible blocks
     
     Vec3 dest = vec3_add(vec3_init(x,y,z), vec3_init(0.5f, 0.5f, 0.5f));
     float dist = vec3_length(vec3_sub(dest, current_camera_position));
@@ -151,7 +151,7 @@ void render_block_damage()
     if (dist > 32.0f) margin *= 2;
 
     int dmg = t_map::requested_block_damage;
-    int max_dmg = maxDamage(t_map::requested_cube_id);
+    int max_dmg = t_map::maxDamage(t_map::requested_cube_id);
     dmg += predicted_block_damage;
     if (dmg < 0) dmg = 0;
     if (dmg >= max_dmg) dmg = max_dmg;

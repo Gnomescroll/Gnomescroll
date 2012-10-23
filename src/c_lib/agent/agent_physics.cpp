@@ -33,10 +33,10 @@ inline bool on_ground(float box_r, float x, float y, float z)
 
     int zz = z - GROUND_MARGIN;
 
-    if (isSolid(x_max,y_max,zz) || //north, west
-         isSolid(x_max,y_min,zz) || //north, east
-         isSolid(x_min,y_min,zz) || //south, east
-         isSolid(x_min,y_max,zz))   //south, west
+    if (t_map::isSolid(x_max,y_max,zz) || //north, west
+         t_map::isSolid(x_max,y_min,zz) || //north, east
+         t_map::isSolid(x_min,y_min,zz) || //south, east
+         t_map::isSolid(x_min,y_max,zz))   //south, west
         return true;
     return false;
 }
@@ -63,10 +63,10 @@ inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
         if (i == n_z-1)
             zz = (int)(z + box_h);
 
-        if( isSolid(x_max,y_max,zz) || //north, west
-            isSolid(x_max,y_min,zz) || //north, east
-            isSolid(x_min,y_min,zz) || //south, east
-            isSolid(x_min,y_max,zz) )  //south, west
+        if( t_map::isSolid(x_max,y_max,zz) || //north, west
+            t_map::isSolid(x_max,y_min,zz) || //north, east
+            t_map::isSolid(x_min,y_min,zz) || //south, east
+            t_map::isSolid(x_min,y_max,zz) )  //south, west
         return true;
     }
     return false;
@@ -92,10 +92,10 @@ inline bool collision_check_final_current(float box_r, float box_h, float x, flo
     {
         int zz = (int)(z + i*step_size);
 
-        if( isSolid(x_max,y_max,zz) || //north, west
-            isSolid(x_max,y_min,zz) || //north, east
-            isSolid(x_min,y_min,zz) || //south, east
-            isSolid(x_min,y_max,zz) )  //south, west
+        if( t_map::isSolid(x_max,y_max,zz) || //north, west
+            t_map::isSolid(x_max,y_min,zz) || //north, east
+            t_map::isSolid(x_min,y_min,zz) || //south, east
+            t_map::isSolid(x_min,y_max,zz) )  //south, west
         return true;
     }
     return false;
@@ -122,10 +122,10 @@ inline bool collision_check_final_xy(float box_r, float box_h, float x, float y,
     {
         int zz = (int)(z + i*step_size);
 
-        if( isSolid(x_max,y_max,zz) || //north, west
-            isSolid(x_max,y_min,zz) || //north, east
-            isSolid(x_min,y_min,zz) || //south, east
-            isSolid(x_min,y_max,zz) )  //south, west
+        if( t_map::isSolid(x_max,y_max,zz) || //north, west
+            t_map::isSolid(x_max,y_min,zz) || //north, east
+            t_map::isSolid(x_min,y_min,zz) || //south, east
+            t_map::isSolid(x_min,y_max,zz) )  //south, west
         return true;   
     }
     return false;
@@ -158,10 +158,10 @@ inline bool collision_check_final_z(float box_r, float box_h, float x, float y, 
         if (zz > (z+box_h))
             zz = (int)(z + box_h);
 
-        if(isSolid(x_max,y_max,zz) || //north, west
-            isSolid(x_max,y_min,zz) || //north, east
-            isSolid(x_min,y_min,zz) || //south, east
-            isSolid(x_min,y_max,zz))  //south, west
+        if(t_map::isSolid(x_max,y_max,zz) || //north, west
+            t_map::isSolid(x_max,y_min,zz) || //north, east
+            t_map::isSolid(x_min,y_min,zz) || //south, east
+            t_map::isSolid(x_min,y_max,zz))  //south, west
             return true;
     }
 

@@ -93,10 +93,10 @@ bool VerletComponent::bounce_box(float gravity)
     struct Vec3 old_velocity = this->velocity;
     
     struct Vec3 a = vec3_init(0.0f, 0.0f, gravity);
-    if (isSolid(translate_point(old_position.x + this->box_radius), old_position.y,                           old_position.z)) a.x += gravity;
-    if (isSolid(translate_point(old_position.x - this->box_radius), old_position.y,                           old_position.z)) a.x -= gravity;
-    if (isSolid(old_position.x,                           translate_point(old_position.y + this->box_radius), old_position.z)) a.y += gravity;
-    if (isSolid(old_position.x,                           translate_point(old_position.y - this->box_radius), old_position.z)) a.y -= gravity;
+    if (t_map::isSolid(translate_point(old_position.x + this->box_radius), old_position.y,                           old_position.z)) a.x += gravity;
+    if (t_map::isSolid(translate_point(old_position.x - this->box_radius), old_position.y,                           old_position.z)) a.x -= gravity;
+    if (t_map::isSolid(old_position.x,                           translate_point(old_position.y + this->box_radius), old_position.z)) a.y += gravity;
+    if (t_map::isSolid(old_position.x,                           translate_point(old_position.y - this->box_radius), old_position.z)) a.y -= gravity;
 
     velocity_integrate(&this->position, &this->velocity, a, dt);
 

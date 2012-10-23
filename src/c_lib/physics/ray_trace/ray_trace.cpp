@@ -20,7 +20,7 @@
 
 static inline int collision_check(int x, int y, int z)
 {
-    return isSolid(x,y,z);
+    return t_map::isSolid(x,y,z);
 }
 
 // called only by ray_cast_simple interfaces

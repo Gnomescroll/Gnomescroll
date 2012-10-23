@@ -35,7 +35,7 @@ struct AttackerProperties
     int agent_damage_max;
     //int voxel_damage_radius;
     int agent_protection_duration;
-    t_map::TerrainModificationAction terrain_modification_action;
+    TerrainModificationAction terrain_modification_action;
 };
 Agent* lock_agent_target(
     Vec3 firing_position, Vec3 firing_direction,

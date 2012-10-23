@@ -2,6 +2,8 @@
 
 namespace t_map
 {
+
+void init_t_map();
 void end_t_map();
 
 int get_block_item_container(int x, int y, int z);

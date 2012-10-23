@@ -29,7 +29,7 @@
     #include <entity/object/main.hpp>
 #endif
 
-struct MapDimension map_dim = { 512,512,128 };
+struct MapDimension map_dim = { XMAX, YMAX, ZMAX };
 
 namespace t_map
 {
@@ -42,7 +42,7 @@ CubeID get(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-    if(c == NULL) return EMPTY_CUBE;
+    if (c == NULL) return EMPTY_CUBE;
     return (CubeID)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 
 }
@@ -50,7 +50,7 @@ CubeID get(int x, int y, int z)
 void set(int x, int y, int z, CubeID cube_id)
 {
     #if DC_SERVER
-    if(isItemContainer(x,y,z))
+    if (isItemContainer(x,y,z))
         t_map::destroy_item_container_block(x,y,z);
     #endif
     main_map->set_block(x,y,z, cube_id);

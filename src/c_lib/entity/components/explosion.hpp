@@ -21,7 +21,7 @@ class ExplosionComponent: public Component
 
         float block_destruction_radius;
         int block_damage;
-        t_map::TerrainModificationAction terrain_modification_action;
+        TerrainModificationAction terrain_modification_action;
 
         void explode();
         bool proximity_check(); // check if near agent; if so, die
@@ -31,7 +31,7 @@ class ExplosionComponent: public Component
     ExplosionComponent()
     : Component(COMPONENT_EXPLOSION, COMPONENT_INTERFACE_EXPLOSION),
     radius(1.0f), damage(0), proximity_radius(1.0f), harms_owner(false),
-    block_destruction_radius(1.0f), block_damage(32), terrain_modification_action(t_map::TMA_NONE)
+    block_destruction_radius(1.0f), block_damage(32), terrain_modification_action(TMA_NONE)
     {}
 };
 

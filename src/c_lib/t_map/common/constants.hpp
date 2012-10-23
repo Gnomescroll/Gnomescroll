@@ -27,3 +27,6 @@ const int MAP_CHUNK_YDIM = MAP_HEIGHT/TERRAIN_CHUNK_WIDTH;
 
 const float QUADRANT_DIVIDEf = 256.0f;
 const int QUADRANT_DIVIDEi = 256;
+
+const unsigned char MAX_CUBE_DAMAGE = 0xff;
+const unsigned char INVINCIBLE_CUBE_DAMAGE = MAX_CUBE_DAMAGE;   // any blocks with this value will be invincible

@@ -10,7 +10,7 @@ int _palette_number = 0;
 
 int _side_texture[6];
 
-int DEFAULT_MAX_DAMAGE = 32;
+int DEFAULT_MAX_DAMAGE = MAX_CUBE_DAMAGE;
 
 void _finish_cube()
 {
@@ -43,6 +43,7 @@ void cube_def(CubeType type, const char* name, CubeMaterial material)
     GS_ASSERT_ABORT(!p->in_use);
     if (p->in_use) return;
     
+    p->id = id;    
     strncpy(p->name, name, CUBE_NAME_MAX_LENGTH);
     p->name[CUBE_NAME_MAX_LENGTH] = '\0';
     p->max_damage = DEFAULT_MAX_DAMAGE;
@@ -57,9 +58,9 @@ void cube_def(CubeType type, const char* name, CubeMaterial material)
             break;
 
         case EmptyCube:
-            p->active = false;
             p->solid = false;
             p->occludes = false;
+            p->magic = false;
             break;
 
         case ItemContainerCube:
@@ -95,8 +96,8 @@ void set_max_damage(int max_damage)
 {
     GS_ASSERT(p != NULL);
     if (p == NULL) return;
-    GS_ASSERT(max_damage > 0 && max_damage <= 0xff);
-    if (max_damage <= 0 || max_damage >= 0xff) return;
+    GS_ASSERT(max_damage > 0 && max_damage <= MAX_CUBE_DAMAGE);
+    if (max_damage <= 0 || max_damage >= MAX_CUBE_DAMAGE) return;
     p->max_damage = max_damage;
 }
 
@@ -265,5 +266,25 @@ int sprite_alias(int sheet_id, int ypos, int xpos)
     return blit_cube_texture(sheet_id, xpos, ypos); 
 }
 #endif
+
+void verify_config()
+{
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        class CubeProperties* p = &cube_properties[i];
+        if (!cube_properties[i].in_use) continue;
+
+        GS_ASSERT(p->id == (CubeID)i);
+        GS_ASSERT(p->id != NULL_CUBE);
+
+        GS_ASSERT(p->id != EMPTY_CUBE || p->type == EmptyCube);
+        GS_ASSERT(p->id != ERROR_CUBE || p->type == ErrorCube);
+        GS_ASSERT(p->id == EMPTY_CUBE || p->type != EmptyCube);
+        GS_ASSERT(p->id == ERROR_CUBE || p->type != ErrorCube);
+
+        GS_ASSERT(p->max_damage <= MAX_CUBE_DAMAGE);
+        GS_ASSERT(is_valid_cube_name(p->name));
+    }
+}
 
 }   // t_map
