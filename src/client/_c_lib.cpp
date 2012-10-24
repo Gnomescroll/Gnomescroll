@@ -323,6 +323,15 @@ int init_c_lib(int argc, char* argv[])
     Item::load_item_dat();
     Item::load_synthesizer();
 
+    // TODO -- enable enough drop dat info to figure out the auto items
+    // maybe have another config or something
+    //t_map::init_block_drop_dat();
+    //t_map::load_block_drop_dat();         // load drop dat after items
+    Item::create_items_from_blocks();
+    //t_map::apply_automatic_block_drops();
+
+    Item::end_item_dat();
+
     Toolbelt::init();   // toolbelt init depends on item dat being loaded
 
     // Load Dats

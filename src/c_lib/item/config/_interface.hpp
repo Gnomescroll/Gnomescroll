@@ -13,6 +13,8 @@
 namespace Item
 {
 
+void iso_block_sprite_def(const char* block_name);
+
 bool is_valid_item_name(const char* name)
 {
     size_t len = strlen(name);
@@ -25,7 +27,7 @@ bool is_valid_item_name(const char* name)
 
 class ItemAttribute* s = NULL;
 
-int _current_item_index = 0;
+static int _current_item_index = 0;
 
 #if DC_CLIENT
 static int _item_cube_iso_spritesheet_id = -1;
@@ -39,7 +41,7 @@ void _set_attribute()
     _current_item_index++;
 }
 
-void item_def(ItemGroup group, const char* name)
+bool item_def(ItemGroup group, const char* name)
 {
     #if DC_CLIENT
     if (s == NULL)
@@ -60,44 +62,70 @@ void item_def(ItemGroup group, const char* name)
         _set_attribute();   // locks in old attribute
         
     GS_ASSERT_ABORT(group != IG_NONE);
-    if (group == IG_NONE) return;
+    if (group == IG_NONE) return false;
     
     GS_ASSERT_ABORT(is_valid_item_name(name));
-    if (!is_valid_item_name(name)) return;
+    if (!is_valid_item_name(name)) return false;
 
     int type = _current_item_index;
 
     GS_ASSERT_ABORT(type != NULL_ITEM_TYPE);
-    if (type == NULL_ITEM_TYPE) return;
+    if (type == NULL_ITEM_TYPE) return false;
     ASSERT_VALID_ITEM_TYPE(type);
-    IF_INVALID_ITEM_TYPE(type) return;
+    IF_INVALID_ITEM_TYPE(type) return false;
 
     GS_ASSERT_ABORT(!item_attributes[type].loaded);
-    if (item_attributes[type].loaded) return;
+    if (item_attributes[type].loaded) return false;
 
     s = &item_attributes[type];
 
     s->load_defaults(type, group);
     strncpy(s->name, name, ITEM_NAME_MAX_LENGTH);
     s->name[ITEM_NAME_MAX_LENGTH] = '\0';
+
+    return true;
 }
 
-void container_block_def(ItemContainerType container_type, const char* block_name)
+// use in place of item_def for items that are equivalent to a block
+bool item_block_def(const char* block_name)
 {
-    GS_ASSERT(s != NULL);
-    if (s == NULL) return;
-    GS_ASSERT_ABORT(container_type != CONTAINER_TYPE_NONE);
-    if (container_type == CONTAINER_TYPE_NONE) return;
-    GS_ASSERT_ABORT(!ItemContainer::container_type_is_attached_to_agent(container_type));
-    if (ItemContainer::container_type_is_attached_to_agent(container_type)) return;
-
-    s->container_type = container_type;
-    s->cube_height = 1;
-    
     CubeID cube_id = t_map::get_cube_id(block_name);
-    GS_ASSERT_ABORT(t_map::isValidCube(cube_id));
-    if (!t_map::isValidCube(cube_id)) return;
-    container_block_types[cube_id] = s->container_type;
+    GS_ASSERT(t_map::isValidCube(cube_id));
+    if (!t_map::isValidCube(cube_id)) return true;
+
+    // item will have same name as the block
+    if (!item_def(IG_PLACER, block_name)) return false;
+
+    iso_block_sprite_def(block_name);
+    s->cube_id = cube_id;
+    s->max_stack_size = 64;
+    s->particle_voxel = true;
+    s->particle_voxel_texture = t_map::get_cube_primary_texture_index(block_name);
+    s->cube_height = 1;
+
+    title_string(block_name, s->pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
+    s->pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH] = '\0';
+
+    return true;
+}
+
+// use in place of item_def for items that are equivalent to an item container block
+bool item_container_def(const char* container_name)
+{
+    ItemContainerType container_type = ItemContainer::get_type(container_name);
+    GS_ASSERT_ABORT(container_type != CONTAINER_TYPE_NONE);
+    if (container_type == CONTAINER_TYPE_NONE) return false;
+    GS_ASSERT_ABORT(!ItemContainer::container_type_is_attached_to_agent(container_type));
+    if (ItemContainer::container_type_is_attached_to_agent(container_type)) return false;
+
+    // container_name is synced with block_name
+    if (!item_block_def(container_name)) return false;
+
+    s->max_stack_size = 1;
+    s->container_type = container_type;
+    container_block_types[s->cube_id] = s->container_type;
+
+    return true;
 }
 
 void block_damage_def(CubeMaterial material, int damage)
@@ -125,15 +153,6 @@ void set_pretty_name(const char* pretty_name)
     if (s == NULL) return;
     strncpy(s->pretty_name, pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
     s->pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH] = '\0';
-}
-
-void end_item_dat()
-{
-    _set_attribute();
-    
-    #if DC_CLIENT
-    save_item_texture();
-    #endif
 }
 
 #if DC_CLIENT

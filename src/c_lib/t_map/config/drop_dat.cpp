@@ -50,6 +50,25 @@ void teardown_block_drop_dat()
     if (block_drop_dat != NULL) delete block_drop_dat;
 }
 
+void apply_automatic_block_drops()
+{
+    // this will make all blocks drop their associated block item,
+    // if they have no other drops defined
+    GS_ASSERT(block_drop_dat != NULL);
+    if (block_drop_dat == NULL) return;
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        if (!isValidCube((CubeID)i)) continue;  // skips empty and error blocks
+        const char* name = get_cube_name((CubeID)i);
+        GS_ASSERT(name != NULL);
+        if (name == NULL) continue;
+        if (block_drop_dat->has_drop_defined(name)) continue;
+        block_drop_dat->def_drop(name);
+        GS_ASSERT(Item::get_item_type(name) != NULL_ITEM_TYPE);
+        block_drop_dat->drop_always(name);   // assumes the block name matches the item name
+    }
+}
+
 void load_block_drop_dat()
 {
     GS_ASSERT(block_drop_dat != NULL);
@@ -76,34 +95,36 @@ void load_block_drop_dat()
         b->set_drop(0.20f, 1);
         b->set_drop(0.07f, 2);
         b->set_drop(0.04f, 3);
+
+    // if no drops defined for a block, then automatically drop itself
             
-    b->def_drop("small_storage");
-        b->drop_always("small_storage");
+    //b->def_drop("small_storage");
+        //b->drop_always("small_storage");
 
-    ////////////////////
-    b->def_drop("small_crafting_bench");
-        b->drop_always("small_crafting_bench");
+    //////////////////////
+    //b->def_drop("small_crafting_bench");
+        //b->drop_always("small_crafting_bench");
 
-    b->def_drop("cryofreezer_1");
-        b->drop_always("cryofreezer_1");
+    //b->def_drop("cryofreezer_1");
+        //b->drop_always("cryofreezer_1");
 
-    b->def_drop("steel_block_1");
-        b->drop_always("steel_block_1");
+    //b->def_drop("steel_block_1");
+        //b->drop_always("steel_block_1");
 
-    b->def_drop("steel_block_2");
-        b->drop_always("steel_block_2");
+    //b->def_drop("steel_block_2");
+        //b->drop_always("steel_block_2");
 
-    b->def_drop("steel_block_3");
-        b->drop_always("steel_block_3");
+    //b->def_drop("steel_block_3");
+        //b->drop_always("steel_block_3");
 
-    b->def_drop("control_node");
-        b->drop_always("control_node");
+    //b->def_drop("control_node");
+        //b->drop_always("control_node");
 
-    b->def_drop("smelter_1");
-        b->drop_always("smelter_1");
+    //b->def_drop("smelter_1");
+        //b->drop_always("smelter_1");
 
-    b->def_drop("crusher");
-        b->drop_always("crusher");
+    //b->def_drop("crusher");
+        //b->drop_always("crusher");
 
     b->def_drop("methane_ice");
         b->add_drop("methane_ice", 4);

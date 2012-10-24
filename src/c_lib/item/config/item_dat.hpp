@@ -17,28 +17,37 @@ void load_item_dat()
     int p0 = texture_alias("./media/sprites/item/p00.png");
     //int i2 = texture_alias("./media/sprites/item/i02.png");
 
+    // Automatic block drop items are created at a later step, after the block drop dat
+    // If you want to override any default properties for IG_PLACER blocks,
+    // use item_block_def()
+    // the pretty name will be automatically generated from the block name
+    // replacing _ with space and capitalizing all first letters
+
+    // special purpose
     item_def(IG_ERROR, "error_item");
     set_pretty_name("Error");
     sprite_def(i0, 4,1);
 
-    item_def(IG_PLACER, "regolith");
-    iso_block_sprite_def("regolith");
-    s->cube_id = t_map::get_cube_id("regolith");
-    set_pretty_name("Regolith");
-    s->max_stack_size = 64;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("regolith");
-    s->cube_height = 1;
+    // special purpose
+    item_def(IG_UNKNOWN, "unknown");
+    sprite_def(i0, 5,1);
+    set_pretty_name("Unknown");
 
-    item_def(IG_PLACER, "rock");
-    iso_block_sprite_def("rock");
-    s->cube_id = t_map::get_cube_id("rock");
-    set_pretty_name("Rock");
-    s->max_stack_size = 64;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("rock");
-    s->cube_height = 1;
+    // containers
+    item_container_def("storage_block_small");
+    set_pretty_name("Small Storage Block");
+
+    item_container_def("crafting_bench_basic");
+    set_pretty_name("Small Crafting Bench");
+
+    item_container_def("smelter_basic");
+    set_pretty_name("Simple Smelter");
+
+    item_container_def("cryofreezer_small");
+    set_pretty_name("Small Cryofreezer");
     
+    item_container_def("crusher");
+
     item_def(IG_RESOURCE, "quartz_crystal");
     sprite_def(i0, 1,5);
     set_pretty_name("Quartz Crystal");
@@ -121,28 +130,6 @@ void load_item_dat()
     set_pretty_name("Block Placer");
     s->cube_height = 1;
     
-    item_def(IG_UNKNOWN, "unknown");
-    sprite_def(i0, 5,1);
-    set_pretty_name("Unknown");
-
-    item_def(IG_PLACER, "small_storage");
-    iso_block_sprite_def("small_storage");
-    s->cube_id = t_map::get_cube_id("small_storage");
-    set_pretty_name("Small Storage Block");
-    s->max_stack_size = 1;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("small_storage");
-    container_block_def(CONTAINER_TYPE_STORAGE_BLOCK_SMALL, "small_storage");
-
-    item_def(IG_PLACER, "small_crafting_bench");
-    iso_block_sprite_def("small_crafting_bench");
-    set_pretty_name("Small Crafting Bench");
-    s->cube_id = t_map::get_cube_id("small_crafting_bench");
-    s->max_stack_size = 1;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("small_crafting_bench");
-    container_block_def(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY, "small_crafting_bench");
-
     item_def(IG_RESOURCE, "copper_ore");
     sprite_def(i1, 3,3);
     set_pretty_name("Copper Ore");
@@ -265,47 +252,21 @@ void load_item_dat()
     s->fuel = true;
     s->fuel_burn_rate = 30 * 30; // 30 seconds
     
-    item_def(IG_PLACER, "steel_block_1");
-    iso_block_sprite_def("steel_block_1");
+    // manually define these blocks, so we can set a custom pretty name
+    item_block_def("steel_block_1");
     set_pretty_name("Steel Block #1");
-    s->cube_id = t_map::get_cube_id("steel_block_1");
-    s->max_stack_size = 16;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_1");
-    s->cube_height = 1;
 
     item_def(IG_PLACER, "steel_block_2");
     set_pretty_name("Steel block #2");
-    iso_block_sprite_def("steel_block_2");
-    s->cube_id = t_map::get_cube_id("steel_block_2");
-    s->max_stack_size = 16;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_2");
-    s->cube_height = 1;
 
     item_def(IG_PLACER, "steel_block_3");
     set_pretty_name("Steel Block #3");
-    iso_block_sprite_def("steel_block_3");
-    s->cube_id = t_map::get_cube_id("steel_block_3");
-    s->max_stack_size = 16;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("steel_block_3");
-    s->cube_height = 1;
 
     item_def(IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
     set_pretty_name("Small Charge Pack");
     s->max_stack_size = 16;
     s->repair_agent_amount = 25;
-
-    item_def(IG_PLACER, "cryofreezer_1");
-    iso_block_sprite_def("cryofreezer_1");
-    set_pretty_name("Small Cryofreezer");
-    s->cube_id = t_map::get_cube_id("cryofreezer_1");
-    s->max_stack_size = 1;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("cryofreezer_1");
-    container_block_def(CONTAINER_TYPE_CRYOFREEZER_SMALL, "cryofreezer_1");
 
     item_def(IG_RESOURCE, "methane_ice");
     sprite_def(i0, 1,4);
@@ -315,24 +276,6 @@ void load_item_dat()
     s->gas_lifetime = 30 * 60 * 5;   // 5 minutes
     s->fuel = true;
     s->fuel_burn_rate = 30 * 30; // 30 seconds
-
-    item_def(IG_PLACER, "smelter_1");
-    iso_block_sprite_def("smelter_1");
-    set_pretty_name("Simple Smelter");
-    s->cube_id = t_map::get_cube_id("smelter_1");
-    s->max_stack_size = 1;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("smelter_1");
-    container_block_def(CONTAINER_TYPE_SMELTER_ONE, "smelter_1");
-
-    item_def(IG_PLACER, "control_node");
-    iso_block_sprite_def("control_node");
-    set_pretty_name("Control Node");
-    s->cube_id = t_map::get_cube_id("control_node");
-    s->max_stack_size = 8;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("control_node");
-    s->cube_height = 1;
 
     item_def(IG_ENERGY_TANK, "energy_tank");
     sprite_def(i0, 2,8);
@@ -362,15 +305,6 @@ void load_item_dat()
     s->mech_type = t_mech::get_mech_type("blue_crystal");
     set_pretty_name("Crystal Seed");
     s->max_stack_size = 8;
-
-    item_def(IG_PLACER, "crusher");
-    iso_block_sprite_def("crusher");
-    set_pretty_name("Crusher");
-    s->cube_id = t_map::get_cube_id("crusher");
-    s->max_stack_size = 1;
-    s->particle_voxel = true;
-    s->particle_voxel_texture = t_map::get_cube_primary_texture_index("crusher");
-    container_block_def(CONTAINER_TYPE_CRUSHER, "crusher");
 
     item_def(IG_RESOURCE, "powdered_regolith");
     sprite_def(i0, 4,6);
@@ -448,11 +382,44 @@ void load_item_dat()
     s->mech_type = t_mech::get_mech_type("blob_flower");
     set_pretty_name("Blob Seed");
     s->max_stack_size = 64;
-
-    end_item_dat(); // finalize
-    
-    verify_item_dat();
 }
+
+void create_items_from_blocks()
+{
+    // this will create items for all blocks that will drop themselves when destroyed
+    // if you need non-default properties for these items, define them in the item_dat
+    // with item_block_def(block_name);
+    // pretty names are automatically generated from the internal name
+    // (overriding the pretty name is the most common use case for overriding this auto item)
+
+    // TODO -- client does not have access to drop dat
+    // Need to give it enough access to figure out which automatic items to make
+    
+    GS_ASSERT_ABORT(t_map::block_drop_dat != NULL);
+    if (t_map::block_drop_dat == NULL) return;
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        if (!t_map::isValidCube((CubeID)i)) continue;  // skips empty and error blocks
+        const char* name = t_map::get_cube_name((CubeID)i);
+        GS_ASSERT_ABORT(name != NULL);
+        if (name == NULL) continue;
+
+        // ignore blocks that have been overriden
+        for (int i=0; i<MAX_ITEMS; i++)
+            if (strcmp(name, item_attributes[i].name) == 0)
+            {
+                GS_ASSERT_ABORT(item_attributes[i].group == IG_PLACER);
+                return;
+            }
+
+        // blocks that have drops defined (at this point) will not be dropping themselves
+        // TODO -- check if it has a drop defined, and its defined for itself
+        if (t_map::block_drop_dat->has_drop_defined(name)) continue;
+        
+        item_block_def(name);
+    }
+}
+
 
 void verify_item_dat()
 {
@@ -510,6 +477,17 @@ void verify_item_dat()
         GS_ASSERT_ABORT(a->sprite == ERROR_SPRITE || a->sprite != b->sprite);
         GS_ASSERT_ABORT(a->item_type != b->item_type);
     }
+}
+
+void end_item_dat()
+{
+    _set_attribute();
+    
+    #if DC_CLIENT
+    save_item_texture();
+    #endif
+
+    verify_item_dat();
 }
 
 }   // Item

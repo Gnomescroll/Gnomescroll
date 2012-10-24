@@ -51,8 +51,9 @@ void tear_down_properties()
 
 class ItemAttribute* get_item_attributes(int item_type)
 {
-    GS_ASSERT(item_type == NULL_ITEM_TYPE || (item_type >= 0 && item_type < MAX_ITEM_TYPES));
-    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return NULL;
+    ASSERT_VALID_ITEM_TYPE(item_type);
+    IF_INVALID_ITEM_TYPE(item_type) return NULL;
+    if (!item_attributes[item_type].loaded) return NULL;
     return &item_attributes[item_type];
 }
 

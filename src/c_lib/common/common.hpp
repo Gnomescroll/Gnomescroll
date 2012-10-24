@@ -148,3 +148,24 @@ void _test_common()
     GS_ASSERT(!str_starts_with("foobar", "foobarr"));
     GS_ASSERT(!str_starts_with("", "foobarr"));
 }
+
+void title_string(const char* str, char* out, size_t size)
+{   // WARNING: does not copy null terminator over if size is too short
+    size_t i=0;
+    bool should_upper = true;
+    for (; i<size && str[i] != '\0'; i++)
+    {
+        char c = str[i];
+        if (c == '_') c = ' ';
+        if (should_upper && islower(c))
+        {
+            c = toupper(c);
+            should_upper = false;
+        }
+        else if (!isalpha(c))
+            should_upper = true;
+        out[i] = c;
+    }
+    
+    if (i < size) out[i] = '\0';
+}

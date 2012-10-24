@@ -278,18 +278,19 @@ int init_c_lib(int argc, char* argv[])
     
     t_mech::init();
 
-    //lua_load_block_dat(); /* Load Block Dat */
+    // DAT LOADING
+    // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
     t_map::load_block_dat();
-
     t_mech::load_mech_dat();
     Item::load_item_dat();
     Item::load_synthesizer();
-
     t_mech::init_drop_dat();
     t_mech::load_drop_dat();
-
     t_map::init_block_drop_dat();
-    t_map::load_block_drop_dat(); //load drop dat after items
+    t_map::load_block_drop_dat();         // load drop dat after items
+    Item::create_items_from_blocks();     // create items tied to block that drop themselves
+    t_map::apply_automatic_block_drops(); // automatically drop associated block item from block
+    Item::end_item_dat();
 
     Toolbelt::init();
 
