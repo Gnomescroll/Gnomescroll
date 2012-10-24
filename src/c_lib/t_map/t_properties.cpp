@@ -53,7 +53,7 @@ CubeID get_cube_id(const char* name)
     }
     GS_ASSERT(false);
     printf("No cube id found for name %s\n", name);
-    return NULL_CUBE;
+    return ERROR_CUBE;
 }
 
 CubeMaterial get_cube_material(CubeID cube_id)
