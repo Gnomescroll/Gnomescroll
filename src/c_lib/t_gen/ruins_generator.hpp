@@ -537,7 +537,7 @@ void setup_rooms() {
 				mal_span.y -= r.eh.dep;
 				r.eh.y = min_lip + randrange(0, mal_span.y);
 			}
-			int ly, my = 0; // least possible pos
+			int ly = 0; int my = 0; // least & most possible pos
 			if (x != 0) {
 				ly = rooms[z][y][x-1].eh.y;
 				my = rooms[z][y][x-1].eh.y + rooms[z][y][x-1].eh.dep;
@@ -557,15 +557,16 @@ void setup_rooms() {
 				mal_span.x -= r.nh.wid;
 				r.nh.x = min_lip + randrange(0, mal_span.x);     
 			}
-			int lx, mx = 0; // least possible pos
+			int lx = 0; int mx = 0; // least & most possible pos
 			if (y != 0) 
 				lx = rooms[z][y-1][x].nh.x;
+				mx = rooms[z][y-1][x].nh.x + rooms[z][y-1][x].nh.wid;
 			if (lx > r.nh.x)
 				mx = r.nh.x;
 			if (lx < r.nh.x + r.nh.wid)
 				mx = r.nh.x + r.nh.wid;
 			r.x = lx;
-			r.wid = mx -r.x;
+			r.wid = mx - r.x;
 
 
 
