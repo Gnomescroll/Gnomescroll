@@ -141,7 +141,6 @@ void start_cave_generator()
     const float cave_size = 2.0f;
 
     const float baseline = 0.0f;
-    const float zmax = 128.0f;
     const int try_limit = 10000;
     
     init_genrand(rand());
@@ -152,9 +151,9 @@ void start_cave_generator()
         int tries = 0;
         do
         {
-            x = (float)genrand_real1()*512.0f;
-            y = (float)genrand_real1()*512.0f;
-            z = (float)genrand_real1()*(zmax-baseline) + baseline;
+            x = (float)genrand_real1()*(float)XMAX;
+            y = (float)genrand_real1()*(float)YMAX;
+            z = (float)genrand_real1()*((float)ZMAX-baseline) + baseline;
         } while (t_map::get(x,y,z) == 0 && tries++ < try_limit);
 
         if (tries >= try_limit) return; 

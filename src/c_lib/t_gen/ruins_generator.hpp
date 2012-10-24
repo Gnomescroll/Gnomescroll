@@ -284,7 +284,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
 
 
-        // setup temp halls that match adjacent neighbors (relies on corners being setup first)
+        // setup temp halls that match adjacent neighbors
 		if (opens_to(DIR_NORTH, ri) ) {
 			if (opens_to(DIR_EAST, ri) ) {
 				r.nh.dep = cubes_across_room - r.eh.y + r.eh.dep;
@@ -340,13 +340,23 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 			ne.x = r.nh.x + r.nh.wid;
             ne.wid = cubes_across_room - ne.x;
 		} else { // blocked
-			//ccw consideration
-			nw.y = half;
-            nw.dep = half;
+			if (opens_to(DIR_WEST, ri) ) {
+				nw.y   = wh.y + wh.dep;
+				nw.dep = cubes_across_room - nw.y;
+			}else{
+				nw.y   = half;
+				nw.dep = half;
+			}
 
-            ne.x   = half;
-			ne.wid = half;
+			if (opens_to(DIR_EAST, ri) ) {
+		        ne.x   = r.eh.x;
+				ne.wid = r.eh.wid;
+			}else{
+		        ne.x   = half;
+				ne.wid = half;
+			}
 		}
+
         if (opens_to(DIR_EAST, ri) ) {
 			//ccw consideration
 			ne.y = r.eh.y + r.eh.dep;
@@ -373,12 +383,21 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 			sw.x = 0;
             sw.wid = rooms[ri.z][ri.y - 1][ri.x].nh.x;
         } else { // dir is blocked
-			//ccw consideration
-			se.y   = 0;
-			se.dep = half;
+			if (opens_to(DIR_EAST, ri) ) {
+				se.y   = 0;
+				se.dep = r.eh.y;
+			}else{
+				se.y   = 0;
+				se.dep = half;
+			}
 
-			sw.x   = 0;
-			sw.wid = half;
+			if (opens_to(DIR_WEST, ri) ) {
+				sw.x   = 0;
+				sw.wid = sh.x;
+			}else{
+				sw.x   = 0;
+				sw.wid = half;
+			}
 		}
 
         if (opens_to(DIR_WEST, ri) ) {
@@ -406,22 +425,22 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 		
 
 
-		// make lintels
+		// make lintels or blocked direction
 		if (opens_to(DIR_WEST, ri) ) {
             if (far_west_cube(cx) && cz > wh.hei)  need_block = true;
-		} else if (cx < r.x)  need_block = true;
+		} //else if (cx < r.x)  need_block = true;
 
         if (opens_to(DIR_SOUTH, ri)) {
             if (far_south_cube(cy) && cz > sh.hei)  need_block = true;
-        } else if (cy < r.y)  need_block = true;
+        } //else if (cy < r.y)  need_block = true;
 
         if (opens_to(DIR_EAST, ri) ) {
             if (far_east_cube(cx) && cz > r.eh.hei)  need_block = true;
-        } else if (cx >= r.x + r.wid)  need_block = true;
+        } //else if (cx >= r.x + r.wid)  need_block = true;
 
         if (opens_to(DIR_NORTH, ri) ) {
             if (far_north_cube(cy) && cz > r.nh.hei)  need_block = true;
-        } else if (cy >= r.y + r.dep)  need_block = true;
+        } //else if (cy >= r.y + r.dep)  need_block = true;
 
         
 		
@@ -500,40 +519,64 @@ void setup_rooms() {
 
             // spans refer to the AIRSPACE, and don't include outer shell of blocks
             // but offset, for cleaner comparisons, should actually be the absolute offset from the corner of the room (including shell)
-            int malleable_x_span = cubes_across_room - 2 /* shell of 2 walls */;
-            int malleable_y_span = cubes_across_room - 2 /* shell of 2 walls */;
-            int malleable_z_span = cubes_going_up - 2 /* shell of 2 walls */;
-            r.wid = randrange(malleable_x_span / 2, malleable_x_span);
-            r.dep = randrange(malleable_y_span / 2, malleable_y_span);
-            r.hei = randrange(2 + min_lip, malleable_z_span);
-            malleable_x_span -= r.wid;
-            malleable_y_span -= r.dep;
-            malleable_z_span -= r.hei;
-            r.x = 1 /* shell */ + randrange(0, malleable_x_span);
-            r.y = 1 /* shell */ + randrange(0, malleable_y_span);
+            IntVec3 mal_span; // malleable/dynamic space span
+			mal_span.x = cubes_across_room - 2 /* shell of 2 walls */ - min_lip * 2;
+            mal_span.y = cubes_across_room - 2 /* shell of 2 walls */ - min_lip * 2;
+            mal_span.z = cubes_going_up    - 2 /* shell of 2 walls */ - min_lip; // floors of the same height are fine, altho ceiling should be lipped
 
-            //r.eh.hei = randrange(2, malleable_z_span);
-            //r.nh.hei = randrange(2, malleable_z_span);
+
+            // hardwired ceiling heights
             r.eh.hei = randrange(3, 4);     r.eh.z = 1;
             r.nh.hei = randrange(3, 4);     r.nh.z = 1;
 
+            // figure lateral opening sizes
+			if (x != rooms_across_ruins - 1) { 
+				r.eh.wid = 1;     
+				r.eh.x = cubes_across_room - 1;
+				r.eh.dep = randrange(2 /* min opening */, mal_span.y); 
+				mal_span.y -= r.eh.dep;
+				r.eh.y = min_lip + randrange(0, mal_span.y);
+			}
+			int ly, my = 0; // least possible pos
+			if (x != 0) {
+				ly = rooms[z][y][x-1].eh.y;
+				my = rooms[z][y][x-1].eh.y + rooms[z][y][x-1].eh.dep;
+			}
+			if (ly > r.eh.y)
+				ly = r.eh.y;
+			if (my < r.eh.y + r.eh.wid)
+				my = r.eh.y + r.eh.wid;
+			r.y = ly;
+			r.dep = my - r.y;
 
-            // now that i chose my offset, it could have eaten into MALLEABLE span, and i don't think i'm considering that here!
-            //.... shouldn't even be using that var?  i'm working within the WID/DEP space when doing the hallways right?!
 
-            // reset malleables, for working INSIDE AIRSPACE
-            malleable_x_span = r.wid - min_lip * 2;
-            malleable_y_span = r.dep - min_lip * 2;
-            r.eh.wid = 1;     r.eh.dep = /*fixed_hall_wid; */ randrange(2 /* min opening */, malleable_y_span);
-            r.nh.dep = 1;     r.nh.wid = /*fixed_hall_wid; */ randrange(2 /* min opening */, malleable_x_span);
-            malleable_x_span -= r.nh.wid;
-            malleable_y_span -= r.eh.dep;
-            r.eh.x = cubes_across_room - 1;     r.eh.y = /*fixed_hall_offs; */ r.y + min_lip + randrange(0, malleable_y_span);
-            r.nh.y = cubes_across_room - 1;     r.nh.x = /*fixed_hall_offs; */ r.x + min_lip + randrange(0, malleable_x_span);
+			if (y != rooms_across_ruins - 1) { 
+				r.nh.dep = 1;     
+				r.nh.y = cubes_across_room - 1;  
+				r.nh.wid = randrange(2 /* min opening */, mal_span.x); 
+				mal_span.x -= r.nh.wid;
+				r.nh.x = min_lip + randrange(0, mal_span.x);     
+			}
+			int lx, mx = 0; // least possible pos
+			if (y != 0) 
+				lx = rooms[z][y-1][x].nh.x;
+			if (lx > r.nh.x)
+				mx = r.nh.x;
+			if (lx < r.nh.x + r.nh.wid)
+				mx = r.nh.x + r.nh.wid;
+			r.x = lx;
+			r.wid = mx -r.x;
 
-            // connections in directions
-            r.air.x = r.air.y = r.air.wid = r.air.dep = 0; // must set some default values since we keep reusing the rooms array
 
+
+
+
+
+			
+			
+			
+			
+			// connections in directions
             for (int i = 0; i < DIR_MAX; i++) {
                 if /* lateral dir */ (i < DIR_UP) 
                     r.dir_types[i] = (direction_type_t)randrange(1, 2); // randomly choose door or hall
