@@ -46,8 +46,9 @@ CubeID get_cube_id(const char* name)
     // TODO -- use hashes
     for (int i=0; i<MAX_CUBES; i++)
     {
-        const char* other = get_cube_name((CubeID)i);
-        if (other != NULL && strcmp(name, other) == 0)
+        class CubeProperties* p = get_cube_properties((CubeID)i);
+        if (p == NULL) continue;
+        if (p->name != NULL && strcmp(name, p->name) == 0)
             return (CubeID)i;
     }
     GS_ASSERT(false);

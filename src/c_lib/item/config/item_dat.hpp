@@ -132,9 +132,7 @@ void load_item_dat()
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("small_storage");
-    s->container_type = CONTAINER_TYPE_STORAGE_BLOCK_SMALL;
-    container_block_def("small_storage", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
-    s->cube_height = 1;
+    container_block_def(CONTAINER_TYPE_STORAGE_BLOCK_SMALL, "small_storage");
 
     item_def(IG_PLACER, "small_crafting_bench");
     iso_block_sprite_def("small_crafting_bench");
@@ -143,9 +141,7 @@ void load_item_dat()
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("small_crafting_bench");
-    s->container_type = CONTAINER_TYPE_CRAFTING_BENCH_UTILITY;
-    container_block_def("small_crafting_bench", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
-    s->cube_height = 1;
+    container_block_def(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY, "small_crafting_bench");
 
     item_def(IG_RESOURCE, "copper_ore");
     sprite_def(i1, 3,3);
@@ -167,7 +163,7 @@ void load_item_dat()
     s->firing_range = 4.0f;
     s->firing_rate = 6;
     block_damage_def(1);
-    block_damage_def(CUBE_MATERIAL_DIRT, 4);
+    block_damage_def(CUBE_MATERIAL_DIRT, 5);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
     block_damage_def(CUBE_MATERIAL_DECORATION, 4);
     s->object_damage_min = 15;
@@ -193,7 +189,7 @@ void load_item_dat()
     s->firing_range = 4.0f;
     s->firing_rate = 6;
     block_damage_def(2);
-    block_damage_def(CUBE_MATERIAL_DIRT, 5);
+    block_damage_def(CUBE_MATERIAL_DIRT, 6);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
     block_damage_def(CUBE_MATERIAL_DECORATION, 6);
     s->object_damage_min = 25;
@@ -219,7 +215,7 @@ void load_item_dat()
     s->firing_range = 4.0f;
     s->firing_rate = 6;
     block_damage_def(3);
-    block_damage_def(CUBE_MATERIAL_DIRT, 6);
+    block_damage_def(CUBE_MATERIAL_DIRT, 7);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
     block_damage_def(CUBE_MATERIAL_DECORATION, 8);
     s->object_damage_min = 20;
@@ -309,9 +305,7 @@ void load_item_dat()
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("cryofreezer_1");
-    s->container_type = CONTAINER_TYPE_CRYOFREEZER_SMALL;
-    container_block_def("cryofreezer_1", CONTAINER_TYPE_CRYOFREEZER_SMALL);
-    s->cube_height = 1;
+    container_block_def(CONTAINER_TYPE_CRYOFREEZER_SMALL, "cryofreezer_1");
 
     item_def(IG_RESOURCE, "methane_ice");
     sprite_def(i0, 1,4);
@@ -329,9 +323,7 @@ void load_item_dat()
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("smelter_1");
-    s->container_type = CONTAINER_TYPE_SMELTER_ONE;
-    container_block_def("smelter_1", CONTAINER_TYPE_SMELTER_ONE);
-    s->cube_height = 1;
+    container_block_def(CONTAINER_TYPE_SMELTER_ONE, "smelter_1");
 
     item_def(IG_PLACER, "control_node");
     iso_block_sprite_def("control_node");
@@ -378,9 +370,7 @@ void load_item_dat()
     s->max_stack_size = 1;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index("crusher");
-    s->container_type = CONTAINER_TYPE_CRUSHER;
-    container_block_def("crusher", CONTAINER_TYPE_CRUSHER);
-    s->cube_height = 1;
+    container_block_def(CONTAINER_TYPE_CRUSHER, "crusher");
 
     item_def(IG_RESOURCE, "powdered_regolith");
     sprite_def(i0, 4,6);

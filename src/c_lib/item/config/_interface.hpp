@@ -13,17 +13,6 @@
 namespace Item
 {
 
-void end_item_dat();
-
-int texture_alias(const char* spritesheet);
-void item_def(int id, ItemGroup group, const char* name);
-void sprite_def(int spritesheet, int xpos, int ypos);
-void sprite_def(int alias);
-int sprite_alias(int spritesheet, int xpos, int ypos);
-
-void iso_block_sprite_def(const char* block_name);
-void container_block_def(const char* block_name, ItemContainerType container_type);
-
 bool is_valid_item_name(const char* name)
 {
     size_t len = strlen(name);
@@ -93,12 +82,22 @@ void item_def(ItemGroup group, const char* name)
     s->name[ITEM_NAME_MAX_LENGTH] = '\0';
 }
 
-void container_block_def(const char* block_name, ItemContainerType container_type)
+void container_block_def(ItemContainerType container_type, const char* block_name)
 {
-    int cube_id = t_map::get_cube_id(block_name);
-    ASSERT_VALID_CUBE_ID(cube_id);
-    IF_INVALID_CUBE_ID(cube_id) return;
-    container_block_types[cube_id] = container_type;
+    GS_ASSERT(s != NULL);
+    if (s == NULL) return;
+    GS_ASSERT_ABORT(container_type != CONTAINER_TYPE_NONE);
+    if (container_type == CONTAINER_TYPE_NONE) return;
+    GS_ASSERT_ABORT(!ItemContainer::container_type_is_attached_to_agent(container_type));
+    if (ItemContainer::container_type_is_attached_to_agent(container_type)) return;
+
+    s->container_type = container_type;
+    s->cube_height = 1;
+    
+    CubeID cube_id = t_map::get_cube_id(block_name);
+    GS_ASSERT_ABORT(t_map::isValidCube(cube_id));
+    if (!t_map::isValidCube(cube_id)) return;
+    container_block_types[cube_id] = s->container_type;
 }
 
 void block_damage_def(CubeMaterial material, int damage)

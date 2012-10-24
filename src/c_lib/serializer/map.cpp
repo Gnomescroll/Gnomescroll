@@ -198,8 +198,8 @@ bool load_map_palette_file(const char* fn)
         }
 
         CubeID actual_cube_id = t_map::get_compatible_cube_id(palette_data.name);
-        GS_ASSERT(t_map::isValidCube(actual_cube_id));
-        if (!t_map::isValidCube(actual_cube_id))
+        GS_ASSERT(t_map::isInUse(actual_cube_id));
+        if (!t_map::isInUse(actual_cube_id))
         {   // we failed to get a compatible block type
             free(str);
             return false;
@@ -230,6 +230,7 @@ bool save_map_palette_file()
 
     for (int i=0; i<MAX_CUBES; i++)
     {
+        if (!t_map::isInUse((CubeID)i)) continue; 
         const char* cube_name = t_map::get_cube_name((CubeID)i);
         if (cube_name == NULL) continue;
         int len = snprintf(buf, MAP_PALETTE_LINE_LENGTH+1, MAP_PALETTE_FMT, cube_name, i);
@@ -249,7 +250,6 @@ bool save_map_palette_file()
 
     return save_file(map_palette_filename, map_palette_filename_tmp, map_palette_filename_backup);
 }
-
 
 static void load_map_restore_containers()
 {
