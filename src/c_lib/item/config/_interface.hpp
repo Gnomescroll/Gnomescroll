@@ -62,7 +62,8 @@ void item_def(ItemGroup group, const char* name)
 
     if (s == NULL)
     {
-        printf("First item MUST be the error item, with group IG_ERROR\n");
+        if (group != IG_ERROR)
+            printf("First item MUST be the error item, with group IG_ERROR\n");
         GS_ASSERT_ABORT(group == IG_ERROR);
     }
     
@@ -104,9 +105,9 @@ void block_damage_def(CubeMaterial material, int damage)
 {
     GS_ASSERT_ABORT(s != NULL);
     if (s == NULL) return;
-    GS_ASSERT_ABORT(damage >= 0 && damage <= 0xff);
+    GS_ASSERT_ABORT(damage >= 0 && damage <= MAX_CUBE_DAMAGE);
     for (int i=0; i<MAX_CUBES; i++)
-        if (t_map::get_cube_material((CubeID)i) == material)
+        if (t_map::isInUse((CubeID)i) && t_map::get_cube_material((CubeID)i) == material)
             s->block_damage[i] = damage;
 }
 

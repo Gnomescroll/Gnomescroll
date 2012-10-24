@@ -586,7 +586,7 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
-    //if (z < 0 || z >= map_dim.z) return;  // this comparison is not needed, because of value range for the data type
+    //if (z < 0 || z >= t_map::map_dim.z) return;  // this comparison is not needed, because of value range for the data type
     if (z == 0) return; // no floor
 
     Agent* a = NetServer::agents[client_id];
@@ -654,7 +654,7 @@ void create_container_block_CtoS::handle()
 void admin_create_container_block_CtoS::handle()
 {
     // comparison not needed due to value range of data type
-    //if (z < 0 || z >= map_dim.z) return;
+    //if (z < 0 || z >= t_map::map_dim.z) return;
  
     Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;

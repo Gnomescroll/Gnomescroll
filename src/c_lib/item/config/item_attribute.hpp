@@ -90,6 +90,7 @@ class ItemAttribute
         // match defaults with fist
         for (int i=0; i<MAX_CUBES; i++)
         {
+            if (!t_map::isInUse((CubeID)i)) continue;
             if (t_map::get_cube_material((CubeID)i) == CUBE_MATERIAL_DIRT)
                 this->block_damage[i] = 2;
             else

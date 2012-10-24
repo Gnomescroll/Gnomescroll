@@ -42,8 +42,8 @@ namespace ServerState
         GS_ASSERT(dims != NULL);
         int h = 1;
         if (dims != NULL) h = (int)ceil(dims->get_height());
-        float x = randrange(0, map_dim.x-1);
-        float y = randrange(0, map_dim.y-1);
+        float x = randrange(0, t_map::map_dim.x-1);
+        float y = randrange(0, t_map::map_dim.y-1);
         float z = t_map::get_highest_open_block(x,y, h);
         struct Vec3 p = vec3_init(x+0.5f,y+0.5f,z);
         return p;
@@ -149,8 +149,8 @@ namespace ServerState
     void spawn_items(int n)
     {
         int type = randrange(1,8);
-        float x = randf() * map_dim.x;
-        float y = randf() * map_dim.y;
+        float x = randf() * t_map::map_dim.x;
+        float y = randf() * t_map::map_dim.y;
         float z = 128.0f;
         ItemParticle::create_item_particle(type, x,y,z, 0,0,-3);
     }
@@ -165,8 +165,8 @@ namespace ServerState
             if (obj == NULL) break;
 
             Vec3 position;
-            position.x = randrange(0, map_dim.x-1);
-            position.y = randrange(0, map_dim.y-1);
+            position.x = randrange(0, t_map::map_dim.x-1);
+            position.y = randrange(0, t_map::map_dim.y-1);
             position.z = t_map::get_highest_open_block(position.x, position.y);
 
             using Components::PhysicsComponent;

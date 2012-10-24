@@ -321,7 +321,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 target_type = Hitscan::HITSCAN_TARGET_NONE;
                 break;
             }
-            if (block_pos[2] >= 0 && block_pos[2] < map_dim.z)
+            if (block_pos[2] >= 0 && block_pos[2] < t_map::map_dim.z)
             {
                 int x = block_pos[0];
                 int y = block_pos[1];
@@ -413,7 +413,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
         max_dist, z_low, z_high
     );
     if (b==NULL) return false;
-    if (b[2] < 0 || b[2] >= map_dim.z) return false;
+    if (b[2] < 0 || b[2] >= t_map::map_dim.z) return false;
     if (b[2] == 0) return false;    // dont modify the floor
 
     int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
@@ -466,7 +466,7 @@ void PlayerAgent_action::admin_set_block()
         max_dist, z_low, z_high
     );
     if (b==NULL) return;
-    if (b[2] < 0 || b[2] >= map_dim.z) return;
+    if (b[2] < 0 || b[2] >= t_map::map_dim.z) return;
 
     int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
     GS_ASSERT(orientation >= 0 && orientation <= 3);

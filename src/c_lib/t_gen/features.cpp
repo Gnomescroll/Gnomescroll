@@ -29,7 +29,7 @@ void rough_floor(int x, int y, int z_start, int height, CubeID tile)
 {
     GS_ASSERT(height > 0);
     if (height <= 0) return;
-    GS_ASSERT(z_start >= 0 && z_start + height < map_dim.z);
+    GS_ASSERT(z_start >= 0 && z_start + height < t_map::map_dim.z);
     for (int i=0; i<x; i++)
     for (int j=0; j<y; j++)
     {

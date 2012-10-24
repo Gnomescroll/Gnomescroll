@@ -1,35 +1,26 @@
 #include "t_map.hpp"
 
 #include <t_map/_interface.hpp>
-
-#include "t_properties.hpp"
-
-#include "t_map_class.hpp"
+#include <t_map/t_properties.hpp>
+#include <t_map/t_map_class.hpp>
 
 #if DC_CLIENT
-    #include <t_map/glsl/cache.hpp>
-    #include <t_map/glsl/texture.hpp>
-    #include <t_map/glsl/shader.hpp>
-
-    #include <t_map/net/t_StoC.hpp>
+# include <t_map/glsl/cache.hpp>
+# include <t_map/glsl/texture.hpp>
+# include <t_map/glsl/shader.hpp>
+# include <t_map/net/t_StoC.hpp>
 #endif
 
 #if DC_SERVER
-    #include <t_map/server/manager.hpp>
-    #include <t_map/server/subscription_list.hpp>
-    #include <t_map/server/env_process.hpp>
-
-    #include <common/random.hpp>
-
-    #include <particle/_interface.hpp>
-
-    #include <item/_interface.hpp>
-
-    #include <t_map/config/drop_dat.hpp>
-    #include <entity/object/main.hpp>
+# include <t_map/server/manager.hpp>
+# include <t_map/server/subscription_list.hpp>
+# include <t_map/server/env_process.hpp>
+# include <common/random.hpp>
+# include <particle/_interface.hpp>
+# include <item/_interface.hpp>
+# include <t_map/config/drop_dat.hpp>
+# include <entity/object/main.hpp>
 #endif
-
-struct MapDimension map_dim = { XMAX, YMAX, ZMAX };
 
 namespace t_map
 {
@@ -168,7 +159,8 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_id);
     if (cube_id == NULL_CUBE || ret != 0) return;
 
-    //NOTE: only sends to clients who are subscribed to map chunk
+    // return value 0 means block was destroyed; cube_id has the value of the cube before it was damaged
+    if (ret == 0) cube_id = EMPTY_CUBE;
 
     map_history->send_block_action(x,y,z, cube_id, action);
 

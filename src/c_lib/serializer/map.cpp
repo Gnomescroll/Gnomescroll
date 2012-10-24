@@ -197,9 +197,9 @@ bool load_map_palette_file(const char* fn)
             return false;
         }
 
-        int actual_cube_id = t_map::get_compatible_cube_id(palette_data.name);
-        GS_ASSERT(actual_cube_id >= 0);
-        if (actual_cube_id < 0)
+        CubeID actual_cube_id = t_map::get_compatible_cube_id(palette_data.name);
+        GS_ASSERT(t_map::isValidCube(actual_cube_id));
+        if (!t_map::isValidCube(actual_cube_id))
         {   // we failed to get a compatible block type
             free(str);
             return false;

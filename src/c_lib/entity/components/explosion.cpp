@@ -54,7 +54,7 @@ void ExplosionComponent::damage_blocks()
         bz = mz + k;
 
         if (bz <= 0) continue;  // ignore floor
-        if (bz >= map_dim.z) continue;
+        if (bz >= t_map::map_dim.z) continue;
 
         bx = translate_point(bx);
         by = translate_point(by);
@@ -69,7 +69,7 @@ void ExplosionComponent::damage_blocks()
         apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
         by = translate_point(my + j);
         bz = mz - k;
-        if (bz > 0 && bz < map_dim.z)
+        if (bz > 0 && bz < t_map::map_dim.z)
             apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
         bx = translate_point(mx + i);
         by = translate_point(my - j);

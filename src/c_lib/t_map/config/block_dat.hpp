@@ -1,39 +1,20 @@
 #pragma once
 
-
 #include <t_map/config/_interface.hpp>
 
 namespace t_map 
 {
 
-void cube_def(CubeType type, const char* name);
-void end_cube_def();
-
-void iso_texture(int tex_id);
-void iso_texture(int sheet_id, int ypos, int xpos);
-void side_texture(int side, int tex_id);
-void side_texture(int side, int sheet_id, int ypos, int xpos);
-void hud_def(int yhud,int xhud, int sheet_id, int ypos, int xpos);
-int texture_alias(const char* spritesheet);
-
-void set_max_damage(int dmg);
-
 /*
 --[[
-t top
-b bottom
-n north
-s south
-w west
-e east
+* side_texture(D, tex);
+    T top
+    B bottom
+    N north
+    S south
+    W west
+    E east
 ]]
-*/
-
-/*
-    ErrorCube,
-    EmptyCube,
-    SolidCube,
-    ItemContainerCube
 */
 
 #if PRODUCTION
@@ -61,11 +42,20 @@ void load_block_dat()
     const int W = 4;
     const int E = 5;
 
-    int error_block =  sprite_alias(t0,1,1);
+    int error_block = sprite_alias(t0,1,1);
 
-    // MUST COME FIRST (error block goes last)
-    cube_def(EmptyCube, "empty_block");
+    cube_def_empty("empty_block");
     iso_texture(error_block);
+    push_texture();
+
+    cube_def_error("error_block");
+    iso_texture(error_block);
+    side_texture(T, error_block);
+    side_texture(B, error_block);
+    side_texture(N, error_block);
+    side_texture(S, error_block);
+    side_texture(W, error_block);
+    side_texture(E, error_block);
     push_texture();
 
     cube_def(SolidCube, "terminal_blue");
@@ -165,6 +155,7 @@ void load_block_dat()
     side_texture(T, t7,2,4);
     side_texture(B, t7,4,4);
     push_texture();
+    set_max_damage(24);
 
     cube_def(SolidCube, "rock", CUBE_MATERIAL_STONE);
     iso_texture(t1,9,9);
@@ -270,7 +261,6 @@ void load_block_dat()
     iso_texture(t5,1,4);
     push_texture();
     set_max_damage(RUINS_DMG);
-
 
     // random textures from cell to fill the block placer
     DEFAULT_MAX_DAMAGE = 16;
@@ -507,17 +497,6 @@ void load_block_dat()
     iso_texture(t6, 2,7);
     push_texture();
     hud_def(7,7, t6,2,7);
-
-    // MUST COME LAST
-    cube_def(ErrorCube, "error_block");
-    iso_texture(error_block);
-    side_texture(T, error_block);
-    side_texture(B, error_block);
-    side_texture(N, error_block);
-    side_texture(S, error_block);
-    side_texture(W, error_block);
-    side_texture(E, error_block);
-    push_texture();
 
     end_cube_def();  // finalize
     verify_config(); // validate

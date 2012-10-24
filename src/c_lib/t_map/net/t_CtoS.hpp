@@ -1,7 +1,6 @@
 #pragma once
 
-#include "t_net.hpp"
-
+#include <t_map/net/t_net.hpp>
 
 namespace t_map
 {

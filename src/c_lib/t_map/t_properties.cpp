@@ -120,10 +120,10 @@ bool isItemContainer(CubeID id)
     return t_map::cube_properties[id].item_container;
 }
 
-int maxDamage(CubeID id) 
+unsigned char maxDamage(CubeID id) 
 {
     ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return 4;
+    IF_INVALID_CUBE_ID(id) return 32;
     return t_map::cube_properties[id].max_damage;
 }
 
@@ -147,7 +147,7 @@ bool isItemContainer(int x, int y, int z)
     return t_map::cube_properties[t_map::get(x,y,z)].item_container;
 }
 
-int maxDamage(int x, int y, int z)
+unsigned char maxDamage(int x, int y, int z)
 {
     return t_map::cube_properties[t_map::get(x,y,z)].max_damage;
 }

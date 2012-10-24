@@ -478,7 +478,7 @@ void Agent::set_camera_state(float x, float y, float z, float theta, float phi)
 
 void Agent::get_spawn_point(Vec3* spawn)
 {
-    Vec3 default_spawn = vec3_init(map_dim.x/2, map_dim.y/2, map_dim.z-1);
+    Vec3 default_spawn = vec3_init(t_map::map_dim.x/2, t_map::map_dim.y/2, t_map::map_dim.z-1);
 
     float fh = this->current_height();
 

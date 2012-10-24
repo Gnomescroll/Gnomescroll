@@ -14,6 +14,8 @@
 namespace t_map
 {
 
+struct MapDimension map_dim = { XMAX, YMAX, ZMAX };
+
 void init_packets()
 {
     t_map::map_chunk_compressed_StoC::register_client_packet();
@@ -124,10 +126,9 @@ unsigned int requested_block_damage = 0;
 
 bool is_last_requested_block(int x, int y, int z)
 {
-    return (
-        last_requested_block.x == x
-     && last_requested_block.y == y
-     && last_requested_block.z == z);
+    return (last_requested_block.x == x
+          && last_requested_block.y == y
+          && last_requested_block.z == z);
 }
 
 void request_block_damage(int x, int y, int z)
@@ -143,9 +144,9 @@ void request_block_damage(int x, int y, int z)
     last_requested_block.y = y;
     last_requested_block.z = z;
     
-    requested_cube_id = t_map::get(x,y,z);
+    requested_cube_id = get(x,y,z);
     requested_block_health = maxDamage(requested_cube_id);
-    
+
     // send packet
     request_block_damage_CtoS msg;
     msg.x = x;

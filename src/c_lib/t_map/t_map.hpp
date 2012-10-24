@@ -9,54 +9,11 @@
 
 #include <t_map/t_properties.hpp>
 
-extern struct MapDimension map_dim;
-
 namespace t_map
 {
 
 extern class Terrain_map* main_map;
  
-void init_t_map();
-void end_t_map();
-
-#if DC_CLIENT
-void init_for_draw();
-void init_shaders();
-#endif
-
 class Terrain_map* get_map();
-
-CubeID get(int x, int y, int z);
-void set(int x, int y, int z, CubeID cube_id);
-inline void set_fast(int x, int y, int z, CubeID cube_id) __attribute__((always_inline));
-void set_palette(int x, int y, int z, int palette);
-
-int get_block_damage(int x, int y, int z);
-int apply_damage(int x, int y, int z, int dmg);
-
-#if DC_SERVER
-void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
-
-void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action);
-void broadcast_set_block(int x, int y, int z, CubeID cube_id);
-void broadcast_set_block_palette(int x, int y, int z, CubeID cube_id, int palette);
-void broadcast_set_palette(int x, int y, int z, int palette);
-#endif
-
-void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
-
-inline int get_highest_open_block(int x, int y, int vertical_gap);
-inline int get_highest_open_block(int x, int y);
-inline int get_nearest_open_block(int x, int y, int z, int vertical_gap); 
-inline int get_nearest_open_block(int x, int y, int z); 
-inline int get_lowest_open_block(int x, int y, int n);
-inline int get_highest_solid_block(int x, int y);
-inline int get_highest_solid_block(int x, int y, int z);
-inline int get_lowest_solid_block(int x, int y);
-inline int get_solid_block_below(int x, int y, int z);
-
-inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
-
-bool block_can_be_placed(int x, int y, int z, CubeID cube_id);
 
 }   // t_map

@@ -568,7 +568,7 @@ inline void Agent_cs_CtoS::handle()
 inline void hit_block_CtoS::handle()
 {
     // comparisons not needed due to value range of data type
-    //if (z < 0 || z >= map_dim.z) return;
+    //if (z < 0 || z >= t_map::map_dim.z) return;
     //if (z == 0) return;
     
     Agent* a = NetServer::agents[client_id];
@@ -816,7 +816,7 @@ inline void ThrowGrenade_CtoS::handle()
 inline void agent_set_block_CtoS::handle()
 {
     // comparisons not needed due to value range of data type
-    //if (z < 0 || z >= map_dim.z) return;
+    //if (z < 0 || z >= t_map::map_dim.z) return;
     //if (z == 0) return;     // dont set bottom layer
 
     Agent* a = NetServer::agents[client_id];
@@ -886,7 +886,7 @@ inline void agent_set_block_CtoS::handle()
 inline void admin_set_block_CtoS::handle()
 {
     // comparisons not needed due to value range of data type
-    //if (z < 0 || z >= map_dim.z) return;
+    //if (z < 0 || z >= t_map::map_dim.z) return;
 
     Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);

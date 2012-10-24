@@ -1,5 +1,6 @@
 #pragma once
 
+#include <t_map/_interface.hpp>
 #include <t_map/common/map_element.hpp>
 #include <t_map/net/t_StoC.hpp>
 #include <t_map/t_map.hpp>
@@ -8,13 +9,7 @@
 namespace t_map
 {
 
-/*
-Note:
-This was previously 
-*/
-
-const int SMC_MAX_SUBSCRIBERS = 64;
-
+const int SMC_MAX_SUBSCRIBERS = HARD_MAX_CONNECTIONS * 2;
 
 class MAP_CHUNK_SUBSCRIPTION
 {
@@ -228,6 +223,4 @@ class Terrain_map_subscription
 
 };
 
-
 }   // t_map
-

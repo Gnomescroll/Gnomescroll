@@ -32,7 +32,7 @@ static int get_cube_id_ptr(const char* name)
 
 static const char* get_cube_name_ptr(int cube_id)
 {
-    return get_cube_name_ptr((CubeID)cube_id);
+    return get_cube_name((CubeID)cube_id);
 }
 
 void init_block_drop_dat()

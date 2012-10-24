@@ -80,7 +80,7 @@ inline bool isOccludes(CubeID id) __attribute((always_inline));
 inline bool isMagic(CubeID id) __attribute((always_inline));
 inline bool isTransparent(CubeID id) __attribute((always_inline));
 inline bool isItemContainer(CubeID id) __attribute((always_inline));
-inline int maxDamage(CubeID id) __attribute((always_inline));
+inline unsigned char maxDamage(CubeID id) __attribute((always_inline));
 
 //Properties by coordinates
 
@@ -88,6 +88,6 @@ inline bool isSolid(int x, int y, int z) __attribute((always_inline));
 inline bool isOccludes(int x, int y, int z) __attribute((always_inline));
 inline bool isMagic(int x, int y, int z) __attribute((always_inline));
 inline bool isItemContainer(int x, int y, int z) __attribute((always_inline));
-inline int maxDamage(int x, int y, int z) __attribute((always_inline));
+inline unsigned char maxDamage(int x, int y, int z) __attribute((always_inline));
 
 }   // t_map

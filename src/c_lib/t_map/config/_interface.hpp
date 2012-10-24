@@ -5,35 +5,32 @@ namespace t_map
 
 class CubeProperties* p = NULL;
 
-int _current_cube_id = 0;
+int _current_cube_id = EMPTY_CUBE + 1;
 int _palette_number = 0;
 
 int _side_texture[6];
 
-int DEFAULT_MAX_DAMAGE = MAX_CUBE_DAMAGE;
+int DEFAULT_MAX_DAMAGE = 32;
 
 void _finish_cube()
 {
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
     p->in_use = true;
-    _current_cube_id++;
 }
 
-void cube_def(CubeType type, const char* name, CubeMaterial material)
+// private method; don't call this one directly
+static void cube_def(CubeID id, CubeType type, const char* name, CubeMaterial material)
 {
-    if (p == NULL)
-    {
-        GS_ASSERT_ABORT(type == EmptyCube);
-    }
-
+    GS_ASSERT_ABORT(id == NULL_CUBE || id == ERROR_CUBE || id == EMPTY_CUBE);
+    
     if (p != NULL)
         _finish_cube();
+    
+    if (id == NULL_CUBE) id = (CubeID)_current_cube_id++;
 
     GS_ASSERT_ABORT(is_valid_cube_name(name));
     if (!is_valid_cube_name(name)) return;
-
-    CubeID id = (CubeID)_current_cube_id;
     
     ASSERT_VALID_CUBE_ID(id);
     IF_INVALID_CUBE_ID(id) return;
@@ -76,16 +73,35 @@ void cube_def(CubeType type, const char* name, CubeMaterial material)
     memset(_side_texture, 0, sizeof(_side_texture));
 }
 
+// this is the public method
+void cube_def(CubeType type, const char* name, CubeMaterial material)
+{
+    cube_def(NULL_CUBE, type, name, material);
+}
+
 void cube_def(CubeType type, const char* name)
 {
     cube_def(type, name, CUBE_MATERIAL_NONE);
+}
+
+void cube_def_empty(const char* name)
+{
+    static int i=0;
+    GS_ASSERT_ABORT(!(i++));
+    cube_def(EMPTY_CUBE, EmptyCube, name, CUBE_MATERIAL_NONE);
+}
+
+void cube_def_error(const char* name)
+{
+    static int i=0;
+    GS_ASSERT_ABORT(!(i++));
+    cube_def(ERROR_CUBE, ErrorCube, name, CUBE_MATERIAL_NONE);
 }
 
 void end_cube_def()
 {
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
-    GS_ASSERT_ABORT(p->type == ErrorCube);
     _finish_cube();
     #if DC_CLIENT
     save_cube_texture();
@@ -94,9 +110,9 @@ void end_cube_def()
 
 void set_max_damage(int max_damage)
 {
-    GS_ASSERT(p != NULL);
+    GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
-    GS_ASSERT(max_damage > 0 && max_damage <= MAX_CUBE_DAMAGE);
+    GS_ASSERT_ABORT(max_damage > 0 && max_damage <= MAX_CUBE_DAMAGE);
     if (max_damage <= 0 || max_damage >= MAX_CUBE_DAMAGE) return;
     p->max_damage = max_damage;
 }
@@ -152,8 +168,8 @@ void push_texture()
     if (p == NULL) return;
     
     start_cube_palette(p->id);
-    for (int i=0; i<6; i++) set_cube_side_texture(_current_cube_id, i, _side_texture[i]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(_current_cube_id, i, _side_texture[i]);
+    for (int i=0; i<6; i++) set_cube_side_texture(p->id, i, _side_texture[i]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, i, _side_texture[i]);
     push_cube_palette();
     _palette_number++;
 }
@@ -234,15 +250,24 @@ void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos)
     GS_ASSERT_ABORT(xhud >= 1 && yhud >= 1 && xhud <= 8 && yhud <= 8);
 
     int tex_id = blit_cube_texture(sheet_id, xpos, ypos);
+
+    // check that the texture is use somewhere in the cube
+    bool found = false;
     for (int i=0; i<6; i++)
     {
         if (_side_texture[i] == 0) continue;
         if (_side_texture[i] == tex_id)
         {
-            printf("%s failed for sheet,y,x %d,%d,%d. No matching texture found for def (check iso_texture)\n", __FUNCTION__, sheet_id, ypos, xpos);
-            GS_ASSERT_ABORT(false);
+            found = true;
+            break;
         }
     }
+    if (!found)
+    {
+        printf("%s failed for sheet,y,x %d,%d,%d. No matching texture found for def (check iso_texture)\n", __FUNCTION__, sheet_id, ypos, xpos);
+        GS_ASSERT_ABORT(found);
+    }
+
     set_cube_hud(xhud, yhud, p->id, tex_id);
 }
 
@@ -267,16 +292,16 @@ void verify_config()
         class CubeProperties* p = &cube_properties[i];
         if (!cube_properties[i].in_use) continue;
 
-        GS_ASSERT(p->id == (CubeID)i);
-        GS_ASSERT(p->id != NULL_CUBE);
+        GS_ASSERT_ABORT(p->id == (CubeID)i);
+        GS_ASSERT_ABORT(p->id != NULL_CUBE);
 
-        GS_ASSERT(p->id != EMPTY_CUBE || p->type == EmptyCube);
-        GS_ASSERT(p->id != ERROR_CUBE || p->type == ErrorCube);
-        GS_ASSERT(p->id == EMPTY_CUBE || p->type != EmptyCube);
-        GS_ASSERT(p->id == ERROR_CUBE || p->type != ErrorCube);
+        GS_ASSERT_ABORT(p->id != EMPTY_CUBE || p->type == EmptyCube);
+        GS_ASSERT_ABORT(p->id != ERROR_CUBE || p->type == ErrorCube);
+        GS_ASSERT_ABORT(p->id == EMPTY_CUBE || p->type != EmptyCube);
+        GS_ASSERT_ABORT(p->id == ERROR_CUBE || p->type != ErrorCube);
 
-        GS_ASSERT(p->max_damage <= MAX_CUBE_DAMAGE);
-        GS_ASSERT(is_valid_cube_name(p->name));
+        GS_ASSERT_ABORT(p->max_damage <= MAX_CUBE_DAMAGE);
+        GS_ASSERT_ABORT(is_valid_cube_name(p->name));
     }
 }
 

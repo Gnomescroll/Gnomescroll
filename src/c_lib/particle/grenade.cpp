@@ -212,7 +212,7 @@ void Grenade::damage_blocks(int multiplier)
         by = my + j;
         bz = mz + k;
         if (bz <= 0) continue;  // dont damage floor
-        if (bz >= map_dim.z) continue;  // dont damage floor
+        if (bz >= t_map::map_dim.z) continue;  // dont damage floor
 
         bx = translate_point(bx);
         by = translate_point(by);
@@ -227,7 +227,7 @@ void Grenade::damage_blocks(int multiplier)
         apply_damage_broadcast(bx,by,bz, dmg, action);
         by = translate_point(my + j);
         bz = mz - k;
-        if (bz > 0 && bz < map_dim.z)
+        if (bz > 0 && bz < t_map::map_dim.z)
             apply_damage_broadcast(bx,by,bz, dmg, action);
         bx = translate_point(mx + i);
         by = translate_point(my - j);

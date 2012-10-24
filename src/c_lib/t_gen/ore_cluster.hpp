@@ -59,9 +59,9 @@ void populate_ore_veins(int number, const char* block_name)
 
     for(int i=0; i<number; i++)
     {
-        int x = (int)genrand_int32() % map_dim.x;
-        int y = (int)genrand_int32() % map_dim.y;
-        int z = (int)genrand_int32() % map_dim.z;
+        int x = (int)genrand_int32() % t_map::map_dim.x;
+        int y = (int)genrand_int32() % t_map::map_dim.y;
+        int z = (int)genrand_int32() % t_map::map_dim.z;
 
         int ctile = t_map::get(x,y,z);
         if(ctile == 0 || ctile == regolith_id) continue;
@@ -157,9 +157,9 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
 
     for(int i=0; i<number; i++)
     {
-        int x = (int)genrand_int32() % map_dim.x;
-        int y = (int)genrand_int32() % map_dim.y;
-        int z = (int)genrand_int32() % map_dim.z;
+        int x = (int)genrand_int32() % t_map::map_dim.x;
+        int y = (int)genrand_int32() % t_map::map_dim.y;
+        int z = (int)genrand_int32() % t_map::map_dim.z;
 
         CubeID ctile = t_map::get(x,y,z);
         if (ctile == EMPTY_CUBE || ctile == regolith_id)
@@ -272,9 +272,9 @@ void populate_ore_pocket_elliptoid(int number, const char* block_name)
     int clusters = 0;
     for(int i=0; i<number; i++)
     {
-        int x = (int)genrand_int32() % map_dim.x;
-        int y = (int)genrand_int32() % map_dim.y;
-        int z = (int)genrand_int32() % map_dim.z;
+        int x = (int)genrand_int32() % t_map::map_dim.x;
+        int y = (int)genrand_int32() % t_map::map_dim.y;
+        int z = (int)genrand_int32() % t_map::map_dim.z;
 
         int ctile = t_map::get(x,y,z);
         if (ctile == 0)
