@@ -394,7 +394,8 @@ void create_items_from_blocks()
 
     // TODO -- client does not have access to drop dat
     // Need to give it enough access to figure out which automatic items to make
-    
+
+    #if 0
     GS_ASSERT_ABORT(t_map::block_drop_dat != NULL);
     if (t_map::block_drop_dat == NULL) return;
     for (int i=0; i<MAX_CUBES; i++)
@@ -418,6 +419,7 @@ void create_items_from_blocks()
         
         item_block_def(name);
     }
+    #endif
 }
 
 

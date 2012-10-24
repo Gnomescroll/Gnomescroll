@@ -9,6 +9,17 @@ class ObjectList
         virtual const char* name() = 0;
 
         unsigned int start;         // indexing offset for quicker lookups
+
+        void init()
+        {
+            GS_ASSERT(this->max > 0);
+            if (this->max <= 0) return;
+
+            GS_ASSERT(this->null_id < 0 || (unsigned int)this->null_id >= this->max);
+            
+            this->objects = (ObjectState*)calloc(this->max, sizeof(ObjectState));
+            for (unsigned int i=0; i<this->max; i++) this->objects[i].id = this->null_id;
+        }
         
     public:
         IDType null_id;    
@@ -96,17 +107,17 @@ class ObjectList
                     this->objects[i].ObjectState::~ObjectState();
             free(this->objects);
         }
-    }
+    }    
 
-    explicit ObjectList(unsigned int capacity, IDType null_id=-1) :
+    explicit ObjectList(unsigned int capacity) :
+        start(0), null_id(-1), max(capacity), ct(0) 
+    {
+        this->init();
+    }
+    
+    explicit ObjectList(unsigned int capacity, IDType null_id) :
         start(0), null_id(null_id), max(capacity), ct(0) 
     {
-        GS_ASSERT(this->max > 0);
-        if (this->max <= 0) return;
-
-        GS_ASSERT(this->null_id < 0 || (unsigned int)this->null_id >= this->max);
-        
-        this->objects = (ObjectState*)calloc(this->max, sizeof(ObjectState));
-        for (unsigned int i=0; i<this->max; i++) this->objects[i].id = this->null_id;
+        this->init();
     }
 };
