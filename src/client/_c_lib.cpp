@@ -211,17 +211,20 @@ bool signal_exit = false;
 #include <unistd.h>
 #include <signal.h>
 
-void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    if (!c_lib_inited)
-    {
-        close_c_lib();
-        exit(0);
-    }
     signal_exit = true;
 }
 #endif
+
+
+void close_c_lib();
+void atexit_handler()
+{
+    close_c_lib();
+    exit(0);
+}
+
 
 int init_c_lib(int argc, char* argv[]) 
 {
@@ -231,6 +234,9 @@ int init_c_lib(int argc, char* argv[])
     static int inited = 0;
     GS_ASSERT(inited == 0);
     inited++;
+
+    int ret = atexit(&atexit_handler);
+    GS_ASSERT_ABORT(ret == 0);
 
     #ifdef linux
     // print working directory
@@ -248,7 +254,7 @@ int init_c_lib(int argc, char* argv[])
     sa_term.sa_handler = &signal_terminate_handler;
     sa_term.sa_flags = 0;
     sigemptyset(&sa_term.sa_mask);
-    int ret = sigaction(SIGTERM, &sa_term, NULL);
+    ret = sigaction(SIGTERM, &sa_term, NULL);
     GS_ASSERT(ret == 0);
     
     // SIGINT ctrl-C
@@ -302,45 +308,43 @@ int init_c_lib(int argc, char* argv[])
 
     init_image_loader();
     TextureSheetLoader::init();
+    TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
+    TextureSheetLoader::init_item_texture();
+
+    HudCubeSelector::init();
+
+    Item::init();
+    ItemContainer::init();
+
+    // HIGHLY ORDER SENSTITIVE
+    Item::init_properties();
+    t_map::init_t_properties();
+    t_mech::init_properties();
+
+    t_map::load_block_dat();
+    t_map::blit_block_item_sheet();
+
+    t_mech::load_mech_dat();
+    Item::load_item_dat();
+    t_map::init_block_drop_dat();
+    t_map::load_block_drop_dat();         // load drop dat after items
+    Item::create_items_from_blocks();
+    Item::end_item_dat();
+
+    Item::load_synthesizer();
+    Item::load_crafting_dat();
+    Item::load_smelting_dat();
+
+    Toolbelt::init();   // toolbelt init depends on item dat being loaded
+
+    t_mech::init();
+
+    t_map::init_t_map();
+    t_map::init_for_draw();
 
     HudText::init();
     HudMap::init();
     HudFont::init();
-    HudCubeSelector::init();
-    
-    t_map::init_t_map();
-    t_map::load_block_dat();
-    t_map::init_for_draw();
-    t_map::blit_block_item_sheet();
-    
-    Item::init();
-    ItemContainer::init();
-    Item::init_properties();
-    
-    t_mech::init();
-    t_mech::load_mech_dat();
-
-    Item::load_item_dat();
-    Item::load_synthesizer();
-
-    // TODO -- enable enough drop dat info to figure out the auto items
-    // maybe have another config or something
-    //t_map::init_block_drop_dat();
-    //t_map::load_block_drop_dat();         // load drop dat after items
-    Item::create_items_from_blocks();
-    //t_map::apply_automatic_block_drops();
-
-    Item::end_item_dat();
-
-    Toolbelt::init();   // toolbelt init depends on item dat being loaded
-
-    // Load Dats
-
-    // Dont do this in the client. server only
-    //t_map::load_block_drop_dat(); //load drop dat after items
-
-    TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
-    TextureSheetLoader::init_item_texture();
 
     HudContainer::init();
     HudContainer::draw_init();
@@ -366,9 +370,6 @@ int init_c_lib(int argc, char* argv[])
 
     Animations::init();
 
-    Item::load_crafting_dat();
-    Item::load_smelting_dat();
-
     Hud::init();
 
     init_voxel_render_list_shader1();   //used to be called from ClientState::init
@@ -392,6 +393,7 @@ void close_c_lib()
     printf("Closing game...\n");
 
     if (TEARDOWN_DEBUG) printf("t_map end t map\n");
+    t_map::end_t_properties();
     t_map::end_t_map();
 
     if (TEARDOWN_DEBUG) printf("HudContainer draw teardown\n");
@@ -399,8 +401,8 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("HudContainer teardown\n");
     HudContainer::teardown();
     if (TEARDOWN_DEBUG) printf("t_mech teardown\n");
+    t_mech::teardown_properties();
     t_mech::teardown();
-    //t_mech::state_teardown();
     if (TEARDOWN_DEBUG) printf("particle draw teardown\n");
     Particle::draw_teardown();
     
@@ -453,6 +455,7 @@ void close_c_lib()
 
     if (TEARDOWN_DEBUG) printf("item teardown\n");
     Item::teardown();
+    Item::teardown_properties();
     if (TEARDOWN_DEBUG) printf("toolbelt teardown\n");
     Toolbelt::teardown();
     if (TEARDOWN_DEBUG) printf("container teardown\n");

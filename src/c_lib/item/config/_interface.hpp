@@ -33,10 +33,11 @@ static int _current_item_index = 0;
 static int _item_cube_iso_spritesheet_id = -1;
 #endif
 
-void _set_attribute()
+void finish_item_def()
 {
     GS_ASSERT_ABORT(s != NULL);
     if (s == NULL) return;
+    if (s->loaded) return;
     s->loaded = true;
     _current_item_index++;
 }
@@ -59,7 +60,7 @@ bool item_def(ItemGroup group, const char* name)
     }
     
     if (s != NULL)
-        _set_attribute();   // locks in old attribute
+        finish_item_def();   // locks in old attribute
         
     GS_ASSERT_ABORT(group != IG_NONE);
     if (group == IG_NONE) return false;
@@ -462,7 +463,9 @@ void synthesizer_item_set(int xslot, int yslot);
 void synthesizer_item_def(const char* item_name, int cost)
 {
     GS_ASSERT_ABORT(cost != NULL_COST && cost > 0 && count_digits(cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);
-    _current_synthesizer_item_type = get_item_type(item_name);
+    int item_type = get_item_type(item_name);
+    GS_ASSERT_ABORT(item_type != NULL_ITEM_TYPE);
+    _current_synthesizer_item_type = item_type;
     _current_synthesizer_item_cost = cost;
 }
 

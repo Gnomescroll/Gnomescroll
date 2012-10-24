@@ -256,10 +256,10 @@ void load_item_dat()
     item_block_def("steel_block_1");
     set_pretty_name("Steel Block #1");
 
-    item_def(IG_PLACER, "steel_block_2");
+    item_block_def("steel_block_2");
     set_pretty_name("Steel block #2");
 
-    item_def(IG_PLACER, "steel_block_3");
+    item_block_def("steel_block_3");
     set_pretty_name("Steel Block #3");
 
     item_def(IG_CONSUMABLE, "small_charge_pack");
@@ -382,6 +382,8 @@ void load_item_dat()
     s->mech_type = t_mech::get_mech_type("blob_flower");
     set_pretty_name("Blob Seed");
     s->max_stack_size = 64;
+
+    finish_item_def();
 }
 
 void create_items_from_blocks()
@@ -395,9 +397,8 @@ void create_items_from_blocks()
     // TODO -- client does not have access to drop dat
     // Need to give it enough access to figure out which automatic items to make
 
-    #if 0
-    GS_ASSERT_ABORT(t_map::block_drop_dat != NULL);
-    if (t_map::block_drop_dat == NULL) return;
+    GS_ASSERT_ABORT(t_map::defined_drops != NULL);
+    if (t_map::defined_drops == NULL) return;
     for (int i=0; i<MAX_CUBES; i++)
     {
         if (!t_map::isValidCube((CubeID)i)) continue;  // skips empty and error blocks
@@ -406,20 +407,25 @@ void create_items_from_blocks()
         if (name == NULL) continue;
 
         // ignore blocks that have been overriden
-        for (int i=0; i<MAX_ITEMS; i++)
+        for (int i=0; i<MAX_ITEM_TYPES; i++)
             if (strcmp(name, item_attributes[i].name) == 0)
             {
                 GS_ASSERT_ABORT(item_attributes[i].group == IG_PLACER);
                 return;
             }
 
+        CubeID cube_id = t_map::get_cube_id(name);
+        GS_ASSERT_ABORT(t_map::isValidCube(cube_id));
+        if (!t_map::isValidCube(cube_id)) continue;
+
         // blocks that have drops defined (at this point) will not be dropping themselves
-        // TODO -- check if it has a drop defined, and its defined for itself
-        if (t_map::block_drop_dat->has_drop_defined(name)) continue;
+        if (t_map::defined_drops[cube_id] != t_map::DROP_UNDEFINED) continue;
         
-        item_block_def(name);
+        bool defined = item_block_def(name);
+        GS_ASSERT_ABORT(defined);
     }
-    #endif
+
+    finish_item_def();
 }
 
 
@@ -460,6 +466,7 @@ void verify_item_dat()
         GS_ASSERT_ABORT(!a->gas || a->gas_lifetime != NULL_GAS_LIFETIME);
 
         #if DC_CLIENT
+        printf("%s %d %d %d\n", a->name, a->group, a->particle_voxel, a->sprite);
         GS_ASSERT_ABORT(a->group == IG_ERROR || a->particle_voxel || a->sprite != ERROR_SPRITE);
         #endif
         
@@ -483,7 +490,7 @@ void verify_item_dat()
 
 void end_item_dat()
 {
-    _set_attribute();
+    finish_item_def();
     
     #if DC_CLIENT
     save_item_texture();

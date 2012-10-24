@@ -15,7 +15,7 @@ float crusher_item_jump_out_velocity()
     return ((randf()*0.5f) + 1.0f) * m;
 }
 
-static class Item::ItemDrop** drops = NULL;
+static class Item::ItemDrop* drops;
 
 /* Configuration Loader */ 
     
@@ -23,28 +23,30 @@ static class Item::ItemDrop* d = NULL;
 
 static void set_crusher_drop(int item_type)
 {
-    GS_ASSERT(drops != NULL);
+    GS_ASSERT_ABORT(drops != NULL);
     if (drops == NULL) return;
 
-    GS_ASSERT(item_type != NULL_ITEM);
-    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEM_TYPES);
-    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return;
+    ASSERT_VALID_ITEM_TYPE(item_type);
+    IF_INVALID_ITEM_TYPE(item_type)
+    {
+        GS_ASSERT_ABORT(false);
+        return;
+    }
 
-    GS_ASSERT(drops[item_type] == NULL);
-    if (drops[item_type] != NULL) return;
-    drops[item_type] = new Item::ItemDrop;
-    d = drops[item_type];
+    GS_ASSERT_ABORT(!drops[item_type].is_loaded());
+    if (drops[item_type].is_loaded()) return;
+    d = &drops[item_type];
 }
 
 static void crusher_def(const char* name)
 {
     int item_type = Item::get_item_type(name);
-    GS_ASSERT(item_type != NULL_ITEM);
+    GS_ASSERT_ABORT(item_type != NULL_ITEM_TYPE);
     set_crusher_drop(item_type);
 }
 
 static void register_crusher_settings()
-{
+{    
     crusher_def("regolith");
     d->set_max_drop_types(6);
     
@@ -106,8 +108,6 @@ static void register_crusher_settings()
 
 void validate_crusher_settings()
 {
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
-        GS_ASSERT(drops[i] == NULL || drops[i]->is_loaded() != 0);
 }
 
 void load_crusher_dat()
@@ -121,26 +121,20 @@ void load_crusher_dat()
 
 void init_crusher_dat()
 {
-    GS_ASSERT(drops == NULL);
-    drops = (class Item::ItemDrop**)calloc(MAX_ITEM_TYPES, sizeof(class Item::ItemDrop*));
+    GS_ASSERT_ABORT(drops == NULL);
+    drops = new class Item::ItemDrop[MAX_ITEM_TYPES];
 }
 
 void teardown_crusher_dat()
 {
-    if (drops != NULL)
-    {
-        for (int i=0; i<MAX_ITEM_TYPES; i++)
-            if (drops[i] != NULL) delete drops[i];
-        free(drops);
-    }
+    if (drops != NULL) delete[] drops;
 }
 
 class Item::ItemDrop* get_crusher_drop(int item_type)
 {
-    GS_ASSERT(item_type != NULL_ITEM_TYPE);
-    GS_ASSERT(item_type >= 0 && item_type < MAX_ITEM_TYPES);
-    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return NULL;
-    return drops[item_type];
+    ASSERT_VALID_ITEM_TYPE(item_type);
+    IF_INVALID_ITEM_TYPE(item_type) return NULL;
+    return &drops[item_type];
 }
 
 }   // ItemContainer

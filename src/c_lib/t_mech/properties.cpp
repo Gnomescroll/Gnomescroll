@@ -13,7 +13,7 @@ void init_properties()
     mech_attributes = new class MechAttribute[MAX_MECHS];
 }
 
-void tear_down_properties()
+void teardown_properties()
 {
     if (mech_attributes != NULL) delete[] mech_attributes;
 }

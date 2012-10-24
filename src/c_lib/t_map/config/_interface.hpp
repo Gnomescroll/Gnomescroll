@@ -1,5 +1,7 @@
 #pragma once
 
+#include <t_map/glsl/palette.hpp>
+
 namespace t_map
 {
 

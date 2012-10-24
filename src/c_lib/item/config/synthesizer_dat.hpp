@@ -17,13 +17,13 @@ void load_synthesizer()
     synthesizer_item_set(4,1);
 
     //top row
-    synthesizer_item_def("small_crafting_bench", 1);
+    synthesizer_item_def("crafting_bench_basic", 1);
     synthesizer_item_set(0,0);
 
-    synthesizer_item_def("smelter_1", 1);
+    synthesizer_item_def("smelter_basic", 1);
     synthesizer_item_set(1,0);
 
-    synthesizer_item_def("cryofreezer_1", 3);
+    synthesizer_item_def("cryofreezer_small", 3);
     synthesizer_item_set(2,0);
 
     synthesizer_item_def("crusher", 25);

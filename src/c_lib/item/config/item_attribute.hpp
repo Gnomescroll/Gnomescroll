@@ -67,7 +67,9 @@ class ItemAttribute
 
     ItemAttribute() :
         loaded(false), item_type(NULL_ITEM_TYPE), group(IG_NONE)
-    {}
+    {
+        for (int i=0; i<MAX_CUBES; this->block_damage[i++] = 1);
+    }
 
     void load_defaults(int item_type, ItemGroup group)
     {

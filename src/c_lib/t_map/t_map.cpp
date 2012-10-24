@@ -83,8 +83,6 @@ class Terrain_map* get_map()
 
 void init_t_map()
 {   
-    init_t_properties();
-
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
     #if DC_CLIENT
@@ -110,8 +108,7 @@ void init_for_draw()
     
 void end_t_map()
 {
-    end_t_properties();
-    delete main_map;
+    if (main_map != NULL) delete main_map;
 
     #if DC_CLIENT
     end_client_compressors();

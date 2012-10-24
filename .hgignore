@@ -5,6 +5,8 @@ syntax: glob
 *.pyo
 *.dylib
 
+.goutputstream*
+
 .bash_history
 
 gnomescroll_linux32_*

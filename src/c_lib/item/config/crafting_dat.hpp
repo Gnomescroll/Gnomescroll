@@ -60,7 +60,7 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("iridium_bar", 1);
 
-    def_crafting_recipe("small_storage");
+    def_crafting_recipe("storage_block_small");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
@@ -199,7 +199,7 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("green_crystal", 1);
 
-	// plants
+    // plants
     def_crafting_recipe("acadia_seed");
     set_crafting_reagent("acadia_fruit", 2);
 

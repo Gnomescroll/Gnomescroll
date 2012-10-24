@@ -8,7 +8,7 @@ namespace t_mech
 extern class MechAttribute* mech_attributes;   //index from type to attributes
 
 void init_properties();
-void tear_down_properties();
+void teardown_properties();
 
 class MechAttribute* get_mech_attribute(MechType mech_type);
 

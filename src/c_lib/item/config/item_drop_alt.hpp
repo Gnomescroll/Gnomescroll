@@ -15,8 +15,8 @@ typedef void (*addDropCallback)(int);
 
 struct ItemDropMeta
 {
-    unsigned short index;   //start index
-    unsigned short num_drop;    //number of possible drops
+    int index;       // start index
+    int num_drop;    // number of possible drops
 };
 
 struct ItemDropTable

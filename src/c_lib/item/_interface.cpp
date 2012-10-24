@@ -23,13 +23,13 @@ namespace Item
 
 void init()
 {
+    GS_ASSERT(item_list == NULL);
     item_list = new ItemList(MAX_ITEMS);
 }
 
 void teardown()
 {
     if (item_list != NULL) delete item_list;
-    tear_down_properties();
 }
 
 void init_packets()

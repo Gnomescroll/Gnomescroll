@@ -274,39 +274,46 @@ int init_c_lib(int argc, char* argv[])
 
     Item::init();
     ItemContainer::init();
-    Item::init_properties();
     
-    t_mech::init();
-
     // DAT LOADING
     // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
+    Item::init_properties();
+    t_map::init_t_properties();
+    t_mech::init_properties();
+
     t_map::load_block_dat();
     t_mech::load_mech_dat();
     Item::load_item_dat();
-    Item::load_synthesizer();
+
     t_mech::init_drop_dat();
     t_mech::load_drop_dat();
+
     t_map::init_block_drop_dat();
     t_map::load_block_drop_dat();         // load drop dat after items
+
     Item::create_items_from_blocks();     // create items tied to block that drop themselves
-    t_map::apply_automatic_block_drops(); // automatically drop associated block item from block
     Item::end_item_dat();
 
+    t_map::apply_automatic_block_drops(); // automatically drop associated block item from block
+    t_map::end_drop_dat();
+    
+    Item::load_synthesizer();
+    Item::load_crafting_dat();
+    Item::load_smelting_dat();
+    ItemContainer::load_crusher_dat();
+        
     Toolbelt::init();
 
+    t_mech::init();
     Agents::init();
     ServerState::init_lists();
     Particle::init_particles();
     ItemParticle::init();
 
-    Item::load_crafting_dat();
-    Item::load_smelting_dat();
-    ItemContainer::load_crusher_dat();
-
     serializer::init();
     
     return 0;
-} 
+}
 
 void close_c_lib()
 {
@@ -314,6 +321,7 @@ void close_c_lib()
 
     serializer::teardown();
 
+    t_map::end_t_properties();
     t_map::end_t_map();
     t_map::teardown_block_drop_dat();
 
@@ -330,9 +338,11 @@ void close_c_lib()
     ServerState::teardown_voxel_lists();
     Toolbelt::teardown();
     Item::teardown();
+    Item::teardown_properties();
     ItemContainer::teardown();
 
     t_mech::teardown_drop_dat();
+    t_mech::teardown_properties();
     t_mech::teardown();
 
     t_gen::teardown_map_generator();

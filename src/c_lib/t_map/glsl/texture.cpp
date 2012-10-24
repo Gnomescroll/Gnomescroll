@@ -13,8 +13,8 @@ SDL_Surface *block_surface = NULL;
 SDL_PixelFormat *block_surface_pixel_format = NULL;
 int block_surface_width, block_surface_height;
 
-struct SDL_Surface* block_item_64_surface;
-struct SDL_Surface* block_item_16_surface;
+struct SDL_Surface* block_item_64_surface = NULL;
+struct SDL_Surface* block_item_16_surface = NULL;
 
 }   // t_map
 
@@ -27,24 +27,13 @@ namespace t_map
 
 const int N_PIXEL_SAMPLES = 10;
 const static int TEXTURE_WIDTH = 16;
-static unsigned char* pixel_data[MAX_TEXTURES];
+static unsigned char** pixel_data = NULL;
 GLuint block_texture = 0;
 
 void init_textures()
 {
-    static int init = 0;
-
-    if (init == 0)
-    {
-        memset(pixel_data, 0, MAX_TEXTURES);
-        init = 1;
-    }
-    else
-    {
-        init = 0;
-        printf("Error: init_textures called twice! \n");
-    }
-
+    GS_ASSERT(pixel_data == NULL);
+    pixel_data = (unsigned char**)calloc(MAX_TEXTURES, sizeof(unsigned char));
 }
 
 void set_cube_side_texture(int id, int side, int tex_id) 

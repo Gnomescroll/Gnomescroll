@@ -1,9 +1,5 @@
 #include "drop_dat.hpp"
 
-#if DC_CLIENT
-dont_include_this_file_in_client
-#endif
-
 #include <t_map/t_properties.hpp>
 #include <t_map/config/_interface.hpp>
 
@@ -13,6 +9,11 @@ dont_include_this_file_in_client
 namespace t_map
 {
 
+DropDefinition* defined_drops = NULL;
+
+#if DC_SERVER
+class Item::ItemDropConfig* block_drop_dat = NULL;
+
 static void add_drop_callback(int block_id)
 {
     ASSERT_VALID_CUBE_ID(block_id);
@@ -21,8 +22,6 @@ static void add_drop_callback(int block_id)
     if (cube_properties == NULL) return;
     cube_properties[block_id].item_drop = true;
 }
-
-class Item::ItemDropConfig* block_drop_dat = NULL;
 
 // wrappers for the drop dat ptr config
 static int get_cube_id_ptr(const char* name)
@@ -35,145 +34,192 @@ static const char* get_cube_name_ptr(int cube_id)
     return get_cube_name((CubeID)cube_id);
 }
 
+void apply_automatic_block_drops()
+{
+    // this will make all blocks drop their associated block item,
+    // if they have no other drops defined
+    GS_ASSERT_ABORT(block_drop_dat != NULL);
+    if (block_drop_dat == NULL) return;
+    GS_ASSERT_ABORT(defined_drops != NULL);
+    if (defined_drops == NULL) return;
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        if (!isValidCube((CubeID)i)) continue;  // skips empty and error blocks
+        if (defined_drops[i] != DROP_UNDEFINED) continue;
+
+        const char* name = get_cube_name((CubeID)i);
+        GS_ASSERT(name != NULL);
+        if (name == NULL) continue;
+        
+        block_drop_dat->def_drop(name);
+        GS_ASSERT(Item::get_item_type(name) != NULL_ITEM_TYPE);
+        block_drop_dat->drop_always(name);   // assumes the block name matches the item name
+    }
+}
+#endif
+
+void def_drop(const char* block_name)
+{
+    GS_ASSERT_ABORT(defined_drops != NULL);
+    if (defined_drops == NULL) return;
+
+    CubeID cube_id = get_cube_id(block_name);
+    GS_ASSERT_ABORT(isValidCube(cube_id));
+    if (!isValidCube(cube_id)) return;
+    
+    GS_ASSERT_ABORT(defined_drops[cube_id] == DROP_UNDEFINED);
+    
+    defined_drops[cube_id] = DROP_DEFINED;
+
+    #if DC_SERVER
+    block_drop_dat->def_drop(block_name);
+    #endif
+}
+
+void no_drop(const char* block_name)
+{   // prevents block from automatically dropping itself
+    GS_ASSERT_ABORT(defined_drops != NULL);
+    if (defined_drops == NULL) return;
+
+    CubeID cube_id = get_cube_id(block_name);
+    GS_ASSERT_ABORT(isValidCube(cube_id));
+    if (!isValidCube(cube_id)) return;
+
+    GS_ASSERT_ABORT(defined_drops[cube_id] == DROP_UNDEFINED);
+    
+    defined_drops[cube_id] = DROP_NEVER; 
+}
+
+void drop_always(const char* item_name)
+{
+    #if DC_SERVER
+    block_drop_dat->drop_always(item_name);
+    #endif
+}
+
+#if DC_SERVER
+void add_drop(const char* item_drop, int drop_entries)
+{
+    block_drop_dat->add_drop(item_drop, drop_entries);
+}
+
+void set_drop(float drop_probabilities, int drops)
+{
+    block_drop_dat->set_drop(drop_probabilities, drops);
+}
+
+void save_drop_file()
+{
+    block_drop_dat->save_to_file();
+}
+
+void end_drop_dat()
+{
+    block_drop_dat->end();
+}
+#endif
+
+#if DC_CLIENT
+# define add_drop(x,y) ;
+# define set_drop(x,y) ;
+# define end_drop_dat() ;
+# define save_drop_file() ;
+#endif
+
+
+void load_block_drop_dat()
+{
+
+    // if no drops defined for a block, it will automatically drop itself
+    // if you want it to drop absolutely nothing, use no_drop(const char*)
+    
+    ////////////////////
+    def_drop("regolith");
+
+        add_drop("regolith", 1);
+        set_drop(0.99f, 1);
+
+        add_drop("synthesizer_coin", 3);
+        set_drop(0.15f, 1);
+        set_drop(0.04f, 2);
+        set_drop(0.02f, 3);
+            
+    def_drop("rock");
+        add_drop("rock", 1);
+        set_drop(0.99f, 1);
+
+        add_drop("synthesizer_coin", 3);
+        set_drop(0.20f, 1);
+        set_drop(0.07f, 2);
+        set_drop(0.04f, 3);
+
+    def_drop("methane_ice");
+        add_drop("methane_ice", 4);
+        set_drop(0.40f, 1);
+        set_drop(0.30f, 2);
+        set_drop(0.15f, 3);
+        set_drop(0.05f, 4);
+
+    def_drop("iron_ore");
+        add_drop("iron_ore", 3);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+
+    def_drop("copper_ore");
+        add_drop("copper_ore", 3);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+
+    def_drop("gallium_ore");
+        add_drop("gallium_ore", 3);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+
+    def_drop("iridium_ore");
+        add_drop("iridium_ore", 3);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+
+    def_drop("coal");
+        add_drop("coal", 3);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+
+    save_drop_file();
+}
+
+
 void init_block_drop_dat()
 {
+    GS_ASSERT(defined_drops == NULL);
+    defined_drops = (DropDefinition*)malloc(MAX_CUBES * sizeof(DropDefinition));
+    for (int i=0; i<MAX_CUBES; defined_drops[i++] = DROP_UNDEFINED);
+    
+    #if DC_SERVER
     GS_ASSERT(block_drop_dat == NULL);
     block_drop_dat = new Item::ItemDropConfig;
     block_drop_dat->init("block", MAX_CUBES);
     block_drop_dat->get_id_from_name = &get_cube_id_ptr;
     block_drop_dat->get_name_from_id = &get_cube_name_ptr;
     block_drop_dat->add_drop_callback = &add_drop_callback;
+    #endif
 }
 
 void teardown_block_drop_dat()
 {
-    if (block_drop_dat != NULL) delete block_drop_dat;
-}
-
-void apply_automatic_block_drops()
-{
-    // this will make all blocks drop their associated block item,
-    // if they have no other drops defined
-    GS_ASSERT(block_drop_dat != NULL);
-    if (block_drop_dat == NULL) return;
-    for (int i=0; i<MAX_CUBES; i++)
-    {
-        if (!isValidCube((CubeID)i)) continue;  // skips empty and error blocks
-        const char* name = get_cube_name((CubeID)i);
-        GS_ASSERT(name != NULL);
-        if (name == NULL) continue;
-        if (block_drop_dat->has_drop_defined(name)) continue;
-        block_drop_dat->def_drop(name);
-        GS_ASSERT(Item::get_item_type(name) != NULL_ITEM_TYPE);
-        block_drop_dat->drop_always(name);   // assumes the block name matches the item name
-    }
-}
-
-void load_block_drop_dat()
-{
-    GS_ASSERT(block_drop_dat != NULL);
-    if (block_drop_dat == NULL) return;
-    class Item::ItemDropConfig* b = block_drop_dat;
+    if (defined_drops != NULL) free(defined_drops);
     
-    ////////////////////
-    b->def_drop("regolith");
-
-        b->add_drop("regolith", 1);
-        b->set_drop(0.99f, 1);
-
-        b->add_drop("synthesizer_coin", 3);
-        b->set_drop(0.15f, 1);
-        b->set_drop(0.04f, 2);
-        b->set_drop(0.02f, 3);
-            
-    b->def_drop("rock");
-
-        b->add_drop("rock", 1);
-        b->set_drop(0.99f, 1);
-
-        b->add_drop("synthesizer_coin", 3);
-        b->set_drop(0.20f, 1);
-        b->set_drop(0.07f, 2);
-        b->set_drop(0.04f, 3);
-
-    // if no drops defined for a block, then automatically drop itself
-            
-    //b->def_drop("small_storage");
-        //b->drop_always("small_storage");
-
-    //////////////////////
-    //b->def_drop("small_crafting_bench");
-        //b->drop_always("small_crafting_bench");
-
-    //b->def_drop("cryofreezer_1");
-        //b->drop_always("cryofreezer_1");
-
-    //b->def_drop("steel_block_1");
-        //b->drop_always("steel_block_1");
-
-    //b->def_drop("steel_block_2");
-        //b->drop_always("steel_block_2");
-
-    //b->def_drop("steel_block_3");
-        //b->drop_always("steel_block_3");
-
-    //b->def_drop("control_node");
-        //b->drop_always("control_node");
-
-    //b->def_drop("smelter_1");
-        //b->drop_always("smelter_1");
-
-    //b->def_drop("crusher");
-        //b->drop_always("crusher");
-
-    b->def_drop("methane_ice");
-        b->add_drop("methane_ice", 4);
-        b->set_drop(0.40f, 1);
-        b->set_drop(0.30f, 2);
-        b->set_drop(0.15f, 3);
-        b->set_drop(0.05f, 4);
-        //normalize_drops_to(1.0f);
-
-    b->def_drop("iron_ore");
-        b->add_drop("iron_ore", 3);
-        b->set_drop(0.50f, 1);
-        b->set_drop(0.20f, 2);
-        b->set_drop(0.10f, 3);
-
-    b->def_drop("copper_ore");
-        b->add_drop("copper_ore", 3);
-        b->set_drop(0.50f, 1);
-        b->set_drop(0.20f, 2);
-        b->set_drop(0.10f, 3);
-        //normalize_drops_to(1.0f);
-
-
-    b->def_drop("gallium_ore");
-        b->add_drop("gallium_ore", 3);
-        b->set_drop(0.50f, 1);
-        b->set_drop(0.20f, 2);
-        b->set_drop(0.10f, 3);
-        //normalize_drops_to(1.0f);
-
-    b->def_drop("iridium_ore");
-        b->add_drop("iridium_ore", 3);
-        b->set_drop(0.50f, 1);
-        b->set_drop(0.20f, 2);
-        b->set_drop(0.10f, 3);
-        //normalize_drops_to(1.0f);
-
-    b->def_drop("coal");
-        b->add_drop("coal", 3);
-        b->set_drop(0.50f, 1);
-        b->set_drop(0.20f, 2);
-        b->set_drop(0.10f, 3);
-        //normalize_drops_to(1.0f);
-
-    b->end();
-
-    b->save_to_file();
+    #if DC_SERVER
+    if (block_drop_dat != NULL) delete block_drop_dat;
+    #endif
 }
 
+#if DC_SERVER
 void handle_block_drop(int x, int y, int z, CubeID cube_id)
 {
     GS_ASSERT(block_drop_dat != NULL);
@@ -205,5 +251,6 @@ void handle_block_drop(int x, int y, int z, CubeID cube_id)
         }
     }
 }
+#endif
 
 }   // t_map

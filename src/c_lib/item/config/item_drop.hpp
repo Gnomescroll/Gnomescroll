@@ -193,10 +193,10 @@ class ItemDrop
         }
 
     ItemDrop() :
-    n_drops(0), max_drops(0), drop(NULL),
-    dropped_items(NULL), n_dropped_items(0),
-    vx_func(NULL), vy_func(NULL), vz_func(NULL),
-    vx(0.0f), vy(0.0f), vz(0.0f)
+        n_drops(0), max_drops(0), drop(NULL),
+        dropped_items(NULL), n_dropped_items(0),
+        vx_func(NULL), vy_func(NULL), vz_func(NULL),
+        vx(0.0f), vy(0.0f), vz(0.0f)
     {}
     
     ~ItemDrop()

@@ -37,16 +37,18 @@ void init_properties()
     GS_ASSERT(synthesizer_item_array == NULL);
     synthesizer_item_array = new SynthesizerItem[ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER)];
 
+    GS_ASSERT(crafting_recipe_array == NULL);
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
+    GS_ASSERT(smelting_recipe_array == NULL);
     smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
 }
 
-void tear_down_properties()
+void teardown_properties()
 {
-    if (item_attributes    != NULL) delete[] item_attributes;
+    if (item_attributes        != NULL) delete[] item_attributes;
     if (synthesizer_item_array != NULL) delete[] synthesizer_item_array;
-    if (crafting_recipe_array != NULL) delete[] crafting_recipe_array;
-    if (smelting_recipe_array != NULL) delete[] smelting_recipe_array;
+    if (crafting_recipe_array  != NULL) delete[] crafting_recipe_array;
+    if (smelting_recipe_array  != NULL) delete[] smelting_recipe_array;
 }
 
 class ItemAttribute* get_item_attributes(int item_type)
@@ -91,10 +93,11 @@ const char* get_item_name(int type)
 
 int get_item_type(const char* name)
 {
+    if (name[0] == '\0') return NULL_ITEM_TYPE;
     for (int i=0; i<MAX_ITEM_TYPES; i++)
     {
-        const char* cmp_name = get_item_name(i);
-        if (cmp_name != NULL && strcmp(name, cmp_name) == 0)
+        class ItemAttribute* attr = get_item_attributes(i);
+        if (attr != NULL && strcmp(attr->name, name) == 0)
             return i;
     }
     GS_ASSERT(false);

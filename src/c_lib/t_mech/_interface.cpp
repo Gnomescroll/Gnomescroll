@@ -34,20 +34,19 @@ class MechListRenderer* mech_list_renderer = NULL;
 
 void init() 
 {
+    GS_ASSERT(mech_list == NULL);
     mech_list = new MECH_LIST;
     #if DC_CLIENT
+    GS_ASSERT(mech_list_renderer == NULL);
     mech_list_renderer = new MechListRenderer;
     #endif
-    init_properties();
 }
 
 void teardown() 
 {
-    tear_down_properties();
-    delete mech_list;
-    
+    if (mech_list != NULL) delete mech_list;
     #if DC_CLIENT
-    delete mech_list_renderer;
+    if (mech_list_renderer != NULL) delete mech_list_renderer;
     #endif
 
 }
