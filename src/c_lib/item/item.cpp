@@ -22,6 +22,7 @@ void Item::init(int item_type)
 
 #if DC_SERVER
 
+# if GS_SERIALIZER
 void Item::init_from_loading()
 {   // use only by serializer
     // we will set defaults for state properties that are not important enough to serialize
@@ -30,6 +31,7 @@ void Item::init_from_loading()
     if (attr == NULL) return;
     this->gas_decay = attr->gas_lifetime;
 }
+# endif
 
 void ItemList::decay_gas()
 {

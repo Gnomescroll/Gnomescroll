@@ -16,7 +16,7 @@ bool load_map(const char* filename);
 void save_map();
 void wait_for_threads();
 
-// defined in items.hpp
+// defined in players.hpp
 bool save_player(UserID user_id, AgentID agent_id);
 bool save_player_container(ClientID client_id, int container_id);
 
@@ -53,6 +53,7 @@ void save_map(){}
 bool load_default_map() {}
 void wait_for_threads(){}
 
+bool save_player(UserID user_id, AgentID agent_id) {}
 bool save_player_container(ClientID client_id, int container_id) {}
 
 int begin_player_load(UserID user_id, ClientID client_id) { return 0; }

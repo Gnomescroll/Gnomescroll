@@ -150,9 +150,10 @@ void NetPeerManager::was_deserialized()
 
     // Apply serializer data to agent and its containers
     agent->status.identify(this->username);
+    #if GS_SERIALIZER
     if (data != NULL)
         agent->status.set_color_silent(data->color);
-
+    #endif
     
     bool assigned_ctrs = ItemContainer::assign_containers_to_agent(agent->id, this->client_id);
     GS_ASSERT(assigned_ctrs);
