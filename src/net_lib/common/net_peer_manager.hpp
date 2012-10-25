@@ -8,7 +8,7 @@ dont_include_this_file_in_client
 #include <item/common/constants.hpp>
 
 #if GS_SERIALIZER
-#include <serializer/players.hpp>
+# include <serializer/players.hpp>
 #endif
 
 

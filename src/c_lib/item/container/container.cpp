@@ -7,15 +7,14 @@
 #include <item/container/config/_interface.hpp>
 
 #if DC_CLIENT
-#include <item/container/container_ui.hpp>
+# include <item/container/container_ui.hpp>
 #endif
 
 #if DC_SERVER
-#include <item/container/server.hpp>
-#include <item/container/net/StoC.hpp>
-
+# include <item/container/server.hpp>
+# include <item/container/net/StoC.hpp>
 # if GS_SERIALIZER
-# include <serializer/uuid.hpp>
+#  include <serializer/uuid.hpp>
 # endif
 #endif
 

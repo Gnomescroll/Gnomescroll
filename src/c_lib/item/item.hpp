@@ -1,9 +1,9 @@
 #pragma once
 
 #if DC_SERVER
-#include <common/subscriber_list.hpp>
+# include <common/subscriber_list.hpp>
 # if GS_SERIALIZER
-# include <serializer/uuid.hpp>
+#  include <serializer/uuid.hpp>
 # endif
 #endif
 

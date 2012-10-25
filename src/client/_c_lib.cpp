@@ -310,6 +310,9 @@ int init_c_lib(int argc, char* argv[])
     TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
     TextureSheetLoader::init_item_texture();
 
+    HudText::init();
+    HudMap::init();
+    HudFont::init();
     HudCubeSelector::init();
 
     Item::init();
@@ -340,10 +343,6 @@ int init_c_lib(int argc, char* argv[])
 
     t_map::init_t_map();
     t_map::init_for_draw();
-
-    HudText::init();
-    HudMap::init();
-    HudFont::init();
 
     HudContainer::init();
     HudContainer::draw_init();

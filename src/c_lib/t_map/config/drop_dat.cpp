@@ -132,6 +132,8 @@ void load_block_drop_dat()
     // if you need to override this behaviour (e.g. regolith drops regolith + synthesizer coins)
     // then you need to define the block-item yourself in item_dat. it will not be automatically
     // generated
+
+    no_drop("bedrock");
     
     ////////////////////
     def_drop("regolith");

@@ -78,8 +78,6 @@ void init(int argc, char* argv[])
     NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
 
     #if !PRODUCTION
-    //Item::test_item_list_capacity();
-    //ItemContainer::test_container_list_capacity();
     //Objects::stress_test();
     #endif
 

@@ -1,27 +1,24 @@
 #include "_interface.hpp"
 
 #include <common/crash_report/stack_trace.hpp>
-
 #include <agent/_interface.hpp>
-
 #include <item/item.hpp>
 #include <item/container/_state.hpp>
 #include <item/particle/_interface.hpp>
-
 #include <item/container/config/_interface.hpp>
-
-#if DC_SERVER
-#include <item/container/net/StoC.hpp>
-#include <serializer/_interface.hpp>
-#endif
-
-#if DC_CLIENT
-#include <item/container/client.hpp>
-#endif
-
 #include <item/container/net/StoC.hpp>
 #include <item/container/net/CtoS.hpp>
 
+#if DC_SERVER
+# include <item/container/net/StoC.hpp>
+# if GS_SERIALIZER
+#  include <serializer/_interface.hpp>
+# endif
+#endif
+
+#if DC_CLIENT
+# include <item/container/client.hpp>
+#endif
 
 namespace ItemContainer
 {
