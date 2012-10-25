@@ -47,8 +47,9 @@ enum direction_type_t {
     DIRTYPE_BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
 };
 
-int random_pic() {
-	return pics[randrange(0, NUM_PICS - 1)];
+
+CubeID random_pic() {
+    return pics[randrange(0, NUM_PICS - 1)];
 }
 
 struct IntVec3 {
@@ -60,12 +61,12 @@ struct IntVec3 {
 
 struct Rect {
     int x, y, wid, dep;
-	Rect() { x = y = wid = dep = 0;	}
+    Rect() { x = y = wid = dep = 0; }
 };
 
 struct Rect3D {
     int x, y, z, wid, dep, hei;
-	Rect3D() { x = y = z = wid = dep = hei = 0;	}
+    Rect3D() { x = y = z = wid = dep = hei = 0; }
 };
 
 struct Room : Rect3D{
@@ -81,14 +82,14 @@ Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
 
 
 
-void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id = 1) {
-	for (int z = i_z; z < i_z + i_h; z++) {
-		for (int y = i_y; y < i_y + i_dep; y++) {
-			for (int x = i_x; x < i_x + i_w; x++) {
-				t_map::set(x, y, z, tile_id);
-			}
-		}
-	}
+void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id) {
+    for (int z = i_z; z < i_z + i_h; z++) {
+        for (int y = i_y; y < i_y + i_dep; y++) {
+            for (int x = i_x; x < i_x + i_w; x++) {
+                t_map::set(x, y, z, tile_id);
+            }
+        }
+    }
 }
 
 
@@ -175,13 +176,13 @@ bool rect_plus_margin_contains(Rect3D r, int mar, int x, int y, int z) {
 
 bool corner_needs_this(Rect r, direction_t d, Room room, int cx, int cy) {
     if (rect_contains(r, cx, cy) ) {
-		if (room.dir_types[d] == DIRTYPE_DOOR) {
-			if (far_north_cube(cy) || far_south_cube(cy) || far_east_cube(cx) || far_west_cube(cx) ) 
-				return true; 
-		} else return true; 
-	}
-	
-	return false;
+        if (room.dir_types[d] == DIRTYPE_DOOR) {
+            if (far_north_cube(cy) || far_south_cube(cy) || far_east_cube(cx) || far_west_cube(cx) ) 
+                return true; 
+        } else return true; 
+    }
+    
+    return false;
 }
 
 // params:  room indexes,  origin x/y
@@ -225,8 +226,8 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
        //             if (far_east_cube(cx) || far_south_cube(cy)) {
        //                 if (s_of_e_opening(rx, ry, rz, cy)) need_block = true;
        //                 if (s_edge_of_e_opening(r, cx, cy, cz) || 
-							//(cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)) 
-							//block = r.floor_block; } break;
+                            //(cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)) 
+                            //block = r.floor_block; } break;
        //         default: // all blockers PLUS currently open air space connection
        //             if (cx >= r.x + r.wid /*far_east_cube(cx)*/ || far_south_cube(cy))
        //                 need_block = true; break;
@@ -277,13 +278,14 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
 
         Rect ne, se, sw, nw; // corner of room to fill w/ blocks
-		Rect3D sh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
+        Rect3D sh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
         int half = cubes_across_room / 2;
 
         
 
 
 
+<<<<<<< local
         // setup temp halls that match adjacent neighbors
 		if (opens_to(DIR_NORTH, ri) ) {
 			if (opens_to(DIR_EAST, ri) ) {
@@ -292,38 +294,48 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 				r.nh.dep = 1;
 		}
 		if (opens_to(DIR_SOUTH, ri) ) {
+=======
+        // setup temp halls that match adjacent neighbors (relies on corners being setup first)
+        if (opens_to(DIR_NORTH, ri) ) {
+            if (opens_to(DIR_EAST, ri) ) {
+                r.nh.dep = cubes_across_room - r.eh.y + r.eh.dep;
+            } else
+                r.nh.dep = 1;
+        }
+        if (opens_to(DIR_SOUTH, ri) ) {
+>>>>>>> other
             sh.x   = rooms[ri.z][ri.y - 1][ri.x].nh.x;
-			sh.y   = 0;
-			sh.z   = 1;
-			sh.hei = rooms[ri.z][ri.y - 1][ri.x].nh.hei;
-			sh.wid = rooms[ri.z][ri.y - 1][ri.x].nh.wid;
-			
-			if (opens_to(DIR_WEST, ri) )  
-				sh.dep = rooms[ri.z][ri.y][ri.x - 1].eh.y;
-			else sh.dep = 1;
-		}
-		if (opens_to(DIR_EAST, ri) ) {
-			if (opens_to(DIR_SOUTH, ri) ) 
-				r.eh.wid = cubes_across_room - 
-					rooms[ri.z][ri.y - 1][ri.x].nh.x +
-					rooms[ri.z][ri.y - 1][ri.x].nh.wid;
-			else
-				r.eh.wid = 1;
-		}
-		if (opens_to(DIR_WEST, ri) ) {
-			wh.x   = 0;
+            sh.y   = 0;
+            sh.z   = 1;
+            sh.hei = rooms[ri.z][ri.y - 1][ri.x].nh.hei;
+            sh.wid = rooms[ri.z][ri.y - 1][ri.x].nh.wid;
+            
+            if (opens_to(DIR_WEST, ri) )  
+                sh.dep = rooms[ri.z][ri.y][ri.x - 1].eh.y;
+            else sh.dep = 1;
+        }
+        if (opens_to(DIR_EAST, ri) ) {
+            if (opens_to(DIR_SOUTH, ri) ) 
+                r.eh.wid = cubes_across_room - 
+                    rooms[ri.z][ri.y - 1][ri.x].nh.x +
+                    rooms[ri.z][ri.y - 1][ri.x].nh.wid;
+            else
+                r.eh.wid = 1;
+        }
+        if (opens_to(DIR_WEST, ri) ) {
+            wh.x   = 0;
             wh.y   = rooms[ri.z][ri.y][ri.x - 1].eh.y;
             wh.z   = 1;
             wh.wid = nw.wid;
-			
-			if (opens_to(DIR_NORTH, ri) )  
-				wh.wid = r.nh.x;
-			else wh.wid = 1;
+            
+            if (opens_to(DIR_NORTH, ri) )  
+                wh.wid = r.nh.x;
+            else wh.wid = 1;
 
             wh.dep = rooms[ri.z][ri.y][ri.x - 1].eh.dep;
             wh.hei = rooms[ri.z][ri.y][ri.x - 1].eh.hei;
-		}
-		// FIXME need to open up dep/wid to be more than one across??
+        }
+        // FIXME need to open up dep/wid to be more than one across??
 
 
 
@@ -331,14 +343,15 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
 
 
-		// setup the 4 corners of the room.  DIRTYPE_ is applied to the next corner that is clockwise from its dir
-		if (opens_to(DIR_NORTH, ri) ) {
-			//ccw consideration
-			nw.y = wh.y + wh.dep;
+        // setup the 4 corners of the room.  DIRTYPE_ is applied to the next corner that is clockwise from its dir
+        if (opens_to(DIR_NORTH, ri) ) {
+            //ccw consideration
+            nw.y = wh.y + wh.dep;
             nw.dep = cubes_across_room - nw.y;
 
-			ne.x = r.nh.x + r.nh.wid;
+            ne.x = r.nh.x + r.nh.wid;
             ne.wid = cubes_across_room - ne.x;
+<<<<<<< local
 		} else { // blocked
 			if (opens_to(DIR_WEST, ri) ) {
 				nw.y   = wh.y + wh.dep;
@@ -347,7 +360,14 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 				nw.y   = half;
 				nw.dep = half;
 			}
+=======
+        } else { // blocked
+            //ccw consideration
+            nw.y = half;
+            nw.dep = half;
+>>>>>>> other
 
+<<<<<<< local
 			if (opens_to(DIR_EAST, ri) ) {
 		        ne.x   = r.eh.x;
 				ne.wid = r.eh.wid;
@@ -357,32 +377,38 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 			}
 		}
 
+=======
+            ne.x   = half;
+            ne.wid = half;
+        }
+>>>>>>> other
         if (opens_to(DIR_EAST, ri) ) {
-			//ccw consideration
-			ne.y = r.eh.y + r.eh.dep;
+            //ccw consideration
+            ne.y = r.eh.y + r.eh.dep;
             ne.dep = cubes_across_room - ne.y;
 
-			se.x   = 
-				rooms[ri.z][ri.y - 1][ri.x].nh.x  + 
-				rooms[ri.z][ri.y - 1][ri.x].nh.wid;
-			se.wid = cubes_across_room - se.x;
+            se.x   = 
+                rooms[ri.z][ri.y - 1][ri.x].nh.x  + 
+                rooms[ri.z][ri.y - 1][ri.x].nh.wid;
+            se.wid = cubes_across_room - se.x;
         } else { // dir is blocked
-			//ccw consideration
-			ne.y = half;
-			ne.dep = half;
+            //ccw consideration
+            ne.y = half;
+            ne.dep = half;
 
-			se.x =   half;
-			se.wid = half;
-		}
+            se.x =   half;
+            se.wid = half;
+        }
 
         if (opens_to(DIR_SOUTH, ri) ) {
-			//ccw consideration
-			se.y = 0;  
-			se.dep = r.eh.y;
-				     
-			sw.x = 0;
+            //ccw consideration
+            se.y = 0;  
+            se.dep = r.eh.y;
+                     
+            sw.x = 0;
             sw.wid = rooms[ri.z][ri.y - 1][ri.x].nh.x;
         } else { // dir is blocked
+<<<<<<< local
 			if (opens_to(DIR_EAST, ri) ) {
 				se.y   = 0;
 				se.dep = r.eh.y;
@@ -390,7 +416,13 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 				se.y   = 0;
 				se.dep = half;
 			}
+=======
+            //ccw consideration
+            se.y   = 0;
+            se.dep = half;
+>>>>>>> other
 
+<<<<<<< local
 			if (opens_to(DIR_WEST, ri) ) {
 				sw.x   = 0;
 				sw.wid = sh.x;
@@ -399,36 +431,50 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 				sw.wid = half;
 			}
 		}
+=======
+            sw.x   = 0;
+            sw.wid = half;
+        }
+>>>>>>> other
 
         if (opens_to(DIR_WEST, ri) ) {
-			//ccw consideration
-			sw.y = 0;
+            //ccw consideration
+            sw.y = 0;
             sw.dep = rooms[ri.z][ri.y][ri.x - 1].eh.y;
 
-			nw.x = 0;
-			nw.wid = r.nh.x;
-		}else{
-			//ccw consideration
-			sw.y = 0;
-			sw.dep = half;
+            nw.x = 0;
+            nw.wid = r.nh.x;
+        }else{
+            //ccw consideration
+            sw.y = 0;
+            sw.dep = half;
 
-			nw.x = 0;
-			nw.wid = half;
-		}
-
-
+            nw.x = 0;
+            nw.wid = half;
+        }
 
 
 
 
 
-		
 
 
+        
+
+
+<<<<<<< local
 		// make lintels or blocked direction
 		if (opens_to(DIR_WEST, ri) ) {
+=======
+        // make lintels
+        if (opens_to(DIR_WEST, ri) ) {
+>>>>>>> other
             if (far_west_cube(cx) && cz > wh.hei)  need_block = true;
+<<<<<<< local
 		} //else if (cx < r.x)  need_block = true;
+=======
+        } else if (cx < r.x)  need_block = true;
+>>>>>>> other
 
         if (opens_to(DIR_SOUTH, ri)) {
             if (far_south_cube(cy) && cz > sh.hei)  need_block = true;
@@ -443,8 +489,8 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
         } //else if (cy >= r.y + r.dep)  need_block = true;
 
         
-		
-		
+        
+        
 
         if (corner_needs_this(ne, DIR_NORTH, r, cx, cy) )  need_block = true;
         if (corner_needs_this(se, DIR_EAST,  r, cx, cy) )  need_block = true;
@@ -453,19 +499,19 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
 
         // clear space for stairs
-		if (in_air_region(r, cx, cy))    need_block = false; 
+        if (in_air_region(r, cx, cy))    need_block = false; 
 
         if (need_block) {
-			// change rim/frame blocks
-			if (rect_plus_margin_contains(r.nh, 1, cx, cy, cz) || 
-				rect_plus_margin_contains(sh,   1, cx, cy, cz) || 
-				rect_plus_margin_contains(r.eh, 1, cx, cy, cz) || 
-				rect_plus_margin_contains(wh,   1, cx, cy, cz) 
-			) block = r.floor_block;
-	        
-			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
-		} else
-			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, 0);
+            // change rim/frame blocks
+            if (rect_plus_margin_contains(r.nh, 1, cx, cy, cz) || 
+                rect_plus_margin_contains(sh,   1, cx, cy, cz) || 
+                rect_plus_margin_contains(r.eh, 1, cx, cy, cz) || 
+                rect_plus_margin_contains(wh,   1, cx, cy, cz) 
+            ) block = r.floor_block;
+            
+            t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
+        } else
+            t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, EMPTY_CUBE);
     }
     }
     }
@@ -607,26 +653,26 @@ void setup_rooms() {
 void make_outer_shell(int x, int y) {
     int ruin_z_span   = cubes_going_up    * rooms_going_up; // z       extent
     int ruin_lat_span = cubes_across_room * rooms_across_ruins; // lateral span of ruin shell
-	CubeID rib = random_pic();
-	CubeID shell = random_pic();
-	while (rib == shell) rib = random_pic();
+    CubeID rib = random_pic();
+    CubeID shell = random_pic();
+    while (rib == shell) rib = random_pic();
 
     // make planes for shell ribbing
     int neg_edge = x + 1; // negative
-	int pos_edge = x + ruin_lat_span - 2; // positive
+    int pos_edge = x + ruin_lat_span - 2; // positive
     while (neg_edge < pos_edge) {
         set_region(neg_edge, y-2, bedrock_offset-2, 1, ruin_lat_span + 4, ruin_z_span + 4, rib);
         set_region(pos_edge, y-2, bedrock_offset-2, 1, ruin_lat_span + 4, ruin_z_span + 4, rib);
-		neg_edge+=5;
-		pos_edge-=5;
+        neg_edge+=5;
+        pos_edge-=5;
     }
     neg_edge = y + 1; // negative
-	pos_edge = y + ruin_lat_span - 2; // positive
+    pos_edge = y + ruin_lat_span - 2; // positive
     while (neg_edge < pos_edge) {
         set_region(x-2, neg_edge, bedrock_offset-2, ruin_lat_span + 4, 1, ruin_z_span + 4, rib);
         set_region(x-2, pos_edge, bedrock_offset-2, ruin_lat_span + 4, 1, ruin_z_span + 4, rib);
-		neg_edge+=5;
-		pos_edge-=5;
+        neg_edge+=5;
+        pos_edge-=5;
     }
 
     // fill in all the ruinspace, + extra outer shell layer
@@ -640,13 +686,13 @@ void make_outer_shell(int x, int y) {
 
 
 void make_ruins(int x, int y) {
-	make_outer_shell(x, y);
+    make_outer_shell(x, y);
     setup_rooms();
 
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-		CubeID ceil_block = random_pic();
+        CubeID ceil_block = random_pic();
 
         // make floor 
         set_region(
@@ -663,7 +709,7 @@ void make_ruins(int x, int y) {
             cubes_across_room, cubes_across_room, 1, ceil_block);
         
         IntVec3 ri; /* room index */ ri.x = rx; ri.y = ry; ri.z = rz;
-		make_walls_or_airspace(ri, x, y);
+        make_walls_or_airspace(ri, x, y);
         
         if (opens_to(DIR_UP, ri) ) 
             make_stairs(rx, ry, rz, x, y, rooms[rz][ry][rx].floor_block);
@@ -686,31 +732,31 @@ void make_ruins(int x, int y) {
 
 
 namespace t_gen {
-	void generate_ruins() {
-		printf("Making ruins\n");
+    void generate_ruins() {
+        printf("Making ruins\n");
 
-		pics[0] = t_map::get_cube_id("raised_tile_gray");
-		pics[1] = t_map::get_cube_id("raised_tile_blue"); 
-		pics[2] = t_map::get_cube_id("raised_tile_green");
-		pics[3] = t_map::get_cube_id("raised_tile_red"); 
-		pics[4] = t_map::get_cube_id("ruins_1"); 
-		pics[5] = t_map::get_cube_id("ruins_2"); 
-		pics[6] = t_map::get_cube_id("ruins_3"); 
-		pics[7] = t_map::get_cube_id("ruins_4"); 
+        pics[0] = t_map::get_cube_id("raised_tile_gray");
+        pics[1] = t_map::get_cube_id("raised_tile_blue"); 
+        pics[2] = t_map::get_cube_id("raised_tile_green");
+        pics[3] = t_map::get_cube_id("raised_tile_red"); 
+        pics[4] = t_map::get_cube_id("ruins_1"); 
+        pics[5] = t_map::get_cube_id("ruins_2"); 
+        pics[6] = t_map::get_cube_id("ruins_3"); 
+        pics[7] = t_map::get_cube_id("ruins_4"); 
 
-		// check textures
-		for (int i = 0; i < NUM_PICS; i++) { 
+        // check textures
+        for (int i = 0; i < NUM_PICS; i++) { 
             GS_ASSERT(t_map::isValidCube(pics[i])); 
             if (!t_map::isValidCube(pics[i])) { printf("*** cube id %d invalid ***", pics[i]); return; }
-		}
+        }
 
-		// generate ruins
-		for (int x = 0; x < ruins_across_world; x++)
-		for (int y = 0; y < ruins_across_world; y++)
-			if (x % 2 == 0  &&  y % 2 == 0)
-				if (randrange(0, 1) == 0)
-					make_ruins(
-						x * cubes_across_room * rooms_across_ruins, 
-						y * cubes_across_room * rooms_across_ruins);
-	}
+        // generate ruins
+        for (int x = 0; x < ruins_across_world; x++)
+        for (int y = 0; y < ruins_across_world; y++)
+            if (x % 2 == 0  &&  y % 2 == 0)
+                if (randrange(0, 1) == 0)
+                    make_ruins(
+                        x * cubes_across_room * rooms_across_ruins, 
+                        y * cubes_across_room * rooms_across_ruins);
+    }
 }   // t_gen

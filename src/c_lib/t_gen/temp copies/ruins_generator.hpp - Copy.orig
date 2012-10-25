@@ -10,7 +10,7 @@ dont_include_this_file_in_client
 
 
 const int NUM_PICS = 8; // pics == textures.   abbreviating "textures" always looks wrong to me.... suggesting its "text"
-CubeID pics[NUM_PICS];
+int pics[NUM_PICS];
 
 const int ruins_across_world = 8;
 const int cubes_across_room = 16;
@@ -70,8 +70,8 @@ struct Rect3D {
 
 struct Room : Rect3D{
     direction_type_t dir_types[DIR_MAX];
-    CubeID wall_block;
-    CubeID floor_block;
+    int wall_block;
+    int floor_block;
     Rect3D eh; // east hall
     Rect3D nh; // north hall
     Rect air; // a region that guarantees airspace, only used for stairways
@@ -81,7 +81,7 @@ Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
 
 
 
-void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id = 1) {
+void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, int tile_id = 1) {
 	for (int z = i_z; z < i_z + i_h; z++) {
 		for (int y = i_y; y < i_y + i_dep; y++) {
 			for (int x = i_x; x < i_x + i_w; x++) {
@@ -190,7 +190,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
     for (int cy = 0; cy < cubes_across_room; cy++) {
     for (int cz = 1; cz < cubes_going_up - 1; cz++) { // excluding floor/ceiling layers
         Room r = rooms[ri.z][ri.y][ri.x];
-        CubeID block = r.wall_block;
+        int block = r.wall_block;
         bool need_block = false;
 
        // // do east
@@ -471,7 +471,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
     }
 }
 
-void make_stairs(int rx, int ry, int rz, int ox, int oy, CubeID floor_block) { // room indexes, origin
+void make_stairs(int rx, int ry, int rz, int ox, int oy, int floor_block) { // room indexes, origin
     set_region(
         rx * cubes_across_room + ox + fixed_stair_x,
         ry * cubes_across_room + oy + fixed_stair_y,
@@ -607,8 +607,8 @@ void setup_rooms() {
 void make_outer_shell(int x, int y) {
     int ruin_z_span   = cubes_going_up    * rooms_going_up; // z       extent
     int ruin_lat_span = cubes_across_room * rooms_across_ruins; // lateral span of ruin shell
-	CubeID rib = random_pic();
-	CubeID shell = random_pic();
+	int rib = random_pic();
+	int shell = random_pic();
 	while (rib == shell) rib = random_pic();
 
     // make planes for shell ribbing
@@ -646,7 +646,7 @@ void make_ruins(int x, int y) {
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-		CubeID ceil_block = random_pic();
+		int ceil_block = random_pic();
 
         // make floor 
         set_region(
@@ -674,7 +674,7 @@ void make_ruins(int x, int y) {
                 rx * cubes_across_room + x + fixed_stair_x,
                 ry * cubes_across_room + y + fixed_stair_y,
                 rz * cubes_going_up + bedrock_offset - 1,
-                fixed_stair_w, fixed_stair_d, 2, EMPTY_CUBE);
+                fixed_stair_w, fixed_stair_d, 2, 0);
     }
     }
     }
@@ -700,8 +700,8 @@ namespace t_gen {
 
 		// check textures
 		for (int i = 0; i < NUM_PICS; i++) { 
-            GS_ASSERT(t_map::isValidCube(pics[i])); 
-            if (!t_map::isValidCube(pics[i])) { printf("*** cube id %d invalid ***", pics[i]); return; }
+			GS_ASSERT(pics[i] >= 0); 
+			if (pics[i] < 0) { printf("*** cube id LESS THAN ZERO ***"); return; }
 		}
 
 		// generate ruins

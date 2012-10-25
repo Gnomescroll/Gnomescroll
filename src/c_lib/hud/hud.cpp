@@ -821,6 +821,8 @@ void Scoreboard::init()
     }
     tags[0]->set_text("ID");
     tags[1]->set_text("Name");
+    tags[0]->shadowed = true;
+    tags[1]->shadowed = true;
 
     const char id_fmt[] = "%d";
     const char name_fmt[] = "%s";
@@ -831,12 +833,14 @@ void Scoreboard::init()
         if (ids[i] == NULL) return;
         ids[i]->set_format(id_fmt);
         ids[i]->set_format_extra_length(3 - 2);
+        ids[i]->shadowed = true;
 
         names[i] = HudText::text_list->create();
         GS_ASSERT(names[i] != NULL);
         if (names[i] == NULL) return;
         names[i]->set_format(name_fmt);
         names[i]->set_format_extra_length(PLAYER_NAME_MAX_LENGTH - 2);
+        names[i]->shadowed = true;
     }
     this->inited = true;
     // set text of teams, stats later
