@@ -16,6 +16,7 @@ dont_include_this_file_in_client
 
 #include <t_gen/cave_generator.hpp>
 #include <t_gen/crystals.hpp>
+#include <t_gen/excavator.hpp>
 #include <t_gen/ruins_generator.hpp>
 #include <t_gen/terrain_features.hpp>
 

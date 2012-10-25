@@ -17,12 +17,13 @@ void default_map_gen()
     
     t_map::map_post_processing(); //regolith stuff
     t_gen::generate_rock_layer();
-    t_gen::start_cave_generator();
+    //t_gen::start_cave_generator();
+	t_gen::excavate(); // corpusc's copy/spin of cave_generator
     t_gen::populate_ore();
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
 
-    map_gen::rough_floor(512,512,0,3, t_map::get_cube_id("bedrock"));    
+    map_gen::rough_floor(XMAX,YMAX,0,3, t_map::dat_get_cube_id("bedrock"));    
 }
 
 
