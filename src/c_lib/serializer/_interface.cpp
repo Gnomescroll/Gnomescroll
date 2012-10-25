@@ -27,10 +27,9 @@ void init()
     
     init_map_serializer();
     init_state();
+    init_mechs();
 
     if (!Options::serializer) return;
-
-    init_mechs();
 
     #if GS_SERIALIZER
     // ORDER DEPENDENT
