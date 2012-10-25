@@ -11,9 +11,7 @@
 
 #if DC_SERVER
 # include <item/container/net/StoC.hpp>
-# if GS_SERIALIZER
-#  include <serializer/_interface.hpp>
-# endif
+# include <serializer/_interface.hpp>
 #endif
 
 #if DC_CLIENT
