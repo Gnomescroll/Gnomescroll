@@ -47,7 +47,7 @@ enum direction_type_t {
     DIRTYPE_BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
 };
 
-int random_pic() {
+CubeID random_pic() {
 	return pics[randrange(0, NUM_PICS - 1)];
 }
 
@@ -81,7 +81,7 @@ Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
 
 
 
-void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id = 1) {
+void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id = t_map::get_cube_id("ruins_3") ) {
 	for (int z = i_z; z < i_z + i_h; z++) {
 		for (int y = i_y; y < i_y + i_dep; y++) {
 			for (int x = i_x; x < i_x + i_w; x++) {
@@ -465,7 +465,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 	        
 			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
 		} else
-			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, 0);
+			t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, EMPTY_CUBE);
     }
     }
     }
