@@ -108,14 +108,10 @@ void set_drop(float drop_probabilities, int drops)
     block_drop_dat->set_drop(drop_probabilities, drops);
 }
 
-void save_drop_file()
-{
-    block_drop_dat->save_to_file();
-}
-
 void end_drop_dat()
 {
     block_drop_dat->end();
+    block_drop_dat->save_to_file();
 }
 #endif
 
@@ -132,10 +128,13 @@ void load_block_drop_dat()
 
     // if no drops defined for a block, it will automatically drop itself
     // if you want it to drop absolutely nothing, use no_drop(const char*)
+
+    // if you need to override this behaviour (e.g. regolith drops regolith + synthesizer coins)
+    // then you need to define the block-item yourself in item_dat. it will not be automatically
+    // generated
     
     ////////////////////
     def_drop("regolith");
-
         add_drop("regolith", 1);
         set_drop(0.99f, 1);
 
@@ -154,43 +153,41 @@ void load_block_drop_dat()
         set_drop(0.04f, 3);
 
     def_drop("methane_ice");
-        add_drop("methane_ice", 4);
+        add_drop("methane_ice_chunk", 4);
         set_drop(0.40f, 1);
         set_drop(0.30f, 2);
         set_drop(0.15f, 3);
         set_drop(0.05f, 4);
 
     def_drop("iron_ore");
-        add_drop("iron_ore", 3);
+        add_drop("iron_ore_piece", 3);
         set_drop(0.50f, 1);
         set_drop(0.20f, 2);
         set_drop(0.10f, 3);
 
     def_drop("copper_ore");
-        add_drop("copper_ore", 3);
+        add_drop("copper_ore_piece", 3);
         set_drop(0.50f, 1);
         set_drop(0.20f, 2);
         set_drop(0.10f, 3);
 
     def_drop("gallium_ore");
-        add_drop("gallium_ore", 3);
+        add_drop("gallium_ore_piece", 3);
         set_drop(0.50f, 1);
         set_drop(0.20f, 2);
         set_drop(0.10f, 3);
 
     def_drop("iridium_ore");
-        add_drop("iridium_ore", 3);
+        add_drop("iridium_ore_piece", 3);
         set_drop(0.50f, 1);
         set_drop(0.20f, 2);
         set_drop(0.10f, 3);
 
     def_drop("coal");
-        add_drop("coal", 3);
+        add_drop("coal_nugget", 3);
         set_drop(0.50f, 1);
         set_drop(0.20f, 2);
         set_drop(0.10f, 3);
-
-    save_drop_file();
 }
 
 

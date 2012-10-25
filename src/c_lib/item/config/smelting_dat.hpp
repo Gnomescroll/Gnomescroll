@@ -20,19 +20,19 @@ void load_smelting_dat()
 {
     // Ore
     def_smelting_recipe("copper_bar");
-    set_smelting_reagent("copper_ore", 1);
+    set_smelting_reagent("copper_ore_piece", 1);
     set_smelting_creation_time(30 * 3);
 
     def_smelting_recipe("iron_bar");
-    set_smelting_reagent("iron_ore", 1);
+    set_smelting_reagent("iron_ore_piece", 1);
     set_smelting_creation_time(30 * 5);
     
     def_smelting_recipe("gallium_bar");
-    set_smelting_reagent("gallium_ore", 1);
+    set_smelting_reagent("gallium_ore_piece", 1);
     set_smelting_creation_time(30 * 10);
 
     def_smelting_recipe("iridium_bar");
-    set_smelting_reagent("iridium_ore", 1);
+    set_smelting_reagent("iridium_ore_piece", 1);
     set_smelting_creation_time(30 * 15);
     
     end_smelting_recipe();  // finalize

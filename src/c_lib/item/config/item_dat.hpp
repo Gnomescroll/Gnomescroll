@@ -48,6 +48,20 @@ void load_item_dat()
     
     item_container_def("crusher");
 
+    // manually define these blocks, so we can set a custom pretty name
+    item_block_def("steel_block_1");
+    set_pretty_name("Steel Block #1");
+
+    item_block_def("steel_block_2");
+    set_pretty_name("Steel block #2");
+
+    item_block_def("steel_block_3");
+    set_pretty_name("Steel Block #3");
+
+    // manually define these blocks, because their source block drops multiple things
+    item_block_def("regolith");
+    item_block_def("rock");
+
     item_def(IG_RESOURCE, "quartz_crystal");
     sprite_def(i0, 1,5);
     set_pretty_name("Quartz Crystal");
@@ -130,7 +144,7 @@ void load_item_dat()
     set_pretty_name("Block Placer");
     s->cube_height = 1;
     
-    item_def(IG_RESOURCE, "copper_ore");
+    item_def(IG_RESOURCE, "copper_ore_piece");
     sprite_def(i1, 3,3);
     set_pretty_name("Copper Ore");
     s->max_stack_size = 64;
@@ -156,7 +170,7 @@ void load_item_dat()
     s->object_damage_min = 15;
     s->object_damage_max = 25;
 
-    item_def(IG_RESOURCE, "iron_ore");
+    item_def(IG_RESOURCE, "iron_ore_piece");
     sprite_def(i0, 5,7);
     set_pretty_name("Iron Ore");
     s->max_stack_size = 64;
@@ -182,7 +196,7 @@ void load_item_dat()
     s->object_damage_min = 25;
     s->object_damage_max = 35;
 
-    item_def(IG_RESOURCE, "gallium_ore");
+    item_def(IG_RESOURCE, "gallium_ore_piece");
     sprite_def(i1, 2,3);
     set_pretty_name("Gallium Ore");
     s->max_stack_size = 64;
@@ -208,7 +222,7 @@ void load_item_dat()
     s->object_damage_min = 20;
     s->object_damage_max = 30;
 
-    item_def(IG_RESOURCE, "iridium_ore");
+    item_def(IG_RESOURCE, "iridium_ore_piece");
     sprite_def(i1, 4,3);
     set_pretty_name("Iridium Ore");
     s->max_stack_size = 64;
@@ -245,30 +259,20 @@ void load_item_dat()
     s->object_damage_min = 5;
     s->object_damage_max = 10;
 
-    item_def(IG_RESOURCE, "coal");
+    item_def(IG_RESOURCE, "coal_nugget");
     sprite_def(i0, 5,2);
     set_pretty_name("Coal");
     s->max_stack_size = 64;
     s->fuel = true;
     s->fuel_burn_rate = 30 * 30; // 30 seconds
     
-    // manually define these blocks, so we can set a custom pretty name
-    item_block_def("steel_block_1");
-    set_pretty_name("Steel Block #1");
-
-    item_block_def("steel_block_2");
-    set_pretty_name("Steel block #2");
-
-    item_block_def("steel_block_3");
-    set_pretty_name("Steel Block #3");
-
     item_def(IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
     set_pretty_name("Small Charge Pack");
     s->max_stack_size = 16;
     s->repair_agent_amount = 25;
 
-    item_def(IG_RESOURCE, "methane_ice");
+    item_def(IG_RESOURCE, "methane_ice_chunk");
     sprite_def(i0, 1,4);
     set_pretty_name("Methane Ice");
     s->max_stack_size = 16;
@@ -399,6 +403,7 @@ void create_items_from_blocks()
 
     GS_ASSERT_ABORT(t_map::defined_drops != NULL);
     if (t_map::defined_drops == NULL) return;
+    
     for (int i=0; i<MAX_CUBES; i++)
     {
         if (!t_map::isValidCube((CubeID)i)) continue;  // skips empty and error blocks
@@ -407,12 +412,18 @@ void create_items_from_blocks()
         if (name == NULL) continue;
 
         // ignore blocks that have been overriden
+        bool already_defined = false;
         for (int i=0; i<MAX_ITEM_TYPES; i++)
-            if (strcmp(name, item_attributes[i].name) == 0)
+            if (item_attributes[i].loaded && strcmp(name, item_attributes[i].name) == 0)
             {
+                if (item_attributes[i].group != IG_PLACER)
+                    printf("This name is already in use by a block: %s\n", name);
+                // an item with this name has been defined, but it is not a block
                 GS_ASSERT_ABORT(item_attributes[i].group == IG_PLACER);
-                return;
+                already_defined = true;
+                break;
             }
+        if (already_defined) continue;
 
         CubeID cube_id = t_map::get_cube_id(name);
         GS_ASSERT_ABORT(t_map::isValidCube(cube_id));
@@ -466,7 +477,6 @@ void verify_item_dat()
         GS_ASSERT_ABORT(!a->gas || a->gas_lifetime != NULL_GAS_LIFETIME);
 
         #if DC_CLIENT
-        printf("%s %d %d %d\n", a->name, a->group, a->particle_voxel, a->sprite);
         GS_ASSERT_ABORT(a->group == IG_ERROR || a->particle_voxel || a->sprite != ERROR_SPRITE);
         #endif
         

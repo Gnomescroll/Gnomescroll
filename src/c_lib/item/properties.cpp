@@ -59,6 +59,12 @@ class ItemAttribute* get_item_attributes(int item_type)
     return &item_attributes[item_type];
 }
 
+bool type_used(int item_type)
+{
+    class ItemAttribute* attr = get_item_attributes(item_type);
+    return (attr != NULL);
+}
+
 int get_item_fire_rate(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return 8;

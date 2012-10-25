@@ -222,7 +222,6 @@ void close_c_lib();
 void atexit_handler()
 {
     close_c_lib();
-    exit(0);
 }
 
 

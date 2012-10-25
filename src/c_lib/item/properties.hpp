@@ -26,7 +26,8 @@ extern int craft_recipes_possible_count;
 void init_properties();
 
 class ItemAttribute* get_item_attributes(int item_type);
-int get_item_fire_rate(int item_type);
+
+bool type_used(int item_type);
 
 int get_sprite_index_for_id(ItemID id);
 int get_sprite_index_for_type(int type);
@@ -40,6 +41,8 @@ const char* get_item_pretty_name(int type);
 ItemGroup get_item_group_for_type(int item_type);
 
 bool item_type_is_voxel(int item_type);
+
+int get_item_fire_rate(int item_type);
 
 int get_max_stack_size(int item_type);
 int get_max_durability(int item_type);

@@ -85,7 +85,7 @@ void init(int argc, char* argv[])
 
     ServerState::init_base();
 
-   ServerState:: main_inited = true;
+    ServerState:: main_inited = true;
     printf("Game started\n");
 }
 
@@ -196,8 +196,7 @@ int run()
         serializer::save_map();
         serializer::should_save_map = false;
     }
-    
-    close_c_lib();
+        
     return 0;
 }
 

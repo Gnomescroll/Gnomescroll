@@ -104,8 +104,8 @@ bool item_block_def(const char* block_name)
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index(block_name);
     s->cube_height = 1;
 
-    title_string(block_name, s->pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
-    s->pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH] = '\0';
+    size_t wrote = title_string(block_name, s->pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
+    s->pretty_name[wrote] = '\0';
 
     return true;
 }

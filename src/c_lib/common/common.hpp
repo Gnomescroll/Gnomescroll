@@ -149,7 +149,7 @@ void _test_common()
     GS_ASSERT(!str_starts_with("", "foobarr"));
 }
 
-void title_string(const char* str, char* out, size_t size)
+size_t title_string(const char* str, char* out, size_t size)
 {   // WARNING: does not copy null terminator over if size is too short
     size_t i=0;
     bool should_upper = true;
@@ -166,6 +166,6 @@ void title_string(const char* str, char* out, size_t size)
             should_upper = true;
         out[i] = c;
     }
-    
     if (i < size) out[i] = '\0';
+    return i;
 }

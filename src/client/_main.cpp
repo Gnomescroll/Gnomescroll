@@ -535,8 +535,6 @@ int run()
 
     Profiling::teardown_frame_graph();
 
-    close_c_lib();
-    
     return 0;
 }
 

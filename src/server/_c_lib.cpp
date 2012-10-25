@@ -168,7 +168,9 @@ dont_include_this_file_in_client
 void close_c_lib();
 void signal_terminate_handler(int sig)
 {
-    exit(0);
+    ServerState::signal_exit = true;
+    if (!ServerState::main_inited)
+        exit(0);
 }
 
 void sigusr1_handler(int sig)
@@ -179,21 +181,17 @@ void sigusr1_handler(int sig)
 
 void atexit_handler()
 {
-    close_c_lib();
-    ServerState::signal_exit = true;
     #if PRODUCTION
     serializer::should_save_map = true;
     #endif
+
+    close_c_lib();
 }
 
 int init_c_lib(int argc, char* argv[])
 {
     static int inited = 0;
-    if (inited++)
-    {
-        printf("WARNING: Attempt to call init_c_lib more than once\n");
-        return 1;
-    }
+    GS_ASSERT_ABORT(!(inited++));
 
     int ret = atexit(&atexit_handler);
     GS_ASSERT_ABORT(ret == 0);

@@ -55,20 +55,20 @@ static void register_crusher_settings()
     d->add_drop("powdered_regolith", 2, 0.12f);
     d->add_drop("powdered_regolith", 3, 0.03f);
 
-    d->set_max_drop_amounts("copper_ore", 1);
-    d->add_drop("copper_ore", 1, 0.005f);
+    d->set_max_drop_amounts("copper_ore_piece", 1);
+    d->add_drop("copper_ore_piece", 1, 0.005f);
     
-    d->set_max_drop_amounts("iron_ore", 1);
-    d->add_drop("iron_ore", 1, 0.005f);
+    d->set_max_drop_amounts("iron_ore_piece", 1);
+    d->add_drop("iron_ore_piece", 1, 0.005f);
 
-    d->set_max_drop_amounts("gallium_ore", 1);
-    d->add_drop("gallium_ore", 1, 0.0025f);
+    d->set_max_drop_amounts("gallium_ore_piece", 1);
+    d->add_drop("gallium_ore_piece", 1, 0.0025f);
 
-    d->set_max_drop_amounts("iridium_ore", 1);
-    d->add_drop("iridium_ore", 1, 0.0025f);
+    d->set_max_drop_amounts("iridium_ore_piece", 1);
+    d->add_drop("iridium_ore_piece", 1, 0.0025f);
 
-    d->set_max_drop_amounts("coal", 1);
-    d->add_drop("coal", 1, 0.005f);
+    d->set_max_drop_amounts("coal_nugget", 1);
+    d->add_drop("coal_nugget", 1, 0.005f);
 
     crusher_def("iron_rod");
     d->set_max_drop_types(1);

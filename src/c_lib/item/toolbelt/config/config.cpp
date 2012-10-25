@@ -90,7 +90,7 @@ static void apply_group_settings(ItemGroup group)
 {
     GS_ASSERT(group != IG_ERROR);
     for (int i=0; i<MAX_ITEM_TYPES; i++)
-        if (Item::get_item_group_for_type(i) == group)
+        if (Item::type_used(i) && Item::get_item_group_for_type(i) == group)
             apply_type_settings(i);
 }
 
@@ -137,7 +137,7 @@ static void click_and_hold_group(ItemGroup group, bool cnh)
 {
     GS_ASSERT(group != IG_ERROR);
     for (int i=0; i<MAX_ITEM_TYPES; i++)
-        if (Item::get_item_group_for_type(i) == group)
+        if (Item::type_used(i) && Item::get_item_group_for_type(i) == group)
             click_and_hold[i] = cnh;
 }
 

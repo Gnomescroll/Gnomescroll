@@ -35,13 +35,17 @@ class CubeProperties
     {
         this->id = NULL_CUBE;
         this->type = ErrorCube;
+        
         this->solid = true;
         this->occludes = true;
-        this->magic = true;
         this->transparent = false;
         this->item_drop = false;
         this->item_container = false;
         this->material = material;
+
+        this->magic = true;
+
+        this->material = CUBE_MATERIAL_NONE;
 
         this->max_damage = 32;
         

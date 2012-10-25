@@ -25,7 +25,7 @@
 namespace t_map
 {
 
-class Terrain_map* main_map;
+class Terrain_map* main_map = NULL;
 
 CubeID get(int x, int y, int z)
 {
