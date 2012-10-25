@@ -1,10 +1,15 @@
 #include "_interface.hpp"
 
+#include <common/files.hpp>
 #include <options/server_options.hpp>
+#include <serializer/mechs.hpp>
 
-#include <serializer/map.hpp>
-#include <serializer/items.hpp>
-#include <serializer/_interface.hpp>
+#if GS_SERIALIZER
+# include <serializer/containers.hpp>
+# include <serializer/map.hpp>
+# include <serializer/redis.hpp>
+# include <serializer/items.hpp>
+#endif
 
 namespace serializer
 {
@@ -27,10 +32,12 @@ void init()
 
     init_mechs();
 
+    #if GS_SERIALIZER
     // ORDER DEPENDENT
     init_redis();
     init_items();
     init_players();
+    #endif
 }
 
 void teardown()
@@ -44,7 +51,8 @@ void teardown()
     
     teardown_map_serializer();
     teardown_mechs();
-    
+
+    #if GS_SERIALIZER    
     // TODO -- save all item data, wait for responses
 
     // ORDER DEPENDENT
@@ -52,6 +60,7 @@ void teardown()
     teardown_players();
     teardown_items();
     teardown_state();
+    #endif
 }
 
 bool load_data()
@@ -65,15 +74,17 @@ bool load_data()
     bool saved = save_map_palette_file();
     GS_ASSERT_ABORT(saved);
 
-    if (!Options::serializer) return true;
-    
-    bool successful_load = load_containers();
+    bool successful_load = load_mechs();
     GS_ASSERT_ABORT(successful_load);
 
-    successful_load = load_mechs();
+    if (!Options::serializer) return true;
+
+    #if GS_SERIALIZER
+    successful_load = load_containers();
     GS_ASSERT_ABORT(successful_load);
 
     //load_players();
+    #endif
     
     return true;
 }
@@ -84,7 +95,9 @@ void update()
 
     if (!Options::serializer) return;
 
+    #if GS_SERIALIZER
     update_redis();
+    #endif
 }
 
 // This is only for the serializer -- it handles the backup copy logic

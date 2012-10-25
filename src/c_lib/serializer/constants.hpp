@@ -10,7 +10,7 @@
  * DONT USE ENUMS FOR DATA THAT LIVES OUTSIDE OF THE GAME SERVER INSTANCE
  */
 
-#include <serializer/uuid.hpp>
+
 #include <t_map/common/constants.hpp>
 #include <t_mech/common/common.hpp>
 
@@ -107,6 +107,8 @@ const size_t PROPERTY_DELIMITER_LENGTH                 = sizeof(PROPERTY_DELIMIT
 const size_t CONTAINER_SEPARATOR_LENGTH                = sizeof(CONTAINER_SEPARATOR)              - 1;
 const size_t COLOR_COMPONENT_DELIMITER_LENGTH          = sizeof(COLOR_COMPONENT_DELIMITER)        - 1;
 const size_t MAP_POSITION_COMPONENT_DELIMITER_LENGTH   = sizeof(MAP_POSITION_COMPONENT_DELIMITER) - 1;
+
+const size_t UUID_STRING_LENGTH = 36;
 
 #define VERSION_LENGTH                4
 #define USER_ID_LENGTH                10

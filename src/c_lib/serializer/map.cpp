@@ -1,6 +1,8 @@
 #include "map.hpp"
 
 #include <common/files.hpp>
+#include <serializer/_interface.hpp>
+#include <serializer/_state.hpp>
 
 namespace serializer
 {

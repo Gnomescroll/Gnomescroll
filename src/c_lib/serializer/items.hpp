@@ -73,4 +73,7 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
 bool create_container_items_from_data(int container_id);
 bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers);
 
+void init_items();
+void teardown_items();
+
 }   // serializer
