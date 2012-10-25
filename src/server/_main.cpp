@@ -17,12 +17,13 @@ void default_map_gen()
     
     t_map::map_post_processing(); //regolith stuff
     t_gen::generate_rock_layer();
-    t_gen::start_cave_generator();
+    // t_gen::start_cave_generator();
+	t_gen::excavate(); // corpusc copied cave_generator.hpp to excavator.hpp, with the idea to heavily modify it, without losing the original
     t_gen::populate_ore();
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
 
-    map_gen::rough_floor(512,512,0,3, t_map::get_cube_id("bedrock"));    
+    map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_id("bedrock"));    
 }
 
 
@@ -36,6 +37,7 @@ void init(int argc, char* argv[])
     srand(Options::seed);
 
     bool fast_map = false;
+    bool corpusc = false;
     #if GS_SERIALIZER
     if (!serializer::load_data())
     {
@@ -52,6 +54,9 @@ void init(int argc, char* argv[])
     if (strcmp(Options::map, "fast") == 0)
         fast_map = true;
     else
+	if (strcmp(Options::map, "corpusc") == 0)
+        corpusc = true;
+    else
     {   // load map from options if given; else load default map file; else do a map gen
         if ((Options::map[0] == '\0' || !serializer::load_map(Options::map))
         && !serializer::load_default_map())
@@ -59,15 +64,19 @@ void init(int argc, char* argv[])
     }
     #endif
 
+    if (corpusc)
+    {
+        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
+		t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_id("regolith") );
+		t_gen::excavate();
+        //t_gen::generate_ruins();
+        t_gen::add_terrain_features();
+    }
     if (fast_map)
     {
-        map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
-        map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
-
-        //map_gen::floor(512,512, 20,1, t_map::get_cube_id("regolith"));
-    
-        //t_gen::generate_ruins();
-        //t_gen::add_terrain_features();
+        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
+        map_gen::floor(XMAX,YMAX,1, 9, t_map::get_cube_id("regolith"));
+        map_gen::floor(XMAX,YMAX,20,1, t_map::get_cube_id("regolith"));
     }
                 //t_gen::populate_crystals();
 

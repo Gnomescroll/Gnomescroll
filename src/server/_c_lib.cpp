@@ -161,11 +161,14 @@ dont_include_this_file_in_client
 // serialization
 #include <serializer/_include.hpp>
 
+
+
+void close_c_lib();
+
 #ifdef linux
 # include <unistd.h>
 # include <signal.h>
 
-void close_c_lib();
 void signal_terminate_handler(int sig)
 {
     ServerState::signal_exit = true;

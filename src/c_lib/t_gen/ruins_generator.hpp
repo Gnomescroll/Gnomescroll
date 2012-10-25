@@ -81,6 +81,8 @@ Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
 
 
 
+namespace t_gen {
+
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id = t_map::get_cube_id("ruins_3") ) {
 	for (int z = i_z; z < i_z + i_h; z++) {
 		for (int y = i_y; y < i_y + i_dep; y++) {
@@ -89,6 +91,8 @@ void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID t
 			}
 		}
 	}
+}
+
 }
 
 
@@ -472,22 +476,22 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 }
 
 void make_stairs(int rx, int ry, int rz, int ox, int oy, CubeID floor_block) { // room indexes, origin
-    set_region(
+    t_gen::set_region(
         rx * cubes_across_room + ox + fixed_stair_x,
         ry * cubes_across_room + oy + fixed_stair_y,
         rz * cubes_going_up + 3 + 1,
         1, fixed_stair_d, 2, floor_block);
-    set_region(
+    t_gen::set_region(
         rx * cubes_across_room + ox + fixed_stair_x + 1,
         ry * cubes_across_room + oy + fixed_stair_y,
         rz * cubes_going_up + 3 + 2,
         1, fixed_stair_d, 3, floor_block);
-    set_region(
+    t_gen::set_region(
         rx * cubes_across_room + ox + fixed_stair_x + 2,
         ry * cubes_across_room + oy + fixed_stair_y,
         rz * cubes_going_up + 3 + 4,
         1, fixed_stair_d, 3, floor_block);
-    set_region(
+    t_gen::set_region(
         rx * cubes_across_room + ox + fixed_stair_x + 3,
         ry * cubes_across_room + oy + fixed_stair_y,
         rz * cubes_going_up + 3 + 6,
@@ -615,22 +619,22 @@ void make_outer_shell(int x, int y) {
     int neg_edge = x + 1; // negative
 	int pos_edge = x + ruin_lat_span - 2; // positive
     while (neg_edge < pos_edge) {
-        set_region(neg_edge, y-2, bedrock_offset-2, 1, ruin_lat_span + 4, ruin_z_span + 4, rib);
-        set_region(pos_edge, y-2, bedrock_offset-2, 1, ruin_lat_span + 4, ruin_z_span + 4, rib);
+        t_gen::set_region(neg_edge, y-2, bedrock_offset-2, 1, ruin_lat_span + 4, ruin_z_span + 4, rib);
+        t_gen::set_region(pos_edge, y-2, bedrock_offset-2, 1, ruin_lat_span + 4, ruin_z_span + 4, rib);
 		neg_edge+=5;
 		pos_edge-=5;
     }
     neg_edge = y + 1; // negative
 	pos_edge = y + ruin_lat_span - 2; // positive
     while (neg_edge < pos_edge) {
-        set_region(x-2, neg_edge, bedrock_offset-2, ruin_lat_span + 4, 1, ruin_z_span + 4, rib);
-        set_region(x-2, pos_edge, bedrock_offset-2, ruin_lat_span + 4, 1, ruin_z_span + 4, rib);
+        t_gen::set_region(x-2, neg_edge, bedrock_offset-2, ruin_lat_span + 4, 1, ruin_z_span + 4, rib);
+        t_gen::set_region(x-2, pos_edge, bedrock_offset-2, ruin_lat_span + 4, 1, ruin_z_span + 4, rib);
 		neg_edge+=5;
 		pos_edge-=5;
     }
 
     // fill in all the ruinspace, + extra outer shell layer
-    set_region(
+    t_gen::set_region(
         x-1,
         y-1,
         bedrock_offset-1,
@@ -649,14 +653,14 @@ void make_ruins(int x, int y) {
 		CubeID ceil_block = random_pic();
 
         // make floor 
-        set_region(
+        t_gen::set_region(
             rx * cubes_across_room + x,
             ry * cubes_across_room + y,
             rz * cubes_going_up + bedrock_offset,
             cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].floor_block);
         
         // make ceiling
-        set_region(
+        t_gen::set_region(
             rx * cubes_across_room + x,
             ry * cubes_across_room + y,
             rz * cubes_going_up + bedrock_offset + cubes_going_up - 1,
@@ -670,7 +674,7 @@ void make_ruins(int x, int y) {
 
         if (opens_to(DIR_DOWN, ri) ) 
             // clear well in floor of this room, and ceiling of room underneath
-            set_region(
+            t_gen::set_region(
                 rx * cubes_across_room + x + fixed_stair_x,
                 ry * cubes_across_room + y + fixed_stair_y,
                 rz * cubes_going_up + bedrock_offset - 1,

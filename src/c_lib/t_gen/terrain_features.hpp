@@ -105,8 +105,8 @@ void corner_origin_make_circle(int x, int y, int z, float dist, CubeID block, bo
 bool blocks_are_invalid(CubeID arr[], int len) {
     for (int i = 0; i < len; i++) { 
         GS_ASSERT(t_map::isValidCube(arr[i]));
-        if (!t_map::isValidCube(arr[i]))
-        {
+        
+		if (!t_map::isValidCube(arr[i])) {
             printf("*** invalid cube %d ***", arr[i]); 
             return true; 
         }
@@ -156,7 +156,7 @@ void make_tree(int x, int y, int z) {
     int segs = randrange(2, 9);
     for (int seg = 0; seg < segs; seg++) {
         // height of current trunk segment
-        int height = randrange(6, 12);
+        int height = randrange(5, 10);
         if (seg == 0) 
             height = randrange(12, 21); // ensure trunk goes up aways
         if (height+z+2 >= ZMAX) break;
