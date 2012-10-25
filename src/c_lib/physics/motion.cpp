@@ -9,18 +9,18 @@ int stick_to_terrain_surface(Vec3 position)
     int x = (int)position.x;
     int y = (int)position.y;
     int z = (int)position.z;
-    if (isSolid(t_map::get(x,y,z)))
+    if (t_map::isSolid(t_map::get(x,y,z)))
     {   // occupied block is solid, move up
-        while (isSolid(t_map::get(x,y,++z)))
-            if (z >= map_dim.z)
+        while (t_map::isSolid(t_map::get(x,y,++z)))
+            if (z >= t_map::map_dim.z)
             {
-                z = map_dim.z;
+                z = t_map::map_dim.z;
                 break;
             }
     }
     else
     {   // occupied block is empty, fall down
-        while (!isSolid(t_map::get(x,y,--z)))
+        while (!t_map::isSolid(t_map::get(x,y,--z)))
             if (z<=0)
             {
                 z = 0;

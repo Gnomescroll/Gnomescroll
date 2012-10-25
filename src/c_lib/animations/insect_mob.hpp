@@ -258,14 +258,19 @@ namespace Animations
 
 const int INSECT_MOB_MAX = 1024;
 
-class Insect_mob_list: public Object_list<InsectMob, INSECT_MOB_MAX>
+class InsectMobList: public ObjectList<InsectMob>
 {
     private:
-        const char* name() { return "Insect_mob_list"; }
+        const char* name() { return "InsectMobList"; }
 
         bool needs_update;
     public:
-        Insect_mob_list() { print_list((char*)this->name(), this); needs_update = true;}
+        explicit InsectMobList(unsigned int capacity) :
+            ObjectList<InsectMob>(capacity)
+        {
+            this->print();
+            needs_update = true;
+        }
 
         void prep();
         void draw();
@@ -274,27 +279,23 @@ class Insect_mob_list: public Object_list<InsectMob, INSECT_MOB_MAX>
 };
 
 
-void Insect_mob_list::prep()
+void InsectMobList::prep()
 {
     #if DC_CLIENT
 
     if( needs_update == false) return;
     insect_mob_t += 0.04f;
 
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] != NULL)
-        {
-            this->a[i]->prep();
-        }
-    }
+    for (unsigned int i=0; i<this->max; i++)
+        if (this->objects[i].id != this->null_id)
+            this->objects[i].prep();
     needs_update = false;
     insect_mob_vlist->buffer();
     #endif
 }
 
 
-void Insect_mob_list::draw()
+void InsectMobList::draw()
 {
     #if DC_CLIENT
 
@@ -329,16 +330,12 @@ void Insect_mob_list::draw()
     #endif
 }
 
-void Insect_mob_list::tick()
+void InsectMobList::tick()
 {
-    needs_update = true;
-    InsectMob* m;
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        m = this->a[i];
-        m->tick();
-    }
+    this->needs_update = true;
+    for (unsigned int i=0; i<this->max; i++)
+        if (this->objects[i].id != this->null_id)
+            this->objects[i].tick();
 }
 
 }   // Animations

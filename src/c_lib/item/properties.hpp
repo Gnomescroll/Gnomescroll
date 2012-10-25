@@ -1,21 +1,19 @@
 #pragma once
 
 #include <item/common/constants.hpp>
+#include <t_mech/common/common.hpp>
 
 namespace Item
 {
 
-extern int sprite_array[MAX_ITEM_TYPES];
-extern int type_array[MAX_ITEM_TYPES];
-extern ItemGroup group_array[MAX_ITEM_TYPES];
-extern class ItemAttribute* item_attribute_array;
+extern class ItemAttribute* item_attributes;
 
 extern class SynthesizerItem* synthesizer_item_array;
 
 extern class CraftingRecipe* crafting_recipe_array;
 extern class SmeltingRecipe* smelting_recipe_array;
 
-extern ItemContainerType container_block_types[t_map::MAX_CUBES]; // maps block value -> container type
+extern ItemContainerType container_block_types[MAX_CUBES]; // maps block value -> container type
 
 // buffers for condensing craft bench inputs to unique type,count pairs
 extern int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
@@ -33,18 +31,13 @@ int get_item_fire_rate(int item_type);
 int get_sprite_index_for_id(ItemID id);
 int get_sprite_index_for_type(int type);
 
-void set_item_name(int type, const char* name, int length);
-void set_item_name(int type, const char* name);
-
 const char* get_item_name(int item_type);
 int get_item_type(const char* name);
-int get_versioned_item_type(const char* name);  // will apply name remapping to get the type
+int get_compatible_item_type(const char* name);
 
 const char* get_item_pretty_name(int type);
 
 ItemGroup get_item_group_for_type(int item_type);
-
-int dat_get_item_type(const char* name);
 
 bool item_type_is_voxel(int item_type);
 
@@ -52,14 +45,14 @@ int get_max_stack_size(int item_type);
 int get_max_durability(int item_type);
 
 int get_block_type_id(int item_type);
-int get_mech_type_id(int item_type);
+MechType get_mech_type(int item_type);
 
 int get_particle_voxel_texture(int item_type);
 
 int get_item_cube_height(int item_type);
 
 float get_weapon_range(int weapon_type);
-int get_item_block_damage(int weapon_type, int block_type);
+int get_item_block_damage(int weapon_type, CubeID cube_id);
 int get_item_object_damage(int weapon_type);
 
 int get_synthesizer_item(int xslot, int yslot);
@@ -88,6 +81,6 @@ int* get_selected_smelting_recipe_types(int container_id, int* recipe_count);
 int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available);
 int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count);
 
-ItemContainerType get_container_type_for_block(int block_value);
+ItemContainerType get_container_type_for_block(CubeID cube_id);
 
 }   // Item

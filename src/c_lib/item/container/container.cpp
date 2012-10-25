@@ -13,6 +13,10 @@
 #if DC_SERVER
 #include <item/container/server.hpp>
 #include <item/container/net/StoC.hpp>
+
+# if GS_SERIALIZER
+# include <serializer/uuid.hpp>
+# endif
 #endif
 
 namespace ItemContainer
@@ -40,23 +44,33 @@ void init_container(ItemContainerInterface* container)
 
 int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
 {
-    GS_ASSERT(item_id != NULL_ITEM);
+    ASSERT_VALID_ITEM_ID(item_id);
+    IF_INVALID_ITEM_ID(item_id) return NULL_SLOT;
+    
     GS_ASSERT(this->is_valid_slot(slot));
     if (!this->is_valid_slot(slot)) return NULL_SLOT;
 
     GS_ASSERT(this->slot[slot] == NULL_ITEM);
-    if (this->slot[slot] != NULL_ITEM)
-        printf("Slot %d occupied by item %d but inserting %d in it\n", slot, this->slot[slot], item_id);
+    if (this->slot[slot] != NULL_ITEM) return NULL_SLOT;
     
-    this->slot[slot] = item_id;
-    this->slot_count++;
-
-    Item::Item* item = Item::get_item_object(item_id);
+    Item::Item* item = Item::get_item(item_id);
     GS_ASSERT(item != NULL);
     if (item == NULL) return slot;
+
     item->location = IL_CONTAINER;
     item->location_id = this->id;
     item->container_slot = slot;
+
+    #if DC_SERVER && GS_SERIALIZER
+    if (Options::serializer)
+    {   // create a uuid now
+        if (uuid_is_null(item->uuid))
+            uuid_generate(item->uuid);
+    }
+    #endif
+
+    this->slot[slot] = item_id;
+    this->slot_count++;
 
     return slot;
 }
@@ -70,7 +84,7 @@ void ItemContainerInterface::remove_item(int slot)  // virtual
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id != NULL_ITEM)
     {
-        Item::Item* item = Item::get_item_object(this->slot[slot]);
+        Item::Item* item = Item::get_item(this->slot[slot]);
         GS_ASSERT(item != NULL);
         if (item != NULL)
         {
@@ -82,6 +96,21 @@ void ItemContainerInterface::remove_item(int slot)  // virtual
     this->slot[slot] = NULL_ITEM;
     this->slot_count--;
 }
+
+/* Hand */
+
+int ItemContainerHand::insert_item(ItemID item_id)
+{
+    int slot = ItemContainerInterface::insert_item(0, item_id);
+    if (slot == NULL_SLOT) return NULL_SLOT;
+    class Item::Item* item = Item::get_item(item_id);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return NULL_SLOT;
+    item->location = IL_HAND;
+    item->location_id = this->owner;
+    return slot;
+}
+
 
 /* Energy Tanks */
 

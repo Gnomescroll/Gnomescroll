@@ -58,7 +58,7 @@ class FixedSizeNetPacketToServer
     public:
         static uint8_t message_id;
         static unsigned int size;
-        int client_id; //id of the UDP client who sent message
+        ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
 
         FixedSizeNetPacketToServer() {}
@@ -103,14 +103,14 @@ class FixedSizeNetPacketToServer
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id)
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, ClientID client_id)
         {
             #if DC_SERVER
             Derived x;  //allocated on stack
-            if (NetServer::clients[_client_id] == NULL ||   // auth check
-                (x.auth_required && !NetServer::clients[_client_id]->authorized))
+            if (NetServer::clients[client_id] == NULL ||   // auth check
+                (x.auth_required && !NetServer::clients[client_id]->authorized))
                 return;
-            x.client_id = _client_id;   //client id of client who sent the packet
+            x.client_id = client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
             #else
@@ -141,7 +141,7 @@ class FixedSizeReliableNetPacketToServer
     public:
         static uint8_t message_id;
         static unsigned int size;
-        int client_id; //id of the UDP client who sent message
+        ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
 
         FixedSizeReliableNetPacketToServer() {}
@@ -187,14 +187,14 @@ class FixedSizeReliableNetPacketToServer
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id)
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, ClientID client_id)
         {
             #if DC_SERVER
             Derived x;  //allocated on stack
-            if (NetServer::clients[_client_id] == NULL ||   // auth check
-                (x.auth_required && !NetServer::clients[_client_id]->authorized))
+            if (NetServer::clients[client_id] == NULL ||   // auth check
+                (x.auth_required && !NetServer::clients[client_id]->authorized))
                 return;
-            x.client_id = _client_id;   //client id of client who sent the packet
+            x.client_id = client_id;   //client id of client who sent the packet
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
             #else

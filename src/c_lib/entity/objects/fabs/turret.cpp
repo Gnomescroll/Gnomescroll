@@ -80,7 +80,7 @@ static void set_turret_properties(Object* object)
     target->attacker_properties.agent_damage_max = TURRET_AGENT_DAMAGE_MAX;
     //target->attacker_properties.voxel_damage_radius = TURRET_VOXEL_DAMAGE_RADIUS;
     target->attacker_properties.agent_protection_duration = TURRET_AGENT_IMMUNITY_DURATION;
-    target->attacker_properties.terrain_modification_action = t_map::TMA_TURRET;
+    target->attacker_properties.terrain_modification_action = TMA_TURRET;
 
     #if DC_SERVER
     using Components::ExplosionComponent;

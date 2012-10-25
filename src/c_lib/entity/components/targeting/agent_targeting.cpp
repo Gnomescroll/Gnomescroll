@@ -5,16 +5,17 @@
 #include <physics/ray_trace/hitscan.hpp>
 #include <physics/ray_trace/handlers.hpp>
 #include <entity/network/packets.hpp>
-#include <common/random.h>
+#include <common/random.hpp>
+#include <agent/_interface.hpp>
 
 namespace Components
 {
 
 /* Targeting */
 
-void AgentTargetingComponent::set_target(int agent_id)
+void AgentTargetingComponent::set_target(AgentID agent_id)
 {
-    Agent_state* a = STATE::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent((AgentID)agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -36,7 +37,7 @@ void AgentTargetingComponent::set_target(int agent_id)
 void AgentTargetingComponent::check_target_alive()
 {
     if (this->target_type != OBJECT_AGENT) return;
-    Agent_state* target = STATE::agent_list->get(this->target_id);
+    Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL || target->status.dead)
     {
         this->target_id = NULL_AGENT;
@@ -46,7 +47,7 @@ void AgentTargetingComponent::check_target_alive()
 
 void AgentTargetingComponent::lock_target(Vec3 camera_position)
 {
-    class Agent_state* target = Hitscan::lock_agent_target
+    class Agent* target = Hitscan::lock_agent_target
         (camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
@@ -70,7 +71,7 @@ void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
         return;
     }
 
-    Agent_state* target = STATE::agent_list->get(this->target_id);
+    Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL)
     {
         this->target_direction = vec3_init(1,0,0);

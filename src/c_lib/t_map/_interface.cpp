@@ -14,6 +14,8 @@
 namespace t_map
 {
 
+struct MapDimension map_dim = { XMAX, YMAX, ZMAX };
+
 void init_packets()
 {
     t_map::map_chunk_compressed_StoC::register_client_packet();
@@ -44,13 +46,13 @@ void init_packets()
 
 int get_block_item_container(int x, int y, int z)
 {
-    if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
+    if ( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
         | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
     ) GS_ABORT();
 
     class MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
-    if(c == NULL) return NULL_CONTAINER;
+    if (c == NULL) return NULL_CONTAINER;
     return c->chunk_item_container.get(x,y,z); 
 }
 
@@ -119,15 +121,14 @@ static struct { int x,y,z; } last_requested_block = {-1};
 static unsigned int last_request_id = 0;
 static int requested_block_health = 0;
 
-int requested_block_type = 0;
+CubeID requested_cube_id = NULL_CUBE;
 unsigned int requested_block_damage = 0;
 
 bool is_last_requested_block(int x, int y, int z)
 {
-    return (
-        last_requested_block.x == x
-     && last_requested_block.y == y
-     && last_requested_block.z == z);
+    return (last_requested_block.x == x
+          && last_requested_block.y == y
+          && last_requested_block.z == z);
 }
 
 void request_block_damage(int x, int y, int z)
@@ -143,9 +144,9 @@ void request_block_damage(int x, int y, int z)
     last_requested_block.y = y;
     last_requested_block.z = z;
     
-    requested_block_type = t_map::get(x,y,z);
-    requested_block_health = maxDamage(requested_block_type);
-    
+    requested_cube_id = get(x,y,z);
+    requested_block_health = maxDamage(requested_cube_id);
+
     // send packet
     request_block_damage_CtoS msg;
     msg.x = x;
@@ -208,7 +209,7 @@ void destroy_item_container_block(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
-    int val = get(x,y,z);
+    CubeID val = get(x,y,z);
     if (Item::get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;
 
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
@@ -216,19 +217,6 @@ void destroy_item_container_block(int x, int y, int z)
     if (c == NULL) return;
 
     c->chunk_item_container.remove(x,y,z);
-}
-
-void load_item_container_block(int x, int y, int z, int block_type)
-{
-    ItemContainerType container_type = Item::get_container_type_for_block(block_type);
-    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-    if (container_type == CONTAINER_TYPE_NONE) return;
-    ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
-    init_container(container);
-
-    create_item_container_block(x,y,z, container->type, container->id);
 }
 
 void smelter_on(int container_id)
@@ -262,7 +250,7 @@ void smelter_off(int container_id)
 /*
     Do on client connect
 */
-void send_client_map_special(int client_id)
+void send_client_map_special(ClientID client_id)
 {
     main_map->control_node_list.send_control_nodes_to_client(client_id);
 }

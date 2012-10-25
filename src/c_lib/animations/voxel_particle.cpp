@@ -74,19 +74,20 @@ static void prep_textured_voxel_particles()
     if (textured_voxel_particle_vlist == NULL)
         return;
 
-    class ItemParticle::ItemParticle_list* item_list = ItemParticle::item_particle_list;
-    GS_ASSERT(item_list != NULL);
+    using ItemParticle::item_particle_list;
+    GS_ASSERT(item_particle_list != NULL);
+    if (item_particle_list == NULL) return;
 
     class Particle::TexturedMinivox_list* particle_list = Particle::textured_minivox_list;
     GS_ASSERT(particle_list != NULL);
     
-    if (item_list == NULL && particle_list == NULL)
+    if (item_particle_list == NULL && particle_list == NULL)
     {
         textured_voxel_particle_vlist->vertex_number = 0;
         return;
     }
     
-    if ((item_list->n_max <= 0 || item_list->num <= 0) && (particle_list->n_max <= 0 || particle_list->num <= 0))
+    if ((item_particle_list->max <= 0 || item_particle_list->ct <= 0) && (particle_list->n_max <= 0 || particle_list->num <= 0))
     {
         textured_voxel_particle_vlist->vertex_number = 0;
         return;
@@ -100,10 +101,10 @@ static void prep_textured_voxel_particles()
     static const float tw = tp * 32.0f;     // sprite width
     static const float th = tw;             // sprite height
     
-    for (int i=0; i<item_list->n_max; i++)
+    for (unsigned int i=0; i<item_particle_list->max; i++)
     {
-        class ItemParticle::ItemParticle* item = item_list->a[i];
-        if (item == NULL) continue;
+        if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
+        class ItemParticle::ItemParticle* item = &item_particle_list->objects[i];
         if (!item->is_voxel || !item->should_draw) continue;
         item->voxel.delta_rotation(0.01f, 0.0f);
         GS_ASSERT(item->voxel.cube_id != 255);

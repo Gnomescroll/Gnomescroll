@@ -7,7 +7,7 @@ dont_include_this_file_in_server
 #include <particle/text/billboard_text_hud.hpp>
 #include <animations/emitter.hpp>
 
-class Agent_state;
+class Agent;
 
 typedef enum
 {
@@ -19,7 +19,7 @@ typedef enum
 class Agent_event
 {
     private:
-        Agent_state* a;
+        Agent* a;
         AgentVoxStatus vox_status;
         bool model_was_changed;
     public:
@@ -54,10 +54,10 @@ class Agent_event
         // old style packet handler events
         // still used; triggers target specific animations/sounds
         // since that is required from server
-        void fired_weapon_at_object(int id, int type, int part);
+        void fired_weapon_at_object(int id, ObjectType type, int part);
         void fired_weapon_at_block(float x, float y, float z, int cube, int side);
         void fired_weapon_at_nothing();
-        void melee_attack_object(int id, int type, int part);
+        void melee_attack_object(int id, ObjectType type, int part);
         void melee_attack_nothing();
         void fire_empty_weapon(int weapon_type);
 
@@ -67,6 +67,6 @@ class Agent_event
 
         void set_spawner(int pt);
 
-        explicit Agent_event(Agent_state* owner);
+        explicit Agent_event(Agent* owner);
         ~Agent_event();
 };

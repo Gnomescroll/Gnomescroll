@@ -160,13 +160,13 @@ namespace Animations
 
 const int MINING_LASER_MAX = 1024;
 
-class MiningLaserEffect_list: public Simple_object_list<MiningLaser, MINING_LASER_MAX>
+class MiningLaserEffectList: public Simple_object_list<MiningLaser, MINING_LASER_MAX>
 {
     private:
-        const char* name() { return "MiningLaserEffect_list"; }
+        const char* name() { return "MiningLaserEffectList"; }
 
     public:
-        MiningLaserEffect_list() { print();}
+        MiningLaserEffectList() { print();}
 
         void prep();
         void draw();
@@ -175,7 +175,7 @@ class MiningLaserEffect_list: public Simple_object_list<MiningLaser, MINING_LASE
 };
 
 
-void MiningLaserEffect_list::prep()
+void MiningLaserEffectList::prep()
 {
     GS_ASSERT(mining_laser_vlist != NULL);
     if (mining_laser_vlist == NULL) return;
@@ -187,7 +187,7 @@ void MiningLaserEffect_list::prep()
 }
 
 
-void MiningLaserEffect_list::draw()
+void MiningLaserEffectList::draw()
 {
     GS_ASSERT(mining_laser_vlist != NULL);
     if (mining_laser_vlist == NULL) return;
@@ -227,7 +227,7 @@ void MiningLaserEffect_list::draw()
     glDisable(GL_TEXTURE_2D);
 }
 
-void MiningLaserEffect_list::tick()
+void MiningLaserEffectList::tick()
 {
     for (unsigned int i=0; i<this->num; i++)
     {

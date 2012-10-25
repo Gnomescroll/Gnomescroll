@@ -1,62 +1,76 @@
 #pragma once
 
-#include <common/template/elastic_object_list.hpp>
+#include <string.h>
+
+#include <common/template/object_list.hpp>
 #include <serializer/constants.hpp>
 #include <net_lib/server.hpp>
+#include <item/item.hpp>
 
 namespace serializer
 {
 
-void init_items();
-void teardown_items();
-
-int save_player_item(class PlayerItemSaveData* data);
-
-void save_player_container(int client_id, int container_id, bool remove_items_after);
-
-int begin_player_load(UserID user_id, int client_id);
-bool load_player_container(int player_load_id, int container_id); 
-bool end_player_load(int player_load_id);
-
-
-class PlayerLoadDataList: public ElasticObjectList<class PlayerLoadData, NetServer::HARD_MAX_CONNECTIONS>
+class ParsedItemData
 {
     public:
-        const char* name() { return "PlayerLoadData"; }
+        ItemID id;
+    
+        uuid_t uuid;
+        char name[ITEM_NAME_MAX_LENGTH+1];
+        unsigned int durability;
+        unsigned int stack_size;
+        char location_name[LOCATION_NAME_MAX_LENGTH+1];
+        unsigned int location_id;
+        unsigned int container_slot;
+        bool valid;
 
-    PlayerLoadDataList() :
-        ElasticObjectList<class PlayerLoadData, NetServer::HARD_MAX_CONNECTIONS>(PLAYER_LOAD_DATA_LIST_HARD_MAX)
+        // additional item data attached after processing, but before item creation
+        int item_type;
+        ItemLocationType item_location;
+        ItemContainerType item_container_type;
+
+    void reset()
+    {
+        this->valid = false;
+        uuid_clear(this->uuid);
+        memset(this->name, 0, sizeof(this->name));
+        this->durability = NULL_DURABILITY;
+        this->stack_size = NULL_STACK_SIZE;
+        memset(this->location_name, 0, sizeof(this->location_name));
+        this->location_id = NULL_LOCATION;
+        this->container_slot = NULL_SLOT;
+
+        this->item_type = NULL_ITEM_TYPE;
+        this->item_location = IL_NOWHERE;
+        this->item_container_type = CONTAINER_TYPE_NONE;
+    }
+
+    ParsedItemData(ItemID id) : id(id)
+    {
+        this->reset();
+    }
+};
+
+class ParsedItemDataList: public ObjectList<class ParsedItemData, ItemID>
+{
+    public:
+        const char* name() { return "ItemLoadData"; }
+
+    ParsedItemDataList(unsigned int capacity) :
+        ObjectList<class ParsedItemData, ItemID>(capacity, NULL_ITEM)
     { this->print(); }
 };
 
-class PlayerContainerLoadDataList: public ElasticObjectList<class PlayerContainerLoadData, NetServer::HARD_MAX_CONNECTIONS>
-{
-    public:
-        const char* name() { return "PlayerContainerLoadDataList"; }
 
-    PlayerContainerLoadDataList() :
-        ElasticObjectList<class PlayerContainerLoadData, NetServer::HARD_MAX_CONNECTIONS>(PLAYER_CONTAINER_LOAD_DATA_LIST_HARD_MAX)
-    { this->print(); }
-};
+class ParsedItemData* create_item_data();
+void destroy_item_data(ItemID id);
+void clear_item_data();
 
-class PlayerItemLoadDataList: public ElasticObjectList<class PlayerItemLoadData, 1024>
-{
-    public:
-        const char* name() { return "PlayerItemLoadDataList"; }
+int write_container_contents_string(char* buf, size_t buffer_size, const class ItemContainer::ItemContainerInterface* container);
 
-    PlayerItemLoadDataList() :
-        ElasticObjectList<class PlayerItemLoadData, 1024>(PLAYER_ITEM_LOAD_DATA_LIST_HARD_MAX)
-    { this->print(); }
-};
+bool parse_item_token(const char* key, const char* val, class ParsedItemData* data);
 
-class PlayerItemSaveDataList: public ElasticObjectList<class PlayerItemSaveData, 1024>
-{
-    public:
-        const char* name() { return "PlayerItemSaveDataList"; }
-
-    PlayerItemSaveDataList() :
-        ElasticObjectList<class PlayerItemSaveData, 1024>(PLAYER_ITEM_SAVE_DATA_LIST_HARD_MAX)
-    { this->print(); }
-};
+bool create_container_items_from_data(int container_id);
+bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers);
 
 }   // serializer

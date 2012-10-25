@@ -1,67 +1,56 @@
 #include "t_map.hpp"
 
 #include <t_map/_interface.hpp>
-
-#include "t_properties.hpp"
-
-#include "t_map_class.hpp"
+#include <t_map/t_properties.hpp>
+#include <t_map/t_map_class.hpp>
 
 #if DC_CLIENT
-    #include <t_map/glsl/cache.hpp>
-    #include <t_map/glsl/texture.hpp>
-    #include <t_map/glsl/shader.hpp>
-
-    #include <t_map/net/t_StoC.hpp>
+# include <t_map/glsl/cache.hpp>
+# include <t_map/glsl/texture.hpp>
+# include <t_map/glsl/shader.hpp>
+# include <t_map/net/t_StoC.hpp>
 #endif
 
 #if DC_SERVER
-    #include <t_map/server/manager.hpp>
-    #include <t_map/server/subscription_list.hpp>
-    #include <t_map/server/env_process.hpp>
-
-    #include <common/random.h>
-
-    #include <particle/_interface.hpp>
-
-    #include <item/_interface.hpp>
-
-    #include <t_map/config/drop_dat.hpp>
-    #include <entity/object/main.hpp>
+# include <t_map/server/manager.hpp>
+# include <t_map/server/subscription_list.hpp>
+# include <t_map/server/env_process.hpp>
+# include <common/random.hpp>
+# include <particle/_interface.hpp>
+# include <item/_interface.hpp>
+# include <t_map/config/drop_dat.hpp>
+# include <entity/object/main.hpp>
 #endif
-
-struct MapDimension map_dim = { 512,512,128 };
 
 namespace t_map
 {
 
 class Terrain_map* main_map;
 
-int get(int x, int y, int z)
+CubeID get(int x, int y, int z)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return EMPTY_CUBE;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-    if(c == NULL) return 0;
-    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+    if (c == NULL) return EMPTY_CUBE;
+    return (CubeID)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 
 }
 
-void set(int x, int y, int z, int value)
+void set(int x, int y, int z, CubeID cube_id)
 {
     #if DC_SERVER
-    if(isItemContainer(x,y,z))
+    if (isItemContainer(x,y,z))
         t_map::destroy_item_container_block(x,y,z);
-    //if (value != get(x,y,z))
-    //    t_map::destroy_item_container_block(x,y,z);
     #endif
-    main_map->set_block(x,y,z,value);
+    main_map->set_block(x,y,z, cube_id);
 }
 
 OPTIMIZED
-void set_fast(int x, int y, int z, int value)
+void set_fast(int x, int y, int z, CubeID cube_id)
 {
-    main_map->set_block(x,y,z,value);
+    main_map->set_block(x,y,z, cube_id);
 }
 
 struct MAP_ELEMENT get_element(int x, int y, int z)
@@ -74,17 +63,16 @@ struct MAP_ELEMENT get_element(int x, int y, int z)
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 }
 
-void set_palette(int x, int y, int z, int value)
+void set_palette(int x, int y, int z, int palette)
 {
     struct MAP_ELEMENT element = main_map->get_element(x,y,z);
-    element.palette = value;
+    element.palette = palette;
     main_map->set_element(x,y,z,element);
 }
 
 int get_palette(int x, int y, int z)
 {
-    struct MAP_ELEMENT element = main_map->get_element(x,y,z);
-    return element.palette;
+    return main_map->get_element(x,y,z).palette;
 }
 
 
@@ -167,38 +155,39 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    int block_type;
-    int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
-    if (res != 0) return;
+    CubeID cube_id = NULL_CUBE;
+    int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_id);
+    if (cube_id == NULL_CUBE || ret != 0) return;
 
-    //NOTE: only sends to clients who are subscribed to map chunk
+    // return value 0 means block was destroyed; cube_id has the value of the cube before it was damaged
+    if (ret == 0) cube_id = EMPTY_CUBE;
 
-    map_history->send_block_action(x,y,z,res,action);
+    map_history->send_block_action(x,y,z, cube_id, action);
 
-    if(cube_list[block_type].item_drop == true) 
-        handle_block_drop(x,y,z, block_type);
+    if (cube_properties[cube_id].item_drop) 
+        handle_block_drop(x,y,z, cube_id);
 }
 
-void broadcast_set_block_action(int x, int y, int z, int block, int action)
+void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action)
 {
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    map_history->send_block_action(x,y,z,block,action);
+    map_history->send_block_action(x,y,z, cube_id, action);
 }
 
-void broadcast_set_block(int x, int y, int z, int block)
+void broadcast_set_block(int x, int y, int z, CubeID cube_id)
 {
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    main_map->set_block(x,y,z,block);
-    map_history->send_set_block(x,y,z,block);
+    main_map->set_block(x,y,z, cube_id);
+    map_history->send_set_block(x,y,z, cube_id);
 }
 
-void broadcast_set_block_palette(int x, int y, int z, int block, int palette)
+void broadcast_set_block_palette(int x, int y, int z, CubeID block, int palette)
 {
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -209,7 +198,7 @@ void broadcast_set_block_palette(int x, int y, int z, int block, int palette)
     e.palette = palette;
 
     main_map->set_element(x,y,z,e);
-    map_history->send_set_block_palette(x,y,z,block,palette);
+    map_history->send_set_block_palette(x,y,z, block,palette);
 }
 
 void broadcast_set_palette(int x, int y, int z, int palette)
@@ -222,7 +211,7 @@ void broadcast_set_palette(int x, int y, int z, int palette)
     e.palette = palette;
 
     main_map->set_element(x,y,z,e);
-    map_history->send_set_block_palette(x,y,z, e.block, e.palette);
+    map_history->send_set_block_palette(x,y,z, (CubeID)e.block, e.palette);
 }
 
 #endif
@@ -234,13 +223,13 @@ inline int get_highest_open_block(int x, int y, int n)
     if (n == 1) return get_highest_open_block(x,y);
 
     int open=n;
-    int block;
+    CubeID cube_id;
     int i;
 
     for (i=ZMAX-1; i>=0; i--)
     {
-        block = get(x,y,i);
-        if (!isSolid(block))
+        cube_id = get(x,y,i);
+        if (!isSolid(cube_id))
             open++;
         else
         {
@@ -340,12 +329,12 @@ inline int get_lowest_open_block(int x, int y, int n)
     if (n < 1) return -1;
 
     int i;
-    int block;
+    CubeID cube_id;
     int open=0;
     for (i=0; i<ZMAX; i++)
     {
-        block = get(x,y,i);
-        if (isSolid(block)) open = 0;
+        cube_id = get(x,y,i);
+        if (isSolid(cube_id)) open = 0;
         else open++;
         if (open >= n) return i-open+1;
     }
@@ -380,11 +369,13 @@ inline bool position_is_loaded(int x, int y)
     #endif
 }
 
-bool block_can_be_placed(int x, int y, int z, int value)
-{   
-    GS_ASSERT(value != 0);
+bool block_can_be_placed(int x, int y, int z, CubeID cube_id)
+{
+    bool valid_cube = isValidCube(cube_id);
+    GS_ASSERT(valid_cube);
+    if (valid_cube) return false;
     
-    if (get(x,y,z) != 0) return false;
+    if (get(x,y,z) != EMPTY_CUBE) return false;
     // check against all spawners
     if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x,y,z))
         return false;

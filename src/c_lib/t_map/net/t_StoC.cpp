@@ -1,9 +1,7 @@
 #include "t_StoC.hpp"
 
-#include "t_CtoS.hpp"
-
-#include "../t_map.hpp"
-//#include "../t_map_class.hpp"
+#include <t_map/net/t_CtoS.hpp>
+#include <t_map/t_map.hpp>
 
 namespace t_map
 {
@@ -11,7 +9,7 @@ namespace t_map
 #if DC_CLIENT
 
 #include <animations/animations.hpp>
-#include <common/random.h>
+#include <common/random.hpp>
 #include <sound/triggers.hpp>
 
 
@@ -175,13 +173,13 @@ void block_set_StoC::handle()
 {
     GS_ASSERT(x < map_dim.x && y < map_dim.y && z < map_dim.z);
     if (x >= map_dim.x || y >= map_dim.y || z >= map_dim.z) return;
-    main_map->set_block(x,y,z, block);
+    main_map->set_block(x,y,z, (CubeID)cube_id);
 }
 
 void block_set_palette_StoC::handle()
 {
     struct MAP_ELEMENT e = {{{0}}};
-    e.block = block;
+    e.block = cube_id;
     e.palette = palette;
 
     main_map->set_element(x,y,z, e);
@@ -189,16 +187,16 @@ void block_set_palette_StoC::handle()
 
 void block_action_StoC::handle()
 {
-    if (block == 0) 
+    if ((CubeID)this->cube_id == EMPTY_CUBE)
     {
-        int cube_id = get(x,y,z);
-        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id, (TerrainModificationAction)action);
+        CubeID old_cube_id = get(x,y,z);
+        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), old_cube_id, (TerrainModificationAction)action);
         Sound::block_destroyed(x+0.5f,y+0.5f,z+0.5f, 0,0,0);
     }
     else
         Sound::block_set(x+0.5f,y+0.5f,z+0.5f,0,0,0);
 
-    main_map->set_block(x,y,z, block);
+    main_map->set_block(x,y,z, (CubeID)this->cube_id);
 }
 
 void map_metadata_StoC::handle() 
@@ -209,7 +207,7 @@ void map_metadata_StoC::handle()
 }
 
 /*
-    Container block
+    Container cube_id
 */
 
 void container_block_chunk_reset_StoC::handle()

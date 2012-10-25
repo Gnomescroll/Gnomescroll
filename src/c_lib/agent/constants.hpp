@@ -45,7 +45,7 @@ enum AGENT_BODY_PARTS
 };
 
 /* Main */
-const int AGENT_MAX = PLAYERS_MAX;
+const int MAX_AGENTS = PLAYERS_MAX;
 //const float AGENT_HEIGHT = 2.8f;
 //const float CAMERA_HEIGHT = 2.5f;
 const float AGENT_HEIGHT = 1.8f;
@@ -75,6 +75,7 @@ const int AGENT_MAX_SPAWNERS = 3;
 const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
 const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
 
+const struct Color AGENT_DEFAULT_COLOR = color_init(64,192,64);
 
 /* Player */
 #if DC_CLIENT
@@ -108,5 +109,5 @@ void verify_configuration()
         GS_ASSERT(health_color_points[i] < health_color_points[i-1]); // must be descending order
 }
 
-}   // AgentHealthColor
+}   // AgentHudName
 #endif

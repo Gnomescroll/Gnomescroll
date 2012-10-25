@@ -15,7 +15,7 @@ const int CHAT_MESSAGE_RENDER_TIMEOUT = 1000*10; // 10 seconds
 // next [16,PLAYERS_MAX] are for pm channels 
 const int CHANNEL_ID_AGENT_OFFSET = 16;
 
-const int CHAT_SENDER_SYSTEM = 255;
+const ClientID CHAT_SENDER_SYSTEM = NULL_CLIENT;
 const int CHAT_CHANNEL_SYSTEM = 0;
 
 //const struct Color CHAT_SYSTEM_COLOR = {255,255,50};  // moved to options

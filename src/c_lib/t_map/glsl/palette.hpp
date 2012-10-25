@@ -1,26 +1,28 @@
 #pragma once
 
+#include <t_map/common/constants.hpp>
+
 namespace t_map
 {
 
 static int cube_texture_palette_index = 1;
-static int cube_texture_palette_lookup[256];
-static int cube_texture_palette_lookup_max[256]; // number of pallete elements per cube
-static unsigned char cube_texture_palette[512*6];
+static int cube_texture_palette_lookup[MAX_CUBES];
+static int cube_texture_palette_lookup_max[MAX_CUBES]; // number of pallete elements per cube
+static unsigned char cube_texture_palette[MAX_CUBES*2*6];
 
-static int cube_texture_palette_debug[256];
+static int cube_texture_palette_debug[MAX_CUBES];
 
 //static int cube_color_palette_index = 1;
-//static int cube_color_palette_lookup[256];
-//static unsigned short cube_color_palette_lookup_max[256];
-//static struct ColorElement cube_color_palette[512];
+//static int cube_color_palette_lookup[MAX_CUBES];
+//static unsigned short cube_color_palette_lookup_max[MAX_CUBES];
+//static struct ColorElement cube_color_palette[MAX_CUBES];
 
-void start_cube_palette(int cube_id);
+void start_cube_palette(CubeID cube_id);
 void end_cube_palette();
-void set_cube_palette_texture(int id, int side, int tex_id);
+void set_cube_palette_texture(CubeID id, int side, int tex_id);
 
 
-void start_cube_palette(int cube_id)
+void start_cube_palette(CubeID cube_id)
 {
     static int last_cube_id = -1;
     cube_texture_palette_debug[cube_texture_palette_index] = 1;
@@ -33,7 +35,7 @@ void start_cube_palette(int cube_id)
     else
     {
         //if this cube id has been used before
-        if(cube_id != last_cube_id) GS_ABORT();
+        GS_ASSERT_ABORT(cube_id == last_cube_id);
     }
     cube_texture_palette_lookup_max[cube_id]++;
     last_cube_id = cube_id;
@@ -44,16 +46,13 @@ void push_cube_palette()
     cube_texture_palette_index++;
 }
 
-void set_cube_palette_texture(int id, int side, int tex_id)
+void set_cube_palette_texture(CubeID id, int side, int tex_id)
 {
-    if(cube_texture_palette_debug[cube_texture_palette_index] != 1)
-    {
-        GS_ABORT();
-    }
+    GS_ASSERT_ABORT(cube_texture_palette_debug[cube_texture_palette_index] == 1);
 
     cube_texture_palette[6*cube_texture_palette_index + side] = tex_id;
 
-    GS_ASSERT(cube_texture_palette_index <= cube_texture_palette_lookup[id] + cube_texture_palette_lookup_max[id] );
+    GS_ASSERT(cube_texture_palette_index <= cube_texture_palette_lookup[id] + cube_texture_palette_lookup_max[id]);
     GS_ASSERT(cube_texture_palette_index >= cube_texture_palette_lookup[id]);
 }
 
@@ -79,7 +78,7 @@ void set_cube_palette_color(int r, int g, int b, int a)
 void print_palette()
 {
 
-    for(int i=0; i<256; i++)
+    for(int i=0; i<MAX_CUBES; i++)
     {
         //printf("block_id= %i index= %i max= %i \n", i, cube_texture_palette_lookup[i], cube_texture_palette_lookup_max[i] );
         if(cube_texture_palette_lookup[i] != 0) 

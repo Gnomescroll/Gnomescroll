@@ -473,7 +473,7 @@ class MapGenerator1
     }
 
     OPTIMIZED
-    void generate_map(int tile_id)
+    void generate_map(CubeID tile_id)
     {
 
         for(int k=0; k<ZMAX-1; k++)
@@ -518,7 +518,7 @@ class MapGenerator1
                         }
                         else
                         {
-                            t_map::set_fast(4*i+i0, 4*j+j0, 4*k+k0, 0);
+                            t_map::set_fast(4*i+i0, 4*j+j0, 4*k+k0, EMPTY_CUBE);
                         }
                     }
                 }
@@ -539,7 +539,7 @@ void test_octave_3d()
 
 class MapGenerator1* map_generator = NULL;
 
-void test_octave_3d_map_gen(int tile_id)
+void test_octave_3d_map_gen(CubeID tile_id)
 {
 #if DC_SERVER
 /*
@@ -678,7 +678,7 @@ extern "C"
     void LUA_generate_map()
     {
         #if !PRODUCTION
-        int tile = t_map::dat_get_cube_id("regolith");
+        CubeID tile = t_map::get_cube_id("regolith");
         map_generator->generate_map(tile);
         t_map::map_post_processing();
         #endif

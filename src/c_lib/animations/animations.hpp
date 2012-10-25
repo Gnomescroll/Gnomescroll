@@ -11,8 +11,6 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-using t_map::TerrainModificationAction;
-
 void block_crumble(float x, float y, float z, int n, int cube_id, float momentum);
 void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModificationAction action);
 

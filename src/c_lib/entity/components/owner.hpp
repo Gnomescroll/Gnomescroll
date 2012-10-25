@@ -9,10 +9,10 @@ namespace Components
 class OwnerComponent: public Component
 {
     public:
-        int owner;
+        AgentID owner;
 
-        int get_owner() { return this->owner; }
-        void set_owner(int owner) { this->owner = owner; }
+        AgentID get_owner() { return this->owner; }
+        void set_owner(AgentID owner) { this->owner = owner; }
 
         #if DC_SERVER
         void revoke();

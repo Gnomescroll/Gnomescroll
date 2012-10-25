@@ -18,7 +18,7 @@
 namespace Particle
 {
 
-class Grenade_list* grenade_list = NULL;
+class GrenadeList* grenade_list = NULL;
 
 #if DC_CLIENT
 class Shrapnel_list* shrapnel_list = NULL;
@@ -31,7 +31,7 @@ class BillboardTextHud_list* billboard_text_hud_list = NULL;
 
 void init_particles()
 {
-    grenade_list = new Grenade_list;
+    grenade_list = new GrenadeList(MAX_GRENADES);
 
     #if DC_CLIENT
     shrapnel_list = new Shrapnel_list;

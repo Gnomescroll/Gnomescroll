@@ -112,7 +112,7 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
 
 
 #if DC_SERVER
-void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(int client_id)
+void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(ClientID client_id)
 {
     class container_block_chunk_reset_StoC reset_msg;
     reset_msg.chunk_index = chunk_index;
@@ -133,7 +133,7 @@ void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(int client_id)
     }
 }
 
-void CHUNK_ITEM_CONTAINER::send_reset_chunk_item_containers(int client_id)
+void CHUNK_ITEM_CONTAINER::send_reset_chunk_item_containers(ClientID client_id)
 {
     class container_block_chunk_reset_StoC msg;
     msg.chunk_index = chunk_index;

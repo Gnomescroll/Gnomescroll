@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 
 #if DC_CLIENT
 dont_include_this_file_in_client
@@ -20,11 +20,11 @@ const CrystalClusterMode CRYSTAL_CLUSTER_MODE = CRYSTAL_CLUSTER_LINEAR;
 const int CRYSTAL_CLUSTER_Z_DIFF_MAX = 3;
 
 const int n_crystals = 3;
-int crystals[n_crystals] = {t_map::ERROR_CUBE };
+MechType crystals[n_crystals] = { NULL_MECH_TYPE };
 float crystal_strata[n_crystals*2] = {0};
 
-int rock = t_map::ERROR_CUBE;
-int bedrock = t_map::ERROR_CUBE;
+int rock = ERROR_CUBE;
+int bedrock = ERROR_CUBE;
 
 float falloffs[CRYSTAL_CLUSTER_RADIUS*2+1] = {1.0f};
 
@@ -50,16 +50,16 @@ void init_crystals()
 
     // load crystal types
     int i=0;
-    crystals[i++] = t_mech::get_mech_type_id("blue_crystal");
-    crystals[i++] = t_mech::get_mech_type_id("red_crystal");
-    crystals[i++] = t_mech::get_mech_type_id("green_crystal");
+    crystals[i++] = t_mech::get_mech_type("blue_crystal");
+    crystals[i++] = t_mech::get_mech_type("red_crystal");
+    crystals[i++] = t_mech::get_mech_type("green_crystal");
     // TODO -- check that all crystals are not ERROR_MECH
 
     bedrock = t_map::get_cube_id("bedrock");
-    GS_ASSERT(bedrock != t_map::ERROR_CUBE);
+    GS_ASSERT(bedrock != ERROR_CUBE);
 
     rock = t_map::get_cube_id("rock");
-    GS_ASSERT(rock != t_map::ERROR_CUBE);
+    GS_ASSERT(rock != ERROR_CUBE);
 
     //int top = get_highest_block_of_type(rock) + 1;
 
@@ -93,7 +93,7 @@ int get_crystal_index(int crystal_id)
     return 0;
 }
 
-void place_crystal_cluster(int x, int y, int z, int crystal_id)
+void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
 {
     
     for (int i=x-CRYSTAL_CLUSTER_RADIUS; i<x+CRYSTAL_CLUSTER_RADIUS; i++)
@@ -110,7 +110,7 @@ void place_crystal_cluster(int x, int y, int z, int crystal_id)
         int id = t_map::get(ii,jj,k-1);
         if (id != rock) continue;
 
-        if( t_mech::can_place_crystal(ii,jj,k, 0) == false) //check to see if placement is valid
+        if( t_mech::can_place_mech(ii,jj,k, 0) == false) //check to see if placement is valid
             continue;
         t_mech::create_crystal(ii,jj,k,crystal_id);
         cluster_size[cluster_id]++;
@@ -119,7 +119,7 @@ void place_crystal_cluster(int x, int y, int z, int crystal_id)
     cluster_id++;
 }
 
-int get_crystal_type(float percent_complete)
+MechType get_crystal_type(float percent_complete)
 {
     int i=0;
     for (; i<n_crystals; i++)
@@ -143,8 +143,8 @@ void populate_crystals()
      *          place crystal cluster
      */
 
-    GS_ASSERT(rock != t_map::ERROR_CUBE);
-    GS_ASSERT(bedrock != t_map::ERROR_CUBE);
+    GS_ASSERT(rock != ERROR_CUBE);
+    GS_ASSERT(bedrock != ERROR_CUBE);
 
     int ct = 0;
     int ct_max = 1000;
@@ -191,7 +191,7 @@ void populate_crystals()
     float inc = 1.0f/(float)ct;
     for (int i=0; i<ct; i++)
     {
-        int crystal_id = get_crystal_type(pct);
+        MechType crystal_id = get_crystal_type(pct);
         int x = loc[3*i+0];
         int y = loc[3*i+1];
         int z = loc[3*i+2];

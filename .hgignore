@@ -30,9 +30,15 @@ valgrerr*
 zi*
 
 *.map
-*.player
-*.item
-*.container
+*.map.*
+*.plr
+*.plr.*
+*.ctr
+*.ctr.*
+*.mch
+*.mch.*
+*.fab
+*.fab.*
 
 .DS_STORE
 *.so

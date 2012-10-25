@@ -15,7 +15,7 @@
 #include <voxel/voxel_render.hpp>
 #endif
 
-const int VOXEL_VERTEX_SCRATCH_SIZE = 65536;
+const int VOXEL_VERTEX_SCRATCH_SIZE = 0xffff;
 static Voxel_vertex* voxel_vertex_scratch_buffer = NULL;
 
 void init_voxel_volume()
@@ -31,8 +31,8 @@ void teardown_voxel_volume()
 
 int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
-    const static int _ssize = 256;
-    const static int _bsize = 65536;
+    const static int _ssize = 0xff;
+    const static int _bsize = 0xffff;
     // normalize direction
     float len2 = sqrtf( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;
@@ -246,28 +246,14 @@ void Voxel_volume::set_parameters(unsigned int xdim, unsigned int ydim, unsigned
 
 void Voxel_volume::init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
 {
-    if(this->voxel != NULL)
-    {
-        printf("Voxel_volume::init, error voxel is not null, init called twice?\n");
-        return;
-    }
-
-    //this->local_matrix = affine_identity();
+    GS_ASSERT(this->voxel == NULL);
+    if (this->voxel != NULL) return;
 
     this->set_parameters(xdim, ydim, zdim, scale);
-
-    #if DC_CLIENT
-    voxel_render_list = NULL;
-    #endif
-    voxel_hitscan_list = NULL;
-
-    //printf("!!! %i %i %i \n", xdim,ydim,zdim );
 
     this->hdx = ((float) xdim) / 2;
     this->hdy = ((float) ydim) / 2;
     this->hdz = ((float) zdim) / 2;
-
-    //printf("!!! %f %f %f \n", hdx, hdy,hdz);
 
     int powx = pow2_2(xdim);
     int powy = pow2_2(ydim);
@@ -284,54 +270,54 @@ void Voxel_volume::init(unsigned int xdim, unsigned int ydim, unsigned int zdim,
     needs_vbo_update = true;
 }
 
-Voxel_volume::Voxel_volume()
-:
-parent_world_matrix(NULL),
-id(-1),
-draw(true),
-hitscan(true),
-scale(1.0f),
-radius(0),
-xdim(1),ydim(1),zdim(1),
-voxel(NULL),
-index1(0), index12(0),
-index_max(0),
-hdx(1),hdy(1),hdz(1),
-needs_vbo_update(false),
-damaged(false)
-#if DC_CLIENT
-,
-voxel_render_list(NULL),
-voxel_render_list_id(-1)
-#endif
+Voxel_volume::Voxel_volume() :
+    parent_world_matrix(NULL),
+    render_id(-1),
+    draw(true),
+    hitscan(true),
+    scale(1.0f),
+    radius(0),
+    xdim(1),ydim(1),zdim(1),
+    voxel(NULL),
+    index1(0), index12(0),
+    index_max(0),
+    hdx(1),hdy(1),hdz(1),
+    needs_vbo_update(false),
+    damaged(false),
+    voxel_hitscan_list(NULL)
+    #if DC_CLIENT
+    , voxel_render_list(NULL)
+    , voxel_render_list_id(-1)
+    #endif
 {
-    memset(&this->world_matrix, 0, sizeof(struct Affine));
     memset(&this->local_matrix, 0, sizeof(struct Affine));
+    memset(&this->world_matrix, 0, sizeof(struct Affine));
+    this->vhe.vv = this;
 }
 
-Voxel_volume::Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
-:
-parent_world_matrix(NULL),
-id(-1),
-draw(true),
-hitscan(true),
-scale(1.0f),
-radius(0),
-voxel(NULL),
-index1(0), index12(0),
-index_max(0),
-hdx(1),hdy(1),hdz(1),
-needs_vbo_update(false),
-damaged(false)
-#if DC_CLIENT
-,
-voxel_render_list(NULL),
-voxel_render_list_id(-1)
-#endif
+Voxel_volume::Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale) :
+    parent_world_matrix(NULL),
+    render_id(-1),
+    draw(true),
+    hitscan(true),
+    scale(1.0f),
+    radius(0),
+    voxel(NULL),
+    index1(0), index12(0),
+    index_max(0),
+    hdx(1),hdy(1),hdz(1),
+    needs_vbo_update(false),
+    damaged(false),
+    voxel_hitscan_list(NULL)
+    #if DC_CLIENT
+    , voxel_render_list(NULL)
+    , voxel_render_list_id(-1)
+    #endif
 {
     memset(&this->world_matrix, 0, sizeof(struct Affine));
     memset(&this->local_matrix, 0, sizeof(struct Affine));
     this->init(xdim, ydim, zdim, scale);
+    this->vhe.vv = this;
 }
 
 Voxel_volume::~Voxel_volume()

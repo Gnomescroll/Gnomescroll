@@ -21,12 +21,12 @@ void teardown_chat_server()
         delete chat_server;
 }
 
-void add_player_to_chat(int client_id)
+void add_player_to_chat(ClientID client_id)
 {
     chat_server->player_join(client_id);
 }
 
-void remove_player_from_chat(int client_id)
+void remove_player_from_chat(ClientID client_id)
 {
     chat_server->player_quit(client_id);
 }
@@ -48,7 +48,7 @@ ChatSystemMessage* system_message = NULL;
 void init_chat_client()
 {
     chat_client = new ChatClient;
-    chat_message_list = new ChatMessageList;
+    chat_message_list = new ChatMessageList((CHAT_CLIENT_MESSAGE_HISTORY_MAX+1)*CHAT_CLIENT_CHANNELS_MAX);
     system_message = new ChatSystemMessage;
 }
 

@@ -6,11 +6,6 @@
 namespace Verlet
 {
 
-bool bounce(struct Vec3* position, struct Vec3* velocity, float damp);
-int* bounce(struct Vec3* position, struct Vec3* velocity, float damp, int* collision, int* tile);
-
-void bounce_box(float radius);
-
 const float dt = 1/30.0f;
 const float gravity = -9.8f;
 
@@ -90,7 +85,7 @@ class VerletComponent
         }
 
         bool bounce();
-        int* bounce(int* collision, int* tile);
+        int* bounce(int* collision, CubeID* tile);
         bool bounce_box(float gravity);
         bool bounce_box();
         bool bounce_box_no_gravity();

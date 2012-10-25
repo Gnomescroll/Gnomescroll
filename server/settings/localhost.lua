@@ -23,14 +23,14 @@ options.port = 0                -- use default
 
 -- map --
 options.map = ''
-options.seed = 303
+options.seed = 589
 
 -- logger --
 options.logger = true
 options.log_chat = false
 
 -- game --
-options.pvp = false
+options.pvp = true
 options.base_move_rate = 30*60*60 --1hr
 
 -- auth --

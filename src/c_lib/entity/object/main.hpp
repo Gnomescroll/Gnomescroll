@@ -30,7 +30,7 @@ void destroy_switch(ObjectType type, int id);
 class Object* get_object(ObjectType type, int id);
 int count(ObjectType type);
 bool full(ObjectType type);
-void send_to_client(ObjectType type, int client_id);
+void send_to_client(ObjectType type, ClientID client_id);
 
 // misc interators. move to another file later
 bool point_occupied_by_type(ObjectType type, int x, int y, int z);
@@ -39,8 +39,8 @@ void spawn_mobs();
 
 #if DC_SERVER
 // TODO -- generalize/remove
-void send_object_state_machines(const ObjectType type, const int client_id);
-void send_to_client(int client_id);
+void send_object_state_machines(const ObjectType type, const ClientID client_id);
+void send_to_client(ClientID client_id);
 #endif
 
 } // Objects

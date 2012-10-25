@@ -4,6 +4,7 @@
 #include <physics/ray_trace/handlers.hpp>
 #include <physics/vec3.hpp>
 #include <entity/network/packets.hpp>
+#include <agent/_interface.hpp>
 
 namespace Components
 {
@@ -12,7 +13,7 @@ namespace Components
 
 void WeaponTargetingComponent::lock_target(Vec3 camera_position)
 {   // lock on agent
-    Agent_state* target = Hitscan::lock_agent_target(
+    Agent* target = Hitscan::lock_agent_target(
         camera_position, &this->target_direction,
         this->sight_range, this->target_acquisition_failure_rate,
         this->attack_at_random
@@ -37,7 +38,7 @@ void WeaponTargetingComponent::lock_target_part(Vec3 camera_position)
     if (this->target_type != OBJECT_AGENT) return;    // TODO -- target all types
 
     // get target
-    Agent_state* target = STATE::agent_list->get(this->target_id);
+    Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL) return;
 
     // aim at target
@@ -58,7 +59,7 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
     if (!this->firing_direction_set) return false;
     
     // get target
-    Agent_state* target = STATE::agent_list->get(this->target_id);
+    Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL) return false;
     
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
@@ -82,7 +83,7 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
 
 bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
 {
-    Agent_state* target = STATE::agent_list->get(this->target_id);
+    Agent* target = Agents::get_agent((AgentID)this->target_id);
     // target exists
     if (target == NULL) return false;
     // target in range
@@ -100,7 +101,7 @@ void WeaponTargetingComponent::orient_to_random_target_part(Vec3 camera_position
 {
     if (this->target_type == OBJECT_NONE) return;
     if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
-    Agent_state* target = STATE::agent_list->get(this->target_id);
+    Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL || target->vox == NULL) return;
     int part = randrange(0, target->vox->n_parts-1);
     Vec3 target_position = target->vox->get_center(part);

@@ -15,6 +15,6 @@ void init_block_drop_dat();
 void teardown_block_drop_dat();
 void load_block_drop_dat();
 
-void handle_block_drop(int x, int y, int z, int block_type);
+void handle_block_drop(int x, int y, int z, CubeID cube_id);
 
 }   // t_map

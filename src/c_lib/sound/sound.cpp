@@ -139,7 +139,7 @@ void enumerate_sound_devices()
 #endif
 
 #if DC_SERVER
-void send_play_2d_sound(const char* name, int client_id)
+void send_play_2d_sound(const char* name, ClientID client_id)
 {
     int sound_id = get_soundfile_id_for_name(name);
     GS_ASSERT(sound_id >= 0);
@@ -159,7 +159,7 @@ void broadcast_play_2d_sound(const char* name)
     msg.broadcast();
 }
 
-void send_play_3d_sound(const char* name, int client_id, struct Vec3 p)
+void send_play_3d_sound(const char* name, ClientID client_id, struct Vec3 p)
 {
     int sound_id = get_soundfile_id_for_name(name);
     GS_ASSERT(sound_id >= 0);

@@ -10,6 +10,7 @@
 #include <entity/components/targeting.hpp>
 #include <entity/components/targeting/weapon_targeting.hpp>
 #include <entity/components/targeting/motion_targeting.hpp>
+#include <agent/_interface.hpp>
 
 namespace Objects
 {
@@ -85,7 +86,7 @@ static void set_mob_robot_box_properties(Object* object)
     target->attacker_properties.agent_damage_max = MONSTER_BOX_AGENT_DAMAGE_MAX;
     //target->attacker_properties.voxel_damage_radius = MONSTER_BOX_VOXEL_DAMAGE_RADIUS;
     target->attacker_properties.agent_protection_duration = MONSTER_BOX_AGENT_IMMUNITY_DURATION;
-    target->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
+    target->attacker_properties.terrain_modification_action = TMA_MONSTER_BOX;
     target->fire_delay_max = MONSTER_BOX_FIRE_DELAY_MAX;
 
     using Components::MotionTargetingComponent;
@@ -215,12 +216,12 @@ void server_tick_mob_robot_box(Object* object)
     int old_target_id = weapon->target_id;
     int old_target_type = weapon->target_type;
     
-    Agent_state* agent = NULL;
+    Agent* agent = NULL;
     if (weapon->locked_on_target)
     {   // target locked
         // query agent
         if (weapon->target_type == OBJECT_AGENT)
-            agent = STATE::agent_list->get(weapon->target_id);
+            agent = Agents::get_agent((AgentID)weapon->target_id);
         // check target still exists
         if (!weapon->target_is_visible(camera_position))
             weapon->locked_on_target = false;
@@ -231,7 +232,7 @@ void server_tick_mob_robot_box(Object* object)
         // look for target
         weapon->lock_target(camera_position);
         if (weapon->locked_on_target)
-            agent = STATE::agent_list->get(weapon->target_id);
+            agent = Agents::get_agent((AgentID)weapon->target_id);
     }
 
     if (weapon->target_type != OBJECT_NONE)
@@ -351,7 +352,7 @@ void client_tick_mob_robot_box(Object* object)
         VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component(COMPONENT_VOXEL_MODEL);
         Vec3 position = vox->get_center();
 
-        Agent_state* agent = ClientState::agent_list->get(weapon->target_id);
+        Agent* agent = Agents::get_agent((AgentID)weapon->target_id);
         if (agent == NULL) return;
         Vec3 agent_position = quadrant_translate_position(position, agent->get_center());
         

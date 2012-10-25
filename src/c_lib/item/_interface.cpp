@@ -1,6 +1,7 @@
 #include "_interface.hpp"
 
 #include <common/crash_report/stack_trace.hpp>
+#include <agent/_interface.hpp>
 
 #include <item/item.hpp>
 #include <item/_state.hpp>
@@ -22,7 +23,7 @@ namespace Item
 
 void init()
 {
-    item_list = new ItemList;
+    item_list = new ItemList(MAX_ITEMS);
 }
 
 void teardown()
@@ -40,17 +41,13 @@ void init_packets()
 
 Item* get_item(ItemID id)
 {
+    if (id == NULL_ITEM) return NULL;
     return item_list->get(id);
-}
-
-// alias for get_item
-class Item* get_item_object(ItemID id)
-{
-    return get_item(id);
 }
 
 int get_item_type(ItemID id)
 {
+    if (id == NULL_ITEM) return NULL_ITEM_TYPE;
     Item* item = get_item(id);
     if (item == NULL) return NULL_ITEM_TYPE;
     return item->type;
@@ -189,15 +186,15 @@ void destroy_item(ItemID id)
                     GS_ASSERT(slot == Toolbelt::get_agent_selected_slot(container->owner));
                     Toolbelt::force_remove_selected_item(container->owner);
                 }
-                Agent_state* a = ServerState::agent_list->get_any(container->owner);
+                Agent* a = Agents::get_agent(container->owner);
                 if (a != NULL) ItemContainer::send_container_remove(a->client_id, container_id, slot);
             }
         }
     }
     else if (item->location == IL_HAND)
     {
-        ItemContainer::remove_item_from_hand(item->location_id);    // we're destroying the item, so subscriptions dont matter
-        Agent_state* a = ServerState::agent_list->get_any(item->location_id);
+        ItemContainer::remove_item_from_hand((AgentID)item->location_id);    // we're destroying the item, so subscriptions dont matter
+        Agent* a = Agents::get_agent((AgentID)item->location_id);
         if (a != NULL) ItemContainer::send_hand_remove(a->client_id);
     }
     else if (item->location == IL_PARTICLE)
@@ -256,6 +253,11 @@ ItemID split_item_stack_in_half(ItemID src)
     return new_item->id;
 }
 
+unsigned int item_space()
+{
+    return item_list->space();
+}
+
 class Item* create_item(int item_type)
 {
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
@@ -270,12 +272,6 @@ class Item* create_item(const char* item_name)
     if (item_type == NULL_ITEM_TYPE) return NULL;
     return create_item(item_type);
 }
-
-class Item* create_item_for_loading()
-{   // only used by serializer
-    return item_list->create_for_loading();
-}
-
 
 int consume_stack_item(ItemID item_id, int amount, bool auto_destroy)
 {
@@ -347,19 +343,19 @@ int consume_durability(ItemID item_id, int amount)
     return consume_durability(item_id, amount, true);
 }
 
-void agent_quit(int agent_id)
+void agent_quit(AgentID agent_id)
 {
-    Agent_state* agent = ServerState::agent_list->get_any(agent_id);
+    Agent* agent = Agents::get_agent(agent_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return;
 
     // remove client from item subscription lists
     // TODO -- reverse lookup from agent
 
-    int client_id = agent->client_id;
-    for (int i=0; i<item_list->n_max; i++)
-        if (item_list->a[i] != NULL)
-            item_list->a[i]->subscribers.remove(client_id);
+    ClientID client_id = agent->client_id;
+    for (unsigned int i=0; i<item_list->max; i++)
+        if (item_list->objects[i].id != item_list->null_id)
+            item_list->objects[i].subscribers.remove(client_id);
 }
 
 
@@ -367,7 +363,7 @@ void agent_quit(int agent_id)
 void test_item_list_capacity()
 {
     printf("Testing item list capacity\n");
-    for (int i=0; i<ITEM_LIST_HARD_MAX+1024; i++)
+    for (int i=0; i<MAX_ITEMS+1024; i++)
         item_list->create_type(0);
 }
 

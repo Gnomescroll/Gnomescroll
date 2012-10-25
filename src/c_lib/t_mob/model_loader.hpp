@@ -120,7 +120,7 @@ static struct Mat4 _ConvertMatrix(const aiMatrix4x4& in)
     struct _VertexWeight
     {
         int bone_index; //index into bone matrix
-        int vertex_index;		//mesh vertex index
+        int vertex_index;       //mesh vertex index
         float weight;   //weight
     };
 
@@ -940,7 +940,7 @@ class BodyPartMesh
     }
 
     //assumes only one mesh per node
-	void load(struct _Mesh* mesh)
+    void load(struct _Mesh* mesh)
     {
 
         //copy name
@@ -1408,7 +1408,7 @@ void init()
 {
     return; //DEBUG
 
-    int bsize;
+    size_t bsize = 0;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
     GS_ASSERT(buffer != NULL);
     if (buffer == NULL) return;

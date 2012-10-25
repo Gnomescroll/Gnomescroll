@@ -56,7 +56,7 @@ using HudText::Text;
 static Text* you_star = NULL;
 static Text* you_A = NULL;
 static Text* base = NULL;
-static Text* ally[AGENT_MAX] = {NULL};
+static Text* ally[MAX_AGENTS] = {NULL};
 static Text* camera = NULL;
 
 static bool text_icons_inited = false;
@@ -81,7 +81,7 @@ void init_text_icons()
     if (base == NULL) return;
     base->set_text(base_symbol);
 
-    for (int i=0; i<(int)AGENT_MAX; i++)
+    for (int i=0; i<(int)MAX_AGENTS; i++)
     {
         ally[i] = HudText::text_list->create();
         GS_ASSERT(ally[i] != NULL);
@@ -108,7 +108,7 @@ void set_icon_colors()
     you_star->set_color(highlight.r, highlight.g, highlight.b, a);
     you_A->set_color(highlight.r, highlight.g, highlight.b, a);
     base->set_color(highlight.r, highlight.g, highlight.b,a);
-    for (int i=0; i<(int)AGENT_MAX; i++)
+    for (int i=0; i<(int)MAX_AGENTS; i++)
         if (ally[i] != NULL) ally[i]->set_color(highlight.r, highlight.g, highlight.b,a);
     camera->set_color(highlight.r, highlight.g, highlight.b, a);
 }
@@ -192,19 +192,19 @@ void update_map_surface()
     Uint8 r,g,b,a;
 
     int cx,cy;
-    for (int i=0; i<t_map::MAP_CHUNK_XDIM; i++)
-    for (int j=0; j<t_map::MAP_CHUNK_YDIM; j++)
+    for (int i=0; i<MAP_CHUNK_XDIM; i++)
+    for (int j=0; j<MAP_CHUNK_YDIM; j++)
     {
-        if (t_map::main_map->chunk_heights_status[i + j*t_map::MAP_CHUNK_XDIM] != t_map::CHUNK_HEIGHT_CHANGED) continue;
-        for (int m=0; m<t_map::TERRAIN_CHUNK_WIDTH; m++)
+        if (t_map::main_map->chunk_heights_status[i + j*MAP_CHUNK_XDIM] != CHUNK_HEIGHT_CHANGED) continue;
+        for (int m=0; m<TERRAIN_CHUNK_WIDTH; m++)
         {
-            cx = i*t_map::TERRAIN_CHUNK_WIDTH + m;
-            for (int n=0; n<t_map::TERRAIN_CHUNK_WIDTH; n++)
+            cx = i*TERRAIN_CHUNK_WIDTH + m;
+            for (int n=0; n<TERRAIN_CHUNK_WIDTH; n++)
             {
-                cy = j*t_map::TERRAIN_CHUNK_WIDTH + n;
-                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + t_map::MAP_WIDTH*cy]];
+                cy = j*TERRAIN_CHUNK_WIDTH + n;
+                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + MAP_WIDTH*cy]];
                 SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-                ((Uint32*)map_surface->pixels)[cx + t_map::MAP_WIDTH*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+                ((Uint32*)map_surface->pixels)[cx + MAP_WIDTH*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
             }
         }
     }
@@ -221,12 +221,12 @@ void update_texture(GLuint texture, SDL_Surface* surface)
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return;
 
-    GS_ASSERT(map_dim.x != 0 && map_dim.y != 0);
-    if (map_dim.x == 0 || map_dim.y == 0) return;
+    GS_ASSERT(t_map::map_dim.x != 0 && t_map::map_dim.y != 0);
+    if (t_map::map_dim.x == 0 || t_map::map_dim.y == 0) return;
     
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, map_dim.x, map_dim.y, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_map::map_dim.x, t_map::map_dim.y, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
     glDisable(GL_TEXTURE_2D);
 
     CHECK_GL_ERROR();
@@ -240,7 +240,7 @@ void draw_2x2_pixel(SDL_Surface* surface, Uint32 pix, int x, int y)
         if (i==2) j = 1;
         if (i==3) k = 1;
         if (x+j >= 0 && x+j < width && y+k >= 0 && y+k < height)    // only draw in surface bounds (or could segfault)
-            ((Uint32*)surface->pixels)[x+j + map_dim.x*(y+k)] = pix;
+            ((Uint32*)surface->pixels)[x+j + t_map::map_dim.x*(y+k)] = pix;
     }
 }
 
@@ -254,8 +254,8 @@ void update_terrain_map(int tex_id)
 
 void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
 {
-    float x_scale = ((float)width)/((float)map_dim.x);
-    float y_scale = ((float)height)/((float)map_dim.y);
+    float x_scale = ((float)width)/((float)t_map::map_dim.x);
+    float y_scale = ((float)height)/((float)t_map::map_dim.y);
     *sx = x * x_scale;
     *sy = y * y_scale;
     *sx += _xresf-screen_x_offset-width;
@@ -266,14 +266,14 @@ void draw_text_icons(float z)
 {
     if (!text_icons_inited) return;
     using ClientState::playerAgent_state;
-    using ClientState::agent_list;
+    using Agents::agent_list;
     if (playerAgent_state.you == NULL) return;
             
     float x,y;
-    for (int i=0; i<agent_list->n_max; i++)
+    for (unsigned int i=0; i<agent_list->max; i++)
     {
-        Agent_state* a = agent_list->a[i];
-        if (a == NULL) continue;
+        Agent* a = &agent_list->objects[i];
+        if (a->id == agent_list->null_id) continue;
         if (a == playerAgent_state.you) continue;
         Vec3 p = a->get_position();
         world_to_map_screen_coordinates(p.x, p.y, &x, &y);

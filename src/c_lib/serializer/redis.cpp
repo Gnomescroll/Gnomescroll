@@ -185,7 +185,7 @@ void update_redis()
     ev_loop(EV_DEFAULT_ EVLOOP_NONBLOCK);
     if (!redis_connected && !waiting_to_connect)
         connect();
-    else if (_ping_tick++ % keep_alive_rate == 0)
+    else if (_ping_tick++ % KEEP_ALIVE_RATE == 0)
         ping_redis_server();
 }
 

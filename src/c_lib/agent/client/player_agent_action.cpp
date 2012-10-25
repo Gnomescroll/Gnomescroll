@@ -40,7 +40,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     float collision_point[3];
     int block_pos[3];
     int side[3];
-    int tile;
+    CubeID tile;
     float block_distance;
 
     Hitscan::HitscanTargetTypes target_type =
@@ -74,12 +74,12 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     hitscan_none_CtoS none_msg;
     hitscan_object_CtoS obj_msg;
 
-    Agent_state* agent;
+    Agent* agent;
     
     int x,y,z;
-    int block_type;
+    CubeID cube_id = NULL_CUBE;
     int weapon_dmg;
-    
+
     switch (target_type)
     {
         case Hitscan::HITSCAN_TARGET_VOXEL:
@@ -107,7 +107,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
                     collision_point[0], collision_point[1], collision_point[2],
                     0,0,0
                 );
-                agent = ClientState::agent_list->get(target.entity_id);
+                agent = Agents::get_agent((AgentID)target.entity_id);
                 if (agent==NULL) break;
             }
             break;
@@ -123,9 +123,9 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
             // if block pos matched last requested block pos
             // add it to hud draw settings predicted
             // else, set it to hud draw settings predicted
-            block_type = t_map::get(x,y,z);
-            GS_ASSERT(block_type != 0);
-            weapon_dmg = Item::get_item_block_damage(weapon_type, block_type);
+            cube_id = t_map::get(x,y,z);
+            GS_ASSERT(t_map::isValidCube(cube_id));
+            weapon_dmg = Item::get_item_block_damage(weapon_type, cube_id);
             if (t_map::is_last_requested_block(x,y,z))
             {
                 Animations::predicted_block_damage += weapon_dmg;
@@ -253,7 +253,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
     float collision_point[3];
     int block_pos[3];
     int side[3];
-    int tile;
+    CubeID tile;
     float block_distance;
 
     Hitscan::HitscanTargetTypes target_type =
@@ -269,7 +269,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
     hit_block_CtoS block_msg;
     melee_object_CtoS obj_msg;
 
-    Agent_state* agent;
+    Agent* agent;
     //int voxel_blast_radius = 1;
 
     switch (target_type)
@@ -292,7 +292,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 
             if (target.entity_type == OBJECT_AGENT)
             {
-                agent = ClientState::agent_list->get(target.entity_id);
+                agent = Agents::get_agent((AgentID)target.entity_id);
                 if (agent==NULL)
                 {
                     target_type = Hitscan::HITSCAN_TARGET_NONE;
@@ -321,7 +321,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 target_type = Hitscan::HITSCAN_TARGET_NONE;
                 break;
             }
-            if (block_pos[2] >= 0 && block_pos[2] < map_dim.z)
+            if (block_pos[2] >= 0 && block_pos[2] < t_map::map_dim.z)
             {
                 int x = block_pos[0];
                 int y = block_pos[1];
@@ -333,9 +333,9 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 // if block pos matched last requested block pos
                 // add it to hud draw settings predicted
                 // else, set it to hud draw settings predicted
-                int block_type = t_map::get(x,y,z);
-                GS_ASSERT(block_type != 0);
-                int weapon_dmg = Item::get_item_block_damage(weapon_type, block_type);
+                CubeID cube_id = t_map::get(x,y,z);
+                GS_ASSERT(cube_id != EMPTY_CUBE);
+                int weapon_dmg = Item::get_item_block_damage(weapon_type, cube_id);
                 if (t_map::is_last_requested_block(x,y,z))
                 {
                     Animations::predicted_block_damage += weapon_dmg;
@@ -413,7 +413,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
         max_dist, z_low, z_high
     );
     if (b==NULL) return false;
-    if (b[2] < 0 || b[2] >= map_dim.z) return false;
+    if (b[2] < 0 || b[2] >= t_map::map_dim.z) return false;
     if (b[2] == 0) return false;    // dont modify the floor
 
     int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
@@ -425,7 +425,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return true;
-    int val = attr->block_type_id;
+    CubeID val = attr->cube_id;
     if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {
         ItemContainer::create_container_block_CtoS msg;
@@ -466,15 +466,15 @@ void PlayerAgent_action::admin_set_block()
         max_dist, z_low, z_high
     );
     if (b==NULL) return;
-    if (b[2] < 0 || b[2] >= map_dim.z) return;
+    if (b[2] < 0 || b[2] >= t_map::map_dim.z) return;
 
     int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
     GS_ASSERT(orientation >= 0 && orientation <= 3);
     if (orientation < 0 || orientation > 3) orientation = 0;
 
     // get block value from somewhere
-    int val = HudCubeSelector::cube_selector.get_active_id();
-    if (t_map::isErrorBlock(val) || !t_map::isInUse(val)) return;
+    CubeID val = HudCubeSelector::cube_selector.get_active_id();
+    if (!t_map::isValidCube(val)) return;
 
     if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
     {
@@ -587,7 +587,7 @@ Vec3 PlayerAgent_action::get_aiming_point()
     float collision_point[3];
     int block_pos[3];
     int side[3];
-    int tile;
+    CubeID tile;
     float block_distance;
 
     Hitscan::HitscanTargetTypes target_type =

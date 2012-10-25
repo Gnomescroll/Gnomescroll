@@ -197,6 +197,99 @@ float _ix, _iy, _iz;
 	glPointSize(1.0f);
 }
 
+void visualize_bounding_box(
+	float bx, float by, float bz,		//center
+	float bdx, float bdy, float bdz,	//size
+	struct Vec3 f,
+	struct Vec3 r,
+	struct Vec3 u
+	);
+
+void visualize_bounding_box()
+{
+	struct Vec3 f = vec3_init(1.0, 0.0, 0.0);
+	struct Vec3 r = vec3_init(0.0, 1.0, 0.0);
+	struct Vec3 u = vec3_init(0.0, 0.0, 1.0);
+
+	visualize_bounding_box(
+	_ix, _iy, _iz,		//center
+	1.0,1.0,1.0,	//size
+	f,r,u
+	);
+}
+
+void visualize_bounding_box(
+	float bx, float by, float bz,		//center
+	float bdx, float bdy, float bdz,	//size
+	struct Vec3 f,
+	struct Vec3 r,
+	struct Vec3 u
+	)
+{
+	static const int vi[2*12] = 
+	{
+        0,1,
+        1,2,
+        2,3,
+        3,0,
+
+        4,5,
+        5,6,
+        6,7,
+        7,4,
+
+        0,4,
+        1,5,
+        2,6,
+        3,7,
+	};
+
+	static const int vs[3*8] = 
+	{
+        -1,-1,0,
+        1,-1,0,
+        1,1,0,
+        -1,1,0,
+        -1,-1,1,
+        1,-1,1,
+        1,1,1,
+        -1,1,1,
+	};
+
+	struct Vec3 _f = vec3_scalar_mult(f, bdx);
+	struct Vec3 _r = vec3_scalar_mult(r, bdy);
+	struct Vec3 _u = vec3_scalar_mult(u, bdz);
+
+	struct Vec3 vex[8];
+	for(int i=0; i<8; i++)
+	{
+		vex[i].x = bx + _f.x*vs[3*i+0] + _r.x*vs[3*i+1] + _u.x*vs[3*i+2];
+		vex[i].y = by + _f.y*vs[3*i+0] + _r.y*vs[3*i+1] + _u.y*vs[3*i+2];
+		vex[i].z = bz + _f.z*vs[3*i+0] + _r.z*vs[3*i+1] + _u.z*vs[3*i+2];
+	}
+
+    glDisable(GL_TEXTURE_2D);
+	glColor4ub(0,0,0,255);
+	glLineWidth(2.0f);
+
+	glBegin(GL_LINES);
+
+	for(int i=0; i<12; i++)
+	{
+		int i1 = vi[2*i+0];
+		int i2 = vi[2*i+1];
+
+		glVertex3f(vex[i1].x, vex[i1].y, vex[i1].z);
+		glVertex3f(vex[i2].x, vex[i2].y, vex[i2].z);
+
+	}
+
+	glEnd();
+
+	glColor4ub(255,255,255,255);
+	glLineWidth(1.0f);
+
+}
 
 bool line_box_test(
 	float lx, float ly, float lz,

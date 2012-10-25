@@ -15,7 +15,7 @@ def copyfile(s,d):
     shutil.copy2(s,d)
     
 def copyfolder(s,d):
-	shutil.copytree(s,d)
+    shutil.copytree(s,d)
     
 def get_version():
     with open('../src/c_lib/common/version.h') as f:
@@ -58,6 +58,9 @@ def run(conf):
         copyfile('./settings/production.lua', os.path.join(settings_path, 'settings.lua'))
     elif conf == 'configure':
         copyfile('./settings/dev.lua', os.path.join(settings_path, 'dev.lua'))
+
+    # TODO -- call unix2dos or "/usr/bin/perl -pi s/\n/\r\n/" to convert the settings file
+    # Check that the lua interpreter handles crlf properly
         
     # create screenshot folder
     ensure_dir(os.path.join(build_path, 'screenshot\\'))
@@ -94,9 +97,9 @@ def run(conf):
         dll_src_path = os.path.join(awesomium_dll_path, dll)
         assert os.path.exists(dll_src_path)
         if os.path.isdir(dll_src_path):
-        	copyfolder(dll_src_path, os.path.join(build_path, dll))
+            copyfolder(dll_src_path, os.path.join(build_path, dll))
         else:
-        	copyfile(dll_src_path, os.path.join(build_path, dll))
+            copyfile(dll_src_path, os.path.join(build_path, dll))
         
     # only zip and copy for production builds
     if conf != 'production':

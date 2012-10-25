@@ -55,7 +55,7 @@ inline void object_create_owner_StoC::handle()
     if (physics != NULL) physics->set_position(vec3_init(x,y,z));
     OwnerComponent* owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
     GS_ASSERT(owner != NULL);
-    if (owner != NULL) owner->set_owner(this->owner);
+    if (owner != NULL) owner->set_owner((AgentID)this->owner);
     Objects::ready(obj);
 }
 
@@ -237,7 +237,7 @@ inline void object_shot_object_StoC::handle()
     if (dims != NULL) position.z += dims->get_camera_height();
 
     // get target
-    Agent_state* a = ClientState::agent_list->get(this->target_id);
+    Agent* a = Agents::get_agent((AgentID)this->target_id);
     if (a == NULL || a->vox == NULL) return;
     // update the model, in case it is out of date.
     force_update_agent_vox(a);

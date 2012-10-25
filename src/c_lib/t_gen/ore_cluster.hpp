@@ -46,22 +46,22 @@ void populate_ore()
 /*
     Add branching ore veins
 */
-int generate_ore_vein(int x, int y, int z, int size, int tile_id);
+int generate_ore_vein(int x, int y, int z, int size, CubeID tile_id);
 
 
 void populate_ore_veins(int number, const char* block_name)
 {
-    int tile_id = t_map::dat_get_cube_id(block_name);
-    const static int regolith_id = t_map::dat_get_cube_id("regolith");
+    CubeID tile_id = t_map::get_cube_id(block_name);
+    const static int regolith_id = t_map::get_cube_id("regolith");
 
     GS_ASSERT(tile_id >= 0);
     if (tile_id < 0) return;
 
     for(int i=0; i<number; i++)
     {
-        int x = (int)genrand_int32() % map_dim.x;
-        int y = (int)genrand_int32() % map_dim.y;
-        int z = (int)genrand_int32() % map_dim.z;
+        int x = (int)genrand_int32() % t_map::map_dim.x;
+        int y = (int)genrand_int32() % t_map::map_dim.y;
+        int z = (int)genrand_int32() % t_map::map_dim.z;
 
         int ctile = t_map::get(x,y,z);
         if(ctile == 0 || ctile == regolith_id) continue;
@@ -73,9 +73,9 @@ void populate_ore_veins(int number, const char* block_name)
 }
 
 
-int generate_ore_vein(int x, int y, int z, int size, int tile_id)
+int generate_ore_vein(int x, int y, int z, int size, CubeID tile_id)
 {
-    const static int regolith_id = t_map::dat_get_cube_id("regolith");
+    const static int regolith_id = t_map::get_cube_id("regolith");
 
     const static int_fast8_t s_array[18] = {
             0,0,1,  //top
@@ -141,28 +141,28 @@ int generate_ore_vein(int x, int y, int z, int size, int tile_id)
 }
 
 
-int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, int tile_id);
-int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, int tile_id);
+int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeID tile_id);
+int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeID tile_id);
 
 void populate_ore_pocket_cuboid(int number, const char* block_name)
 {
-    const static int regolith_id = t_map::dat_get_cube_id("regolith");
-    int tile_id = t_map::dat_get_cube_id(block_name);
+    const static CubeID regolith_id = t_map::get_cube_id("regolith");
+    CubeID tile_id = t_map::get_cube_id(block_name);
 
-    GS_ASSERT(tile_id >= 0);
-    if (tile_id < 0) return;
+    GS_ASSERT(t_map::isValidCube(tile_id));
+    if (!t_map::isValidCube(tile_id)) return;
 
     int ore_count = 0;
     int clusters = 0;
 
     for(int i=0; i<number; i++)
     {
-        int x = (int)genrand_int32() % map_dim.x;
-        int y = (int)genrand_int32() % map_dim.y;
-        int z = (int)genrand_int32() % map_dim.z;
+        int x = (int)genrand_int32() % t_map::map_dim.x;
+        int y = (int)genrand_int32() % t_map::map_dim.y;
+        int z = (int)genrand_int32() % t_map::map_dim.z;
 
-        int ctile = t_map::get(x,y,z);
-        if (ctile == 0 || ctile == regolith_id)
+        CubeID ctile = t_map::get(x,y,z);
+        if (ctile == EMPTY_CUBE || ctile == regolith_id)
             continue;
         
 
@@ -195,7 +195,7 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
     printf("populate_ore_pocket_cuboid: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, clusters );
 }
 
-int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, int tile_id)
+int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeID tile_id)
 {
     float asize = randf();
     float bsize = randf();
@@ -259,12 +259,12 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, int tile_id)
 }   
 
 
-int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, int tile_id);
+int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeID tile_id);
 
 void populate_ore_pocket_elliptoid(int number, const char* block_name)
 {
 
-    int tile_id = t_map::dat_get_cube_id(block_name);
+    CubeID tile_id = t_map::get_cube_id(block_name);
     GS_ASSERT(tile_id >= 0);
     if (tile_id < 0) return;
 
@@ -272,9 +272,9 @@ void populate_ore_pocket_elliptoid(int number, const char* block_name)
     int clusters = 0;
     for(int i=0; i<number; i++)
     {
-        int x = (int)genrand_int32() % map_dim.x;
-        int y = (int)genrand_int32() % map_dim.y;
-        int z = (int)genrand_int32() % map_dim.z;
+        int x = (int)genrand_int32() % t_map::map_dim.x;
+        int y = (int)genrand_int32() % t_map::map_dim.y;
+        int z = (int)genrand_int32() % t_map::map_dim.z;
 
         int ctile = t_map::get(x,y,z);
         if (ctile == 0)
@@ -304,7 +304,7 @@ void populate_ore_pocket_elliptoid(int number, const char* block_name)
     printf("populate_ore_elliptoid_pockets: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, clusters );
 }
 
-int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, int tile_id)
+int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeID tile_id)
 {
     float asize = randf();
     float bsize = randf();
@@ -352,7 +352,7 @@ int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, int tile_i
             int ty = (_y+j+512) % 512;
             int tz = (_z+k+128) % 128;
 
-            t_map::set(tx,ty,tz,tile_id);
+            t_map::set(tx,ty,tz, tile_id);
             _set ++;
 
         }

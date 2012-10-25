@@ -19,6 +19,7 @@
 #include <t_map/lighting.hpp>
 
 #if DC_CLIENT
+#include <t_map/config/textures.hpp>
 #include <t_map/t_vbo_draw.cpp>
 #include <t_map/t_vbo_update.cpp>
 

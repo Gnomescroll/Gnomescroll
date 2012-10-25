@@ -39,7 +39,7 @@ class FixedSizeNetPacketToClient
         static uint8_t message_id;
         static unsigned int size;
         static int _in;
-        //int client_id; //not used yet
+        //ClientID client_id; //not used yet
 
         FixedSizeNetPacketToClient() { nm = NULL; }
         virtual ~FixedSizeNetPacketToClient() {}
@@ -61,7 +61,7 @@ class FixedSizeNetPacketToClient
         /*
             For higher performance, require explicit serialization
         */
-        void sendToClient(int client_id) 
+        void sendToClient(ClientID client_id) 
         {
             #if DC_SERVER
             nm = Net_message::acquire(Derived::size);
@@ -82,7 +82,7 @@ class FixedSizeNetPacketToClient
             #endif
         }
 
-        void sendToClients(int* client_ids, unsigned int n_clients)
+        void sendToClients(ClientID* client_ids, unsigned int n_clients)
         {
             #if DC_SERVER
             GS_ASSERT(client_ids != NULL);
@@ -97,13 +97,13 @@ class FixedSizeNetPacketToClient
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
-            int client_id;
+            ClientID client_id;
             class NetPeer* np;
             for (unsigned int i=0; i<n_clients; i++) 
             {
                 client_id = client_ids[i];
-                GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
-                if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) continue;
+                GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
+                if (client_id < 0 || client_id >= HARD_MAX_CONNECTIONS) continue;
                 np = NetServer::pool[client_id];
                 GS_ASSERT(np != NULL);
                 if (np == NULL) continue;
@@ -127,7 +127,7 @@ class FixedSizeNetPacketToClient
 
             class NetPeer* np;
 
-            for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++) 
             {
                 np = NetServer::pool[i];
                 if (np == NULL) continue;
@@ -151,7 +151,7 @@ class FixedSizeNetPacketToClient
 
             class NetPeer* np;
 
-            for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++) 
             {
                 if (i == ignore_client_id) continue;
                 np = NetServer::pool[i];
@@ -176,7 +176,7 @@ class FixedSizeNetPacketToClient
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read) 
         {
             Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
@@ -222,6 +222,7 @@ class FixedSizeReliableNetPacketToClient {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
+        
         inline void unserialize(char* buff, unsigned int* buff_n, unsigned int* size) __attribute((always_inline))
         {
             unsigned int _buff_n = *buff_n;
@@ -229,7 +230,7 @@ class FixedSizeReliableNetPacketToClient {
             *size = *buff_n - _buff_n;
         }
 
-        void sendToClient(int client_id) 
+        void sendToClient(ClientID client_id) 
         {
             #if DC_SERVER
             //printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
@@ -251,7 +252,7 @@ class FixedSizeReliableNetPacketToClient {
             #endif
         }
 
-        void sendToClients(int* client_ids, unsigned int n_clients)
+        void sendToClients(ClientID* client_ids, unsigned int n_clients)
         {
             #if DC_SERVER
             GS_ASSERT(client_ids != NULL);
@@ -266,13 +267,13 @@ class FixedSizeReliableNetPacketToClient {
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
-            int client_id;
+            ClientID client_id;
             class NetPeer* np;
             for (unsigned int i=0; i<n_clients; i++) 
             {
                 client_id = client_ids[i];
-                GS_ASSERT(client_id >= 0 && client_id < NetServer::HARD_MAX_CONNECTIONS);
-                if (client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) continue;
+                GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
+                if (client_id < 0 || client_id >= HARD_MAX_CONNECTIONS) continue;
                 np = NetServer::pool[client_id];
                 GS_ASSERT(np != NULL);
                 if (np == NULL) continue;
@@ -294,7 +295,7 @@ class FixedSizeReliableNetPacketToClient {
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
-            for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++) 
             {
                 class NetPeer* np = NetServer::pool[i];
                 if (np == NULL) continue;
@@ -316,7 +317,7 @@ class FixedSizeReliableNetPacketToClient {
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
-            for (int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++) 
             {
                 if (i == ignore_client_id) continue;
                 class NetPeer* np = NetServer::pool[i];
@@ -341,7 +342,7 @@ class FixedSizeReliableNetPacketToClient {
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, unsigned int _client_id) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read) 
         {
             Derived x;
             x.unserialize(buff, &buff_n, bytes_read);

@@ -16,9 +16,9 @@ dont_include_this_file_in_server
 #include <t_map/_interface.hpp>
 #include <agent/client/agent_sound_handler.hpp>
 
-void PlayerAgent_state::set_PlayerAgent_id(int id)
+void PlayerAgent_state::set_PlayerAgent_id(AgentID id)
 {
-    this->you = ClientState::agent_list->get(id);
+    this->you = Agents::get_agent(id);
     GS_ASSERT(this->you != NULL);
     if (this->you == NULL) return;
     this->agent_id = id;
@@ -328,8 +328,8 @@ action(this)
     //camera
     camera_mode = client_side_prediction_interpolated;
 
-    agent_id = -1;
-    this->you = NULL;
+    this->agent_id = NULL_AGENT;
+    this->you = NULL;   // TODO -- deprecate
     
     cs_seq_local = 255;  // so first one is zero
     cs_seq_net = -1;
@@ -373,11 +373,11 @@ void PlayerAgent_state::toggle_camera_mode()
 
 void PlayerAgent_state::pump_camera()
 {
-    Agent_state* A;
+    Agent* A;
     switch (camera_mode)
     {
         case net_agent:
-            A = ClientState::agent_list->get(agent_id);
+            A = Agents::get_agent(agent_id);
             if (A != NULL) camera_state = A->get_state();
             break;
         case client_side_prediction_interpolated:   // default
@@ -398,7 +398,7 @@ void PlayerAgent_state::pump_camera()
 
 void PlayerAgent_state::update_model()
 {
-    Agent_state* a = this->you;
+    Agent* a = this->you;
     if (a == NULL) return;
     if (a->vox == NULL) return;
 
@@ -502,7 +502,7 @@ int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], int si
     if (agent_camera == NULL) return 0;
     Vec3 p = agent_camera->get_position();
     Vec3 v = agent_camera->forward_vector();
-    int tile = 0;
+    CubeID tile = NULL_CUBE;
     Hitscan::HitscanTargetTypes target = Hitscan::terrain(p.x, p.y, p.z, v.x, v.y, v.z, solid_pos, distance, side, &tile);
     if (target != Hitscan::HITSCAN_TARGET_BLOCK) return 0;
     open_pos[0] = translate_point(solid_pos[0] + side[0]);

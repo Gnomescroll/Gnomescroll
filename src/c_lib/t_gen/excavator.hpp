@@ -81,7 +81,7 @@ void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
             int jj = j%YMAX;
 
             float d = cc_point_line_distance2(st.x,st.y,st.z, dx,dy,dz, x,y,z);
-            if(d < size*size) t_map::set(ii, jj, k, 0);
+            if(d < size*size) t_map::set(ii, jj, k, EMPTY_CUBE);
         }
 
         if(out_of_bounds == true) phi *= -1;

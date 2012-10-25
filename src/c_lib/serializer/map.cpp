@@ -5,6 +5,8 @@
 namespace serializer
 {
 
+static int* cube_id_map = NULL;
+
 bool should_save_map = false;
 BlockSerializer* block_serializer = NULL;
 
@@ -17,17 +19,22 @@ void init_map_serializer()
 {
     GS_ASSERT(block_serializer == NULL);
     block_serializer = new BlockSerializer;
+
+    GS_ASSERT(cube_id_map == NULL);
+    cube_id_map = (int*)malloc(MAX_CUBES * sizeof(int));
+    for (int i=0; i<MAX_CUBES; cube_id_map[i++] = -1);
 }
 
 void teardown_map_serializer()
 {
     if (block_serializer != NULL) delete block_serializer;
+    if (cube_id_map != NULL) free(cube_id_map);
 }
 
 #if PTHREADS_ENABLED
 //threaded IO
 
-struct THREADED_WRITE_STRUCT
+struct ThreadedWriteData
 {
     char filename[256];
     char* buffer;
@@ -35,7 +42,7 @@ struct THREADED_WRITE_STRUCT
 };
 
 static int _threaded_write_running = 0;
-static struct THREADED_WRITE_STRUCT threaded_write_struct_param;
+static struct ThreadedWriteData threaded_write_data;
 static pthread_t _threaded_write_thread;
 
 void* _threaded_write(void* vptr)
@@ -43,33 +50,30 @@ void* _threaded_write(void* vptr)
     int ti1 = _GET_MS_TIME();
 
     char filename[256]; 
-    strcpy(filename, threaded_write_struct_param.filename);
-    char* buffer = threaded_write_struct_param.buffer;
-    int buffer_size = threaded_write_struct_param.buffer_size;
+    strcpy(filename, threaded_write_data.filename);
+    char* buffer = threaded_write_data.buffer;
+    int buffer_size = threaded_write_data.buffer_size;
 
 
-    if(buffer == NULL)
+    if (buffer == NULL)
     {
         printf("ERROR _threaded_write: t->buffer is NULL!\n");
         return NULL;
     }
 
     FILE *file; 
-    file = fopen(filename, "w+"); // apend file (add text to  a file or create a file if it does not exist. 
-    //size_t fwrite ( const void * ptr, size_t size, size_t count, FILE * stream );
+    file = fopen(filename, "wb+");
     
-    if(file == 0)
+    if (file == 0)
     {
         printf("THREAD WRITE ERROR: cannot open map file %s \n", filename);
         return NULL;
     }
 
-    int ret = fwrite (buffer, buffer_size, 1, file);
-    if(ret != 1)
-    {
-        printf("THREAD WRITE ERROR: fwrite return value != 1\n");
-    }
-    fclose(file); /*done!*/ 
+    int ret = fwrite(buffer, sizeof(char), buffer_size, file);
+    GS_ASSERT(ret == buffer_size);
+    ret = fclose(file); /*done!*/
+    GS_ASSERT(ret == 0);
 
     free(buffer);
 
@@ -80,24 +84,24 @@ void* _threaded_write(void* vptr)
     map_save_completed = true;
     _threaded_write_running = 0;
 
-    threaded_write_struct_param.filename[0] = '\0';
-    threaded_write_struct_param.buffer = NULL;
-    threaded_write_struct_param.buffer_size = 0;
+    threaded_write_data.filename[0] = '\0';
+    threaded_write_data.buffer = NULL;
+    threaded_write_data.buffer_size = 0;
 
     return NULL;
 }
 
 static void threaded_write(const char* filename, char* buffer, int buffer_len)
 {
-    if(_threaded_write_running != 0)
+    if (_threaded_write_running != 0)
     {
         printf("threaded_write failed: previous thread has not finished \n");
         return;
     }
 
-    strcpy(threaded_write_struct_param.filename, filename);
-    threaded_write_struct_param.buffer = buffer;
-    threaded_write_struct_param.buffer_size = buffer_len;
+    strcpy(threaded_write_data.filename, filename);
+    threaded_write_data.buffer = buffer;
+    threaded_write_data.buffer_size = buffer_len;
 
     //pthread_join( _threaded_write_thread, NULL);
     /* Create independent threads each of which will execute function */
@@ -105,7 +109,7 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
     _threaded_write_running = 1;
 
     int ret = pthread_create( &_threaded_write_thread, NULL, _threaded_write, (void*)NULL);
-    if(ret != 0)
+    if (ret != 0)
     {
         printf("threaded_write error: pthread_create returned %i \n", ret);
         _threaded_write_running = 0;
@@ -114,24 +118,161 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
 
 void wait_for_threads()
 {
-    while(_threaded_write_running != 0)
+    while (_threaded_write_running != 0)
         gs_microsleep(100);
 }
 #endif
 
+static bool parse_map_palette_token(const char* key, const char* val, class ParsedMapPaletteData* data)
+{
+    bool err = false;
+    if (strcmp(CUBE_ID_TAG, key) == 0)
+    {
+        long long cube_id = parse_int(val, err);
+        ASSERT_VALID_CUBE_ID(cube_id);
+        IF_INVALID_CUBE_ID(cube_id) return false;
+        GS_ASSERT(!err);
+        if (err) return false;
+        data->cube_id = (int)cube_id;
+    }
+    else
+    if (strcmp(NAME_TAG, key) == 0)
+    {
+        bool valid_name = t_map::is_valid_cube_name(val);
+        GS_ASSERT(valid_name);
+        if (!valid_name) return false;
+        strncpy(data->name, val, CUBE_NAME_MAX_LENGTH);
+        data->name[CUBE_NAME_MAX_LENGTH] = '\0';
+    }
+    else
+    {   // unrecognized field
+        GS_ASSERT(false);
+        return false;
+    }
+
+    return true;
+}
+
+bool load_map_palette_file(const char* fn)
+{
+    printf("Loading map palette file %s\n", fn);
+
+    size_t size = 0;
+    char* str = read_file_to_buffer(fn, &size);
+    GS_ASSERT(str != NULL)
+    GS_ASSERT(size > 0);
+    if (str == NULL) return false;
+    if (size <= 0)
+    {
+        free(str);
+        return false;
+    }
+
+    // allocate scratch buffer long enough to hold the largest line
+    static const size_t LONGEST_LINE = MAP_PALETTE_LINE_LENGTH;
+    char buf[LONGEST_LINE+1] = {'\0'};
+
+    size_t istr = 0;
+    class ParsedMapPaletteData palette_data;
+    while (istr < size)
+    {    
+        // copy line
+        size_t ibuf = 0;
+        char c = '\0';
+        while ((c = str[istr++]) != '\0' && c != '\n' && ibuf < LONGEST_LINE)
+            buf[ibuf++] = c;
+        buf[ibuf] = '\0';
+        GS_ASSERT(c == '\n' || c == '\0');
+        if (c != '\0' && c != '\n')
+        {
+            free(str);
+            return false;
+        }
+
+        parse_line<class ParsedMapPaletteData>(&parse_map_palette_token, buf, ibuf, &palette_data);
+        GS_ASSERT(palette_data.valid);
+        if (!palette_data.valid)
+        {
+            free(str);
+            return false;
+        }
+
+        CubeID actual_cube_id = t_map::get_compatible_cube_id(palette_data.name);
+        GS_ASSERT(t_map::isInUse(actual_cube_id));
+        if (!t_map::isInUse(actual_cube_id))
+        {   // we failed to get a compatible block type
+            free(str);
+            return false;
+        }
+        GS_ASSERT(cube_id_map[palette_data.cube_id] < 0);
+        if (cube_id_map[palette_data.cube_id] >= 0)
+        {   // duplicate entry
+            free(str);
+            return false;
+        }
+        cube_id_map[palette_data.cube_id] = actual_cube_id;
+        
+        if (c == '\0') break;
+    }
+
+    free(str);
+
+    return true;
+}
+
+bool save_map_palette_file()
+{
+    FILE* f = fopen(map_palette_filename_tmp, "w");
+    GS_ASSERT(f != NULL);
+    if (f == NULL) return false;
+
+    char buf[MAP_PALETTE_LINE_LENGTH+2] = {'\0'};
+
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        if (!t_map::isInUse((CubeID)i)) continue; 
+        const char* cube_name = t_map::get_cube_name((CubeID)i);
+        if (cube_name == NULL) continue;
+        int len = snprintf(buf, MAP_PALETTE_LINE_LENGTH+1, MAP_PALETTE_FMT, cube_name, i);
+        GS_ASSERT(len >= 0 && (size_t)len < MAP_PALETTE_LINE_LENGTH+1);
+        if (len < 0 || (size_t)len >= MAP_PALETTE_LINE_LENGTH+1) return false;
+        buf[len++] = '\n';
+        buf[len] = '\0';
+        
+        size_t wrote = fwrite(buf, sizeof(char), (size_t)len, f);
+        GS_ASSERT(wrote == (size_t)len);
+        if (wrote != (size_t)len) return false;
+    }
+
+    int ret = fclose(f);
+    GS_ASSERT(ret == 0);
+    if (ret != 0) return false;
+
+    return save_file(map_palette_filename, map_palette_filename_tmp, map_palette_filename_backup);
+}
+
 static void load_map_restore_containers()
 {
-    for(int ci=0; ci < 32; ci++)
-    for(int cj=0; cj < 32; cj++)
+    for (int ci=0; ci < 32; ci++)
+    for (int cj=0; cj < 32; cj++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[32*cj+ci];
-        for(int k=0; k<128; k++)
-        for(int i=0; i<16; i++)
-        for(int j=0; j<16; j++)
+        for (int k=0; k<128; k++)
+        for (int i=0; i<16; i++)
+        for (int j=0; j<16; j++)
         {
-            int block = mp->e[16*16*k + 16*j + i].block;
-            if(isItemContainer(block))
-                t_map::load_item_container_block(ci*16+i, cj*16+j, k, block);
+            CubeID block = (CubeID)mp->e[16*16*k + 16*j + i].block;
+            if (!t_map::isItemContainer(block)) continue;
+            
+            ItemContainerType container_type = Item::get_container_type_for_block(block);
+            GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+            if (container_type == CONTAINER_TYPE_NONE) continue;    // TODO -- log error
+            class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
+            GS_ASSERT(container != NULL);
+            if (container == NULL) continue;    // TODO -- log error
+            init_container(container);            
+            t_map::create_item_container_block(ci*16+i, cj*16+j, k, container->type, container->id);
+            loaded_containers[container->id] = CONTAINER_LOAD_MAP;
         }
     }
 }
@@ -179,13 +320,13 @@ void BlockSerializer::save(const char* filename)
     strcpy(file_name, filename);
 
     this->file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
-    this->write_buffer = (char*) malloc(file_size);
+    this->write_buffer = (char*)calloc(file_size, sizeof(char));
 
     //push header
     int index = 0;
     push_int(write_buffer, index, version);
 
-    if(write_buffer == NULL)
+    if (write_buffer == NULL)
     {
         printf("BlockSerializer: cannot save map.  malloc failed, out of memory? \n");
         return;
@@ -195,11 +336,11 @@ void BlockSerializer::save(const char* filename)
 
     //serialize
     #if PTHREADS_ENABLED
-    for(int i=0; i<chunk_number; i++) version_array[i] = -1;
+    for (int i=0; i<chunk_number; i++) version_array[i] = -1;
     while (map_save_memcpy_in_progress)
         this->save_iter(2);   //2 ms per iteration
     #else
-    for(int i=0; i < chunk_number; i++)
+    for (int i=0; i < chunk_number; i++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
@@ -209,7 +350,7 @@ void BlockSerializer::save(const char* filename)
     }
     //prepare buffer for saving
 
-    for(int i=0; i<chunk_number; i++)
+    for (int i=0; i<chunk_number; i++)
     {
         memcpy(&this->write_buffer[index], (char*) &this->chunks[i], sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
@@ -234,18 +375,18 @@ void BlockSerializer::save_iter(int max_ms)
     static int _memcpy_count = 0;
 
     _calls++;
-    if(_start_ms == 0)
+    if (_start_ms == 0)
        _start_ms = _GET_MS_TIME();
     int start_ms = _GET_MS_TIME();
 
 
     static int index = 0;
 
-    for(int j=0; j < chunk_number; j++)
+    for (int j=0; j < chunk_number; j++)
     {
         index = (index+1)%chunk_number;
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[index];
-        if(mp->version == version_array[index]) continue;
+        if (mp->version == version_array[index]) continue;
         GS_ASSERT(mp != NULL);
         chunk->xchunk = chunk_number % 16;
         chunk->ychunk = chunk_number / 16;
@@ -258,7 +399,7 @@ void BlockSerializer::save_iter(int max_ms)
 
         int _ctime = _GET_MS_TIME();
 
-        if( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
+        if ( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
             return; //yield after n ms
     }
 
@@ -278,21 +419,18 @@ void BlockSerializer::save_iter(int max_ms)
 }
 #endif
 
-void BlockSerializer::load(const char* filename)
+bool BlockSerializer::load(const char* filename)
 {
+    GS_ASSERT_ABORT(t_map::main_map != NULL);
+
     GS_ASSERT(filename != NULL);
-    if (filename == NULL) return;
-    
-    if(t_map::main_map == NULL)
-    {
-        printf("ERROR: Attempting to load map before t_map init \n");
-        GS_ABORT();
-    }
+    if (filename == NULL) return false;
 
     int ti1 = _GET_MS_TIME();
-    int filesize;
-    char* buffer = fast_read_file_to_buffer(filename, &filesize);
-    if(buffer == NULL) GS_ABORT();
+    size_t filesize = 0;
+    char* buffer = read_binary_file_to_buffer(filename, &filesize);
+    GS_ASSERT_ABORT(buffer != NULL);
+    if (buffer == NULL) return false;
 
     int ti2 = _GET_MS_TIME();
 
@@ -300,26 +438,36 @@ void BlockSerializer::load(const char* filename)
     int index = 0;
     pop_int(buffer, index, _version);
 
-    printf("Map Loader: map_version= %i filesize= %i bytes \n", _version, filesize);
-    if(_version != version)
+    printf("Loading map. Version: %d Filesize: %d\n", _version, filesize);
+    if (_version != version)
+        printf("WARNING: Map version %d does not match build version %d\n", _version, version);
+    GS_ASSERT_ABORT(_version == version);
+
+    size_t expected_filesize = prefix_length + chunk_number*sizeof(struct SerializedChunk);
+    if (filesize != expected_filesize)
+        printf("WARNING: Map filesize %u does not match expected filesize %u\n", filesize, expected_filesize); 
+    GS_ASSERT_ABORT(filesize == expected_filesize);
+
+    // apply block id versioning transformation
+    for (size_t i=0; i<filesize; i++)
     {
-        printf("Error: cannot load map, saved map is version %i and map loader expects %i \n", _version, version);
-        GS_ABORT();
+        char c = buffer[i];
+        ASSERT_VALID_CUBE_ID(c);
+        IF_INVALID_CUBE_ID(c)
+        {
+            free(buffer);
+            GS_ABORT();
+        }
+        buffer[i] = cube_id_map[(unsigned char)c];
     }
 
-    if(filesize != prefix_length + chunk_number*sizeof(struct SerializedChunk))
-    {
-        printf("Map Loader error: file sizes do not match!\n");
-        return;
-    }
-
-    for(int i=0; i<chunk_number; i++)
+    for (int i=0; i<chunk_number; i++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
-        if(mp == NULL) continue;
+        if (mp == NULL) continue;
 
-        memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk) );
+        memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
         GS_ASSERT(index == (prefix_length + (i+1)*(int)sizeof(struct SerializedChunk)));
         memcpy(&mp->e, (void*) &chunk->data, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
@@ -333,6 +481,8 @@ void BlockSerializer::load(const char* filename)
     free(buffer);
 
     load_map_restore_containers();  //setup containers
+
+    return true;
 }
 
 void save_map(const char* filename)
@@ -347,9 +497,9 @@ void save_map(const char* filename)
     
     if (file_exists(filename))
     {
-        const char ext[] = ".tmp";
-        char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(ext))*sizeof(char));
-        sprintf(tmp_filename, "%s%s", filename, ext);
+        const char fmt[] = "%s" DATA_TMP_EXT;
+        char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(fmt) - 2)*sizeof(char));
+        sprintf(tmp_filename, fmt, filename);
         map_tmp_name = tmp_filename;
         block_serializer->save(tmp_filename);        
     }
@@ -358,21 +508,37 @@ void save_map(const char* filename)
 }
 
 
-void load_map(const char* filename)
+bool load_map(const char* filename)
 {
     GS_ASSERT(block_serializer != NULL);
-    if (block_serializer == NULL) return;
-    block_serializer->load(filename);
+    if (block_serializer == NULL) return false;
+    return block_serializer->load(filename);
 }
 
 void save_map()
 {
-    save_map(default_map_file);
+    save_map(map_filename);
 }
 
-void load_map()
+bool load_map()
 {
-    load_map(default_map_file);
+    return load_map(map_filename);
+}
+
+bool load_default_map()
+{
+    if (file_exists(map_filename) && fsize(map_filename) > 0)
+    {
+        if (!load_map_palette_file(map_palette_filename)) return false;
+        return load_map(map_filename);
+    }
+    else
+    if (file_exists(map_filename_backup) && fsize(map_filename_backup) > 0)
+    {
+        if (!load_map_palette_file(map_palette_filename_backup)) return false;
+        return load_map(map_filename_backup);
+    }
+    return false;
 }
 
 void check_map_save_state()
@@ -386,9 +552,9 @@ void check_map_save_state()
             {
                 if (file_exists(map_final_name))
                 {
-                    const char ext[] = ".bak";
-                    char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(ext))*sizeof(char));
-                    sprintf(map_final_name_bak, "%s%s", map_final_name, ext);
+                    const char fmt[] = "%s" DATA_BACKUP_EXT;
+                    char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(fmt) - 2)*sizeof(char));
+                    sprintf(map_final_name_bak, fmt, map_final_name);
                     rename(map_final_name, map_final_name_bak);
                     free(map_final_name_bak);
                 }

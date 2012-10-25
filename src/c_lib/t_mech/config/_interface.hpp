@@ -4,96 +4,95 @@
 #include <t_mech/config/_interface.hpp>
 #include <t_mech/properties.hpp>
 
-/*
-struct MECH_ATTRIBUTE
-{
-    int mech_type;
-    int mech_type_class;
-    int render_type;
-    int sprite_index;
-};
-
-enum MECH_CLASS
-{
-    MECH_CRYSTAL,
-    MECH_CROP,
-    MECH_WIRE,
-    MECH_SWITCH
-};
-
-enum MECH_RENDER_TYPE
-{
-    MECH_RENDER_TYPE_0, //X shaped
-    MECH_RENDER_TYPE_1, //crop/wheat type
-    MECH_RENDER_TYPE_2, //mycelium/ladder type
-};
-*/
-
 namespace t_mech
 {
     //this is whitespace/alpha dimensions for ray casting box
     int mech_sprite_width[256];  //centered
     int mech_sprite_height[256]; //from bottom
+    float mech_sprite_width_f[256];  //centered
+    float mech_sprite_height_f[256]; //from bottom
 }
 
 namespace t_mech
 {
 
-int _current_mech_index = -1;
-struct MECH_ATTRIBUTE s;
+int _current_mech_index = 0;
+class MechAttribute* s = NULL;
 
-void _reset_mech()
+void load_mech()
 {
-    s.mech_type = -1;
-    s.mech_type_class = -1;
-    s.render_type = -1;
-    s.sprite_index = 255;
-    s.item_drop = false;
+    GS_ASSERT(s != NULL);
+    if (s == NULL) return;
+    s->loaded = true;
+    _current_mech_index++;
 }
 
-void start_mech_dat()
-{
-    GS_ASSERT(_current_mech_index == -1);
+void mech_def(MechClass mech_type_class, const char* name)
+{    
+    if (s != NULL) load_mech();
 
-    _reset_mech();
-}
+    // check names
+    GS_ASSERT(is_valid_mech_name(name));
+    if (!is_valid_mech_name(name)) return;
+    for (int i=0; i<_current_mech_index; i++)
+        if (strcmp(name, mech_attributes[i].name) == 0)
+        {
+            GS_ASSERT(false);
+            return;
+        }
 
-void _push_mech()
-{
-    GS_ASSERT(s.sprite_index != 255);
-    GS_ASSERT(s.mech_type_class != -1);
-    GS_ASSERT(s.render_type != -1);
-    mech_attribute[_current_mech_index] = s;
+    MechType mech_type = (MechType)_current_mech_index;
 
-    _reset_mech();
-}
-
-void mech_def(int mech_type, int mech_type_class, const char* name)
-{
     ASSERT_VALID_MECH_TYPE(mech_type);
     IF_INVALID_MECH_TYPE(mech_type) return;
-    
-    if(_current_mech_index != -1) 
-        _push_mech();
 
-    GS_ASSERT(mech_attribute[mech_type].mech_type == -1);
-    if(mech_attribute[mech_type].mech_type != -1)
-    {
-        printf("mech_def error, id used twiced: name=%s id=%i \n", name, mech_type);
-        return;
-    }
-    
-    s.mech_type = mech_type;
-    s.mech_type_class = mech_type_class;
+    GS_ASSERT(!mech_attributes[mech_type].loaded);
+    if(mech_attributes[mech_type].loaded) return;
 
-    set_mech_name(mech_type, name);
-    _current_mech_index = mech_type;
+    s = &mech_attributes[mech_type];
+    
+    s->mech_type = mech_type;
+    s->mech_type_class = mech_type_class;
+    strncpy(s->name, name, MECH_NAME_MAX_LENGTH);
+    s->name[MECH_NAME_MAX_LENGTH] = '\0';
+}
+
+void set_sprite_index(int sprite_index)
+{
+    GS_ASSERT(s != NULL);
+    if (s == NULL) return;
+    GS_ASSERT(s->sprite_index == NULL_MECH_SPRITE);
+    s->sprite_index = (MechSpriteIndex)sprite_index;
 }
 
 void end_mech_dat()
 {
-    _push_mech();
+    if (s != NULL) load_mech();
+}
 
+void verify_mech_dat()
+{
+    for (int i=0; i<MAX_MECHS; i++)
+    {
+        class MechAttribute* a = &mech_attributes[i];
+        if (!a->loaded) continue;
+        GS_ASSERT_ABORT(a->sprite_index != NULL_MECH_SPRITE);
+        GS_ASSERT_ABORT(a->render_type != MECH_RENDER_TYPE_NONE);
+        GS_ASSERT_ABORT(a->mech_type != NULL_MECH_TYPE);
+        GS_ASSERT_ABORT(a->mech_type_class != NULL_MECH_CLASS);
+        GS_ASSERT_ABORT(is_valid_mech_name(a->name));
+        GS_ASSERT_ABORT(i == a->mech_type);
+    }
+
+    for (int i=0; i<MAX_MECHS-1; i++)
+    for (int j=i+1; j<MAX_MECHS; j++)
+    {
+        class MechAttribute* a = &mech_attributes[i];
+        class MechAttribute* b = &mech_attributes[j];
+        if (!a->loaded || !b->loaded) continue;
+        GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
+        GS_ASSERT_ABORT(a->mech_type != b->mech_type);
+    }
 }
 
 }   // t_mech

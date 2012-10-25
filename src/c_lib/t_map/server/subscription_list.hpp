@@ -1,5 +1,6 @@
 #pragma once
 
+#include <t_map/_interface.hpp>
 #include <t_map/common/map_element.hpp>
 #include <t_map/net/t_StoC.hpp>
 #include <t_map/t_map.hpp>
@@ -8,13 +9,7 @@
 namespace t_map
 {
 
-/*
-Note:
-This was previously 
-*/
-
-const int SMC_MAX_SUBSCRIBERS = 64;
-
+const int SMC_MAX_SUBSCRIBERS = HARD_MAX_CONNECTIONS * 2;
 
 class MAP_CHUNK_SUBSCRIPTION
 {
@@ -41,7 +36,7 @@ class MAP_CHUNK_SUBSCRIPTION
                 
     }
 
-    void add_subscriber(int client_id, int chunk_alias, int client_map_version)
+    void add_subscriber(ClientID client_id, int chunk_alias, int client_map_version)
     {
         //check that they are not already subscribed
         for(int i=0; i < subscriber_num; i++) GS_ASSERT(subscribers[i] != client_id)
@@ -51,7 +46,7 @@ class MAP_CHUNK_SUBSCRIPTION
         subscriber_num++;
     }
 
-    void remove_subscriber(int client_id)
+    void remove_subscriber(ClientID client_id)
     {
         int i = 0;
         while(i < subscriber_num && subscribers[i] != client_id) i++;
@@ -62,7 +57,7 @@ class MAP_CHUNK_SUBSCRIPTION
         chunk_aliases[i] = chunk_aliases[subscriber_num];
     }
 
-    void send_block_action(int x, int y, int z, int block, int action)
+    void send_block_action(int x, int y, int z, CubeID cube_id, int action)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
@@ -71,16 +66,16 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.block = block;
+        msg.cube_id = cube_id;
         msg.action = action;
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 
-    void send_set_block(int x, int y, int z, int block)
+    void send_set_block(int x, int y, int z, CubeID cube_id)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
@@ -89,15 +84,15 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.block = block;
+        msg.cube_id = cube_id;
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 
-    void send_set_block_palette(int x, int y, int z, int block, int palette)
+    void send_set_block_palette(int x, int y, int z, CubeID cube_id, int palette)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
@@ -106,12 +101,12 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.x = x;
         msg.y = y;
         msg.z = z;
-        msg.block = block;
+        msg.cube_id = cube_id;
         msg.palette = palette;
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 
@@ -129,7 +124,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 
@@ -141,7 +136,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
         for(int i=0; i < subscriber_num; i++)
         {
-            msg.sendToClient(subscribers[i]);
+            msg.sendToClient((ClientID)subscribers[i]);
         }
     }
 };
@@ -180,10 +175,8 @@ class Terrain_map_subscription
         delete[] chunk;
     }
 
-    void send_block_action(int x, int y, int z, int value, int action)
+    void send_block_action(int x, int y, int z, CubeID value, int action)
     {
-        x = translate_point(x);
-        y = translate_point(y);
         GS_ASSERT(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
 
         int _x = x/16;
@@ -192,24 +185,24 @@ class Terrain_map_subscription
         chunk[xchunk_dim*_y + _x].send_block_action(x,y,z,value,action);
     }
 
-    void send_set_block(int x, int y, int z, int block)
+    void send_set_block(int x, int y, int z, CubeID cube_id)
     {
         GS_ASSERT(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
 
         int _x = x/16;
         int _y = y/16;
 
-        chunk[xchunk_dim*_y + _x].send_set_block(x,y,z,block);
+        chunk[xchunk_dim*_y + _x].send_set_block(x,y,z,cube_id);
     }
 
-    void send_set_block_palette(int x, int y, int z, int block, int palette)
+    void send_set_block_palette(int x, int y, int z, CubeID cube_id, int palette)
     {
         GS_ASSERT(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
 
         int _x = x/16;
         int _y = y/16;
 
-        chunk[xchunk_dim*_y + _x].send_set_block_palette(x,y,z,block,palette);
+        chunk[xchunk_dim*_y + _x].send_set_block_palette(x,y,z,cube_id,palette);
     }
 
     void container_block_create(int chunk_index, int x, int y, int z, int container_type, int container_id)
@@ -230,6 +223,4 @@ class Terrain_map_subscription
 
 };
 
-
 }   // t_map
-

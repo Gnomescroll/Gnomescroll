@@ -4,7 +4,7 @@
 dont_include_this_file_in_server
 #endif
 
-#include <common/random.h>
+#include <common/random.hpp>
 #include <state/client_state.hpp>
 
 #include <physics/vec3.hpp>
@@ -75,22 +75,22 @@ void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModific
     float momentum = 5.0f;
     switch (action)
     {
-        case t_map::TMA_PICK:
+        case TMA_PICK:
             momentum = 2.0f;
             break;
-        case t_map::TMA_GRENADE:
+        case TMA_GRENADE:
             momentum = 10.0f;
             break;
-        case t_map::TMA_LASER:
+        case TMA_LASER:
             momentum = 0.5f;
             break;
-        case t_map::TMA_MONSTER_BOX:
+        case TMA_MONSTER_BOX:
             momentum = 0.5f;
             break;
-        case t_map::TMA_MONSTER_BOMB:
+        case TMA_MONSTER_BOMB:
             momentum = 10.0f;
             break;
-        case t_map::TMA_NONE:
+        case TMA_NONE:
             break;
         default:
             GS_ASSERT(false);

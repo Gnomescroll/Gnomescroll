@@ -106,7 +106,7 @@ static void set_mob_bomb_properties(Object* object)
     explode->damage = MONSTER_BOMB_EXPLOSION_DAMAGE;
     explode->block_destruction_radius = MONSTER_BOMB_BLOCK_DESTRUCTION_RADIUS;
     explode->block_damage = MONSTER_BOMB_BLOCK_DAMAGE;
-    explode->terrain_modification_action = t_map::TMA_MONSTER_BOMB;
+    explode->terrain_modification_action = TMA_MONSTER_BOMB;
 
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
@@ -233,7 +233,7 @@ void broadcast_object_in_transit(class Object* object, class Components::Destina
     msg.broadcast();
 }
 
-void send_object_in_transit(int client_id, class Object* object, class Components::DestinationTargetingComponent* dest)
+void send_object_in_transit(ClientID client_id, class Object* object, class Components::DestinationTargetingComponent* dest)
 {
     object_in_transit_StoC msg;
     if (!pack_object_in_transit(&msg, object, dest)) return;
@@ -262,7 +262,7 @@ void broadcast_object_chase_agent(class Object* object, class Components::AgentT
     msg.broadcast();
 }
 
-void send_object_chase_agent(int client_id, class Object* object, class Components::AgentTargetingComponent* target)
+void send_object_chase_agent(ClientID client_id, class Object* object, class Components::AgentTargetingComponent* target)
 {
     object_chase_agent_StoC msg;
     if (!pack_object_chase_agent(&msg, object, target)) return;
@@ -287,14 +287,14 @@ void broadcast_object_begin_wait(class Object* object)
     msg.broadcast();
 }
 
-void send_object_begin_wait(int client_id, class Object* object)
+void send_object_begin_wait(ClientID client_id, class Object* object)
 {
     object_begin_waiting_StoC msg;
     if (!pack_object_begin_wait(&msg, object)) return;
     msg.sendToClient(client_id);
 }
 
-inline void send_mob_bomb_state_machine_to_client(int client_id, class Object* object)
+inline void send_mob_bomb_state_machine_to_client(ClientID client_id, class Object* object)
 {
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);

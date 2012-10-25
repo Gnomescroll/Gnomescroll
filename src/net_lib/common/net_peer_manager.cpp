@@ -21,17 +21,17 @@ dont_include_this_file_in_client
 /*
     Utility Functions
 */
-void send_player_agent_id_to_client(int client_id);
-void send_version_to_client(int client_id);
+void send_player_agent_id_to_client(ClientID client_id);
+void send_version_to_client(ClientID client_id);
 
-void send_player_agent_id_to_client(int client_id)
+void send_player_agent_id_to_client(ClientID client_id)
 {
     PlayerAgent_id_StoC msg;
     msg.id = client_id;
     msg.sendToClient(client_id);
 }
 
-void send_version_to_client(int client_id)
+void send_version_to_client(ClientID client_id)
 {
     version_StoC msg;
     msg.version = GS_VERSION;
@@ -76,13 +76,14 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
 
     GS_ASSERT(this->inited);
     if (!this->inited) return;
-    GS_ASSERT(!this->loaded || this->user_id == user_id);
+    GS_ASSERT(!this->authorized || this->user_id == user_id);
 
     // update expiration time and waiting state
     this->waiting_for_auth = false;
     this->auth_expiration = expiration_time;
 
-    if (this->loaded) return;
+    if (this->authorized) return;
+    this->authorized = true;
 
     this->user_id = user_id;
     strcpy(this->username, username);
@@ -91,75 +92,98 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
     NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
     NetServer::staging_pool[this->client_id] = NULL;
 
-    class Agent_state* a = ServerState::agent_list->create_temp(client_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL)
-    {   // if this happens, we need to force disconnect the client
+    NetServer::users->set_name_for_client_id(this->client_id, this->username);
+    
+    if (!Options::serializer)
+    {
+        #if GS_SERIALIZER
+        this->was_deserialized(NULL);
+        #else
+        this->was_deserialized();
+        #endif
+    }
+
+    int serializer_id = serializer::begin_player_load(this->user_id, this->client_id);
+    GS_ASSERT(serializer_id >= 0);
+    if (serializer_id < 0)
+    {
+        this->deserializer_failed();
+        return;
+    }
+
+    ItemContainerType container_types[N_PLAYER_CONTAINERS] = {
+        AGENT_HAND,
+        AGENT_TOOLBELT,
+        AGENT_INVENTORY,
+        AGENT_SYNTHESIZER,
+        AGENT_ENERGY_TANKS
+    };
+    for (int i=0; i<N_PLAYER_CONTAINERS; i++)
+        if (!serializer::load_player_container(serializer_id, container_types[i]))
+            this->deserializer_failed();
+    if (!serializer::end_player_load(serializer_id))
+        this->deserializer_failed();
+}
+
+#if GS_SERIALIZER
+void NetPeerManager::was_deserialized(class serializer::ParsedPlayerData* data)
+#else
+void NetPeerManager::was_deserialized()
+#endif
+{
+    GS_ASSERT(!this->loaded);
+    GS_ASSERT(!this->deserialized);
+    if (this->deserialized || this->loaded) return;
+    this->deserialized = true;
+
+    class Agent* agent = Agents::create_agent((AgentID)this->client_id);
+    GS_ASSERT(agent != NULL);
+    if (agent == NULL)
+    {
         NetServer::kill_client(this->client_id, DISCONNECT_SERVER_ERROR);
         return;
     }
-    GS_ASSERT((int)this->client_id == (int)a->id);
+    NetServer::agents[this->client_id] = agent;
+    GS_ASSERT((int)this->client_id == (int)agent->id);
 
-    this->agent_id = a->id;
+    this->agent_id = agent->id;
 
-    // attach username to agent
-    a->status.identify(username);
-    NetServer::users->set_name_for_client_id(client_id, a->status.name);
+    // Apply serializer data to agent and its containers
+    agent->status.identify(this->username);
+    if (data != NULL)
+        agent->status.set_color_silent(data->color);
 
-    NetServer::agents[this->client_id] = a;
     
-    ItemContainer::assign_containers_to_agent(a->id, this->client_id);
+    bool assigned_ctrs = ItemContainer::assign_containers_to_agent(agent->id, this->client_id);
+    GS_ASSERT(assigned_ctrs);
+    if (!assigned_ctrs)
+    {
+        this->deserializer_failed();
+        return;
+    }
 
     if (Options::serializer)
     {
-        int serializer_id = serializer::begin_player_load(this->user_id, this->client_id);
-        GS_ASSERT(serializer_id >= 0);
-        if (serializer_id < 0) return;  // TODO -- force disconnect agent with error
-        int n_player_containers = 0;
-        int* player_containers = ItemContainer::get_player_containers(this->agent_id, &n_player_containers);
-        GS_ASSERT(n_player_containers == N_PLAYER_CONTAINERS);
-        for (int i=0; i<n_player_containers; i++)
-            if (!serializer::load_player_container(serializer_id, player_containers[i]))
-            {
-                // force disconnect player with error
-            }
-        if (!serializer::end_player_load(serializer_id))
+        int n_containers = 0;
+        int* containers = ItemContainer::get_player_containers(agent->id, &n_containers);
+        GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
+        if (n_containers != N_PLAYER_CONTAINERS)
         {
-            // force disconnect player with error
+            this->deserializer_failed();
+            return;
         }
+        serializer::create_player_container_items_from_data(agent->id, containers, n_containers);
     }
-    else
-        this->was_deserialized();
 
-    add_player_to_chat(client_id);
-
-    ServerState::agent_list->send_to_client(client_id);
-    t_mech::send_client_mech_list(this->client_id);  //send t_mech to client
-
+    // Register agent with subsystems and send state 
+    add_player_to_chat(this->client_id);
+    
+    Agents::agent_list->send_to_client(this->client_id);
+    t_mech::send_client_mech_list(this->client_id);
     Objects::send_to_client(this->client_id);
-
     t_map::send_client_map_special(this->client_id); //send special blocks to client
+    ItemParticle::send_particle_items_to_client(this->client_id);
 
-    ItemParticle::send_particle_items_to_client(client_id);
-
-    this->loaded = true;
-    this->authorized = true;
-}
-
-void NetPeerManager::was_deserialized()
-{
-    GS_ASSERT(!this->deserialized);
-    if (this->deserialized) return;
-    this->deserialized = true;
-
-    printf("Deserialized\n");
-
-    class Agent_state* agent = ServerState::agent_list->load_temp(this->agent_id);
-    GS_ASSERT(agent != NULL);
-    if (agent == NULL) return;  // TODO -- force disconnect client with error
-
-    // we add player to manager setup now, because it didnt have state before
-    // NOTE: must call this before agent->status.set_fresh_state();
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
 
     // broadcast agent to all players
@@ -168,24 +192,30 @@ void NetPeerManager::was_deserialized()
     msg.client_id = agent->client_id;
     strncpy(msg.username, username, PLAYER_NAME_MAX_LENGTH+1);
     msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
+    msg.color = agent->status.color;
     msg.broadcast();
 
-    send_player_agent_id_to_client(agent->id);
+    // notify client of their agent
+    send_player_agent_id_to_client(this->client_id);
     ItemContainer::send_container_assignments_to_agent(agent->id, this->client_id);
 
     agent->status.set_fresh_state();
+
+    this->loaded = true;
 }
 
 void NetPeerManager::teardown()
 {
-    class Agent_state* a = NetServer::agents[this->agent_id];
+    class Agent* a = NetServer::agents[this->client_id];
     if (a != NULL)
     {
+        bool saved = serializer::save_player(this->user_id, this->agent_id);
+        GS_ASSERT(saved);   // TODO -- log error
         Item::agent_quit(a->id);    // unsubscribes agent from all item
         ItemContainer::agent_quit(a->id);
         Toolbelt::agent_quit(a->id);
         Components::owner_component_list->revoke(a->id);
-        ServerState::agent_list->destroy_any(a->id);
+        Agents::destroy_agent(a->id);
     }
     if (this->loaded)
     {
@@ -203,6 +233,17 @@ void NetPeerManager::broadcast_disconnect()
     msg.broadcast();
 }
 
+void NetPeerManager::deserializer_failed()
+{
+    printf("ERROR: Player deserialization failed for user %d, name %s\n", this->user_id, this->username);
+    GS_ASSERT(false);
+    GS_ASSERT(!this->deserialized);
+    if (this->deserialized) return;
+
+    serializer::player_load_failed();
+    NetServer::kill_client(this->client_id, DISCONNECT_SERVER_ERROR);
+}
+
 bool NetPeerManager::failed_to_authorize()
 {
     return (this->waiting_for_auth &&
@@ -211,7 +252,7 @@ bool NetPeerManager::failed_to_authorize()
 
 bool NetPeerManager::authorization_expired()
 {
-    return (this->loaded && difftime(utc_now(), this->auth_expiration) >= 0);
+    return (this->authorized && difftime(utc_now(), this->auth_expiration) >= 0);
 }
 
 void NetPeerManager::failed_authorization_attempt()

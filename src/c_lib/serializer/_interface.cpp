@@ -14,25 +14,23 @@ void init()
     verify_config();
 
     // make sure paths exist
-    create_path(DATA_PATH);
-    
+    create_path(DATA_PATH);    
     create_path(MAP_DATA_PATH);
     create_path(MECH_DATA_PATH);
-    
-    //create_path(PLAYER_DATA_PATH);
-    //create_path(CONTAINER_DATA_PATH);
-    //create_path(ITEM_DATA_PATH);
-    
-    //create_path(PLAYER_DATA_PATH    INVALID_DATA_SUBPATH);
-    //create_path(CONTAINER_DATA_PATH INVALID_DATA_SUBPATH);
-    //create_path(ITEM_DATA_PATH      INVALID_DATA_SUBPATH);
+    create_path(PLAYER_DATA_PATH);
+    create_path(CONTAINER_DATA_PATH);
     
     init_map_serializer();
+    init_state();
 
     if (!Options::serializer) return;
-    
+
+    init_mechs();
+
+    // ORDER DEPENDENT
+    init_redis();
     init_items();
-    init_redis();    
+    init_players();
 }
 
 void teardown()
@@ -45,9 +43,39 @@ void teardown()
     check_map_save_state();
     
     teardown_map_serializer();
+    teardown_mechs();
+    
+    // TODO -- save all item data, wait for responses
 
-    teardown_redis();   // MUST COME FIRST -- all callbacks/data need to return results
+    // ORDER DEPENDENT
+    teardown_redis();
+    teardown_players();
     teardown_items();
+    teardown_state();
+}
+
+bool load_data()
+{
+    if (!load_default_map()) return false;
+
+    // Actually, save it as palette.new
+    // After the first time the map is saved, rename it to normal
+
+    // we can save the new map palette now that we're done with the old one
+    bool saved = save_map_palette_file();
+    GS_ASSERT_ABORT(saved);
+
+    if (!Options::serializer) return true;
+    
+    bool successful_load = load_containers();
+    GS_ASSERT_ABORT(successful_load);
+
+    successful_load = load_mechs();
+    GS_ASSERT_ABORT(successful_load);
+
+    //load_players();
+    
+    return true;
 }
 
 void update()
@@ -57,6 +85,20 @@ void update()
     if (!Options::serializer) return;
 
     update_redis();
+}
+
+// This is only for the serializer -- it handles the backup copy logic
+bool save_file(const char* fn, const char* fn_tmp, const char* fn_bak)
+{
+    if (file_exists(fn))
+    {
+        int ret = rename(fn, fn_bak);
+        GS_ASSERT(ret == 0);
+        if (ret != 0) return false;
+    }
+    int ret = rename(fn_tmp, fn);
+    GS_ASSERT(ret == 0);
+    return (ret == 0);
 }
 
 }   // serializer

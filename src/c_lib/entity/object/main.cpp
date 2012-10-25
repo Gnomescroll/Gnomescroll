@@ -152,7 +152,7 @@ bool full(ObjectType type)
     return object_list->full(type);
 }
 
-void send_to_client(ObjectType type, int client_id)
+void send_to_client(ObjectType type, ClientID client_id)
 {
     object_list->send_to_client(type, client_id);
 }
@@ -242,7 +242,7 @@ void spawn_mobs()
 }
 
 #if DC_SERVER
-void send_object_state_machines(const ObjectType type, const int client_id)
+void send_object_state_machines(const ObjectType type, const ClientID client_id)
 {
     GS_ASSERT(type == OBJECT_MONSTER_BOMB);
     if (type != OBJECT_MONSTER_BOMB) return;    // TODO
@@ -261,7 +261,7 @@ void send_object_state_machines(const ObjectType type, const int client_id)
             send_mob_bomb_state_machine_to_client(client_id, objects[i]);
 }
 
-void send_to_client(int client_id)
+void send_to_client(ClientID client_id)
 {
     // TODO -- make these one function call
     send_to_client(OBJECT_BASE, client_id);

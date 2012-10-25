@@ -1,7 +1,7 @@
 #include "voxel_model.hpp"
 
 #include <common/defines.h>
-#include <common/random.h>
+#include <common/random.hpp>
 #include <physics/affine.hpp>
 #include <physics/quadrant.hpp>
 #include <voxel/voxel_hitscan.hpp>
@@ -18,12 +18,14 @@
 //set offset and rotation
 void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
+    if (!skeleton_inited) return;
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0f,0.0f);
     vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
 
 void Voxel_model::set_skeleton_root(float *data)
 {
+    if (!skeleton_inited) return;
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(
         data[0], data[1], data[2],
         data[3], data[4], data[5]
@@ -45,6 +47,7 @@ int Voxel_model::get_parent_node_index(int part)
 
 void Voxel_model::set_node_rotation_by_part(int part, float theta, float phi, float rho)
 {
+    if (!skeleton_inited) return;
     int node = this->get_parent_node_index(part);
     if (node == -1) return;
     this->set_node_rotation(node, theta, phi, rho);
@@ -52,6 +55,7 @@ void Voxel_model::set_node_rotation_by_part(int part, float theta, float phi, fl
 
 void Voxel_model::set_node_rotation(int node, float theta, float phi, float rho)
 {
+    if (!skeleton_inited) return;
     if (node < 0 || node >= this->n_skeleton_nodes)
     {
         printf("WARNING: Voxel_mode::set_node_rotation -- node %d out of range\n", node);
@@ -70,6 +74,7 @@ void Voxel_model::set_node_rotation(int node, float theta, float phi, float rho)
 void Voxel_model::set_biaxial_nodes(float phi)
 {   // in the editor, head and arm rotate the same way
     // here, they rotate opposite directions
+    if (!skeleton_inited) return;
     for (int i=0; i<this->n_skeleton_nodes; i++)
     {
         if (!biaxial_nodes[i]) continue;
@@ -79,6 +84,7 @@ void Voxel_model::set_biaxial_nodes(float phi)
 
 void Voxel_model::update_skeleton()
 {
+    if (!skeleton_inited) return;
     const int debug = 0;
     if(debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
 
@@ -109,6 +115,7 @@ void Voxel_model::update_skeleton()
 
 void Voxel_model::draw_skeleton()
 {
+    if (!skeleton_inited) return;
     #if DC_CLIENT
     glDisable(GL_TEXTURE_2D);
     //;
@@ -216,21 +223,18 @@ void Voxel_model::draw_skeleton()
 
 void Voxel_model::init_skeleton()
 {
-    if( skeleton_inited == true )
-    {
-        printf("Voxel_model::init_skeleton error!! inited twice \n");
-        return;
-    }
-    skeleton_inited = true;
+    GS_ASSERT(!this->skeleton_inited);
+    if (this->skeleton_inited) return;
 
-    n_skeleton_nodes = vox_dat->n_skeleton_nodes;
+    this->n_skeleton_nodes = vox_dat->n_skeleton_nodes;
+    GS_ASSERT(this->n_skeleton_nodes > 0);
+    if (this->n_skeleton_nodes <= 0) return;
 
-    int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
-    vox_skeleton_transveral_list = (int*)calloc(num_skeleton_nodes, sizeof(int));
-    vox_skeleton_local_matrix = (struct Affine*)calloc(num_skeleton_nodes, sizeof(struct Affine));
-    vox_skeleton_world_matrix = (struct Affine*)calloc(num_skeleton_nodes, sizeof(struct Affine));
+    vox_skeleton_transveral_list = (int*)calloc(this->n_skeleton_nodes, sizeof(int));
+    vox_skeleton_local_matrix = (struct Affine*)calloc(this->n_skeleton_nodes, sizeof(struct Affine));
+    vox_skeleton_world_matrix = (struct Affine*)calloc(this->n_skeleton_nodes, sizeof(struct Affine));
     
-    biaxial_nodes = (bool*)calloc(num_skeleton_nodes, sizeof(bool));
+    biaxial_nodes = (bool*)calloc(this->n_skeleton_nodes, sizeof(bool));
     for (int i=0; i<vox_dat->n_parts; i++)
     {
         VoxPart* vp = vox_dat->vox_part[i];
@@ -238,6 +242,8 @@ void Voxel_model::init_skeleton()
             continue;
         biaxial_nodes[vp->skeleton_parent_matrix] = vp->biaxial;
     }
+
+    this->skeleton_inited = true;
 
     this->reset_skeleton();
 }
@@ -248,74 +254,46 @@ void Voxel_model::reset_skeleton()
     int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
     skeleton_needs_update = true;
     
-    const int debug_0 = 0;
-
-    if(debug_0) printf("Voxel_model::init_skeleton, number of nodes= %i \n", num_skeleton_nodes);
-
     for(int i=0; i<num_skeleton_nodes; i++)
     {
         vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
         vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i]; //this is zero
-
-        if( debug_0 )
-        {
-            printf("vox_skeleton_local_matrix[%i]= \n", i);
-            print_affine( vox_skeleton_local_matrix[i] );
-            printf("vox_dat->vox_skeleton_local_matrix[%i]= \n", i);
-            print_affine( vox_dat->vox_skeleton_local_matrix[i] );
-        }
     }
-
-    const int debug_1 = 0;
-
-    if(debug_1) printf("Voxel_model::init_skeleton, number of volumes= %i \n", this->n_parts );
     //set pointer in voxel volume back to the skeleton parent world matrix 
     for(int i=0; i<this->n_parts; i++)
     {
         class Voxel_volume* vv = &this->vv[i];
         class VoxPart *vp = vox_dat->vox_part[i];
-
         vv->parent_world_matrix = &vox_skeleton_world_matrix[vp->skeleton_parent_matrix];
         vv->local_matrix = vox_dat->vox_volume_local_matrix[i];
-
-        if( debug_1 )
-        {
-            printf("voxel volume %i local matrix= \n", i);
-            print_affine( vv->local_matrix );
-        }
     }
-
 }
 
 void Voxel_model::init_parts(int id, ObjectType type)
 {
     // create each vox part from vox_dat conf
-    if (this->vox_inited)
-    { 
-        printf("Voxel_model::init_parts error!! inited twice \n");
-        return;
-    }
-    this->vox_inited = true;
-    int x,y,z;
-    VoxPart *vp;
-    Voxel_volume* vv;
-    for (int i=0; i<this->n_parts; i++) {
-        vp = vox_dat->vox_part[i];
-        x = vp->dimension.x;
-        y = vp->dimension.y;
-        z = vp->dimension.z;
+    GS_ASSERT(!this->vox_inited);
+    if (this->vox_inited) return;
 
-        vv = &(this->vv[i]);
+    for (int i=0; i<this->n_parts; i++)
+    {
+        VoxPart* vp = vox_dat->vox_part[i];
+        int x = vp->dimension.x;
+        int y = vp->dimension.y;
+        int z = vp->dimension.z;
+
+        Voxel_volume* vv = &(this->vv[i]);
 
         vv->init(x,y,z, vp->vox_size);
         vv->set_hitscan_properties(id, type, i);
 
-        //#if DC_CLIENT
         this->set_part_color(i);
+
         #if DC_CLIENT
         ClientState::voxel_render_list->register_voxel_volume(vv);
         #endif
     }
+    this->vox_inited = true;
 }
 
 void Voxel_model::set_part_color(int part_num)
@@ -355,6 +333,7 @@ void Voxel_model::set_colors()
 void Voxel_model::fill_part_color(int part_num, struct Color color)
 {
     GS_ASSERT(color.r || color.g || color.b); // 0,0,0 is interpreted as invisible
+    GS_ASSERT(color.r != 255 && color.g != 255 && color.b != 255);  // 255 wraps to 0 for whatever reason
     GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
     if (part_num < 0 || part_num >= this->n_parts) return;
     
@@ -401,8 +380,8 @@ void Voxel_model::register_hitscan()
         printf("ERROR Voxel_model::register_hitscan -- voxel volume array is NULL\n");
         return;
     }
-    for (int i=0; i<this->n_parts;
-        STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i++]));
+    for (int i=0; i<this->n_parts; i++)
+        STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i]);
 }
 
 void Voxel_model::unregister_hitscan()
@@ -452,13 +431,17 @@ void Voxel_model::set_vox_dat(VoxDat* vox_dat)
     this->vox_dat = vox_dat;
 }
 
-Voxel_model::Voxel_model(VoxDat* vox_dat, int id, ObjectType type)
-:
-skeleton_inited(false),
-vox_inited(false),
-was_updated(false),
-frozen(false),
-vv(NULL)
+Voxel_model::Voxel_model(VoxDat* vox_dat, int id, ObjectType type) :
+    skeleton_inited(false),
+    n_skeleton_nodes(0),
+    vox_skeleton_transveral_list(NULL),
+    vox_skeleton_local_matrix(NULL),
+    vox_skeleton_world_matrix(NULL),
+    biaxial_nodes(NULL),
+    vox_inited(false),
+    was_updated(false),
+    frozen(false),
+    vv(NULL)
 {
     if (vox_dat == NULL) printf("WARNING: ::Voxel_model() ctor -- vox_dat is NULL\n");
     this->set_vox_dat(vox_dat);
@@ -489,15 +472,10 @@ Voxel_model::~Voxel_model()
         delete[] this->vv;
     }
 
-    if (skeleton_inited)
-    {
-        free(vox_skeleton_transveral_list);
-        free(vox_skeleton_local_matrix);
-        free(vox_skeleton_world_matrix);
-        free(biaxial_nodes);
-    }
-    else
-        printf("Voxel_model::~Voxel_model, error! skeleton not inited \n");
+    if (this->vox_skeleton_transveral_list != NULL) free(this->vox_skeleton_transveral_list);
+    if (this->vox_skeleton_local_matrix != NULL) free(this->vox_skeleton_local_matrix);
+    if (this->vox_skeleton_world_matrix != NULL) free(this->vox_skeleton_world_matrix);
+    if (this->biaxial_nodes != NULL) free(this->biaxial_nodes);
 }
 
 void Voxel_model::freeze()
@@ -510,7 +488,8 @@ void Voxel_model::thaw()
     this->frozen = false;
 }
 
-float Voxel_model::largest_radius() {
+float Voxel_model::largest_radius()
+{
     float largest = 0.0f;
     if (this->vv == NULL) return largest;
     Voxel_volume* vv;
@@ -588,7 +567,7 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
 
     for (int i=0; i<this->n_parts; i++)
         part_numbers[i] = i;
-    shuffle_int_array(part_numbers, this->n_parts);
+    shuffle<int>(part_numbers, this->n_parts);
     
     Vec3 c;
     for (int i=0; i<this->n_parts; i++)

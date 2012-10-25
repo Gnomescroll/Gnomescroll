@@ -288,38 +288,38 @@ void teardown()
 }   // TextureSheetLoader
 
 
-int LUA_load_cube_texture_sheet(const char* filename)
+int load_cube_texture_sheet(const char* filename)
 {
     return TextureSheetLoader::CubeTextureSheetLoader->load_texture(filename);
 }
 
-int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y)
+int blit_cube_texture(int sheet_id, int source_x, int source_y)
 {
     return TextureSheetLoader::CubeTextureSheetLoader->blit(sheet_id, source_x, source_y);
 }
 
-void LUA_save_cube_texture()
+void save_cube_texture()
 {
     save_surface_to_png(TextureSheetLoader::CubeSurface, "./screenshot/cube_texture.png");
 }
 
 //Item API
-int LUA_load_item_texture_sheet(const char* filename)
+int load_item_texture_sheet(const char* filename)
 {
     return TextureSheetLoader::ItemTextureSheetLoader->load_texture(filename);
 }
 
-int LUA_load_item_texture(struct SDL_Surface* surface)
+int load_item_texture(struct SDL_Surface* surface)
 {
     return TextureSheetLoader::ItemTextureSheetLoader->load_texture_from_surface(surface);
 }
 
-int LUA_blit_item_texture(int sheet_id, int source_x, int source_y)
+int blit_item_texture(int sheet_id, int source_x, int source_y)
 {
     return TextureSheetLoader::ItemTextureSheetLoader->blit(sheet_id, source_x, source_y);
 }
 
-void LUA_save_item_texture()
+void save_item_texture()
 {
     save_surface_to_png(TextureSheetLoader::ItemSurface, "./screenshot/item_texture.png");
 }

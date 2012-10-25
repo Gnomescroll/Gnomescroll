@@ -36,7 +36,7 @@ namespace ItemContainer
 {
 
 /* Configuration Loader */ 
-    
+
 static class ContainerAttributes* c = NULL;
 
 void add_container(class ContainerAttributes* c)
@@ -163,8 +163,6 @@ static void register_settings()
     container_def(CONTAINER_TYPE_CRUSHER, "crusher");
     c->xdim = 1;
     c->ydim = 1;
-    c->alt_xdim = 0;
-    c->alt_ydim = 0;
     c->attached_to_agent = false;
     c->alpha_action = &crusher_alpha_action_decision_tree;
     c->beta_action = &crusher_beta_action_decision_tree;
@@ -178,6 +176,18 @@ static void register_settings()
     
 static void validate_settings()
 {
+    GS_ASSERT_ABORT(get_attr("none") != NULL && get_attr("none")->max_dim() == 0);
+    GS_ASSERT_ABORT(get_attr("hand") != NULL && get_attr("hand")->max_dim() == 1);
+    GS_ASSERT_ABORT(get_attr("inventory") != NULL && get_attr("inventory")->max_dim() == 18);
+    GS_ASSERT_ABORT(get_attr("toolbelt") != NULL && get_attr("toolbelt")->max_dim() == 9);
+    GS_ASSERT_ABORT(get_attr("synthesizer") != NULL && get_attr("synthesizer")->max_dim() == 1);
+    GS_ASSERT_ABORT(get_attr("energy_tanks") != NULL && get_attr("energy_tanks")->max_dim() == 4);
+    GS_ASSERT_ABORT(get_attr("storage_block_small") != NULL && get_attr("storage_block_small")->max_dim() == 9);
+    GS_ASSERT_ABORT(get_attr("crafting_bench_basic") != NULL && get_attr("crafting_bench_basic")->max_dim() == 4);
+    GS_ASSERT_ABORT(get_attr("cryofreezer_small") != NULL && get_attr("cryofreezer_small")->max_dim() == 4);
+    GS_ASSERT_ABORT(get_attr("smelter_basic") != NULL && get_attr("smelter_basic")->max_dim() == 1);
+    GS_ASSERT_ABORT(get_attr("crusher") != NULL && get_attr("crusher")->max_dim() == 1);
+    
     int n_none = 0;
     for (int i=0; i<MAX_CONTAINER_TYPES; i++)
     {
@@ -188,9 +198,10 @@ static void validate_settings()
             n_none++;
             continue;
         }
-        GS_ASSERT(c->name != NULL && strlen(c->name));
+        GS_ASSERT(is_valid_container_name(c->name));
         GS_ASSERT(c->xdim > 0);
         GS_ASSERT(c->ydim > 0);
+        GS_ASSERT(c->max_dim() <= MAX_CONTAINER_SIZE);
         if (c->type != AGENT_HAND)
         {
             GS_ASSERT(c->alpha_action != NULL);
@@ -202,6 +213,17 @@ static void validate_settings()
         }
     }
     GS_ASSERT(n_none == 1);
+
+    // make sure no names collide
+    for (int i=0; i<MAX_CONTAINER_TYPES-1; i++)
+    for (int j=i+1; j<MAX_CONTAINER_TYPES; j++)
+    {
+        class ContainerAttributes* c = container_attributes[i];
+        class ContainerAttributes* d = container_attributes[j];
+        if (c == NULL || d == NULL) continue;
+        if (!c->loaded || !d->loaded) continue;
+        GS_ASSERT(strcmp(c->name, d->name) != 0);
+    }
 }
 
 void init_config()
@@ -233,6 +255,29 @@ void teardown_config()
 
 /* Public Attribute Accessors */
 
+ItemContainerType get_type(const char* name)
+{
+    for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+    {
+        if (container_attributes[i] != NULL && container_attributes[i]->loaded
+         && strcmp(container_attributes[i]->name, name) == 0)
+            return container_attributes[i]->type;
+    }
+    return CONTAINER_TYPE_NONE;
+}
+
+ItemContainerType get_compatible_type(const char* name)
+{
+    // TODO -- renaming scheme
+    return get_type(name);
+}
+
+class ContainerAttributes* get_attr(const char* name)
+{
+    ItemContainerType type = get_type(name);
+    return get_attr(type);
+}
+
 class ContainerAttributes* get_attr(ItemContainerType type)
 {
     ASSERT_VALID_CONTAINER_TYPE(type);
@@ -240,7 +285,7 @@ class ContainerAttributes* get_attr(ItemContainerType type)
     return container_attributes[type];
 }
 
-int get_container_max_slots(ItemContainerType type)
+unsigned int get_container_max_slots(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
     if (attr == NULL) return 0;
@@ -295,5 +340,22 @@ bool container_type_is_block(ItemContainerType type)
     if (attr == NULL) return false;
     return !attr->attached_to_agent;
 }
-    
+
+const char* get_container_name(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    if (attr == NULL) return NULL;
+    return attr->name;
+}
+
+bool is_valid_container_name(const char* name)
+{
+    size_t len = strlen(name);
+    if (len <= 0 || len > CONTAINER_NAME_MAX_LENGTH) return false;
+    for (size_t i=0; i<len; i++)
+        if (!is_valid_name_char(name[i]))
+            return false;
+    return true;
+}
+
 }   // ItemContainer

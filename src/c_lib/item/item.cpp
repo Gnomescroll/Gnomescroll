@@ -3,6 +3,7 @@
 #if DC_SERVER
 #include <item/server.hpp>
 #include <item/container/_state.hpp>
+#include <agent/_interface.hpp>
 #endif
 
 namespace Item
@@ -21,7 +22,7 @@ void Item::init(int item_type)
 
 #if DC_SERVER
 
-void Item::init_for_loading()
+void Item::init_from_loading()
 {   // use only by serializer
     // we will set defaults for state properties that are not important enough to serialize
     ItemAttribute* attr = get_item_attributes(this->type);
@@ -29,7 +30,6 @@ void Item::init_for_loading()
     if (attr == NULL) return;
     this->gas_decay = attr->gas_lifetime;
 }
-
 
 void ItemList::decay_gas()
 {
@@ -44,11 +44,11 @@ void ItemList::decay_gas()
     Item* item;
     ItemAttribute* attr;
     ItemContainer::ItemContainerInterface* container;
-    for (int i=0; i<this->n_max; i++)
+    for (unsigned int i=0; i<this->max; i++)
     {
         // get item
-        if (this->a[i] == NULL) continue;
-        item = this->a[i];
+        if (this->objects[i].id == this->null_id) continue;
+        item = &this->objects[i];
         attr = get_item_attributes(item->type);
         GS_ASSERT(attr != NULL);
         if (attr == NULL) continue;
@@ -97,8 +97,8 @@ void ItemList::decay_gas()
                     item->gas_decay = attr->gas_lifetime;
                     if (stack_size != final_stack)
                     {
-                        int agent_id = container->owner;
-                        Agent_state* agent = ServerState::agent_list->get(agent_id);
+                        AgentID agent_id = container->owner;
+                        Agent* agent = Agents::get_agent(agent_id);
                         if (agent != NULL)
                             send_item_state(item->id);
                     }
@@ -117,8 +117,7 @@ void ItemList::decay_gas()
                     item->gas_decay = attr->gas_lifetime;
                     if (stack_size != final_stack)
                     {
-                        int agent_id = item->location_id;
-                        Agent_state* agent = ServerState::agent_list->get(agent_id);
+                        Agent* agent = Agents::get_agent((AgentID)item->location_id);
                         if (agent != NULL)
                             send_item_state(item->id);
                     }
@@ -145,14 +144,23 @@ bool is_valid_location_data(ItemLocationType location, int location_id, int cont
     else
     if (location == IL_HAND)
     {
-        VERIFY_ITEM_LOCATION(location_id >= 0 && location_id < AGENT_MAX);
+        VERIFY_ITEM_LOCATION(IS_VALID_AGENT_ID(location_id));
+        VERIFY_ITEM_LOCATION(container_slot == 0);
     }
     else
     if (location == IL_CONTAINER)
     {
+        VERIFY_ITEM_LOCATION(IS_VALID_CONTAINER_ID(location_id));
         VERIFY_ITEM_LOCATION(location_id != NULL_CONTAINER);
         VERIFY_ITEM_LOCATION(container_slot != NULL_SLOT);
-        VERIFY_ITEM_LOCATION(ItemContainer::get_container_type(location_id) != CONTAINER_TYPE_NONE);    
+        ItemContainerType container_type = ItemContainer::get_container_type(location_id);
+        VERIFY_ITEM_LOCATION(container_type != CONTAINER_TYPE_NONE);
+        // we can't check container slot max from attr for container blocks, because the configuration is not specialized enough
+        // we can check for player containers though
+        if (ItemContainer::container_type_is_attached_to_agent(container_type))
+        {
+            VERIFY_ITEM_LOCATION(container_slot >= 0 && (unsigned int)container_slot < ItemContainer::get_container_max_slots(container_type));
+        }
     }
 
     #undef VERIFY_ITEM_LOCATION
@@ -162,32 +170,32 @@ bool is_valid_location_data(ItemLocationType location, int location_id, int cont
 
 void ItemList::verify_items()
 {
-
+    // use this macro for conditions which should mark the item as invalid item state
+    // dont use it if the item's state does not align with meta info, like subscribers
     #define VERIFY_ITEM(COND, LIMIT, ITEM) \
         GS_ASSERT_LIMIT((COND), (LIMIT)); \
         if (!(COND)) (ITEM)->valid = false;
     
     const int LIMIT = 1;
-    for (int k=0; k<this->n_max; k++)
+    for (unsigned int k=0; k<this->max; k++)
     {
-        if (this->a[k] == NULL) continue;
-        Item* i = this->a[k];
+        if (this->objects[k].id == this->null_id) continue;
+        Item* i = &this->objects[k];
 
-        // items in a save-waiting state don't apply, they can sit in limbo
-        if (i->save_state == ISS_WAITING_FOR_GID || i->save_state == ISS_WAITING_FOR_SAVE) continue;
-        
-        bool valid_location = is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT);
-        if (!valid_location) i->valid = false;
+        VERIFY_ITEM(is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT), LIMIT, i);
+
+        VERIFY_ITEM(i->type != NULL_ITEM_TYPE, LIMIT, i);
     
-        VERIFY_ITEM(i->subscribers.n >= 0, LIMIT, i);
-        VERIFY_ITEM(i->stack_size > 0, LIMIT, i);
-        VERIFY_ITEM(i->durability > 0, LIMIT, i);
+        GS_ASSERT_LIMIT(i->subscribers.n >= 0, LIMIT);  // this should warn, but not mark the item as invalid
+        VERIFY_ITEM((i->stack_size > 0 && i->stack_size <= MAX_STACK_SIZE) || i->stack_size == NULL_STACK_SIZE, LIMIT, i);
+        VERIFY_ITEM((i->durability > 0 && i->durability <= MAX_DURABILITY) || i->durability == NULL_DURABILITY, LIMIT, i);
 
         if (i->location == IL_HAND)
         {
-            VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
-            VERIFY_ITEM(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT, i); // WARNING -- assumes client_id==agent_id
-            VERIFY_ITEM(i->location_id >= 0 && i->location_id < AGENT_MAX && ItemContainer::get_agent_hand_item(i->location_id) == i->id, LIMIT, i);
+            GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+            GS_ASSERT_LIMIT(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT); // WARNING -- assumes client_id==agent_id
+            GS_ASSERT_LIMIT(ItemContainer::get_agent_hand_item((AgentID)i->location_id) == i->id, LIMIT);
+            VERIFY_ITEM(i->location_id >= 0 && i->location_id < MAX_AGENTS, LIMIT, i);
         }
         else
         if (i->location == IL_CONTAINER)
@@ -196,13 +204,13 @@ void ItemList::verify_items()
             int owner = ItemContainer::get_container_owner(i->location_id);
             if (ItemContainer::container_type_is_attached_to_agent(type))
             {
-                VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
-                VERIFY_ITEM(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);
+                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }
             else if (owner != NULL_AGENT)
             {
-                VERIFY_ITEM(i->subscribers.n == 1, LIMIT, i);
-                VERIFY_ITEM(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT, i);
+                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }
         }
     }

@@ -2,6 +2,9 @@
 
 #if DC_SERVER
 #include <common/subscriber_list.hpp>
+# if GS_SERIALIZER
+# include <serializer/uuid.hpp>
+# endif
 #endif
 
 namespace Item
@@ -21,7 +24,7 @@ class Item
 
         ItemID id;
         int type;  // stone_block, dirt_block, mining_laser_beta,
-        int64_t global_id;
+        int32_t global_id;
 
         int durability;
         int stack_size;
@@ -35,32 +38,20 @@ class Item
         #if DC_SERVER
         SubscriberList subscribers;
         bool valid;
-        ItemSaveState save_state;
         #endif
 
-    #if DC_SERVER
-    bool valid_deserialization()
-    {
-        if (this->global_id == 0) return false;
-        if (this->location == IL_NOWHERE) return false;
-        if (this->location != IL_PARTICLE && this->container_slot == NULL_SLOT) return false;
-        if (this->type == NULL_ITEM_TYPE) return false;
-        if (this->stack_size <= 0 || this->stack_size > get_max_stack_size(this->type)) return false;
-        if (this->durability <= 0 || this->durability > get_max_durability(this->type)) return false;
-        return true;
-    }
-
-    void init_for_loading();   // only to be used by serializer
+    #if DC_SERVER && GS_SERIALIZER
+    uuid_t uuid;
+    void init_from_loading();   // only to be used by serializer
     #endif
     
     void init(int item_type);
     
-
     void print()
     {
         printf("Item:\n");
         printf("ID %d\n", id);
-        printf("Global ID: %lld\n", this->global_id);
+        printf("Global ID: %d\n", this->global_id);
         printf("Group %d\n", get_item_group_for_type(this->type));
         printf("Type %d\n", type);
         printf("Durability %d\n", durability);
@@ -70,6 +61,14 @@ class Item
         printf("Container slot %d\n", container_slot);
         printf("Gas decay %d\n", gas_decay);
         #if DC_SERVER
+        # if GS_SERIALIZER
+        if (Options::serializer)
+        {
+            static char uuid_str[(serializer::UUID_STRING_LENGTH)+1];
+            uuid_unparse(this->uuid, uuid_str);
+            printf("UUID: %s", uuid_str);
+        }
+        # endif
         printf("Subscribers %d\n", subscribers.n);
         printf("\t");
         for (unsigned int i=0; i<subscribers.n; i++) printf("%d ", subscribers.subscribers[i]);
@@ -77,8 +76,8 @@ class Item
         #endif
     }
 
-    explicit Item(int id)   // is not ItemID id because of the container list template
-    :   id((ItemID)id),
+    explicit Item(ItemID id)
+    :   id(id),
         type(NULL_ITEM_TYPE),
         global_id(0),
         durability(NULL_DURABILITY),
@@ -90,28 +89,33 @@ class Item
         #if DC_SERVER
         , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE, ITEM_SUBSCRIBER_LIST_HARD_MAX)
         , valid(true)
-        , save_state(ISS_NONE)
         #endif
-    {}
+    {
+        #if DC_SERVER && GS_SERIALIZER
+        if (Options::serializer)
+            uuid_clear(this->uuid);
+        #endif
+    }
 
 };
 
 }
 
-#include <common/template/dynamic_object_list.hpp>
+#include <common/template/object_list.hpp>
 
 namespace Item
 {
 
-class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
+class ItemList: public ObjectList<Item, ItemID>
 {
     private:
         const char* name() { return "Item"; }
-        
+
     public:
-        ItemList() : gas_tick(0)
+        ItemList(unsigned int capacity) : ObjectList<Item, ItemID>(capacity, NULL_ITEM),
+            gas_tick(0)
         {
-            print_list((char*)this->name(), this);
+            this->print();
         }
 
         #if DC_CLIENT && !PRODUCTION
@@ -126,7 +130,7 @@ class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
         #if DC_CLIENT
         Item* create_type(int item_type, ItemID item_id)
         {
-            Item* item = DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>::create(item_id);
+            Item* item = ObjectList<Item, ItemID>::create(item_id);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;
@@ -134,16 +138,10 @@ class ItemList: public DynamicObjectList<Item, MAX_ITEMS, ITEM_LIST_HARD_MAX>
         #endif
 
         #if DC_SERVER
-        Item* create_for_loading()
-        {   // only used by serializer
-            // make sure to either destroy or init the items before the stack unwinds
-            // otherwise lost items will be trapped in the array and asserts will go nuts
-            return this->create();
-        }
-        
         Item* create_type(int item_type)
         {
             Item* item = this->create();
+            GS_ASSERT(item != NULL);
             if (item == NULL) return NULL;
             item->init(item_type);
             return item;

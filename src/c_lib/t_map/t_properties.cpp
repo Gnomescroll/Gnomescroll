@@ -1,239 +1,156 @@
 #include "t_properties.hpp"
 
-#include "t_map.hpp"
-
-
+#include <t_map/t_map.hpp>
 
 namespace t_map
 {
 
-struct cubeProperties* cube_list = NULL;
-
-char cube_names[MAX_CUBES*64];
-int cube_name_index[MAX_CUBES];
+class CubeProperties* cube_properties = NULL;
 
 void init_t_properties()
 {
-    //printf("init_t_properties() \n");
-    
-    if(cube_list != NULL) printf("ERROR: init_t_properties called twice\n");
-
-    cube_list = (cubeProperties*) calloc(MAX_CUBES, sizeof(struct cubeProperties));
-    for (int i=0; i<MAX_CUBES; cube_list[i++].in_use = false);
-
-    memset(cube_names, 0, 64* MAX_CUBES);
-    memset(cube_name_index, 0, sizeof(int) * MAX_CUBES);
-    //for(int i=0; i<MAX_CUBES*64; i++) cube_names = NULL;
-    //for(int i=0; i<MAX_CUBES; i++) cube_name_index = 0s;
+    GS_ASSERT(cube_properties == NULL);
+    cube_properties = new class CubeProperties[MAX_CUBES];
 }
 
 void end_t_properties()
 {
-    free(cube_list);
-    return;
+    if (cube_properties != NULL) delete[] cube_properties;
 }
 
-struct cubeProperties* get_cube(int id)
+class CubeProperties* get_cube_properties(CubeID id)
 {
-    if(id < 0) printf("get_cube: error id less than zero \n");
-    if(id >= MAX_CUBES ) printf("get_cube: error id exceeds MAX_CUBES \n");
-    return &cube_list[id];
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return NULL;
+    if (!cube_properties[id].in_use) return NULL;
+    return &cube_properties[id];
 }
 
-
-void set_cube_name(int id, const char* name, int length)
+const char* get_cube_name(CubeID id)
 {
-    static int index = 0;
-
-    if(length >= 64)
-    {
-        printf("Error: set_cube_name(), name length greater than 63 characters\n");
-        return;
-    }
-
-    if(index +length + 1 > MAX_CUBES*64)
-    {
-        printf("Error: set_cube_name(), WTF potential overflow\n");
-        return;
-    }
-
-    if(id < 0 || id >= MAX_CUBES)
-    {
-        printf("Error: set_cube_name(), cube id error\n");
-        return;
-    }
-
-    cube_name_index[id] = index;
-
-    memcpy(cube_names+index, name, length);
-    index += length;
-    cube_names[index] = '\0';
-    index++;
+    class CubeProperties* p = get_cube_properties(id);
+    GS_ASSERT(p != NULL);
+    if (p == NULL) return NULL;
+    return p->name;
 }
 
-void set_cube_name(int id, const char* name)
+CubeID get_compatible_cube_id(const char* name)
 {
-    int length = (int)strlen(name);
-    set_cube_name(id, name, length);
+    return get_cube_id(name);
+
+    // TODO -- we need a config loader thing for managing block renaming/deletions
 }
 
-const char* get_cube_name(int id)
+CubeID get_cube_id(const char* name)
 {
-    GS_ASSERT(id >= 0 && id < MAX_CUBES);
-    if (id < 0 || id >= MAX_CUBES)
-    {
-        printf("%s:%d, cube id %d invalid\n", __FUNCTION__, __LINE__, id);
-        return NULL;
-    }
-
-    return (cube_names + cube_name_index[id]);
-}
-
-int get_cube_id(const char* name)
-{
+    // TODO -- use hashes
     for (int i=0; i<MAX_CUBES; i++)
     {
-        if (strcmp(name, get_cube_name(i)) == 0)
-            return i;
+        class CubeProperties* p = get_cube_properties((CubeID)i);
+        if (p == NULL) continue;
+        if (p->name != NULL && strcmp(name, p->name) == 0)
+            return (CubeID)i;
     }
     GS_ASSERT(false);
     printf("No cube id found for name %s\n", name);
-    return -1;
+    return ERROR_CUBE;
 }
 
-int dat_get_cube_id(const char* name)
+CubeMaterial get_cube_material(CubeID cube_id)
 {
-    int id = get_cube_id((char*) name);
-    GS_ASSERT(id >= 0);
-    if(id < 0)
-    {
-        printf("Dat Loading Failure:cube_id, dat failure, cube %s does not exist! \n", name);
-        return -1;
-    }
-    return id; 
+    class CubeProperties* p = get_cube_properties(cube_id);
+    GS_ASSERT(p != NULL);
+    if (p == NULL) return CUBE_MATERIAL_NONE;
+    return p->material;
 }
 
-CubeMaterial get_cube_material(int cube_id)
+bool is_valid_cube_name(const char* name)
 {
-    GS_ASSERT(cube_list != NULL);
-    if (cube_list == NULL) return CUBE_MATERIAL_NONE;
-    ASSERT_VALID_BLOCK(cube_id);
-    IF_INVALID_BLOCK(cube_id) return CUBE_MATERIAL_NONE;
-    return cube_list[cube_id].material;
+    if (name == NULL) return false;
+    size_t len = strlen(name);
+    if (len <= 0 || len > CUBE_NAME_MAX_LENGTH) return false;
+    for (size_t i=0; i<len; i++)
+        if (!is_valid_name_char(name[i]))
+            return false;
+    return true;
 }
 
-}   // t_map
-
-/*
-    LUA interface
-*/
-
-void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent)
+inline bool isValidCube(CubeID cube_id)
 {
-    t_map::cube_list[id].active = active;
-    t_map::cube_list[id].solid = solid;
-    t_map::cube_list[id].occludes = occludes;
-    t_map::cube_list[id].transparent = transparent;        
+    IF_INVALID_CUBE_ID(cube_id) return false;   // range check
+    if (!isInUse(cube_id)) return false;
+    return (cube_id != ERROR_CUBE && cube_id != EMPTY_CUBE && cube_id != NULL_CUBE);
 }
 
-void LUA_set_block_max_damage(int id, int max_damage)
+bool isInUse(CubeID id)
 {
-    t_map::cube_list[id].max_damage = max_damage;
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return false;
+    return cube_properties[id].in_use;
 }
 
-void LUA_set_block_color_type(int id, int color_type)
+bool isSolid(CubeID id) 
 {
-    t_map::cube_list[id].color_type = color_type;
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return false;
+    return t_map::cube_properties[id].solid;
 }
 
-void LUA_set_block_name(int id, const char* name, int length)
+bool isOccludes(CubeID id) 
 {
-    t_map::set_cube_name(id, name, length);
+    // don't check id because this shouldnt be used publicly
+    return t_map::cube_properties[id].occludes;
 }
 
-
-/*
-    Properties by cube id
-*/
-
-namespace t_map
+bool isMagic(CubeID id)
 {
-
-bool isErrorBlock(int id)
-{
-    return (id == 255);
+    // don't check id because this shouldnt be used publicly
+    return t_map::cube_properties[id].magic;
 }
 
-bool isValidID(int id)
+bool isTransparent(CubeID id)
 {
-    return (id >=0 && id < MAX_CUBES);
+    // don't check id because this shouldnt be used publicly
+    return t_map::cube_properties[id].transparent;
 }
 
-bool isInUse(int id)
+bool isItemContainer(CubeID id)
 {
-    return cube_list[id].in_use;
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return false;
+    return t_map::cube_properties[id].item_container;
 }
 
-}   // t_map
-
-// TODO -- put in t_map namespace
-
-bool isActive(int id) 
+unsigned char maxDamage(CubeID id) 
 {
-    return t_map::cube_list[id].active;
-}
-
-bool isSolid(int id) 
-{
-    return t_map::cube_list[id].solid;
-}
-
-bool isOccludes(int id) 
-{
-    return t_map::cube_list[id].occludes;
-}
-
-bool isTransparent(int id)
-{
-    return t_map::cube_list[id].transparent;
-}
-
-bool isItemContainer(int id)
-{
-    return t_map::cube_list[id].item_container;
-}
-
-/*
-    Properties by cordinates
-*/
-bool isActive(int x, int y, int z)
-{
-    return t_map::cube_list[t_map::get(x,y,z)].active;
-    //return isActive(t_map::get(x,y,z));
+    ASSERT_VALID_CUBE_ID(id);
+    IF_INVALID_CUBE_ID(id) return 32;
+    return t_map::cube_properties[id].max_damage;
 }
 
 bool isSolid(int x, int y, int z)
 {
-    return t_map::cube_list[t_map::get(x,y,z)].solid;
-    //return isSolid(t_map::get(x,y,z));
+    return t_map::cube_properties[t_map::get(x,y,z)].solid;
 }
 
 bool isOccludes(int x, int y, int z)
 {
-    return t_map::cube_list[t_map::get(x,y,z)].occludes;
-    //return isOccludes(t_map::get(x,y,z));
+    return t_map::cube_properties[t_map::get(x,y,z)].occludes;
+}
+
+bool isMagic(int x, int y, int z)
+{
+    return t_map::cube_properties[t_map::get(x,y,z)].magic;
 }
 
 bool isItemContainer(int x, int y, int z)
 {
-    return t_map::cube_list[t_map::get(x,y,z)].item_container;
+    return t_map::cube_properties[t_map::get(x,y,z)].item_container;
 }
 
-/*
-    Map Damage
-*/
-    
-int maxDamage(int id) 
+unsigned char maxDamage(int x, int y, int z)
 {
-    return t_map::cube_list[id].max_damage;
+    return t_map::cube_properties[t_map::get(x,y,z)].max_damage;
 }
+
+}   // t_map

@@ -7,9 +7,9 @@ dont_include_this_file_in_client
 #define  __STDC_FORMAT_MACROS
 
 #if __GCC__
-	#include <inttypes.h>
+    #include <inttypes.h>
 #else
-	typedef unsigned char uint8_t;
+    typedef unsigned char uint8_t;
 #endif
 
 #include <auth/hmac-sha256.h>
@@ -24,7 +24,7 @@ unsigned char* secret_key = NULL;   // hex str converted to bytes
 // Init loaders
 void load_secret_key()
 {    
-    int size = 0;
+    size_t size = 0;
     char* buf = read_file_to_buffer(SECRET_KEY_PATH, &size);
     GS_ASSERT(buf != NULL);
     if (buf == NULL) return;
@@ -189,7 +189,7 @@ bool verify_token(const char* _token)
     return ok;
 }
 
-void received_auth_token(int client_id, const char* token)
+void received_auth_token(ClientID client_id, const char* token)
 {
     if (!Options::auth)
     {
@@ -213,19 +213,19 @@ void received_auth_token(int client_id, const char* token)
     }
 }
 
-void send_auth_token_valid(int client_id)
+void send_auth_token_valid(ClientID client_id)
 {
     auth_token_valid_StoC msg;
     msg.sendToClient(client_id);
 }
 
-void send_auth_token_invalid(int client_id)
+void send_auth_token_invalid(ClientID client_id)
 {
     auth_token_invalid_StoC msg;
     msg.sendToClient(client_id);
 }
 
-void send_clock_time(int client_id)
+void send_clock_time(ClientID client_id)
 {
     clock_time_StoC msg;
     msg.server_time = (uint64_t)utc_now();

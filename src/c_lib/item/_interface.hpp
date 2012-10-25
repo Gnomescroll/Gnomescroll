@@ -11,7 +11,6 @@ void teardown();
 void init_packets();
 
 class Item* get_item(ItemID id);
-class Item* get_item_object(ItemID id); // alias for get_item
 
 int get_item_type(ItemID id);
 ItemGroup get_item_group(ItemID id);
@@ -39,13 +38,14 @@ namespace Item
 
 class Item* create_item(int item_type);
 class Item* create_item(const char* item_name);
-class Item* create_item_for_loading();  // only used by serializer
 
 void destroy_item(ItemID id);
 void destroy_item_for_loading(ItemID id);   // only used by serializer
     
 ItemID split_item_stack(ItemID src, int amount);
 ItemID split_item_stack_in_half(ItemID src);
+
+unsigned int item_space();
 
 // returns remaining stack size
 int consume_stack_item(ItemID item_id); // automatically destroys consumed item
@@ -57,7 +57,7 @@ int consume_durability(ItemID item_id); // automatically destroys consumed item
 int consume_durability(ItemID item_id, int amount); // automatically destroys consumed item
 int consume_durability(ItemID item_id, int amount, bool auto_destroy);
 
-void agent_quit(int agent_id);
+void agent_quit(AgentID agent_id);
 
 // tests
 void test_item_list_capacity();

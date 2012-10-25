@@ -1,5 +1,6 @@
 #include "callbacks.hpp"
 
+#include <agent/_interface.hpp>
 #include <item/toolbelt/common/types.hpp>
 #include <entity/object/main.hpp>
 #include <entity/objects/fabs/constants.hpp>
@@ -57,19 +58,19 @@ void end_local_mining_laser(int item_type)
     ClientState::playerAgent_state.action.end_mining_laser();
 }
 
-void begin_mining_laser(int agent_id, int item_type)
+void begin_mining_laser(AgentID agent_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    Agent_state* a = ClientState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.begin_mining_laser();
 }
 
-void end_mining_laser(int agent_id, int item_type)
+void end_mining_laser(AgentID agent_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    Agent_state* a = ClientState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     a->event.end_mining_laser();
 }
@@ -135,15 +136,15 @@ void select_facing_block(ItemID item_id, int item_type)
 
     int* b = ClientState::playerAgent_state.facing_block();
     if (b == NULL) return;
-    int block_type = t_map::get(b[0], b[1], b[2]);
-    HudCubeSelector::cube_selector.set_block_type(block_type);
+    CubeID cube_id = t_map::get(b[0], b[1], b[2]);
+    HudCubeSelector::cube_selector.set_block_type(cube_id);
 }
 
 #endif
 
 #if DC_SERVER
 
-void decrement_durability(int agent_id, ItemID item_id, int item_type)
+void decrement_durability(AgentID agent_id, ItemID item_id, int item_type)
 {
     int durability = Item::get_item_durability(item_id);
     if (durability == NULL_DURABILITY) return;
@@ -158,7 +159,7 @@ void decrement_durability(int agent_id, ItemID item_id, int item_type)
         Item::send_item_state(item_id);
 }
 
-void decrement_stack(int agent_id, ItemID item_id, int item_type)
+void decrement_stack(AgentID agent_id, ItemID item_id, int item_type)
 {
     int stack_size = Item::get_stack_size(item_id);
     GS_ASSERT(stack_size > 0);
@@ -174,20 +175,20 @@ void decrement_stack(int agent_id, ItemID item_id, int item_type)
 
 // IG_CONSUMABLE
 
-void consume_item(int agent_id, ItemID item_id, int item_type)
+void consume_item(AgentID agent_id, ItemID item_id, int item_type)
 {
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     bool consumed = a->status.consume_item(item_id);
     if (!consumed) return;
     decrement_stack(agent_id, item_id, item_type);
 }
 
-void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type)
+void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_type)
 {
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
-    int teammate_id = Hitscan::against_agents(
+    AgentID teammate_id = Hitscan::against_agents(
         a->get_camera_position(), a->forward_vector(),
         APPLY_REPAIR_KIT_MAX_DISTANCE, a->id);
     if (teammate_id == NULL_AGENT) return;
@@ -195,9 +196,9 @@ void apply_charge_pack_to_teammates(int agent_id, ItemID item_id, int item_type)
 }
 
 // simple creator for objects
-static class Objects::Object* place_object(int agent_id, ItemID item_id, int item_type, const ObjectType object_type, const float object_height)
+static class Objects::Object* place_object(AgentID agent_id, ItemID item_id, int item_type, const ObjectType object_type, const float object_height)
 {
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return NULL;
     
@@ -209,7 +210,7 @@ static class Objects::Object* place_object(int agent_id, ItemID item_id, int ite
     
     // must be placed on solid block
     if (b[2] <= 0) return NULL;  // can't place on nothing
-    if (!isSolid(b[0], b[1], b[2]-1)) return NULL;
+    if (!t_map::isSolid(b[0], b[1], b[2]-1)) return NULL;
     
     // make sure will fit height
     int h = (int)ceil(object_height);
@@ -243,11 +244,11 @@ static class Objects::Object* place_object(int agent_id, ItemID item_id, int ite
 
 // IG_AGENT_SPAWNER
 
-void place_spawner(int agent_id, ItemID item_id, int item_type)
+void place_spawner(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
 
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -256,6 +257,9 @@ void place_spawner(int agent_id, ItemID item_id, int item_type)
     Objects::ready(obj);
     
     decrement_stack(agent_id, item_id, item_type);
+
+    printf("Place spawner: %d\n", obj->id);
+    printf("Agent spawner: %d\n", a->status.spawner);
     
     // select spawner automatically if spawn pt is base
     if (a->status.spawner == BASE_SPAWN_ID)
@@ -264,7 +268,7 @@ void place_spawner(int agent_id, ItemID item_id, int item_type)
 
 // IG_ENERGY_CORE
 
-void place_energy_core(int agent_id, ItemID item_id, int item_type)
+void place_energy_core(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_ENERGY_CORE);
     
@@ -277,100 +281,33 @@ void place_energy_core(int agent_id, ItemID item_id, int item_type)
 
 //IG_MECH_PLACER
 
-void place_mech(int agent_id, ItemID item_id, int item_type)
+void place_mech(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
     
-
-    //class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Objects::ENERGY_CORE_HEIGHT);
-    //if (obj == NULL) return;
-    //Objects::ready(obj);
-
-    //printf("fuck: %i %i \n", item_type, Item::dat_get_item_type("crystal_seed") );
-
-
-    //static int crystal = Item::get_item_type("crystal_seed");
-
-    //if(item_type == crystal)
-    //{
-        Agent_state* a = ServerState::agent_list->get(agent_id);
-        GS_ASSERT(a != NULL);
-        if (a == NULL) return;
-        
-        const int max_dist = 4.0f;
-        const int z_low = 4;
-        const int z_high = 3;
-        int* b = a->nearest_open_block(max_dist, z_low, z_high);
-        if (b == NULL) return;
-        
-        // must be placed on solid block
-        if (b[2] <= 0) return;  // can't place on nothing
-        if (!isSolid(b[0], b[1], b[2]-1)) return;
-
-/*
-        static const int n_crystals = 3;
-        static int red_crystal_id = t_mech::get_mech_type_id("red_crystal");
-        static int blue_crystal_id = t_mech::get_mech_type_id("blue_crystal");
-        static int green_crystal_id = t_mech::get_mech_type_id("green_crystal");
-        int crystals[n_crystals] = { red_crystal_id, blue_crystal_id, green_crystal_id };
-        for (int i=0; i<n_crystals; i++)
-*/
-        int mech_type_id = Item::get_mech_type_id(item_type);
-
-        GS_ASSERT(mech_type_id != -1);
-        ASSERT_VALID_MECH_TYPE(mech_type_id);
-
-        //int crystal_id = crystals[randrange(0, n_crystals-1)];
+    Agent* a = Agents::get_agent(agent_id);
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     
-        if( t_mech::can_place_crystal(b[0],b[1],b[2], 0) == true)
-        {
-            printf("place crystal %d: at %d %d %d \n", mech_type_id, b[0],b[1],b[2] );
-            t_mech::create_crystal(b[0],b[1],b[2], mech_type_id);
-        }
-        else
-        {
+    const int max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* b = a->nearest_open_block(max_dist, z_low, z_high);
+    if (b == NULL) return;
+    
+    // must be placed on solid block
+    if (b[2] <= 0) return;  // can't place on nothing
+    if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
 
-        }
-        //decrement_stack(agent_id, item_id, item_type);
-    //}
-/*
-    static int crystal2 = Item::get_item_type("crystal_seed2");
+    MechType mech_type = Item::get_mech_type(item_type);
 
-    if(item_type == crystal2)
-    {
-        Agent_state* a = ServerState::agent_list->get(agent_id);
-        GS_ASSERT(a != NULL);
-        if (a == NULL) return;
-    #if 1
-        const int max_dist = 4.0f;
-        const int z_low = 4;
-        const int z_high = 3;
-        
-        int solid_pos[3];
-        int open_pos[3];
-        int side = a->get_facing_side(solid_pos, open_pos, max_dist, z_low, z_high);
-        
-        printf("block: %i %i %i open: %i %i %i side: %i\n", 
-            solid_pos[0],solid_pos[1],solid_pos[2], 
-            open_pos[0],open_pos[1],open_pos[2],
-            side);
+    ASSERT_VALID_MECH_TYPE(mech_type);
+    IF_INVALID_MECH_TYPE(mech_type) return;
+    
+    if (!t_mech::can_place_mech(b[0],b[1],b[2], 0)) return;
 
-        if (side < 0) return;
-    #else
-
-        Vec3 pos = a->camera_position();
-        Vec3 dir = a->forward_vector();
-
-        float d;
-
-        t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &d)
-
-
-    #endif
-        //t_mech::create_crystal(b[0],b[1],b[2] );
-        //decrement_stack(agent_id, item_id, item_type);
-    }
-*/
+    printf("place crystal %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
+    t_mech::create_crystal(b[0],b[1],b[2], mech_type);
 }
 
 #endif

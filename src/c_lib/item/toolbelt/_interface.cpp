@@ -4,6 +4,7 @@
 #include <item/toolbelt/config/config.hpp>
 #include <item/toolbelt/config/_state.hpp>
 #include <item/container/config/_interface.hpp>
+#include <agent/_interface.hpp>
 
 // Common
 namespace Toolbelt
@@ -40,7 +41,7 @@ void init_packets()
 
 /* Miscellaneous Events */
 
-void remove_agent(int agent_id)
+void remove_agent(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
@@ -61,7 +62,7 @@ void remove_agent(int agent_id)
     #endif
 }
 
-void agent_died(int agent_id)
+void agent_died(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
@@ -69,7 +70,7 @@ void agent_died(int agent_id)
     turn_fire_off(agent_id);
 }
 
-int get_agent_selected_item_type(int agent_id)
+int get_agent_selected_item_type(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM_TYPE;
@@ -85,7 +86,7 @@ int get_agent_selected_item_type(int agent_id)
 
 #if DC_SERVER
 
-void agent_quit(int agent_id)
+void agent_quit(AgentID agent_id)
 {   // It might be the same as agent_died, but they should not be mixed
     // Death has penalties; leaving the server should not
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -94,7 +95,7 @@ void agent_quit(int agent_id)
     turn_fire_off(agent_id);
 }
 
-void tick_item(int agent_id, ItemID item_id, int item_type)
+void tick_item(AgentID agent_id, ItemID item_id, int item_type)
 {
     if (!item_is_click_and_hold(item_type))
         turn_fire_off(agent_id);
@@ -104,14 +105,14 @@ void tick_item(int agent_id, ItemID item_id, int item_type)
     tick(agent_id, item_id, item_type);
 }
 
-void trigger_item(int agent_id, ItemID item_id, int item_type)
+void trigger_item(AgentID agent_id, ItemID item_id, int item_type)
 {
     triggerItem trigger = get_trigger_item_fn(item_type);
     if (trigger == NULL) return;
     trigger(agent_id, item_id, item_type);
 }
 
-void trigger_item_beta(int agent_id, ItemID item_id, int item_type)
+void trigger_item_beta(AgentID agent_id, ItemID item_id, int item_type)
 {
     triggerItem trigger = get_trigger_item_beta_fn(item_type);
     if (trigger == NULL) return;
@@ -120,7 +121,7 @@ void trigger_item_beta(int agent_id, ItemID item_id, int item_type)
 #endif
 
 #if DC_CLIENT
-void tick_item(int agent_id, int item_type)
+void tick_item(AgentID agent_id, int item_type)
 {
     if (!item_is_click_and_hold(item_type))
         turn_fire_off(agent_id);
@@ -140,14 +141,14 @@ void tick_local_item(ItemID item_id, int item_type)
     tick(item_id, item_type);
 }
 
-void trigger_item(int agent_id, int item_type)
+void trigger_item(AgentID agent_id, int item_type)
 {
     triggerItem trigger = get_trigger_item_fn(item_type);
     if (trigger == NULL) return;
     trigger(agent_id, item_type);
 }
 
-void trigger_item_beta(int agent_id, int item_type)
+void trigger_item_beta(AgentID agent_id, int item_type)
 {
     triggerItem trigger = get_trigger_item_beta_fn(item_type);
     if (trigger == NULL) return;
@@ -186,14 +187,14 @@ void end_local_item(int item_type)
     end(item_type);
 }
 
-void begin_item(int agent_id, int item_type)
+void begin_item(AgentID agent_id, int item_type)
 {
     beginItem begin = get_begin_item_fn(item_type);
     if (begin == NULL) return;
     begin(agent_id, item_type);
 }
 
-void end_item(int agent_id, int item_type)
+void end_item(AgentID agent_id, int item_type)
 {
     endItem end = get_end_item_fn(item_type);
     if (end == NULL) return;
@@ -223,7 +224,7 @@ void tick()
     #endif
     
     // increment fire ticks if weapon down
-    for (int i=0; i<AGENT_MAX; i++)
+    for (int i=0; i<MAX_AGENTS; i++)
     {
         if (!agent_fire_on[i]) continue;
 
@@ -233,7 +234,7 @@ void tick()
         GS_ASSERT(agent_selected_type[i] == Item::get_item_type(item_id));
         #endif
 
-        GS_ASSERT(STATE::agent_list->a[i] != NULL); // agent should exist, if fire is on
+        GS_ASSERT(Agents::agent_list->objects[i].id != Agents::agent_list->null_id); // agent should exist, if fire is on
         int item_type = agent_selected_type[i];
         if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
 
@@ -246,11 +247,11 @@ void tick()
             #if DC_CLIENT
             if (local_agent_id == i)
                 trigger_local_item(local_item_id, item_type);
-            else trigger_item(i, item_type);
+            else trigger_item((AgentID)i, item_type);
             #endif
             
             #if DC_SERVER
-            trigger_item(i, item_id, item_type);
+            trigger_item((AgentID)i, item_id, item_type);
             #endif
         }
         
@@ -258,11 +259,11 @@ void tick()
         if (local_agent_id == i)
             tick_local_item(local_item_id, item_type);
         else
-            tick_item(i, item_type);
+            tick_item((AgentID)i, item_type);
         #endif
         
         #if DC_SERVER
-        tick_item(i, item_id, item_type);
+        tick_item((AgentID)i, item_id, item_type);
         #endif
         
         agent_fire_tick[i]++;
@@ -279,7 +280,7 @@ int get_selected_item_type()
 {
     GS_ASSERT(agent_selected_type != NULL);
     if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
-    int agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::playerAgent_state.agent_id;
     IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM_TYPE;
     return agent_selected_type[agent_id];
 }
@@ -289,7 +290,7 @@ int get_selected_item_type()
 // the item type needs to be periodically updated to ensure it is correct
 void update_selected_item_type()
 {
-    int agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::playerAgent_state.agent_id;
     IF_INVALID_AGENT_ID(agent_id) return;
 
     int item_type = NULL_ITEM_TYPE;
@@ -375,8 +376,9 @@ void update_toolbelt_items()
     if (agent_selected_slot == NULL) return;
     // make sure agent_selected_item is current
     // if any discrepancies exist, send a set_selected_item packet
-    for (int agent_id=0; agent_id<AGENT_MAX; agent_id++)
+    for (int i=0; i<MAX_AGENTS; i++)
     {
+        AgentID agent_id = (AgentID)i;
         int slot = agent_selected_slot[agent_id];
         GS_ASSERT(slot != NULL_SLOT);
         ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
@@ -388,7 +390,7 @@ void update_toolbelt_items()
     }
 }
 
-ItemID get_agent_selected_item(int agent_id)
+ItemID get_agent_selected_item(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM;
@@ -397,7 +399,7 @@ ItemID get_agent_selected_item(int agent_id)
     return agent_selected_item[agent_id];
 }
 
-int get_agent_selected_slot(int agent_id)
+int get_agent_selected_slot(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return NULL_SLOT;
@@ -406,7 +408,7 @@ int get_agent_selected_slot(int agent_id)
     return agent_selected_slot[agent_id];
 }
 
-bool set_agent_toolbelt_slot(int agent_id, int slot)
+bool set_agent_toolbelt_slot(AgentID agent_id, int slot)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return false;
@@ -426,7 +428,7 @@ bool set_agent_toolbelt_slot(int agent_id, int slot)
 // TODO -- rewrite code so that it doesnt need to callback again here
 // or add yet another configuration
 // or just leave this special case
-void use_block_placer(int agent_id, ItemID placer_id)
+void use_block_placer(AgentID agent_id, ItemID placer_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
@@ -441,7 +443,7 @@ void use_block_placer(int agent_id, ItemID placer_id)
         Item::send_item_state(placer->id);        
 }
 
-void force_remove_selected_item(int agent_id)
+void force_remove_selected_item(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;

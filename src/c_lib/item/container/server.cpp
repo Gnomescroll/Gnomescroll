@@ -4,6 +4,7 @@
 dont_include_this_file_in_client
 #endif
 
+#include <agent/_interface.hpp>
 #include <item/container/_state.hpp>
 
 namespace ItemContainer
@@ -13,7 +14,7 @@ namespace ItemContainer
 
 // first order transactions
 // only use internally here, for the 2nd order transactions
-void remove_item_from_hand(int agent_id)
+void remove_item_from_hand(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
@@ -26,11 +27,15 @@ void remove_item_from_hand(int agent_id)
     Item::Item* item = Item::get_item(hand->get_item());
     GS_ASSERT(item != NULL);
     if (item != NULL)
+    {
+        GS_ASSERT(item->location == IL_HAND);
+        GS_ASSERT(item->location_id == agent_id);
         item->location = IL_NOWHERE;
+    }
     hand->remove_item();
 }
 
-static void insert_item_in_hand(int agent_id, ItemID item_id)
+static void insert_item_in_hand(AgentID agent_id, ItemID item_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
@@ -75,17 +80,17 @@ void transfer_item_between_containers(ItemID item_id, int container_id_a, int sl
     GS_ASSERT(container_a->get_item(slot_a) == item_id);
     if (container_a->get_item(slot_a) != item_id) return;
 
-    Agent_state* owner_a = NULL;
+    Agent* owner_a = NULL;
     if (container_a->owner != NULL_AGENT)
     {
-        owner_a = ServerState::agent_list->get_any(container_a->owner);
+        owner_a = Agents::get_agent(container_a->owner);
         GS_ASSERT(owner_a != NULL);
     }
     
-    Agent_state* owner_b = NULL;
+    Agent* owner_b = NULL;
     if (container_b->owner != NULL_AGENT)
     {
-        owner_b = ServerState::agent_list->get_any(container_b->owner);
+        owner_b = Agents::get_agent(container_b->owner);
         GS_ASSERT(owner_b != NULL);
     }
     
@@ -109,7 +114,7 @@ void transfer_item_between_containers(ItemID item_id, int container_id_a, int sl
         Item::unsubscribe_agent_from_item(owner_a->id, item_id);
 }
 
-void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int slot, int agent_id)
+void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int slot, AgentID agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -127,10 +132,10 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
     GS_ASSERT(container->get_item(slot) == item_id);
     if (container->get_item(slot) != item_id) return;
 
-    Agent_state* owner = NULL;
+    Agent* owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        owner = ServerState::agent_list->get_any(container->owner);
+        owner = Agents::get_agent(container->owner);
         GS_ASSERT(owner != NULL);
     }
     
@@ -144,7 +149,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
     insert_item_in_hand(agent_id, item_id);
 
     // send hand insert
-    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
+    Agent* hand_owner = Agents::get_agent(agent_id);
     GS_ASSERT(hand_owner != NULL);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, item_id);
@@ -157,7 +162,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
         Item::unsubscribe_agent_from_item(owner->id, item_id);
 }
 
-void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int slot, int agent_id)
+void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int slot, AgentID agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -176,7 +181,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
     GS_ASSERT(container->get_item(slot) == NULL_ITEM);
     if (container->get_item(slot) != NULL_ITEM) return;
 
-    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
+    Agent* hand_owner = Agents::get_agent(agent_id);
     GS_ASSERT(hand_owner != NULL);
 
     // remove item from hand
@@ -185,10 +190,10 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
     if (hand_owner != NULL)
         send_hand_remove(hand_owner->client_id);
 
-    Agent_state* owner = NULL;
+    Agent* owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        owner = ServerState::agent_list->get_any(container->owner);
+        owner = Agents::get_agent(container->owner);
         GS_ASSERT(owner != NULL);
     }
 
@@ -206,7 +211,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
         Item::unsubscribe_agent_from_item(hand_owner->id, item_id);
 }
 
-bool swap_item_between_hand_and_container(int agent_id, int container_id, int slot)
+bool swap_item_between_hand_and_container(AgentID agent_id, int container_id, int slot)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(slot != NULL_SLOT);
@@ -220,14 +225,14 @@ bool swap_item_between_hand_and_container(int agent_id, int container_id, int sl
     GS_ASSERT(container != NULL);
     if (container == NULL) return false;
 
-    Agent_state* container_owner = NULL;
+    Agent* container_owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        container_owner = ServerState::agent_list->get_any(container->owner);
+        container_owner = Agents::get_agent(container->owner);
         GS_ASSERT(container_owner != NULL);
     }
 
-    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
+    Agent* hand_owner = Agents::get_agent(agent_id);
     GS_ASSERT(hand_owner != NULL);
 
     ItemID container_item_id = container->get_item(slot);
@@ -309,10 +314,10 @@ bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
     container->insert_item(slot, item->id);
 
     // send container insert
-    Agent_state* owner = NULL;
+    Agent* owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        owner = ServerState::agent_list->get_any(container->owner);
+        owner = Agents::get_agent(container->owner);
         GS_ASSERT(owner != NULL);
     }
     if (owner != NULL)
@@ -322,7 +327,7 @@ bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
 }
 
 // new unassigned item to hand
-bool transfer_free_item_to_hand(ItemID item_id, int agent_id)
+bool transfer_free_item_to_hand(ItemID item_id, AgentID agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -336,7 +341,7 @@ bool transfer_free_item_to_hand(ItemID item_id, int agent_id)
 
     // put in hand
     insert_item_in_hand(agent_id, item_id);
-    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
+    Agent* hand_owner = Agents::get_agent(agent_id);
     GS_ASSERT(hand_owner != NULL);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, item_id);
@@ -380,10 +385,10 @@ bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, 
     container->insert_item(slot, item->id);
 
     // send container insert
-    Agent_state* owner = NULL;
+    Agent* owner = NULL;
     if (container->owner != NULL_AGENT)
     {
-        owner = ServerState::agent_list->get_any(container->owner);
+        owner = Agents::get_agent(container->owner);
         GS_ASSERT(owner != NULL);
     }
     if (owner != NULL)
@@ -392,7 +397,7 @@ bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, 
     return true;
 }
 
-void transfer_particle_to_hand(ItemID item_id, ItemParticleID particle_id, int agent_id)
+void transfer_particle_to_hand(ItemID item_id, ItemParticleID particle_id, AgentID agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     ASSERT_VALID_AGENT_ID(agent_id);
@@ -415,7 +420,7 @@ void transfer_particle_to_hand(ItemID item_id, ItemParticleID particle_id, int a
 
     // put in hand
     insert_item_in_hand(agent_id, item_id);
-    Agent_state* hand_owner = ServerState::agent_list->get_any(agent_id);
+    Agent* hand_owner = Agents::get_agent(agent_id);
     GS_ASSERT(hand_owner != NULL);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, item_id);
@@ -425,7 +430,7 @@ void transfer_particle_to_hand(ItemID item_id, ItemParticleID particle_id, int a
 // use this only when no other hand transaction is sufficient
 // this does not handle item particle creation
 // you will need to call throw_item or whatever you want yourself
-void transfer_hand_to_particle(int agent_id)
+void transfer_hand_to_particle(AgentID agent_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
@@ -436,7 +441,7 @@ void transfer_hand_to_particle(int agent_id)
 
     remove_item_from_hand(agent_id);
 
-    Agent_state* agent = ServerState::agent_list->get_any(agent_id);
+    Agent* agent = Agents::get_agent(agent_id);
     GS_ASSERT(agent != NULL);
     if (agent != NULL) send_hand_remove(agent->client_id);
     
@@ -448,7 +453,7 @@ void transfer_hand_to_particle(int agent_id)
 /* Network */
 
 //  tell client to assign container to an agent
-void send_container_assign(int client_id, int container_id)
+void send_container_assign(ClientID client_id, int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -474,7 +479,7 @@ static bool pack_container_create(int container_id, create_item_container_StoC* 
     return true;
 }
 
-void send_container_create(int client_id, int container_id)
+void send_container_create(ClientID client_id, int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -492,7 +497,7 @@ void broadcast_container_create(int container_id)
     msg.broadcast();
 }
 
-void send_container_delete(int client_id, int container_id)
+void send_container_delete(ClientID client_id, int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -528,7 +533,7 @@ static bool pack_container_lock(int container_id, lock_container_StoC* msg)
     return true;
 }
 
-void send_container_lock(int client_id, int container_id)
+void send_container_lock(ClientID client_id, int container_id)
 {
     lock_container_StoC msg;
     if (!pack_container_lock(container_id, &msg)) return;
@@ -557,7 +562,7 @@ void broadcast_container_unlock(int container_id, int unlocking_agent_id)
     msg.broadcast();
 }
 
-void send_container_state(int client_id, int container_id)
+void send_container_state(ClientID client_id, int container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
@@ -567,7 +572,7 @@ void send_container_state(int client_id, int container_id)
     if (container->owner != NULL_AGENT) send_container_lock(client_id, container_id);
 }
 
-void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot)
+void send_container_item_create(ClientID client_id, ItemID item_id, int container_id, int slot)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(slot != NULL_SLOT);
@@ -576,14 +581,14 @@ void send_container_item_create(int client_id, ItemID item_id, int container_id,
     send_container_insert(client_id, item_id, container_id, slot);
 }
 
-void send_container_close(int agent_id, int container_id)
+void send_container_close(AgentID agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;
 
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     
@@ -592,12 +597,12 @@ void send_container_close(int agent_id, int container_id)
     msg.sendToClient(a->client_id);
 }
 
-void send_container_open(int agent_id, int container_id)
+void send_container_open(AgentID agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
 
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     
     open_container_StoC msg;
@@ -605,7 +610,7 @@ void send_container_open(int agent_id, int container_id)
     msg.sendToClient(a->client_id);
 }
 
-void send_open_container_failed(int client_id, int container_id, int event_id)
+void send_open_container_failed(ClientID client_id, int container_id, int event_id)
 {
     open_container_failed_StoC msg;
     msg.container_id = container_id;
@@ -626,11 +631,15 @@ void send_smelter_fuel(int container_id)
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
     GS_ASSERT(container_id == smelter->id);
 
+    Agent* owner = Agents::get_agent(smelter->owner);
+    GS_ASSERT(owner != NULL);
+    if (owner == NULL) return;
+
     smelter_fuel_StoC msg;
     msg.container_id = smelter->id;
     msg.fuel = smelter->fuel;
     msg.fuel_type = smelter->fuel_type;
-    msg.sendToClient(smelter->owner);
+    msg.sendToClient(owner->client_id);
 }
 
 void send_smelter_progress(int container_id)
@@ -644,16 +653,19 @@ void send_smelter_progress(int container_id)
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
-    GS_ASSERT(container_id == smelter->id);
+
+    Agent* owner = Agents::get_agent(smelter->owner);
+    GS_ASSERT(owner != NULL);
+    if (owner == NULL) return;
 
     smelter_progress_StoC msg;
     msg.progress = smelter->progress;
     msg.container_id = smelter->id;
-    msg.sendToClient(smelter->owner);
+    msg.sendToClient(owner->client_id);
 }
 
 // transactions
-bool agent_open_container(int agent_id, int container_id)
+bool agent_open_container(AgentID agent_id, int container_id)
 {
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers == NULL) return false;
@@ -671,7 +683,7 @@ bool agent_open_container(int agent_id, int container_id)
     GS_ASSERT(!container->attached_to_agent);   // we shouldnt use this function for attached containers
     if (container->attached_to_agent) return false;
 
-    Agent_state* a = ServerState::agent_list->get(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return false;
 
@@ -711,7 +723,7 @@ bool agent_open_container(int agent_id, int container_id)
     return true;
 }
 
-static void agent_close_container(int agent_id, int container_id, bool send_close)
+static void agent_close_container(AgentID agent_id, int container_id, bool send_close)
 {
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers == NULL) return;
@@ -745,12 +757,12 @@ static void agent_close_container(int agent_id, int container_id, bool send_clos
     unsubscribe_agent_from_container_contents(agent_id, container_id);
 }
 
-void agent_close_container(int agent_id, int container_id)
+void agent_close_container(AgentID agent_id, int container_id)
 {
     agent_close_container(agent_id, container_id, true);    // send close as normal
 }
 
-void agent_close_container_silent(int agent_id, int container_id)
+void agent_close_container_silent(AgentID agent_id, int container_id)
 {   // dont send container_close packet
     // this should be used if the client initiated the closing
     // there is a race condition that occurs otherwise
@@ -760,7 +772,7 @@ void agent_close_container_silent(int agent_id, int container_id)
     agent_close_container(agent_id, container_id, false); 
 }
 
-void unsubscribe_agent_from_container_contents(int agent_id, int container_id)
+void unsubscribe_agent_from_container_contents(AgentID agent_id, int container_id)
 {
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;

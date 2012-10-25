@@ -14,7 +14,7 @@ void ItemDropConfig::save_to_file()
     GS_ASSERT(max > 0);
     GS_ASSERT(this->get_name_from_id != NULL);
     
-    const char fmt[] = "./screenshot/%s_drop_dat.txt";
+    const char fmt[] = "./data/%s_drop_dat.txt";
     char* name = this->name;
     GS_ASSERT(name != NULL);
     if (name == NULL) name = (char*)"";
@@ -130,7 +130,7 @@ void ItemDropConfig::add_drop(const char* item_name, int drop_entries)
     drop_entries += 1;
     GS_ASSERT(drop_entries > 0);
 
-    int item_type = dat_get_item_type(item_name);
+    int item_type = get_item_type(item_name);
     int id = this->_current_drop_id;
 
     if (this->add_drop_callback != NULL)

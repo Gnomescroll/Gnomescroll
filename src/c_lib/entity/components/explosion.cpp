@@ -54,7 +54,7 @@ void ExplosionComponent::damage_blocks()
         bz = mz + k;
 
         if (bz <= 0) continue;  // ignore floor
-        if (bz >= map_dim.z) continue;
+        if (bz >= t_map::map_dim.z) continue;
 
         bx = translate_point(bx);
         by = translate_point(by);
@@ -69,7 +69,7 @@ void ExplosionComponent::damage_blocks()
         apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
         by = translate_point(my + j);
         bz = mz - k;
-        if (bz > 0 && bz < map_dim.z)
+        if (bz > 0 && bz < t_map::map_dim.z)
             apply_damage_broadcast(bx,by,bz, dmg, this->terrain_modification_action);
         bx = translate_point(mx + i);
         by = translate_point(my - j);
@@ -88,7 +88,7 @@ void ExplosionComponent::explode()
 
     using Components::OwnerComponent;
     OwnerComponent* owner = (OwnerComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_OWNER);
-    int owner_id = NULL_AGENT;
+    AgentID owner_id = NULL_AGENT;
     if (owner != NULL) owner_id = owner->get_owner();
     
     ServerState::damage_objects_within_sphere(
@@ -114,7 +114,7 @@ bool ExplosionComponent::proximity_check()
         position = physics->get_position();
     }
     
-    Agent_state* agent = nearest_living_agent_model_in_range(position, this->proximity_radius);
+    Agent* agent = nearest_living_agent_model_in_range(position, this->proximity_radius);
     if (agent != NULL)
     {
         using Components::HealthComponent;

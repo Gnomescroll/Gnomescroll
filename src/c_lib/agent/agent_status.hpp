@@ -12,7 +12,7 @@
 class Agent_status {
 
     private:
-        class Agent_state* a;
+        class Agent* a;
         int voxel_model_restore_throttle;
 
     public:
@@ -36,7 +36,6 @@ class Agent_status {
 
         int lifetime;
         
-        bool color_chosen;
         struct Color color;
 
         void tick();
@@ -50,7 +49,7 @@ class Agent_status {
         void set_spawner(int pt);
 
         bool die();
-        bool die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
+        bool die(AgentID inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
         void kill_slime();
 
@@ -62,31 +61,30 @@ class Agent_status {
         void set_fresh_state();
 
         void send_health_msg();
-        void send_health_msg(int client_id);
+        void send_health_msg(ClientID client_id);
         void restore_health();
         void heal(unsigned int amt);
         int apply_damage(int dmg);
-        int apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id=-1);
-        int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
-        int apply_mining_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
+        int apply_damage(int dmg, AgentID inflictor_id, ObjectType inflictor_type, int part_id=-1);
+        int apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type);
+        int apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type);
         void at_base();
 
-        void send_color(int client_id);
+        void send_color(ClientID client_id);
         void broadcast_color();
-        #endif
 
+        bool consume_item(ItemID item_id);
+
+        #endif
         
-        void send_scores(int client_id);
+        void send_scores(ClientID client_id);
         void send_scores();
 
-        void set_color(struct Color color);
+        bool set_color(struct Color color);
+        bool set_color_silent(struct Color color);
 
         float get_spawn_angle();
 
-        #if DC_SERVER
-        bool consume_item(ItemID item_id);
-        #endif
-
-        explicit Agent_status(Agent_state* a);
+        explicit Agent_status(Agent* a);
         ~Agent_status();
 };

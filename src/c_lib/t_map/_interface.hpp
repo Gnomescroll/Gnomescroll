@@ -2,15 +2,47 @@
 
 namespace t_map
 {
+
+extern struct MapDimension map_dim;
+
+void init_t_map();
 void end_t_map();
+
+void init_packets();
 
 int get_block_item_container(int x, int y, int z);
 bool get_container_location(int container_id, int position[3]);
 
-void init_packets();
+CubeID get(int x, int y, int z);
+void set(int x, int y, int z, CubeID cube_id);
+inline void set_fast(int x, int y, int z, CubeID cube_id) __attribute__((always_inline));
+void set_palette(int x, int y, int z, int palette);
+
+int get_block_damage(int x, int y, int z);
+int apply_damage(int x, int y, int z, int dmg);
+
+void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
+
+inline int get_highest_open_block(int x, int y, int vertical_gap);
+inline int get_highest_open_block(int x, int y);
+inline int get_nearest_open_block(int x, int y, int z, int vertical_gap); 
+inline int get_nearest_open_block(int x, int y, int z); 
+inline int get_lowest_open_block(int x, int y, int n);
+inline int get_highest_solid_block(int x, int y);
+inline int get_highest_solid_block(int x, int y, int z);
+inline int get_lowest_solid_block(int x, int y);
+inline int get_solid_block_below(int x, int y, int z);
+
+inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
+
+bool block_can_be_placed(int x, int y, int z, CubeID cube_id);
+
 
 #if DC_CLIENT
 extern class Vbo_map* vbo_map;
+
+void init_for_draw();
+void init_shaders();
 
 void init_t_vbo();
 void teardown_t_vbo();
@@ -18,7 +50,6 @@ void teardown_t_vbo();
 void draw_map();
 void draw_map_compatibility();
 void update_map();
-
 
 void control_node_render_init(class CONTROL_NODE_LIST* _cnl);   //internal method
 void control_node_render_teardown();    //internal method
@@ -33,15 +64,12 @@ int get_requested_block_remaining_health();
 void get_requested_block_position(int* x, int* y, int* z);
 bool is_last_requested_block(int x, int y, int z);
 extern unsigned int requested_block_damage;
-extern int requested_block_type;
+extern CubeID requested_cube_id;
 #endif
 
 #if DC_SERVER
 void create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id);
 void destroy_item_container_block(int x, int y, int z);
-
-// creates container
-void load_item_container_block(int x, int y, int z, int block_type);
 
 void smelter_on(int container_id);
 void smelter_off(int container_id);
@@ -50,14 +78,15 @@ void smelter_off(int container_id);
 void map_post_processing();
 
 //on connect
-void send_client_map_special(int client_id);
+void send_client_map_special(ClientID client_id);
 void add_control_node(int x, int y, int z);
 
-void save_map();
-void save_map(const char* filename);
+void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
 
-void load_map();
-void load_map(const char* filename);
-
+void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action);
+void broadcast_set_block(int x, int y, int z, CubeID cube_id);
+void broadcast_set_block_palette(int x, int y, int z, CubeID cube_id, int palette);
+void broadcast_set_palette(int x, int y, int z, int palette);
 #endif
+
 }   // t_map

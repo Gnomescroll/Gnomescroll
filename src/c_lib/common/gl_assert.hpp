@@ -1,6 +1,7 @@
 #pragma once
 
-#include "compat_gl.h"
+#include <common/macros.hpp>
+#include <common/compat_gl.h>
 
 /*
 This prints error/line when gl GS_ASSERTion fails
@@ -11,35 +12,18 @@ GL_ASSERT(GL_DEPTH_TEST, true);
 GL_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/./particle/minivox.cpp, line 183
 */
 
-
-//#define GL_ASSERT_DEBUG 1
-
-#define GL_ASSERT_OFF 0
-
 bool _gl_assert(GLenum flag)
 {
-
     GLboolean value;
     glGetBooleanv(flag, &value);
-
-    if(value == GL_FALSE)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-
+    return (value == GL_TRUE);
 }
 
-/*
-    Disable in production
-*/
-#if PRODUCTION || GL_ASSERT_OFF
-    #define GL_ASSERT(flag, truth) ;
+// Disable in production
+#if PRODUCTION
+# define GL_ASSERT(flag, truth) ;
 #else
-    #define GL_ASSERT(flag, truth) \
-    if(_gl_assert(flag) !=  truth) \
-    fprintf (stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
+# define GL_ASSERT(flag, truth) \
+    if(unlikely(_gl_assert((flag)) !=  (truth))) \
+        fprintf(stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
 #endif

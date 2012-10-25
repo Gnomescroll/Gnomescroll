@@ -16,14 +16,14 @@ NetPeer** pool = NULL;
 NetPeer** staging_pool = NULL;
 class NetPeerManager** clients = NULL;
 
-class Agent_state** agents = NULL;
+class Agent** agents = NULL;
 
 class UserRecorder* users = NULL;
 
 FILE* session_log_file = NULL;
 FILE* population_log_file = NULL;
 
-class NetPeerManager* get_client(int client_id)
+class NetPeerManager* get_client(ClientID client_id)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return NULL;
@@ -38,6 +38,14 @@ class NetPeerManager* get_client_from_user_id(UserID user_id)
     return NULL;
 }
 
+AgentID get_agent_id_for_client(ClientID client_id)
+{
+    NetPeerManager* npm = get_client(client_id);
+    GS_ASSERT(npm != NULL);
+    if (npm == NULL) return NULL_AGENT;
+    return npm->agent_id;
+}
+
 void init_globals()
 {
     GS_ASSERT(pool == NULL);
@@ -48,7 +56,7 @@ void init_globals()
     pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
     staging_pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
     clients = (NetPeerManager**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeerManager*));
-    agents = (class Agent_state**)calloc(HARD_MAX_CONNECTIONS, sizeof(class Agent_state*));
+    agents = (class Agent**)calloc(HARD_MAX_CONNECTIONS, sizeof(class Agent*));
     users = new UserRecorder;
 
     const char* time_str = get_time_str();
@@ -83,7 +91,7 @@ void teardown_globals()
     if (agents != NULL) free(agents);
 }
 
-class Session* begin_session(uint32_t ip_addr, int client_id)
+class Session* begin_session(uint32_t ip_addr, ClientID client_id)
 {
     class Session* session = new Session(ip_addr);
     session->client_id = client_id;
@@ -138,7 +146,7 @@ void end_session(class Session* session)
     }
 }
 
-void client_authorized(int client_id, UserID user_id, time_t expiration_time, const char* username)
+void client_authorized(ClientID client_id, UserID user_id, time_t expiration_time, const char* username)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
@@ -167,7 +175,7 @@ void client_authorized(int client_id, UserID user_id, time_t expiration_time, co
     pm->was_authorized(user_id, expiration_time, username);
 }
 
-void client_authorization_failed(int client_id)
+void client_authorization_failed(ClientID client_id)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;
@@ -179,7 +187,7 @@ void client_authorization_failed(int client_id)
     pm->failed_authorization_attempt();
 }
 
-void kill_client(int client_id, DisconnectType error_code)
+void kill_client(ClientID client_id, DisconnectType error_code)
 {
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return;

@@ -4,21 +4,23 @@
 dont_include_this_file_in_client
 #endif
 
+#include <agent/_interface.hpp>
+
 namespace Item
 {
 
-static void send_item_create(int client_id, ItemID item_id);
-static void send_item_destroy(int client_id, ItemID item_id);
+static void send_item_create(ClientID client_id, ItemID item_id);
+static void send_item_destroy(ClientID client_id, ItemID item_id);
 
 // subscriptions
 
-void subscribe_agent_to_item(int agent_id, ItemID item_id)
+void subscribe_agent_to_item(AgentID agent_id, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return;
     ASSERT_VALID_AGENT_ID(agent_id);
     
-    Agent_state* a = ServerState::agent_list->get_any(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -35,13 +37,13 @@ void subscribe_agent_to_item(int agent_id, ItemID item_id)
     send_item_create(a->client_id, item->id);
 }
 
-void unsubscribe_agent_from_item(int agent_id, ItemID item_id)
+void unsubscribe_agent_from_item(AgentID agent_id, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return;
     ASSERT_VALID_AGENT_ID(agent_id);
     
-    Agent_state* a = ServerState::agent_list->get_any(agent_id);
+    Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -100,7 +102,7 @@ static bool pack_item_create(Item* item, item_create_StoC* msg)
     return true;
 }
 
-static void send_item_create(int client_id, ItemID item_id)
+static void send_item_create(ClientID client_id, ItemID item_id)
 {
     Item* item = get_item(item_id);
     if (item == NULL) return;
@@ -141,7 +143,7 @@ void send_item_state(ItemID item_id)
     msg.sendToClients(item->subscribers.subscribers, item->subscribers.n);
 }
 
-static void send_item_destroy(int client_id, ItemID item_id)
+static void send_item_destroy(ClientID client_id, ItemID item_id)
 {
     Item* item = get_item(item_id);
     GS_ASSERT(item != NULL);

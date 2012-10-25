@@ -7,8 +7,8 @@ dont_include_this_file_in_server
 namespace Toolbelt
 {
 
-void turn_fire_on(int agent_id);
-void turn_fire_off(int agent_id);
+void turn_fire_on(AgentID agent_id);
+void turn_fire_off(AgentID agent_id);
 
 /* Begins some animations, returns true/false if something should happen */
 /* Called when user input occurs. return value used to decide if should send packet to server */
@@ -22,8 +22,8 @@ bool toolbelt_item_beta_action();
 // only applies to local agent
 void toolbelt_item_begin_local_alpha_action_event_handler(int item_type);
 void toolbelt_item_end_local_alpha_action_event_handler(int item_type);
-void toolbelt_item_begin_alpha_action_event_handler(int agent_id, int item_type);
-void toolbelt_item_end_alpha_action_event_handler(int agent_id, int item_type);
+void toolbelt_item_begin_alpha_action_event_handler(AgentID agent_id, int item_type);
+void toolbelt_item_end_alpha_action_event_handler(AgentID agent_id, int item_type);
 
 /* Packets */
 

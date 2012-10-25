@@ -5,6 +5,14 @@
 #include <ctype.h>
 #include <time.h>
 
+#ifndef UINT8_MAX
+# define UINT8_MAX  (255U)
+#endif
+
+#ifndef UINT16_MAX
+# define UINT16_MAX (65535U)
+#endif
+
 bool in_array_int(int* arr, int arr_max, int val)
 {
     for (int i=0; i<arr_max; i++)
@@ -62,8 +70,7 @@ static unsigned int strhash(const char* s)
 {
     unsigned int highorder;
     unsigned int h = 0;
-    int i;
-    for (i=0; s[i] != '\0'; i++)
+    for (int i=0; s[i] != '\0'; i++)
     {
          highorder = h & 0xf8000000;    // extract high-order 5 bits from h
                                         // 0xf8000000 is the hexadecimal representation
@@ -117,6 +124,11 @@ static long long int parse_int(const char* str, bool& err)
     err = (*str == '\0' || *endptr != '\0');
     return val;
 } 
+
+bool is_valid_name_char(char c)
+{   // For string names used in configs. Don't fuck with this
+    return (isalnum(c) || c == '_' || c == '-');
+}
 
 void _test_common()
 {

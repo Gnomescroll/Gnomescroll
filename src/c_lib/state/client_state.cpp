@@ -28,8 +28,6 @@ int frame_id = 0;
 Vec3 location_pointer = vec3_init(0,0,0);
 bool location_pointer_set = false;
 
-Agent_list* agent_list = NULL;
-
 Voxel_render_list_manager* voxel_render_list;
 Voxel_hitscan_list* voxel_hitscan_list = NULL;
 
@@ -45,22 +43,17 @@ void init_lists()
     voxel_render_list = new Voxel_render_list_manager;
     voxel_render_list->init();
     voxel_hitscan_list = new Voxel_hitscan_list;
-
-    agent_list = new Agent_list;
 }
 
-void teardown_lists()
+void teardown_voxel_lists()
 {
-    // voxel models
-    if (agent_list != NULL) delete agent_list;
-
     // voxel lists
     // must go after all voxels
     if (voxel_render_list != NULL) delete voxel_render_list;
     if (voxel_hitscan_list != NULL) delete voxel_hitscan_list;
 }
 
-void set_PlayerAgent_id(int id)
+void set_PlayerAgent_id(AgentID id)
 {
     playerAgent_state.set_PlayerAgent_id(id);
 }
@@ -76,11 +69,6 @@ void tick()
     Particle::textured_minivox_list->tick();
     Particle::billboard_text_list->tick();
     Particle::billboard_text_hud_list->tick();
-}
-
-void update_for_draw()
-{
-    agent_list->update_models();
 }
 
 void update_camera()

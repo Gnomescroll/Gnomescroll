@@ -12,6 +12,27 @@ struct SerializedChunk
     struct t_map::MAP_ELEMENT data[sizeof(struct t_map::MAP_ELEMENT)*16*16*128];
 };
 
+class ParsedMapPaletteData
+{
+    public:
+        bool valid;
+        
+        int cube_id;
+        char name[CUBE_NAME_MAX_LENGTH+1];
+        
+    void reset()
+    {
+        this->valid = false;
+        this->cube_id = ERROR_CUBE;
+        memset(this->name, 0, sizeof(this->name));
+    }
+
+    ParsedMapPaletteData()
+    {
+        this->reset();
+    }
+};
+
 extern bool should_save_map;
 extern bool map_save_completed;
 extern char* map_tmp_name;
@@ -25,11 +46,14 @@ void wait_for_threads();
 #endif
 
 void save_map(const char* filename);
-void load_map(const char* filename);
+bool load_map(const char* filename);
 
 // uses default map names
 void save_map();
-void load_map();
+bool load_map();
+
+// will choose a correct map if available. returns false if no map found
+bool load_default_map();
 
 void check_map_save_state();
 
@@ -71,7 +95,7 @@ class BlockSerializer
         index += sizeof(uint32_t);
     }
 
-    void load(const char* filename);
+    bool load(const char* filename);
 
     void save(const char* filename);
 

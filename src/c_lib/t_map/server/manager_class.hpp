@@ -67,7 +67,7 @@ class Map_manager
     public:
     class Terrain_map* t;
 
-    int client_id;
+    ClientID client_id;
 
     bool needs_update;
     int xpos; //player chunk position
@@ -94,12 +94,12 @@ class Map_manager
 
     mz_stream stream;
 
-    Map_manager(int _client_id)
+    Map_manager(ClientID client_id)
     {
         init_compressor();
 
         needs_update = false;
-        client_id = _client_id;
+        this->client_id = client_id;
         
         chunk_que_num = 0;
 
@@ -221,7 +221,7 @@ void Map_manager::send_uncompressed_chunk(int alias, int index)
     //c.byte_size = size;
     c.sendToClient(client_id, (char*)t->chunk[index]->e, size);
 
-    //void sendToClient(int client_id, char* buff, int len) 
+    //void sendToClient(ClientID client_id, char* buff, int len) 
     //map_chunk_uncompressed_StoC
 }
 
@@ -239,7 +239,7 @@ void Map_manager::update()
 {
     GS_ASSERT(xpos != 0xffff && ypos != 0xffff);
     //printf("xpos= %i ypos= %i \n", xpos, ypos);
-    if(needs_update == false) return;
+    if (!needs_update) return;
 
     /*
         unsub part

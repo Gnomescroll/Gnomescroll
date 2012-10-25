@@ -1,8 +1,6 @@
 #pragma once
 
 #include <common/time/physics_timer.hpp>
-#include <map_gen/map_generator.hpp>
-#include <map_gen/recipes.hpp>
 
 #include <t_gen/_interface.hpp>
 #include <t_map/_interface.hpp>
@@ -31,54 +29,48 @@ void default_map_gen()
 
 void init(int argc, char* argv[])
 {
-
-//  for(int i=0; i<argc; i++) 
-//      printf("ARG%d: %s \n", i, argv[i]);
+    //for (int i=0; i<argc; i++) 
+        //printf("argument %d: %s\n", i, argv[i]);
 
     init_c_lib(argc, argv);
 
     srand(Options::seed);
 
     bool fast_map = false;
-    if (Options::map[0] == '\0')
-    {   // use map gen
-        #if PRODUCTION
-        default_map_gen();
-        #else
-        // load map file by default in development mode; decreases startup time
-        const char default_map[] = "./world/map/map-" STR(GS_VERSION) ".map";
-        if (file_exists(default_map))
-            serializer::load_map(default_map);
-        else
-            default_map_gen();
-        #endif
-    }
-    else if (!strcmp(Options::map, "fast"))
+    #if GS_SERIALIZER
+    if (!serializer::load_data())
     {
-        fast_map = true;
+        if (strcmp(Options::map, "fast") == 0)
+            fast_map = true;
+        else
+        {
+            default_map_gen();
+            t_gen::populate_crystals();
+            t_map::environment_process_startup();
+        }
     }
+    #else
+    if (strcmp(Options::map, "fast") == 0)
+        fast_map = true;
     else
-    {   // use map file
-        serializer::load_map(Options::map);
-    }   
+    {   // load map from options if given; else load default map file; else do a map gen
+        if ((Options::map[0] == '\0' || !serializer::load_map(Options::map))
+        && !serializer::load_default_map())
+            default_map_gen();
+    }
+    #endif
 
     if (fast_map)
     {
-        map_gen::floor(512,512,0,1, t_map::dat_get_cube_id("bedrock"));
-        map_gen::floor(512,512,1,9, t_map::dat_get_cube_id("regolith"));
+        map_gen::floor(512,512,0,1, t_map::get_cube_id("bedrock"));
+        map_gen::floor(512,512,1,9, t_map::get_cube_id("regolith"));
 
-        //map_gen::floor(512,512, 20,1, t_map::dat_get_cube_id("regolith"));
+        //map_gen::floor(512,512, 20,1, t_map::get_cube_id("regolith"));
     
-        t_gen::generate_ruins();
-        t_gen::add_terrain_features();
+        //t_gen::generate_ruins();
+        //t_gen::add_terrain_features();
     }
-    else
-    {
-        // do this after map gen / loading until crystals are serialized
-        t_gen::populate_crystals();
-        t_map::environment_process_startup();
-    }
-
+                //t_gen::populate_crystals();
 
     srand((unsigned int)time(NULL));
     
@@ -104,9 +96,9 @@ void tick()
 
     t_map::t_map_send_map_chunks();  //every tick
 
-    if(counter % 15 == 0) 
+    if (counter % 15 == 0) 
     {
-        ServerState::agent_list->update_map_manager_positions();
+        Agents::agent_list->update_map_manager_positions();
         t_map::t_map_manager_update();
         //t_map::t_map_sort_map_chunk_ques();
     }
@@ -114,7 +106,7 @@ void tick()
     Toolbelt::update_toolbelt_items();
     Toolbelt::tick();
 
-    ServerState::agent_list->update_models(); // sets skeleton
+    Agents::agent_list->update_models(); // sets skeleton
     
     Particle::grenade_list->tick();
     ItemParticle::tick();
@@ -159,10 +151,10 @@ int run()
     while (!ServerState::signal_exit)
     {
         tc = 0;
-        while(1)
+        while (1)
         {
             int ti = _GET_TICK();
-            if(ti == 0 || tc > 1) break;
+            if (ti == 0 || tc > 1) break;
 
             tick();
 
@@ -170,12 +162,12 @@ int run()
             break;
         }
 
-        if(tc > 0)
+        if (tc > 0)
         {
             NetServer::flush_to_net();
         }
 
-        if(tc > 1)
+        if (tc > 1)
         {
             printf("Warning:: %i ticks this frame", tc);
         }
@@ -183,23 +175,21 @@ int run()
         if (Options::auth)
             NetServer::check_client_authorizations();
         
-	#if GS_SERIALIZER
+        #if GS_SERIALIZER
         if (serializer::should_save_map)
         {
             serializer::save_map();
             serializer::should_save_map = false;
+            // TODO -- move, testing only
+            serializer::save_containers();
+            serializer::save_mechs();
+            serializer::save_map_palette_file();
         }
 
         serializer::update();
-	#endif
+        #endif
 
-        #ifdef __GNUC__
-        usleep(1000);
-        #endif
-    
-        #ifdef __MSVC__
-        Sleep(1);
-        #endif
+        gs_millisleep(1000);
     }
 
     if (serializer::should_save_map)

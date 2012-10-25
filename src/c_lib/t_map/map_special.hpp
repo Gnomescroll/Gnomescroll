@@ -82,7 +82,7 @@ class CONTROL_NODE_LIST
     }
 
     #if DC_SERVER
-    void send_control_nodes_to_client(int client_id)
+    void send_control_nodes_to_client(ClientID client_id)
     {
         for(int i=0; i<cpi; i++)
         {
@@ -317,7 +317,7 @@ class ControlNodeRenderer
         //printf("draw: %i \n", vertex_list.vi);
 
         if(vertex_list.vi == 0) return;
-        if(shader.shader->shader_valid == false) return;
+        if(!shader.shader->shader_valid) return;
 
         //printf("draw \n");
 
@@ -627,8 +627,8 @@ void ControlNodeRenderer::control_node_render_update()
     static int counter = 0; //refresh, deals with loading before terrain map
     counter++;
 
-    //if(cnl->needs_update == false && cnri != 0 && counter%30!=0) return;
-    if(cnl->needs_update == false && cnri != 0 ) return;
+    //if(!cnl->needs_update && cnri != 0 && counter%30!=0) return;
+    if(!cnl->needs_update && cnri != 0) return;
     cnl->needs_update = false;
     cnri = 0; //reset index
 

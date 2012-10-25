@@ -67,7 +67,7 @@ static void register_settings()
     c.create = &create_agent_spawner;
     c.ready = &ready_agent_spawner;
     c.die = &die_agent_spawner;
-    c.max = 1024;
+    c.max = MAX_SPAWNERS;
     
     set_object(OBJECT_BASE);
     c.loader = &load_base_data;

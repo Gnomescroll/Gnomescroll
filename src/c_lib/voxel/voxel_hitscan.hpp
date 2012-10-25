@@ -17,12 +17,17 @@ const int VOXEL_HITSCAN_LIST_SIZE = 1024;
 
 class Voxel_volume; // forward decl
 
-struct Voxel_hitscan_element
+class Voxel_hitscan_element
 {
-    short entity_id;
-    short entity_type;
-    short part_id;
-    Voxel_volume* vv;
+    public:
+        short entity_id;
+        short entity_type;
+        short part_id;
+        Voxel_volume* vv;
+
+    Voxel_hitscan_element() :
+        entity_id(-1), entity_type(-1), part_id(-1), vv(NULL)
+    {}
 };
 
 class Voxel_hitscan_target: public Voxel_hitscan_element

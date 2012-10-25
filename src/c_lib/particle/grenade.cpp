@@ -9,7 +9,7 @@
 #include <t_map/t_properties.hpp>
 
 #include <entity/constants.hpp>
-#include <common/random.h>
+#include <common/random.hpp>
 
 #include <particle/_interface.hpp>
 
@@ -68,7 +68,7 @@ inline void grenade_StoC::handle()
     Grenade* g = Particle::grenade_list->create();
     if (g == NULL) return;
     g->set_state(x, y, z, mx, my, mz);
-    g->owner = owner;
+    g->owner = (AgentID)this->owner;
     g->ttl_max = (int)ttl_max;
     g->type = (int)type;
     #endif
@@ -86,9 +86,9 @@ void Grenade::reset()
 }
 
 Grenade::Grenade(int id) :
-ParticleMotion(id, 0,0,0,0,0,0, GRENADE_MASS),
-bounce_count(0),
-owner(-1)
+    ParticleMotion(id, 0,0,0,0,0,0, GRENADE_MASS),
+    bounce_count(0),
+    owner(NULL_AGENT)
 {
     this->reset();
 }
@@ -193,7 +193,7 @@ void Grenade::damage_blocks(int multiplier)
 {
     #if DC_SERVER
     using t_map::apply_damage_broadcast;
-    const t_map::TerrainModificationAction action = t_map::TMA_GRENADE;
+    const TerrainModificationAction action = TMA_GRENADE;
 
     Vec3 position = this->get_position();
     int mx = (int)position.x;
@@ -212,7 +212,7 @@ void Grenade::damage_blocks(int multiplier)
         by = my + j;
         bz = mz + k;
         if (bz <= 0) continue;  // dont damage floor
-        if (bz >= map_dim.z) continue;  // dont damage floor
+        if (bz >= t_map::map_dim.z) continue;  // dont damage floor
 
         bx = translate_point(bx);
         by = translate_point(by);
@@ -227,7 +227,7 @@ void Grenade::damage_blocks(int multiplier)
         apply_damage_broadcast(bx,by,bz, dmg, action);
         by = translate_point(my + j);
         bz = mz - k;
-        if (bz > 0 && bz < map_dim.z)
+        if (bz > 0 && bz < t_map::map_dim.z)
             apply_damage_broadcast(bx,by,bz, dmg, action);
         bx = translate_point(mx + i);
         by = translate_point(my - j);
@@ -239,28 +239,28 @@ void Grenade::damage_blocks(int multiplier)
 }
 
 /* Grenade list */
-void Grenade_list::tick()
+void GrenadeList::tick()
 {
-    if (num <= 0) return;
-    for(int i=0; i<n_max; i++)
+    if (this->ct <= 0) return;
+    for (unsigned int i=0; i<this->max; i++)
     {
-        if (a[i] == NULL) continue;
-        a[i]->tick();
-        if(a[i]->ttl >= a[i]->ttl_max)
+        if (this->objects[i].id == -1) continue;
+        this->objects[i].tick();
+        if(this->objects[i].ttl >= this->objects[i].ttl_max)
         {
-            a[i]->explode();
-            destroy(a[i]->id);
+            this->objects[i].explode();
+            this->destroy(this->objects[i].id);
         }
     }
 }
 
-void Grenade_list::draw()
+void GrenadeList::draw()
 {
     #if DC_CLIENT
-    if (num <= 0) return;
-    for(int i=0; i<n_max; i++)
-        if (a[i] != NULL)
-            a[i]->draw(a[i]->get_position());
+    if (this->ct <= 0) return;
+    for (unsigned int i=0; i<this->max; i++)
+        if (this->objects[i].id != -1)
+            this->objects[i].draw(this->objects[i].get_position());
     #endif
 }
 

@@ -46,7 +46,7 @@ void draw()
     HudFont::set_texture();
     Particle::billboard_text_hud_list->draw();
     CHECK_GL_ERROR();
-    ClientState::agent_list->draw_names();
+    Agents::agent_list->draw_names();
     CHECK_GL_ERROR();
     end_font_draw();
     CHECK_GL_ERROR();

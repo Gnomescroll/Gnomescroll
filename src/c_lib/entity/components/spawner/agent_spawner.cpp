@@ -33,7 +33,7 @@ struct Vec3 AgentSpawnerComponent::get_spawn_point(float spawned_object_height, 
     if (h < 1) h = 1;
     spawn_point.z = t_map::get_nearest_open_block(sx, sy, position.z, h);
 
-    while (object_collides_terrain(spawn_point, spawned_object_height, spawned_object_radius) && spawn_point.z < map_dim.z)
+    while (object_collides_terrain(spawn_point, spawned_object_height, spawned_object_radius) && spawn_point.z < t_map::map_dim.z)
         spawn_point.z += 1;
 
 

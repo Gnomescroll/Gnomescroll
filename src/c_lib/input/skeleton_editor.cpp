@@ -128,10 +128,10 @@ void raycast_to_part()
     {
         case OBJECT_AGENT:
             vox_dat = &VoxDats::agent;
-            obj = ClientState::agent_list->get(id);
+            obj = Agents::get_agent((AgentID)id);
             GS_ASSERT(obj != NULL);
             if (obj == NULL) return;
-            vox = ((Agent_state*)obj)->vox;
+            vox = ((Agent*)obj)->vox;
             break;
 
         //case OBJECT_AGENT_SPAWNER:

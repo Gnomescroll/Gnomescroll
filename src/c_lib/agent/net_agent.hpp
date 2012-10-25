@@ -469,12 +469,14 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
     public:
         uint8_t id;
         uint8_t client_id;
+        struct Color color;
         char username[PLAYER_NAME_MAX_LENGTH+1];
         
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&client_id, buff, buff_n, pack);
+            pack_color(&color, buff, buff_n, pack);
             pack_string(username, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
         }
 
@@ -768,13 +770,11 @@ class killme_CtoS: public FixedSizeReliableNetPacketToServer<killme_CtoS>
 class colorme_CtoS: public FixedSizeReliableNetPacketToServer<colorme_CtoS>
 {
     public:
-        uint8_t r,g,b;
+        struct Color color;
         
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u8(&r, buff, buff_n, pack);
-        pack_u8(&g, buff, buff_n, pack);
-        pack_u8(&b, buff, buff_n, pack);
+        pack_color(&color, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -783,14 +783,12 @@ class agent_color_StoC: public FixedSizeReliableNetPacketToClient<agent_color_St
 {
     public:
         uint8_t agent_id;
-        uint8_t r,g,b;
+        struct Color color;
         
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&agent_id, buff, buff_n, pack);
-        pack_u8(&r, buff, buff_n, pack);
-        pack_u8(&g, buff, buff_n, pack);
-        pack_u8(&b, buff, buff_n, pack);
+        pack_color(&color, buff, buff_n, pack);
     }
     inline void handle();
 };

@@ -28,6 +28,11 @@ typedef enum
 
 typedef enum
 {
+    NULL_CONTAINER = 0xffff
+} ItemContainerID;
+
+typedef enum
+{
     CONTAINER_ACTION_NONE = 0,      // null
     
     FULL_HAND_TO_WORLD,             // remove
@@ -93,15 +98,5 @@ typedef enum
     IL_CONTAINER,
     IL_HAND,
 } ItemLocationType;
-
-typedef enum
-{
-    ISS_NONE,
-    ISS_WAITING_FOR_GID,
-    ISS_WAITING_FOR_SAVE,
-    ISS_SAVED,
-    ISS_LOADING,
-    ISS_LOADED,
-} ItemSaveState;
 
 /* No typedef for ItemType, use string names */

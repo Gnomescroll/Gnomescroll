@@ -14,7 +14,7 @@
 
 #include <common/defines.h>
 #include <math.h>
-#include <common/random.h>
+#include <common/random.hpp>
 
 #include <item/toolbelt/_interface.hpp>
 #include <item/common/constants.hpp>
@@ -62,14 +62,14 @@ Vec3 AgentState::forward_vector()
 }
 
 #if DC_CLIENT
-bool Agent_state::is_you()
+bool Agent::is_you()
 {
     if (id == ClientState::playerAgent_state.agent_id) return true;
     return false;
 }
 #endif
 
-void Agent_state::teleport(float x,float y,float z)
+void Agent::teleport(float x,float y,float z)
 {
     this->set_position(x,y,z);
 
@@ -88,11 +88,11 @@ void Agent_state::teleport(float x,float y,float z)
     msg.phi = s.phi;
     msg.broadcast();
 
-    t_map::t_map_manager_update_client_position(this->id, x,y);
+    t_map::t_map_manager_update_client_position(this->client_id, x,y);
     #endif
 }
 
-void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi)
+void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi)
 {
     this->set_state(x,y,z,vx,vy,vz);
     s.theta = theta;
@@ -113,16 +113,16 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     msg.phi = s.phi;
     msg.broadcast();
 
-    t_map::t_map_manager_update_client_position(this->id, x,y);
+    t_map::t_map_manager_update_client_position(this->client_id, x,y);
     #endif
 }
 
-void Agent_state::tick() 
+void Agent::tick() 
 {
     int _tc =0;
     struct Agent_control_state _cs;
 
-    while (cs[CS_seq].seq == CS_seq )
+    while (cs[CS_seq].seq == CS_seq)
     {
         _cs = cs[CS_seq];
         s = _agent_tick(_cs, box, s);
@@ -331,7 +331,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     return as;
 }
 
-void Agent_state::handle_control_state(int seq, int cs, float theta, float phi)
+void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 {
 
     //printf("cs= %i \n", seq);
@@ -406,7 +406,7 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi)
     #endif
 }
 
-void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
+void Agent::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
     #if DC_CLIENT
     state_snapshot.seq = seq;
     state_snapshot.theta = theta;
@@ -435,14 +435,14 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     #endif
 }
 
-void Agent_state::set_position(float x, float y, float z)
+void Agent::set_position(float x, float y, float z)
 {
     s.x = translate_point(x);
     s.y = translate_point(y);
     s.z = z;
 }
 
-void Agent_state::set_state(float  x, float y, float z, float vx, float vy, float vz)
+void Agent::set_state(float  x, float y, float z, float vx, float vy, float vz)
 {
     this->set_position(x,y,z);
     s.vx = vx;
@@ -450,7 +450,7 @@ void Agent_state::set_state(float  x, float y, float z, float vx, float vy, floa
     s.vz = vz;
 }
 
-void Agent_state::set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz)
+void Agent::set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz)
 {
     state_snapshot.x = translate_point(x);
     state_snapshot.y = translate_point(y);
@@ -460,14 +460,14 @@ void Agent_state::set_state_snapshot(float  x, float y, float z, float vx, float
     state_snapshot.vz = vz;
 }
 
-void Agent_state::set_angles(float theta, float phi)
+void Agent::set_angles(float theta, float phi)
 {
     s.theta = theta;
     s.phi = phi;
 }
 
 #if DC_SERVER
-void Agent_state::set_camera_state(float x, float y, float z, float theta, float phi)
+void Agent::set_camera_state(float x, float y, float z, float theta, float phi)
 {
     this->camera.x = translate_point(x);
     this->camera.y = translate_point(y);
@@ -476,9 +476,9 @@ void Agent_state::set_camera_state(float x, float y, float z, float theta, float
     this->camera.phi = phi;
 }
 
-void Agent_state::get_spawn_point(Vec3* spawn)
+void Agent::get_spawn_point(Vec3* spawn)
 {
-    Vec3 default_spawn = vec3_init(map_dim.x/2, map_dim.y/2, map_dim.z-1);
+    Vec3 default_spawn = vec3_init(t_map::map_dim.x/2, t_map::map_dim.y/2, t_map::map_dim.z-1);
 
     float fh = this->current_height();
 
@@ -516,29 +516,29 @@ void Agent_state::get_spawn_point(Vec3* spawn)
     }
 }
 
-void Agent_state::spawn_state()
+void Agent::spawn_state()
 {   // update position
     Vec3 spawn;
     this->get_spawn_point(&spawn);
     this->spawn_state(spawn);
 }
 
-void Agent_state::spawn_state(Vec3 p)
+void Agent::spawn_state(Vec3 p)
 {   // update position
     float theta = this->status.get_spawn_angle();
     teleport(p.x, p.y, p.z, 0, 0, 0, theta, 0.0f);
 }
 #endif
 
-void Agent_state::init_vox()
+void Agent::init_vox()
 {
     this->vox = new Voxel_model(&VoxDats::agent, this->id, this->type);
     this->vox->set_hitscan(true);
     this->vox->register_hitscan();
 }
 
-Agent_state::Agent_state(int id) :
-    id((AgentID)id), client_id((ClientID)id),
+Agent::Agent(AgentID id) :
+    id(id), client_id((ClientID)id),
     type(OBJECT_AGENT), status(this)
     #if DC_CLIENT
     , event(this)
@@ -554,7 +554,7 @@ Agent_state::Agent_state(int id) :
 
     CS_seq = 0;
 
-    printf("Agent_state::Agent_state, new agent, id=%i \n", id);
+    printf("Agent::Agent, new agent, id=%i \n", id);
     
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
@@ -568,35 +568,27 @@ Agent_state::Agent_state(int id) :
 
     set_angles(0.5f, 0.0f);
     set_position(0,0,-256);
-
-    this->init_vox();
 }
 
-Agent_state::~Agent_state()
+Agent::~Agent()
 {
-    #if DC_SERVER
-    agent_destroy_StoC msg;
-    msg.id = id;
-    msg.broadcast();
-    #endif
-
-    Toolbelt::remove_agent(this->id);
-
     if (this->vox != NULL) delete this->vox;
 }
 
 
-void Agent_state::revert_to_snapshot() {
+void Agent::revert_to_snapshot()
+{
     s = state_snapshot;
     CS_seq = state_snapshot.seq;
 }
 
-void Agent_state::revert_to_rollback() {
+void Agent::revert_to_rollback()
+{
     s = state_rollback;            
     CS_seq = state_rollback.seq;
 }
 
-void Agent_state::print_cs()
+void Agent::print_cs()
 {
     uint16_t cs = this->cs[this->CS_seq].cs;
     int forward     = cs & CS_FORWARD ? 1 :0;
@@ -619,17 +611,17 @@ void Agent_state::print_cs()
     printf("misc123= %d%d%d\n", misc1, misc2, misc3);
 }
 
-Agent_control_state Agent_state::get_current_control_state()
+Agent_control_state Agent::get_current_control_state()
 {
     return this->cs[(this->CS_seq-1+256)%256];
 }
 
-int Agent_state::crouched()
+int Agent::crouched()
 {
     return this->get_current_control_state().cs & CS_CROUCH;
 }
 
-float Agent_state::camera_height()
+float Agent::camera_height()
 {
     if (this->status.dead)
         return CAMERA_HEIGHT_DEAD;
@@ -638,7 +630,7 @@ float Agent_state::camera_height()
     return CAMERA_HEIGHT;
 }
 
-float Agent_state::current_height()
+float Agent::current_height()
 {
     if (this->crouched())
         return this->box.c_height;
@@ -646,54 +638,54 @@ float Agent_state::current_height()
         return this->box.b_height;
 }
 
-int Agent_state::current_height_int()
+int Agent::current_height_int()
 {
     float h = this->current_height();
     return (int)ceil(h);
 }
 
-float Agent_state::camera_z()
+float Agent::camera_z()
 {
     return this->s.z + this->camera_height();
 }
 
-Vec3 Agent_state::camera_position()
+Vec3 Agent::camera_position()
 {
     return vec3_init(this->s.x, this->s.y, this->camera_z());
 }
 
-class Voxel_volume* Agent_state::get_arm()
+class Voxel_volume* Agent::get_arm()
 {
     if (this->vox == NULL) return NULL;
     return this->vox->get_part(AGENT_PART_RARM);
 }
 
-Vec3 Agent_state::arm_center()
+Vec3 Agent::arm_center()
 {
     if (this->vox == NULL || !this->vox->was_updated)
         return this->get_center();
     return this->vox->get_part(AGENT_PART_RARM)->get_center();
 }
 
-Vec3 Agent_state::arm_forward()
+Vec3 Agent::arm_forward()
 {
     if (this->vox == NULL) return vec3_init(1,0,0);
     return this->vox->get_part(AGENT_PART_RARM)->world_matrix.vx;
 }
 
-Vec3 Agent_state::arm_right()
+Vec3 Agent::arm_right()
 {
     if (this->vox == NULL) return vec3_init(0,1,0);
     return this->vox->get_part(AGENT_PART_RARM)->world_matrix.vy;
 }
 
-Vec3 Agent_state::arm_up()
+Vec3 Agent::arm_up()
 {
     if (this->vox == NULL) return vec3_init(0,0,1);
     return this->vox->get_part(AGENT_PART_RARM)->world_matrix.vz;
 }
 
-int Agent_state::get_facing_block_type()
+int Agent::get_facing_block_type()
 {
     const float CUBE_SELECT_MAX_DISTANCE = 12.0f;
     const int z_low = 8;
@@ -728,7 +720,7 @@ int Agent_state::get_facing_block_type()
     return t_map::get(pos[0], pos[1], pos[2]);
 }
 
-bool Agent_state::point_can_cast(float x, float y, float z, float max_dist)
+bool Agent::point_can_cast(float x, float y, float z, float max_dist)
 {
     // checks if a point can raycast to some area of the agent box,
     // or if the terrain prevents it
@@ -788,19 +780,19 @@ bool Agent_state::point_can_cast(float x, float y, float z, float max_dist)
     return false;
 }
 
-bool Agent_state::in_sight_of(Vec3 source, Vec3* sink)
+bool Agent::in_sight_of(Vec3 source, Vec3* sink)
 {
     if (this->vox == NULL) return false;
     return this->vox->in_sight_of(source, sink);
 }
 
-bool Agent_state::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
+bool Agent::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
 {
     if (this->vox == NULL) return false;
     return this->vox->in_sight_of(source, sink, failure_rate);
 }
 
-void Agent_state::update_legs()
+void Agent::update_legs()
 {
     const float arc = 25.0f;    // degree
     const int peak = 37;
@@ -859,7 +851,7 @@ void Agent_state::update_legs()
         was_forward = false;
 }
 
-void Agent_state::update_model()
+void Agent::update_model()
 {
     #if DC_CLIENT
     if (this->vox == NULL) return;
@@ -950,7 +942,7 @@ void Agent_state::update_model()
     #endif
 }
 
-bool Agent_state::near_base()
+bool Agent::near_base()
 {
     Objects::Object* b = Objects::get(OBJECT_BASE, 0);
     if (b == NULL) return false;
@@ -970,7 +962,7 @@ bool Agent_state::near_base()
     return false;
 }
 
-int* Agent_state::nearest_open_block(const float max_dist, const int z_low, const int z_high)
+int* Agent::nearest_open_block(const float max_dist, const int z_low, const int z_high)
 {
     Vec3 p = this->get_camera_position();
     Vec3 f = this->forward_vector();
@@ -981,7 +973,7 @@ int* Agent_state::nearest_open_block(const float max_dist, const int z_low, cons
     return b;
 }
 
-void force_update_agent_vox(Agent_state* a)
+void force_update_agent_vox(Agent* a)
 {
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -991,11 +983,11 @@ void force_update_agent_vox(Agent_state* a)
 }
 
 // returns block type
-int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
+int Agent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
 {
     Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();
-    int tile = 0;
+    CubeID tile = NULL_CUBE;
     Hitscan::HitscanTargetTypes target = Hitscan::terrain(p.x, p.y, p.z, v.x, v.y, v.z, solid_pos, distance, side, &tile);
     if (target != Hitscan::HITSCAN_TARGET_BLOCK) return 0;
     open_pos[0] = translate_point(solid_pos[0] + side[0]);
@@ -1007,7 +999,7 @@ int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3],
 }
 
 // returns side as int
-int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], float* distance)
+int Agent::get_facing_side(int solid_pos[3], int open_pos[3], float* distance)
 {
     int s[3];
     int block = this->get_facing_side(solid_pos, open_pos, s, distance);
@@ -1016,7 +1008,7 @@ int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], float* dista
 }
 
 // returns side as int
-int Agent_state::get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance, const int z_low, const int z_high)
+int Agent::get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance, const int z_low, const int z_high)
 {
     Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();

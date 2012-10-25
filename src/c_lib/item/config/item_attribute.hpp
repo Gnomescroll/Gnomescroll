@@ -1,24 +1,31 @@
 #pragma once
 
+#include <item/common/constants.hpp>
 #include <t_map/common/constants.hpp>
 
 namespace Item
 {
-    class ItemAttribute
-    {
-        public:
-
-        ItemGroup group;
+    
+class ItemAttribute
+{
+    public:
+        bool loaded;
 
         int item_type;
-    
-        char* pretty_name;
+        ItemGroup group;
+        char name[ITEM_NAME_MAX_LENGTH+1];
+        char pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH+1];
+
+        // All items
+        int max_durability;
+        int max_stack_size;
+        int sprite;
 
         //IG_PLACER
-        int block_type_id;   //id of block type that it creates
+        CubeID cube_id;   //id of block type that it creates
 
         //IG_MECH_PLACER_PLAYER
-        int mech_type_id;
+        MechType mech_type;
 
         //IG_HITSCAN_WEAPON
         int hitscan_fire_cooldown;      // ms per bullet
@@ -32,21 +39,16 @@ namespace Item
         // weapons
         float firing_range;
         int firing_rate;
-        int block_damage[t_map::MAX_CUBES];
+        int block_damage[MAX_CUBES];
 
         int object_damage;       // if this is nonzero it will be used, otherwise randrange will be used
         int object_damage_min;  // for randrange(min,max);
         int object_damage_max;
-    
-    
-        // All items
-        int max_durability;
-        int max_stack_size;
 
         // particle rendering
         bool particle_voxel;
         int particle_voxel_texture;
-    
+
         // health
         unsigned int repair_agent_amount;
 
@@ -55,60 +57,62 @@ namespace Item
         
         bool fuel;
         int fuel_burn_rate; // in ticks
-    
+
         ItemContainerType container_type;
 
-        int cube_height;
+        int cube_height;    // if the item occupies space, the height it occupies in cubes
 
         // animation
         int animation_id;
 
-        ItemAttribute()
+    ItemAttribute() :
+        loaded(false), item_type(NULL_ITEM_TYPE), group(IG_NONE)
+    {}
+
+    void load_defaults(int item_type, ItemGroup group)
+    {
+        // PUT ALL DEFAULTS HERE
+        this->group = group;
+        this->item_type = item_type;
+
+        memset(this->name, 0, sizeof(this->name));
+        memset(this->pretty_name, 0, sizeof(this->pretty_name));
+        cube_id = NULL_CUBE;
+        mech_type = NULL_MECH_TYPE;
+
+        max_durability = NULL_DURABILITY;
+        max_stack_size = 1;
+        sprite = ERROR_SPRITE;
+        particle_voxel = false;
+        particle_voxel_texture = 0;
+        firing_range = DEFAULT_FIRING_RANGE;
+        firing_rate = 6;
+        // match defaults with fist
+        for (int i=0; i<MAX_CUBES; i++)
         {
-            this->item_type = NULL_ITEM_TYPE;
-            this->group = IG_NONE;
+            if (!t_map::isInUse((CubeID)i)) continue;
+            if (t_map::get_cube_material((CubeID)i) == CUBE_MATERIAL_DIRT)
+                this->block_damage[i] = 2;
+            else
+            if (t_map::get_cube_material((CubeID)i) == CUBE_MATERIAL_DECORATION)
+                this->block_damage[i] = 4;
+            else
+                this->block_damage[i] = 1;
         }
+        
+        object_damage = 0;
+        object_damage_min = 5;
+        object_damage_max = 10;
+        repair_agent_amount = 0;
+        container_type = CONTAINER_TYPE_NONE;
+        gas = false;
+        gas_lifetime = NULL_GAS_LIFETIME;
+        fuel = false;
+        fuel_burn_rate = 30;
+        cube_height = 0;
+        animation_id = 0;
+        loaded = false;
+    }
+};
 
-        void load_defaults(int item_type, ItemGroup group)
-        {
-            // PUT ALL DEFAULTS HERE
-            this->group = group;
-            this->item_type = item_type;
-
-            block_type_id = -1; // error value
-            mech_type_id = -1;  // error value
-
-            pretty_name = NULL;
-            max_durability = NULL_DURABILITY;
-            max_stack_size = 1;
-            particle_voxel = false;
-            particle_voxel_texture = 0;
-            firing_range = DEFAULT_FIRING_RANGE;
-            firing_rate = 6;
-            // match defaults with fist
-            for (int i=0; i<t_map::MAX_CUBES; i++)
-            {
-                if (t_map::get_cube_material(i) == CUBE_MATERIAL_DIRT)
-                    this->block_damage[i] = 2;
-                else
-                if (t_map::get_cube_material(i) == CUBE_MATERIAL_DECORATION)
-                    this->block_damage[i] = 4;
-                else
-                    this->block_damage[i] = 1;
-            }
-            
-            object_damage = 0;
-            object_damage_min = 5;
-            object_damage_max = 10;
-            repair_agent_amount = 0;
-            container_type = CONTAINER_TYPE_NONE;
-            gas = false;
-            gas_lifetime = NULL_GAS_LIFETIME;
-            fuel = false;
-            fuel_burn_rate = 30;
-            cube_height = 0;
-            animation_id = 0;
-        }
-    };
-
-}
+}   // Item

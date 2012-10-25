@@ -12,6 +12,10 @@
     #define GS_AWESOMIUM 1
 #endif
 
+#ifdef GS_SERIALIZER
+dont_define_gs_serializer_in_client
+#endif
+
 #ifdef DC_SERVER
 dont_include_this_file_in_server
 #endif
@@ -133,7 +137,7 @@ dont_include_this_file_in_server
 #include <camera/skybox/skybox.cpp>
 
 /* Agents */
-#include <agent/agent_include.h>
+#include <agent/_include.hpp>
 
 /* animations */
 #include <animations/_include.hpp>
@@ -193,10 +197,6 @@ dont_include_this_file_in_server
 
 /* Awesomium */
 #include <SDL/awesomium/_include.hpp>
-
-/* client side map gen / utils */
-//#include <map_gen/hopcroft-karp.cpp>
-//#include <map_gen/dragon.cpp>
 
 #include <state/client_state.cpp>
 #include <state/packet_init.cpp>
@@ -289,7 +289,8 @@ int init_c_lib(int argc, char* argv[])
     update_camera_settings(Options::view_distance);
     
     srand((unsigned int)time(NULL));   // seed the RNG
-    
+
+    Agents::init();
     ClientState::init_lists();
 
     Components::init();
@@ -430,13 +431,16 @@ void close_c_lib()
     t_map::teardown_shader();
 
     if (TEARDOWN_DEBUG) printf("particle teardown particles\n");
-    Particle::teardown_particles(); // teardown after ClientState::agent_list, because of billboard particle
+    Particle::teardown_particles(); // teardown after Agents::agent_list, because of billboard particle
 
     if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
     t_mob::teardown();
 
-    if (TEARDOWN_DEBUG) printf("client state list teardown\n");
-    ClientState::teardown_lists();
+    if (TEARDOWN_DEBUG) printf("Agent list teardown\n");
+    Agents::teardown();
+
+    if (TEARDOWN_DEBUG) printf("Voxels list teardown\n");
+    ClientState::teardown_voxel_lists();
 
     if (TEARDOWN_DEBUG) printf("item teardown\n");
     Item::teardown();

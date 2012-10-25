@@ -21,25 +21,23 @@
 
 const int VOXEL_MODEL_RESTORE_WAIT = 30 * 10; // ~ once every 10 seconds
 
-Agent_status::Agent_status(Agent_state* a)
-:
-a(a),
-voxel_model_restore_throttle(0),
-health(AGENT_HEALTH),
-should_die(false),
-dead(true),
-respawn_countdown(RESPAWN_TICKS),
-spawner(BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
-kills(0),
-deaths(0),
-suicides(0),
-slime_kills(0),
-health_max(AGENT_HEALTH),
-vox_crouched(false),
-lifetime(0),
-color_chosen(false)
+Agent_status::Agent_status(Agent* a) :
+    a(a),
+    voxel_model_restore_throttle(0),
+    health(AGENT_HEALTH),
+    should_die(false),
+    dead(true),
+    respawn_countdown(RESPAWN_TICKS),
+    spawner(BASE_SPAWN_ID),
+    kills(0),
+    deaths(0),
+    suicides(0),
+    slime_kills(0),
+    health_max(AGENT_HEALTH),
+    vox_crouched(false),
+    lifetime(0),
+    color(AGENT_DEFAULT_COLOR)
 {
-    color.r=color.g=color.b=48;
     this->name[0] = '\0';
 }
 
@@ -49,22 +47,24 @@ Agent_status::~Agent_status()
 
 void Agent_status::set_spawner(int pt)
 {
-    GS_ASSERT(pt == BASE_SPAWN_ID || (pt >= 0 && pt <= 0xffff));
+    ASSERT_VALID_SPAWNER_ID(pt);
+    IF_INVALID_SPAWNER_ID(pt) return;
+
     if (pt == this->spawner) return;
     this->spawner = pt;
+
     #if DC_SERVER
-    set_spawner_StoC msg;
-    msg.spawner_id = pt;
-    msg.sendToClient(this->a->id);
-
-    // play sound
-    
-    if (pt == BASE_SPAWN_ID) return;    // dont play sound for base
-
     class Objects::Object* spawner = Objects::get(OBJECT_AGENT_SPAWNER, pt);
-    GS_ASSERT(spawner != NULL);
+    // don't assert, the deserializer will trigger it regularly
     if (spawner == NULL) return;
 
+    set_spawner_StoC msg;
+    msg.spawner_id = pt;
+    msg.sendToClient(this->a->client_id);
+
+    if (pt == BASE_SPAWN_ID) return;    // dont play sound for base
+
+    // play sound
     // only send the sound if its not the base spawner set
     struct Vec3 pos;
     using Components::VoxelModelComponent;
@@ -96,49 +96,55 @@ void Agent_status::identify(const char* name)
 void Agent_status::broadcast_color()
 {
     agent_color_StoC msg;
-    msg.r = this->color.r;
-    msg.g = this->color.g;
-    msg.b = this->color.b;
     msg.agent_id = this->a->id;
+    msg.color = this->color;
     msg.broadcast();
 }
 
-void Agent_status::send_color(int client_id)
+void Agent_status::send_color(ClientID client_id)
 {
     agent_color_StoC msg;
-    msg.r = this->color.r;
-    msg.g = this->color.g;
-    msg.b = this->color.b;
     msg.agent_id = this->a->id;
+    msg.color = this->color;
     msg.sendToClient(client_id);
 }
 #endif
 
-void Agent_status::set_color(struct Color color)
+bool Agent_status::set_color(struct Color color)
 {
-    if (this->color_chosen && colors_equal(color, this->color)) return;
+    if (!this->set_color_silent(color)) return false;
+    #if DC_SERVER
+    this->broadcast_color();
+    #endif
+    return true;
+}
+
+// does not broadcast the change (useful for the deserializer) 
+bool Agent_status::set_color_silent(struct Color color)
+{
+    if (colors_equal(color, this->color)) return false;
+
+    if (!color.r && !color.g && !color.b) color = color_init(1,1,1); // dont allow 0,0,0 (interpreted as empty voxel)
         
     this->color = color;
-    this->color_chosen = true;
     
     #if DC_CLIENT
     this->a->event.color_changed = true;
     #endif
 
-    #if DC_SERVER
-    this->broadcast_color();
-    #endif
-
-    // TODO -- REMOVE THIS HACK
+    // TODO -- REMOVE THIS HACK. have to fix something in the voxel color render pipeline
+    // previous attempt failed -- not worth fixing for now
     // somewhere, somehow, 255 is rolling over
     // to 0 by the time it is rendered
-    if (color.r == 255) color.r = 254;
-    if (color.g == 255) color.g = 254;
-    if (color.b == 255) color.b = 254;
+    if (color.r == 255) this->color.r = 254;
+    if (color.g == 255) this->color.g = 254;
+    if (color.b == 255) this->color.b = 254;
     
     #if DC_SERVER
     this->a->vox->fill_color(this->color);
     #endif
+
+    return true;
 }
 
 void Agent_status::set_name(const char* name)
@@ -206,7 +212,7 @@ void Agent_status::send_health_msg()
     health_msg.broadcast();
 }
 
-void Agent_status::send_health_msg(int client_id)
+void Agent_status::send_health_msg(ClientID client_id)
 {
     agent_health_StoC health_msg;
     health_msg.id = a->id;
@@ -214,7 +220,7 @@ void Agent_status::send_health_msg(int client_id)
     health_msg.sendToClient(client_id);
 }
 
-int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id)
+int Agent_status::apply_damage(int dmg, AgentID inflictor_id, ObjectType inflictor_type, int part_id)
 {
     if (!Options::pvp)
     {   // dont allow player kills
@@ -237,7 +243,7 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_t
     return health;
 }
 
-int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type)
+int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type)
 {
     int dmg = 0;
 
@@ -268,7 +274,7 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
-int Agent_status::apply_mining_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type)
+int Agent_status::apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type)
 {
     int dmg = 0;
 
@@ -368,18 +374,18 @@ bool Agent_status::die()
     return true;
 }
 
-bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
+bool Agent_status::die(AgentID inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
 {
     bool killed = this->die();
     if (!killed) return false;
     
-    Agent_state* attacker;
+    Agent* attacker;
     //Turret* turret;
     switch (inflictor_type)
     {
         case OBJECT_GRENADE:
         case OBJECT_AGENT:
-            attacker = STATE::agent_list->get(inflictor_id);
+            attacker = Agents::get_agent(inflictor_id);
             if (attacker != NULL)
                 attacker->status.kill(this->a->id);
             break;
@@ -390,12 +396,12 @@ bool Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMe
         //case OBJECT_TURRET:
             //turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
             //if (turret == NULL) break;
-            //attacker = STATE::agent_list->get(turret->get_owner());
+            //attacker = Agents::get_agent(turret->get_owner());
             //if (attacker != NULL)
                 //attacker->status.kill(this->a->id);
             //break;
         default:
-            //printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
+            //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
             break;
     }
 
@@ -456,7 +462,7 @@ void Agent_status::kill_slime()
     this->slime_kills++;
 }
 
-void Agent_status::send_scores(int client_id)
+void Agent_status::send_scores(ClientID client_id)
 {
     AgentKills_StoC ak;
     ak.id = a->id;

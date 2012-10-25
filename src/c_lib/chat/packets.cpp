@@ -6,8 +6,9 @@
 inline void ChatMessage_StoC::handle()
 {
     if (sender != CHAT_SENDER_SYSTEM)
-    {
-        Agent_state *a = ClientState::agent_list->get(sender);
+    {   // ignore agents we don't know about
+        AgentID agent_id = NetClient::get_agent_id_for_client((ClientID)this->sender);
+        Agent *a = Agents::get_agent(agent_id);
         if (a == NULL) return;
     }
 
@@ -18,7 +19,7 @@ inline void ChatMessage_StoC::handle()
     }
 
     msg[CHAT_MESSAGE_SIZE_MAX] = '\0';
-    chat_client->received_message(channel, sender, msg);
+    chat_client->received_message(channel, (ClientID)this->sender, msg);
 }
 
 inline void ChatMessage_CtoS::handle(){}
@@ -30,7 +31,7 @@ inline void ChatMessage_CtoS::handle(){}
 
 inline void ChatMessage_CtoS::handle()
 {
-    Agent_state* a = NetServer::agents[client_id];
+    Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
 
     msg[CHAT_MESSAGE_SIZE_MAX] = '\0';

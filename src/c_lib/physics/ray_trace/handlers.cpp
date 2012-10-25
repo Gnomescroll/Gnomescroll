@@ -1,48 +1,40 @@
 #include "handlers.hpp"
 
-#if DC_CLIENT
-#include <state/client_state.hpp>
-#endif
-#if DC_SERVER
-#include <state/server_state.hpp>
-#endif
 #include <agent/agent.hpp>
 #include <entity/network/packets.hpp>
+#include <agent/_interface.hpp>
 
 namespace Hitscan
 {
 
-Agent_state* lock_agent_target(
+Agent* lock_agent_target(
     Vec3 firing_position, Vec3* firing_direction,
     const float range, const float failure_rate, const bool random)
 {
     // find agents in range
-    using STATE::agent_list;
+    using Agents::agent_list;
     agent_list->objects_within_sphere(firing_position.x, firing_position.y, firing_position.z, range);
     if (!agent_list->n_filtered) return NULL;
 
-    //printf("found %d agents in range\n", agent_list->n_filtered);
-
-    //int chosen[agent_list->n_filtered];
-    MALLOX(int, chosen, agent_list->n_filtered); //type, name, size
+    MALLOX(unsigned int, chosen, agent_list->n_filtered); //type, name, size
 
     if (random)
     {
-        for (int i=0; i<agent_list->n_filtered; i++)
+        for (unsigned int i=0; i<agent_list->n_filtered; i++)
             chosen[i] = i;
-        shuffle_int_array(chosen, agent_list->n_filtered);  // randomize
+        shuffle<unsigned int>(chosen, agent_list->n_filtered);  // randomize
     }
     
-    Agent_state* agent = NULL;
+    Agent* agent = NULL;
     Vec3 sink;
-    int i=0;
+    unsigned int i=0;
     for (i=0; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         if (random)
             agent = agent_list->filtered_objects[chosen[i]];
         else
             agent = agent_list->filtered_objects[i];
-        if (agent->status.dead || agent == NULL) continue;
+        if (agent->id == agent_list->null_id || agent->status.dead) continue;
         if (agent->in_sight_of(firing_position, &sink, failure_rate))
         {
             *firing_direction = vec3_sub(sink, firing_position);
@@ -53,19 +45,19 @@ Agent_state* lock_agent_target(
     return agent;
 }
 
-Agent_state* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, const float range)
+Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, const float range)
 { // find agents in range
-    using STATE::agent_list;
+    using Agents::agent_list;
     agent_list->objects_within_sphere(firing_position.x, firing_position.y, firing_position.z, range);
 
     if (!agent_list->n_filtered) return NULL;
 
-    Agent_state* agent = NULL;
-    int i=0;
+    Agent* agent = NULL;
+    unsigned int i=0;
     for (i=0; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         agent = agent_list->filtered_objects[i];
-        if (agent == NULL) continue;
+        if (agent->id == agent_list->null_id) continue;
         *firing_direction = vec3_sub(agent->get_position(), firing_position);
         break;
     }
@@ -75,14 +67,14 @@ Agent_state* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, con
 
 HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, ObjectType type,
-    Agent_state* agent, const float range)
+    Agent* agent, const float range)
 { // hitscan vector against world
     class Voxel_hitscan_target target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
     int side[3];
-    int tile;
+    CubeID tile = EMPTY_CUBE;
     float block_distance;
     HitscanTargetTypes
     target_type = hitscan_against_world(
@@ -137,7 +129,7 @@ HitscanTarget shoot_at_agent(
 void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
 {
     #if DC_SERVER
-    Agent_state* agent;
+    Agent* agent;
     switch (t.hitscan)
     {
         case HITSCAN_TARGET_BLOCK:
@@ -151,7 +143,7 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
         case HITSCAN_TARGET_VOXEL:
             if (t.type == OBJECT_AGENT)
             {
-                agent = STATE::agent_list->get(t.id);
+                agent = Agents::get_agent((AgentID)t.id);
                 if (agent == NULL) break;
                 if (agent->status.lifetime > p.agent_protection_duration
                   && !agent->near_base())
@@ -160,9 +152,7 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
                     int dmg = 0;
                     if (p.agent_damage_min <= p.agent_damage_max)
                         dmg = randrange(p.agent_damage_min, p.agent_damage_max);
-                    agent->status.apply_damage(
-                        dmg, p.id, p.type, t.part
-                    );
+                    agent->status.apply_damage(dmg, (AgentID)p.id, p.type, t.part);
                 }
             }
             break;

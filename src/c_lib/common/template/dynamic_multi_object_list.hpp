@@ -56,6 +56,11 @@ class DynamicMultiObjectList
         void where();
         void print_members();
 
+        void print()
+        {
+            printf("%s list instantiated at %p\n", this->name(), this);
+        }
+
         // initialize with pointer to creator
         DynamicMultiObjectList(Object_interface* (*create_interface)(int, int)); //default constructor
         virtual ~DynamicMultiObjectList(); //default deconstructor

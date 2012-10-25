@@ -5,18 +5,22 @@
 namespace t_mech
 {
     
-extern struct MECH_ATTRIBUTE* mech_attribute;   //index from type to attributes
+extern class MechAttribute* mech_attributes;   //index from type to attributes
 
 void init_properties();
 void tear_down_properties();
 
-//name
-void set_mech_name(int type, const char* name);
-const char* get_mech_name(int type);
+class MechAttribute* get_mech_attribute(MechType mech_type);
 
-int get_mech_type_id(const char* name);
-int dat_get_mech_type_id(const char* name);
+const char* get_mech_name(MechType type);
+bool is_valid_mech_name(const char* name);
 
-struct MECH_ATTRIBUTE* get_mech_attribute(int mech_type);
+MechType get_mech_type(const char* name);
+MechType get_compatible_mech_type(const char* name);    // for serializer
+
+MechClass get_mech_class(MechType mech_type);
+int get_mech_render_type(MechType mech_type);
+
+bool get_mech_type_in_use(MechType mech_type);
 
 }   // t_mech

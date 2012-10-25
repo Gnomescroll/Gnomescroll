@@ -5,9 +5,9 @@ namespace Animations
 
 #if DC_CLIENT
 
-extern class HitscanEffect_list* hitscan_effect_list;
-extern class MiningLaserEffect_list* mining_laser_effect_list;
-extern class Insect_mob_list* insect_mob_list;
+extern class HitscanEffectList* hitscan_effect_list;
+extern class MiningLaserEffectList* mining_laser_effect_list;
+extern class InsectMobList* insect_mob_list;
 
 void animations_tick();
 
@@ -25,7 +25,7 @@ void mining_laser_beam(Vec3 position, Vec3 orientation, float length);
 #endif
 
 #if DC_SERVER
-void send_play_animation(const char* name, int client_id, struct Vec3 position);
+void send_play_animation(const char* name, ClientID client_id, struct Vec3 position);
 void broadcast_play_animation(const char* name, struct Vec3 position);
 #endif
 
