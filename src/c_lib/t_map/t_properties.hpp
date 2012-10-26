@@ -8,6 +8,18 @@
 namespace t_map
 {
 
+struct FastCubeProperties 
+{
+    bool active;
+    bool solid;
+    bool occludes;
+    bool transparent;
+    bool item_drop;
+    bool item_container;
+    bool reserved7;
+    bool reserved8;
+};
+
 class CubeProperties 
 {
     public:
@@ -20,7 +32,7 @@ class CubeProperties
         bool item_drop;       // does block drop items
         bool item_container;  // inventory and crafting bench blocks
 
-        bool magic;  // Brandon's special flag
+        bool active;  // Brandon's special flag
 
         CubeMaterial material;
 
@@ -43,7 +55,7 @@ class CubeProperties
         this->item_container = false;
         this->material = material;
 
-        this->magic = true;
+        this->active = true;
 
         this->material = CUBE_MATERIAL_NONE;
 
@@ -56,6 +68,7 @@ class CubeProperties
 };
 
 extern class CubeProperties* cube_properties;
+extern struct FastCubeProperties* fast_cube_properties;
 
 void init_t_properties();
 void end_t_properties();
@@ -81,7 +94,7 @@ inline bool isInUse(CubeID id) __attribute((always_inline));
 
 inline bool isSolid(CubeID id) __attribute((always_inline));
 inline bool isOccludes(CubeID id) __attribute((always_inline));
-inline bool isMagic(CubeID id) __attribute((always_inline));
+inline bool isActive(CubeID id) __attribute((always_inline));
 inline bool isTransparent(CubeID id) __attribute((always_inline));
 inline bool isItemContainer(CubeID id) __attribute((always_inline));
 inline unsigned char maxDamage(CubeID id) __attribute((always_inline));
@@ -90,7 +103,7 @@ inline unsigned char maxDamage(CubeID id) __attribute((always_inline));
 
 inline bool isSolid(int x, int y, int z) __attribute((always_inline));
 inline bool isOccludes(int x, int y, int z) __attribute((always_inline));
-inline bool isMagic(int x, int y, int z) __attribute((always_inline));
+inline bool isActive(int x, int y, int z) __attribute((always_inline));
 inline bool isItemContainer(int x, int y, int z) __attribute((always_inline));
 inline unsigned char maxDamage(int x, int y, int z) __attribute((always_inline));
 

@@ -5,12 +5,15 @@
 namespace t_map
 {
 
+struct FastCubeProperties* fast_cube_properties = NULL;
 class CubeProperties* cube_properties = NULL;
 
 void init_t_properties()
 {
     GS_ASSERT(cube_properties == NULL);
     cube_properties = new class CubeProperties[MAX_CUBES];
+    GS_ASSERT(fast_cube_properties == NULL);
+    fast_cube_properties = (struct FastCubeProperties*)calloc(MAX_CUBES, sizeof(struct FastCubeProperties));
 }
 
 void end_t_properties()
@@ -90,35 +93,33 @@ bool isInUse(CubeID id)
 }
 
 bool isSolid(CubeID id) 
-{
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return false;
-    return t_map::cube_properties[id].solid;
+{   // make sure you don't call this with a cube out of range
+    return t_map::fast_cube_properties[id].solid;
 }
 
 bool isOccludes(CubeID id) 
 {
     // don't check id because this shouldnt be used publicly
-    return t_map::cube_properties[id].occludes;
+    return t_map::fast_cube_properties[id].occludes;
 }
 
-bool isMagic(CubeID id)
+bool isActive(CubeID id)
 {
     // don't check id because this shouldnt be used publicly
-    return t_map::cube_properties[id].magic;
+    return t_map::fast_cube_properties[id].active;
 }
 
 bool isTransparent(CubeID id)
 {
     // don't check id because this shouldnt be used publicly
-    return t_map::cube_properties[id].transparent;
+    return t_map::fast_cube_properties[id].transparent;
 }
 
 bool isItemContainer(CubeID id)
 {
     ASSERT_VALID_CUBE_ID(id);
     IF_INVALID_CUBE_ID(id) return false;
-    return t_map::cube_properties[id].item_container;
+    return t_map::fast_cube_properties[id].item_container;
 }
 
 unsigned char maxDamage(CubeID id) 
@@ -130,22 +131,22 @@ unsigned char maxDamage(CubeID id)
 
 bool isSolid(int x, int y, int z)
 {
-    return t_map::cube_properties[t_map::get(x,y,z)].solid;
+    return t_map::fast_cube_properties[t_map::get(x,y,z)].solid;
 }
 
 bool isOccludes(int x, int y, int z)
 {
-    return t_map::cube_properties[t_map::get(x,y,z)].occludes;
+    return t_map::fast_cube_properties[t_map::get(x,y,z)].occludes;
 }
 
-bool isMagic(int x, int y, int z)
+bool isActive(int x, int y, int z)
 {
-    return t_map::cube_properties[t_map::get(x,y,z)].magic;
+    return t_map::fast_cube_properties[t_map::get(x,y,z)].active;
 }
 
 bool isItemContainer(int x, int y, int z)
 {
-    return t_map::cube_properties[t_map::get(x,y,z)].item_container;
+    return t_map::fast_cube_properties[t_map::get(x,y,z)].item_container;
 }
 
 unsigned char maxDamage(int x, int y, int z)

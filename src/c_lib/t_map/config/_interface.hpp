@@ -59,7 +59,7 @@ static void cube_def(CubeID id, CubeType type, const char* name, CubeMaterial ma
         case EmptyCube:
             p->solid = false;
             p->occludes = false;
-            p->magic = false;
+            p->active = false;
             break;
 
         case ItemContainerCube:
@@ -100,11 +100,27 @@ void cube_def_error(const char* name)
     cube_def(ERROR_CUBE, ErrorCube, name, CUBE_MATERIAL_NONE);
 }
 
+static void copy_cube_properties(class CubeProperties* a, struct FastCubeProperties* b)
+{
+    b->active = a->active;
+    b->solid = a->solid;
+    b->occludes = a->occludes;
+    b->transparent = a->transparent;
+    b->item_drop = a->item_drop;
+    b->item_container = a->item_container;
+}
+
 void end_cube_def()
 {
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
     _finish_cube();
+
+    // copy CubeProperties data to fast cube properties
+    for (int i=0; i<MAX_CUBES; i++)
+        if (cube_properties[i].in_use)
+            copy_cube_properties(&cube_properties[i], &fast_cube_properties[i]);
+    
     #if DC_CLIENT
     TextureSheetLoader::save_cube_texture();
     #endif

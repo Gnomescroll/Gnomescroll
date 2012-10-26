@@ -145,7 +145,7 @@ inline int _is_occluded_transparent(int x,int y,int z, int side_num, CubeID _cub
 
     CubeID cube_id =  t_map::get(x,y,z);
     if (cube_id == _cube_id) return 1;
-    return isMagic(cube_id);
+    return isActive(cube_id);
 }
 
 #define AO_DEBUG 0
@@ -578,7 +578,7 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                 struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z); //faster
                 CubeID cube_id = (CubeID)element.block;
 
-                if( !isMagic(cube_id) ) continue;
+                if( !isActive(cube_id) ) continue;
 
                 if( !isTransparent(cube_id) )
                 {
