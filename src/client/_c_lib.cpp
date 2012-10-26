@@ -319,6 +319,9 @@ int init_c_lib(int argc, char* argv[])
     Item::init();
     ItemContainer::init();
 
+    t_map::init_t_map();
+    t_map::init_for_draw();
+
     // DAT LOADING
     // HIGHLY ORDER SENSTITIVE
     Item::init_properties();
@@ -343,8 +346,7 @@ int init_c_lib(int argc, char* argv[])
     Toolbelt::init();   // toolbelt init depends on item dat being loaded
     TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
     TextureSheetLoader::init_item_texture();
-    t_map::init_t_map();
-    t_map::init_for_draw();
+    TextureSheetLoader::save_item_texture();
 
     t_mech::init();
 

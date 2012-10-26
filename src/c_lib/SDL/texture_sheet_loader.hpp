@@ -54,8 +54,6 @@ void teardown_item_texture();
 
 void teardown();
 
-}   // TextureSheetLoader
-
 //cube texture sheet api
 int load_cube_texture_sheet(const char* filename);
 int blit_cube_texture(int sheet_id, int source_x, int source_y);
@@ -66,3 +64,5 @@ int load_item_texture_sheet(const char* filename);
 int load_item_texture_sheet(struct SDL_Surface* surface);
 int blit_item_texture(int sheet_id, int source_x, int source_y);
 void save_item_texture();
+
+}   // TextureSheetLoader

@@ -284,48 +284,45 @@ void teardown()
     teardown_item_texture();
 }
 
-}   // TextureSheetLoader
-
-
 int load_cube_texture_sheet(const char* filename)
 {
-    return TextureSheetLoader::CubeTextureSheetLoader->load_texture(filename);
+    return CubeTextureSheetLoader->load_texture(filename);
 }
 
 int blit_cube_texture(int sheet_id, int source_x, int source_y)
 {
-    return TextureSheetLoader::CubeTextureSheetLoader->blit(sheet_id, source_x, source_y);
+    return CubeTextureSheetLoader->blit(sheet_id, source_x, source_y);
 }
 
 void save_cube_texture()
 {
-    save_surface_to_png(TextureSheetLoader::CubeSurface, "./screenshot/cubes.png");
+    save_surface_to_png(CubeSurface, "./screenshot/cubes.png");
 }
 
 //Item API
 int load_item_texture_sheet(const char* filename)
 {
-    return TextureSheetLoader::ItemTextureSheetLoader->load_texture(filename);
+    return ItemTextureSheetLoader->load_texture(filename);
 }
 
 int load_item_texture(struct SDL_Surface* surface)
 {
-    return TextureSheetLoader::ItemTextureSheetLoader->load_texture_from_surface(surface);
+    return ItemTextureSheetLoader->load_texture_from_surface(surface);
 }
 
 int blit_item_texture(int sheet_id, int source_x, int source_y)
 {
-    return TextureSheetLoader::ItemTextureSheetLoader->blit(sheet_id, source_x, source_y);
+    return ItemTextureSheetLoader->blit(sheet_id, source_x, source_y);
 }
 
 void save_item_texture()
 {
-    GS_ASSERT(TextureSheetLoader::ItemSurface != NULL);
-    GS_ASSERT(TextureSheetLoader::GreyScaleItemSurface != NULL);
-    if (TextureSheetLoader::ItemSurface != NULL)
-        save_surface_to_png(TextureSheetLoader::ItemSurface, "./screenshot/items.png");
-    if (TextureSheetLoader::GreyScaleItemSurface != NULL)
-        save_surface_to_png(TextureSheetLoader::GreyScaleItemSurface, "./screenshot/greyscale_items.png");
+    GS_ASSERT(ItemSurface != NULL);
+    GS_ASSERT(GreyScaleItemSurface != NULL);
+    if (ItemSurface != NULL)
+        save_surface_to_png(ItemSurface, "./screenshot/items.png");
+    if (GreyScaleItemSurface != NULL)
+        save_surface_to_png(GreyScaleItemSurface, "./screenshot/greyscale_items.png");
 }
 
-
+}   // TextureSheetLoader
