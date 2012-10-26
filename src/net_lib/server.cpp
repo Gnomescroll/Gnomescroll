@@ -208,7 +208,8 @@ void check_client_authorizations()
     GS_ASSERT(pool != NULL);
     GS_ASSERT(staging_pool != NULL);
     if (pool == NULL || staging_pool == NULL) return;
-    
+
+    time_t now = utc_now();
     for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
     {
         NetPeerManager* pm = clients[i];
@@ -222,7 +223,7 @@ void check_client_authorizations()
         // remove peers who have authorized and it has expired,
         // or who have failed to authorize within a connection time limit
         DisconnectType disconnect_code = DISCONNECT_NONE;
-        if (pm->authorization_expired())
+        if (pm->authorization_expired(now))
             disconnect_code = DISCONNECT_AUTH_EXPIRED;
         else
         if (pm->failed_to_authorize())

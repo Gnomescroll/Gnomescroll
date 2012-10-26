@@ -251,9 +251,9 @@ bool NetPeerManager::failed_to_authorize()
         difftime(utc_now(), connection_time) >= Auth::AUTHORIZATION_TIMEOUT);
 }
 
-bool NetPeerManager::authorization_expired()
+bool NetPeerManager::authorization_expired(time_t now)
 {
-    return (this->authorized && difftime(utc_now(), this->auth_expiration) >= 0);
+    return (this->authorized && difftime(now, this->auth_expiration) >= 0);
 }
 
 void NetPeerManager::failed_authorization_attempt()

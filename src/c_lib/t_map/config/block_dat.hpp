@@ -25,7 +25,6 @@ namespace t_map
 
 void load_block_dat()
 {
-
     int t0 = texture_alias("media/sprites/terrain/t00.png");
     int t1 = texture_alias("media/sprites/terrain/t01.png");
     int t2 = texture_alias("media/sprites/terrain/t02.png");
@@ -79,7 +78,7 @@ void load_block_dat()
     push_texture();
     hud_def(1,4, t0,2,3);
 
-    cube_def(ItemContainerCube, "storage_block_small");
+    cube_def_container("storage_block_small", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
     iso_texture(t1, 13,4);
     side_texture(T, t1, 1,3);
     side_texture(B, t1, 1,3);
@@ -87,7 +86,7 @@ void load_block_dat()
     push_oriented_texture();
     set_max_damage(128);
 
-    cube_def(ItemContainerCube, "crafting_bench_basic");
+    cube_def_container("crafting_bench_basic", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
     iso_texture(t1, 3,4);
     side_texture(T, t1, 2,5);
     side_texture(B, t1, 3,6);
@@ -95,7 +94,7 @@ void load_block_dat()
     push_oriented_texture();
     set_max_damage(128);
 
-    cube_def(ItemContainerCube, "smelter_basic");
+    cube_def_container("smelter_basic", CONTAINER_TYPE_SMELTER_ONE);
     iso_texture(t1, 14,2);
     side_texture(T, t1, 14,2);
     side_texture(B, t1, 14,2);
@@ -105,7 +104,7 @@ void load_block_dat()
     push_oriented_texture();
     set_max_damage(128);
 
-    cube_def(ItemContainerCube, "cryofreezer_small");
+    cube_def_container("cryofreezer_small", CONTAINER_TYPE_CRYOFREEZER_SMALL);
     iso_texture(t1, 14,5);
     side_texture(T, t1, 14,6);
     side_texture(B, t1, 14,6);
@@ -113,7 +112,7 @@ void load_block_dat()
     push_oriented_texture();
     set_max_damage(128);
 
-    cube_def(ItemContainerCube, "crusher");
+    cube_def_container("crusher", CONTAINER_TYPE_CRUSHER);
     iso_texture(t1, 11,7);
     side_texture(T, t1, 11,5);
     side_texture(B, t1, 11,5);

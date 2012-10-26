@@ -479,6 +479,8 @@ void verify_item_dat()
         #if DC_CLIENT
         GS_ASSERT_ABORT(a->group == IG_ERROR || a->particle_voxel || a->sprite != ERROR_SPRITE);
         #endif
+
+        GS_ASSERT_ABORT(a->cube_id == NULL_CUBE || t_map::isValidCube(a->cube_id));
         
         if (a->group == IG_ERROR) errct++;
     }
@@ -495,6 +497,7 @@ void verify_item_dat()
         GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
         GS_ASSERT_ABORT(a->sprite == ERROR_SPRITE || a->sprite != b->sprite);
         GS_ASSERT_ABORT(a->item_type != b->item_type);
+        GS_ASSERT_ABORT(a->cube_id == NULL_CUBE || a->cube_id != b->cube_id);
     }
 }
 

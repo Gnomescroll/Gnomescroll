@@ -815,31 +815,26 @@ inline void ThrowGrenade_CtoS::handle()
 
 inline void agent_set_block_CtoS::handle()
 {
-    // comparisons not needed due to value range of data type
-    //if (z < 0 || z >= t_map::map_dim.z) return;
-    //if (z == 0) return;     // dont set bottom layer
+    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    if (z == 0) return;     // no floor
 
     Agent* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    if (a == NULL || a->status.dead) return;
 
     // fire block applier
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
+    GS_ASSERT(attr != NULL);
+    if (attr == NULL) return;
     CubeID cube_id = attr->cube_id;
 
-    if (!t_map::isValidCube(cube_id)) return;
-    
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
 
     x = translate_point(x);
     y = translate_point(y);
-    z = clamp_z(z);
 
     // dont set on existing block
     if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
@@ -851,11 +846,12 @@ inline void agent_set_block_CtoS::handle()
         collides = true;
     else
     {
-        for (unsigned int i=0; i<Agents::agent_list->max; i++)
+        for (unsigned int i=0, j=0; i<Agents::agent_list->max && j <Agents::agent_list->ct; i++,j++)
         {
             Agent* agent = &Agents::agent_list->objects[i];
-            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
-            if (agent_collides_terrain(agent))
+            if (agent->id == Agents::agent_list->null_id) continue;
+            j++;
+            if (agent->id != a->id && agent_collides_terrain(agent))
             {
                 collides = true;
                 break;

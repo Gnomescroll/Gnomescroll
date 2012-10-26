@@ -3,6 +3,6 @@
 namespace ItemContainer
 {
 
-class ContainerAttributes** container_attributes = NULL;
+class ContainerAttributes* container_attributes = NULL;
     
 }   // ItemContainer

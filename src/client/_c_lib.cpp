@@ -323,18 +323,24 @@ int init_c_lib(int argc, char* argv[])
 
     // DAT LOADING
     // HIGHLY ORDER SENSTITIVE
-    Item::init_properties();
+    ItemContainer::init_config();
     t_map::init_t_properties();
     t_mech::init_properties();
 
     t_map::load_block_dat();
     t_map::init_for_draw();
     t_map::blit_block_item_sheet();
-
     t_mech::load_mech_dat();
+    ItemContainer::load_config();
+    Item::init_properties();
     Item::load_item_dat();
+
     t_map::init_block_drop_dat();
     t_map::load_block_drop_dat();
+
+    ItemContainer::create_containers_from_blocks();
+    ItemContainer::end_config();
+
     Item::create_items_from_blocks();
     Item::end_item_dat();
 
@@ -462,6 +468,7 @@ void close_c_lib()
     Toolbelt::teardown();
     if (TEARDOWN_DEBUG) printf("container teardown\n");
     ItemContainer::teardown();
+    ItemContainer::teardown_config();
 
     if (TEARDOWN_DEBUG) printf("Input teardown\n");
     teardown_input();

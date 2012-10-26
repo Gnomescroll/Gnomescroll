@@ -124,7 +124,6 @@ bool item_container_def(const char* container_name)
 
     s->max_stack_size = 1;
     s->container_type = container_type;
-    container_block_types[s->cube_id] = s->container_type;
 
     return true;
 }

@@ -28,13 +28,12 @@ class CubeProperties
         
         bool solid;
         bool occludes;  // occludes on all 6 faces only
+        bool active;  // Brandon's special flag
         bool transparent;     //
         bool item_drop;       // does block drop items
-        bool item_container;  // inventory and crafting bench blocks
-
-        bool active;  // Brandon's special flag
 
         CubeMaterial material;
+        ItemContainerType container_type;  // inventory and crafting bench blocks
 
         unsigned char max_damage;
 
@@ -50,14 +49,12 @@ class CubeProperties
         
         this->solid = true;
         this->occludes = true;
+        this->active = true;
         this->transparent = false;
         this->item_drop = false;
-        this->item_container = false;
-        this->material = material;
-
-        this->active = true;
 
         this->material = CUBE_MATERIAL_NONE;
+        this->container_type = CONTAINER_TYPE_NONE;
 
         this->max_damage = 32;
         
@@ -80,11 +77,15 @@ CubeMaterial get_cube_material(CubeID cube_id);
 const char* get_cube_name(CubeID id);
 CubeID get_cube_id(const char* name);
 
+const char* get_cube_name_for_container(ItemContainerType container_type);
+
 bool is_valid_cube_name(const char* name);
 
 // applies forward-compatible name versioning to give an id
 // use only for the serializer
 CubeID get_compatible_cube_id(const char* name);
+
+ItemContainerType get_container_type_for_cube(CubeID cube_id);
 
 // checks against ERROR_CUBE/NULL_CUBE/EMPTY_CUBE and value range and used
 inline bool isValidCube(CubeID cube_id) __attribute((always_inline));

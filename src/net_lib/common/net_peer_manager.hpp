@@ -37,7 +37,7 @@ class NetPeerManager
     void was_authorized(UserID user_id, time_t expiration_time, const char* username);
 
     bool failed_to_authorize();
-    bool authorization_expired();
+    bool authorization_expired(time_t now);
     void failed_authorization_attempt();
 
     void deserializer_failed();

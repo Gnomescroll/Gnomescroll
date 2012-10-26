@@ -36,7 +36,7 @@ void verify_config()
     
     for (int i=0; i<MAX_CONTAINER_TYPES; i++)
     {
-        ContainerAttributes* attr = ItemContainer::container_attributes[i];
+        ContainerAttributes* attr = &ItemContainer::container_attributes[i];
         if (attr == NULL || !attr->loaded || !attr->attached_to_agent) continue;
         switch (attr->type)
         {

@@ -393,10 +393,6 @@ static void draw_grabbed_icon()
         
     int tex_id = Item::get_sprite_index_for_type(hand_item_type);
 
-    printf("tex_id %d\n", tex_id);
-
-    //const float iw = 8.0f; // icon_width
-    //const int iiw = 8; // integer icon width
     const float iw = 16.0f; // icon_width
     const int iiw = 16; // integer icon width
     

@@ -23,8 +23,6 @@ namespace ItemContainer
 
 void init()
 {
-    init_config();
-
     item_container_list = new ItemContainerList(MAX_CONTAINERS);
 
     #if DC_SERVER
@@ -74,8 +72,6 @@ void teardown()
     if (agent_hand_list         != NULL) free(agent_hand_list);
     if (opened_containers       != NULL) free(opened_containers);
     #endif
-    
-    teardown_config();
 }
 
 void init_packets()

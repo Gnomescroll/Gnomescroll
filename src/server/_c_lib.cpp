@@ -280,12 +280,14 @@ int init_c_lib(int argc, char* argv[])
     
     // DAT LOADING
     // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
-    Item::init_properties();
+    ItemContainer::init_config();
     t_map::init_t_properties();
     t_mech::init_properties();
 
     t_map::load_block_dat();
     t_mech::load_mech_dat();
+    ItemContainer::load_config();
+    Item::init_properties();
     Item::load_item_dat();
 
     t_mech::init_drop_dat();
@@ -294,6 +296,9 @@ int init_c_lib(int argc, char* argv[])
     t_map::init_block_drop_dat();
     t_map::load_block_drop_dat();         // load drop dat after items
 
+    ItemContainer::create_containers_from_blocks();
+    ItemContainer::end_config();
+    
     Item::create_items_from_blocks();     // create items tied to block that drop themselves
     Item::end_item_dat();
 
@@ -343,7 +348,8 @@ void close_c_lib()
     Item::teardown();
     Item::teardown_properties();
     ItemContainer::teardown();
-
+    ItemContainer::teardown_config();
+    
     t_mech::teardown_drop_dat();
     t_mech::teardown_properties();
     t_mech::teardown();

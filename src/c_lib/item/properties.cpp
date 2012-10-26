@@ -19,8 +19,6 @@ class SynthesizerItem* synthesizer_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
 class SmeltingRecipe* smelting_recipe_array = NULL;
 
-ItemContainerType container_block_types[MAX_CUBES]; // maps cube_id -> container type
-
 // buffers for condensing craft bench inputs to unique type,count pairs
 int craft_input_types[CRAFT_BENCH_INPUTS_MAX];
 int craft_input_totals[CRAFT_BENCH_INPUTS_MAX];
@@ -30,17 +28,19 @@ int craft_recipes_possible_count = 0;
 
 void init_properties()
 {
-    for (int i=0; i<MAX_CUBES; container_block_types[i++] = CONTAINER_TYPE_NONE);
-
     GS_ASSERT(item_attributes == NULL);
     item_attributes = new ItemAttribute[MAX_ITEM_TYPES];
-    GS_ASSERT(synthesizer_item_array == NULL);
-    synthesizer_item_array = new SynthesizerItem[ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER)];
 
     GS_ASSERT(crafting_recipe_array == NULL);
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
     GS_ASSERT(smelting_recipe_array == NULL);
     smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
+
+    GS_ASSERT(synthesizer_item_array == NULL);
+    const int synth_slots = ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER);
+    GS_ASSERT_ABORT(synth_slots > 0);
+    if (synth_slots <= 0) return;
+    synthesizer_item_array = new SynthesizerItem[synth_slots];
 }
 
 void teardown_properties()
@@ -75,7 +75,7 @@ int get_item_fire_rate(int item_type)
 
 int get_sprite_index_for_id(ItemID id)
 {
-    GS_ASSERT(id < MAX_ITEM_TYPES && id >= 0);
+    ASSERT_VALID_ITEM_ID(id);
     int type = get_item_type(id);
     return get_sprite_index_for_type(type);
 }
@@ -554,13 +554,5 @@ int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count)
     *recipe_count = recipe->output_num;
     return recipe->output_stack;
 }
-
-ItemContainerType get_container_type_for_block(CubeID cube_id)
-{
-    GS_ASSERT(cube_id >= 0 && cube_id < MAX_CUBES);
-    if (cube_id < 0 || cube_id >= MAX_CUBES) return CONTAINER_TYPE_NONE;
-    return container_block_types[cube_id];
-}
-
 
 }   // Item

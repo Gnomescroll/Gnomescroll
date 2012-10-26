@@ -18,7 +18,7 @@ void default_map_gen()
     t_map::map_post_processing(); //regolith stuff
     t_gen::generate_rock_layer();
     // t_gen::start_cave_generator();
-	t_gen::excavate(); // corpusc copied cave_generator.hpp to excavator.hpp, with the idea to heavily modify it, without losing the original
+    t_gen::excavate(); // corpusc copied cave_generator.hpp to excavator.hpp, with the idea to heavily modify it, without losing the original
     t_gen::populate_ore();
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
@@ -54,7 +54,7 @@ void init(int argc, char* argv[])
     if (strcmp(Options::map, "fast") == 0)
         fast_map = true;
     else
-	if (strcmp(Options::map, "corpusc") == 0)
+    if (strcmp(Options::map, "corpusc") == 0)
         corpusc = true;
     else
     {   // load map from options if given; else load default map file; else do a map gen
@@ -67,8 +67,8 @@ void init(int argc, char* argv[])
     if (corpusc)
     {
         map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
-		t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_id("regolith") );
-		t_gen::excavate();
+        t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_id("regolith") );
+        t_gen::excavate();
         //t_gen::generate_ruins();
         t_gen::add_terrain_features();
     }
@@ -98,7 +98,7 @@ void init(int argc, char* argv[])
 
 void tick()
 {
-    static int counter = 0; counter ++;
+    static int counter = 0;
 
     t_map::t_map_send_map_chunks();  //every tick
 
@@ -130,9 +130,9 @@ void tick()
     Components::agent_targeting_component_list->call(); // update target lock ticks
 
     if (counter % 10 == 0) ItemParticle::check_item_pickups();
-    if (counter % 6  == 0) ItemContainer::check_agents_in_container_range();
     if (counter % 6  == 0)
     {
+        ItemContainer::check_agents_in_container_range();
         Components::healer_component_list->call();
         ServerState::check_agents_at_base();
     }
@@ -147,55 +147,47 @@ void tick()
     t_map::environment_process_tick(); //refresh regolith etc...
 
     Auth::update(); // do it here because i need constant timer
+
+    counter++;
 }
  
 int run()
 {
-    //int tick = 0;
-    int tc;
-
     while (!ServerState::signal_exit)
     {
-        tc = 0;
-        while (1)
+        int tc = 0;
+        if (_GET_TICK())
         {
-            int ti = _GET_TICK();
-            if (ti == 0 || tc > 1) break;
-
             tick();
-
             tc++;
-            break;
         }
 
         if (tc > 0)
-        {
             NetServer::flush_to_net();
-        }
-
         if (tc > 1)
-        {
-            printf("Warning:: %i ticks this frame", tc);
-        }
+            printf("Warning:: %d ticks this frame", tc);
+            
         NetServer::dispatch_network_events();
         if (Options::auth)
             NetServer::check_client_authorizations();
         
-        #if GS_SERIALIZER
         if (serializer::should_save_map)
         {
             serializer::save_map();
             serializer::should_save_map = false;
-            // TODO -- move, testing only
-            serializer::save_containers();
             serializer::save_mechs();
-            serializer::save_map_palette_file();
+
+            // TODO -- move, testing only
+            if (Options::serializer)
+            {
+                serializer::save_map_palette_file();
+                serializer::save_containers();
+            }
         }
 
         serializer::update();
-        #endif
 
-        gs_millisleep(1000);
+        gs_millisleep(1);
     }
 
     if (serializer::should_save_map)

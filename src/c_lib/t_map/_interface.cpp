@@ -210,7 +210,7 @@ void destroy_item_container_block(int x, int y, int z)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
     CubeID val = get(x,y,z);
-    if (Item::get_container_type_for_block(val) == CONTAINER_TYPE_NONE) return;
+    if (!isItemContainer(val)) return;
 
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);

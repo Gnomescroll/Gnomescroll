@@ -266,7 +266,7 @@ static void load_map_restore_containers()
             CubeID block = (CubeID)mp->e[16*16*k + 16*j + i].block;
             if (!t_map::isItemContainer(block)) continue;
             
-            ItemContainerType container_type = Item::get_container_type_for_block(block);
+            ItemContainerType container_type = t_map::get_container_type_for_cube(block);
             GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
             if (container_type == CONTAINER_TYPE_NONE) continue;    // TODO -- log error
             class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);

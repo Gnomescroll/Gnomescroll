@@ -51,19 +51,17 @@ static void cube_def(CubeID id, CubeType type, const char* name, CubeMaterial ma
     switch (type)
     {
         case ErrorCube:
-            break;
-
         case SolidCube:
+        case ItemContainerCube:
+            p->solid = true;
+            p->occludes = true;
+            p->active = true;
             break;
 
         case EmptyCube:
             p->solid = false;
             p->occludes = false;
             p->active = false;
-            break;
-
-        case ItemContainerCube:
-            p->item_container = true;
             break;
 
         default:
@@ -100,6 +98,13 @@ void cube_def_error(const char* name)
     cube_def(ERROR_CUBE, ErrorCube, name, CUBE_MATERIAL_NONE);
 }
 
+void cube_def_container(const char* name, ItemContainerType container_type)
+{
+    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+    cube_def(ItemContainerCube, name, CUBE_MATERIAL_NONE);  // TODO -- cube material for chests?
+    p->container_type = container_type;
+}
+
 static void copy_cube_properties(class CubeProperties* a, struct FastCubeProperties* b)
 {
     b->active = a->active;
@@ -107,7 +112,7 @@ static void copy_cube_properties(class CubeProperties* a, struct FastCubePropert
     b->occludes = a->occludes;
     b->transparent = a->transparent;
     b->item_drop = a->item_drop;
-    b->item_container = a->item_container;
+    b->item_container = (a->type == ItemContainerCube);
 }
 
 void end_cube_def()
@@ -328,6 +333,16 @@ void verify_config()
 
         GS_ASSERT_ABORT(p->max_damage <= MAX_CUBE_DAMAGE);
         GS_ASSERT_ABORT(is_valid_cube_name(p->name));
+    }
+
+    for (int i=0; i<MAX_CUBES-1; i++)
+    for (int j=i+1; j<MAX_CUBES; j++)
+    {
+        class CubeProperties* a = &cube_properties[i];
+        class CubeProperties* b = &cube_properties[j];
+        if (!a->in_use || !b->in_use) continue;
+        if (a->container_type == CONTAINER_TYPE_NONE || b->container_type == CONTAINER_TYPE_NONE) continue;
+        GS_ASSERT_ABORT(a->container_type != b->container_type);
     }
 }
 

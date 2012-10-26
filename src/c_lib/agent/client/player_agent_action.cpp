@@ -424,9 +424,9 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     GS_ASSERT(placer_type != NULL_ITEM_TYPE);
     Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
     GS_ASSERT(attr != NULL);
-    if (attr == NULL) return true;
+    if (attr == NULL) return false;
     CubeID val = attr->cube_id;
-    if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
+    if (t_map::isItemContainer(val))
     {
         ItemContainer::create_container_block_CtoS msg;
         msg.x = b[0];
@@ -435,7 +435,6 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
         msg.placer_id = placer_id;
         msg.orientation = orientation;
         msg.send();
-        return true;
     }
     else
     {
@@ -445,8 +444,8 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
         msg.z = b[2];
         msg.placer_id = placer_id;
         msg.send();
-        return true;
     }
+    return true;
 }
 
 //#if !PRODUCTION
@@ -476,7 +475,7 @@ void PlayerAgent_action::admin_set_block()
     CubeID val = HudCubeSelector::cube_selector.get_active_id();
     if (!t_map::isValidCube(val)) return;
 
-    if (Item::get_container_type_for_block(val) != CONTAINER_TYPE_NONE)
+    if (t_map::isItemContainer(val))
     {
         ItemContainer::admin_create_container_block_CtoS msg;
         msg.x = b[0];

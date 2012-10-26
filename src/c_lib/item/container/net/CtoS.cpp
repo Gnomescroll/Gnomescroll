@@ -586,20 +586,27 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
-    //if (z < 0 || z >= t_map::map_dim.z) return;  // this comparison is not needed, because of value range for the data type
-    if (z == 0) return; // no floor
+    printf("Received create container block\n");
+    printf("%d,%d,%d\n", x,y,z);
+    printf("placer: %d, orientation: %d\n", placer_id, orientation);
+    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    if (z == 0) return;     // no floor
 
+    printf("z ok\n");
     Agent* a = NetServer::agents[client_id];
-    if (a == NULL) return;
-    if (a->status.dead) return;
+    if (a == NULL || a->status.dead) return;
+    printf("a ok\n");
 
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
+    printf("placer ok\n");
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
+    GS_ASSERT(attr != NULL);
     if (attr == NULL) return;
-    CubeID val = attr->cube_id;
+    CubeID cube_id = attr->cube_id;
 
-    ItemContainerType container_type = Item::get_container_type_for_block(val);
+    ItemContainerType container_type = t_map::get_container_type_for_cube(cube_id);
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
@@ -610,19 +617,20 @@ void create_container_block_CtoS::handle()
     y = translate_point(y);
 
     // dont set on existing block
-    if (!t_map::block_can_be_placed(x,y,z,val)) return;
+    if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
 
     bool collides = false;
-    t_map::set_fast(x,y,z, val); // set temporarily to test against
+    t_map::set_fast(x,y,z, cube_id); // set temporarily to test against
     if (agent_collides_terrain(a))
         collides = true;  // test against our agent, most likely to collide
     else
     {
-        for (unsigned int i=0; i<Agents::agent_list->max; i++)
+        for (unsigned int i=0, j=0; i<Agents::agent_list->max && j < Agents::agent_list->ct; i++)
         {
             Agent* agent = &Agents::agent_list->objects[i];
-            if (a->id == Agents::agent_list->null_id || agent == a) continue;
-            if (agent_collides_terrain(agent))
+            if (a->id == Agents::agent_list->null_id) continue;
+            j++;
+            if (agent->id != a->id && agent_collides_terrain(agent))
             {
                 collides = true;
                 break;
@@ -639,8 +647,8 @@ void create_container_block_CtoS::handle()
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
 
-    t_map::broadcast_set_block_action(x,y,z, val, TMA_PLACE_BLOCK);
-    t_map::broadcast_set_block_palette(x,y,z,val,orientation);
+    t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_palette(x,y,z,cube_id,orientation);
 
     init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
@@ -649,20 +657,23 @@ void create_container_block_CtoS::handle()
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();
+
+    printf("Placed container block\n");
 }
 
 void admin_create_container_block_CtoS::handle()
 {
-    // comparison not needed due to value range of data type
-    //if (z < 0 || z >= t_map::map_dim.z) return;
- 
+    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    if (z == 0) return;     // no floor
+
     Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
     CubeID cube_id = (CubeID)this->val;
 
-    ItemContainerType container_type = Item::get_container_type_for_block(cube_id);
+    ItemContainerType container_type = t_map::get_container_type_for_cube(cube_id);
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     if (container_type == CONTAINER_TYPE_NONE) return;
 

@@ -51,13 +51,23 @@ CubeID get_cube_id(const char* name)
     for (int i=0; i<MAX_CUBES; i++)
     {
         class CubeProperties* p = get_cube_properties((CubeID)i);
-        if (p == NULL) continue;
-        if (p->name != NULL && strcmp(name, p->name) == 0)
+        if (p != NULL && strcmp(name, p->name) == 0)
             return (CubeID)i;
     }
     GS_ASSERT(false);
     printf("No cube id found for name %s\n", name);
     return ERROR_CUBE;
+}
+
+const char* get_cube_name_for_container(ItemContainerType container_type)
+{   // not indexed/fast, use only for init/cached values
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        class CubeProperties* p = get_cube_properties((CubeID)i);
+        if (p != NULL && p->container_type == container_type)
+            return p->name;
+    }
+    return NULL;
 }
 
 CubeMaterial get_cube_material(CubeID cube_id)
@@ -66,6 +76,14 @@ CubeMaterial get_cube_material(CubeID cube_id)
     GS_ASSERT(p != NULL);
     if (p == NULL) return CUBE_MATERIAL_NONE;
     return p->material;
+}
+
+ItemContainerType get_container_type_for_cube(CubeID cube_id)
+{
+    class CubeProperties* p = get_cube_properties(cube_id);
+    GS_ASSERT(p != NULL);
+    if (p == NULL) return CONTAINER_TYPE_NONE;
+    return p->container_type;
 }
 
 bool is_valid_cube_name(const char* name)

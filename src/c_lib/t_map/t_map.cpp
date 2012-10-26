@@ -356,9 +356,14 @@ inline bool position_is_loaded(int x, int y)
 
 bool block_can_be_placed(int x, int y, int z, CubeID cube_id)
 {
+    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
     bool valid_cube = isValidCube(cube_id);
     GS_ASSERT(valid_cube);
-    if (valid_cube) return false;
+    if (!valid_cube) return false;
     
     if (get(x,y,z) != EMPTY_CUBE) return false;
     // check against all spawners
