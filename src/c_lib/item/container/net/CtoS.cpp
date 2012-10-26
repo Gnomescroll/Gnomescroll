@@ -586,21 +586,15 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
-    printf("Received create container block\n");
-    printf("%d,%d,%d\n", x,y,z);
-    printf("placer: %d, orientation: %d\n", placer_id, orientation);
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     if (z == 0) return;     // no floor
 
-    printf("z ok\n");
     Agent* a = NetServer::agents[client_id];
     if (a == NULL || a->status.dead) return;
-    printf("a ok\n");
 
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
-    printf("placer ok\n");
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return;
@@ -657,8 +651,6 @@ void create_container_block_CtoS::handle()
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();
-
-    printf("Placed container block\n");
 }
 
 void admin_create_container_block_CtoS::handle()
