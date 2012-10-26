@@ -48,7 +48,7 @@ bool item_def(ItemGroup group, const char* name)
     if (s == NULL)
     {
         GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id == -1);
-        _item_cube_iso_spritesheet_id = load_item_texture(t_map::block_item_16_surface);
+        _item_cube_iso_spritesheet_id = TextureSheetLoader::load_item_texture(t_map::block_item_16_surface);
     }
     #endif
 
@@ -158,9 +158,9 @@ void set_pretty_name(const char* pretty_name)
 
 #if DC_CLIENT
 
-int texture_alias(const char* spritesheet)
+int texture_alias(const char* spritesheet_filename)
 {
-    return load_item_texture_sheet(spritesheet);
+    return TextureSheetLoader::load_item_texture_sheet(spritesheet_filename);
 }
 
 void sprite_def(int spritesheet, int ypos, int xpos)
@@ -173,10 +173,10 @@ void sprite_def(int spritesheet, int ypos, int xpos)
         
     // check if we have already set this sprite
     GS_ASSERT_ABORT(s->sprite == ERROR_SPRITE);
-    
-    int sprite = blit_item_texture(spritesheet, xpos, ypos);
-    GS_ASSERT_ABORT(s->group == IG_ERROR || sprite != ERROR_SPRITE);
-    if (s->group != IG_ERROR && sprite == ERROR_SPRITE) return;
+
+    int sprite = TextureSheetLoader::blit_item_texture(spritesheet, xpos, ypos);
+    GS_ASSERT_ABORT(sprite != NULL_SPRITE);
+    if (sprite == NULL_SPRITE) return;
     
     s->sprite = sprite;
 }
@@ -192,7 +192,9 @@ void iso_block_sprite_def(const char* block_name)
     
     int xpos = (cube_id % 16) + 1;
     int ypos = (cube_id / 16) + 1;
-    int sprite = blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
+    int sprite = TextureSheetLoader::blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
+    GS_ASSERT_ABORT(sprite != NULL_SPRITE);
+    if (sprite == NULL_SPRITE) return;
     s->sprite = sprite;
 }
 

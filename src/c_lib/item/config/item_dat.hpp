@@ -501,11 +501,6 @@ void verify_item_dat()
 void end_item_dat()
 {
     finish_item_def();
-    
-    #if DC_CLIENT
-    save_item_texture();
-    #endif
-
     verify_item_dat();
 }
 

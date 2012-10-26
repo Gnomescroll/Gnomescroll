@@ -239,11 +239,14 @@ int init_c_lib(int argc, char* argv[])
 
     #ifdef linux
     // print working directory
-    const int DIR_SIZE = 100;
+    const size_t DIR_SIZE = 1024;
     char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
     char* wdr = getcwd(wd, DIR_SIZE);
-    GS_ASSERT(wdr == wd);
-    printf("Working directory is: %s\n", wd);
+    GS_ASSERT(wdr != NULL);
+    if (wdr == NULL)
+        printf("Failed to get working directory.\n");
+    else
+        printf("Working directory is: %s\n", wd);
     free(wd);
     
     // Set signal handlers
@@ -307,8 +310,6 @@ int init_c_lib(int argc, char* argv[])
 
     init_image_loader();
     TextureSheetLoader::init();
-    TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
-    TextureSheetLoader::init_item_texture();
 
     HudText::init();
     HudMap::init();
@@ -318,6 +319,10 @@ int init_c_lib(int argc, char* argv[])
     Item::init();
     ItemContainer::init();
 
+    t_map::init_t_map();
+    t_map::init_for_draw();
+
+    // DAT LOADING
     // HIGHLY ORDER SENSTITIVE
     Item::init_properties();
     t_map::init_t_properties();
@@ -337,17 +342,16 @@ int init_c_lib(int argc, char* argv[])
     Item::load_crafting_dat();
     Item::load_smelting_dat();
 
+    // This block MUST come after dat loaders. not sure about things after this block
     Toolbelt::init();   // toolbelt init depends on item dat being loaded
+    TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
+    TextureSheetLoader::init_item_texture();
+    TextureSheetLoader::save_item_texture();
 
     t_mech::init();
 
-    t_map::init_t_map();
-    t_map::init_for_draw();
-
     HudContainer::init();
     HudContainer::draw_init();
-
-    //t_mech::state_init();
 
     Particle::init_particles();
     ItemParticle::init();

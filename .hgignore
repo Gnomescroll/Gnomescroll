@@ -13,6 +13,8 @@ gnomescroll_linux32_*
 
 *.exe
 
+data/*
+
 stdout.txt
 stderr.txt
 
