@@ -335,6 +335,9 @@ static HudText::Text* tooltip_text = NULL;
 
 static void draw_grabbed_icon()
 {
+    GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
+    if (TextureSheetLoader::ItemSheetTexture == 0) return;
+
     using ItemContainer::player_hand_ui;
     if (player_hand_ui == NULL) return;
     int hand_item_type = player_hand_ui->get_item_type();
@@ -361,12 +364,12 @@ static void draw_grabbed_icon()
     {
         int max_durability = Item::get_max_durability(hand_item_type);
         float ratio = ((float)hand_item_durability)/((float)max_durability);
-        const float alpha = 128;
-        if (ratio >= 0.75)
+        const unsigned char alpha = 128;
+        if (ratio >= 0.75f)
             glColor4ub(7, 247, 0, alpha);    // green
-        else if (ratio >= 0.5)
+        else if (ratio >= 0.5f)
             glColor4ub(243, 247, 0, alpha);  // yellow
-        else if (ratio >= 0.25)
+        else if (ratio >= 0.25f)
             glColor4ub(247, 71, 0, alpha);    // red-orange
         else
             glColor4ub(247, 14, 0, alpha);   // red
@@ -383,11 +386,14 @@ static void draw_grabbed_icon()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
+
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
     glBegin(GL_QUADS);
         
     int tex_id = Item::get_sprite_index_for_type(hand_item_type);
+
+    printf("tex_id %d\n", tex_id);
 
     //const float iw = 8.0f; // icon_width
     //const int iiw = 8; // integer icon width

@@ -24,5 +24,4 @@ void init_block_drop_dat();
 void teardown_block_drop_dat();
 void load_block_drop_dat();
 
-
 }   // t_map

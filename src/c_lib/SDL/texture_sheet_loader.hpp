@@ -1,5 +1,7 @@
 #pragma once
 
+const int NULL_SPRITE = 0xff+1;
+
 namespace TextureSheetLoader
 {
 

@@ -144,6 +144,8 @@ void iso_texture(int sheet_id, int ypos, int xpos)
     if (xpos < 1 || ypos < 1) return;
 
     int tex_id = blit_cube_texture(sheet_id, xpos, ypos);
+    GS_ASSERT_ABORT(tex_id != NULL_SPRITE);
+    if (tex_id == NULL_SPRITE) return;
     for (int i=0; i<6; _side_texture[i++] = tex_id);
 }
 
@@ -161,6 +163,8 @@ void side_texture(int side, int sheet_id, int ypos, int xpos)
     if (xpos < 1 || ypos < 1) return;
     
     int tex_id = blit_cube_texture(sheet_id, xpos, ypos);
+    GS_ASSERT_ABORT(tex_id != NULL_SPRITE);
+    if (tex_id == NULL_SPRITE) return;
     _side_texture[side] = tex_id;
 }
 
@@ -252,6 +256,8 @@ void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos)
     GS_ASSERT_ABORT(xhud >= 1 && yhud >= 1 && xhud <= 8 && yhud <= 8);
 
     int tex_id = blit_cube_texture(sheet_id, xpos, ypos);
+    GS_ASSERT_ABORT(tex_id != NULL_SPRITE);
+    if (tex_id == NULL_SPRITE) return;
 
     // check that the texture is use somewhere in the cube
     bool found = false;
@@ -283,7 +289,9 @@ int sprite_alias(int sheet_id, int ypos, int xpos)
     if (xpos < 1 || ypos < 1)
         printf("sprite_alias error: xpos and ypos must be greater than 1\n");
     GS_ASSERT_ABORT(xpos >= 1 && ypos >= 1);
-    return blit_cube_texture(sheet_id, xpos, ypos); 
+    int tex_id = blit_cube_texture(sheet_id, xpos, ypos);
+    GS_ASSERT_ABORT(tex_id != NULL_SPRITE);
+    return tex_id;
 }
 #endif
 

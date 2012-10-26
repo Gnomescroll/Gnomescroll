@@ -88,12 +88,15 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
 {
     // sanity checks
     GS_ASSERT(sheet_id < texture_num);
-    if (sheet_id >= texture_num) return 255;
+    if (sheet_id >= texture_num) return NULL_SPRITE;
 
     GS_ASSERT(source_x > 0);
-    if (source_x < 1) return 255;
+    if (source_x < 1) return NULL_SPRITE;
     GS_ASSERT(source_y > 0);
-    if (source_y < 1) return 255;
+    if (source_y < 1) return NULL_SPRITE;
+
+    GS_ASSERT(this->tile_num >= 0 && this->tile_num <= 0xff);
+    if (this->tile_num < 0 || this->tile_num > 0xff) return NULL_SPRITE;
 
     // decrement x,y because arguments should be 1-indexed
     source_x--;
@@ -109,7 +112,7 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
     // get surface
     SDL_Surface* s = this->surfaces[sheet_id];
     GS_ASSERT(s != NULL);
-    if (s == NULL) return 255;
+    if (s == NULL) return NULL_SPRITE;
 
     // record metadata
     meta[tile_num].texture_sheet = sheet_id;
@@ -119,7 +122,7 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
     // check that tiles are in bounds
     GS_ASSERT(source_x*(int)tile_size < s->w && source_y*(int)tile_size < s->h);
     if (source_x*(int)tile_size >= s->w || source_y*(int)tile_size >= s->h)
-        return 255;
+        return NULL_SPRITE;
 
     // lock surfaces
     int s_lock = SDL_MUSTLOCK(s);
@@ -276,10 +279,6 @@ void teardown_item_texture()
 
 void teardown()
 {
-    if (ItemSurface != NULL)
-        save_surface_to_png(ItemSurface, "./screenshot/items.png");    
-    if (GreyScaleItemSurface != NULL)
-        save_surface_to_png(GreyScaleItemSurface, "./screenshot/grey_scale_items.png");
     if (CubeTextureSheetLoader != NULL) delete CubeTextureSheetLoader;
     if (ItemTextureSheetLoader != NULL) delete ItemTextureSheetLoader;
     teardown_item_texture();
@@ -300,7 +299,7 @@ int blit_cube_texture(int sheet_id, int source_x, int source_y)
 
 void save_cube_texture()
 {
-    save_surface_to_png(TextureSheetLoader::CubeSurface, "./screenshot/cube_texture.png");
+    save_surface_to_png(TextureSheetLoader::CubeSurface, "./screenshot/cubes.png");
 }
 
 //Item API
@@ -321,7 +320,12 @@ int blit_item_texture(int sheet_id, int source_x, int source_y)
 
 void save_item_texture()
 {
-    save_surface_to_png(TextureSheetLoader::ItemSurface, "./screenshot/item_texture.png");
+    GS_ASSERT(TextureSheetLoader::ItemSurface != NULL);
+    GS_ASSERT(TextureSheetLoader::GreyScaleItemSurface != NULL);
+    if (TextureSheetLoader::ItemSurface != NULL)
+        save_surface_to_png(TextureSheetLoader::ItemSurface, "./screenshot/items.png");
+    if (TextureSheetLoader::GreyScaleItemSurface != NULL)
+        save_surface_to_png(TextureSheetLoader::GreyScaleItemSurface, "./screenshot/greyscale_items.png");
 }
 
 
