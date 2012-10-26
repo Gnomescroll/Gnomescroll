@@ -40,6 +40,7 @@ float cc_point_line_distance2(float vx, float vy, float vz, float wx, float wy, 
 
 
 
+float dz = 0; //cosf(0.95f*_phi);
 __attribute__((optimize("-O3")))
 void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
     while( genrand_real1() < 0.999f ) {
@@ -49,8 +50,9 @@ void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
 
         float dx = (float)(sin(_phi)*cos(_theta));
         float dy = (float)(sin(_phi)*sin(_theta));
-        float dz = cosf(0.75f*_phi);
-        dz *= dz;
+		dz += 0.1; //////////////-------------
+        //float dz = cosf(0.75f*_phi);
+        //dz *= dz;
 
         float size = cave_size * ((float)genrand_real1()*1.25f + 0.5f);  // variable diameter
 
@@ -119,7 +121,7 @@ void excavate() {
             st.x = (float)genrand_real1()*(float)XMAX;
             st.y = (float)genrand_real1()*(float)YMAX;
             st.z = (float)genrand_real1()*(float)ZMAX;
-        } while (t_map::get(st.x, st.y, st.z) == 0 && tries++ < try_limit);
+        } while (t_map::get(st.x, st.y, st.z) == EMPTY_CUBE && tries++ < try_limit);
 
         if (tries >= try_limit) return; 
 
