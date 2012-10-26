@@ -53,8 +53,7 @@ void save_map();
 bool load_default_map();
 bool save_file(const char* fn, const char* fn_tmp, const char* fn_bak);
 
-
-save_containers() {}
+void save_containers() {}
 void check_save_state() {}
 
 bool save_player(UserID user_id, AgentID agent_id) { return true; }

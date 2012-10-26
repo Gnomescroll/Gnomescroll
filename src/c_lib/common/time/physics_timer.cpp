@@ -223,7 +223,8 @@ long _LAST_TICK()
 }
 
 void gs_millisleep(int milliseconds)
-{
+{   // NOTE: milliseconds must be <1000
+    GS_ASSERT(milliseconds > 0 && milliseconds < 1000);
     #ifdef _WIN32
     Sleep(milliseconds);
     #else
