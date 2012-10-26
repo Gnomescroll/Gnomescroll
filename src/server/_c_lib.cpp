@@ -230,6 +230,8 @@ int init_c_lib(int argc, char* argv[])
     #endif
 
     create_path("./screenshot/");
+    create_path("./data/");
+    
     Log::init();
 
     Options::init_option_tables();

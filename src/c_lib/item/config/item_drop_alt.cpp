@@ -22,7 +22,7 @@ void ItemDropConfig::save_to_file()
     char* filename = (char*)malloc((len+1) * sizeof(char));
     sprintf(filename, fmt, name);
     
-    FILE *fp = fopen(filename,"w");
+    FILE *fp = fopen(filename, "w");
     free(filename);
     GS_ASSERT(fp != NULL);
     if (fp == NULL) return;

@@ -320,7 +320,6 @@ int init_c_lib(int argc, char* argv[])
     ItemContainer::init();
 
     t_map::init_t_map();
-    t_map::init_for_draw();
 
     // DAT LOADING
     // HIGHLY ORDER SENSTITIVE
@@ -329,6 +328,7 @@ int init_c_lib(int argc, char* argv[])
     t_mech::init_properties();
 
     t_map::load_block_dat();
+    t_map::init_for_draw();
     t_map::blit_block_item_sheet();
 
     t_mech::load_mech_dat();
