@@ -19,7 +19,6 @@ inline void set_fast(int x, int y, int z, CubeID cube_id) __attribute__((always_
 void set_palette(int x, int y, int z, int palette);
 
 int get_block_damage(int x, int y, int z);
-int apply_damage(int x, int y, int z, int dmg);
 
 void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
 

@@ -114,7 +114,6 @@ class Terrain_map
 
     int get_damage(int x, int y, int z);
 
-    int apply_damage(int x, int y, int z, int dmg);
     int apply_damage(int x, int y, int z, int dmg, CubeID* cube_id);
 
     inline int get_height(int x, int y);

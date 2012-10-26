@@ -248,7 +248,7 @@ namespace t_map
     {
     #if T_MAP_SET_OPTIMIZED
 
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
+        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; 
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -282,104 +282,6 @@ namespace t_map
         struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
         
         return e->damage;
-    #endif
-    }
-
-    int Terrain_map::apply_damage(int x, int y, int z, int dmg)
-    {
-        //printf("set: %i %i %i %i \n", x,y,element.block);
-    #if T_MAP_SET_OPTIMIZED
-        if (dmg <= 0) return -4;
-
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
-
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-        class MAP_CHUNK* c;
-        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if( c != NULL ) return -3;
-
-        struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
-
-        if(e->block == 0) return -1;
-        if (maxDamage((CubeID)e->block) == 255) return -5;
-        e->damage += dmg;
-        if(e->damage >= maxDamage((CubeID)e->block) ) 
-        {
-            #if DC_SERVER
-            if(isItemContainer((CubeID)e->block))
-                destroy_item_container_block(x,y,z);
-            #endif
-            // destroy block
-            *e = NO_MAP_ELEMENT; 
-            
-            #if DC_CLIENT
-                c->needs_update = true; 
-
-                if((x & 15) == 0)  set_update(x-1,y);
-                if((x & 15) == 15) set_update(x+1,y);
-                if((y & 15) == 0)  set_update(x,y-1);
-                if((y & 15) == 15) set_update(x,y+1);
-            #endif
-
-            return 0;
-        } 
-        else 
-        {
-            return e->damage;
-        }
-
-    #else
-
-        if (dmg <= 0) return -4;
-        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
-
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-        class MAP_CHUNK* c;
-        {
-            int xchunk = (x >> 4);
-            int ychunk = (y >> 4);
-            c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-
-            if( c == NULL ) return -3;
-        }
-
-        int xi = x & 15; //bit mask
-        int yi = y & 15; //bit mask
-
-        struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
-        
-        if(e->block == 0) return -1;
-        if (maxDamage((CubeID)e->block) == 255) return -5;
-        e->damage += dmg;
-        if(e->damage >= maxDamage((CubeID)e->block) ) 
-        {
-            #if DC_SERVER
-            if(isItemContainer((CubeID)e->block))
-                destroy_item_container_block(x,y,z);
-            #endif
-            // destroy block
-            *e = NO_MAP_ELEMENT; 
-
-            #if DC_CLIENT
-                c->needs_update = true; 
-
-                if((x & 15) == 0)  set_update(x-1,y);
-                if((x & 15) == 15) set_update(x+1,y);
-                if((y & 15) == 0)  set_update(x,y-1);
-                if((y & 15) == 15) set_update(x,y+1);
-            #endif
-
-            return 0;
-        } 
-        else 
-        {
-            return e->damage;
-        }
-
     #endif
     }
 
@@ -390,7 +292,7 @@ namespace t_map
     #if T_MAP_SET_OPTIMIZED
         if (dmg <= 0) return -4;
 
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; // an error
+        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; 
         
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -402,10 +304,11 @@ namespace t_map
         struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
         if(e->block == 0) return -1;
-        if (maxDamage((CubeID)e->block) == 255) return -5;
-        e->damage += dmg;
-        if(e->damage >= maxDamage((CubeID)e->block) ) 
+        int maxdmg = maxDamage((CubeID)e->block);
+        if (maxdmg >= INVINCIBLE_CUBE_DAMAGE) return -5;
+        if(e->damage + dmg >= maxdmg) 
         {
+            e->damage = maxdmg;
             #if DC_SERVER
             if(isItemContainer((CubeID)e->block))
                 destroy_item_container_block(x,y,z);
@@ -429,6 +332,7 @@ namespace t_map
         } 
         else 
         {
+            e->damage += dmg;
             return e->damage;
         }
 
@@ -436,7 +340,9 @@ namespace t_map
 
         if (dmg <= 0) return -4;
 
-        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
+        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2;
+        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
         class MAP_CHUNK* c;
         {
@@ -456,10 +362,12 @@ namespace t_map
         *cube_id = (CubeID)e->block;
 
         if(e->block == 0) return -1;
-        if (maxDamage((CubeID)e->block) == 255) return -5;
-        e->damage += dmg;
-        if(e->damage >= maxDamage((CubeID)e->block) ) 
+        int maxdmg = maxDamage((CubeID)e->block);
+        if (maxdmg >= INVINCIBLE_CUBE_DAMAGE) return -5;
+        if(e->damage + dmg >= maxdmg) 
         {
+            e->damage = maxdmg;
+            
             #if DC_SERVER
             if(isItemContainer((CubeID)e->block))
                 destroy_item_container_block(x,y,z);
@@ -484,6 +392,7 @@ namespace t_map
         } 
         else 
         {
+            e->damage += dmg;
             return e->damage;
         }
 

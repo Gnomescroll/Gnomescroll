@@ -131,16 +131,6 @@ int get_block_damage(int x, int y, int z)
     return main_map->get_damage(x,y,z);
 }
 
-int apply_damage(int x, int y, int z, int dmg)
-{
-    GS_ASSERT(dmg > 0);
-    #if DC_CLIENT
-    print_trace();
-    Sound::block_took_damage(x+0.5f,y+0.5f,z+0.5f,0,0,0);
-    #endif
-    return t_map::main_map->apply_damage(x,y,z,dmg);
-}
-
 #if DC_SERVER
 
 // apply block damage & broadcast the update to client
@@ -152,14 +142,12 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    CubeID cube_id = NULL_CUBE;
+    CubeID cube_id = ERROR_CUBE;
     int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_id);
-    if (cube_id == NULL_CUBE || ret != 0) return;
-
-    // return value 0 means block was destroyed; cube_id has the value of the cube before it was damaged
-    if (ret == 0) cube_id = EMPTY_CUBE;
-
-    map_history->send_block_action(x,y,z, cube_id, action);
+    if (ret != 0) return;
+    
+    // block_action packet expects final value of cube, not initial value
+    map_history->send_block_action(x,y,z, EMPTY_CUBE, action);
 
     if (cube_properties[cube_id].item_drop) 
         handle_block_drop(x,y,z, cube_id);

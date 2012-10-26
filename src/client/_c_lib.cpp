@@ -334,7 +334,7 @@ int init_c_lib(int argc, char* argv[])
     t_mech::load_mech_dat();
     Item::load_item_dat();
     t_map::init_block_drop_dat();
-    t_map::load_block_drop_dat();         // load drop dat after items
+    t_map::load_block_drop_dat();
     Item::create_items_from_blocks();
     Item::end_item_dat();
 
@@ -342,7 +342,7 @@ int init_c_lib(int argc, char* argv[])
     Item::load_crafting_dat();
     Item::load_smelting_dat();
 
-    // This block MUST come after dat loaders. not sure about things after this block
+    // This block MUST come after dat loaders. possibly others
     Toolbelt::init();   // toolbelt init depends on item dat being loaded
     TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
     TextureSheetLoader::init_item_texture();
