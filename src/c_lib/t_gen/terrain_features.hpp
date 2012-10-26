@@ -156,20 +156,23 @@ void make_tree(int x, int y, int z) {
     int segs = randrange(2, 9);
     for (int seg = 0; seg < segs; seg++) {
         // height of current trunk segment
-        int height = randrange(5, 10);
+        int height = randrange(5, 11);
         if (seg == 0) 
             height = randrange(12, 21); // ensure trunk goes up aways
         if (height+z+2 >= ZMAX) break;
 
+        float dist = .0f; // from center voxel
         for (int j = 0; j < height; j++) {
             t_map::set(x, y, z + j, trunk);
 
             if (j == height - 1) {
-                float dist = randrange(2, 11);
+				if (randrange(0,1) == 00) 
+					dist = randrange(2, 11);
+				else dist += .5f;
                 for (int i = -dist; i < dist; i++)  set_me_maybe(x+i, y, z+j, trunk); // limbs
                 for (int i = -dist; i < dist; i++)  set_me_maybe(x, y+i, z+j, trunk); // limbs
                 while (dist > 0) {
-                    make_circle(x, y, z+j, dist, leaf, trunk);
+                    make_circle(x, y, z+j,   dist, leaf, trunk);
                     make_circle(x, y, z+j+1, dist+1, leaf, trunk);
                     make_circle(x, y, z+j+2, dist+.5, leaf, trunk);
                     dist -= 2.5;

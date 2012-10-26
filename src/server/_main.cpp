@@ -17,8 +17,8 @@ void default_map_gen()
     
     t_map::map_post_processing(); //regolith stuff
     t_gen::generate_rock_layer();
-    // t_gen::start_cave_generator();
-    t_gen::excavate(); // corpusc copied cave_generator.hpp to excavator.hpp, with the idea to heavily modify it, without losing the original
+    t_gen::start_cave_generator();
+	//t_gen::excavate(); // corpusc copied cave_generator.hpp to excavator.hpp, with the idea to heavily modify it, without losing the original
     t_gen::populate_ore();
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
