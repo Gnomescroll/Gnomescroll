@@ -19,6 +19,7 @@ void init_t_properties()
 void end_t_properties()
 {
     if (cube_properties != NULL) delete[] cube_properties;
+    if (fast_cube_properties != NULL) free(fast_cube_properties);
 }
 
 class CubeProperties* get_cube_properties(CubeID id)
