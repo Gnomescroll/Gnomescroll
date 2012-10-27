@@ -40,7 +40,7 @@ class ParsedContainerData
     public:
 
         int container_id;
-        char name[CONTAINER_NAME_MAX_LENGTH+1];
+        char name[DAT_NAME_MAX_LENGTH+1];
         int item_count;
         struct
         {
@@ -109,8 +109,8 @@ static bool parse_container_token(const char* key, const char* val, class Parsed
         bool valid_name = ItemContainer::is_valid_container_name(val);
         GS_ASSERT(valid_name);
         if (!valid_name) return false;
-        strncpy(data->name, val, CONTAINER_NAME_MAX_LENGTH);
-        data->name[CONTAINER_NAME_MAX_LENGTH] = '\0';
+        strncpy(data->name, val, DAT_NAME_MAX_LENGTH);
+        data->name[DAT_NAME_MAX_LENGTH] = '\0';
     }
     else
     if (strcmp(CONTAINER_ITEM_COUNT_TAG, key) == 0)

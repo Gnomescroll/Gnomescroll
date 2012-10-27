@@ -38,7 +38,7 @@ class CubeProperties
 
         unsigned char max_damage;
 
-        char name[CUBE_NAME_MAX_LENGTH+1];
+        char name[DAT_NAME_MAX_LENGTH+1];
 
         //for dat debug assistance
         bool in_use;

@@ -7,7 +7,7 @@ class ParsedMechPaletteData
 {
     public:
         bool valid;
-        char name[MECH_NAME_MAX_LENGTH+1];
+        char name[DAT_NAME_MAX_LENGTH+1];
         MechType mech_type;
 
     void reset()

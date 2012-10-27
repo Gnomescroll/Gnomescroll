@@ -302,7 +302,7 @@ void init_config()
     container_attributes = new class ContainerAttributes[MAX_CONTAINER_TYPES];
 
     GS_ASSERT(container_name_map == NULL);
-    container_name_map = new class DatNameMap(32, CONTAINER_NAME_MAX_LENGTH);
+    container_name_map = new class DatNameMap(32, DAT_NAME_MAX_LENGTH);
     
     #if DC_SERVER
     init_crusher_dat();
@@ -439,7 +439,7 @@ const char* get_container_name(ItemContainerType type)
 bool is_valid_container_name(const char* name)
 {
     size_t len = strlen(name);
-    if (len <= 0 || len > CONTAINER_NAME_MAX_LENGTH) return false;
+    if (len <= 0 || len > DAT_NAME_MAX_LENGTH) return false;
     for (size_t i=0; i<len; i++)
         if (!is_valid_name_char(name[i]))
             return false;

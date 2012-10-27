@@ -30,7 +30,7 @@ int craft_recipes_possible_count = 0;
 void init_properties()
 {
     GS_ASSERT(item_name_map == NULL);
-    item_name_map = new DatNameMap(256, ITEM_NAME_MAX_LENGTH);
+    item_name_map = new DatNameMap(256, DAT_NAME_MAX_LENGTH);
     
     GS_ASSERT(item_attributes == NULL);
     item_attributes = new ItemAttribute[MAX_ITEM_TYPES];

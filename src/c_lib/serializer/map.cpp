@@ -143,8 +143,8 @@ static bool parse_map_palette_token(const char* key, const char* val, class Pars
         bool valid_name = t_map::is_valid_cube_name(val);
         GS_ASSERT(valid_name);
         if (!valid_name) return false;
-        strncpy(data->name, val, CUBE_NAME_MAX_LENGTH);
-        data->name[CUBE_NAME_MAX_LENGTH] = '\0';
+        strncpy(data->name, val, DAT_NAME_MAX_LENGTH);
+        data->name[DAT_NAME_MAX_LENGTH] = '\0';
     }
     else
     {   // unrecognized field

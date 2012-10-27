@@ -40,8 +40,8 @@ static bool parse_mech_palette_token(const char* key, const char* val, class Par
         bool valid_name = t_mech::is_valid_mech_name(val);
         GS_ASSERT(valid_name);
         if (!valid_name) return false;
-        strncpy(data->name, val, MECH_NAME_MAX_LENGTH);
-        data->name[MECH_NAME_MAX_LENGTH] = '\0';
+        strncpy(data->name, val, DAT_NAME_MAX_LENGTH);
+        data->name[DAT_NAME_MAX_LENGTH] = '\0';
     }
     else
     {   // unrecognized field

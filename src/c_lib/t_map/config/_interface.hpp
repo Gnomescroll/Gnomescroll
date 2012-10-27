@@ -43,8 +43,8 @@ static void cube_def(CubeID id, CubeType type, const char* name, CubeMaterial ma
     if (p->in_use) return;
     
     p->id = id;    
-    strncpy(p->name, name, CUBE_NAME_MAX_LENGTH);
-    p->name[CUBE_NAME_MAX_LENGTH] = '\0';
+    strncpy(p->name, name, DAT_NAME_MAX_LENGTH);
+    p->name[DAT_NAME_MAX_LENGTH] = '\0';
     p->max_damage = DEFAULT_MAX_DAMAGE;
     p->type = type;
     

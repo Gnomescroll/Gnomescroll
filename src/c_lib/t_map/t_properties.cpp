@@ -16,7 +16,7 @@ void init_t_properties()
     GS_ASSERT(fast_cube_properties == NULL);
     fast_cube_properties = (struct FastCubeProperties*)calloc(MAX_CUBES, sizeof(struct FastCubeProperties));
     GS_ASSERT(cube_name_map == NULL);
-    cube_name_map = new class DatNameMap(256, CUBE_NAME_MAX_LENGTH);
+    cube_name_map = new class DatNameMap(256, DAT_NAME_MAX_LENGTH);
 }
 
 void end_t_properties()
@@ -103,7 +103,7 @@ bool is_valid_cube_name(const char* name)
 {
     if (name == NULL) return false;
     size_t len = strlen(name);
-    if (len <= 0 || len > CUBE_NAME_MAX_LENGTH) return false;
+    if (len <= 0 || len > DAT_NAME_MAX_LENGTH) return false;
     for (size_t i=0; i<len; i++)
         if (!is_valid_name_char(name[i]))
             return false;

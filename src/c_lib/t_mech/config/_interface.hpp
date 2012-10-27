@@ -53,8 +53,8 @@ void mech_def(MechClass mech_type_class, const char* name)
     
     s->mech_type = mech_type;
     s->mech_type_class = mech_type_class;
-    strncpy(s->name, name, MECH_NAME_MAX_LENGTH);
-    s->name[MECH_NAME_MAX_LENGTH] = '\0';
+    strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
+    s->name[DAT_NAME_MAX_LENGTH] = '\0';
 }
 
 void set_sprite_index(int sprite_index)

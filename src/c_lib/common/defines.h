@@ -23,11 +23,11 @@ typedef unsigned int GLuint;
 #endif
 
 #ifdef __MSVC__
-	#include <float.h>
-	#define isfinite( x ) ( _finite( x ) && x==x )  
-	float cbrt(float arg) { return pow(arg, 1.0f/3); }
+    #include <float.h>
+    #define isfinite( x ) ( _finite( x ) && x==x )  
+    float cbrt(float arg) { return pow(arg, 1.0f/3); }
 
-	static int S_IRWXU = 0;
+    static int S_IRWXU = 0;
 #endif
 ///*
   //Turn off GS_ASSERTs when production is enabled
@@ -80,3 +80,5 @@ typedef unsigned int GLuint;
 const int GAME_OBJECTS_MAX = 4096 * 4;
 const float TICK_DURATION = 30.0f;
 const int PLAYERS_MAX = 64;
+
+#define DAT_NAME_MAX_LENGTH 24

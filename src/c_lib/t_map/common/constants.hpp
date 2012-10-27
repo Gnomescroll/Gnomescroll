@@ -7,8 +7,6 @@ const int ZMAX = 128;
 
 const int MAX_CUBES = 0xff;
 
-#define CUBE_NAME_MAX_LENGTH 24
-
 const int TERRAIN_MAP_HEIGHT = 128;
 const int TERRAIN_CHUNK_WIDTH = 16;
 

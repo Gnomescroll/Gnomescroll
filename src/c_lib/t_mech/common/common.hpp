@@ -1,6 +1,5 @@
 #pragma once
 
-#define MECH_NAME_MAX_LENGTH 24
 const int MAX_MECHS = 0xff;
 
 typedef enum
@@ -61,7 +60,7 @@ class MechAttribute
         MechRenderType render_type;
         MechSpriteIndex sprite_index;
         bool item_drop; // indicates whether has an item drop set
-        char name[MECH_NAME_MAX_LENGTH+1];
+        char name[DAT_NAME_MAX_LENGTH+1];
         bool loaded;
 
     MechAttribute() :

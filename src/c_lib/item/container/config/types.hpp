@@ -19,7 +19,7 @@ class ContainerAttributes
         bool loaded;
 
         ItemContainerType type;
-        char name[CONTAINER_NAME_MAX_LENGTH+1];
+        char name[DAT_NAME_MAX_LENGTH+1];
 
         int xdim, ydim;
         int alt_xdim, alt_ydim;
@@ -39,8 +39,8 @@ class ContainerAttributes
     void set_name(const char* name)
     {
         size_t len = strlen(name);
-        GS_ASSERT(len <= CONTAINER_NAME_MAX_LENGTH);
-        if (len > CONTAINER_NAME_MAX_LENGTH) return;
+        GS_ASSERT(len <= DAT_NAME_MAX_LENGTH);
+        if (len > DAT_NAME_MAX_LENGTH) return;
         strcpy(this->name, name);
     }
 

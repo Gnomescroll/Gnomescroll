@@ -11,7 +11,7 @@ class MechAttribute* mech_attributes = NULL;  //index from type to attributes
 void init_properties()
 {
     GS_ASSERT(mech_name_map == NULL);
-    mech_name_map = new class DatNameMap(256, MECH_NAME_MAX_LENGTH);
+    mech_name_map = new class DatNameMap(256, DAT_NAME_MAX_LENGTH);
     
     GS_ASSERT(mech_attributes == NULL);
     mech_attributes = new class MechAttribute[MAX_MECHS];
@@ -76,7 +76,7 @@ bool get_mech_type_in_use(MechType mech_type)
 bool is_valid_mech_name(const char* name)
 {
     size_t len = strlen(name);
-    if (len <= 0 || len > MECH_NAME_MAX_LENGTH) return false;
+    if (len <= 0 || len > DAT_NAME_MAX_LENGTH) return false;
     for (size_t i=0; i<len; i++)
         if (!is_valid_name_char(name[i]))
             return false;

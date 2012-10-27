@@ -7,6 +7,10 @@ namespace serializer
 
 void verify_config()
 {
+    print_trace();
+
+    GS_ASSERT_ABORT(DAT_NAME_MAX_LENGTH >= 24);
+    
     GS_ASSERT_ABORT(strcmp(PLAYER_HAND_LOCATION_NAME,         "player:hand")         == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_TOOLBELT_LOCATION_NAME,     "player:toolbelt")     == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_INVENTORY_LOCATION_NAME,    "player:inventory")    == 0);

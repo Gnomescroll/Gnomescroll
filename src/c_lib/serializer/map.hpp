@@ -18,7 +18,7 @@ class ParsedMapPaletteData
         bool valid;
         
         int cube_id;
-        char name[CUBE_NAME_MAX_LENGTH+1];
+        char name[DAT_NAME_MAX_LENGTH+1];
         
     void reset()
     {

@@ -18,7 +18,7 @@ void iso_block_sprite_def(const char* block_name);
 bool is_valid_item_name(const char* name)
 {
     size_t len = strlen(name);
-    if (len <= 0 || len > ITEM_NAME_MAX_LENGTH) return false;
+    if (len <= 0 || len > DAT_NAME_MAX_LENGTH) return false;
     for (size_t i=0; i<len; i++)
         if (!is_valid_name_char(name[i]))
             return false;
@@ -81,8 +81,8 @@ bool item_def(ItemGroup group, const char* name)
     s = &item_attributes[type];
 
     s->load_defaults(type, group);
-    strncpy(s->name, name, ITEM_NAME_MAX_LENGTH);
-    s->name[ITEM_NAME_MAX_LENGTH] = '\0';
+    strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
+    s->name[DAT_NAME_MAX_LENGTH] = '\0';
 
     return true;
 }

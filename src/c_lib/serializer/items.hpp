@@ -16,7 +16,7 @@ class ParsedItemData
         ItemID id;
     
         uuid_t uuid;
-        char name[ITEM_NAME_MAX_LENGTH+1];
+        char name[DAT_NAME_MAX_LENGTH+1];
         unsigned int durability;
         unsigned int stack_size;
         char location_name[LOCATION_NAME_MAX_LENGTH+1];

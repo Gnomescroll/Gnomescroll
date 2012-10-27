@@ -13,7 +13,7 @@ class ItemAttribute
 
         int item_type;
         ItemGroup group;
-        char name[ITEM_NAME_MAX_LENGTH+1];
+        char name[DAT_NAME_MAX_LENGTH+1];
         char pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH+1];
 
         // All items

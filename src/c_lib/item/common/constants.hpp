@@ -3,10 +3,6 @@
 #include <agent/constants.hpp>
 #include <item/common/enum.hpp>
 
-// DON'T CHANGE THIS -- the serializer uses it. that's also why its a macro
-#define ITEM_NAME_MAX_LENGTH 24
-#define CONTAINER_NAME_MAX_LENGTH 24
-
 const size_t ITEM_PRETTY_NAME_MAX_LENGTH = 64;
 
 const int MAX_ITEMS = NULL_ITEM;
