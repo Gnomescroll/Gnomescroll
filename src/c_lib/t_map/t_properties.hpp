@@ -4,6 +4,7 @@
 #include <common/macros.hpp>
 #include <t_map/common/constants.hpp>
 #include <t_map/common/types.hpp>
+#include <common/dat/name_map.hpp>
 
 namespace t_map
 {
@@ -64,8 +65,9 @@ class CubeProperties
     }
 };
 
-extern class CubeProperties* cube_properties;
 extern struct FastCubeProperties* fast_cube_properties;
+extern class CubeProperties* cube_properties;
+extern class DatNameMap* cube_name_map;
 
 void init_t_properties();
 void end_t_properties();
@@ -76,6 +78,8 @@ CubeMaterial get_cube_material(CubeID cube_id);
 
 const char* get_cube_name(CubeID id);
 CubeID get_cube_id(const char* name);
+
+CubeType get_cube_type(CubeID id);
 
 const char* get_cube_name_for_container(ItemContainerType container_type);
 

@@ -5,6 +5,12 @@
 namespace t_map 
 {
 
+void apply_block_dat_changes()
+{
+    // NEVER REUSE A NAME!!
+    //change_block("old_block", "new_block");
+}
+
 /*
 --[[
 * side_texture(D, tex);
@@ -498,6 +504,9 @@ void load_block_dat()
     hud_def(7,7, t6,2,7);
 
     end_cube_def();  // finalize
+
+    apply_block_dat_changes();
+    
     verify_config(); // validate
 }
 

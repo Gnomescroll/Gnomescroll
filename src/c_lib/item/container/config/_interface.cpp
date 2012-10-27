@@ -199,6 +199,20 @@ static void register_settings()
   
     add_container();   // finalize
 }
+
+void change_container(const char* original, const char* replacement)
+{
+    GS_ASSERT_ABORT(is_valid_container_name(original));
+    GS_ASSERT_ABORT(is_valid_container_name(replacement));        
+    bool mapped = container_name_map->add_definition(original, replacement);
+    GS_ASSERT_ABORT(mapped);
+}
+
+static void apply_container_dat_changes()
+{
+    // NEVER REUSE A NAME!!
+    //change_container("old_name", "new_name");
+}
     
 static void validate_settings()
 {
@@ -270,12 +284,25 @@ static void validate_settings()
         if (!c->loaded || !d->loaded) continue;
         GS_ASSERT_ABORT(strcmp(c->name, d->name) != 0);
     }
+
+    // all ItemContainer blocks must have a container defined
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        if (!t_map::isValidCube((CubeID)i)) continue;
+        if (t_map::get_cube_type((CubeID)i) == ItemContainerCube)
+        {
+            GS_ASSERT_ABORT(get_type(t_map::get_cube_name((CubeID)i)) != CONTAINER_TYPE_NONE);
+        }
+    }
 }
 
 void init_config()
 {
-    GS_ASSERT_ABORT(container_attributes == NULL);
+    GS_ASSERT(container_attributes == NULL);
     container_attributes = new class ContainerAttributes[MAX_CONTAINER_TYPES];
+
+    GS_ASSERT(container_name_map == NULL);
+    container_name_map = new class DatNameMap(32, CONTAINER_NAME_MAX_LENGTH);
     
     #if DC_SERVER
     init_crusher_dat();
@@ -285,7 +312,8 @@ void init_config()
 void teardown_config()
 {
     if (container_attributes != NULL) delete[] container_attributes;
-
+    if (container_name_map != NULL) delete container_name_map;
+    
     #if DC_SERVER
     teardown_crusher_dat();
     #endif
@@ -294,17 +322,12 @@ void teardown_config()
 void load_config()
 {
     register_settings();
-    validate_settings();
 }
 
 void end_config()
 {
+    apply_container_dat_changes();
     validate_settings();
-}
-
-void create_containers_from_blocks()
-{
-
 }
 
 /* Public Attribute Accessors */
@@ -321,7 +344,9 @@ ItemContainerType get_type(const char* name)
 
 ItemContainerType get_compatible_type(const char* name)
 {
-    // TODO -- renaming scheme
+    const char* mapname = container_name_map->get_mapped_name(name);
+    if (mapname != NULL)
+        return get_type(mapname);
     return get_type(name);
 }
 

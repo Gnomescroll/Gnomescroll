@@ -195,7 +195,6 @@ void load_block_drop_dat()
         set_drop(0.10f, 3);
 }
 
-
 void init_block_drop_dat()
 {
     GS_ASSERT(defined_drops == NULL);

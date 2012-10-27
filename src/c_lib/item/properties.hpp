@@ -1,11 +1,13 @@
 #pragma once
 
+#include <common/dat/name_map.hpp>
 #include <item/common/constants.hpp>
 #include <t_mech/common/common.hpp>
 
 namespace Item
 {
 
+extern class DatNameMap* item_name_map;
 extern class ItemAttribute* item_attributes;
 
 extern class SynthesizerItem* synthesizer_item_array;

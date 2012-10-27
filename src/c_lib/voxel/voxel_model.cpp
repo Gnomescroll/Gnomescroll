@@ -18,14 +18,16 @@
 //set offset and rotation
 void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
-    if (!skeleton_inited) return;
+    GS_ASSERT(this->skeleton_inited);
+    if (!this->skeleton_inited) return;
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0f,0.0f);
     vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
 
 void Voxel_model::set_skeleton_root(float *data)
 {
-    if (!skeleton_inited) return;
+    GS_ASSERT(this->skeleton_inited);
+    if (!this->skeleton_inited) return;
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(
         data[0], data[1], data[2],
         data[3], data[4], data[5]
@@ -35,11 +37,8 @@ void Voxel_model::set_skeleton_root(float *data)
 
 int Voxel_model::get_parent_node_index(int part)
 {
-    if (part < 0 || part >+ this->n_parts)
-    {
-        printf("WARNING: Voxel_model::get_parent_node_index -- part %d out of range\n", part);
-        return -1;
-    }
+    GS_ASSERT(part >= 0 && part < this->n_parts);
+    if (part < 0 || part >= this->n_parts) return -1;
     VoxPart* vp = vox_dat->vox_part[part];
     if (vp == NULL) return -1;
     return vp->skeleton_parent_matrix;
@@ -47,7 +46,8 @@ int Voxel_model::get_parent_node_index(int part)
 
 void Voxel_model::set_node_rotation_by_part(int part, float theta, float phi, float rho)
 {
-    if (!skeleton_inited) return;
+    GS_ASSERT(this->skeleton_inited);
+    if (!this->skeleton_inited) return;
     int node = this->get_parent_node_index(part);
     if (node == -1) return;
     this->set_node_rotation(node, theta, phi, rho);
@@ -55,26 +55,25 @@ void Voxel_model::set_node_rotation_by_part(int part, float theta, float phi, fl
 
 void Voxel_model::set_node_rotation(int node, float theta, float phi, float rho)
 {
-    if (!skeleton_inited) return;
-    if (node < 0 || node >= this->n_skeleton_nodes)
-    {
-        printf("WARNING: Voxel_mode::set_node_rotation -- node %d out of range\n", node);
-        return;
-    }
-    float x,y,z,rx,ry,rz;
-    x = vox_dat->vox_skeleton_local_matrix_reference[node][0];
-    y = vox_dat->vox_skeleton_local_matrix_reference[node][1];
-    z = vox_dat->vox_skeleton_local_matrix_reference[node][2];
-    rx = vox_dat->vox_skeleton_local_matrix_reference[node][3];
-    ry = vox_dat->vox_skeleton_local_matrix_reference[node][4];
-    rz = vox_dat->vox_skeleton_local_matrix_reference[node][5];
+    GS_ASSERT(this->skeleton_inited);
+    if (!this->skeleton_inited) return;
+    GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
+    if (node < 0 || node >= this->n_skeleton_nodes) return;
+    
+    float x  = vox_dat->vox_skeleton_local_matrix_reference[node][0];
+    float y  = vox_dat->vox_skeleton_local_matrix_reference[node][1];
+    float z  = vox_dat->vox_skeleton_local_matrix_reference[node][2];
+    float rx = vox_dat->vox_skeleton_local_matrix_reference[node][3];
+    float ry = vox_dat->vox_skeleton_local_matrix_reference[node][4];
+    float rz = vox_dat->vox_skeleton_local_matrix_reference[node][5];
     vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx - theta, ry - phi, rz - rho);
 }
 
 void Voxel_model::set_biaxial_nodes(float phi)
 {   // in the editor, head and arm rotate the same way
     // here, they rotate opposite directions
-    if (!skeleton_inited) return;
+    GS_ASSERT(this->skeleton_inited);
+    if (!this->skeleton_inited) return;
     for (int i=0; i<this->n_skeleton_nodes; i++)
     {
         if (!biaxial_nodes[i]) continue;
@@ -84,7 +83,8 @@ void Voxel_model::set_biaxial_nodes(float phi)
 
 void Voxel_model::update_skeleton()
 {
-    if (!skeleton_inited) return;
+    GS_ASSERT(this->skeleton_inited);
+    if (!this->skeleton_inited) return;
     const int debug = 0;
     if(debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
 
@@ -115,10 +115,10 @@ void Voxel_model::update_skeleton()
 
 void Voxel_model::draw_skeleton()
 {
-    if (!skeleton_inited) return;
+    GS_ASSERT(this->skeleton_inited);
+    if (!this->skeleton_inited) return;
     #if DC_CLIENT
     glDisable(GL_TEXTURE_2D);
-    //;
 
     glLineWidth(3.0f);
 
@@ -216,8 +216,6 @@ void Voxel_model::draw_skeleton()
     glColor3ub(255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
-
-    //;
     #endif
 }
 
@@ -251,16 +249,17 @@ void Voxel_model::init_skeleton()
 // implemented for the voxel editor
 void Voxel_model::reset_skeleton()
 {
-    int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
-    skeleton_needs_update = true;
+    this->n_skeleton_nodes = vox_dat->n_skeleton_nodes;
+    this->skeleton_needs_update = true;
     
-    for(int i=0; i<num_skeleton_nodes; i++)
+    for (int i=0; i<this->n_skeleton_nodes; i++)
     {
         vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
         vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i]; //this is zero
     }
+    
     //set pointer in voxel volume back to the skeleton parent world matrix 
-    for(int i=0; i<this->n_parts; i++)
+    for (int i=0; i<this->n_parts; i++)
     {
         class Voxel_volume* vv = &this->vv[i];
         class VoxPart *vp = vox_dat->vox_part[i];
@@ -298,6 +297,9 @@ void Voxel_model::init_parts(int id, ObjectType type)
 
 void Voxel_model::set_part_color(int part_num)
 {
+    GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
+    if (part_num < 0 || part_num >= this->n_parts) return;
+    
     VoxPart *vp = vox_dat->vox_part[part_num];
     Voxel_volume* vv = &(this->vv[part_num]);
     int x = vp->dimension.x;
@@ -332,10 +334,10 @@ void Voxel_model::set_colors()
 
 void Voxel_model::fill_part_color(int part_num, struct Color color)
 {
-    GS_ASSERT(color.r || color.g || color.b); // 0,0,0 is interpreted as invisible
-    GS_ASSERT(color.r != 255 && color.g != 255 && color.b != 255);  // 255 wraps to 0 for whatever reason
     GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
     if (part_num < 0 || part_num >= this->n_parts) return;
+    GS_ASSERT(color.r || color.g || color.b); // 0,0,0 is interpreted as invisible
+    GS_ASSERT(color.r != 255 && color.g != 255 && color.b != 255);  // 255 wraps to 0 for whatever reason
     
     VoxPart *vp = vox_dat->vox_part[part_num];
     if (!vp->colorable) return;
@@ -375,22 +377,16 @@ void Voxel_model::set_draw(bool draw)
 
 void Voxel_model::register_hitscan()
 {
-    if (this->vv == NULL)
-    {
-        printf("ERROR Voxel_model::register_hitscan -- voxel volume array is NULL\n");
-        return;
-    }
+    GS_ASSERT(this->vv != NULL);
+    if (this->vv == NULL) return;
     for (int i=0; i<this->n_parts; i++)
         STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i]);
 }
 
 void Voxel_model::unregister_hitscan()
 {
-    if (this->vv == NULL)
-    {
-        printf("ERROR Voxel_model::register_hitscan -- voxel volume array is NULL\n");
-        return;
-    }
+    GS_ASSERT(this->vv != NULL);
+    if (this->vv == NULL) return;
     for (int i=0; i<this->n_parts;
         STATE::voxel_hitscan_list->unregister_voxel_volume(&this->vv[i++]));
 }
@@ -503,12 +499,8 @@ float Voxel_model::largest_radius()
 
 Voxel_volume* Voxel_model::get_part(int part)
 {
-    if (part < 0 || part >= this->n_parts)
-    {
-        printf("Voxel_model::get_part -- part %d invalid\n", part);
-        return NULL;
-    }
-
+    GS_ASSERT(part >= 0 && part < this->n_parts);
+    if (part < 0 || part >= this->n_parts) return NULL;
     return &this->vv[part];
 }
 
@@ -536,19 +528,15 @@ float Voxel_model::get_radius()
 
 float Voxel_model::get_radius(int part)
 {
-    GS_ASSERT(part < this->n_parts);
-    GS_ASSERT(part >= 0);
-    if (part >= this->n_parts || part < 0) return 1.0f;
+    GS_ASSERT(part >= 0 && part < this->n_parts);
+    if (part < 0 || part >= this->n_parts) return 1.0f;
     return this->get_part(part)->radius;
 }
 
 Affine* Voxel_model::get_node(int node)
 {
-    if (node < 0 || node >= this->n_skeleton_nodes)
-    {
-        printf("Voxel_model::get_node -- part %d invalid\n", node);
-        return NULL;
-    }
+    GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
+    if (node < 0 || node >= this->n_skeleton_nodes) return NULL;
     return &this->vox_skeleton_world_matrix[node];
 }
 

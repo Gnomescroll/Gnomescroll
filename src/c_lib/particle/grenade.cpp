@@ -38,27 +38,21 @@ class grenade_StoC: public FixedSizeReliableNetPacketToClient<grenade_StoC>
 {
     public:
 
-        float x,y,z;
-        float mx,my,mz; // send initial impulse, not velocity
+        Vec3 p;
+        Vec3 m;
         uint8_t owner;
         uint16_t ttl_max;
         uint8_t type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
-        {
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-
-            pack_float(&mx, buff, buff_n, pack);
-            pack_float(&my, buff, buff_n, pack);
-            pack_float(&mz, buff, buff_n, pack);
-
-            pack_u8(&owner, buff, buff_n, pack);
-            pack_u16(&ttl_max, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, unsigned int* buff_n, bool pack) 
+    {
+        pack_vec3(&p, buff, buff_n, pack);
+        pack_vec3(&m, buff, buff_n, pack);
+        pack_u8(&owner, buff, buff_n, pack);
+        pack_u16(&ttl_max, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 inline void grenade_StoC::handle()
@@ -67,7 +61,7 @@ inline void grenade_StoC::handle()
     if (owner == ClientState::playerAgent_state.agent_id) return;
     Grenade* g = Particle::grenade_list->create();
     if (g == NULL) return;
-    g->set_state(x, y, z, mx, my, mz);
+    g->set_state(p, m);
     g->owner = (AgentID)this->owner;
     g->ttl_max = (int)ttl_max;
     g->type = (int)type;
@@ -97,10 +91,7 @@ Grenade::~Grenade()
 {
     #if DC_CLIENT
     Vec3 position = this->get_position();
-    Sound::plasma_grenade_explode(
-        position.x, position.y, position.z,
-        0,0,0
-    );
+    Sound::plasma_grenade_explode(position.x, position.y, position.z, 0,0,0);
     #endif
 }
 
@@ -108,14 +99,8 @@ Grenade::~Grenade()
 void Grenade::broadcast()
 {
     grenade_StoC msg;
-    Vec3 position = this->get_position();
-    msg.x = position.x;
-    msg.y = position.y;
-    msg.z = position.z;
-    Vec3 momentum = this->get_momentum();
-    msg.mx = momentum.x;
-    msg.my = momentum.y;
-    msg.mz = momentum.z;
+    msg.p = this->get_position();
+    msg.m = this->get_momentum();
     msg.ttl_max = this->ttl_max;
     msg.owner = this->owner;
     msg.type = this->type;
@@ -132,12 +117,7 @@ void Grenade::tick()
         this->bounce_count++;
         #if DC_CLIENT
         Vec3 position = this->get_position();
-        Sound::grenade_bounce(
-            position.x,
-            position.y,
-            position.z,
-            0,0,0
-        );
+        Sound::grenade_bounce(position.x, position.y, position.z, 0,0,0);
         #endif
     }
     if (this->bounce_count >= GRENADE_BOUNCE_EXPLODE_LIMIT)

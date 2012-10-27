@@ -287,6 +287,7 @@ int init_c_lib(int argc, char* argv[])
     t_map::load_block_dat();
     t_mech::load_mech_dat();
     ItemContainer::load_config();
+    ItemContainer::end_config();
     Item::init_properties();
     Item::load_item_dat();
 
@@ -295,9 +296,6 @@ int init_c_lib(int argc, char* argv[])
 
     t_map::init_block_drop_dat();
     t_map::load_block_drop_dat();         // load drop dat after items
-
-    ItemContainer::create_containers_from_blocks();
-    ItemContainer::end_config();
     
     Item::create_items_from_blocks();     // create items tied to block that drop themselves
     Item::end_item_dat();

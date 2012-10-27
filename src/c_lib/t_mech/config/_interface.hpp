@@ -65,6 +65,15 @@ void set_sprite_index(int sprite_index)
     s->sprite_index = (MechSpriteIndex)sprite_index;
 }
 
+// Use this to remove or rename a mech
+void change_mech(const char* original, const char* replacement)
+{
+    GS_ASSERT_ABORT(is_valid_mech_name(original));
+    GS_ASSERT_ABORT(is_valid_mech_name(replacement));        
+    bool mapped = mech_name_map->add_definition(original, replacement);
+    GS_ASSERT_ABORT(mapped);
+}
+
 void end_mech_dat()
 {
     if (s != NULL) load_mech();

@@ -14,6 +14,7 @@
 namespace Item
 {
 
+class DatNameMap* item_name_map = NULL;
 class ItemAttribute* item_attributes = NULL;
 class SynthesizerItem* synthesizer_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
@@ -28,6 +29,9 @@ int craft_recipes_possible_count = 0;
 
 void init_properties()
 {
+    GS_ASSERT(item_name_map == NULL);
+    item_name_map = new DatNameMap(256, ITEM_NAME_MAX_LENGTH);
+    
     GS_ASSERT(item_attributes == NULL);
     item_attributes = new ItemAttribute[MAX_ITEM_TYPES];
 
@@ -45,6 +49,7 @@ void init_properties()
 
 void teardown_properties()
 {
+    if (item_name_map          != NULL) delete item_name_map;
     if (item_attributes        != NULL) delete[] item_attributes;
     if (synthesizer_item_array != NULL) delete[] synthesizer_item_array;
     if (crafting_recipe_array  != NULL) delete[] crafting_recipe_array;
@@ -113,7 +118,9 @@ int get_item_type(const char* name)
 
 int get_compatible_item_type(const char* name)
 {
-    // TODO -- implement item renaming/versioning
+    const char* mapname = item_name_map->get_mapped_name(name);
+    if (mapname != NULL)
+        return get_item_type(mapname);
     return get_item_type(name);
 }
 

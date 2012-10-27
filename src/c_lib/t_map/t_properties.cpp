@@ -7,6 +7,7 @@ namespace t_map
 
 struct FastCubeProperties* fast_cube_properties = NULL;
 class CubeProperties* cube_properties = NULL;
+class DatNameMap* cube_name_map = NULL;
 
 void init_t_properties()
 {
@@ -14,12 +15,15 @@ void init_t_properties()
     cube_properties = new class CubeProperties[MAX_CUBES];
     GS_ASSERT(fast_cube_properties == NULL);
     fast_cube_properties = (struct FastCubeProperties*)calloc(MAX_CUBES, sizeof(struct FastCubeProperties));
+    GS_ASSERT(cube_name_map == NULL);
+    cube_name_map = new class DatNameMap(256, CUBE_NAME_MAX_LENGTH);
 }
 
 void end_t_properties()
 {
     if (cube_properties != NULL) delete[] cube_properties;
     if (fast_cube_properties != NULL) free(fast_cube_properties);
+    if (cube_name_map != NULL) delete cube_name_map;
 }
 
 class CubeProperties* get_cube_properties(CubeID id)
@@ -40,9 +44,10 @@ const char* get_cube_name(CubeID id)
 
 CubeID get_compatible_cube_id(const char* name)
 {
+    const char* mapname = cube_name_map->get_mapped_name(name);
+    if (mapname != NULL)
+        return get_cube_id(mapname);
     return get_cube_id(name);
-
-    // TODO -- we need a config loader thing for managing block renaming/deletions
 }
 
 CubeID get_cube_id(const char* name)
@@ -57,6 +62,14 @@ CubeID get_cube_id(const char* name)
     GS_ASSERT(false);
     printf("No cube id found for name %s\n", name);
     return ERROR_CUBE;
+}
+
+CubeType get_cube_type(CubeID id)
+{
+    class CubeProperties* p = get_cube_properties(id);
+    GS_ASSERT(p != NULL);
+    if (p == NULL) return ErrorCube;
+    return p->type;
 }
 
 const char* get_cube_name_for_container(ItemContainerType container_type)

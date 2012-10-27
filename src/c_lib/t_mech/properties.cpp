@@ -5,16 +5,21 @@
 namespace t_mech
 {
     
+class DatNameMap* mech_name_map = NULL;
 class MechAttribute* mech_attributes = NULL;  //index from type to attributes
 
 void init_properties()
 {
+    GS_ASSERT(mech_name_map == NULL);
+    mech_name_map = new class DatNameMap(256, MECH_NAME_MAX_LENGTH);
+    
     GS_ASSERT(mech_attributes == NULL);
     mech_attributes = new class MechAttribute[MAX_MECHS];
 }
 
 void teardown_properties()
 {
+    if (mech_name_map != NULL) delete mech_name_map;
     if (mech_attributes != NULL) delete[] mech_attributes;
 }
 
@@ -80,7 +85,9 @@ bool is_valid_mech_name(const char* name)
 
 MechType get_compatible_mech_type(const char* name)
 {
-    // TODO -- forward compatible dat
+    const char* mapname = mech_name_map->get_mapped_name(name);
+    if (mapname != NULL)
+        return get_mech_type(mapname);
     return get_mech_type(name);
 }
 

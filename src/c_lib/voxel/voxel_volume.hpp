@@ -88,9 +88,7 @@ class Voxel_volume
 
     inline unsigned int get_as_int(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
 
-/*
-    Tests whether a voxel is occupied, for AO
-*/
+    // Tests whether a voxel is occupied, for AO
     inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
     inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3]) __attribute((always_inline));
     inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline));

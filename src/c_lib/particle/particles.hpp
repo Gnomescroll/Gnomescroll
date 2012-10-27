@@ -19,6 +19,11 @@ class ParticleMotionCore
             this->verlet.set_state(x,y,z,mx,my,mz);
         }
 
+        void set_state(struct Vec3 p, struct Vec3 m)
+        {
+            this->set_state(p.x, p.y, p.z, m.x, m.y, m.z);
+        }
+
         void set_position(float x, float y, float z)
         {
             this->verlet.set_position(x,y,z);

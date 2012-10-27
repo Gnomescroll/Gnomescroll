@@ -163,6 +163,7 @@ void set_volume(float vol)
 
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
 {
+    // flip y and z to map to openal's coordinate space
     if (!enabled) return;
     alListener3f(AL_POSITION, x,z,y);
     alListener3f(AL_VELOCITY, vx,vz,vy);

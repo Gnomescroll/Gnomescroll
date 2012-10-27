@@ -46,7 +46,6 @@ class Grenade: public ParticleMotion, public BillboardSprite
         #endif
         
         explicit Grenade(int id);
-        explicit Grenade();
         ~Grenade();
 };
 

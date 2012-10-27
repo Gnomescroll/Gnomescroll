@@ -332,14 +332,12 @@ int init_c_lib(int argc, char* argv[])
     t_map::blit_block_item_sheet();
     t_mech::load_mech_dat();
     ItemContainer::load_config();
+    ItemContainer::end_config();
     Item::init_properties();
     Item::load_item_dat();
 
     t_map::init_block_drop_dat();
     t_map::load_block_drop_dat();
-
-    ItemContainer::create_containers_from_blocks();
-    ItemContainer::end_config();
 
     Item::create_items_from_blocks();
     Item::end_item_dat();

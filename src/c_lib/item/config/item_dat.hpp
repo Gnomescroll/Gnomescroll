@@ -8,8 +8,6 @@
 namespace Item
 {
 
-void verify_item_dat();
-
 void load_item_dat()
 {
     int i0 = texture_alias("./media/sprites/item/i00.png");
@@ -501,9 +499,24 @@ void verify_item_dat()
     }
 }
 
+// Use this to remove or rename a item
+void change_item(const char* original, const char* replacement)
+{
+    GS_ASSERT_ABORT(is_valid_item_name(original));
+    GS_ASSERT_ABORT(is_valid_item_name(replacement));        
+    bool mapped = item_name_map->add_definition(original, replacement);
+    GS_ASSERT_ABORT(mapped);
+}
+
+void apply_item_dat_changes()
+{
+    //change_item("old_name", "new_name");
+}
+
 void end_item_dat()
 {
     finish_item_def();
+    apply_item_dat_changes();
     verify_item_dat();
 }
 

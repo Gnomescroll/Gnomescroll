@@ -27,7 +27,7 @@ typedef enum
     EmptyCube,
     ErrorCube,
     SolidCube,
-    ItemContainerCube
+    ItemContainerCube,
 } CubeType;
 
 typedef enum

@@ -316,6 +316,15 @@ int sprite_alias(int sheet_id, int ypos, int xpos)
 }
 #endif
 
+// Use this to remove or rename a block
+void change_block(const char* original, const char* replacement)
+{
+    GS_ASSERT_ABORT(is_valid_cube_name(original));
+    GS_ASSERT_ABORT(is_valid_cube_name(replacement));        
+    bool mapped = cube_name_map->add_definition(original, replacement);
+    GS_ASSERT_ABORT(mapped);
+}
+
 void verify_config()
 {
     for (int i=0; i<MAX_CUBES; i++)

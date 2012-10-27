@@ -22,39 +22,30 @@ class AgentState
         float phi;        
         float x,y,z;
         float vx,vy,vz;
-        //float jump_pow;
         
-        AgentState();
+    AgentState() :
+        seq(-1),
+        theta(0), phi(0),
+        x(0), y(0), z(0),
+        vx(0), vy(0), vz(0)
+    {}
+    
+    struct Vec3 forward_vector();
+    
+    struct Vec3 get_position() { return vec3_init(x,y,z); }
+    
+    void set_position(struct Vec3 p)
+    {
+        ASSERT_BOXED_POSITION(p);
+        this->x = p.x;
+        this->y = p.y;
+        this->z = p.z;
+    }
 
-        AgentState(const AgentState& other)
-        {
-            this->seq = other.seq;
-            this->theta = other.theta;
-            this->phi = other.phi;
-            this->x = other.x;
-            this->y = other.y;
-            this->z = other.z;
-            this->vx = other.vx;
-            this->vy = other.vy;
-            this->vz = other.vz;
-        }
-        
-        struct Vec3 forward_vector();
-        
-        struct Vec3 get_position() { return vec3_init(x,y,z); }
-        
-        void set_position(struct Vec3 p)
-        {
-            ASSERT_BOXED_POSITION(p);
-            this->x = p.x;
-            this->y = p.y;
-            this->z = p.z;
-        }
-
-        void print()
-        {
-            printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f\n", x,y,z,vx,vy,vz);
-        }
+    void print()
+    {
+        printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f\n", x,y,z,vx,vy,vz);
+    }
 };
 
 
@@ -161,7 +152,9 @@ class Agent
 
         //void send_id_to_client(ClientID client_id);
 
+        #if DC_CLIENT
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
+        #endif
 
         //this is for client
         void handle_control_state(int _seq, int _cs, float _theta, float _phi);

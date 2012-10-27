@@ -77,11 +77,11 @@ void init()
     printf("Awesomium::init\n");
 
     #ifdef linux
-        #if PRODUCTION
+    # if PRODUCTION
     const char package_path_str[] = "./lib/lin32/awesomium/release";
-        #else
+    # else
     const char package_path_str[] = "../lib/lin32/awesomium/release";
-        #endif
+    # endif
     awe_string* package_path = get_awe_string(package_path_str);
     const char locale_path_str[] = "./locales"; // relative to the package path
     awe_string* locale_path = get_awe_string(locale_path_str);

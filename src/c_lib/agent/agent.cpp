@@ -21,15 +21,6 @@
 
 #include <physics/quadrant.hpp>
 
-AgentState::AgentState()
-:
-seq(-1),
-theta(0), phi(0),
-x(0), y(0), z(0),
-vx(0), vy(0), vz(0)
-//,jump_pow(0)
-{}
-
 Vec3 AgentState::forward_vector()
 {
     if (theta > 1.0f)
@@ -64,8 +55,7 @@ Vec3 AgentState::forward_vector()
 #if DC_CLIENT
 bool Agent::is_you()
 {
-    if (id == ClientState::playerAgent_state.agent_id) return true;
-    return false;
+    return (this->id != NULL_AGENT && this->id == ClientState::playerAgent_state.agent_id);
 }
 #endif
 
@@ -333,30 +323,15 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
 void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 {
-
-    //printf("cs= %i \n", seq);
-
-
-    //if (seq != CS_seq) printf("seq != CS_seq: %i %i  \n", seq, CS_seq);
-
-    //int index = seq%256;
-
     this->cs[seq].seq = seq;
     this->cs[seq].cs = cs;
     this->cs[seq].theta = theta;
     this->cs[seq].phi = phi;
 
-    //printf("index= %i \n", index);
-
-    //printf("1 seq: %i \n", seq);
-    //printf("1 CS_seq: %i \n", CS_seq);
     tick();
-    //printf("2 seq: %i \n", seq);
-    //printf("2 CS_seq: %i \n", CS_seq);
 
-    #if DC_SERVER
-    
-    if (client_id != -1) 
+    #if DC_SERVER    
+    if (client_id != NULL_CLIENT) 
     {
         class PlayerAgent_Snapshot P;
         
@@ -406,8 +381,9 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
     #endif
 }
 
-void Agent::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
-    #if DC_CLIENT
+#if DC_CLIENT
+void Agent::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
+{
     state_snapshot.seq = seq;
     state_snapshot.theta = theta;
     state_snapshot.phi = phi;
@@ -425,15 +401,9 @@ void Agent::handle_state_snapshot(int seq, float theta, float phi, float x,float
 
     s = state_snapshot;
 
-    //#if DC_CLIENT
-    //AgentDraw::add_snapshot_to_history(this);
-    //#endif
-
     tick();
-    #else
-    printf("ERROR: Server is calling handle_state_snapshot\n");
-    #endif
 }
+#endif
 
 void Agent::set_position(float x, float y, float z)
 {

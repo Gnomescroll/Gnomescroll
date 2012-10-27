@@ -27,7 +27,6 @@ void init_config();
 void teardown_config();
 void load_config();
 void end_config();
-void create_containers_from_blocks();
 
 bool is_valid_container_name(const char* name);
 

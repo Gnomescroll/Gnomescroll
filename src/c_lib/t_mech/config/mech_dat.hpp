@@ -5,6 +5,11 @@
 namespace t_mech
 {
 
+void apply_mech_dat_changes()
+{
+    //change_mech("old_name", "new_name");
+}
+
 void load_mech_dat()
 {
     mech_def(MECH_CRYSTAL, "blue_crystal");
@@ -36,6 +41,8 @@ void load_mech_dat()
     s->render_type = MECH_RENDER_TYPE_0;
 
     end_mech_dat();     // finalize
+
+    apply_mech_dat_changes();   // handle renaming/removals
     
     verify_mech_dat();  // validate
 }

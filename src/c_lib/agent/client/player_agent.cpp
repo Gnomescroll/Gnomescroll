@@ -309,17 +309,14 @@ void PlayerAgent_state::update_sound()
     Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, p.x, p.y, p.z, 0.0f,0.0f,1.0f);
 }
 
-PlayerAgent_state::PlayerAgent_state()
-:
-crouching(false),
-jetpack_ticks(0),
-jetpack_decay(0),
-action(this)
+PlayerAgent_state::PlayerAgent_state() :
+    crouching(false),
+    jetpack_ticks(0),
+    jetpack_decay(0),
+    action(this)
 {
-    //init
     static int inited=0;
-    if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
-    inited++;
+    GS_ASSERT(!(inited++));
 
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
 

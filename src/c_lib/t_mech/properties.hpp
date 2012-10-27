@@ -4,7 +4,8 @@
 
 namespace t_mech
 {
-    
+
+extern class DatNameMap* mech_name_map;
 extern class MechAttribute* mech_attributes;   //index from type to attributes
 
 void init_properties();

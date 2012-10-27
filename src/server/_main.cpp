@@ -18,7 +18,7 @@ void default_map_gen()
     t_map::map_post_processing(); //regolith stuff
     t_gen::generate_rock_layer();
     t_gen::start_cave_generator();
-	//t_gen::excavate(); // corpusc copied cave_generator.hpp to excavator.hpp, with the idea to heavily modify it, without losing the original
+    //t_gen::excavate(); // corpusc copied cave_generator.hpp to excavator.hpp, with the idea to heavily modify it, without losing the original
     t_gen::populate_ore();
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
@@ -39,16 +39,14 @@ void init(int argc, char* argv[])
     bool fast_map = false;
     bool corpusc = false;
     #if GS_SERIALIZER
+    if (strcmp(Options::map, "fast") == 0)
+        fast_map = true;
+    else
     if (!serializer::load_data())
     {
-        if (strcmp(Options::map, "fast") == 0)
-            fast_map = true;
-        else
-        {
-            default_map_gen();
-            t_gen::populate_crystals();
-            t_map::environment_process_startup();
-        }
+        default_map_gen();
+        t_gen::populate_crystals();
+        t_map::environment_process_startup();
     }
     #else
     if (strcmp(Options::map, "fast") == 0)
