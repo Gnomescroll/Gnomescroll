@@ -8,6 +8,8 @@ namespace t_mech
 void apply_mech_dat_changes()
 {
     //change_mech("old_name", "new_name");
+
+    mech_name_map->condense();  // finalize
 }
 
 void load_mech_dat()

@@ -212,6 +212,8 @@ static void apply_container_dat_changes()
 {
     // NEVER REUSE A NAME!!
     //change_container("old_name", "new_name");
+
+    container_name_map->condense();  // finalize
 }
     
 static void validate_settings()

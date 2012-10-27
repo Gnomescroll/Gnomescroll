@@ -43,7 +43,7 @@ class DatNameMap
     {
         // condense transitive relationships
         // e.g. if A->B and B->C, then change to A->C
-        // repeated apply until the mapping is stable
+        // repeatedly apply until the mapping is stable
         // i.e. no string in replacements is also in originals
         bool condensed = true;
         do
@@ -55,7 +55,15 @@ class DatNameMap
                 const char* replacement = &this->replacements[index];
                 const char* dest = this->get_mapped_name(replacement);
                 if (dest == NULL) continue;
-                strcpy(&this->replacements[index], dest);
+
+                // make sure name does not resolve to self, for circular definitions
+                bool same = (strcmp(&this->originals[index], dest) == 0);
+                if (same)
+                    printf("ERROR: chained name mapping resolves to self, for name %s\n", dest); 
+                GS_ASSERT_ABORT(!same);
+                
+                strncpy(&this->replacements[index], dest, this->name_max+1);
+                this->replacements[index+this->name_max] = '\0';
                 condensed = false;
             }
         }

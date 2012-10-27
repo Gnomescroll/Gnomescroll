@@ -9,6 +9,8 @@ void apply_block_dat_changes()
 {
     // NEVER REUSE A NAME!!
     //change_block("old_block", "new_block");
+
+    cube_name_map->condense();  // finalize
 }
 
 /*
