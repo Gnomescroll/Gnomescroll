@@ -16,6 +16,9 @@ namespace t_mech
 namespace t_mech
 {
 
+#define MECH_NAME_FILE_ACTIVE   "mech_names.active"
+#define MECH_NAME_FILE_INACTIVE "mech_names.inactive"
+
 int _current_mech_index = 0;
 class MechAttribute* s = NULL;
 
@@ -102,6 +105,41 @@ void verify_mech_dat()
         GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
         GS_ASSERT_ABORT(a->mech_type != b->mech_type);
     }
+
+    GS_ASSERT_ABORT(mech_name_map->condensed);
+
+    // check inactive names against active
+    for (int i=0; i<MAX_MECHS; i++)
+    {
+        GS_ASSERT_ABORT(mech_name_map->get_mapped_name(mech_attributes[i].name) == NULL);
+    }
+
+    // check inactive name destinations against active
+    for (size_t i=0; i<mech_name_map->size; i++)
+    {
+        GS_ASSERT_ABORT(get_mech_type(mech_name_map->get_replacement(i)) != NULL_MECH_TYPE);
+    }
+
+    // either both files must be missing or both must exist
+    bool active_dat = file_exists(DATA_PATH MECH_NAME_FILE_ACTIVE);
+    bool inactive_dat = file_exists(DATA_PATH MECH_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT((active_dat && inactive_dat) || (!active_dat && !inactive_dat));
+
+    if (active_dat && inactive_dat)
+    {   // check that all names declared a valid with respect to past name definitions
+        // but only if the files are present
+        GS_ASSERT_ABORT(name_changes_valid(DATA_PATH MECH_NAME_FILE_ACTIVE, DATA_PATH MECH_NAME_FILE_INACTIVE,
+            DAT_NAME_MAX_LENGTH, mech_attributes, MAX_MECHS, mech_name_map));
+    }
 }
+
+void save_mech_names()
+{
+    bool saved = save_active_names(mech_attributes, MAX_MECHS, DAT_NAME_MAX_LENGTH, DATA_PATH MECH_NAME_FILE_ACTIVE);
+    GS_ASSERT_ABORT(saved);
+    saved = mech_name_map->save(DATA_PATH MECH_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT(saved);
+}
+
 
 }   // t_mech

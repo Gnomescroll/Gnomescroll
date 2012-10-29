@@ -47,6 +47,8 @@ void load_mech_dat()
     apply_mech_dat_changes();   // handle renaming/removals
     
     verify_mech_dat();  // validate
+
+    save_mech_names();  // safe to save names now
 }
 
 }   // t_mech

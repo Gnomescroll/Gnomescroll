@@ -78,6 +78,8 @@ class DatNameMap
         char* originals;
         char* replacements;
 
+        bool condensed;
+
     bool add_definition(const char* original, const char* replacement)
     {
         int cmp = strcmp(original, replacement);
@@ -128,10 +130,10 @@ class DatNameMap
         // e.g. if A->B and B->C, then change to A->C
         // repeatedly apply until the mapping is stable
         // i.e. no string in replacements is also in originals
-        bool condensed = true;
+        this->condensed = true;
         do
         {
-            condensed = true;
+            this->condensed = true;
             for (size_t i=0; i<this->size; i++)
             {
                 size_t index = this->get_index(i);
@@ -147,10 +149,10 @@ class DatNameMap
                 
                 strncpy(&this->replacements[index], dest, this->name_max+1);
                 this->replacements[index+this->name_max] = '\0';
-                condensed = false;
+                this->condensed = false;
             }
         }
-        while (!condensed);
+        while (!this->condensed);
     }
 
     bool save(const char* filename)
@@ -226,7 +228,7 @@ class DatNameMap
     }
 
     DatNameMap(const size_t max, const size_t name_max) :
-        max(max), name_max(name_max), size(0)
+        max(max), name_max(name_max), size(0), condensed(false)
     {
         this->originals = (char*)calloc(this->max * (this->name_max+1), sizeof(char));
         this->replacements = (char*)calloc(this->max * (this->name_max+1), sizeof(char));

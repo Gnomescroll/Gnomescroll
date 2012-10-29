@@ -359,6 +359,8 @@ void verify_config()
         GS_ASSERT_ABORT(a->container_type != b->container_type);
     }
 
+    GS_ASSERT_ABORT(cube_name_map->condensed);
+
     // check inactive names against active
     for (int i=0; i<MAX_CUBES; i++)
     {
