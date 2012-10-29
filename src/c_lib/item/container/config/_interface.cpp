@@ -35,6 +35,9 @@ void send_crusher_crush_action(ContainerActionType action, int container_id, int
 namespace ItemContainer
 {
 
+#define CONTAINER_NAME_FILE_ACTIVE   "container_names.active"
+#define CONTAINER_NAME_FILE_INACTIVE "container_names.inactive"
+
 /* Configuration Loader */ 
 
 static class ContainerAttributes* c = NULL;
@@ -215,7 +218,7 @@ static void apply_container_dat_changes()
 
     container_name_map->condense();  // finalize
 }
-    
+
 static void validate_settings()
 {
     // if the dimensions change, we need to know as it affects the serializer
@@ -296,6 +299,40 @@ static void validate_settings()
             GS_ASSERT_ABORT(get_type(t_map::get_cube_name((CubeID)i)) != CONTAINER_TYPE_NONE);
         }
     }
+
+    GS_ASSERT_ABORT(container_name_map->condensed);
+
+    // check inactive names against active
+    for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+    {
+        GS_ASSERT_ABORT(container_name_map->get_mapped_name(container_attributes[i].name) == NULL);
+    }
+
+    // check inactive name destinations against active
+    for (size_t i=0; i<container_name_map->size; i++)
+    {
+        GS_ASSERT_ABORT(get_type(container_name_map->get_replacement(i)) != CONTAINER_TYPE_NONE);
+    }
+
+    // either both files must be missing or both must exist
+    bool active_dat = file_exists(DATA_PATH CONTAINER_NAME_FILE_ACTIVE);
+    bool inactive_dat = file_exists(DATA_PATH CONTAINER_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT((active_dat && inactive_dat) || (!active_dat && !inactive_dat));
+
+    if (active_dat && inactive_dat)
+    {   // check that all names declared a valid with respect to past name definitions
+        // but only if the files are present
+        GS_ASSERT_ABORT(name_changes_valid(DATA_PATH CONTAINER_NAME_FILE_ACTIVE, DATA_PATH CONTAINER_NAME_FILE_INACTIVE,
+            DAT_NAME_MAX_LENGTH, container_attributes, MAX_CONTAINER_TYPES, container_name_map));
+    }
+}
+
+void save_container_names()
+{
+    bool saved = save_active_names(container_attributes, MAX_CONTAINER_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH CONTAINER_NAME_FILE_ACTIVE);
+    GS_ASSERT_ABORT(saved);
+    saved = container_name_map->save(DATA_PATH CONTAINER_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT(saved);
 }
 
 void init_config()
@@ -330,6 +367,7 @@ void end_config()
 {
     apply_container_dat_changes();
     validate_settings();
+    save_container_names();
 }
 
 /* Public Attribute Accessors */

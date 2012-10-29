@@ -8,6 +8,9 @@
 namespace Item
 {
 
+#define ITEM_NAME_FILE_ACTIVE   "item_names.active"
+#define ITEM_NAME_FILE_INACTIVE "item_names.inactive"
+
 void load_item_dat()
 {
     int i0 = texture_alias("./media/sprites/item/i00.png");
@@ -497,6 +500,40 @@ void verify_item_dat()
         GS_ASSERT_ABORT(a->item_type != b->item_type);
         GS_ASSERT_ABORT(a->cube_id == NULL_CUBE || a->cube_id != b->cube_id);
     }
+    
+    GS_ASSERT_ABORT(item_name_map->condensed);
+
+    // check inactive names against active
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
+    {
+        GS_ASSERT_ABORT(item_name_map->get_mapped_name(item_attributes[i].name) == NULL);
+    }
+
+    // check inactive name destinations against active
+    for (size_t i=0; i<item_name_map->size; i++)
+    {
+        GS_ASSERT_ABORT(get_item_type(item_name_map->get_replacement(i)) != NULL_ITEM_TYPE);
+    }
+
+    // either both files must be missing or both must exist
+    bool active_dat = file_exists(DATA_PATH ITEM_NAME_FILE_ACTIVE);
+    bool inactive_dat = file_exists(DATA_PATH ITEM_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT((active_dat && inactive_dat) || (!active_dat && !inactive_dat));
+
+    if (active_dat && inactive_dat)
+    {   // check that all names declared a valid with respect to past name definitions
+        // but only if the files are present
+        GS_ASSERT_ABORT(name_changes_valid(DATA_PATH ITEM_NAME_FILE_ACTIVE, DATA_PATH ITEM_NAME_FILE_INACTIVE,
+            DAT_NAME_MAX_LENGTH, item_attributes, MAX_ITEM_TYPES, item_name_map));
+    }
+}
+
+void save_item_names()
+{
+    bool saved = save_active_names(item_attributes, MAX_ITEM_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH ITEM_NAME_FILE_ACTIVE);
+    GS_ASSERT_ABORT(saved);
+    saved = item_name_map->save(DATA_PATH ITEM_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT(saved);
 }
 
 // Use this to remove or rename a item
@@ -520,6 +557,7 @@ void end_item_dat()
     finish_item_def();
     apply_item_dat_changes();
     verify_item_dat();
+    save_item_names();
 }
 
 }   // Item
