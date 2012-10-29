@@ -9,6 +9,9 @@ void apply_block_dat_changes()
 {
     // NEVER REUSE A NAME!!
     //change_block("old_block", "new_block");
+    
+    // Note: if you define any name changes for a block that automatically creates an item or container,
+    // you have to manually define the name change in the item or container dat
 
     cube_name_map->condense();  // finalize
 }

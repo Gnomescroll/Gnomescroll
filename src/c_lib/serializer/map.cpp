@@ -199,7 +199,14 @@ bool load_map_palette_file(const char* fn)
             return false;
         }
 
-        CubeID actual_cube_id = t_map::get_compatible_cube_id(palette_data.name);
+        const char* actual_name = t_map::get_compatible_cube_name(palette_data.name);
+        GS_ASSERT(actual_name != NULL);
+        if (actual_name == NULL)
+        {   // we failed to get a compatible cube name
+            free(str);
+            return false;
+        }
+        CubeID actual_cube_id = t_map::get_cube_id(actual_name);
         GS_ASSERT(t_map::isInUse(actual_cube_id));
         if (!t_map::isInUse(actual_cube_id))
         {   // we failed to get a compatible block type

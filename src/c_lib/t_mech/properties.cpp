@@ -83,13 +83,12 @@ bool is_valid_mech_name(const char* name)
     return true;
 }
 
-MechType get_compatible_mech_type(const char* name)
+const char* get_compatible_mech_name(const char* name)
 {
     const char* mapname = mech_name_map->get_mapped_name(name);
-    if (mapname != NULL)
-        return get_mech_type(mapname);
-    return get_mech_type(name);
+    if (mapname != NULL) return mapname;
+    if (get_mech_type(name) != NULL_MECH_TYPE) return name;
+    return NULL;
 }
-
 
 }   // t_mech

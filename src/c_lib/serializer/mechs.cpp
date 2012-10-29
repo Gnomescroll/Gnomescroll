@@ -96,9 +96,17 @@ bool load_mech_palette_file(const char* fn)
             return false;
         }
 
-        MechType actual_mech_type = t_mech::get_compatible_mech_type(palette_data.name);
-        GS_ASSERT(actual_mech_type != NULL_MECH_TYPE);
-        if (actual_mech_type == NULL_MECH_TYPE)
+        const char* actual_name = t_mech::get_compatible_mech_name(palette_data.name);
+        GS_ASSERT(actual_name != NULL);
+        if (actual_name == NULL)
+        {
+            free(str);
+            return false;
+        }
+
+        MechType mech_type = t_mech::get_mech_type(actual_name);
+        GS_ASSERT(mech_type != NULL_MECH_TYPE);
+        if (mech_type == NULL_MECH_TYPE)
         {   // we failed to get a compatible mech type
             free(str);
             return false;
@@ -110,7 +118,7 @@ bool load_mech_palette_file(const char* fn)
             return false;
         }
         
-        mech_type_map[palette_data.mech_type] = actual_mech_type;
+        mech_type_map[palette_data.mech_type] = mech_type;
         
         if (c == '\0') break;
     }

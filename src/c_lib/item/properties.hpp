@@ -34,7 +34,7 @@ int get_sprite_index_for_type(int type);
 
 const char* get_item_name(int item_type);
 int get_item_type(const char* name);
-int get_compatible_item_type(const char* name);
+const char* get_compatible_item_name(const char* name);
 
 const char* get_item_pretty_name(int type);
 

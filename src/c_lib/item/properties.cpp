@@ -116,12 +116,12 @@ int get_item_type(const char* name)
     return NULL_ITEM_TYPE;
 }
 
-int get_compatible_item_type(const char* name)
+const char* get_compatible_item_name(const char* name)
 {
     const char* mapname = item_name_map->get_mapped_name(name);
-    if (mapname != NULL)
-        return get_item_type(mapname);
-    return get_item_type(name);
+    if (mapname != NULL) return mapname;
+    if (get_item_type(name) != NULL_ITEM_TYPE) return name;
+    return NULL;
 }
 
 const char* get_item_pretty_name(int item_type)

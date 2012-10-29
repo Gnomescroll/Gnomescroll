@@ -8,7 +8,7 @@ namespace ItemContainer
 /* Public Attribute Accessors */
 
 ItemContainerType get_type(const char* name);
-ItemContainerType get_compatible_type(const char* name);
+const char* get_compatible_name(const char* name);
 class ContainerAttributes* get_attr(const char* name);
 class ContainerAttributes* get_attr(ItemContainerType type);
 unsigned int get_container_max_slots(ItemContainerType type);

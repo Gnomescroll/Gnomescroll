@@ -85,13 +85,13 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
         
         /* Read the entire file into memory. */
         size_t newLen = fread(source, sizeof(char), bufsize, fp);
-        if (newLen == 0) 
+        if (ferror(fp))
         {
             free(source);
             fclose(fp);
             printf("read_file_to_buffer: error reading file %s\n", filename);
             return NULL;
-        } 
+        }
         *size = newLen;
         source[++newLen] = '\0'; /* Just to be safe. */
     }

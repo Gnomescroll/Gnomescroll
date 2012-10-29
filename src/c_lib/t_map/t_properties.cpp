@@ -42,12 +42,21 @@ const char* get_cube_name(CubeID id)
     return p->name;
 }
 
-CubeID get_compatible_cube_id(const char* name)
+const char* get_compatible_cube_name(const char* name)
 {
     const char* mapname = cube_name_map->get_mapped_name(name);
-    if (mapname != NULL)
-        return get_cube_id(mapname);
-    return get_cube_id(name);
+    if (mapname != NULL) return mapname;
+
+    // look for the name defined in the cube list
+    // (we don't reuse get_cube_id() becuase that returns ERROR_CUBE when not found,
+    // which is technically a valid cube for other purposes
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        class CubeProperties* p = get_cube_properties((CubeID)i);
+        if (p != NULL && strcmp(name, p->name) == 0)
+            return name;
+    }
+    return NULL;
 }
 
 CubeID get_cube_id(const char* name)

@@ -87,7 +87,7 @@ bool is_valid_cube_name(const char* name);
 
 // applies forward-compatible name versioning to give an id
 // use only for the serializer
-CubeID get_compatible_cube_id(const char* name);
+const char* get_compatible_cube_name(const char* name);
 
 ItemContainerType get_container_type_for_cube(CubeID cube_id);
 

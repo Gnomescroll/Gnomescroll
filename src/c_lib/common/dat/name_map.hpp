@@ -217,13 +217,15 @@ class DatNameMap
 
     const char* get_original(size_t i)
     {
-        if (i <= this->size) return NULL;
+        GS_ASSERT(i < this->size);
+        if (i >= this->size) return NULL;
         return &this->originals[this->get_index(i)];
     }
     
     const char* get_replacement(size_t i)
     {
-        if (i <= this->size) return NULL;
+        GS_ASSERT(i < this->size);
+        if (i >= this->size) return NULL;
         return &this->replacements[this->get_index(i)];
     }
 
@@ -317,9 +319,9 @@ bool name_changes_valid(const char* active_filename, const char* inactive_filena
         if (!properties[i].loaded) continue;
         bool in_active = (active_names != NULL && string_in_fixed_lines(properties[i].name, active_names, active_count, name_length));
         bool in_inactive = (inactive_names != NULL && string_in_fixed_lines(properties[i].name, inactive_names, inactive_count, name_length));
-        if (!in_active && !in_inactive)
+        if (!in_active && in_inactive)
         {
-            printf("ERROR: name %s does not appear in either %s or %s\n", properties[i].name, active_filename, inactive_filename);
+            printf("ERROR: name %s does not appear in %s but appears in %s\n", properties[i].name, active_filename, inactive_filename);
             valid = false;
         }
     }

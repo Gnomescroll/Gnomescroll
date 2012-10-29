@@ -548,7 +548,7 @@ void change_item(const char* original, const char* replacement)
 void apply_item_dat_changes()
 {
     //change_item("old_name", "new_name");
-    
+
     item_name_map->condense();  // finalize
 }
 

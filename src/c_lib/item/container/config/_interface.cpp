@@ -382,12 +382,12 @@ ItemContainerType get_type(const char* name)
     return CONTAINER_TYPE_NONE;
 }
 
-ItemContainerType get_compatible_type(const char* name)
+const char* get_compatible_name(const char* name)
 {
     const char* mapname = container_name_map->get_mapped_name(name);
-    if (mapname != NULL)
-        return get_type(mapname);
-    return get_type(name);
+    if (mapname != NULL) return mapname;
+    if (get_type(name) != CONTAINER_TYPE_NONE) return name;
+    return NULL;
 }
 
 class ContainerAttributes* get_attr(const char* name)

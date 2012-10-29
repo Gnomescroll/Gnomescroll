@@ -226,14 +226,19 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         }
 
         parse_line<class ParsedItemData>(&parse_item_token, buf, k, item_data);
-        int item_type = Item::get_compatible_item_type(item_data->name);
+        const char* actual_name = Item::get_compatible_item_name(item_data->name);
+
+        int item_type = NULL_ITEM_TYPE;
+        if (actual_name != NULL)
+            item_type = Item::get_item_type(actual_name);
         
         GS_ASSERT(item_data->valid);
+        GS_ASSERT(actual_name != NULL);
         GS_ASSERT(item_type != NULL_ITEM_TYPE);
         GS_ASSERT(item_data->container_slot < max_slots);
         GS_ASSERT(slot_checker[item_data->container_slot] == NULL_ITEM);
 
-        if (!item_data->valid || item_data->container_slot >= max_slots
+        if (!item_data->valid || item_data->container_slot >= max_slots || actual_name == NULL
           || item_type == NULL_ITEM_TYPE || slot_checker[item_data->container_slot] != NULL_ITEM)
         {
             error = true;
