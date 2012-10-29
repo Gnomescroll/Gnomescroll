@@ -314,6 +314,7 @@ static void validate_settings()
         GS_ASSERT_ABORT(get_type(container_name_map->get_replacement(i)) != CONTAINER_TYPE_NONE);
     }
 
+    #if DC_SERVER || !PRODUCTION
     // either both files must be missing or both must exist
     bool active_dat = file_exists(DATA_PATH CONTAINER_NAME_FILE_ACTIVE);
     bool inactive_dat = file_exists(DATA_PATH CONTAINER_NAME_FILE_INACTIVE);
@@ -325,14 +326,17 @@ static void validate_settings()
         GS_ASSERT_ABORT(name_changes_valid(DATA_PATH CONTAINER_NAME_FILE_ACTIVE, DATA_PATH CONTAINER_NAME_FILE_INACTIVE,
             DAT_NAME_MAX_LENGTH, container_attributes, MAX_CONTAINER_TYPES, container_name_map));
     }
+    #endif
 }
 
 void save_container_names()
 {
+    #if DC_SERVER || !PRODUCTION
     bool saved = save_active_names(container_attributes, MAX_CONTAINER_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH CONTAINER_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = container_name_map->save(DATA_PATH CONTAINER_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);
+    #endif
 }
 
 void init_config()

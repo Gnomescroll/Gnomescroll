@@ -270,7 +270,10 @@ int init_c_lib(int argc, char* argv[])
     _test_common();
 
     create_path(SCREENSHOT_PATH);
+    #if !PRODUCTION
+    // this path is for build/debug data
     create_path(DATA_PATH);
+    #endif
     
     Log::init();
     printf("init c_lib\n");

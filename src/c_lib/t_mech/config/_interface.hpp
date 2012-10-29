@@ -120,6 +120,8 @@ void verify_mech_dat()
         GS_ASSERT_ABORT(get_mech_type(mech_name_map->get_replacement(i)) != NULL_MECH_TYPE);
     }
 
+
+    #if DC_SERVER || !PRODUCTION
     // either both files must be missing or both must exist
     bool active_dat = file_exists(DATA_PATH MECH_NAME_FILE_ACTIVE);
     bool inactive_dat = file_exists(DATA_PATH MECH_NAME_FILE_INACTIVE);
@@ -131,14 +133,17 @@ void verify_mech_dat()
         GS_ASSERT_ABORT(name_changes_valid(DATA_PATH MECH_NAME_FILE_ACTIVE, DATA_PATH MECH_NAME_FILE_INACTIVE,
             DAT_NAME_MAX_LENGTH, mech_attributes, MAX_MECHS, mech_name_map));
     }
+    #endif
 }
 
 void save_mech_names()
 {
+    #if DC_SERVER || !PRODUCTION
     bool saved = save_active_names(mech_attributes, MAX_MECHS, DAT_NAME_MAX_LENGTH, DATA_PATH MECH_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = mech_name_map->save(DATA_PATH MECH_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);
+    #endif
 }
 
 

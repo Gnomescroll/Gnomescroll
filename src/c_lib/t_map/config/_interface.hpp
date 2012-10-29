@@ -373,6 +373,7 @@ void verify_config()
         GS_ASSERT_ABORT(get_cube_id(cube_name_map->get_replacement(i)) != ERROR_CUBE);
     }
 
+    #if DC_SERVER || !PRODUCTION
     // either both files must be missing or both must exist
     bool active_dat = file_exists(DATA_PATH CUBE_NAME_FILE_ACTIVE);
     bool inactive_dat = file_exists(DATA_PATH CUBE_NAME_FILE_INACTIVE);
@@ -384,14 +385,17 @@ void verify_config()
         GS_ASSERT_ABORT(name_changes_valid(DATA_PATH CUBE_NAME_FILE_ACTIVE, DATA_PATH CUBE_NAME_FILE_INACTIVE,
             DAT_NAME_MAX_LENGTH, cube_properties, MAX_CUBES, cube_name_map));
     }
+    #endif
 }
 
 void save_cube_names()
 {
+    #if DC_SERVER || !PRODUCTION
     bool saved = save_active_names(cube_properties, MAX_CUBES, DAT_NAME_MAX_LENGTH, DATA_PATH CUBE_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = cube_name_map->save(DATA_PATH CUBE_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);
+    #endif
 }
 
 }   // t_map

@@ -515,6 +515,7 @@ void verify_item_dat()
         GS_ASSERT_ABORT(get_item_type(item_name_map->get_replacement(i)) != NULL_ITEM_TYPE);
     }
 
+    #if DC_SERVER || !PRODUCTION
     // either both files must be missing or both must exist
     bool active_dat = file_exists(DATA_PATH ITEM_NAME_FILE_ACTIVE);
     bool inactive_dat = file_exists(DATA_PATH ITEM_NAME_FILE_INACTIVE);
@@ -526,14 +527,17 @@ void verify_item_dat()
         GS_ASSERT_ABORT(name_changes_valid(DATA_PATH ITEM_NAME_FILE_ACTIVE, DATA_PATH ITEM_NAME_FILE_INACTIVE,
             DAT_NAME_MAX_LENGTH, item_attributes, MAX_ITEM_TYPES, item_name_map));
     }
+    #endif
 }
 
 void save_item_names()
 {
+    #if DC_SERVER || !PRODUCTION
     bool saved = save_active_names(item_attributes, MAX_ITEM_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH ITEM_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = item_name_map->save(DATA_PATH ITEM_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);
+    #endif
 }
 
 // Use this to remove or rename a item
