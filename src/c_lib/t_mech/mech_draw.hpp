@@ -334,7 +334,7 @@ class MechListShader
 
         SDL_UnlockSurface(s);
 
-        //save_surface_to_png(s, "./screenshot/mech_surface.png");
+        //save_surface_to_png(s, SCREENSHOT_PATH "mech_surface.png");
 
         //floating point modifier
         for(int i=0; i<256; i++)

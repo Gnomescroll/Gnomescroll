@@ -14,7 +14,7 @@ void ItemDropConfig::save_to_file()
     GS_ASSERT(max > 0);
     GS_ASSERT(this->get_name_from_id != NULL);
     
-    const char fmt[] = "./data/%s_drop_dat.txt";
+    const char fmt[] = DATA_PATH "%s_drop_dat.txt";
     char* name = this->name;
     GS_ASSERT(name != NULL);
     if (name == NULL) name = (char*)"";

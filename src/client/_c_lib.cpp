@@ -269,7 +269,9 @@ int init_c_lib(int argc, char* argv[])
 
     _test_common();
 
-    create_path("./screenshot/");
+    create_path(SCREENSHOT_PATH);
+    create_path(DATA_PATH);
+    
     Log::init();
     printf("init c_lib\n");
 

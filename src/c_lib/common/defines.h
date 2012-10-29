@@ -82,4 +82,5 @@ const float TICK_DURATION = 30.0f;
 const int PLAYERS_MAX = 32;
 
 #define DAT_NAME_MAX_LENGTH 24
-#define DAT_DATA_PATH "./data/"
+#define DATA_PATH "./data/"
+#define SCREENSHOT_PATH "./screenshot/"

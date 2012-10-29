@@ -523,7 +523,7 @@ void save_screenshot()
 
     char* timestr = get_time_str();
     if (timestr == NULL) timestr = (char*)"notime";
-    const char fmt[] = "./screenshot/%s";
+    const char fmt[] = SCREENSHOT_PATH "%s";
     size_t len = strlen(timestr) + sizeof(fmt) + sizeof(ext) + 3 + 1; // +3 to fit name collision extension, +1 for ext separator
     char* filename = (char*)malloc(len * sizeof(char));
     int wrote = snprintf(filename, len, fmt, timestr);

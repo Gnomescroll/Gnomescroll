@@ -228,7 +228,7 @@ int init_c_lib(int argc, char* argv[])
     GS_ASSERT(ret == 0);
     #endif
 
-    create_path("./screenshot/");
+    create_path(SCREENSHOT_PATH);
     create_path("./data/");
     
     Log::init();

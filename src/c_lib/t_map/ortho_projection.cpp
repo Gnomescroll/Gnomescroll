@@ -103,8 +103,8 @@ void render_ortho()
 __attribute__((optimize("-O3")))
 void save_map_ortho_projection(const char* filename)
 {
-	vbo_map->load_all();
-	load_ortho_shader();
+    vbo_map->load_all();
+    load_ortho_shader();
 
 
 
@@ -210,24 +210,24 @@ void save_map_ortho_projection(const char* filename)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-	double dist = sqrtf(1.0f / 3.0f);
+    double dist = sqrtf(1.0f / 3.0f);
 
-	float f1 = 128.0f;
-	float f2 = 128.0f;
-	gluLookAt(f1*dist, f1*dist, f1*dist + f2,  /* position of camera */
-	          256.0f,  256.0f,  f2,   /* where camera is pointing at */
-	          0.0f,  0.0f,  1.0f);  /* which direction is up */
+    float f1 = 128.0f;
+    float f2 = 128.0f;
+    gluLookAt(f1*dist, f1*dist, f1*dist + f2,  /* position of camera */
+              256.0f,  256.0f,  f2,   /* where camera is pointing at */
+              0.0f,  0.0f,  1.0f);  /* which direction is up */
 
 
 #endif
 
 
     /*
-		Render
+        Render
     */
 
-	render_ortho();
-	//glFinish();
+    render_ortho();
+    //glFinish();
 
     unsigned char* pixel_buffer = new unsigned char[4*xres*yres];
     GLenum format = GL_BGRA;
@@ -250,10 +250,10 @@ void save_map_ortho_projection(const char* filename)
 
 
     //char FileName[128];
-    //sprintf(FileName,"./screenshot/%s.png", (char*) filename);
+    //sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) filename);
 
     {
-    	unsigned char* PBUFFER = pixel_buffer;
+        unsigned char* PBUFFER = pixel_buffer;
         int index;
         void* temp_row;
         int height_div_2;
@@ -279,7 +279,7 @@ void save_map_ortho_projection(const char* filename)
 
 
     char FileName[128];
-    sprintf(FileName,"./screenshot/%s.png", (char*) "ortho_test");
+    sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) "ortho_test");
 
     size_t png_size;
     char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(

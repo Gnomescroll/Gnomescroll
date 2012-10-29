@@ -30,17 +30,17 @@ const unsigned int PARSED_ITEM_DATA_LIST_MAX = MAX_CONTAINER_SIZE * N_PLAYER_CON
 
 // Paths for server-specific flat-file data
 
-#define DATA_PATH "./world/"
+#define WORLD_DATA_PATH "./world/"
 
 #define DATA_TMP_EXT     ".tmp"
 #define DATA_BACKUP_EXT  ".bak"
 #define DATA_PALETTE_EXT ".pal"
 //#define DATA_ERROR_EXT  ".err"
 
-#define MAP_DATA_PATH  DATA_PATH      "map/"
-#define MECH_DATA_PATH DATA_PATH      "mechs/"
-#define PLAYER_DATA_PATH DATA_PATH    "players/"
-#define CONTAINER_DATA_PATH DATA_PATH "containers/"
+#define MAP_DATA_PATH       WORLD_DATA_PATH "map/"
+#define MECH_DATA_PATH      WORLD_DATA_PATH "mechs/"
+#define PLAYER_DATA_PATH    WORLD_DATA_PATH "players/"
+#define CONTAINER_DATA_PATH WORLD_DATA_PATH "containers/"
 
 #define MAP_DATA_EXT       ".map"
 #define MECH_DATA_EXT      ".mch"

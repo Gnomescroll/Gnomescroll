@@ -67,7 +67,7 @@ float* create_2d_noise_array(const unsigned long seed, const float persistence, 
 void save_png(const char* filename, float* in, int xres, int yres)
 {
     char FileName[128];
-    sprintf(FileName,"./screenshot/%s.png", (char*) filename);
+    sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) filename);
     char* PBUFFER = (char*) malloc(4*xres*yres);
 
     static unsigned char gamma_correction[256];
@@ -150,7 +150,7 @@ void save_perlin(const char* filename, float* in, int xres, int yres)
 {
 //#if DC_CLIENT
     char FileName[128];
-    sprintf(FileName,"./screenshot/%s.png", (char*) filename);
+    sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) filename);
     char* PBUFFER = (char*) malloc(4*xres*yres);
 
     static unsigned char gamma_correction[256];

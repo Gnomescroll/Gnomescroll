@@ -296,7 +296,7 @@ int blit_cube_texture(int sheet_id, int source_x, int source_y)
 
 void save_cube_texture()
 {
-    save_surface_to_png(CubeSurface, "./screenshot/cubes.png");
+    save_surface_to_png(CubeSurface, SCREENSHOT_PATH "cubes.png");
 }
 
 //Item API
@@ -320,9 +320,9 @@ void save_item_texture()
     GS_ASSERT(ItemSurface != NULL);
     GS_ASSERT(GreyScaleItemSurface != NULL);
     if (ItemSurface != NULL)
-        save_surface_to_png(ItemSurface, "./screenshot/items.png");
+        save_surface_to_png(ItemSurface, SCREENSHOT_PATH "items.png");
     if (GreyScaleItemSurface != NULL)
-        save_surface_to_png(GreyScaleItemSurface, "./screenshot/greyscale_items.png");
+        save_surface_to_png(GreyScaleItemSurface, SCREENSHOT_PATH "greyscale_items.png");
 }
 
 }   // TextureSheetLoader

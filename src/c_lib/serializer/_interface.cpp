@@ -19,7 +19,7 @@ void init()
     verify_config();
 
     // make sure paths exist
-    create_path(DATA_PATH);    
+    create_path(WORLD_DATA_PATH);    
     create_path(MAP_DATA_PATH);
     create_path(MECH_DATA_PATH);
     create_path(PLAYER_DATA_PATH);

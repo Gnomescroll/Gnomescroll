@@ -22,7 +22,7 @@ void _save_png(const char* filename, int xres, int yres)
 #if DC_CLIENT
 
     char FileName[128];
-    sprintf(FileName,"./screenshot/%s.png", (char*) filename);
+    sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) filename);
 
     char* PBUFFER = (char*) color_array;
 
