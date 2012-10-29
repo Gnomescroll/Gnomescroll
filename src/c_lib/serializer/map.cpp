@@ -250,7 +250,7 @@ bool save_map_palette_file()
     GS_ASSERT(ret == 0);
     if (ret != 0) return false;
 
-    return save_file(map_palette_filename, map_palette_filename_tmp, map_palette_filename_backup);
+    return save_tmp_file(map_palette_filename, map_palette_filename_tmp, map_palette_filename_backup);
 }
 
 static void load_map_restore_containers()

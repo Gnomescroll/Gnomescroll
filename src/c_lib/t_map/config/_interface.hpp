@@ -5,6 +5,9 @@
 namespace t_map
 {
 
+#define CUBE_NAME_FILE_ACTIVE   "cube_names.active"
+#define CUBE_NAME_FILE_INACTIVE "cube_names.inactive"
+
 class CubeProperties* p = NULL;
 
 int _current_cube_id = EMPTY_CUBE + 1;
@@ -18,7 +21,7 @@ void _finish_cube()
 {
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
-    p->in_use = true;
+    p->loaded = true;
 }
 
 // private method; don't call this one directly
@@ -39,8 +42,8 @@ static void cube_def(CubeID id, CubeType type, const char* name, CubeMaterial ma
 
     p = &cube_properties[id];
 
-    GS_ASSERT_ABORT(!p->in_use);
-    if (p->in_use) return;
+    GS_ASSERT_ABORT(!p->loaded);
+    if (p->loaded) return;
     
     p->id = id;    
     strncpy(p->name, name, DAT_NAME_MAX_LENGTH);
@@ -123,7 +126,7 @@ void end_cube_def()
 
     // copy CubeProperties data to fast cube properties
     for (int i=0; i<MAX_CUBES; i++)
-        if (cube_properties[i].in_use)
+        if (cube_properties[i].loaded)
             copy_cube_properties(&cube_properties[i], &fast_cube_properties[i]);
     
     #if DC_CLIENT
@@ -327,10 +330,11 @@ void change_block(const char* original, const char* replacement)
 
 void verify_config()
 {
+    // check validity of individual cubes
     for (int i=0; i<MAX_CUBES; i++)
     {
         class CubeProperties* p = &cube_properties[i];
-        if (!cube_properties[i].in_use) continue;
+        if (!cube_properties[i].loaded) continue;
 
         GS_ASSERT_ABORT(p->id == (CubeID)i);
         GS_ASSERT_ABORT(p->id != NULL_CUBE);
@@ -344,15 +348,48 @@ void verify_config()
         GS_ASSERT_ABORT(is_valid_cube_name(p->name));
     }
 
+    // check uniqueness among cubes
     for (int i=0; i<MAX_CUBES-1; i++)
     for (int j=i+1; j<MAX_CUBES; j++)
     {
         class CubeProperties* a = &cube_properties[i];
         class CubeProperties* b = &cube_properties[j];
-        if (!a->in_use || !b->in_use) continue;
+        if (!a->loaded || !b->loaded) continue;
         if (a->container_type == CONTAINER_TYPE_NONE || b->container_type == CONTAINER_TYPE_NONE) continue;
         GS_ASSERT_ABORT(a->container_type != b->container_type);
     }
+
+    // check inactive names against active
+    for (int i=0; i<MAX_CUBES; i++)
+    {
+        GS_ASSERT_ABORT(cube_name_map->get_mapped_name(cube_properties[i].name) == NULL);
+    }
+
+    // check inactive name destinations against active
+    for (size_t i=0; i<cube_name_map->size; i++)
+    {
+        GS_ASSERT_ABORT(get_cube_id(cube_name_map->get_replacement(i)) != ERROR_CUBE);
+    }
+
+    // either both files must be missing or both must exist
+    bool active_dat = file_exists(DAT_DATA_PATH CUBE_NAME_FILE_ACTIVE);
+    bool inactive_dat = file_exists(DAT_DATA_PATH CUBE_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT((active_dat && inactive_dat) || (!active_dat && !inactive_dat));
+
+    if (active_dat && inactive_dat)
+    {   // check that all names declared a valid with respect to past name definitions
+        // but only if the files are present
+        GS_ASSERT_ABORT(name_changes_valid(DAT_DATA_PATH CUBE_NAME_FILE_ACTIVE, DAT_DATA_PATH CUBE_NAME_FILE_INACTIVE,
+            DAT_NAME_MAX_LENGTH, cube_properties, MAX_CUBES, cube_name_map));
+    }
+}
+
+void save_cube_names()
+{
+    bool saved = save_active_names(cube_properties, MAX_CUBES, DAT_NAME_MAX_LENGTH, DAT_DATA_PATH CUBE_NAME_FILE_ACTIVE);
+    GS_ASSERT_ABORT(saved);
+    saved = cube_name_map->save(DAT_DATA_PATH CUBE_NAME_FILE_INACTIVE);
+    GS_ASSERT_ABORT(saved);
 }
 
 }   // t_map

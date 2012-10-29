@@ -50,17 +50,12 @@ dont_include_this_file_in_server
 #include <common/crash_report/stack_trace.hpp>
 #include <common/gs_assert.hpp>
 #include <common/mallox.hpp>
-
-/* Compression */
 #include <common/compression/miniz.c>
-
-/* Templates */
 #include <common/template/object_list.hpp>
-#include <common/template/dynamic_object_list.hpp>
 #include <common/template/multi_object_list.hpp>
-#include <common/template/dynamic_multi_object_list.hpp>
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
+#include <common/dat/name_map.hpp>
 
 /* configuration options */
 #include <options/option_macros.hpp>

@@ -30,7 +30,7 @@ class CubeProperties* get_cube_properties(CubeID id)
 {
     ASSERT_VALID_CUBE_ID(id);
     IF_INVALID_CUBE_ID(id) return NULL;
-    if (!cube_properties[id].in_use) return NULL;
+    if (!cube_properties[id].loaded) return NULL;
     return &cube_properties[id];
 }
 
@@ -121,7 +121,7 @@ bool isInUse(CubeID id)
 {
     ASSERT_VALID_CUBE_ID(id);
     IF_INVALID_CUBE_ID(id) return false;
-    return cube_properties[id].in_use;
+    return cube_properties[id].loaded;
 }
 
 bool isSolid(CubeID id) 

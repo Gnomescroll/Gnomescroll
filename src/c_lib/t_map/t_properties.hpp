@@ -41,7 +41,7 @@ class CubeProperties
         char name[DAT_NAME_MAX_LENGTH+1];
 
         //for dat debug assistance
-        bool in_use;
+        bool loaded;
 
     CubeProperties()
     {
@@ -61,7 +61,7 @@ class CubeProperties
         
         memset(this->name, 0, sizeof(this->name));
 
-        this->in_use = false;
+        this->loaded = false;
     }
 };
 

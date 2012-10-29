@@ -508,8 +508,10 @@ void load_block_dat()
     end_cube_def();  // finalize
 
     apply_block_dat_changes();
-    
+
     verify_config(); // validate
+    
+    save_cube_names();  // safe to save cube names now
 }
 
 #undef RUINS_DMG

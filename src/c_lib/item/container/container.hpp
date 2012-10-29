@@ -560,8 +560,6 @@ class ItemContainerCrusher: public ItemContainerInterface
 
 }   // ItemContainer
 
-#include <common/template/dynamic_multi_object_list.hpp>
-
 namespace ItemContainer
 {
 

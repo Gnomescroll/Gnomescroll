@@ -22,3 +22,9 @@ void create_path(const char* path);
 void create_path_to_file(const char* fn);
 
 bool file_exists(const char* filename);
+
+bool save_tmp_file(const char* fn, const char* fn_tmp, const char* fn_bak);
+
+// reads lines of a file into fixed width per-line continuous array
+// return false on error (e.g., a line is wider than width)
+bool read_fixed_lines(const char* buf, const size_t width, char** lines, size_t* count);

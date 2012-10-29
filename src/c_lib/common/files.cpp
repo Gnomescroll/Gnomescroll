@@ -241,3 +241,66 @@ bool file_exists(const char* filename)
     struct stat file_stat;
     return (stat(filename, &file_stat) == 0);
 }
+
+bool save_tmp_file(const char* fn, const char* fn_tmp, const char* fn_bak)
+{   // Saves a tmp file to real filename, backing up old filename
+    if (file_exists(fn))
+    {
+        int ret = rename(fn, fn_bak);
+        GS_ASSERT(ret == 0);
+        if (ret != 0) return false;
+    }
+    int ret = rename(fn_tmp, fn);
+    GS_ASSERT(ret == 0);
+    return (ret == 0);
+}
+
+// reads lines of a file into fixed width per-line continuous array
+// return false on error (e.g., a line is wider than width)
+bool read_fixed_lines(const char* buf, const size_t width, char** lines, size_t* count)
+{
+    *lines = NULL;
+    *count = 0;
+
+    for (size_t i=0; buf[i] != '\0'; i++)
+        if (buf[i] == '\n')
+            (*count)++;
+
+    if (!(*count)) return true;
+
+    char* _lines = (char*)malloc((width+1)*(*count) * sizeof(char));
+
+    size_t m = 0;   // tracks length of single line
+    size_t n = 0;   // tracks length in char* lines array
+    size_t _count = 0;
+    for (size_t i=0; buf[i] != '\0'; i++)
+    {
+        if (m > width)
+        {
+            printf("M>WIDTH:: %u > %u\n", m, width);
+            free(_lines);
+            *lines = NULL;
+            *count = 0;
+            return false;
+        }
+
+        char c = buf[i];
+        if (c == '\n')
+        {
+            for (size_t j=m; j<width+1; j++)
+                _lines[n++] = '\0';
+            _count++;
+            m = 0;
+        }
+        else
+        {
+            m++;
+            _lines[n++] = c;
+        }
+    }
+
+    *count = _count;
+    *lines = _lines;
+
+    return true;
+}

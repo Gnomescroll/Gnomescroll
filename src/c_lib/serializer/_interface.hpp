@@ -31,9 +31,6 @@ bool create_player_container_items_from_data(AgentID agent_id, int* containers, 
 
 void save_containers();
 
-// This is only for the serializer -- it handles the backup copy logic
-bool save_file(const char* fn, const char* fn_tmp, const char* fn_bak);
-
 }   // serializer
 
 #else
@@ -51,7 +48,6 @@ extern bool should_save_map;
 bool load_map(const char* filename);
 void save_map();
 bool load_default_map();
-bool save_file(const char* fn, const char* fn_tmp, const char* fn_bak);
 
 void save_containers() {}
 void check_save_state() {}

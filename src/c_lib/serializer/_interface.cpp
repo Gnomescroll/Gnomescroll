@@ -99,18 +99,4 @@ void update()
     #endif
 }
 
-// This is only for the serializer -- it handles the backup copy logic
-bool save_file(const char* fn, const char* fn_tmp, const char* fn_bak)
-{
-    if (file_exists(fn))
-    {
-        int ret = rename(fn, fn_bak);
-        GS_ASSERT(ret == 0);
-        if (ret != 0) return false;
-    }
-    int ret = rename(fn_tmp, fn);
-    GS_ASSERT(ret == 0);
-    return (ret == 0);
-}
-
 }   // serializer

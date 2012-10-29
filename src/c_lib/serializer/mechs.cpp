@@ -148,7 +148,7 @@ bool save_mech_palette_file()
     GS_ASSERT(ret == 0);
     if (ret != 0) return false;
 
-    return save_file(mech_palette_filename, mech_palette_filename_tmp, mech_palette_filename_backup);
+    return save_tmp_file(mech_palette_filename, mech_palette_filename_tmp, mech_palette_filename_backup);
 }
 
 bool write_mech_file(FILE* f)

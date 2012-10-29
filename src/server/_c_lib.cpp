@@ -78,12 +78,11 @@ dont_include_this_file_in_client
 #include <common/files.cpp>
 #include <common/template/object_list.hpp>
 #include <common/template/multi_object_list.hpp>
-#include <common/template/dynamic_object_list.hpp>
-#include <common/template/dynamic_multi_object_list.hpp>
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
 #include <common/subscriber_list.hpp>
 #include <common/analytics/sessions.cpp>
+#include <common/dat/name_map.hpp>
  
 // logging
 #include <common/logger.cpp>
