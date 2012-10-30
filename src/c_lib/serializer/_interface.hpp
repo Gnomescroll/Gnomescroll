@@ -50,7 +50,7 @@ bool begin_new_world_version();
 extern bool should_save_map;
 bool load_default_map();
 
-bool save_containers() {}
+bool save_containers() { return true; }
 void check_save_state() {}
 
 bool save_player(UserID user_id, AgentID agent_id) { return true; }
