@@ -304,16 +304,7 @@ bool save_mechs()
     GS_ASSERT(ret == 0);
     if (ret != 0) return false;
 
-    if (file_exists(mech_filename))
-    {
-        ret = GS_RENAME(mech_filename, mech_filename_backup);
-        if (ret != 0) return false;
-    }
-    
-    ret = GS_RENAME(mech_filename_tmp, mech_filename);
-    GS_ASSERT(ret == 0);
-
-    return (ret == 0);
+    return save_tmp_file(mech_filename, mech_filename_tmp, mech_filename_backup);
 }
 
 bool load_mechs()

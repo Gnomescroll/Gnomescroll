@@ -438,17 +438,7 @@ void save_containers()
     GS_ASSERT(!err);
     if (err) return;   // TODO -- log error
 
-    // move current file to .bak
-    if (file_exists(container_filename))
-    {
-        err = GS_RENAME(container_filename, container_filename_backup);
-        GS_ASSERT(!err);
-        if (err) return;   // TODO -- log error
-    }
-    
-    // move tmp file to current
-    err = GS_RENAME(container_filename_tmp, container_filename);
-    GS_ASSERT(!err);
+    return save_tmp_file(container_filename, container_filename_tmp, container_filename_backup);
 }
 
 bool load_containers()

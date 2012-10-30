@@ -34,6 +34,7 @@ dont_include_this_file_in_client
 # include "windows.h"
 # undef interface
 # undef rad2
+# include <common/dirent.h>
 #endif
 
 // serialization

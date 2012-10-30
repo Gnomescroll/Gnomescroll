@@ -554,6 +554,7 @@ void check_map_save_state()
 {
     if (map_save_completed)
     {
+        // TODO -- use save_tmp_file wrapper
         if (map_tmp_name != NULL)
         {
             GS_ASSERT(map_final_name != NULL);
