@@ -5,6 +5,6 @@ namespace serializer
 
 bool load_containers();
 
-void save_containers();
+bool save_containers();
 
 }   // serializer

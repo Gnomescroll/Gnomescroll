@@ -30,7 +30,7 @@ void player_load_failed();
 
 bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers);
 
-void save_containers();
+bool save_containers();
 
 }   // serializer
 
@@ -50,7 +50,7 @@ bool begin_new_world_version();
 extern bool should_save_map;
 bool load_default_map();
 
-void save_containers() {}
+bool save_containers() {}
 void check_save_state() {}
 
 bool save_player(UserID user_id, AgentID agent_id) { return true; }

@@ -395,23 +395,23 @@ static bool save_container(FILE* f, const class ItemContainer::ItemContainerInte
 
 /* Public Interface */
 
-void save_containers()
+bool save_containers()
 {
     using ItemContainer::item_container_list;
     GS_ASSERT(item_container_list != NULL);
-    if (item_container_list == NULL) return;    // TODO -- log error
+    if (item_container_list == NULL) return false;    // TODO -- log error
 
     FILE* f = fopen(container_filename_tmp, "w");
     GS_ASSERT(f != NULL);
-    if (f == NULL) return;  // TODO -- log error
+    if (f == NULL) return false;  // TODO -- log error
 
     // write a temporary file header. the container count is wrong, so we have to rewrite it later 
     int ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, item_container_list->n_max);
     GS_ASSERT(ret > 0);
-    if (ret <= 0) return;   // TODO -- log error
+    if (ret <= 0) return false;   // TODO -- log error
     ret = fprintf(f, "\n");
     GS_ASSERT(ret > 0);
-    if (ret <= 0) return;   // TODO -- log error
+    if (ret <= 0) return false;   // TODO -- log error
 
     // write the container contents
     int ct = 0;
@@ -429,14 +429,14 @@ void save_containers()
     // write the actual file header
     ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, ct);
     GS_ASSERT(ret > 0);
-    if (ret <= 0) return;   // TODO -- log error
+    if (ret <= 0) return false;   // TODO -- log error
     ret = fprintf(f, "\n");
     GS_ASSERT(ret > 0);
-    if (ret <= 0) return;   // TODO -- log error
+    if (ret <= 0) return false;   // TODO -- log error
 
     int err = fclose(f);
     GS_ASSERT(!err);
-    if (err) return;   // TODO -- log error
+    if (err) return false;   // TODO -- log error
 
     return save_tmp_file(container_filename, container_filename_tmp, container_filename_backup);
 }
