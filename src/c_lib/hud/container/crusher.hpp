@@ -222,32 +222,32 @@ void CrusherUI::draw()
     float th = ((float)cell_size)/256.0f;
 
     float x = xoff;
-    float y = yoff - sh;    // -sh because draw_bound_texture_sprite2 draws bottom up
+    float y = yoff - sh;    // -sh because draw_bound_texture_sprite draws bottom up
     float z = -0.1f;
     
     // draw input slot
-    draw_bound_texture_sprite2(x,y, sw,sh, z, input_sprite_x*tw, input_sprite_y*th, tw, th);
+    draw_bound_texture_sprite(x,y, sw,sh, z, input_sprite_x*tw, input_sprite_y*th, tw, th);
 
     // draw button
     y -= cell_size;
     if (this->in_button_region(mouse_x, mouse_y))
     {   // draw hover sprite
         if (slot_types[0] != NULL_ITEM_TYPE)
-            draw_bound_texture_sprite2(x,y, sw,sh, z, button_available_hover_x*tw, button_available_hover_y*th, tw, th);
+            draw_bound_texture_sprite(x,y, sw,sh, z, button_available_hover_x*tw, button_available_hover_y*th, tw, th);
         else
-            draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_hover_x*tw, button_inactive_hover_y*th, tw, th);
+            draw_bound_texture_sprite(x,y, sw,sh, z, button_inactive_hover_x*tw, button_inactive_hover_y*th, tw, th);
         if (lm_down) // draw button
-            draw_bound_texture_sprite2(x,y, sw,sh, z, button_overlay_pressed_x*tw, button_overlay_pressed_y*th, tw,th);
+            draw_bound_texture_sprite(x,y, sw,sh, z, button_overlay_pressed_x*tw, button_overlay_pressed_y*th, tw,th);
         else
-            draw_bound_texture_sprite2(x,y, sw,sh, z, button_overlay_x*tw, button_overlay_y*th, tw,th);
+            draw_bound_texture_sprite(x,y, sw,sh, z, button_overlay_x*tw, button_overlay_y*th, tw,th);
     }
     else
     {
         if (slot_types[0] != NULL_ITEM_TYPE)
-            draw_bound_texture_sprite2(x,y, sw,sh, z, button_available_x*tw, button_available_y*th, tw, th);
+            draw_bound_texture_sprite(x,y, sw,sh, z, button_available_x*tw, button_available_y*th, tw, th);
         else
-            draw_bound_texture_sprite2(x,y, sw,sh, z, button_inactive_x*tw, button_inactive_y*th, tw, th);
-        draw_bound_texture_sprite2(x,y, sw,sh, z, button_overlay_x*tw, button_overlay_y*th, tw,th);
+            draw_bound_texture_sprite(x,y, sw,sh, z, button_inactive_x*tw, button_inactive_y*th, tw, th);
+        draw_bound_texture_sprite(x,y, sw,sh, z, button_overlay_x*tw, button_overlay_y*th, tw,th);
     }
 
     glDisable(GL_TEXTURE_2D);
@@ -321,7 +321,7 @@ void CrusherUI::draw()
     glBindTexture(GL_TEXTURE_2D, CrusherTexture);
 
     // draw input overlay
-    draw_bound_texture_sprite2(xoff, yoff-sw, sw, sh, -0.1f, input_overlay_x*tw, input_overlay_y*th, tw, th);
+    draw_bound_texture_sprite(xoff, yoff-sw, sw, sh, -0.1f, input_overlay_x*tw, input_overlay_y*th, tw, th);
 
     glDisable(GL_TEXTURE_2D);
 

@@ -23,7 +23,8 @@ bool in_array_int(int* arr, int arr_max, int val)
 int count_digits(int n)
 {
     int digits = 0;
-    do {
+    do
+    {
         digits++;
         n /= 10;
     } while (n > 0);

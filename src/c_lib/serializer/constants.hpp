@@ -30,6 +30,13 @@ const unsigned int PARSED_ITEM_DATA_LIST_MAX = MAX_CONTAINER_SIZE * N_PLAYER_CON
 
 // Paths for server-specific flat-file data
 
+#define WORLD_DATA_PREFIX "world"
+#define WORLD_DATA_FOLDER_DELIMITER "-"
+const size_t WORLD_DATA_FOLDER_PARTS = 3;
+
+static const char save_folder_fmt[] = WORLD_DATA_PREFIX WORLD_DATA_FOLDER_DELIMITER "%d" WORLD_DATA_FOLDER_DELIMITER LLD_FMT "/";
+static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS_VERSION)) + 20;
+
 #define WORLD_DATA_PATH "./world/"
 
 #define DATA_TMP_EXT     ".tmp"

@@ -157,6 +157,9 @@ void verify_config()
     // we need to #define ITEM_UUID_LENGTH as a plain integer, so we can use it in the format string
     // but we really want it to be UUID_STRING_LENGTH
     GS_ASSERT_ABORT(ITEM_UUID_LENGTH == UUID_STRING_LENGTH);
+
+    GS_ASSERT_ABORT(sizeof(WORLD_DATA_FOLDER_DELIMITER) > 1);
+    GS_ASSERT_ABORT(WORLD_DATA_FOLDER_PARTS == 3);
 }
 
 }   // serializer

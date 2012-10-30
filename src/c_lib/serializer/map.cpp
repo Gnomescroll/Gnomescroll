@@ -564,10 +564,10 @@ void check_map_save_state()
                     const char fmt[] = "%s" DATA_BACKUP_EXT;
                     char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(fmt) - 2)*sizeof(char));
                     sprintf(map_final_name_bak, fmt, map_final_name);
-                    rename(map_final_name, map_final_name_bak);
+                    GS_RENAME(map_final_name, map_final_name_bak);
                     free(map_final_name_bak);
                 }
-                int ret = rename(map_tmp_name, map_final_name);
+                int ret = GS_RENAME(map_tmp_name, map_final_name);
                 GS_ASSERT(ret == 0);
             }
             free(map_tmp_name);

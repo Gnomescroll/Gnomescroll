@@ -441,13 +441,13 @@ void save_containers()
     // move current file to .bak
     if (file_exists(container_filename))
     {
-        err = rename(container_filename, container_filename_backup);
+        err = GS_RENAME(container_filename, container_filename_backup);
         GS_ASSERT(!err);
         if (err) return;   // TODO -- log error
     }
     
     // move tmp file to current
-    err = rename(container_filename_tmp, container_filename);
+    err = GS_RENAME(container_filename_tmp, container_filename);
     GS_ASSERT(!err);
 }
 

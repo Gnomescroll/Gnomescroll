@@ -9,11 +9,12 @@ void init();
 void teardown();
 void update();
 
+bool begin_new_world_version();
+
 bool load_data();
+void save_data();
 
 // defined in map.cpp
-bool load_map(const char* filename);
-void save_map();
 void wait_for_threads();
 
 // defined in players.hpp
@@ -43,10 +44,10 @@ void init();
 void teardown();
 void update();
 
+bool begin_new_world_version();
+
 // these map functions are actually enabled for non-serializer mode
 extern bool should_save_map;
-bool load_map(const char* filename);
-void save_map();
 bool load_default_map();
 
 void save_containers() {}

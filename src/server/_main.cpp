@@ -43,7 +43,8 @@ void init(int argc, char* argv[])
         fast_map = true;
     else
     if (!serializer::load_data())
-    {
+    {   // TODO -- option/mechanism for forcing new map gen from command line
+        serializer::begin_new_world_version();
         default_map_gen();
         t_gen::populate_crystals();
         t_map::environment_process_startup();
@@ -171,16 +172,8 @@ int run()
         
         if (serializer::should_save_map)
         {
-            serializer::save_map();
+            serializer::save_data();            
             serializer::should_save_map = false;
-            serializer::save_mechs();
-
-            // TODO -- move, testing only
-            if (Options::serializer)
-            {
-                serializer::save_map_palette_file();
-                serializer::save_containers();
-            }
         }
 
         serializer::update();
@@ -190,7 +183,7 @@ int run()
 
     if (serializer::should_save_map)
     {
-        serializer::save_map();
+        serializer::save_data();
         serializer::should_save_map = false;
     }
         

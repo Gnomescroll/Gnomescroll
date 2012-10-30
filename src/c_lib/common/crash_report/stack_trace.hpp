@@ -1,40 +1,32 @@
 #pragma once 
 
-#ifdef __MSVC__
-    void print_trace() {}
-    void print_trace(int frame_start) {}
-
+#ifdef _WIN32
+void print_trace() {}
+void print_trace(int frame_start) {}
 #else
-    #ifndef __WIN32__
-        #include <execinfo.h>
+# include <execinfo.h>
+# define PRINT_TRACE_STACK_SIZE 15
+void print_trace(int frame_start)
+{
+    void *array[PRINT_TRACE_STACK_SIZE];
+    int size;
+    char **strings;
+    
+    size = backtrace(array, PRINT_TRACE_STACK_SIZE);
+    if (frame_start >= size) return;
 
-        #define PRINT_TRACE_STACK_SIZE 15
-        
-        void print_trace(int frame_start)
-        {
-            void *array[PRINT_TRACE_STACK_SIZE];
-            int size;
-            char **strings;
-            
-            size = backtrace(array, PRINT_TRACE_STACK_SIZE);
-            if (frame_start >= size) return;
+    strings = backtrace_symbols(array, size);
 
-            strings = backtrace_symbols(array, size);
+    for (int i = frame_start; i < size; i++)
+        puts(strings[i]);
 
-            for (int i = frame_start; i < size; i++)
-                puts(strings[i]);
+    free(strings);
+}
 
-            free(strings);
-        }
-        #undef PRINT_TRACE_STACK_SIZE
+void print_trace()
+{
+    print_trace(0);
+}
 
-        void print_trace()
-        {
-            print_trace(0);
-        }
-    #else
-        void print_trace() {}
-        void print_trace(int frame_start) {}
-    #endif
-
+# undef PRINT_TRACE_STACK_SIZE
 #endif

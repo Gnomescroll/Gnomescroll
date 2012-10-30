@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <common/macros.hpp>
 
+int GS_RENAME(const char* src, const char* dst);
 int GS_MKDIR(const char* dir, int permissions);
 
 char* read_file_to_buffer(const char* file_name, size_t* size);

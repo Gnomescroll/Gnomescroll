@@ -198,25 +198,6 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
 {
     glBegin(GL_QUADS);
 
-    glTexCoord2f(sprite_x, sprite_y+sprite_height);
-        glVertex3f(x,y,z);
-
-    glTexCoord2f(sprite_x+sprite_width, sprite_y+sprite_height);
-        glVertex3f(x+w, y,z);
-        
-    glTexCoord2f(sprite_x+sprite_width, sprite_y);
-        glVertex3f(x+w, y+h, z);
-
-    glTexCoord2f(sprite_x, sprite_y);
-        glVertex3f(x, y+h, z);
-
-    glEnd();
-}
-
-void draw_bound_texture_sprite2(float x, float y, float w, float h, float z, float sprite_x, float sprite_y, float sprite_width, float sprite_height)
-{
-    glBegin(GL_QUADS);
-
     glTexCoord2f(sprite_x, sprite_y+sprite_height); // top left
         glVertex3f(x,y,z);  // bottom left
 
@@ -230,15 +211,6 @@ void draw_bound_texture_sprite2(float x, float y, float w, float h, float z, flo
         glVertex3f(x, y+h, z);
 
     glEnd();
-}
-
-void draw_bound_texture_sprite(float x, float y, float w, float h, float z, float sx, float sy, float sw, float sh, float ssw, float ssh)
-{
-    sx /= ssw;
-    sy /= ssh;
-    sw /= ssw;
-    sh /= ssh;
-    draw_bound_texture_sprite(x,y,w,h,z, sx,sy,sw,sh);
 }
 
 /*

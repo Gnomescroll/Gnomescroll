@@ -123,7 +123,7 @@ void server_update()
     // check if file exists
     if (!file_exists(new_key_fn)) return;
     // rename the new key to the main key file name
-    rename(new_key_fn, SECRET_KEY_PATH);
+    GS_RENAME(new_key_fn, SECRET_KEY_PATH);
     // load the new key
     load_secret_key();
 }

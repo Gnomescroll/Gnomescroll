@@ -77,6 +77,12 @@ typedef unsigned int GLuint;
 #define LUA_EXPORT __declspec(dllexport)
 #endif
 
+#ifdef _WIN32
+# define LLD_FMT "%I64d"
+#else
+# define LLD_FMT "%lld"
+#endif
+
 const int GAME_OBJECTS_MAX = 4096 * 4;
 const float TICK_DURATION = 30.0f;
 const int PLAYERS_MAX = 32;

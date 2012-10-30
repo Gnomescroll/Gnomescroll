@@ -6,22 +6,31 @@
 #include <common/macros.hpp>
 
 #ifdef __WIN32__
-#ifdef __GNUC__
-    #include <io.h>
-#endif
+# ifdef __GNUC__
+#  include <io.h>
+# endif
 #endif
 
 int GS_MKDIR(const char* dir, int permissions)
 {
-#ifdef _WIN32
-    #ifdef __MSVC__
-        return _mkdir(dir);
+    #ifdef _WIN32
+    # ifdef __MSVC__
+    return _mkdir(dir);
+    # else
+    return mkdir(dir);
+    # endif
     #else
-        return mkdir(dir);
-    #endif
-#else
     return mkdir(dir, S_IRWXU);
-#endif
+    #endif
+}
+
+int GS_RENAME(const char* src, const char* dst)
+{
+    #ifdef _WIN32
+    remove(dst);
+    #endif
+    
+    return rename(src, dst);
 }
 
 off_t fsize(const char *filename)
@@ -246,11 +255,11 @@ bool save_tmp_file(const char* fn, const char* fn_tmp, const char* fn_bak)
 {   // Saves a tmp file to real filename, backing up old filename
     if (file_exists(fn))
     {
-        int ret = rename(fn, fn_bak);
+        int ret = GS_RENAME(fn, fn_bak);
         GS_ASSERT(ret == 0);
         if (ret != 0) return false;
     }
-    int ret = rename(fn_tmp, fn);
+    int ret = GS_RENAME(fn_tmp, fn);
     GS_ASSERT(ret == 0);
     return (ret == 0);
 }
@@ -277,7 +286,6 @@ bool read_fixed_lines(const char* buf, const size_t width, char** lines, size_t*
     {
         if (m > width)
         {
-            printf("M>WIDTH:: %u > %u\n", m, width);
             free(_lines);
             *lines = NULL;
             *count = 0;
