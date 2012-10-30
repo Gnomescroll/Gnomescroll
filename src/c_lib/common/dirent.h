@@ -1,5 +1,8 @@
 #pragma once
-#ifdef _WIN32
+
+#ifndef _WIN32
+# include <dirent.h>
+#else
 
 /*
  * dirent.h - dirent API for Microsoft Visual Studio

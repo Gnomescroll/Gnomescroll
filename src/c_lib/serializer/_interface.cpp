@@ -1,6 +1,6 @@
 #include "_interface.hpp"
 
-#include <dirent.h>
+#include <common/dirent.h>
 
 #include <common/files.hpp>
 #include <options/server_options.hpp>
