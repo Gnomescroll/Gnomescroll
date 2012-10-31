@@ -7,6 +7,7 @@ dont_include_this_file_in_server
 #include <agent/agent.hpp>
 #include <agent/agent_status.hpp>
 #include <agent/client/player_agent_action.hpp>
+#include <agent/client/jetpack.hpp>
 
 enum active_camera_states
 {
@@ -33,8 +34,7 @@ class PlayerAgent_state
 
         //client side state variables
         bool crouching;     //move client side
-        int jetpack_ticks;
-        int jetpack_decay;
+        JetPack jetpack;
 
         //use for interpolated client side prediction
         class AgentState s0;

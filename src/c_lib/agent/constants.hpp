@@ -81,9 +81,6 @@ const struct Color AGENT_DEFAULT_COLOR = color_init(64,192,64);
 #if DC_CLIENT
 const int AGENT_STATE_HISTORY_SIZE = 64;
 const float AGENT_INTERPOLATION_DECAY  = 0.8f;
-//const int JETPACK_TICKS_MAX = 30 * 10 * 2;
-const int JETPACK_TICKS_MAX = 30 * 10 * 2 * 10000;
-const int JETPACK_DECAY_TICKS = 30 * 10;
 
 namespace AgentHudName
 {
