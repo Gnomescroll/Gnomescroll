@@ -13,8 +13,6 @@ bool should_save_map = false;
 BlockSerializer* block_serializer = NULL;
 
 bool map_save_completed = false;
-char* map_tmp_name = NULL;
-char* map_final_name = NULL;
 bool map_save_memcpy_in_progress = false;
 
 void init_map_serializer()
@@ -231,7 +229,7 @@ bool load_map_palette_file(const char* fn)
 
 bool save_map_palette_file()
 {
-    FILE* f = fopen(map_palette_filename_tmp, "w");
+    FILE* f = fopen(map_palette_path_tmp, "w");
     GS_ASSERT(f != NULL);
     if (f == NULL) return false;
 
@@ -255,9 +253,7 @@ bool save_map_palette_file()
 
     int ret = fclose(f);
     GS_ASSERT(ret == 0);
-    if (ret != 0) return false;
-
-    return save_tmp_file(map_palette_filename, map_palette_filename_tmp, map_palette_filename_backup);
+    return (ret == 0);
 }
 
 static void load_map_restore_containers()
@@ -312,12 +308,12 @@ BlockSerializer::~BlockSerializer()
     #endif
 }
 
-void BlockSerializer::save(const char* filename)
+bool BlockSerializer::save(const char* filename)
 {
     if (map_save_memcpy_in_progress)
     {
         printf("BlockSerializer::save call failed, map memcpy already in progress \n");
-        return; 
+        return false; 
     }
 
     map_save_memcpy_in_progress = true;
@@ -338,7 +334,7 @@ void BlockSerializer::save(const char* filename)
     if (write_buffer == NULL)
     {
         printf("BlockSerializer: cannot save map.  malloc failed, out of memory? \n");
-        return;
+        return false;
     }
 
     int ti1 = _GET_MS_TIME();
@@ -371,6 +367,8 @@ void BlockSerializer::save(const char* filename)
 
     //int ti3 = _GET_MS_TIME();
     printf("BlockSerializer save: memcpy buffer for %s  took %i ms \n", filename, ti2-ti1);
+
+    return true;
 }
 
 #if PTHREADS_ENABLED
@@ -378,7 +376,6 @@ void BlockSerializer::save(const char* filename)
 //will memcpy map and yield after ms milliseconds
 void BlockSerializer::save_iter(int max_ms)
 {
-
     static int _start_ms = 0;
     static int _calls = 0;
     static int _memcpy_count = 0;
@@ -494,28 +491,13 @@ bool BlockSerializer::load(const char* filename)
     return true;
 }
 
-void save_map(const char* filename)
+bool save_map()
 {
     GS_ASSERT(block_serializer != NULL);
-    if (block_serializer == NULL) return;
-    
-    create_path_to_file(filename);
-
-    map_final_name = (char*)malloc((strlen(filename)+1)*sizeof(char));
-    strcpy(map_final_name, filename);
-    
-    if (file_exists(filename))
-    {
-        const char fmt[] = "%s" DATA_TMP_EXT;
-        char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(fmt) - 2)*sizeof(char));
-        sprintf(tmp_filename, fmt, filename);
-        map_tmp_name = tmp_filename;
-        block_serializer->save(tmp_filename);        
-    }
-    else
-        block_serializer->save(filename);
+    if (block_serializer == NULL) return false;
+    create_path_to_file(map_path_tmp);
+    return block_serializer->save(map_path_tmp);        
 }
-
 
 bool load_map(const char* filename)
 {
@@ -524,61 +506,28 @@ bool load_map(const char* filename)
     return block_serializer->load(filename);
 }
 
-void save_map()
-{
-    save_map(map_filename);
-}
-
-bool load_map()
-{
-    return load_map(map_filename);
-}
-
 bool load_default_map()
 {
-    if (file_exists(map_filename) && fsize(map_filename) > 0)
+    if (file_exists(map_path) && fsize(map_path) > 0)
     {
-        if (!load_map_palette_file(map_palette_filename)) return false;
-        return load_map(map_filename);
+        if (!load_map_palette_file(map_palette_path)) return false;
+        return load_map(map_path);
     }
     else
-    if (file_exists(map_filename_backup) && fsize(map_filename_backup) > 0)
+    if (file_exists(map_path_bak) && fsize(map_path_bak) > 0)
     {
-        if (!load_map_palette_file(map_palette_filename_backup)) return false;
-        return load_map(map_filename_backup);
+        if (!load_map_palette_file(map_palette_path_bak)) return false;
+        return load_map(map_path_bak);
     }
     return false;
 }
 
 void check_map_save_state()
 {
-    if (map_save_completed)
-    {
-        // TODO -- use save_tmp_file wrapper
-        if (map_tmp_name != NULL)
-        {
-            GS_ASSERT(map_final_name != NULL);
-            if (map_final_name != NULL)
-            {
-                if (file_exists(map_final_name))
-                {
-                    const char fmt[] = "%s" DATA_BACKUP_EXT;
-                    char* map_final_name_bak = (char*)malloc((strlen(map_final_name) + sizeof(fmt) - 2)*sizeof(char));
-                    sprintf(map_final_name_bak, fmt, map_final_name);
-                    GS_RENAME(map_final_name, map_final_name_bak);
-                    free(map_final_name_bak);
-                }
-                int ret = GS_RENAME(map_tmp_name, map_final_name);
-                GS_ASSERT(ret == 0);
-            }
-            free(map_tmp_name);
-            map_tmp_name = NULL;
-        }
-        if (map_final_name != NULL)
-            free(map_final_name);
-        map_final_name = NULL;
-        map_save_completed = false;
-    }
+    if (!map_save_completed) return;
+    bool saved = save_tmp_file(map_path, map_path_tmp, map_path_bak);
+    GS_ASSERT(saved);
+    map_save_completed = false; // reset
 }
 
 }   // serializer

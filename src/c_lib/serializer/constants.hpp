@@ -34,8 +34,8 @@ const unsigned int PARSED_ITEM_DATA_LIST_MAX = MAX_CONTAINER_SIZE * N_PLAYER_CON
 #define WORLD_DATA_FOLDER_DELIMITER "-"
 const size_t WORLD_DATA_FOLDER_PARTS = 3;
 
-static const char save_folder_fmt[] = WORLD_DATA_PREFIX WORLD_DATA_FOLDER_DELIMITER "%d" WORLD_DATA_FOLDER_DELIMITER LLD_FMT "/";
-static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS_VERSION)) + 20;
+static const char save_folder_fmt[] = WORLD_DATA_PREFIX WORLD_DATA_FOLDER_DELIMITER "%d" WORLD_DATA_FOLDER_DELIMITER "%ld/";
+static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS_VERSION)) + 21;
 
 #define WORLD_DATA_PATH "./world/"
 
@@ -44,10 +44,10 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define DATA_PALETTE_EXT ".pal"
 //#define DATA_ERROR_EXT  ".err"
 
-#define MAP_DATA_PATH       WORLD_DATA_PATH "map/"
-#define MECH_DATA_PATH      WORLD_DATA_PATH "mechs/"
-#define PLAYER_DATA_PATH    WORLD_DATA_PATH "players/"
-#define CONTAINER_DATA_PATH WORLD_DATA_PATH "containers/"
+#define MAP_DATA_PATH       "map/"
+#define MECH_DATA_PATH      "mechs/"
+#define PLAYER_DATA_PATH    "players/"
+#define CONTAINER_DATA_PATH "containers/"
 
 #define MAP_DATA_EXT       ".map"
 #define MECH_DATA_EXT      ".mch"
@@ -55,27 +55,27 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define CONTAINER_DATA_EXT ".ctr"
 
 // data files
-const char map_filename[]                = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT;
-const char map_filename_tmp[]            = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_TMP_EXT;
-const char map_filename_backup[]         = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_BACKUP_EXT;
-const char map_palette_filename[]        = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT;
-const char map_palette_filename_tmp[]    = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT DATA_TMP_EXT;
-const char map_palette_filename_backup[] = MAP_DATA_PATH "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT DATA_BACKUP_EXT;
+#define MAP_FILENAME                "map-" GS_STR(GS_VERSION) MAP_DATA_EXT
+#define MAP_FILENAME_TMP            "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_TMP_EXT
+#define MAP_FILENAME_BACKUP         "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_BACKUP_EXT
+#define MAP_PALETTE_FILENAME        "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT
+#define MAP_PALETTE_FILENAME_TMP    "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT DATA_TMP_EXT
+#define MAP_PALETTE_FILENAME_BACKUP "map-" GS_STR(GS_VERSION) MAP_DATA_EXT DATA_PALETTE_EXT DATA_BACKUP_EXT
 
-const char mech_filename[]                = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT;
-const char mech_filename_tmp[]            = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_TMP_EXT;
-const char mech_filename_backup[]         = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_BACKUP_EXT;
-const char mech_palette_filename[]        = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT;
-const char mech_palette_filename_tmp[]    = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT DATA_TMP_EXT;
-const char mech_palette_filename_backup[] = MECH_DATA_PATH "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT DATA_BACKUP_EXT;
+#define MECH_FILENAME                "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT
+#define MECH_FILENAME_TMP            "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_TMP_EXT
+#define MECH_FILENAME_BACKUP         "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_BACKUP_EXT
+#define MECH_PALETTE_FILENAME        "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT
+#define MECH_PALETTE_FILENAME_TMP    "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT DATA_TMP_EXT
+#define MECH_PALETTE_FILENAME_BACKUP "mechs-" GS_STR(GS_VERSION) MECH_DATA_EXT DATA_PALETTE_EXT DATA_BACKUP_EXT
 
-const char player_filename[]        = PLAYER_DATA_PATH "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT;
-const char player_filename_tmp[]    = PLAYER_DATA_PATH "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT DATA_TMP_EXT;
-const char player_filename_backup[] = PLAYER_DATA_PATH "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT DATA_BACKUP_EXT;
+#define PLAYER_FILENAME        "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT
+#define PLAYER_FILENAME_TMP    "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT DATA_TMP_EXT
+#define PLAYER_FILENAME_BACKUP "players-" GS_STR(GS_VERSION) PLAYER_DATA_EXT DATA_BACKUP_EXT
 
-const char container_filename[]        = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT;
-const char container_filename_tmp[]    = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_TMP_EXT;
-const char container_filename_backup[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_BACKUP_EXT;
+#define CONTAINER_FILENAME        "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT
+#define CONTAINER_FILENAME_TMP    "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_TMP_EXT
+#define CONTAINER_FILENAME_BACKUP "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_BACKUP_EXT
 
 // error files
 //const char map_error_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_ERROR_EXT;

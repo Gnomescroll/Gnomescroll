@@ -130,7 +130,7 @@ bool load_mech_palette_file(const char* fn)
 
 bool save_mech_palette_file()
 {
-    FILE* f = fopen(mech_palette_filename_tmp, "w");
+    FILE* f = fopen(mech_palette_path_tmp, "w");
     GS_ASSERT(f != NULL);
     if (f == NULL) return false;
 
@@ -154,9 +154,7 @@ bool save_mech_palette_file()
 
     int ret = fclose(f);
     GS_ASSERT(ret == 0);
-    if (ret != 0) return false;
-
-    return save_tmp_file(mech_palette_filename, mech_palette_filename_tmp, mech_palette_filename_backup);
+    return (ret == 0);
 }
 
 bool write_mech_file(FILE* f)
@@ -292,7 +290,7 @@ bool save_mechs()
     GS_ASSERT(saved_palette);
     if (!saved_palette) return false;
     
-    FILE* f = fopen(mech_filename_tmp, "wb");
+    FILE* f = fopen(mech_path_tmp, "wb");
     GS_ASSERT(f != NULL);
     if (f == NULL) return false;
 
@@ -302,23 +300,21 @@ bool save_mechs()
 
     int ret = fclose(f);
     GS_ASSERT(ret == 0);
-    if (ret != 0) return false;
-
-    return save_tmp_file(mech_filename, mech_filename_tmp, mech_filename_backup);
+    return (ret == 0);
 }
 
 bool load_mechs()
 {    
-    if (file_exists(mech_filename) && fsize(mech_filename) > 0)
+    if (file_exists(mech_path) && fsize(mech_path) > 0)
     {
-        if (!load_mech_palette_file(mech_palette_filename)) return false;
-        return load_mech_file(mech_filename);
+        if (!load_mech_palette_file(mech_palette_path)) return false;
+        return load_mech_file(mech_path);
     }
     else
-    if (file_exists(mech_filename_backup) && fsize(mech_filename_backup) > 0)
+    if (file_exists(mech_path_bak) && fsize(mech_path_bak) > 0)
     {
-        if (!load_mech_palette_file(mech_palette_filename_backup)) return false;
-        return load_mech_file(mech_filename_backup);
+        if (!load_mech_palette_file(mech_palette_path_bak)) return false;
+        return load_mech_file(mech_path_bak);
     }
     else
         printf("WARNING: No mech file found\n");

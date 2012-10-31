@@ -48,6 +48,8 @@ void init(int argc, char* argv[])
         default_map_gen();
         t_gen::populate_crystals();
         t_map::environment_process_startup();
+        bool saved = serializer::save_data();
+        GS_ASSERT_ABORT(saved);
     }
     #else
     if (strcmp(Options::map, "fast") == 0)
@@ -172,7 +174,8 @@ int run()
         
         if (serializer::should_save_map)
         {
-            serializer::save_data();            
+            bool saved = serializer::save_data();
+            GS_ASSERT(saved);
             serializer::should_save_map = false;
         }
 
@@ -183,7 +186,8 @@ int run()
 
     if (serializer::should_save_map)
     {
-        serializer::save_data();
+        bool saved = serializer::save_data();
+        GS_ASSERT(saved);
         serializer::should_save_map = false;
     }
         

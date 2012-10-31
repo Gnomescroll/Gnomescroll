@@ -17,7 +17,33 @@
 namespace serializer
 {
 
+static bool world_found = false;
+
 static char save_folder[SAVE_FOLDER_LEN+1] = {'\0'};
+
+char map_folder[NAME_MAX+1] = {'\0'};
+char mech_folder[NAME_MAX+1] = {'\0'};
+char player_folder[NAME_MAX+1] = {'\0'};
+char container_folder[NAME_MAX+1] = {'\0'};
+
+char map_path[NAME_MAX+1] = {'\0'};
+char map_path_tmp[NAME_MAX+1] = {'\0'};
+char map_path_bak[NAME_MAX+1] = {'\0'};
+char map_palette_path[NAME_MAX+1] = {'\0'};
+char map_palette_path_tmp[NAME_MAX+1] = {'\0'};
+char map_palette_path_bak[NAME_MAX+1] = {'\0'};
+char mech_path[NAME_MAX+1] = {'\0'};
+char mech_path_tmp[NAME_MAX+1] = {'\0'};
+char mech_path_bak[NAME_MAX+1] = {'\0'};
+char mech_palette_path[NAME_MAX+1] = {'\0'};
+char mech_palette_path_tmp[NAME_MAX+1] = {'\0'};
+char mech_palette_path_bak[NAME_MAX+1] = {'\0'};
+char player_path[NAME_MAX+1] = {'\0'};
+char player_path_tmp[NAME_MAX+1] = {'\0'};
+char player_path_bak[NAME_MAX+1] = {'\0'};
+char container_path[NAME_MAX+1] = {'\0'};
+char container_path_tmp[NAME_MAX+1] = {'\0'};
+char container_path_bak[NAME_MAX+1] = {'\0'};
 
 static bool set_save_folder(int version, time_t timestamp)
 {
@@ -25,30 +51,109 @@ static bool set_save_folder(int version, time_t timestamp)
     GS_ASSERT_ABORT(wrote > 0 && (size_t)wrote <= SAVE_FOLDER_LEN);
     if (wrote <= 0 || (size_t)wrote > SAVE_FOLDER_LEN) return false;
     save_folder[SAVE_FOLDER_LEN] = '\0';
+
+    char* save_path = (char*)malloc((sizeof(WORLD_DATA_PATH) + strlen(save_folder)+1) * sizeof(char));
+    sprintf(save_path, "%s%s/", WORLD_DATA_PATH, save_folder);
+    create_path(save_path);
+    free(save_path);
+    
     return true;    
 }
 
-static void create_data_paths(const char* save_folder)
+static void set_data_paths(const char* save_folder)
 {
-    GS_ASSERT(save_folder[0] != '\0');
+    GS_ASSERT_ABORT(save_folder[0] != '\0');
     if (save_folder[0] == '\0') return;
-    
-    static const size_t alongest = GS_MAX(sizeof(MAP_DATA_PATH), sizeof(MECH_DATA_PATH));
-    static const size_t blongest = GS_MAX(sizeof(PLAYER_DATA_PATH), sizeof(CONTAINER_DATA_PATH));
-    static const size_t longest  = GS_MAX(alongest, blongest);
-    
-    char* path = (char*)malloc((sizeof(WORLD_DATA_PATH) + strlen(save_folder) + longest) * sizeof(char));
 
-    sprintf(path, "%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH);
-    create_path(path);
-    sprintf(path, "%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH);
-    create_path(path);
-    sprintf(path, "%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH);
-    create_path(path);
-    sprintf(path, "%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH);
-    create_path(path);
+    printf("SET DATA PATHS: save_folder %s\n", save_folder);
 
-    free(path);
+    int wrote = 0;
+
+    // map
+    // set & create folder
+    wrote = snprintf(map_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    map_folder[NAME_MAX] = '\0';
+    create_path(map_folder);
+
+    // set full paths for filenames
+    wrote = snprintf(map_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    map_path[NAME_MAX] = '\0';
+    wrote = snprintf(map_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    map_path_tmp[NAME_MAX] = '\0';
+    wrote = snprintf(map_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    map_path_bak[NAME_MAX] = '\0';
+
+    wrote = snprintf(map_palette_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    map_palette_path[NAME_MAX] = '\0';
+    wrote = snprintf(map_palette_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    map_palette_path_tmp[NAME_MAX] = '\0';
+    wrote = snprintf(map_palette_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    map_palette_path_bak[NAME_MAX] = '\0';
+
+    // mechs
+    wrote = snprintf(mech_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    mech_folder[NAME_MAX] = '\0';
+    create_path(mech_folder);
+
+    wrote = snprintf(mech_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    mech_path[NAME_MAX] = '\0';
+    wrote = snprintf(mech_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    mech_path_tmp[NAME_MAX] = '\0';
+    wrote = snprintf(mech_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    mech_path_bak[NAME_MAX] = '\0';
+
+    wrote = snprintf(mech_palette_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    mech_palette_path[NAME_MAX] = '\0';
+    wrote = snprintf(mech_palette_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    mech_palette_path_tmp[NAME_MAX] = '\0';
+    wrote = snprintf(mech_palette_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    mech_palette_path_bak[NAME_MAX] = '\0';
+
+    // players
+    wrote = snprintf(player_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    player_folder[NAME_MAX] = '\0';
+    create_path(player_folder);
+    
+    wrote = snprintf(player_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    player_path[NAME_MAX] = '\0';
+    wrote = snprintf(player_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    player_path_tmp[NAME_MAX] = '\0';
+    wrote = snprintf(player_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    player_path_bak[NAME_MAX] = '\0';
+
+    // containers
+    wrote = snprintf(container_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    container_folder[NAME_MAX] = '\0';
+    create_path(container_folder);
+
+    wrote = snprintf(container_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    container_path[NAME_MAX] = '\0';
+    wrote = snprintf(container_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    container_path_tmp[NAME_MAX] = '\0';
+    wrote = snprintf(container_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    container_path_bak[NAME_MAX] = '\0';
 }
 
 bool begin_new_world_version()
@@ -59,62 +164,70 @@ bool begin_new_world_version()
     bool exists = file_exists(save_folder);
     GS_ASSERT(!exists);
     if (exists) return false;
-    create_path(save_folder);
-    create_data_paths(save_folder);
+
+    set_data_paths(save_folder);
     return true;
 }
 
 bool load_data()
 {
-    GS_ASSERT(save_folder[0] != '\0');
-    if (save_folder[0] == '\0')
-    {
-        printf("There is no data to load -- we have started a new world version\n");
-        return false;
-    }
+    if (!world_found) return false;
     
-    // Load all the data
-    //      Each piece loads it palette and raw data and applies any transformations needed
-    // Then resave the palettes and data
+    if (!load_map(map_path)) return false;
+    if (!load_mechs()) return false;
     
-    if (!load_default_map()) return false;
-
-    // Actually, save it as palette.new
-    // After the first time the map is saved, rename it to normal
-
-    bool successful_load = load_mechs();
-    GS_ASSERT_ABORT(successful_load);
-
-    // we can save the new map palette now that we're done with the old one
-    bool saved = save_map_palette_file();
-    GS_ASSERT_ABORT(saved);
-
     if (!Options::serializer) return true;
 
     #if GS_SERIALIZER
-    successful_load = load_containers();
-    GS_ASSERT_ABORT(successful_load);
-
-    //load_players();
+    if (!load_containers()) return false;
+    //if (!load_players()) return false;
     #endif
     
-    return true;
+    return true;    
 }
 
-void save_data()
+bool save_palettes()
 {
-    // We need to know where to save it
-    // If creation_timestamp is set then we're working with that version,
-    // otherwise we need to detect our version name
+    bool mapps = save_map_palette_file();
+    bool mechps = save_mech_palette_file();
+    return (mapps && mechps);
+}
 
-    save_map();
-    save_mechs();
-
-    if (Options::serializer)
+bool save_data()
+{
+    // Save the palettes, but only once
+    static bool palettes_saved = false;
+    if (!palettes_saved)
     {
-        save_map_palette_file();
-        save_containers();
+        palettes_saved = save_palettes();
+        if (!palettes_saved) return false;
+        save_tmp_file(map_palette_path, map_palette_path_tmp, map_palette_path_bak); 
+        save_tmp_file(mech_palette_path, mech_palette_path_tmp, mech_palette_path_bak); 
     }
+
+    // TODO -- separate tmp file renaming from the rest of the saving logic
+
+    if (!save_map()) return false;
+
+    // TODO -- wait for map copy to complete
+    //while(!map_copy_complete) {}
+
+    bool rps = save_remote_player_data();
+    bool ms = save_mechs();
+    bool cs = save_containers();
+    //bool lps = save_local_player_data();  // TODO -- enable once we have local player data
+
+    //bool saved = (rps && ms && cs && lps);
+    bool saved = (rps && ms && cs);
+    if (!saved) return false;
+
+    // copy all tmp files over
+    ms = save_tmp_file(mech_path, mech_path_tmp, mech_path_bak);
+    cs = save_tmp_file(container_path, container_path_tmp, container_path_bak);
+    //lps = save_tmp_file(player_filename, player_filename_tmp, player_path_bak);
+
+    //return (ms && cs && lps);
+    return (ms && cs);
 }
 
 void update()
@@ -141,33 +254,43 @@ static bool parse_world_dirname(const char* dir, int& version, time_t& timestamp
     char* buf = &_buf[0];
 
     // replace the delimiter with \0, and check the component count
+    // the lookback var is to indicated we found the delimiter, and on the next char
+    // we should increment the parts count.
+    // this prevents part count errors when the string ends with the delimiter
     size_t pts = 1;
+    bool lookback = false;
     for (size_t i=0; buf[i] != '\0'; i++)
+    {
         if (buf[i] == WORLD_DATA_FOLDER_DELIMITER[0])
+            lookback = true;
+        if (lookback)
         {
+            lookback = false;
             pts++;
             buf[i] = '\0';
         }
+    }
+    if (lookback) return false;
+    
     if (pts != WORLD_DATA_FOLDER_PARTS) return false;
 
     // check the prefix
     if (strcmp(buf, WORLD_DATA_PREFIX) != 0) return false;
-    buf = &buf[sizeof(WORLD_DATA_PREFIX)-2];
 
     // extract and check version
+    buf = &buf[sizeof(WORLD_DATA_PREFIX)];
     bool err = false;
     long long int _version = parse_int(buf, err);
     if (err) return false;
     if (_version <= 0 || _version > GS_VERSION) return false;
-    version = (int)version;
-
-    buf = &buf[strlen(buf)];
+    version = _version;
 
     // extract and check timestamp
+    buf = &buf[strlen(buf)+1];
     long long int _timestamp = parse_int(buf, err);
     if (err) return false;
     if (_timestamp <= 0 || _timestamp > utc_now()) return false;
-    timestamp = (time_t)_timestamp;
+    timestamp = _timestamp;
 
     return true;
 }
@@ -185,9 +308,9 @@ static bool find_existing_world(char filename[NAME_MAX], int& version, time_t& t
     
     while ((ep = readdir(dp)) != NULL)
     {
+        if (!ep->d_type == DT_DIR) continue;
         bool is_world = parse_world_dirname(ep->d_name, version, timestamp);
-        if (!is_world) continue;
-        if (timestamp > most_recent)
+        if (is_world && difftime(timestamp, most_recent) >= 0)
         {
             GS_ASSERT(version >= highest_version);
             highest_version = version;
@@ -197,6 +320,9 @@ static bool find_existing_world(char filename[NAME_MAX], int& version, time_t& t
     }
     int ret = closedir(dp);
     GS_ASSERT(ret == 0);
+
+    version = highest_version;
+    timestamp = most_recent;
 
     return (most_recent != 0 && highest_version != 0);
 }
@@ -208,28 +334,17 @@ void init()
     create_path(WORLD_DATA_PATH);
 
     // find the most up to date world data, if present
-    // TODO
-
     int version = 0;
     time_t timestamp = 0;
     char filename[NAME_MAX] = {'\0'};
-    bool found = find_existing_world(filename, version, timestamp);
-    if (found)
+    world_found = find_existing_world(filename, version, timestamp);
+    if (world_found)
     {   // save the folder name
+        printf("Found world: %s\n", filename);
         GS_ASSERT_ABORT(strlen(filename) <= SAVE_FOLDER_LEN);
-        
-        strncpy(save_folder, filename, SAVE_FOLDER_LEN);
-        save_folder[SAVE_FOLDER_LEN] = '\0';
-
-        // create the folder
-        char* path = (char*)malloc((sizeof(WORLD_DATA_PATH)+strlen(save_folder)) * sizeof(char));
-        sprintf(path, "%s%s", WORLD_DATA_PATH, save_folder);
-        create_path(path);
-        free(path);
-        create_data_paths(save_folder);
+        set_save_folder(version, timestamp);
+        set_data_paths(save_folder);
     }
-    else
-        begin_new_world_version();
     
     init_map_serializer();
     init_state();

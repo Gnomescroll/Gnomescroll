@@ -15,7 +15,7 @@ dont_include_this_file_in_client
 #include <math.h>
 
 #ifndef UINT32_MAX
-# define UINT32_MAX (0xffffffff)
+# define UINT32_MAX (0xFFFFFFFFU)
 #endif
 
 #ifndef INT32_MAX
@@ -34,7 +34,6 @@ dont_include_this_file_in_client
 # include "windows.h"
 # undef interface
 # undef rad2
-# include <common/dirent.h>
 #endif
 
 // serialization
@@ -62,6 +61,7 @@ dont_include_this_file_in_client
 #include <common/crash_report/stack_trace.hpp>
 #include <common/gs_assert.hpp>
 #include <common/mallox.hpp>
+#include <common/dirent.h>
 
 // osx tools
 #ifdef __APPLE__

@@ -34,6 +34,12 @@ void teardown_players()
     }
 }
 
+bool save_remote_player_data()
+{
+    // TODO -- save all player data
+    return true;
+}
+
 bool PlayerLoadData::signal_if_loaded()
 {
     GS_ASSERT(!this->waiting_for_setup);

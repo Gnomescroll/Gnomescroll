@@ -35,8 +35,6 @@ class ParsedMapPaletteData
 
 extern bool should_save_map;
 extern bool map_save_completed;
-extern char* map_tmp_name;
-extern char* map_final_name;
 extern bool map_save_memcpy_in_progress;
 
 extern class BlockSerializer* block_serializer;
@@ -45,15 +43,8 @@ extern class BlockSerializer* block_serializer;
 void wait_for_threads();
 #endif
 
-void save_map(const char* filename);
+bool save_map();
 bool load_map(const char* filename);
-
-// uses default map names
-void save_map();
-bool load_map();
-
-// will choose a correct map if available. returns false if no map found
-bool load_default_map();
 
 void check_map_save_state();
 
@@ -96,8 +87,7 @@ class BlockSerializer
     }
 
     bool load(const char* filename);
-
-    void save(const char* filename);
+    bool save(const char* filename);
 
     #if PTHREADS_ENABLED
     //this is called until map is done saving
