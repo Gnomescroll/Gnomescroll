@@ -44,7 +44,7 @@ void wait_for_threads();
 #endif
 
 bool save_map();
-bool load_map(const char* filename);
+bool load_map();
 
 void check_map_save_state();
 
@@ -59,7 +59,7 @@ class BlockSerializer
         static const int version = GS_VERSION;
         static const int chunk_number = 32*32;
 
-        char file_name[256];
+        char filename[NAME_MAX+1];
         size_t file_size;
 
         char* write_buffer;

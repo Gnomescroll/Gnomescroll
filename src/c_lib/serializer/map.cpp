@@ -284,7 +284,7 @@ static void load_map_restore_containers()
 
 BlockSerializer::BlockSerializer()
 {
-    this->file_name[0] = '\0';
+    this->filename[0] = '\0';
     this->write_buffer = NULL;
     this->file_size = 0;
 
@@ -319,10 +319,10 @@ bool BlockSerializer::save(const char* filename)
     map_save_memcpy_in_progress = true;
 
     GS_ASSERT(write_buffer == NULL);
-    GS_ASSERT(file_name[0] == '\0');
+    GS_ASSERT(this->filename[0] == '\0');
     GS_ASSERT(file_size == 0);
 
-    strcpy(file_name, filename);
+    strcpy(this->filename, filename);
 
     this->file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
     this->write_buffer = (char*)calloc(file_size, sizeof(char));
@@ -412,7 +412,7 @@ void BlockSerializer::save_iter(int max_ms)
     printf("BlockSerializer save_itr complete: clock_time= %i ms num_calls= %i, ms_per_call= %i, chunks_per_call= %i total_chunks= %i memcpy_count= %i \n", 
         _GET_MS_TIME()-_start_ms, _calls, max_ms, chunk_number/_calls, chunk_number, _memcpy_count);
 
-    threaded_write(this->file_name, write_buffer, file_size);
+    threaded_write(this->filename, write_buffer, file_size);
 
     _start_ms = 0;
     _calls = 0;
@@ -420,13 +420,15 @@ void BlockSerializer::save_iter(int max_ms)
 
     map_save_memcpy_in_progress = false;
     write_buffer = NULL;
-    file_name[0] = '\0';
+    this->filename[0] = '\0';
     file_size = 0;
 }
 #endif
 
 bool BlockSerializer::load(const char* filename)
 {
+    printf("MAP LOAD: %s\n", filename);
+        
     GS_ASSERT_ABORT(t_map::main_map != NULL);
 
     GS_ASSERT(filename != NULL);
@@ -499,25 +501,18 @@ bool save_map()
     return block_serializer->save(map_path_tmp);        
 }
 
-bool load_map(const char* filename)
-{
-    GS_ASSERT(block_serializer != NULL);
-    if (block_serializer == NULL) return false;
-    return block_serializer->load(filename);
-}
-
-bool load_default_map()
+bool load_map()
 {
     if (file_exists(map_path) && fsize(map_path) > 0)
     {
         if (!load_map_palette_file(map_palette_path)) return false;
-        return load_map(map_path);
+        return block_serializer->load(map_path);
     }
     else
     if (file_exists(map_path_bak) && fsize(map_path_bak) > 0)
     {
         if (!load_map_palette_file(map_palette_path_bak)) return false;
-        return load_map(map_path_bak);
+        return block_serializer->load(map_path_bak);
     }
     return false;
 }

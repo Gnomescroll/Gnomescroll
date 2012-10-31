@@ -58,10 +58,12 @@ void init(int argc, char* argv[])
     if (strcmp(Options::map, "corpusc") == 0)
         corpusc = true;
     else
-    {   // load map from options if given; else load default map file; else do a map gen
-        if ((Options::map[0] == '\0' || !serializer::load_map(Options::map))
-        && !serializer::load_default_map())
-            default_map_gen();
+    if (!serializer::load_map())
+    {
+        serializer::begin_new_world_version();
+        default_map_gen();
+        t_gen::populate_crystals();
+        t_map::environment_process_startup();
     }
     #endif
 

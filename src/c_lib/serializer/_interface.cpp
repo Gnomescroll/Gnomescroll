@@ -74,7 +74,6 @@ static void set_data_paths(const char* save_folder)
     wrote = snprintf(map_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     map_folder[NAME_MAX] = '\0';
-    create_path(map_folder);
 
     // set full paths for filenames
     wrote = snprintf(map_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME);
@@ -101,7 +100,6 @@ static void set_data_paths(const char* save_folder)
     wrote = snprintf(mech_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     mech_folder[NAME_MAX] = '\0';
-    create_path(mech_folder);
 
     wrote = snprintf(mech_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
@@ -127,7 +125,6 @@ static void set_data_paths(const char* save_folder)
     wrote = snprintf(player_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     player_folder[NAME_MAX] = '\0';
-    create_path(player_folder);
     
     wrote = snprintf(player_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
@@ -143,7 +140,6 @@ static void set_data_paths(const char* save_folder)
     wrote = snprintf(container_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     container_folder[NAME_MAX] = '\0';
-    create_path(container_folder);
 
     wrote = snprintf(container_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
@@ -156,15 +152,19 @@ static void set_data_paths(const char* save_folder)
     container_path_bak[NAME_MAX] = '\0';
 }
 
+static void create_data_paths()
+{
+    create_path(map_folder);
+    create_path(mech_folder);
+    create_path(player_folder);
+    create_path(container_folder);
+} 
+
 bool begin_new_world_version()
 {
     bool set = set_save_folder(GS_VERSION, utc_now());
     GS_ASSERT(set);
     if (!set) return false;
-    bool exists = file_exists(save_folder);
-    GS_ASSERT(!exists);
-    if (exists) return false;
-
     set_data_paths(save_folder);
     return true;
 }
@@ -173,7 +173,7 @@ bool load_data()
 {
     if (!world_found) return false;
     
-    if (!load_map(map_path)) return false;
+    if (!load_map()) return false;
     if (!load_mechs()) return false;
     
     if (!Options::serializer) return true;
@@ -195,6 +195,10 @@ bool save_palettes()
 
 bool save_data()
 {
+    static int paths_created = 0;
+    if (!(paths_created++))
+        create_data_paths();
+
     // Save the palettes, but only once
     static bool palettes_saved = false;
     if (!palettes_saved)
@@ -204,8 +208,6 @@ bool save_data()
         save_tmp_file(map_palette_path, map_palette_path_tmp, map_palette_path_bak); 
         save_tmp_file(mech_palette_path, mech_palette_path_tmp, mech_palette_path_bak); 
     }
-
-    // TODO -- separate tmp file renaming from the rest of the saving logic
 
     if (!save_map()) return false;
 
