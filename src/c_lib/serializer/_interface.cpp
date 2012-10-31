@@ -65,8 +65,6 @@ static void set_data_paths(const char* save_folder)
     GS_ASSERT_ABORT(save_folder[0] != '\0');
     if (save_folder[0] == '\0') return;
 
-    printf("SET DATA PATHS: save_folder %s\n", save_folder);
-
     int wrote = 0;
 
     // map

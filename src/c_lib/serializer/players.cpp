@@ -35,8 +35,22 @@ void teardown_players()
 }
 
 bool save_remote_player_data()
-{
-    // TODO -- save all player data
+{ 
+    for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+    {
+        NetPeerManager* client = NetServer::clients[i];
+        if (client == NULL) continue;
+        if (!client->loaded) continue;
+        GS_ASSERT(client->user_id != NULL_USER_ID && client->agent_id != NULL_AGENT);
+        if (client->user_id == NULL_USER_ID || client->agent_id == NULL_AGENT) continue;
+        save_player(client->user_id, client->agent_id);
+        int n_containers = 0;
+        int* containers = ItemContainer::get_player_containers(client->agent_id, &n_containers);
+        GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
+        for (int j=0; j<n_containers; j++)
+            save_player_container(client->client_id, containers[j]);
+    }
+    
     return true;
 }
 
