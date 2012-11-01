@@ -204,16 +204,17 @@ void broadcast_set_palette(int x, int y, int z, int palette)
 inline int get_highest_open_block(int x, int y, int n)
 {
     GS_ASSERT(n >= 1);
+    if (n < 1) printf("Get highest open block error: called with n = %d\n", n);
     if (n < 1) return -1;
-    if (n == 1) return get_highest_open_block(x,y);
+    if (n == 1) return get_highest_open_block(x, y);
 
-    int open=n;
+    int open = n;
     CubeID cube_id;
     int i;
 
     for (i=ZMAX-1; i>=0; i--)
     {
-        cube_id = get(x,y,i);
+        cube_id = get(x, y, i);
         if (!isSolid(cube_id))
             open++;
         else
@@ -228,7 +229,7 @@ inline int get_highest_open_block(int x, int y, int n)
 
 inline int get_highest_open_block(int x, int y) 
 {
-    return get_highest_solid_block(x,y)+1;
+    return get_highest_solid_block(x, y) + 1;
 }
 
 inline int get_nearest_open_block(int x, int y, int z, int n)

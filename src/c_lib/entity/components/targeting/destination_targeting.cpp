@@ -34,10 +34,15 @@ void DestinationTargetingComponent::choose_destination()
         y = 2*(randf()-0.5f) * this->destination_choice_y;
     } while ((x*x + y*y) < r2);
 
+    int height = 1;
+    DimensionComponent* dims = (DimensionComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    if (dims != NULL)
+        height = dims->get_integer_height();
+
     Vec3 position = physics->get_position();
     position.x += x;
     position.y += y;
-    position.z = t_map::get_highest_open_block(position.x, position.y, position.z);
+    position.z = t_map::get_highest_open_block(position.x, position.y, height);
         
     this->set_destination(position);
 
