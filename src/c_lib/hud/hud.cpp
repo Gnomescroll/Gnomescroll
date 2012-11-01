@@ -19,6 +19,8 @@
 namespace Hud
 {
 
+JetPackMeter jp_meter;
+
 /* Strings */
 
 static const char help_text[] =
@@ -201,9 +203,7 @@ void draw_reference_center()
 
 void draw_hud_textures()
 {
-	int h = 4; // meter thickness
-	float w = _xresf * (float)ClientState::playerAgent_state.jetpack.fuel/JETPACK_FUEL_MAX;
-	draw_bound_texture(	(_xresf - w) / 2, _yresf-h*7, w, h);
+	jp_meter.draw(_xresf, _yresf, &ClientState::playerAgent_state);
 
     if (!hud_draw_settings.draw) return;
 

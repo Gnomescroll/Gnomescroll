@@ -42,6 +42,9 @@
     <ClInclude Include="..\c_lib\agent\client\jetpack.hpp">
       <Filter>c_lib\agent\client</Filter>
     </ClInclude>
+    <ClInclude Include="..\c_lib\hud\jetpack_meter.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
