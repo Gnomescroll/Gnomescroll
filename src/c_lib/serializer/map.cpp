@@ -7,6 +7,8 @@
 namespace serializer
 {
 
+static const size_t CHUNK_SIZE = CHUNK_ELEMENT_COUNT * sizeof(struct t_map::MAP_ELEMENT);
+
 static int* cube_id_map = NULL;
 
 bool should_save_world = false;
@@ -405,9 +407,6 @@ bool BlockSerializer::save_iter(int max_ms)
        _start_ms = _GET_MS_TIME();
     int start_ms = _GET_MS_TIME();
 
-
-    size_t CHUNK_SIZE = ZMAX*TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*sizeof(struct t_map::MAP_ELEMENT);
-
     static int index = 0;
 
     for (int j=0; j < CHUNK_COUNT; j++)
@@ -499,8 +498,7 @@ bool BlockSerializer::load(const char* filename)
 
         memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
-        GS_ASSERT(index == (prefix_length + (i+1)*(int)sizeof(struct SerializedChunk)));
-        memcpy(&mp->e, (void*) &chunk->data, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
+        memcpy(&mp->e, (void*) &chunk->data, CHUNK_SIZE);
     }
 
     int ti3 = _GET_MS_TIME();
