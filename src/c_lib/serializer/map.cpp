@@ -270,30 +270,33 @@ bool save_map_palette_file()
     return (ret == 0);
 }
 
-static void load_map_restore_containers()
+static bool load_map_restore_containers()
 {
-    for (int ci=0; ci < 32; ci++)
-    for (int cj=0; cj < 32; cj++)
+    for (int ci=0; ci < MAP_CHUNK_XDIM; ci++)
+    for (int cj=0; cj < MAP_CHUNK_YDIM; cj++)
     {
-        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[32*cj+ci];
-        for (int k=0; k<128; k++)
-        for (int i=0; i<16; i++)
-        for (int j=0; j<16; j++)
+        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[MAP_CHUNK_XDIM*cj+ci];
+        GS_ASSERT(mp != NULL);
+        if (mp == NULL) continue;
+        for (int k=0; k<ZMAX; k++)
+        for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
+        for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
         {
-            CubeID block = (CubeID)mp->e[16*16*k + 16*j + i].block;
+            CubeID block = (CubeID)mp->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*k + TERRAIN_CHUNK_WIDTH*j + i].block;
             if (!t_map::isItemContainer(block)) continue;
             
             ItemContainerType container_type = t_map::get_container_type_for_cube(block);
             GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-            if (container_type == CONTAINER_TYPE_NONE) continue;    // TODO -- log error
+            if (container_type == CONTAINER_TYPE_NONE) return false;    // TODO -- log error
             class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
             GS_ASSERT(container != NULL);
-            if (container == NULL) continue;    // TODO -- log error
+            if (container == NULL) return false;    // TODO -- log error
             init_container(container);            
-            t_map::create_item_container_block(ci*16+i, cj*16+j, k, container->type, container->id);
+            t_map::create_item_container_block(ci*TERRAIN_CHUNK_WIDTH+i, cj*TERRAIN_CHUNK_WIDTH+j, k, container->type, container->id);
             loaded_containers[container->id] = CONTAINER_LOAD_MAP;
         }
     }
+    return true;
 }
 
 BlockSerializer::BlockSerializer()
@@ -506,9 +509,7 @@ bool BlockSerializer::load(const char* filename)
 
     free(buffer);
 
-    load_map_restore_containers();  //setup containers
-
-    return true;
+    return load_map_restore_containers();  //setup containers
 }
 
 bool save_map()
