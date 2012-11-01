@@ -2,6 +2,12 @@
 
 #include <serializer/constants.hpp>
 
+#if GS_SERIALIZER
+#include <serializer/containers.hpp>
+#include <serializer/items.hpp>
+#include <serializer/players.hpp>
+#endif
+
 namespace serializer
 {
 

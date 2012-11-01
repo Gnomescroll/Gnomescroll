@@ -91,6 +91,8 @@ void player_load_failed() {}
 
 bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers) { return true; }
 
+void wait_for_redis_replies() {}
+
 }   // serializer
 
 #endif

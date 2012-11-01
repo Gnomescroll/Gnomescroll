@@ -202,6 +202,7 @@ bool save_remaining_data()
     bool rps = true;
     bool cs = true;
 
+    #if GS_SERIALIZER
     if (Options::serializer)
     {
         rps = save_remote_player_data();
@@ -210,17 +211,18 @@ bool save_remaining_data()
         GS_ASSERT(rps);
         GS_ASSERT(cs);
     }
+    #endif
 
     if (!rps || !ms || !cs) return false; // ERROR -- aborting
 
     ms = true;
-    rps = true;
     cs = true;
 
     // copy all tmp files over
     ms = save_tmp_file(mech_path, mech_path_tmp, mech_path_bak);
     GS_ASSERT(ms);
 
+    #if GS_SERIALIZER
     if (Options::serializer)
     {
         cs = save_tmp_file(container_path, container_path_tmp, container_path_bak);
@@ -228,6 +230,7 @@ bool save_remaining_data()
         //lps = save_tmp_file(player_filename, player_filename_tmp, player_path_bak);    
         //GS_ASSERT(lps);
     }
+    #endif
 
     return (ms && cs);
 }

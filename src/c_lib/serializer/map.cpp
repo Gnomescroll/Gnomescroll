@@ -122,9 +122,11 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
 
 void wait_for_threads()
 {
+    GS_ASSERT(!_threaded_write_running || map_save_thread != 0);
+    if (!_threaded_write_running) return;
+
+    GS_ASSERT(map_save_thread != 0);
     printf("Waiting for threads to finish...\n");
-    //while (_threaded_write_running != 0)
-        //gs_microsleep(100);
     pthread_join(map_save_thread, NULL);
     pthread_detach(map_save_thread);
     printf("Thread detached\n");
