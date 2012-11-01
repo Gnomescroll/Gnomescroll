@@ -128,7 +128,7 @@ void update_skylight_out(int x, int y, int z)
     }
 
 
-    GS_ASSERT( ((x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2) == (x+512-1) % 512);
+    GS_ASSERT( ((x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2) == (x+XMAX-1) % XMAX);
 
     _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _y = y;
