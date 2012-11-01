@@ -2,6 +2,7 @@
 
 #include <hud/font.hpp>
 #include <hud/text.hpp>
+#include <hud/jetpack_meter.hpp>
 
 namespace Hud
 {
