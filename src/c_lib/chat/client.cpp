@@ -194,7 +194,8 @@ void ChatInput::submit(int channel)
     if (!was_cmd && valid)
     {   // create, send packet
         ChatMessage_CtoS msg;
-        strcpy(msg.msg, buffer);
+        strncpy(msg.msg, buffer, CHAT_MESSAGE_SIZE_MAX+1);
+        msg.msg[CHAT_MESSAGE_SIZE_MAX] = '\0';
         msg.channel = channel;
         msg.send();
     }

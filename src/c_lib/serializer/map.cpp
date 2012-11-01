@@ -114,6 +114,8 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
         printf("threaded_write error: pthread_create returned %i \n", ret);
         _threaded_write_running = false;
     }
+    else
+        printf("Thread created\n");
 }
 
 void wait_for_threads()
@@ -123,6 +125,7 @@ void wait_for_threads()
         //gs_microsleep(100);
     pthread_join(map_save_thread, NULL);
     pthread_detach(map_save_thread);
+    printf("Thread detached\n");
     map_save_thread = 0;
 }
 
@@ -547,6 +550,15 @@ void update_map_save_file()
     bool saved = save_tmp_file(map_path, map_path_tmp, map_path_bak);
     GS_ASSERT(saved);
     map_save_completed = false; // reset
+
+    GS_ASSERT(!map_save_memcpy_in_progress);
+    GS_ASSERT(!_threaded_write_running);
+
+    if (!_threaded_write_running)
+    {
+        pthread_detach(map_save_thread);
+        printf("Thread detached\n");
+    }
 }
 
 }   // serializer

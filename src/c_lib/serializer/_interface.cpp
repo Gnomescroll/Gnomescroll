@@ -417,13 +417,15 @@ void teardown()
     wait_for_save_complete();
     wait_for_threads();
 
+    // guarantee a final save in production
     #if PRODUCTION
     should_save_world = true;
     #endif
 
+    // guarantee a final save if in serializer mode
     if (Options::serializer) should_save_world = true;
 
-    // resave if requested
+    // final save
     if (should_save_world) save_data();
     wait_for_save_complete();
     
@@ -431,13 +433,13 @@ void teardown()
     wait_for_threads();
     update_map_save_file();
     wait_for_redis_replies();
+
+    // tear it all down
     
     teardown_map_serializer();
     teardown_mechs();
 
     #if GS_SERIALIZER    
-    // TODO -- save all item data, wait for responses
-
     // ORDER DEPENDENT
     teardown_redis();
     teardown_players();
