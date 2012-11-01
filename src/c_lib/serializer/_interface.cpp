@@ -7,6 +7,7 @@
 #include <serializer/mechs.hpp>
 
 #if GS_SERIALIZER
+# include <serializer/logger.hpp>
 # include <serializer/constants.hpp>
 # include <serializer/containers.hpp>
 # include <serializer/map.hpp>
@@ -19,31 +20,31 @@ namespace serializer
 
 static bool world_found = false;
 
-static char save_folder[SAVE_FOLDER_LEN+1] = {'\0'};
+static char save_folder[SAVE_FOLDER_LEN+1];
 
-char map_folder[NAME_MAX+1] = {'\0'};
-char mech_folder[NAME_MAX+1] = {'\0'};
-char player_folder[NAME_MAX+1] = {'\0'};
-char container_folder[NAME_MAX+1] = {'\0'};
+char map_folder[NAME_MAX+1];
+char mech_folder[NAME_MAX+1];
+char player_folder[NAME_MAX+1];
+char container_folder[NAME_MAX+1];
 
-char map_path[NAME_MAX+1] = {'\0'};
-char map_path_tmp[NAME_MAX+1] = {'\0'};
-char map_path_bak[NAME_MAX+1] = {'\0'};
-char map_palette_path[NAME_MAX+1] = {'\0'};
-char map_palette_path_tmp[NAME_MAX+1] = {'\0'};
-char map_palette_path_bak[NAME_MAX+1] = {'\0'};
-char mech_path[NAME_MAX+1] = {'\0'};
-char mech_path_tmp[NAME_MAX+1] = {'\0'};
-char mech_path_bak[NAME_MAX+1] = {'\0'};
-char mech_palette_path[NAME_MAX+1] = {'\0'};
-char mech_palette_path_tmp[NAME_MAX+1] = {'\0'};
-char mech_palette_path_bak[NAME_MAX+1] = {'\0'};
-char player_path[NAME_MAX+1] = {'\0'};
-char player_path_tmp[NAME_MAX+1] = {'\0'};
-char player_path_bak[NAME_MAX+1] = {'\0'};
-char container_path[NAME_MAX+1] = {'\0'};
-char container_path_tmp[NAME_MAX+1] = {'\0'};
-char container_path_bak[NAME_MAX+1] = {'\0'};
+char map_path[NAME_MAX+1];
+char map_path_tmp[NAME_MAX+1];
+char map_path_bak[NAME_MAX+1];
+char map_palette_path[NAME_MAX+1];
+char map_palette_path_tmp[NAME_MAX+1];
+char map_palette_path_bak[NAME_MAX+1];
+char mech_path[NAME_MAX+1];
+char mech_path_tmp[NAME_MAX+1];
+char mech_path_bak[NAME_MAX+1];
+char mech_palette_path[NAME_MAX+1];
+char mech_palette_path_tmp[NAME_MAX+1];
+char mech_palette_path_bak[NAME_MAX+1];
+char player_path[NAME_MAX+1];
+char player_path_tmp[NAME_MAX+1];
+char player_path_bak[NAME_MAX+1];
+char container_path[NAME_MAX+1];
+char container_path_tmp[NAME_MAX+1];
+char container_path_bak[NAME_MAX+1];
 
 static bool set_save_folder(int version, time_t timestamp)
 {
@@ -148,6 +149,8 @@ static void set_data_paths(const char* save_folder)
     wrote = snprintf(container_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_BACKUP);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     container_path_bak[NAME_MAX] = '\0';
+
+    set_log_paths(save_folder);
 }
 
 static void create_data_paths()

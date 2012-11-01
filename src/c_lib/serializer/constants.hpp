@@ -37,6 +37,15 @@ const size_t WORLD_DATA_FOLDER_PARTS = 3;
 static const char save_folder_fmt[] = WORLD_DATA_PREFIX WORLD_DATA_FOLDER_DELIMITER "%d" WORLD_DATA_FOLDER_DELIMITER "%ld/";
 static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS_VERSION)) + 21;
 
+#define LOG_FOLDER "log/"
+
+#define MAP_LOG_FILENAME       "map.log"
+#define MECH_LOG_FILENAME      "mechs.log"
+#define PLAYER_LOG_FILENAME    "players.log"
+#define CONTAINER_LOG_FILENAME "containers.log"
+
+#define LOG_LINE_SEPARATOR "===========\n"
+
 #define WORLD_DATA_PATH "./world/"
 
 #define DATA_TMP_EXT     ".tmp"

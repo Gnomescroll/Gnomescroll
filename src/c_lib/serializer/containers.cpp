@@ -12,59 +12,6 @@
 namespace serializer
 {
 
-/* Parse data structs */
-
-class ParsedContainerFileData
-{
-    public:
-
-        int version;
-        int container_count;
-        bool valid;
-
-    void reset()
-    {
-        this->valid = false;
-        this->version = 0;
-        this->container_count = 0;
-    }
-
-    ParsedContainerFileData()
-    {
-        this->reset();
-    }
-};
-
-class ParsedContainerData
-{
-    public:
-
-        int container_id;
-        char name[DAT_NAME_MAX_LENGTH+1];
-        int item_count;
-        struct
-        {
-            int x,y,z;
-        } position;
-        bool valid;
-
-    void reset()
-    {
-        this->valid = false;
-        this->container_id = -1;
-        this->name[0] = '\0';
-        this->item_count = 0;
-        this->position.x = -1;
-        this->position.y = -1;
-        this->position.z = -1;
-    }
-
-    ParsedContainerData()
-    {
-        this->reset();
-    }
-};
-
 /* Loading */
 
 static bool parse_container_file_header_token(const char* key, const char* val, class ParsedContainerFileData* data)
@@ -229,7 +176,6 @@ static bool process_container_blob(const char* str, size_t filesize)
         if (container == NULL) return false;
 
         // check container type
-        // TODO -- apply renaming scheme
         const char* actual_name = ItemContainer::get_compatible_name(container_data.name);
         GS_ASSERT(actual_name != NULL);
         if (actual_name == NULL) return false;

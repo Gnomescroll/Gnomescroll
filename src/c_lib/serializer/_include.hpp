@@ -17,4 +17,5 @@ dont_include_this_file_in_client
 # include <serializer/items.cpp>
 # include <serializer/players.cpp>
 # include <serializer/containers.cpp>
+# include <serializer/logger.cpp>
 #endif
