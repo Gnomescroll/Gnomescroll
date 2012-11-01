@@ -420,12 +420,13 @@ void teardown()
     should_save_world = true;
     #endif
 
+    if (Options::serializer) should_save_world = true;
+
     // resave if requested
     if (should_save_world) save_data();
     wait_for_save_complete();
     
-    printf("Waiting for threads to finish...\n");
-    // TODO -- wait for all player saves to reply
+    // wait for replies/threads
     wait_for_redis_replies();
     wait_for_threads();
     update_map_save_file();

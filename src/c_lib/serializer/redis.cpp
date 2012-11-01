@@ -58,6 +58,12 @@ void redis_get_cb(redisAsyncContext* ctx, void* _reply, void* note)
     handle_reply(reply);
 }
 
+void null_redis_cb(redisAsyncContext* ctx, void* _reply, void* note)
+{
+    GS_ASSERT(note == NULL);
+    received_redis_reply();
+}
+
 void redis_connect_cb(const redisAsyncContext *ctx, int status)
 {
     waiting_to_connect = false;
@@ -179,10 +185,15 @@ void teardown_redis()
     }
 }
 
+static void pump_events()
+{
+    ev_loop(EV_DEFAULT_ EVLOOP_NONBLOCK);
+}
+
 void update_redis()
 {
     static int _ping_tick = 0;
-    ev_loop(EV_DEFAULT_ EVLOOP_NONBLOCK);
+    pump_events();
     if (!redis_connected && !waiting_to_connect)
         connect();
     else if (_ping_tick++ % KEEP_ALIVE_RATE == 0)
@@ -191,8 +202,12 @@ void update_redis()
 
 void wait_for_redis_replies()
 {
+    printf("Waiting for %d redis replies...\n", expected_redis_replies);
     while (expected_redis_replies > 0)
+    {
+        pump_events();
         gs_millisleep(10);
+    }
 }
 
 void received_redis_reply()
@@ -204,6 +219,7 @@ void received_redis_reply()
 
 int send_redis_command(redisAsyncContext *ac, redisCallbackFn *fn, void *privdata, const char *format, ...)
 {
+    if (fn == NULL) fn = &null_redis_cb;
     va_list ap;
     va_start(ap, format);
     int ret = redisvAsyncCommand(ac, fn, privdata, format, ap);

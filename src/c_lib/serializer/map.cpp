@@ -118,6 +118,7 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
 
 void wait_for_threads()
 {
+    printf("Waiting for threads to finish...\n");
     while (_threaded_write_running != 0)
         gs_microsleep(100);
 }
@@ -437,7 +438,7 @@ bool BlockSerializer::save_iter(int max_ms)
 
 bool BlockSerializer::load(const char* filename)
 {
-    printf("MAP LOAD: %s\n", filename);
+    printf("Loading map: %s\n", filename);
         
     GS_ASSERT_ABORT(t_map::main_map != NULL);
 
@@ -456,10 +457,7 @@ bool BlockSerializer::load(const char* filename)
     int index = 0;
     pop_int(buffer, index, _version);
 
-    printf("Loading map. Version: %d Filesize: %d\n", _version, filesize);
-    if (_version != version)
-        printf("WARNING: Map version %d does not match build version %d\n", _version, version);
-    GS_ASSERT_ABORT(_version == version);
+    printf("Build Version: %d; Filesize: %d\n", _version, filesize);
 
     size_t expected_filesize = prefix_length + chunk_number*sizeof(struct SerializedChunk);
     if (filesize != expected_filesize)
