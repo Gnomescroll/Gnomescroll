@@ -45,7 +45,7 @@ void set_log_paths(const char* save_folder)
 
     wrote = snprintf(log_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER);
     GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
-    log_folder[0] = '\0';
+    log_folder[NAME_MAX] = '\0';
     create_path(log_folder);
 
     wrote = snprintf(player_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, PLAYER_LOG_FILENAME);
