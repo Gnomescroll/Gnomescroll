@@ -38,10 +38,26 @@ void CHUNK_ITEM_CONTAINER::remove(int container_id)
     this->remove_index(i);
 }
 
+void CHUNK_ITEM_CONTAINER::_remove(int index)
+{
+    GS_ASSERT(index < ibam);
+    if (index >= ibam) return;
+    iban--;
+    iba[index] = iba[iban];
+
+    // Update map chunk version
+    // TODO -- the chunk version should be done for all blocks,
+    // And should not be at this layer
+    // But at the time of this writing, chunk versioning only matters
+    // when an item container block is added/removed from the map
+    // (for the serializer) 
+    main_map->chunk[this->chunk_index]->increment_version();
+}
+
 void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
 {
-    x = translate_point(x);
-    y = translate_point(y);
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     // find container
     int i;
@@ -56,11 +72,16 @@ void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
 
 void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_type, int container_id)
 {
-    x = translate_point(x);
-    y = translate_point(y);
-    GS_ASSERT(x >= 0 && x < XMAX && y >= 0 && y < YMAX && z >= 0 && z < ZMAX);
+    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0);
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     GS_ASSERT(container_id != NULL_CONTAINER);
+    if (container_type == CONTAINER_TYPE_NONE || container_id == NULL_CONTAINER) return;
+    
     GS_ASSERT(ibam < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM);
     if (ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) return;
     
@@ -96,18 +117,22 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
     iba[iban].container_id = container_id;
     iban++;
 
+    // Update map chunk version
+    // TODO -- the chunk version should be done for all blocks,
+    // And should not be at this layer
+    // But at the time of this writing, chunk versioning only matters
+    // when an item container block is added/removed from the map
+    // (for the serializer) 
+    main_map->chunk[this->chunk_index]->increment_version();
+
     #if DC_SERVER
     map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
 
     GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     GS_ASSERT(container != NULL);
-    if (container == NULL) return;
-    container->chunk = this->chunk_index;
+    if (container != NULL) container->chunk = this->chunk_index;
     #endif
-
-    // need to create the container here
-    
 }
 
 

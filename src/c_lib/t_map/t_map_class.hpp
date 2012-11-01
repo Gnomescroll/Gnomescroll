@@ -31,24 +31,22 @@ class MAP_CHUNK
 {
     public:
 
-    int chunk_index;
+        int chunk_index;
 
-    int xpos;
-    int ypos;
+        int xpos;
+        int ypos;
 
-    class CHUNK_ITEM_CONTAINER chunk_item_container;
+        class CHUNK_ITEM_CONTAINER chunk_item_container;
 
-    unsigned char height_cache[256];
+        unsigned char height_cache[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH];
 
-    #if DC_CLIENT
-    bool needs_update;
-    #endif
+        #if DC_CLIENT
+        bool needs_update;
+        #endif
 
-    int version; //increment on map changes
+        int version; //increment on map changes
 
-    unsigned char top_block[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];
-
-    struct MAP_ELEMENT e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT];
+        struct MAP_ELEMENT e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT];
 
     MAP_CHUNK(int _xpos, int _ypos);
 
@@ -58,6 +56,8 @@ class MAP_CHUNK
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT e) __attribute__((always_inline)); //for VBO generator
 
     void refresh_height_cache();
+
+    void increment_version() { this->version++; }
 
 };
 

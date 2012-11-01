@@ -46,9 +46,11 @@ void init_packets()
 
 int get_block_item_container(int x, int y, int z)
 {
-    if ( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK)
-        | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0 
-    ) GS_ABORT();
+    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0);
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_CONTAINER;
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     class MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
@@ -192,7 +194,10 @@ void received_block_damage_response(unsigned int request_id, unsigned int dmg)
 void create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id)
 {
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
-    if (((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) != 0) return;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);
@@ -203,7 +208,7 @@ void create_item_container_block(int x, int y, int z, ItemContainerType containe
 
 void destroy_item_container_block(int x, int y, int z)
 {
-    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
+    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;

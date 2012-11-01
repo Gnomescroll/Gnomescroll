@@ -36,7 +36,7 @@ void teardown_map_serializer()
 
 struct ThreadedWriteData
 {
-    char filename[256];
+    char filename[NAME_MAX+1];
     char* buffer;
     int buffer_size;
 };
@@ -49,7 +49,7 @@ void* _threaded_write(void* vptr)
 {
     int ti1 = _GET_MS_TIME();
 
-    char filename[256]; 
+    char filename[NAME_MAX+1] = {'\0'}; 
     strcpy(filename, threaded_write_data.filename);
     char* buffer = threaded_write_data.buffer;
     int buffer_size = threaded_write_data.buffer_size;
@@ -316,10 +316,11 @@ BlockSerializer::~BlockSerializer()
 
 bool BlockSerializer::save(const char* filename)
 {
+    GS_ASSERT(!map_save_memcpy_in_progress);
     if (map_save_memcpy_in_progress)
     {
-        printf("BlockSerializer::save call failed, map memcpy already in progress \n");
-        return false; 
+        printf("BlockSerializer::save call failed, map memcpy already in progress\n");
+        return false;
     }
 
     map_save_memcpy_in_progress = true;
@@ -395,21 +396,24 @@ bool BlockSerializer::save_iter(int max_ms)
     int start_ms = _GET_MS_TIME();
 
 
+    size_t CHUNK_SIZE = ZMAX*TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*sizeof(struct t_map::MAP_ELEMENT);
+
     static int index = 0;
 
     for (int j=0; j < chunk_number; j++)
     {
         index = (index+1)%chunk_number;
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[index];
-        if (mp->version == version_array[index]) continue;
         GS_ASSERT(mp != NULL);
-        chunk->xchunk = chunk_number % 16;
-        chunk->ychunk = chunk_number / 16;
-        memcpy((void*) &chunk->data, &mp->e, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
+        if (mp == NULL) continue;
+        if (mp->version == version_array[index]) continue;
+        chunk->xchunk = chunk_number % TERRAIN_CHUNK_WIDTH;
+        chunk->ychunk = chunk_number / TERRAIN_CHUNK_WIDTH;
+        memcpy((void*) &chunk->data, &mp->e, CHUNK_SIZE);
         version_array[index] = mp->version;
 
         int write_index = prefix_length+index*sizeof(struct SerializedChunk);
-        memcpy(write_buffer+write_index, (void*) chunk, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
+        memcpy(write_buffer+write_index, (void*) chunk, CHUNK_SIZE);
         _memcpy_count++;
 
         int _ctime = _GET_MS_TIME();

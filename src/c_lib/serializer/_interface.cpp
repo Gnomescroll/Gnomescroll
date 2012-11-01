@@ -427,9 +427,9 @@ void teardown()
     wait_for_save_complete();
     
     // wait for replies/threads
-    wait_for_redis_replies();
     wait_for_threads();
     update_map_save_file();
+    wait_for_redis_replies();
     
     teardown_map_serializer();
     teardown_mechs();

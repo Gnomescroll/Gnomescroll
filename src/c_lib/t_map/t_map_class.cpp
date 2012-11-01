@@ -26,7 +26,7 @@ namespace t_map
     */
     MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
     {
-        GS_ASSERT( (_xpos % 16) == 0 && (_ypos % 16) == 0 );
+        GS_ASSERT( (_xpos % TERRAIN_CHUNK_WIDTH) == 0 && (_ypos % TERRAIN_CHUNK_WIDTH) == 0 );
         #if DC_CLIENT
         needs_update = false;
         #endif
@@ -34,8 +34,7 @@ namespace t_map
         ypos = _ypos;
         version = 0;
 
-        for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH;i++) top_block[i] = 0;
-        chunk_index = (ypos / 16)*(MAP_WIDTH/16) + (xpos / 16);
+        chunk_index = (ypos / TERRAIN_CHUNK_WIDTH)*(MAP_CHUNK_XDIM) + (xpos / TERRAIN_CHUNK_WIDTH);
         chunk_item_container.chunk_index = chunk_index;
         memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
     }
@@ -79,13 +78,13 @@ namespace t_map
 
     void MAP_CHUNK::refresh_height_cache()
     {
-        for(int i=0; i<16; i++)
-        for(int j=0; j<16; j++)
-        for(int k=127; k>=0; k--)
+        for(int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
+        for(int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
+        for(int k=ZMAX-1; k>=0; k--)
         {
             if (isSolid((CubeID)e[(k<<8)+(j<<4)+i].block))
             {
-                this->height_cache[16*j+i] = j+1; //first block above the firs solid block
+                this->height_cache[TERRAIN_CHUNK_WIDTH*j+i] = j+1; //first block above the firs solid block
                 break;
             }
 
@@ -579,22 +578,20 @@ namespace t_map
         class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
         GS_ASSERT(c != NULL);
+        if (c == NULL) return 0;
 
-        if(c == NULL)
-            return 0;
-
-        return c->height_cache[ ((y&15)<<4) + (x&15) ];
+        return c->height_cache[ ((y&(TERRAIN_CHUNK_WIDTH-1))<<4) + (x&(TERRAIN_CHUNK_WIDTH-1)) ];
     }
 
 
     //only entry point for loading chunks
     void Terrain_map::load_chunk(int i, int j)
     {
-        GS_ASSERT(i < 32 && i >= 0);
-        GS_ASSERT(j < 32 && j >= 0);
-        if (i<0 || i >= 32 || j<0 || j>=32) return;
+        GS_ASSERT(i < xchunk_dim && i >= 0);
+        GS_ASSERT(j < ychunk_dim && j >= 0);
+        if (i < 0 || i >= xchunk_dim || j < 0 || j >= ychunk_dim) return;
         GS_ASSERT(this->chunk[xchunk_dim*j + i ] == NULL);
-        this->chunk[xchunk_dim*j+i] = new MAP_CHUNK(16*i, 16*j);
+        this->chunk[xchunk_dim*j+i] = new MAP_CHUNK(TERRAIN_CHUNK_WIDTH*i, TERRAIN_CHUNK_WIDTH*j);
     }      
 
 

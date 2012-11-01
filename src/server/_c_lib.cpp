@@ -200,12 +200,10 @@ int init_c_lib(int argc, char* argv[])
     GS_ASSERT_ABORT(ret == 0);
 
     #ifdef linux
-    const int DIR_SIZE = 100;
-    char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
-    char* wdr = getcwd(wd, DIR_SIZE);
+    char wd[NAME_MAX+1] = {'\0'};
+    char* wdr = getcwd(wd, NAME_MAX);
     GS_ASSERT(wdr == wd);
     printf("Working directory is: %s\n", wd);
-    free(wd);
     
     // Set signal handlers
     // SIGTERM  kill `pidof gnomescroll_server`
@@ -230,7 +228,7 @@ int init_c_lib(int argc, char* argv[])
     #endif
 
     create_path(SCREENSHOT_PATH);
-    create_path("./data/");
+    create_path(DATA_PATH);
     
     Log::init();
 
@@ -242,7 +240,6 @@ int init_c_lib(int argc, char* argv[])
     Options::parse_args(argc, argv);
     Options::validate();
     
-    //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
     srand((unsigned int)time(NULL));
 
