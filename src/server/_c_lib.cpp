@@ -15,7 +15,7 @@ dont_include_this_file_in_client
 #include <math.h>
 
 #ifndef UINT32_MAX
-# define UINT32_MAX (0xffffffff)
+# define UINT32_MAX (0xFFFFFFFFU)
 #endif
 
 #ifndef INT32_MAX
@@ -34,7 +34,6 @@ dont_include_this_file_in_client
 # include "windows.h"
 # undef interface
 # undef rad2
-# include <common/dirent.h>
 #endif
 
 // serialization
@@ -62,6 +61,7 @@ dont_include_this_file_in_client
 #include <common/crash_report/stack_trace.hpp>
 #include <common/gs_assert.hpp>
 #include <common/mallox.hpp>
+#include <common/dirent.h>
 
 // osx tools
 #ifdef __APPLE__
@@ -178,14 +178,14 @@ void signal_terminate_handler(int sig)
 
 void sigusr1_handler(int sig)
 {
-    serializer::should_save_map = true;
+    serializer::should_save_world = true;
 }
 #endif
 
 void atexit_handler()
 {
     #if PRODUCTION
-    serializer::should_save_map = true;
+    serializer::should_save_world = true;
     #endif
 
     close_c_lib();
@@ -200,12 +200,10 @@ int init_c_lib(int argc, char* argv[])
     GS_ASSERT_ABORT(ret == 0);
 
     #ifdef linux
-    const int DIR_SIZE = 100;
-    char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
-    char* wdr = getcwd(wd, DIR_SIZE);
+    char wd[NAME_MAX+1] = {'\0'};
+    char* wdr = getcwd(wd, NAME_MAX);
     GS_ASSERT(wdr == wd);
     printf("Working directory is: %s\n", wd);
-    free(wd);
     
     // Set signal handlers
     // SIGTERM  kill `pidof gnomescroll_server`
@@ -230,7 +228,7 @@ int init_c_lib(int argc, char* argv[])
     #endif
 
     create_path(SCREENSHOT_PATH);
-    create_path("./data/");
+    create_path(DATA_PATH);
     
     Log::init();
 
@@ -242,7 +240,6 @@ int init_c_lib(int argc, char* argv[])
     Options::parse_args(argc, argv);
     Options::validate();
     
-    //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
     srand((unsigned int)time(NULL));
 

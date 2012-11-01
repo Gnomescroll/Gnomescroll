@@ -1,6 +1,11 @@
 #pragma once
 
-#if GS_SERIALIZER
+typedef enum
+{
+    WORLD_SAVE_IDLE,
+    WORLD_SAVE_UNFINISHED,
+    WORLD_SAVE_FINISHED
+} WorldSaveState;
 
 namespace serializer
 {
@@ -12,10 +17,42 @@ void update();
 bool begin_new_world_version();
 
 bool load_data();
-void save_data();
+bool save_data();
 
-// defined in map.cpp
-void wait_for_threads();
+WorldSaveState update_save_state(int max_ms);
+
+void wait_for_save_complete();
+
+extern char map_folder[NAME_MAX+1];
+extern char mech_folder[NAME_MAX+1];
+extern char player_folder[NAME_MAX+1];
+extern char container_folder[NAME_MAX+1];
+
+extern char map_path[NAME_MAX+1];
+extern char map_path_tmp[NAME_MAX+1];
+extern char map_path_bak[NAME_MAX+1];
+extern char map_palette_path[NAME_MAX+1];
+extern char map_palette_path_tmp[NAME_MAX+1];
+extern char map_palette_path_bak[NAME_MAX+1];
+extern char mech_path[NAME_MAX+1];
+extern char mech_path_tmp[NAME_MAX+1];
+extern char mech_path_bak[NAME_MAX+1];
+extern char mech_palette_path[NAME_MAX+1];
+extern char mech_palette_path_tmp[NAME_MAX+1];
+extern char mech_palette_path_bak[NAME_MAX+1];
+extern char player_path[NAME_MAX+1];
+extern char player_path_tmp[NAME_MAX+1];
+extern char player_path_bak[NAME_MAX+1];
+extern char container_path[NAME_MAX+1];
+extern char container_path_tmp[NAME_MAX+1];
+extern char container_path_bak[NAME_MAX+1];
+
+}   // serializer
+
+#if GS_SERIALIZER
+
+namespace serializer
+{
 
 // defined in players.hpp
 bool save_player(UserID user_id, AgentID agent_id);
@@ -39,16 +76,6 @@ bool save_containers();
 // stubs
 namespace serializer
 {
-
-void init();
-void teardown();
-void update();
-
-bool begin_new_world_version();
-
-// these map functions are actually enabled for non-serializer mode
-extern bool should_save_map;
-bool load_default_map();
 
 bool save_containers() { return true; }
 void check_save_state() {}

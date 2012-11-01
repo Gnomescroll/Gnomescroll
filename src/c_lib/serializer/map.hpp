@@ -33,29 +33,23 @@ class ParsedMapPaletteData
     }
 };
 
-extern bool should_save_map;
-extern bool map_save_completed;
-extern char* map_tmp_name;
-extern char* map_final_name;
+extern bool should_save_world;
 extern bool map_save_memcpy_in_progress;
 
 extern class BlockSerializer* block_serializer;
 
 #if PTHREADS_ENABLED
 void wait_for_threads();
+bool save_map_iter(int max_ms);
+#else
+void wait_for_threads() {}
+bool save_map_iter(int max_ms) {}
 #endif
 
-void save_map(const char* filename);
-bool load_map(const char* filename);
-
-// uses default map names
-void save_map();
+bool save_map();
 bool load_map();
 
-// will choose a correct map if available. returns false if no map found
-bool load_default_map();
-
-void check_map_save_state();
+void update_map_save_file();
 
 void init_map_serializer();
 void teardown_map_serializer();
@@ -68,7 +62,7 @@ class BlockSerializer
         static const int version = GS_VERSION;
         static const int chunk_number = 32*32;
 
-        char file_name[256];
+        char filename[NAME_MAX+1];
         size_t file_size;
 
         char* write_buffer;
@@ -96,13 +90,12 @@ class BlockSerializer
     }
 
     bool load(const char* filename);
-
-    void save(const char* filename);
+    bool save(const char* filename);
 
     #if PTHREADS_ENABLED
     //this is called until map is done saving
     //will memcpy map and yield after ms milliseconds
-    void save_iter(int max_ms);
+    bool save_iter(int max_ms);
     #endif
 };
 

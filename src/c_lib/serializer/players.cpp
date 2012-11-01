@@ -34,6 +34,26 @@ void teardown_players()
     }
 }
 
+bool save_remote_player_data()
+{ 
+    for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
+    {
+        NetPeerManager* client = NetServer::clients[i];
+        if (client == NULL) continue;
+        if (!client->loaded) continue;
+        GS_ASSERT(client->user_id != NULL_USER_ID && client->agent_id != NULL_AGENT);
+        if (client->user_id == NULL_USER_ID || client->agent_id == NULL_AGENT) continue;
+        save_player(client->user_id, client->agent_id);
+        int n_containers = 0;
+        int* containers = ItemContainer::get_player_containers(client->agent_id, &n_containers);
+        GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
+        for (int j=0; j<n_containers; j++)
+            save_player_container(client->client_id, containers[j]);
+    }
+    
+    return true;
+}
+
 bool PlayerLoadData::signal_if_loaded()
 {
     GS_ASSERT(!this->waiting_for_setup);
@@ -57,7 +77,7 @@ void PlayerLoadData::load_error()
     this->error = true;
     NetPeerManager* client = NetServer::get_client(this->client_id);
     GS_ASSERT(client != NULL);
-    if (client == NULL) return;   // LOG ERROR
+    if (client == NULL) return;   // TODO - LOG ERROR
     if (client->user_id != this->user_id) return;
     client->deserializer_failed();
 }
@@ -285,6 +305,8 @@ bool process_player_blob(const char* str, class PlayerLoadData* player_load_data
 
 void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
+    received_redis_reply();
+    
     class PlayerLoadData* data = (class PlayerLoadData*)_data;
     redisReply* reply = (redisReply*)_reply;
 
@@ -318,6 +340,8 @@ void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 
 void player_container_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
+    received_redis_reply();
+
     redisReply* reply = (redisReply*)_reply;
     class PlayerContainerLoadData* data = (class PlayerContainerLoadData*)_data;
     class PlayerLoadData* player_data = player_load_data_list->get(data->player_data_id);
@@ -431,7 +455,7 @@ bool save_player_container(ClientID client_id, int container_id)
     GS_ASSERT(container_string != NULL);
     if (container_string == NULL) return false;
 
-    int ret = redisAsyncCommand(ctx, NULL, NULL,
+    int ret = send_redis_command(ctx, NULL, NULL,
         "SET %s:%d %s", location_name, client->user_id, container_string);
 
     GS_ASSERT(ret == REDIS_OK);
@@ -451,7 +475,7 @@ bool save_player(UserID user_id, AgentID agent_id)
     GS_ASSERT(player_string != NULL);
     if (player_string == NULL) return false;
     
-    int ret = redisAsyncCommand(ctx, NULL, NULL,
+    int ret = send_redis_command(ctx, NULL, NULL,
         "SET " PLAYER_REDIS_KEY_PREFIX "%d %s", user_id, player_string);
 
     GS_ASSERT(ret == REDIS_OK);
@@ -498,7 +522,7 @@ bool load_player_container(int player_load_id, ItemContainerType container_type)
     data->container_type = container_type;
     data->player_data_id = player_data->id;
 
-    int ret = redisAsyncCommand(ctx, &player_container_load_cb, data,
+    int ret = send_redis_command(ctx, &player_container_load_cb, data,
         "GET %s:%d", container_name, player_data->user_id);
         
     GS_ASSERT(ret == REDIS_OK);
@@ -520,7 +544,7 @@ bool end_player_load(int player_load_id)
 
     // Call the player data load last, so we can destroy the player load data struct safely in its callback
     // callbacks return in-order
-    int ret = redisAsyncCommand(ctx, &player_load_cb, data,
+    int ret = send_redis_command(ctx, &player_load_cb, data,
         "GET " PLAYER_REDIS_KEY_PREFIX "%d", data->user_id);
     
     GS_ASSERT(ret == REDIS_OK);

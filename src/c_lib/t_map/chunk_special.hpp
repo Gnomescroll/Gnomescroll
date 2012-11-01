@@ -50,6 +50,8 @@ class CHUNK_ITEM_CONTAINER
         free(iba);
     }
 
+
+    #if DC_CLIENT
     //deletes all
     void _reset()
     {
@@ -60,16 +62,11 @@ class CHUNK_ITEM_CONTAINER
             iba[i].container_type = CONTAINER_TYPE_NONE;
         }
     }
+    #endif
 
-    void _remove(int index)
-    {
-        GS_ASSERT(index < ibam);
-        if (index >= ibam) return;
-        iban--;
-        iba[index] = iba[iban];
-    }
+    void _remove(int index);
 
-    void remove (int x, int y, int z);
+    void remove(int x, int y, int z);
     void remove(int container_id);
 
     void get_container_location(int container_id, int position[3])

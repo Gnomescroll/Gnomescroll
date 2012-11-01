@@ -10,6 +10,8 @@ namespace serializer
 void init_players();
 void teardown_players();
 
+bool save_remote_player_data();
+
 bool save_player(UserID user_id, AgentID agent_id);
 bool save_player_container(ClientID client_id, int container_id);
 
@@ -17,7 +19,8 @@ int begin_player_load(UserID user_id, ClientID client_id);
 bool load_player_container(int player_load_id, ItemContainerType container_type); 
 bool end_player_load(int player_load_id);
 
-// Called from outside this module. NetPeerManager is the only thing that knows about true failure
+// Callback into this module. NetPeerManager is the only thing that knows about actual failure
+// this module needs to know if the process failed outside of here so it can clean up correctly
 void player_load_failed();
 
 class ParsedPlayerData

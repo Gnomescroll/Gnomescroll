@@ -401,7 +401,7 @@ bool save_containers()
     GS_ASSERT(item_container_list != NULL);
     if (item_container_list == NULL) return false;    // TODO -- log error
 
-    FILE* f = fopen(container_filename_tmp, "w");
+    FILE* f = fopen(container_path_tmp, "w");
     GS_ASSERT(f != NULL);
     if (f == NULL) return false;  // TODO -- log error
 
@@ -435,19 +435,18 @@ bool save_containers()
     if (ret <= 0) return false;   // TODO -- log error
 
     int err = fclose(f);
-    GS_ASSERT(!err);
-    if (err) return false;   // TODO -- log error
+    GS_ASSERT(!err);    // TODO -- log error
 
-    return save_tmp_file(container_filename, container_filename_tmp, container_filename_backup);
+    return (!err);
 }
 
 bool load_containers()
 {
-    if (file_exists(container_filename) && fsize(container_filename) > 0)
-        return load_container_file(container_filename);
+    if (file_exists(container_path) && fsize(container_path) > 0)
+        return load_container_file(container_path);
     else
-    if (file_exists(container_filename_backup) && fsize(container_filename_backup) > 0)
-        return load_container_file(container_filename_backup);
+    if (file_exists(container_path_bak) && fsize(container_path_bak) > 0)
+        return load_container_file(container_path_bak);
     else
         printf("WARNING: No container file found\n");
     return true;
