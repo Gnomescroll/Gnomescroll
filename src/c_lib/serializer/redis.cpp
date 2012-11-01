@@ -6,6 +6,8 @@
 namespace serializer
 {
 
+static int expected_redis_replies = 0;
+
 redisAsyncContext* ctx = NULL;
 static bool waiting_to_connect = false; 
 static bool waiting_to_disconnect = false; 
@@ -47,15 +49,16 @@ static void handle_reply(redisReply* reply)
     }
 }
 
-void getCallback(redisAsyncContext* ctx, void* _reply, void* note)
-{   // note is data send in the initial redisAsyncCommand
+void redis_get_cb(redisAsyncContext* ctx, void* _reply, void* note)
+{   // note is data send in the initial send_redis_command
+    received_redis_reply();
     redisReply* reply = (redisReply*) _reply;
     GS_ASSERT(reply != NULL);
     if (reply == NULL) return;
     handle_reply(reply);
 }
 
-void connectCallback(const redisAsyncContext *ctx, int status)
+void redis_connect_cb(const redisAsyncContext *ctx, int status)
 {
     waiting_to_connect = false;
     if (status == REDIS_OK)
@@ -70,7 +73,7 @@ void connectCallback(const redisAsyncContext *ctx, int status)
     }
 }
 
-void disconnectCallback(const redisAsyncContext *ctx, int status)
+void redis_disconnect_cb(const redisAsyncContext *ctx, int status)
 {
     printf("Redis disconnected...\n");
     if (status != REDIS_OK)
@@ -117,19 +120,14 @@ void connect()
     GS_ASSERT(ret == REDIS_OK);
 
     // SET UP CALLBACKS
-    ret = redisAsyncSetConnectCallback(ctx, &connectCallback);
+    ret = redisAsyncSetConnectCallback(ctx, &redis_connect_cb);
     GS_ASSERT(ret == REDIS_OK);
-    ret = redisAsyncSetDisconnectCallback(ctx, &disconnectCallback);
+    ret = redisAsyncSetDisconnectCallback(ctx, &redis_disconnect_cb);
     GS_ASSERT(ret == REDIS_OK);
 
     // SELECT DATABASE
-    ret = redisAsyncCommand(ctx, NULL, NULL, "SELECT %d", Options::redis_database);
+    ret = send_redis_command(ctx, NULL, NULL, "SELECT %d", Options::redis_database);
     GS_ASSERT(ret == REDIS_OK);
-
-    // TODO -- REMOVE
-    // FLUSH DATABASE
-    //ret = redisAsyncCommand(ctx, NULL, NULL, "FLUSHALL");
-    //GS_ASSERT(ret == REDIS_OK);
 }
 
 void disconnect()
@@ -141,7 +139,7 @@ void disconnect()
 
 static void ping_redis_server()
 {
-    int ret = redisAsyncCommand(ctx, NULL, NULL, "PING");
+    int ret = send_redis_command(ctx, NULL, NULL, "PING");
     GS_ASSERT(ret == REDIS_OK);
 }
 
@@ -160,6 +158,8 @@ void init_redis()
 
 void teardown_redis()
 {
+    GS_ASSERT(expected_redis_replies == 0);
+    
     if (!redis_connected)
     {
         if (ctx != NULL)
@@ -187,6 +187,30 @@ void update_redis()
         connect();
     else if (_ping_tick++ % KEEP_ALIVE_RATE == 0)
         ping_redis_server();
+}
+
+void wait_for_redis_replies()
+{
+    while (expected_redis_replies > 0)
+        gs_millisleep(10);
+}
+
+void received_redis_reply()
+{
+    GS_ASSERT(expected_redis_replies > 0);
+    if (expected_redis_replies <= 0) return;
+    expected_redis_replies--;
+}
+
+int send_redis_command(redisAsyncContext *ac, redisCallbackFn *fn, void *privdata, const char *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    int ret = redisvAsyncCommand(ac, fn, privdata, format, ap);
+    if (ret == REDIS_OK)
+        expected_redis_replies++;
+    va_end(ap);
+    return ret;
 }
 
 }   // serializer

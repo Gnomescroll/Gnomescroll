@@ -17,7 +17,7 @@
 namespace serializer
 {
 
-const int REDIS_TIMEOUT   = 300;  // seconds
+const int REDIS_TIMEOUT   = 180;  // seconds
 const int KEEP_ALIVE_RATE = (REDIS_TIMEOUT*30)/2; // send keep-alive halfway
 
 // Cached data queues

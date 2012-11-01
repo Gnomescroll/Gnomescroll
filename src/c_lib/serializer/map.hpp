@@ -33,20 +33,23 @@ class ParsedMapPaletteData
     }
 };
 
-extern bool should_save_map;
-extern bool map_save_completed;
+extern bool should_save_world;
 extern bool map_save_memcpy_in_progress;
 
 extern class BlockSerializer* block_serializer;
 
 #if PTHREADS_ENABLED
 void wait_for_threads();
+bool save_map_iter(int max_ms);
+#else
+void wait_for_threads() {}
+bool save_map_iter(int max_ms) {}
 #endif
 
 bool save_map();
 bool load_map();
 
-void check_map_save_state();
+void update_map_save_file();
 
 void init_map_serializer();
 void teardown_map_serializer();
@@ -92,7 +95,7 @@ class BlockSerializer
     #if PTHREADS_ENABLED
     //this is called until map is done saving
     //will memcpy map and yield after ms milliseconds
-    void save_iter(int max_ms);
+    bool save_iter(int max_ms);
     #endif
 };
 

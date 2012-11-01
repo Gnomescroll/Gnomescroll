@@ -178,14 +178,14 @@ void signal_terminate_handler(int sig)
 
 void sigusr1_handler(int sig)
 {
-    serializer::should_save_map = true;
+    serializer::should_save_world = true;
 }
 #endif
 
 void atexit_handler()
 {
     #if PRODUCTION
-    serializer::should_save_map = true;
+    serializer::should_save_world = true;
     #endif
 
     close_c_lib();

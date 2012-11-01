@@ -26,23 +26,24 @@ void default_map_gen()
     map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_id("bedrock"));    
 }
 
-
-void init(int argc, char* argv[])
+void init_world()
 {
-    //for (int i=0; i<argc; i++) 
-        //printf("argument %d: %s\n", i, argv[i]);
-
-    init_c_lib(argc, argv);
-
     srand(Options::seed);
 
     bool fast_map = false;
     bool corpusc = false;
+    
     #if GS_SERIALIZER
     if (strcmp(Options::map, "fast") == 0)
         fast_map = true;
     else
-    if (!serializer::load_data())
+    if (serializer::load_data())
+    {
+        bool saved = serializer::save_data();    // re-save immediately after loading, so that palette changes are up to date
+        GS_ASSERT_ABORT(saved);
+        serializer::wait_for_save_complete();
+    }
+    else
     {   // TODO -- option/mechanism for forcing new map gen from command line
         serializer::begin_new_world_version();
         default_map_gen();
@@ -50,8 +51,10 @@ void init(int argc, char* argv[])
         t_map::environment_process_startup();
         bool saved = serializer::save_data();
         GS_ASSERT_ABORT(saved);
+        serializer::wait_for_save_complete();
     }
     #else
+    
     if (strcmp(Options::map, "fast") == 0)
         fast_map = true;
     else
@@ -81,17 +84,19 @@ void init(int argc, char* argv[])
         map_gen::floor(XMAX,YMAX,1, 9, t_map::get_cube_id("regolith"));
         map_gen::floor(XMAX,YMAX,20,1, t_map::get_cube_id("regolith"));
     }
-                //t_gen::populate_crystals();
 
     srand((unsigned int)time(NULL));
+}
+
+void init(int argc, char* argv[])
+{
+    init_c_lib(argc, argv);
+
+    init_world();
     
     int address[4];
     address_from_string(Options::ip_address, address);
     NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
-
-    #if !PRODUCTION
-    //Objects::stress_test();
-    #endif
 
     ServerState::init_base();
 
@@ -174,23 +179,26 @@ int run()
         if (Options::auth)
             NetServer::check_client_authorizations();
         
-        if (serializer::should_save_map)
+        if (serializer::should_save_world)
         {
             bool saved = serializer::save_data();
             GS_ASSERT(saved);
-            serializer::should_save_map = false;
+            serializer::should_save_world = false;
         }
 
         serializer::update();
 
-        gs_millisleep(1);
+        // update the world save, else sleep
+        if (serializer::update_save_state(2) == WORLD_SAVE_IDLE)
+            gs_millisleep(1);
     }
 
-    if (serializer::should_save_map)
+    if (serializer::should_save_world)
     {
         bool saved = serializer::save_data();
         GS_ASSERT(saved);
-        serializer::should_save_map = false;
+        serializer::wait_for_save_complete();
+        serializer::should_save_world = false;
     }
         
     return 0;

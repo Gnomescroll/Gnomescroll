@@ -191,8 +191,48 @@ bool save_palettes()
     return (mapps && mechps);
 }
 
+bool save_remaining_data()
+{
+    bool ms = save_mechs();
+    GS_ASSERT(ms);
+
+    bool rps = true;
+    bool cs = true;
+
+    if (Options::serializer)
+    {
+        rps = save_remote_player_data();
+        cs = save_containers();
+        //bool lps = save_local_player_data();  // TODO -- enable once we have local player data
+        GS_ASSERT(rps);
+        GS_ASSERT(cs);
+    }
+
+    if (!rps || !ms || !cs) return false; // ERROR -- aborting
+
+    ms = true;
+    rps = true;
+    cs = true;
+
+    // copy all tmp files over
+    ms = save_tmp_file(mech_path, mech_path_tmp, mech_path_bak);
+    GS_ASSERT(ms);
+
+    if (Options::serializer)
+    {
+        cs = save_tmp_file(container_path, container_path_tmp, container_path_bak);
+        GS_ASSERT(cs);
+        //lps = save_tmp_file(player_filename, player_filename_tmp, player_path_bak);    
+        //GS_ASSERT(lps);
+    }
+
+    return (ms && cs);
+}
+
 bool save_data()
 {
+    printf("Save data to %s\n", save_folder);
+    
     static int paths_created = 0;
     if (!(paths_created++))
         create_data_paths();
@@ -209,30 +249,41 @@ bool save_data()
 
     if (!save_map()) return false;
 
-    // TODO -- wait for map copy to complete
-    //while(!map_copy_complete) {}
+    #if !GS_SERIALIZER
+    return save_remaining_data();
+    #endif
 
-    bool rps = save_remote_player_data();
-    bool ms = save_mechs();
-    bool cs = save_containers();
-    //bool lps = save_local_player_data();  // TODO -- enable once we have local player data
+    return true;
+}
 
-    //bool saved = (rps && ms && cs && lps);
-    bool saved = (rps && ms && cs);
-    if (!saved) return false;
+// actually, 3 states:
+// not in progress
+// in progress, and unfinished
+// in progress, and finished
 
-    // copy all tmp files over
-    ms = save_tmp_file(mech_path, mech_path_tmp, mech_path_bak);
-    cs = save_tmp_file(container_path, container_path_tmp, container_path_bak);
-    //lps = save_tmp_file(player_filename, player_filename_tmp, player_path_bak);
+// returns true on completion
+WorldSaveState update_save_state(int max_ms)
+{
+    #if !GS_SERIALIZER
+    return WORLD_SAVE_IDLE;
+    #else
+    
+    if (!map_save_memcpy_in_progress) return WORLD_SAVE_IDLE;
+    if (!save_map_iter(max_ms)) return WORLD_SAVE_UNFINISHED;
+    save_remaining_data();
 
-    //return (ms && cs && lps);
-    return (ms && cs);
+    return WORLD_SAVE_FINISHED;
+    #endif
+}
+
+void wait_for_save_complete()
+{
+    while (update_save_state(100) == WORLD_SAVE_UNFINISHED);
 }
 
 void update()
 {
-    check_map_save_state();
+    update_map_save_file();
 
     if (!Options::serializer) return;
 
@@ -362,12 +413,22 @@ void init()
 
 void teardown()
 {
-    #if PTHREADS_ENABLED
-    printf("Waiting for threads to finish...\n");
-    serializer::wait_for_threads();
+    // finish saves in progress
+    wait_for_save_complete();
+
+    #if PRODUCTION
+    should_save_world = true;
     #endif
-        
-    check_map_save_state();
+
+    // resave if requested
+    if (should_save_world) save_data();
+    wait_for_save_complete();
+    
+    printf("Waiting for threads to finish...\n");
+    // TODO -- wait for all player saves to reply
+    wait_for_redis_replies();
+    wait_for_threads();
+    update_map_save_file();
     
     teardown_map_serializer();
     teardown_mechs();

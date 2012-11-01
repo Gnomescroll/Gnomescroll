@@ -9,10 +9,10 @@ namespace serializer
 
 static int* cube_id_map = NULL;
 
-bool should_save_map = false;
+bool should_save_world = false;
 BlockSerializer* block_serializer = NULL;
 
-bool map_save_completed = false;
+static bool map_save_completed = false;
 bool map_save_memcpy_in_progress = false;
 
 void init_map_serializer()
@@ -120,6 +120,11 @@ void wait_for_threads()
 {
     while (_threaded_write_running != 0)
         gs_microsleep(100);
+}
+
+bool save_map_iter(int max_ms)
+{
+    return block_serializer->save_iter(2);
 }
 #endif
 
@@ -342,8 +347,7 @@ bool BlockSerializer::save(const char* filename)
     //serialize
     #if PTHREADS_ENABLED
     for (int i=0; i<chunk_number; i++) version_array[i] = -1;
-    while (map_save_memcpy_in_progress)
-        this->save_iter(2);   //2 ms per iteration
+    // iterated save data copying should be done in the main server loop
     #else
     for (int i=0; i < chunk_number; i++)
     {
@@ -361,6 +365,8 @@ bool BlockSerializer::save(const char* filename)
         index += sizeof(struct SerializedChunk);
     }
     GS_ASSERT(file_size == (size_t)index);
+
+    map_save_memcpy_in_progress = false;
     #endif
 
     int ti2 = _GET_MS_TIME();
@@ -374,8 +380,10 @@ bool BlockSerializer::save(const char* filename)
 #if PTHREADS_ENABLED
 //this is called until map is done saving
 //will memcpy map and yield after ms milliseconds
-void BlockSerializer::save_iter(int max_ms)
+bool BlockSerializer::save_iter(int max_ms)
 {
+    if (!map_save_memcpy_in_progress) return true;
+    
     static int _start_ms = 0;
     static int _calls = 0;
     static int _memcpy_count = 0;
@@ -406,7 +414,7 @@ void BlockSerializer::save_iter(int max_ms)
         int _ctime = _GET_MS_TIME();
 
         if ( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
-            return; //yield after n ms
+            return false; //yield after n ms
     }
 
     printf("BlockSerializer save_itr complete: clock_time= %i ms num_calls= %i, ms_per_call= %i, chunks_per_call= %i total_chunks= %i memcpy_count= %i \n", 
@@ -422,6 +430,8 @@ void BlockSerializer::save_iter(int max_ms)
     write_buffer = NULL;
     this->filename[0] = '\0';
     file_size = 0;
+
+    return true;
 }
 #endif
 
@@ -495,6 +505,9 @@ bool BlockSerializer::load(const char* filename)
 
 bool save_map()
 {
+    GS_ASSERT(!map_save_memcpy_in_progress);
+    if (map_save_memcpy_in_progress) return false;
+    
     GS_ASSERT(block_serializer != NULL);
     if (block_serializer == NULL) return false;
     create_path_to_file(map_path_tmp);
@@ -517,7 +530,7 @@ bool load_map()
     return false;
 }
 
-void check_map_save_state()
+void update_map_save_file()
 {
     if (!map_save_completed) return;
     bool saved = save_tmp_file(map_path, map_path_tmp, map_path_bak);
