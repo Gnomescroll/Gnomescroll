@@ -7,6 +7,8 @@
 namespace serializer
 {
 
+static const size_t CHUNK_SIZE = CHUNK_ELEMENT_COUNT * sizeof(struct t_map::MAP_ELEMENT);
+
 static int* cube_id_map = NULL;
 
 bool should_save_world = false;
@@ -405,9 +407,6 @@ bool BlockSerializer::save_iter(int max_ms)
        _start_ms = _GET_MS_TIME();
     int start_ms = _GET_MS_TIME();
 
-
-    size_t CHUNK_SIZE = ZMAX*TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*sizeof(struct t_map::MAP_ELEMENT);
-
     static int index = 0;
 
     for (int j=0; j < CHUNK_COUNT; j++)
@@ -431,9 +430,6 @@ bool BlockSerializer::save_iter(int max_ms)
         if ( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
             return false; //yield after n ms
     }
-
-    printf("BlockSerializer save_itr complete: clock_time= %i ms num_calls= %i, ms_per_call= %i, chunks_per_call= %i total_chunks= %i memcpy_count= %i \n", 
-        _GET_MS_TIME()-_start_ms, _calls, max_ms, CHUNK_COUNT/_calls, CHUNK_COUNT, _memcpy_count);
 
     threaded_write(this->filename, write_buffer, file_size);
 

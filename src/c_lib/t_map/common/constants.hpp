@@ -28,3 +28,5 @@ const int QUADRANT_DIVIDEi = 256;
 
 const unsigned char MAX_CUBE_DAMAGE = 0xff;
 const unsigned char INVINCIBLE_CUBE_DAMAGE = MAX_CUBE_DAMAGE;   // any blocks with this value will be invincible
+
+const size_t CHUNK_ELEMENT_COUNT = ZMAX*TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH;
