@@ -102,7 +102,7 @@ void update_skylight_out(int x, int y, int z)
 {
     int li = get_skylight(x,y,z);
 
-    GS_ASSERT(! isSolid(x,y,z));
+    //GS_ASSERT(! isSolid(x,y,z));
     if(li-1 <= 0) return;
 
 /*
@@ -164,7 +164,7 @@ void update_skylight_out(int x, int y, int z)
     //y
     _x = x;
     _y = y;
-    _z = (z+1) % 128;
+    _z = (z+1) % ZMAX;
 
     if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
     {
@@ -174,7 +174,7 @@ void update_skylight_out(int x, int y, int z)
 
     _x = x;
     _y = y;
-    _z = (z+127)%128; //z -1
+    _z = (z+(ZMAX-1))%ZMAX; //z -1
     if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
     {
         set_skylight(_x,_y,_z, li-1);
@@ -259,7 +259,7 @@ void update_skylight_in(int x, int y, int z)
     //z
     _x = x;
     _y = y;
-    _z = (z+1) % 128;
+    _z = (z+1) % ZMAX;
 
     tli = get_skylight(_x,_y,_z);
     if(tli > li )
@@ -267,7 +267,7 @@ void update_skylight_in(int x, int y, int z)
 
     _x = x;
     _y = y;
-    _z = (z+127)%128;
+    _z = (z+(ZMAX-1))%ZMAX;
 
     tli = get_skylight(_x,_y,_z);
     if(tli > li )

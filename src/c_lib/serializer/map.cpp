@@ -544,20 +544,23 @@ bool load_map()
     return false;
 }
 
-void update_map_save_file()
+void update_completed_map_save()
 {
     if (!map_save_completed) return;
     bool saved = save_tmp_file(map_path, map_path_tmp, map_path_bak);
     GS_ASSERT(saved);
     map_save_completed = false; // reset
-
     GS_ASSERT(!map_save_memcpy_in_progress);
     GS_ASSERT(!_threaded_write_running);
 
     if (!_threaded_write_running)
     {
-        pthread_detach(map_save_thread);
-        printf("Thread detached\n");
+        if (map_save_thread != 0)
+        {
+            pthread_detach(map_save_thread);
+            printf("Thread detached\n");
+        }
+        map_save_thread = 0;
     }
 }
 

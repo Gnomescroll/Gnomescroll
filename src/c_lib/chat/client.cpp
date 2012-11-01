@@ -44,9 +44,7 @@ void ChatMessage::set_color()
 }
 
 ChatMessage::ChatMessage(int id) :
-id(id),
-timestamp(0),
-color(CHAT_UNKNOWN_COLOR)
+    id(id), timestamp(0), color(CHAT_UNKNOWN_COLOR)
 {
     this->payload = (char*)calloc(CHAT_MESSAGE_SIZE_MAX+1, sizeof(char));
     this->name = (char*)calloc(PLAYER_NAME_MAX_LENGTH+1, sizeof(char));
@@ -54,11 +52,8 @@ color(CHAT_UNKNOWN_COLOR)
 
 /* ChatMessageHistoryObject */
 
-ChatMessageHistoryObject::ChatMessageHistoryObject(ChatMessage* m)
-:
-m(m),
-next(NULL),
-prev(NULL)
+ChatMessageHistoryObject::ChatMessageHistoryObject(ChatMessage* m) :
+    m(m), next(NULL), prev(NULL)
 {}
 
 ChatMessageHistoryObject::~ChatMessageHistoryObject()
@@ -129,8 +124,7 @@ ChatClientChannel::~ChatClientChannel()
 /* ChatInput */
 
 ChatInputHistoryObject::ChatInputHistoryObject(const char* m) :
-next(NULL),
-prev(NULL)
+    next(NULL), prev(NULL)
 {
     this->m = (char*)malloc(sizeof(char) * (strlen(m)+1));
     strcpy(this->m, m);

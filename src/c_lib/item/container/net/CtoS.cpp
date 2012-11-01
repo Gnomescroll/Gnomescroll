@@ -604,9 +604,9 @@ void create_container_block_CtoS::handle()
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
-    // these comparisons not needed due to value range of data type
-    //GS_ASSERT(orientation >= 0 && orientation <= 3);
-    //if (orientation < 0 || orientation > 3) orientation = 0;
+    GS_ASSERT(orientation >= 0 && orientation <= 3);
+    if (orientation < 0 || orientation > 3) orientation = 0;
+
     x = translate_point(x);
     y = translate_point(y);
 
@@ -669,9 +669,9 @@ void admin_create_container_block_CtoS::handle()
     GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
     if (container_type == CONTAINER_TYPE_NONE) return;
 
-    // comparison not needed due to value range of data type
-    //GS_ASSERT(orientation >= 0 && orientation <= 3);
-    //if (orientation < 0 || orientation > 3) orientation = 0;
+    GS_ASSERT(orientation >= 0 && orientation <= 3);
+    if (orientation < 0 || orientation > 3) orientation = 0;
+    
     x = translate_point(x);
     y = translate_point(y);
 

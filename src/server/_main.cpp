@@ -39,9 +39,12 @@ void init_world()
     else
     if (serializer::load_data())
     {
-        bool saved = serializer::save_data();    // re-save immediately after loading, so that palette changes are up to date
-        GS_ASSERT_ABORT(saved);
-        serializer::wait_for_save_complete();
+        if (Options::serializer)
+        {   // only resave the data if we're in serializer mode
+            bool saved = serializer::save_data();    // re-save immediately after loading, so that palette changes are up to date
+            GS_ASSERT_ABORT(saved);
+            serializer::wait_for_save_complete();
+        }
     }
     else
     {   // TODO -- option/mechanism for forcing new map gen from command line
@@ -61,7 +64,7 @@ void init_world()
     if (strcmp(Options::map, "corpusc") == 0)
         corpusc = true;
     else
-    if (!serializer::load_map())
+    if (!serializer::load_data())
     {
         serializer::begin_new_world_version();
         default_map_gen();

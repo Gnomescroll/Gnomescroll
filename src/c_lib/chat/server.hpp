@@ -39,3 +39,5 @@ class ChatServer
     ChatServer();
     ~ChatServer();
 };
+
+void broadcast_server_message(const char* str);

@@ -45,6 +45,7 @@ void CHUNK_ITEM_CONTAINER::_remove(int index)
     iban--;
     iba[index] = iba[iban];
 
+    #if DC_SERVER
     // Update map chunk version
     // TODO -- the chunk version should be done for all blocks,
     // And should not be at this layer
@@ -52,6 +53,7 @@ void CHUNK_ITEM_CONTAINER::_remove(int index)
     // when an item container block is added/removed from the map
     // (for the serializer) 
     main_map->chunk[this->chunk_index]->increment_version();
+    #endif
 }
 
 void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
@@ -117,6 +119,7 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
     iba[iban].container_id = container_id;
     iban++;
 
+    #if DC_SERVER
     // Update map chunk version
     // TODO -- the chunk version should be done for all blocks,
     // And should not be at this layer
@@ -125,7 +128,6 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
     // (for the serializer) 
     main_map->chunk[this->chunk_index]->increment_version();
 
-    #if DC_SERVER
     map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
 
     GS_ASSERT(container_id != NULL_CONTAINER);

@@ -2,12 +2,20 @@
 
 #include <chat/packets.hpp>
 
+void broadcast_server_message(const char* str)
+{
+    ChatMessage_StoC msg;
+    strncpy(msg.msg, str, CHAT_MESSAGE_SIZE_MAX+1);
+    msg.msg[CHAT_MESSAGE_SIZE_MAX] = '\0';
+    msg.sender = CHAT_SENDER_SYSTEM;
+    msg.channel = CHAT_CHANNEL_SYSTEM;
+    msg.broadcast();
+}
+
 /* ChatServerChannel */
 
-ChatServerChannel::ChatServerChannel(int max)
-:
-n(0),
-max(max)
+ChatServerChannel::ChatServerChannel(int max) :
+    n(0), max(max)
 {
     this->listeners = (ClientID*)malloc(sizeof(ClientID) * max);
     for (int i=0; i<max; this->listeners[i++] = NULL_CLIENT);

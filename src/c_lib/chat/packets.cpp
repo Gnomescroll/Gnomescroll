@@ -2,7 +2,7 @@
 
 #include <chat/interface.hpp>
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 inline void ChatMessage_StoC::handle()
 {
     if (sender != CHAT_SENDER_SYSTEM)
@@ -25,8 +25,7 @@ inline void ChatMessage_StoC::handle()
 inline void ChatMessage_CtoS::handle(){}
 #endif
 
-#ifdef DC_SERVER
-
+#if DC_SERVER
 #include <chat/server.hpp>
 
 inline void ChatMessage_CtoS::handle()

@@ -57,7 +57,10 @@ class MAP_CHUNK
 
     void refresh_height_cache();
 
-    void increment_version() { this->version++; }
+    void increment_version()
+    {
+        this->version++;
+    }
 
 };
 

@@ -231,7 +231,8 @@ bool save_remaining_data()
 
 bool save_data()
 {
-    printf("Save data to %s\n", save_folder);
+    printf("Saving data to %s\n", save_folder);
+    broadcast_server_message("Saving the world...");
     
     static int paths_created = 0;
     if (!(paths_created++))
@@ -283,7 +284,7 @@ void wait_for_save_complete()
 
 void update()
 {
-    update_map_save_file();
+    update_completed_map_save();
 
     if (!Options::serializer) return;
 
@@ -431,7 +432,7 @@ void teardown()
     
     // wait for replies/threads
     wait_for_threads();
-    update_map_save_file();
+    update_completed_map_save();
     wait_for_redis_replies();
 
     // tear it all down

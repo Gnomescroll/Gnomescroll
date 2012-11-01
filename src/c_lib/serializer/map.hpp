@@ -49,7 +49,7 @@ bool save_map_iter(int max_ms) {}
 bool save_map();
 bool load_map();
 
-void update_map_save_file();
+void update_completed_map_save();
 
 void init_map_serializer();
 void teardown_map_serializer();
