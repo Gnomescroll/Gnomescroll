@@ -230,28 +230,29 @@ bool write_mech_file(FILE* f)
 bool load_mech_file(const char* fn)
 {
     printf("Loading mech file %s\n", fn);
+    bool success = false;
+    static const size_t mech_size = 3*sizeof(uint8_t) + 2*sizeof(uint16_t);
     
     size_t size = 0;
     char* buf = read_binary_file_to_buffer(fn, &size);
     GS_ASSERT(buf != NULL);
     if (buf == NULL) return false;
 
-    // file should be larger than at least the mech count
-    GS_ASSERT(size >= sizeof(uint32_t));
-    if (size < sizeof(uint32_t)) return false;
-
     size_t ibuf = 0;
     uint32_t mech_count = ((uint32_t*)buf)[ibuf];
     ibuf += sizeof(uint32_t);
 
-    GS_ASSERT(mech_count >= 0);
-    if (mech_count < 0) return false;
+    // file should be larger than at least the mech count
+    GS_ASSERT(size >= sizeof(uint32_t));
+    if (size < sizeof(uint32_t)) goto error;
 
-    static const size_t mech_size = 3*sizeof(uint8_t) + 2*sizeof(uint16_t);
+    GS_ASSERT(mech_count >= 0);
+    if (mech_count < 0) goto error;
+
     for (size_t i=0; i<mech_count; i++)
     {
         GS_ASSERT(size - ibuf >= mech_size);
-        if (size - ibuf < mech_size) return false;
+        if (size - ibuf < mech_size) goto error;
 
         int type = read_bytes<uint8_t>(buf, ibuf);
         int subtype = read_bytes<uint8_t>(buf, ibuf);
@@ -265,23 +266,28 @@ bool load_mech_file(const char* fn)
         GS_ASSERT(y >= 0 && y < YMAX);
         GS_ASSERT(z >= 0 && z < ZMAX);
 
-        if (x < 0 || x >= XMAX) return false;
-        if (y < 0 || y >= YMAX) return false;
-        if (z < 0 || z >= ZMAX) return false;
-        IF_INVALID_MECH_TYPE(type) return false;
-        if (subtype < 0) return false;
+        if (x < 0 || x >= XMAX) goto error;
+        if (y < 0 || y >= YMAX) goto error;
+        if (z < 0 || z >= ZMAX) goto error;
+        IF_INVALID_MECH_TYPE(type) goto error;
+        if (subtype < 0) goto error;
 
         // apply renaming
         MechType mech_type = mech_type_map[type];
         ASSERT_VALID_MECH_TYPE(mech_type);
-        IF_INVALID_MECH_TYPE(mech_type) return false;
+        IF_INVALID_MECH_TYPE(mech_type) goto error;
 
         bool placed = t_mech::create_mech(x,y,z, mech_type, subtype);
         GS_ASSERT(placed);
-        if (!placed) return false;
+        if (!placed) goto error;
     }
 
-    return true;
+    success = true;
+
+    error:  // GOTO LABEL
+        free(buf);
+
+    return success;
 }
 
 bool save_mechs()

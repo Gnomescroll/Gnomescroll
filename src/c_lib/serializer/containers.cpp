@@ -308,6 +308,7 @@ static bool load_container_file(const char* filename)
     if (buffer == NULL) return false;
 
     bool success = process_container_blob(buffer, filesize);
+    free(buffer);
     if (!success) return false;
 
     // check that all containers loaded from map were also found in the flat file

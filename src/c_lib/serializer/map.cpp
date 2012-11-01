@@ -41,9 +41,9 @@ struct ThreadedWriteData
     int buffer_size;
 };
 
-static int _threaded_write_running = 0;
+static bool _threaded_write_running = false;
 static struct ThreadedWriteData threaded_write_data;
-static pthread_t _threaded_write_thread;
+static pthread_t map_save_thread = 0;
 
 void* _threaded_write(void* vptr)
 {
@@ -82,7 +82,7 @@ void* _threaded_write(void* vptr)
     printf("_threaded_write: map saved to %s in %i ms \n", filename, ti2-ti1);
 
     map_save_completed = true;
-    _threaded_write_running = 0;
+    _threaded_write_running = false;
 
     threaded_write_data.filename[0] = '\0';
     threaded_write_data.buffer = NULL;
@@ -103,24 +103,27 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
     threaded_write_data.buffer = buffer;
     threaded_write_data.buffer_size = buffer_len;
 
-    //pthread_join( _threaded_write_thread, NULL);
+    //pthread_join( map_save_thread, NULL);
     /* Create independent threads each of which will execute function */
 
-    _threaded_write_running = 1;
+    _threaded_write_running = true;
 
-    int ret = pthread_create( &_threaded_write_thread, NULL, _threaded_write, (void*)NULL);
+    int ret = pthread_create( &map_save_thread, NULL, _threaded_write, (void*)NULL);
     if (ret != 0)
     {
         printf("threaded_write error: pthread_create returned %i \n", ret);
-        _threaded_write_running = 0;
+        _threaded_write_running = false;
     }
 }
 
 void wait_for_threads()
 {
     printf("Waiting for threads to finish...\n");
-    while (_threaded_write_running != 0)
-        gs_microsleep(100);
+    //while (_threaded_write_running != 0)
+        //gs_microsleep(100);
+    pthread_join(map_save_thread, NULL);
+    pthread_detach(map_save_thread);
+    map_save_thread = 0;
 }
 
 bool save_map_iter(int max_ms)
@@ -297,21 +300,14 @@ BlockSerializer::BlockSerializer()
     this->chunk = (struct SerializedChunk*) malloc(sizeof(struct SerializedChunk));
 
     #if PTHREADS_ENABLED
-    this->version_array = (int*) malloc(chunk_number*sizeof(int));
-    #else
-    this->chunks = (struct SerializedChunk*)malloc(chunk_number * sizeof(struct SerializedChunk));
-    #endif 
+    for (int i=0; i<CHUNK_COUNT; this->version_array[i++] = -1);
+    #endif
 }
 
 BlockSerializer::~BlockSerializer()
 {
+    if (this->write_buffer != NULL) free(this->write_buffer);
     if (this->chunk != NULL) free(this->chunk);
-
-    #if PTHREADS_ENABLED
-    if (this->version_array != NULL) free(this->version_array);
-    #else
-    if (this->chunks != NULL) free(this->chunks);
-    #endif
 }
 
 bool BlockSerializer::save(const char* filename)
@@ -323,45 +319,56 @@ bool BlockSerializer::save(const char* filename)
         return false;
     }
 
+    GS_ASSERT(!_threaded_write_running);
+    if (_threaded_write_running)
+    {
+        printf("BlockSerializer::save call failed; threaded write in progress\n");
+        return false;
+    }
+
     map_save_memcpy_in_progress = true;
 
-    GS_ASSERT(write_buffer == NULL);
+    GS_ASSERT(this->write_buffer == NULL);
     GS_ASSERT(this->filename[0] == '\0');
     GS_ASSERT(file_size == 0);
 
     strcpy(this->filename, filename);
 
-    this->file_size = prefix_length + chunk_number*sizeof(struct SerializedChunk);
-    this->write_buffer = (char*)calloc(file_size, sizeof(char));
+    this->file_size = prefix_length + CHUNK_COUNT*sizeof(struct SerializedChunk);
+    if (this->write_buffer == NULL)
+        this->write_buffer = (char*)calloc(file_size, sizeof(char));
+    else
+        memset(this->write_buffer, file_size, sizeof(char));
 
-    //push header
-    int index = 0;
-    push_int(write_buffer, index, version);
-
-    if (write_buffer == NULL)
+    GS_ASSERT(this->write_buffer != NULL);
+    if (this->write_buffer == NULL)
     {
         printf("BlockSerializer: cannot save map.  malloc failed, out of memory? \n");
         return false;
     }
 
+    //push header
+    int index = 0;
+    push_int(this->write_buffer, index, version);
+
     int ti1 = _GET_MS_TIME();
 
     //serialize
     #if PTHREADS_ENABLED
-    for (int i=0; i<chunk_number; i++) version_array[i] = -1;
+    for (int i=0; i<CHUNK_COUNT; this->version_array[i++] = -1);
     // iterated save data copying should be done in the main server loop
     #else
-    for (int i=0; i < chunk_number; i++)
+    for (int i=0; i < CHUNK_COUNT; i++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
-        this->chunks[i].xchunk = chunk_number % 16;
-        this->chunks[i].ychunk = chunk_number / 16;
+        this->chunks[i].xchunk = CHUNK_COUNT % 16;
+        this->chunks[i].ychunk = CHUNK_COUNT / 16;
         memcpy((void*) &this->chunks[i].data, &mp->e, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
     }
     //prepare buffer for saving
 
-    for (int i=0; i<chunk_number; i++)
+    for (int i=0; i<CHUNK_COUNT; i++)
     {
         memcpy(&this->write_buffer[index], (char*) &this->chunks[i], sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
@@ -400,15 +407,15 @@ bool BlockSerializer::save_iter(int max_ms)
 
     static int index = 0;
 
-    for (int j=0; j < chunk_number; j++)
+    for (int j=0; j < CHUNK_COUNT; j++)
     {
-        index = (index+1)%chunk_number;
+        index = (index+1)%CHUNK_COUNT;
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[index];
         GS_ASSERT(mp != NULL);
         if (mp == NULL) continue;
         if (mp->version == version_array[index]) continue;
-        chunk->xchunk = chunk_number % TERRAIN_CHUNK_WIDTH;
-        chunk->ychunk = chunk_number / TERRAIN_CHUNK_WIDTH;
+        chunk->xchunk = CHUNK_COUNT % TERRAIN_CHUNK_WIDTH;
+        chunk->ychunk = CHUNK_COUNT / TERRAIN_CHUNK_WIDTH;
         memcpy((void*) &chunk->data, &mp->e, CHUNK_SIZE);
         version_array[index] = mp->version;
 
@@ -423,7 +430,7 @@ bool BlockSerializer::save_iter(int max_ms)
     }
 
     printf("BlockSerializer save_itr complete: clock_time= %i ms num_calls= %i, ms_per_call= %i, chunks_per_call= %i total_chunks= %i memcpy_count= %i \n", 
-        _GET_MS_TIME()-_start_ms, _calls, max_ms, chunk_number/_calls, chunk_number, _memcpy_count);
+        _GET_MS_TIME()-_start_ms, _calls, max_ms, CHUNK_COUNT/_calls, CHUNK_COUNT, _memcpy_count);
 
     threaded_write(this->filename, write_buffer, file_size);
 
@@ -463,7 +470,7 @@ bool BlockSerializer::load(const char* filename)
 
     printf("Build Version: %d; Filesize: %d\n", _version, filesize);
 
-    size_t expected_filesize = prefix_length + chunk_number*sizeof(struct SerializedChunk);
+    size_t expected_filesize = prefix_length + CHUNK_COUNT*sizeof(struct SerializedChunk);
     if (filesize != expected_filesize)
         printf("WARNING: Map filesize %u does not match expected filesize %u\n", filesize, expected_filesize); 
     GS_ASSERT_ABORT(filesize == expected_filesize);
@@ -481,7 +488,7 @@ bool BlockSerializer::load(const char* filename)
         buffer[i] = cube_id_map[(unsigned char)c];
     }
 
-    for (int i=0; i<chunk_number; i++)
+    for (int i=0; i<CHUNK_COUNT; i++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
@@ -509,6 +516,8 @@ bool save_map()
 {
     GS_ASSERT(!map_save_memcpy_in_progress);
     if (map_save_memcpy_in_progress) return false;
+    GS_ASSERT(!_threaded_write_running);
+    if (_threaded_write_running) return false;
     
     GS_ASSERT(block_serializer != NULL);
     if (block_serializer == NULL) return false;

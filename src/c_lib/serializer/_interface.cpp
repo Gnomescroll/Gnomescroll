@@ -415,6 +415,7 @@ void teardown()
 {
     // finish saves in progress
     wait_for_save_complete();
+    wait_for_threads();
 
     #if PRODUCTION
     should_save_world = true;

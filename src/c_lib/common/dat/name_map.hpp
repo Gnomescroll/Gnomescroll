@@ -235,6 +235,12 @@ class DatNameMap
         this->originals = (char*)calloc(this->max * (this->name_max+1), sizeof(char));
         this->replacements = (char*)calloc(this->max * (this->name_max+1), sizeof(char));
     }
+
+    ~DatNameMap()
+    {
+        if (this->originals != NULL) free(this->originals);
+        if (this->replacements != NULL) free(this->replacements);
+    }
 };
 
 // caller must free the strings pointed to by active/inactive if not NULL
