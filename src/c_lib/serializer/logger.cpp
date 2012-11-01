@@ -11,6 +11,8 @@
 namespace serializer
 {
 
+char log_folder[NAME_MAX+1];
+
 char player_log_path[NAME_MAX+1];
 char container_log_path[NAME_MAX+1];
 char map_log_path[NAME_MAX+1];
@@ -22,16 +24,11 @@ FILE* map_log = NULL;
 FILE* mech_log = NULL;
 
 void init_logger()
-{
+{    
     GS_ASSERT(player_log == NULL);
     GS_ASSERT(container_log == NULL);
     GS_ASSERT(map_log == NULL);
-    GS_ASSERT(mech_log == NULL);
-    
-    player_log = fopen(player_log_path, "a");
-    container_log = fopen(container_log_path, "a");
-    map_log = fopen(map_log_path, "a");
-    mech_log = fopen(mech_log_path, "a");
+    GS_ASSERT(mech_log == NULL);    
 }
 
 void teardown_logger()
@@ -45,6 +42,12 @@ void teardown_logger()
 void set_log_paths(const char* save_folder)
 {
     int wrote = 0;
+
+    wrote = snprintf(log_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
+    log_folder[0] = '\0';
+    create_path(log_folder);
+
     wrote = snprintf(player_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, PLAYER_LOG_FILENAME);
     GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
     player_log_path[NAME_MAX] = '\0';
@@ -57,6 +60,11 @@ void set_log_paths(const char* save_folder)
     wrote = snprintf(mech_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, MECH_LOG_FILENAME);
     GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
     mech_log_path[NAME_MAX] = '\0';
+
+    player_log = fopen(player_log_path, "a");
+    container_log = fopen(container_log_path, "a");
+    map_log = fopen(map_log_path, "a");
+    mech_log = fopen(mech_log_path, "a");
 }
 
 void log_map_load_error(const char* msg)
