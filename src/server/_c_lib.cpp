@@ -31,11 +31,9 @@ dont_include_this_file_in_client
 #endif
 
 #ifdef _WIN32
-# define _DIRENT_H_
 # include "windows.h"
 # undef interface
 # undef rad2
-# undef _DIRENT_H_
 #endif
 
 // serialization

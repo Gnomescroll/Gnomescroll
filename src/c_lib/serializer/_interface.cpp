@@ -364,7 +364,9 @@ static bool find_existing_world(char filename[NAME_MAX], int& version, time_t& t
     
     while ((ep = readdir(dp)) != NULL)
     {
+        #ifndef __MINGW32__
         if (ep->d_type != DT_DIR) continue;
+        #endif
         bool is_world = parse_world_dirname(ep->d_name, version, timestamp);
         if (is_world && difftime(timestamp, most_recent) >= 0)
         {
