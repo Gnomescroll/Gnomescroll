@@ -2,7 +2,14 @@
 
 #ifndef _WIN32
 # include <dirent.h>
-#else
+#endif
+
+#ifdef __MINGW32__
+# include <dirent.h>
+#endif
+
+#ifdef _WIN32
+#ifndef __MINGW32__
 
 /*
  * dirent.h - dirent API for Microsoft Visual Studio
@@ -699,4 +706,5 @@ rewinddir(
 #endif
 #endif /*DIRENT_H*/
 
+#endif
 #endif
