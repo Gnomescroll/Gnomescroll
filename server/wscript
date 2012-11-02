@@ -124,10 +124,10 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
         lua_lib_path = []
         lua_inc_path = '/usr/include/luajit-2.0'
         
-        redis_lib_path = '../lib/lin32/hiredis/lib/'
-        redis_inc_path = '../lib/lin32/hiredis/include/'
+        redis_lib_path = ['../lib/server/hiredis/lib32/', '../lib/server/hiredis/lib64/']
+        redis_inc_path = '../lib/server/hiredis/include/'
 
-        libev_lib_path = ['/usr/lib', redis_lib_path]
+        libev_lib_path = ['/usr/lib'] + redis_lib_path
         libev_inc_path = ['/usr/include', redis_inc_path]
 
         libuuid_lib_path = ['/usr/lib']
@@ -158,7 +158,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
             use='hiredis',
             uselib_store='REDIS',
             fragment='#include <hiredis/hiredis.h>' + MAIN_TEST_CODE,
-            libpath=os.path.abspath(redis_lib_path),
+            libpath=map(os.path.abspath, redis_lib_path),
             includes=os.path.abspath(redis_inc_path),
             mandatory=True)
 
