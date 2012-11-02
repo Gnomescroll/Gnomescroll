@@ -152,7 +152,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
             break;
 
         if (index > size)
-            printf("voxel_volume_read: buffer overflow, index= %i, size= %i \n", index, size);
+            printf("voxel_volume_read: buffer overflow, index= %lu, size= %lu \n", (unsigned long)index, (unsigned long)size);
 
         ret = sscanf (buffer+index, "%d %d %d  %d %d %d  %n", &x,&y,&z,&r,&g,&b, &read);
 
