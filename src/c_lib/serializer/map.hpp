@@ -43,7 +43,7 @@ void wait_for_threads();
 bool save_map_iter(int max_ms);
 #else
 void wait_for_threads() {}
-bool save_map_iter(int max_ms) {}
+bool save_map_iter(int max_ms) { return true; }
 #endif
 
 bool save_map();
