@@ -139,7 +139,7 @@ void set_max_damage(int max_damage)
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
     GS_ASSERT_ABORT(max_damage > 0 && max_damage <= MAX_CUBE_DAMAGE);
-    if (max_damage <= 0 || max_damage >= MAX_CUBE_DAMAGE) return;
+    if (max_damage <= 0 || max_damage > MAX_CUBE_DAMAGE) return;
     p->max_damage = max_damage;
 }
 
