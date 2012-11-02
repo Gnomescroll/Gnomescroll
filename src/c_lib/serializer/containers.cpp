@@ -255,20 +255,28 @@ static bool load_container_file(const char* filename)
 
     bool success = process_container_blob(buffer, filesize);
     free(buffer);
-    if (!success) return false;
+    if (!success)
+    {
+        log_container_load_error("Failed to acquire container name");
+        return false;
+    }
 
+    bool err = false;
     // check that all containers loaded from map were also found in the flat file
     for (int i=0; i<MAX_CONTAINERS; i++)
     {
         ContainerLoadState state = loaded_containers[i];
         GS_ASSERT(state == CONTAINER_LOAD_UNUSED || state == CONTAINER_LOAD_ITEMS);
-        // TODO -- collect all unloaded containers and log their positions/block type
-        if (state != CONTAINER_LOAD_UNUSED && state != CONTAINER_LOAD_ITEMS) return false;
+        if (state != CONTAINER_LOAD_UNUSED && state != CONTAINER_LOAD_ITEMS)
+            err = true;
     }
 
     clear_loaded_containers();
 
-    return true;
+    if (err)
+        log_container_load_error("Containers defined in map not found in container data file");
+
+    return err;
 }
 
 /* Saving */
@@ -281,7 +289,11 @@ const char* write_container_string(const class ItemContainer::ItemContainerInter
     // get container data
     const char* container_name = ItemContainer::get_container_name(container->type);
     GS_ASSERT(container_name != NULL);
-    if (container_name == NULL) return NULL;
+    if (container_name == NULL)
+    {
+        log_container_save_error("Failed to acquire container name");
+        return NULL;
+    }
 
     int b[3];
     bool found = t_map::get_container_location(container->id, b);
@@ -291,23 +303,39 @@ const char* write_container_string(const class ItemContainer::ItemContainerInter
                && b[1] >= 0 && b[1] < YMAX
                && b[2] >= 0 && b[2] < ZMAX);
     GS_ASSERT(fits);
-    if (!fits) return NULL;
+    if (!fits)
+    {
+        log_container_save_error("Container dimensions outside map boundaries");
+        return NULL;
+    }
 
     // write header
     int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_HEADER_FMT,
         container_name, container->slot_count, b[0], b[1], b[2], container_entry);
     GS_ASSERT(could_write > 0 && (size_t)could_write < BUF_SIZE - ibuf);
-    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf) return NULL;
+    if (could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf)
+    {
+        log_container_save_error("Buffer overrun in writing container entry header");
+        return NULL;
+    }
     ibuf += (size_t)could_write;
 
     _buffer[ibuf++] = '\n';
-    if (ibuf >= BUF_SIZE) return NULL;
+    if (ibuf >= BUF_SIZE)
+    {
+        log_container_save_error("Buffer overrun in writing container entry header");
+        return NULL;
+    }
 
     // write contents
     if (container->slot_count > 0)
     {   // we must check the slot count, because write_container_contents_string returns 0 on error or if the container is empty
         size_t wrote = write_container_contents_string(&_buffer[ibuf], BUF_SIZE - ibuf, container);
-        if (wrote <= 0) return NULL;  // error
+        if (wrote <= 0)
+        {
+            log_container_save_error("Failed to write container contents string");
+            return NULL;
+        }
         ibuf += wrote;
     }
 
@@ -346,19 +374,35 @@ bool save_containers()
 {
     using ItemContainer::item_container_list;
     GS_ASSERT(item_container_list != NULL);
-    if (item_container_list == NULL) return false;    // TODO -- log error
+    if (item_container_list == NULL)
+    {
+        log_container_save_error("Item Container List was NULL");
+        return false;
+    }
 
     FILE* f = fopen(container_path_tmp, "w");
     GS_ASSERT(f != NULL);
-    if (f == NULL) return false;  // TODO -- log error
+    if (f == NULL)
+    {
+        log_container_save_error("Failed to open tmp container file for writing");
+        return false;
+    }
 
     // write a temporary file header. the container count is wrong, so we have to rewrite it later 
     int ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, item_container_list->n_max);
     GS_ASSERT(ret > 0);
-    if (ret <= 0) return false;   // TODO -- log error
+    if (ret <= 0)
+    {
+        log_container_save_error("Failed to write temporary container header");
+        return false;
+    }
     ret = fprintf(f, "\n");
     GS_ASSERT(ret > 0);
-    if (ret <= 0) return false;   // TODO -- log error
+    if (ret <= 0)
+    {
+        log_container_save_error("Failed to write temporary container header");
+        return false;
+    }
 
     // write the container contents
     int ct = 0;
@@ -366,8 +410,9 @@ bool save_containers()
         if (item_container_list->a[i] != NULL && !item_container_list->a[i]->attached_to_agent)
         {
             bool success = save_container(f, item_container_list->a[i], ct+1);
-            GS_ASSERT(success); // TODO -- log error
+            GS_ASSERT(success);
             if (success) ct++;
+            else log_container_save_error("Failed to save container contents");
         }
 
     // rewind to beginning of file
@@ -376,13 +421,23 @@ bool save_containers()
     // write the actual file header
     ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, ct);
     GS_ASSERT(ret > 0);
-    if (ret <= 0) return false;   // TODO -- log error
+    if (ret <= 0)
+    {
+        log_container_save_error("Failed to write container file header");
+        return false;
+    }
     ret = fprintf(f, "\n");
     GS_ASSERT(ret > 0);
-    if (ret <= 0) return false;   // TODO -- log error
+    if (ret <= 0)
+    {
+        log_container_save_error("Failed to write final container header");
+        return false;
+    }
 
     int err = fclose(f);
-    GS_ASSERT(!err);    // TODO -- log error
+    GS_ASSERT(!err);
+    if (err)
+        log_container_save_error("Container file close error");
 
     return (!err);
 }

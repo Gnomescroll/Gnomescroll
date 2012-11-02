@@ -247,7 +247,11 @@ bool save_map_palette_file()
 {
     FILE* f = fopen(map_palette_path_tmp, "w");
     GS_ASSERT(f != NULL);
-    if (f == NULL) return false;
+    if (f == NULL)
+    {
+        log_map_save_error("Saving map palette file: failed to open file");
+        return false;
+    }
 
     char buf[MAP_PALETTE_LINE_LENGTH+2] = {'\0'};
 
@@ -258,13 +262,21 @@ bool save_map_palette_file()
         if (cube_name == NULL) continue;
         int len = snprintf(buf, MAP_PALETTE_LINE_LENGTH+1, MAP_PALETTE_FMT, cube_name, i);
         GS_ASSERT(len >= 0 && (size_t)len < MAP_PALETTE_LINE_LENGTH+1);
-        if (len < 0 || (size_t)len >= MAP_PALETTE_LINE_LENGTH+1) return false;
+        if (len < 0 || (size_t)len >= MAP_PALETTE_LINE_LENGTH+1)
+        {
+            log_map_save_error("Saving map palette file: buffer overrun");
+            return false;
+        }
         buf[len++] = '\n';
         buf[len] = '\0';
         
         size_t wrote = fwrite(buf, sizeof(char), (size_t)len, f);
         GS_ASSERT(wrote == (size_t)len);
-        if (wrote != (size_t)len) return false;
+        if (wrote != (size_t)len)
+        {
+            log_map_save_error("Saving map palette file: failed to write to file");
+            return false;
+        }
     }
 
     int ret = fclose(f);
@@ -289,10 +301,18 @@ static bool load_map_restore_containers()
             
             ItemContainerType container_type = t_map::get_container_type_for_cube(block);
             GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-            if (container_type == CONTAINER_TYPE_NONE) return false;    // TODO -- log error
+            if (container_type == CONTAINER_TYPE_NONE)
+            {
+                log_map_load_error("Restoring containers from map: Container type is CONTAINER_TYPE_NONE");
+                return false;
+            }
             class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
             GS_ASSERT(container != NULL);
-            if (container == NULL) return false;    // TODO -- log error
+            if (container == NULL)
+            {
+                log_map_load_error("Restoring containers from map: Container creation failed");
+                return false;
+            }
             init_container(container);            
             t_map::create_item_container_block(ci*TERRAIN_CHUNK_WIDTH+i, cj*TERRAIN_CHUNK_WIDTH+j, k, container->type, container->id);
             loaded_containers[container->id] = CONTAINER_LOAD_MAP;
