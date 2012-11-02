@@ -55,9 +55,13 @@ def run(conf):
     ensure_dir(settings_path)
     copyfile('./settings/lua_library.lua', os.path.join(settings_path, 'lua_library.lua'))
     if conf == 'production':
-        copyfile('./settings/production.lua', os.path.join(settings_path, 'settings.lua'))
+    	settings_file = os.path.join(settings_path, 'settings.lua')
+        copyfile('./settings/production.lua', settings_file)
+        subprocess.call('unix2dos %s' % (settings_file,), shell=True)
     elif conf == 'configure':
-        copyfile('./settings/dev.lua', os.path.join(settings_path, 'dev.lua'))
+    	settings_file = os.path.join(settings_path, 'dev.lua')
+        copyfile('./settings/dev.lua', settings_file)
+        subprocess.call('unix2dos %s' % (settings_file,), shell=True)
 
     # TODO -- call unix2dos or "/usr/bin/perl -pi s/\n/\r\n/" to convert the settings file
     # Check that the lua interpreter handles crlf properly
