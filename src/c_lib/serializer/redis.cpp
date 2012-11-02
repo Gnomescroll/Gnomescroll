@@ -38,7 +38,7 @@ static void handle_reply(redisReply* reply)
             break;
 
         case REDIS_REPLY_ARRAY:
-            printf("Reply (multi-bulk): %d elements\n", reply->elements);
+            printf("Reply (multi-bulk): %lu elements\n", (unsigned long)reply->elements);
             for (unsigned int i=0; i<reply->elements; i++)
                 handle_reply(reply->element[i]);
             break;

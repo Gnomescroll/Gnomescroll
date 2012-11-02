@@ -492,11 +492,11 @@ bool BlockSerializer::load(const char* filename)
     int index = 0;
     pop_int(buffer, index, _version);
 
-    printf("Build Version: %d; Filesize: %d\n", _version, filesize);
+    printf("Build Version: %d; Filesize: %lu\n", _version, (unsigned long)filesize);
 
     size_t expected_filesize = prefix_length + CHUNK_COUNT*sizeof(struct SerializedChunk);
     if (filesize != expected_filesize)
-        printf("WARNING: Map filesize %u does not match expected filesize %u\n", filesize, expected_filesize); 
+        printf("WARNING: Map filesize %lu does not match expected filesize %lu\n", (unsigned long)filesize, (unsigned long)expected_filesize); 
     GS_ASSERT_ABORT(filesize == expected_filesize);
 
     // apply block id versioning transformation
