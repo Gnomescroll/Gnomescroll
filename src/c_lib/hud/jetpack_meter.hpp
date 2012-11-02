@@ -29,7 +29,7 @@ namespace Hud {
 		JetPackMeter() {
 			prev_w = 0;
 			
-			quadticles[LUDICROUS_REZ]; 
+			//quadticles[LUDICROUS_REZ]; 
 		}
 
 		void draw(int _xresf, int _yresf, PlayerAgent_state* pa_s) {
