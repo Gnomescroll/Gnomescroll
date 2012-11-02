@@ -191,8 +191,9 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
     conf.env.INCLUDES = ['../src/c_lib', '../src/net_lib', '../src','/usr/local/include', '/usr/include']
     conf.env.RPATH = ['.','..', '$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
     if OS == 'Linux':
-        conf.env.INCLUDES.append('../lib/lin32/hiredis/include')
-        conf.env.RPATH.append('$ORIGIN/../lib/lin32/hiredis/lib')
+        conf.env.INCLUDES.append('../lib/server/hiredis/include')
+        conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib32')
+        conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib64')
 
 def build(bld):
     OS = platform.system()
