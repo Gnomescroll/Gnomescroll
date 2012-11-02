@@ -349,12 +349,14 @@ bool BlockSerializer::save(const char* filename)
         return false;
     }
 
+    #if PTHREADS_ENABLED
     GS_ASSERT(!_threaded_write_running);
     if (_threaded_write_running)
     {
         printf("BlockSerializer::save call failed; threaded write in progress\n");
         return false;
     }
+    #endif
 
     map_save_memcpy_in_progress = true;
 
@@ -538,8 +540,10 @@ bool save_map()
 {
     GS_ASSERT(!map_save_memcpy_in_progress);
     if (map_save_memcpy_in_progress) return false;
+    #if PTHREADS_ENABLED
     GS_ASSERT(!_threaded_write_running);
     if (_threaded_write_running) return false;
+    #endif
     
     GS_ASSERT(block_serializer != NULL);
     if (block_serializer == NULL) return false;
@@ -570,6 +574,8 @@ void update_completed_map_save()
     GS_ASSERT(saved);
     map_save_completed = false; // reset
     GS_ASSERT(!map_save_memcpy_in_progress);
+
+    #if PTHREADS_ENABLED
     GS_ASSERT(!_threaded_write_running);
 
     if (!_threaded_write_running)
@@ -581,6 +587,7 @@ void update_completed_map_save()
         }
         map_save_thread = 0;
     }
+    #endif
 }
 
 }   // serializer
