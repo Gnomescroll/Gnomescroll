@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# make sure data files exist
-./shell/touch_world_files.py
-
 # make sure gnomescroll user owns the folder
 chown -R gnomescroll:gnomescroll .
 
