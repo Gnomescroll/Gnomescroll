@@ -95,8 +95,8 @@ int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
     GS_ASSERT(source_y > 0);
     if (source_y < 1) return NULL_SPRITE;
 
-    GS_ASSERT(this->tile_num >= 0 && this->tile_num <= 0xff);
-    if (this->tile_num < 0 || this->tile_num > 0xff) return NULL_SPRITE;
+    GS_ASSERT(this->tile_num <= 0xff);
+    if (this->tile_num > 0xff) return NULL_SPRITE;
 
     // decrement x,y because arguments should be 1-indexed
     source_x--;

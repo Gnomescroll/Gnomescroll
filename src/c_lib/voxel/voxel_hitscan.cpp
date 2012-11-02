@@ -146,6 +146,6 @@ void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
 
 void Voxel_hitscan_target::copy_voxel(int voxel[3])
 {
-    memcpy(this->voxel, voxel, sizeof(voxel));
+    for (int i=0; i<3; i++) voxel[i] = this->voxel[i];
 }
 
