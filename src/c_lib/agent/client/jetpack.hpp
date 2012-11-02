@@ -5,7 +5,7 @@ dont_include_this_file_in_server
 #endif
 
 
-const int JETPACK_FUEL_MAX = 1600;
+const int JETPACK_FUEL_MAX = 1300;
 const int JETPACK_DRAIN_RATE = 3;
 const int JETPACK_REFILL_RATE = 2;
 
