@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef NAME_MAX
+# define NAME_MAX 0xFF
+#endif
+
 #ifndef _WIN32
 # include <dirent.h>
 #endif
