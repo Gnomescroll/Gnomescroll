@@ -7,5 +7,5 @@ then
 fi
 
 secret=`./shell/make_secret_key.py`
-echo $secret > ./data/secret_key.$ext.new
+echo $secret > ./keys/secret_key.$ext.new
 echo $secret > /var/www/gnomescroll.com/secret_key.$ext
