@@ -58,12 +58,6 @@ void redis_get_cb(redisAsyncContext* ctx, void* _reply, void* note)
     handle_reply(reply);
 }
 
-void null_redis_cb(redisAsyncContext* ctx, void* _reply, void* note)
-{
-    GS_ASSERT(note == NULL);
-    received_redis_reply();
-}
-
 void redis_connect_cb(const redisAsyncContext *ctx, int status)
 {
     waiting_to_connect = false;
@@ -202,6 +196,7 @@ void update_redis()
 
 void wait_for_redis_replies()
 {
+    if (expected_redis_replies <= 0) return;
     printf("Waiting for %d redis replies...\n", expected_redis_replies);
     while (expected_redis_replies > 0)
     {
@@ -219,11 +214,10 @@ void received_redis_reply()
 
 int send_redis_command(redisAsyncContext *ac, redisCallbackFn *fn, void *privdata, const char *format, ...)
 {
-    if (fn == NULL) fn = &null_redis_cb;
     va_list ap;
     va_start(ap, format);
     int ret = redisvAsyncCommand(ac, fn, privdata, format, ap);
-    if (ret == REDIS_OK)
+    if (fn != NULL && ret == REDIS_OK)
         expected_redis_replies++;
     va_end(ap);
     return ret;

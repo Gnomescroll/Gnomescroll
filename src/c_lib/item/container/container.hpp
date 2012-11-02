@@ -28,7 +28,7 @@ class ItemContainerInterface
         ItemID* slot;
         
         AgentID owner;
-        int chunk;  // TODO -- move to subclass
+        int chunk;  // TODO -- move to subclass for container blocks
 
         bool attached_to_agent; // true for containers permanently attached to agents (inventory, synthesizer)
 

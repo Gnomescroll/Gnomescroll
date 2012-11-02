@@ -15,12 +15,21 @@ void log_mech_load_error(const char* msg);
 
 #if GS_SERIALIZER
 void log_container_save_error(const char* msg);
-void log_container_load_error(const char* msg,
+void log_container_load_error(const char* msg, const char* data_str,
     class ParsedContainerFileData* file_data, class ParsedContainerData* container_data,
     class ParsedItemData* item_data);
+void log_container_load_error(const char* msg)
+{
+    log_container_load_error(msg, NULL, NULL, NULL, NULL);
+}
 
 void log_player_save_error(const char* msg);
-void log_player_load_error(const char* msg,
+void log_player_save_error(const char* msg,
+    UserID user_id, AgentID agent_id,
+    class ItemContainer::ItemContainerInterface* container);
+
+void log_player_load_error(const char* msg);
+void log_player_load_error(const char* msg, const char* data_str,
     class PlayerLoadData* load_data, class PlayerContainerLoadData* container_load_data,
     class ParsedPlayerData* player_data, class ParsedPlayerContainerData* container_data,
     class ParsedItemData* item_data);

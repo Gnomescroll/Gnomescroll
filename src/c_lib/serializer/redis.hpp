@@ -11,8 +11,6 @@ extern bool redis_connected;
 
 void redis_get_cb(redisAsyncContext* ctx, void* _reply, void* note);
 
-void null_redis_cb(redisAsyncContext* ctx, void* _reply, void* note);
-
 void init_redis();
 void teardown_redis();
 void update_redis();

@@ -3,9 +3,10 @@
 #include <serializer/constants.hpp>
 
 #if GS_SERIALIZER
-#include <serializer/containers.hpp>
-#include <serializer/items.hpp>
-#include <serializer/players.hpp>
+# include <item/container/container.hpp>
+# include <serializer/containers.hpp>
+# include <serializer/items.hpp>
+# include <serializer/players.hpp>
 #endif
 
 namespace serializer
@@ -100,13 +101,16 @@ void log_mech_save_error(const char* msg)
 }
 
 #if GS_SERIALIZER
-void log_container_load_error(const char* msg,
+void log_container_load_error(const char* msg, const char* data_str,
     class ParsedContainerFileData* file_data, class ParsedContainerData* container_data,
     class ParsedItemData* item_data)
 {
     GS_ASSERT(container_log != NULL);
     if (container_log == NULL) return;
     fprintf(container_log, "LoadError: %s\n", msg);
+
+    if (data_str != NULL)
+        fprintf(container_log, "%s\n", data_str);
 
     if (file_data != NULL)
         fprintf(container_log, "ParsedContainerFileData: version %d, container_container %d, valid %d\n",
@@ -140,15 +144,34 @@ void log_container_save_error(const char* msg)
     fprintf(container_log, LOG_LINE_SEPARATOR);
 }
 
-void log_player_save_error(const char* msg)
+void log_player_save_error(const char* msg,
+    UserID user_id, AgentID agent_id,
+    class ItemContainer::ItemContainerInterface* container)
 {
     GS_ASSERT(player_log != NULL);
     if (player_log == NULL) return;
     fprintf(player_log, "SaveError: %s\n", msg);
+    
+    if (user_id != NULL_USER_ID)
+        fprintf(player_log, "UserID: %d\n", user_id);
+
+    if (agent_id != NULL_AGENT)
+        fprintf(player_log, "PlayerID: %d\n", agent_id);
+
+    if (container != NULL)
+        fprintf(player_log, "ItemContainer: type %d, xdim %d, ydim %d, slot_max %d, slot_count %d, owner %d\n",
+            container->type, container->xdim, container->ydim,
+            container->slot_max, container->slot_count, container->owner);
+
     fprintf(player_log, LOG_LINE_SEPARATOR);
 }
 
-void log_player_load_error(const char* msg,
+void log_player_save_error(const char* msg)
+{
+    log_player_save_error(msg, NULL_USER_ID, NULL_AGENT, NULL);
+}
+
+void log_player_load_error(const char* msg, const char* data_str,
     class PlayerLoadData* load_data, class PlayerContainerLoadData* container_load_data,
     class ParsedPlayerData* player_data, class ParsedPlayerContainerData* container_data,
     class ParsedItemData* item_data)
@@ -156,6 +179,9 @@ void log_player_load_error(const char* msg,
     GS_ASSERT(player_log != NULL);
     if (player_log == NULL) return;
     fprintf(player_log, "LoadError: %s\n", msg);
+
+    if (data_str != NULL)
+        fprintf(player_log, "%s\n", data_str);
 
     if (load_data != NULL)
         fprintf(player_log, "PlayerLoadData: user_id %d, client_id %d\n", load_data->user_id, load_data->client_id);
@@ -168,7 +194,8 @@ void log_player_load_error(const char* msg,
             player_data->color.r, player_data->color.g, player_data->color.b);
 
     if (container_data != NULL)
-        fprintf(player_log, "ParsedPlayerContainerData: name %s, user_id %d, container_count %d\n", container_data->name, container_data->user_id, container_data->container_count);
+        fprintf(player_log, "ParsedPlayerContainerData: name %s, user_id %d, container_count %d\n",
+            container_data->name, container_data->user_id, container_data->container_count);
 
     if (item_data != NULL)
     {
@@ -182,6 +209,11 @@ void log_player_load_error(const char* msg,
     }
     
     fprintf(player_log, LOG_LINE_SEPARATOR);
+}
+
+void log_player_load_error(const char* msg)
+{
+    log_player_load_error(msg, NULL, NULL, NULL, NULL, NULL, NULL);
 }
 #endif
 
