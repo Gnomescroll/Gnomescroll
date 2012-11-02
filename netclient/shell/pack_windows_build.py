@@ -62,9 +62,6 @@ def run(conf):
     	settings_file = os.path.join(settings_path, 'dev.lua')
         copyfile('./settings/dev.lua', settings_file)
         subprocess.call('unix2dos %s' % (settings_file,), shell=True)
-
-    # TODO -- call unix2dos or "/usr/bin/perl -pi s/\n/\r\n/" to convert the settings file
-    # Check that the lua interpreter handles crlf properly
         
     # create screenshot folder
     ensure_dir(os.path.join(build_path, 'screenshot\\'))
