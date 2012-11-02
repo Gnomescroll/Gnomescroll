@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/dirent.h>
+
 typedef enum
 {
     WORLD_SAVE_IDLE,

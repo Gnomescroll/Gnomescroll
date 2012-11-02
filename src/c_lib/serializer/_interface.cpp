@@ -1,7 +1,5 @@
 #include "_interface.hpp"
 
-#include <common/dirent.h>
-
 #include <common/files.hpp>
 #include <options/server_options.hpp>
 #include <serializer/mechs.hpp>
