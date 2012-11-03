@@ -5,6 +5,8 @@ syntax: glob
 *.pyo
 *.dylib
 
+secret_key.prod
+
 output.png
 
 .goutputstream*

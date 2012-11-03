@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# run backup script
+/usr/freespace/dc_mmo/server/shell/gsbackup.sh
+
 function send_save_map
 {
   local p=`pidof "$1"`
