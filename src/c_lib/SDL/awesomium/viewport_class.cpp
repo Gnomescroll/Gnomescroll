@@ -160,16 +160,16 @@ void js_token_failure_callback(awe_webview* webView, const awe_string* _obj_name
 
 void js_login_required_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
-    Auth::needs_login = true;
-    if (chat_client != NULL)
-    {
-        chat_client->send_system_message("There was a server reset. You will need to again soon to continue playing.");
-        chat_client->send_system_message(Hud::open_login_text);
-    }
+    //Auth::needs_login = true;
+    //if (chat_client != NULL)
+    //{
+        //chat_client->send_system_message("There was a server reset. You will need to again soon to continue playing.");
+        //chat_client->send_system_message(Hud::open_login_text);
+    //}
     if (!Auth::has_authorized_once)
         enable_awesomium();
-    else
-        Hud::set_prompt(Hud::open_login_text);
+    //else
+        //Hud::set_prompt(Hud::open_login_text);
 }
 
 void js_save_username_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)

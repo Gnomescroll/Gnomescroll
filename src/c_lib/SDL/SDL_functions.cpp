@@ -72,7 +72,6 @@ int DisplayBox()
 
 int glVersionErrorPopup(const char* gl_version, const char* gl_gpu)
 {
-    const char title[] = "Error";
     const char msg_fmt[] =
         "Your graphics card does not support OpenGL 2.1.\n"
         "Try updating your drivers.\n"
@@ -86,6 +85,7 @@ int glVersionErrorPopup(const char* gl_version, const char* gl_gpu)
     msg[msg_len] = '\0';
     
     #ifdef _WIN32
+    const char title[] = "Error";
     int msgboxID = MessageBox(
         NULL,
         (LPCTSTR)title,
