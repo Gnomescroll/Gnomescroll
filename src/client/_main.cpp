@@ -363,9 +363,12 @@ void draw_tick()
     // with depth test disable
     int equipped_item_type = Toolbelt::get_selected_item_type();
 
-    glDisable(GL_DEPTH_TEST);
-    Animations::draw_equipped_item(equipped_item_type);
-    glEnable(GL_DEPTH_TEST);
+    if (input_state.draw_hud)
+    {
+        glDisable(GL_DEPTH_TEST);
+        Animations::draw_equipped_item(equipped_item_type);
+        glEnable(GL_DEPTH_TEST);
+    }
 
     if (Options::placement_outline)
     {
