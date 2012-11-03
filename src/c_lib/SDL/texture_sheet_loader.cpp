@@ -15,8 +15,8 @@ struct TileMeta
     int ypos;
 };
 
-TextureSheetLoader::TextureSheetLoader(unsigned int tile_size)
-: tile_size(tile_size), texture_num(0), tile_num(0), texture_format(GL_BGRA)
+TextureSheetLoader::TextureSheetLoader(unsigned int tile_size) :
+    tile_size(tile_size), texture_num(0), tile_num(0), texture_format(GL_BGRA)
 {
     this->meta = new struct TileMeta[256];
     this->filenames = (char**)calloc(N_SURFACES, sizeof(char*));
