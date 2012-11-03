@@ -19,7 +19,6 @@ struct InputState
     bool chat;
     bool full_chat;
     bool skeleton_editor;
-    bool graphs;
     bool equipped_sprite_adjuster;
     
     bool can_jump;

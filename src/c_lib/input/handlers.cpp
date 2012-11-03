@@ -203,11 +203,6 @@ void toggle_awesomium()
     #endif
 }
 
-void toggle_graphs()
-{
-    input_state.graphs = (!input_state.graphs);
-}
-
 void enable_jump()
 {
     input_state.can_jump = true;
@@ -912,7 +907,7 @@ void key_down_handler(SDL_Event* event)
                         ClientState::playerAgent_state.camera_state.x,
                         ClientState::playerAgent_state.camera_state.y,
                         ClientState::playerAgent_state.camera_state.z
-                   );
+                    );
                 break;
                 
             case SDLK_g:
@@ -975,7 +970,7 @@ void key_down_handler(SDL_Event* event)
                 
             case SDLK_u:
                 #if PRODUCTION
-                if (input_state.admin_controls)
+                if (!input_state.mouse_bound || input_state.admin_controls)
                 #endif
                     toggle_mouse_bind();
                 break;
@@ -994,18 +989,9 @@ void key_down_handler(SDL_Event* event)
                 chat_client->use_global_channel();
                 break;
 
-            case SDLK_SLASH:
-                if (input_state.admin_controls)
-                    toggle_hud();
-                break;
-
             case SDLK_LEFTBRACKET:
                 if (input_state.admin_controls)
                     ClientState::playerAgent_state.toggle_camera_mode();
-                break;
-
-            case SDLK_QUOTE:
-                toggle_graphs();
                 break;
 
             case SDLK_e:
@@ -1045,6 +1031,10 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_F3:
             input_state.vbo_debug = (!input_state.vbo_debug);
+            break;
+
+        case SDLK_F4:
+            toggle_hud();
             break;
 
         case SDLK_F12:
