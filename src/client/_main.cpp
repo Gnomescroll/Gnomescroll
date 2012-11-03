@@ -380,14 +380,11 @@ void draw_tick()
 
     CHECK_GL_ERROR();   //check error before hud
 
-    /*
-        Draw Hud
-    */
-
     if (input_state.draw_hud)
     {
         // switch to hud  projection
         hud_projection();
+        glDisable(GL_DEPTH_TEST);
         
         // draw hud
         Hud::set_hud_fps_display(run_state.fps_value);
@@ -398,11 +395,9 @@ void draw_tick()
 
         if (input_state.awesomium)
         {
-            glDisable(GL_DEPTH_TEST);
             glEnable(GL_BLEND);
             Awesomium::draw();
             glDisable(GL_BLEND);
-            glEnable(GL_DEPTH_TEST);
         }
         else
         {
@@ -414,6 +409,7 @@ void draw_tick()
             t_map::draw_vbo_debug(400, 400);
 
         
+        glEnable(GL_DEPTH_TEST);
         CHECK_GL_ERROR();  //check error after hud rendering
     }
 }
