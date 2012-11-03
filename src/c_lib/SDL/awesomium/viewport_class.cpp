@@ -160,6 +160,8 @@ void js_token_failure_callback(awe_webview* webView, const awe_string* _obj_name
 
 void js_login_required_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
+    // Required token refreshing is disabled for now
+    
     //Auth::needs_login = true;
     //if (chat_client != NULL)
     //{
