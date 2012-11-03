@@ -14,6 +14,7 @@ namespace ServerState
 
     extern bool main_inited;
     extern bool signal_exit;
+    extern bool reload_settings;
 
     extern class Objects::Object* base;
 

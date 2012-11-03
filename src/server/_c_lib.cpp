@@ -182,6 +182,13 @@ void sigusr1_handler(int sig)
 {
     serializer::should_save_world = true;
 }
+
+void sigusr2_handler(int sig)
+{
+    // TODO -- reload settings file
+    printf("SIGUSR2\n");
+    ServerState::reload_settings = true;
+}
 #endif
 
 void atexit_handler()
@@ -222,10 +229,17 @@ int init_c_lib(int argc, char* argv[])
 
     // SIGUSR1  kill -s SIGUSR1 `pidof gnomescroll_server`
     struct sigaction sa_usr1;
-    sa_usr1.sa_handler = sigusr1_handler;
+    sa_usr1.sa_handler = &sigusr1_handler;
     sa_usr1.sa_flags = 0;
     sigemptyset(&sa_usr1.sa_mask);
     ret = sigaction(SIGUSR1, &sa_usr1, NULL);
+    GS_ASSERT(ret == 0);
+
+    struct sigaction sa_usr2;
+    sa_usr2.sa_handler = &sigusr2_handler;
+    sa_usr2.sa_flags = 0;
+    sigemptyset(&sa_usr2.sa_mask);
+    ret = sigaction(SIGUSR2, &sa_usr2, NULL);
     GS_ASSERT(ret == 0);
     #endif
 

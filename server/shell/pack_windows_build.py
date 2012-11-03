@@ -50,6 +50,7 @@ def run():
     settings_path = os.path.join(build_path, 'settings\\')
     ensure_dir(settings_path)
     copyfile('./settings/lua_library.lua', os.path.join(settings_path, 'lua_library.lua'))
+    copyfile('./settings/load_options.lua', os.path.join(settings_path, 'load_options.lua'))
     copyfile('./settings/localhost.lua', os.path.join(settings_path, 'localhost.lua'))
 
     # create screenshot folder

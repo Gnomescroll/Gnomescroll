@@ -10,6 +10,7 @@ cp -d -R media $f/
 mkdir $f/settings
 cp -d ./settings/production.lua $f/settings/settings.lua
 cp -d ./settings/lua_library.lua $f/settings/lua_library.lua
+cp -d ./settings/lua_library.lua $f/settings/load_options.lua
 mkdir $f/screenshot
 
 mkdir -p $f/lib/lin32/

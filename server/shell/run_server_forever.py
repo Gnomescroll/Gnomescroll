@@ -27,12 +27,13 @@ def register_signals():
             print "Waiting for server process to exit..."
             current_process.wait()
             print "Server process exited"
-        if sig != signal.SIGUSR1:
+        if sig != signal.SIGUSR1 and sig != signal.SIGUSR2:
             sys.exit(0)
     
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     signal.signal(signal.SIGUSR1, signal_handler)
+    signal.signal(signal.SIGUSR2, signal_handler)
 
 if platform.system() != "Linux":
     print "This script is only compatible with linux"

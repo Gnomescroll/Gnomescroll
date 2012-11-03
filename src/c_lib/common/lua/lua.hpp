@@ -7,7 +7,7 @@ int lua_load_block_dat();
 namespace LUA
 {
 
-void set_options_file(const char* path);
+void set_options_file(const char* lua_name);
 
 void init_options();
 void load_options();

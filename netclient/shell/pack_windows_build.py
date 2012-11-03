@@ -54,12 +54,13 @@ def run(conf):
     settings_path = os.path.join(build_path, 'settings\\')
     ensure_dir(settings_path)
     copyfile('./settings/lua_library.lua', os.path.join(settings_path, 'lua_library.lua'))
+    copyfile('./settings/load_options.lua', os.path.join(settings_path, 'load_options.lua'))
     if conf == 'production':
-    	settings_file = os.path.join(settings_path, 'settings.lua')
+        settings_file = os.path.join(settings_path, 'settings.lua')
         copyfile('./settings/production.lua', settings_file)
         subprocess.call('unix2dos %s' % (settings_file,), shell=True)
     elif conf == 'configure':
-    	settings_file = os.path.join(settings_path, 'dev.lua')
+        settings_file = os.path.join(settings_path, 'dev.lua')
         copyfile('./settings/dev.lua', settings_file)
         subprocess.call('unix2dos %s' % (settings_file,), shell=True)
         

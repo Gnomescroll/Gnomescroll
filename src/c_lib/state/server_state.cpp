@@ -16,6 +16,7 @@ namespace ServerState
 {
     bool main_inited = false;
     bool signal_exit = false;
+    bool reload_settings = false;
     
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
 

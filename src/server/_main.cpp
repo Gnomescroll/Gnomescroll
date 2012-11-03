@@ -191,6 +191,12 @@ int run()
         // update the world save, else sleep
         if (serializer::update_save_state(2) == WORLD_SAVE_IDLE)
             gs_millisleep(1);
+
+        if (ServerState::reload_settings)
+        {
+            LUA::load_options();
+            ServerState::reload_settings = false;
+        }
     }
 
     if (serializer::should_save_world)
