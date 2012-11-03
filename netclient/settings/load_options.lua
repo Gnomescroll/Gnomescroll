@@ -12,7 +12,10 @@ ffi.cdef[[
 ]]
 
 function set_options(options_file)
-    require(options_file);
+    -- require will not reload the file, but it uses LUA_PATH
+    --require(options_file)
+    options = {}
+    dofile("./settings/" .. options_file .. ".lua");
     for key,value in pairs(options) do 
         if(options_table[key] ~= nil) then
 

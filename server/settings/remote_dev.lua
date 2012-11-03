@@ -1,5 +1,3 @@
-options = {}
-
 -- server name --
 options.server_name = "server_one"
 

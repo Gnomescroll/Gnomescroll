@@ -1,5 +1,3 @@
-options = {}
-
 -- server name --
 options.server_name = "server_one"
 
@@ -16,7 +14,7 @@ options.logger = true
 options.log_chat = false
 
 -- game --
-options.pvp = true
+options.pvp = false
 options.base_move_rate = 30*60*60 --1hr
 
 -- auth --

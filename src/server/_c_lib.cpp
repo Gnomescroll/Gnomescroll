@@ -271,6 +271,12 @@ int init_c_lib(int argc, char* argv[])
     else
         printf("disabled\n");
 
+    printf("PVP ");
+    if (Options::pvp)
+        printf("enabled\n");
+    else
+        printf("disabled\n");
+
     Components::init();
     Objects::init_net_interfaces();
     Objects::init();    // Entity system

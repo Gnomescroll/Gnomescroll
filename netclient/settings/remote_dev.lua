@@ -1,7 +1,4 @@
-options = {}
-
 -- server --
-
 options.server = "174.37.26.118"
 options.port = 0
 
