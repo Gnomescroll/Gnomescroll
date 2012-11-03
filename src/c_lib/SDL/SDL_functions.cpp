@@ -70,11 +70,22 @@ int DisplayBox()
     return 0;
 }
 
-int glVersionErrorPopup()
+int glVersionErrorPopup(const char* gl_version, const char* gl_gpu)
 {
     #ifdef _WIN32
     const char title[] = "Error";
-    const char msg[] = "Your graphics card does not support OpenGL 2.0.\nPress OK to exit.";
+    const char msg_fmt[] =
+        "Your graphics card does not support OpenGL 2.1.\n"
+        "Try updating your drivers.\n"
+        "Your OpenGL Version is %s\n"
+        "Your GPU is %s\n"
+        "Press OK to exit.";
+
+    const size_t msg_len = sizeof(msg_fmt) + strlen(gl_version) + strlen(gl_gpu);
+    char* msg = (char*)malloc((msg_len+1) * sizeof(char));
+    snprintf(msg, msg_len+1, msg_fmt, gl_version, gl_gpu);
+    msg[msg_len] = '\0';
+    
     int msgboxID = MessageBox(
         NULL,
         (LPCTSTR)title,
@@ -324,17 +335,19 @@ int init_video() {
     //const char* GLVersionString = (char *) glGetString(GL_VERSION);
     //printf("OpenGL version: %s \n", GLVersionString);
 
-    printf("OpenGL: %s \n", (char*) glGetString(GL_VERSION));
-    printf("GPU: %s \n", (char*) glGetString(GL_RENDERER));
-    printf("Driver: %s \n", (char*) glGetString(GL_VENDOR));
+    const char* gl_version = (const char*)glGetString(GL_VERSION);
+    const char* gl_gpu = (const char*)glGetString(GL_RENDERER);
+    const char* gl_vendor = (const char*)glGetString(GL_VENDOR);
+    printf("OpenGL: %s \n", gl_version);
+    printf("GPU: %s \n", gl_gpu);
+    printf("Driver: %s \n", gl_vendor);
 
-    if (glewIsSupported("GL_VERSION_2_0"))
+    if (glewIsSupported("GL_VERSION_2_1"))
+        printf("OpenGL 2.1 is available\n");
+    else
     {
-        if(PRODUCTION) printf("OpenGL 2.0 Supported \n");
-    }
-    else {
-        printf("OpenGL 2.0 not supported \n");
-        glVersionErrorPopup();
+        printf("OpenGL 2.1 is not available\n");
+        glVersionErrorPopup(gl_version, gl_gpu);
     }
 
     //printf("Extentions= %s \n", (char*)glGetString(GL_EXTENSIONS));
