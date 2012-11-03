@@ -894,12 +894,12 @@ void agent_born(AgentID agent_id)
     if (energy_tanks != NULL)
     {
         #if PRODUCTION
-        int n_energy_tanks = 1;
-        if (energy_tanks->slot_count == energy_tanks->slot_max) n_energy_tanks = 0;
+        int max_energy_tanks = 1;
         #else
-        int n_energy_tanks = energy_tanks->slot_max - energy_tanks->slot_count - 1;
+        int max_energy_tanks = energy_tanks->slot_max - 1;
         #endif
-        for (int i=0; i<n_energy_tanks; i++)
+        int n_energy_tanks = energy_tanks->slot_count;
+        for (int i=0; i<max_energy_tanks-n_energy_tanks; i++)
         {
             int energy_tank_type = Item::get_item_type("energy_tank");
             GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
