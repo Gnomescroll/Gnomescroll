@@ -15,7 +15,7 @@ dont_include_this_file_in_client
 #include <t_mech/properties.hpp>
 
 
-namespace t_gen 
+namespace t_gen
 {
 
 // v is starting point of line
@@ -44,10 +44,10 @@ __attribute__((optimize("-O3")))
 void generate_node(float xs, float ys, float zs, float theta, float phi, float cave_size)
 {
     const int baseline = 0;
-    
+
     while( genrand_real1() < 0.999f )
     {
-            const static float length = 2.0f;
+            const static float length = 3.0f;
 
         /*
             float dx = length*sin(phi)*cos(theta)
@@ -63,7 +63,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             float dz = cosf(0.75f*_phi);
             dz *= dz;
 
-            float size = cave_size * ((float)genrand_real1()*1.25f + 0.5f);  // variable diameter
+            float size = cave_size * ((float)genrand_real1())*1.25f + 0.5f;  // variable diameter
 
             float xm = abs(dx) + size;
             float ym = abs(dy) + size;
@@ -71,7 +71,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 
             int xmin = xs - xm;
             int xmax = xs + xm;
-    
+
             int ymin = ys - ym;
             int ymax = ys + ym;
 
@@ -85,7 +85,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             for(int j=ymin; j<=ymax; j++)
             for(int k=zmin; k<=zmax; k++)
             {
-                if(k < baseline || k >= 128) 
+                if(k < baseline || k >= 128)
                 {
                     hits_bottom = true;
                     continue;
@@ -128,7 +128,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             if(zs < 32 && genrand_real1() < 0.20)
             {
                 if(phi > 0.25) phi -= 0.10;
-            } 
+            }
         */
     }
 
@@ -137,31 +137,55 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 
 void start_cave_generator()
 {
-    const int nodes = 300;
-    const float cave_size = 2.0f;
+    const int nodes = 300; //actually, 4 times more nodes will generate but many of the will be clustered together because of the entanglement script below
+    const float cave_size = 2.0f; //this also controls the size of stalactites and holes between caves
 
     const float baseline = 0.0f;
     const int try_limit = 10000;
-    
+
     init_genrand(rand());
 
     for (int i=0; i<nodes; i++)
     {
         float x,y,z;
         int tries = 0;
+        int cavecount; //used for better generation of ellipses and stalactites
         do
         {
             x = (float)genrand_real1()*(float)XMAX;
             y = (float)genrand_real1()*(float)YMAX;
             z = (float)genrand_real1()*((float)ZMAX-baseline) + baseline;
+            x = x+(cavecount % 100);
+            y = y+(99 - (cavecount % 100));
+            z = z+(cavecount % 3);
+            if (z>=5) //just for nicer and more round entrances
+                {
+                    z = z + cavecount;
+                    cavecount=cavecount / 2;
+                }
+            if (z>=15) //makes cave entrances rabidly drop and twist in 1 direction to stop them from getting tangled together
+                {
+                    x = x*x*y;
+                    y = y*y*x;
+                    z = z / 2;
+                }
+            if (cavecount>=100) //makes caves go further x and y instead of continuing downwards
+                {
+                    x = x + 30 + x * y;
+                    y = y + 30 + x * y;
+                }
+            cavecount++;
         } while (t_map::get(x,y,z) == 0 && tries++ < try_limit);
 
-        if (tries >= try_limit) return; 
+        if (tries >= try_limit) return;
 
         float phi = (float)genrand_real1()*2*3.14159f;
         float theta = (float)genrand_real1()*2*3.14159f;
-        
-        generate_node(x,y,z, theta, phi, cave_size);
+
+        generate_node(x,y,z, theta, phi, cave_size); //the entanglement script, helps to generate stalactites
+        generate_node(y,x,z, theta, phi, cave_size);
+        generate_node(y,y,z, theta, phi, cave_size);
+        generate_node(x,x,z, theta, phi, cave_size);
     }
 }
 
