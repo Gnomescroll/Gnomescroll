@@ -30,12 +30,18 @@ void init_world()
 {
     srand(Options::seed);
 
+    bool new_map = false;
     bool fast_map = false;
     bool corpusc = false;
-    
-    #if GS_SERIALIZER
+        
     if (strcmp(Options::map, "fast") == 0)
         fast_map = true;
+    else
+    if (strcmp(Options::map, "new") == 0)
+        new_map = true;
+    else
+    if (strcmp(Options::map, "corpusc") == 0)
+        corpusc = true;
     else
     if (serializer::load_data())
     {
@@ -47,32 +53,22 @@ void init_world()
         }
     }
     else
-    {   // TODO -- option/mechanism for forcing new map gen from command line
-        serializer::begin_new_world_version();
-        default_map_gen();
-        t_gen::populate_crystals();
-        t_map::environment_process_startup();
-        bool saved = serializer::save_data();
-        GS_ASSERT_ABORT(saved);
-        serializer::wait_for_save_complete();
-    }
-    #else
-    
-    if (strcmp(Options::map, "fast") == 0)
-        fast_map = true;
-    else
-    if (strcmp(Options::map, "corpusc") == 0)
-        corpusc = true;
-    else
-    if (!serializer::load_data())
+        new_map = true;
+
+    if (new_map)
     {
         serializer::begin_new_world_version();
         default_map_gen();
         t_gen::populate_crystals();
         t_map::environment_process_startup();
+        if (Options::serializer)
+        {
+            bool saved = serializer::save_data();
+            GS_ASSERT_ABORT(saved);
+            serializer::wait_for_save_complete();
+        }
     }
-    #endif
-
+    else
     if (corpusc)
     {
         map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
@@ -81,6 +77,7 @@ void init_world()
         //t_gen::generate_ruins();
         t_gen::add_terrain_features();
     }
+    else
     if (fast_map)
     {
         map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));

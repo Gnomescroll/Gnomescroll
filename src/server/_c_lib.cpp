@@ -49,6 +49,8 @@ dont_include_this_file_in_client
 # ifdef __GNUC__
 #  include <pthread.h>
 #  define PTHREADS_ENABLED 1
+# else
+#  define PTHREADS_ENABLED 0
 # endif
 #else
 # define PTHREADS_ENABLED 0
