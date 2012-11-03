@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
     if (argc > 1 && argv[1][0] != '-') LUA::set_options_file((char*) argv[1]);
 
     Main::init(argc, (char**) argv);
-    int ret = Main::run();
-    return ret;
+    if (!input_state.quit && !signal_exit && !_quit)
+        return Main::run();
+    return 0;
 }

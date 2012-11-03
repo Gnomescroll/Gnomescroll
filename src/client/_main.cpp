@@ -57,11 +57,6 @@ void init(int argc, char* argv[])
     Auth::begin_auth();
     wait_for_login();
     #endif
-
-    // parse ip address and connect
-    int address[4];
-    address_from_string(Options::server, address);
-    NetClient::client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 }
 
 void wait_for_login()
@@ -417,9 +412,10 @@ void draw_tick()
 
 int run()
 {
-    //t_gen::test();
-   
-    //t_gen::gen_map();
+    // parse ip address and connect
+    int address[4];
+    address_from_string(Options::server, address);
+    NetClient::client_connect_to(address[0], address[1], address[2], address[3], Options::port);
     
     using Profiling::frame_graph;
     Profiling::init_frame_graph();

@@ -6,9 +6,6 @@
 
 void address_from_string(char* ip, int address[4])
 {   // parse IP address string
-
-    printf("IP: %s\n", ip);
-
     int address_index = 0;
 
     char c;
