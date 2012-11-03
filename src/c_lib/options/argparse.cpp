@@ -281,11 +281,7 @@ void teardown_option_tables()
     {
         for (int i=0; i<MAX_OPTIONS; i++)
             if (coercion_methods[i] == &coerce_option_str)
-            {
-                printf("Index; %d\n", i);
                 free(*((char**)(option_values[i])));
-            }
-            //if (coercion_methods[i] == &coerce_option_str) printf("%s\n", *((char**)(option_values[i])));
         free(option_values);
     }
     if (option_names != NULL)

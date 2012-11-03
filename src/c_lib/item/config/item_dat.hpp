@@ -315,6 +315,11 @@ void load_item_dat()
     sprite_def(i0, 4,6);
     set_pretty_name("Powdered Regolith");
     s->max_stack_size = 64;
+    
+    item_def(IG_RESOURCE, "crushed_rock");
+    sprite_def(i0, 5,6);
+    set_pretty_name("Crushed Stone");
+    s->max_stack_size = 64;
 
     item_def(IG_RESOURCE, "iron_rod");
     sprite_def(i1, 1,7);

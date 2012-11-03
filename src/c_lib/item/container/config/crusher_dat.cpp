@@ -48,62 +48,86 @@ static void crusher_def(const char* name)
 static void register_crusher_settings()
 {    
     crusher_def("regolith");
-    d->set_max_drop_types(6);
-    
-    d->set_max_drop_amounts("powdered_regolith", 3);
-    d->add_drop("powdered_regolith", 1, 0.85f);
-    d->add_drop("powdered_regolith", 2, 0.12f);
-    d->add_drop("powdered_regolith", 3, 0.03f);
+        d->set_max_drop_types(6);
+        
+        d->set_max_drop_amounts("powdered_regolith", 3);
+        d->add_drop("powdered_regolith", 1, 0.85f);
+        d->add_drop("powdered_regolith", 2, 0.12f);
+        d->add_drop("powdered_regolith", 3, 0.03f);
 
-    d->set_max_drop_amounts("copper_ore_piece", 1);
-    d->add_drop("copper_ore_piece", 1, 0.005f);
-    
-    d->set_max_drop_amounts("iron_ore_piece", 1);
-    d->add_drop("iron_ore_piece", 1, 0.005f);
+        d->set_max_drop_amounts("copper_ore_piece", 1);
+        d->add_drop("copper_ore_piece", 1, 0.005f);
+        
+        d->set_max_drop_amounts("iron_ore_piece", 1);
+        d->add_drop("iron_ore_piece", 1, 0.005f);
 
-    d->set_max_drop_amounts("gallium_ore_piece", 1);
-    d->add_drop("gallium_ore_piece", 1, 0.0025f);
+        d->set_max_drop_amounts("gallium_ore_piece", 1);
+        d->add_drop("gallium_ore_piece", 1, 0.0025f);
 
-    d->set_max_drop_amounts("iridium_ore_piece", 1);
-    d->add_drop("iridium_ore_piece", 1, 0.0025f);
+        d->set_max_drop_amounts("iridium_ore_piece", 1);
+        d->add_drop("iridium_ore_piece", 1, 0.0025f);
 
-    d->set_max_drop_amounts("coal_nugget", 1);
-    d->add_drop("coal_nugget", 1, 0.005f);
+        d->set_max_drop_amounts("coal_nugget", 1);
+        d->add_drop("coal_nugget", 1, 0.005f);
+
+    crusher_def("rock");
+        d->set_max_drop_types(6);
+        
+        d->set_max_drop_amounts("crushed_rock", 3);
+        d->add_drop("crushed_rock", 1, 0.85f);
+        d->add_drop("crushed_rock", 2, 0.12f);
+        d->add_drop("crushed_rock", 3, 0.03f);
+
+        d->set_max_drop_amounts("copper_ore_piece", 1);
+        d->add_drop("copper_ore_piece", 1, 0.015f);
+        
+        d->set_max_drop_amounts("iron_ore_piece", 1);
+        d->add_drop("iron_ore_piece", 1, 0.015f);
+
+        d->set_max_drop_amounts("gallium_ore_piece", 1);
+        d->add_drop("gallium_ore_piece", 1, 0.01f);
+
+        d->set_max_drop_amounts("iridium_ore_piece", 1);
+        d->add_drop("iridium_ore_piece", 1, 0.01f);
+
+        d->set_max_drop_amounts("coal_nugget", 1);
+        d->add_drop("coal_nugget", 1, 0.01f);
+
 
     crusher_def("iron_rod");
-    d->set_max_drop_types(1);
-    d->set_max_drop_amounts("iron_bar", 1);
-    d->add_drop("iron_bar", 1, 1.0f);
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("iron_bar", 1);
+        d->add_drop("iron_bar", 1, 1.0f);
 
     crusher_def("iron_star");
-    d->set_max_drop_types(1);
-    d->set_max_drop_amounts("iron_bar", 1);
-    d->add_drop("iron_bar", 1, 1.0f);
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("iron_bar", 1);
+        d->add_drop("iron_bar", 1, 1.0f);
     
     crusher_def("iron_blade");
-    d->set_max_drop_types(1);
-    d->set_max_drop_amounts("iron_bar", 1);
-    d->add_drop("iron_bar", 1, 1.0f);
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("iron_bar", 1);
+        d->add_drop("iron_bar", 1, 1.0f);
 
     crusher_def("copper_helmet");
-    d->set_max_drop_types(1);
-    d->set_max_drop_amounts("copper_bar", 1);
-    d->add_drop("copper_bar", 1, 1.0f);
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("copper_bar", 1);
+        d->add_drop("copper_bar", 1, 1.0f);
 
     crusher_def("iron_helmet");
-    d->set_max_drop_types(1);
-    d->set_max_drop_amounts("iron_bar", 1);
-    d->add_drop("iron_bar", 1, 1.0f);
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("iron_bar", 1);
+        d->add_drop("iron_bar", 1, 1.0f);
 
     crusher_def("gallium_helmet");
-    d->set_max_drop_types(1);
-    d->set_max_drop_amounts("gallium_bar", 1);
-    d->add_drop("gallium_bar", 1, 1.0f);
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("gallium_bar", 1);
+        d->add_drop("gallium_bar", 1, 1.0f);
 
     crusher_def("iridium_helmet");
-    d->set_max_drop_types(1);
-    d->set_max_drop_amounts("iridium_bar", 1);
-    d->add_drop("iridium_bar", 1, 1.0f);    
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("iridium_bar", 1);
+        d->add_drop("iridium_bar", 1, 1.0f);    
 }
 
 void validate_crusher_settings()
