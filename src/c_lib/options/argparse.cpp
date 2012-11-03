@@ -9,11 +9,6 @@
 namespace Options
 {
 
-/* Constants */
-
-static const int ARG_STRING_MAX = 127;
-static const int ARG_NAME_MAX = 127;
-
 /* Globals */
 
 // table of option values
@@ -24,27 +19,6 @@ static char** option_names = NULL;
 // table of functions that coerce a string into correct type
 typedef void (*coercion)(int, char*);
 static coercion* coercion_methods = NULL;
-
-/* Init/Teardown */
-
-void init_option_tables()
-{
-    option_values = (void**)calloc(MAX_OPTIONS, sizeof(void*));
-    option_names = (char**)calloc(MAX_OPTIONS, sizeof(char*));
-    coercion_methods = (coercion*)calloc(MAX_OPTIONS, sizeof(coercion));
-}
-
-void teardown_option_tables()
-{
-    if (option_values != NULL) free(option_values);
-    if (option_names != NULL)
-    {
-        for (int i=0; i<MAX_OPTIONS; i++)
-            if (option_names[i] != NULL) free(option_names[i]);
-        free(option_names);
-    }
-    if (coercion_methods != NULL) free(coercion_methods);
-}
 
 /* Table lookup */
 
@@ -69,7 +43,9 @@ static int set_option_from_str(char* name, char* val)
 
 static void set_option_float(int key, float opt)
 {
-    *((float*)(option_values[key])) = opt;
+    float* dest = (float*)malloc(sizeof(float));
+    *dest = opt;
+    *((float**)(option_values[key])) = dest;
 }
 
 static void set_option_uint(int key, unsigned int opt)
@@ -85,7 +61,8 @@ static void set_option_int(int key, int opt)
 static void set_option_str(int key, char* opt)
 {
     char* dest = *((char**)(option_values[key]));
-    strcpy(dest, opt);
+    strncpy(dest, opt, ARG_STRING_MAX+1);
+    dest[ARG_STRING_MAX] = '\0';
 }
 
 static void set_option_bool(int key, bool opt)
@@ -124,7 +101,7 @@ static void coerce_option_int(int key, char* val)
 static void coerce_option_bool(int key, char* val)
 {
     bool opt = true;
-    if (!strcmp((char*)"false", val) || !strcmp((char*)"0", val))
+    if (!strcmp("false", val) || !strcmp("0", val))
         opt = false;
     set_option_bool(key, opt);
 }
@@ -139,8 +116,8 @@ static void coerce_option_str(int key, char* val)
 static void add_option_name(int index, const char* name)
 {
     unsigned int len = strlen(name);
-    GS_ASSERT(len <= (unsigned int)ARG_STRING_MAX);
-    if (len > (unsigned int)ARG_STRING_MAX) len = ARG_STRING_MAX;
+    GS_ASSERT(len <= (unsigned int)ARG_NAME_MAX);
+    if (len > (unsigned int)ARG_NAME_MAX) len = ARG_NAME_MAX;
     option_names[n_options] = (char*)calloc(len+1, sizeof(char));
     strncpy(option_names[n_options], name, len);
 }
@@ -188,12 +165,17 @@ void register_bool_option(const char* key, bool* val)
     n_options++;
 }
 
-void register_string_option(const char* key, char** val)
+void register_string_option(const char* key, char** addr, const char* val)
 {
+    *addr = (char*)calloc(ARG_STRING_MAX+1, sizeof(char));
+    
     GS_ASSERT(n_options < MAX_OPTIONS);
+
+    strncpy(*addr, val, ARG_STRING_MAX+1);
+    (*addr)[ARG_STRING_MAX] = '\0';
     
     add_option_name(n_options, key);
-    option_values[n_options] = (void*)val;
+    option_values[n_options] = (void*)addr;
     coercion_methods[n_options] = &coerce_option_str;
 
     n_options++;
@@ -224,7 +206,7 @@ int parse_args(int argc, char* argv[])
             continue;
         }
 
-        int j=0,k=0,m=0;
+        size_t j=0,k=0,m=0;
         char c;
         while ((c = str[j++]) != '\0' && c == '-'); // skip all -
         j--;
@@ -282,6 +264,37 @@ int parse_args(int argc, char* argv[])
         n++;
     }
     return n;
+}
+
+/* Init/Teardown */
+
+void init_option_tables()
+{
+    option_values = (void**)calloc(MAX_OPTIONS, sizeof(void*));
+    option_names = (char**)calloc(MAX_OPTIONS, sizeof(char*));
+    coercion_methods = (coercion*)calloc(MAX_OPTIONS, sizeof(coercion));
+}
+
+void teardown_option_tables()
+{
+    if (option_values != NULL)
+    {
+        for (int i=0; i<MAX_OPTIONS; i++)
+            if (coercion_methods[i] == &coerce_option_str)
+            {
+                printf("Index; %d\n", i);
+                free(*((char**)(option_values[i])));
+            }
+            //if (coercion_methods[i] == &coerce_option_str) printf("%s\n", *((char**)(option_values[i])));
+        free(option_values);
+    }
+    if (option_names != NULL)
+    {
+        for (int i=0; i<MAX_OPTIONS; i++)
+            if (option_names[i] != NULL) free(option_names[i]);
+        free(option_names);
+    }
+    if (coercion_methods != NULL) free(coercion_methods);
 }
 
 }   // Options

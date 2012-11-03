@@ -97,7 +97,7 @@ void init(int argc, char* argv[])
 
     init_world();
     
-    int address[4];
+    int address[4] = {0};
     address_from_string(Options::ip_address, address);
     NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
 

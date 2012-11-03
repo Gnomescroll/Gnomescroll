@@ -107,28 +107,30 @@ int run_lua_test()
 namespace LUA
 {
 
-
 lua_State* LUA_options_table = NULL;
 
 #if DC_CLIENT
-    #if PRODUCTION
-        const char* default_options_file = "./settings/settings.lua";
-    #else
-        const char* default_options_file = "./settings/dev.lua";
-    #endif
+# if PRODUCTION
+const char* default_options_file = "./settings/settings.lua";
+# else
+const char* default_options_file = "./settings/dev.lua";
+# endif
 #endif
+
 #if DC_SERVER
 const char* default_options_file = "./settings/localhost.lua";
 #endif
 
 char* options_file = NULL;
 
-void set_options_file(char* path)
+void set_options_file(const char* path)
 {
-    GS_ASSERT(path != NULL);
-    if (path == NULL) return;
-    if (options_file != NULL)
-        free(options_file);
+    if (!file_exists(path))
+    {
+        printf("Options file %s does not exist.\n", path);
+        GS_ABORT();
+    }
+    if (options_file != NULL) free(options_file);
     options_file = (char*)malloc(sizeof(char) * (strlen(path) + 1));
     strcpy(options_file, path);
 }
@@ -425,7 +427,8 @@ extern "C"
             printf("LUA_set_string_option: error \n");
             GS_ABORT();
         }
-        *LUA::LUA_string_option_table[option_id] = value;
+        strncpy(*(LUA::LUA_string_option_table[option_id]), value, ARG_STRING_MAX+1);
+        (*(LUA::LUA_string_option_table[option_id]))[ARG_STRING_MAX] = '\0';
     }
 
 }

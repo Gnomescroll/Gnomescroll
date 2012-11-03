@@ -195,11 +195,39 @@ void init()
     
     Sound::init_wav_buffers();
 
-    // open device (enumerate before this) 
+    const char* devices = (const char*)alcGetString(NULL, ALC_DEVICE_SPECIFIER);
+    const char* default_device = (const char*)alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+    if (devices != NULL)
+    {
+        printf("================\n");
+        printf("If you want to use a specific sound device, copy one of these strings and run the program with --sound_device=\"device name\"\n");
+        printf("\n");
+        printf("Available OpenAL devices:\n");
+        const char* device_name = devices;
+        size_t len = strlen(device_name);
+        while (len)
+        {
+            printf("%s\n", device_name);
+            device_name = &device_name[len+1];
+            len = strlen(device_name);
+        }
+        printf("\n");
+        printf("Default device is:\n");
+        printf("%s\n", default_device);
+        printf("================\n");
+    }
+
+    // open device
     if (Options::sound_device[0] != '\0')
+    {
+        printf("Using device: %s\n", Options::sound_device);
         device = alcOpenDevice(Options::sound_device);
+    }
     else
+    {
+        printf("Using device: %s\n", default_device);
         device = alcOpenDevice(NULL); // select the "preferred device"
+    }
 
     if (device == NULL)
     {

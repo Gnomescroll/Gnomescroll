@@ -2,6 +2,9 @@
 
 #include <common/defines.h>
 
+static const size_t ARG_STRING_MAX = 127;
+static const size_t ARG_NAME_MAX = 127;
+
 /* Header declarations */
 
 #define OPT_INT_HEADER(NAME)\
@@ -33,8 +36,8 @@ bool NAME = DEFAULT;
 #define OPT_FLOAT(NAME, DEFAULT)\
 float NAME = DEFAULT;
 
-#define OPT_STRING(NAME, DEFAULT)\
-char* NAME = (char*) DEFAULT;
+#define OPT_STRING(NAME)\
+char* NAME = NULL;
 
 /* Registrations */
 
@@ -54,9 +57,9 @@ register_bool_option( #NAME, & NAME );
 LUA::register_float_option( #NAME, & NAME );\
 register_float_option( #NAME, & NAME );
 
-#define OPT_STRING_REGISTER(NAME)\
-LUA::register_string_option( #NAME, & NAME );\
-register_string_option( #NAME, & NAME );
+#define OPT_STRING_REGISTER(NAME, DEFAULT)\
+register_string_option( #NAME, &NAME, DEFAULT );\
+LUA::register_string_option( #NAME, &NAME );
 
 /* Value restrictions */
 

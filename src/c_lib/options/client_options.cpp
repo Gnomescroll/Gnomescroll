@@ -13,7 +13,7 @@ namespace Options
 {
 
 /* Network */
-OPT_STRING(server, "127.0.0.1")
+OPT_STRING(server)
 OPT_INT(port, 4096)
 
 /* Window / Camera */
@@ -34,13 +34,13 @@ OPT_INT(system_message_g, 255)
 OPT_INT(system_message_b, 50)
 
 /* Font */
-OPT_STRING(font, "inc_18_b.fnt")
+OPT_STRING(font)
 
 /* Sound */
 OPT_BOOL(sound, true)
 OPT_INT(sfx, 100)
 OPT_INT(music, 100)
-OPT_STRING(sound_device, "")
+OPT_STRING(sound_device)
 
 /* Graphics */
 OPT_INT(animation_level, 3)
@@ -57,7 +57,7 @@ OPT_BOOL(show_tips, true);
 void register_options()
 {
     /* Network */
-    OPT_STRING_REGISTER(server)
+    OPT_STRING_REGISTER(server, "127.0.0.1")
     OPT_INT_REGISTER(port)
 
     /* Window / Camera */
@@ -78,13 +78,13 @@ void register_options()
     OPT_INT_REGISTER(system_message_b)
 
     /* Font */
-    OPT_STRING_REGISTER(font)
+    OPT_STRING_REGISTER(font, "inc_18_b.fnt")
 
     /* Sound */
     OPT_BOOL_REGISTER(sound)
     OPT_INT_REGISTER(sfx)
     OPT_INT_REGISTER(music)
-    OPT_STRING_REGISTER(sound_device)
+    OPT_STRING_REGISTER(sound_device, "")
 
     /* Graphics */
     OPT_INT_REGISTER(animation_level)

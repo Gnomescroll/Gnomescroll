@@ -13,14 +13,14 @@ namespace Options
 {
 
 /* General */
-OPT_STRING(server_name, "gnomescroll_one")
+OPT_STRING(server_name)
 
 /* Network */
-OPT_STRING(ip_address, "0.0.0.0")
+OPT_STRING(ip_address)
 OPT_INT(port, 4096)
 
 /* Map */
-OPT_STRING(map, "natural_terrain")
+OPT_STRING(map)
 OPT_UINT(seed, 8007513)
 
 /* Logging */
@@ -41,14 +41,14 @@ OPT_UINT(redis_database, 2);
 void register_options()
 {
     /* General */
-    OPT_STRING_REGISTER(server_name)
+    OPT_STRING_REGISTER(server_name, "gnomescroll_one")
 
     /* Network */
-    OPT_STRING_REGISTER(ip_address)
+    OPT_STRING_REGISTER(ip_address, "0.0.0.0")
     OPT_INT_REGISTER(port)
 
     /* Map */
-    OPT_STRING_REGISTER(map)
+    OPT_STRING_REGISTER(map, "")
     OPT_UINT_REGISTER(seed)
 
     /* Logging */
