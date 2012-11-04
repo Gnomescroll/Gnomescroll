@@ -247,6 +247,8 @@ void toggle_input_mode()
     switch (input_state.input_mode)
     {
         case INPUT_STATE_AGENT:
+            Toolbelt::left_trigger_up_event(); // clear any trigger events
+            Toolbelt::right_trigger_up_event(); // clear any trigger events
             input_state.input_mode = INPUT_STATE_CAMERA;
             break;
         case INPUT_STATE_CAMERA:
