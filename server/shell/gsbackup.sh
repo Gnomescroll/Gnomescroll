@@ -13,4 +13,4 @@ fi
 
 mkdir -p /usr/freespace/gsbackups/
 date=`date +%m-%d-%Y-%R`
-tar cvzf /usr/freespace/gsbackups/${latest}_${date}.tar.gz ${datapath}/${latest}
+tar cvzf /usr/freespace/gsbackups/${latest}_${date}.tar.gz ${datapath}/${latest} --exclude="*.bak" --exclude="*.tmp"
