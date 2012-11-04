@@ -133,9 +133,15 @@ void block_damage_def(CubeMaterial material, int damage)
     GS_ASSERT_ABORT(s != NULL);
     if (s == NULL) return;
     GS_ASSERT_ABORT(damage >= 0 && damage <= MAX_CUBE_DAMAGE);
+    bool set_any = false;
     for (int i=0; i<MAX_CUBES; i++)
         if (t_map::isInUse((CubeID)i) && t_map::get_cube_material((CubeID)i) == material)
+        {
             s->block_damage[i] = damage;
+            set_any = true;
+        }
+    if (!set_any) printf("block_damage_def error: No cubes found with materal %d\n", material);
+    GS_ASSERT_ABORT(set_any);
 }
 
 void block_damage_def(int damage)
