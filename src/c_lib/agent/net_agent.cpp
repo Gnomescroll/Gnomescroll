@@ -37,10 +37,7 @@ inline void PlayerAgent_Snapshot::handle()
 
 inline void SendClientId_StoC::handle()
 {
-    NetClient::Server.client_id = (ClientID)this->client_id;
-    class Agent* you = ClientState::playerAgent_state.you();
-    GS_ASSERT(you != NULL);
-    if (you != NULL) you->client_id = (ClientID)client_id;
+    NetClient::Server.client_id = (ClientID)this->client_id;    
 }
 
 inline void Agent_state_message::handle()

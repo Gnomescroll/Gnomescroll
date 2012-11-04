@@ -30,6 +30,7 @@ options.system_message_b = 50
 options.sound = true
 options.sfx = 50
 options.music = 100
+options.sound_device = ""   -- leave empty to use default. check stdout for a list of available devices
 
 -- graphics --
 options.view_distance = 128;    -- capped at 128
