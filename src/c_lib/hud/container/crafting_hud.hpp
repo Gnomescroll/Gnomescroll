@@ -82,8 +82,8 @@ class CraftingUI : public UIElement
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stacks[i];
-            t->set_format((char*) "%d");
-            t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+            t->set_format("%d");
+            t->set_format_extra_length(11 + 1 - 2);
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
@@ -93,13 +93,13 @@ class CraftingUI : public UIElement
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->output_stacks[i];
-            t->set_format((char*) "%d");
-            t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+            t->set_format("%d");
+            t->set_format_extra_length(11 + 1 - 2);
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
 
-        this->name.set_text((char*)"Crafting Bench");
+        this->name.set_text("Crafting Bench");
     }
 
     void set_container_type(ItemContainerType container_type)
@@ -442,7 +442,6 @@ void CraftingUI::draw()
         if (stack <= 1) continue;
 
         GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
-        if (count_digits(stack) >= STACK_COUNT_MAX_LENGTH) continue;
 
         text = &this->stacks[slot];
         text->update_formatted_string(1, stack);
@@ -466,7 +465,6 @@ void CraftingUI::draw()
         if (stack <= 1) continue;
 
         GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
-        if (count_digits(stack) >= STACK_COUNT_MAX_LENGTH) continue;
 
         text = &this->output_stacks[slot];
         text->update_formatted_string(1, stack);

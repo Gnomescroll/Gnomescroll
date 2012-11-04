@@ -42,7 +42,7 @@ class EnergyTanksUI : public UIElement
     {
         this->xdim = ItemContainer::get_container_xdim(AGENT_ENERGY_TANKS);
         this->ydim = ItemContainer::get_container_ydim(AGENT_ENERGY_TANKS);
-        this->name.set_text((char*)"Energy Tanks");
+        this->name.set_text("Energy Tanks");
     }
 
     EnergyTanksUI() : xdim(0), ydim(0), selected_slot(0)

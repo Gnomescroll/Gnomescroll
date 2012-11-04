@@ -254,11 +254,11 @@ void Text::set_format_extra_length(int size)
 
 void Text::update_formatted_string(int n_args, ...)
 {
-    int len = this->format_len + this->formatted_extra_len + 1;
+    size_t len = this->format_len + this->formatted_extra_len + 1;
     GS_ASSERT(len > 0);
-    if (len > (int)this->text_len)
+    if (len > this->text_len)
     {
-        unsigned int new_len = this->text_len;
+        size_t new_len = this->text_len;
         char* new_text = grow_string(len, this->text, &new_len);
         if (new_text != NULL)
         {
@@ -266,10 +266,14 @@ void Text::update_formatted_string(int n_args, ...)
             this->text_len = new_len;
         }
     }
+    if (this->text == NULL || this->text_len <= 0) return;
+    
     va_list args;
     va_start(args, n_args);
-    vsprintf(this->text, this->format, args);
+    int wrote = vsnprintf(this->text, this->text_len, this->format, args);
     va_end(args);
+    GS_ASSERT(wrote > 0 && (size_t)wrote < this->text_len);
+    this->text[this->text_len-1] = '\0';
 }
 
 void Text::set_color(unsigned char r, unsigned char g, unsigned char b)

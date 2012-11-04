@@ -74,14 +74,14 @@ class AgentSynthesizerUI : public UIElement
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->prices[i];
-            t->set_format((char*) "%d");
+            t->set_format("%d");
             t->set_format_extra_length(SYNTHESIZER_ITEM_COST_MAX_STRLEN + 1 - 2);
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
 
-        coin_stack.set_format((char*) "%d");
-        coin_stack.set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+        coin_stack.set_format("%d");
+        coin_stack.set_format_extra_length(11 + 1 - 2);
         coin_stack.set_color(255,255,255,255);
         coin_stack.set_depth(-0.1f);
     }
@@ -95,7 +95,7 @@ class AgentSynthesizerUI : public UIElement
         shopping_xdim(0), shopping_ydim(0),
         render_width(0.0f), render_height(0.0f), prices(NULL)
     {
-        this->name.set_text((char*)"Synthesizer");  
+        this->name.set_text("Synthesizer");  
     }
 
     ~AgentSynthesizerUI()
@@ -401,7 +401,7 @@ void AgentSynthesizerUI::draw()
         GS_ASSERT(slot < shopping_xdim*shopping_ydim);
         HudText::Text* text = &this->prices[slot];
         if (cost <= 0)
-            text->set_text((char*)"???");
+            text->set_text("???");
         else
             text->update_formatted_string(1, cost);
 

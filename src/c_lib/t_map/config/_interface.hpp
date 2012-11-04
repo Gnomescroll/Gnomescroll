@@ -50,6 +50,7 @@ static void cube_def(CubeID id, CubeType type, const char* name, CubeMaterial ma
     p->name[DAT_NAME_MAX_LENGTH] = '\0';
     p->max_damage = DEFAULT_MAX_DAMAGE;
     p->type = type;
+    p->material = material;
     
     switch (type)
     {

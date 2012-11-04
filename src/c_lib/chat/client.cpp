@@ -69,10 +69,8 @@ void ChatClientChannel::add_message(ChatMessage* m)
         
     if (history_size == CHAT_CLIENT_MESSAGE_HISTORY_MAX)
     {
+        GS_ASSERT(this->tail != NULL);
         // remove back
-        if (this->tail == NULL)
-            printlog(Log::CHAT, Log::Warning, "tail is NULL but history full\n");
-            
         ChatMessageHistoryObject* delete_me = this->tail;
         this->tail = delete_me->next;
         this->tail->prev = NULL;
@@ -106,8 +104,7 @@ void ChatClientChannel::clear_history()
         delete delete_me;
         freed++;
     }
-    if (freed != history_size)
-        printlog(Log::CHAT, Log::Warning, "freed %d but history_size=%d\n", freed, history_size);
+    GS_ASSERT(freed == history_size);
     this->history = NULL;
 }
 
@@ -154,8 +151,7 @@ void ChatInput::add_to_history(const char *s)
 
     if (history_size >= CHAT_CLIENT_INPUT_HISTORY_MAX)
     {   // remove tail
-        if (this->history_tail == NULL)
-            printlog(Log::CHAT, Log::Warning, "tail is NULL but history full\n");
+        GS_ASSERT(this->history_tail != NULL);
 
         ChatInputHistoryObject* delete_me = this->history_tail;
         this->history_tail = delete_me->next;
@@ -299,7 +295,7 @@ void ChatInput::history_older()
 }
 
 bool ChatInput::route_command()
-{
+{   // return false if the buffer doesn't start with command syntax; else return true (whether the command is valid/recognized or not) 
     if (!buffer_len) return false;
     if (this->buffer[0] != '/' || this->buffer[1] == '\0' || isspace(this->buffer[1]))
         return false;
@@ -310,14 +306,14 @@ bool ChatInput::route_command()
     while((c = this->buffer[i++]) != '\0' && !isspace(c))   // advance cursor past command
         cmd[i-2] = c;
 
-    if (i == 2) return false;
+    if (i == 2) return true;
 
     while((c = buffer[i++]) != '\0' && isspace(c)); // advance cursor to first non-space char
     i -= 1;
     
     //if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
     //{
-        //if (buffer_len <= (int)(strlen((char*)"/name "))) return false;
+        //if (buffer_len <= (int)(strlen((char*)"/name "))) return true;
         //char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
         //int j = 0;
         //while ((c = buffer[i++]) != '\0' && !isspace(c))
@@ -362,7 +358,7 @@ bool ChatInput::route_command()
         if (!valid)
         {
             chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
-            return false;
+            return true;
         }
         
         char buf[3+1] = {'\0'};
@@ -408,7 +404,7 @@ bool ChatInput::route_command()
         if (!valid)
         {
             chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
-            return false;
+            return true;
         }
 
         class Agent* you = ClientState::playerAgent_state.you();
@@ -434,7 +430,7 @@ bool ChatInput::route_command()
         return true;
     }
 
-    return false;
+    return true;
 }
 
 ChatInput::ChatInput() :
@@ -466,20 +462,15 @@ void ChatClient::received_message(int channel, ClientID sender, const char* payl
     // get channel
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
-        chan = this->channels[i];
-        if (chan == NULL)
-            continue;
-        if (chan->id == channel)
+        if (this->channels[i] != NULL && this->channels[i]->id == channel)
+        {
+            chan = this->channels[i];
             break;
-        chan = NULL;
+        }
     }
 
     GS_ASSERT(chan != NULL);
-    if (chan == NULL)
-    {
-        printlog(Log::CHAT, Log::Always, "unknown message channel %d\n", channel);
-        return;
-    }
+    if (chan == NULL) return;
 
     // create message
     ChatMessage* m = chat_message_list->create();

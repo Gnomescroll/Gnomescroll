@@ -93,13 +93,23 @@ class ItemAttribute
         for (int i=0; i<MAX_CUBES; i++)
         {
             if (!t_map::isInUse((CubeID)i)) continue;
-            if (t_map::get_cube_material((CubeID)i) == CUBE_MATERIAL_DIRT)
-                this->block_damage[i] = 2;
-            else
-            if (t_map::get_cube_material((CubeID)i) == CUBE_MATERIAL_DECORATION)
-                this->block_damage[i] = 4;
-            else
-                this->block_damage[i] = 1;
+            int dmg = 1;
+            switch (t_map::get_cube_material((CubeID)i))
+            {
+                case CUBE_MATERIAL_DIRT:
+                    dmg = 2;
+                    break;
+                case CUBE_MATERIAL_STONE:
+                    dmg = 1;
+                    break;
+                case CUBE_MATERIAL_DECORATION:
+                    dmg = 4;
+                    break;
+                default:
+                    dmg = 1;
+                    break;
+            }
+            this->block_damage[i] = dmg;
         }
         
         object_damage = 0;
