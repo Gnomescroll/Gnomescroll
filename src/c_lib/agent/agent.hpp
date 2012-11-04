@@ -19,21 +19,23 @@ class AgentState
     public:
         int seq;
         float theta;
-        float phi;        
+        float phi;
         float x,y,z;
         float vx,vy,vz;
-        
+        float ax,ay,az;
+
     AgentState() :
         seq(-1),
         theta(0), phi(0),
         x(0), y(0), z(0),
-        vx(0), vy(0), vz(0)
+        vx(0), vy(0), vz(0),
+        ax(0), ay(0), az(0)
     {}
-    
+
     struct Vec3 forward_vector();
-    
+
     struct Vec3 get_position() { return vec3_init(x,y,z); }
-    
+
     void set_position(struct Vec3 p)
     {
         ASSERT_BOXED_POSITION(p);
@@ -54,7 +56,7 @@ struct Agent_control_state
     //int id;
     int seq;
     float theta;
-    float phi;        
+    float phi;
     uint32_t cs;
 
 };
@@ -83,20 +85,20 @@ class Agent
         void get_spawn_point(struct Vec3* spawn);
         #endif
 
-    public:    
+    public:
 
         AgentID id;
         ClientID client_id;
 
         ObjectType type;
-        
+
         struct Agent_collision_box box;
 
         class Agent_status status;
         //class Agent_weapons weapons;
 
         class Voxel_model* vox;
-        
+
         #if DC_CLIENT
         Agent_event event;
         bool initial_teleport;  // record first teleport from server
@@ -184,7 +186,7 @@ class Agent
 
         float camera_z();
         Vec3 camera_position();
-        
+
         class Voxel_volume* get_arm();
         Vec3 arm_center();
         Vec3 arm_forward();
