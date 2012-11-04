@@ -485,4 +485,11 @@ int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], float*
     return get_cube_side_from_side_array(s);
 }
 
-
+#if !PRODUCTION
+void PlayerAgent_state::teleport_to(struct Vec3 p)
+{
+    teleport_me_CtoS msg;
+    msg.position = p;
+    msg.send();
+}
+#endif

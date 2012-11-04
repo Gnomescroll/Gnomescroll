@@ -777,8 +777,17 @@ void camera_key_down_handler(SDL_Event* event)
     switch (event->key.keysym.sym)
     {
         case SDLK_p:    // jump to agent camera
-            free_camera->copy_state_from(agent_camera);
+            if (free_camera != NULL && agent_camera != NULL)
+                free_camera->copy_state_from(agent_camera);
             break;
+
+        #if !PRODUCTION
+        case SDLK_j:    // teleport our agent to the free camera
+            if (free_camera != NULL)
+                ClientState::playerAgent_state.teleport_to(free_camera->get_position());
+            break;
+        #endif
+            
         default: break;
     }
 }
@@ -1048,15 +1057,6 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_F12:
             toggle_admin_controls();
-            break;
-
-        case SDLK_LALT:
-        case SDLK_RALT:
-            if (input_state.admin_controls)
-            {
-                set_mouse_bind(false);
-                printf("Unbound mouse with alt\n");
-            }
             break;
 
         case SDLK_BACKQUOTE:

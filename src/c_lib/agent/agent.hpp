@@ -128,6 +128,7 @@ class Agent
         void set_angles(float theta, float phi);
         void teleport(float x,float y,float z); //should only be used on server
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
+        void teleport(struct Vec3 p) { this->teleport(p.x, p.y, p.z); }
 
         int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
         int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);    // returns side, as integer. side<0 if failure

@@ -183,6 +183,7 @@ void RegisterMessages()
     // auth
     Auth::init_packets();
 
+    teleport_me_CtoS::register_server_packet();
 }
 
 }

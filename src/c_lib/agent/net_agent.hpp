@@ -791,3 +791,14 @@ class agent_color_StoC: public FixedSizeReliableNetPacketToClient<agent_color_St
     inline void handle();
 };
 
+class teleport_me_CtoS: public FixedSizeReliableNetPacketToServer<teleport_me_CtoS>
+{
+    public:
+        struct Vec3 position;
+
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_vec3(&position, buff, buff_n, pack); 
+    }
+    inline void handle();
+};

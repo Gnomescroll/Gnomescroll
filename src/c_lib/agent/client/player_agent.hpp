@@ -108,6 +108,10 @@ class PlayerAgent_state
         int* nearest_open_block(const float max_dist, const int z_low, const int z_high);
         int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
         int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);    // returns side, as integer. side<0 if failure
+
+        #if !PRODUCTION
+        void teleport_to(struct Vec3 p);
+        #endif
         
         PlayerAgent_state();
         ~PlayerAgent_state();

@@ -464,6 +464,7 @@ inline void agent_camera_state_CtoS::handle() {}
 inline void version_CtoS::handle(){}
 inline void killme_CtoS::handle() {}
 inline void colorme_CtoS::handle() {}
+inline void teleport_me_CtoS::handle() {}
 #endif
 
 // Client -> Server handlers
@@ -1010,5 +1011,18 @@ inline void agent_camera_state_CtoS::handle()
     a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;
 }
+
+inline void teleport_me_CtoS::handle()
+{
+    #if PRODUCTION
+    GS_ASSERT(false);
+    return;
+    #endif
+
+    Agent* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    a->teleport(this->position);
+}
+
 
 #endif
