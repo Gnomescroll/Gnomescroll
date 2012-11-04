@@ -12,13 +12,13 @@ ChatServer* chat_server = NULL;
 
 void init_chat_server()
 {
+    GS_ASSERT(chat_server == NULL);
     chat_server = new ChatServer;
 }
 
 void teardown_chat_server()
 {
-    if (chat_server != NULL)
-        delete chat_server;
+    if (chat_server != NULL) delete chat_server;
 }
 
 void add_player_to_chat(ClientID client_id)
