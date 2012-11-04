@@ -156,11 +156,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
     const float AGENT_MASS = 1.0f; //the agents mass, will become a variable dependent on the amount of stuff a player carries
-    const float deaccel = 2.0f; //the slowing down of the player so that his speed doesn't go crazy fast
-    float prevspeed=0.0f; //used for acceleration so that there are no undefined variables, as there would be in float speed = AGENT_SPEED / tr + speed / AGENT_MASS / deaccel;
+    const float SPEEDUP = 2.0f; //makes acceleration more noticeable
 
-    float speed = AGENT_SPEED / tr + (prevspeed / AGENT_MASS) / deaccel;
-    prevspeed=speed + 1;
+    float speed = AGENT_SPEED / tr;
         
     float height = box.b_height;
     if (crouch)
@@ -220,8 +218,10 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         CS_vy *= speed*len;
     }
 
-    as.vx = CS_vx;
-    as.vy = CS_vy;
+    as.vx = CS_vx + as.ax * speed / 30 / AGENT_MASS;
+    as.vy = CS_vy + as.ay * speed / 30 / AGENT_MASS;
+    as.ax = as.vx / 30 * SPEEDUP;
+    as.ay = as.vy / 30 * SPEEDUP;
 
     // need distance from ground
     const float max_jetpack_height = 8.0f;
