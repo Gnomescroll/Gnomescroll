@@ -12,13 +12,13 @@ options.width = 1280
 options.height = 720
 options.fov = 85
 
-
 --1280x720
 
 -- mouse --
 options.sensitivity = 1000
 options.camera_speed = 0.6
 options.invert_mouse = false
+options.mouse_bound = false
 
 -- hud setting --
 options.ping_update_interval = 250

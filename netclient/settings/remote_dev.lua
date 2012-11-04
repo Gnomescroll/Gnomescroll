@@ -12,6 +12,7 @@ options.fov = 85
 options.sensitivity = 1000
 options.camera_speed = 0.6
 options.invert_mouse = false
+options.mouse_bound = false
 
 -- hud setting --
 options.ping_update_interval = 250

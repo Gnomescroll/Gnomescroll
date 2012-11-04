@@ -274,12 +274,12 @@ void toggle_camera_mode()
 
 void init_input_state()
 {   // set input_state defaults
+
+    input_state.mouse_bound = Options::mouse_bound;
     #if PRODUCTION
-    input_state.mouse_bound = true;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
     #else
-    input_state.mouse_bound = false;
     input_state.input_mode = INPUT_STATE_CAMERA;
     input_state.camera_mode = INPUT_STATE_CAMERA;
     #endif

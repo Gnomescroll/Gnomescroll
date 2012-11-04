@@ -12,6 +12,7 @@ options.fov = 85
 options.sensitivity = 1000  -- logarithmic scale
 options.camera_speed = 0.6
 options.invert_mouse = false
+options.mouse_bound = true
 
 -- hud setting --
 options.system_message_r = 255

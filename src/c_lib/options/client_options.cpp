@@ -26,6 +26,7 @@ OPT_FLOAT(fov, 85.0f)
 OPT_FLOAT(sensitivity, 70.0f)
 OPT_FLOAT(camera_speed, 0.6f)
 OPT_BOOL(invert_mouse, false)
+OPT_BOOL(mouse_bound, true)
 
 /* HUD / Info */
 OPT_INT(ping_update_interval, 500)
@@ -70,6 +71,7 @@ void register_options()
     OPT_FLOAT_REGISTER(sensitivity)
     OPT_FLOAT_REGISTER(camera_speed)
     OPT_BOOL_REGISTER(invert_mouse)
+    OPT_BOOL_REGISTER(mouse_bound)
 
     /* HUD / Info */
     OPT_INT_REGISTER(ping_update_interval)

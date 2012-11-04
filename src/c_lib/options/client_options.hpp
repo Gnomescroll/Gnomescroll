@@ -23,6 +23,7 @@ OPT_FLOAT_HEADER(fov)
 OPT_FLOAT_HEADER(sensitivity)
 OPT_FLOAT_HEADER(camera_speed)
 OPT_BOOL_HEADER(invert_mouse)
+OPT_BOOL_HEADER(mouse_bound)
 
 /* HUD / Info */
 OPT_INT_HEADER(ping_update_interval)
