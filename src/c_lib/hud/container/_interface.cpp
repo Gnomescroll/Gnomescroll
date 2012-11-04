@@ -420,7 +420,6 @@ static void draw_grabbed_icon()
     if (grabbed_icon_stack_text == NULL) return;
     if (hand_item_stack <= 1) return;
     GS_ASSERT(count_digits(hand_item_stack) < STACK_COUNT_MAX_LENGTH);
-    if (count_digits(hand_item_stack) >= STACK_COUNT_MAX_LENGTH) return;
 
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
@@ -582,8 +581,8 @@ void init()
     crusher->yoff = -150.0f + (_yresf + crusher->height())/2;
 
     grabbed_icon_stack_text = new HudText::Text;
-    grabbed_icon_stack_text->set_format((char*) "%d");
-    grabbed_icon_stack_text->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+    grabbed_icon_stack_text->set_format("%d");
+    grabbed_icon_stack_text->set_format_extra_length(11 + 1 - 2);
     grabbed_icon_stack_text->set_color(255,255,255,255);
     grabbed_icon_stack_text->set_depth(-0.1f);
 

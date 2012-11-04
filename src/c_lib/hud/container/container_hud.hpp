@@ -53,13 +53,13 @@ class AgentInventoryUI : public UIElement
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stack_numbers[i];
-            t->set_format((char*) "%d");
-            t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+            t->set_format("%d");
+            t->set_format_extra_length(11 + 1 - 2);
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
 
-        this->name.set_text((char*)"Inventory");
+        this->name.set_text("Inventory");
     }
 
     AgentInventoryUI() : xdim(0), ydim(0), stack_numbers(NULL)
@@ -259,7 +259,6 @@ void AgentInventoryUI::draw()
         const int slot = j * this->xdim + i;
         int count = slot_stacks[slot];
         if (count <= 1) continue;
-        GS_ASSERT(count_digits(count) <= STACK_COUNT_MAX_LENGTH);
         
         text = &this->stack_numbers[slot];
         text->update_formatted_string(1, count);

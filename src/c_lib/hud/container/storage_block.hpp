@@ -54,7 +54,7 @@ class StorageBlockUI : public UIElement
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
-        this->name.set_text((char*)"Storage Block");
+        this->name.set_text("Storage Block");
     }
 
     void init_text()
@@ -72,8 +72,8 @@ class StorageBlockUI : public UIElement
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stacks[i];
-            t->set_format((char*) "%d");
-            t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+            t->set_format("%d");
+            t->set_format_extra_length(11 + 1 - 2);
             t->set_color(255,255,255,255);
             t->set_depth(-0.1f);
         }
