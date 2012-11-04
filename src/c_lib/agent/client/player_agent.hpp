@@ -75,7 +75,7 @@ class PlayerAgent_state
         //state variables
 
         AgentID agent_id;   //agent_id for player agent
-        Agent* you;
+        class Agent* you();
         void set_PlayerAgent_id(AgentID id);
 
         //set also sends
@@ -99,10 +99,6 @@ class PlayerAgent_state
         void update_model();
 
         PlayerAgent_action action;
-
-        bool identified;
-
-        void was_identified();
 
         int* facing_block();
         int facing_container();

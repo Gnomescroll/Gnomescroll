@@ -486,8 +486,9 @@ void send_crusher_crush_action(ContainerActionType action, int container_id, int
 
 void mouse_left_click_handler(int container_id, int slot, bool alt_action)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
-    if (ClientState::playerAgent_state.you->status.dead) return;
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
     
     ItemContainerType container_type = get_container_type(container_id);
     class ContainerAttributes* attr = get_attr(container_type);
@@ -527,8 +528,9 @@ void mouse_left_click_handler(int container_id, int slot, bool alt_action)
 
 void mouse_right_click_handler(int container_id, int slot, bool alt_action)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
-    if (ClientState::playerAgent_state.you->status.dead) return;
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
 
     ItemContainerType container_type = get_container_type(container_id);
     class ContainerAttributes* attr = get_attr(container_type);

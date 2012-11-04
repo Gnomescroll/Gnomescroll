@@ -97,10 +97,8 @@ void update_hud_draw_settings()
     hud_draw_settings.help = input_state.help_menu;
     if (hud_draw_settings.help) hud_draw_settings.prompt = false;   // clear this after opening help once
 
-    hud_draw_settings.dead = (
-            ClientState::playerAgent_state.you != NULL
-        && ClientState::playerAgent_state.you->status.dead
-    );
+    class Agent* you = ClientState::playerAgent_state.you();
+    hud_draw_settings.dead = (you != NULL && you->status.dead);
 
     // sanitize
     int ping_val = ClientState::last_ping_time;
@@ -355,7 +353,7 @@ void draw_hud_text()
     {
         if (hud_draw_settings.agent_status)
         {
-            Agent* a = ClientState::playerAgent_state.you;
+            Agent* a = ClientState::playerAgent_state.you();
             if (a != NULL)
             {
                 int health = a->status.health;
@@ -706,7 +704,8 @@ void ChatRender::draw_cursor()
 {
     struct Color color = AGENT_DEFAULT_COLOR;
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL) color = playerAgent_state.you->status.color;
+    class Agent* you = playerAgent_state.you();
+    if (you != NULL) color = you->status.color;
     _draw_rect(color, cursor_x, cursor_y, cursor_w, cursor_h);
 }
 
@@ -720,8 +719,8 @@ void ChatRender::draw_input()
 {
     if (!this->inited) return;
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL)
-        this->input->set_color(playerAgent_state.you->status.color);
+    class Agent* you = playerAgent_state.you();
+    if (you != NULL) this->input->set_color(you->status.color);
     this->input->draw();
 }
 

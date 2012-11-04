@@ -323,6 +323,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
     conf.env.awe_stem = awe_stem
     conf.env.production = production
 
+
 def build(bld):
     OS = platform.system()
 

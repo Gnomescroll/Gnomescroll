@@ -267,14 +267,15 @@ void draw_text_icons(float z)
     if (!text_icons_inited) return;
     using ClientState::playerAgent_state;
     using Agents::agent_list;
-    if (playerAgent_state.you == NULL) return;
+    class Agent* you = playerAgent_state.you();
+    if (you == NULL) return;
             
     float x,y;
     for (unsigned int i=0; i<agent_list->max; i++)
     {
         Agent* a = &agent_list->objects[i];
         if (a->id == agent_list->null_id) continue;
-        if (a == playerAgent_state.you) continue;
+        if (a == you) continue;
         Vec3 p = a->get_position();
         world_to_map_screen_coordinates(p.x, p.y, &x, &y);
         ally[i]->set_position(x,y);
@@ -285,12 +286,12 @@ void draw_text_icons(float z)
     using ClientState::playerAgent_state;
 
     Objects::Object* b = NULL;
-    if (playerAgent_state.you != NULL)
+    if (you != NULL)
     {
-        if (playerAgent_state.you->status.spawner == BASE_SPAWN_ID)
+        if (you->status.spawner == BASE_SPAWN_ID)
             b = Objects::get(OBJECT_BASE, 0);   // TODO -- remove Base
         else
-            b = Objects::get(OBJECT_AGENT_SPAWNER, playerAgent_state.you->status.spawner);
+            b = Objects::get(OBJECT_AGENT_SPAWNER, you->status.spawner);
     }
 
     if (b != NULL)
@@ -314,7 +315,7 @@ void draw_text_icons(float z)
     if (camera == NULL) return;
     
     if (!text_icons_inited) return;
-    if (playerAgent_state.you == NULL) return;
+    if (playerAgent_state.you() == NULL) return;
     world_to_map_screen_coordinates(
         playerAgent_state.camera_state.x, playerAgent_state.camera_state.y,
         &x, &y

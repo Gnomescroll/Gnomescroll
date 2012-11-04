@@ -250,7 +250,7 @@ void toggle_input_mode()
             input_state.input_mode = INPUT_STATE_CAMERA;
             break;
         case INPUT_STATE_CAMERA:
-            if (ClientState::playerAgent_state.you != NULL)
+            if (ClientState::playerAgent_state.you() != NULL)
                 input_state.input_mode = INPUT_STATE_AGENT;
             break;
         default: break;
@@ -265,7 +265,7 @@ void toggle_camera_mode()
             input_state.camera_mode = INPUT_STATE_CAMERA;
             break;
         case INPUT_STATE_CAMERA:
-            if (ClientState::playerAgent_state.you != NULL)
+            if (ClientState::playerAgent_state.you() != NULL)
                 input_state.camera_mode = INPUT_STATE_AGENT;
             break;
         default: break;
@@ -474,8 +474,6 @@ void chat_mouse_motion_handler(SDL_Event* event){}
 
 void container_key_down_handler(SDL_Event* event)
 {
-    //if (ClientState::playerAgent_state.you == NULL) return;
-    //if (ClientState::playerAgent_state.you->status.dead) return;
     switch (event->key.keysym.sym)
     {
         case SDLK_e:
@@ -495,14 +493,16 @@ void container_key_down_handler(SDL_Event* event)
 
 void container_key_up_handler(SDL_Event* event)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
-    if (ClientState::playerAgent_state.you->status.dead) return;
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
 }
 
 void container_mouse_down_handler(SDL_Event* event)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
-    if (ClientState::playerAgent_state.you->status.dead) return;
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
 
     // gets correct mouse pixels
     int x,y;
@@ -525,8 +525,9 @@ void container_mouse_down_handler(SDL_Event* event)
 
 void container_mouse_up_handler(SDL_Event* event)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
-    if (ClientState::playerAgent_state.you->status.dead) return;
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
     
     Toolbelt::left_trigger_up_event(); // clear any trigger events
     Toolbelt::right_trigger_up_event(); // clear any trigger events
@@ -580,6 +581,9 @@ void container_mouse_up_handler(SDL_Event* event)
 
 void container_mouse_motion_handler(SDL_Event* event)
 {
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
+
     //SDL_MouseMotionEvent e = event->motion;
 
     //printf("Motion type: %d\n", e.type);
@@ -598,11 +602,11 @@ void container_mouse_motion_handler(SDL_Event* event)
 
 /* Agent */
 
-#include <common/lua/lua.hpp>
-//lua_load_map_tiles();
-
 void agent_key_down_handler(SDL_Event* event)
 {
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
+
     HudContainer::ContainerInputEvent container_event;
     switch (event->key.keysym.sym)
     {
@@ -671,6 +675,9 @@ void agent_key_down_handler(SDL_Event* event)
 
 void agent_key_up_handler(SDL_Event* event)
 {
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
+
     switch (event->key.keysym.sym)
     {
         case SDLK_SPACE:
@@ -683,7 +690,8 @@ void agent_key_up_handler(SDL_Event* event)
 
 void agent_mouse_down_handler(SDL_Event* event)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
 
     HudContainer::ContainerInputEvent container_event;
     switch (event->button.button)
@@ -716,7 +724,8 @@ void agent_mouse_down_handler(SDL_Event* event)
 
 void agent_mouse_up_handler(SDL_Event* event)
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
 
     switch (event->button.button)
     {

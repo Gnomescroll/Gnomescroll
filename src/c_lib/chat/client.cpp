@@ -411,8 +411,9 @@ bool ChatInput::route_command()
             return false;
         }
 
-        if (ClientState::playerAgent_state.you != NULL
-         && colors_equal(ClientState::playerAgent_state.you->status.color, color))
+        class Agent* you = ClientState::playerAgent_state.you();
+        if (you != NULL
+         && colors_equal(you->status.color, color))
         {
             static const char msgfmt[] = "Your color is already %d %d %d";
             static const size_t msg_len = sizeof(msgfmt) + 3*3 - 3*2;
@@ -436,14 +437,13 @@ bool ChatInput::route_command()
     return false;
 }
 
-ChatInput::ChatInput()
-:
-history(NULL),
-history_tail(NULL),
-history_size(0),
-history_index(-1),
-buffer_len(0),
-cursor(0)
+ChatInput::ChatInput() :
+    history(NULL),
+    history_tail(NULL),
+    history_size(0),
+    history_index(-1),
+    buffer_len(0),
+    cursor(0)
 {
     this->buffer = (char*)calloc(CHAT_BUFFER_SIZE+1, sizeof(char));
     this->buffer[CHAT_BUFFER_SIZE] = '\0';
@@ -516,8 +516,7 @@ void ChatClient::subscribe_channels()
     this->subscribe_system_channel();
 
     // call after playerAgent_state has been assigned by server
-    if (ClientState::playerAgent_state.you == NULL)
-        return;
+    if (ClientState::playerAgent_state.you() == NULL) return;
 
     ChatClientChannel* chan;
     for (int i=1; i<CHAT_CLIENT_CHANNELS_MAX; i++)

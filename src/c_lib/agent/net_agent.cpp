@@ -38,8 +38,9 @@ inline void PlayerAgent_Snapshot::handle()
 inline void SendClientId_StoC::handle()
 {
     NetClient::Server.client_id = (ClientID)this->client_id;
-    if (ClientState::playerAgent_state.you != NULL)
-        ClientState::playerAgent_state.you->client_id = (ClientID)client_id;
+    class Agent* you = ClientState::playerAgent_state.you();
+    GS_ASSERT(you != NULL);
+    if (you != NULL) you->client_id = (ClientID)client_id;
 }
 
 inline void Agent_state_message::handle()
@@ -390,15 +391,16 @@ inline void client_disconnected_StoC::handle()
 inline void set_spawner_StoC::handle()
 {
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you == NULL) return;
+    class Agent* you = playerAgent_state.you();
+    if (you == NULL) return;
 
     ASSERT_VALID_SPAWNER_ID(this->spawner_id);
     IF_INVALID_SPAWNER_ID(this->spawner_id) return;
     
     // de-color old spawner
-    if (playerAgent_state.you->status.spawner != BASE_SPAWN_ID)
+    if (you->status.spawner != BASE_SPAWN_ID)
     {
-        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, playerAgent_state.you->status.spawner);
+        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, you->status.spawner);
         if (obj != NULL)
         {
             using Components::VoxelModelComponent;
@@ -424,7 +426,7 @@ inline void set_spawner_StoC::handle()
         }
     }
 
-    playerAgent_state.you->event.set_spawner(this->spawner_id);
+    if (you != NULL) you->event.set_spawner(this->spawner_id);
 }
 
 inline void agent_color_StoC::handle()
@@ -1007,7 +1009,6 @@ inline void agent_camera_state_CtoS::handle()
 {
     Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
-    if (a->id != id) return;
     z = clamp_z(z);
     a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;

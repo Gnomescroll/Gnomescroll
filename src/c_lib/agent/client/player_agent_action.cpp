@@ -29,8 +29,9 @@ dont_include_this_file_in_server
 
 void PlayerAgent_action::hitscan_laser(int weapon_type)
 {
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
+    class Agent* you = p->you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
 
     Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();
@@ -190,8 +191,10 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
 
 void PlayerAgent_action::update_mining_laser()
 {
-    if (this->p->you == NULL) return;
-    if (!this->p->you->event.mining_laser_emitter.on) return;
+    class Agent* you = p->you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
+    if (!you->event.mining_laser_emitter.on) return;
     if (agent_camera == NULL) return;
     
     Vec3 origin = this->p->get_weapon_fire_animation_origin();
@@ -200,25 +203,28 @@ void PlayerAgent_action::update_mining_laser()
     struct Vec3 focal_point = vec3_add(this->p->camera_position(), vec3_scalar_mult(agent_camera->forward_vector(), 50.0f));
     struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
     
-    this->p->you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
-    this->p->you->event.mining_laser_emitter.length_position = agent_camera->get_position();
-    this->p->you->event.mining_laser_emitter.length_direction = agent_camera->forward_vector();
-    this->p->you->event.mining_laser_emitter.set_state(origin, direction);
-    this->p->you->event.mining_laser_emitter.tick();
-    this->p->you->event.mining_laser_emitter.prep_draw();
+    you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
+    you->event.mining_laser_emitter.length_position = agent_camera->get_position();
+    you->event.mining_laser_emitter.length_direction = agent_camera->forward_vector();
+    you->event.mining_laser_emitter.set_state(origin, direction);
+    you->event.mining_laser_emitter.tick();
+    you->event.mining_laser_emitter.prep_draw();
 }
 
 void PlayerAgent_action::begin_mining_laser()
 {
-    int laser_type = Toolbelt::get_agent_selected_item_type(this->p->you->id);
+    class Agent* you = p->you();
+    if (you == NULL) return;
+
+    int laser_type = Toolbelt::get_agent_selected_item_type(you->id);
     GS_ASSERT(laser_type != NULL_ITEM_TYPE);
     GS_ASSERT(Item::get_item_group_for_type(laser_type) == IG_MINING_LASER);
     float range = Item::get_weapon_range(laser_type);
 
-    this->p->you->event.mining_laser_emitter.set_base_length(range);
-    this->p->you->event.mining_laser_emitter.set_laser_type(laser_type);
+    you->event.mining_laser_emitter.set_base_length(range);
+    you->event.mining_laser_emitter.set_laser_type(laser_type);
     
-    this->p->you->event.mining_laser_emitter.turn_on();
+    you->event.mining_laser_emitter.turn_on();
 
     GS_ASSERT(this->mining_laser_sound_id < 0);
     if (this->mining_laser_sound_id >= 0) return;
@@ -227,7 +233,10 @@ void PlayerAgent_action::begin_mining_laser()
 
 void PlayerAgent_action::end_mining_laser()
 {
-    this->p->you->event.mining_laser_emitter.turn_off();
+    class Agent* you = p->you();
+    if (you == NULL) return;
+
+    you->event.mining_laser_emitter.turn_off();
 
     if (this->mining_laser_sound_id < 0) return;
     Sound::mining_laser(false, this->mining_laser_sound_id);
@@ -236,8 +245,9 @@ void PlayerAgent_action::end_mining_laser()
 
 void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 {    
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
+    class Agent* you = p->you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
 
     GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
     if (weapon_type == NULL_ITEM_TYPE) return;
@@ -398,8 +408,9 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 bool PlayerAgent_action::set_block(ItemID placer_id)
 {
     GS_ASSERT(placer_id != NULL_ITEM);
-    if (p->you == NULL) return false;
-    if (p->you->status.dead) return false;
+    class Agent* you = p->you();
+    if (you == NULL) return false;
+    if (you->status.dead) return false;
 
     // get nearest empty block
     const float max_dist = 4.0f;
@@ -451,7 +462,8 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
 //#if !PRODUCTION
 void PlayerAgent_action::admin_set_block()
 {
-    if (p->you == NULL) return;
+    class Agent* you = p->you();
+    if (you == NULL) return;
 
     // get nearest empty block
     const float max_dist = 4.0f;
@@ -499,16 +511,17 @@ void PlayerAgent_action::admin_set_block()
 
 void PlayerAgent_action::throw_grenade()
 {
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
+    class Agent* you = p->you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
 
     // message to server
-    Vec3 pos = p->you->get_camera_position();
+    Vec3 pos = you->get_camera_position();
     ThrowGrenade_CtoS msg;
     msg.x = pos.x;
     msg.y = pos.y;
     msg.z = pos.z;
-    Vec3 f = p->you->forward_vector();    // use network state
+    Vec3 f = you->forward_vector();    // use network state
     msg.vx = f.x;
     msg.vy = f.y;
     msg.vz = f.z;
@@ -527,8 +540,9 @@ void PlayerAgent_action::throw_grenade()
 
 void PlayerAgent_action::place_spawner()
 {
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
+    class Agent* you = p->you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
 
     Vec3 v = agent_camera->forward_vector();
 
@@ -551,8 +565,9 @@ void PlayerAgent_action::place_spawner()
 
 void PlayerAgent_action::place_turret()
 {
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
+    class Agent* you = p->you();
+    if (you == NULL) return;
+    if (you->status.dead) return;
 
     Vec3 v = agent_camera->forward_vector();
 
@@ -575,8 +590,9 @@ void PlayerAgent_action::place_turret()
 
 Vec3 PlayerAgent_action::get_aiming_point()
 {
-    if (p->you == NULL) return vec3_init(0,0,0);
-    if (p->you->status.dead) return vec3_init(0,0,0);
+    class Agent* you = p->you();
+    if (you == NULL) return vec3_init(0,0,0);
+    if (you->status.dead) return vec3_init(0,0,0);
 
     Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();
@@ -600,9 +616,7 @@ Vec3 PlayerAgent_action::get_aiming_point()
     else return vec3_init(0,0,0);
 }
 
-PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)
-:
-p(player_agent),
-mining_laser_sound_id(-1)
+PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent) :
+    p(player_agent), mining_laser_sound_id(-1)
 {}
 

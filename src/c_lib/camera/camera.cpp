@@ -310,7 +310,8 @@ void hud_projection()
 
 void update_agent_camera()
 {
-    if (ClientState::playerAgent_state.you == NULL) return;
+    class Agent* you = ClientState::playerAgent_state.you();
+    if (you == NULL) return;
     // update camera_state
     ClientState::playerAgent_state.pump_camera();
 

@@ -16,12 +16,17 @@ dont_include_this_file_in_server
 #include <t_map/_interface.hpp>
 #include <agent/client/agent_sound_handler.hpp>
 
+class Agent* PlayerAgent_state::you()
+{
+    if (this->agent_id == NULL_AGENT) return NULL;
+    return Agents::agent_list->get(this->agent_id);
+}
+
 void PlayerAgent_state::set_PlayerAgent_id(AgentID id)
 {
-    this->you = Agents::get_agent(id);
-    GS_ASSERT(this->you != NULL);
-    if (this->you == NULL) return;
+    GS_ASSERT(id != NULL_AGENT);
     this->agent_id = id;
+    GS_ASSERT(this->you() != NULL);
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
     chat_client->subscribe_channels();
@@ -63,10 +68,13 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     v = translate_position(v);
     c.set_position(v);
 
-    if (this->you == NULL) return;
-    AgentState s = this->you->get_state();
-    c.theta = s.theta;
-    c.phi = s.phi;
+    class Agent* a = this->you();
+    if (a != NULL)
+    {
+        AgentState s = a->get_state();
+        c.theta = s.theta;
+        c.phi = s.phi;
+    }
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
@@ -119,8 +127,7 @@ void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta
 uint16_t PlayerAgent_state::pack_control_state(
     int f, int b, int l, int r,
     int jet, int jump, int crouch, int boost,
-    int misc1, int misc2, int misc3
-)
+    int misc1, int misc2, int misc3)
 {
     uint16_t cs = 0;
     if(f) cs |= CS_FORWARD;
@@ -139,8 +146,9 @@ uint16_t PlayerAgent_state::pack_control_state(
 
 uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
 {
-    if (this->you == NULL) return 0;
-    if (this->you->status.dead) return 0;
+    class Agent* a = this->you();
+    if (a == NULL) return 0;
+    if (a->status.dead) return 0;
 
     int forward,backwards,left,right,jp,jump,crouch,boost,misc1,misc2,misc3;
     //set control state variables
@@ -160,18 +168,15 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
     state = &this->s1;
 
     // force staying crouched if cant stand up
-    if ((this->crouching && !crouch)
-    && can_stand_up(
-        this->you->box.box_r, this->you->box.b_height,
-        state->x, state->y, state->z
-    ))
+    if ((this->crouching && !crouch) && can_stand_up(a->box.box_r, a->box.b_height,
+                                                        state->x, state->y, state->z))
     {
         crouch = 1;
     }
     this->crouching = (bool)crouch;
 
     // only jump if on ground
-    if (jump && !on_ground(this->you->box.box_r, state->x, state->y, state->z))
+    if (jump && !on_ground(a->box.box_r, state->x, state->y, state->z))
     {
         jump = 0;
     }
@@ -179,7 +184,7 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
     cs = this->pack_control_state(
         forward, backwards, left, right,
         jetpack.update(jp), // UPDATE()
-		jump, crouch, boost,
+        jump, crouch, boost,
         misc1, misc2, misc3
     );
     return cs;
@@ -196,14 +201,15 @@ void PlayerAgent_state::set_control_state(int f, int b, int l, int r, int jet, i
 //set actually sends
 void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
 {
-    if(this->you == NULL) return;  //player agent not set
+    class Agent* a = this->you();
+    if(a == NULL) return;  //player agent not set
 
     cs = this->sanitize_control_state(cs);
 
     cs_seq_local = (cs_seq_local+1) % 256;
 
-    AgentState s = this->you->get_state();
-    if (this->you->status.dead)
+    AgentState s = a->get_state();
+    if (a->status.dead)
     {   // use the last agent state's theta,phi (instead of the camera which is normally passed in)
         theta = s.theta;
         phi = s.phi;
@@ -240,18 +246,18 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
     {
         acs = cs_local[cs_index%128]; //check seq number
 
-        tmp = _agent_tick(acs, you->box, tmp);
+        tmp = _agent_tick(acs, a->box, tmp);
         tmp.seq = (tmp.seq+1) % 256;
 
         cs_index = (cs_index+1) % 256;
     }
     s0 = tmp;
     acs = cs_local[cs_seq_local % 128];
-    s1 = _agent_tick(acs, you->box, s0);
+    s1 = _agent_tick(acs, a->box, s0);
 
     // tick sound motion
-    bool s1_on_ground = on_ground(this->you->box.box_r, s1.x, s1.y, s1.z);
-    bool camera_on_ground = on_ground(this->you->box.box_r, camera_state.x, camera_state.y, camera_state.z);
+    bool s1_on_ground = on_ground(a->box.box_r, s1.x, s1.y, s1.z);
+    bool camera_on_ground = on_ground(a->box.box_r, camera_state.x, camera_state.y, camera_state.z);
     //if (s0.vx || s0.vy || s0.vz || s1.vx || s1.vy || s1.vz)
     //{
         //printf("s0 ");s0.print();
@@ -263,19 +269,20 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
 
 float PlayerAgent_state::camera_height()
 {
-    if (this->you == NULL) return 0.0f;
-    return this->you->camera_height();
+    class Agent* a = this->you();
+    if (a == NULL) return 0.0f;
+    return a->camera_height();
 }
 
 float PlayerAgent_state::camera_z()
 {
-    if (this->you == NULL) return 0.0f;
+    if (this->you() == NULL) return 0.0f;
     return this->camera_state.z + this->camera_height();
 }
 
-Vec3 PlayerAgent_state::camera_position()
+struct Vec3 PlayerAgent_state::camera_position()
 {
-    if (this->you == NULL) return vec3_init(0,0,0);
+    if (this->you() == NULL) return vec3_init(0,0,0);
     return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
 }
 
@@ -287,28 +294,12 @@ void PlayerAgent_state::update_sound()
 }
 
 PlayerAgent_state::PlayerAgent_state() :
-    crouching(false),
-    action(this)
+    crouching(false), camera_mode(client_side_prediction_interpolated),
+    cs_seq_local(255), cs_seq_net(-1),
+    state_history_seq(0), state_history_index(0),
+    agent_id(NULL_AGENT),  action(this)
 {
-    static int inited=0;
-    GS_ASSERT(!(inited++));
-
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
-
-    //client side state variables
-    crouching = false;
-    //camera
-    camera_mode = client_side_prediction_interpolated;
-
-    this->agent_id = NULL_AGENT;
-    this->you = NULL;   // TODO -- deprecate
-    
-    cs_seq_local = 255;  // so first one is zero
-    cs_seq_net = -1;
-
-    state_history_index = 0;
-    state_history_seq = 0;
-
     for(int i=0; i<128; cs_local[i++].seq = -1);
     for(int i=0; i<128; cs_net[i++].seq = -1) ;
 }
@@ -370,7 +361,7 @@ void PlayerAgent_state::pump_camera()
 
 void PlayerAgent_state::update_model()
 {
-    Agent* a = this->you;
+    class Agent* a = this->you();
     if (a == NULL) return;
     if (a->vox == NULL) return;
 
@@ -437,7 +428,7 @@ void PlayerAgent_state::update_model()
 
 int* PlayerAgent_state::facing_block()
 {
-    if (this->you == NULL) return NULL;
+    if (this->you() == NULL) return NULL;
     if (current_camera == NULL) return NULL;
 
     const float max_distance = 4.0f;

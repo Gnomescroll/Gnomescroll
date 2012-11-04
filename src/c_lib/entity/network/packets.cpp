@@ -211,8 +211,8 @@ inline void object_destroy_StoC::handle()
 inline void object_picked_up_StoC::handle()
 {
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
-        Sound::pickup_item();
+    class Agent* you = playerAgent_state.you();
+    if (you != NULL && you->id == agent_id) Sound::pickup_item();
     Objects::destroy((ObjectType)type, id);
 }
 

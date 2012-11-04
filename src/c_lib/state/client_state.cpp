@@ -84,10 +84,9 @@ void update_camera()
 void send_camera_state()
 {
     if (current_camera == NULL) return;
-    if (playerAgent_state.you == NULL) return;
-    if (!playerAgent_state.you->initial_teleport) return;
+    class Agent* you = playerAgent_state.you();
+    if (!you->initial_teleport) return;
     agent_camera_state_CtoS msg;
-    msg.id = playerAgent_state.you->client_id;
     Vec3 p = current_camera->get_position();
     msg.x = p.x;
     msg.y = p.y;
