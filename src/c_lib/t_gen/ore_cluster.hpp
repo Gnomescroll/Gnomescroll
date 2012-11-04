@@ -56,12 +56,21 @@ void populate_ore_veins(int number, const char* block_name)
 
     GS_ASSERT(tile_id >= 0);
     if (tile_id < 0) return;
+    const float dephchange=2.0f; //how much more probable it is for an ore to generate lower than higher
+    if (dephchange>1)
+    {
+    printf("Ores have a higher probability of generating lower\n");
+    }
 
     for(int i=0; i<number; i++)
     {
         int x = (int)genrand_int32() % t_map::map_dim.x;
         int y = (int)genrand_int32() % t_map::map_dim.y;
-        int z = (int)genrand_int32() % t_map::map_dim.z;
+        int z = ((int)genrand_int32() % t_map::map_dim.z) / dephchange;
+        if (z <= t_map::map_dim.z / dephchange / dephchange)
+            {
+                z = ((int)genrand_int32() % t_map::map_dim.z) / dephchange; //make ores lower even more probable
+            }
 
         int ctile = t_map::get(x,y,z);
         if(ctile == 0 || ctile == regolith_id) continue;
@@ -133,7 +142,7 @@ int generate_ore_vein(int x, int y, int z, int size, CubeID tile_id)
         tries = 0; //reset
         ct++;
     }
-    
+
     if(tries >= 20)
         printf("Warning: generate_ore_vein 20 attemps made to populate ore vein\n");
 
@@ -164,7 +173,7 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
         CubeID ctile = t_map::get(x,y,z);
         if (ctile == EMPTY_CUBE || ctile == regolith_id)
             continue;
-        
+
 
         //int ctile = t_map::get(x,y,z);
         //if(ctile == 0) continue;
@@ -204,7 +213,7 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeID tile_i
     float norm = cbrt(size/2.0f)/cbrt(asize*bsize*csize);
 
     asize *= norm;
-    bsize *= norm;    
+    bsize *= norm;
     csize *= norm;
 
     Vec3 f = vec3_init(1.0, 0.0, 0.0);
@@ -237,7 +246,7 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeID tile_i
         && abs(x*r.x+y*r.y+z*r.z) < bsize
         && abs(x*u.x+y*u.y+z*u.z) < csize
             )
-        {   
+        {
 
             int tx = (_x+i+512) % 512;
             int ty = (_y+j+512) % 512;
@@ -256,7 +265,7 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeID tile_i
 
     return _set;
     //printf("set= %d skipped= %d size= %f target= %f asize= %.02f bsize= %.02f csize= %.02f \n", _set,_skipped, asize*bsize*csize, size, asize,bsize,csize);
-}   
+}
 
 
 int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeID tile_id);
@@ -313,7 +322,7 @@ int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeID til
     float norm = 1.0f/sqrt(asize*asize+bsize*bsize+csize*csize);
 
     asize *= norm;
-    bsize *= norm;    
+    bsize *= norm;
     csize *= norm;
 
     Vec3 f = vec3_init(1.0, 0.0, 0.0);
@@ -347,7 +356,7 @@ int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeID til
         float dz = (x*u.x+y*u.y+z*u.z)*csize;
 
         if(dx*dx + dy*dy + dz*dz < size*size)
-        {   
+        {
             int tx = (_x+i+512) % 512;
             int ty = (_y+j+512) % 512;
             int tz = (_z+k+128) % 128;
