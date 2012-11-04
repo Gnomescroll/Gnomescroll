@@ -123,7 +123,7 @@ void on_connect()
 
 void on_disconnect()
 {
-    chat_client->send_system_message("Disconnected from server");
+    Chat::send_system_message("Disconnected from server");
 }
 
 void set_location_pointer()

@@ -6,9 +6,7 @@ dont_include_this_file_in_client
 
 #include <agent/agent.hpp>
 #include <agent/_interface.hpp>
-
-#include <chat/interface.hpp>
-
+#include <chat/_interface.hpp>
 #include <entity/objects.hpp>
 #include <entity/components.hpp>
 

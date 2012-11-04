@@ -9,7 +9,7 @@ dont_include_this_file_in_client
 #include <net_lib/global.hpp>
 #include <state/server_state.hpp>
 #include <t_map/server/manager.hpp>
-#include <chat/interface.hpp>
+#include <chat/_interface.hpp>
 #include <agent/net_agent.hpp>
 #include <item/_interface.hpp>
 #include <common/analytics/sessions.hpp>
@@ -170,7 +170,7 @@ void NetPeerManager::was_deserialized()
     }
 
     // Register agent with subsystems and send state 
-    add_player_to_chat(this->client_id);
+    Chat::add_player_to_chat(this->client_id);
     
     Agents::agent_list->send_to_client(this->client_id);
     t_mech::send_client_mech_list(this->client_id);
@@ -213,7 +213,7 @@ void NetPeerManager::teardown()
     }
     if (this->loaded)
     {
-        remove_player_from_chat(this->client_id);
+        Chat::remove_player_from_chat(this->client_id);
         this->broadcast_disconnect();
     }
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager

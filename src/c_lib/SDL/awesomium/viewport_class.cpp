@@ -3,7 +3,7 @@
 #if GS_AWESOMIUM
 
 #include <hud/hud.hpp>
-#include <chat/client.hpp>
+#include <chat/_interface.hpp>
 
 namespace Awesomium
 {
@@ -163,11 +163,8 @@ void js_login_required_callback(awe_webview* webView, const awe_string* _obj_nam
     // Required token refreshing is disabled for now
     
     //Auth::needs_login = true;
-    //if (chat_client != NULL)
-    //{
-        //chat_client->send_system_message("There was a server reset. You will need to again soon to continue playing.");
-        //chat_client->send_system_message(Hud::open_login_text);
-    //}
+    //Chat::send_system_message("There was a server reset. You will need to again soon to continue playing.");
+    //Chat::send_system_message(Hud::open_login_text);
     if (!Auth::has_authorized_once)
         enable_awesomium();
     //else

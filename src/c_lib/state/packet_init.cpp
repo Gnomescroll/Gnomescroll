@@ -101,8 +101,7 @@ void RegisterMessages()
     AgentSuicides_StoC::register_client_packet();
 
     // chat
-    ChatMessage_CtoS::register_server_packet();
-    ChatMessage_StoC::register_client_packet();
+    Chat::init_packets();
 
     //ping
     ping_CtoS::register_server_packet();

@@ -2,6 +2,9 @@
 
 #include <chat/packets.hpp>
 
+namespace Chat
+{
+
 void broadcast_server_message(const char* str)
 {
     ChatMessage_StoC msg;
@@ -198,3 +201,5 @@ ChatServer::~ChatServer()
     if (this->log_msg_buffer != NULL) free(this->log_msg_buffer);
     if (this->logfile != NULL) fclose(this->logfile);
 }
+
+}   // Chat

@@ -144,10 +144,7 @@ dont_include_this_file_in_client
 #include <agent/_include.hpp>
 
 /* chat */
-#include <chat/globals.hpp>
-#include <chat/packets.cpp>
-#include <chat/server.cpp>
-#include <chat/interface.cpp>
+#include <chat/_include.hpp>
 
 #include <net_lib/_include.hpp>
 
@@ -282,7 +279,7 @@ int init_c_lib(int argc, char* argv[])
     Objects::init();    // Entity system
 
     VoxDats::init();
-    init_chat_server();
+    Chat::init_chat_server();
 
     NetServer::init_globals();
     init_network();
@@ -350,7 +347,7 @@ void close_c_lib()
     t_map::end_t_map();
     t_map::teardown_block_drop_dat();
 
-    teardown_chat_server();
+    Chat::teardown_chat_server();
 
     Particle::teardown_particles();
     ItemParticle::teardown();

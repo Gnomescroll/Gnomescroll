@@ -3,6 +3,9 @@
 #include <chat/globals.hpp>
 #include <chat/packets.hpp>
 
+namespace Chat
+{
+
 const int CHAT_BUFFER_SIZE = CHAT_MESSAGE_SIZE_MAX;
 const int CHAT_CLIENT_INPUT_HISTORY_MAX = 20;
 const int CHAT_CLIENT_MESSAGE_HISTORY_MAX = 50;
@@ -125,6 +128,8 @@ class ChatClient
     void subscribe_channels();
     void received_message(int channel, ClientID sender, const char* payload);
     void send_system_message(const char* msg);
+    void send_system_messagef(const char* fmt, ...);
+    void send_system_messagevf(const char* fmt, va_list args);
     void submit();
 
     void use_global_channel();
@@ -177,3 +182,5 @@ class ChatSystemMessage
     void object_destroyed(Objects::Object* object);
     void object_created(Objects::Object* object);
 };
+
+}   // Chat

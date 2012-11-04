@@ -1,6 +1,13 @@
 #include "packets.hpp"
 
-#include <chat/interface.hpp>
+#include <chat/_interface.hpp>
+
+#if DC_SERVER
+# include <chat/server.hpp>
+#endif
+
+namespace Chat
+{
 
 #if DC_CLIENT
 inline void ChatMessage_StoC::handle()
@@ -26,8 +33,6 @@ inline void ChatMessage_CtoS::handle(){}
 #endif
 
 #if DC_SERVER
-#include <chat/server.hpp>
-
 inline void ChatMessage_CtoS::handle()
 {
     Agent* a = NetServer::agents[client_id];
@@ -39,3 +44,5 @@ inline void ChatMessage_CtoS::handle()
 
 inline void ChatMessage_StoC::handle(){}
 #endif
+
+}   // Chat

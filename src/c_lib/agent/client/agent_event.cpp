@@ -8,7 +8,7 @@ dont_include_this_file_in_server
 
 #include <state/client_state.hpp>
 #include <sound/triggers.hpp>
-#include <chat/client.hpp>
+#include <chat/_interface.hpp>
 #include <hud/map.hpp>
 
 #include <particle/_interface.hpp>
@@ -101,7 +101,7 @@ void Agent_event::healed(int amount)
     if (a->is_you())
     {
         //Sound::restore_health();
-        chat_client->send_system_message((char*) "You healed.");
+        Chat::send_system_message("You healed.");
     }
     else
     {

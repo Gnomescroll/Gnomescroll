@@ -2,6 +2,9 @@
 
 #include <chat/globals.hpp>
 
+namespace Chat
+{
+
 class ChatMessage_CtoS: public FixedSizeReliableNetPacketToServer<ChatMessage_CtoS>
 {
     public:
@@ -31,3 +34,5 @@ class ChatMessage_StoC: public FixedSizeReliableNetPacketToClient<ChatMessage_St
     }
     inline void handle();
 };
+
+}   // Chat

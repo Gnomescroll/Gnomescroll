@@ -3,6 +3,7 @@
 #include <common/files.hpp>
 #include <options/server_options.hpp>
 #include <serializer/mechs.hpp>
+#include <chat/_interface.hpp>
 
 #if GS_SERIALIZER
 # include <serializer/logger.hpp>
@@ -236,7 +237,7 @@ bool save_remaining_data()
 bool save_data()
 {
     printf("Saving data to %s\n", save_folder);
-    broadcast_server_message("Saving the world...");
+    Chat::broadcast_server_message("Saving the world...");
     
     static int paths_created = 0;
     if (!(paths_created++))

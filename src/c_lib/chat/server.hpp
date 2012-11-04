@@ -2,6 +2,9 @@
 
 #include <chat/globals.hpp>
 
+namespace Chat
+{
+
 class ChatServerChannel
 {
     public:
@@ -41,3 +44,5 @@ class ChatServer
 };
 
 void broadcast_server_message(const char* str);
+
+}   // Chat

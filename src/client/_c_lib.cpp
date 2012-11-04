@@ -185,10 +185,7 @@ dont_include_this_file_in_server
 #include <sound/_include.hpp>
 
 /* chat */
-#include <chat/packets.cpp>
-#include <chat/client.cpp>
-
-#include <chat/interface.cpp>
+#include <chat/_include.hpp>
 
 /* Awesomium */
 #include <SDL/awesomium/_include.hpp>
@@ -371,7 +368,7 @@ int init_c_lib(int argc, char* argv[])
     Sound::init();
     init_input();
     init_cameras();
-    init_chat_client();
+    Chat::init_chat_client();
     Particle::draw_init();
 
     Animations::init();
@@ -429,7 +426,7 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("hudfont teardown\n");
     HudFont::teardown();
     if (TEARDOWN_DEBUG) printf("chat client teardown\n");
-    teardown_chat_client();
+    Chat::teardown_chat_client();
 
     if (TEARDOWN_DEBUG) printf("objects teardown\n");
     Objects::teardown();    // Entity system

@@ -8,8 +8,7 @@
 #if DC_CLIENT
 #include <state/client_state.hpp>
 #include <common/time/physics_timer.hpp>
-#include <chat/client.hpp>
-#include <chat/interface.hpp>
+#include <chat/_interface.hpp>
 #include <entity/objects/fabs/constants.hpp>
 #include <SDL/SDL_functions.hpp>
 #endif
@@ -192,16 +191,7 @@ inline void agent_create_StoC::handle()
     a->status.set_name(this->username);
     a->status.set_color(this->color);
     a->event.name_set();
-
-    GS_ASSERT(chat_client != NULL);
-    if (chat_client != NULL)
-    {
-        const char fmt[] = "%s has joined the game";
-        char* msg = (char*)calloc(strlen(fmt) + strlen(this->username) - 2 + 1, sizeof(char));
-        sprintf(msg, fmt, this->username);
-        chat_client->send_system_message(msg);
-        free(msg);
-    }
+    Chat::send_system_messagef("%s has joined the game", this->username);
 }
 
 inline void agent_destroy_StoC::handle()
@@ -217,33 +207,24 @@ inline void PlayerAgent_id_StoC::handle()
 inline void AgentKills_StoC::handle()
 {
     Agent* a = Agents::get_agent((AgentID)this->id);
-    if(a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->status.kills = kills;
 }
 
 inline void AgentDeaths_StoC::handle()
 {
     Agent* a = Agents::get_agent((AgentID)this->id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->status.deaths = deaths;
 }
 
 inline void AgentSuicides_StoC::handle()
 {
     Agent* a = Agents::get_agent((AgentID)this->id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     a->status.suicides = suicides;
 }
 
@@ -353,7 +334,7 @@ inline void agent_conflict_notification_StoC::handle()
         default: break;
     }
     
-    chat_client->send_system_message(msg);
+    Chat::send_system_message(msg);
     free(msg);
 }
 
@@ -371,7 +352,7 @@ inline void version_StoC::handle()
         #endif
     }
     else
-        chat_client->send_system_message("Connected to server");
+        Chat::send_system_message("Connected to server");
 }
 
 inline void client_disconnected_StoC::handle()
@@ -381,7 +362,7 @@ inline void client_disconnected_StoC::handle()
     char* msg = (char*)malloc(msg_len * sizeof(char));
     int wrote = snprintf(msg, msg_len, fmt, name);
     GS_ASSERT(wrote < (int)msg_len);
-    chat_client->send_system_message(msg);
+    Chat::send_system_message(msg);
     free(msg);
 }
 
@@ -440,7 +421,7 @@ inline void agent_color_StoC::handle()
         size_t len = sizeof(fmt) + 3*3 - 2*3 + 1;
         char* msg = (char*)malloc(len * sizeof(char));
         snprintf(msg, len, fmt, color.r, color.g, color.b);
-        chat_client->send_system_message(msg);
+        Chat::send_system_message(msg);
         free(msg);
     }
 }

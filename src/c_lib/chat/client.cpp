@@ -7,6 +7,9 @@
 #include <auth/constants.hpp>
 #include <net_lib/client.hpp>
 
+namespace Chat
+{
+    
 /* ChatMessage */
 
 void ChatMessage::set_name()
@@ -493,6 +496,29 @@ void ChatClient::send_system_message(const char* msg)
     this->received_message(CHAT_CHANNEL_SYSTEM, CHAT_SENDER_SYSTEM, msg);
 }
 
+void ChatClient::send_system_messagef(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    const size_t size = CHAT_MESSAGE_SIZE_MAX+1;
+    char msg[size];
+    int wrote = vsnprintf(msg, size, fmt, args);
+    va_end(args);
+    GS_ASSERT(wrote > 0 && (size_t)wrote < size);
+    msg[size-1] = '\0';
+    this->received_message(CHAT_CHANNEL_SYSTEM, CHAT_SENDER_SYSTEM, msg);
+}
+
+void ChatClient::send_system_messagevf(const char* fmt, va_list args)
+{
+    const size_t size = CHAT_MESSAGE_SIZE_MAX+1;
+    char msg[size];
+    int wrote = vsnprintf(msg, size, fmt, args);
+    GS_ASSERT(wrote > 0 && (size_t)wrote < size);
+    msg[size-1] = '\0';
+    this->received_message(CHAT_CHANNEL_SYSTEM, CHAT_SENDER_SYSTEM, msg);
+}
+
 void ChatClient::subscribe_system_channel()
 {
     if (this->channels[CHANNEL_SYSTEM] == NULL)
@@ -554,9 +580,7 @@ void ChatClient::use_global_channel()
     this->channel = 1;
 }
 
-ChatClient::ChatClient()
-:
-channel(1)
+ChatClient::ChatClient() : channel(1)
 {
     this->channels = (ChatClientChannel**)malloc(sizeof(ChatClientChannel*)*CHAT_CLIENT_CHANNELS_MAX);
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; channels[i++] = NULL);
@@ -567,6 +591,7 @@ channel(1)
 
 ChatClient::~ChatClient()
 {
+    this->teardown();
     if (this->channels != NULL)
     {
         for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
@@ -707,3 +732,5 @@ void ChatSystemMessage::object_created(Objects::Object* object)
         //free(msg);
     //}
 }
+
+}   // Chat

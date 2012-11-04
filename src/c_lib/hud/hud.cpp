@@ -129,7 +129,8 @@ void update_hud_draw_settings()
         HudText::Text *t = hud->chat->input;
         if (t != NULL)
         {
-            t->set_text(chat_client->input->buffer);
+            if (Chat::chat_client != NULL)
+                t->set_text(Chat::chat_client->input->buffer);
             hud->chat->set_cursor(t->text, t->x, t->y);
         }
 
@@ -658,7 +659,7 @@ void ChatRender::init()
         t->set_position(x_offset, line_height * (CHAT_MESSAGE_RENDER_MAX+lines_offset - i));
         t->set_text("");
         t->set_format("%s%s%s");
-        t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
+        t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + Chat::CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
         t->set_color(255,255,255,255);
         t->shadowed = true;
         messages[i] = t;
@@ -677,8 +678,9 @@ void ChatRender::init()
 
 void ChatRender::set_cursor(const char* text, float x, float y)
 {
-    if (HudFont::font == NULL)
-        return;
+    if (HudFont::font == NULL) return;
+    if (Chat::chat_client == NULL) return;
+    
     int len = 0;
     int h = 0;
     const int w = 8;
@@ -686,14 +688,14 @@ void ChatRender::set_cursor(const char* text, float x, float y)
     int s_len = (int)strlen(text);
     char* tmp_text = (char*)malloc(sizeof(char) * (s_len + 1));
     strcpy(tmp_text, text);
-    if (chat_client->input->cursor <= s_len)    // truncate text buffer to cursor position
-        tmp_text[chat_client->input->cursor] = '\0';
+    if (Chat::chat_client->input->cursor <= s_len)    // truncate text buffer to cursor position
+        tmp_text[Chat::chat_client->input->cursor] = '\0';
     HudFont::font->get_string_pixel_dimension(tmp_text, &len, &h);
     free(tmp_text);
     h = HudFont::font->data.line_height;
     
     cursor_x = x + len;
-    if (s_len && chat_client->input->cursor == s_len)
+    if (s_len && Chat::chat_client->input->cursor == s_len)
         cursor_x += 4;  // margin at the end
     cursor_y = y - h;
     cursor_w = w;
@@ -728,17 +730,19 @@ void ChatRender::update(bool timeout)
 {   // read chat client messages and format for display
     if (!this->inited) return;
 
+    if (Chat::chat_message_list == NULL) return;
+
     int now = _GET_MS_TIME();
-    chat_message_list->sort_by_most_recent();
+    Chat::chat_message_list->sort_by_most_recent();
     unsigned int i = paging_offset;
     int j=CHAT_MESSAGE_RENDER_MAX-1;
     int n_draw = 0;
-    for (; i<chat_message_list->n_filtered; i++)
+    for (; i<Chat::chat_message_list->n_filtered; i++)
     {
         if (n_draw == CHAT_MESSAGE_RENDER_MAX) break;
-        ChatMessage* m = chat_message_list->filtered_objects[i];
+        class Chat::ChatMessage* m = Chat::chat_message_list->filtered_objects[i];
         if (m == NULL) break;
-        if (timeout && now - m->timestamp > CHAT_MESSAGE_RENDER_TIMEOUT) break;
+        if (timeout && now - m->timestamp > Chat::CHAT_MESSAGE_RENDER_TIMEOUT) break;
         n_draw++;
     }
 
@@ -750,10 +754,10 @@ void ChatRender::update(bool timeout)
     i = 0;
     for (;j>0;)
     {
-        ChatMessage* m = chat_message_list->filtered_objects[--j];
+        class Chat::ChatMessage* m = Chat::chat_message_list->filtered_objects[--j];
         HudText::Text* t = this->messages[i++];
 
-        if (m->sender == CHAT_SENDER_SYSTEM)
+        if (m->sender == Chat::CHAT_SENDER_SYSTEM)
         {
             separator = blank;
             name = blank;
@@ -785,11 +789,8 @@ void ChatRender::update(bool timeout)
 //}
 
 
-ChatRender::ChatRender()
-:
-inited(false),
-input(NULL),
-paging_offset(0)
+ChatRender::ChatRender() :
+    inited(false), input(NULL), paging_offset(0)
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
 }

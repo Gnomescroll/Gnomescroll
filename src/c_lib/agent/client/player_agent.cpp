@@ -12,7 +12,7 @@ dont_include_this_file_in_server
 #include <sound/sound.hpp>
 #include <common/time/physics_timer.hpp>
 #include <input/handlers.hpp>
-#include <chat/interface.hpp>
+#include <chat/_interface.hpp>
 #include <t_map/_interface.hpp>
 #include <agent/client/agent_sound_handler.hpp>
 
@@ -29,7 +29,7 @@ void PlayerAgent_state::set_PlayerAgent_id(AgentID id)
     GS_ASSERT(this->you() != NULL);
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
-    chat_client->subscribe_channels();
+    Chat::subscribe_channels();
 }
 
 /*

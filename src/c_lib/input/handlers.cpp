@@ -1,7 +1,7 @@
 #include "handlers.hpp"
 
 #include <math.h>
-#include <chat/client.hpp>
+#include <chat/_interface.hpp>
 #include <input/skeleton_editor.hpp>
 #include <input/equipped_sprite_adjuster.hpp>
 
@@ -421,7 +421,8 @@ void trigger_keys_held_down()
 
 void chat_key_down_handler(SDL_Event* event)
 {
-    using namespace Hud;
+    using Chat::chat_client;
+    if (chat_client == NULL) return;
     
     switch (event->key.keysym.sym)
     {
@@ -486,7 +487,7 @@ void container_key_down_handler(SDL_Event* event)
         case SDLK_t:
         case SDLK_RETURN:
             toggle_chat();
-            chat_client->use_global_channel();
+            Chat::use_global_channel();
             break;
 
         default: break;
@@ -984,7 +985,7 @@ void key_down_handler(SDL_Event* event)
                 else
                 {
                     toggle_chat();
-                    chat_client->use_global_channel();
+                    Chat::use_global_channel();
                 }
                 break;
                 
@@ -1006,7 +1007,7 @@ void key_down_handler(SDL_Event* event)
 
             case SDLK_RETURN:
                 toggle_chat();
-                chat_client->use_global_channel();
+                Chat::use_global_channel();
                 break;
 
             case SDLK_LEFTBRACKET:

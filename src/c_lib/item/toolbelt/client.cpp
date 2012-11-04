@@ -7,7 +7,7 @@ dont_include_this_file_in_server
 #include <item/toolbelt/_interface.hpp>
 #include <item/toolbelt/_state.hpp>
 #include <item/toolbelt/config/_interface.hpp>
-#include <chat/interface.hpp>
+#include <chat/_interface.hpp>
 #include <item/toolbelt/net/CtoS.hpp>
 
 namespace Toolbelt
@@ -187,8 +187,7 @@ static bool beta_scan_world()
             {
                 bool opened = ItemContainer::open_container(container_id);
                 if (opened) return true;
-                const char msg[] = "This container is locked.";
-                chat_client->send_system_message(msg);
+                Chat::send_system_message("This container is locked.");
                 return false;
             }
             return false;

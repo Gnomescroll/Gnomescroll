@@ -3,8 +3,7 @@
 #include <math.h>
 
 #if DC_SERVER
-#include <chat/server.hpp>
-#include <chat/interface.hpp>
+#include <chat/_interface.hpp>
 #include <item/container/container.hpp>
 #endif
 

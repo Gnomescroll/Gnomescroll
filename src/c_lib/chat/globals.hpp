@@ -2,6 +2,9 @@
 
 #include <common/color.hpp>
 
+namespace Chat
+{
+
 #if DC_SERVER
 const char CHAT_LOG_MSG_FORMAT[] = " - [%d] %s: %s\n"; // client_id, name, msg
 #endif
@@ -50,3 +53,5 @@ bool is_valid_chat_message(char* msg)
     return non_space;
 
 }
+
+}   // Chat
