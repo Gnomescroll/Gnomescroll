@@ -87,7 +87,7 @@ void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, floa
     this->set_state(x,y,z,vx,vy,vz);
     s.theta = theta;
     s.phi = phi;
-    
+
     #if DC_SERVER
     Agent_teleport_message msg;
 
@@ -107,7 +107,7 @@ void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, floa
     #endif
 }
 
-void Agent::tick() 
+void Agent::tick()
 {
     int _tc =0;
     struct Agent_control_state _cs;
@@ -151,13 +151,16 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     bool boost       = a_cs & CS_BOOST ? 1 :0;
     bool misc1       = a_cs & CS_MISC1 ? 1 :0;
     bool misc2       = a_cs & CS_MISC2 ? 1 :0;
-    bool misc3       = a_cs & CS_MISC3 ? 1 :0;     
+    bool misc3       = a_cs & CS_MISC3 ? 1 :0;
     */
-
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
+    const float AGENT_MASS = 1.0f; //the agents mass, will become a variable dependent on the amount of stuff a player carries
+    const float deaccel = 2.0f; //the slowing down of the player so that his speed doesn't go crazy fast
+    float prevspeed=0.0f; //used for acceleration so that there are no undefined variables, as there would be in float speed = AGENT_SPEED / tr + speed / AGENT_MASS / deaccel;
 
-    float speed = AGENT_SPEED / tr;
+    float speed = AGENT_SPEED / tr + (prevspeed / AGENT_MASS) / deaccel;
+    prevspeed=speed + 1;
     float height = box.b_height;
     if (crouch)
     {
@@ -196,12 +199,12 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         CS_vx += -speed*cosf( _cs.theta * pi);
         CS_vy += -speed*sinf( _cs.theta * pi);
     }
-    if (left) 
+    if (left)
     {
         CS_vx += speed*cosf( _cs.theta * pi + pi/2);
         CS_vy += speed*sinf( _cs.theta * pi + pi/2);
     }
-    if (right) 
+    if (right)
     {
         CS_vx += -speed*cosf( _cs.theta * pi + pi/2);
         CS_vy += -speed*sinf( _cs.theta * pi + pi/2);
@@ -242,7 +245,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         as.vz -= (as.z - solid_z);
     else
         as.vz += z_gravity;
-        
+
     #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
     if (jump)
@@ -304,7 +307,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         if (top)
             new_z = (float)floor(as.z) + (float)ceil(height) - height;
         as.vz = 0.0f;
-    }       
+    }
 
     as.x = translate_point(new_x);
     as.y = translate_point(new_y);
@@ -330,11 +333,11 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 
     tick();
 
-    #if DC_SERVER    
-    if (client_id != NULL_CLIENT) 
+    #if DC_SERVER
+    if (client_id != NULL_CLIENT)
     {
         class PlayerAgent_Snapshot P;
-        
+
         P.id = id;
         //P.seq = (CS_seq+1) % 256;
         P.seq = CS_seq;
@@ -395,7 +398,7 @@ void Agent::handle_state_snapshot(int seq, float theta, float phi, float x,float
         int index = (seq + i)%256;
         cs[index].seq = -1;
     }
-                
+
     state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
     CS_seq = seq;
 
@@ -525,7 +528,7 @@ Agent::Agent(AgentID id) :
     CS_seq = 0;
 
     printf("Agent::Agent, new agent, id=%i \n", id);
-    
+
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     for (int i=0; i<256; i++)
@@ -554,7 +557,7 @@ void Agent::revert_to_snapshot()
 
 void Agent::revert_to_rollback()
 {
-    s = state_rollback;            
+    s = state_rollback;
     CS_seq = state_rollback.seq;
 }
 
@@ -571,7 +574,7 @@ void Agent::print_cs()
     int boost       = cs & CS_BOOST ? 1 :0;
     int misc1       = cs & CS_MISC1 ? 1 :0;
     int misc2       = cs & CS_MISC2 ? 1 :0;
-    int misc3       = cs & CS_MISC3 ? 1 :0;     
+    int misc3       = cs & CS_MISC3 ? 1 :0;
 
     printf("f,b,l,r = %d%d%d%d\n", forward, backwards, left, right);
     printf("jet=%d\n", jetpack);
@@ -662,7 +665,7 @@ int Agent::get_facing_block_type()
     const int z_high = 8;
     Vec3 f;
     float x,y,z;
-    
+
     #if DC_CLIENT
     if (this->is_you())
     {   // if you, use camera / player agent state instead.
@@ -679,7 +682,7 @@ int Agent::get_facing_block_type()
         y = this->s.y;
         z = this->camera_z();
     }
-        
+
     int *pos = _nearest_block(
         x, y, z,
         f.x, f.y, f.z,
@@ -721,7 +724,7 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
         if (ray_cast_simple(x,y,z, a,b,c, max_dist))
             return true;
     }
-    
+
     a = this->s.x + this->box.box_r;
     b = this->s.y - this->box.box_r;
     for (i=0; i<samples_per_height; i++)
@@ -780,7 +783,7 @@ void Agent::update_legs()
     bool right = (cs.cs & CS_RIGHT) !=0;
 
     static bool was_forward = false;
-    
+
     if (forward || backward || left || right)
     {
         if (was_forward && backward && !forward)
@@ -839,19 +842,19 @@ void Agent::update_model()
     }
 
     Vec3 center = this->get_center();    // model is fresh, use model center for more accurate culling
-        
+
     this->vox->was_updated = false;
     // other agents
     VoxDat* vox_dat = &VoxDats::agent;
     float radius = this->vox->get_part(0)->radius;
-   
+
     if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
     {   // agent not in view fulcrum
         this->vox->set_draw(false);
         this->vox->set_hitscan(false);
         return;
     }
-    
+
     if (this->crouched())
     {
         vox_dat = &VoxDats::agent_crouched;
@@ -872,14 +875,14 @@ void Agent::update_model()
         }
     }
     if (this->status.dead) vox_dat = &VoxDats::agent_dead;
-        
+
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
     this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, -this->s.phi);
     this->vox->set_draw(true);
     this->vox->set_hitscan(true);
     #endif
-    
+
     #if DC_SERVER
     if (this->vox == NULL) return;
     this->vox->was_updated = false;
@@ -921,7 +924,7 @@ bool Agent::near_base()
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return false;
     Vec3 bp = physics->get_position();
-    
+
     float x = quadrant_translate_f(this->s.x, bp.x);
     float y = quadrant_translate_f(this->s.y, bp.y);
     float z = bp.z;
@@ -983,14 +986,14 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], const float max_di
     Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();
 
-    int s[3];   
+    int s[3];
     int* b = _farthest_empty_block(p.x, p.y, p.z, v.x, v.y, v.z, s, max_distance, z_low, z_high);
     if (b == NULL) return -1;
 
     open_pos[0] = b[0];
     open_pos[1] = b[1];
     open_pos[2] = b[2];
-    
+
     solid_pos[0] = translate_point(open_pos[0] - s[0]);
     solid_pos[1] = translate_point(open_pos[1] - s[1]);
     solid_pos[2] = open_pos[2] - s[2];
