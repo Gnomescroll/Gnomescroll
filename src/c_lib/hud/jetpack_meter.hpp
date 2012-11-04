@@ -32,11 +32,11 @@ namespace Hud {
 			num_qticles = 0;
 		}
 
-		void draw(int _xresf, int _yresf, PlayerAgent_state* pa, char* anchor = "right") {
-			int s_w = _xresf/4; // spectrum width (that a full bar would cover)
-			int s_x = 0;        // spectrum x pos
-			int s_h = _yresf/64;
-			int s_y = 0;
+		void draw(float _xresf, float _yresf, PlayerAgent_state* pa, char* anchor = "right") {
+			float s_w = _xresf/4; // spectrum width (that a full bar would cover)
+			float s_x = 0;        // spectrum x pos
+			float s_h = _yresf/64;
+			float s_y = 0;
 
 			float dyn_w = s_w * (float)pa->jetpack.fuel / JETPACK_FUEL_MAX;
 			float lo = s_w - dyn_w; // dynamic leftover
