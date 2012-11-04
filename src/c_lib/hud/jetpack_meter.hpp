@@ -46,7 +46,7 @@ namespace Hud {
             }
             prev_w = w;
 
-            // also was doing a healthbar
+			// health meter
             //Agent* a = pa_s->you();
             //if (a != NULL)
             //{
@@ -74,6 +74,7 @@ namespace Hud {
 
 
 
+		
         bool spawn_quadticle(int x, int y, int x_speed, int y_speed, int y_dest) {
             for (int i = 0; i < LUDICROUS_REZ; i++) {
                 if (!quadticles[i].Alive) {
