@@ -155,11 +155,29 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     */
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
-    const float AGENT_MASS = 1.0f; //the agents mass, will become a variable dependent on the amount of stuff a player carries
+    //const float AGENT_MASS = 1.0f; //the agents mass, will become a variable dependent on the amount of stuff a player carries
+    //const float FRICTION = 0.5f;    // coefficient of friction. will be variable based on the surface
 
-    float speed = AGENT_SPEED / tr * as.ac + (as.ac / 100);
-    as.ac = speed / AGENT_MASS + 1;
+    // Key press applies Force in direction
+    // F = ma
+    // a = F/m
+    // calculate acceleration by the method above
+    // acceleration vector is some constant * direction
+    // acceleration is 0 if nothing pressed
+    // Friction is some constant (later, dependent on block directly underneath)
+    // Friction is 0 if in air
+    // Force of friction is friction_coefficient * normal vector (normal vector is inverse of gravity, unless we are using the jetpack, but ignore that aspect and use inverse of gravity)
+    // So,
+    // a = (F - uN) / m;
+    // Applied Force should be > uN for all u
+    // If velocity >= velocity_limit,
+    // Applied Force should == uN for a fixed u (the maximum u, i think)
+    // ...while keys are pressed
 
+    //float speed = AGENT_SPEED / tr * as.ac + (as.ac / 100);
+    //as.ac = speed / AGENT_MASS + 1;
+
+    float speed = AGENT_SPEED / tr;
     float height = box.b_height;
     if (crouch)
     {

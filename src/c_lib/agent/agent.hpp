@@ -22,14 +22,14 @@ class AgentState
         float phi;
         float x,y,z;
         float vx,vy,vz;
-        float ac;
+        float ax,ay,az;
 
     AgentState() :
         seq(-1),
         theta(0), phi(0),
         x(0), y(0), z(0),
         vx(0), vy(0), vz(0),
-        ac(0)
+        ax(0), ay(0), az(0)
     {}
 
     struct Vec3 forward_vector();
@@ -46,7 +46,7 @@ class AgentState
 
     void print()
     {
-        printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f\n", x,y,z,vx,vy,vz);
+        printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f; a: %0.2f, %0.2f, %0.2f;\n", x,y,z,vx,vy,vz,ax,ay,az);
     }
 };
 
