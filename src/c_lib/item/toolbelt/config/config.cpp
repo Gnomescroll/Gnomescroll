@@ -156,7 +156,6 @@ static void register_click_and_hold()
     click_and_hold_group(IG_HITSCAN_WEAPON, false);
     click_and_hold_group(IG_GRENADE_LAUNCHER, false);
     click_and_hold_group(IG_DEBUG, false);
-    click_and_hold_group(IG_PLACER, false);
     click_and_hold_group(IG_CONSUMABLE, false);
     click_and_hold_group(IG_AGENT_SPAWNER, false);
     click_and_hold_group(IG_ENERGY_CORE, false);
@@ -188,7 +187,8 @@ static void register_item_group_callbacks()
     c.local_end = &end_local_mining_laser;
 
     set_group(IG_PLACER);
-    c.local_trigger = &trigger_local_block_placer;
+    c.local_trigger = &fire_close_range_weapon;
+    c.local_beta_trigger = &trigger_local_block_placer;
     
     set_group(IG_GRENADE_LAUNCHER);
     c.local_trigger = &trigger_local_plasma_grenade;
