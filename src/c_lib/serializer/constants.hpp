@@ -103,6 +103,7 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define USER_ID_TAG              "UID"
 #define VERSION_TAG              "VER"
 #define MECH_TYPE_TAG            "MCH"
+#define ENTITY_ID_TAG            "EID"
 #define DURABILITY_TAG           "DUR"
 #define STACK_SIZE_TAG           "STA"
 #define MAP_POSITION_TAG         "MAP"
@@ -130,6 +131,7 @@ const size_t UUID_STRING_LENGTH = 36;
 #define USER_ID_LENGTH                10
 #define CUBE_ID_LENGTH                4
 #define MECH_TYPE_LENGTH              4
+#define ENTITY_ID_LENGTH              5
 #define ITEM_UUID_LENGTH              36
 #define CONTAINER_ID_LENGTH           5
 #define CONTAINER_COUNT_LENGTH        5
@@ -146,6 +148,7 @@ const size_t UUID_STRING_LENGTH = 36;
 
 const size_t ITEM_FIELD_COUNT             = 5;
 const size_t PLAYER_FIELD_COUNT           = 1;
+const size_t ENTITY_FIELD_COUNT           = 2;
 const size_t CONTAINER_FIELD_COUNT        = 3;
 const size_t MAP_PALETTE_FIELD_COUNT      = 2;
 const size_t MECH_PALETTE_FIELD_COUNT     = 2;
@@ -202,30 +205,9 @@ const size_t MECH_PALETTE_LINE_LENGTH =
     + MECH_TYPE_LENGTH
     + DAT_NAME_MAX_LENGTH;
 
-AGENT_SPAWNER_FIELD_COUNT
-
-const size_t AGENT_SPAWNER_LINE_LENGTH =
-      AGENT_SPAWNER_FIELD_COUNT + (TAG_LENGTH + TAG_DELIMITER_LENGTH)
-    + (AGENT_SPAWNER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
-    + MAP_POSITION_LENGTH
-    + ENTITY_ID_LENGTH
-    + DAT_NAME_MAX_LENGTH;
-    // TODO -- user length is unbounded???
-    // Should put users on separate line
-    // Actually, new format for entities:
-    // FILE HEADER -- version, entity count
-    // Entity Header: name, id
-    // TK1=....
-    // TK2=....
-    // +
-    // etc
-    
-const size_t ENERGY_CORE_FIELD_COUNT = 3;
-
-const size_t ENERGY_CORE_LINE_LENGTH =
-      ENERGY_CORE_FIELD_COUNT + (TAG_LENGTH + TAG_DELIMITER_LENGTH)
-    + (ENERGY_CORE_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
-    + MAP_POSITION_LENGTH
+const size_t ENTITY_LINE_LENGTH =
+       ENTITY_FIELD_COUNT + (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (ENTITY_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
     + ENTITY_ID_LENGTH
     + DAT_NAME_MAX_LENGTH;
 
@@ -301,37 +283,12 @@ const char MECH_PALETTE_FMT[] =
     MECH_TYPE_TAG TAG_DELIMITER
         "%0" GS_STR(MECH_TYPE_LENGTH)       "d";
 
-const char AGENT_SPAWNER_FMT[] =
+const char ENTITY_FMT[] =
     NAME_TAG        TAG_DELIMITER
         "%-" GS_STR(DAT_NAME_MAX_LENGTH)           "s"
         PROPERTY_DELIMITER
-    USER_COUNT_TAG  TAG_DELIMITER
-        "%0" GS_STR(USER_COUNT_LENGTH)             "d"
-        PROPERTY_DELIMITER
-    MAP_POSITION_TAG    TAG_DELIMITER
-        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
-            MAP_POSITION_COMPONENT_DELIMITER
-        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
-            MAP_POSITION_COMPONENT_DELIMITER
-        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
-        PROPERTY_DELIMITER
     ENTITY_ID_TAG   TAG_DELIMITER
         "%0" GS_STR(ENTITY_ID_LENGTH)              "d";
-
-const char ENERGY_CORE_FMT[] =
-    NAME_TAG    TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)           "s"
-        PROPERTY_DELIMITER
-    MAP_POSITION_TAG    TAG_DELIMITER
-        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
-            MAP_POSITION_COMPONENT_DELIMITER
-        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
-            MAP_POSITION_COMPONENT_DELIMITER
-        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
-        PROPERTY_DELIMITER
-    ENTITY_ID_TAG   TAG_DELIMITER
-        "%0" GS_STR(ENTITY_ID_LENGTH)              "d";
-
 
 #define PLAYER_REDIS_KEY_PREFIX "player:"
 

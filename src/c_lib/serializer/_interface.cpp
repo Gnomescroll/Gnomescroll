@@ -177,6 +177,7 @@ static void create_data_paths()
     create_path(map_folder);
     create_path(mech_folder);
     create_path(player_folder);
+    create_path(entity_folder);
     create_path(container_folder);
 } 
 
