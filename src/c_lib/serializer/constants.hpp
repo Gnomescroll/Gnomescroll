@@ -202,6 +202,33 @@ const size_t MECH_PALETTE_LINE_LENGTH =
     + MECH_TYPE_LENGTH
     + DAT_NAME_MAX_LENGTH;
 
+AGENT_SPAWNER_FIELD_COUNT
+
+const size_t AGENT_SPAWNER_LINE_LENGTH =
+      AGENT_SPAWNER_FIELD_COUNT + (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (AGENT_SPAWNER_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + MAP_POSITION_LENGTH
+    + ENTITY_ID_LENGTH
+    + DAT_NAME_MAX_LENGTH;
+    // TODO -- user length is unbounded???
+    // Should put users on separate line
+    // Actually, new format for entities:
+    // FILE HEADER -- version, entity count
+    // Entity Header: name, id
+    // TK1=....
+    // TK2=....
+    // +
+    // etc
+    
+const size_t ENERGY_CORE_FIELD_COUNT = 3;
+
+const size_t ENERGY_CORE_LINE_LENGTH =
+      ENERGY_CORE_FIELD_COUNT + (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (ENERGY_CORE_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + MAP_POSITION_LENGTH
+    + ENTITY_ID_LENGTH
+    + DAT_NAME_MAX_LENGTH;
+
 const char CONTAINER_FILE_HEADER_FMT[] =
     VERSION_TAG         TAG_DELIMITER
         "%0" GS_STR(VERSION_LENGTH)         "d"
@@ -219,7 +246,7 @@ const char PLAYER_DATA_FMT[] =
 
 const char PLAYER_CONTAINER_HEADER_FMT[] =
     NAME_TAG            TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)      "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)            "s"
         PROPERTY_DELIMITER
     USER_ID_TAG         TAG_DELIMITER
         "%0" GS_STR(USER_ID_LENGTH)                 "d"
@@ -229,7 +256,7 @@ const char PLAYER_CONTAINER_HEADER_FMT[] =
 
 const char CONTAINER_HEADER_FMT[] =
     NAME_TAG            TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)     "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)           "s"
         PROPERTY_DELIMITER
     CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER
         "%0" GS_STR(CONTAINER_ITEM_COUNT_LENGTH)   "d"
@@ -246,7 +273,7 @@ const char CONTAINER_HEADER_FMT[] =
     
 const char ITEM_FMT[] =
     NAME_TAG           TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)       "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)        "s"
         PROPERTY_DELIMITER
     DURABILITY_TAG     TAG_DELIMITER
         "%0" GS_STR(ITEM_DURABILITY_LENGTH)     "d"
@@ -269,10 +296,42 @@ const char MAP_PALETTE_FMT[] =
         
 const char MECH_PALETTE_FMT[] =
     NAME_TAG    TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH) "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)    "s"
         PROPERTY_DELIMITER
     MECH_TYPE_TAG TAG_DELIMITER
         "%0" GS_STR(MECH_TYPE_LENGTH)       "d";
+
+const char AGENT_SPAWNER_FMT[] =
+    NAME_TAG        TAG_DELIMITER
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)           "s"
+        PROPERTY_DELIMITER
+    USER_COUNT_TAG  TAG_DELIMITER
+        "%0" GS_STR(USER_COUNT_LENGTH)             "d"
+        PROPERTY_DELIMITER
+    MAP_POSITION_TAG    TAG_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+        PROPERTY_DELIMITER
+    ENTITY_ID_TAG   TAG_DELIMITER
+        "%0" GS_STR(ENTITY_ID_LENGTH)              "d";
+
+const char ENERGY_CORE_FMT[] =
+    NAME_TAG    TAG_DELIMITER
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)           "s"
+        PROPERTY_DELIMITER
+    MAP_POSITION_TAG    TAG_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+        PROPERTY_DELIMITER
+    ENTITY_ID_TAG   TAG_DELIMITER
+        "%0" GS_STR(ENTITY_ID_LENGTH)              "d";
+
 
 #define PLAYER_REDIS_KEY_PREFIX "player:"
 

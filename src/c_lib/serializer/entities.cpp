@@ -14,7 +14,9 @@ bool load_entities_file(const char* fn)
 
 bool save_entities()
 {
-    return true;
+    FILE* f = fopen(entity_path_tmp, "w");
+    GS_ASSERT(f != NULL);
+    if (f == NULL) return false;
 
     // For entity in entities we care about
     //  // Write entity header
@@ -25,6 +27,10 @@ bool save_entities()
 
     // spawners also have a list of user_ids that are attached to them
     // can be comma separated list
+
+    int ret = fclose(f);
+    GS_ASSERT(ret == 0);
+    return (ret == 0);
 }
 
 bool load_entities()
