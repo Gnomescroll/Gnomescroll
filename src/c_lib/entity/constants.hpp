@@ -1,5 +1,13 @@
 #pragma once
 
+namespace Objects
+{   // forward decl
+class Object;
+}   // Objects
+
+typedef void (*tickObject)(class Objects::Object*);      // for physics
+typedef void (*updateObject)(class Objects::Object*);    // for draw prep
+
 int MAX_OBJECT_TYPES = 0xFF;
 typedef enum
 {
@@ -12,7 +20,6 @@ typedef enum
     OBJECT_GRENADE,
 
     // game items
-    OBJECT_FLAG,
     OBJECT_BASE,
 
     // fabs
@@ -25,12 +32,6 @@ typedef enum
     OBJECT_MONSTER_BOX,
     OBJECT_MONSTER_SPAWNER,
 
-    // inventories
-    OBJECT_AGENT_INVENTORY,
-    OBJECT_AGENT_TOOLBELT,
-    OBJECT_SYNTHESIZER_INVENTORY,
-    OBJECT_CRAFTING_BENCH,
-    
 } ObjectType;
 
 int MAX_COMPONENT_TYPES = 0xFF;
@@ -124,12 +125,13 @@ typedef enum
 
 typedef enum
 {
-    STATE_NONE,
+    STATE_NONE = 0,
     STATE_WAITING,
     STATE_IN_TRANSIT,
     STATE_CHASE_AGENT,
 } EntityState;
 
+typedef void (*stateRouter) (class Objects::Object*, EntityState);   // for state machine
 
 #include <limits.h>
 #include <physics/vec3.hpp>

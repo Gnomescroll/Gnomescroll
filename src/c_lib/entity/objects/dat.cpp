@@ -38,14 +38,15 @@ void entity_def(const char* name, ObjectType type)
     if (e != NULL) finish_def();
 
     GS_ASSERT_ABORT(type >= 0 && type < MAX_OBJECT_TYPES);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return;
+    IF_INVALID_OBJECT_TYPE(type) return;
         
     e = &attributes[type];
     GS_ASSERT_ABORT(!e->loaded);
     
     e->type = type;
+    strncpy(e->name, name, DAT_NAME_MAX_LENGTH+1);
+    e->name[DAT_NAME_MAX_LENGTH] = '\0';
 }
-
 
 void verify_entity_dat()
 {
