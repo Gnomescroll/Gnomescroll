@@ -408,13 +408,18 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 }
 
 #if DC_CLIENT
-void Agent::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
+void Agent::handle_state_snapshot(int seq,
+                                    float theta, float phi,
+                                    float x,float y,float z,
+                                    float vx,float vy,float vz,
+                                    float ax,float ay,float az)
 {
     state_snapshot.seq = seq;
     state_snapshot.theta = theta;
     state_snapshot.phi = phi;
     state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
     state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
+    state_snapshot.ax=ax;state_snapshot.ay=ay;state_snapshot.az=az;
 
     for (int i=16; i<96; i++)
     {

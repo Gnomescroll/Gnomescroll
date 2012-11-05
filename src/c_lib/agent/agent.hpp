@@ -156,7 +156,7 @@ class Agent
         //void send_id_to_client(ClientID client_id);
 
         #if DC_CLIENT
-        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
+        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz, float ax,float ay,float az);
         #endif
 
         //this is for client

@@ -77,7 +77,7 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     }
 }
 
-void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
+void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz, float ax,float ay,float az)
 {
     class AgentState ss;
 
@@ -86,6 +86,7 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
     ss.phi = phi;
     ss.x=x;ss.y=y;ss.z=z;
     ss.vx=vx;ss.vy=vy;ss.vz=vz;
+    ss.ax=ax;ss.ay=ay;ss.az=az;
 
     int index = seq % AGENT_STATE_HISTORY_SIZE;
 

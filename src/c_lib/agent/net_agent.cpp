@@ -27,7 +27,7 @@
 inline void PlayerAgent_Snapshot::handle()
 {
     #if DC_CLIENT
-    ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
+    ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz, ax, ay, az);
     #endif
 }
 
@@ -47,7 +47,7 @@ inline void Agent_state_message::handle()
     #if DC_SERVER
     z = clamp_z(z);
     #endif
-    a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
+    a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz, ax, ay, az);
 }
 
 inline void Agent_teleport_message::handle()
