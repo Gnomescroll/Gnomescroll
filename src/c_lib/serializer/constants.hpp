@@ -107,6 +107,7 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define DURABILITY_TAG           "DUR"
 #define STACK_SIZE_TAG           "STA"
 #define MAP_POSITION_TAG         "MAP"
+#define ENTITY_COUNT_TAG         "CNT"
 #define CONTAINER_ID_TAG         "CID"
 #define CONTAINER_SLOT_TAG       "CSL"
 #define CONTAINER_COUNT_TAG      "CNT"
@@ -133,6 +134,7 @@ const size_t UUID_STRING_LENGTH = 36;
 #define MECH_TYPE_LENGTH              4
 #define ENTITY_ID_LENGTH              5
 #define ITEM_UUID_LENGTH              36
+#define ENTITY_COUNT_LENGTH           5
 #define CONTAINER_ID_LENGTH           5
 #define CONTAINER_COUNT_LENGTH        5
 #define ITEM_DURABILITY_LENGTH        5
@@ -228,13 +230,13 @@ const char PLAYER_DATA_FMT[] =
 
 const char PLAYER_CONTAINER_HEADER_FMT[] =
     NAME_TAG            TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)            "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)         "s"
         PROPERTY_DELIMITER
     USER_ID_TAG         TAG_DELIMITER
-        "%0" GS_STR(USER_ID_LENGTH)                 "d"
+        "%0" GS_STR(USER_ID_LENGTH)              "d"
         PROPERTY_DELIMITER
     CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER
-        "%0" GS_STR(CONTAINER_ITEM_COUNT_LENGTH)    "d";
+        "%0" GS_STR(CONTAINER_ITEM_COUNT_LENGTH) "d";
 
 const char CONTAINER_HEADER_FMT[] =
     NAME_TAG            TAG_DELIMITER
@@ -274,21 +276,29 @@ const char MAP_PALETTE_FMT[] =
         "%-" GS_STR(DAT_NAME_MAX_LENGTH) "s"
         PROPERTY_DELIMITER
     CUBE_ID_TAG TAG_DELIMITER
-        "%0" GS_STR(CUBE_ID_LENGTH)       "d";
+        "%0" GS_STR(CUBE_ID_LENGTH)      "d";
         
 const char MECH_PALETTE_FMT[] =
     NAME_TAG    TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)    "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH) "s"
         PROPERTY_DELIMITER
     MECH_TYPE_TAG TAG_DELIMITER
-        "%0" GS_STR(MECH_TYPE_LENGTH)       "d";
+        "%0" GS_STR(MECH_TYPE_LENGTH)    "d";
 
 const char ENTITY_FMT[] =
     NAME_TAG        TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)           "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH) "s"
         PROPERTY_DELIMITER
     ENTITY_ID_TAG   TAG_DELIMITER
-        "%0" GS_STR(ENTITY_ID_LENGTH)              "d";
+        "%0" GS_STR(ENTITY_ID_LENGTH)    "d";
+
+const char ENTITY_FILE_HEADER_FMT[] =
+    VERSION_TAG         TAG_DELIMITER
+        "%0" GS_STR(VERSION_LENGTH)      "d"
+        PROPERTY_DELIMITER
+    ENTITY_COUNT_TAG TAG_DELIMITER
+        "%0" GS_STR(ENTITY_COUNT_LENGTH) "d";
+
 
 #define PLAYER_REDIS_KEY_PREFIX "player:"
 
