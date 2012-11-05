@@ -299,9 +299,12 @@ int init_c_lib(int argc, char* argv[])
     ItemContainer::init_config();
     t_map::init_t_properties();
     t_mech::init_properties();
+    Objects::init_entity_dat();
 
     t_map::load_block_dat();
     t_mech::load_mech_dat();
+    Objects::load_entity_dat();
+    Objects::end_entity_dat();
     ItemContainer::load_config();
     ItemContainer::end_config();
     Item::init_properties();
@@ -354,6 +357,7 @@ void close_c_lib()
 
     Objects::teardown();    // Entity system
     Objects::teardown_net_interfaces();
+    Objects::teardown_entity_dat();
     Components::teardown();
 
     Agents::teardown();

@@ -1,6 +1,6 @@
 #pragma once
 
-int MAX_OBJECT_TYPES = 256;
+int MAX_OBJECT_TYPES = 0xFF;
 typedef enum
 {
     OBJECT_NONE = 0,    // null
@@ -33,10 +33,10 @@ typedef enum
     
 } ObjectType;
 
-int MAX_COMPONENT_TYPES = 256;
+int MAX_COMPONENT_TYPES = 0xFF;
 typedef enum
 {
-    COMPONENT_NONE,
+    COMPONENT_NONE = 0,
 
     COMPONENT_POSITION,
     COMPONENT_POSITION_MOMENTUM,
@@ -90,7 +90,7 @@ typedef enum
     
 } ComponentType;
 
-int MAX_COMPONENT_INTERFACE_TYPES = 256;
+int MAX_COMPONENT_INTERFACE_TYPES = 0xFF;
 typedef enum
 {
     COMPONENT_INTERFACE_NONE = 0,
