@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef __GNUC__
-    #pragma GCC diagnostic ignored "-Wunused-function"
+# pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 
 #include <math.h>
@@ -87,7 +87,7 @@ struct Vec3 vec3_normalize(struct Vec3 v)
 
     if (l == 0.0f) 
     {
-        GS_ASSERT_LIMIT(l != 0.0f, 50);
+        GS_ASSERT_LIMIT(l != 0.0f, 1);
         return v;
     }
 

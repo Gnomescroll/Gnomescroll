@@ -32,19 +32,26 @@ class AgentState
         ax(0), ay(0), az(0)
     {}
 
-    struct Vec3 forward_vector();
+    const struct Vec3 forward_vector();
 
-    struct Vec3 get_position() { return vec3_init(x,y,z); }
+    const struct Vec3 get_position() { return vec3_init(x, y, z); }
+    const struct Vec3 get_velocity() { return vec3_init(vx, vy, vz); }
 
     void set_position(struct Vec3 p)
     {
-        ASSERT_BOXED_POSITION(p);
-        this->x = p.x;
-        this->y = p.y;
+        this->x = translate_point(p.x);
+        this->y = translate_point(p.y);
         this->z = p.z;
     }
 
-    void print()
+    void set_velocity(struct Vec3 v)
+    {
+        this->vx = v.x;
+        this->vy = v.y;
+        this->vz = v.z;
+    }
+
+    const void print()
     {
         printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f; a: %0.2f, %0.2f, %0.2f;\n", x,y,z,vx,vy,vz,ax,ay,az);
     }
@@ -126,7 +133,7 @@ class Agent
         void set_position(float x, float y, float z);
         void set_state(float x, float y, float z, float vx, float vy, float vz);
         AgentState get_state_snapshot() { return this->state_snapshot; }
-        void set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz);
+        void set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz, float ax, float ay, float az);
         void set_angles(float theta, float phi);
         void teleport(float x,float y,float z); //should only be used on server
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
@@ -199,7 +206,7 @@ class Agent
         ~Agent();
 };
 
-class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
+class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct Agent_collision_box& box, class AgentState as);
 
 bool agent_collides_terrain(Agent* a);
 void force_update_agent_vox(Agent* a);
