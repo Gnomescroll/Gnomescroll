@@ -149,7 +149,7 @@ void start_cave_generator()
     {
         float x,y,z;
         int tries = 0;
-        int cavecount; //used for better generation of ellipses and stalactites
+        int cavecount = 0; //used for better generation of ellipses and stalactites
         do
         {
             x = (float)genrand_real1()*(float)XMAX;
