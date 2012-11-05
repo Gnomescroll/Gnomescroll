@@ -42,6 +42,7 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define MAP_LOG_FILENAME       "map.log"
 #define MECH_LOG_FILENAME      "mechs.log"
 #define PLAYER_LOG_FILENAME    "players.log"
+#define ENTITIES_LOG_FILENAME  "entities.log"
 #define CONTAINER_LOG_FILENAME "containers.log"
 
 #define LOG_LINE_SEPARATOR "===========\n"
@@ -51,16 +52,17 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define DATA_TMP_EXT     ".tmp"
 #define DATA_BACKUP_EXT  ".bak"
 #define DATA_PALETTE_EXT ".pal"
-//#define DATA_ERROR_EXT  ".err"
 
 #define MAP_DATA_PATH       "map/"
 #define MECH_DATA_PATH      "mechs/"
 #define PLAYER_DATA_PATH    "players/"
+#define ENTITY_DATA_PATH    "entities/"
 #define CONTAINER_DATA_PATH "containers/"
 
 #define MAP_DATA_EXT       ".map"
 #define MECH_DATA_EXT      ".mch"
 #define PLAYER_DATA_EXT    ".plr"
+#define ENTITY_DATA_EXT  ".ent"
 #define CONTAINER_DATA_EXT ".ctr"
 
 // data files
@@ -86,11 +88,9 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define CONTAINER_FILENAME_TMP    "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_TMP_EXT
 #define CONTAINER_FILENAME_BACKUP "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_BACKUP_EXT
 
-// error files
-//const char map_error_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_ERROR_EXT;
-//const char mech_error_filename[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_ERROR_EXT;
-//const char player_error_filename[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_ERROR_EXT;
-//const char container_error_filename[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_ERROR_EXT;
+#define ENTITY_FILENAME        "entities-" GS_STR(GS_VERSION) ENTITY_DATA_EXT
+#define ENTITY_FILENAME_TMP    "entities-" GS_STR(GS_VERSION) ENTITY_DATA_EXT DATA_TMP_EXT
+#define ENTITY_FILENAME_BACKUP "entities-" GS_STR(GS_VERSION) ENTITY_DATA_EXT DATA_BACKUP_EXT
 
 // Format data for items, containers, redis keys
 
