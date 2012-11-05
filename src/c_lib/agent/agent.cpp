@@ -365,6 +365,9 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
         P.vx = s.vx;
         P.vy = s.vy;
         P.vz = s.vz;
+        P.ax = s.ax;
+        P.ay = s.ay;
+        P.az = s.az;
 
         P.theta = s.theta;
         P.phi = s.phi;
@@ -385,6 +388,9 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
         A.vx = s.vx;
         A.vy = s.vy;
         A.vz = s.vz;
+        A.ax = s.ax;
+        A.ay = s.ay;
+        A.az = s.az;
 
         A.theta = s.theta;
         A.phi = s.phi;
