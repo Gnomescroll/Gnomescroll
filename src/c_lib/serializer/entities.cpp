@@ -1,6 +1,7 @@
 #include "entities.hpp"
 
 #include <entity/objects.hpp>
+#include <serializer/logger.hpp>
 
 namespace serializer
 {
