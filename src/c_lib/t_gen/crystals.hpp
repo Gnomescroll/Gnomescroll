@@ -56,10 +56,10 @@ void init_crystals()
     // TODO -- check that all crystals are not ERROR_MECH
 
     bedrock = t_map::get_cube_id("bedrock");
-    GS_ASSERT(bedrock != ERROR_CUBE);
+    ASSERT_VALID_CUBE_ID(bedrock);
 
     rock = t_map::get_cube_id("rock");
-    GS_ASSERT(rock != ERROR_CUBE);
+    ASSERT_VALID_CUBE_ID(rock);
 
     //int top = get_highest_block_of_type(rock) + 1;
 
