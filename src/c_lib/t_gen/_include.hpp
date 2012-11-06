@@ -21,3 +21,5 @@ dont_include_this_file_in_client
 #include <t_gen/terrain_features.hpp>
 
 #include <t_gen/features.cpp>
+
+#include <t_gen/meteors.hpp>
