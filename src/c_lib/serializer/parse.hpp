@@ -92,7 +92,6 @@ size_t parse_block(bool (*process_token) (const char*, const char*, Data*), cons
             printf("%c (%d) != \\n\n", c, (int)c);
             printf("n: %u\n", n);
             printf("buf: %s\n", buf);
-            printf("index: %u\n", index);
             return i;
         }
         if (strcmp(buf, terminator) == 0) break;
