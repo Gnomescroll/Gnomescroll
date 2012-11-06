@@ -268,7 +268,7 @@ void Voxel_model::reset_skeleton()
     }
 }
 
-void Voxel_model::init_parts(int id, ObjectType type)
+void Voxel_model::init_parts(int id, EntityType type)
 {
     // create each vox part from vox_dat conf
     GS_ASSERT(!this->vox_inited);
@@ -427,7 +427,7 @@ void Voxel_model::set_vox_dat(VoxDat* vox_dat)
     this->vox_dat = vox_dat;
 }
 
-Voxel_model::Voxel_model(VoxDat* vox_dat, int id, ObjectType type) :
+Voxel_model::Voxel_model(VoxDat* vox_dat, int id, EntityType type) :
     skeleton_inited(false),
     n_skeleton_nodes(0),
     vox_skeleton_transveral_list(NULL),

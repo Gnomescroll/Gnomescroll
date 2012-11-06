@@ -48,7 +48,7 @@ ContainerInputEvent null_input_event();
 void set_mouse_position(int x, int y);
 
 // network
-void network_container_assignment(ObjectType type, int id);
+void network_container_assignment(EntityType type, int id);
 
 // Init
 void init();

@@ -33,6 +33,10 @@ void log_player_load_error(const char* msg, const char* data_str,
     class PlayerLoadData* load_data, class PlayerContainerLoadData* container_load_data,
     class ParsedPlayerData* player_data, class ParsedPlayerContainerData* container_data,
     class ParsedItemData* item_data);
+
+void log_entity_save_error(const char* msg, const char* entity_name, int entity_id);
+void log_entity_save_error(const char* msg);
+void log_entity_load_error(const char* msg);
 #endif
 
 }   // serializer

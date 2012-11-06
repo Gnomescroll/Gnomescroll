@@ -128,7 +128,7 @@ void CalculateBoneToWorldTransform(class cBone* bone)
     bone->global_transform = bone->local_transform;
     class cBone* parent = bone->parent;
 
-    // this will climb the nodes up along through the parents concentating all the matrices to get the Object to World transform, or in this case, the Bone To World transform
+    // this will climb the nodes up along through the parents concentating all the matrices to get the Entity to World transform, or in this case, the Bone To World transform
     while( parent )
     {
         bone->global_transform = mat4_mult(bone->global_transform, parent->local_transform);

@@ -2,16 +2,16 @@
 
 #include <entity/object/types.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 void init_config();
 void teardown_config();
 
-unsigned int get_object_max(ObjectType type);
-objectLoad get_object_load_method(ObjectType type);
-objectCreate get_object_create_method(ObjectType type);
-objectReady get_object_ready_method(ObjectType type);
-objectDie get_object_die_method(ObjectType type);
+unsigned int get_object_max(EntityType type);
+entityLoad get_object_load_method(EntityType type);
+entityCreate get_object_create_method(EntityType type);
+entityReady get_object_ready_method(EntityType type);
+entityDie get_object_die_method(EntityType type);
 
-}   // Objects
+}   // Entities

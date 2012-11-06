@@ -18,7 +18,7 @@ namespace ServerState
     
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
 
-    class Objects::Object* base;
+    class Entities::Entity* base;
 
     void init_lists()
     {
@@ -50,7 +50,7 @@ namespace ServerState
 
     void init_base()
     {
-        base = Objects::create(OBJECT_BASE);
+        base = Entities::create(OBJECT_BASE);
         GS_ASSERT(base != NULL);
         if (base == NULL) return;
         using Components::PhysicsComponent;
@@ -58,7 +58,7 @@ namespace ServerState
         GS_ASSERT(physics != NULL);
         if (physics != NULL)
             physics->set_position(get_base_spawn_position());
-        Objects::ready(base);
+        Entities::ready(base);
     }
 
     void move_base()
@@ -87,7 +87,7 @@ namespace ServerState
     {
         using Agents::agent_list;
         
-        Objects::Object* base = Objects::get(OBJECT_BASE, 0);
+        Entities::Entity* base = Entities::get(OBJECT_BASE, 0);
         GS_ASSERT(base != NULL);
         if (base == NULL) return;
 
@@ -116,7 +116,7 @@ namespace ServerState
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
         int damage, AgentID owner,
-        ObjectType inflictor_type, int inflictor_id,
+        EntityType inflictor_type, int inflictor_id,
         bool suicidal)   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     {   // agents
         using Agents::agent_list;
@@ -137,10 +137,10 @@ namespace ServerState
         Vec3 position = vec3_init(x,y,z);
 
         const int n_types = 3;
-        const ObjectType types[n_types] = {
+        const EntityType types[n_types] = {
             OBJECT_MONSTER_BOMB, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
         };
-        Objects::damage_objects_within_sphere(types, n_types, position, radius, damage);
+        Entities::damage_objects_within_sphere(types, n_types, position, radius, damage);
 
     }
         
@@ -155,12 +155,12 @@ namespace ServerState
     }
 
     // TODO -- move this
-    void spawn_monsters(ObjectType type, int n)
+    void spawn_monsters(EntityType type, int n)
     {
-        int count = Objects::count(type);
+        int count = Entities::count(type);
         for (int i=0; i<n-count; i++)
         {
-            Objects::Object* obj = Objects::create(type);
+            Entities::Entity* obj = Entities::create(type);
             if (obj == NULL) break;
 
             Vec3 position;
@@ -173,12 +173,12 @@ namespace ServerState
             GS_ASSERT(physics != NULL);
             if (physics == NULL)
             {
-                Objects::ready(obj);    // sets id
-                Objects::destroy(obj);
+                Entities::ready(obj);    // sets id
+                Entities::destroy(obj);
                 break;
             }
             physics->set_position(position);
-            Objects::ready(obj);
+            Entities::ready(obj);
         }
     }
 }   // ServerState

@@ -188,14 +188,14 @@ void ItemList::verify_items()
 
         VERIFY_ITEM(i->type != NULL_ITEM_TYPE, LIMIT, i);
     
-        GS_ASSERT_LIMIT(i->subscribers.n >= 0, LIMIT);  // this should warn, but not mark the item as invalid
+        GS_ASSERT_LIMIT(i->subscribers.count >= 0, LIMIT);  // this should warn, but not mark the item as invalid
         VERIFY_ITEM((i->stack_size > 0 && i->stack_size <= MAX_STACK_SIZE) || i->stack_size == NULL_STACK_SIZE, LIMIT, i);
         VERIFY_ITEM((i->durability > 0 && i->durability <= MAX_DURABILITY) || i->durability == NULL_DURABILITY, LIMIT, i);
 
         if (i->location == IL_HAND)
         {
-            GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
-            GS_ASSERT_LIMIT(i->subscribers.n <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT); // WARNING -- assumes client_id==agent_id
+            GS_ASSERT_LIMIT(i->subscribers.count == 1, LIMIT);
+            GS_ASSERT_LIMIT(i->subscribers.count <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT); // WARNING -- assumes client_id==agent_id
             GS_ASSERT_LIMIT(ItemContainer::get_agent_hand_item((AgentID)i->location_id) == i->id, LIMIT);
             VERIFY_ITEM(i->location_id >= 0 && i->location_id < MAX_AGENTS, LIMIT, i);
         }
@@ -206,13 +206,13 @@ void ItemList::verify_items()
             int owner = ItemContainer::get_container_owner(i->location_id);
             if (ItemContainer::container_type_is_attached_to_agent(type))
             {
-                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
-                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.count == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.count <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }
             else if (owner != NULL_AGENT)
             {
-                GS_ASSERT_LIMIT(i->subscribers.n == 1, LIMIT);
-                GS_ASSERT_LIMIT(i->subscribers.n <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.count == 1, LIMIT);
+                GS_ASSERT_LIMIT(i->subscribers.count <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
             }
         }
     }

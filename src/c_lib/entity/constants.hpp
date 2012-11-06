@@ -1,6 +1,14 @@
 #pragma once
 
-int MAX_OBJECT_TYPES = 256;
+namespace Entities
+{   // forward decl
+class Entity;
+}   // Entities
+
+typedef void (*tickObject)(class Entities::Entity*);      // for physics
+typedef void (*updateObject)(class Entities::Entity*);    // for draw prep
+
+int MAX_OBJECT_TYPES = 0xFF;
 typedef enum
 {
     OBJECT_NONE = 0,    // null
@@ -12,7 +20,6 @@ typedef enum
     OBJECT_GRENADE,
 
     // game items
-    OBJECT_FLAG,
     OBJECT_BASE,
 
     // fabs
@@ -25,18 +32,12 @@ typedef enum
     OBJECT_MONSTER_BOX,
     OBJECT_MONSTER_SPAWNER,
 
-    // inventories
-    OBJECT_AGENT_INVENTORY,
-    OBJECT_AGENT_TOOLBELT,
-    OBJECT_SYNTHESIZER_INVENTORY,
-    OBJECT_CRAFTING_BENCH,
-    
-} ObjectType;
+} EntityType;
 
-int MAX_COMPONENT_TYPES = 256;
+int MAX_COMPONENT_TYPES = 0xFF;
 typedef enum
 {
-    COMPONENT_NONE,
+    COMPONENT_NONE = 0,
 
     COMPONENT_POSITION,
     COMPONENT_POSITION_MOMENTUM,
@@ -90,7 +91,7 @@ typedef enum
     
 } ComponentType;
 
-int MAX_COMPONENT_INTERFACE_TYPES = 256;
+int MAX_COMPONENT_INTERFACE_TYPES = 0xFF;
 typedef enum
 {
     COMPONENT_INTERFACE_NONE = 0,
@@ -124,12 +125,13 @@ typedef enum
 
 typedef enum
 {
-    STATE_NONE,
+    STATE_NONE = 0,
     STATE_WAITING,
     STATE_IN_TRANSIT,
     STATE_CHASE_AGENT,
 } EntityState;
 
+typedef void (*stateRouter) (class Entities::Entity*, EntityState);   // for state machine
 
 #include <limits.h>
 #include <physics/vec3.hpp>

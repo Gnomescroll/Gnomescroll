@@ -54,10 +54,10 @@ class Agent_event
         // old style packet handler events
         // still used; triggers target specific animations/sounds
         // since that is required from server
-        void fired_weapon_at_object(int id, ObjectType type, int part);
+        void fired_weapon_at_object(int id, EntityType type, int part);
         void fired_weapon_at_block(float x, float y, float z, int cube, int side);
         void fired_weapon_at_nothing();
-        void melee_attack_object(int id, ObjectType type, int part);
+        void melee_attack_object(int id, EntityType type, int part);
         void melee_attack_nothing();
         void fire_empty_weapon(int weapon_type);
 

@@ -29,4 +29,4 @@ class RateLimitComponent: public Component
     {}
 };
 
-}; // Objects
+}; // Entities

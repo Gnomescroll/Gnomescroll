@@ -13,12 +13,12 @@
 #include <entity/components/healer.hpp>
 #endif
 
-namespace Objects
+namespace Entities
 {
 
 void load_energy_core_data()
 {
-    ObjectType type = OBJECT_ENERGY_CORE;
+    EntityType type = OBJECT_ENERGY_CORE;
 
     #if DC_SERVER
     int n_components = 6;
@@ -27,24 +27,24 @@ void load_energy_core_data()
     int n_components = 5;
     #endif
 
-    object_data->set_components(type, n_components);
+    entity_data->set_components(type, n_components);
 
-    object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
-    object_data->attach_component(type, COMPONENT_DIMENSION);
-    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    object_data->attach_component(type, COMPONENT_HIT_POINTS);
+    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
+    entity_data->attach_component(type, COMPONENT_DIMENSION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
     
     #if DC_SERVER
-    object_data->attach_component(type, COMPONENT_HEALER);
-    object_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_HEALER);
+    entity_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
     
     #if DC_CLIENT
-    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
     #endif
 }
 
-static void set_energy_core_properties(Object* object)
+static void set_energy_core_properties(Entity* object)
 {
     void* ret = (void*)add_component_to_object(object, COMPONENT_POSITION_CHANGED);
     GS_ASSERT(ret != NULL);
@@ -98,17 +98,17 @@ static void set_energy_core_properties(Object* object)
     object->state = state_packet;
 }
 
-Object* create_energy_core()
+Entity* create_energy_core()
 {
-    ObjectType type = OBJECT_ENERGY_CORE;
-    Object* obj = object_list->create(type);
+    EntityType type = OBJECT_ENERGY_CORE;
+    Entity* obj = entity_list->create(type);
     GS_ASSERT(obj != NULL);
     if (obj == NULL) return NULL;
     set_energy_core_properties(obj);
     return obj;
 }
 
-void ready_energy_core(Object* object)
+void ready_energy_core(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
@@ -129,7 +129,7 @@ void ready_energy_core(Object* object)
     #endif
 }
 
-void die_energy_core(Object* object)
+void die_energy_core(Entity* object)
 {
     #if DC_SERVER
     using Components::ItemDropComponent;
@@ -156,7 +156,7 @@ void die_energy_core(Object* object)
     #endif
 }
 
-void tick_energy_core(Object* object)
+void tick_energy_core(Entity* object)
 {
     #if DC_SERVER
     typedef Components::PositionChangedPhysicsComponent PCP;
@@ -173,7 +173,7 @@ void tick_energy_core(Object* object)
     #endif
 }
 
-void update_energy_core(Object* object)
+void update_energy_core(Entity* object)
 {
     typedef Components::PositionChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
@@ -187,4 +187,4 @@ void update_energy_core(Object* object)
     physics->changed = false;    // reset changed state
 }
 
-} // Objects
+} // Entities

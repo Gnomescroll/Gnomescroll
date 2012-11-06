@@ -6,20 +6,20 @@
 #include <entity/object/types.hpp>
 #include <entity/object/config.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 using Components::Component;
 
-ObjectList* object_list = NULL;
-ObjectDataList* object_data = NULL;
-ObjectListFilter* filter = NULL;
+EntityList* entity_list = NULL;
+EntityDataList* entity_data = NULL;
+EntityListFilter* filter = NULL;
 
 void load_object_data()
 {
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
-        objectLoad load = get_object_load_method((ObjectType)i);
+        entityLoad load = get_object_load_method((EntityType)i);
         if (load != NULL) load();
     }
 }
@@ -29,35 +29,35 @@ void init()
 
     init_config();
 
-    GS_ASSERT(object_list == NULL);
-    GS_ASSERT(object_data == NULL);
+    GS_ASSERT(entity_list == NULL);
+    GS_ASSERT(entity_data == NULL);
     GS_ASSERT(filter == NULL);
 
-    filter = new ObjectListFilter;
+    filter = new EntityListFilter;
     filter->init();
     
-    object_list = new ObjectList;
-    object_list->init();
+    entity_list = new EntityList;
+    entity_list->init();
     
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
-        int max = get_object_max((ObjectType)i);
+        int max = get_object_max((EntityType)i);
         if (max > 0)
-            object_list->set_object_max((ObjectType)i, max);
+            entity_list->set_object_max((EntityType)i, max);
     }
     
-    object_data = new ObjectDataList;
-    object_data->init();
+    entity_data = new EntityDataList;
+    entity_data->init();
     load_object_data();
-    object_data->sanity_check();
+    entity_data->sanity_check();
 
-    object_list->load_object_data(object_data);
+    entity_list->load_object_data(entity_data);
 }
 
 void teardown()
 {
-    if (object_list != NULL) delete object_list;
-    if (object_data != NULL) delete object_data;
+    if (entity_list != NULL) delete entity_list;
+    if (entity_data != NULL) delete entity_data;
     if (filter != NULL) delete filter;
     teardown_config();
 }
@@ -66,112 +66,124 @@ void teardown()
 
 void tick()
 {
-    object_list->tick();
+    entity_list->tick();
 }
 
 void update()
 {
-    object_list->update();
+    entity_list->update();
 }
 
 void harvest()
 {
-    object_list->harvest();
+    entity_list->harvest();
 }
 
 /* Underlying API handlers */
 
-static Object* create_switch(ObjectType type)
+static Entity* create_switch(EntityType type)
 {
-    objectCreate create = get_object_create_method(type);
+    entityCreate create = get_object_create_method(type);
     GS_ASSERT(create != NULL);
     if (create == NULL) return NULL;
     return create();
 }
 
-Object* create(ObjectType type)
+Entity* create(EntityType type)
 {
-    Object* object = create_switch(type);
+    Entity* object = create_switch(type);
     if (object == NULL) return NULL;
-    object_list->set_object_id(object);
+    entity_list->set_object_id(object);
     return object;
 }
 
-Object* create(ObjectType type, int id)
+Entity* create(EntityType type, int id)
 {
-    if (object_list->in_use(type, id)) return NULL;
-    Object* object = create_switch(type);
+    if (entity_list->in_use(type, id)) return NULL;
+    Entity* object = create_switch(type);
     if (object == NULL) return NULL;
-    object_list->set_object_id(object, id);
+    entity_list->set_object_id(object, id);
     return object;
 }
 
-void ready_switch(Object* object)
+void ready_switch(Entity* object)
 {
     GS_ASSERT(object != NULL);
     if (object == NULL) return;
 
-    objectReady ready = get_object_ready_method(object->type);
+    entityReady ready = get_object_ready_method(object->type);
     GS_ASSERT(ready != NULL);
     if (ready != NULL) ready(object);
 }
 
-void destroy_switch(Object* object)
+void destroy_switch(Entity* object)
 {
     GS_ASSERT(object != NULL);
     if (object == NULL) return;
-    ObjectType type = object->type;
+    EntityType type = object->type;
     
-    objectDie die = get_object_die_method(type);
+    entityDie die = get_object_die_method(type);
     GS_ASSERT(die != NULL);
     if (die != NULL) die(object);
     
     release_object_components(object);
     int id = object->id;
-    object_list->destroy(type, id);
+    entity_list->destroy(type, id);
 }
 
-void destroy_switch(ObjectType type, int id)
+void destroy_switch(EntityType type, int id)
 {
-    Object* object = get_object(type, id);
+    Entity* object = get_object(type, id);
     if (object != NULL) destroy_switch(object);
 }
 
-Object* get_object(ObjectType type, int id)
+Entity* get_object(EntityType type, int id)
 {
-    return object_list->get(type, id);
+    return entity_list->get(type, id);
 }
 
-int count(ObjectType type)
+int get_all(const EntityType type, class Entity**& entities, char*& used)
 {
-    return object_list->count(type);
+    used = entity_list->get_used(type);
+    entities = entity_list->get_objects(type);
+    return entity_list->max(type);
 }
 
-bool full(ObjectType type)
+void destroy_all()
 {
-    return object_list->full(type);
+    entity_list->destroy_all();
 }
 
-void send_to_client(ObjectType type, ClientID client_id)
+int count(EntityType type)
 {
-    object_list->send_to_client(type, client_id);
+    return entity_list->count(type);
 }
 
-bool point_occupied_by_type(ObjectType type, int x, int y, int z)
+bool full(EntityType type)
 {
-    if (object_list->empty(type)) return false;
+    return entity_list->full(type);
+}
 
-    Object** objects = object_list->get_objects(type);
+void send_to_client(EntityType type, ClientID client_id)
+{
+    entity_list->send_to_client(type, client_id);
+}
+
+bool point_occupied_by_type(EntityType type, int x, int y, int z)
+{
+    if (entity_list->empty(type)) return false;
+
+    Entity** objects = entity_list->get_objects(type);
     GS_ASSERT(objects != NULL);
-    char* used = object_list->get_used(type);
+    char* used = entity_list->get_used(type);
     GS_ASSERT(used != NULL);
-    int max = object_list->max(type);
+    int max = entity_list->max(type);
     GS_ASSERT(max > 0);
     
     using Components::PhysicsComponent;
     using Components::DimensionComponent;
 
-    Object *obj;
+    Entity *obj;
     int px,py,pz,height;
     PhysicsComponent* physics;
     DimensionComponent* dims;
@@ -199,14 +211,14 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
     return false;
 }
 
-void damage_objects_within_sphere(const ObjectType* types, int n_types, Vec3 position, float radius, int damage)
+void damage_objects_within_sphere(const EntityType* types, int n_types, Vec3 position, float radius, int damage)
 {
-    Object* object;
+    Entity* object;
 
     using Components::HealthComponent;
     HealthComponent* health;
 
-    int count = filter->within_sphere(object_list, types, n_types, position, radius);
+    int count = filter->within_sphere(entity_list, types, n_types, position, radius);
     for (int i=0; i<count; i++)
     {
         object = filter->objects[i];
@@ -218,16 +230,16 @@ void damage_objects_within_sphere(const ObjectType* types, int n_types, Vec3 pos
 
 void spawn_mobs()
 {   // fill all monster spawner capacity
-    const ObjectType type = OBJECT_MONSTER_SPAWNER;
-    if (object_list->empty(type)) return;
-    Object** objects = object_list->get_objects(type);
+    const EntityType type = OBJECT_MONSTER_SPAWNER;
+    if (entity_list->empty(type)) return;
+    Entity** objects = entity_list->get_objects(type);
     GS_ASSERT(objects != NULL);
-    char* used = object_list->get_used(type);
+    char* used = entity_list->get_used(type);
     GS_ASSERT(used != NULL);
-    int max = object_list->max(type);
+    int max = entity_list->max(type);
     GS_ASSERT(max > 0);
-    Object* obj;
-    Object* child;
+    Entity* obj;
+    Entity* child;
     using Components::MonsterSpawnerComponent;
     MonsterSpawnerComponent* spawner;
     for (int i=0; i<max; i++)
@@ -242,18 +254,18 @@ void spawn_mobs()
 }
 
 #if DC_SERVER
-void send_object_state_machines(const ObjectType type, const ClientID client_id)
+void send_object_state_machines(const EntityType type, const ClientID client_id)
 {
     GS_ASSERT(type == OBJECT_MONSTER_BOMB);
     if (type != OBJECT_MONSTER_BOMB) return;    // TODO
     
-    if (object_list->empty(type)) return;
+    if (entity_list->empty(type)) return;
 
-    Object** objects = object_list->get_objects(type);
+    Entity** objects = entity_list->get_objects(type);
     GS_ASSERT(objects != NULL);
-    char* used = object_list->get_used(type);
+    char* used = entity_list->get_used(type);
     GS_ASSERT(used != NULL);
-    int max = object_list->max(type);
+    int max = entity_list->max(type);
     GS_ASSERT(max > 0);
 
     for (int i=0; i<max; i++)
@@ -277,4 +289,4 @@ void send_to_client(ClientID client_id)
 }
 #endif
 
-} // Objects
+} // Entities

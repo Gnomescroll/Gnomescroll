@@ -114,7 +114,7 @@ void RegisterMessages()
     //destroy_voxel_StoC::register_client_packet();
 
     /*
-     * Objects
+     * Entities
      */
 
     // object crud

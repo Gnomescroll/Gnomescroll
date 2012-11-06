@@ -24,4 +24,4 @@ class OwnerComponent: public Component
     {}
 };
 
-} // Objects
+} // Entities

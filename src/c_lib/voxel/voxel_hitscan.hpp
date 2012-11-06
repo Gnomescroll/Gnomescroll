@@ -62,7 +62,7 @@ class Voxel_hitscan_list
     bool hitscan(
         const float x0, const float y0, const float z0, // source
         const float x1, const float y1, const float z1, // direction
-        int skip_id, ObjectType skip_type,
+        int skip_id, EntityType skip_type,
         float collision_point[3], float *distance,
         Voxel_hitscan_target* target
     );

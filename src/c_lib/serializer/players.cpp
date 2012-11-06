@@ -545,7 +545,7 @@ const char* write_player_string(AgentID agent_id)
 
 bool save_player_container(ClientID client_id, int container_id)
 {
-    if (!Options::serializer) return true;
+    if (!Options::serializer || !Options::auth) return true;
 
     ASSERT_VALID_CLIENT_ID(client_id);
     IF_INVALID_CLIENT_ID(client_id) return false;
@@ -574,7 +574,7 @@ bool save_player_container(ClientID client_id, int container_id)
 
 bool save_player(UserID user_id, AgentID agent_id)
 {
-    if (!Options::serializer) return true;
+    if (!Options::serializer || !Options::auth) return true;
     
     ASSERT_VALID_USER_ID(user_id);
     IF_INVALID_USER_ID(user_id) return false;
@@ -594,7 +594,7 @@ bool save_player(UserID user_id, AgentID agent_id)
 
 int begin_player_load(UserID user_id, ClientID client_id)
 {
-    if (!Options::serializer) return true;
+    if (!Options::serializer || !Options::auth) return true;
 
     ASSERT_VALID_USER_ID(user_id);
     IF_INVALID_USER_ID(user_id) return -1;
@@ -614,7 +614,7 @@ int begin_player_load(UserID user_id, ClientID client_id)
 
 bool load_player_container(int player_load_id, ItemContainerType container_type)
 {
-    if (!Options::serializer) return true;
+    if (!Options::serializer || !Options::auth) return true;
 
     class PlayerLoadData* player_data = player_load_data_list->get(player_load_id);
     GS_ASSERT(player_data != NULL);
@@ -641,7 +641,7 @@ bool load_player_container(int player_load_id, ItemContainerType container_type)
 
 bool end_player_load(int player_load_id)
 {
-    if (!Options::serializer) return true;
+    if (!Options::serializer || !Options::auth) return true;
 
     class PlayerLoadData* data = player_load_data_list->get(player_load_id);
     GS_ASSERT(data != NULL);
@@ -664,7 +664,7 @@ bool end_player_load(int player_load_id)
 // Called from outside this module. NetPeerManager is the only thing that knows about true failure
 void player_load_failed()
 {
-    if (!Options::serializer) return;
+    if (!Options::serializer || !Options::auth) return;
     clear_item_data();
 }
 

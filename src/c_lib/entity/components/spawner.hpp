@@ -18,4 +18,4 @@ class SpawnerComponent: public Component
     virtual ~SpawnerComponent() {}
 };
 
-}; // Objects
+}; // Components

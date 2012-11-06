@@ -1,14 +1,14 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {
 
 //forward decl
-class Object;
+class Entity;
 
 /* Management */
 
-class ObjectDataList
+class EntityDataList
 {
     private:
         // keep track of component type buffers for 
@@ -19,21 +19,21 @@ class ObjectDataList
         
     public:
 
-        void set_components(ObjectType type, int n_components);
-        void attach_component(ObjectType type, ComponentType component);
-        inline int get_component_count(ObjectType type);
-        inline int get_component_slot(ObjectType type, ComponentType component);
-        inline int get_component_interface_slot(ObjectType type, ComponentInterfaceType interface);
+        void set_components(EntityType type, int n_components);
+        void attach_component(EntityType type, ComponentType component);
+        inline int get_component_count(EntityType type);
+        inline int get_component_slot(EntityType type, ComponentType component);
+        inline int get_component_interface_slot(EntityType type, ComponentInterfaceType interface);
 
         void init();
         void sanity_check();
 
-    ~ObjectDataList();
+    ~EntityDataList();
 
-    ObjectDataList()
+    EntityDataList()
     : interface_types(NULL), component_types(NULL),
     expected_component_sizes(NULL), component_sizes(NULL)
     {}
 };
 
-} // Objects
+} // Entities

@@ -42,6 +42,7 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define MAP_LOG_FILENAME       "map.log"
 #define MECH_LOG_FILENAME      "mechs.log"
 #define PLAYER_LOG_FILENAME    "players.log"
+#define ENTITY_LOG_FILENAME    "entities.log"
 #define CONTAINER_LOG_FILENAME "containers.log"
 
 #define LOG_LINE_SEPARATOR "===========\n"
@@ -51,16 +52,17 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define DATA_TMP_EXT     ".tmp"
 #define DATA_BACKUP_EXT  ".bak"
 #define DATA_PALETTE_EXT ".pal"
-//#define DATA_ERROR_EXT  ".err"
 
 #define MAP_DATA_PATH       "map/"
 #define MECH_DATA_PATH      "mechs/"
 #define PLAYER_DATA_PATH    "players/"
+#define ENTITY_DATA_PATH    "entities/"
 #define CONTAINER_DATA_PATH "containers/"
 
 #define MAP_DATA_EXT       ".map"
 #define MECH_DATA_EXT      ".mch"
 #define PLAYER_DATA_EXT    ".plr"
+#define ENTITY_DATA_EXT  ".ent"
 #define CONTAINER_DATA_EXT ".ctr"
 
 // data files
@@ -86,11 +88,9 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define CONTAINER_FILENAME_TMP    "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_TMP_EXT
 #define CONTAINER_FILENAME_BACKUP "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_BACKUP_EXT
 
-// error files
-//const char map_error_filename[]       = MAP_DATA_PATH       "map-"        GS_STR(GS_VERSION) MAP_DATA_EXT       DATA_ERROR_EXT;
-//const char mech_error_filename[]      = MECH_DATA_PATH      "mechs-"      GS_STR(GS_VERSION) MECH_DATA_EXT      DATA_ERROR_EXT;
-//const char player_error_filename[]    = PLAYER_DATA_PATH    "players-"    GS_STR(GS_VERSION) PLAYER_DATA_EXT    DATA_ERROR_EXT;
-//const char container_error_filename[] = CONTAINER_DATA_PATH "containers-" GS_STR(GS_VERSION) CONTAINER_DATA_EXT DATA_ERROR_EXT;
+#define ENTITY_FILENAME        "entities-" GS_STR(GS_VERSION) ENTITY_DATA_EXT
+#define ENTITY_FILENAME_TMP    "entities-" GS_STR(GS_VERSION) ENTITY_DATA_EXT DATA_TMP_EXT
+#define ENTITY_FILENAME_BACKUP "entities-" GS_STR(GS_VERSION) ENTITY_DATA_EXT DATA_BACKUP_EXT
 
 // Format data for items, containers, redis keys
 
@@ -103,15 +103,19 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define USER_ID_TAG              "UID"
 #define VERSION_TAG              "VER"
 #define MECH_TYPE_TAG            "MCH"
+#define ENTITY_ID_TAG            "EID"
 #define DURABILITY_TAG           "DUR"
 #define STACK_SIZE_TAG           "STA"
+#define USER_COUNT_TAG           "UCT"
 #define MAP_POSITION_TAG         "MAP"
+#define ENTITY_COUNT_TAG         "CNT"
 #define CONTAINER_ID_TAG         "CID"
 #define CONTAINER_SLOT_TAG       "CSL"
 #define CONTAINER_COUNT_TAG      "CNT"
 #define CONTAINER_ITEM_COUNT_TAG "CNT"
 
 #define TAG_DELIMITER                      "="
+#define ENTITY_SEPARATOR                "+"
 #define PROPERTY_DELIMITER                 ";"
 #define CONTAINER_SEPARATOR                "+"
 #define COLOR_COMPONENT_DELIMITER          ","
@@ -130,7 +134,10 @@ const size_t UUID_STRING_LENGTH = 36;
 #define USER_ID_LENGTH                10
 #define CUBE_ID_LENGTH                4
 #define MECH_TYPE_LENGTH              4
+#define ENTITY_ID_LENGTH              5
 #define ITEM_UUID_LENGTH              36
+#define USER_COUNT_LENGTH             10
+#define ENTITY_COUNT_LENGTH           5
 #define CONTAINER_ID_LENGTH           5
 #define CONTAINER_COUNT_LENGTH        5
 #define ITEM_DURABILITY_LENGTH        5
@@ -146,6 +153,7 @@ const size_t UUID_STRING_LENGTH = 36;
 
 const size_t ITEM_FIELD_COUNT             = 5;
 const size_t PLAYER_FIELD_COUNT           = 1;
+const size_t ENTITY_FIELD_COUNT           = 2;
 const size_t CONTAINER_FIELD_COUNT        = 3;
 const size_t MAP_PALETTE_FIELD_COUNT      = 2;
 const size_t MECH_PALETTE_FIELD_COUNT     = 2;
@@ -202,6 +210,12 @@ const size_t MECH_PALETTE_LINE_LENGTH =
     + MECH_TYPE_LENGTH
     + DAT_NAME_MAX_LENGTH;
 
+const size_t ENTITY_LINE_LENGTH =
+       ENTITY_FIELD_COUNT + (TAG_LENGTH + TAG_DELIMITER_LENGTH)
+    + (ENTITY_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
+    + ENTITY_ID_LENGTH
+    + DAT_NAME_MAX_LENGTH;
+
 const char CONTAINER_FILE_HEADER_FMT[] =
     VERSION_TAG         TAG_DELIMITER
         "%0" GS_STR(VERSION_LENGTH)         "d"
@@ -219,17 +233,17 @@ const char PLAYER_DATA_FMT[] =
 
 const char PLAYER_CONTAINER_HEADER_FMT[] =
     NAME_TAG            TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)      "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)         "s"
         PROPERTY_DELIMITER
     USER_ID_TAG         TAG_DELIMITER
-        "%0" GS_STR(USER_ID_LENGTH)                 "d"
+        "%0" GS_STR(USER_ID_LENGTH)              "d"
         PROPERTY_DELIMITER
     CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER
-        "%0" GS_STR(CONTAINER_ITEM_COUNT_LENGTH)    "d";
+        "%0" GS_STR(CONTAINER_ITEM_COUNT_LENGTH) "d";
 
 const char CONTAINER_HEADER_FMT[] =
     NAME_TAG            TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)     "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)           "s"
         PROPERTY_DELIMITER
     CONTAINER_ITEM_COUNT_TAG TAG_DELIMITER
         "%0" GS_STR(CONTAINER_ITEM_COUNT_LENGTH)   "d"
@@ -246,7 +260,7 @@ const char CONTAINER_HEADER_FMT[] =
     
 const char ITEM_FMT[] =
     NAME_TAG           TAG_DELIMITER
-        "%-" GS_STR(DAT_NAME_MAX_LENGTH)       "s"
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH)        "s"
         PROPERTY_DELIMITER
     DURABILITY_TAG     TAG_DELIMITER
         "%0" GS_STR(ITEM_DURABILITY_LENGTH)     "d"
@@ -265,14 +279,44 @@ const char MAP_PALETTE_FMT[] =
         "%-" GS_STR(DAT_NAME_MAX_LENGTH) "s"
         PROPERTY_DELIMITER
     CUBE_ID_TAG TAG_DELIMITER
-        "%0" GS_STR(CUBE_ID_LENGTH)       "d";
+        "%0" GS_STR(CUBE_ID_LENGTH)      "d";
         
 const char MECH_PALETTE_FMT[] =
     NAME_TAG    TAG_DELIMITER
         "%-" GS_STR(DAT_NAME_MAX_LENGTH) "s"
         PROPERTY_DELIMITER
     MECH_TYPE_TAG TAG_DELIMITER
-        "%0" GS_STR(MECH_TYPE_LENGTH)       "d";
+        "%0" GS_STR(MECH_TYPE_LENGTH)    "d";
+
+const char ENTITY_FMT[] =
+    NAME_TAG        TAG_DELIMITER
+        "%-" GS_STR(DAT_NAME_MAX_LENGTH) "s"
+        PROPERTY_DELIMITER
+    ENTITY_ID_TAG   TAG_DELIMITER
+        "%0" GS_STR(ENTITY_ID_LENGTH)    "d";
+
+const char ENTITY_FILE_HEADER_FMT[] =
+    VERSION_TAG         TAG_DELIMITER
+        "%0" GS_STR(VERSION_LENGTH)      "d"
+        PROPERTY_DELIMITER
+    ENTITY_COUNT_TAG TAG_DELIMITER
+        "%0" GS_STR(ENTITY_COUNT_LENGTH) "d";
+
+const char MAP_POSITION_FMT[] =
+    MAP_POSITION_TAG TAG_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d"
+            MAP_POSITION_COMPONENT_DELIMITER
+        "%0" GS_STR(MAP_POSITION_COMPONENT_LENGTH) "d";
+
+const char USER_ID_FMT[] =
+    USER_ID_TAG TAG_DELIMITER
+        "%0" GS_STR(USER_ID_LENGTH) "d";
+
+const char USER_COUNT_FMT[] =
+    USER_COUNT_TAG TAG_DELIMITER
+        "%0" GS_STR(USER_COUNT_LENGTH) "d";
 
 #define PLAYER_REDIS_KEY_PREFIX "player:"
 

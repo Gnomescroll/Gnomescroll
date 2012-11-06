@@ -25,4 +25,4 @@ class DimensionComponent: public Component
     {}
 };
 
-} // Objects
+} // Entities

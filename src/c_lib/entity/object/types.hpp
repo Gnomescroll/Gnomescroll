@@ -1,11 +1,11 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {
 
-typedef void (*objectLoad) (void);
-typedef class Object* (*objectCreate) (void);
-typedef void (*objectReady) (class Object*);
-typedef void (*objectDie) (class Object* object);
+typedef void (*entityLoad) (void);
+typedef class Entity* (*entityCreate) (void);
+typedef void (*entityReady) (class Entity*);
+typedef void (*entityDie) (class Entity* object);
 
-}   // Objects
+}   // Entities

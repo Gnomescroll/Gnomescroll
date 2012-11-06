@@ -37,7 +37,7 @@ class Voxel_model
         VoxDat* vox_dat;
 
         int n_parts;
-        void init_parts(int id, ObjectType type);
+        void init_parts(int id, EntityType type);
 
         void set_draw(bool draw);
         void set_hitscan(bool hitscan);
@@ -72,6 +72,6 @@ class Voxel_model
 
         float largest_radius(); // temporary, until real body collision detection
 
-        Voxel_model(VoxDat* vox_dat, int id, ObjectType type);
+        Voxel_model(VoxDat* vox_dat, int id, EntityType type);
         ~Voxel_model();
 };

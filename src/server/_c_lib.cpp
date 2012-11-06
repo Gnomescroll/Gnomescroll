@@ -275,8 +275,8 @@ int init_c_lib(int argc, char* argv[])
         printf("disabled\n");
 
     Components::init();
-    Objects::init_net_interfaces();
-    Objects::init();    // Entity system
+    Entities::init_net_interfaces();
+    Entities::init();    // Entity system
 
     VoxDats::init();
     Chat::init_chat_server();
@@ -299,9 +299,12 @@ int init_c_lib(int argc, char* argv[])
     ItemContainer::init_config();
     t_map::init_t_properties();
     t_mech::init_properties();
+    Entities::init_entity_dat();
 
     t_map::load_block_dat();
     t_mech::load_mech_dat();
+    Entities::load_entity_dat();
+    Entities::end_entity_dat();
     ItemContainer::load_config();
     ItemContainer::end_config();
     Item::init_properties();
@@ -352,8 +355,9 @@ void close_c_lib()
     Particle::teardown_particles();
     ItemParticle::teardown();
 
-    Objects::teardown();    // Entity system
-    Objects::teardown_net_interfaces();
+    Entities::teardown();    // Entity system
+    Entities::teardown_net_interfaces();
+    Entities::teardown_entity_dat();
     Components::teardown();
 
     Agents::teardown();

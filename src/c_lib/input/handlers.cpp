@@ -804,7 +804,7 @@ void print_mob_id()
     struct Vec3 p = current_camera->get_position();
     struct Vec3 v = current_camera->forward_vector();
     int ignore_id = -1;
-    ObjectType ignore_type = OBJECT_NONE;
+    EntityType ignore_type = OBJECT_NONE;
 
     class Voxel_hitscan_target target;
     float vox_distance = 0.0f;

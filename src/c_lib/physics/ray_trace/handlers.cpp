@@ -66,7 +66,7 @@ Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, const flo
 }
 
 HitscanTarget shoot_at_agent(
-    Vec3 source, Vec3 firing_direction, int id, ObjectType type,
+    Vec3 source, Vec3 firing_direction, int id, EntityType type,
     Agent* agent, const float range)
 { // hitscan vector against world
     class Voxel_hitscan_target target;
@@ -95,7 +95,7 @@ HitscanTarget shoot_at_agent(
                 break;
             }
             target_information.id = target.entity_id;
-            target_information.type = (ObjectType)target.entity_type;
+            target_information.type = (EntityType)target.entity_type;
             target_information.part = target.part_id;
             for (int i=0; i<3; i++)
                 target_information.voxel[i] = target.voxel[i];
@@ -165,7 +165,7 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
     #endif
 }
 
-void broadcast_object_fired(int id, ObjectType type, HitscanTarget t)
+void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
 {
     object_shot_object_StoC obj_msg;
     object_shot_terrain_StoC terrain_msg;

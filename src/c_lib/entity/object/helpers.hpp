@@ -2,13 +2,13 @@
 
 #include <entity/constants.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 //forward declarations
-class Object;
+class Entity;
 
-Component* add_component_to_object(Object* object, ComponentType type);
-void release_object_components(Object* object);
+Component* add_component_to_object(Entity* object, ComponentType type);
+void release_object_components(Entity* object);
 
-} // Objects
+} // Entities

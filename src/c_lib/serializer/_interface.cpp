@@ -9,6 +9,7 @@
 # include <serializer/logger.hpp>
 # include <serializer/constants.hpp>
 # include <serializer/containers.hpp>
+# include <serializer/entities.hpp>
 # include <serializer/map.hpp>
 # include <serializer/redis.hpp>
 # include <serializer/items.hpp>
@@ -25,6 +26,7 @@ char map_folder[NAME_MAX+1];
 char mech_folder[NAME_MAX+1];
 char player_folder[NAME_MAX+1];
 char container_folder[NAME_MAX+1];
+char entity_folder[NAME_MAX+1];
 
 char map_path[NAME_MAX+1];
 char map_path_tmp[NAME_MAX+1];
@@ -44,6 +46,9 @@ char player_path_bak[NAME_MAX+1];
 char container_path[NAME_MAX+1];
 char container_path_tmp[NAME_MAX+1];
 char container_path_bak[NAME_MAX+1];
+char entity_path[NAME_MAX+1];
+char entity_path_tmp[NAME_MAX+1];
+char entity_path_bak[NAME_MAX+1];
 
 static bool set_save_folder(int version, time_t timestamp)
 {
@@ -148,6 +153,21 @@ static void set_data_paths(const char* save_folder)
     wrote = snprintf(container_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_BACKUP);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     container_path_bak[NAME_MAX] = '\0';
+    
+    // entitys
+    wrote = snprintf(entity_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    entity_folder[NAME_MAX] = '\0';
+
+    wrote = snprintf(entity_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    entity_path[NAME_MAX] = '\0';
+    wrote = snprintf(entity_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    entity_path_tmp[NAME_MAX] = '\0';
+    wrote = snprintf(entity_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX);
+    entity_path_bak[NAME_MAX] = '\0';
 
     set_log_paths(save_folder);
 }
@@ -157,6 +177,7 @@ static void create_data_paths()
     create_path(map_folder);
     create_path(mech_folder);
     create_path(player_folder);
+    create_path(entity_folder);
     create_path(container_folder);
 } 
 
@@ -180,6 +201,7 @@ bool load_data()
 
     #if GS_SERIALIZER
     if (!load_containers()) return false;
+    if (!load_entities()) return false;
     //if (!load_players()) return false;
     #endif
     
@@ -200,22 +222,25 @@ bool save_remaining_data()
 
     bool rps = true;
     bool cs = true;
+    bool es = true;
 
     #if GS_SERIALIZER
     if (Options::serializer)
     {
         rps = save_remote_player_data();
         cs = save_containers();
-        //bool lps = save_local_player_data();  // TODO -- enable once we have local player data
+        es = save_entities();
         GS_ASSERT(rps);
         GS_ASSERT(cs);
+        GS_ASSERT(es);
     }
     #endif
 
-    if (!rps || !ms || !cs) return false; // ERROR -- aborting
+    if (!rps || !ms || !cs || !es) return false; // ERROR
 
     ms = true;
     cs = true;
+    es = true;
 
     // copy all tmp files over
     ms = save_tmp_file(mech_path, mech_path_tmp, mech_path_bak);
@@ -226,12 +251,12 @@ bool save_remaining_data()
     {
         cs = save_tmp_file(container_path, container_path_tmp, container_path_bak);
         GS_ASSERT(cs);
-        //lps = save_tmp_file(player_filename, player_filename_tmp, player_path_bak);    
-        //GS_ASSERT(lps);
+        es = save_tmp_file(entity_path, entity_path_tmp, entity_path_bak);
+        GS_ASSERT(es);
     }
     #endif
 
-    return (ms && cs);
+    return (ms && cs && es);
 }
 
 bool save_data()
@@ -250,7 +275,7 @@ bool save_data()
         palettes_saved = save_palettes();
         if (!palettes_saved) return false;
         save_tmp_file(map_palette_path, map_palette_path_tmp, map_palette_path_bak); 
-        save_tmp_file(mech_palette_path, mech_palette_path_tmp, mech_palette_path_bak); 
+        save_tmp_file(mech_palette_path, mech_palette_path_tmp, mech_palette_path_bak);
     }
 
     if (!save_map()) return false;

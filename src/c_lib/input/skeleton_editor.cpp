@@ -7,7 +7,7 @@ namespace SkeletonEditor
 {
 bool rotate = false;
 bool use_skeleton = false;
-ObjectType type = OBJECT_AGENT;
+EntityType type = OBJECT_AGENT;
 int id = 0;
 int part = 0;
 VoxDat* vox_dat = NULL;
@@ -91,7 +91,7 @@ void reset_part()
 /*
 // use this macro in a case label to get correct type cast
 #define GET_VOX_STUFF(TYPE) \
-obj = ClientState::object_list->get(type, id); \
+obj = ClientState::entity_list->get(type, id); \
 if (obj==NULL) return; \
 vox = ((TYPE*)obj)->voxel_properties.vox; \
 vox_dat = ((TYPE*)obj)->voxel_properties.vox_dat; \
@@ -111,7 +111,7 @@ void raycast_to_part()
     bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
         p.x,p.y,p.z,
         vec.x,vec.y,vec.z,
-        -1, (ObjectType)-1,
+        -1, (EntityType)-1,
         collision_point, &vox_distance,
         &target
     );
@@ -121,7 +121,7 @@ void raycast_to_part()
 
     id = target.entity_id;
     part = target.part_id;
-    type = (ObjectType)target.entity_type;
+    type = (EntityType)target.entity_type;
 
     VoxDat* old = vox_dat;
     switch (type)

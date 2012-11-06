@@ -12,7 +12,7 @@
     #define OBJECT_POOL_OBJECT_MACRO
 #endif
 
-template <class Base, class Object, int BUFFER_POOL_SIZE>
+template <class Base, class Entity, int BUFFER_POOL_SIZE>
 class Object_pool {
     private:
         int batch_num;
@@ -21,33 +21,33 @@ class Object_pool {
         void batch_alloc();
 
         //garabage collection
-        Object** alloc_list;
+        Entity** alloc_list;
         int alloc_list_index;
         int alloc_list_max_size;
         //virtual char* name() { static char* x = (char*) "Error: generic object pool"; return x; }
 
     public:
 
-    Object* first;
-    Object* last;
+    Entity* first;
+    Entity* last;
 
-    inline Object* acquire() __attribute__((always_inline));
+    inline Entity* acquire() __attribute__((always_inline));
 
-    inline void retire(Object* nmb) __attribute__((always_inline));
+    inline void retire(Entity* nmb) __attribute__((always_inline));
 
     Object_pool();
     ~Object_pool();
 };
 
-template <class Base, class Object, int BUFFER_POOL_SIZE>
-Object_pool<Base, Object, BUFFER_POOL_SIZE>::Object_pool()
+template <class Base, class Entity, int BUFFER_POOL_SIZE>
+Object_pool<Base, Entity, BUFFER_POOL_SIZE>::Object_pool()
 {
     //batch_num = 0;
     //first = NULL;
 }
 
-template <class Base, class Object, int BUFFER_POOL_SIZE>
-Object_pool<Base, Object, BUFFER_POOL_SIZE>::~Object_pool()
+template <class Base, class Entity, int BUFFER_POOL_SIZE>
+Object_pool<Base, Entity, BUFFER_POOL_SIZE>::~Object_pool()
 {
     /*
         Warning: batch_alloc() must be called at least once
@@ -57,8 +57,8 @@ Object_pool<Base, Object, BUFFER_POOL_SIZE>::~Object_pool()
 }
 
 
-template <class Base, class Object, int BUFFER_POOL_SIZE>
-void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
+template <class Base, class Entity, int BUFFER_POOL_SIZE>
+void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
 {
     static int inited = 0;
     if(inited == 0 )
@@ -69,14 +69,14 @@ void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
         first = NULL;
 
         const int INITIAL_SIZE = 4;
-        alloc_list = new Object*[INITIAL_SIZE];
+        alloc_list = new Entity*[INITIAL_SIZE];
         alloc_list_max_size = INITIAL_SIZE;
         alloc_list_index = 0;
     }
 
     batch_num++;
 
-    Object* ar = new Object[BUFFER_POOL_SIZE];
+    Entity* ar = new Entity[BUFFER_POOL_SIZE];
 
     if( ar == NULL)
     {
@@ -105,7 +105,7 @@ void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
     {
         if(alloc_list_index > alloc_list_max_size) printf("%s: Batch Alloc: ERROR!! alloc_list error!\n", Base::name() );
         printf("%s: Batch Alloc: possible memory leak!\n", Base::name() );
-        Object** tmp = new Object*[2*alloc_list_max_size];
+        Entity** tmp = new Entity*[2*alloc_list_max_size];
         for(int i=0; i < alloc_list_max_size; i++) tmp[i] = alloc_list[i];
         delete[] alloc_list;
         alloc_list = tmp;
@@ -114,11 +114,11 @@ void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
 
 }
 
-template <class Base, class Object, int BUFFER_POOL_SIZE>
-Object* Object_pool<Base, Object, BUFFER_POOL_SIZE>::acquire()
+template <class Base, class Entity, int BUFFER_POOL_SIZE>
+Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
 {
     #if OBJECT_POOL_DEBUG_BATCH 
-        Object* tmp2 = (Object*) malloc(sizeof(Object));
+        Entity* tmp2 = (Entity*) malloc(sizeof(Entity));
         tmp2->next = NULL; //debug
         return tmp2;
     #endif
@@ -127,7 +127,7 @@ Object* Object_pool<Base, Object, BUFFER_POOL_SIZE>::acquire()
     {
         batch_alloc();       
     }
-    Object* tmp = first;
+    Entity* tmp = first;
     first = first->next;
 
     #if OBJECT_POOL_DEBUG 
@@ -142,8 +142,8 @@ Object* Object_pool<Base, Object, BUFFER_POOL_SIZE>::acquire()
     return tmp;
 }
 
-template <class Base, class Object, int BUFFER_POOL_SIZE>
-void Object_pool<Base, Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
+template <class Base, class Entity, int BUFFER_POOL_SIZE>
+void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::retire(Entity* nmb)
 {
     #if OBJECT_POOL_DEBUG_BATCH
         free(nmb);

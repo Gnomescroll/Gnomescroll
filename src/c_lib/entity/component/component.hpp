@@ -3,12 +3,12 @@
 #include <entity/constants.hpp>
 
 //forward decl
-namespace Objects { class Object; }
+namespace Entities { class Entity; }
 
 namespace Components
 {
 
-using Objects::Object;
+using Entities::Entity;
 
 class Component
 {
@@ -16,7 +16,7 @@ class Component
         int id;
         ComponentType type;
         ComponentInterfaceType interface;
-        Object* object;
+        Entity* object;
 
     Component(ComponentType type, ComponentInterfaceType interface)
     : id(-1), type(type), interface(interface), object(NULL)

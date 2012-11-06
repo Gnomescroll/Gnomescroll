@@ -131,6 +131,16 @@ bool is_valid_name_char(char c)
     return (isalnum(c) || c == '_' || c == '-');
 }
 
+bool is_valid_name(const char* name)
+{   // for string names using in config. don't change
+    size_t len = strlen(name);
+    if (len <= 0 || len > DAT_NAME_MAX_LENGTH) return false;
+    for (size_t i=0; i<len; i++)
+        if (!is_valid_name_char(name[i]))
+            return false;
+    return true;
+}
+
 void _test_common()
 {
     GS_ASSERT(str_ends_with("foobar", "bar"));

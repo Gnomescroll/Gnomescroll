@@ -95,7 +95,7 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 }
 
 HitscanTargetTypes hitscan_against_world(
-    Vec3 p, Vec3 v, int ignore_id, ObjectType ignore_type,    // inputs
+    Vec3 p, Vec3 v, int ignore_id, EntityType ignore_type,    // inputs
     class Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
     int block_pos[3], int side[3], CubeID* tile, float* block_distance // outputs
 )

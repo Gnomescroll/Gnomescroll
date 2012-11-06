@@ -1,6 +1,6 @@
 #include "interfaces.hpp"
 
-namespace Objects
+namespace Entities
 {
 
 CreatePacketNone* create_packet_none = NULL;
@@ -45,4 +45,4 @@ void teardown_net_interfaces()
     if (state_packet_momentum_angles != NULL) delete state_packet_momentum_angles;
 }
 
-} // Objects
+} // Entities

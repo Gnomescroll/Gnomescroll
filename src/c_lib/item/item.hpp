@@ -36,7 +36,7 @@ class Item
         int gas_decay;
 
         #if DC_SERVER
-        SubscriberList subscribers;
+        SubscriberList<ClientID> subscribers;
         bool valid;
         #endif
 
@@ -69,9 +69,9 @@ class Item
             printf("UUID: %s", uuid_str);
         }
         # endif
-        printf("Subscribers %d\n", subscribers.n);
+        printf("Subscribers %d\n", subscribers.count);
         printf("\t");
-        for (unsigned int i=0; i<subscribers.n; i++) printf("%d ", subscribers.subscribers[i]);
+        for (unsigned int i=0; i<subscribers.count; i++) printf("%d ", subscribers.subscribers[i]);
         printf("\n");
         #endif
     }

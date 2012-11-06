@@ -2,6 +2,8 @@
 
 #include "include.hpp"
 
+#include <entity/objects/dat.cpp>
+
 #include <entity/objects/fabs/base.cpp>
 #include <entity/objects/fabs/energy_core.cpp>
 #include <entity/objects/fabs/turret.cpp>

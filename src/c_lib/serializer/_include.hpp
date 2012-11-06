@@ -9,6 +9,7 @@ dont_include_this_file_in_client
 #include <serializer/logger.cpp>
 #include <serializer/map.cpp>
 #include <serializer/mechs.cpp>
+#include <serializer/entities.cpp>
 #include <serializer/_state.cpp>
 #include <serializer/_interface.cpp>
 

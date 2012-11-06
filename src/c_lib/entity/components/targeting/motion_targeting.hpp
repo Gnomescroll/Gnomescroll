@@ -25,7 +25,7 @@ class MotionTargetingComponent: public TargetingComponent
         void check_target_alive();
 
         // explicitly set the target
-        void set_target(ObjectType target_type, int target_id);
+        void set_target(EntityType target_type, int target_id);
 
         // lock to agent
         void lock_target(Vec3 camera_position);

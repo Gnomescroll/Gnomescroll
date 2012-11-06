@@ -147,4 +147,4 @@ void AgentTargetingComponent::call()
     }
 }
 
-} // Objects
+} // Entities

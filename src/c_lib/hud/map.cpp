@@ -285,13 +285,13 @@ void draw_text_icons(float z)
 
     using ClientState::playerAgent_state;
 
-    Objects::Object* b = NULL;
+    Entities::Entity* b = NULL;
     if (you != NULL)
     {
         if (you->status.spawner == BASE_SPAWN_ID)
-            b = Objects::get(OBJECT_BASE, 0);   // TODO -- remove Base
+            b = Entities::get(OBJECT_BASE, 0);   // TODO -- remove Base
         else
-            b = Objects::get(OBJECT_AGENT_SPAWNER, you->status.spawner);
+            b = Entities::get(OBJECT_AGENT_SPAWNER, you->status.spawner);
     }
 
     if (b != NULL)

@@ -488,7 +488,7 @@ void Animator::CalculateBoneToWorldTransform(cBone* child)
     child->GlobalTransform = child->LocalTransform;
     cBone* parent = child->Parent;
     while( parent )
-    {// this will climb the nodes up along through the parents concentating all the matrices to get the Object to World transform, or in this case, the Bone To World transform
+    {// this will climb the nodes up along through the parents concentating all the matrices to get the Entity to World transform, or in this case, the Bone To World transform
         child->GlobalTransform *= parent->LocalTransform;
         parent  = parent->Parent;// get the parent of the bone we are working on 
     }

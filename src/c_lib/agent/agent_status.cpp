@@ -42,6 +42,7 @@ Agent_status::Agent_status(Agent* a) :
 
 Agent_status::~Agent_status()
 {
+    this->quit();
 }
 
 void Agent_status::set_spawner(int pt)
@@ -50,18 +51,38 @@ void Agent_status::set_spawner(int pt)
     IF_INVALID_SPAWNER_ID(pt) return;
 
     if (pt == this->spawner) return;
+
+    #if DC_SERVER
+    using Components::AgentSpawnerComponent;
+    if (pt != BASE_SPAWN_ID && this->spawner != BASE_SPAWN_ID)
+    {   // transferring between spawners
+        class Entities::Entity* old_spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->spawner);
+        GS_ASSERT(old_spawner != NULL);
+        if (old_spawner != NULL)
+        {
+            AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)old_spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            GS_ASSERT(agent_spawner != NULL);
+            if (agent_spawner != NULL) agent_spawner->remove_all(this->a->id);                
+        }
+    }
+    #endif
+    
     this->spawner = pt;
 
     #if DC_SERVER
-    class Objects::Object* spawner = Objects::get(OBJECT_AGENT_SPAWNER, pt);
-    // don't assert, the deserializer will trigger it regularly
-    if (spawner == NULL) return;
-
     set_spawner_StoC msg;
     msg.spawner_id = pt;
     msg.sendToClient(this->a->client_id);
 
-    if (pt == BASE_SPAWN_ID) return;    // dont play sound for base
+    if (pt == BASE_SPAWN_ID) return;
+
+    class Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, pt);
+    GS_ASSERT(spawner != NULL);
+    if (spawner == NULL) return;
+
+    AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+    GS_ASSERT(agent_spawner != NULL);
+    if (agent_spawner != NULL) agent_spawner->add(this->a->id);
 
     // play sound
     // only send the sound if its not the base spawner set
@@ -219,7 +240,7 @@ void Agent_status::send_health_msg(ClientID client_id)
     health_msg.sendToClient(client_id);
 }
 
-int Agent_status::apply_damage(int dmg, AgentID inflictor_id, ObjectType inflictor_type, int part_id)
+int Agent_status::apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id)
 {
     if (!Options::pvp)
     {   // dont allow player kills
@@ -242,7 +263,7 @@ int Agent_status::apply_damage(int dmg, AgentID inflictor_id, ObjectType inflict
     return health;
 }
 
-int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type)
+int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
 {
     int dmg = 0;
 
@@ -273,7 +294,7 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflic
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
-int Agent_status::apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type)
+int Agent_status::apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
 {
     int dmg = 0;
 
@@ -347,6 +368,24 @@ void Agent_status::at_base()
 
 #endif
 
+void Agent_status::quit()
+{
+    #if DC_SERVER
+    if (this->spawner != BASE_SPAWN_ID)
+    {
+        class Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->spawner);
+        GS_ASSERT(spawner != NULL);
+        if (spawner != NULL)
+        {
+            using Components::AgentSpawnerComponent;
+            AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            GS_ASSERT(agent_spawner != NULL);
+            if (agent_spawner != NULL) agent_spawner->remove(this->a->id);                
+        }
+    }
+    #endif
+}
+
 bool Agent_status::die()
 {
     if (this->dead) return false;
@@ -372,7 +411,7 @@ bool Agent_status::die()
     return true;
 }
 
-bool Agent_status::die(AgentID inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
+bool Agent_status::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method)
 {
     bool killed = this->die();
     if (!killed) return false;
@@ -392,7 +431,7 @@ bool Agent_status::die(AgentID inflictor_id, ObjectType inflictor_type, AgentDea
             //if (slime != NULL) {}
             //break;
         //case OBJECT_TURRET:
-            //turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
+            //turret = (Turret*)STATE::entity_list->get(inflictor_type, inflictor_id);
             //if (turret == NULL) break;
             //attacker = Agents::get_agent(turret->get_owner());
             //if (attacker != NULL)
@@ -419,7 +458,7 @@ bool Agent_status::die(AgentID inflictor_id, ObjectType inflictor_type, AgentDea
 
         //case OBJECT_TURRET:
             //// lookup turret object, get owner, this will be the inflictor id
-            //turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
+            //turret = (Turret*)ServerState::entity_list->get(inflictor_type, inflictor_id);
             //if (turret == NULL) break;
             //inflictor_id = turret->get_owner();
             //msg.victim = this->a->id;

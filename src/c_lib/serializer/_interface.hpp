@@ -29,6 +29,7 @@ extern char map_folder[NAME_MAX+1];
 extern char mech_folder[NAME_MAX+1];
 extern char player_folder[NAME_MAX+1];
 extern char container_folder[NAME_MAX+1];
+extern char entity_folder[NAME_MAX+1];
 
 extern char map_path[NAME_MAX+1];
 extern char map_path_tmp[NAME_MAX+1];
@@ -48,6 +49,9 @@ extern char player_path_bak[NAME_MAX+1];
 extern char container_path[NAME_MAX+1];
 extern char container_path_tmp[NAME_MAX+1];
 extern char container_path_bak[NAME_MAX+1];
+extern char entity_path[NAME_MAX+1];
+extern char entity_path_tmp[NAME_MAX+1];
+extern char entity_path_bak[NAME_MAX+1];
 
 }   // serializer
 

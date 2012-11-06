@@ -13,7 +13,7 @@ namespace Components
 
 /* Targeting */
 
-void MotionTargetingComponent::set_target(ObjectType target_type, int target_id)
+void MotionTargetingComponent::set_target(EntityType target_type, int target_id)
 {
     GS_ASSERT(target_type == OBJECT_AGENT);
     if (target_type != OBJECT_AGENT) return;
@@ -192,4 +192,4 @@ void MotionTargetingComponent::call()
     }
 }
 
-} // Objects
+} // Entities

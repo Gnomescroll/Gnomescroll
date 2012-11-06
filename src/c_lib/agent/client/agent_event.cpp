@@ -239,7 +239,7 @@ void Agent_event::end_mining_laser()
     this->mining_laser_emitter.turn_off();
 }
 
-void Agent_event::fired_weapon_at_object(int id, ObjectType type, int part)
+void Agent_event::fired_weapon_at_object(int id, EntityType type, int part)
 {
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
@@ -363,7 +363,7 @@ void Agent_event::hit_block()
     //Sound::block_took_damage(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
 }
 
-void Agent_event::melee_attack_object(int id, ObjectType type, int part)
+void Agent_event::melee_attack_object(int id, EntityType type, int part)
 {
     // play pick swing animation
     // play blood animation

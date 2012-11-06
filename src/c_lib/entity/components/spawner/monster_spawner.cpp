@@ -34,14 +34,14 @@ struct Vec3 MonsterSpawnerComponent::get_spawn_point(float spawned_object_height
     return spawn_point;
 }
 
-class Objects::Object* MonsterSpawnerComponent::spawn_child()
+class Entities::Entity* MonsterSpawnerComponent::spawn_child()
 {
     GS_ASSERT(this->spawn_type != OBJECT_NONE);    // dont use this method when any component can be spawned
     if (this->spawn_type == OBJECT_NONE) return NULL;
     if (this->full()) return NULL;
     GS_ASSERT(this->children != NULL);
     if (this->children == NULL) return NULL;
-    Objects::Object* child = Objects::create(this->spawn_type);
+    Entities::Entity* child = Entities::create(this->spawn_type);
     GS_ASSERT(child != NULL);
     if (child == NULL) return NULL;
 
@@ -75,7 +75,7 @@ class Objects::Object* MonsterSpawnerComponent::spawn_child()
     return child;
 }
 
-void MonsterSpawnerComponent::lose_child(ObjectType type, int id)
+void MonsterSpawnerComponent::lose_child(EntityType type, int id)
 {
     for (int i=0; i<this->children_ct; i++)
         if (this->children[i] == id)
@@ -86,7 +86,7 @@ void MonsterSpawnerComponent::notify_children_of_death()
 {
     for (int i=0; i<this->children_ct; i++)
     {
-        class Objects::Object* child = Objects::get(this->spawn_type, this->children[i]);
+        class Entities::Entity* child = Entities::get(this->spawn_type, this->children[i]);
         GS_ASSERT(child != NULL);
         if (child == NULL) continue;
         SpawnChildComponent* spawn = (SpawnChildComponent*)child->get_component(COMPONENT_SPAWN_CHILD);

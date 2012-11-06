@@ -201,7 +201,7 @@ class Char_buffer2 {
     char* offset;
 
     
-        //Object can acquire a char buffer as long it decrements cbf reference count when its done
+        //Entity can acquire a char buffer as long it decrements cbf reference count when its done
     
     void acquire(int length, char** b, Char_buffer_ref** cbf) {
         if(remaining < length) 

@@ -21,7 +21,7 @@
 
 inline void object_create_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::PhysicsComponent;
 
     GS_ASSERT(type < MAX_OBJECT_TYPES);
@@ -29,17 +29,17 @@ inline void object_create_StoC::handle()
     if (type >= MAX_OBJECT_TYPES) return;
     if (id >= GAME_OBJECTS_MAX) return;
 
-    Object* obj = Objects::create((ObjectType)type, id);
+    Entity* obj = Entities::create((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics != NULL) physics->set_position(vec3_init(x,y,z));
-    Objects::ready(obj);
+    Entities::ready(obj);
 }
 
 inline void object_create_owner_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::PhysicsComponent;
     using Components::OwnerComponent;
 
@@ -48,7 +48,7 @@ inline void object_create_owner_StoC::handle()
     if (type >= MAX_OBJECT_TYPES) return;
     if (id >= GAME_OBJECTS_MAX) return;
 
-    Object* obj = Objects::create((ObjectType)type, id);
+    Entity* obj = Entities::create((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -56,15 +56,15 @@ inline void object_create_owner_StoC::handle()
     OwnerComponent* owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
     GS_ASSERT(owner != NULL);
     if (owner != NULL) owner->set_owner((AgentID)this->owner);
-    Objects::ready(obj);
+    Entities::ready(obj);
 }
 
 inline void object_create_momentum_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Object* obj = Objects::create((ObjectType)type, id);
+    Entity* obj = Entities::create((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -73,15 +73,15 @@ inline void object_create_momentum_StoC::handle()
         physics->set_position(vec3_init(x,y,z));
         physics->set_momentum(vec3_init(mx,my,mz));
     }
-    Objects::ready(obj);
+    Entities::ready(obj);
 }
 
 inline void object_create_momentum_angles_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Object* obj = Objects::create((ObjectType)type, id);
+    Entity* obj = Entities::create((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -91,16 +91,16 @@ inline void object_create_momentum_angles_StoC::handle()
         physics->set_momentum(vec3_init(mx,my,mz));
         physics->set_angles(vec3_init(theta, phi, 0));
     }
-    Objects::ready(obj);
+    Entities::ready(obj);
 }
 
 inline void object_create_momentum_angles_health_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::PhysicsComponent;
     using Components::HitPointsHealthComponent;
 
-    Object* obj = Objects::create((ObjectType)type, id);
+    Entity* obj = Entities::create((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -117,17 +117,17 @@ inline void object_create_momentum_angles_health_StoC::handle()
         health->max_health = this->max_health;
         health->health = this->max_health;
     }
-    Objects::ready(obj);
+    Entities::ready(obj);
 }
 
 /* State */
 
 inline void object_state_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Object* obj = Objects::get((ObjectType)type, id);
+    Entity* obj = Entities::get((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -136,10 +136,10 @@ inline void object_state_StoC::handle()
 
 inline void object_state_momentum_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Object* obj = Objects::get((ObjectType)type, id);
+    Entity* obj = Entities::get((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -152,10 +152,10 @@ inline void object_state_momentum_StoC::handle()
 
 inline void object_state_momentum_angles_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Object* obj = Objects::get((ObjectType)type, id);
+    Entity* obj = Entities::get((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -190,9 +190,9 @@ inline void object_state_momentum_angles_StoC::handle()
 
 inline void object_state_health_StoC::handle()
 {
-    using Objects::Object;
+    using Entities::Entity;
     using Components::HitPointsHealthComponent;
-    Object* obj = Objects::get((ObjectType)type, id);
+    Entity* obj = Entities::get((EntityType)type, id);
     if (obj == NULL) return;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
     GS_ASSERT(health != NULL);
@@ -203,7 +203,7 @@ inline void object_state_health_StoC::handle()
 
 inline void object_destroy_StoC::handle()
 {
-    Objects::destroy((ObjectType)type, id);
+    Entities::destroy((EntityType)type, id);
 }
 
 /* Actions */
@@ -213,7 +213,7 @@ inline void object_picked_up_StoC::handle()
     using ClientState::playerAgent_state;
     class Agent* you = playerAgent_state.you();
     if (you != NULL && you->id == agent_id) Sound::pickup_item();
-    Objects::destroy((ObjectType)type, id);
+    Entities::destroy((EntityType)type, id);
 }
 
 /* Hitscan */
@@ -223,7 +223,7 @@ inline void object_shot_object_StoC::handle()
     if (this->target_type != OBJECT_AGENT) return; // remove this once turret can attack other objects
 
     // get firing object
-    Objects::Object* obj = Objects::get((ObjectType)this->type, (int)this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, (int)this->id);
     if (obj == NULL) return;
 
     // get firing position of object
@@ -261,7 +261,7 @@ inline void object_shot_object_StoC::handle()
 
 inline void object_shot_terrain_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
 
     // get firing position of object
@@ -296,7 +296,7 @@ inline void object_shot_terrain_StoC::handle()
 
 inline void object_shot_nothing_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
 
     // get firing position of object
@@ -322,7 +322,7 @@ inline void object_shot_nothing_StoC::handle()
 
 inline void object_choose_weapon_target_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
 
     using Components::WeaponTargetingComponent;
@@ -331,7 +331,7 @@ inline void object_choose_weapon_target_StoC::handle()
     if (weapon != NULL)
     {
         weapon->target_id = this->target_id;    // set target
-        weapon->target_type = (ObjectType)this->target_type;
+        weapon->target_type = (EntityType)this->target_type;
         weapon->locked_on_target = true;   // flag target lock
     }
 
@@ -342,19 +342,19 @@ inline void object_choose_weapon_target_StoC::handle()
 
 inline void object_choose_motion_target_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
 
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
     GS_ASSERT(motion != NULL);
     if (motion == NULL) return;
-    motion->set_target((ObjectType)target_type, target_id);
+    motion->set_target((EntityType)target_type, target_id);
 }
 
 inline void object_remove_motion_target_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
 
     using Components::MotionTargetingComponent;
@@ -367,7 +367,7 @@ inline void object_remove_motion_target_StoC::handle()
 
 inline void object_choose_destination_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
     
     using Components::MotionTargetingComponent;
@@ -420,7 +420,7 @@ inline void object_choose_destination_StoC::handle()
 
 inline void object_took_damage_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
 
     // get object position
@@ -459,7 +459,7 @@ inline void object_took_damage_StoC::handle()
 
 inline void object_begin_waiting_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
     
     using Components::StateMachineComponent;
@@ -478,7 +478,7 @@ inline void object_begin_waiting_StoC::handle()
 
 inline void object_in_transit_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     GS_ASSERT(obj != NULL);
     if (obj == NULL) return;
 
@@ -509,7 +509,7 @@ inline void object_in_transit_StoC::handle()
         direction.z = 0.0f;        
         float len = vec3_length(direction);
         dest_target->speed = len / ((float)this->ticks_to_destination);
-        dest_target->speed = Objects::MONSTER_BOMB_WALK_SPEED;
+        dest_target->speed = Entities::MONSTER_BOMB_WALK_SPEED;
     }
     else
     {   // 0 ticks is teleport
@@ -529,7 +529,7 @@ inline void object_in_transit_StoC::handle()
 
 inline void object_chase_agent_StoC::handle()
 {
-    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
     
     using Components::PhysicsComponent;

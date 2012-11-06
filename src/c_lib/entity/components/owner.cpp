@@ -18,4 +18,4 @@ void OwnerComponent::revoke()
 }
 #endif
 
-} // Objects
+} // Entities

@@ -132,4 +132,4 @@ bool DestinationTargetingComponent::check_at_destination()
     return this->at_destination;
 }
 
-} // Objects
+} // Entities

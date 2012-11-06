@@ -9,12 +9,12 @@
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 void load_base_data()
 {
-    ObjectType type = OBJECT_BASE;
+    EntityType type = OBJECT_BASE;
 
     #if DC_SERVER
     int n_components = 4;
@@ -23,18 +23,18 @@ void load_base_data()
     int n_components = 3;
     #endif
 
-    object_data->set_components(type, n_components);
+    entity_data->set_components(type, n_components);
 
-    object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
-    object_data->attach_component(type, COMPONENT_DIMENSION);
-    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
+    entity_data->attach_component(type, COMPONENT_DIMENSION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     
     #if DC_SERVER
-    object_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
+    entity_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
     #endif
 }
 
-static void set_base_properties(Object* object)
+static void set_base_properties(Entity* object)
 {
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);    
 
@@ -62,17 +62,17 @@ static void set_base_properties(Object* object)
     object->state = state_packet;
 }
 
-Object* create_base()
+Entity* create_base()
 {
-    ObjectType type = OBJECT_BASE;
-    Object* obj = object_list->create(type);
+    EntityType type = OBJECT_BASE;
+    Entity* obj = entity_list->create(type);
     GS_ASSERT(obj != NULL);
     if (obj == NULL) return NULL;
     set_base_properties(obj);
     return obj;
 }
 
-void ready_base(Object* object)
+void ready_base(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
@@ -91,12 +91,12 @@ void ready_base(Object* object)
     #endif
 }
 
-void die_base(Object* object)
+void die_base(Entity* object)
 {
     GS_ASSERT(false);
 }
 
-void tick_base(Object* object)
+void tick_base(Entity* object)
 {
     #if DC_SERVER
     typedef Components::PositionChangedPhysicsComponent PCP;
@@ -112,7 +112,7 @@ void tick_base(Object* object)
     #endif
 }
 
-void update_base(Object* object)
+void update_base(Entity* object)
 {
     typedef Components::PositionChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
@@ -125,4 +125,4 @@ void update_base(Object* object)
     physics->changed = false;    // reset changed state
 }
 
-} // Objects
+} // Entities

@@ -368,9 +368,9 @@ bool block_can_be_placed(int x, int y, int z, CubeID cube_id)
     
     if (get(x,y,z) != EMPTY_CUBE) return false;
     // check against all spawners
-    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x,y,z))
+    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x,y,z))
         return false;
-    if (Objects::point_occupied_by_type(OBJECT_ENERGY_CORE, x,y,z))
+    if (Entities::point_occupied_by_type(OBJECT_ENERGY_CORE, x,y,z))
         return false;
     return true;
 }

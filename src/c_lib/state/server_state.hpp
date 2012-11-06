@@ -16,7 +16,7 @@ namespace ServerState
     extern bool signal_exit;
     extern bool reload_settings;
 
-    extern class Objects::Object* base;
+    extern class Entities::Entity* base;
 
     // property lists
     extern Voxel_hitscan_list* voxel_hitscan_list;
@@ -31,9 +31,9 @@ namespace ServerState
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
         int damage, AgentID owner,
-        ObjectType inflictor_type, int inflictor_id,
+        EntityType inflictor_type, int inflictor_id,
         bool suicidal=true
     );
 
-    void spawn_monsters(ObjectType type, int n);
+    void spawn_monsters(EntityType type, int n);
 }   // ServerState

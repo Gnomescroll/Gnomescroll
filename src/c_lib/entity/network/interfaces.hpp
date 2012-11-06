@@ -2,46 +2,46 @@
 
 #include <entity/network/packets.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 //forward decl
-class Object;
+class Entity;
 
 /* Network Delegates */
 
 class CreatePacketDelegate
 {
     public:
-        virtual void sendToClient(Object* object, ClientID client_id) = 0;
-        virtual void broadcast(Object* object) = 0;
+        virtual void sendToClient(Entity* object, ClientID client_id) = 0;
+        virtual void broadcast(Entity* object) = 0;
         virtual ~CreatePacketDelegate(){}
 };
 
 class StatePacketDelegate
 {
     public:
-        virtual void sendToClient(Object* object, ClientID client_id) = 0;
-        virtual void broadcast(Object* object) = 0;
+        virtual void sendToClient(Entity* object, ClientID client_id) = 0;
+        virtual void broadcast(Entity* object) = 0;
         virtual ~StatePacketDelegate(){}
 };
 
 
-/* Null Objects */
+/* Null Entities */
 
 
 class CreatePacketNone: public CreatePacketDelegate
 {
     public:
-        void sendToClient(Object* object, ClientID client_id) {}
-        void broadcast(Object* object) {}
+        void sendToClient(Entity* object, ClientID client_id) {}
+        void broadcast(Entity* object) {}
 };
 
 class StatePacketNone: public StatePacketDelegate
 {
     public:
-        void sendToClient(Object* object, ClientID client_id) {}
-        void broadcast(Object* object) {}
+        void sendToClient(Entity* object, ClientID client_id) {}
+        void broadcast(Entity* object) {}
 };
 
 /* Concrete Delegates */
@@ -49,17 +49,17 @@ class StatePacketNone: public StatePacketDelegate
 class CreatePacket: public CreatePacketDelegate
 {
     private:
-        void message(Object* object, object_create_StoC* msg);
+        void message(Entity* object, object_create_StoC* msg);
     
     public:
-        void sendToClient(Object* object, ClientID client_id)
+        void sendToClient(Entity* object, ClientID client_id)
         {
             object_create_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* object)
+        void broadcast(Entity* object)
         {
             object_create_StoC msg;
             this->message(object, &msg);
@@ -70,17 +70,17 @@ class CreatePacket: public CreatePacketDelegate
 class CreatePacketOwner: public CreatePacketDelegate
 {
     private:
-        void message(Object* object, object_create_owner_StoC* msg);
+        void message(Entity* object, object_create_owner_StoC* msg);
     
     public:
-        void sendToClient(Object* object, ClientID client_id)
+        void sendToClient(Entity* object, ClientID client_id)
         {
             object_create_owner_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* object)
+        void broadcast(Entity* object)
         {
             object_create_owner_StoC msg;
             this->message(object, &msg);
@@ -91,17 +91,17 @@ class CreatePacketOwner: public CreatePacketDelegate
 class CreatePacketMomentum: public CreatePacketDelegate
 {
     private:
-        void message(Object* object, object_create_momentum_StoC* msg);
+        void message(Entity* object, object_create_momentum_StoC* msg);
     
     public:
-        void sendToClient(Object* object, ClientID client_id)
+        void sendToClient(Entity* object, ClientID client_id)
         {
             object_create_momentum_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* object)
+        void broadcast(Entity* object)
         {
             object_create_momentum_StoC msg;
             this->message(object, &msg);
@@ -112,17 +112,17 @@ class CreatePacketMomentum: public CreatePacketDelegate
 class CreatePacketMomentumAngles: public CreatePacketDelegate
 {
     private:
-        void message(Object* object, object_create_momentum_angles_StoC* msg);
+        void message(Entity* object, object_create_momentum_angles_StoC* msg);
     
     public:
-        void sendToClient(Object* object, ClientID client_id)
+        void sendToClient(Entity* object, ClientID client_id)
         {
             object_create_momentum_angles_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* object)
+        void broadcast(Entity* object)
         {
             object_create_momentum_angles_StoC msg;
             this->message(object, &msg);
@@ -133,11 +133,11 @@ class CreatePacketMomentumAngles: public CreatePacketDelegate
 class CreatePacketMomentumAnglesHealth: public CreatePacketDelegate
 {
     private:
-        void message(Object* object, object_create_momentum_angles_health_StoC* msg);
-        void health_message(Object* object, object_state_health_StoC* msg);
+        void message(Entity* object, object_create_momentum_angles_health_StoC* msg);
+        void health_message(Entity* object, object_state_health_StoC* msg);
     
     public:
-        void sendToClient(Object* object, ClientID client_id)
+        void sendToClient(Entity* object, ClientID client_id)
         {
             object_create_momentum_angles_health_StoC msg;
             this->message(object, &msg);
@@ -148,7 +148,7 @@ class CreatePacketMomentumAnglesHealth: public CreatePacketDelegate
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* object)
+        void broadcast(Entity* object)
         {
             object_create_momentum_angles_health_StoC msg;
             this->message(object, &msg);
@@ -166,17 +166,17 @@ class CreatePacketMomentumAnglesHealth: public CreatePacketDelegate
 class StatePacket: public StatePacketDelegate
 {
     private:
-        void message(Object* object, object_state_StoC* msg);
+        void message(Entity* object, object_state_StoC* msg);
     
     public:
-        void sendToClient(Object* object, ClientID client_id)
+        void sendToClient(Entity* object, ClientID client_id)
         {
             object_state_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* object)
+        void broadcast(Entity* object)
         {
             object_state_StoC msg;
             this->message(object, &msg);
@@ -187,17 +187,17 @@ class StatePacket: public StatePacketDelegate
 class StatePacketMomentum: public StatePacketDelegate
 {
     private:
-        void message(Object* object, object_state_momentum_StoC* msg);
+        void message(Entity* object, object_state_momentum_StoC* msg);
     
     public:
-        void sendToClient(Object* object, ClientID client_id)
+        void sendToClient(Entity* object, ClientID client_id)
         {
             object_state_momentum_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* object)
+        void broadcast(Entity* object)
         {
             object_state_momentum_StoC msg;
             this->message(object, &msg);
@@ -208,17 +208,17 @@ class StatePacketMomentum: public StatePacketDelegate
 class StatePacketMomentumAngles: public StatePacketDelegate
 {
     private:
-        void message(Object* object, object_state_momentum_angles_StoC* msg);
+        void message(Entity* object, object_state_momentum_angles_StoC* msg);
     
     public:
-        void sendToClient(Object* object, ClientID client_id)
+        void sendToClient(Entity* object, ClientID client_id)
         {
             object_state_momentum_angles_StoC msg;
             this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* object)
+        void broadcast(Entity* object)
         {
             object_state_momentum_angles_StoC msg;
             this->message(object, &msg);
@@ -227,4 +227,4 @@ class StatePacketMomentumAngles: public StatePacketDelegate
 };
 
 
-} // Objects
+} // Entities

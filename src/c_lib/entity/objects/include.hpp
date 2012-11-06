@@ -1,5 +1,7 @@
 #pragma once
 
+#include <entity/objects/dat.hpp>
+
 #include <entity/objects/fabs/constants.hpp>
 #include <entity/objects/fabs/base.hpp>
 #include <entity/objects/fabs/energy_core.hpp>

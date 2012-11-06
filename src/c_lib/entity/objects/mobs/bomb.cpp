@@ -11,14 +11,14 @@
 #include <entity/components/explosion.hpp>
 #endif
 
-namespace Objects
+namespace Entities
 {
     
-static void bomb_state_router(class Object*, EntityState state);
+static void bomb_state_router(class Entity*, EntityState state);
 
 void load_mob_bomb_data()
 {
-    ObjectType type = OBJECT_MONSTER_BOMB;
+    EntityType type = OBJECT_MONSTER_BOMB;
     
     #if DC_SERVER
     const int n_components = 11;
@@ -27,29 +27,29 @@ void load_mob_bomb_data()
     const int n_components = 9;
     #endif
     
-    object_data->set_components(type, n_components);
+    entity_data->set_components(type, n_components);
     
-    object_data->attach_component(type, COMPONENT_POSITION_MOMENTUM_CHANGED);
-    object_data->attach_component(type, COMPONENT_DIMENSION);
-    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    object_data->attach_component(type, COMPONENT_HIT_POINTS);
-    object_data->attach_component(type, COMPONENT_STATE_MACHINE);
-    object_data->attach_component(type, COMPONENT_WAITING);
-    object_data->attach_component(type, COMPONENT_DESTINATION_TARGETING);
-    object_data->attach_component(type, COMPONENT_AGENT_TARGETING);
+    entity_data->attach_component(type, COMPONENT_POSITION_MOMENTUM_CHANGED);
+    entity_data->attach_component(type, COMPONENT_DIMENSION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
+    entity_data->attach_component(type, COMPONENT_STATE_MACHINE);
+    entity_data->attach_component(type, COMPONENT_WAITING);
+    entity_data->attach_component(type, COMPONENT_DESTINATION_TARGETING);
+    entity_data->attach_component(type, COMPONENT_AGENT_TARGETING);
 
     #if DC_SERVER
-    object_data->attach_component(type, COMPONENT_EXPLOSION);
-    object_data->attach_component(type, COMPONENT_RATE_LIMIT);
-    object_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_EXPLOSION);
+    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    entity_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
 
     #if DC_CLIENT
-    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
     #endif
 }
 
-static void set_mob_bomb_properties(Object* object)
+static void set_mob_bomb_properties(Entity* object)
 {
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
 
@@ -141,16 +141,16 @@ static void set_mob_bomb_properties(Object* object)
     object->state = state_packet_momentum_angles;
 }
 
-Object* create_mob_bomb()
+Entity* create_mob_bomb()
 {
-    ObjectType type = OBJECT_MONSTER_BOMB;
-    Object* obj = object_list->create(type);
+    EntityType type = OBJECT_MONSTER_BOMB;
+    Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
     set_mob_bomb_properties(obj);
     return obj;
 }
 
-void ready_mob_bomb(Object* object)
+void ready_mob_bomb(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
@@ -168,7 +168,7 @@ void ready_mob_bomb(Object* object)
     #endif
 }
 
-void die_mob_bomb(Object* object)
+void die_mob_bomb(Entity* object)
 {
     #if DC_SERVER
     // drop item
@@ -199,7 +199,7 @@ void die_mob_bomb(Object* object)
 }
 
 #if DC_SERVER
-static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Object* object, class Components::DestinationTargetingComponent* dest)
+static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Entity* object, class Components::DestinationTargetingComponent* dest)
 {
     if (dest == NULL)
         dest = (Components::DestinationTargetingComponent*)
@@ -226,21 +226,21 @@ static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Obje
     return true;
 }
 
-void broadcast_object_in_transit(class Object* object, class Components::DestinationTargetingComponent* dest)
+void broadcast_object_in_transit(class Entity* object, class Components::DestinationTargetingComponent* dest)
 {
     object_in_transit_StoC msg;
     if (!pack_object_in_transit(&msg, object, dest)) return;
     msg.broadcast();
 }
 
-void send_object_in_transit(ClientID client_id, class Object* object, class Components::DestinationTargetingComponent* dest)
+void send_object_in_transit(ClientID client_id, class Entity* object, class Components::DestinationTargetingComponent* dest)
 {
     object_in_transit_StoC msg;
     if (!pack_object_in_transit(&msg, object, dest)) return;
     msg.sendToClient(client_id);
 }
 
-static bool pack_object_chase_agent(class object_chase_agent_StoC* msg, class Object* object, class Components::AgentTargetingComponent* target)
+static bool pack_object_chase_agent(class object_chase_agent_StoC* msg, class Entity* object, class Components::AgentTargetingComponent* target)
 {
     if (target == NULL)
         target = (Components::AgentTargetingComponent*)
@@ -255,21 +255,21 @@ static bool pack_object_chase_agent(class object_chase_agent_StoC* msg, class Ob
     return true;
 }
 
-void broadcast_object_chase_agent(class Object* object, class Components::AgentTargetingComponent* target)
+void broadcast_object_chase_agent(class Entity* object, class Components::AgentTargetingComponent* target)
 {
     object_chase_agent_StoC msg;
     if (!pack_object_chase_agent(&msg, object, target)) return;
     msg.broadcast();
 }
 
-void send_object_chase_agent(ClientID client_id, class Object* object, class Components::AgentTargetingComponent* target)
+void send_object_chase_agent(ClientID client_id, class Entity* object, class Components::AgentTargetingComponent* target)
 {
     object_chase_agent_StoC msg;
     if (!pack_object_chase_agent(&msg, object, target)) return;
     msg.sendToClient(client_id);
 }
 
-static bool pack_object_begin_wait(class object_begin_waiting_StoC* msg, class Object* object)
+static bool pack_object_begin_wait(class object_begin_waiting_StoC* msg, class Entity* object)
 {
     msg->type = object->type;
     msg->id = object->id;
@@ -280,21 +280,21 @@ static bool pack_object_begin_wait(class object_begin_waiting_StoC* msg, class O
     return true;
 }
 
-void broadcast_object_begin_wait(class Object* object)
+void broadcast_object_begin_wait(class Entity* object)
 {
     object_begin_waiting_StoC msg;
     if (!pack_object_begin_wait(&msg, object)) return;
     msg.broadcast();
 }
 
-void send_object_begin_wait(ClientID client_id, class Object* object)
+void send_object_begin_wait(ClientID client_id, class Entity* object)
 {
     object_begin_waiting_StoC msg;
     if (!pack_object_begin_wait(&msg, object)) return;
     msg.sendToClient(client_id);
 }
 
-inline void send_mob_bomb_state_machine_to_client(ClientID client_id, class Object* object)
+inline void send_mob_bomb_state_machine_to_client(ClientID client_id, class Entity* object)
 {
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -310,7 +310,7 @@ inline void send_mob_bomb_state_machine_to_client(ClientID client_id, class Obje
 }
 #endif
 
-static void waiting_to_in_transit(class Object* object)
+static void waiting_to_in_transit(class Entity* object)
 {
     #if DC_SERVER
     using Components::PhysicsComponent;
@@ -338,7 +338,7 @@ static void waiting_to_in_transit(class Object* object)
     state->state = STATE_IN_TRANSIT;
 }
 
-static void waiting_to_chase_agent(class Object* object)
+static void waiting_to_chase_agent(class Entity* object)
 {   // assumes target already locked
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -349,7 +349,7 @@ static void waiting_to_chase_agent(class Object* object)
     #endif
 }
 
-static void in_transit_to_waiting(class Object* object)
+static void in_transit_to_waiting(class Entity* object)
 {
     using Components::WaitingComponent;
     WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
@@ -364,7 +364,7 @@ static void in_transit_to_waiting(class Object* object)
     #endif
 }
 
-static void in_transit_to_chase_agent(class Object* object)
+static void in_transit_to_chase_agent(class Entity* object)
 {   // assumes target already locked
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -375,7 +375,7 @@ static void in_transit_to_chase_agent(class Object* object)
     #endif
 }
 
-static void chase_agent_to_waiting(class Object* object)
+static void chase_agent_to_waiting(class Entity* object)
 {
     using Components::WaitingComponent;
     WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
@@ -390,14 +390,14 @@ static void chase_agent_to_waiting(class Object* object)
     #endif
 }
 
-static void chase_agent_to_in_transit(class Object* object)
+static void chase_agent_to_in_transit(class Entity* object)
 {   // unused
     GS_ASSERT(false);
 }
 
 // ticks to do while in a state
 
-static void waiting(class Object* object)
+static void waiting(class Entity* object)
 {
     #if DC_SERVER
     using Components::WaitingComponent;
@@ -408,7 +408,7 @@ static void waiting(class Object* object)
     #endif
 }
 
-static void in_transit(class Object* object)
+static void in_transit(class Entity* object)
 {
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)object->get_component(COMPONENT_DESTINATION_TARGETING);
@@ -445,7 +445,7 @@ static void in_transit(class Object* object)
     #endif
 }
 
-static void chase_agent(class Object* object)
+static void chase_agent(class Entity* object)
 {
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)
@@ -473,7 +473,7 @@ static void chase_agent(class Object* object)
     target->move_on_surface();
 }
 
-static void bomb_state_router(class Object* object, EntityState state)
+static void bomb_state_router(class Entity* object, EntityState state)
 {
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -507,7 +507,7 @@ static void bomb_state_router(class Object* object, EntityState state)
     }
 }
 
-void tick_mob_bomb(Object* object)
+void tick_mob_bomb(Entity* object)
 {
     #if DC_SERVER
      //die if near agent
@@ -563,7 +563,7 @@ void tick_mob_bomb(Object* object)
     #endif
 }
 
-void update_mob_bomb(Object* object)
+void update_mob_bomb(Entity* object)
 {
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
@@ -576,4 +576,4 @@ void update_mob_bomb(Object* object)
     physics->changed = false;    // reset changed state
 }
 
-} // Objects
+} // Entities

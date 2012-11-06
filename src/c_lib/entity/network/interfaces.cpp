@@ -3,12 +3,12 @@
 #include <entity/object/object.hpp>
 #include <entity/components/physics.hpp>
 
-namespace Objects
+namespace Entities
 {
     
 /* Create */
 
-void CreatePacket::message(Object* object, object_create_StoC* msg)
+void CreatePacket::message(Entity* object, object_create_StoC* msg)
 {
     using Components::PhysicsComponent;
     
@@ -24,7 +24,7 @@ void CreatePacket::message(Object* object, object_create_StoC* msg)
     ASSERT_BOXED_POSITION(position);
 }
 
-void CreatePacketOwner::message(Object* object, object_create_owner_StoC* msg)
+void CreatePacketOwner::message(Entity* object, object_create_owner_StoC* msg)
 {
     using Components::PhysicsComponent;
     using Components::OwnerComponent;
@@ -47,7 +47,7 @@ void CreatePacketOwner::message(Object* object, object_create_owner_StoC* msg)
     ASSERT_BOXED_POSITION(position);
 }
 
-void CreatePacketMomentum::message(Object* object, object_create_momentum_StoC* msg)
+void CreatePacketMomentum::message(Entity* object, object_create_momentum_StoC* msg)
 {
     using Components::PhysicsComponent;
     
@@ -68,7 +68,7 @@ void CreatePacketMomentum::message(Object* object, object_create_momentum_StoC* 
     ASSERT_BOXED_POSITION(position);
 }
 
-void CreatePacketMomentumAngles::message(Object* object, object_create_momentum_angles_StoC* msg)
+void CreatePacketMomentumAngles::message(Entity* object, object_create_momentum_angles_StoC* msg)
 {
     using Components::PhysicsComponent;
     
@@ -93,7 +93,7 @@ void CreatePacketMomentumAngles::message(Object* object, object_create_momentum_
     ASSERT_BOXED_POSITION(position);
 }
 
-void CreatePacketMomentumAnglesHealth::message(Object* object, object_create_momentum_angles_health_StoC* msg)
+void CreatePacketMomentumAnglesHealth::message(Entity* object, object_create_momentum_angles_health_StoC* msg)
 {
     using Components::PhysicsComponent;
     using Components::HitPointsHealthComponent;
@@ -127,7 +127,7 @@ void CreatePacketMomentumAnglesHealth::message(Object* object, object_create_mom
     ASSERT_BOXED_POSITION(position);
 }
 
-void CreatePacketMomentumAnglesHealth::health_message(Object* object, object_state_health_StoC* msg)
+void CreatePacketMomentumAnglesHealth::health_message(Entity* object, object_state_health_StoC* msg)
 {
     GS_ASSERT(msg != NULL);
 
@@ -146,7 +146,7 @@ void CreatePacketMomentumAnglesHealth::health_message(Object* object, object_sta
 
 /* State */
 
-void StatePacket::message(Object* object, object_state_StoC* msg)
+void StatePacket::message(Entity* object, object_state_StoC* msg)
 {
     using Components::PhysicsComponent;
     
@@ -162,7 +162,7 @@ void StatePacket::message(Object* object, object_state_StoC* msg)
     ASSERT_BOXED_POSITION(position);
 }
 
-void StatePacketMomentum::message(Object* object, object_state_momentum_StoC* msg)
+void StatePacketMomentum::message(Entity* object, object_state_momentum_StoC* msg)
 {
     using Components::PhysicsComponent;
     
@@ -183,7 +183,7 @@ void StatePacketMomentum::message(Object* object, object_state_momentum_StoC* ms
     ASSERT_BOXED_POSITION(position);
 }
 
-void StatePacketMomentumAngles::message(Object* object, object_state_momentum_angles_StoC* msg)
+void StatePacketMomentumAngles::message(Entity* object, object_state_momentum_angles_StoC* msg)
 {
     using Components::PhysicsComponent;
     
@@ -210,4 +210,4 @@ void StatePacketMomentumAngles::message(Object* object, object_state_momentum_an
 
 
 
-} // Objects
+} // Entities

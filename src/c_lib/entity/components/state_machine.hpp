@@ -10,8 +10,8 @@ class StateMachineComponent: public Component
 {
     public:
         EntityState state;
-        void (*router) (class Object*, EntityState);
-    
+        stateRouter router;
+        
     virtual ~StateMachineComponent() {}
     
     StateMachineComponent()

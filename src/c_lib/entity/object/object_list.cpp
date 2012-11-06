@@ -5,10 +5,10 @@
 #include <entity/components/health.hpp>
 #include <entity/object/object_data_list.hpp>
 
-namespace Objects
+namespace Entities
 {
 
-int ObjectList::get_free_id(ObjectType type)
+int EntityList::get_free_id(EntityType type)
 {
     if (this->objects[type] == NULL) return -1;
     for (int i=0; i<this->maximums[type]; i++)
@@ -16,16 +16,21 @@ int ObjectList::get_free_id(ObjectType type)
     return -1;
 }
 
-void ObjectList::set_object_id(Object* object)
+void EntityList::set_object_id(Entity* object)
 {
     int id = this->get_free_id(object->type);
-    if (id < 0) { printf("WARNING: no free ids\n"); return; }
+    GS_ASSERT(id >= 0);
+    if (id < 0)
+    {
+        printf("WARNING: no free ids\n");
+        return;
+    }
     this->set_object_id(object, id);
 }
 
-void ObjectList::set_object_id(Object* object, int id)
+void EntityList::set_object_id(Entity* object, int id)
 {
-    ObjectType type = object->type;
+    EntityType type = object->type;
     GS_ASSERT(this->used[type][id] == 0);
     GS_ASSERT(id >= 0);
     GS_ASSERT(id < this->max(type));
@@ -41,31 +46,31 @@ void ObjectList::set_object_id(Object* object, int id)
     this->indices[type] += 1;
 }
 
-inline int ObjectList::count(ObjectType type)
+inline int EntityList::count(EntityType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return 0;
     return this->indices[type];
 }
 
-inline int ObjectList::max(ObjectType type)
+inline int EntityList::max(EntityType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return 0;
     return this->maximums[type];
 }
 
-inline bool ObjectList::empty(ObjectType type)
+inline bool EntityList::empty(EntityType type)
 {
     return (this->count(type) == 0);
 }
 
-inline bool ObjectList::full(ObjectType type)
+inline bool EntityList::full(EntityType type)
 {
     return (this->count(type) >= this->max(type));
 }
 
-inline bool ObjectList::in_use(ObjectType type, int id)
+inline bool EntityList::in_use(EntityType type, int id)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     GS_ASSERT(this->used != NULL);
@@ -80,7 +85,7 @@ inline bool ObjectList::in_use(ObjectType type, int id)
     return (this->used[type][id] == 1);
 }
 
-void ObjectList::destroy(ObjectType type, int id)
+void EntityList::destroy(EntityType type, int id)
 {
     if (this->used[type] == NULL) return;
     GS_ASSERT(this->used[type][id]);
@@ -88,7 +93,7 @@ void ObjectList::destroy(ObjectType type, int id)
     this->indices[type] -= 1;
 }
 
-Object* ObjectList::get(ObjectType type, int id)
+Entity* EntityList::get(EntityType type, int id)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
@@ -100,7 +105,7 @@ Object* ObjectList::get(ObjectType type, int id)
     return this->objects[type][id];
 }
 
-Object* ObjectList::create(ObjectType type)
+Entity* EntityList::create(EntityType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
@@ -109,7 +114,7 @@ Object* ObjectList::create(ObjectType type)
 }
 
 // preemptively check against used ids
-Object* ObjectList::create(ObjectType type, int id)
+Entity* EntityList::create(EntityType type, int id)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
@@ -121,21 +126,30 @@ Object* ObjectList::create(ObjectType type, int id)
     return this->staging_objects[type];
 }
 
-Object** ObjectList::get_objects(ObjectType type)
+Entity** EntityList::get_objects(EntityType type)
 {
     GS_ASSERT(type < MAX_OBJECT_TYPES);
     GS_ASSERT(type >= 0);
     return this->objects[type];
 }
 
-char* ObjectList::get_used(ObjectType type)
+char* EntityList::get_used(EntityType type)
 {
     GS_ASSERT(type < MAX_OBJECT_TYPES);
     GS_ASSERT(type >= 0);
     return this->used[type];
 }
 
-void ObjectList::set_object_max(ObjectType type, int max)
+void EntityList::destroy_all()
+{
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+        if (this->objects[i] != NULL)
+            for (int j=0; j<this->maximums[j]; j++)
+                if (this->used[j])
+                    this->destroy((EntityType)i, j); 
+}
+
+void EntityList::set_object_max(EntityType type, int max)
 {
     GS_ASSERT(type < MAX_OBJECT_TYPES);
     GS_ASSERT(type >= 0);
@@ -147,42 +161,42 @@ void ObjectList::set_object_max(ObjectType type, int max)
     this->maximums[type] = max;
     if (max > 0)
     {
-        this->objects[type] = (Object**)calloc(max, sizeof(Object*));
+        this->objects[type] = (Entity**)calloc(max, sizeof(Entity*));
         this->used[type] = (char*)calloc(max, sizeof(char));
     }
 }
 
-void ObjectList::load_object_data(ObjectDataList* data)
+void EntityList::load_object_data(EntityDataList* data)
 {   // preallocate component pointer buffers
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
-        int n_components = data->get_component_count((ObjectType)i);
+        int n_components = data->get_component_count((EntityType)i);
         for (int j=0; j<this->maximums[i]; j++)
         {
-            this->objects[i][j] = new Object(j);
+            this->objects[i][j] = new Entity(j);
             this->objects[i][j]->init(n_components);
-            this->objects[i][j]->type = (ObjectType)i;
+            this->objects[i][j]->type = (EntityType)i;
         }
-        this->staging_objects[i] = new Object(-1);
+        this->staging_objects[i] = new Entity(-1);
         this->staging_objects[i]->init(n_components);
-        this->staging_objects[i]->type = (ObjectType)i;
+        this->staging_objects[i]->type = (EntityType)i;
     }
 }
 
-void ObjectList::init()
+void EntityList::init()
 {
     this->indices = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
     this->maximums = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
     this->used = (char**)calloc(MAX_OBJECT_TYPES, sizeof(char*));
-    this->staging_objects = (Object**)calloc(MAX_OBJECT_TYPES, sizeof(Object*));
-    this->objects = (Object***)calloc(MAX_OBJECT_TYPES, sizeof(Object**));
+    this->staging_objects = (Entity**)calloc(MAX_OBJECT_TYPES, sizeof(Entity*));
+    this->objects = (Entity***)calloc(MAX_OBJECT_TYPES, sizeof(Entity**));
 }
 
-void ObjectList::tick()
+void EntityList::tick()
 {
     char* used;
     int max;
-    Object** objects;
+    Entity** objects;
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
         used = this->used[i];
@@ -192,14 +206,14 @@ void ObjectList::tick()
         for (int j=0; j<max; j++)
         {
             if (!used[j]) continue;
-            Object* obj = objects[j];
+            Entity* obj = objects[j];
             if (obj->tick == NULL) break;   // none of these objects will have tick()
             obj->tick(obj);
         }
     }
 }
 
-void ObjectList::update()
+void EntityList::update()
 {
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
@@ -207,14 +221,14 @@ void ObjectList::update()
         for (int j=0; j<this->maximums[i]; j++)
         {
             if (!this->used[i][j]) continue;
-            Object* obj = this->objects[i][j];
+            Entity* obj = this->objects[i][j];
             if (obj->update == NULL) break;
             obj->update(obj);
         }
     }
 }
 
-void ObjectList::harvest()
+void EntityList::harvest()
 {
     using Components::HealthComponent;
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
@@ -223,20 +237,20 @@ void ObjectList::harvest()
         for (int j=0; j<this->maximums[i]; j++)
         {
             if (!this->used[i][j]) continue;
-            Object* obj = this->objects[i][j];
+            Entity* obj = this->objects[i][j];
             HealthComponent* health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
             if (health != NULL && health->is_dead())
-                Objects::destroy(obj);
+                Entities::destroy(obj);
         }
     }
 }
 
-void ObjectList::send_to_client(ObjectType type, ClientID client_id)
+void EntityList::send_to_client(EntityType type, ClientID client_id)
 {
     GS_ASSERT(type < MAX_OBJECT_TYPES);
     GS_ASSERT(type >= 0);
     if (this->empty(type)) return;
-    Object** objects = this->get_objects(type);
+    Entity** objects = this->get_objects(type);
     GS_ASSERT(objects != NULL);
     int max = this->max(type);
     GS_ASSERT(max > 0);
@@ -246,7 +260,7 @@ void ObjectList::send_to_client(ObjectType type, ClientID client_id)
             objects[i]->sendToClientCreate(client_id);
 }
 
-ObjectList::~ObjectList()
+EntityList::~EntityList()
 {
     if (this->objects != NULL)
     {
@@ -284,4 +298,4 @@ ObjectList::~ObjectList()
     }
 }
 
-} // Objects
+} // Entities

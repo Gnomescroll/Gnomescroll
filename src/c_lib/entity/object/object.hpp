@@ -6,22 +6,22 @@
 
 //#include <windows.h>
 
-namespace Objects
+namespace Entities
 {
 
 using Components::Component;
 
-class Object
+class Entity
 {
     public:
         int n_components;
         Component** components;
 
         int id;
-        ObjectType type;
+        EntityType type;
 
-        void (*tick)(Object*);      // for physics
-        void (*update)(Object*);    // for draw prep
+        void (*tick)(Entity*);      // for physics
+        void (*update)(Entity*);    // for draw prep
 
         CreatePacketDelegate* create;
         StatePacketDelegate* state;
@@ -52,9 +52,9 @@ class Object
 
         void init(int n_components);
 
-    ~Object();
+    ~Entity();
 
-    explicit Object(int id)
+    explicit Entity(int id)
     :   n_components(0), components(NULL),
         id(id), type(OBJECT_NONE),
         tick(NULL), update(NULL),
@@ -63,4 +63,4 @@ class Object
 };
 
 
-} // Objects
+} // Entities

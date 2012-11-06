@@ -27,7 +27,7 @@
 inline void PlayerAgent_Snapshot::handle()
 {
     #if DC_CLIENT
-    ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz, ax, ay, az);
+    ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
     #endif
 }
 
@@ -47,7 +47,7 @@ inline void Agent_state_message::handle()
     #if DC_SERVER
     z = clamp_z(z);
     #endif
-    a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz, ax, ay, az);
+    a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 
 inline void Agent_teleport_message::handle()
@@ -98,7 +98,7 @@ inline void agent_shot_object_StoC::handle()
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    a->event.fired_weapon_at_object(target_id, (ObjectType)target_type, target_part);
+    a->event.fired_weapon_at_object(target_id, (EntityType)target_type, target_part);
 }
 
 inline void agent_shot_block_StoC::handle()
@@ -125,7 +125,7 @@ inline void agent_melee_object_StoC::handle()
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    a->event.melee_attack_object(target_id, (ObjectType)target_type, target_part);
+    a->event.melee_attack_object(target_id, (EntityType)target_type, target_part);
 }
 
 inline void agent_melee_nothing_StoC::handle()
@@ -378,21 +378,21 @@ inline void set_spawner_StoC::handle()
     // de-color old spawner
     if (you->status.spawner != BASE_SPAWN_ID)
     {
-        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, you->status.spawner);
+        Entities::Entity* obj = Entities::get(OBJECT_AGENT_SPAWNER, you->status.spawner);
         if (obj != NULL)
         {
             using Components::VoxelModelComponent;
             VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
             GS_ASSERT(vox != NULL);
             if (vox != NULL && vox->vox != NULL)
-                vox->vox->fill_color(Objects::DEACTIVATED_SPAWNER_COLOR);
+                vox->vox->fill_color(Entities::DEACTIVATED_SPAWNER_COLOR);
         }
     }
 
     // color new spawner
     if (this->spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check, once base is removed (if it is)
     {
-        Objects::Object* obj = Objects::get(OBJECT_AGENT_SPAWNER, this->spawner_id);
+        Entities::Entity* obj = Entities::get(OBJECT_AGENT_SPAWNER, this->spawner_id);
         GS_ASSERT(obj != NULL);
         if (obj != NULL)
         {
@@ -400,7 +400,7 @@ inline void set_spawner_StoC::handle()
             VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
             GS_ASSERT(vox != NULL);
             if (vox != NULL && vox->vox != NULL)
-                vox->vox->fill_color(Objects::ACTIVATED_SPAWNER_COLOR);
+                vox->vox->fill_color(Entities::ACTIVATED_SPAWNER_COLOR);
         }
     }
 
@@ -600,7 +600,7 @@ inline void hitscan_object_CtoS::handle()
     }
     else
     {
-        class Objects::Object* obj = Objects::get((ObjectType)type, id);
+        class Entities::Entity* obj = Entities::get((EntityType)type, id);
         if (obj == NULL) return;
 
         // apply damage
@@ -732,7 +732,7 @@ inline void melee_object_CtoS::handle()
     }
     else
     {
-        class Objects::Object* obj = Objects::get((ObjectType)type, id);
+        class Entities::Entity* obj = Entities::get((EntityType)type, id);
         if (obj == NULL) return;
 
         // apply damage
@@ -910,21 +910,21 @@ inline void admin_set_block_CtoS::handle()
 }
 //#endif
 
-static Objects::Object* place_object_handler(ObjectType type, int x, int y, int z, AgentID owner_id)
+static Entities::Entity* place_object_handler(EntityType type, int x, int y, int z, AgentID owner_id)
 {
-    if (Objects::point_occupied_by_type(OBJECT_TURRET, x, y, z)) return NULL;
-    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, z)) return NULL;
+    if (Entities::point_occupied_by_type(OBJECT_TURRET, x, y, z)) return NULL;
+    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, z)) return NULL;
 
     // zip down
     static const int ITEM_PLACEMENT_Z_DIFF_LIMIT = 3;
 
     int new_z = t_map::get_highest_open_block(x,y);
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return NULL;
-    if (Objects::point_occupied_by_type(OBJECT_TURRET, x, y, new_z)) return NULL;
-    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, new_z)) return NULL;
+    if (Entities::point_occupied_by_type(OBJECT_TURRET, x, y, new_z)) return NULL;
+    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, new_z)) return NULL;
 
-    using Objects::Object;
-    Object* object = Objects::create(type);
+    using Entities::Entity;
+    Entity* object = Entities::create(type);
     if (object == NULL) return NULL;
 
     using Components::PhysicsComponent;
@@ -940,26 +940,26 @@ static Objects::Object* place_object_handler(ObjectType type, int x, int y, int 
 
 inline void place_spawner_CtoS::handle()
 {
-    ObjectType type = OBJECT_AGENT_SPAWNER;
+    EntityType type = OBJECT_AGENT_SPAWNER;
     Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     z = clamp_z(z);
-    Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
+    Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
-    Objects::ready(obj);
+    Entities::ready(obj);
 }
 
 inline void place_turret_CtoS::handle()
 {
-    ObjectType type = OBJECT_TURRET;
+    EntityType type = OBJECT_TURRET;
     Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     z = clamp_z(z);
-    Objects::Object* obj = place_object_handler(type, x,y,z, a->id);
+    Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
-    Objects::ready(obj);
+    Entities::ready(obj);
 }
 
 inline void choose_spawner_CtoS::handle()

@@ -7,4 +7,4 @@
 namespace Components
 {
 
-} // Objects
+} // Entities

@@ -27,7 +27,7 @@ extern class Voxel_hitscan_list* voxel_hitscan_list;
 extern int last_ping_time;
 extern int last_reliable_ping_time;
 
-extern Objects::Object* base;
+extern Entities::Entity* base;
 
 void set_PlayerAgent_id(AgentID id);
 

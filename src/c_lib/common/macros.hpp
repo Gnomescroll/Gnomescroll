@@ -44,6 +44,9 @@
 #define ASSERT_VALID_CUBE_ID(cube_id) GS_ASSERT((cube_id) >= 0 && (cube_id) < MAX_CUBES);
 #define IF_INVALID_CUBE_ID(cube_id) if (unlikely((cube_id) < 0 || (cube_id) >= MAX_CUBES))
 
+#define ASSERT_VALID_OBJECT_TYPE(object_type) GS_ASSERT((object_type) >= 0 && (object_type) < MAX_OBJECT_TYPES);
+#define IF_INVALID_OBJECT_TYPE(object_type) if (unlikely((object_type) < 0 || (object_type) >= MAX_OBJECT_TYPES))
+
 #define GS_ABORT() \
     do \
     { \
