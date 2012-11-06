@@ -73,4 +73,4 @@ void VoxelModelComponent::force_update(Vec3 position, float theta, float phi, bo
     #endif
 }
 
-} // Objects
+} // Entities

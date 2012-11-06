@@ -681,19 +681,19 @@ void ChatMessageList::filter_none()
 namespace SystemMessage
 {
     
-char* spawner_created(Objects::Object* s)
+char* spawner_created(Entities::Entity* s)
 {
     return NULL;
 }
 
-char* spawner_destroyed(Objects::Object* s)
+char* spawner_destroyed(Entities::Entity* s)
 {
     return NULL;
 }
 
 }   // SystemMessage
 
-void ChatSystemMessage::object_destroyed(Objects::Object* object)
+void ChatSystemMessage::object_destroyed(Entities::Entity* object)
 {
     //char* msg = NULL;
     //switch (object->state()->type)
@@ -713,7 +713,7 @@ void ChatSystemMessage::object_destroyed(Objects::Object* object)
     //}
 }
 
-void ChatSystemMessage::object_created(Objects::Object* object)
+void ChatSystemMessage::object_created(Entities::Entity* object)
 {
     //char* msg = NULL;
     //switch (object->state()->type)

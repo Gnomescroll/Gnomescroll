@@ -2,10 +2,10 @@
 
 #include <entity/constants.hpp>
 
-namespace Objects
+namespace Entities
 {
 
-void ObjectDataList::set_components(ObjectType type, int n_components)
+void EntityDataList::set_components(EntityType type, int n_components)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return;
@@ -19,7 +19,7 @@ void ObjectDataList::set_components(ObjectType type, int n_components)
     this->expected_component_sizes[type] = n_components;
 }
 
-void ObjectDataList::attach_component(ObjectType type, ComponentType component)
+void EntityDataList::attach_component(EntityType type, ComponentType component)
 {
     int index = this->component_sizes[type];
     this->component_types[type][index] = component;
@@ -29,12 +29,12 @@ void ObjectDataList::attach_component(ObjectType type, ComponentType component)
     this->component_sizes[type] += 1;
 }
 
-inline int ObjectDataList::get_component_count(ObjectType type)
+inline int EntityDataList::get_component_count(EntityType type)
 {
     return this->component_sizes[type];
 }
 
-inline int ObjectDataList::get_component_slot(ObjectType type, ComponentType component)
+inline int EntityDataList::get_component_slot(EntityType type, ComponentType component)
 {
     for (int i=0; i<this->component_sizes[type]; i++)
         if (this->component_types[type][i] == component)
@@ -42,7 +42,7 @@ inline int ObjectDataList::get_component_slot(ObjectType type, ComponentType com
     return -1;
 }
 
-inline int ObjectDataList::get_component_interface_slot(ObjectType type, ComponentInterfaceType interface)
+inline int EntityDataList::get_component_interface_slot(EntityType type, ComponentInterfaceType interface)
 {
     for (int i=0; i<this->component_sizes[type]; i++)
         if (this->interface_types[type][i] == interface)
@@ -50,7 +50,7 @@ inline int ObjectDataList::get_component_interface_slot(ObjectType type, Compone
     return -1;
 }
 
-void ObjectDataList::init()
+void EntityDataList::init()
 {
     this->component_types = (ComponentType**)calloc(MAX_OBJECT_TYPES, sizeof(ComponentType*));
     this->interface_types = (ComponentInterfaceType**)calloc(MAX_OBJECT_TYPES, sizeof(ComponentInterfaceType*));
@@ -63,13 +63,13 @@ void ObjectDataList::init()
     GS_ASSERT(this->component_sizes != NULL);
 }
 
-void ObjectDataList::sanity_check()
+void EntityDataList::sanity_check()
 {
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
         GS_ASSERT(this->expected_component_sizes[i] == this->component_sizes[i]);
 }
 
-ObjectDataList::~ObjectDataList()
+EntityDataList::~EntityDataList()
 {
     if (this->component_types != NULL)
     {
@@ -93,4 +93,4 @@ ObjectDataList::~ObjectDataList()
     if (this->component_sizes != NULL) free(this->component_sizes);
 }
 
-} // Objects
+} // Entities

@@ -1,52 +1,54 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {
 
 //forward decl
-class Object;
-class ObjectDataList;
+class Entity;
+class EntityDataList;
 
 /* Management */
 
-class ObjectList
+class EntityList
 {
     private:
         // keep a counters for individual object indices
         int* indices;
         int* maximums;
         char** used;
-        Object** staging_objects;
-        Object*** objects;
+        Entity** staging_objects;
+        Entity*** objects;
         
-        int get_free_id(ObjectType type);
+        int get_free_id(EntityType type);
 
     public:
 
         // misc
-        void set_object_id(Object* object);
-        void set_object_id(Object* object, int id);
+        void set_object_id(Entity* object);
+        void set_object_id(Entity* object, int id);
 
         // count accessors
-        inline int count(ObjectType type);
-        inline int max(ObjectType type);
-        inline bool empty(ObjectType type);
-        inline bool full(ObjectType type);
-        inline bool in_use(ObjectType type, int id);
+        inline int count(EntityType type);
+        inline int max(EntityType type);
+        inline bool empty(EntityType type);
+        inline bool full(EntityType type);
+        inline bool in_use(EntityType type, int id);
 
         // object accessors
-        Object* get(ObjectType type, int id);
-        void destroy(ObjectType type, int id);
-        Object* create(ObjectType type);
-        Object* create(ObjectType type, int id);
+        Entity* get(EntityType type, int id);
+        void destroy(EntityType type, int id);
+        Entity* create(EntityType type);
+        Entity* create(EntityType type, int id);
 
         // objects accessors
-        Object** get_objects(ObjectType type);
-        char* get_used(ObjectType type);
+        Entity** get_objects(EntityType type);
+        char* get_used(EntityType type);
+
+        void destroy_all();
 
         // initializers
-        void set_object_max(ObjectType type, int max);
-        void load_object_data(ObjectDataList* data);
+        void set_object_max(EntityType type, int max);
+        void load_object_data(EntityDataList* data);
         void init();
 
         // standard tickers
@@ -55,13 +57,13 @@ class ObjectList
         void harvest(); // kill
 
         // network iterators
-        void send_to_client(ObjectType type, ClientID client_id);
+        void send_to_client(EntityType type, ClientID client_id);
         
-    ~ObjectList();
+    ~EntityList();
 
-    ObjectList()
-    : indices(NULL), maximums(NULL), staging_objects(NULL), objects(NULL)
+    EntityList() :
+        indices(NULL), maximums(NULL), staging_objects(NULL), objects(NULL)
     {}
 };
 
-} // Objects
+} // Entities

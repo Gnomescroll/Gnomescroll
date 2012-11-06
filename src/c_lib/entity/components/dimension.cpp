@@ -15,4 +15,4 @@ Vec3 DimensionComponent::get_camera_position()
     return position;
 }
 
-} // Objects
+} // Entities

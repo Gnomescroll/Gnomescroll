@@ -12,12 +12,12 @@
 #include <entity/components/explosion.hpp>
 #endif
 
-namespace Objects
+namespace Entities
 {
 
 void load_turret_data()
 {
-    ObjectType type = OBJECT_TURRET;
+    EntityType type = OBJECT_TURRET;
 
     #if DC_SERVER
     int n_components = 7;
@@ -26,25 +26,25 @@ void load_turret_data()
     int n_components = 7;
     #endif
 
-    object_data->set_components(type, n_components);
+    entity_data->set_components(type, n_components);
 
-    object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
-    object_data->attach_component(type, COMPONENT_OWNER);
-    object_data->attach_component(type, COMPONENT_DIMENSION);
-    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    object_data->attach_component(type, COMPONENT_HIT_POINTS);
-    object_data->attach_component(type, COMPONENT_WEAPON_TARGETING);
+    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
+    entity_data->attach_component(type, COMPONENT_OWNER);
+    entity_data->attach_component(type, COMPONENT_DIMENSION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
+    entity_data->attach_component(type, COMPONENT_WEAPON_TARGETING);
 
     #if DC_SERVER
-    object_data->attach_component(type, COMPONENT_EXPLOSION);
+    entity_data->attach_component(type, COMPONENT_EXPLOSION);
     #endif
 
     #if DC_CLIENT
-    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
     #endif
 }
 
-static void set_turret_properties(Object* object)
+static void set_turret_properties(Entity* object)
 {
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
     add_component_to_object(object, COMPONENT_OWNER);
@@ -106,16 +106,16 @@ static void set_turret_properties(Object* object)
     object->state = state_packet;
 }
 
-Object* create_turret()
+Entity* create_turret()
 {
-    ObjectType type = OBJECT_TURRET;
-    Object* obj = object_list->create(type);
+    EntityType type = OBJECT_TURRET;
+    Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
     set_turret_properties(obj);
     return obj;
 }
 
-void ready_turret(Object* object)
+void ready_turret(Entity* object)
 {
     // we have id now, set it on attack properties
     using Components::WeaponTargetingComponent;
@@ -139,7 +139,7 @@ void ready_turret(Object* object)
     #endif
 }
 
-void die_turret(Object* object)
+void die_turret(Entity* object)
 {
     #if DC_SERVER
     using Components::ExplosionComponent;
@@ -167,7 +167,7 @@ void die_turret(Object* object)
     #endif
 }
 
-void tick_turret(Object* object)
+void tick_turret(Entity* object)
 {
     #if DC_SERVER
     using Components::WeaponTargetingComponent;
@@ -194,7 +194,7 @@ void tick_turret(Object* object)
     #endif
 }
 
-void update_turret(Object* object)
+void update_turret(Entity* object)
 {
     typedef Components::PositionChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
@@ -207,4 +207,4 @@ void update_turret(Object* object)
     physics->changed = false;    // reset changed state
 }
 
-} // Objects
+} // Entities

@@ -1,17 +1,17 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {
 
 // forward decl
-class Object;
+class Entity;
 
 void load_energy_core_data();
-Object* create_energy_core();
-void ready_energy_core(Object* object);
-void die_energy_core(Object* object);
-void tick_energy_core(Object* object);
-void update_energy_core(Object* object);
+Entity* create_energy_core();
+void ready_energy_core(Entity* object);
+void die_energy_core(Entity* object);
+void tick_energy_core(Entity* object);
+void update_energy_core(Entity* object);
 
 
-} // Objects
+} // Entities

@@ -196,7 +196,7 @@ void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_t
 }
 
 // simple creator for objects
-static class Objects::Object* place_object(AgentID agent_id, ItemID item_id, int item_type, const ObjectType object_type, const float object_height)
+static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, int item_type, const EntityType object_type, const float object_height)
 {
     Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
@@ -221,12 +221,12 @@ static class Objects::Object* place_object(AgentID agent_id, ItemID item_id, int
             return NULL;
     
     // check against all known spawners & energy cores
-    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
+    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
         return NULL;
-    if (Objects::point_occupied_by_type(OBJECT_ENERGY_CORE, b[0], b[1], b[2]))
+    if (Entities::point_occupied_by_type(OBJECT_ENERGY_CORE, b[0], b[1], b[2]))
         return NULL;
 
-    class Objects::Object* obj = Objects::create(object_type);
+    class Entities::Entity* obj = Entities::create(object_type);
     GS_ASSERT(obj != NULL);
     if (obj == NULL) return NULL;
     using Components::PhysicsComponent;
@@ -238,7 +238,7 @@ static class Objects::Object* place_object(AgentID agent_id, ItemID item_id, int
         physics->set_position(pos);
     }
     
-    // WARNING :: MUST CALL Objects::ready(obj);
+    // WARNING :: MUST CALL Entities::ready(obj);
     return obj;    
 }
 
@@ -252,15 +252,12 @@ void place_spawner(AgentID agent_id, ItemID item_id, int item_type)
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
-    class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_AGENT_SPAWNER, Objects::AGENT_SPAWNER_HEIGHT);
+    class Entities::Entity* obj = place_object(agent_id, item_id, item_type, OBJECT_AGENT_SPAWNER, Entities::AGENT_SPAWNER_HEIGHT);
     if (obj == NULL) return;
-    Objects::ready(obj);
+    Entities::ready(obj);
     
     decrement_stack(agent_id, item_id, item_type);
 
-    printf("Place spawner: %d\n", obj->id);
-    printf("Agent spawner: %d\n", a->status.spawner);
-    
     // select spawner automatically if spawn pt is base
     if (a->status.spawner == BASE_SPAWN_ID)
         a->status.set_spawner(obj->id);
@@ -272,9 +269,9 @@ void place_energy_core(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_ENERGY_CORE);
     
-    class Objects::Object* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Objects::ENERGY_CORE_HEIGHT);
+    class Entities::Entity* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Entities::ENERGY_CORE_HEIGHT);
     if (obj == NULL) return;
-    Objects::ready(obj);
+    Entities::ready(obj);
     
     decrement_stack(agent_id, item_id, item_type);
 }

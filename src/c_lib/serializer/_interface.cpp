@@ -201,6 +201,7 @@ bool load_data()
 
     #if GS_SERIALIZER
     if (!load_containers()) return false;
+    if (!load_entities()) return false;
     //if (!load_players()) return false;
     #endif
     

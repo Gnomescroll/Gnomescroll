@@ -9,10 +9,10 @@ namespace Components
 class SpawnChildComponent: public Component
 {
     public:
-        ObjectType parent_type;
+        EntityType parent_type;
         int parent_id;
 
-        void assign_parent(ObjectType type, int id)
+        void assign_parent(EntityType type, int id)
         {
             this->parent_type = type;
             this->parent_id = id;

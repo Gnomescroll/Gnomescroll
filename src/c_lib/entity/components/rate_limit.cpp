@@ -3,4 +3,4 @@
 namespace Components
 {
 
-}; // Objects
+}; // Entities

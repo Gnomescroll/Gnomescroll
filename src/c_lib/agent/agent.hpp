@@ -22,14 +22,12 @@ class AgentState
         float phi;
         float x,y,z;
         float vx,vy,vz;
-        float ax,ay,az;
 
     AgentState() :
         seq(-1),
         theta(0), phi(0),
         x(0), y(0), z(0),
-        vx(0), vy(0), vz(0),
-        ax(0), ay(0), az(0)
+        vx(0), vy(0), vz(0)
     {}
 
     const struct Vec3 forward_vector();
@@ -53,7 +51,7 @@ class AgentState
 
     const void print()
     {
-        printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f; a: %0.2f, %0.2f, %0.2f;\n", x,y,z,vx,vy,vz,ax,ay,az);
+        printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f;\n", x,y,z,vx,vy,vz);
     }
 };
 
@@ -96,8 +94,9 @@ class Agent
 
         AgentID id;
         ClientID client_id;
+        UserID user_id;
 
-        ObjectType type;
+        EntityType type;
 
         struct Agent_collision_box box;
 
@@ -115,8 +114,8 @@ class Agent
 
         void tick();
 
-        bool in_sight_of(Vec3 source, Vec3 *sink);
-        bool in_sight_of(Vec3 source, Vec3 *sink, float failure_rate);
+        bool in_sight_of(struct Vec3 source, struct Vec3 *sink);
+        bool in_sight_of(struct Vec3 source, struct Vec3 *sink, float failure_rate);
 
         #if DC_SERVER
         AgentState camera;    // agent's camera state, sent by client
@@ -126,14 +125,14 @@ class Agent
         void set_camera_state(float x, float y, float z, float theta, float phi);
 
         void spawn_state();
-        void spawn_state(Vec3 p);
+        void spawn_state(struct Vec3 p);
         #endif
 
         AgentState get_state() { return this->s; }
         void set_position(float x, float y, float z);
         void set_state(float x, float y, float z, float vx, float vy, float vz);
         AgentState get_state_snapshot() { return this->state_snapshot; }
-        void set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz, float ax, float ay, float az);
+        void set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz);
         void set_angles(float theta, float phi);
         void teleport(float x,float y,float z); //should only be used on server
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
@@ -163,7 +162,7 @@ class Agent
         //void send_id_to_client(ClientID client_id);
 
         #if DC_CLIENT
-        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz, float ax,float ay,float az);
+        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
         #endif
 
         //this is for client

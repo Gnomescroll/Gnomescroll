@@ -69,7 +69,7 @@ class PlayerAgent_state
         int state_history_index;
         int last_snapshot_time;
 
-        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz, float ax,float ay,float az);
+        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
         void handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
 
         //state variables

@@ -122,4 +122,4 @@ void WeaponTargetingComponent::broadcast_target_choice()
     msg.broadcast();
 }
 
-} // Objects
+} // Entities

@@ -89,4 +89,4 @@ class VoxelModelComponent: public Component
     {}
 };
 
-} // Objects
+} // Entities

@@ -10,12 +10,12 @@
 #include <voxel/vox_dat_init.hpp>
 #include <agent/_interface.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 void load_agent_spawner_data()
 {
-    ObjectType type = OBJECT_AGENT_SPAWNER;
+    EntityType type = OBJECT_AGENT_SPAWNER;
 
     #if DC_SERVER
     int n_components = 6;
@@ -24,24 +24,24 @@ void load_agent_spawner_data()
     int n_components = 5;
     #endif
 
-    object_data->set_components(type, n_components);
+    entity_data->set_components(type, n_components);
 
-    object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
-    object_data->attach_component(type, COMPONENT_DIMENSION);
-    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    object_data->attach_component(type, COMPONENT_HIT_POINTS);
+    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
+    entity_data->attach_component(type, COMPONENT_DIMENSION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
     
     #if DC_SERVER
-    object_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
-    object_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
+    entity_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
 
     #if DC_CLIENT
-    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
     #endif
 }
 
-static void set_agent_spawner_properties(Object* object)
+static void set_agent_spawner_properties(Entity* object)
 {
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);    
 
@@ -89,17 +89,17 @@ static void set_agent_spawner_properties(Object* object)
     object->state = state_packet;
 }
 
-Object* create_agent_spawner()
+Entity* create_agent_spawner()
 {
-    ObjectType type = OBJECT_AGENT_SPAWNER;
-    Object* obj = object_list->create(type);
+    EntityType type = OBJECT_AGENT_SPAWNER;
+    Entity* obj = entity_list->create(type);
     GS_ASSERT(obj != NULL);
     if (obj == NULL) return NULL;
     set_agent_spawner_properties(obj);
     return obj;
 }
 
-void ready_agent_spawner(Object* object)
+void ready_agent_spawner(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
@@ -118,7 +118,7 @@ void ready_agent_spawner(Object* object)
     #endif
 }
 
-void die_agent_spawner(Object* object)
+void die_agent_spawner(Entity* object)
 {    
     #if DC_SERVER
     using Components::ItemDropComponent;
@@ -152,7 +152,7 @@ void die_agent_spawner(Object* object)
     #endif
 }
 
-void tick_agent_spawner(Object* object)
+void tick_agent_spawner(Entity* object)
 {
     #if DC_SERVER
     typedef Components::PositionChangedPhysicsComponent PCP;
@@ -167,7 +167,7 @@ void tick_agent_spawner(Object* object)
     #endif
 }
 
-void update_agent_spawner(Object* object)
+void update_agent_spawner(Entity* object)
 {
     typedef Components::PositionChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
@@ -181,4 +181,4 @@ void update_agent_spawner(Object* object)
     physics->changed = false;    // reset changed state
 }
 
-} // Objects
+} // Entities

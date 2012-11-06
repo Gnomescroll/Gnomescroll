@@ -2,7 +2,7 @@
 
 #include <entity/network/interfaces.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 extern CreatePacketNone* create_packet_none;
@@ -20,4 +20,4 @@ extern StatePacketMomentumAngles* state_packet_momentum_angles;
 void init_net_interfaces();
 void teardown_net_interfaces();
 
-} // Objects
+} // Entities

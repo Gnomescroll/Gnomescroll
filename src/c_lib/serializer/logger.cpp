@@ -12,17 +12,19 @@
 namespace serializer
 {
 
-char log_folder[NAME_MAX+1];
+static char log_folder[NAME_MAX+1];
 
-char player_log_path[NAME_MAX+1];
-char container_log_path[NAME_MAX+1];
-char map_log_path[NAME_MAX+1];
-char mech_log_path[NAME_MAX+1];
+static char player_log_path[NAME_MAX+1];
+static char container_log_path[NAME_MAX+1];
+static char map_log_path[NAME_MAX+1];
+static char mech_log_path[NAME_MAX+1];
+static char entity_log_path[NAME_MAX+1];
 
-FILE* player_log = NULL;
-FILE* container_log = NULL;
-FILE* map_log = NULL;
-FILE* mech_log = NULL;
+static FILE* player_log = NULL;
+static FILE* container_log = NULL;
+static FILE* map_log = NULL;
+static FILE* mech_log = NULL;
+static FILE* entity_log = NULL;
 
 void init_logger()
 {    
@@ -30,6 +32,7 @@ void init_logger()
     GS_ASSERT(container_log == NULL);
     GS_ASSERT(map_log == NULL);
     GS_ASSERT(mech_log == NULL);    
+    GS_ASSERT(entity_log == NULL);    
 }
 
 void teardown_logger()
@@ -38,6 +41,7 @@ void teardown_logger()
     if (mech_log != NULL) fclose(mech_log);
     if (player_log != NULL) fclose(player_log);
     if (container_log != NULL) fclose(container_log);
+    if (entity_log != NULL) fclose(entity_log);
 }
 
 void set_log_paths(const char* save_folder)
@@ -61,11 +65,15 @@ void set_log_paths(const char* save_folder)
     wrote = snprintf(mech_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, MECH_LOG_FILENAME);
     GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
     mech_log_path[NAME_MAX] = '\0';
+    wrote = snprintf(entity_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, ENTITY_LOG_FILENAME);
+    GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
+    entity_log_path[NAME_MAX] = '\0';
 
     player_log = fopen(player_log_path, "a");
     container_log = fopen(container_log_path, "a");
     map_log = fopen(map_log_path, "a");
     mech_log = fopen(mech_log_path, "a");
+    entity_log = fopen(entity_log_path, "a");
 }
 
 void log_map_load_error(const char* msg)
@@ -214,6 +222,34 @@ void log_player_load_error(const char* msg, const char* data_str,
 void log_player_load_error(const char* msg)
 {
     log_player_load_error(msg, NULL, NULL, NULL, NULL, NULL, NULL);
+}
+
+void log_entity_save_error(const char* msg, const char* entity_name, int entity_id)
+{
+    GS_ASSERT(entity_log != NULL);
+    if (entity_log == NULL) return;
+
+    fprintf(entity_log, "SaveError: %s\n", msg);
+
+    if (entity_name != NULL)
+        fprintf(entity_log, "Name: %s\n", entity_name);
+
+    if (entity_id != NULL_ENTITY_ID)
+        fprintf(entity_log, "ID: %d\n", entity_id);
+
+    fprintf(entity_log, LOG_LINE_SEPARATOR);
+}
+
+void log_entity_save_error(const char* msg)
+{
+    log_entity_save_error(msg, NULL, NULL_ENTITY_ID);
+}
+
+void log_entity_load_error(const char* msg)
+{
+    GS_ASSERT(entity_log != NULL);
+    if (entity_log == NULL) return;
+    fprintf(entity_log, "LoadError: %s\n", msg);
 }
 #endif
 

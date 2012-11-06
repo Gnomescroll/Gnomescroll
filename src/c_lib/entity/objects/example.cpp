@@ -1,17 +1,17 @@
 //#include "example.hpp"
 
-///* Object Interface */
+///* Entity Interface */
 
-//namespace Objects
+//namespace Entities
 //{
 
 ////each object type will have a single creation function
-//Object* create_some_object()
+//Entity* create_some_object()
 //{
     //// initialize object
-    //ObjectType type = OBJECT_SOME_OBJECT;
-    //int id = object_list->get_free_id(type);
-    //Object* obj = object_list->create(type, id);
+    //EntityType type = OBJECT_SOME_OBJECT;
+    //int id = entity_list->get_free_id(type);
+    //Entity* obj = entity_list->create(type, id);
     //if (obj == NULL) return NULL;
 
     //// attach components
@@ -25,18 +25,18 @@
 
 ////and a ready function, called after creation and data loading (like setting position)
 
-//void ready_some_object(Object* object)
+//void ready_some_object(Entity* object)
 //{
     //// set voxel stuff if it has voxels
 //}
 
 ////and a die function, called right before removing the object from memory
-//void die_some_object(Object* object)
+//void die_some_object(Entity* object)
 //{
     //// any necessary teardown
 //}
 
-//} // Objects
+//} // Entities
 
 
 /* TEMPLATE (copy paste this) */
@@ -47,14 +47,14 @@
 #include <entity/object/helpers.hpp>
 #include <entity/constants.hpp>
 
-namespace Objects
+namespace Entities
 {
 
-Object* create_REPLACEME()
+Entity* create_REPLACEME()
 {
     // initialize object
-    ObjectType type = OBJECT_REPLACEME;
-    Object* obj = object_list->create(type);
+    EntityType type = OBJECT_REPLACEME;
+    Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
 
     // attach components
@@ -65,25 +65,25 @@ Object* create_REPLACEME()
     return obj;
 }
 
-void ready_REPLACEME(Object* object)
+void ready_REPLACEME(Entity* object)
 {
 
 }
 
-void die_REPLACEME(Object* object)
+void die_REPLACEME(Entity* object)
 {
 
 }
 
-//void tick_REPLACEME(Object* object)
+//void tick_REPLACEME(Entity* object)
 //{
 
 //}
 
-//void update_REPLACEME(Object* object)
+//void update_REPLACEME(Entity* object)
 //{
 
 //}
 
 
-} // Objects
+} // Entities

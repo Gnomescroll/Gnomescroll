@@ -2,7 +2,7 @@
 
 #include <common/color.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 /* Base */
@@ -32,6 +32,8 @@ const struct Color DEACTIVATED_SPAWNER_COLOR = color_init(20, 20, 20);
 // spawner
 const int AGENT_SPAWNER_SPAWN_RADIUS = 0;
 const int AGENT_SPAWNER_INITIAL_CHILDREN_SIZE = 4;
+const size_t MAX_USERS_PER_AGENT_SPAWNER = 4096;
+const size_t AGENT_SPAWNER_INITIAL_USERS_SIZE = 8;
 
 // health
 const int AGENT_SPAWNER_MAX_HEALTH = 200;
@@ -101,4 +103,4 @@ const int TURRET_ANIMATION_COUNT_MAX = 50;
 const float TURRET_ANIMATION_SIZE = 0.1f;
 const float TURRET_ANIMATION_FORCE = 5.0f;
 
-} // Objects
+} // Entities

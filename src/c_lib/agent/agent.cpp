@@ -244,30 +244,6 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
     */
     const float tr = 1.0f / 10.0f;    //tick rate
     const float tr2 = tr*tr;
-    const float AGENT_MASS = 1.0f; //the agents mass, will become a variable dependent on the amount of stuff a player carries
-    //const float FRICTION = 0.5f;    // coefficient of friction. will be variable based on the surface
-    const float FRICTION = 0.9f;    // coefficient of friction. will be variable based on the surface
-    float imass = 1.0f/AGENT_MASS;   // inverse mass
-
-    // Key press applies Force in direction
-    // F = ma
-    // a = F/m
-    // calculate acceleration by the method above
-    // acceleration vector is some constant * direction
-    // acceleration is 0 if nothing pressed
-    // Friction is some constant (later, dependent on block directly underneath)
-    // Friction is 0 if in air
-    // Force of friction is friction_coefficient * normal vector (normal vector is inverse of gravity, unless we are using the jetpack, but ignore that aspect and use inverse of gravity)
-    // So,
-    // a = (F - uN) / m;
-    // Applied Force should be > uN for all u
-    // If velocity >= velocity_limit,
-    // Applied Force should == uN for a fixed u (the maximum u, i think)
-    // ...while keys are pressed
-
-    //float speed = AGENT_SPEED * tr * as.ac + (as.ac / 100);
-    //as.ac = speed / AGENT_MASS + 1;
-
     float speed = AGENT_SPEED * tr;
     float height = box.b_height;
     if (crouch)
@@ -276,12 +252,12 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
         height = box.c_height;
     }
 
-    float z_gravity = -9.8f * tr2;
+    float z_gravity = -3.0f * tr2;
     #if DC_CLIENT
     if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
     #endif
 
-    const float z_jetpack = - z_gravity;
+    const float z_jetpack = -z_gravity + tr2;
 
     #if ADVANCED_JUMP
     const float JUMP_POWINITIAL = 1.0f * 0.17f;
@@ -294,10 +270,8 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
 
     const float pi = 3.14159265f;
     float solid_z = (float)t_map::get_solid_block_below(as.x, as.y, as.z);
+    float dist_from_ground = as.z - solid_z;
 
-
-    //float new_x = as.x + as.vx + CS_vx;
-    //float new_y = as.y + as.vy + CS_vy;
     float new_x = as.x + as.vx;
     float new_y = as.y + as.vy;
     float new_z = as.z + as.vz;
@@ -312,10 +286,7 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
         return as;
     }
 
-
-    /*
-        Collision Order: as.x,as.y,as.z
-    */
+    // Collision Order: as.x,as.y,as.z
     bool collision_x = collision_check_final_xy(box.box_r, height, new_x,as.y,as.z);
     if (collision_x)
     {
@@ -341,17 +312,9 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
         as.vz = 0.0f;
     }
 
-    as.x = translate_point(new_x);
-    as.y = translate_point(new_y);
-    if (new_z < solid_z) new_z = solid_z;
-    as.z = new_z;
-
     #if ADVANCED_JUMP
     as.jump_pow = new_jump_pow;
     #endif
-
-    as.theta = _cs.theta;
-    as.phi = _cs.phi;
 
     float CS_vx = 0.0f;
     float CS_vy = 0.0f;
@@ -386,22 +349,12 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
         CS_vy *= speed*len;
     }
 
-    // TODO -- rename CS_vx, CS_vy. they are now force impulses
-    as.ax = CS_vx * imass;
-    as.ay = CS_vy * imass;
-    as.az = (0 - ((-z_gravity) * FRICTION)) * imass;
-
-    as.vx += as.ax;
-    as.vy += as.ay;
-    //as.vz += as.az;
-
-    //as.vx = CS_vx;
-    //as.vy = CS_vy;
+    as.vx = CS_vx;
+    as.vy = CS_vy;
 
     // need distance from ground
     const float max_jetpack_height = 8.0f;
     const float jetpack_velocity_max = z_jetpack * 5;
-    float dist_from_ground = as.z - solid_z;
     if (jetpack)
     {
         if (dist_from_ground < max_jetpack_height)
@@ -414,10 +367,8 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
             as.vz = -z_gravity;
     }
 
-    as.vz += as.az;
-
     if (dist_from_ground < 0.025f)
-        as.vz -= (as.z - solid_z);
+        as.vz -= (new_z - solid_z);
     else
         as.vz += z_gravity;
 
@@ -425,7 +376,7 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
     float new_jump_pow = as.jump_pow;
     if (jump)
     {
-        as.vz = 0;
+        as.vz = 0.0f;
         new_jump_pow = JUMP_POWINITIAL;
     }
     if (new_jump_pow >= 0)
@@ -441,9 +392,12 @@ class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct
     }
     #endif
 
-    as.vx *= FRICTION;
-    as.vy *= FRICTION;
-    as.vz *= FRICTION;
+    as.x = translate_point(new_x);
+    as.y = translate_point(new_y);
+    if (new_z < solid_z) new_z = solid_z;
+    as.z = new_z;
+    as.theta = _cs.theta;
+    as.phi = _cs.phi;
 
     return as;
 }
@@ -472,9 +426,6 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
         P.vx = s.vx;
         P.vy = s.vy;
         P.vz = s.vz;
-        P.ax = s.ax;
-        P.ay = s.ay;
-        P.az = s.az;
 
         P.theta = s.theta;
         P.phi = s.phi;
@@ -495,9 +446,6 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
         A.vx = s.vx;
         A.vy = s.vy;
         A.vz = s.vz;
-        A.ax = s.ax;
-        A.ay = s.ay;
-        A.az = s.az;
 
         A.theta = s.theta;
         A.phi = s.phi;
@@ -518,15 +466,13 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 void Agent::handle_state_snapshot(int seq,
                                     float theta, float phi,
                                     float x,float y,float z,
-                                    float vx,float vy,float vz,
-                                    float ax,float ay,float az)
+                                    float vx,float vy,float vz)
 {
     state_snapshot.seq = seq;
     state_snapshot.theta = theta;
     state_snapshot.phi = phi;
     state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
     state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
-    state_snapshot.ax=ax;state_snapshot.ay=ay;state_snapshot.az=az;
 
     for (int i=16; i<96; i++)
     {
@@ -556,12 +502,9 @@ void Agent::set_state(float  x, float y, float z, float vx, float vy, float vz)
     s.vx = vx;
     s.vy = vy;
     s.vz = vz;
-    s.ax = 0.0f;
-    s.ay = 0.0f;
-    s.az = 0.0f;
 }
 
-void Agent::set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz, float ax, float ay, float az)
+void Agent::set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz)
 {
     state_snapshot.x = translate_point(x);
     state_snapshot.y = translate_point(y);
@@ -569,9 +512,6 @@ void Agent::set_state_snapshot(float  x, float y, float z, float vx, float vy, f
     state_snapshot.vx = vx;
     state_snapshot.vy = vy;
     state_snapshot.vz = vz;
-    state_snapshot.ax = ax;
-    state_snapshot.ay = ay;
-    state_snapshot.az = az;
 }
 
 void Agent::set_angles(float theta, float phi)
@@ -590,15 +530,15 @@ void Agent::set_camera_state(float x, float y, float z, float theta, float phi)
     this->camera.phi = phi;
 }
 
-void Agent::get_spawn_point(Vec3* spawn)
+void Agent::get_spawn_point(struct Vec3* spawn)
 {
-    Vec3 default_spawn = vec3_init(t_map::map_dim.x/2, t_map::map_dim.y/2, t_map::map_dim.z-1);
+    struct Vec3 default_spawn = vec3_init(t_map::map_dim.x/2, t_map::map_dim.y/2, t_map::map_dim.z-1);
 
     float fh = this->current_height();
 
     if (this->status.spawner == BASE_SPAWN_ID)
     {
-        Objects::Object* base = Objects::get(OBJECT_BASE, 0);
+        Entities::Entity* base = Entities::get(OBJECT_BASE, 0);
         GS_ASSERT(base != NULL);
         if (base == NULL)
         {
@@ -613,7 +553,7 @@ void Agent::get_spawn_point(Vec3* spawn)
     }
     else // spawner was found
     {
-        Objects::Object* spawner = Objects::get(OBJECT_AGENT_SPAWNER, this->status.spawner);
+        Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->status.spawner);
         GS_ASSERT(spawner != NULL);
         if (spawner != NULL)
         {
@@ -632,12 +572,12 @@ void Agent::get_spawn_point(Vec3* spawn)
 
 void Agent::spawn_state()
 {   // update position
-    Vec3 spawn;
+    struct Vec3 spawn;
     this->get_spawn_point(&spawn);
     this->spawn_state(spawn);
 }
 
-void Agent::spawn_state(Vec3 p)
+void Agent::spawn_state(struct Vec3 p)
 {   // update position
     float theta = this->status.get_spawn_angle();
     teleport(p.x, p.y, p.z, 0, 0, 0, theta, 0.0f);
@@ -652,7 +592,7 @@ void Agent::init_vox()
 }
 
 Agent::Agent(AgentID id) :
-    id(id), client_id((ClientID)id),
+    id(id), client_id((ClientID)id), user_id(NULL_USER_ID),
     type(OBJECT_AGENT), status(this)
     #if DC_CLIENT
     , event(this)
@@ -1058,7 +998,7 @@ void Agent::update_model()
 
 bool Agent::near_base()
 {
-    Objects::Object* b = Objects::get(OBJECT_BASE, 0);
+    Entities::Entity* b = Entities::get(OBJECT_BASE, 0);
     if (b == NULL) return false;
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -1069,7 +1009,7 @@ bool Agent::near_base()
     float x = quadrant_translate_f(this->s.x, bp.x);
     float y = quadrant_translate_f(this->s.y, bp.y);
     float z = bp.z;
-    using Objects::BASE_SPAWN_RADIUS;
+    using Entities::BASE_SPAWN_RADIUS;
     static const float k = sqrtf(2);    // scaling factor for radius of a square (base spawning is square manhattan distance)
     if (distancef_squared(x,y,z, this->s.x, this->s.y, this->s.z) < k*BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
         return true;

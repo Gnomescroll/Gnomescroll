@@ -1,5 +1,6 @@
 #pragma once
 
+#include <common/template/object_list.hpp>
 #include <agent/constants.hpp>
 #include <item/common/constants.hpp>
 #include <serializer/constants.hpp>

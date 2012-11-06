@@ -71,7 +71,7 @@ class GrenadeList: public ObjectList<Grenade>
         }
 };
  
-int get_grenade_damage(ObjectType type)
+int get_grenade_damage(EntityType type)
 {
     switch (type)
     {

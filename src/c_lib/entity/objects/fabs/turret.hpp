@@ -1,17 +1,17 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {
 
 // forward decl
-class Object;
+class Entity;
 
 void load_turret_data();
-Object* create_turret();
-void ready_turret(Object* object);
-void die_turret(Object* object);
-void tick_turret(Object* object);
-void update_turret(Object* object);
+Entity* create_turret();
+void ready_turret(Entity* object);
+void die_turret(Entity* object);
+void tick_turret(Entity* object);
+void update_turret(Entity* object);
 
 
-} // Objects
+} // Entities

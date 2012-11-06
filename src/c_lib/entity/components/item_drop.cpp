@@ -12,7 +12,7 @@ dont_include_this_file_in_client
 namespace Components
 {
 
-static struct Vec3 get_dropped_item_position(Objects::Object* object)
+static struct Vec3 get_dropped_item_position(Entities::Entity* object)
 {
     // get object state
     Vec3 position;

@@ -1,17 +1,13 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {
 
-// forward decl
-class Object;
-
 void load_agent_spawner_data();
-Object* create_agent_spawner();
-void ready_agent_spawner(Object* object);
-void die_agent_spawner(Object* object);
-void tick_agent_spawner(Object* object);
-void update_agent_spawner(Object* object);
+class Entity* create_agent_spawner();
+void ready_agent_spawner(Entity* object);
+void die_agent_spawner(Entity* object);
+void tick_agent_spawner(Entity* object);
+void update_agent_spawner(Entity* object);
 
-
-} // Objects
+} // Entities

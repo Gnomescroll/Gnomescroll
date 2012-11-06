@@ -28,6 +28,6 @@ class AnimationComponent: public Component
     }
 };
 
-}; // Objects
+}; // Entities
 
 #endif

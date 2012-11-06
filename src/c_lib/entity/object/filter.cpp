@@ -1,16 +1,16 @@
 #include "filter.hpp"
 
-namespace Objects
+namespace Entities
 {
 
-int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec3 position, float radius)
+int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec3 position, float radius)
 {
     GS_ASSERT(list != NULL);
     if (list == NULL) return 0;
     
     if (list->empty(type)) return 0;
 
-    Object** objects = list->get_objects(type);
+    Entity** objects = list->get_objects(type);
     GS_ASSERT(objects != NULL);
     if (objects == NULL) return 0;
     char* used = list->get_used(type);
@@ -24,7 +24,7 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec
     float dist;
     float min_dist = 10000000.0f;
 
-    Object* object;
+    Entity* object;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics;
@@ -54,21 +54,21 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec
 }
 
 // array of types to filter
-int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType* types, const int n_types, Vec3 position, float radius)
+int EntityListFilter::within_sphere(EntityList* list, const EntityType* types, const int n_types, Vec3 position, float radius)
 {
     GS_ASSERT(list != NULL);
     if (list == NULL) return 0;
     
     const float radius_squared = radius*radius;
-    ObjectType type;
+    EntityType type;
     int ct = 0;
     float dist;
     float min_dist = 10000000.0f;
 
     int max;
     char* used;
-    Object** objects;
-    Object* object;
+    Entity** objects;
+    Entity* object;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics;
@@ -113,13 +113,13 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType* types, c
     return ct;
 }
 
-void ObjectListFilter::init()
+void EntityListFilter::init()
 {
-    this->objects = (Object**)malloc(this->max * sizeof(Object*));
+    this->objects = (Entity**)malloc(this->max * sizeof(Entity*));
     this->distances = (float*)malloc(this->max * sizeof(float));
 }
 
-ObjectListFilter::~ObjectListFilter()
+EntityListFilter::~EntityListFilter()
 {
     if (this->objects != NULL) free(this->objects);
     if (this->distances != NULL) free(this->distances);
@@ -127,4 +127,4 @@ ObjectListFilter::~ObjectListFilter()
 
 
 
-} // Objects
+} // Entities

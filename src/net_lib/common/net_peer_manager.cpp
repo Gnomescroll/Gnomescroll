@@ -94,7 +94,7 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
 
     NetServer::users->set_name_for_client_id(this->client_id, this->username);
     
-    if (!Options::serializer)
+    if (!Options::serializer || !Options::auth)
     {
         #if GS_SERIALIZER
         this->was_deserialized(NULL);
@@ -139,6 +139,9 @@ void NetPeerManager::was_deserialized()
     NetServer::agents[this->client_id] = agent;
     GS_ASSERT((int)this->client_id == (int)agent->id);
 
+    agent->client_id = this->client_id;
+    agent->user_id = this->user_id;
+
     this->agent_id = agent->id;
 
     // Apply serializer data to agent and its containers
@@ -156,17 +159,24 @@ void NetPeerManager::was_deserialized()
         return;
     }
 
+    int spawner_id = BASE_SPAWN_ID;
     if (Options::serializer)
     {
-        int n_containers = 0;
-        int* containers = ItemContainer::get_player_containers(agent->id, &n_containers);
-        GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
-        if (n_containers != N_PLAYER_CONTAINERS)
+        if (Options::auth)
         {
-            this->deserializer_failed();
-            return;
+            int n_containers = 0;
+            int* containers = ItemContainer::get_player_containers(agent->id, &n_containers);
+            GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
+            if (n_containers != N_PLAYER_CONTAINERS)
+            {
+                this->deserializer_failed();
+                return;
+            }
+            serializer::create_player_container_items_from_data(agent->id, containers, n_containers);
         }
-        serializer::create_player_container_items_from_data(agent->id, containers, n_containers);
+
+        // find spawner
+        spawner_id = Components::agent_spawner_component_list->get_spawner_for_user(this->user_id);
     }
 
     // Register agent with subsystems and send state 
@@ -174,7 +184,7 @@ void NetPeerManager::was_deserialized()
     
     Agents::agent_list->send_to_client(this->client_id);
     t_mech::send_client_mech_list(this->client_id);
-    Objects::send_to_client(this->client_id);
+    Entities::send_to_client(this->client_id);
     t_map::send_client_map_special(this->client_id); //send special blocks to client
     ItemParticle::send_particle_items_to_client(this->client_id);
 
@@ -192,6 +202,9 @@ void NetPeerManager::was_deserialized()
     // notify client of their agent
     send_player_agent_id_to_client(this->client_id);
     ItemContainer::send_container_assignments_to_agent(agent->id, this->client_id);
+
+    if (spawner_id != BASE_SPAWN_ID)
+        agent->status.set_spawner(spawner_id);
 
     agent->status.set_fresh_state();
 

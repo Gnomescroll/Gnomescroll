@@ -3,7 +3,7 @@
 #include <common/macros.hpp>
 
 /*
- * Objects managed by MultiObject_list must support the minimum interface:
+ * Entities managed by MultiObject_list must support the minimum interface:
  *
  * void draw();
  * void client_tick();
@@ -20,7 +20,7 @@ class MultiObject_list
 {
     private:
         //#if PRODUCTION
-        //const char* name() { return "Object"; }
+        //const char* name() { return "Entity"; }
         //#else
         virtual const char* name() = 0;
         //#endif

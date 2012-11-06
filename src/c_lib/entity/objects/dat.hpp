@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {
 
 #define ENTITY_NAME_FILE_ACTIVE   "entity_names.active"
@@ -13,7 +13,7 @@ class EntityAttributes
     public:
         bool loaded;
         
-        ObjectType type;
+        EntityType type;
         char name[DAT_NAME_MAX_LENGTH+1];
 
         //// Controllers
@@ -45,7 +45,7 @@ class EntityAttributes
         //// monster spawner
         //float monster_spawn_radius;
         //int monster_spawn_max_children;
-        //ObjectType monster_spawn_type;
+        //EntityType monster_spawn_type;
 
         //// healer
         //float heal_radius;
@@ -143,7 +143,7 @@ void end_entity_dat();
 // Use this to remove or rename a entity
 void change_entity_name(const char* original, const char* replacement);
 
-void entity_def(const char* name, ObjectType type);
+void entity_def(const char* name, EntityType type);
 void finish_def();
 
 // Load
@@ -167,15 +167,23 @@ void apply_entity_dat_changes()
 }
 
 
-ObjectType get_entity_type(const char* name)
+EntityType get_entity_type(const char* name)
 {   // TODO -- use hash map
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
-        if (attributes[i].loaded && strcmp(name, attributes[i].name))
-            return (ObjectType)i;
+        if (attributes[i].loaded && strcmp(name, attributes[i].name) == 0)
+            return (EntityType)i;
     return OBJECT_NONE;
 }
 
-const class EntityAttributes* get_entity_attributes(ObjectType type)
+const char* get_compatible_entity_name(const char* name)
+{
+    const char* mapname = entity_name_map->get_mapped_name(name);
+    if (mapname != NULL) return mapname;
+    if (get_entity_type(name) != OBJECT_NONE) return name;
+    return NULL;
+}
+
+const class EntityAttributes* get_entity_attributes(EntityType type)
 {
     ASSERT_VALID_OBJECT_TYPE(type);
     IF_INVALID_OBJECT_TYPE(type) return NULL;
@@ -184,11 +192,11 @@ const class EntityAttributes* get_entity_attributes(ObjectType type)
     return &attributes[type];
 }
 
-const char* get_entity_name(ObjectType type)
+const char* get_entity_name(EntityType type)
 {
     const class EntityAttributes* attr = get_entity_attributes(type);
     if (attr == NULL) return NULL;
     return attr->name;
 }
 
-}   // Objects
+}   // Entities

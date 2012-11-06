@@ -7,7 +7,7 @@ void SpawnChildComponent::notify_parent_of_death()
 {
     if (this->parent_id == NULL_ENTITY_ID) return;
     
-    Objects::Object* obj = Objects::get(this->parent_type, this->parent_id);
+    Entities::Entity* obj = Entities::get(this->parent_type, this->parent_id);
     if (obj == NULL) return;
 
     using Components::SpawnerComponent;

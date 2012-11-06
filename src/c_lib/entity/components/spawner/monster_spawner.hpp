@@ -13,13 +13,13 @@ class MonsterSpawnerComponent: public SpawnerComponent
         int* children;
 
     public:
-        ObjectType spawn_type;
+        EntityType spawn_type;
         float radius;
         int children_ct;
 
         bool full() { return (this->children_ct >= this->max_children); }
-        Objects::Object* spawn_child();
-        void lose_child(ObjectType type, int id);
+        Entities::Entity* spawn_child();
+        void lose_child(EntityType type, int id);
         struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius);
 
         void notify_children_of_death();

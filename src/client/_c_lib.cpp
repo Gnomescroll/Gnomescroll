@@ -299,8 +299,8 @@ int init_c_lib(int argc, char* argv[])
     ClientState::init_lists();
 
     Components::init();
-    Objects::init_net_interfaces();
-    Objects::init();    // Entity system
+    Entities::init_net_interfaces();
+    Entities::init();    // Entity system
 
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
@@ -323,14 +323,14 @@ int init_c_lib(int argc, char* argv[])
     ItemContainer::init_config();
     t_map::init_t_properties();
     t_mech::init_properties();
-    Objects::init_entity_dat();
+    Entities::init_entity_dat();
 
     t_map::load_block_dat();
     t_map::init_for_draw();
     t_map::blit_block_item_sheet();
     t_mech::load_mech_dat();
-    Objects::load_entity_dat();
-    Objects::end_entity_dat();
+    Entities::load_entity_dat();
+    Entities::end_entity_dat();
     ItemContainer::load_config();
     ItemContainer::end_config();
     Item::init_properties();
@@ -432,13 +432,13 @@ void close_c_lib()
     Chat::teardown_chat_client();
 
     if (TEARDOWN_DEBUG) printf("objects teardown\n");
-    Objects::teardown();    // Entity system
+    Entities::teardown();    // Entity system
     if (TEARDOWN_DEBUG) printf("components teardown\n");
     Components::teardown();
     if (TEARDOWN_DEBUG) printf("object net interfaces teardown\n");
-    Objects::teardown_net_interfaces();
+    Entities::teardown_net_interfaces();
     if (TEARDOWN_DEBUG) printf("entity dat teardown\n");
-    Objects::teardown_entity_dat();
+    Entities::teardown_entity_dat();
     
     if (TEARDOWN_DEBUG) printf("voxel volume teardown\n");
     teardown_voxel_volume();

@@ -47,6 +47,8 @@ zi*
 *.mch.*
 *.fab
 *.fab.*
+*.ent
+*.ent.*
 
 .DS_STORE
 *.so

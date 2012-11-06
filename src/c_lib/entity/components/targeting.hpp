@@ -14,7 +14,7 @@ class TargetingComponent: public Component
 
         // state
         int target_id;
-        ObjectType target_type;
+        EntityType target_type;
         Vec3 target_direction;
         bool locked_on_target;
 

@@ -6,12 +6,12 @@
 #include <entity/components/pickup.hpp>
 #include <entity/components/health/ttl.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 using Components::Component;
 
-void Object::add_component(int slot, class Component* component)
+void Entity::add_component(int slot, class Component* component)
 {
     GS_ASSERT(slot >= 0);
     if (slot < 0) return;
@@ -23,23 +23,23 @@ void Object::add_component(int slot, class Component* component)
 
 // returns component of type if available
 // must cast to desired component manually
-class Component* Object::get_component(ComponentType type)
+class Component* Entity::get_component(ComponentType type)
 {
-    int slot = object_data->get_component_slot(this->type, type);
+    int slot = entity_data->get_component_slot(this->type, type);
     if (slot < 0) return NULL;
     GS_ASSERT(slot < this->n_components);
     return this->components[slot];
 }
 
-class Component* Object::get_component_interface(ComponentInterfaceType interface)
+class Component* Entity::get_component_interface(ComponentInterfaceType interface)
 {
-    int slot = object_data->get_component_interface_slot(this->type, interface);
+    int slot = entity_data->get_component_interface_slot(this->type, interface);
     if (slot < 0) return NULL;
     GS_ASSERT(slot < this->n_components);
     return this->components[slot];
 }
 
-void Object::broadcastDeath()
+void Entity::broadcastDeath()
 {
     object_destroy_StoC msg;
     msg.id = this->id;
@@ -47,7 +47,7 @@ void Object::broadcastDeath()
     msg.broadcast();
 }
 
-void Object::init(int n_components)
+void Entity::init(int n_components)
 {
     GS_ASSERT(this->components == NULL);
     GS_ASSERT(this->n_components == 0);
@@ -58,9 +58,9 @@ void Object::init(int n_components)
     this->components = (class Component**)calloc(n_components, sizeof(class Component*));
 }
 
-Object::~Object()
+Entity::~Entity()
 {
     if (this->components != NULL) free(this->components);
 }
 
-} // Objects
+} // Entities

@@ -179,8 +179,8 @@ class ChatMessageList: public ObjectList<ChatMessage>
 class ChatSystemMessage
 {
     public:
-    void object_destroyed(Objects::Object* object);
-    void object_created(Objects::Object* object);
+    void object_destroyed(Entities::Entity* object);
+    void object_created(Entities::Entity* object);
 };
 
 }   // Chat

@@ -17,7 +17,6 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
 
         float x,y,z;
         float vx,vy,vz;
-        float ax,ay,az;
         float theta, phi;
 
         inline void packet(char* buff, unsigned int* buff_n, bool pack) 
@@ -31,9 +30,6 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
             pack_float(&vx, buff, buff_n, pack);
             pack_float(&vy, buff, buff_n, pack);
             pack_float(&vz, buff, buff_n, pack);
-            pack_float(&ax, buff, buff_n, pack);
-            pack_float(&ay, buff, buff_n, pack);
-            pack_float(&az, buff, buff_n, pack);
 
             pack_float(&theta, buff, buff_n, pack);
             pack_float(&phi, buff, buff_n, pack);
@@ -68,7 +64,6 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
 
         float x,y,z;
         float vx,vy,vz;
-        float ax,ay,az;
 
         float theta, phi;
 
@@ -83,9 +78,6 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
             pack_float(&vx, buff, buff_n, pack);
             pack_float(&vy, buff, buff_n, pack);
             pack_float(&vz, buff, buff_n, pack);
-            pack_float(&ax, buff, buff_n, pack);
-            pack_float(&ay, buff, buff_n, pack);
-            pack_float(&az, buff, buff_n, pack);
 
             pack_float(&theta, buff, buff_n, pack);
             pack_float(&phi, buff, buff_n, pack);

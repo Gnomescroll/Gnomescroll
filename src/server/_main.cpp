@@ -124,11 +124,11 @@ void tick()
     Particle::grenade_list->tick();
     ItemParticle::tick();
 
-    Objects::tick();
-    Objects::harvest();
-    Objects::update();
+    Entities::tick();
+    Entities::harvest();
+    Entities::update();
 
-    Objects::spawn_mobs();
+    Entities::spawn_mobs();
 
     ServerState::move_base();
 

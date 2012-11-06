@@ -2,28 +2,30 @@
 
 #include <entity/constants.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 // forward declaration
-class Object;
+class Entity;
 
-int count(ObjectType type);
-bool full(ObjectType type);
-bool point_occupied_by_type(ObjectType type, int x, int y, int z);
+int count(EntityType type);
+bool full(EntityType type);
+bool point_occupied_by_type(EntityType type, int x, int y, int z);
 void spawn_mobs();
 
 /* API */
 
-Object* create(ObjectType type);
-Object* create(ObjectType type, int id);
-Object* get(ObjectType type, int id);
-void ready(Object* object);
-void destroy(Object* object);
-void destroy(ObjectType type, int id);
+class Entity* create(EntityType type);
+class Entity* create(EntityType type, int id);
+class Entity* get(EntityType type, int id);
+void ready(class Entity* object);
+void destroy(class Entity* object);
+void destroy(EntityType type, int id);
+
+int get_all(const EntityType type, class Entity**& entities, char*& used);
 
 void stress_test();
 
 void send_to_client(ClientID client_id);
 
-} // Objects
+} // Entities

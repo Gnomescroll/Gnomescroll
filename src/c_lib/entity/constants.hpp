@@ -1,12 +1,12 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {   // forward decl
-class Object;
-}   // Objects
+class Entity;
+}   // Entities
 
-typedef void (*tickObject)(class Objects::Object*);      // for physics
-typedef void (*updateObject)(class Objects::Object*);    // for draw prep
+typedef void (*tickObject)(class Entities::Entity*);      // for physics
+typedef void (*updateObject)(class Entities::Entity*);    // for draw prep
 
 int MAX_OBJECT_TYPES = 0xFF;
 typedef enum
@@ -32,7 +32,7 @@ typedef enum
     OBJECT_MONSTER_BOX,
     OBJECT_MONSTER_SPAWNER,
 
-} ObjectType;
+} EntityType;
 
 int MAX_COMPONENT_TYPES = 0xFF;
 typedef enum
@@ -131,7 +131,7 @@ typedef enum
     STATE_CHASE_AGENT,
 } EntityState;
 
-typedef void (*stateRouter) (class Objects::Object*, EntityState);   // for state machine
+typedef void (*stateRouter) (class Entities::Entity*, EntityState);   // for state machine
 
 #include <limits.h>
 #include <physics/vec3.hpp>

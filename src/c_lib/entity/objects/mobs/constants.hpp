@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Objects
+namespace Entities
 {
 
 /* Robot Bomb */
@@ -114,4 +114,4 @@ const int MONSTER_SPAWNER_ANIMATION_COUNT = 5*5*5;
 //const int MONSTER_SPAWNER_ANIMATION_COUNT_MAX = 5*5*5;
 const float MONSTER_SPAWNER_ANIMATION_SIZE = 0.4f;
 
-} // Objects
+} // Entities

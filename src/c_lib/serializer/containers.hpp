@@ -1,5 +1,7 @@
 #pragma once
 
+#include <serializer/parse.hpp>
+
 namespace serializer
 {
 
@@ -33,10 +35,7 @@ class ParsedContainerData
         int container_id;
         char name[DAT_NAME_MAX_LENGTH+1];
         int item_count;
-        struct
-        {
-            int x,y,z;
-        } position;
+        struct MapPosition position;
         bool valid;
 
     void reset()

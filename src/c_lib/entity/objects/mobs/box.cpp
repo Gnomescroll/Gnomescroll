@@ -12,12 +12,12 @@
 #include <entity/components/targeting/motion_targeting.hpp>
 #include <agent/_interface.hpp>
 
-namespace Objects
+namespace Entities
 {
 
 void load_mob_robot_box_data()
 {
-    ObjectType type = OBJECT_MONSTER_BOX;
+    EntityType type = OBJECT_MONSTER_BOX;
     
     #if DC_SERVER
     const int n_components = 9;
@@ -26,26 +26,26 @@ void load_mob_robot_box_data()
     const int n_components = 7;
     #endif
     
-    object_data->set_components(type, n_components);
+    entity_data->set_components(type, n_components);
 
-    object_data->attach_component(type, COMPONENT_POSITION_MOMENTUM_CHANGED);
-    object_data->attach_component(type, COMPONENT_DIMENSION);
-    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    object_data->attach_component(type, COMPONENT_HIT_POINTS);
-    object_data->attach_component(type, COMPONENT_WEAPON_TARGETING);
-    object_data->attach_component(type, COMPONENT_MOTION_TARGETING);
+    entity_data->attach_component(type, COMPONENT_POSITION_MOMENTUM_CHANGED);
+    entity_data->attach_component(type, COMPONENT_DIMENSION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
+    entity_data->attach_component(type, COMPONENT_WEAPON_TARGETING);
+    entity_data->attach_component(type, COMPONENT_MOTION_TARGETING);
 
     #if DC_SERVER
-    object_data->attach_component(type, COMPONENT_SPAWN_CHILD);
-    object_data->attach_component(type, COMPONENT_RATE_LIMIT);
-    object_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_SPAWN_CHILD);
+    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    entity_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
     #if DC_CLIENT
-    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
     #endif
 }
 
-static void set_mob_robot_box_properties(Object* object)
+static void set_mob_robot_box_properties(Entity* object)
 {
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
 
@@ -130,16 +130,16 @@ static void set_mob_robot_box_properties(Object* object)
     object->state = state_packet_momentum_angles;
 }
 
-Object* create_mob_robot_box()
+Entity* create_mob_robot_box()
 {
-    ObjectType type = OBJECT_MONSTER_BOX;
-    Object* obj = object_list->create(type);
+    EntityType type = OBJECT_MONSTER_BOX;
+    Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
     set_mob_robot_box_properties(obj);
     return obj;
 }
 
-void ready_mob_robot_box(Object* object)
+void ready_mob_robot_box(Entity* object)
 {
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* target = (WeaponTargetingComponent*)object->get_component_interface(COMPONENT_INTERFACE_TARGETING);
@@ -161,7 +161,7 @@ void ready_mob_robot_box(Object* object)
     #endif
 }
 
-void die_mob_robot_box(Object* object)
+void die_mob_robot_box(Entity* object)
 {
     #if DC_SERVER
     // drop item
@@ -191,7 +191,7 @@ void die_mob_robot_box(Object* object)
 }
 
 #if DC_SERVER
-void server_tick_mob_robot_box(Object* object)
+void server_tick_mob_robot_box(Entity* object)
 {
     // must stay on ground -- apply terrain collision
     // wander randomly (TODO: network model with destinations)
@@ -333,7 +333,7 @@ void server_tick_mob_robot_box(Object* object)
 #endif
 
 #if DC_CLIENT
-void client_tick_mob_robot_box(Object* object)
+void client_tick_mob_robot_box(Entity* object)
 {
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
@@ -396,7 +396,7 @@ void client_tick_mob_robot_box(Object* object)
 #endif
 
 
-void tick_mob_robot_box(Object* object)
+void tick_mob_robot_box(Entity* object)
 {
     //return;
     #if DC_SERVER
@@ -407,7 +407,7 @@ void tick_mob_robot_box(Object* object)
     #endif
 }
 
-void update_mob_robot_box(Object* object)
+void update_mob_robot_box(Entity* object)
 {
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
@@ -421,5 +421,5 @@ void update_mob_robot_box(Object* object)
 }
 
 
-} // Objects
+} // Entities
 

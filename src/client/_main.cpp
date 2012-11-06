@@ -157,7 +157,7 @@ int physics_tick()
         // update mouse
         poll_mouse();
 
-        Objects::tick();    // update physics state
+        Entities::tick();    // update physics state
 
         if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
 
@@ -205,8 +205,8 @@ void draw_tick()
 
     frame_graph->frame_stage(2); // call draw functions
 
-    Objects::harvest(); // remove dead objects
-    Objects::update(); // update render state
+    Entities::harvest(); // remove dead objects
+    Entities::update(); // update render state
     Agents::agent_list->update_models();
 
     poll_mouse();

@@ -1,6 +1,6 @@
 #include "dat.hpp"
 
-namespace Objects
+namespace Entities
 {
 
 class EntityAttributes* attributes = NULL;
@@ -33,7 +33,7 @@ void finish_def()
     e->loaded = true;
 }
 
-void entity_def(const char* name, ObjectType type)
+void entity_def(const char* name, EntityType type)
 {
     if (e != NULL) finish_def();
 
@@ -58,6 +58,16 @@ void verify_entity_dat()
 
         GS_ASSERT_ABORT(e->type != OBJECT_NONE);
         GS_ASSERT_ABORT(is_valid_entity_name(e->name));
+    }
+
+    // check no type used twice
+    for (int i=0; i<MAX_OBJECT_TYPES-1; i++)
+    for (int j=i+1; j<MAX_OBJECT_TYPES; j++)
+    {
+        class EntityAttributes* a = &attributes[i];
+        class EntityAttributes* b = &attributes[j];
+        if (!a->loaded || !b->loaded) continue;
+        GS_ASSERT_ABORT(a->type != b->type);
     }
 
     // check inactive names against active
@@ -111,5 +121,5 @@ void end_entity_dat()
     save_entity_names();
 }
 
-}   // Objects
+}   // Entities
 

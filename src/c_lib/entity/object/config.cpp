@@ -1,6 +1,6 @@
 #include "config.hpp"
 
-namespace Objects
+namespace Entities
 {
 
 static class ObjectConfig* object_conf = NULL;
@@ -9,13 +9,13 @@ class ObjectConfig
 {
     public:
     
-    ObjectType type;
+    EntityType type;
     
     unsigned int max;
-    objectLoad   loader;
-    objectCreate create;
-    objectReady  ready;
-    objectDie    die;
+    entityLoad   loader;
+    entityCreate create;
+    entityReady  ready;
+    entityDie    die;
     
     bool loaded;
     
@@ -48,7 +48,7 @@ static void commit_object_config()
     c.init();
 }
 
-static void set_object(ObjectType type)
+static void set_object(EntityType type)
 {
     if (started) commit_object_config();
     started = true;
@@ -150,35 +150,35 @@ void teardown_config()
     if (object_conf != NULL) delete[] object_conf;
 }
 
-unsigned int get_object_max(ObjectType type)
+unsigned int get_object_max(EntityType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return 0;
     return object_conf[type].max;
 }
 
-objectLoad get_object_load_method(ObjectType type)
+entityLoad get_object_load_method(EntityType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
     return object_conf[type].loader;
 }
 
-objectCreate get_object_create_method(ObjectType type)
+entityCreate get_object_create_method(EntityType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
     return object_conf[type].create;
 }
 
-objectReady get_object_ready_method(ObjectType type)
+entityReady get_object_ready_method(EntityType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
     return object_conf[type].ready;
 }
 
-objectDie get_object_die_method(ObjectType type)
+entityDie get_object_die_method(EntityType type)
 {
     GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
     if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
@@ -186,4 +186,4 @@ objectDie get_object_die_method(ObjectType type)
 }
 
 
-}   // Objects
+}   // Entities

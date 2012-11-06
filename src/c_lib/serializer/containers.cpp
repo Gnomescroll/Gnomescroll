@@ -70,46 +70,8 @@ static bool parse_container_token(const char* key, const char* val, class Parsed
     else
     if (strcmp(MAP_POSITION_TAG, key) == 0)
     {
-        static char buf[MAP_POSITION_LENGTH+1] = {'\0'};
-        strncpy(buf, val, MAP_POSITION_LENGTH);
-        buf[MAP_POSITION_LENGTH] = '\0';
-        int pts = 1;
-        char d;
-        int j = 0;
-        int cmp_len = 0;
-        while ((d = buf[j]) != '\0')
-        {
-            if (d == MAP_POSITION_COMPONENT_DELIMITER[0])
-            {
-                GS_ASSERT(cmp_len == MAP_POSITION_COMPONENT_LENGTH);
-                if (cmp_len != MAP_POSITION_COMPONENT_LENGTH) return false;
-                cmp_len = 0;
-                pts++;
-                buf[j] = '\0';
-            }
-            else
-                cmp_len++;
-            j++;
-        }
-        GS_ASSERT(cmp_len == MAP_POSITION_COMPONENT_LENGTH);
-        if (cmp_len != MAP_POSITION_COMPONENT_LENGTH) return false;
-        GS_ASSERT(pts == 3);
-        if (pts != 3) return false;
-        
-        int base_offset = MAP_POSITION_COMPONENT_LENGTH + MAP_POSITION_COMPONENT_DELIMITER_LENGTH;
-        long long x = parse_int(&buf[0 * base_offset], err);
-        GS_ASSERT(!err && x >= 0 && x < XMAX);
-        if (err || x < 0 || x >= XMAX) return false;
-        long long y = parse_int(&buf[1 * base_offset], err);
-        GS_ASSERT(!err && y >= 0 && y < YMAX);
-        if (err || y < 0 || y >= YMAX) return false;
-        long long z = parse_int(&buf[2 * base_offset], err);
-        GS_ASSERT(!err && z >= 0 && z < ZMAX);
-        if (err || z < 0 || z >= ZMAX) return false;
-
-        data->position.x = x;
-        data->position.y = y;
-        data->position.z = z;
+        if (!parse_map_position(val, &data->position))
+            return false;
     }
     else
     {   // unrecognized field
@@ -257,7 +219,7 @@ static bool load_container_file(const char* filename)
     free(buffer);
     if (!success)
     {
-        log_container_load_error("Failed to acquire container name");
+        log_container_load_error("Error processing entire file");
         return false;
     }
 
@@ -273,10 +235,11 @@ static bool load_container_file(const char* filename)
 
     clear_loaded_containers();
 
+    GS_ASSERT(!err);
     if (err)
         log_container_load_error("Containers defined in map not found in container data file");
 
-    return err;
+    return (!err);
 }
 
 /* Saving */
@@ -367,11 +330,33 @@ static bool save_container(FILE* f, const class ItemContainer::ItemContainerInte
     return (wrote == container_string_length);
 }
 
+static bool save_container_file_header(FILE* f, int container_ct)
+{
+    int ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, container_ct);
+    GS_ASSERT(ret > 0);
+    if (ret <= 0)
+    {
+        log_container_save_error("Failed to write temporary container header");
+        return false;
+    }
+    ret = fprintf(f, "\n");
+    GS_ASSERT(ret > 0);
+    if (ret <= 0)
+    {
+        log_container_save_error("Failed to write temporary container header");
+        return false;
+    }
+    return true;    
+}
+
 
 /* Public Interface */
 
 bool save_containers()
 {
+    bool err = false;
+    int ct = 0;
+
     using ItemContainer::item_container_list;
     GS_ASSERT(item_container_list != NULL);
     if (item_container_list == NULL)
@@ -389,23 +374,11 @@ bool save_containers()
     }
 
     // write a temporary file header. the container count is wrong, so we have to rewrite it later 
-    int ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, item_container_list->n_max);
-    GS_ASSERT(ret > 0);
-    if (ret <= 0)
-    {
-        log_container_save_error("Failed to write temporary container header");
-        return false;
-    }
-    ret = fprintf(f, "\n");
-    GS_ASSERT(ret > 0);
-    if (ret <= 0)
-    {
-        log_container_save_error("Failed to write temporary container header");
-        return false;
-    }
+    err = (!save_container_file_header(f, item_container_list->n_max));
+    GS_ASSERT(!err);
+    if (err) goto Error;
 
     // write the container contents
-    int ct = 0;
     for (unsigned i=0; i<item_container_list->n_max; i++)
         if (item_container_list->a[i] != NULL && !item_container_list->a[i]->attached_to_agent)
         {
@@ -419,27 +392,17 @@ bool save_containers()
     rewind(f);
 
     // write the actual file header
-    ret = fprintf(f, CONTAINER_FILE_HEADER_FMT, GS_VERSION, ct);
-    GS_ASSERT(ret > 0);
-    if (ret <= 0)
-    {
-        log_container_save_error("Failed to write container file header");
-        return false;
-    }
-    ret = fprintf(f, "\n");
-    GS_ASSERT(ret > 0);
-    if (ret <= 0)
-    {
-        log_container_save_error("Failed to write final container header");
-        return false;
-    }
-
-    int err = fclose(f);
+    err = (!save_container_file_header(f, ct));
     GS_ASSERT(!err);
-    if (err)
-        log_container_save_error("Container file close error");
+    if (err) goto Error;
 
-    return (!err);
+    Error:  // GOTO LABEL
+        int ferr = fclose(f);
+        GS_ASSERT(!ferr);
+        if (ferr)
+            log_container_save_error("Container file close error");
+
+    return (!err && !ferr);
 }
 
 bool load_containers()

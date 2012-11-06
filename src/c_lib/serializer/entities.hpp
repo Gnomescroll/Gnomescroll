@@ -1,7 +1,51 @@
 #pragma once
 
+#include <serializer/parse.hpp>
+
 namespace serializer
 {
+
+class ParsedEntityFileData
+{
+    public:
+
+        int version;
+        int entity_count;
+        bool valid;
+
+    void reset()
+    {
+        this->valid = false;
+        this->version = 0;
+        this->entity_count = 0;
+    }
+    
+    ParsedEntityFileData()
+    {
+        this->reset();
+    }
+};
+
+class ParsedEntityData
+{
+    public:
+
+        char name[DAT_NAME_MAX_LENGTH+1];
+        int entity_id;
+        bool valid;
+
+    void reset()
+    {
+        memset(this->name, 0, sizeof(this->name));
+        this->entity_id = -1;
+        this->valid = false;
+    }
+    
+    ParsedEntityData()
+    {
+        this->reset();
+    }
+};
 
 class ParsedAgentSpawnerData
 {
@@ -10,17 +54,14 @@ class ParsedAgentSpawnerData
     
     public:
 
-        struct {
-            int x,y,z;
-        } position;
+        struct MapPosition position;
         size_t user_count;
         UserID* users;
         bool valid;
 
     void reset()
     {
-        if (this->users != NULL)
-            free(this->users);
+        if (this->users != NULL) free(this->users);
         this->users = NULL;
         this->user_count = 0;
         this->user_index = 0;
@@ -57,7 +98,7 @@ class ParsedAgentSpawnerData
         }
     }
 
-    ParsedAgentSpawnerData()
+    ParsedAgentSpawnerData() : users(NULL)
     {
         this->reset();
     }
@@ -72,10 +113,7 @@ class ParsedEnergyCoreData
 {
     public:
 
-        struct {
-            int x,y,z;
-        } position;
-
+        struct MapPosition position;
         bool valid;
 
     void reset()

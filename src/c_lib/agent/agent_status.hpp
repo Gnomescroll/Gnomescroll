@@ -49,9 +49,11 @@ class Agent_status {
         void set_spawner(int pt);
 
         bool die();
-        bool die(AgentID inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
+        bool die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
         void kill_slime();
+
+        void quit();
 
         #if DC_SERVER
 
@@ -65,9 +67,9 @@ class Agent_status {
         void restore_health();
         void heal(unsigned int amt);
         int apply_damage(int dmg);
-        int apply_damage(int dmg, AgentID inflictor_id, ObjectType inflictor_type, int part_id=-1);
-        int apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type);
-        int apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, ObjectType inflictor_type);
+        int apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id=-1);
+        int apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
+        int apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
         void at_base();
 
         void send_color(ClientID client_id);

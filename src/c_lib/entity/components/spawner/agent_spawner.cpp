@@ -36,8 +36,7 @@ struct Vec3 AgentSpawnerComponent::get_spawn_point(float spawned_object_height, 
     while (object_collides_terrain(spawn_point, spawned_object_height, spawned_object_radius) && spawn_point.z < t_map::map_dim.z)
         spawn_point.z += 1;
 
-
     return spawn_point;
 }
 
-}; // Objects
+}; // Components
