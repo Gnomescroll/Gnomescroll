@@ -84,16 +84,8 @@ size_t parse_block(bool (*process_token) (const char*, const char*, Data*), cons
         while ((c = str[i++]) != '\0' && c != '\n' && n < LONGEST_LINE)
             buf[n++] = c;
         buf[n] = '\0';
-        printf("BUF: %s\n", buf);
         GS_ASSERT(c == '\n');
-        if (c != '\n')
-        {
-            printf("ERROR: %s\n", str);
-            printf("%c (%d) != \\n\n", c, (int)c);
-            printf("n: %u\n", n);
-            printf("buf: %s\n", buf);
-            return i;
-        }
+        if (c != '\n') return i;
         if (strcmp(buf, terminator) == 0) break;
 
         GS_ASSERT(n > TAG_LENGTH + TAG_DELIMITER_LENGTH);
@@ -105,7 +97,7 @@ size_t parse_block(bool (*process_token) (const char*, const char*, Data*), cons
         const char* key = &buf[0];
         const char* token = &buf[TAG_LENGTH+1];
 
-        if (!process_token(key, token, data)) return i; // THIS LINE??
+        if (!process_token(key, token, data)) return i;
     }
     data->valid = true;
     return i;
@@ -159,7 +151,7 @@ static bool parse_map_position(const char* val, struct MapPosition* position)
     position->x = x;
     position->y = y;
     position->z = z;
-    return err;
+    return (!err);
 }
 
 }   // serializer

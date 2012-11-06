@@ -48,14 +48,12 @@ class ParsedEntityData
 };
 
 class ParsedAgentSpawnerData
-{
-    private:
-        size_t user_index;
-    
+{    
     public:
-
+    
         struct MapPosition position;
         size_t user_count;
+        size_t added_users;
         UserID* users;
         bool valid;
 
@@ -64,7 +62,7 @@ class ParsedAgentSpawnerData
         if (this->users != NULL) free(this->users);
         this->users = NULL;
         this->user_count = 0;
-        this->user_index = 0;
+        this->added_users = 0;
         this->valid = false;
         this->position.x = -1;
         this->position.y = -1;
@@ -77,14 +75,14 @@ class ParsedAgentSpawnerData
         IF_INVALID_USER_ID(user_id) return false;
         GS_ASSERT(this->users != NULL);
         if (this->users == NULL) return false;
-        if (this->user_index >= this->user_count) return false;
-        for (size_t i=0; i<this->user_index; i++)
+        if (this->added_users >= this->user_count) return false;
+        for (size_t i=0; i<this->added_users; i++)
         {
             GS_ASSERT(this->users[i] != user_id);
             if (this->users[i] == user_id)
                 return false;
         }
-        this->users[this->user_index++] = user_id;
+        this->users[this->added_users++] = user_id;
         return true;
     }
 

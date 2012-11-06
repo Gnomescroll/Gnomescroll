@@ -20,34 +20,33 @@ class AgentSpawnerComponent: public SpawnerComponent
         
         struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius);
 
-        bool add(AgentID agent_id)
+        void add_user(UserID user_id)
+        {
+            this->users.add(user_id);
+        }
+
+        void add_agent(AgentID agent_id)
         {
             class Agent* agent = Agents::get_agent(agent_id);
             GS_ASSERT(agent != NULL);
-            if (agent == NULL) return false;
-            if (!this->agents.add(agent->id)) return false;
-            if (!this->users.add(agent->user_id))
-            {
-                GS_ASSERT(false);
-                this->agents.remove(agent->id);
-                return false;
-            }
-            return true;
+            if (agent == NULL) return;
+            if (this->agents.full()) return;
+            this->agents.add(agent->id);
+            this->add_user(agent->user_id);
         }
 
-        bool remove_all(AgentID agent_id)
+        void remove_all(AgentID agent_id)
         {
-            bool rm = this->remove(agent_id);
-            GS_ASSERT(rm);
+            this->remove(agent_id);
             class Agent* agent = Agents::get_agent(agent_id);
             GS_ASSERT(agent != NULL);
-            if (agent == NULL) return false;
-            return this->users.remove(agent->user_id);
+            if (agent == NULL) return;
+            this->users.remove(agent->user_id);
         }
 
-        bool remove(AgentID agent_id)
+        void remove(AgentID agent_id)
         {
-            return this->agents.remove(agent_id);
+            this->agents.remove(agent_id);
         }
     
     AgentSpawnerComponent() : SpawnerComponent(COMPONENT_AGENT_SPAWNER),

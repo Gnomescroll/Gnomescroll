@@ -82,7 +82,7 @@ void Agent_status::set_spawner(int pt)
 
     AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
     GS_ASSERT(agent_spawner != NULL);
-    if (agent_spawner != NULL) agent_spawner->add(this->a->id);
+    if (agent_spawner != NULL) agent_spawner->add_agent(this->a->id);
 
     // play sound
     // only send the sound if its not the base spawner set

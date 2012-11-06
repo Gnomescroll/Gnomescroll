@@ -104,7 +104,7 @@ static bool parse_agent_spawner_token(const char* key, const char* val, class Pa
         GS_ASSERT(false);
         return false;
     }
-    return err;
+    return (!err);
 }
 
 bool process_entities_blob(const char* str, size_t filesize)
@@ -168,8 +168,10 @@ bool process_entities_blob(const char* str, size_t filesize)
         if (entity == NULL) return false;
 
         bool err = false;
+        struct MapPosition* position = NULL;
         if (entity_type == OBJECT_ENERGY_CORE)
         {
+            position = &energy_core_data.position;
             i += parse_block<class ParsedEnergyCoreData>(&parse_energy_core_token, ENTITY_SEPARATOR, &str[i], &energy_core_data);
             GS_ASSERT(energy_core_data.valid);
             err = (!energy_core_data.valid);
@@ -177,15 +179,34 @@ bool process_entities_blob(const char* str, size_t filesize)
         else
         if (entity_type == OBJECT_AGENT_SPAWNER)
         {
+            position = &agent_spawner_data.position;
             i += parse_block<class ParsedAgentSpawnerData>(&parse_agent_spawner_token, ENTITY_SEPARATOR, &str[i], &agent_spawner_data);
             GS_ASSERT(agent_spawner_data.valid);
             err = (!agent_spawner_data.valid);
+            if (agent_spawner_data.user_count == agent_spawner_data.added_users)
+            {
+                using Components::AgentSpawnerComponent;
+                AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)entity->get_component(COMPONENT_AGENT_SPAWNER);
+                GS_ASSERT(spawner != NULL);
+                err = (spawner == NULL);
+                if (spawner != NULL)
+                    for (size_t i=0; i<agent_spawner_data.user_count; i++)
+                        spawner->add_user(agent_spawner_data.users[i]);
+            }
+            else err = true;
         }
         else
         {
             err = true;
             GS_ASSERT(false);
         }
+
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)entity->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        GS_ASSERT(physics != NULL);
+        err = (physics == NULL);
+        if (position != NULL && physics != NULL)
+            physics->set_position(vec3_init(position->x, position->y, position->z));
 
         GS_ASSERT(!err);
         if (err)    // cancel entity
@@ -296,8 +317,10 @@ static bool save_agent_spawner(FILE* f, class Entities::Entity* entity, int id)
     GS_ASSERT(spawner != NULL);
     if (spawner == NULL) return false;
 
-    write_entity_header(f, entity, id);
+    if (!write_entity_header(f, entity, id)) return false;
     if (!write_position_tag(f, physics->get_position())) return false;
+
+    if (!write_user_count_tag(f, spawner->users.count)) return false;
 
     for (size_t i=0; i<spawner->users.count; i++)
         if (!write_user_id_tag(f, spawner->users.subscribers[i]))
@@ -317,7 +340,7 @@ static bool save_energy_core(FILE* f, class Entities::Entity* entity, int id)
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return false;
 
-    write_entity_header(f, entity, id);
+    if (!write_entity_header(f, entity, id)) return false;
     if (!write_position_tag(f, physics->get_position())) return false;
 
     if (!write_entity_terminator(f)) return false;

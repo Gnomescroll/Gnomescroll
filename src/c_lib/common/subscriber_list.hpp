@@ -39,6 +39,11 @@ class SubscriberList
         size_t count;
         size_t max;
         size_t hard_max;
+
+    bool full()
+    {
+        return (this->count >= this->hard_max);
+    }
         
     // returns true is subscriber is added to the list
     // if subscriber was already in the list, or if the list is maxed out, returns false
