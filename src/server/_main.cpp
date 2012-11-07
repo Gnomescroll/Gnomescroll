@@ -14,7 +14,7 @@ namespace Main
 void default_map_gen()
 {
     t_gen::noise_map_generate_map();
-    
+
     t_map::map_post_processing(); //regolith stuff
     t_gen::generate_rock_layer();
     t_gen::start_cave_generator();
@@ -22,7 +22,7 @@ void default_map_gen()
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
 
-    map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_id("bedrock"));    
+    map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_id("bedrock"));
 }
 
 void init_world()
@@ -32,7 +32,7 @@ void init_world()
     bool new_map = false;
     bool fast_map = false;
     bool corpusc = false;
-        
+
     if (strcmp(Options::map, "fast") == 0)
         fast_map = true;
     else
@@ -92,7 +92,7 @@ void init(int argc, char* argv[])
     init_c_lib(argc, argv);
 
     init_world();
-    
+
     int address[4] = {0};
     address_from_string(Options::ip_address, address);
     NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
@@ -109,7 +109,7 @@ void tick()
 
     t_map::t_map_send_map_chunks();  //every tick
 
-    if (counter % 15 == 0) 
+    if (counter % 15 == 0)
     {
         Agents::agent_list->update_map_manager_positions();
         t_map::t_map_manager_update();
@@ -120,7 +120,7 @@ void tick()
     Toolbelt::tick();
 
     Agents::agent_list->update_models(); // sets skeleton
-    
+
     Particle::grenade_list->tick();
     ItemParticle::tick();
 
@@ -143,6 +143,10 @@ void tick()
         Components::healer_component_list->call();
         ServerState::check_agents_at_base();
     }
+    if (counter % 5000 == 999)
+    {
+        meteor_fall();
+    }
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
@@ -157,7 +161,7 @@ void tick()
 
     counter++;
 }
- 
+
 int run()
 {
     while (!ServerState::signal_exit)
@@ -173,11 +177,11 @@ int run()
             NetServer::flush_to_net();
         if (tc > 1)
             printf("Warning:: %d ticks this frame", tc);
-            
+
         NetServer::dispatch_network_events();
         if (Options::auth)
             NetServer::check_client_authorizations();
-        
+
         if (serializer::should_save_world)
         {
             bool saved = serializer::save_data();
@@ -205,7 +209,7 @@ int run()
         serializer::wait_for_save_complete();
         serializer::should_save_world = false;
     }
-        
+
     return 0;
 }
 
