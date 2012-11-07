@@ -104,9 +104,16 @@ bool item_block_def(const char* block_name)
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index(block_name);
     s->cube_height = 1;
 
-    size_t wrote = title_string(block_name, s->pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
-    s->pretty_name[wrote] = '\0';
-
+    // capitalize string
+    char title_name[ITEM_PRETTY_NAME_MAX_LENGTH+1] = {'\0'};
+    size_t wrote = title_string(block_name, pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
+    title_name[wrote] = '\0';
+    // remove numbers
+    size_t j=0;
+    for (size_t i=0; title_name[i] != '\0'; i++)
+        if (!isdigit(title_name[i]))
+            s->pretty_name[j++] = title_name[i];
+    s->pretty_name[j] = '\0';
     return true;
 }
 
