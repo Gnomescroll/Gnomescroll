@@ -100,7 +100,7 @@ class DatNameMap
         for (size_t i=0; i<this->size; i++)
         {
             int cmp = strcmp(original, &this->originals[index]);
-            GS_ASSERT(!cmp);
+            GS_ASSERT(cmp != 0);
             if (cmp == 0) return false;
         }
 

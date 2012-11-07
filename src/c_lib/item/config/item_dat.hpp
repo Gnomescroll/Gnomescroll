@@ -558,6 +558,41 @@ void apply_item_dat_changes()
 {
     //change_item("old_name", "new_name");
 
+    // deletions
+    const size_t buflen = 32;
+    char name[buflen] = {'\0'};
+    for (int i=1; i<=36; i++)
+    {
+        if (i == 7) continue;
+        snprintf(name, buflen, "cell%d", i);
+        name[buflen-1] = '\0';
+        change_item(name, "regolith");
+    }
+    for (int i=1; i<=10; i++)
+    {
+        snprintf(name, buflen, "iceflame%02d", i);
+        name[buflen-1] = '\0';
+        change_item(name, "regolith");
+    }
+
+    change_item("terminal_blue", "regolith");
+    change_item("terminal_green", "regolith");
+    change_item("battery", "regolith");
+    change_item("ruins_1", "rock");
+    change_item("ruins_2", "rock");
+    change_item("ruins_3", "rock");
+    change_item("ruins_4", "rock");
+
+    // renames
+    change_item("space_tree_trunk", "space_tree_trunk1");
+    change_item("leaves", "leaves1");
+    change_item("leaves_red", "leaves3");
+    change_item("raised_tile_gray", "raised_tile1");
+    change_item("raised_tile_blue", "raised_tile2");
+    change_item("raised_tile_green", "raised_tile3");
+    change_item("raised_tile_red", "raised_tile4");
+
+
     item_name_map->condense();  // finalize
 }
 

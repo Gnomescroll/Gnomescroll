@@ -21,6 +21,8 @@ const int NUM_LEAVES = 3; // pics == textures.   abbreviating "textures" always 
 CubeID leaves[NUM_LEAVES];
 const int NUM_TRUNKS = 2;
 CubeID trunks[NUM_TRUNKS];
+const size_t NUM_SHROOMS = 2;
+CubeID shrooms[NUM_SHROOMS] = {NULL_CUBE};
 
 // we probably dont want to use the same base seed as the map generator, or we'll get the same heightmap. maybe
 // this should really be abstacted to a function get_next_seed() but whatever
@@ -106,7 +108,7 @@ bool blocks_are_invalid(CubeID arr[], int len) {
     for (int i = 0; i < len; i++) { 
         GS_ASSERT(t_map::isValidCube(arr[i]));
         
-		if (!t_map::isValidCube(arr[i])) {
+        if (!t_map::isValidCube(arr[i])) {
             printf("*** invalid cube %d ***", arr[i]); 
             return true; 
         }
@@ -118,7 +120,7 @@ bool blocks_are_invalid(CubeID arr[], int len) {
 
 
 void make_shroom(int x, int y, int z) {
-    CubeID trunk = trunks[randrange(0, NUM_TRUNKS - 1)];
+    CubeID shroom = shrooms[randrange(0, NUM_SHROOMS - 1)];
 
     int cap_height = randrange(4, 15);
     int hei = 0;
@@ -128,16 +130,16 @@ void make_shroom(int x, int y, int z) {
 
     while (cap_rad > 0) {
         if (cap_rad > t_rad) 
-            corner_origin_make_circle(x, y, z+hei, t_rad, trunk, hei == 0);
+            corner_origin_make_circle(x, y, z+hei, t_rad, shroom, hei == 0);
 
         if (hei >= cap_height) {
             if (corner_origin_circle_untouched(x, y, z+hei, cap_rad) ) 
-                corner_origin_make_circle(     x, y, z+hei, cap_rad, trunk);
+                corner_origin_make_circle(     x, y, z+hei, cap_rad, shroom);
             
             //
             int targ_cap_rad = cap_rad + cap_rad_changer;
-            while (targ_cap_rad > cap_rad) { cap_rad++; corner_origin_make_circle(x, y, z+hei, cap_rad, trunk); }
-            while (targ_cap_rad < cap_rad) { cap_rad--; corner_origin_make_circle(x, y, z+hei, cap_rad, trunk); }
+            while (targ_cap_rad > cap_rad) { cap_rad++; corner_origin_make_circle(x, y, z+hei, cap_rad, shroom); }
+            while (targ_cap_rad < cap_rad) { cap_rad--; corner_origin_make_circle(x, y, z+hei, cap_rad, shroom); }
 
             cap_rad_changer--;
         }
@@ -166,9 +168,9 @@ void make_tree(int x, int y, int z) {
             t_map::set(x, y, z + j, trunk);
 
             if (j == height - 1) {
-				if (randrange(0,1) == 00) 
-					dist = randrange(2, 11);
-				else dist += .5f;
+                if (randrange(0,1) == 00) 
+                    dist = randrange(2, 11);
+                else dist += .5f;
                 for (int i = -dist; i < dist; i++)  set_me_maybe(x+i, y, z+j, trunk); // limbs
                 for (int i = -dist; i < dist; i++)  set_me_maybe(x, y+i, z+j, trunk); // limbs
                 while (dist > 0) {
@@ -203,15 +205,23 @@ namespace t_gen {
         printf("    shrooms\n");
 
         // setup blocks
-        leaves[0] = t_map::get_cube_id("leaves");
+        leaves[0] = t_map::get_cube_id("leaves1");
         leaves[1] = t_map::get_cube_id("leaves2"); 
-        leaves[2] = t_map::get_cube_id("leaves_red"); 
+        leaves[2] = t_map::get_cube_id("leaves3"); 
         
-        trunks[0] = t_map::get_cube_id("space_tree_trunk"); 
-        trunks[1] = t_map::get_cube_id("space_tree_trunk2"); 
+        trunks[0] = t_map::get_cube_id("space_tree_trunk1"); 
+        trunks[1] = t_map::get_cube_id("space_tree_trunk2");
+
+        shrooms[0] = t_map::get_cube_id("mushroom1");
+        shrooms[1] = t_map::get_cube_id("mushroom2");
+
+        CubeID regolith = t_map::get_cube_id("regolith");
+        GS_ASSERT(t_map::isValidCube(regolith));
+        if (!t_map::isValidCube(regolith)) return;
 
         if (blocks_are_invalid(leaves, NUM_LEAVES) ) return;
         if (blocks_are_invalid(trunks, NUM_TRUNKS) ) return;
+        if (blocks_are_invalid(shrooms, NUM_SHROOMS) ) return;
 
         // setup perlin array
         float* noise = t_gen::create_2d_noise_array(seed, persistence, octaves, XMAX, YMAX);  // must free return value
@@ -226,7 +236,7 @@ namespace t_gen {
             {   // we're in tree land
                 int z = t_map::get_highest_solid_block(x,y);
 
-                if (z >= 1 && t_map::get(x,y,z) == t_map::get_cube_id("regolith") )
+                if (z >= 1 && t_map::get(x,y,z) == regolith)
                     if (strip_of_solid_blocks_underneath(x,y,z, 6) ) {
                         make_tree(x,y,z);
                         continue;
@@ -235,10 +245,10 @@ namespace t_gen {
 
             if (noise[x + y*XMAX] > shroom_zone_threshold
              && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-            {   // we're in tree land
+            {   // we're in shroom land
                 int z = t_map::get_highest_solid_block(x,y);
 
-                if (z >= 1 && t_map::get(x,y,z) == t_map::get_cube_id("regolith") )
+                if (z >= 1 && t_map::get(x,y,z) == regolith)
                     if (strip_of_solid_blocks_underneath(x,y,z, 6) )
                         make_shroom(x,y,z);
             }
