@@ -11,8 +11,8 @@ void meteor_fall(void)
     bool stopgen=0;
     const int displacement=30; //the amount of additional blocks of the ore to place around the crater
     int displacedcount=0; //counts the displaced blocks
-    int x=randrange (21, t_map::map_dim.x - METEOR_SIZE - 5);
-    int y=randrange (21, t_map::map_dim.y - METEOR_SIZE - 5);
+    int x=randrange (55, t_map::map_dim.x - METEOR_SIZE - 5);
+    int y=randrange (55, t_map::map_dim.y - METEOR_SIZE - 5);
     int z=randrange (10, 30);
     int xcurrent=x;
     int ycurrent=y;
@@ -103,9 +103,9 @@ void meteor_fall(void)
     }
     while (displacedcount <= displacement)
     {
-        xcurrent=x + METEOR_SIZE + randrange(1, 3);
-        ycurrent=y + METEOR_SIZE + randrange(1, 3);
         zcurrent=z + METEOR_SIZE + randrange(1, 20);
+        xcurrent=x + METEOR_SIZE + randrange(1, 52 - zcurrent);
+        ycurrent=y + METEOR_SIZE + randrange(1, 52 - zcurrent);
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         xcurrent=xcurrent + randrange(1, 3);
         ycurrent=ycurrent + randrange(1, 3);
@@ -117,8 +117,8 @@ void meteor_fall(void)
     while (displacedcount <= displacement)
     {
         zcurrent=z + METEOR_SIZE + randrange(1, 20);
-        xcurrent=x - randrange(1, 10 - zcurrent);
-        ycurrent=y - randrange(1, 10 - zcurrent);
+        xcurrent=x - randrange(1, 52 - zcurrent);
+        ycurrent=y - randrange(1, 52 - zcurrent);
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         xcurrent=xcurrent - randrange(1, 3);
         ycurrent=ycurrent - randrange(1, 3);
