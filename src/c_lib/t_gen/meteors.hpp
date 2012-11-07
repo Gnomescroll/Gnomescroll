@@ -11,8 +11,8 @@ void meteor_fall(void)
     bool stopgen=0;
     const int displacement=30; //the amount of additional blocks of the ore to place around the crater
     int displacedcount=0; //counts the displaced blocks
-    int x=randrange (55, t_map::map_dim.x - METEOR_SIZE - 5);
-    int y=randrange (55, t_map::map_dim.y - METEOR_SIZE - 5);
+    int x=randrange (65, t_map::map_dim.x - METEOR_SIZE - 65);
+    int y=randrange (65, t_map::map_dim.y - METEOR_SIZE - 65);
     int z=randrange (10, 30);
     int xcurrent=x;
     int ycurrent=y;
@@ -104,8 +104,8 @@ void meteor_fall(void)
     while (displacedcount <= displacement)
     {
         zcurrent=z + METEOR_SIZE + randrange(1, 20);
-        xcurrent=x + METEOR_SIZE + randrange(1, 52 - zcurrent);
-        ycurrent=y + METEOR_SIZE + randrange(1, 52 - zcurrent);
+        xcurrent=x + METEOR_SIZE + randrange(1, 60 - zcurrent);
+        ycurrent=y + METEOR_SIZE + randrange(1, 60 - zcurrent);
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         xcurrent=xcurrent + randrange(1, 3);
         ycurrent=ycurrent + randrange(1, 3);
@@ -117,13 +117,22 @@ void meteor_fall(void)
     while (displacedcount <= displacement)
     {
         zcurrent=z + METEOR_SIZE + randrange(1, 20);
-        xcurrent=x - randrange(1, 52 - zcurrent);
-        ycurrent=y - randrange(1, 52 - zcurrent);
+        xcurrent=x - randrange(1, 60 - zcurrent);
+        ycurrent=y - randrange(1, 60 - zcurrent);
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         xcurrent=xcurrent - randrange(1, 3);
         ycurrent=ycurrent - randrange(1, 3);
         zcurrent=zcurrent - randrange(1, 2);
         t_map::set(xcurrent, ycurrent, zcurrent, rock);
+        displacedcount++;
+    }
+    displacedcount=0;
+    while (displacedcount <= displacement)
+    {
+        zcurrent=z + randrange(1, METEOR_SIZE);
+        xcurrent=x + randrange(1, METEOR_SIZE);
+        ycurrent=y + randrange(1, METEOR_SIZE);
+        t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         displacedcount++;
     }
 }
