@@ -510,9 +510,10 @@ void verify_item_dat()
 
     // check inactive names against active
     for (int i=0; i<MAX_ITEM_TYPES; i++)
-    {
-        GS_ASSERT_ABORT(item_name_map->get_mapped_name(item_attributes[i].name) == NULL);
-    }
+        if (item_attributes[i].loaded)
+        {
+            GS_ASSERT_ABORT(item_name_map->get_mapped_name(item_attributes[i].name) == NULL);
+        }
 
     // check inactive name destinations against active
     for (size_t i=0; i<item_name_map->size; i++)

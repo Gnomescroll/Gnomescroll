@@ -110,9 +110,10 @@ void verify_mech_dat()
 
     // check inactive names against active
     for (int i=0; i<MAX_MECHS; i++)
-    {
-        GS_ASSERT_ABORT(mech_name_map->get_mapped_name(mech_attributes[i].name) == NULL);
-    }
+        if (mech_attributes[i].loaded)
+        {
+            GS_ASSERT_ABORT(mech_name_map->get_mapped_name(mech_attributes[i].name) == NULL);
+        }
 
     // check inactive name destinations against active
     for (size_t i=0; i<mech_name_map->size; i++)

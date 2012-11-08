@@ -49,7 +49,7 @@ void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
 
         float dx = (float)(sin(_phi)*cos(_theta));
         float dy = (float)(sin(_phi)*sin(_theta));
-		//dz += 0.1f; //////////////-------------
+        //dz += 0.1f; //////////////-------------
         float dz = cosf(0.95f*_phi);
         dz *= dz;
 
@@ -105,7 +105,7 @@ void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
 
 
 void excavate() {
-	printf("Excavating\n");
+    printf("Excavating\n");
 
     const int nodes = 300;
     const float cave_size = 2.0f;

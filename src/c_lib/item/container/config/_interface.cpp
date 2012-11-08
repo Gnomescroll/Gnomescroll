@@ -304,9 +304,10 @@ static void validate_settings()
 
     // check inactive names against active
     for (int i=0; i<MAX_CONTAINER_TYPES; i++)
-    {
-        GS_ASSERT_ABORT(container_name_map->get_mapped_name(container_attributes[i].name) == NULL);
-    }
+        if (container_attributes[i].loaded)
+        {
+            GS_ASSERT_ABORT(container_name_map->get_mapped_name(container_attributes[i].name) == NULL);
+        }
 
     // check inactive name destinations against active
     for (size_t i=0; i<container_name_map->size; i++)

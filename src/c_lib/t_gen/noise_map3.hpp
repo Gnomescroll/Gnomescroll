@@ -10,14 +10,11 @@ dont_include_this_file_in_client
 
 #include <t_gen/twister.hpp>
 #include <t_gen/noise_map2.hpp>
-
 #include <common/time/physics_timer.hpp>
-
-
 #include <t_map/server/env_process.hpp>
 
 #ifdef __MSVC__
-    #pragma optimize( "gt", on )
+# pragma optimize( "gt", on )
 #endif
 
 namespace t_gen
@@ -148,6 +145,8 @@ float base(float x, float y, float z)
 
 class PerlinOctave3D
 {
+    private:
+        int runs;
     public:
     int octaves;
     class PerlinField3D* octave_array;
@@ -156,7 +155,7 @@ class PerlinOctave3D
     float cache_persistance;
     unsigned long cache_seed;
 
-    PerlinOctave3D(int _octaves)
+    PerlinOctave3D(int _octaves) : runs(0)
     {
         cache_persistance = 0.0f;
         cache_seed = 0;
@@ -210,15 +209,14 @@ class PerlinOctave3D
 
     }
 
-    void set_param(int persistance, unsigned long seed)
+    void set_param(int persistance)
     {
-        static int first_run = 0;
         bool update = false;
-        if(seed != cache_seed || first_run == 0)
+        if (runs == 0)
         {
             update = true;
-            cache_seed = seed;
-            init_genrand(seed);
+            this->cache_seed = rand();
+            init_genrand(this->cache_seed);
             for(int i=0; i<octaves; i++)
                 octave_array[i].generate_gradient_array();
         }
@@ -229,7 +227,7 @@ class PerlinOctave3D
             populate_cache(persistance); 
         }
 
-        first_run++;
+        runs++;
     }
 
     __attribute__((optimize("-O3")))
@@ -532,16 +530,15 @@ class MapGenerator1
 
 void test_octave_3d()
 {
-    return;
-    PerlinOctave3D m(6);
-    m.save_octaves(8);
+    //class PerlinOctave3D* m = new class PerlinOctave3D(6);
+    //m->save_octaves(8);
+    //delete m;
 }
 
 class MapGenerator1* map_generator = NULL;
 
 void test_octave_3d_map_gen(CubeID tile_id)
 {
-#if DC_SERVER
 /*
     void set_persistance(float p1, float p2, float p3, float p4, float p5)
     {
@@ -555,15 +552,16 @@ void test_octave_3d_map_gen(CubeID tile_id)
     int ti[6]; int i=0;
     ti[i++] = _GET_MS_TIME();
 
-    map_generator = new MapGenerator1;
+    if (map_generator == NULL) map_generator = new MapGenerator1;
+
     ti[i++] = _GET_MS_TIME();
 
     //set seeds for each of the noise maps
-    map_generator->erosion3D->set_param(0.9f, rand() );
-    map_generator->erosion2D->set_param(0.7f, rand() );
-    map_generator->height2D->set_param(0.8f, rand() );
-    map_generator->ridge2D->set_param(0.5f, rand() );
-    map_generator->roughness2D->set_param(0.9f, rand() );
+    map_generator->erosion3D->set_param(0.9f);
+    map_generator->erosion2D->set_param(0.7f);
+    map_generator->height2D->set_param(0.8f);
+    map_generator->ridge2D->set_param(0.5f);
+    map_generator->roughness2D->set_param(0.9f);
 
     ti[i++] = _GET_MS_TIME();
 
@@ -582,7 +580,6 @@ void test_octave_3d_map_gen(CubeID tile_id)
     printf("3 populate cache: %i ms \n", ti[3]-ti[2] );
     printf("4 map volume lerp: %i ms \n", ti[4]-ti[3] );
     printf("5 save noisemaps: %i ms \n", ti[5]-ti[4] );
-#endif
 }
 
 void teardown_map_generator()
@@ -604,38 +601,28 @@ static unsigned long hash_string(unsigned char *str)
 
 extern "C"
 {
-/*
-    PerlinOctave3D* erosion3D;
-    PerlinOctave2D* erosion2D;
-
-    PerlinOctave2D* height2D;
-    PerlinOctave2D* ridge2D;
-
-    PerlinOctave2D* roughness2D;
-*/
     void LUA_set_noisemap_param(int noise_map, float persistance, unsigned char* seed_string)
     {
-        if(map_generator == NULL)   map_generator = new MapGenerator1;
-
-        unsigned long seed = hash_string(seed_string);
-
-        printf("i= %i seed= %li \n", noise_map, seed);
+        if (map_generator == NULL) map_generator = new MapGenerator1;
+        
+        //unsigned long seed = hash_string(seed_string);
+        //printf("i= %i seed= %li \n", noise_map, seed);
         switch(noise_map)
           {
              case 0:
-                map_generator->erosion3D->set_param(persistance, seed);
+                map_generator->erosion3D->set_param(persistance);
                 break;
              case 1:
-                map_generator->erosion2D->set_param(persistance, seed);
+                map_generator->erosion2D->set_param(persistance);
                 break;
              case 2:
-                map_generator->height2D->set_param(persistance, seed);
+                map_generator->height2D->set_param(persistance);
                 break;
              case 3:
-                map_generator->ridge2D->set_param(persistance, seed);
+                map_generator->ridge2D->set_param(persistance);
                 break;
              case 4:
-                map_generator->roughness2D->set_param(persistance, seed);
+                map_generator->roughness2D->set_param(persistance);
                 break;
              default:
                 printf("LUA_set_noisemap_param Error: noisemap %i does not exist \n", noise_map);

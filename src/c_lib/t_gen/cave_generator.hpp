@@ -99,7 +99,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
                 int jj = j%512;
 
                 float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
-                if(d < size*size) t_map::set(ii, jj, k, EMPTY_CUBE);
+                if(d < size*size) t_map::set_fast(ii, jj, k, EMPTY_CUBE);
             }
 
             if(hits_bottom == true) phi *= -1;

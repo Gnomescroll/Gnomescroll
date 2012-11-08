@@ -80,7 +80,7 @@ bool item_def(ItemGroup group, const char* name)
 
     s = &item_attributes[type];
 
-    s->load_defaults(type, group);
+    s->set_type(type, group);
     strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
     s->name[DAT_NAME_MAX_LENGTH] = '\0';
 
@@ -106,7 +106,7 @@ bool item_block_def(const char* block_name)
 
     // capitalize string
     char title_name[ITEM_PRETTY_NAME_MAX_LENGTH+1] = {'\0'};
-    size_t wrote = title_string(block_name, pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
+    size_t wrote = title_string(block_name, title_name, ITEM_PRETTY_NAME_MAX_LENGTH);
     title_name[wrote] = '\0';
     // remove numbers
     size_t j=0;

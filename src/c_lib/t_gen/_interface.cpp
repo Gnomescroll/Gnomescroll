@@ -11,35 +11,28 @@ typedef unsigned char Uint8;
 namespace t_gen
 {
 
-void populate_2d_noise_array(float* _2d_noise_array, unsigned long seed, float persistance, int octaves)
+void populate_2d_noise_array(float* _2d_noise_array, float persistance, int octaves)
 {
-    //class PerlinOctave2D p2d(octaves);
-    init_genrand(seed);
-    //p2d.setup_octaves();
-    //p2d.set_param(persistance, seed);
-
-    class PerlinOctave2D p2d(octaves);
-    //pd2.set_persistance(persistance);
+    init_genrand(rand());
+    class PerlinOctave2D* p2d = new class PerlinOctave2D(octaves);
 
     float sum = 0.0f;
-    for(int i=0; i<512; i++)
-    for(int j=0; j<512; j++)  
+    for(int i=0; i<XMAX; i++)
+    for(int j=0; j<YMAX; j++)  
     {
-        float _x = i*(1.0f/512.0f); // + (0.5/512.0);
-        float _y = j*(1.0f/512.0f); // + (0.5/512.0);
+        float _x = i*(1.0f/(float)XMAX); // + (0.5/512.0);
+        float _y = j*(1.0f/(float)YMAX); // + (0.5/512.0);
 
-        float tmp = p2d.sample(_x,_y,persistance);
-        _2d_noise_array[512*j + i] = tmp;
+        float tmp = p2d->sample(_x,_y,persistance);
+        _2d_noise_array[XMAX*j + i] = tmp;
         sum += tmp;
-        //printf("x,y= %f %f noise= %f \n", _x,_y, tmp );
     }
 
-    //printf("populate_2d_noise_array: average= %f \n", sum/ (512.0f*512.0f));
-    //p2d.save_octaves2(8, "regolith_depth_map");
+    delete p2d;
 }
 
 // NOTE: caller must free() the return value if not NULL
-float* create_2d_noise_array(const unsigned long seed, const float persistence, const int octaves, const unsigned int x, const unsigned int y)
+float* create_2d_noise_array(const float persistence, const int octaves, const unsigned int x, const unsigned int y)
 {
     int size = x*y;
     GS_ASSERT(size > 0);
@@ -49,20 +42,21 @@ float* create_2d_noise_array(const unsigned long seed, const float persistence, 
     GS_ASSERT(noise != NULL);
     if (noise == NULL) return NULL;
 
-    init_genrand(seed);
+    init_genrand(rand());
 
     const float xscale = 1.0f/(float)x;
     const float yscale = 1.0f/(float)y;
     
-    class PerlinOctave2D pgen(octaves);
+    class PerlinOctave2D* pgen = new class PerlinOctave2D(octaves);
 
     for (unsigned int i=0; i<x; i++)
     for (unsigned int j=0; j<y; j++)
-        noise[i + x*j] = pgen.sample((float)i * xscale, (float)j * yscale, persistence);
+        noise[i + x*j] = pgen->sample((float)i * xscale, (float)j * yscale, persistence);
+
+    delete pgen;
 
     return noise;
 }
-
 
 void save_png(const char* filename, float* in, int xres, int yres)
 {

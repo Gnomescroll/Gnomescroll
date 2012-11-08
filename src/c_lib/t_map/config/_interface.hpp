@@ -364,9 +364,10 @@ void verify_config()
 
     // check inactive names against active
     for (int i=0; i<MAX_CUBES; i++)
-    {
-        GS_ASSERT_ABORT(cube_name_map->get_mapped_name(cube_properties[i].name) == NULL);
-    }
+        if (cube_properties[i].loaded)
+        {
+            GS_ASSERT_ABORT(cube_name_map->get_mapped_name(cube_properties[i].name) == NULL);
+        }
 
     // check inactive name destinations against active
     for (size_t i=0; i<cube_name_map->size; i++)

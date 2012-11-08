@@ -102,8 +102,8 @@ class PerlinField2D
 
     ~PerlinField2D()
     {
-        delete[] this->grad;
-        delete[] this->ga;
+        if (this->grad != NULL) delete[] this->grad;
+        if (this->ga != NULL) delete[] this->ga;
     }
 
     __attribute((optimize("-O3")))
@@ -198,6 +198,8 @@ float base(float x, float y)
 
 class PerlinOctave2D
 {
+    private:
+        int runs;
     public:
     int octaves;
     class PerlinField2D* octave_array;
@@ -206,7 +208,7 @@ class PerlinOctave2D
     float cache_persistance;
     unsigned long cache_seed;
 
-    PerlinOctave2D(int _octaves)
+    PerlinOctave2D(int _octaves) : runs(0)
     {
         cache = NULL;
         cache_persistance = 0.0f;
@@ -214,8 +216,7 @@ class PerlinOctave2D
 
         octaves = _octaves;
 
-
-        init_genrand(randf());
+        init_genrand(rand());
         octave_array = new PerlinField2D[octaves];
 
         cache = new float[(512/4)*(512/4)];
@@ -232,8 +233,8 @@ class PerlinOctave2D
 
     ~PerlinOctave2D()
     {
-        delete[] octave_array;
-        delete[] cache;
+        if (this->octave_array != NULL) delete[] this->octave_array;
+        if (this->cache != NULL) delete[] this->cache;
     }
 
     void set_persistance(float persistance)
@@ -246,15 +247,14 @@ class PerlinOctave2D
 
     }
 
-    void set_param(int persistance, unsigned long seed)
+    void set_param(int persistance)
     {
-        static int first_run = 0;
         bool update = false;
-        if(seed != cache_seed || first_run == 0)
+        if (this->runs == 0)
         {
             update = true;
-            cache_seed = seed;
-            init_genrand(seed);
+            cache_seed = rand();
+            init_genrand(this->cache_seed);
             for(int i=0; i<octaves; i++)
                 octave_array[i].generate_gradient_array();
         }
@@ -265,7 +265,7 @@ class PerlinOctave2D
             populate_cache(persistance); 
         }
 
-        first_run++;
+        this->runs++;
     }
 
     __attribute((optimize("-O3")))
@@ -458,18 +458,13 @@ class PerlinOctave2D
 
 void test_octave_2d()
 {
-    return;
-    PerlinOctave2D m(6);
-
     //m.save_octaves2(8, "test");
 }
 
 void test_octave_2d_map_gen(CubeID tile)
 {
-    //return;
-
-    PerlinOctave2D m1(6);
-    PerlinOctave2D m2(6);
+    class PerlinOctave2D* m1 = new class PerlinOctave2D(6);
+    class PerlinOctave2D* m2 = new class PerlinOctave2D(6);
 
     const int xres = 512;
     const int yres = 512;
@@ -490,11 +485,11 @@ void test_octave_2d_map_gen(CubeID tile)
         float y = j*yresf;
 
         //value += 32*m.sample(x,y, 0.75);
-        float roughness = m2.sample(x,y, 0.125f);
+        float roughness = m2->sample(x,y, 0.125f);
         //if(roughness < 0) roughness = 0.0;
         if(roughness < 0) roughness *= -1.0f/32.0f;
 
-        float value = 32 + 32.0f*roughness*m1.sample(x,y, 0.125f);
+        float value = 32 + 32.0f*roughness*m1->sample(x,y, 0.125f);
         if (value < min_value_generated) min_value_generated = value;
         if (value > max_value_generated) max_value_generated = value;
         values[i+512*j] = value;
@@ -540,10 +535,12 @@ void test_octave_2d_map_gen(CubeID tile)
     for(int j=0; j<512; j++)
     {
         for (int k=0; k<baseline+values[i+512*j]; k++)
-            t_map::set(i,j,k,tile);
+            t_map::set_fast(i,j,k,tile);
     }
 
     free(values);
+    delete m1;
+    delete m2;
 }
 
 }   // t_gen

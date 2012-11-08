@@ -68,15 +68,12 @@ class ItemAttribute
     ItemAttribute() :
         loaded(false), item_type(NULL_ITEM_TYPE), group(IG_NONE)
     {
-        for (int i=0; i<MAX_CUBES; this->block_damage[i++] = 1);
+        this->load_defaults();
     }
 
-    void load_defaults(int item_type, ItemGroup group)
+    void load_defaults()
     {
         // PUT ALL DEFAULTS HERE
-        this->group = group;
-        this->item_type = item_type;
-
         memset(this->name, 0, sizeof(this->name));
         memset(this->pretty_name, 0, sizeof(this->pretty_name));
         cube_id = NULL_CUBE;
@@ -124,6 +121,12 @@ class ItemAttribute
         cube_height = 0;
         animation_id = 0;
         loaded = false;
+    }
+
+    void set_type(int item_type, ItemGroup group)
+    {
+        this->group = group;
+        this->item_type = item_type;
     }
 };
 

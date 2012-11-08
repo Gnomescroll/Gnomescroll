@@ -12,11 +12,10 @@ void generate_rock_layer()
     float* _2d_noise_array = new float [512*512];
     int* regolith_depth_array = new int[512*512]; 
 
-    const int seed = 5812;
     const float persistance = 0.99f;
     const int octaves = 8;
 
-    t_gen::populate_2d_noise_array(_2d_noise_array, seed, persistance, octaves);
+    t_gen::populate_2d_noise_array(_2d_noise_array, persistance, octaves);
 
     for(int i=0; i<512; i++)
     for(int j=0; j<512; j++)

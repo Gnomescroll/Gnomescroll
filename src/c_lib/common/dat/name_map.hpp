@@ -94,16 +94,16 @@ class DatNameMap
         if (this->size >= this->max) return false;
         if (cmp == 0) return false;
 
-        size_t index = this->get_index(this->size);
-
         // make sure the original name is not duplicated
         for (size_t i=0; i<this->size; i++)
         {
+            size_t index = this->get_index(i);
             int cmp = strcmp(original, &this->originals[index]);
             GS_ASSERT(cmp != 0);
             if (cmp == 0) return false;
         }
 
+        size_t index = this->get_index(this->size);
         strncpy(&this->originals[index], original, this->name_max);
         this->originals[index + this->name_max] = '\0';
         strncpy(&this->replacements[index], replacement, this->name_max);

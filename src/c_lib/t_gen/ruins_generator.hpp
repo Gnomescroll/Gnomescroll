@@ -79,22 +79,20 @@ struct Room : Rect3D{
 
 Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
 
-
-
 namespace t_gen {
 
-void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id = t_map::get_cube_id("ruins_3") ) {
+void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id)
+{
     for (int z = i_z; z < i_z + i_h; z++) {
         for (int y = i_y; y < i_y + i_dep; y++) {
             for (int x = i_x; x < i_x + i_w; x++) {
-                t_map::set(x, y, z, tile_id);
+                t_map::set_fast(x, y, z, tile_id);
             }
         }
     }
 }
 
-}
-
+}   // t_gen
 
 
 bool far_north_cube(int y) {
@@ -277,16 +275,9 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
         // do south
 
-
-
-
         Rect ne, se, sw, nw; // corner of room to fill w/ blocks
         Rect3D sh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
         int half = cubes_across_room / 2;
-
-        
-
-
 
         // setup temp halls that match adjacent neighbors
         if (opens_to(DIR_NORTH, ri) ) {
@@ -328,12 +319,6 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
             wh.hei = rooms[ri.z][ri.y][ri.x - 1].eh.hei;
         }
         // FIXME need to open up dep/wid to be more than one across??
-
-
-
-
-
-
 
         // setup the 4 corners of the room.  DIRTYPE_ is applied to the next corner that is clockwise from its dir
         if (opens_to(DIR_NORTH, ri) ) {
@@ -420,15 +405,6 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
             nw.wid = half;
         }
 
-
-
-
-
-
-
-        
-
-
         // make lintels or blocked direction
         if (opens_to(DIR_WEST, ri) ) {
             if (far_west_cube(cx) && cz > wh.hei)  need_block = true;
@@ -447,14 +423,10 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
         } //else if (cy >= r.y + r.dep)  need_block = true;
 
         
-        
-        
-
         if (corner_needs_this(ne, DIR_NORTH, r, cx, cy) )  need_block = true;
         if (corner_needs_this(se, DIR_EAST,  r, cx, cy) )  need_block = true;
         if (corner_needs_this(sw, DIR_SOUTH, r, cx, cy) )  need_block = true;
         if (corner_needs_this(nw, DIR_WEST,  r, cx, cy) )  need_block = true;
-
 
         // clear space for stairs
         if (in_air_region(r, cx, cy))    need_block = false; 
@@ -572,15 +544,6 @@ void setup_rooms() {
             r.x = lx;
             r.wid = mx - r.x;
 
-
-
-
-
-
-            
-            
-            
-            
             // connections in directions
             for (int i = 0; i < DIR_MAX; i++) {
                 if /* lateral dir */ (i < DIR_UP) 
@@ -684,11 +647,6 @@ void make_ruins(int x, int y) {
     }
 }
 
-
-
-
-
-
 namespace t_gen {
     void generate_ruins() {
         printf("Making ruins\n");
@@ -708,10 +666,8 @@ namespace t_gen {
         // generate ruins
         for (int x = 0; x < ruins_across_world; x++)
         for (int y = 0; y < ruins_across_world; y++)
-            if (x % 2 == 0  &&  y % 2 == 0)
-                if (randrange(0, 1) == 0)
-                    make_ruins(
-                        x * cubes_across_room * rooms_across_ruins, 
-                        y * cubes_across_room * rooms_across_ruins);
+            if (x % 2 == 0  &&  y % 2 == 0 && rand() % 2 == 0)
+                make_ruins(x * cubes_across_room * rooms_across_ruins, 
+                           y * cubes_across_room * rooms_across_ruins);
     }
 }   // t_gen

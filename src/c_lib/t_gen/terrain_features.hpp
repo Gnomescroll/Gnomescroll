@@ -224,7 +224,7 @@ namespace t_gen {
         if (blocks_are_invalid(shrooms, NUM_SHROOMS) ) return;
 
         // setup perlin array
-        float* noise = t_gen::create_2d_noise_array(seed, persistence, octaves, XMAX, YMAX);  // must free return value
+        float* noise = t_gen::create_2d_noise_array(persistence, octaves, XMAX, YMAX);  // must free return value
         GS_ASSERT(noise != NULL);
         if (noise == NULL) return;
 
