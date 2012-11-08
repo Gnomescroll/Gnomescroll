@@ -143,7 +143,7 @@ void tick()
         Components::healer_component_list->call();
         ServerState::check_agents_at_base();
     }
-    if (counter % 5000 == 999)
+    if (counter % 30000 == 999)
     {
         meteor_fall();
     }
