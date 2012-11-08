@@ -158,6 +158,7 @@ class Item::ItemDrop* get_crusher_drop(int item_type)
 {
     ASSERT_VALID_ITEM_TYPE(item_type);
     IF_INVALID_ITEM_TYPE(item_type) return NULL;
+    if (!drops[item_type].is_loaded()) return NULL;
     return &drops[item_type];
 }
 

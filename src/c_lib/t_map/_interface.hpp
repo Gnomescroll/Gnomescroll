@@ -11,7 +11,7 @@ void end_t_map();
 void init_packets();
 
 int get_block_item_container(int x, int y, int z);
-bool get_container_location(int container_id, int position[3]);
+bool get_container_location(int container_id, int position[3]); // returns false is container not found
 
 CubeID get(int x, int y, int z);
 void set(int x, int y, int z, CubeID cube_id);

@@ -1376,8 +1376,11 @@ bool agent_in_container_range(AgentID agent_id, int container_id)
     if (!container_type_is_block(container->type)) return false;
 
     int block[3];
-    t_map::get_container_location(container->id, block);
-    
+    if (!t_map::get_container_location(container->id, block))
+    {
+        GS_ASSERT(false);
+        return false;
+    }
     return container_block_in_range_of(agent_position, block);
 }
 
@@ -1560,11 +1563,17 @@ void update_smelters()
                     if (is_here)
                     {   // throw it out
                         int p[3];
-                        t_map::get_container_location(smelter->id, p);
-                        Vec3 pos = vec3_init(p[0], p[1], p[2]);
-                        pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 1.05f));
-                        ItemParticle::dump_container_item(fuel_item,
-                            pos.x, pos.y, pos.z);
+                        if (t_map::get_container_location(smelter->id, p))
+                        {
+                            Vec3 pos = vec3_init(p[0], p[1], p[2]);
+                            pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 1.05f));
+                            ItemParticle::dump_container_item(fuel_item,
+                                pos.x, pos.y, pos.z);
+                        }
+                        else
+                        {
+                            GS_ASSERT(false);
+                        }
                     }
                     else
                     {   // erroneous state

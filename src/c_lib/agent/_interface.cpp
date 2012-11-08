@@ -14,6 +14,7 @@ class Agent* create_agent(AgentID id)
 
 class Agent* get_agent(AgentID id)
 {
+    if (id == NULL_AGENT) return NULL;
     return agent_list->get(id);
 }
 

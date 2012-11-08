@@ -451,7 +451,9 @@ inline void crusher_crush_item_CtoS::handle()
     if (type == NULL_ITEM_TYPE) return;
 
     int b[3];
-    t_map::get_container_location(crusher->id, b);
+    bool found = t_map::get_container_location(crusher->id, b);
+    GS_ASSERT(found);
+    if (!found) return;
     Vec3 p = vec3_add(vec3_init(b[0], b[1], b[2]), vec3_init(0.5f, 0.5f, 0.5f));
 
     int plasma_grenade_type = Item::get_item_type("plasma_grenade");

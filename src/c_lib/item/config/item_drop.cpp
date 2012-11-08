@@ -77,7 +77,6 @@ void ItemDrop::drop_item(Vec3 position)
 {
     // treat each item type independently
     // but within each item type treat cumulatively and exclusively
-    
     GS_ASSERT(this->drop != NULL);
     if (this->drop == NULL) return;
     GS_ASSERT(this->max_drops > 0);
