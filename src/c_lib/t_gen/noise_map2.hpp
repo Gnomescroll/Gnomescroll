@@ -82,19 +82,25 @@ class PerlinField2D
     int grad_max;   //number of gradients
 
     //xsize is number of gradients
-    PerlinField2D() {}
+    PerlinField2D() :
+        ga(NULL), grad(NULL), ssize(0), xsize(0), grad_max(0)
+    {}
 
     void init(int _xsize, int _grad_max)
     {
+        GS_ASSERT(this->ga == NULL);
+        GS_ASSERT(this->grad == NULL);
+        if (this->ga != NULL) return;
+        if (this->grad != NULL) return;
+        
         if(_xsize < 1) GS_ABORT();
 
-        xsize = _xsize;
-        ssize = xsize*xsize;
+        this->xsize = _xsize;
+        this->ssize = xsize*xsize;
+        this->grad_max = _grad_max;
 
-        grad_max = _grad_max;
-
-        ga = new unsigned char[ssize];
-        grad = new float[2*grad_max];
+        this->ga = new unsigned char[this->ssize];
+        this->grad = new float[2*this->grad_max];
 
         generate_gradient_array();
         generate_gradient_vectors();
@@ -217,18 +223,12 @@ class PerlinOctave2D
         octaves = _octaves;
 
         init_genrand(rand());
-        octave_array = new PerlinField2D[octaves];
+        this->octave_array = new PerlinField2D[octaves];
 
-        cache = new float[(512/4)*(512/4)];
-        //for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
-        //for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
-        //for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
+        this->cache = new float[(512/4)*(512/4)];
     
-        for(int i=0; i<octaves; i++) octave_array[i].init(primes[i+1], 16);
-
         for(int i=0; i<octaves; i++)
-            octave_array[i].init(primes[i+1], 16);
-
+            this->octave_array[i].init(primes[i+1], 16);
     }
 
     ~PerlinOctave2D()
@@ -271,18 +271,18 @@ class PerlinOctave2D
     __attribute((optimize("-O3")))
     void populate_cache(float persistance)
     {
-        const int XMAX = 512/4;
-        const int YMAX = 512/4;
+        const int xmax = 512/4;
+        const int ymax = 512/4;
 
         float x,y;
 
-        for(int i=0; i<XMAX; i++)
-        for(int j=0; j<YMAX; j++)
+        for(int i=0; i<xmax; i++)
+        for(int j=0; j<ymax; j++)
         {
-            x = i*(4.0f/512.0f);
-            y = j*(4.0f/512.0f);
+            x = i*(4.0f/(float)XMAX);
+            y = j*(4.0f/(float)YMAX);
 
-            cache[j*XMAX + i] = sample(x,y, persistance);
+            cache[j*xmax + i] = sample(x,y, persistance);
         }
     }
 
@@ -293,13 +293,13 @@ class PerlinOctave2D
         float tmp = 0.0f;
         for(int i=0; i<octaves; i++)
         {
-        #if 1
+            #if 1
             tmp += octave_array[i].base(x,y);
             p *= persistance;
-        #else
+            #else
             p *= persistance;
             tmp += p*octave_array[i].base(x,y,z);
-        #endif
+            #endif
         }
         return tmp;
     }

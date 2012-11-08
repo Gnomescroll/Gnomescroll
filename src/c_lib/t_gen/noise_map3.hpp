@@ -281,76 +281,73 @@ class MapGenerator1
 {
     public:
     
-    PerlinOctave3D* erosion3D;
-    PerlinOctave2D* erosion2D;
+        PerlinOctave3D* erosion3D;
+        PerlinOctave2D* erosion2D;
 
-    PerlinOctave2D* height2D;
-    PerlinOctave2D* ridge2D;
+        PerlinOctave2D* height2D;
+        PerlinOctave2D* ridge2D;
 
-    PerlinOctave2D* roughness2D;
+        PerlinOctave2D* roughness2D;
 
-    static const int XMAX = 512/4;
-    static const int YMAX = 512/4;
-    static const int ZMAX = 128/4;
-    static const int XYMAX = 128*128;
+        static const int xmax = 512/4;
+        static const int ymax = 512/4;
+        static const int zmax = 128/4;
+        static const int xymax = xmax*ymax;
 
-/*
-    Multiply by 3, subtract 2 and then clamp to -1 to 1
-*/
-  
-    float* cache;
+        /*
+            Multiply by 3, subtract 2 and then clamp to -1 to 1
+        */  
+        float* cache;
 
     /*
         Octaves
     */
     MapGenerator1()
     {
-        cache = new float[XMAX*YMAX*ZMAX];
         init_genrand(rand());
 
-        erosion3D = new PerlinOctave3D(4);
-        erosion2D = new PerlinOctave2D(4);
-
-        height2D = new PerlinOctave2D(6);
-        ridge2D = new PerlinOctave2D(4);
-
-        roughness2D = new PerlinOctave2D(4);
+        this->cache = new float[this->xmax * this->ymax * this->zmax];
+        this->erosion3D = new PerlinOctave3D(4);
+        this->erosion2D = new PerlinOctave2D(4);
+        this->height2D = new PerlinOctave2D(6);
+        this->ridge2D = new PerlinOctave2D(4);
+        this->roughness2D = new PerlinOctave2D(4);
     }
 
     ~MapGenerator1()
     {
-        delete[] cache;
-        delete erosion3D;
-        delete erosion2D;
-        delete height2D;
-        delete ridge2D;
-        delete roughness2D;
-
+        if (this->cache != NULL) delete[] this->cache;
+        if (this->erosion3D != NULL) delete this->erosion3D;
+        if (this->erosion2D != NULL) delete this->erosion2D;
+        if (this->height2D != NULL) delete this->height2D;
+        if (this->ridge2D != NULL) delete this->ridge2D;
+        if (this->roughness2D != NULL) delete this->roughness2D;
     }
+    
     void set_persistance(float p1, float p2, float p3, float p4, float p5)
     {
-        erosion2D->set_persistance(p2);
-        erosion3D->set_persistance(p1);
+        this->erosion2D->set_persistance(p2);
+        this->erosion3D->set_persistance(p1);
 
-        height2D->set_persistance(p3);
-        ridge2D->set_persistance(p4);
-        roughness2D->set_persistance(p5);
+        this->height2D->set_persistance(p3);
+        this->ridge2D->set_persistance(p4);
+        this->roughness2D->set_persistance(p5);
     }
 
     void save_noisemaps()
     {
-        height2D->save_octaves2(8,"n_height");
+        this->height2D->save_octaves2(8,"n_height");
     }
 
 
     OPTIMIZED
     void populate_cache()
     {
-        for(int k=0; k<ZMAX; k++)
-        for(int i=0; i<XMAX; i++)
-        for(int j=0; j<YMAX; j++)
+        for(int k=0; k<this->zmax; k++)
+        for(int i=0; i<this->xmax; i++)
+        for(int j=0; j<this->ymax; j++)
         {
-            cache[k*XYMAX + j*XMAX + i] = calc(i,j,k);
+            this->cache[k*this->xymax + j*this->xmax + i] = calc(i,j,k);
         }
     }
 
@@ -364,22 +361,22 @@ class MapGenerator1
 
         float v = 0.0f; //value;
 
-        int index2 = j*XMAX + i;
-        int index3 = k*XYMAX + j*XMAX + i;
+        int index2 = j*this->xmax + i;
+        int index3 = k*this->xymax + j*this->xmax + i;
 
-        float h2 = height2D->cache[index2];
+        float h2 = this->height2D->cache[index2];
         //float r2 = roughness2D->cache[index2];
         //float ri2 = ridge2D->cache[index2];
 
         //printf("ri2= %f \n", ri2);
         //float e2 = erosion2D->cache[index2];
-        float e3 = erosion3D->cache[index3];
+        float e3 = this->erosion3D->cache[index3];
 
         //printf("e3= %f \n", e3);
-#if 1
+        #if 1
         static const float hmin = 64;
 
-    /*
+        /*
         if(ri2 < 0) ri2 *= -1;
         ri2 = ((int)(ri2 * 5));
         ri2 *= 0.20f;
@@ -387,8 +384,7 @@ class MapGenerator1
         if( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
         if(v < -1) v = -1;
         if(v > 1) v = 1;
-    */
-
+        */
 
         v += 2.40f*e3*e3;   //only erodes in this form
 
@@ -412,7 +408,7 @@ class MapGenerator1
         v += tmp1;
 
         return v;
-#else 
+        #else 
         /*
             Threshold height
         */
@@ -432,12 +428,12 @@ class MapGenerator1
         if(v < -1) v = -1;
         if(v > 1) v = 1;
 
-#if 1
+        # if 1
         v += 0.40f*e3*e3;   //only erodes in this form
 
         if(v < -1) v = -1;
         if(v > 1) v = 1;
-#endif
+        # endif
         //return v;
 
         static const float hrange = 4.0f;   //half of range (can perturb this with another map)
@@ -457,37 +453,36 @@ class MapGenerator1
         v += tmp1;
 
         return v;
-#endif
+        #endif
     }
-
 
     INLINE_OPTIMIZED
     float get_cache(int i, int j, int k)
     {
-        i &= 127;
-        j &= 127;
-        k &= 31;
-        return cache[k*XYMAX + j*XMAX + i];
+        i &= 0x7F;
+        j &= 0x7F;
+        k &= 0x1F;
+        return cache[k*this->xymax + j*this->xmax + i];
     }
 
     OPTIMIZED
     void generate_map(CubeID tile_id)
     {
 
-        for(int k=0; k<ZMAX-1; k++)
-        for(int i=0; i<XMAX; i++)
-        for(int j=0; j<YMAX; j++)
+        for(int k=0; k<this->zmax-1; k++)
+        for(int i=0; i<this->xmax; i++)
+        for(int j=0; j<this->ymax; j++)
         {
 
             // Calculate noise contributions from each of the eight corners
-            float n000= get_cache(i+0,j+0,k+0);
-            float n100= get_cache(i+1,j+0,k+0);
-            float n010= get_cache(i+0,j+1,k+0);
-            float n110= get_cache(i+1,j+1,k+0);
-            float n001= get_cache(i+0,j+0,k+1);
-            float n101= get_cache(i+1,j+0,k+1);
-            float n011= get_cache(i+0,j+1,k+1);
-            float n111= get_cache(i+1,j+1,k+1);
+            float n000 = this->get_cache(i+0,j+0,k+0);
+            float n100 = this->get_cache(i+1,j+0,k+0);
+            float n010 = this->get_cache(i+0,j+1,k+0);
+            float n110 = this->get_cache(i+1,j+1,k+0);
+            float n001 = this->get_cache(i+0,j+0,k+1);
+            float n101 = this->get_cache(i+1,j+0,k+1);
+            float n011 = this->get_cache(i+0,j+1,k+1);
+            float n111 = this->get_cache(i+1,j+1,k+1);
 
             //map volume lerp: 962 ms 
             for(int i0=0; i0<4; i0++)
@@ -539,21 +534,12 @@ class MapGenerator1* map_generator = NULL;
 
 void test_octave_3d_map_gen(CubeID tile_id)
 {
-/*
-    void set_persistance(float p1, float p2, float p3, float p4, float p5)
-    {
-        erosion2D->set_persistance(p2);
-        erosion3D->set_persistance(p1);
-
-        height2D->set_persistance(p3);
-        ridge2D->set_persistance(p4);
-        roughness2D->set_persistance(p5);
-*/
-    int ti[6]; int i=0;
+    GS_ASSERT(map_generator != NULL);
+    if (map_generator == NULL) return;
+    
+    int ti[6];
+    int i=0;
     ti[i++] = _GET_MS_TIME();
-
-    if (map_generator == NULL) map_generator = new MapGenerator1;
-
     ti[i++] = _GET_MS_TIME();
 
     //set seeds for each of the noise maps
@@ -582,6 +568,12 @@ void test_octave_3d_map_gen(CubeID tile_id)
     printf("5 save noisemaps: %i ms \n", ti[5]-ti[4] );
 }
 
+void init_map_generator()
+{
+    GS_ASSERT(map_generator == NULL);
+    map_generator = new class MapGenerator1;
+}
+
 void teardown_map_generator()
 {
     if (map_generator != NULL) delete map_generator;
@@ -601,79 +593,80 @@ static unsigned long hash_string(unsigned char *str)
 
 extern "C"
 {
-    void LUA_set_noisemap_param(int noise_map, float persistance, unsigned char* seed_string)
+void LUA_set_noisemap_param(int noise_map, float persistance, unsigned char* seed_string)
+{
+    GS_ASSERT(map_generator != NULL);
+    if (map_generator == NULL) return;
+    
+    switch(noise_map)
     {
-        if (map_generator == NULL) map_generator = new MapGenerator1;
-        
-        //unsigned long seed = hash_string(seed_string);
-        //printf("i= %i seed= %li \n", noise_map, seed);
-        switch(noise_map)
-          {
-             case 0:
-                map_generator->erosion3D->set_param(persistance);
-                break;
-             case 1:
-                map_generator->erosion2D->set_param(persistance);
-                break;
-             case 2:
-                map_generator->height2D->set_param(persistance);
-                break;
-             case 3:
-                map_generator->ridge2D->set_param(persistance);
-                break;
-             case 4:
-                map_generator->roughness2D->set_param(persistance);
-                break;
-             default:
-                printf("LUA_set_noisemap_param Error: noisemap %i does not exist \n", noise_map);
-                //abort();
-          }
-    }
-
-
-   float* LUA_get_noisemap_map_cache(int noise_map)
-    {
-        switch(noise_map)
-          {
-             case 0:
-                return map_generator->erosion3D->cache;
-                break;
-             case 1:
-                return map_generator->erosion2D->cache;
-                break;
-             case 2:
-                return map_generator->height2D->cache;
-                break;
-             case 3:
-                return map_generator->ridge2D->cache;
-                break;
-             case 4:
-                return map_generator->roughness2D->cache;
-                break;
-             default:
-                printf("LUA_get_noisemap_map_cache Error: noisemap %i does not exist \n", noise_map);
-                //abort();
-          }
-        return NULL;
-    }
-
-    float* LUA_get_map_lerp_array()
-    {
-        return map_generator->cache;
-    }
-
-    void LUA_generate_map()
-    {
-        #if !PRODUCTION
-        CubeID tile = t_map::get_cube_id("regolith");
-        map_generator->generate_map(tile);
-        t_map::map_post_processing();
-        #endif
+        case 0:
+            map_generator->erosion3D->set_param(persistance);
+            break;
+        case 1:
+            map_generator->erosion2D->set_param(persistance);
+            break;
+        case 2:
+            map_generator->height2D->set_param(persistance);
+            break;
+        case 3:
+            map_generator->ridge2D->set_param(persistance);
+            break;
+        case 4:
+            map_generator->roughness2D->set_param(persistance);
+            break;
+        default:
+            GS_ASSERT(false);
+            printf("%s Error: noisemap %d does not exist \n", __FUNCTION__, noise_map);
+            break;
     }
 }
+
+
+float* LUA_get_noisemap_map_cache(int noise_map)
+{
+    GS_ASSERT(map_generator != NULL);
+    if (map_generator == NULL) return NULL;
+
+    switch(noise_map)
+    {
+        case 0:
+            return map_generator->erosion3D->cache;
+        case 1:
+            return map_generator->erosion2D->cache;
+        case 2:
+            return map_generator->height2D->cache;
+        case 3:
+            return map_generator->ridge2D->cache;
+        case 4:
+            return map_generator->roughness2D->cache;
+         default:
+            GS_ASSERT(false);
+            printf("%s Error: noisemap %d does not exist \n", __FUNCTION__, noise_map);
+            break;
+    }
+    return NULL;
+}
+
+float* LUA_get_map_lerp_array()
+{
+    GS_ASSERT(map_generator != NULL);
+    if (map_generator == NULL) return NULL;
+    return map_generator->cache;
+}
+
+void LUA_generate_map()
+{
+    #if !PRODUCTION
+    CubeID tile = t_map::get_cube_id("regolith");
+    map_generator->generate_map(tile);
+    t_map::map_post_processing();
+    #endif
+}
+}   // extern "C"
 
 }   // t_gen
 
 #ifdef __MSVC__
-    #pragma optimize( "", off )
+# pragma optimize( "", off )
 #endif

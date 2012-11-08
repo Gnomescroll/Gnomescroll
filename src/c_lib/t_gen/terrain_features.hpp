@@ -24,9 +24,6 @@ CubeID trunks[NUM_TRUNKS];
 const size_t NUM_SHROOMS = 2;
 CubeID shrooms[NUM_SHROOMS] = {NULL_CUBE};
 
-// we probably dont want to use the same base seed as the map generator, or we'll get the same heightmap. maybe
-// this should really be abstacted to a function get_next_seed() but whatever
-const int seed = Options::seed * 2;
 const float persistence = 0.5f; // tweak
 const int octaves = 6;  // tweak
 

@@ -336,6 +336,8 @@ int init_c_lib(int argc, char* argv[])
     ItemParticle::init();
 
     serializer::init();
+
+    t_gen::init_map_generator();
     
     return 0;
 }
