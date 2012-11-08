@@ -522,7 +522,7 @@ void mouse_left_click_handler(int container_id, int slot, bool alt_action)
     {
         GS_ASSERT(attr->alpha_packet != NULL);
         if (attr->alpha_packet == NULL) return;
-        attr->alpha_packet(action, container_id, slot);        
+        attr->alpha_packet(action, container_id, slot);
     }
 }
 

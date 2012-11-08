@@ -224,8 +224,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
         bool can_insert_item(int slot, ItemID item_id)
         {
             GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
-            if (Item::get_item_type(item_id) != this->energy_tank_type)
-                return false;
+            if (Item::get_item_type(item_id) != this->energy_tank_type) return false;
             return ItemContainerInterface::can_insert_item(slot, item_id);
         }
 
@@ -458,7 +457,6 @@ class ItemContainerSmelter: public ItemContainerInterface
         {
             GS_ASSERT(this->is_valid_slot(slot));
             if (!this->is_valid_slot(slot)) return false;
-            GS_ASSERT(item_id != NULL_ITEM);
             if (item_id == NULL_ITEM) return false;
 
             // check fuel slot
@@ -469,7 +467,7 @@ class ItemContainerSmelter: public ItemContainerInterface
                 // we can't insert anything here through an action.
                 // the insert can only be done by server with special function
                 return false;
-            return true;
+            return ItemContainerInterface::can_insert_item(slot, item_id);
         }
 
         int get_empty_slot()
@@ -534,11 +532,8 @@ class ItemContainerCrusher: public ItemContainerInterface
 
         bool can_insert_item(int slot, ItemID item_id)
         {
-            GS_ASSERT(this->is_valid_slot(slot));
-            if (!this->is_valid_slot(slot)) return false;
-            if (item_id == NULL_ITEM) return false;
-            if (slot == this->input_slot) return true;
-            return false;
+            if (slot != this->input_slot) return false;
+            return ItemContainerInterface::can_insert_item(slot, item_id);
         }
 
         void init(int xdim, int ydim)

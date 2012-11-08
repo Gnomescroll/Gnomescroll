@@ -143,24 +143,18 @@ void load_block_dat()
 
     cube_def(SolidCube, "steel_block_1");
     iso_texture(t8, 9,5);
-    side_texture(T, t8, 9,6);
-    side_texture(B, t8, 9,6);
     push_texture();
     set_max_damage(64);
     hud_def(5,1,t8,9,5);
 
     cube_def(SolidCube, "steel_block_2");
     iso_texture(t8, 10,5);
-    side_texture(T, t8, 10,6);
-    side_texture(B, t8, 10,6);
     push_texture();
     set_max_damage(64);
     hud_def(5,3,t8,10,5);
 
     cube_def(SolidCube, "steel_block_3");
     iso_texture(t8, 11,5);
-    side_texture(T, t8, 11,6);
-    side_texture(B, t8, 11,6);
     push_texture();
     set_max_damage(64);
     hud_def(5,2,t8,11,5);
