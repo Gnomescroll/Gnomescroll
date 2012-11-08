@@ -1,3 +1,3 @@
 #pragma once
 
-#define GS_VERSION 33
+#define GS_VERSION 34
