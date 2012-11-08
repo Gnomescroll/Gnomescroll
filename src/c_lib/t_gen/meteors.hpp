@@ -104,8 +104,8 @@ void meteor_fall(void)
     while (displacedcount <= displacement)
     {
         zcurrent=z + METEOR_SIZE + randrange(1, 20);
-        xcurrent=x + METEOR_SIZE + randrange(1, 60 - zcurrent);
-        ycurrent=y + METEOR_SIZE + randrange(1, 60 - zcurrent);
+        xcurrent=x + METEOR_SIZE + randrange(1, (60 - zcurrent) / 2);
+        ycurrent=y + METEOR_SIZE + randrange(1, (60 - zcurrent) / 2);
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         xcurrent=xcurrent + randrange(1, 3);
         ycurrent=ycurrent + randrange(1, 3);
@@ -120,8 +120,8 @@ void meteor_fall(void)
     while (displacedcount <= displacement)
     {
         zcurrent=z + METEOR_SIZE + randrange(1, 20);
-        xcurrent=x - randrange(1, 60 - zcurrent);
-        ycurrent=y - randrange(1, 60 - zcurrent);
+        xcurrent=x - randrange(1, (60 - zcurrent) / 2);
+        ycurrent=y - randrange(1, (60 - zcurrent) / 2);
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         xcurrent=xcurrent - randrange(1, 3);
         ycurrent=ycurrent - randrange(1, 3);
@@ -135,9 +135,12 @@ void meteor_fall(void)
     displacedcount=0;
     while (displacedcount <= displacement / 2)
     {
-        zcurrent=z + randrange(-1, METEOR_SIZE + 1);
-        xcurrent=x + randrange(-1, METEOR_SIZE + 1);
-        ycurrent=y + randrange(-1, METEOR_SIZE + 1);
+        zcurrent=z - randrange(0, 1);
+        xcurrent=x - randrange(0, 1);
+        ycurrent=y - randrange(0, 1);
+        zcurrent=z + randrange(0, METEOR_SIZE + 1);
+        xcurrent=x + randrange(0, METEOR_SIZE + 1);
+        ycurrent=y + randrange(0, METEOR_SIZE + 1);
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         displacedcount++;
     }
