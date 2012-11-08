@@ -145,7 +145,7 @@ void tick()
     }
     if (counter % 30000 == 999)
     {
-        meteor_fall();
+        //meteor_fall();
     }
 
     //ServerState::spawn_items(2);

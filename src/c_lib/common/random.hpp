@@ -7,6 +7,8 @@ typedef float (*randFloat)();
 // returns random integer with lowest value min, and highest value max
 inline int randrange(int min, int max)
 {
+    GS_ASSERT(min >= 0 && min <= max);
+    if (min < 0 || min > max) return 0;
     return rand() % (max - min + 1) + min;
 }
 
