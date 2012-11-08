@@ -42,16 +42,12 @@ void ItemList::decay_gas()
     // decay any gases
     // dont decay if container is cryofreezer
 
-    int container_id;
-    Item* item;
-    ItemAttribute* attr;
-    ItemContainer::ItemContainerInterface* container;
     for (unsigned int i=0; i<this->max; i++)
     {
         // get item
         if (this->objects[i].id == this->null_id) continue;
-        item = &this->objects[i];
-        attr = get_item_attributes(item->type);
+        class Item* item = &this->objects[i];
+        class ItemAttribute* attr = get_item_attributes(item->type);
         GS_ASSERT(attr != NULL);
         if (attr == NULL) continue;
         if (!attr->gas) continue;
@@ -70,11 +66,11 @@ void ItemList::decay_gas()
         }
         else if (item->location == IL_CONTAINER)
         {   // get container
-            container_id = item->location_id;
+            int container_id = item->location_id;
             GS_ASSERT(container_id != NULL_CONTAINER);  // if it wasnt a particle it should be in a container
             if (container_id == NULL_CONTAINER) continue;
 
-            container = ItemContainer::get_container(container_id);
+            class ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
             GS_ASSERT(container != NULL);
             if (container == NULL) continue;
             // ignore cryofreezer items
@@ -99,10 +95,12 @@ void ItemList::decay_gas()
                     item->gas_decay = attr->gas_lifetime;
                     if (stack_size != final_stack)
                     {
-                        AgentID agent_id = container->owner;
-                        Agent* agent = Agents::get_agent(agent_id);
-                        if (agent != NULL)
-                            send_item_state(item->id);
+                        if (container->owner != NULL_AGENT)
+                        {
+                            class Agent* agent = Agents::get_agent(container->owner);
+                            if (agent != NULL)
+                                send_item_state(item->id);
+                        }
                     }
                 }
             }
@@ -119,9 +117,12 @@ void ItemList::decay_gas()
                     item->gas_decay = attr->gas_lifetime;
                     if (stack_size != final_stack)
                     {
-                        Agent* agent = Agents::get_agent((AgentID)item->location_id);
-                        if (agent != NULL)
-                            send_item_state(item->id);
+                        if (item->location_id != NULL_AGENT)
+                        {
+                            Agent* agent = Agents::get_agent((AgentID)item->location_id);
+                            if (agent != NULL)
+                                send_item_state(item->id);
+                        }
                     }
                 }
             }
