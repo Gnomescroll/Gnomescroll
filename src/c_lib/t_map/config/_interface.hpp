@@ -145,6 +145,7 @@ void set_max_damage(int max_damage)
 }
 
 #if DC_SERVER
+void hud_def(int yhud, int xhud, int tex_id) {}
 void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos) {}
 void push_oriented_texture() {}
 void push_texture() {}
@@ -270,38 +271,37 @@ void push_oriented_texture()
     _palette_number += 4;
 }
 
-void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos)
+void hud_def(int yhud, int xhud, int tex_id)
 {
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
 
-    if (xpos < 1 || ypos < 1) printf("hud_def error: ypos and xpos must be greater than 1\n");
     if (yhud < 1 || xhud < 1 || xhud > 8 || yhud > 8) printf("hud_def error: yhud and xhud must be between 1 and 8\n");
-    GS_ASSERT_ABORT(xpos >= 1 && ypos >= 1);
     GS_ASSERT_ABORT(xhud >= 1 && yhud >= 1 && xhud <= 8 && yhud <= 8);
-
-    int tex_id = TextureSheetLoader::blit_cube_texture(sheet_id, xpos, ypos);
-    GS_ASSERT_ABORT(tex_id != NULL_SPRITE);
-    if (tex_id == NULL_SPRITE) return;
 
     // check that the texture is use somewhere in the cube
     bool found = false;
     for (int i=0; i<6; i++)
-    {
-        if (_side_texture[i] == 0) continue;
         if (_side_texture[i] == tex_id)
         {
             found = true;
             break;
         }
-    }
     if (!found)
     {
-        printf("%s failed for sheet,y,x %d,%d,%d. No matching texture found for def (check iso_texture)\n", __FUNCTION__, sheet_id, ypos, xpos);
+        printf("%s failed for texture id %d. No matching texture found (texture must be used in iso_texture or side_texture)\n", __FUNCTION__, tex_id);
         GS_ASSERT_ABORT(found);
     }
 
-    set_cube_hud(xhud, yhud, p->id, tex_id);
+    HudCubeSelector::set_cube_hud(xhud, yhud, p->id, tex_id);
+}
+
+void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos)
+{
+    int tex_id = TextureSheetLoader::blit_cube_texture(sheet_id, xpos, ypos);
+    GS_ASSERT_ABORT(tex_id != NULL_SPRITE);
+    if (tex_id == NULL_SPRITE) return;
+    hud_def(yhud, xhud, tex_id);
 }
 
 int texture_alias(const char* spritesheet) 

@@ -15,32 +15,21 @@
 namespace HudCubeSelector
 {
 
-void CubeSelector::init()
-{
-    GS_ASSERT(this->cubes == NULL);
-    if (this->cubes != NULL) return;
-    this->cubes = (struct cube_select_element*)malloc(N_CUBES * sizeof(struct cube_select_element));
-    for(int i=0;i<N_CUBES;i++)
-    {
-        cubes[i].cube_id = NULL_CUBE;
-        cubes[i].tex_id = 1;
-    }
-}
-
 void CubeSelector::set_block_selector(int pos, CubeID cube_id, int tex_id)
 {
     GS_ASSERT(cube_id != NULL_CUBE);
-    GS_ASSERT(tex_id >= 0);
+    GS_ASSERT(tex_id != NULL_SPRITE && tex_id >= 0);
     GS_ASSERT(pos >= 0 && pos < 64);
-    if (tex_id < 0) return;
-    if (pos < 0 || pos >= 64) return;
     if (cube_id == NULL_CUBE) return;
+    if (tex_id == NULL_SPRITE || tex_id < 0) return;
+    if (pos < 0 || pos >= 64) return;
 
     GS_ASSERT(cubes[pos].cube_id == NULL_CUBE);
+    GS_ASSERT(cubes[pos].tex_id == NULL_SPRITE);
     cubes[pos].cube_id = cube_id;
 
     for (int i=0; i<64; i++)
-        if (cubes[i].tex_id != 1)
+        if (cubes[i].tex_id != NULL_SPRITE)
             GS_ASSERT(cubes[i].tex_id != tex_id); 
     
     cubes[pos].tex_id = tex_id;
@@ -71,9 +60,8 @@ void CubeSelector::set_active_pos(int pos)
 
 void CubeSelector::set_active_id(int id)
 {
-    if (id == 255) return;
-
-    for (int i=0; i<256; i++)
+    if (id == 0xFF) return;
+    for (int i=0; i<MAX_CUBES; i++)
         if (cubes[i].cube_id == id)
         {
             this->set_active_pos(i);
@@ -85,42 +73,50 @@ void CubeSelector::draw()
 {
     GS_ASSERT(this->cubes != NULL);
     if (this->cubes == NULL) return;
-    int i,j;
-    float x0,y0,x1,y1;
-
-    int ti, tj;
-    int tex_id;
-    float tx_min,ty_min,tx_max,ty_max;
 
     const float _ssize = 16;
     const float sborder = 1;
     const float z_ = -0.5f;
-
     const float txmargin = 0.001f;
 
-    glColor3ub(255,255,255);
+    const float width = this->n_x * (_ssize+sborder);
+    const float height = this->n_y * (_ssize+sborder);
 
+    // draw black background
+    glColor3ub(0,0,0);
+    glBegin(GL_QUADS);
+    glVertex3f(this->x, this->y, z_);
+    glVertex3f(this->x + width, this->y, z_);
+    glVertex3f(this->x + width, this->y - height, z_);
+    glVertex3f(this->x, this->y - height, z_);
+    glEnd();
+
+    glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
 
     glBegin(GL_QUADS);
 
-    for(i=0;i<8;i++)
-    for(j=0;j<8;j++)
+    // draw sprites
+    for(int i=0; i<this->n_x; i++)
+    for(int j=0; j<this->n_y; j++)
     {
-        x0 = x + i*(_ssize+sborder) + sborder/2;
-        x1 = x0 + _ssize - sborder;
-        y0 = y - j*(_ssize+sborder) + sborder/2;
-        y1 = y0 + _ssize - sborder;
+        CubeID cube_id = cubes[i+8*j].cube_id;
+        if (cube_id == NULL_CUBE) continue;
+        int tex_id = cubes[i+8*j].tex_id;
+        
+        float x0 = x + i*(_ssize+sborder) + sborder/2;
+        float x1 = x0 + _ssize - sborder;
+        float y0 = y - j*(_ssize+sborder) + sborder/2;
+        float y1 = y0 - _ssize + sborder;
 
-        tex_id = cubes[i+8*j].tex_id;
-        ti = tex_id % 16;
-        tj = tex_id / 16;
+        int ti = tex_id % 16;
+        int tj = tex_id / 16;
 
-        tx_min = ti*0.0625f + txmargin;
-        ty_min = tj*0.0625f + txmargin;
-        tx_max = ti*0.0625f + 0.0625f - txmargin;
-        ty_max = tj*0.0625f + 0.0625f - txmargin;
+        float tx_min = ti*0.0625f + txmargin;
+        float ty_min = tj*0.0625f + txmargin;
+        float tx_max = ti*0.0625f + 0.0625f - txmargin;
+        float ty_max = tj*0.0625f + 0.0625f - txmargin;
 
         glTexCoord2f(tx_min,ty_max);
         glVertex3f(x0, y0, z_);  // Top left
@@ -139,33 +135,23 @@ void CubeSelector::draw()
     glDisable(GL_TEXTURE_2D);
 
     // draw selected cube outline
-    const float s_margin = 1.0f; //selector margin
-    i = this->pos_x;
-    j = this->pos_y;
-    //printf("i= %i, j= %i\n",i,j);
+    int i = this->pos_x;
+    int j = this->pos_y;
 
-    x0 = x + i*(_ssize+sborder) + sborder/2 - s_margin;
-    x1 = x + i*(_ssize+sborder) + _ssize - sborder/2 + s_margin;
-    y0 = y - j*(_ssize+sborder) + sborder/2 - s_margin;
-    y1 = y - j*(_ssize+sborder) + _ssize - sborder/2 + s_margin;
-    
-    x0 = x + i*(_ssize+sborder) + sborder/2;
-    x1 = x0 + _ssize - sborder;
-    y0 = y - j*(_ssize+sborder) + sborder/2;
-    y1 = y0 + _ssize - sborder;
+    float x0 = x + i*(_ssize+sborder) + sborder/2;
+    float x1 = x0 + _ssize - sborder;
+    float y0 = y - j*(_ssize+sborder) + sborder/2;
+    float y1 = y0 - _ssize + sborder;
     
     glLineWidth(1.0f);
     glColor4ub(0,0,255,255);  // blue
     glBegin(GL_LINE_STRIP);
 
     glVertex3f(x0, y0, z_);  // Top left
-
     glVertex3f(x1,y0, z_);  // Top right
-
     glVertex3f(x1,y1, z_);  // Bottom right
-
     glVertex3f(x0,y1, z_);  // Bottom left
-    glVertex3f(x0, y0, z_);
+    glVertex3f(x0, y0, z_); // tie up the last line
 
     glEnd();
     glLineWidth(1.0f);
@@ -244,22 +230,23 @@ bool CubeSelector::set_block_type(CubeID cube_id)
 
 CubeSelector::CubeSelector() :
     x(0),y(0),
-    size(0),
-    mode(0),
     n_x(8), n_y(8),
     pos(0),
-    pos_x(0), pos_y(0),
-    cubes(NULL)
-{}
+    pos_x(0), pos_y(0)
+{
+    this->cubes = (struct CubeSelectElement*)malloc(MAX_CUBES * sizeof(struct CubeSelectElement));
+    for(int i=0; i<MAX_CUBES; i++)
+    {
+        cubes[i].cube_id = NULL_CUBE;
+        cubes[i].tex_id = NULL_SPRITE;
+    }
+}
 
 CubeSelector cube_selector;
 
 void init()
 {
-    cube_selector.init();
     cube_selector.set_position(150,250);
-}
-
 }
 
 void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id)
@@ -273,3 +260,5 @@ void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id)
     hudy--;
     HudCubeSelector::cube_selector.set_block_selector(8*hudy+hudx, cube_id, tex_id);
 }
+
+}   // HudCubeSelector

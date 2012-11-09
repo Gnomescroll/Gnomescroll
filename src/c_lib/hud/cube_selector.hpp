@@ -5,14 +5,6 @@
 namespace HudCubeSelector
 {
 
-const int N_CUBES = 256;
-
-struct cube_select_element
-{
-    CubeID cube_id;
-    int tex_id;
-};
-
 class CubeSelector
 {
     private:
@@ -20,19 +12,20 @@ class CubeSelector
         void vertical(bool up);
 
     public:
-        float x,y;
-        float size;
-        int mode;
 
+        float x,y;
         int n_x, n_y;
         int pos;
         int pos_x,pos_y;
 
-        //int texture;
+        struct CubeSelectElement
+        {
+            CubeID cube_id;
+            int tex_id;
+        };
+        
+        struct CubeSelectElement* cubes;
 
-        struct cube_select_element* cubes;
-
-        void init();
         void set_position(float x, float y);
         void set_block_selector(int pos, CubeID cube_id, int tex_id);
         void set_active_pos(int pos);
@@ -54,8 +47,6 @@ class CubeSelector
 extern CubeSelector cube_selector;
 
 void init();
-
+void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id);
 
 }   // HudCubeSelector
-
-void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id);

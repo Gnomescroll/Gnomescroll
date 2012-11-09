@@ -70,15 +70,6 @@ void apply_block_dat_changes()
 
 void load_block_dat()
 {
-    //int t0 = texture_alias("media/sprites/terrain/t00.png");
-    //int t1 = texture_alias("media/sprites/terrain/t01.png");
-    //int t2 = texture_alias("media/sprites/terrain/t02.png");
-    //int t3 = texture_alias("media/sprites/terrain/t03.png");
-    ////int t4 = texture_alias("media/sprites/terrain/t04.png");
-    //int t5 = texture_alias("media/sprites/terrain/t05.png");
-    //int t6 = texture_alias("media/sprites/terrain/t06.png");
-    //int t7 = texture_alias("media/sprites/terrain/t07.png");
-
     int t8 = texture_alias("media/sprites/terrain/t08.png");
 
     const int T = 0;
@@ -103,6 +94,7 @@ void load_block_dat()
     side_texture(W, error_block);
     side_texture(E, error_block);
     push_texture();
+    hud_def(1,1, error_block);
 
     cube_def_container("storage_block_small", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
     iso_texture(t8, 1,9);
