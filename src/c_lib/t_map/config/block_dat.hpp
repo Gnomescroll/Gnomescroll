@@ -94,7 +94,7 @@ void load_block_dat()
     side_texture(W, error_block);
     side_texture(E, error_block);
     push_texture();
-    hud_def(1,1, error_block);
+    //hud_def(1,1, error_block);
 
     cube_def_container("storage_block_small", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
     iso_texture(t8, 1,9);
