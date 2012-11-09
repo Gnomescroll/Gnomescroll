@@ -1165,7 +1165,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     }
 
     // update coins
-    if (cost && coins != NULL)
+    if (cost && coin_item != NULL)
     {
         if (coin_stack == cost)
         {   // delete coins
