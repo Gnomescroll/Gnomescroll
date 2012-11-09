@@ -48,7 +48,9 @@ bool save_remote_player_data()
         int* containers = ItemContainer::get_player_containers(client->agent_id, &n_containers);
         GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
         for (int j=0; j<n_containers; j++)
-            save_player_container(client->client_id, containers[j]);
+            // TODO -- enable hand saving
+            if (containers[j] != ItemContainer::get_agent_hand(client->agent_id))
+                save_player_container(client->client_id, containers[j]);
     }
     
     return true;

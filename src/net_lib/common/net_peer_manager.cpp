@@ -112,8 +112,9 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
     }
 
     for (int i=0; i<N_PLAYER_CONTAINERS; i++)
-        if (!serializer::load_player_container(serializer_id, ItemContainer::player_container_types[i]))
-            this->deserializer_failed();
+        if (ItemContainer::player_container_types[i] != AGENT_HAND) // TODO -- allow hand loading eventually
+            if (!serializer::load_player_container(serializer_id, ItemContainer::player_container_types[i]))
+                this->deserializer_failed();
     if (!serializer::end_player_load(serializer_id))
         this->deserializer_failed();
 }

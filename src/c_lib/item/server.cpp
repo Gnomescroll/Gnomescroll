@@ -51,6 +51,7 @@ void unsubscribe_agent_from_item(AgentID agent_id, ItemID item_id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
 
+    // TODO -- allow more subscribers under certain contexts (public containers)
     GS_ASSERT(item->subscribers.count == 1);
     bool rm = item->subscribers.remove(a->client_id);
     GS_ASSERT(rm);

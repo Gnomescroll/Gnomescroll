@@ -1165,7 +1165,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     }
 
     // update coins
-    if (cost)
+    if (cost && coins != NULL)
     {
         if (coin_stack == cost)
         {   // delete coins
@@ -1174,6 +1174,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
         else
         {   // decrement coin stack
             coin_item->stack_size -= cost;
+            GS_ASSERT(coin_item->stack_size > 0);
             Item::send_item_state(coins);
         }
     }
@@ -1335,6 +1336,7 @@ bool consume_crafting_reagents(AgentID agent_id, int container_id, int recipe_id
         else
         {   // decrement this item
             item->stack_size -= count;
+            GS_ASSERT(item->stack_size > 0);
             Item::send_item_state(item->id);
         }
     }
