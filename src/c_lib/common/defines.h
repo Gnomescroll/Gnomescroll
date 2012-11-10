@@ -3,31 +3,30 @@
 typedef unsigned int GLuint;
 
 #ifdef __WIN32__
-    #ifndef uint
-        #define uint unsigned int
-    #endif
+# ifndef uint
+#  define uint unsigned int
+# endif
 #endif
 
 #ifdef DC_CLIENT
-    #define STATE ClientState
+# define STATE ClientState
 #else
-    #define STATE ServerState
+# define STATE ServerState
 #endif
 
 #ifndef PRODUCTION
-    #define  PRODUCTION 0
+# define  PRODUCTION 0
 #endif
 
 #ifndef PRODUCTION_DEV
-    #define  PRODUCTION_DEV 0
+# define  PRODUCTION_DEV 0
 #endif
 
 #ifdef __MSVC__
-    #include <float.h>
-    #define isfinite( x ) ( _finite( x ) && x==x )  
-    float cbrt(float arg) { return pow(arg, 1.0f/3); }
-
-    static int S_IRWXU = 0;
+# include <float.h>
+# define isfinite( x ) ( _finite( x ) && x==x )  
+float cbrt(float arg) { return powf(arg, 1.0f/3.0f); }
+static int S_IRWXU = 0;
 #endif
 ///*
   //Turn off GS_ASSERTs when production is enabled

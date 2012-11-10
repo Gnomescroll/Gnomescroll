@@ -11,9 +11,9 @@ namespace Auth
 
 // Configuration
 #if PRODUCTION
-#define SECRET_KEY_PATH "./keys/secret_key.prod"
+# define SECRET_KEY_PATH "./keys/secret_key.prod"
 #else
-#define SECRET_KEY_PATH "./keys/secret_key.debug"
+# define SECRET_KEY_PATH "./keys/secret_key.debug"
 #endif
 
 #define SECRET_KEY_PATH_TMP_EXT ".new"

@@ -581,7 +581,6 @@ class agent_set_block_CtoS: public FixedSizeReliableNetPacketToServer<agent_set_
         inline void handle();
 };
 
-//#if !PRODUCTION
 class admin_set_block_CtoS: public FixedSizeReliableNetPacketToServer<admin_set_block_CtoS>
 {
     public:
@@ -597,7 +596,6 @@ class admin_set_block_CtoS: public FixedSizeReliableNetPacketToServer<admin_set_
         }
         inline void handle();
 };
-//#endif
 
 /****************/
 

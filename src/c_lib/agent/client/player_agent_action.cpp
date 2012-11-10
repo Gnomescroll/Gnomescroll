@@ -459,7 +459,6 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     return true;
 }
 
-//#if !PRODUCTION
 void PlayerAgent_action::admin_set_block()
 {
     class Agent* you = p->you();
@@ -507,7 +506,6 @@ void PlayerAgent_action::admin_set_block()
         msg.send();
     }
 }
-//#endif
 
 void PlayerAgent_action::throw_grenade()
 {
