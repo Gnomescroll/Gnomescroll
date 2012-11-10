@@ -29,6 +29,6 @@ void update();
 
 int test();
 
-void enumerate_devices();
+const char* enumerate_devices();
 
 }   // OpenALSound

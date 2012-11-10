@@ -2,6 +2,7 @@
 
 #include <item/common/enum.hpp>
 #include <item/common/struct.hpp>
+#include <SDL/constants.hpp>
 
 #if DC_CLIENT
 #include <SDL/texture_sheet_loader.hpp>
@@ -30,7 +31,7 @@ class ItemAttribute* s = NULL;
 static int _current_item_index = 0;
 
 #if DC_CLIENT
-static int _item_cube_iso_spritesheet_id = -1;
+static SpriteSheet _item_cube_iso_spritesheet_id = NULL_SPRITE_SHEET;
 #endif
 
 void finish_item_def()
@@ -170,12 +171,12 @@ void set_pretty_name(const char* pretty_name)
 
 #if DC_CLIENT
 
-int texture_alias(const char* spritesheet_filename)
+SpriteSheet texture_alias(const char* spritesheet_filename)
 {
     return TextureSheetLoader::load_item_texture_sheet(spritesheet_filename);
 }
 
-void sprite_def(int spritesheet, int ypos, int xpos)
+void sprite_def(SpriteSheet spritesheet, int ypos, int xpos)
 {
     GS_ASSERT_ABORT(s != NULL);
     if (s == NULL) return;
@@ -211,8 +212,8 @@ void iso_block_sprite_def(const char* block_name)
 }
 
 #else
-int texture_alias(const char* spritesheet) { return 0; }
-void sprite_def(int spritesheet, int xpos, int ypos) {}
+SpriteSheet texture_alias(const char* spritesheet) { return (SpriteSheet)0; }
+void sprite_def(SpriteSheet spritesheet, int xpos, int ypos) {}
 void iso_block_sprite_def(const char* block_name) {}
 #endif
 

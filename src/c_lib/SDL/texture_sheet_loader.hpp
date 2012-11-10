@@ -1,6 +1,10 @@
 #pragma once
 
-const int NULL_SPRITE = 0xff+1;
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
+#include <SDL/constants.hpp>
 
 namespace TextureSheetLoader
 {
@@ -24,11 +28,11 @@ class TextureSheetLoader
         struct SDL_Surface* grey_scale_texture_sheet;  //for 2d array
         Uint32* texture_stack; //for 3d arrays
 
-        int load_texture(const char* filename);
-        int load_texture_from_surface(struct SDL_Surface* surface);
+        SpriteSheet load_texture(const char* filename);
+        SpriteSheet load_texture_from_surface(struct SDL_Surface* surface);
 
         // blit to sheet and return texture id
-        int blit(unsigned int sheet_id, int source_x, int source_y);
+        int blit(SpriteSheet sheet_id, int source_x, int source_y);
 
         void generate_grey_scale();
 
@@ -55,14 +59,14 @@ void teardown_item_texture();
 void teardown();
 
 //cube texture sheet api
-int load_cube_texture_sheet(const char* filename);
-int blit_cube_texture(int sheet_id, int source_x, int source_y);
+SpriteSheet load_cube_texture_sheet(const char* filename);
+int blit_cube_texture(SpriteSheet sheet_id, int source_x, int source_y);
 void save_cube_texture();
 
 //item texture sheet api
-int load_item_texture_sheet(const char* filename);
-int load_item_texture_sheet(struct SDL_Surface* surface);
-int blit_item_texture(int sheet_id, int source_x, int source_y);
+SpriteSheet load_item_texture_sheet(const char* filename);
+SpriteSheet load_item_texture_sheet(struct SDL_Surface* surface);
+int blit_item_texture(SpriteSheet sheet_id, int source_x, int source_y);
 void save_item_texture();
 
 }   // TextureSheetLoader

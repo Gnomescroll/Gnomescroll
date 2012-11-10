@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL/constants.hpp>
 #include <t_map/glsl/palette.hpp>
 
 namespace t_map
@@ -145,17 +146,17 @@ void set_max_damage(int max_damage)
 }
 
 #if DC_SERVER
-void hud_def(int yhud, int xhud, int tex_id) {}
-void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos) {}
+void hud_def(int yhud, int xhud, SpriteSheet sheet_id, int ypos, int xpos) {}
+void hud_def(SpriteSheet sheet_id, int ypos, int xpos) {}
 void push_oriented_texture() {}
 void push_texture() {}
 void iso_texture(int tex_id) {}
-void iso_texture(int sheet_id, int ypos, int xpos) {}
+void iso_texture(SpriteSheet sheet_id, int ypos, int xpos) {}
 void side_texture(int side, int tex_id) {}
-void side_texture(int side, int sheet_id, int ypos, int xpos) {}
+void side_texture(int side, SpriteSheet sheet_id, int ypos, int xpos) {}
 
-int sprite_alias(int sheet_id, int ypos, int xpos) { return 0; }
-int texture_alias(const char* spritesheet) { return 0; }
+int sprite_alias(SpriteSheet sheet_id, int ypos, int xpos) { return 0; }
+SpriteSheet texture_alias(const char* spritesheet) { return (SpriteSheet)0; }
 #endif
 
 #if DC_CLIENT
@@ -164,7 +165,7 @@ void iso_texture(int tex_id)
     for (int i=0; i<6; _side_texture[i++] = tex_id);
 }
 
-void iso_texture(int sheet_id, int ypos, int xpos)
+void iso_texture(SpriteSheet sheet_id, int ypos, int xpos)
 {
     GS_ASSERT_ABORT(xpos >= 1 && ypos >= 1);
     if (xpos < 1 || ypos < 1) return;
@@ -183,7 +184,7 @@ void side_texture(int side, int tex_id)
     _side_texture[side] = tex_id;
 }
 
-void side_texture(int side, int sheet_id, int ypos, int xpos)
+void side_texture(int side, SpriteSheet sheet_id, int ypos, int xpos)
 {
     GS_ASSERT_ABORT(xpos >= 1 && ypos >= 1);
     if (xpos < 1 || ypos < 1) return;
@@ -271,7 +272,7 @@ void push_oriented_texture()
     _palette_number += 4;
 }
 
-void hud_def(int yhud, int xhud, int tex_id)
+static void hud_def(int yhud, int xhud, int tex_id)
 {
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
@@ -296,7 +297,7 @@ void hud_def(int yhud, int xhud, int tex_id)
     HudCubeSelector::set_cube_hud(xhud, yhud, p->id, tex_id);
 }
 
-void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos)
+void hud_def(int yhud, int xhud, SpriteSheet sheet_id, int ypos, int xpos)
 {
     int tex_id = TextureSheetLoader::blit_cube_texture(sheet_id, xpos, ypos);
     GS_ASSERT_ABORT(tex_id != NULL_SPRITE);
@@ -304,12 +305,33 @@ void hud_def(int yhud, int xhud, int sheet_id, int ypos, int xpos)
     hud_def(yhud, xhud, tex_id);
 }
 
-int texture_alias(const char* spritesheet) 
+void hud_def(SpriteSheet sheet_id, int ypos, int xpos)
+{
+    int tex_id = TextureSheetLoader::blit_cube_texture(sheet_id, xpos, ypos);
+    
+    // check that the texture is use somewhere in the cube
+    bool found = false;
+    for (int i=0; i<6; i++)
+        if (_side_texture[i] == tex_id)
+        {
+            found = true;
+            break;
+        }
+    if (!found)
+    {
+        printf("%s failed for texture id %d. No matching texture found (texture must be used in iso_texture or side_texture)\n", __FUNCTION__, tex_id);
+        GS_ASSERT_ABORT(found);
+    }
+
+    HudCubeSelector::set_cube_hud(p->id, tex_id);
+}
+
+SpriteSheet texture_alias(const char* spritesheet) 
 { 
     return TextureSheetLoader::load_cube_texture_sheet(spritesheet); 
 }
 
-int sprite_alias(int sheet_id, int ypos, int xpos)
+int sprite_alias(SpriteSheet sheet_id, int ypos, int xpos)
 {
     if (xpos < 1 || ypos < 1)
         printf("sprite_alias error: xpos and ypos must be greater than 1\n");

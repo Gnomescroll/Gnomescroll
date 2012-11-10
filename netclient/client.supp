@@ -226,3 +226,35 @@
    fun:SDL_InitSubSystem
    fun:_Z10init_c_libiPPc
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:inflateReset2
+   fun:inflateInit2_
+   fun:inflateInit_
+   fun:png_create_read_struct_2
+   fun:png_create_read_struct
+   fun:IMG_LoadPNG_RW
+   fun:IMG_LoadTyped_RW
+   fun:IMG_Load
+   fun:_Z24create_surface_from_filePKc
+   fun:_ZN6HudMap12init_surfaceEv
+   fun:_ZN6HudMap4initEv
+   fun:_Z10init_c_libiPPc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   obj:/usr/lib/i386-linux-gnu/libxcb.so.1.1.0
+   fun:xcb_connect_to_display_with_auth_info
+   fun:xcb_connect
+   fun:pa_client_conf_from_x11
+   fun:pa_context_new_with_proplist
+   fun:pa_context_new
+   obj:/usr/lib/libopenal.so.1.13.0
+   obj:/usr/lib/libopenal.so.1.13.0
+   fun:alcGetString
+   fun:_ZN11OpenALSound17enumerate_devicesEv
+}

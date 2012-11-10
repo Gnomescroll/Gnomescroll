@@ -28,6 +28,7 @@ class CubeSelector
 
         void set_position(float x, float y);
         void set_block_selector(int pos, CubeID cube_id, int tex_id);
+        void set_block_selector(CubeID cube_id, int tex_id);
         void set_active_pos(int pos);
         void set_active_id(int id);
         int get_active_pos();
@@ -48,5 +49,6 @@ extern CubeSelector cube_selector;
 
 void init();
 void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id);
+void set_cube_hud(CubeID cube_id, int tex_id);
 
 }   // HudCubeSelector

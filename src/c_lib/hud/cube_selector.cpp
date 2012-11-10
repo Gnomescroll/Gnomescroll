@@ -17,22 +17,37 @@ namespace HudCubeSelector
 
 void CubeSelector::set_block_selector(int pos, CubeID cube_id, int tex_id)
 {
+    int ct = this->n_x*this->n_y;
     GS_ASSERT(cube_id != NULL_CUBE);
     GS_ASSERT(tex_id != NULL_SPRITE && tex_id >= 0);
-    GS_ASSERT(pos >= 0 && pos < 64);
+    GS_ASSERT(pos >= 0 && pos < ct);
     if (cube_id == NULL_CUBE) return;
     if (tex_id == NULL_SPRITE || tex_id < 0) return;
-    if (pos < 0 || pos >= 64) return;
+    if (pos < 0 || pos >= ct) return;
 
     GS_ASSERT(cubes[pos].cube_id == NULL_CUBE);
     GS_ASSERT(cubes[pos].tex_id == NULL_SPRITE);
     cubes[pos].cube_id = cube_id;
 
-    for (int i=0; i<64; i++)
+    for (int i=0; i<ct; i++)
         if (cubes[i].tex_id != NULL_SPRITE)
             GS_ASSERT(cubes[i].tex_id != tex_id); 
     
     cubes[pos].tex_id = tex_id;
+}
+
+void CubeSelector::set_block_selector(CubeID cube_id, int tex_id)
+{
+    int pos = 0;
+    for (; pos<this->n_x*this->n_y; pos++)
+        if (cubes[pos].tex_id == NULL_SPRITE)
+            break;
+    if (pos >= this->n_x*this->n_y)
+    {
+        printf("WARNING: Hud cube selector is full\n");
+        return;
+    }
+    this->set_block_selector(pos, cube_id, tex_id);
 }
 
 void CubeSelector::set_position(float x, float y)
@@ -259,6 +274,11 @@ void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id)
     hudx--;
     hudy--;
     HudCubeSelector::cube_selector.set_block_selector(8*hudy+hudx, cube_id, tex_id);
+}
+
+void set_cube_hud(CubeID cube_id, int tex_id)
+{
+    HudCubeSelector::cube_selector.set_block_selector(cube_id, tex_id);
 }
 
 }   // HudCubeSelector

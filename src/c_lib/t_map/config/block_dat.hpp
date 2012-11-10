@@ -70,7 +70,7 @@ void apply_block_dat_changes()
 
 void load_block_dat()
 {
-    int t8 = texture_alias("media/sprites/terrain/t08.png");
+    SpriteSheet t8 = texture_alias("media/sprites/terrain/t08.png");
 
     const int T = 0;
     const int B = 1;
@@ -94,7 +94,6 @@ void load_block_dat()
     side_texture(W, error_block);
     side_texture(E, error_block);
     push_texture();
-    //hud_def(1,1, error_block);
 
     cube_def_container("storage_block_small", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
     iso_texture(t8, 1,9);
@@ -137,19 +136,19 @@ void load_block_dat()
     iso_texture(t8, 9,5);
     push_texture();
     set_max_damage(64);
-    hud_def(5,1,t8,9,5);
+    hud_def(t8,9,5);
 
     cube_def(SolidCube, "steel_block_2");
     iso_texture(t8, 10,5);
     push_texture();
     set_max_damage(64);
-    hud_def(5,3,t8,10,5);
+    hud_def(t8,10,5);
 
     cube_def(SolidCube, "steel_block_3");
     iso_texture(t8, 11,5);
     push_texture();
     set_max_damage(64);
-    hud_def(5,2,t8,11,5);
+    hud_def(t8,11,5);
 
     cube_def(SolidCube, "methane_ice");
     iso_texture(t8, 15,1);
@@ -170,7 +169,7 @@ void load_block_dat()
     cube_def(SolidCube, "rock", CUBE_MATERIAL_STONE);
     iso_texture(t8,5,4);
     push_texture();
-    hud_def(6,1, t8, 5,4);
+    hud_def(t8, 5,4);
     set_max_damage(48);
 
     cube_def(SolidCube, "coal", CUBE_MATERIAL_DIRT);
@@ -206,27 +205,27 @@ void load_block_dat()
     cube_def(SolidCube, "control_node", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 12,6);
     push_texture();
-    hud_def(2,1, t8,12,6);
+    hud_def(t8,12,6);
 
     cube_def(SolidCube, "space_tree_trunk1", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 7,15);
     push_texture();
-    hud_def(6,4, t8,7,15);
+    hud_def(t8,7,15);
 
     cube_def(SolidCube, "space_tree_trunk2", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 5,15);
     push_texture();
-    hud_def(6,5, t8, 5,15);
+    hud_def(t8, 5,15);
 
     cube_def(SolidCube, "mushroom1", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 8,9);
     push_texture();
-    hud_def(6,6, t8,8,9);
+    hud_def(t8,8,9);
 
     cube_def(SolidCube, "mushroom2", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 8,11);
     push_texture();
-    hud_def(6,7, t8,8,11);
+    hud_def(t8,8,11);
 
     cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 6,15);

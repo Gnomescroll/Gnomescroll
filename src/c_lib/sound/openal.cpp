@@ -195,27 +195,9 @@ void init()
     
     Sound::init_wav_buffers();
 
-    const char* devices = (const char*)alcGetString(NULL, ALC_DEVICE_SPECIFIER);
-    const char* default_device = (const char*)alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
-    if (devices != NULL)
-    {
-        printf("================\n");
-        printf("If you want to use a specific sound device, copy one of these strings and run the program with --sound_device=\"device name\"\n");
-        printf("\n");
-        printf("Available OpenAL devices:\n");
-        const char* device_name = devices;
-        size_t len = strlen(device_name);
-        while (len)
-        {
-            printf("%s\n", device_name);
-            device_name = &device_name[len+1];
-            len = strlen(device_name);
-        }
-        printf("\n");
-        printf("Default device is:\n");
-        printf("%s\n", default_device);
-        printf("================\n");
-    }
+    const char* default_device = enumerate_devices();
+    GS_ASSERT(default_device != NULL);
+
 
     // open device
     if (Options::sound_device[0] != '\0')
@@ -225,7 +207,8 @@ void init()
     }
     else
     {
-        printf("Using device: %s\n", default_device);
+        if (default_device != NULL)
+            printf("Using device: %s\n", default_device);
         device = alcOpenDevice(NULL); // select the "preferred device"
     }
 
@@ -262,7 +245,7 @@ void init()
     }
 
     // init AL buffers
-    alGenBuffers(MAX_BUFFERS, buffers); 
+    alGenBuffers(MAX_BUFFERS, buffers);
     if (checkError())
     {
         close();
@@ -866,46 +849,37 @@ int test()
     return 0;
 }
 
-void enumerate_devices()
+const char* enumerate_devices()
 {
-    if (alcIsExtensionPresent(NULL, (ALchar*)"ALC_ENUMERATION_EXT") != AL_TRUE)
+    if (alcIsExtensionPresent(NULL, (const ALchar*)"ALC_ENUMERATION_EXT") != AL_TRUE)
     {
         printf("OpenAL device enumeration extension is not available.\n");
-        return;
+        return NULL;
     }
-    printf("\n");
-    printf("OpenAL Device enumeration:\n\n");
 
-    const ALchar* devices = alcGetString(NULL, ALC_DEVICE_SPECIFIER);
-    const ALchar* default_device = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
-
-    printf("\n");
-    printf("Devices available:\n");
-    ALchar c = '\0';
-    int i = 0, j = 0;
-    ALchar *device_name = (ALchar*)calloc(200, sizeof(ALchar));
-    while (1)
+    const char* devices = (const char*)alcGetString(NULL, ALC_DEVICE_SPECIFIER);
+    const char* default_device = (const char*)alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+    if (devices != NULL)
     {
-        if (c == '\0')
+        printf("================\n");
+        printf("If you want to use a specific sound device, copy one of these strings and run the program with --sound_device=\"device name\"\n");
+        printf("\n");
+        printf("Available OpenAL devices:\n");
+        const char* device_name = devices;
+        size_t len = strlen(device_name);
+        while (len)
         {
-            j = 0;
-            printf("%s", device_name);
-            memset(device_name, '\0', 200 * sizeof(ALchar));
-            printf("\n");
-            if (devices[i] == '\0')
-                break;
+            printf("%s\n", device_name);
+            device_name = &device_name[len+1];
+            len = strlen(device_name);
         }
-
-        c = devices[i++];
-        device_name[j++] = c;
+        printf("\n");
+        printf("Default device is:\n");
+        printf("%s\n", default_device);
+        printf("================\n");
     }
-    free(device_name);
-    
-    printf("\n");
-    printf("Default device:\n");
-    printf("%s", default_device);
-    printf("\n");
 
+    return default_device;
 }
 
 }   // OpenALSound

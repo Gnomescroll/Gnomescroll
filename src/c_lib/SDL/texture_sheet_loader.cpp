@@ -1,5 +1,9 @@
 #include "texture_sheet_loader.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <common/macros.hpp>
 #include <SDL/texture_loader.hpp>
 
@@ -49,7 +53,7 @@ TextureSheetLoader::~TextureSheetLoader()
     if (this->texture_stack != NULL) free(this->texture_stack);
 }
 
-int TextureSheetLoader::load_texture(const char* filename)
+SpriteSheet TextureSheetLoader::load_texture(const char* filename)
 {
     for (unsigned int i=0; i<this->texture_num; i++)
         if (this->filenames[i] != NULL)
@@ -57,9 +61,9 @@ int TextureSheetLoader::load_texture(const char* filename)
 
     SDL_Surface* s = create_surface_from_file(filename);
     GS_ASSERT(s != NULL);
-    if (s == NULL) return -1;
+    if (s == NULL) return NULL_SPRITE_SHEET;
 
-    int index = this->load_texture_from_surface(s);
+    SpriteSheet index = this->load_texture_from_surface(s);
 
     if (index < 0) SDL_FreeSurface(s);
 
@@ -70,21 +74,23 @@ int TextureSheetLoader::load_texture(const char* filename)
     return index;
 }
 
-int TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* surface)
+SpriteSheet TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* surface)
 {
     GS_ASSERT(surface != NULL);
-    if (surface == NULL) return -1;
+    if (surface == NULL) return NULL_SPRITE_SHEET;
 
     GS_ASSERT(this->texture_num < N_SURFACES);
-    if (this->texture_num >= N_SURFACES) return -1;
+    if (this->texture_num >= N_SURFACES) return NULL_SPRITE_SHEET;
     
     surfaces[this->texture_num] = surface;
-    
-    return texture_num++;
+
+    SpriteSheet tx = (SpriteSheet)this->texture_num;
+    this->texture_num += 1;
+    return tx;
 }
 
 //blit to sheet or return texture id
-int TextureSheetLoader::blit(unsigned int sheet_id, int source_x, int source_y)
+int TextureSheetLoader::blit(SpriteSheet sheet_id, int source_x, int source_y)
 {
     // sanity checks
     GS_ASSERT(sheet_id < texture_num);
@@ -284,12 +290,12 @@ void teardown()
     teardown_item_texture();
 }
 
-int load_cube_texture_sheet(const char* filename)
+SpriteSheet load_cube_texture_sheet(const char* filename)
 {
     return CubeTextureSheetLoader->load_texture(filename);
 }
 
-int blit_cube_texture(int sheet_id, int source_x, int source_y)
+int blit_cube_texture(SpriteSheet sheet_id, int source_x, int source_y)
 {
     return CubeTextureSheetLoader->blit(sheet_id, source_x, source_y);
 }
@@ -300,17 +306,17 @@ void save_cube_texture()
 }
 
 //Item API
-int load_item_texture_sheet(const char* filename)
+SpriteSheet load_item_texture_sheet(const char* filename)
 {
     return ItemTextureSheetLoader->load_texture(filename);
 }
 
-int load_item_texture(struct SDL_Surface* surface)
+SpriteSheet load_item_texture(struct SDL_Surface* surface)
 {
     return ItemTextureSheetLoader->load_texture_from_surface(surface);
 }
 
-int blit_item_texture(int sheet_id, int source_x, int source_y)
+int blit_item_texture(SpriteSheet sheet_id, int source_x, int source_y)
 {
     return ItemTextureSheetLoader->blit(sheet_id, source_x, source_y);
 }

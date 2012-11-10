@@ -13,9 +13,9 @@ namespace Item
 
 void load_item_dat()
 {
-    int i0 = texture_alias("./media/sprites/item/i00.png");
-    int i1 = texture_alias("./media/sprites/item/i01.png");
-    int p0 = texture_alias("./media/sprites/item/p00.png");
+    SpriteSheet i0 = texture_alias("./media/sprites/item/i00.png");
+    SpriteSheet i1 = texture_alias("./media/sprites/item/i01.png");
+    SpriteSheet p0 = texture_alias("./media/sprites/item/p00.png");
     //int i2 = texture_alias("./media/sprites/item/i02.png");
 
     // Automatic block drop items are created at a later step, after the block drop dat
