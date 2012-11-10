@@ -1,15 +1,15 @@
 #pragma once
 
 #ifndef DC_CLIENT
-    #define DC_CLIENT 1
+# define DC_CLIENT 1
 #endif
 
 #ifndef GS_AWESOMIUM
-    #define GS_AWESOMIUM 0
+# define GS_AWESOMIUM 0
 #endif
 
 #if PRODUCTION
-    #define GS_AWESOMIUM 1
+# define GS_AWESOMIUM 1
 #endif
 
 #ifdef GS_SERIALIZER
@@ -293,20 +293,28 @@ int init_c_lib(int argc, char* argv[])
 
     update_camera_settings(Options::view_distance);
     
-    srand((unsigned int)time(NULL));   // seed the RNG
-
-    Agents::init();
-    ClientState::init_lists();
+    srand((unsigned int)time(NULL));
 
     Components::init();
     Entities::init_net_interfaces();
     Entities::init();    // Entity system
+    Chat::init_chat_client();
+
+    init_network();
+    NetClient::init_net_client();
+    
+    Agents::init();
+    ClientState::init_lists();
+
+    Auth::init();
 
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
 
     init_image_loader();
     TextureSheetLoader::init();
+
+    Awesomium::init();
 
     HudText::init();
     HudMap::init();
@@ -365,13 +373,9 @@ int init_c_lib(int argc, char* argv[])
     VoxDats::init();
     init_voxel_volume();
     
-    init_network();
-    NetClient::init_net_client();
-    
     Sound::init();
     init_input();
     init_cameras();
-    Chat::init_chat_client();
     Particle::draw_init();
 
     Animations::init();
@@ -379,9 +383,6 @@ int init_c_lib(int argc, char* argv[])
     Hud::init();
 
     init_voxel_render_list_shader1();   //used to be called from ClientState::init
-
-    Awesomium::init();
-    Auth::init();
 
     //init shaders
     

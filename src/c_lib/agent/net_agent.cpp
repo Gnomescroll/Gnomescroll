@@ -859,7 +859,6 @@ inline void agent_set_block_CtoS::handle()
     if(cube_id == _control_node) t_map::add_control_node(x,y,z);
 }
 
-//#if !PRODUCTION
 inline void admin_set_block_CtoS::handle()
 {
     // comparisons not needed due to value range of data type
@@ -908,7 +907,6 @@ inline void admin_set_block_CtoS::handle()
 
     t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
 }
-//#endif
 
 static Entities::Entity* place_object_handler(EntityType type, int x, int y, int z, AgentID owner_id)
 {

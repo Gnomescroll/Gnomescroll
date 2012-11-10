@@ -9,13 +9,7 @@
 
 #include <SDL.h>
 
-//int main(int argc, char** argv)
-#ifdef __MSVC__
-//int _tmain(int argc, _TCHAR* argv[])
 int main(int argc, char* argv[])
-#else
-int main(int argc, char* argv[])
-#endif
 {
     #if PRODUCTION
     printf("Production build\n");
@@ -35,7 +29,7 @@ int main(int argc, char* argv[])
     
     // program accepts one option: path to lua settings file
     // will use a default value if not provided
-    if (argc > 1 && argv[1][0] != '-') LUA::set_options_file((char*) argv[1]);
+    if (argc > 1 && argv[1][0] != '-') LUA::set_options_file(argv[1]);
 
     Main::init(argc, (char**) argv);
     if (!input_state.quit && !signal_exit && !_quit)

@@ -96,14 +96,14 @@ class CONTROL_NODE_LIST
 
     void server_add_control_node(int x, int y, int z)
     {
-        return; //PRODUCTION
-        this->add_control_node(x,y,z);
+        return;
+        //this->add_control_node(x,y,z);
 
-        control_node_create_StoC p;
-        p.x = x;
-        p.y = y;
-        p.z = z;
-        p.broadcast();
+        //control_node_create_StoC p;
+        //p.x = x;
+        //p.y = y;
+        //p.z = z;
+        //p.broadcast();
     }
 
     void server_remove_control_node(int x, int y, int z)

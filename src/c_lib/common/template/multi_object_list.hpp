@@ -19,11 +19,7 @@ template <class Object_interface>
 class MultiObject_list
 {
     private:
-        //#if PRODUCTION
-        //const char* name() { return "Entity"; }
-        //#else
         virtual const char* name() = 0;
-        //#endif
 
     protected:
         int id_c;

@@ -197,13 +197,23 @@ bool create_player_container_items_from_data(AgentID agent_id, int* containers, 
         IF_INVALID_CONTAINER_ID(containers[i]) return false;
     }
 
-    MALLOX(ItemContainerType, container_types, n_containers);
+    // TODO -- enable hand saving?
+    int _n_containers = n_containers;
+    for (int i=0; i<n_containers; i++)
+        if (ItemContainer::get_container_type(containers[i]) == AGENT_HAND)
+            _n_containers--;
+
+    MALLOX(ItemContainerType, container_types, _n_containers);
     for (int i=0; i<n_containers; i++)
     {
-        container_types[i] = ItemContainer::get_container_type(containers[i]);
+        ItemContainerType container_type = ItemContainer::get_container_type(containers[i]);
+        if (container_type == AGENT_HAND) continue;
+        container_types[i] = container_type;
         GS_ASSERT(container_types[i] != CONTAINER_TYPE_NONE);
         if (container_types[i] == CONTAINER_TYPE_NONE) return false;
     }
+    
+    n_containers = _n_containers;
 
     unsigned int item_space = Item::item_space();
     GS_ASSERT(item_load_data_list->ct <= item_space);
