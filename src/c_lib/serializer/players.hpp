@@ -115,6 +115,7 @@ class PlayerLoadData
         }
         this->containers_expected[this->n_containers_expected++] = container_type;
         return true;
+        printf("Expecting container %d. %d expected total\n", container_type, this->n_containers_expected);
     }
 
     bool container_was_loaded(ItemContainerType container_type)

@@ -66,7 +66,7 @@ bool PlayerLoadData::signal_if_loaded()
         return false;
     }
     if (!this->player_data_loaded) return false;
-    for (int i=0; i<N_PLAYER_CONTAINERS; i++)
+    for (int i=0; i<this->n_containers_expected; i++)
         if (!this->containers_loaded[i])
         {
             log_player_load_error("signal_if_loaded(): not all containers actually loaded", NULL,
@@ -617,6 +617,8 @@ int begin_player_load(UserID user_id, ClientID client_id)
 bool load_player_container(int player_load_id, ItemContainerType container_type)
 {
     if (!Options::serializer || !Options::auth) return true;
+
+    GS_ASSERT(container_type != AGENT_HAND);
 
     class PlayerLoadData* player_data = player_load_data_list->get(player_load_id);
     GS_ASSERT(player_data != NULL);
