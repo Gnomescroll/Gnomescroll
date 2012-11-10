@@ -21,7 +21,7 @@ void meteor_fall(void)
     static CubeID rock = t_map::get_cube_id("rock");
     int meteorandomizer=randrange (1, 6); //1 makes the meteor out of iron, 2-coal(I know it's strange, delete that if you want), 3-copper, 4-iridium, 5-gallium and 6-methice
     if (meteorandomizer==1)
-    while (t_map::get(x, y, z)==0)
+    while (t_map::get(x, y, z)==EMPTY_CUBE)
     {
         z=z-1;
     }
@@ -111,10 +111,10 @@ void meteor_fall(void)
     while (displacedcount <= displacement)
     {
         zcurrent=z + METEOR_SIZE + randrange(1, 15);
-        xcurrent=x + METEOR_SIZE + randrange(1, (100 - zcurrent) / 3);
-        ycurrent=y + METEOR_SIZE + randrange(1, (100 - zcurrent) / 3);
-        xcurrent=x - randrange(1, (100 - zcurrent) / 3);
-        ycurrent=y - randrange(1, (100 - zcurrent) / 3);
+        xcurrent=x + METEOR_SIZE + randrange(1, (100 - zcurrent) / 5);
+        ycurrent=y + METEOR_SIZE + randrange(1, (100 - zcurrent) / 5);
+        xcurrent=x - randrange(1, (100 - zcurrent) / 5);
+        ycurrent=y - randrange(1, (100 - zcurrent) / 5);
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         xcurrent=xcurrent + randrange(0, 3);
         ycurrent=ycurrent + randrange(0, 3);
@@ -122,10 +122,10 @@ void meteor_fall(void)
         ycurrent=ycurrent - randrange(0, 3);
         zcurrent=zcurrent - randrange(0, 2);
         t_map::set(xcurrent, ycurrent, zcurrent, rock);
-        xcurrent=xcurrent - randrange(1, 5);
-        ycurrent=ycurrent - randrange(1, 5);
-        xcurrent=xcurrent + randrange(1, 5);
-        ycurrent=ycurrent + randrange(1, 5);
+        xcurrent=xcurrent - randrange(0, 5);
+        ycurrent=ycurrent - randrange(0, 5);
+        xcurrent=xcurrent + randrange(0, 5);
+        ycurrent=ycurrent + randrange(0, 5);
         t_map::set(xcurrent, ycurrent, zcurrent, EMPTY_CUBE);
         displacedcount++;
     }
@@ -145,17 +145,18 @@ void meteor_fall(void)
     xcurrent=x;
     ycurrent=y;
     displacedcount=0;
-    while (displacedcount <= displacement)
+    while (zcurrent < t_map::map_dim.z)
     {
-        zcurrent=zcurrent + randrange(0, 1);
-        while(randrange(0, 5))
+        zcurrent=zcurrent + 1;
+        while(displacedcount <= displacement)
         {
-            xcurrent=x - randrange(0, 2);
-            ycurrent=y - randrange(0,2);
-            xcurrent=xcurrent + randrange(0, METEOR_SIZE + 2);
-            ycurrent=ycurrent + randrange(0, METEOR_SIZE + 2);
+            xcurrent=x - randrange(0, zcurrent / 10);
+            ycurrent=y - randrange(0, zcurrent / 10);
+            xcurrent=xcurrent + randrange(0, METEOR_SIZE + zcurrent /10);
+            ycurrent=ycurrent + randrange(0, METEOR_SIZE + zcurrent /10);
             t_map::set(xcurrent, ycurrent, zcurrent, EMPTY_CUBE);
+            displacedcount++;
         }
-        displacedcount++;
+        displacedcount=0;
     }
 }
