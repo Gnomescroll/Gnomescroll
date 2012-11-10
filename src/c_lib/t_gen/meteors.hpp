@@ -17,7 +17,7 @@ void meteor_fall(void)
     int xcurrent=x;
     int ycurrent=y;
     int zcurrent=z;
-    CubeID tile_id;
+    CubeID tile_id = NULL_CUBE;
     static CubeID rock = t_map::get_cube_id("rock");
     int meteorandomizer=randrange (1, 6); //1 makes the meteor out of iron, 2-coal(I know it's strange, delete that if you want), 3-copper, 4-iridium, 5-gallium and 6-methice
     if (meteorandomizer==1)
@@ -50,6 +50,8 @@ void meteor_fall(void)
         tile_id = t_map::get_cube_id("methane_ice");
         printf("Incoming methane meteor!\n");
     }
+    GS_ASSERT(t_map::isValidCube(tile_id));
+    if (!t_map::isValidCube(tile_id)) return;
     while (!stopgen) //while the generation has not been stopped by attempting to overwrite itself
     {
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
