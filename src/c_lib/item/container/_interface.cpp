@@ -33,12 +33,15 @@ void init()
     opened_containers       = (int*) malloc(MAX_AGENTS * sizeof(int));
     agent_hand_list         = (int*) malloc(MAX_AGENTS * sizeof(int));
     
-    for (int i=0; i<MAX_AGENTS; i++) agent_inventory_list   [i] = NULL_CONTAINER;
-    for (int i=0; i<MAX_AGENTS; i++) agent_toolbelt_list    [i] = NULL_CONTAINER;
-    for (int i=0; i<MAX_AGENTS; i++) agent_synthesizer_list [i] = NULL_CONTAINER;
-    for (int i=0; i<MAX_AGENTS; i++) agent_energy_tanks_list[i] = NULL_CONTAINER;
-    for (int i=0; i<MAX_AGENTS; i++) opened_containers      [i] = NULL_CONTAINER;
-    for (int i=0; i<MAX_AGENTS; i++) agent_hand_list        [i] = NULL_CONTAINER;
+    for (int i=0; i<MAX_AGENTS; i++) 
+	{
+		agent_inventory_list   [i] = NULL_CONTAINER;
+		agent_toolbelt_list    [i] = NULL_CONTAINER;
+		agent_synthesizer_list [i] = NULL_CONTAINER;
+		agent_energy_tanks_list[i] = NULL_CONTAINER;
+		opened_containers      [i] = NULL_CONTAINER;
+		agent_hand_list        [i] = NULL_CONTAINER;
+	}
     #endif
     
     #if DC_CLIENT

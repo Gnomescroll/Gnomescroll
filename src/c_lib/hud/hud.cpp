@@ -202,7 +202,7 @@ void draw_reference_center()
 
 void draw_hud_textures()
 {
-    jetpack_meter.draw(_xresf, _yresf, &ClientState::playerAgent_state, METANCH_RIGHT);
+    jetpack_meter.draw(_xresf, _yresf, &ClientState::playerAgent_state);
 
     if (!hud_draw_settings.draw) return;
 
