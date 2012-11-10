@@ -69,7 +69,7 @@ class Item
             printf("UUID: %s", uuid_str);
         }
         # endif
-        printf("Subscribers %d\n", subscribers.count);
+        printf("Subscribers %lu\n", (long unsigned)subscribers.count);
         printf("\t");
         for (unsigned int i=0; i<subscribers.count; i++) printf("%d ", subscribers.subscribers[i]);
         printf("\n");
