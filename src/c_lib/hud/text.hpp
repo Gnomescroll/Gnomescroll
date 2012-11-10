@@ -23,12 +23,12 @@ typedef struct
 class Text
 {
     protected:
-        unsigned int text_len;
-        unsigned int format_len;
+        size_t text_len;
+        size_t format_len;
         int formatted_extra_len;
         bool formatted;
-        char* set_string(const char* text, char* this_text, unsigned int* this_len);
-        char* grow_string(unsigned int n, char* str, unsigned int *str_len);
+        char* set_string(const char* text, char* this_text, size_t* this_len);
+        char* grow_string(size_t n, char* str, size_t *str_len);
 
     public:
         int id;

@@ -145,9 +145,9 @@ void Text::draw_centered()
 // internal string copy
 // if string is changed, char buffer will expand
 // however, char buffer will never contract
-char* Text::set_string(const char* text, char* this_text, unsigned int* this_len)
+char* Text::set_string(const char* text, char* this_text, size_t* this_len)
 {
-    unsigned int len = (unsigned int)strlen(text);
+    size_t len = strlen(text);
     if (this_text == NULL)
     {   // first time adding
         this_text = (char*)malloc(sizeof(char) * (len+1));
@@ -203,7 +203,7 @@ void Text::draw_character_rotated_centered(float theta)
     this->draw_character_rotated(theta);
 }
 
-char* Text::grow_string(unsigned int n, char* str, unsigned int* str_len)
+char* Text::grow_string(size_t n, char* str, size_t* str_len)
 {
     GS_ASSERT(*str_len < n);
     if (*str_len >= n) return str;
