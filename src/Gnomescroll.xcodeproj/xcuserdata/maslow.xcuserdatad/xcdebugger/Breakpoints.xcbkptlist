@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "1"
+   version = "1.0">
+   <FileBreakpoints>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../dc_mmo/src/server/_server.cpp"
+         timestampString = "364040381.741901"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "57"
+         endingLineNumber = "57"
+         landmarkName = "main(int argc, char* argv[])"
+         landmarkType = "7">
+         <Locations>
+            <Location
+               shouldBeEnabled = "No"
+               ignoreCount = "0"
+               continueAfterRunningActions = "No"
+               symbolName = "main"
+               urlString = "file://localhost/Users/maslow/Desktop/Gnomescroll/../../dc_mmo/src/server/_server.cpp"
+               timestampString = "364040550.006831"
+               startingColumnNumber = "9223372036854775807"
+               endingColumnNumber = "9223372036854775807"
+               startingLineNumber = "57"
+               endingLineNumber = "57">
+            </Location>
+            <Location
+               shouldBeEnabled = "No"
+               ignoreCount = "0"
+               continueAfterRunningActions = "No"
+               symbolName = "orient_to_point(Vec3, Vec3, float*, float*)"
+               urlString = "file://localhost/Users/maslow/Desktop/Gnomescroll/../../dc_mmo/src/server/_server.cpp"
+               timestampString = "364040550.006346"
+               startingColumnNumber = "9223372036854775807"
+               endingColumnNumber = "9223372036854775807"
+               startingLineNumber = "57"
+               endingLineNumber = "57">
+            </Location>
+            <Location
+               shouldBeEnabled = "No"
+               ignoreCount = "0"
+               continueAfterRunningActions = "No"
+               symbolName = "AgentState::forward_vector()"
+               urlString = "file://localhost/Users/maslow/Desktop/Gnomescroll/../../dc_mmo/src/server/_server.cpp"
+               timestampString = "364040550.006631"
+               startingColumnNumber = "9223372036854775807"
+               endingColumnNumber = "9223372036854775807"
+               startingLineNumber = "57"
+               endingLineNumber = "57">
+            </Location>
+            <Location
+               shouldBeEnabled = "No"
+               ignoreCount = "0"
+               continueAfterRunningActions = "No"
+               symbolName = "object_create_momentum_StoC::packet(char*, int*, bool)"
+               urlString = "file://localhost/Users/maslow/Desktop/Gnomescroll/../../dc_mmo/src/server/_server.cpp"
+               timestampString = "364040550.007033"
+               startingColumnNumber = "9223372036854775807"
+               endingColumnNumber = "9223372036854775807"
+               startingLineNumber = "57"
+               endingLineNumber = "57">
+            </Location>
+            <Location
+               shouldBeEnabled = "No"
+               ignoreCount = "0"
+               continueAfterRunningActions = "No"
+               symbolName = "ItemParticle::item_particle_state_StoC::packet(char*, int*, bool)"
+               urlString = "file://localhost/Users/maslow/Desktop/Gnomescroll/../../dc_mmo/src/server/_server.cpp"
+               timestampString = "364040550.007233"
+               startingColumnNumber = "9223372036854775807"
+               endingColumnNumber = "9223372036854775807"
+               startingLineNumber = "57"
+               endingLineNumber = "57">
+            </Location>
+            <Location
+               shouldBeEnabled = "No"
+               ignoreCount = "0"
+               continueAfterRunningActions = "No"
+               symbolName = "Toolbelt::toolbelt_item_beta_action_StoC::packet(char*, int*, bool)"
+               urlString = "file://localhost/Users/maslow/Desktop/Gnomescroll/../../dc_mmo/src/server/_server.cpp"
+               timestampString = "364040550.007417"
+               startingColumnNumber = "9223372036854775807"
+               endingColumnNumber = "9223372036854775807"
+               startingLineNumber = "57"
+               endingLineNumber = "57">
+            </Location>
+            <Location
+               shouldBeEnabled = "No"
+               ignoreCount = "0"
+               continueAfterRunningActions = "No"
+               symbolName = "Particle::grenade_StoC::packet(char*, int*, bool)"
+               urlString = "file://localhost/Users/maslow/Desktop/Gnomescroll/../../dc_mmo/src/server/_server.cpp"
+               timestampString = "364040550.0076"
+               startingColumnNumber = "9223372036854775807"
+               endingColumnNumber = "9223372036854775807"
+               startingLineNumber = "57"
+               endingLineNumber = "57">
+            </Location>
+         </Locations>
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../dc_mmo/src/c_lib/t_map/config/_interface.hpp"
+         timestampString = "364040940.937063"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "191"
+         endingLineNumber = "191"
+         landmarkName = "side_texture(int side, int sheet_id, int ypos, int xpos)"
+         landmarkType = "7">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../dc_mmo/src/c_lib/t_map/config/_interface.hpp"
+         timestampString = "364040941.285009"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "192"
+         endingLineNumber = "192"
+         landmarkName = "side_texture(int side, int sheet_id, int ypos, int xpos)"
+         landmarkType = "7">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../dc_mmo/src/c_lib/entity/objects/mobs/bomb.cpp"
+         timestampString = "364827043.23673"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "349"
+         endingLineNumber = "349"
+         landmarkName = "in_transit_to_waiting(class Object* object)"
+         landmarkType = "7">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../dc_mmo/src/c_lib/entity/object/object_data_list.cpp"
+         timestampString = "364811202.201295"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "49"
+         endingLineNumber = "49"
+         landmarkName = "ObjectDataList::get_component_interface_slot(ObjectType type, ComponentInterfaceType interface)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../dc_mmo/src/c_lib/entity/objects/mobs/bomb.cpp"
+         timestampString = "364827043.23673"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "339"
+         endingLineNumber = "339"
+         landmarkName = "waiting_to_chase_agent(class Object* object)"
+         landmarkType = "7">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../dc_mmo/src/c_lib/entity/object/object_data_list.cpp"
+         timestampString = "364811330.555501"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "48"
+         endingLineNumber = "48"
+         landmarkName = "ObjectDataList::get_component_interface_slot(ObjectType type, ComponentInterfaceType interface)"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "../../dc_mmo/src/c_lib/entity/object/object_data_list.cpp"
+         timestampString = "364811442.724073"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "47"
+         endingLineNumber = "47"
+         landmarkName = "ObjectDataList::get_component_interface_slot(ObjectType type, ComponentInterfaceType interface)"
+         landmarkType = "5">
+      </FileBreakpoint>
+   </FileBreakpoints>
+</Bucket>

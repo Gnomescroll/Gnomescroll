@@ -1,0 +1,949 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0D1ECFDC15709F0B0099991D /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1ECFDB15709F0B0099991D /* SDL.framework */; };
+		0D1ECFDE1570A0490099991D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1ECFDD1570A0490099991D /* OpenGL.framework */; };
+		0D1ECFE01570A0800099991D /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1ECFDF1570A0800099991D /* SDL_image.framework */; };
+		0D1ECFE21570A3F80099991D /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D1ECFE11570A3F80099991D /* SDLMain.m */; };
+		0D3066BD1605D76800AF7759 /* data in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D3066BC1605D76800AF7759 /* data */; };
+		0D3D98B01570B95700674A3C /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D1ECFDB15709F0B0099991D /* SDL.framework */; };
+		0D3D98B11570B95A00674A3C /* SDL_image.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D1ECFDF1570A0800099991D /* SDL_image.framework */; };
+		0D3D98BA1570C3AD00674A3C /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D3D98B91570C3AD00674A3C /* OpenAL.framework */; };
+		0D3D98D51570CA6200674A3C /* media in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D3D98D41570CA6200674A3C /* media */; };
+		0D3D98D71570CA9600674A3C /* screenshot in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D3D98D61570CA9600674A3C /* screenshot */; };
+		0D3D98EC15710B2200674A3C /* libluajit-51.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D3D98E615710A4400674A3C /* libluajit-51.2.dylib */; };
+		0D74E64015C05FCE003855AF /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD6B80615709CB00003D792 /* Cocoa.framework */; };
+		0D74E65715C06256003855AF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D1ECFE11570A3F80099991D /* SDLMain.m */; };
+		0D74E65915C06283003855AF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D74E65815C06283003855AF /* main.cpp */; };
+		0D74E65B15C0659D003855AF /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1ECFDB15709F0B0099991D /* SDL.framework */; };
+		0D74E65C15C0659F003855AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1ECFDD1570A0490099991D /* OpenGL.framework */; };
+		0D74E65D15C065A7003855AF /* libGLEW.1.7.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DB113AA15ADED49005FD861 /* libGLEW.1.7.0.dylib */; };
+		0D74E65F15C065BA003855AF /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D1ECFDB15709F0B0099991D /* SDL.framework */; };
+		0D74E66215C065D1003855AF /* libGLEW.1.7.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0DB113AA15ADED49005FD861 /* libGLEW.1.7.0.dylib */; };
+		0D74E66615C0663E003855AF /* media in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D74E66515C0663E003855AF /* media */; };
+		0D74E66B15C070C4003855AF /* libcurl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D74E66A15C070C4003855AF /* libcurl.dylib */; };
+		0D74E66C15C07131003855AF /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D74E66A15C070C4003855AF /* libcurl.dylib */; };
+		0D78B65615A29FAD0097E8CB /* lua_library.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D78B65515A29FAD0097E8CB /* lua_library.lua */; };
+		0D8459E215B25E1D0019F9D1 /* production.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D8459E115B25E1C0019F9D1 /* production.lua */; };
+		0D8459E415B25F1B0019F9D1 /* production.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D8459E315B25F1B0019F9D1 /* production.lua */; };
+		0D89921515BCAC6D0044FAB9 /* Awesomium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D89921415BCAC6D0044FAB9 /* Awesomium.framework */; };
+		0D89921615BCAC8A0044FAB9 /* Awesomium.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D89921415BCAC6D0044FAB9 /* Awesomium.framework */; };
+		0D9055BE1595C7D500335AAB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0DD6B80F15709CB00003D792 /* InfoPlist.strings */; };
+		0D9055BF1595C7D500335AAB /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 0DD6B81515709CB00003D792 /* Credits.rtf */; };
+		0D9055C21595C7D500335AAB /* libluajit-51.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D3D98E615710A4400674A3C /* libluajit-51.2.dylib */; };
+		0D9055CD1595C7D500335AAB /* libluajit-51.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D3D98E615710A4400674A3C /* libluajit-51.2.dylib */; };
+		0D9055CF1595C7D500335AAB /* screenshot in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D3D98D61570CA9600674A3C /* screenshot */; };
+		0D9055D01595C7D500335AAB /* media in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D3D98D41570CA6200674A3C /* media */; };
+		0D9056001595E0BF00335AAB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD6B80615709CB00003D792 /* Cocoa.framework */; };
+		0D90560B1595E50A00335AAB /* log in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D90560A1595E50900335AAB /* log */; };
+		0D95929215C4D39F009D0F51 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0DD6B80F15709CB00003D792 /* InfoPlist.strings */; };
+		0D95929315C4D3A1009D0F51 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 0DD6B81515709CB00003D792 /* Credits.rtf */; };
+		0DB113AB15ADED49005FD861 /* libGLEW.1.7.0.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0DB113AA15ADED49005FD861 /* libGLEW.1.7.0.dylib */; };
+		0DB113AC15ADF1C4005FD861 /* libGLEW.1.7.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DB113AA15ADED49005FD861 /* libGLEW.1.7.0.dylib */; };
+		0DB113AE15B0C3D7005FD861 /* _server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DB113AD15B0C3D7005FD861 /* _server.cpp */; };
+		0DB113B015B0C3ED005FD861 /* _client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DB113AF15B0C3ED005FD861 /* _client.cpp */; };
+		0DCF86DA15AA22E7000639BC /* lua_library.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0DCF86D915AA22E7000639BC /* lua_library.lua */; };
+		0DD55C2615B2F8D8006EA718 /* libluajit-51.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D3D98E615710A4400674A3C /* libluajit-51.2.dylib */; };
+		0DD55C2815B2F8E7006EA718 /* libassimp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD55C2715B2F8E7006EA718 /* libassimp.dylib */; };
+		0DD55C2915B2F8F7006EA718 /* libassimp.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0DD55C2715B2F8E7006EA718 /* libassimp.dylib */; };
+		0DD6B80715709CB00003D792 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD6B80615709CB00003D792 /* Cocoa.framework */; };
+		0DD6B81115709CB00003D792 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0DD6B80F15709CB00003D792 /* InfoPlist.strings */; };
+		0DD6B81715709CB00003D792 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 0DD6B81515709CB00003D792 /* Credits.rtf */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0D3D98AE1570B94B00674A3C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0D3D98B01570B95700674A3C /* SDL.framework in CopyFiles */,
+				0D3D98B11570B95A00674A3C /* SDL_image.framework in CopyFiles */,
+				0D89921615BCAC8A0044FAB9 /* Awesomium.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D3D98C71570C9C200674A3C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				0D3D98D71570CA9600674A3C /* screenshot in CopyFiles */,
+				0D3D98D51570CA6200674A3C /* media in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D3D98D91571036100674A3C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = ./settings;
+			dstSubfolderSpec = 7;
+			files = (
+				0D8459E215B25E1D0019F9D1 /* production.lua in CopyFiles */,
+				0D78B65615A29FAD0097E8CB /* lua_library.lua in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D3D98EA15710B0F00674A3C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0DB113AB15ADED49005FD861 /* libGLEW.1.7.0.dylib in CopyFiles */,
+				0D3D98EC15710B2200674A3C /* libluajit-51.2.dylib in CopyFiles */,
+				0DD55C2915B2F8F7006EA718 /* libassimp.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D74E65E15C065B5003855AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0D74E65F15C065BA003855AF /* SDL.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D74E66115C065C8003855AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0D74E66B15C070C4003855AF /* libcurl.dylib in CopyFiles */,
+				0D74E66215C065D1003855AF /* libGLEW.1.7.0.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D74E66415C06627003855AF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				0D74E66615C0663E003855AF /* media in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D9055CB1595C7D500335AAB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0D9055CD1595C7D500335AAB /* libluajit-51.2.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D9055CE1595C7D500335AAB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				0D3066BD1605D76800AF7759 /* data in CopyFiles */,
+				0D90560B1595E50A00335AAB /* log in CopyFiles */,
+				0D9055CF1595C7D500335AAB /* screenshot in CopyFiles */,
+				0D9055D01595C7D500335AAB /* media in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D9055D11595C7D500335AAB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = ./settings;
+			dstSubfolderSpec = 7;
+			files = (
+				0D8459E415B25F1B0019F9D1 /* production.lua in CopyFiles */,
+				0DCF86DA15AA22E7000639BC /* lua_library.lua in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0D1ECFDB15709F0B0099991D /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = Library/Frameworks/SDL.framework; sourceTree = SDKROOT; };
+		0D1ECFDD1570A0490099991D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		0D1ECFDF1570A0800099991D /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = ../../../../Library/Frameworks/SDL_image.framework; sourceTree = "<group>"; };
+		0D1ECFE11570A3F80099991D /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDLMain.m; path = "../../../../Library/Application Support/Developer/Shared/Xcode/Project Templates/Application/SDL OpenGL Application/SDLMain.m"; sourceTree = "<group>"; };
+		0D1ECFE31570A3FF0099991D /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = "../../../../Library/Application Support/Developer/Shared/Xcode/Project Templates/Application/SDL OpenGL Application/SDLMain.h"; sourceTree = "<group>"; };
+		0D3066B31605D6ED00AF7759 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../../dc_mmo/server/data; sourceTree = "<group>"; };
+		0D3066B61605D72B00AF7759 /* secret_key.debug */ = {isa = PBXFileReference; lastKnownFileType = text; path = secret_key.debug; sourceTree = "<group>"; };
+		0D3066B81605D73900AF7759 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data; sourceTree = "<group>"; };
+		0D3066BA1605D74E00AF7759 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../../dc_mmo/server/data; sourceTree = "<group>"; };
+		0D3066BC1605D76800AF7759 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../../dc_mmo/server/data; sourceTree = "<group>"; };
+		0D3D98B91570C3AD00674A3C /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
+		0D3D98D41570CA6200674A3C /* media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = media; path = ../../dc_mmo/netclient/media; sourceTree = "<group>"; };
+		0D3D98D61570CA9600674A3C /* screenshot */ = {isa = PBXFileReference; lastKnownFileType = folder; name = screenshot; path = ../../dc_mmo/netclient/screenshot; sourceTree = "<group>"; };
+		0D3D98E615710A4400674A3C /* libluajit-51.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libluajit-51.2.dylib"; path = "usr/local/lib/libluajit-51.2.dylib"; sourceTree = SDKROOT; };
+		0D74E63E15C05FCE003855AF /* Gnomescroll Autoupdater.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gnomescroll Autoupdater.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D74E65815C06283003855AF /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../dc_mmo/tools/autoupdate/main.cpp; sourceTree = "<group>"; };
+		0D74E66515C0663E003855AF /* media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = media; path = ../../dc_mmo/tools/autoupdate/media; sourceTree = "<group>"; };
+		0D74E66A15C070C4003855AF /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = "../../libcurl-7.26.0/lib/Release/libcurl.dylib"; sourceTree = "<group>"; };
+		0D74E66F15C0820E003855AF /* Gnomescroll.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Gnomescroll.app; path = ../../dc_mmo/tools/autoupdate/Gnomescroll.app; sourceTree = "<group>"; };
+		0D78B65515A29FAD0097E8CB /* lua_library.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = lua_library.lua; path = ../../dc_mmo/netclient/settings/lua_library.lua; sourceTree = "<group>"; };
+		0D8459E115B25E1C0019F9D1 /* production.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = production.lua; path = ../../dc_mmo/netclient/settings/production.lua; sourceTree = "<group>"; };
+		0D8459E315B25F1B0019F9D1 /* production.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = production.lua; path = ../../dc_mmo/server/settings/production.lua; sourceTree = "<group>"; };
+		0D89921415BCAC6D0044FAB9 /* Awesomium.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Awesomium.framework; path = Library/Frameworks/Awesomium.framework; sourceTree = SDKROOT; };
+		0D9055D71595C7D500335AAB /* Gnomescroll Server.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gnomescroll Server.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D9056071595E40A00335AAB /* Gnomescroll Server-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Gnomescroll Server-Info.plist"; sourceTree = "<group>"; };
+		0D9056091595E41900335AAB /* Gnomescroll Server-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Gnomescroll Server-Prefix.pch"; sourceTree = "<group>"; };
+		0D90560A1595E50900335AAB /* log */ = {isa = PBXFileReference; lastKnownFileType = folder; name = log; path = ../../dc_mmo/server/log; sourceTree = "<group>"; };
+		0D95928E15C4D135009D0F51 /* Gnomescroll Autoupdater-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Gnomescroll Autoupdater-Info.plist"; sourceTree = "<group>"; };
+		0D95928F15C4D135009D0F51 /* Gnomescroll Autoupdater-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Gnomescroll Autoupdater-Prefix.pch"; sourceTree = "<group>"; };
+		0DB113AA15ADED49005FD861 /* libGLEW.1.7.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.1.7.0.dylib; path = "../../src/glew-1.7.0/lib/libGLEW.1.7.0.dylib"; sourceTree = "<group>"; };
+		0DB113AD15B0C3D7005FD861 /* _server.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _server.cpp; path = ../../dc_mmo/src/server/_server.cpp; sourceTree = "<group>"; };
+		0DB113AF15B0C3ED005FD861 /* _client.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _client.cpp; path = ../../dc_mmo/src/client/_client.cpp; sourceTree = "<group>"; };
+		0DCF86D915AA22E7000639BC /* lua_library.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = lua_library.lua; path = ../../dc_mmo/server/settings/lua_library.lua; sourceTree = "<group>"; };
+		0DD55C2715B2F8E7006EA718 /* libassimp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.dylib; path = "../../src/assimp--3.0.1270-source-only/lib/RelWithDebInfo/libassimp.dylib"; sourceTree = "<group>"; };
+		0DD6B80215709CB00003D792 /* Gnomescroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gnomescroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0DD6B80615709CB00003D792 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		0DD6B80915709CB00003D792 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		0DD6B80A15709CB00003D792 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		0DD6B80B15709CB00003D792 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		0DD6B80E15709CB00003D792 /* Gnomescroll-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Gnomescroll-Info.plist"; sourceTree = "<group>"; };
+		0DD6B81015709CB00003D792 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0DD6B81415709CB00003D792 /* Gnomescroll-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Gnomescroll-Prefix.pch"; sourceTree = "<group>"; };
+		0DD6B81615709CB00003D792 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		0DEDFD6E1597E137005A9EAA /* net_lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = net_lib; path = ../../dc_mmo/src/net_lib; sourceTree = "<group>"; };
+		0DEDFD711597E142005A9EAA /* c_lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = c_lib; path = ../../dc_mmo/src/c_lib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0D74E63B15C05FCE003855AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D74E66C15C07131003855AF /* libcurl.dylib in Frameworks */,
+				0D74E65D15C065A7003855AF /* libGLEW.1.7.0.dylib in Frameworks */,
+				0D74E65C15C0659F003855AF /* OpenGL.framework in Frameworks */,
+				0D74E65B15C0659D003855AF /* SDL.framework in Frameworks */,
+				0D74E64015C05FCE003855AF /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D9055C01595C7D500335AAB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D9056001595E0BF00335AAB /* Cocoa.framework in Frameworks */,
+				0D9055C21595C7D500335AAB /* libluajit-51.2.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0DD6B7FF15709CAF0003D792 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DD55C2815B2F8E7006EA718 /* libassimp.dylib in Frameworks */,
+				0DD55C2615B2F8D8006EA718 /* libluajit-51.2.dylib in Frameworks */,
+				0DB113AC15ADF1C4005FD861 /* libGLEW.1.7.0.dylib in Frameworks */,
+				0D1ECFDE1570A0490099991D /* OpenGL.framework in Frameworks */,
+				0D3D98BA1570C3AD00674A3C /* OpenAL.framework in Frameworks */,
+				0D1ECFDC15709F0B0099991D /* SDL.framework in Frameworks */,
+				0D1ECFE01570A0800099991D /* SDL_image.framework in Frameworks */,
+				0D89921515BCAC6D0044FAB9 /* Awesomium.framework in Frameworks */,
+				0DD6B80715709CB00003D792 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0DD6B7F715709CAE0003D792 = {
+			isa = PBXGroup;
+			children = (
+				0D3066BC1605D76800AF7759 /* data */,
+				0D3066BA1605D74E00AF7759 /* data */,
+				0D3066B81605D73900AF7759 /* data */,
+				0D3066B61605D72B00AF7759 /* secret_key.debug */,
+				0D3066B31605D6ED00AF7759 /* data */,
+				0D74E66F15C0820E003855AF /* Gnomescroll.app */,
+				0D74E66A15C070C4003855AF /* libcurl.dylib */,
+				0D74E66515C0663E003855AF /* media */,
+				0D74E65815C06283003855AF /* main.cpp */,
+				0D89921415BCAC6D0044FAB9 /* Awesomium.framework */,
+				0DD55C2715B2F8E7006EA718 /* libassimp.dylib */,
+				0D8459E315B25F1B0019F9D1 /* production.lua */,
+				0D8459E115B25E1C0019F9D1 /* production.lua */,
+				0DB113AF15B0C3ED005FD861 /* _client.cpp */,
+				0DB113AD15B0C3D7005FD861 /* _server.cpp */,
+				0DB113AA15ADED49005FD861 /* libGLEW.1.7.0.dylib */,
+				0DCF86D915AA22E7000639BC /* lua_library.lua */,
+				0D78B65515A29FAD0097E8CB /* lua_library.lua */,
+				0DEDFD711597E142005A9EAA /* c_lib */,
+				0DEDFD6E1597E137005A9EAA /* net_lib */,
+				0D90560A1595E50900335AAB /* log */,
+				0D3D98E615710A4400674A3C /* libluajit-51.2.dylib */,
+				0D3D98D61570CA9600674A3C /* screenshot */,
+				0D3D98D41570CA6200674A3C /* media */,
+				0D3D98B91570C3AD00674A3C /* OpenAL.framework */,
+				0D1ECFE31570A3FF0099991D /* SDLMain.h */,
+				0D1ECFE11570A3F80099991D /* SDLMain.m */,
+				0D1ECFDF1570A0800099991D /* SDL_image.framework */,
+				0D1ECFDD1570A0490099991D /* OpenGL.framework */,
+				0D1ECFDB15709F0B0099991D /* SDL.framework */,
+				0DD6B80C15709CB00003D792 /* Gnomescroll */,
+				0DD6B80515709CB00003D792 /* Frameworks */,
+				0DD6B80315709CB00003D792 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0DD6B80315709CB00003D792 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0DD6B80215709CB00003D792 /* Gnomescroll.app */,
+				0D9055D71595C7D500335AAB /* Gnomescroll Server.app */,
+				0D74E63E15C05FCE003855AF /* Gnomescroll Autoupdater.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0DD6B80515709CB00003D792 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0DD6B80615709CB00003D792 /* Cocoa.framework */,
+				0DD6B80815709CB00003D792 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0DD6B80815709CB00003D792 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0DD6B80915709CB00003D792 /* AppKit.framework */,
+				0DD6B80A15709CB00003D792 /* CoreData.framework */,
+				0DD6B80B15709CB00003D792 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		0DD6B80C15709CB00003D792 /* Gnomescroll */ = {
+			isa = PBXGroup;
+			children = (
+				0DD6B80D15709CB00003D792 /* Supporting Files */,
+			);
+			path = Gnomescroll;
+			sourceTree = "<group>";
+		};
+		0DD6B80D15709CB00003D792 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0D9056091595E41900335AAB /* Gnomescroll Server-Prefix.pch */,
+				0D9056071595E40A00335AAB /* Gnomescroll Server-Info.plist */,
+				0D95928E15C4D135009D0F51 /* Gnomescroll Autoupdater-Info.plist */,
+				0D95928F15C4D135009D0F51 /* Gnomescroll Autoupdater-Prefix.pch */,
+				0DD6B80E15709CB00003D792 /* Gnomescroll-Info.plist */,
+				0DD6B80F15709CB00003D792 /* InfoPlist.strings */,
+				0DD6B81415709CB00003D792 /* Gnomescroll-Prefix.pch */,
+				0DD6B81515709CB00003D792 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0D74E63D15C05FCE003855AF /* Gnomescroll Autoupdater */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0D74E65515C05FCF003855AF /* Build configuration list for PBXNativeTarget "Gnomescroll Autoupdater" */;
+			buildPhases = (
+				0D74E63A15C05FCE003855AF /* Sources */,
+				0D74E63B15C05FCE003855AF /* Frameworks */,
+				0D74E63C15C05FCE003855AF /* Resources */,
+				0D74E65E15C065B5003855AF /* CopyFiles */,
+				0D74E66115C065C8003855AF /* CopyFiles */,
+				0D74E66415C06627003855AF /* CopyFiles */,
+				0D74E66315C065F0003855AF /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Gnomescroll Autoupdater";
+			productName = "Gnomescroll Autoupdater";
+			productReference = 0D74E63E15C05FCE003855AF /* Gnomescroll Autoupdater.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0D9055B91595C7D500335AAB /* Gnomescroll Server */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0D9055D41595C7D500335AAB /* Build configuration list for PBXNativeTarget "Gnomescroll Server" */;
+			buildPhases = (
+				0D9055BA1595C7D500335AAB /* Sources */,
+				0D9055BD1595C7D500335AAB /* Resources */,
+				0D9055C01595C7D500335AAB /* Frameworks */,
+				0D9055CB1595C7D500335AAB /* CopyFiles */,
+				0D9055CE1595C7D500335AAB /* CopyFiles */,
+				0D9055D11595C7D500335AAB /* CopyFiles */,
+				0D8459E515B25F2F0019F9D1 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Gnomescroll Server";
+			productName = Gnomescroll;
+			productReference = 0D9055D71595C7D500335AAB /* Gnomescroll Server.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0DD6B80115709CAF0003D792 /* Gnomescroll Client */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0DD6B82015709CB10003D792 /* Build configuration list for PBXNativeTarget "Gnomescroll Client" */;
+			buildPhases = (
+				0DD6B7FE15709CAF0003D792 /* Sources */,
+				0DD6B7FF15709CAF0003D792 /* Frameworks */,
+				0DD6B80015709CAF0003D792 /* Resources */,
+				0D3D98AE1570B94B00674A3C /* CopyFiles */,
+				0D3D98EA15710B0F00674A3C /* CopyFiles */,
+				0D3D98C71570C9C200674A3C /* CopyFiles */,
+				0D3D98D91571036100674A3C /* CopyFiles */,
+				0DE552F815ABE1B300320AC0 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Gnomescroll Client";
+			productName = Gnomescroll;
+			productReference = 0DD6B80215709CB00003D792 /* Gnomescroll.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0DD6B7F915709CAE0003D792 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = 0DD6B7FC15709CAE0003D792 /* Build configuration list for PBXProject "Gnomescroll" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 0DD6B7F715709CAE0003D792;
+			productRefGroup = 0DD6B80315709CB00003D792 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0D9055B91595C7D500335AAB /* Gnomescroll Server */,
+				0DD6B80115709CAF0003D792 /* Gnomescroll Client */,
+				0D74E63D15C05FCE003855AF /* Gnomescroll Autoupdater */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0D74E63C15C05FCE003855AF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D95929215C4D39F009D0F51 /* InfoPlist.strings in Resources */,
+				0D95929315C4D3A1009D0F51 /* Credits.rtf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D9055BD1595C7D500335AAB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D9055BE1595C7D500335AAB /* InfoPlist.strings in Resources */,
+				0D9055BF1595C7D500335AAB /* Credits.rtf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0DD6B80015709CAF0003D792 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DD6B81115709CB00003D792 /* InfoPlist.strings in Resources */,
+				0DD6B81715709CB00003D792 /* Credits.rtf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0D74E66315C065F0003855AF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "~/dc_mmo/netclient/shell/clean_osx_app.sh \"${BUILD_DIR}/${CONFIGURATION}/${EXECUTABLE_FOLDER_PATH}\" \"Gnomescroll Autoupdater\"";
+		};
+		0D8459E515B25F2F0019F9D1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"${BUILD_DIR}/${CONFIGURATION}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nmv settings/production.lua settings/settings.lua";
+		};
+		0DE552F815ABE1B300320AC0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "~/dc_mmo/netclient/shell/clean_osx_app.sh \"${BUILD_DIR}/${CONFIGURATION}/${EXECUTABLE_FOLDER_PATH}\"\ncd \"${BUILD_DIR}/${CONFIGURATION}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nmv settings/production.lua settings/settings.lua";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0D74E63A15C05FCE003855AF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D74E65715C06256003855AF /* SDLMain.m in Sources */,
+				0D74E65915C06283003855AF /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D9055BA1595C7D500335AAB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DB113AE15B0C3D7005FD861 /* _server.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0DD6B7FE15709CAF0003D792 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0D1ECFE21570A3F80099991D /* SDLMain.m in Sources */,
+				0DB113B015B0C3ED005FD861 /* _client.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		0DD6B80F15709CB00003D792 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0DD6B81015709CB00003D792 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		0DD6B81515709CB00003D792 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0DD6B81615709CB00003D792 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0D74E65315C05FCF003855AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks/SDL_image.framework,
+					/Library/Frameworks/SDL.framework,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "Gnomescroll/Gnomescroll Autoupdater-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_image.framework/Headers,
+					/Users/maslow/dc_mmo/netclient/c_lib,
+					/Users/maslow/dc_mmo/netclient/net_lib,
+					/Users/maslow/dc_mmo/netclient,
+					"/usr/local/include/luajit-2.0",
+					"/Users/maslow/src/glew-1.7.0/include",
+					"/Users/maslow/src/curl-7.26.0/include/curl",
+				);
+				INFOPLIST_FILE = "Gnomescroll/Gnomescroll Autoupdater-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/maslow/src/glew-1.7.0/lib",
+					"/Users/maslow/libcurl-7.26.0/lib/Release",
+				);
+				"OTHER_LDFLAGS[arch=x86_64]" = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "/Users/maslow/tools/src /Users/maslow/src/curl-7.26.0/include/curl";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		0D74E65415C05FCF003855AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks/SDL_image.framework,
+					/Library/Frameworks/SDL.framework,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "Gnomescroll/Gnomescroll Autoupdater-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_image.framework/Headers,
+					/Users/maslow/dc_mmo/netclient/c_lib,
+					/Users/maslow/dc_mmo/netclient/net_lib,
+					/Users/maslow/dc_mmo/netclient,
+					"/usr/local/include/luajit-2.0",
+					"/Users/maslow/src/glew-1.7.0/include",
+					"/Users/maslow/src/curl-7.26.0/include/curl",
+				);
+				INFOPLIST_FILE = "Gnomescroll/Gnomescroll Autoupdater-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/maslow/src/glew-1.7.0/lib",
+					"/Users/maslow/libcurl-7.26.0/lib/Release",
+				);
+				"OTHER_LDFLAGS[arch=x86_64]" = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "/Users/maslow/tools/src /Users/maslow/src/curl-7.26.0/include/curl";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		0D9055D51595C7D500335AAB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				DC_SERVER = 1;
+				DEPLOYMENT_LOCATION = NO;
+				EXPORTED_SYMBOLS_FILE = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks/SDL_image.framework,
+					/Library/Frameworks/SDL.framework,
+				);
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Gnomescroll/Gnomescroll Server-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DC_SERVER=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					/Users/maslow/dc_mmo/src/c_lib,
+					/Users/maslow/dc_mmo/src/net_lib,
+					/Users/maslow/dc_mmo/server,
+					/Users/maslow/dc_mmo/src,
+					"/usr/local/include/luajit-2.0",
+				);
+				INFOPLIST_FILE = "Gnomescroll/Gnomescroll Server-Info.plist";
+				INSTALL_PATH = /Applications;
+				LD_DYLIB_INSTALL_NAME = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = "Gnomescroll Server";
+				SKIP_INSTALL = NO;
+				USER_HEADER_SEARCH_PATHS = "/Users/maslow/dc_mmo/src/c_lib /Users/maslow/dc_mmo/src/net_lib /Users/maslow/dc_mmo/server /Users/maslow/dc_mmo/src /usr/local/include/luajit-2.0";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		0D9055D61595C7D500335AAB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				DC_SERVER = 1;
+				DEPLOYMENT_LOCATION = NO;
+				EXPORTED_SYMBOLS_FILE = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks/SDL_image.framework,
+					/Library/Frameworks/SDL.framework,
+				);
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Gnomescroll/Gnomescroll Server-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DC_SERVER=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Users/maslow/dc_mmo/src/c_lib,
+					/Users/maslow/dc_mmo/src/net_lib,
+					/Users/maslow/dc_mmo/server,
+					/Users/maslow/dc_mmo/src,
+					"/usr/local/include/luajit-2.0",
+				);
+				INFOPLIST_FILE = "Gnomescroll/Gnomescroll Server-Info.plist";
+				INSTALL_PATH = /Applications;
+				LD_DYLIB_INSTALL_NAME = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = "Gnomescroll Server";
+				SKIP_INSTALL = NO;
+				USER_HEADER_SEARCH_PATHS = "/Users/maslow/dc_mmo/src/c_lib /Users/maslow/dc_mmo/src/net_lib /Users/maslow/dc_mmo/server /Users/maslow/dc_mmo/src /usr/local/include/luajit-2.0";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		0DD6B81E15709CB10003D792 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXPORTED_SYMBOLS_FILE = "";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_UNROLL_LOOPS = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PROFILING_CODE = NO;
+				KEEP_PRIVATE_EXTERNS = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"-pagezero_size",
+					10000,
+					"-image_base",
+					100000000,
+				);
+				OTHER_TEST_FLAGS = "-g";
+				SDKROOT = macosx;
+				SKIP_INSTALL = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_STYLE = all;
+				USER_HEADER_SEARCH_PATHS = "/Users/maslow/dc_mmo/netclient/c_lib /Users/maslow/dc_mmo/netclient/net_lib /Users/maslow/dc_mmo/server/c_lib /Users/maslow/dc_mmo/server/net_lib";
+				WARNING_CFLAGS = "-Wparentheses";
+				WARNING_LDFLAGS = "";
+			};
+			name = Debug;
+		};
+		0DD6B81F15709CB10003D792 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
+				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXPORTED_SYMBOLS_FILE = "";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "PRODUCTION=1";
+				GCC_UNROLL_LOOPS = NO;
+				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PROFILING_CODE = NO;
+				KEEP_PRIVATE_EXTERNS = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"-pagezero_size",
+					10000,
+					"-image_base",
+					100000000,
+				);
+				OTHER_TEST_FLAGS = "-g";
+				SDKROOT = macosx;
+				SKIP_INSTALL = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_STYLE = all;
+				USER_HEADER_SEARCH_PATHS = "/Users/maslow/dc_mmo/netclient/c_lib /Users/maslow/dc_mmo/netclient/net_lib /Users/maslow/dc_mmo/server/c_lib /Users/maslow/dc_mmo/server/net_lib";
+				WARNING_CFLAGS = "-Wparentheses";
+				WARNING_LDFLAGS = "";
+			};
+			name = Release;
+		};
+		0DD6B82115709CB10003D792 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DC_CLIENT = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks/SDL_image.framework,
+					/Library/Frameworks/SDL.framework,
+					/Library/Frameworks/Awesomium.framework,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Gnomescroll/Gnomescroll-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GS_AWESOMIUM=1",
+					"DC_CLIENT=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_image.framework/Headers,
+					/Users/maslow/dc_mmo/netclient/c_lib,
+					/Users/maslow/dc_mmo/netclient/net_lib,
+					/Users/maslow/dc_mmo/netclient,
+					"/usr/local/include/luajit-2.0",
+					"/Users/maslow/src/glew-1.7.0/include",
+					/Library/Frameworks/Awesomium.framework/Headers,
+					"/Users/maslow/src/assimp--3.0.1270-source-only/include",
+				);
+				INFOPLIST_FILE = "Gnomescroll/Gnomescroll-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/maslow/src/glew-1.7.0/lib",
+					"/Users/maslow/src/assimp--3.0.1270-source-only/lib/RelWithDebInfo",
+				);
+				PRODUCT_NAME = Gnomescroll;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/maslow/src/glew-1.7.0/lib /Users/maslow/src/assimp--3.0.1270-source-only/lib/Release /Users/maslow/Library/Developer/Xcode/DerivedData/Assimp-dvlsedlqlcupuochpdespfautxqd/ArchiveIntermediates/assimp/InstallationBuildProductsLocation/Users/maslow/src/assimp--3.0.1270-source-only/lib/Release";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		0DD6B82215709CB10003D792 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DC_CLIENT = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks/SDL_image.framework,
+					/Library/Frameworks/SDL.framework,
+					/Library/Frameworks/Awesomium.framework,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Gnomescroll/Gnomescroll-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"GS_AWESOMIUM=1",
+					"DC_CLIENT=1",
+					"PRODUCTION=1",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/SDL.framework/Headers,
+					/Library/Frameworks/SDL_image.framework/Headers,
+					/Users/maslow/dc_mmo/netclient/c_lib,
+					/Users/maslow/dc_mmo/netclient/net_lib,
+					/Users/maslow/dc_mmo/netclient,
+					"/usr/local/include/luajit-2.0",
+					"/Users/maslow/src/glew-1.7.0/include",
+					/Library/Frameworks/Awesomium.framework/Headers,
+					"/Users/maslow/src/assimp--3.0.1270-source-only/include",
+				);
+				INFOPLIST_FILE = "Gnomescroll/Gnomescroll-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "@rpath";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/maslow/src/glew-1.7.0/lib",
+					"/Users/maslow/src/assimp--3.0.1270-source-only/lib/RelWithDebInfo",
+				);
+				PRODUCT_NAME = Gnomescroll;
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/maslow/src/glew-1.7.0/lib /Users/maslow/src/assimp--3.0.1270-source-only/lib/Release /Users/maslow/Library/Developer/Xcode/DerivedData/Assimp-dvlsedlqlcupuochpdespfautxqd/ArchiveIntermediates/assimp/InstallationBuildProductsLocation/Users/maslow/src/assimp--3.0.1270-source-only/lib/Release";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0D74E65515C05FCF003855AF /* Build configuration list for PBXNativeTarget "Gnomescroll Autoupdater" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D74E65315C05FCF003855AF /* Debug */,
+				0D74E65415C05FCF003855AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0D9055D41595C7D500335AAB /* Build configuration list for PBXNativeTarget "Gnomescroll Server" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0D9055D51595C7D500335AAB /* Debug */,
+				0D9055D61595C7D500335AAB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0DD6B7FC15709CAE0003D792 /* Build configuration list for PBXProject "Gnomescroll" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0DD6B81E15709CB10003D792 /* Debug */,
+				0DD6B81F15709CB10003D792 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0DD6B82015709CB10003D792 /* Build configuration list for PBXNativeTarget "Gnomescroll Client" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0DD6B82115709CB10003D792 /* Debug */,
+				0DD6B82215709CB10003D792 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0DD6B7F915709CAE0003D792 /* Project object */;
+}
