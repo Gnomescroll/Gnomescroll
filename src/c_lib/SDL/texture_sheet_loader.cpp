@@ -93,8 +93,8 @@ SpriteSheet TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* su
 int TextureSheetLoader::blit(SpriteSheet sheet_id, int source_x, int source_y)
 {
     // sanity checks
-    GS_ASSERT(sheet_id < texture_num);
-    if (sheet_id >= texture_num) return NULL_SPRITE;
+    GS_ASSERT(sheet_id < (int)texture_num);
+    if (sheet_id >= (int)texture_num) return NULL_SPRITE;
 
     GS_ASSERT(source_x > 0);
     if (source_x < 1) return NULL_SPRITE;
