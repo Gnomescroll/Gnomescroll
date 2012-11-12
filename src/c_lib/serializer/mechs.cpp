@@ -277,9 +277,9 @@ bool load_mech_file(const char* fn)
         ASSERT_VALID_MECH_TYPE(mech_type);
         IF_INVALID_MECH_TYPE(mech_type) goto error;
 
-        bool placed = t_mech::create_mech(x,y,z, mech_type, subtype);
-        GS_ASSERT(placed);
-        if (!placed) goto error;
+        success = t_mech::create_mech(x,y,z, mech_type, subtype);
+        GS_ASSERT(success);
+        if (!success) goto error;
     }
 
     success = true;

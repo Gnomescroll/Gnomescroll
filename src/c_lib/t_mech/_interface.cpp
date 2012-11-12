@@ -160,13 +160,25 @@ void client_ray_cast()
 bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
 {
     ASSERT_VALID_MECH_TYPE(mech_type);
-    IF_INVALID_MECH_TYPE(mech_type) return false;
-
-    if (!can_place_mech(x,y,z, 0)) return false;
+    IF_INVALID_MECH_TYPE(mech_type)
+    {
+        printf("Mech type %d invalid\n", mech_type);
+        return false;
+    }
 
     // TODO -- check valid mech type properly
-    GS_ASSERT(mech_attributes[mech_type].mech_type != -1);
-    if (mech_attributes[mech_type].mech_type == -1) return false;
+    GS_ASSERT(mech_attributes[mech_type].loaded);
+    if (!mech_attributes[mech_type].loaded)
+    {
+        printf("Mech type %d not in use\n", mech_type);
+        return false;
+    }
+
+    if (!can_place_mech(x,y,z, 0))
+    {
+        printf("Can't place mech at %d,%d,%d\n", x,y,z);
+        return false;
+    }
 
     struct MECH m;
     m.mech_type = mech_type;

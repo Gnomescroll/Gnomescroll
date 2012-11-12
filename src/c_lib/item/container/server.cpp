@@ -305,7 +305,9 @@ bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
     if (container == NULL) return false;
 
     GS_ASSERT(container->is_valid_slot(slot));
+    if (!container->is_valid_slot(slot)) return false;
     GS_ASSERT(container->get_item(slot) == NULL_ITEM);
+    if (container->get_item(slot) != NULL_ITEM) return false;
 
     if (container->owner != NULL_AGENT)
         Item::subscribe_agent_to_item(container->owner, item->id);
@@ -336,6 +338,7 @@ bool transfer_free_item_to_hand(ItemID item_id, AgentID agent_id)
     if (item_id == NULL_ITEM) return false;
 
     GS_ASSERT(get_agent_hand_item(agent_id) == NULL_ITEM);
+    if (get_agent_hand_item(agent_id) != NULL_ITEM) return false;
 
     Item::subscribe_agent_to_item(agent_id, item_id);
 

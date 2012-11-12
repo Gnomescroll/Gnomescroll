@@ -189,34 +189,23 @@ bool create_container_items_from_data(int container_id)
     return true;
 }
 
-bool create_player_container_items_from_data(AgentID agent_id, int* _containers, int n_containers)
+bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers)
 {
     for (int i=0; i<n_containers; i++)
     {
-        ASSERT_VALID_CONTAINER_ID(_containers[i]);
-        IF_INVALID_CONTAINER_ID(_containers[i]) return false;
+        ASSERT_VALID_CONTAINER_ID(containers[i]);
+        IF_INVALID_CONTAINER_ID(containers[i]) return false;
     }
 
-    // TODO -- enable hand saving?
-    int _n_containers = n_containers;
-    for (int i=0; i<n_containers; i++)
-        if (ItemContainer::get_container_type(_containers[i]) == AGENT_HAND)
-            _n_containers--;
-
-    MALLOX(ItemContainerType, container_types, _n_containers);
-    MALLOX(int, containers, _n_containers);
+    MALLOX(ItemContainerType, container_types, n_containers);
     for (int i=0; i<n_containers; i++)
     {
-        ItemContainerType container_type = ItemContainer::get_container_type(_containers[i]);
+        ItemContainerType container_type = ItemContainer::get_container_type(containers[i]);
+        if (container_type == CONTAINER_TYPE_NONE) return false;
         GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-        if (container_types[i] == CONTAINER_TYPE_NONE) return false;
-        if (container_type == AGENT_HAND) continue;
         container_types[i] = container_type;
-        _containers[i] = containers[i];
     }
     
-    n_containers = _n_containers;
-
     unsigned int item_space = Item::item_space();
     GS_ASSERT(item_load_data_list->ct <= item_space);
     if (item_load_data_list->ct > item_space) return false;
@@ -230,14 +219,16 @@ bool create_player_container_items_from_data(AgentID agent_id, int* _containers,
         GS_ASSERT(item != NULL);
         if (item == NULL) break; // Can/should never happen. Critical part
 
-        GS_ASSERT(item->location == IL_HAND || item->location == IL_CONTAINER);
+        //GS_ASSERT(item->location == IL_HAND || item->location == IL_CONTAINER);
+        GS_ASSERT(item->location == IL_CONTAINER);
 
-        if (item->location == IL_HAND)
-        {
-            item->location_id = agent_id;
-            ItemContainer::load_item_into_hand(item->id, agent_id);
-        }
-        else
+        bool loaded = false;
+        //if (item->location == IL_HAND)
+        //{
+            //item->location_id = agent_id;
+            //loaded = ItemContainer::load_item_into_hand(item->id, agent_id);
+        //}
+        //else
         if (item->location == IL_CONTAINER)
         {
             int container_id = NULL_CONTAINER;
@@ -248,9 +239,13 @@ bool create_player_container_items_from_data(AgentID agent_id, int* _containers,
                     break;
                 }
             GS_ASSERT(container_id != NULL_CONTAINER);
+            if (container_id == NULL_CONTAINER) continue;
             item->location_id = container_id;
-            ItemContainer::load_item_into_container(item->id, container_id, item->container_slot);
+            loaded = ItemContainer::load_item_into_container(item->id, container_id, item->container_slot);
         }
+        GS_ASSERT(loaded);
+        if (!loaded)
+            Item::destroy_item(item->id);
     }
 
     clear_item_data();

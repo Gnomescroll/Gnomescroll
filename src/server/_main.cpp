@@ -73,7 +73,6 @@ void init_world()
         map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
         t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_id("regolith") );
         t_gen::excavate();
-        //t_gen::generate_ruins();
         t_gen::add_terrain_features();
     }
     else
@@ -145,7 +144,7 @@ void tick()
     }
     if (counter % 30000 == 1)
     {
-        meteor_fall();
+        //t_gen::meteor_fall();
     }
 
     //ServerState::spawn_items(2);

@@ -15,30 +15,21 @@ class SubscriberList
         bool grow()
         {
             if (this->max >= hard_max) return false;
-            this->max *= 2;
-            if (this->max > hard_max) this->max = hard_max;
-            this->subscribers = (T*)realloc(this->subscribers, this->max * sizeof(T));
+            size_t _max = this->max * 2;
+            if (_max > hard_max) _max = hard_max;
+            T* _subs = (T*)realloc(this->subscribers, _max * sizeof(T));
+            GS_ASSERT(_subs != NULL);
+            if (_subs == NULL) return false;
+            this->max = _max;
+            this->subscribers = _subs;
             return true;
         }
 
-        // grows to a specified size
-        bool grow(size_t new_max)
-        {
-            GS_ASSERT(new_max > this->max);
-            if (new_max <= this->max) return false;
-            GS_ASSERT(new_max <= hard_max);
-            if (new_max > hard_max) return false;
-            
-            this->max = new_max;
-            this->subscribers = (T*)realloc(this->subscribers, this->max * sizeof(T));
-            return true;
-        }
-        
     public:
         T* subscribers;
         size_t count;
         size_t max;
-        size_t hard_max;
+        const size_t hard_max;
 
     bool full()
     {
@@ -68,7 +59,7 @@ class SubscriberList
             if (this->subscribers[i] == id)
             {
                 if (i < this->count-1) // swap with highest, decrement count
-                    this->subscribers[i] = this->subscribers[this->count];
+                    this->subscribers[i] = this->subscribers[this->count-1];
                 this->count--;
                 return true;
             }
@@ -80,7 +71,7 @@ class SubscriberList
         this->count = 0;
     }
 
-    SubscriberList<T>(size_t initial_size, size_t hard_max) :
+    SubscriberList<T>(size_t initial_size, const size_t hard_max) :
         count(0), max(initial_size), hard_max(hard_max)
     {
         GS_ASSERT(initial_size > 0);

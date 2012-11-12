@@ -64,7 +64,7 @@ class Item
         # if GS_SERIALIZER
         if (Options::serializer)
         {
-            static char uuid_str[(serializer::UUID_STRING_LENGTH)+1];
+            static char uuid_str[serializer::UUID_STRING_LENGTH+1];
             uuid_unparse(this->uuid, uuid_str);
             printf("UUID: %s", uuid_str);
         }

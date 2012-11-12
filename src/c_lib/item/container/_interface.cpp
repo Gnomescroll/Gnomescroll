@@ -773,6 +773,8 @@ void agent_born(AgentID agent_id)
 
     // if we have neither and there is only one slot, add the laser rifle (because fist can replace mining_laser)
 
+    printf("AGENT BORN\n");
+
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;
 
