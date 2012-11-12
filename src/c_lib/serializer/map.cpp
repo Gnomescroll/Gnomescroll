@@ -477,7 +477,7 @@ bool BlockSerializer::load(const char* filename)
 {
     printf("Loading map: %s\n", filename);
         
-    GS_ASSERT_ABORT(t_map::main_map != NULL);
+    GS_ASSERT(t_map::main_map != NULL);
 
     GS_ASSERT(filename != NULL);
     if (filename == NULL) return false;
@@ -485,7 +485,7 @@ bool BlockSerializer::load(const char* filename)
     int ti1 = _GET_MS_TIME();
     size_t filesize = 0;
     char* buffer = read_binary_file_to_buffer(filename, &filesize);
-    GS_ASSERT_ABORT(buffer != NULL);
+    GS_ASSERT(buffer != NULL);
     if (buffer == NULL) return false;
 
     int ti2 = _GET_MS_TIME();
@@ -499,7 +499,7 @@ bool BlockSerializer::load(const char* filename)
     size_t expected_filesize = prefix_length + CHUNK_COUNT*sizeof(struct SerializedChunk);
     if (filesize != expected_filesize)
         printf("WARNING: Map filesize %lu does not match expected filesize %lu\n", (unsigned long)filesize, (unsigned long)expected_filesize); 
-    GS_ASSERT_ABORT(filesize == expected_filesize);
+    GS_ASSERT(filesize == expected_filesize);
 
     // apply block id versioning transformation
     for (size_t i=0; i<filesize; i++)
@@ -507,10 +507,7 @@ bool BlockSerializer::load(const char* filename)
         char c = buffer[i];
         ASSERT_VALID_CUBE_ID(c);
         IF_INVALID_CUBE_ID(c)
-        {
-            free(buffer);
-            GS_ABORT();
-        }
+            c = (char)EMPTY_CUBE;
         buffer[i] = cube_id_map[(unsigned char)c];
     }
 

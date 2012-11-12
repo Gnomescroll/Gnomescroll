@@ -125,7 +125,6 @@ void NetPeerManager::was_deserialized(class serializer::ParsedPlayerData* data)
 void NetPeerManager::was_deserialized()
 #endif
 {
-    printf("WAS DESERIALIZED\n");
     GS_ASSERT(!this->loaded);
     GS_ASSERT(!this->deserialized);
     if (this->deserialized || this->loaded) return;

@@ -34,14 +34,14 @@ void init()
     agent_hand_list         = (int*) malloc(MAX_AGENTS * sizeof(int));
     
     for (int i=0; i<MAX_AGENTS; i++) 
-	{
-		agent_inventory_list   [i] = NULL_CONTAINER;
-		agent_toolbelt_list    [i] = NULL_CONTAINER;
-		agent_synthesizer_list [i] = NULL_CONTAINER;
-		agent_energy_tanks_list[i] = NULL_CONTAINER;
-		opened_containers      [i] = NULL_CONTAINER;
-		agent_hand_list        [i] = NULL_CONTAINER;
-	}
+    {
+        agent_inventory_list   [i] = NULL_CONTAINER;
+        agent_toolbelt_list    [i] = NULL_CONTAINER;
+        agent_synthesizer_list [i] = NULL_CONTAINER;
+        agent_energy_tanks_list[i] = NULL_CONTAINER;
+        opened_containers      [i] = NULL_CONTAINER;
+        agent_hand_list        [i] = NULL_CONTAINER;
+    }
     #endif
     
     #if DC_CLIENT
@@ -775,8 +775,6 @@ void agent_born(AgentID agent_id)
     // if we have one or more of either not maxed out, fill up the most full one
 
     // if we have neither and there is only one slot, add the laser rifle (because fist can replace mining_laser)
-
-    printf("AGENT BORN\n");
 
     ASSERT_VALID_AGENT_ID(agent_id);
     IF_INVALID_AGENT_ID(agent_id) return;

@@ -100,6 +100,17 @@ void log_mech_load_error(const char* msg)
     fprintf(mech_log, LOG_LINE_SEPARATOR);
 }
 
+void log_mech_load_error(const char* msg, int x, int y, int z, MechType mech_type, int subtype)
+{
+    GS_ASSERT(mech_log != NULL);
+    if (mech_log == NULL) return;
+    fprintf(mech_log, "LoadError: %s\n", msg);
+    fprintf(mech_log, "Position: %d, %d, %d\n", x,y,z);
+    fprintf(mech_log, "Mech type: %d\n", mech_type);
+    fprintf(mech_log, "Mech subtype: %d\n", subtype);
+    fprintf(mech_log, LOG_LINE_SEPARATOR);
+}
+
 void log_mech_save_error(const char* msg)
 {
     GS_ASSERT(mech_log != NULL);

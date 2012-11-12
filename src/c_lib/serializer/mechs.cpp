@@ -279,7 +279,8 @@ bool load_mech_file(const char* fn)
 
         success = t_mech::create_mech(x,y,z, mech_type, subtype);
         GS_ASSERT(success);
-        if (!success) goto error;
+        if (!success)
+            log_mech_load_error("Failed to create mech", x,y,z, mech_type, subtype);
     }
 
     success = true;
