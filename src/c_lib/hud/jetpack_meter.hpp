@@ -32,6 +32,8 @@ namespace Hud {
 		}
 
 		void draw(float _xresf, float _yresf, PlayerAgent_state* pa, MeterAnchor anchor = METANCH_RIGHT) {
+		    glColor4ub(255,255,255,255);
+
 			float s_w = _xresf/4; // spectrum width (that a full bar would cover)
 			float s_x = 0;        // spectrum x pos
 			float s_h = _yresf/64;

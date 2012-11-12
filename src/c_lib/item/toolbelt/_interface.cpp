@@ -223,6 +223,13 @@ void tick()
     ItemID local_item_id = ItemContainer::get_toolbelt_item(selected_slot);
     #endif
     
+    // here's where i want to add x jetpack particles per frame i think.... sounds probably based on events
+    for (int i=0; i<MAX_AGENTS; i++)
+    {
+		//Agents::agent_list[i].state
+
+	}
+    
     // increment fire ticks if weapon down
     for (int i=0; i<MAX_AGENTS; i++)
     {
