@@ -2,13 +2,13 @@
 
 #include <common/macros.hpp>
 
-char* _gs_internal_itoa(int val, int base)
-{   
-    static char buf[32] = {0};  
-    int i = 30;
-    for(; val && i ; --i, val /= base)
-        buf[i] = "0123456789abcdef"[val % base];
-    return &buf[i+1];
+const char* _gs_internal_itoa(int val)
+{
+    const size_t bufsiz = 32;
+    static char buf[bufsiz] = {'\0'};
+    snprintf(buf, bufsiz, "%d", val);
+    buf[bufsiz-1] = '\0';
+    return buf;
 }
 
 void _gs_push_str(char* tstr, int* index, char* istr)
@@ -42,7 +42,7 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE, int LIMIT
     static char t[256];
 
     int index = 0;
-    char* LINE_STR = _gs_internal_itoa(LINE, 10);
+    const char* LINE_STR = _gs_internal_itoa(LINE);
 
     _gs_push_str(t,&index, "GS_ASSERT: ");
     _gs_push_str(t,&index, FILE);

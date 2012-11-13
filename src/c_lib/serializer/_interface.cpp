@@ -154,7 +154,7 @@ static void set_data_paths(const char* save_folder)
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     container_path_bak[NAME_MAX] = '\0';
     
-    // entitys
+    // entities
     wrote = snprintf(entity_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     entity_folder[NAME_MAX] = '\0';
