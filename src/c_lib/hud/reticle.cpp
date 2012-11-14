@@ -62,7 +62,7 @@ void Reticle::draw()
     //glLogicOp(GL_INVERT);
 
 
-    glColor3ub(0, 255, 0);
+    glColor3ub(255, 0, 185);
 
     glBegin( GL_QUADS );
     glTexCoord2i( 0, 0 );

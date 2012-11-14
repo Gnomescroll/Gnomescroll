@@ -66,7 +66,7 @@ public:
 				////Sound::play_2d_sound("jetpack_loop", false, this->jetpack_loop_sound_id);
 				//this->jetpack_loop_sound_id = -1;
 
-				///////////////Sound::play_2d_sound("jetpack_off");
+				Sound::play_2d_sound("jetpack_off");
 			}
 			prev_thrusting = false;
 
