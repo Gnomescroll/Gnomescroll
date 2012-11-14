@@ -2,19 +2,20 @@
 
 #include <physics/mat4.hpp>
 
-#ifdef __MINGW32__
-# undef __cplusplus
-#endif
+#ifdef __MSVC__
 extern "C"
 {
-    #include <assimp/cimport.h>
-    #include <assimp/scene.h>
-    #include <assimp/postprocess.h> //defines for postprocessor
-    #include <assimp/config.h>
-}
-#ifdef __MINGW32__
-# define __cplusplus
 #endif
+
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h> //defines for postprocessor
+#include <assimp/config.h>
+
+#ifdef __MSVC__
+}
+#endif
+
 
 namespace t_mob
 {
