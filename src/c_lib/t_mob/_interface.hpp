@@ -2,27 +2,51 @@
 
 #include <physics/mat4.hpp>
 
+// TODO -- clean this up after testing
+// #undef __cplusplus should not be done under linux build (it breaks some stdlib headers)
+
+//#ifdef __MSVC__
+//extern "C"
+//{
+//#include <assimp/cimport.h>
+//#include <assimp/scene.h>
+//#include <assimp/postprocess.h> //defines for postprocessor
+//#include <assimp/config.h>
+//}
+//#else
+    //#undef __cplusplus
+    //extern "C"
+    //{
+    //#include <assimp/cimport.h>
+    //#include <assimp/scene.h>
+    //#include <assimp/postprocess.h> //defines for postprocessor
+    //#include <assimp/config.h>
+    //}
+    //#define __cplusplus
+//#endif
+
+
+//#ifdef __MINGW32__
+//# undef __cplusplus
+//#endif
+
 #ifdef __MSVC__
 extern "C"
 {
+#endif
+
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h> //defines for postprocessor
 #include <assimp/config.h>
+
+#ifdef __MSVC__
 }
-#else
-    #undef __cplusplus
-    extern "C"
-    {
-    #include <assimp/cimport.h>
-    #include <assimp/scene.h>
-    #include <assimp/postprocess.h> //defines for postprocessor
-    #include <assimp/config.h>
-    }
-    #define __cplusplus
 #endif
 
-
+//#ifdef __MINGW32__
+//# define __cplusplus
+//#endif
 
 
 namespace t_mob
