@@ -61,6 +61,7 @@ SOUND_TRIGGER(spawner_placed)
 SOUND_TRIGGER(respawned)
 SOUND_TRIGGER(died)
 SOUND_TRIGGER(jetpack_on)
+SOUND_TRIGGER(jetpack_off)
 SOUND_TRIGGER(victory)
 SOUND_TRIGGER(restore_health)
 SOUND_TRIGGER(restore_ammo)
@@ -95,6 +96,7 @@ SOUND_TRIGGER(hard_landing_4)
 
 // on/off loops
 SOUND_LOOP_TRIGGER(mining_laser);
+SOUND_LOOP_TRIGGER(jetpack_loop);
 
 #endif
 
