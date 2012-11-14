@@ -1,31 +1,20 @@
 #pragma once
 
-
-
-
 #include <physics/mat4.hpp>
 
-#ifdef __MSVC__
+#ifdef __MINGW32__
+# undef __cplusplus
+#endif
 extern "C"
 {
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h> //defines for postprocessor
-#include <assimp/config.h>
-}
-#else
-    #undef __cplusplus
-    extern "C"
-    {
     #include <assimp/cimport.h>
     #include <assimp/scene.h>
     #include <assimp/postprocess.h> //defines for postprocessor
     #include <assimp/config.h>
-    }
-    #define __cplusplus
+}
+#ifdef __MINGW32__
+# define __cplusplus
 #endif
-
-
 
 namespace t_mob
 {
