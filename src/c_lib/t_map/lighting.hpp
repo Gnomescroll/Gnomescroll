@@ -22,7 +22,7 @@ void update_skylight(int chunk_i, int chunk_j)
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
     {
-        int k=127;
+        int k = map_dim.z-1;
 
         // get highest block
         for (; k>=0; k--)
@@ -30,7 +30,6 @@ void update_skylight(int chunk_i, int chunk_j)
             e = mc->get_element(i,j,k);
             if(e.block != 0)    //iterate until we hit top block
                 break;
-
             e.light  = 15; //upper bits for skylight
             mc->set_element(i,j,k,e);
         }
@@ -127,8 +126,7 @@ void update_skylight_out(int x, int y, int z)
         update_skylight_out(_x,_y,_z);
     }
 
-
-    GS_ASSERT( ((x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2) == (x+512-1) % 512);
+    //GS_ASSERT( ((x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2) == (x+512-1) % 512);
 
     _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _y = y;
@@ -164,7 +162,7 @@ void update_skylight_out(int x, int y, int z)
     //y
     _x = x;
     _y = y;
-    _z = (z+1) % ZMAX;
+    _z = (z+1) % map_dim.z;
 
     if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
     {
@@ -174,7 +172,7 @@ void update_skylight_out(int x, int y, int z)
 
     _x = x;
     _y = y;
-    _z = (z+(ZMAX-1))%ZMAX; //z -1
+    _z = (z-1+map_dim.z)%map_dim.z; //z -1
     if(!isSolid(_x,_y,_z) && get_skylight(_x,_y,_z) < li-1 )
     {
         set_skylight(_x,_y,_z, li-1);
@@ -259,7 +257,7 @@ void update_skylight_in(int x, int y, int z)
     //z
     _x = x;
     _y = y;
-    _z = (z+1) % ZMAX;
+    _z = (z+1) % map_dim.z;
 
     tli = get_skylight(_x,_y,_z);
     if(tli > li )
@@ -267,7 +265,7 @@ void update_skylight_in(int x, int y, int z)
 
     _x = x;
     _y = y;
-    _z = (z+(ZMAX-1))%ZMAX;
+    _z = (z+(map_dim.z-1))%map_dim.z;
 
     tli = get_skylight(_x,_y,_z);
     if(tli > li )
@@ -295,7 +293,7 @@ void update_skylight_boundary(int _ci, int _cj)
     {
         const int i = 0;
         for(int j=0; j<16; j++)
-        for(int k=0; k<128; k++)
+        for(int k=0; k<map_dim.z; k++)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
                 continue;
@@ -313,7 +311,7 @@ void update_skylight_boundary(int _ci, int _cj)
     {
         const int i = 15;
         for(int j=0; j<16; j++)
-        for(int k=0; k<128; k++)
+        for(int k=0; k<map_dim.z; k++)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
                 continue;
@@ -330,7 +328,7 @@ void update_skylight_boundary(int _ci, int _cj)
     {
         const int j = 0;
         for(int i=0; i<16; i++)
-        for(int k=0; k<128; k++)
+        for(int k=0; k<map_dim.z; k++)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
                 continue;
@@ -348,7 +346,7 @@ void update_skylight_boundary(int _ci, int _cj)
     {
         const int j = 15;
         for(int i=0; i<16; i++)
-        for(int k=0; k<128; k++)
+        for(int k=0; k<map_dim.z; k++)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
                 continue;
@@ -368,7 +366,7 @@ void update_skylight2(int ci, int cj)
 
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
-    for(int k=0; k<128; k++)
+    for(int k=0; k<map_dim.z; k++)
     {
         if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_skylight(16*ci+i,16*cj+j,k) != 15) // || get_skylight(i,j,k) < 16)
             continue;
