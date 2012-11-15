@@ -17,28 +17,32 @@ static HitscanBlock dummy_hitscan_block;
 
 HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy, float vz)
 {
-    const float max_dist = 500.0f;  // far
+    const float MAX_DIST = 0.95f * (float)t_map::map_dim.z;  // far
 
-    float distance=0.0f;
-    int collision[3];
-    int pre_collision[3];
-    CubeID tile = EMPTY_CUBE;
-    int side[3];
+    //float distance=0.0f;
+    //int collision[3];
+    //int pre_collision[3];
+    //CubeID tile = EMPTY_CUBE;
+    //int side[3];
 
-    int collided = _ray_cast6(x,y,z, vx,vy,vz, max_dist, &distance, collision, pre_collision, &tile, side);
+    //int collided = _ray_cast6(x,y,z, vx,vy,vz, max_dist, &distance, collision, pre_collision, &tile, side);
+
+    struct RaytraceData data;
+    struct Vec3 start = vec3_init(x, y, z);
+    struct Vec3 direction = vec3_init(vx, vy, vz);
+    struct Vec3 end = vec3_add(start, vec3_scalar_mult(direction, MAX_DIST));
+    bool collided = raytrace_terrain(start, end, &data);
 
     dummy_hitscan_block.hit = collided;
     if (!collided) return &dummy_hitscan_block;
     
-    dummy_hitscan_block.x = translate_point(collision[0]);
-    dummy_hitscan_block.y = translate_point(collision[1]);
-    dummy_hitscan_block.z = collision[2];
+    dummy_hitscan_block.x = data.collision_point[0];
+    dummy_hitscan_block.y = data.collision_point[1];
+    dummy_hitscan_block.z = data.collision_point[2];
 
-    dummy_hitscan_block.distance = distance;
-    dummy_hitscan_block.side[0] = side[0];
-    dummy_hitscan_block.side[1] = side[1];
-    dummy_hitscan_block.side[2] = side[2];
-    dummy_hitscan_block.tile = tile;
+    dummy_hitscan_block.distance = MAX_DIST * data.interval;
+    data.get_side_array(dummy_hitscan_block.side);
+    dummy_hitscan_block.tile = t_map::get(dummy_hitscan_block.x, dummy_hitscan_block.y, dummy_hitscan_block.z);
     
     return &dummy_hitscan_block;
 }

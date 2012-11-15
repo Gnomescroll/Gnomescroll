@@ -44,12 +44,10 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     CubeID tile;
     float block_distance;
 
-    Hitscan::HitscanTargetTypes target_type =
-        Hitscan::hitscan_against_world(
-            pos, look, this->p->agent_id, OBJECT_AGENT,
-            &target, &vox_distance, collision_point,
-            block_pos, side, &tile, &block_distance
-        );
+    Hitscan::HitscanTargetTypes target_type = Hitscan::hitscan_against_world(
+        pos, look, this->p->agent_id, OBJECT_AGENT,
+        &target, &vox_distance, collision_point,
+        block_pos, side, &tile, &block_distance);
 
     // for hitscan animation:
     // readjust the vector so that the translated position points to target

@@ -566,8 +566,8 @@ int* farthest_empty_block(float x, float y, float z, float vx, float vy, float v
     return NULL;
 }
 
-int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high) {
-
+int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
+{
     const float inc = 1.0f / RAYCAST_SAMPLING_DENSITY;
     float xy_inc = sqrtf(vx*vx + vy*vy);
 
@@ -657,12 +657,12 @@ int get_cube_side_from_side_array(int* side)
     return 0;
 }
 
-void get_side_array_from_cube_side(int cube_id, int *side)
+void get_side_array_from_cube_side(int side_id, int *side)
 {
     side[0] = 0;
     side[1] = 0;
     side[2] = 1;
-    switch (cube_id)
+    switch (side_id)
     {
         case 2:
             side[0] = 1;
@@ -686,4 +686,161 @@ void get_side_array_from_cube_side(int cube_id, int *side)
             GS_ASSERT(false);
             return;
     }
+}
+
+
+bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length, struct RaytraceData* data)
+{   // direction must be normalized
+    struct Vec3 end = vec3_add(start, vec3_scalar_mult(direction, length));
+    return raytrace_terrain(start, end, data);
+}
+
+/* Borrowed from: http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html */
+bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* data)
+{
+    if (vec3_equal(start, end))
+    {
+        if (collision_check(start.x, start.y, start.z))
+        {
+            data->set_collision_point(start.x, start.y, start.z);
+            return true;
+        }
+        return false;
+    }
+    
+    float dx = fabsf(end.x - start.x);
+    float dy = fabsf(end.y - start.y);
+    float dz = fabsf(end.z - start.z);
+
+    int x = int(floor(start.x));
+    int y = int(floor(start.y));
+    int z = int(floor(start.z));
+
+    // div by 0 is implicitly handled, will generate +/-infinity
+    float dt_dx = 1.0f / dx;
+    float dt_dy = 1.0f / dy;
+    float dt_dz = 1.0f / dz;
+
+    float t = 0;
+
+    int n = 1;
+    int x_inc, y_inc, z_inc;
+    float t_next_x, t_next_y, t_next_z;
+    int side[3] = {0};
+
+    if (dx == 0)
+    {
+        x_inc = 0;
+        t_next_x = dt_dx; // infinity
+    }
+    else if (end.x > start.x)
+    {
+        x_inc = 1;
+        n += int(ceil(end.x)) - 1 - x;
+        t_next_x = (floor(start.x) + 1 - start.x) * dt_dx;
+    }
+    else
+    {
+        x_inc = -1;
+        n += x - int(floor(end.x));
+        t_next_x = (start.x - floor(start.x)) * dt_dx;
+    }
+
+    if (dy == 0)
+    {
+        y_inc = 0;
+        t_next_y = dt_dy; // infinity
+    }
+    else if (end.y > start.y)
+    {
+        y_inc = 1;
+        n += int(ceil(end.y)) - 1 - y;
+        t_next_y = (floor(start.y) + 1 - start.y) * dt_dy;
+    }
+    else
+    {
+        y_inc = -1;
+        n += y - int(floor(end.y));
+        t_next_y = (start.y - floor(start.y)) * dt_dy;
+    }
+    
+    if (dz == 0)
+    {
+        z_inc = 0;
+        t_next_z = dt_dz; // infinity
+    }
+    else if (end.z > start.z)
+    {
+        z_inc = 1;
+        n += int(ceil(end.z)) - 1 - z;
+        t_next_z = (floor(start.z) + 1 - start.z) * dt_dz;
+    }
+    else
+    {
+        z_inc = -1;
+        n += z - int(floor(end.z));
+        t_next_z = (start.z - floor(start.z)) * dt_dz;
+    }
+
+    for (; n > 0; --n)
+    {
+        if (collision_check(x,y,z))
+        {
+            if (data != NULL)
+            {
+                data->side = get_cube_side_from_side_array(side);
+                data->interval = t;
+                data->set_collision_point(x,y,z);
+            }
+            return true;
+        }
+
+        for (int i=0; i<3; side[i++] = 0);
+        
+        if (t_next_y < t_next_x && t_next_y < t_next_z)
+        {
+            side[1] = -y_inc;
+            y += y_inc;
+            t = t_next_y;
+            t_next_y += dt_dy;
+        }
+        else if (t_next_x < t_next_y && t_next_x < t_next_z)
+        {
+            side[0] = -x_inc;
+            x += x_inc;
+            t = t_next_x;
+            t_next_x += dt_dx;
+        }
+        else
+        {
+            side[2] = -z_inc;
+            z += z_inc;
+            t = t_next_z;
+            t_next_z += dt_dz;
+        }
+    }
+    
+    return false;
+}
+
+inline const CubeID RaytraceData::get_cube_id()
+{
+    return t_map::get(this->collision_point[0], this->collision_point[1], this->collision_point[2]); 
+}
+
+inline void RaytraceData::set_collision_point(int x, int y, int z)
+{
+    this->collision_point[0] = translate_point(x);
+    this->collision_point[1] = translate_point(y);
+    this->collision_point[2] = z;
+}
+
+const void RaytraceData::get_pre_collision_point(int pre_collision_point[3])
+{
+    int sides[3];
+    this->get_side_array(sides);
+    for (int i=0; i<3; i++)
+        pre_collision_point[i] = collision_point[i] + sides[i];
+    pre_collision_point[0] = translate_point(pre_collision_point[0]);
+    pre_collision_point[1] = translate_point(pre_collision_point[1]);
 }
