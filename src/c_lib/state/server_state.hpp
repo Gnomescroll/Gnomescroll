@@ -29,7 +29,7 @@ namespace ServerState
     void check_agents_at_base();
 
     void damage_objects_within_sphere(
-        float x, float y, float z, float radius,
+        struct Vec3 position, float radius,
         int damage, AgentID owner,
         EntityType inflictor_type, int inflictor_id,
         bool suicidal=true

@@ -13,7 +13,7 @@ namespace Particle
 
 /* These should be pulled from a dat or something */
 const unsigned int MAX_GRENADES = 1024;
-const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;
+const int GRENADE_BLOCK_DESTROY_RADIUS = 3;
 const float GRENADE_DAMAGE_RADIUS = 5.0f;
 const int GRENADE_SPLASH_DAMAGE = 100;
 const int GRENADE_BLOCK_DAMAGE = 8;
@@ -29,16 +29,16 @@ class Grenade: public ParticleMotion, public BillboardSprite
     private:
         int bounce_count;
         void reset();
+        inline int block_damage(int dist);
     public:
         AgentID owner;
         int ttl_max;
 
         void tick();
-        void explode();
+        void explode() { this->explode(1); }
         void explode(int multiplier);
-
-        int block_damage(int dist);
-        void damage_blocks();
+        
+        void damage_blocks() { this->damage_blocks(1); }
         void damage_blocks(int multiplier);
 
         #if DC_SERVER

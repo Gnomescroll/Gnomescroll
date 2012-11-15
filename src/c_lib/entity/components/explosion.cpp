@@ -92,7 +92,7 @@ void ExplosionComponent::explode()
     if (owner != NULL) owner_id = owner->get_owner();
     
     ServerState::damage_objects_within_sphere(
-        position.x, position.y, position.z, this->radius, this->damage, owner_id,
+        position, this->radius, this->damage, owner_id,
         this->object->type, this->object->id, this->harms_owner
     );
 }

@@ -28,12 +28,6 @@ const float GRENADE_TEXTURE_SCALE = 1.0f;
 const int GRENADE_BOUNCE_EXPLODE_LIMIT = 2;
 const float GRENADE_MASS = 0.5f;
 
-
-/*
- *  Networking; spawn packet from server to client
- */
-
-
 class grenade_StoC: public FixedSizeReliableNetPacketToClient<grenade_StoC>
 {
     public:
@@ -125,28 +119,22 @@ void Grenade::tick()
     this->ttl++;
 }
 
-void Grenade::explode()
-{
-    this->explode(1);
-}
-
 void Grenade::explode(int multiplier)
 {
     Vec3 position = this->get_position();
     #if DC_CLIENT
-    if (multiplier > 3) multiplier = 3;
-    for (int i=0; i<multiplier; i++)
+    const int ANIM_CT_MAX = 6;
+    int anim_ct = Options::animation_level * multiplier;
+    if (ANIM_CT_MAX > 6) anim_ct = ANIM_CT_MAX;
+    for (int i=0; i<anim_ct; i++)
         Animations::grenade_explode(position.x, position.y, position.z);
     #endif
 
     #if DC_SERVER
     // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
-    // leave this for other objects, but agents are damaged by shrapnel now
-
     ServerState::damage_objects_within_sphere(
-        position.x, position.y, position.z,
-        GRENADE_DAMAGE_RADIUS,
-        GRENADE_SPLASH_DAMAGE*multiplier, this->owner, OBJECT_GRENADE, this->id
+        position, GRENADE_DAMAGE_RADIUS, GRENADE_SPLASH_DAMAGE,
+        this->owner, OBJECT_GRENADE, this->id
     );
 
     // apply block damage
@@ -164,56 +152,31 @@ inline int Grenade::block_damage(int dist)
     return idmg;
 }
 
-void Grenade::damage_blocks()
-{
-    this->damage_blocks(1);
-}
-
 void Grenade::damage_blocks(int multiplier)
 {
     #if DC_SERVER
-    using t_map::apply_damage_broadcast;
     const TerrainModificationAction action = TMA_GRENADE;
+    const int ir = GRENADE_BLOCK_DESTROY_RADIUS;
 
     Vec3 position = this->get_position();
-    int mx = (int)position.x;
-    int my = (int)position.y;
-    int mz = (int)position.z;
+    int mx = position.x;
+    int my = position.y;
+    int mz = position.z;
     
-    int ir = GRENADE_BLOCK_DESTROY_RADIUS;
-    int bx,by,bz;
-    int dmg = 0;
-
-    for (int i=0; i<ir; i++)
-    for (int j=0; j<ir; j++)
-    for (int k=0; k<ir; k++)
+    for (int i=mx-ir; i<mx+ir; i++)
+    for (int j=my-ir; j<my+ir; j++)
+    for (int k=mz-ir; k<mz+ir; k++)
     {
-        bx = mx + i;
-        by = my + j;
-        bz = mz + k;
-        if (bz <= 0) continue;  // dont damage floor
-        if (bz >= t_map::map_dim.z) continue;  // dont damage floor
+        if (k <= 0 || k >= t_map::map_dim.z) continue;
 
-        bx = translate_point(bx);
-        by = translate_point(by);
-        
-        dmg = block_damage(i+j+k)*multiplier;
+        int x = translate_point(i);
+        int y = translate_point(j);
+        int z = k;
+
+        int dmg = this->block_damage(abs(x-mx)+abs(y-my)+abs(z-mz));
         if (dmg <= 0) continue;
-        
-        apply_damage_broadcast(bx,by,bz, dmg, action);
-        bx = translate_point(mx - i);
-        apply_damage_broadcast(bx,by,bz, dmg, action);
-        by = translate_point(my - j);
-        apply_damage_broadcast(bx,by,bz, dmg, action);
-        by = translate_point(my + j);
-        bz = mz - k;
-        if (bz > 0 && bz < t_map::map_dim.z)
-            apply_damage_broadcast(bx,by,bz, dmg, action);
-        bx = translate_point(mx + i);
-        by = translate_point(my - j);
-        apply_damage_broadcast(bx,by,bz, dmg, action);
-        bx = translate_point(mx - i);
-        apply_damage_broadcast(bx,by,bz, dmg, action);
+
+        t_map::apply_damage_broadcast(x,y,z, dmg*multiplier, action);
     }
     #endif
 }

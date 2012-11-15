@@ -7,7 +7,6 @@ const int bsize = 65536;
 const float RAYCAST_SAMPLING_DENSITY = 100.0f;
 const int raycast_tick_max = 1024;
 
-//int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval);
 void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out);
 
 void ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval)
@@ -17,8 +16,7 @@ void ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval)
 }
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile);
-//int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile);
-int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile, struct Vec3* v_out);
+int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile, struct Vec3* v_out);
 
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, CubeID* tile, int* side);
 

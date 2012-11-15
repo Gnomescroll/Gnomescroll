@@ -2,15 +2,20 @@
 
 // branch prediction
 #ifdef __MSVC__
-# define likely(x)   !!(x)
+# define likely  (x) !!(x)
 # define unlikely(x) !!(x)
 #else
-# define likely(x)   __builtin_expect(!!(x), 1)
+# define likely  (x) __builtin_expect(!!(x), 1)
 # define unlikely(x) __builtin_expect(!!(x), 0)
 #endif
 
 #define GS_MAX(a,b) ((a) > (b)) ? (a) : (b);
 #define GS_MIN(a,b) ((a) < (b)) ? (a) : (b);
+
+#ifdef __MSVC__
+# define fmin(x,y) ((x) < (y)) ? (x) : (y)
+# define fmax(x,y) ((x) > (y)) ? (x) : (y)
+#endif
 
 #define ASSERT_VALID_USER_ID(user_id) GS_ASSERT((user_id) > 0 && (user_id) != NULL_USER_ID)
 #define IF_INVALID_USER_ID(user_id) if (unlikely((user_id) <= 0 || (user_id) == NULL_USER_ID)) 
@@ -64,61 +69,20 @@
 // preprocessor macros 
 // http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
 
-
 #ifdef __GNUC__
-    #define OPTIMIZED __attribute__((optimize("-O3")))
-    #define STATIC_OPTIMIZED __attribute__((optimize("-O3"))) static
-
-    #define INLINE __attribute__((__always_inline__)) inline 
-    #define STATIC_INLINE __attribute__((__always_inline__)) static inline 
-
-    #define INLINE_OPTIMIZED __attribute__((always_inline, optimize("-O3"))) inline
-    #define STATIC_INLINE_OPTIMIZED __attribute__((always_inline, optimize("-O3"))) static inline 
+# define OPTIMIZED __attribute__((optimize("-O3")))
+# define STATIC_OPTIMIZED __attribute__((optimize("-O3"))) static
+# define INLINE __attribute__((__always_inline__)) inline 
+# define STATIC_INLINE __attribute__((__always_inline__)) static inline 
+# define INLINE_OPTIMIZED __attribute__((always_inline, optimize("-O3"))) inline
+# define STATIC_INLINE_OPTIMIZED __attribute__((always_inline, optimize("-O3"))) static inline 
 #endif
 
 #ifdef __MSVC__
-    #define OPTIMIZED
-    #define STATIC_OPTIMIZED static
-
-    #define INLINE_OPTIMIZED __forceinline
-    #define STATIC_INLINE_OPTIMIZED __forceinline
-
-    #define INLINE __forceinline
-    #define STATIC_INLINE __foreceinline static
+# define OPTIMIZED
+# define STATIC_OPTIMIZED static
+# define INLINE_OPTIMIZED __forceinline
+# define STATIC_INLINE_OPTIMIZED __forceinline
+# define INLINE __forceinline
+# define STATIC_INLINE __foreceinline static
 #endif
-
-
-/*
-#ifndef __MSVC__
-    #ifdef _MSC_VER
-        #define __MSVC__
-    #endif
-#endif
-*/
-
-/*
-#else
-#define ALWAYS_INLINE inline
-#endif
-#endif
-*/
-
-
-/*
-#ifndef UNLIKELY
-#if COMPILER(GCC)
-#define UNLIKELY(x) __builtin_expect((x), 0)
-#else
-#define UNLIKELY(x) (x)
-#endif
-#endif
-
-#ifndef LIKELY
-#if COMPILER(GCC)
-#define LIKELY(x) __builtin_expect((x), 1)
-#else
-#define LIKELY(x) (x)
-#endif
-#endif
-#endif
-*/

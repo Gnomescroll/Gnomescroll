@@ -66,7 +66,7 @@ int* VerletComponent::bounce(int* collision, CubeID* tile)
     float interval = 0.0f;
 
     struct Vec3 norm;
-    int *s = _ray_cast5_capped(
+    int *s = ray_cast5_capped(
         old_position.x, old_position.y, old_position.z,
         this->position.x, this->position.y, this->position.z,
         &interval, collision, tile, &norm

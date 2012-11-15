@@ -213,17 +213,12 @@ bool point_occupied_by_type(EntityType type, int x, int y, int z)
 
 void damage_objects_within_sphere(const EntityType* types, int n_types, Vec3 position, float radius, int damage)
 {
-    Entity* object;
-
-    using Components::HealthComponent;
-    HealthComponent* health;
-
     int count = filter->within_sphere(entity_list, types, n_types, position, radius);
     for (int i=0; i<count; i++)
     {
-        object = filter->objects[i];
-
-        health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+        Entity* object = filter->objects[i];
+        using Components::HealthComponent;
+        HealthComponent* health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
         if (health != NULL) health->take_damage(damage);
     }
 }

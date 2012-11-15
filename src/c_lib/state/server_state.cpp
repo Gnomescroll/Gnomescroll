@@ -4,6 +4,7 @@
 dont_include_this_file_in_client
 #endif
 
+#include <physics/vec3.hpp>
 #include <agent/agent.hpp>
 #include <agent/_interface.hpp>
 #include <chat/_interface.hpp>
@@ -114,33 +115,30 @@ namespace ServerState
     }
 
     void damage_objects_within_sphere(
-        float x, float y, float z, float radius,
+        struct Vec3 p, float radius,
         int damage, AgentID owner,
         EntityType inflictor_type, int inflictor_id,
         bool suicidal)   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     {   // agents
         using Agents::agent_list;
-        agent_list->objects_within_sphere(x,y,z,radius);
-        Agent* a;
+        agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
         const float blast_mean = 0;
         const float blast_stddev = 1.0f;
         for (unsigned int i=0; i<agent_list->n_filtered; i++)
         {
-            a = agent_list->filtered_objects[i];
+            Agent* a = agent_list->filtered_objects[i];
             if (a->id == agent_list->null_id) continue;
             if (!suicidal && a->id == owner) continue;
-            if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
+            if (!a->point_can_cast(p.x, p.y, p.z, radius)) continue;  // cheap terrain cover check
             int dmg = ((float)damage)*gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
             a->status.apply_damage(dmg, owner, inflictor_type);
         }
-
-        Vec3 position = vec3_init(x,y,z);
 
         const int n_types = 3;
         const EntityType types[n_types] = {
             OBJECT_MONSTER_BOMB, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
         };
-        Entities::damage_objects_within_sphere(types, n_types, position, radius, damage);
+        Entities::damage_objects_within_sphere(types, n_types, p, radius, damage);
 
     }
         
