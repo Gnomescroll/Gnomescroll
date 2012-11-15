@@ -12,7 +12,7 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 
 void ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval)
 {
-    struct Vec3 out;
+    static struct Vec3 out;
     _ray_cast4(p.x, p.y, p.z, f.x, f.y, f.z, interval, &out);
 }
 
@@ -25,9 +25,9 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
 // args: position and forward vector
 int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
 int* _nearest_block(Vec3 position, Vec3 direction, float max_distance, int z_low, int z_high) { return _nearest_block(position.x, position.y, position.z, direction.x, direction.y, direction.z, max_distance, z_low, z_high); }
-int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
-int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, int side[3], float max_distance, int z_low, int z_high);
-int* _farthest_empty_block(Vec3 p, Vec3 v, int side[3], float max_distance, int z_low, int z_high) { return _farthest_empty_block(p.x, p.y, p.z, v.x, v.y, v.z, side, max_distance, z_low, z_high); }
+int* farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
+int* farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, int side[3], float max_distance, int z_low, int z_high);
+int* farthest_empty_block(struct Vec3 p, struct Vec3 v, int side[3], float max_distance, int z_low, int z_high) { return farthest_empty_block(p.x, p.y, p.z, v.x, v.y, v.z, side, max_distance, z_low, z_high); }
 
 inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2);
 

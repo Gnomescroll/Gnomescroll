@@ -181,7 +181,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 
 void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out)
 {
-    float len = (float)sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    float len = sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x,y,z;
     x = x0; //truncating conversion
@@ -268,7 +268,7 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 }
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile) {
-    float len = (float)sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    float len = sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x = (int)x0, //truncating conversion
         y = (int)y0,
@@ -525,7 +525,7 @@ void _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
 #endif
 
 int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile, struct Vec3* v_out) {
-    float len = (float)sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    float len = sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x = (int)x0, //truncating conversion
         y = (int)y0,
@@ -628,7 +628,7 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
 
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, CubeID* tile, int* side) {
     // normalize direction
-    float len2 = (float)sqrtf( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
+    float len2 = sqrtf( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;
     _dfy /= len2;
     _dfz /= len2;
@@ -733,19 +733,18 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
 }
 
 
-/* Formerly raycast_utils.py */
 static int ray_cast_block[3];
-int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
+int* farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
 {
-    int side[3];
-    return _farthest_empty_block(x,y,z,vx,vy,vz,side,max_distance,z_low,z_high);
+    static int side[3];
+    return farthest_empty_block(x,y,z,vx,vy,vz,side,max_distance,z_low,z_high);
 }
 
-int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, int side[3], float max_distance, int z_low, int z_high)
+int* farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, int side[3], float max_distance, int z_low, int z_high)
 {   // side si the normal of the solid block that it collided against
 
     const float inc = 1.0f / RAYCAST_SAMPLING_DENSITY;
-    float xy_inc = (float)sqrtf(vx*vx + vy*vy);
+    float xy_inc = sqrtf(vx*vx + vy*vy);
 
     int z_max;
     float z_inc;
@@ -765,17 +764,17 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
         z_inc = -1.0f*vz;
     }
 
-    while (!(n*xy_inc > max_distance || n*z_inc > z_max))
+    while (n*xy_inc <= max_distance && n*z_inc <= z_max)
     {
         n += inc;
 
         x_ = (int)translate_point(x+vx*n);
         y_ = (int)translate_point(y+vy*n);
-        z_ = (int)(z+vz*n);
+        z_ = (int)(z + vz*n);
 
         x__ = (int)translate_point(x+ vx*(n+inc));
         y__ = (int)translate_point(y+ vy*(n+inc));
-        z__ = (int)(z+ vz*(n+inc));
+        z__ = (int)(z + vz*(n+inc));
 
         if (x_ != x__ || y_ != y__ || z_ != z__)
         {
@@ -783,7 +782,7 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
             {
                 if (z_ >= z-z_low && z_ <= z+z_high)
                 {
-                    if (z_ < 0 || z >= t_map::map_dim.z) return NULL;
+                    if (z_ < 0 || z_ >= t_map::map_dim.z) return NULL;
                     ray_cast_block[0] = translate_point(x_);
                     ray_cast_block[1] = translate_point(y_);
                     ray_cast_block[2] = z_;
@@ -803,7 +802,7 @@ int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float 
 int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high) {
 
     const float inc = 1.0f / RAYCAST_SAMPLING_DENSITY;
-    float xy_inc = (float)sqrtf(vx*vx + vy*vy);
+    float xy_inc = sqrtf(vx*vx + vy*vy);
 
     int z_max;
     float z_inc;
@@ -812,15 +811,19 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
     int x_, y_, z_;
     int x__, y__, z__;
 
-    if (vz >= 0.0f) {
+    if (vz >= 0.0f)
+    {
         z_max = z_high;
         z_inc = vz;
-    } else {
+    }
+    else
+    {
         z_max = z_low;
         z_inc = -vz;
     }
 
-    while (!(n*xy_inc > max_distance || n*z_inc > z_max)) {
+    while (n*xy_inc <= max_distance && n*z_inc <= z_max)
+    {
         n += inc;
 
         x_ = (int)translate_point(x+vx*n);

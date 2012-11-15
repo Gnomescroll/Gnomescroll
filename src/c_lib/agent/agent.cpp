@@ -1020,7 +1020,7 @@ int* Agent::nearest_open_block(const float max_dist, const int z_low, const int 
 {
     Vec3 p = this->get_camera_position();
     Vec3 f = this->forward_vector();
-    int* b = _farthest_empty_block(
+    int* b = farthest_empty_block(
         p.x, p.y, p.z,
         f.x, f.y, f.z,
         max_dist, z_low, z_high);
@@ -1068,7 +1068,7 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], const float max_di
     Vec3 v = this->forward_vector();
 
     int s[3];
-    int* b = _farthest_empty_block(p.x, p.y, p.z, v.x, v.y, v.z, s, max_distance, z_low, z_high);
+    int* b = farthest_empty_block(p.x, p.y, p.z, v.x, v.y, v.z, s, max_distance, z_low, z_high);
     if (b == NULL) return -1;
 
     open_pos[0] = b[0];

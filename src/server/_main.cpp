@@ -78,9 +78,10 @@ void init_world()
     else
     if (fast_map)
     {
-        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
-        map_gen::floor(XMAX,YMAX,1, 9, t_map::get_cube_id("regolith"));
-        map_gen::floor(XMAX,YMAX,20,1, t_map::get_cube_id("regolith"));
+        map_gen::fill("regolith");
+        //map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
+        //map_gen::floor(XMAX,YMAX,1, 9, t_map::get_cube_id("regolith"));
+        //map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_id("regolith"));
     }
 
     srand((unsigned int)time(NULL));

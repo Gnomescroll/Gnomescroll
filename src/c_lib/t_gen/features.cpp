@@ -5,22 +5,32 @@
 namespace map_gen
 {
 
+void fill(const char* cube_name)
+{
+    CubeID cube = t_map::get_cube_id(cube_name);
+    ASSERT_VALID_CUBE_ID(cube);
+    IF_INVALID_CUBE_ID(cube) return;
+
+    for (int i=0; i<t_map::map_dim.x; i++)
+    for (int j=0; j<t_map::map_dim.y; j++)
+    for (int k=0; k<t_map::map_dim.z; k++)
+        t_map::set_fast(i,j,k, cube);
+}
+
 void ceiling(int x, int y, int z, int height, CubeID tile)
 {
-    int i,j,k;
     z -= 1;
-    for (i=0; i<x; i++)
-    for (j=0; j<y; j++)
-    for (k=z; k>z-height; k--)
+    for (int i=0; i<x; i++)
+    for (int j=0; j<y; j++)
+    for (int k=z; k>z-height; k--)
         t_map::set_fast(i,j,k, tile);
 }
 
 void floor(int x, int y, int z_start, int height, CubeID tile)
 {
-    int i,j,k;
-    for (k=z_start; k<z_start+height; k++)
-    for (i=0; i<x; i++)
-    for (j=0; j<y; j++)
+    for (int k=z_start; k<z_start+height; k++)
+    for (int i=0; i<x; i++)
+    for (int j=0; j<y; j++)
         t_map::set_fast(i,j,k, tile);
 }
 
@@ -42,15 +52,14 @@ void rough_floor(int x, int y, int z_start, int height, CubeID tile)
 
 void walls(int x, int y, int z_start, int height, CubeID tile)
 {
-    int i,j,k;
-    for (i=0; i<x; i+=x-1)
-    for (j=0; j<y; j++)
-    for (k=z_start; k<height; k++)
+    for (int i=0; i<x; i+=x-1)
+    for (int j=0; j<y; j++)
+    for (int k=z_start; k<height; k++)
         t_map::set_fast(i,j,k,tile);
     
-    for (j=0; j<y; j+=y-1)
-    for (i=0; i<y; i++)
-    for (k=z_start; k<height; k++)
+    for (int j=0; j<y; j+=y-1)
+    for (int i=0; i<y; i++)
+    for (int k=z_start; k<height; k++)
         t_map::set_fast(i,j,k,tile);
 }
 

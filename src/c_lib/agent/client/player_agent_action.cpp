@@ -418,7 +418,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     const int z_high = 3;
 
     Vec3 f = agent_camera->forward_vector();
-    int* b = _farthest_empty_block(
+    int* b = farthest_empty_block(
         p->camera_state.x, p->camera_state.y, p->camera_z(),
         f.x, f.y, f.z,
         max_dist, z_low, z_high
@@ -470,7 +470,7 @@ void PlayerAgent_action::admin_set_block()
     const int z_high = 3;
 
     Vec3 f = agent_camera->forward_vector();
-    int* b = _farthest_empty_block(
+    int* b = farthest_empty_block(
         p->camera_state.x, p->camera_state.y, p->camera_z(),
         f.x, f.y, f.z,
         max_dist, z_low, z_high
@@ -547,7 +547,7 @@ void PlayerAgent_action::place_spawner()
     const float max_dist = 4.0f;
     const int z_low = 4;
     const int z_high = 3;
-    int* block = _farthest_empty_block(
+    int* block = farthest_empty_block(
         this->p->camera_state.x, this->p->camera_state.y, this->p->camera_z(),
         v.x, v.y, v.z,
         max_dist, z_low, z_high
@@ -572,7 +572,7 @@ void PlayerAgent_action::place_turret()
     const float max_dist = 4.0f;
     const int z_low = 4;
     const int z_high = 3;
-    int* block = _farthest_empty_block(
+    int* block = farthest_empty_block(
         this->p->camera_state.x, this->p->camera_state.y, this->p->camera_z(),
         v.x, v.y, v.z,
         max_dist, z_low, z_high

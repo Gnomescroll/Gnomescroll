@@ -11,6 +11,8 @@ void rough_floor(int x, int y, int z_start, int height, CubeID tile);    // whit
 void walls(int x, int y, int z_start, int height, CubeID tile);
 void box(int x, int y, int z_start, int height, CubeID tile);
 
+void fill(const char* cube_name);
+
 void erosion(const int x, const int y, const int passes, const int h_diff, const int max_iters);
 
 }   // map_gen

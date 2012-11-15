@@ -500,7 +500,7 @@ inline void crusher_crush_item_CtoS::handle()
     else
     {   // calculate face nearest agent
         int side[3];
-        int* c = _farthest_empty_block(a->get_camera_position(), a->forward_vector(), side, AGENT_CONTAINER_REACH, 4, 3);
+        int* c = farthest_empty_block(a->get_camera_position(), a->forward_vector(), side, AGENT_CONTAINER_REACH, 4, 3);
         if (c == NULL
          || (c[0] != b[0] || c[1] != b[1] || c[2] != b[2])
          || t_map::get(b[0]+side[0], b[1]+side[1], b[2]+side[2]) != 0)
