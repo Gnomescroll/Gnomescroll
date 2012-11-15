@@ -44,9 +44,6 @@ inline void Agent_state_message::handle()
     Agent* a = Agents::get_agent((AgentID)id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    #if DC_SERVER
-    z = clamp_z(z);
-    #endif
     a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 
@@ -548,20 +545,14 @@ inline void Agent_cs_CtoS::handle()
 // agent hit block action
 inline void hit_block_CtoS::handle()
 {
-    // comparisons not needed due to value range of data type
-    //if (z < 0 || z >= t_map::map_dim.z) return;
-    //if (z == 0) return;
-    
     Agent* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+
+    if (z <= 0 || z >= t_map::map_dim.z) return;
 
     x = translate_point(x);
     y = translate_point(y);
-    z = clamp_z(z);
 
     agent_hit_block_StoC msg;
     msg.id = a->id;
@@ -655,13 +646,10 @@ inline void hitscan_object_CtoS::handle()
 inline void hitscan_block_CtoS::handle()
 {
     Agent* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
 
-    z = clamp_z(z);
+    if (z <= 0 || z >= t_map::map_dim.z) return;
 
     // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
     // send to clients
@@ -859,6 +847,7 @@ inline void admin_set_block_CtoS::handle()
     Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
+    if (z <= 0 || z >= t_map::map_dim.z) return;
 
     CubeID cube_id = (CubeID)this->val;
     
@@ -866,7 +855,6 @@ inline void admin_set_block_CtoS::handle()
 
     x = translate_point(x);
     y = translate_point(y);
-    z = clamp_z(z);
 
     // TODO -- when this is a /real/ admin tool, remove this check
     // since we're giving it to players, do this check
@@ -934,7 +922,7 @@ inline void place_spawner_CtoS::handle()
     Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    z = clamp_z(z);
+    if (z <= 0 || z >= t_map::map_dim.z) return;
     Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
     Entities::ready(obj);
@@ -946,7 +934,7 @@ inline void place_turret_CtoS::handle()
     Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
-    z = clamp_z(z);
+    if (z <= 0 || z >= t_map::map_dim.z) return;
     Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
     Entities::ready(obj);
@@ -978,7 +966,6 @@ inline void agent_camera_state_CtoS::handle()
 {
     Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
-    z = clamp_z(z);
     a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;
 }
