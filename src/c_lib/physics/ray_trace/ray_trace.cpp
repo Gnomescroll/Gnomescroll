@@ -727,6 +727,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* d
     int x_inc, y_inc, z_inc;
     float t_next_x, t_next_y, t_next_z;
     int side[3] = {0};
+    side[0] = 1;    // default value in case we start inside a block 
 
     if (dx == 0)
     {
