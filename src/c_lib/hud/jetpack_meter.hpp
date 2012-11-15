@@ -32,8 +32,6 @@ namespace Hud {
 		}
 
 		void draw(float _xresf, float _yresf, PlayerAgent_state* pa, MeterAnchor anchor = METANCH_RIGHT) {
-		    glColor4ub(255,255,255,255);
-
 			float s_w = _xresf/4; // spectrum width (that a full bar would cover)
 			float s_x = 0;        // spectrum x pos
 			float s_h = _yresf/64;
@@ -50,6 +48,9 @@ namespace Hud {
 				s_x += lo / 2;
 			}
 
+			// draw
+			glEnable(GL_BLEND);
+			glColor4ub(255,255,255,115);
 			draw_bound_texture(s_x, s_y, dyn_w, s_h);
 			for (int i = 0; i < prev_w - dyn_w; i++) {
 				// FIXME   spawn_quadticles, uses the dynamic leftover width i think?  or SHOULD?

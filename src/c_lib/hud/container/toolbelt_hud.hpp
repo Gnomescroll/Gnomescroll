@@ -111,11 +111,10 @@ void AgentToolbeltUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    int g1 = 80-16; //color 1
-    //int g2 = 80-8;  //color 2
-
-    glBegin(GL_QUADS);
-    glColor4ub(g1,g1,g1, 128+64); //128+64);
+    // draw slot border
+    int intensity = 0; // old intensity == 80-16
+	glBegin(GL_QUADS);
+    glColor4ub(intensity, intensity, intensity, 55); // old alpha == 128+64
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -139,7 +138,7 @@ void AgentToolbeltUI::draw()
     if (slot_stacks == NULL) return;
     if (slot_durabilities == NULL) return;
 
-    //glColor4ub(80, 80, 80, 128);
+    //glColor4ub(80, 80, 80, 128);		
     // render durability
     glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
