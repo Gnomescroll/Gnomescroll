@@ -13,8 +13,11 @@
 #include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 
-static inline int collision_check(int x, int y, int z)
+static inline bool collision_check(int x, int y, int z)
 {
+    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     return t_map::isSolid(x,y,z);
 }
 
@@ -54,29 +57,26 @@ static bool _ray_cast_simple(float x, float y, float z, float a, float b, float 
         cx += dx;
         cy += dy;
         cz += dz;
-        if (cx >= bsize || cy >= bsize || cz >= bsize)
+        if (cx >= bsize)
         {
-            if (cx >= bsize)
-            {
-                cx -= bsize;
-                sx += cdx;
-                if (collision_check(sx,sy,sz))
-                    return false;
-            }
-            if (cy >= bsize)
-            {
-                cy -= bsize;
-                sy += cdy;
-                if (collision_check(sx,sy,sz))
-                    return false;
-            }
-            if (cz >= bsize)
-            {
-                cz -= bsize;
-                sz += cdz;
-                if (collision_check(sx,sy,sz))
-                    return false;
-            }
+            cx -= bsize;
+            sx += cdx;
+            if (collision_check(sx,sy,sz))
+                return false;
+        }
+        if (cy >= bsize)
+        {
+            cy -= bsize;
+            sy += cdy;
+            if (collision_check(sx,sy,sz))
+                return false;
+        }
+        if (cz >= bsize)
+        {
+            cz -= bsize;
+            sz += cdz;
+            if (collision_check(sx,sy,sz))
+                return false;
         }
     }
     return true;
@@ -117,18 +117,18 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int _dy = ((y1-y0)/len) *ssize;
     int _dz = ((z1-z0)/len) *ssize;
 
-    int cdx = _dx >= 0 ? 1 : -1;
-    int cdy = _dy >= 0 ? 1 : -1;
-    int cdz = _dz >= 0 ? 1 : -1;
+    int cdx = (_dx >= 0) ? 1 : -1;
+    int cdy = (_dy >= 0) ? 1 : -1;
+    int cdz = (_dz >= 0) ? 1 : -1;
 
     int dx = _dx*cdx;
     int dy = _dy*cdy;
     int dz = _dz*cdz;
 
     float dummy;
-    int cx = cdx >=0 ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
-    int cy = cdy >=0 ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
-    int cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
+    int cx = (cdx >= 0) ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
+    int cy = (cdy >= 0) ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
+    int cz = (cdz >= 0) ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
     max_i = (max_i > raycast_tick_max) ? raycast_tick_max : max_i;
@@ -136,52 +136,42 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int i = 0;
     for (; i < max_i; i++)
     {
+        bool collides = false;
         cx += dx;
         cy += dy;
         cz += dz;
-        if (cx >= bsize || cy >= bsize || cz >= bsize)
+        
+        if (cx >= bsize)
         {
-            if (cx >= bsize)
+            cx -= bsize;
+            x += cdx;
+            if (collision_check(x,y,z))
             {
-                cx -= bsize;
-                x += cdx;
-                if (collision_check(x,y,z))
-                {
-                    if (cdx == 1)
-                        *v_out = vec3_init(1.0f,0.0f,0.0f);
-                    else 
-                        *v_out = vec3_init(-1.0f,0.0f,0.0f);
-                    ri4[0] = cdx;
-                    break;
-                }
-            }
-            if (cy >= bsize)
-            {
-                cy -= bsize;
-                y += cdy;
-                if (collision_check(x,y,z))
-                {
-                    if (cdy == 1)
-                        *v_out = vec3_init(0.0f,1.0f,0.0f);
-                    else
-                        *v_out = vec3_init(0.0f,-1.0f,0.0f);
-                    break;
-                }
-            }
-            if (cz >= bsize)
-            {
-                cz -= bsize;
-                z += cdz;
-                if (collision_check(x,y,z))
-                {
-                    if (cdz == 1)
-                        *v_out = vec3_init(0.0f,0.0f,1.0f);
-                    else 
-                        *v_out = vec3_init(0.0f,0.0f,-1.0f);
-                    break;
-                }
+                *v_out = vec3_init(cdx,0.0f,0.0f);
+                collides = true;
             }
         }
+        if (cy >= bsize)
+        {
+            cy -= bsize;
+            y += cdy;
+            if (collision_check(x,y,z))
+            {
+                *v_out = vec3_init(0.0f,cdy,0.0f);
+                collides = true;
+            }
+        }
+        if (cz >= bsize)
+        {
+            cz -= bsize;
+            z += cdz;
+            if (collision_check(x,y,z))
+            {
+                *v_out = vec3_init(0.0f,0.0f,cdz);
+                collides = true;
+            }
+        }
+        if (collides) break;
     }
 
     *interval = (float)i / max_i;
@@ -198,74 +188,85 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
         return NULL;
     }
 
-    int x = (int)x0, //truncating conversion
-        y = (int)y0,
-        z = (int)z0;
+    // truncate
+    int x = x0;
+    int y = y0;
+    int z = z0;
 
-    /* orient the delta step */
-    int _dx,_dy,_dz;
-    _dx = ((x1-x0)/len) *ssize;
-    _dy = ((y1-y0)/len) *ssize;
-    _dz = ((z1-z0)/len) *ssize;
+    // orient the delta step
+    int _dx = ((x1-x0)/len) *ssize;
+    int _dy = ((y1-y0)/len) *ssize;
+    int _dz = ((z1-z0)/len) *ssize;
 
-    int cdx, cdy, cdz;
-    cdx = _dx >= 0 ? 1 : -1;
-    cdy = _dy >= 0 ? 1 : -1;
-    cdz = _dz >= 0 ? 1 : -1;
+    int cdx = _dx >= 0 ? 1 : -1;
+    int cdy = _dy >= 0 ? 1 : -1;
+    int cdz = _dz >= 0 ? 1 : -1;
 
-    int dx,dy,dz;
-    dx = _dx*cdx;
-    dy = _dy*cdy;
-    dz = _dz*cdz;
+    int dx = _dx*cdx;
+    int dy = _dy*cdy;
+    int dz = _dz*cdz;
 
-    int cx,cy,cz;
     float dummy;
-    cx = cdx >=0 ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
-    cy = cdy >=0 ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
-    cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
+    int cx = cdx >=0 ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
+    int cy = cdy >=0 ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
+    int cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
-    ri4[0]=0; ri4[1]=0; ri4[2]=0;
+    for (int i=0; i<3; i++) ri4[i] = 0;
 
-    int i;
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
 
-    int _c = 0;
-    for (i=0; i < max_i; i++) {
+    int i = 0;
+    for (; i < max_i; i++)
+    {
+        bool collides = false;
         cx += dx;
         cy += dy;
         cz += dz;
-        if (cx >= bsize || cy >= bsize || cz >= bsize) {
-            if (cx >= bsize) {
-                cx -= bsize;
-                x += cdx;
-                if (collision_check(x,y,z)) {
-                    ri4[0] = cdx;
-                    _c = 1;
-                }
+
+        if (cx >= bsize)
+        {
+            cx -= bsize;
+            x += cdx;
+            if (collision_check(x,y,z))
+            {
+                ri4[0] = cdx;
+                collides = true;
             }
-            if (cy >= bsize) {
-                cy -= bsize;
-                y += cdy;
-                if (_c || collision_check(x,y,z)) {
-                    ri4[1] = cdy;
-                    _c = 1;
-                }
-            }
-            if (cz >= bsize) {
-                cz -= bsize;
-                z += cdz;
-                if (_c || collision_check(x,y,z)) {
-                    ri4[2] = cdz;
-                    _c = 1;
-                }
-            }
-            if (_c) break;
         }
+        if (cy >= bsize)
+        {
+            cy -= bsize;
+            y += cdy;
+            if (collides || collision_check(x,y,z))
+            {
+                ri4[1] = cdy;
+                collides = true;
+            }
+        }
+        if (cz >= bsize)
+        {
+            cz -= bsize;
+            z += cdz;
+            if (collides || collision_check(x,y,z))
+            {
+                ri4[2] = cdz;
+                collides = true;
+            }
+        }
+        
+        if (collides) break;
     }
 
-    collision[0]=x;collision[1]=y;collision[2]=z;
+    x = translate_point(x);
+    y = translate_point(y);
+
+    collision[0] = x;
+    collision[1] = y;
+    collision[2] = z;
+    
     *tile = t_map::get(x,y,z);
-    *interval = (float)(i) / max_i;
+    *interval = (float)i / (float)max_i;
+
     return ri4;
 }
 
@@ -309,8 +310,7 @@ int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, fl
     // this adjustment is necessary, but the step may need to be resized
     // if max_i > ray_cast_max.
     GS_ASSERT(max_i <= raycast_tick_max);
-    if (max_i > raycast_tick_max)
-        max_i = raycast_tick_max;
+    max_i = GS_MIN(max_i, raycast_tick_max); 
 
     int i = 0;
     for (; i < max_i; i++)
@@ -328,10 +328,7 @@ int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, fl
             {
                 collides = true;
                 ri4[0] = cdx;
-                if (cdx == 1)
-                    *v_out = vec3_init(1.0f,0.0f,0.0f);
-                else 
-                    *v_out = vec3_init(-1.0f,0.0f,0.0f);
+                *v_out = vec3_init(cdx,0.0f,0.0f);
             }
         }
         if (cy >= bsize)
@@ -342,10 +339,7 @@ int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, fl
             {
                 collides = true;
                 ri4[1] = cdy;
-                if (cdy == 1)
-                    *v_out = vec3_init(0.0f,1.0f,0.0f);
-                else 
-                    *v_out = vec3_init(0.0f,-1.0f,0.0f);
+                *v_out = vec3_init(0.0f,cdy,0.0f);
             }
         }
         if (cz >= bsize)
@@ -356,14 +350,14 @@ int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, fl
             {
                 collides = true;
                 ri4[2] = cdz;
-                if (cdz == 1)
-                    *v_out = vec3_init(0.0f,0.0f,1.0f);
-                else 
-                    *v_out = vec3_init(0.0f,0.0f,-1.0f);
+                *v_out = vec3_init(0.0f,0.0f,cdz);
             }
         }
         if (collides) break;
     }
+
+    x = translate_point(x);
+    y = translate_point(y);
 
     collision[0] = x;
     collision[1] = y;
@@ -481,6 +475,9 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
 
     if (collides)
     {
+        x = translate_point(x);
+        y = translate_point(y);
+
         collision[0] = x;
         collision[1] = y;
         collision[2] = z;
@@ -538,13 +535,13 @@ int* farthest_empty_block(float x, float y, float z, float vx, float vy, float v
     {
         n += inc;
 
-        x_ = (int)translate_point(x+vx*n);
-        y_ = (int)translate_point(y+vy*n);
-        z_ = (int)(z + vz*n);
+        x_ = translate_point(x+vx*n);
+        y_ = translate_point(y+vy*n);
+        z_ = (z + vz*n);
 
-        x__ = (int)translate_point(x+ vx*(n+inc));
-        y__ = (int)translate_point(y+ vy*(n+inc));
-        z__ = (int)(z + vz*(n+inc));
+        x__ = translate_point(x+ vx*(n+inc));
+        y__ = translate_point(y+ vy*(n+inc));
+        z__ = (z + vz*(n+inc));
 
         if (x_ != x__ || y_ != y__ || z_ != z__)
         {
@@ -596,13 +593,13 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
     {
         n += inc;
 
-        x_ = (int)translate_point(x+vx*n);
-        y_ = (int)translate_point(y+vy*n);
-        z_ = (int)(z+vz*n);
+        x_ = translate_point(x+vx*n);
+        y_ = translate_point(y+vy*n);
+        z_ = (z+vz*n);
 
-        x__ = (int)translate_point(x+ vx*(n+inc));
-        y__ = (int)translate_point(y+ vy*(n+inc));
-        z__ = (int)(z+ vz*(n+inc));
+        x__ = translate_point(x+ vx*(n+inc));
+        y__ = translate_point(y+ vy*(n+inc));
+        z__ = (z+ vz*(n+inc));
 
         if (x_ != x__ || y_ != y__ || z_ != z__)
         {
