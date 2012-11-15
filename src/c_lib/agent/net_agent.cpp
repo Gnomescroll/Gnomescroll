@@ -758,11 +758,8 @@ inline void melee_object_CtoS::handle()
 inline void melee_none_CtoS::handle()
 {
     Agent* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     agent_melee_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();
@@ -771,16 +768,11 @@ inline void melee_none_CtoS::handle()
 inline void ThrowGrenade_CtoS::handle()
 {
     Agent* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
     agent_threw_grenade_StoC msg;
     msg.id = a->id;
     msg.broadcast();
-
-    z = clamp_z(z);
 
     Vec3 n = vec3_init(vx,vy,vz);
     normalize_vector(&n);

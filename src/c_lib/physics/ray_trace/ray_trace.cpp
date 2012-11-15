@@ -30,9 +30,9 @@ static bool _ray_cast_simple(float x, float y, float z, float a, float b, float 
     sz = (int)z;
 
     int _dx,_dy,_dz;
-    _dx = ((a-x)/len) *ssize;
-    _dy = ((b-y)/len) *ssize;
-    _dz = ((c-z)/len) *ssize;
+    _dx = ((a-x)/len) * ssize;
+    _dy = ((b-y)/len) * ssize;
+    _dz = ((c-z)/len) * ssize;
 
     int cdx, cdy, cdz;
     cdx = _dx >= 0 ? 1 : -1;
@@ -113,9 +113,9 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int y = y0;
     int z = z0;
 
-    int _dx = ((x1-x0)/len) *ssize;
-    int _dy = ((y1-y0)/len) *ssize;
-    int _dz = ((z1-z0)/len) *ssize;
+    int _dx = ((x1-x0)/len) * ssize;
+    int _dy = ((y1-y0)/len) * ssize;
+    int _dz = ((z1-z0)/len) * ssize;
 
     int cdx = (_dx >= 0) ? 1 : -1;
     int cdy = (_dy >= 0) ? 1 : -1;
@@ -131,7 +131,7 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int cz = (cdz >= 0) ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    max_i = (max_i > raycast_tick_max) ? raycast_tick_max : max_i;
+    max_i = GS_MIN(max_i, raycast_tick_max);
 
     int i = 0;
     for (; i < max_i; i++)
@@ -174,7 +174,7 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
         if (collides) break;
     }
 
-    *interval = (float)i / max_i;
+    *interval = (float)i / (float)max_i;
 }
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile)
@@ -194,9 +194,9 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     int z = z0;
 
     // orient the delta step
-    int _dx = ((x1-x0)/len) *ssize;
-    int _dy = ((y1-y0)/len) *ssize;
-    int _dz = ((z1-z0)/len) *ssize;
+    int _dx = ((x1-x0)/len) * ssize;
+    int _dy = ((y1-y0)/len) * ssize;
+    int _dz = ((z1-z0)/len) * ssize;
 
     int cdx = _dx >= 0 ? 1 : -1;
     int cdy = _dy >= 0 ? 1 : -1;
@@ -287,9 +287,9 @@ int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, fl
     int z = z0;
 
     /* orient the delta step */
-    int _dx = ((x1-x0)/len) *ssize;
-    int _dy = ((y1-y0)/len) *ssize;
-    int _dz = ((z1-z0)/len) *ssize;
+    int _dx = ((x1-x0)/len) * ssize;
+    int _dy = ((y1-y0)/len) * ssize;
+    int _dz = ((z1-z0)/len) * ssize;
 
     int cdx = (_dx >= 0) ? 1 : -1;
     int cdy = (_dy >= 0) ? 1 : -1;
@@ -404,9 +404,9 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
     int _y = y;
     int _z = z;
 
-    int _dx = ((x1-x0)/len) *ssize;
-    int _dy = ((y1-y0)/len) *ssize;
-    int _dz = ((z1-z0)/len) *ssize;
+    int _dx = ((x1-x0)/len) * ssize;
+    int _dy = ((y1-y0)/len) * ssize;
+    int _dz = ((z1-z0)/len) * ssize;
 
     int cdx = _dx >= 0 ? 1 : -1;
     int cdy = _dy >= 0 ? 1 : -1;
