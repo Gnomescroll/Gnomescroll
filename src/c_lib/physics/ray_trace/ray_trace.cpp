@@ -378,7 +378,7 @@ int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, fl
 
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, CubeID* tile, int* side) {
     // normalize direction
-    float _len = 1.0f/sqrtf(_dfx*_dfx+_dfy*_dfy+_dfz*_dfz);
+    float _len = sqrtf(_dfx*_dfx+_dfy*_dfy+_dfz*_dfz);
     if (unlikely(_len == 0.0f))
     {
         *distance = 0.0f;
