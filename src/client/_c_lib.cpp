@@ -8,6 +8,10 @@
 # define GS_AWESOMIUM 0
 #endif
 
+#ifndef GS_ASSIMP
+# define GS_ASSIMP 1
+#endif
+
 #if PRODUCTION
 # define GS_AWESOMIUM 1
 #endif
@@ -28,17 +32,17 @@ dont_include_this_file_in_server
 #include <math.h>
 
 #ifdef __MINGW32__
-    #include <malloc.h> //alloca function
+# include <malloc.h> //alloca function
 #endif
 
 #ifdef _WIN32
-    #include "windows.h"
-    #undef interface
-    #undef rad2
+# include "windows.h"
+# undef interface
+# undef rad2
 #endif
 
 #ifdef __APPLE__
-#include <common/osx.hpp>
+# include <common/osx.hpp>
 #endif
 
 /* Common headers */
@@ -104,7 +108,9 @@ dont_include_this_file_in_server
 
 #include <SDL/mesh_loader/obj_loader.cpp>
 
-#include <t_mob/_include.hpp>
+#if GS_ASSIMP
+# include <t_mob/_include.hpp>
+#endif
 
 /* Draw utils */
 #include <common/draw/draw.cpp>
@@ -125,7 +131,6 @@ dont_include_this_file_in_server
 #include <entity/include.cpp>
 
 /* particles */
-//#include <particle/particle_lib.cpp>
 #include <particle/_include.hpp>
 
 /* Skybox */
@@ -167,9 +172,6 @@ dont_include_this_file_in_server
 #include <camera/camera.cpp>
 #include <camera/fulstrum_test.cpp>
 #include <camera/fulstrum_test2.cpp>
-//#ifdef linux
-//#include <SDL/IMG_savepng.c>
-//#endif
 
 /* HUD */
 
@@ -200,8 +202,8 @@ bool c_lib_inited = false;
 bool signal_exit = false;
 
 #ifdef linux
-#include <unistd.h>
-#include <signal.h>
+# include <unistd.h>
+# include <signal.h>
 
 void signal_terminate_handler(int sig)
 {
@@ -209,13 +211,11 @@ void signal_terminate_handler(int sig)
 }
 #endif
 
-
-void close_c_lib();
+void close_c_lib(); // forward declaration
 void atexit_handler()
 {
     close_c_lib();
 }
-
 
 int init_c_lib(int argc, char* argv[]) 
 {

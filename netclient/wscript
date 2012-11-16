@@ -49,7 +49,7 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False, awesomium_debug=False):
+def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False, awesomium_debug=False, assimp=True):
     global _OS
     global os_libpth
 
@@ -60,6 +60,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
     prodflag = '-DPRODUCTION='
     if production:
         awesomium = True
+        assimp = True
         prodflag += '1'
     else:
         prodflag += '0'
@@ -69,6 +70,12 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
         aweflag += '1'
     else:
         aweflag += '0'
+
+    assimpflag = '-DGS_ASSIMP='
+    if assimp:
+        assimpflag += '1'
+    else:
+        assimpflag += '0'
         
     #conf.check_tool('gcc')
     conf.check_tool('g++')
@@ -277,20 +284,21 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
             uselib_store='AWESOMIUM') 
 
     #assimp
-    if OS == 'Linux':
-        assimp_lib_path = os.path.abspath('../lib/lin32/assimp/lib/')
-        assimp_inc_path = os.path.abspath('../lib/lin32/assimp/include/')
-    elif OS == 'Windows':
-        assimp_lib_path = os.path.abspath('../lib/win32/lib/')
-        assimp_inc_path = os.path.abspath('../lib/win32/assimp/')
-    else:
-        assert False
-    
-    conf.check(
-        lib=['assimp'], 
-        libpath= [assimp_lib_path],
-        includes = [assimp_inc_path],
-        uselib_store='ASSIMP') 
+    if assimp:
+        if OS == 'Linux':
+            assimp_lib_path = os.path.abspath('../lib/lin32/assimp/lib/')
+            assimp_inc_path = os.path.abspath('../lib/lin32/assimp/include/')
+        elif OS == 'Windows':
+            assimp_lib_path = os.path.abspath('../lib/win32/lib/')
+            assimp_inc_path = os.path.abspath('../lib/win32/assimp/')
+        else:
+            assert False
+
+        conf.check(
+            lib=['assimp'], 
+            libpath= [assimp_lib_path],
+            includes = [assimp_inc_path],
+            uselib_store='ASSIMP') 
 
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
     if awesomium:
@@ -315,10 +323,12 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
             conf.env.RPATH += [lib_base_path]   # the libs in the root of dc_mmo/lib are copied from steve's computer. they should not be on the rpath in development 
         else:
             lib_base_path = '$ORIGIN/../lib/lin32/'
-        conf.env.RPATH += [os.path.join(lib_base_path, 'assimp/lib')] #assimp lib
+        if assimp:
+            conf.env.RPATH += [os.path.join(lib_base_path, 'assimp/lib')] #assimp lib
         if awesomium:
             conf.env.RPATH += [os.path.join(lib_base_path, 'awesomium/release')] #awesomium lib
-
+            
+    conf.env.assimp = assimp
     conf.env.awesomium = awesomium
     conf.env.awe_stem = awe_stem
     conf.env.production = production
@@ -365,9 +375,11 @@ def build(bld):
             os.path.join(libpath, 'awesomium/bin/%s' % (bld.env.awe_stem,)),]
         
     #bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
-    use = time_lib+SDL_libraries+['LUA', 'ASSIMP']
+    use = time_lib+SDL_libraries+['LUA']
     if bld.env.awesomium:
         use.append('AWESOMIUM')
+    if bld.env.assimp:
+        use.append('ASSIMP')
 
     bld(
         features = 'cxx cxxprogram',
@@ -385,17 +397,6 @@ def build(bld):
     bld.add_post_fun(install_bin)
     #if '-DPRODUCTION=1' in bld.env.CXXFLAGS and '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS:
     #    bld.add_post_fun(strip_symbols)
-
-'''
-def strip_symbols(ctx):
-    OS = platform.system()
-    if OS == 'Linux':
-        print 'Stripping symbols'
-        if os.path.exists('./libc_lib.so'):
-            subprocess.Popen(['strip', '-s', 'libc_lib.so'])
-        if os.path.exists('./libfont_lib.so'):
-            subprocess.Popen(['strip', '-s', 'libfont_lib.so'])
-'''
 
 def install_bin(ctx):
     OS = platform.system()
@@ -438,12 +439,6 @@ def install_bin(ctx):
     except Exception, e:
         print "Error copying dlls from %s to current directory. Reason: %s" % (dll_path, e,)
                 
-#def ensure_dir(path):
-    #try:
-        #os.makedirs(path)
-    #except OSError, e:
-        #if e.errno != errno.EEXIST:
-            #raise
 
 from waflib.Configure import ConfigurationContext
 class optimized_ctx(ConfigurationContext):
@@ -605,12 +600,18 @@ class awesomium_ctx(ConfigurationContext):
     fun = 'awesomium'
 
 def awesomium(ctx):
-    configure(ctx, add_flags=['-DGS_AWESOMIUM=1'], rm_flags=['-DGS_AWESOMIUM=0'], awesomium=True)
+    configure(ctx, awesomium=True)
 
 class awesomium_dbg_ctx(ConfigurationContext):
     cmd = 'awedbg'
     fun = 'awesomiumdbg'
 
 def awesomiumdbg(ctx):
-    configure(ctx, add_flags=['-DGS_AWESOMIUM=1'], rm_flags=['-DGS_AWESOMIUM=0'], awesomium=True, awesomium_debug=True)
+    configure(ctx, awesomium=True, awesomium_debug=True)
 
+class noass_ctx(ConfigurationContext):
+    cmd = 'noass'
+    fun = 'noass'
+
+def noass(ctx):
+    configure(ctx, assimp=False)
