@@ -93,6 +93,7 @@ void BillboardTextHud_list::draw()
     if (num == 0) return;
     for (unsigned int i=0; i<this->num; i++)
         a[i].draw();
+    glColor4ub(255,255,255,255);
 }
 
 }   // Particle

@@ -4,28 +4,22 @@
 #include <physics/ray_trace/ray_trace.hpp>
 #include <physics/quadrant.hpp>
 
-//forward decl
-namespace STATE
-{
-    extern Voxel_hitscan_list* voxel_hitscan_list;
-}
+#if DC_SERVER
+#include <state/server_state.hpp>
+#endif
+
+#if DC_CLIENT
+#include <state/client_state.hpp>
+#endif
 
 namespace Hitscan
 {
 
-static HitscanBlock dummy_hitscan_block;
-
 HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy, float vz)
 {
-    const float MAX_DIST = 0.95f * (float)t_map::map_dim.z;  // far
+    static HitscanBlock dummy;
 
-    //float distance=0.0f;
-    //int collision[3];
-    //int pre_collision[3];
-    //CubeID tile = EMPTY_CUBE;
-    //int side[3];
-
-    //int collided = _ray_cast6(x,y,z, vx,vy,vz, max_dist, &distance, collision, pre_collision, &tile, side);
+    const float MAX_DIST = 128.0f;
 
     struct RaytraceData data;
     struct Vec3 start = vec3_init(x, y, z);
@@ -33,40 +27,40 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
     struct Vec3 end = vec3_add(start, vec3_scalar_mult(direction, MAX_DIST));
     bool collided = raytrace_terrain(start, end, &data);
 
-    dummy_hitscan_block.hit = collided;
-    if (!collided) return &dummy_hitscan_block;
+    if (!collided) return NULL;
     
-    dummy_hitscan_block.x = data.collision_point[0];
-    dummy_hitscan_block.y = data.collision_point[1];
-    dummy_hitscan_block.z = data.collision_point[2];
+    dummy.x = data.collision_point[0];
+    dummy.y = data.collision_point[1];
+    dummy.z = data.collision_point[2];
 
-    dummy_hitscan_block.distance = MAX_DIST * data.interval;
-    data.get_side_array(dummy_hitscan_block.side);
-    dummy_hitscan_block.tile = t_map::get(dummy_hitscan_block.x, dummy_hitscan_block.y, dummy_hitscan_block.z);
+    dummy.distance = MAX_DIST * data.interval;
+
+    //printf("Interval: %0.2f, Distance: %0.2f\n", data.interval, dummy.distance);
+    //printf("Est. distance: %0.2f\n", vec3_distance(vec3_init(x,y,z), vec3_init(dummy.x, dummy.y, dummy.z)));
     
-    return &dummy_hitscan_block;
+    data.get_side_array(dummy.side);
+    dummy.cube_id = t_map::get(dummy.x, dummy.y, dummy.z);
+    
+    return &dummy;
 }
 
-HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance, int side[3], CubeID *tile)
+HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance, int side[3], CubeID *cube_id)
 {
     HitscanBlock* block = ray_intersect_block(x,y,z, vx,vy,vz);
 
     HitscanTargetTypes target = HITSCAN_TARGET_NONE;
 
-    if (block->hit)
+    *cube_id = EMPTY_CUBE;
+    if (block != NULL)
     {
         target = HITSCAN_TARGET_BLOCK;
         pos[0] = translate_point(block->x);
         pos[1] = translate_point(block->y);
         pos[2] = block->z;
         *distance = block->distance;
-        side[0] = block->side[0];
-        side[1] = block->side[1];
-        side[2] = block->side[2];
-        *tile = block->tile;
+        for (int i=0; i<3; i++) side[i] = block->side[i];
+        *cube_id = block->cube_id;
     }
-    else
-        *tile = EMPTY_CUBE;
 
     return target;
 }
@@ -101,7 +95,7 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 HitscanTargetTypes hitscan_against_world(
     Vec3 p, Vec3 v, int ignore_id, EntityType ignore_type,    // inputs
     class Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
-    int block_pos[3], int side[3], CubeID* tile, float* block_distance // outputs
+    int block_pos[3], int side[3], CubeID* cube_id, float* block_distance // outputs
 )
 {   // hitscan against voxels
     *vox_distance = 10000000.0f;
@@ -119,7 +113,7 @@ HitscanTargetTypes hitscan_against_world(
         p.x, p.y, p.z,
         v.x, v.y, v.z,
         block_pos, block_distance,
-        side, tile
+        side, cube_id
     );
 
     // choose closer collision (or none)

@@ -85,7 +85,6 @@ class VerletComponent
         }
 
         bool bounce();
-        int* bounce(int* collision, CubeID* tile);
         bool bounce_box(float gravity);
         bool bounce_box();
         bool bounce_box_no_gravity();

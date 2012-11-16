@@ -30,14 +30,8 @@ int* farthest_empty_block(struct Vec3 p, struct Vec3 v, int side[3], float max_d
 inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2);
 
 // converts int[3] filled by ray_trace6 to a cube_side id
-int get_cube_side_from_side_array(int* side);
-void get_side_array_from_cube_side(int side_id, int *side);
-
-bool ray_cast_simple(float x, float y, float z, float a, float b, float c);
-bool ray_cast_simple(float x, float y, float z, float a, float b, float c, float max_distance);
-
-
-/* New ray tracer */
+int get_cube_side_from_side_array(int side[3]);
+void get_side_array_from_cube_side(int side_id, int side[3]);
 
 class RaytraceData
 {
@@ -71,3 +65,5 @@ class RaytraceData
 // returns true if collided with any block
 bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* data);
 bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length, struct RaytraceData* data);
+bool raytrace_terrain(struct Vec3 start, struct Vec3 end) { return raytrace_terrain(start, end, NULL); }
+bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length)  { return raytrace_terrain(start, direction, length, NULL); }

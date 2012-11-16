@@ -566,7 +566,7 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
         if (pnum < 0 || pnum >= this->n_parts) continue;
         c = this->vv[pnum].get_center(); // ray cast to center of volume
         c = quadrant_translate_position(source, c);
-        if (ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
+        if (!raytrace_terrain(source, c))
         {
             *sink = c;
             return true;

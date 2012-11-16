@@ -1,5 +1,9 @@
 #pragma once
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <particle/particles.hpp>
 
 namespace Particle
@@ -29,7 +33,7 @@ class BillboardText: public TextParticle
 
         void set_gravity(bool grav);
         void set_draw(bool draw);
-
+    
         void draw();
         void tick();
 

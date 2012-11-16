@@ -783,51 +783,55 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
     const int samples_per_height = 8;
     float step = this->current_height() / samples_per_height;
 
-    int i;
-    float a,b,c;
-
     // check the center column
-    a = this->s.x;
-    b = this->s.y;
-    for (i=0; i<samples_per_height; i++)
+    struct Vec3 start = vec3_init(x,y,z);
+    struct Vec3 end = this->s.get_position();
+    for (int i=0; i<samples_per_height; i++)
     {
-        c = this->s.z + i*step;
-        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+        end.z = this->s.z + i*step;
+        if (vec3_distance(start, end) < max_dist
+         && raytrace_terrain(start, end))
             return true;
     }
 
     // check the 4 corner columns
-    a = this->s.x + this->box.box_r;
-    b = this->s.y + this->box.box_r;
-    for (i=0; i<samples_per_height; i++)
+    end.x = this->s.x + this->box.box_r;
+    end.y = this->s.y + this->box.box_r;
+    for (int i=0; i<samples_per_height; i++)
     {
-        c = this->s.z + i*step;
-        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+        end.z = this->s.z + i*step;
+        if (vec3_distance(start, end) < max_dist
+         && !raytrace_terrain(start, end))
             return true;
     }
 
-    a = this->s.x + this->box.box_r;
-    b = this->s.y - this->box.box_r;
-    for (i=0; i<samples_per_height; i++)
+    end.x = this->s.x + this->box.box_r;
+    end.y = this->s.y - this->box.box_r;
+    for (int i=0; i<samples_per_height; i++)
     {
-        c = this->s.z + i*step;
-        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+        end.z = this->s.z + i*step;
+        if (vec3_distance(start, end) < max_dist
+         && !raytrace_terrain(start, end))
             return true;
     }
-    a = this->s.x - this->box.box_r;
-    b = this->s.y + this->box.box_r;
-    for (i=0; i<samples_per_height; i++)
+
+    end.x = this->s.x - this->box.box_r;
+    end.y = this->s.y + this->box.box_r;
+    for (int i=0; i<samples_per_height; i++)
     {
-        c = this->s.z + i*step;
-        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+        end.z = this->s.z + i*step;
+        if (vec3_distance(start, end) < max_dist
+         && !raytrace_terrain(start, end))
             return true;
     }
-    a = this->s.x - this->box.box_r;
-    b = this->s.y - this->box.box_r;
-    for (i=0; i<samples_per_height; i++)
+    
+    end.x = this->s.x - this->box.box_r;
+    end.y = this->s.y - this->box.box_r;
+    for (int i=0; i<samples_per_height; i++)
     {
-        c = this->s.z + i*step;
-        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+        end.z = this->s.z + i*step;
+        if (vec3_distance(start, end) < max_dist
+         && !raytrace_terrain(start, end))
             return true;
     }
 

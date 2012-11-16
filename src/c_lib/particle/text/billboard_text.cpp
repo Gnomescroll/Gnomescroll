@@ -1,5 +1,9 @@
 #include "billboard_text.hpp"
 
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <physics/ray_trace/ray_trace.hpp>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
@@ -59,7 +63,6 @@ void BillboardText::set_draw(bool draw)
 
 void BillboardText::draw()
 {
-    #if DC_CLIENT
     if (!this->should_draw) return;
     if (HudFont::font == NULL) return;
     if (current_camera == NULL) return;
@@ -159,7 +162,6 @@ void BillboardText::draw()
         glVertex3f(bx, by, az);
         glEnd();
     }
-    #endif
 }
 
 }   // Particles
@@ -180,7 +182,6 @@ void BillboardText_list::tick()
 
 void BillboardText_list::draw()
 {
-    #if DC_CLIENT
     if (num == 0) return;
     if (current_camera == NULL) return;
     if (HudFont::font == NULL) return;
@@ -194,7 +195,7 @@ void BillboardText_list::draw()
         a[i].draw();
     }
     HudFont::end_world_font_draw();
-    #endif
+    glColor4ub(255,255,255,255);
 }
 
 }   // Particles
