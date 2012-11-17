@@ -7,13 +7,9 @@ const int bsize = 65536;
 const float RAYCAST_SAMPLING_DENSITY = 100.0f;
 const int raycast_tick_max = 1024;
 
-void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out);
+bool raytrace_terrain_subint(struct Vec3 start, struct Vec3 end, struct RaytraceData* data);
 
-void ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval)
-{
-    static struct Vec3 out;
-    _ray_cast4(p.x, p.y, p.z, f.x, f.y, f.z, interval, &out);
-}
+bool ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval);
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile);
 int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile, struct Vec3* v_out);

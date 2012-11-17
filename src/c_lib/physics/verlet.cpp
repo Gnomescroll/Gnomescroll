@@ -38,16 +38,10 @@ bool VerletComponent::bounce()
 
     if (bounced)
     {   // collision
-        this->position = old_position;
-        if (data.interval > 0.0f && data.interval < 1.0f)
-        {
-            velocity_integrate(&old_position, &old_velocity, dt*data.interval);
-            this->position = translate_position(old_position);
-        }
-        else
-            this->position = old_position;
-        old_velocity = vec3_reflect(old_velocity, data.collision_normal());
-        this->velocity = vec3_scalar_mult(old_velocity, dampening);
+        velocity_integrate(&old_position, &old_velocity, dt*data.interval);
+        this->position = translate_position(old_position);
+        this->velocity = vec3_reflect(old_velocity, data.collision_normal());
+        this->velocity = vec3_scalar_mult(this->velocity, dampening);
     }
     else
         this->position = translate_position(this->position);
@@ -73,15 +67,10 @@ bool VerletComponent::bounce_box(float gravity)
 
     if (bounced)
     {   // collision
-        if (data.interval > 0.0f)
-        {
-            velocity_integrate(&old_position, &old_velocity, dt*data.interval);
-            old_velocity = vec3_reflect(old_velocity, data.collision_normal());
-            this->velocity = vec3_scalar_mult(old_velocity, dampening);
-            this->position = translate_position(old_position);
-        }
-        else
-            this->position = old_position;
+        velocity_integrate(&old_position, &old_velocity, dt*data.interval);
+        this->velocity = vec3_reflect(old_velocity, data.collision_normal());
+        this->velocity = vec3_scalar_mult(this->velocity, dampening);
+        this->position = translate_position(old_position);
     }
     else
         this->position = translate_position(this->position);
@@ -114,21 +103,16 @@ bool VerletComponent::radial(float xr, float yr)
 
     if (bounced)
     {   // collision
-        if (data.interval > 0.0f)
-        {
-            const float th = 2.0f * 3.14159f * randf();
-            const float V = 5.0f * randf();
+        const float th = 2.0f * 3.14159f * randf();
+        const float V = 5.0f * randf();
 
-            old_velocity.x += V * sinf(th);
-            old_velocity.y += V * cosf(th);
-            velocity_integrate(&old_position, &old_velocity, dt*data.interval);
+        old_velocity.x += V * sinf(th);
+        old_velocity.y += V * cosf(th);
+        velocity_integrate(&old_position, &old_velocity, dt*data.interval);
 
-            old_velocity = vec3_reflect(old_velocity, data.collision_normal());
-            this->velocity = vec3_scalar_mult(old_velocity, dampening);
-            this->position = translate_position(old_position);
-        }
-        else
-            this->position = old_position;
+        this->velocity = vec3_reflect(old_velocity, data.collision_normal());
+        this->velocity = vec3_scalar_mult(this->velocity, dampening);
+        this->position = translate_position(old_position);
     }
     else
         this->position = translate_position(this->position);
@@ -148,13 +132,8 @@ bool VerletComponent::collide_no_gravity()
 
     if (collided)
     {   // collision
-        if (data.interval > 0.0f)
-        {
-            this->position = vec3_add(old_position, vec3_scalar_mult(old_velocity, dt*data.interval));
-            this->position = translate_position(this->position);
-        }
-        else
-            this->position = old_position;
+        this->position = vec3_add(old_position, vec3_scalar_mult(old_velocity, dt*data.interval));
+        this->position = translate_position(this->position);
         this->velocity = vec3_init(0.0f, 0.0f, 0.0f);
     }
     else

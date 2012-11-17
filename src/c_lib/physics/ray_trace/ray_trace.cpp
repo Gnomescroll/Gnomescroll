@@ -24,44 +24,53 @@ static inline bool collision_check(int x, int y, int z)
 
 static int ri4[3];
 
-void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out)
+bool raytrace_terrain_subint(struct Vec3 start, struct Vec3 end, struct RaytraceData* data)
 {
+    float x0 = start.x;
+    float y0 = start.y;
+    float z0 = start.z;
+    float x1 = end.x;
+    float y1 = end.y;
+    float z1 = end.z;
+    
     float len = sqrtf((x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
     if (unlikely(len == 0.0f))
     {
-        *interval = 0.0f;
-        *v_out = vec3_init(0,0,1);
-        return;
+        if (data != NULL)
+        {
+            data->interval = 0.0f;
+            data->side = 0;
+        }
+        return collision_check(x0, y0, z0);
     }
 
     int x = x0; //truncating conversion
     int y = y0;
     int z = z0;
 
-    int _dx = ((x1-x0)/len) * ssize;
-    int _dy = ((y1-y0)/len) * ssize;
-    int _dz = ((z1-z0)/len) * ssize;
+    const int _dx = ((x1-x0)/len) * ssize;
+    const int _dy = ((y1-y0)/len) * ssize;
+    const int _dz = ((z1-z0)/len) * ssize;
 
-    int cdx = (_dx >= 0) ? 1 : -1;
-    int cdy = (_dy >= 0) ? 1 : -1;
-    int cdz = (_dz >= 0) ? 1 : -1;
+    const int cdx = (_dx >= 0) ? 1 : -1;
+    const int cdy = (_dy >= 0) ? 1 : -1;
+    const int cdz = (_dz >= 0) ? 1 : -1;
 
-    int dx = _dx*cdx;
-    int dy = _dy*cdy;
-    int dz = _dz*cdz;
+    const int dx = _dx*cdx;
+    const int dy = _dy*cdy;
+    const int dz = _dz*cdz;
 
     float dummy;
     int cx = (cdx >= 0) ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
     int cy = (cdy >= 0) ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
     int cz = (cdz >= 0) ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
 
-    int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    max_i = GS_MIN(max_i, raycast_tick_max);
+    const int max_i = GS_MIN((bsize / ssize)*len + 1, raycast_tick_max); //over project so we dont end up in wall
 
+    int side[3] = {0,0,1};
     int i = 0;
     for (; i < max_i; i++)
     {
-        bool collides = false;
         cx += dx;
         cy += dy;
         cz += dz;
@@ -72,39 +81,55 @@ void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
             x += cdx;
             if (collision_check(x,y,z))
             {
-                *v_out = vec3_init(cdx,0.0f,0.0f);
-                collides = true;
+                side[0] = cdx;
+                break;
             }
         }
+        else
         if (cy >= bsize)
         {
             cy -= bsize;
             y += cdy;
             if (collision_check(x,y,z))
             {
-                *v_out = vec3_init(0.0f,cdy,0.0f);
-                collides = true;
+                side[1] = cdy;
+                break;
             }
         }
+        else
         if (cz >= bsize)
         {
             cz -= bsize;
             z += cdz;
             if (collision_check(x,y,z))
             {
-                *v_out = vec3_init(0.0f,0.0f,cdz);
-                collides = true;
+                side[2] = cdz;
+                break;
             }
         }
-        if (collides) break;
     }
 
-    *interval = (float)i / (float)max_i;
+    if (data != NULL)
+    {
+        data->interval = (float)i / (float)max_i;
+        data->side = get_cube_side_from_side_array(side);
+    }
+
+    return (i < max_i);
+}
+
+bool ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval)
+{
+    static struct RaytraceData data;
+    data.interval = 0.0f;
+    bool collided = raytrace_terrain_subint(p, f, &data);
+    *interval = data.interval;
+    return collided;
 }
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile)
 {
-    float len = sqrtf( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+    float len = sqrtf((x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1));
     if (unlikely(len == 0.0f))
     {
         *interval = 0.0f;
@@ -632,24 +657,27 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* d
         return false;
     }
     
-    float dx = fabsf(end.x - start.x);
-    float dy = fabsf(end.y - start.y);
-    float dz = fabsf(end.z - start.z);
+    const float dx = fabsf(end.x - start.x);
+    const float dy = fabsf(end.y - start.y);
+    const float dz = fabsf(end.z - start.z);
+
+    //if (dx < 1.0f && dy < 1.0f && dz < 1.0f)
+        //return raytrace_terrain_subint(start, end, data);
 
     int x = int(floorf(start.x));
     int y = int(floorf(start.y));
     int z = int(floorf(start.z));
 
     // div by 0 is implicitly handled, will generate +/-infinity
-    float dt_dx = 1.0f / dx;
-    float dt_dy = 1.0f / dy;
-    float dt_dz = 1.0f / dz;
+    const float dt_dx = 1.0f / dx;
+    const float dt_dy = 1.0f / dy;
+    const float dt_dz = 1.0f / dz;
 
     float t = 0.0f;
 
     int n = 1;
-    int x_inc, y_inc, z_inc;
-    float t_next_x, t_next_y, t_next_z;
+    int x_inc = 0, y_inc = 0, z_inc = 0;
+    float t_next_x = 0.0f, t_next_y = 0.0f, t_next_z = 0.0f;
     int side[3] = {0};
 
     if (dx == 0)
@@ -660,13 +688,13 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* d
     else if (end.x > start.x)
     {
         x_inc = 1;
-        n += int(floorf(end.x)) - x;
+        n += int(end.x) - x;
         t_next_x = (floorf(start.x) + 1 - start.x) * dt_dx;
     }
     else
     {
         x_inc = -1;
-        n += x - int(floorf(end.x));
+        n += x - int(end.x);
         t_next_x = (start.x - floorf(start.x)) * dt_dx;
     }
 
@@ -678,13 +706,13 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* d
     else if (end.y > start.y)
     {
         y_inc = 1;
-        n += int(floorf(end.y)) - y;
+        n += int(end.y) - y;
         t_next_y = (floorf(start.y) + 1 - start.y) * dt_dy;
     }
     else
     {
         y_inc = -1;
-        n += y - int(floorf(end.y));
+        n += y - int(end.y);
         t_next_y = (start.y - floorf(start.y)) * dt_dy;
     }
     
@@ -696,7 +724,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* d
     else if (end.z > start.z)
     {
         z_inc = 1;
-        n += int(floorf(end.z)) - z;
+        n += int(end.z) - z;
         t_next_z = (floorf(start.z) + 1 - start.z) * dt_dz;
     }
     else
@@ -706,30 +734,17 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* d
         t_next_z = (start.z - floorf(start.z)) * dt_dz;
     }
 
-    // initialize t and side, incase we're already in a block
+    // initialize side, incase we're already in a block
     if (t_next_x < t_next_y && t_next_x < t_next_z)
-    {
         side[0] = -x_inc;
-        t = t_next_x;
-    }
     else
-    if (t_next_y < t_next_x && t_next_y < t_next_z)
-    {
+    if (t_next_y < t_next_z)
         side[1] = -y_inc;
-        t = t_next_y;
-    }
     else
-    {
         side[2] = -z_inc;
-        t = t_next_z;
-    }
 
-    //printf("t %0.2f\n", t);
-    //printf("n %d\n", n);
-
-    for (; n > 0; --n)
+    for (int i=0; i<n; i++)
     {
-        //printf("t: %0.2f\n", t);
         if (collision_check(x,y,z))
         {
             if (data != NULL)
@@ -752,7 +767,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* d
             t_next_x += dt_dx;
         }
         else
-        if (t_next_y < t_next_x && t_next_y < t_next_z)
+        if (t_next_y < t_next_z)
         {
             y += y_inc;
             y = translate_point(y);

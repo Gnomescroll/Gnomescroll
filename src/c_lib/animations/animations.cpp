@@ -111,13 +111,13 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 
 // surface block dmg
 // collision point, incident vector, cube_id, side
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side)
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int side[3])
 {
     int cube_side = get_cube_side_from_side_array(side);
     block_damage(x,y,z,ix,iy,iz,cube_id, side, cube_side);
 }
 
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side)
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int side[3], int cube_side)
 {
     if (Options::animation_level <= 0) return;
 
@@ -139,6 +139,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     const float momentum = 0.2f;
 
     // "invert" the normal for perturbing the initial positions along the plane
+    // this flips the 0 vectors to 1, which will be centered to be 1,-1 in the perturbation
     side[0] = (side[0]) ? 0 : 1;
     side[1] = (side[1]) ? 0 : 1;
     side[2] = (side[2]) ? 0 : 1;
