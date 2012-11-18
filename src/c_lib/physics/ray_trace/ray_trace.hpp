@@ -2,30 +2,8 @@
 
 #include <t_map/common/types.hpp>
 
-const int ssize = 256;
-const int bsize = 65536;
-const float RAYCAST_SAMPLING_DENSITY = 100.0f;
-const int raycast_tick_max = 1024;
-
-bool raytrace_terrain_subint(struct Vec3 start, struct Vec3 end, struct RaytraceData* data);
-
-bool ray_cast_interval(struct Vec3 p, struct Vec3 f, float* interval);
-
-int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile);
-int* ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, CubeID* tile, struct Vec3* v_out);
-
-int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, CubeID* tile, int* side);
-
-// args: position and forward vector
-int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
-int* _nearest_block(Vec3 position, Vec3 direction, float max_distance, int z_low, int z_high) { return _nearest_block(position.x, position.y, position.z, direction.x, direction.y, direction.z, max_distance, z_low, z_high); }
-int* farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
-int* farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, int side[3], float max_distance, int z_low, int z_high);
-int* farthest_empty_block(struct Vec3 p, struct Vec3 v, int side[3], float max_distance, int z_low, int z_high) { return farthest_empty_block(p.x, p.y, p.z, v.x, v.y, v.z, side, max_distance, z_low, z_high); }
-
 inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2);
 
-// converts int[3] filled by ray_trace6 to a cube_side id
 int get_cube_side_from_side_array(int side[3]);
 void get_side_array_from_cube_side(int side_id, int side[3]);
 

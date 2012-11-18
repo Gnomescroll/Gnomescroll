@@ -134,8 +134,9 @@ void select_facing_block(ItemID item_id, int item_type)
     GS_ASSERT(block_placer_type != NULL_ITEM_TYPE);
     GS_ASSERT(item_type == block_placer_type);
 
-    int* b = ClientState::playerAgent_state.facing_block();
-    if (b == NULL) return;
+    int b[3];
+    bool collided = ClientState::playerAgent_state.facing_block(b);
+    if (!collided) return;
     CubeID cube_id = t_map::get(b[0], b[1], b[2]);
     HudCubeSelector::cube_selector.set_block_type(cube_id);
 }
@@ -203,10 +204,9 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, in
     if (a == NULL) return NULL;
     
     const int max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
-    int* b = a->nearest_open_block(max_dist, z_low, z_high);
-    if (b == NULL) return NULL;
+    int b[3];
+    bool collided = a->nearest_open_block(max_dist, b);
+    if (!collided) return NULL;
     
     // must be placed on solid block
     if (b[2] <= 0) return NULL;  // can't place on nothing
@@ -287,13 +287,12 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
     if (a == NULL) return;
     
     const int max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
-    int* b = a->nearest_open_block(max_dist, z_low, z_high);
-    if (b == NULL) return;
+    int b[3];
+    bool collided = a->nearest_open_block(max_dist, b);
+    if (!collided) return;
     
     // must be placed on solid block
-    if (b[2] <= 0) return;  // can't place on nothing
+    if (b[2] <= 0) return;  // can't place on nothing. it CAN be placed on top of the map for now
     if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
 
     MechType mech_type = Item::get_mech_type(item_type);

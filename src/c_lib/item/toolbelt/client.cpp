@@ -159,7 +159,7 @@ static bool beta_scan_world()
     CubeID tile = EMPTY_CUBE;
     float block_distance;
 
-    Hitscan::HitscanTargetTypes target_type =
+    HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
             pos, look, playerAgent_state.agent_id, OBJECT_AGENT,
             &target, &vox_distance, collision_point,
@@ -169,7 +169,7 @@ static bool beta_scan_world()
     int container_id = NULL_CONTAINER;
     switch (target_type)
     {
-        case Hitscan::HITSCAN_TARGET_VOXEL:
+        case HITSCAN_TARGET_VOXEL:
             if (vox_distance > range) return false;
             if (target.entity_type == OBJECT_AGENT_SPAWNER)
             {
@@ -180,7 +180,7 @@ static bool beta_scan_world()
             }
             return false;
         
-        case Hitscan::HITSCAN_TARGET_BLOCK:
+        case HITSCAN_TARGET_BLOCK:
             if (!ItemContainer::container_block_in_range_of(pos, block_pos)) return false; 
             container_id = t_map::get_block_item_container(block_pos[0], block_pos[1], block_pos[2]);
             if (container_id != NULL_CONTAINER)

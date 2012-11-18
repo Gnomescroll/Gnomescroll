@@ -151,10 +151,10 @@ class MiningLaserEmitter
 
     void update_length()
     {
-        float interval = 1.0f;
+        static struct RaytraceData data;
         struct Vec3 dest = vec3_add(this->length_position, vec3_scalar_mult(this->length_direction, this->base_length));
-        ray_cast_interval(this->length_position, dest, &interval);
-        this->length = interval*this->base_length;
+        raytrace_terrain(this->length_position, dest, &data);
+        this->length = data.interval*this->base_length;
     }
 
     int get_render_count()

@@ -653,42 +653,47 @@ inline void hitscan_block_CtoS::handle()
 
     // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
     // send to clients
-    int collision[3];
-    int pre_collision[3];
-    int side[3];
-    CubeID cube = EMPTY_CUBE;
-    const float max_l = 500.0f;
-    float distance=0.0f;
+    
+    const float max_len = t_map::map_dim.x * 0.95f;
+    struct RaytraceData data;
 
     Vec3 f = a->forward_vector();
     Vec3 p = a->get_camera_position();
 
-    int collided = _ray_cast6(p.x, p.y, p.z, f.x, f.y, f.z, max_l, &distance, collision, pre_collision, &cube, side);
+    bool collided = raytrace_terrain(p, f, max_len, &data);
     if (!collided) return;
+
+    CubeID cube_id = data.get_cube_id();
+    if (!t_map::isValidCube(cube_id)) return;
+
+    float distance = max_len * data.interval;
+
     // pt of collision
     f = vec3_scalar_mult(f, distance);
     p = vec3_add(p,f);
     p = translate_position(p);
-
-    int cube_side = get_cube_side_from_side_array(side);
 
     agent_shot_block_StoC msg;
     msg.id = a->id;
     msg.x = p.x;
     msg.y = p.y;
     msg.z = p.z;
-    msg.cube = cube;
-    msg.side = cube_side;
+    msg.cube = cube_id;
+    msg.side = data.side;
     msg.broadcast();
 
     // damage block
     // WARNING:
     // *must* call this after raycasting, or you will be raycasting altered terrain
     if (p.z <= 0) return; // dont damage floor
-    CubeID block = t_map::get(p.x, p.y, p.z);
-    if (block == EMPTY_CUBE) return;
+    cube_id = t_map::get(p.x, p.y, p.z);
+    if (!t_map::isValidCube(cube_id)) return;
+
     static int laser_rifle_type = Item::get_item_type("laser_rifle");
-    int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, block);
+    ASSERT_VALID_ITEM_TYPE(laser_rifle_type);
+    IF_INVALID_ITEM_TYPE(laser_rifle_type) return;
+    
+    int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, cube_id);
     if (weapon_block_damage <= 0) return;
     t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, TMA_LASER);
 }
@@ -696,11 +701,9 @@ inline void hitscan_block_CtoS::handle()
 inline void hitscan_none_CtoS::handle()
 {
     Agent* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
+    GS_ASSERT(a != NULL);
+    if (a == NULL) return;
+
     agent_shot_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();

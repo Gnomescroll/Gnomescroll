@@ -87,11 +87,7 @@ class PlayerAgent_state
 
         struct Vec3 get_weapon_fire_animation_origin()
         {
-            struct Vec3 origin;
-            if (agent_camera != NULL)
-                origin = agent_camera->get_position();
-            else
-                origin = this->camera_position();
+            struct Vec3 origin = agent_camera->get_position();
             origin.z -= 0.40f;
             return origin;
         }
@@ -100,12 +96,12 @@ class PlayerAgent_state
 
         PlayerAgent_action action;
 
-        int* facing_block();
-        int facing_container();
+        bool facing_block(int pos[3]);
+        int facing_container(); // returns container_id
         
         void update_sound();
 
-        int* nearest_open_block(const float max_dist, const int z_low, const int z_high);
+        bool nearest_open_block(const float max_dist, int open_point[3]);
         int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
         int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);    // returns side, as integer. side<0 if failure
 

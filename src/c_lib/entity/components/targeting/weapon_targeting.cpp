@@ -77,7 +77,7 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
     // play sounds
     // play animations
     
-    if (t.hitscan == Hitscan::HITSCAN_TARGET_VOXEL) return true;
+    if (t.hitscan == HITSCAN_TARGET_VOXEL) return true;
     return false;
 }
 

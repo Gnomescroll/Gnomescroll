@@ -15,56 +15,6 @@
 namespace Hitscan
 {
 
-HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy, float vz)
-{
-    static HitscanBlock dummy;
-
-    const float MAX_DIST = 128.0f;
-
-    struct RaytraceData data;
-    struct Vec3 start = vec3_init(x, y, z);
-    struct Vec3 direction = vec3_init(vx, vy, vz);
-    struct Vec3 end = vec3_add(start, vec3_scalar_mult(direction, MAX_DIST));
-    bool collided = raytrace_terrain(start, end, &data);
-
-    if (!collided) return NULL;
-    
-    dummy.x = data.collision_point[0];
-    dummy.y = data.collision_point[1];
-    dummy.z = data.collision_point[2];
-
-    dummy.distance = MAX_DIST * data.interval;
-
-    //printf("Interval: %0.2f, Distance: %0.2f\n", data.interval, dummy.distance);
-    //printf("Est. distance: %0.2f\n", vec3_distance(vec3_init(x,y,z), vec3_init(dummy.x, dummy.y, dummy.z)));
-    
-    data.get_side_array(dummy.side);
-    dummy.cube_id = t_map::get(dummy.x, dummy.y, dummy.z);
-    
-    return &dummy;
-}
-
-HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance, int side[3], CubeID *cube_id)
-{
-    HitscanBlock* block = ray_intersect_block(x,y,z, vx,vy,vz);
-
-    HitscanTargetTypes target = HITSCAN_TARGET_NONE;
-
-    *cube_id = EMPTY_CUBE;
-    if (block != NULL)
-    {
-        target = HITSCAN_TARGET_BLOCK;
-        pos[0] = translate_point(block->x);
-        pos[1] = translate_point(block->y);
-        pos[2] = block->z;
-        *distance = block->distance;
-        for (int i=0; i<3; i++) side[i] = block->side[i];
-        *cube_id = block->cube_id;
-    }
-
-    return target;
-}
-
 // returns agent id of first agent found in hitscan path
 // returns NULL_AGENT if none found
 AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentID firing_agent_id)
@@ -93,7 +43,7 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 }
 
 HitscanTargetTypes hitscan_against_world(
-    Vec3 p, Vec3 v, int ignore_id, EntityType ignore_type,    // inputs
+    struct Vec3 p, struct Vec3 v, int ignore_id, EntityType ignore_type,    // inputs
     class Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
     int block_pos[3], int side[3], CubeID* cube_id, float* block_distance // outputs
 )
@@ -108,26 +58,37 @@ HitscanTargetTypes hitscan_against_world(
     );
 
      //hitscan against terrain
-    *block_distance = 10000000.0f;
-    HitscanTargetTypes target_type = terrain(
-        p.x, p.y, p.z,
-        v.x, v.y, v.z,
-        block_pos, block_distance,
-        side, cube_id
-    );
+    struct RaytraceData terrain_data;
+    const float max_dist = 128.0f;
 
+    bool block_hit = raytrace_terrain(p, v, max_dist, &terrain_data);
+
+    if (block_hit)
+    {
+        *block_distance = terrain_data.interval * max_dist;
+        *cube_id = terrain_data.get_cube_id();
+        terrain_data.get_side_array(side);
+        for (int i=0; i<3; i++) block_pos[i] = terrain_data.collision_point[i];
+    }
+    else
+    {
+        *block_distance = 10000000.0f;
+        *cube_id = NULL_CUBE;
+        side[2] = 1;
+        for (int i=0; i<3; i++) block_pos[i] = -1;
+    }
+
+    HitscanTargetTypes target_type = HITSCAN_TARGET_NONE;
+    
     // choose closer collision (or none)
-    bool block_hit = (target_type == HITSCAN_TARGET_BLOCK);
     bool voxel_closer = (*vox_distance <= *block_distance);
-
-    //printf("voxel closer = %d\n", voxel_closer);
-    //printf("vox distance = %0.2f\n", *vox_distance);
-
     if (voxel_hit && block_hit)
+    {
         if (voxel_closer)
             target_type = HITSCAN_TARGET_VOXEL;
         else
             target_type = HITSCAN_TARGET_BLOCK;
+    }
     else if (voxel_hit)
         target_type = HITSCAN_TARGET_VOXEL;
     else if (block_hit)
@@ -138,4 +99,4 @@ HitscanTargetTypes hitscan_against_world(
     return target_type;
 }
 
-}
+}   // Hitscan

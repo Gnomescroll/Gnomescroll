@@ -11,7 +11,7 @@ namespace Hitscan
 
 struct HitscanTarget
 {
-    Hitscan::HitscanTargetTypes hitscan;
+    HitscanTargetTypes hitscan;
     int voxel[3];
     Vec3 collision_point;
 

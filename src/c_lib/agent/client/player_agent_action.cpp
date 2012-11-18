@@ -33,7 +33,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     if (you == NULL) return;
     if (you->status.dead) return;
 
-    Vec3 pos = this->p->camera_position();
+    Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
     class Voxel_hitscan_target target;
@@ -44,7 +44,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     CubeID tile;
     float block_distance;
 
-    Hitscan::HitscanTargetTypes target_type = Hitscan::hitscan_against_world(
+    HitscanTargetTypes target_type = Hitscan::hitscan_against_world(
         pos, look, this->p->agent_id, OBJECT_AGENT,
         &target, &vox_distance, collision_point,
         block_pos, side, &tile, &block_distance);
@@ -81,7 +81,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
 
     switch (target_type)
     {
-        case Hitscan::HITSCAN_TARGET_VOXEL:
+        case HITSCAN_TARGET_VOXEL:
             obj_msg.id = target.entity_id;
             obj_msg.type = target.entity_type;
             obj_msg.part = target.part_id;
@@ -111,7 +111,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
             }
             break;
 
-        case Hitscan::HITSCAN_TARGET_BLOCK:
+        case HITSCAN_TARGET_BLOCK:
             x = block_pos[0];
             y = block_pos[1];
             z = block_pos[2];
@@ -168,7 +168,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
             
             break;
             
-        case Hitscan::HITSCAN_TARGET_NONE:
+        case HITSCAN_TARGET_NONE:
             // for no target, leave translated animation origin
             none_msg.send();    // server will know to forward a fire weapon packet
             break;
@@ -198,7 +198,7 @@ void PlayerAgent_action::update_mining_laser()
     Vec3 origin = this->p->get_weapon_fire_animation_origin();
     ASSERT_BOXED_POSITION(origin);
 
-    struct Vec3 focal_point = vec3_add(this->p->camera_position(), vec3_scalar_mult(agent_camera->forward_vector(), 50.0f));
+    struct Vec3 focal_point = vec3_add(agent_camera->get_position(), vec3_scalar_mult(agent_camera->forward_vector(), 50.0f));
     struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
     
     you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
@@ -253,7 +253,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 
     float range = Item::get_weapon_range(weapon_type);
 
-    Vec3 pos = this->p->camera_position();
+    Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
     class Voxel_hitscan_target target;
@@ -264,7 +264,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
     CubeID tile;
     float block_distance;
 
-    Hitscan::HitscanTargetTypes target_type =
+    HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
             pos, look, this->p->agent_id, OBJECT_AGENT,
             &target, &vox_distance, collision_point,
@@ -282,10 +282,10 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 
     switch (target_type)
     {
-        case Hitscan::HITSCAN_TARGET_VOXEL:
+        case HITSCAN_TARGET_VOXEL:
             if (vox_distance > range)
             {
-                target_type = Hitscan::HITSCAN_TARGET_NONE;
+                target_type = HITSCAN_TARGET_NONE;
                 break;
             }
         
@@ -303,7 +303,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 agent = Agents::get_agent((AgentID)target.entity_id);
                 if (agent==NULL)
                 {
-                    target_type = Hitscan::HITSCAN_TARGET_NONE;
+                    target_type = HITSCAN_TARGET_NONE;
                     break;
                 }
                 Animations::blood_spray(
@@ -323,10 +323,10 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
             //destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
             break;
 
-        case Hitscan::HITSCAN_TARGET_BLOCK:
+        case HITSCAN_TARGET_BLOCK:
             if (block_distance > range)
             {
-                target_type = Hitscan::HITSCAN_TARGET_NONE;
+                target_type = HITSCAN_TARGET_NONE;
                 break;
             }
             if (block_pos[2] >= 0 && block_pos[2] < t_map::map_dim.z)
@@ -394,7 +394,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
             break;
     }
 
-    if (target_type == Hitscan::HITSCAN_TARGET_NONE)
+    if (target_type == HITSCAN_TARGET_NONE)
     {
         melee_none_CtoS none_msg;
         none_msg.send();
@@ -405,32 +405,28 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
 
 bool PlayerAgent_action::set_block(ItemID placer_id)
 {
+    class Agent* you = this->p->you();
+    if (you == NULL || you->status.dead) return false;
+
+    int placer_type = Item::get_item_type(placer_id);
+    ASSERT_VALID_ITEM_TYPE(placer_type);
+    IF_INVALID_ITEM_TYPE(placer_type) return false;
+    
     GS_ASSERT(placer_id != NULL_ITEM);
-    class Agent* you = p->you();
-    if (you == NULL) return false;
-    if (you->status.dead) return false;
+    if (placer_id == NULL_ITEM) return false;
 
     // get nearest empty block
     const float max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
+    struct RaytraceData data; 
+    bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
+    if (!collided) return false;
 
-    Vec3 f = agent_camera->forward_vector();
-    int* b = farthest_empty_block(
-        p->camera_state.x, p->camera_state.y, p->camera_z(),
-        f.x, f.y, f.z,
-        max_dist, z_low, z_high
-    );
-    if (b==NULL) return false;
-    if (b[2] < 0 || b[2] >= t_map::map_dim.z) return false;
-    if (b[2] == 0) return false;    // dont modify the floor
+    int cube_point[3];
+    data.get_pre_collision_point(cube_point);
+    if (cube_point[2] <= 0 || cube_point[2] >= t_map::map_dim.z) return false; // dont modify the floor
 
-    int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
-    GS_ASSERT(orientation >= 0 && orientation <= 3);
-    if (orientation < 0 || orientation > 3) orientation = 0;
+    int orientation = axis_orientation(agent_camera->get_position(), vec3_init(cube_point[0]+0.5f, cube_point[1]+0.5f, cube_point[2]+0.5f));
 
-    int placer_type = Item::get_item_type(placer_id);
-    GS_ASSERT(placer_type != NULL_ITEM_TYPE);
     Item::ItemAttribute* attr = Item::get_item_attributes(placer_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return false;
@@ -438,9 +434,9 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     if (t_map::isItemContainer(val))
     {
         ItemContainer::create_container_block_CtoS msg;
-        msg.x = b[0];
-        msg.y = b[1];
-        msg.z = b[2];
+        msg.x = cube_point[0];
+        msg.y = cube_point[1];
+        msg.z = cube_point[2];
         msg.placer_id = placer_id;
         msg.orientation = orientation;
         msg.send();
@@ -448,9 +444,9 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     else
     {
         agent_set_block_CtoS msg;
-        msg.x = b[0];
-        msg.y = b[1];
-        msg.z = b[2];
+        msg.x = cube_point[0];
+        msg.y = cube_point[1];
+        msg.z = cube_point[2];
         msg.placer_id = placer_id;
         msg.send();
     }
@@ -459,21 +455,19 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
 
 void PlayerAgent_action::admin_set_block()
 {
-    class Agent* you = p->you();
+    class Agent* you = this->p->you();
     if (you == NULL) return;
 
     // get nearest empty block
     const float max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
 
-    Vec3 f = agent_camera->forward_vector();
-    int* b = farthest_empty_block(
-        p->camera_state.x, p->camera_state.y, p->camera_z(),
-        f.x, f.y, f.z,
-        max_dist, z_low, z_high
-    );
-    if (b==NULL) return;
+    struct RaytraceData data;
+    bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
+    if (!collided) return;
+
+    int b[3];
+    data.get_pre_collision_point(b);
+
     if (b[2] < 0 || b[2] >= t_map::map_dim.z) return;
 
     int orientation = axis_orientation(agent_camera->get_position(), vec3_init(b[0]+0.5f, b[1]+0.5f, b[2]+0.5f));
@@ -540,17 +534,14 @@ void PlayerAgent_action::place_spawner()
     if (you == NULL) return;
     if (you->status.dead) return;
 
-    Vec3 v = agent_camera->forward_vector();
-
     const float max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
-    int* block = farthest_empty_block(
-        this->p->camera_state.x, this->p->camera_state.y, this->p->camera_z(),
-        v.x, v.y, v.z,
-        max_dist, z_low, z_high
-    );
-    if (block == NULL) return;
+
+    struct RaytraceData data;
+    bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
+    if (!collided) return;
+
+    int block[3];
+    data.get_pre_collision_point(block);
     
     place_spawner_CtoS msg;
     msg.x = block[0];
@@ -565,17 +556,14 @@ void PlayerAgent_action::place_turret()
     if (you == NULL) return;
     if (you->status.dead) return;
 
-    Vec3 v = agent_camera->forward_vector();
-
     const float max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
-    int* block = farthest_empty_block(
-        this->p->camera_state.x, this->p->camera_state.y, this->p->camera_z(),
-        v.x, v.y, v.z,
-        max_dist, z_low, z_high
-    );
-    if (block == NULL) return;
+
+    struct RaytraceData data;
+    bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
+    if (!collided) return;
+
+    int block[3];
+    data.get_pre_collision_point(block);
     
     place_turret_CtoS msg;
     msg.x = block[0];
@@ -590,7 +578,7 @@ Vec3 PlayerAgent_action::get_aiming_point()
     if (you == NULL) return vec3_init(0,0,0);
     if (you->status.dead) return vec3_init(0,0,0);
 
-    Vec3 pos = this->p->camera_position();
+    Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
     class Voxel_hitscan_target target;
@@ -601,14 +589,14 @@ Vec3 PlayerAgent_action::get_aiming_point()
     CubeID tile;
     float block_distance;
 
-    Hitscan::HitscanTargetTypes target_type =
+    HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
             pos, look, this->p->agent_id, OBJECT_AGENT,
             &target, &vox_distance, collision_point,
             block_pos, side, &tile, &block_distance
         );
-    if (target_type == Hitscan::HITSCAN_TARGET_VOXEL) return vec3_init(collision_point[0], collision_point[1], collision_point[2]);
-    else if (target_type == Hitscan::HITSCAN_TARGET_BLOCK) return vec3_add(pos, vec3_scalar_mult(look, block_distance));
+    if (target_type == HITSCAN_TARGET_VOXEL) return vec3_init(collision_point[0], collision_point[1], collision_point[2]);
+    else if (target_type == HITSCAN_TARGET_BLOCK) return vec3_add(pos, vec3_scalar_mult(look, block_distance));
     else return vec3_init(0,0,0);
 }
 

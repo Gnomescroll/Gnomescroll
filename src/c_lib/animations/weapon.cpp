@@ -495,10 +495,9 @@ void draw_placement_outline(int item_type)
 
     // get open block
     const int max_dist = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
-    int* b = ClientState::playerAgent_state.nearest_open_block(max_dist, z_low, z_high);
-    if (b == NULL) return;
+    int b[3];
+    bool collided = ClientState::playerAgent_state.nearest_open_block(max_dist, b);
+    if (!collided) return;
 
     // center it
 

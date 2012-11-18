@@ -426,54 +426,60 @@ void PlayerAgent_state::update_model()
     }
 }
 
-int* PlayerAgent_state::facing_block()
+bool PlayerAgent_state::facing_block(int pos[3])
 {
     if (this->you() == NULL) return NULL;
     if (current_camera == NULL) return NULL;
 
     const float max_distance = 4.0f;
-    const int z_low = 4;
-    const int z_high = 3;
 
-    Vec3 direction = current_camera->forward_vector();
-    int* pos = _nearest_block(current_camera_position, direction, max_distance, z_low, z_high);
-    return pos;
+    struct RaytraceData data;
+    bool collided = raytrace_terrain(current_camera_position, current_camera->forward_vector(), max_distance, &data);
+    if (!collided) return false;
+    for (int i=0; i<3; i++)
+        pos[i] = data.collision_point[i];
+    return collided;
 }
 
 int PlayerAgent_state::facing_container()
 {
-    int* pos = this->facing_block();
-    if (pos == NULL) return NULL_CONTAINER;
+    int pos[3];
+    bool facing = this->facing_block(pos);
+    if (!facing) return NULL_CONTAINER;
 
     return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
 }
 
-int* PlayerAgent_state::nearest_open_block(const float max_dist, const int z_low, const int z_high)
+bool PlayerAgent_state::nearest_open_block(const float max_dist, int open_point[3])
 {
     if (agent_camera == NULL) return NULL;
-    Vec3 f = agent_camera->forward_vector();
-    ASSERT_BOXED_POSITION(this->camera_state);
-    int* b = farthest_empty_block(
-        this->camera_state.x, this->camera_state.y, this->camera_z(),
-        f.x, f.y, f.z,
-        max_dist, z_low, z_high);
-    return b;
+    struct Vec3 f = agent_camera->forward_vector();
+
+    struct RaytraceData data;
+    bool collided = raytrace_terrain(agent_camera->get_position(), f, max_dist, &data);
+    if (!collided) return false;
+    data.get_pre_collision_point(open_point);
+    return collided;
 }
 
 int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
 {
     if (agent_camera == NULL) return 0;
-    Vec3 p = agent_camera->get_position();
-    Vec3 v = agent_camera->forward_vector();
-    CubeID tile = NULL_CUBE;
-    Hitscan::HitscanTargetTypes target = Hitscan::terrain(p.x, p.y, p.z, v.x, v.y, v.z, solid_pos, distance, side, &tile);
-    if (target != Hitscan::HITSCAN_TARGET_BLOCK) return 0;
-    open_pos[0] = translate_point(solid_pos[0] + side[0]);
-    open_pos[1] = translate_point(solid_pos[1] + side[1]);
-    open_pos[2] = solid_pos[2] + side[2];
+    struct Vec3 p = agent_camera->get_position();
+    struct Vec3 v = agent_camera->forward_vector();
+
+    const float max_dist = 128.0f;
+    struct RaytraceData data;
+    bool collided = raytrace_terrain(p, v, max_dist, &data);
+    if (!collided) return 0;
+
+    for (int i=0; i<3; i++) solid_pos[i] = data.collision_point[i];
+    data.get_pre_collision_point(open_pos);
+    data.get_side_array(side);
+    *distance = data.interval * max_dist;
+    
     GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
-    GS_ASSERT(tile > 0);
-    return tile;
+    return data.get_cube_id();
 }
 
 int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], float* distance)

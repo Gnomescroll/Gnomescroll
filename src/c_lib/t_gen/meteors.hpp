@@ -14,11 +14,11 @@ namespace t_gen
 void meteor_fall(void)
 {
     static const CubeID bedrock = t_map::get_cube_id("bedrock");
-    ASSERT_VALID_CUBE_ID(bedrock);
-    IF_INVALID_CUBE_ID(bedrock) return; 
+    GS_ASSERT(t_map::isValidCube(bedrock));
+    if (!t_map::isValidCube(bedrock)) return;
     static CubeID rock = t_map::get_cube_id("rock");
-    ASSERT_VALID_CUBE_ID(rock);
-    IF_INVALID_CUBE_ID(rock) return; 
+    GS_ASSERT(t_map::isValidCube(rock));
+    if (!t_map::isValidCube(rock)) return;
 
     const int METEOR_SIZE = 5; //one side of the meteor, which is a cube - will make it have a random shape later
     const int displacement = 100; //the amount of additional blocks of the ore to place around the crater
@@ -61,8 +61,8 @@ void meteor_fall(void)
             GS_ASSERT(false);
             return;
     }
-    ASSERT_VALID_CUBE_ID(tile_id);
-    IF_INVALID_CUBE_ID(tile_id) return;
+    GS_ASSERT(t_map::isValidCube(tile_id));
+    if (!t_map::isValidCube(tile_id)) return;
     
     const char* cube_name = t_map::get_cube_name(tile_id);
     GS_ASSERT(cube_name != NULL);

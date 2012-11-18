@@ -138,21 +138,36 @@ class Agent
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
         void teleport(struct Vec3 p) { this->teleport(p.x, p.y, p.z); }
 
+
+        // returns side, as integer. side<0 if failure
         int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
-        int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);    // returns side, as integer. side<0 if failure
-        int get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance, const int z_low, const int z_high);    // returns side, as integer. side<0 if failure
-        int* nearest_open_block(const float max_dist, const int z_low, const int z_high);
-        int* nearest_open_block(int side[3], const float max_dist, const int z_low, const int z_high);
+        int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);
+        int get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance);
+        
+        bool nearest_open_block(const float max_dist, int open_point[3]);
 
-        Vec3 forward_vector() { return this->s.forward_vector(); }
+        Vec3 forward_vector()
+        {
+            return this->s.forward_vector();
+        }
 
-        Vec3 get_position() { return vec3_init(this->s.x, this->s.y, this->s.z); }
-        Vec3 get_camera_position() { Vec3 p = this->get_position(); p.z += this->camera_height(); return p; }
+        Vec3 get_position()
+        {
+            return vec3_init(this->s.x, this->s.y, this->s.z);
+        }
+
+        Vec3 get_camera_position()
+        {
+            struct Vec3 p = this->get_position();
+            p.z += this->camera_height();
+            return p;
+        }
+
         Vec3 get_center()
         {
             if (this->vox == NULL || !this->vox->was_updated)
             {   // use approximate center of model
-                Vec3 p = this->get_position();
+                struct Vec3 p = this->get_position();
                 p.z += this->box.b_height/2.0f;
                 return p;
             }
