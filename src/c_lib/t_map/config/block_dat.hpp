@@ -2,14 +2,14 @@
 
 #include <t_map/config/_interface.hpp>
 
-namespace t_map 
+namespace t_map
 {
 
 void apply_block_dat_changes()
 {
     // NEVER REUSE A NAME!!
     //change_block("old_block", "new_block");
-    
+
     // Note: if you define any name changes for a block that automatically creates an item or container,
     // you have to manually define the name change in the item or container dat
 
@@ -265,7 +265,7 @@ void load_block_dat()
     apply_block_dat_changes();
 
     verify_config(); // validate
-    
+
     save_cube_names();  // safe to save cube names now
 }
 

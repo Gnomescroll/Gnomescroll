@@ -120,7 +120,7 @@ bool set_soundfile(int snd_id, const char* fn, const char* file)
     // check if function mapped already
     if (function_registered(fn))
         return false;
-    
+
     int fn_len = (int)strlen(fn);
     int file_len = (int)strlen(file);
     class Soundfile* snd = &sound_file_functions[snd_id];
@@ -187,7 +187,7 @@ int get_soundfile_id_for_name(const char* name)
     GS_ASSERT(sound_file_functions != NULL);
     if (sound_file_functions == NULL) return -1;
 
-    unsigned int hash = strhash(name); 
+    unsigned int hash = strhash(name);
     for (int i=0; i<n_sounds; i++)
         if (hash == sound_file_functions[i].hash)
             return i;
@@ -198,7 +198,7 @@ void teardown_triggers()
 {
     if (sound_file_functions == NULL)
         return;
-        
+
     for (int i=0; i<n_sounds; i++)
     {
         free(sound_file_functions[i].fn);
