@@ -240,6 +240,10 @@ void load_block_dat()
     iso_texture(cc, 2,2);
     push_texture();
 
+    cube_def(SolidCube, "mushroom_cap3", CUBE_MATERIAL_DECORATION);
+    iso_texture(cc, 1,2);
+    push_texture();
+
     cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 6,15);
     push_texture();
