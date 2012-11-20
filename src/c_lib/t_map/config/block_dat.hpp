@@ -39,6 +39,8 @@ void apply_block_dat_changes()
     change_block("ruins_4", "rock");
 
     // renames
+    change_block("mushroom1", "mushroom_stem1");
+    change_block("mushroom2", "mushroom_stem2");
     change_block("space_tree_trunk", "space_tree_trunk1");
     change_block("leaves", "leaves1");
     change_block("leaves_red", "leaves3");
@@ -71,6 +73,7 @@ void apply_block_dat_changes()
 void load_block_dat()
 {
     SpriteSheet t8 = texture_alias("media/sprites/terrain/t08.png");
+    SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
 
     const int T = 0;
     const int B = 1;
@@ -217,15 +220,29 @@ void load_block_dat()
     push_texture();
     hud_def(t8, 5,15);
 
-    cube_def(SolidCube, "mushroom1", CUBE_MATERIAL_DECORATION);
+    cube_def(SolidCube, "mushroom_stem1", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 8,9);
     push_texture();
     hud_def(t8,8,9);
 
-    cube_def(SolidCube, "mushroom2", CUBE_MATERIAL_DECORATION);
+    cube_def(SolidCube, "mushroom_stem2", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 8,11);
     push_texture();
     hud_def(t8,8,11);
+
+    cube_def(SolidCube, "mushroom_cap1", CUBE_MATERIAL_DECORATION);
+//    iso_texture(t8, 8,9);
+    iso_texture(cc, 1,1);
+    push_texture();
+
+    cube_def(SolidCube, "mushroom_cap2", CUBE_MATERIAL_DECORATION);
+//    iso_texture(t8, 8,9);
+    iso_texture(cc, 2,2);
+    push_texture();
+
+    cube_def(SolidCube, "mushroom_cap3", CUBE_MATERIAL_DECORATION);
+    iso_texture(cc, 1,2);
+    push_texture();
 
     cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 6,15);
