@@ -23,6 +23,7 @@ void create_explosion(int x, int y, int z, int strength)
     int blockedright=x; //higher x
     int blockedforward=y; //higher y
     int blockedbackward=y; //lower y
+    int power=25;
     static CubeID bedrock=t_map::get_cube_id("bedrock");
     static CubeID iron=t_map::get_cube_id("steel_block_1");
     static CubeID plasmagen=t_map::get_cube_id("plasmagen");
@@ -59,25 +60,25 @@ void create_explosion(int x, int y, int z, int strength)
             if (cz<z) blockeddown=cz;
             if (cz>z) blockedup=cz;
         }
-        if (cx <= tx + strength)
+        if (cx <= tx + 2*strength)
             {
                 cx++;
             }
-        if (cx >= tx + strength + 1)
+        if (cx >= tx + 2*strength + 1)
             {
                 cx=x;
-                if (cy <= ty + strength)
+                if (cy <= ty + 2*strength)
                     {
                         cy++;
                     }
-                if (cy >= ty + strength + 1)
+                if (cy >= ty + 2*strength + 1)
                     {
                         cy=y;
-                        if (cz <= tz + strength)
+                        if (cz <= tz + 2*strength)
                             {
                                 cz++;
                             }
-                        if (cz >= tz + strength + 1)
+                        if (cz >= tz + 2*strength + 1)
                             {
                                 stop=1;
                             }
@@ -93,27 +94,46 @@ void create_explosion(int x, int y, int z, int strength)
         if (cx>t_map::map_dim.x) cx=1; //wrap around map border
         if (cy>t_map::map_dim.y) cy=1;
         if (cz>t_map::map_dim.z) cz=t_map::map_dim.z; //clamp
-        if (!t_map::get(cx, cy, cz)==bedrock && !t_map::get(cx, cy, cz)==iron && !t_map::get(cx, cy, cz)==plasmagen && cx>blockedleft || cx<blockedright && cy>blockedbackward || cy<blockedforward && cz>blockeddown || cz<blockedup) t_map::set(cx, cy, cz, EMPTY_CUBE);
-        if (t_map::get(cx, cy, cz)==plasmagen && !cx==x || !cy==y || !cz==z) create_explosion(cx, cy, cz, strength);
+        if (t_map::get(cx, cy, cz)==plasmagen)
+        {
+            if (!cx==x || !cy==y || !cz=z)
+            {
+                create_explosion(cx, cy, cz, strength);
+                power=power + 10;
+            }
+        }
+        if (!t_map::get(cx, cy, cz)==bedrock && !t_map::get(cx, cy, cz)==iron)
+        {
+            if (cx > blockedleft || cx <blockedright)
+            {
+                if (cy > blockedbackward || cy < blockedforward)
+                {
+                    if (cz > blockeddown || cz < blockedup)
+                    {
+                        t_map::set(cx, cy, cz, EMPTY_CUBE);
+                    }
+                }
+            }
+        }
         if (cx <= tx + strength)
             {
                 cx++;
             }
-        if (cx >= tx + strength + 1)
+        if (cx >= tx + 2*strength + 1)
             {
                 cx=x;
-                if (cy <= ty + strength)
+                if (cy <= ty + 2*strength)
                     {
                         cy++;
                     }
-                if (cy >= ty + strength + 1)
+                if (cy >= ty + 2*strength + 1)
                     {
                         cy=y;
-                        if (cz <= tz + strength)
+                        if (cz <= tz + 2*strength)
                             {
                                 cz++;
                             }
-                        if (cz >= tz + strength + 1)
+                        if (cz >= tz + 2*strength + 1)
                             {
                                 stop=1;
                             }
