@@ -17,12 +17,10 @@ const float HALF_PI = PI / 2;
 const float QUARTER_PI = HALF_PI / 2;
 const float EIGHTH_PI = QUARTER_PI / 2;
 
-const int NUM_LEAVES = 3; // pics == textures.   abbreviating "textures" always looks wrong to me.... suggesting its "text"
-CubeID leaves[NUM_LEAVES];
-const int NUM_TRUNKS = 2;
-CubeID trunks[NUM_TRUNKS];
-const size_t NUM_SHROOMS = 2;
-CubeID shrooms[NUM_SHROOMS] = {NULL_CUBE};
+const int NUM_LEAVES = 3;      CubeID leaves[NUM_LEAVES];
+const int NUM_TRUNKS = 2;      CubeID trunks[NUM_TRUNKS];
+const size_t NUM_SHROOMCAPS = 2;   CubeID shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
+const size_t NUM_SHROOMSTEMS = 2;  CubeID shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
 
 const float persistence = 0.5f; // tweak
 const int octaves = 6;  // tweak
@@ -125,26 +123,27 @@ bool blocks_are_invalid(CubeID arr[], int len) {
 
 
 void make_shroom(int x, int y, int z) {
-    CubeID shroom = shrooms[randrange(0, NUM_SHROOMS - 1)];
+    CubeID shroom_cap = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
+    CubeID shroom_stem = shroom_stems[randrange(0, NUM_SHROOMSTEMS - 1)];
 
     int cap_height = randrange(4, 15);
     int hei = 0;
-    float t_rad = randrange(1, 4); // trunk/stem radius
-    float cap_rad = t_rad * 4;
+    float stem_rad = randrange(1, 4); // stem radius
+    float cap_rad = stem_rad * 4;
     int cap_rad_changer = 0;
 
     while (cap_rad > 0) {
-        if (cap_rad > t_rad) 
-            corner_origin_make_circle(x, y, z+hei, t_rad, shroom, hei == 0);
+        if (cap_rad > stem_rad) 
+            corner_origin_make_circle(x, y, z+hei, stem_rad, shroom_stem, hei == 0);
 
         if (hei >= cap_height) {
             if (corner_origin_circle_untouched(x, y, z+hei, cap_rad) ) 
-                corner_origin_make_circle(     x, y, z+hei, cap_rad, shroom);
+                corner_origin_make_circle(     x, y, z+hei, cap_rad, shroom_cap);
             
             //
             int targ_cap_rad = cap_rad + cap_rad_changer;
-            while (targ_cap_rad > cap_rad) { cap_rad++; corner_origin_make_circle(x, y, z+hei, cap_rad, shroom); }
-            while (targ_cap_rad < cap_rad) { cap_rad--; corner_origin_make_circle(x, y, z+hei, cap_rad, shroom); }
+            while (targ_cap_rad > cap_rad) { cap_rad++; corner_origin_make_circle(x, y, z+hei, cap_rad, shroom_cap); }
+            while (targ_cap_rad < cap_rad) { cap_rad--; corner_origin_make_circle(x, y, z+hei, cap_rad, shroom_cap); }
 
             cap_rad_changer--;
         }
@@ -225,8 +224,11 @@ namespace t_gen {
         trunks[0] = t_map::get_cube_id("space_tree_trunk1"); 
         trunks[1] = t_map::get_cube_id("space_tree_trunk2");
 
-        shrooms[0] = t_map::get_cube_id("mushroom1");
-        shrooms[1] = t_map::get_cube_id("mushroom2");
+        shroom_caps[0] = t_map::get_cube_id("mushroom_cap1");
+        shroom_caps[1] = t_map::get_cube_id("mushroom_cap2");
+
+        shroom_stems[0] = t_map::get_cube_id("mushroom_stem1");
+        shroom_stems[1] = t_map::get_cube_id("mushroom_stem2");
 
         CubeID regolith = t_map::get_cube_id("regolith");
         GS_ASSERT(t_map::isValidCube(regolith));
@@ -234,7 +236,8 @@ namespace t_gen {
 
         if (blocks_are_invalid(leaves, NUM_LEAVES) ) return;
         if (blocks_are_invalid(trunks, NUM_TRUNKS) ) return;
-        if (blocks_are_invalid(shrooms, NUM_SHROOMS) ) return;
+        if (blocks_are_invalid(shroom_caps, NUM_SHROOMCAPS) ) return;
+        if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS) ) return;
 
         // setup perlin array
         float* noise = t_gen::create_2d_noise_array(persistence, octaves, XMAX, YMAX);  // must free return value
