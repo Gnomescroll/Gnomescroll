@@ -167,7 +167,7 @@ void make_tree(int x, int y, int z) {
 	// make tree, segment by segment
 	for (int seg = 0; seg < segs; seg++) {
         // height of current trunk segment
-        int height = randrange(5, 11);
+        int height = randrange(6, 11);
         if (seg == 0) 
             height = randrange(12, 21); // ensure trunk goes up aways
         if (height+z+2 >= ZMAX) break;
