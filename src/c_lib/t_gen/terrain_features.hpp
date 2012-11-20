@@ -34,6 +34,14 @@ const float shroom_threshold = 0.997f;
 
 
 
+typedef enum {
+    TREE_RANDOM,    // Dr. Suess style!
+    TREE_INVERSIVE, // opposite of earth leaf layers being broadest at base
+	TREE_MAX        // for iteration
+} TreeType;
+
+
+
 void set_me_maybe(int x, int y, int z, CubeID block, CubeID an_overwriteable = NULL_CUBE) {
     if (t_map::get(x, y, z) == EMPTY_CUBE
     || (an_overwriteable != NULL_CUBE && t_map::get(x, y, z) == an_overwriteable))
@@ -152,29 +160,37 @@ void make_tree(int x, int y, int z) {
     CubeID leaf = leaves[randrange(0, NUM_LEAVES - 1)];
     CubeID trunk = trunks[randrange(0, NUM_TRUNKS - 1)];
 
-    int segs = randrange(2, 9);
-    for (int seg = 0; seg < segs; seg++) {
+    int segs = randrange(2, 6);
+    float rad = 2.0f; // radius of leaf layer from center voxel
+	TreeType tt = (TreeType)randrange(0, (int)TREE_MAX-1);
+	
+	// make tree, segment by segment
+	for (int seg = 0; seg < segs; seg++) {
         // height of current trunk segment
         int height = randrange(5, 11);
         if (seg == 0) 
             height = randrange(12, 21); // ensure trunk goes up aways
         if (height+z+2 >= ZMAX) break;
 
-        float dist = .0f; // from center voxel
-        for (int j = 0; j < height; j++) {
+        // make segment
+		for (int j = 0; j < height; j++) {
             t_map::set(x, y, z + j, trunk);
 
             if (j == height - 1) {
-                if (randrange(0,1) == 00) 
-                    dist = randrange(2, 11);
-                else dist += .5f;
-                for (int i = -dist; i < dist; i++)  set_me_maybe(x+i, y, z+j, trunk); // limbs
-                for (int i = -dist; i < dist; i++)  set_me_maybe(x, y+i, z+j, trunk); // limbs
-                while (dist > 0) {
-                    make_circle(x, y, z+j,   dist, leaf, trunk);
-                    make_circle(x, y, z+j+1, dist+1, leaf, trunk);
-                    make_circle(x, y, z+j+2, dist+.5, leaf, trunk);
-                    dist -= 2.5;
+				switch (tt) {
+					case TREE_RANDOM: rad = randrange(2, 11); break;
+					default: rad += 1.7f;
+				}
+
+                for (int i = -rad; i < rad; i++)  set_me_maybe(x+i, y, z+j, trunk); // limbs
+                for (int i = -rad; i < rad; i++)  set_me_maybe(x, y+i, z+j, trunk); // limbs
+
+				float ring_rad = rad; // current ring radius
+                while (ring_rad > 0) {
+                    make_circle(x, y, z+j,   ring_rad,    leaf, trunk);
+                    make_circle(x, y, z+j+1, ring_rad+1,  leaf, trunk);
+                    make_circle(x, y, z+j+2, ring_rad+.5, leaf, trunk);
+                    ring_rad -= 2.5;
                 }
             }
         }
