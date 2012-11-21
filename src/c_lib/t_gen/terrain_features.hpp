@@ -19,7 +19,7 @@ const float EIGHTH_PI = QUARTER_PI / 2;
 
 const int NUM_LEAVES = 3;      CubeID leaves[NUM_LEAVES];
 const int NUM_TRUNKS = 2;      CubeID trunks[NUM_TRUNKS];
-const size_t NUM_SHROOMCAPS = 2;   CubeID shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
+const size_t NUM_SHROOMCAPS = 3;   CubeID shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
 const size_t NUM_SHROOMSTEMS = 2;  CubeID shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
 
 const float persistence = 0.5f; // tweak
@@ -134,7 +134,7 @@ void make_shroom(int x, int y, int z) {
 
     while (cap_rad > 0) {
         if (cap_rad > stem_rad) 
-            corner_origin_make_circle(x, y, z+hei, stem_rad, shroom_stem, hei == 0);
+            corner_origin_make_circle(x, y, z+hei, stem_rad, shroom_cap /*shroom_stem*/, hei == 0);
 
         if (hei >= cap_height) {
             if (corner_origin_circle_untouched(x, y, z+hei, cap_rad) ) 
@@ -226,6 +226,7 @@ namespace t_gen {
 
         shroom_caps[0] = t_map::get_cube_id("mushroom_cap1");
         shroom_caps[1] = t_map::get_cube_id("mushroom_cap2");
+        shroom_caps[2] = t_map::get_cube_id("mushroom_cap3");
 
         shroom_stems[0] = t_map::get_cube_id("mushroom_stem1");
         shroom_stems[1] = t_map::get_cube_id("mushroom_stem2");

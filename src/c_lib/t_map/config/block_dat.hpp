@@ -39,6 +39,8 @@ void apply_block_dat_changes()
     change_block("ruins_4", "rock");
 
     // renames
+    change_block("mushroom1", "mushroom_stem1");
+    change_block("mushroom2", "mushroom_stem2");
     change_block("space_tree_trunk", "space_tree_trunk1");
     change_block("leaves", "leaves1");
     change_block("leaves_red", "leaves3");
