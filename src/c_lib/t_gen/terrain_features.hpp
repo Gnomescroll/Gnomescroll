@@ -18,7 +18,7 @@ const float QUARTER_PI = HALF_PI / 2;
 const float EIGHTH_PI = QUARTER_PI / 2;
 
 const int NUM_LEAVES = 3;      CubeID leaves[NUM_LEAVES];
-const int NUM_TRUNKS = 2;      CubeID trunks[NUM_TRUNKS];
+const int NUM_TRUNKS = 3;      CubeID trunks[NUM_TRUNKS];
 const size_t NUM_SHROOMCAPS = 3;   CubeID shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
 const size_t NUM_SHROOMSTEMS = 2;  CubeID shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
 
@@ -223,6 +223,7 @@ namespace t_gen {
         
         trunks[0] = t_map::get_cube_id("space_tree_trunk1"); 
         trunks[1] = t_map::get_cube_id("space_tree_trunk2");
+        trunks[2] = t_map::get_cube_id("space_tree_trunk3");
 
         shroom_caps[0] = t_map::get_cube_id("mushroom_cap1");
         shroom_caps[1] = t_map::get_cube_id("mushroom_cap2");

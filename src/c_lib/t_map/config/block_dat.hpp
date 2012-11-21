@@ -210,15 +210,33 @@ void load_block_dat()
     push_texture();
     hud_def(t8,12,6);
 
-    cube_def(SolidCube, "space_tree_trunk1", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 7,15);
+    // terrain features
+	cube_def(SolidCube, "space_tree_trunk1", CUBE_MATERIAL_DECORATION);
+    iso_texture(t8, 6,16);
     push_texture();
-    hud_def(t8,7,15);
+    hud_def(t8,6,16);
 
     cube_def(SolidCube, "space_tree_trunk2", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 5,15);
+    iso_texture(t8, 8,16);
     push_texture();
-    hud_def(t8, 5,15);
+    hud_def(t8, 8,16);
+
+    cube_def(SolidCube, "space_tree_trunk3", CUBE_MATERIAL_DECORATION);
+    iso_texture(t8, 2,15);
+    push_texture();
+    hud_def(t8, 2,15);
+
+    cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
+    iso_texture(t8, 2,16);
+    push_texture();
+
+    cube_def(SolidCube, "leaves2", CUBE_MATERIAL_DECORATION);
+    iso_texture(t8, 8,10);
+    push_texture();
+
+    cube_def(SolidCube, "leaves3", CUBE_MATERIAL_DECORATION);
+    iso_texture(t8, 8,12);
+    push_texture();
 
     cube_def(SolidCube, "mushroom_stem1", CUBE_MATERIAL_DECORATION);
     iso_texture(t8, 8,9);
@@ -242,18 +260,6 @@ void load_block_dat()
 
     cube_def(SolidCube, "mushroom_cap3", CUBE_MATERIAL_DECORATION);
     iso_texture(cc, 1,2);
-    push_texture();
-
-    cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 6,15);
-    push_texture();
-
-    cube_def(SolidCube, "leaves2", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 8,10);
-    push_texture();
-
-    cube_def(SolidCube, "leaves3", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 8,12);
     push_texture();
 
     // ruins
