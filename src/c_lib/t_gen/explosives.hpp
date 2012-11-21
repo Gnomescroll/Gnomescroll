@@ -8,6 +8,7 @@ dont_include_this_file_in_client
 #include <t_map/t_properties.hpp>
 #include <common/random.hpp>
 #include <physics/quadrant.hpp>
+#include <state/server_state.cpp>
 
 namespace t_gen
 {
@@ -19,17 +20,30 @@ void create_explosion(const int x, const int y, const int z, const int strength)
     // check for sane strength value
     GS_ASSERT(strength > 0 && strength <= MAX_STRENGTH);
     if (strength <= 0 || strength > MAX_STRENGTH) return;
-    
+
+    // power determines damage dealt by projectiles
+    int power=10;
+    int cannonoffsetx;
+    int cannonoffsety;
+    int cannonoffsetz;
+    int cannonx=x;
+    int cannony=y;
+    int cannonz=z;
+    int cannoncount=0;
+
     // get and check cubes to be used
     static CubeID bedrock = t_map::get_cube_id("bedrock");
     static CubeID iron = t_map::get_cube_id("steel_block_1");
     static CubeID plasmagen = t_map::get_cube_id("plasmagen");
+    static CubeID cannonball = t_map::get_cube_id("steel_block_2");
     GS_ASSERT(t_map::isValidCube(bedrock));
     GS_ASSERT(t_map::isValidCube(iron));
     GS_ASSERT(t_map::isValidCube(plasmagen));
+    GS_ASSERT(t_map::isValidCube(cannonball));
     if (!t_map::isValidCube(bedrock)) return;
     if (!t_map::isValidCube(iron)) return;
     if (!t_map::isValidCube(plasmagen)) return;
+    if (!t_map::isValidCube(cannonball)) return;
 
     // check upper bounds
     // we should not be calling this function out of bounds, so assert
@@ -90,6 +104,7 @@ void create_explosion(const int x, const int y, const int z, const int strength)
             // make sure to unset the plasmegen cube,
             // or we will end up in infinite recursion and crash
             t_map::set(ix, iy, iz, EMPTY_CUBE);
+            power=power + 100 / power; // so that if there are 2 pieces of the explosive, the power will be 20 but the more there are, the smaller the power gain so that the explosive can be classified as "precision explosive"
             create_explosion(ix, iy, iz, strength);
             continue;
         }
@@ -99,9 +114,33 @@ void create_explosion(const int x, const int y, const int z, const int strength)
         GS_ASSERT(cube_id != bedrock && cube_id != iron);
         if (cube_id == bedrock || cube_id == iron) continue;
 
+        if (cube_id == cannonball)
+        {
+            cannonoffsetx = ix - x;
+            cannonoffsety = iy - y;
+            cannonoffsetz = iz - z;
+            cannonx = translate_point(x + cannonoffsetx);
+            cannony = translate_point(y + cannonoffsety);
+            cannonz = z + cannonoffsetz;
+            if (cannonz < 1) cannonz = 1;
+            if (cannonz > t_map::map_dim.z) cannonz = t_map::map_dim.z;
+            while (!t_map::isSolid(t_map::get(cannonx, cannony, cannonz)) && cannoncount < power * strength)
+            {
+                ServerState::damage_objects_within_sphere(cannonx, cannony, cannonz, cannonoffsetx + cannonoffsety + cannonoffsetz, power, 0, 0, 0);
+                cannonx = translate_point(cannonx + cannonoffsetx);
+                cannony = translate_point(cannony + cannonoffsety);
+                cannonz = cannonz + cannonoffsetz;
+                if (cannonz < 1) cannonz = 1;
+                if (cannonz > t_map::map_dim.z) cannonz = t_map::map_dim.z;
+                cannoncount++;
+            }
+            t_map::set(cannonx, cannony, cannonz, cannonball);
+        }
+
         // TODO -- switch to t_map::apply_damage_broadcast();
-        t_map::set(iz, iy, iz, EMPTY_CUBE);
+        t_map::set(ix, iy, iz, EMPTY_CUBE);
     }
 }
+ServerState::damage_objects_within_sphere(x, y, z, strength + power, power, 0, 0, 0);
 
 }   // t_gen
