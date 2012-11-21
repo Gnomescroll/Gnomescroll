@@ -592,6 +592,8 @@ void apply_item_dat_changes()
     change_item("raised_tile_blue", "raised_tile2");
     change_item("raised_tile_green", "raised_tile3");
     change_item("raised_tile_red", "raised_tile4");
+    change_item("mushroom1", "mushroom_stem1");
+    change_item("mushroom2", "mushroom_stem2");
 
 
     item_name_map->condense();  // finalize
