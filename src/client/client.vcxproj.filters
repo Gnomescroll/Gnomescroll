@@ -68,6 +68,16 @@
 
 
 
+	
+
+
+
+
+	
+
+
+
+
 	<ItemGroup>
 		<Filter Include="c_lib\agent">
 		</Filter>
@@ -155,10 +165,6 @@
 		</Filter>
 		<Filter Include="c_lib\item\toolbelt\net">
 		</Filter>
-		<Filter Include="c_lib\map_gen">
-		</Filter>
-		<Filter Include="c_lib\map_gen\client">
-		</Filter>
 		<Filter Include="c_lib\options">
 		</Filter>
 		<Filter Include="c_lib\particle">
@@ -217,6 +223,8 @@
 		</Filter>
 		<Filter Include="c_lib\common\crash_report">
 		</Filter>
+		<Filter Include="c_lib\common\dat">
+		</Filter>
 		<Filter Include="c_lib\common\template">
 		</Filter>
 		<Filter Include="c_lib\item\common">
@@ -245,6 +253,12 @@
 		<Filter>c_lib\agent</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\agent\net_agent.cpp">
+		<Filter>c_lib\agent</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\agent\_interface.cpp">
+		<Filter>c_lib\agent</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\agent\_state.cpp">
 		<Filter>c_lib\agent</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\agent\client\agent_draw.cpp">
@@ -328,13 +342,13 @@
 	<ClInclude Include="..\c_lib\chat\client.cpp">
 		<Filter>c_lib\chat</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\interface.cpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\chat\packets.cpp">
 		<Filter>c_lib\chat</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\chat\server.cpp">
+		<Filter>c_lib\chat</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\chat\_interface.cpp">
 		<Filter>c_lib\chat</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\common.cpp">
@@ -550,6 +564,9 @@
 	<ClInclude Include="..\c_lib\entity\object\object_list.cpp">
 		<Filter>c_lib\entity\object</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\entity\objects\dat.cpp">
+		<Filter>c_lib\entity\objects</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\entity\objects\example.cpp">
 		<Filter>c_lib\entity\objects</Filter>
 	</ClInclude>
@@ -751,60 +768,6 @@
 	<ClInclude Include="..\c_lib\item\toolbelt\net\StoC.cpp">
 		<Filter>c_lib\item\toolbelt\net</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\dragon.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\dungeon.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\features.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\gradient.c">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\hopcroft-karp.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\interpolator.c">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\map_generator.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\mix.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\noise.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\noise_util.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\noise_viz.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\perlin.c">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\recipes.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\ridged_mf.c">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\simplex.c">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\voronoi.cpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\client\dragon.cpp">
-		<Filter>c_lib\map_gen\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\client\hopcroft-karp.cpp">
-		<Filter>c_lib\map_gen\client</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\options\argparse.cpp">
 		<Filter>c_lib\options</Filter>
 	</ClInclude>
@@ -910,16 +873,40 @@
 	<ClInclude Include="..\c_lib\SDL\unused\v.cpp">
 		<Filter>c_lib\SDL\unused</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\constants.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\containers.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\entities.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\items.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\logger.cpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\map.cpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\mechs.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\players.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\redis.cpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\uuid.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\_interface.cpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\_state.cpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\csv_parser.cpp">
@@ -948,6 +935,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\state\server_state.cpp">
 		<Filter>c_lib\state</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\features.cpp">
+		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\noise_map.cpp">
 		<Filter>c_lib\t_gen</Filter>
@@ -1144,6 +1134,15 @@
 	<ClInclude Include="..\c_lib\agent\net_agent.hpp">
 		<Filter>c_lib\agent</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\agent\_include.hpp">
+		<Filter>c_lib\agent</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\agent\_interface.hpp">
+		<Filter>c_lib\agent</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\agent\_state.hpp">
+		<Filter>c_lib\agent</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\agent\client\agent_draw.hpp">
 		<Filter>c_lib\agent\client</Filter>
 	</ClInclude>
@@ -1151,6 +1150,9 @@
 		<Filter>c_lib\agent\client</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\agent\client\agent_sound_handler.hpp">
+		<Filter>c_lib\agent\client</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\agent\client\jetpack.hpp">
 		<Filter>c_lib\agent\client</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\agent\client\player_agent.hpp">
@@ -1240,13 +1242,16 @@
 	<ClInclude Include="..\c_lib\chat\globals.hpp">
 		<Filter>c_lib\chat</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\interface.hpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\chat\packets.hpp">
 		<Filter>c_lib\chat</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\chat\server.hpp">
+		<Filter>c_lib\chat</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\chat\_include.hpp">
+		<Filter>c_lib\chat</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\chat\_interface.hpp">
 		<Filter>c_lib\chat</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\color.hpp">
@@ -1276,6 +1281,9 @@
 	<ClInclude Include="..\c_lib\common\osx.hpp">
 		<Filter>c_lib\common</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\common\random.hpp">
+		<Filter>c_lib\common</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\common\subscriber_list.hpp">
 		<Filter>c_lib\common</Filter>
 	</ClInclude>
@@ -1284,6 +1292,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\crash_report\stack_trace.hpp">
 		<Filter>c_lib\common\crash_report</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\common\dat\name_map.hpp">
+		<Filter>c_lib\common\dat</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\draw\colored_voxel.hpp">
 		<Filter>c_lib\common\draw</Filter>
@@ -1310,15 +1321,6 @@
 		<Filter>c_lib\common\profiling</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\template\char_buffer.hpp">
-		<Filter>c_lib\common\template</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\template\dynamic_multi_object_list.hpp">
-		<Filter>c_lib\common\template</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\template\dynamic_object_list.hpp">
-		<Filter>c_lib\common\template</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\template\elastic_object_list.hpp">
 		<Filter>c_lib\common\template</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\template\multi_object_list.hpp">
@@ -1492,6 +1494,9 @@
 	<ClInclude Include="..\c_lib\entity\object\types.hpp">
 		<Filter>c_lib\entity\object</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\entity\objects\dat.hpp">
+		<Filter>c_lib\entity\objects</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\entity\objects\example.hpp">
 		<Filter>c_lib\entity\objects</Filter>
 	</ClInclude>
@@ -1538,6 +1543,9 @@
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\hud.hpp">
+		<Filter>c_lib\hud</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\hud\jetpack_meter.hpp">
 		<Filter>c_lib\hud</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\hud\map.hpp">
@@ -1765,36 +1773,6 @@
 	<ClInclude Include="..\c_lib\item\toolbelt\net\StoC.hpp">
 		<Filter>c_lib\item\toolbelt\net</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\dragon.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\dungeon.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\features.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\map_generator.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\mix.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\noise.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\noise_util.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\recipes.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\voronoi.hpp">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\client\dragon.hpp">
-		<Filter>c_lib\map_gen\client</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\options\argparse.hpp">
 		<Filter>c_lib\options</Filter>
 	</ClInclude>
@@ -1900,6 +1878,9 @@
 	<ClInclude Include="..\c_lib\physics\reference\matrix.hpp">
 		<Filter>c_lib\physics\reference</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\SDL\constants.hpp">
+		<Filter>c_lib\SDL</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\draw_functions.hpp">
 		<Filter>c_lib\SDL</Filter>
 	</ClInclude>
@@ -1936,19 +1917,43 @@
 	<ClInclude Include="..\c_lib\serializer\constants.hpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\containers.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\entities.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\items.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\logger.hpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\map.hpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\mechs.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\parse.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\players.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\redis.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\uuid.hpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\_include.hpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\serializer\_interface.hpp">
+		<Filter>c_lib\serializer</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\serializer\_state.hpp">
 		<Filter>c_lib\serializer</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\sound\csv_parser.hpp">
@@ -1987,6 +1992,18 @@
 	<ClInclude Include="..\c_lib\t_gen\crystals.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\excavator.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\explosives.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\features.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\meteors.hpp">
+		<Filter>c_lib\t_gen</Filter>
+	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\noise_map.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
@@ -2003,9 +2020,6 @@
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\perlin_extra.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\river.hpp">
 		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\rock_layer.hpp">
@@ -2093,6 +2107,9 @@
 		<Filter>c_lib\t_map\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\config\drop_dat.hpp">
+		<Filter>c_lib\t_map\config</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_map\config\textures.hpp">
 		<Filter>c_lib\t_map\config</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_map\config\_interface.hpp">
@@ -2260,9 +2277,6 @@
 	<ClInclude Include="..\net_lib\common\types.hpp">
 		<Filter>net_lib\common</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\agent_include.h">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
 	<ClInclude Include="..\c_lib\auth\hmac-sha256.h">
 		<Filter>c_lib\auth</Filter>
 	</ClInclude>
@@ -2275,10 +2289,10 @@
 	<ClInclude Include="..\c_lib\common\defines.h">
 		<Filter>c_lib\common</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\common\qsort.h">
+	<ClInclude Include="..\c_lib\common\dirent.h">
 		<Filter>c_lib\common</Filter>
 	</ClInclude>
-	<ClInclude Include="..\c_lib\common\random.h">
+	<ClInclude Include="..\c_lib\common\qsort.h">
 		<Filter>c_lib\common</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\version.h">
@@ -2286,21 +2300,6 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\common\time\TODO">
 		<Filter>c_lib\common\time</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\gradient.h">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\interpolator.h">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\perlin.h">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\ridged_mf.h">
-		<Filter>c_lib\map_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\map_gen\simplex.h">
-		<Filter>c_lib\map_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\SDL\particle_functions.h">
 		<Filter>c_lib\SDL</Filter>

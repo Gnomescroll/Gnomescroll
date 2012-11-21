@@ -120,12 +120,42 @@
 	
 
 
+	
+
+	
+
+	
+
+
+	
+
+	
+
+	
+
+
+	
+
+	
+
+	
+
+
+	
+
+	
+
+	
+
+
 	<ItemGroup>
 		<ClInclude Include="..\c_lib\agent\agent.cpp" />
 		<ClInclude Include="..\c_lib\agent\agent_list.cpp" />
 		<ClInclude Include="..\c_lib\agent\agent_physics.cpp" />
 		<ClInclude Include="..\c_lib\agent\agent_status.cpp" />
 		<ClInclude Include="..\c_lib\agent\net_agent.cpp" />
+		<ClInclude Include="..\c_lib\agent\_interface.cpp" />
+		<ClInclude Include="..\c_lib\agent\_state.cpp" />
 		<ClInclude Include="..\c_lib\agent\client\agent_draw.cpp" />
 		<ClInclude Include="..\c_lib\agent\client\agent_event.cpp" />
 		<ClInclude Include="..\c_lib\agent\client\agent_sound_handler.cpp" />
@@ -153,9 +183,9 @@
 		<ClInclude Include="..\c_lib\camera\fulstrum_test2.cpp" />
 		<ClInclude Include="..\c_lib\camera\skybox\skybox.cpp" />
 		<ClInclude Include="..\c_lib\chat\client.cpp" />
-		<ClInclude Include="..\c_lib\chat\interface.cpp" />
 		<ClInclude Include="..\c_lib\chat\packets.cpp" />
 		<ClInclude Include="..\c_lib\chat\server.cpp" />
+		<ClInclude Include="..\c_lib\chat\_interface.cpp" />
 		<ClInclude Include="..\c_lib\common\common.cpp" />
 		<ClInclude Include="..\c_lib\common\files.cpp" />
 		<ClInclude Include="..\c_lib\common\logger.cpp" />
@@ -227,6 +257,7 @@
 		<ClInclude Include="..\c_lib\entity\object\object.cpp" />
 		<ClInclude Include="..\c_lib\entity\object\object_data_list.cpp" />
 		<ClInclude Include="..\c_lib\entity\object\object_list.cpp" />
+		<ClInclude Include="..\c_lib\entity\objects\dat.cpp" />
 		<ClInclude Include="..\c_lib\entity\objects\example.cpp" />
 		<ClInclude Include="..\c_lib\entity\objects\include.cpp" />
 		<ClInclude Include="..\c_lib\entity\objects\fabs\base.cpp" />
@@ -294,24 +325,6 @@
 		<ClInclude Include="..\c_lib\item\toolbelt\config\_state.cpp" />
 		<ClInclude Include="..\c_lib\item\toolbelt\net\CtoS.cpp" />
 		<ClInclude Include="..\c_lib\item\toolbelt\net\StoC.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\dragon.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\dungeon.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\features.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\gradient.c" />
-		<ClInclude Include="..\c_lib\map_gen\hopcroft-karp.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\interpolator.c" />
-		<ClInclude Include="..\c_lib\map_gen\map_generator.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\mix.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\noise.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\noise_util.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\noise_viz.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\perlin.c" />
-		<ClInclude Include="..\c_lib\map_gen\recipes.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\ridged_mf.c" />
-		<ClInclude Include="..\c_lib\map_gen\simplex.c" />
-		<ClInclude Include="..\c_lib\map_gen\voronoi.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\client\dragon.cpp" />
-		<ClInclude Include="..\c_lib\map_gen\client\hopcroft-karp.cpp" />
 		<ClInclude Include="..\c_lib\options\argparse.cpp" />
 		<ClInclude Include="..\c_lib\options\client_options.cpp" />
 		<ClInclude Include="..\c_lib\options\server_options.cpp" />
@@ -347,10 +360,18 @@
 		<ClInclude Include="..\c_lib\SDL\unused\IMG_savepng.c" />
 		<ClInclude Include="..\c_lib\SDL\unused\pngfuncs.c" />
 		<ClInclude Include="..\c_lib\SDL\unused\v.cpp" />
+		<ClInclude Include="..\c_lib\serializer\constants.cpp" />
+		<ClInclude Include="..\c_lib\serializer\containers.cpp" />
+		<ClInclude Include="..\c_lib\serializer\entities.cpp" />
 		<ClInclude Include="..\c_lib\serializer\items.cpp" />
+		<ClInclude Include="..\c_lib\serializer\logger.cpp" />
 		<ClInclude Include="..\c_lib\serializer\map.cpp" />
+		<ClInclude Include="..\c_lib\serializer\mechs.cpp" />
+		<ClInclude Include="..\c_lib\serializer\players.cpp" />
 		<ClInclude Include="..\c_lib\serializer\redis.cpp" />
+		<ClInclude Include="..\c_lib\serializer\uuid.cpp" />
 		<ClInclude Include="..\c_lib\serializer\_interface.cpp" />
+		<ClInclude Include="..\c_lib\serializer\_state.cpp" />
 		<ClInclude Include="..\c_lib\sound\csv_parser.cpp" />
 		<ClInclude Include="..\c_lib\sound\openal.cpp" />
 		<ClInclude Include="..\c_lib\sound\packets.cpp" />
@@ -360,6 +381,7 @@
 		<ClInclude Include="..\c_lib\state\client_state.cpp" />
 		<ClInclude Include="..\c_lib\state\packet_init.cpp" />
 		<ClInclude Include="..\c_lib\state\server_state.cpp" />
+		<ClInclude Include="..\c_lib\t_gen\features.cpp" />
 		<ClInclude Include="..\c_lib\t_gen\noise_map.cpp" />
 		<ClInclude Include="..\c_lib\t_gen\_interface.cpp" />
 		<ClInclude Include="..\c_lib\t_gen\lib\gaussian.cpp" />
@@ -428,9 +450,13 @@
 		<ClInclude Include="..\c_lib\agent\agent_status.hpp" />
 		<ClInclude Include="..\c_lib\agent\constants.hpp" />
 		<ClInclude Include="..\c_lib\agent\net_agent.hpp" />
+		<ClInclude Include="..\c_lib\agent\_include.hpp" />
+		<ClInclude Include="..\c_lib\agent\_interface.hpp" />
+		<ClInclude Include="..\c_lib\agent\_state.hpp" />
 		<ClInclude Include="..\c_lib\agent\client\agent_draw.hpp" />
 		<ClInclude Include="..\c_lib\agent\client\agent_event.hpp" />
 		<ClInclude Include="..\c_lib\agent\client\agent_sound_handler.hpp" />
+		<ClInclude Include="..\c_lib\agent\client\jetpack.hpp" />
 		<ClInclude Include="..\c_lib\agent\client\player_agent.hpp" />
 		<ClInclude Include="..\c_lib\agent\client\player_agent_action.hpp" />
 		<ClInclude Include="..\c_lib\animations\animations.hpp" />
@@ -460,9 +486,10 @@
 		<ClInclude Include="..\c_lib\camera\skybox\skybox.hpp" />
 		<ClInclude Include="..\c_lib\chat\client.hpp" />
 		<ClInclude Include="..\c_lib\chat\globals.hpp" />
-		<ClInclude Include="..\c_lib\chat\interface.hpp" />
 		<ClInclude Include="..\c_lib\chat\packets.hpp" />
 		<ClInclude Include="..\c_lib\chat\server.hpp" />
+		<ClInclude Include="..\c_lib\chat\_include.hpp" />
+		<ClInclude Include="..\c_lib\chat\_interface.hpp" />
 		<ClInclude Include="..\c_lib\common\color.hpp" />
 		<ClInclude Include="..\c_lib\common\common.hpp" />
 		<ClInclude Include="..\c_lib\common\files.hpp" />
@@ -472,9 +499,11 @@
 		<ClInclude Include="..\c_lib\common\macros.hpp" />
 		<ClInclude Include="..\c_lib\common\mallox.hpp" />
 		<ClInclude Include="..\c_lib\common\osx.hpp" />
+		<ClInclude Include="..\c_lib\common\random.hpp" />
 		<ClInclude Include="..\c_lib\common\subscriber_list.hpp" />
 		<ClInclude Include="..\c_lib\common\analytics\sessions.hpp" />
 		<ClInclude Include="..\c_lib\common\crash_report\stack_trace.hpp" />
+		<ClInclude Include="..\c_lib\common\dat\name_map.hpp" />
 		<ClInclude Include="..\c_lib\common\draw\colored_voxel.hpp" />
 		<ClInclude Include="..\c_lib\common\draw\draw.hpp" />
 		<ClInclude Include="..\c_lib\common\draw\textured_voxel.hpp" />
@@ -484,9 +513,6 @@
 		<ClInclude Include="..\c_lib\common\profiling\map_vbo_graph.hpp" />
 		<ClInclude Include="..\c_lib\common\profiling\texture_surface.hpp" />
 		<ClInclude Include="..\c_lib\common\template\char_buffer.hpp" />
-		<ClInclude Include="..\c_lib\common\template\dynamic_multi_object_list.hpp" />
-		<ClInclude Include="..\c_lib\common\template\dynamic_object_list.hpp" />
-		<ClInclude Include="..\c_lib\common\template\elastic_object_list.hpp" />
 		<ClInclude Include="..\c_lib\common\template\multi_object_list.hpp" />
 		<ClInclude Include="..\c_lib\common\template\object_list.hpp" />
 		<ClInclude Include="..\c_lib\common\template\object_pool.hpp" />
@@ -544,6 +570,7 @@
 		<ClInclude Include="..\c_lib\entity\object\object_data_list.hpp" />
 		<ClInclude Include="..\c_lib\entity\object\object_list.hpp" />
 		<ClInclude Include="..\c_lib\entity\object\types.hpp" />
+		<ClInclude Include="..\c_lib\entity\objects\dat.hpp" />
 		<ClInclude Include="..\c_lib\entity\objects\example.hpp" />
 		<ClInclude Include="..\c_lib\entity\objects\include.hpp" />
 		<ClInclude Include="..\c_lib\entity\objects\fabs\base.hpp" />
@@ -560,6 +587,7 @@
 		<ClInclude Include="..\c_lib\hud\font.hpp" />
 		<ClInclude Include="..\c_lib\hud\harvest_bar.hpp" />
 		<ClInclude Include="..\c_lib\hud\hud.hpp" />
+		<ClInclude Include="..\c_lib\hud\jetpack_meter.hpp" />
 		<ClInclude Include="..\c_lib\hud\map.hpp" />
 		<ClInclude Include="..\c_lib\hud\reticle.hpp" />
 		<ClInclude Include="..\c_lib\hud\text.hpp" />
@@ -635,16 +663,6 @@
 		<ClInclude Include="..\c_lib\item\toolbelt\config\_state.hpp" />
 		<ClInclude Include="..\c_lib\item\toolbelt\net\CtoS.hpp" />
 		<ClInclude Include="..\c_lib\item\toolbelt\net\StoC.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\dragon.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\dungeon.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\features.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\map_generator.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\mix.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\noise.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\noise_util.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\recipes.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\voronoi.hpp" />
-		<ClInclude Include="..\c_lib\map_gen\client\dragon.hpp" />
 		<ClInclude Include="..\c_lib\options\argparse.hpp" />
 		<ClInclude Include="..\c_lib\options\client_options.hpp" />
 		<ClInclude Include="..\c_lib\options\options.hpp" />
@@ -680,6 +698,7 @@
 		<ClInclude Include="..\c_lib\physics\ray_trace\hitscan.hpp" />
 		<ClInclude Include="..\c_lib\physics\ray_trace\ray_trace.hpp" />
 		<ClInclude Include="..\c_lib\physics\reference\matrix.hpp" />
+		<ClInclude Include="..\c_lib\SDL\constants.hpp" />
 		<ClInclude Include="..\c_lib\SDL\draw_functions.hpp" />
 		<ClInclude Include="..\c_lib\SDL\SDL_functions.hpp" />
 		<ClInclude Include="..\c_lib\SDL\shader_loader.hpp" />
@@ -692,11 +711,19 @@
 		<ClInclude Include="..\c_lib\SDL\mesh_loader\obj_loader.hpp" />
 		<ClInclude Include="..\c_lib\SDL\unused\v.hpp" />
 		<ClInclude Include="..\c_lib\serializer\constants.hpp" />
+		<ClInclude Include="..\c_lib\serializer\containers.hpp" />
+		<ClInclude Include="..\c_lib\serializer\entities.hpp" />
 		<ClInclude Include="..\c_lib\serializer\items.hpp" />
+		<ClInclude Include="..\c_lib\serializer\logger.hpp" />
 		<ClInclude Include="..\c_lib\serializer\map.hpp" />
+		<ClInclude Include="..\c_lib\serializer\mechs.hpp" />
+		<ClInclude Include="..\c_lib\serializer\parse.hpp" />
+		<ClInclude Include="..\c_lib\serializer\players.hpp" />
 		<ClInclude Include="..\c_lib\serializer\redis.hpp" />
+		<ClInclude Include="..\c_lib\serializer\uuid.hpp" />
 		<ClInclude Include="..\c_lib\serializer\_include.hpp" />
 		<ClInclude Include="..\c_lib\serializer\_interface.hpp" />
+		<ClInclude Include="..\c_lib\serializer\_state.hpp" />
 		<ClInclude Include="..\c_lib\sound\csv_parser.hpp" />
 		<ClInclude Include="..\c_lib\sound\openal.hpp" />
 		<ClInclude Include="..\c_lib\sound\packets.hpp" />
@@ -709,13 +736,16 @@
 		<ClInclude Include="..\c_lib\state\server_state.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\cave_generator.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\crystals.hpp" />
+		<ClInclude Include="..\c_lib\t_gen\excavator.hpp" />
+		<ClInclude Include="..\c_lib\t_gen\explosives.hpp" />
+		<ClInclude Include="..\c_lib\t_gen\features.hpp" />
+		<ClInclude Include="..\c_lib\t_gen\meteors.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\noise_map.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\noise_map2.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\noise_map3.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\ore_cluster.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\perlin.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\perlin_extra.hpp" />
-		<ClInclude Include="..\c_lib\t_gen\river.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\rock_layer.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\ruins_generator.hpp" />
 		<ClInclude Include="..\c_lib\t_gen\terrain_features.hpp" />
@@ -745,6 +775,7 @@
 		<ClInclude Include="..\c_lib\t_map\common\types.hpp" />
 		<ClInclude Include="..\c_lib\t_map\config\block_dat.hpp" />
 		<ClInclude Include="..\c_lib\t_map\config\drop_dat.hpp" />
+		<ClInclude Include="..\c_lib\t_map\config\textures.hpp" />
 		<ClInclude Include="..\c_lib\t_map\config\_interface.hpp" />
 		<ClInclude Include="..\c_lib\t_map\glsl\cache.hpp" />
 		<ClInclude Include="..\c_lib\t_map\glsl\hash_functions.hpp" />
@@ -803,20 +834,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ClInclude Include="..\c_lib\agent\agent_include.h" />
 		<ClInclude Include="..\c_lib\auth\hmac-sha256.h" />
 		<ClInclude Include="..\c_lib\common\compat_al.h" />
 		<ClInclude Include="..\c_lib\common\compat_gl.h" />
 		<ClInclude Include="..\c_lib\common\defines.h" />
+		<ClInclude Include="..\c_lib\common\dirent.h" />
 		<ClInclude Include="..\c_lib\common\qsort.h" />
-		<ClInclude Include="..\c_lib\common\random.h" />
 		<ClInclude Include="..\c_lib\common\version.h" />
 		<ClInclude Include="..\c_lib\common\time\TODO" />
-		<ClInclude Include="..\c_lib\map_gen\gradient.h" />
-		<ClInclude Include="..\c_lib\map_gen\interpolator.h" />
-		<ClInclude Include="..\c_lib\map_gen\perlin.h" />
-		<ClInclude Include="..\c_lib\map_gen\ridged_mf.h" />
-		<ClInclude Include="..\c_lib\map_gen\simplex.h" />
 		<ClInclude Include="..\c_lib\SDL\particle_functions.h" />
 		<ClInclude Include="..\c_lib\SDL\voronoi.h" />
 		<ClInclude Include="..\c_lib\SDL\unused\IMG_savepng.h" />
