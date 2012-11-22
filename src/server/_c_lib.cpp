@@ -337,6 +337,7 @@ int init_c_lib(int argc, char* argv[])
 
     serializer::init();
 
+    t_gen::init();
     t_gen::init_map_generator();
     
     return 0;
@@ -375,6 +376,7 @@ void close_c_lib()
     t_mech::teardown();
 
     t_gen::teardown_map_generator();
+    t_gen::teardown();
 
     NetServer::teardown_globals();
 

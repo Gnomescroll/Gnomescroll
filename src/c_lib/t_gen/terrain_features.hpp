@@ -35,7 +35,7 @@ const float shroom_threshold = 0.997f;
 typedef enum {
     TREE_RANDOM,    // Dr. Suess style!
     TREE_INVERSIVE, // opposite of earth leaf layers being broadest at base
-	TREE_MAX        // for iteration
+    TREE_MAX        // for iteration
 } TreeType;
 
 
@@ -124,7 +124,7 @@ bool blocks_are_invalid(CubeID arr[], int len) {
 
 void make_shroom(int x, int y, int z) {
     CubeID shroom_cap = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
-    CubeID shroom_stem = shroom_stems[randrange(0, NUM_SHROOMSTEMS - 1)];
+    //CubeID shroom_stem = shroom_stems[randrange(0, NUM_SHROOMSTEMS - 1)];
 
     int cap_height = randrange(4, 15);
     int hei = 0;
@@ -161,10 +161,10 @@ void make_tree(int x, int y, int z) {
 
     int segs = randrange(2, 6);
     float rad = 2.0f; // radius of leaf layer from center voxel
-	TreeType tt = (TreeType)randrange(0, (int)TREE_MAX-1);
-	
-	// make tree, segment by segment
-	for (int seg = 0; seg < segs; seg++) {
+    TreeType tt = (TreeType)randrange(0, (int)TREE_MAX-1);
+    
+    // make tree, segment by segment
+    for (int seg = 0; seg < segs; seg++) {
         // height of current trunk segment
         int height = randrange(6, 11);
         if (seg == 0) 
@@ -172,19 +172,19 @@ void make_tree(int x, int y, int z) {
         if (height+z+2 >= ZMAX) break;
 
         // make segment
-		for (int j = 0; j < height; j++) {
+        for (int j = 0; j < height; j++) {
             t_map::set(x, y, z + j, trunk);
 
             if (j == height - 1) {
-				switch (tt) {
-					case TREE_RANDOM: rad = randrange(2, 11); break;
-					default: rad += 1.7f;
-				}
+                switch (tt) {
+                    case TREE_RANDOM: rad = randrange(2, 11); break;
+                    default: rad += 1.7f;
+                }
 
                 for (int i = -rad; i < rad; i++)  set_me_maybe(x+i, y, z+j, trunk); // limbs
                 for (int i = -rad; i < rad; i++)  set_me_maybe(x, y+i, z+j, trunk); // limbs
 
-				float ring_rad = rad; // current ring radius
+                float ring_rad = rad; // current ring radius
                 while (ring_rad > 0) {
                     make_circle(x, y, z+j,   ring_rad,    leaf, trunk);
                     make_circle(x, y, z+j+1, ring_rad+1,  leaf, trunk);

@@ -32,6 +32,10 @@ typedef enum
     OBJECT_MONSTER_BOX,
     OBJECT_MONSTER_SPAWNER,
 
+    // misc
+    OBJECT_PLASMAGEN,
+    OBJECT_CANNONBALL,
+
 } EntityType;
 
 int MAX_COMPONENT_TYPES = 0xFF;

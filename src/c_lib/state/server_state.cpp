@@ -179,4 +179,6 @@ namespace ServerState
             Entities::ready(obj);
         }
     }
+
 }   // ServerState
+

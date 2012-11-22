@@ -5,11 +5,23 @@ dont_include_this_file_in_client
 #endif
 
 #include <t_gen/noise_map2.hpp>
+#include <t_gen/explosives.hpp>
 
 typedef unsigned char Uint8;
 
 namespace t_gen
 {
+
+void init()
+{
+    init_explosives();
+}
+
+void teardown()
+{
+    
+}
+
 
 void populate_2d_noise_array(float* _2d_noise_array, float persistance, int octaves)
 {

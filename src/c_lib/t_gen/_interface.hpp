@@ -15,4 +15,7 @@ float* create_2d_noise_array(const float persistence, const int octaves, const u
 void save_png(const char* filename, float*in, int xres, int yres);
 void save_perlin(const char* filename, float* in, int xres, int yres);
 
+void init();
+void teardown();
+
 }   // t_gen

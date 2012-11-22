@@ -13,10 +13,12 @@
 # define UINT16_MAX (65535U)
 #endif
 
-bool in_array_int(int* arr, int arr_max, int val)
+template<typename T>
+bool in_array(const T elem, const T* arr, const size_t len)
 {
-    for (int i=0; i<arr_max; i++)
-        if (arr[i] == val) return true;
+    for (size_t i=0; i<len; i++)
+        if (arr[i] == elem)
+            return true;
     return false;
 }
 
