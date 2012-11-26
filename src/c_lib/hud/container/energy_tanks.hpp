@@ -79,7 +79,8 @@ void EnergyTanksUI::draw_name()
     HudFont::start_font_draw();
     HudFont::reset_default();
     HudFont::set_texture();
-    this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
+    // this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
+	this->name.set_position(this->xoff, _yresf /*- this->name.get_height()*/ );
     this->name.draw();
     HudFont::end_font_draw();   
 }
@@ -96,20 +97,21 @@ void EnergyTanksUI::draw()
 
     int g1 = 80-16; //color 1
 
-    glBegin(GL_QUADS);
-    glColor4ub(g1,g1,g1, 128+64); //128+64);
-    for (int i=0; i<xdim; i++)
-    for (int j=0; j<ydim; j++)
-    {
-        float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+    // draw alpha quads behind tanks
+	//glBegin(GL_QUADS);
+ //   glColor4ub(g1,g1,g1, 128+64); //128+64);
+ //   for (int i=0; i<xdim; i++)
+ //   for (int j=0; j<ydim; j++)
+ //   {
+ //       float x = xoff + border + i*(inc1+w);
+ //       float y = _yresf - (yoff + border + (j+1)*(inc1+w));
 
-        glVertex2f(x-inc2,y+w+inc2);
-        glVertex2f(x+w+inc2, y+w+inc2);
-        glVertex2f(x+w+inc2, y-inc2);
-        glVertex2f(x-inc2, y-inc2);
-    }
-    glEnd();
+ //       glVertex2f(x-inc2,y+w+inc2);
+ //       glVertex2f(x+w+inc2, y+w+inc2);
+ //       glVertex2f(x+w+inc2, y-inc2);
+ //       glVertex2f(x-inc2, y-inc2);
+ //   }
+ //   glEnd();
 
     if (this->container_id == NULL_CONTAINER) return;
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
@@ -148,36 +150,9 @@ void EnergyTanksUI::draw()
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
 
     // draw unloaded energy tanks as greyscale
-    glBegin(GL_QUADS);
-    for (int i=0; i<xdim; i++)
-    for (int j=0; j<ydim; j++)
-    {
-        int slot = j * xdim + i;
-        if (slot_types[slot] != NULL_ITEM_TYPE) continue;
-        const float x = xoff + border + i*(inc1+slot_size);
-        const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-
-        const float iw = 16.0f; // icon_width
-        const int iiw = 16; // integer icon width
-        
-        const float tx_min = (1.0f/iw)*(energy_tank_sprite_index % iiw);
-        const float ty_min = (1.0f/iw)*(energy_tank_sprite_index / iiw);
-        const float tx_max = tx_min + 1.0f/iw;
-        const float ty_max = ty_min + 1.0f/iw;
-
-        glTexCoord2f(tx_min, ty_min);
-        glVertex2f(x,y+w);
-
-        glTexCoord2f(tx_max, ty_min);
-        glVertex2f(x+w, y+w);
-            
-        glTexCoord2f(tx_max, ty_max);
-        glVertex2f(x+w, y);
-
-        glTexCoord2f(tx_min, ty_max);
-        glVertex2f(x, y);
-    }
-    glEnd();
+	// (here's where we ALSO used the LOADED drawing code below, but with the following line changed
+	// in order to only draw the empty tanks:
+	//         if (slot_types[slot] != NULL_ITEM_TYPE) continue;
     
     GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
     if (TextureSheetLoader::ItemSheetTexture == 0)
@@ -187,6 +162,16 @@ void EnergyTanksUI::draw()
     }
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
+    // count loaded energy tanks, to figure appropriate (centered) xoff
+	int num_loaded = 0;
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
+    {
+        if (slot_types[j * xdim + i] != NULL_ITEM_TYPE) 
+			num_loaded++;
+	}
+	xoff = (_xresf - num_loaded * slot_size) / 2;
+
     // draw loaded energy tanks
     glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
@@ -195,7 +180,7 @@ void EnergyTanksUI::draw()
         int slot = j * xdim + i;
         if (slot_types[slot] == NULL_ITEM_TYPE) continue;
         GS_ASSERT(slot_types[slot] == energy_tank_type);
-        const float x = xoff + border + i*(inc1+slot_size);
+        const float x = xoff + /*border +*/ i * (/*inc1 + */slot_size);
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
         const float iw = 16.0f; // icon_width

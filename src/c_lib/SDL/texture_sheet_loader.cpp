@@ -233,7 +233,7 @@ void init()
     GS_ASSERT(CubeTextureStack == NULL);
     GS_ASSERT(CubeSurface == NULL);
 
-    CubeTextureSheetLoader = new TextureSheetLoader(16);        //pixel size for cube textures
+    CubeTextureSheetLoader = new TextureSheetLoader(32);        //pixel size for cube textures
     CubeTextureStack = CubeTextureSheetLoader->texture_stack;
     CubeSurface = CubeTextureSheetLoader->texture_sheet;
     

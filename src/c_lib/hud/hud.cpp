@@ -202,7 +202,17 @@ void draw_reference_center()
 
 void draw_hud_textures()
 {
-    jetpack_meter.draw(_xresf, _yresf, &ClientState::playerAgent_state);
+    //jetpack_meter.draw(_xresf, _yresf, (float)pa->jetpack.fuel, JETPACK_FUEL_MAX);
+    //jetpack_meter.draw(_xresf, _yresf, 0,0, (float)pa->jetpack.fuel, JETPACK_FUEL_MAX);
+    //jetpack_meter.draw(_xresf, _yresf, 15,15, (float)pa->jetpack.fuel, JETPACK_FUEL_MAX);
+
+	// health/energy meter
+	Agent* a = ClientState::playerAgent_state.you();
+    if (a != NULL)
+    {
+        int health = a->status.health;
+	}
+
 
     if (!hud_draw_settings.draw) return;
 
@@ -437,7 +447,7 @@ void draw_hud_text()
             else
                 hud->health->set_text(no_agent_text);
                 
-            hud->health->draw();
+            //hud->health->draw();
         }   // agent_status
     }
     
@@ -554,7 +564,7 @@ void HUD::init()
     else
         prompt->set_text("");
     prompt->set_color(255,255,255,255);
-    prompt->set_position((_xresf - prompt->get_width()) / 2.0f, _yresf);
+	prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::agent_toolbelt->height() );
     prompt->shadowed = true;
 
     error = text_list->create();
