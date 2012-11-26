@@ -79,7 +79,7 @@ void load_block_dat()
     //SpriteSheet c4 = texture_alias("media/sprites/terrain/cell_04.png");  // no alpha
     //SpriteSheet c5 = texture_alias("media/sprites/terrain/cell_05.png");  // no alpha
     SpriteSheet c6 = texture_alias("media/sprites/terrain/cell_06.png");
-    SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
+    //SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
 
     const int T = 0;
     const int B = 1;
