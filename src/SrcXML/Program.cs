@@ -11,7 +11,7 @@ namespace SrcXML
     {
         static void Main(string[] args)
         {
-            if (!File.Exists("Config.txt"))
+            if (!File.Exists("C:/dc_mmo/src/SrcXML/Config.txt"))
             {
                 ERROR("Config.txt can't be found");
             }
@@ -19,7 +19,7 @@ namespace SrcXML
             List<string> Folders = new List<string>();
             List<string> Projects = new List<string>();
             string FOLDERPATH = "";
-            string[] LINES = File.ReadAllLines("Config.txt");
+            string[] LINES = File.ReadAllLines("C:/dc_mmo/src/SrcXML/Config.txt");
             string FOLDERSREX = "";
             foreach (string LINE in LINES)
             {

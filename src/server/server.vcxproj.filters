@@ -67,6 +67,16 @@
 
 
 
+	
+
+
+
+
+	
+
+
+
+
 	<ItemGroup>
 		<Filter Include="c_lib\agent">
 		</Filter>
@@ -924,6 +934,9 @@
 	</ClInclude>
 	<ClInclude Include="..\c_lib\state\server_state.cpp">
 		<Filter>c_lib\state</Filter>
+	</ClInclude>
+	<ClInclude Include="..\c_lib\t_gen\explosives.cpp">
+		<Filter>c_lib\t_gen</Filter>
 	</ClInclude>
 	<ClInclude Include="..\c_lib\t_gen\features.cpp">
 		<Filter>c_lib\t_gen</Filter>

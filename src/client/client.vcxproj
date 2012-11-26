@@ -148,6 +148,34 @@
 	
 
 
+	
+
+	
+
+	
+
+
+	
+
+	
+
+	
+
+
+	
+
+	
+
+	
+
+
+	
+
+	
+
+	
+
+
 	<ItemGroup>
 		<ClInclude Include="..\c_lib\agent\agent.cpp" />
 		<ClInclude Include="..\c_lib\agent\agent_list.cpp" />
@@ -381,6 +409,7 @@
 		<ClInclude Include="..\c_lib\state\client_state.cpp" />
 		<ClInclude Include="..\c_lib\state\packet_init.cpp" />
 		<ClInclude Include="..\c_lib\state\server_state.cpp" />
+		<ClInclude Include="..\c_lib\t_gen\explosives.cpp" />
 		<ClInclude Include="..\c_lib\t_gen\features.cpp" />
 		<ClInclude Include="..\c_lib\t_gen\noise_map.cpp" />
 		<ClInclude Include="..\c_lib\t_gen\_interface.cpp" />

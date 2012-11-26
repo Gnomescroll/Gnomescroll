@@ -74,6 +74,7 @@ void load_block_dat()
 {
     SpriteSheet t8 = texture_alias("media/sprites/terrain/t08.png");
     SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
+    SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtextures.png");
 
     const int T = 0;
     const int B = 1;
@@ -170,33 +171,39 @@ void load_block_dat()
     set_max_damage(24);
 
     cube_def(SolidCube, "rock", CUBE_MATERIAL_STONE);
-    iso_texture(t8,5,4);
+    //iso_texture(t8,5,4);
+	iso_texture(tgm,1,1);
     push_texture();
-    hud_def(t8, 5,4);
+    //hud_def(t8, 5,4);
     set_max_damage(48);
 
     cube_def(SolidCube, "coal", CUBE_MATERIAL_DIRT);
-    iso_texture(t8,6,4);
+    //iso_texture(t8,6,4);
+	iso_texture(tgm,6,1);
     push_texture();
     set_max_damage(32);
 
     cube_def(SolidCube, "iron_ore", CUBE_MATERIAL_STONE);
-    iso_texture(t8,7,1);
+    //iso_texture(t8,7,1);
+	iso_texture(tgm,2,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "copper_ore", CUBE_MATERIAL_STONE);
-    iso_texture(t8,9,2);
+    //iso_texture(t8,9,2);
+	iso_texture(tgm,3,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "gallium_ore", CUBE_MATERIAL_STONE);
-    iso_texture(t8,11,2);
+    //iso_texture(t8,11,2);
+	iso_texture(tgm,4,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "iridium_ore", CUBE_MATERIAL_STONE);
-    iso_texture(t8,9,3);
+    //iso_texture(t8,9,3);
+	iso_texture(tgm,5,1);
     push_texture();
     set_max_damage(64);
 
@@ -249,12 +256,12 @@ void load_block_dat()
     hud_def(t8,8,11);
 
     cube_def(SolidCube, "mushroom_cap1", CUBE_MATERIAL_DECORATION);
-//    iso_texture(t8, 8,9);
+//  iso_texture(t8, 8,9);
     iso_texture(cc, 1,1);
     push_texture();
 
     cube_def(SolidCube, "mushroom_cap2", CUBE_MATERIAL_DECORATION);
-//    iso_texture(t8, 8,9);
+//  iso_texture(t8, 8,9);
     iso_texture(cc, 2,2);
     push_texture();
 
