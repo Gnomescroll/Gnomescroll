@@ -307,8 +307,19 @@ bool line_box_test(
 	bool ret;
 	//float a;
 
+	//struct Vec3 n, 		//normal
+	//struct Vec3 v1, 		//direction 1 on surface
+	//struct Vec3 v2,		//direction 2 on surface
+
 	//top
 	ret = line_plane_intersection2(lx,ly,lz, lvx,lvy,lvz, bx,by,bz, u,f,r, bdz,bdx,bdy, a);
+	if( ret)
+	{
+		return true;
+	}
+
+	//bottom
+	ret = line_plane_intersection2(lx,ly,lz, lvx,lvy,lvz, bx,by,bz, u,f,r, -bdz,bdx,bdy, a);
 	if( ret)
 	{
 		return true;
