@@ -31,10 +31,9 @@ namespace Hud {
 			num_qticles = 0;
 		}
 
-		void draw(float _xresf, float _yresf, int s_x, int s_y, float portion, float possible, MeterAnchor anchor = METANCH_RIGHT) {
-			float s_w = _xresf/4; // spectrum width (that a full bar would cover)
-			float s_h = _yresf/64;
-
+		void draw(int s_x, int s_y, int w, int h, float portion, float possible, MeterAnchor anchor = METANCH_LEFT) {
+			float s_w = w;  // spectrum width (that a full meter would cover)
+			float s_h = h;
 			float dyn_w = s_w * portion / possible; // dynamic width (the current size of the meter itself)
 			float lo = s_w - dyn_w; // dynamic leftover
 			
@@ -48,7 +47,6 @@ namespace Hud {
 
 			// draw
 			glEnable(GL_BLEND);
-			glColor4ub(255,255,255,115);
 			draw_bound_texture(s_x, s_y, dyn_w, s_h);
 			for (int i = 0; i < prev_w - dyn_w; i++) {
 				// FIXME   spawn_quadticles, uses the dynamic leftover width i think?  or SHOULD?

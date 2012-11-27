@@ -173,12 +173,12 @@ void load_block_dat()
 
     cube_def(SolidCube, "regolith", CUBE_MATERIAL_DIRT);
     // palette 0
-    iso_texture    (c1, 10,5);
+    iso_texture    (c1, 12,12);
     push_texture();
     //palette 1
-    iso_texture    (c1, 10,4);
-    side_texture(T, c1, 10,3);
-    side_texture(B, c1, 10,5);
+    iso_texture    (c1, 12,11);
+    side_texture(T, c1, 12,10);
+    side_texture(B, c1, 12,12);
     push_texture();
     set_max_damage(24);
 

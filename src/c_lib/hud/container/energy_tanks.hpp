@@ -80,7 +80,7 @@ void EnergyTanksUI::draw_name()
     HudFont::reset_default();
     HudFont::set_texture();
     // this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
-    this->name.set_position(this->xoff, _yresf - this->height() /*- this->name.get_height()*/ );
+    this->name.set_position(this->xoff, _yresf - this->height() );
     this->name.draw();
     HudFont::end_font_draw();   
 }
@@ -95,9 +95,8 @@ void EnergyTanksUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //int g1 = 80-16; //color 1
-
     // draw alpha quads behind tanks
+    //int g1 = 80-16; //color 1
     //glBegin(GL_QUADS);
  //   glColor4ub(g1,g1,g1, 128+64); //128+64);
  //   for (int i=0; i<xdim; i++)

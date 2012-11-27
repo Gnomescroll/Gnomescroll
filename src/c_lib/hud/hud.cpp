@@ -200,21 +200,53 @@ void draw_reference_center()
 
 /* Display logic */
 
+bool blink_on = true;
+size_t ticks_til_health_blink = 0;
 void draw_hud_textures()
 {
-	// draw jetpack meter
-    //jetpack_meter.draw(_xresf, _yresf, (float)pa->jetpack.fuel, JETPACK_FUEL_MAX);
-    jetpack_meter.draw(_xresf, _yresf, 0,0, (float)ClientState::playerAgent_state.jetpack.fuel, JETPACK_FUEL_MAX);
+	// meters
+	size_t w = _xresf/4;
+	size_t h = _yresf/64;
+	const size_t slowest_blink_delay = 15;
+
+	// jetpack
+	glColor4ub(255,255,255,115);
+    jetpack_meter.draw(0,0, w,h, (float)ClientState::playerAgent_state.jetpack.fuel, JETPACK_FUEL_MAX, METANCH_RIGHT);
 	
-	// draw health/energy meter
-	//jetpack_meter.draw(_xresf, _yresf, 15,15, ClientState::agent_control_state. , a->status.health_max);
+	// health/energy
+    Agent* a = ClientState::playerAgent_state.you();
+    if (a != NULL) 
+	{ 
+		float curr = a->status.health_max - a->status.health; // inverted to represent how much damage 
+		float max  = a->status.health_max;
+		float green_to_red = curr/max * 2.0f;
+		Color yellow = color_init(255,255,0);
+		Color dyn;
 
+		if (green_to_red > 1.0f)
+		{
+			green_to_red -= 1.0f;
+			dyn = interpolate_color(yellow, color_init(255,0,0) /* red */  , green_to_red);
+		}
+		else
+			dyn = interpolate_color(color_init(0,255,0) /* green */, yellow, green_to_red);
 
+		// handle blinking
+		ticks_til_health_blink--;
+		if (ticks_til_health_blink < 1) 
+		{
+			if (green_to_red > .75f) ticks_til_health_blink = slowest_blink_delay;
+			blink_on = !blink_on;
+		}
+		
+		if (blink_on) {
+			glColor4ub(dyn.r, dyn.g, dyn.b, 175);
+			jetpack_meter.draw(0,       _yresf-h/2, _xresf/2,h/2, curr, max);
+			jetpack_meter.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr, max, METANCH_RIGHT);
+		}
+	}
 
-
-
-
-
+	
 
     if (!hud_draw_settings.draw) return;
 
