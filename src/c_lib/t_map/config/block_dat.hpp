@@ -74,7 +74,6 @@ void load_block_dat()
 {
     SpriteSheet c0 = texture_alias("media/sprites/terrain/cell_00.png");
     SpriteSheet c1 = texture_alias("media/sprites/terrain/cell_01.png");
-    SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtextures.png");
     SpriteSheet c3 = texture_alias("media/sprites/terrain/cell_03.png");
     //SpriteSheet c4 = texture_alias("media/sprites/terrain/cell_04.png");  // no alpha
     //SpriteSheet c5 = texture_alias("media/sprites/terrain/cell_05.png");  // no alpha
