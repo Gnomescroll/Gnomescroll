@@ -25,8 +25,7 @@ static CubeID add_immune_cube(const char* name)
     GS_ASSERT(immune_cubes_ct < MAX_IMMUNE_CUBES);
     if (immune_cubes_ct >= MAX_IMMUNE_CUBES) return NULL_CUBE;
     CubeID cube_id = t_map::get_cube_id(name);
-    GS_ASSERT(t_map::isValidCube(cube_id));
-    if (!t_map::isValidCube(cube_id)) return NULL_CUBE;
+    GS_ASSERT(cube_id != ERROR_CUBE);
     immune_cubes[immune_cubes_ct++] = cube_id;
     return cube_id;
 }

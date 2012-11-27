@@ -74,12 +74,12 @@ void load_block_dat()
 {
     SpriteSheet c0 = texture_alias("media/sprites/terrain/cell_00.png");
     SpriteSheet c1 = texture_alias("media/sprites/terrain/cell_01.png");
-    SpriteSheet c3 = texture_alias("media/sprites/terrain/cell_03.png");
-    //SpriteSheet c4 = texture_alias("media/sprites/terrain/cell_04.png");  // no alpha
-    //SpriteSheet c5 = texture_alias("media/sprites/terrain/cell_05.png");  // no alpha
-    SpriteSheet c6 = texture_alias("media/sprites/terrain/cell_06.png");
+    //SpriteSheet c3 = texture_alias("media/sprites/terrain/cell_03.png");
+    //SpriteSheet c4 = texture_alias("media/sprites/terrain/cell_04.png");
+    //SpriteSheet c5 = texture_alias("media/sprites/terrain/cell_05.png");
+    SpriteSheet iceflame = texture_alias("media/sprites/terrain/iceflame_06.png");
     //SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
-	SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtex.png");
+    SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtex.png");
 
     const int T = 0;
     const int B = 1;
@@ -135,7 +135,7 @@ void load_block_dat()
     side_texture(T, c1, 14,6);
     side_texture(B, c1, 14,6);
     side_texture(N, c1, 14,4);
-	push_oriented_texture();
+    push_oriented_texture();
     set_max_damage(128);
 
     cube_def_container("crusher", CONTAINER_TYPE_CRUSHER);
@@ -162,7 +162,7 @@ void load_block_dat()
     iso_texture    (c1, 1,4);
     side_texture(T, c1, 1,5);
     side_texture(B, c1, 1,5);
-	push_texture();
+    push_texture();
     set_max_damage(64);
     hud_def        (c1, 1,4);
 
@@ -183,33 +183,33 @@ void load_block_dat()
     set_max_damage(24);
 
     cube_def(SolidCube, "rock", CUBE_MATERIAL_STONE);
-	iso_texture(tgm, 1,1);
+    iso_texture(tgm, 1,1);
     push_texture();
     //hud_def    (c1, 9,9);
     set_max_damage(48);
 
     cube_def(SolidCube, "coal", CUBE_MATERIAL_DIRT);
-	iso_texture(tgm, 6,1);
+    iso_texture(tgm, 6,1);
     push_texture();
     set_max_damage(32);
 
     cube_def(SolidCube, "iron_ore", CUBE_MATERIAL_STONE);
-	iso_texture(tgm, 2,1);
+    iso_texture(tgm, 2,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "copper_ore", CUBE_MATERIAL_STONE);
-	iso_texture(tgm, 3,1);
+    iso_texture(tgm, 3,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "gallium_ore", CUBE_MATERIAL_STONE);
-	iso_texture(tgm, 4,1);
+    iso_texture(tgm, 4,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "iridium_ore", CUBE_MATERIAL_STONE);
-	iso_texture(tgm, 5,1);
+    iso_texture(tgm, 5,1);
     push_texture();
     set_max_damage(64);
 
@@ -224,7 +224,7 @@ void load_block_dat()
     hud_def    (c1, 9,4);
 
     // terrain features
-	cube_def(SolidCube, "space_tree_trunk1", CUBE_MATERIAL_DECORATION);
+    cube_def(SolidCube, "space_tree_trunk1", CUBE_MATERIAL_DECORATION);
     iso_texture(c1, 6,8);
     push_texture();
     hud_def    (c1, 6,8);
@@ -295,6 +295,11 @@ void load_block_dat()
     iso_texture(c1, 8,7);
     push_texture();
     set_max_damage(RUINS_DMG);
+
+    // explosives
+    cube_def(SolidCube, "plasmagen");
+    iso_texture(iceflame, 1, 2);
+    push_texture();
 
     end_cube_def();  // finalize
 

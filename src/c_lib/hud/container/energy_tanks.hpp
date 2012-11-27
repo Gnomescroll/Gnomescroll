@@ -80,7 +80,7 @@ void EnergyTanksUI::draw_name()
     HudFont::reset_default();
     HudFont::set_texture();
     // this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
-	this->name.set_position(this->xoff, _yresf - this->height() /*- this->name.get_height()*/ );
+    this->name.set_position(this->xoff, _yresf - this->height() /*- this->name.get_height()*/ );
     this->name.draw();
     HudFont::end_font_draw();   
 }
@@ -95,10 +95,10 @@ void EnergyTanksUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    int g1 = 80-16; //color 1
+    //int g1 = 80-16; //color 1
 
     // draw alpha quads behind tanks
-	//glBegin(GL_QUADS);
+    //glBegin(GL_QUADS);
  //   glColor4ub(g1,g1,g1, 128+64); //128+64);
  //   for (int i=0; i<xdim; i++)
  //   for (int j=0; j<ydim; j++)
@@ -150,9 +150,9 @@ void EnergyTanksUI::draw()
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
 
     // draw unloaded energy tanks as greyscale
-	// (here's where we ALSO used the LOADED drawing code below, but with the following line changed
-	// in order to only draw the empty tanks:
-	//         if (slot_types[slot] != NULL_ITEM_TYPE) continue;
+    // (here's where we ALSO used the LOADED drawing code below, but with the following line changed
+    // in order to only draw the empty tanks:
+    //         if (slot_types[slot] != NULL_ITEM_TYPE) continue;
     
     GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
     if (TextureSheetLoader::ItemSheetTexture == 0)
@@ -163,14 +163,14 @@ void EnergyTanksUI::draw()
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
     // count loaded energy tanks, to figure appropriate (centered) xoff
-	int num_loaded = 0;
+    int num_loaded = 0;
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
         if (slot_types[j * xdim + i] != NULL_ITEM_TYPE) 
-			num_loaded++;
-	}
-	xoff = (_xresf - num_loaded * slot_size) / 2;
+            num_loaded++;
+    }
+    xoff = (_xresf - num_loaded * slot_size) / 2;
 
     // draw loaded energy tanks
     glBegin(GL_QUADS);
