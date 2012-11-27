@@ -21,6 +21,25 @@ class EnergyTanksUI : public UIElement
 
     int selected_slot;
 
+    int count()
+    { // count loaded energy tanks
+		if (this->container_id == NULL_CONTAINER) return 0;
+		int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
+		GS_ASSERT(slot_types != NULL);
+		if (slot_types == NULL) return 0;
+
+		int num_loaded = 0;
+
+		for (int i=0; i<xdim; i++)
+		for (int j=0; j<ydim; j++)
+		{
+			if (slot_types[j * xdim + i] != NULL_ITEM_TYPE) 
+				num_loaded++;
+		}
+
+        return num_loaded;
+    }
+
     int width()
     {
         return xdim*slot_size + (xdim-1)*inc1 + inc2*2;
@@ -161,15 +180,7 @@ void EnergyTanksUI::draw()
     }
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
 
-    // count loaded energy tanks, to figure appropriate (centered) xoff
-    int num_loaded = 0;
-    for (int i=0; i<xdim; i++)
-    for (int j=0; j<ydim; j++)
-    {
-        if (slot_types[j * xdim + i] != NULL_ITEM_TYPE) 
-            num_loaded++;
-    }
-    xoff = (_xresf - num_loaded * slot_size) / 2;
+    xoff = (_xresf - count() * slot_size) / 2;
 
     // draw loaded energy tanks
     glBegin(GL_QUADS);

@@ -201,7 +201,8 @@ void draw_reference_center()
 /* Display logic */
 
 bool blink_on = true;
-size_t ticks_til_health_blink = 0;
+size_t ticks_til_blink = 0;
+float largest_total_health_seen = 0;
 void draw_hud_textures()
 {
 	// meters
@@ -217,10 +218,13 @@ void draw_hud_textures()
     Agent* a = ClientState::playerAgent_state.you();
     if (a != NULL) 
 	{ 
-		float curr = a->status.health_max - a->status.health; // inverted to represent how much damage 
-		float max  = a->status.health_max;
-		float green_to_red = curr/max * 2.0f;
-		Color yellow = color_init(255,255,0);
+		float extra_from_tanks = HudContainer::energy_tanks->count() * AGENT_HEALTH;
+		float max  = a->status.health_max + extra_from_tanks;
+		if (largest_total_health_seen < max)
+			largest_total_health_seen = max;
+		float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage 
+		float green_to_red = curr/largest_total_health_seen * 2.0f;
+		Color yellow = color_init(255,190,0);
 		Color dyn;
 
 		if (green_to_red > 1.0f)
@@ -232,17 +236,17 @@ void draw_hud_textures()
 			dyn = interpolate_color(color_init(0,255,0) /* green */, yellow, green_to_red);
 
 		// handle blinking
-		ticks_til_health_blink--;
-		if (ticks_til_health_blink < 1) 
+		ticks_til_blink--;
+		if (ticks_til_blink < 1) 
 		{
-			if (green_to_red > .75f) ticks_til_health_blink = slowest_blink_delay;
+			if (green_to_red > .75f) ticks_til_blink = slowest_blink_delay;
 			blink_on = !blink_on;
 		}
 		
 		if (blink_on) {
 			glColor4ub(dyn.r, dyn.g, dyn.b, 175);
-			jetpack_meter.draw(0,       _yresf-h/2, _xresf/2,h/2, curr, max);
-			jetpack_meter.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr, max, METANCH_RIGHT);
+			jetpack_meter.draw(0,       _yresf-h/2, _xresf/2,h/2, curr, largest_total_health_seen);
+			jetpack_meter.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr, largest_total_health_seen, METANCH_RIGHT);
 		}
 	}
 
@@ -330,13 +334,13 @@ void draw_hud_text()
             static unsigned int press_help_tick = 0;
             const int press_help_anim_len = 60;
             const struct Color white = color_init(255,255,255);
-            const struct Color red = color_init(255,10,10);
+            const struct Color blue = color_init(10,10,255);
             float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
             t -= 1.0f;
             if (t < 0.0f)
-                hud->prompt->set_color(interpolate_color(red, white, 1.0f+t));
+                hud->prompt->set_color(interpolate_color(blue, white, 1.0f+t));
             else
-                hud->prompt->set_color(interpolate_color(white, red, t));
+                hud->prompt->set_color(interpolate_color(white, blue, t));
             hud->prompt->draw();
             press_help_tick++;
         }
