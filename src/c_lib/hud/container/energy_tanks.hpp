@@ -80,7 +80,7 @@ void EnergyTanksUI::draw_name()
     HudFont::reset_default();
     HudFont::set_texture();
     // this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
-	this->name.set_position(this->xoff, _yresf /*- this->name.get_height()*/ );
+	this->name.set_position(this->xoff, _yresf - this->height() /*- this->name.get_height()*/ );
     this->name.draw();
     HudFont::end_font_draw();   
 }

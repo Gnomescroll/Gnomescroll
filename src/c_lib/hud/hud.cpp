@@ -202,16 +202,18 @@ void draw_reference_center()
 
 void draw_hud_textures()
 {
+	// draw jetpack meter
     //jetpack_meter.draw(_xresf, _yresf, (float)pa->jetpack.fuel, JETPACK_FUEL_MAX);
-    //jetpack_meter.draw(_xresf, _yresf, 0,0, (float)pa->jetpack.fuel, JETPACK_FUEL_MAX);
-    //jetpack_meter.draw(_xresf, _yresf, 15,15, (float)pa->jetpack.fuel, JETPACK_FUEL_MAX);
+    jetpack_meter.draw(_xresf, _yresf, 0,0, (float)ClientState::playerAgent_state.jetpack.fuel, JETPACK_FUEL_MAX);
+	
+	// draw health/energy meter
+	//jetpack_meter.draw(_xresf, _yresf, 15,15, ClientState::agent_control_state. , a->status.health_max);
 
-	// health/energy meter
-	Agent* a = ClientState::playerAgent_state.you();
-    if (a != NULL)
-    {
-        int health = a->status.health;
-	}
+
+
+
+
+
 
 
     if (!hud_draw_settings.draw) return;
