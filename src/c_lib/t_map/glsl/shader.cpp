@@ -199,8 +199,8 @@ void MapShader::init_texture()
     GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
     //GLuint internalFormat = GL_SRGB8_ALPHA8; //GL_RGBA;
 
-    const int w = 32;
-    const int h = 32;
+    const int w = TextureSheetLoader::CubeTextureSheetLoader->tile_size;    //32 or 16
+    const int h = TextureSheetLoader::CubeTextureSheetLoader->tile_size;    //32 or 16
     const int d = 256;
 
     GS_ASSERT(TextureSheetLoader::CubeTextureStack != NULL);
