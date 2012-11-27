@@ -5,6 +5,8 @@ syntax: glob
 *.pyo
 *.dylib
 
+html_doxygen
+
 a.out
 
 secret_key.prod

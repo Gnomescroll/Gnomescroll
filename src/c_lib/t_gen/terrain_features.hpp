@@ -17,17 +17,17 @@ const float HALF_PI = PI / 2;
 const float QUARTER_PI = HALF_PI / 2;
 const float EIGHTH_PI = QUARTER_PI / 2;
 
-const int NUM_LEAVES = 3;      CubeID leaves[NUM_LEAVES];
-const int NUM_TRUNKS = 3;      CubeID trunks[NUM_TRUNKS];
+const size_t NUM_LEAVES = 3;      CubeID leaves[NUM_LEAVES];
+const size_t NUM_TRUNKS = 3;      CubeID trunks[NUM_TRUNKS];
 const size_t NUM_SHROOMCAPS = 3;   CubeID shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
 const size_t NUM_SHROOMSTEMS = 2;  CubeID shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
 
 const float persistence = 0.5f; // tweak
-const int octaves = 6;  // tweak
+const size_t octaves = 6;  // tweak
 
 const float tree_zone_threshold = 0.3f;  // move to a config file maybe
 const float tree_threshold = 0.997f;
-const float shroom_zone_threshold = 0.5f;  // move to a config file maybe
+const float shroom_zone_threshold = 0.3f;  // move to a config file maybe
 const float shroom_threshold = 0.997f;
 
 

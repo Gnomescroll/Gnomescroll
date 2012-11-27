@@ -26,7 +26,7 @@ namespace t_map
 {
 
 const int N_PIXEL_SAMPLES = 10;
-const static int TEXTURE_WIDTH = 16;
+const static int TEXTURE_WIDTH = 32;
 static unsigned char** pixel_data = NULL;
 GLuint block_texture = 0;
 

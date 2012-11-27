@@ -67,14 +67,20 @@ void apply_block_dat_changes()
 #if PRODUCTION
 # define RUINS_DMG 32
 #else
-# define RUINS_DMG 4
+# define RUINS_DMG 2
 #endif
 
 void load_block_dat()
 {
-    SpriteSheet t8 = texture_alias("media/sprites/terrain/t08.png");
-    SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
+    SpriteSheet c0 = texture_alias("media/sprites/terrain/cell_00.png");
+    SpriteSheet c1 = texture_alias("media/sprites/terrain/cell_01.png");
     SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtextures.png");
+    SpriteSheet c3 = texture_alias("media/sprites/terrain/cell_03.png");
+    //SpriteSheet c4 = texture_alias("media/sprites/terrain/cell_04.png");  // no alpha
+    //SpriteSheet c5 = texture_alias("media/sprites/terrain/cell_05.png");  // no alpha
+    SpriteSheet c6 = texture_alias("media/sprites/terrain/cell_06.png");
+    //SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
+	SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtex.png");
 
     const int T = 0;
     const int B = 1;
@@ -83,7 +89,7 @@ void load_block_dat()
     const int W = 4;
     const int E = 5;
 
-    int error_block = sprite_alias(t8,12,5);
+    int error_block = sprite_alias(c0, 1,1);
 
     cube_def_empty("empty_block");
     iso_texture(error_block);
@@ -100,193 +106,194 @@ void load_block_dat()
     push_texture();
 
     cube_def_container("storage_block_small", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
-    iso_texture(t8, 1,9);
-    side_texture(T, t8, 1,11);
-    side_texture(B, t8, 1,11);
-    side_texture(N, t8, 1,10);
+    iso_texture(c1, 14,4);
+    side_texture(T, c1, 1,3);
+    side_texture(B, c1, 1,3);
+    side_texture(N, c1, 14,5);
     push_oriented_texture();
     set_max_damage(128);
 
     cube_def_container("crafting_bench_basic", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
-    iso_texture(t8, 5,10);
-    side_texture(T, t8, 5,11);
-    side_texture(B, t8, 5,11);
-    side_texture(N, t8, 5,9);
+    iso_texture(c1, 3,4);
+    side_texture(T, c1, 2,5);
+    side_texture(B, c1, 3,6);
+    side_texture(N, c1, 3,5);
     push_oriented_texture();
     set_max_damage(128);
 
     cube_def_container("smelter_basic", CONTAINER_TYPE_SMELTER_ONE);
-    iso_texture(t8, 3,5);
-    side_texture(N, t8, 4,5);
+    iso_texture(c1, 14,2);
+    side_texture(T, c1, 14,2);
+    side_texture(B, c1, 14,2);
+    side_texture(N, c1, 14,1);
     push_oriented_texture();
-    side_texture(N, t8, 5,5);  // smelter face on
+    side_texture(N, c1, 14,3);  // smelter face on
     push_oriented_texture();
     set_max_damage(128);
 
     cube_def_container("cryofreezer_small", CONTAINER_TYPE_CRYOFREEZER_SMALL);
-    iso_texture(t8, 5,6);
-    push_oriented_texture();
+    iso_texture(c1, 14,5);
+    side_texture(T, c1, 14,6);
+    side_texture(B, c1, 14,6);
+    side_texture(N, c1, 14,4);
+	push_oriented_texture();
     set_max_damage(128);
 
     cube_def_container("crusher", CONTAINER_TYPE_CRUSHER);
-    iso_texture(t8, 7,10);
-    side_texture(T, t8, 7,11);
-    side_texture(B, t8, 7,11);
-    side_texture(N, t8, 7,9);
+    iso_texture(c1, 11,7);
+    side_texture(T, c1, 11,5);
+    side_texture(B, c1, 11,5);
+    side_texture(N, c1, 11,6);
     push_oriented_texture();
     set_max_damage(128);
 
     cube_def(SolidCube, "steel_block_1");
-    iso_texture(t8, 9,5);
+    iso_texture(c1, 1,3);
     push_texture();
     set_max_damage(64);
-    hud_def(t8,9,5);
+    hud_def    (c1, 1,3);
 
     cube_def(SolidCube, "steel_block_2");
-    iso_texture(t8, 10,5);
+    iso_texture(c1, 1,5);
     push_texture();
     set_max_damage(64);
-    hud_def(t8,10,5);
+    hud_def    (c1, 1,5);
 
     cube_def(SolidCube, "steel_block_3");
-    iso_texture(t8, 11,5);
-    push_texture();
+    iso_texture    (c1, 1,4);
+    side_texture(T, c1, 1,5);
+    side_texture(B, c1, 1,5);
+	push_texture();
     set_max_damage(64);
-    hud_def(t8,11,5);
+    hud_def        (c1, 1,4);
 
     cube_def(SolidCube, "methane_ice");
-    iso_texture(t8, 15,1);
+    iso_texture(c1, 5,4);;
     push_texture();
     set_max_damage(5);
 
     cube_def(SolidCube, "regolith", CUBE_MATERIAL_DIRT);
     // palette 0
-    iso_texture(t8,4,4);
+    iso_texture    (c1, 12,12);
     push_texture();
     //palette 1
-    iso_texture(t8,3,4);
-    side_texture(T, t8,2,4);
-    side_texture(B, t8,4,4);
+    iso_texture    (c1, 12,11);
+    side_texture(T, c1, 12,10);
+    side_texture(B, c1, 12,12);
     push_texture();
     set_max_damage(24);
 
     cube_def(SolidCube, "rock", CUBE_MATERIAL_STONE);
-    //iso_texture(t8,5,4);
-	iso_texture(tgm,1,1);
+	iso_texture(tgm, 1,1);
     push_texture();
-    //hud_def(t8, 5,4);
+    //hud_def    (c1, 9,9);
     set_max_damage(48);
 
     cube_def(SolidCube, "coal", CUBE_MATERIAL_DIRT);
-    //iso_texture(t8,6,4);
-	iso_texture(tgm,6,1);
+	iso_texture(tgm, 6,1);
     push_texture();
     set_max_damage(32);
 
     cube_def(SolidCube, "iron_ore", CUBE_MATERIAL_STONE);
-    //iso_texture(t8,7,1);
-	iso_texture(tgm,2,1);
+	iso_texture(tgm, 2,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "copper_ore", CUBE_MATERIAL_STONE);
-    //iso_texture(t8,9,2);
-	iso_texture(tgm,3,1);
+	iso_texture(tgm, 3,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "gallium_ore", CUBE_MATERIAL_STONE);
-    //iso_texture(t8,11,2);
-	iso_texture(tgm,4,1);
+	iso_texture(tgm, 4,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "iridium_ore", CUBE_MATERIAL_STONE);
-    //iso_texture(t8,9,3);
-	iso_texture(tgm,5,1);
+	iso_texture(tgm, 5,1);
     push_texture();
     set_max_damage(64);
 
     cube_def(SolidCube, "bedrock");
-    iso_texture(t8, 14,4);
+    iso_texture(c1, 10,7);
     push_texture();
     set_max_damage(INVINCIBLE_CUBE_DAMAGE);
 
     cube_def(SolidCube, "control_node", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 12,6);
+    iso_texture(c1, 9,4);
     push_texture();
-    hud_def(t8,12,6);
+    hud_def    (c1, 9,4);
 
     // terrain features
 	cube_def(SolidCube, "space_tree_trunk1", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 6,16);
+    iso_texture(c1, 6,8);
     push_texture();
-    hud_def(t8,6,16);
+    hud_def    (c1, 6,8);
 
     cube_def(SolidCube, "space_tree_trunk2", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 8,16);
+    iso_texture(c1, 2,8);
     push_texture();
-    hud_def(t8, 8,16);
+    hud_def    (c1, 2,8);
 
     cube_def(SolidCube, "space_tree_trunk3", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 2,15);
+    iso_texture(c1, 2,4);
     push_texture();
-    hud_def(t8, 2,15);
+    hud_def    (c1, 2,4);
 
     cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 2,16);
+    iso_texture(c1, 2,9);
     push_texture();
 
     cube_def(SolidCube, "leaves2", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 8,10);
+    iso_texture(c1, 8,1);
     push_texture();
 
     cube_def(SolidCube, "leaves3", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 8,12);
+    iso_texture(c1, 5,3);
     push_texture();
 
     cube_def(SolidCube, "mushroom_stem1", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 8,9);
+    iso_texture(c1, 1,1);
     push_texture();
-    hud_def(t8,8,9);
+    hud_def    (c1, 1,1);
 
     cube_def(SolidCube, "mushroom_stem2", CUBE_MATERIAL_DECORATION);
-    iso_texture(t8, 8,11);
+    iso_texture(c1, 2,2);
     push_texture();
-    hud_def(t8,8,11);
+    hud_def    (c1, 2,2);
 
     cube_def(SolidCube, "mushroom_cap1", CUBE_MATERIAL_DECORATION);
 //  iso_texture(t8, 8,9);
-    iso_texture(cc, 1,1);
+    iso_texture(c1, 5,5);
     push_texture();
 
     cube_def(SolidCube, "mushroom_cap2", CUBE_MATERIAL_DECORATION);
 //  iso_texture(t8, 8,9);
-    iso_texture(cc, 2,2);
+    iso_texture(c1, 6,2);
     push_texture();
 
     cube_def(SolidCube, "mushroom_cap3", CUBE_MATERIAL_DECORATION);
-    iso_texture(cc, 1,2);
+    iso_texture(c1, 1,2);
     push_texture();
 
     // ruins
     cube_def(SolidCube, "raised_tile1");
-    iso_texture(t8,14,5);
+    iso_texture(c1, 8,4);
     push_texture();
     set_max_damage(RUINS_DMG);
 
     cube_def(SolidCube, "raised_tile2");
-    iso_texture(t8,14,6);
+    iso_texture(c1, 8,5);
     push_texture();
     set_max_damage(RUINS_DMG);
 
     cube_def(SolidCube, "raised_tile3");
-    iso_texture(t8,15,5);
+    iso_texture(c1, 8,6);
     push_texture();
     set_max_damage(RUINS_DMG);
 
     cube_def(SolidCube, "raised_tile4");
-    iso_texture(t8,15,6);
+    iso_texture(c1, 8,7);
     push_texture();
     set_max_damage(RUINS_DMG);
 

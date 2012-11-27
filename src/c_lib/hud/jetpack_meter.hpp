@@ -31,13 +31,11 @@ namespace Hud {
 			num_qticles = 0;
 		}
 
-		void draw(float _xresf, float _yresf, PlayerAgent_state* pa, MeterAnchor anchor = METANCH_RIGHT) {
+		void draw(float _xresf, float _yresf, int s_x, int s_y, float portion, float possible, MeterAnchor anchor = METANCH_RIGHT) {
 			float s_w = _xresf/4; // spectrum width (that a full bar would cover)
-			float s_x = 0;        // spectrum x pos
 			float s_h = _yresf/64;
-			float s_y = 0;
 
-			float dyn_w = s_w * (float)pa->jetpack.fuel / JETPACK_FUEL_MAX; // dynamic width (the current size of the meter itself)
+			float dyn_w = s_w * portion / possible; // dynamic width (the current size of the meter itself)
 			float lo = s_w - dyn_w; // dynamic leftover
 			
 			if        (anchor == METANCH_LEFT) {
@@ -62,16 +60,6 @@ namespace Hud {
 				//	s_y + s_h + 40);
 			}
 			prev_w = dyn_w;
-
-			// health meter
-			//Agent* a = pa->you;
-			//if (a != NULL)
-			//{
-			//	w = _xresf * (float)a->status.health / (float)a->status.health_max;
-			//	draw_bound_texture(	(_xresf - w) / 2, _yresf-h*9, w, h);
-			//}
-
-
 
 			// update & draw alive particles
 			int num_alive_tallied = 0;
