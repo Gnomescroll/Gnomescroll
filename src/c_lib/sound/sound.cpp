@@ -75,6 +75,12 @@ int play_2d_sound(const char* fn)
     return OpenALSound::play_2d_sound(fn);
 }
 
+int play_2d_sound(const char* fn, float gain_multiplier, float pitch_multiplier)
+{
+    if (!Options::sound) return -1;
+    return OpenALSound::play_2d_sound(fn, gain_multiplier, pitch_multiplier);
+}
+
 int play_2d_sound(int soundfile_id)
 {
     if (!Options::sound) return -1;
@@ -90,7 +96,7 @@ int play_3d_sound(const char* fn, float x, float y, float z, float vx, float vy,
     return play_3d_sound(fn, vec3_init(x,y,z), vec3_init(vx,vy,vz));
 }
 
-int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v)
+int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
 {
     if (!Options::sound) return -1;
 
@@ -101,7 +107,12 @@ int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v)
     if (dist > GS_SOUND_DISTANCE_CUTOFF*GS_SOUND_DISTANCE_CUTOFF)
         return -1;
 
-    return OpenALSound::play_3d_sound(file, p, v);
+    return OpenALSound::play_3d_sound(file, p, v, gain_multiplier, pitch_multiplier);
+}
+
+int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v)
+{
+    return play_3d_sound(file, p, v, 1.0f, 1.0f);
 }
 
 int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
@@ -121,6 +132,16 @@ int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
 void stop_sound(int sound_id)
 {
     OpenALSound::stop_sound(sound_id);
+}
+
+void set_pitch_multiplier(int sound_id, float pitch)
+{
+    OpenALSound::set_pitch_multiplier(sound_id, pitch);
+}
+
+void set_gain_multiplier(int sound_id, float gain)
+{
+    OpenALSound::set_gain_multiplier(sound_id, gain);
 }
 
 /*

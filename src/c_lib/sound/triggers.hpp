@@ -6,10 +6,10 @@ namespace Sound
 #if DC_CLIENT
 
 #define SOUND_TRIGGER_HEADER(NAME)\
-void NAME();\
-void NAME(float x, float y, float z, float vx, float vy, float vz);\
-void NAME(struct Vec3 p);
-void NAME(struct Vec3 p, struct Vec3 v);
+int NAME();\
+int NAME(float x, float y, float z, float vx, float vy, float vz);\
+int NAME(struct Vec3 p);
+int NAME(struct Vec3 p, struct Vec3 v);
 
 #define SOUND_LOOP_TRIGGER_HEADER(NAME)\
 int NAME(bool start, int source_id);\

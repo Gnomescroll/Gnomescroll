@@ -112,12 +112,27 @@ static ALuint* sources = NULL;
 class GS_SoundSource
 {
     public:
+        int soundfile_id;
         bool active;
         bool two_dimensional;
         // add AL source properties here so we can vary per source easily
+        float pitch_multiplier;
+        float gain_multiplier;
+
+    void use(int soundfile_id)
+    {
+        GS_ASSERT(soundfile_id >= 0);
+        this->soundfile_id = soundfile_id;
+        this->active = true;
+        this->two_dimensional = true;
+        this->pitch_multiplier = 1.0f;
+        this->gain_multiplier = 1.0f;
+    }
 
     GS_SoundSource() :
-    active(false), two_dimensional(false)
+        soundfile_id(-1),
+        active(false), two_dimensional(false),
+        pitch_multiplier(1.0f), gain_multiplier(1.0f)
     {}
 };
 
@@ -466,7 +481,21 @@ GS_SoundBuffer* get_sound_buffer_from_soundfile_id(int soundfile_id)
     return sound_buffers[soundfile_id];
 }
 
-int set_source_properties(int source_id, Soundfile* snd)
+void set_pitch_multiplier(int sound_id, float pitch)
+{
+    GS_ASSERT(sound_id >= 0 && sound_id < MAX_SOURCES);
+    if (sound_id < 0 || sound_id >= MAX_SOURCES) return;
+    active_sources[sound_id].pitch_multiplier = pitch;
+}
+
+void set_gain_multiplier(int sound_id, float gain)
+{
+    GS_ASSERT(sound_id >= 0 && sound_id < MAX_SOURCES);
+    if (sound_id < 0 || sound_id >= MAX_SOURCES) return;
+    active_sources[sound_id].gain_multiplier = gain;
+}
+
+int set_source_properties(int source_id, const class Soundfile* snd, const class GS_SoundSource* active_source)
 {
     if (source_id < 0 || source_id >= MAX_SOURCES)
     {
@@ -478,8 +507,16 @@ int set_source_properties(int source_id, Soundfile* snd)
         printf("WARNING -- set_source_properties -- snd is NULL\n");
         return 1;
     }
-    alSourcef(sources[source_id], AL_PITCH, snd->pitch);
-    alSourcef(sources[source_id], AL_GAIN, snd->gain);
+
+    float pitch = snd->pitch;
+    if (active_source != NULL)
+        pitch *= active_source->pitch_multiplier;
+    float gain = snd->gain;
+    if (active_source != NULL)
+        gain *= active_source->gain_multiplier;
+    
+    alSourcef(sources[source_id], AL_PITCH, pitch);
+    alSourcef(sources[source_id], AL_GAIN, gain);
     alSourcef(sources[source_id], AL_MAX_DISTANCE, snd->max_distance);
     alSourcef(sources[source_id], AL_REFERENCE_DISTANCE, snd->reference_distance);
     alSourcef(sources[source_id], AL_MIN_GAIN, snd->minimum_gain);
@@ -518,8 +555,24 @@ static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional
     // add sound to active sources
     GS_ASSERT(!active_sources[source_id].active);
     if (!active_sources[source_id].active) sources_in_use++;
-    active_sources[source_id].active = true;
+    active_sources[source_id].use(soundfile_id);
     active_sources[source_id].two_dimensional = two_dimensional;
+    return true;
+}
+
+static bool remove_from_sources(int source_id)
+{
+    GS_ASSERT(sources_in_use > 0);
+    if (sources_in_use <= 0) return false;
+    
+    GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
+    if (source_id < 0 || source_id >= MAX_SOURCES) return false;
+
+    GS_ASSERT(active_sources[source_id].active);
+    if (!active_sources[source_id].active) return false;
+
+    sources_in_use--;
+    active_sources[source_id].active = false;
     return true;
 }
 
@@ -539,7 +592,9 @@ static bool can_add_to_sources(int soundfile_id, int source_id)
     return true;
 }
 
-static int play_sound(int source_id, GS_SoundBuffer* sound_buffer, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+static int play_sound(int source_id,
+    const class GS_SoundBuffer* sound_buffer, const class GS_SoundSource* active_source,
+    float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
 {
     if (!enabled)
         return -1;
@@ -548,7 +603,7 @@ static int play_sound(int source_id, GS_SoundBuffer* sound_buffer, float x, floa
         return -1;
         
     // set source properties
-    if (set_source_properties(source_id, sound_buffer->metadata))
+    if (set_source_properties(source_id, sound_buffer->metadata, active_source))
         return -1;
 
     // set source state
@@ -568,7 +623,7 @@ static int play_sound(int source_id, GS_SoundBuffer* sound_buffer, float x, floa
     return source_id;
 }
 
-int play_2d_sound(class GS_SoundBuffer* sound_buffer)
+static int play_2d_sound(class GS_SoundBuffer* sound_buffer, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled)
         return -1;
@@ -590,18 +645,26 @@ int play_2d_sound(class GS_SoundBuffer* sound_buffer)
     if (!can_add_to_sources(sound_buffer->buffer_id, source_id))
         return -1;
 
-    int ret_source_id = play_sound(source_id, sound_buffer, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
-    GS_ASSERT(source_id == ret_source_id);
-    if (source_id < 0) return source_id;
-    
     // add sound to active sources
     bool added = add_to_sources(sound_buffer->buffer_id, source_id, true);
     GS_ASSERT(added);
+    if (!added) return -1;
+    class GS_SoundSource* active_source = &active_sources[source_id];
+    active_source->gain_multiplier = gain_multiplier;
+    active_source->pitch_multiplier = pitch_multiplier;
+
+    int ret_source_id = play_sound(source_id, sound_buffer, active_source, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+    GS_ASSERT(source_id == ret_source_id);
+    if (ret_source_id < 0)
+    {   // play sound failed, back out
+        remove_from_sources(source_id);
+        return ret_source_id;
+    }
 
     return source_id;
 }
 
-int play_2d_sound(const char* fn)
+int play_2d_sound(const char* fn, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled) return -1;
     
@@ -613,7 +676,12 @@ int play_2d_sound(const char* fn)
     if (sound_buffer->buffer_id < 0) return -1;
     if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
 
-    return play_2d_sound(sound_buffer);
+    return play_2d_sound(sound_buffer, gain_multiplier, pitch_multiplier);
+}
+
+int play_2d_sound(const char* fn)
+{
+    return play_2d_sound(fn, 1.0f, 1.0f);
 }
 
 int play_2d_sound(int soundfile_id)
@@ -626,10 +694,10 @@ int play_2d_sound(int soundfile_id)
      || sound_buffer->current_sources >= sound_buffer->max_sources)
         return -1;
 
-    return play_2d_sound(sound_buffer);
+    return play_2d_sound(sound_buffer, 1.0f, 1.0f);
 }
 
-int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3 v)
+static int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled) return -1;
 
@@ -648,16 +716,23 @@ int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3
     if (!can_add_to_sources(sound_buffer->buffer_id, source_id)) printf("Can't add %s\n", sound_buffer->fn);
     if (!can_add_to_sources(sound_buffer->buffer_id, source_id))
         return -1;
-    
-    source_id = play_sound(source_id, sound_buffer, p.x, p.y, p.z, v.x, v.y, v.z, o.x, o.y, o.z);
-    if (source_id < 0) return source_id;
-    // add sound to active sources
+
     if (!add_to_sources(sound_buffer->buffer_id, source_id, false)) return -1;
+    class GS_SoundSource* active_source = &active_sources[source_id];
+    active_source->gain_multiplier = gain_multiplier;
+    active_source->pitch_multiplier = pitch_multiplier;
+
+    int ret_source_id = play_sound(source_id, sound_buffer, active_source, p.x, p.y, p.z, v.x, v.y, v.z, o.x, o.y, o.z);
+    if (ret_source_id < 0)
+    {   // error, back out
+        remove_from_sources(source_id);
+        return ret_source_id;
+    }
 
     return source_id;
 }
 
-int play_3d_sound(const char* fn, struct Vec3 p, struct Vec3 v)
+int play_3d_sound(const char* fn, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled) return -1;
 
@@ -668,7 +743,12 @@ int play_3d_sound(const char* fn, struct Vec3 p, struct Vec3 v)
     if (sound_buffer->buffer_id < 0) return -1;
     if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
         
-    return play_3d_sound(sound_buffer, p, v);
+    return play_3d_sound(sound_buffer, p, v, gain_multiplier, pitch_multiplier);
+}
+
+int play_3d_sound(const char* fn, struct Vec3 p, struct Vec3 v)
+{
+    return play_3d_sound(fn, p, v, 1.0f, 1.0f);
 }
 
 int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
@@ -681,7 +761,7 @@ int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
      || sound_buffer->current_sources >= sound_buffer->max_sources)
         return -1;
 
-    return play_3d_sound(sound_buffer, p, v);
+    return play_3d_sound(sound_buffer, p, v, 1.0f, 1.0f);
 }
 
 void update()
@@ -715,6 +795,18 @@ void update()
             active_sources[i].active = true;
             if (active_sources[i].two_dimensional)    // update 2d listeners
                 update_source_state(sources[i], x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+
+            GS_ASSERT(active_sources[i].soundfile_id >= 0);
+            if (active_sources[i].soundfile_id >= 0)
+            {
+                class GS_SoundBuffer* buffer_data = sound_buffers[active_sources[i].soundfile_id];
+                GS_ASSERT(buffer_data != NULL);
+                if (buffer_data != NULL)
+                {
+                    GS_ASSERT(sound_buffers[active_sources[i].soundfile_id]);
+                    set_source_properties(i, buffer_data->metadata, &active_sources[i]);
+                }
+            }
         }
         else
         {

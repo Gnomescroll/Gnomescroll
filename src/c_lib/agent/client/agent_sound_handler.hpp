@@ -30,7 +30,7 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
 
     float dvz = s1.vz - s0.vz;
     float dz  = s1.z  - s0.z;
-    if (dz < 0) // was falling & hit ground
+    if (/* TODO */ false && dz < 0) // was falling & hit ground
     {
         //int snd_id = 0;
         // TODO -- multiply dvz by base gain to get playable gain for fall range
@@ -51,7 +51,7 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
     if (!camera_on_ground) return;
 
     const int n_footsteps = 16;
-    void (*footsteps[n_footsteps])(void) =
+    int (*footsteps[n_footsteps])(void) =
     {
         Sound::soft_step_2,
         Sound::soft_step_1,
@@ -73,7 +73,7 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
     };
 
     const int n_perturb_footsteps = 4;
-    void (*perturb_footsteps[n_perturb_footsteps])(void) =
+    int (*perturb_footsteps[n_perturb_footsteps])(void) =
     {
         Sound::soft_step_1,
         Sound::soft_step_2,

@@ -8,21 +8,21 @@ namespace Sound
 
 #if DC_CLIENT
 #define SOUND_TRIGGER(NAME)\
-void NAME()\
+int NAME()\
 {\
-    play_2d_sound(#NAME);\
+    return play_2d_sound(#NAME);\
 }\
-void NAME(float x, float y, float z, float vx, float vy, float vz)\
+int NAME(float x, float y, float z, float vx, float vy, float vz)\
 {\
-    play_3d_sound(#NAME, x,y,z,vx,vy,vz);\
+    return play_3d_sound(#NAME, x,y,z,vx,vy,vz);\
 }\
-void NAME(struct Vec3 p)\
+int NAME(struct Vec3 p)\
 {\
-    play_3d_sound(#NAME, p);\
+    return play_3d_sound(#NAME, p);\
 }\
-void NAME(struct Vec3 p, struct Vec3 v)\
+int NAME(struct Vec3 p, struct Vec3 v)\
 {\
-    play_3d_sound(#NAME, p, v);\
+    return play_3d_sound(#NAME, p, v);\
 }
 
 #define SOUND_LOOP_TRIGGER(NAME)\

@@ -5,6 +5,8 @@ syntax: glob
 *.pyo
 *.dylib
 
+*-old1*
+
 html_doxygen
 
 a.out

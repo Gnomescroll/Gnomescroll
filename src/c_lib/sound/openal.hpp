@@ -17,7 +17,10 @@ void set_volume(float vol);
 void load_sound(Soundfile* snd);
 
 int play_2d_sound(const char* file);
+int play_2d_sound(const char* fn, float gain_multiplier, float pitch_multiplier);
+
 int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v);
+int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier);
 
 int play_2d_sound(int soundfile_id);
 int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
@@ -28,6 +31,9 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 void update();
 
 int test();
+
+void set_pitch_multiplier(int sound_id, float pitch);
+void set_gain_multiplier(int sound_id, float gain);
 
 const char* enumerate_devices();
 

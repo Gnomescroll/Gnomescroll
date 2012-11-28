@@ -1,5 +1,5 @@
 Event,Soundfile,function name,IN USE,Integrated,pitch,gain,max distance,reference distance,minimum gain,maximum gain,rolloff factor,loops,max playable distance,Notes
-Fire laser at object,cyberset_001_47.wav,fire_laser,y,y,0.7,0.3,,5.63,,,3.1,0,,
+Fire laser at object,cyberset_001_47.wav,fire_laser,y,y,0.5,0.3,,5.63,,,3.1,0,,
 Fire laser at block,cyberset_001_47.wav,fire_laser,y,y,,,,,,,,0,,
 Fire laser at nothing,cyberset_001_47.wav,fire_laser,y,y,,,,,,,,0,,
 Out of ammo,,out_of_ammo,,y,,,,,,,,0,,click
