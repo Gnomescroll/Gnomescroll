@@ -34,6 +34,9 @@ namespace ServerState
 
     struct Vec3 get_base_spawn_position()
     {
+        // always start the base at the map center in fast map mode
+        if (strcmp(Options::map, "art") == 0) return vec3_init(0,0,0);
+        
         GS_ASSERT(base != NULL);
         if (base == NULL) return vec3_init(0,0,0);
         

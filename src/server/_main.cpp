@@ -30,14 +30,18 @@ void init_world()
     srand(Options::seed);
 
     bool new_map = false;
-    bool fast_map = false;
+    bool valgrind_map = false;
     bool corpusc = false;
+    bool art_map = false;
 
-    if (strcmp(Options::map, "fast") == 0)
-        fast_map = true;
+    if (strcmp(Options::map, "valgrind") == 0)
+        valgrind_map = true;
     else
     if (strcmp(Options::map, "new") == 0)
         new_map = true;
+    else
+    if (strcmp(Options::map, "art") == 0)
+        art_map = true;
     else
     if (strcmp(Options::map, "corpusc") == 0)
         corpusc = true;
@@ -76,12 +80,16 @@ void init_world()
         t_gen::add_terrain_features();
     }
     else
-    if (fast_map)
+    if (valgrind_map)
     {
-        map_gen::fill("regolith");
-        //map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
-        //map_gen::floor(XMAX,YMAX,1, 9, t_map::get_cube_id("regolith"));
-        //map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_id("regolith"));
+        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
+        map_gen::floor(XMAX,YMAX,1, 9, t_map::get_cube_id("regolith"));
+        map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_id("regolith"));
+    }
+    else
+    if (art_map)
+    {
+        // corpus do it here
     }
 
     srand((unsigned int)time(NULL));
