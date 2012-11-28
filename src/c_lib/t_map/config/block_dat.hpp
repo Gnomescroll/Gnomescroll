@@ -105,15 +105,15 @@ void load_block_dat()
     push_texture();
 
     cube_def_container("storage_block_small", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
-    iso_texture(c1, 14,4);
+    iso_texture(    c1, 13,4);
     side_texture(T, c1, 1,3);
     side_texture(B, c1, 1,3);
-    side_texture(N, c1, 14,5);
+    side_texture(N, c1, 13,5);
     push_oriented_texture();
     set_max_damage(128);
 
     cube_def_container("crafting_bench_basic", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
-    iso_texture(c1, 3,4);
+    iso_texture(    c1, 3,4);
     side_texture(T, c1, 2,5);
     side_texture(B, c1, 3,6);
     side_texture(N, c1, 3,5);
@@ -240,7 +240,7 @@ void load_block_dat()
     hud_def    (c1, 2,4);
 
     cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
-    iso_texture(c1, 13,10);
+    iso_texture(c1, 2,11);
     push_texture();
 
     cube_def(SolidCube, "leaves2", CUBE_MATERIAL_DECORATION);
@@ -248,7 +248,7 @@ void load_block_dat()
     push_texture();
 
     cube_def(SolidCube, "leaves3", CUBE_MATERIAL_DECORATION);
-    iso_texture(c1, 14,10);
+    iso_texture(c1, 2,12);
     push_texture();
 
     cube_def(SolidCube, "mushroom_stem1", CUBE_MATERIAL_DECORATION);
@@ -276,22 +276,74 @@ void load_block_dat()
     push_texture();
 
     // ruins
-    cube_def(SolidCube, "raised_tile1");
-    iso_texture(c1, 8,4);
+    cube_def(SolidCube, "ruins_floor1");
+    iso_texture(c0, 3,2);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+    cube_def(SolidCube, "ruins_floor2");
+    iso_texture(c0, 3,3);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+    cube_def(SolidCube, "ruins_floor3");
+    iso_texture(c0, 3,4);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+    cube_def(SolidCube, "ruins_floor4");
+    iso_texture(c1, 4,7);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+	
+	cube_def(SolidCube, "ruins_wall1");
+    iso_texture(c1, 2,1);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+    cube_def(SolidCube, "ruins_wall2");
+    iso_texture(c1, 1,2);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+	
+	cube_def(SolidCube, "raised_tile1");
+    iso_texture(c1, 6,3);
     push_texture();
     set_max_damage(RUINS_DMG);
 
     cube_def(SolidCube, "raised_tile2");
-    iso_texture(c1, 8,5);
+    iso_texture(c1, 6,4);
     push_texture();
     set_max_damage(RUINS_DMG);
 
     cube_def(SolidCube, "raised_tile3");
-    iso_texture(c1, 8,6);
+    iso_texture(c1, 6,5);
     push_texture();
     set_max_damage(RUINS_DMG);
 
     cube_def(SolidCube, "raised_tile4");
+    iso_texture(c1, 6,6);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+    cube_def(SolidCube, "ruins_trim1");
+    iso_texture(c1, 8,4);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+    cube_def(SolidCube, "ruins_trim2");
+    iso_texture(c1, 8,5);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+    cube_def(SolidCube, "ruins_trim3");
+    iso_texture(c1, 8,6);
+    push_texture();
+    set_max_damage(RUINS_DMG);
+
+    cube_def(SolidCube, "ruins_trim4");
     iso_texture(c1, 8,7);
     push_texture();
     set_max_damage(RUINS_DMG);

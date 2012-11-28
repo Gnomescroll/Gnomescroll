@@ -9,8 +9,14 @@ dont_include_this_file_in_client
 
 
 
-const int NUM_PICS = 5; // pics == textures.   abbreviating "textures" always looks wrong to me.... suggesting its "text"
-CubeID pics[NUM_PICS];
+const size_t  NUM_FLOORS = 4; 
+CubeID floors[NUM_FLOORS];
+const size_t NUM_WALLS = 2; 
+CubeID walls[NUM_WALLS];
+const size_t NUM_CEILS = 4; 
+CubeID ceils[NUM_CEILS];
+const size_t NUM_TRIMS = 4;
+CubeID trims[NUM_TRIMS];
 
 const int ruins_across_world = 8;
 const int cubes_across_room = 16;
@@ -48,7 +54,7 @@ enum direction_type_t {
 };
 
 CubeID random_pic() {
-    return pics[randrange(0, NUM_PICS - 1)];
+    return trims[randrange(0, NUM_TRIMS - 1)];
 }
 
 struct IntVec3 {
@@ -447,6 +453,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
     }
 }
 
+
 void make_stairs(int rx, int ry, int rz, int ox, int oy, CubeID floor_block) { // room indexes, origin
     t_gen::set_region(
         rx * cubes_across_room + ox + fixed_stair_x,
@@ -470,6 +477,8 @@ void make_stairs(int rx, int ry, int rz, int ox, int oy, CubeID floor_block) { /
         1, fixed_stair_d, 3, floor_block);
 }
 
+
+
 Room setup_stairspace_for(direction_t d, Room r) {
     r.dir_types[d] = DIRTYPE_STAIRS;
     r.air.x = fixed_stair_x - 2;
@@ -478,6 +487,8 @@ Room setup_stairspace_for(direction_t d, Room r) {
     r.air.dep = fixed_stair_d + 4;
     return r;
 }
+
+
 
 void setup_rooms() {
     for (int z = 0; z < rooms_going_up; z++) {
@@ -621,6 +632,15 @@ void make_ruins(int x, int y) {
             ry * cubes_across_room + y,
             rz * cubes_going_up + bedrock_offset,
             cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].floor_block);
+
+		// FIXME: random rock cubes for crystals
+		int num_rocks = randrange(0,6);
+		for (int i = 0; i < num_rocks; i++)
+			t_map::set(
+				x + rx * cubes_across_room + randrange(1, cubes_across_room-2),
+				y + ry * cubes_across_room + randrange(1, cubes_across_room-2),
+	            rz * cubes_going_up + bedrock_offset + 2,
+				t_map::get_cube_id("rock"));
         
         // make ceiling
         t_gen::set_region(
@@ -647,20 +667,35 @@ void make_ruins(int x, int y) {
     }
 }
 
+
+
 namespace t_gen {
     void generate_ruins() {
         printf("Making ruins\n");
 
-        pics[0] = t_map::get_cube_id("raised_tile1");
-        pics[1] = t_map::get_cube_id("raised_tile2"); 
-        pics[2] = t_map::get_cube_id("raised_tile3");
-        pics[3] = t_map::get_cube_id("raised_tile4"); 
-        pics[4] = t_map::get_cube_id("rock"); 
+        floors[0] = t_map::get_cube_id("ruins_floor1");
+        floors[1] = t_map::get_cube_id("ruins_floor2"); 
+        floors[2] = t_map::get_cube_id("ruins_floor3"); 
+        floors[3] = t_map::get_cube_id("ruins_floor4"); 
+
+        walls[0] = t_map::get_cube_id("ruins_wall1");
+        walls[1] = t_map::get_cube_id("ruins_wall2"); 
+
+        ceils[0] = t_map::get_cube_id("raised_tile1");
+        ceils[1] = t_map::get_cube_id("raised_tile2"); 
+        ceils[2] = t_map::get_cube_id("raised_tile3");
+        ceils[3] = t_map::get_cube_id("raised_tile4"); 
+
+        trims[0] = t_map::get_cube_id("ruins_trim1");
+        trims[1] = t_map::get_cube_id("ruins_trim2"); 
+        trims[2] = t_map::get_cube_id("ruins_trim3");
+        trims[3] = t_map::get_cube_id("ruins_trim4"); 
+        //trims[4] = t_map::get_cube_id("rock"); 
 
         // check textures
-        for (int i = 0; i < NUM_PICS; i++) { 
-            GS_ASSERT(t_map::isValidCube(pics[i])); 
-            if (!t_map::isValidCube(pics[i])) { printf("*** cube id %d invalid ***", pics[i]); return; }
+        for (int i = 0; i < NUM_TRIMS; i++) { 
+            GS_ASSERT(t_map::isValidCube(trims[i])); 
+            if (!t_map::isValidCube(trims[i])) { printf("*** cube id %d invalid ***", trims[i]); return; }
         }
 
         // generate ruins

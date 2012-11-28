@@ -78,6 +78,7 @@ void init_world()
         t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_id("regolith") );
         t_gen::excavate();
         t_gen::add_terrain_features();
+		t_gen::generate_ruins();
 		t_gen::make_art_gallery(ZMAX/2);
     }
     else
