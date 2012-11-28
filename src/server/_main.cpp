@@ -31,7 +31,7 @@ void init_world()
 
     bool new_map = false;
     bool valgrind_map = false;
-    bool corpusc = false;
+    bool corpusc_map = false;
     bool art_map = false;
 
     if (strcmp(Options::map, "valgrind") == 0)
@@ -44,7 +44,7 @@ void init_world()
         art_map = true;
     else
     if (strcmp(Options::map, "corpusc") == 0)
-        corpusc = true;
+        corpusc_map = true;
     else
     if (serializer::load_data())
     {
@@ -72,25 +72,28 @@ void init_world()
         }
     }
     else
-    if (corpusc)
+    if (corpusc_map)
     {
         map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
         t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_id("regolith") );
         t_gen::excavate();
         t_gen::add_terrain_features();
-		t_gen::make_cube_gallery();
-    }
-    else
-    if (valgrind_map)
-    {
-        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
-        map_gen::floor(XMAX,YMAX,1, 9, t_map::get_cube_id("regolith"));
-        map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_id("regolith"));
+		t_gen::make_art_gallery(ZMAX/2);
     }
     else
     if (art_map)
     {
-        // corpus do it here
+		int floor_h = 10; // height
+        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
+        t_gen::set_region(0,0,1, XMAX,YMAX,floor_h, t_map::get_cube_id("regolith") );
+		t_gen::make_art_gallery(floor_h);
+    }
+    else
+    if (valgrind_map)
+    {
+        map_gen::floor(XMAX,YMAX,0, 1,       t_map::get_cube_id("bedrock"));
+        map_gen::floor(XMAX,YMAX,1, 9,       t_map::get_cube_id("regolith"));
+        map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_id("regolith"));
     }
 
     srand((unsigned int)time(NULL));

@@ -88,7 +88,7 @@
   <ItemGroup>
     <ClInclude Include="..\c_lib\agent\client\jetpack.hpp" />
     <ClInclude Include="..\c_lib\hud\jetpack_meter.hpp" />
-    <ClInclude Include="..\c_lib\t_gen\cube_gallery.hpp" />
+    <ClInclude Include="..\c_lib\t_gen\art_gallery.hpp" />
     <ClInclude Include="..\c_lib\t_gen\excavator.hpp" />
     <ClInclude Include="..\c_lib\t_gen\terrain_features.hpp" />
     <ClInclude Include="stdafx.h" />

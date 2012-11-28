@@ -57,7 +57,7 @@
     <ClInclude Include="..\c_lib\t_gen\terrain_features.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\c_lib\t_gen\cube_gallery.hpp">
+    <ClInclude Include="..\c_lib\t_gen\art_gallery.hpp">
       <Filter>c_lib\t_gen</Filter>
     </ClInclude>
   </ItemGroup>
