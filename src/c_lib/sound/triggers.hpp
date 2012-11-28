@@ -28,7 +28,6 @@ SOUND_TRIGGER_HEADER(block_took_damage)
 SOUND_TRIGGER_HEADER(spawner_placed)
 SOUND_TRIGGER_HEADER(respawned)
 SOUND_TRIGGER_HEADER(died)
-SOUND_TRIGGER_HEADER(jetpack_on)
 SOUND_TRIGGER_HEADER(victory)
 SOUND_TRIGGER_HEADER(restore_health)
 SOUND_TRIGGER_HEADER(restore_ammo)
@@ -63,6 +62,7 @@ SOUND_TRIGGER_HEADER(hard_landing_4)
 
 // on/off loops
 SOUND_LOOP_TRIGGER_HEADER(mining_laser);
+SOUND_LOOP_TRIGGER_HEADER(jetpack_loop);
 
 #endif
 

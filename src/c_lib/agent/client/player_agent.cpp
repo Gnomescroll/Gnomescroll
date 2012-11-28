@@ -183,10 +183,9 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
 
     cs = this->pack_control_state(
         forward, backwards, left, right,
-        jetpack.update(jp), // UPDATE()
+        jetpack.update(jp),
         jump, crouch, boost,
-        misc1, misc2, misc3
-    );
+        misc1, misc2, misc3);
     return cs;
 }
 
