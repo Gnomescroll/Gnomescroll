@@ -695,7 +695,7 @@ namespace t_gen {
         //trims[4] = t_map::get_cube_id("rock"); 
 
         // check textures
-        for (int i = 0; i < NUM_TRIMS; i++) { 
+        for (size_t i = 0; i < NUM_TRIMS; i++) { 
             GS_ASSERT(t_map::isValidCube(trims[i])); 
             if (!t_map::isValidCube(trims[i])) { printf("*** cube id %d invalid ***", trims[i]); return; }
         }

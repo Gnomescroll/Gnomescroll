@@ -118,6 +118,7 @@ static void copy_cube_properties(class CubeProperties* a, struct FastCubePropert
     b->transparent = a->transparent;
     b->item_drop = a->item_drop;
     b->item_container = (a->type == ItemContainerCube);
+    b->explosive = a->explosive;
 }
 
 void end_cube_def()

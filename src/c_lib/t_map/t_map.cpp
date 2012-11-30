@@ -20,6 +20,7 @@
 # include <item/_interface.hpp>
 # include <t_map/config/drop_dat.hpp>
 # include <entity/object/main.hpp>
+# include <t_gen/explosives.hpp>
 #endif
 
 namespace t_map
@@ -41,8 +42,13 @@ CubeID get(int x, int y, int z)
 void set(int x, int y, int z, CubeID cube_id)
 {
     #if DC_SERVER
-    if (isItemContainer(x,y,z))
-        t_map::destroy_item_container_block(x,y,z);
+    // TODO -- this handling code also appears in apply_damage for handling
+    // destroyed block. see if can be unified
+    // This container check may only be here for sanity, because
+    // the container shit would get corrupted otherwise
+    CubeID existing_cube_id = t_map::get(x,y,z);
+    if (isItemContainer(existing_cube_id))
+        destroy_item_container_block(x,y,z);
     #endif
     main_map->set_block(x,y,z, cube_id);
 }
@@ -145,7 +151,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     CubeID cube_id = ERROR_CUBE;
     int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_id);
     if (ret != 0) return;
-    
+
     // block_action packet expects final value of cube, not initial value
     map_history->send_block_action(x,y,z, EMPTY_CUBE, action);
 

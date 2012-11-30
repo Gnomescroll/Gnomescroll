@@ -79,6 +79,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModific
             momentum = 2.0f;
             break;
         case TMA_GRENADE:
+        case TMA_PLASMAGEN:
             momentum = 10.0f;
             break;
         case TMA_LASER:

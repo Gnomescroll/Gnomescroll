@@ -214,9 +214,6 @@ void destroy_item_container_block(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
-    CubeID val = get(x,y,z);
-    if (!isItemContainer(val)) return;
-
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);
     if (c == NULL) return;
@@ -252,9 +249,20 @@ void smelter_off(int container_id)
     broadcast_set_palette(x,y,z, palette);
 }
 
-/*
-    Do on client connect
-*/
+void handle_explosive_block(int x, int y, int z)
+{   // make sure to destroy the block before calling this
+    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    
+    t_gen::create_explosion(x,y,z);
+    // TODO -- add sound
+    //Sound::broadcast_3d_sound("plasmagen_explode", x,y,z, 0,0,0);
+}
+
+// Do on client connect
 void send_client_map_special(ClientID client_id)
 {
     main_map->control_node_list.send_control_nodes_to_client(client_id);
