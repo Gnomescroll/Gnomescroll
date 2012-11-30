@@ -53,8 +53,8 @@ enum direction_type_t {
     DIRTYPE_BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
 };
 
-CubeID random_pic() {
-    return trims[randrange(0, NUM_TRIMS - 1)];
+CubeID randcube(CubeID arr[], int num) {
+    return arr[randrange(0, num - 1)];
 }
 
 struct IntVec3 {
@@ -78,6 +78,8 @@ struct Room : Rect3D{
     direction_type_t dir_types[DIR_MAX];
     CubeID wall_block;
     CubeID floor_block;
+    CubeID ceil;
+    CubeID trim;
     Rect3D eh; // east hall
     Rect3D nh; // north hall
     Rect air; // a region that guarantees airspace, only used for stairways
@@ -439,15 +441,22 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
 
         if (need_block) {
             // change rim/frame blocks
-            if (rect_plus_margin_contains(r.nh, 1, cx, cy, cz) || 
+            if (cz == 1 ||
+				rect_plus_margin_contains(r.nh, 1, cx, cy, cz) || 
                 rect_plus_margin_contains(sh,   1, cx, cy, cz) || 
                 rect_plus_margin_contains(r.eh, 1, cx, cy, cz) || 
                 rect_plus_margin_contains(wh,   1, cx, cy, cz) 
-            ) block = r.floor_block;
+            ) block = r.trim;
             
             t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
-        } else
-            t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, EMPTY_CUBE);
+        } else {
+			CubeID ci = EMPTY_CUBE;
+			if (cz == 1) {
+				r.trim = randcube(trims, NUM_TRIMS);
+				if (randrange(0,64) == 0) ci = t_map::get_cube_id("rock"); // random rock used as crystal bait
+			}
+            t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, ci);
+		}
     }
     }
     }
@@ -495,14 +504,18 @@ void setup_rooms() {
         // floors have 1 stairway up
         int stairway_up_x = randrange(0, rooms_across_ruins - 1);
         int stairway_up_y = randrange(0, rooms_across_ruins - 1);
+		CubeID floo = randcube(floors, NUM_FLOORS);
+		CubeID wall = randcube(walls, NUM_WALLS);
+		CubeID ceil = randcube(ceils, NUM_CEILS);
+		CubeID trim = randcube(trims, NUM_TRIMS);
 
         for (int x = 0; x < rooms_across_ruins; x++) {
         for (int y = 0; y < rooms_across_ruins; y++) {
             Room r;
-            r.floor_block = random_pic();
-            do {
-                r.wall_block = random_pic();
-            } while (r.floor_block == r.wall_block);
+            r.floor_block = floo;
+            r.wall_block = wall;
+			r.ceil = ceil;
+			r.trim = trim;
 
             // spans refer to the AIRSPACE, and don't include outer shell of blocks
             // but offset, for cleaner comparisons, should actually be the absolute offset from the corner of the room (including shell)
@@ -585,9 +598,9 @@ void setup_rooms() {
 void make_outer_shell(int x, int y) {
     int ruin_z_span   = cubes_going_up    * rooms_going_up; // z       extent
     int ruin_lat_span = cubes_across_room * rooms_across_ruins; // lateral span of ruin shell
-    CubeID rib = random_pic();
-    CubeID shell = random_pic();
-    while (rib == shell) rib = random_pic();
+    CubeID rib = randcube(trims, NUM_TRIMS);
+    CubeID shell = randcube(walls, NUM_WALLS);
+    //while (rib == shell) rib = random_pic();  *** atm, we have no textures that fall into more than one category
 
     // make planes for shell ribbing
     int neg_edge = x + 1; // negative
@@ -624,8 +637,6 @@ void make_ruins(int x, int y) {
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-        CubeID ceil_block = random_pic();
-
         // make floor 
         t_gen::set_region(
             rx * cubes_across_room + x,
@@ -633,21 +644,12 @@ void make_ruins(int x, int y) {
             rz * cubes_going_up + bedrock_offset,
             cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].floor_block);
 
-		// FIXME: random rock cubes for crystals
-		int num_rocks = randrange(0,6);
-		for (int i = 0; i < num_rocks; i++)
-			t_map::set(
-				x + rx * cubes_across_room + randrange(1, cubes_across_room-2),
-				y + ry * cubes_across_room + randrange(1, cubes_across_room-2),
-	            rz * cubes_going_up + bedrock_offset + 2,
-				t_map::get_cube_id("rock"));
-        
         // make ceiling
         t_gen::set_region(
             rx * cubes_across_room + x,
             ry * cubes_across_room + y,
             rz * cubes_going_up + bedrock_offset + cubes_going_up - 1,
-            cubes_across_room, cubes_across_room, 1, ceil_block);
+            cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].ceil);
         
         IntVec3 ri; /* room index */ ri.x = rx; ri.y = ry; ri.z = rz;
         make_walls_or_airspace(ri, x, y);
