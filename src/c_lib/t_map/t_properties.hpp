@@ -17,7 +17,7 @@ struct FastCubeProperties
     bool transparent;
     bool item_drop;
     bool item_container;
-    bool reserved7;
+    bool explosive;
     bool reserved8;
 };
 
@@ -35,6 +35,7 @@ class CubeProperties
 
         CubeMaterial material;
         ItemContainerType container_type;  // inventory and crafting bench blocks
+        bool explosive; // causes an explosion when destroyed
 
         unsigned char max_damage;
 
@@ -56,6 +57,7 @@ class CubeProperties
 
         this->material = CUBE_MATERIAL_NONE;
         this->container_type = CONTAINER_TYPE_NONE;
+        this->explosive = false;
 
         this->max_damage = 32;
         
@@ -102,6 +104,7 @@ inline bool isOccludes(CubeID id) __attribute((always_inline));
 inline bool isActive(CubeID id) __attribute((always_inline));
 inline bool isTransparent(CubeID id) __attribute((always_inline));
 inline bool isItemContainer(CubeID id) __attribute((always_inline));
+inline bool isExplosive(CubeID id) __attribute((always_inline));
 inline unsigned char maxDamage(CubeID id) __attribute((always_inline));
 
 //Properties by coordinates
@@ -110,6 +113,7 @@ inline bool isSolid(int x, int y, int z) __attribute((always_inline));
 inline bool isOccludes(int x, int y, int z) __attribute((always_inline));
 inline bool isActive(int x, int y, int z) __attribute((always_inline));
 inline bool isItemContainer(int x, int y, int z) __attribute((always_inline));
+inline bool isExplosive(int x, int y, int z) __attribute((always_inline));
 inline unsigned char maxDamage(int x, int y, int z) __attribute((always_inline));
 
 }   // t_map

@@ -141,7 +141,7 @@ namespace t_map
     #endif
     }
 
-#if DC_CLIENT
+    #if DC_CLIENT
     void Terrain_map::set_update(int x, int y)
     {
         //printf("set update: %i %i \n", x,y);
@@ -153,7 +153,7 @@ namespace t_map
         if( c != NULL ) 
             c->needs_update = true;
     }
-#endif
+    #endif
 
 /*
     Set Methods 
@@ -175,37 +175,6 @@ namespace t_map
 
     void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     {
-        //printf("set_element: %i %i %i %i \n", x,y,element.block);
-
-    #if T_MAP_SET_OPTIMIZED
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-        #if DC_CLIENT
-            class MAP_CHUNK* c;
-            c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-            if(c == NULL)
-            {
-                GS_ASSERT(false);
-                return;
-            }
-        #endif
-
-        c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
-
-        #if DC_CLIENT
-            c->needs_update = true; 
-
-            if((x & 15) == 0)  set_update(x-1,y);
-            if((x & 15) == 15) set_update(x+1,y);
-            if((y & 15) == 0)  set_update(x,y-1);
-            if((y & 15) == 15) set_update(x,y+1);
-        #endif
-
-    #else
-
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -219,11 +188,8 @@ namespace t_map
         c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
 
         #if DC_CLIENT
-            if(c == NULL)
-            {
-                GS_ASSERT(false);
-                return;
-            }
+        GS_ASSERT(c != NULL)
+        if (c == NULL) return;
         #endif
 
         int xi = x & 15; //bit mask
@@ -232,35 +198,17 @@ namespace t_map
         c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
 
         #if DC_CLIENT
-            c->needs_update = true; 
+        c->needs_update = true; 
 
-            if((x & 15) == 0)  set_update(x-1,y);
-            if((x & 15) == 15) set_update(x+1,y);
-            if((y & 15) == 0)  set_update(x,y-1);
-            if((y & 15) == 15) set_update(x,y+1);
+        if((x & 15) == 0)  set_update(x-1,y);
+        if((x & 15) == 15) set_update(x+1,y);
+        if((y & 15) == 0)  set_update(x,y-1);
+        if((y & 15) == 15) set_update(x,y+1);
         #endif
-
-    #endif
     }
 
     int Terrain_map::get_damage(int x, int y, int z)
     {
-    #if T_MAP_SET_OPTIMIZED
-
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; 
-
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-        class MAP_CHUNK* c;
-        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if( c != NULL ) return -3;
-
-        struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
-
-        return e->damage;
-
-    #else
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -281,62 +229,11 @@ namespace t_map
         struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
         
         return e->damage;
-    #endif
     }
 
     // return negative on error, 0 on destruction of underlying block, or total damage so far on block 
     int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeID* cube_id)
     {
-        //printf("set: %i %i %i %i \n", x,y,element.block);
-    #if T_MAP_SET_OPTIMIZED
-        if (dmg <= 0) return -4;
-
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2; 
-        
-        x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-        y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-        class MAP_CHUNK* c;
-        c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if( c != NULL ) return -3;
-
-        struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
-
-        if(e->block == 0) return -1;
-        int maxdmg = maxDamage((CubeID)e->block);
-        if (maxdmg >= INVINCIBLE_CUBE_DAMAGE) return -5;
-        if(e->damage + dmg >= maxdmg) 
-        {
-            e->damage = maxdmg;
-            #if DC_SERVER
-            if(isItemContainer((CubeID)e->block))
-                destroy_item_container_block(x,y,z);
-            #endif
-            // destroy block
-            *e = NO_MAP_ELEMENT; 
-            
-            #if DC_CLIENT
-                c->needs_update = true; 
-                if((x & 15) == 0)  set_update(x-1,y);
-                if((x & 15) == 15) set_update(x+1,y);
-                if((y & 15) == 0)  set_update(x,y-1);
-                if((y & 15) == 15) set_update(x,y+1);
-            #endif
-
-            #if DC_SERVER
-                t_mech::handle_block_removal(x,y,z);
-            #endif
-
-            return 0;
-        } 
-        else 
-        {
-            e->damage += dmg;
-            return e->damage;
-        }
-
-    #else
-
         if (dmg <= 0) return -4;
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0 ) return -2;
@@ -366,25 +263,28 @@ namespace t_map
         if(e->damage + dmg >= maxdmg) 
         {
             e->damage = maxdmg;
-            
-            #if DC_SERVER
-            if(isItemContainer((CubeID)e->block))
-                destroy_item_container_block(x,y,z);
-            #endif
+
             // destroy block
             *e = NO_MAP_ELEMENT; 
 
-            #if DC_CLIENT
-                c->needs_update = true; 
+            #if DC_SERVER
+            if(isItemContainer(*cube_id))
+                destroy_item_container_block(x,y,z);
+            if (isExplosive(*cube_id))
+                handle_explosive_block(x,y,z);
+            #endif
 
-                if((x & 15) == 0)  set_update(x-1,y);
-                if((x & 15) == 15) set_update(x+1,y);
-                if((y & 15) == 0)  set_update(x,y-1);
-                if((y & 15) == 15) set_update(x,y+1);
+            #if DC_CLIENT
+            c->needs_update = true; 
+
+            if((x & 15) == 0)  set_update(x-1,y);
+            if((x & 15) == 15) set_update(x+1,y);
+            if((y & 15) == 0)  set_update(x,y-1);
+            if((y & 15) == 15) set_update(x,y+1);
             #endif
 
             #if DC_SERVER
-                t_mech::handle_block_removal(x,y,z);
+            t_mech::handle_block_removal(x,y,z);
             #endif
 
             return 0;
@@ -394,8 +294,6 @@ namespace t_map
             e->damage += dmg;
             return e->damage;
         }
-
-    #endif
     }
 
 

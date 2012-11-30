@@ -633,14 +633,14 @@ void make_ruins(int x, int y) {
             rz * cubes_going_up + bedrock_offset,
             cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].floor_block);
 
-		// FIXME: random rock cubes for crystals
-		int num_rocks = randrange(0,6);
-		for (int i = 0; i < num_rocks; i++)
-			t_map::set(
-				x + rx * cubes_across_room + randrange(1, cubes_across_room-2),
-				y + ry * cubes_across_room + randrange(1, cubes_across_room-2),
-	            rz * cubes_going_up + bedrock_offset + 2,
-				t_map::get_cube_id("rock"));
+        // FIXME: random rock cubes for crystals
+        int num_rocks = randrange(0,6);
+        for (int i = 0; i < num_rocks; i++)
+            t_map::set(
+                x + rx * cubes_across_room + randrange(1, cubes_across_room-2),
+                y + ry * cubes_across_room + randrange(1, cubes_across_room-2),
+                rz * cubes_going_up + bedrock_offset + 2,
+                t_map::get_cube_id("rock"));
         
         // make ceiling
         t_gen::set_region(
@@ -693,7 +693,7 @@ namespace t_gen {
         //trims[4] = t_map::get_cube_id("rock"); 
 
         // check textures
-        for (int i = 0; i < NUM_TRIMS; i++) { 
+        for (size_t i = 0; i < NUM_TRIMS; i++) { 
             GS_ASSERT(t_map::isValidCube(trims[i])); 
             if (!t_map::isValidCube(trims[i])) { printf("*** cube id %d invalid ***", trims[i]); return; }
         }

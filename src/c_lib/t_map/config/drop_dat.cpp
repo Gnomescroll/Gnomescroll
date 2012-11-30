@@ -137,6 +137,7 @@ void load_block_drop_dat()
     // generated
 
     no_drop("bedrock");
+    no_drop("plasmagen");
     
     ////////////////////
     def_drop("regolith");

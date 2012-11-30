@@ -33,6 +33,7 @@ void init_world()
     bool valgrind_map = false;
     bool corpusc_map = false;
     bool art_map = false;
+    bool explosive_map = false;
 
     if (strcmp(Options::map, "valgrind") == 0)
         valgrind_map = true;
@@ -45,6 +46,12 @@ void init_world()
     else
     if (strcmp(Options::map, "corpusc") == 0)
         corpusc_map = true;
+    else
+    if (strcmp(Options::map, "explosive") == 0)
+    {
+        valgrind_map = true;
+        explosive_map = true;
+    }
     else
     if (serializer::load_data())
     {
@@ -71,30 +78,44 @@ void init_world()
             serializer::wait_for_save_complete();
         }
     }
-    else
+
     if (corpusc_map)
     {
         map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
         t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_id("regolith") );
         t_gen::excavate();
         t_gen::add_terrain_features();
-		t_gen::generate_ruins();
-		t_gen::make_art_gallery(ZMAX/2);
+        t_gen::generate_ruins();
+        t_gen::make_art_gallery(ZMAX/2);
     }
-    else
+
     if (art_map)
     {
-		int floor_h = 10; // height
+        int floor_h = 10; // height
         map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
         t_gen::set_region(0,0,1, XMAX,YMAX,floor_h, t_map::get_cube_id("regolith") );
-		t_gen::make_art_gallery(floor_h);
+        t_gen::make_art_gallery(floor_h);
     }
-    else
+
     if (valgrind_map)
     {
         map_gen::floor(XMAX,YMAX,0, 1,       t_map::get_cube_id("bedrock"));
         map_gen::floor(XMAX,YMAX,1, 9,       t_map::get_cube_id("regolith"));
         map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_id("regolith"));
+    }
+
+    if (explosive_map)
+    {
+        static const CubeID plasmagen = t_map::get_cube_id("plasmagen");
+        GS_ASSERT(t_map::isValidCube(plasmagen));
+        static const size_t n_explosives = 10000;
+        for (size_t i=0; i<n_explosives; i++)
+        {
+            int x = randrange(0, t_map::map_dim.x-1);
+            int y = randrange(0, t_map::map_dim.y-1);
+            int z = randrange(0, t_map::map_dim.z-1);
+            t_map::set_fast(x,y,z, plasmagen);
+        }
     }
 
     srand((unsigned int)time(NULL));

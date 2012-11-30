@@ -296,8 +296,8 @@ void load_block_dat()
     push_texture();
     set_max_damage(RUINS_DMG);
 
-	
-	cube_def(SolidCube, "ruins_wall1");
+    
+    cube_def(SolidCube, "ruins_wall1");
     iso_texture(c1, 2,1);
     push_texture();
     set_max_damage(RUINS_DMG);
@@ -307,8 +307,8 @@ void load_block_dat()
     push_texture();
     set_max_damage(RUINS_DMG);
 
-	
-	cube_def(SolidCube, "raised_tile1");
+    
+    cube_def(SolidCube, "raised_tile1");
     iso_texture(c1, 6,3);
     push_texture();
     set_max_damage(RUINS_DMG);
@@ -352,6 +352,8 @@ void load_block_dat()
     cube_def(SolidCube, "plasmagen");
     iso_texture(iceflame, 1, 2);
     push_texture();
+    p->explosive = true;
+    set_max_damage(1);  // TODO -- higher damage, 1 is debug only
 
     end_cube_def();  // finalize
 

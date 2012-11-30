@@ -158,9 +158,12 @@ bool isTransparent(CubeID id)
 
 bool isItemContainer(CubeID id)
 {
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return false;
     return t_map::fast_cube_properties[id].item_container;
+}
+
+bool isExplosive(CubeID id)
+{
+    return t_map::fast_cube_properties[id].explosive;
 }
 
 unsigned char maxDamage(CubeID id) 
@@ -188,6 +191,11 @@ bool isActive(int x, int y, int z)
 bool isItemContainer(int x, int y, int z)
 {
     return t_map::fast_cube_properties[t_map::get(x,y,z)].item_container;
+}
+
+bool isExplosive(int x, int y, int z)
+{
+    return t_map::fast_cube_properties[t_map::get(x,y,z)].explosive;
 }
 
 unsigned char maxDamage(int x, int y, int z)

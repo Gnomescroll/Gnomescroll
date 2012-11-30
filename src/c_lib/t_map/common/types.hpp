@@ -48,4 +48,5 @@ typedef enum TerrainModificationAction
     TMA_MONSTER_BOX,
     TMA_MONSTER_BOMB,
     TMA_PLACE_BLOCK,
+    TMA_PLASMAGEN,
 } TerrainModificationAction;

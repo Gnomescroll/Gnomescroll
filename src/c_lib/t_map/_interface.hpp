@@ -86,6 +86,8 @@ void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action)
 void broadcast_set_block(int x, int y, int z, CubeID cube_id);
 void broadcast_set_block_palette(int x, int y, int z, CubeID cube_id, int palette);
 void broadcast_set_palette(int x, int y, int z, int palette);
+
+void handle_explosive_block(int x, int y, int z);
 #endif
 
 }   // t_map
