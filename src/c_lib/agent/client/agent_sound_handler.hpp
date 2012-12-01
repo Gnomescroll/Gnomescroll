@@ -30,7 +30,7 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
 
     float dvz = s1.vz - s0.vz;
     float dz  = s1.z  - s0.z;
-    if (/* TODO */ false && dz < 0) // was falling & hit ground
+    if (dz < 0 && s1_on_ground) // was falling & hit ground
     {
         //int snd_id = 0;
         // TODO -- multiply dvz by base gain to get playable gain for fall range
