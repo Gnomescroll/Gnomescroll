@@ -32,8 +32,8 @@ class grenade_StoC: public FixedSizeReliableNetPacketToClient<grenade_StoC>
 {
     public:
 
-        Vec3 p;
-        Vec3 m;
+        struct Vec3 p;
+        struct Vec3 m;
         uint8_t owner;
         uint16_t ttl_max;
         uint8_t type;

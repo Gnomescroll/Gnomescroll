@@ -9,6 +9,7 @@ dont_include_this_file_in_client
 #include <common/random.hpp>
 #include <physics/quadrant.hpp>
 #include <state/server_state.hpp>
+#include <particle/plasmagen_spur.hpp>
 
 namespace t_gen
 {
@@ -41,13 +42,8 @@ void init_explosives()
     GS_ASSERT(t_map::isValidCube(plasmagen));
 }
 
-static void shoot_cannonball()
-{
-    // TODO
-}
-
 void create_explosion(const int x, const int y, const int z)
-{
+{   // WARNING: make sure this function is called after destroying the explosive block
     // check upper bounds
     // we should not be calling this function out of bounds, so assert
     GS_ASSERT(x >= 0 && x < t_map::map_dim.x);
@@ -63,6 +59,17 @@ void create_explosion(const int x, const int y, const int z)
         { 1, 0, 0 },
         { 0, 1, 0 },
         { 0, 0, 1 }};
+    static const struct Vec3 vsides[3] = {
+        vec3_init(1, 0, 0),
+        vec3_init(0, 1, 0),
+        vec3_init(0, 0, 1)};
+
+    const struct Vec3 position = vec3_init(x+0.5f, y+0.5f, z+0.5f); 
+
+    // notify clients
+    Particle::plasmagen_explode_StoC msg;
+    msg.position = position;
+    msg.broadcast();
 
     // boundaries for the explosion, which can be contained by iron and bedrock
     const int pos[3] = { x,y,z };
@@ -92,14 +99,7 @@ void create_explosion(const int x, const int y, const int z)
         if (bounds[i][k] >= j)
         {
             CubeID cube_id = t_map::get(p[0], p[1], p[2]);
-            if (cube_id == EMPTY_CUBE)
-            {
-                ServerState::damage_objects_within_sphere(
-                    vec3_init(p[0]+0.5f, p[1]+0.5f, p[2]+0.5f),
-                    0.5f, PLASMAGEN_ENTITY_DAMAGE, NULL_AGENT,
-                    OBJECT_PLASMAGEN, NULL_ENTITY_ID, false); 
-            }
-            else
+            if (cube_id != EMPTY_CUBE)
             {
                 bounds[i][k] = j;
                 cubes[i][k] = cube_id;
@@ -111,7 +111,8 @@ void create_explosion(const int x, const int y, const int z)
     for (int i=0; i<3; i++)
         bounds[i][0] *= -1;
 
-    // damage each of the stop blocks heavily, if they are not immune
+    // damage each of the stop blocks and the block behind them heavily,
+    // if they are not immune
     for (int i=0; i<3; i++)
     for (int j=0; j<2; j++)
         if (!in_array(cubes[i][j], immune_cubes, immune_cubes_ct))
@@ -119,12 +120,37 @@ void create_explosion(const int x, const int y, const int z)
             int p[3];
             for (int k=0; k<3; k++)
                 p[k] = pos[k] + sides[i][k]*bounds[i][j];
+            for (int k=0; k<2; k++)
+                p[k] = translate_point(p[k]);
                 
             t_map::apply_damage_broadcast(
                 p[0], p[1], p[2],
                 PLASMAGEN_BLOCK_DAMAGE,
                 TMA_PLASMAGEN);
+
+            // block behind this one
+            for (int k=0; k<3; k++)
+                p[k] += sides[i][k]*dir[j];
+            for (int k=0; k<2; k++)
+                p[k] = translate_point(p[k]);
+            if (!in_array(t_map::get(p[0], p[1], p[2]), immune_cubes, immune_cubes_ct))
+                t_map::apply_damage_broadcast(
+                    p[0], p[1], p[2],
+                    PLASMAGEN_BLOCK_DAMAGE,
+                    TMA_PLASMAGEN);
         }
+
+    // hitscan all objects in paths
+    for (int i=0; i<3; i++)
+    for (int j=0; j<2; j++)
+    {
+        size_t n_hit = 0;
+        struct Vec3 end = vec3_add(position, vec3_scalar_mult(vsides[i], bounds[i][j]+0.5f));
+        class Voxel_hitscan_target* targets = ServerState::voxel_hitscan_list->hitscan_all(position, end, &n_hit);
+        if (targets == NULL) continue;
+        for (size_t k=0; k<n_hit; k++)
+            Hitscan::damage_target(&targets[i], OBJECT_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);
+    }
 }
 
 }   // t_gen

@@ -11,19 +11,13 @@ const int VOXEL_HITSCAN_LIST_SIZE = 1024;
     use instances instead of pointers
 */
 
-/*
-    list, add, remove, iterate
-*/
-
-class Voxel_volume; // forward decl
-
 class Voxel_hitscan_element
 {
     public:
         short entity_id;
         short entity_type;
         short part_id;
-        Voxel_volume* vv;
+        class Voxel_volume* vv;
 
     Voxel_hitscan_element() :
         entity_id(-1), entity_type(-1), part_id(-1), vv(NULL)
@@ -50,13 +44,13 @@ class Voxel_hitscan_target: public Voxel_hitscan_element
 class Voxel_hitscan_list
 {
     private:
-    Voxel_hitscan_element** hitscan_list;
+        class Voxel_hitscan_element** hitscan_list;
     
     public:
-    int num_elements;
+        int num_elements;
 
-    void register_voxel_volume(Voxel_volume* vv);
-    void unregister_voxel_volume(Voxel_volume* vv);
+        void register_voxel_volume(class Voxel_volume* vv);
+        void unregister_voxel_volume(class Voxel_volume* vv);
 
     //pass in x,y,z fire point and direction of projectile
     bool hitscan(
@@ -64,10 +58,11 @@ class Voxel_hitscan_list
         const float x1, const float y1, const float z1, // direction
         int skip_id, EntityType skip_type,
         float collision_point[3], float *distance,
-        Voxel_hitscan_target* target
-    );
+        class Voxel_hitscan_target* target);
+    
+    class Voxel_hitscan_target* hitscan_all(struct Vec3 start, struct Vec3 end, size_t* n_targets);
 
-    bool point_collision(Vec3 position, Voxel_hitscan_target* target);
+    bool point_collision(struct Vec3 position, class Voxel_hitscan_target* target);
     
     Voxel_hitscan_list();
     ~Voxel_hitscan_list();

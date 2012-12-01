@@ -61,14 +61,24 @@ static void animation_def(const char* name, AnimationMetadataType metadata_type)
 static void register_settings()
 {
     animation_def("plasma_grenade_explode", AnimDataSimple);
-    d->callback = &create_shrapnel;
-    d->count = 45;
-    d->max_count = 60;
-    d->use_rand_range = true;
-    d->jitter_scale = 1.0f/20.0f;   // applied to starting position
-    d->ttl_min = 25;
-    d->ttl_max = 35;
-    d->momentum = 20.0f;
+        d->callback = &create_shrapnel;
+        d->count = 45;
+        d->max_count = 60;
+        d->use_rand_range = true;
+        d->jitter_scale = 1.0f/20.0f;   // applied to starting position
+        d->ttl_min = 25;
+        d->ttl_max = 35;
+        d->momentum = 20.0f;
+
+    animation_def("plasmagen_spur_explode", AnimDataSimple);
+        d->callback = &create_shrapnel;
+        d->count = 20;
+        d->max_count = 30;
+        d->use_rand_range = true;
+        d->jitter_scale = 1.0f/20.0f;
+        d->ttl_min = 20;
+        d->ttl_max = 30;
+        d->momentum = 20.0f;
 
     add_animation(d);    // finalize
 }
@@ -87,7 +97,7 @@ static void validate_config()
         if (name == NULL) continue;
         for (int j=0; j<MAX_ANIMATIONS; j++)
         {
-            if (i==j) continue;
+            if (i == j) continue;
             if (!animation_data[j].loaded) continue;
             GS_ASSERT(hash != animation_data[j].hash);
             GS_ASSERT(animation_data[j].name != NULL);

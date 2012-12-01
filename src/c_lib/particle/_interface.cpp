@@ -20,9 +20,9 @@ namespace Particle
 {
 
 class GrenadeList* grenade_list = NULL;
-class PlasmagenSpurList* plasmagen_spur_list = NULL;
 
 #if DC_CLIENT
+class PlasmagenSpurList* plasmagen_spur_list = NULL;
 class Shrapnel_list* shrapnel_list = NULL;
 class Blood_list* blood_list = NULL;
 class ColoredMinivox_list* colored_minivox_list = NULL;
@@ -34,9 +34,9 @@ class BillboardTextHud_list* billboard_text_hud_list = NULL;
 void init_particles()
 {
     grenade_list = new GrenadeList(MAX_GRENADES);
-    plasmagen_spur_list = new PlasmagenSpurList;
 
     #if DC_CLIENT
+    plasmagen_spur_list = new PlasmagenSpurList(PLASMAGEN_SPUR_MAX);
     shrapnel_list = new Shrapnel_list;
     blood_list = new Blood_list;
 
@@ -52,9 +52,9 @@ void init_particles()
 void teardown_particles()
 {
     if (grenade_list != NULL) delete grenade_list;
-    if (plasmagen_spur_list != NULL) delete plasmagen_spur_list;
 
     #if DC_CLIENT
+    if (plasmagen_spur_list != NULL) delete plasmagen_spur_list;
     if (shrapnel_list != NULL) delete shrapnel_list;
     if (blood_list != NULL) delete blood_list;
     if (colored_minivox_list != NULL) delete colored_minivox_list;
@@ -66,9 +66,7 @@ void teardown_particles()
     #endif
 }
 
-
 #if DC_CLIENT
-
 GLuint particle_texture = 0;
 
 void draw_init() 
@@ -119,7 +117,7 @@ void draw_shrapnel()
 
 class Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz)
 {
-    Shrapnel* s = shrapnel_list->create();
+    class Shrapnel* s = shrapnel_list->create();
     if(s == NULL) return NULL;
     s->set_state(x,y,z, vx,vy,vz);
     return s;

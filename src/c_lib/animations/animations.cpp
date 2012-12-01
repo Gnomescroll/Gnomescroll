@@ -40,13 +40,13 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
     
     for (int i=0; i < n; i++)
     {
-        nx = x + randf() -0.5f;
-        ny = y + randf() -0.5f;
-        nz = z + randf() -0.5f;
+        nx = x + randf() - 0.5f;
+        ny = y + randf() - 0.5f;
+        nz = z + randf() - 0.5f;
 
-        vx = momentum*(randf() -0.5f);
-        vy = momentum*(randf() -0.5f);
-        vz = momentum*(randf() -0.5f);
+        vx = momentum*(randf() - 0.5f);
+        vy = momentum*(randf() - 0.5f);
+        vz = momentum*(randf() - 0.5f);
 
         nx = translate_point(nx);
         ny = translate_point(ny);

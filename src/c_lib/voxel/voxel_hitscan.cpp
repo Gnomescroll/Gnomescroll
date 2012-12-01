@@ -8,8 +8,7 @@ bool Voxel_hitscan_list::hitscan(
     const float x1, const float y1, const float z1,     // direction
     int skip_id, EntityType skip_type, // skip player agent id
     float collision_point[3], float *distance,
-    Voxel_hitscan_target* target
-)
+    class Voxel_hitscan_target* target)
 {
     float x2,y2,z2;
 
@@ -26,7 +25,7 @@ bool Voxel_hitscan_list::hitscan(
 
     float dist;
     float min_dist = 1000000.0f;
-    float max_dist = 10000.0f;
+    float max_dist = 256.0f;
     float tpos[3];
 
     Vec3 source = vec3_init(x0,y0,z0);
@@ -52,7 +51,8 @@ bool Voxel_hitscan_list::hitscan(
             if (dist > min_dist) continue;
             tpos[0] = translate_point(tpos[0]);
             tpos[1] = translate_point(tpos[1]);
-            if (!vhe->vv->hitscan_test(tpos[0], tpos[1], tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
+            if (!vhe->vv->hitscan_test(
+                tpos[0], tpos[1], tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
             min_dist = dist;
             target_hit = vhe;
             x = tpos[0];
@@ -74,12 +74,62 @@ bool Voxel_hitscan_list::hitscan(
     return false;
 }
 
-bool Voxel_hitscan_list::point_collision(Vec3 position, Voxel_hitscan_target* target)
+class Voxel_hitscan_target* Voxel_hitscan_list::hitscan_all(
+    struct Vec3 start, struct Vec3 end, size_t* n_targets)
 {
-    class Voxel_hitscan_element* vhe;
+    *n_targets = 0;
+    if (vec3_equal(start, end)) return NULL;
+
+    const size_t MAX_TARGETS = 16;
+    static Voxel_hitscan_target targets[MAX_TARGETS];
+
+    struct Vec3 direction = vec3_sub(end, start);
+    float max_dist = vec3_length(direction);
+    normalize_vector(&direction);
+    size_t n = 0;
+    for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
+    {
+        if (n >= MAX_TARGETS) break;
+        class Voxel_hitscan_element* vhe = hitscan_list[i];
+        if (vhe == NULL) continue;
+        if (!vhe->vv->hitscan) continue;
+
+        struct Vec3 p = quadrant_translate_position(start, vhe->vv->world_matrix.c);
+        float tpos[3] = {0};
+        float r2 = 0.0f;
+        float radius = vhe->vv->radius;
+        float dist = sphere_line_distance(
+            start.x, start.y, start.z,
+            direction.x, direction.y, direction.z, 
+            p.x, p.y, p.z, tpos, &r2);
+
+        if (dist < 0.0f || dist > max_dist) continue;
+        if (r2 < radius*radius)
+        {
+            tpos[0] = translate_point(tpos[0]);
+            tpos[1] = translate_point(tpos[1]);
+            // test for voxel hit
+            int voxel[3] = {0};
+            if (!vhe->vv->hitscan_test(
+                tpos[0], tpos[1], tpos[2],
+                direction.x, direction.y, direction.z, r2, voxel)) continue;
+            class Voxel_hitscan_target* target = &targets[n++];
+            target->copy_vhe(vhe);
+            target->copy_voxel(voxel);
+        }
+    }
+
+    *n_targets = n;
+    if (n == 0) return NULL;
+    return targets;
+}
+
+
+bool Voxel_hitscan_list::point_collision(struct Vec3 position, class Voxel_hitscan_target* target)
+{
     for (int i=0; i<VOXEL_HITSCAN_LIST_SIZE; i++)
     {
-        vhe = this->hitscan_list[i];
+        class Voxel_hitscan_element* vhe = this->hitscan_list[i];
         if (vhe == NULL) continue;
         if (vhe->vv->point_collision_test(position, target->voxel))
         {
@@ -90,7 +140,7 @@ bool Voxel_hitscan_list::point_collision(Vec3 position, Voxel_hitscan_target* ta
     return false;
 }
 
-void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
+void Voxel_hitscan_list::register_voxel_volume(class Voxel_volume* vv)
 {
     GS_ASSERT(this->num_elements < VOXEL_HITSCAN_LIST_SIZE);
     if (this->num_elements >= VOXEL_HITSCAN_LIST_SIZE) return;
@@ -106,7 +156,7 @@ void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
     GS_ASSERT(false);
 }
 
-void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
+void Voxel_hitscan_list::unregister_voxel_volume(class Voxel_volume* vv)
 {
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
         if (this->hitscan_list[i] != NULL && this->hitscan_list[i] == &(vv->vhe))

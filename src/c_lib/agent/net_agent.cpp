@@ -327,6 +327,14 @@ inline void agent_conflict_notification_StoC::handle()
             else
                 sprintf(msg, "%s was destroyed by %s's turret.", b_name, a_name);
             break;
+
+        case DEATH_PLASMAGEN:
+            if (a != NULL && a->is_you())
+                strcpy(msg, "You've been fried.");
+            else
+                sprintf(msg, "%s's skin melted off.", a_name);
+            break;
+                
             
         default: break;
     }

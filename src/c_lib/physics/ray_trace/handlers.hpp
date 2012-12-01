@@ -52,4 +52,8 @@ HitscanTarget shoot_at_agent(
 void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p);
 void broadcast_object_fired(int id, EntityType type, HitscanTarget t);
 
+#if DC_SERVER
+void damage_target(const class Voxel_hitscan_target* target, EntityType inflictor_type, int dmg);
+#endif
+
 }   // Hitscan

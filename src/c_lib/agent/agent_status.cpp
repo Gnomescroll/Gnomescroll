@@ -250,12 +250,14 @@ int Agent_status::apply_damage(int dmg, AgentID inflictor_id, EntityType inflict
     
     int health = this->apply_damage(dmg);
     AgentDeathMethod death_method = DEATH_NORMAL;
-    if (part_id == AGENT_PART_HEAD)
-        death_method = DEATH_HEADSHOT;
-    else if (inflictor_type == OBJECT_GRENADE)
+    if (inflictor_type == OBJECT_GRENADE)
         death_method = DEATH_GRENADE;
     else if (inflictor_type == OBJECT_TURRET)
         death_method = DEATH_TURRET;
+    else if (inflictor_type == OBJECT_PLASMAGEN)
+        death_method = DEATH_PLASMAGEN;
+    else if (part_id == AGENT_PART_HEAD)
+        death_method = DEATH_HEADSHOT;
         
     if (this->should_die)
         die(inflictor_id, inflictor_type, death_method);

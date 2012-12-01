@@ -3,6 +3,8 @@
 #include <agent/agent.hpp>
 #include <entity/network/packets.hpp>
 #include <agent/_interface.hpp>
+#include <entity/objects.hpp>
+#include <entity/components/health.hpp>
 
 namespace Hitscan
 {
@@ -207,5 +209,40 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
         default: break;
     }
 }
+
+#if DC_SERVER
+static void damage_agent(AgentID agent_id, int part_id, EntityType inflictor_type, int dmg)
+{
+    class Agent* agent = Agents::get_agent(agent_id);
+    GS_ASSERT(agent != NULL);
+    if (agent == NULL) return;
+    agent->status.apply_damage(dmg, NULL_AGENT, inflictor_type, part_id);
+}
+
+static void damage_entity(EntityType entity_type, int entity_id, int part_id, EntityType inflictor_type, int dmg)
+{
+    class Entities::Entity* entity = Entities::get(entity_type, entity_id);
+    GS_ASSERT(entity != NULL);
+    if (entity == NULL) return;
+
+    using Components::HealthComponent;
+    class HealthComponent* health = (class HealthComponent*)entity->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+    if (health == NULL) return;
+    health->take_damage(dmg);
+}
+
+void damage_target(const class Voxel_hitscan_target* target, EntityType inflictor_type, int dmg)
+{
+    switch (target->entity_type)
+    {
+        case OBJECT_AGENT:
+            damage_agent((AgentID)target->entity_id, target->part_id, inflictor_type, dmg);
+            break;
+        default:
+            damage_entity((EntityType)target->entity_type, target->entity_id, target->part_id, inflictor_type, dmg);
+            break;
+    }
+}
+#endif
 
 }   // Hitscan

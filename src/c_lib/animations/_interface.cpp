@@ -57,6 +57,38 @@ void draw_mining_laser_effect()
     mining_laser_effect_list->draw();
 }
 
+void play_animation(int animation_id, struct Vec3 position)
+{
+    class AnimationData* data = get_animation_data(animation_id);
+    GS_ASSERT(data != NULL);
+    if (data == NULL) return;
+    GS_ASSERT(data->callback != NULL);
+    GS_ASSERT(data->metadata != NULL);
+    if (data->callback == NULL || data->metadata == NULL) return;
+
+    switch (data->metadata_type)
+    {
+        case AnimDataNone:
+            break;
+
+        case AnimDataSimple:
+            ((class AnimationStateMetadata*)data->metadata)->position = position;
+            ((class AnimationStateMetadata*)data->metadata)->velocity = vec3_scalar_mult(vec3_init(1,1,1), data->momentum);
+            break;
+
+        default:
+            GS_ASSERT(false);
+            break;
+    }
+
+    data->callback(animation_id, data->metadata);
+}
+
+void play_animation(const char* name, struct Vec3 position)
+{
+    int animation_id = get_animation_id(name);
+    play_animation(animation_id, position);
+}
 
 float x13 = 0.0f;
 float y13 = 0.0f;
@@ -77,8 +109,7 @@ void spawn_insect_mob(float x, float y, float z)
     //printf("insect at: %f %f %f \n", x,y,z);
 }
 
-
-void create_mining_laser_particle(Vec3 position, Vec3 orientation, const float speed, const float length)
+void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation, const float speed, const float length)
 {
     MiningLaser* effect = mining_laser_effect_list->create();
     if (effect == NULL) return;
@@ -94,7 +125,7 @@ void create_hitscan_effect(float x, float y, float z, float vx, float vy, float 
     he->set_state(x,y,z,vx,vy,vz);
 }
 
-void mining_laser_beam(Vec3 position, Vec3 orientation, float length)
+void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float length)
 {
     if (Options::animation_level <= 0) return;
 

@@ -31,7 +31,8 @@ typedef enum
     DEATH_BELOW_MAP,
     DEATH_TURRET,
     DEATH_SLIME,
-    DEATH_KILLME
+    DEATH_KILLME,
+    DEATH_PLASMAGEN,
 } AgentDeathMethod;
 
 enum AGENT_BODY_PARTS

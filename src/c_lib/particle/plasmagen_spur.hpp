@@ -8,23 +8,40 @@ namespace Particle
 
 const int PLASMAGEN_SPUR_MAX = 1024;
 const float PLASMAGEN_SPUR_DAMP = 1.0f;
-const int PLASMAGEN_SPUR_TEXTURE_ID = 54;
+const int PLASMAGEN_SPUR_TEXTURE_ID = 22;
 const float PLASMAGEN_SPUR_TEXTURE_SCALE = 0.25f;
+const float PLASMAGEN_MOMENTUM = 10.0f;
 
 class PlasmagenSpur: public ParticleMotion, public BillboardSprite
 {
     public:
-        static const int texture_index = PLASMAGEN_SPUR_TEXTURE_ID;
         float travelled;
 
     inline void reset();
     void tick();
     void die();
 
-    PlasmagenSpur();
+    #if DC_SERVER
+    void broadcast_death();
+    void broadcast_birth();
+    #endif
+
+    explicit PlasmagenSpur(int id);
 };
 
-class PlasmagenSpurList: public Simple_object_list<PlasmagenSpur, PLASMAGEN_SPUR_MAX>
+class plasmagen_explode_StoC: public FixedSizeReliableNetPacketToClient<plasmagen_explode_StoC>
+{
+    public:
+        struct Vec3 position;
+
+    inline void packet(char* buff, unsigned int* buff_n, bool pack) 
+    {
+        pack_vec3(&position, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class PlasmagenSpurList: public ObjectList<PlasmagenSpur>
 {
     private:
         const char* name() { return "PlasmagenSpur"; }
@@ -34,7 +51,9 @@ class PlasmagenSpurList: public Simple_object_list<PlasmagenSpur, PLASMAGEN_SPUR
         #endif
         void tick();
 
-    PlasmagenSpurList() {}
+    PlasmagenSpurList(unsigned int capacity) :
+        ObjectList<PlasmagenSpur>(capacity)
+    {}
 };
     
 }   // Particle

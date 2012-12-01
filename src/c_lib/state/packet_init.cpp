@@ -57,6 +57,7 @@ void RegisterMessages()
 
     // particle system messages
     Particle::grenade_StoC::register_client_packet();
+    Particle::plasmagen_explode_StoC::register_client_packet();
  
     // agent hit block action
     hit_block_CtoS::register_server_packet();
