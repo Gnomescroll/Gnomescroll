@@ -1403,7 +1403,7 @@ void check_agents_in_container_range()
     }
 }
 
-// for brand new items going to a container
+// for brand new Item*s going to a container
 ContainerActionType auto_add_free_item_to_container(ClientID client_id, int container_id, ItemID item_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -1485,6 +1485,36 @@ ContainerActionType auto_add_free_item_to_container(ClientID client_id, int cont
     
     return CONTAINER_ACTION_NONE;
 }
+
+ItemID auto_add_item_to_container(const char* item_name, int container_id)
+{   // creates and adds item to the container. returns id of the created item
+    ASSERT_VALID_CONTAINER_ID(container_id);
+    IF_INVALID_CONTAINER_ID(container_id) return NULL_ITEM;
+
+    ItemContainerInterface* container = get_container(container_id);
+    GS_ASSERT(container != NULL);
+    if (container == NULL) return NULL_ITEM;
+
+    int slot = container->get_empty_slot();
+    if (slot == NULL_SLOT) return NULL_ITEM;    // can't fit
+
+    class Item::Item* item = Item::create_item(item_name);
+    GS_ASSERT(item != NULL);
+    if (item == NULL) return NULL_ITEM;
+
+    bool can_insert = container->can_insert_item(slot, item->id);
+    GS_ASSERT(can_insert);
+    if (!can_insert)
+    {
+        Item::destroy_item(item->id);
+        return NULL_ITEM;
+    }
+
+    transfer_free_item_to_container(item->id, container->id, slot);
+
+    return item->id;
+}
+
 
 void update_smelters()
 {

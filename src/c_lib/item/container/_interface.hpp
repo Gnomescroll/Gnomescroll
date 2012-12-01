@@ -14,7 +14,6 @@ const ItemContainerType player_container_types[N_PLAYER_CONTAINERS] = {
     AGENT_ENERGY_TANKS
 };
 
-
 void init();
 void teardown();
 
@@ -26,11 +25,10 @@ int get_container_owner(int container_id);
 void destroy_container(int container_id);
 void container_block_destroyed(int container_id, int x, int y, int z);
 
-bool container_block_in_range_of(Vec3 pos, int block[3]);
+bool container_block_in_range_of(struct Vec3 pos, int block[3]);
 
 }   // ItemContainer
 
-//CLIENT
 #if DC_CLIENT
 namespace ItemContainer
 {
@@ -64,7 +62,6 @@ void set_ui_slot_stack_size(int container_id, int slot, int stack_size);
 }   // ItemContainer
 #endif 
 
-//SERVER
 #if DC_SERVER
 namespace ItemContainer
 {
@@ -103,8 +100,13 @@ void send_container_contents(AgentID agent_id, ClientID client_id, int container
 bool agent_in_container_range(AgentID agent_id, int container_id);
 void check_agents_in_container_range(); // checks that any agent accessing a container is still in range
 
-// for brand new items going to a container
+// for brand new Item*s going to a container
 ContainerActionType auto_add_free_item_to_container(ClientID client_id, int container_id, ItemID item_id);
+
+// creates and adds item to the container. return id of created item
+// if you modify the item's state after this function returns, make sure to call
+// Item::send_item_state(item_id);
+ItemID auto_add_item_to_container(const char* item_name, int container_id);
 
 // definition in server.hpp
 void send_container_remove(ClientID client_id, int container_id, int slot);
