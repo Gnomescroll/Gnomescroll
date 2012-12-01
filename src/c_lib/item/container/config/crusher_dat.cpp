@@ -93,7 +93,6 @@ static void register_crusher_settings()
         d->set_max_drop_amounts("coal_nugget", 1);
         d->add_drop("coal_nugget", 1, 0.01f);
 
-
     crusher_def("iron_rod");
         d->set_max_drop_types(1);
         d->set_max_drop_amounts("iron_bar", 1);
@@ -127,7 +126,16 @@ static void register_crusher_settings()
     crusher_def("iridium_helmet");
         d->set_max_drop_types(1);
         d->set_max_drop_amounts("iridium_bar", 1);
-        d->add_drop("iridium_bar", 1, 1.0f);    
+        d->add_drop("iridium_bar", 1, 1.0f);
+
+    crusher_def("coal_nugget");
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("blackpowder", 5);
+        d->add_drop("blackpowder", 1, 0.10f);
+        d->add_drop("blackpowder", 3, 0.20f);
+        d->add_drop("blackpowder", 5, 0.40f);
+        d->add_drop("blackpowder", 7, 0.20f);
+        d->add_drop("blackpowder", 9, 0.10f);
 }
 
 void validate_crusher_settings()

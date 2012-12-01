@@ -353,7 +353,7 @@ void load_block_dat()
     iso_texture(iceflame, 1, 2);
     push_texture();
     p->explosive = true;
-    set_max_damage(1);  // TODO -- higher damage, 1 is debug only
+    set_max_damage(32);
 
     end_cube_def();  // finalize
 

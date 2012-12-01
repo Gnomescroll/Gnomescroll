@@ -393,6 +393,12 @@ void load_item_dat()
     set_pretty_name("Blob Seed");
     s->max_stack_size = 64;
 
+    item_def(IG_RESOURCE, "blackpowder");
+    sprite_def(i0, 5,3);
+    s->max_stack_size = 64;
+
+    item_block_def("plasmagen");
+
     finish_item_def();
 }
 
@@ -445,6 +451,17 @@ void create_items_from_blocks()
     finish_item_def();
 }
 
+void set_pretty_names()
+{   // automatically set "pretty" names for items
+    const size_t len = GS_MIN(DAT_NAME_MAX_LENGTH, ITEM_PRETTY_NAME_MAX_LENGTH);
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
+    {
+        class ItemAttribute* a = &item_attributes[i];
+        if (!a->loaded) continue;
+        if (a->pretty_name[0] == '\0')
+            make_pretty_name(a->name, a->pretty_name, len);
+    }
+}
 
 void verify_item_dat()
 {
@@ -602,6 +619,7 @@ void apply_item_dat_changes()
 void end_item_dat()
 {
     finish_item_def();
+    set_pretty_names();
     apply_item_dat_changes();
     verify_item_dat();
     save_item_names();

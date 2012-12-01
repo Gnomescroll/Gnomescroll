@@ -22,15 +22,6 @@ namespace Item
 
 void load_crafting_dat()
 {
-    def_crafting_recipe("steel_block_1", 4);
-    set_crafting_reagent("iron_bar", 1);
-    
-    def_crafting_recipe("steel_block_2", 4);
-    set_crafting_reagent("iron_bar", 1);
-    
-    def_crafting_recipe("steel_block_3", 4);
-    set_crafting_reagent("iron_bar", 1);
-
     // ore -> bar recipes
     // these take 2x as much as it would take to smelt
     // but we need it to circumvent the smelter prerequisite introduced
@@ -60,11 +51,39 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("iridium_bar", 1);
 
-    def_crafting_recipe("storage_block_small");
+    // blocks
+     def_crafting_recipe("steel_block_1", 4);
+    set_crafting_reagent("iron_bar", 1);
+    
+    def_crafting_recipe("steel_block_2", 4);
+    set_crafting_reagent("iron_bar", 1);
+    
+    def_crafting_recipe("steel_block_3", 4);
+    set_crafting_reagent("iron_bar", 1);
+
+   def_crafting_recipe("storage_block_small");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
+
+    def_crafting_recipe("plasmagen");
+    set_crafting_reagent("blackpowder", 8);
+    set_crafting_reagent("methane_ice_chunk", 8);
+    set_crafting_reagent("plasma_grenade", 4);
+    set_crafting_reagent("steel_block_1", 1);
+
+    def_crafting_recipe("plasmagen");
+    set_crafting_reagent("blackpowder", 8);
+    set_crafting_reagent("methane_ice_chunk", 8);
+    set_crafting_reagent("plasma_grenade", 4);
+    set_crafting_reagent("steel_block_2", 1);
+    
+    def_crafting_recipe("plasmagen");
+    set_crafting_reagent("blackpowder", 8);
+    set_crafting_reagent("methane_ice_chunk", 8);
+    set_crafting_reagent("plasma_grenade", 4);
+    set_crafting_reagent("steel_block_3", 1);
 
     // Energy
     def_crafting_recipe("small_charge_pack");
