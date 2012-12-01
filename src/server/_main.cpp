@@ -156,6 +156,7 @@ void tick()
     Agents::agent_list->update_models(); // sets skeleton
 
     Particle::grenade_list->tick();
+    Particle::plasmagen_spur_list->tick();
     ItemParticle::tick();
 
     Entities::tick();

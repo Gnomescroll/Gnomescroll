@@ -49,7 +49,7 @@ class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
         void draw();
         void tick();
 
-        Shrapnel_list() { this->print(); }
+        Shrapnel_list() {}
 };
     
 }   // Particle

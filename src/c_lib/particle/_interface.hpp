@@ -8,6 +8,7 @@ void init_particles();
 void teardown_particles();
 
 extern class GrenadeList* grenade_list;
+extern class PlasmagenSpurList* plasmagen_spur_list;
 
 #if DC_CLIENT
 extern class  Shrapnel_list* shrapnel_list;

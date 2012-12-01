@@ -90,6 +90,8 @@ class VerletComponent
         bool bounce_box_no_gravity();
         bool radial(float xy, float yr);
         bool collide_no_gravity();
+        bool collide_no_gravity(class RaytraceData* data, float* dist);
+            // *data is required; float* dist is distance travelled;
         void move_no_gravity();
 
     VerletComponent()

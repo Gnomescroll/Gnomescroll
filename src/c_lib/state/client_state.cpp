@@ -69,6 +69,7 @@ void tick()
     Particle::textured_minivox_list->tick();
     Particle::billboard_text_list->tick();
     Particle::billboard_text_hud_list->tick();
+    Particle::plasmagen_spur_list->tick();
 }
 
 void update_camera()

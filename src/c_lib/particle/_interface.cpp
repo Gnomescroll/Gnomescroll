@@ -1,24 +1,26 @@
 #include "_interface.hpp"
 
 #include <particle/grenade.hpp>
+#include <particle/plasmagen_spur.hpp>
 
 #if DC_CLIENT
-#include <particle/shrapnel.hpp>
-#include <particle/blood.hpp>
-#include <particle/minivox_colored.hpp>
-#include <particle/minivox_textured.hpp>
-#include <particle/text/billboard_text.hpp>
-#include <particle/text/billboard_text_hud.hpp>
-#include <particle/billboard_sprite.hpp>
+# include <particle/shrapnel.hpp>
+# include <particle/blood.hpp>
+# include <particle/minivox_colored.hpp>
+# include <particle/minivox_textured.hpp>
+# include <particle/text/billboard_text.hpp>
+# include <particle/text/billboard_text_hud.hpp>
+# include <particle/billboard_sprite.hpp>
 
-#include <common/compat_gl.h>
-#include <SDL/texture_loader.hpp>
+# include <common/compat_gl.h>
+# include <SDL/texture_loader.hpp>
 #endif 
 
 namespace Particle
 {
 
 class GrenadeList* grenade_list = NULL;
+class PlasmagenSpurList* plasmagen_spur_list = NULL;
 
 #if DC_CLIENT
 class Shrapnel_list* shrapnel_list = NULL;
@@ -32,6 +34,7 @@ class BillboardTextHud_list* billboard_text_hud_list = NULL;
 void init_particles()
 {
     grenade_list = new GrenadeList(MAX_GRENADES);
+    plasmagen_spur_list = new PlasmagenSpurList;
 
     #if DC_CLIENT
     shrapnel_list = new Shrapnel_list;
@@ -49,6 +52,7 @@ void init_particles()
 void teardown_particles()
 {
     if (grenade_list != NULL) delete grenade_list;
+    if (plasmagen_spur_list != NULL) delete plasmagen_spur_list;
 
     #if DC_CLIENT
     if (shrapnel_list != NULL) delete shrapnel_list;
@@ -113,8 +117,7 @@ void draw_shrapnel()
     shrapnel_list->draw();
 }
 
-// TODO -- RESTORE SHRAPNEL ONCE RENDERING IS FIXED
-Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz)
+class Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz)
 {
     Shrapnel* s = shrapnel_list->create();
     if(s == NULL) return NULL;

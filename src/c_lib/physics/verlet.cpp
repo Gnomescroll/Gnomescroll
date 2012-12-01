@@ -120,26 +120,37 @@ bool VerletComponent::radial(float xr, float yr)
     return bounced;
 }
 
-bool VerletComponent::collide_no_gravity()
-{
+bool VerletComponent::collide_no_gravity(class RaytraceData* data, float* dist)
+{   // float* dist is distance travelled
     struct Vec3 old_position = this->position;
     struct Vec3 old_velocity = this->velocity;
 
     velocity_integrate(&this->position, &this->velocity, no_gravity, dt);
 
-    struct RaytraceData data;
-    bool collided = raytrace_terrain(old_position, this->position, &data);
+    bool collided = raytrace_terrain(old_position, this->position, data);
 
     if (collided)
     {   // collision
-        this->position = vec3_add(old_position, vec3_scalar_mult(old_velocity, dt*data.interval));
+        this->position = vec3_add(old_position, vec3_scalar_mult(old_velocity, dt*data->interval));
         this->position = translate_position(this->position);
         this->velocity = vec3_init(0.0f, 0.0f, 0.0f);
     }
     else
         this->position = translate_position(this->position);
 
+    if (dist != NULL)
+    {
+        if (vec3_equal(this->position, old_position)) *dist = 0.0f;
+        else *dist = vec3_length(vec3_sub(this->position, old_position));
+    }
+
     return collided;
+}
+
+bool VerletComponent::collide_no_gravity()
+{
+    static struct RaytraceData data;
+    return collide_no_gravity(&data, NULL);
 }
 
 void VerletComponent::move_no_gravity()

@@ -89,8 +89,6 @@ void create_explosion(const int x, const int y, const int z)
         for (int m=0; m<2; m++)
             p[m] = translate_point(p[m]);
 
-        //printf("Checking point: %d,%d,%d\n", p[0], p[1], p[2]);
-
         if (bounds[i][k] >= j)
         {
             CubeID cube_id = t_map::get(p[0], p[1], p[2]);

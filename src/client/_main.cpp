@@ -339,6 +339,7 @@ void draw_tick()
     Particle::begin_particle_draw();
     Particle::grenade_list->draw();
     Particle::blood_list->draw();
+    Particle::plasmagen_spur_list->draw();
     Particle::end_particle_draw();
 
     GL_ASSERT(GL_BLEND, true);
