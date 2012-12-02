@@ -191,10 +191,10 @@ void block_action_StoC::handle()
     {
         CubeID old_cube_id = get(x,y,z);
         Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), old_cube_id, (TerrainModificationAction)action);
-        Sound::block_destroyed(x+0.5f,y+0.5f,z+0.5f, 0,0,0);
+        Sound::play_3d_sound("block_destroyed", x+0.5f,y+0.5f,z+0.5f, 0,0,0);
     }
     else
-        Sound::block_set(x+0.5f,y+0.5f,z+0.5f,0,0,0);
+        Sound::play_3d_sound("block_set", x+0.5f,y+0.5f,z+0.5f,0,0,0);
 
     main_map->set_block(x,y,z, (CubeID)this->cube_id);
 }

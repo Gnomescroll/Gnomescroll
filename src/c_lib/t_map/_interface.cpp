@@ -258,8 +258,6 @@ void handle_explosive_block(int x, int y, int z)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
     t_gen::create_explosion(x,y,z);
-    // TODO -- add sound
-    //Sound::broadcast_3d_sound("plasmagen_explode", x,y,z, 0,0,0);
 }
 
 // Do on client connect
