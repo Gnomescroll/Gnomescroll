@@ -50,56 +50,58 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
 
     if (!camera_on_ground) return;
 
-    const int n_footsteps = 16;
-    int (*footsteps[n_footsteps])(void) =
+    // pre-programmed footstep sequence
+    const size_t n_footsteps = 16;
+    int footsteps[n_footsteps] =
     {
-        Sound::soft_step_2,
-        Sound::soft_step_1,
-        Sound::soft_step_2,
-        Sound::soft_step_1,
-        Sound::soft_step_3,
-        Sound::soft_step_1,
-        Sound::soft_step_2,
-        Sound::soft_step_4,
-        
-        Sound::soft_step_2,
-        Sound::soft_step_1,
-        Sound::soft_step_2,
-        Sound::soft_step_2,
-        Sound::soft_step_3,
-        Sound::soft_step_1,
-        Sound::soft_step_4,
-        Sound::soft_step_2,
+        2,
+        1,
+        2,
+        1,
+        3,
+        1,
+        2,
+        4,
+
+        2,
+        1,
+        2,
+        2,
+        3,
+        1,
+        4,
+        2,
     };
 
-    const int n_perturb_footsteps = 4;
-    int (*perturb_footsteps[n_perturb_footsteps])(void) =
-    {
-        Sound::soft_step_1,
-        Sound::soft_step_2,
-        Sound::soft_step_3,
-        Sound::soft_step_4,
-    };
-
+    const size_t n_perturb_footsteps = 4;
+    int perturb_footsteps[n_perturb_footsteps] = {1,2,3,4};
     
     #define RANDOM_STEPS 0
     #define RANDOM_CHANGE 1
     #define RANDOM_CHANGE_PER_LOOP 1
 
+    const size_t footstep_sound_len = 32;
+    static char footstep_sound[footstep_sound_len] = {'\0'};
     if (total_distance > distance_per_step)
     {
         total_distance = fmodf(total_distance, distance_per_step);
         #if RANDOM_STEPS
-        footsteps[randrange(0,n_footsteps-1)]();
+        int footstep_num = footsteps[randrange(0, n_footsteps-1)];
         #else
-        static int step = 0;
+        int footstep_num = 1;
+        static size_t step = 0;
         step++;
         step %= n_footsteps;
         if (RANDOM_CHANGE && randf() < (((float)RANDOM_CHANGE_PER_LOOP)/((float)n_footsteps)))
-            perturb_footsteps[randrange(0,n_perturb_footsteps-1)]();
+            footstep_num = perturb_footsteps[randrange(0,n_perturb_footsteps-1)];
         else
-            footsteps[step]();
+            footstep_num = footsteps[step];
         #endif
+
+        size_t wrote = snprintf(footstep_sound, footstep_sound_len, "soft_step_%d", footstep_num);
+        GS_ASSERT(wrote < footstep_sound_len);
+        if (wrote >= footstep_sound_len) return;
+        Sound::play_2d_sound(footstep_sound);
     }
 
     #undef RANDOM_STEPS
