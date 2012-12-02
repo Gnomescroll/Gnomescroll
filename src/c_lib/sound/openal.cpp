@@ -22,7 +22,7 @@ class GS_SoundBuffer
     public:
         int id;
         unsigned int hash;
-        char* fn;
+        char* event_name;
         int buffer_id;
         bool loaded;
         Soundfile* metadata;
@@ -79,7 +79,7 @@ class GS_SoundBuffer
 
     GS_SoundBuffer() :
     id(-1),
-    hash(0), fn(NULL), buffer_id(-1), loaded(false), metadata(NULL),
+    hash(0), event_name(NULL), buffer_id(-1), loaded(false), metadata(NULL),
     max_sources(MAX_SOURCES_PER_SAMPLE),
     current_sources(0)
     {
@@ -90,7 +90,7 @@ class GS_SoundBuffer
     ~GS_SoundBuffer()
     {
         free(this->sources);
-        free(this->fn);
+        free(this->event_name);
     }
 };
 
@@ -379,14 +379,14 @@ void load_sound(Soundfile* snd)
     {
         s = sound_buffers[i];
         if (s == NULL) continue;
-        if (s->metadata != NULL && strcmp(s->metadata->file, snd->file) == 0)
+        if (s->metadata != NULL && strcmp(s->metadata->filename, snd->filename) == 0)
         {   // already loaded this wav file into an openal buffer.
             // create a new instance of GS_Soundbuffer and copy the OpenAL buffer id
             GS_SoundBuffer* new_s = new GS_SoundBuffer;
             new_s->id = soundfile_index;
             new_s->hash = snd->hash;
-            new_s->fn = (char*)malloc((strlen(snd->fn)+1)*sizeof(char));
-            strcpy(new_s->fn, snd->fn);
+            new_s->event_name = (char*)malloc((strlen(snd->event_name)+1)*sizeof(char));
+            strcpy(new_s->event_name, snd->event_name);
             new_s->buffer_id = s->buffer_id;
             new_s->loaded = true;
             new_s->metadata = snd;
@@ -406,7 +406,7 @@ void load_sound(Soundfile* snd)
     unsigned char* buffer = NULL;
 
     // Load test.wav 
-    int data_id = Sound::load_wav_file(snd->file, &buffer);
+    int data_id = Sound::load_wav_file(snd->filename, &buffer);
     if (data_id < 0)
     {
         printf("OpenALSound::load_sound -- wav data_id %d invalid\n", data_id);
@@ -429,7 +429,7 @@ void load_sound(Soundfile* snd)
     // retrieve OpenAL specific format, determined from wav metadata
     ALenum fmt = Sound::get_openal_wav_format(data);
     if (fmt == AL_FORMAT_STEREO8 || fmt == AL_FORMAT_STEREO16)  // stereo samples wont be attenuated in OpenAL
-        printf("WARNING: audio file %s is in stereo format. 3D sound will not be applied for this sample.\n", snd->file);
+        printf("WARNING: audio file %s is in stereo format. 3D sound will not be applied for this sample.\n", snd->filename);
         
     // put the PCM data into the alBuffer
     // (this will copy the buffer, so we must free our PCM buffer)
@@ -442,8 +442,8 @@ void load_sound(Soundfile* snd)
     s = new GS_SoundBuffer;
     s->id = soundfile_index;
     s->hash = snd->hash;
-    s->fn = (char*)malloc((strlen(snd->fn)+1) * sizeof(char));
-    strcpy(s->fn, snd->fn);
+    s->event_name = (char*)malloc((strlen(snd->event_name)+1) * sizeof(char));
+    strcpy(s->event_name, snd->event_name);
     s->buffer_id = buffer_index;
     s->loaded = true;
     s->metadata = snd;
@@ -460,9 +460,9 @@ int get_free_source()
     return -1;
 }
 
-GS_SoundBuffer* get_sound_buffer_from_function_name(const char* fn)
+GS_SoundBuffer* get_sound_buffer_from_event_name(const char* event_name)
 {
-    unsigned int h = strhash(fn);
+    unsigned int h = strhash(event_name);
     for (int i=0; i<MAX_SOUNDS; i++)
     {
         if (sound_buffers[i] == NULL) continue;
@@ -641,7 +641,7 @@ static int play_2d_sound(class GS_SoundBuffer* sound_buffer, float gain_multipli
         return -1;
 
     // add sound to active sources
-    if (!can_add_to_sources(sound_buffer->buffer_id, source_id)) printf("Can't add %s\n", sound_buffer->fn);
+    if (!can_add_to_sources(sound_buffer->buffer_id, source_id)) printf("Can't add %s\n", sound_buffer->event_name);
     if (!can_add_to_sources(sound_buffer->buffer_id, source_id))
         return -1;
 
@@ -664,12 +664,12 @@ static int play_2d_sound(class GS_SoundBuffer* sound_buffer, float gain_multipli
     return source_id;
 }
 
-int play_2d_sound(const char* fn, float gain_multiplier, float pitch_multiplier)
+int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled) return -1;
     
     // lookup buffer from file
-    class GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
+    class GS_SoundBuffer* sound_buffer = get_sound_buffer_from_event_name(event_name);
     GS_ASSERT(sound_buffer != NULL);
     
     if (sound_buffer == NULL) return -1;
@@ -679,9 +679,9 @@ int play_2d_sound(const char* fn, float gain_multiplier, float pitch_multiplier)
     return play_2d_sound(sound_buffer, gain_multiplier, pitch_multiplier);
 }
 
-int play_2d_sound(const char* fn)
+int play_2d_sound(const char* event_name)
 {
-    return play_2d_sound(fn, 1.0f, 1.0f);
+    return play_2d_sound(event_name, 1.0f, 1.0f);
 }
 
 int play_2d_sound(int soundfile_id)
@@ -713,7 +713,7 @@ static int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, stru
         return -1;
 
     // add sound to active sources
-    if (!can_add_to_sources(sound_buffer->buffer_id, source_id)) printf("Can't add %s\n", sound_buffer->fn);
+    if (!can_add_to_sources(sound_buffer->buffer_id, source_id)) printf("Can't add %s\n", sound_buffer->event_name);
     if (!can_add_to_sources(sound_buffer->buffer_id, source_id))
         return -1;
 
@@ -732,12 +732,12 @@ static int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, stru
     return source_id;
 }
 
-int play_3d_sound(const char* fn, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
+int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled) return -1;
 
     // lookup buffer from file
-    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
+    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_event_name(event_name);
 
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
@@ -746,9 +746,9 @@ int play_3d_sound(const char* fn, struct Vec3 p, struct Vec3 v, float gain_multi
     return play_3d_sound(sound_buffer, p, v, gain_multiplier, pitch_multiplier);
 }
 
-int play_3d_sound(const char* fn, struct Vec3 p, struct Vec3 v)
+int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v)
 {
-    return play_3d_sound(fn, p, v, 1.0f, 1.0f);
+    return play_3d_sound(event_name, p, v, 1.0f, 1.0f);
 }
 
 int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
@@ -884,9 +884,9 @@ int test()
 
     unsigned char* buffer = NULL;
 
-    char fn[] = "./media/sound/wav/plasma_grenade_explode.wav";
+    char event_name[] = "./media/sound/wav/plasma_grenade_explode.wav";
     // Load test.wav 
-    int data_id = Sound::load_wav_file(fn, &buffer);
+    int data_id = Sound::load_wav_file(event_name, &buffer);
     if (data_id < 0)
     {
         printf("OpenALSound::test -- wav data_id %d invalid\n", data_id);

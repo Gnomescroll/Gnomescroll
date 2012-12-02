@@ -255,8 +255,7 @@ inline void object_shot_object_StoC::handle()
         v.x, v.y, v.z
     );
 
-    // todo -- sound event
-    Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
+    Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
 }
 
 inline void object_shot_terrain_StoC::handle()
@@ -290,8 +289,8 @@ inline void object_shot_terrain_StoC::handle()
         this->cube, this->side
     );
     Animations::terrain_sparks(this->x, this->y, this->z);
-    Sound::laser_hit_block(this->x, this->y, this->z, 0,0,0);
-    Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
+    Sound::play_3d_sound("laser_hit_block", this->x, this->y, this->z, 0,0,0);
+    Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
 }
 
 inline void object_shot_nothing_StoC::handle()
@@ -317,7 +316,7 @@ inline void object_shot_nothing_StoC::handle()
         position.x, position.y, position.z,
         v.x, v.y, v.z
     );
-    Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
+    Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
 }
 
 inline void object_choose_weapon_target_StoC::handle()

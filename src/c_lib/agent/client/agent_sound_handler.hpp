@@ -88,11 +88,7 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
 
     if (total_distance > distance_per_step)
     {
-        //play sound
-        //printf("play agent sound !!! \n");
-        //total_distance -= distance_per_step;
         total_distance = fmodf(total_distance, distance_per_step);
-        //Sound::walking();
         #if RANDOM_STEPS
         footsteps[randrange(0,n_footsteps-1)]();
         #else

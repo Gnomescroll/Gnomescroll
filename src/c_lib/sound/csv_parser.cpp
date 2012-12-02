@@ -8,9 +8,8 @@ namespace Sound
 // the csv columns in left to right order
 typedef enum
 {
-    EVENT_NAME = 0, // not code
+    EVENT_NAME = 0,
     FILE_NAME,
-    FUNCTION_NAME,
     IN_USE,         // not code
     INTEGRATED,     // not code
     PITCH,
@@ -36,13 +35,14 @@ const float GS_DEFAULT_ROLLOFF_FACTOR = 1.0f;
 const bool GS_DEFAULT_LOOP = false;
 const float GS_DEFAULT_MAX_PLAYABLE_DISTANCE = 128.0f;
 
-void parse_sound_triggers(const char *fn)
+void parse_sound_triggers(const char* csv_filename)
 {
     size_t size = 0;
-    char *buff = read_file_to_buffer(fn, &size);
+    char *buff = read_file_to_buffer(csv_filename, &size);
+    GS_ASSERT(buff != NULL && size != 0);
     if (buff == NULL)
     {
-        printf("Error opening sound conf: %s\n", fn);
+        printf("Error opening sound conf: %s\n", csv_filename);
         return;
     }
     if (size == 0)
@@ -66,17 +66,17 @@ void parse_sound_triggers(const char *fn)
         return;
     }
     n_lines -= 1;   // first line of csv is metadata
-    sound_file_functions = (class Soundfile*)malloc(sizeof(class Soundfile) * n_lines);
+    soundfiles = (class Soundfile*)malloc(sizeof(class Soundfile) * n_lines);
 
     i = 0;
     int n = 0;
     int column = 0;
 
-    const int MAX_FN_LEN = 100;
-    char* filename = (char*)calloc(MAX_FN_LEN+1, sizeof(char));
-    char* function_name = (char*)calloc(MAX_FN_LEN+1, sizeof(char));
+    const int MAX_EVENT_NAME_LEN = 100;
+    char* filename = (char*)calloc(MAX_EVENT_NAME_LEN+1, sizeof(char));
+    char* event_name = (char*)calloc(MAX_EVENT_NAME_LEN+1, sizeof(char));
     int filename_index = 0;
-    int function_name_index = 0;
+    int event_name_index = 0;
 
     const int MAX_FLOAT_BUFFER_INDEX = 10;
     const int MAX_BOOL_BUFFER_INDEX = 1;
@@ -110,11 +110,11 @@ void parse_sound_triggers(const char *fn)
     bool loop_value;
     float max_playable_distance_value;
 
-    // filename is stored in the 2nd column (1-indexed),
-    // function name is stored in the 3rd column
+    // event name is stored in the 1st column
+    // filename is stored in the 2nd column,
     // commas deliminate columns
     // newlines deliminate entries
-    // any character that cant be a filename or function name character should throw warning,
+    // any character that cant be a filename or event name character should throw warning,
     // but only ignoring spaces as is
     // the csv exported by gnumeric contains no spaces, and looks like: col1,col2,...,colN,\n
 
@@ -134,9 +134,9 @@ void parse_sound_triggers(const char *fn)
             switch (column)
             {
                 case FILE_NAME:
-                    if (filename_index >= MAX_FN_LEN)
+                    if (filename_index >= MAX_EVENT_NAME_LEN)
                     {
-                        printf("Error parsing sounds conf: filename %s exceeding max length (%d)\n", filename, MAX_FN_LEN);
+                        printf("Error parsing sounds conf: filename %s exceeding max length (%d)\n", filename, MAX_EVENT_NAME_LEN);
                         return;
                     }
                     if (isspace(c))
@@ -144,15 +144,15 @@ void parse_sound_triggers(const char *fn)
                     filename[filename_index++] = c;
                     break;
                     
-                case FUNCTION_NAME:
-                    if (function_name_index >= MAX_FN_LEN)
+                case EVENT_NAME: 
+                    if (event_name_index >= MAX_EVENT_NAME_LEN)
                     {
-                        printf("Error parsing sounds conf: function name %s exceeding max length (%d)\n", function_name, MAX_FN_LEN);
+                        printf("Error parsing sounds conf: event name %s exceeding max length (%d)\n", event_name, MAX_EVENT_NAME_LEN);
                         return;
                     }
                     if (isspace(c))
                         break;
-                    function_name[function_name_index++] = c;
+                    event_name[event_name_index++] = c;
                     break;
 
                 case PITCH:
@@ -213,8 +213,6 @@ void parse_sound_triggers(const char *fn)
                 case IN_USE:
                 case INTEGRATED:
                 case NOTES:
-                case EVENT_NAME: 
-                default:
                     break;
             }
         }
@@ -222,11 +220,11 @@ void parse_sound_triggers(const char *fn)
         if (c == '\n')
         {   // end of row; insert data
             n++;
-            if (filename_index && function_name_index)
+            if (filename_index && event_name_index)
             {
                 // end the string
                 filename[filename_index] = '\0';
-                function_name[function_name_index] = '\0';
+                event_name[event_name_index] = '\0';
                 pitch[pitch_index] = '\0';
                 gain[gain_index] = '\0';
                 max_distance[max_distance_index] = '\0';
@@ -239,7 +237,7 @@ void parse_sound_triggers(const char *fn)
 
                 // set strings
                 int snd_id = n_sounds;
-                if (set_soundfile(snd_id, function_name, filename))
+                if (set_soundfile(snd_id, event_name, filename))
                 {   // set properties
                     n_sounds++;
                     pitch_value = (pitch_index) ? (float)atof(pitch) : GS_DEFAULT_PITCH;
@@ -258,10 +256,10 @@ void parse_sound_triggers(const char *fn)
                 {
                     printf("OPENAL: double line allocation\n");
                     n_lines *= 2;
-                    class Soundfile* new_sound_file_functions = (class Soundfile*)realloc(sound_file_functions, sizeof(class Soundfile) * n_lines);
-                    GS_ASSERT(new_sound_file_functions != NULL);
-                    if (new_sound_file_functions != NULL)
-                        sound_file_functions = new_sound_file_functions;
+                    class Soundfile* new_soundfiles = (class Soundfile*)realloc(soundfiles, sizeof(class Soundfile) * n_lines);
+                    GS_ASSERT(new_soundfiles != NULL);
+                    if (new_soundfiles != NULL)
+                        soundfiles = new_soundfiles;
                     else
                     {
                         n_lines /= 2;
@@ -271,7 +269,7 @@ void parse_sound_triggers(const char *fn)
             }
 
             filename_index = 0;
-            function_name_index = 0;
+            event_name_index = 0;
             pitch_index = 0;
             gain_index = 0;
             max_distance_index = 0;
@@ -286,16 +284,16 @@ void parse_sound_triggers(const char *fn)
     }
 
     // finalize
-    if (n_sounds == 0 && sound_file_functions != NULL)
+    if (n_sounds == 0 && soundfiles != NULL)
     {
-        free(sound_file_functions);
-        sound_file_functions = NULL;
+        free(soundfiles);
+        soundfiles = NULL;
     }
 
     // cleanup
     free(buff);
     free(filename);
-    free(function_name);
+    free(event_name);
 }
 
 }   // Sound

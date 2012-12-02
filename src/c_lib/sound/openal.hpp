@@ -16,11 +16,11 @@ void set_volume(float vol);
 
 void load_sound(Soundfile* snd);
 
-int play_2d_sound(const char* file);
-int play_2d_sound(const char* fn, float gain_multiplier, float pitch_multiplier);
+int play_2d_sound(const char* event_name);
+int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_multiplier);
 
-int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v);
-int play_3d_sound(const char* file, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier);
+int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v);
+int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier);
 
 int play_2d_sound(int soundfile_id);
 int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
