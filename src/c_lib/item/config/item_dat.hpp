@@ -13,10 +13,10 @@ namespace Item
 
 void load_item_dat()
 {
-    SpriteSheet i0 = texture_alias("./media/sprites/item/i00.png");
-    SpriteSheet i1 = texture_alias("./media/sprites/item/i01.png");
-    SpriteSheet p0 = texture_alias("./media/sprites/item/p00.png");
-    //int i2 = texture_alias("./media/sprites/item/i02.png");
+    SpriteSheet i0 = item_texture_alias("./media/sprites/item/i00.png");
+    SpriteSheet i1 = item_texture_alias("./media/sprites/item/i01.png");
+    SpriteSheet p0 = item_texture_alias("./media/sprites/item/p00.png");
+    //int i2 = item_texture_alias("./media/sprites/item/i02.png");
 
     // Automatic block drop items are created at a later step, after the block drop dat
     // If you want to override any default properties for IG_PLACER blocks,

@@ -200,7 +200,7 @@ void AgentInventoryUI::draw()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
     glBegin(GL_QUADS);
 

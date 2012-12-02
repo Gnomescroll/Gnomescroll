@@ -106,23 +106,26 @@ void init_shaders()
     //map_compatibility_shader = new MapCompatibilityShader;
 }
 
+void reload_textures()
+{
+    if (T_MAP_BACKUP_SHADER)
+        map_compatibility_shader.init_texture();
+    else
+        map_shader.init_texture();
+}
+
 void MapShader::init_texture()
 {
-
-    if (terrain_map_glsl != 0)
-    {
-        printf("map_shader init_texture: attempting to delete, may cause segfault \n");
-        glDeleteTextures(1,&terrain_map_glsl);
-        terrain_map_glsl = 0;
-    }
-
-
     //printf("init_map_3d_texture: 1 \n");
     //glEnable(GL_TEXTURE_2D);
+
     glDisable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
-
+    
+    if (terrain_map_glsl != 0)
+        glDeleteTextures(1, &terrain_map_glsl);
     glGenTextures(1, &terrain_map_glsl);
+
     glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl);
 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -189,23 +192,23 @@ void MapShader::init_texture()
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
     }
 
-    GS_ASSERT(TextureSheetLoader::CubeSurface != NULL);
-    if (TextureSheetLoader::CubeSurface == NULL) return;
+    GS_ASSERT(TextureSheetLoader::cube_texture_sheet_loader->surface != NULL);
+    if (TextureSheetLoader::cube_texture_sheet_loader->surface == NULL) return;
     
     GLenum format = GL_BGRA;
-    if (TextureSheetLoader::CubeSurface->format->Rmask == 0x000000ff)
+    if (TextureSheetLoader::cube_texture_sheet_loader->surface->format->Rmask == 0x000000ff)
         format = GL_RGBA;
 
     GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
     //GLuint internalFormat = GL_SRGB8_ALPHA8; //GL_RGBA;
 
-    const int w = TextureSheetLoader::CubeTextureSheetLoader->tile_size;    //32 or 16
-    const int h = TextureSheetLoader::CubeTextureSheetLoader->tile_size;    //32 or 16
+    const int w = TextureSheetLoader::cube_texture_sheet_loader->tile_size;    //32 or 16
+    const int h = TextureSheetLoader::cube_texture_sheet_loader->tile_size;    //32 or 16
     const int d = 256;
 
-    GS_ASSERT(TextureSheetLoader::CubeTextureStack != NULL);
-    if (TextureSheetLoader::CubeTextureStack == NULL) return;
-    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTextureStack);
+    GS_ASSERT(TextureSheetLoader::cube_texture_sheet_loader->texture_stack != NULL);
+    if (TextureSheetLoader::cube_texture_sheet_loader->texture_stack == NULL) return;
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::cube_texture_sheet_loader->texture_stack);
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
@@ -214,21 +217,16 @@ void MapShader::init_texture()
 
 void MapCompatibilityShader::init_texture()
 {
-    SDL_Surface* s = TextureSheetLoader::CubeSurface;
+    SDL_Surface* s = TextureSheetLoader::cube_texture_sheet_loader->surface;
 
-    if (s == NULL)
-    {
-        printf("init_map_3d_texture_compatibility() error \n");
-        return;
-    }
-
+    GS_ASSERT(s != NULL);
+    if (s == NULL) return;
 
     glEnable(GL_TEXTURE_2D);
 
-    if (block_textures_compatibility == 0)
-    {
-        glGenTextures(1, &block_textures_compatibility);
-    }
+    if (block_textures_compatibility != 0)
+        glDeleteTextures(1, &block_textures_compatibility);
+    glGenTextures(1, &block_textures_compatibility);
 
     glBindTexture(GL_TEXTURE_2D, block_textures_compatibility);
 
@@ -248,9 +246,7 @@ void MapCompatibilityShader::init_texture()
     //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels); //2nd parameter is level
     
     if (ANISOTROPIC_FILTERING)
-    {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
-    }
 
     GLenum texture_format;
     if (s->format->Rmask == 0x000000ff)
@@ -402,7 +398,7 @@ void set_map_shader_0_compatibility(int level)
 void init_map_3d_texture_compatibility()
 {
 //#if 0
-    //SDL_Surface* s = TextureSheetLoader::CubeSurface;
+    //SDL_Surface* s = TextureSheetLoader::cube_texture_sheet_loader->surface;
 
     //if (s == NULL)
     //{
@@ -455,7 +451,7 @@ void init_map_3d_texture_compatibility()
 void init_block_texture_normal()
 {
 
-    SDL_Surface* s = TextureSheetLoader::CubeSurface;
+    SDL_Surface* s = TextureSheetLoader::cube_texture_sheet_loader->surface;
 
     if (s == NULL)
     {

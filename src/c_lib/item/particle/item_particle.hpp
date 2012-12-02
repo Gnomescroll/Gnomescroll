@@ -130,9 +130,9 @@ class ItemParticle_list: public ObjectList<ItemParticle, ItemParticleID>
 void ItemParticle_list::draw()
 {
     #if DC_CLIENT
-    using TextureSheetLoader::ItemSheetTexture;
-    GS_ASSERT(ItemSheetTexture != 0);
-    if (ItemSheetTexture == 0) return;
+    using TextureSheetLoader::item_texture_sheet_loader;
+    GS_ASSERT(item_texture_sheet_loader->texture != 0);
+    if (item_texture_sheet_loader->texture == 0) return;
 
     glColor4ub(255,255,255,255);
 
@@ -144,7 +144,7 @@ void ItemParticle_list::draw()
 
     glAlphaFunc(GL_GREATER, 0.5f);
 
-    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
+    glBindTexture(GL_TEXTURE_2D, item_texture_sheet_loader->texture);
 
     glBegin(GL_QUADS);
     for (unsigned int i=0; i<this->max; i++)

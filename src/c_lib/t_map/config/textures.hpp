@@ -3,6 +3,8 @@
 #if DC_CLIENT
 #include <SDL/texture_sheet_loader.hpp>
 #include <t_map/glsl/palette.hpp>
+#include <t_map/glsl/texture.hpp>
+#include <SDL/draw_functions.hpp>
 #endif
 
 namespace t_map

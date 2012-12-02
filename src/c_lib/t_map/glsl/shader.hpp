@@ -5,6 +5,7 @@ namespace t_map
 { 
 
 void init_shaders();
+void reload_textures();
 
 void set_map_shader_0();
 
@@ -88,24 +89,24 @@ class MapCompatibilityShader
 {
     public:
 
-    SDL_Surface* terrain_map_surface;
-    int terrain_map_texture;
+        SDL_Surface* terrain_map_surface;
+        int terrain_map_texture;
 
-    int terrain_map_glsl;
-    //unsigned int texture1;
-    class SHADER* shader;
+        int terrain_map_glsl;
+        //unsigned int texture1;
+        class SHADER* shader;
 
-    //uniforms
-    int InOffset;
+        //uniforms
+        int InOffset;
 
-    //attributes
-    int InVertex;
-    int InTexCoord;
-    int InTexCoord2;
-    int InRGB;
-    int InLightMatrix;
-    int InLight;
-    //int Normal;
+        //attributes
+        int InVertex;
+        int InTexCoord;
+        int InTexCoord2;
+        int InRGB;
+        int InLightMatrix;
+        int InLight;
+        //int Normal;
 
     MapCompatibilityShader()
     : terrain_map_surface(NULL), terrain_map_texture(0), terrain_map_glsl(0), shader(NULL)

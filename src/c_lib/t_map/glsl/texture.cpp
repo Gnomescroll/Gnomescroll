@@ -28,7 +28,6 @@ namespace t_map
 const int N_PIXEL_SAMPLES = 10;
 const static int TEXTURE_WIDTH = 32;
 static unsigned char** pixel_data = NULL;
-GLuint block_texture = 0;
 
 void init_textures()
 {
@@ -100,12 +99,12 @@ void set_cube_side_texture(int id, int side, int tex_id)
 
 void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
 {
-    GS_ASSERT(TextureSheetLoader::CubeTextureStack != NULL);
-    if (TextureSheetLoader::CubeTextureStack == NULL) return;
+    GS_ASSERT(TextureSheetLoader::cube_texture_sheet_loader->texture_stack != NULL);
+    if (TextureSheetLoader::cube_texture_sheet_loader->texture_stack == NULL) return;
     
     int tex_id = get_cube_side_texture(cube_id, side);
     int ra = (TEXTURE_WIDTH*TEXTURE_WIDTH)*tex_id + (rand() % (TEXTURE_WIDTH*TEXTURE_WIDTH));
-    unsigned int t = TextureSheetLoader::CubeTextureStack[ra];
+    unsigned int t = TextureSheetLoader::cube_texture_sheet_loader->texture_stack[ra];
     *r = (t >> (8*0)) & 0xff;
     *g = (t >> (8*1)) & 0xff;
     *b = (t >> (8*2)) & 0xff;

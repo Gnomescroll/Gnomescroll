@@ -113,7 +113,7 @@ void AgentToolbeltUI::draw()
 
     // draw slot border
     int intensity = 0; // old intensity == 80-16
-	glBegin(GL_QUADS);
+    glBegin(GL_QUADS);
     glColor4ub(intensity, intensity, intensity, 55); // old alpha == 128+64
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
@@ -138,7 +138,7 @@ void AgentToolbeltUI::draw()
     if (slot_stacks == NULL) return;
     if (slot_durabilities == NULL) return;
 
-    //glColor4ub(80, 80, 80, 128);		
+    //glColor4ub(80, 80, 80, 128);      
     // render durability
     glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
@@ -196,8 +196,8 @@ void AgentToolbeltUI::draw()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
+    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
     glBegin(GL_QUADS);
 

@@ -149,9 +149,9 @@ static Vec3 compute_point_offset(
 bool draw_sprite_gl_begin()
 {
     // setup texture
-    using TextureSheetLoader::ItemSheetTexture;
-    GS_ASSERT(ItemSheetTexture != 0);
-    if (ItemSheetTexture == 0) return false;
+    using TextureSheetLoader::item_texture_sheet_loader;
+    GS_ASSERT(item_texture_sheet_loader->texture != 0);
+    if (item_texture_sheet_loader->texture == 0) return false;
 
     // set up opengl state
     glColor4ub(255,255,255,255);
@@ -162,7 +162,7 @@ bool draw_sprite_gl_begin()
 
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5f);
-    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
+    glBindTexture(GL_TEXTURE_2D, item_texture_sheet_loader->texture);
 
     // vertex calls
     glBegin(GL_QUADS);

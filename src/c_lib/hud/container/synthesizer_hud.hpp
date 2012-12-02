@@ -257,8 +257,8 @@ void AgentSynthesizerUI::draw()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    GS_ASSERT(TextureSheetLoader::GreyScaleItemTexture != 0);
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
+    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->greyscale_texture != 0);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
 
     glBegin(GL_QUADS);
 
@@ -306,8 +306,8 @@ void AgentSynthesizerUI::draw()
     // item sheet items
     if (any_available)
     {
-        GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
-        glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
+        GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
+        glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
         glBegin(GL_QUADS);
         //draw available store items

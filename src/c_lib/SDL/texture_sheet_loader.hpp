@@ -11,50 +11,60 @@ namespace TextureSheetLoader
 
 class TextureSheetLoader
 {
+    private:
+        bool blit_meta(size_t meta_index);
+        
     public:
 
-        unsigned int tile_size; // pixel dimension of each sprite/tile in sheet
-        unsigned int texture_num;
-        unsigned int tile_num;
+        struct TileMeta
+        {
+            SpriteSheet sheet_id;
+            size_t xpos;
+            size_t ypos;
+        };
+
+        size_t tile_size; // pixel dimension of each sprite/tile in sheet
+        size_t surface_num;
+        size_t tile_num;
         
-        GLenum texture_format;
+        GLenum format;
 
         char** filenames;
         SDL_Surface** surfaces;
         
         struct TileMeta* meta;
 
-        struct SDL_Surface* texture_sheet;  //for 2d array
-        struct SDL_Surface* grey_scale_texture_sheet;  //for 2d array
+        struct SDL_Surface* surface;  //for 2d array
+        struct SDL_Surface* greyscale_surface;  //for 2d array
         Uint32* texture_stack; //for 3d arrays
+
+        GLuint texture;
+        GLuint greyscale_texture;
+
+        GLenum mag_filter;
 
         SpriteSheet load_texture(const char* filename);
         SpriteSheet load_texture_from_surface(struct SDL_Surface* surface);
+        SpriteSheet load_texture_from_surface(struct SDL_Surface* surface, SpriteSheet sheet_id);
 
         // blit to sheet and return texture id
-        int blit(SpriteSheet sheet_id, int source_x, int source_y);
+        int blit(SpriteSheet sheet_id, size_t source_x, size_t source_y);
 
-        void generate_grey_scale();
+        void generate_greyscale();
 
-    explicit TextureSheetLoader(unsigned int tile_size);
+        void reload();
+        void generate_texture(GLenum mag_filter);
+
+    explicit TextureSheetLoader(size_t tile_size);
     ~TextureSheetLoader();
 };
 
-extern class TextureSheetLoader* CubeTextureSheetLoader;
-extern Uint32* CubeTextureStack;
-extern struct SDL_Surface* CubeSurface;
-
-extern class TextureSheetLoader* ItemTextureSheetLoader;
-extern Uint32* ItemTextureStack;
-extern struct SDL_Surface* ItemSurface;
-extern struct SDL_Surface* GreyScaleItemSurface;
-extern GLuint ItemSheetTexture;
-extern GLuint GreyScaleItemTexture;
+extern class TextureSheetLoader* cube_texture_sheet_loader;
+extern class TextureSheetLoader* item_texture_sheet_loader;
 
 void init();
 void init_greyscale();
 void init_item_texture();
-void teardown_item_texture();
 
 void teardown();
 
@@ -68,5 +78,7 @@ SpriteSheet load_item_texture_sheet(const char* filename);
 SpriteSheet load_item_texture_sheet(struct SDL_Surface* surface);
 int blit_item_texture(SpriteSheet sheet_id, int source_x, int source_y);
 void save_item_texture();
+
+void reload_texture_sheets();
 
 }   // TextureSheetLoader

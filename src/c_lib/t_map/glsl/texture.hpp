@@ -1,17 +1,10 @@
 #pragma once
 
-
 #ifndef GLuint
     typedef unsigned int GLuint;
 #endif
 
-struct SDL_Surface;
-struct SDL_PixelFormat;
-
-extern GLuint block_texture;
-//GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using this
-
-#include "structs.hpp"
+#include <t_map/glsl/structs.hpp>
 
 namespace t_map
 {
@@ -24,8 +17,8 @@ extern GLuint terrain_map_glsl; //for shader
 extern GLuint block_textures_normal; //linear scale
 
 extern int must_lock_block_surface;
-extern SDL_Surface *block_surface;
-extern SDL_PixelFormat *block_surface_pixel_format;
+extern struct SDL_Surface* block_surface;
+extern struct SDL_PixelFormat* block_surface_pixel_format;
 extern int block_surface_width, block_surface_height;
 
 extern struct SDL_Surface* block_item_64_surface;

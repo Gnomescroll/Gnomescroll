@@ -291,7 +291,7 @@ void CraftingUI::draw()
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
     glBegin(GL_QUADS);
 
@@ -378,7 +378,7 @@ void CraftingUI::draw()
     // switch to greyscale texture if unavailable
     if (any_unavailable)
     {
-        glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
+        glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
         for (int xslot=0; xslot<output_xdim; xslot++)
         for (int yslot=0; yslot<output_ydim; yslot++)
         {
@@ -391,7 +391,7 @@ void CraftingUI::draw()
             int tex_id = Item::get_sprite_index_for_type(item_type);
 
             // switch to greyscale texture if unavailable
-            if (!available) glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
+            if (!available) glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
 
             x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
             y = yoff - (output_offset_y + cell_offset_y + cell_size*yslot);

@@ -23,19 +23,19 @@ class EnergyTanksUI : public UIElement
 
     int count()
     { // count loaded energy tanks
-		if (this->container_id == NULL_CONTAINER) return 0;
-		int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-		GS_ASSERT(slot_types != NULL);
-		if (slot_types == NULL) return 0;
+        if (this->container_id == NULL_CONTAINER) return 0;
+        int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
+        GS_ASSERT(slot_types != NULL);
+        if (slot_types == NULL) return 0;
 
-		int num_loaded = 0;
+        int num_loaded = 0;
 
-		for (int i=0; i<xdim; i++)
-		for (int j=0; j<ydim; j++)
-		{
-			if (slot_types[j * xdim + i] != NULL_ITEM_TYPE) 
-				num_loaded++;
-		}
+        for (int i=0; i<xdim; i++)
+        for (int j=0; j<ydim; j++)
+        {
+            if (slot_types[j * xdim + i] != NULL_ITEM_TYPE) 
+                num_loaded++;
+        }
 
         return num_loaded;
     }
@@ -162,23 +162,23 @@ void EnergyTanksUI::draw()
     int energy_tank_sprite_index = Item::get_sprite_index_for_type(energy_tank_type);
     GS_ASSERT(energy_tank_sprite_index != ERROR_SPRITE);
 
-    GS_ASSERT(TextureSheetLoader::GreyScaleItemTexture != 0);
-    if (TextureSheetLoader::GreyScaleItemTexture == 0) return;
+    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->greyscale_texture != 0);
+    if (TextureSheetLoader::item_texture_sheet_loader->greyscale_texture == 0) return;
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::GreyScaleItemTexture);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
 
     // draw unloaded energy tanks as greyscale
     // (here's where we ALSO used the LOADED drawing code below, but with the following line changed
     // in order to only draw the empty tanks:
     //         if (slot_types[slot] != NULL_ITEM_TYPE) continue;
     
-    GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
-    if (TextureSheetLoader::ItemSheetTexture == 0)
+    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
+    if (TextureSheetLoader::item_texture_sheet_loader->texture == 0)
     {
         glDisable(GL_TEXTURE_2D);
         return;
     }
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
     xoff = (_xresf - count() * slot_size) / 2;
 

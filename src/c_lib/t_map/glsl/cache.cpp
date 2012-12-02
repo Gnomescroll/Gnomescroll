@@ -40,25 +40,6 @@ void init_cache()
 
 }
 
-/*
-    Deprecate, use lookup table
-*/
-
-/*
-    if vert_num == 0:
-        tx = 0.0
-        ty = 0.0
-    elif vert_num == 1:
-        tx = 0.0
-        ty = 1.0
-    elif vert_num == 2:
-        tx = 1.0
-        ty = 1.0
-    elif vert_num == 3:
-        tx = 1.0
-        ty = 0.0
-*/
-
 static const int v_index[72] = 
 {
     1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top

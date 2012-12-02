@@ -335,8 +335,8 @@ static HudText::Text* tooltip_text = NULL;
 
 static void draw_grabbed_icon()
 {
-    GS_ASSERT(TextureSheetLoader::ItemSheetTexture != 0);
-    if (TextureSheetLoader::ItemSheetTexture == 0) return;
+    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
+    if (TextureSheetLoader::item_texture_sheet_loader->texture == 0) return;
 
     using ItemContainer::player_hand_ui;
     if (player_hand_ui == NULL) return;
@@ -387,7 +387,7 @@ static void draw_grabbed_icon()
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
 
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::ItemSheetTexture);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
     glBegin(GL_QUADS);
         

@@ -27,10 +27,14 @@ bool is_valid_item_name(const char* name)
 }
 
 class ItemAttribute* s = NULL;
-
 static int _current_item_index = 0;
 
 #if DC_CLIENT
+SpriteSheet item_texture_alias(const char* spritesheet_filename)
+{
+    return TextureSheetLoader::load_item_texture_sheet(spritesheet_filename);
+}
+
 static SpriteSheet _item_cube_iso_spritesheet_id = NULL_SPRITE_SHEET;
 #endif
 
@@ -49,7 +53,7 @@ bool item_def(ItemGroup group, const char* name)
     if (s == NULL)
     {
         GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id == -1);
-        _item_cube_iso_spritesheet_id = TextureSheetLoader::load_item_texture(t_map::block_item_16_surface);
+        _item_cube_iso_spritesheet_id = item_texture_alias("screenshot/fbo_test_16.png");
     }
     #endif
 
@@ -176,12 +180,6 @@ void set_pretty_name(const char* pretty_name)
 }
 
 #if DC_CLIENT
-
-SpriteSheet texture_alias(const char* spritesheet_filename)
-{
-    return TextureSheetLoader::load_item_texture_sheet(spritesheet_filename);
-}
-
 void sprite_def(SpriteSheet spritesheet, int ypos, int xpos)
 {
     GS_ASSERT_ABORT(s != NULL);
@@ -218,7 +216,7 @@ void iso_block_sprite_def(const char* block_name)
 }
 
 #else
-SpriteSheet texture_alias(const char* spritesheet) { return (SpriteSheet)0; }
+SpriteSheet item_texture_alias(const char* spritesheet) { return (SpriteSheet)0; }
 void sprite_def(SpriteSheet spritesheet, int xpos, int ypos) {}
 void iso_block_sprite_def(const char* block_name) {}
 #endif

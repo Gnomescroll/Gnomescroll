@@ -1037,10 +1037,6 @@ void key_down_handler(SDL_Event* event)
             save_screenshot();
             break;
 
-        case SDLK_F10:
-            if (input_state.admin_controls) t_map::toggle_3d_texture_settings();
-            break;
-
         case SDLK_F1:
             if (!input_state.login_mode)
                 toggle_awesomium();
@@ -1057,6 +1053,17 @@ void key_down_handler(SDL_Event* event)
         case SDLK_F4:
             toggle_hud();
             break;
+
+        case SDLK_F9:
+            #if PRODUCTION
+            if (input_state.admin_controls)
+            #endif
+                TextureSheetLoader::reload_texture_sheets();
+            break;
+
+        //case SDLK_F10:
+            //if (input_state.admin_controls) t_map::toggle_3d_texture_settings();
+            //break;
 
         case SDLK_F12:
             toggle_admin_controls();
