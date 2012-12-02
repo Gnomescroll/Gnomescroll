@@ -5,8 +5,6 @@ dont_include_this_file_in_server
 #endif
 
 #include <sound/sound.hpp>
-#include <sound/packets.hpp>
-#include <sound/triggers.hpp>
 
 //const int JETPACK_FUEL_MAX = 1300;
 const int JETPACK_FUEL_MAX = 500;

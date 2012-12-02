@@ -36,7 +36,7 @@ inline void item_particle_destroy_StoC::handle()
         if (pickup_sound_frame != ClientState::frame_id)
         {
             pickup_sound_frame = ClientState::frame_id;
-            Sound::pickup_item();
+            Sound::play_2d_sound("pickup_item");
         }
     }
     

@@ -1,6 +1,6 @@
 #include "csv_parser.hpp"
 
-#include <sound/triggers.hpp>
+#include <sound/soundfiles.hpp>
 
 namespace Sound
 {
@@ -133,17 +133,6 @@ void parse_sound_triggers(const char* csv_filename)
         {
             switch (column)
             {
-                case FILE_NAME:
-                    if (filename_index >= MAX_EVENT_NAME_LEN)
-                    {
-                        printf("Error parsing sounds conf: filename %s exceeding max length (%d)\n", filename, MAX_EVENT_NAME_LEN);
-                        return;
-                    }
-                    if (isspace(c))
-                        break;
-                    filename[filename_index++] = c;
-                    break;
-                    
                 case EVENT_NAME: 
                     if (event_name_index >= MAX_EVENT_NAME_LEN)
                     {
@@ -155,6 +144,17 @@ void parse_sound_triggers(const char* csv_filename)
                     event_name[event_name_index++] = c;
                     break;
 
+                case FILE_NAME:
+                    if (filename_index >= MAX_EVENT_NAME_LEN)
+                    {
+                        printf("Error parsing sounds conf: filename %s exceeding max length (%d)\n", filename, MAX_EVENT_NAME_LEN);
+                        return;
+                    }
+                    if (isspace(c))
+                        break;
+                    filename[filename_index++] = c;
+                    break;
+                    
                 case PITCH:
                     if (pitch_index >= MAX_FLOAT_BUFFER_INDEX || !(isdigit(c) || c == '.' || c == '-'))
                         break;
@@ -284,11 +284,15 @@ void parse_sound_triggers(const char* csv_filename)
     }
 
     // finalize
-    if (n_sounds == 0 && soundfiles != NULL)
+    if (n_sounds <= 0 && soundfiles != NULL)
     {
         free(soundfiles);
         soundfiles = NULL;
+        n_sounds = 0;
     }
+
+    for (int i=0; i<n_sounds; i++)
+        soundfiles[i].id = i;
 
     // cleanup
     free(buff);

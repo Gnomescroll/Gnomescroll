@@ -10,7 +10,7 @@ namespace t_map
 
 #include <animations/animations.hpp>
 #include <common/random.hpp>
-#include <sound/triggers.hpp>
+#include <sound/sound.hpp>
 
 
 int client_chunk_alias_list[1024] = {0};

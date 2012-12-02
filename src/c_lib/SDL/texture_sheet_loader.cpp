@@ -16,7 +16,7 @@ const size_t N_SURFACES = 32;
 
 TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
     tile_size(tile_size), surface_num(0), tile_num(0), format(GL_BGRA),
-    mag_filter(GL_NEAREST)
+    texture(0), greyscale_texture(0), mag_filter(GL_NEAREST)
 {
     this->meta = new struct TileMeta[256];
     this->filenames = (char**)calloc(N_SURFACES, sizeof(char*));

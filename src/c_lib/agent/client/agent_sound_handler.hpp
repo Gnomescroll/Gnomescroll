@@ -13,7 +13,7 @@ dont_include_this_file_in_server
 
 void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentState s1, bool s1_on_ground, bool camera_on_ground)
 {
-    static const float SOFT_FALL_VELOCITY_THRESHOLD   = 0.05f;
+    static const float SOFT_FALL_VELOCITY_THRESHOLD   = 0.07f;
     static const float MEDIUM_FALL_VELOCITY_THRESHOLD = 0.50f;
     static const float HARD_FALL_VELOCITY_THRESHOLD   = 0.75f;
     

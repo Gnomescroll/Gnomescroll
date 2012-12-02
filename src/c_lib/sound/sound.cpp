@@ -1,7 +1,7 @@
 #include "sound.hpp"
 
 #include <sound/packets.hpp>
-#include <sound/triggers.hpp>
+#include <sound/soundfiles.hpp>
 
 #if DC_CLIENT
 #include <physics/vec3.hpp>
@@ -69,16 +69,17 @@ void load_sound(Soundfile* snd)
 }
 
 // Public
-int play_2d_sound(const char* fn)
+int play_2d_sound(const char* event_name)
 {
+    printf("Play %s\n", event_name);
     if (!Options::sound) return -1;
-    return OpenALSound::play_2d_sound(fn);
+    return OpenALSound::play_2d_sound(event_name);
 }
 
-int play_2d_sound(const char* fn, float gain_multiplier, float pitch_multiplier)
+int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_multiplier)
 {
     if (!Options::sound) return -1;
-    return OpenALSound::play_2d_sound(fn, gain_multiplier, pitch_multiplier);
+    return OpenALSound::play_2d_sound(event_name, gain_multiplier, pitch_multiplier);
 }
 
 int play_2d_sound(int soundfile_id)
@@ -90,10 +91,10 @@ int play_2d_sound(int soundfile_id)
 //Public
 
 // deprecated, use Vec3
-int play_3d_sound(const char* fn, float x, float y, float z, float vx, float vy, float vz)
+int play_3d_sound(const char* event_name, float x, float y, float z, float vx, float vy, float vz)
 {
     if (!Options::sound) return -1;
-    return play_3d_sound(fn, vec3_init(x,y,z), vec3_init(vx,vy,vz));
+    return play_3d_sound(event_name, vec3_init(x,y,z), vec3_init(vx,vy,vz));
 }
 
 int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)

@@ -6,6 +6,7 @@ namespace Sound
 class Soundfile
 {
     public:
+        int id;
         unsigned int hash;  // hash of event_name
         char* event_name;
         char* filename;
@@ -20,8 +21,8 @@ class Soundfile
         bool loop;
         float max_playable_distance;
 
-    Soundfile()
-    : hash(0), event_name(NULL), filename(NULL)
+    Soundfile() :
+        id(-1), hash(0), event_name(NULL), filename(NULL)
     {}
 
     ~Soundfile()

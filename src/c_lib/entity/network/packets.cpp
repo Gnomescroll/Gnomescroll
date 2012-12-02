@@ -3,7 +3,6 @@
 #if DC_CLIENT
 
 #include <sound/sound.hpp>
-#include <sound/triggers.hpp>
 #include <animations/_interface.hpp>
 #include <animations/animations.hpp>
 
@@ -212,7 +211,7 @@ inline void object_picked_up_StoC::handle()
 {
     using ClientState::playerAgent_state;
     class Agent* you = playerAgent_state.you();
-    if (you != NULL && you->id == agent_id) Sound::pickup_item();
+    if (you != NULL && you->id == agent_id) Sound::play_2d_sound("pickup_item");
     Entities::destroy((EntityType)type, id);
 }
 

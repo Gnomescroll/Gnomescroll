@@ -7,7 +7,7 @@ dont_include_this_file_in_server
 #include <physics/ray_trace/hitscan.hpp>
 
 #include <agent/net_agent.hpp>
-#include <sound/triggers.hpp>
+#include <sound/sound.hpp>
 
 #include <particle/_include.hpp>
 #include <particle/grenade.hpp>
@@ -102,7 +102,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
                     collision_point[0], collision_point[1], collision_point[2],
                     look.x, look.y, look.z
                 );
-                Sound::laser_hit_agent(
+                Sound::play_3d_sound("laser_hit_agent",
                     collision_point[0], collision_point[1], collision_point[2],
                     0,0,0
                 );
@@ -164,7 +164,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
                 tile, side
             );
             Animations::terrain_sparks(collision_point[0], collision_point[1], collision_point[2]);
-            Sound::laser_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            Sound::play_3d_sound("laser_hit_block", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
             break;
             
@@ -176,7 +176,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
             break;
     }
 
-    Sound::fire_laser();
+    Sound::play_2d_sound("fire_laser");
 
     // play laser anim (client viewport)
     const float hitscan_speed = 200.0f;
@@ -226,7 +226,7 @@ void PlayerAgent_action::begin_mining_laser()
 
     GS_ASSERT(this->mining_laser_sound_id < 0);
     if (this->mining_laser_sound_id >= 0) return;
-    this->mining_laser_sound_id = Sound::mining_laser(true, -1);
+    this->mining_laser_sound_id = Sound::play_2d_sound("mining_laser");
 }
 
 void PlayerAgent_action::end_mining_laser()
@@ -237,7 +237,7 @@ void PlayerAgent_action::end_mining_laser()
     you->event.mining_laser_emitter.turn_off();
 
     if (this->mining_laser_sound_id < 0) return;
-    Sound::mining_laser(false, this->mining_laser_sound_id);
+    Sound::stop_sound(this->mining_laser_sound_id);
     this->mining_laser_sound_id = -1;
 }
 
@@ -310,7 +310,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                     collision_point[0], collision_point[1], collision_point[2],
                     look.x, look.y, look.z
                 );
-                Sound::pick_hit_agent(
+                Sound::play_3d_sound("pick_hit_agent",
                     collision_point[0], collision_point[1], collision_point[2],
                     0,0,0
                 );
@@ -385,9 +385,9 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 look.x, look.y, look.z,
                 tile, side
             );
-            //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            //Sound::play_3d_sound("pick_hit_block", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             if (weapon_group != IG_MINING_LASER)
-                Sound::block_took_damage(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+                Sound::play_3d_sound("block_took_damage", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             break;
             
         default:

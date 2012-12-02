@@ -7,7 +7,7 @@ dont_include_this_file_in_server
 #include <input/handlers.hpp>
 
 #include <state/client_state.hpp>
-#include <sound/triggers.hpp>
+#include <sound/sound.hpp>
 #include <chat/_interface.hpp>
 #include <hud/map.hpp>
 
@@ -89,10 +89,10 @@ void Agent_event::took_damage(int dmg)
     b->set_ttl(245);
 
     if (a->is_you())
-        Sound::agent_took_damage();
+        Sound::play_2d_sound("agent_took_damage");
     // TODO: attenuated damage sound
     //else
-        //Sound::agent_took_damage(p.x, p.y, p.z, 0,0,0);
+        //Sound::play_3d_sound("agent_took_damage", p.x, p.y, p.z, 0,0,0);
 }
 
 void Agent_event::healed(int amount)
@@ -100,13 +100,13 @@ void Agent_event::healed(int amount)
     GS_ASSERT(amount >= 0);
     if (a->is_you())
     {
-        //Sound::restore_health();
+        //Sound::play_2d_sound("restore_health");
         Chat::send_system_message("You healed.");
     }
     else
     {
         //Vec3 p = this->a->get_position();
-        //Sound::restore_health(p.x, p.y, p.z, 0,0,0);
+        //Sound::play_3d_sound("restore_health", p.x, p.y, p.z, 0,0,0);
     }
 
     // show billboard text particle
@@ -138,12 +138,12 @@ void Agent_event::died()
         if (a->is_you())
         {
             close_all_containers();
-            //Sound::died();
+            //Sound::play_2d_sound("died");
         }
         //else
         //{
             //Vec3 p = this->a->get_position();
-            //Sound::died(p.x, p.y, p.z, 0,0,0);
+            //Sound::play_3d_sound("died", p.x, p.y, p.z, 0,0,0);
         //}
         this->a->vox->set_vox_dat(&VoxDats::agent_dead);
         this->a->vox->reset_skeleton();
@@ -155,9 +155,9 @@ void Agent_event::born()
 {
     if (!this->a->status.dead) return;
     //if (a->is_you())
-        //Sound::respawned();
+        //Sound::play_2d_sound("respawned");
     //else
-        //Sound::respawned(a->s.x, a->s.y, a->s.z, 0,0,0);
+        //Sound::play_3d_sound("respawned", a->s.x, a->s.y, a->s.z, 0,0,0);
     this->a->status.dead = false;
 
     // reset skeleton
@@ -207,7 +207,7 @@ void Agent_event::set_agent_vox_status(AgentVoxStatus status)
 void Agent_event::reload_weapon(int type)
 {
     //Vec3 p = this->a->get_position();
-    //Sound::reload(p.x, p.y, p.z, 0,0,0);
+    //Sound::play_3d_sound("reload", p.x, p.y, p.z, 0,0,0);
     // play reload animation/sound for the weapon
 }
 
@@ -244,7 +244,7 @@ void Agent_event::fired_weapon_at_object(int id, EntityType type, int part)
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
 
-    Sound::fire_laser(s.x, s.y, s.z, s.vx, s.vy, s.vz);
+    Sound::play_3d_sound("fire_laser", s.x, s.y, s.z, s.vx, s.vy, s.vz);
 
     Vec3 f = this->a->forward_vector();
 
@@ -258,10 +258,9 @@ void Agent_event::fired_weapon_at_object(int id, EntityType type, int part)
             {
                 Vec3 c = vv->get_center();
                 Animations::blood_spray(c.x, c.y, c.z, f.x, f.y, f.z);
-                //Sound::pick_hit_agent(  // TODO: play weapon sound from a config
+                //Sound::play_3d_sound("pick_hit_agent",  // TODO: play weapon sound from a config
                     //c.x, c.y, c.z, 
-                    //0,0,0
-                //);
+                    //0,0,0);
             }
         }
     }
@@ -289,7 +288,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
 
-    Sound::fire_laser(s.x, s.y, s.z, s.vx, s.vy, s.vz);
+    Sound::play_3d_sound("fire_laser", s.x, s.y, s.z, s.vx, s.vy, s.vz);
 
     if (this->a->vox == NULL) return;
 
@@ -317,7 +316,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     // play block surface crumble
     Animations::block_damage(x,y,z, f.x, f.y, f.z, cube, side);
     Animations::terrain_sparks(x,y,z);
-    Sound::laser_hit_block(x,y,z, 0,0,0);
+    Sound::play_3d_sound("laser_hit_block", x,y,z, 0,0,0);
 }
 
 void Agent_event::fired_weapon_at_nothing()
@@ -325,7 +324,7 @@ void Agent_event::fired_weapon_at_nothing()
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
 
-    Sound::fire_laser(s.x, s.y, s.z, s.vx, s.vy, s.vz);
+    Sound::play_3d_sound("fire_laser", s.x, s.y, s.z, s.vx, s.vy, s.vz);
 
     if (this->a->vox == NULL) return;
     
@@ -357,10 +356,10 @@ void Agent_event::hit_block()
     // play pick swing
     // play block damage animation
     //Vec3 p = this->a->get_camera_position();
-    //Sound::pick_swung(p.x, p.y, p.z, 0,0,0);
+    //Sound::play_3d_sound("pick_swung", p.x, p.y, p.z, 0,0,0);
 
     // TODO -- need collision point
-    //Sound::block_took_damage(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+    //Sound::play_3d_sound("block_took_damage", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
 }
 
 void Agent_event::melee_attack_object(int id, EntityType type, int part)
@@ -371,33 +370,32 @@ void Agent_event::melee_attack_object(int id, EntityType type, int part)
     // play object's hurt sound
 
     //Vec3 p = this->a->get_camera_position();
-    //Sound::pick_swung(p.x,p.y,p.z,0,0,0);
-    //Sound::pick_hit_agent(p.x, p.y, p.z,0,0,0);
+    //Sound::play_3d_sound("pick_swung", p.x,p.y,p.z, 0,0,0);
+    //Sound::play_3d_sound("pick_hit_agent", p.x, p.y, p.z, 0,0,0);
 }
 
 void Agent_event::melee_attack_nothing()
 {
     // play pick swing animation
     //Vec3 p = this->a->get_camera_position();
-    //Sound::pick_swung(p.x, p.y, p.z, 0,0,0);
+    //Sound::play_3d_sound("pick_swung", p.x, p.y, p.z, 0,0,0);
 }
 
 void Agent_event::fire_empty_weapon(int weapon_type)
 {
     Vec3 p = this->a->get_camera_position();
-    Sound::out_of_ammo(p.x, p.y, p.z, 0,0,0);
+    Sound::play_3d_sound("out_of_ammo", p.x, p.y, p.z, 0,0,0);
 }
 
 Agent_event::~Agent_event()
 {
 }
 
-Agent_event::Agent_event(Agent* owner)
-:
-a(owner),
-vox_status(AGENT_VOX_IS_STANDING),
-model_was_changed(true),
-color_changed(false)
+Agent_event::Agent_event(Agent* owner) :
+    a(owner),
+    vox_status(AGENT_VOX_IS_STANDING),
+    model_was_changed(true),
+    color_changed(false)
 {
     this->bb.reset();
     this->bb.permanent = true;

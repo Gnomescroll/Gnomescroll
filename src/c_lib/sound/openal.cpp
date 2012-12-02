@@ -5,6 +5,7 @@ dont_include_this_file_in_server
 #endif
 
 #include <sound/sound.hpp>
+#include <sound/soundfiles.hpp>
 #include <common/compat_al.h>
 #include <physics/vec3.hpp>
 
@@ -78,10 +79,10 @@ class GS_SoundBuffer
     }
 
     GS_SoundBuffer() :
-    id(-1),
-    hash(0), event_name(NULL), buffer_id(-1), loaded(false), metadata(NULL),
-    max_sources(MAX_SOURCES_PER_SAMPLE),
-    current_sources(0)
+        id(-1),
+        hash(0), event_name(NULL), buffer_id(-1), loaded(false), metadata(NULL),
+        max_sources(MAX_SOURCES_PER_SAMPLE),
+        current_sources(0)
     {
         this->sources = (int*)malloc(sizeof(int) * this->max_sources);
         for (int i=0; i<this->max_sources; this->sources[i++] = -1);
@@ -112,17 +113,17 @@ static ALuint* sources = NULL;
 class GS_SoundSource
 {
     public:
-        int soundfile_id;
+        int sound_buffer_id;
         bool active;
         bool two_dimensional;
         // add AL source properties here so we can vary per source easily
         float pitch_multiplier;
         float gain_multiplier;
 
-    void use(int soundfile_id)
+    void use(int sound_buffer_id)
     {
-        GS_ASSERT(soundfile_id >= 0);
-        this->soundfile_id = soundfile_id;
+        GS_ASSERT(sound_buffer_id >= 0 && sound_buffer_id < MAX_SOUNDS);
+        this->sound_buffer_id = sound_buffer_id;
         this->active = true;
         this->two_dimensional = true;
         this->pitch_multiplier = 1.0f;
@@ -130,7 +131,7 @@ class GS_SoundSource
     }
 
     GS_SoundSource() :
-        soundfile_id(-1),
+        sound_buffer_id(-1),
         active(false), two_dimensional(false),
         pitch_multiplier(1.0f), gain_multiplier(1.0f)
     {}
@@ -370,28 +371,25 @@ void close()
 
 void load_sound(Soundfile* snd)
 {
-    if (!enabled)
-        return;
+    if (!enabled) return;
 
-    GS_SoundBuffer* s;
     // check if file has been loaded
     for (int i=0; i<MAX_SOUNDS; i++)
     {
-        s = sound_buffers[i];
+        class GS_SoundBuffer* s = sound_buffers[i];
         if (s == NULL) continue;
         if (s->metadata != NULL && strcmp(s->metadata->filename, snd->filename) == 0)
         {   // already loaded this wav file into an openal buffer.
             // create a new instance of GS_Soundbuffer and copy the OpenAL buffer id
             GS_SoundBuffer* new_s = new GS_SoundBuffer;
-            new_s->id = soundfile_index;
+            new_s->id = soundfile_index++;
             new_s->hash = snd->hash;
             new_s->event_name = (char*)malloc((strlen(snd->event_name)+1)*sizeof(char));
             strcpy(new_s->event_name, snd->event_name);
             new_s->buffer_id = s->buffer_id;
             new_s->loaded = true;
             new_s->metadata = snd;
-            sound_buffers[soundfile_index] = new_s;
-            soundfile_index++;
+            sound_buffers[new_s->id] = new_s;
             return;
         }
     }
@@ -439,17 +437,15 @@ void load_sound(Soundfile* snd)
         return;
 
     // put in lookup table for playback
-    s = new GS_SoundBuffer;
-    s->id = soundfile_index;
+    class GS_SoundBuffer* s = new GS_SoundBuffer;
+    s->id = soundfile_index++;
     s->hash = snd->hash;
     s->event_name = (char*)malloc((strlen(snd->event_name)+1) * sizeof(char));
     strcpy(s->event_name, snd->event_name);
-    s->buffer_id = buffer_index;
+    s->buffer_id = buffer_index++;
     s->loaded = true;
     s->metadata = snd;
-    sound_buffers[soundfile_index] = s;
-    buffer_index++;
-    soundfile_index++;
+    sound_buffers[s->id] = s;
 }
 
 int get_free_source()
@@ -544,10 +540,10 @@ void get_listener_state(float *x, float *y, float *z, float *vx, float *vy, floa
     alGetListenerfv(AL_ORIENTATION, orientation);
 }
 
-static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional)
+static bool add_to_sources(int sound_buffer_id, int source_id, bool two_dimensional)
 {
-    GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
-    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return false;
+    GS_ASSERT(sound_buffer_id >= 0 && sound_buffer_id < MAX_SOUNDS);
+    if (sound_buffer_id < 0 || sound_buffer_id >= MAX_SOUNDS) return false;
 
     GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
     if (source_id < 0 || source_id >= MAX_SOURCES) return false;
@@ -555,7 +551,7 @@ static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional
     // add sound to active sources
     GS_ASSERT(!active_sources[source_id].active);
     if (!active_sources[source_id].active) sources_in_use++;
-    active_sources[source_id].use(soundfile_id);
+    active_sources[source_id].use(sound_buffer_id);
     active_sources[source_id].two_dimensional = two_dimensional;
     return true;
 }
@@ -646,7 +642,7 @@ static int play_2d_sound(class GS_SoundBuffer* sound_buffer, float gain_multipli
         return -1;
 
     // add sound to active sources
-    bool added = add_to_sources(sound_buffer->buffer_id, source_id, true);
+    bool added = add_to_sources(sound_buffer->id, source_id, true);
     GS_ASSERT(added);
     if (!added) return -1;
     class GS_SoundSource* active_source = &active_sources[source_id];
@@ -675,6 +671,8 @@ int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_mul
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
     if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
+
+    printf("Loops? %d\n", sound_buffer->metadata->loop);
 
     return play_2d_sound(sound_buffer, gain_multiplier, pitch_multiplier);
 }
@@ -717,7 +715,7 @@ static int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, stru
     if (!can_add_to_sources(sound_buffer->buffer_id, source_id))
         return -1;
 
-    if (!add_to_sources(sound_buffer->buffer_id, source_id, false)) return -1;
+    if (!add_to_sources(sound_buffer->id, source_id, false)) return -1;
     class GS_SoundSource* active_source = &active_sources[source_id];
     active_source->gain_multiplier = gain_multiplier;
     active_source->pitch_multiplier = pitch_multiplier;
@@ -788,30 +786,28 @@ void update()
     // expire any used sources
     for (int i=0; i<MAX_SOURCES; i++)
     {
+        class GS_SoundSource* active_source = &active_sources[i];
         alGetSourcei(sources[i], AL_SOURCE_STATE, &source_state);
         if (source_state == AL_PLAYING)
         {
-            GS_ASSERT(active_sources[i].active);    // should already be active
-            active_sources[i].active = true;
-            if (active_sources[i].two_dimensional)    // update 2d listeners
+            GS_ASSERT(active_source->active);    // should already be active
+            active_source->active = true;
+            if (active_source->two_dimensional)    // update 2d listeners
                 update_source_state(sources[i], x,z,y,vx,vz,vy, o[0], o[2], o[1]);
 
-            GS_ASSERT(active_sources[i].soundfile_id >= 0);
-            if (active_sources[i].soundfile_id >= 0)
+            GS_ASSERT(active_source->sound_buffer_id >= 0 && active_source->sound_buffer_id < MAX_SOUNDS);
+            if (active_source->sound_buffer_id >= 0 && active_source->sound_buffer_id < MAX_SOUNDS)
             {
-                class GS_SoundBuffer* buffer_data = sound_buffers[active_sources[i].soundfile_id];
-                GS_ASSERT(buffer_data != NULL);
-                if (buffer_data != NULL)
-                {
-                    GS_ASSERT(sound_buffers[active_sources[i].soundfile_id]);
-                    set_source_properties(i, buffer_data->metadata, &active_sources[i]);
-                }
+                class GS_SoundBuffer* sound_buffer = sound_buffers[active_source->sound_buffer_id];
+                GS_ASSERT(sound_buffer != NULL);
+                if (sound_buffer != NULL)
+                    set_source_properties(i, sound_buffer->metadata, active_source);
             }
         }
         else
         {
-            if (active_sources[i].active) sources_in_use--;
-            active_sources[i].active = false;
+            if (active_source->active) sources_in_use--;
+            active_source->active = false;
         }
         
     }

@@ -2,7 +2,7 @@
 
 #if DC_CLIENT
 #include <animations/animations.hpp>
-#include <sound/triggers.hpp>
+#include <sound/sound.hpp>
 #endif
 
 #include <t_map/t_map.hpp>
@@ -85,7 +85,7 @@ Grenade::~Grenade()
 {
     #if DC_CLIENT
     Vec3 position = this->get_position();
-    Sound::plasma_grenade_explode(position.x, position.y, position.z, 0,0,0);
+    Sound::play_3d_sound("plasma_grenade_explode", position.x, position.y, position.z, 0,0,0);
     #endif
 }
 
@@ -111,7 +111,7 @@ void Grenade::tick()
         this->bounce_count++;
         #if DC_CLIENT
         Vec3 position = this->get_position();
-        Sound::grenade_bounce(position.x, position.y, position.z, 0,0,0);
+        Sound::play_3d_sound("grenade_bounce", position.x, position.y, position.z, 0,0,0);
         #endif
     }
     if (this->bounce_count >= GRENADE_BOUNCE_EXPLODE_LIMIT)
