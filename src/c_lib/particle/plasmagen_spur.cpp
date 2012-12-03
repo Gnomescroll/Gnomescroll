@@ -77,8 +77,7 @@ void plasmagen_explode_StoC::handle()
         spur->set_state(this->position, momentum);
     }
 
-    // TODO -- play sound
-    //Sound::play_3d_sound("plasmagen_explode", this->position, vec3_init(0,0,0));
+    Sound::play_3d_sound("plasmagen_explode", this->position, vec3_init(0,0,0));
     #endif
 }
 
