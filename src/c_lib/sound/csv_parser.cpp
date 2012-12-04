@@ -141,6 +141,8 @@ void parse_sound_triggers(const char* csv_filename)
                     }
                     if (isspace(c))
                         break;
+                    if (c == '"' || c == '\'')
+                        break;
                     event_name[event_name_index++] = c;
                     break;
 
@@ -151,6 +153,8 @@ void parse_sound_triggers(const char* csv_filename)
                         return;
                     }
                     if (isspace(c))
+                        break;
+                    if (c == '"' || c == '\'')
                         break;
                     filename[filename_index++] = c;
                     break;

@@ -116,7 +116,7 @@ class MechListShader
     SDL_Surface* s;
 
     unsigned int texture1;
-    class SHADER* shader;
+    class Shader* shader;
 
     //uniforms
     int CameraPosition;
@@ -139,7 +139,7 @@ class MechListShader
 
     void init_shader()
     {
-        shader = new SHADER;
+        shader = new Shader;
         shader->set_debug(true);
 
         shader->load_shader( "mech_list_shader",

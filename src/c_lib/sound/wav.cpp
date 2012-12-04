@@ -237,7 +237,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
 
  
 // returns buffer id.  make sure to free *buffer after binding to an ALbuffer
-int load_wav_file(char *fn, unsigned char** buffer)
+int load_wav_file(const char* filename, unsigned char** buffer)
 {    
     *buffer = NULL;
     WavData* data = NULL;
@@ -249,20 +249,20 @@ int load_wav_file(char *fn, unsigned char** buffer)
     }
 
     // open file
-    char* fullpath = (char*)malloc(sizeof(char) * (strlen(base_path) + strlen(fn) + 1));
-    sprintf(fullpath, "%s%s", base_path, fn);
+    char* fullpath = (char*)malloc(sizeof(char) * (strlen(base_path) + strlen(filename) + 1));
+    sprintf(fullpath, "%s%s", base_path, filename);
     FILE* f = fopen(fullpath, "rb");
     free(fullpath);
     if (f == NULL)
     {
-        printf("Error opening file: %s\n", fn);
+        printf("Error opening file: %s\n", fullpath);
         return -1;
     }
 
     // check header
     if (!is_valid_wav(f))
     {
-        printf("%s is not a WAV file\n", fn);
+        printf("%s is not a WAV file\n", filename);
         fclose(f);
         return -1;
     }
@@ -270,7 +270,7 @@ int load_wav_file(char *fn, unsigned char** buffer)
     // read metadata
     if (!read_wav_fmt_subchunk(f, data))
     {
-        printf("%s has an invalid format chunk\n", fn);
+        printf("%s has an invalid format chunk\n", filename);
         fclose(f);
         return -1;
     }
@@ -278,7 +278,7 @@ int load_wav_file(char *fn, unsigned char** buffer)
     // read wav data
     if (!read_wav_data(f, data, buffer))
     {
-        printf("Failed to read data subchunk of %s\n", fn);
+        printf("Failed to read data subchunk of %s\n", filename);
         return -1;
     }
     if (*buffer == NULL)

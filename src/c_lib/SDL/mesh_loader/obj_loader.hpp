@@ -186,7 +186,7 @@ void load_model()
     free(memory);
 }
 
-class SHADER monster_shader;
+class Shader monster_shader;
 unsigned int monster_texture;
 
 unsigned int monster_TexCoord;

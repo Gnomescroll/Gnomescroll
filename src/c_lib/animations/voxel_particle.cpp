@@ -12,13 +12,13 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-class SHADER textured_voxel_particle_shader;
+class Shader textured_voxel_particle_shader;
 GLint textured_voxel_particle_TexCoord;
 GLint textured_voxel_particle_Normal;
 GLint textured_voxel_particle_CameraPos;
 VertexElementListTextureNormal* textured_voxel_particle_vlist = NULL;
 
-class SHADER colored_voxel_particle_shader;
+class Shader colored_voxel_particle_shader;
 GLint colored_voxel_particle_Normal;
 GLint colored_voxel_particle_Color;
 GLint colored_voxel_particle_CameraPos;
@@ -58,15 +58,6 @@ void teardown_voxel_particle()
     if (textured_voxel_particle_vlist != NULL) delete textured_voxel_particle_vlist;
     if (colored_voxel_particle_vlist != NULL) delete colored_voxel_particle_vlist;
 }
-
-static const struct Vec3 base_normals[6] = {
-    {{{1,0,0}}},
-    {{{0,1,0}}},
-    {{{0,0,1}}},
-    {{{-1,0,0}}},
-    {{{0,-1,0}}},
-    {{{0,0,-1}}},
-};
 
 static void prep_textured_voxel_particles()
 {
@@ -115,7 +106,7 @@ static void prep_textured_voxel_particles()
         struct Vec3 center = p;
         center.x += size;
         center.y += size;
-        if (sphere_fulstrum_test(center.x, center.y, center.z, size) == false) continue;
+        if (!sphere_fulstrum_test(center.x, center.y, center.z, size)) continue;
 
         p.z += size;   // render offset
 
@@ -180,7 +171,7 @@ static void prep_textured_voxel_particles()
         struct Vec3 center = p;
         center.x += size;
         center.y += size;
-        if (sphere_fulstrum_test(center.x, center.y, center.z, size) == false) continue;
+        if (!sphere_fulstrum_test(center.x, center.y, center.z, size)) continue;
 
         p.z += size;   // render offset
 
@@ -266,7 +257,7 @@ static void prep_colored_voxel_particles()
         struct Vec3 center = p;
         center.x += size;
         center.y += size;
-        if (sphere_fulstrum_test(center.x, center.y, center.z, size) == false) continue;
+        if (!sphere_fulstrum_test(center.x, center.y, center.z, size)) continue;
 
         for (int i=0; i<8; i++)
         {
@@ -300,10 +291,10 @@ static void prep_colored_voxel_particles()
         // draw voxel
         for (int i=0; i<6; i++)
         {
-            colored_voxel_particle_vlist->push_vertex(veb2[4*i+0], vn[i], vox->color);
-            colored_voxel_particle_vlist->push_vertex(veb2[4*i+1], vn[i], vox->color);
-            colored_voxel_particle_vlist->push_vertex(veb2[4*i+2], vn[i], vox->color);
-            colored_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], vox->color);
+            colored_voxel_particle_vlist->push_vertex(veb2[4*i+0], vn[i], vox->voxel.color);
+            colored_voxel_particle_vlist->push_vertex(veb2[4*i+1], vn[i], vox->voxel.color);
+            colored_voxel_particle_vlist->push_vertex(veb2[4*i+2], vn[i], vox->voxel.color);
+            colored_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], vox->voxel.color);
         }
     }
     

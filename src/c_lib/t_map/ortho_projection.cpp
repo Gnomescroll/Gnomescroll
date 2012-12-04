@@ -5,7 +5,7 @@
 namespace t_map
 {
 
-class SHADER map_ortho_shader;
+class Shader map_ortho_shader;
 
 
 int map_ortho_Vertex;

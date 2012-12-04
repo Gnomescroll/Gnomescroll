@@ -14,7 +14,7 @@ namespace Particle
 
 inline void ColoredMinivox::reset()
 {
-    this->color = MINIVOX_COLOR;
+    this->voxel.color = MINIVOX_COLOR;
     this->ttl = MINIVOX_TTL;
     this->type = MINIVOX_TYPE;
     this->verlet.dampening = MINIVOX_DAMP;
@@ -23,16 +23,15 @@ inline void ColoredMinivox::reset()
     this->voxel.set_rotation(0.0f, 0.0f);
 }
 
-ColoredMinivox::ColoredMinivox()
-:
-ParticleMotion(-1, 0,0,0,0,0,0, MINIVOX_MASS*MINIVOX_SIZE)
+ColoredMinivox::ColoredMinivox() :
+    ParticleMotion(-1, 0,0,0,0,0,0, MINIVOX_MASS*MINIVOX_SIZE)
 {
     this->reset();
 }
 
 void ColoredMinivox::set_color(struct Color color)
 {
-    this->color = color;
+    this->voxel.color = color;
 }
 
 void ColoredMinivox::set_color(unsigned char r, unsigned char g, unsigned char b)

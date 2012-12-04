@@ -327,7 +327,7 @@ void set_map_shader_0_compatibility(int level)
     //bool mesa = false;
     //if (Options::mesa_shader)
     //{
-        //printf("OPTIONS MESA SHADER\n");
+        //printf("OPTIONS MESA Shader\n");
         //const char* gl_v = (const char*)glGetString(GL_VERSION);
         //if (strstr(gl_v, "Mesa") != NULL)
         //{

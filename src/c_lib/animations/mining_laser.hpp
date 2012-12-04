@@ -17,7 +17,7 @@ namespace Animations
 VertexElementList1* mining_laser_vlist = NULL;
 
 //unsigned int mining_laser_vbo;
-class SHADER mining_laser_shader;
+class Shader mining_laser_shader;
 
 int mining_laser_surface;
 unsigned int mining_laser_texture;

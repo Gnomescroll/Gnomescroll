@@ -50,6 +50,16 @@ inline struct Color color_init(unsigned char r, unsigned char g, unsigned char b
     return color;
 } 
 
+inline struct Color color_init(struct Color4 color)
+{
+    return color_init(color.r, color.g, color.b);
+}
+
+inline struct Color4 color_init(struct Color color)
+{
+    return color_init(color.r, color.g, color.g, 0xFF);
+}
+
 inline bool colors_equal(struct Color a, struct Color b)
 {
     return (a.r == b.r && a.g == b.g && a.b == b.b);

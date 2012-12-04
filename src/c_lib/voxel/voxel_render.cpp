@@ -6,17 +6,11 @@ dont_include_this_file_in_server
 
 #include <state/client_state.hpp>
 #include <camera/fulstrum_test.hpp>
-
 #include <physics/vec3.hpp>
 #include <physics/vec4.hpp>
-//#include <physics/mat3.hpp>
-//#include <physics/mat4.hpp>
 #include <physics/affine.hpp>
-
 #include <entity/constants.hpp>
-
 #include <input/handlers.hpp>
-
 #include <agent/client/player_agent.hpp>
 
 #define VOXEL_RENDER_DEBUG 0
@@ -53,8 +47,8 @@ void init_voxel_render_list_shader1()
 
     char *vs, *fs;
 
-    vs = textFileRead((char*) "./media/shaders/voxel/voxel.vsh");
-    fs = textFileRead((char*) "./media/shaders/voxel/voxel.fsh");
+    vs = textFileRead("./media/shaders/voxel/voxel.vsh");
+    fs = textFileRead("./media/shaders/voxel/voxel.fsh");
 
     glShaderSourceARB(voxel_shader_vert, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);
@@ -88,9 +82,7 @@ void init_voxel_render_list_shader1()
 
 
 Voxel_render_list::Voxel_render_list() :
-    needs_update(false),
-    id(-1),
-    num_elements(0)
+    needs_update(false), id(-1), num_elements(0)
 {
     const int starting_size = 1024;
 
@@ -122,7 +114,7 @@ Voxel_render_list::~Voxel_render_list()
 
 void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 {
-    if (num_elements >= VOXEL_RENDER_LIST_SIZE)
+    if (this->num_elements >= VOXEL_RENDER_LIST_SIZE)
     {
         printf("Voxel_render_list Error: number of voxel models exceeds VOXEL_RENDER_LIST_SIZE \n");
         return;
@@ -131,7 +123,7 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
     {
         if (this->render_list[i] == NULL)
         {
-            num_elements++;
+            this->num_elements++;
             this->render_list[i] = vv;
             vv->render_id = i;
             vv->voxel_render_list = this;
@@ -157,14 +149,9 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
     this->needs_update = true;
 }
 
-//void Voxel_render_list::update()
-//{
-    ////this->update_vertex_buffer_object();
-//}
-
 void Voxel_render_list::update_vertex_buffer_object()
 {
-    Voxel_volume* vv;
+    Voxel_volume* vv = NULL;
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
     int v_num = 0;
@@ -184,16 +171,15 @@ void Voxel_render_list::update_vertex_buffer_object()
     }
 
     _vbo->vnum = v_num;
-    //printf("v_num = %i\n", v_num);
     
     if (v_num == 0) return;
     if (!this->needs_update && volumes_updated == 0) return; //return if nothing to update
     this->needs_update = false;
     
-    if (v_num >= _vbo->max_size ) 
+    if (v_num >= _vbo->max_size)
     {
         while (v_num >= _vbo->max_size) _vbo->max_size *= 2; //double max size until its large enough and realloc
-        _vbo->vertex_list = (Voxel_vertex*) realloc (_vbo->vertex_list, _vbo->max_size*sizeof(Voxel_vertex) );
+        _vbo->vertex_list = (Voxel_vertex*)realloc(_vbo->vertex_list, _vbo->max_size*sizeof(Voxel_vertex));
     }
 
     int index = 0;
@@ -211,17 +197,11 @@ void Voxel_render_list::update_vertex_buffer_object()
         index += vv->vvl.vnum;
     }
     GS_ASSERT(index == v_num);
-    if (_vbo->id == 0 )  glGenBuffers( 1, &_vbo->id );
+    if (_vbo->id == 0 )  glGenBuffers(1, &_vbo->id);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), _vbo->vertex_list, GL_STATIC_DRAW);
 }
-
-//void Voxel_render_list::draw()
-//{
-
-//}
-
 
 // Voxel_render_list_manager
 
