@@ -37,7 +37,7 @@ class RaytraceData
 };
 
 // returns true if collided with any block
-bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* data);
-bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length, struct RaytraceData* data);
+bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* data);
+bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length, class RaytraceData* data);
 bool raytrace_terrain(struct Vec3 start, struct Vec3 end) { return raytrace_terrain(start, end, NULL); }
 bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length)  { return raytrace_terrain(start, direction, length, NULL); }

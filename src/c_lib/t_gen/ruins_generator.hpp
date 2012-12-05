@@ -11,7 +11,7 @@ dont_include_this_file_in_client
 
 const size_t  NUM_FLOORS = 4; 
 CubeID floors[NUM_FLOORS];
-const size_t NUM_WALLS = 2; 
+const size_t NUM_WALLS = 4; 
 CubeID walls[NUM_WALLS];
 const size_t NUM_CEILS = 4; 
 CubeID ceils[NUM_CEILS];
@@ -202,87 +202,6 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
         Room r = rooms[ri.z][ri.y][ri.x];
         CubeID block = r.wall_block;
         bool need_block = false;
-
-       // // do east
-       // int mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
-       // if (opens_to(DIR_SOUTH, rx, ry, rz))
-       //     mid = rooms[rz][ry - 1][rx].nh.x + rooms[rz][ry - 1][rx].nh.wid;
-       // if (cx >= mid /*&& cy < fixed_hall_offs*/) {
-       //     switch (r.dir_types[DIR_EAST]) {
-       //         case DIRTYPE_HALL:
-       //             if (far_east_cube(cx) && cz >= r.eh.hei) { // make blocks above opening
-       //                 need_block = true;
-       //                 if (cz == r.eh.hei && 
-       //                     !s_of_e_opening(rx, ry, rz, cy) &&
-       //                     !n_of_e_opening(rx, ry, rz, cy) )
-       //                     block = r.floor_block;
-       //             }
-
-       //             if (s_of_e_opening(rx, ry, rz, cy + min_lip) || 
-       //                 (s_of_e_opening(rx, ry, rz, cy) && far_east_cube(cx))) need_block = true; /////////////////
-       //             if (s_edge_of_e_opening(r, cx, cy, cz) || 
-       //                 (cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)
-       //                 ) block = r.floor_block; break;
-       //         case DIRTYPE_DOOR:
-       //             if (far_east_cube(cx) && cz >= r.eh.hei) { // make blocks above opening
-       //                 need_block = true;
-       //                 if (cz == r.eh.hei && 
-       //                     !s_of_e_opening(rx, ry, rz, cy) &&
-       //                     !n_of_e_opening(rx, ry, rz, cy) )
-       //                     block = r.floor_block;
-       //             }
-
-       //             if (far_east_cube(cx) || far_south_cube(cy)) {
-       //                 if (s_of_e_opening(rx, ry, rz, cy)) need_block = true;
-       //                 if (s_edge_of_e_opening(r, cx, cy, cz) || 
-                            //(cx == mid && opens_to(DIR_SOUTH, rx, ry, rz) && cz <= rooms[rz][ry-1][rx].n_hall_hei)) 
-                            //block = r.floor_block; } break;
-       //         default: // all blockers PLUS currently open air space connection
-       //             if (cx >= r.x + r.wid /*far_east_cube(cx)*/ || far_south_cube(cy))
-       //                 need_block = true; break;
-       //     }
-       // }
-
-       // // do west
-       // mid = fixed_hall_offs; // cubes_across_room / 2;
-       // if (opens_to(DIR_NORTH, rx, ry, rz))
-       //     mid = r.nh.x;
-       // if (cx < mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
-       //     switch (r.dir_types[DIR_WEST]) {
-       //         case DIRTYPE_HALL:
-       //             if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].eh.hei)  need_block = true; // make blocks above opening
-       //             if (n_of_e_opening(rx - 1, ry, rz, cy)) need_block = true; break;
-       //         case DIRTYPE_DOOR:
-       //             if (far_west_cube(cx) && cz >= rooms[rz][ry][rx-1].eh.hei)  need_block = true; // make blocks above opening
-       //             if (far_west_cube(cx) || far_north_cube(cy))
-       //                 if (n_of_e_opening(rx - 1, ry, rz, cy)) need_block = true; break;
-       //         default: // all blockers PLUS currently open air space connection
-       //             if (cx < r.x /*far_west_cube(cx)*/ || far_north_cube(cy))
-       //                 need_block = true; break;
-       //     }
-       // }
-
-       // // do north
-       // mid = fixed_hall_offs + fixed_hall_wid; // cubes_across_room / 2;
-       // if (opens_to(DIR_EAST, rx, ry, rz))
-       //     mid = r.eh.y + r.eh.dep;
-       // if (cy >= mid /*&& cy >= fixed_hall_offs + fixed_hall_wid*/) {
-       //     switch (r.dir_types[DIR_NORTH]) {
-       //         case DIRTYPE_HALL:
-       //             if (far_north_cube(cy) && cz >= r.n_hall_hei)  need_block = true; // make blocks above opening
-       //             if (e_of_n_opening(rx, ry, rz, cx)) need_block = true; break;
-       //         case DIRTYPE_DOOR:
-       //             if (far_north_cube(cy) && cz >= r.n_hall_hei)  need_block = true; // make blocks above opening
-       //             if (far_north_cube(cy) || far_east_cube(cx))
-       //                 if (e_of_n_opening(rx, ry, rz, cx)) need_block = true; break;
-       //         default: // all blockers PLUS currently open air space connection
-       //             if (cy >= r.y + r.dep /*far_north_cube(cy)*/ || far_east_cube(cx))
-       //                 need_block = true; break;
-       //     }
-       // }
-
-        // do south
-
         Rect ne, se, sw, nw; // corner of room to fill w/ blocks
         Rect3D sh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
         int half = cubes_across_room / 2;
@@ -450,12 +369,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
             
             t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
         } else {
-			CubeID ci = EMPTY_CUBE;
-			if (cz == 1) {
-				r.trim = randcube(trims, NUM_TRIMS);
-				if (randrange(0,64) == 0) ci = t_map::get_cube_id("rock"); // random rock used as crystal bait
-			}
-            t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, ci);
+            t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, EMPTY_CUBE);
 		}
     }
     }
@@ -637,12 +551,13 @@ void make_ruins(int x, int y) {
     for (int rx = 0; rx < rooms_across_ruins; rx++) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
-        // make floor 
+        // make floor
+		CubeID fl = (randrange(0,7) == 0) ? t_map::get_cube_id("rock") : rooms[rz][ry][rx].floor_block;
         t_gen::set_region(
             rx * cubes_across_room + x,
             ry * cubes_across_room + y,
             rz * cubes_going_up + bedrock_offset,
-            cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].floor_block);
+            cubes_across_room, cubes_across_room, 1, fl);
 
         // make ceiling
         t_gen::set_region(
@@ -657,13 +572,20 @@ void make_ruins(int x, int y) {
         if (opens_to(DIR_UP, ri) ) 
             make_stairs(rx, ry, rz, x, y, rooms[rz][ry][rx].floor_block);
 
-        if (opens_to(DIR_DOWN, ri) ) 
+        if (opens_to(DIR_DOWN, ri) ) {
+            // make trim cube region to hollow out for stairwell
+            t_gen::set_region(
+                rx * cubes_across_room + x + fixed_stair_x - 1,
+                ry * cubes_across_room + y + fixed_stair_y - 1,
+                rz * cubes_going_up + bedrock_offset - 1,
+				fixed_stair_w + 2, fixed_stair_d + 2, 2, rooms[rz][ry][rx].trim);
             // clear well in floor of this room, and ceiling of room underneath
             t_gen::set_region(
                 rx * cubes_across_room + x + fixed_stair_x,
                 ry * cubes_across_room + y + fixed_stair_y,
                 rz * cubes_going_up + bedrock_offset - 1,
                 fixed_stair_w, fixed_stair_d, 2, EMPTY_CUBE);
+		}
     }
     }
     }
@@ -672,6 +594,15 @@ void make_ruins(int x, int y) {
 
 
 namespace t_gen {
+    void check_textures(CubeID arr[], int num) {
+		for (int i = 0; i < num; i++) { 
+			GS_ASSERT(t_map::isValidCube(trims[i])); 
+			if (!t_map::isValidCube(trims[i])) { printf("** cube id %d invalid ***", trims[i]); return; }
+		}
+	}
+
+
+
     void generate_ruins() {
         printf("Making ruins\n");
 
@@ -682,23 +613,23 @@ namespace t_gen {
 
         walls[0] = t_map::get_cube_id("ruins_wall1");
         walls[1] = t_map::get_cube_id("ruins_wall2"); 
+        walls[2] = t_map::get_cube_id("ruins_wall3");
+        walls[3] = t_map::get_cube_id("ruins_wall4"); 
 
-        ceils[0] = t_map::get_cube_id("raised_tile1");
-        ceils[1] = t_map::get_cube_id("raised_tile2"); 
-        ceils[2] = t_map::get_cube_id("raised_tile3");
-        ceils[3] = t_map::get_cube_id("raised_tile4"); 
+        ceils[0] = t_map::get_cube_id("ruins_ceiling1");
+        ceils[1] = t_map::get_cube_id("ruins_ceiling2"); 
+        ceils[2] = t_map::get_cube_id("ruins_ceiling3");
+        ceils[3] = t_map::get_cube_id("ruins_ceiling4"); 
 
         trims[0] = t_map::get_cube_id("ruins_trim1");
         trims[1] = t_map::get_cube_id("ruins_trim2"); 
         trims[2] = t_map::get_cube_id("ruins_trim3");
         trims[3] = t_map::get_cube_id("ruins_trim4"); 
-        //trims[4] = t_map::get_cube_id("rock"); 
 
-        // check textures
-        for (size_t i = 0; i < NUM_TRIMS; i++) { 
-            GS_ASSERT(t_map::isValidCube(trims[i])); 
-            if (!t_map::isValidCube(trims[i])) { printf("*** cube id %d invalid ***", trims[i]); return; }
-        }
+        check_textures(floors, NUM_FLOORS);
+        check_textures(walls, NUM_WALLS);
+        check_textures(ceils, NUM_CEILS);
+        check_textures(trims, NUM_TRIMS);
 
         // generate ruins
         for (int x = 0; x < ruins_across_world; x++)

@@ -663,7 +663,7 @@ inline void hitscan_block_CtoS::handle()
     // send to clients
     
     const float max_len = t_map::map_dim.x * 0.95f;
-    struct RaytraceData data;
+    class RaytraceData data;
 
     Vec3 f = a->forward_vector();
     Vec3 p = a->get_camera_position();

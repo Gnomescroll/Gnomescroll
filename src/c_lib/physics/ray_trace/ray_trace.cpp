@@ -94,14 +94,14 @@ void get_side_array_from_cube_side(int side_id, int side[3])
 }
 
 
-bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length, struct RaytraceData* data)
+bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length, class RaytraceData* data)
 {   // direction must be normalized
     struct Vec3 end = vec3_add(start, vec3_scalar_mult(direction, length));
     return raytrace_terrain(start, end, data);
 }
 
 /* Borrowed from: http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html */
-bool raytrace_terrain(struct Vec3 start, struct Vec3 end, struct RaytraceData* data)
+bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* data)
 {
     if (vec3_equal(start, end))
     {

@@ -417,7 +417,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
 
     // get nearest empty block
     const float max_dist = 4.0f;
-    struct RaytraceData data; 
+    class RaytraceData data; 
     bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
     if (!collided) return false;
 
@@ -461,7 +461,7 @@ void PlayerAgent_action::admin_set_block()
     // get nearest empty block
     const float max_dist = 4.0f;
 
-    struct RaytraceData data;
+    class RaytraceData data;
     bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
     if (!collided) return;
 
@@ -536,7 +536,7 @@ void PlayerAgent_action::place_spawner()
 
     const float max_dist = 4.0f;
 
-    struct RaytraceData data;
+    class RaytraceData data;
     bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
     if (!collided) return;
 
@@ -558,7 +558,7 @@ void PlayerAgent_action::place_turret()
 
     const float max_dist = 4.0f;
 
-    struct RaytraceData data;
+    class RaytraceData data;
     bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
     if (!collided) return;
 

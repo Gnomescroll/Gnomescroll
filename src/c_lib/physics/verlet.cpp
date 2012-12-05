@@ -33,7 +33,7 @@ bool VerletComponent::bounce()
     struct Vec3 old_velocity = this->velocity;
     velocity_integrate(&this->position, &this->velocity, dt);
 
-    struct RaytraceData data;
+    class RaytraceData data;
     bool bounced = raytrace_terrain(old_position, this->position, &data);
 
     if (bounced)
@@ -62,7 +62,7 @@ bool VerletComponent::bounce_box(float gravity)
 
     velocity_integrate(&this->position, &this->velocity, a, dt);
 
-    struct RaytraceData data;
+    class RaytraceData data;
     bool bounced = raytrace_terrain(old_position, this->position, &data);
 
     if (bounced)
@@ -98,7 +98,7 @@ bool VerletComponent::radial(float xr, float yr)
 
     velocity_integrate(&this->position, &this->velocity, a, dt);
 
-    struct RaytraceData data;
+    class RaytraceData data;
     bool bounced = raytrace_terrain(old_position, this->position, &data);
 
     if (bounced)
@@ -149,7 +149,7 @@ bool VerletComponent::collide_no_gravity(class RaytraceData* data, float* dist)
 
 bool VerletComponent::collide_no_gravity()
 {
-    static struct RaytraceData data;
+    static class RaytraceData data;
     return collide_no_gravity(&data, NULL);
 }
 

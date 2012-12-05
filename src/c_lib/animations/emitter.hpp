@@ -151,7 +151,7 @@ class MiningLaserEmitter
 
     void update_length()
     {
-        static struct RaytraceData data;
+        static class RaytraceData data;
         struct Vec3 dest = vec3_add(this->length_position, vec3_scalar_mult(this->length_direction, this->base_length));
         raytrace_terrain(this->length_position, dest, &data);
         this->length = data.interval*this->base_length;

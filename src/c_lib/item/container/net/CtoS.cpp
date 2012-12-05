@@ -499,7 +499,7 @@ inline void crusher_crush_item_CtoS::handle()
     }
     else
     {   // calculate face nearest agent
-        struct RaytraceData data;
+        class RaytraceData data;
         bool collided = raytrace_terrain(a->get_camera_position(), a->forward_vector(), AGENT_CONTAINER_REACH, &data);
         int c[3];
         data.get_pre_collision_point(c);

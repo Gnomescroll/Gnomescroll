@@ -758,7 +758,7 @@ int Agent::get_facing_block_type()
         f = this->s.forward_vector();
     }
 
-    struct RaytraceData data;
+    class RaytraceData data;
     bool collided = raytrace_terrain(p, f, CUBE_SELECT_MAX_DISTANCE, &data);
 
     if (!collided) return 0;
@@ -1015,7 +1015,7 @@ bool Agent::nearest_open_block(const float max_dist, int open_point[3])
 {
     Vec3 p = this->get_camera_position();
     Vec3 f = this->forward_vector();
-    struct RaytraceData data;
+    class RaytraceData data;
     bool collided = raytrace_terrain(p, f, max_dist, &data);
     if (!collided) return false;
     data.get_pre_collision_point(open_point);
@@ -1038,7 +1038,7 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float
     Vec3 v = this->forward_vector();
     
     const float max_dist = 128.0f;
-    struct RaytraceData data;
+    class RaytraceData data;
     bool collided = raytrace_terrain(p, v, max_dist, &data);
     if (!collided) return 0;
 
@@ -1066,7 +1066,7 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], const float max_di
     Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();
 
-    struct RaytraceData data;
+    class RaytraceData data;
     bool collided = raytrace_terrain(p, v, max_distance, &data);
     if (!collided) return -1;
 

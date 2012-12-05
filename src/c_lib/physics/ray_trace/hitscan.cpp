@@ -58,7 +58,7 @@ HitscanTargetTypes hitscan_against_world(
     );
 
      //hitscan against terrain
-    struct RaytraceData terrain_data;
+    class RaytraceData terrain_data;
     const float max_dist = 128.0f;
 
     bool block_hit = raytrace_terrain(p, v, max_dist, &terrain_data);
