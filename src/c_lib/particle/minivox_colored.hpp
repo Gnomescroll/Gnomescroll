@@ -27,19 +27,17 @@ class ColoredMinivox: public ParticleMotion
 {
     public:
 
-        Draw::TexturedVoxel voxel;
+        Draw::ColoredVoxel voxel;
     
-        struct Color color;
+    void set_color(struct Color color);
+    void set_color(unsigned char r, unsigned char g, unsigned char b);
 
-        void set_color(struct Color color);
-        void set_color(unsigned char r, unsigned char g, unsigned char b);
+    void set_size(float size);
 
-        void set_size(float size);
+    void tick();
 
-        void tick();
-
-        inline void reset();
-        ColoredMinivox();
+    inline void reset();
+    ColoredMinivox();
 };
 
 class ColoredMinivox_list: public Simple_object_list<ColoredMinivox, MINIVOX_MAX>
@@ -49,7 +47,7 @@ class ColoredMinivox_list: public Simple_object_list<ColoredMinivox, MINIVOX_MAX
     public:
         void tick();
 
-        ColoredMinivox_list() { this->print(); }
+        ColoredMinivox_list() {}
 };
     
 }   // Particle

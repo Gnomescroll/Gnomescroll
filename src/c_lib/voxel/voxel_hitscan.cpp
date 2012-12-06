@@ -113,6 +113,7 @@ class Voxel_hitscan_target* Voxel_hitscan_list::hitscan_all(
             if (!vhe->vv->hitscan_test(
                 tpos[0], tpos[1], tpos[2],
                 direction.x, direction.y, direction.z, r2, voxel)) continue;
+
             class Voxel_hitscan_target* target = &targets[n++];
             target->copy_vhe(vhe);
             target->copy_voxel(voxel);
@@ -173,13 +174,12 @@ void Voxel_hitscan_list::unregister_voxel_volume(class Voxel_volume* vv)
 
 Voxel_hitscan_list::Voxel_hitscan_list() : num_elements(0)
 {
-    hitscan_list = (class Voxel_hitscan_element**)calloc(VOXEL_HITSCAN_LIST_SIZE, sizeof(class Voxel_hitscan_element*));
+    this->hitscan_list = (class Voxel_hitscan_element**)calloc(VOXEL_HITSCAN_LIST_SIZE, sizeof(class Voxel_hitscan_element*));
 }
 
 Voxel_hitscan_list::~Voxel_hitscan_list()
 {
     if (this->hitscan_list != NULL) free(this->hitscan_list);
-    this->hitscan_list = NULL;
 }
 
 void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
@@ -198,4 +198,3 @@ void Voxel_hitscan_target::copy_voxel(int voxel[3])
 {
     for (int i=0; i<3; i++) voxel[i] = this->voxel[i];
 }
-

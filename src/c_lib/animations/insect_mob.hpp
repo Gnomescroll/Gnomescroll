@@ -20,7 +20,7 @@ static float insect_mob_t = 0.0f;
 int insect_mob_surface;
 unsigned int insect_mob_texture;
 
-class SHADER insect_mob_shader;
+class Shader insect_mob_shader;
 
 //unsigned int insect_mob_Vertex;
 unsigned int insect_mob_TexCoord;

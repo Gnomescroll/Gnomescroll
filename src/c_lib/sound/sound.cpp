@@ -71,7 +71,6 @@ void load_sound(Soundfile* snd)
 // Public
 int play_2d_sound(const char* event_name)
 {
-    printf("Play %s\n", event_name);
     if (!Options::sound) return -1;
     return OpenALSound::play_2d_sound(event_name);
 }

@@ -27,7 +27,7 @@ ALenum get_openal_wav_format(WavData* data);
 void print_wav_data(WavData* data);
 
 // returns buffer id.  make sure to free *buffer after binding to an ALbuffer
-int load_wav_file(char *fn, unsigned char** buffer);
+int load_wav_file(const char* filename, unsigned char** buffer);
 
 void release_wav_data(int buffer_id);
 WavData* get_loaded_wav_data(int buffer_id);

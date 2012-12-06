@@ -384,7 +384,7 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
     struct Vec3 origin = vec3_add(a->arm_center(), vec3_scalar_mult(right, offset));
     origin = translate_position(origin);
     
-    if (sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, sprite_scale) == false)
+    if (!sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, sprite_scale))
         return false;
 
     struct Vec3 up = a->arm_forward();
@@ -425,7 +425,10 @@ void begin_equipped_item_animation(int item_type, bool continuous)
     stop_equipped_item_animation();
     
     if (item_type == NULL_ITEM_TYPE)
-        item_type = Item::get_item_type("fist");
+    {
+        static int fist = Item::get_item_type("fist");
+        item_type = fist;
+    }
         
     // begin action animation for item type
     equipped_item_animating = true;

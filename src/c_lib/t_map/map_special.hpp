@@ -226,7 +226,7 @@ class ControlNodeShader
     SDL_Surface* s;
 
     unsigned int texture1;
-    class SHADER* shader;
+    class Shader* shader;
 
     //uniforms
     unsigned int CameraPosition;
@@ -249,7 +249,7 @@ class ControlNodeShader
 
     void init_shader()
     {
-        shader = new SHADER;
+        shader = new Shader;
         shader->set_debug(true);
 
         shader->load_shader( "control_node_shader",

@@ -18,7 +18,7 @@ const float SHRAPNEL_DAMP = 0.5f;
 const int SHRAPNEL_TEXTURE_ID = 5;
 const float SHRAPNEL_TEXTURE_SCALE = 0.15f;
 
-class SHADER shrapnel_shader;
+class Shader shrapnel_shader;
 unsigned int shrapnel_TexCoord;
 
 /* Shrapnel vlist */

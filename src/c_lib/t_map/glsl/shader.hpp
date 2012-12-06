@@ -35,7 +35,7 @@ class MapShader
 {
     public:
     GLuint terrain_map_glsl;
-    class SHADER* shader;
+    class Shader* shader;
 
     //uniforms
     int InOffset;
@@ -61,7 +61,7 @@ class MapShader
     {
         GS_ASSERT(this->shader == NULL);
         if (this->shader != NULL) delete this->shader;
-        this->shader = new SHADER;
+        this->shader = new Shader;
         this->shader->set_debug(true);
 
         this->shader->load_shader( "map_shader",
@@ -94,7 +94,7 @@ class MapCompatibilityShader
 
         int terrain_map_glsl;
         //unsigned int texture1;
-        class SHADER* shader;
+        class Shader* shader;
 
         //uniforms
         int InOffset;
@@ -122,7 +122,7 @@ class MapCompatibilityShader
     void init_shader(int level)
     {
         if (this->shader != NULL) delete this->shader;
-        this->shader = new SHADER;
+        this->shader = new Shader;
             this->shader->set_debug(true);
 
         static bool tried_mesa = false;

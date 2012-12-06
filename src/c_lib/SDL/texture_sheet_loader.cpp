@@ -15,16 +15,22 @@ namespace TextureSheetLoader
 const size_t N_SURFACES = 32;
 
 TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
-    tile_size(tile_size), surface_num(0), tile_num(0), format(GL_BGRA),
+    tile_size(tile_size), tiles_wide(16), tiles_high(16),
+    surface_num(0), tile_num(0), format(GL_BGRA),
     texture(0), greyscale_texture(0), mag_filter(GL_NEAREST)
 {
-    this->meta = new struct TileMeta[256];
+    this->meta = new struct TileMeta[this->tiles_wide*this->tiles_high];
     this->filenames = (char**)calloc(N_SURFACES, sizeof(char*));
     this->surfaces = (SDL_Surface**)calloc(N_SURFACES, sizeof(SDL_Surface*));
+
+    this->width = this->tiles_wide*this->tile_size;
+    this->height = this->tiles_high*this->tile_size;
     
-    this->surface = create_surface_from_nothing(16*tile_size, 16*tile_size);
-    this->greyscale_surface = create_surface_from_nothing(16*tile_size, 16*tile_size);
-    this->texture_stack = (Uint32*) calloc(4*256*tile_size*tile_size, sizeof(char));
+    this->surface = create_surface_from_nothing(this->width, this->height);
+    this->greyscale_surface = create_surface_from_nothing(this->width, this->height);
+    this->texture_stack = (Uint32*) calloc(4*this->width*this->height, sizeof(char));
+
+    this->pixels = (struct Color4*)calloc(this->width*this->height, sizeof(struct Color4));
 
     GLenum format = GL_BGRA;
     if (this->surface->format->Rmask == 0x000000ff)
@@ -54,6 +60,7 @@ TextureSheetLoader::~TextureSheetLoader()
     if (this->surface != NULL) SDL_FreeSurface(this->surface);
     if (this->greyscale_surface != NULL) SDL_FreeSurface(this->greyscale_surface);
     if (this->texture_stack != NULL) free(this->texture_stack);
+    if (this->pixels != NULL) free(this->pixels);
 
     if (this->texture != 0) glDeleteTextures(1, &this->texture);
     if (this->greyscale_texture != 0) glDeleteTextures(1, &this->greyscale_texture);
@@ -132,11 +139,12 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
     Uint32* sheet_pixels = (Uint32*)this->surface->pixels;
 
     // sprite coordinate index into destination pixel buffers
-    size_t index = (meta_index % 16) + 16*(meta_index/16);
-    size_t  dest_x = (index % 16) * this->tile_size;
-    size_t  dest_y = (index / 16) * this->tile_size;
+    size_t index = (meta_index % this->tiles_wide) + this->tiles_wide*(meta_index/this->tiles_wide);
+    size_t dest_x = (index % this->tiles_wide) * this->tile_size;
+    size_t dest_y = (index / this->tiles_wide) * this->tile_size;
 
-    // copy sprite icon pixels from source pixel buffer to sheet and stack buffers
+    // copy sprite icon pixels from source pixel buffer to
+    // sheet and stack buffers and unpacked pixel array
     for (size_t i=0; i<tile_size; i++)
     for (size_t j=0; j<tile_size; j++) 
     {
@@ -150,8 +158,12 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
         
         size_t stack_index = tile_size*tile_size*index + (j*tile_size+i);
         stack_pixels[stack_index] = pix;
-        size_t sheet_index = (16*tile_size)*((dest_y+j)) + (dest_x+i);
+        size_t sheet_index = (this->width)*((dest_y+j)) + (dest_x+i);
         sheet_pixels[sheet_index] = pix;
+
+        size_t pixel_index = meta_index * this->tile_size * this->tile_size;
+        pixel_index += j * this->tile_size + i;
+        this->pixels[pixel_index] = color_init(r,g,b,a);
     }
 
     // unlock
@@ -214,10 +226,10 @@ void TextureSheetLoader::generate_greyscale()
 
     Uint8 r,g,b,a;
 
-    for (size_t x=0; x<16*tile_size; x++)
-    for (size_t y=0; y<16*tile_size; y++)
+    for (size_t x=0; x<this->width; x++)
+    for (size_t y=0; y<this->height; y++)
     {
-        size_t index = y*16*tile_size + x;
+        size_t index = y*this->width + x;
         GS_ASSERT(index < (size_t)greyscale_surface->w*greyscale_surface->h);
         Uint32 pix = ((Uint32*)surface->pixels)[index];
         SDL_GetRGBA(pix, surface->format, &r, &g, &b, &a);
@@ -238,10 +250,9 @@ void TextureSheetLoader::generate_greyscale()
         &this->greyscale_texture, this->mag_filter);
 }
 
-void TextureSheetLoader::generate_texture(GLenum mag_filter)
+void TextureSheetLoader::generate_texture()
 {
-    this->mag_filter = mag_filter;
-    create_texture_from_surface(this->surface, &this->texture, mag_filter);    
+    create_texture_from_surface(this->surface, &this->texture, this->mag_filter);    
 }
 
 void TextureSheetLoader::reload()
@@ -260,7 +271,7 @@ void TextureSheetLoader::reload()
     {
         GS_ASSERT(this->filenames[i] != NULL);
         if (this->filenames[i] == NULL) continue;
-        printf("Texture file: %s\n", this->filenames[i]);
+        printf("Reloading texture file: %s\n", this->filenames[i]);
         SDL_Surface* s = create_surface_from_file(this->filenames[i]);
         GS_ASSERT(s != NULL);
         if (s == NULL)
@@ -303,7 +314,7 @@ void TextureSheetLoader::reload()
     if (this->greyscale_texture != 0) glDeleteTextures(1, &this->greyscale_texture);
 
     // regenerate textures
-    this->generate_texture(this->mag_filter);
+    this->generate_texture();
     this->generate_greyscale();
 }
 
@@ -316,13 +327,14 @@ void init()
     GS_ASSERT(item_texture_sheet_loader == NULL);
     cube_texture_sheet_loader = new TextureSheetLoader(32);        //pixel size for cube textures
     item_texture_sheet_loader = new TextureSheetLoader(16);
+    item_texture_sheet_loader->mag_filter = GL_NEAREST;
 }
 
 void init_item_texture()
 {
     GS_ASSERT(item_texture_sheet_loader != NULL);
     if (item_texture_sheet_loader == NULL) return;
-    item_texture_sheet_loader->generate_texture(GL_NEAREST);
+    item_texture_sheet_loader->generate_texture();
 }
 
 void init_greyscale()

@@ -13,13 +13,10 @@ class TexturedMinivox: public ParticleMotion
 
         Draw::TexturedVoxel voxel;
 
-        void set_size(float size);
-
-        void tick();
-
-        inline void reset();
-        
-        TexturedMinivox();
+    void set_size(float size);
+    void tick();
+    inline void reset();
+    TexturedMinivox();
 };
 
 }
@@ -36,7 +33,7 @@ class TexturedMinivox_list: public Simple_object_list<TexturedMinivox, MINIVOX_M
     public:
         void tick();
 
-        TexturedMinivox_list() { this->print(); }
+        TexturedMinivox_list() {}
 };
     
 }   // Particle

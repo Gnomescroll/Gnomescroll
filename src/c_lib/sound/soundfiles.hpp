@@ -7,7 +7,6 @@ class Soundfile
 {
     public:
         int id;
-        unsigned int hash;  // hash of event_name
         char* event_name;
         char* filename;
         // properties
@@ -22,13 +21,13 @@ class Soundfile
         float max_playable_distance;
 
     Soundfile() :
-        id(-1), hash(0), event_name(NULL), filename(NULL)
+        id(-1), event_name(NULL), filename(NULL)
     {}
 
     ~Soundfile()
     {
-        free(this->event_name);
-        free(this->filename);
+        if (this->event_name != NULL) free(this->event_name);
+        if (this->filename != NULL) free(this->filename);
     }
 };
 

@@ -4,6 +4,7 @@
 dont_include_this_file_in_server
 #endif
 
+#include <common/color.hpp>
 #include <SDL/constants.hpp>
 
 namespace TextureSheetLoader
@@ -23,7 +24,13 @@ class TextureSheetLoader
             size_t ypos;
         };
 
+        size_t width;
+        size_t height;
+
         size_t tile_size; // pixel dimension of each sprite/tile in sheet
+        size_t tiles_wide;
+        size_t tiles_high;
+        
         size_t surface_num;
         size_t tile_num;
         
@@ -43,6 +50,8 @@ class TextureSheetLoader
 
         GLenum mag_filter;
 
+        struct Color4* pixels;
+
         SpriteSheet load_texture(const char* filename);
         SpriteSheet load_texture_from_surface(struct SDL_Surface* surface);
         SpriteSheet load_texture_from_surface(struct SDL_Surface* surface, SpriteSheet sheet_id);
@@ -53,7 +62,7 @@ class TextureSheetLoader
         void generate_greyscale();
 
         void reload();
-        void generate_texture(GLenum mag_filter);
+        void generate_texture();
 
     explicit TextureSheetLoader(size_t tile_size);
     ~TextureSheetLoader();

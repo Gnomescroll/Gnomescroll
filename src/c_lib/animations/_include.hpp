@@ -1,14 +1,15 @@
 #pragma once
 
 #if DC_CLIENT
-#include <animations/animations.cpp>
-#include <animations/hitscan.cpp>
-#include <animations/mining_laser.cpp>
-#include <animations/insect_mob.cpp>
-#include <animations/weapon.cpp>
-#include <animations/voxel_particle.cpp>
-#include <animations/block_damage.cpp>
-#include <animations/emitter.cpp>
+# include <animations/animations.cpp>
+# include <animations/hitscan.cpp>
+# include <animations/mining_laser.cpp>
+# include <animations/insect_mob.cpp>
+# include <animations/weapon.cpp>
+# include <animations/sprite_voxelizer.cpp>
+# include <animations/voxel_particle.cpp>
+# include <animations/block_damage.cpp>
+# include <animations/emitter.cpp>
 #endif
 
 #include <animations/_interface.cpp>

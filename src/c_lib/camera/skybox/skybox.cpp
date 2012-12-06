@@ -15,7 +15,7 @@ struct STAR* star_list = NULL;
 int star_num = 1024;
 
 // glsl
-class SHADER star_shader;
+class Shader star_shader;
 GLuint star_TexCoord;
 GLint star_CameraPos; 
 Animations::VertexElementList1* star_vlist = NULL;

@@ -24,12 +24,11 @@ bool set_soundfile(int snd_id, const char* event_name, const char* filename)
     if (event_registered(event_name))
         return false;
 
-    int event_name_len = (int)strlen(event_name);
-    int file_len = (int)strlen(filename);
+    size_t event_name_len = strlen(event_name);
+    size_t file_len = strlen(filename);
     class Soundfile* snd = &soundfiles[snd_id];
     snd->event_name = (char*)malloc(sizeof(char) * (event_name_len + 1));
     strcpy(snd->event_name, event_name);
-    snd->hash = strhash(event_name);
     snd->filename = (char*)malloc(sizeof(char) * (file_len + 1));
     strcpy(snd->filename, filename);
 
@@ -73,16 +72,6 @@ void validate_sound_config()
 {
     GS_ASSERT(soundfiles != NULL);
     if (soundfiles == NULL) return;
-    for (int i=0; i<n_sounds; i++)
-    {
-        unsigned int hash = soundfiles[i].hash;
-        char* event_name = soundfiles[i].event_name;
-        for (int j=0; j<n_sounds; j++)
-        {
-            if (i==j) continue;
-            GS_ASSERT(hash != soundfiles[j].hash || strcmp(event_name, soundfiles[j].event_name) == 0);
-        }
-    }
 }
 
 int get_soundfile_id_for_name(const char* event_name)
@@ -90,9 +79,8 @@ int get_soundfile_id_for_name(const char* event_name)
     GS_ASSERT(soundfiles != NULL);
     if (soundfiles == NULL) return -1;
 
-    unsigned int hash = strhash(event_name);
     for (int i=0; i<n_sounds; i++)
-        if (hash == soundfiles[i].hash)
+        if (strcmp(soundfiles[i].event_name, event_name) == 0)
             return i;
     return -1;
 }

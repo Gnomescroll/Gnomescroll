@@ -22,7 +22,6 @@ class GS_SoundBuffer
 {
     public:
         int id;
-        unsigned int hash;
         char* event_name;
         int buffer_id;
         bool loaded;
@@ -79,9 +78,8 @@ class GS_SoundBuffer
     }
 
     GS_SoundBuffer() :
-        id(-1),
-        hash(0), event_name(NULL), buffer_id(-1), loaded(false), metadata(NULL),
-        max_sources(MAX_SOURCES_PER_SAMPLE),
+        id(-1), event_name(NULL), buffer_id(-1), loaded(false),
+        metadata(NULL), max_sources(MAX_SOURCES_PER_SAMPLE),
         current_sources(0)
     {
         this->sources = (int*)malloc(sizeof(int) * this->max_sources);
@@ -90,8 +88,8 @@ class GS_SoundBuffer
 
     ~GS_SoundBuffer()
     {
-        free(this->sources);
-        free(this->event_name);
+        if (this->sources != NULL) free(this->sources);
+        if (this->event_name != NULL) free(this->event_name);
     }
 };
 
@@ -383,7 +381,6 @@ void load_sound(Soundfile* snd)
             // create a new instance of GS_Soundbuffer and copy the OpenAL buffer id
             GS_SoundBuffer* new_s = new GS_SoundBuffer;
             new_s->id = soundfile_index++;
-            new_s->hash = snd->hash;
             new_s->event_name = (char*)malloc((strlen(snd->event_name)+1)*sizeof(char));
             strcpy(new_s->event_name, snd->event_name);
             new_s->buffer_id = s->buffer_id;
@@ -439,7 +436,6 @@ void load_sound(Soundfile* snd)
     // put in lookup table for playback
     class GS_SoundBuffer* s = new GS_SoundBuffer;
     s->id = soundfile_index++;
-    s->hash = snd->hash;
     s->event_name = (char*)malloc((strlen(snd->event_name)+1) * sizeof(char));
     strcpy(s->event_name, snd->event_name);
     s->buffer_id = buffer_index++;
@@ -458,11 +454,10 @@ int get_free_source()
 
 GS_SoundBuffer* get_sound_buffer_from_event_name(const char* event_name)
 {
-    unsigned int h = strhash(event_name);
     for (int i=0; i<MAX_SOUNDS; i++)
     {
         if (sound_buffers[i] == NULL) continue;
-        if (sound_buffers[i]->loaded && sound_buffers[i]->hash == h)
+        if (sound_buffers[i]->loaded && strcmp(sound_buffers[i]->event_name, event_name) == 0)
             return sound_buffers[i];
     }
     return NULL;
@@ -671,8 +666,6 @@ int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_mul
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
     if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
-
-    printf("Loops? %d\n", sound_buffer->metadata->loop);
 
     return play_2d_sound(sound_buffer, gain_multiplier, pitch_multiplier);
 }
