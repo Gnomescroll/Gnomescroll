@@ -125,10 +125,11 @@ bool blocks_are_invalid(CubeID arr[], int len) {
 void make_shroom(int x, int y, int z) {
     CubeID shroom_cap = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
     //CubeID shroom_stem = shroom_stems[randrange(0, NUM_SHROOMSTEMS - 1)];
+	// (need to make some stem textures)
 
     int cap_height = randrange(4, 15);
     int hei = 0;
-    float stem_rad = randrange(1, 4); // stem radius
+    float stem_rad = randrange(16/*10*/, 40) / 10.0f; // stem radius
     float cap_rad = stem_rad * 4;
     int cap_rad_changer = 0;
 

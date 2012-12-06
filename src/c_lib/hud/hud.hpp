@@ -110,7 +110,7 @@ class HUD
 
 // meter
 MeterGraphic meter_graphic;
-void set_color_from_green_to_red(float ratio);
+void set_color_from_ratio(float ratio, float alpha = 175, bool invert_color_for_damage = false);
 
 void set_prompt(const char* msg);
 void clear_prompt(const char* msg);

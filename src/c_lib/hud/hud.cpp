@@ -195,21 +195,31 @@ void draw_reference_center()
     _draw_rect(10, 255, 255, x, y, w, w);
 }
 
-void set_color_from_green_to_red(float ratio) 
+void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage) 
 {
-	float green_to_red = ratio * 2.0f;
-	Color yellow = color_init(255,190,0);
+	float small_to_big = ratio * 2.0f;
+	Color red    = color_init(255,   0, 0);
+	Color green  = color_init(0,   255, 0);
+	Color yellow = color_init(255, 190, 0);
+	Color full = green;
+	Color empty = red;
 	Color dyn;
 
-	if (green_to_red > 1.0f)
+	if (invert_color_for_damage) 
 	{
-		green_to_red -= 1.0f;
-		dyn = interpolate_color(yellow, color_init(255,0,0) /* red */  , green_to_red);
+		full = red;
+		empty = green;
+	}
+
+	if (small_to_big > 1.0f)
+	{
+		small_to_big -= 1.0f;
+		dyn = interpolate_color(yellow, full, small_to_big);
 	}
 	else
-		dyn = interpolate_color(color_init(0,255,0) /* green */, yellow, green_to_red);
+		dyn = interpolate_color(empty, yellow, small_to_big);
 			
-	glColor4ub(dyn.r, dyn.g, dyn.b, 175);
+	glColor4ub(dyn.r, dyn.g, dyn.b, alpha);
 }
 
 
@@ -237,7 +247,7 @@ void draw_hud_textures()
 			largest_total_health_seen = max;
 		float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage 
 		
-		set_color_from_green_to_red(curr / largest_total_health_seen);
+		set_color_from_ratio(curr / largest_total_health_seen, 175, true);
 		meter_graphic.draw(0,       _yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen);
 		meter_graphic.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen, METANCH_RIGHT);
 	}

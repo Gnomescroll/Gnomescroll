@@ -154,22 +154,23 @@ void AgentToolbeltUI::draw()
             ratio = ((float)durability)/((float)max_durability);
         }
 
-        const float alpha = 128;
+        // old color values
+		//glColor4ub(7, 247, 0, alpha);    // green
+        //glColor4ub(243, 247, 0, alpha);  // yellow
+        //glColor4ub(247, 71, 0, alpha);   // red-orange
+        //glColor4ub(247, 14, 0, alpha);   // red
+        
+		// get color for background
+		const float alpha = 128;
         if (durability == NULL_DURABILITY)
             glColor4ub(80, 80, 80, alpha);    // grey
-        else if (ratio >= 0.75)
-            glColor4ub(7, 247, 0, alpha);    // green
-        else if (ratio >= 0.5)
-            glColor4ub(243, 247, 0, alpha);  // yellow
-        else if (ratio >= 0.25)
-            glColor4ub(247, 71, 0, alpha);    // red-orange
         else
-            glColor4ub(247, 14, 0, alpha);   // red
-		//Hud::set_color_from_green_to_red(ratio);
+			Hud::set_color_from_ratio(ratio, alpha);
 
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
+		// old static-sized, color-coded box
         //glVertex2f(x,y+w);
         //glVertex2f(x+w, y+w);
         //glVertex2f(x+w, y);
