@@ -86,6 +86,6 @@ const int GAME_OBJECTS_MAX = 4096 * 4;
 const float TICK_DURATION = 30.0f;
 const int PLAYERS_MAX = 32;
 
-#define DAT_NAME_MAX_LENGTH 24
+#define DAT_NAME_MAX_LENGTH 32
 #define DATA_PATH "./data/"
 #define SCREENSHOT_PATH "./screenshot/"
