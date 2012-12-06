@@ -19,8 +19,6 @@
 namespace Hud
 {
 
-JetPackMeter jetpack_meter;
-
 /* Strings */
 
 static const char help_text[] =
@@ -197,22 +195,37 @@ void draw_reference_center()
     _draw_rect(10, 255, 255, x, y, w, w);
 }
 
+void set_color_from_green_to_red(float ratio) 
+{
+	float green_to_red = ratio * 2.0f;
+	Color yellow = color_init(255,190,0);
+	Color dyn;
+
+	if (green_to_red > 1.0f)
+	{
+		green_to_red -= 1.0f;
+		dyn = interpolate_color(yellow, color_init(255,0,0) /* red */  , green_to_red);
+	}
+	else
+		dyn = interpolate_color(color_init(0,255,0) /* green */, yellow, green_to_red);
+			
+	glColor4ub(dyn.r, dyn.g, dyn.b, 175);
+}
+
 
 /* Display logic */
 
-bool blink_on = true;
-size_t ticks_til_blink = 0;
-float largest_total_health_seen = 0;
+int largest_total_health_seen = 0;
 void draw_hud_textures()
 {
 	// meters
-	size_t w = _xresf/4;
-	size_t h = _yresf/64;
-	const size_t slowest_blink_delay = 15;
+	int w = _xresf/4;
+	int h = _yresf/64;
+	const int slowest_blink_delay = 15;
 
 	// jetpack
-	glColor4ub(255,255,255,115);
-    jetpack_meter.draw(0,0, w,h, (float)ClientState::playerAgent_state.jetpack.fuel, JETPACK_FUEL_MAX, METANCH_RIGHT);
+	glColor4ub(255,255,255,115); // white, more than half translucent
+    meter_graphic.draw(0,0, w,h, (float)ClientState::playerAgent_state.jetpack.fuel / (float)JETPACK_FUEL_MAX, METANCH_RIGHT);
 	
 	// health/energy
     Agent* a = ClientState::playerAgent_state.you();
@@ -223,31 +236,10 @@ void draw_hud_textures()
 		if (largest_total_health_seen < max)
 			largest_total_health_seen = max;
 		float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage 
-		float green_to_red = curr/largest_total_health_seen * 2.0f;
-		Color yellow = color_init(255,190,0);
-		Color dyn;
-
-		if (green_to_red > 1.0f)
-		{
-			green_to_red -= 1.0f;
-			dyn = interpolate_color(yellow, color_init(255,0,0) /* red */  , green_to_red);
-		}
-		else
-			dyn = interpolate_color(color_init(0,255,0) /* green */, yellow, green_to_red);
-
-		// handle blinking
-		ticks_til_blink--;
-		if (ticks_til_blink < 1) 
-		{
-			if (green_to_red > .75f) ticks_til_blink = slowest_blink_delay;
-			blink_on = !blink_on;
-		}
 		
-		if (blink_on) {
-			glColor4ub(dyn.r, dyn.g, dyn.b, 175);
-			jetpack_meter.draw(0,       _yresf-h/2, _xresf/2,h/2, curr, largest_total_health_seen);
-			jetpack_meter.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr, largest_total_health_seen, METANCH_RIGHT);
-		}
+		set_color_from_green_to_red(curr / largest_total_health_seen);
+		meter_graphic.draw(0,       _yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen);
+		meter_graphic.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen, METANCH_RIGHT);
 	}
 
 	
@@ -330,7 +322,7 @@ void draw_hud_text()
             hud->help->draw();
 
         if (hud_draw_settings.prompt)
-        {   // blinks red/white
+        {   // blinks blue/white
             static unsigned int press_help_tick = 0;
             const int press_help_anim_len = 60;
             const struct Color white = color_init(255,255,255);

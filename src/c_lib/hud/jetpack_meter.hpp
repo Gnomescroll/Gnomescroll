@@ -18,23 +18,41 @@ struct Quadticle {
 
 
 namespace Hud {
-	class JetPackMeter {
+	class MeterGraphic {
 		int prev_w; // previous width
+
+		// blink related
+		bool blink_on;
+		int ticks_til_blink;
+		//// handle blinking
+		//ticks_til_blink--;
+		//if (ticks_til_blink < 1) 
+		//{
+		//	if (green_to_red > .75f) ticks_til_blink = slowest_blink_delay;
+		//	blink_on = !blink_on;
+		//}
+		//if (blink_on) {		}
+
+		// quadticles
 		int num_qticles; // number of alive quadticles
 		Quadticle quadticles[LUDICROUS_REZ]; 
 
 
 
 	public:
-		JetPackMeter() {
+		MeterGraphic() {
 			prev_w = 0;
 			num_qticles = 0;
+			blink_on = true;
+			ticks_til_blink = 0;
 		}
 
-		void draw(int s_x, int s_y, int w, int h, float portion, float possible, MeterAnchor anchor = METANCH_LEFT) {
+		void draw(int x, int y, int w, int h, float ratio, MeterAnchor anchor = METANCH_LEFT) {
+			float s_x = x;
+			float s_y = y;
 			float s_w = w;  // spectrum width (that a full meter would cover)
 			float s_h = h;
-			float dyn_w = s_w * portion / possible; // dynamic width (the current size of the meter itself)
+			float dyn_w = s_w * ratio; // dynamic width (the current size of the meter itself)
 			float lo = s_w - dyn_w; // dynamic leftover
 			
 			if        (anchor == METANCH_LEFT) {

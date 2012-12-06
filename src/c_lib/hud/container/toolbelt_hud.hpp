@@ -1,5 +1,6 @@
 #pragma once
 
+#include <hud/hud.hpp>
 #include <hud/container/texture.hpp>
 
 namespace HudContainer
@@ -152,6 +153,7 @@ void AgentToolbeltUI::draw()
             int max_durability = Item::get_max_durability(slot_types[slot]);
             ratio = ((float)durability)/((float)max_durability);
         }
+
         const float alpha = 128;
         if (durability == NULL_DURABILITY)
             glColor4ub(80, 80, 80, alpha);    // grey
@@ -163,14 +165,16 @@ void AgentToolbeltUI::draw()
             glColor4ub(247, 71, 0, alpha);    // red-orange
         else
             glColor4ub(247, 14, 0, alpha);   // red
+		//Hud::set_color_from_green_to_red(ratio);
 
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
-        glVertex2f(x,y+w);
-        glVertex2f(x+w, y+w);
-        glVertex2f(x+w, y);
-        glVertex2f(x, y);
+        //glVertex2f(x,y+w);
+        //glVertex2f(x+w, y+w);
+        //glVertex2f(x+w, y);
+        //glVertex2f(x, y);
+		Hud::meter_graphic.draw(x, y, w, w, ratio);
     }
     glEnd();
 

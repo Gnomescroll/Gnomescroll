@@ -108,13 +108,16 @@ class HUD
     ~HUD();
 };
 
+// meter
+MeterGraphic meter_graphic;
+void set_color_from_green_to_red(float ratio);
+
 void set_prompt(const char* msg);
 void clear_prompt(const char* msg);
 
 void set_awesomium_message(const char* msg);
 void clear_awesomium_message(const char* msg);
 void clear_awesomium_message();
-
 void draw_awesomium_message();
 
 }   // Hud
