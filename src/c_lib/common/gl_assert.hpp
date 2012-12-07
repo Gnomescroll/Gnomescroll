@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sound/sound.hpp>
 #include <common/macros.hpp>
 #include <common/compat_gl.h>
 
@@ -19,11 +20,19 @@ bool _gl_assert(GLenum flag)
     return (value == GL_TRUE);
 }
 
+void _gl_assert_action()
+{
+    fprintf(stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
+    #if !PRODUCTION
+    Sound::play_2d_sound("debug_warning");
+    #endif
+}
+
 // Disable in production
 #if PRODUCTION
 # define GL_ASSERT(flag, truth) ;
 #else
 # define GL_ASSERT(flag, truth) \
     if(unlikely(_gl_assert((flag)) !=  (truth))) \
-        fprintf(stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
+        _gl_assert_action();
 #endif

@@ -96,6 +96,8 @@ int play_3d_sound(const char* event_name, float x, float y, float z, float vx, f
     return play_3d_sound(event_name, vec3_init(x,y,z), vec3_init(vx,vy,vz));
 }
 
+int play_3d_sound(const char* event_name, struct Vec3 p) { return play_3d_sound(event_name, p, vec3_init(0,0,0)); }
+
 int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
 {
     if (!Options::sound) return -1;

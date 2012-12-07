@@ -1,6 +1,9 @@
 #pragma once
 
 #include <common/defines.h>
+#include <net_lib/common/types.hpp>
+
+struct Vec3;    // forward decl
 
 namespace Sound
 {
@@ -23,7 +26,7 @@ int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_mul
 int play_3d_sound(const char* event_name, float x, float y, float z, float vx, float vy, float vz);
 int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v);
 int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier);
-int play_3d_sound(const char* event_name, struct Vec3 p) { return play_3d_sound(event_name, p, vec3_init(0,0,0)); }
+int play_3d_sound(const char* event_name, struct Vec3 p);
 
 int play_2d_sound(int soundfile_id);
 int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
