@@ -1,3 +1,5 @@
+#pragma once
+
 const int LUDICROUS_REZ = 4000; // fixme once players start using resolutions over this...... if not much sooner  8)
 
 namespace Hud

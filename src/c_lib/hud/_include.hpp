@@ -1,4 +1,4 @@
-#include <hud/meter.cpp>
+#include <hud/meter.hpp>
 #include <hud/reticle.cpp>
 #include <hud/cube_selector.cpp>
 #include <hud/font.cpp>
