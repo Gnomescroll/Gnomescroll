@@ -197,6 +197,12 @@ void draw_reference_center()
 
 void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage) 
 {
+    // old durability color jumps
+	//glColor4ub(7, 247, 0, alpha);    // green
+    //glColor4ub(243, 247, 0, alpha);  // yellow
+    //glColor4ub(247, 71, 0, alpha);   // red-orange
+    //glColor4ub(247, 14, 0, alpha);   // red
+
 	float small_to_big = ratio * 2.0f;
 	Color red    = color_init(255,   0, 0);
 	Color green  = color_init(0,   255, 0);

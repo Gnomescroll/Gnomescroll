@@ -1,5 +1,6 @@
 #pragma once
 
+#include <hud/hud.hpp>
 #include <hud/container/_interface.hpp>
 #include <hud/container/texture.hpp>
 #include <SDL/SDL_functions.hpp>
@@ -143,8 +144,7 @@ void AgentInventoryUI::draw()
     GS_ASSERT(slot_stacks != NULL);
     GS_ASSERT(slot_durabilities != NULL);
 
-    //glColor4ub(80, 80, 80, 128);
-    // render durability
+    // render slot backgrounds
     glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
@@ -157,25 +157,18 @@ void AgentInventoryUI::draw()
             int max_durability = Item::get_max_durability(slot_types[slot]);
             ratio = ((float)durability)/((float)max_durability);
         }
+
+		// get color based on durability
         const float alpha = 255;
         if (durability == NULL_DURABILITY)
             glColor4ub(80, 80, 80, alpha);    // grey
-        else if (ratio >= 0.75)
-            glColor4ub(7, 247, 0, alpha);    // green
-        else if (ratio >= 0.5)
-            glColor4ub(243, 247, 0, alpha);  // yellow
-        else if (ratio >= 0.25)
-            glColor4ub(247, 71, 0, alpha);    // red-orange
         else
-            glColor4ub(247, 14, 0, alpha);   // red
+			Hud::set_color_from_ratio(ratio, alpha);
 
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
-        glVertex2f(x,y+w);
-        glVertex2f(x+w, y+w);
-        glVertex2f(x+w, y);
-        glVertex2f(x, y);
+		Hud::meter_graphic.draw(x, y, w, w, ratio);
     }
     glEnd();
     

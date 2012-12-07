@@ -139,8 +139,7 @@ void AgentToolbeltUI::draw()
     if (slot_stacks == NULL) return;
     if (slot_durabilities == NULL) return;
 
-    //glColor4ub(80, 80, 80, 128);      
-    // render durability
+    // render slot backgrounds
     glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
@@ -154,13 +153,7 @@ void AgentToolbeltUI::draw()
             ratio = ((float)durability)/((float)max_durability);
         }
 
-        // old color values
-		//glColor4ub(7, 247, 0, alpha);    // green
-        //glColor4ub(243, 247, 0, alpha);  // yellow
-        //glColor4ub(247, 71, 0, alpha);   // red-orange
-        //glColor4ub(247, 14, 0, alpha);   // red
-        
-		// get color for background
+		// get color based on durability
 		const float alpha = 128;
         if (durability == NULL_DURABILITY)
             glColor4ub(80, 80, 80, alpha);    // grey
@@ -170,11 +163,6 @@ void AgentToolbeltUI::draw()
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
-		// old static-sized, color-coded box
-        //glVertex2f(x,y+w);
-        //glVertex2f(x+w, y+w);
-        //glVertex2f(x+w, y);
-        //glVertex2f(x, y);
 		Hud::meter_graphic.draw(x, y, w, w, ratio);
     }
     glEnd();

@@ -363,21 +363,9 @@ static void draw_grabbed_icon()
     if (hand_item_durability != NULL_DURABILITY)
     {
         int max_durability = Item::get_max_durability(hand_item_type);
-        float ratio = ((float)hand_item_durability)/((float)max_durability);
-        const unsigned char alpha = 128;
-        if (ratio >= 0.75f)
-            glColor4ub(7, 247, 0, alpha);    // green
-        else if (ratio >= 0.5f)
-            glColor4ub(243, 247, 0, alpha);  // yellow
-        else if (ratio >= 0.25f)
-            glColor4ub(247, 71, 0, alpha);    // red-orange
-        else
-            glColor4ub(247, 14, 0, alpha);   // red
-
-        glVertex2f(x,y+w);
-        glVertex2f(x+w, y+w);
-        glVertex2f(x+w, y);
-        glVertex2f(x, y);
+        float ratio = (float)hand_item_durability / (float)max_durability;
+        Hud::set_color_from_ratio(ratio, 128);
+		Hud::meter_graphic.draw(x, y, w, w, ratio);
     }
     glEnd();
 
