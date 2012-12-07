@@ -172,7 +172,7 @@ void load_item_dat()
     s->object_damage_max = 25;
 
     item_def(IG_RESOURCE, "iron_ore_piece");
-    sprite_def(i0, 5,7);
+    sprite_def(i0, 5,5);
     set_pretty_name("Iron Ore");
     s->max_stack_size = 64;
 
