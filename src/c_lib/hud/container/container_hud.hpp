@@ -145,7 +145,6 @@ void AgentInventoryUI::draw()
     GS_ASSERT(slot_durabilities != NULL);
 
     // render slot backgrounds
-    glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -158,19 +157,18 @@ void AgentInventoryUI::draw()
             ratio = ((float)durability)/((float)max_durability);
         }
 
-		// get color based on durability
+        // get color based on durability
         const float alpha = 255;
         if (durability == NULL_DURABILITY)
             glColor4ub(80, 80, 80, alpha);    // grey
         else
-			Hud::set_color_from_ratio(ratio, alpha);
+            Hud::set_color_from_ratio(ratio, alpha);
 
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
-		Hud::meter_graphic.draw(x, y, w, w, ratio);
+        Hud::meter_graphic.draw(x, y, w, w, ratio);
     }
-    glEnd();
     
     // draw hover highlight
     glBegin(GL_QUADS);

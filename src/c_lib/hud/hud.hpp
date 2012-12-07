@@ -73,35 +73,34 @@ class Scoreboard
 
     Scoreboard();
     ~Scoreboard();
-    
 };
 
 class HUD
 {
     public:
-    bool inited;
-    
-    // text objects
-    Text* help;
-    Text* dead;
-    Text* fps;
-    Text* ping;
-    Text* reliable_ping;
-    Text* location;
-    Text* look;
-    AnimatedText* health;
-    Text* confirm_quit;
-    Text* prompt;
-    Text* error;
-    Text* error_subtitle;
-    Text* awesomium_message;
+        bool inited;
+        
+        // text objects
+        Text* help;
+        Text* dead;
+        Text* fps;
+        Text* ping;
+        Text* reliable_ping;
+        Text* location;
+        Text* look;
+        AnimatedText* health;
+        Text* confirm_quit;
+        Text* prompt;
+        Text* error;
+        Text* error_subtitle;
+        Text* awesomium_message;
 
-    // scoreboard needs rewritten logic
-    // will be its own class, also holding text objects
-    Scoreboard* scoreboard;
-    
-    // chat queue
-    ChatRender* chat;    // contains text objects
+        // scoreboard needs rewritten logic
+        // will be its own class, also holding text objects
+        Scoreboard* scoreboard;
+        
+        // chat queue
+        ChatRender* chat;    // contains text objects
 
     void init();
     HUD();

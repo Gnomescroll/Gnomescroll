@@ -357,17 +357,14 @@ static void draw_grabbed_icon()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glBegin(GL_QUADS);
-
     // render durability
     if (hand_item_durability != NULL_DURABILITY)
     {
         int max_durability = Item::get_max_durability(hand_item_type);
         float ratio = (float)hand_item_durability / (float)max_durability;
         Hud::set_color_from_ratio(ratio, 128);
-		Hud::meter_graphic.draw(x, y, w, w, ratio);
+        Hud::meter_graphic.draw(x, y, w, w, ratio);
     }
-    glEnd();
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_BLEND);

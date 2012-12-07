@@ -198,67 +198,66 @@ void draw_reference_center()
 void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage) 
 {
     // old durability color jumps
-	//glColor4ub(7, 247, 0, alpha);    // green
+    //glColor4ub(7, 247, 0, alpha);    // green
     //glColor4ub(243, 247, 0, alpha);  // yellow
     //glColor4ub(247, 71, 0, alpha);   // red-orange
     //glColor4ub(247, 14, 0, alpha);   // red
 
-	float small_to_big = ratio * 2.0f;
-	Color red    = color_init(255,   0, 0);
-	Color green  = color_init(0,   255, 0);
-	Color yellow = color_init(255, 190, 0);
-	Color full = green;
-	Color empty = red;
-	Color dyn;
+    float small_to_big = ratio * 2.0f;
+    Color red    = color_init(255,   0, 0);
+    Color green  = color_init(0,   255, 0);
+    Color yellow = color_init(255, 190, 0);
+    Color full = green;
+    Color empty = red;
+    Color dyn;
 
-	if (invert_color_for_damage) 
-	{
-		full = red;
-		empty = green;
-	}
+    if (invert_color_for_damage) 
+    {
+        full = red;
+        empty = green;
+    }
 
-	if (small_to_big > 1.0f)
-	{
-		small_to_big -= 1.0f;
-		dyn = interpolate_color(yellow, full, small_to_big);
-	}
-	else
-		dyn = interpolate_color(empty, yellow, small_to_big);
-			
-	glColor4ub(dyn.r, dyn.g, dyn.b, alpha);
+    if (small_to_big > 1.0f)
+    {
+        small_to_big -= 1.0f;
+        dyn = interpolate_color(yellow, full, small_to_big);
+    }
+    else
+        dyn = interpolate_color(empty, yellow, small_to_big);
+            
+    glColor4ub(dyn.r, dyn.g, dyn.b, alpha);
 }
 
 
 /* Display logic */
 
-int largest_total_health_seen = 0;
+static int largest_total_health_seen = 0;
+
 void draw_hud_textures()
 {
-	// meters
-	int w = _xresf/4;
-	int h = _yresf/64;
-	const int slowest_blink_delay = 15;
+    // meters
+    int w = _xresf/4;
+    int h = _yresf/64;
+    //const int slowest_blink_delay = 15;
 
-	// jetpack
-	glColor4ub(255,255,255,115); // white, more than half translucent
-    meter_graphic.draw(0,0, w,h, (float)ClientState::playerAgent_state.jetpack.fuel / (float)JETPACK_FUEL_MAX, METANCH_RIGHT);
-	
-	// health/energy
+    // jetpack
+    glColor4ub(255,255,255,115); // white, more than half translucent
+    meter_graphic.draw(0,0, w,h, (float)ClientState::playerAgent_state.jetpack.fuel / (float)JETPACK_FUEL_MAX, MeterGraphic::METANCH_RIGHT);
+    
+    // health/energy
     Agent* a = ClientState::playerAgent_state.you();
     if (a != NULL) 
-	{ 
-		float extra_from_tanks = HudContainer::energy_tanks->count() * AGENT_HEALTH;
-		float max  = a->status.health_max + extra_from_tanks;
-		if (largest_total_health_seen < max)
-			largest_total_health_seen = max;
-		float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage 
-		
-		set_color_from_ratio(curr / largest_total_health_seen, 175, true);
-		meter_graphic.draw(0,       _yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen);
-		meter_graphic.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen, METANCH_RIGHT);
-	}
+    { 
+        float extra_from_tanks = HudContainer::energy_tanks->count() * AGENT_HEALTH;
+        float max  = a->status.health_max + extra_from_tanks;
+        if (largest_total_health_seen < max)
+            largest_total_health_seen = max;
+        float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage 
 
-	
+        set_color_from_ratio(curr / largest_total_health_seen, 175, true);
+        meter_graphic.draw(0,       _yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen);
+        meter_graphic.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen, MeterGraphic::METANCH_RIGHT);
+    }
 
     if (!hud_draw_settings.draw) return;
 
@@ -610,7 +609,7 @@ void HUD::init()
     else
         prompt->set_text("");
     prompt->set_color(255,255,255,255);
-	prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::agent_toolbelt->height() );
+    prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::agent_toolbelt->height() );
     prompt->shadowed = true;
 
     error = text_list->create();

@@ -10,19 +10,19 @@ class AgentToolbeltUI : public UIElement
 {
     public:
 
-    //static const float border = 16;       // border around entire panel
-    static const int border = 0;       // border around entire panel
-    static const int inc1 = 8; // spacing between slot icons
-    static const int inc2 = 2;  // border around a slot icon
+        //static const float border = 16;       // border around entire panel
+        static const int border = 0;       // border around entire panel
+        static const int inc1 = 8; // spacing between slot icons
+        static const int inc2 = 2;  // border around a slot icon
 
-    static const int slot_size = 32;    // pixel dimension
+        static const int slot_size = 32;    // pixel dimension
 
-    static const int xdim = 9;    // slot dimensions
-    static const int ydim = 1;
+        static const int xdim = 9;    // slot dimensions
+        static const int ydim = 1;
 
-    int selected_slot;
+        int selected_slot;
 
-    HudText::Text* stack_numbers;
+        HudText::Text* stack_numbers;
 
     int width()
     {
@@ -140,7 +140,6 @@ void AgentToolbeltUI::draw()
     if (slot_durabilities == NULL) return;
 
     // render slot backgrounds
-    glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -153,19 +152,18 @@ void AgentToolbeltUI::draw()
             ratio = ((float)durability)/((float)max_durability);
         }
 
-		// get color based on durability
-		const float alpha = 128;
+        // get color based on durability
+        const float alpha = 128;
         if (durability == NULL_DURABILITY)
             glColor4ub(80, 80, 80, alpha);    // grey
         else
-			Hud::set_color_from_ratio(ratio, alpha);
+            Hud::set_color_from_ratio(ratio, alpha);
 
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
-		Hud::meter_graphic.draw(x, y, w, w, ratio);
+        Hud::meter_graphic.draw(x, y, w, w, ratio);
     }
-    glEnd();
 
     // draw hover highlight
     glBegin(GL_QUADS);
@@ -276,7 +274,6 @@ void AgentToolbeltUI::draw()
     HudFont::set_properties(font_size);
     HudFont::set_texture();
 
-    HudText::Text* text;
     for (int i=0; i<this->xdim; i++)
     for (int j=0; j<this->ydim; j++)
     {
@@ -285,7 +282,7 @@ void AgentToolbeltUI::draw()
         if (count <= 1) continue;
         GS_ASSERT(count_digits(count) < STACK_COUNT_MAX_LENGTH);
         
-        text = &this->stack_numbers[slot];
+        HudText::Text* text = &this->stack_numbers[slot];
         text->update_formatted_string(1, count);
 
         const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
@@ -301,5 +298,4 @@ void AgentToolbeltUI::draw()
     glDisable(GL_BLEND);
 }
 
-
-}
+}   // HudContainer

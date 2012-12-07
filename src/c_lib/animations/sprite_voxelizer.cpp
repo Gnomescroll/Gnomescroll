@@ -133,16 +133,16 @@ static inline void push_pixel_voxel(const struct Color pixel,
     struct Vec3 forward, struct Vec3 right, struct Vec3 up,
     float scale)
 {
-    static struct Vec3 veb[8];     //vertex positions
+    //static struct Vec3 veb[8];     //vertex positions
     static struct Vec3 vn[6];      //normals
     static struct Vec3 veb2[6*4];  //vertex array for rendering
 
-    for (int i=0; i<8; i++)
-    {
-        veb[i].x = scale*v_set2[3*i+0];
-        veb[i].y = scale*v_set2[3*i+1];
-        veb[i].z = scale*v_set2[3*i+2];
-    }
+    //for (int i=0; i<8; i++)
+    //{
+        //veb[i].x = scale*v_set2[3*i+0];
+        //veb[i].y = scale*v_set2[3*i+1];
+        //veb[i].z = scale*v_set2[3*i+2];
+    //}
 
     for (int i=0; i<6; i++)
     {
