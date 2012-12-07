@@ -87,7 +87,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\c_lib\agent\client\jetpack.hpp" />
-    <ClInclude Include="..\c_lib\hud\jetpack_meter.hpp" />
+    <ClInclude Include="..\c_lib\hud\meter.hpp" />
     <ClInclude Include="..\c_lib\t_gen\art_gallery.hpp" />
     <ClInclude Include="..\c_lib\t_gen\excavator.hpp" />
     <ClInclude Include="..\c_lib\t_gen\terrain_features.hpp" />
@@ -547,7 +547,6 @@
     <ClInclude Include="..\c_lib\hud\font.hpp" />
     <ClInclude Include="..\c_lib\hud\harvest_bar.hpp" />
     <ClInclude Include="..\c_lib\hud\hud.hpp" />
-    <ClInclude Include="..\c_lib\hud\jetpack_meter.hpp" />
     <ClInclude Include="..\c_lib\hud\map.hpp" />
     <ClInclude Include="..\c_lib\hud\reticle.hpp" />
     <ClInclude Include="..\c_lib\hud\text.hpp" />

@@ -28,7 +28,7 @@ class MeterGraphic
         } MeterAnchor;
 
     MeterGraphic() :
-        prev_w(0), blink_on(true), ticks_til_blink(0), num_qticles(0)
+        prev_w(0), blink_on(true), num_qticles(0)
     {}
 
     void draw(int x, int y, int w, int h, float ratio)
@@ -120,7 +120,6 @@ class MeterGraphic
 
         // blink related
         bool blink_on;
-        int ticks_til_blink;
         //// handle blinking
         //ticks_til_blink--;
         //if (ticks_til_blink < 1) 
