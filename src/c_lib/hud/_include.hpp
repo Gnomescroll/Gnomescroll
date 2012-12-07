@@ -1,3 +1,4 @@
+#include <hud/meter.cpp>
 #include <hud/reticle.cpp>
 #include <hud/cube_selector.cpp>
 #include <hud/font.cpp>
