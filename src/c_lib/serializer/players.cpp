@@ -318,10 +318,17 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         parse_line<class ParsedItemData>(&parse_item_token, item_buf, k, item_data);
         const char* actual_name = Item::get_compatible_item_name(item_data->name);
 
+        printf("Item data slot: %d\n", item_data->container_slot);
+
         int item_type = NULL_ITEM_TYPE;
         if (actual_name != NULL)
             item_type = Item::get_item_type(actual_name);
         
+        // attach data needed for the final item creation
+        item_data->item_type = item_type;
+        item_data->item_location = location;
+        item_data->item_container_type = container_load_data->container_type;
+
         GS_ASSERT(item_data->valid);
         GS_ASSERT(actual_name != NULL);
         GS_ASSERT(item_type != NULL_ITEM_TYPE);
@@ -344,11 +351,6 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
                 player_load_data, container_load_data, NULL, &container_data, item_data);
             continue;
         }
-
-        // attach post-process data needed for the final item creation
-        item_data->item_type = item_type;
-        item_data->item_location = location;
-        item_data->item_container_type = container_load_data->container_type;
 
         // put item in the slot checker
         slot_checker[item_data->container_slot] = item_data->id;
