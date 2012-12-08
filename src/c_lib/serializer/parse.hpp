@@ -115,6 +115,7 @@ void parse_line(bool (*process_token) (const char*, const char*, class ParsedIte
         char* val = &key[TAG_LENGTH + TAG_DELIMITER_LENGTH];
         if (!process_token(key, val, data)) return;
 
+        printf("Inside parser, key %s, val %s\n", key, val);
         printf("Inside parser Container slot: %d\n", data->container_slot);
 
         token_length = 0;
