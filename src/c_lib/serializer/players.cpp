@@ -122,8 +122,8 @@ static bool parse_player_container_token(const char* key, const char* val, class
     {
         GS_ASSERT(ItemContainer::is_valid_container_name(val));
         if (!ItemContainer::is_valid_container_name(val)) return false;
-        strncpy(data->name, val, DAT_NAME_MAX_LENGTH);
-        data->name[DAT_NAME_MAX_LENGTH] = '\0';
+        strncpy(data->name, val, LOCATION_NAME_MAX_LENGTH);
+        data->name[LOCATION_NAME_MAX_LENGTH] = '\0';
     }
     else
     if (strcmp(USER_ID_TAG, key) == 0)

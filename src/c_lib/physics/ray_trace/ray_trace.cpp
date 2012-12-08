@@ -21,9 +21,16 @@ static inline bool collision_check(int x, int y, int z)
     return t_map::isSolid(x,y,z);
 }
 
-inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2)
+inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float pos[3], float* _rad2)
 {
-    if (ox == 0.0f && oy == 0.0f && oz == 0.0f) return t_map::map_dim.x * 4;
+    if (unlikely(ox == 0.0f && oy == 0.0f && oz == 0.0f))
+    {
+        for (int i=0; i<3; i++)
+            pos[i] = 0;
+        float d = t_map::map_dim.x * 4;
+        *_rad2 = d*d;
+        return d;
+    }
     
     tx -= px;
     ty -= py;

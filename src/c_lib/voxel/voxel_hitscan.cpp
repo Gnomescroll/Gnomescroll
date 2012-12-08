@@ -12,7 +12,7 @@ bool Voxel_hitscan_list::hitscan(
 {
     float x2,y2,z2;
 
-    float r2;
+    float r2 = 100000.0f;
     float x = 0.0f;
     float y = 0.0f;
     float z = 0.0f;
@@ -26,7 +26,7 @@ bool Voxel_hitscan_list::hitscan(
     float dist;
     float min_dist = 1000000.0f;
     float max_dist = 256.0f;
-    float tpos[3];
+    float tpos[3] = {0};
 
     Vec3 source = vec3_init(x0,y0,z0);
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
