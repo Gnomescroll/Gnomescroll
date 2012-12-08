@@ -22,6 +22,7 @@ void write_bytes(char* buf, size_t& index, F val)
 template<class Data>
 void parse_line(bool (*process_token) (const char*, const char*, Data*), char* str, size_t length, Data* data)
 {
+    printf("Parsing line: %s\n", str);
     data->valid = false;
     GS_ASSERT(length);
     if (!length) return;
