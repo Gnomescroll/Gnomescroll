@@ -68,8 +68,6 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
         GS_ASSERT(!err && ((container_slot >= 0 && container_slot <= MAX_CONTAINER_SIZE) || container_slot == NULL_SLOT));
         if (err || ((container_slot < 0 || container_slot > MAX_CONTAINER_SIZE) && container_slot != NULL_SLOT)) return false;
         data->container_slot = container_slot;
-        printf("Container slot %lld, parsed from %s\n", container_slot, val);
-        printf("Container slot is %u after casting\n", data->container_slot);
     }
     else
     {   // unrecognized field

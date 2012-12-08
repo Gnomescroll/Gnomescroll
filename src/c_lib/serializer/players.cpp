@@ -206,7 +206,6 @@ static bool parse_player_token(const char* key, const char* val, class ParsedPla
 
 bool process_player_container_blob(const char* str, class PlayerLoadData* player_load_data, class PlayerContainerLoadData* container_load_data)
 {
-    printf("Processing player container blob: %s\n", str);
     // allocate scratch buffer long enough to hold the largest line
     static const size_t LONGEST_LINE = GS_MAX(ITEM_LINE_LENGTH, PLAYER_CONTAINER_LINE_LENGTH);
     char buf[LONGEST_LINE+1] = {'\0'};
@@ -302,8 +301,6 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
                 player_load_data, container_load_data, NULL, &container_data, NULL);
             break;
         }
-        printf("Item buf: %s\n", item_buf);
-        printf("Buf: %s\n", buf);
 
         class ParsedItemData* item_data = create_item_data();
         GS_ASSERT(item_data != NULL);
@@ -316,9 +313,7 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         }
 
         parse_line<class ParsedItemData>(&parse_item_token, item_buf, k, item_data);
-        printf("Item data slot 1: %d\n", item_data->container_slot);
         const char* actual_name = Item::get_compatible_item_name(item_data->name);
-        printf("Item data slot 2: %d\n", item_data->container_slot);
 
         int item_type = NULL_ITEM_TYPE;
         if (actual_name != NULL)
@@ -338,8 +333,6 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         {
             slot_occupied = (slot_checker[item_data->container_slot] != NULL_ITEM);
             GS_ASSERT(!slot_occupied);
-            if (slot_occupied)
-                printf("Slot %d is occupied with item %d\n", item_data->container_slot, slot_checker[item_data->container_slot]);
         }
 
         if (!item_data->valid || item_data->container_slot >= max_slots

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <serializer/items.hpp>
-
 namespace serializer
 {
 
@@ -64,59 +62,6 @@ void parse_line(bool (*process_token) (const char*, const char*, Data*), char* s
         // index to the value
         char* val = &key[TAG_LENGTH + TAG_DELIMITER_LENGTH];
         if (!process_token(key, val, data)) return;
-
-        token_length = 0;
-    }
-    
-    data->valid = true;
-}
-
-template<>
-void parse_line(bool (*process_token) (const char*, const char*, class ParsedItemData*), char* str, size_t length, class ParsedItemData* data)
-{
-    printf("Parsing line: %s\n", str);
-    data->valid = false;
-    GS_ASSERT(length);
-    if (!length) return;
-
-    // walk the string backwards
-    size_t token_length = 0;
-    for (int i=(int)length-1; i>=0; i--)
-    {
-        char c = str[i];
-        if (c == ' ') str[i] = '\0';    // convert all spaces to NUL so that padded strings get shortened
-        if (i && c != PROPERTY_DELIMITER[0])
-        {
-            token_length++;
-            continue;
-        }
-
-        // make sure at least the key + delimiter fits
-        GS_ASSERT(token_length >= TAG_LENGTH + TAG_DELIMITER_LENGTH);
-        if (token_length < TAG_LENGTH + TAG_DELIMITER_LENGTH) return;
-
-        char* key = NULL;
-        if (i)
-        {   // we are pointing at a token delimiter, the key starts on the next line
-            str[i] = '\0';
-            key = &str[i+1];
-        }
-        else  // we are at position 0, we can't go back any further
-            key = &str[i];
-
-        // check that the tag delimiter is correct
-        GS_ASSERT(key[TAG_LENGTH] == TAG_DELIMITER[0]);
-        if (key[TAG_LENGTH] != TAG_DELIMITER[0]) return;
-        
-        // replace the tag delimiter with NUL
-        key[TAG_LENGTH] = '\0';
-
-        // index to the value
-        char* val = &key[TAG_LENGTH + TAG_DELIMITER_LENGTH];
-        if (!process_token(key, val, data)) return;
-
-        printf("Inside parser, key %s, val %s\n", key, val);
-        printf("Inside parser Container slot: %d\n", data->container_slot);
 
         token_length = 0;
     }
