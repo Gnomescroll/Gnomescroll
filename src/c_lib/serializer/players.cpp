@@ -317,10 +317,17 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         GS_ASSERT(actual_name != NULL);
         GS_ASSERT(item_type != NULL_ITEM_TYPE);
         GS_ASSERT(item_data->container_slot < max_slots);
-        GS_ASSERT(slot_checker[item_data->container_slot] == NULL_ITEM);
+        bool slot_occupied = false;
+        if (item_data->container_slot < max_slots)
+        {
+            slot_occupied = (slot_checker[item_data->container_slot] != NULL_ITEM);
+            GS_ASSERT(!slot_occupied);
+            if (slot_occupied)
+                printf("Slot %d is occupied with item %d\n", item_data->container_slot, slot_check[item_data->container_slot]);
+        }
 
-        if (!item_data->valid || item_data->container_slot >= max_slots || actual_name == NULL
-          || item_type == NULL_ITEM_TYPE || slot_checker[item_data->container_slot] != NULL_ITEM)
+        if (!item_data->valid || item_data->container_slot >= max_slots
+          || actual_name == NULL || item_type == NULL_ITEM_TYPE || slot_occupied)
         {
             error = true;
             destroy_item_data(item_data->id);
