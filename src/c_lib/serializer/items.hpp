@@ -43,7 +43,6 @@ class ParsedItemData
         this->item_type = NULL_ITEM_TYPE;
         this->item_location = IL_NOWHERE;
         this->item_container_type = CONTAINER_TYPE_NONE;
-        printf("Parsed item data reset() called\n");
     }
 
     ParsedItemData(ItemID id) : id(id)

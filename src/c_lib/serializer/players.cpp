@@ -209,6 +209,7 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
     // allocate scratch buffer long enough to hold the largest line
     static const size_t LONGEST_LINE = GS_MAX(ITEM_LINE_LENGTH, PLAYER_CONTAINER_LINE_LENGTH);
     char buf[LONGEST_LINE+1] = {'\0'};
+    char item_buf[ITEM_LINE_LENGTH+1] = {'\0'};
 
     ItemLocationType location = IL_NOWHERE;
     if (container_load_data->container_type == AGENT_HAND)
@@ -284,8 +285,13 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         if (c == '\0') break;
 
         size_t k = 0;
-        while ((c = str[i++]) != '\0' && c != '\n' && k < LONGEST_LINE)
-            buf[k++] = c;
+        while ((c = str[i++]) != '\0' && c != '\n' && k < ITEM_LINE_LENGTH)
+        {
+            item_buf[k] = c;
+            buf[k] = c;
+            k++;
+        }
+        item_buf[k] = '\0';
         buf[k] = '\0';
         GS_ASSERT(c == '\n');
         if (c != '\n')
@@ -306,7 +312,7 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
             break;
         }
 
-        parse_line<class ParsedItemData>(&parse_item_token, buf, k, item_data);
+        parse_line<class ParsedItemData>(&parse_item_token, item_buf, k, item_data);
         const char* actual_name = Item::get_compatible_item_name(item_data->name);
 
         int item_type = NULL_ITEM_TYPE;
