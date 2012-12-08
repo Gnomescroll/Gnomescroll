@@ -805,8 +805,8 @@ inline void agent_set_block_CtoS::handle()
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
 
-    x = translate_point(x);
-    y = translate_point(y);
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     // dont set on existing block
     if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
@@ -818,11 +818,10 @@ inline void agent_set_block_CtoS::handle()
         collides = true;
     else
     {
-        for (unsigned int i=0, j=0; i<Agents::agent_list->max && j <Agents::agent_list->ct; i++,j++)
+        for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
             Agent* agent = &Agents::agent_list->objects[i];
             if (agent->id == Agents::agent_list->null_id) continue;
-            j++;
             if (agent->id != a->id && agent_collides_terrain(agent))
             {
                 collides = true;
@@ -844,9 +843,9 @@ inline void agent_set_block_CtoS::handle()
 
     /*
         Handle Special Block Placement
+        TODO -- move this to t_map's handler
     */
     static int _control_node = t_map::get_cube_id("control_node");
-
     if(cube_id == _control_node) t_map::add_control_node(x,y,z);
 }
 
@@ -864,8 +863,8 @@ inline void admin_set_block_CtoS::handle()
     
     if (!t_map::isValidCube((CubeID)cube_id)) return;
 
-    x = translate_point(x);
-    y = translate_point(y);
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     // TODO -- when this is a /real/ admin tool, remove this check
     // since we're giving it to players, do this check

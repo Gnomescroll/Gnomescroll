@@ -614,8 +614,8 @@ void create_container_block_CtoS::handle()
     GS_ASSERT(orientation >= 0 && orientation <= 3);
     if (orientation < 0 || orientation > 3) orientation = 0;
 
-    x = translate_point(x);
-    y = translate_point(y);
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     // dont set on existing block
     if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
@@ -626,11 +626,10 @@ void create_container_block_CtoS::handle()
         collides = true;  // test against our agent, most likely to collide
     else
     {
-        for (unsigned int i=0, j=0; i<Agents::agent_list->max && j < Agents::agent_list->ct; i++)
+        for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
             Agent* agent = &Agents::agent_list->objects[i];
             if (a->id == Agents::agent_list->null_id) continue;
-            j++;
             if (agent->id != a->id && agent_collides_terrain(agent))
             {
                 collides = true;
@@ -679,8 +678,8 @@ void admin_create_container_block_CtoS::handle()
     GS_ASSERT(orientation >= 0 && orientation <= 3);
     if (orientation < 0 || orientation > 3) orientation = 0;
     
-    x = translate_point(x);
-    y = translate_point(y);
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     // TODO -- when this is a /real/ admin tool, remove this check
     // since we're giving it to players, do this check
