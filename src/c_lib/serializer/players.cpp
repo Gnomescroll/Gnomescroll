@@ -205,7 +205,8 @@ static bool parse_player_token(const char* key, const char* val, class ParsedPla
 }
 
 bool process_player_container_blob(const char* str, class PlayerLoadData* player_load_data, class PlayerContainerLoadData* container_load_data)
-{    
+{
+    printf("Processing player container blob: %s\n", str);
     // allocate scratch buffer long enough to hold the largest line
     static const size_t LONGEST_LINE = GS_MAX(ITEM_LINE_LENGTH, PLAYER_CONTAINER_LINE_LENGTH);
     char buf[LONGEST_LINE+1] = {'\0'};
@@ -301,6 +302,8 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
                 player_load_data, container_load_data, NULL, &container_data, NULL);
             break;
         }
+        printf("Item buf: %s\n", item_buf);
+        printf("Buf: %s\n", buf);
 
         class ParsedItemData* item_data = create_item_data();
         GS_ASSERT(item_data != NULL);
