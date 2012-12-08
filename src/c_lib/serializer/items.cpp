@@ -43,7 +43,7 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
         GS_ASSERT(valid_name);
         if (!valid_name) return false;
         strncpy(data->name, val, DAT_NAME_MAX_LENGTH);
-        data->location_name[DAT_NAME_MAX_LENGTH] = '\0';
+        data->name[DAT_NAME_MAX_LENGTH] = '\0';
     }
     else
     if (strcmp(DURABILITY_TAG, key) == 0)
