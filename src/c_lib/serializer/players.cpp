@@ -323,7 +323,7 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
             slot_occupied = (slot_checker[item_data->container_slot] != NULL_ITEM);
             GS_ASSERT(!slot_occupied);
             if (slot_occupied)
-                printf("Slot %d is occupied with item %d\n", item_data->container_slot, slot_check[item_data->container_slot]);
+                printf("Slot %d is occupied with item %d\n", item_data->container_slot, slot_checker[item_data->container_slot]);
         }
 
         if (!item_data->valid || item_data->container_slot >= max_slots
