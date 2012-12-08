@@ -316,9 +316,9 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         }
 
         parse_line<class ParsedItemData>(&parse_item_token, item_buf, k, item_data);
+        printf("Item data slot 1: %d\n", item_data->container_slot);
         const char* actual_name = Item::get_compatible_item_name(item_data->name);
-
-        printf("Item data slot: %d\n", item_data->container_slot);
+        printf("Item data slot 2: %d\n", item_data->container_slot);
 
         int item_type = NULL_ITEM_TYPE;
         if (actual_name != NULL)
