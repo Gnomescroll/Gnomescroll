@@ -57,23 +57,25 @@ CubeID randcube(CubeID arr[], int num) {
     return arr[randrange(0, num - 1)];
 }
 
+namespace t_gen {
+
 struct IntVec3 {
     int x;
     int y;
     int z;
     IntVec3() { x = y = z = 0; }
 };
-
+    
 struct Rect {
     int x, y, wid, dep;
     Rect() { x = y = wid = dep = 0; }
 };
-
+    
 struct Rect3D {
     int x, y, z, wid, dep, hei;
     Rect3D() { x = y = z = wid = dep = hei = 0; }
 };
-
+    
 struct Room : Rect3D{
     direction_type_t dir_types[DIR_MAX];
     CubeID wall_block;
@@ -84,11 +86,9 @@ struct Room : Rect3D{
     Rect3D nh; // north hall
     Rect air; // a region that guarantees airspace, only used for stairways
 };
-
+    
 Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
-
-namespace t_gen {
-
+    
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id)
 {
     for (int z = i_z; z < i_z + i_h; z++) {
@@ -99,8 +99,6 @@ void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID t
         }
     }
 }
-
-}   // t_gen
 
 
 bool far_north_cube(int y) {
@@ -591,9 +589,6 @@ void make_ruins(int x, int y) {
     }
 }
 
-
-
-namespace t_gen {
     void check_textures(CubeID arr[], int num) {
 		for (int i = 0; i < num; i++) { 
 			GS_ASSERT(t_map::isValidCube(trims[i])); 

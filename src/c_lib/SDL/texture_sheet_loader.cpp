@@ -92,8 +92,11 @@ SpriteSheet TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* su
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return NULL_SPRITE_SHEET;
 
-    GS_ASSERT(sheet_id < N_SURFACES);
-    if (sheet_id >= N_SURFACES) return NULL_SPRITE_SHEET;
+    GS_ASSERT(sheet_id != NULL_SPRITE_SHEET);
+    if (sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE_SHEET;
+    
+    GS_ASSERT(sheet_id < (SpriteSheet)N_SURFACES);
+    if (sheet_id >= (SpriteSheet)N_SURFACES) return NULL_SPRITE_SHEET;
     
     surfaces[sheet_id] = surface;
     return sheet_id;
@@ -108,14 +111,16 @@ SpriteSheet TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* su
 
 bool TextureSheetLoader::blit_meta(size_t meta_index)
 {
-    GS_ASSERT(meta_index >= 0 && meta_index < this->tile_num);
-    if (meta_index < 0 || meta_index >= this->tile_num) return false;
+    GS_ASSERT(meta_index < this->tile_num);
+    if (meta_index >= this->tile_num) return false;
 
     struct TileMeta meta = this->meta[meta_index];
 
     // sanity checks
-    GS_ASSERT(meta.sheet_id < surface_num);
-    if (meta.sheet_id >= surface_num) return NULL_SPRITE;
+    GS_ASSERT(meta.sheet_id != NULL_SPRITE_SHEET);
+    if (meta.sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE;
+    GS_ASSERT(meta.sheet_id < (SpriteSheet)surface_num);
+    if (meta.sheet_id >= (SpriteSheet)surface_num) return NULL_SPRITE;
     
     // get surface
     SDL_Surface* s = this->surfaces[meta.sheet_id];
@@ -282,8 +287,8 @@ void TextureSheetLoader::reload()
 
         SpriteSheet index = this->load_texture_from_surface(s, (SpriteSheet)i);
 
-        GS_ASSERT(index == i);
-        if (index != i)
+        GS_ASSERT(index == (SpriteSheet)i);
+        if (index != (SpriteSheet)i)
         {
             this->surface_num = i;
             SDL_FreeSurface(s);

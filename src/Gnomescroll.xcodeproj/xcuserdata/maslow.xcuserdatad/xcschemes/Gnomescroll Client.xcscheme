@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/maslow/dc_mmo/netclient/settings/dev.lua"
+            argument = "dev"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

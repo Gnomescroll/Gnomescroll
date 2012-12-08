@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/maslow/dc_mmo/server/settings/localhost.lua"
+            argument = "localhost"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

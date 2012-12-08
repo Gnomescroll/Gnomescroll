@@ -246,9 +246,6 @@ bool load_mech_file(const char* fn)
     GS_ASSERT(size >= sizeof(uint32_t));
     if (size < sizeof(uint32_t)) goto error;
 
-    GS_ASSERT(mech_count >= 0);
-    if (mech_count < 0) goto error;
-
     for (size_t i=0; i<mech_count; i++)
     {
         GS_ASSERT(size - ibuf >= mech_size);

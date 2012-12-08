@@ -11,7 +11,6 @@
 		0D1ECFDE1570A0490099991D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1ECFDD1570A0490099991D /* OpenGL.framework */; };
 		0D1ECFE01570A0800099991D /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1ECFDF1570A0800099991D /* SDL_image.framework */; };
 		0D1ECFE21570A3F80099991D /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D1ECFE11570A3F80099991D /* SDLMain.m */; };
-		0D3066BD1605D76800AF7759 /* data in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D3066BC1605D76800AF7759 /* data */; };
 		0D3D98B01570B95700674A3C /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D1ECFDB15709F0B0099991D /* SDL.framework */; };
 		0D3D98B11570B95A00674A3C /* SDL_image.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D1ECFDF1570A0800099991D /* SDL_image.framework */; };
 		0D3D98BA1570C3AD00674A3C /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D3D98B91570C3AD00674A3C /* OpenAL.framework */; };
@@ -48,6 +47,8 @@
 		0DB113AC15ADF1C4005FD861 /* libGLEW.1.7.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DB113AA15ADED49005FD861 /* libGLEW.1.7.0.dylib */; };
 		0DB113AE15B0C3D7005FD861 /* _server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DB113AD15B0C3D7005FD861 /* _server.cpp */; };
 		0DB113B015B0C3ED005FD861 /* _client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0DB113AF15B0C3ED005FD861 /* _client.cpp */; };
+		0DCCF00F164E1D7A00DABD33 /* load_options.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0DCCF00E164E1D7A00DABD33 /* load_options.lua */; };
+		0DCCF010164E1EBF00DABD33 /* load_options.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0DCCF00E164E1D7A00DABD33 /* load_options.lua */; };
 		0DCF86DA15AA22E7000639BC /* lua_library.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0DCF86D915AA22E7000639BC /* lua_library.lua */; };
 		0DD55C2615B2F8D8006EA718 /* libluajit-51.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D3D98E615710A4400674A3C /* libluajit-51.2.dylib */; };
 		0DD55C2815B2F8E7006EA718 /* libassimp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DD55C2715B2F8E7006EA718 /* libassimp.dylib */; };
@@ -87,6 +88,7 @@
 			dstPath = ./settings;
 			dstSubfolderSpec = 7;
 			files = (
+				0DCCF010164E1EBF00DABD33 /* load_options.lua in CopyFiles */,
 				0D8459E215B25E1D0019F9D1 /* production.lua in CopyFiles */,
 				0D78B65615A29FAD0097E8CB /* lua_library.lua in CopyFiles */,
 			);
@@ -151,7 +153,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				0D3066BD1605D76800AF7759 /* data in CopyFiles */,
 				0D90560B1595E50A00335AAB /* log in CopyFiles */,
 				0D9055CF1595C7D500335AAB /* screenshot in CopyFiles */,
 				0D9055D01595C7D500335AAB /* media in CopyFiles */,
@@ -164,6 +165,7 @@
 			dstPath = ./settings;
 			dstSubfolderSpec = 7;
 			files = (
+				0DCCF00F164E1D7A00DABD33 /* load_options.lua in CopyFiles */,
 				0D8459E415B25F1B0019F9D1 /* production.lua in CopyFiles */,
 				0DCF86DA15AA22E7000639BC /* lua_library.lua in CopyFiles */,
 			);
@@ -204,6 +206,7 @@
 		0DB113AA15ADED49005FD861 /* libGLEW.1.7.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.1.7.0.dylib; path = "../../src/glew-1.7.0/lib/libGLEW.1.7.0.dylib"; sourceTree = "<group>"; };
 		0DB113AD15B0C3D7005FD861 /* _server.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _server.cpp; path = ../../dc_mmo/src/server/_server.cpp; sourceTree = "<group>"; };
 		0DB113AF15B0C3ED005FD861 /* _client.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = _client.cpp; path = ../../dc_mmo/src/client/_client.cpp; sourceTree = "<group>"; };
+		0DCCF00E164E1D7A00DABD33 /* load_options.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = load_options.lua; path = ../netclient/settings/load_options.lua; sourceTree = "<group>"; };
 		0DCF86D915AA22E7000639BC /* lua_library.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = lua_library.lua; path = ../../dc_mmo/server/settings/lua_library.lua; sourceTree = "<group>"; };
 		0DD55C2715B2F8E7006EA718 /* libassimp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.dylib; path = "../../src/assimp--3.0.1270-source-only/lib/RelWithDebInfo/libassimp.dylib"; sourceTree = "<group>"; };
 		0DD6B80215709CB00003D792 /* Gnomescroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gnomescroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -263,6 +266,7 @@
 		0DD6B7F715709CAE0003D792 = {
 			isa = PBXGroup;
 			children = (
+				0DCCF00E164E1D7A00DABD33 /* load_options.lua */,
 				0D3066BC1605D76800AF7759 /* data */,
 				0D3066BA1605D74E00AF7759 /* data */,
 				0D3066B81605D73900AF7759 /* data */,
