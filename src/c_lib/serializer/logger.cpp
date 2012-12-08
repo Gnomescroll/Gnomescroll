@@ -144,7 +144,7 @@ void log_container_load_error(const char* msg, const char* data_str,
     if (item_data != NULL)
     {
         char uuid[UUID_STRING_LENGTH+1];
-        write_uuid(uuid, UUID_STRING_LENGTH, item_data->uuid);
+        write_uuid(uuid, UUID_STRING_LENGTH+1, item_data->uuid);
         uuid[UUID_STRING_LENGTH] = '\0'; 
         fprintf(player_log, "ParsedItemData: ID %d, uuid %s, name %s, durability %u, stack_size %u, location_name %s, location_id %u, container_slot %u, item_type %d, item_location %d, item_container_type %d\n",
             item_data->id, uuid, item_data->name, item_data->durability, item_data->stack_size,
@@ -219,7 +219,7 @@ void log_player_load_error(const char* msg, const char* data_str,
     if (item_data != NULL)
     {
         char uuid[UUID_STRING_LENGTH+1];
-        write_uuid(uuid, UUID_STRING_LENGTH, item_data->uuid);
+        write_uuid(uuid, UUID_STRING_LENGTH+1, item_data->uuid);
         uuid[UUID_STRING_LENGTH] = '\0'; 
         fprintf(player_log, "ParsedItemData: ID %d, uuid %s, name %s, durability %u, stack_size %u, location_name %s, location_id %u, container_slot %u, item_type %d, item_location %d, item_container_type %d\n",
             item_data->id, uuid, item_data->name, item_data->durability, item_data->stack_size,
