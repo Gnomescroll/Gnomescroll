@@ -461,6 +461,7 @@ GS_SoundBuffer* get_sound_buffer_from_event_name(const char* event_name)
         if (sound_buffers[i]->loaded && strcmp(sound_buffers[i]->event_name, event_name) == 0)
             return sound_buffers[i];
     }
+    printf("No sound buffer found for event_name %s\n", event_name);
     return NULL;
 }
 
