@@ -102,10 +102,10 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
                     collision_point[0], collision_point[1], collision_point[2],
                     look.x, look.y, look.z
                 );
-                Sound::play_3d_sound("laser_hit_agent",
-                    collision_point[0], collision_point[1], collision_point[2],
-                    0,0,0
-                );
+                //Sound::play_3d_sound("laser_hit_agent",
+                    //collision_point[0], collision_point[1], collision_point[2],
+                    //0,0,0
+                //);
                 agent = Agents::get_agent((AgentID)target.entity_id);
                 if (agent==NULL) break;
             }
@@ -164,7 +164,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
                 tile, side
             );
             Animations::terrain_sparks(collision_point[0], collision_point[1], collision_point[2]);
-            Sound::play_3d_sound("laser_hit_block", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            //Sound::play_3d_sound("laser_hit_block", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
             break;
             
@@ -310,10 +310,10 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                     collision_point[0], collision_point[1], collision_point[2],
                     look.x, look.y, look.z
                 );
-                Sound::play_3d_sound("pick_hit_agent",
-                    collision_point[0], collision_point[1], collision_point[2],
-                    0,0,0
-                );
+                //Sound::play_3d_sound("pick_hit_agent",
+                    //collision_point[0], collision_point[1], collision_point[2],
+                    //0,0,0
+                //);
                 //voxel_blast_radius = 3;
             }
             //else if (target.entity_type == OBJECT_MONSTER_BOMB)
