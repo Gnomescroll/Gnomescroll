@@ -662,7 +662,7 @@ int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_mul
     
     // lookup buffer from file
     class GS_SoundBuffer* sound_buffer = get_sound_buffer_from_event_name(event_name);
-    GS_ASSERT(sound_buffer != NULL);
+    GS_ASSERT(sound_buffers == NULL || sound_buffer != NULL);
     
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
@@ -730,6 +730,7 @@ int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float ga
 
     // lookup buffer from file
     GS_SoundBuffer* sound_buffer = get_sound_buffer_from_event_name(event_name);
+    GS_ASSERT(sound_buffers == NULL || sound_buffer != NULL);
 
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
