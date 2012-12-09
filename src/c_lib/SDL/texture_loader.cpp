@@ -9,18 +9,16 @@
 
 int init_image_loader()
 {
-    //printf("image loader init\n");
     IMG_Init(IMG_INIT_PNG); // IMG_INIT_JPG|IMG_INIT_PNG
     return 0;
 }
 
 SDL_Surface* _load_image(const char* file)
 {
-    SDL_Surface *image;
-    image=IMG_Load(file);
+    SDL_Surface* image = IMG_Load(file);
     if (!image)
     {
-        printf("IMG_Load: %s\n", IMG_GetError());
+        printf("Failed to load %s. IMG_Load error: %s\n", file, IMG_GetError());
         return NULL;
     }
     GS_ASSERT(image->format->BytesPerPixel == 4);
