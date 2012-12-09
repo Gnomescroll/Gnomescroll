@@ -454,6 +454,7 @@ int get_free_source()
 
 GS_SoundBuffer* get_sound_buffer_from_event_name(const char* event_name)
 {
+    if (sound_buffers == NULL) return NULL;
     for (int i=0; i<MAX_SOUNDS; i++)
     {
         if (sound_buffers[i] == NULL) continue;
