@@ -84,7 +84,7 @@ Grenade::Grenade(int id) :
 Grenade::~Grenade()
 {
     #if DC_CLIENT
-    Vec3 position = this->get_position();
+    //Vec3 position = this->get_position();
     // Sound::play_3d_sound("plasma_grenade_explode", position.x, position.y, position.z, 0,0,0);
     #endif
 }
@@ -110,7 +110,7 @@ void Grenade::tick()
     {
         this->bounce_count++;
         #if DC_CLIENT
-        Vec3 position = this->get_position();
+        //Vec3 position = this->get_position();
         // Sound::play_3d_sound("grenade_bounce", position.x, position.y, position.z, 0,0,0);
         #endif
     }

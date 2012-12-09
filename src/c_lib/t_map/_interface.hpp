@@ -67,8 +67,8 @@ extern CubeID requested_cube_id;
 #endif
 
 #if DC_SERVER
-void create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id);
-void destroy_item_container_block(int x, int y, int z);
+bool create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id);
+bool destroy_item_container_block(int x, int y, int z);
 
 void smelter_on(int container_id);
 void smelter_off(int container_id);

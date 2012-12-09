@@ -191,34 +191,36 @@ void received_block_damage_response(unsigned int request_id, unsigned int dmg)
 #endif
 
 #if DC_SERVER
-void create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id)
+bool create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id)
 {
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
+    IF_ASSERT(t_map::get(x,y,z) != EMPTY_CUBE) return false;
+
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);
-    if (c == NULL) return;
+    if (c == NULL) return false;
     
-    c->chunk_item_container.add(x,y,z, container_type, container_id);
+    return c->chunk_item_container.add(x,y,z, container_type, container_id);
 }
 
-void destroy_item_container_block(int x, int y, int z)
+bool destroy_item_container_block(int x, int y, int z)
 {
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);
-    if (c == NULL) return;
+    if (c == NULL) return false;
 
-    c->chunk_item_container.remove(x,y,z);
+    return c->chunk_item_container.remove(x,y,z);
 }
 
 void smelter_on(int container_id)

@@ -1515,6 +1515,28 @@ ItemID auto_add_item_to_container(const char* item_name, int container_id)
     return item->id;
 }
 
+int create_container_block(const char* container_name, int x, int y, int z)
+{
+    ItemContainerType container_type = get_type(container_name);
+    return create_container_block(container_type, x,y,z);
+}
+
+int create_container_block(ItemContainerType container_type, int x, int y, int z)
+{
+    ASSERT_VALID_CONTAINER_TYPE(container_type);
+    IF_INVALID_CONTAINER_TYPE(container_type) return NULL_CONTAINER;
+
+    ItemContainerInterface* container = create_container(container_type);
+    IF_ASSERT(container == NULL) return NULL_CONTAINER;
+    init_container(container);
+    bool added = t_map::create_item_container_block(x,y,z, container->type, container->id);
+    IF_ASSERT(added)
+    {
+        destroy_container(container->id);
+        return NULL_CONTAINER;
+    }
+    return container->id;
+}
 
 void update_smelters()
 {

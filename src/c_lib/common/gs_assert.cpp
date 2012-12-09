@@ -32,8 +32,8 @@ const size_t GS_ASSERT_MAX = 4096;
 char* _GS_ASSERT_ARRAY[GS_ASSERT_MAX] = {NULL};
 size_t _GS_ASSERT_COUNT[GS_ASSERT_MAX] = {0};
 
-void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
-{
+int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
+{   // always return 1, so IF_ASSERT works correctly
     #if !PRODUCTION && DC_CLIENT
     if (c_lib_inited)
         Sound::play_2d_sound("debug_warning");
@@ -60,16 +60,16 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t
         if (strcmp(t, _GS_ASSERT_ARRAY[i]) == 0)
         {   //match
             _GS_ASSERT_COUNT[i]++;
-            if(_GS_ASSERT_COUNT[i] >= LIMIT) return;
+            if(_GS_ASSERT_COUNT[i] >= LIMIT) return 1;
             //print and return;
             print_trace(2);
             puts(t);
-            return;
+            return 1;
         }
         i++;
     }
 
-    if (i >= GS_ASSERT_MAX) return;
+    if (i >= GS_ASSERT_MAX) return 1;
 
     //insert into array
     _GS_ASSERT_ARRAY[i] = (char*) malloc(strlen(t)+1);
@@ -78,11 +78,13 @@ void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t
     _GS_ASSERT_COUNT[i]++;
     print_trace(2);
     printf("%s\n", t);
+
+    return 1;
 }
 
-inline void _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
+inline int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
-    _GS_ASSERT_INTERNAL(FILE, FUNC, LINE, GS_ASSERT_DEFAULT_PRINT_LIMIT);
+    return _GS_ASSERT_INTERNAL(FILE, FUNC, LINE, GS_ASSERT_DEFAULT_PRINT_LIMIT);
 }
 
 void _GS_ASSERT_TEARDOWN()

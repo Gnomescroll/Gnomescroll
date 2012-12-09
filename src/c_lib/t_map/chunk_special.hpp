@@ -23,15 +23,15 @@ struct inventory_block
 class CHUNK_ITEM_CONTAINER
 {
     private:
-        void remove_index(int index);
+    bool remove_index(int index);
         
     public:
 
-    int chunk_index;
+        int chunk_index;
 
-    int iban; //inventory_block_array_num
-    int ibam; //inventory_block_array_max
-    struct inventory_block* iba; //inventory_block_array
+        int iban; //inventory_block_array_num
+        int ibam; //inventory_block_array_max
+        struct inventory_block* iba; //inventory_block_array
 
     CHUNK_ITEM_CONTAINER()
     {
@@ -64,10 +64,10 @@ class CHUNK_ITEM_CONTAINER
     }
     #endif
 
-    void _remove(int index);
+    bool _remove(int index);
 
-    void remove(int x, int y, int z);
-    void remove(int container_id);
+    bool remove(int x, int y, int z);
+    bool remove(int container_id);
 
     void get_container_location(int container_id, int position[3])
     {
@@ -84,7 +84,7 @@ class CHUNK_ITEM_CONTAINER
         GS_ASSERT(false);
     }
     
-    void add(int x, int y, int z, ItemContainerType container_type, int container_id);
+    bool add(int x, int y, int z, ItemContainerType container_type, int container_id);
 
     int get(int x, int y, int z)
     {

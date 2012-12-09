@@ -3,13 +3,13 @@
 #include <item/container/_interface.hpp>
 #include <item/container/container.hpp>
 #if DC_SERVER
-#include <item/container/server.hpp>
+# include <item/container/server.hpp>
 #endif
 
 namespace t_map
 {
 
-void CHUNK_ITEM_CONTAINER::remove_index(int i)
+bool CHUNK_ITEM_CONTAINER::remove_index(int i)
 {
     #if DC_SERVER
     map_history->container_block_delete(chunk_index, iba[i].container_id);
@@ -22,10 +22,10 @@ void CHUNK_ITEM_CONTAINER::remove_index(int i)
 
     ItemContainer::container_block_destroyed(iba[i].container_id, iba[i].x, iba[i].y, iba[i].z);
     
-    _remove(i);
+    return this->_remove(i);
 }
 
-void CHUNK_ITEM_CONTAINER::remove(int container_id)
+bool CHUNK_ITEM_CONTAINER::remove(int container_id)
 {
     // find container
     int i;
@@ -33,15 +33,14 @@ void CHUNK_ITEM_CONTAINER::remove(int container_id)
         if(container_id == iba[i].container_id)
             break;
     GS_ASSERT(i < iban);   // did not find
-    if (i >= iban) return;
+    if (i >= iban) return false;
 
-    this->remove_index(i);
+    return this->remove_index(i);
 }
 
-void CHUNK_ITEM_CONTAINER::_remove(int index)
+bool CHUNK_ITEM_CONTAINER::_remove(int index)
 {
-    GS_ASSERT(index < ibam);
-    if (index >= ibam) return;
+    IF_ASSERT(index >= ibam) return false;
     iban--;
     iba[index] = iba[iban];
 
@@ -54,9 +53,10 @@ void CHUNK_ITEM_CONTAINER::_remove(int index)
     // (for the serializer) 
     main_map->chunk[this->chunk_index]->increment_version();
     #endif
+    return true;
 }
 
-void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
+bool CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
 {
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -66,41 +66,33 @@ void CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
     for(i=0; i<iban; i++)
         if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
             break;
-    GS_ASSERT(i < iban);   // did not find
-    if (i >= iban) return;
-
-    this->remove_index(i);
+    IF_ASSERT(i >= iban) return false;
+    return this->remove_index(i);
 }
 
-void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_type, int container_id)
+bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_type, int container_id)
 {
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0);
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_type == CONTAINER_TYPE_NONE || container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_type == CONTAINER_TYPE_NONE || container_id == NULL_CONTAINER) return false;
     
-    GS_ASSERT(ibam < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM);
-    if (ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) return;
+    IF_ASSERT(ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) return false;
     
-    if(iban == ibam)
+    if (iban == ibam)
     {
         int o_ibam = ibam;
         ibam *= 2;
         ibam = (ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) ? (MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) - 1 : ibam;
-        GS_ASSERT(ibam >= o_ibam);
-        if (ibam < o_ibam) return;
-        GS_ASSERT(iban < ibam);
-        if (iban >= ibam) return;
+        IF_ASSERT(ibam < o_ibam) return false;
+        IF_ASSERT(iban >= ibam) return false;
         if (o_ibam != ibam)
         {
             struct inventory_block* new_iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
-            GS_ASSERT(new_iba != NULL);
-            if (new_iba == NULL)
+            IF_ASSERT(new_iba == NULL)
             {   // error handling
                 free(iba);
                 iba = NULL;
@@ -108,8 +100,7 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
             }
             else iba = new_iba;
         }
-        GS_ASSERT(iba != NULL);
-        if (iba == NULL) return;
+        IF_ASSERT(iba == NULL) return false;
     }
 
     iba[iban].x = x;
@@ -135,6 +126,7 @@ void CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
     GS_ASSERT(container != NULL);
     if (container != NULL) container->chunk = this->chunk_index;
     #endif
+    return true;
 }
 
 

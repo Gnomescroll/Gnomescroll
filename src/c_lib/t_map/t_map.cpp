@@ -42,11 +42,13 @@ CubeID get(int x, int y, int z)
 void set(int x, int y, int z, CubeID cube_id)
 {
     #if DC_SERVER
-    // TODO -- this handling code also appears in apply_damage for handling
-    // destroyed block. see if can be unified
-    // This container check may only be here for sanity, because
-    // the container shit would get corrupted otherwise
     CubeID existing_cube_id = t_map::get(x,y,z);
+    // dont overwrite existing cubes with new ones
+    IF_ASSERT(cube_id != EMPTY_CUBE && existing_cube_id != EMPTY_CUBE) return;
+
+    // TODO -- make a single handler for this item container check,
+    // and the explosives checks (any special destruction required blocks)
+    // and call it here (along with the apply_damage location)
     if (isItemContainer(existing_cube_id))
         destroy_item_container_block(x,y,z);
     #endif

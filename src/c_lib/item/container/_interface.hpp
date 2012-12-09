@@ -108,6 +108,12 @@ ContainerActionType auto_add_free_item_to_container(ClientID client_id, int cont
 // Item::send_item_state(item_id);
 ItemID auto_add_item_to_container(const char* item_name, int container_id);
 
+// Create a container at a map location and returns the container ID
+// Remember to broadcast_container_create(id) if you are calling this
+// outside of the init phase (when players may be playing)
+int create_container_block(const char* container_name, int x, int y, int z);
+int create_container_block(ItemContainerType container_type, int x, int y, int z);
+
 // definition in server.hpp
 void send_container_remove(ClientID client_id, int container_id, int slot);
 
