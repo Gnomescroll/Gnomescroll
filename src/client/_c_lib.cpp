@@ -45,6 +45,9 @@ dont_include_this_file_in_server
 # include <common/osx.hpp>
 #endif
 
+// Vars related to internal startup
+bool c_lib_inited = false;
+
 /* Common headers */
 #include <common/version.h>
 #include <common/defines.h>
@@ -52,7 +55,7 @@ dont_include_this_file_in_server
 #include <common/compat_al.h>
 #include <common/macros.hpp>
 #include <common/crash_report/stack_trace.hpp>
-#include <common/gs_assert.hpp>
+#include <common/gs_assert.cpp>
 #include <common/mallox.hpp>
 #include <common/compression/miniz.c>
 #include <common/template/object_list.hpp>
@@ -198,7 +201,6 @@ dont_include_this_file_in_server
 // authentication
 #include <auth/_include.hpp>
 
-bool c_lib_inited = false;
 bool signal_exit = false;
 
 #ifdef linux
@@ -222,9 +224,7 @@ int init_c_lib(int argc, char* argv[])
     /*
         Time startup functions to determine delay/slow down
     */
-    static int inited = 0;
-    GS_ASSERT(inited == 0);
-    inited++;
+    GS_ASSERT(!c_lib_inited);
 
     int ret = atexit(&atexit_handler);
     GS_ASSERT_ABORT(ret == 0);
@@ -389,6 +389,8 @@ int init_c_lib(int argc, char* argv[])
     //t_map::init_shaders();
     t_mob::init();
     //CHECK_GL_ERROR();
+
+    c_lib_inited = true;
 
     return 0;
 }

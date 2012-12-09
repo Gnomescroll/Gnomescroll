@@ -4,17 +4,14 @@
 dont_include_this_file_in_server
 #endif
 
-#include <agent/agent_list.hpp>
-#include <voxel/voxel_render.hpp>
 #include <hud/text.hpp>
 #include <agent/agent.hpp>
 #include <agent/net_agent.hpp>
-#include <agent/client/player_agent.hpp>
 #include <particle/_interface.hpp>
 #include <item/particle/_interface.hpp>
 
 #if USE_OPENAL
-#include <sound/openal.hpp>
+# include <sound/openal.hpp>
 #endif
 
 const int GAME_OBJECT_MAX = 4096 * 4;

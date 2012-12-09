@@ -4,10 +4,12 @@
 dont_include_this_file_in_server
 #endif
 
-#include <agent/agent_list.hpp>
+#include <agent/constants.hpp>
 #include <entity/objects.hpp>
-
-class PlayerAgent_state; //forward declaration
+#include <physics/vec3.hpp>
+#include <agent/client/player_agent.hpp>
+#include <voxel/voxel_hitscan.hpp>
+#include <voxel/voxel_render.hpp>
 
 namespace ClientState
 {
@@ -15,10 +17,10 @@ namespace ClientState
 extern int tick_id;
 extern int frame_id;
 
-extern Vec3 location_pointer;
+extern struct Vec3 location_pointer;
 extern bool location_pointer_set;
 
-extern PlayerAgent_state playerAgent_state;
+extern class PlayerAgent_state playerAgent_state;
 
 // property lists
 extern class Voxel_render_list_manager* voxel_render_list;
@@ -27,7 +29,7 @@ extern class Voxel_hitscan_list* voxel_hitscan_list;
 extern int last_ping_time;
 extern int last_reliable_ping_time;
 
-extern Entities::Entity* base;
+extern class Entities::Entity* base;
 
 void set_PlayerAgent_id(AgentID id);
 

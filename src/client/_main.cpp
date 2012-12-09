@@ -45,7 +45,6 @@ void init(int argc, char* argv[])
     GS_MKDIR("./screenshot", S_IRWXU);
 
     init_c_lib(argc, argv);
-    c_lib_inited = true;
 
     _START_CLOCK(); // must start before networking
 

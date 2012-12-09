@@ -61,7 +61,7 @@ dont_include_this_file_in_client
 #include <common/compression/miniz.c>
 #include <common/macros.hpp>
 #include <common/crash_report/stack_trace.hpp>
-#include <common/gs_assert.hpp>
+#include <common/gs_assert.cpp>
 #include <common/mallox.hpp>
 #include <common/dirent.h>
 

@@ -2,8 +2,7 @@
 
 #include <common/defines.h>
 #include <net_lib/common/types.hpp>
-
-struct Vec3;    // forward decl
+#include <physics/vec3.hpp>
 
 namespace Sound
 {
