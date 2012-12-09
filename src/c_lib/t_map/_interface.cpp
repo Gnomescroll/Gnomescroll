@@ -199,7 +199,7 @@ bool create_item_container_block(int x, int y, int z, ItemContainerType containe
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    IF_ASSERT(t_map::get(x,y,z) != EMPTY_CUBE) return false;
+    IF_ASSERT(!isItemContainer(t_map::get(x,y,z))) return false;
 
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     GS_ASSERT(c != NULL);

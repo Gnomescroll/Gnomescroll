@@ -39,12 +39,12 @@ CubeID get(int x, int y, int z)
 
 }
 
-void set(int x, int y, int z, CubeID cube_id)
+CubeID set(int x, int y, int z, CubeID cube_id)
 {
     #if DC_SERVER
     CubeID existing_cube_id = t_map::get(x,y,z);
     // dont overwrite existing cubes with new ones
-    IF_ASSERT(cube_id != EMPTY_CUBE && existing_cube_id != EMPTY_CUBE) return;
+    //IF_ASSERT(cube_id != EMPTY_CUBE && existing_cube_id != EMPTY_CUBE) return existing_cube_id;
 
     // TODO -- make a single handler for this item container check,
     // and the explosives checks (any special destruction required blocks)
@@ -53,6 +53,7 @@ void set(int x, int y, int z, CubeID cube_id)
         destroy_item_container_block(x,y,z);
     #endif
     main_map->set_block(x,y,z, cube_id);
+    return cube_id;
 }
 
 OPTIMIZED
@@ -144,9 +145,8 @@ int get_block_damage(int x, int y, int z)
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
-    GS_ASSERT(dmg > 0);
-    if (dmg <= 0) return;
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT(dmg <= 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -163,7 +163,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 
 void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -172,7 +172,7 @@ void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action)
 
 void broadcast_set_block(int x, int y, int z, CubeID cube_id)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -182,7 +182,7 @@ void broadcast_set_block(int x, int y, int z, CubeID cube_id)
 
 void broadcast_set_block_palette(int x, int y, int z, CubeID block, int palette)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -196,7 +196,7 @@ void broadcast_set_block_palette(int x, int y, int z, CubeID block, int palette)
 
 void broadcast_set_palette(int x, int y, int z, int palette)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -211,16 +211,14 @@ void broadcast_set_palette(int x, int y, int z, int palette)
 
 inline int get_highest_open_block(int x, int y, int n)
 {
-    GS_ASSERT(n >= 1);
-    if (n < 1) printf("Get highest open block error: called with n = %d\n", n);
-    if (n < 1) return -1;
+    IF_ASSERT(n < 1) return -1;
     if (n == 1) return get_highest_open_block(x, y);
 
     int open = n;
     CubeID cube_id;
     int i;
 
-    for (i=ZMAX-1; i>=0; i--)
+    for (i=map_dim.z-1; i>=0; i--)
     {
         cube_id = get(x, y, i);
         if (!isSolid(cube_id))
@@ -242,8 +240,7 @@ inline int get_highest_open_block(int x, int y)
 
 inline int get_nearest_open_block(int x, int y, int z, int n)
 {
-    GS_ASSERT(n >= 1);
-    if (n < 1) return z;
+    IF_ASSERT(n < 1) return z;
 
     int inc = 1;    // direction (+/- up/down)
     int up = z;     // up cursor
@@ -319,13 +316,12 @@ inline int get_highest_solid_block(int x, int y, int z)
 
 inline int get_lowest_open_block(int x, int y, int n)
 {
-    GS_ASSERT(n > 0);
-    if (n < 1) return -1;
+    IF_ASSERT(n < 1) return -1;
 
     int i;
     CubeID cube_id;
     int open=0;
-    for (i=0; i<ZMAX; i++)
+    for (i=0; i<map_dim.z; i++)
     {
         cube_id = get(x,y,i);
         if (isSolid(cube_id)) open = 0;
@@ -339,9 +335,9 @@ inline int get_lowest_open_block(int x, int y, int n)
 inline int get_lowest_solid_block(int x, int y)
 {
     int i;
-    for (i=0; i < ZMAX; i++)
+    for (i=0; i<map_dim.z; i++)
         if (isSolid(x,y,i)) break;
-    if (i >= ZMAX) i = -1;  // failure
+    if (i >= map_dim.z) i = -1;  // failure
     return i;
 }
 
@@ -365,14 +361,12 @@ inline bool position_is_loaded(int x, int y)
 
 bool block_can_be_placed(int x, int y, int z, CubeID cube_id)
 {
-    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     bool valid_cube = isValidCube(cube_id);
-    GS_ASSERT(valid_cube);
-    if (!valid_cube) return false;
+    IF_ASSERT(!valid_cube) return false;
     
     if (get(x,y,z) != EMPTY_CUBE) return false;
     // check against all spawners
@@ -382,6 +376,5 @@ bool block_can_be_placed(int x, int y, int z, CubeID cube_id)
         return false;
     return true;
 }
-
 
 }   // t_map

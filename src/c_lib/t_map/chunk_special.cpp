@@ -79,7 +79,6 @@ bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     IF_ASSERT(container_type == CONTAINER_TYPE_NONE || container_id == NULL_CONTAINER) return false;
-    
     IF_ASSERT(ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) return false;
     
     if (iban == ibam)
@@ -91,7 +90,7 @@ bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
         IF_ASSERT(iban >= ibam) return false;
         if (o_ibam != ibam)
         {
-            struct inventory_block* new_iba = (struct inventory_block*) realloc(iba, ibam*sizeof(struct inventory_block));
+            struct inventory_block* new_iba = (struct inventory_block*)realloc(iba, ibam*sizeof(struct inventory_block));
             IF_ASSERT(new_iba == NULL)
             {   // error handling
                 free(iba);

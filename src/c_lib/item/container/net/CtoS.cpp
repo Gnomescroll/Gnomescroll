@@ -603,13 +603,11 @@ void create_container_block_CtoS::handle()
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return;
+    IF_ASSERT(attr == NULL) return;
     CubeID cube_id = attr->cube_id;
 
     ItemContainerType container_type = t_map::get_container_type_for_cube(cube_id);
-    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-    if (container_type == CONTAINER_TYPE_NONE) return;
+    IF_ASSERT(container_type == CONTAINER_TYPE_NONE) return;
 
     GS_ASSERT(orientation >= 0 && orientation <= 3);
     if (orientation < 0 || orientation > 3) orientation = 0;
@@ -628,27 +626,27 @@ void create_container_block_CtoS::handle()
     {
         for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
-            Agent* agent = &Agents::agent_list->objects[i];
-            if (a->id == Agents::agent_list->null_id) continue;
-            if (agent->id != a->id && agent_collides_terrain(agent))
+            class Agent* agent = &Agents::agent_list->objects[i];
+            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
+            if (agent_collides_terrain(agent))
             {
                 collides = true;
                 break;
             }
         }
     }
+    
     t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
 
     if (collides) return;
 
     ItemContainerInterface* container = create_container(container_type);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    IF_ASSERT(container == NULL) return;
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
 
     t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
-    t_map::broadcast_set_block_palette(x,y,z,cube_id,orientation);
+    t_map::broadcast_set_block_palette(x,y,z, cube_id, orientation);
 
     init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
@@ -693,7 +691,7 @@ void admin_create_container_block_CtoS::handle()
         for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
             Agent* agent = &Agents::agent_list->objects[i];
-            if (a->id == Agents::agent_list->null_id || agent == a) continue;
+            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
             if (agent_collides_terrain(agent))
             {
                 collides = true;

@@ -821,8 +821,8 @@ inline void agent_set_block_CtoS::handle()
         for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
             Agent* agent = &Agents::agent_list->objects[i];
-            if (agent->id == Agents::agent_list->null_id) continue;
-            if (agent->id != a->id && agent_collides_terrain(agent))
+            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
+            if (agent_collides_terrain(agent))
             {
                 collides = true;
                 break;

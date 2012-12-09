@@ -1526,9 +1526,15 @@ int create_container_block(ItemContainerType container_type, int x, int y, int z
     ASSERT_VALID_CONTAINER_TYPE(container_type);
     IF_INVALID_CONTAINER_TYPE(container_type) return NULL_CONTAINER;
 
+    CubeID cube_id = t_map::get_cube_id_for_container(container_type);
+    IF_ASSERT(cube_id == NULL_CUBE) return NULL_CONTAINER;
+
     ItemContainerInterface* container = create_container(container_type);
     IF_ASSERT(container == NULL) return NULL_CONTAINER;
     init_container(container);
+
+    t_map::broadcast_set_block(x,y,z, cube_id);
+
     bool added = t_map::create_item_container_block(x,y,z, container->type, container->id);
     IF_ASSERT(added)
     {

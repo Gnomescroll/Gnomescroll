@@ -83,13 +83,20 @@ CubeType get_cube_type(CubeID id)
 
 const char* get_cube_name_for_container(ItemContainerType container_type)
 {   // not indexed/fast, use only for init/cached values
+    CubeID cube_id = get_cube_id_for_container(container_type);
+    if (cube_id == NULL_CUBE) return NULL;
+    return get_cube_properties(cube_id)->name;
+}
+
+CubeID get_cube_id_for_container(ItemContainerType container_type)
+{
     for (int i=0; i<MAX_CUBES; i++)
     {
         class CubeProperties* p = get_cube_properties((CubeID)i);
         if (p != NULL && p->container_type == container_type)
-            return p->name;
+            return (CubeID)i;
     }
-    return NULL;
+    return NULL_CUBE;
 }
 
 CubeMaterial get_cube_material(CubeID cube_id)

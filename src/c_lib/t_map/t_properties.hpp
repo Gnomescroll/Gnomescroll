@@ -84,6 +84,7 @@ CubeID get_cube_id(const char* name);
 CubeType get_cube_type(CubeID id);
 
 const char* get_cube_name_for_container(ItemContainerType container_type);
+CubeID get_cube_id_for_container(ItemContainerType container_type);
 
 bool is_valid_cube_name(const char* name);
 

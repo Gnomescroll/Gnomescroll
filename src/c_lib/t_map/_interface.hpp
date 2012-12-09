@@ -14,7 +14,7 @@ int get_block_item_container(int x, int y, int z);
 bool get_container_location(int container_id, int position[3]); // returns false is container not found
 
 CubeID get(int x, int y, int z);
-void set(int x, int y, int z, CubeID cube_id);
+CubeID set(int x, int y, int z, CubeID cube_id);
 inline void set_fast(int x, int y, int z, CubeID cube_id) __attribute__((always_inline));
 void set_palette(int x, int y, int z, int palette);
 
