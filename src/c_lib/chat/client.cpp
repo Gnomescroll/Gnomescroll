@@ -314,20 +314,6 @@ bool ChatInput::route_command()
     while((c = buffer[i++]) != '\0' && isspace(c)); // advance cursor to first non-space char
     i -= 1;
     
-    //if (!strcmp(cmd, "name") || !strcmp(cmd, "nick"))
-    //{
-        //if (buffer_len <= (int)(strlen("/name "))) return true;
-        //char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
-        //int j = 0;
-        //while ((c = buffer[i++]) != '\0' && !isspace(c))
-        //{
-            //name[j++] = c;
-            //if (j == (int)PLAYER_NAME_MAX_LENGTH) break;
-        //}
-        //if (j) ClientState::send_identify_packet(name);
-        //return true;
-    //}
-    //else
     if (!strcmp(cmd, "kill") || !strcmp(cmd, "die"))
     {
         killme_CtoS msg;
