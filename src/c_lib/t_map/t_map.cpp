@@ -154,6 +154,9 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_id);
     if (ret != 0) return;
 
+    // always explode explosives with force
+    if (isExplosive(cube_id)) action = TMA_PLASMAGEN;
+
     // block_action packet expects final value of cube, not initial value
     map_history->send_block_action(x,y,z, EMPTY_CUBE, action);
 

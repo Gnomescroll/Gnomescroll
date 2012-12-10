@@ -314,9 +314,9 @@ bool ChatInput::route_command()
     while((c = buffer[i++]) != '\0' && isspace(c)); // advance cursor to first non-space char
     i -= 1;
     
-    //if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
+    //if (!strcmp(cmd, "name") || !strcmp(cmd, "nick"))
     //{
-        //if (buffer_len <= (int)(strlen((char*)"/name "))) return true;
+        //if (buffer_len <= (int)(strlen("/name "))) return true;
         //char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
         //int j = 0;
         //while ((c = buffer[i++]) != '\0' && !isspace(c))
@@ -328,13 +328,19 @@ bool ChatInput::route_command()
         //return true;
     //}
     //else
-    if (!strcmp(cmd, (char*)"kill") || !strcmp(cmd, (char*)"die"))
+    if (!strcmp(cmd, "kill") || !strcmp(cmd, "die"))
     {
         killme_CtoS msg;
         msg.send();
     }
     else
-    if (!strcmp(cmd, (char*)"color") || !strcmp(cmd, (char*)"colour"))
+    if (!strcmp(cmd, "chaton"))
+        Options::player_chat = true;
+    else
+    if (!strcmp(cmd, "chatoff"))
+        Options::player_chat = false;
+    else
+    if (!strcmp(cmd, "color") || !strcmp(cmd, "colour"))
     {
         struct Color color = color_init(0,0,0);
         bool valid = true;

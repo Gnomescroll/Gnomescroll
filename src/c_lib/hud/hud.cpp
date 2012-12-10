@@ -58,6 +58,7 @@ static struct HudDrawSettings
     int reliable_ping_val;
     bool agent_status;
     bool chat;  // draw chat messages normally (using timeouts)
+    bool player_chat;   // draw other players' chat messages
     bool chat_input;    // draw chat input area
     bool full_chat;     // draw chat messages (ignoring timeouts)
     bool scoreboard;
@@ -70,8 +71,7 @@ static struct HudDrawSettings
 } hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
-{
-    // sanitize
+{   // sanitize
     fps_val = (fps_val >= 1000.0f) ? 999.99f : fps_val;
     fps_val = (fps_val < 0.0f) ? 0.0f : fps_val;
     hud_draw_settings.fps_val = fps_val;
@@ -82,9 +82,8 @@ void init_hud_draw_settings()
     update_hud_draw_settings();
 }
 
-// read game state to decide what to draw
 void update_hud_draw_settings()
-{
+{   // read game state to decide what to draw
     hud_draw_settings.draw = input_state.draw_hud;
 
     hud_draw_settings.zoom = current_camera->zoomed;
@@ -110,6 +109,7 @@ void update_hud_draw_settings()
     hud_draw_settings.agent_status = true;
 
     hud_draw_settings.chat = true;
+    hud_draw_settings.player_chat = Options::player_chat;
     hud_draw_settings.chat_input = input_state.chat;
     hud_draw_settings.full_chat = input_state.full_chat;
 
@@ -137,7 +137,7 @@ void update_hud_draw_settings()
             timeout = false;
         else if (hud_draw_settings.chat_input)
             timeout = false;
-        hud->chat->update(timeout);
+        hud->chat->update(timeout, hud_draw_settings.player_chat);
     }
 
     hud_draw_settings.confirm_quit = input_state.confirm_quit;
@@ -641,24 +641,23 @@ void HUD::init()
     this->inited = true;
 }
 
-HUD::HUD()
-:
-inited(false),
-help(NULL),
-dead(NULL),
-fps(NULL),
-ping(NULL),
-reliable_ping(NULL),
-location(NULL),
-look(NULL),
-health(NULL),
-confirm_quit(NULL),
-prompt(NULL),
-error(NULL),
-error_subtitle(NULL),
-awesomium_message(NULL),
-scoreboard(NULL),
-chat(NULL)
+HUD::HUD() :
+    inited(false),
+    help(NULL),
+    dead(NULL),
+    fps(NULL),
+    ping(NULL),
+    reliable_ping(NULL),
+    location(NULL),
+    look(NULL),
+    health(NULL),
+    confirm_quit(NULL),
+    prompt(NULL),
+    error(NULL),
+    error_subtitle(NULL),
+    awesomium_message(NULL),
+    scoreboard(NULL),
+    chat(NULL)
 {}
 
 HUD::~HUD()
@@ -781,16 +780,20 @@ void ChatRender::draw_input()
     this->input->draw();
 }
 
-void ChatRender::update(bool timeout)
+void ChatRender::update(bool timeout, bool other_players)
 {   // read chat client messages and format for display
     if (!this->inited) return;
 
     if (Chat::chat_message_list == NULL) return;
 
+    class Agent* you = ClientState::playerAgent_state.you();
+    ClientID client_id = NULL_CLIENT;
+    if (you != NULL) client_id = you->client_id;
+
     int now = _GET_MS_TIME();
     Chat::chat_message_list->sort_by_most_recent();
     unsigned int i = paging_offset;
-    int j=CHAT_MESSAGE_RENDER_MAX-1;
+    int j = CHAT_MESSAGE_RENDER_MAX-1;
     int n_draw = 0;
     for (; i<Chat::chat_message_list->n_filtered; i++)
     {
@@ -801,32 +804,31 @@ void ChatRender::update(bool timeout)
         n_draw++;
     }
 
-    char blank[] = "";
-    char* separator;
-    char* name;
-    
     j = n_draw;
     i = 0;
+    
+    if (!other_players)
+    {
+        HudText::Text* t = this->messages[i++];
+        t->set_text("PLAYER CHAT OFF (use /chaton /chatoff)");
+        t->set_color(200,10,10);
+    }
+
     for (;j>0;)
     {
         class Chat::ChatMessage* m = Chat::chat_message_list->filtered_objects[--j];
+        if (!other_players && m->sender != Chat::CHAT_SENDER_SYSTEM && m->sender != client_id) continue;
+
         HudText::Text* t = this->messages[i++];
 
         if (m->sender == Chat::CHAT_SENDER_SYSTEM)
-        {
-            separator = blank;
-            name = blank;
-        }
+            t->update_formatted_string(3, "", "", m->payload);
         else
-        {
-            separator = CHAT_NAME_DEFAULT_SEPARATOR;
-            name = m->name;
-        }
-        t->update_formatted_string(3, name, separator, m->payload);
+            t->update_formatted_string(3, m->name, CHAT_NAME_DEFAULT_SEPARATOR, m->payload);
         t->set_color(m->color);
     }
 
-    for (int i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text(""));
+    for (int k=i; k<CHAT_MESSAGE_RENDER_MAX; this->messages[k++]->set_text(""));
 }
 
 //void ChatRender::page_up()

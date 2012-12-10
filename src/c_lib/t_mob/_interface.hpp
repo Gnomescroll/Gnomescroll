@@ -367,7 +367,7 @@ class BoneTree
         GS_ASSERT(pNode->mNumMeshes == 0);  //RECOVER FROM THIS
         for(unsigned int i=0; i < pNode->mNumChildren; i++)
         {
-            *count++;
+            (*count)++;
             count_bones(count, pNode->mChildren[i]);
         }
     }

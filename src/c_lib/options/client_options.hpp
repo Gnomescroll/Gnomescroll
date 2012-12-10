@@ -30,6 +30,7 @@ OPT_INT_HEADER(ping_update_interval)
 OPT_INT_HEADER(system_message_r)
 OPT_INT_HEADER(system_message_g)
 OPT_INT_HEADER(system_message_b)
+OPT_BOOL_HEADER(player_chat);
 
 /* Font */
 OPT_STRING_HEADER(font)

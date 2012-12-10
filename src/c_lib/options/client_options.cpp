@@ -33,6 +33,7 @@ OPT_INT(ping_update_interval, 500)
 OPT_INT(system_message_r, 255)
 OPT_INT(system_message_g, 255)
 OPT_INT(system_message_b, 50)
+OPT_BOOL(player_chat, true);
 
 /* Font */
 OPT_STRING(font)
@@ -78,6 +79,7 @@ void register_options()
     OPT_INT_REGISTER(system_message_r)
     OPT_INT_REGISTER(system_message_g)
     OPT_INT_REGISTER(system_message_b)
+    OPT_BOOL_REGISTER(player_chat);
 
     /* Font */
     OPT_STRING_REGISTER(font, "inc_18_b.fnt")
@@ -104,6 +106,12 @@ void register_options()
 void validate()
 {
     OPT_INT_RANGE_VALID(animation_level, 0, 3);
+
+    #if PRODUCTION
+    ping_update_interval = 250;
+    #else
+    ping_update_interval = GS_MAX(1, ping_update_interval)
+    #endif
 }
 
 }   // Options
