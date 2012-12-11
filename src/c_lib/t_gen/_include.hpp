@@ -25,3 +25,4 @@ dont_include_this_file_in_client
 
 #include <t_gen/meteors.hpp>
 #include <t_gen/explosives.cpp>
+#include <t_gen/city_generator.cpp>

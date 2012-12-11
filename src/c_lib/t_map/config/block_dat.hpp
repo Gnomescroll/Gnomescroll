@@ -86,12 +86,12 @@ void load_block_dat()
     SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
     SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtex.png");
 
-    const int T = 0;
-    const int B = 1;
-    const int N = 2;
-    const int S = 3;
-    const int W = 4;
-    const int E = 5;
+    const int T = 0; //Top
+    const int B = 1; //Bottom
+    const int N = 2; //North
+    const int S = 3; //South
+    const int W = 4; //West
+    const int E = 5; //East
 
     int error_block = sprite_alias(c0, 1,1);
 
@@ -201,6 +201,26 @@ void load_block_dat()
     push_texture();
     set_max_damage(64);
 
+    cube_def(SolidCube, "battery2", CUBE_MATERIAL_STONE);
+    side_texture(B, c0, 2,2);
+    side_texture(N, c0, 2,3);
+    side_texture(E, c0, 2,3);
+    side_texture(S, c0, 2,3);
+    side_texture(W, c0, 2,3);
+    side_texture(T, c0, 2,4);
+    push_texture();
+    set_max_damage(64);
+
+    cube_def(SolidCube, "blue_glow", CUBE_MATERIAL_STONE);
+    iso_texture(c0, 1,3);
+    push_texture();
+    set_max_damage(64);
+
+    cube_def(SolidCube, "green_glow", CUBE_MATERIAL_STONE);
+    iso_texture(c0, 1,4);
+    push_texture();
+    set_max_damage(64);
+
     cube_def(SolidCube, "copper_ore", CUBE_MATERIAL_STONE);
     iso_texture(tgm, 3,1);
     push_texture();
@@ -303,7 +323,7 @@ void load_block_dat()
     push_texture();
     set_max_damage(RUINS_DMG);
 
-    
+
     cube_def(SolidCube, "ruins_wall1");
     iso_texture(c1, 7,6); // peach
     push_texture();
@@ -324,7 +344,7 @@ void load_block_dat()
     push_texture();
     set_max_damage(RUINS_DMG);
 
-    
+
     cube_def(SolidCube, "ruins_ceiling1");
     iso_texture(c1, 2,1);
     push_texture();
