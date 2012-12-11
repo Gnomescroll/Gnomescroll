@@ -8,6 +8,12 @@ extern "C"
     #include <lauxlib.h>
 }
 
+#if DC_CLIENT
+#include <options/client_options.hpp>
+#endif
+#if DC_SERVER
+#include <options/server_options.hpp>
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -196,6 +202,8 @@ void load_options()
     }
 
     inited++;
+
+    Options::validate();
 }
 
 /*

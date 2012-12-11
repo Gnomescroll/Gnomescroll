@@ -316,7 +316,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     // play block surface crumble
     Animations::block_damage(x,y,z, f.x, f.y, f.z, cube, side);
     Animations::terrain_sparks(x,y,z);
-    Sound::play_3d_sound("laser_hit_block", x,y,z, 0,0,0);
+    //Sound::play_3d_sound("laser_hit_block", x,y,z, 0,0,0);
 }
 
 void Agent_event::fired_weapon_at_nothing()

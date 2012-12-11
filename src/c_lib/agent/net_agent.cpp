@@ -654,8 +654,7 @@ inline void hitscan_object_CtoS::handle()
 inline void hitscan_block_CtoS::handle()
 {
     Agent* a = NetServer::agents[client_id];
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
 
     if (z <= 0 || z >= t_map::map_dim.z) return;
 
@@ -694,15 +693,15 @@ inline void hitscan_block_CtoS::handle()
     // WARNING:
     // *must* call this after raycasting, or you will be raycasting altered terrain
     if (p.z <= 0) return; // dont damage floor
-    cube_id = t_map::get(p.x, p.y, p.z);
     if (!t_map::isValidCube(cube_id)) return;
 
     static int laser_rifle_type = Item::get_item_type("laser_rifle");
     ASSERT_VALID_ITEM_TYPE(laser_rifle_type);
     IF_INVALID_ITEM_TYPE(laser_rifle_type) return;
-    
+
     int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, cube_id);
     if (weapon_block_damage <= 0) return;
+
     t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, TMA_LASER);
 }
 

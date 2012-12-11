@@ -25,6 +25,7 @@ options.ping_update_interval = 250
 options.system_message_r = 255
 options.system_message_g = 255
 options.system_message_b = 50
+options.player_chat = true
 
 -- sound settings --
 options.sound = true
