@@ -657,6 +657,12 @@ void generate_area(const int minx, const int miny, const int minz, const int max
 
 void degenerate_area(const int minx, const int miny, const int minz, const int maxx, const int maxy, const int maxz)
 {
+    if (minz < 0) return;
+    if (minx < 0) return;
+    if (miny < 0) return;
+    if (maxz >= t_map::map_dim.z) return;
+    if (maxx >= t_map::map_dim.x) return;
+    if (maxy >= t_map::map_dim.y) return;
     for (int i=minx; i<=maxx; i++)
     for (int j=miny; j<=maxy; j++)
     for (int k=minz; k<=maxz; k++)
