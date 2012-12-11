@@ -5,6 +5,8 @@
 
 #include <SDL/texture_sheet_loader.hpp>
 
+#include <t_map/glsl/haldCLUT/hald_clut.hpp>
+
 /*
 In GL 3.0, GL_GENERATE_MIPMAP is deprecated, and in 3.1 and above, it was removed. 
 So for those versions, you must use glGenerateMipmap.

@@ -22,6 +22,7 @@ varying vec3 inColor;
 varying float fogFragDepth;
 
 uniform sampler2DArray base_texture;
+uniform sampler3D clut;
 
 const float gamma_factor = 1.0f / 2.2f;
 const vec3 gamma_factor3 = vec3(gamma_factor);
@@ -57,6 +58,9 @@ void main()
     color = color * skyLight;
 
     color = pow(color, gamma_factor3);
+
+    color = texture3D(clut, color.rgb); //clut correction
+
     gl_FragColor.rgb = color;
 
 }

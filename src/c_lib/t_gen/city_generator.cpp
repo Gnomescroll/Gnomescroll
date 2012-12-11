@@ -439,6 +439,8 @@ void degenerate_space(const int x, const int y, const int z, const int size)
     int cz=z;
     while (1)
     {
+        if(cz <= 0 || cz > 127)
+            printf("degenerate_space error: cs= %i \n", cz);
         t_map::set(cx, cy, cz, EMPTY_CUBE);
         if (cx <= x + size)
         {
