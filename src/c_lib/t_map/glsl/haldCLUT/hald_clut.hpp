@@ -80,6 +80,38 @@ float *generate_identity(unsigned int level)
 	return data;
 }
 
+void correction_end_twist(float *color, float twist)
+{
+	float tmp[3];
+	compute_hsv(tmp, color[0], color[1], color[2]);
+	compute_rgb(color, tmp[0] + twist * 0.3 * (tmp[2] * tmp[2]) - twist * ((1 - tmp[2]) * (1 - tmp[2])),
+		tmp[1] * (1 - 0.5 * tmp[2] * tmp[2] * tmp[2]), tmp[2]);
+}
+
+void correction_mono_edge(float *color, float value)
+{
+	float tmp[3];
+	compute_hsv(tmp, color[0], color[1], color[2]);
+	compute_rgb(color, tmp[0], tmp[1] * (1 - value + tmp[2] * tmp[2] * 1.3 * 1.3 * value), tmp[2]);
+}
+
+void correction_desaturate_darks(float *color)
+{
+	float tmp[3];
+	compute_hsv(tmp, color[0], color[1], color[2]);
+	tmp[1] *= 1.2 - tmp[2];
+	compute_rgb(color, tmp[0], tmp[1], tmp[2]);
+}
+
+void correction_dark_color(float *color, float red, float green, float blue)
+{
+	float tmp[3];
+	compute_hsv(tmp, color[0], color[1], color[2]);
+	color[0] = color[0] * tmp[2] + red * (1 - tmp[2]) * tmp[2];
+	color[1] = color[1] * tmp[2] + green * (1 - tmp[2]) * tmp[2];
+	color[2] = color[2] * tmp[2] + blue * (1 - tmp[2]) * tmp[2];
+}
+
 void correction_deep_dark_color(float *color, float red, float green, float blue)
 {
 	float tmp[3];
@@ -108,10 +140,10 @@ int generate_clut_texture()
 	for(int i = 0; i < level * level * level * level * level * level; i++)
 	{
 	//	correction_end_twist(&data[i * 3], 0.3);
-	//	correction_mono_edge(&data[i * 3], 1);
+		correction_mono_edge(&data[i * 3], 1);
 	//	correction_desaturate_darks(&data[i * 3]);
 	//	correction_dark_color(&data[i * 3], 0.6, 0.3, 1);
-		correction_deep_dark_color(&data[i * 3], 0.6, 0.3, 1);
+	//	correction_deep_dark_color(&data[i * 3], 0.6, 0.3, 1);
 	}
 	for(int i = 0; i < 3 * level * level * level * level * level * level; i++) 
 	{

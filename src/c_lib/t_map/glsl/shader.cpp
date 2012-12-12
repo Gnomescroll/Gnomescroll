@@ -33,6 +33,10 @@ void init_shaders()
     //determine support for anisotropic filtering
     //if (true || !GLEW_texture_array)
 
+    printf("Generate clut texture... ");
+    generate_clut_texture();
+    printf("finished\n");
+
     if (GLEW_EXT_texture_array)
     {
         if (PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");

@@ -47,6 +47,8 @@ void main()
     }
 */
 
+//fog code
+/*
     if(fogFragDepth > gl_Fog.start)
     {
         float f = gl_Fog.density * (fogFragDepth - gl_Fog.start);
@@ -62,6 +64,27 @@ void main()
     color = texture3D(clut, color.rgb); //clut correction
 
     gl_FragColor.rgb = color;
+*/
+
+    color = color * skyLight;
+    color = pow(color, gamma_factor3);
+
+
+    const float clut_start = 32;
+    const float _clut_depth = 1.0/64.0;
+
+    if(fogFragDepth > clut_start)
+    { 
+        vec3 color_clut = texture3D(clut, color.rgb); //clut correction
+
+        float f = _clut_depth*(fogFragDepth - clut_start);
+        f = clamp(f, 0.0f, 1.0f);
+        gl_FragColor.rgb = mix(color, color_clut, f); 
+    }
+    else
+    {
+        gl_FragColor.rgb = color;
+    }
 
 }
 
