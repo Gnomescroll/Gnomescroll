@@ -94,20 +94,31 @@ class VertexElementList1
 template <class VertexElement>
 class VertexElementList
 {
+    private:
+
+    void add_element()
+    {
+        this->vlist_index++;
+        if (this->vlist_index >= this->vlist_max)
+        {
+            this->vlist_max *= 2;
+            this->vlist = (VertexElement*)realloc(this->vlist, this->vlist_max*sizeof(VertexElement));
+        }
+    }
+
     public:
+        const static unsigned int stride = sizeof(VertexElement);
 
-    const static unsigned int stride = sizeof(VertexElement);
+        VertexElement* vlist;
+        int vlist_index;
+        int vlist_max;
 
-    VertexElement* vlist;
-    int vlist_index;
-    int vlist_max;
-
-    GLuint VBO;
-    unsigned int vertex_number;
+        GLuint VBO;
+        unsigned int vertex_number;
 
     VertexElementList() :
-    vlist_index(0), vlist_max(1024),
-    VBO(0), vertex_number(0)
+        vlist_index(0), vlist_max(1024),
+        VBO(0), vertex_number(0)
     {
         this->vlist = (VertexElement*) malloc(this->vlist_max*sizeof(VertexElement));
     }
@@ -124,14 +135,7 @@ class VertexElementList
         this->vlist[this->vlist_index].normal   = normal;
         this->vlist[this->vlist_index].tx       = tx;
         this->vlist[this->vlist_index].ty       = ty;
-
-        this->vlist_index++;
-
-        if(this->vlist_index >= this->vlist_max)
-        {
-            this->vlist_max *= 2;
-            this->vlist = (VertexElement*) realloc(this->vlist, this->vlist_max*sizeof(VertexElement));
-        }
+        this->add_element();
     }
      
     __attribute__((always_inline))
@@ -140,14 +144,7 @@ class VertexElementList
         this->vlist[this->vlist_index].position = position;
         this->vlist[this->vlist_index].tx       = tx;
         this->vlist[this->vlist_index].ty       = ty;
-
-        this->vlist_index++;
-
-        if(this->vlist_index >= this->vlist_max)
-        {
-            this->vlist_max *= 2;
-            this->vlist = (VertexElement*) realloc(this->vlist, this->vlist_max*sizeof(VertexElement));
-        }
+        this->add_element();
     }
 
     __attribute__((always_inline))
@@ -156,20 +153,21 @@ class VertexElementList
         this->vlist[this->vlist_index].position = position;
         this->vlist[this->vlist_index].normal   = normal;
         this->vlist[this->vlist_index].color    = color;
+        this->add_element();
+    }
 
-        this->vlist_index++;
-
-        if (this->vlist_index >= this->vlist_max)
-        {
-            this->vlist_max *= 2;
-            this->vlist = (VertexElement*) realloc(this->vlist, this->vlist_max*sizeof(VertexElement));
-        }
+    __attribute__((always_inline))
+    void push_vertex(float x, float y, struct Color color)
+    {
+        this->vlist[this->vlist_index].x = x;
+        this->vlist[this->vlist_index].y = y;
+        this->vlist[this->vlist_index].color = color;
+        this->add_element();
     }
 
     void buffer()
     {   // upload data to card for drawing
         if (this->VBO == 0) glGenBuffers(1, &this->VBO);
-
         if (this->VBO != 0)
         {
             if (this->vlist_index != 0)
@@ -190,6 +188,12 @@ class VertexElementList
         
         this->vertex_number = this->vlist_index;
         this->vlist_index = 0;
+    }
+
+    void clear()
+    {
+        this->vlist_index = 0;
+        this->vertex_number = 0;
     }
 };
 
@@ -213,8 +217,15 @@ struct VertexElementColorNormal
     struct Color color;
 };
 
+struct VertexElementSpriteVoxel
+{
+    float x,y;
+    struct Color color;
+}
+
 typedef class VertexElementList<struct VertexElementTexture> VertexElementListTexture;
 typedef class VertexElementList<struct VertexElementTextureNormal> VertexElementListTextureNormal;
 typedef class VertexElementList<struct VertexElementColorNormal> VertexElementListColor;
+typedef class VertexElementList<struct VertexElementSpriteVoxel> VertexElementListSpriteVoxel;
 
 }   // Animations

@@ -8,6 +8,8 @@ namespace Animations
 void init_sprite_voxelizer();
 void teardown_sprite_voxelizer();
 
+void load_sprite_voxelizer();
+
 void prep_sprite_voxelizer();
 void draw_sprite_voxelizer();
 

@@ -323,6 +323,15 @@ void TextureSheetLoader::reload()
     this->generate_greyscale();
 }
 
+const struct Color4* get_sprite_pixels(int sprite_id)
+{
+    n_pixels = 0;
+    IF_ASSERT(sprite_id < 0 || sprite_id >= this->tile_num) return NULL;
+    size_t index = meta_index * this->tile_size * this->tile_size;
+    n_pixels = this->tile_size * this->tile_size;
+    return &this->pixels[index];
+}
+
 class TextureSheetLoader* cube_texture_sheet_loader = NULL;
 class TextureSheetLoader* item_texture_sheet_loader = NULL;
 
