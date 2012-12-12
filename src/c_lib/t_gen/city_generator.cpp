@@ -77,7 +77,7 @@ void generate_city()
     int z;
     int cx;
     int cy;
-    int count=0;
+    int count=1;
     int prevsubwayx;
     int prevsubwayy;
     int firstsubwayx;
@@ -86,12 +86,12 @@ void generate_city()
     bool laststation;
     int building_randomizer;
     int size;
-    while (count < CITY_AMOUNT)
+    while (count <= CITY_AMOUNT)
     {
         x=randrange(4, t_map::map_dim.x - CITY_SIZE - CITY_RANDOMNESS - 4);
         y=randrange(4, t_map::map_dim.y - CITY_SIZE - CITY_RANDOMNESS - 4);
         z=randrange(MINIMAL_ELEVATION, MAXIMAL_ELEVATION);
-        printf("Generating alien city at %d, %d, %d", x, y, z);
+        printf("Generating alien city at %d, %d, %d \n", x, y, z);
         cx=x;
         cy=y;
         size=CITY_SIZE + randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
@@ -99,7 +99,8 @@ void generate_city()
         degenerate_space(x, y, z, size);
         create_floor(x, y, z, size, gray);
         create_roads(x, y, z, size, ROAD_SIZE, rock);
-        while (cy < size)
+        printf("Starting to generate buildings... \n");
+        while (cy < y + size)
         {
             if (cx + CITY_RANDOMNESS >= size)
             {
@@ -176,6 +177,7 @@ void generate_city()
 
 void generate_lab(const int x, const int y, const int z, const int size, const int height, const int floors, const int randomness, const int door_probability, CubeID computer, CubeID steelA, CubeID steelB, CubeID steelC, CubeID battery, CubeID smelter, CubeID cryofreezer, CubeID bench, CubeID crusher, CubeID storage)
 {
+    printf ("Generating a lab at %d, %d, %d \n", x, y, z);
     int maxx=x + randrange(randomness * -1, randomness) + size;
     int maxy=y + randrange(randomness * -1, randomness) + size;
     int maxz=z + height + randrange(randomness * -1, randomness);
@@ -230,6 +232,7 @@ void generate_lab(const int x, const int y, const int z, const int size, const i
 
 void generate_skyscraper(const int x, const int y, const int z, const int size, const int height, const int floors, const int randomness, const int partitions, CubeID computer, CubeID purple, CubeID green, CubeID red, CubeID cryofreezer, CubeID battery)
 {
+    printf ("Generating a skyscraper at %d, %d, %d \n", x, y, z);
     int maxx=x + randrange(randomness * -1, randomness) + size;
     int maxy=y + randrange(randomness * -1, randomness) + size;
     int maxz=z + height + randrange(randomness * -1, randomness);
@@ -279,6 +282,7 @@ void generate_skyscraper(const int x, const int y, const int z, const int size, 
 
 void generate_subway_station(const int x, const int y, const int z, const int prevsubwayx, const int prevsubwayy, const int firstsubwayx, const int firstsubwayy, const bool laststation, const int size, const int height, const int tunnel_size, CubeID gray, CubeID steelA, CubeID steelB, CubeID steelC, CubeID battery, CubeID rock)
 {
+    printf ("Generating a subway station at %d, %d, %d \n", x, y, z);
     int maxx=x + size;
     int maxy=y + size;
     int minz=z - height;
@@ -297,6 +301,7 @@ void generate_subway_station(const int x, const int y, const int z, const int pr
 
 void generate_house(const int x, const int y, const int z, const int size, const int height, const int partition_probability, const int randomness, const int garden, const int garage, CubeID computer, CubeID green, CubeID red, CubeID purple, CubeID storage, CubeID cryofreezer, CubeID smelter, CubeID bench, CubeID crusher, CubeID regolith, CubeID steelA)
 {
+    printf ("Generating a house at %d, %d, %d \n", x, y, z);
     const int maxx=x + size + garden * 2 + randrange(randomness * -1, randomness);
     const int maxy=y + size + garden * 2 + randrange(randomness * -1, randomness);
     const int maxz=z + height + randrange(randomness / 4 * -1, randomness / 4);
@@ -410,6 +415,7 @@ void generate_house(const int x, const int y, const int z, const int size, const
 
 void generate_shop(const int x, const int y, const int z, const int size, const int height, const int goods, CubeID steelA, CubeID steelB, CubeID steelC, CubeID computer, CubeID storage, CubeID cryofreezer)
 {
+    printf ("Generating a shop at %d, %d, %d \n", x, y, z);
     generate_area(x, y, z, x + size, y + size, z, steelA);
     generate_area(x, y, z + 1, x + size, y, z + height - 1, steelB);
     generate_area(x, y, z + 1, x, y + size, z + height - 1, steelB);
@@ -424,6 +430,7 @@ void generate_shop(const int x, const int y, const int z, const int size, const 
 
 void generate_transmission_tower(const int x, const int y, const int z, const int height, CubeID steelA, CubeID steelB, CubeID steelC, CubeID gray, CubeID battery, CubeID computer)
 {
+    printf ("Generating a transmission tower at %d, %d, %d \n", x, y, z);
     generate_area(x + 1, y + 1,z + 1, x + 1, y + 1,z + 1, battery);
     generate_area(x, y, z + 1, x, y, z + height - 1, steelC);
     generate_area(x + 1, y, z + 1, x + 1, y, z + height / 2, steelA);
@@ -434,43 +441,19 @@ void generate_transmission_tower(const int x, const int y, const int z, const in
 
 void degenerate_space(const int x, const int y, const int z, const int size)
 {
-    int cx=x;
-    int cy=y;
-    int cz=z;
-    while (1)
+    printf ("Making room for the city at %d, %d, %d \n", x, y, z);
+    for (int i = x; i <= x + size; i++)
+    for (int j = y; j <= y + size; j++)
+    for (int k = z; k < t_map::map_dim.z; k++)
     {
-        if(cz <= 0 || cz > 127)
-            printf("degenerate_space error: cs= %i \n", cz);
-        t_map::set(cx, cy, cz, EMPTY_CUBE);
-        if (cx <= x + size)
-        {
-            cx++;
-        }
-        if (cx > x + size)
-        {
-            cx = x;
-            if (cy <= y + size)
-            {
-                cy++;
-            }
-            if (cy > y + size)
-            {
-                cy = y;
-                if (cz <= t_map::map_dim.z)
-                {
-                    cz++;
-                }
-                if (cz > t_map::map_dim.z)
-                {
-                    break;
-                }
-            }
-        }
+        t_map::set(i, j, k, EMPTY_CUBE);
+        if (k > t_map::map_dim.z || k <=0) printf ("degenerate_space error \n");
     }
 }
 
 void create_floor(const int x, const int y, const int z, const int size, CubeID gray)
 {
+    printf ("Generating city floor at %d, %d, %d \n", x, y, z);
     int cx=x;
     int cy=y;
     while (1)
@@ -497,6 +480,7 @@ void create_floor(const int x, const int y, const int z, const int size, CubeID 
 
 void create_roads(const int x, const int y, const int z, const int city_size, const int size, CubeID rock)
 {
+    printf ("Generating roads \n");
     generate_area(x + city_size / 2 - size / 2, 0, z, x + city_size / 2 + size / 2, y, z, rock); //generate trade routes going out of the city to the borders of the map, so that they connect on ends
     generate_area(0, y + city_size / 2 - size / 2, z, x, y + city_size / 2 + size / 2, z, rock);
     generate_area(x + city_size / 2 - size / 2, y + city_size, z, x + city_size / 2 + size / 2, t_map::map_dim.y - 1, z, rock);
@@ -509,6 +493,7 @@ void create_roads(const int x, const int y, const int z, const int city_size, co
 
 void generate_temple(const int x, const int y, const int z, const int size, CubeID glowgreen, CubeID glowblue, CubeID rock)
 {
+    printf ("Generating a temple at %d, %d, %d \n", x, y, z);
     generate_area(x, y, z, x + size, y + size, z, glowblue); //make the floor
     int count=1;
     while (count <= size / 3.2) //make the walls
@@ -534,6 +519,7 @@ void generate_temple(const int x, const int y, const int z, const int size, Cube
 
 void generate_bunker(const int x, const int y, const int maxz, const int size, const int depth, const int floors, const int partition_probability, const int randomness, CubeID gray, CubeID computer, CubeID storage, CubeID cryofreezer)
 {
+    printf ("Generating a bunker at %d, %d, %d \n", x, y, maxz);
     const int z=maxz - depth - randrange(randomness * -1, randomness);
     const int maxx=x + size + randrange(randomness * -1, randomness);
     const int maxy=y + size + randrange(randomness * -1, randomness);
@@ -583,6 +569,7 @@ void generate_bunker(const int x, const int y, const int maxz, const int size, c
 
 void generate_column(const int x, const int y, const int z, const int size, CubeID rock)
 {
+    printf ("Generating a column at %d, %d, %d \n", x, y, z);
     generate_area(x, y, 1, x + size, y + size, z - 1, rock);
     generate_area(x - 1, y - 1, z, x + size + 1, y + size + 1, z, rock);
 }
@@ -673,6 +660,7 @@ void degenerate_area(const int minx, const int miny, const int minz, const int m
 
 void generate_tunnel(const int x, const int y, const int z, const int otherx, const int othery, const int size, CubeID steelA, CubeID steelB, CubeID battery, CubeID rock)
 {
+    printf ("Generating a subway tunnel at %d, %d, %d, other end at %d, %d, %d \n", x, y, z, otherx, othery, z);
     int minx;
     int maxx;
     int miny;
