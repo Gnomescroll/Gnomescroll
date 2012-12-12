@@ -5,6 +5,8 @@
 
 #include <SDL/texture_sheet_loader.hpp>
 
+#include <t_map/glsl/haldCLUT/hald_clut.hpp>
+
 /*
 In GL 3.0, GL_GENERATE_MIPMAP is deprecated, and in 3.1 and above, it was removed. 
 So for those versions, you must use glGenerateMipmap.
@@ -30,6 +32,10 @@ void init_shaders()
 {
     //determine support for anisotropic filtering
     //if (true || !GLEW_texture_array)
+
+    printf("Generate clut texture... ");
+    generate_clut_texture();
+    printf("finished\n");
 
     if (GLEW_EXT_texture_array)
     {

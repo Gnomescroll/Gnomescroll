@@ -22,6 +22,7 @@ varying vec3 inColor;
 varying float fogFragDepth;
 
 uniform sampler2DArray base_texture;
+uniform sampler3D clut;
 
 const float gamma_factor = 1.0f / 2.2f;
 const vec3 gamma_factor3 = vec3(gamma_factor);
@@ -46,6 +47,8 @@ void main()
     }
 */
 
+//fog code
+/*
     if(fogFragDepth > gl_Fog.start)
     {
         float f = gl_Fog.density * (fogFragDepth - gl_Fog.start);
@@ -57,7 +60,30 @@ void main()
     color = color * skyLight;
 
     color = pow(color, gamma_factor3);
+
+    color = texture3D(clut, color.rgb); //clut correction
+
     gl_FragColor.rgb = color;
+*/
+
+    color = color * skyLight;
+    color = pow(color, gamma_factor3);
+
+
+    const float clut_start = 64;
+    const float _clut_depth = 1.0/32.0;
+
+    if(fogFragDepth > clut_start)
+    { 
+        vec3 color_clut = texture3D(clut, color.rgb); //clut correction
+
+        float f = _clut_depth*(fogFragDepth - clut_start);
+        f = clamp(f, 0.0f, 1.0f);
+        color.rgb = mix(color, color_clut, f); 
+    }
+
+    gl_FragColor.rgb = color;
+
 
 }
 
