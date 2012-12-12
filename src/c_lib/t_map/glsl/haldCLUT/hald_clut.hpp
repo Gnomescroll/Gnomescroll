@@ -4,6 +4,10 @@
 //int texture_make(float *data, unsigned int dimensions, unsigned int x, unsigned int y, unsigned int z)
 //{
 
+void compute_hsv(float *output, float r, float g, float b);
+void compute_rgb(float *output, float h, float s, float v);
+float *generate_identity(unsigned int level);
+
 void compute_hsv(float *output, float r, float g, float b)
 {
 	if(r < g)
@@ -54,6 +58,59 @@ void compute_hsv(float *output, float r, float g, float b)
 				output[2] = r;
 			}
 		}
+	}
+}
+
+void compute_rgb(float *output, float h, float s, float v)
+{
+	if(h < 0)
+		h = h + 5;
+	if(h > 1)
+		h = h - (float)((int)h);
+	if(s < 0)
+		s = 0;
+	if(s > 1)
+		s = 1;
+	if(v < 0)
+		v = 0;
+	if(v > 1)
+		v = 1;
+	s = 1 - s;
+
+	h *= 6;
+	s *= v;
+	switch((int)h)
+	{
+		case 0 :
+			output[0] = v;
+			output[1] = s + (0 + h) * (v - s);
+			output[2] = s;
+		break;
+		case 1 :
+			output[0] = s + (2 - h) * (v - s);
+			output[1] = v;
+			output[2] = s;
+		break;
+		case 2 :
+			output[0] = s;
+			output[1] = v;
+			output[2] = s + (h - 2) * (v - s);
+		break;
+		case 3 :
+			output[0] = s;
+			output[1] = s + (4 - h) * (v - s);
+			output[2] = v;
+		break;
+		case 4 :
+			output[0] = s + (h - 4) * (v - s);
+			output[1] = s;
+			output[2] = v;
+		break;
+		default :
+			output[0] = v;
+			output[1] = s;
+			output[2] = s + (6 - h) * (v - s);
+		break;
 	}
 }
 
@@ -139,8 +196,8 @@ int generate_clut_texture()
 
 	for(int i = 0; i < level * level * level * level * level * level; i++)
 	{
-	//	correction_end_twist(&data[i * 3], 0.3);
-		correction_mono_edge(&data[i * 3], 1);
+		correction_end_twist(&data[i * 3], 0.3);
+	//	correction_mono_edge(&data[i * 3], 1);
 	//	correction_desaturate_darks(&data[i * 3]);
 	//	correction_dark_color(&data[i * 3], 0.6, 0.3, 1);
 	//	correction_deep_dark_color(&data[i * 3], 0.6, 0.3, 1);

@@ -70,8 +70,8 @@ void main()
     color = pow(color, gamma_factor3);
 
 
-    const float clut_start = 32;
-    const float _clut_depth = 1.0/64.0;
+    const float clut_start = 64;
+    const float _clut_depth = 1.0/32.0;
 
     if(fogFragDepth > clut_start)
     { 
@@ -79,12 +79,11 @@ void main()
 
         float f = _clut_depth*(fogFragDepth - clut_start);
         f = clamp(f, 0.0f, 1.0f);
-        gl_FragColor.rgb = mix(color, color_clut, f); 
+        color.rgb = mix(color, color_clut, f); 
     }
-    else
-    {
-        gl_FragColor.rgb = color;
-    }
+
+    gl_FragColor.rgb = color;
+
 
 }
 
