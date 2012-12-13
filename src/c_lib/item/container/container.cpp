@@ -43,18 +43,12 @@ void init_container(ItemContainerInterface* container)
 
 int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
 {
-    ASSERT_VALID_ITEM_ID(item_id);
-    IF_INVALID_ITEM_ID(item_id) return NULL_SLOT;
-    
-    GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return NULL_SLOT;
-
-    GS_ASSERT(this->slot[slot] == NULL_ITEM);
-    if (this->slot[slot] != NULL_ITEM) return NULL_SLOT;
+    IF_ASSERT(!isValid(item_id)) return NULL_SLOT;
+    IF_ASSERT(!this->is_valid_slot(slot)) return NULL_SLOT;
+    IF_ASSERT(this->slot[slot] != NULL_ITEM) return NULL_SLOT;
     
     Item::Item* item = Item::get_item(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return slot;
+    IF_ASSERT(item == NULL) return slot;
 
     item->location = IL_CONTAINER;
     item->location_id = this->id;
@@ -76,8 +70,7 @@ int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
 
 void ItemContainerInterface::remove_item(int slot)  // virtual
 {
-    GS_ASSERT(this->is_valid_slot(slot));
-    if (!this->is_valid_slot(slot)) return;
+    IF_ASSERT(!this->is_valid_slot(slot)) return;
 
     ItemID item_id = this->slot[slot];
     GS_ASSERT(item_id != NULL_ITEM);

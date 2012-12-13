@@ -78,3 +78,18 @@ const int ITEM_PARTICLE_PICKUP_MOMENTUM = 5.0f;
 const float ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE = 1.5f;
 // distance where initiated pickup will become final
 const float ITEM_PARTICLE_PICKUP_END_DISTANCE = AGENT_BOX_RADIUS;
+
+inline bool isValid(ItemID item_id)
+{
+    return (item_id >= 0 && item_id < MAX_ITEMS);
+}
+
+inline bool isValid(ItemParticleID particle_id)
+{
+    return (particle_id >= 0 && particle_id < MAX_ITEM_PARTICLES);
+}
+
+inline bool isValid(ItemContainerID container_id)
+{
+    return (container_id >= 0 && container_id < MAX_CONTAINERS);
+}

@@ -18,7 +18,7 @@ void subscribe_agent_to_item(AgentID agent_id, ItemID item_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return;
-    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(isValid(agent_id));
     
     Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
@@ -39,23 +39,17 @@ void subscribe_agent_to_item(AgentID agent_id, ItemID item_id)
 
 void unsubscribe_agent_from_item(AgentID agent_id, ItemID item_id)
 {
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id == NULL_ITEM) return;
-    ASSERT_VALID_AGENT_ID(agent_id);
-    
+    IF_ASSERT(item_id == NULL_ITEM) return;
     Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
 
     Item* item = get_item(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    IF_ASSERT(item == NULL) return;
 
     // TODO -- allow more subscribers under certain contexts (public containers)
     GS_ASSERT(item->subscribers.count == 1);
     bool rm = item->subscribers.remove(a->client_id);
-    GS_ASSERT(rm);
-    if (!rm) return;
+    IF_ASSERT(!rm) return;
     GS_ASSERT(item->subscribers.count == 0);
 
     //printf("Unsubscribed %d from %d\n", a->client_id, item->id);
@@ -66,12 +60,10 @@ void unsubscribe_agent_from_item(AgentID agent_id, ItemID item_id)
 
 void unsubscribe_all_from_item(ItemID item_id)
 {
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id == NULL_ITEM) return;
+    IF_ASSERT(item_id == NULL_ITEM) return;
     
     Item* item = get_item(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    IF_ASSERT(item == NULL) return;
 
     if (item->subscribers.count == 0) return;
 

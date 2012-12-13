@@ -43,40 +43,32 @@ void init_packets()
 
 void remove_agent(AgentID agent_id)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_ASSERT(!isValid(agent_id)) return;
 
     turn_fire_off(agent_id);
 
-    GS_ASSERT(agent_selected_type != NULL);
-    if (agent_selected_type != NULL)
+    IF_ASSERT(agent_selected_type != NULL)
         agent_selected_type[agent_id] = NULL_ITEM_TYPE;
 
     #if DC_SERVER
-    GS_ASSERT(agent_selected_item != NULL);
-    GS_ASSERT(agent_selected_slot != NULL);
-    if (agent_selected_item != NULL) 
+    IF_ASSERT(agent_selected_item != NULL) 
         agent_selected_item[agent_id] = NULL_ITEM;
-    if (agent_selected_slot != NULL)
+    IF_ASSERT(agent_selected_slot != NULL)
         agent_selected_slot[agent_id] = 0;
     #endif
 }
 
 void agent_died(AgentID agent_id)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_ASSERT(!isValid(agent_id)) return;
 
     turn_fire_off(agent_id);
 }
 
 int get_agent_selected_item_type(AgentID agent_id)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM_TYPE;
-    
-    GS_ASSERT(agent_selected_type != NULL);
-    if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
+    IF_ASSERT(!isValid(agent_id)) return NULL_ITEM_TYPE;
+    IF_ASSERT(agent_selected_type == NULL) return NULL_ITEM_TYPE;
     
     return agent_selected_type[agent_id];
 }
@@ -89,8 +81,7 @@ int get_agent_selected_item_type(AgentID agent_id)
 void agent_quit(AgentID agent_id)
 {   // It might be the same as agent_died, but they should not be mixed
     // Death has penalties; leaving the server should not
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_ASSERT(!isValid(agent_id)) return;
 
     turn_fire_off(agent_id);
 }
@@ -288,7 +279,7 @@ int get_selected_item_type()
     GS_ASSERT(agent_selected_type != NULL);
     if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
     AgentID agent_id = ClientState::playerAgent_state.agent_id;
-    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM_TYPE;
+    IF_ASSERT(!isValid(agent_id)) return NULL_ITEM_TYPE;
     return agent_selected_type[agent_id];
 }
 
@@ -298,7 +289,7 @@ int get_selected_item_type()
 void update_selected_item_type()
 {
     AgentID agent_id = ClientState::playerAgent_state.agent_id;
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_ASSERT(!isValid(agent_id)) return;
 
     int item_type = NULL_ITEM_TYPE;
     ItemContainer::ItemContainer* toolbelt = NULL;
@@ -403,31 +394,27 @@ void update_toolbelt_items()
 
 ItemID get_agent_selected_item(AgentID agent_id)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return NULL_ITEM;
-    GS_ASSERT(agent_selected_item != NULL);
-    if (agent_selected_item == NULL) return NULL_ITEM;
+    IF_ASSERT(!isValid(agent_id)) return NULL_ITEM;
+    IF_ASSERT(agent_selected_item == NULL) return NULL_ITEM;
+
     return agent_selected_item[agent_id];
 }
 
 int get_agent_selected_slot(AgentID agent_id)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return NULL_SLOT;
-    GS_ASSERT(agent_selected_slot != NULL);
-    if (agent_selected_slot == NULL) return NULL_SLOT;
+    IF_ASSERT(!isValid(agent_id)) return NULL_SLOT;
+    IF_ASSERT(agent_selected_slot == NULL) return NULL_SLOT;
+
     return agent_selected_slot[agent_id];
 }
 
 bool set_agent_toolbelt_slot(AgentID agent_id, int slot)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return false;
+    IF_ASSERT(!isValid(agent_id)) return false;
     
     int max = ItemContainer::get_container_max_slots(AGENT_TOOLBELT);
     GS_ASSERT(max > 0);
-    GS_ASSERT(slot >= 0 && slot < max && slot != NULL_SLOT);
-    if (slot < 0 || slot >= max || slot == NULL_SLOT) return false;
+    IF_ASSERT(slot < 0 || slot >= max || slot == NULL_SLOT) return false;
     agent_selected_slot[agent_id] = slot;
     ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);
     if (item_id == agent_selected_item[agent_id]) return false;
@@ -441,8 +428,7 @@ bool set_agent_toolbelt_slot(AgentID agent_id, int slot)
 // or just leave this special case
 void use_block_placer(AgentID agent_id, ItemID placer_id)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_ASSERT(!isValid(agent_id)) return;
     
     Item::Item* placer = Item::get_item(placer_id);
     if (placer == NULL) return;
@@ -456,8 +442,7 @@ void use_block_placer(AgentID agent_id, ItemID placer_id)
 
 void force_remove_selected_item(AgentID agent_id)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_ASSERT(!isValid(agent_id)) return;
     
     turn_fire_off(agent_id);
     agent_selected_item[agent_id] = NULL_ITEM;

@@ -46,14 +46,8 @@ void parse_equipment_sprite_alignment_config()
     
     size_t size = 0;
     char* buffer = read_file_to_buffer(CONFIG_FILENAME, &size);
-    GS_ASSERT(buffer != NULL);
-    if (buffer == NULL) return;
-    GS_ASSERT(size > 0);
-    if (size <= 0 && buffer != NULL)
-    {
-        free(buffer);
-        return;
-    }
+    IF_ASSERT(buffer == NULL) return;
+    IF_ASSERT(size <= 0) return;
     
     size_t index = 0;
     int read = 0;
@@ -218,8 +212,7 @@ static GLint cull_face_mode = GL_BACK;
 
 bool draw_voxel_gl_begin(GLint cull_mode)
 {
-    GS_ASSERT(t_map::block_textures_normal != 0);
-    if (t_map::block_textures_normal == 0) return false;
+    IF_ASSERT(t_map::block_textures_normal == 0) return false;
     
     glColor4ub(255,255,255,255);
 
@@ -260,7 +253,7 @@ void draw_voxel_gl_end()
 
 static void draw_voxel(int item_type, Vec3 origin, Vec3 forward, Vec3 right, Vec3 up)
 {
-    GS_ASSERT(item_type != NULL_ITEM_TYPE);
+    IF_ASSERT(item_type == NULL_ITEM_TYPE) return;
     const int sprite_id = Item::get_particle_voxel_texture(item_type);
     GS_ASSERT(sprite_id != ERROR_SPRITE);
     const float sprite_width = 32.0f/512.0f;
@@ -293,17 +286,17 @@ void draw_equipped_item(int item_type)
         
     rendered_item = item_type;
 
-    if (agent_camera == NULL) return;
+    IF_ASSERT(agent_camera == NULL) return;
     
     // camera state
-    Vec3 position = agent_camera->get_position();
-    Vec3 forward = agent_camera->forward_vector();
-    Vec3 camera_right = agent_camera->right_vector();
-    Vec3 up = agent_camera->up_vector();
+    struct Vec3 position = agent_camera->get_position();
+    struct Vec3 forward = agent_camera->forward_vector();
+    struct Vec3 camera_right = agent_camera->right_vector();
+    struct Vec3 up = agent_camera->up_vector();
 
     // calculate focal,origin points from camera and focal/origin deltas
-    Vec3 focal;
-    Vec3 origin;
+    struct Vec3 focal;
+    struct Vec3 origin;
     
     if (equipped_item_animating)
     {    // use animated state
@@ -328,7 +321,7 @@ void draw_equipped_item(int item_type)
 
     // use focal and origin points to calculate right vector
 
-    Vec3 right = vec3_init(1,0,0);
+    struct Vec3 right = vec3_init(1,0,0);
     GS_ASSERT(!vec3_equal(focal, origin));
     if (!vec3_equal(focal, origin))
         right = vec3_sub(focal, origin);
@@ -374,16 +367,13 @@ void draw_equipped_item(int item_type)
 
 static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3* pForward, Vec3* pRight, Vec3* pUp)
 {    // draw item in other players' hands
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return false;
+    IF_ASSERT(!isValid(agent_id)) return false;
 
     Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return false;
+    IF_ASSERT(a == NULL) return false;
 
     class Voxel_volume* vv = a->get_arm();
-    GS_ASSERT(vv != NULL);
-    if (vv == NULL) return false;
+    IF_ASSERT(vv == NULL) return false;
     
     // HACKED UP MODEL DEPENDENT CRAP
     struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);

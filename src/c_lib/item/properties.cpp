@@ -74,13 +74,13 @@ int get_item_fire_rate(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return 8;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
+    IF_ASSERT(attr == NULL) return 8;
     return attr->firing_rate;
 }
 
 int get_sprite_index_for_id(ItemID id)
 {
-    ASSERT_VALID_ITEM_ID(id);
+    GS_ASSERT(isValid(id));
     int type = get_item_type(id);
     return get_sprite_index_for_type(type);
 }

@@ -215,7 +215,7 @@ void broadcast_particle_item_destroy(ItemParticleID particle_id)
 void send_particle_item_picked_up(ClientID client_id, AgentID agent_id, ItemParticleID particle_id)
 {
     GS_ASSERT(particle_id != NULL_PARTICLE);
-    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(isValid(agent_id));
     item_particle_picked_up_StoC msg;
     msg.agent_id = agent_id;
     msg.id = particle_id;
@@ -225,7 +225,7 @@ void send_particle_item_picked_up(ClientID client_id, AgentID agent_id, ItemPart
 void broadcast_particle_item_picked_up(AgentID agent_id, ItemParticleID particle_id)
 {
     GS_ASSERT(particle_id != NULL_PARTICLE);
-    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(isValid(agent_id));
     item_particle_picked_up_StoC msg;
     msg.agent_id = agent_id;
     msg.id = particle_id;

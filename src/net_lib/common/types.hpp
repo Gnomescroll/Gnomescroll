@@ -1,5 +1,7 @@
 #pragma once
 
+#include <net_lib/global.hpp>
+
 typedef enum
 {
     DISCONNECT_NONE = 0,        // enet sets it as 0 for its internal disconnects
@@ -24,3 +26,13 @@ typedef enum
 {
     NULL_CLIENT = 0xff,
 } ClientID;
+
+inline bool isValid(UserID user_id)
+{
+    return (user_id > 0);
+}
+
+inline bool isValid(ClientID client_id)
+{
+    return (client_id != NULL_CLIENT && client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
+}

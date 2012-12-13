@@ -45,10 +45,8 @@ void send_version_to_client(ClientID client_id)
  */
 void NetPeerManager::init(ClientID client_id)
 {
-    ASSERT_VALID_CLIENT_ID(client_id);
-    IF_INVALID_CLIENT_ID(client_id) return;
-    GS_ASSERT(!this->inited);
-    if (this->inited) return;
+    IF_ASSERT(!isValid(client_id)) return;
+    IF_ASSERT(this->inited) return;
     this->inited = true;
     this->client_id = client_id;
 

@@ -71,15 +71,12 @@ class ParsedAgentSpawnerData
 
     bool add_user(UserID user_id)
     {
-        ASSERT_VALID_USER_ID(user_id);
-        IF_INVALID_USER_ID(user_id) return false;
-        GS_ASSERT(this->users != NULL);
-        if (this->users == NULL) return false;
+        IF_ASSERT(!isValid(user_id)) return false;
+        IF_ASSERT(this->users == NULL) return false;
         if (this->added_users >= this->user_count) return false;
         for (size_t i=0; i<this->added_users; i++)
         {
-            GS_ASSERT(this->users[i] != user_id);
-            if (this->users[i] == user_id)
+            IF_ASSERT(this->users[i] == user_id)
                 return false;
         }
         this->users[this->added_users++] = user_id;

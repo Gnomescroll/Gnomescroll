@@ -25,8 +25,7 @@ FILE* population_log_file = NULL;
 
 class NetPeerManager* get_client(ClientID client_id)
 {
-    ASSERT_VALID_CLIENT_ID(client_id);
-    IF_INVALID_CLIENT_ID(client_id) return NULL;
+    IF_ASSERT(!isValid(client_id)) return NULL;
     return clients[client_id];
 }
 
@@ -148,8 +147,7 @@ void end_session(class Session* session)
 
 void client_authorized(ClientID client_id, UserID user_id, time_t expiration_time, const char* username)
 {
-    ASSERT_VALID_CLIENT_ID(client_id);
-    IF_INVALID_CLIENT_ID(client_id) return;
+    IF_ASSERT(!isValid(client_id)) return;
 
     NetPeerManager* pm = clients[client_id];
     GS_ASSERT(pm != NULL);
@@ -163,8 +161,7 @@ void client_authorized(ClientID client_id, UserID user_id, time_t expiration_tim
     for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
         if (clients[i] != NULL && clients[i] != pm && clients[i]->user_id == user_id)
         {
-            ASSERT_VALID_CLIENT_ID(clients[i]->client_id);
-            IF_INVALID_CLIENT_ID(clients[i]->client_id) continue;
+            IF_ASSERT(!isValid(clients[i]->client_id)) continue;
             class NetPeer* peer = staging_pool[clients[i]->client_id];
             if (peer == NULL) peer = pool[clients[i]->client_id];
             GS_ASSERT(peer != NULL);
@@ -177,8 +174,7 @@ void client_authorized(ClientID client_id, UserID user_id, time_t expiration_tim
 
 void client_authorization_failed(ClientID client_id)
 {
-    ASSERT_VALID_CLIENT_ID(client_id);
-    IF_INVALID_CLIENT_ID(client_id) return;
+    IF_ASSERT(!isValid(client_id)) return;
 
     NetPeerManager* pm = clients[client_id];
     GS_ASSERT(pm != NULL);
@@ -189,16 +185,13 @@ void client_authorization_failed(ClientID client_id)
 
 void kill_client(ClientID client_id, DisconnectType error_code)
 {
-    ASSERT_VALID_CLIENT_ID(client_id);
-    IF_INVALID_CLIENT_ID(client_id) return;
-    GS_ASSERT(staging_pool != NULL);
-    GS_ASSERT(pool != NULL);
-    if (staging_pool == NULL || pool == NULL) return;
+    IF_ASSERT(!isValid(client_id)) return;
+    IF_ASSERT(staging_pool == NULL) return;
+    IF_ASSERT(pool == NULL) return;
     
     class NetPeer* peer = staging_pool[client_id];
     if (peer == NULL) peer = pool[client_id];
-    GS_ASSERT(peer != NULL);
-    if (peer == NULL) return;
+    IF_ASSERT(peer == NULL) return;
 
     kill_client(peer, error_code);
 }

@@ -147,7 +147,7 @@ bool is_valid_location_data(ItemLocationType location, int location_id, int cont
     else
     if (location == IL_HAND)
     {
-        VERIFY_ITEM_LOCATION(IS_VALID_AGENT_ID(location_id));
+        VERIFY_ITEM_LOCATION(isValid((AgentID)location_id));
         VERIFY_ITEM_LOCATION(container_slot == 0);
     }
     else

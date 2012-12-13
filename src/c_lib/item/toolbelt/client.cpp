@@ -15,13 +15,10 @@ namespace Toolbelt
 
 void turn_fire_on(AgentID agent_id)
 {
-    GS_ASSERT(agent_fire_on != NULL);
-    if (agent_fire_on == NULL) return;
-    GS_ASSERT(agent_fire_tick != NULL);
-    if (agent_fire_tick == NULL) return;
+    IF_ASSERT(agent_fire_on == NULL) return;
+    IF_ASSERT(agent_fire_tick == NULL) return;
     
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_ASSERT(!isValid(agent_id)) return;
 
     agent_fire_tick[agent_id] = 0;
     if (agent_fire_on[agent_id]) return;
@@ -36,15 +33,11 @@ void turn_fire_on(AgentID agent_id)
 
 void turn_fire_off(AgentID agent_id)
 {
-    GS_ASSERT(click_and_hold != NULL);
-    if (click_and_hold == NULL) return;
-    GS_ASSERT(agent_fire_on != NULL);
-    if (agent_fire_on == NULL) return;
-    GS_ASSERT(agent_fire_tick != NULL);
-    if (agent_fire_tick == NULL) return;
+    IF_ASSERT(click_and_hold == NULL) return;
+    IF_ASSERT(agent_fire_on == NULL) return;
+    IF_ASSERT(agent_fire_tick == NULL) return;
     
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return;
+    IF_ASSERT(!isValid(agent_id)) return;
 
     agent_fire_tick[agent_id] = 0;
     if (!agent_fire_on[agent_id]) return;
@@ -73,8 +66,7 @@ bool toolbelt_item_begin_alpha_action()
     if (agent_fire_on == NULL) return false;
 
     AgentID agent_id = ClientState::playerAgent_state.agent_id;
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return false;
+    IF_ASSERT(!isValid(agent_id)) return false;
 
     if (agent_fire_on[agent_id]) return false;
 
@@ -96,8 +88,7 @@ bool toolbelt_item_end_alpha_action()
     if (click_and_hold == NULL) return false;
 
     AgentID agent_id = ClientState::playerAgent_state.agent_id;
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return false;
+    IF_ASSERT(!isValid(agent_id)) return false;
 
     if (!agent_fire_on[agent_id]) return false;
     turn_fire_off(agent_id);
@@ -207,8 +198,7 @@ bool toolbelt_item_beta_action()
     if (agent_selected_type == NULL) return false;
 
     AgentID agent_id = ClientState::playerAgent_state.agent_id;
-    ASSERT_VALID_AGENT_ID(agent_id);
-    IF_INVALID_AGENT_ID(agent_id) return false;
+    IF_ASSERT(!isValid(agent_id)) return false;
 
     if (agent_fire_on[agent_id]) return false;
 

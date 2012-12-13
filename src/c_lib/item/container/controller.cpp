@@ -191,7 +191,7 @@ ContainerActionType full_hand_swap_with_slot(
 
 ContainerActionType full_hand_to_world(AgentID agent_id)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(isValid(agent_id));
 
     // throw item
     transfer_hand_to_particle(agent_id);
@@ -201,7 +201,7 @@ ContainerActionType full_hand_to_world(AgentID agent_id)
 
 ContainerActionType partial_hand_to_world(AgentID agent_id, int transfer_stack_size)
 {
-    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(isValid(agent_id));
     ItemID hand_item = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
 
@@ -223,7 +223,7 @@ ContainerActionType full_hand_to_empty_slot(AgentID agent_id, ItemContainerInter
     GS_ASSERT(container != NULL);
     if (container == NULL) return CONTAINER_ACTION_NONE;
 
-    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(isValid(agent_id));
     ItemID hand_item = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
 
@@ -236,7 +236,7 @@ ContainerActionType full_hand_to_occupied_slot(AgentID agent_id, int slot, ItemI
 { // add stacks
     GS_ASSERT(slot_item != NULL_ITEM);
 
-    ASSERT_VALID_AGENT_ID(agent_id);
+    GS_ASSERT(isValid(agent_id));
     ItemID hand_item = get_agent_hand_item(agent_id);
     GS_ASSERT(hand_item != NULL_ITEM);
     GS_ASSERT(hand_item != slot_item);

@@ -13,8 +13,7 @@ namespace Toolbelt
 
 inline void toolbelt_set_active_item_StoC::handle() 
 {
-    ASSERT_VALID_AGENT_ID(this->agent_id);
-    IF_INVALID_AGENT_ID(this->agent_id) return;
+    IF_ASSERT(!isValid((AgentID)this->agent_id)) return;
     GS_ASSERT(agent_selected_type != NULL);
     if (agent_selected_type == NULL) return;
     if (item_type == agent_selected_type[this->agent_id]) return;

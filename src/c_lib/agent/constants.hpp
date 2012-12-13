@@ -66,6 +66,11 @@ typedef enum
     NULL_AGENT = 0xff,
 } AgentID;
 
+inline bool isValid(AgentID agent_id)
+{
+    return (agent_id >= 0 && agent_id < MAX_AGENTS);
+}
+
 /* Status */
 const int AGENT_HEALTH = 99;
 const int RESPAWN_TICKS = 30 * 4; // 4 seconds

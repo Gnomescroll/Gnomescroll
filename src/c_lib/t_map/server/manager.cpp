@@ -33,8 +33,7 @@ void t_map_manager_teardown(ClientID client_id)
 */
 void t_map_manager_update_client_position(ClientID client_id, float x, float y)
 {
-    ASSERT_VALID_CLIENT_ID(client_id);
-    IF_INVALID_CLIENT_ID(client_id) return;
+    IF_ASSERT(!isValid(client_id)) return;
 
     GS_ASSERT(map_manager_list[client_id] != NULL);
     if (map_manager_list[client_id] == NULL) return;

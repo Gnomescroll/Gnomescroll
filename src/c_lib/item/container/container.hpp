@@ -118,7 +118,7 @@ class ItemContainerInterface
         
         virtual bool lock(AgentID agent_id)
         {
-            ASSERT_VALID_AGENT_ID(agent_id);
+            GS_ASSERT(isValid(agent_id));
             GS_ASSERT(this->can_be_opened_by(agent_id));
             if (!this->can_be_opened_by(agent_id)) return false;
             GS_ASSERT(!this->attached_to_agent);
@@ -129,7 +129,7 @@ class ItemContainerInterface
 
         virtual bool unlock(AgentID agent_id)
         {
-            ASSERT_VALID_AGENT_ID(agent_id);
+            GS_ASSERT(isValid(agent_id));
             GS_ASSERT(this->owner != NULL_AGENT);
             GS_ASSERT(this->owner == agent_id);
             GS_ASSERT(!this->attached_to_agent);

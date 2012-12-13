@@ -94,16 +94,13 @@ static bool parse_agent_spawner_token(const char* key, const char* val, class Pa
     if (strcmp(key, USER_ID_TAG) == 0)
     {
         long long user_id = parse_int(val, err);
-        GS_ASSERT(!err);
-        ASSERT_VALID_USER_ID(user_id);
-        if (err) return false;
-        IF_INVALID_USER_ID(user_id) return false;
+        IF_ASSERT(err) return false;
+        IF_ASSERT(!isValid((UserID)user_id)) return false;
         if (!data->add_user((UserID)user_id)) return false;
     }
     else
     {
-        GS_ASSERT(false);
-        return false;
+        IF_ASSERT(true) return false;
     }
     return (!err);
 }
@@ -285,8 +282,7 @@ static bool write_entity_terminator(FILE* f)
 
 static bool write_user_id_tag(FILE* f, UserID user_id)
 {
-    ASSERT_VALID_USER_ID(user_id);
-    IF_INVALID_USER_ID(user_id) return false;
+    IF_ASSERT(!isValid(user_id)) return false;
     int ret = fprintf(f, USER_ID_FMT, user_id);
     GS_ASSERT(ret > 0);
     if (ret <= 0) return false;
