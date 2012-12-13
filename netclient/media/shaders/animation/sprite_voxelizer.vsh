@@ -16,7 +16,7 @@ void main(void)
 {
     // add the sprite pixel offset to the position, and rotate through the matrix
     // this is our gl_Vertex
-    vec4 vert = vec4(InRotMatrix * (vec3(InXY) + InPos));
+    vec4 vert = vec4((vec3(InXY) + InPos) * InRotMatrix);  // multiply V*M becuase M is row major
 
     // calculate final position
     vec4 pos = gl_ModelViewProjectionMatrix * vert;

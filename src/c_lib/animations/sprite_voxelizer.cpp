@@ -98,7 +98,7 @@ void draw_voxelized_sprite(int sprite_id, struct Vec3 position, const struct Mat
 
     struct Vec3 cpos = current_camera->get_position();
     glUniform3f(sprite_voxelizer_shader_vars.camera_pos, cpos.x, cpos.y, cpos.z);
-    glUniformMatrix3fv(sprite_voxelizer_shader_vars.rot_matrix, 1, GL_TRUE, rotation_matrix._f);
+    glUniformMatrix3fv(sprite_voxelizer_shader_vars.rot_matrix, 1, GL_FALSE, rotation_matrix._f);
     glUniform3f(sprite_voxelizer_shader_vars.pos, position.x, position.y, position.z);
 
     size_t offset = 0;
