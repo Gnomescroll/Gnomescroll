@@ -64,7 +64,7 @@ class TextureSheetLoader
         void reload();
         void generate_texture();
 
-        const struct Color4* get_sprite_pixels(int sprite_id);
+        const struct Color4* get_sprite_pixels(int sprite_id) const;
 
     explicit TextureSheetLoader(size_t tile_size);
     ~TextureSheetLoader();

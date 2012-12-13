@@ -221,7 +221,7 @@ struct VertexElementSpriteVoxel
 {
     float x,y;
     struct Color color;
-}
+};
 
 typedef class VertexElementList<struct VertexElementTexture> VertexElementListTexture;
 typedef class VertexElementList<struct VertexElementTextureNormal> VertexElementListTextureNormal;
