@@ -78,13 +78,56 @@ void teardown_sprite_voxelizer()
             delete sprite_voxelizer_vlists[i];
 }
 
-void draw_voxelized_sprite(int sprite_id)
+void draw_voxelized_sprite(int sprite_id, struct Vec3 position, const struct Mat3& rotation_matrix)
 {
     IF_ASSERT(sprite_id < 0 || sprite_id >= (int)SPRITE_VOXELIZER_MAX) return;
     IF_ASSERT(sprite_voxelizer_vlists[sprite_id] == NULL) return;
 
-    sprite_voxelizer_vlists[sprite_id]->buffer();
-    // TODO assign uniforms
+    VertexElementListSpriteVoxel* vlist = sprite_voxelizer_vlists[sprite_id];
+    vlist->buffer();
+
+    if (vlist->vertex_number == 0) return;
+
+    glUseProgramObjectARB(sprite_voxelizer_shader.shader);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vlist->VBO);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableVertexAttribArray(sprite_voxelizer_shader_vars.xy);
+    glEnableVertexAttribArray(sprite_voxelizer_shader_vars.color);
+
+    struct Vec3 cpos = current_camera->get_position();
+    glUniform3f(sprite_voxelizer_shader_vars.camera_pos, cpos.x, cpos.y, cpos.z);
+    glUniformMatrix3fv(sprite_voxelizer_shader_vars.rot_matrix, 1, GL_TRUE, rotation_matrix._f);
+    glUniform3f(sprite_voxelizer_shader_vars.pos, position.x, position.y, position.z);
+
+    size_t offset = 0;
+    glVertexAttribPointer(sprite_voxelizer_shader_vars.xy, 2, GL_FLOAT, GL_FALSE, vlist->stride, (GLvoid*)offset);
+    offset += 2 * sizeof(GL_FLOAT);
+    glVertexAttribPointer(sprite_voxelizer_shader_vars.color, 3, GL_UNSIGNED_BYTE, GL_TRUE, vlist->stride, (GLvoid*)offset);
+    
+    glDrawArrays(GL_QUADS, 0, vlist->vertex_number);
+
+    glDisableVertexAttribArray(sprite_voxelizer_shader_vars.xy);
+    glDisableVertexAttribArray(sprite_voxelizer_shader_vars.color);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glUseProgramObjectARB(0);
+
+    CHECK_GL_ERROR();
+}
+
+bool draw_voxelized_sprite_gl_begin()
+{
+    glEnable(GL_CULL_FACE);
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_TEXTURE_2D, false);
+    GL_ASSERT(GL_BLEND, false);
+    return true;
+}
+
+void draw_voxelized_sprite_gl_end()
+{
+    glDisable(GL_CULL_FACE);
 }
 
 }   // Animations

@@ -380,7 +380,6 @@ void draw_colored_voxel_particles()
 
     glEnable(GL_CULL_FACE);
 
-    //GL_ASSERT(GL_CULL_FACE, false);
     GL_ASSERT(GL_TEXTURE_2D, false);
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);

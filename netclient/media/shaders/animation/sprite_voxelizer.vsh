@@ -14,19 +14,21 @@ varying vec3 base_color;
 
 void main(void) 
 {
-    vec3 base_pos = vec3(InXY) + InPos;
-    // TODO -- what is gl_Vertex bound to again?
-    base_pos =  InRotMatrix * vec3(0,0,1);  // ????
-    
-    vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
+    // add the sprite pixel offset to the position, and rotate through the matrix
+    // this is our gl_Vertex
+    vec4 vert = vec4(InRotMatrix * (vec3(InXY) + InPos));
+
+    // calculate final position
+    vec4 pos = gl_ModelViewProjectionMatrix * vert;
 
     // set light diffusion
     vec3 look = normalize(pos.xyz - InCameraPos);
     diffuse_light = abs(dot(look, InNormal));           //use camera position
 
+    // set position
+    gl_Position = pos;
+
     // set color
     base_color = InColor;
-
-    gl_Position = pos;
 }
 

@@ -8,6 +8,7 @@ dont_include_this_file_in_server
 #include <SDL/texture_loader.hpp>
 #include <t_map/config/textures.hpp>
 #include <t_map/glsl/shader.hpp>
+#include <animations/sprite_voxelizer.hpp>
 
 namespace TextureSheetLoader
 {
@@ -409,6 +410,7 @@ void reload_texture_sheets()
     cube_texture_sheet_loader->reload();
     t_map::blit_block_item_sheet();
     item_texture_sheet_loader->reload();
+    Animations::load_sprite_voxelizer();
     t_map::reload_textures();
 }
 
