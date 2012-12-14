@@ -173,14 +173,15 @@ void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action)
     map_history->send_block_action(x,y,z, cube_id, action);
 }
 
-void broadcast_set_block(int x, int y, int z, CubeID cube_id)
+bool broadcast_set_block(int x, int y, int z, CubeID cube_id)
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     main_map->set_block(x,y,z, cube_id);
     map_history->send_set_block(x,y,z, cube_id);
+    return true;
 }
 
 void broadcast_set_block_palette(int x, int y, int z, CubeID block, int palette)

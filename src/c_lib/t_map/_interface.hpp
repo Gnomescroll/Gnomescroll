@@ -83,7 +83,7 @@ void add_control_node(int x, int y, int z);
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
 
 void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action);
-void broadcast_set_block(int x, int y, int z, CubeID cube_id);
+bool broadcast_set_block(int x, int y, int z, CubeID cube_id);
 void broadcast_set_block_palette(int x, int y, int z, CubeID cube_id, int palette);
 void broadcast_set_palette(int x, int y, int z, int palette);
 
