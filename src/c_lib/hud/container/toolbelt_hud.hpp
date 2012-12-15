@@ -134,35 +134,53 @@ void AgentToolbeltUI::draw()
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     int* slot_durabilities = ItemContainer::get_container_ui_durabilities(this->container_id);
     if (slot_types == NULL) return;
-    GS_ASSERT(slot_stacks != NULL);
-    GS_ASSERT(slot_durabilities != NULL);
-    if (slot_stacks == NULL) return;
-    if (slot_durabilities == NULL) return;
+    IF_ASSERT(slot_stacks == NULL) return;
+    IF_ASSERT(slot_durabilities == NULL) return;
 
-    // render slot backgrounds
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// render slot backgrounds
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
-        int slot = j*xdim + i;
-        float ratio = 1.0f;
+        const float alpha = 128;
+		
+		// always draw grey background
+		int slot = j*xdim + i;
+		float x = xoff + border + i*(inc1+slot_size);
+		float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+		float ratio = 1.0f;
+		glColor4ub(80, 80, 80, alpha);    // grey
+		Hud::meter_graphic.draw(x, y, w, w, ratio);
+
+		// maybe draw a dura meter on it
         int durability = slot_durabilities[slot];
         if (durability != NULL_DURABILITY)
         {
-            int max_durability = Item::get_max_durability(slot_types[slot]);
-            ratio = ((float)durability)/((float)max_durability);
+			int max_durability = Item::get_max_durability(slot_types[slot]);
+			ratio = ((float)durability)/((float)max_durability);
+			Hud::set_color_from_ratio(ratio, alpha);
+			Hud::meter_graphic.draw(x, y, w, w, ratio);
         }
-
-        // get color based on durability
-        const float alpha = 128;
-        if (durability == NULL_DURABILITY)
-            glColor4ub(80, 80, 80, alpha);    // grey
-        else
-            Hud::set_color_from_ratio(ratio, alpha);
-
-        float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-
-        Hud::meter_graphic.draw(x, y, w, w, ratio);
     }
 
     // draw hover highlight

@@ -198,7 +198,8 @@ void draw_reference_center()
 void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage) 
 {
     // old durability color jumps
-    //glColor4ub(7, 247, 0, alpha);    // green
+    
+	//glColor4ub(7, 247, 0, alpha);    // green
     //glColor4ub(243, 247, 0, alpha);  // yellow
     //glColor4ub(247, 71, 0, alpha);   // red-orange
     //glColor4ub(247, 14, 0, alpha);   // red
@@ -207,6 +208,7 @@ void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage
     Color red    = color_init(255,   0, 0);
     Color green  = color_init(0,   255, 0);
     Color yellow = color_init(255, 190, 0);
+
     Color full = green;
     Color empty = red;
     Color dyn;
@@ -226,6 +228,154 @@ void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage
         dyn = interpolate_color(empty, yellow, small_to_big);
             
     glColor4ub(dyn.r, dyn.g, dyn.b, alpha);
+}
+
+bool FAILED_merge_of_cntainr_draws(
+	int slot_size, 
+	int container_id, 
+	GLubyte alpha_bord, // border
+	float alpha_bkgd, // background
+	const int xdim, 
+	const int ydim, 
+	float xoff, 
+	float yoff,
+	const float inc1,  // spacing between slot icons
+    const float inc2,  // border around a slot icon
+	const float border,
+	int hover_slot)
+{
+    // abort if slots aren't copasetic
+    int* slot_types = ItemContainer::get_container_ui_types(container_id);
+    if (slot_types == NULL) return false;
+
+	const float w = slot_size;
+
+    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_TEXTURE_2D);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
+
+	// draw larger rects for borders
+    int intensity = 80-16;
+    glBegin(GL_QUADS);
+    glColor4ub(intensity, intensity, intensity, alpha_bord); // old alpha == 128+64
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
+    {
+        float x = xoff + border + i*(inc1+slot_size);
+        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+	
+		glVertex2f(x-inc2,y+w+inc2);
+        glVertex2f(x+w+inc2, y+w+inc2);
+        glVertex2f(x+w+inc2, y-inc2);
+        glVertex2f(x-inc2, y-inc2);
+    }
+    glEnd();
+
+
+   	// render slot backgrounds
+	int* slot_durabilities = ItemContainer::get_container_ui_durabilities(container_id);
+	if (slot_durabilities != NULL) 
+	{
+		for (int i=0; i<xdim; i++)
+		for (int j=0; j<ydim; j++)
+		{
+			// always draw grey background
+			int slot = j*xdim + i;
+			float x = xoff + border + i*(inc1+slot_size);
+			float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+			glColor4ub(80, 80, 80, alpha_bkgd);    // grey
+			float ratio = 1.0f;
+			Hud::meter_graphic.draw(x, y, w, w, ratio);
+
+			// maybe draw a dura meter on it
+			int durability = slot_durabilities[slot];
+			if (durability != NULL_DURABILITY)
+			{
+				int max_durability = Item::get_max_durability(slot_types[slot]);
+				ratio = ((float)durability)/((float)max_durability);
+				Hud::set_color_from_ratio(ratio, alpha_bkgd);
+				Hud::meter_graphic.draw(x, y, w, w, ratio);
+			}
+		}
+	}
+
+
+    // draw hover highlight background
+    glBegin(GL_QUADS);
+    glColor4ub(160, 160, 160, 128);
+    if (hover_slot != NULL_SLOT)
+    {
+        int i = hover_slot % xdim;
+        int j = hover_slot / xdim;
+        
+        float x = xoff + border + i*(inc1+slot_size);
+        // VV container_hud version VV
+		//float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+        // VV toolbelt_hud version VV
+        float y = _yresf - (yoff - border + (j+1)*(inc1+slot_size));
+
+        glVertex2f(x,y+w);
+        glVertex2f(x+w, y+w);
+        glVertex2f(x+w, y);
+        glVertex2f(x, y);
+    }
+    glEnd();
+
+	
+    // draw icons
+	glColor4ub(255, 255, 255, 255);
+    glEnable(GL_TEXTURE_2D);
+    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
+    glBegin(GL_QUADS);
+
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
+    {
+        int slot = j * xdim + i;
+        if (slot_types[slot] == NULL_ITEM_TYPE) continue;
+        int tex_id = Item::get_sprite_index_for_type(slot_types[slot]);
+        const float x = xoff + border + i*(inc1+slot_size);
+        const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+
+        //const float iw = 8.0f; // icon_width
+        //const int iiw = 8; // integer icon width
+        const float iw = 16.0f; // icon_width
+        const int iiw = 16; // integer icon width
+        
+        const float tx_min = (1.0f/iw)*(tex_id % iiw);
+        const float ty_min = (1.0f/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0f/iw;
+        const float ty_max = ty_min + 1.0f/iw;
+
+        glTexCoord2f(tx_min, ty_min);
+        glVertex2f(x,y+w);
+
+        glTexCoord2f(tx_max, ty_min);
+        glVertex2f(x+w, y+w);
+            
+        glTexCoord2f(tx_max, ty_max);
+        glVertex2f(x+w, y);
+
+        glTexCoord2f(tx_min, ty_max);
+        glVertex2f(x, y);
+    }
+
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glColor4ub(255, 255, 255, 255);
+
+	// container_hud didn't have these next 2:
+    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_BLEND);
+
+
+
+	return true; // success
 }
 
 

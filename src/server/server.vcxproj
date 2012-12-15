@@ -92,6 +92,7 @@
     <ClInclude Include="..\c_lib\t_gen\excavator.hpp" />
     <ClInclude Include="..\c_lib\t_gen\terrain_features.hpp" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="syncbait.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_c_lib.cpp">

@@ -110,6 +110,16 @@ class HUD
 // meter
 MeterGraphic meter_graphic;
 void set_color_from_ratio(float ratio, float alpha = 175, bool invert_color_for_damage = false);
+bool FAILED_merge_of_cntainr_draws(
+	int slot_size, 
+	int container_id, 
+	GLubyte alpha_bord, // border
+	float alpha_bkgd,   // background
+	const int xdim, const int ydim, float xoff, float yoff,
+	const float inc1,  // spacing between slot icons
+    const float inc2,  // border around a slot icon
+	const float border,
+	int hover_slot);
 
 void set_prompt(const char* msg);
 void clear_prompt(const char* msg);
