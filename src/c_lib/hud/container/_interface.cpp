@@ -460,6 +460,7 @@ static void draw_tooltip()
 void draw()
 {
     agent_toolbelt->draw();
+	energy_tanks->inv_open = agent_inventory_enabled;
     energy_tanks->draw();
 
     if (!agent_inventory_enabled && !container_block_enabled) return;

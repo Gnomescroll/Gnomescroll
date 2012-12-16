@@ -11,10 +11,12 @@ class EnergyTanksUI : public UIElement
     public:
 
     static const int border = 0;       // border around entire panel
-    static const int inc1 = 8; // spacing between slot icons
+    static const int span_tween_slots = 8;
     static const int inc2 = 2;  // border around a slot icon
 
     static const int slot_size = 32;    // pixel dimension
+
+	bool inv_open;
 
     int xdim;    // slot dimensions
     int ydim;
@@ -42,12 +44,12 @@ class EnergyTanksUI : public UIElement
 
     int width()
     {
-        return xdim*slot_size + (xdim-1)*inc1 + inc2*2;
+        return xdim*slot_size + (xdim-1)*span_tween_slots + inc2*2;
     }
 
     int height()
     {
-        return ydim*slot_size + ydim*inc1 + inc2*2;
+        return ydim*slot_size + ydim*span_tween_slots + inc2*2;
     }
 
     void draw();
@@ -59,6 +61,7 @@ class EnergyTanksUI : public UIElement
 
     void init()
     {
+		this->inv_open = false;
         this->xdim = ItemContainer::get_container_xdim(AGENT_ENERGY_TANKS);
         this->ydim = ItemContainer::get_container_ydim(AGENT_ENERGY_TANKS);
         this->name.set_text("Energy Tanks");
@@ -75,17 +78,17 @@ class EnergyTanksUI : public UIElement
 
 int EnergyTanksUI::get_slot_at(int px, int py)
 {
-    px -= xoff - border - inc1/2;
-    py -= yoff + border + inc1/2;
+    px -= xoff - border - span_tween_slots/2;
+    py -= yoff + border + span_tween_slots/2;
 
-    float width  = xdim*slot_size + (xdim-1)*inc1 + inc2*2;
-    float height = ydim*slot_size + (ydim-1)*inc1 + inc2*2;
+    float width  = xdim*slot_size + (xdim-1)*span_tween_slots + inc2*2;
+    float height = ydim*slot_size + (ydim-1)*span_tween_slots + inc2*2;
 
     if (px < 0 || px > width)  return NULL_SLOT;
     if (py < 0 || py > height) return NULL_SLOT;
 
-    int xslot = px / (inc1 + slot_size);
-    int yslot = py / (inc1 + slot_size);
+    int xslot = px / (span_tween_slots + slot_size);
+    int yslot = py / (span_tween_slots + slot_size);
 
     int slot = yslot * this->xdim + xslot;
     
@@ -101,7 +104,7 @@ void EnergyTanksUI::draw_name()
     // this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
     this->name.set_position(this->xoff, _yresf - this->height() );
     this->name.draw();
-    HudFont::end_font_draw();   
+    HudFont::end_font_draw();
 }
 
 void EnergyTanksUI::draw()
@@ -114,28 +117,51 @@ void EnergyTanksUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // draw alpha quads behind tanks
-    //int g1 = 80-16; //color 1
-    //glBegin(GL_QUADS);
- //   glColor4ub(g1,g1,g1, 128+64); //128+64);
- //   for (int i=0; i<xdim; i++)
- //   for (int j=0; j<ydim; j++)
- //   {
- //       float x = xoff + border + i*(inc1+w);
- //       float y = _yresf - (yoff + border + (j+1)*(inc1+w));
 
- //       glVertex2f(x-inc2,y+w+inc2);
- //       glVertex2f(x+w+inc2, y+w+inc2);
- //       glVertex2f(x+w+inc2, y-inc2);
- //       glVertex2f(x-inc2, y-inc2);
- //   }
- //   glEnd();
 
     if (this->container_id == NULL_CONTAINER) return;
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     GS_ASSERT(slot_types != NULL);
     if (slot_types == NULL) return;
-    
+
+
+
+	if (inv_open) 
+	{
+		// draw larger rect for border of slot
+		int g1 = 80-16;
+		glColor4ub(1,1,1, 128+64); //128+64);
+		glBegin(GL_QUADS);
+		for (int i=0; i<xdim; i++)
+		for (int j=0; j<ydim; j++)
+		{
+			float x = xoff + border + i*(span_tween_slots+w);
+			float y = _yresf - (yoff + border + (j+1)*(span_tween_slots+w));
+
+			glVertex2f(x-inc2,y+w+inc2);
+			glVertex2f(x+w+inc2, y+w+inc2);
+			glVertex2f(x+w+inc2, y-inc2);
+			glVertex2f(x-inc2, y-inc2);
+		}
+		glEnd();
+
+		// draw slot rect behind tanks
+		glColor4ub(g1,g1,g1, 128+64); //128+64);
+		glBegin(GL_QUADS);
+		for (int i=0; i<xdim; i++)
+		for (int j=0; j<ydim; j++)
+		{
+			float x = xoff + border + i*(span_tween_slots+w);
+			float y = _yresf - (yoff + border + (j+1)*(span_tween_slots+w));
+
+			glVertex2f(x,y+w);
+			glVertex2f(x+w, y+w);
+			glVertex2f(x+w, y);
+			glVertex2f(x, y);
+		}
+		glEnd();
+	}
+
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
@@ -145,8 +171,8 @@ void EnergyTanksUI::draw()
         int i = hover_slot % this->xdim;
         int j = hover_slot / this->xdim;
         
-        float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff - border + (j+1)*(inc1+slot_size));
+        float x = xoff + border + i*(span_tween_slots+w);
+        float y = _yresf - (yoff - border + (j+1)*(span_tween_slots+w));
 
         glVertex2f(x,y+w);
         glVertex2f(x+w, y+w);
@@ -168,7 +194,7 @@ void EnergyTanksUI::draw()
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
 
     // draw unloaded energy tanks as greyscale
-    // (here's where we ALSO used the LOADED drawing code below, but with the following line changed
+    // (here's where we ALSO used the LOADED tank drawing code below, but with the following line changed
     // in order to only draw the empty tanks:
     //         if (slot_types[slot] != NULL_ITEM_TYPE) continue;
     
@@ -190,8 +216,8 @@ void EnergyTanksUI::draw()
         int slot = j * xdim + i;
         if (slot_types[slot] == NULL_ITEM_TYPE) continue;
         GS_ASSERT(slot_types[slot] == energy_tank_type);
-        const float x = xoff + /*border +*/ i * (/*inc1 + */slot_size);
-        const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+        const float x = xoff + border + i * (span_tween_slots + w);
+        const float y = _yresf - (yoff + border + (j+1)*(span_tween_slots + w));
 
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
