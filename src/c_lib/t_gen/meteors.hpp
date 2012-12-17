@@ -10,7 +10,7 @@ dont_include_this_file_in_client
 
 namespace t_gen
 {
-    
+
 void meteor_fall(void)
 {
     static const CubeID bedrock = t_map::get_cube_id("bedrock");
@@ -28,12 +28,12 @@ void meteor_fall(void)
     x = translate_point(x);
     y = translate_point(y);
 
-    int z = randrange (15, 65);
+    int z = randrange (30, 65);
     z = t_map::get_nearest_open_block(x,y,z,1) - 1;
     if (z <= 0) return;
 
-    int xcurrent = x;
-    int ycurrent = y;
+    int xcurrent = x + METEOR_SIZE / 2;
+    int ycurrent = y + METEOR_SIZE / 2;
     int zcurrent = z;
 
     CubeID tile_id = NULL_CUBE;
@@ -63,29 +63,29 @@ void meteor_fall(void)
     }
     GS_ASSERT(t_map::isValidCube(tile_id));
     if (!t_map::isValidCube(tile_id)) return;
-    
+
     const char* cube_name = t_map::get_cube_name(tile_id);
     GS_ASSERT(cube_name != NULL);
     if (cube_name != NULL)
         printf("Incoming %s meteor at %d, %d, %d!\n", cube_name, x, y, z);
-    
-    while (1) //while the generation has not been stopped by attempting to overwrite itself
+
+    while (1) //while the generation has not been stopped by attempting to overwrite itself, generate the lower half of the meteor
     {
         t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
-        if (xcurrent <= x + METEOR_SIZE)
+        if (xcurrent <= x + z + 1.5 * METEOR_SIZE - zcurrent)
         {
             xcurrent++;
         }
         else
         {
-            xcurrent = x;
-            if (ycurrent <= y + METEOR_SIZE)
+            xcurrent = x + z + 0.5 * METEOR_SIZE - zcurrent;
+            if (ycurrent <= y + z + 1.5 * METEOR_SIZE - zcurrent)
             {
                 ycurrent++;
             }
             else
             {
-                ycurrent = y;
+                ycurrent = y + z + 0.5 * METEOR_SIZE - zcurrent;
                 if (zcurrent <= z + METEOR_SIZE)
                 {
                     zcurrent++;
@@ -97,18 +97,47 @@ void meteor_fall(void)
             }
         }
     }
-    
+
+    while (1) //generate the upper half of the meteor
+    {
+        t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
+        if (xcurrent <= x - (zcurrent - z + METEOR_SIZE) + METEOR_SIZE / 2)
+        {
+            xcurrent++;
+        }
+        else
+        {
+            xcurrent = x - (zcurrent - z + METEOR_SIZE) - METEOR_SIZE / 2;
+            if (ycurrent <= y - (zcurrent - z + METEOR_SIZE) + METEOR_SIZE / 2)
+            {
+                ycurrent++;
+            }
+            else
+            {
+                ycurrent = x - (zcurrent - z + METEOR_SIZE) - METEOR_SIZE / 2;
+                if (zcurrent <= z + METEOR_SIZE * 2)
+                {
+                    zcurrent++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
     while (zcurrent < t_map::map_dim.z)
     {
         t_map::set(xcurrent, ycurrent, zcurrent, EMPTY_CUBE);
-        if (xcurrent <= x + METEOR_SIZE)
+        if (xcurrent <= x + METEOR_SIZE + zcurrent / 20)
         {
             xcurrent++;
         }
         else
         {
             xcurrent = x;
-            if (ycurrent <= y + METEOR_SIZE)
+            if (ycurrent <= y + METEOR_SIZE + zcurrent / 20)
             {
                 ycurrent++;
             }
@@ -135,7 +164,7 @@ void meteor_fall(void)
                 t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
             }
         }
-        
+
         zcurrent = zcurrent - randrange(0, 2);
         if (zcurrent > 0 && zcurrent < t_map::map_dim.z)
         {
@@ -179,7 +208,7 @@ void meteor_fall(void)
             }
         }
     }
-    
+
     zcurrent = z + METEOR_SIZE + 1;
     while (zcurrent < t_map::map_dim.z)
     {
