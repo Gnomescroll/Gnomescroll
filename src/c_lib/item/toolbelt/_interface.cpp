@@ -47,13 +47,16 @@ void remove_agent(AgentID agent_id)
 
     turn_fire_off(agent_id);
 
-    IF_ASSERT(agent_selected_type != NULL)
+    GS_ASSERT(agent_selected_type != NULL);
+    if (agent_selected_type != NULL)
         agent_selected_type[agent_id] = NULL_ITEM_TYPE;
 
     #if DC_SERVER
-    IF_ASSERT(agent_selected_item != NULL) 
+    GS_ASSERT(agent_selected_item != NULL) 
+    if (agent_selected_item != NULL) 
         agent_selected_item[agent_id] = NULL_ITEM;
-    IF_ASSERT(agent_selected_slot != NULL)
+    GS_ASSERT(agent_selected_slot != NULL)
+    if (agent_selected_slot != NULL)
         agent_selected_slot[agent_id] = 0;
     #endif
 }
@@ -217,9 +220,9 @@ void tick()
     // here's where i want to add x jetpack particles per frame i think.... sounds probably based on events
     for (int i=0; i<MAX_AGENTS; i++)
     {
-		//Agents::agent_list[i].state
+        //Agents::agent_list[i].state
 
-	}
+    }
     
     // increment fire ticks if weapon down
     for (int i=0; i<MAX_AGENTS; i++)
