@@ -62,13 +62,13 @@ class Voxel_model
         bool in_sight_of(Vec3 source, Vec3* sink);
         bool in_sight_of(Vec3 source, Vec3* sink, float failure_rate);
 
-        VoxelVolume* vv;
+        Voxel_volume* vv;
 
         Vec3 get_center();
         Vec3 get_center(int part);
         float get_radius();
         float get_radius(int part);
-        VoxelVolume* get_part(int part);
+        Voxel_volume* get_part(int part);
 
         float largest_radius(); // temporary, until real body collision detection
 

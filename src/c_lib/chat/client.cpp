@@ -32,8 +32,8 @@ void ChatMessage::set_color()
     if (sender == CHAT_SENDER_SYSTEM) // system msg
         this->color = color_init(Options::system_message_r, Options::system_message_g, Options::system_message_b);
     else if (
-        ClientState::player_agent.agent_id >= 0
-     && ClientState::player_agent.agent_id + CHANNEL_ID_AGENT_OFFSET == channel
+        ClientState::playerAgent_state.agent_id >= 0
+     && ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET == channel
     )    // pm
         this->color = CHAT_PM_COLOR;
     else // global
@@ -402,7 +402,7 @@ bool ChatInput::route_command()
             return true;
         }
 
-        class Agent* you = ClientState::player_agent.you();
+        class Agent* you = ClientState::playerAgent_state.you();
         if (you != NULL
          && colors_equal(you->status.color, color))
         {
@@ -524,8 +524,8 @@ void ChatClient::subscribe_channels()
 {
     this->subscribe_system_channel();
 
-    // call after player_agent has been assigned by server
-    if (ClientState::player_agent.you() == NULL) return;
+    // call after playerAgent_state has been assigned by server
+    if (ClientState::playerAgent_state.you() == NULL) return;
 
     ChatClientChannel* chan;
     for (int i=1; i<CHAT_CLIENT_CHANNELS_MAX; i++)
@@ -544,7 +544,7 @@ void ChatClient::subscribe_channels()
                 chan->id = 1;
                 break;
             case CHANNEL_PRIVATE:
-                chan->id = ClientState::player_agent.agent_id + CHANNEL_ID_AGENT_OFFSET;
+                chan->id = ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET;
                 break;
             default:
                 GS_ASSERT(false);

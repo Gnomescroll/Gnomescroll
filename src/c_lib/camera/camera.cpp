@@ -310,13 +310,13 @@ void hud_projection()
 
 void update_agent_camera()
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agent* you = ClientState::playerAgent_state.you();
     if (you == NULL) return;
     // update camera_state
-    ClientState::player_agent.pump_camera();
+    ClientState::playerAgent_state.pump_camera();
 
     // set agent_camera from state
-    Vec3 pos = ClientState::player_agent.camera_position();
+    Vec3 pos = ClientState::playerAgent_state.camera_position();
     agent_camera->set_position(pos);
 }
 

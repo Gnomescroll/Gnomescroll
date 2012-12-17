@@ -4,6 +4,20 @@
 #include <physics/vec3.hpp>
 #include <common/template/object_list.hpp>
 
+#if DC_SERVER
+class AgentListTemp: public ObjectList<Agent, AgentID>
+{
+    private:
+        const char* name() { return "AgentListTemp"; }
+    public:
+        AgentListTemp(unsigned int capacity) :
+            ObjectList<Agent, AgentID>(capacity, NULL_AGENT)
+        {
+            this->print();
+        }
+};
+#endif
+
 class AgentList: public ObjectList<class Agent, AgentID>
 {
     private:

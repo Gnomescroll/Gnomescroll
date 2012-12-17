@@ -8,19 +8,19 @@
 #endif
 
 /*
- * AgentStatus has miscellaneous status properties (health, dead, ...)
+ * Agent_status has miscellaneous status properties (health, dead, ...)
  * Its methods are to be used by the server ONLY
- * The reflexive methods that will be called in the client are stored on AgentEvent
+ * The reflexive methods that will be called in the client are stored on Agent_event
  *
  * e.g.
- * AgentStatus::die() // in server
- * AgentEvent::died() // in client
+ * Agent_status::die() // in server
+ * Agent_event::died() // in client
  *
  */
 
 const int VOXEL_MODEL_RESTORE_WAIT = 30 * 10; // ~ once every 10 seconds
 
-AgentStatus::AgentStatus(Agent* a) :
+Agent_status::Agent_status(Agent* a) :
     a(a),
     voxel_model_restore_throttle(0),
     health(AGENT_HEALTH),
@@ -40,12 +40,12 @@ AgentStatus::AgentStatus(Agent* a) :
     this->name[0] = '\0';
 }
 
-AgentStatus::~AgentStatus()
+Agent_status::~Agent_status()
 {
     this->quit();
 }
 
-void AgentStatus::set_spawner(int pt)
+void Agent_status::set_spawner(int pt)
 {
     ASSERT_VALID_SPAWNER_ID(pt);
     IF_INVALID_SPAWNER_ID(pt) return;
@@ -108,12 +108,12 @@ void AgentStatus::set_spawner(int pt)
 
 #if DC_SERVER
 
-void AgentStatus::identify(const char* name)
+void Agent_status::identify(const char* name)
 {
     this->set_name(name);
 }
 
-void AgentStatus::broadcast_color()
+void Agent_status::broadcast_color()
 {
     agent_color_StoC msg;
     msg.agent_id = this->a->id;
@@ -121,7 +121,7 @@ void AgentStatus::broadcast_color()
     msg.broadcast();
 }
 
-void AgentStatus::send_color(ClientID client_id)
+void Agent_status::send_color(ClientID client_id)
 {
     agent_color_StoC msg;
     msg.agent_id = this->a->id;
@@ -130,7 +130,7 @@ void AgentStatus::send_color(ClientID client_id)
 }
 #endif
 
-bool AgentStatus::set_color(struct Color color)
+bool Agent_status::set_color(struct Color color)
 {
     if (!this->set_color_silent(color)) return false;
     #if DC_SERVER
@@ -140,7 +140,7 @@ bool AgentStatus::set_color(struct Color color)
 }
 
 // does not broadcast the change (useful for the deserializer) 
-bool AgentStatus::set_color_silent(struct Color color)
+bool Agent_status::set_color_silent(struct Color color)
 {
     if (colors_equal(color, this->color)) return false;
 
@@ -167,13 +167,13 @@ bool AgentStatus::set_color_silent(struct Color color)
     return true;
 }
 
-void AgentStatus::set_name(const char* name)
+void Agent_status::set_name(const char* name)
 {
     strcpy(this->name, name);
 }
 
 #if DC_SERVER
-void AgentStatus::heal(unsigned int amt)
+void Agent_status::heal(unsigned int amt)
 {
     GS_ASSERT(amt > 0);
     if (this->dead || this->should_die) return;
@@ -182,7 +182,7 @@ void AgentStatus::heal(unsigned int amt)
         this->health = this->health_max;
 }
 
-int AgentStatus::apply_damage(int dmg)
+int Agent_status::apply_damage(int dmg)
 {
     GS_ASSERT(dmg >= 0);
     if (dmg <= 0) return this->health;
@@ -224,7 +224,7 @@ int AgentStatus::apply_damage(int dmg)
     return this->health;
 }
 
-void AgentStatus::send_health_msg()
+void Agent_status::send_health_msg()
 {
     agent_health_StoC health_msg;
     health_msg.id = a->id;
@@ -232,7 +232,7 @@ void AgentStatus::send_health_msg()
     health_msg.broadcast();
 }
 
-void AgentStatus::send_health_msg(ClientID client_id)
+void Agent_status::send_health_msg(ClientID client_id)
 {
     agent_health_StoC health_msg;
     health_msg.id = a->id;
@@ -240,7 +240,7 @@ void AgentStatus::send_health_msg(ClientID client_id)
     health_msg.sendToClient(client_id);
 }
 
-int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id)
+int Agent_status::apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id)
 {
     if (!Options::pvp)
     {   // dont allow player kills
@@ -265,7 +265,7 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
     return health;
 }
 
-int AgentStatus::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
+int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
 {
     int dmg = 0;
 
@@ -296,7 +296,7 @@ int AgentStatus::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflict
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
-int AgentStatus::apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
+int Agent_status::apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
 {
     int dmg = 0;
 
@@ -329,7 +329,7 @@ int AgentStatus::apply_mining_laser_damage_to_part(int part_id, AgentID inflicto
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
-void AgentStatus::set_fresh_state()
+void Agent_status::set_fresh_state()
 {
     a->spawn_state();
     this->lifetime = 0;
@@ -346,7 +346,7 @@ void AgentStatus::set_fresh_state()
     ItemContainer::agent_born(this->a->id);
 }
 
-void AgentStatus::respawn()
+void Agent_status::respawn()
 {
     if (!this->dead) return;  // ignore if not waiting to respawn
     
@@ -356,21 +356,21 @@ void AgentStatus::respawn()
     respawn_countdown = RESPAWN_TICKS; // reset timer
 }
 
-void AgentStatus::restore_health()
+void Agent_status::restore_health()
 {
     if (this->health == AGENT_HEALTH) return;
     this->health = AGENT_HEALTH;
     this->send_health_msg();
 }
 
-void AgentStatus::at_base()
+void Agent_status::at_base()
 {
     this->restore_health();
 }
 
 #endif
 
-void AgentStatus::quit()
+void Agent_status::quit()
 {
     #if DC_SERVER
     if (this->spawner != BASE_SPAWN_ID)
@@ -388,7 +388,7 @@ void AgentStatus::quit()
     #endif
 }
 
-bool AgentStatus::die()
+bool Agent_status::die()
 {
     if (this->dead) return false;
     this->should_die = false;
@@ -413,7 +413,7 @@ bool AgentStatus::die()
     return true;
 }
 
-bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method)
+bool Agent_status::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method)
 {
     bool killed = this->die();
     if (!killed) return false;
@@ -476,7 +476,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
     return true;
 }
 
-void AgentStatus::kill(int victim_id)
+void Agent_status::kill(int victim_id)
 {
     if (victim_id == this->a->id)
     {
@@ -496,12 +496,12 @@ void AgentStatus::kill(int victim_id)
     }
 }
 
-void AgentStatus::kill_slime()
+void Agent_status::kill_slime()
 {
     this->slime_kills++;
 }
 
-void AgentStatus::send_scores(ClientID client_id)
+void Agent_status::send_scores(ClientID client_id)
 {
     AgentKills_StoC ak;
     ak.id = a->id;
@@ -520,7 +520,7 @@ void AgentStatus::send_scores(ClientID client_id)
 }
 
 // to all
-void AgentStatus::send_scores()
+void Agent_status::send_scores()
 {
     AgentKills_StoC ak;
     ak.id = a->id;
@@ -538,13 +538,13 @@ void AgentStatus::send_scores()
     as.broadcast();
 }
 
-float AgentStatus::get_spawn_angle()
+float Agent_status::get_spawn_angle()
 {
     return 0.5f;
 }
 
 #if DC_SERVER
-bool AgentStatus::consume_item(ItemID item_id)
+bool Agent_status::consume_item(ItemID item_id)
 {
     int item_type = Item::get_item_type(item_id);
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
@@ -576,7 +576,7 @@ bool AgentStatus::consume_item(ItemID item_id)
 }
 #endif
 
-void AgentStatus::tick()
+void Agent_status::tick()
 {
     if (this->dead || this->should_die)
         this->lifetime = 0;

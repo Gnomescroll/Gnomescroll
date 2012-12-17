@@ -16,7 +16,7 @@ typedef enum
     AGENT_VOX_IS_DEAD,
 } AgentVoxStatus;
 
-class AgentEvent
+class Agent_event
 {
     private:
         Agent* a;
@@ -67,6 +67,6 @@ class AgentEvent
 
         void set_spawner(int pt);
 
-        explicit AgentEvent(Agent* owner);
-        ~AgentEvent();
+        explicit Agent_event(Agent* owner);
+        ~Agent_event();
 };

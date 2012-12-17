@@ -20,11 +20,11 @@ extern int frame_id;
 extern struct Vec3 location_pointer;
 extern bool location_pointer_set;
 
-extern class PlayerAgent player_agent;
+extern class PlayerAgent_state playerAgent_state;
 
 // property lists
-extern class VoxelRenderListManager* voxel_render_list;
-extern class VoxelHitscanList* voxel_hitscan_list;
+extern class Voxel_render_list_manager* voxel_render_list;
+extern class Voxel_hitscan_list* voxel_hitscan_list;
 
 extern int last_ping_time;
 extern int last_reliable_ping_time;

@@ -4,11 +4,12 @@
 #include <entity/constants.hpp>
 #include <common/defines.h>
 #include <voxel/voxel_model.hpp>
+
 #include <agent/constants.hpp>
 #include <agent/agent_status.hpp>
 
 #if DC_CLIENT
-# include <agent/client/agent_event.hpp>
+#include <agent/client/agent_event.hpp>
 #endif
 
 //store last network messsage
@@ -55,15 +56,17 @@ class AgentState
 };
 
 
-struct AgentControlState
+struct Agent_control_state
 {
+    //int id;
     int seq;
     float theta;
     float phi;
     uint32_t cs;
+
 };
 
-struct AgentCollisionBox
+struct Agent_collision_box
 {
     float b_height; //standing height
     float c_height; //crouch height
@@ -74,9 +77,9 @@ class Agent
 {
     private:
         void print_cs();
-        AgentControlState get_current_control_state();
+        Agent_control_state get_current_control_state();
         class AgentState state_rollback;
-        struct AgentControlState cs[256];
+        struct Agent_control_state cs[256];
         int snapshot_seq;
         int CS_seq; // <--current counter
 
@@ -95,15 +98,15 @@ class Agent
 
         EntityType type;
 
-        struct AgentCollisionBox box;
+        struct Agent_collision_box box;
 
-        class AgentStatus status;
+        class Agent_status status;
         //class Agent_weapons weapons;
 
         class Voxel_model* vox;
 
         #if DC_CLIENT
-        class AgentEvent event;
+        Agent_event event;
         bool initial_teleport;  // record first teleport from server
         #endif
 
@@ -206,7 +209,7 @@ class Agent
         float camera_z();
         Vec3 camera_position();
 
-        class VoxelVolume* get_arm();
+        class Voxel_volume* get_arm();
         Vec3 arm_center();
         Vec3 arm_forward();
         Vec3 arm_right();
@@ -217,7 +220,7 @@ class Agent
         ~Agent();
 };
 
-class AgentState _agent_tick(const struct AgentControlState& _cs, const struct AgentCollisionBox& box, class AgentState as);
+class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct Agent_collision_box& box, class AgentState as);
 
 bool agent_collides_terrain(Agent* a);
 void force_update_agent_vox(Agent* a);

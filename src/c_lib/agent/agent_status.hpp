@@ -8,8 +8,8 @@
 // All agents server side
 // All non-player agents client side.
 // In client side, ignore properties such as health
-//class AgentStatus: public Base_status {
-class AgentStatus {
+//class Agent_status: public Base_status {
+class Agent_status {
 
     private:
         class Agent* a;
@@ -87,6 +87,6 @@ class AgentStatus {
 
         float get_spawn_angle();
 
-        explicit AgentStatus(Agent* a);
-        ~AgentStatus();
+        explicit Agent_status(Agent* a);
+        ~Agent_status();
 };

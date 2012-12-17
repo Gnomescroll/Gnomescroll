@@ -55,7 +55,7 @@ const struct Vec3 AgentState::forward_vector()
 #if DC_CLIENT
 bool Agent::is_you()
 {
-    return (this->id != NULL_AGENT && this->id == ClientState::player_agent.agent_id);
+    return (this->id != NULL_AGENT && this->id == ClientState::playerAgent_state.agent_id);
 }
 #endif
 
@@ -110,7 +110,7 @@ void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, floa
 void Agent::tick()
 {
     int _tc =0;
-    struct AgentControlState _cs;
+    struct Agent_control_state _cs;
 
     while (cs[CS_seq].seq == CS_seq)
     {
@@ -134,7 +134,7 @@ void Agent::tick()
 
 #define ADVANCED_JUMP 0
 
-//class AgentState _agent_tick(const struct AgentControlState& _cs, const struct AgentCollisionBox& box, const class AgentState& as)
+//class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct Agent_collision_box& box, const class AgentState& as)
 //{
     //int a_cs = _cs.cs;
     ////set control state variables
@@ -224,7 +224,7 @@ void Agent::tick()
 //}
 
 //takes an agent state and control state and returns new agent state
-class AgentState _agent_tick(const struct AgentControlState& _cs, const struct AgentCollisionBox& box, class AgentState as)
+class AgentState _agent_tick(const struct Agent_control_state& _cs, const struct Agent_collision_box& box, class AgentState as)
 {
     int a_cs = _cs.cs;
     //set control state variables
@@ -665,7 +665,7 @@ void Agent::print_cs()
     printf("misc123= %d%d%d\n", misc1, misc2, misc3);
 }
 
-AgentControlState Agent::get_current_control_state()
+Agent_control_state Agent::get_current_control_state()
 {
     return this->cs[(this->CS_seq-1+256)%256];
 }
@@ -708,7 +708,7 @@ struct Vec3 Agent::camera_position()
     return vec3_init(this->s.x, this->s.y, this->camera_z());
 }
 
-class VoxelVolume* Agent::get_arm()
+class Voxel_volume* Agent::get_arm()
 {
     if (this->vox == NULL) return NULL;
     return this->vox->get_part(AGENT_PART_RARM);
@@ -852,7 +852,7 @@ void Agent::update_legs()
     static int legtick = 0;
     static float direction = -1;
 
-    AgentControlState cs = this->get_current_control_state();
+    Agent_control_state cs = this->get_current_control_state();
     bool forward = (cs.cs & CS_FORWARD) !=0;
     bool backward = (cs.cs & CS_BACKWARD) !=0;
     bool left = (cs.cs & CS_LEFT) !=0;
@@ -913,7 +913,7 @@ void Agent::update_model()
 
     if (this->is_you())
     {   // your agent
-        ClientState::player_agent.update_model();
+        ClientState::playerAgent_state.update_model();
         return;
     }
 

@@ -6,36 +6,26 @@
 
 #extension GL_EXT_texture_array : enable
 
-varying vec3 texCoord;
-
 #ifdef GL_EXT_gpu_shader4
     flat varying mat2 lightMatrix;
+    flat varying float skyLight;
+    flat varying float playerLight;
 #else
     varying mat2 lightMatrix;
+    varying float skyLight;
+    varying float playerLight;
 #endif
 
+varying vec3 texCoord;
 varying vec3 inColor;
- 
-uniform sampler2DArray base_texture;
 
 varying float fogFragDepth;
-//varying float fogFragZ;
 
-//const vec3 fog_color = vec3(0.0, 0.0, 0.0);
-//const float fog_start = 96.0;
-//const float fog_depth = 32.0;
-//const vec3 fog_z_color = vec3(40.0, 0.0, 20.0);
-//const vec3 fog_color = vec3(10.0);
-//const float fog_z_start = 16.0f;
-//const float fog_z_depth = 128.0f;
-//const float fog_z_density = 0.35f;
-//const float z_depth_max = 128.0f;
+uniform sampler2DArray base_texture;
+uniform sampler3D clut;
 
-//const float LOG2 = 1.442695;
-
-const vec3 fog_color = vec3(0.0, 0.0, 0.0);
-const float fog_start = 96.0;
-const float fog_depth = 128.0 - fog_start;
+const float gamma_factor = 1.0f / 2.2f;
+const vec3 gamma_factor3 = vec3(gamma_factor);
 
 void main() 
 {
@@ -50,21 +40,50 @@ void main()
     vec3 color = tmp*inColor.rgb;
     color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
 
-    if(fogFragDepth <= fog_start)
+/*
+    if(skyLight > 0.5f)
     {
-        color = pow(color, vec3(1.0f / 2.2f) );
-        gl_FragColor.rgb = color;
+        color = vec3(1.0, 0.0, 0.0);
     }
-    else
-    {
-        float fogFactor = (fogFragDepth - fog_start) / fog_depth;
+*/
 
-        if(fogFactor >= 1.0) discard;
-        
-        color = mix( color, fog_color, fogFactor);
-        color = pow(color, vec3(1.0f / 2.2f) );
-        gl_FragColor.rgb = color;
+//fog code
+/*
+    if(fogFragDepth > gl_Fog.start)
+    {
+        float f = gl_Fog.density * (fogFragDepth - gl_Fog.start);
+        float fogFactor = exp(-(f*f*f*f));
+        fogFactor = clamp(fogFactor, 0.0f, 1.0f);
+        color = mix(color, gl_Fog.color.xyz, 1.0f-fogFactor); 
     }
+
+    color = color * skyLight;
+
+    color = pow(color, gamma_factor3);
+
+    color = texture3D(clut, color.rgb); //clut correction
+
+    gl_FragColor.rgb = color;
+*/
+
+    color = color * skyLight;
+    color = pow(color, gamma_factor3);
+
+
+    const float clut_start = 64;
+    const float _clut_depth = 1.0/32.0;
+
+    if(fogFragDepth > clut_start)
+    { 
+        vec3 color_clut = texture3D(clut, color.rgb); //clut correction
+
+        float f = _clut_depth*(fogFragDepth - clut_start);
+        f = clamp(f, 0.0f, 1.0f);
+        color.rgb = mix(color, color_clut, f); 
+    }
+
+    gl_FragColor.rgb = color;
+
 
 }
 
