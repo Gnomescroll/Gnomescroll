@@ -5,27 +5,20 @@ dont_include_this_file_in_server
 #endif
 
 #include <physics/ray_trace/hitscan.hpp>
-
 #include <agent/net_agent.hpp>
 #include <sound/sound.hpp>
-
 #include <particle/_include.hpp>
 #include <particle/grenade.hpp>
-
 #include <animations/_interface.hpp>
 #include <animations/block_damage.hpp>
-
+#include <hud/_interface.hpp>
 #include <hud/cube_selector.hpp>
 #include <t_map/net/t_CtoS.hpp>
-
 #include <item/_interface.hpp>
 #include <item/container/_interface.hpp>
 #include <item/container/net/CtoS.hpp>
 #include <item/properties.hpp>
 #include <item/config/item_attribute.hpp>
-
-//#include <hud/hud.hpp>
-#include <hud/_interface.hpp>
 
 void PlayerAgent_action::hitscan_laser(int weapon_type)
 {
@@ -36,7 +29,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
-    class Voxel_hitscan_target target;
+    class VoxelHitscanTarget target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
@@ -256,7 +249,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
     Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
-    class Voxel_hitscan_target target;
+    class VoxelHitscanTarget target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
@@ -581,7 +574,7 @@ Vec3 PlayerAgent_action::get_aiming_point()
     Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
-    class Voxel_hitscan_target target;
+    class VoxelHitscanTarget target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
@@ -600,7 +593,7 @@ Vec3 PlayerAgent_action::get_aiming_point()
     else return vec3_init(0,0,0);
 }
 
-PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent) :
+PlayerAgent_action::PlayerAgent_action(PlayerAgent* player_agent) :
     p(player_agent), mining_laser_sound_id(-1)
 {}
 

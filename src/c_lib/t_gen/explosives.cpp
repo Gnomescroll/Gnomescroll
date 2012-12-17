@@ -146,7 +146,7 @@ void create_explosion(const int x, const int y, const int z)
     {
         size_t n_hit = 0;
         struct Vec3 end = vec3_add(position, vec3_scalar_mult(vsides[i], bounds[i][j]+0.5f));
-        class Voxel_hitscan_target* targets = ServerState::voxel_hitscan_list->hitscan_all(position, end, &n_hit);
+        class VoxelHitscanTarget* targets = ServerState::voxel_hitscan_list->hitscan_all(position, end, &n_hit);
         if (targets == NULL) continue;
         for (size_t k=0; k<n_hit; k++)
             Hitscan::damage_target(&targets[i], OBJECT_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);

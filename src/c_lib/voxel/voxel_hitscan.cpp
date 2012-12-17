@@ -3,12 +3,12 @@
 #include <physics/ray_trace/hitscan.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 
-bool Voxel_hitscan_list::hitscan(
+bool VoxelHitscanList::hitscan(
     const float x0, const float y0, const float z0,     // source
     const float x1, const float y1, const float z1,     // direction
     int skip_id, EntityType skip_type, // skip player agent id
     float collision_point[3], float *distance,
-    class Voxel_hitscan_target* target)
+    class VoxelHitscanTarget* target)
 {
     float x2,y2,z2;
 
@@ -18,8 +18,8 @@ bool Voxel_hitscan_list::hitscan(
     float z = 0.0f;
 
     float radius;
-    class Voxel_hitscan_element* vhe;
-    class Voxel_hitscan_element* target_hit;
+    class VoxelHitscanElement* vhe;
+    class VoxelHitscanElement* target_hit;
     target_hit = NULL;
     int voxel[3];
 
@@ -74,14 +74,14 @@ bool Voxel_hitscan_list::hitscan(
     return false;
 }
 
-class Voxel_hitscan_target* Voxel_hitscan_list::hitscan_all(
+class VoxelHitscanTarget* VoxelHitscanList::hitscan_all(
     struct Vec3 start, struct Vec3 end, size_t* n_targets)
 {
     *n_targets = 0;
     if (vec3_equal(start, end)) return NULL;
 
     const size_t MAX_TARGETS = 16;
-    static Voxel_hitscan_target targets[MAX_TARGETS];
+    static VoxelHitscanTarget targets[MAX_TARGETS];
 
     struct Vec3 direction = vec3_sub(end, start);
     float max_dist = vec3_length(direction);
@@ -90,7 +90,7 @@ class Voxel_hitscan_target* Voxel_hitscan_list::hitscan_all(
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if (n >= MAX_TARGETS) break;
-        class Voxel_hitscan_element* vhe = hitscan_list[i];
+        class VoxelHitscanElement* vhe = hitscan_list[i];
         if (vhe == NULL) continue;
         if (!vhe->vv->hitscan) continue;
 
@@ -114,7 +114,7 @@ class Voxel_hitscan_target* Voxel_hitscan_list::hitscan_all(
                 tpos[0], tpos[1], tpos[2],
                 direction.x, direction.y, direction.z, r2, voxel)) continue;
 
-            class Voxel_hitscan_target* target = &targets[n++];
+            class VoxelHitscanTarget* target = &targets[n++];
             target->copy_vhe(vhe);
             target->copy_voxel(voxel);
         }
@@ -126,11 +126,11 @@ class Voxel_hitscan_target* Voxel_hitscan_list::hitscan_all(
 }
 
 
-bool Voxel_hitscan_list::point_collision(struct Vec3 position, class Voxel_hitscan_target* target)
+bool VoxelHitscanList::point_collision(struct Vec3 position, class VoxelHitscanTarget* target)
 {
     for (int i=0; i<VOXEL_HITSCAN_LIST_SIZE; i++)
     {
-        class Voxel_hitscan_element* vhe = this->hitscan_list[i];
+        class VoxelHitscanElement* vhe = this->hitscan_list[i];
         if (vhe == NULL) continue;
         if (vhe->vv->point_collision_test(position, target->voxel))
         {
@@ -141,7 +141,7 @@ bool Voxel_hitscan_list::point_collision(struct Vec3 position, class Voxel_hitsc
     return false;
 }
 
-void Voxel_hitscan_list::register_voxel_volume(class Voxel_volume* vv)
+void VoxelHitscanList::register_voxel_volume(class VoxelVolume* vv)
 {
     GS_ASSERT(this->num_elements < VOXEL_HITSCAN_LIST_SIZE);
     if (this->num_elements >= VOXEL_HITSCAN_LIST_SIZE) return;
@@ -157,7 +157,7 @@ void Voxel_hitscan_list::register_voxel_volume(class Voxel_volume* vv)
     GS_ASSERT(false);
 }
 
-void Voxel_hitscan_list::unregister_voxel_volume(class Voxel_volume* vv)
+void VoxelHitscanList::unregister_voxel_volume(class VoxelVolume* vv)
 {
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
         if (this->hitscan_list[i] != NULL && this->hitscan_list[i] == &(vv->vhe))
@@ -172,17 +172,17 @@ void Voxel_hitscan_list::unregister_voxel_volume(class Voxel_volume* vv)
     vv->voxel_hitscan_list = NULL;
 }
 
-Voxel_hitscan_list::Voxel_hitscan_list() : num_elements(0)
+VoxelHitscanList::VoxelHitscanList() : num_elements(0)
 {
-    this->hitscan_list = (class Voxel_hitscan_element**)calloc(VOXEL_HITSCAN_LIST_SIZE, sizeof(class Voxel_hitscan_element*));
+    this->hitscan_list = (class VoxelHitscanElement**)calloc(VOXEL_HITSCAN_LIST_SIZE, sizeof(class VoxelHitscanElement*));
 }
 
-Voxel_hitscan_list::~Voxel_hitscan_list()
+VoxelHitscanList::~VoxelHitscanList()
 {
     if (this->hitscan_list != NULL) free(this->hitscan_list);
 }
 
-void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
+void VoxelHitscanTarget::copy_vhe(VoxelHitscanElement* vhe)
 {
     GS_ASSERT(vhe->entity_id >= 0);
     GS_ASSERT(vhe->entity_type >= 0);
@@ -194,7 +194,7 @@ void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
     this->vv = vhe->vv;
 }
 
-void Voxel_hitscan_target::copy_voxel(int voxel[3])
+void VoxelHitscanTarget::copy_voxel(int voxel[3])
 {
     for (int i=0; i<3; i++) voxel[i] = this->voxel[i];
 }

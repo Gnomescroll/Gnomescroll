@@ -52,7 +52,7 @@ class grenade_StoC: public FixedSizeReliableNetPacketToClient<grenade_StoC>
 inline void grenade_StoC::handle()
 {
     #if DC_CLIENT
-    if (owner == ClientState::playerAgent_state.agent_id) return;
+    if (owner == ClientState::player_agent.agent_id) return;
     Grenade* g = Particle::grenade_list->create();
     if (g == NULL) return;
     g->set_state(p, m);

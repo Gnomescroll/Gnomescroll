@@ -128,7 +128,7 @@ void tick_item(AgentID agent_id, int item_type)
 void tick_local_item(ItemID item_id, int item_type)
 {
     if (!item_is_click_and_hold(item_type))
-        turn_fire_off(ClientState::playerAgent_state.agent_id);
+        turn_fire_off(ClientState::player_agent.agent_id);
 
     tickLocalItem tick = get_tick_local_item_fn(item_type);
     if (tick == NULL) return;
@@ -156,7 +156,7 @@ void trigger_local_item(ItemID item_id, int item_type)
     trigger(item_id, item_type);
 
     if (!item_is_click_and_hold(item_type))
-        turn_fire_off(ClientState::playerAgent_state.agent_id);
+        turn_fire_off(ClientState::player_agent.agent_id);
 }
 
 bool trigger_local_item_beta(ItemID item_id, int item_type)
@@ -213,7 +213,7 @@ void tick()
 
     #if DC_CLIENT
     update_selected_item_type();
-    int local_agent_id = ClientState::playerAgent_state.agent_id;
+    int local_agent_id = ClientState::player_agent.agent_id;
     ItemID local_item_id = ItemContainer::get_toolbelt_item(selected_slot);
     #endif
     
@@ -281,7 +281,7 @@ int get_selected_item_type()
 {
     GS_ASSERT(agent_selected_type != NULL);
     if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
-    AgentID agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::player_agent.agent_id;
     IF_ASSERT(!isValid(agent_id)) return NULL_ITEM_TYPE;
     return agent_selected_type[agent_id];
 }
@@ -291,7 +291,7 @@ int get_selected_item_type()
 // the item type needs to be periodically updated to ensure it is correct
 void update_selected_item_type()
 {
-    AgentID agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::player_agent.agent_id;
     IF_ASSERT(!isValid(agent_id)) return;
 
     int item_type = NULL_ITEM_TYPE;
@@ -336,7 +336,7 @@ void toolbelt_item_selected_event(int container_id, int slot)
 
 void left_trigger_down_event()
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
     bool something_happened = toolbelt_item_begin_alpha_action();
     if (something_happened) send_begin_alpha_action_packet();
@@ -344,7 +344,7 @@ void left_trigger_down_event()
 
 void left_trigger_up_event()
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
     bool something_happened = toolbelt_item_end_alpha_action();
     if (something_happened) send_end_alpha_action_packet();
@@ -352,7 +352,7 @@ void left_trigger_up_event()
 
 void right_trigger_down_event()
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
     bool something_happened = toolbelt_item_beta_action();
     if (something_happened) send_beta_action_packet();
@@ -360,7 +360,7 @@ void right_trigger_down_event()
 
 void right_trigger_up_event()
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
 }
 

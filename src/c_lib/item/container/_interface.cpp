@@ -292,7 +292,7 @@ bool open_container(int container_id)
     GS_ASSERT(container != NULL);
     if (container == NULL) return false;
     GS_ASSERT(container->type != CONTAINER_TYPE_NONE);
-    if (!container->can_be_opened_by(ClientState::playerAgent_state.agent_id)) return false;
+    if (!container->can_be_opened_by(ClientState::player_agent.agent_id)) return false;
 
     GS_ASSERT(opened_container == NULL_CONTAINER);
     

@@ -7,7 +7,7 @@
 */
 
 
-typedef enum CS_KEYS
+typedef enum
 {
     CS_FORWARD = 1,
     CS_BACKWARD = 2,
@@ -20,7 +20,7 @@ typedef enum CS_KEYS
     CS_MISC1 = 256,
     CS_MISC2 = 512,
     CS_MISC3 = 1024
-} CS_KEYS;
+} CSKeys;
 
 typedef enum
 {
