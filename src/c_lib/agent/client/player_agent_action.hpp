@@ -8,6 +8,9 @@ dont_include_this_file_in_server
  * All client agent input triggers should be implemented here
  */
 
+namespace Agents
+{
+
 class PlayerAgent;// forward declare
 
 class PlayerAgent_action
@@ -46,3 +49,5 @@ class PlayerAgent_action
 
         explicit PlayerAgent_action(PlayerAgent* player_agent);
 };
+
+}   // Agents

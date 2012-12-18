@@ -3,17 +3,20 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
+bool object_collides_terrain(Vec3 position, float height, float radius)
+{
+    ASSERT_BOXED_POSITION(position);
+    return Agents::collision_check_final_current(radius, height, position.x, position.y, position.z);
+}
+
+namespace Agents
+{
+
 bool agent_collides_terrain(Agent* a)
 {
     float h = a->current_height();
     Vec3 p = a->get_position();
     return collision_check_final_current(a->box.box_r, h, p.x, p.y, p.z);
-}
-
-bool object_collides_terrain(Vec3 position, float height, float radius)
-{
-    ASSERT_BOXED_POSITION(position);
-    return collision_check_final_current(radius, height, position.x, position.y, position.z);
 }
 
 #define GROUND_MARGIN 0.03f
@@ -167,3 +170,5 @@ inline bool collision_check_final_z(float box_r, float box_h, float x, float y, 
 
     return false;
 }
+
+}   // Agents

@@ -7,12 +7,9 @@ dont_include_this_file_in_client
 #include <net_lib/common/net_peer.hpp>
 #include <common/defines.h>
 #include <common/analytics/sessions.hpp>
-
-#if DC_SERVER
 #include <net_lib/common/net_peer_manager.hpp>
-#endif
 
-class Agent;  // forward decl
+#include <c_lib/agent/agent.hpp>
 
 namespace NetServer
 {
@@ -24,7 +21,7 @@ extern class NetPeer** pool;
 extern class NetPeer** staging_pool;
 extern class NetPeerManager** clients;
 
-extern class Agent** agents;
+extern class Agents::Agent** agents;
 
 extern class UserRecorder* users;
 

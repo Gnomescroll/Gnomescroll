@@ -6,7 +6,7 @@
 #include <agent/constants.hpp>
 
 /*
- *  Player Agent Packets
+ *  Player Agents::Agent Packets
 */
 
 class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapshot>
@@ -130,7 +130,7 @@ class Agent_teleport_message: public FixedSizeReliableNetPacketToClient<Agent_te
         inline void handle();
 };
 
-//Agent control state, server to client
+//Agents::Agent control state, server to client
 class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
 {
     public:

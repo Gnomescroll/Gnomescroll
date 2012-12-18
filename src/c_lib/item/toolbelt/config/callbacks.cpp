@@ -61,7 +61,7 @@ void end_local_mining_laser(int item_type)
 void begin_mining_laser(AgentID agent_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.begin_mining_laser();
@@ -70,7 +70,7 @@ void begin_mining_laser(AgentID agent_id, int item_type)
 void end_mining_laser(AgentID agent_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     a->event.end_mining_laser();
 }
@@ -178,7 +178,7 @@ void decrement_stack(AgentID agent_id, ItemID item_id, int item_type)
 
 void consume_item(AgentID agent_id, ItemID item_id, int item_type)
 {
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     bool consumed = a->status.consume_item(item_id);
     if (!consumed) return;
@@ -187,7 +187,7 @@ void consume_item(AgentID agent_id, ItemID item_id, int item_type)
 
 void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_type)
 {
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     AgentID teammate_id = Hitscan::against_agents(
         a->get_camera_position(), a->forward_vector(),
@@ -199,7 +199,7 @@ void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_t
 // simple creator for objects
 static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, int item_type, const EntityType object_type, const float object_height)
 {
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return NULL;
     
@@ -248,7 +248,7 @@ void place_spawner(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
 
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -282,7 +282,7 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
     
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     

@@ -22,6 +22,9 @@ dont_include_this_file_in_server
 
 #include <common/color.hpp>
 
+namespace Agents
+{
+
 void AgentEvent::name_set()
 {
     GS_ASSERT(this->a->status.name != NULL);
@@ -404,3 +407,5 @@ AgentEvent::AgentEvent(Agent* owner) :
     this->bb.set_color(255,10,10,255);
     this->bb.set_scale(AgentHudName::SIZE);    
 }
+
+}   // Agents

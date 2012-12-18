@@ -18,7 +18,7 @@ const bool BASE_SHOULD_HITSCAN = false;
 // spawner
 const int BASE_SPAWN_RADIUS = 4;
 
-/* Agent Spawner */
+/* Agents::Agent Spawner */
 
 // dimensions
 const float AGENT_SPAWNER_HEIGHT = 1.9f;

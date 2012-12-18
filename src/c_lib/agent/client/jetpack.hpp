@@ -6,6 +6,9 @@ dont_include_this_file_in_server
 
 #include <sound/sound.hpp>
 
+namespace Agents
+{
+
 //const int JETPACK_FUEL_MAX = 1300;
 const int JETPACK_FUEL_MAX = 500;
 const int JETPACK_DRAIN_RATE = 3;
@@ -129,3 +132,5 @@ class JetPack
         return thrusting;
     }
 };
+
+}   // Agents

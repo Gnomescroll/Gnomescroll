@@ -210,7 +210,7 @@ inline void object_destroy_StoC::handle()
 inline void object_picked_up_StoC::handle()
 {
     using ClientState::player_agent;
-    class Agent* you = player_agent.you();
+    class Agents::Agent* you = player_agent.you();
     if (you != NULL && you->id == agent_id) Sound::play_2d_sound("pickup_item");
     Entities::destroy((EntityType)type, id);
 }
@@ -236,7 +236,7 @@ inline void object_shot_object_StoC::handle()
     if (dims != NULL) position.z += dims->get_camera_height();
 
     // get target
-    Agent* a = Agents::get_agent((AgentID)this->target_id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->target_id);
     if (a == NULL || a->vox == NULL) return;
     // update the model, in case it is out of date.
     force_update_agent_vox(a);

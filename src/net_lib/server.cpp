@@ -4,8 +4,6 @@
 dont_include_this_file_in_client
 #endif
 
-#include <c_lib/agent/agent.hpp>
-
 namespace NetServer
 {
 
@@ -16,7 +14,7 @@ NetPeer** pool = NULL;
 NetPeer** staging_pool = NULL;
 class NetPeerManager** clients = NULL;
 
-class Agent** agents = NULL;
+class Agents::Agent** agents = NULL;
 
 class UserRecorder* users = NULL;
 
@@ -55,7 +53,7 @@ void init_globals()
     pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
     staging_pool = (NetPeer**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeer*));
     clients = (NetPeerManager**)calloc(HARD_MAX_CONNECTIONS, sizeof(NetPeerManager*));
-    agents = (class Agent**)calloc(HARD_MAX_CONNECTIONS, sizeof(class Agent*));
+    agents = (class Agents::Agent**)calloc(HARD_MAX_CONNECTIONS, sizeof(class Agents::Agent*));
     users = new UserRecorder;
 
     const char* time_str = get_time_str();

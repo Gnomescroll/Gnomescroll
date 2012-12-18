@@ -11,7 +11,8 @@
 # include <agent/client/agent_event.hpp>
 #endif
 
-//store last network messsage
+namespace Agents
+{
 
 class AgentState
 {
@@ -221,3 +222,5 @@ class AgentState _agent_tick(const struct AgentControlState& _cs, const struct A
 
 bool agent_collides_terrain(Agent* a);
 void force_update_agent_vox(Agent* a);
+
+}   // Agents

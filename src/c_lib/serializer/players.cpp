@@ -503,7 +503,7 @@ const char* write_player_container_string(int container_id, UserID user_id)
 
 const char* write_player_string(AgentID agent_id)
 {
-    class Agent* agent = Agents::get_agent(agent_id);
+    class Agents::Agent* agent = Agents::get_agent(agent_id);
     IF_ASSERT(agent == NULL)
     {
         log_player_save_error("Could not save player string; agent not found", NULL_USER_ID, agent_id, NULL);

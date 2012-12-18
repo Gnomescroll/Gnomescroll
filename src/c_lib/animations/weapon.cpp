@@ -369,7 +369,7 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
 {    // draw item in other players' hands
     IF_ASSERT(!isValid(agent_id)) return false;
 
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return false;
 
     class VoxelVolume* vv = a->get_arm();

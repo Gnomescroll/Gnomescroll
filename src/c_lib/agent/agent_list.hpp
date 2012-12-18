@@ -4,6 +4,9 @@
 #include <physics/vec3.hpp>
 #include <common/template/object_list.hpp>
 
+namespace Agents
+{
+
 class AgentList: public ObjectList<class Agent, AgentID>
 {
     private:
@@ -68,3 +71,5 @@ Agent* nearest_agent_in_range(const Vec3 position, const float radius);
 Agent* nearest_living_agent_in_range(const Vec3 position, const float radius);
 Agent* nearest_living_agent_model_in_range(const Vec3 position, const float radius);
 Agent* random_agent_in_range(const Vec3 position, const float radius);
+
+}   // Agents

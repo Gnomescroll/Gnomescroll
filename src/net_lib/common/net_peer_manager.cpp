@@ -128,7 +128,7 @@ void NetPeerManager::was_deserialized()
     if (this->deserialized || this->loaded) return;
     this->deserialized = true;
 
-    class Agent* agent = Agents::create_agent((AgentID)this->client_id);
+    class Agents::Agent* agent = Agents::create_agent((AgentID)this->client_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL)
     {
@@ -212,7 +212,7 @@ void NetPeerManager::was_deserialized()
 
 void NetPeerManager::teardown()
 {
-    class Agent* a = NetServer::agents[this->client_id];
+    class Agents::Agent* a = NetServer::agents[this->client_id];
     if (a != NULL)
     {
         bool saved = serializer::save_player(this->user_id, this->agent_id);

@@ -760,7 +760,7 @@ void agent_born(AgentID agent_id)
 
     // if we have neither and there is only one slot, add the laser rifle (because fist can replace mining_laser)
 
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
     ClientID client_id = a->client_id;
     
@@ -964,7 +964,7 @@ void agent_born(AgentID agent_id)
 void agent_died(AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     if (a == NULL) return;
     GS_ASSERT(a->status.dead);
 
@@ -1024,7 +1024,7 @@ void dump_agent_containers(ClientID client_id, AgentID agent_id)
 
 void agent_quit(AgentID agent_id)
 {
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
     // close opened free container (this will throw any items sitting in hand)
@@ -1159,7 +1159,7 @@ void craft_item_from_bench(AgentID agent_id, int container_id, int craft_slot)
 {
     GS_ASSERT(isValid(agent_id));
 
-    Agent* agent = Agents::get_agent(agent_id);
+    Agents::Agent* agent = Agents::get_agent(agent_id);
     if (agent == NULL) return;
 
     // agent does not own container, abort
@@ -1206,7 +1206,7 @@ bool consume_crafting_reagents(AgentID agent_id, int container_id, int recipe_id
 
     GS_ASSERT(isValid(agent_id));
 
-    Agent* agent = Agents::get_agent(agent_id);
+    Agents::Agent* agent = Agents::get_agent(agent_id);
     if (agent == NULL) return false;
 
     // agent does not own container, abort
@@ -1338,7 +1338,7 @@ bool agent_in_container_range(AgentID agent_id, int container_id)
 {
     // get agent position
     IF_ASSERT(!isValid(agent_id)) return false;
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return false;
 
     Vec3 agent_position = a->get_camera_position();
@@ -1364,7 +1364,7 @@ void check_agents_in_container_range()
     for (unsigned int i=0; i<agent_list->max; i++)
     {
         if (agent_list->objects[i].id == agent_list->null_id) continue;
-        Agent* a = &agent_list->objects[i];
+        Agents::Agent* a = &agent_list->objects[i];
         if (opened_containers[a->id] == NULL_CONTAINER) continue;
         if (agent_in_container_range(a->id, opened_containers[a->id])) continue;
         agent_close_container(a->id, opened_containers[a->id]);

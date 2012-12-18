@@ -83,7 +83,7 @@ void ItemParticle::tick()
     // orient to target agent
     if (this->target_agent != NULL_AGENT)
     {
-        Agent* a = Agents::get_agent(this->target_agent);
+        Agents::Agent* a = Agents::get_agent(this->target_agent);
         if (a != NULL)
         {
             Vec3 p = a->get_center();
@@ -229,7 +229,7 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     GS_ASSERT(item != NULL);
     if (item == NULL) return false;
 
-    Agent* agent = Agents::get_agent(particle->target_agent);
+    Agents::Agent* agent = Agents::get_agent(particle->target_agent);
     if (agent == NULL) return false;    
     
     // attempt to transfer item particle to intended destination

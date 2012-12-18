@@ -131,7 +131,7 @@ void raycast_to_part()
             obj = Agents::get_agent((AgentID)id);
             GS_ASSERT(obj != NULL);
             if (obj == NULL) return;
-            vox = ((Agent*)obj)->vox;
+            vox = ((Agents::Agent*)obj)->vox;
             break;
 
         //case OBJECT_AGENT_SPAWNER:

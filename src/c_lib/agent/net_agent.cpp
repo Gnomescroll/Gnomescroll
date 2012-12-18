@@ -20,7 +20,7 @@
 
 
 /*
- *  Player Agent Packets
+ *  Player Agents::Agent Packets
  */
 
 inline void PlayerAgent_Snapshot::handle()
@@ -40,7 +40,7 @@ inline void SendClientId_StoC::handle()
 
 inline void Agent_state_message::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)id);
+    Agents::Agent* a = Agents::get_agent((AgentID)id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
@@ -48,7 +48,7 @@ inline void Agent_state_message::handle()
 
 inline void Agent_teleport_message::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)id);
+    Agents::Agent* a = Agents::get_agent((AgentID)id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     // reset camera angle
@@ -65,10 +65,10 @@ inline void Agent_teleport_message::handle()
         a->vox->update(x,y,z,theta,phi);
 }
 
-//Agent control state, server to client
+//Agents::Agent control state, server to client
 inline void Agent_cs_StoC::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)id);
+    Agents::Agent* a = Agents::get_agent((AgentID)id);
     if(a == NULL)
     {
         //printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
@@ -82,7 +82,7 @@ inline void Agent_cs_StoC::handle()
 // damage indicator packet
 inline void agent_damage_StoC::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.took_damage(dmg);
@@ -91,7 +91,7 @@ inline void agent_damage_StoC::handle()
 inline void agent_shot_object_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.fired_weapon_at_object(target_id, (EntityType)target_type, target_part);
@@ -100,7 +100,7 @@ inline void agent_shot_object_StoC::handle()
 inline void agent_shot_block_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.fired_weapon_at_block(x,y,z, cube, side);
@@ -109,7 +109,7 @@ inline void agent_shot_block_StoC::handle()
 inline void agent_shot_nothing_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.fired_weapon_at_nothing();
@@ -118,7 +118,7 @@ inline void agent_shot_nothing_StoC::handle()
 inline void agent_melee_object_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.melee_attack_object(target_id, (EntityType)target_type, target_part);
@@ -127,7 +127,7 @@ inline void agent_melee_object_StoC::handle()
 inline void agent_melee_nothing_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.melee_attack_nothing();
@@ -136,7 +136,7 @@ inline void agent_melee_nothing_StoC::handle()
 inline void agent_hit_block_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.hit_block();
@@ -145,7 +145,7 @@ inline void agent_hit_block_StoC::handle()
 inline void agent_threw_grenade_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.threw_grenade();
@@ -154,7 +154,7 @@ inline void agent_threw_grenade_StoC::handle()
 inline void agent_placed_block_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.placed_block();
@@ -162,7 +162,7 @@ inline void agent_placed_block_StoC::handle()
 
 inline void agent_dead_StoC::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->event.life_changing((bool)this->dead);
@@ -170,7 +170,7 @@ inline void agent_dead_StoC::handle()
 
 inline void agent_health_StoC::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     if (health > a->status.health)
@@ -180,7 +180,7 @@ inline void agent_health_StoC::handle()
 
 inline void agent_create_StoC::handle()
 {
-    Agent* a = Agents::create_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::create_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->client_id = (ClientID)this->client_id;
@@ -202,7 +202,7 @@ inline void PlayerAgent_id_StoC::handle()
 
 inline void AgentKills_StoC::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->status.kills = kills;
@@ -210,7 +210,7 @@ inline void AgentKills_StoC::handle()
 
 inline void AgentDeaths_StoC::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->status.deaths = deaths;
@@ -218,7 +218,7 @@ inline void AgentDeaths_StoC::handle()
 
 inline void AgentSuicides_StoC::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)this->id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->status.suicides = suicides;
@@ -238,8 +238,8 @@ inline void agent_conflict_notification_StoC::handle()
 {
     bool suicide = (victim == attacker) ? true : false;
 
-    Agent* a = Agents::get_agent((AgentID)this->attacker);
-    Agent* b = Agents::get_agent((AgentID)this->victim);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->attacker);
+    Agents::Agent* b = Agents::get_agent((AgentID)this->victim);
     
     char unknown_name[] = "Someone";
     char *a_name = (a == NULL) ? unknown_name : a->status.name;
@@ -373,7 +373,7 @@ inline void client_disconnected_StoC::handle()
 inline void set_spawner_StoC::handle()
 {
     using ClientState::player_agent;
-    class Agent* you = player_agent.you();
+    class Agents::Agent* you = player_agent.you();
     if (you == NULL) return;
 
     ASSERT_VALID_SPAWNER_ID(this->spawner_id);
@@ -413,7 +413,7 @@ inline void set_spawner_StoC::handle()
 
 inline void agent_color_StoC::handle()
 {
-    Agent* a = Agents::get_agent((AgentID)this->agent_id);
+    Agents::Agent* a = Agents::get_agent((AgentID)this->agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     
@@ -495,7 +495,7 @@ inline void version_CtoS::handle()
 
 inline void colorme_CtoS::handle()
 {
-    Agent* a = NetServer::agents[this->client_id];
+    Agents::Agent* a = NetServer::agents[this->client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->status.set_color(this->color);
@@ -503,7 +503,7 @@ inline void colorme_CtoS::handle()
 
 inline void killme_CtoS::handle()
 {
-    Agent* a = NetServer::agents[this->client_id];
+    Agents::Agent* a = NetServer::agents[this->client_id];
     if (a == NULL) return;
 
     a->status.die(a->id, a->type, DEATH_KILLME);
@@ -523,7 +523,7 @@ inline void Agent_cs_CtoS::handle()
     }
     */
 
-    Agent* A = NetServer::agents[client_id];
+    Agents::Agent* A = NetServer::agents[client_id];
     if(A == NULL) return;
 
     //determine if message is new, if so send out
@@ -552,7 +552,7 @@ inline void Agent_cs_CtoS::handle()
 // agent hit block action
 inline void hit_block_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -581,16 +581,16 @@ inline void hit_block_CtoS::handle()
 
 inline void hitscan_object_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL)
     {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        printf("Agents::Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
 
     if (type == OBJECT_AGENT)
     {
-        Agent* agent = Agents::get_agent((AgentID)this->id);
+        Agents::Agent* agent = Agents::get_agent((AgentID)this->id);
         if (agent == NULL || agent->vox == NULL) return;
         force_update_agent_vox(a);
         // apply damage
@@ -652,7 +652,7 @@ inline void hitscan_object_CtoS::handle()
 // hitscan target:block
 inline void hitscan_block_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
 
     if (z <= 0 || z >= t_map::map_dim.z) return;
@@ -706,7 +706,7 @@ inline void hitscan_block_CtoS::handle()
 
 inline void hitscan_none_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -717,13 +717,13 @@ inline void hitscan_none_CtoS::handle()
 
 inline void melee_object_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     
     if (type == OBJECT_AGENT)
     {
-        class Agent* agent = Agents::get_agent((AgentID)this->id);
+        class Agents::Agent* agent = Agents::get_agent((AgentID)this->id);
         if (agent==NULL) return;
         agent->status.apply_mining_laser_damage_to_part(part, a->id, a->type);
     }
@@ -754,7 +754,7 @@ inline void melee_object_CtoS::handle()
 
 inline void melee_none_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     agent_melee_nothing_StoC msg;
@@ -764,7 +764,7 @@ inline void melee_none_CtoS::handle()
 
 inline void ThrowGrenade_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     agent_threw_grenade_StoC msg;
@@ -789,7 +789,7 @@ inline void agent_set_block_CtoS::handle()
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     if (z == 0) return;     // no floor
 
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL || a->status.dead) return;
 
     // fire block applier
@@ -818,7 +818,7 @@ inline void agent_set_block_CtoS::handle()
     {
         for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
-            Agent* agent = &Agents::agent_list->objects[i];
+            Agents::Agent* agent = &Agents::agent_list->objects[i];
             if (agent->id == Agents::agent_list->null_id || agent == a) continue;
             if (agent_collides_terrain(agent))
             {
@@ -852,7 +852,7 @@ inline void admin_set_block_CtoS::handle()
     // comparisons not needed due to value range of data type
     //if (z < 0 || z >= t_map::map_dim.z) return;
 
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     if (z <= 0 || z >= t_map::map_dim.z) return;
@@ -875,7 +875,7 @@ inline void admin_set_block_CtoS::handle()
     {   // check the rest of the players
         for (unsigned int i=0; i<Agents::agent_list->max; i++)
         {
-            Agent* agent = &Agents::agent_list->objects[i];
+            Agents::Agent* agent = &Agents::agent_list->objects[i];
             if (agent->id == Agents::agent_list->null_id || agent == a) continue;
             if (agent_collides_terrain(agent))
             {
@@ -927,7 +927,7 @@ static Entities::Entity* place_object_handler(EntityType type, int x, int y, int
 inline void place_spawner_CtoS::handle()
 {
     EntityType type = OBJECT_AGENT_SPAWNER;
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     if (z <= 0 || z >= t_map::map_dim.z) return;
@@ -939,7 +939,7 @@ inline void place_spawner_CtoS::handle()
 inline void place_turret_CtoS::handle()
 {
     EntityType type = OBJECT_TURRET;
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     if (z <= 0 || z >= t_map::map_dim.z) return;
@@ -950,7 +950,7 @@ inline void place_turret_CtoS::handle()
 
 inline void choose_spawner_CtoS::handle()
 {
-    Agent* a = NetServer::agents[this->client_id];
+    Agents::Agent* a = NetServer::agents[this->client_id];
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
     a->status.set_spawner(spawner_id);
@@ -972,7 +972,7 @@ inline void ping_reliable_CtoS::handle()
 
 inline void agent_camera_state_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     a->set_camera_state(x,y,z, theta,phi);
     a->camera_ready = true;
@@ -985,7 +985,7 @@ inline void teleport_me_CtoS::handle()
     return;
     #endif
 
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     a->teleport(this->position);
 }

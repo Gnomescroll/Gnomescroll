@@ -94,7 +94,7 @@ void update_hud_draw_settings()
     hud_draw_settings.help = input_state.help_menu;
     if (hud_draw_settings.help) hud_draw_settings.prompt = false;   // clear this after opening help once
 
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     hud_draw_settings.dead = (you != NULL && you->status.dead);
 
     // sanitize
@@ -392,10 +392,10 @@ void draw_hud_textures()
 
     // jetpack
     glColor4ub(255,255,255,115); // white, more than half translucent
-    meter_graphic.draw(0,0, w,h, (float)ClientState::player_agent.jetpack.fuel / (float)JETPACK_FUEL_MAX, MeterGraphic::METANCH_RIGHT);
+    meter_graphic.draw(0,0, w,h, (float)ClientState::player_agent.jetpack.fuel / (float)Agents::JETPACK_FUEL_MAX, MeterGraphic::METANCH_RIGHT);
     
     // health/energy
-    Agent* a = ClientState::player_agent.you();
+    Agents::Agent* a = ClientState::player_agent.you();
     if (a != NULL) 
     { 
         float extra_from_tanks = HudContainer::energy_tanks->count() * AGENT_HEALTH;
@@ -559,7 +559,7 @@ void draw_hud_text()
     {
         if (hud_draw_settings.agent_status)
         {
-            Agent* a = ClientState::player_agent.you();
+            Agents::Agent* a = ClientState::player_agent.you();
             if (a != NULL)
             {
                 int health = a->status.health;
@@ -910,7 +910,7 @@ void ChatRender::draw_cursor()
 {
     struct Color color = AGENT_DEFAULT_COLOR;
     using ClientState::player_agent;
-    class Agent* you = player_agent.you();
+    class Agents::Agent* you = player_agent.you();
     if (you != NULL) color = you->status.color;
     _draw_rect(color, cursor_x, cursor_y, cursor_w, cursor_h);
 }
@@ -925,7 +925,7 @@ void ChatRender::draw_input()
 {
     if (!this->inited) return;
     using ClientState::player_agent;
-    class Agent* you = player_agent.you();
+    class Agents::Agent* you = player_agent.you();
     if (you != NULL) this->input->set_color(you->status.color);
     this->input->draw();
 }
@@ -936,7 +936,7 @@ void ChatRender::update(bool timeout, bool other_players)
 
     if (Chat::chat_message_list == NULL) return;
 
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     ClientID client_id = NULL_CLIENT;
     if (you != NULL) client_id = you->client_id;
 
@@ -1075,7 +1075,7 @@ void Scoreboard::update()
     Agents::agent_list->filter_none();
     for (i=0; i<Agents::agent_list->max; i++)
     {
-        Agent* agent = Agents::agent_list->filtered_objects[i];
+        Agents::Agent* agent = Agents::agent_list->filtered_objects[i];
         if (i >= Agents::agent_list->n_filtered || agent->id == Agents::agent_list->null_id)
         {
             ids[i]->set_text("");

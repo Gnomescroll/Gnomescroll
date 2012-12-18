@@ -6,6 +6,9 @@ dont_include_this_file_in_server
 
 #include <agent/agent.hpp>
 
+namespace Agents
+{
+
 // TODO: detect if player is on ground
 // TODO: detect when player goes form on-ground to ground (fall event)
 // TODO: detect the type of block the player is walking on
@@ -108,3 +111,5 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
     #undef RANDOM_CHANGE
     #undef RANDOM_CHANGE_PER_LOOP
 }
+
+}   // Agents

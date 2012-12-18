@@ -1,25 +1,25 @@
 #include "agent.hpp"
 
-#if DC_CLIENT
-#include <common/compat_gl.h>
-#endif
-
 #include <agent/net_agent.hpp>
 #include <agent/agent_physics.hpp>
-
-#if DC_CLIENT
-#include <agent/client/agent_draw.hpp>
-#include <agent/client/player_agent.hpp>
-#endif
-
 #include <common/defines.h>
 #include <math.h>
 #include <common/random.hpp>
-
 #include <item/toolbelt/_interface.hpp>
 #include <item/common/constants.hpp>
-
 #include <physics/quadrant.hpp>
+
+#if DC_CLIENT
+# include <common/compat_gl.h>
+#endif
+
+#if DC_CLIENT
+# include <agent/client/agent_draw.hpp>
+# include <agent/client/player_agent.hpp>
+#endif
+
+namespace Agents
+{
 
 const struct Vec3 AgentState::forward_vector()
 {
@@ -1079,3 +1079,5 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], const float max_di
 
     return data.side;
 }
+
+}   // Agents

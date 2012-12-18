@@ -336,7 +336,7 @@ void toolbelt_item_selected_event(int container_id, int slot)
 
 void left_trigger_down_event()
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
     bool something_happened = toolbelt_item_begin_alpha_action();
     if (something_happened) send_begin_alpha_action_packet();
@@ -344,7 +344,7 @@ void left_trigger_down_event()
 
 void left_trigger_up_event()
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
     bool something_happened = toolbelt_item_end_alpha_action();
     if (something_happened) send_end_alpha_action_packet();
@@ -352,7 +352,7 @@ void left_trigger_up_event()
 
 void right_trigger_down_event()
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
     bool something_happened = toolbelt_item_beta_action();
     if (something_happened) send_beta_action_packet();
@@ -360,7 +360,7 @@ void right_trigger_down_event()
 
 void right_trigger_up_event()
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
 }
 

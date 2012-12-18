@@ -42,7 +42,7 @@ void load_colored_icon(
 /* Map letter icons */
 /*
  * You: * and A on top of each other
- * Agent: A
+ * Agents::Agent: A
  * Base:    B
  */
 
@@ -267,13 +267,13 @@ void draw_text_icons(float z)
     if (!text_icons_inited) return;
     using ClientState::player_agent;
     using Agents::agent_list;
-    class Agent* you = player_agent.you();
+    class Agents::Agent* you = player_agent.you();
     if (you == NULL) return;
             
     float x,y;
     for (unsigned int i=0; i<agent_list->max; i++)
     {
-        Agent* a = &agent_list->objects[i];
+        Agents::Agent* a = &agent_list->objects[i];
         if (a->id == agent_list->null_id) continue;
         if (a == you) continue;
         Vec3 p = a->get_position();

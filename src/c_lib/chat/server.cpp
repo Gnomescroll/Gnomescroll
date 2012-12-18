@@ -136,7 +136,7 @@ void ChatServer::log_message(int channel, ClientID sender, char* payload)
     if (!is_valid_chat_message(payload)) return;
 
     AgentID agent_id = NetServer::get_agent_id_for_client(sender);
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL); 
     if (a == NULL) return;
     char* sender_name = a->status.name;

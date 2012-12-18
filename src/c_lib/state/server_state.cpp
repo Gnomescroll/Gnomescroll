@@ -110,7 +110,7 @@ namespace ServerState
         agent_list->objects_within_sphere(p.x, p.y, p.z, r);
         for (unsigned int i=0; i<agent_list->n_filtered; i++)
         {
-            Agent* a = agent_list->filtered_objects[i];
+            Agents::Agent* a = agent_list->filtered_objects[i];
             GS_ASSERT(a->id != agent_list->null_id);
             if (a->id == agent_list->null_id) continue;
             a->status.at_base();
@@ -129,7 +129,7 @@ namespace ServerState
         const float blast_stddev = 1.0f;
         for (unsigned int i=0; i<agent_list->n_filtered; i++)
         {
-            Agent* a = agent_list->filtered_objects[i];
+            Agents::Agent* a = agent_list->filtered_objects[i];
             if (a->id == agent_list->null_id) continue;
             if (!suicidal && a->id == owner) continue;
             if (!a->point_can_cast(p.x, p.y, p.z, radius)) continue;  // cheap terrain cover check

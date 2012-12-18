@@ -19,7 +19,7 @@ void ChatMessage::set_name()
     else
     {
         AgentID agent_id = NetClient::get_agent_id_for_client(this->sender); 
-        Agent* a = Agents::get_agent(agent_id);
+        Agents::Agent* a = Agents::get_agent(agent_id);
         if (a==NULL || a->status.name[0] == '\0')
             strcpy(name, Auth::UNDEFINED_NAME);
         else
@@ -39,7 +39,7 @@ void ChatMessage::set_color()
     else // global
     {
         AgentID agent_id = NetClient::get_agent_id_for_client(this->sender); 
-        Agent *a = Agents::get_agent(agent_id);
+        Agents::Agent *a = Agents::get_agent(agent_id);
         struct Color color = AGENT_DEFAULT_COLOR;
         if (a != NULL) color = a->status.color;
         this->color = color;
@@ -402,7 +402,7 @@ bool ChatInput::route_command()
             return true;
         }
 
-        class Agent* you = ClientState::player_agent.you();
+        class Agents::Agent* you = ClientState::player_agent.you();
         if (you != NULL
          && colors_equal(you->status.color, color))
         {

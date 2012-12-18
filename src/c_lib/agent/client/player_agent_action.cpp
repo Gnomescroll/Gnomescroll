@@ -20,6 +20,9 @@ dont_include_this_file_in_server
 #include <item/properties.hpp>
 #include <item/config/item_attribute.hpp>
 
+namespace Agents
+{
+
 void PlayerAgent_action::hitscan_laser(int weapon_type)
 {
     class Agent* you = p->you();
@@ -597,3 +600,4 @@ PlayerAgent_action::PlayerAgent_action(PlayerAgent* player_agent) :
     p(player_agent), mining_laser_sound_id(-1)
 {}
 
+}   // Agents

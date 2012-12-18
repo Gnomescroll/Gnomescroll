@@ -20,7 +20,7 @@ void subscribe_agent_to_item(AgentID agent_id, ItemID item_id)
     if (item_id == NULL_ITEM) return;
     GS_ASSERT(isValid(agent_id));
     
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -40,7 +40,7 @@ void subscribe_agent_to_item(AgentID agent_id, ItemID item_id)
 void unsubscribe_agent_from_item(AgentID agent_id, ItemID item_id)
 {
     IF_ASSERT(item_id == NULL_ITEM) return;
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
     Item* item = get_item(item_id);

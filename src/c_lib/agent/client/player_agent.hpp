@@ -9,6 +9,9 @@ dont_include_this_file_in_server
 #include <agent/client/player_agent_action.hpp>
 #include <agent/client/jetpack.hpp>
 
+namespace Agents
+{
+
 typedef enum
 {
     CAMERA_STATE_NET_AGENT = 0,
@@ -112,3 +115,4 @@ class PlayerAgent
         ~PlayerAgent();
 };
 
+}   // Agents

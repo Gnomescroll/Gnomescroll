@@ -31,7 +31,7 @@ VoxelHitscanList* voxel_hitscan_list = NULL;
 int last_ping_time;
 int last_reliable_ping_time;
 
-PlayerAgent player_agent;
+Agents::PlayerAgent player_agent;
 
 int agent_control_state[16];
 
@@ -82,7 +82,7 @@ void update_camera()
 void send_camera_state()
 {
     if (current_camera == NULL) return;
-    class Agent* you = player_agent.you();
+    class Agents::Agent* you = player_agent.you();
     if (you == NULL || !you->initial_teleport) return;
     agent_camera_state_CtoS msg;
     Vec3 p = current_camera->get_position();

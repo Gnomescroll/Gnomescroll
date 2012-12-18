@@ -37,7 +37,7 @@ void HealerComponent::heal_agents_in_range()
         
     for (unsigned int i=0; i<agent_list->max; i++)
     {
-        Agent* a = &agent_list->objects[i];
+        Agents::Agent* a = &agent_list->objects[i];
         if (a->id == agent_list->null_id) continue;
         if (a->status.dead) continue;
         if (a->status.health == AGENT_HEALTH) continue;

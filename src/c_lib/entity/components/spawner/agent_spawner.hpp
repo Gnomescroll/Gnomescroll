@@ -27,7 +27,7 @@ class AgentSpawnerComponent: public SpawnerComponent
 
         void add_agent(AgentID agent_id)
         {
-            class Agent* agent = Agents::get_agent(agent_id);
+            class Agents::Agent* agent = Agents::get_agent(agent_id);
             GS_ASSERT(agent != NULL);
             if (agent == NULL) return;
             if (this->agents.full()) return;
@@ -38,7 +38,7 @@ class AgentSpawnerComponent: public SpawnerComponent
         void remove_all(AgentID agent_id)
         {
             this->remove(agent_id);
-            class Agent* agent = Agents::get_agent(agent_id);
+            class Agents::Agent* agent = Agents::get_agent(agent_id);
             GS_ASSERT(agent != NULL);
             if (agent == NULL) return;
             this->users.remove(agent->user_id);

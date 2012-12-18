@@ -18,7 +18,7 @@ void MotionTargetingComponent::set_target(EntityType target_type, int target_id)
     GS_ASSERT(target_type == OBJECT_AGENT);
     if (target_type != OBJECT_AGENT) return;
 
-    Agent* a = Agents::get_agent((AgentID)target_id);
+    Agents::Agent* a = Agents::get_agent((AgentID)target_id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
 
@@ -44,7 +44,7 @@ void MotionTargetingComponent::set_target(EntityType target_type, int target_id)
 void MotionTargetingComponent::check_target_alive()
 {
     if (this->target_type != OBJECT_AGENT) return;
-    Agent* target = Agents::get_agent((AgentID)this->target_id);
+    Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL || target->status.dead)
     {
         this->target_id = NULL_AGENT;
@@ -57,7 +57,7 @@ void MotionTargetingComponent::check_target_alive()
 
 void MotionTargetingComponent::lock_target(Vec3 camera_position)
 {
-    Agent* target;
+    Agents::Agent* target;
     target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
@@ -94,7 +94,7 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
 {
     if (this->target_type == OBJECT_NONE) return;
     if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
-    Agent* target = Agents::get_agent((AgentID)this->target_id);
+    Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL) return;
     Vec3 target_position = target->get_position();
     target_position = quadrant_translate_position(camera_position, target_position);

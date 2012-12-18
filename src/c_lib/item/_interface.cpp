@@ -186,7 +186,7 @@ void destroy_item(ItemID id)
                     GS_ASSERT(slot == Toolbelt::get_agent_selected_slot(container->owner));
                     Toolbelt::force_remove_selected_item(container->owner);
                 }
-                Agent* a = Agents::get_agent(container->owner);
+                Agents::Agent* a = Agents::get_agent(container->owner);
                 if (a != NULL) ItemContainer::send_container_remove(a->client_id, container_id, slot);
             }
         }
@@ -194,7 +194,7 @@ void destroy_item(ItemID id)
     else if (item->location == IL_HAND)
     {
         ItemContainer::remove_item_from_hand((AgentID)item->location_id);    // we're destroying the item, so subscriptions dont matter
-        Agent* a = Agents::get_agent((AgentID)item->location_id);
+        Agents::Agent* a = Agents::get_agent((AgentID)item->location_id);
         if (a != NULL) ItemContainer::send_hand_remove(a->client_id);
     }
     else if (item->location == IL_PARTICLE)
@@ -345,7 +345,7 @@ int consume_durability(ItemID item_id, int amount)
 
 void agent_quit(AgentID agent_id)
 {
-    Agent* agent = Agents::get_agent(agent_id);
+    Agents::Agent* agent = Agents::get_agent(agent_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return;
 

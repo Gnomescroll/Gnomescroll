@@ -97,7 +97,7 @@ void ItemList::decay_gas()
                     {
                         if (container->owner != NULL_AGENT)
                         {
-                            class Agent* agent = Agents::get_agent(container->owner);
+                            class Agents::Agent* agent = Agents::get_agent(container->owner);
                             if (agent != NULL)
                                 send_item_state(item->id);
                         }
@@ -119,7 +119,7 @@ void ItemList::decay_gas()
                     {
                         if (item->location_id != NULL_AGENT)
                         {
-                            Agent* agent = Agents::get_agent((AgentID)item->location_id);
+                            Agents::Agent* agent = Agents::get_agent((AgentID)item->location_id);
                             if (agent != NULL)
                                 send_item_state(item->id);
                         }

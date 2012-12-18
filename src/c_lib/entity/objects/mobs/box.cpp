@@ -216,7 +216,7 @@ void server_tick_mob_robot_box(Entity* object)
     int old_target_id = weapon->target_id;
     int old_target_type = weapon->target_type;
     
-    Agent* agent = NULL;
+    Agents::Agent* agent = NULL;
     if (weapon->locked_on_target)
     {   // target locked
         // query agent
@@ -352,7 +352,7 @@ void client_tick_mob_robot_box(Entity* object)
         VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component(COMPONENT_VOXEL_MODEL);
         Vec3 position = vox->get_center();
 
-        Agent* agent = Agents::get_agent((AgentID)weapon->target_id);
+        Agents::Agent* agent = Agents::get_agent((AgentID)weapon->target_id);
         if (agent == NULL) return;
         Vec3 agent_position = quadrant_translate_position(position, agent->get_center());
         

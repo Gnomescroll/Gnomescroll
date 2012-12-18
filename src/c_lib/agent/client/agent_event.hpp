@@ -7,6 +7,9 @@ dont_include_this_file_in_server
 #include <particle/text/billboard_text_hud.hpp>
 #include <animations/emitter.hpp>
 
+namespace Agents
+{
+
 class Agent;
 
 typedef enum
@@ -70,3 +73,5 @@ class AgentEvent
         explicit AgentEvent(Agent* owner);
         ~AgentEvent();
 };
+
+}   // Agents

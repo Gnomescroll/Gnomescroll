@@ -14,6 +14,9 @@
 # include <t_map/server/manager.hpp>
 #endif
 
+namespace Agents
+{
+
 const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
 
 #if DC_SERVER
@@ -401,3 +404,5 @@ AgentList::AgentList(unsigned int capacity) :
     this->filtered_object_distances = (float*)calloc(this->max, sizeof(float));
     this->print();
 }
+
+}   // Agents

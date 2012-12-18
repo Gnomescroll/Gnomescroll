@@ -311,7 +311,7 @@ void check_item_pickups()
         GS_ASSERT(item->stack_size > 0);
         GS_ASSERT(item->type != NULL_ITEM_TYPE);
 
-        Agent* agent = nearest_living_agent_in_range(
+        Agents::Agent* agent = Agents::nearest_living_agent_in_range(
             item_particle->verlet.position, ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE);
         if (agent == NULL) continue;
 
@@ -619,7 +619,7 @@ void throw_agent_item(AgentID agent_id, ItemID item_id)
     GS_ASSERT(item_id != NULL_ITEM);
     if (item_id == NULL_ITEM) return;
     
-    Agent* a = Agents::get_agent(agent_id);
+    Agents::Agent* a = Agents::get_agent(agent_id);
     GS_ASSERT(a != NULL);
     if (a == NULL)
     {   // we cannot get the agent state, so just destroy the item

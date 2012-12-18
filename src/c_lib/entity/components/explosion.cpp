@@ -114,7 +114,7 @@ bool ExplosionComponent::proximity_check()
         position = physics->get_position();
     }
     
-    Agent* agent = nearest_living_agent_model_in_range(position, this->proximity_radius);
+    Agents::Agent* agent = Agents::nearest_living_agent_model_in_range(position, this->proximity_radius);
     if (agent != NULL)
     {
         using Components::HealthComponent;

@@ -15,7 +15,7 @@ inline void ChatMessage_StoC::handle()
     if (sender != CHAT_SENDER_SYSTEM)
     {   // ignore agents we don't know about
         AgentID agent_id = NetClient::get_agent_id_for_client((ClientID)this->sender);
-        Agent *a = Agents::get_agent(agent_id);
+        Agents::Agent *a = Agents::get_agent(agent_id);
         if (a == NULL) return;
     }
 
@@ -35,7 +35,7 @@ inline void ChatMessage_CtoS::handle(){}
 #if DC_SERVER
 inline void ChatMessage_CtoS::handle()
 {
-    Agent* a = NetServer::agents[client_id];
+    Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
 
     msg[CHAT_MESSAGE_SIZE_MAX] = '\0';

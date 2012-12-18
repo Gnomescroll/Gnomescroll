@@ -496,14 +496,14 @@ void container_key_down_handler(SDL_Event* event)
 
 void container_key_up_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
 }
 
 void container_mouse_down_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
 
@@ -528,7 +528,7 @@ void container_mouse_down_handler(SDL_Event* event)
 
 void container_mouse_up_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
     
@@ -584,7 +584,7 @@ void container_mouse_up_handler(SDL_Event* event)
 
 void container_mouse_motion_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     //SDL_MouseMotionEvent e = event->motion;
@@ -603,11 +603,11 @@ void container_mouse_motion_handler(SDL_Event* event)
 }
 
 
-/* Agent */
+/* Agents::Agent */
 
 void agent_key_down_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     HudContainer::ContainerInputEvent container_event;
@@ -678,7 +678,7 @@ void agent_key_down_handler(SDL_Event* event)
 
 void agent_key_up_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     switch (event->key.keysym.sym)
@@ -693,7 +693,7 @@ void agent_key_up_handler(SDL_Event* event)
 
 void agent_mouse_down_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     HudContainer::ContainerInputEvent container_event;
@@ -727,7 +727,7 @@ void agent_mouse_down_handler(SDL_Event* event)
 
 void agent_mouse_up_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::player_agent.you();
+    class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     switch (event->button.button)
@@ -919,7 +919,7 @@ void key_down_handler(SDL_Event* event)
         else
             camera_key_down_handler(event);
 
-        // these should occur for both Agent and Camera
+        // these should occur for both Agents::Agent and Camera
         switch (event->key.keysym.sym)
         {
             case SDLK_b:
@@ -1030,7 +1030,7 @@ void key_down_handler(SDL_Event* event)
         }
     }
 
-    // these should occur for all of Chat, Agent and Camera
+    // these should occur for all of Chat, Agents::Agent and Camera
     switch (event->key.keysym.sym)
     {
         case SDLK_HOME:

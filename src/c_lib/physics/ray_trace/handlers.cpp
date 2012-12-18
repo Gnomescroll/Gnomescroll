@@ -9,7 +9,7 @@
 namespace Hitscan
 {
 
-Agent* lock_agent_target(
+Agents::Agent* lock_agent_target(
     Vec3 firing_position, Vec3* firing_direction,
     const float range, const float failure_rate, const bool random)
 {
@@ -27,7 +27,7 @@ Agent* lock_agent_target(
         shuffle<unsigned int>(chosen, agent_list->n_filtered);  // randomize
     }
     
-    Agent* agent = NULL;
+    Agents::Agent* agent = NULL;
     Vec3 sink;
     unsigned int i=0;
     for (i=0; i<agent_list->n_filtered; i++)
@@ -47,14 +47,14 @@ Agent* lock_agent_target(
     return agent;
 }
 
-Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, const float range)
+Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, const float range)
 { // find agents in range
     using Agents::agent_list;
     agent_list->objects_within_sphere(firing_position.x, firing_position.y, firing_position.z, range);
 
     if (!agent_list->n_filtered) return NULL;
 
-    Agent* agent = NULL;
+    Agents::Agent* agent = NULL;
     unsigned int i=0;
     for (i=0; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
@@ -69,7 +69,7 @@ Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, const flo
 
 HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, EntityType type,
-    Agent* agent, const float range)
+    Agents::Agent* agent, const float range)
 { // hitscan vector against world
     class VoxelHitscanTarget target;
     float vox_distance;
@@ -131,7 +131,7 @@ HitscanTarget shoot_at_agent(
 void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
 {
     #if DC_SERVER
-    Agent* agent;
+    Agents::Agent* agent;
     switch (t.hitscan)
     {
         case HITSCAN_TARGET_BLOCK:
@@ -213,7 +213,7 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
 #if DC_SERVER
 static void damage_agent(AgentID agent_id, int part_id, EntityType inflictor_type, int dmg)
 {
-    class Agent* agent = Agents::get_agent(agent_id);
+    class Agents::Agent* agent = Agents::get_agent(agent_id);
     GS_ASSERT(agent != NULL);
     if (agent == NULL) return;
     agent->status.apply_damage(dmg, NULL_AGENT, inflictor_type, part_id);

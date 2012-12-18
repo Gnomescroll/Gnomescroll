@@ -458,7 +458,7 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("t_mob teardown\n");
     t_mob::teardown();
 
-    if (TEARDOWN_DEBUG) printf("Agent list teardown\n");
+    if (TEARDOWN_DEBUG) printf("Agents::Agent list teardown\n");
     Agents::teardown();
 
     if (TEARDOWN_DEBUG) printf("Voxels list teardown\n");

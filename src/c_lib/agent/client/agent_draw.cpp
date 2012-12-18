@@ -6,18 +6,18 @@ dont_include_this_file_in_server
 
 #include <agent/constants.hpp>
 
-const int SNAPSHOT_DRAW_ARRAY_SIZE = 32;
-
 namespace AgentDraw
 {
 
+const int SNAPSHOT_DRAW_ARRAY_SIZE = 32;
+
 //static int snapshot_draw_array_i = 0;
 //static int snapshot_draw_last_seq = 0;
-//AgentState snapshot_draw_array[SNAPSHOT_DRAW_ARRAY_SIZE];
+//Agents::AgentState snapshot_draw_array[SNAPSHOT_DRAW_ARRAY_SIZE];
 
 //static int _last_seq = 0;
 
-void add_snapshot_to_history(Agent* g)
+void add_snapshot_to_history(Agents::Agent* g)
 {
     //if(g->state_snapshot.seq != snapshot_draw_last_seq) {
         //snapshot_draw_last_seq = g->state_snapshot.seq;
@@ -34,15 +34,15 @@ void add_snapshot_to_history(Agent* g)
     //}
 }
 
-void draw_agent(Agent* g) {
+void draw_agent(Agents::Agent* g) {
 
     //printf("agent draw \n");
-    AgentState s = g->get_state();
+    Agents::AgentState s = g->get_state();
     //draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
     //printf("id=%i, x= %f, y= %f, z= %f \n", g->id, s->x, s->y, s->z);
     //printf("draw\n");
 
-    //AgentState* ss = &g->state_snapshot;
+    //Agents::AgentState* ss = &g->state_snapshot;
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
 
 /*

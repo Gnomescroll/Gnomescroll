@@ -4,13 +4,16 @@
 #include <agent/constants.hpp>
 #include <common/color.hpp>
 
+namespace Agents
+{
+
 // Use for:
 // All agents server side
 // All non-player agents client side.
 // In client side, ignore properties such as health
 //class AgentStatus: public Base_status {
-class AgentStatus {
-
+class AgentStatus
+{
     private:
         class Agent* a;
         int voxel_model_restore_throttle;
@@ -90,3 +93,5 @@ class AgentStatus {
         explicit AgentStatus(Agent* a);
         ~AgentStatus();
 };
+
+}   // Agents

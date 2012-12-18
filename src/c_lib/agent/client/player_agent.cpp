@@ -16,6 +16,9 @@ dont_include_this_file_in_server
 #include <t_map/_interface.hpp>
 #include <agent/client/agent_sound_handler.hpp>
 
+namespace Agents
+{
+
 class Agent* PlayerAgent::you()
 {
     if (this->agent_id == NULL_AGENT) return NULL;
@@ -498,3 +501,5 @@ void PlayerAgent::teleport_to(struct Vec3 p)
     msg.send();
 }
 #endif
+
+}   // Agents

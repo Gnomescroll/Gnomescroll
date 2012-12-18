@@ -12,10 +12,10 @@ dont_include_this_file_in_server
 namespace AgentDraw
 {
 
-void add_snapshot_to_history(Agent* g);
+void add_snapshot_to_history(Agents::Agent* g);
 
-void draw_agents(AgentList* agent_list); 
-void draw_agent(Agent* g); 
+void draw_agents(Agents::AgentList* agent_list); 
+void draw_agent(Agents::Agent* g); 
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle);
 void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height);

@@ -3,9 +3,12 @@
 #include <math.h>
 
 #if DC_SERVER
-#include <chat/_interface.hpp>
-#include <item/container/container.hpp>
+# include <chat/_interface.hpp>
+# include <item/container/container.hpp>
 #endif
+
+namespace Agents
+{
 
 /*
  * AgentStatus has miscellaneous status properties (health, dead, ...)
@@ -583,3 +586,5 @@ void AgentStatus::tick()
     else
         this->lifetime++;
 }
+
+}   // Agents
