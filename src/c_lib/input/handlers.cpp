@@ -252,7 +252,7 @@ void toggle_input_mode()
             input_state.input_mode = INPUT_STATE_CAMERA;
             break;
         case INPUT_STATE_CAMERA:
-            if (ClientState::playerAgent_state.you() != NULL)
+            if (ClientState::player_agent.you() != NULL)
                 input_state.input_mode = INPUT_STATE_AGENT;
             break;
         default: break;
@@ -267,7 +267,7 @@ void toggle_camera_mode()
             input_state.camera_mode = INPUT_STATE_CAMERA;
             break;
         case INPUT_STATE_CAMERA:
-            if (ClientState::playerAgent_state.you() != NULL)
+            if (ClientState::player_agent.you() != NULL)
                 input_state.camera_mode = INPUT_STATE_AGENT;
             break;
         default: break;
@@ -496,14 +496,14 @@ void container_key_down_handler(SDL_Event* event)
 
 void container_key_up_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
 }
 
 void container_mouse_down_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
 
@@ -528,7 +528,7 @@ void container_mouse_down_handler(SDL_Event* event)
 
 void container_mouse_up_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
     
@@ -584,7 +584,7 @@ void container_mouse_up_handler(SDL_Event* event)
 
 void container_mouse_motion_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     //SDL_MouseMotionEvent e = event->motion;
@@ -607,7 +607,7 @@ void container_mouse_motion_handler(SDL_Event* event)
 
 void agent_key_down_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     HudContainer::ContainerInputEvent container_event;
@@ -678,7 +678,7 @@ void agent_key_down_handler(SDL_Event* event)
 
 void agent_key_up_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     switch (event->key.keysym.sym)
@@ -693,7 +693,7 @@ void agent_key_up_handler(SDL_Event* event)
 
 void agent_mouse_down_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     HudContainer::ContainerInputEvent container_event;
@@ -727,7 +727,7 @@ void agent_mouse_down_handler(SDL_Event* event)
 
 void agent_mouse_up_handler(SDL_Event* event)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
 
     switch (event->button.button)
@@ -787,7 +787,7 @@ void camera_key_down_handler(SDL_Event* event)
         #if !PRODUCTION
         case SDLK_j:    // teleport our agent to the free camera
             if (free_camera != NULL)
-                ClientState::playerAgent_state.teleport_to(free_camera->get_position());
+                ClientState::player_agent.teleport_to(free_camera->get_position());
             break;
         #endif
             
@@ -806,7 +806,7 @@ void print_mob_id()
     int ignore_id = -1;
     EntityType ignore_type = OBJECT_NONE;
 
-    class Voxel_hitscan_target target;
+    class VoxelHitscanTarget target;
     float vox_distance = 0.0f;
     float collision_point[3] = {0.0f};
     bool voxel_hit = STATE::voxel_hitscan_list->hitscan(
@@ -925,9 +925,9 @@ void key_down_handler(SDL_Event* event)
             case SDLK_b:
                 if (input_state.admin_controls)
                     Animations::agent_bleed(
-                        ClientState::playerAgent_state.camera_state.x,
-                        ClientState::playerAgent_state.camera_state.y,
-                        ClientState::playerAgent_state.camera_state.z
+                        ClientState::player_agent.camera_state.x,
+                        ClientState::player_agent.camera_state.y,
+                        ClientState::player_agent.camera_state.z
                     );
                 break;
                 
@@ -1012,7 +1012,7 @@ void key_down_handler(SDL_Event* event)
 
             case SDLK_LEFTBRACKET:
                 if (input_state.admin_controls)
-                    ClientState::playerAgent_state.toggle_camera_mode();
+                    ClientState::player_agent.toggle_camera_mode();
                 break;
 
             case SDLK_e:
@@ -1264,7 +1264,7 @@ void key_state_handler(Uint8 *keystate, int numkeys)
     }
 
     // always set control state
-    ClientState::playerAgent_state.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
+    ClientState::player_agent.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
 }
 
 // active event (window / input focus)

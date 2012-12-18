@@ -34,7 +34,7 @@ static void update_predicted_durability()
 
 void fire_close_range_weapon(ItemID item_id, int item_type)
 {
-    ClientState::playerAgent_state.action.fire_close_range_weapon(item_type);    
+    ClientState::player_agent.action.fire_close_range_weapon(item_type);    
     update_predicted_durability();
 }
 
@@ -49,13 +49,13 @@ void trigger_local_mining_laser(ItemID item_id, int item_type)
 void begin_local_mining_laser(int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    ClientState::playerAgent_state.action.begin_mining_laser();
+    ClientState::player_agent.action.begin_mining_laser();
 }
 
 void end_local_mining_laser(int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    ClientState::playerAgent_state.action.end_mining_laser();
+    ClientState::player_agent.action.end_mining_laser();
 }
 
 void begin_mining_laser(AgentID agent_id, int item_type)
@@ -80,7 +80,7 @@ void end_mining_laser(AgentID agent_id, int item_type)
 void trigger_local_block_placer(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_PLACER);
-    ClientState::playerAgent_state.action.set_block(item_id);
+    ClientState::player_agent.action.set_block(item_id);
 }
 
 // IG_DEBUG
@@ -107,7 +107,7 @@ void trigger_local_location_pointer(ItemID item_id, int item_type)
 void trigger_local_admin_block_placer(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_DEBUG);
-    ClientState::playerAgent_state.action.admin_set_block();
+    ClientState::player_agent.action.admin_set_block();
 }
 
 // IG_GRENADE_LAUNCHER
@@ -115,7 +115,7 @@ void trigger_local_admin_block_placer(ItemID item_id, int item_type)
 void trigger_local_plasma_grenade(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_GRENADE_LAUNCHER);
-    ClientState::playerAgent_state.action.throw_grenade();
+    ClientState::player_agent.action.throw_grenade();
 }
 
 // IG_HITSCAN_WEAPON
@@ -123,7 +123,7 @@ void trigger_local_plasma_grenade(ItemID item_id, int item_type)
 void trigger_local_hitscan_laser(ItemID item_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_HITSCAN_WEAPON);
-    ClientState::playerAgent_state.action.hitscan_laser(item_type);
+    ClientState::player_agent.action.hitscan_laser(item_type);
 }
 
 // block placer
@@ -135,7 +135,7 @@ void select_facing_block(ItemID item_id, int item_type)
     GS_ASSERT(item_type == block_placer_type);
 
     int b[3];
-    bool collided = ClientState::playerAgent_state.facing_block(b);
+    bool collided = ClientState::player_agent.facing_block(b);
     if (!collided) return;
     CubeID cube_id = t_map::get(b[0], b[1], b[2]);
     HudCubeSelector::cube_selector.set_block_type(cube_id);

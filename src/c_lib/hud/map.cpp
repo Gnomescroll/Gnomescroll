@@ -265,9 +265,9 @@ void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
 void draw_text_icons(float z)
 {
     if (!text_icons_inited) return;
-    using ClientState::playerAgent_state;
+    using ClientState::player_agent;
     using Agents::agent_list;
-    class Agent* you = playerAgent_state.you();
+    class Agent* you = player_agent.you();
     if (you == NULL) return;
             
     float x,y;
@@ -283,7 +283,7 @@ void draw_text_icons(float z)
         ally[i]->draw_centered();
     }
 
-    using ClientState::playerAgent_state;
+    using ClientState::player_agent;
 
     Entities::Entity* b = NULL;
     if (you != NULL)
@@ -315,18 +315,18 @@ void draw_text_icons(float z)
     if (camera == NULL) return;
     
     if (!text_icons_inited) return;
-    if (playerAgent_state.you() == NULL) return;
+    if (player_agent.you() == NULL) return;
     world_to_map_screen_coordinates(
-        playerAgent_state.camera_state.x, playerAgent_state.camera_state.y,
+        player_agent.camera_state.x, player_agent.camera_state.y,
         &x, &y
     );
     you_star->set_position(x,y);
     you_star->set_depth(z);
-    you_star->draw_character_rotated_centered(playerAgent_state.camera_state.theta - 0.5f);
+    you_star->draw_character_rotated_centered(player_agent.camera_state.theta - 0.5f);
 
     you_A->set_position(x,y);
     you_A->set_depth(z);
-    you_A->draw_character_rotated_centered(playerAgent_state.camera_state.theta - 0.5f);
+    you_A->draw_character_rotated_centered(player_agent.camera_state.theta - 0.5f);
 
     if (free_camera != NULL)
     {

@@ -16,13 +16,13 @@ dont_include_this_file_in_server
 #include <t_map/_interface.hpp>
 #include <agent/client/agent_sound_handler.hpp>
 
-class Agent* PlayerAgent_state::you()
+class Agent* PlayerAgent::you()
 {
     if (this->agent_id == NULL_AGENT) return NULL;
     return Agents::agent_list->get(this->agent_id);
 }
 
-void PlayerAgent_state::set_PlayerAgent_id(AgentID id)
+void PlayerAgent::set_PlayerAgent_id(AgentID id)
 {
     GS_ASSERT(id != NULL_AGENT);
     this->agent_id = id;
@@ -35,7 +35,7 @@ void PlayerAgent_state::set_PlayerAgent_id(AgentID id)
 /*
     ERROR INTERPOLATION IS STILL WRONG: TIME DELTA IS INVALID
 */
-void PlayerAgent_state::update_client_side_prediction_interpolated()
+void PlayerAgent::update_client_side_prediction_interpolated()
 {    
     int _t = (int)_GET_MS_TIME();
     int last_tick = (int)_LAST_TICK();
@@ -77,7 +77,7 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     }
 }
 
-void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
+void PlayerAgent::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
 {
     class AgentState ss;
 
@@ -99,7 +99,7 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
     }
 }
 
-void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta, float _phi)
+void PlayerAgent::handle_net_control_state(int _seq, int _cs, float _theta, float _phi)
 {
     int index = _seq%128;
 
@@ -124,7 +124,7 @@ void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta
     if(cs_net[index].phi != cs_local[index].phi) printf("player agent: e4\n");
 }
 
-uint16_t PlayerAgent_state::pack_control_state(
+uint16_t PlayerAgent::pack_control_state(
     int f, int b, int l, int r,
     int jet, int jump, int crouch, int boost,
     int misc1, int misc2, int misc3)
@@ -144,7 +144,7 @@ uint16_t PlayerAgent_state::pack_control_state(
     return cs;
 }
 
-uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
+uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
 {
     class Agent* a = this->you();
     if (a == NULL) return 0;
@@ -189,7 +189,7 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
     return cs;
 }
 
-void PlayerAgent_state::set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
+void PlayerAgent::set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
 {
     uint16_t cs;
     cs = this->pack_control_state(f,b,l,r,jet,jump,crouch,boost,misc1,misc2,misc3);
@@ -198,7 +198,7 @@ void PlayerAgent_state::set_control_state(int f, int b, int l, int r, int jet, i
 }
 
 //set actually sends
-void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
+void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
 {
     class Agent* a = this->you();
     if(a == NULL) return;  //player agent not set
@@ -234,7 +234,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
     cs_local[(index+1)%128].seq = -1;
     //client side tick forward
 
-    struct Agent_control_state acs = cs_local[index];
+    struct AgentControlState acs = cs_local[index];
 
     int cs_index = (state_history_seq) % 256;
     class AgentState tmp = state_history[state_history_index];
@@ -266,34 +266,34 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi)
     player_agent_sound_ground_movement_event(s0, s1, s1_on_ground, camera_on_ground);
 }
 
-float PlayerAgent_state::camera_height()
+float PlayerAgent::camera_height()
 {
     class Agent* a = this->you();
     if (a == NULL) return 0.0f;
     return a->camera_height();
 }
 
-float PlayerAgent_state::camera_z()
+float PlayerAgent::camera_z()
 {
     if (this->you() == NULL) return 0.0f;
     return this->camera_state.z + this->camera_height();
 }
 
-struct Vec3 PlayerAgent_state::camera_position()
+struct Vec3 PlayerAgent::camera_position()
 {
     if (this->you() == NULL) return vec3_init(0,0,0);
     return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
 }
 
-void PlayerAgent_state::update_sound()
+void PlayerAgent::update_sound()
 {
     AgentState s = camera_state;
     Vec3 p = agent_camera->forward_vector();
     Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, p.x, p.y, p.z, 0.0f,0.0f,1.0f);
 }
 
-PlayerAgent_state::PlayerAgent_state() :
-    crouching(false), camera_mode(client_side_prediction_interpolated),
+PlayerAgent::PlayerAgent() :
+    crouching(false), camera_mode(CAMERA_STATE_CLIENT_SIDE_PREDICTION_INTERPOLATED),
     cs_seq_local(255), cs_seq_net(-1),
     state_history_seq(0), state_history_index(0),
     agent_id(NULL_AGENT),  action(this)
@@ -303,62 +303,62 @@ PlayerAgent_state::PlayerAgent_state() :
     for(int i=0; i<128; cs_net[i++].seq = -1) ;
 }
 
-PlayerAgent_state::~PlayerAgent_state()
+PlayerAgent::~PlayerAgent()
 {
     if (this->state_history != NULL)
         delete[] this->state_history;
 }
 
-void PlayerAgent_state::toggle_camera_mode()
+void PlayerAgent::toggle_camera_mode()
 {
-    camera_mode = (camera_mode + 1) % CameraStatesEnd;
+    camera_mode = (camera_mode + 1) % CAMERA_STATE_END;
     switch (camera_mode)
     {
-        case net_agent:
+        case CAMERA_STATE_NET_AGENT:
             printf("Camera Mode: net_agent\n");
             break;
-        case client_side_prediction_interpolated:
+        case CAMERA_STATE_CLIENT_SIDE_PREDICTION_INTERPOLATED:
             printf("Camera Mode: client_side_prediction_interpolated\n");
             break;
-        case client_side_prediction:
+        case CAMERA_STATE_CLIENT_SIDE_PREDICTION:
             printf("Camera Mode: client_side_prediction\n");
             break;
-        case last_server_snapshot:
+        case CAMERA_STATE_LAST_SERVER_SNAPSHOT:
             printf("Camera Mode: last_server_snapshot\n");
             break;
-        default:
+            
+        case CAMERA_STATE_END:
             printf("PlayerAgent toggle_camera_mode: error\n");
             break;
-        //active_camera_state = &camera_state;
     }
 }
 
-void PlayerAgent_state::pump_camera()
+void PlayerAgent::pump_camera()
 {
-    Agent* A;
-    switch (camera_mode)
+    switch (this->camera_mode)
     {
-        case net_agent:
-            A = Agents::get_agent(agent_id);
-            if (A != NULL) camera_state = A->get_state();
+        case CAMERA_STATE_NET_AGENT:            
+            if (this->you() != NULL)
+                this->camera_state = this->you()->get_state();
             break;
-        case client_side_prediction_interpolated:   // default
-            update_client_side_prediction_interpolated();
-            camera_state = c;
+        case CAMERA_STATE_CLIENT_SIDE_PREDICTION_INTERPOLATED:   // default
+            this->update_client_side_prediction_interpolated();
+            this->camera_state = c;
             break;
-        case client_side_prediction:
-            camera_state = s1;
+        case CAMERA_STATE_CLIENT_SIDE_PREDICTION:
+            this->camera_state = this->s1;
             break;
-        case last_server_snapshot:
-            camera_state = state_snapshot;
+        case CAMERA_STATE_LAST_SERVER_SNAPSHOT:
+            this->camera_state = this->state_snapshot;
             break;
-        default:
-            GS_ABORT();
+
+        case CAMERA_STATE_END:
+            GS_ASSERT(false);
             break;
     }
 }
 
-void PlayerAgent_state::update_model()
+void PlayerAgent::update_model()
 {
     class Agent* a = this->you();
     if (a == NULL) return;
@@ -425,7 +425,7 @@ void PlayerAgent_state::update_model()
     }
 }
 
-bool PlayerAgent_state::facing_block(int pos[3])
+bool PlayerAgent::facing_block(int pos[3])
 {
     if (this->you() == NULL) return NULL;
     if (current_camera == NULL) return NULL;
@@ -440,7 +440,7 @@ bool PlayerAgent_state::facing_block(int pos[3])
     return collided;
 }
 
-int PlayerAgent_state::facing_container()
+int PlayerAgent::facing_container()
 {
     int pos[3];
     bool facing = this->facing_block(pos);
@@ -449,7 +449,7 @@ int PlayerAgent_state::facing_container()
     return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
 }
 
-bool PlayerAgent_state::nearest_open_block(const float max_dist, int open_point[3])
+bool PlayerAgent::nearest_open_block(const float max_dist, int open_point[3])
 {
     if (agent_camera == NULL) return NULL;
     struct Vec3 f = agent_camera->forward_vector();
@@ -461,7 +461,7 @@ bool PlayerAgent_state::nearest_open_block(const float max_dist, int open_point[
     return collided;
 }
 
-int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
+int PlayerAgent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
 {
     if (agent_camera == NULL) return 0;
     struct Vec3 p = agent_camera->get_position();
@@ -481,7 +481,7 @@ int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], int si
     return data.get_cube_id();
 }
 
-int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], float* distance)
+int PlayerAgent::get_facing_side(int solid_pos[3], int open_pos[3], float* distance)
 {
     int s[3];
     int block = this->get_facing_side(solid_pos, open_pos, s, distance);
@@ -491,7 +491,7 @@ int PlayerAgent_state::get_facing_side(int solid_pos[3], int open_pos[3], float*
 }
 
 #if !PRODUCTION
-void PlayerAgent_state::teleport_to(struct Vec3 p)
+void PlayerAgent::teleport_to(struct Vec3 p)
 {
     teleport_me_CtoS msg;
     msg.position = p;

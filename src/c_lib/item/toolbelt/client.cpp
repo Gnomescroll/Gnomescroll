@@ -25,7 +25,7 @@ void turn_fire_on(AgentID agent_id)
     agent_fire_on[agent_id] = true;
 
     int item_type = get_agent_selected_item_type(agent_id);
-    if (ClientState::playerAgent_state.agent_id == agent_id)
+    if (ClientState::player_agent.agent_id == agent_id)
         toolbelt_item_begin_local_alpha_action_event_handler(item_type);
     else
         toolbelt_item_begin_alpha_action_event_handler(agent_id, item_type);
@@ -44,7 +44,7 @@ void turn_fire_off(AgentID agent_id)
     agent_fire_on[agent_id] = false;
 
     int item_type = get_agent_selected_item_type(agent_id);
-    if (ClientState::playerAgent_state.agent_id == agent_id)
+    if (ClientState::player_agent.agent_id == agent_id)
         toolbelt_item_end_local_alpha_action_event_handler(item_type);
     else
     {
@@ -65,7 +65,7 @@ bool toolbelt_item_begin_alpha_action()
     GS_ASSERT(agent_fire_on != NULL);
     if (agent_fire_on == NULL) return false;
 
-    AgentID agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::player_agent.agent_id;
     IF_ASSERT(!isValid(agent_id)) return false;
 
     if (agent_fire_on[agent_id]) return false;
@@ -87,7 +87,7 @@ bool toolbelt_item_end_alpha_action()
     GS_ASSERT(click_and_hold != NULL);
     if (click_and_hold == NULL) return false;
 
-    AgentID agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::player_agent.agent_id;
     IF_ASSERT(!isValid(agent_id)) return false;
 
     if (!agent_fire_on[agent_id]) return false;
@@ -119,30 +119,30 @@ void toolbelt_item_end_local_alpha_action_event_handler(int item_type)
 
 void toolbelt_item_begin_alpha_action_event_handler(AgentID agent_id, int item_type)
 {
-    GS_ASSERT(agent_id != ClientState::playerAgent_state.agent_id); // use local
+    GS_ASSERT(agent_id != ClientState::player_agent.agent_id); // use local
     if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
     begin_item(agent_id, item_type);
 }
 
 void toolbelt_item_end_alpha_action_event_handler(AgentID agent_id, int item_type)
 {
-    GS_ASSERT(agent_id != ClientState::playerAgent_state.agent_id); // use local
+    GS_ASSERT(agent_id != ClientState::player_agent.agent_id); // use local
     if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
     end_item(agent_id, item_type);
 }
 
 static bool beta_scan_world()
 {   // check for things in world that respond to beta action
-    using ClientState::playerAgent_state;
+    using ClientState::player_agent;
     if (agent_camera == NULL) return false;
     
     float range = BETA_WORLD_EFFECT_RANGE - 0.2f;   // reduce margin to correct for discrepancy btwn client and server camera position
     //float range = BETA_WORLD_EFFECT_RANGE;   // reduce margin to correct for discrepancy btwn client and server camera position
 
-    Vec3 pos = playerAgent_state.camera_position();
+    Vec3 pos = player_agent.camera_position();
     Vec3 look = agent_camera->forward_vector();
 
-    class Voxel_hitscan_target target;
+    class VoxelHitscanTarget target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
@@ -152,7 +152,7 @@ static bool beta_scan_world()
 
     HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
-            pos, look, playerAgent_state.agent_id, OBJECT_AGENT,
+            pos, look, player_agent.agent_id, OBJECT_AGENT,
             &target, &vox_distance, collision_point,
             block_pos, side, &tile, &block_distance
         );
@@ -197,7 +197,7 @@ bool toolbelt_item_beta_action()
     GS_ASSERT(agent_selected_type != NULL)
     if (agent_selected_type == NULL) return false;
 
-    AgentID agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::player_agent.agent_id;
     IF_ASSERT(!isValid(agent_id)) return false;
 
     if (agent_fire_on[agent_id]) return false;

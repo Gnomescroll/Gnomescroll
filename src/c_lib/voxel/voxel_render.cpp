@@ -34,7 +34,7 @@ void init_voxel_render_list_shader1()
     static int init=0;
     if (init++)
     {
-        printf("Voxel_render_list::init_voxel_render_list_shader1, error, tried to init more than once\n");
+        printf("VoxelRenderList::init_voxel_render_list_shader1, error, tried to init more than once\n");
         return;
     }
     printf("init voxel shader\n");
@@ -78,16 +78,16 @@ void init_voxel_render_list_shader1()
     free(fs);
 }
 
-// Voxel_render_list
+// VoxelRenderList
 
 
-Voxel_render_list::Voxel_render_list() :
+VoxelRenderList::VoxelRenderList() :
     needs_update(false), id(-1), num_elements(0)
 {
     const int starting_size = 1024;
 
-    vbo_wrapper[0].vertex_list = (Voxel_vertex*) malloc(starting_size*sizeof(Voxel_vertex));
-    vbo_wrapper[1].vertex_list = (Voxel_vertex*) malloc(starting_size*sizeof(Voxel_vertex));
+    vbo_wrapper[0].vertex_list = (VoxelVertex*) malloc(starting_size*sizeof(VoxelVertex));
+    vbo_wrapper[1].vertex_list = (VoxelVertex*) malloc(starting_size*sizeof(VoxelVertex));
 
     vbo_wrapper[0].max_size = starting_size; //in voxel vertex
     vbo_wrapper[1].max_size = starting_size;
@@ -98,10 +98,10 @@ Voxel_render_list::Voxel_render_list() :
     vbo_wrapper[0].vnum = 0;
     vbo_wrapper[1].vnum = 0;
 
-    this->render_list = (Voxel_volume**)calloc(VOXEL_RENDER_LIST_SIZE, sizeof(Voxel_volume*));
+    this->render_list = (VoxelVolume**)calloc(VOXEL_RENDER_LIST_SIZE, sizeof(VoxelVolume*));
 }
 
-Voxel_render_list::~Voxel_render_list()
+VoxelRenderList::~VoxelRenderList()
 {
     if (this->render_list != NULL)
         free(this->render_list);
@@ -112,11 +112,11 @@ Voxel_render_list::~Voxel_render_list()
         free(vbo_wrapper[1].vertex_list);
 }
 
-void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
+void VoxelRenderList::register_voxel_volume(VoxelVolume* vv)
 {
     if (this->num_elements >= VOXEL_RENDER_LIST_SIZE)
     {
-        printf("Voxel_render_list Error: number of voxel models exceeds VOXEL_RENDER_LIST_SIZE \n");
+        printf("VoxelRenderList Error: number of voxel models exceeds VOXEL_RENDER_LIST_SIZE \n");
         return;
     }
     for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
@@ -134,7 +134,7 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
     }
 }
 
-void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
+void VoxelRenderList::unregister_voxel_volume(VoxelVolume* vv)
 {
     if (vv == NULL) return;
     if (vv->render_id < 0) return;
@@ -149,9 +149,9 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
     this->needs_update = true;
 }
 
-void Voxel_render_list::update_vertex_buffer_object()
+void VoxelRenderList::update_vertex_buffer_object()
 {
-    Voxel_volume* vv = NULL;
+    VoxelVolume* vv = NULL;
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
     int v_num = 0;
@@ -179,7 +179,7 @@ void Voxel_render_list::update_vertex_buffer_object()
     if (v_num >= _vbo->max_size)
     {
         while (v_num >= _vbo->max_size) _vbo->max_size *= 2; //double max size until its large enough and realloc
-        _vbo->vertex_list = (Voxel_vertex*)realloc(_vbo->vertex_list, _vbo->max_size*sizeof(Voxel_vertex));
+        _vbo->vertex_list = (VoxelVertex*)realloc(_vbo->vertex_list, _vbo->max_size*sizeof(VoxelVertex));
     }
 
     int index = 0;
@@ -192,20 +192,20 @@ void Voxel_render_list::update_vertex_buffer_object()
         GS_ASSERT(vv->vvl.vnum != 0);
         GS_ASSERT(vv->vvl.vertex_list != 0)
         
-        memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
+        memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(VoxelVertex) );
         vv->vvl.voff = index;
         index += vv->vvl.vnum;
     }
     GS_ASSERT(index == v_num);
     if (_vbo->id == 0 )  glGenBuffers(1, &_vbo->id);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
-    glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), NULL, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), _vbo->vertex_list, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, index*sizeof(VoxelVertex), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, index*sizeof(VoxelVertex), _vbo->vertex_list, GL_STATIC_DRAW);
 }
 
-// Voxel_render_list_manager
+// VoxelRenderListManager
 
-void Voxel_render_list_manager::register_voxel_volume(class Voxel_volume* vv)
+void VoxelRenderListManager::register_voxel_volume(class VoxelVolume* vv)
 {
     GS_ASSERT(this->max > 0);
     GS_ASSERT(this->lists != NULL);
@@ -225,7 +225,7 @@ void Voxel_render_list_manager::register_voxel_volume(class Voxel_volume* vv)
     this->lists[smallest].register_voxel_volume(vv);
 }
 
-void Voxel_render_list_manager::unregister_voxel_volume(class Voxel_volume* vv)
+void VoxelRenderListManager::unregister_voxel_volume(class VoxelVolume* vv)
 {
     GS_ASSERT(this->max > 0);
     GS_ASSERT(this->lists != NULL);
@@ -236,7 +236,7 @@ void Voxel_render_list_manager::unregister_voxel_volume(class Voxel_volume* vv)
     this->lists[id].unregister_voxel_volume(vv);
 }
 
-void Voxel_render_list_manager::draw()
+void VoxelRenderListManager::draw()
 {
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
@@ -257,7 +257,7 @@ void Voxel_render_list_manager::draw()
 
     for (int k=0; k < this->max; k++)
     {
-        Voxel_render_list* vrl = &this->lists[k];
+        VoxelRenderList* vrl = &this->lists[k];
         struct VBOmeta* _vbo = &vrl->vbo_wrapper[0];
 
         vrl->update_vertex_buffer_object(); 
@@ -269,17 +269,17 @@ void Voxel_render_list_manager::draw()
 
         glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
-        glVertexPointer(3, GL_FLOAT, sizeof(class Voxel_vertex), (GLvoid*)0);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(class Voxel_vertex), (GLvoid*)12);
+        glVertexPointer(3, GL_FLOAT, sizeof(class VoxelVertex), (GLvoid*)0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(class VoxelVertex), (GLvoid*)12);
         
-        glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(class Voxel_vertex), (GLvoid*)16);
-        glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(class Voxel_vertex), (GLvoid*)20);
-        glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(class Voxel_vertex), (GLvoid*)24);
+        glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(class VoxelVertex), (GLvoid*)16);
+        glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(class VoxelVertex), (GLvoid*)20);
+        glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(class VoxelVertex), (GLvoid*)24);
 
         for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
             if (vrl->render_list[i] == NULL) continue;
-            Voxel_volume* vv = vrl->render_list[i];
+            VoxelVolume* vv = vrl->render_list[i];
             if (!vv->draw) continue;
             if (vv->vvl.vnum == 0) continue;
 
@@ -290,7 +290,7 @@ void Voxel_render_list_manager::draw()
 
             if (_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))
             {
-                printf("Voxel_render_list_manager::draw error!! would draw past VBO memory\n");
+                printf("VoxelRenderListManager::draw error!! would draw past VBO memory\n");
                 printf("vbo vnum= %i vv vnum= %i vv voff= %i \n", _vbo->vnum, vv->vvl.vnum, vv->vvl.voff);
                 printf("would read %i vertices past vbo \n", vv->vvl.vnum+vv->vvl.voff - _vbo->vnum);
                 //GS_ABORT();
@@ -319,7 +319,7 @@ void Voxel_render_list_manager::draw()
 
     for (int k=0; k < this->max; k++)
     {
-        Voxel_render_list* vrl = &this->lists[k];
+        VoxelRenderList* vrl = &this->lists[k];
         vrl->update_vertex_buffer_object(); 
     }
 }

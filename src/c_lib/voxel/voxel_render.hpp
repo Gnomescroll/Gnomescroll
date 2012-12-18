@@ -21,14 +21,14 @@ const int VOXEL_RENDER_LISTS = 16;
 struct VBOmeta
 {
     GLuint id;
-    class Voxel_vertex* vertex_list;
+    class VoxelVertex* vertex_list;
     int vnum;
     int max_size; //in voxel vertex elements
     //use to prevent constant mallocing
     //int size_max; //increase size if it goes over this
 };
 
-class Voxel_volume_token
+class VoxelVolumeToken
 {
     int index;
     int vnum;   //number of vertices
@@ -37,35 +37,35 @@ class Voxel_volume_token
 
 void init_voxel_render_list_shader1();
 
-class Voxel_render_list
+class VoxelRenderList
 {
     public:
         bool first_load;
         bool needs_update;
         void update_vertex_buffer_object(); //gets called after draw
-        class Voxel_volume** render_list;
+        class VoxelVolume** render_list;
         struct VBOmeta vbo_wrapper[2];
 
         int id;
         int num_elements;
 
-        void register_voxel_volume(class Voxel_volume* vv);
-        void unregister_voxel_volume(class Voxel_volume* vv);
+        void register_voxel_volume(class VoxelVolume* vv);
+        void unregister_voxel_volume(class VoxelVolume* vv);
 
         bool full() { return this->num_elements >= VOXEL_RENDER_LIST_SIZE; }
 
-    Voxel_render_list();
-    ~Voxel_render_list();
+    VoxelRenderList();
+    ~VoxelRenderList();
 };
 
-class Voxel_render_list_manager
+class VoxelRenderListManager
 {
     public:
-        Voxel_render_list* lists;
+        VoxelRenderList* lists;
         int max;
 
-        void register_voxel_volume(class Voxel_volume* vv);
-        void unregister_voxel_volume(class Voxel_volume* vv);
+        void register_voxel_volume(class VoxelVolume* vv);
+        void unregister_voxel_volume(class VoxelVolume* vv);
 
         void draw();
 
@@ -74,7 +74,7 @@ class Voxel_render_list_manager
             GS_ASSERT(this->lists == NULL);
             if (this->lists != NULL) return;
             this->max = max;
-            this->lists = new Voxel_render_list[this->max];
+            this->lists = new VoxelRenderList[this->max];
             for (int i=0; i<this->max; i++) this->lists[i].id = i;
         }
 
@@ -83,11 +83,11 @@ class Voxel_render_list_manager
             this->init(VOXEL_RENDER_LISTS);
         }
 
-    Voxel_render_list_manager()
+    VoxelRenderListManager()
     : lists(NULL), max(0)
     {}
 
-    ~Voxel_render_list_manager()
+    ~VoxelRenderListManager()
     {
         if (this->lists != NULL) delete[] this->lists;
     }

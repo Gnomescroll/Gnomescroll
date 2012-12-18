@@ -9,24 +9,23 @@ dont_include_this_file_in_server
 #include <agent/client/player_agent_action.hpp>
 #include <agent/client/jetpack.hpp>
 
-enum active_camera_states
+typedef enum
 {
-    net_agent = 0,
-    client_side_prediction_interpolated,
-    client_side_prediction,
-    last_server_snapshot,
-    CameraStatesEnd
-};
+    CAMERA_STATE_NET_AGENT = 0,
+    CAMERA_STATE_CLIENT_SIDE_PREDICTION_INTERPOLATED,
+    CAMERA_STATE_CLIENT_SIDE_PREDICTION,
+    CAMERA_STATE_LAST_SERVER_SNAPSHOT,
+    CAMERA_STATE_END,
+} ActiveCameraState;
 
-class PlayerAgent_state
+class PlayerAgent
 {
     private:
         uint16_t sanitize_control_state(uint16_t cs);
         uint16_t pack_control_state(
             int f, int b, int l, int r,
             int jet, int jump, int crouch, int boost,
-            int misc1, int misc2, int misc3
-        );
+            int misc1, int misc2, int misc3);
 
         void set_control_state(uint16_t cs, float theta, float phi);
 
@@ -57,8 +56,8 @@ class PlayerAgent_state
         int cs_seq_local;   // client side cs
         int cs_seq_net;     // snapshot cs sequence
 
-        struct Agent_control_state cs_local[128];
-        struct Agent_control_state cs_net[128];
+        struct AgentControlState cs_local[128];
+        struct AgentControlState cs_net[128];
 
         class AgentState snapshot_local[128];
 
@@ -109,7 +108,7 @@ class PlayerAgent_state
         void teleport_to(struct Vec3 p);
         #endif
         
-        PlayerAgent_state();
-        ~PlayerAgent_state();
+        PlayerAgent();
+        ~PlayerAgent();
 };
 

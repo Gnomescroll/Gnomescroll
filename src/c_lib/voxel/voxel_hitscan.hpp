@@ -11,25 +11,25 @@ const int VOXEL_HITSCAN_LIST_SIZE = 1024;
     use instances instead of pointers
 */
 
-class Voxel_hitscan_element
+class VoxelHitscanElement
 {
     public:
         short entity_id;
         short entity_type;
         short part_id;
-        class Voxel_volume* vv;
+        class VoxelVolume* vv;
 
-    Voxel_hitscan_element() :
+    VoxelHitscanElement() :
         entity_id(-1), entity_type(-1), part_id(-1), vv(NULL)
     {}
 };
 
-class Voxel_hitscan_target: public Voxel_hitscan_element
+class VoxelHitscanTarget: public VoxelHitscanElement
 {
     public:
         unsigned int voxel[3];
 
-        void copy_vhe(Voxel_hitscan_element* vhe);
+        void copy_vhe(VoxelHitscanElement* vhe);
         void copy_voxel(int voxel[3]);
         void print()
         {
@@ -41,16 +41,16 @@ class Voxel_hitscan_target: public Voxel_hitscan_element
         }
 };
 
-class Voxel_hitscan_list
+class VoxelHitscanList
 {
     private:
-        class Voxel_hitscan_element** hitscan_list;
+        class VoxelHitscanElement** hitscan_list;
     
     public:
         int num_elements;
 
-        void register_voxel_volume(class Voxel_volume* vv);
-        void unregister_voxel_volume(class Voxel_volume* vv);
+        void register_voxel_volume(class VoxelVolume* vv);
+        void unregister_voxel_volume(class VoxelVolume* vv);
 
     //pass in x,y,z fire point and direction of projectile
     bool hitscan(
@@ -58,12 +58,12 @@ class Voxel_hitscan_list
         const float x1, const float y1, const float z1, // direction
         int skip_id, EntityType skip_type,
         float collision_point[3], float *distance,
-        class Voxel_hitscan_target* target);
+        class VoxelHitscanTarget* target);
     
-    class Voxel_hitscan_target* hitscan_all(struct Vec3 start, struct Vec3 end, size_t* n_targets);
+    class VoxelHitscanTarget* hitscan_all(struct Vec3 start, struct Vec3 end, size_t* n_targets);
 
-    bool point_collision(struct Vec3 position, class Voxel_hitscan_target* target);
+    bool point_collision(struct Vec3 position, class VoxelHitscanTarget* target);
     
-    Voxel_hitscan_list();
-    ~Voxel_hitscan_list();
+    VoxelHitscanList();
+    ~VoxelHitscanList();
 };

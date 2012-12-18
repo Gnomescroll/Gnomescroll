@@ -4,14 +4,14 @@
 #include <agent/_state.hpp>
 
 #if DC_CLIENT
-#include <state/client_state.hpp>
-#include <animations/weapon.hpp>
-#include <item/properties.hpp>
-#include <animations/emitter.hpp>
+# include <state/client_state.hpp>
+# include <animations/weapon.hpp>
+# include <item/properties.hpp>
+# include <animations/emitter.hpp>
 #endif
 #if DC_SERVER
-#include <state/server_state.hpp>
-#include <t_map/server/manager.hpp>
+# include <state/server_state.hpp>
+# include <t_map/server/manager.hpp>
 #endif
 
 const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
@@ -62,7 +62,7 @@ void AgentList::send_to_client(ClientID client_id)
 #if DC_CLIENT
 void AgentList::draw_names()
 {
-    AgentID agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::player_agent.agent_id;
     for (unsigned int i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
@@ -76,7 +76,7 @@ void AgentList::draw_names()
 
 void AgentList::draw_equipped_items()
 {
-    AgentID agent_id = ClientState::playerAgent_state.agent_id;
+    AgentID agent_id = ClientState::player_agent.agent_id;
     if (this->ct <= 0) return;
 
     int num = 0;
@@ -131,7 +131,7 @@ void AgentList::draw_equipped_items()
 void AgentList::update_mining_lasers()
 {
     for (unsigned int i=0; i<this->max; i++)
-        if (this->objects[i].id != this->null_id && i != ClientState::playerAgent_state.agent_id)
+        if (this->objects[i].id != this->null_id && i != ClientState::player_agent.agent_id)
             this->objects[i].event.update_mining_laser();
 }
 #endif

@@ -486,7 +486,7 @@ void send_crusher_crush_action(ContainerActionType action, int container_id, int
 
 void mouse_left_click_handler(int container_id, int slot, bool alt_action)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
     
@@ -528,7 +528,7 @@ void mouse_left_click_handler(int container_id, int slot, bool alt_action)
 
 void mouse_right_click_handler(int container_id, int slot, bool alt_action)
 {
-    class Agent* you = ClientState::playerAgent_state.you();
+    class Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
 
