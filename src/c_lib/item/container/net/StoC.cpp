@@ -136,7 +136,7 @@ inline void insert_item_in_hand_StoC::handle()
     GS_ASSERT(item != NULL);
     if (item == NULL) return;
     item->location = IL_HAND;
-    item->location_id = ClientState::player_agent.agent_id;
+    item->location_id = ClientState::playerAgent_state.agent_id;
 
     GS_ASSERT(player_hand != NULL);
     if (player_hand != NULL)

@@ -372,7 +372,7 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
     Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return false;
 
-    class VoxelVolume* vv = a->get_arm();
+    class Voxel_volume* vv = a->get_arm();
     IF_ASSERT(vv == NULL) return false;
     
     // HACKED UP MODEL DEPENDENT CRAP
@@ -496,7 +496,7 @@ void draw_placement_outline(int item_type)
     // get open block
     const int max_dist = 4.0f;
     int b[3];
-    bool collided = ClientState::player_agent.nearest_open_block(max_dist, b);
+    bool collided = ClientState::playerAgent_state.nearest_open_block(max_dist, b);
     if (!collided) return;
 
     // center it

@@ -107,7 +107,7 @@ void Voxel_model::update_skeleton()
 
     for(int i=0; i<this->n_parts; i++)
     {
-        VoxelVolume* vv = &this->vv[i];
+        Voxel_volume* vv = &this->vv[i];
         vv->world_matrix = affine_mult(*vv->parent_world_matrix, vv->local_matrix);
         vv->world_matrix.c = translate_position(vv->world_matrix.c);
     }
@@ -261,7 +261,7 @@ void Voxel_model::reset_skeleton()
     //set pointer in voxel volume back to the skeleton parent world matrix 
     for (int i=0; i<this->n_parts; i++)
     {
-        class VoxelVolume* vv = &this->vv[i];
+        class Voxel_volume* vv = &this->vv[i];
         class VoxPart *vp = vox_dat->vox_part[i];
         vv->parent_world_matrix = &vox_skeleton_world_matrix[vp->skeleton_parent_matrix];
         vv->local_matrix = vox_dat->vox_volume_local_matrix[i];
@@ -281,7 +281,7 @@ void Voxel_model::init_parts(int id, EntityType type)
         int y = vp->dimension.y;
         int z = vp->dimension.z;
 
-        VoxelVolume* vv = &(this->vv[i]);
+        Voxel_volume* vv = &(this->vv[i]);
 
         vv->init(x,y,z, vp->vox_size);
         vv->set_hitscan_properties(id, type, i);
@@ -301,7 +301,7 @@ void Voxel_model::set_part_color(int part_num)
     if (part_num < 0 || part_num >= this->n_parts) return;
     
     VoxPart *vp = vox_dat->vox_part[part_num];
-    VoxelVolume* vv = &(this->vv[part_num]);
+    Voxel_volume* vv = &(this->vv[part_num]);
     int x = vp->dimension.x;
     int y = vp->dimension.y;
     int z = vp->dimension.z;
@@ -343,7 +343,7 @@ void Voxel_model::fill_part_color(int part_num, struct Color color)
     if (!vp->colorable) return;
     struct Color base_color = vp->base_color;
 
-    VoxelVolume* vv = &(this->vv[part_num]);
+    Voxel_volume* vv = &(this->vv[part_num]);
     
     int ix,iy,iz;
     unsigned char r,g,b,a;
@@ -445,7 +445,7 @@ Voxel_model::Voxel_model(VoxDat* vox_dat, int id, EntityType type) :
     GS_ASSERT(this->n_parts > 0);
     if (this->n_parts > 0)
     {
-        this->vv = new VoxelVolume[vox_dat->n_parts];
+        this->vv = new Voxel_volume[vox_dat->n_parts];
         GS_ASSERT(this->vv != NULL);
     }
     else
@@ -488,7 +488,7 @@ float Voxel_model::largest_radius()
 {
     float largest = 0.0f;
     if (this->vv == NULL) return largest;
-    VoxelVolume* vv;
+    Voxel_volume* vv;
     for (int i=0; i<this->n_parts; i++)
     {
         vv = &this->vv[i];
@@ -497,7 +497,7 @@ float Voxel_model::largest_radius()
     return largest;
 }
 
-VoxelVolume* Voxel_model::get_part(int part)
+Voxel_volume* Voxel_model::get_part(int part)
 {
     GS_ASSERT(part >= 0 && part < this->n_parts);
     if (part < 0 || part >= this->n_parts) return NULL;

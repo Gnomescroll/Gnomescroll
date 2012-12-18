@@ -152,7 +152,7 @@ int physics_tick()
         // tick client state
         ClientState::tick(); 
         // update sound listener
-        ClientState::player_agent.update_sound();
+        ClientState::playerAgent_state.update_sound();
         // update mouse
         poll_mouse();
 
@@ -329,7 +329,7 @@ void draw_tick()
     Animations::draw_hitscan_effect();
     GL_ASSERT(GL_BLEND, true);
     Agents::agent_list->update_mining_lasers();
-    ClientState::player_agent.action.update_mining_laser();
+    ClientState::playerAgent_state.action.update_mining_laser();
     Animations::draw_mining_laser_effect();
     GL_ASSERT(GL_BLEND, true);
 

@@ -8,12 +8,12 @@ dont_include_this_file_in_server
  * All client agent input triggers should be implemented here
  */
 
-class PlayerAgent;// forward declare
+class PlayerAgent_state;// forward declare
 
 class PlayerAgent_action
 {
     private:
-        PlayerAgent* p;
+        PlayerAgent_state* p;
         
     public:
 
@@ -44,5 +44,5 @@ class PlayerAgent_action
 
         Vec3 get_aiming_point();
 
-        explicit PlayerAgent_action(PlayerAgent* player_agent);
+        explicit PlayerAgent_action(PlayerAgent_state* player_agent);
 };

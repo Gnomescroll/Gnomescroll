@@ -16,11 +16,11 @@
 #endif
 
 const int VOXEL_VERTEX_SCRATCH_SIZE = 0xffff;
-static VoxelVertex* voxel_vertex_scratch_buffer = NULL;
+static Voxel_vertex* voxel_vertex_scratch_buffer = NULL;
 
 void init_voxel_volume()
 {
-    voxel_vertex_scratch_buffer = new VoxelVertex[VOXEL_VERTEX_SCRATCH_SIZE];
+    voxel_vertex_scratch_buffer = new Voxel_vertex[VOXEL_VERTEX_SCRATCH_SIZE];
 }
 
 void teardown_voxel_volume()
@@ -29,7 +29,7 @@ void teardown_voxel_volume()
         delete[] voxel_vertex_scratch_buffer;
 }
 
-int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
+int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
     const static int _ssize = 0xff;
     const static int _bsize = 0xffff;
@@ -135,7 +135,7 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
     Enables using faster, Sagitta ray cast
 
 */
-int VoxelVolume::hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2, int voxel[3])
+int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2, int voxel[3])
 {
 
     x -= world_matrix.v[3].x;
@@ -187,7 +187,7 @@ int VoxelVolume::hitscan_test(float x, float y, float z, float vx, float vy, flo
 }
 
 #define DEBUG_POINT_COLLISION_TEST 1
-int VoxelVolume::point_collision_test(Vec3 p, unsigned int vxl[3]) 
+int Voxel_volume::point_collision_test(Vec3 p, unsigned int vxl[3]) 
 {
 #if DEBUG_POINT_COLLISION_TEST
         float x = p.x;
@@ -226,7 +226,7 @@ int VoxelVolume::point_collision_test(Vec3 p, unsigned int vxl[3])
 #endif
 }
  
-//int VoxelVolume::point_collision_test(Vec3 p, float voxel[3])
+//int Voxel_volume::point_collision_test(Vec3 p, float voxel[3])
 //{
     //struct Vec3 v;
     //p = vec3_sub(p, world_matrix.v[3]);
@@ -236,7 +236,7 @@ int VoxelVolume::point_collision_test(Vec3 p, unsigned int vxl[3])
     //return _test_occludes_safe(v.x,v.y,v.z, voxel);
 //}
 
-void VoxelVolume::set_parameters(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
+void Voxel_volume::set_parameters(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
 {
     this->xdim = xdim;
     this->ydim = ydim;
@@ -244,7 +244,7 @@ void VoxelVolume::set_parameters(unsigned int xdim, unsigned int ydim, unsigned 
     this->scale = scale;
 }
 
-void VoxelVolume::init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
+void Voxel_volume::init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
 {
     GS_ASSERT(this->voxel == NULL);
     if (this->voxel != NULL) return;
@@ -270,7 +270,7 @@ void VoxelVolume::init(unsigned int xdim, unsigned int ydim, unsigned int zdim, 
     needs_vbo_update = true;
 }
 
-VoxelVolume::VoxelVolume() :
+Voxel_volume::Voxel_volume() :
     parent_world_matrix(NULL),
     render_id(-1),
     draw(true),
@@ -295,7 +295,7 @@ VoxelVolume::VoxelVolume() :
     this->vhe.vv = this;
 }
 
-VoxelVolume::VoxelVolume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale) :
+Voxel_volume::Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale) :
     parent_world_matrix(NULL),
     render_id(-1),
     draw(true),
@@ -320,7 +320,7 @@ VoxelVolume::VoxelVolume(unsigned int xdim, unsigned int ydim, unsigned int zdim
     this->vhe.vv = this;
 }
 
-VoxelVolume::~VoxelVolume()
+Voxel_volume::~Voxel_volume()
 {
     #if DC_CLIENT
     if (voxel_render_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_render_list not unregistered\n");
@@ -331,7 +331,7 @@ VoxelVolume::~VoxelVolume()
 }
 
 //external methods
-void VoxelVolume::set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
+void Voxel_volume::set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
 {
     if (x >= xdim || y >= ydim || z >= zdim) return;
     _set(x,y,z,v);
@@ -339,7 +339,7 @@ void VoxelVolume::set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
     damaged = true;
 }
 
-inline void VoxelVolume::set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+inline void Voxel_volume::set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     if (x >= xdim || y >= ydim || z >= zdim) return;
     _set(x,y,z,r,g,b,a);
@@ -389,10 +389,10 @@ static inline int vCalcAdj(int side_1, int side_2, int corner)
         ty = 0.0
 */
 
-void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz)
+void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz)
 {
 
-    static const struct VoxelNormal voxel_normal_array[6] = { 
+    static const struct Voxel_normal voxel_normal_array[6] = { 
         {{{0,0,1,0}}},
         {{{0,0,-1,0}}},
         {{{1,0,0,0}}},
@@ -401,7 +401,7 @@ void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int
         {{{0,-1,0,0}}}
         };
 
-    static const struct VoxelTex voxel_tex_array[4] = {
+    static const struct Voxel_tex voxel_tex_array[4] = {
         {{{0,0,0,0}}},
         {{{0,1,0,0}}},
         {{{1,1,0,0}}},
@@ -451,7 +451,7 @@ void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int
         }
 
         {
-            VoxAOElement _ao;
+            voxAOElement _ao;
 
             _ao.ao[0] = vCalcAdj(CX[7], CX[1], CX[0]);
             _ao.ao[1] = vCalcAdj(CX[5], CX[7], CX[6]);
@@ -516,7 +516,7 @@ l = [
 
 #define VOXEL_RENDER_DEBUG_02 0
 
-void VoxelVolume::update_vertex_list()
+void Voxel_volume::update_vertex_list()
 {
     static int compute_gamma_chart = 0;
     if(compute_gamma_chart == 0) 
@@ -581,7 +581,7 @@ void VoxelVolume::update_vertex_list()
 
     if (index == 0)
     {
-        printf("VoxelVolume::update_vertex_list, FATAL ERROR, no quads in voxel model\n");
+        printf("Voxel_volume::update_vertex_list, FATAL ERROR, no quads in voxel model\n");
         vvl.vnum = 0;
         return;
     }
@@ -591,26 +591,26 @@ void VoxelVolume::update_vertex_list()
     if (index >= VOXEL_VERTEX_SCRATCH_SIZE) return;
     if (index < 0) return;
 
-    vvl.vertex_list = new VoxelVertex[index];
-    memcpy(vvl.vertex_list, voxel_vertex_scratch_buffer, index*sizeof(VoxelVertex));
+    vvl.vertex_list = new Voxel_vertex[index];
+    memcpy(vvl.vertex_list, voxel_vertex_scratch_buffer, index*sizeof(Voxel_vertex));
     
     vvl.vnum = index;
 }
 #endif
 
-void VoxelVolume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
+void Voxel_volume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
 {
     _set(x,y,z, r,g,b,a);
     needs_vbo_update = true;
 }
 
-void VoxelVolume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4]) 
+void Voxel_volume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4]) 
 {
     _set(x,y,z, rgba[0], rgba[1], rgba[2], rgba[3]);
     needs_vbo_update = true;
 }
 
-void VoxelVolume::set_hitscan_properties(short entity_id, short entity_type, short part_id)
+void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, short part_id)
 {
     this->vhe.entity_id = entity_id;
     this->vhe.entity_type = entity_type;
@@ -618,7 +618,7 @@ void VoxelVolume::set_hitscan_properties(short entity_id, short entity_type, sho
     this->vhe.vv = this;
 }
 
-void VoxelVolume::draw_bounding_box()
+void Voxel_volume::draw_bounding_box()
 {
     #if DC_CLIENT
     glDisable(GL_TEXTURE_2D);
@@ -676,16 +676,16 @@ void VoxelVolume::draw_bounding_box()
     #endif
 }
 
-inline Voxel* VoxelVolume::get(unsigned int x, unsigned int y, unsigned int z) 
+inline Voxel* Voxel_volume::get(unsigned int x, unsigned int y, unsigned int z) 
 {   return &voxel[x+(y << index1)+(z << index12)]; }
 
-inline unsigned int VoxelVolume::get_as_int(unsigned int x, unsigned int y, unsigned int z) 
+inline unsigned int Voxel_volume::get_as_int(unsigned int x, unsigned int y, unsigned int z) 
 { return voxel[x+(y << index1)+(z << index12)].color; }
 
 /*
 Tests whether a voxel is occupied, for AO
 */
-inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) 
+inline unsigned int Voxel_volume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) 
 { 
     if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
@@ -693,16 +693,16 @@ inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned in
     return 1;
 }
 // fills voxel[3] with the voxel location
-inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3]) 
+inline unsigned int Voxel_volume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3]) 
 { 
     if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
-    if(index >= index_max) printf("VoxelVolume::_test_occludes_safe IMPOSSIBLE \n");
+    if(index >= index_max) printf("Voxel_volume::_test_occludes_safe IMPOSSIBLE \n");
     vxl[0] = x; vxl[1] = y; vxl[2] = z; 
     if(voxel[index].color == 0) return 0;
     return 1;
 }
-inline void VoxelVolume::_set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
+inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
 { voxel[x+(y << index1)+(z << index12)] = *v; }
-inline void VoxelVolume::_set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }

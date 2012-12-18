@@ -8,7 +8,7 @@
 #include <voxel/voxel_render.hpp>
 #endif
 
-class VoxelVolume
+class Voxel_volume
 {
     public:
 
@@ -18,7 +18,7 @@ class VoxelVolume
     struct Affine* parent_world_matrix;
 
     #if DC_CLIENT
-    VoxelVertexList vvl;
+    Voxel_vertex_list vvl;
     #endif
 
     int render_id;
@@ -40,13 +40,13 @@ class VoxelVolume
     bool needs_vbo_update;
     bool damaged;
     
-    class VoxelHitscanElement vhe;
+    class Voxel_hitscan_element vhe;
 
     //hitscan registration
-    VoxelHitscanList* voxel_hitscan_list;
+    Voxel_hitscan_list* voxel_hitscan_list;
 
     #if DC_CLIENT
-    class VoxelRenderList* voxel_render_list;
+    class Voxel_render_list* voxel_render_list;
     int voxel_render_list_id;
     void update_vertex_list();
     #endif
@@ -74,14 +74,14 @@ class VoxelVolume
     void init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
     void set_hitscan_properties(short entity_id, short entity_type, short part_id);
 
-    VoxelVolume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
-    VoxelVolume();
+    Voxel_volume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
+    Voxel_volume();
 
-    ~VoxelVolume();
+    ~Voxel_volume();
 
     private:
     #if DC_CLIENT
-    inline void push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
+    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
     #endif
 
     inline Voxel* get(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));

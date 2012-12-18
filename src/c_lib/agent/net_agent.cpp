@@ -1,21 +1,22 @@
 #include "net_agent.hpp"
 
 #include <agent/_state.hpp>
+
 #include <agent/agent.hpp>
 #include <common/defines.h>
 
 #if DC_CLIENT
-# include <state/client_state.hpp>
-# include <common/time/physics_timer.hpp>
-# include <chat/_interface.hpp>
-# include <entity/objects/fabs/constants.hpp>
-# include <SDL/SDL_functions.hpp>
+#include <state/client_state.hpp>
+#include <common/time/physics_timer.hpp>
+#include <chat/_interface.hpp>
+#include <entity/objects/fabs/constants.hpp>
+#include <SDL/SDL_functions.hpp>
 #endif
 
 #if DC_SERVER
-# include <state/server_state.hpp>
-# include <t_map/t_map.hpp>
-# include <physics/ray_trace/ray_trace.hpp>
+#include <state/server_state.hpp>
+#include <t_map/t_map.hpp>
+#include <physics/ray_trace/ray_trace.hpp>
 #endif
 
 
@@ -26,7 +27,7 @@
 inline void PlayerAgent_Snapshot::handle()
 {
     #if DC_CLIENT
-    ClientState::player_agent.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
+    ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
     #endif
 }
 
@@ -76,7 +77,7 @@ inline void Agent_cs_StoC::handle()
     }
     //printf("!!! control state= %i \n", cs);
     a->handle_control_state(seq, cs, theta, phi);
-    ClientState::player_agent.handle_net_control_state(seq, cs, theta, phi);
+    ClientState::playerAgent_state.handle_net_control_state(seq, cs, theta, phi);
 }
 
 // damage indicator packet
@@ -90,7 +91,7 @@ inline void agent_damage_StoC::handle()
 
 inline void agent_shot_object_StoC::handle()
 {
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -99,7 +100,7 @@ inline void agent_shot_object_StoC::handle()
 
 inline void agent_shot_block_StoC::handle()
 {
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -108,7 +109,7 @@ inline void agent_shot_block_StoC::handle()
 
 inline void agent_shot_nothing_StoC::handle()
 {
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -117,7 +118,7 @@ inline void agent_shot_nothing_StoC::handle()
 
 inline void agent_melee_object_StoC::handle()
 {
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -126,7 +127,7 @@ inline void agent_melee_object_StoC::handle()
 
 inline void agent_melee_nothing_StoC::handle()
 {
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -135,7 +136,7 @@ inline void agent_melee_nothing_StoC::handle()
 
 inline void agent_hit_block_StoC::handle()
 {
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -144,7 +145,7 @@ inline void agent_hit_block_StoC::handle()
 
 inline void agent_threw_grenade_StoC::handle()
 {
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -153,7 +154,7 @@ inline void agent_threw_grenade_StoC::handle()
 
 inline void agent_placed_block_StoC::handle()
 {
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent* a = Agents::get_agent((AgentID)this->id);
     GS_ASSERT(a != NULL);
     if (a == NULL) return;
@@ -372,8 +373,8 @@ inline void client_disconnected_StoC::handle()
 
 inline void set_spawner_StoC::handle()
 {
-    using ClientState::player_agent;
-    class Agent* you = player_agent.you();
+    using ClientState::playerAgent_state;
+    class Agent* you = playerAgent_state.you();
     if (you == NULL) return;
 
     ASSERT_VALID_SPAWNER_ID(this->spawner_id);
@@ -419,7 +420,7 @@ inline void agent_color_StoC::handle()
     
     a->status.set_color(this->color);
     
-    if (this->agent_id == ClientState::player_agent.agent_id)
+    if (this->agent_id == ClientState::playerAgent_state.agent_id)
     {
         const char fmt[] = "Your color is now %d %d %d\n";
         size_t len = sizeof(fmt) + 3*3 - 2*3 + 1;

@@ -16,8 +16,10 @@ Attributes
 */
 
 attribute vec4 InVertex;
-attribute vec4 InTexCoord;
+attribute vec2 InTexCoord;
+attribute vec2 InTexCoord2;
 attribute vec3 InRGB;
+attribute vec2 InLight;
 
 //attribute int InNormal;
 
@@ -35,9 +37,11 @@ Varying
 */
 
 varying vec2 texCoord;
-varying vec2 texCoord3;
-
+varying vec2 texCoord2;
 varying vec3 inColor;
+
+varying float skyLight;
+varying float playerLight;
 
 void main(void) 
 {              
@@ -47,11 +51,12 @@ void main(void)
     inColor = InRGB;
  
     texCoord = InTexCoord.xy;
-
-    vec2 tmp = (0.96f)*(InTexCoord.xy - vec2(0.5f,0.5f) )+ vec2(0.5f,0.5f);
-    texCoord3 = 0.0625f*tmp +InTexCoord.zw;
+    texCoord2 = InTexCoord2.xy;
 
     lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
+
+    skyLight = InLight[0];
+    playerLight = InLight[1];
 }
 
     /* (InTexCoord.xy - vec2(0.5,0.5)) * .94 */

@@ -25,21 +25,21 @@ int frame_id = 0;
 Vec3 location_pointer = vec3_init(0,0,0);
 bool location_pointer_set = false;
 
-VoxelRenderListManager* voxel_render_list;
-VoxelHitscanList* voxel_hitscan_list = NULL;
+Voxel_render_list_manager* voxel_render_list;
+Voxel_hitscan_list* voxel_hitscan_list = NULL;
 
 int last_ping_time;
 int last_reliable_ping_time;
 
-PlayerAgent player_agent;
+PlayerAgent_state playerAgent_state;
 
 int agent_control_state[16];
 
 void init_lists()
 {
-    voxel_render_list = new VoxelRenderListManager;
+    voxel_render_list = new Voxel_render_list_manager;
     voxel_render_list->init();
-    voxel_hitscan_list = new VoxelHitscanList;
+    voxel_hitscan_list = new Voxel_hitscan_list;
 }
 
 void teardown_voxel_lists()
@@ -52,7 +52,7 @@ void teardown_voxel_lists()
 
 void set_PlayerAgent_id(AgentID id)
 {
-    player_agent.set_PlayerAgent_id(id);
+    playerAgent_state.set_PlayerAgent_id(id);
 }
 
 void tick()
@@ -82,7 +82,7 @@ void update_camera()
 void send_camera_state()
 {
     if (current_camera == NULL) return;
-    class Agent* you = player_agent.you();
+    class Agent* you = playerAgent_state.you();
     if (you == NULL || !you->initial_teleport) return;
     agent_camera_state_CtoS msg;
     Vec3 p = current_camera->get_position();
@@ -127,7 +127,7 @@ void on_disconnect()
 void set_location_pointer()
 {
     location_pointer_set = false;
-    Vec3 loc = player_agent.action.get_aiming_point();
+    Vec3 loc = playerAgent_state.action.get_aiming_point();
     if (vec3_equal(loc, vec3_init(0,0,0))) return;
     location_pointer = loc;
     location_pointer_set = true;

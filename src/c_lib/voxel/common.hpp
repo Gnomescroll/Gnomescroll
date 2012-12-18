@@ -10,7 +10,7 @@ union Voxel
     unsigned int color;
 };
 
-struct VoxelNormal
+struct Voxel_normal
 {
     union
     {
@@ -19,7 +19,7 @@ struct VoxelNormal
     };
 };
 
-struct VoxAOElement
+struct voxAOElement
 {
     union
     {
@@ -31,7 +31,7 @@ struct VoxAOElement
     };
 };
 
-struct VoxelTex
+struct Voxel_tex
 {
     union
     {
@@ -40,12 +40,11 @@ struct VoxelTex
     };
 };
 
-class VoxelVertex
+class Voxel_vertex
 {
     public:
     
     float x,y,z;
-
     union
     {
         unsigned char rgba[4]; //12
@@ -69,15 +68,15 @@ class VoxelVertex
 };
 
 #if DC_CLIENT
-class VoxelVertexList
+class Voxel_vertex_list
 {
     public:
-    VoxelVertex* vertex_list;   //number of vertices
+    Voxel_vertex* vertex_list;   //number of vertices
 
     int vnum;   //number of vertices
     int voff;   //offset of vertices
 
-    VoxelVertexList()
+    Voxel_vertex_list()
     :
     vertex_list(NULL)
     {
@@ -85,7 +84,7 @@ class VoxelVertexList
         voff = 0;
     }
 
-    ~VoxelVertexList()
+    ~Voxel_vertex_list()
     {
         if(vertex_list != NULL)
             delete[] vertex_list;
@@ -93,8 +92,14 @@ class VoxelVertexList
 };
 #endif
 
+/*
+struct Voxel {
+    unsigned char r,g,b,a;
+};
+*/
+
 //fast rond up to next power of two
-unsigned next_pow2( unsigned x ) {
+unsigned NextPow2( unsigned x ) {
     --x;
     x |= x >> 1;
     x |= x >> 2;

@@ -22,14 +22,14 @@ dont_include_this_file_in_server
 
 #include <common/color.hpp>
 
-void AgentEvent::name_set()
+void Agent_event::name_set()
 {
     GS_ASSERT(this->a->status.name != NULL);
     if (this->a->status.name == NULL) return;
     this->bb.set_text(this->a->status.name);
 }
 
-void AgentEvent::update_hud_name()
+void Agent_event::update_hud_name()
 {
     const float z_margin = 0.4f;
     Vec3 p = this->a->get_position();
@@ -65,7 +65,7 @@ void AgentEvent::update_hud_name()
 }
 
 // side effects of taking damage. dont modify health/death here
-void AgentEvent::took_damage(int dmg)
+void Agent_event::took_damage(int dmg)
 {
     GS_ASSERT(dmg > 0);
     if (dmg <= 0) return;
@@ -95,7 +95,7 @@ void AgentEvent::took_damage(int dmg)
         //Sound::play_3d_sound("agent_took_damage", p.x, p.y, p.z, 0,0,0);
 }
 
-void AgentEvent::healed(int amount)
+void Agent_event::healed(int amount)
 {
     GS_ASSERT(amount >= 0);
     if (a->is_you())
@@ -130,7 +130,7 @@ void AgentEvent::healed(int amount)
     b->set_ttl(245);
 }
 
-void AgentEvent::died()
+void Agent_event::died()
 {
     if (!this->a->status.dead)
     {
@@ -151,7 +151,7 @@ void AgentEvent::died()
     Toolbelt::agent_died(this->a->id);
 }
 
-void AgentEvent::born()
+void Agent_event::born()
 {
     if (!this->a->status.dead) return;
     //if (a->is_you())
@@ -166,52 +166,52 @@ void AgentEvent::born()
     this->a->vox->reset_skeleton();
 }
 
-void AgentEvent::life_changing(bool dead)
+void Agent_event::life_changing(bool dead)
 {
     if (dead) died();
     else born();
 }
 
-void AgentEvent::set_spawner(int pt)
+void Agent_event::set_spawner(int pt)
 {
     this->a->status.spawner = pt;
 }
 
-void AgentEvent::crouched()
+void Agent_event::crouched()
 {
     this->model_was_changed = true;
     this->a->vox->set_vox_dat(&VoxDats::agent_crouched);
     this->a->vox->reset_skeleton();
 }
 
-void AgentEvent::uncrouched()
+void Agent_event::uncrouched()
 {
     this->model_was_changed = true;
     this->a->vox->set_vox_dat(&VoxDats::agent);
     this->a->vox->reset_skeleton();
 }
 
-bool AgentEvent::model_changed()
+bool Agent_event::model_changed()
 {
     bool changed = this->model_was_changed;
     this->model_was_changed = false;
     return changed;
 }
 
-void AgentEvent::set_agent_vox_status(AgentVoxStatus status)
+void Agent_event::set_agent_vox_status(AgentVoxStatus status)
 {
     if (this->vox_status != status) this->model_was_changed = true;
     this->vox_status = status;
 }
 
-void AgentEvent::reload_weapon(int type)
+void Agent_event::reload_weapon(int type)
 {
     //Vec3 p = this->a->get_position();
     //Sound::play_3d_sound("reload", p.x, p.y, p.z, 0,0,0);
     // play reload animation/sound for the weapon
 }
 
-void AgentEvent::update_mining_laser()
+void Agent_event::update_mining_laser()
 {
     if (!this->mining_laser_emitter.on) return;
     struct Vec3 p = this->a->arm_center();
@@ -223,7 +223,7 @@ void AgentEvent::update_mining_laser()
     this->mining_laser_emitter.prep_draw();
 }
 
-void AgentEvent::begin_mining_laser()
+void Agent_event::begin_mining_laser()
 {
     int laser_type = Toolbelt::get_agent_selected_item_type(this->a->id);
     GS_ASSERT(laser_type != NULL_ITEM_TYPE);
@@ -234,12 +234,12 @@ void AgentEvent::begin_mining_laser()
     this->mining_laser_emitter.turn_on();
 }
 
-void AgentEvent::end_mining_laser()
+void Agent_event::end_mining_laser()
 {
     this->mining_laser_emitter.turn_off();
 }
 
-void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
+void Agent_event::fired_weapon_at_object(int id, EntityType type, int part)
 {
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
@@ -253,7 +253,7 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
         Agent* agent = Agents::get_agent((AgentID)id);
         if (agent != NULL && agent->vox != NULL)
         {
-            VoxelVolume* vv = agent->vox->get_part(part);
+            Voxel_volume* vv = agent->vox->get_part(part);
             if (vv != NULL)
             {
                 Vec3 c = vv->get_center();
@@ -279,7 +279,7 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
 
 }
 
-void AgentEvent::fired_weapon_at_block(float x, float y, float z, int cube, int side)
+void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int side)
 {
     ASSERT_BOXED_POINTf(x);
     ASSERT_BOXED_POINTf(y);
@@ -319,7 +319,7 @@ void AgentEvent::fired_weapon_at_block(float x, float y, float z, int cube, int 
     //Sound::play_3d_sound("laser_hit_block", x,y,z, 0,0,0);
 }
 
-void AgentEvent::fired_weapon_at_nothing()
+void Agent_event::fired_weapon_at_nothing()
 {
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
@@ -340,18 +340,18 @@ void AgentEvent::fired_weapon_at_nothing()
     );
 }
 
-void AgentEvent::threw_grenade()
+void Agent_event::threw_grenade()
 {
     // play throw grenade animation
     // might need to sync grenades with this?
 }
 
-void AgentEvent::placed_block()
+void Agent_event::placed_block()
 {
     // player agent block placement animation
 }
 
-void AgentEvent::hit_block()
+void Agent_event::hit_block()
 {
     // play pick swing
     // play block damage animation
@@ -362,7 +362,7 @@ void AgentEvent::hit_block()
     //Sound::play_3d_sound("block_took_damage", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
 }
 
-void AgentEvent::melee_attack_object(int id, EntityType type, int part)
+void Agent_event::melee_attack_object(int id, EntityType type, int part)
 {
     // play pick swing animation
     // play blood animation
@@ -374,24 +374,24 @@ void AgentEvent::melee_attack_object(int id, EntityType type, int part)
     //Sound::play_3d_sound("pick_hit_agent", p.x, p.y, p.z, 0,0,0);
 }
 
-void AgentEvent::melee_attack_nothing()
+void Agent_event::melee_attack_nothing()
 {
     // play pick swing animation
     //Vec3 p = this->a->get_camera_position();
     //Sound::play_3d_sound("pick_swung", p.x, p.y, p.z, 0,0,0);
 }
 
-void AgentEvent::fire_empty_weapon(int weapon_type)
+void Agent_event::fire_empty_weapon(int weapon_type)
 {
     Vec3 p = this->a->get_camera_position();
     Sound::play_3d_sound("out_of_ammo", p.x, p.y, p.z, 0,0,0);
 }
 
-AgentEvent::~AgentEvent()
+Agent_event::~Agent_event()
 {
 }
 
-AgentEvent::AgentEvent(Agent* owner) :
+Agent_event::Agent_event(Agent* owner) :
     a(owner),
     vox_status(AGENT_VOX_IS_STANDING),
     model_was_changed(true),
