@@ -4,7 +4,10 @@
 #include <voxel/voxel_volume.hpp>
 #include <voxel/voxel_dat.hpp>
 
-class Voxel_model 
+namespace Voxels
+{
+
+class VoxelModel 
 {
     public:
         //skeleton
@@ -72,6 +75,8 @@ class Voxel_model
 
         float largest_radius(); // temporary, until real body collision detection
 
-        Voxel_model(VoxDat* vox_dat, int id, EntityType type);
-        ~Voxel_model();
+        VoxelModel(VoxDat* vox_dat, int id, EntityType type);
+        ~VoxelModel();
 };
+
+}   // Voxels

@@ -31,7 +31,7 @@ class EntityAttributes
         //float dim_camera_height;
 
         //// voxel model
-        //class VoxDat* vox_dat;
+        //class Voxels::VoxDat* vox_dat;
         //bool vox_init_hitscan;
         //bool vox_init_draw;
 

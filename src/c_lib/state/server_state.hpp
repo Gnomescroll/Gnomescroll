@@ -19,7 +19,7 @@ namespace ServerState
     extern class Entities::Entity* base;
 
     // property lists
-    extern VoxelHitscanList* voxel_hitscan_list;
+    extern Voxels::VoxelHitscanList* voxel_hitscan_list;
 
     void init_lists();
     void teardown_voxel_lists();

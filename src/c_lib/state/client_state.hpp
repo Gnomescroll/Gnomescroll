@@ -23,8 +23,8 @@ extern bool location_pointer_set;
 extern class Agents::PlayerAgent player_agent;
 
 // property lists
-extern class VoxelRenderListManager* voxel_render_list;
-extern class VoxelHitscanList* voxel_hitscan_list;
+extern class Voxels::VoxelRenderListManager* voxel_render_list;
+extern class Voxels::VoxelHitscanList* voxel_hitscan_list;
 
 extern int last_ping_time;
 extern int last_reliable_ping_time;

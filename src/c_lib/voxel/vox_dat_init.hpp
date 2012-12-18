@@ -1,24 +1,23 @@
 #pragma once
 
-
 namespace VoxDats
 {
 
 // agent
-extern VoxDat agent;
-extern VoxDat agent_crouched;
-extern VoxDat agent_dead;
+extern Voxels::VoxDat agent;
+extern Voxels::VoxDat agent_crouched;
+extern Voxels::VoxDat agent_dead;
 
 // monsters
-extern VoxDat robot_bomb;
-extern VoxDat robot_box;
-extern VoxDat monster_spawner;
+extern Voxels::VoxDat robot_bomb;
+extern Voxels::VoxDat robot_box;
+extern Voxels::VoxDat monster_spawner;
 
 // items
-extern VoxDat base;
-extern VoxDat energy_core;
-extern VoxDat agent_spawner;
-extern VoxDat turret;
+extern Voxels::VoxDat base;
+extern Voxels::VoxDat energy_core;
+extern Voxels::VoxDat agent_spawner;
+extern Voxels::VoxDat turret;
 
 void init();
 

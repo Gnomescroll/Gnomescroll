@@ -2,8 +2,11 @@
 
 #include <common/files.hpp>
 
+namespace Voxels
+{
+
 //this function will always return on a new line or null
-static void check_for_comments(char* s, size_t* index)
+static void check_for_comments(const char* s, size_t* index)
 {   
     while (1)
     {
@@ -16,7 +19,7 @@ static void check_for_comments(char* s, size_t* index)
     }
 }
 
-void read_skeleton(char* file_name, VoxDat* vox_dat)
+void read_skeleton(const char* file_name, VoxDat* vox_dat)
 {
     //printf("Loading skeleton: %s \n", file_name);
     size_t size = 0;
@@ -91,7 +94,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     free(buffer);
 }
 
-void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
+void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
 {
     //printf("Loading voxel model: %s \n", file_name);
     size_t size = 0;
@@ -169,3 +172,5 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
 
     free(buffer);
 }
+
+}   // Voxels

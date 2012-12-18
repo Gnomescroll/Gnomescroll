@@ -25,8 +25,8 @@ int frame_id = 0;
 Vec3 location_pointer = vec3_init(0,0,0);
 bool location_pointer_set = false;
 
-VoxelRenderListManager* voxel_render_list;
-VoxelHitscanList* voxel_hitscan_list = NULL;
+Voxels::VoxelRenderListManager* voxel_render_list;
+Voxels::VoxelHitscanList* voxel_hitscan_list = NULL;
 
 int last_ping_time;
 int last_reliable_ping_time;
@@ -37,9 +37,9 @@ int agent_control_state[16];
 
 void init_lists()
 {
-    voxel_render_list = new VoxelRenderListManager;
+    voxel_render_list = new Voxels::VoxelRenderListManager;
     voxel_render_list->init();
-    voxel_hitscan_list = new VoxelHitscanList;
+    voxel_hitscan_list = new Voxels::VoxelHitscanList;
 }
 
 void teardown_voxel_lists()

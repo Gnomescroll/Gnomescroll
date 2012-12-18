@@ -71,7 +71,7 @@ HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, EntityType type,
     Agents::Agent* agent, const float range)
 { // hitscan vector against world
-    class VoxelHitscanTarget target;
+    class Voxels::VoxelHitscanTarget target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];
@@ -231,7 +231,7 @@ static void damage_entity(EntityType entity_type, int entity_id, int part_id, En
     health->take_damage(dmg);
 }
 
-void damage_target(const class VoxelHitscanTarget* target, EntityType inflictor_type, int dmg)
+void damage_target(const class Voxels::VoxelHitscanTarget* target, EntityType inflictor_type, int dmg)
 {
     switch (target->entity_type)
     {

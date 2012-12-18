@@ -3,6 +3,9 @@
 #include <entity/constants.hpp>
 #include <physics/vec3.hpp>
 
+namespace Voxels
+{
+
 const int VOXEL_HITSCAN_LIST_SIZE = 1024;
 
 /*
@@ -67,3 +70,5 @@ class VoxelHitscanList
     VoxelHitscanList();
     ~VoxelHitscanList();
 };
+
+}   // Voxels

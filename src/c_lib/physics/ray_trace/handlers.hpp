@@ -50,7 +50,7 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p);
 void broadcast_object_fired(int id, EntityType type, HitscanTarget t);
 
 #if DC_SERVER
-void damage_target(const class VoxelHitscanTarget* target, EntityType inflictor_type, int dmg);
+void damage_target(const class Voxels::VoxelHitscanTarget* target, EntityType inflictor_type, int dmg);
 #endif
 
 }   // Hitscan

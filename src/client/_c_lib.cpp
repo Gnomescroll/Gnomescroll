@@ -371,7 +371,7 @@ int init_c_lib(int argc, char* argv[])
     Skybox::init();
  
     VoxDats::init();
-    init_voxel_volume();
+    Voxels::init_voxel_volume();
     
     Sound::init();
     init_input();
@@ -382,7 +382,7 @@ int init_c_lib(int argc, char* argv[])
 
     Hud::init();
 
-    init_voxel_render_list_shader1();   //used to be called from ClientState::init
+    Voxels::init_voxel_render_list_shader1();   //used to be called from ClientState::init
 
     //init shaders
     
@@ -444,7 +444,7 @@ void close_c_lib()
     Entities::teardown_entity_dat();
     
     if (TEARDOWN_DEBUG) printf("voxel volume teardown\n");
-    teardown_voxel_volume();
+    Voxels::teardown_voxel_volume();
     if (TEARDOWN_DEBUG) printf("hud teardown\n");
     Hud::teardown();
     

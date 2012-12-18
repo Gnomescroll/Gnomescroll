@@ -17,14 +17,14 @@ namespace ServerState
     bool signal_exit = false;
     bool reload_settings = false;
     
-    VoxelHitscanList* voxel_hitscan_list = NULL;
+    Voxels::VoxelHitscanList* voxel_hitscan_list = NULL;
 
     class Entities::Entity* base;
 
     void init_lists()
     {
         GS_ASSERT(voxel_hitscan_list == NULL);
-        voxel_hitscan_list = new VoxelHitscanList;
+        voxel_hitscan_list = new Voxels::VoxelHitscanList;
     }
 
     void teardown_voxel_lists()

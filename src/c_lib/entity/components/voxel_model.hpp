@@ -21,8 +21,8 @@ class VoxelModelComponent: public Component
         }
 
     public:
-        Voxel_model* vox;
-        VoxDat* vox_dat;
+        Voxels::VoxelModel* vox;
+        Voxels::VoxDat* vox_dat;
         bool init_hitscan;
         bool init_draw;
         bool should_hitscan;
@@ -36,7 +36,7 @@ class VoxelModelComponent: public Component
         float get_radius(int part)
         {
             if (this->vox == NULL) return 1.0f;
-            VoxelVolume* vv = vox->get_part(part);
+            Voxels::VoxelVolume* vv = vox->get_part(part);
             if (vv == NULL) return 1.0f;
             return vv->radius;
         }
@@ -50,7 +50,7 @@ class VoxelModelComponent: public Component
         struct Vec3 get_center(int part)
         {
             if (this->vox == NULL) return vec3_init(0,0,0);
-            VoxelVolume* vv = vox->get_part(part);
+            Voxels::VoxelVolume* vv = vox->get_part(part);
             if (vv == NULL) return vec3_init(0,0,0);
             return vv->get_center();
         }
@@ -61,7 +61,7 @@ class VoxelModelComponent: public Component
             if (this->vox != NULL) return;
             GS_ASSERT(this->vox_dat != NULL);
             if (this->vox_dat == NULL) return;
-            this->vox = new Voxel_model(this->vox_dat, this->object->id, this->object->type);
+            this->vox = new Voxels::VoxelModel(this->vox_dat, this->object->id, this->object->type);
             this->set_properties();
             vox->update(position.x, position.y, position.z, theta, phi);
             vox->set_hitscan(this->init_hitscan);

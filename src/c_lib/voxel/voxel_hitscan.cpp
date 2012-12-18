@@ -3,6 +3,9 @@
 #include <physics/ray_trace/hitscan.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 
+namespace Voxels
+{
+
 bool VoxelHitscanList::hitscan(
     const float x0, const float y0, const float z0,     // source
     const float x1, const float y1, const float z1,     // direction
@@ -198,3 +201,5 @@ void VoxelHitscanTarget::copy_voxel(int voxel[3])
 {
     for (int i=0; i<3; i++) voxel[i] = this->voxel[i];
 }
+
+}   // Voxels

@@ -586,7 +586,7 @@ void Agent::spawn_state(struct Vec3 p)
 
 void Agent::init_vox()
 {
-    this->vox = new Voxel_model(&VoxDats::agent, this->id, this->type);
+    this->vox = new Voxels::VoxelModel(&VoxDats::agent, this->id, this->type);
     this->vox->set_hitscan(true);
     this->vox->register_hitscan();
 }
@@ -708,7 +708,7 @@ struct Vec3 Agent::camera_position()
     return vec3_init(this->s.x, this->s.y, this->camera_z());
 }
 
-class VoxelVolume* Agent::get_arm()
+class Voxels::VoxelVolume* Agent::get_arm()
 {
     if (this->vox == NULL) return NULL;
     return this->vox->get_part(AGENT_PART_RARM);
@@ -921,7 +921,7 @@ void Agent::update_model()
 
     this->vox->was_updated = false;
     // other agents
-    VoxDat* vox_dat = &VoxDats::agent;
+    Voxels::VoxDat* vox_dat = &VoxDats::agent;
     float radius = this->vox->get_part(0)->radius;
 
     if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
@@ -962,7 +962,7 @@ void Agent::update_model()
     #if DC_SERVER
     if (this->vox == NULL) return;
     this->vox->was_updated = false;
-    VoxDat* vox_dat = &VoxDats::agent;
+    Voxels::VoxDat* vox_dat = &VoxDats::agent;
     if (this->crouched())
     {
         vox_dat = &VoxDats::agent_crouched;

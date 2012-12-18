@@ -5,8 +5,11 @@
 #include <voxel/voxel_hitscan.hpp>
 
 #if DC_CLIENT
-#include <voxel/voxel_render.hpp>
+# include <voxel/voxel_render.hpp>
 #endif
+
+namespace Voxels
+{
 
 class VoxelVolume
 {
@@ -98,3 +101,5 @@ class VoxelVolume
 
 void init_voxel_volume();
 void teardown_voxel_volume();
+
+}   // Voxels

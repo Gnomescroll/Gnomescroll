@@ -15,6 +15,9 @@ dont_include_this_file_in_server
 
 #define VOXEL_RENDER_DEBUG 0
 
+namespace Voxels
+{
+
 // Shader
 
 static GLenum voxel_shader_vert = 0;
@@ -323,3 +326,5 @@ void VoxelRenderListManager::draw()
         vrl->update_vertex_buffer_object(); 
     }
 }
+
+}   // Voxels

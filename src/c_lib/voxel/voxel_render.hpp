@@ -9,11 +9,12 @@ dont_include_this_file_on_server
 #include <voxel/voxel_volume.hpp>
 #include <SDL/shader_loader.hpp>
 
-//#include <physics/vector4.hpp>
-
 /*
     Double buffered drawing object template
 */
+
+namespace Voxels
+{
 
 const int VOXEL_RENDER_LIST_SIZE = 1024;
 const int VOXEL_RENDER_LISTS = 16;
@@ -92,3 +93,5 @@ class VoxelRenderListManager
         if (this->lists != NULL) delete[] this->lists;
     }
 };
+
+}   // Voxels

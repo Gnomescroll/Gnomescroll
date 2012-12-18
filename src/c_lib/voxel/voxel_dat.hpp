@@ -3,6 +3,9 @@
 #include <common/color.hpp>
 #include <physics/affine.hpp>
 
+namespace Voxels
+{
+
 /* Dat storage */
 
 class VoxDat; // forward decl;
@@ -55,13 +58,13 @@ class VoxPart
         void set_local_matrix();   // uses cached x,y,z,rx,ry,rz values
         void set_dimension(int x, int y, int z);
 
-        void set_filename(char *filename);
+        void set_filename(const char* filename);
         VoxPart(
             VoxDat* dat,
             int part_num,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
-            char* filename,
+            const char* filename,
             bool biaxial=false
         );
 
@@ -95,9 +98,8 @@ class VoxDat {
             int part_num,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
-            char* filename,
-            bool biaxial=false
-        );
+            const char* filename,
+            bool biaxial=false);
 
         //anchor x,y,z then rotation x,y,z
         void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
@@ -112,3 +114,5 @@ class VoxDat {
         VoxDat();
         ~VoxDat();
 };
+
+}   // Voxels

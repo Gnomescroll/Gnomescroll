@@ -2,44 +2,43 @@
 
 #include <voxel/voxel_loader.hpp>
 
-
 namespace VoxDats
 {
 
 // agent
-VoxDat agent;
-VoxDat agent_crouched;
-VoxDat agent_dead;
+Voxels::VoxDat agent;
+Voxels::VoxDat agent_crouched;
+Voxels::VoxDat agent_dead;
 
 // monsters
-VoxDat robot_bomb;
-VoxDat robot_box;
-VoxDat monster_spawner;
+Voxels::VoxDat robot_bomb;
+Voxels::VoxDat robot_box;
+Voxels::VoxDat monster_spawner;
 
 // items
-VoxDat base;
-VoxDat energy_core;
-VoxDat agent_spawner;
-VoxDat turret;
+Voxels::VoxDat base;
+Voxels::VoxDat energy_core;
+Voxels::VoxDat agent_spawner;
+Voxels::VoxDat turret;
 
 void init()
 {
     // agent
-    read_skeleton((char*)"./media/voxel/crouch.skeleton", &agent);
-    read_skeleton((char*)"./media/voxel/crouch.skeleton", &agent_crouched);
+    read_skeleton("./media/voxel/crouch.skeleton", &agent);
+    read_skeleton("./media/voxel/crouch.skeleton", &agent_crouched);
     
-    read_skeleton((char*)"./media/voxel/dead.skeleton", &agent_dead);
+    read_skeleton("./media/voxel/dead.skeleton", &agent_dead);
 
     // monsters
-    read_skeleton((char*)"./media/voxel/bomb.skeleton", &robot_bomb);
-    read_skeleton((char*)"./media/voxel/robot_box.skeleton", &robot_box);
-    read_skeleton((char*)"./media/voxel/monster_spawner.skeleton", &monster_spawner);
+    read_skeleton("./media/voxel/bomb.skeleton", &robot_bomb);
+    read_skeleton("./media/voxel/robot_box.skeleton", &robot_box);
+    read_skeleton("./media/voxel/monster_spawner.skeleton", &monster_spawner);
 
     // items
-    read_skeleton((char*)"./media/voxel/base.skeleton", &base);
-    read_skeleton((char*)"./media/voxel/energy_core.skeleton", &energy_core);
-    read_skeleton((char*)"./media/voxel/spawner.skeleton", &agent_spawner);
-    read_skeleton((char*)"./media/voxel/turret.skeleton", &turret);
+    read_skeleton("./media/voxel/base.skeleton", &base);
+    read_skeleton("./media/voxel/energy_core.skeleton", &energy_core);
+    read_skeleton("./media/voxel/spawner.skeleton", &agent_spawner);
+    read_skeleton("./media/voxel/turret.skeleton", &turret);
 }
 
 }   // VoxDats

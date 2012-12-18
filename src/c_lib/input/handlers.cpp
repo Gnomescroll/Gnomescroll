@@ -806,7 +806,7 @@ void print_mob_id()
     int ignore_id = -1;
     EntityType ignore_type = OBJECT_NONE;
 
-    class VoxelHitscanTarget target;
+    class Voxels::VoxelHitscanTarget target;
     float vox_distance = 0.0f;
     float collision_point[3] = {0.0f};
     bool voxel_hit = STATE::voxel_hitscan_list->hitscan(

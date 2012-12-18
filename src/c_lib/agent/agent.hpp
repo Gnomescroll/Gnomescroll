@@ -101,7 +101,7 @@ class Agent
         class AgentStatus status;
         //class Agent_weapons weapons;
 
-        class Voxel_model* vox;
+        class Voxels::VoxelModel* vox;
 
         #if DC_CLIENT
         class AgentEvent event;
@@ -207,7 +207,7 @@ class Agent
         float camera_z();
         Vec3 camera_position();
 
-        class VoxelVolume* get_arm();
+        class Voxels::VoxelVolume* get_arm();
         Vec3 arm_center();
         Vec3 arm_forward();
         Vec3 arm_right();

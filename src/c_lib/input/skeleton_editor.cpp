@@ -5,15 +5,16 @@
 
 namespace SkeletonEditor
 {
+    
 bool rotate = false;
 bool use_skeleton = false;
 EntityType type = OBJECT_AGENT;
 int id = 0;
 int part = 0;
-VoxDat* vox_dat = NULL;
-Voxel_model* vox = NULL;
+Voxels::VoxDat* vox_dat = NULL;
+Voxels::VoxelModel* vox = NULL;
 void *obj = NULL;
-VoxPart* vp = NULL;
+Voxels::VoxPart* vp = NULL;
 int node = 0;
 
 float lateral_speed = 0.05f;
@@ -107,7 +108,7 @@ void raycast_to_part()
     // hitscan against voxels
     float vox_distance = 10000000.0f;
     float collision_point[3];
-    VoxelHitscanTarget target;
+    Voxels::VoxelHitscanTarget target;
     bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
         p.x,p.y,p.z,
         vec.x,vec.y,vec.z,
@@ -123,7 +124,7 @@ void raycast_to_part()
     part = target.part_id;
     type = (EntityType)target.entity_type;
 
-    VoxDat* old = vox_dat;
+    Voxels::VoxDat* old = vox_dat;
     switch (type)
     {
         case OBJECT_AGENT:

@@ -164,7 +164,7 @@ void AgentEvent::born()
     this->a->status.dead = false;
 
     // reset skeleton
-    VoxDat* vd = (this->a->crouched()) ? &VoxDats::agent_crouched : &VoxDats::agent;
+    Voxels::VoxDat* vd = (this->a->crouched()) ? &VoxDats::agent_crouched : &VoxDats::agent;
     this->a->vox->set_vox_dat(vd);
     this->a->vox->reset_skeleton();
 }
@@ -256,7 +256,7 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
         Agent* agent = Agents::get_agent((AgentID)id);
         if (agent != NULL && agent->vox != NULL)
         {
-            VoxelVolume* vv = agent->vox->get_part(part);
+            Voxels::VoxelVolume* vv = agent->vox->get_part(part);
             if (vv != NULL)
             {
                 Vec3 c = vv->get_center();

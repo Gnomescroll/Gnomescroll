@@ -372,7 +372,7 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return false;
 
-    class VoxelVolume* vv = a->get_arm();
+    class Voxels::VoxelVolume* vv = a->get_arm();
     IF_ASSERT(vv == NULL) return false;
     
     // HACKED UP MODEL DEPENDENT CRAP

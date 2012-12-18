@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Voxels
+{
 
 union Voxel 
 {
@@ -130,3 +132,5 @@ int pow2_2(int n)
     }
     return x;
 }
+
+}   // Voxels

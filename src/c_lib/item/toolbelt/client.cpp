@@ -142,7 +142,7 @@ static bool beta_scan_world()
     Vec3 pos = player_agent.camera_position();
     Vec3 look = agent_camera->forward_vector();
 
-    class VoxelHitscanTarget target;
+    class Voxels::VoxelHitscanTarget target;
     float vox_distance;
     float collision_point[3];
     int block_pos[3];

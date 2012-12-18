@@ -1,9 +1,11 @@
 #include "voxel_dat.hpp"
 
+namespace Voxels
+{
+
 /* *
  * Dat storage
  * */
-
 
 /* Color */
 
@@ -105,7 +107,7 @@ void VoxPart::set_dimension(int x, int y, int z)
     dimension.set(x,y,z);
 }
 
-void VoxPart::set_filename(char *filename)
+void VoxPart::set_filename(const char *filename)
 {
     int len = (int)strlen(filename);
     this->filename = (char*)realloc(this->filename, sizeof(char) * (len+1));
@@ -118,15 +120,14 @@ VoxPart::VoxPart(
     int part_num,
     float vox_size,
     int dimension_x, int dimension_y, int dimension_z,
-    char* filename,
-    bool biaxial
-):
-dimension(dimension_x, dimension_y, dimension_z),
-dat(dat),
-part_num(part_num),
-vox_size(vox_size),
-biaxial(biaxial),
-colorable(false)
+    const char* filename,
+    bool biaxial)
+  : dimension(dimension_x, dimension_y, dimension_z),
+    dat(dat),
+    part_num(part_num),
+    vox_size(vox_size),
+    biaxial(biaxial),
+    colorable(false)
 {
     this->base_color.r = 1;
     this->base_color.g = 1;
@@ -237,9 +238,8 @@ void VoxDat::set_part_properties(
     int part_num,
     float vox_size,
     int dimension_x, int dimension_y, int dimension_z,
-    char* filename,
-    bool biaxial
-)
+    const char* filename,
+    bool biaxial)
 {
     if (!voxel_volume_inited) printf("ERROR WARNING: VoxDat not inited\n");
     VoxPart* p = vox_part[part_num];
@@ -414,3 +414,5 @@ void VoxDat::save(char* fn)
 
     fclose(f);
 }
+
+}   // Voxels

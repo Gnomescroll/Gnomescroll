@@ -1,21 +1,23 @@
 #include "voxel_volume.hpp"
 
 #if DC_CLIENT
-#include <state/client_state.hpp>
+# include <state/client_state.hpp>
+# include <voxel/voxel_render.hpp>
 #endif
+
 #if DC_SERVER
-#include <state/server_state.hpp>
+# include <state/server_state.hpp>
 #endif
+
 #include <voxel/constants.hpp>
 #include <entity/object/object.hpp>
 #include <entity/objects.hpp>
 #include <entity/components/voxel_model.hpp>
 
-#if DC_CLIENT
-#include <voxel/voxel_render.hpp>
-#endif
+namespace Voxels
+{
 
-const int VOXEL_VERTEX_SCRATCH_SIZE = 0xffff;
+const int VOXEL_VERTEX_SCRATCH_SIZE = 0xFFFF;
 static VoxelVertex* voxel_vertex_scratch_buffer = NULL;
 
 void init_voxel_volume()
@@ -706,3 +708,5 @@ inline void VoxelVolume::_set(unsigned int x, unsigned int y, unsigned int z, Vo
 { voxel[x+(y << index1)+(z << index12)] = *v; }
 inline void VoxelVolume::_set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
+
+}   // Voxels

@@ -7,16 +7,19 @@
 #include <voxel/voxel_hitscan.hpp>
 
 #if DC_CLIENT
-#include <voxel/voxel_render.hpp>
-#include <state/client_state.hpp>
+# include <voxel/voxel_render.hpp>
+# include <state/client_state.hpp>
 #endif
 
 #if DC_SERVER
-#include <state/server_state.hpp>
+# include <state/server_state.hpp>
 #endif
 
+namespace Voxels
+{
+
 //set offset and rotation
-void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
+void VoxelModel::set_skeleton_root(float x, float y, float z, float theta)
 {
     GS_ASSERT(this->skeleton_inited);
     if (!this->skeleton_inited) return;
@@ -24,7 +27,7 @@ void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
     vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
 
-void Voxel_model::set_skeleton_root(float *data)
+void VoxelModel::set_skeleton_root(float *data)
 {
     GS_ASSERT(this->skeleton_inited);
     if (!this->skeleton_inited) return;
@@ -35,7 +38,7 @@ void Voxel_model::set_skeleton_root(float *data)
     vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
 
-int Voxel_model::get_parent_node_index(int part)
+int VoxelModel::get_parent_node_index(int part)
 {
     GS_ASSERT(part >= 0 && part < this->n_parts);
     if (part < 0 || part >= this->n_parts) return -1;
@@ -44,7 +47,7 @@ int Voxel_model::get_parent_node_index(int part)
     return vp->skeleton_parent_matrix;
 }
 
-void Voxel_model::set_node_rotation_by_part(int part, float theta, float phi, float rho)
+void VoxelModel::set_node_rotation_by_part(int part, float theta, float phi, float rho)
 {
     GS_ASSERT(this->skeleton_inited);
     if (!this->skeleton_inited) return;
@@ -53,7 +56,7 @@ void Voxel_model::set_node_rotation_by_part(int part, float theta, float phi, fl
     this->set_node_rotation(node, theta, phi, rho);
 }
 
-void Voxel_model::set_node_rotation(int node, float theta, float phi, float rho)
+void VoxelModel::set_node_rotation(int node, float theta, float phi, float rho)
 {
     GS_ASSERT(this->skeleton_inited);
     if (!this->skeleton_inited) return;
@@ -69,7 +72,7 @@ void Voxel_model::set_node_rotation(int node, float theta, float phi, float rho)
     vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx - theta, ry - phi, rz - rho);
 }
 
-void Voxel_model::set_biaxial_nodes(float phi)
+void VoxelModel::set_biaxial_nodes(float phi)
 {   // in the editor, head and arm rotate the same way
     // here, they rotate opposite directions
     GS_ASSERT(this->skeleton_inited);
@@ -81,7 +84,7 @@ void Voxel_model::set_biaxial_nodes(float phi)
     }
 }
 
-void Voxel_model::update_skeleton()
+void VoxelModel::update_skeleton()
 {
     GS_ASSERT(this->skeleton_inited);
     if (!this->skeleton_inited) return;
@@ -113,7 +116,7 @@ void Voxel_model::update_skeleton()
     }
 }
 
-void Voxel_model::draw_skeleton()
+void VoxelModel::draw_skeleton()
 {
     GS_ASSERT(this->skeleton_inited);
     if (!this->skeleton_inited) return;
@@ -219,7 +222,7 @@ void Voxel_model::draw_skeleton()
     #endif
 }
 
-void Voxel_model::init_skeleton()
+void VoxelModel::init_skeleton()
 {
     GS_ASSERT(!this->skeleton_inited);
     if (this->skeleton_inited) return;
@@ -247,7 +250,7 @@ void Voxel_model::init_skeleton()
 }
 
 // implemented for the voxel editor
-void Voxel_model::reset_skeleton()
+void VoxelModel::reset_skeleton()
 {
     this->n_skeleton_nodes = vox_dat->n_skeleton_nodes;
     this->skeleton_needs_update = true;
@@ -268,7 +271,7 @@ void Voxel_model::reset_skeleton()
     }
 }
 
-void Voxel_model::init_parts(int id, EntityType type)
+void VoxelModel::init_parts(int id, EntityType type)
 {
     // create each vox part from vox_dat conf
     GS_ASSERT(!this->vox_inited);
@@ -295,7 +298,7 @@ void Voxel_model::init_parts(int id, EntityType type)
     this->vox_inited = true;
 }
 
-void Voxel_model::set_part_color(int part_num)
+void VoxelModel::set_part_color(int part_num)
 {
     GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
     if (part_num < 0 || part_num >= this->n_parts) return;
@@ -326,13 +329,13 @@ void Voxel_model::set_part_color(int part_num)
     }
 }
 
-void Voxel_model::set_colors()
+void VoxelModel::set_colors()
 {
     for (int i=0; i<this->n_parts; i++)
         this->set_part_color(i);
 }
 
-void Voxel_model::fill_part_color(int part_num, struct Color color)
+void VoxelModel::fill_part_color(int part_num, struct Color color)
 {
     GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
     if (part_num < 0 || part_num >= this->n_parts) return;
@@ -364,18 +367,18 @@ void Voxel_model::fill_part_color(int part_num, struct Color color)
     }
 }
 
-void Voxel_model::fill_color(struct Color color)
+void VoxelModel::fill_color(struct Color color)
 {
     for (int i=0; i<this->n_parts; i++)
         this->fill_part_color(i, color);
 }
 
-void Voxel_model::set_draw(bool draw)
+void VoxelModel::set_draw(bool draw)
 {
     for (int i=0; i<this->n_parts; this->vv[i++].draw = draw);
 }
 
-void Voxel_model::register_hitscan()
+void VoxelModel::register_hitscan()
 {
     GS_ASSERT(this->vv != NULL);
     if (this->vv == NULL) return;
@@ -383,7 +386,7 @@ void Voxel_model::register_hitscan()
         STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i]);
 }
 
-void Voxel_model::unregister_hitscan()
+void VoxelModel::unregister_hitscan()
 {
     GS_ASSERT(this->vv != NULL);
     if (this->vv == NULL) return;
@@ -391,12 +394,12 @@ void Voxel_model::unregister_hitscan()
         STATE::voxel_hitscan_list->unregister_voxel_volume(&this->vv[i++]));
 }
 
-void Voxel_model::set_hitscan(bool hitscan)
+void VoxelModel::set_hitscan(bool hitscan)
 {
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
-void Voxel_model::update(float x, float y, float z, float theta, float phi) 
+void VoxelModel::update(float x, float y, float z, float theta, float phi) 
 {
     if (this->frozen) return;
     if (this->was_updated) return;
@@ -422,12 +425,12 @@ void Voxel_model::update(float x, float y, float z, float theta, float phi)
     this->was_updated = true;
 }
 
-void Voxel_model::set_vox_dat(VoxDat* vox_dat)
+void VoxelModel::set_vox_dat(VoxDat* vox_dat)
 {
     this->vox_dat = vox_dat;
 }
 
-Voxel_model::Voxel_model(VoxDat* vox_dat, int id, EntityType type) :
+VoxelModel::VoxelModel(VoxDat* vox_dat, int id, EntityType type) :
     skeleton_inited(false),
     n_skeleton_nodes(0),
     vox_skeleton_transveral_list(NULL),
@@ -439,7 +442,7 @@ Voxel_model::Voxel_model(VoxDat* vox_dat, int id, EntityType type) :
     frozen(false),
     vv(NULL)
 {
-    if (vox_dat == NULL) printf("WARNING: ::Voxel_model() ctor -- vox_dat is NULL\n");
+    if (vox_dat == NULL) printf("WARNING: ::VoxelModel() ctor -- vox_dat is NULL\n");
     this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
     GS_ASSERT(this->n_parts > 0);
@@ -454,7 +457,7 @@ Voxel_model::Voxel_model(VoxDat* vox_dat, int id, EntityType type) :
     this->init_skeleton();
 }
 
-Voxel_model::~Voxel_model()
+VoxelModel::~VoxelModel()
 {
     if (this->vv != NULL)
     {
@@ -474,17 +477,17 @@ Voxel_model::~Voxel_model()
     if (this->biaxial_nodes != NULL) free(this->biaxial_nodes);
 }
 
-void Voxel_model::freeze()
+void VoxelModel::freeze()
 {
     this->frozen = true;
 }
 
-void Voxel_model::thaw()
+void VoxelModel::thaw()
 {
     this->frozen = false;
 }
 
-float Voxel_model::largest_radius()
+float VoxelModel::largest_radius()
 {
     float largest = 0.0f;
     if (this->vv == NULL) return largest;
@@ -497,21 +500,21 @@ float Voxel_model::largest_radius()
     return largest;
 }
 
-VoxelVolume* Voxel_model::get_part(int part)
+VoxelVolume* VoxelModel::get_part(int part)
 {
     GS_ASSERT(part >= 0 && part < this->n_parts);
     if (part < 0 || part >= this->n_parts) return NULL;
     return &this->vv[part];
 }
 
-Vec3 Voxel_model::get_center()
+Vec3 VoxelModel::get_center()
 {
     GS_ASSERT(this->n_parts > 0);
     if (this->n_parts <= 0) return vec3_init(0,0,0);
     return this->get_part(0)->get_center();
 }
 
-Vec3 Voxel_model::get_center(int part)
+Vec3 VoxelModel::get_center(int part)
 {
     GS_ASSERT(part < this->n_parts);
     GS_ASSERT(part >= 0);
@@ -519,33 +522,33 @@ Vec3 Voxel_model::get_center(int part)
     return this->get_part(part)->get_center();
 }
 
-float Voxel_model::get_radius()
+float VoxelModel::get_radius()
 {
     GS_ASSERT(this->n_parts > 0);
     if (this->n_parts <= 0) return 1.0f;
     return this->get_part(0)->radius;
 }
 
-float Voxel_model::get_radius(int part)
+float VoxelModel::get_radius(int part)
 {
     GS_ASSERT(part >= 0 && part < this->n_parts);
     if (part < 0 || part >= this->n_parts) return 1.0f;
     return this->get_part(part)->radius;
 }
 
-Affine* Voxel_model::get_node(int node)
+Affine* VoxelModel::get_node(int node)
 {
     GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
     if (node < 0 || node >= this->n_skeleton_nodes) return NULL;
     return &this->vox_skeleton_world_matrix[node];
 }
 
-bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
+bool VoxelModel::in_sight_of(Vec3 source, Vec3* sink)
 {   // ray cast from source to each body part center (shuffled)
     return this->in_sight_of(source, sink, 0.0f);
 }
 
-bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
+bool VoxelModel::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
 {   // ray cast from source to each body part center (shuffled)
     GS_ASSERT(failure_rate >= 0.0f && failure_rate < 1.0f);
     GS_ASSERT(this->n_parts > 0);
@@ -574,3 +577,5 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
     }
     return false;
 }
+
+}   // Voxels
