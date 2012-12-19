@@ -85,5 +85,4 @@ int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, boo
 int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count);
 
 ItemContainerType get_container_type_for_cube(CubeID cube_id);
-
 }   // Item

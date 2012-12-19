@@ -25,6 +25,12 @@ typedef enum
     MECH_RENDER_TYPE_2, //mycelium/ladder type
 } MechRenderType;
 
+typedef enum
+{
+    MECH_BEHAVIOR_TYPE_DEFAULT = 0
+    MECH_BEHAVIOR_TYPE_PLANT,
+} MechBehaviorType;
+
 //instance
 struct MECH
 {
@@ -45,6 +51,8 @@ struct MECH
 
     float offset_x;
     float offset_y;
+
+    int growth_ttl;
 };
 
 typedef enum
@@ -58,6 +66,11 @@ class MechAttribute
         MechType mech_type;
         MechClass mech_type_class;
         MechRenderType render_type;
+        MechBehaviorType behavior_type;
+
+        int growth_ttl;         //starting growth ttl
+        MechType growth_stage;  //next growth stage
+
         MechSpriteIndex sprite_index;
         bool item_drop; // indicates whether has an item drop set
         char name[DAT_NAME_MAX_LENGTH+1];
@@ -66,6 +79,7 @@ class MechAttribute
     MechAttribute() :
         mech_type(NULL_MECH_TYPE), mech_type_class(NULL_MECH_CLASS),
         render_type(MECH_RENDER_TYPE_NONE), sprite_index(NULL_MECH_SPRITE),
+        growth_ttl(-1), growth_stage(-1),
         item_drop(false), loaded(false)
     {
         memset(this->name, 0, sizeof(this->name));
