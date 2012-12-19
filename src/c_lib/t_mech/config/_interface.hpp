@@ -30,7 +30,7 @@ void load_mech()
     _current_mech_index++;
 }
 
-void mech_def(MechClass mech_type_class, const char* name)
+void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_render_type, MechBehaviorType mech_behavior_type)
 {    
     if (s != NULL) load_mech();
 
@@ -58,6 +58,10 @@ void mech_def(MechClass mech_type_class, const char* name)
     s->mech_type_class = mech_type_class;
     strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
     s->name[DAT_NAME_MAX_LENGTH] = '\0';
+
+    s->render_type = mech_render_type;
+    s->mech_behavior_type = mech_behavior_type;
+
 }
 
 void set_sprite_index(int sprite_index)
@@ -135,6 +139,19 @@ void verify_mech_dat()
             DAT_NAME_MAX_LENGTH, mech_attributes, MAX_MECHS, mech_name_map));
     }
     #endif
+
+
+    /*
+        Growth timer just in case
+    */
+    for (int i=0; i<MAX_MECHS; i++)
+    {
+        class MechAttribute* a = &mech_attributes[i];
+        if (!a->loaded) continue;
+
+        if(a->mech_behavior_type == MECH_BEHAVIOR_TYPE_DEFAULT)
+            GS_ASSERT_ABORT(a->growth_ttl == -1);
+    }
 }
 
 void save_mech_names()

@@ -29,9 +29,20 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
 
 void client_ray_cast();
 
+
+
+static bool _mech_update(struct MECH &m); //call after type or subtype changes
+static bool unpack_mech(struct MECH &m, class mech_create_StoC &p);
+
 #endif
 
 #if DC_SERVER
+
+
+void tick(); //update growth cycles
+
+void force_mech_growth(int mech_id); //forces growth cycle
+
 bool create_crystal(int x, int y, int z, MechType mech_type);
 bool create_mech(int x, int y, int z, MechType mech_type);
 bool create_mech(int x, int y, int z, MechType mech_type, int subtype);

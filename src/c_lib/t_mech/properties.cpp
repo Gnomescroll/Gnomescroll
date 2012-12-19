@@ -44,6 +44,19 @@ MechType get_mech_type(const char* name)
     return NULL_MECH_TYPE;
 }
 
+MechType get_mech_type_dat(const char* name) //fatal on failure
+{
+    for (int i=0; i<MAX_MECHS; i++)
+    {
+        const char* cmp_name = get_mech_name((MechType)i);
+        if (cmp_name != NULL && strcmp(name, cmp_name) == 0)
+            return (MechType)i;
+    }
+    printf("In function %s:%d -- No mech for name %s\n", __FUNCTION__, __LINE__, name);
+    GS_ASSERT_ABORT(false);
+    return NULL_MECH_TYPE;
+}
+
 class MechAttribute* get_mech_attribute(MechType mech_type)
 {
     ASSERT_VALID_MECH_TYPE(mech_type);

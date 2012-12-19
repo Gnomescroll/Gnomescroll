@@ -190,6 +190,9 @@ void tick()
     ItemContainer::update_smelters();
     Item::tick();
 
+    if(counter % 5 == 0) // 6 times a second
+        t_mech::tick(); //t_mech growth timers
+
     t_map::environment_process_tick(); //refresh regolith etc...
 
     Auth::update(); // do it here because i need constant timer

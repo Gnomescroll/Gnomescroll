@@ -17,6 +17,8 @@ const char* get_mech_name(MechType type);
 bool is_valid_mech_name(const char* name);
 
 MechType get_mech_type(const char* name);
+MechType get_mech_type_dat(const char* name); //fatal on failure
+
 const char* get_compatible_mech_name(const char* name);    // for serializer
 
 MechClass get_mech_class(MechType mech_type);
