@@ -10,5 +10,5 @@ void main()
 {
     vec3 color = (diffuse_light*diffuse_p+ambient_p) * base_color;
     //color = pow(base_color, vec3(1.0f / 2.2f));  // gamma correction  TOO BRIGHT
-    gl_FragColor.rgb = base_color;
+    gl_FragColor.rgb = color;
 }

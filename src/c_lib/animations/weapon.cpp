@@ -13,6 +13,8 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
+float equipped_item_scale = 0.3f;
+
 static int rendered_item = NULL_ITEM_TYPE;
 static bool equipped_item_animating = false;
 static int equipped_item_animation_tick = 0;
@@ -36,16 +38,13 @@ static float origin_dz = 0.0f;
 static float origin_dxy = 0.0f;
 static float origin_depth = 0.0f;
 
-static float sprite_scale = 0.3f;
-
 void parse_equipment_sprite_alignment_config()
 {
     // get file contents
-    char* CONFIG_FILENAME = (char*)
-        "./media/config/equipped_sprite_alignment.cfg";
+    const char* filename = MEDIA_PATH "config/equipped_sprite_alignment.cfg";
     
     size_t size = 0;
-    char* buffer = read_file_to_buffer(CONFIG_FILENAME, &size);
+    char* buffer = read_file_to_buffer(filename, &size);
     IF_ASSERT(buffer == NULL) return;
     IF_ASSERT(size <= 0) return;
     
@@ -53,19 +52,19 @@ void parse_equipment_sprite_alignment_config()
     int read = 0;
     
     // scanf for alignment config    
-    sscanf(buffer+index, "sprite_scale: %f %n", &sprite_scale, &read);
+    sscanf(&buffer[index], "sprite_scale: %f %n", &equipped_item_scale, &read);
     index += read;
-    sscanf(buffer+index, "focal_dz: %f %n", &focal_dz, &read);
+    sscanf(&buffer[index], "focal_dz: %f %n", &focal_dz, &read);
     index += read;
-    sscanf(buffer+index, "focal_dxy: %f %n", &focal_dxy, &read);
+    sscanf(&buffer[index], "focal_dxy: %f %n", &focal_dxy, &read);
     index += read;
-    sscanf(buffer+index, "focal_depth: %f %n", &focal_depth, &read);
+    sscanf(&buffer[index], "focal_depth: %f %n", &focal_depth, &read);
     index += read;
-    sscanf(buffer+index, "origin_dz: %f %n", &origin_dz, &read);
+    sscanf(&buffer[index], "origin_dz: %f %n", &origin_dz, &read);
     index += read;
-    sscanf(buffer+index, "origin_dxy: %f %n", &origin_dxy, &read);
+    sscanf(&buffer[index], "origin_dxy: %f %n", &origin_dxy, &read);
     index += read;
-    sscanf(buffer+index, "origin_depth: %f %n", &origin_depth, &read);
+    sscanf(&buffer[index], "origin_depth: %f %n", &origin_depth, &read);
     index += read;
 
     GS_ASSERT(index <= size);
@@ -106,13 +105,13 @@ void move_origin_depth(float delta)
 
 void dilate_equipped_sprite(float delta)
 {
-    sprite_scale += delta;
+    equipped_item_scale += delta;
 }
 
 void print_sprite_alignment_config()
 {
     printf("Sprite alignment:\n");
-    printf("sprite_scale: %f\n", sprite_scale);
+    printf("equipped_item_scale: %f\n", equipped_item_scale);
     printf("focal_dz: %f\n", focal_dz);
     printf("focal_dxy: %f\n", focal_dxy);
     printf("focal_depth: %f\n", focal_depth);
@@ -334,32 +333,31 @@ void draw_equipped_item(int item_type)
 
     origin = translate_position(origin);
     
-    GL_ASSERT(GL_DEPTH_TEST, false);
+    // scale to size
+    up = vec3_scalar_mult(up, equipped_item_scale);
+    right = vec3_scalar_mult(right, equipped_item_scale);
+    forward = vec3_scalar_mult(forward, equipped_item_scale);
+
     if (Item::item_type_is_voxel(item_type))
     {
+        GL_ASSERT(GL_DEPTH_TEST, false);
         bool works = draw_voxel_gl_begin(GL_FRONT);
         if (works)
         {
-            // scale to size
-            up = vec3_scalar_mult(up, sprite_scale);
-            right = vec3_scalar_mult(right, sprite_scale);
-            forward = vec3_scalar_mult(forward, sprite_scale);
-
             draw_voxel(item_type, origin, forward, right, up);
             draw_voxel_gl_end();
         }
     }
     else
     {
-        // TODO re-enable sprite voxelizer when ready for testing
         //bool works = draw_sprite_gl_begin();
         bool works = draw_voxelized_sprite_gl_begin();
         if (works)
         {
             int sprite_id = Item::get_sprite_index_for_type(item_type);
-            struct Mat3 m;
-            mat3_from_vec3(m, forward, right, up);
-            draw_voxelized_sprite(sprite_id, sprite_scale, origin, m);
+            struct Mat4 m;
+            mat4_from_vec3(m, forward, right, up, origin);
+            draw_voxelized_sprite(sprite_id, m);
             draw_voxelized_sprite_gl_end();
             //draw_planar_sprite(item_type, origin, right, up);
             //draw_sprite_gl_end();
@@ -379,20 +377,20 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
     
     // HACKED UP MODEL DEPENDENT CRAP
     struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);
-    float offset = (((vv->zdim)/2) * vv->scale) + (sprite_scale / 2.0f);
+    float offset = (((vv->zdim)/2) * vv->scale) + (equipped_item_scale / 2.0f);
     struct Vec3 origin = vec3_add(a->arm_center(), vec3_scalar_mult(right, offset));
     origin = translate_position(origin);
     
-    if (!sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, sprite_scale))
+    if (!sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, equipped_item_scale))
         return false;
 
     struct Vec3 up = a->arm_forward();
     struct Vec3 forward = a->arm_right();
 
     // scale to size
-    *pUp = vec3_scalar_mult(up, sprite_scale);
-    *pRight = vec3_scalar_mult(right, sprite_scale);
-    *pForward = vec3_scalar_mult(forward, sprite_scale);
+    *pUp = vec3_scalar_mult(up, equipped_item_scale);
+    *pRight = vec3_scalar_mult(right, equipped_item_scale);
+    *pForward = vec3_scalar_mult(forward, equipped_item_scale);
 
     *pOrigin = origin;
     
@@ -427,9 +425,9 @@ void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, int item_
     bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
     if (!valid) return;
     int sprite_id = Item::get_sprite_index_for_type(item_type);
-    struct Mat3 m;
-    mat3_from_vec3(m, forward, right, up);
-    draw_voxelized_sprite(sprite_id, sprite_scale, origin, m);
+    struct Mat4 m;
+    mat4_from_vec3(m, forward, right, up, origin);
+    draw_voxelized_sprite(sprite_id, m);
 }
 
 void begin_equipped_item_animation(int item_type, bool continuous)

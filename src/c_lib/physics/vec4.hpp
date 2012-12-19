@@ -55,6 +55,16 @@ struct Vec4 vec4_init(float x, float y, float z, float w)
     return v;
 }
 
+struct Vec4 vec4_init(struct Vec3 v, float w)
+{
+    struct Vec4 v4;
+    v4.x = v.x;
+    v4.y = v.y;
+    v4.z = v.z;
+    v4.w = w;
+    return v4;
+}
+
 
 /*
 

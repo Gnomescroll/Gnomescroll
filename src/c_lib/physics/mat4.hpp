@@ -420,3 +420,11 @@ struct Vec3 vec3_mat3_apply(struct Vec3 v, struct Mat4 m)
 
     return u;
 }
+
+void mat4_from_vec3(struct Mat4& m, struct Vec3 vx, struct Vec3 vy, struct Vec3 vz, struct Vec3 c)
+{
+    m.vx = vec4_init(vx, 0.0f);
+    m.vy = vec4_init(vy, 0.0f);
+    m.vz = vec4_init(vz, 0.0f);
+    m.c = vec4_init(c, 1.0f);
+}

@@ -89,3 +89,4 @@ const int PLAYERS_MAX = 32;
 #define DAT_NAME_MAX_LENGTH 32
 #define DATA_PATH "./data/"
 #define SCREENSHOT_PATH "./screenshot/"
+#define MEDIA_PATH "./media/"

@@ -7,6 +7,8 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
+extern float equipped_item_scale;
+
 void draw_equipped_voxel_item_other_agent(AgentID agent_id, int item_type);
 void draw_equipped_sprite_item_other_agent(AgentID agent_id, int item_type);
 void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, int item_type);

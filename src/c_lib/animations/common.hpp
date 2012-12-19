@@ -228,15 +228,8 @@ struct VertexElementColorNormal
     struct Color color;
 };
 
-struct VertexElementSpriteVoxel
-{
-    float x,y;
-    struct Color color;
-};
-
 typedef class VertexElementList<struct VertexElementTexture> VertexElementListTexture;
 typedef class VertexElementList<struct VertexElementTextureNormal> VertexElementListTextureNormal;
 typedef class VertexElementList<struct VertexElementColorNormal> VertexElementListColor;
-typedef class VertexElementList<struct VertexElementSpriteVoxel> VertexElementListSpriteVoxel;
 
 }   // Animations

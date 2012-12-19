@@ -288,7 +288,7 @@ inline void object_shot_terrain_StoC::handle()
         this->cube, this->side
     );
     Animations::terrain_sparks(this->x, this->y, this->z);
-    Sound::play_3d_sound("laser_hit_block", this->x, this->y, this->z, 0,0,0);
+    //Sound::play_3d_sound("laser_hit_block", this->x, this->y, this->z, 0,0,0);
     Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
 }
 

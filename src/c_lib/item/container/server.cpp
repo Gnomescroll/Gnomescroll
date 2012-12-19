@@ -417,7 +417,8 @@ void transfer_hand_to_particle(AgentID agent_id)
     remove_item_from_hand(agent_id);
 
     Agents::Agent* agent = Agents::get_agent(agent_id);
-    IF_ASSERT(agent != NULL) send_hand_remove(agent->client_id);
+    GS_ASSERT(agent != NULL);
+    if (agent != NULL) send_hand_remove(agent->client_id);
     
     Item::unsubscribe_agent_from_item(agent_id, hand_item);
 
@@ -429,8 +430,7 @@ void transfer_hand_to_particle(AgentID agent_id)
 //  tell client to assign container to an agent
 void send_container_assign(ClientID client_id, int container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
@@ -443,8 +443,7 @@ void send_container_assign(ClientID client_id, int container_id)
 
 static bool pack_container_create(int container_id, create_item_container_StoC* msg)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
+    IF_ASSERT(container_id == NULL_CONTAINER) return false;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
     msg->container_id = container->id;
@@ -455,8 +454,7 @@ static bool pack_container_create(int container_id, create_item_container_StoC* 
 
 void send_container_create(ClientID client_id, int container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     create_item_container_StoC msg;
     if (!pack_container_create(container_id, &msg)) return;
     msg.sendToClient(client_id);
@@ -464,8 +462,7 @@ void send_container_create(ClientID client_id, int container_id)
 
 void broadcast_container_create(int container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     create_item_container_StoC msg;
     if (!pack_container_create(container_id, &msg)) return;
     msg.broadcast();
@@ -473,8 +470,7 @@ void broadcast_container_create(int container_id)
 
 void send_container_delete(ClientID client_id, int container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     delete_item_container_StoC msg;
     msg.container_id = container_id;
     msg.sendToClient(client_id);
@@ -482,8 +478,7 @@ void send_container_delete(ClientID client_id, int container_id)
 
 void broadcast_container_delete(int container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     delete_item_container_StoC msg;
     msg.container_id = container_id;
     msg.broadcast();
@@ -494,8 +489,7 @@ static bool pack_container_lock(int container_id, lock_container_StoC* msg)
     GS_ASSERT(msg != NULL);
     if (msg == NULL) return false;
 
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
+    IF_ASSERT(container_id == NULL_CONTAINER) return false;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return false;
     IF_ASSERT(!isValid(container->owner)) return false;
@@ -522,8 +516,7 @@ void broadcast_container_lock(int container_id)
 
 void broadcast_container_unlock(int container_id, int unlocking_agent_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
     GS_ASSERT(container->owner == NULL_AGENT);
@@ -537,8 +530,7 @@ void broadcast_container_unlock(int container_id, int unlocking_agent_id)
 
 void send_container_state(ClientID client_id, int container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return;
 
@@ -589,11 +581,9 @@ void send_open_container_failed(ClientID client_id, int container_id, int event_
 
 void send_smelter_fuel(int container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    IF_ASSERT(container == NULL) return;
     if (container->owner == NULL_AGENT) return;
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
@@ -601,8 +591,7 @@ void send_smelter_fuel(int container_id)
     GS_ASSERT(container_id == smelter->id);
 
     Agents::Agent* owner = Agents::get_agent(smelter->owner);
-    GS_ASSERT(owner != NULL);
-    if (owner == NULL) return;
+    IF_ASSERT(owner == NULL) return;
 
     smelter_fuel_StoC msg;
     msg.container_id = smelter->id;
@@ -613,19 +602,16 @@ void send_smelter_fuel(int container_id)
 
 void send_smelter_progress(int container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    IF_ASSERT(container == NULL) return;
     if (container->owner == NULL_AGENT) return;
     GS_ASSERT(Item::is_smelter(container->type));
     if (!Item::is_smelter(container->type)) return;
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
 
     Agents::Agent* owner = Agents::get_agent(smelter->owner);
-    GS_ASSERT(owner != NULL);
-    if (owner == NULL) return;
+    IF_ASSERT(owner == NULL) return;
 
     smelter_progress_StoC msg;
     msg.progress = smelter->progress;
