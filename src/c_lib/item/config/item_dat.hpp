@@ -378,9 +378,9 @@ void load_item_dat()
 
     item_def(IG_MECH_PLACER, "acadia_seed");
     sprite_def(p0, 1,2);
-    s->mech_type = t_mech::get_mech_type("acadia_flower");
+    s->mech_type = t_mech::get_mech_type("acadia_flower_stage_0");
     set_pretty_name("Acadia Seed");
-    s->max_stack_size = 64;
+    s->max_stack_size = 16;
 
     item_def(IG_RESOURCE, "acadia_fruit");
     sprite_def(p0, 1,9);

@@ -73,11 +73,31 @@ void load_drop_dat()
         b->set_drop(0.15f, 2);
         b->set_drop(0.075f, 3);
 
-    b->def_drop("acadia_flower");
+    //acadia flower stages
+    b->def_drop("acadia_flower_stage_0");
+        b->add_drop("acadia_seed", 1);
+        b->set_drop(0.99f, 1);
+
+    b->def_drop("acadia_flower_stage_1");
+        b->add_drop("acadia_seed", 2);
+        b->set_drop(0.80f, 1);
+        b->set_drop(0.19f, 2);
+
+        b->add_drop("acadia_fruit", 1);
+        b->set_drop(0.50f, 1);
+
+    b->def_drop("acadia_flower_stage_2");
+        b->add_drop("acadia_seed", 3);
+        b->set_drop(0.50f, 1);
+        b->set_drop(0.25f, 2);
+        b->set_drop(0.24f, 3);
+
         b->add_drop("acadia_fruit", 3);
-        b->set_drop(0.70f, 1);
-        b->set_drop(0.15f, 2);
-        b->set_drop(0.075f, 3);
+        b->set_drop(0.50f, 1);
+        b->set_drop(0.25f, 2);
+        b->set_drop(0.24f, 3);
+
+
 
     b->end();
 

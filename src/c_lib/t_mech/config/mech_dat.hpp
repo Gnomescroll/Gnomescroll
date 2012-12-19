@@ -8,6 +8,7 @@ namespace t_mech
 void apply_mech_dat_changes()
 {
     //change_mech("old_name", "new_name");
+    change_mech("acadia_flower", "acadia_flower_stage_0");
 
     mech_name_map->condense();  // finalize
 }
@@ -36,10 +37,21 @@ void load_mech_dat()
     set_sprite_index(16*1 + 1);
     //s->render_type = MECH_RENDER_TYPE_0;
 
-    mech_def(MECH_CRYSTAL, "acadia_flower", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_DEFAULT);
-    //set_sprite_index(16*7 + 2);
+
+
+    mech_def(MECH_CRYSTAL, "acadia_flower_stage_2", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_DEFAULT);
     set_sprite_index(16*6 + 2);
-    //s->render_type = MECH_RENDER_TYPE_0;
+
+    mech_def(MECH_CRYSTAL, "acadia_flower_stage_1", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_PLANT);
+    set_sprite_index(16*6 + 1);
+    s->growth_ttl = 30;
+    s->growth_stage = get_mech_type_dat("acadia_flower_stage_2");
+
+    mech_def(MECH_CRYSTAL, "acadia_flower_stage_0", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_PLANT);
+    set_sprite_index(16*6 + 0);
+    s->growth_ttl = 60;
+    s->growth_stage = get_mech_type_dat("acadia_flower_stage_1");
+
 
     mech_def(MECH_CRYSTAL, "blob_flower", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_DEFAULT);
     set_sprite_index(16*7 + 2);

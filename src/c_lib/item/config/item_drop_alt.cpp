@@ -93,8 +93,8 @@ void ItemDropConfig::end()
             for (int k=1; k<cidt->drop_entries; k++)
                 total += cidt->drop_probabilities[k];
 
-            GS_ASSERT(total < 0.99f || cidt->drop_entries <= 2);
-            if (total > 0.99f && cidt->drop_entries > 2) //means non-zero drop rate of less than 1%
+            GS_ASSERT(total < 0.999f || cidt->drop_entries <= 2);
+            if (total > 0.999f && cidt->drop_entries > 2) //means non-zero drop rate of less than 1%
             {
                 printf("Drop Dat Error: Item total probabilities exceed 0.99 (p = %f)\n", total);
                 char* item_name = (char*)get_item_name(cidt->item_type);

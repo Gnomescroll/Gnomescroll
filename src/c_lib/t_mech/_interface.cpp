@@ -186,7 +186,8 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
     m.x = x;
     m.y = y;
     m.z = z;
-    
+    m.growth_ttl = mech_attributes[mech_type].growth_ttl;
+
     mech_list->server_add_mech(m);
 
     return true;
