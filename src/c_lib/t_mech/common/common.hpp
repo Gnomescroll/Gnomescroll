@@ -27,7 +27,7 @@ typedef enum
 
 typedef enum
 {
-    MECH_BEHAVIOR_TYPE_DEFAULT = 0
+    MECH_BEHAVIOR_TYPE_DEFAULT = 0,
     MECH_BEHAVIOR_TYPE_PLANT,
 } MechBehaviorType;
 
@@ -66,8 +66,8 @@ class MechAttribute
         MechType mech_type;
         MechClass mech_type_class;
         MechRenderType render_type;
-        MechBehaviorType behavior_type;
-
+        
+        MechBehaviorType mech_behavior_type;
         int growth_ttl;         //starting growth ttl
         MechType growth_stage;  //next growth stage
 
@@ -78,8 +78,12 @@ class MechAttribute
 
     MechAttribute() :
         mech_type(NULL_MECH_TYPE), mech_type_class(NULL_MECH_CLASS),
-        render_type(MECH_RENDER_TYPE_NONE), sprite_index(NULL_MECH_SPRITE),
-        growth_ttl(-1), growth_stage(-1),
+        render_type(MECH_RENDER_TYPE_NONE), 
+        
+        mech_behavior_type(MECH_BEHAVIOR_TYPE_DEFAULT),
+        growth_ttl(-1), growth_stage(NULL_MECH_TYPE),
+
+        sprite_index(NULL_MECH_SPRITE),
         item_drop(false), loaded(false)
     {
         memset(this->name, 0, sizeof(this->name));

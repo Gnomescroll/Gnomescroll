@@ -30,7 +30,7 @@ void load_mech()
     _current_mech_index++;
 }
 
-void mech_def(MechClass mech_type_class, const char* name)
+void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_render_type, MechBehaviorType mech_behavior_type)
 {    
     if (s != NULL) load_mech();
 
@@ -58,6 +58,10 @@ void mech_def(MechClass mech_type_class, const char* name)
     s->mech_type_class = mech_type_class;
     strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
     s->name[DAT_NAME_MAX_LENGTH] = '\0';
+
+    s->render_type = mech_render_type;
+    s->mech_behavior_type = mech_behavior_type;
+
 }
 
 void set_sprite_index(int sprite_index)
