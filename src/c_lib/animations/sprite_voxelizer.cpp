@@ -32,18 +32,19 @@ static void generate_sprite_vertices(
         sprite_voxelizer_vlists[sprite_id] = new VertexElementListSpriteVoxel;
     VertexElementListSpriteVoxel* vlist = sprite_voxelizer_vlists[sprite_id];
     vlist->clear();
-    size_t tile_size = sheet_loader->tile_size;
-    size_t n_pixels =  tile_size*tile_size;
+    const size_t tile_size = sheet_loader->tile_size;
+    const size_t n_pixels =  tile_size*tile_size;
     const unsigned char alpha_test = 0xFF/2;
     for (size_t i=0; i<n_pixels; i++)
     {   // build vertices from pixels
-        if (pixels[i].a >= alpha_test) continue;
+        if (pixels[i].a <= alpha_test) continue;
         float x = i % tile_size;
         float y = i / tile_size;
         vlist->push_vertex(x,y, color_init(pixels[i]));
     }
     // check if the sprite wasn't completely invisible
-    GS_ASSERT(vlist->vlist_index > 0);
+    IF_ASSERT(vlist->vlist_index <= 0)
+        printf("Sprite id %d in use but is invisible after alpha testing\n", sprite_id);
 }
 
 void load_sprite_voxelizer()
@@ -84,48 +85,30 @@ void draw_voxelized_sprite(int sprite_id, struct Vec3 position, const struct Mat
 
     IF_ASSERT(sprite_voxelizer_shader.shader == 0) return;
 
-    CHECK_GL_ERROR();
-
     VertexElementListSpriteVoxel* vlist = sprite_voxelizer_vlists[sprite_id];
     vlist->buffer();
 
-    CHECK_GL_ERROR();
-
     if (vlist->vertex_number == 0) return;
-
-    CHECK_GL_ERROR();
 
     glUseProgramObjectARB(sprite_voxelizer_shader.shader);
 
-    CHECK_GL_ERROR();
-
     glBindBuffer(GL_ARRAY_BUFFER, vlist->VBO);
-
-    CHECK_GL_ERROR();
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(sprite_voxelizer_shader_vars.xy);
     glEnableVertexAttribArray(sprite_voxelizer_shader_vars.color);
-
-    CHECK_GL_ERROR();
 
     struct Vec3 cpos = current_camera->get_position();
     glUniform3f(sprite_voxelizer_shader_vars.camera_pos, cpos.x, cpos.y, cpos.z);
     glUniformMatrix3fv(sprite_voxelizer_shader_vars.rot_matrix, 1, GL_FALSE, rotation_matrix._f);
     glUniform3f(sprite_voxelizer_shader_vars.pos, position.x, position.y, position.z);
 
-    CHECK_GL_ERROR();
-
     size_t offset = 0;
     glVertexAttribPointer(sprite_voxelizer_shader_vars.xy, 2, GL_FLOAT, GL_FALSE, vlist->stride, (GLvoid*)offset);
     offset += 2 * sizeof(GL_FLOAT);
     glVertexAttribPointer(sprite_voxelizer_shader_vars.color, 3, GL_UNSIGNED_BYTE, GL_TRUE, vlist->stride, (GLvoid*)offset);
     
-    CHECK_GL_ERROR();
-
     glDrawArrays(GL_QUADS, 0, vlist->vertex_number);
-
-    CHECK_GL_ERROR();
 
     glDisableVertexAttribArray(sprite_voxelizer_shader_vars.xy);
     glDisableVertexAttribArray(sprite_voxelizer_shader_vars.color);
