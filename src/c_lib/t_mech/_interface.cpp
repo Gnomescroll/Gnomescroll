@@ -23,6 +23,7 @@ struct MECH_LIST* mech_list;
 void init_packets()
 {
     mech_create_StoC::register_client_packet();
+    mech_type_change_StoC::::register_client_packet();
     mech_delete_StoC::register_client_packet();
 }
 
