@@ -344,6 +344,7 @@ void draw_tick()
     GL_ASSERT(GL_BLEND, true);
 
     glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
     glDepthMask(GL_TRUE);   //END
 
     poll_mouse();
@@ -361,24 +362,22 @@ void draw_tick()
     if (input_state.draw_hud)
     {
         glDisable(GL_DEPTH_TEST);
-        glDisable(GL_TEXTURE_2D);
         Animations::draw_equipped_item(equipped_item_type);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_TEXTURE_2D);
     }
+
 
     if (Options::placement_outline)
     {
         // draw outline of facing block
-        glDisable(GL_TEXTURE_2D);
         Animations::draw_placement_outline(equipped_item_type);
-        glEnable(GL_TEXTURE_2D);
     }
 
     CHECK_GL_ERROR();   //check error before hud
 
     if (input_state.draw_hud)
     {
+        glEnable(GL_TEXTURE_2D);
         // switch to hud  projection
         hud_projection();
         glDisable(GL_DEPTH_TEST);
@@ -408,6 +407,7 @@ void draw_tick()
             t_map::draw_vbo_debug(400, 400);
 
         
+        glDisable(GL_TEXTURE_2D);
         glEnable(GL_DEPTH_TEST);
         CHECK_GL_ERROR();  //check error after hud rendering
     }

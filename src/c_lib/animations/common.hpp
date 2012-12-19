@@ -165,16 +165,27 @@ class VertexElementList
         this->add_element();
     }
 
+    void buffer_static()
+    {
+        if (this->VBO == 0) glGenBuffers(1, &this->VBO);
+        IF_ASSERT(this->VBO == 0) return;
+        IF_ASSERT(this->vlist_index == 0) return;
+        glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+        glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, this->vlist, GL_STATIC_DRAW);
+        this->vertex_number = this->vlist_index;
+    }
+
     void buffer()
     {   // upload data to card for drawing
         if (this->VBO == 0) glGenBuffers(1, &this->VBO);
+        GS_ASSERT(this->VBO != 0);
         if (this->VBO != 0)
         {
             if (this->vlist_index != 0)
             {
                 glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
                 glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, NULL, GL_DYNAMIC_DRAW);   // clears data or something
-                glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, vlist, GL_DYNAMIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, this->vlist, GL_DYNAMIC_DRAW);
             } 
             else
             {

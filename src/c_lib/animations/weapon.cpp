@@ -332,11 +332,6 @@ void draw_equipped_item(int item_type)
     forward = vec3_cross(right, up);
     normalize_vector(&forward);
 
-    // scale to size
-    up = vec3_scalar_mult(up, sprite_scale);
-    right = vec3_scalar_mult(right, sprite_scale);
-    forward = vec3_scalar_mult(forward, sprite_scale);
-
     origin = translate_position(origin);
     
     GL_ASSERT(GL_DEPTH_TEST, false);
@@ -345,6 +340,11 @@ void draw_equipped_item(int item_type)
         bool works = draw_voxel_gl_begin(GL_FRONT);
         if (works)
         {
+            // scale to size
+            up = vec3_scalar_mult(up, sprite_scale);
+            right = vec3_scalar_mult(right, sprite_scale);
+            forward = vec3_scalar_mult(forward, sprite_scale);
+
             draw_voxel(item_type, origin, forward, right, up);
             draw_voxel_gl_end();
         }
@@ -359,7 +359,7 @@ void draw_equipped_item(int item_type)
             int sprite_id = Item::get_sprite_index_for_type(item_type);
             struct Mat3 m;
             mat3_from_vec3(m, forward, right, up);
-            draw_voxelized_sprite(sprite_id, origin, m);
+            draw_voxelized_sprite(sprite_id, sprite_scale, origin, m);
             draw_voxelized_sprite_gl_end();
             //draw_planar_sprite(item_type, origin, right, up);
             //draw_sprite_gl_end();
@@ -417,6 +417,19 @@ void draw_equipped_sprite_item_other_agent(AgentID agent_id, int item_type)
     bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
     if (!valid) return;
     draw_planar_sprite(item_type, origin, right, up);
+}
+
+void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, int item_type)
+{
+    static int fist = Item::get_item_type("fist");
+    if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
+    Vec3 origin, forward, right, up;
+    bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
+    if (!valid) return;
+    int sprite_id = Item::get_sprite_index_for_type(item_type);
+    struct Mat3 m;
+    mat3_from_vec3(m, forward, right, up);
+    draw_voxelized_sprite(sprite_id, sprite_scale, origin, m);
 }
 
 void begin_equipped_item_animation(int item_type, bool continuous)

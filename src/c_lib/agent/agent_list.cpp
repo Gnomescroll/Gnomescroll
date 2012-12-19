@@ -109,7 +109,7 @@ void AgentList::draw_equipped_items()
     GS_ASSERT(this->ct-num >= 0);
     if (this->ct - num <= 0) return;
 
-    works = Animations::draw_sprite_gl_begin();
+    works = Animations::draw_voxelized_sprite_gl_begin();
     if (works)
     {
         for (unsigned int i=0; i<this->max; i++)
@@ -122,12 +122,14 @@ void AgentList::draw_equipped_items()
 
             float radius = this->objects[i].vox->get_part(0)->radius;
             Vec3 center = this->objects[i].vox->get_center();
-            if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
+            if (!sphere_fulstrum_test_translate(center.x, center.y, center.z, radius))
                 continue;
 
-            Animations::draw_equipped_sprite_item_other_agent(this->objects[i].id, equipped_item_type);
+            //Animations::draw_equipped_sprite_item_other_agent(this->objects[i].id, equipped_item_type);
+            Animations::draw_equipped_voxelized_sprite_item_other_agent(this->objects[i].id, equipped_item_type);
         }
-        Animations::draw_sprite_gl_end();
+        //Animations::draw_sprite_gl_end();
+        Animations::draw_voxelized_sprite_gl_end();
     }
 }
 

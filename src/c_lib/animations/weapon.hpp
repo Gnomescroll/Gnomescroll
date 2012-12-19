@@ -9,6 +9,7 @@ namespace Animations
 
 void draw_equipped_voxel_item_other_agent(AgentID agent_id, int item_type);
 void draw_equipped_sprite_item_other_agent(AgentID agent_id, int item_type);
+void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, int item_type);
 
 void draw_equipped_item(int item_type);
 void begin_equipped_item_animation(int item_type, bool continuous);

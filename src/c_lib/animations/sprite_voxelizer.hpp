@@ -10,7 +10,7 @@ void init_sprite_voxelizer();
 void teardown_sprite_voxelizer();
 void load_sprite_voxelizer();
 
-void draw_voxelized_sprite(int sprite_id, struct Vec3 position, const struct Mat3& rotation_matrix);
+void draw_voxelized_sprite(int sprite_id, const struct Mat3& rotation_matrix);
 
 bool draw_voxelized_sprite_gl_begin();
 void draw_voxelized_sprite_gl_end();

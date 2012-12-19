@@ -92,12 +92,9 @@ struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat3 m)
     return u;
 }
 
-void mat3_from_vec3(struct Mat3& m, struct Vec3 f, struct Vec3 r, struct Vec3 n)
+void mat3_from_vec3(struct Mat3& m, struct Vec3 vx, struct Vec3 vy, struct Vec3 vz)
 {
-    for (size_t i=0, j=0; i<3 && j<3; i++, j++)
-        m._f[i] = f.f[j];
-    for (size_t i=3, j=0; i<6 && j<3; i++, j++)
-        m._f[i] = r.f[j];
-    for (size_t i=6, j=0; i<9 && j<3; i++, j++)
-        m._f[i] = n.f[j];
+    m.vx = vx;
+    m.vy = vy;
+    m.vz = vz;
 }
