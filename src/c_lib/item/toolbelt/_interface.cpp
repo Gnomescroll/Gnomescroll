@@ -282,7 +282,7 @@ int get_selected_item_type()
     GS_ASSERT(agent_selected_type != NULL);
     if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
     AgentID agent_id = ClientState::player_agent.agent_id;
-    IF_ASSERT(!isValid(agent_id)) return NULL_ITEM_TYPE;
+    if (!isValid(agent_id)) return NULL_ITEM_TYPE;
     return agent_selected_type[agent_id];
 }
 
