@@ -43,7 +43,6 @@ void mech_create_StoC::handle()
 /*
     uint16_t id;
     uint8_t mech_type;
-    uint8_t subtype;
 */
 
 void mech_type_change_StoC::handle()

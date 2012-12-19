@@ -23,7 +23,7 @@ struct MECH_LIST* mech_list;
 void init_packets()
 {
     mech_create_StoC::register_client_packet();
-    mech_type_change_StoC::::register_client_packet();
+    mech_type_change_StoC::register_client_packet();
     mech_delete_StoC::register_client_packet();
 }
 
@@ -69,8 +69,11 @@ void draw_transparent()
 }
 #endif
 
-//pack mech data into packet
+
 #if DC_SERVER
+
+//pack mech data into packet
+
 static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 {
     p.id = m.id;
@@ -158,6 +161,86 @@ void client_ray_cast()
 
 
 #if DC_SERVER
+
+void tick()
+{
+
+    const int mlm = mech_list->mlm;
+    const struct MECH* mla = mech_list->mla;
+    
+    int num =0;
+
+    for(int i=0; i<mlm; i++)
+    {
+        if (mla[i].id == -1) continue;
+
+        MechType mech_type = mla[i].mech_type;
+        MechBehaviorType mech_behavior_type = mech_attributes[mech_type].mech_behavior_type;
+
+/*
+    typedef enum
+    {
+        MECH_BEHAVIOR_TYPE_DEFAULT = 0,
+        MECH_BEHAVIOR_TYPE_PLANT,
+    } MechBehaviorType;
+*/
+
+        switch (mech_behavior_type)
+        {
+            case MECH_BEHAVIOR_TYPE_DEFAULT:
+                continue;
+                break;
+            case MECH_BEHAVIOR_TYPE_PLANT:
+                if(rand() % 4 != 0)
+                    continue;
+                GS_ASSERT(mla[i].growth_ttl >= 0);
+                mla[i].growth_ttl--;
+                if(mla[i].growth_ttl == 0)
+                    force_mech_growth(int mech_id);
+
+                break;
+            default:
+                GS_ASSERT(false);
+                break;
+        }
+
+    }
+}
+
+void force_mech_growth(int mech_id)
+{
+    const int mlm = mech_list->mlm;
+    const struct MECH* mla = mech_list->mla;
+
+    MechType mech_type = mla[mech_id].mech_type;
+    MechBehaviorType mech_behavior_type = mech_attributes[mech_type].mech_behavior_type;
+
+
+
+    //int growth_ttl;         //starting growth ttl
+    MechType growth_stage = mech_attributes[mech_type].growth_stage;  //next growth stage
+
+    ASSERT_VALID_MECH_TYPE(growth_stage);
+    GS_ASSERT(mla[mech_id].id != -1);
+    GS_ASSERT(mech_id > 0 && mech_id < mlm);
+    //MechType mech_type;       //mech type
+    //int subtype;        //sprite
+    //MechRenderType render_type;
+    //growth_ttl
+
+
+    mla[mech_id].mech_type =  mech_attributes[growth_stage].mech_type;
+    mla[mech_id].sub_type =  mech_attributes[growth_stage].sub_type;
+    mla[mech_id].mech_class =  mech_attributes[growth_stage].mech_classe; 
+    mla[mech_id].growth_ttl = mech_attributes[growth_stage].growth_ttl;
+
+
+    class mech_type_change_StoC p;
+    p.id = mech_id;
+    p.mech_type = growth_stage;
+    p.broadcast();
+}
+
 bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
 {
     ASSERT_VALID_MECH_TYPE(mech_type);
@@ -187,6 +270,7 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
     m.x = x;
     m.y = y;
     m.z = z;
+
     m.growth_ttl = mech_attributes[mech_type].growth_ttl;
 
     mech_list->server_add_mech(m);

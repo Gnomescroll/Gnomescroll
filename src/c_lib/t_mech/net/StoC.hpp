@@ -30,13 +30,11 @@ class mech_type_change_StoC: public MapMessagePacketToClient<mech_type_change_St
     public:
     uint16_t id;
     uint8_t mech_type;
-    uint8_t subtype;
     
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&mech_type, buff, buff_n, pack);
-        pack_u8(&subtype, buff, buff_n, pack);
     }
     
     void handle();

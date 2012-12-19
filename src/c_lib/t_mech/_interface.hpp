@@ -32,6 +32,12 @@ void client_ray_cast();
 #endif
 
 #if DC_SERVER
+
+
+void tick(); //update growth cycles
+
+void force_mech_growth(int mech_id); //forces growth cycle
+
 bool create_crystal(int x, int y, int z, MechType mech_type);
 bool create_mech(int x, int y, int z, MechType mech_type);
 bool create_mech(int x, int y, int z, MechType mech_type, int subtype);
