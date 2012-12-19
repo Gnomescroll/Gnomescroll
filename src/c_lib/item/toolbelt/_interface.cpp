@@ -292,7 +292,7 @@ int get_selected_item_type()
 void update_selected_item_type()
 {
     AgentID agent_id = ClientState::player_agent.agent_id;
-    IF_ASSERT(!isValid(agent_id)) return;
+    if (!isValid(agent_id)) return;
 
     int item_type = NULL_ITEM_TYPE;
     ItemContainer::ItemContainer* toolbelt = NULL;

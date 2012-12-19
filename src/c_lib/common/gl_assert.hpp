@@ -20,10 +20,10 @@ bool _gl_assert(GLenum flag)
     return (value == GL_TRUE);
 }
 
-void _gl_assert_action()
+void _gl_assert_action(const char* file, int line)
 {
-    fprintf(stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
-    #if !PRODUCTION
+    fprintf(stderr, "GL_ASSERT error: %s, line %d\n", file, line);
+    #if !PRODUCTION && DC_CLIENT && (!unix)
     Sound::play_2d_sound("debug_warning");
     #endif
 }
@@ -34,5 +34,5 @@ void _gl_assert_action()
 #else
 # define GL_ASSERT(flag, truth) \
     if(unlikely(_gl_assert((flag)) !=  (truth))) \
-        _gl_assert_action();
+        _gl_assert_action(__FILE__, __LINE__);
 #endif

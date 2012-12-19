@@ -361,8 +361,10 @@ void draw_tick()
     if (input_state.draw_hud)
     {
         glDisable(GL_DEPTH_TEST);
+        glDisable(GL_TEXTURE_2D);
         Animations::draw_equipped_item(equipped_item_type);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_TEXTURE_2D);
     }
 
     if (Options::placement_outline)

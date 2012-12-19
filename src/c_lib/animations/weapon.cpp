@@ -248,6 +248,8 @@ void draw_voxel_gl_end()
     if (!cull_face_enabled)
         glDisable(GL_CULL_FACE);
 
+    glDisable(GL_TEXTURE_2D);
+
     CHECK_GL_ERROR();
 }
 
@@ -350,17 +352,17 @@ void draw_equipped_item(int item_type)
     else
     {
         // TODO re-enable sprite voxelizer when ready for testing
-        bool works = draw_sprite_gl_begin();
-        //bool works = draw_voxelized_sprite_gl_begin();
+        //bool works = draw_sprite_gl_begin();
+        bool works = draw_voxelized_sprite_gl_begin();
         if (works)
         {
-            //int sprite_id = Item::get_sprite_index_for_type(item_type);
-            //struct Mat3 m;
-            //mat3_from_vec3(m, forward, right, up);
-            //draw_voxelized_sprite(sprite_id, origin, m);
-            //draw_voxelized_sprite_gl_end();
-            draw_planar_sprite(item_type, origin, right, up);
-            draw_sprite_gl_end();
+            int sprite_id = Item::get_sprite_index_for_type(item_type);
+            struct Mat3 m;
+            mat3_from_vec3(m, forward, right, up);
+            draw_voxelized_sprite(sprite_id, origin, m);
+            draw_voxelized_sprite_gl_end();
+            //draw_planar_sprite(item_type, origin, right, up);
+            //draw_sprite_gl_end();
         }
     }
 }

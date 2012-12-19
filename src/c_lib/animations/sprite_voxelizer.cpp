@@ -48,11 +48,10 @@ static void generate_sprite_vertices(
 
 void load_sprite_voxelizer()
 {   // generate vertex arrays from items in the spritesheet
-    for (int i=0; i<MAX_ITEMS; i++)
+    for (int i=0; i<MAX_ITEM_TYPES; i++)
     {
         class Item::ItemAttribute* attr = &Item::item_attributes[i];
-        if (attr == NULL) continue;
-        if (attr->particle_voxel) continue;
+        if (!attr->loaded || attr->particle_voxel) continue;
         generate_sprite_vertices(TextureSheetLoader::item_texture_sheet_loader, attr->sprite);
     }
 }
@@ -83,30 +82,50 @@ void draw_voxelized_sprite(int sprite_id, struct Vec3 position, const struct Mat
     IF_ASSERT(sprite_id < 0 || sprite_id >= (int)SPRITE_VOXELIZER_MAX) return;
     IF_ASSERT(sprite_voxelizer_vlists[sprite_id] == NULL) return;
 
+    IF_ASSERT(sprite_voxelizer_shader.shader == 0) return;
+
+    CHECK_GL_ERROR();
+
     VertexElementListSpriteVoxel* vlist = sprite_voxelizer_vlists[sprite_id];
     vlist->buffer();
 
+    CHECK_GL_ERROR();
+
     if (vlist->vertex_number == 0) return;
+
+    CHECK_GL_ERROR();
 
     glUseProgramObjectARB(sprite_voxelizer_shader.shader);
 
+    CHECK_GL_ERROR();
+
     glBindBuffer(GL_ARRAY_BUFFER, vlist->VBO);
+
+    CHECK_GL_ERROR();
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(sprite_voxelizer_shader_vars.xy);
     glEnableVertexAttribArray(sprite_voxelizer_shader_vars.color);
+
+    CHECK_GL_ERROR();
 
     struct Vec3 cpos = current_camera->get_position();
     glUniform3f(sprite_voxelizer_shader_vars.camera_pos, cpos.x, cpos.y, cpos.z);
     glUniformMatrix3fv(sprite_voxelizer_shader_vars.rot_matrix, 1, GL_FALSE, rotation_matrix._f);
     glUniform3f(sprite_voxelizer_shader_vars.pos, position.x, position.y, position.z);
 
+    CHECK_GL_ERROR();
+
     size_t offset = 0;
     glVertexAttribPointer(sprite_voxelizer_shader_vars.xy, 2, GL_FLOAT, GL_FALSE, vlist->stride, (GLvoid*)offset);
     offset += 2 * sizeof(GL_FLOAT);
     glVertexAttribPointer(sprite_voxelizer_shader_vars.color, 3, GL_UNSIGNED_BYTE, GL_TRUE, vlist->stride, (GLvoid*)offset);
     
+    CHECK_GL_ERROR();
+
     glDrawArrays(GL_QUADS, 0, vlist->vertex_number);
+
+    CHECK_GL_ERROR();
 
     glDisableVertexAttribArray(sprite_voxelizer_shader_vars.xy);
     glDisableVertexAttribArray(sprite_voxelizer_shader_vars.color);
@@ -119,7 +138,7 @@ void draw_voxelized_sprite(int sprite_id, struct Vec3 position, const struct Mat
 bool draw_voxelized_sprite_gl_begin()
 {
     glEnable(GL_CULL_FACE);
-    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_DEPTH_TEST, false);
     GL_ASSERT(GL_TEXTURE_2D, false);
     GL_ASSERT(GL_BLEND, false);
     return true;

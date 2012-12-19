@@ -379,7 +379,8 @@ int init_c_lib(int argc, char* argv[])
     Particle::draw_init();
 
     Animations::init();
-
+    Animations::load_sprite_voxelizer();
+    
     Hud::init();
 
     Voxels::init_voxel_render_list_shader1();   //used to be called from ClientState::init

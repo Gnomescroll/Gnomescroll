@@ -175,6 +175,9 @@ void broadcast_play_animation(const char* name, struct Vec3 position)
 void init()
 {
     #if DC_CLIENT
+    GS_ASSERT(hitscan_effect_list == NULL);
+    GS_ASSERT(mining_laser_effect_list == NULL);
+    
     hitscan_effect_list = new HitscanEffectList;
     mining_laser_effect_list = new MiningLaserEffectList;
 
@@ -182,6 +185,7 @@ void init()
 
     Animations::init_hitscan();
     Animations::init_mining_laser();
+    Animations::init_sprite_voxelizer();
 
     //aAnimations::init_insect_mob();
 
@@ -203,10 +207,11 @@ void teardown()
     #if DC_CLIENT
     //delete insect_mob_list;
 
-    delete hitscan_effect_list;
-    delete mining_laser_effect_list;
+    if (hitscan_effect_list != NULL) delete hitscan_effect_list;
+    if (mining_laser_effect_list != NULL) delete mining_laser_effect_list;
 
     Animations::teardown_hitscan();
+    Animations::teardown_sprite_voxelizer();
 
     //Animations::teardown_insect_mob();
 
