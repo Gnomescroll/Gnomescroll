@@ -139,6 +139,19 @@ void verify_mech_dat()
             DAT_NAME_MAX_LENGTH, mech_attributes, MAX_MECHS, mech_name_map));
     }
     #endif
+
+
+    /*
+        Growth timer just in case
+    */
+    for (int i=0; i<MAX_MECHS; i++)
+    {
+        class MechAttribute* a = &mech_attributes[i];
+        if (!a->loaded) continue;
+
+        if(a->mech_behavior_type == MECH_BEHAVIOR_TYPE_DEFAULT)
+            GS_ASSERT_ABORT(a->growth_ttl == -1);
+    }
 }
 
 void save_mech_names()
