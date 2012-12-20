@@ -23,27 +23,17 @@ static VertexElementListColor* sprite_voxelizer_vlists[SPRITE_VOXELIZER_MAX] = {
 static void push_sprite_vertex_cube(VertexElementListColor* vlist, float x, float y, const struct Color color)
 {
     static struct Vec3 veb[8];     //vertex positions
-    static struct Vec3 veb2[6*4];  //vertex array for rendering
 
     for (int i=0; i<8; i++)
     {
-        veb[i].x = equipped_item_scale*(v_set2[3*i+0] + x);
-        veb[i].y = equipped_item_scale*(v_set2[3*i+1] + y);
-        veb[i].z = equipped_item_scale*v_set2[3*i+2];
-    }
-
-    // copy vertices into quad
-    for (int i=0; i<6; i++)
-    {
-        veb2[4*i+0] = veb[q_set[4*i+0]];
-        veb2[4*i+1] = veb[q_set[4*i+1]];
-        veb2[4*i+2] = veb[q_set[4*i+2]];
-        veb2[4*i+3] = veb[q_set[4*i+3]];
+        veb[i].x = equipped_item_scale*(v_set[3*i+0] + 0);
+        veb[i].y = equipped_item_scale*(v_set[3*i+1] + x);
+        veb[i].z = equipped_item_scale*(v_set[3*i+2] + y);
     }
 
     for (int i=0; i<6; i++)
     for (int j=0; j<4; j++)
-        vlist->push_vertex(veb2[4*i+j], v_normal_vec3[i], color);
+        vlist->push_vertex(veb[q_set[4*i+j]], v_normal_vec3[i], color);
 }
 
 static void generate_sprite_vertices(
@@ -64,8 +54,8 @@ static void generate_sprite_vertices(
     for (size_t i=0; i<n_pixels; i++)
     {   // build vertices from pixels
         if (pixels[i].a <= alpha_test) continue;
-        float x = float(i / tile_size);// / float(tile_size);
-        float y = float(i % tile_size);// / float(tile_size);
+        float x = float(i / tile_size);
+        float y = float(i % tile_size);
         push_sprite_vertex_cube(vlist, x, y, color_init(pixels[i]));
     }
     // check if the sprite wasn't completely invisible
