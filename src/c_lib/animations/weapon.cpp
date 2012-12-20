@@ -350,18 +350,28 @@ void draw_equipped_item(int item_type)
     }
     else
     {
-        //bool works = draw_sprite_gl_begin();
-        bool works = draw_voxelized_sprite_gl_begin();
-        if (works)
+        if (Options::animation_level <= 1)
         {
-            int sprite_id = Item::get_sprite_index_for_type(item_type);
-            struct Mat4 m;
-            mat4_from_vec3(m, forward, right, up, origin);
-            draw_voxelized_sprite(sprite_id, m);
-            draw_voxelized_sprite_gl_end();
-            //draw_planar_sprite(item_type, origin, right, up);
-            //draw_sprite_gl_end();
+            bool works = draw_sprite_gl_begin();
+            if (works)
+            {
+                draw_planar_sprite(item_type, origin, right, up);
+                draw_sprite_gl_end();
+            }
         }
+        else
+        {
+            bool works = draw_voxelized_sprite_gl_begin();
+            if (works)
+            {
+                int sprite_id = Item::get_sprite_index_for_type(item_type);
+                struct Mat4 m;
+                mat4_from_vec3(m, forward, right, up, origin);
+                draw_voxelized_sprite(sprite_id, m);
+                draw_voxelized_sprite_gl_end();
+            }
+        }
+        
     }
 }
 
