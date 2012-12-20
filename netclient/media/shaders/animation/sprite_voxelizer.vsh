@@ -6,7 +6,7 @@ uniform mat4 InMatrix;
 attribute vec3 InNormal;
 attribute vec3 InColor;
 
-const vec3 light_dir = normalize(vec3(1.00, 1.00, 1.00));   //fixed light source?
+const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));   //fixed light source?
 
 varying float diffuse_light;
 varying vec3 base_color;
@@ -19,6 +19,7 @@ void main(void)
     vec3 look = normalize(pos.xyz - InCameraPos);
 	vec3 normal = gl_NormalMatrix*(mat3(InMatrix)*InNormal);
     diffuse_light = abs(dot(look, normal));
+    //diffuse_light = abs(dot(look, (InMatrix * vec4(InNormal, 0.0f)).xyz));           //use camera position
 
     // set position
     gl_Position = pos;
