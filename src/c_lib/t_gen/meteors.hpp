@@ -232,4 +232,69 @@ void meteor_fall(void)
     }
 }
 
+void meteor_shower()
+{
+    int AMOUNT = randrange(5, 20);
+    int killed_blocks;
+    int x;
+    int y;
+    int z;
+    CubeID bedrock=t_map::get_cube_id("bedrock");
+    CubeID steelA=t_map::get_cube_id("steel_block1");
+    CubeID steelB=t_map::get_cube_id("steel_block2");
+    CubeID steelC=t_map::get_cube_id("steel_block3");
+    CubeID material;
+    switch (randrange(1, 6))
+    {
+        case 1:
+            material = t_map::get_cube_id("iron_ore");
+            break;
+        case 2:
+            material = t_map::get_cube_id("coal");
+            break;
+        case 3:
+            material = t_map::get_cube_id("copper_ore");
+            break;
+        case 4:
+            material = t_map::get_cube_id("iridium_ore");
+            break;
+        case 5:
+            material = t_map::get_cube_id("gallium_ore");
+            break;
+        case 6:
+            material = t_map::get_cube_id("methane_ice");
+            break;
+        default:
+            GS_ASSERT(false);
+            return;
+    }
+    for(int count = 1; count <= AMOUNT; count++)
+    {
+        x = randrange(1, t_map::map_dim.x - 1);
+        y = randrange(1, t_map::map_dim.y - 1);
+        z = t_map::map_dim.z - 1;
+        killed_blocks = 0;
+        while(z > 1 && killed_blocks <= 3)
+        {
+            if(t_map::get(x, y, z) != EMPTY_CUBE)
+            {
+                if(t_map::get(x, y, z) == bedrock || t_map::get(x, y, z) == steelA || t_map::get(x, y, z) == steelB || t_map::get(x, y, z) == steelC)
+                {
+                    killed_blocks=4; //so that further generation is impossible
+                }
+                if(killed_blocks == 3)
+                {
+                    t_map::set(x, y, z, material);
+                }
+                else
+                {
+                    t_map::set(x, y, z, EMPTY_CUBE);
+                }
+                killed_blocks++;
+            }
+            z = z - 1;
+        }
+    }
+}
+
 }   // t_gen
