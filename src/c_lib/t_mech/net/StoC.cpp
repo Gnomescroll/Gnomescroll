@@ -55,7 +55,7 @@ void mech_type_change_StoC::handle()
     mech_list->mla[id].mech_type = (MechType) mech_type;
     _mech_update(mech_list->mla[id]);
 
-    printf("mecch %i grow \n", id);
+    //printf("mech %i grow \n", id);
 
 };
 

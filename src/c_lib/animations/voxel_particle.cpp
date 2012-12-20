@@ -288,13 +288,19 @@ static void prep_colored_voxel_particles()
             veb2[4*i+3] = veb[q_set[4*i+3]];
         }
 
+        struct Color c3;
+
+        c3.c[0] = vox->voxel.color.c[0];
+        c3.c[1] = vox->voxel.color.c[1];
+        c3.c[2] = vox->voxel.color.c[2];
+
         // draw voxel
         for (int i=0; i<6; i++)
         {
-            colored_voxel_particle_vlist->push_vertex(veb2[4*i+0], vn[i], vox->voxel.color);
-            colored_voxel_particle_vlist->push_vertex(veb2[4*i+1], vn[i], vox->voxel.color);
-            colored_voxel_particle_vlist->push_vertex(veb2[4*i+2], vn[i], vox->voxel.color);
-            colored_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], vox->voxel.color);
+            colored_voxel_particle_vlist->push_vertex(veb2[4*i+0], vn[i], c3);
+            colored_voxel_particle_vlist->push_vertex(veb2[4*i+1], vn[i], c3);
+            colored_voxel_particle_vlist->push_vertex(veb2[4*i+2], vn[i], c3);
+            colored_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], c3);
         }
     }
     

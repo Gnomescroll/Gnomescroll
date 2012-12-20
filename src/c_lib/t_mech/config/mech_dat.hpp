@@ -58,6 +58,26 @@ void load_mech_dat()
     //set_sprite_index(16*6 + 2);
     ///s->render_type = MECH_RENDER_TYPE_0;
 
+
+    mech_def(MECH_CRYSTAL, "cryptid_larvae_stage_3", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_DEFAULT);
+    set_sprite_index(16*6 + 2);
+
+    mech_def(MECH_CRYSTAL, "cryptid_larvae_stage_2", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_PLANT);
+    set_sprite_index(16*6 + 1);
+    s->growth_ttl = 30;
+    s->growth_stage = get_mech_type_dat("cryptid_larvae_stage_3");
+
+    mech_def(MECH_CRYSTAL, "cryptid_larvae_stage_1", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_PLANT);
+    set_sprite_index(16*6 + 1);
+    s->growth_ttl = 30;
+    s->growth_stage = get_mech_type_dat("acadia_flower_stage_2");
+
+    mech_def(MECH_CRYSTAL, "cryptid_larvae_stage_0", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_PLANT);
+    set_sprite_index(16*6 + 0);
+    s->growth_ttl = 60;
+    s->growth_stage = get_mech_type_dat("cryptid_larvae_stage_1");
+
+
     end_mech_dat();     // finalize
 
     apply_mech_dat_changes();   // handle renaming/removals
