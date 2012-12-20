@@ -56,8 +56,6 @@ static void generate_sprite_vertices(
         if (pixels[i].a <= alpha_test) continue;
         float x = float((n_pixels-i-1) / tile_size);
         float y = float((n_pixels-i-1) % tile_size);
-        //float x = float((i) / tile_size);
-        //float y = float((i) % tile_size);
         push_sprite_vertex_cube(vlist, x, y, color_init(pixels[i]));
     }
     // check if the sprite wasn't completely invisible
