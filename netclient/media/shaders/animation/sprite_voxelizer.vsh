@@ -18,7 +18,6 @@ void main(void)
     // set light diffusion
     vec3 look = normalize(pos.xyz - InCameraPos);
     diffuse_light = abs(dot(look, (InMatrix * vec4(InNormal, 0.0f)).xyz));           //use camera position
-    //diffuse_light = abs(dot(look, InNormal));           //use camera position
 
     // set position
     gl_Position = pos;
