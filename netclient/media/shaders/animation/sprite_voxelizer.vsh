@@ -25,4 +25,3 @@ void main(void)
     // set color
     base_color = InColor;
 }
-

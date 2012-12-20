@@ -356,7 +356,8 @@ void draw_equipped_item(int item_type)
         {
             int sprite_id = Item::get_sprite_index_for_type(item_type);
             struct Mat4 m;
-            mat4_from_vec3(m, forward, right, up, origin);
+            //mat4_from_vec3(m, forward, right, up, origin);
+            mat4_from_vec3(m, right, up, forward, origin);
             draw_voxelized_sprite(sprite_id, m);
             draw_voxelized_sprite_gl_end();
             //draw_planar_sprite(item_type, origin, right, up);
