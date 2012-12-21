@@ -16,5 +16,5 @@ void main()
     //gl_FragColor.rgb = vec3(diffuse_light, diffuse_light, diffuse_light);
 
     //uncomment to see total lighting
-    gl_FragColor.rgb = vec3(diffuse_light*diffuse_p+ambient_p, diffuse_light*diffuse_p+ambient_p, diffuse_light*diffuse_p+ambient_p);
+    //gl_FragColor.rgb = vec3(diffuse_light*diffuse_p+ambient_p, diffuse_light*diffuse_p+ambient_p, diffuse_light*diffuse_p+ambient_p);
 }
