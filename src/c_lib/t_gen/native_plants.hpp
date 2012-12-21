@@ -26,9 +26,9 @@ void place_native_plants()
 	MechType plant_3 = t_mech::get_mech_type_dat("acadia_flower_stage_2");
 
 	MechType plant_4 = t_mech::get_mech_type_dat("cryptid_larvae_stage_0");
-	MechType plant_5 = t_mech::get_mech_type_dat("cryptid_larvae_stage_1");
+	MechType plant_5 = t_mech::get_mech_type_dat("cryptid_larvae_stage_3");
 
-	int plants_max = 4096;
+	int plants_max = 128;
 	int tries = 0;
 
     int regolith = t_map::get_cube_id("regolith");
@@ -61,8 +61,27 @@ void place_native_plants()
     				tries++;
     				break;
     			}
+    			bool ret;
 
-    			bool ret = t_mech::create_mech(x,y,z+1, plant_1);
+    			if(rand()%4 == 0)
+    			{
+    				int v = rand()%4;
+    				if(v==0) ret = t_mech::create_mech(x,y,z+1, plant_1);
+    				if(v==1) ret = t_mech::create_mech(x,y,z+1, plant_1);
+       				if(v==2) ret = t_mech::create_mech(x,y,z+1, plant_2);
+    				if(v==3) ret = t_mech::create_mech(x,y,z+1, plant_3);
+	    		}
+	    		else
+	    		{
+	    			if(rand()%4 != 0)
+					{
+		    			ret = t_mech::create_mech(x,y,z+1, plant_4);
+	    			}
+	    			else
+	    			{
+		    			ret = t_mech::create_mech(x,y,z+1, plant_5);
+	    			}	
+	    		}
 
     			if(ret == false)
     			{
