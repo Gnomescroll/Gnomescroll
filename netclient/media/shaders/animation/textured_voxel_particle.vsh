@@ -17,9 +17,18 @@ void main(void)
     vec3 look = normalize(pos.xyz - InCameraPos);
 
 
+	//Light 2
+    diffuse_light = abs(dot(light_dir, InNormal));           //use camera position
+
+/*
+	//Light 1
+    vec3 look = normalize(pos.xyz - InCameraPos);
+    diffuse_light = abs(dot(look, InNormal));           //use camera position
+*/
+
     //diffuse_light = dot(look, InNormal);
     
-    diffuse_light = abs(dot(look, InNormal));           //use camera position
+    //diffuse_light = abs(dot(look, InNormal));           //use camera position
     //diffuse_light = abs(dot(light_dir, InNormal));    //use fixed light source
 
     gl_Position = pos;
