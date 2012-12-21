@@ -302,8 +302,12 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
     
     if (!t_mech::can_place_mech(b[0],b[1],b[2], 0)) return;
 
-    printf("place crystal %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
-    t_mech::create_crystal(b[0],b[1],b[2], mech_type);
+    //printf("place mech %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
+    bool ret = t_mech::create_mech(b[0],b[1],b[2], mech_type);
+
+    if(ret == true)
+        decrement_stack(agent_id, item_id, item_type);
+
 }
 
 #endif

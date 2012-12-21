@@ -193,6 +193,7 @@ void tick()
         MECH_BEHAVIOR_TYPE_PLANT,
     } MechBehaviorType;
 */
+        int light_value;
 
         switch (mech_behavior_type)
         {
@@ -206,8 +207,24 @@ void tick()
                 mla[i].growth_ttl--;
                 if(mla[i].growth_ttl == 0)
                     force_mech_growth(i);
+            case MECH_BEHAVIOR_TYPE_LIGHT_PLANT:
+                break;
+
+            case MECH_BEHAVIOR_TYPE_DARK_PLANT:
+                light_value = t_map::get_skylight(mla[i].x, mla[i].y, mla[i].z);
+                if(light_value < 10)
+                {
+                    if(rand() % 6 != 0)
+                        continue;
+                    GS_ASSERT(mla[i].growth_ttl >= 0);  
+                    mla[i].growth_ttl--;
+                    if(mla[i].growth_ttl == 0)
+                        force_mech_growth(i);
+                }
 
                 break;
+
+
             default:
                 GS_ASSERT(false);
                 break;

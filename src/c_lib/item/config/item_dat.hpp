@@ -393,6 +393,12 @@ void load_item_dat()
     set_pretty_name("Blob Seed");
     s->max_stack_size = 64;
 
+    item_def(IG_MECH_PLACER, "cryptid_larvae");
+    sprite_def(p0, 3,1);
+    s->mech_type = t_mech::get_mech_type("cryptid_larvae_stage_0");
+    set_pretty_name("Cryptid Larvae");
+    s->max_stack_size = 16;
+
     item_def(IG_RESOURCE, "blackpowder");
     sprite_def(i0, 5,3);
     s->max_stack_size = 64;

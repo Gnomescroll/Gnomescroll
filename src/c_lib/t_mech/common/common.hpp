@@ -29,6 +29,8 @@ typedef enum
 {
     MECH_BEHAVIOR_TYPE_DEFAULT = 0,
     MECH_BEHAVIOR_TYPE_PLANT,
+    MECH_BEHAVIOR_TYPE_LIGHT_PLANT,
+    MECH_BEHAVIOR_TYPE_DARK_PLANT,
 } MechBehaviorType;
 
 //instance

@@ -98,6 +98,26 @@ void load_drop_dat()
         b->set_drop(0.24f, 3);
 
 
+    b->def_drop("cryptid_larvae_stage_0");
+        b->add_drop("cryptid_larvae", 1);
+        b->set_drop(0.99f, 1);
+
+    b->def_drop("cryptid_larvae_stage_1");
+        b->add_drop("cryptid_larvae", 2);
+        b->set_drop(0.50f, 1);
+        b->set_drop(0.24f, 2);
+
+    b->def_drop("cryptid_larvae_stage_2");
+        b->add_drop("cryptid_larvae", 3);
+        b->set_drop(0.25f, 1);
+        b->set_drop(0.25f, 2);
+        b->set_drop(0.24f, 3);
+
+    b->def_drop("cryptid_larvae_stage_3");
+        b->add_drop("cryptid_larvae", 3);
+        b->set_drop(0.33f, 1);
+        b->set_drop(0.33f, 2);
+        b->set_drop(0.33f, 3);
 
     b->end();
 
