@@ -17,10 +17,10 @@ void main(void)
     // set light diffusion
 
     
-/*
+
 	//Light 2
     diffuse_light = abs(dot(light_dir, InNormal));           //use camera position
-*/
+
 
 /*
 	//Light 1
