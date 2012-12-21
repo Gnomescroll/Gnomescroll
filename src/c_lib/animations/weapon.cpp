@@ -338,10 +338,9 @@ void draw_equipped_item(int item_type)
     right = vec3_scalar_mult(right, equipped_item_scale);
     forward = vec3_scalar_mult(forward, equipped_item_scale);
 
-    GL_ASSERT(GL_DEPTH_TEST, false);
-
     if (Item::item_type_is_voxel(item_type))
     {
+        GL_ASSERT(GL_DEPTH_TEST, false);
         bool works = draw_voxel_gl_begin(GL_FRONT);
         if (works)
         {

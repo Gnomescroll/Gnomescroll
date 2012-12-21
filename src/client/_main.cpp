@@ -361,9 +361,9 @@ void draw_tick()
 
     if (input_state.draw_hud)
     {
-        glDisable(GL_DEPTH_TEST);
+        //glDisable(GL_DEPTH_TEST);
         Animations::draw_equipped_item(equipped_item_type);
-        glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_DEPTH_TEST);
     }
 
 

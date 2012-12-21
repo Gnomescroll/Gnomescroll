@@ -138,17 +138,15 @@ void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix)
 bool draw_voxelized_sprite_gl_begin()
 {
     glEnable(GL_CULL_FACE);
-    //glEnable(GL_DEPTH_TEST);
     GL_ASSERT(GL_TEXTURE_2D, false);
     GL_ASSERT(GL_BLEND, false);
-    GL_ASSERT(GL_DEPTH_TEST, false);
+    GL_ASSERT(GL_DEPTH_TEST, true);
     return true;
 }
 
 void draw_voxelized_sprite_gl_end()
 {
     glDisable(GL_CULL_FACE);
-    //glDisable(GL_DEPTH_TEST);
 }
 
 }   // Animations
