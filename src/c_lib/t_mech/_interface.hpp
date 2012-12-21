@@ -40,6 +40,7 @@ static bool unpack_mech(struct MECH &m, class mech_create_StoC &p);
 
 
 void tick(); //update growth cycles
+void floating_removal_tick(); //removes floating t_mech
 
 void force_mech_growth(int mech_id); //forces growth cycle
 
@@ -49,6 +50,7 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype);
 
 void send_client_mech_list(ClientID client_id);
 void handle_block_removal(int x, int y, int z); //react to block destruction
+bool remove_mech(int mech_id);
 #endif
 
 }   // t_mech

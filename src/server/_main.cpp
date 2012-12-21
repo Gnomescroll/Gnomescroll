@@ -193,7 +193,9 @@ void tick()
 
     if(counter % 5 == 0) // 6 times a second
         t_mech::tick(); //t_mech growth timers
-
+    if(counter % 30 == 0)
+        t_mech::floating_removal_tick();
+    
     t_map::environment_process_tick(); //refresh regolith etc...
 
     Auth::update(); // do it here because i need constant timer

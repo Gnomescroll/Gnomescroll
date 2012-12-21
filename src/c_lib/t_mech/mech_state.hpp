@@ -183,6 +183,8 @@ MechType MECH_LIST::handle_block_removal(int x, int y, int z)
         }
     return mech_type;
 }
+
+
 #endif
 
 }   // t_mech

@@ -216,6 +216,31 @@ void tick()
     }
 }
 
+void floating_removal_tick() //removes floating t_mech
+{
+    const int mlm = mech_list->mlm;
+    struct MECH* mla = mech_list->mla;
+    
+    //int num =0;
+    int collection_count = 0;
+    for(int i=0; i<mlm; i++)
+    {
+        if (mla[i].id == -1) continue;
+
+        int x = mla[i].x;
+        int y = mla[i].y;
+        int z = mla[i].z;
+        if(!t_map::isSolid(x,y,z-1))
+        {
+            remove_mech(i);
+            collection_count++;
+        }
+    }
+
+    if(collection_count != 0)
+        printf("t_mech::floating_removal_tick, removed %i floating t_mech \n", collection_count);
+}
+
 void force_mech_growth(int mech_id)
 {
     const int mlm = mech_list->mlm;
@@ -649,7 +674,23 @@ void handle_block_removal(int x, int y, int z)
         handle_drop(x,y,z, mech_type);
 }
 
+bool remove_mech(int mech_id)   //removes mech with drop
+{
+    GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
+    
+    struct MECH m = mech_list->mla[mech_id];
+    MechType mech_type = m.mech_type;
 
+    int ret = mech_list->server_remove_mech(mech_id);
+    IF_INVALID_MECH_TYPE(mech_type) return false;
+
+    GS_ASSERT(ret == true);
+    
+    if(mech_attributes[mech_type].item_drop) 
+        handle_drop(m.x,m.y,m.z, mech_type);
+
+    return ret;
+}
 #endif
 
 }   // t_mech
