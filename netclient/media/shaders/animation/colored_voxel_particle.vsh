@@ -15,9 +15,18 @@ void main(void)
     vec4 pos = gl_ModelViewProjectionMatrix * gl_Vertex;
 
     // set light diffusion
+
+    
+/*
+	//Light 2
+    diffuse_light = abs(dot(light_dir, InNormal));           //use camera position
+*/
+
+/*
+	//Light 1
     vec3 look = normalize(pos.xyz - InCameraPos);
     diffuse_light = abs(dot(look, InNormal));           //use camera position
-
+*/
     // set color
     base_color = InColor;
 

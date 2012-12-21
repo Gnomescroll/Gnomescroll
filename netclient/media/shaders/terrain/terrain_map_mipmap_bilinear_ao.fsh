@@ -75,7 +75,7 @@ void main()
 
     if(fogFragDepth > clut_start)
     { 
-        vec3 color_clut = texture3D(clut, color.rgb); //clut correction
+        vec3 color_clut = texture3D(clut, color.rgb).rgb; //clut correction
 
         float f = _clut_depth*(fogFragDepth - clut_start);
         f = clamp(f, 0.0f, 1.0f);
