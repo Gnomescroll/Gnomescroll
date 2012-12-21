@@ -228,7 +228,7 @@ void force_mech_growth(int mech_id)
 
     ASSERT_VALID_MECH_TYPE(growth_stage);
     GS_ASSERT(mla[mech_id].id != -1);
-    GS_ASSERT(mech_id > 0 && mech_id < mlm);
+    GS_ASSERT(mech_id >= 0 && mech_id < mlm);
 
     mla[mech_id].mech_type =  growth_stage;
     //mla[mech_id].subtype =  rand % 255;
@@ -265,7 +265,28 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
 
     if (!can_place_mech(x,y,z, 0))
     {
-        printf("Can't place mech at %d,%d,%d\n", x,y,z);
+        
+
+
+        if (t_map::isSolid(x,y,z))
+        {
+            printf("Can't place mech: reason 1 at %d,%d,%d\n", x,y,z);
+            return false;
+        }
+
+        if (!t_map::isSolid(x,y,z-1))        
+        {
+            printf("Can't place mech: reason 2 at %d,%d,%d\n", x,y,z);
+            return false;
+        }
+
+        if (mech_list->is_occupied(x,y,z))        
+        {
+            printf("Can't place mech: reason 3 at %d,%d,%d\n", x,y,z);
+            return false;
+        }
+
+        printf("Can't place mech: reason other at %d,%d,%d\n", x,y,z); //means out of bounds in z
         return false;
     }
 
