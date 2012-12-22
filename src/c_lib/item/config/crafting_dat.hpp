@@ -54,10 +54,10 @@ void load_crafting_dat()
     // blocks
      def_crafting_recipe("steel_block_1", 4);
     set_crafting_reagent("iron_bar", 1);
-    
+
     def_crafting_recipe("steel_block_2", 4);
     set_crafting_reagent("iron_bar", 1);
-    
+
     def_crafting_recipe("steel_block_3", 4);
     set_crafting_reagent("iron_bar", 1);
 
@@ -73,12 +73,16 @@ void load_crafting_dat()
     set_crafting_reagent("plasma_grenade", 2);
     set_crafting_reagent("steel_block_1", 1);
 
+    def_crafting_recipe("rock_landmine");
+    set_crafting_reagent("plasmagen", 1);
+    set_crafting_reagent("rock", 1);
+
     def_crafting_recipe("plasmagen");
     set_crafting_reagent("blackpowder", 8);
     set_crafting_reagent("methane_ice_chunk", 8);
     set_crafting_reagent("plasma_grenade", 4);
     set_crafting_reagent("steel_block_2", 1);
-    
+
     def_crafting_recipe("plasmagen");
     set_crafting_reagent("blackpowder", 8);
     set_crafting_reagent("methane_ice_chunk", 8);
@@ -89,15 +93,15 @@ void load_crafting_dat()
     def_crafting_recipe("small_charge_pack");
     set_crafting_reagent("copper_bar", 1);
     set_crafting_reagent("methane_ice_chunk", 1);
-    
+
     def_crafting_recipe("small_charge_pack");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("methane_ice_chunk", 1);
-    
+
     def_crafting_recipe("small_charge_pack");
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("methane_ice_chunk", 1);
-    
+
     def_crafting_recipe("small_charge_pack");
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("methane_ice_chunk", 1);
@@ -106,34 +110,34 @@ void load_crafting_dat()
     set_crafting_reagent("copper_bar", 1);
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("methane_ice_chunk", 4);
-    
+
     def_crafting_recipe("energy_tank");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("methane_ice_chunk", 4);
-    
+
     def_crafting_recipe("energy_tank");
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("methane_ice_chunk", 4);
-    
+
     def_crafting_recipe("energy_tank");
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("methane_ice_chunk", 4);
-    
+
     def_crafting_recipe("agent_spawner");
     set_crafting_reagent("copper_bar", 4);
     set_crafting_reagent("iron_bar", 4);
     set_crafting_reagent("gallium_bar", 4);
     set_crafting_reagent("iridium_bar", 4);
-    
+
     def_crafting_recipe("energy_core");
     set_crafting_reagent("methane_ice_chunk", 16);
     set_crafting_reagent("coal_nugget", 8);
     set_crafting_reagent("iridium_bar", 4);
     set_crafting_reagent("copper_bar", 4);
-    
+
     def_crafting_recipe("iron_rod", 2);
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
@@ -171,15 +175,15 @@ void load_crafting_dat()
     def_crafting_recipe("blue_mining_laser");
     set_crafting_reagent("copper_bar", 1);
     set_crafting_reagent("blue_crystal", 1);
-    
+
     def_crafting_recipe("blue_mining_laser");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("blue_crystal", 1);
-    
+
     def_crafting_recipe("blue_mining_laser");
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("blue_crystal", 1);
-    
+
     def_crafting_recipe("blue_mining_laser");
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("blue_crystal", 1);
@@ -188,15 +192,15 @@ void load_crafting_dat()
     def_crafting_recipe("red_mining_laser");
     set_crafting_reagent("copper_bar", 1);
     set_crafting_reagent("red_crystal", 1);
-    
+
     def_crafting_recipe("red_mining_laser");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("red_crystal", 1);
-    
+
     def_crafting_recipe("red_mining_laser");
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("red_crystal", 1);
-    
+
     def_crafting_recipe("red_mining_laser");
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("red_crystal", 1);
@@ -205,15 +209,15 @@ void load_crafting_dat()
     def_crafting_recipe("green_mining_laser");
     set_crafting_reagent("copper_bar", 1);
     set_crafting_reagent("green_crystal", 1);
-    
+
     def_crafting_recipe("green_mining_laser");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("green_crystal", 1);
-    
+
     def_crafting_recipe("green_mining_laser");
     set_crafting_reagent("gallium_bar", 1);
     set_crafting_reagent("green_crystal", 1);
-    
+
     def_crafting_recipe("green_mining_laser");
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("green_crystal", 1);

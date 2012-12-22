@@ -181,7 +181,11 @@ void tick()
     }
     if (counter % 30000 == 1)
     {
-        //t_gen::meteor_fall();
+        t_gen::meteor_fall();
+    }
+    if (counter % 30000 == 15000)
+    {
+        t_gen::meteor_shower();
     }
 
     //ServerState::spawn_items(2);

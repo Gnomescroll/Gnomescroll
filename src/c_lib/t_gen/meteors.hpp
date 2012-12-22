@@ -248,21 +248,27 @@ void meteor_shower()
     {
         case 1:
             material = t_map::get_cube_id("iron_ore");
+            printf("Starting iron meteor shower \n");
             break;
         case 2:
             material = t_map::get_cube_id("coal");
+            printf("Starting coal meteor shower \n");
             break;
         case 3:
             material = t_map::get_cube_id("copper_ore");
+            printf("Starting copper meteor shower \n");
             break;
         case 4:
             material = t_map::get_cube_id("iridium_ore");
+            printf("Starting iridium meteor shower \n");
             break;
         case 5:
             material = t_map::get_cube_id("gallium_ore");
+            printf("Starting gallium meteor shower \n");
             break;
         case 6:
             material = t_map::get_cube_id("methane_ice");
+            printf("Starting methane meteor shower \n");
             break;
         default:
             GS_ASSERT(false);
@@ -270,9 +276,11 @@ void meteor_shower()
     }
     for(int count = 1; count <= AMOUNT; count++)
     {
+        printf("Creating meteor from meteor shower at %d, %d \n", x, y);
         x = randrange(1, t_map::map_dim.x - 1);
         y = randrange(1, t_map::map_dim.y - 1);
         z = t_map::map_dim.z - 1;
+        printf("Creating meteor from meteor shower at %d, %d \n", x, y);
         killed_blocks = 0;
         while(z > 1 && killed_blocks <= 3)
         {
@@ -286,9 +294,16 @@ void meteor_shower()
                 {
                     t_map::set(x, y, z, material);
                 }
-                else
+                else if (killed_blocks < 3)
                 {
                     t_map::set(x, y, z, EMPTY_CUBE);
+                }
+                else if (killed_blocks > 3)
+                {
+                    if(z < t_map::map_dim.z - 1)
+                    {
+                        t_map::set(x, y, z + 1, material);
+                    }
                 }
                 killed_blocks++;
             }

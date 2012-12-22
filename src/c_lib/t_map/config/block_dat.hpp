@@ -191,6 +191,12 @@ void load_block_dat()
     //hud_def  (c1, 9,9);
     set_max_damage(48);
 
+    cube_def(SolidCube, "rock_landmine", CUBE_MATERIAL_STONE);
+    iso_texture(tgm, 1,1);
+    push_texture();
+    //hud_def  (c1, 9,9);
+    set_max_damage(4);
+
     cube_def(SolidCube, "coal", CUBE_MATERIAL_DIRT);
     iso_texture(tgm, 6,1);
     push_texture();
