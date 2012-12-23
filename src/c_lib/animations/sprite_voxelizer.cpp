@@ -26,9 +26,9 @@ static void push_sprite_vertex_cube(VertexElementListColor* vlist, float x, floa
 
     for (int i=0; i<8; i++)
     {
-        veb[i].x = equipped_item_scale*(v_set[3*i+0] + 0);
-        veb[i].y = equipped_item_scale*(v_set[3*i+1] + x);
-        veb[i].z = equipped_item_scale*(v_set[3*i+2] + y);
+        veb[i].x = voxelized_sprite_config.scale*(v_set[3*i+0] + 0);
+        veb[i].y = voxelized_sprite_config.scale*(v_set[3*i+1] + x);
+        veb[i].z = voxelized_sprite_config.scale*(v_set[3*i+2] + y);
     }
 
     for (int i=0; i<6; i++)

@@ -13,38 +13,24 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-float equipped_item_scale = 0.3f;
-
 static int rendered_item = NULL_ITEM_TYPE;
 static bool equipped_item_animating = false;
 static int equipped_item_animation_tick = 0;
 static int equipped_item_animation_tick_nudge = 1;
 static bool equipped_item_continuous_animation = false;
 
-// offsets when equipped_item_animating
-static float anim_focal_dz = 0.0f;
-static float anim_focal_dxy = 0.0f;
-static float anim_focal_depth = 0.0f;
-static float anim_origin_dz = 0.0f;
-static float anim_origin_dxy = 0.0f;
-static float anim_origin_depth = 0.0f;
+static class EquippedItemConfig sprite_config;
+static class EquippedItemConfig voxel_config;
+class EquippedItemConfig voxelized_sprite_config;
 
-// config; adjustments for aligning weapon sprite
-static float focal_dz = 0.0f;
-static float focal_dxy = 0.0f;
-static float focal_depth = 0.0f;
+static class EquippedItemConfig* current_config; 
 
-static float origin_dz = 0.0f;
-static float origin_dxy = 0.0f;
-static float origin_depth = 0.0f;
+static class EquippedItemAlignment animation_state;
 
-void parse_equipment_sprite_alignment_config()
+void EquippedItemConfig::parse()
 {
-    // get file contents
-    const char* filename = MEDIA_PATH "config/equipped_sprite_alignment.cfg";
-    
     size_t size = 0;
-    char* buffer = read_file_to_buffer(filename, &size);
+    char* buffer = read_file_to_buffer(this->filename, &size);
     IF_ASSERT(buffer == NULL) return;
     IF_ASSERT(size <= 0) return;
     
@@ -52,19 +38,19 @@ void parse_equipment_sprite_alignment_config()
     int read = 0;
     
     // scanf for alignment config    
-    sscanf(&buffer[index], "sprite_scale: %f %n", &equipped_item_scale, &read);
+    sscanf(&buffer[index], "scale: %f %n", &this->scale, &read);
     index += read;
-    sscanf(&buffer[index], "focal_dz: %f %n", &focal_dz, &read);
+    sscanf(&buffer[index], "focal.dz: %f %n", &this->alignment.focal.dz, &read);
     index += read;
-    sscanf(&buffer[index], "focal_dxy: %f %n", &focal_dxy, &read);
+    sscanf(&buffer[index], "focal.dxy: %f %n", &this->alignment.focal.dxy, &read);
     index += read;
-    sscanf(&buffer[index], "focal_depth: %f %n", &focal_depth, &read);
+    sscanf(&buffer[index], "focal.depth: %f %n", &this->alignment.focal.depth, &read);
     index += read;
-    sscanf(&buffer[index], "origin_dz: %f %n", &origin_dz, &read);
+    sscanf(&buffer[index], "origin.dz: %f %n", &this->alignment.origin.dz, &read);
     index += read;
-    sscanf(&buffer[index], "origin_dxy: %f %n", &origin_dxy, &read);
+    sscanf(&buffer[index], "origin.dxy: %f %n", &this->alignment.origin.dxy, &read);
     index += read;
-    sscanf(&buffer[index], "origin_depth: %f %n", &origin_depth, &read);
+    sscanf(&buffer[index], "origin.depth: %f %n", &this->alignment.origin.depth, &read);
     index += read;
 
     GS_ASSERT(index <= size);
@@ -73,51 +59,93 @@ void parse_equipment_sprite_alignment_config()
     free(buffer);
 }
 
+void init_weapon_sprite()
+{
+    sprite_config.set_filename("equipped_sprite_alignment.cfg");
+    voxel_config.set_filename("equipped_voxel_alignment.cfg");
+    voxelized_sprite_config.set_filename("equipped_voxelized_sprite_alignment.cfg");
+
+    sprite_config.parse();
+    voxel_config.parse();
+    voxelized_sprite_config.parse();
+
+    current_config = &voxelized_sprite_config;
+}
+
 void move_focal_vertical(float delta)
 {    // vertical distance
-    focal_dz += delta;
+    current_config->alignment.focal.dz += delta;
 }
 
 void move_focal_horizontal(float delta)
 {    // horizontal distance
-    focal_dxy += delta;
+    current_config->alignment.focal.dxy += delta;
 }
 
 void move_focal_depth(float delta)
 {    // distance from agent plane
-    focal_depth += delta;
+    current_config->alignment.focal.depth += delta;
 }
 
 void move_origin_vertical(float delta)
 {    // vertical distance along agent plane
-    origin_dz += delta;
+    current_config->alignment.origin.dz += delta;
 }
 
 void move_origin_horizontal(float delta)
 {    // horizontal distance along agent plane
-    origin_dxy += delta;
+    current_config->alignment.origin.dxy += delta;
 }
 
 void move_origin_depth(float delta)
 {    // distance from agent plane
-    origin_depth += delta;
+    current_config->alignment.origin.depth += delta;
 }
 
 void dilate_equipped_sprite(float delta)
 {
-    equipped_item_scale += delta;
+    current_config->scale += delta;
+}
+
+void cycle_current_config()
+{
+    const int nconf = 3;
+    static int _cur = 0;
+    _cur = (_cur+1)%nconf;
+    printf("Selected config: ");
+    switch (_cur)
+    {
+        case 0:
+            current_config = &voxelized_sprite_config;
+            printf("voxelized sprite");
+            break;
+
+        case 1:
+            current_config = &voxel_config;
+            printf("voxel config");
+            break;
+
+        case 2:
+            current_config = &sprite_config;
+            printf("sprite config");
+            break;
+
+        default:
+            GS_ASSERT(false)
+            break;
+    }
+    printf("\n");
+    
 }
 
 void print_sprite_alignment_config()
 {
-    printf("Sprite alignment:\n");
-    printf("equipped_item_scale: %f\n", equipped_item_scale);
-    printf("focal_dz: %f\n", focal_dz);
-    printf("focal_dxy: %f\n", focal_dxy);
-    printf("focal_depth: %f\n", focal_depth);
-    printf("origin_dz: %f\n", origin_dz);
-    printf("origin_dxy: %f\n", origin_dxy);
-    printf("origin_depth: %f\n", origin_depth);
+    printf("Sprite:\n");
+    sprite_config.print();
+    printf("Voxel:\n");
+    voxel_config.print();
+    printf("Voxelized sprite:\n");
+    voxelized_sprite_config.print();
 }
 
 static Vec3 compute_point_offset(
@@ -287,6 +315,14 @@ void draw_equipped_item(int item_type)
         
     rendered_item = item_type;
 
+    if (Item::item_type_is_voxel(item_type))
+        current_config = &voxel_config;
+    else if (Options::animation_level <= 1)
+            current_config = &sprite_config;
+    else
+        current_config = &voxelized_sprite_config;
+
+
     IF_ASSERT(agent_camera == NULL) return;
     
     // camera state
@@ -303,21 +339,21 @@ void draw_equipped_item(int item_type)
     {    // use animated state
         focal = compute_point_offset(
             position, forward, camera_right, up,
-            anim_focal_dxy, anim_focal_dz, anim_focal_depth);
+            animation_state.focal.dxy, animation_state.focal.dz, animation_state.focal.depth);
 
         origin = compute_point_offset(
             position, forward, camera_right, up,
-            anim_origin_dxy, anim_origin_dz, anim_origin_depth);
+            animation_state.origin.dxy, animation_state.origin.dz, animation_state.origin.depth);
     }
     else
     {    // use defaults
         focal = compute_point_offset(
             position, forward, camera_right, up,
-            focal_dxy, focal_dz, focal_depth);
+            current_config->alignment.focal.dxy, current_config->alignment.focal.dz, current_config->alignment.focal.depth);
 
         origin = compute_point_offset(
             position, forward, camera_right, up,
-            origin_dxy, origin_dz, origin_depth);
+            current_config->alignment.origin.dxy, current_config->alignment.origin.dz, current_config->alignment.origin.depth);
     }
 
     // use focal and origin points to calculate right vector
@@ -334,9 +370,9 @@ void draw_equipped_item(int item_type)
     origin = translate_position(origin);
     
     // scale to size
-    up = vec3_scalar_mult(up, equipped_item_scale);
-    right = vec3_scalar_mult(right, equipped_item_scale);
-    forward = vec3_scalar_mult(forward, equipped_item_scale);
+    up = vec3_scalar_mult(up, current_config->scale);
+    right = vec3_scalar_mult(right, current_config->scale);
+    forward = vec3_scalar_mult(forward, current_config->scale);
 
     if (Item::item_type_is_voxel(item_type))
     {
@@ -365,6 +401,7 @@ void draw_equipped_item(int item_type)
             if (works)
             {
                 int sprite_id = Item::get_sprite_index_for_type(item_type);
+                origin = quadrant_translate_position(current_camera_position, origin);
                 struct Mat4 m;
                 mat4_from_vec3(m, forward, right, up, origin);
                 draw_voxelized_sprite(sprite_id, m);
@@ -387,20 +424,20 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
     
     // HACKED UP MODEL DEPENDENT CRAP
     struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);
-    float offset = (((vv->zdim)/2) * vv->scale) + (equipped_item_scale / 2.0f);
+    float offset = (((vv->zdim)/2) * vv->scale) + (current_config->scale / 2.0f);
     struct Vec3 origin = vec3_add(a->arm_center(), vec3_scalar_mult(right, offset));
     origin = translate_position(origin);
     
-    if (!sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, equipped_item_scale))
+    if (!sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, current_config->scale))
         return false;
 
     struct Vec3 up = a->arm_forward();
     struct Vec3 forward = a->arm_right();
 
     // scale to size
-    *pUp = vec3_scalar_mult(up, equipped_item_scale);
-    *pRight = vec3_scalar_mult(right, equipped_item_scale);
-    *pForward = vec3_scalar_mult(forward, equipped_item_scale);
+    *pUp = vec3_scalar_mult(up, current_config->scale);
+    *pRight = vec3_scalar_mult(right, current_config->scale);
+    *pForward = vec3_scalar_mult(forward, current_config->scale);
 
     *pOrigin = origin;
     
@@ -458,12 +495,12 @@ void begin_equipped_item_animation(int item_type, bool continuous)
     equipped_item_animation_tick = 0;
     
     // copy default state
-    anim_focal_dz = focal_dz;
-    anim_focal_dxy = focal_dxy;
-    anim_focal_depth = focal_depth;
-    anim_origin_dz = origin_dz;
-    anim_origin_dxy = origin_dxy;
-    anim_origin_depth = origin_depth;
+    animation_state.focal.dz = current_config->alignment.focal.dz;
+    animation_state.focal.dxy = current_config->alignment.focal.dxy;
+    animation_state.focal.depth = current_config->alignment.focal.depth;
+    animation_state.origin.dz = current_config->alignment.origin.dz;
+    animation_state.origin.dxy = current_config->alignment.origin.dxy;
+    animation_state.origin.depth = current_config->alignment.origin.depth;
 }
 
 void tick_equipped_item_animation()
@@ -491,14 +528,14 @@ void tick_equipped_item_animation()
     
     // calculate offsets based on tick value
     const float delta = 0.05f;
-    anim_origin_depth = origin_depth;
+    animation_state.origin.depth = current_config->alignment.origin.depth;
     if (equipped_item_animation_tick < duration/2)
-        anim_origin_depth += delta * (float)equipped_item_animation_tick;
+        animation_state.origin.depth += delta * (float)equipped_item_animation_tick;
     else
-        anim_origin_depth += delta * (float)(duration - equipped_item_animation_tick);
+        animation_state.origin.depth += delta * (float)(duration - equipped_item_animation_tick);
     
     // clamp
-    if (anim_origin_depth < origin_depth) anim_origin_depth = origin_depth;
+    if (animation_state.origin.depth < current_config->alignment.origin.depth) animation_state.origin.depth = current_config->alignment.origin.depth;
 }
 
 void stop_equipped_item_animation()
@@ -560,11 +597,6 @@ void draw_placement_outline(int item_type)
     }
     glEnd();
     CHECK_GL_ERROR();
-}
-
-void init_weapon_sprite()
-{
-    parse_equipment_sprite_alignment_config();
 }
 
 }   // Animations
