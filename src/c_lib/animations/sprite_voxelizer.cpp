@@ -25,10 +25,43 @@ static struct
 const size_t SPRITE_VOXELIZER_MAX = MAX_ITEMS;
 static VertexElementListColorByteAO* sprite_voxelizer_vlists[SPRITE_VOXELIZER_MAX] = {NULL}; 
 
-static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist, float x, float y, const Color color)
-{
-    static struct Vec3 veb[8];     //vertex positions
+static const unsigned char alpha_test = 0xFF/2;
 
+// these are x,y deltas surrounding a face
+// https://github.com/Charged/Miners/blob/master/src/miners/builder/helpers.d#L344
+static const int cdirs[8][2] = {
+    {-1,-1,},  // c1
+    { 0,-1,},
+    { 1,-1,},
+    {-1, 0,},
+    { 1, 0,},
+    {-1, 1,},
+    { 0, 1,},
+    { 1, 1,},
+    };
+
+// these indicate whether we need to bother checking an adjacent pixel
+static const int pdirs[3][8] = {
+    { 0, 1, 0, 0, 0, 0, 1, 0, }, // top,bottom
+    { 1, 1, 1, 1, 1, 1, 1, 1, }, // north,south
+    { 0, 1, 0, 0, 0, 0, 1, 0, }, // east,west
+    };
+
+static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
+    const Color* pixels, size_t n_pixels, size_t tile_size, int index)
+{
+    static struct Vec3 veb[8] = {{{{0,0,0}}}};
+    static char ao[4] = {0};
+    static int neighbors[8] = {0};
+
+    Color color = color_linearize(pixels[index]);
+    
+    int a = index % tile_size;
+    int b = index / tile_size;
+
+    float x = float((n_pixels-index-1) % tile_size);
+    float y = float((n_pixels-index-1) / tile_size);
+    
     for (int i=0; i<8; i++)
     {
         veb[i].x = voxelized_sprite_config.scale*(v_set[3*i+0] + 0);
@@ -37,8 +70,29 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist, float x
     }
 
     for (int i=0; i<6; i++)
-    for (int j=0; j<4; j++)
-        vlist->push_vertex(veb[q_set[4*i+j]], color, v_normal_b[i], voxel_tex_array[j].tex);
+    {
+        for (int j=0; j<8; j++)
+        {
+            neighbors[j] = pdirs[i/2][j];
+            if (neighbors[j])
+            {
+                int m = a + cdirs[j][0];
+                int n = b + cdirs[j][1];
+                int k = m + (n * tile_size);
+                if (m < 0 || m >= (int)tile_size || n < 0 || n >= (int)tile_size)
+                    neighbors[j] = 0;
+                else
+                    neighbors[j] = int(pixels[k].a > alpha_test);
+            }
+        }
+        
+        ao[0] = Voxels::get_ao_weight(neighbors[7], neighbors[1], neighbors[0]);
+        ao[1] = Voxels::get_ao_weight(neighbors[5], neighbors[7], neighbors[6]);
+        ao[2] = Voxels::get_ao_weight(neighbors[1], neighbors[3], neighbors[2]);
+        ao[3] = Voxels::get_ao_weight(neighbors[3], neighbors[5], neighbors[4]);
+        for (int j=0; j<4; j++)
+            vlist->push_vertex(veb[q_set[4*i+j]], color, v_normal_b[i], ao, voxel_tex_array[j].tex);
+    }
 }
 
 static void generate_sprite_vertices(
@@ -55,16 +109,10 @@ static void generate_sprite_vertices(
     
     const size_t tile_size = sheet_loader->tile_size;
     const size_t n_pixels =  tile_size*tile_size;
-    const unsigned char alpha_test = 0xFF/2;
     for (size_t i=0; i<n_pixels; i++)
-    {   // build vertices from pixels
-        if (pixels[i].a <= alpha_test) continue;
-        float x = float((n_pixels-i-1) / tile_size);
-        float y = float((n_pixels-i-1) % tile_size);
-        
-        push_sprite_vertex_cube(vlist, x, y, color_linearize(pixels[i]));
+        if (pixels[i].a > alpha_test)        
+            push_sprite_vertex_cube(vlist, pixels, n_pixels, tile_size, i);
 
-    }
     // check if the sprite wasn't completely invisible
     IF_ASSERT(vlist->vlist_index <= 0)
     {
@@ -138,7 +186,7 @@ void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix)
 
     size_t offset = 0;
     glVertexPointer(3, GL_FLOAT, vlist->stride, (GLvoid*)offset);
-    offset += 3 * sizeof(float);
+    offset += sizeof(struct Vec3);
     glColorPointer(3, GL_UNSIGNED_BYTE, vlist->stride, (GLvoid*)offset);
     offset += sizeof(Color);
     
@@ -148,6 +196,8 @@ void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix)
     offset += 4 * sizeof(char);
     glVertexAttribPointer(sprite_voxelizer_shader_vars.ao_interpolate, 4, GL_UNSIGNED_BYTE, GL_FALSE, vlist->stride, (GLvoid*)offset);
     offset += 4 * sizeof(char);
+
+    GS_ASSERT(offset == sizeof(struct VertexElementColorNormalByteAO));
     
     glDrawArrays(GL_QUADS, 0, vlist->vertex_number);
 

@@ -11,6 +11,9 @@
 namespace Voxels
 {
 
+inline int get_ao_weight(int side_1, int side_2, int corner) __attribute((always_inline));
+// Sets AO strength values
+
 class VoxelVolume
 {
     public:

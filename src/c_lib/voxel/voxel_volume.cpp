@@ -365,10 +365,7 @@ static const int vnset[18] = { 0,0,1,
 };
 */
 
-static inline int vCalcAdj(int side_1, int side_2, int corner)  __attribute((always_inline));
-// Sets AO strength values
-
-static inline int vCalcAdj(int side_1, int side_2, int corner) 
+inline int get_ao_weight(int side_1, int side_2, int corner) 
 {
     static const int occ_array[3] = { 255, 128, 64 };
 
@@ -394,15 +391,6 @@ static inline int vCalcAdj(int side_1, int side_2, int corner)
 void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz)
 {
     //struct voxTexElement
-
-    static const int_fast8_t CI[6*8*3] = {
-        1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
-        -1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
-        1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
-        -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, 1, -1, 0, 1,
-        1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
-        -1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 
-        };
 
     //color
     {
@@ -432,16 +420,16 @@ void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int
         for(int i=0; i<8; i++) 
         {
             int index = side*8*3+i*3;
-            CX[i] = _test_occludes_safe(x+CI[index+0],y+CI[index+1],z+CI[index+2]);
+            CX[i] = _test_occludes_safe(x+ao_perm[index+0],y+ao_perm[index+1],z+ao_perm[index+2]);
         }
 
         {
             VoxAOElement _ao;
 
-            _ao.ao[0] = vCalcAdj(CX[7], CX[1], CX[0]);
-            _ao.ao[1] = vCalcAdj(CX[5], CX[7], CX[6]);
-            _ao.ao[2] = vCalcAdj(CX[1], CX[3], CX[2]);
-            _ao.ao[3] = vCalcAdj(CX[3], CX[5], CX[4]);
+            _ao.ao[0] = get_ao_weight(CX[7], CX[1], CX[0]);
+            _ao.ao[1] = get_ao_weight(CX[5], CX[7], CX[6]);
+            _ao.ao[2] = get_ao_weight(CX[1], CX[3], CX[2]);
+            _ao.ao[3] = get_ao_weight(CX[3], CX[5], CX[4]);
 
             scratch[*index + 0].AO = _ao.AO;
             scratch[*index + 1].AO = _ao.AO;

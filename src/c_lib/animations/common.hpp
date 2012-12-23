@@ -158,10 +158,12 @@ class VertexElementList
     }
 
     __attribute__((always_inline))
-    void push_vertex(struct Vec3 position, Color color, const char normal[3], const char interpolate[4])
+    void push_vertex(struct Vec3 position, Color color, const char normal[3], const char ao[4], const char interpolate[4])
     {
         this->vlist[this->vlist_index].position    = position;
         this->vlist[this->vlist_index].color       = color;
+        for (int i=0; i<4; i++)
+            this->vlist[this->vlist_index].ao[i] = ao[i];
         for (int i=0; i<4; i++)
             this->vlist[this->vlist_index].interpolate[i] = interpolate[i];
         for (int i=0; i<3; i++)

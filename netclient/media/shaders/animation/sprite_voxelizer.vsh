@@ -48,4 +48,6 @@ void main(void)
 
     // set position
     gl_Position = pos;
+
+    gl_FrontColor = gl_Color;
 }

@@ -13,7 +13,7 @@ dont_include_this_file_in_server
 namespace Particle
 {
 
-const int MINIVOX_MAX = 4096;
+const int MINIVOX_MAX = 4096*2;
 const int MINIVOX_TTL = 100;
 const float MINIVOX_DAMP = 0.5f;
 const int MINIVOX_TYPE = 6;
