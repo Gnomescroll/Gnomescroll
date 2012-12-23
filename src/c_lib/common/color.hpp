@@ -24,6 +24,17 @@ struct Color4
     };
 };
 
+static unsigned char _gamma_correction[256];
+void init_color_data()
+{
+    static const float gamma_correction = 2.2f;
+    for(int i=0; i<256; i++)
+    {
+        float intensity = powf(float(i)/256.0f, gamma_correction)*256.0f;
+        _gamma_correction[i] = (unsigned char)intensity;
+    }
+}
+
 inline struct Color interpolate_color(const struct Color a, const struct Color b, float t)
 {
     struct Color c;
@@ -78,30 +89,10 @@ const struct Color4 COLOR_BLACK = color_init(0,0,0,255);
 
 //convert to linear scale
 
-
 inline struct Color color_init_linear_scale(struct Color4 color)
 {
-
-    static unsigned char _gamma_correction[256];
-    static int compute_gamma_chart = 0;
-    if(compute_gamma_chart == 0) 
-    {
-        compute_gamma_chart = 1;
-
-        static const float gamma_correction = 2.2f;
-        for(int i=0; i< 255; i++)
-        {
-            float intensity = (float) i;
-            intensity = powf(intensity/255, gamma_correction)*255;
-            _gamma_correction[i] = (unsigned char)((int) intensity);
-        }
-    }
-
-    struct Color c3;
-
-    c3.c[0] = _gamma_correction[color.c[0]];
-    c3.c[1] = _gamma_correction[color.c[1]];
-    c3.c[2] = _gamma_correction[color.c[2]];
-    //color.c[3] = _gamma_correction[color.c[3]];
-    return c3;
+    struct Color c;
+    for (int i=0; i<3; i++)
+        c.c[i] = _gamma_correction[color.c[i]];
+    return c;
 }

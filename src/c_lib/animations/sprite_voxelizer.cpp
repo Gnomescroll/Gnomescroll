@@ -63,9 +63,12 @@ static void generate_sprite_vertices(
     }
     // check if the sprite wasn't completely invisible
     IF_ASSERT(vlist->vlist_index <= 0)
+    {
         printf("Sprite id %d in use but is invisible after alpha testing\n", sprite_id);
-    else
-        vlist->buffer_static();
+        return;
+    }
+
+    vlist->buffer_static();
 }
 
 void load_sprite_voxelizer()

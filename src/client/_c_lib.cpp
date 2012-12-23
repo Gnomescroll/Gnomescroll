@@ -312,6 +312,8 @@ int init_c_lib(int argc, char* argv[])
 
     Auth::init();
 
+    init_color_data();
+
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
 

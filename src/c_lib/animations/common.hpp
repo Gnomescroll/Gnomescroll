@@ -168,11 +168,14 @@ class VertexElementList
     void buffer_static()
     {
         if (this->VBO == 0) glGenBuffers(1, &this->VBO);
+
         IF_ASSERT(this->VBO == 0) return;
         IF_ASSERT(this->vlist_index == 0) return;
+
+        this->vertex_number = this->vlist_index;
+
         glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
         glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, this->vlist, GL_STATIC_DRAW);
-        this->vertex_number = this->vlist_index;
     }
 
     void buffer()
