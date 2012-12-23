@@ -85,6 +85,7 @@ void load_block_dat()
     SpriteSheet iceflame = texture_alias("media/sprites/terrain/iceflame_06.png");
     SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
     SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtex.png");
+    SpriteSheet landmine = texture_alias("media/sprites/terrain/landmine.png");
 
     const int T = 0; //Top
     const int B = 1; //Bottom
@@ -192,9 +193,8 @@ void load_block_dat()
     set_max_damage(48);
 
     cube_def(SolidCube, "rock_landmine", CUBE_MATERIAL_STONE);
-    iso_texture(tgm, 1,1);
+    iso_texture(landmine, 1,1);
     push_texture();
-    //hud_def  (c1, 9,9);
     set_max_damage(4);
 
     cube_def(SolidCube, "coal", CUBE_MATERIAL_DIRT);
