@@ -4,6 +4,8 @@
 # define DC_SERVER 1
 #endif
 
+#define ENABLE_WARNING_SOUND 0
+
 #ifdef DC_CLIENT
 dont_include_this_file_in_client
 #endif

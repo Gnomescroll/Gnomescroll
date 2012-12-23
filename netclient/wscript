@@ -125,7 +125,10 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
         #conf.env.SHLIB_MARKER = '-Wl,-Bstatic'  # static lib
     if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
-    
+
+    if OS == 'Linux':
+        warning_sound_flag = False
+
     extra_options = [
         '-Wall',
         '-Wempty-body',
@@ -139,6 +142,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
         '-DGNOMESCROLL_DSO=1',
         aweflag,
         prodflag,
+        warning_sound_flag,
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]

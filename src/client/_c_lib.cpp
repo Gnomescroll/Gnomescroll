@@ -16,6 +16,10 @@
 # define GS_AWESOMIUM 1
 #endif
 
+#ifndef ENABLE_WARNING_SOUND
+# define ENABLE_WARNING_SOUND 1
+#endif
+
 #ifdef GS_SERIALIZER
 dont_define_gs_serializer_in_client
 #endif
