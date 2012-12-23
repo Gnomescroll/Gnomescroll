@@ -21,7 +21,7 @@ namespace Particle
 inline void BillboardText::reset()
 {
     this->bounce_count = 0;
-    this->color = color_init(100, 100, 100, 255);
+    this->color = Color(100, 100, 100, 255);
     this->gravity = true;
     this->should_draw = true;
     this->scale = BILLBOARD_TEXT_TEXTURE_SCALE;

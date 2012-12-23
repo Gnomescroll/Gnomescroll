@@ -84,7 +84,7 @@ class CraftingUI : public UIElement
             HudText::Text* t = &this->stacks[i];
             t->set_format("%d");
             t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(255,255,255,255);
+            t->set_color(Color(255,255,255,255));
             t->set_depth(-0.1f);
         }
         
@@ -95,7 +95,7 @@ class CraftingUI : public UIElement
             HudText::Text* t = &this->output_stacks[i];
             t->set_format("%d");
             t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(255,255,255,255);
+            t->set_color(Color(255,255,255,255));
             t->set_depth(-0.1f);
         }
 

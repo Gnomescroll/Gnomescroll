@@ -10,9 +10,9 @@
 namespace HudMap
 {
 
-static Color current_color;
-static Color current_enemy_color;
-static Color highlight;
+static Color current_color = Color(0xFF, 0xFF, 0xFF);
+static Color current_enemy_color = Color(0xFF, 0xFF, 0xFF);
+static Color highlight = Color(247, 247, 10);
 
 // for texture init
 static const int width = 512;
@@ -99,18 +99,17 @@ void init_text_icons()
 
 void set_icon_colors()
 {
-    const unsigned char a = 255;
     if (you_star == NULL) return;
     if (you_A == NULL) return;
     if (base == NULL) return;
     if (camera == NULL) return;
-    
-    you_star->set_color(highlight.r, highlight.g, highlight.b, a);
-    you_A->set_color(highlight.r, highlight.g, highlight.b, a);
-    base->set_color(highlight.r, highlight.g, highlight.b,a);
+
+    you_star->set_color(highlight);
+    you_A->set_color(highlight);
+    base->set_color(highlight);
     for (int i=0; i<(int)MAX_AGENTS; i++)
-        if (ally[i] != NULL) ally[i]->set_color(highlight.r, highlight.g, highlight.b,a);
-    camera->set_color(highlight.r, highlight.g, highlight.b, a);
+        if (ally[i] != NULL) ally[i]->set_color(highlight);
+    camera->set_color(highlight);
 }
 
 // create blank surface
@@ -162,18 +161,6 @@ void init()
 {
     init_surface();
     init_text_icons();
-    current_color.r = 255;
-    current_color.g = 255;
-    current_color.b = 255;
-    
-    current_enemy_color.r = 255;
-    current_enemy_color.g = 255;
-    current_enemy_color.b = 255;
-
-    highlight.r = 247;  // yellow/gold
-    highlight.g = 247;
-    highlight.b = 10;
-
     set_icon_colors();
 }
 
@@ -306,7 +293,7 @@ void draw_text_icons(float z)
             base->set_position(x,y);
             base->set_depth(z);
         }
-        base->set_color(highlight.r, highlight.g, highlight.b);
+        base->set_color(highlight);
         base->draw_centered();
     }
 

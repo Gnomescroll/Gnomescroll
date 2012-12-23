@@ -19,10 +19,10 @@ const char press_help_text[] = "Press H for help";
 const char error_subtitle_text[] = "Press ESC to exit";
 const char open_login_text[] = "Press F1 to log in.";
 
-const struct Color HEALTH_GREEN = color_init(10,240,10);
-const struct Color HEALTH_GREY = color_init(100,100,100);
-const struct Color HEALTH_WHITE = color_init(255,255,255);
-const struct Color HEALTH_RED = color_init(240,10,10);
+const Color HEALTH_GREEN = Color(10,240,10);
+const Color HEALTH_GREY = Color(100,100,100);
+const Color HEALTH_WHITE = Color(255,255,255);
+const Color HEALTH_RED = Color(240,10,10);
 
 using namespace HudText;
 using HudFont::font;
@@ -111,15 +111,15 @@ class HUD
 MeterGraphic meter_graphic;
 void set_color_from_ratio(float ratio, float alpha = 175, bool invert_color_for_damage = false);
 bool FAILED_merge_of_cntainr_draws(
-	int slot_size, 
-	int container_id, 
-	GLubyte alpha_bord, // border
-	float alpha_bkgd,   // background
-	const int xdim, const int ydim, float xoff, float yoff,
-	const float inc1,  // spacing between slot icons
+    int slot_size, 
+    int container_id, 
+    GLubyte alpha_bord, // border
+    float alpha_bkgd,   // background
+    const int xdim, const int ydim, float xoff, float yoff,
+    const float inc1,  // spacing between slot icons
     const float inc2,  // border around a slot icon
-	const float border,
-	int hover_slot);
+    const float border,
+    int hover_slot);
 
 void set_prompt(const char* msg);
 void clear_prompt(const char* msg);

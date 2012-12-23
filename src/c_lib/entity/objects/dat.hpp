@@ -61,7 +61,7 @@ class EntityAttributes
         //int anim_count_max;
         //float anim_size;
         //float anim_force;
-        //struct Color anim_color;
+        //Color anim_color;
 
         //// motion targeting (( DEPRECATE ?? [for Dest targeting]))
         //float motion_speed;

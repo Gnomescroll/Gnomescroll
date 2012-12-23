@@ -7,6 +7,7 @@ dont_include_this_file_in_server
 #include <common/compat_gl.h>
 #include <physics/vec3.hpp>
 #include <common/color.hpp>
+#include <voxel/common.hpp>
 
 namespace Animations 
 {
@@ -148,19 +149,21 @@ class VertexElementList
     }
 
     __attribute__((always_inline))
-    void push_vertex(struct Vec3 position, struct Vec3 normal, struct Color color)
+    void push_vertex(struct Vec3 position, struct Vec3 normal, Color color)
     {
         this->vlist[this->vlist_index].position = position;
         this->vlist[this->vlist_index].normal   = normal;
-        this->vlist[this->vlist_index].color    = color_init(color);
+        this->vlist[this->vlist_index].color    = color;
         this->add_element();
     }
 
     __attribute__((always_inline))
-    void push_vertex(struct Vec3 position, struct Color color, const char normal[3])
+    void push_vertex(struct Vec3 position, Color color, const char normal[3], const char interpolate[4])
     {
-        this->vlist[this->vlist_index].position = position;
-        this->vlist[this->vlist_index].color    = color_init(color);
+        this->vlist[this->vlist_index].position    = position;
+        this->vlist[this->vlist_index].color       = color;
+        for (int i=0; i<4; i++)
+            this->vlist[this->vlist_index].interpolate[i] = interpolate[i];
         for (int i=0; i<3; i++)
             this->vlist[this->vlist_index].normal[i] = normal[i];
         this->add_element();
@@ -229,19 +232,23 @@ struct VertexElementColorNormal
 {
     struct Vec3 position;
     struct Vec3 normal;
-    struct Color4 color;
+    Color color;
 };
 
-struct VertexElementColorNormalByte
-{
-    struct Vec3 position;
-    struct Color4 color;
-    char normal[4]; // align to 32bit
+struct VertexElementColorNormalByteAO
+{                             // offset
+    struct Vec3 position;    // 0
+    Color color;    // 12
+
+    // 32bit alignment; not all values are used
+    char normal[4];         // 16
+    char ao[4];             // 20
+    char interpolate[4];    // 24
 };
 
 typedef class VertexElementList<struct VertexElementTexture> VertexElementListTexture;
 typedef class VertexElementList<struct VertexElementTextureNormal> VertexElementListTextureNormal;
 typedef class VertexElementList<struct VertexElementColorNormal> VertexElementListColor;
-typedef class VertexElementList<struct VertexElementColorNormalByte> VertexElementListColorByte;
+typedef class VertexElementList<struct VertexElementColorNormalByteAO> VertexElementListColorByteAO;
 
 }   // Animations

@@ -42,7 +42,7 @@ void init_voxel_render_list_shader1()
     }
     printf("init voxel shader\n");
 
-    int DEBUG1 = 0;
+    int DEBUG1 = 1;
 
     voxel_shader_prog = glCreateProgramObjectARB(); //glCreateProgram();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -241,6 +241,8 @@ void VoxelRenderListManager::unregister_voxel_volume(class VoxelVolume* vv)
 
 void VoxelRenderListManager::draw()
 {
+    CHECK_GL_ERROR();
+
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
     glColor3ub(255,255,255);
@@ -322,6 +324,8 @@ void VoxelRenderListManager::draw()
         VoxelRenderList* vrl = &this->lists[k];
         vrl->update_vertex_buffer_object(); 
     }
+
+    CHECK_GL_ERROR();
 }
 
 }   // Voxels

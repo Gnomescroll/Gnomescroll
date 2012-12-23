@@ -1,6 +1,6 @@
 #version 120
 
-uniform vec3 InCameraPos;
+//uniform vec3 InCameraPos;
 
 attribute vec3 InNormal;
 attribute vec3 InColor;
@@ -18,12 +18,12 @@ void main(void)
 
     
 
-	//Light 2
+    //Light 2
     diffuse_light = abs(dot(light_dir, InNormal));           //use camera position
 
 
 /*
-	//Light 1
+    //Light 1
     vec3 look = normalize(pos.xyz - InCameraPos);
     diffuse_light = abs(dot(look, InNormal));           //use camera position
 */

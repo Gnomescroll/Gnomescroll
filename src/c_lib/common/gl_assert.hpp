@@ -23,7 +23,8 @@ bool _gl_assert(GLenum flag)
 void _gl_assert_action(const char* file, int line)
 {
     fprintf(stderr, "GL_ASSERT error: %s, line %d\n", file, line);
-    #if ENABLE_WARNING_SOUND && !PRODUCTION && DC_CLIENT
+    #if ENABLE_WARNING_SOUND
+    printf("FUCK: %d\n", ENABLE_WARNING_SOUND);
     Sound::play_2d_sound("debug_warning");
     #endif
 }

@@ -35,7 +35,7 @@ class Text
         float depth;
         float scale;
 
-        struct Color4 color;
+        Color color;
 
         char* text;
         char* format;
@@ -60,10 +60,7 @@ class Text
         void set_format_extra_length(int size);
         void update_formatted_string(int n_args, ...);
         
-        void set_color(unsigned char r, unsigned char g, unsigned char b);
-        void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-        void set_color(struct Color color);
-        void set_color(struct Color4 color);
+        void set_color(Color color);
         
         void set_position(float x, float y);
         void set_scale(float scale);
@@ -132,7 +129,7 @@ class AnimatedText: public Text
     
         unsigned int max_colors;
         unsigned int n_colors;
-        struct Color4* colors;
+        Color* colors;
     
         struct CharRange
         {
@@ -146,22 +143,12 @@ class AnimatedText: public Text
     
         void set_color_count(unsigned int n)
         {
-            this->colors = (struct Color4*)set_and_update_array_range(
+            this->colors = (Color*)set_and_update_array_range(
                 n, &this->max_colors, &this->n_colors,
-                this->colors, sizeof(struct Color4));
-        }
-    
-        int add_color(struct Color color)
-        {
-            struct Color4 colora;
-            colora.r = color.r;
-            colora.g = color.g;
-            colora.b = color.b;
-            colora.a = 255;
-            return this->add_color(colora);
+                this->colors, sizeof(Color));
         }
         
-        int add_color(struct Color4 color)
+        int add_color(Color color)
         {
             GS_ASSERT(this->n_colors < this->max_colors);
             GS_ASSERT(this->colors != NULL);
@@ -171,38 +158,15 @@ class AnimatedText: public Text
             return this->n_colors++;
         }
 
-        int get_color(struct Color color)
+        int get_color(Color color)
         {
             for (unsigned int i=0; i<this->n_colors; i++)
-                if (this->colors[i].r == color.r
-                 && this->colors[i].g == color.g
-                 && this->colors[i].b == color.b)
+                if (colors_equal_alpha(this->colors[i], color))
                     return i;
             return -1;
         }
         
-        int get_color(struct Color4 color)
-        {
-            for (unsigned int i=0; i<this->n_colors; i++)
-                if (this->colors[i].r == color.r
-                 && this->colors[i].g == color.g
-                 && this->colors[i].b == color.b
-                 && this->colors[i].a == color.a)
-                    return i;
-            return -1;
-        }
-        
-        void set_color_index_color(int color_index, struct Color color)
-        {
-            struct Color4 colora;
-            colora.r = color.r;
-            colora.g = color.g;
-            colora.b = color.b;
-            colora.a = 255;
-            this->set_color_index_color(color_index, colora);
-        }
-        
-        void set_color_index_color(int color_index, struct Color4 color)
+        void set_color_index_color(int color_index, Color color)
         {
             if (color_index < 0) return;
             if (color_index >= (int)this->n_colors) return;
@@ -284,7 +248,7 @@ class AnimatedText: public Text
             int range = end - (int)start;
             if (range < 0) range = 0;
 
-            struct Color4 c = this->colors[this->char_ranges[i].color_index];
+            Color c = this->colors[this->char_ranges[i].color_index];
             glColor4ub(c.r, c.g, c.b, c.a);
 
             draw_string(this->text, start, range,
@@ -319,22 +283,16 @@ class AnimatedText: public Text
     }
     
     AnimatedText() :
-    max_colors(0), n_colors(0), colors(NULL),
-    max_char_ranges(0), n_char_ranges(0), char_ranges(NULL)
+        max_colors(0), n_colors(0), colors(NULL),
+        max_char_ranges(0), n_char_ranges(0), char_ranges(NULL)
     {}
     
     ~AnimatedText()
     {
         if (this->colors != NULL)
-        {
             free(this->colors);
-            this->colors = NULL;
-        }
         if (this->char_ranges != NULL)
-        {
             free(this->char_ranges);
-            this->char_ranges = NULL;
-        }
     }
 };
 

@@ -23,7 +23,7 @@ class ChatMessage
 
     int timestamp;
 
-    struct Color color;
+    Color color;
     char* name;
 
     void set_color();

@@ -12,7 +12,7 @@ namespace Draw
 class ColoredVoxel: public Voxel
 {
     public:
-        struct Color color;
+        Color color;
         
         void call();
 

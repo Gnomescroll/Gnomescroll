@@ -199,15 +199,15 @@ void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage
 {
     // old durability color jumps
     
-	//glColor4ub(7, 247, 0, alpha);    // green
+    //glColor4ub(7, 247, 0, alpha);    // green
     //glColor4ub(243, 247, 0, alpha);  // yellow
     //glColor4ub(247, 71, 0, alpha);   // red-orange
     //glColor4ub(247, 14, 0, alpha);   // red
 
     float small_to_big = ratio * 2.0f;
-    Color red    = color_init(255,   0, 0);
-    Color green  = color_init(0,   255, 0);
-    Color yellow = color_init(255, 190, 0);
+    Color red    = Color(255,   0, 0);
+    Color green  = Color(0,   255, 0);
+    Color yellow = Color(255, 190, 0);
 
     Color full = green;
     Color empty = red;
@@ -231,24 +231,24 @@ void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage
 }
 
 bool FAILED_merge_of_cntainr_draws(
-	int slot_size, 
-	int container_id, 
-	GLubyte alpha_bord, // border
-	float alpha_bkgd, // background
-	const int xdim, 
-	const int ydim, 
-	float xoff, 
-	float yoff,
-	const float inc1,  // spacing between slot icons
+    int slot_size, 
+    int container_id, 
+    GLubyte alpha_bord, // border
+    float alpha_bkgd, // background
+    const int xdim, 
+    const int ydim, 
+    float xoff, 
+    float yoff,
+    const float inc1,  // spacing between slot icons
     const float inc2,  // border around a slot icon
-	const float border,
-	int hover_slot)
+    const float border,
+    int hover_slot)
 {
     // abort if slots aren't copasetic
     int* slot_types = ItemContainer::get_container_ui_types(container_id);
     if (slot_types == NULL) return false;
 
-	const float w = slot_size;
+    const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_TEXTURE_2D);
@@ -257,7 +257,7 @@ bool FAILED_merge_of_cntainr_draws(
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
 
-	// draw larger rects for borders
+    // draw larger rects for borders
     int intensity = 80-16;
     glBegin(GL_QUADS);
     glColor4ub(intensity, intensity, intensity, alpha_bord); // old alpha == 128+64
@@ -266,8 +266,8 @@ bool FAILED_merge_of_cntainr_draws(
     {
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-	
-		glVertex2f(x-inc2,y+w+inc2);
+    
+        glVertex2f(x-inc2,y+w+inc2);
         glVertex2f(x+w+inc2, y+w+inc2);
         glVertex2f(x+w+inc2, y-inc2);
         glVertex2f(x-inc2, y-inc2);
@@ -275,32 +275,32 @@ bool FAILED_merge_of_cntainr_draws(
     glEnd();
 
 
-   	// render slot backgrounds
-	int* slot_durabilities = ItemContainer::get_container_ui_durabilities(container_id);
-	if (slot_durabilities != NULL) 
-	{
-		for (int i=0; i<xdim; i++)
-		for (int j=0; j<ydim; j++)
-		{
-			// always draw grey background
-			int slot = j*xdim + i;
-			float x = xoff + border + i*(inc1+slot_size);
-			float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-			glColor4ub(80, 80, 80, alpha_bkgd);    // grey
-			float ratio = 1.0f;
-			Hud::meter_graphic.draw(x, y, w, w, ratio);
+    // render slot backgrounds
+    int* slot_durabilities = ItemContainer::get_container_ui_durabilities(container_id);
+    if (slot_durabilities != NULL) 
+    {
+        for (int i=0; i<xdim; i++)
+        for (int j=0; j<ydim; j++)
+        {
+            // always draw grey background
+            int slot = j*xdim + i;
+            float x = xoff + border + i*(inc1+slot_size);
+            float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+            glColor4ub(80, 80, 80, alpha_bkgd);    // grey
+            float ratio = 1.0f;
+            Hud::meter_graphic.draw(x, y, w, w, ratio);
 
-			// maybe draw a dura meter on it
-			int durability = slot_durabilities[slot];
-			if (durability != NULL_DURABILITY)
-			{
-				int max_durability = Item::get_max_durability(slot_types[slot]);
-				ratio = ((float)durability)/((float)max_durability);
-				Hud::set_color_from_ratio(ratio, alpha_bkgd);
-				Hud::meter_graphic.draw(x, y, w, w, ratio);
-			}
-		}
-	}
+            // maybe draw a dura meter on it
+            int durability = slot_durabilities[slot];
+            if (durability != NULL_DURABILITY)
+            {
+                int max_durability = Item::get_max_durability(slot_types[slot]);
+                ratio = ((float)durability)/((float)max_durability);
+                Hud::set_color_from_ratio(ratio, alpha_bkgd);
+                Hud::meter_graphic.draw(x, y, w, w, ratio);
+            }
+        }
+    }
 
 
     // draw hover highlight background
@@ -313,7 +313,7 @@ bool FAILED_merge_of_cntainr_draws(
         
         float x = xoff + border + i*(inc1+slot_size);
         // VV container_hud version VV
-		//float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+        //float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
         // VV toolbelt_hud version VV
         float y = _yresf - (yoff - border + (j+1)*(inc1+slot_size));
 
@@ -324,9 +324,9 @@ bool FAILED_merge_of_cntainr_draws(
     }
     glEnd();
 
-	
+    
     // draw icons
-	glColor4ub(255, 255, 255, 255);
+    glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
@@ -369,13 +369,13 @@ bool FAILED_merge_of_cntainr_draws(
     glDisable(GL_TEXTURE_2D);
     glColor4ub(255, 255, 255, 255);
 
-	// container_hud didn't have these next 2:
+    // container_hud didn't have these next 2:
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
 
 
 
-	return true; // success
+    return true; // success
 }
 
 
@@ -490,8 +490,8 @@ void draw_hud_text()
         {   // blinks blue/white
             static unsigned int press_help_tick = 0;
             const int press_help_anim_len = 60;
-            const struct Color white = color_init(255,255,255);
-            const struct Color blue = color_init(10,10,255);
+            const Color white = Color(255,255,255);
+            const Color blue = Color(10,10,255);
             float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
             t -= 1.0f;
             if (t < 0.0f)
@@ -609,7 +609,7 @@ void draw_hud_text()
                 static int blink_step = 1;
                 if (health <= 0)
                 {
-                    struct Color blink_color = HEALTH_RED;
+                    Color blink_color = HEALTH_RED;
                     if (!a->status.dead)
                     {
                         const int NO_HEALTH_WARNING_TEXT_BLINK_RATE = 15;
@@ -671,14 +671,14 @@ void HUD::init()
     help->set_text(help_text);
     help->shadowed = true;
     int help_width = help->get_width();
-    help->set_color(255,255,255,255);
+    help->set_color(Color(255,255,255,255));
     help->set_position(_xres - help_width - 5, _yresf - 5);
 
     dead = text_list->create();
     GS_ASSERT(dead != NULL);
     if (dead == NULL) return;
     dead->set_text(dead_text);
-    dead->set_color(255,10,10,255);
+    dead->set_color(Color(Color(255,10,10,255)));
     dead->set_position(_xresf/2, _yresf/2);
     
     fps = text_list->create();
@@ -686,7 +686,7 @@ void HUD::init()
     if (fps == NULL) return;
     fps->set_format(fps_format);
     fps->set_format_extra_length(6 - 5);
-    fps->set_color(255,10,10,255);
+    fps->set_color(Color(255,10,10,255));
     fps->set_position(3, line_height+3);
     
     ping = text_list->create();
@@ -694,7 +694,7 @@ void HUD::init()
     if (ping == NULL) return;
     ping->set_format(ping_format);
     ping->set_format_extra_length(3 - 2);
-    ping->set_color(255,10,10,255);
+    ping->set_color(Color(255,10,10,255));
     ping->set_position(3, (line_height*2)+3);
     
     reliable_ping = text_list->create();
@@ -702,7 +702,7 @@ void HUD::init()
     if (reliable_ping == NULL) return;
     reliable_ping->set_format(ping_format);
     reliable_ping->set_format_extra_length(3 - 2);
-    reliable_ping->set_color(255,10,10,255);
+    reliable_ping->set_color(Color(255,10,10,255));
     reliable_ping->set_position(3, (line_height*3)+3);
 
     location = text_list->create();
@@ -710,7 +710,7 @@ void HUD::init()
     if (location == NULL) return;
     location->set_format(location_format);
     location->set_format_extra_length((40 + 20 + 1 - 2) * 3);
-    location->set_color(255,10,10,255);
+    location->set_color(Color(255,10,10,255));
     location->set_position(3, _yresf-3);
     
     look = text_list->create();
@@ -718,7 +718,7 @@ void HUD::init()
     if (look == NULL) return;
     look->set_format(location_format);
     look->set_format_extra_length((40 + 20 + 1 - 2) * 3);
-    look->set_color(255,10,10,255);
+    look->set_color(Color(255,10,10,255));
     look->set_position(3, _yresf-3);
 
     health = new AnimatedText;
@@ -729,7 +729,7 @@ void HUD::init()
     GS_ASSERT(HudContainer::energy_tanks != NULL);
     float health_x = HudContainer::energy_tanks->xoff + HudContainer::energy_tanks->width() + 1;
     health->set_position(health_x, _yresf - HudContainer::energy_tanks->yoff - health->get_height());
-    health->set_color(255,255,255,255);
+    health->set_color(Color(255,255,255,255));
 
     // add color for health text animations
     health->set_color_count(4);
@@ -748,7 +748,7 @@ void HUD::init()
     GS_ASSERT(confirm_quit != NULL);
     if (confirm_quit == NULL) return;
     confirm_quit->set_text(confirm_quit_text);
-    confirm_quit->set_color(255,10,10,255);
+    confirm_quit->set_color(Color(255,10,10,255));
     confirm_quit->set_position(_xresf/2, (3*_yresf)/4);
 
     prompt = text_list->create();
@@ -758,27 +758,27 @@ void HUD::init()
         prompt->set_text(press_help_text);
     else
         prompt->set_text("");
-    prompt->set_color(255,255,255,255);
+    prompt->set_color(Color(255,255,255,255));
     prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::agent_toolbelt->height() );
     prompt->shadowed = true;
 
     error = text_list->create();
     GS_ASSERT(error != NULL);
     if (error == NULL) return;
-    error->set_color(255,10,10,255);
+    error->set_color(Color(255,10,10,255));
     error->set_position(_xresf/2, _yresf/2);
 
     error_subtitle = text_list->create();
     GS_ASSERT(error_subtitle != NULL);
     if (error_subtitle == NULL) return;
-    error_subtitle->set_color(255,10,10,255);
+    error_subtitle->set_color(Color(255,10,10,255));
     error_subtitle->set_position(_xresf/2, error->y - error->get_height());
     error_subtitle->set_text(error_subtitle_text);
     
     awesomium_message = text_list->create();
     GS_ASSERT(awesomium_message != NULL);
     if (awesomium_message == NULL) return;
-    awesomium_message->set_color(255,10,10,255);
+    awesomium_message->set_color(Color(255,10,10,255));
     awesomium_message->set_position(_xresf/2, _yresf - 2);
     awesomium_message->set_text("");
     
@@ -864,7 +864,7 @@ void ChatRender::init()
         t->set_text("");
         t->set_format("%s%s%s");
         t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + Chat::CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
-        t->set_color(255,255,255,255);
+        t->set_color(Color(255,255,255,255));
         t->shadowed = true;
         messages[i] = t;
     }
@@ -908,7 +908,7 @@ void ChatRender::set_cursor(const char* text, float x, float y)
 
 void ChatRender::draw_cursor()
 {
-    struct Color color = AGENT_DEFAULT_COLOR;
+    Color color = AGENT_DEFAULT_COLOR;
     using ClientState::player_agent;
     class Agents::Agent* you = player_agent.you();
     if (you != NULL) color = you->status.color;
@@ -961,7 +961,7 @@ void ChatRender::update(bool timeout, bool other_players)
     {
         HudText::Text* t = this->messages[i++];
         t->set_text("PLAYER CHAT OFF (use /chaton /chatoff)");
-        t->set_color(200,10,10);
+        t->set_color(Color(200,10,10));
     }
 
     for (;j>0;)
@@ -1015,7 +1015,7 @@ ChatRender::~ChatRender()
 void Scoreboard::init()
 {
     if (this->inited) return;
-    const unsigned char r=255,g=10,b=10,a=255;
+    static const Color color = Color(255,10,10,255);
     const float start_y = 120;
     //const float start_x = _xresf / 8.0f;
     const float start_x = _xresf / 4.0f;
@@ -1027,7 +1027,7 @@ void Scoreboard::init()
         tags[i] = HudText::text_list->create();
         GS_ASSERT(tags[i] != NULL);
         if (tags[i] == NULL) return;
-        tags[i]->set_color(r,g,b,a);
+        tags[i]->set_color(color);
         tags[i]->set_position(start_x + i*col_width, _yresf - start_y);
     }
     tags[0]->set_text("ID");
@@ -1071,7 +1071,7 @@ void Scoreboard::update()
     const float col_width = (_xresf * 0.75f) / 5;
     
     unsigned int i,j=0;
-    const unsigned char r=255,g=10,b=10,a=255;
+    static const Color color = Color(255,10,10,255);
     Agents::agent_list->filter_none();
     for (i=0; i<Agents::agent_list->max; i++)
     {
@@ -1087,11 +1087,11 @@ void Scoreboard::update()
 
         ids[i]->set_position(start_x + col_width*0, _yresf - y);
         ids[i]->update_formatted_string(1, agent->id);
-        ids[i]->set_color(r,g,b,a);
+        ids[i]->set_color(color);
 
         names[i]->set_position(start_x + col_width*1, _yresf - y);
         names[i]->update_formatted_string(1, agent->status.name);
-        names[i]->set_color(r,g,b,a);
+        names[i]->set_color(color);
     }
 }
 

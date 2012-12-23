@@ -31,7 +31,7 @@ TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
     this->greyscale_surface = create_surface_from_nothing(this->width, this->height);
     this->texture_stack = (Uint32*) calloc(4*this->width*this->height, sizeof(char));
 
-    this->pixels = (struct Color4*)calloc(this->width*this->height, sizeof(struct Color4));
+    this->pixels = (Color*)calloc(this->width*this->height, sizeof(Color));
 
     GLenum format = GL_BGRA;
     if (this->surface->format->Rmask == 0x000000ff)
@@ -169,7 +169,7 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
 
         size_t pixel_index = meta_index * this->tile_size * this->tile_size;
         pixel_index += j * this->tile_size + i;
-        this->pixels[pixel_index] = color_init(r,g,b,a);
+        this->pixels[pixel_index] = Color(r,g,b,a);
     }
 
     // unlock
@@ -324,7 +324,7 @@ void TextureSheetLoader::reload()
     this->generate_greyscale();
 }
 
-const struct Color4* TextureSheetLoader::get_sprite_pixels(int sprite_id) const 
+const Color* TextureSheetLoader::get_sprite_pixels(int sprite_id) const 
 {
     IF_ASSERT(sprite_id < 0 || sprite_id >= (int)this->tile_num) return NULL;
     size_t index = sprite_id * this->tile_size * this->tile_size;

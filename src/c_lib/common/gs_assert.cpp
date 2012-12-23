@@ -34,7 +34,7 @@ size_t _GS_ASSERT_COUNT[GS_ASSERT_MAX] = {0};
 
 int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
 {   // always return 1, so IF_ASSERT works correctly
-    #if ENABLE_WARNING_SOUND && !PRODUCTION && DC_CLIENT
+    #if ENABLE_WARNING_SOUND
     if (c_lib_inited)
         Sound::play_2d_sound("debug_warning");
     #endif

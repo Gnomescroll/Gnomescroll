@@ -166,7 +166,7 @@ bool chunk_distance_check( float x, float y)
     //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
     //static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
 
-	static const float sqrt_2f = sqrt(2.0f);
+    static const float sqrt_2f = sqrt(2.0f);
     static const float dist2 = (CAMERA_VIEW_DISTANCE+(sqrt_2f*8))*(CAMERA_VIEW_DISTANCE+(sqrt_2f*8));
 
     const float cx = current_camera_position.x;
@@ -478,10 +478,10 @@ void Vbo_map::draw_map_compatibility()
 
     glPushMatrix(); //save matrix
 
-#if ADV_PRUNE
+    #if ADV_PRUNE
     int v_total = 0;
     int v_drawn = 0;
-#endif
+    #endif
 
     for(int i=0;i<draw_vbo_n;i++)
     {

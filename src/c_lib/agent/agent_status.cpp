@@ -133,7 +133,7 @@ void AgentStatus::send_color(ClientID client_id)
 }
 #endif
 
-bool AgentStatus::set_color(struct Color color)
+bool AgentStatus::set_color(Color color)
 {
     if (!this->set_color_silent(color)) return false;
     #if DC_SERVER
@@ -143,11 +143,11 @@ bool AgentStatus::set_color(struct Color color)
 }
 
 // does not broadcast the change (useful for the deserializer) 
-bool AgentStatus::set_color_silent(struct Color color)
+bool AgentStatus::set_color_silent(Color color)
 {
     if (colors_equal(color, this->color)) return false;
 
-    if (!color.r && !color.g && !color.b) color = color_init(1,1,1); // dont allow 0,0,0 (interpreted as empty voxel)
+    if (!color.r && !color.g && !color.b) color = Color(1,1,1); // dont allow 0,0,0 (interpreted as empty voxel)
         
     this->color = color;
     

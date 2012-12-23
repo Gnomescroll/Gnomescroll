@@ -30,7 +30,7 @@ void ChatMessage::set_name()
 void ChatMessage::set_color()
 {
     if (sender == CHAT_SENDER_SYSTEM) // system msg
-        this->color = color_init(Options::system_message_r, Options::system_message_g, Options::system_message_b);
+        this->color = Color(Options::system_message_r, Options::system_message_g, Options::system_message_b);
     else if (
         ClientState::player_agent.agent_id >= 0
      && ClientState::player_agent.agent_id + CHANNEL_ID_AGENT_OFFSET == channel
@@ -40,7 +40,7 @@ void ChatMessage::set_color()
     {
         AgentID agent_id = NetClient::get_agent_id_for_client(this->sender); 
         Agents::Agent *a = Agents::get_agent(agent_id);
-        struct Color color = AGENT_DEFAULT_COLOR;
+        Color color = AGENT_DEFAULT_COLOR;
         if (a != NULL) color = a->status.color;
         this->color = color;
     }
@@ -328,7 +328,7 @@ bool ChatInput::route_command()
     else
     if (!strcmp(cmd, "color") || !strcmp(cmd, "colour"))
     {
-        struct Color color = color_init(0,0,0);
+        Color color = Color(0,0,0);
         bool valid = true;
 
         int start = i;  // save start cursor

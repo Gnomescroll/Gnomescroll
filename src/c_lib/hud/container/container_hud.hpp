@@ -56,7 +56,7 @@ class AgentInventoryUI : public UIElement
             HudText::Text* t = &this->stack_numbers[i];
             t->set_format("%d");
             t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(255,255,255,255);
+            t->set_color(Color(255,255,255,255));
             t->set_depth(-0.1f);
         }
 
@@ -144,28 +144,28 @@ void AgentInventoryUI::draw()
     GS_ASSERT(slot_stacks != NULL);
     GS_ASSERT(slot_durabilities != NULL);
 
-	// render slot backgrounds
+    // render slot backgrounds
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
         const float alpha = 128;
-		
-		// always draw grey background
-		int slot = j*xdim + i;
-		float x = xoff + border + i*(inc1+slot_size);
-		float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-		float ratio = 1.0f;
-		glColor4ub(80, 80, 80, alpha);    // grey
-		Hud::meter_graphic.draw(x, y, w, w, ratio);
+        
+        // always draw grey background
+        int slot = j*xdim + i;
+        float x = xoff + border + i*(inc1+slot_size);
+        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+        float ratio = 1.0f;
+        glColor4ub(80, 80, 80, alpha);    // grey
+        Hud::meter_graphic.draw(x, y, w, w, ratio);
 
-		// maybe draw a dura meter on it
+        // maybe draw a dura meter on it
         int durability = slot_durabilities[slot];
         if (durability != NULL_DURABILITY)
         {
-			int max_durability = Item::get_max_durability(slot_types[slot]);
-			ratio = ((float)durability)/((float)max_durability);
-			Hud::set_color_from_ratio(ratio, alpha);
-			Hud::meter_graphic.draw(x, y, w, w, ratio);
+            int max_durability = Item::get_max_durability(slot_types[slot]);
+            ratio = ((float)durability)/((float)max_durability);
+            Hud::set_color_from_ratio(ratio, alpha);
+            Hud::meter_graphic.draw(x, y, w, w, ratio);
         }
     }
     

@@ -29,14 +29,14 @@ ColoredMinivox::ColoredMinivox() :
     this->reset();
 }
 
-void ColoredMinivox::set_color(struct Color color)
+void ColoredMinivox::set_color(Color color)
 {
     this->voxel.color = color;
 }
 
 void ColoredMinivox::set_color(unsigned char r, unsigned char g, unsigned char b)
 {
-    this->set_color(color_init(r,g,b));
+    this->set_color(Color(r,g,b));
 }
 
 void ColoredMinivox::set_size(float size)

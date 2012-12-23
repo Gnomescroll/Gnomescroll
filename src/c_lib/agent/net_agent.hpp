@@ -467,7 +467,7 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
     public:
         uint8_t id;
         uint8_t client_id;
-        struct Color color;
+        Color color;
         char username[PLAYER_NAME_MAX_LENGTH+1];
         
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
@@ -766,7 +766,7 @@ class killme_CtoS: public FixedSizeReliableNetPacketToServer<killme_CtoS>
 class colorme_CtoS: public FixedSizeReliableNetPacketToServer<colorme_CtoS>
 {
     public:
-        struct Color color;
+        Color color;
         
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
@@ -779,7 +779,7 @@ class agent_color_StoC: public FixedSizeReliableNetPacketToClient<agent_color_St
 {
     public:
         uint8_t agent_id;
-        struct Color color;
+        Color color;
         
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {

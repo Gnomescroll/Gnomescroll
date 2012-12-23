@@ -586,12 +586,7 @@ int check_gl_error()
 {
     int error = glGetError();
     if (error)
-    {
         printf("GL_ERROR: %s\n", gluErrorString(error));
-        #if !PRODUCTION
-        Sound::play_2d_sound("debug_warning");
-        #endif
-    }
     return error;
 }
 
@@ -599,11 +594,6 @@ int check_gl_error(const char* filename, const int line_no)
 {
     int error = glGetError();
     if (error)
-    {
         printf("%s:%d - GL_ERROR: %s\n", filename, line_no, gluErrorString(error));
-        #if !PRODUCTION
-        Sound::play_2d_sound("debug_warning");
-        #endif
-    }
     return error;
 }

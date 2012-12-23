@@ -37,7 +37,7 @@ struct VoxelTex
 {
     union
     {
-        unsigned char tex[4]; //32
+        char tex[4]; //32
         unsigned int t;
     };
 };

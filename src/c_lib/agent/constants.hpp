@@ -81,7 +81,7 @@ const int AGENT_MAX_SPAWNERS = 3;
 const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
 const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
 
-const struct Color AGENT_DEFAULT_COLOR = color_init(64,192,64);
+const Color AGENT_DEFAULT_COLOR = Color(64,192,64);
 
 /* Player */
 #if DC_CLIENT
@@ -91,17 +91,17 @@ const float AGENT_INTERPOLATION_DECAY  = 0.8f;
 namespace AgentHudName
 {
 // setup const config data for coloring
-const struct Color green = color_init(0, 206, 0);
-const struct Color yellow = color_init(228, 222, 20);
-const struct Color orange = color_init(244, 161, 35);
-const struct Color orange_red = color_init(244, 88, 35);
-const struct Color red = color_init(219, 29, 20);
-const struct Color black = color_init(0,0,0);
+const Color green = Color(0, 206, 0);
+const Color yellow = Color(228, 222, 20);
+const Color orange = Color(244, 161, 35);
+const Color orange_red = Color(244, 88, 35);
+const Color red = Color(219, 29, 20);
+const Color black = Color(0,0,0);
 const unsigned int COLOR_COUNT = 5;
-const struct Color health_colors[COLOR_COUNT] = { green, yellow, orange, orange_red, red };
+const Color health_colors[COLOR_COUNT] = { green, yellow, orange, orange_red, red };
 const float health_color_points[COLOR_COUNT] = { 1.0f, 0.6f, 0.4f, 0.3f, 0.0f };    // anchor health_color_points
 
-const struct Color HEALTH_TEXT_DEAD_COLOR = black;
+const Color HEALTH_TEXT_DEAD_COLOR = black;
 const float SIZE = 0.7f;
 
 void verify_configuration()

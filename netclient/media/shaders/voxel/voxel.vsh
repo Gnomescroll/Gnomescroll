@@ -7,7 +7,7 @@ attribute vec3 InNormal;
 attribute vec4 InAO;
 attribute vec2 InTex;
 
-varying float diffuse;
+varying float diffuse_light;
 
 varying mat2 AOMatrix;
 varying vec2 texCoord;
@@ -36,7 +36,7 @@ void main(void)
 
     //const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));
 
-    diffuse = abs(dot(normal, light_dir));
+    diffuse_light = abs(dot(normal, light_dir));
     texCoord = InTex;
     AOMatrix = mat2(InAO[0], InAO[1], InAO[2], InAO[3]);
 }

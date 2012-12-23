@@ -39,7 +39,7 @@ class AgentStatus
 
         int lifetime;
         
-        struct Color color;
+        Color color;
 
         void tick();
 
@@ -85,8 +85,8 @@ class AgentStatus
         void send_scores(ClientID client_id);
         void send_scores();
 
-        bool set_color(struct Color color);
-        bool set_color_silent(struct Color color);
+        bool set_color(Color color);
+        bool set_color_silent(Color color);
 
         float get_spawn_angle();
 

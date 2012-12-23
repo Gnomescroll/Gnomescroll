@@ -16,7 +16,7 @@ int _draw_line(unsigned char r, unsigned char g, unsigned char b, float x0, floa
 int _draw_point(unsigned char r, unsigned char g, unsigned char b, float x0, float y0, float z0);
 int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z);
 int _draw_rect(unsigned char r, unsigned char g, unsigned char b, float x, float y, float w, float h);
-int _draw_rect(struct Color color, float x, float y, float w, float h);
+int _draw_rect(Color color, float x, float y, float w, float h);
 int _draw_border_rect(unsigned char r, unsigned char g, unsigned char b, float x, float y, float w, float h);
 
 int _bind_VBO(struct Quad* quad_list, int v_num);

@@ -21,7 +21,7 @@ const int MINIVOX_TYPE = 6;
 /* voxel properties */
 const float MINIVOX_MASS = 2.0f;
 const float MINIVOX_SIZE = 0.05f;
-const struct Color MINIVOX_COLOR = color_init(136, 27, 224);
+const Color MINIVOX_COLOR = Color(136, 27, 224);
 
 class ColoredMinivox: public ParticleMotion
 {
@@ -29,7 +29,7 @@ class ColoredMinivox: public ParticleMotion
 
         Draw::ColoredVoxel voxel;
     
-    void set_color(struct Color color);
+    void set_color(Color color);
     void set_color(unsigned char r, unsigned char g, unsigned char b);
 
     void set_size(float size);

@@ -17,7 +17,11 @@
 #endif
 
 #ifndef ENABLE_WARNING_SOUND
-# define ENABLE_WARNING_SOUND 1
+# if PRODUCTION
+#  define ENABLE_WARNING_SOUND 0
+# else
+#  define ENABLE_WARNING_SOUND 1
+# endif
 #endif
 
 #ifdef GS_SERIALIZER
@@ -398,6 +402,8 @@ int init_c_lib(int argc, char* argv[])
     //CHECK_GL_ERROR();
 
     c_lib_inited = true;
+
+    CHECK_GL_ERROR();
 
     return 0;
 }

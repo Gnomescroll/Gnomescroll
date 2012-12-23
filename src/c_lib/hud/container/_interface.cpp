@@ -460,7 +460,7 @@ static void draw_tooltip()
 void draw()
 {
     agent_toolbelt->draw();
-	energy_tanks->inv_open = agent_inventory_enabled;
+    energy_tanks->inv_open = agent_inventory_enabled;
     energy_tanks->draw();
 
     if (!agent_inventory_enabled && !container_block_enabled) return;
@@ -570,11 +570,11 @@ void init()
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format("%d");
     grabbed_icon_stack_text->set_format_extra_length(11 + 1 - 2);
-    grabbed_icon_stack_text->set_color(255,255,255,255);
+    grabbed_icon_stack_text->set_color(Color(255,255,255,255));
     grabbed_icon_stack_text->set_depth(-0.1f);
 
     tooltip_text = new HudText::Text;
-    tooltip_text->set_color(255,255,255,255);
+    tooltip_text->set_color(Color(255,255,255,255));
     tooltip_text->set_depth(-0.1f);
 }
 

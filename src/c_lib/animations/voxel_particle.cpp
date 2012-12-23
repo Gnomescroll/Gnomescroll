@@ -15,13 +15,13 @@ namespace Animations
 class Shader textured_voxel_particle_shader;
 GLint textured_voxel_particle_TexCoord;
 GLint textured_voxel_particle_Normal;
-GLint textured_voxel_particle_CameraPos;
+//GLint textured_voxel_particle_CameraPos;
 VertexElementListTextureNormal* textured_voxel_particle_vlist = NULL;
 
 class Shader colored_voxel_particle_shader;
 GLint colored_voxel_particle_Normal;
 GLint colored_voxel_particle_Color;
-GLint colored_voxel_particle_CameraPos;
+//GLint colored_voxel_particle_CameraPos;
 VertexElementListColor* colored_voxel_particle_vlist = NULL;
 
 void init_voxel_particle()
@@ -34,7 +34,7 @@ void init_voxel_particle()
     
     textured_voxel_particle_TexCoord = textured_voxel_particle_shader.get_attribute("InTexCoord");
     textured_voxel_particle_Normal = textured_voxel_particle_shader.get_attribute("InNormal");
-    textured_voxel_particle_CameraPos = textured_voxel_particle_shader.get_uniform("InCameraPos");
+    //textured_voxel_particle_CameraPos = textured_voxel_particle_shader.get_uniform("InCameraPos");
 
     GS_ASSERT(textured_voxel_particle_vlist == NULL);
     textured_voxel_particle_vlist = new VertexElementListTextureNormal;
@@ -47,7 +47,7 @@ void init_voxel_particle()
     
     colored_voxel_particle_Normal = colored_voxel_particle_shader.get_attribute("InNormal");
     colored_voxel_particle_Color = colored_voxel_particle_shader.get_attribute("InColor");
-    colored_voxel_particle_CameraPos = colored_voxel_particle_shader.get_uniform("InCameraPos");
+    //colored_voxel_particle_CameraPos = colored_voxel_particle_shader.get_uniform("InCameraPos");
 
     GS_ASSERT(colored_voxel_particle_vlist == NULL);
     colored_voxel_particle_vlist = new VertexElementListColor;
@@ -288,7 +288,7 @@ static void prep_colored_voxel_particles()
             veb2[4*i+3] = veb[q_set[4*i+3]];
         }
 
-        struct Color c3;
+        Color c3;
 
         c3.c[0] = vox->voxel.color.c[0];
         c3.c[1] = vox->voxel.color.c[1];
@@ -346,8 +346,8 @@ void draw_textured_voxel_particles()
     glEnableVertexAttribArray(textured_voxel_particle_TexCoord);
     glEnableVertexAttribArray(textured_voxel_particle_Normal);
 
-    Vec3 pos = current_camera->get_position();
-    glUniform3f(textured_voxel_particle_CameraPos, pos.x, pos.y, pos.z);
+    //Vec3 pos = current_camera->get_position();
+    //glUniform3f(textured_voxel_particle_CameraPos, pos.x, pos.y, pos.z);
 
     int offset = 0;
     glVertexPointer(3, GL_FLOAT, textured_voxel_particle_vlist->stride, (GLvoid*)offset);
@@ -398,15 +398,16 @@ void draw_colored_voxel_particles()
     glEnableVertexAttribArray(colored_voxel_particle_Normal);
     glEnableVertexAttribArray(colored_voxel_particle_Color);
 
-    struct Vec3 pos = current_camera->get_position();
-    glUniform3f(colored_voxel_particle_CameraPos, pos.x, pos.y, pos.z);
+    //struct Vec3 pos = current_camera->get_position();
+    //glUniform3f(colored_voxel_particle_CameraPos, pos.x, pos.y, pos.z);
 
     int offset = 0;
     glVertexPointer(3, GL_FLOAT, colored_voxel_particle_vlist->stride, (GLvoid*)offset);
-    offset += 3 * sizeof(GL_FLOAT);
+    offset += sizeof(struct Vec3);
     glVertexAttribPointer(colored_voxel_particle_Normal, 3, GL_FLOAT, GL_FALSE, colored_voxel_particle_vlist->stride, (GLvoid*)offset);
-    offset += 3 * sizeof(GL_FLOAT);
+    offset += sizeof(struct Vec3);
     glVertexAttribPointer(colored_voxel_particle_Color, 3, GL_UNSIGNED_BYTE, GL_TRUE, colored_voxel_particle_vlist->stride, (GLvoid*)offset);
+    offset += sizeof(Color);
     
     glDrawArrays(GL_QUADS, 0, colored_voxel_particle_vlist->vertex_number);
 

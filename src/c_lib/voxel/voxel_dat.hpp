@@ -52,8 +52,8 @@ class VoxPart
 
         char *filename;
 
-		bool colorable;
-		struct Color base_color;
+        bool colorable;
+        Color base_color;
 
         void set_local_matrix();   // uses cached x,y,z,rx,ry,rz values
         void set_dimension(int x, int y, int z);
@@ -104,8 +104,8 @@ class VoxDat {
         //anchor x,y,z then rotation x,y,z
         void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
 
-		void set_colorable(int part, bool colorable);
-		void set_base_color(int part, unsigned char r, unsigned char g, unsigned char b);
+        void set_colorable(int part, bool colorable);
+        void set_base_color(int part, unsigned char r, unsigned char g, unsigned char b);
 
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 

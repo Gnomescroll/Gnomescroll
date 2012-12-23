@@ -28,9 +28,9 @@ void grenade_explode(float x, float y, float z);
 void agent_bleed(float x, float y, float z);
 void blood_spray(float x, float y, float z, float ix, float iy, float iz);  // pos, incident vector
 
-void voxel_explode(Vec3 position, int count, float size, float force, struct Color color);
+void voxel_explode(Vec3 position, int count, float size, float force, Color color);
 // will generate random count between count_min and count_max
-void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, struct Color color);
+void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, Color color);
 
 // DEBUG
 void confetti_stream();

@@ -76,13 +76,13 @@ class AgentSynthesizerUI : public UIElement
             HudText::Text* t = &this->prices[i];
             t->set_format("%d");
             t->set_format_extra_length(SYNTHESIZER_ITEM_COST_MAX_STRLEN + 1 - 2);
-            t->set_color(255,255,255,255);
+            t->set_color(Color(255,255,255,255));
             t->set_depth(-0.1f);
         }
 
         coin_stack.set_format("%d");
         coin_stack.set_format_extra_length(11 + 1 - 2);
-        coin_stack.set_color(255,255,255,255);
+        coin_stack.set_color(Color(255,255,255,255));
         coin_stack.set_depth(-0.1f);
     }
 

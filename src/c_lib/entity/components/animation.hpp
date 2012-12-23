@@ -16,7 +16,7 @@ class AnimationComponent: public Component
         int count_max;
         float size;
         float force;
-        struct Color color;
+        Color color;
 
     void explode(Vec3 position);
     void explode_random(Vec3 position);

@@ -335,7 +335,7 @@ void VoxelModel::set_colors()
         this->set_part_color(i);
 }
 
-void VoxelModel::fill_part_color(int part_num, struct Color color)
+void VoxelModel::fill_part_color(int part_num, Color color)
 {
     GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
     if (part_num < 0 || part_num >= this->n_parts) return;
@@ -344,7 +344,7 @@ void VoxelModel::fill_part_color(int part_num, struct Color color)
     
     VoxPart *vp = vox_dat->vox_part[part_num];
     if (!vp->colorable) return;
-    struct Color base_color = vp->base_color;
+    Color base_color = vp->base_color;
 
     VoxelVolume* vv = &(this->vv[part_num]);
     
@@ -367,7 +367,7 @@ void VoxelModel::fill_part_color(int part_num, struct Color color)
     }
 }
 
-void VoxelModel::fill_color(struct Color color)
+void VoxelModel::fill_color(Color color)
 {
     for (int i=0; i<this->n_parts; i++)
         this->fill_part_color(i, color);

@@ -1,27 +1,28 @@
 #pragma once
 
-struct Color
+class Color
 {
-    union
-    {
-        unsigned char c[3];
-        struct
+    public:
+        union
         {
-            unsigned char r,g,b;
+            unsigned char c[4];
+            struct
+            {
+                unsigned char r,g,b,a;
+            };
         };
-    };
-};
 
-struct Color4
-{
-    union
-    {
-        unsigned char c[4];
-        struct
-        {
-            unsigned char r,g,b,a;
-        };
-    };
+    Color() :
+        r(0), g(0), b(0), a(0xFF)
+    {}
+
+    Color(unsigned char r, unsigned char g, unsigned char b) :
+        r(r), g(g), b(b), a(0xFF)
+    {}
+
+    Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) :
+        r(r), g(g), b(b), a(a)
+    {}
 };
 
 static unsigned char _gamma_correction[256];
@@ -35,63 +36,42 @@ void init_color_data()
     }
 }
 
-inline struct Color interpolate_color(const struct Color a, const struct Color b, float t)
+inline Color interpolate_color(const Color a, const Color b, float t)
 {
-    struct Color c;
-    c.r = a.r + ((float)(b.r - a.r)) * t;
-    c.g = a.g + ((float)(b.g - a.g)) * t;
-    c.b = a.b + ((float)(b.b - a.b)) * t;
+    Color c;
+    c.r = a.r + float(b.r - a.r) * t;
+    c.g = a.g + float(b.g - a.g) * t;
+    c.b = a.b + float(b.b - a.b) * t;
+    c.a = a.a + float(b.a - a.a) * t;
     return c;
 }
 
-inline void print_color(struct Color color)
+inline void print_color(Color color)
 {
-    printf("%d,%d,%d\n", color.r, color.g, color.b);
+    printf("%d,%d,%d,%d\n", color.r, color.g, color.b, color.a);
 }
 
-inline struct Color4 color_init(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-{
-    struct Color4 color = {{{r,g,b,a}}};
-    return color;
-}
-
-inline struct Color color_init(unsigned char r, unsigned char g, unsigned char b)
-{
-    struct Color color = {{{r,g,b}}};
-    return color;
-} 
-
-inline struct Color color_init(struct Color4 color)
-{
-    return color_init(color.r, color.g, color.b);
-}
-
-inline struct Color4 color_init(struct Color color)
-{
-    return color_init(color.r, color.g, color.g, 0xFF);
-}
-
-inline bool colors_equal(struct Color a, struct Color b)
+inline bool colors_equal(Color a, Color b)
 {
     return (a.r == b.r && a.g == b.g && a.b == b.b);
 }
 
-inline bool colors_equal(struct Color4 a, struct Color4 b)
+inline bool colors_equal_alpha(Color a, Color b)
 {
     return (a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a);
 }
 
-const struct Color4 COLOR_RED = color_init(255,0,0,255);
-const struct Color4 COLOR_GREEN = color_init(0,255,0,255);
-const struct Color4 COLOR_BLUE = color_init(0,0,255,255);
-const struct Color4 COLOR_WHITE = color_init(255,255,255,255);
-const struct Color4 COLOR_BLACK = color_init(0,0,0,255);
+const Color COLOR_RED = Color(0xFF,0,0,0xFF);
+const Color COLOR_GREEN = Color(0,0xFF,0,0xFF);
+const Color COLOR_BLUE = Color(0,0,0xFF,0xFF);
+const Color COLOR_WHITE = Color(0xFF,0xFF,0xFF,0xFF);
+const Color COLOR_BLACK = Color(0,0,0,0xFF);
 
 //convert to linear scale
 
-inline struct Color color_init_linear_scale(struct Color4 color)
+inline Color color_linearize(Color color)
 {
-    struct Color c;
+    Color c;
     for (int i=0; i<3; i++)
         c.c[i] = _gamma_correction[color.c[i]];
     return c;

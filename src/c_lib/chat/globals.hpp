@@ -21,10 +21,10 @@ const int CHANNEL_ID_AGENT_OFFSET = 16;
 const ClientID CHAT_SENDER_SYSTEM = NULL_CLIENT;
 const int CHAT_CHANNEL_SYSTEM = 0;
 
-//const struct Color CHAT_SYSTEM_COLOR = {255,255,50};  // moved to options
-const struct Color CHAT_PM_COLOR = color_init(10,10,255);
-const struct Color CHAT_GLOBAL_COLOR = color_init(255,255,255);
-const struct Color CHAT_UNKNOWN_COLOR = color_init(50,50,50);
+//const Color CHAT_SYSTEM_COLOR = {255,255,50};  // moved to options
+const Color CHAT_PM_COLOR = Color(10,10,255);
+const Color CHAT_GLOBAL_COLOR = Color(255,255,255);
+const Color CHAT_UNKNOWN_COLOR = Color(50,50,50);
 
 bool is_valid_chat_character(char c)
 {

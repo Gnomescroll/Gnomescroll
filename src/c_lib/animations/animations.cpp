@@ -290,7 +290,7 @@ void terrain_sparks(float x, float y, float z)
     }
 }
 
-void voxel_explode(Vec3 position, int count, float size, float force, struct Color color)
+void voxel_explode(Vec3 position, int count, float size, float force, Color color)
 {
     if (Options::animation_level <= 0) return;
 
@@ -334,7 +334,7 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
 }
 
 // will generate random count between count_min and count_max
-void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, struct Color color)
+void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, Color color)
 {
     int count = randrange(count_min, count_max);
     voxel_explode(position, count, size, force, color);
@@ -433,7 +433,7 @@ void confetti_stream()
     {
         Particle::ColoredMinivox* minivox = Particle::colored_minivox_list->create();
         if (minivox == NULL) return;
-        minivox->set_color(color_init(randrange(0,255), randrange(0,255), randrange(0,255)));
+        minivox->set_color(Color(randrange(0,255), randrange(0,255), randrange(0,255)));
         minivox->set_ttl(100);
         minivox->voxel.set_rotation_delta(0.1f, 0.0f);
         minivox->voxel.set_rotation(randf(), randf());

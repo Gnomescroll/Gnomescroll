@@ -51,8 +51,8 @@ class VoxelModel
         void set_part_color(int part_num);
         void set_colors();
         
-        void fill_part_color(int part_num, struct Color color);
-        void fill_color(struct Color color);
+        void fill_part_color(int part_num, Color color);
+        void fill_color(Color color);
 
         void update(float x, float y, float z, float theta, float phi);
 

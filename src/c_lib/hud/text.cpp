@@ -276,29 +276,7 @@ void Text::update_formatted_string(int n_args, ...)
     this->text[this->text_len-1] = '\0';
 }
 
-void Text::set_color(unsigned char r, unsigned char g, unsigned char b)
-{
-    this->color.r = r;
-    this->color.g = g;
-    this->color.b = b;
-}
-
-void Text::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-{
-    this->color.r = r;
-    this->color.g = g;
-    this->color.b = b;
-    this->color.a = a;
-}
-
-void Text::set_color(struct Color color)
-{
-    this->color.r = color.r;
-    this->color.g = color.g;
-    this->color.b = color.b;
-}
-
-void Text::set_color(struct Color4 color)
+void Text::set_color(Color color)
 {
     this->color = color;
 }
@@ -449,7 +427,7 @@ formatted(false),
 id(id),
 depth(-1.0f),
 scale(1.0f),
-color(color_init(255,255,255,255)),
+color(Color(255,255,255,255)),
 text(NULL),
 format(NULL),
 x(0.0f), y(0.0f),
@@ -468,7 +446,7 @@ formatted(false),
 id(-1),
 depth(-1.0f),
 scale(1.0f),
-color(color_init(255,255,255,255)),
+color(Color(255,255,255,255)),
 text(NULL),
 format(NULL),
 x(0.0f), y(0.0f),

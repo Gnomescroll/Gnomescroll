@@ -37,7 +37,7 @@ class AnimationData
         int count;
         int max_count;
         bool use_rand_range;
-        struct Color color;
+        Color color;
 
         float jitter_scale;
         float momentum;
@@ -49,7 +49,7 @@ class AnimationData
         id(-1), name(NULL), hash(0), loaded(false),
         metadata_type(AnimDataNone), metadata(NULL), callback(NULL),
         count(1), max_count(1), use_rand_range(false),
-        color(color_init(255,255,255)), jitter_scale(0.0f), momentum(1.0f),
+        color(Color(255,255,255)), jitter_scale(0.0f), momentum(1.0f),
         ttl_min(10), ttl_max(15)
     {
     }

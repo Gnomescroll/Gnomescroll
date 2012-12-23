@@ -225,7 +225,9 @@ void draw_tick()
 
     Particle::prep_shrapnel();
     Skybox::prep_skybox();
+    CHECK_GL_ERROR();
     Animations::prep_voxel_particles();
+    CHECK_GL_ERROR();
 
     t_mech::prep();
 
@@ -365,7 +367,6 @@ void draw_tick()
         Animations::draw_equipped_item(equipped_item_type);
         //glEnable(GL_DEPTH_TEST);
     }
-
 
     if (Options::placement_outline)
     {

@@ -15,7 +15,7 @@ static inline void unpack_message_id(uint8_t* message_id, char* buff, unsigned i
 static inline void pack_float(float* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 
 static inline void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
-static inline void pack_color(struct Color* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
+static inline void pack_color(Color* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 
 static inline void pack_64(int64_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
 static inline void pack_u64(uint64_t* x, char* buff, unsigned int* buff_n, bool pack) __attribute__((always_inline));
@@ -63,7 +63,7 @@ static inline void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, b
     pack_float(&(x->z), buff, buff_n, pack);
 }
 
-static inline void pack_color(struct Color* x, char* buff, unsigned int* buff_n, bool pack)
+static inline void pack_color(Color* x, char* buff, unsigned int* buff_n, bool pack)
 {
     pack_u8(&(x->r), buff, buff_n, pack);
     pack_u8(&(x->g), buff, buff_n, pack);

@@ -42,7 +42,7 @@ int _draw_rect(unsigned char r, unsigned char g, unsigned char b, float x, float
     return 0;
 }
 
-int _draw_rect(struct Color color, float x, float y, float w, float h)
+int _draw_rect(Color color, float x, float y, float w, float h)
 {
     return _draw_rect(color.r, color.g, color.b, x,y,w,h);
 }

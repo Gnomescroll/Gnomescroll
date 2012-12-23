@@ -42,7 +42,7 @@ void AgentEvent::update_hud_name()
 
     using namespace AgentHudName;
 
-    struct Color color = HEALTH_TEXT_DEAD_COLOR;    // default, dead color
+    Color color = HEALTH_TEXT_DEAD_COLOR;    // default, dead color
     
     if (!this->a->status.dead)
     {    // calculate interpolated color from health ratio and color control health_color_points
@@ -404,7 +404,7 @@ AgentEvent::AgentEvent(Agent* owner) :
     this->bb.permanent = true;
     if (this->a->status.name != NULL)
         this->bb.set_text(this->a->status.name);
-    this->bb.set_color(255,10,10,255);
+    this->bb.set_color(Color(255,10,10,255));
     this->bb.set_scale(AgentHudName::SIZE);    
 }
 

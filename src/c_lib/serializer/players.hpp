@@ -27,7 +27,7 @@ void player_load_failed();
 class ParsedPlayerData
 {
     public:
-        struct Color color;
+        Color color;
         bool valid;
 
     void reset()
