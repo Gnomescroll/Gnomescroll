@@ -36,8 +36,8 @@ void main(void)
 
     //const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));
 
-    diffuse = abs(dot(normal, light_dir ));
+    diffuse = abs(dot(normal, light_dir));
     texCoord = InTex;
-    AOMatrix = mat2( InAO[0], InAO[1], InAO[2], InAO[3] );
+    AOMatrix = mat2(InAO[0], InAO[1], InAO[2], InAO[3]);
 }
 

@@ -6,7 +6,7 @@
 #include <camera/fulstrum_test.hpp>
 #endif
 
-#include <voxel/common_data.h>
+#include <voxel/constants.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 
 namespace Particle
