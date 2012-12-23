@@ -71,6 +71,40 @@ class Skyplane
 		return 0.75*(1+vec3_dot(v1,v2));
 	}
 
+	//function of wavelength
+	static float out_scatter(struct Vec3 v1, struct Vec3 v2, int samples)
+	{
+		float _f = 1.0f / ((float) samples);
+
+		//H 0 is the scale height, which is the height at which the atmosphere's average density is found.
+		//My implementation uses 0.25, so the average density is found 25 percent of the way up from the ground to the sky dome.
+		static const flota H0 = 0.25f;
+
+		struct Vec3 vi = vec3_sub(v2, v1);
+		vi = Vec3 vec3_scalar_mult(vi, _f);
+
+		float tmp = 0.0f;
+		//the height is scaled so that 0 represents sea level and 1 is at the top of the atmosphere.
+		//do over array of data?
+		for(int i=0; i<samples; i++)
+		{
+			struct Vec3 tmp1 = vec3_add(v1, vec3_scalar_mult(vi, i*_f));
+			struct Vec3 tmp2 = vec3_add(v1, vec3_scalar_mult(vi, (i+1)*_f));
+
+			float _h = (tmp1.z + tmp2.z) / (-2.0*H0);
+
+			tmp += exp(_h); //-height / H0 
+		}
+
+		return 4*3.14159*tmp;
+	}
+
+	static float in_scatter()
+	{
+
+
+	}
+
 	void update_point(int i, int j, float x, float y, float z, float sx, float sy, float sz)
 	{
 
