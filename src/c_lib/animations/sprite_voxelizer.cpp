@@ -43,8 +43,8 @@ static const int cdirs[8][2] = {
 // these indicate whether we need to bother checking an adjacent pixel
 static const int pdirs[3][8] = {
     { 0, 1, 0, 0, 0, 0, 1, 0, }, // top,bottom
-    { 1, 1, 1, 1, 1, 1, 1, 1, }, // north,south
     { 0, 1, 0, 0, 0, 0, 1, 0, }, // east,west
+    { 1, 1, 1, 1, 1, 1, 1, 1, }, // north,south
     };
 
 static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
@@ -74,15 +74,12 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
         for (int j=0; j<8; j++)
         {
             neighbors[j] = pdirs[i/2][j];
-            if (neighbors[j])
+            if (neighbors[j] && a > 0 && a < int(tile_size)-1 && b > 0 && b < int(tile_size)-1)
             {
-                int m = a + cdirs[j][0];
-                int n = b + cdirs[j][1];
+                int m = a - cdirs[j][0];
+                int n = b - cdirs[j][1];
                 int k = m + (n * tile_size);
-                if (m < 0 || m >= (int)tile_size || n < 0 || n >= (int)tile_size)
-                    neighbors[j] = 0;
-                else
-                    neighbors[j] = int(pixels[k].a > alpha_test);
+                neighbors[j] = int(pixels[k].a > alpha_test);
             }
         }
         
