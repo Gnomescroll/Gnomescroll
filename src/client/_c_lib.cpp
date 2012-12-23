@@ -138,6 +138,7 @@ bool c_lib_inited = false;
 
 /* Skybox */
 #include <camera/skybox/skybox.cpp>
+#include <camera/skybox/rayleigh_scattering.hpp>
 
 /* Agents */
 #include <agent/_include.hpp>
@@ -313,6 +314,8 @@ int init_c_lib(int argc, char* argv[])
 
     init_image_loader();
     TextureSheetLoader::init();
+
+    Skybox::init_rayleigh_scattering(); // init skybox
 
     Awesomium::init();
 
