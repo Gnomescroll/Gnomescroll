@@ -48,6 +48,7 @@ class VoxelVertex
     
     float x,y,z;
 
+    // these all must be 32bit aligned due to some GPU model bugs
     union
     {
         unsigned char rgba[4]; //12
@@ -79,13 +80,9 @@ class VoxelVertexList
     int vnum;   //number of vertices
     int voff;   //offset of vertices
 
-    VoxelVertexList()
-    :
-    vertex_list(NULL)
-    {
-        vnum = 0;
-        voff = 0;
-    }
+    VoxelVertexList() :
+        vertex_list(NULL), vnum(0), voff(0)
+    {}
 
     ~VoxelVertexList()
     {
@@ -96,7 +93,8 @@ class VoxelVertexList
 #endif
 
 //fast rond up to next power of two
-unsigned next_pow2( unsigned x ) {
+unsigned next_pow2(unsigned x)
+{
     --x;
     x |= x >> 1;
     x |= x >> 2;

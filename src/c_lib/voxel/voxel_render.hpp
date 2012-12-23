@@ -50,10 +50,13 @@ class VoxelRenderList
         int id;
         int num_elements;
 
-        void register_voxel_volume(class VoxelVolume* vv);
-        void unregister_voxel_volume(class VoxelVolume* vv);
+    void register_voxel_volume(class VoxelVolume* vv);
+    void unregister_voxel_volume(class VoxelVolume* vv);
 
-        bool full() { return this->num_elements >= VOXEL_RENDER_LIST_SIZE; }
+    bool full()
+    {
+        return (this->num_elements >= VOXEL_RENDER_LIST_SIZE);
+    }
 
     VoxelRenderList();
     ~VoxelRenderList();
@@ -65,27 +68,26 @@ class VoxelRenderListManager
         VoxelRenderList* lists;
         int max;
 
-        void register_voxel_volume(class VoxelVolume* vv);
-        void unregister_voxel_volume(class VoxelVolume* vv);
+    void register_voxel_volume(class VoxelVolume* vv);
+    void unregister_voxel_volume(class VoxelVolume* vv);
 
-        void draw();
+    void draw();
 
-        void init(int max)
-        {
-            GS_ASSERT(this->lists == NULL);
-            if (this->lists != NULL) return;
-            this->max = max;
-            this->lists = new VoxelRenderList[this->max];
-            for (int i=0; i<this->max; i++) this->lists[i].id = i;
-        }
+    void init(int max)
+    {
+        IF_ASSERT(this->lists != NULL) return;
+        this->max = max;
+        this->lists = new VoxelRenderList[this->max];
+        for (int i=0; i<this->max; i++) this->lists[i].id = i;
+    }
 
-        void init()
-        {
-            this->init(VOXEL_RENDER_LISTS);
-        }
+    void init()
+    {
+        this->init(VOXEL_RENDER_LISTS);
+    }
 
-    VoxelRenderListManager()
-    : lists(NULL), max(0)
+    VoxelRenderListManager() :
+        lists(NULL), max(0)
     {}
 
     ~VoxelRenderListManager()

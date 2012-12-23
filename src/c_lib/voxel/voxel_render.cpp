@@ -266,9 +266,7 @@ void VoxelRenderListManager::draw()
         vrl->update_vertex_buffer_object(); 
 
         if (_vbo->vnum == 0) continue;
-
-        GS_ASSERT(_vbo->id != 0);
-        if (_vbo->id == 0) continue;
+        IF_ASSERT(_vbo->id == 0) continue;
 
         glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
@@ -285,11 +283,10 @@ void VoxelRenderListManager::draw()
             VoxelVolume* vv = vrl->render_list[i];
             if (!vv->draw) continue;
             if (vv->vvl.vnum == 0) continue;
-
             
-            glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
+            glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*)vv->world_matrix._f);
             Vec3 p = quadrant_translate_position(current_camera_position, vv->world_matrix.c);
-            glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
+            glUniform3fv(InTranslation, 1, (GLfloat*)p.f);
 
             if (_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))
             {
@@ -299,7 +296,7 @@ void VoxelRenderListManager::draw()
                 //GS_ABORT();
             }
             //printf("vnum= %i, vbo_id= %i voff=%i vnum_local %i \n", _vbo->vnum, _vbo->id, vv->vvl.voff,vv->vvl.vnum);
-            glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
+            glDrawArrays(GL_QUADS, vv->vvl.voff, vv->vvl.vnum);
         }
     }
 

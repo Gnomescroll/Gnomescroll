@@ -1,7 +1,7 @@
 #include "sprite_voxelizer.hpp"
 
 #include <animations/common.hpp>
-#include <voxel/common_data.h>
+#include <voxel/constants.hpp>
 #include <common/color.hpp>
 
 namespace Animations
@@ -11,16 +11,20 @@ static class Shader sprite_voxelizer_shader;
 
 static struct
 {
+    // attributes
     GLint normal;
     GLint color;
+    GLint ao;
+
+    // uniforms
     GLint camera_pos;
     GLint matrix;
 } sprite_voxelizer_shader_vars;
 
 const size_t SPRITE_VOXELIZER_MAX = MAX_ITEMS;
-static VertexElementListColor* sprite_voxelizer_vlists[SPRITE_VOXELIZER_MAX] = {NULL}; 
+static VertexElementListColorByte* sprite_voxelizer_vlists[SPRITE_VOXELIZER_MAX] = {NULL}; 
 
-static void push_sprite_vertex_cube(VertexElementListColor* vlist, float x, float y, const struct Color color)
+static void push_sprite_vertex_cube(VertexElementListColorByte* vlist, float x, float y, const struct Color color)
 {
     static struct Vec3 veb[8];     //vertex positions
 
@@ -33,7 +37,7 @@ static void push_sprite_vertex_cube(VertexElementListColor* vlist, float x, floa
 
     for (int i=0; i<6; i++)
     for (int j=0; j<4; j++)
-        vlist->push_vertex(veb[q_set[4*i+j]], v_normal_vec3[i], color);
+        vlist->push_vertex(veb[q_set[4*i+j]], color, v_normal_b[i]);
 }
 
 static void generate_sprite_vertices(
@@ -44,8 +48,8 @@ static void generate_sprite_vertices(
     const struct Color4* pixels = sheet_loader->get_sprite_pixels(sprite_id);
     IF_ASSERT(pixels == NULL) return;
     if (sprite_voxelizer_vlists[sprite_id] == NULL)
-        sprite_voxelizer_vlists[sprite_id] = new VertexElementListColor;
-    VertexElementListColor* vlist = sprite_voxelizer_vlists[sprite_id];
+        sprite_voxelizer_vlists[sprite_id] = new VertexElementListColorByte;
+    VertexElementListColorByte* vlist = sprite_voxelizer_vlists[sprite_id];
     vlist->clear();
     
     const size_t tile_size = sheet_loader->tile_size;
@@ -57,7 +61,6 @@ static void generate_sprite_vertices(
         float x = float((n_pixels-i-1) / tile_size);
         float y = float((n_pixels-i-1) % tile_size);
         
-        //push_sprite_vertex_cube(vlist, x, y, color_init(pixels[i]));
         push_sprite_vertex_cube(vlist, x, y, color_init_linear_scale(pixels[i]));
 
     }
@@ -89,7 +92,7 @@ void init_sprite_voxelizer()
         "./media/shaders/animation/sprite_voxelizer.fsh");
 
     sprite_voxelizer_shader_vars.normal = sprite_voxelizer_shader.get_attribute("InNormal");
-    sprite_voxelizer_shader_vars.color = sprite_voxelizer_shader.get_attribute("InColor");
+    sprite_voxelizer_shader_vars.ao = sprite_voxelizer_shader.get_attribute("InAO");
     sprite_voxelizer_shader_vars.camera_pos = sprite_voxelizer_shader.get_uniform("InCameraPos");
     sprite_voxelizer_shader_vars.matrix = sprite_voxelizer_shader.get_uniform("InMatrix");
 }
@@ -106,7 +109,7 @@ void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix)
     IF_ASSERT(sprite_id < 0 || sprite_id >= (int)SPRITE_VOXELIZER_MAX) return;
     IF_ASSERT(sprite_voxelizer_vlists[sprite_id] == NULL) return;
     IF_ASSERT(sprite_voxelizer_shader.shader == 0) return;
-    VertexElementListColor* vlist = sprite_voxelizer_vlists[sprite_id];
+    VertexElementListColorByte* vlist = sprite_voxelizer_vlists[sprite_id];
     IF_ASSERT(vlist->vertex_number == 0) return;
 
     glUseProgramObjectARB(sprite_voxelizer_shader.shader);
@@ -114,8 +117,10 @@ void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix)
     glBindBuffer(GL_ARRAY_BUFFER, vlist->VBO);
 
     glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
     glEnableVertexAttribArray(sprite_voxelizer_shader_vars.normal);
-    glEnableVertexAttribArray(sprite_voxelizer_shader_vars.color);
+    glEnableVertexAttribArray(sprite_voxelizer_shader_vars.ao);
 
     struct Vec3 cpos = current_camera->get_position();
     glUniform3f(sprite_voxelizer_shader_vars.camera_pos, cpos.x, cpos.y, cpos.z);
@@ -123,16 +128,24 @@ void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix)
 
     size_t offset = 0;
     glVertexPointer(3, GL_FLOAT, vlist->stride, (GLvoid*)offset);
-    offset += 3 * sizeof(GL_FLOAT);    
-    glVertexAttribPointer(sprite_voxelizer_shader_vars.normal, 3, GL_FLOAT, GL_FALSE, vlist->stride, (GLvoid*)offset);
     offset += 3 * sizeof(GL_FLOAT);
-    glVertexAttribPointer(sprite_voxelizer_shader_vars.color, 3, GL_UNSIGNED_BYTE, GL_TRUE, vlist->stride, (GLvoid*)offset);
+    glColorPointer(3, GL_UNSIGNED_BYTE, vlist->stride, (GLvoid*)offset);
+    offset += 3 * sizeof(GL_UNSIGNED_BYTE);
+    
+    glVertexAttribPointer(sprite_voxelizer_shader_vars.normal, 3, GL_BYTE, GL_FALSE, vlist->stride, (GLvoid*)offset);
+    offset += 3 * sizeof(GL_BYTE);
+    glVertexAttribPointer(sprite_voxelizer_shader_vars.ao, 4, GL_UNSIGNED_BYTE, GL_TRUE, vlist->stride, (GLvoid*)offset);
+    offset += 4 * sizeof(GL_UNSIGNED_BYTE);
     
     glDrawArrays(GL_QUADS, 0, vlist->vertex_number);
 
     glDisableVertexAttribArray(sprite_voxelizer_shader_vars.normal);
-    glDisableVertexAttribArray(sprite_voxelizer_shader_vars.color);
+    glDisableVertexAttribArray(sprite_voxelizer_shader_vars.ao);
+    
     glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
     glUseProgramObjectARB(0);
 
     CHECK_GL_ERROR();

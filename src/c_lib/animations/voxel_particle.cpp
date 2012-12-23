@@ -6,7 +6,7 @@ dont_include_this_file_in_server
 
 #include <animations/common.hpp>
 #include <item/particle/item_particle.hpp>
-#include <voxel/common_data.h>
+#include <voxel/constants.hpp>
 #include <common/color.hpp>
 
 namespace Animations

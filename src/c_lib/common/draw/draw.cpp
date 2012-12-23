@@ -7,10 +7,13 @@ dont_include_this_file_on_server
 #include <camera/camera.hpp>
 #include <camera/fulstrum_test.hpp>
 #include <common/common.hpp>
-#include <voxel/common_data.h>
+#include <voxel/constants.hpp>
 
 namespace Draw
 {
+
+static float v_buffer[3*8];
+static float s_buffer[6*(4*3)];
 
 void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_scale)
 {

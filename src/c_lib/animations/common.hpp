@@ -152,16 +152,17 @@ class VertexElementList
     {
         this->vlist[this->vlist_index].position = position;
         this->vlist[this->vlist_index].normal   = normal;
-        this->vlist[this->vlist_index].color    = color;
+        this->vlist[this->vlist_index].color    = color_init(color);
         this->add_element();
     }
 
     __attribute__((always_inline))
-    void push_vertex(float x, float y, struct Color color)
+    void push_vertex(struct Vec3 position, struct Color color, const char normal[3])
     {
-        this->vlist[this->vlist_index].x = x;
-        this->vlist[this->vlist_index].y = y;
-        this->vlist[this->vlist_index].color = color;
+        this->vlist[this->vlist_index].position = position;
+        this->vlist[this->vlist_index].color    = color_init(color);
+        for (int i=0; i<3; i++)
+            this->vlist[this->vlist_index].normal[i] = normal[i];
         this->add_element();
     }
 
@@ -228,11 +229,19 @@ struct VertexElementColorNormal
 {
     struct Vec3 position;
     struct Vec3 normal;
-    struct Color color;
+    struct Color4 color;
+};
+
+struct VertexElementColorNormalByte
+{
+    struct Vec3 position;
+    struct Color4 color;
+    char normal[4]; // align to 32bit
 };
 
 typedef class VertexElementList<struct VertexElementTexture> VertexElementListTexture;
 typedef class VertexElementList<struct VertexElementTextureNormal> VertexElementListTextureNormal;
 typedef class VertexElementList<struct VertexElementColorNormal> VertexElementListColor;
+typedef class VertexElementList<struct VertexElementColorNormalByte> VertexElementListColorByte;
 
 }   // Animations

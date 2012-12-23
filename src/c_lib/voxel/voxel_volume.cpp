@@ -393,23 +393,6 @@ static inline int vCalcAdj(int side_1, int side_2, int corner)
 
 void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz)
 {
-
-    static const struct VoxelNormal voxel_normal_array[6] = { 
-        {{{0,0,1,0}}},
-        {{{0,0,-1,0}}},
-        {{{1,0,0,0}}},
-        {{{-1,0,0,0}}},
-        {{{0,1,0,0}}},
-        {{{0,-1,0,0}}}
-        };
-
-    static const struct VoxelTex voxel_tex_array[4] = {
-        {{{0,0,0,0}}},
-        {{{0,1,0,0}}},
-        {{{1,1,0,0}}},
-        {{{1,0,0,0}}}
-        };
-
     //struct voxTexElement
 
     static const int_fast8_t CI[6*8*3] = {

@@ -6,7 +6,7 @@ dont_include_this_file_in_server
 
 #include <common/compat_gl.h>
 #include <camera/fulstrum_test.hpp>
-#include <voxel/common_data.h>
+#include <voxel/constants.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 
 namespace Particle
