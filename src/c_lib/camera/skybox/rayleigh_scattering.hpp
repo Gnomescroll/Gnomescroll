@@ -37,7 +37,7 @@ class Skyplane
 
 		//sun position
 		float sx = radius*sin(stheta)*cos(sphi);
-		float sy = radius*sin(stheta)*sin(sphi)
+		float sy = radius*sin(stheta)*sin(sphi);
 		float sz = radius*cos(stheta);
 
 		for(int i=0; i<dim; i++)
@@ -45,7 +45,7 @@ class Skyplane
 			for(int j=0; i<dim; j++)
 			{
 
-				update_point(i,j, s,y,z);
+				update_point(i,j, sx,sy,sz);
 			}
 
 		}
@@ -56,10 +56,15 @@ class Skyplane
 		struct Vec3 u = vec3_init(0.0, 0.0, 1.0); 	//up
 		struct Vec3 r = vec3_init(0.0, 1.0, 0.0);	//right
 
-		const size = 
+		const float size = 1.0;
+
+
+		float x = size*(i*u.x + j*r.x);
+		float y = size*(i*u.y + j*r.y);
+		float z = size*(i*u.z + j*r.z);
 	}
 
-	draw()
+	void draw()
 	{
 
 
