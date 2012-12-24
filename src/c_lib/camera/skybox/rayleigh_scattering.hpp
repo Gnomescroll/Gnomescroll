@@ -253,6 +253,11 @@ class Skyplane
 	//start position, end position, sun position
 	static float in_scatter(struct Vec3 a, struct Vec3 b, struct Vec3 s)
 	{
+
+		//For each point P along the ray from Pa to Pb , 
+		//PPc is the ray from the point to the sun
+		//PPa is the ray from the sample point to the camera.
+
 		const static float camera_z = 0.0f;
 		//static const float H0 = 0.25f;
 		//static const float SKYBOX_HEIGHT = 128.0; //skybox height
