@@ -211,7 +211,7 @@ void init_rayleigh_scattering()
 
 	S.update(0.0, 0.5);
 
-	abort();
+	//abort();
 }
 
 

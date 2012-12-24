@@ -47,6 +47,48 @@ static const int pdirs[3][8] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, }, // north,south
     };
 
+
+static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color* pixels)
+{
+
+    static const int _side_array[3*6] = 
+    {
+        0,0,1,  //top
+        0,0,-1, //bottom
+        1,0,0,  //north
+        -1,0,0, //south
+        0,1,0,  //west
+        0,-1,0, //east
+    };
+
+    if(ix-1 < 0 || ix+1 >= tile_size)
+        return false;
+    if(iy-1 < 0 || iy+1 >= tile_size)
+        return false;
+
+    //is in plane; retursn false for top/bottom
+    if(_side_array[side].z != 0)
+        return false;   //this might be a bug/glassert
+
+    int _ix = ix + _side_array(3*side+0);
+    int _iy = iy + _side_array(3*side+1);
+
+    if(_ix < 0 || _ix >= tile_size)
+        return false;
+    if(_iy < 0 || _iy >= tile_size)
+        return false;
+
+    int index = _ix + (_iy * tile_size);
+    if(pixels[index].a > alpha_test)
+    {
+        return true
+    }
+    else
+    {
+        return false
+    }
+}
+
 static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
     const Color* pixels, size_t n_pixels, size_t tile_size, int index)
 {
@@ -64,13 +106,14 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
     
     for (int i=0; i<8; i++)
     {
-        veb[i].x = voxelized_sprite_config.scale*(v_set[3*i+0] + 0);
-        veb[i].y = voxelized_sprite_config.scale*(v_set[3*i+1] + x);
-        veb[i].z = voxelized_sprite_config.scale*(v_set[3*i+2] + y);
+        veb[i].x = voxelized_sprite_config.scale*(v_set[3*i+0] + x);
+        veb[i].y = voxelized_sprite_config.scale*(v_set[3*i+1] + y);
+        veb[i].z = voxelized_sprite_config.scale*(v_set[3*i+2] + 0);
     }
 
     for (int i=0; i<6; i++)
     {
+
         for (int j=0; j<8; j++)
         {
             neighbors[j] = pdirs[i/2][j];
