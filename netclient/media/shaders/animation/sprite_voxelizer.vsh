@@ -19,15 +19,17 @@ void main(void)
 
     // set light diffusion
  
-/*
+
     //lighting -1
     vec3 normal = gl_NormalMatrix*(mat3(InMatrix)*InNormal);
     diffuse_light = abs(dot(light_dir, normal));
-*/
 
+
+/*
     //lighting 0
     vec3 normal = mat3(InMatrix)*InNormal;
     diffuse_light = dot(light_dir, normal);
+*/
 
 /*
     //lighting 1

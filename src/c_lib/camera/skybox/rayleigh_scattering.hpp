@@ -284,15 +284,9 @@ class Skyplane
 
 	float update_point(const struct Vec3 &c, const struct Vec3 &b, const struct Vec3 &s)
 	{
-		//struct Vec3 s = vec3_init(sx,sy,sz);
-		
+		const float ATMOSPHERE_DEPTH = 128.0;
 		//compute ray from camera to upper atmosphere
 		//intersection with upper atomsphere
-
-		//float* farray = new float[dim*dim];
-
-		const float ATMOSPHERE_DEPTH = 128.0;
-		//struct Vec3 b = vec3_init(x,y,z);
 		struct Vec3 _b;
 		_b = vec3_scalar_mult(vec3_normalize(b), ATMOSPHERE_DEPTH);
 		return in_scatter(c, _b, s);
