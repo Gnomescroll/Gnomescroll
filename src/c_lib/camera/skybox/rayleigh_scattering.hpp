@@ -258,21 +258,19 @@ class Skyplane
 		//PPc is the ray from the point to the sun
 		//PPa is the ray from the sample point to the camera.
 
-		const static float camera_z = 0.0f;
-		//static const float H0 = 0.25f;
-		//static const float SKYBOX_HEIGHT = 128.0; //skybox height
-
-		//struct Vec3 v1 = s; //sun position
-		//struct Vec3 c = vec3_init(0.0, 0.0, camera_z);
 		float _f = 1.0f / ((float) samples);
-		float _d = _f * vec3_length(vec3_sub(v2,v1));
-		
-		struct Vec3 vi = vec3_scalar_mult(vec3_sub(v2, c), _f);
+		float _d = _f * vec3_distance(b,a);	//for intergral
+
+		GS_ASSERT(abs( vec3_distance(a,b) - vec3_length(vec3_sub(b,a))) < 0.0001 );
+
+
+		struct Vec3 vi = vec3_scalar_mult(vec3_sub(b, a), _f);
 
 		//compute sample points
 		struct Vec3 tmp1[samples+1];	//should be constant for MSVC
+
 		for(int i=0; i<=samples; i++)
-			tmp1[i] = vec3_add(c, vec3_scalar_mult(vi, i));
+			tmp1[i] = vec3_add(a, vec3_scalar_mult(vi, i));
 
 		//compute rays from sample points to sun
 		struct Vec3 _s[samples+1];
