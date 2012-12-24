@@ -145,11 +145,9 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
         if(adjacent_pixel(side, a,b,tile_size,pixels))
             continue;
 
-        //int side = i;
         int CX[8];
         for(int i=0; i<8; i++) 
         {
-
             int index = side*8*3+i*3;
             CX[i] = isOccludes(x+CI[index+0],y+CI[index+1],CI[index+2],tile_size,pixels);
         }
