@@ -94,8 +94,8 @@ static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color*
         return false;
 
     if(pixels[ _ix + (_iy * tile_size) ].a > alpha_test)    
-        return false;
-    return true;
+        return true;
+    return false;
 
 }
 
