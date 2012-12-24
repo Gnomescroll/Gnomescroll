@@ -81,6 +81,8 @@ void wait_for_login()
         glEnable(GL_DEPTH_TEST);
         Skybox::prep_skybox();
         Skybox::draw();
+        Skybox::draw_rayleigh_scattering(); //skybox
+
         glDisable(GL_DEPTH_TEST);
 
         poll_mouse();
