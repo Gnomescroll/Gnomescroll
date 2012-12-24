@@ -309,10 +309,11 @@ static float vec3_cos2(struct Vec3 v1, struct Vec3 v2) __attribute((always_inlin
 
 float vec3_cos2(struct Vec3 v1, struct Vec3 v2) 
 {
-    return (v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z) / ((v1.x*v1.x + v1.y*v1.y + v1.z*v1.z)*(v2.x*v2.x + v2.y*v2.y + v2.z*v2.z));
+    float dot =  (v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z);
+    return (dot*dot) / ((v1.x*v1.x + v1.y*v1.y + v1.z*v1.z)*(v2.x*v2.x + v2.y*v2.y + v2.z*v2.z));
 }
 
-static float vec3_distance(struct Vec3 v) __attribute((always_inline));
+static float vec3_distance(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline));
 float vec3_distance(struct Vec3 v1, struct Vec3 v2)
 {
     return sqrtf((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
