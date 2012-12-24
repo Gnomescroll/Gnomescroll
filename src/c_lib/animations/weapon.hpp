@@ -7,6 +7,9 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
+// TODO: move this somewhere. its for caching/restoring cull mode state 
+extern GLint cull_face_mode;
+
 class AlignmentNode
 {
     public:

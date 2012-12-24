@@ -12,7 +12,7 @@ void load_sprite_voxelizer();
 
 void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix);
 
-bool draw_voxelized_sprite_gl_begin();
+bool draw_voxelized_sprite_gl_begin(GLint cull_mode);
 void draw_voxelized_sprite_gl_end();
 
 }   // Animations
