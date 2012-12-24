@@ -109,8 +109,8 @@ static bool isOccludes(int ix, int iy, int iz, int tile_size, const Color* pixel
         return false;
 
     if(pixels[ ix + (iy * tile_size) ].a > alpha_test)    
-        return false;
-    return true; 
+        return true;
+    return false; 
 
 }
 
