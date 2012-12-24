@@ -27,92 +27,39 @@ static VertexElementListColorByteAO* sprite_voxelizer_vlists[SPRITE_VOXELIZER_MA
 
 static const unsigned char alpha_test = 0xFF/2;
 
-// these are x,y deltas surrounding a face
-// https://github.com/Charged/Miners/blob/master/src/miners/builder/helpers.d#L344
-static const int cdirs[8][2] = {
-    {-1,-1,},  // c1
-    { 0,-1,},
-    { 1,-1,},
-    {-1, 0,},
-    { 1, 0,},
-    {-1, 1,},
-    { 0, 1,},
-    { 1, 1,},
-    };
-
-// these indicate whether we need to bother checking an adjacent pixel
-static const int pdirs[3][8] = {
-    { 0, 1, 0, 0, 0, 0, 1, 0, }, // top,bottom
-    { 0, 1, 0, 0, 0, 0, 1, 0, }, // east,west
-    { 1, 1, 1, 1, 1, 1, 1, 1, }, // north,south
-    };
-
-
-static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
--1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
-1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
--1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, 1, -1, 0, 1,
-1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
--1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
-
-
-static inline int calcAdj(int side_1, int side_2, int corner) 
+static bool adjacent_pixel(const Color* pixels, size_t tile_size, int side, int x, int y)
 {
-    const static int occ_array[3] = { 255, 128, 64 };
-    int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
-    return occ_array[occ];
-}
-
-const static int_fast8_t _s_array[3*6] = 
-    {
-        0,0,1,  //top
-        0,0,-1, //bottom
-        1,0,0,  //north
-        -1,0,0, //south
-        0,1,0,  //west
-        0,-1,0, //east
-    };
-
-static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color* pixels)
-{
-
-    if(ix-1 < 0 || ix+1 >= tile_size)
+    if (x <= 0 || x >= int(tile_size)-1)
         return false;
-    if(iy-1 < 0 || iy+1 >= tile_size)
+    if (y <= 0 || y >= int(tile_size)-1)
         return false;
 
-    //is in plane; retursn false for top/bottom
-    if(_s_array[3*side+2] != 0)
+    //is in plane; returns false for top/bottom
+    if (_s_array[3*side+2])
         return false;   //this might be a bug/glassert
 
-    int _ix = ix + _s_array[3*side+0];
-    int _iy = iy + _s_array[3*side+1];
+    int ix = x - _s_array[3*side+1];
+    int iy = y + _s_array[3*side+0];
 
-    if(_ix < 0 || _ix >= tile_size)
+    if (ix < 0 || ix >= int(tile_size))
         return false;
-    if(_iy < 0 || _iy >= tile_size)
+    if (iy < 0 || iy >= int(tile_size))
         return false;
 
-    if(pixels[ _ix + (_iy * tile_size) ].a > alpha_test)    
-        return true;
-    return false;
-
+    return (pixels[ix + (iy * tile_size)].a > alpha_test);
 }
 
 //this just checks if there is a pixel and its non-zero
-static bool isOccludes(int ix, int iy, int iz, int tile_size, const Color* pixels)
+static bool pixel_occupied(const Color* pixels, size_t tile_size, int x, int y, int z)
 {
-    if(iz != 0)
+    if (z != 0)
         return false;
-    if(ix < 0 || ix >= tile_size)
+    if (x < 0 || x >= int(tile_size))
         return false;
-    if(iy < 0 || iy >= tile_size)
+    if (y < 0 || y >= int(tile_size))
         return false;
 
-    if(pixels[ ix + (iy * tile_size) ].a > alpha_test)    
-        return true;
-    return false; 
-
+    return (pixels[x + (y * tile_size)].a > alpha_test); 
 }
 
 static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
@@ -124,12 +71,9 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
 
     Color color = color_linearize(pixels[index]);
     
-    int a = index % tile_size;
-    int b = index / tile_size;
+    int x = index % tile_size;
+    int y = index / tile_size;
 
-    float x = float((n_pixels-index-1) % tile_size);
-    float y = float((n_pixels-index-1) / tile_size);
-    
     for (int i=0; i<8; i++)
     {
         veb[i].x = voxelized_sprite_config.scale*(v_set[3*i+0] + x);
@@ -139,47 +83,20 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
 
     for (int side=0; side<6; side++)
     {
-
-        //static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color* pixels)
-
-        //dont draw occluded vertices
-        if(adjacent_pixel(side, a,b,tile_size,pixels))
+        // skip occluded vertices
+        if (adjacent_pixel(pixels, tile_size, side, x, y))
             continue;
 
-        int CX[8];
-        for(int i=0; i<8; i++) 
-        {
-            int index = side*8*3+i*3;
-            CX[i] = isOccludes(x+CI[index+0],y+CI[index+1],CI[index+2],tile_size,pixels);
-        }
+        //for (int i=0; i<8; i++) 
+        //{
+            //int index = side*8*3+i*3;
+            //neighbors[i] = pixel_occupied(pixels, tile_size, x+ao_perm[index+0], y+ao_perm[index+1], ao_perm[index+2]);
+        //}
 
-
-        ao[0] = calcAdj(CX[7], CX[1], CX[0]);
-        ao[1] = calcAdj(CX[5], CX[7], CX[6]);
-        ao[2] = calcAdj(CX[1], CX[3], CX[2]);
-        ao[3] = calcAdj(CX[3], CX[5], CX[4]);
-
-
-/*
-        for (int j=0; j<8; j++)
-        {
-            neighbors[j] = pdirs[i/2][j];
-            if (neighbors[j] && a > 0 && a < int(tile_size)-1 && b > 0 && b < int(tile_size)-1)
-            {
-                int m = a - cdirs[j][0];
-                int n = b - cdirs[j][1];
-                int k = m + (n * tile_size);
-                neighbors[j] = int(pixels[k].a > alpha_test);
-            }
-        }
-*/
-
-/*
-        ao[0] = Voxels::get_ao_weight(neighbors[7], neighbors[1], neighbors[0]);
-        ao[1] = Voxels::get_ao_weight(neighbors[5], neighbors[7], neighbors[6]);
-        ao[2] = Voxels::get_ao_weight(neighbors[1], neighbors[3], neighbors[2]);
-        ao[3] = Voxels::get_ao_weight(neighbors[3], neighbors[5], neighbors[4]);
-*/
+        //ao[0] = Voxels::get_ao_weight(neighbors[7], neighbors[1], neighbors[0]);
+        //ao[1] = Voxels::get_ao_weight(neighbors[5], neighbors[7], neighbors[6]);
+        //ao[2] = Voxels::get_ao_weight(neighbors[1], neighbors[3], neighbors[2]);
+        //ao[3] = Voxels::get_ao_weight(neighbors[3], neighbors[5], neighbors[4]);
 
         for (int j=0; j<4; j++)
             vlist->push_vertex(veb[q_set[4*side+j]], color, v_normal_b[side], ao, voxel_tex_array[j].tex);

@@ -168,7 +168,7 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
         sheet_pixels[sheet_index] = pix;
 
         size_t pixel_index = meta_index * this->tile_size * this->tile_size;
-        pixel_index += j * this->tile_size + i;
+        pixel_index += (this->tile_size - j - 1) * this->tile_size + (this->tile_size - i - 1);
         this->pixels[pixel_index] = Color(r,g,b,a);
     }
 

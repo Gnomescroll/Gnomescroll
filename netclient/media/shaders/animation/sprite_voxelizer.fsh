@@ -15,10 +15,10 @@ void main()
     float ao = dot(vx, AOMatrix * vy);
 
     //vec3 color = ((diffuse_light*diffuse_p) + (ao*ambient_p)) * gl_Color.rgb;
-    ////vec3 color = ((diffuse_light*diffuse_p) + (ambient_p)) * gl_Color.rgb;
-    //color = pow(color, vec3(gamma));  // gamma correction
-    //gl_FragColor.rgb = color;
-    gl_FragColor.rgb = vec3(ao);
+    vec3 color = ((diffuse_light*diffuse_p) + (ambient_p)) * gl_Color.rgb;
+    color = pow(color, vec3(gamma));  // gamma correction
+    gl_FragColor.rgb = color;
+    //gl_FragColor.rgb = vec3(ao);
 
     //uncomment to see the diffuse
     //gl_FragColor.rgb = vec3(diffuse_light, diffuse_light, diffuse_light);
