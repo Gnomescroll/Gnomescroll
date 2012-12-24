@@ -11,6 +11,8 @@ class Skyplane
 	unsigned char color[4*dim*dim];
 	public:
 
+	const static int samples = 5;
+
 	struct Vec3 vert[4];
 
 	Skyplane()
@@ -81,7 +83,7 @@ class Skyplane
 	}
 
 	//function of wavelength
-	static float out_scatter(struct Vec3 v1, struct Vec3 v2, int samples)
+	static float out_scatter(struct Vec3 v1, struct Vec3 v2)
 	{
 		float _f = 1.0f / ((float) samples);
 		float _d = _f * vec3_length(vec3_sub(v2,v1));
@@ -113,7 +115,7 @@ class Skyplane
 	}
 
 	//sun position, endpoint position
-	static float in_scatter(struct Vec3 s, struct Vec3 v2, int samples)
+	static float in_scatter(struct Vec3 s, struct Vec3 v2)
 	{
 
 		const static float camera_z = 0.0f;
@@ -148,8 +150,8 @@ class Skyplane
 		for(int i=0; i<=samples; i++)
 		{
 			_t0[i] = expf(tmp1[i].z / (H0*SKYBOX_HEIGHT));
-			_t1[i] = out_scatter(tmp1[i], _s[i], 5); //out_scatter from current point to sun
-			_t2[i] = out_scatter(tmp1[i], c, 5); //out_scatter from current point to camera
+			_t1[i] = out_scatter(tmp1[i], _s[i]); //out_scatter from current point to sun
+			_t2[i] = out_scatter(tmp1[i], c); //out_scatter from current point to camera
 		
 			printf("%i: _t0,_t1,_t2= %.2f %.2f %.2f \n", i, _t0[i],_t1[i],_t2[i] );
 		}
@@ -186,7 +188,7 @@ class Skyplane
 		b.y = bl*y;
 		b.z = bl*z;
 
-		float light = in_scatter(s, b, 5);
+		float light = in_scatter(s, b);
 
 		printf("light: %i %i = %.2f \n", i,j,light);
 

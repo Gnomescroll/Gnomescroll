@@ -48,10 +48,22 @@ static const int pdirs[3][8] = {
     };
 
 
-static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color* pixels)
-{
+static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
+-1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
+1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
+-1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, 1, -1, 0, 1,
+1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
+-1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
 
-    static const int _side_array[3*6] = 
+
+static inline int calcAdj(int side_1, int side_2, int corner) 
+{
+    const static int occ_array[3] = { 255, 128, 64 };
+    int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
+    return occ_array[occ];
+}
+
+const static int_fast8_t _s_array[3*6] = 
     {
         0,0,1,  //top
         0,0,-1, //bottom
@@ -61,32 +73,45 @@ static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color*
         0,-1,0, //east
     };
 
+static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color* pixels)
+{
+
     if(ix-1 < 0 || ix+1 >= tile_size)
         return false;
     if(iy-1 < 0 || iy+1 >= tile_size)
         return false;
 
     //is in plane; retursn false for top/bottom
-    if(_side_array[side].z != 0)
+    if(_s_array[3*side+2] != 0)
         return false;   //this might be a bug/glassert
 
-    int _ix = ix + _side_array(3*side+0);
-    int _iy = iy + _side_array(3*side+1);
+    int _ix = ix + _s_array[3*side+0];
+    int _iy = iy + _s_array[3*side+1];
 
     if(_ix < 0 || _ix >= tile_size)
         return false;
     if(_iy < 0 || _iy >= tile_size)
         return false;
 
-    int index = _ix + (_iy * tile_size);
-    if(pixels[index].a > alpha_test)
-    {
-        return true
-    }
-    else
-    {
-        return false
-    }
+    if(pixels[ _ix + (_iy * tile_size) ].a > alpha_test)    
+        return false;
+    return true;
+
+}
+
+static bool isOccludes(int ix, int iy, int iz, int tile_size, const Color* pixels)
+{
+    if(iz != 0)
+        return false;
+    if(ix < 0 || ix >= tile_size)
+        return false;
+    if(iy < 0 || iy >= tile_size)
+        return false;
+
+    if(pixels[ ix + (iy * tile_size) ].a > alpha_test)    
+        return false;
+    return true; 
+
 }
 
 static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
@@ -94,7 +119,7 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
 {
     static struct Vec3 veb[8] = {{{{0,0,0}}}};
     static char ao[4] = {0};
-    static int neighbors[8] = {0};
+    //static int neighbors[8] = {0};
 
     Color color = color_linearize(pixels[index]);
     
@@ -111,9 +136,32 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
         veb[i].z = voxelized_sprite_config.scale*(v_set[3*i+2] + 0);
     }
 
-    for (int i=0; i<6; i++)
+    for (int side=0; side<6; side++)
     {
 
+        //static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color* pixels)
+
+        //dont draw occluded vertices
+        if(adjacent_pixel(side, a,b,tile_size,pixels))
+            continue;
+
+        //int side = i;
+        int CX[8];
+        for(int i=0; i<8; i++) 
+        {
+
+            int index = side*8*3+i*3;
+            CX[i] = isOccludes(x+CI[index+0],y+CI[index+1],CI[index+2],tile_size,pixels);
+        }
+
+
+        ao[0] = calcAdj(CX[7], CX[1], CX[0]);
+        ao[1] = calcAdj(CX[5], CX[7], CX[6]);
+        ao[2] = calcAdj(CX[1], CX[3], CX[2]);
+        ao[3] = calcAdj(CX[3], CX[5], CX[4]);
+
+
+/*
         for (int j=0; j<8; j++)
         {
             neighbors[j] = pdirs[i/2][j];
@@ -125,13 +173,17 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
                 neighbors[j] = int(pixels[k].a > alpha_test);
             }
         }
-        
+*/
+
+/*
         ao[0] = Voxels::get_ao_weight(neighbors[7], neighbors[1], neighbors[0]);
         ao[1] = Voxels::get_ao_weight(neighbors[5], neighbors[7], neighbors[6]);
         ao[2] = Voxels::get_ao_weight(neighbors[1], neighbors[3], neighbors[2]);
         ao[3] = Voxels::get_ao_weight(neighbors[3], neighbors[5], neighbors[4]);
+*/
+
         for (int j=0; j<4; j++)
-            vlist->push_vertex(veb[q_set[4*i+j]], color, v_normal_b[i], ao, voxel_tex_array[j].tex);
+            vlist->push_vertex(veb[q_set[4*side+j]], color, v_normal_b[side], ao, voxel_tex_array[j].tex);
     }
 }
 

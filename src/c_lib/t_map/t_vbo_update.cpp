@@ -153,12 +153,10 @@ inline int _is_occluded_transparent(int x,int y,int z, int side_num, CubeID _cub
 INLINE
 void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
-    int i;
-    int index;
     int CX[8];
-    for(i=0; i<8; i++) 
+    for(int i=0; i<8; i++) 
     {
-        index = side*8*3+i*3;
+        int index = side*8*3+i*3;
         CX[i] = isOccludes(x+CI[index+0],y+CI[index+1],z+CI[index+2]);
     }
 
