@@ -61,16 +61,72 @@ class Skyplane
 		struct Vec3 r = vec3_init(0.0, 1.0, 0.0);	//right
 
 		//center of plane
-		struct Vec3 center = vec3_init(
-			plane_depth,
-			0.0,
-			size/2.0
-			);
+		struct Vec3 center[6];
 
-		struct Vec3 sun = center;
-		sun = vec3_normalize(sun);
-		sun = vec3_scalar_mult(sun, 256.0);
+		//struct Vec3 f[6];
 
+		const float _f[6*3] =
+		{
+			 0, 0, 1, //top
+			 0, 0,-1,
+			 1, 0, 0, //north
+			-1, 0, 0,
+			 0, 1, 0, //west
+			 0,-1, 0
+		};
+
+		const float _r[6*3] =
+		{
+			 0,-1, 0, //top
+			 0,-1, 0,
+			 0, -1,0, //north
+			 0, 1, 0,
+			 1, 0, 0, //west
+			 -1, 0, 0
+		};
+
+		const float _u[6*3] =
+		{
+			-1, 0, 0, //top
+			 1, 0, 0,
+			 0, 0,1, //north
+			 0, 0, 1,
+			 0, 0, 1, //west
+			 0, 0, 1
+		};
+
+		for(int i=0; i<6 ;i++)
+		{
+			struct Vec3 f = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+1] );
+			struct Vec3 r = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+1] );
+			struct Vec3 u = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+1] );
+
+			struct Vec3 cu = vec3_cross(f,r);
+			printtf("%i: dot= %.2f fr, fu, ru= %.2f %.2f %.2f \n", 
+				vec3_dot(cu, u),
+				vec3_dot(f, r),
+				vec3_dot(f, u),
+				vec3_dot(r, u)
+				);
+		}
+		{
+			float p = size/2.0;
+			//float s = size/2.0;
+
+			center[0] = vec3_init( 0, 0, p);
+			center[1] = vec3_init( 0, 0, -p);
+			center[2] = vec3_init( p, 0, p);
+			center[3] = vec3_init( p, 0, p);
+			center[4] = vec3_init( p, 0, p);
+			center[5] = vec3_init( p, 0, p);
+
+			//center[0] = vec3_init( p, 0, p);
+			//center[1] = 
+		}
+
+		//struct Vec3 sun = center[0];
+		//sun = vec3_normalize(sun);
+		//sun = vec3_scalar_mult(sun, 256.0);
 		//sx = sun.x;
 		//sy = sun.y;
 		//sz = sun.z;
@@ -92,9 +148,9 @@ class Skyplane
 				int _j = j -dim/2;
 
 				struct Vec3 b;
-				b.x = center.x + _df*size*(_i*r.x + _j*u.x);
-				b.y = center.y + _df*size*(_i*r.y + _j*u.y);
-				b.z = center.z + _df*size*(_i*r.z + _j*u.z);
+				b.x = center[0].x + _df*size*(_i*r.x + _j*u.x);
+				b.y = center[0].y + _df*size*(_i*r.y + _j*u.y);
+				b.z = center[0].z + _df*size*(_i*r.z + _j*u.z);
 
 				//can inline this even
 				float light = update_point(c, b, s);
