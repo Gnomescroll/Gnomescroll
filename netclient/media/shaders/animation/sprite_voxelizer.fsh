@@ -5,7 +5,7 @@ varying mat2 AOMatrix;
 varying vec2 AOInterpolate;
 
 #define gamma 1.0f/2.2f
-#define diffuse_p .30f //diffuse lighting weight
+#define diffuse_p 1.0f //diffuse lighting weight
 #define ambient_p .50f //ambient lighting weight
 
 void main() 
