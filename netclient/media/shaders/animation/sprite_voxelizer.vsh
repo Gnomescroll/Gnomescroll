@@ -22,8 +22,7 @@ void main(void)
 
     //lighting -1
     vec3 normal = gl_NormalMatrix*(mat3(InMatrix)*InNormal);
-    diffuse_light = abs(dot(light_dir, normal));
-
+    diffuse_light = dot(light_dir, normal);
 
 /*
     //lighting 0
