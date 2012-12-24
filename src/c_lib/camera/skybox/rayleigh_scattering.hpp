@@ -8,11 +8,11 @@ void save_png(const char* filename, float* in, int xres, int yres);
 
 class Skyplane
 {
-	static const int dim = 32;
+
 
 	//unsigned char color[4*dim*dim];
 	public:
-
+	static const int dim = 32;
 	const static int samples = 5;
 
 	struct Vec3 vert[4];
@@ -42,7 +42,6 @@ class Skyplane
 	{
 		const float radius = 256.0;
 		const float size = 128.0; //plane size
-		const float plane_depth = size/2.0;
 
 		const float _df = 1.0/ ((float) dim);
 
@@ -57,11 +56,10 @@ class Skyplane
 		s.z = radius*cosf(stheta);
 
 		//point position
-		struct Vec3 u = vec3_init(0.0, 0.0, 1.0); 	//up
-		struct Vec3 r = vec3_init(0.0, 1.0, 0.0);	//right
+		//struct Vec3 u = vec3_init(0.0, 0.0, 1.0); 	//up
+		//struct Vec3 r = vec3_init(0.0, 1.0, 0.0);	//right
 
 		//center of plane
-		struct Vec3 center[6];
 
 		//struct Vec3 f[6];
 
@@ -95,99 +93,147 @@ class Skyplane
 			 0, 0, 1
 		};
 
+		struct Vec3 f[6];
+		struct Vec3 r[6];
+		struct Vec3 u[6];
+
+		for(int i=0;i<6;i++)
+		{
+			f[i] = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+2] );
+			r[i] = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+2] );
+			u[i] = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+2] );
+		}
+	/*
 		for(int i=0; i<6 ;i++)
 		{
-			struct Vec3 f = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+1] );
-			struct Vec3 r = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+1] );
-			struct Vec3 u = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+1] );
+			struct Vec3 f = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+2] );
+			struct Vec3 r = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+2] );
+			struct Vec3 u = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+2] );
 
 			struct Vec3 cu = vec3_cross(f,r);
-			printtf("%i: dot= %.2f fr, fu, ru= %.2f %.2f %.2f \n", 
+
+			printf("%i: dot= %.2f fr, fu, ru= %.2f %.2f %.2f \n", i,
 				vec3_dot(cu, u),
 				vec3_dot(f, r),
 				vec3_dot(f, u),
 				vec3_dot(r, u)
 				);
 		}
+	*/
+
+		//center of plane
+		struct Vec3 center[6];
+
+		for(int i=0;i<6;i++)
 		{
-			float p = size/2.0;
-			//float s = size/2.0;
-
-			center[0] = vec3_init( 0, 0, p);
-			center[1] = vec3_init( 0, 0, -p);
-			center[2] = vec3_init( p, 0, p);
-			center[3] = vec3_init( p, 0, p);
-			center[4] = vec3_init( p, 0, p);
-			center[5] = vec3_init( p, 0, p);
-
-			//center[0] = vec3_init( p, 0, p);
-			//center[1] = 
+			const float plane_depth = size/2.0;
+			center[i] = vec3_scalar_mult(f[i], plane_depth);
+			center[i].z += plane_depth;
 		}
 
-		//struct Vec3 sun = center[0];
-		//sun = vec3_normalize(sun);
-		//sun = vec3_scalar_mult(sun, 256.0);
-		//sx = sun.x;
-		//sy = sun.y;
-		//sz = sun.z;
+	/*
+		struct Vec3 sun = center[2];
+		sun = vec3_normalize(sun);
+		s = vec3_scalar_mult(sun, 256.0);
 
 		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,s.x,s.y,s.z);
+	*/
 
+	/*
 		printf("Sun Position: theta,phi= %.2f %.2f 	sx,sy,sz= %.2f %.2f %.2f \n", 
 			theta, phi,
 			s.x,s.y,s.z);
+	*/
 
 		const float camera_z = 0.0f;
 		struct Vec3 c = vec3_init(0.0, 0.0, camera_z);
 
-		for(int i=0; i<dim; i++)
+		for(int side=0; side<6; side++)
 		{
-			for(int j=0; j<dim; j++)
+			for(int i=0; i<dim; i++)
 			{
-				int _i = i -dim/2;
-				int _j = j -dim/2;
+				for(int j=0; j<dim; j++)
+				{
+					int _i = i -dim/2;
+					int _j = j -dim/2;
 
-				struct Vec3 b;
-				b.x = center[0].x + _df*size*(_i*r.x + _j*u.x);
-				b.y = center[0].y + _df*size*(_i*r.y + _j*u.y);
-				b.z = center[0].z + _df*size*(_i*r.z + _j*u.z);
+					struct Vec3 b;
+					b.x = center[side].x + _df*size*(_i*r[side].x + _j*u[side].x);
+					b.y = center[side].y + _df*size*(_i*r[side].y + _j*u[side].y);
+					b.z = center[side].z + _df*size*(_i*r[side].z + _j*u[side].z);
 
-				//can inline this even
-				float light = update_point(c, b, s);
+					//can inline this even
+					float light = update_point(c, b, s);
 
-				farray[0][j*dim+i] = light;
+					farray[side][j*dim+i] = light;
 
-				printf("light: %i %i = %.2f \n", i,j,light);
+					//printf("light: %i %i = %.2f \n", i,j,light);
+				}
+
 			}
-
 		}
 
-		for(int i=0; i<dim; i++)
-		{
-			float _d = 1.0 / ((float) dim);
-			farray[0][i*dim+0] = _d*i;
-		}
 
 /*
 		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,sx,sy,sz);
 		printf("theta,phi= %.2f %.2f ", theta, phi);
 		printf("Sun Position: x,y,z= %.2f %.2f %.2f \n", sx,sy,sz);
 		printf("plane_center: x,y,z= %.2f %.2f %.2f \n", center.x, center.y, center.z);
-
-		printf("!!! DOT= %.2f cos2= %.2f \n", 
-			vec3_dot(sun, center), 
-			vec3_cos2(sun, center)
-			);
 */
+
+	/*
+		printf("!!! DOT= %.2f cos2= %.2f \n", 
+			vec3_dot(s, center[2]), 
+			vec3_cos2(s, center[2])
+			);
+
+		for(int i=0; i<6; i++)
+		{
+			printf("%i: center= %.2f %.2f %.2f \n", i,center[i].x,center[i].y,center[i].z );
+		}
+	*/
 	}
 
-	void save(const char* filename)
+	void save(const char* filename, int side)
 	{
-		save_png(filename, farray[0], dim, dim);
+		save_png(filename, farray[side], dim, dim);
+	}
+
+	void blit_to_buffer(float* fbuffer, int row)
+	{
+
+		if(row == 0)
+		{
+			for(int i=0; i<dim; i++)
+			{
+				float _d = 1.0 / ((float) dim);
+				farray[0][i*dim+0] = _d*i;
+			}
+		}
+
+		const int row_size = 6*dim;
+
+		for(int side=0; side<6; side++)
+		{
+			int xoff = dim*side;
+			int yoff = row_size*dim*row;
+			for(int j=0; j<dim; j++)
+			{
+				int _yoff = yoff + j*row_size;
+
+				for(int i=0; i<dim; i++)
+				{
+					int _xoff = xoff + i;
+					fbuffer[_xoff + _yoff] = farray[side][i + j*dim];
+				}
+			}
+		}
+
 	}
 
 	static float phase(struct Vec3 v1, struct Vec3 v2)
 	{
+/*
 		float t0 = vec3_cos2(v1,v2);
 		float t1 = vec3_cos2( vec3_normalize(v1),vec3_normalize(v2));
 
@@ -196,6 +242,7 @@ class Skyplane
 			printf("phase error: t0, t1= %.2f %.2f \n", t0,t1);
 			GS_ASSERT(false);
 		}
+*/
 		//GS_ASSERT(vec3_cos2(v1,v2) == vec3_cos2( vec3_normalize(v1),vec3_normalize(v2)) );
 		return 0.75*(1+vec3_cos2(v1,v2)); //*.75
 	}
@@ -296,7 +343,7 @@ class Skyplane
 			_t1[i] = out_scatter(tmp1[i], _s[i]); //out_scatter from current point to sun
 			_t2[i] = out_scatter(tmp1[i], c); //out_scatter from current point to camera
 		
-			printf("%i: _t0,_t1,_t2= %.2f %.2f %.2f \n", i, _t0[i],_t1[i],_t2[i] );
+			//printf("%i: _t0,_t1,_t2= %.2f %.2f %.2f \n", i, _t0[i],_t1[i],_t2[i] );
 		}
 
 		float _r [samples+1];
@@ -306,14 +353,14 @@ class Skyplane
 		//	_r[i] = _t0[i]*expf( -_t1[i] -_t2[i] );
 		for(int i=0; i<=samples; i++)
 			_r[i] = expf( -1.0*(_t1[i] + _t2[i]) );
-
+/*
 		for(int i=0; i<=samples; i++)
 		{
 			printf("%i: _r[i] = %.2f, _t0,_t1,_t2= %.2f %.2f %.2f, -_t1[i] -_t2[i]= %.2f, exp= %.2f \n", 
 				i, _r[i], _t0[i],_t1[i],_t2[i],
 				-_t1[i] -_t2[i], exp(-_t1[i] -_t2[i]));
 		}
-
+*/
 		float tmp = 0.0f;
 
 		for(int i=0; i<samples; i++)
@@ -322,12 +369,13 @@ class Skyplane
 		//struct Vec3 s2 = vec3_sub(v2, c);	
 
 		//printf("phase: %.2f\n", phase(v2, s));
+/*
 		printf("a= %.2f %.2f %.2f  b= %.2f %.2f %.2f s= %.2f %.2f %.2f  phase: %.2f \n", 
 			a.x,a.y,a.z, 
 			b.x,b.y,b.z,
 			s.x,s.y,s.z, 
 			phase(b, s) );
-
+*/
 		//debug
 		//tmp *= phase(v2, s);
 		
@@ -341,7 +389,7 @@ class Skyplane
 	float update_point(const struct Vec3 &c, const struct Vec3 &b, const struct Vec3 &s)
 	{
 		const float ATMOSPHERE_DEPTH = 128.0;
-		//compute ray from camera to upper atmosphere
+		//compute ray from camera to upper atmosphere (use sphere and radius)
 		//intersection with upper atomsphere
 		struct Vec3 _b;
 		_b = vec3_scalar_mult(vec3_normalize(b), ATMOSPHERE_DEPTH);
@@ -355,9 +403,50 @@ class Skyplane
 	}
 };
 
+class SkyboxRender
+{
+	public:
+	int time_count;
+
+	class Skyplane sun;
+
+	SkyboxRender()
+	{
+		time_count = 0;
+	}
+
+	~SkyboxRender()
+	{
+
+	}
+
+
+	void increment_time()
+	{
+
+		const int tspeed = 15; //normally 1
+		time_count = (time_count+tspeed) % 6750;
+
+
+	}
+
+	void update_skybox()
+	{
+		float sun_theta = time_count / 6750.0; //day length
+		sun.update(sun_theta, 0.0);
+
+
+
+	}
+};
+
+
+	static class SkyboxRender* SR;
+
 void init_rayleigh_scattering()
 {
-	return;
+
+/*
 	class Skyplane S;
 
 	if(true)
@@ -365,14 +454,20 @@ void init_rayleigh_scattering()
 		int max_div = 16;
 		float _f = 0.5 / ((float) max_div);
 
+		int dim = S.dim;
+		float* fbuffer = new float[6*dim*dim*max_div];
 		for(int i=0; i<max_div; i++)
 		{
 			char filename[128];
 
 			snprintf(filename, 128,"light_%.2i", i);
-			S.update(_f*((float) i), 0.0);	//height, then rotation
-			S.save(filename);
+			S.update(_f*((float) i) , 0.0);	//height, then rotation
+			//S.save(filename);
+			S.blit_to_buffer(fbuffer, i);
 		}
+
+		save_png("sky", fbuffer, 6*dim, dim*max_div);
+
 	}
 	else
 	{
@@ -380,13 +475,21 @@ void init_rayleigh_scattering()
 		S.save("sky");
 	}
 	abort();
+*/
+
+	SR = new SkyboxRender;
+	//SR->update_skybox(); //wait for time to do this?
 }
 
 
 void draw_rayleigh_scattering()
 {
+	SR->increment_time();
 
-
+	static int update_count = 0;
+	update_count++;
+	if(update_count % 15 ==0 )
+		SR->update_skybox();
 }
 
 /*
