@@ -15,6 +15,10 @@ class Skyplane
 	static const int dim = 16;
 	const static int samples = 5;
 
+
+	static const float radius = 256.0; //sun distance from surface
+	static const float size = 128.0;	//skybox plane size
+
 	struct Vec3 vert[4];
 
 	Skyplane()
@@ -40,8 +44,6 @@ class Skyplane
 
 	void update(float theta, float phi)
 	{
-		const float radius = 256.0;
-		const float size = 128.0; //plane size
 
 		const float _df = 1.0/ ((float) dim);
 
@@ -396,11 +398,6 @@ class Skyplane
 		return in_scatter(c, _b, s);
 	}
 
-	void draw()
-	{
-
-
-	}
 };
 
 class SkyboxRender
@@ -513,7 +510,79 @@ class SkyboxRender
 
 	void draw(float x, float y, float z)
 	{
+		const float _f[6*3] =
+		{
+			 0, 0, 1, //top
+			 0, 0,-1,
+			 1, 0, 0, //north
+			-1, 0, 0,
+			 0, 1, 0, //west
+			 0,-1, 0
+		};
 
+		const float _r[6*3] =
+		{
+			 0,-1, 0, //top
+			 0,-1, 0,
+			 0, -1,0, //north
+			 0, 1, 0,
+			 1, 0, 0, //west
+			 -1, 0, 0
+		};
+
+		const float _u[6*3] =
+		{
+			-1, 0, 0, //top
+			 1, 0, 0,
+			 0, 0,1, //north
+			 0, 0, 1,
+			 0, 0, 1, //west
+			 0, 0, 1
+		};
+
+		struct Vec3 f[6];
+		struct Vec3 r[6];
+		struct Vec3 u[6];
+
+		for(int i=0;i<6;i++)
+		{
+			f[i] = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+2] );
+			r[i] = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+2] );
+			u[i] = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+2] );
+		}
+
+		//center of plane
+		struct Vec3 center[6];
+
+		for(int i=0;i<6;i++)
+		{
+			const float plane_depth = sun.size/2.0;
+			center[i] = vec3_scalar_mult(f[i], plane_depth);
+			center[i].z += plane_depth;
+
+			center[i].x += x;
+			center[i].y += y;
+			center[i].z += z;
+		}
+
+		for(int i=0; i<6; i++)
+		{
+			struct Vec3 rv, uv, lv, dv;
+			//f = vec3_scalar_mult(_f[i], sun.size/2);
+			rv = vec3_scalar_mult(r[i], sun.size/2);	//right
+			uv = vec3_scalar_mult(u[i], sun.size/2);	//up
+
+			//nf = vec3_scalar_mult(_f[i], -sun.size/2);
+			lv = vec3_scalar_mult(r[i], -sun.size/2);	//left
+			dv = vec3_scalar_mult(u[i], -sun.size/2);	//down
+
+			struct Vec3 ul,bl,br,ur; 
+			ul = vec3_add3(center[i], uv, lv);
+			bl = vec3_add3(center[i], dv, lv);
+			br = vec3_add3(center[i], dv, rv );
+			ur = vec3_add3(center[i], uv, rv);
+
+		}
 	}
 };
 
