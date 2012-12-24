@@ -94,11 +94,12 @@ static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color*
         return false;
 
     if(pixels[ _ix + (_iy * tile_size) ].a > alpha_test)    
-        return false;
-    return true;
+        return true;
+    return false;
 
 }
 
+//this just checks if there is a pixel and its non-zero
 static bool isOccludes(int ix, int iy, int iz, int tile_size, const Color* pixels)
 {
     if(iz != 0)
@@ -109,8 +110,8 @@ static bool isOccludes(int ix, int iy, int iz, int tile_size, const Color* pixel
         return false;
 
     if(pixels[ ix + (iy * tile_size) ].a > alpha_test)    
-        return false;
-    return true; 
+        return true;
+    return false; 
 
 }
 
@@ -145,11 +146,9 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
         if(adjacent_pixel(side, a,b,tile_size,pixels))
             continue;
 
-        //int side = i;
         int CX[8];
         for(int i=0; i<8; i++) 
         {
-
             int index = side*8*3+i*3;
             CX[i] = isOccludes(x+CI[index+0],y+CI[index+1],CI[index+2],tile_size,pixels);
         }
