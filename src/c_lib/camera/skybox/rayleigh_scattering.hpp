@@ -410,9 +410,34 @@ class SkyboxRender
 
 	class Skyplane sun;
 
+	unsigned char* sun_rgba[6];
+
+	unsigned int texture_array[6];
+
 	SkyboxRender()
 	{
 		time_count = 0;
+
+
+
+		glEnable(GL_TEXTURE_2D);
+
+	    glGenTextures(6, texture_array);
+
+	    for(int i=0; i<6; i++)
+	    {
+		    glBindTexture(GL_TEXTURE_2D, texture_array[i]);
+		    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
+		glDisable(GL_TEXTURE_2D);
+
+	    for(int i=0; i<6; i++)
+	    {
+			sun_rgba[i] = new unsigned char[sun.dim*sun.dim*6];
+		}
 	}
 
 	~SkyboxRender()
@@ -433,10 +458,56 @@ class SkyboxRender
 	void update_skybox()
 	{
 		float sun_theta = time_count / 6750.0; //day length
-		sun.update(sun_theta, 0.0);
+		sun.update(sun_theta, 0.0); //update float array
 
-		printf("update \n");
+		//gamma
+	    static unsigned char gamma_correction[256];
+	    for(int i=0; i < 256; i++)
+	    {
+	        float intensity = ((float) i) / 255;
+	        intensity = powf(intensity, 1.0f/2.2f)*255;
+	        gamma_correction[i] = (unsigned char)((int) intensity);
+	    }
 
+	    //load RGB from array
+		for(int side = 0; side<6; side++)
+		{
+			const int dim = sun.dim;
+			const float* farray = sun.farray[side];
+			for(int i=0; i<sun.dim; i++)
+			for(int j=0; j<sun.dim; j++)
+			{
+				float _v = farray[j*sun.dim+i];
+        		if( _v < 0.0) _v = 0.0f;
+        		if( _v > 1.0) _v = 1.0f;
+        		unsigned char v = ((int) 255.0f*_v );
+        		unsigned char v2 = gamma_correction[v];
+
+				sun_rgba[side][4*(i+j*dim)+0] = v2;
+				sun_rgba[side][4*(i+j*dim)+1] = v2;
+				sun_rgba[side][4*(i+j*dim)+2] = v2;
+				sun_rgba[side][4*(i+j*dim)+3] = 255;
+			}
+
+		    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun.dim, sun.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+		}
+
+		glEnable(GL_TEXTURE_2D);
+
+		for(int side = 0; side<6; side++)
+		{
+			glBindTexture(GL_TEXTURE_2D, texture_array[side]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun.dim, sun.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, sun_rgba[side] );
+		}
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glDisable(GL_TEXTURE_2D);
+
+		//printf("update \n");
+
+		//textures
+
+		
 	}
 
 
