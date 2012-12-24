@@ -446,7 +446,7 @@ class SkyboxRender
 	void increment_time()
 	{
 
-		const int tspeed = 15; //normally 1
+		const int tspeed = 3; //normally 1
 		time_count = (time_count+tspeed) % 6750;
 
 
@@ -471,6 +471,7 @@ class SkyboxRender
 		{
 			const int dim = sun.dim;
 			const float* farray = sun.farray[side];
+
 			for(int i=0; i<sun.dim; i++)
 			for(int j=0; j<sun.dim; j++)
 			{
@@ -484,6 +485,12 @@ class SkyboxRender
 				sun_rgba[side][4*(i+j*dim)+1] = v2;
 				sun_rgba[side][4*(i+j*dim)+2] = v2;
 				sun_rgba[side][4*(i+j*dim)+3] = 255;
+
+        		if(i==0 && j == 0)
+        		{
+        			sun_rgba[side][4*(i+j*dim)+0] = 255;
+        		}
+
 			}
 
 		    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun.dim, sun.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
@@ -565,6 +572,9 @@ class SkyboxRender
 			center[i].z += z;
 		}
 
+
+		glEnable(GL_TEXTURE_2D);
+
 		for(int i=0; i<6; i++)
 		{
 			struct Vec3 rv, uv, lv, dv;
@@ -573,8 +583,8 @@ class SkyboxRender
 			uv = vec3_scalar_mult(u[i], sun.size/2);	//up
 
 			//nf = vec3_scalar_mult(_f[i], -sun.size/2);
-			lv = vec3_scalar_mult(r[i], -sun.size/2);	//left
-			dv = vec3_scalar_mult(u[i], -sun.size/2);	//down
+			lv = vec3_scalar_mult(r[i], -1.0*sun.size/2);	//left
+			dv = vec3_scalar_mult(u[i], -1.0*sun.size/2);	//down
 
 			struct Vec3 ul,bl,br,ur; 
 			ul = vec3_add3(center[i], uv, lv);
@@ -582,7 +592,35 @@ class SkyboxRender
 			br = vec3_add3(center[i], dv, rv );
 			ur = vec3_add3(center[i], uv, rv);
 
+			glBindTexture(GL_TEXTURE_2D, texture_array[i]);
+
+			//(0,0), 0,1 1,1 1,0
+
+			glBegin(GL_QUADS);
+
+			glVertex3f(ul.x, ul.y, ul.z);
+
+			glTexCoord2f(0.0,1.0);
+			glVertex3f(bl.x, bl.y, bl.z);
+
+			glTexCoord2f(1.0,1.0);
+
+			glVertex3f(br.x, br.y, br.z);
+
+			glTexCoord2f(1.0,0.0);
+
+			glVertex3f(ur.x, ur.y, ur.z);
+			glTexCoord2f(0.0,0.0);
+
+			glEnd();
 		}
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glDisable(GL_TEXTURE_2D);
+
+
+	//printf("draw\n");
 	}
 };
 
