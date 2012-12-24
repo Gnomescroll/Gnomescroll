@@ -99,6 +99,7 @@ static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color*
 
 }
 
+//this just checks if there is a pixel and its non-zero
 static bool isOccludes(int ix, int iy, int iz, int tile_size, const Color* pixels)
 {
     if(iz != 0)
