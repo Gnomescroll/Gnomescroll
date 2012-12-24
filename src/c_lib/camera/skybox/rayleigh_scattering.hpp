@@ -119,6 +119,8 @@ class Skyplane
 	void update(float theta, float phi)
 	{
 		const float radius = 256.0;
+		const float size = 128.0; //plane size
+		const float _df = 1.0/ ((float) dim);
 
 		float stheta = 3.14159*theta;
 		float sphi   = 3.14159*phi;
@@ -127,6 +129,29 @@ class Skyplane
 		float sx = radius*sinf(stheta)*cosf(sphi);
 		float sy = radius*sinf(stheta)*sinf(sphi);
 		float sz = radius*cosf(stheta);
+
+		struct Vec3 sun = vec3_init(0.0, (size/2.0)*dim, ((size/2.0)*dim));
+		sun = vec3_normalize(sun);
+		sun = vec3_scalar_mult(sun, 128);
+
+		sx = sun.x;
+		sy = sun.y;
+		sz = sun.z;
+
+		//point position
+		struct Vec3 u = vec3_init(0.0, 0.0, 1.0); 	//up
+		struct Vec3 r = vec3_init(0.0, 1.0, 0.0);	//right
+
+		//center of plane
+		int _i = dim /2;
+		int _j = dim /2;
+		struct Vec3 center = vec3_init(
+			128.0+_df*size*(_i*u.x + _j*r.x),
+			_df*size*(_j*u.y + _i*r.y) - _df*((size/2.0)*dim),
+			_df*size*(_j*u.z + _i*r.z)
+			);
+
+
 
 		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,sx,sy,sz);
 
@@ -138,19 +163,15 @@ class Skyplane
 		//sy = radius * 128;
 		//sz = 64;
 
-		//point position
-		struct Vec3 u = vec3_init(0.0, 0.0, 1.0); 	//up
-		struct Vec3 r = vec3_init(0.0, 1.0, 0.0);	//right
 
-		const float size = 128.0;
 
 		for(int i=0; i<dim; i++)
 		{
 			for(int j=0; j<dim; j++)
 			{
-				float x = 128.0+size*(i*u.x + j*r.x); //offset plane
-				float y = size*(i*u.y + j*r.y) - ((size/2.0)*dim);
-				float z = size*(i*u.z + j*r.z);
+				float x = 128.0+_df*size*(i*u.x + j*r.x); //offset plane
+				float y = _df*size*(j*u.y + i*r.y) - _df*((size/2.0)*dim);
+				float z = _df*size*(j*u.z + i*r.z);
 
 				update_point(i,j, x,y,z, sx,sy,sz);
 			}
@@ -166,10 +187,11 @@ class Skyplane
 		}
 
 		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,sx,sy,sz);
+		printf("theta,phi= %.2f %.2f ", theta, phi);
+		printf("Sun Position: x,y,z= %.2f %.2f %.2f \n", sx,sy,sz);
+		printf("plane_center: x,y,z= %.2f %.2f %.2f \n", center.x, center.y, center.z);
 
-		printf("Sun Position: theta,phi= %.2f %.2f x,y,z= %.2f %.2f %.2f \n", 
-			theta, phi,
-			sx,sy,sz);
+		printf("!!! DOT= %.2f \n", vec3_dot(sun, center));
 	}
 
 	void save(const char* filename)
@@ -182,9 +204,10 @@ class Skyplane
 		float t0 = vec3_cos2(v1,v2);
 		float t1 = vec3_cos2( vec3_normalize(v1),vec3_normalize(v2));
 
-		if(t0 != t1)
+		if(abs(t0-t1) > 0.0001f)
 		{
 			printf("phase error: t0, t1= %.2f %.2f \n", t0,t1);
+			GS_ASSERT(false);
 		}
 		//GS_ASSERT(vec3_cos2(v1,v2) == vec3_cos2( vec3_normalize(v1),vec3_normalize(v2)) );
 		return 0.75*(1+vec3_cos2(v1,v2)); //*.75
@@ -253,7 +276,7 @@ class Skyplane
 		for(int i=0; i<=samples; i++)
 		{
 			//do line sphere intersection to get length
-			_s[i] = vec3_add(tmp1[i], vec3_scalar_mult(vec3_sub(s, tmp1[i]), 10.0));
+			_s[i] = vec3_add(tmp1[i], vec3_scalar_mult(vec3_normalize(vec3_sub(s, tmp1[i])), 20.0));
 
 		}
 
@@ -342,8 +365,9 @@ void init_rayleigh_scattering()
 {
 	class Skyplane S;
 
+/*
 	int max_div = 16;
-	float _f = 1.0 / ((float) max_div);
+	float _f = 0.5 / ((float) max_div);
 
 	for(int i=0; i<max_div; i++)
 	{
@@ -353,7 +377,9 @@ void init_rayleigh_scattering()
 		S.update(_f*((float) i), 0.0);	//height, then rotation
 		S.save(filename);
 	}
-
+*/
+	S.update(0.0, 0.0);	//height, then rotation
+	S.save("sky");
 
 	//abort();
 }

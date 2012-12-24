@@ -75,7 +75,8 @@ const static int_fast8_t _s_array[3*6] =
 
 static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color* pixels)
 {
-
+    if(side == 0 || side == 1)
+        return false;
     if(ix-1 < 0 || ix+1 >= tile_size)
         return false;
     if(iy-1 < 0 || iy+1 >= tile_size)
@@ -83,7 +84,10 @@ static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color*
 
     //is in plane; retursn false for top/bottom
     if(_s_array[3*side+2] != 0)
+    {
+        GS_ASSERT(false);
         return false;   //this might be a bug/glassert
+    }    
 
     int _ix = ix + _s_array[3*side+0];
     int _iy = iy + _s_array[3*side+1];
@@ -143,7 +147,14 @@ static void push_sprite_vertex_cube(VertexElementListColorByteAO* vlist,
         //static bool adjacent_pixel(int side, int ix, int iy, int tile_size, const Color* pixels)
 
         //dont draw occluded vertices
-        if(adjacent_pixel(side, a,b,tile_size,pixels))
+        bool skip = adjacent_pixel(side, a,b,tile_size,pixels);
+        if(side == 0 || side == 1)
+        {
+            //never shoult skip top or bottom
+            GS_ASSERT(skip == false);
+        }
+
+        if(skip)
             continue;
 
         int CX[8];
