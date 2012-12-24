@@ -12,7 +12,7 @@ class Skyplane
 
 	//unsigned char color[4*dim*dim];
 	public:
-	static const int dim = 32;
+	static const int dim = 16;
 	const static int samples = 5;
 
 	struct Vec3 vert[4];
@@ -435,7 +435,13 @@ class SkyboxRender
 		float sun_theta = time_count / 6750.0; //day length
 		sun.update(sun_theta, 0.0);
 
+		printf("update \n");
 
+	}
+
+
+	void draw(float x, float y, float z)
+	{
 
 	}
 };
@@ -486,10 +492,13 @@ void draw_rayleigh_scattering()
 {
 	SR->increment_time();
 
+	SR->draw(current_camera_position.x, current_camera_position.y, current_camera_position.z);
+
 	static int update_count = 0;
 	update_count++;
 	if(update_count % 15 ==0 )
 		SR->update_skybox();
+
 }
 
 /*

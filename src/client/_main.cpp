@@ -81,7 +81,6 @@ void wait_for_login()
         glEnable(GL_DEPTH_TEST);
         Skybox::prep_skybox();
         Skybox::draw();
-        Skybox::draw_rayleigh_scattering(); //skybox
 
         glDisable(GL_DEPTH_TEST);
 
@@ -327,6 +326,8 @@ void draw_tick()
     t_map::control_node_render_draw();      //draw control node perimeter
     GL_ASSERT(GL_BLEND, true);
     Skybox::draw();
+    Skybox::draw_rayleigh_scattering(); //skybox drawing
+
     GL_ASSERT(GL_BLEND, true);
     Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
     GL_ASSERT(GL_BLEND, true);
