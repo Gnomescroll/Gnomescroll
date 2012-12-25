@@ -42,13 +42,45 @@ class Skyplane
 
 	float farray[6][dim*dim]; //intensity array
 
+
+	void draw_sun(float theta, float phi, float x,float y,float z)
+	{
+		const float radius = 64.0;
+
+		float stheta = 2*3.14159*theta;
+		float sphi   = 2*3.14159*phi;
+
+		struct Vec3 s;
+		s.x = radius*sinf(stheta)*cosf(sphi);
+		s.y = radius*sinf(stheta)*sinf(sphi);
+		s.z = radius*cosf(stheta);
+
+
+    	glDisable(GL_DEPTH_TEST);
+
+	    glPointSize(5.0);
+
+	    glColor3ub(0, 0, 255);
+
+	    glBegin(GL_POINTS);
+
+	    glVertex3f(x+s.x,y+s.y,z+s.z);
+
+	    glEnd();
+	    
+	    glColor3ub(255, 255, 255);
+    	glEnable(GL_DEPTH_TEST);
+	    glPointSize(1.0);
+
+
+	}
 	void update(float theta, float phi)
 	{
 
 		const float _df = 1.0/ ((float) dim);
 
-		float stheta = 3.14159*theta;
-		float sphi   = 3.14159*phi;
+		float stheta = 2*3.14159*theta;
+		float sphi   = 2*3.14159*phi;
 
 		//sun position
 
@@ -397,7 +429,19 @@ class Skyplane
 
 		struct Vec3 tb = vec3_sub(b, c);
 		struct Vec3 ts = vec3_sub(s, c);
-		return vec3_cos2(tb,ts);
+
+		tb = vec3_normalize(tb);
+		ts = vec3_normalize(ts);
+
+		float v = vec3_dot(tb, ts);
+
+		if(v <= 0.0)
+			v = 0.0;
+
+		return v;
+		//return vec3_cos2(tb,ts);
+
+
 		//return vec3_cos2(b,s);	//cos2 between end ray and sun, from camera
 	}
 
@@ -466,7 +510,7 @@ class SkyboxRender
 	void increment_time()
 	{
 
-		const int tspeed = 3; //normally 1
+		const int tspeed = 15; //normally 1
 		time_count = (time_count+tspeed) % 6750;
 
 
@@ -643,6 +687,9 @@ class SkyboxRender
 
 		glDisable(GL_TEXTURE_2D);
 
+
+		float sun_theta = time_count / 6750.0; //day length
+		sun.draw_sun(sun_theta, 0.0, x,y,z);
 
 	//printf("draw\n");
 	}
