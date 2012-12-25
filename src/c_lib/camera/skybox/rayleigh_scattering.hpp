@@ -510,7 +510,7 @@ class SkyboxRender
 	void increment_time()
 	{
 
-		const int tspeed = 15; //normally 1
+		const int tspeed = 9; //normally 1
 		time_count = (time_count+tspeed) % 6750;
 
 
