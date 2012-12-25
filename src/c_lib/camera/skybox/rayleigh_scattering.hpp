@@ -131,6 +131,9 @@ class Skyplane
 			const float plane_depth = size/2.0;
 			center[i] = vec3_scalar_mult(f[i], plane_depth);
 			center[i].z += plane_depth;
+
+			if(i == 1)
+				center[i].z -= -1.0;	//to prevent zero
 		}
 
 	/*
@@ -365,7 +368,7 @@ class Skyplane
 				-_t1[i] -_t2[i], exp(-_t1[i] -_t2[i]));
 		}
 */
-		
+
 		float tmp = 0.0f;
 
 		for(int i=0; i<samples; i++)
