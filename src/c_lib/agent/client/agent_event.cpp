@@ -49,8 +49,7 @@ void AgentEvent::update_hud_name()
         int health = 0;
         if (this->a->status.health > 0) health = this->a->status.health;
         GS_ASSERT(this->a->status.health_max > 0);
-        float h = ((float)health)
-                / ((float)this->a->status.health_max);
+        float h = float(health) / float(this->a->status.health_max);
         
         if (h >= health_color_points[0])
             color = health_colors[0];    // degenerate case, out of range

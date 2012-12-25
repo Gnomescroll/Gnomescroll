@@ -22,13 +22,11 @@ const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
 #if DC_SERVER
 void AgentList::update_map_manager_positions()
 {
-    Vec3 p;
-    for(unsigned int i=0; i<this->max; i++)
+    for (unsigned int i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
-        if (this->objects[i].camera_ready)
-            p = this->objects[i].camera.get_position();
-        else
+        struct Vec3 p = this->objects[i].camera.get_position();
+        if (!this->objects[i].camera_ready)
             p = this->objects[i].get_position();
         t_map::t_map_manager_update_client_position(this->objects[i].client_id, p.x, p.y);
     }
@@ -79,10 +77,10 @@ void AgentList::draw_names()
 
 void AgentList::draw_equipped_items()
 {
-    AgentID agent_id = ClientState::player_agent.agent_id;
     if (this->ct <= 0) return;
+    const AgentID agent_id = ClientState::player_agent.agent_id;
 
-    int num = 0;
+    unsigned int num = 0;
     bool works = Animations::draw_voxel_gl_begin(GL_BACK);
     if (works)
     {
@@ -96,7 +94,7 @@ void AgentList::draw_equipped_items()
 
             float radius = this->objects[i].vox->get_part(0)->radius;
             Vec3 center = this->objects[i].vox->get_center();
-            if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
+            if (!sphere_fulstrum_test_translate(center.x, center.y, center.z, radius))
                 continue;
 
             Animations::draw_equipped_voxel_item_other_agent(this->objects[i].id, equipped_item_type);
@@ -106,8 +104,8 @@ void AgentList::draw_equipped_items()
         Animations::draw_voxel_gl_end();
     }
 
-    GS_ASSERT(this->ct-num >= 0);
-    if (this->ct - num <= 0) return;
+    GS_ASSERT(this->ct >= num);
+    if (this->ct <= num) return;
 
     if (Options::animation_level <= 1)
         works = Animations::draw_sprite_gl_begin();
@@ -160,11 +158,19 @@ void AgentList::update_models() // doesnt actually draw, but updates draw/hitsca
 
 /* quicksorts */
 
-void AgentList::swap_object_state(Agent **a, Agent **b)
-{Agent* t=*a; *a=*b; *b=t;}
+void AgentList::swap_object_state(Agent** a, Agent** b)
+{
+    Agent* t = *a;
+    *a = *b;
+    *b = t;
+}
 
-void AgentList::swap_float(float *a, float *b)
-{float t=*a; *a=*b; *b=t;}
+void AgentList::swap_float(float* a, float* b)
+{
+    float t = *a;
+    *a = *b;
+    *b = t;
+}
 
 void AgentList::quicksort_distance_asc(int beg, int end)
 {
@@ -176,7 +182,8 @@ void AgentList::quicksort_distance_asc(int beg, int end)
         {
             if (this->filtered_object_distances[l] <= dist)
                 l++;
-            else {
+            else
+            {
                 swap_float(&this->filtered_object_distances[l], &this->filtered_object_distances[--r]);
                 swap_object_state(&this->filtered_objects[l], &this->filtered_objects[r]);
             }
@@ -198,7 +205,8 @@ void AgentList::quicksort_distance_desc(int beg, int end)
         {
             if (this->filtered_object_distances[l] >= dist)
                 l++;
-            else {
+            else
+            {
                 swap_float(&this->filtered_object_distances[l], &this->filtered_object_distances[--r]);
                 swap_object_state(&this->filtered_objects[l], &this->filtered_objects[r]);
             }
@@ -411,7 +419,6 @@ AgentList::AgentList(unsigned int capacity) :
 {
     this->filtered_objects = (Agent**)calloc(this->max, sizeof(Agent*));
     this->filtered_object_distances = (float*)calloc(this->max, sizeof(float));
-    this->print();
 }
 
 }   // Agents
