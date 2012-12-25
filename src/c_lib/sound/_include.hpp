@@ -1,8 +1,8 @@
 #pragma once
 
 #if DC_CLIENT
-#include <sound/wav.cpp>
-#include <sound/openal.cpp>
+# include <sound/wav.cpp>
+# include <sound/openal.cpp>
 #endif
 
 #include <sound/packets.cpp>

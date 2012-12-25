@@ -85,14 +85,7 @@ int get_soundfile_id_for_name(const char* event_name)
 
 void teardown_triggers()
 {
-    if (soundfiles == NULL) return;
-
-    for (int i=0; i<n_sounds; i++)
-    {
-        free(soundfiles[i].event_name);
-        free(soundfiles[i].filename);
-    }
-    free(soundfiles);
+    if (soundfiles != NULL) delete[] soundfiles;
 }
 
 }   // Sound

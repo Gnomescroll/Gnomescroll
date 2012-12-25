@@ -38,21 +38,20 @@ const float GS_DEFAULT_MAX_PLAYABLE_DISTANCE = 128.0f;
 void parse_sound_triggers(const char* csv_filename)
 {
     size_t size = 0;
-    char *buff = read_file_to_buffer(csv_filename, &size);
+    char* buff = read_file_to_buffer(csv_filename, &size);
     IF_ASSERT(buff == NULL)
     {
         printf("Error opening sound conf: %s\n", csv_filename);
         return;
     }
 
-    char c;
+    char c = '\0';
     int i = 0;
     int n_lines = 0;
+    // count number of lines
     while ((c = buff[i++]) != '\0')
-    {   // count number of lines, should correspond with number of sounds
         if (c == '\n')
             n_lines++;
-    }
 
     if (n_lines == 0)
     {
@@ -60,15 +59,16 @@ void parse_sound_triggers(const char* csv_filename)
         return;
     }
     n_lines -= 1;   // first line of csv is metadata
-    soundfiles = (class Soundfile*)malloc(sizeof(class Soundfile) * n_lines);
+    soundfiles = new class Soundfile[n_lines];
 
     i = 0;
     int n = 0;
     int column = 0;
 
-    const int MAX_EVENT_NAME_LEN = 100;
-    char* filename = (char*)calloc(MAX_EVENT_NAME_LEN+1, sizeof(char));
-    char* event_name = (char*)calloc(MAX_EVENT_NAME_LEN+1, sizeof(char));
+    const int MAX_EVENT_NAME_LEN = 0xFF;
+    const int MAX_FILENAME_LEN = 0xFF;
+    char filename[MAX_FILENAME_LEN+1] = {'\0'};
+    char event_name[MAX_FILENAME_LEN+1] = {'\0'};
     int filename_index = 0;
     int event_name_index = 0;
 
@@ -141,9 +141,9 @@ void parse_sound_triggers(const char* csv_filename)
                     break;
 
                 case FILE_NAME:
-                    if (filename_index >= MAX_EVENT_NAME_LEN)
+                    if (filename_index >= MAX_FILENAME_LEN)
                     {
-                        printf("Error parsing sounds conf: filename %s exceeding max length (%d)\n", filename, MAX_EVENT_NAME_LEN);
+                        printf("Error parsing sounds conf: filename %s exceeding max length (%d)\n", filename, MAX_FILENAME_LEN);
                         return;
                     }
                     if (isspace(c))
@@ -294,8 +294,6 @@ void parse_sound_triggers(const char* csv_filename)
 
     // cleanup
     free(buff);
-    free(filename);
-    free(event_name);
 }
 
 }   // Sound
