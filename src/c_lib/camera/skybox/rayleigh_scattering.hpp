@@ -586,7 +586,10 @@ class SkyboxRender
 	void update_skybox()
 	{
 		float sun_theta = time_count / 6750.0; //day length
-		sun.update(sun_theta, 0.0); //update float array
+		float sun_phi = time_count / 3000.0;
+		//sun.draw_sun(sun_theta, sun_phi, x,y,z);
+
+		sun.update(sun_theta, sun_phi); //update float array
 
 		//gamma
 	    static unsigned char gamma_correction[256];
@@ -733,17 +736,19 @@ class SkyboxRender
 
 			glBegin(GL_QUADS);
 
-
 			glTexCoord2f(0.0,1.0);
+
 			glVertex3f(ul.x, ul.y, ul.z);
 
-			glTexCoord2f(1.0,1.0);
+			glTexCoord2f(0.0,0.0);
+
 			glVertex3f(bl.x, bl.y, bl.z);
 
 			glTexCoord2f(1.0,0.0);
+
 			glVertex3f(br.x, br.y, br.z);
 
-			glTexCoord2f(0.0,0.0);
+			glTexCoord2f(1.0,1.0);
 			glVertex3f(ur.x, ur.y, ur.z);
 
 			glEnd();
@@ -755,7 +760,8 @@ class SkyboxRender
 
 
 		float sun_theta = time_count / 6750.0; //day length
-		sun.draw_sun(sun_theta, 0.0, x,y,z);
+		float sun_phi = time_count / 3000.0;
+		sun.draw_sun(sun_theta, sun_phi, x,y,z);
 
 	//printf("draw\n");
 	}
