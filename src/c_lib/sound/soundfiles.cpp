@@ -70,14 +70,12 @@ void set_soundfile_properties(
 
 void validate_sound_config()
 {
-    GS_ASSERT(soundfiles != NULL);
-    if (soundfiles == NULL) return;
+    IF_ASSERT(soundfiles == NULL) return;
 }
 
 int get_soundfile_id_for_name(const char* event_name)
 {
-    GS_ASSERT(soundfiles != NULL);
-    if (soundfiles == NULL) return -1;
+    IF_ASSERT(soundfiles == NULL) return -1;
 
     for (int i=0; i<n_sounds; i++)
         if (strcmp(soundfiles[i].event_name, event_name) == 0)
@@ -87,8 +85,7 @@ int get_soundfile_id_for_name(const char* event_name)
 
 void teardown_triggers()
 {
-    if (soundfiles == NULL)
-        return;
+    if (soundfiles == NULL) return;
 
     for (int i=0; i<n_sounds; i++)
     {

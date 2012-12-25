@@ -39,18 +39,21 @@ class GS_SoundBuffer
     
     bool can_add_source(int source_id)
     {
-        GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
-        if (source_id < 0 || source_id >= MAX_SOURCES) printf("can't add %d because invalid id\n", source_id);
-        if (source_id < 0 || source_id >= MAX_SOURCES) return false;
-        for (int i=0; i<this->current_sources; i++)
-        {   // TODO -- this used to return false. not sure why but it was breaking things (after i rearranged the source_id acquisition to prevent sound leaks)
-            // the naming in this sound module is horrible (buffers and sources mean 2 things -- gnomescroll buffers (more like files+metadata) and gnomescroll sources (something keeping tracks of al source ids in use)
-            if (this->sources[i] == source_id) printf("can't add %d because this source is already added\n", source_id);
-            if (this->sources[i] == source_id) return false;
-            if (this->sources[i] == source_id) return true;
+        IF_ASSERT(source_id < 0 || source_id >= MAX_SOURCES)
+        {
+            printf("can't add %d because invalid id\n", source_id);
+            return false;
         }
-        GS_ASSERT(this->current_sources >= 0);
-        if (this->current_sources < 0) this->current_sources = 0;
+        
+        for (int i=0; i<this->current_sources; i++)
+        {
+            if (this->sources[i] == source_id)
+            {
+                printf("can't add %d because this source is already added\n", source_id);
+                return false;
+            }
+        }
+        IF_ASSERT(this->current_sources < 0) this->current_sources = 0;
         if (this->current_sources >= this->max_sources) printf("Can't add %d because max sources reached for this buffer\n", source_id);
         if (this->current_sources >= this->max_sources) return false;
         return true;
@@ -58,18 +61,15 @@ class GS_SoundBuffer
 
     void remove_source(int index)
     {
-        GS_ASSERT(index >= 0 && index < this->max_sources);
-        if (index < 0 || index >= this->max_sources) return;
+        IF_ASSERT(index < 0 || index >= this->max_sources) return;
 
-        GS_ASSERT(this->current_sources > 0);
-        if (this->current_sources <= 0)
+        IF_ASSERT(this->current_sources <= 0)
         {
             this->current_sources = 0;
             return;
         }
 
-        GS_ASSERT(index < this->current_sources); // TODO -- re-enable this assert and FIX IT
-        if (index >= this->current_sources) return;
+        IF_ASSERT(index >= this->current_sources) return;
 
         if (index == this->current_sources-1)
             this->current_sources--;
@@ -211,7 +211,6 @@ void init()
 
     const char* default_device = enumerate_devices();
     GS_ASSERT(default_device != NULL);
-
 
     // open device
     if (Options::sound_device[0] != '\0')
@@ -467,8 +466,7 @@ GS_SoundBuffer* get_sound_buffer_from_event_name(const char* event_name)
 
 GS_SoundBuffer* get_sound_buffer_from_soundfile_id(int soundfile_id)
 {
-    GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
-    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return NULL;
+    IF_ASSERT(soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return NULL;
     if (sound_buffers[soundfile_id] == NULL) return NULL;
     if (!sound_buffers[soundfile_id]->loaded) return NULL;
     return sound_buffers[soundfile_id];
@@ -476,15 +474,13 @@ GS_SoundBuffer* get_sound_buffer_from_soundfile_id(int soundfile_id)
 
 void set_pitch_multiplier(int sound_id, float pitch)
 {
-    GS_ASSERT(sound_id >= 0 && sound_id < MAX_SOURCES);
-    if (sound_id < 0 || sound_id >= MAX_SOURCES) return;
+    IF_ASSERT(sound_id < 0 || sound_id >= MAX_SOURCES) return;
     active_sources[sound_id].pitch_multiplier = pitch;
 }
 
 void set_gain_multiplier(int sound_id, float gain)
 {
-    GS_ASSERT(sound_id >= 0 && sound_id < MAX_SOURCES);
-    if (sound_id < 0 || sound_id >= MAX_SOURCES) return;
+    IF_ASSERT(sound_id < 0 || sound_id >= MAX_SOURCES) return;
     active_sources[sound_id].gain_multiplier = gain;
 }
 
@@ -539,11 +535,8 @@ void get_listener_state(float *x, float *y, float *z, float *vx, float *vy, floa
 
 static bool add_to_sources(int sound_buffer_id, int source_id, bool two_dimensional)
 {
-    GS_ASSERT(sound_buffer_id >= 0 && sound_buffer_id < MAX_SOUNDS);
-    if (sound_buffer_id < 0 || sound_buffer_id >= MAX_SOUNDS) return false;
-
-    GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
-    if (source_id < 0 || source_id >= MAX_SOURCES) return false;
+    IF_ASSERT(sound_buffer_id < 0 || sound_buffer_id >= MAX_SOUNDS) return false;
+    IF_ASSERT(source_id < 0 || source_id >= MAX_SOURCES) return false;
 
     // add sound to active sources
     GS_ASSERT(!active_sources[source_id].active);
@@ -555,14 +548,9 @@ static bool add_to_sources(int sound_buffer_id, int source_id, bool two_dimensio
 
 static bool remove_from_sources(int source_id)
 {
-    GS_ASSERT(sources_in_use > 0);
-    if (sources_in_use <= 0) return false;
-    
-    GS_ASSERT(source_id >= 0 && source_id < MAX_SOURCES);
-    if (source_id < 0 || source_id >= MAX_SOURCES) return false;
-
-    GS_ASSERT(active_sources[source_id].active);
-    if (!active_sources[source_id].active) return false;
+    IF_ASSERT(sources_in_use <= 0) return false;
+    IF_ASSERT(source_id < 0 || source_id >= MAX_SOURCES) return false;
+    IF_ASSERT(!active_sources[source_id].active) return false;
 
     sources_in_use--;
     active_sources[source_id].active = false;
@@ -571,16 +559,24 @@ static bool remove_from_sources(int source_id)
 
 static bool can_add_to_sources(int soundfile_id, int source_id)
 {
-    GS_ASSERT(soundfile_id >= 0 && soundfile_id < MAX_SOUNDS);
-    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) printf("invalid soundfile_id %d\n", soundfile_id);
-    if (soundfile_id < 0 || soundfile_id >= MAX_SOUNDS) return false;
+    IF_ASSERT(soundfile_id < 0 || soundfile_id >= MAX_SOUNDS)
+    {
+        printf("invalid soundfile_id %d\n", soundfile_id);
+        return false;
+    }
 
-    if (sources_in_use >= MAX_SOURCES) printf("no free sources\n");
-    if (sources_in_use >= MAX_SOURCES) return false;
+    if (sources_in_use >= MAX_SOURCES)
+    {
+        printf("no free sources\n");
+        return false;
+    }
     
     bool can = sound_buffers[soundfile_id]->can_add_source(source_id);
-    if (!can) printf("can't add to sound_buffer\n");
-    if (!can) return false;
+    if (!can)
+    {
+        printf("can't add to sound_buffer\n");
+        return false;
+    }
 
     return true;
 }
@@ -640,8 +636,7 @@ static int play_2d_sound(class GS_SoundBuffer* sound_buffer, float gain_multipli
 
     // add sound to active sources
     bool added = add_to_sources(sound_buffer->id, source_id, true);
-    GS_ASSERT(added);
-    if (!added) return -1;
+    IF_ASSERT(!added) return -1;
     class GS_SoundSource* active_source = &active_sources[source_id];
     active_source->gain_multiplier = gain_multiplier;
     active_source->pitch_multiplier = pitch_multiplier;
@@ -762,14 +757,10 @@ void update()
 {
     if (!enabled) return;
     
-    GS_ASSERT(inited);
-    GS_ASSERT(active_sources != NULL);
-    GS_ASSERT(sound_buffers != NULL);
-    GS_ASSERT(sources != NULL);
-    if (!inited) return;
-    if (active_sources == NULL) return;
-    if (sound_buffers == NULL) return;
-    if (sources == NULL) return;
+    IF_ASSERT(!inited) return;
+    IF_ASSERT(active_sources == NULL) return;
+    IF_ASSERT(sound_buffers == NULL) return;
+    IF_ASSERT(sources == NULL) return;
     
     // get listener state
     ALfloat x,y,z;
@@ -820,8 +811,7 @@ void update()
         for (int j=0; j<cs; j++)
         {
             int gs_source_id = b->sources[j];
-            GS_ASSERT(gs_source_id >= 0 && gs_source_id < MAX_SOURCES);
-            if (gs_source_id < 0 || gs_source_id >= MAX_SOURCES) continue;
+            IF_ASSERT(gs_source_id < 0 || gs_source_id >= MAX_SOURCES) continue;
             if (!active_sources[gs_source_id].active)
                 rm_sources[rm_sources_index++] = j;
         }
@@ -835,10 +825,8 @@ void update()
 
 void stop_sound(int sound_id)
 {
-    GS_ASSERT(sound_id >= 0);
-    if (sound_id < 0) return;
-    GS_ASSERT(sources != NULL);
-    if (sources == NULL) return;
+    IF_ASSERT(sound_id < 0) return;
+    IF_ASSERT(sources == NULL) return;
     
     alSourceStop(sources[sound_id]);
     checkError();
@@ -876,7 +864,7 @@ int test()
 
     unsigned char* buffer = NULL;
 
-    char event_name[] = "./media/sound/wav/plasma_grenade_explode.wav";
+    char event_name[] = MEDIA_PATH "sound/wav/plasma_grenade_explode.wav";
     // Load test.wav 
     int data_id = Sound::load_wav_file(event_name, &buffer);
     if (data_id < 0)

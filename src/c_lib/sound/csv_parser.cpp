@@ -39,15 +39,9 @@ void parse_sound_triggers(const char* csv_filename)
 {
     size_t size = 0;
     char *buff = read_file_to_buffer(csv_filename, &size);
-    GS_ASSERT(buff != NULL && size != 0);
-    if (buff == NULL)
+    IF_ASSERT(buff == NULL)
     {
         printf("Error opening sound conf: %s\n", csv_filename);
-        return;
-    }
-    if (size == 0)
-    {
-        printf("Sounds conf is empty.\n");
         return;
     }
 

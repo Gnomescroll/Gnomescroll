@@ -23,7 +23,7 @@ typedef union WavDataElement
 } WavDataElement;
 
 static WavData* wav_buffers = NULL;
-static const char base_path[] = "./media/sound/wav/";
+static const char base_path[] = MEDIA_PATH "sound/wav/";
 
 void print_wav_data(WavData* data)
 {
@@ -71,7 +71,7 @@ int get_free_wav_data(WavData** data)
             *data = &wav_buffers[i];
             break;
         }
-    if (i >= MAX_WAV_BUFFERS) GS_ASSERT(false);
+    GS_ASSERT(i < MAX_WAV_BUFFERS);
     return i;
 }
 

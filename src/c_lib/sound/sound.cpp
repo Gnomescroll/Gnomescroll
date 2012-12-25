@@ -24,7 +24,7 @@ void init()
     OpenALSound::init();
     #endif
     
-    parse_sound_triggers("./media/sound/sounds.csv");
+    parse_sound_triggers(MEDIA_PATH "sound/sounds.csv");
     validate_sound_config();
 }
 
@@ -165,8 +165,7 @@ void enumerate_sound_devices()
 void send_play_2d_sound(const char* name, ClientID client_id)
 {
     int sound_id = get_soundfile_id_for_name(name);
-    GS_ASSERT(sound_id >= 0);
-    if (sound_id < 0) return;
+    IF_ASSERT(sound_id < 0) return;
     play_2d_sound_StoC msg;
     msg.sound_id = sound_id;
     msg.sendToClient(client_id);
@@ -175,8 +174,7 @@ void send_play_2d_sound(const char* name, ClientID client_id)
 void broadcast_play_2d_sound(const char* name)
 {
     int sound_id = get_soundfile_id_for_name(name);
-    GS_ASSERT(sound_id >= 0);
-    if (sound_id < 0) return;
+    IF_ASSERT(sound_id < 0) return;
     play_2d_sound_StoC msg;
     msg.sound_id = sound_id;
     msg.broadcast();
@@ -185,8 +183,7 @@ void broadcast_play_2d_sound(const char* name)
 void send_play_3d_sound(const char* name, ClientID client_id, struct Vec3 p)
 {
     int sound_id = get_soundfile_id_for_name(name);
-    GS_ASSERT(sound_id >= 0);
-    if (sound_id < 0) return;
+    IF_ASSERT(sound_id < 0) return;
     play_3d_sound_StoC msg;
     msg.sound_id = sound_id;
     msg.position = p;
@@ -196,8 +193,7 @@ void send_play_3d_sound(const char* name, ClientID client_id, struct Vec3 p)
 void broadcast_play_3d_sound(const char* name, struct Vec3 p)
 {
     int sound_id = get_soundfile_id_for_name(name);
-    GS_ASSERT(sound_id >= 0);
-    if (sound_id < 0) return;
+    IF_ASSERT(sound_id < 0) return;
     play_3d_sound_StoC msg;
     msg.sound_id = sound_id;
     msg.position = p;
@@ -207,8 +203,7 @@ void broadcast_play_3d_sound(const char* name, struct Vec3 p)
 void broadcast_exclude_play_3d_sound(const char* name, struct Vec3 p, int ignore_client_id)
 {
     int sound_id = get_soundfile_id_for_name(name);
-    GS_ASSERT(sound_id >= 0);
-    if (sound_id < 0) return;
+    IF_ASSERT(sound_id < 0) return;
     play_3d_sound_StoC msg;
     msg.sound_id = sound_id;
     msg.position = p;
