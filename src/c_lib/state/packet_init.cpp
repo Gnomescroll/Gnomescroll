@@ -31,10 +31,8 @@ void RegisterMessages()
     benchmarkReliableCtoS::register_server_packet();  
     */  
 
-    //Agent_control_state_message::register_server_packet();
     Agent_state_message::register_client_packet();
     Agent_teleport_message::register_client_packet();
-    //Agent_control_state_to_client_message::register_client_packet();
 
     agent_camera_state_CtoS::register_server_packet();
 
@@ -109,8 +107,6 @@ void RegisterMessages()
     ping_reliable_StoC::register_client_packet();
 
     agent_conflict_notification_StoC::register_client_packet();
-
-    //destroy_voxel_StoC::register_client_packet();
 
     /*
      * Entities
