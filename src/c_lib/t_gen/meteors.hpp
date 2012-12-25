@@ -240,9 +240,9 @@ void meteor_shower()
     int y;
     int z;
     CubeID bedrock=t_map::get_cube_id("bedrock");
-    CubeID steelA=t_map::get_cube_id("steel_block1");
-    CubeID steelB=t_map::get_cube_id("steel_block2");
-    CubeID steelC=t_map::get_cube_id("steel_block3");
+    CubeID steelA=t_map::get_cube_id("steel_block_1");
+    CubeID steelB=t_map::get_cube_id("steel_block_2");
+    CubeID steelC=t_map::get_cube_id("steel_block_3");
     CubeID material;
     switch (randrange(1, 6))
     {

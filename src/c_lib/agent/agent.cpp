@@ -167,7 +167,7 @@ void Agent::tick()
     //if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
     //#endif
     //const struct Vec3 gravity = vec3_init(0.0f, 0.0f, z_gravity * AGENT_MASS);
-    
+
     //float fx = 0.0f;
     //float fy = 0.0f;
     //if (forward)
@@ -217,9 +217,9 @@ void Agent::tick()
     //struct Vec3 pos = vec3_add(p, vec3_scalar_mult(velo, tr));
 
     //class AgentState _as;
-    //_as.set_position(pos); 
+    //_as.set_position(pos);
     //_as.set_velocity(velo);
-    
+
     //return _as;
 //}
 
@@ -252,7 +252,7 @@ class AgentState _agent_tick(const struct AgentControlState& _cs, const struct A
         height = box.c_height;
     }
 
-    float z_gravity = -3.0f * tr2;
+    float z_gravity = (-3.0f + (as.z / 64)) * tr2; //player must never go higher than 192 blocks or they will start falling upwards. I tried more complicated formulas but they weren't as noticeable as this.
     #if DC_CLIENT
     if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
     #endif
@@ -815,7 +815,7 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
          && !raytrace_terrain(start, end))
             return true;
     }
-    
+
     end.x = this->s.x - this->box.box_r;
     end.y = this->s.y - this->box.box_r;
     for (int i=0; i<samples_per_height; i++)
@@ -1036,7 +1036,7 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float
 {
     Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();
-    
+
     const float max_dist = 128.0f;
     class RaytraceData data;
     bool collided = raytrace_terrain(p, v, max_dist, &data);
@@ -1046,7 +1046,7 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float
     data.get_pre_collision_point(open_pos);
     data.get_side_array(side);
     *distance = data.interval * max_dist;
-    
+
     GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
     return data.get_cube_id();
 }
@@ -1073,7 +1073,7 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], const float max_di
     data.get_pre_collision_point(open_pos);
     for (int i=0; i<3; i++)
         solid_pos[i] = data.collision_point[i];
-    
+
     GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
     GS_ASSERT(solid_pos[2] >= 0); // agent should never be shooting from underground
 
