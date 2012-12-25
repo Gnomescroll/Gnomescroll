@@ -259,6 +259,7 @@ class Skyplane
 	//function of wavelength
 
 	static const float damp = 0.100;
+	//static const float damp = 0.001;
 
 	static float out_scatter(const struct Vec3 &v1, const struct Vec3 &v2)
 	{
@@ -355,6 +356,7 @@ class Skyplane
 		//	_r[i] = _t0[i]*expf( -_t1[i] -_t2[i] );
 		for(int i=0; i<=samples; i++)
 			_r[i] = expf( -1.0*(_t1[i] + _t2[i]) );
+
 /*
 		for(int i=0; i<=samples; i++)
 		{
@@ -363,6 +365,7 @@ class Skyplane
 				-_t1[i] -_t2[i], exp(-_t1[i] -_t2[i]));
 		}
 */
+		
 		float tmp = 0.0f;
 
 		for(int i=0; i<samples; i++)
