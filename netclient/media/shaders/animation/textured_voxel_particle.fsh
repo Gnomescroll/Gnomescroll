@@ -5,8 +5,8 @@ uniform sampler2D base_texture;
 varying vec2 texCoord;
 varying float diffuse_light;
 
-#define diffuse_p .30f //diffuse lighting weight
-#define ambient_p .70f //ambient lighting weight
+#define diffuse_p .15f //diffuse lighting weight
+#define ambient_p .85f //ambient lighting weight
 
 void main() 
 {
@@ -14,6 +14,6 @@ void main()
     //color = vec3(1.0, 1.0, 1.0);  use for testing lighting
 
     //color = pow(color, vec3(1.0f / 2.2f));  // gamma correction - Too bright??
-    color = (diffuse_light*diffuse_p+ambient_p) *color;  
+    color = (diffuse_light*diffuse_p + ambient_p) * color;  
     gl_FragColor.rgb = color;
 }

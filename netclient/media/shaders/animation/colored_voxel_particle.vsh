@@ -19,7 +19,7 @@ void main(void)
     
 
     //Light 2
-    diffuse_light = abs(dot(light_dir, InNormal));           //use camera position
+    diffuse_light = dot(light_dir, InNormal);           //use camera position
 
 
 /*

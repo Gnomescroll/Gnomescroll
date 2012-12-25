@@ -112,7 +112,7 @@ void AgentList::draw_equipped_items()
     if (Options::animation_level <= 1)
         works = Animations::draw_sprite_gl_begin();
     else
-        works = Animations::draw_voxelized_sprite_gl_begin();
+        works = Animations::draw_voxelized_sprite_gl_begin(GL_FRONT);
     if (works)
     {
         for (unsigned int i=0; i<this->max; i++)

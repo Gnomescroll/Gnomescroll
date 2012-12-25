@@ -235,7 +235,7 @@ static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
 
 // used for restoring cull face state
 static GLboolean cull_face_enabled = false;
-static GLint cull_face_mode = GL_BACK;
+GLint cull_face_mode = GL_BACK;
 
 bool draw_voxel_gl_begin(GLint cull_mode)
 {
@@ -245,16 +245,16 @@ bool draw_voxel_gl_begin(GLint cull_mode)
 
     GL_ASSERT(GL_BLEND, false);
     GL_ASSERT(GL_ALPHA_TEST, false);
+    GS_ASSERT(cull_mode != GL_INVALID_ENUM);
 
     // save culling state
     cull_face_enabled = glIsEnabled(GL_CULL_FACE);
     glGetIntegerv(GL_CULL_FACE_MODE, &cull_face_mode);
     
-    // enable backface culling
+    // enable culling
     if (!cull_face_enabled)
         glEnable(GL_CULL_FACE);
-    if (cull_face_mode != cull_mode && cull_mode != GL_INVALID_ENUM)
-        glCullFace(cull_mode);    // backface culling
+    glCullFace(cull_mode);
     
     // draw textured voxels
     glEnable(GL_TEXTURE_2D);
@@ -397,7 +397,7 @@ void draw_equipped_item(int item_type)
         }
         else
         {
-            bool works = draw_voxelized_sprite_gl_begin();
+            bool works = draw_voxelized_sprite_gl_begin(GL_BACK);
             if (works)
             {
                 int sprite_id = Item::get_sprite_index_for_type(item_type);
