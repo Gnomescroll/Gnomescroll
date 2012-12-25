@@ -46,6 +46,7 @@ class Skyplane
 	void draw_sun(float theta, float phi, float x,float y,float z)
 	{
 		const float radius = 64.0;
+		const float plane_depth = size/2.0;
 
 		float stheta = 2*3.14159*theta;
 		float sphi   = 2*3.14159*phi;
@@ -55,6 +56,7 @@ class Skyplane
 		s.y = radius*sinf(stheta)*sinf(sphi);
 		s.z = radius*cosf(stheta);
 
+		s.z += plane_depth;
 
     	glDisable(GL_DEPTH_TEST);
 
@@ -76,6 +78,7 @@ class Skyplane
 	}
 	void update(float theta, float phi)
 	{
+		const float plane_depth = size/2.0;
 
 		const float _df = 1.0/ ((float) dim);
 
@@ -88,6 +91,8 @@ class Skyplane
 		s.x = radius*sinf(stheta)*cosf(sphi);
 		s.y = radius*sinf(stheta)*sinf(sphi);
 		s.z = radius*cosf(stheta);
+
+		s.z += plane_depth;
 
 		//point position
 		//struct Vec3 u = vec3_init(0.0, 0.0, 1.0); 	//up
@@ -160,7 +165,6 @@ class Skyplane
 
 		for(int i=0;i<6;i++)
 		{
-			const float plane_depth = size/2.0;
 			center[i] = vec3_scalar_mult(f[i], plane_depth);
 			center[i].z += plane_depth;
 
@@ -182,7 +186,7 @@ class Skyplane
 			s.x,s.y,s.z);
 	*/
 
-		const float camera_z = 0.0f;
+		const float camera_z = 64.0f;
 		struct Vec3 c = vec3_init(0.0, 0.0, camera_z);
 
 		for(int side=0; side<6; side++)
@@ -424,10 +428,18 @@ class Skyplane
 
 	static float sun_position(const struct Vec3 &a, const struct Vec3 &b, const struct Vec3 &s)
 	{
-		//assume camera is 0,0,0 for now, but its not
+		//compute ray from camera to upper atmosphere (use sphere and radius)
+		//intersection with upper atomsphere
+		
+		//const float ATMOSPHERE_DEPTH = 128.0;
+		//struct Vec3 _b;
+		//_b = vec3_scalar_mult(vec3_normalize(b), ATMOSPHERE_DEPTH);
+
 		struct Vec3 c = a;
 
 		struct Vec3 tb = vec3_sub(b, c);
+
+		//struct Vec3 tb = vec3_sub(_b, c);
 		struct Vec3 ts = vec3_sub(s, c);
 
 		tb = vec3_normalize(tb);
@@ -437,6 +449,7 @@ class Skyplane
 
 		if(v <= 0.0)
 			v = 0.0;
+		v *= v;
 
 		return v;
 		//return vec3_cos2(tb,ts);
@@ -666,19 +679,18 @@ class SkyboxRender
 
 			glBegin(GL_QUADS);
 
-			glVertex3f(ul.x, ul.y, ul.z);
 
 			glTexCoord2f(0.0,1.0);
-			glVertex3f(bl.x, bl.y, bl.z);
+			glVertex3f(ul.x, ul.y, ul.z);
 
 			glTexCoord2f(1.0,1.0);
-
-			glVertex3f(br.x, br.y, br.z);
+			glVertex3f(bl.x, bl.y, bl.z);
 
 			glTexCoord2f(1.0,0.0);
+			glVertex3f(br.x, br.y, br.z);
 
-			glVertex3f(ur.x, ur.y, ur.z);
 			glTexCoord2f(0.0,0.0);
+			glVertex3f(ur.x, ur.y, ur.z);
 
 			glEnd();
 		}
@@ -701,13 +713,13 @@ class SkyboxRender
 void init_rayleigh_scattering()
 {
 
-/*
+
 	class Skyplane S;
 
 	if(true)
 	{
 		int max_div = 16;
-		float _f = 0.5 / ((float) max_div);
+		float _f = 1.0 / ((float) max_div);
 
 		int dim = S.dim;
 		float* fbuffer = new float[6*dim*dim*max_div];
@@ -727,10 +739,10 @@ void init_rayleigh_scattering()
 	else
 	{
 		S.update(0.0, 0.0);	//height, then rotation
-		S.save("sky");
+		S.save("sky", 2);
 	}
-	abort();
-*/
+	//abort();
+
 
 	SR = new SkyboxRender;
 	//SR->update_skybox(); //wait for time to do this?
