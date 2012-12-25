@@ -367,9 +367,11 @@ void draw_tick()
     if (input_state.draw_hud)
     {
         //glDisable(GL_DEPTH_TEST);
-        Animations::use_voxelized_sprite_fbo();
+        if (agent_camera->is_current())
+            Animations::use_voxelized_sprite_fbo();
         Animations::draw_equipped_item(equipped_item_type);
-        Animations::unuse_voxelized_sprite_fbo();
+        if (agent_camera->is_current())
+            Animations::unuse_voxelized_sprite_fbo();
         //glEnable(GL_DEPTH_TEST);
     }
 
