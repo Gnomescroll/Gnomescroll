@@ -800,3 +800,11 @@ class teleport_me_CtoS: public FixedSizeReliableNetPacketToServer<teleport_me_Ct
     }
     inline void handle();
 };
+
+class gohome_CtoS: public FixedSizeReliableNetPacketToServer<gohome_CtoS>
+{
+    public:
+
+    inline void packet(char* buff, unsigned int* buff_n, bool pack) {}
+    inline void handle();
+};

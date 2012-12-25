@@ -31,10 +31,9 @@ void ChatMessage::set_color()
 {
     if (sender == CHAT_SENDER_SYSTEM) // system msg
         this->color = Color(Options::system_message_r, Options::system_message_g, Options::system_message_b);
-    else if (
-        ClientState::player_agent.agent_id >= 0
-     && ClientState::player_agent.agent_id + CHANNEL_ID_AGENT_OFFSET == channel
-    )    // pm
+    else  // pm
+    if (ClientState::player_agent.agent_id >= 0
+     && ClientState::player_agent.agent_id + CHANNEL_ID_AGENT_OFFSET == channel)
         this->color = CHAT_PM_COLOR;
     else // global
     {
@@ -132,7 +131,7 @@ ChatInputHistoryObject::ChatInputHistoryObject(const char* m) :
 
 ChatInputHistoryObject::~ChatInputHistoryObject()
 {
-    free(this->m);
+    if (this->m != NULL) free(this->m);
 }
 
 void ChatInput::clear_history()
@@ -299,131 +298,36 @@ void ChatInput::history_older()
 
 bool ChatInput::route_command()
 {   // return false if the buffer doesn't start with command syntax; else return true (whether the command is valid/recognized or not) 
-    if (!buffer_len) return false;
-    if (this->buffer[0] != '/' || this->buffer[1] == '\0' || isspace(this->buffer[1]))
-        return false;
+    if (this->buffer_len <= 1) return false;
+    if (this->buffer[0] != '/') return false;
+    if (!isalnum(this->buffer[1]) && !ispunct(this->buffer[1])) return false;
 
     char cmd[CHAT_BUFFER_SIZE] = {'\0'};
-    char c;
-    int i=1;
-    while((c = this->buffer[i++]) != '\0' && !isspace(c))   // advance cursor past command
-        cmd[i-2] = c;
+    size_t cmdlen = 0;
+    char c = '\0';
+    int i = 1;
+   // copy command to buffer and advance cursor
+    while((c = this->buffer[i]) != '\0' && !isspace(c))
+    {
+        i++;
+        cmd[cmdlen++] = c;
+    }
+    cmd[cmdlen] = '\0';
 
-    if (i == 2) return true;
+    // advance cursor to first non-space char (start of any arguments)
+    while((c = this->buffer[i]) != '\0' && isspace(c))
+        i++;
 
-    while((c = buffer[i++]) != '\0' && isspace(c)); // advance cursor to first non-space char
-    i -= 1;
+    char args[CHAT_BUFFER_SIZE] = {'\0'};
+    IF_ASSERT(this->buffer_len < i) return true;
     
-    if (!strcmp(cmd, "kill") || !strcmp(cmd, "die"))
-    {
-        killme_CtoS msg;
-        msg.send();
-    }
-    else
-    if (!strcmp(cmd, "chaton"))
-        Options::player_chat = true;
-    else
-    if (!strcmp(cmd, "chatoff"))
-        Options::player_chat = false;
-    else
-    if (!strcmp(cmd, "color") || !strcmp(cmd, "colour"))
-    {
-        Color color = Color(0,0,0);
-        bool valid = true;
-
-        int start = i;  // save start cursor
-
-        // split lines up
-        int n = 1;
-        const char delim = ' ';
-        while ((c = buffer[i++]) != '\0')
+    for (size_t cmd_id=0; cmd_id<n_commands; cmd_id++)
+        if (!strcmp(cmd, commands[cmd_id].name))
         {
-            if (!isdigit(c) && c != delim)
-                break;
-            if (c == delim)
-            {
-                buffer[i-1] = '\0';
-                n++;
-            }
+            strcpy(args, &buffer[i]);
+            commands[cmd_id].action(cmd, cmdlen, args, this->buffer_len-i);
+            break;
         }
-        
-        if (c != '\0') valid = false;    // encountered invalid char
-        if (n != 3) valid = false;       // invalid arg count
-        
-        if (!valid)
-        {
-            chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
-            return true;
-        }
-        
-        char buf[3+1] = {'\0'};
-
-        i = start;  // reset cursor
-        
-        int j = 0;  // copy red
-        while ((c = buffer[i++]) != '\0' && j < 3)
-            buf[j++] = c;
-        buf[j] = '\0';
-        if (buffer[i-1] != '\0') valid = false;
-        else
-        {
-            int r = atoi(buf);
-            if (r > 0xff) valid = false;
-            else color.r = r;
-        }
-        
-        j = 0;      // copy green
-        while ((c = buffer[i++]) != '\0' && j < 3)
-            buf[j++] = c;
-        buf[j] = '\0';
-        if (buffer[i-1] != '\0') valid = false;
-        else
-        {
-            int g = atoi(buf);
-            if (g > 0xff) valid = false;
-            else color.g = g;
-        }
-                
-        j = 0;      // copy blue
-        while ((c = buffer[i++]) != '\0' && j < 3)
-            buf[j++] = c;
-        buf[j] = '\0';
-        if (buffer[i-1] != '\0') valid = false;
-        else
-        {
-            int b = atoi(buf);
-            if (b > 0xff) valid = false;
-            else color.b = b;
-        }
-        
-        if (!valid)
-        {
-            chat_client->send_system_message("Usage: /color R G B (R G B must be between 0 and 255)");
-            return true;
-        }
-
-        class Agents::Agent* you = ClientState::player_agent.you();
-        if (you != NULL
-         && colors_equal(you->status.color, color))
-        {
-            static const char msgfmt[] = "Your color is already %d %d %d";
-            static const size_t msg_len = sizeof(msgfmt) + 3*3 - 3*2;
-            static char msg[msg_len+1] = {'\0'};
-
-            snprintf(msg, msg_len+1, msgfmt, color.r, color.g, color.b);
-            chat_client->send_system_message(msg);
-        }
-        
-        colorme_CtoS msg;
-        msg.color = color;
-        msg.send();
-    }
-    else
-    if (!strcmp(cmd, "url"))
-    {
-        Awesomium::open_url(&buffer[i]);
-        return true;
-    }
 
     return true;
 }

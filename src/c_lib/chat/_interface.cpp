@@ -1,5 +1,7 @@
 #include "_interface.hpp"
 
+#include <chat/commands.hpp>
+
 namespace Chat
 {
 
@@ -53,6 +55,8 @@ void init_chat_client()
     chat_client = new ChatClient;
     chat_message_list = new ChatMessageList((CHAT_CLIENT_MESSAGE_HISTORY_MAX+1)*CHAT_CLIENT_CHANNELS_MAX);
     system_message = new ChatSystemMessage;
+
+    register_chat_commands();
 }
 
 void teardown_chat_client()

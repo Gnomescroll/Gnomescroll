@@ -6,6 +6,7 @@
 #include <chat/_interface.cpp>
 
 #if DC_CLIENT
+# include <chat/commands.cpp>
 # include <chat/client.cpp>
 #endif
 

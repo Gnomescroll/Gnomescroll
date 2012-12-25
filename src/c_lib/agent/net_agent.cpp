@@ -450,6 +450,7 @@ inline void version_CtoS::handle(){}
 inline void killme_CtoS::handle() {}
 inline void colorme_CtoS::handle() {}
 inline void teleport_me_CtoS::handle() {}
+inline void gohome_CtoS::handle() {}
 #endif
 
 // Client -> Server handlers
@@ -496,8 +497,7 @@ inline void version_CtoS::handle()
 inline void colorme_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[this->client_id];
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
     a->status.set_color(this->color);
 }
 
@@ -523,23 +523,23 @@ inline void Agent_cs_CtoS::handle()
     }
     */
 
-    Agents::Agent* A = NetServer::agents[client_id];
-    if(A == NULL) return;
+    Agents::Agent* a = NetServer::agents[client_id];
+    if (a == NULL) return;
 
     //determine if message is new, if so send out
     /*
         Client should send last 2 control states each packet, must handle redundant control state properly
     */
         
-    class Agent_cs_StoC M;
-    M.id = A->id;
-    M.seq = seq;
-    M.cs = cs;
-    M.theta = theta;
-    M.phi = phi;
-    M.broadcast();
+    class Agent_cs_StoC m;
+    m.id = a->id;
+    m.seq = seq;
+    m.cs = cs;
+    m.theta = theta;
+    m.phi = phi;
+    m.broadcast();
 
-    A->handle_control_state(seq, cs, theta, phi);
+    a->handle_control_state(seq, cs, theta, phi);
 
     /*
         Warning: setting agent client id by the client the last control state was received for that agent
@@ -940,8 +940,7 @@ inline void place_turret_CtoS::handle()
 {
     EntityType type = OBJECT_TURRET;
     Agents::Agent* a = NetServer::agents[client_id];
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
     if (z <= 0 || z >= t_map::map_dim.z) return;
     Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
@@ -951,8 +950,7 @@ inline void place_turret_CtoS::handle()
 inline void choose_spawner_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[this->client_id];
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
     a->status.set_spawner(spawner_id);
 }
 
@@ -990,5 +988,11 @@ inline void teleport_me_CtoS::handle()
     a->teleport(this->position);
 }
 
+inline void gohome_CtoS::handle()
+{
+    Agents::Agent* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    a->spawn_state();
+}
 
 #endif

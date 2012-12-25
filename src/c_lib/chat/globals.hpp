@@ -5,6 +5,9 @@
 namespace Chat
 {
 
+const size_t MAX_COMMANDS = 32;
+const size_t COMMAND_MAX_LENGTH = 0xFF;
+
 #if DC_SERVER
 const char CHAT_LOG_MSG_FORMAT[] = " - [%d] %s: %s\n"; // client_id, name, msg
 #endif
@@ -33,8 +36,7 @@ bool is_valid_chat_character(char c)
 
 bool is_valid_chat_message(char* msg)
 {
-    GS_ASSERT(msg != NULL);
-    if (msg == NULL) return false;
+    IF_ASSERT(msg == NULL) return false;
     
     if (msg[0] == '\0') return false;   // empty
     if (msg[0] == '/') return false;    // chat command
@@ -51,7 +53,6 @@ bool is_valid_chat_message(char* msg)
             non_space = true;
     }
     return non_space;
-
 }
 
 }   // Chat
