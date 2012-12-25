@@ -205,8 +205,8 @@ class Skyplane
 
 					//can inline this even
 					
-					//float light = update_point(c, b, s);
-					float light = 0;
+					float light = update_point(c, b, s);
+					//float light = 0;
 					farray[side][j*dim+i] = light;
 
 					//printf("light: %i %i = %.2f \n", i,j,light);
@@ -215,7 +215,7 @@ class Skyplane
 			}
 		}
 
-
+/*
 		int m_side;
 		int m_i;
 		int m_j;
@@ -265,9 +265,8 @@ class Skyplane
 
 			}
 		}
-
-
 		farray[m_side][m_j*dim+m_i] = 1.0;
+*/
 
 /*
 		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,sx,sy,sz);
