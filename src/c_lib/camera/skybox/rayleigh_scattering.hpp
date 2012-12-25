@@ -204,8 +204,9 @@ class Skyplane
 					b.z = center[side].z + _df*size*(_i*r[side].z + _j*u[side].z);
 
 					//can inline this even
-					float light = update_point(c, b, s);
-
+					
+					//float light = update_point(c, b, s);
+					float light = 0;
 					farray[side][j*dim+i] = light;
 
 					//printf("light: %i %i = %.2f \n", i,j,light);
@@ -214,6 +215,59 @@ class Skyplane
 			}
 		}
 
+
+		int m_side;
+		int m_i;
+		int m_j;
+		float m_cos = -1000;
+
+		for(int side=0; side<6; side++)
+		{
+			for(int i=0; i<dim; i++)
+			{
+				for(int j=0; j<dim; j++)
+				{
+					int _i = i -dim/2;
+					int _j = j -dim/2;
+
+					struct Vec3 b;
+					b.x = center[side].x + _df*size*(_i*r[side].x + _j*u[side].x);
+					b.y = center[side].y + _df*size*(_i*r[side].y + _j*u[side].y);
+					b.z = center[side].z + _df*size*(_i*r[side].z + _j*u[side].z);
+
+
+					struct Vec3 tb = vec3_sub(b, c);
+					//struct Vec3 tb = vec3_sub(_b, c);
+					struct Vec3 ts = vec3_sub(s, c);
+
+					tb = vec3_normalize(tb);
+					ts = vec3_normalize(ts);
+
+					float v = vec3_dot(tb, ts);
+
+					if(v > m_cos)
+					{
+						m_cos = v;
+						m_side = side;
+						m_i = i;
+						m_j = j;
+					}
+
+
+					//can inline this even
+					
+					//float light = update_point(c, b, s);
+					//float light = 0;
+					//farray[side][j*dim+i] = light;
+
+					//printf("light: %i %i = %.2f \n", i,j,light);
+				}
+
+			}
+		}
+
+
+		farray[m_side][m_j*dim+m_i] = 1.0;
 
 /*
 		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,sx,sy,sz);
