@@ -181,7 +181,7 @@ class Skyplane
 
 /*
 		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,sx,sy,sz);
-		printf("theta,phi= %.2f %.2f ", theta, phi);
+		printf("theta,phi= %.2f %.2f ", theta, phi);s
 		printf("Sun Position: x,y,z= %.2f %.2f %.2f \n", sx,sy,sz);
 		printf("plane_center: x,y,z= %.2f %.2f %.2f \n", center.x, center.y, center.z);
 */
@@ -390,6 +390,17 @@ class Skyplane
 		return tmp;
 	}
 
+	static float sun_position(const struct Vec3 &a, const struct Vec3 &b, const struct Vec3 &s)
+	{
+		//assume camera is 0,0,0 for now, but its not
+		struct Vec3 c = a;
+
+		struct Vec3 tb = vec3_sub(b, c);
+		struct Vec3 ts = vec3_sub(s, c);
+		return vec3_cos2(tb,ts);
+		//return vec3_cos2(b,s);	//cos2 between end ray and sun, from camera
+	}
+
 	//sun distance
 	//atmosphere height
 	//planet radius
@@ -401,7 +412,10 @@ class Skyplane
 		//intersection with upper atomsphere
 		struct Vec3 _b;
 		_b = vec3_scalar_mult(vec3_normalize(b), ATMOSPHERE_DEPTH);
-		return in_scatter(c, _b, s);
+		
+		return sun_position(c,_b,s);
+		//return in_scatter(c, _b, s);
+
 	}
 
 };
