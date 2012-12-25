@@ -46,7 +46,10 @@ class Camera
         void set_angles(float theta, float phi);
         
         void set_position(struct Vec3 p);
-        struct Vec3 get_position() { return this->position; }
+        struct Vec3 get_position() const
+        {
+            return this->position;
+        }
         
         struct Vec3 forward_vector();
         
@@ -75,7 +78,7 @@ class Camera
         void zoom();
         void unzoom();
 
-        void copy_state_from(Camera* c);
+        void copy_state_from(const Camera* c);
 
         Camera();
 };

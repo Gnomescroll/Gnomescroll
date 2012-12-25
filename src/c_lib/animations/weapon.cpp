@@ -376,7 +376,6 @@ void draw_equipped_item(int item_type)
 
     if (Item::item_type_is_voxel(item_type))
     {
-        GL_ASSERT(GL_DEPTH_TEST, false);
         bool works = draw_voxel_gl_begin(GL_FRONT);
         if (works)
         {

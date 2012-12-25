@@ -131,8 +131,7 @@ void ItemParticle_list::draw()
 {
     #if DC_CLIENT
     using TextureSheetLoader::item_texture_sheet_loader;
-    GS_ASSERT(item_texture_sheet_loader->texture != 0);
-    if (item_texture_sheet_loader->texture == 0) return;
+    IF_ASSERT(item_texture_sheet_loader->texture == 0) return;
 
     glColor4ub(255,255,255,255);
 
@@ -141,7 +140,6 @@ void ItemParticle_list::draw()
     GL_ASSERT(GL_BLEND, false);
 
     glEnable(GL_ALPHA_TEST);
-
     glAlphaFunc(GL_GREATER, 0.5f);
 
     glBindTexture(GL_TEXTURE_2D, item_texture_sheet_loader->texture);

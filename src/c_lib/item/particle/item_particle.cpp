@@ -16,7 +16,7 @@ void ItemParticle::draw()
     const float h = 0.35f;
 
     Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
-    if (sphere_fulstrum_test(position.x, position.y, position.z+h, scale*2) == false) return;
+    if (!sphere_fulstrum_test(position.x, position.y, position.z+h, scale*2)) return;
     
     Vec3 up = vec3_init(
         model_view_matrix[0]*scale,

@@ -82,8 +82,7 @@ void teardown_cameras()
 
 #define CAMERA_ZOOM_FACTOR 2.0f
 Camera::Camera() :
-zoomed(false),
-zoom_factor(CAMERA_ZOOM_FACTOR)
+    zoomed(false), zoom_factor(CAMERA_ZOOM_FACTOR)
 {
     const float FOV = 70.0f;
     const float Z_NEAR = 0.1f;
@@ -118,8 +117,7 @@ void Camera::unzoom()
 
 bool Camera::is_current()
 {
-    if (this == current_camera) return true;
-    return false;
+    return (this == current_camera);
 }
 
 void Camera::set_aspect(float fov, float z_near, float z_far)
@@ -153,7 +151,10 @@ void Camera::set_position(struct Vec3 p)
     this->position = translate_position(p);
     ASSERT_BOXED_POSITION(this->position);
     if (this->is_current()) current_camera_position = this->position;
-    if (this->is_current()) GS_ASSERT(vec3_equal(this->position, current_camera_position));
+    if (this->is_current())
+    {
+        GS_ASSERT(vec3_equal(this->position, current_camera_position));
+    }
 }
 
 void Camera::pan(float dx, float dy)
@@ -200,7 +201,6 @@ void Camera::world_projection()
 
     //look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
     look = vec3_euler_rotation(look, theta, phi, 0.0f);
-
 
     float x = this->position.x;
     float y = this->position.y;
@@ -263,9 +263,9 @@ Vec3 Camera::forward_vector()
     return f;
 }
 
-void Camera::copy_state_from(Camera* c)
+void Camera::copy_state_from(const Camera* c)
 {
-    GS_ASSERT(c != NULL);
+    IF_ASSERT(c == NULL) return;
     this->set_position(c->get_position());
     this->set_angles(c->theta, c->phi);
 }

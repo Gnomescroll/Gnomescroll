@@ -15,4 +15,10 @@ void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix);
 bool draw_voxelized_sprite_gl_begin(GLint cull_mode);
 void draw_voxelized_sprite_gl_end();
 
+void render_voxelized_sprite_fbo();
+
+void use_voxelized_sprite_fbo();
+void unuse_voxelized_sprite_fbo();
+void render_voxelized_sprite_fbo();
+
 }   // Animations
