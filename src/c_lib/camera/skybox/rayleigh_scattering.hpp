@@ -537,6 +537,10 @@ class SkyboxRender
 
 	void draw(float x, float y, float z)
 	{
+		x = 256;
+		y = 256;
+		z = 128;
+
 		const float _f[6*3] =
 		{
 			 0, 0, 1, //top
