@@ -301,13 +301,12 @@ void Vbo_map::draw_map()
     glUseProgramObjectARB(map_shader.shader->shader);
 
     //glActiveTexture(GL_TEXTURE0);
-    glBindTexture( GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
 
     //glActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_3D);
 
-    glBindTexture( GL_TEXTURE_3D, generate_clut_texture());
-
+    glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
 
     glEnableVertexAttribArray(map_shader.InVertex);
     glEnableVertexAttribArray(map_shader.InTexCoord);
@@ -322,11 +321,11 @@ void Vbo_map::draw_map()
 
     //glPushMatrix();
 
-#if ADV_PRUNE
+    #if ADV_PRUNE
     int v_total = 0;
     int v_drawn = 0;
     //int v_pruned = 0;
-#endif
+    #endif
 
     /*
         Draw
@@ -335,11 +334,7 @@ void Vbo_map::draw_map()
     {
         vbo = draw_vbo_array[i].map_vbo;
 
-        if(vbo->_v_num[0] == 0)
-        {
-            printf("t_vbo_draw.cpp:376 no blocks\n");
-            continue; 
-        } 
+        if (vbo->_v_num[0] == 0) continue; 
 
         //glLoadMatrixf(modelview);
         //glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
