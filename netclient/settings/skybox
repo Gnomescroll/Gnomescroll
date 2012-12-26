@@ -7,5 +7,5 @@ phase_factor = 0.75
 
 sun_distance = 64.0
 time_speed = 5
-skybox_update_rate = 5
+skybox_update_rate = 15
 print_max_light = 0
