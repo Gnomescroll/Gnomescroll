@@ -116,6 +116,7 @@ bool c_lib_inited = false;
 #include <SDL/texture_sheet_loader.cpp>
 #include <SDL/draw_functions.cpp>
 #include <SDL/SDL_functions.cpp>
+#include <SDL/png_save.cpp>
 
 //#include <SDL/mesh_loader/obj_loader.cpp>
 
