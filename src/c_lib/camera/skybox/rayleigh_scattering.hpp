@@ -843,10 +843,12 @@ void init_rayleigh_scattering()
 
 void draw_rayleigh_scattering()
 {
+/*
 	CFL.set_float("test", &test_float);
 	CFL.load_file("./settings/skybox");
 	abort();
-
+*/
+	
 	SR->increment_time();
 
 	SR->draw(current_camera_position.x, current_camera_position.y, current_camera_position.z);
