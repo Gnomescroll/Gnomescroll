@@ -72,6 +72,7 @@ bool c_lib_inited = false;
 #include <common/template/object_pool.hpp>
 #include <common/dat/name_map.hpp>
 
+
 /* configuration options */
 #include <options/option_macros.hpp>
 #include <options/argparse.cpp>
@@ -86,7 +87,7 @@ bool c_lib_inited = false;
 #include <common/common.cpp>
 #include <common/color.hpp>
 #include <common/files.cpp>
-
+#include <common/config_file.hpp>
 // logging
 #include <common/logger.cpp>
 
@@ -114,10 +115,10 @@ bool c_lib_inited = false;
 #include <SDL/texture_loader.cpp>
 #include <SDL/texture_sheet_loader.cpp>
 #include <SDL/draw_functions.cpp>
-#include <SDL/particle_functions.c>
 #include <SDL/SDL_functions.cpp>
+#include <SDL/png_save.cpp>
 
-#include <SDL/mesh_loader/obj_loader.cpp>
+//#include <SDL/mesh_loader/obj_loader.cpp>
 
 #if GS_ASSIMP
 # include <t_mob/_include.hpp>
