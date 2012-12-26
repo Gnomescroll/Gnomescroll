@@ -350,7 +350,7 @@ class Skyplane
 
 	//function of wavelength
 
-	static const float damp = 0.025;
+	static const float damp = 0.50;
 	//static const float damp = 0.001;
 
 	static float out_scatter(const struct Vec3 &v1, const struct Vec3 &v2)
@@ -477,7 +477,7 @@ class Skyplane
 			phase(b, s) );
 */
 		//debug
-		tmp *= phase(bc, bs);
+		//tmp *= phase(bc, bs);
 		
 		return tmp;
 	}

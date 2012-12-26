@@ -296,18 +296,27 @@ void Vbo_map::draw_map()
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
 
+    //glActiveTextureARB(GL_TEXTURE0_ARB);
+    //glBindTexture(GL_TEXTURE_2D, texture1);
+    //glEnable(GL_TEXTURE_2D);
+
     glColor3ub(255,255,255);
 
-    glUseProgramObjectARB(map_shader.shader->shader);
+
 
     //glActiveTexture(GL_TEXTURE0);
+
+    glActiveTextureARB(GL_TEXTURE0);
     glBindTexture( GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
 
     //glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_3D);
+    //glEnable(GL_TEXTURE_3D);
 
+    glActiveTextureARB(GL_TEXTURE1);
     glBindTexture( GL_TEXTURE_3D, generate_clut_texture());
 
+
+    glUseProgramObjectARB(map_shader.shader->shader);
 
     glEnableVertexAttribArray(map_shader.InVertex);
     glEnableVertexAttribArray(map_shader.InTexCoord);
@@ -400,7 +409,8 @@ void Vbo_map::draw_map()
     glDisable(GL_CULL_FACE);
 
     //glActiveTexture(GL_TEXTURE0);
-    glDisable(GL_TEXTURE_3D);
+    //glDisable(GL_TEXTURE_3D);
+    glActiveTextureARB(GL_TEXTURE0);
 
 
     CHECK_GL_ERROR();
