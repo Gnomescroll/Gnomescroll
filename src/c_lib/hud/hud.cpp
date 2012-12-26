@@ -411,6 +411,12 @@ void draw_hud_textures()
 
     if (!hud_draw_settings.draw) return;
 
+    if (!has_error())
+    {
+        if (hud_draw_settings.scoreboard)
+            hud->scoreboard->draw_badges();
+    }
+
     if (hud_draw_settings.zoom)
     {
         HudReticle::scope_reticle.draw();
@@ -518,9 +524,8 @@ void draw_hud_text()
 
     if (!has_error())
     {
-        if (hud->scoreboard->inited)
-            if (hud_draw_settings.scoreboard)
-                hud->scoreboard->draw();
+        if (hud_draw_settings.scoreboard)
+            hud->scoreboard->draw();
 
         // everything after this is hidden when zoomed
         if (hud_draw_settings.zoom)
@@ -1095,12 +1100,11 @@ void Scoreboard::update()
     }
 }
 
-void Scoreboard::draw()
+void Scoreboard::draw_text()
 {
     if (!this->inited) return;
     this->update();
-    for (int i=0; i<N_STATS; i++)
-        tags[i]->draw();
+    for (int i=0; i<N_STATS; i++) tags[i]->draw();
     for (int i=0; i<PLAYERS_MAX; i++)
     {
         ids[i]->draw();
@@ -1108,12 +1112,10 @@ void Scoreboard::draw()
     }
 }
 
-Scoreboard::Scoreboard()
-:
-inited(false)
+Scoreboard::Scoreboard() :
+    inited(false)
 {
-    for (int i=0; i<N_STATS; i++)
-        tags[i] = NULL;
+    for (int i=0; i<N_STATS; i++) tags[i] = NULL;
     for (int i=0; i<PLAYERS_MAX; i++)
     {
         ids[i] = NULL;
