@@ -291,7 +291,6 @@ void Vbo_map::draw_map()
     prep_frustrum_vertices();
 
 
-    CHECK_GL_ERROR();
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
@@ -319,11 +318,9 @@ void Vbo_map::draw_map()
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
-    CHECK_GL_ERROR();
     
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
-    CHECK_GL_ERROR();
 
     GLint clut_texture = glGetUniformLocation(map_shader.shader->shader, "clut_texture");
     GLint base_texture = glGetUniformLocation(map_shader.shader->shader, "base_texture");
@@ -332,18 +329,12 @@ void Vbo_map::draw_map()
     GS_ASSERT(base_texture != 0);
 
     glUseProgramObjectARB(map_shader.shader->shader);
-    CHECK_GL_ERROR();
 
-
-
-
-    CHECK_GL_ERROR();
     //CHECK_GL_ERROR();
     //glActiveTextureARB(GL_TEXTURE0);
 
     glUniform1i(clut_texture, 1); //Texture unit 0 is for clut_texture
     glUniform1i(base_texture, 2); //Texture unit 1 is for base_texture
-    CHECK_GL_ERROR();
 
     //glEnable(GL_TEXTURE_2D);
 
@@ -367,7 +358,6 @@ void Vbo_map::draw_map()
     glEnableVertexAttribArray(map_shader.InLightMatrix);
     glEnableVertexAttribArray(map_shader.InLight);
 
-    CHECK_GL_ERROR();
     //CHECK_GL_ERROR();
 
     class Map_vbo* vbo;
@@ -397,11 +387,8 @@ void Vbo_map::draw_map()
         //glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
 
         //GS_ASSERT(vbo->vbo_id != 0);
-        CHECK_GL_ERROR();
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
-
-        CHECK_GL_ERROR();
 
         glUniform4f(map_shader.InOffset, vbo->wxoff, vbo->wyoff, 0.0f, 0.0f);
 
@@ -411,7 +398,6 @@ void Vbo_map::draw_map()
         glVertexAttribPointer(map_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
         glVertexAttribPointer(map_shader.InLight, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)16);
 
-        CHECK_GL_ERROR();
         #if ADV_PRUNE
 
         int xi = draw_vbo_array[i].i;
@@ -433,7 +419,6 @@ void Vbo_map::draw_map()
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
         #endif
 
-        CHECK_GL_ERROR();
         //glPopMatrix();
         //glPushMatrix();
     }
