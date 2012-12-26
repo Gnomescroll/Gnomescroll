@@ -644,6 +644,9 @@ class SkyboxRender
 
 		glDisable(GL_TEXTURE_2D);
 
+
+		CHECK_GL_ERROR();
+		
 		//printf("update \n");
 
 		//textures
@@ -766,6 +769,8 @@ class SkyboxRender
 		//float sun_phi = time_count / 3000.0;
 		float sun_phi = 0;
 		sun.draw_sun(sun_theta, sun_phi, x,y,z);
+
+		CHECK_GL_ERROR();
 
 	//printf("draw\n");
 	}
