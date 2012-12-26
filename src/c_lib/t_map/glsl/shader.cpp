@@ -52,6 +52,13 @@ void init_shaders()
         printf("!!! Warning: EXT_texture_sRGB not supported. \n");
     }
 
+
+/*
+    if(!GLEW_EXT_multitexture)
+    {
+        printf("!!! Warning: GL_ARB_multitexture not supported. \n")
+    }
+*/
     //ANISOTROPIC_FILTERING = 0;
 
     if (ANISOTROPIC_FILTERING)
