@@ -215,9 +215,23 @@ void ati_meminfo(void)
     return;
 }
 
+void set_window_icon(const char* filename)
+{
+    // have to load as BMP to avoid IMG_Load which can't safely be called before SDL_SetVideoMode
+    // and SDL_WM_SetIcon must be called before SDL_SetVideoMode
+    SDL_Surface* icon = SDL_LoadBMP(filename);
+    IF_ASSERT(icon == NULL) return;
+    // set transparency mask (red)
+    Uint32 colorkey = SDL_MapRGB(icon->format, 0xFF, 0, 0);
+    int ret = SDL_SetColorKey(icon, SDL_SRCCOLORKEY, colorkey);
+    GS_ASSERT(!ret);
+    SDL_WM_SetIcon(icon, NULL);
+    SDL_FreeSurface(icon);
+}
 
-int init_video() {
 
+int init_video()
+{
     //DisplayBox();
 
     int nFlags;
@@ -227,7 +241,8 @@ int init_video() {
     //SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
 
     //-1 on error, 0 on success
-    if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) == -1) {
+    if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1)
+    {
        // Unrecoverable error, exit here.
        printf("SDL_Init failed: %s\n", SDL_GetError());
        DisplayBox();
@@ -236,20 +251,26 @@ int init_video() {
 
     //printf("SDL: %s\n", SDL_GetError());
 
-    SDL_WM_SetCaption( "Gnomescroll", NULL );
+    SDL_WM_SetCaption("Gnomescroll", NULL);
+
+    set_window_icon(MEDIA_PATH "icons/window.bmp");
+    
     const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
     //pSDLVideoInfo = SDL_GetVideoInfo();
     //printf("SDL_GetVideoInfo: %s\n", SDL_GetError());
 
-    if( !pSDLVideoInfo )
+    if (pSDLVideoInfo == NULL)
     {
         printf("SDL_GetVideoInfo() failed. SDL Error: %s\n", SDL_GetError());
         DisplayBox();
         close_SDL();
         return 1;
     }
+
     nFlags = SDL_OPENGL; // | SDL_FULLSCREEN; //| SDL_GL_DOUBLEBUFFER; // | SDL_HWPALETTE;
-    if(_fullscreen != 0) {nFlags |= SDL_FULLSCREEN; }
+    
+    if (_fullscreen)
+        nFlags |= SDL_FULLSCREEN;
 /*
     if( pSDLVideoInfo->hw_available ) // Hardware surfaces enabled?
         nFlags |= SDL_HWSURFACE;
@@ -263,13 +284,15 @@ int init_video() {
         printf( "SDL_HWACCEL Error: Hardware blitting not enabled!\n");
 */
 
-    if(0) {//When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
-        nFlags |= SDL_RESIZABLE;
-    }
+    //if(0)
+    //{//When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
+        //nFlags |= SDL_RESIZABLE;
+    //}
 
     nFlags |= SDL_DOUBLEBUF; // http://sdl.beuc.net/sdl.wiki/SDL_Flip
 
-    if(_multisampling) {
+    if(_multisampling)
+    {
         SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
         SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
     }
