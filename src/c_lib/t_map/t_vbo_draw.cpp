@@ -290,6 +290,9 @@ void Vbo_map::draw_map()
     sort_draw();
     prep_frustrum_vertices();
 
+
+    CHECK_GL_ERROR();
+
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
@@ -303,32 +306,37 @@ void Vbo_map::draw_map()
 
     glColor3ub(255,255,255);
 
-
+    CHECK_GL_ERROR();
 
     //glActiveTexture(GL_TEXTURE0);
 
+    glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
+    CHECK_GL_ERROR();
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
+    CHECK_GL_ERROR();
+
+
+
     glUseProgramObjectARB(map_shader.shader->shader);
 
-    CHECK_GL_ERROR();
+    //CHECK_GL_ERROR();
     //glActiveTextureARB(GL_TEXTURE0);
 
-    glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
+    //glActiveTexture(GL_TEXTURE0);
+    //glEnable(GL_TEXTURE_2D);
 
 
-    CHECK_GL_ERROR();
+    //glActiveTexture(GL_TEXTURE1);
+    //glEnable(GL_TEXTURE_3D);
 
-    glActiveTexture(GL_TEXTURE1);
-    glEnable(GL_TEXTURE_3D);
-    glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
     //glActiveTexture(GL_TEXTURE0);
     //glEnable(GL_TEXTURE_3D);
 
     //glActiveTextureARB(GL_TEXTURE1);
 
 
-    CHECK_GL_ERROR();
+    //CHECK_GL_ERROR();
 
     glEnableVertexAttribArray(map_shader.InVertex);
     glEnableVertexAttribArray(map_shader.InTexCoord);
@@ -336,7 +344,7 @@ void Vbo_map::draw_map()
     glEnableVertexAttribArray(map_shader.InLightMatrix);
     glEnableVertexAttribArray(map_shader.InLight);
 
-    CHECK_GL_ERROR();
+    //CHECK_GL_ERROR();
 
     class Map_vbo* vbo;
 
@@ -403,6 +411,7 @@ void Vbo_map::draw_map()
     //glPopMatrix(); //restore matrix
 
     CHECK_GL_ERROR();
+
     glDisableVertexAttribArray(map_shader.InVertex);
     glDisableVertexAttribArray(map_shader.InTexCoord);
     glDisableVertexAttribArray(map_shader.InRGB);
@@ -411,19 +420,20 @@ void Vbo_map::draw_map()
 
     //printf("%d \n", map_shader.InLight);
 
-    CHECK_GL_ERROR();
+    //CHECK_GL_ERROR();
     
     glUseProgramObjectARB(0);
 
-    CHECK_GL_ERROR();
+    //CHECK_GL_ERROR();
     //glEnable(GL_TEXTURE_2D);
 
     //;
     glDisable(GL_CULL_FACE);
 
-    glActiveTexture(GL_TEXTURE0);
-    glDisable(GL_TEXTURE_3D);
-    glDisable(GL_TEXTURE_2D);
+    //glActiveTexture(GL_TEXTURE0);
+
+    //glDisable(GL_TEXTURE_3D);
+    //glDisable(GL_TEXTURE_2D);
 
 
     CHECK_GL_ERROR();
