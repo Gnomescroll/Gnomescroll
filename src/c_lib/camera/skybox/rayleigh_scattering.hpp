@@ -5,6 +5,8 @@
 namespace Skybox
 {
 
+int print_max_light = 0 ;
+
 class Skyplane
 {
 
@@ -15,7 +17,7 @@ class Skyplane
 	const static int samples = 5;
 
 
-	static const float radius = 256.0; //sun distance from surface
+	float sun_distance;  				//sun distance from surface
 	static const float size = 128.0;	//skybox plane size
 
 	int sun_i, sun_j, sun_side; //used to find pixel for tracking sun
@@ -23,8 +25,23 @@ class Skyplane
 
 	struct Vec3 vert[4];
 
+	float brightness_log_factor;
+	float brightness_scale_factor;
+	float brightness_sum_factor;
+	float light_epsilon;
+
+	float phase_factor;
+
 	Skyplane()
 	{
+		brightness_log_factor = 1.0;
+		phase_factor = 0.75;
+		sun_distance =  256.0; 
+		light_epsilon = 0.0000001;
+
+		brightness_scale_factor = 1.0;
+		brightness_sum_factor = 0.0;
+
 	/*
 		for(int i=0; i<dim*dim; i++)
 		{
@@ -90,9 +107,9 @@ class Skyplane
 		//sun position
 
 		struct Vec3 s;
-		s.x = radius*sinf(stheta)*cosf(sphi);
-		s.y = radius*sinf(stheta)*sinf(sphi);
-		s.z = radius*cosf(stheta);
+		s.x = sun_distance*sinf(stheta)*cosf(sphi);
+		s.y = sun_distance*sinf(stheta)*sinf(sphi);
+		s.z = sun_distance*cosf(stheta);
 
 		s.z += plane_depth;
 
@@ -237,6 +254,32 @@ class Skyplane
 			}
 		}
 
+		if(print_max_light)
+			printf("max_light- %f \n", farray[sun_side][sun_j*dim+sun_i]);
+
+
+		float max_light = farray[sun_side][sun_j*dim+sun_i];
+
+		//float light_epsilon = 0.0000001
+		float _max_light = 1.0 / (max_light+light_epsilon);	 //need to scale factor, so it goes to limit
+
+		//return brightness_scale_factor*tmp + brightness_sum_factor);
+
+		for(int side=0; side<6; side++)
+		{
+			for(int i=0; i<dim; i++)
+			{
+				for(int j=0; j<dim; j++)
+				{
+					float light = farray[side][j*dim+i];
+					light *= _max_light;
+					light = brightness_scale_factor*light + brightness_sum_factor;
+
+					farray[side][j*dim+i]  = light;
+				}
+
+			}
+		}	
 /*
 		int m_side;
 		int m_i;
@@ -347,7 +390,7 @@ class Skyplane
 
 	}
 
-	static float phase(struct Vec3 v1, struct Vec3 v2)
+	float phase(struct Vec3 v1, struct Vec3 v2)
 	{
 /*
 		float t0 = vec3_cos2(v1,v2);
@@ -360,7 +403,7 @@ class Skyplane
 		}
 */
 		//GS_ASSERT(vec3_cos2(v1,v2) == vec3_cos2( vec3_normalize(v1),vec3_normalize(v2)) );
-		return 0.75*(1+vec3_cos2(v1,v2)); //*.75
+		return phase_factor*(1+vec3_cos2(v1,v2)); //*.75
 	}
 
 	//H 0 is the scale height, which is the height at which the atmosphere's average density is found.
@@ -375,7 +418,7 @@ class Skyplane
 	static const float damp = 0.50;
 	//static const float damp = 0.001;
 
-	static float out_scatter(const struct Vec3 &v1, const struct Vec3 &v2)
+	float out_scatter(const struct Vec3 &v1, const struct Vec3 &v2)
 	{
 		float _f = 1.0f / ((float) samples);
 		float _d = _f * vec3_distance(v1, v2);
@@ -408,14 +451,14 @@ class Skyplane
 		for(int i=0; i<samples; i++)
 			tmp += _d*(_r[i] + _r[i+1]) / ( 2.0f);
 
-		return damp*tmp;
+		return tmp;
 		//return 4*3.14159*tmp;
 
 
 	}
 
 	//start position, end position, sun position
-	static float in_scatter(const struct Vec3 &a, const struct Vec3 &b, const struct Vec3 &s)
+	float in_scatter(const struct Vec3 &a, const struct Vec3 &b, const struct Vec3 &s)
 	{
 		struct Vec3 c = a;
 
@@ -501,6 +544,7 @@ class Skyplane
 		//debug
 		tmp *= phase(bc, bs);
 		
+		//return brightness_scale_factor*(brightness_log_factor*log(tmp) + brightness_sum_factor);
 		return tmp;
 	}
 
@@ -566,10 +610,11 @@ class SkyboxRender
 
 	unsigned int texture_array[6];
 
+	int time_speed;
 	SkyboxRender()
 	{
 		time_count = 0;
-
+		time_speed = 1;
 
 
 		glEnable(GL_TEXTURE_2D);
@@ -601,8 +646,8 @@ class SkyboxRender
 	void increment_time()
 	{
 
-		const int tspeed = 1; //normally 1
-		time_count = (time_count+tspeed) % 6750;
+		//const int tspeed = 1; //normally 1
+		time_count = (time_count+time_speed) % 6750;
 
 
 	}
@@ -803,6 +848,8 @@ static class SkyboxRender* SR;
 static class ConfigFileLoader CFL;
 float test_float = 0.0f;
 
+int skybox_update_rate = 15;
+
 void init_rayleigh_scattering()
 {
 	class Skyplane S;
@@ -838,24 +885,35 @@ void init_rayleigh_scattering()
 	SR = new SkyboxRender;
 	//SR->update_skybox(); //wait for time to do this?
 
+	CFL.set_float("test", &test_float);
+	CFL.set_float("brightness_log_factor", &SR->sun.brightness_log_factor);
+	CFL.set_float("brightness_scale_factor", &SR->sun.brightness_scale_factor);
+	CFL.set_float("brightness_sum_factor", &SR->sun.brightness_sum_factor);
+	CFL.set_float("light_epsilon", &SR->sun.light_epsilon);
+	CFL.set_float("phase_factor", &SR->sun.phase_factor);
+
+	CFL.set_float("sun_distance", &SR->sun.sun_distance);
+	CFL.set_int("time_speed", &SR->time_speed);
+	CFL.set_int("skybox_update_rate", &skybox_update_rate);
+	CFL.set_int("print_max_light", &print_max_light);
 }
 
 
 void draw_rayleigh_scattering()
 {
-/*
-	CFL.set_float("test", &test_float);
+
+
 	CFL.load_file("./settings/skybox");
-	abort();
-*/
-	
+	//abort();
+
+
 	SR->increment_time();
 
 	SR->draw(current_camera_position.x, current_camera_position.y, current_camera_position.z);
 
 	static int update_count = 0;
 	update_count++;
-	if(update_count % 15 ==0 )
+	if(update_count % skybox_update_rate ==0 )
 		SR->update_skybox();
 
 }

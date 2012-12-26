@@ -105,8 +105,12 @@ class ConfigFileLoader
 					var_name, ret, value_float);
 					break;
 				}
-				*((float*)cva[index].ptr) = value_float;
-				printf("Set float: %s to %f \n", var_name, value_float);
+
+				if(*((float*)cva[index].ptr) != value_float)
+				{
+					*((float*)cva[index].ptr) = value_float;
+					printf("Set float: %s to %f \n", var_name, value_float);
+				}	
 				break;
 
 			case CONFIG_TYPE_INT:
@@ -118,8 +122,12 @@ class ConfigFileLoader
 					var_name, ret, value_int);
 					break;
 				}
-				*((float*)cva[index].ptr) = value_int;
-				printf("Set int: %s to %d \n", var_name, value_int);
+
+				if( *((int*)cva[index].ptr) != value_int)
+				{
+					*((int*)cva[index].ptr) = value_int;
+					printf("Set int: %s to %d \n", var_name, value_int);
+				}
 				break;
 			default:
 			printf("ConfigFileLoader ERROR: default wtf\n");
@@ -198,7 +206,7 @@ class ConfigFileLoader
 		cvn++;
 	}
 
-	void set_int(const char* var_name, float* var_loc)
+	void set_int(const char* var_name, int* var_loc)
 	{
 		name_creation_check(var_name);
 

@@ -1,1 +1,11 @@
 test = 50.0
+brightness_log_factor =   1.0
+brightness_scale_factor = 0.10
+brightness_sum_factor =   0.0
+light_epsilon = 0.000001
+phase_factor = 0.75
+
+sun_distance = 64.0
+time_speed = 5
+skybox_update_rate = 5
+print_max_light = 0
