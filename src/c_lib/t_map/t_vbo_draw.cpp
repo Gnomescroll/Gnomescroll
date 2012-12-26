@@ -306,16 +306,18 @@ void Vbo_map::draw_map()
 
     //glActiveTexture(GL_TEXTURE0);
 
+    glUseProgramObjectARB(map_shader.shader->shader);
+    
     glActiveTextureARB(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
-
+    glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
     //glActiveTexture(GL_TEXTURE0);
     //glEnable(GL_TEXTURE_3D);
 
-    glActiveTextureARB(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
+    //glActiveTextureARB(GL_TEXTURE1);
 
-    glUseProgramObjectARB(map_shader.shader->shader);
+
+
 
     glEnableVertexAttribArray(map_shader.InVertex);
     glEnableVertexAttribArray(map_shader.InTexCoord);
