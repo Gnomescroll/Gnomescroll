@@ -5,6 +5,7 @@ namespace Skybox
 
 void save_png(const char* filename, float* in, int xres, int yres);
 
+/*
 class ConfigFileLoader
 {
 	private:
@@ -200,6 +201,7 @@ class ConfigFileLoader
 		cvn++;
 	}
 };
+*/
 
 class Skyplane
 {

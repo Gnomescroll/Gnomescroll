@@ -72,6 +72,7 @@ bool c_lib_inited = false;
 #include <common/template/object_pool.hpp>
 #include <common/dat/name_map.hpp>
 
+
 /* configuration options */
 #include <options/option_macros.hpp>
 #include <options/argparse.cpp>
@@ -86,7 +87,7 @@ bool c_lib_inited = false;
 #include <common/common.cpp>
 #include <common/color.hpp>
 #include <common/files.cpp>
-
+#include <common/config_file.hpp>
 // logging
 #include <common/logger.cpp>
 
