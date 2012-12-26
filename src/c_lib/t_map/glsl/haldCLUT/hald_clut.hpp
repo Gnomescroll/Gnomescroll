@@ -219,6 +219,7 @@ int generate_clut_texture()
 	glGenTextures(1, &texture_id);
 
 	glEnable(GL_TEXTURE_3D);
+
 	glBindTexture(GL_TEXTURE_3D, texture_id);
 	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -236,6 +237,11 @@ int generate_clut_texture()
 	//p_glTexImage3DEXT(GL_TEXTURE_3D, 0, GL_RGB, x, y, z, 0, GL_RGB, GL_FLOAT, data);
 
 	glDisable(GL_TEXTURE_3D);
+
+	CHECK_GL_ERROR();
+
+	GS_ASSERT(texture_id != 0);
+
 	return texture_id;
 }
 

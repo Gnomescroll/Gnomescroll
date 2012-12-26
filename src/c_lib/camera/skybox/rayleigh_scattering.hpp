@@ -19,6 +19,9 @@ class Skyplane
 	static const float radius = 256.0; //sun distance from surface
 	static const float size = 128.0;	//skybox plane size
 
+	int sun_i, sun_j, sun_side; //used to find pixel for tracking sun
+	float sun_cos_max;
+
 	struct Vec3 vert[4];
 
 	Skyplane()
@@ -186,6 +189,11 @@ class Skyplane
 			s.x,s.y,s.z);
 	*/
 
+
+		//int sun_i, sun_j, sun_side; //used to find pixel for tracking sun
+		//float sun_cos_max;
+		sun_cos_max = -10.0;
+
 		const float camera_z = 64.0f;
 		struct Vec3 c = vec3_init(0.0, 0.0, camera_z);
 
@@ -208,6 +216,21 @@ class Skyplane
 					float light = update_point(c, b, s);
 					//float light = 0;
 					farray[side][j*dim+i] = light;
+
+					//debug stuff
+					struct Vec3 tb = vec3_normalize(vec3_sub(b, c));
+					struct Vec3 ts = vec3_normalize(vec3_sub(s, c));
+
+					float v = vec3_dot(tb, ts);
+
+					if(v > sun_cos_max)
+					{
+						sun_cos_max = v;
+						sun_side = side;
+						sun_i = i;
+						sun_j = j;
+					}
+
 
 					//printf("light: %i %i = %.2f \n", i,j,light);
 				}
@@ -450,7 +473,7 @@ class Skyplane
 		//for(int i=0; i<=samples; i++)
 		//	_r[i] = _t0[i]*expf( -_t1[i] -_t2[i] );
 		for(int i=0; i<=samples; i++)
-			_r[i] = expf( -1.0*(_t1[i] + _t2[i]) );
+			_r[i] = _t0[i]*expf( -1.0*(_t1[i] + _t2[i]) );
 
 /*
 		for(int i=0; i<=samples; i++)
@@ -477,7 +500,7 @@ class Skyplane
 			phase(b, s) );
 */
 		//debug
-		//tmp *= phase(bc, bs);
+		tmp *= phase(bc, bs);
 		
 		return tmp;
 	}
@@ -646,7 +669,7 @@ class SkyboxRender
 
 
 		CHECK_GL_ERROR();
-		
+
 		//printf("update \n");
 
 		//textures
