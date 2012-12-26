@@ -252,7 +252,7 @@ class AgentState _agent_tick(const struct AgentControlState& _cs, const struct A
         height = box.c_height;
     }
 
-    float z_gravity = (-3.0f + (as.z / 64)) * tr2; //player must never go higher than 192 blocks or they will start falling upwards. I tried more complicated formulas but they weren't as noticeable as this.
+    float z_gravity = -3.0f * tr2;
     #if DC_CLIENT
     if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
     #endif
