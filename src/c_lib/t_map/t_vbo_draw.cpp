@@ -359,6 +359,8 @@ void Vbo_map::draw_map()
     //int v_pruned = 0;
     #endif
 
+    CHECK_GL_ERROR();
+
     /*
         Draw
     */
@@ -371,8 +373,12 @@ void Vbo_map::draw_map()
         //glLoadMatrixf(modelview);
         //glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
 
-        GS_ASSERT(vbo->vbo_id != 0);
+        //GS_ASSERT(vbo->vbo_id != 0);
+        CHECK_GL_ERROR();
+
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
+
+        CHECK_GL_ERROR();
 
         glUniform4f(map_shader.InOffset, vbo->wxoff, vbo->wyoff, 0.0f, 0.0f);
 
@@ -382,6 +388,7 @@ void Vbo_map::draw_map()
         glVertexAttribPointer(map_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
         glVertexAttribPointer(map_shader.InLight, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)16);
 
+        CHECK_GL_ERROR();
         #if ADV_PRUNE
 
         int xi = draw_vbo_array[i].i;
@@ -403,6 +410,7 @@ void Vbo_map::draw_map()
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
         #endif
 
+        CHECK_GL_ERROR();
         //glPopMatrix();
         //glPushMatrix();
     }
