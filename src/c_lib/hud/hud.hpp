@@ -67,9 +67,10 @@ class Scoreboard
         Text* ids[PLAYERS_MAX];
         Text* names[PLAYERS_MAX];
 
-        void update();
-        void init();
-        void draw();
+    void update();
+    void init();
+    void draw_text();
+    void draw_badges();
 
     Scoreboard();
     ~Scoreboard();

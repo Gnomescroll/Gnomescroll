@@ -525,7 +525,7 @@ void draw_hud_text()
     if (!has_error())
     {
         if (hud_draw_settings.scoreboard)
-            hud->scoreboard->draw();
+            hud->scoreboard->draw_text();
 
         // everything after this is hidden when zoomed
         if (hud_draw_settings.zoom)
@@ -1110,6 +1110,11 @@ void Scoreboard::draw_text()
         ids[i]->draw();
         names[i]->draw();
     }
+}
+
+void Scoreboard::draw_badges()
+{
+    if (!this->inited) return;
 }
 
 Scoreboard::Scoreboard() :
