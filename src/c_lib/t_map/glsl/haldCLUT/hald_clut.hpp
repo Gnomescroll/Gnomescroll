@@ -183,9 +183,9 @@ void correction_deep_dark_color(float *color, float red, float green, float blue
 int generate_clut_texture()
 {
 
-	static unsigned int texture_id = 0;
-	if(texture_id != 0)
-		return texture_id;
+	static unsigned int _texture_id = 0;
+	if(_texture_id != 0)
+		return _texture_id;
 
 	//char *file_name = "custom_hald_clut.tga";
 	//int i;
@@ -216,10 +216,11 @@ int generate_clut_texture()
 	int h = level*level;
 	int d = level*level;
 
-	glGenTextures(1, &texture_id);
+	glGenTextures(1, &_texture_id);
 
 	glEnable(GL_TEXTURE_3D);
-	glBindTexture(GL_TEXTURE_3D, texture_id);
+
+	glBindTexture(GL_TEXTURE_3D, _texture_id);
 	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -236,6 +237,10 @@ int generate_clut_texture()
 	//p_glTexImage3DEXT(GL_TEXTURE_3D, 0, GL_RGB, x, y, z, 0, GL_RGB, GL_FLOAT, data);
 
 	glDisable(GL_TEXTURE_3D);
-	return texture_id;
+
+	CHECK_GL_ERROR();
+	GS_ASSERT(_texture_id != 0);
+
+	return _texture_id;
 }
 

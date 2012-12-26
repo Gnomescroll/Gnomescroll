@@ -21,8 +21,9 @@ varying vec3 inColor;
 
 varying float fogFragDepth;
 
+uniform sampler3D clut_texture;
 uniform sampler2DArray base_texture;
-uniform sampler3D clut;
+
 
 const float gamma_factor = 1.0f / 2.2f;
 const vec3 gamma_factor3 = vec3(gamma_factor);
@@ -61,7 +62,7 @@ void main()
 
     color = pow(color, gamma_factor3);
 
-    color = texture3D(clut, color.rgb); //clut correction
+    color = texture3D(clut_texture, color.rgb); //clut correction
 
     gl_FragColor.rgb = color;
 */
@@ -73,10 +74,14 @@ void main()
     const float clut_start = 64;
     const float _clut_depth = 1.0/32.0;
 
-    if(fogFragDepth > clut_start)
-    { 
-        vec3 color_clut = texture3D(clut, color.rgb).rgb; //clut correction
+    /*
+        Avoid non-uniform flow control in texture sampling
+        http://www.opengl.org/wiki/Sampler_(GLSL)
+    */
+    vec3 color_clut = texture3D(clut_texture, color.rgb).rgb; //clut correction
 
+    if(fogFragDepth > clut_start)
+    {
         float f = _clut_depth*(fogFragDepth - clut_start);
         f = clamp(f, 0.0f, 1.0f);
         color.rgb = mix(color, color_clut, f); 

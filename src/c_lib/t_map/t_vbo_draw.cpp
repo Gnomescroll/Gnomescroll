@@ -290,10 +290,13 @@ void Vbo_map::draw_map()
     sort_draw();
     prep_frustrum_vertices();
 
+
+
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
     glEnable(GL_CULL_FACE);
+    
     glDisable(GL_TEXTURE_2D);
 
     //glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -303,19 +306,49 @@ void Vbo_map::draw_map()
     glColor3ub(255,255,255);
 
 
-
     //glActiveTexture(GL_TEXTURE0);
+
+    //glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
+
+    //glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
+
+
+    //uniform sampler3D clut_texture;
+    //uniform sampler2DArray base_texture;
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
+    
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
+
+    GLint clut_texture = glGetUniformLocation(map_shader.shader->shader, "clut_texture");
+    GLint base_texture = glGetUniformLocation(map_shader.shader->shader, "base_texture");
+
+    GS_ASSERT(clut_texture != 0);
+    GS_ASSERT(base_texture != 0);
 
     glUseProgramObjectARB(map_shader.shader->shader);
 
+    //CHECK_GL_ERROR();
     //glActiveTextureARB(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
-    glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
+
+    glUniform1i(clut_texture, 1); //Texture unit 0 is for clut_texture
+    glUniform1i(base_texture, 2); //Texture unit 1 is for base_texture
+
+    //glEnable(GL_TEXTURE_2D);
+
+
+    //glActiveTexture(GL_TEXTURE1);
+    //glEnable(GL_TEXTURE_3D);
+
     //glActiveTexture(GL_TEXTURE0);
     //glEnable(GL_TEXTURE_3D);
 
     //glActiveTextureARB(GL_TEXTURE1);
 
+
+    //CHECK_GL_ERROR();
 
 
 
@@ -324,6 +357,8 @@ void Vbo_map::draw_map()
     glEnableVertexAttribArray(map_shader.InRGB);
     glEnableVertexAttribArray(map_shader.InLightMatrix);
     glEnableVertexAttribArray(map_shader.InLight);
+
+    //CHECK_GL_ERROR();
 
     class Map_vbo* vbo;
 
@@ -338,6 +373,7 @@ void Vbo_map::draw_map()
     //int v_pruned = 0;
     #endif
 
+
     /*
         Draw
     */
@@ -349,6 +385,8 @@ void Vbo_map::draw_map()
 
         //glLoadMatrixf(modelview);
         //glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
+
+        //GS_ASSERT(vbo->vbo_id != 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
@@ -398,16 +436,27 @@ void Vbo_map::draw_map()
 
     //printf("%d \n", map_shader.InLight);
 
+    //CHECK_GL_ERROR();
+    
     glUseProgramObjectARB(0);
 
+    //CHECK_GL_ERROR();
     //glEnable(GL_TEXTURE_2D);
 
     //;
     glDisable(GL_CULL_FACE);
 
-    //glActiveTexture(GL_TEXTURE0);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_3D, 0);
+
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+    glActiveTexture(GL_TEXTURE0);
+
     //glDisable(GL_TEXTURE_3D);
-    //glActiveTextureARB(GL_TEXTURE0);
+    //glDisable(GL_TEXTURE_2D);
 
 
     CHECK_GL_ERROR();
