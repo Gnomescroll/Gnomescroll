@@ -804,7 +804,7 @@ class SkyboxRender
 
 void init_rayleigh_scattering()
 {
-
+	return;
 
 	class Skyplane S;
 
@@ -843,6 +843,8 @@ void init_rayleigh_scattering()
 
 void draw_rayleigh_scattering()
 {
+	return;
+	
 	SR->increment_time();
 
 	SR->draw(current_camera_position.x, current_camera_position.y, current_camera_position.z);
