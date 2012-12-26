@@ -371,6 +371,7 @@ void Vbo_map::draw_map()
         //glLoadMatrixf(modelview);
         //glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
 
+        GS_ASSERT(vbo->vbo_id != 0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
         glUniform4f(map_shader.InOffset, vbo->wxoff, vbo->wyoff, 0.0f, 0.0f);
