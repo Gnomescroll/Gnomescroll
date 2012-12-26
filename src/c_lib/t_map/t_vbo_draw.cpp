@@ -309,12 +309,15 @@ void Vbo_map::draw_map()
 
     glUseProgramObjectARB(map_shader.shader->shader);
 
+    CHECK_GL_ERROR();
     //glActiveTextureARB(GL_TEXTURE0);
 
     glActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
 
+
+    CHECK_GL_ERROR();
 
     glActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_3D);
@@ -325,13 +328,15 @@ void Vbo_map::draw_map()
     //glActiveTextureARB(GL_TEXTURE1);
 
 
-
+    CHECK_GL_ERROR();
 
     glEnableVertexAttribArray(map_shader.InVertex);
     glEnableVertexAttribArray(map_shader.InTexCoord);
     glEnableVertexAttribArray(map_shader.InRGB);
     glEnableVertexAttribArray(map_shader.InLightMatrix);
     glEnableVertexAttribArray(map_shader.InLight);
+
+    CHECK_GL_ERROR();
 
     class Map_vbo* vbo;
 
@@ -397,7 +402,7 @@ void Vbo_map::draw_map()
 
     //glPopMatrix(); //restore matrix
 
-
+    CHECK_GL_ERROR();
     glDisableVertexAttribArray(map_shader.InVertex);
     glDisableVertexAttribArray(map_shader.InTexCoord);
     glDisableVertexAttribArray(map_shader.InRGB);
@@ -406,8 +411,11 @@ void Vbo_map::draw_map()
 
     //printf("%d \n", map_shader.InLight);
 
+    CHECK_GL_ERROR();
+    
     glUseProgramObjectARB(0);
 
+    CHECK_GL_ERROR();
     //glEnable(GL_TEXTURE_2D);
 
     //;
