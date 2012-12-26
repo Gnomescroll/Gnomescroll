@@ -350,7 +350,7 @@ class Skyplane
 
 	//function of wavelength
 
-	static const float damp = 0.100;
+	static const float damp = 0.50;
 	//static const float damp = 0.001;
 
 	static float out_scatter(const struct Vec3 &v1, const struct Vec3 &v2)
@@ -396,6 +396,9 @@ class Skyplane
 	static float in_scatter(const struct Vec3 &a, const struct Vec3 &b, const struct Vec3 &s)
 	{
 		struct Vec3 c = a;
+
+		struct Vec3 bc = vec3_sub(b,c);
+		struct Vec3 bs = vec3_sub(s,c);
 
 		//For each point P along the ray from Pa to Pb , 
 		//PPc is the ray from the point to the sun
@@ -474,7 +477,7 @@ class Skyplane
 			phase(b, s) );
 */
 		//debug
-		//tmp *= phase(v2, s);
+		//tmp *= phase(bc, bs);
 		
 		return tmp;
 	}
@@ -523,8 +526,8 @@ class Skyplane
 		struct Vec3 _b;
 		_b = vec3_scalar_mult(vec3_normalize(b), ATMOSPHERE_DEPTH);
 		
-		return sun_position(c,_b,s);
-		//return in_scatter(c, _b, s);
+		//return sun_position(c,_b,s);
+		return in_scatter(c, _b, s);
 
 	}
 
@@ -576,7 +579,7 @@ class SkyboxRender
 	void increment_time()
 	{
 
-		const int tspeed = 9; //normally 1
+		const int tspeed = 1; //normally 1
 		time_count = (time_count+tspeed) % 6750;
 
 
@@ -585,7 +588,8 @@ class SkyboxRender
 	void update_skybox()
 	{
 		float sun_theta = time_count / 6750.0; //day length
-		float sun_phi = time_count / 3000.0;
+		//float sun_phi = time_count / 3000.0;
+		float sun_phi = 0;
 		//sun.draw_sun(sun_theta, sun_phi, x,y,z);
 
 		sun.update(sun_theta, sun_phi); //update float array
@@ -759,7 +763,8 @@ class SkyboxRender
 
 
 		float sun_theta = time_count / 6750.0; //day length
-		float sun_phi = time_count / 3000.0;
+		//float sun_phi = time_count / 3000.0;
+		float sun_phi = 0;
 		sun.draw_sun(sun_theta, sun_phi, x,y,z);
 
 	//printf("draw\n");
