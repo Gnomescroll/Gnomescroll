@@ -30,11 +30,6 @@ class ItemAttribute* s = NULL;
 static int _current_item_index = 0;
 
 #if DC_CLIENT
-SpriteSheet item_texture_alias(const char* spritesheet_filename)
-{
-    return TextureSheetLoader::load_item_texture_sheet(spritesheet_filename);
-}
-
 static SpriteSheet _item_cube_iso_spritesheet_id = NULL_SPRITE_SHEET;
 #endif
 
@@ -53,7 +48,7 @@ bool item_def(ItemGroup group, const char* name)
     if (s == NULL)
     {
         GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id == -1);
-        _item_cube_iso_spritesheet_id = item_texture_alias("screenshot/fbo_test_16.png");
+        _item_cube_iso_spritesheet_id = TextureSheetLoader::item_texture_alias(SCREENSHOT_PATH "fbo_test_16.png");
     }
     #endif
 
@@ -216,7 +211,6 @@ void iso_block_sprite_def(const char* block_name)
 }
 
 #else
-SpriteSheet item_texture_alias(const char* spritesheet) { return (SpriteSheet)0; }
 void sprite_def(SpriteSheet spritesheet, int xpos, int ypos) {}
 void iso_block_sprite_def(const char* block_name) {}
 #endif

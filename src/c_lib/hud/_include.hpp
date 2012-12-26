@@ -11,3 +11,5 @@
 #include <hud/harvest_bar.hpp>
 
 #include <hud/_interface.cpp>
+
+#include <hud/badges.cpp>

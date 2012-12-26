@@ -404,6 +404,8 @@ int init_c_lib(int argc, char* argv[])
     t_mob::init();
     //CHECK_GL_ERROR();
 
+    Badges::register_badges();
+
     c_lib_inited = true;
 
     CHECK_GL_ERROR();

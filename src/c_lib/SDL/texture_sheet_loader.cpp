@@ -333,14 +333,17 @@ const Color* TextureSheetLoader::get_sprite_pixels(int sprite_id) const
 
 class TextureSheetLoader* cube_texture_sheet_loader = NULL;
 class TextureSheetLoader* item_texture_sheet_loader = NULL;
+class TextureSheetLoader* badge_texture_sheet_loader = NULL;
 
 void init()
 {
     GS_ASSERT(cube_texture_sheet_loader == NULL);
     GS_ASSERT(item_texture_sheet_loader == NULL);
+    GS_ASSERT(badge_texture_sheet_loader == NULL);
     cube_texture_sheet_loader = new TextureSheetLoader(32);        //pixel size for cube textures
     item_texture_sheet_loader = new TextureSheetLoader(16);
     item_texture_sheet_loader->mag_filter = GL_NEAREST;
+    badge_texture_sheet_loader = new TextureSheetLoader(16);
 }
 
 void init_item_texture()
@@ -357,8 +360,9 @@ void init_greyscale()
 
 void teardown()
 {
-    if (cube_texture_sheet_loader != NULL) delete cube_texture_sheet_loader;
-    if (item_texture_sheet_loader != NULL) delete item_texture_sheet_loader;
+    if (cube_texture_sheet_loader  != NULL) delete cube_texture_sheet_loader;
+    if (item_texture_sheet_loader  != NULL) delete item_texture_sheet_loader;
+    if (badge_texture_sheet_loader != NULL) delete badge_texture_sheet_loader;
 }
 
 SpriteSheet load_cube_texture_sheet(const char* filename)
@@ -376,8 +380,13 @@ void save_cube_texture()
     save_surface_to_png(cube_texture_sheet_loader->surface, SCREENSHOT_PATH "cubes.png");
 }
 
+SpriteSheet cube_texture_alias(const char* filename)
+{
+    return cube_texture_sheet_loader->load_texture(filename);
+}
+
 //Item API
-SpriteSheet load_item_texture_sheet(const char* filename)
+SpriteSheet item_texture_alias(const char* filename)
 {
     return item_texture_sheet_loader->load_texture(filename);
 }
@@ -394,14 +403,28 @@ int blit_item_texture(SpriteSheet sheet_id, int source_x, int source_y)
 
 void save_item_texture()
 {
-    GS_ASSERT(item_texture_sheet_loader->surface != NULL);
-    GS_ASSERT(item_texture_sheet_loader->greyscale_surface != NULL);
-    if (item_texture_sheet_loader->surface != NULL)
-        save_surface_to_png(item_texture_sheet_loader->surface,
-            SCREENSHOT_PATH "items.png");
-    if (item_texture_sheet_loader->greyscale_surface != NULL)
-        save_surface_to_png(item_texture_sheet_loader->greyscale_surface,
-            SCREENSHOT_PATH "greyscale_items.png");
+    IF_ASSERT(item_texture_sheet_loader->surface == NULL) return;
+    IF_ASSERT(item_texture_sheet_loader->greyscale_surface == NULL) return;
+
+    save_surface_to_png(item_texture_sheet_loader->surface,
+        SCREENSHOT_PATH "items.png");
+
+    save_surface_to_png(item_texture_sheet_loader->greyscale_surface,
+        SCREENSHOT_PATH "greyscale_items.png");
+}
+
+// badge api
+void save_badge_texture()
+{
+    IF_ASSERT(badge_texture_sheet_loader->surface == NULL) return;
+
+    save_surface_to_png(badge_texture_sheet_loader->surface,
+        SCREENSHOT_PATH "badges.png");
+}
+
+SpriteSheet badge_texture_alias(const char* filename)
+{
+    return badge_texture_sheet_loader->load_texture(filename);
 }
 
 void reload_texture_sheets()
@@ -412,6 +435,7 @@ void reload_texture_sheets()
     item_texture_sheet_loader->reload();
     Animations::load_sprite_voxelizer();
     t_map::reload_textures();
+    badge_texture_sheet_loader->reload();
 }
 
 }   // TextureSheetLoader

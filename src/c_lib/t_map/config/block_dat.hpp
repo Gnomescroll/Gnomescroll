@@ -1,6 +1,7 @@
 #pragma once
 
 #include <t_map/config/_interface.hpp>
+#include <SDL/texture_sheet_loader.hpp>
 
 namespace t_map
 {
@@ -76,15 +77,16 @@ void apply_block_dat_changes()
 
 void load_block_dat()
 {
-    SpriteSheet c0 = texture_alias("media/sprites/terrain/cell_00.png");
-    SpriteSheet c1 = texture_alias("media/sprites/terrain/cell_01.png");
-    SpriteSheet c2 = texture_alias("media/sprites/terrain/cell_02.png");
-    SpriteSheet c3 = texture_alias("media/sprites/terrain/cell_03.png");
-    //SpriteSheet c4 = texture_alias("media/sprites/terrain/cell_04.png");
-    //SpriteSheet c5 = texture_alias("media/sprites/terrain/cell_05.png");
-    SpriteSheet iceflame = texture_alias("media/sprites/terrain/iceflame_06.png");
-    SpriteSheet cc = texture_alias("media/sprites/terrain/corpusc.png");
-    SpriteSheet tgm = texture_alias("media/sprites/terrain/tgmtex.png");
+    using TextureSheetLoader::cube_texture_alias;
+    SpriteSheet c0 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_00.png");
+    SpriteSheet c1 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_01.png");
+    SpriteSheet c2 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_02.png");
+    SpriteSheet c3 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_03.png");
+    //SpriteSheet c4 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_04.png");
+    //SpriteSheet c5 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_05.png");
+    SpriteSheet iceflame = cube_texture_alias(MEDIA_PATH "sprites/terrain/iceflame_06.png");
+    SpriteSheet cc = cube_texture_alias(MEDIA_PATH "sprites/terrain/corpusc.png");
+    SpriteSheet tgm = cube_texture_alias(MEDIA_PATH "sprites/terrain/tgmtex.png");
 
     const int T = 0; //Top
     const int B = 1; //Bottom
@@ -177,9 +179,9 @@ void load_block_dat()
     set_max_damage(5);
 
     cube_def(SolidCube, "regolith", CUBE_MATERIAL_DIRT);
-	iso_texture(tgm, 3, 2); // when not the topmost regolith cube
-	push_texture();
-	iso_texture    (tgm, 2,2); // side with diff colored rim to match top
+    iso_texture(tgm, 3, 2); // when not the topmost regolith cube
+    push_texture();
+    iso_texture    (tgm, 2,2); // side with diff colored rim to match top
     side_texture(T, tgm, 1,2);
     side_texture(B, tgm, 3,2);
     push_texture();
@@ -355,7 +357,7 @@ void load_block_dat()
     push_texture();
     set_max_damage(RUINS_DMG);
 
-	cube_def(SolidCube, "ruins_ceiling2");
+    cube_def(SolidCube, "ruins_ceiling2");
     iso_texture(c1, 4,5);
     push_texture();
     set_max_damage(RUINS_DMG);

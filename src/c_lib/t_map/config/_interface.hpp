@@ -157,7 +157,6 @@ void side_texture(int side, int tex_id) {}
 void side_texture(int side, SpriteSheet sheet_id, int ypos, int xpos) {}
 
 int sprite_alias(SpriteSheet sheet_id, int ypos, int xpos) { return 0; }
-SpriteSheet texture_alias(const char* spritesheet) { return (SpriteSheet)0; }
 #endif
 
 #if DC_CLIENT
@@ -325,11 +324,6 @@ void hud_def(SpriteSheet sheet_id, int ypos, int xpos)
     }
 
     HudCubeSelector::set_cube_hud(p->id, tex_id);
-}
-
-SpriteSheet texture_alias(const char* spritesheet) 
-{ 
-    return TextureSheetLoader::load_cube_texture_sheet(spritesheet); 
 }
 
 int sprite_alias(SpriteSheet sheet_id, int ypos, int xpos)

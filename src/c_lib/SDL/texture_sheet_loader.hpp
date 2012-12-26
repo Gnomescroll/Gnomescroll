@@ -1,8 +1,6 @@
 #pragma once
 
-#if DC_SERVER
-dont_include_this_file_in_server
-#endif
+#if DC_CLIENT
 
 #include <common/color.hpp>
 #include <SDL/constants.hpp>
@@ -64,6 +62,8 @@ class TextureSheetLoader
         void reload();
         void generate_texture();
 
+        void save_texture(const char* filename);
+
         const Color* get_sprite_pixels(int sprite_id) const;
 
     explicit TextureSheetLoader(size_t tile_size);
@@ -72,6 +72,7 @@ class TextureSheetLoader
 
 extern class TextureSheetLoader* cube_texture_sheet_loader;
 extern class TextureSheetLoader* item_texture_sheet_loader;
+extern class TextureSheetLoader* badge_texture_sheet_loader;
 
 void init();
 void init_greyscale();
@@ -83,13 +84,38 @@ void teardown();
 SpriteSheet load_cube_texture_sheet(const char* filename);
 int blit_cube_texture(SpriteSheet sheet_id, int source_x, int source_y);
 void save_cube_texture();
+SpriteSheet cube_texture_alias(const char* filename);
 
 //item texture sheet api
-SpriteSheet load_item_texture_sheet(const char* filename);
-SpriteSheet load_item_texture_sheet(struct SDL_Surface* surface);
+SpriteSheet item_texture_alias(const char* filename);
 int blit_item_texture(SpriteSheet sheet_id, int source_x, int source_y);
 void save_item_texture();
+
+// badge api
+void save_badge_texture();
+SpriteSheet badge_texture_alias(const char* filename);
 
 void reload_texture_sheets();
 
 }   // TextureSheetLoader
+
+#endif
+
+#if DC_SERVER
+namespace TextureSheetLoader
+{
+
+// This is allowed for the server, so the dat configs can be shared between
+// client and server
+
+SpriteSheet _texture_alias(const char* spritesheet_filename)
+{
+    return (SpriteSheet)0;
+}
+
+#define cube_texture_alias _texture_alias
+#define item_texture_alias _texture_alias
+#define badge_texture_alias _texture_alias
+
+}   // TextureSheetLoader
+#endif
