@@ -137,7 +137,6 @@ class ConfigFileLoader
 
 	void load_file(const char* filename)
 	{
-
 		size_t buffer_size;
 		char* buffer = read_file_to_buffer(filename, &buffer_size);	
 
