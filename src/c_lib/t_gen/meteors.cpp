@@ -209,7 +209,6 @@ void meteor_shower()
     }
     for(int count = 1; count <= AMOUNT; count++)
     {
-        printf("Creating meteor from meteor shower at %d, %d \n", x, y);
         x = randrange(1, t_map::map_dim.x - 1);
         y = randrange(1, t_map::map_dim.y - 1);
         z = t_map::map_dim.z - 1;
