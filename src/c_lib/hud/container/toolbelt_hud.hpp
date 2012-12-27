@@ -178,8 +178,12 @@ void AgentToolbeltUI::draw()
         {
             int max_durability = Item::get_max_durability(slot_types[slot]);
             ratio = ((float)durability)/((float)max_durability);
-            Hud::set_color_from_ratio(ratio, alpha);
-            Hud::meter_graphic.draw(x, y, w, w, ratio);
+
+			int mh = slot_size / 8; // meter height
+			glColor4ub(255, 0, 0, alpha);               // red
+            Hud::meter_graphic.draw(x, y, w, mh, 1.0f); // full slot width background
+            Hud::set_color_from_ratio(ratio, 255);
+            Hud::meter_graphic.draw(x, y, w, mh, ratio); 
         }
     }
 
