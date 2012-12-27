@@ -126,6 +126,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
     if OS != 'Windows':
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
 
+    warning_sound_flag = '-DENABLE_WARNING_SOUND=1'
     if OS == 'Linux':
         warning_sound_flag = '-DENABLE_WARNING_SOUND=0'
 
