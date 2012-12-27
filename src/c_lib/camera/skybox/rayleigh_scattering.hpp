@@ -38,6 +38,43 @@ static const float _u[6*3] =
 	 0, 0, 1
 };
 
+class SkyplaneSettings
+{
+	public:
+
+	float brightness_log_factor;
+	float phase_factor;
+	float sun_distance;  				//sun distance from surface
+	float light_epsilon;
+
+	float brightness_scale_factor;
+	float brightness_sum_factor;
+
+	float H0;
+	float skybox_height;
+	float camera_z;
+
+	float plane_size;	//size of skybox box
+
+	SkyplaneSettings()
+	{
+		brightness_log_factor = 1.0;
+		phase_factor = 0.75;
+		sun_distance =  256.0; 
+		light_epsilon = 0.0000001;
+
+		brightness_scale_factor = 1.0;
+		brightness_sum_factor = 0.0;
+
+		H0 = 0.25f;			 	//percent of skybox where atomosphere hits 25%
+		skybox_height = 128.0;	//skybox height
+		camera_z = 64.0f;
+
+		plane_size = 128.0;
+	}
+};
+
+
 class Skyplane
 {
 
@@ -79,18 +116,25 @@ class Skyplane
 		camera_z = 64.0f;
 
 		plane_size = 128.0;
-
-	/*
-		for(int i=0; i<dim*dim; i++)
-		{
-			color[4*i+0] = 255;
-			color[4*i+1] = 255;
-			color[4*i+2] = 255;
-			color[4*i+3] = 255;
-		}
-	*/
 	}
 
+
+	void load_settings(class SkyplaneSettings &s)
+	{
+		brightness_log_factor = s.brightness_log_factor;
+		phase_factor = 			s.phase_factor;
+		sun_distance =  		s.sun_distance;
+		light_epsilon = 		s.light_epsilon;
+
+		brightness_scale_factor =	s.brightness_scale_factor;
+		brightness_sum_factor = 	s.brightness_sum_factor;
+
+		H0 = 			s.H0;
+		skybox_height = s.skybox_height;
+		camera_z = 		s.camera_z;
+
+		plane_size = s.plane_size;
+	}
 
 	float farray[6][dim*dim]; //intensity array
 
@@ -720,7 +764,7 @@ class SkyboxRender
 	}
 };
 
-
+static class SkyplaneSettings SPS; //default sun setting
 static class SkyboxRender* SR;
 static class ConfigFileLoader CFL;
 float test_float = 0.0f;
@@ -763,18 +807,19 @@ void init_rayleigh_scattering()
 	//SR->update_skybox(); //wait for time to do this?
 
 	CFL.set_float("test", &test_float);
-	CFL.set_float("brightness_log_factor", &SR->sun.brightness_log_factor);
-	CFL.set_float("brightness_scale_factor", &SR->sun.brightness_scale_factor);
-	CFL.set_float("brightness_sum_factor", &SR->sun.brightness_sum_factor);
-	CFL.set_float("light_epsilon", &SR->sun.light_epsilon);
-	CFL.set_float("phase_factor", &SR->sun.phase_factor);
+	CFL.set_float("brightness_log_factor", &SPS.brightness_log_factor);
+	CFL.set_float("brightness_scale_factor", &SPS.brightness_scale_factor);
+	CFL.set_float("brightness_sum_factor", &SPS.brightness_sum_factor);
+	CFL.set_float("light_epsilon", &SPS.light_epsilon);
+	CFL.set_float("phase_factor", &SPS.phase_factor);
 
-	CFL.set_float("H0", &SR->sun.H0);
-	CFL.set_float("skybox_height", &SR->sun.skybox_height);
-	CFL.set_float("camera_z", &SR->sun.camera_z);
+	CFL.set_float("H0", &SPS.H0);
+	CFL.set_float("skybox_height", &SPS.skybox_height);
+	CFL.set_float("camera_z", &SPS.camera_z);
 
-	CFL.set_float("sun_distance", &SR->sun.sun_distance);
+	CFL.set_float("sun_distance", &SPS.sun_distance);
 	CFL.set_int("time_speed", &SR->time_speed);
+
 	CFL.set_int("skybox_update_rate", &skybox_update_rate);
 	CFL.set_int("print_max_light", &print_max_light);
 }
@@ -795,8 +840,10 @@ void draw_rayleigh_scattering()
 	static int update_count = 0;
 	update_count++;
 	if(update_count % skybox_update_rate ==0 )
+	{
+		SR->sun.load_settings(SPS);
 		SR->update_skybox();
-
+	}
 }
 
 /*
