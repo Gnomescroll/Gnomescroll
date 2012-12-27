@@ -29,6 +29,7 @@ class Skyplane
 
 	float H0;
 	float skybox_height;
+	float camera_z;
 
 	float plane_size;	//size of skybox box
 
@@ -44,6 +45,7 @@ class Skyplane
 
 		H0 = 0.25f;			 	//percent of skybox where atomosphere hits 25%
 		skybox_height = 128.0;	//skybox height
+		camera_z = 64.0f;
 
 		plane_size = 128.0;
 
@@ -110,16 +112,8 @@ class Skyplane
 		s.x = sun_distance*sinf(stheta)*cosf(sphi);
 		s.y = sun_distance*sinf(stheta)*sinf(sphi);
 		s.z = sun_distance*cosf(stheta);
-
+ 
 		s.z += plane_depth;
-
-		//point position
-		//struct Vec3 u = vec3_init(0.0, 0.0, 1.0); 	//up
-		//struct Vec3 r = vec3_init(0.0, 1.0, 0.0);	//right
-
-		//center of plane
-
-		//struct Vec3 f[6];
 
 		const float _f[6*3] =
 		{
@@ -193,7 +187,6 @@ class Skyplane
 		//float sun_cos_max;
 		sun_cos_max = -10.0;
 
-		const float camera_z = 64.0f;
 		struct Vec3 c = vec3_init(0.0, 0.0, camera_z);
 
 		const float _dfp = _df*plane_size; //for speed
@@ -807,6 +800,7 @@ void init_rayleigh_scattering()
 
 	CFL.set_float("H0", &SR->sun.H0);
 	CFL.set_float("skybox_height", &SR->sun.skybox_height);
+	CFL.set_float("camera_z", &SR->sun.camera_z);
 
 	CFL.set_float("sun_distance", &SR->sun.sun_distance);
 	CFL.set_int("time_speed", &SR->time_speed);
