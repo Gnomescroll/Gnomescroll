@@ -6,11 +6,11 @@ brightness_sum_factor =   0.0
 light_epsilon = 0.000001
 phase_factor = 0.75
 
-H0 = 0.25
+H0 = 0.15
 skybox_height = 128.0
 camera_z = 64.0
 
 sun_distance = 128.0
-time_speed = 15
+time_speed = 5
 skybox_update_rate = 15
 print_max_light = 0
