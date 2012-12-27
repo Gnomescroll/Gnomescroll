@@ -290,7 +290,7 @@ class Skyplane
 	*/
 	}
 
-	float phase(struct Vec3 v1, struct Vec3 v2)
+	inline float phase(const struct Vec3 &v1, const struct Vec3 &v2)
 	{
 /*
 		float t0 = vec3_cos2(v1,v2);

@@ -170,7 +170,7 @@ class ConfigFileLoader
 
 			for(int i=0; i<1024; i++) 
 				tmp_str[i] = 0x00;
-			mempcpy(tmp_str, buffer+offset, marker - offset);
+			memcpy(tmp_str, buffer+offset, marker - offset);
 			tmp_str[marker - offset] = 0x00;
 			process_line(tmp_str);
 
