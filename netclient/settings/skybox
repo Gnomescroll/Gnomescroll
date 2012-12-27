@@ -1,11 +1,15 @@
 test = 50.0
+
 brightness_log_factor =   1.0
 brightness_scale_factor = 0.10
 brightness_sum_factor =   0.0
 light_epsilon = 0.000001
 phase_factor = 0.75
 
-sun_distance = 64.0
-time_speed = 5
+H0 = 0.25
+skybox_height = 128.0
+
+sun_distance = 256.0
+time_speed = 15
 skybox_update_rate = 15
 print_max_light = 0
