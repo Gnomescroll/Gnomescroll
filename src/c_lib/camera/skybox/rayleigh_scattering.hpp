@@ -7,6 +7,37 @@ namespace Skybox
 
 int print_max_light = 0 ;
 
+//cube orientation vectors
+static const float _f[6*3] =
+{
+	 0, 0, 1, //top
+	 0, 0,-1,
+	 1, 0, 0, //north
+	-1, 0, 0,
+	 0, 1, 0, //west
+	 0,-1, 0
+};
+
+static const float _r[6*3] =
+{
+	 0,-1, 0, //top
+	 0,-1, 0,
+	 0, -1,0, //north
+	 0, 1, 0,
+	 1, 0, 0, //west
+	 -1, 0, 0
+};
+
+static const float _u[6*3] =
+{
+	-1, 0, 0, //top
+	 1, 0, 0,
+	 0, 0,1, //north
+	 0, 0, 1,
+	 0, 0, 1, //west
+	 0, 0, 1
+};
+
 class Skyplane
 {
 
@@ -114,36 +145,6 @@ class Skyplane
 		s.z = sun_distance*cosf(stheta);
  
 		s.z += plane_depth;
-
-		const float _f[6*3] =
-		{
-			 0, 0, 1, //top
-			 0, 0,-1,
-			 1, 0, 0, //north
-			-1, 0, 0,
-			 0, 1, 0, //west
-			 0,-1, 0
-		};
-
-		const float _r[6*3] =
-		{
-			 0,-1, 0, //top
-			 0,-1, 0,
-			 0, -1,0, //north
-			 0, 1, 0,
-			 1, 0, 0, //west
-			 -1, 0, 0
-		};
-
-		const float _u[6*3] =
-		{
-			-1, 0, 0, //top
-			 1, 0, 0,
-			 0, 0,1, //north
-			 0, 0, 1,
-			 0, 0, 1, //west
-			 0, 0, 1
-		};
 
 		struct Vec3 f[6];
 		struct Vec3 r[6];
@@ -633,36 +634,6 @@ class SkyboxRender
 		x = 256;
 		y = 256;
 		z = 128;
-
-		const float _f[6*3] =
-		{
-			 0, 0, 1, //top
-			 0, 0,-1,
-			 1, 0, 0, //north
-			-1, 0, 0,
-			 0, 1, 0, //west
-			 0,-1, 0
-		};
-
-		const float _r[6*3] =
-		{
-			 0,-1, 0, //top
-			 0,-1, 0,
-			 0, -1,0, //north
-			 0, 1, 0,
-			 1, 0, 0, //west
-			 -1, 0, 0
-		};
-
-		const float _u[6*3] =
-		{
-			-1, 0, 0, //top
-			 1, 0, 0,
-			 0, 0,1, //north
-			 0, 0, 1,
-			 0, 0, 1, //west
-			 0, 0, 1
-		};
 
 		struct Vec3 f[6];
 		struct Vec3 r[6];
