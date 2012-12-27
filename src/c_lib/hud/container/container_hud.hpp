@@ -72,10 +72,10 @@ class AgentInventoryUI : public UIElement
     }
 };
 
-    const float AgentInventoryUI::border = 0;       // border around entire panel
-    const float AgentInventoryUI::inc1 = 5; // spacing between slot icons
-    const float AgentInventoryUI::inc2 = 2;  // border around a slot icon
-    const float AgentInventoryUI::slot_size = 32;    // pixel dimension
+const float AgentInventoryUI::border = 0;       // border around entire panel
+const float AgentInventoryUI::inc1 = 5; // spacing between slot icons
+const float AgentInventoryUI::inc2 = 2;  // border around a slot icon
+const float AgentInventoryUI::slot_size = 32;    // pixel dimension
 
 int AgentInventoryUI::get_slot_at(int px, int py)
 {

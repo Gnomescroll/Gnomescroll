@@ -118,23 +118,23 @@ class CraftingUI : public UIElement
     }
 };
 
-    // size of render area (texture + clickable area (will render highlights there still)
-    const float CraftingUI::render_width = CraftingUI::cell_size * CraftingUI::xdim;
-    const float CraftingUI::render_height = CraftingUI::cell_size * CraftingUI::ydim;
+// size of render area (texture + clickable area (will render highlights there still)
+const float CraftingUI::render_width = CraftingUI::cell_size * CraftingUI::xdim;
+const float CraftingUI::render_height = CraftingUI::cell_size * CraftingUI::ydim;
 
-    // texture area
-    const float CraftingUI::texture_width = CraftingUI::cell_size * 6;
-    const float CraftingUI::texture_height = CraftingUI::cell_size;
+// texture area
+const float CraftingUI::texture_width = CraftingUI::cell_size * 6;
+const float CraftingUI::texture_height = CraftingUI::cell_size;
 
-    const float CraftingUI::slot_size = 32;
-    const float CraftingUI::cell_offset_x = 3;
-    const float CraftingUI::cell_offset_y = 3;
-    const float CraftingUI::cell_offset_x_right = 2;
-    const float CraftingUI::cell_offset_y_bottom = 2;
-    const float CraftingUI::input_offset_x = 0;
-    const float CraftingUI::input_offset_y = 0;
-    const float CraftingUI::output_offset_x = CraftingUI::cell_size * (CraftingUI::input_xdim + CraftingUI::input_output_gap);
-    const float CraftingUI::output_offset_y = 0;
+const float CraftingUI::slot_size = 32;
+const float CraftingUI::cell_offset_x = 3;
+const float CraftingUI::cell_offset_y = 3;
+const float CraftingUI::cell_offset_x_right = 2;
+const float CraftingUI::cell_offset_y_bottom = 2;
+const float CraftingUI::input_offset_x = 0;
+const float CraftingUI::input_offset_y = 0;
+const float CraftingUI::output_offset_x = CraftingUI::cell_size * (CraftingUI::input_xdim + CraftingUI::input_output_gap);
+const float CraftingUI::output_offset_y = 0;
 
 int CraftingUI::get_grid_at(int px, int py)
 {  
