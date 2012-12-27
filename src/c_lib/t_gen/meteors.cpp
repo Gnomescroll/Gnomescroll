@@ -133,9 +133,9 @@ void meteor_fall(void)
     for (int count=0; count < displacement; count++)
     {
         zcurrent=randrange(z + METEOR_SIZE, z + METEOR_SIZE * 3);
-        xcurrent=randrange(x - zcurrent + METEOR_SIZE / 2, x + zcurrent + METEOR_SIZE / 2);
+        xcurrent=randrange(x - zcurrent + z + METEOR_SIZE / 2, x + zcurrent - z + METEOR_SIZE / 2);
         xcurrent=translate_point(xcurrent);
-        ycurrent=randrange(y - zcurrent + METEOR_SIZE / 2, y + zcurrent + METEOR_SIZE / 2);
+        ycurrent=randrange(y - zcurrent + z + METEOR_SIZE / 2, y + zcurrent - z + METEOR_SIZE / 2);
         ycurrent=translate_point(ycurrent);
         if (randrange(1, 5) == 1) t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         else t_map::set(xcurrent, ycurrent, zcurrent, rock); //lots of impurities here because the crater is mainly made out of stuff that the meteor pushed away from itself
@@ -209,7 +209,6 @@ void meteor_shower()
     }
     for(int count = 1; count <= AMOUNT; count++)
     {
-        printf("Creating meteor from meteor shower at %d, %d \n", x, y);
         x = randrange(1, t_map::map_dim.x - 1);
         y = randrange(1, t_map::map_dim.y - 1);
         z = t_map::map_dim.z - 1;
