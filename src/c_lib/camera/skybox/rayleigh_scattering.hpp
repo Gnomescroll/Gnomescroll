@@ -19,8 +19,6 @@ class Skyplane
 	int sun_i, sun_j, sun_side; //used to find pixel for tracking sun
 	float sun_cos_max;
 
-	struct Vec3 vert[4];
-
 	float brightness_log_factor;
 	float phase_factor;
 	float sun_distance;  				//sun distance from surface
@@ -58,11 +56,6 @@ class Skyplane
 			color[4*i+3] = 255;
 		}
 	*/
-		//vertices of the quad
-		vert[0] = vec3_init(-1.0, 0.0, 1.0);
-		vert[1] = vec3_init(-1.0, 0.0, -1.0);
-		vert[2] = vec3_init(-1.0, 0.0, 1.0);
-		vert[3] = vec3_init(1.0, 0.0, 1.0);
 	}
 
 
