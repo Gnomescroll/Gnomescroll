@@ -8,6 +8,7 @@ namespace Skybox
 int print_max_light = 0 ;
 unsigned char sun_color[4];
 
+float sun_w[4];	//wavelenght_factor for each channel
 float sun_g[4];	//g factor for each channels
 float sun_h[4];//h0, scale height for each channel
 float sun_b[4];//brightness for each channel
@@ -743,8 +744,7 @@ class SkyboxRender
 	public:
 	int time_count;
 
-	class Skyplane sun;		//Rayleigh scattering channel
-
+	class Skyplane sun0;		//Rayleigh scattering channel
 	class Skyplane sunR;	//Mie aerosol scattering channel
 	class Skyplane sunG;
 	class Skyplane sunB;
@@ -776,7 +776,7 @@ class SkyboxRender
 
 	    for(int i=0; i<6; i++)
 	    {
-			sun_rgba[i] = new unsigned char[sun.dim*sun.dim*6];
+			sun_rgba[i] = new unsigned char[sun0.dim*sun0.dim*6];
 		}
 	}
 
@@ -815,9 +815,37 @@ class SkyboxRender
 		float sun_theta = time_count / 6750.0; //day length
 		//float sun_phi = time_count / 3000.0;
 		float sun_phi = 0;
-		//sun.draw_sun(sun_theta, sun_phi, x,y,z);
+		//sun0.draw_sun(sun_theta, sun_phi, x,y,z);
 
-		sun.update(sun_theta, sun_phi); //update float array
+
+
+	//float sun_w[4];	//wavelenght_factor for each channel
+	//float sun_g[4];	//g factor for each channels
+	//float sun_h[4];//h0, scale height for each channel
+	//float sun_b[4];//brightness for each channel
+
+		sun0.phase_g_factor = sun_g[0];
+		sunR.phase_g_factor = sun_g[1];
+		sunG.phase_g_factor = sun_g[2];
+		sunB.phase_g_factor = sun_g[3];
+
+		sun0.H0 = sun_h[0];
+		sunR.H0 = sun_h[1];
+		sunG.H0 = sun_h[2];
+		sunB.H0 = sun_h[3];
+
+		sun0.wavelenght_factor = sun_w[0];
+		sunR.wavelenght_factor = sun_w[1];
+		sunG.wavelenght_factor = sun_w[2];
+		sunB.wavelenght_factor = sun_w[3];
+
+	float wavelenght_factor;
+
+		sun0.update(sun_theta, sun_phi); //update float array
+		sunR.update(sun_theta, sun_phi); //update float array
+		sunG.update(sun_theta, sun_phi); //update float array
+		sunB.update(sun_theta, sun_phi); //update float array
+
 
 		//set gamma_correction array
 
@@ -832,15 +860,16 @@ class SkyboxRender
 	    float g_color = sun_color[1];
 	    float b_color = sun_color[2];
 	    //load RGB from array
+		const int dim = sun0.dim;
+
 		for(int side = 0; side<6; side++)
 		{
-			const int dim = sun.dim;
-			const float* farray = sun.farray[side];
+			const float* farray = sun0.farray[side];
 
-			for(int i=0; i<sun.dim; i++)
-			for(int j=0; j<sun.dim; j++)
+			for(int i=0; i<sun0.dim; i++)
+			for(int j=0; j<sun0.dim; j++)
 			{
-				float _v = farray[j*sun.dim+i];
+				float _v = farray[j*sun0.dim+i];
 
 
 				sun_rgba[side][4*(i+j*dim)+0] = gamma_correct(_v, r_color);
@@ -856,11 +885,11 @@ class SkyboxRender
 
 			}
 
-		    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun.dim, sun.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+		    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun0.dim, sun0.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
 		}
 
-		//sun.sun_i, sun.sun_j, sun.sun_side
-		sun_rgba[sun.sun_side][4*(sun.sun_i+sun.sun_j*sun.dim)+1] = 255;
+		//sun0.sun_i, sun0.sun_j, sun0.sun_side
+		sun_rgba[sun0.sun_side][4*(sun0.sun_i+sun0.sun_j*sun0.dim)+1] = 255;
 
 
 		glEnable(GL_TEXTURE_2D);
@@ -868,7 +897,7 @@ class SkyboxRender
 		for(int side = 0; side<6; side++)
 		{
 			glBindTexture(GL_TEXTURE_2D, texture_array[side]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun.dim, sun.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, sun_rgba[side] );
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun0.dim, sun0.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, sun_rgba[side] );
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -907,7 +936,7 @@ class SkyboxRender
 
 		for(int i=0;i<6;i++)
 		{
-			const float plane_depth = sun.plane_size*0.5;
+			const float plane_depth = sun0.plane_size*0.5;
 			center[i] = vec3_scalar_mult(f[i], plane_depth);
 			center[i].z += plane_depth;
 
@@ -922,13 +951,13 @@ class SkyboxRender
 		for(int i=0; i<6; i++)
 		{
 			struct Vec3 rv, uv, lv, dv;
-			//f = vec3_scalar_mult(_f[i], sun.plane_size/2.0);
-			rv = vec3_scalar_mult(r[i], sun.plane_size*0.5); 	//right
-			uv = vec3_scalar_mult(u[i], sun.plane_size*0.5);	//up
+			//f = vec3_scalar_mult(_f[i], sun0.plane_size/2.0);
+			rv = vec3_scalar_mult(r[i], sun0.plane_size*0.5); 	//right
+			uv = vec3_scalar_mult(u[i], sun0.plane_size*0.5);	//up
 
-			//nf = vec3_scalar_mult(_f[i], -sun.plane_size/2.0);
-			lv = vec3_scalar_mult(r[i], -1.0*sun.plane_size*0.5);	//left
-			dv = vec3_scalar_mult(u[i], -1.0*sun.plane_size*0.5);	//down
+			//nf = vec3_scalar_mult(_f[i], -sun0.plane_size/2.0);
+			lv = vec3_scalar_mult(r[i], -1.0*sun0.plane_size*0.5);	//left
+			dv = vec3_scalar_mult(u[i], -1.0*sun0.plane_size*0.5);	//down
 
 			struct Vec3 ul,bl,br,ur; 
 			ul = vec3_add3(center[i], uv, lv);
@@ -968,7 +997,7 @@ class SkyboxRender
 		float sun_theta = time_count / 6750.0; //day length
 		//float sun_phi = time_count / 3000.0;
 		float sun_phi = 0;
-		sun.draw_sun(sun_theta, sun_phi, x,y,z);
+		sun0.draw_sun(sun_theta, sun_phi, x,y,z);
 
 		CHECK_GL_ERROR();
 
@@ -1003,6 +1032,11 @@ void init_rayleigh_scattering()
 	CFL.set_float("wavelenght_factor", &SPS.wavelenght_factor);
 	CFL.set_float("phase_g_factor", &SPS.phase_g_factor);
 	CFL.set_color("color", (char*) sun_color);
+
+	CFL.set_float("sun_w0", &sun_w[0]);
+	CFL.set_float("sun_wR", &sun_w[1]);
+	CFL.set_float("sun_wG", &sun_w[2]);
+	CFL.set_float("sun_wB", &sun_w[3]);
 
 	CFL.set_float("sun_g0", &sun_g[0]);
 	CFL.set_float("sun_gR", &sun_g[1]);
@@ -1081,7 +1115,7 @@ void draw_rayleigh_scattering()
 	update_count++;
 	if(update_count % skybox_update_rate ==0 )
 	{
-		SR->sun.load_settings(SPS);
+		SR->sun0.load_settings(SPS);
 		SR->update_skybox();
 	}
 }
