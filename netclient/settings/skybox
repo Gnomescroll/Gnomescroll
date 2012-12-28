@@ -5,12 +5,16 @@ sun_distance = 1024.0
 
 phase_factor = 0.25
 phase_g_factor = 0.00		
-color = 253 0 0 000
+color = 127 64 0 000
+
+sun_g0 = 0.00
+sun_gR = 0.00
+sun_gB = 0.00
+sun_gG = 0.00
 
 brightness_scale_factor = 0.10
-brightness_sum_factor =   0.0
+brightness_sum_factor =   0.00
 light_epsilon = 0.0000001
-
 
 H0 = 0.15
 skybox_height = 128.0
