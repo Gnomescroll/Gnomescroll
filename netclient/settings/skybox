@@ -3,7 +3,7 @@ planet_radius = 128.0
 atomosphere_depth = 256.0
 sun_distance = 1024.0
 
-phase_factor = 0.25
+wavelenght_factor = 1.00
 phase_g_factor = 0.00		
 color = 127 64 0 000
 
