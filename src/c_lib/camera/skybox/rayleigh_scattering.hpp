@@ -6,6 +6,7 @@ namespace Skybox
 {
 
 int print_max_light = 0 ;
+char sun_color[4];
 
 //cube orientation vectors
 static const float _f[6*3] =
@@ -831,6 +832,25 @@ class SkyboxRender
 
 	}
 
+	unsigned char gamma_correction[256];
+
+	unsigned char gamma_correct(float _v)
+	{
+		if( _v < 0.0) _v = 0.0f;
+		if( _v > 1.0) _v = 1.0f;
+		unsigned char v = ((int) 255.0f*_v );
+		return (unsigned char) gamma_correction[v];
+	}
+
+	//modifer is 0 to 255
+	unsigned char gamma_correct(float _v, float modifier)
+	{
+		if( _v < 0.0) _v = 0.0f;
+		if( _v > 1.0) _v = 1.0f;
+		unsigned char v = ((int) modifier*_v );
+		return (unsigned char) gamma_correction[v];
+	}
+
 	void update_skybox()
 	{
 		float sun_theta = time_count / 6750.0; //day length
@@ -840,8 +860,8 @@ class SkyboxRender
 
 		sun.update(sun_theta, sun_phi); //update float array
 
-		//gamma
-	    static unsigned char gamma_correction[256];
+		//set gamma_correction array
+
 	    for(int i=0; i < 256; i++)
 	    {
 	        float intensity = ((float) i) / 255;
@@ -849,6 +869,9 @@ class SkyboxRender
 	        gamma_correction[i] = (unsigned char)((int) intensity);
 	    }
 
+	    float r_color = sun_color[0];
+	    float g_color = sun_color[1];
+	    float b_color = sun_color[2];
 	    //load RGB from array
 		for(int side = 0; side<6; side++)
 		{
@@ -859,15 +882,12 @@ class SkyboxRender
 			for(int j=0; j<sun.dim; j++)
 			{
 				float _v = farray[j*sun.dim+i];
-        		if( _v < 0.0) _v = 0.0f;
-        		if( _v > 1.0) _v = 1.0f;
-        		unsigned char v = ((int) 255.0f*_v );
-        		unsigned char v2 = gamma_correction[v];
 
-				sun_rgba[side][4*(i+j*dim)+0] = v2;
-				sun_rgba[side][4*(i+j*dim)+1] = v2;
-				sun_rgba[side][4*(i+j*dim)+2] = v2;
-				sun_rgba[side][4*(i+j*dim)+3] = 255;
+
+				sun_rgba[side][4*(i+j*dim)+0] = gamma_correct(_v, r_color);
+				sun_rgba[side][4*(i+j*dim)+1] = gamma_correct(_v, g_color);
+				sun_rgba[side][4*(i+j*dim)+2] = gamma_correct(_v, b_color);
+				sun_rgba[side][4*(i+j*dim)+3] = sun_color[3];
 
         		if(i==0 && j == 0)
         		{
@@ -1001,8 +1021,6 @@ static class SkyplaneSettings SPS; //default sun setting
 static class SkyboxRender* SR;
 static class ConfigFileLoader CFL;
 //sfloat test_float = 0.0f;
-
-static char sun_color[4];
 
 int skybox_update_rate = 15;
 

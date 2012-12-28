@@ -135,7 +135,7 @@ class ConfigFileLoader
 
 			case CONFIG_TYPE_COLOR:
 				ret = sscanf(input_line, "%s = %d %d %d %d", var_name, &value_r, &value_g,&value_b,&value_a);
-				if(ret != 2 )
+				if(ret != 5 )
 				{
 					printf("ConfigFileLoader CONFIG_TYPE_COLOR input_line error: %s \n", input_line);
 					printf("ConfigFileLoader CONFIG_TYPE_COLOR proces_line: var_name= %s ret= %d value= %d %d %d %d \n", 
@@ -143,10 +143,10 @@ class ConfigFileLoader
 					value_r,value_g,value_b,value_a);
 					break;
 				}
-				((char*)(&value_int))[0] = value_r;
-				((char*)(&value_int))[1] = value_g;
-				((char*)(&value_int))[2] = value_b;
-				((char*)(&value_int))[3] = value_a;
+				((unsigned char*)(&value_int))[0] = value_r;
+				((unsigned char*)(&value_int))[1] = value_g;
+				((unsigned char*)(&value_int))[2] = value_b;
+				((unsigned char*)(&value_int))[3] = value_a;
 
 				if( *((int*)cva[index].ptr) != value_int)
 				{
