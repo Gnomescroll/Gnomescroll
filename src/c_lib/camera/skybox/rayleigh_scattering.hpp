@@ -1000,7 +1000,9 @@ class SkyboxRender
 static class SkyplaneSettings SPS; //default sun setting
 static class SkyboxRender* SR;
 static class ConfigFileLoader CFL;
-float test_float = 0.0f;
+//sfloat test_float = 0.0f;
+
+static char sun_color[4];
 
 int skybox_update_rate = 15;
 
@@ -1010,7 +1012,7 @@ void init_rayleigh_scattering()
 	SR = new SkyboxRender;
 	//SR->update_skybox(); //wait for time to do this?
 
-	CFL.set_float("test", &test_float);
+	//CFL.set_float("test", &test_float);
 
 	CFL.set_float("planet_radius", &SPS.planet_radius);
 	CFL.set_float("atomosphere_depth", &SPS.atomosphere_depth);
@@ -1019,6 +1021,7 @@ void init_rayleigh_scattering()
 	CFL.set_float("phase_factor", &SPS.phase_factor);
 	CFL.set_float("phase_g_factor", &SPS.phase_g_factor);
 	//phase_g_factor = 		s.phase_g_factor;
+	CFL.set_color("color", (char*) sun_color);
 
 	//CFL.set_float("brightness_log_factor", &SPS.brightness_log_factor);
 	CFL.set_float("brightness_scale_factor", &SPS.brightness_scale_factor);

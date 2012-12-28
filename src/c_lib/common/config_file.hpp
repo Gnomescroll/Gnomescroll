@@ -11,8 +11,10 @@ class ConfigFileLoader
 	typedef enum
 	{
 	    CONFIG_TYPE_NONE = 0,
-	    CONFIG_TYPE_FLOAT, //X shaped/crystal/
-	    CONFIG_TYPE_INT, //crop/wheat type
+	    CONFIG_TYPE_FLOAT, 
+	    CONFIG_TYPE_INT, 
+	   	CONFIG_TYPE_COLOR,
+
 	} CONFIG_TYPE;
 
 	struct ConfigValue
@@ -58,6 +60,7 @@ class ConfigFileLoader
 
 		float value_float = 0.0f;
 		int   value_int = 0;
+		int   value_r,value_g,value_b,value_a;
 		//int read = 0;
 
 
@@ -129,6 +132,29 @@ class ConfigFileLoader
 					printf("Set int: %s to %d \n", var_name, value_int);
 				}
 				break;
+
+			case CONFIG_TYPE_COLOR:
+				ret = sscanf(input_line, "%s = %d %d %d %d", var_name, &value_r, &value_g,&value_b,&value_a);
+				if(ret != 2 )
+				{
+					printf("ConfigFileLoader CONFIG_TYPE_COLOR input_line error: %s \n", input_line);
+					printf("ConfigFileLoader CONFIG_TYPE_COLOR proces_line: var_name= %s ret= %d value= %d %d %d %d \n", 
+					var_name, ret, 
+					value_r,value_g,value_b,value_a);
+					break;
+				}
+				((char*)(&value_int))[0] = value_r;
+				((char*)(&value_int))[1] = value_g;
+				((char*)(&value_int))[2] = value_b;
+				((char*)(&value_int))[3] = value_a;
+
+				if( *((int*)cva[index].ptr) != value_int)
+				{
+					*((int*)cva[index].ptr) = value_int;
+					printf("Set color: %s to %d %d %d %d \n", var_name, value_r,value_g,value_b,value_a);
+				}
+				break;
+
 			default:
 			printf("ConfigFileLoader ERROR: default wtf\n");
 			GS_ASSERT_ABORT(false);
@@ -215,6 +241,19 @@ class ConfigFileLoader
 		cva[cvn].name[strlen(var_name)] = 0x00;
 		cva[cvn].ptr = (void*) var_loc;
 		cva[cvn].type = CONFIG_TYPE_INT;
+		//printf("Added %s, %d \n", var_name, cvn);
+		cvn++;
+	}
+
+	void set_color(const char* var_name, char* var_loc)
+	{
+		name_creation_check(var_name);
+
+		cva[cvn].name = new char[strlen(var_name)+1];
+		memcpy(cva[cvn].name,var_name, strlen(var_name));
+		cva[cvn].name[strlen(var_name)] = 0x00;
+		cva[cvn].ptr = (void*) var_loc;
+		cva[cvn].type = CONFIG_TYPE_COLOR;
 		//printf("Added %s, %d \n", var_name, cvn);
 		cvn++;
 	}
