@@ -49,9 +49,11 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False, awesomium_debug=False, assimp=True):
+def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awesomium=False, awesomium_debug=False, assimp=True):
     global _OS
     global os_libpth
+
+    optflag = '-O' + str(optlevel)
 
     awe_stem = 'release'
     if awesomium_debug:
@@ -144,6 +146,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False, awesomium=False
         aweflag,
         prodflag,
         warning_sound_flag,
+        optflag,
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]
@@ -507,39 +510,32 @@ def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
     
 def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DNDEBUG','-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], production=True)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm+['-ggdb', '-g'], production=True)
 
 # developers' build of the production build
 def production_dev(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION_DEV=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], production=True)
+    configure(ctx, add_flags=add+['-DPRODUCTION_DEV=1', '-Winline'], optlevel=3, rm_flags=rm+['-ggdb', '-g'], production=True)
 
 def profile(ctx):
     configure(ctx)
-    #ctx.env.CFLAGS.append('-O3')
-    #ctx.env.CXXFLAGS.append('-O3')
     ctx.env.CFLAGS.append('-pg')
     ctx.env.CXXFLAGS.append('-pg')
     ctx.env.append_value("LINKFLAGS", "-pg")
 
 def profile_opt(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.append('-O3')
-    ctx.env.CXXFLAGS.append('-O3')
+    configure(ctx, optlevel=3)
     ctx.env.CFLAGS.append('-pg')
     ctx.env.CXXFLAGS.append('-pg')
     ctx.env.append_value("LINKFLAGS", "-pg")
 
 def optimized(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.append('-O3')
-    ctx.env.CXXFLAGS.append('-O3')
+    configure(ctx, optlevel=3)
     #ctx.env.CXXFLAGS.append('-mtune=native')
     #ctx.env.CXXFLAGS.append('-march=native')
 
 #run time profile optimization
 def optimized2(ctx):
-    configure(ctx)
-    ctx.env.CXXFLAGS.append('-O3')
+    configure(ctx, optlevel=3)
     ctx.env.CXXFLAGS.append('-Winline')
     #ctx.env.CXXFLAGS.append('-fprofile-generate')
 
@@ -600,7 +596,7 @@ class production_dbg_ctx(ConfigurationContext):
     fun = 'production_dbg'
 
 def production_dbg(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm, production=True)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm, production=True)
     
 class awesomium_ctx(ConfigurationContext):
     cmd = 'awe'

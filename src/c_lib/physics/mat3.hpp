@@ -30,8 +30,7 @@ struct Mat3
     };
 };
 
-static struct Mat3 mat3_euler_rotation(float x, float y, float z) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Mat3 mat3_euler_rotation(float x, float y, float z)
 {   
     x *= PI;
@@ -65,8 +64,7 @@ struct Mat3 mat3_euler_rotation(float x, float y, float z)
     return m;
 }
 
-static struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat3 m) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat3 m)
 {   
     struct Vec3 u;
@@ -78,8 +76,7 @@ struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat3 m)
     return u;
 }
 
-static struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat3 m) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat3 m)
 {   
     struct Vec4 u;

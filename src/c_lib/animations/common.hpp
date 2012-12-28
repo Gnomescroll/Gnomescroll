@@ -129,7 +129,7 @@ class VertexElementList
         if (this->vlist != NULL) free(this->vlist);
     }
 
-    __attribute__((always_inline))
+    ALWAYS_INLINE
     void push_vertex(struct Vec3 position, struct Vec3 normal, float tx, float ty)
     {
         this->vlist[this->vlist_index].position = position;
@@ -139,7 +139,7 @@ class VertexElementList
         this->add_element();
     }
      
-    __attribute__((always_inline))
+    ALWAYS_INLINE
     void push_vertex(struct Vec3 position, float tx, float ty)
     {
         this->vlist[this->vlist_index].position = position;
@@ -148,7 +148,7 @@ class VertexElementList
         this->add_element();
     }
 
-    __attribute__((always_inline))
+    ALWAYS_INLINE
     void push_vertex(struct Vec3 position, struct Vec3 normal, Color color)
     {
         this->vlist[this->vlist_index].position = position;
@@ -157,7 +157,7 @@ class VertexElementList
         this->add_element();
     }
 
-    __attribute__((always_inline))
+    ALWAYS_INLINE
     void push_vertex(struct Vec3 position, Color color, const char normal[3])
     {
         this->vlist[this->vlist_index].position    = position;

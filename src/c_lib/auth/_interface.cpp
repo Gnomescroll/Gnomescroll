@@ -42,8 +42,7 @@ void teardown()
     #endif
 }
 
-bool is_valid_name_character(char c) __attribute__((always_inline));
-bool is_valid_name_character(char c)
+ALWAYS_INLINE bool is_valid_name_character(char c)
 {
     return (isalnum(c) || c == '_');
 }

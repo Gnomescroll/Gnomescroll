@@ -64,15 +64,13 @@ void mat4_print(struct Mat4 m)
 */
 }
 
-static float mat4_row_mult_column(float* r, int i, float *c, int j)  __attribute((always_inline));
-
+ALWAYS_INLINE
 float mat4_row_mult_column(float* r, int i, float *c, int j)
 {
     return r[4*0+i]*c[4*j+0] + r[4*1+i]*c[4*j+1] + r[4*2+i]*c[4*j+2] + r[4*3+i]*c[4*j+3];
 }
 
-static struct Mat4 mat4_mult(Mat4 a, Mat4 b) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Mat4 mat4_mult(Mat4 a, Mat4 b)
 {
     struct Mat4 c;
@@ -249,9 +247,7 @@ struct Mat4 mat4_inverse(Mat4 m)
 
 }
 
-
-struct Mat4 mat4_transpose(Mat4 a) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Mat4 mat4_transpose(Mat4 a)
 {
     struct Mat4 b;
@@ -263,8 +259,7 @@ struct Mat4 mat4_transpose(Mat4 a)
     return b;
 }
 
-static struct Mat4 mat4_identity()  __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Mat4 mat4_identity()
 {   
     struct Mat4 m;
@@ -277,8 +272,7 @@ struct Mat4 mat4_identity()
     return m;
 }
 
-static struct Mat4 mat4_euler_rotation(float x, float y, float z)  __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Mat4 mat4_euler_rotation(float x, float y, float z)
 {   
     x *= PI;
@@ -317,8 +311,7 @@ struct Mat4 mat4_euler_rotation(float x, float y, float z)
     return m;
 }
 
-static struct Mat4 mat4_euler_rotation_and_translation(float _x, float _y, float _z, float x, float y, float z)  __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Mat4 mat4_euler_rotation_and_translation(float _x, float _y, float _z, float x, float y, float z)
 {   
     x *= PI;
@@ -358,8 +351,7 @@ struct Mat4 mat4_euler_rotation_and_translation(float _x, float _y, float _z, fl
 }
 
 /*
-static struct Mat4 mat4_apply_rotation(struct Mat3 m)  __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
 {   
     struct Mat4 m;
@@ -368,8 +360,7 @@ struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
 }
 */
 
-static struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m)
 {   
     struct Vec3 u;
@@ -381,8 +372,7 @@ struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m)
     return u;
 }
 
-static struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m)
 {   
     struct Vec4 u;
@@ -400,7 +390,7 @@ struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m)
 */
 
 //translation and rotation by mat4
-INLINE
+ALWAYS_INLINE
 struct Vec3 vec3_mat3_apply(struct Vec3 v, struct Mat4 m)
 {   
     struct Vec3 u;

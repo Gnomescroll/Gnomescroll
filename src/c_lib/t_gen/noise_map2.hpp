@@ -9,7 +9,7 @@ dont_include_this_file_in_client
 #include <t_gen/twister.hpp>
 
 #ifdef __MSVC__
-    #pragma optimize( "gt", on )
+# pragma optimize("gt", on)
 #endif
 
 namespace t_gen
@@ -20,29 +20,29 @@ int primes[20] = {
     13,17,19,23,29,
     31,37,41,43,47,
     53,59,61,67,71
-};
+    };
 
 #if __GNUC__
-__attribute((always_inline, optimize("-O3"))) static float dot(float* g, float x, float y);
-__attribute((always_inline, optimize("-O3"))) static float dot(int gi, float x, float y, float z);
+__attribute((always_inline, optimize("-O3"))) static inline float dot(float* g, float x, float y);
+__attribute((always_inline, optimize("-O3"))) static inline float dot(int gi, float x, float y, float z);
 
-__attribute((always_inline, optimize("-O3"))) static float mix(float a, float b, float t);
-__attribute((always_inline, optimize("-O3"))) static float fade(float t);
+__attribute((always_inline, optimize("-O3"))) static inline float mix(float a, float b, float t);
+__attribute((always_inline, optimize("-O3"))) static inline float fade(float t);
 #endif
 
-int fast_floor(float value);
+int inline fast_floor(float value);
 
-int fast_floor(float value) 
+int inline fast_floor(float value) 
 {
-    return (int)( value>=0 ? (int)value : (int)value-1 );
+    return (int)(value>=0 ? (int)value : (int)value-1);
 }
 
-static float dot(float* g, float x, float y)
+static inline float dot(float* g, float x, float y)
 {
     return g[0]*x + g[1]*y;
 }
 
-static float dot(int gi, float x, float y, float z)
+static inline float dot(int gi, float x, float y, float z)
 {
     static const int g3[][3] = {
     {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
@@ -53,12 +53,12 @@ static float dot(int gi, float x, float y, float z)
     return g3[gi][0]*x + g3[gi][1]*y + g3[gi][2]*z;
 }
 
-static float mix(float a, float b, float t) 
+static inline float mix(float a, float b, float t) 
 {
     return a + t*(b-a);   //optimized version
 }
 
-static float fade(float t) 
+static inline float fade(float t) 
 {
     return t*t*t*(t*(t*6-15)+10);
 }
@@ -120,7 +120,7 @@ class PerlinField2D
 
     void generate_gradient_vectors()
     {
-    #if 1
+        #if 1
         for(int i=0; i<grad_max; i++)
         {
             float t = 6.28318531f*i* (1.0f / ((float) grad_max));
@@ -130,7 +130,7 @@ class PerlinField2D
             grad[2*i+0] = x;
             grad[2*i+1] = y;
         }
-    #else
+        #else
         for(int i=0; i<grad_max; i++)
         {
             float x = 2*genrand_real1() -1.0;
@@ -143,7 +143,7 @@ class PerlinField2D
             grad[2*i+0] = x;
             grad[2*i+1] = y;
         }
-    #endif
+        #endif
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
@@ -287,7 +287,7 @@ class PerlinOctave2D
     }
 
     __attribute((always_inline, optimize("-O3")))
-    float sample(float x, float y, float persistance)
+    inline float sample(float x, float y, float persistance)
     {   
         float p = 1.0f;
         float tmp = 0.0f;

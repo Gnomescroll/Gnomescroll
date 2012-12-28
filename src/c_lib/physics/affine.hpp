@@ -34,8 +34,7 @@ void print_affine(struct Affine m)
     printf("%.2f %.2f %.2f \n", m.v[3].x,m.v[3].y,m.v[3].z);
 }
 
-static struct Affine affine_mult(Affine a, Affine b)  __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Affine affine_mult(Affine a, Affine b)
 {
     struct Affine c;
@@ -54,8 +53,7 @@ struct Affine affine_mult(Affine a, Affine b)
     return c;
 }
 
-static struct Affine affine_identity()  __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Affine affine_identity()
 {   
     struct Affine m;
@@ -68,8 +66,7 @@ struct Affine affine_identity()
     return m;
 }
 
-static struct Affine affine_euler_rotation_and_translation(float _x, float _y, float _z, float x, float y, float z)  __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Affine affine_euler_rotation_and_translation(float _x, float _y, float _z, float x, float y, float z)
 {   
     x *= PI;

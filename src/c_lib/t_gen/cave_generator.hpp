@@ -23,7 +23,7 @@ namespace t_gen
 // px is the point
 // returns square of distance between line and point
 __attribute((always_inline, optimize("-O3")))
-float point_line_distance2(float vx, float vy, float vz, float wx, float wy, float wz, float px, float py, float pz)
+inline float point_line_distance2(float vx, float vy, float vz, float wx, float wy, float wz, float px, float py, float pz)
 {
 
     px -= vx;

@@ -41,7 +41,9 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], production=False):
+def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False):
+    optflag = '-O' + str(optlevel)
+    
     OS = platform.system()
     conf.env.os = OS
 
@@ -82,6 +84,7 @@ def configure(conf, add_flags=[], rm_flags=[], production=False):
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
         prodflag,
+        optflag,
         #'-DGS_VERSION=%d' % (version,),
     ]
 
@@ -317,9 +320,7 @@ class profile_ctx(ConfigurationContext):
     fun = 'profile'
 
 def profile(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.append('-O3')
-    ctx.env.CXXFLAGS.append('-O3')
+    configure(ctx, optlevel=3)
     ctx.env.CFLAGS.append('-pg')
     ctx.env.CXXFLAGS.append('-pg')
     ctx.env.append_value("LINKFLAGS", "-pg")
@@ -334,9 +335,7 @@ def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
     
 def optimized(ctx):
-    configure(ctx)
-    ctx.env.CFLAGS.append('-O3')
-    ctx.env.CXXFLAGS.append('-O3')
+    configure(ctx, optlevel=3)
 
 def multicore(ctx):
     configure(ctx)
@@ -359,15 +358,14 @@ class production_ctx(ConfigurationContext):
     fun = 'production'
 
 def production(ctx, add=[], rm=[]):
-    #configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], production=True)
-    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm, production=True)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm, production=True)
     
 class production_dbg_ctx(ConfigurationContext):
     cmd = 'production_dbg'
     fun = 'production_dbg'
 
 def production_dbg(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline', '-O3'], rm_flags=rm, production=True)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm, production=True)
     
 class prodtest_ctx(ConfigurationContext):
     cmd = 'prodtest'
