@@ -282,7 +282,7 @@ class AgentState _agent_tick(const struct AgentControlState& _cs, const struct A
     #if DC_SERVER
     if(t_gen::isLandmine(new_x, new_y, new_z - 1))
     {
-        t_map::set(new_x, new_y, new_z - 1, EMPTY_CUBE);
+        t_map::apply_damage_broadcast(new_x, new_y, new_z - 1, 64, TMA_PLASMAGEN);
         t_gen::create_explosion(new_x, new_y, new_z - 1);
     }
     #endif
