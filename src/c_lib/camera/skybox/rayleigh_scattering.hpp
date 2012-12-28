@@ -839,8 +839,6 @@ class SkyboxRender
 		sunG.wavelenght_factor = sun_w[2];
 		sunB.wavelenght_factor = sun_w[3];
 
-	float wavelenght_factor;
-
 		sun0.update(sun_theta, sun_phi); //update float array
 		sunR.update(sun_theta, sun_phi); //update float array
 		sunG.update(sun_theta, sun_phi); //update float array
@@ -1116,6 +1114,10 @@ void draw_rayleigh_scattering()
 	if(update_count % skybox_update_rate ==0 )
 	{
 		SR->sun0.load_settings(SPS);
+		SR->sunR.load_settings(SPS);
+		SR->sunG.load_settings(SPS);
+		SR->sunB.load_settings(SPS);
+
 		SR->update_skybox();
 	}
 }
