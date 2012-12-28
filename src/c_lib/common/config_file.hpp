@@ -55,6 +55,9 @@ class ConfigFileLoader
 			return;
 		//printf("scan: %s \n", input_line);
 
+		if(input_line[0] == '#')
+			return;
+		
 		char* var_name = new char[256];
 		char* rest = new char[256];
 
