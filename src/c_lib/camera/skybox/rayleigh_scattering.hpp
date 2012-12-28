@@ -50,7 +50,8 @@ class SkyplaneSettings
 	float sun_distance;  				//sun distance from surface
 
 	//float brightness_log_factor;
-	float phase_factor;
+	float wavelenght_factor;
+	//float phase_factor;
 	float phase_g_factor;
 	float light_epsilon;
 
@@ -70,7 +71,8 @@ class SkyplaneSettings
 		sun_distance =  	256.0; 
 
 		//brightness_log_factor = 1.0;
-		phase_factor = 			0.75;
+		wavelenght_factor =		1.00;
+		//phase_factor = 			0.75;	//deprecate
 		phase_g_factor	=		0.00;
 		light_epsilon = 		0.0000001;
 
@@ -91,6 +93,7 @@ class Skyplane
 
 
 	//unsigned char color[4*dim*dim];
+
 	public:
 	static const int dim = 16;
 	const static int samples = 5;
@@ -107,7 +110,8 @@ class Skyplane
 	float sun_distance;  				//sun distance from surface
 
 	//float brightness_log_factor;
-	float phase_factor;
+	float wavelenght_factor;
+	//float phase_factor;
 	float phase_g_factor;
 	float light_epsilon;
 
@@ -133,7 +137,8 @@ class Skyplane
 		sun_distance =  		s.sun_distance;
 
 		//brightness_log_factor = s.brightness_log_factor;
-		phase_factor = 			s.phase_factor;
+		wavelenght_factor =		s.wavelenght_factor;
+		//phase_factor = 			s.phase_factor;
 		phase_g_factor = 		s.phase_g_factor;
 		light_epsilon = 		s.light_epsilon;
 
@@ -267,6 +272,10 @@ class Skyplane
 	//sun orbits around 0,0,0
 	void update(float theta, float phi)
 	{
+		update_phase_constants();
+/*
+	Cube Stuff
+*/
 		const float plane_depth = plane_size*0.5;
 
 		const float _df = 2.0/ ((float) dim);
@@ -307,21 +316,6 @@ class Skyplane
 				center[i].z -= -1.0;	//to prevent zero
 		}
 
-	/*
-		struct Vec3 sun = center[2];
-		sun = vec3_normalize(sun);
-		s = vec3_scalar_mult(sun, 256.0);
-
-		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,s.x,s.y,s.z);
-	*/
-
-	/*
-		printf("Sun Position: theta,phi= %.2f %.2f 	sx,sy,sz= %.2f %.2f %.2f \n", 
-			theta, phi,
-			s.x,s.y,s.z);
-	*/
-
-
 		//int sun_i, sun_j, sun_side; //used to find pixel for tracking sun
 		//float sun_cos_max;
 		sun_cos_max = -10.0;
@@ -357,10 +351,6 @@ class Skyplane
 
 		for(int side=0; side<6; side++)
 		{
-
-			//float center_x = center[side].x;
-			//float center_y = center[side].y;
-			//float center_z = center[side].z;
 			
 			struct Vec3 _f = f[side];
 			struct Vec3 _r = r[side];
@@ -384,20 +374,8 @@ class Skyplane
 					//can inline this even
 					GS_ASSERT(vec3_length(b) > 0.01);
 					b = vec3_normalize(b); //direction from camera
-					//camera is at the center of the cube always
 
-
-					float d = sphere_line_intersection(c, b, sphere_radius - _epsilon);
-
-					//if(d > 32.0)
-					//	d =32;
-
-		//const float ATMOSPHERE_DEPTH = 128.0;
-		//compute ray from camera to upper atmosphere (use sphere and radius)
-		//intersection with upper atomsphere
-		//struct Vec3 _b;
-		//_b = vec3_scalar_mult(vec3_normalize(b), ATMOSPHERE_DEPTH);
-					//d = 128.0;
+					float d = sphere_line_intersection(c, b, sphere_radius - _epsilon);	
 
 					if(0 &&(side == 0 || side == 2 || side == 3 || side == 4)) 
 					{
@@ -427,11 +405,6 @@ class Skyplane
 						b = vec3_add(c, vec3_scalar_mult(b, d));
 
 					}
-
-					//float light = 0;
-					//farray[side][j*dim+i] = light;
-
-					//debug stuff
 
 					if( vec3_length(vec3_sub(b, c)) < 0.01 || vec3_length(vec3_sub(s, c)) < 0.01 )
 					{
@@ -499,12 +472,31 @@ class Skyplane
 		return 0;
 	}
 
+	float gf;
+	float gf2; //gf squared
+	float gfc; //constant
+
+	void update_phase_constants()
+	{
+		gs  = phase_g_factor;
+		gs2 = phase_g_factor*phase_g_factor;
+		gfc = (3.0*(1-gs2))/(2(2+gs2));
+	}
+
 	inline float phase(const struct Vec3 &v1, const struct Vec3 &v2)
 	{
+		float _cos2 = vec3_cos2(v1,v2);
+		float _cos  = sqrt(_cos2);
+		
+		float f = 
+
+
 		/*
 			!!! Add g factor
 		*/
-		return phase_factor*(1+vec3_cos2(v1,v2)); //*.75
+		return 0.75*(1+vec3_cos2(v1,v2)); // simple phase equation
+	
+
 	}
 
 	//H 0 is the scale height, which is the height at which the atmosphere's average density is found.
@@ -786,7 +778,11 @@ class SkyboxRender
 	public:
 	int time_count;
 
-	class Skyplane sun;
+	class Skyplane sun;		//Rayleigh scattering channel
+
+	class Skyplane sunR;	//Mie aerosol scattering channel
+	class Skyplane sunG;
+	class Skyplane sunB;
 
 	unsigned char* sun_rgba[6];
 
@@ -1026,6 +1022,11 @@ static class ConfigFileLoader CFL;
 
 int skybox_update_rate = 15;
 
+//Rayleigh scattering can be approximated by setting g to 0
+//Mie aerosol scattering, g is usually set between -0.75 and -0.999
+//Negative values of g scatter more light in a forward direction
+//positive values of g scatter more light back toward the light source.
+
 void init_rayleigh_scattering()
 {
 
@@ -1041,6 +1042,7 @@ void init_rayleigh_scattering()
 	CFL.set_float("phase_factor", &SPS.phase_factor);
 	CFL.set_float("phase_g_factor", &SPS.phase_g_factor);
 	CFL.set_color("color", (char*) sun_color);
+
 	CFL.set_float("sun_g0", &sun_g[0]);
 	CFL.set_float("sun_gR", &sun_g[1]);
 	CFL.set_float("sun_gG", &sun_g[2]);
@@ -1098,11 +1100,7 @@ void init_rayleigh_scattering()
 
 void draw_rayleigh_scattering()
 {
-
-
 	CFL.load_file("./settings/skybox");
-	//abort();
-
 
 	SR->increment_time();
 
