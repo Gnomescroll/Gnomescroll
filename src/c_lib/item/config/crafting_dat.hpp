@@ -77,6 +77,10 @@ void load_crafting_dat()
     set_crafting_reagent("plasmagen", 1);
     set_crafting_reagent("rock", 1);
 
+    def_crafting_recipe("regolith_landmine");
+    set_crafting_reagent("plasmagen", 1);
+    set_crafting_reagent("regolith", 1);
+
     def_crafting_recipe("plasmagen");
     set_crafting_reagent("blackpowder", 8);
     set_crafting_reagent("methane_ice_chunk", 8);

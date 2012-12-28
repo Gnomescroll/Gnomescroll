@@ -139,6 +139,7 @@ void load_block_drop_dat()
     no_drop("bedrock");
     no_drop("plasmagen");
     no_drop("rock_landmine");
+    no_drop("regolith_landmine");
 
     ////////////////////
     def_drop("regolith");

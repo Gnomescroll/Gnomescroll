@@ -20,6 +20,7 @@ static CubeID immune_cubes[MAX_IMMUNE_CUBES];
 
 static CubeID plasmagen = NULL_CUBE;
 static CubeID rock_landmine = NULL_CUBE;
+static CubeID regolith_landmine = NULL_CUBE;
 
 static CubeID add_immune_cube(const char* name)
 {
@@ -44,12 +45,16 @@ void init_explosives()
 
     rock_landmine = t_map::get_cube_id("rock_landmine");
     GS_ASSERT(t_map::isValidCube(rock_landmine));
+
+    regolith_landmine = t_map::get_cube_id("regolith_landmine");
+    GS_ASSERT(t_map::isValidCube(regolith_landmine));
 }
 
 bool isLandmine(int x, int y, int z)
 {
     CubeID place=t_map::get(x, y, z);
     if (place==rock_landmine) return true;
+    else if (place==regolith_landmine) return true;
     else return false;
 }
 
