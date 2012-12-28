@@ -193,56 +193,26 @@ class Skyplane
 	//return false if ray hits planet
 	static bool sphere_line_intersection_test0(struct Vec3 a, struct Vec3 b, float radius)
 	{
-		//return true;
-
 		float d1 = vec3_dot(a,b);
 		float d2 = d1*d1 - vec3_dot(a,a) + radius*radius;
-
-		//GS_ASSERT(d2 >= 0.0f);
-
-		//no intersection
 		if(d2 <= 0.0)
 			return true;
-
 		float d3 = sqrt(d2);
-		
-		//if d3 or d2 is close to zero then point is almost at sphere
-
 		float s1 =  	d3 - d1;
 		float s2 = -1.0*d3 - d1;
-
-		//GS_ASSERT(s1 >= 0.0f || s2 >= 0.0f);
-
-		//out to space
-		//intersections are both behind the sphere
 		if(s1 < 0.0f && s2 < 0.0f)
 			return true;
-
-
-		//else one or more intersection in front of sphere
-
-		//debug
 		return false; // set to true to disable
-
-		//return intersection in front of sphere
-		//float ret = s1 > s2 ? s1 : s2; 
-
-		//return ret;
-
 	}
 	//a is start point of line, b is direction
 	//cente is 0
 	static float sphere_line_intersection(const struct Vec3 &a, const struct Vec3 &b, const float radius)
 	{
-
-
 		//assume b is unit vector
 		//assume l is direction
 
 		float d1 = vec3_dot(a,b);
-		//float d2 = d*d;
 		float d2 = d1*d1 - vec3_dot(a,a) + radius*radius;
-
 		GS_ASSERT(d2 >= 0.0f);
 
 		//no intersection
@@ -252,19 +222,14 @@ class Skyplane
 		float d3 = sqrt(d2);
 		
 		//if d3 or d2 is close to zero then point is almost at sphere
-
 		float s1 =  	d3 - d1;
 		float s2 = -1.0*d3 - d1;
-
 		GS_ASSERT(s1 >= 0.0f || s2 >= 0.0f);
-
 		//intersections are both behind the sphere
 		if(s1 < 0.0f && s2 < 0.0f)
 			return -1.0f;
-
 		//return intersection in front of sphere
 		float ret = s1 > s2 ? s1 : s2; 
-
 		return ret;
 	}
 
