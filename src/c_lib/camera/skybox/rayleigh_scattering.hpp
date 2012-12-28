@@ -478,9 +478,9 @@ class Skyplane
 
 	void update_phase_constants()
 	{
-		gs  = phase_g_factor;
-		gs2 = phase_g_factor*phase_g_factor;
-		gfc = (3.0*(1-gs2))/(2(2+gs2));
+		gf  = phase_g_factor;
+		gf2 = phase_g_factor*phase_g_factor;
+		gfc = (3.0*(1-gf2))/(2.0*(2.0+gf2));
 	}
 
 	inline float phase(const struct Vec3 &v1, const struct Vec3 &v2)
@@ -488,14 +488,12 @@ class Skyplane
 		float _cos2 = vec3_cos2(v1,v2);
 		float _cos  = sqrt(_cos2);
 		
-		float f = 
+		float f = (1.0 + gf*(gf - 2.0*_cos) ) ;
+		f = f* sqrt(f);
 
+		return gfc*(1.0+_cos2)/f;
 
-		/*
-			!!! Add g factor
-		*/
-		return 0.75*(1+vec3_cos2(v1,v2)); // simple phase equation
-	
+		//return 0.75*(1+vec3_cos2(v1,v2)); // simple phase equation
 
 	}
 
@@ -1039,7 +1037,10 @@ void init_rayleigh_scattering()
 	CFL.set_float("atomosphere_depth", &SPS.atomosphere_depth);
 	CFL.set_float("sun_distance", &SPS.sun_distance);
 
-	CFL.set_float("phase_factor", &SPS.phase_factor);
+	//CFL.set_float("phase_factor", &SPS.phase_factor);
+
+	//float wavelenght_factor;
+	CFL.set_float("wavelenght_factor", &SPS.wavelenght_factor);
 	CFL.set_float("phase_g_factor", &SPS.phase_g_factor);
 	CFL.set_color("color", (char*) sun_color);
 
