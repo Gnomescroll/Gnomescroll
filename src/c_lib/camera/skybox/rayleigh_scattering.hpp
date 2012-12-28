@@ -46,9 +46,9 @@ class SkyplaneSettings
 	float atomosphere_depth;
 	float sun_distance;  				//sun distance from surface
 
-
-	float brightness_log_factor;
+	//float brightness_log_factor;
 	float phase_factor;
+	float phase_g_factor;
 	float light_epsilon;
 
 	float brightness_scale_factor;
@@ -66,8 +66,9 @@ class SkyplaneSettings
 		atomosphere_depth = 1.0;	//how far until stop raycasting scattering through atomosphere
 		sun_distance =  	256.0; 
 
-		brightness_log_factor = 1.0;
+		//brightness_log_factor = 1.0;
 		phase_factor = 			0.75;
+		phase_g_factor	=		0.00;
 		light_epsilon = 		0.0000001;
 
 		brightness_scale_factor = 	1.0;
@@ -102,9 +103,9 @@ class Skyplane
 	float atomosphere_depth;
 	float sun_distance;  				//sun distance from surface
 
-	float brightness_log_factor;
+	//float brightness_log_factor;
 	float phase_factor;
-
+	float phase_g_factor;
 	float light_epsilon;
 
 	float brightness_scale_factor;
@@ -128,8 +129,9 @@ class Skyplane
 		atomosphere_depth =  	s.atomosphere_depth;
 		sun_distance =  		s.sun_distance;
 
-		brightness_log_factor = s.brightness_log_factor;
+		//brightness_log_factor = s.brightness_log_factor;
 		phase_factor = 			s.phase_factor;
+		phase_g_factor = 		s.phase_g_factor;
 		light_epsilon = 		s.light_epsilon;
 
 		brightness_scale_factor =	s.brightness_scale_factor;
@@ -330,7 +332,7 @@ class Skyplane
 		if(c.z < planet_radius + _epsilon)
 			c.z = planet_radius + _epsilon;
 
-		const float _dfp = _df*plane_size; //for speed
+		//const float _dfp = _df*plane_size; //for speed
 		const int dim_half = dim/2;
 
 
@@ -1010,16 +1012,18 @@ void init_rayleigh_scattering()
 
 	CFL.set_float("test", &test_float);
 
-
 	CFL.set_float("planet_radius", &SPS.planet_radius);
 	CFL.set_float("atomosphere_depth", &SPS.atomosphere_depth);
 	CFL.set_float("sun_distance", &SPS.sun_distance);
 
-	CFL.set_float("brightness_log_factor", &SPS.brightness_log_factor);
+	CFL.set_float("phase_factor", &SPS.phase_factor);
+	CFL.set_float("phase_g_factor", &SPS.phase_g_factor);
+	//phase_g_factor = 		s.phase_g_factor;
+
+	//CFL.set_float("brightness_log_factor", &SPS.brightness_log_factor);
 	CFL.set_float("brightness_scale_factor", &SPS.brightness_scale_factor);
 	CFL.set_float("brightness_sum_factor", &SPS.brightness_sum_factor);
 	CFL.set_float("light_epsilon", &SPS.light_epsilon);
-	CFL.set_float("phase_factor", &SPS.phase_factor);
 
 	CFL.set_float("H0", &SPS.H0);
 	CFL.set_float("skybox_height", &SPS.skybox_height);
