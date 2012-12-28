@@ -1,16 +1,19 @@
 test = 50.0
 
+planet_radius = 256.0
+atomosphere_depth = 256.0
+sun_distance = 10024.0
+		
 brightness_log_factor =   1.0
 brightness_scale_factor = 0.10
 brightness_sum_factor =   0.0
-light_epsilon = 0.000001
-phase_factor = 0.75
+light_epsilon = 0.0000001
+phase_factor = 0.25
 
-H0 = 0.15e
+H0 = 0.25
 skybox_height = 128.0
-camera_z = 64.0
+camera_z = 1.0
 
-sun_distance = 128.0s
-time_speed = 5
-skybox_update_rate = 15
+time_speed = 20
+skybox_update_rate = 3
 print_max_light = 0
