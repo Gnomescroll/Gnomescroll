@@ -602,20 +602,8 @@ class Skyplane
 			{
 				//printf("WTF 2: %0.2f, min %0.2f \n", vec3_length(tmp1[i]), planet_radius);
 			}
-
-
 		}
 
-
-		//direction of sun from each sample point
-		//struct Vec3 sun_dir[samples+1];
-		//for(int i=0; i<=samples; i++)
-		//	sun_dir[i] = vec3_normalize(vec3_sub(s, tmp1[i]));
-
-		/*
-			!!! computute height of sample point and atomosphere density
-		*/
-		//direction of sun from sample point
 		struct Vec3 _s[samples+1];
 		for(int i=0; i<=samples; i++)
 		{
@@ -633,7 +621,7 @@ class Skyplane
 			if(vec3_length(vec3_sub(s, tmp1[i])) < 0.01)
 				printf("tmp1[i] len < 0.01 \n");
 			struct Vec3 sun_dir = vec3_normalize(vec3_sub(s, tmp1[i]));
-			float d = sphere_line_intersection(tmp1[i], sun_dir, sphere_radius);
+			float d = sphere_line_intersection(tmp1[i], sun_dir, sphere_radius - _epsilon);
 			_s[i] = vec3_add(tmp1[i], vec3_scalar_mult(sun_dir,d));
 
 			/*
@@ -644,34 +632,35 @@ class Skyplane
 		float _t0 [samples+1]; //exp(h/H0)
 		float _t1 [samples+1]; //out_scatter PPc
 		float _t2 [samples+1]; //out_scatter PPa
+		//float _r  [samples+1]; //result
 
+		//t0 calculation
 		for(int i=0; i<=samples; i++)
 		{
 			//_t0[i] = expf( -tmp1[i].z / (H0*skybox_height));
-
 			float s_height = vec3_length(tmp1[i]) - planet_radius - _epsilon;
-
-
 			if(s_height > atomosphere_depth)
 			{
 				printf("ERROR in_scatter: s_height= %.2f %2.f \n", s_height , atomosphere_depth);
 			}
+			_t0[i] = s_height < 0.0 ? 0.0 : expf(sbh_norm*s_height); // expf( -tmp1[i].z / (H0*skybox_height));
+		}
 
-			_t0[i] = expf(sbh_norm*s_height); // expf( -tmp1[i].z / (H0*skybox_height));
-
+		//t1 and t2
+		for(int i=0; i<=samples; i++)
+		{
 			_t1[i] = out_scatter(tmp1[i], _s[i]); //out_scatter from current point to sun
 			_t2[i] = out_scatter(tmp1[i], c); //out_scatter from current point to camera
-		
 			//printf("%i: _t0,_t1,_t2= %.2f %.2f %.2f \n", i, _t0[i],_t1[i],_t2[i] );
 		}
 
 		float _r [samples+1];
-		
+		for(int i=0; i<=samples; i++)
+			_r[i] = _t0[i]*expf( -1.0*(_t1[i] + _t2[i]) );		
 		//debug
 		//for(int i=0; i<=samples; i++)
 		//	_r[i] = _t0[i]*expf( -_t1[i] -_t2[i] );
-		for(int i=0; i<=samples; i++)
-			_r[i] = _t0[i]*expf( -1.0*(_t1[i] + _t2[i]) );
+
 
 /*
 		for(int i=0; i<=samples; i++)
