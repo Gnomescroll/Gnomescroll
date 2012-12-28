@@ -15,10 +15,11 @@ namespace t_gen
 {
 
 static const size_t MAX_IMMUNE_CUBES = 10;
-static size_t immune_cubes_ct = 0; 
+static size_t immune_cubes_ct = 0;
 static CubeID immune_cubes[MAX_IMMUNE_CUBES];
 
 static CubeID plasmagen = NULL_CUBE;
+static CubeID rock_landmine = NULL_CUBE;
 
 static CubeID add_immune_cube(const char* name)
 {
@@ -40,6 +41,16 @@ void init_explosives()
 
     plasmagen = t_map::get_cube_id("plasmagen");
     GS_ASSERT(t_map::isValidCube(plasmagen));
+
+    rock_landmine = t_map::get_cube_id("rock_landmine");
+    GS_ASSERT(t_map::isValidCube(rock_landmine));
+}
+
+bool isLandmine(int x, int y, int z)
+{
+    CubeID place=t_map::get(x, y, z);
+    if (place==rock_landmine) return true;
+    else return false;
 }
 
 void create_explosion(const int x, const int y, const int z)
@@ -64,7 +75,7 @@ void create_explosion(const int x, const int y, const int z)
         vec3_init(0, 1, 0),
         vec3_init(0, 0, 1)};
 
-    const struct Vec3 position = vec3_init(x+0.5f, y+0.5f, z+0.5f); 
+    const struct Vec3 position = vec3_init(x+0.5f, y+0.5f, z+0.5f);
 
     // notify clients
     Particle::plasmagen_explode_StoC msg;
@@ -122,7 +133,7 @@ void create_explosion(const int x, const int y, const int z)
                 p[k] = pos[k] + sides[i][k]*bounds[i][j];
             for (int k=0; k<2; k++)
                 p[k] = translate_point(p[k]);
-                
+
             t_map::apply_damage_broadcast(
                 p[0], p[1], p[2],
                 PLASMAGEN_BLOCK_DAMAGE,
