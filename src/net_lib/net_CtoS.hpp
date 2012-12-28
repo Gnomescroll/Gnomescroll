@@ -54,7 +54,7 @@ template <class Derived>
 class FixedSizeNetPacketToServer
 {
     private:
-        virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0;
+        virtual void packet(char* buff, unsigned int* buff_n, bool pack) = 0;
     public:
         static uint8_t message_id;
         static unsigned int size;
@@ -65,13 +65,15 @@ class FixedSizeNetPacketToServer
         virtual ~FixedSizeNetPacketToServer() {}
     
         //flatten this
-        void serialize(char* buff, unsigned int* buff_n) __attribute((always_inline))
+        ALWAYS_INLINE
+        void serialize(char* buff, unsigned int* buff_n)
         {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
-        //flatten this
-        inline void unserialize(char* buff, unsigned int* buff_n, unsigned int* size) __attribute((always_inline))
+        
+        ALWAYS_INLINE
+        void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
         {
             unsigned int _buff_n = *buff_n;
             packet(buff, buff_n, false);
@@ -137,7 +139,8 @@ template <class Derived>
 class FixedSizeReliableNetPacketToServer
 {
     private:
-        virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0;
+        virtual void packet(char* buff, unsigned int* buff_n, bool pack) = 0;
+        //virtual ALWAYS_INLINE void packet(char* buff, unsigned int* buff_n, bool pack) { GS_ASSERT(false); }
     public:
         static uint8_t message_id;
         static unsigned int size;
@@ -147,13 +150,16 @@ class FixedSizeReliableNetPacketToServer
         FixedSizeReliableNetPacketToServer() {}
         virtual ~FixedSizeReliableNetPacketToServer() {}
     
-        void serialize(char* buff, unsigned int* buff_n) __attribute((always_inline))
+        ALWAYS_INLINE
+        void serialize(char* buff, unsigned int* buff_n)
         {
             //GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
-        inline void unserialize(char* buff, unsigned int* buff_n, unsigned int* size) __attribute((always_inline))
+        
+        ALWAYS_INLINE
+        void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
         {
             unsigned int _buff_n = *buff_n;
             packet(buff, buff_n, false);

@@ -26,16 +26,13 @@ struct Vec3
     };
 };
 
-//__attribute__((aligned (16)));
-//static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
-
 /*
     Vec3 operations
 */
 
-static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline));
+ALWAYS_INLINE float vec3_dot(struct Vec3 v1, struct Vec3 v2);
 
-static void normalize_vector(struct Vec3* v)
+void normalize_vector(struct Vec3* v)
 {
     float len = sqrtf(v->x*v->x + v->y*v->y + v->z*v->z);
     GS_ASSERT_LIMIT(len != 0.0f, 50);
@@ -46,8 +43,7 @@ static void normalize_vector(struct Vec3* v)
     v->z *= len;
 }
 
-static struct Vec3 vec3_init(float x, float y, float z) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_init(float x, float y, float z)
 {
     struct Vec3 v;
@@ -57,8 +53,7 @@ struct Vec3 vec3_init(float x, float y, float z)
     return v;
 }
 
-static struct Vec3 vec3_init(float p[3]) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_init(float p[3])
 {
     struct Vec3 v;
@@ -68,8 +63,7 @@ struct Vec3 vec3_init(float p[3])
     return v;
 }
 
-static struct Vec3 vec3_copy(Vec3 f) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_copy(Vec3 f)
 {
     struct Vec3 v;
@@ -79,8 +73,7 @@ struct Vec3 vec3_copy(Vec3 f)
     return v;
 }
 
-static struct Vec3 vec3_normalize(struct Vec3 v) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_normalize(struct Vec3 v) 
 {
     float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
@@ -98,9 +91,7 @@ struct Vec3 vec3_normalize(struct Vec3 v)
     return v;
 }
 
-
-static struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2)
 {
     struct Vec3 v;
@@ -110,8 +101,7 @@ struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2)
     return v;
 }
 
-static struct Vec3 vec3_mult(struct Vec3 vl, struct Vec3 v2) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Vec3 vec3_mult(struct Vec3 v1, struct Vec3 v2)
 {
     struct Vec3 v;
@@ -121,8 +111,7 @@ struct Vec3 vec3_mult(struct Vec3 v1, struct Vec3 v2)
     return v;
 }
 
-static struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2)
 {
     v1.x -= v2.x;
@@ -131,8 +120,7 @@ struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2)
     return v1;
 }
 
-static struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar)
 {
     v.x *= scalar;
@@ -141,8 +129,7 @@ struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar)
     return v;
 }
 
-static struct Vec3 vec3_scalar_add(struct Vec3 v, float scalar) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_scalar_add(struct Vec3 v, float scalar)
 {
     v.x += scalar;
@@ -151,26 +138,16 @@ struct Vec3 vec3_scalar_add(struct Vec3 v, float scalar)
     return v;
 }
 
-static struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2) 
 {
-#if 0
-    struct Vec3 v;
-    v.x = v1.x + v2.x;
-    v.y = v1.y + v2.y;
-    v.z = v1.z + v2.z;
-    return v;
-#else
     v1.x += v2.x;
     v1.y += v2.y;
     v1.z += v2.z;
     return v1;
-#endif
 }
 
-static struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3) 
 {
     struct Vec3 v;
@@ -180,8 +157,7 @@ struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3)
     return v;
 }
 
-static struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) 
 {
     struct Vec3 v;
@@ -191,9 +167,8 @@ struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec
     return v;
 }
 
-static struct Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n) __attribute((always_inline));
-
-static struct Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
+ALWAYS_INLINE
+static Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
 {
     struct Vec3 v;
     //v = vec3_add(i, vec3_scalar_mult(vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)), -1));
@@ -202,11 +177,9 @@ static struct Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
     return v;
 }
 
-static struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z) __attribute((always_inline));
-
+ALWAYS_INLINE
 struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
 {
-
     x *= PI;
     y *= PI;
     z *= PI;
@@ -249,9 +222,8 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
     return u;
 }
 
-static struct Vec3 vec3_init_from_angles(float theta, float phi, float rho) __attribute((always_inline));
-
-static struct Vec3 vec3_init_from_angles(float theta, float phi, float rho)
+ALWAYS_INLINE
+struct Vec3 vec3_init_from_angles(float theta, float phi, float rho)
 {
     Vec3 unit = vec3_init(1,0,0);
     unit = vec3_euler_rotation(unit, theta, phi, rho);
@@ -259,9 +231,8 @@ static struct Vec3 vec3_init_from_angles(float theta, float phi, float rho)
     return unit;
 }
 
-static struct Vec3 vec3_bias_random(Vec3 v, const float bias) __attribute((always_inline));
-
-Vec3 vec3_bias_random(Vec3 v, const float bias)
+ALWAYS_INLINE
+struct Vec3 vec3_bias_random(struct Vec3 v, const float bias)
 {
     const float arc = bias / 360.0f;
     const float theta = ((randf() * PI * 2) - PI) * arc;
@@ -270,9 +241,8 @@ Vec3 vec3_bias_random(Vec3 v, const float bias)
     return vec3_euler_rotation(v, theta, phi, rho);
 }
 
-static struct Vec3 vec3_bias(Vec3 v, const float bias) __attribute((always_inline));
-
-Vec3 vec3_bias(Vec3 v, const float bias)
+ALWAYS_INLINE
+struct Vec3 vec3_bias(struct Vec3 v, const float bias)
 {
     const float arc = bias / 360.0f;
     const float factor = ((PI * 2) - PI) * arc;
@@ -283,50 +253,45 @@ Vec3 vec3_bias(Vec3 v, const float bias)
     scalar return
 */
 
-static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
-
-
+ALWAYS_INLINE
 float vec3_dot(struct Vec3 v1, struct Vec3 v2) 
 {
     return v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
 }
 
-static float vec3_length(struct Vec3 v) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 float vec3_length(struct Vec3 v) 
 {
     return sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
-static float vec3_length_squared(struct Vec3 v) __attribute((always_inline));
-
+ALWAYS_INLINE
 float vec3_length_squared(struct Vec3 v) 
 {
     return v.x*v.x + v.y*v.y + v.z*v.z;
 }
 
-static float vec3_cos2(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 float vec3_cos2(struct Vec3 v1, struct Vec3 v2) 
 {
     float dot =  (v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z);
     return (dot*dot) / ((v1.x*v1.x + v1.y*v1.y + v1.z*v1.z)*(v2.x*v2.x + v2.y*v2.y + v2.z*v2.z));
 }
 
-static float vec3_distance(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline));
+ALWAYS_INLINE
 float vec3_distance(struct Vec3 v1, struct Vec3 v2)
 {
     return sqrtf((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
 }
 
-static float vec3_distance_squared(struct Vec3 v) __attribute((always_inline));
+ALWAYS_INLINE
 float vec3_distance_squared(struct Vec3 v1, struct Vec3 v2)
 {
     return (v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z);
 }
 
 // Angle from look vector vx,vy,vz to point x,y,z
-static float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2) __attribute((always_inline));
+ALWAYS_INLINE
 float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)
 {
     normalize_vector(&look);
@@ -337,8 +302,8 @@ float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)
     return x;
 }
 
-static float vec3_to_theta(Vec3 direction) __attribute((always_inline));
-static float vec3_to_theta(Vec3 direction)
+ALWAYS_INLINE
+float vec3_to_theta(Vec3 direction)
 {
     direction.z = 0;
     if (vec3_length_squared(direction) == 0.0f) return 0.0f;
@@ -349,8 +314,8 @@ static float vec3_to_theta(Vec3 direction)
 }
 
 //  x- and y-angle (theta,phi) rotation between two Vec3s
-static void vec3_to_angles(Vec3 direction, float* theta, float* phi) __attribute((always_inline));
-static void vec3_to_angles(Vec3 direction, float* theta, float* phi)
+ALWAYS_INLINE
+void vec3_to_angles(Vec3 direction, float* theta, float* phi)
 {
     normalize_vector(&direction);
     float z = direction.z;
@@ -373,15 +338,15 @@ static void vec3_to_angles(Vec3 direction, float* theta, float* phi)
 }
 
 
-static bool vec3_equal(Vec3 v1, Vec3 v2) __attribute((always_inline));
-static bool vec3_equal(Vec3 v1, Vec3 v2)
+ALWAYS_INLINE
+bool vec3_equal(Vec3 v1, Vec3 v2)
 {
     if (v1.x == v2.x && v1.y == v2.y && v1.z == v2.z) return true;
     return false;
 }
 
-static bool vec3_isnan(Vec3 v) __attribute__((always_inline));
-static bool vec3_isnan(Vec3 v)
+ALWAYS_INLINE
+bool vec3_isnan(Vec3 v)
 {
     #ifdef NAN
     if (isnan(v.x) || isnan(v.y) || isnan(v.z)) return true;
@@ -389,15 +354,15 @@ static bool vec3_isnan(Vec3 v)
     return false;
 }
 
-static bool vec3_isfinite(Vec3 v) __attribute__((always_inline));
-static bool vec3_isfinite(Vec3 v)
+ALWAYS_INLINE
+bool vec3_isfinite(Vec3 v)
 {
     if (isfinite(v.x) || isfinite(v.y) || isfinite(v.z)) return true;
     return false;
 }
 
-static bool vec3_is_valid(Vec3 v) __attribute__((always_inline));
-static bool vec3_is_valid(Vec3 v)
+ALWAYS_INLINE
+bool vec3_is_valid(Vec3 v)
 {
     return (vec3_isfinite(v) && !vec3_isnan(v));
 }

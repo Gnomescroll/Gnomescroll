@@ -13,7 +13,8 @@
 #endif
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-class Object_pool {
+class Object_pool
+{
     private:
         int batch_num;
         int instance_used;
@@ -28,8 +29,8 @@ class Object_pool {
 
     public:
 
-    Entity* first;
-    Entity* last;
+        Entity* first;
+        Entity* last;
 
     inline Entity* acquire() __attribute__((always_inline));
 
@@ -115,7 +116,7 @@ void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
 }
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
+ALWAYS_INLINE Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
 {
     #if OBJECT_POOL_DEBUG_BATCH 
         Entity* tmp2 = (Entity*) malloc(sizeof(Entity));
@@ -143,7 +144,7 @@ Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
 }
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::retire(Entity* nmb)
+ALWAYS_INLINE void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::retire(Entity* nmb)
 {
     #if OBJECT_POOL_DEBUG_BATCH
         free(nmb);

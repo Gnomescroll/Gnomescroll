@@ -152,7 +152,7 @@ void save_png(const char* filename, float* in, int xres, int yres)
 }
 
 __attribute((always_inline, optimize("-O3")))
-void save_perlin(const char* filename, float* in, int xres, int yres)
+inline void save_perlin(const char* filename, float* in, int xres, int yres)
 {
 //#if DC_CLIENT
     char FileName[128];

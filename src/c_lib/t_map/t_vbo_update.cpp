@@ -105,7 +105,7 @@ static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, 
 //const static int occ_array[3] = { 255, 177, 100 };
 
 //STATIC_INLINE_OPTIMIZED
-inline int calcAdj(int side_1, int side_2, int corner) 
+ALWAYS_INLINE int calcAdj(int side_1, int side_2, int corner) 
 {
     const static int occ_array[3] = { 255, 128, 64 };
     int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
@@ -122,14 +122,14 @@ const static int_fast8_t s_array[18] = {
         };
 
 //this is doing a get, but can use within chunk lookup
-INLINE
+ALWAYS_INLINE
 int _is_occluded(int x,int y,int z, int side_num)
 {
     int i = 3*side_num;
     return isOccludes(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]);
 }
 
-INLINE
+ALWAYS_INLINE
 int get_lighting(int x,int y,int z, int side)
 {
     int i = 3*side;
@@ -150,7 +150,7 @@ inline int _is_occluded_transparent(int x,int y,int z, int side_num, CubeID _cub
 
 #define AO_DEBUG 0
 
-INLINE
+ALWAYS_INLINE
 void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int CX[8];
@@ -195,7 +195,7 @@ void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x,
 
 }
 
-INLINE
+ALWAYS_INLINE
 void _set_quad_local_ambient_occlusion_compatibility(struct VertexBackup* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -380,11 +380,11 @@ static int vertex_max = 0;
 
 #define USE_QUAD_CACHE 0
 
-//static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
+//ALWAYS_INLINE static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 
 //__attribute((always_inline, optimize("-O3")))
 
-//__attribute((always_inline))
+//ALWAYS_INLINE
 void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
 {
     int tile_id = element.block;

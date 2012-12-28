@@ -30,8 +30,7 @@ struct Vec4 {
  //__attribute__((aligned (16)));
 
 /*
-static struct Vec4 vec4_init(float x, float y, float z) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec4 vec4_init(float x, float y, float z)
 {
     struct Vec4 v;
@@ -43,8 +42,7 @@ struct Vec4 vec4_init(float x, float y, float z)
 }
 */
 
-static struct Vec4 vec4_init(float x, float y, float z, float w) __attribute((always_inline)); 
-
+ALWAYS_INLINE
 struct Vec4 vec4_init(float x, float y, float z, float w)
 {
     struct Vec4 v;

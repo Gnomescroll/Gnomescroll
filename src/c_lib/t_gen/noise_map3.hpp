@@ -260,7 +260,7 @@ class PerlinOctave3D
 
 //reaction is inverse of interval over which effect occurs
 __attribute((always_inline, optimize("-O3")))
-float sigmoid(float t, float mean, float reaction)
+inline float sigmoid(float t, float mean, float reaction)
 {
     t = t -mean;
     t *= reaction;
@@ -269,7 +269,7 @@ float sigmoid(float t, float mean, float reaction)
 
 //-1 to 1
 __attribute((always_inline, optimize("-O3")))
-float sigmoid2(float t, float mean, float reaction)
+inline float sigmoid2(float t, float mean, float reaction)
 {
     t = t -mean;
     t *= reaction;

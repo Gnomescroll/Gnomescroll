@@ -33,7 +33,7 @@ template <class Derived>
 class FixedSizeNetPacketToClient
 {
     private:
-        virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        virtual void packet(char* buff, unsigned int* buff_n, bool pack) = 0;
         class Net_message* nm;
     public:
         static uint8_t message_id;
@@ -44,14 +44,16 @@ class FixedSizeNetPacketToClient
         FixedSizeNetPacketToClient() { nm = NULL; }
         virtual ~FixedSizeNetPacketToClient() {}
     
-        void serialize(char* buff, unsigned int* buff_n) __attribute((always_inline))
+        ALWAYS_INLINE
+        void serialize(char* buff, unsigned int* buff_n)
         {
             //GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
 
-        inline void unserialize(char* buff, unsigned int* buff_n, unsigned int* size) __attribute((always_inline))
+        ALWAYS_INLINE
+        void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
         {
             unsigned int _buff_n = *buff_n;
             packet(buff, buff_n, false);
@@ -203,9 +205,10 @@ Should onyl use one net message allocation per message
 */
 
 template <class Derived>
-class FixedSizeReliableNetPacketToClient {
+class FixedSizeReliableNetPacketToClient
+{
     private:
-        virtual void packet(char* buff, unsigned int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        virtual void packet(char* buff, unsigned int* buff_n, bool pack) = 0;
         class Net_message* nm;
     public:
         static uint8_t message_id;
@@ -216,14 +219,14 @@ class FixedSizeReliableNetPacketToClient {
         FixedSizeReliableNetPacketToClient(){ nm = NULL; }
         virtual ~FixedSizeReliableNetPacketToClient() {}
     
-        void serialize(char* buff, unsigned int* buff_n) __attribute((always_inline))
+        ALWAYS_INLINE void serialize(char* buff, unsigned int* buff_n)
         {
             //GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
         
-        inline void unserialize(char* buff, unsigned int* buff_n, unsigned int* size) __attribute((always_inline))
+        ALWAYS_INLINE void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
         {
             unsigned int _buff_n = *buff_n;
             packet(buff, buff_n, false);
