@@ -191,6 +191,12 @@ void load_block_drop_dat()
         set_drop(0.20f, 2);
         set_drop(0.10f, 3);
 
+    def_drop("silicon_ore");
+        add_drop("silicon_ore_piece", 3);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+
     def_drop("coal");
         add_drop("coal_nugget", 3);
         set_drop(0.50f, 1);

@@ -37,7 +37,7 @@ void meteor_fall(void)
     int zcurrent = z;
 
     CubeID tile_id = NULL_CUBE;
-    switch (randrange(1,6))
+    switch (randrange(1,7))
     {
         case 1:
             tile_id = t_map::get_cube_id("iron_ore");
@@ -56,6 +56,9 @@ void meteor_fall(void)
             break;
         case 6:
             tile_id = t_map::get_cube_id("methane_ice");
+            break;
+        case 7:
+            tile_id = t_map::get_cube_id("silicon_ore");
             break;
         default:
             GS_ASSERT(false);
@@ -136,6 +139,7 @@ void meteor_fall(void)
         xcurrent=translate_point(xcurrent);
         ycurrent=randrange(y + (zcurrent - z) - METEOR_SIZE * 5, y - (zcurrent - z) + METEOR_SIZE * 6);
         ycurrent=translate_point(ycurrent);
+        if (zcurrent > t_map::get_highest_open_block(xcurrent, ycurrent)) zcurrent = t_map::get_highest_open_block(xcurrent, ycurrent);
         if (randrange(1, 5) == 1) t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         else t_map::set(xcurrent, ycurrent, zcurrent, rock); //lots of impurities here because the crater is mainly made out of stuff that the meteor pushed away from itself
         if (randrange(1, 5) < 5) degenerate_column(xcurrent, ycurrent, zcurrent + 1);
@@ -176,7 +180,7 @@ void meteor_shower()
     CubeID steelB=t_map::get_cube_id("steel_block_2");
     CubeID steelC=t_map::get_cube_id("steel_block_3");
     CubeID material;
-    switch (randrange(1, 6))
+    switch (randrange(1, 7))
     {
         case 1:
             material = t_map::get_cube_id("iron_ore");
@@ -201,6 +205,10 @@ void meteor_shower()
         case 6:
             material = t_map::get_cube_id("methane_ice");
             printf("Starting methane meteor shower \n");
+            break;
+        case 7:
+            material = t_map::get_cube_id("silicon_ore");
+            printf("Starting silicon meteor shower \n");
             break;
         default:
             GS_ASSERT(false);

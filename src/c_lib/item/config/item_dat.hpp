@@ -252,6 +252,16 @@ void load_item_dat()
     s->object_damage_min = 30;
     s->object_damage_max = 40;
 
+    item_def(IG_RESOURCE, "silicon_ore_piece");
+    sprite_def(i1, 13,2);
+    set_pretty_name("Silicon Ore");
+    s->max_stack_size = 64;
+
+    item_def(IG_RESOURCE, "silicon_crystal");
+    sprite_def(i1, 13,1);
+    set_pretty_name("Silicon Crystal");
+    s->max_stack_size = 64;
+
     item_def(IG_FIST, "fist");
     sprite_def(i1, 6, 2);
     set_pretty_name("Fist");

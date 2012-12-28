@@ -26,7 +26,7 @@ void load_smelting_dat()
     def_smelting_recipe("iron_bar");
     set_smelting_reagent("iron_ore_piece", 1);
     set_smelting_creation_time(30 * 5);
-    
+
     def_smelting_recipe("gallium_bar");
     set_smelting_reagent("gallium_ore_piece", 1);
     set_smelting_creation_time(30 * 10);
@@ -34,7 +34,11 @@ void load_smelting_dat()
     def_smelting_recipe("iridium_bar");
     set_smelting_reagent("iridium_ore_piece", 1);
     set_smelting_creation_time(30 * 15);
-    
+
+    def_smelting_recipe("silicon_crystal");
+    set_smelting_reagent("silicon_ore_piece", 1);
+    set_smelting_creation_time(30 * 8);
+
     end_smelting_recipe();  // finalize
 }
 

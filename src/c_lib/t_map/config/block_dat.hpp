@@ -250,6 +250,11 @@ void load_block_dat()
     push_texture();
     set_max_damage(64);
 
+    cube_def(SolidCube, "silicon_ore", CUBE_MATERIAL_STONE);
+    iso_texture(iceflame, 3,2);
+    push_texture();
+    set_max_damage(64);
+
     cube_def(SolidCube, "bedrock");
     iso_texture(c1, 10,7);
     push_texture();
