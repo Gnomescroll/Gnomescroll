@@ -1065,7 +1065,7 @@ void init_rayleigh_scattering()
 	CFL.set_int("skybox_update_rate", &skybox_update_rate);
 	CFL.set_int("print_max_light", &print_max_light);
 
-	CFL.load_file("./settings/skybox");
+	CFL.load_file("./settings/skybox", true);	//load file silently first time
 
 	class Skyplane S;
 	S.load_settings(SPS);

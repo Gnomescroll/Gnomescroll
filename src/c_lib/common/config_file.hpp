@@ -49,7 +49,7 @@ class ConfigFileLoader
 	}
 
 
-	void process_line(const char* input_line)
+	void process_line(const char* input_line, bool silent)
 	{
 		if(strlen(input_line) <= 3)
 			return;
@@ -57,7 +57,7 @@ class ConfigFileLoader
 
 		if(input_line[0] == '#')
 			return;
-		
+
 		char* var_name = new char[256];
 		char* rest = new char[256];
 
@@ -115,7 +115,7 @@ class ConfigFileLoader
 				if(*((float*)cva[index].ptr) != value_float)
 				{
 					*((float*)cva[index].ptr) = value_float;
-					printf("Set float: %s to %f \n", var_name, value_float);
+					if(!silent) printf("Set float: %s to %f \n", var_name, value_float);
 				}	
 				break;
 
@@ -132,7 +132,7 @@ class ConfigFileLoader
 				if( *((int*)cva[index].ptr) != value_int)
 				{
 					*((int*)cva[index].ptr) = value_int;
-					printf("Set int: %s to %d \n", var_name, value_int);
+					if(!silent) printf("Set int: %s to %d \n", var_name, value_int);
 				}
 				break;
 
@@ -154,7 +154,7 @@ class ConfigFileLoader
 				if( *((int*)cva[index].ptr) != value_int)
 				{
 					*((int*)cva[index].ptr) = value_int;
-					printf("Set color: %s to %d %d %d %d \n", var_name, value_r,value_g,value_b,value_a);
+					if(!silent) printf("Set color: %s to %d %d %d %d \n", var_name, value_r,value_g,value_b,value_a);
 				}
 				break;
 
@@ -172,7 +172,8 @@ class ConfigFileLoader
 
 	}
 
-	void load_file(const char* filename)
+	//silent == true for avoiding print
+	void load_file(const char* filename, bool silent)
 	{
 		size_t buffer_size;
 		char* buffer = read_file_to_buffer(filename, &buffer_size);	
@@ -201,7 +202,7 @@ class ConfigFileLoader
 				tmp_str[i] = 0x00;
 			memcpy(tmp_str, buffer+offset, marker - offset);
 			tmp_str[marker - offset] = 0x00;
-			process_line(tmp_str);
+			process_line(tmp_str, silent);
 
 			marker++;
 			offset = marker;
@@ -209,6 +210,11 @@ class ConfigFileLoader
 
 
 		delete[] tmp_str;
+	}
+
+	void load_file(const char* filename)
+	{
+		load_file(filename, false);
 	}
 
 	void name_creation_check(const char* var_name)
