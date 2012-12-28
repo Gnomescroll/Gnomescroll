@@ -590,7 +590,7 @@ class Skyplane
 		for(int i=0; i<=samples; i++)
 		{
 
-			if(vec3_length(tmp1[i]) >= sphere_radius + _epsilon)
+			if(vec3_length(tmp1[i]) >= sphere_radius) // + _epsilon; this is more serious
 			{
 				printf("WTF 1: %0.2f, max %0.2f \n", vec3_length(tmp1[i]), planet_radius + atomosphere_depth);
 			}
@@ -625,7 +625,7 @@ class Skyplane
 			else
 			{
 				struct Vec3 sun_dir = vec3_normalize(vec3_sub(s, tmp1[i]));
-				float d = sphere_line_intersection(tmp1[i], sun_dir, sphere_radius - _epsilon);
+				float d = sphere_line_intersection(tmp1[i], sun_dir, sphere_radius);
 				_s[i] = vec3_add(tmp1[i], vec3_scalar_mult(sun_dir,d));
 
 			}
