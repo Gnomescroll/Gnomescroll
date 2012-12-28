@@ -324,7 +324,7 @@ class Skyplane
 		struct Vec3 c = vec3_init(0.0, 0.0, planet_radius+camera_z);
 		
 		//debug
-		float _epsilon = 1.0f;
+		float _epsilon = 0.1f;
 		if(c.z > planet_radius + atomosphere_depth - _epsilon)
 			c.z = planet_radius + atomosphere_depth - _epsilon;
 		if(c.z < planet_radius + _epsilon)
@@ -334,13 +334,22 @@ class Skyplane
 		const int dim_half = dim/2;
 
 
+		if(vec3_length(c) > planet_radius + atomosphere_depth + _epsilon)
+		{
+			printf("WTF: camera outside of sphere\n");
+			GS_ASSERT_ABORT(false);
+		}
+
+		if(vec3_length(c) < planet_radius - _epsilon)
+		{
+			printf("WTF: camera inside of sphere\n");
+			GS_ASSERT_ABORT(false);
+		}
+
 		float _max_light2 = 0.10;
 
 		const float sphere_radius = planet_radius + atomosphere_depth;
-		if(sun_distance < _epsilon + sphere_radius)
-		{
-			printf("SKYBOX WARNING: sun distance is less than planet_radius + atomosphere_depth \n");
-		}
+
 		for(int side=0; side<6; side++)
 		{
 
@@ -372,17 +381,8 @@ class Skyplane
 					b = vec3_normalize(b); //direction from camera
 					//camera is at the center of the cube always
 
-					if(vec3_length(c) >= sphere_radius)
-					{
-						printf("WTF: camera outside of sphere\n");
-					}
 
-					if(vec3_length(c) <= planet_radius)
-					{
-						printf("WTF: camera inside of sphere\n");
-					}
-
-					float d = sphere_line_intersection(c, b, sphere_radius);
+					float d = sphere_line_intersection(c, b, sphere_radius - _epsilon);
 
 					//if(d > 32.0)
 					//	d =32;
@@ -477,24 +477,6 @@ class Skyplane
 			}
 		}	
 
-/*
-		printf("!!! sx,sy,sz= %.2f %.2f %.2f \n" ,sx,sy,sz);
-		printf("theta,phi= %.2f %.2f ", theta, phi);s
-		printf("Sun Position: x,y,z= %.2f %.2f %.2f \n", sx,sy,sz);
-		printf("plane_center: x,y,z= %.2f %.2f %.2f \n", center.x, center.y, center.z);
-*/
-
-	/*
-		printf("!!! DOT= %.2f cos2= %.2f \n", 
-			vec3_dot(s, center[2]), 
-			vec3_cos2(s, center[2])
-			);
-
-		for(int i=0; i<6; i++)
-		{
-			printf("%i: center= %.2f %.2f %.2f \n", i,center[i].x,center[i].y,center[i].z );
-		}
-	*/
 	}
 
 	int sphere_wedge_test(struct Vec3 v, float inner_radius, float outer_radius)
@@ -528,6 +510,7 @@ class Skyplane
 
 	float out_scatter(const struct Vec3 &v1, const struct Vec3 &v2)
 	{
+		const float _epsilon = 0.1;
 
 		const float _f = 1.0f / ((float) samples);
 		const float _d = _f * vec3_distance(v1, v2);
@@ -545,7 +528,15 @@ class Skyplane
 		{
 			struct Vec3 tmp1 = vec3_add(v1, vec3_scalar_mult(vi, i));
 			//float _h = tmp1.z *sbh_norm; //divide by -H0*skybox_height
-			_r[i] = exp(tmp1.z *sbh_norm); //intergrate over exp(-height / H0) 
+		
+			float s_height = vec3_length(tmp1) - planet_radius - _epsilon;
+
+			if(s_height > atomosphere_depth)
+			{
+				printf("ERROR out_scatter: s_height= %.2f %2.f \n", s_height , atomosphere_depth);
+			}
+			_r[i] = s_height < 0.0 ? 0.0 : exp(s_height *sbh_norm); //intergrate over exp(-height / H0) 
+			//_r[i] = exp(tmp1.z *sbh_norm); //intergrate over exp(-height / H0) 
 		}
 
 
@@ -609,7 +600,7 @@ class Skyplane
 
 			if(vec3_length(tmp1[i]) <= planet_radius - _epsilon)
 			{
-				printf("WTF 2: %0.2f, min %0.2f \n", vec3_length(tmp1[i]), planet_radius);
+				//printf("WTF 2: %0.2f, min %0.2f \n", vec3_length(tmp1[i]), planet_radius);
 			}
 
 
@@ -638,6 +629,9 @@ class Skyplane
 			//dont outscatter to sun; only outscatter in direction of sun (to end of skybox)
 
 			//struct Vec3 dir = vec3_normalize(vec3_sub(s, tmp1[i]) );
+
+			if(vec3_length(vec3_sub(s, tmp1[i])) < 0.01)
+				printf("tmp1[i] len < 0.01 \n");
 			struct Vec3 sun_dir = vec3_normalize(vec3_sub(s, tmp1[i]));
 			float d = sphere_line_intersection(tmp1[i], sun_dir, sphere_radius);
 			_s[i] = vec3_add(tmp1[i], vec3_scalar_mult(sun_dir,d));
@@ -654,7 +648,16 @@ class Skyplane
 		for(int i=0; i<=samples; i++)
 		{
 			//_t0[i] = expf( -tmp1[i].z / (H0*skybox_height));
-			_t0[i] = expf(sbh_norm*tmp1[i].z); // expf( -tmp1[i].z / (H0*skybox_height));
+
+			float s_height = vec3_length(tmp1[i]) - planet_radius - _epsilon;
+
+
+			if(s_height > atomosphere_depth)
+			{
+				printf("ERROR in_scatter: s_height= %.2f %2.f \n", s_height , atomosphere_depth);
+			}
+
+			_t0[i] = expf(sbh_norm*s_height); // expf( -tmp1[i].z / (H0*skybox_height));
 
 			_t1[i] = out_scatter(tmp1[i], _s[i]); //out_scatter from current point to sun
 			_t2[i] = out_scatter(tmp1[i], c); //out_scatter from current point to camera
