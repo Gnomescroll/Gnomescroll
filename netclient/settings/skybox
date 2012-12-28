@@ -12,7 +12,7 @@ phase_factor = 0.25
 
 H0 = 0.15
 skybox_height = 128.0
-camera_z = 128.0
+camera_z = 64.0
 
 time_speed = 20
 skybox_update_rate = 3

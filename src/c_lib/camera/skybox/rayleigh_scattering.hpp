@@ -566,9 +566,6 @@ class Skyplane
 			printf("WTF 4: %0.2f, max %0.2f \n", vec3_length(b), planet_radius + atomosphere_depth);
 		}
 
-		struct Vec3 bc = vec3_sub(b,c);
-		struct Vec3 bs = vec3_sub(s,c);
-
 		//For each point P along the ray from Pa to Pb , 
 		//PPc is the ray from the point to the sun
 		//PPa is the ray from the sample point to the camera.
@@ -618,11 +615,23 @@ class Skyplane
 
 			//struct Vec3 dir = vec3_normalize(vec3_sub(s, tmp1[i]) );
 
-			if(vec3_length(vec3_sub(s, tmp1[i])) < 0.01)
-				printf("tmp1[i] len < 0.01 \n");
-			struct Vec3 sun_dir = vec3_normalize(vec3_sub(s, tmp1[i]));
-			float d = sphere_line_intersection(tmp1[i], sun_dir, sphere_radius - _epsilon);
-			_s[i] = vec3_add(tmp1[i], vec3_scalar_mult(sun_dir,d));
+			//happens when sun is in atomosphere!
+
+			if(vec3_length(vec3_sub(s, tmp1[i])) < _epsilon)
+			{
+				//sun is in atomosphere
+				_s[i] = tmp1[i]; // or s
+			}
+			else
+			{
+				struct Vec3 sun_dir = vec3_normalize(vec3_sub(s, tmp1[i]));
+				float d = sphere_line_intersection(tmp1[i], sun_dir, sphere_radius - _epsilon);
+				_s[i] = vec3_add(tmp1[i], vec3_scalar_mult(sun_dir,d));
+
+			}
+				//printf("tmp1[i] len < 0.01 \n");
+
+
 
 			/*
 				!!! dont raycast to sun; only to atomosphere ceiling in direction of sun
@@ -687,6 +696,8 @@ class Skyplane
 			phase(b, s) );
 */
 		//debug
+		struct Vec3 bc = vec3_sub(b,c);
+		struct Vec3 bs = vec3_sub(s,c);
 		tmp *= phase(bc, bs);
 		
 		//return brightness_scale_factor*(brightness_log_factor*log(tmp) + brightness_sum_factor);
@@ -1019,6 +1030,7 @@ void init_rayleigh_scattering()
 	CFL.set_int("skybox_update_rate", &skybox_update_rate);
 	CFL.set_int("print_max_light", &print_max_light);
 
+	CFL.load_file("./settings/skybox");
 
 	class Skyplane S;
 	S.load_settings(SPS);
