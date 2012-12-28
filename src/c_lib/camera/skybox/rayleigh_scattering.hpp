@@ -10,6 +10,7 @@ unsigned char sun_color[4];
 
 float sun_g[4];	//g factor for each channels
 float sun_h[4];//h0, scale height for each channel
+float sun_b[4];//brightness for each channel
 
 //cube orientation vectors
 static const float _f[6*3] =
@@ -439,8 +440,8 @@ class Skyplane
 	}
 
 	float gf;
-	float gf2; //gf squared
 	float gfc; //constant
+	float gf2; //gf squared
 
 	void update_phase_constants()
 	{
@@ -506,7 +507,7 @@ class Skyplane
 		for(int i=0; i<samples; i++)
 			tmp += _d_half*(_r[i] + _r[i+1]);  // _d*(_r[i] + _r[i+1])*0.5
 
-		return tmp;
+		return wavelenght_factor*tmp;
 		//return 4.0*3.14159*tmp;
 	}
 
@@ -659,7 +660,7 @@ class Skyplane
 		//debug
 		struct Vec3 bc = vec3_sub(b,c);
 		struct Vec3 bs = vec3_sub(s,c);
-		tmp *= phase(bc, bs);
+		tmp *= wavelenght_factor*phase(bc, bs);
 		
 		//return brightness_scale_factor*(brightness_log_factor*log(tmp) + brightness_sum_factor);
 		return tmp;
@@ -787,11 +788,7 @@ class SkyboxRender
 
 	void increment_time()
 	{
-
-		//const int tspeed = 1; //normally 1
 		time_count = (time_count+time_speed) % 6750;
-
-
 	}
 
 	unsigned char gamma_correction[256];
@@ -1016,6 +1013,11 @@ void init_rayleigh_scattering()
 	CFL.set_float("sun_hR", &sun_h[1]);
 	CFL.set_float("sun_hG", &sun_h[2]);
 	CFL.set_float("sun_hB", &sun_h[3]);
+
+	CFL.set_float("sun_b0", &sun_b[0]);
+	CFL.set_float("sun_bR", &sun_b[1]);
+	CFL.set_float("sun_bG", &sun_b[2]);
+	CFL.set_float("sun_bB", &sun_b[3]);
 
 	//CFL.set_float("brightness_log_factor", &SPS.brightness_log_factor);
 	CFL.set_float("brightness_scale_factor", &SPS.brightness_scale_factor);
