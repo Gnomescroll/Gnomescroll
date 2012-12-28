@@ -8,7 +8,8 @@ namespace Skybox
 int print_max_light = 0 ;
 unsigned char sun_color[4];
 
-float sun_g[4];	//channels
+float sun_g[4];	//g factor for each channels
+float sun_h[4];//h0, scale height for each channel
 
 //cube orientation vectors
 static const float _f[6*3] =
@@ -1037,9 +1038,6 @@ void init_rayleigh_scattering()
 	CFL.set_float("atomosphere_depth", &SPS.atomosphere_depth);
 	CFL.set_float("sun_distance", &SPS.sun_distance);
 
-	//CFL.set_float("phase_factor", &SPS.phase_factor);
-
-	//float wavelenght_factor;
 	CFL.set_float("wavelenght_factor", &SPS.wavelenght_factor);
 	CFL.set_float("phase_g_factor", &SPS.phase_g_factor);
 	CFL.set_color("color", (char*) sun_color);
@@ -1048,6 +1046,11 @@ void init_rayleigh_scattering()
 	CFL.set_float("sun_gR", &sun_g[1]);
 	CFL.set_float("sun_gG", &sun_g[2]);
 	CFL.set_float("sun_gB", &sun_g[3]);
+
+	CFL.set_float("sun_h0", &sun_h[0]);
+	CFL.set_float("sun_hR", &sun_h[1]);
+	CFL.set_float("sun_hG", &sun_h[2]);
+	CFL.set_float("sun_hB", &sun_h[3]);
 
 	//CFL.set_float("brightness_log_factor", &SPS.brightness_log_factor);
 	CFL.set_float("brightness_scale_factor", &SPS.brightness_scale_factor);
