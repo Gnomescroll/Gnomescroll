@@ -165,6 +165,8 @@ int physics_tick()
 
         Auth::update();   // put it in the physics tick because i want a fixed time counter
 
+        Skybox::tick_rayleigh_scattering(); //update skybox time and update physics
+
         _SET_LAST_TICK();
     }
 
