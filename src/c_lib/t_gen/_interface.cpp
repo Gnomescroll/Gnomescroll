@@ -22,8 +22,7 @@ void teardown()
     
 }
 
-
-void populate_2d_noise_array(float* _2d_noise_array, float persistance, int octaves)
+void populate_2d_noise_array(float* _2d_noise_array, float persistence, int octaves)
 {
     init_genrand(rand());
     class PerlinOctave2D* p2d = new class PerlinOctave2D(octaves);
@@ -35,7 +34,7 @@ void populate_2d_noise_array(float* _2d_noise_array, float persistance, int octa
         float _x = i*(1.0f/(float)XMAX); // + (0.5/512.0);
         float _y = j*(1.0f/(float)YMAX); // + (0.5/512.0);
 
-        float tmp = p2d->sample(_x,_y,persistance);
+        float tmp = p2d->sample(_x,_y,persistence);
         _2d_noise_array[XMAX*j + i] = tmp;
         sum += tmp;
     }

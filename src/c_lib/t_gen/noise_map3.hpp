@@ -4,17 +4,13 @@
 dont_include_this_file_in_client
 #endif
 
-//#pragma GCC push_options
-//#pragma GCC pop_options
-//#pragma GCC optimize ("O3")
-
 #include <t_gen/twister.hpp>
 #include <t_gen/noise_map2.hpp>
 #include <common/time/physics_timer.hpp>
 #include <t_map/server/env_process.hpp>
 
 #ifdef __MSVC__
-# pragma optimize( "gt", on )
+# pragma optimize("gt", on)
 #endif
 
 namespace t_gen
@@ -44,8 +40,8 @@ class PerlinField3D
 
     void init(int _xsize, int _zsize)
     {
-        if(_xsize < 1) GS_ABORT();
-        if(_zsize < 1) GS_ABORT();
+        if (_xsize < 1) GS_ABORT();
+        if (_zsize < 1) GS_ABORT();
 
         xsize = _xsize;
         xsize2 = xsize*xsize;
@@ -65,82 +61,82 @@ class PerlinField3D
     //OPTIMIZED
     void generate_gradient_array()
     {
-        for(int i=0; i<this->ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
+        for (int i=0; i<this->ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
     }
 
-OPTIMIZED
-inline int get_gradient(int x, int y, int z)
-{
-    x = x % xsize; //replace with bitmask
-    y = y % xsize;
-    z = z % zsize;
+    OPTIMIZED
+    inline int get_gradient(int x, int y, int z)
+    {
+        x = x % xsize; //replace with bitmask
+        y = y % xsize;
+        z = z % zsize;
 
-    return ga[x + y*xsize + z*xsize2];
-}
+        return ga[x + y*xsize + z*xsize2];
+    }
 
-public:
+    public:
 
-// Classic Perlin noise, 3D version
-OPTIMIZED
-float base(float x, float y, float z) 
-{
-    x *= xsize;
-    y *= xsize;
-    z *= zsize;
+    // Classic Perlin noise, 3D version
+    OPTIMIZED
+    float base(float x, float y, float z) 
+    {
+        x *= xsize;
+        y *= xsize;
+        z *= zsize;
 
-    //get grid point
-    int X = fast_floor(x);
-    int Y = fast_floor(y);
-    int Z = fast_floor(z);
+        //get grid point
+        int X = fast_floor(x);
+        int Y = fast_floor(y);
+        int Z = fast_floor(z);
 
-    x = x - X;
-    y = y - Y;
-    z = z - Z;
+        x = x - X;
+        y = y - Y;
+        z = z - Z;
 
-    int gi000 = get_gradient(X+0,Y+0,Z+0);
-    int gi001 = get_gradient(X+0,Y+0,Z+1);
-    int gi010 = get_gradient(X+0,Y+1,Z+0);
-    int gi011 = get_gradient(X+0,Y+1,Z+1);
+        int gi000 = get_gradient(X+0,Y+0,Z+0);
+        int gi001 = get_gradient(X+0,Y+0,Z+1);
+        int gi010 = get_gradient(X+0,Y+1,Z+0);
+        int gi011 = get_gradient(X+0,Y+1,Z+1);
 
-    int gi100 = get_gradient(X+1,Y+0,Z+0);
-    int gi101 = get_gradient(X+1,Y+0,Z+1);
-    int gi110 = get_gradient(X+1,Y+1,Z+0);
-    int gi111 = get_gradient(X+1,Y+1,Z+1);
-    
-    // Calculate noise contributions from each of the eight corners
-    float n000= dot(gi000, x, y, z);
-    float n100= dot(gi100, x-1, y, z);
-    float n010= dot(gi010, x, y-1, z);
-    float n110= dot(gi110, x-1, y-1, z);
-    float n001= dot(gi001, x, y, z-1);
-    float n101= dot(gi101, x-1, y, z-1);
-    float n011= dot(gi011, x, y-1, z-1);
-    float n111= dot(gi111, x-1, y-1, z-1);
-    // Compute the fade curve value for each of x, y, z
-    
-#if 1
-    float u = fade(x);
-    float v = fade(y);
-    float w = fade(z);
-#else
-    float u = x;
-    float v = y;
-    float w = z;
-#endif
+        int gi100 = get_gradient(X+1,Y+0,Z+0);
+        int gi101 = get_gradient(X+1,Y+0,Z+1);
+        int gi110 = get_gradient(X+1,Y+1,Z+0);
+        int gi111 = get_gradient(X+1,Y+1,Z+1);
+        
+        // Calculate noise contributions from each of the eight corners
+        float n000= dot(gi000, x, y, z);
+        float n100= dot(gi100, x-1, y, z);
+        float n010= dot(gi010, x, y-1, z);
+        float n110= dot(gi110, x-1, y-1, z);
+        float n001= dot(gi001, x, y, z-1);
+        float n101= dot(gi101, x-1, y, z-1);
+        float n011= dot(gi011, x, y-1, z-1);
+        float n111= dot(gi111, x-1, y-1, z-1);
+        // Compute the fade curve value for each of x, y, z
+        
+    #if 1
+        float u = fade(x);
+        float v = fade(y);
+        float w = fade(z);
+    #else
+        float u = x;
+        float v = y;
+        float w = z;
+    #endif
 
-    // Interpolate along x the contributions from each of the corners
-    float nx00 = mix(n000, n100, u);
-    float nx01 = mix(n001, n101, u);
-    float nx10 = mix(n010, n110, u);
-    float nx11 = mix(n011, n111, u);
-    // Interpolate the four results along y
-    float nxy0 = mix(nx00, nx10, v);
-    float nxy1 = mix(nx01, nx11, v);
-    // Interpolate the two last results along z
-    float nxyz = mix(nxy0, nxy1, w);
+        // Interpolate along x the contributions from each of the corners
+        float nx00 = mix(n000, n100, u);
+        float nx01 = mix(n001, n101, u);
+        float nx10 = mix(n010, n110, u);
+        float nx11 = mix(n011, n111, u);
+        // Interpolate the four results along y
+        float nxy0 = mix(nx00, nx10, v);
+        float nxy1 = mix(nx01, nx11, v);
+        // Interpolate the two last results along z
+        float nxyz = mix(nxy0, nxy1, w);
 
-    return nxyz * 0.707106781f;   //-1 to 1 
-}
+        return nxyz * 0.707106781f;   //-1 to 1 
+    }
 
 };
 
@@ -149,28 +145,28 @@ class PerlinOctave3D
     private:
         int runs;
     public:
-    int octaves;
-    class PerlinField3D* octave_array;
+        int octaves;
+        class PerlinField3D* octave_array;
 
-    float* cache;
-    float cache_persistance;
-    unsigned long cache_seed;
+        float* cache;
+        float cache_persistence;
+        unsigned long cache_seed;
 
     PerlinOctave3D(int _octaves) : runs(0)
     {
-        cache_persistance = 0.0f;
+        cache_persistence = 0.0f;
         cache_seed = 0;
 
         octaves = _octaves;
         octave_array = new PerlinField3D[octaves];
 
-        //for(int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
-        //for(int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
-        //for(int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
+        //for (int i=0; i<octaves; i++) octave_array[i].init(pow(2,i+2), 15);
+        //for (int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
+        //for (int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
 
         cache = new float[(512/4)*(512/4)*(128/4)];
 
-        for(int i=0; i<octaves; i++) octave_array[i].init(
+        for (int i=0; i<octaves; i++) octave_array[i].init(
             primes[i+1], primes[i+1]);
     }
 
@@ -181,17 +177,17 @@ class PerlinOctave3D
     }
 
     OPTIMIZED
-    float sample(float x, float y, float z, float persistance)
+    float sample(float x, float y, float z, float persistence)
     {   
         float p = 1.0f;
         float tmp = 0.0f;
-        for(int i=0; i<octaves; i++)
+        for (int i=0; i<octaves; i++)
         {
         #if 1
             tmp += octave_array[i].base(x,y,z);
-            p *= persistance;
+            p *= persistence;
         #else
-            p *= persistance;
+            p *= persistence;
             tmp += p*octave_array[i].base(x,y,z);
         #endif
         }
@@ -200,17 +196,17 @@ class PerlinOctave3D
 
     void save_octaves(float _DEIN) {}
 
-    void set_persistance(float persistance)
+    void set_persistence(float persistence)
     {
-        if(cache_persistance != persistance)
+        if (cache_persistence != persistence)
         {
-            cache_persistance = persistance;
-            populate_cache(persistance);
+            cache_persistence = persistence;
+            populate_cache(persistence);
         }
 
     }
 
-    void set_param(int persistance)
+    void set_param(int persistence)
     {
         bool update = false;
         if (runs == 0)
@@ -218,23 +214,23 @@ class PerlinOctave3D
             update = true;
             this->cache_seed = rand();
             init_genrand(this->cache_seed);
-            for(int i=0; i<octaves; i++)
+            for (int i=0; i<octaves; i++)
                 octave_array[i].generate_gradient_array();
         }
 
-        if(persistance != cache_persistance || update)
+        if (persistence != cache_persistence || update)
         {
-            cache_persistance = persistance;
-            populate_cache(persistance); 
+            cache_persistence = persistence;
+            populate_cache(persistence); 
         }
 
         runs++;
     }
 
     OPTIMIZED
-    void populate_cache(float persistance)
+    void populate_cache(float persistence)
     {
-        //if(cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
+        //if (cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
 
         const int XMAX = 512/4;
         const int YMAX = 512/4;
@@ -242,18 +238,17 @@ class PerlinOctave3D
 
         float x,y,z;
 
-        for(int k=0; k<ZMAX; k++)
-        for(int i=0; i<XMAX; i++)
-        for(int j=0; j<YMAX; j++)
+        for (int k=0; k<ZMAX; k++)
+        for (int i=0; i<XMAX; i++)
+        for (int j=0; j<YMAX; j++)
         {
             x = i*(4.0f/512.0f);
             y = j*(4.0f/512.0f);
             z = k*(4.0f/512.0f);
 
-            cache[k*XMAX*YMAX + j*XMAX + i] = sample(x,y,z, persistance);
+            cache[k*XMAX*YMAX + j*XMAX + i] = sample(x,y,z, persistence);
         }
     }
-
 
 };
 
@@ -263,9 +258,9 @@ class PerlinOctave3D
 OPTIMIZED
 inline float sigmoid(float t, float mean, float reaction)
 {
-    t = t -mean;
+    t -= mean;
     t *= reaction;
-    return (1.0f / (1+(float)exp(-t)));
+    return (1.0f / (1+expf(-t)));
 }
 
 //-1 to 1
@@ -274,7 +269,7 @@ inline float sigmoid2(float t, float mean, float reaction)
 {
     t = t -mean;
     t *= reaction;
-    return (2.0f / (1+(float)exp(-t))) - 1;
+    return (2.0f / (1+expf(-t))) - 1;
 }
 
 
@@ -325,14 +320,14 @@ class MapGenerator1
         if (this->roughness2D != NULL) delete this->roughness2D;
     }
     
-    void set_persistance(float p1, float p2, float p3, float p4, float p5)
+    void set_persistence(float p1, float p2, float p3, float p4, float p5)
     {
-        this->erosion2D->set_persistance(p2);
-        this->erosion3D->set_persistance(p1);
+        this->erosion2D->set_persistence(p2);
+        this->erosion3D->set_persistence(p1);
 
-        this->height2D->set_persistance(p3);
-        this->ridge2D->set_persistance(p4);
-        this->roughness2D->set_persistance(p5);
+        this->height2D->set_persistence(p3);
+        this->ridge2D->set_persistence(p4);
+        this->roughness2D->set_persistence(p5);
     }
 
     void save_noisemaps()
@@ -344,9 +339,9 @@ class MapGenerator1
     OPTIMIZED
     void populate_cache()
     {
-        for(int k=0; k<this->zmax; k++)
-        for(int i=0; i<this->xmax; i++)
-        for(int j=0; j<this->ymax; j++)
+        for (int k=0; k<this->zmax; k++)
+        for (int i=0; i<this->xmax; i++)
+        for (int j=0; j<this->ymax; j++)
         {
             this->cache[k*this->xymax + j*this->xmax + i] = calc(i,j,k);
         }
@@ -378,13 +373,13 @@ class MapGenerator1
         static const float hmin = 64;
 
         /*
-        if(ri2 < 0) ri2 *= -1;
+        if (ri2 < 0) ri2 *= -1;
         ri2 = ((int)(ri2 * 5));
         ri2 *= 0.20f;
         ri2 *= 40;
-        if( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
-        if(v < -1) v = -1;
-        if(v > 1) v = 1;
+        if ( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
+        if (v < -1) v = -1;
+        if (v > 1) v = 1;
         */
 
         v += 2.40f*e3*e3;   //only erodes in this form
@@ -396,15 +391,15 @@ class MapGenerator1
 
         static const float _hmix = 0.050f; //0.25;
 
-        //if(r2 < 0.125f) r2 = 0.0125f; 
+        //if (r2 < 0.125f) r2 = 0.0125f; 
         //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
 
         //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
 
         float tmp1 = _hmix*(z - hmin - h2*hrange);
 
-        //if(tmp1 < _hmin) tmp1 = _hmin;
-        //if(tmp1 > _hmax) tmp1 = _hmax;
+        //if (tmp1 < _hmin) tmp1 = _hmin;
+        //if (tmp1 > _hmax) tmp1 = _hmax;
 
         v += tmp1;
 
@@ -416,7 +411,7 @@ class MapGenerator1
 
         static const float hmin = 96;
 
-        if(ri2 < 0) ri2 *= -1;
+        if (ri2 < 0) ri2 *= -1;
 
         ri2 = ((int)(ri2 * 5));
 
@@ -424,16 +419,16 @@ class MapGenerator1
 
         ri2 *= 40;
 
-        if( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
+        if ( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
 
-        if(v < -1) v = -1;
-        if(v > 1) v = 1;
+        if (v < -1) v = -1;
+        if (v > 1) v = 1;
 
         # if 1
         v += 0.40f*e3*e3;   //only erodes in this form
 
-        if(v < -1) v = -1;
-        if(v > 1) v = 1;
+        if (v < -1) v = -1;
+        if (v > 1) v = 1;
         # endif
         //return v;
 
@@ -444,11 +439,11 @@ class MapGenerator1
 
         static const float _hmix = 0.01f; //0.125;
 
-        if(r2 < 0.125f) r2 = 0.0125f; 
+        if (r2 < 0.125f) r2 = 0.0125f; 
         float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
 
-        if(tmp1 < _hmin) tmp1 = _hmin;
-        if(tmp1 > _hmax) tmp1 = _hmax;
+        if (tmp1 < _hmin) tmp1 = _hmin;
+        if (tmp1 > _hmax) tmp1 = _hmax;
 
 
         v += tmp1;
@@ -469,12 +464,10 @@ class MapGenerator1
     OPTIMIZED
     void generate_map(CubeID tile_id)
     {
-
-        for(int k=0; k<this->zmax-1; k++)
-        for(int i=0; i<this->xmax; i++)
-        for(int j=0; j<this->ymax; j++)
+        for (int k=0; k<this->zmax-1; k++)
+        for (int i=0; i<this->xmax; i++)
+        for (int j=0; j<this->ymax; j++)
         {
-
             // Calculate noise contributions from each of the eight corners
             float n000 = this->get_cache(i+0,j+0,k+0);
             float n100 = this->get_cache(i+1,j+0,k+0);
@@ -486,7 +479,7 @@ class MapGenerator1
             float n111 = this->get_cache(i+1,j+1,k+1);
 
             //map volume lerp: 962 ms 
-            for(int i0=0; i0<4; i0++)
+            for (int i0=0; i0<4; i0++)
             {
                 float u = 0.25f * i0;    //x interpolation
                 float nx00 = mix(n000, n100, u);
@@ -494,20 +487,19 @@ class MapGenerator1
                 float nx10 = mix(n010, n110, u);
                 float nx11 = mix(n011, n111, u);
 
-                for(int j0=0; j0<4; j0++)
+                for (int j0=0; j0<4; j0++)
                 {
                     float v = 0.25f * j0;    //y interpolation
                     float nxy0 = mix(nx00, nx10, v);
                     float nxy1 = mix(nx01, nx11, v);
 
-                    for(int k0=0; k0<4; k0++)
+                    for (int k0=0; k0<4; k0++)
                     {
                         float w = 0.25f * k0;   //z interpolation
                         float nxyz = mix(nxy0, nxy1, w);
 
-                        if(nxyz < 0.0)
+                        if (nxyz < 0.0)
                         {
-
                             t_map::set_fast(4*i+i0, 4*j+j0, 4*k+k0, tile_id);
                         }
                         else
@@ -517,10 +509,8 @@ class MapGenerator1
                     }
                 }
             }
-
         }
     }
-
 };
 
 
@@ -535,8 +525,7 @@ class MapGenerator1* map_generator = NULL;
 
 void test_octave_3d_map_gen(CubeID tile_id)
 {
-    GS_ASSERT(map_generator != NULL);
-    if (map_generator == NULL) return;
+    IF_ASSERT(map_generator == NULL) return;
     
     int ti[6];
     int i=0;
@@ -563,7 +552,7 @@ void test_octave_3d_map_gen(CubeID tile_id)
 
     printf("Map Gen: \n");
     printf("0 init noise map: %i ms \n", ti[1]-ti[0] );
-    printf("1 set persistance: %i ms \n", ti[2]-ti[1] );
+    printf("1 set persistence: %i ms \n", ti[2]-ti[1] );
     printf("3 populate cache: %i ms \n", ti[3]-ti[2] );
     printf("4 map volume lerp: %i ms \n", ti[4]-ti[3] );
     printf("5 save noisemaps: %i ms \n", ti[5]-ti[4] );
@@ -594,27 +583,27 @@ static unsigned long hash_string(unsigned char *str)
 
 extern "C"
 {
-void LUA_set_noisemap_param(int noise_map, float persistance, unsigned char* seed_string)
+    
+void LUA_set_noisemap_param(int noise_map, float persistence, unsigned char* seed_string)
 {
-    GS_ASSERT(map_generator != NULL);
-    if (map_generator == NULL) return;
+    IF_ASSERT(map_generator == NULL) return;
     
     switch(noise_map)
     {
         case 0:
-            map_generator->erosion3D->set_param(persistance);
+            map_generator->erosion3D->set_param(persistence);
             break;
         case 1:
-            map_generator->erosion2D->set_param(persistance);
+            map_generator->erosion2D->set_param(persistence);
             break;
         case 2:
-            map_generator->height2D->set_param(persistance);
+            map_generator->height2D->set_param(persistence);
             break;
         case 3:
-            map_generator->ridge2D->set_param(persistance);
+            map_generator->ridge2D->set_param(persistence);
             break;
         case 4:
-            map_generator->roughness2D->set_param(persistance);
+            map_generator->roughness2D->set_param(persistence);
             break;
         default:
             GS_ASSERT(false);
@@ -626,8 +615,7 @@ void LUA_set_noisemap_param(int noise_map, float persistance, unsigned char* see
 
 float* LUA_get_noisemap_map_cache(int noise_map)
 {
-    GS_ASSERT(map_generator != NULL);
-    if (map_generator == NULL) return NULL;
+    IF_ASSERT(map_generator == NULL) return NULL;
 
     switch(noise_map)
     {
@@ -651,8 +639,7 @@ float* LUA_get_noisemap_map_cache(int noise_map)
 
 float* LUA_get_map_lerp_array()
 {
-    GS_ASSERT(map_generator != NULL);
-    if (map_generator == NULL) return NULL;
+    IF_ASSERT(map_generator == NULL) return NULL;
     return map_generator->cache;
 }
 
@@ -669,5 +656,5 @@ void LUA_generate_map()
 }   // t_gen
 
 #ifdef __MSVC__
-# pragma optimize( "", off )
+# pragma optimize("", off)
 #endif
