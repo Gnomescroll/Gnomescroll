@@ -61,13 +61,13 @@ class PerlinField3D
         if (this->ga != NULL) delete[] this->ga;
     }
 
-    //__attribute((optimize("-O3")))
+    //OPTIMIZED
     void generate_gradient_array()
     {
         for(int i=0; i<this->ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
     }
 
-__attribute__((optimize("-O3")))
+OPTIMIZED
 inline int get_gradient(int x, int y, int z)
 {
     x = x % xsize; //replace with bitmask
@@ -80,7 +80,7 @@ inline int get_gradient(int x, int y, int z)
 public:
 
 // Classic Perlin noise, 3D version
-__attribute__((optimize("-O3")))
+OPTIMIZED
 float base(float x, float y, float z) 
 {
     x *= xsize;
@@ -179,7 +179,7 @@ class PerlinOctave3D
         delete[] cache;
     }
 
-    __attribute__((optimize("-O3")))
+    OPTIMIZED
     float sample(float x, float y, float z, float persistance)
     {   
         float p = 1.0f;
@@ -230,7 +230,7 @@ class PerlinOctave3D
         runs++;
     }
 
-    __attribute__((optimize("-O3")))
+    OPTIMIZED
     void populate_cache(float persistance)
     {
         //if(cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
@@ -259,7 +259,7 @@ class PerlinOctave3D
 //http://en.wikipedia.org/wiki/Sigmoid_function
 
 //reaction is inverse of interval over which effect occurs
-__attribute((always_inline, optimize("-O3")))
+OPTIMIZED
 inline float sigmoid(float t, float mean, float reaction)
 {
     t = t -mean;
@@ -268,7 +268,7 @@ inline float sigmoid(float t, float mean, float reaction)
 }
 
 //-1 to 1
-__attribute((always_inline, optimize("-O3")))
+OPTIMIZED
 inline float sigmoid2(float t, float mean, float reaction)
 {
     t = t -mean;
@@ -352,7 +352,7 @@ class MapGenerator1
     }
 
     //ROCK if less than zero
-    INLINE_OPTIMIZED
+    ALWAYS_INLINE OPTIMIZED
     float calc(int i, int j, int k)
     {        
         //float x = i*4;
@@ -456,7 +456,7 @@ class MapGenerator1
         #endif
     }
 
-    INLINE_OPTIMIZED
+    ALWAYS_INLINE OPTIMIZED
     float get_cache(int i, int j, int k)
     {
         i &= 0x7F;

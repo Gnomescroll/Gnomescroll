@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef __has_attribute
+# define __has_attribute(x) 0
+#endif
+
 // branch prediction
 #ifdef __MSVC__
 # define likely  (x) !!(x)
@@ -57,19 +61,15 @@
 // http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
 
 #ifdef __GNUC__
-# define OPTIMIZED __attribute__((optimize("-O3")))
-# define STATIC_OPTIMIZED __attribute__((optimize("-O3"))) static
 # define ALWAYS_INLINE __attribute__((__always_inline__)) inline 
-# define STATIC_INLINE __attribute__((__always_inline__)) static inline 
-# define INLINE_OPTIMIZED __attribute__((always_inline, optimize("-O3"))) inline
-# define STATIC_INLINE_OPTIMIZED __attribute__((always_inline, optimize("-O3"))) static inline 
+# if __clang__ && (!__has_attribute(optimize))
+#  define OPTIMIZED
+# else
+#  define OPTIMIZED __attribute__((optimize("-O3")))
+# endif
 #endif
 
 #ifdef __MSVC__
 # define OPTIMIZED
-# define STATIC_OPTIMIZED static
-# define INLINE_OPTIMIZED __forceinline
-# define STATIC_INLINE_OPTIMIZED __forceinline
 # define ALWAYS_INLINE __forceinline
-# define STATIC_INLINE __foreceinline static
 #endif

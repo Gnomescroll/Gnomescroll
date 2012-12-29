@@ -23,11 +23,11 @@ int primes[20] = {
     };
 
 #if __GNUC__
-__attribute((always_inline, optimize("-O3"))) static inline float dot(float* g, float x, float y);
-__attribute((always_inline, optimize("-O3"))) static inline float dot(int gi, float x, float y, float z);
+OPTIMIZED static inline float dot(float* g, float x, float y);
+OPTIMIZED static inline float dot(int gi, float x, float y, float z);
 
-__attribute((always_inline, optimize("-O3"))) static inline float mix(float a, float b, float t);
-__attribute((always_inline, optimize("-O3"))) static inline float fade(float t);
+OPTIMIZED static inline float mix(float a, float b, float t);
+OPTIMIZED static inline float fade(float t);
 #endif
 
 int inline fast_floor(float value);
@@ -112,7 +112,7 @@ class PerlinField2D
         if (this->ga != NULL) delete[] this->ga;
     }
 
-    __attribute((optimize("-O3")))
+    OPTIMIZED
     void generate_gradient_array()
     {
         for(int i=0; i<this->ssize; i++) ga[i] = genrand_int32() % grad_max; //gradient number
@@ -147,9 +147,9 @@ class PerlinField2D
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-//__attribute((always_inline, optimize("-O3")))
+//OPTIMIZED
 
-//__attribute((always_inline, optimize("-O3")))
+//OPTIMIZED
 inline int get_gradient(int x, int y)
 {
     x = x % xsize; //replace with bitmask
@@ -161,7 +161,7 @@ inline int get_gradient(int x, int y)
 public:
 
 // Classic Perlin noise, 3D version
-//__attribute((optimize("-O3")))
+//OPTIMIZED
 float base(float x, float y) 
 {
     x *= xsize;  //replace with multiplication
@@ -268,7 +268,7 @@ class PerlinOctave2D
         this->runs++;
     }
 
-    __attribute((optimize("-O3")))
+    OPTIMIZED
     void populate_cache(float persistance)
     {
         const int xmax = 512/4;
@@ -286,7 +286,7 @@ class PerlinOctave2D
         }
     }
 
-    __attribute((always_inline, optimize("-O3")))
+    OPTIMIZED
     inline float sample(float x, float y, float persistance)
     {   
         float p = 1.0f;
@@ -304,7 +304,7 @@ class PerlinOctave2D
         return tmp;
     }
 
-//    __attribute((always_inline, optimize("-O3")))
+//    OPTIMIZED
     float sample2(float x, float y, float persistance)
     {   
         float p = 1.0f;
@@ -319,7 +319,7 @@ class PerlinOctave2D
         return tmp;
     }
 
-    __attribute((optimize("-O3")))
+    OPTIMIZED
     void save_octaves()
     {
 
@@ -383,7 +383,7 @@ class PerlinOctave2D
         //void save_png(const char* filename, float* in, int xres, int yres)
     }
 
-    __attribute((optimize("-O3")))
+    OPTIMIZED
     void save_octaves2(int DEGREE, const char* filename)
     {
 

@@ -20,7 +20,7 @@ void teardown_env_process()
     if (_random != NULL) free(_random);
 }
 
-__attribute__((optimize("-O3")))
+OPTIMIZED
 void environment_process_tick()
 {
     GS_ASSERT(_random != NULL);
@@ -91,7 +91,7 @@ void environment_process_tick()
 }
 
 //run at startup
-__attribute__((optimize("-O3")))
+OPTIMIZED
 void environment_process_startup()
 {
     int regolith_id = get_cube_id("regolith");

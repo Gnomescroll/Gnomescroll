@@ -39,11 +39,7 @@ void load_ortho_shader()
 
 void render_ortho()
 {
-
     GL_ASSERT(GL_DEPTH_TEST, true);
-
-    
-    //;
 
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -100,7 +96,7 @@ void render_ortho()
     glDisable(GL_CULL_FACE);
 }
 
-__attribute__((optimize("-O3")))
+OPTIMIZED
 void save_map_ortho_projection(const char* filename)
 {
     vbo_map->load_all();

@@ -23,7 +23,7 @@ namespace t_gen
 // vz is unit vector for direction of line
 // px is the point
 // returns square of distance between line and point
-__attribute((always_inline, optimize("-O3")))
+OPTIMIZED
 inline float cc_point_line_distance2(float vx, float vy, float vz, float wx, float wy, float wz, float px, float py, float pz) {
     px -= vx;
     py -= vy;
@@ -40,7 +40,7 @@ inline float cc_point_line_distance2(float vx, float vy, float vz, float wx, flo
 
 
 
-__attribute__((optimize("-O3")))
+OPTIMIZED
 void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
     while( genrand_real1() < 0.999f ) {
         const static float length = 2.0f;

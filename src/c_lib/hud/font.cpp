@@ -190,14 +190,15 @@ void Font::add_glyph(
 
 void Font::update_glyphs()
 {
+    const int space = int(' ');
     for (int i=0; i<128; i++)
     {
-        if (i == '\t' && glyphs[' '].available)
+        if (i == '\t' && glyphs[space].available)
         {
             const int TABS_IN_SPACES = 4;
-            glyphs[i].w = glyphs[' '].w * TABS_IN_SPACES;
-            glyphs[i].xoff = glyphs[' '].xoff * TABS_IN_SPACES;
-            glyphs[i].xadvance = glyphs[' '].xadvance * TABS_IN_SPACES;
+            glyphs[i].w = glyphs[space].w * TABS_IN_SPACES;
+            glyphs[i].xoff = glyphs[space].xoff * TABS_IN_SPACES;
+            glyphs[i].xadvance = glyphs[space].xadvance * TABS_IN_SPACES;
             glyphs[i].available = true;
         }
         

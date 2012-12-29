@@ -52,7 +52,7 @@ class EquippedItemConfig
     public:
         char filename[fnsiz+1];
         float scale;
-        struct EquippedItemAlignment alignment;
+        class EquippedItemAlignment alignment;
 
     EquippedItemConfig() : scale(1) {}
 

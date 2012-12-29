@@ -14,6 +14,8 @@ GLuint star_sheet = 0;
 struct STAR* star_list = NULL;
 int star_num = 1024;
 
+const float SKY_RADIUS = 256.0f;
+
 // glsl
 class Shader star_shader;
 GLuint star_TexCoord;
@@ -71,15 +73,36 @@ void init_texture()
     SDL_FreeSurface(surface);
 }
 
+void generate_north_star()
+{
+    IF_ASSERT(star_list == NULL) return;
+    // add north star
+    STAR s;
+    float t = 1.5f;
+    float z = 0.75f;
+    float _r = sqrtf(1.0f - z*z);
+    float x = _r * cosf(t);
+    float y = _r * sinf(t);
+    s.size = 12.0f;
+    s.x = SKY_RADIUS * x;
+    s.y = SKY_RADIUS * y;
+    s.z = SKY_RADIUS * z;
+    s.brightness = 1.0f;
+    s.type = NORTH_STAR_TYPE;
+    s.tx_min = 0.0f;
+    s.tx_max = 1.0f;
+    s.ty_min = 0.5f;
+    s.ty_max = 1.0f;
+    star_list[star_num-1] = s;
+}
+
 void generate_sky()
 {
-    GS_ASSERT(star_num > 0);
-    if (star_num <= 0) return;
+    IF_ASSERT(star_num <= 0) return;
+    GS_ASSERT(star_list != NULL);
     star_list = new STAR[star_num];
 
-    float r = 256.0f;
-
-    for(int i=0; i < star_num-1; i++)
+    for (int i=0; i < star_num-1; i++)
     {
         STAR s;
 
@@ -91,9 +114,9 @@ void generate_sky()
         float x = _r * cosf(t);
         float y = _r * sinf(t);
 
-        s.x = r*x;
-        s.y = r*y;
-        s.z = r*z;
+        s.x = SKY_RADIUS*x;
+        s.y = SKY_RADIUS*y;
+        s.z = SKY_RADIUS*z;
         
         s.brightness = 0.2f + (0.8f)*randf();
         s.size = 1 + 3*randf();
@@ -107,26 +130,7 @@ void generate_sky()
         star_list[i] = s;
     }
 
-    // add north star
-    STAR s;
-    float t = 1.5f;
-    float z = 0.75f;
-    float _r = sqrtf(1.0f - z*z);
-    float x = _r * cosf(t);
-    float y = _r * sinf(t);
-    s.size = 12.0f;
-    s.x = r * x;
-    s.y = r * y;
-    s.z = r * z;
-    s.brightness = 1.0f;
-    s.type = NORTH_STAR_TYPE;
-    s.tx_min = 0.0f;
-    s.tx_max = 1.0f;
-    s.ty_min = 0.5f;
-    s.ty_max = 1.0f;
-    star_list[star_num-1] = s;
-
-    star_num = star_num;
+    generate_north_star();
 }
 
 void init()

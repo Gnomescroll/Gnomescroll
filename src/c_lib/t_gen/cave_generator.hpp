@@ -22,7 +22,7 @@ namespace t_gen
 // vz is unit vector for direction of line
 // px is the point
 // returns square of distance between line and point
-__attribute((always_inline, optimize("-O3")))
+OPTIMIZED
 inline float point_line_distance2(float vx, float vy, float vz, float wx, float wy, float wz, float px, float py, float pz)
 {
 
@@ -40,7 +40,7 @@ inline float point_line_distance2(float vx, float vy, float vz, float wx, float 
 
 }
 
-__attribute__((optimize("-O3")))
+OPTIMIZED
 void generate_node(float xs, float ys, float zs, float theta, float phi, float cave_size)
 {
     const int baseline = 0;

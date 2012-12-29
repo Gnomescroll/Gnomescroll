@@ -1,33 +1,27 @@
+#include "t_vbo_update.hpp"
 
 #include <t_map/glsl/structs.hpp>
 #include <t_map/glsl/cache.hpp>
 #include <t_map/glsl/hash_functions.hpp>
 #include <t_map/glsl/palette.hpp>
-
-#include "t_map_class.hpp"
-#include "t_vbo_update.hpp"
-
-#include "t_properties.hpp"
-
-
+#include <t_map/t_properties.hpp>
+#include <t_map/t_map_class.hpp>
 
 #ifdef __MSVC__
-    #pragma optimize( "gt", on )
+# pragma optimize( "gt", on )
 #endif
 
-#if __GNUC__
-    #pragma GCC push_options
-    //#pragma GCC optimization_level 3
-    //#pragma GCC optimize 3
-    #pragma GCC optimize ("O3")
+#if __GNUC__ && (!__clang__ || (__has_attribute(push_options) && __has_attribute(optimize)))
+# pragma GCC push_options
+//# pragma GCC optimization_level 3
+//# pragma GCC optimize 3
+# pragma GCC optimize ("O3")
 #endif
 
 namespace t_map
 {
 
 void init_pallete();
-
-
 
 struct SIDE_BUFFER
 {
@@ -47,9 +41,7 @@ struct SIDE_BUFFER** SIDE_BUFFER_ARRAY = NULL;
 struct Vertex* vlist_scratch_0 = NULL;
 struct Vertex* vlist_scratch_1 = NULL;
 
-
 float light_lookup[16]; //how fast light decays
-
 
 void t_vbo_update_init()
 {
@@ -382,7 +374,7 @@ static int vertex_max = 0;
 
 //ALWAYS_INLINE static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
 
-//__attribute((always_inline, optimize("-O3")))
+//OPTIMIZED
 
 //ALWAYS_INLINE
 void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) 
@@ -514,7 +506,7 @@ void generate_quad_ao_values(struct Vertex* vlist)
 
 
 //for solid blocks
-INLINE_OPTIMIZED
+ALWAYS_INLINE OPTIMIZED
 void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[side][SIDE_BUFFER_INDEX[side]];
@@ -527,7 +519,7 @@ void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsig
 
 
 //for transparent blocks
-INLINE_OPTIMIZED
+ALWAYS_INLINE OPTIMIZED
 void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
 {
     struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[6][SIDE_BUFFER_INDEX[side]];
@@ -948,9 +940,9 @@ int update_chunks() {
 
 
 #ifdef __MSVC__
-    #pragma optimize( "", off )
+# pragma optimize("", off)
 #endif
 
-#if __GNUC__
-    #pragma GCC pop_options
+#if __GNUC__ && (!__clang__ || __has_attribute(pop_options))
+# pragma GCC pop_options
 #endif
