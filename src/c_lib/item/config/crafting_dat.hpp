@@ -51,6 +51,10 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("iridium_bar", 1);
 
+    def_crafting_recipe("laser_rifle");
+    set_crafting_reagent("silicon_crystal", 1);
+    set_crafting_reagent("iron_bar", 1);
+
     // blocks
      def_crafting_recipe("steel_block_1", 4);
     set_crafting_reagent("iron_bar", 1);
@@ -76,6 +80,10 @@ void load_crafting_dat()
     def_crafting_recipe("rock_landmine");
     set_crafting_reagent("plasmagen", 1);
     set_crafting_reagent("rock", 1);
+
+    def_crafting_recipe("regolith_landmine");
+    set_crafting_reagent("plasmagen", 1);
+    set_crafting_reagent("regolith", 1);
 
     def_crafting_recipe("plasmagen");
     set_crafting_reagent("blackpowder", 8);

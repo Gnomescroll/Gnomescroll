@@ -49,7 +49,7 @@ void load_item_dat()
 
     item_container_def("cryofreezer_small");
     set_pretty_name("Small Cryofreezer");
-    
+
     item_container_def("crusher");
 
     // manually define these blocks, so we can set a custom pretty name
@@ -147,7 +147,7 @@ void load_item_dat()
     sprite_def(i0, 4,5);
     set_pretty_name("Block Placer");
     s->cube_height = 1;
-    
+
     item_def(IG_RESOURCE, "copper_ore_piece");
     sprite_def(i1, 3,3);
     set_pretty_name("Copper Ore");
@@ -252,6 +252,16 @@ void load_item_dat()
     s->object_damage_min = 30;
     s->object_damage_max = 40;
 
+    item_def(IG_RESOURCE, "silicon_ore_piece");
+    sprite_def(i1, 13,2);
+    set_pretty_name("Silicon Ore");
+    s->max_stack_size = 64;
+
+    item_def(IG_RESOURCE, "silicon_crystal");
+    sprite_def(i1, 13,1);
+    set_pretty_name("Silicon Crystal");
+    s->max_stack_size = 64;
+
     item_def(IG_FIST, "fist");
     sprite_def(i1, 6, 2);
     set_pretty_name("Fist");
@@ -269,7 +279,7 @@ void load_item_dat()
     s->max_stack_size = 64;
     s->fuel = true;
     s->fuel_burn_rate = 30 * 30; // 30 seconds
-    
+
     item_def(IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
     set_pretty_name("Small Charge Pack");
@@ -318,7 +328,7 @@ void load_item_dat()
     sprite_def(i0, 4,6);
     set_pretty_name("Powdered Regolith");
     s->max_stack_size = 64;
-    
+
     item_def(IG_RESOURCE, "crushed_rock");
     sprite_def(i0, 5,6);
     set_pretty_name("Crushed Stone");
@@ -407,6 +417,8 @@ void load_item_dat()
     s->max_stack_size = 64;
 
     item_block_def("plasmagen");
+    item_block_def("rock_landmine");
+    item_block_def("regolith_landmine");
 
     finish_item_def();
 }
@@ -424,7 +436,7 @@ void create_items_from_blocks()
 
     GS_ASSERT_ABORT(t_map::defined_drops != NULL);
     if (t_map::defined_drops == NULL) return;
-    
+
     for (int i=0; i<MAX_CUBES; i++)
     {
         if (!t_map::isValidCube((CubeID)i)) continue;  // skips empty and error blocks
@@ -452,7 +464,7 @@ void create_items_from_blocks()
 
         // blocks that have drops defined (at this point) will not be dropping themselves
         if (t_map::defined_drops[cube_id] != t_map::DROP_UNDEFINED) continue;
-        
+
         bool defined = item_block_def(name);
         GS_ASSERT_ABORT(defined);
     }
@@ -478,23 +490,23 @@ void verify_item_dat()
     for (int i=0; i<MAX_ITEM_TYPES; i++)
     {
         class ItemAttribute* a = &item_attributes[i];
-        
+
         if (!a->loaded) continue;
 
         GS_ASSERT_ABORT(a->item_type != NULL_ITEM_TYPE);
         GS_ASSERT_ABORT(a->item_type == i);
-        
+
         GS_ASSERT_ABORT(is_valid_item_name(a->name));
 
         // make sure group is set
         GS_ASSERT_ABORT(a->group != IG_NONE);
-    
+
         GS_ASSERT_ABORT(a->pretty_name[0] != '\0');
 
         // make sure all data types are within bounds
         GS_ASSERT_ABORT(a->max_durability > 0
                 && a->max_durability <= MAX_DURABILITY);
-                
+
         GS_ASSERT_ABORT(a->max_stack_size > 0
                 && a->max_stack_size <= MAX_STACK_SIZE);
 
@@ -513,7 +525,7 @@ void verify_item_dat()
         #endif
 
         GS_ASSERT_ABORT(a->cube_id == NULL_CUBE || t_map::isValidCube(a->cube_id));
-        
+
         if (a->group == IG_ERROR) errct++;
     }
 
@@ -531,7 +543,7 @@ void verify_item_dat()
         GS_ASSERT_ABORT(a->item_type != b->item_type);
         GS_ASSERT_ABORT(a->cube_id == NULL_CUBE || a->cube_id != b->cube_id);
     }
-    
+
     GS_ASSERT_ABORT(item_name_map->condensed);
 
     // check inactive names against active
@@ -576,7 +588,7 @@ void save_item_names()
 void change_item(const char* original, const char* replacement)
 {
     GS_ASSERT_ABORT(is_valid_item_name(original));
-    GS_ASSERT_ABORT(is_valid_item_name(replacement));        
+    GS_ASSERT_ABORT(is_valid_item_name(replacement));
     bool mapped = item_name_map->add_definition(original, replacement);
     GS_ASSERT_ABORT(mapped);
 }

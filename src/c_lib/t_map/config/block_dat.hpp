@@ -198,6 +198,13 @@ void load_block_dat()
     push_texture();
     set_max_damage(4);
 
+    cube_def(SolidCube, "regolith_landmine", CUBE_MATERIAL_DIRT);
+    iso_texture(iceflame, 2,10);
+    side_texture(T, iceflame, 2, 9);
+    side_texture(B, iceflame, 3, 1);
+    push_texture();
+    set_max_damage(2);
+
     cube_def(SolidCube, "coal", CUBE_MATERIAL_DIRT);
     iso_texture(tgm, 6,1);
     push_texture();
@@ -240,6 +247,11 @@ void load_block_dat()
 
     cube_def(SolidCube, "iridium_ore", CUBE_MATERIAL_STONE);
     iso_texture(tgm, 5,1);
+    push_texture();
+    set_max_damage(64);
+
+    cube_def(SolidCube, "silicon_ore", CUBE_MATERIAL_STONE);
+    iso_texture(iceflame, 3,2);
     push_texture();
     set_max_damage(64);
 

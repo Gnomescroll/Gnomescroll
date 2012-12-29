@@ -23,9 +23,9 @@ void def_drop(const char* block_name)
     CubeID cube_id = get_cube_id(block_name);
     GS_ASSERT_ABORT(isValidCube(cube_id));
     if (!isValidCube(cube_id)) return;
-    
+
     GS_ASSERT_ABORT(defined_drops[cube_id] == DROP_UNDEFINED);
-    
+
     defined_drops[cube_id] = DROP_DEFINED;
 
     #if DC_SERVER
@@ -43,8 +43,8 @@ void no_drop(const char* block_name)
     if (!isValidCube(cube_id)) return;
 
     GS_ASSERT_ABORT(defined_drops[cube_id] == DROP_UNDEFINED);
-    
-    defined_drops[cube_id] = DROP_NEVER; 
+
+    defined_drops[cube_id] = DROP_NEVER;
 }
 
 void drop_always(const char* item_name)
@@ -138,7 +138,9 @@ void load_block_drop_dat()
 
     no_drop("bedrock");
     no_drop("plasmagen");
-    
+    no_drop("rock_landmine");
+    no_drop("regolith_landmine");
+
     ////////////////////
     def_drop("regolith");
         add_drop("regolith", 1);
@@ -148,7 +150,7 @@ void load_block_drop_dat()
         set_drop(0.15f, 1);
         set_drop(0.04f, 2);
         set_drop(0.02f, 3);
-            
+
     def_drop("rock");
         add_drop("rock", 1);
         set_drop(0.99f, 1);
@@ -189,6 +191,12 @@ void load_block_drop_dat()
         set_drop(0.20f, 2);
         set_drop(0.10f, 3);
 
+    def_drop("silicon_ore");
+        add_drop("silicon_ore_piece", 3);
+        set_drop(0.50f, 1);
+        set_drop(0.20f, 2);
+        set_drop(0.10f, 3);
+
     def_drop("coal");
         add_drop("coal_nugget", 3);
         set_drop(0.50f, 1);
@@ -201,7 +209,7 @@ void init_block_drop_dat()
     GS_ASSERT(defined_drops == NULL);
     defined_drops = (DropDefinition*)malloc(MAX_CUBES * sizeof(DropDefinition));
     for (int i=0; i<MAX_CUBES; defined_drops[i++] = DROP_UNDEFINED);
-    
+
     #if DC_SERVER
     GS_ASSERT(block_drop_dat == NULL);
     block_drop_dat = new Item::ItemDropConfig;
@@ -215,7 +223,7 @@ void init_block_drop_dat()
 void teardown_block_drop_dat()
 {
     if (defined_drops != NULL) free(defined_drops);
-    
+
     #if DC_SERVER
     if (block_drop_dat != NULL) delete block_drop_dat;
     #endif
@@ -248,8 +256,8 @@ void handle_block_drop(int x, int y, int z, CubeID cube_id)
                     x = (float)((float)x + 0.5f + randf()*0.33f);
                     y = (float)((float)y + 0.5f + randf()*0.33f);
                     z = (float)((float)z + 0.05f);
-                    ItemParticle::create_item_particle(cidt->item_type, x, y, z, 
-                        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom); 
+                    ItemParticle::create_item_particle(cidt->item_type, x, y, z,
+                        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
                 }
                 break;
             }

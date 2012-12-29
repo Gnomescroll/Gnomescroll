@@ -12,4 +12,6 @@ void create_explosion(const int x, const int y, const int z);
 void init_explosives();
 #endif
 
+bool isLandmine(int x, int y, int z);
+
 }   // t_gen
