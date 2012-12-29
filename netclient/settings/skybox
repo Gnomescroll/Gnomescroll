@@ -5,7 +5,7 @@ sun_distance = 40096.0
 
 #wavelenght_factor = 1.00
 #phase_g_factor = 0.00	
-color = 127 255 255 000
+color = 127 127 255 000
 
 sun_w0 = 1.00
 sun_g0 = 0.95
@@ -37,4 +37,6 @@ camera_z = 96.0
 
 time_speed = 60
 skybox_update_rate = 5
+skybox_gl_linear = 1
 print_max_light = 0
+

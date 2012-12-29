@@ -13,6 +13,8 @@ float sun_g[4];	//g factor for each channels
 float sun_h[4];//h0, scale height for each channel
 float sun_b[4];//brightness for each channel
 
+int skybox_gl_linear = 0;
+
 //cube orientation vectors
 static const float _f[6*3] =
 {
@@ -937,6 +939,17 @@ class SkyboxRender
 		for(int side = 0; side<6; side++)
 		{
 			glBindTexture(GL_TEXTURE_2D, texture_array[side]);
+
+			if(skybox_gl_linear)
+			{
+		    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
+			else
+			{
+		    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			}
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun0.dim, sun0.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, sun_rgba[side] );
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -1102,8 +1115,8 @@ void init_rayleigh_scattering()
 	CFL.set_float("camera_z", &SPS.camera_z);
 
 	CFL.set_int("time_speed", &SR->time_speed);
-
 	CFL.set_int("skybox_update_rate", &skybox_update_rate);
+	CFL.set_int("skybox_gl_linear", &skybox_gl_linear);
 	CFL.set_int("print_max_light", &print_max_light);
 
 	CFL.load_file("./settings/skybox", true);	//load file silently first time
