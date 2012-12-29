@@ -9,9 +9,10 @@ import os.path
 import platform
 import shutil
 import subprocess
+import shlex
 import re
 
-from waflib import Tools;
+from waflib import Tools, Errors
 Tools.c_preproc.go_absolute = True
 
 MAIN_TEST_CODE = """
@@ -49,9 +50,28 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awesomium=False, awesomium_debug=False, assimp=True):
+def check_clang(conf, use_clang=False):
+    # use clang if requested or available
+    # If you do check_tool('g++') after this, it won't compile, even though the check works
+    if os.environ.get('WAF_USE_CLANG'):
+        use_clang = True
+    has_clang = False
+    with open(os.devnull, "w") as fnull:
+        has_clang = (subprocess.call(shlex.split('which clang'), stdout=fnull, stderr=fnull) == 0)
+    if use_clang and not has_clang:
+        raise Errors.ConfigurationError('ERROR: Clang requested, but not found on system')
+    if use_clang:
+        conf.env['CC'] = ['clang']
+        conf.env['CXX'] = ['clang']
+    return use_clang
+
+def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awesomium=False, awesomium_debug=False, assimp=True, use_clang=False):
     global _OS
     global os_libpth
+
+    OS = platform.system()
+    _OS = OS
+    conf.env.os = OS
 
     optflag = '-O' + str(optlevel)
 
@@ -82,12 +102,13 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awe
     #conf.check_tool('gcc')
     conf.check_tool('g++')
 
+    # use clang if requested or available
+    # If you do check_tool('g++') after this, it won't compile, even though the check works
+    if check_clang(conf, use_clang=use_clang):
+        print 'Using clang'
+
     #conf.cc_add_flags()     #"-g" -ggdb
     #conf.link_add_flags()   #"-g" -ggdb
-
-    OS = platform.system()
-    _OS = OS
-    conf.env.os = OS
     
     '''
     add to linker for faster linking --incremental
@@ -618,3 +639,10 @@ class noass_ctx(ConfigurationContext):
 
 def noass(ctx):
     configure(ctx, assimp=False)
+
+class clang_ctx(ConfigurationContext):
+    cmd = 'clang'
+    fun = 'clang'
+
+def clang(ctx):
+    configure(ctx, use_clang=True)

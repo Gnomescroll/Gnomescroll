@@ -6,12 +6,12 @@ target = 'run'
 
 import errno
 import os
-import os.path
 import platform
 import shutil
 import subprocess
+import shlex
 
-from waflib import Tools;
+from waflib import Tools, Errors
 Tools.c_preproc.go_absolute = True
 
 
@@ -41,7 +41,22 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False):
+def check_clang(conf, use_clang=False):
+    # use clang if requested or available
+    # If you do check_tool('g++') after this, it won't compile, even though the check works
+    if os.environ.get('WAF_USE_CLANG'):
+        use_clang = True
+    has_clang = False
+    with open(os.devnull, "w") as fnull:
+        has_clang = (subprocess.call(shlex.split('which clang'), stdout=fnull, stderr=fnull) == 0)
+    if use_clang and not has_clang:
+        raise Errors.ConfigurationError('ERROR: Clang requested, but not found on system')
+    if use_clang:
+        conf.env['CC'] = ['clang']
+        conf.env['CXX'] = ['clang']
+    return use_clang
+
+def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use_clang=False):
     optflag = '-O' + str(optlevel)
     
     OS = platform.system()
@@ -56,6 +71,13 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False):
     #conf.check_tool('gcc')
     conf.check_tool('g++')
 
+    # use clang if requested or available
+    # If you do check_tool('g++') after this, it won't compile, even though the check works
+    if check_clang(conf, use_clang=use_clang):
+        print 'Using clang'
+
+    #from waflib.Tools.compiler_c import c_compiler
+    #c_compiler['linux'] = ['clang', 'gcc']
     #conf.load('compiler_c compiler_cxx')
 
     #conf.cc_add_flags()     #"-g"
@@ -318,7 +340,7 @@ class extra_ctx(ConfigurationContext):
 class profile_ctx(ConfigurationContext):
     cmd = 'profile'
     fun = 'profile'
-
+    
 def profile(ctx):
     configure(ctx, optlevel=3)
     ctx.env.CFLAGS.append('-pg')
@@ -373,3 +395,10 @@ class prodtest_ctx(ConfigurationContext):
 
 def prodtest(ctx, add=[], rm=[]):
     configure(ctx, add_flags=add+['-Winline'], rm_flags=rm, production=True)
+
+class clang_ctx(ConfigurationContext):
+    cmd = 'clang'
+    fun = 'clang'
+
+def clang(ctx, add=[], rm=[]):
+    configure(ctx, add_flags=add, rm_flags=rm, use_clang=True)
