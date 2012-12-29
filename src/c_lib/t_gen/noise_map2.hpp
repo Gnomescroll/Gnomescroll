@@ -182,11 +182,12 @@ inline float dot_grad(int index, float x, float y)
         int gi10 = get_gradient(X+1,Y+0);
         int gi11 = get_gradient(X+1,Y+1);
         
-        // Calculate noise contributions from each of the eight corners
+    // Calculate noise contributions from each of the eight corners
 /*
-        float n10 = dot(&grad[2*gi10], x-1, y);
-        float n01 = dot(&grad[2*gi01], x, y-1);
-        float n11 = dot(&grad[2*gi11], x-1, y-1);
+    float n00= dot(grad+2*gi00, x, y);
+    float n10= dot(grad+2*gi10, x-1, y);
+    float n01= dot(grad+2*gi01, x, y-1);
+    float n11= dot(grad+2*gi11, x-1, y-1);
 */
 
 /*
