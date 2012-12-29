@@ -36,7 +36,7 @@ class MeterGraphic
         this->draw(x,y,w,h,ratio, METANCH_LEFT);
     }
 
-    void draw(int x, int y, int w, int h, float ratio, MeterAnchor anchor, bool is_dmg_meter = false)
+    void draw(int x, int y, int w, int h, float ratio, MeterAnchor anchor)
     {
         float s_x = x;
         float s_y = y;
@@ -45,7 +45,7 @@ class MeterGraphic
         float dyn_w = s_w * ratio; // dynamic width (the current size of the meter itself)
         float lo = s_w - dyn_w; // dynamic leftover
         
-        if      (anchor == METANCH_LEFT)
+        if (anchor == METANCH_LEFT)
         {
             ;
         }
@@ -60,15 +60,15 @@ class MeterGraphic
 
         // draw
         draw_bound_texture(s_x, s_y, dyn_w, s_h);
-        for (int i = 0; i < dyn_w - prev_w; i++)
+        for (int i = 0; i < prev_w - dyn_w; i++)
         {
-			if (is_dmg_meter)
-				spawn_quadticle( // ..... somewhere random within current bar dimensions
-					randrange(s_x,   s_x +   (dyn_w <= 0)   ?   1   :   dyn_w), 
-					s_y,
-					randrange(-2, 2), 
-					randrange(7, 11), 
-					s_y + s_h + 40);
+            // FIXME   spawn_quadticles, uses the dynamic leftover width i think?  or SHOULD?
+            //spawn_quadticle( // ..... somewhere random within current bar dimensions
+            //  randrange(s_x,   s_x +   (dyn_w <= 0)   ?   1   :   dyn_w), 
+            //  s_y,
+            //  randrange(-2, 2), 
+            //  randrange(7, 11), 
+            //  s_y + s_h + 40);
         }
         prev_w = dyn_w;
 
