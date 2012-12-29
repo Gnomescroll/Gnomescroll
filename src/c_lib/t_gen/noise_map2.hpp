@@ -165,7 +165,7 @@ public:
 
 inline float dot_grad(int index, float x, float y)
 {
-    return grad[index+0]*x + grad[index+1]*y;
+    return grad[2*index+0]*x + grad[2*index+1]*y;
 }
 // Classic Perlin noise, 3D version
 //OPTIMIZED
@@ -196,10 +196,10 @@ float base(float x, float y)
 /*
     DONT LET STEVE SLOW DOWN THIS LOOP
 */
-    float n00= dot_grad( 2*gi00, x, y);
-    float n10= dot_grad( 2*gi10, x-1, y);
-    float n01= dot_grad( 2*g2*gi01, x, y-1);
-    float n11= dot_grad( 2*gi11, x-1, y-1);
+    float n00= dot_grad( gi00, x, y);
+    float n10= dot_grad( gi10, x-1, y);
+    float n01= dot_grad( gi01, x, y-1);
+    float n11= dot_grad( gi11, x-1, y-1);
 
     // Compute the fade curve value for each of x, y, z
     
