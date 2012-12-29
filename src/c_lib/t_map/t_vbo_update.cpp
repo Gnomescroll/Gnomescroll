@@ -8,10 +8,12 @@
 #include <t_map/t_map_class.hpp>
 
 #ifdef __MSVC__
+# define PUSHED_OPTIMIZATIONS
 # pragma optimize( "gt", on )
 #endif
 
 #if __GNUC__ && (!__clang__ || (__has_attribute(push_options) && __has_attribute(optimize)))
+# define PUSHED_OPTIMIZATIONS
 # pragma GCC push_options
 //# pragma GCC optimization_level 3
 //# pragma GCC optimize 3
@@ -939,10 +941,12 @@ int update_chunks() {
 }   // t_map
 
 
-#ifdef __MSVC__
-# pragma optimize("", off)
-#endif
-
-#if __GNUC__ && (!__clang__ || __has_attribute(pop_options))
-# pragma GCC pop_options
+#ifdef PUSHED_OPTIMIZATIONS
+# ifdef __MSVC__
+#  pragma optimize("", off)
+# endif
+# if __GNUC__
+#  pragma GCC pop_options
+# endif
+# undef PUSHED_OPTIMIZATIONS
 #endif
