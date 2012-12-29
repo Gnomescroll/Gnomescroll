@@ -37,10 +37,12 @@ int inline fast_floor(float value)
     return (int)(value>=0 ? (int)value : (int)value-1);
 }
 
+/*
 static inline float dot(float* g, float x, float y)
 {
     return g[0]*x + g[1]*y;
 }
+*/
 
 static inline float dot(int gi, float x, float y, float z)
 {
@@ -160,6 +162,11 @@ inline int get_gradient(int x, int y)
 
 public:
 
+
+inline float dot_grad(int index, float x, float y)
+{
+    return grad[index+0]*x + grad[index+1]*y;
+}
 // Classic Perlin noise, 3D version
 //OPTIMIZED
 float base(float x, float y) 
@@ -179,10 +186,21 @@ float base(float x, float y)
     int gi11 = get_gradient(X+1,Y+1);
     
     // Calculate noise contributions from each of the eight corners
+/*
     float n00= dot(grad+2*gi00, x, y);
     float n10= dot(grad+2*gi10, x-1, y);
     float n01= dot(grad+2*gi01, x, y-1);
     float n11= dot(grad+2*gi11, x-1, y-1);
+*/
+
+/*
+    DONT LET STEVE SLOW DOWN THIS LOOP
+*/
+    float n00= dot_grad( 2*gi00, x, y);
+    float n10= dot_grad( 2*gi10, x-1, y);
+    float n01= dot_grad( 2*g2*gi01, x, y-1);
+    float n11= dot_grad( 2*gi11, x-1, y-1);
+
     // Compute the fade curve value for each of x, y, z
     
     #if 1
