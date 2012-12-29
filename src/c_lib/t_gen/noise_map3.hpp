@@ -47,7 +47,8 @@ class PerlinField3D
         if(_xsize < 1) GS_ABORT();
         if(_zsize < 1) GS_ABORT();
 
-        xsize = _xsize; xsize2 = xsize*xsize;
+        xsize = _xsize;
+        xsize2 = xsize*xsize;
         zsize = _zsize;
         ssize = xsize*xsize*zsize;
 

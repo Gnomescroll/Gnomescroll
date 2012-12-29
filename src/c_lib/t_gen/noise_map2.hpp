@@ -44,7 +44,7 @@ static inline float dot(float* g, float x, float y)
 
 static inline float dot(int gi, float x, float y, float z)
 {
-    static const int g3[][3] = {
+    static const int g3[12][3] = {
     {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
     {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
     {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
@@ -88,10 +88,8 @@ class PerlinField2D
 
     void init(int _xsize, int _grad_max)
     {
-        GS_ASSERT(this->ga == NULL);
-        GS_ASSERT(this->grad == NULL);
-        if (this->ga != NULL) return;
-        if (this->grad != NULL) return;
+        IF_ASSERT(this->ga != NULL) return;
+        IF_ASSERT(this->grad != NULL) return;
         
         if(_xsize < 1) GS_ABORT();
 
@@ -179,10 +177,10 @@ float base(float x, float y)
     int gi11 = get_gradient(X+1,Y+1);
     
     // Calculate noise contributions from each of the eight corners
-    float n00= dot(grad+2*gi00, x, y);
-    float n10= dot(grad+2*gi10, x-1, y);
-    float n01= dot(grad+2*gi01, x, y-1);
-    float n11= dot(grad+2*gi11, x-1, y-1);
+    float n00= dot(&grad[2*gi00], x, y);
+    float n10= dot(&grad[2*gi10], x-1, y);
+    float n01= dot(&grad[2*gi01], x, y-1);
+    float n11= dot(&grad[2*gi11], x-1, y-1);
     // Compute the fade curve value for each of x, y, z
     
     #if 1
