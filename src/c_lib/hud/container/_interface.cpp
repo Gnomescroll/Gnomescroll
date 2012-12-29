@@ -362,8 +362,12 @@ static void draw_grabbed_icon()
     {
         int max_durability = Item::get_max_durability(hand_item_type);
         float ratio = (float)hand_item_durability / (float)max_durability;
-        Hud::set_color_from_ratio(ratio, 128);
-        Hud::meter_graphic.draw(x, y, w, w, ratio);
+
+		int mh = w / 8; // meter height
+		glColor4ub(255, 0, 0, 255);               // red
+        Hud::meter_graphic.draw(x, y, w, mh, 1.0f); // full slot width background
+        Hud::set_color_from_ratio(ratio, 255);
+        Hud::meter_graphic.draw(x, y, w, mh, ratio);
     }
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
