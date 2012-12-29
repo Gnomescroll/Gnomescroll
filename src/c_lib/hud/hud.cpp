@@ -405,8 +405,8 @@ void draw_hud_textures()
         float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage 
 
         set_color_from_ratio(curr / largest_total_health_seen, 175, true);
-        meter_graphic.draw(0,       _yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen);
-        meter_graphic.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen, MeterGraphic::METANCH_RIGHT);
+        meter_graphic.draw(0,       _yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen, MeterGraphic::METANCH_LEFT,  true);
+        meter_graphic.draw(_xresf/2,_yresf-h/2, _xresf/2,h/2, curr / largest_total_health_seen, MeterGraphic::METANCH_RIGHT, true);
     }
 
     if (!hud_draw_settings.draw) return;
