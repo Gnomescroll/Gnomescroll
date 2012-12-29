@@ -353,29 +353,29 @@ float one_over_f(float x, float y)
     return tmp;
 }
 
-float one_over_f(float x, float y, float persistance) 
+float one_over_f(float x, float y, float persistence) 
 {   
     float tmp = 0;
     float m = 1.0;
 
     tmp += base(x,y);
-    m *= persistance;
+    m *= persistence;
 
     tmp += m * base(2*x, 2*y);
-    m *= persistance;
+    m *= persistence;
 
     tmp += m * base(4*x,4*y);
-    m *= persistance;
+    m *= persistence;
 
     tmp += m * base(8*x,8*y);
     
-    m *= persistance;
+    m *= persistence;
     tmp += m * base(16*x,16*y);
     return tmp;
 }
 
 //order 0 is base
-float order(float x, float y, float persistance, int order) 
+float order(float x, float y, float persistence, int order) 
 {   
     float tmp = 0;
     float m = 1.0;
@@ -384,7 +384,7 @@ float order(float x, float y, float persistance, int order)
     for(int i=0; i<=order; i++)
     {
         tmp += base(b*x,b*y);
-        m *= persistance;
+        m *= persistence;
         b *= 2;
     }
     return tmp;

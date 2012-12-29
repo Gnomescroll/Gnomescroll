@@ -146,7 +146,7 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
         lua_inc_path = os.path.join(libpath, 'LuaJIT-2.0.0-beta10')
         lua_lib_path = [os.path.join(libpath, 'lib')]
     else:
-        lua_lib_path = []
+        lua_lib_path = ['/usr/local/lib']
         lua_inc_path = '/usr/include/luajit-2.0'
         
         redis_lib_path = ['../lib/server/hiredis/lib32/', '../lib/server/hiredis/lib64/']
