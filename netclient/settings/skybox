@@ -38,5 +38,6 @@ camera_z = 96.0
 time_speed = 60
 skybox_update_rate = 5
 skybox_gl_linear = 1
+skybox_normalization = 0
 print_max_light = 0
 

@@ -14,6 +14,7 @@ float sun_h[4];//h0, scale height for each channel
 float sun_b[4];//brightness for each channel
 
 int skybox_gl_linear = 0;
+int skybox_normalization = 0;
 
 //cube orientation vectors
 static const float _f[6*3] =
@@ -425,23 +426,24 @@ class Skyplane
 		float _max_light = 1.0 / (max_light+light_epsilon);	 //need to scale factor, so it goes to limit
 
 		//return brightness_scale_factor*tmp + brightness_sum_factor);
-	/*
-		for(int side=0; side<6; side++)
+		if(skybox_normalization)
 		{
-			for(int i=0; i<dim; i++)
+			for(int side=0; side<6; side++)
 			{
-				for(int j=0; j<dim; j++)
+				for(int i=0; i<dim; i++)
 				{
-					float light = farray[side][j*dim+i];
-					light *= _max_light;
-					light = brightness_scale_factor*light + brightness_sum_factor;
+					for(int j=0; j<dim; j++)
+					{
+						float light = farray[side][j*dim+i];
+						light *= _max_light;
+						light = brightness_scale_factor*light + brightness_sum_factor;
 
-					farray[side][j*dim+i]  = light;
+						farray[side][j*dim+i]  = light;
+					}
+
 				}
-
-			}
-		}	
-	*/
+			}	
+		}
 	}
 
 	int sphere_wedge_test(struct Vec3 v, float inner_radius, float outer_radius)
@@ -1117,6 +1119,8 @@ void init_rayleigh_scattering()
 	CFL.set_int("time_speed", &SR->time_speed);
 	CFL.set_int("skybox_update_rate", &skybox_update_rate);
 	CFL.set_int("skybox_gl_linear", &skybox_gl_linear);
+	CFL.set_int("skybox_normalization", &skybox_normalization);
+
 	CFL.set_int("print_max_light", &print_max_light);
 
 	CFL.load_file("./settings/skybox", true);	//load file silently first time
