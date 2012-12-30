@@ -24,7 +24,10 @@
 # include <t_map/glsl/shader.cpp>
 # include <t_map/glsl/palette.hpp>
 # include <t_map/glsl/_interface.cpp>
-# include <t_map/ortho_projection.cpp>
+# include <t_map/glsl/light_texture.hpp>
+
+//# include <t_map/ortho_projection.cpp>
+
 #endif
 
 #if DC_SERVER
