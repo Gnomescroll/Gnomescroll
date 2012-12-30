@@ -15,6 +15,9 @@ float sun_b[4];//brightness for each channel
 
 int skybox_gl_linear = 0;
 int skybox_normalization = 0;
+int skybox_corners = 0;	//show corners of skybox plans
+int skybox_sundial = 0;	//draw time indicator
+int skybox_debug = 0;	//puts skybox in floating cube
 
 //cube orientation vectors
 static const float _f[6*3] =
@@ -807,7 +810,6 @@ class SkyboxRender
 
 	}
 
-
 	void increment_time()
 	{
 		time_count = (time_count+time_speed) % (30*1200);
@@ -927,14 +929,19 @@ class SkyboxRender
 				sun_rgba[side][4*(i+j*dim)+2] = gamma_correct(v0 + vB, b_color);
 				sun_rgba[side][4*(i+j*dim)+3] = sun_color[3];
 
-        		if(i==0 && j == 0)
-        		{
-        			sun_rgba[side][4*(i+j*dim)+0] = 255;
-        		}
+
 			}
+
+    		if(skybox_corners == 1)
+    		{
+    			sun_rgba[side][4*(0+0*dim)+0] = 255;	//i=0, j=0
+    		}
 		}
 
-		sun_rgba[sun0.sun_side][4*(sun0.sun_i+sun0.sun_j*sun0.dim)+1] = 255;
+		if(skybox_sundial == 1)
+		{
+			sun_rgba[sun0.sun_side][4*(sun0.sun_i+sun0.sun_j*sun0.dim)+1] = 255;
+		}
 
 		glEnable(GL_TEXTURE_2D);
 
@@ -975,9 +982,16 @@ class SkyboxRender
 		//float sun_phi = time_count / 3000.0;
 		float sun_phi = 0;
 
-		x = 256;
-		y = 256;
-		z = 128;
+		if(skybox_debug)
+		{
+			x = 256;
+			y = 256;
+			z = 128;
+
+		    glEnable(GL_DEPTH_TEST);
+    		glDisable(GL_BLEND);
+    		glDepthMask(GL_TRUE);
+		}
 
 		struct Vec3 f[6];
 		struct Vec3 r[6];
@@ -997,7 +1011,7 @@ class SkyboxRender
 		{
 			const float plane_depth = sun0.plane_size*0.5;
 			center[i] = vec3_scalar_mult(f[i], plane_depth);
-			center[i].z += plane_depth;
+			//center[i].z += plane_depth;
 
 			center[i].x += x;
 			center[i].y += y;
@@ -1052,7 +1066,9 @@ class SkyboxRender
 
 		glDisable(GL_TEXTURE_2D);
 
-		sun0.draw_sun(sun_theta, sun_phi, x,y,z); //draw sun
+
+		if(skybox_sundial != 0)
+			sun0.draw_sun(sun_theta, sun_phi, x,y,z); //draw sun
 
 		CHECK_GL_ERROR();
 
@@ -1120,7 +1136,10 @@ void init_rayleigh_scattering()
 	CFL.set_int("skybox_update_rate", &skybox_update_rate);
 	CFL.set_int("skybox_gl_linear", &skybox_gl_linear);
 	CFL.set_int("skybox_normalization", &skybox_normalization);
+	CFL.set_int("skybox_corners", &skybox_corners);
+	CFL.set_int("skybox_sundial", &skybox_sundial);
 
+	CFL.set_int("skybox_debug", &skybox_debug);
 	CFL.set_int("print_max_light", &print_max_light);
 
 	CFL.load_file("./settings/skybox", true);	//load file silently first time
@@ -1164,15 +1183,18 @@ void init_rayleigh_scattering()
 
 void tick_rayleigh_scattering()
 {
-	if(!PRODUCTION)
+	static int update_count = 0;
+	update_count++;
+
+	//reload every 4 seconds unless skybox_debug == 1 or production is true
+	if( !PRODUCTION || skybox_debug == 1 || update_count % 120 == 0)
 	{
 		CFL.load_file("./settings/skybox"); //reload file during debug
 	}
 
 	SR->increment_time();
 	
-	static int update_count = 0;
-	update_count++;
+
 
 	int _skybox_update_rate = skybox_update_rate < 5 ? 5 : skybox_update_rate;
 	int v = update_count % _skybox_update_rate;

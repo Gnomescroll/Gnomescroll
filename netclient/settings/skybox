@@ -1,11 +1,11 @@
 
 planet_radius = 256.0
 atomosphere_depth = 256.0
-sun_distance = 40096.0
+sun_distance = 40000.0
 
 #wavelenght_factor = 1.00
 #phase_g_factor = 0.00	
-color = 127 127 255 000
+color = 127 127 255 127
 
 sun_w0 = 1.00
 sun_g0 = 0.95
@@ -35,9 +35,12 @@ H0 = 0.15
 skybox_height = 128.0
 camera_z = 96.0
 
-time_speed = 60
+time_speed = 5
 skybox_update_rate = 60
 skybox_gl_linear = 1
 skybox_normalization = 0
-print_max_light = 0
+skybox_corners = 0
+skybox_sundial = 0
 
+print_max_light = 0
+skybox_debug = 0
