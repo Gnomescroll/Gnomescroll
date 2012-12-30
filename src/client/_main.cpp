@@ -215,24 +215,42 @@ void draw_tick()
 
     // Start World Projetion
     
-    GL_ASSERT(GL_DEPTH_TEST, true);
-    GL_ASSERT(GL_BLEND, false);
+
 
 
     poll_mouse();
 
     // Prep for draw
 
-    GL_ASSERT(GL_DEPTH_TEST, true);
-    GL_ASSERT(GL_BLEND, false);
 
     Particle::prep_shrapnel();
     Skybox::prep_skybox();
+
+
+
     CHECK_GL_ERROR();
     Animations::prep_voxel_particles();
     CHECK_GL_ERROR();
 
     t_mech::prep();
+
+
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+
+    // Skybox
+
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glDepthMask(GL_FALSE);
+
+    Skybox::draw_rayleigh_scattering(); //skybox drawing
+
+
+
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
 
     // Map
 
@@ -313,7 +331,6 @@ void draw_tick()
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
-    Skybox::draw_rayleigh_scattering(); //skybox drawing
 
     /*
         Transparent
