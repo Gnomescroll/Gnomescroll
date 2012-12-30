@@ -99,7 +99,7 @@ void generate_north_star()
 void generate_sky()
 {
     IF_ASSERT(star_num <= 0) return;
-    GS_ASSERT(star_list != NULL);
+    GS_ASSERT(star_list == NULL);
     star_list = new STAR[star_num];
 
     for (int i=0; i < star_num-1; i++)
