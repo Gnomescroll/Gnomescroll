@@ -107,7 +107,7 @@ int create_texture_from_file(const char* filename, GLuint* tex)
 int create_texture_from_file(const char* filename, GLuint* tex, GLuint min_filter, GLuint mag_filter)
 {
     SDL_Surface* s = create_texture_and_surface_from_file(filename, tex, min_filter, mag_filter);
-    if (s == NULL) return 1;
+    if (s == NULL)  return 1;
     SDL_FreeSurface(s);
     return 0;
 }

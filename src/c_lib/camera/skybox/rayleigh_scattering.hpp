@@ -29,6 +29,8 @@ int skybox_corners = 0;	//show corners of skybox plans
 int skybox_sundial = 0;	//draw time indicator
 int skybox_debug = 0;	//puts skybox in floating cube
 
+unsigned int cloud_blur_texture = 0;
+
 //cube orientation vectors
 static const float _f[6*3] =
 {
@@ -1293,6 +1295,8 @@ class PerlinClouds
 		//float cloud_size = 64.0;
 		//float _cloud_size = 1.0/cloud_size;
 
+		bool TEXTURED = true;
+
 		static int time_counter = 0;
 
 		time_counter++;
@@ -1318,8 +1322,6 @@ class PerlinClouds
 	    float _z = 127.0;
 
 
-	    glColor4ub(0, 0, 127, 127);
-
 
 	    const float ca[2*4] =
 	    {
@@ -1341,6 +1343,18 @@ class PerlinClouds
 	    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	    glDisable(GL_CULL_FACE);
+
+	    if(TEXTURED)
+	    {
+		    glEnable(GL_TEXTURE_2D);
+		   	glBindTexture(GL_TEXTURE_2D, cloud_blur_texture);
+		}
+
+	   	GS_ASSERT(cloud_blur_texture != 0);
+
+	    glColor4ub(0, 0, 127, 127);
+	    //glColor4ub(255, 255, 255, 255);
+
 	    glBegin(GL_QUADS);
 	
 
@@ -1373,7 +1387,7 @@ class PerlinClouds
 
 				s = s*size_mult + size_add;
 
-
+				//s = 5.0;
 				if(s <= 0.0)
 					continue; 
 
@@ -1381,10 +1395,27 @@ class PerlinClouds
 
 
 				//float _csize = s*csize;
-
+			if(!TEXTURED)
+			{
 				for(int _i=0; _i<4; _i++)
 			    	glVertex3f(_x + s*ca[_i*2+0], _y + s*ca[_i *2+1], _z);
+			}
+			else
+			{
+				glTexCoord2f(0.0,1.0);
+				glVertex3f(_x + s*ca[0*2+0], _y + s*ca[0*2+1], _z);
 
+				glTexCoord2f(0.0,0.0);
+				glVertex3f(_x + s*ca[1*2+0], _y + s*ca[1*2+1], _z);
+
+				glTexCoord2f(1.0,0.0);
+				glVertex3f(_x + s*ca[2*2+0], _y + s*ca[2*2+1], _z);
+
+				glTexCoord2f(1.0,1.0);
+				glVertex3f(_x + s*ca[3*2+0], _y + s*ca[3*2+1], _z);
+
+
+			}
 		    //glEnd();
 		    
 		    //glColor3ub(255, 255, 255);
@@ -1508,7 +1539,14 @@ void init_rayleigh_scattering()
 		}
 	}
 	
-
+/*
+	Load cloudblur texture
+*/
+	int ret= create_texture_from_file("./media/sprites/skybox/blur.png", &cloud_blur_texture, GL_LINEAR, GL_LINEAR);
+	if(ret != 0)
+	{
+		GS_ASSERT_ABORT(false);
+	}
 
 }
 
