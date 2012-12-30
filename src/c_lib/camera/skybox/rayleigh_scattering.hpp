@@ -2,9 +2,19 @@
 
 #include <SDL/png_save.hpp>
 
+//#include <t_gen/twister.hpp>
+
 namespace Skybox
 {
 
+/*
+
+	Todo
+	Subtle Perlin Noise Plasma in Sky
+	- subtle perlin noise plasma in sky
+	- modulate or multiply by sky perlin
+	- 
+*/
 int print_max_light = 0 ;
 unsigned char sun_color[4];
 
@@ -1076,9 +1086,328 @@ class SkyboxRender
 	}
 };
 
+
+class _PerlinField3D
+{
+
+    static inline float mix(float a, float b, float t) 
+    {
+        return a + t*(b-a);   //optimized version
+    }
+
+    static inline int fast_floor(float value) 
+    {
+        return (int)(value>=0 ? (int)value : (int)value-1);
+    }
+
+
+    static inline float fade(float t) 
+    {
+        return t*t*t*(t*(t*6-15)+10);
+    }
+
+	static inline float dot(int gi, float x, float y, float z)
+	{
+	    static const int g3[12][3] = {
+	    {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
+	    {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
+	    {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
+	    };
+
+	    return g3[gi][0]*x + g3[gi][1]*y + g3[gi][2]*z;
+	}
+
+    public:
+
+    unsigned char* ga;  //gradient array
+    float* grad; //gradient vector array
+    //static const int ssize = 64*64*32;
+    //static const int xsize = 64;
+
+    int ssize;  //number of gradients
+
+    int xsize; int xsize2;
+    int zsize;
+
+    float xscale;   //scale multiplier
+    float zscale;
+
+    static const int grad_max = 12;   //number of gradients
+
+    //xsize is number of gradients
+    _PerlinField3D() : ga(NULL), grad(NULL) {}
+
+    void init(int _xsize, int _zsize)
+    {
+        if (_xsize < 1) GS_ABORT();
+        if (_zsize < 1) GS_ABORT();
+
+        xsize = _xsize;
+        xsize2 = xsize*xsize;
+        zsize = _zsize;
+        ssize = xsize*xsize*zsize;
+
+        ga = new unsigned char[ssize];
+
+        generate_gradient_array();
+    }
+
+    ~_PerlinField3D()
+    {
+        if (this->ga != NULL) delete[] this->ga;
+    }
+
+    //OPTIMIZED
+    void generate_gradient_array()
+    {
+        for (int i=0; i<this->ssize; i++) ga[i] = rand() % grad_max; //gradient number
+    }
+
+    OPTIMIZED
+    inline int get_gradient(int x, int y, int z)
+    {
+        x = x % xsize; //replace with bitmask
+        y = y % xsize;
+        z = z % zsize;
+
+        return ga[x + y*xsize + z*xsize2];
+    }
+
+    public:
+
+    // Classic Perlin noise, 3D version
+    OPTIMIZED
+    float base(float x, float y, float z) 
+    {
+        x *= xsize;
+        y *= xsize;
+        z *= zsize;
+
+        //get grid point
+        int X = fast_floor(x);
+        int Y = fast_floor(y);
+        int Z = fast_floor(z);
+
+        x = x - X;
+        y = y - Y;
+        z = z - Z;
+
+        int gi000 = get_gradient(X+0,Y+0,Z+0);
+        int gi001 = get_gradient(X+0,Y+0,Z+1);
+        int gi010 = get_gradient(X+0,Y+1,Z+0);
+        int gi011 = get_gradient(X+0,Y+1,Z+1);
+
+        int gi100 = get_gradient(X+1,Y+0,Z+0);
+        int gi101 = get_gradient(X+1,Y+0,Z+1);
+        int gi110 = get_gradient(X+1,Y+1,Z+0);
+        int gi111 = get_gradient(X+1,Y+1,Z+1);
+        
+        // Calculate noise contributions from each of the eight corners
+        float n000= dot(gi000, x, y, z);
+        float n100= dot(gi100, x-1, y, z);
+        float n010= dot(gi010, x, y-1, z);
+        float n110= dot(gi110, x-1, y-1, z);
+        float n001= dot(gi001, x, y, z-1);
+        float n101= dot(gi101, x-1, y, z-1);
+        float n011= dot(gi011, x, y-1, z-1);
+        float n111= dot(gi111, x-1, y-1, z-1);
+        // Compute the fade curve value for each of x, y, z
+        
+    #if 1
+        float u = fade(x);
+        float v = fade(y);
+        float w = fade(z);
+    #else
+        float u = x;
+        float v = y;
+        float w = z;
+    #endif
+
+        // Interpolate along x the contributions from each of the corners
+        float nx00 = mix(n000, n100, u);
+        float nx01 = mix(n001, n101, u);
+        float nx10 = mix(n010, n110, u);
+        float nx11 = mix(n011, n111, u);
+        // Interpolate the four results along y
+        float nxy0 = mix(nx00, nx10, v);
+        float nxy1 = mix(nx01, nx11, v);
+        // Interpolate the two last results along z
+        float nxyz = mix(nxy0, nxy1, w);
+
+        return nxyz * 0.707106781f;   //-1 to 1 
+    }
+
+};
+
+class PerlinClouds
+{
+
+	
+	class _PerlinField3D pf3d;
+
+	static const int xsize = 32;
+	static const int zsize = 32;
+
+	float farray[zsize*xsize*xsize];
+
+	public:
+
+	PerlinClouds()
+	{
+		int xsize = 16;
+		int zsize = 32;
+		pf3d.init(xsize, zsize);
+	
+
+		float xscale = 1.0/7.0;
+		const float of = 0.33;
+
+		for(int i=0; i<xsize; i++)
+		{
+			for(int j=0; j<xsize; j++)
+			{
+				for(int k=0; k<zsize; k++)
+				{
+
+					float _if = of + xscale*((float) i);
+					float _jf = of + xscale*((float) j);
+					float _kf = of + xscale*((float) k);
+
+					farray[k*xsize*xsize + j*xsize + i] = 0.01 + pf3d.base(_if,_jf,_kf); 
+
+					//printf("f= %f \n", farray[k*xsize*xsize + j*xsize + i] );
+
+				}	
+			}
+		}
+	}
+
+	~PerlinClouds()
+	{
+
+	}
+
+
+	void draw(float x, float y, float z)
+	{
+		//float cloud_size = 64.0;
+		//float _cloud_size = 1.0/cloud_size;
+
+		static int time_counter = 0;
+
+		time_counter++;
+
+		int time_interval = 120*8;
+
+		int tc = (time_counter % time_interval);
+
+
+		float tfloat = ((float) tc) / ((float) time_interval);
+
+
+		//printf("%f tfloat \n", tfloat);
+
+		int k0 = (time_counter/time_interval) % zsize;
+		int k1 = (time_counter/time_interval +1) % zsize;
+
+	    float cloud_spacing = 16.0;
+	    //float csize = 4.0;
+	    float size_mult = 12.0+32.0;
+	    float size_add  = -0.5;
+
+	    float _z = 127.0;
+
+
+	    glColor4ub(0, 0, 127, 127);
+
+
+	    const float ca[2*4] =
+	    {
+	    	1, 1,
+	    	-1,1,
+	    	-1,-1,
+	    	1,-1
+	    };
+
+	    //printf("k0,k1= %d %d tc= %d \n", k0,k1,tc);
+	/*
+	    glBegin(GL_QUADS);
+
+		for(int _i=0; _i<4; _i++)
+	    	glVertex3f(x + 5.0*ca[_i*2+0], y + 5.0*ca[_i *2+1], z+25.0);
+
+	    glEnd();
+*/
+	    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	    glDisable(GL_CULL_FACE);
+	    glBegin(GL_QUADS);
+	
+
+	    //glDisable(GL_CULL_FACE);
+	    //glBegin(GL_QUADS);
+
+
+		for(int i=0; i<xsize; i++)
+		{
+			for(int j=0; j<xsize; j++)
+			{
+				float s0 = farray[k0*xsize*xsize + j*xsize + i];
+				float s1 = farray[k1*xsize*xsize + j*xsize + i];
+
+				float s = (1.0-tfloat)*s0 + tfloat*s1;
+			/*
+				if(i==5 && j==5)
+					printf("i,j= %d %d tfloat= %.2f s0= %f s1= %f s= %f k0,k1= %d %d tc= %d \n", 
+						i,j, tfloat, s0,s1,s, k0,k1,tc);
+			*/
+				float _if = (float) i;
+				float _jf = (float) j;
+				float xsizef = (float) xsize;
+
+				float _x = x + cloud_spacing*_if - cloud_spacing*xsizef/2.0;// - cloud_size/2.0;
+				float _y = y + cloud_spacing*_jf - cloud_spacing*xsizef/2.0;// - cloud_size/2.0;
+
+
+				//printf("s= %f, i,j= %d %d misc= %f %f %f \n", s, i,j, x,cloud_spacing*((float)(i)) , cloud_spacing*xsize/2);
+
+				s = s*size_mult + size_add;
+
+
+				if(s <= 0.0)
+					continue; 
+
+				//printf("i,i= %d %d _x, _y= %f %f \n", i,j, _x, _y);
+
+
+				//float _csize = s*csize;
+
+				for(int _i=0; _i<4; _i++)
+			    	glVertex3f(_x + s*ca[_i*2+0], _y + s*ca[_i *2+1], _z);
+
+		    //glEnd();
+		    
+		    //glColor3ub(255, 255, 255);
+
+			}
+		}
+	    glEnd();
+
+
+	    glColor4ub(255, 255, 255, 255);
+
+		CHECK_GL_ERROR();
+	}
+};
+
+
+//perlin clouds
+
+
 static class SkyboxRender* SR;
 static class ConfigFileLoader CFL;
 //sfloat test_float = 0.0f;
+static class PerlinClouds* PC;
 
 int skybox_update_rate = 15;
 
@@ -1091,6 +1420,8 @@ void init_rayleigh_scattering()
 {
 
 	SR = new SkyboxRender;
+
+	PC = new PerlinClouds;
 	//SR->update_skybox(); //wait for time to do this?
 
 	//CFL.set_float("test", &test_float);
@@ -1216,7 +1547,9 @@ void tick_rayleigh_scattering()
 
 void draw_rayleigh_scattering()
 {
+
 	SR->draw(current_camera_position.x, current_camera_position.y, current_camera_position.z);
+	PC->draw(current_camera_position.x, current_camera_position.y, current_camera_position.z);
 }
 
 

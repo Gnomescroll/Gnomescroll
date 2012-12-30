@@ -240,7 +240,7 @@ void draw_tick()
 
     // Skybox
 
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glDepthMask(GL_FALSE);
 
@@ -248,7 +248,7 @@ void draw_tick()
 
 
 
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glDepthMask(GL_TRUE);
 

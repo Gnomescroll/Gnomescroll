@@ -18,6 +18,7 @@ namespace t_gen
 
 class PerlinField3D
 {
+
     public:
 
     unsigned char* ga;  //gradient array
