@@ -70,18 +70,18 @@ class PerlinField2D
 {
     public:
 
-    unsigned char* ga;  //gradient array
-    float* grad; //gradient vector array
-    //static const int ssize = 64*64*32;
-    //static const int xsize = 64;
+        unsigned char* ga;  //gradient array
+        float* grad; //gradient vector array
+        //static const int ssize = 64*64*32;
+        //static const int xsize = 64;
 
-    int ssize;  //number of gradients
+        int ssize;  //number of gradients
 
-    int xsize;
+        int xsize;
 
-    //float xscale;   //scale multiplier
+        //float xscale;   //scale multiplier
 
-    int grad_max;   //number of gradients
+        int grad_max;   //number of gradients
 
     //xsize is number of gradients
     PerlinField2D() :
@@ -158,12 +158,11 @@ class PerlinField2D
         return ga[x + y*xsize];
     }
 
-
-
-inline float dot_grad(int index, float x, float y)
-{
-    return grad[2*index+0]*x + grad[2*index+1]*y;
-}
+    inline float dot_grad(int index, float x, float y)
+    {
+        return grad[2*index+0]*x + grad[2*index+1]*y;
+    }
+    
     // Classic Perlin noise, 3D version
     //OPTIMIZED
     float base(float x, float y) 
@@ -182,21 +181,18 @@ inline float dot_grad(int index, float x, float y)
         int gi10 = get_gradient(X+1,Y+0);
         int gi11 = get_gradient(X+1,Y+1);
         
-    // Calculate noise contributions from each of the eight corners
-/*
-    float n00= dot(grad+2*gi00, x, y);
-    float n10= dot(grad+2*gi10, x-1, y);
-    float n01= dot(grad+2*gi01, x, y-1);
-    float n11= dot(grad+2*gi11, x-1, y-1);
-*/
+        // Calculate noise contributions from each of the eight corners
+        /*
+            float n00= dot(grad+2*gi00, x, y);
+            float n10= dot(grad+2*gi10, x-1, y);
+            float n01= dot(grad+2*gi01, x, y-1);
+            float n11= dot(grad+2*gi11, x-1, y-1);
+        */
 
-/*
-    DONT LET STEVE SLOW DOWN THIS LOOP
-*/
-    float n00= dot_grad( gi00, x, y);
-    float n10= dot_grad( gi10, x-1, y);
-    float n01= dot_grad( gi01, x, y-1);
-    float n11= dot_grad( gi11, x-1, y-1);
+        float n00 = dot_grad(gi00, x, y);
+        float n10 = dot_grad(gi10, x-1, y);
+        float n01 = dot_grad(gi01, x, y-1);
+        float n11 = dot_grad(gi11, x-1, y-1);
 
         // Compute the fade curve value for each of x, y, z
         
@@ -214,17 +210,15 @@ inline float dot_grad(int index, float x, float y)
 
 class PerlinOctave2D
 {
-    private:
-        int runs;
     public:
-    int octaves;
-    class PerlinField2D* octave_array;
+        int octaves;
+        class PerlinField2D* octave_array;
 
-    float* cache;
-    float cache_persistence;
-    unsigned long cache_seed;
+        float* cache;
+        float cache_persistence;
+        unsigned long cache_seed;
 
-    PerlinOctave2D(int _octaves) : runs(0)
+    explicit PerlinOctave2D(int _octaves) : runs(0)
     {
         cache = NULL;
         cache_persistence = 0.0f;
@@ -460,6 +454,8 @@ class PerlinOctave2D
         delete[] out;
     }
 
+    private:
+        int runs;
 };
 
 

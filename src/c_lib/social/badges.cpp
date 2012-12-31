@@ -103,18 +103,32 @@ void init_packets()
     add_badge_StoC::register_client_packet();
 }
 
-void broadcast_badge(BadgeID badge_id, AgentID agent_id)
+#if DC_SERVER
+static bool prep_add_badge(add_badge_StoC* msg, BadgeID badge_id, AgentID agent_id)
 {
-    IF_ASSERT(!isValid(agent_id)) return;
-    IF_ASSERT(!isValid(badge_id)) return;
+    IF_ASSERT(!isValid(agent_id)) return false;
+    IF_ASSERT(!isValid(badge_id)) return false;
     
+    msg->badge_id = badge_id;
+    msg->agent_id = agent_id;
+    return true;
+}
+
+void broadcast_badge(BadgeID badge_id, AgentID agent_id)
+{    
     add_badge_StoC msg;
-    msg.badge_id = badge_id;
-    msg.agent_id = agent_id;
+    if (!prep_add_badge(&msg, badge_id, agent_id)) return;
     msg.broadcast();
 }
 
-#if DC_SERVER
+void send_badge(BadgeID badge_id, AgentID agent_id, ClientID client_id)
+{
+    IF_ASSERT(!isValid(client_id)) return;
+    add_badge_StoC msg;
+    if (!prep_add_badge(&msg, badge_id, agent_id)) return;
+    msg.sendToClient(client_id);
+}
+
 inline void add_badge_StoC::handle() {}
 #endif
 

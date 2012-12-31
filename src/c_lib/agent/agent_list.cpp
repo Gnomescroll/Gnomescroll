@@ -12,6 +12,7 @@
 #if DC_SERVER
 # include <state/server_state.hpp>
 # include <t_map/server/manager.hpp>
+# include <social/badges.hpp>
 #endif
 
 namespace Agents
@@ -38,24 +39,29 @@ void AgentList::send_to_client(ClientID client_id)
     {
         if (this->objects[i].id == this->null_id) continue;
         if (this->objects[i].client_id == client_id) continue;
+
+        class Agent* agent = &this->objects[i];
         
         agent_create_StoC msg;
-        msg.id = objects[i].id;
-        msg.client_id = objects[i].client_id;
-        strncpy(msg.username, objects[i].status.name, PLAYER_NAME_MAX_LENGTH+1);
+        msg.id = agent->id;
+        msg.client_id = agent->client_id;
+        strncpy(msg.username, agent->status.name, PLAYER_NAME_MAX_LENGTH+1);
         msg.username[PLAYER_NAME_MAX_LENGTH] = '\0';
-        msg.color = objects[i].status.color;
+        msg.color = agent->status.color;
         msg.sendToClient(client_id);
 
         agent_dead_StoC dead_msg;
-        dead_msg.dead = objects[i].status.dead;
-        dead_msg.id = objects[i].id;
+        dead_msg.dead = agent->status.dead;
+        dead_msg.id = agent->id;
         dead_msg.sendToClient(client_id);
 
-        objects[i].status.send_health_msg(client_id);
+        agent->status.send_health_msg(client_id);
         
-        int item_type = Toolbelt::get_agent_selected_item_type(this->objects[i].id);
-        Toolbelt::send_agent_set_active_item_packet(client_id, this->objects[i].id, item_type);
+        int item_type = Toolbelt::get_agent_selected_item_type(agent->id);
+        Toolbelt::send_agent_set_active_item_packet(client_id, agent->id, item_type);
+
+        for (size_t j=0; j<agent->status.n_badges; j++)
+            Badges::send_badge(agent->status.badges[i], agent->id, client_id);
     }
 }
 #endif

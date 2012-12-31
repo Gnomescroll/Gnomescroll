@@ -12,7 +12,6 @@ namespace Agents
 // All agents server side
 // All non-player agents client side.
 // In client side, ignore properties such as health
-//class AgentStatus: public Base_status {
 class AgentStatus
 {
     public:
@@ -41,53 +40,51 @@ class AgentStatus
         
         Color color;
 
-        void tick();
+    void tick();
 
-        void set_name(const char* name);
+    void set_name(const char* name);
 
-        void set_spawner(int pt);
+    void set_spawner(int pt);
 
-        bool die();
-        bool die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method);
-        void kill(int victim_id);
-        void kill_slime();
+    bool die();
+    bool die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method);
+    void kill(int victim_id);
+    void kill_slime();
 
-        void quit();
+    void quit();
 
-        #if DC_SERVER
+    bool set_color(Color color);
+    bool set_color_silent(Color color);
 
-        void identify(const char* name);    // returns false if malformed
+    float get_spawn_angle();
+
+    void add_badge(BadgeID badge_id);
+
+    #if DC_SERVER
+    void identify(const char* name);    // returns false if malformed
+    
+    void respawn();
+    void set_fresh_state();
+
+    void send_health_msg();
+    void send_health_msg(ClientID client_id);
+    void restore_health();
+    void heal(unsigned int amt);
+    int apply_damage(int dmg);
+    int apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id=-1);
+    int apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
+    int apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
+    void at_base();
+
+    void send_color(ClientID client_id);
+    void broadcast_color();
+
+    bool consume_item(ItemID item_id);
+
+    void send_scores(ClientID client_id);
+    void send_scores();
+    #endif
         
-        void respawn();
-        void set_fresh_state();
-
-        void send_health_msg();
-        void send_health_msg(ClientID client_id);
-        void restore_health();
-        void heal(unsigned int amt);
-        int apply_damage(int dmg);
-        int apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id=-1);
-        int apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
-        int apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
-        void at_base();
-
-        void send_color(ClientID client_id);
-        void broadcast_color();
-
-        bool consume_item(ItemID item_id);
-
-        void send_scores(ClientID client_id);
-        void send_scores();
-
-        #endif
-        
-        bool set_color(Color color);
-        bool set_color_silent(Color color);
-
-        float get_spawn_angle();
-
-        void add_badge(BadgeID badge_id);
-
     explicit AgentStatus(class Agent* a);
     ~AgentStatus();
 

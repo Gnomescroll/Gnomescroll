@@ -47,7 +47,11 @@ int get_badge_sprite(BadgeID id);
 const char* get_badge_name(BadgeID id);
 
 void init_packets();
-void broadcast_badge(BadgeID badge_id, ClientID client_id);
+
+#if DC_SERVER
+void broadcast_badge(BadgeID badge_id, AgentID agent_id);
+void send_badge(BadgeID badge_id, AgentID agent_id, ClientID client_id);
+#endif
 
 class add_badge_StoC: public FixedSizeReliableNetPacketToClient<add_badge_StoC>
 {

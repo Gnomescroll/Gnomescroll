@@ -143,7 +143,6 @@ class Agent
         void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
         void teleport(struct Vec3 p) { this->teleport(p.x, p.y, p.z); }
 
-
         // returns side, as integer. side<0 if failure
         int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
         int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);
@@ -183,6 +182,7 @@ class Agent
 
         #if DC_CLIENT
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
+        bool is_you();
         #endif
 
         //this is for client
@@ -198,9 +198,6 @@ class Agent
         void draw();
         void update_model();
         void update_legs();
-        #if DC_CLIENT
-        bool is_you();
-        #endif
 
         bool point_can_cast(float x, float y, float z, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it
 
