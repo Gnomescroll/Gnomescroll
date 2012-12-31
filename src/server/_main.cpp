@@ -118,6 +118,7 @@ void init_world()
             t_map::set_fast(x,y,z, plasmagen);
         }
     }
+    
     t_gen::generate_city();
 
     srand((unsigned int)time(NULL));
