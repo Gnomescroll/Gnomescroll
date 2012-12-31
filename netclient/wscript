@@ -28,7 +28,7 @@ For gcc, set conf.env.SHLIB_MARKER = '-Wl,-Bstatic' to link all libraries in sta
 and add '-static' to the linkflags to make a fully static binary.
 """
 
-_OS = None
+OS = None
 os_libpth = ''
 
 def _grab_output(*cmd):
@@ -69,11 +69,10 @@ def check_clang(conf, use_clang=False):
     return use_clang
 
 def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awesomium=False, awesomium_debug=False, assimp=True, use_clang=False):
-    global _OS
+    global OS
     global os_libpth
 
     OS = platform.system()
-    _OS = OS
     conf.env.os = OS
 
     optflag = '-O' + str(optlevel)
