@@ -15,6 +15,23 @@ namespace Skybox
 	- modulate or multiply by sky perlin
 	- 
 */
+
+/*
+
+	Clouds Todo:
+	- !!! cloud motion (feeling of wind or breeze)
+	- global fade in and out
+	- perlin 2d drift/displacement of individual clouds
+	- 2d perlin map for cloud density
+	- !   wrap cordinates of clouds (so they dont move with player)
+	- !!  Octaves for cloud density (less uniform)
+	- should fade out over distances (for wrap, needs shader
+
+	- should have bloom?
+	- blur whats behind it?
+
+*/
+
 int print_max_light = 0 ;
 unsigned char sun_color[4];
 
