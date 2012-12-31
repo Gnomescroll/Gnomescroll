@@ -6,21 +6,33 @@
 namespace Hud
 {
 
+float Scoreboard::column_width()
+{
+    return (_xresf * 0.75f) / 5;
+}
+
+float Scoreboard::start_x()
+{
+    return _xresf / 3.0f;
+}
+
+float Scoreboard::start_y()
+{
+    return 20.0f;
+}
+
 /* Scoreboard */
 void Scoreboard::init()
 {
     IF_ASSERT(this->inited) return;
     
-    this->start_x = _xresf / 5.0f;
-    this->col_width = (_xresf * 0.75f) / 5;
-
     for (int i=0; i<N_STATS; i++)
     {
         tags[i] = HudText::text_list->create();
         GS_ASSERT(tags[i] != NULL);
         if (tags[i] == NULL) return;
         tags[i]->set_color(color);
-        tags[i]->set_position(start_x + i*col_width, _yresf - start_y);
+        tags[i]->set_position(this->start_x() + i*this->column_width(), _yresf - this->start_y());
     }
     tags[0]->set_text("ID");
     tags[1]->set_text("Name");
@@ -51,9 +63,6 @@ void Scoreboard::update()
 {
     IF_ASSERT(!this->inited) return;
         
-    this->start_x = _xresf / 5.0f;
-    this->col_width = (_xresf * 0.75f) / 5;
-    
     Agents::agent_list->filter_none();
     for (int i=0,j=0; i<Agents::agent_list->max; i++)
     {
@@ -64,18 +73,18 @@ void Scoreboard::update()
             //names[i]->set_text("");
             //continue;
         //}
-        float y = start_y + HudFont::font->data.line_height*(j+2);
-        //float y = start_y + 32*(j+1);
+        float y = this->start_y() + HudFont::font->data.line_height*(j+2);
+        //float y = this->start_y() + 32*(j+1);
         j++;
 
-        this->line_pos[i].x = start_x;
+        this->line_pos[i].x = this->start_x();
         this->line_pos[i].y = _yresf - y;
 
-        ids[i]->set_position(start_x + col_width*0, _yresf - y);
+        ids[i]->set_position(this->start_x(), _yresf - y);
         //ids[i]->update_formatted_string(1, agent->id);
         ids[i]->set_color(color);
 
-        names[i]->set_position(start_x + col_width*1, _yresf - y);
+        names[i]->set_position(this->start_x() + this->column_width(), _yresf - y);
         //names[i]->update_formatted_string(1, agent->status.name);
         names[i]->set_color(color);
 
@@ -120,7 +129,7 @@ void Scoreboard::draw_badges()
 
     for (int i=0; i<PLAYERS_MAX; i++)
     {   // position it right behing the name
-        float x = this->line_pos[i].x - (w + margin) + this->col_width;
+        float x = this->line_pos[i].x - (w + margin) + this->column_width();
         // keep it centered with the line
         float y = this->line_pos[i].y + (h - HudFont::font->data.line_height)/2;
         // TODO -- get from player
@@ -133,8 +142,7 @@ void Scoreboard::draw_badges()
 }
 
 Scoreboard::Scoreboard() :
-    inited(false), start_x(0), start_y(20.0f), col_width(20.0f),
-    color(Color(255,10,10,255))
+    inited(false), color(Color(255,10,10,255))
 {
     for (int i=0; i<N_STATS; i++) tags[i] = NULL;
     for (int i=0; i<PLAYERS_MAX; i++)

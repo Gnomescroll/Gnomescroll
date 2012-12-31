@@ -4,6 +4,8 @@
 dont_include_this_file_in_client
 #endif
 
+#include <c_lib/agent/agent.hpp>
+
 namespace NetServer
 {
 

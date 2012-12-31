@@ -162,7 +162,8 @@ dont_include_this_file_in_client
 // serialization
 #include <serializer/_include.hpp>
 
-
+// social (clans, badges, etc)
+#include <social/_include.hpp>
 
 void close_c_lib();
 
@@ -341,6 +342,8 @@ int init_c_lib(int argc, char* argv[])
 
     t_gen::init();
     t_gen::init_map_generator();
+
+    Badges::register_badges();
     
     return 0;
 }

@@ -211,6 +211,9 @@ bool c_lib_inited = false;
 // authentication
 #include <auth/_include.hpp>
 
+// social (clans, badges, etc)
+#include <social/_include.hpp>
+
 bool signal_exit = false;
 
 #ifdef linux
@@ -244,8 +247,7 @@ int init_c_lib(int argc, char* argv[])
     const size_t DIR_SIZE = 1024;
     char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
     char* wdr = getcwd(wd, DIR_SIZE);
-    GS_ASSERT(wdr != NULL);
-    if (wdr == NULL)
+    IF_ASSERT(wdr == NULL)
         printf("Failed to get working directory.\n");
     else
         printf("Working directory is: %s\n", wd);

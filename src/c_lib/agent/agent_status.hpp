@@ -3,6 +3,7 @@
 #include <entity/constants.hpp>
 #include <agent/constants.hpp>
 #include <common/color.hpp>
+#include <social/badges.hpp>
 
 namespace Agents
 {
@@ -14,10 +15,6 @@ namespace Agents
 //class AgentStatus: public Base_status {
 class AgentStatus
 {
-    private:
-        class Agent* a;
-        int voxel_model_restore_throttle;
-
     public:
 
         int health;
@@ -35,6 +32,9 @@ class AgentStatus
 
         char name[PLAYER_NAME_MAX_LENGTH + 1];
 
+        size_t n_badges;
+        BadgeID badges[PLAYER_MAX_BADGES];
+
         bool vox_crouched;
 
         int lifetime;
@@ -44,10 +44,6 @@ class AgentStatus
         void tick();
 
         void set_name(const char* name);
-
-        //#if DC_CLIENT
-        //void check_missing_name();
-        //#endif
 
         void set_spawner(int pt);
 
@@ -80,18 +76,24 @@ class AgentStatus
 
         bool consume_item(ItemID item_id);
 
-        #endif
-        
         void send_scores(ClientID client_id);
         void send_scores();
 
+        #endif
+        
         bool set_color(Color color);
         bool set_color_silent(Color color);
 
         float get_spawn_angle();
 
-        explicit AgentStatus(Agent* a);
-        ~AgentStatus();
+        void add_badge(BadgeID badge_id);
+
+    explicit AgentStatus(class Agent* a);
+    ~AgentStatus();
+
+    private:
+        class Agent* a;
+        int voxel_model_restore_throttle;
 };
 
 }   // Agents

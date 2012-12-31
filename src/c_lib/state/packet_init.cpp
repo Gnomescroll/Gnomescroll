@@ -16,6 +16,8 @@
 #include <particle/grenade.hpp> // move into net folder in particles
 #include <auth/_interface.hpp>
 
+#include <social/badges.hpp>
+
 namespace PacketInit
 {
 
@@ -180,6 +182,8 @@ void RegisterMessages()
     teleport_me_CtoS::register_server_packet();
     
     gohome_CtoS::register_server_packet();
+
+    Badges::init_packets();
 }
 
 }

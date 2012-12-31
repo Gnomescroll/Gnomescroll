@@ -24,8 +24,6 @@ namespace Agents
 const int VOXEL_MODEL_RESTORE_WAIT = 30 * 10; // ~ once every 10 seconds
 
 AgentStatus::AgentStatus(Agent* a) :
-    a(a),
-    voxel_model_restore_throttle(0),
     health(AGENT_HEALTH),
     should_die(false),
     dead(true),
@@ -36,9 +34,12 @@ AgentStatus::AgentStatus(Agent* a) :
     suicides(0),
     slime_kills(0),
     health_max(AGENT_HEALTH),
+    n_badges(0),
     vox_crouched(false),
     lifetime(0),
-    color(AGENT_DEFAULT_COLOR)
+    color(AGENT_DEFAULT_COLOR),
+    a(a),
+    voxel_model_restore_throttle(0)
 {
     this->name[0] = '\0';
 }
@@ -140,6 +141,19 @@ bool AgentStatus::set_color(Color color)
     this->broadcast_color();
     #endif
     return true;
+}
+
+void AgentStatus::add_badge(BadgeID badge_id)
+{
+    IF_ASSERT(this->n_badges >= PLAYER_MAX_BADGES) return;
+    
+    for (size_t i=0; i<this->n_badges; i++)
+        GS_ASSERT(this->badges[i] != badge_id);
+        
+    this->badges[this->n_badges++] = badge_id;
+    
+    #if DC_SERVER
+    #endif
 }
 
 // does not broadcast the change (useful for the deserializer) 
@@ -504,6 +518,12 @@ void AgentStatus::kill_slime()
     this->slime_kills++;
 }
 
+float AgentStatus::get_spawn_angle()
+{
+    return 0.5f;
+}
+
+#if DC_SERVER
 void AgentStatus::send_scores(ClientID client_id)
 {
     AgentKills_StoC ak;
@@ -541,12 +561,7 @@ void AgentStatus::send_scores()
     as.broadcast();
 }
 
-float AgentStatus::get_spawn_angle()
-{
-    return 0.5f;
-}
 
-#if DC_SERVER
 bool AgentStatus::consume_item(ItemID item_id)
 {
     int item_type = Item::get_item_type(item_id);

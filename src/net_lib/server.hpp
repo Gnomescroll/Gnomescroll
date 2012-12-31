@@ -9,7 +9,10 @@ dont_include_this_file_in_client
 #include <common/analytics/sessions.hpp>
 #include <net_lib/common/net_peer_manager.hpp>
 
-#include <c_lib/agent/agent.hpp>
+namespace Agents
+{   // forward decl
+class Agent;
+}   // Agents
 
 namespace NetServer
 {
