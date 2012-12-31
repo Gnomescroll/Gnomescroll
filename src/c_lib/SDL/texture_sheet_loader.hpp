@@ -104,6 +104,7 @@ void save_item_texture();
 // badge api
 void save_badge_texture();
 SpriteSheet badge_texture_alias(const char* filename);
+void init_badge_texture();
 
 void reload_texture_sheets();
 

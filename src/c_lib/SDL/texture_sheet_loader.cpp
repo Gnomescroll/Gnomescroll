@@ -279,17 +279,14 @@ void TextureSheetLoader::reload()
         if (this->filenames[i] == NULL) continue;
         printf("Reloading texture file: %s\n", this->filenames[i]);
         SDL_Surface* s = create_surface_from_file(this->filenames[i]);
-        GS_ASSERT(s != NULL);
-        if (s == NULL)
+        IF_ASSERT(s == NULL)
         {
             this->surface_num = i;
             break;
         }
 
         SpriteSheet index = this->load_texture_from_surface(s, (SpriteSheet)i);
-
-        GS_ASSERT(index == (SpriteSheet)i);
-        if (index != (SpriteSheet)i)
+        IF_ASSERT(index != (SpriteSheet)i)
         {
             this->surface_num = i;
             SDL_FreeSurface(s);
@@ -348,8 +345,7 @@ void init()
 
 void init_item_texture()
 {
-    GS_ASSERT(item_texture_sheet_loader != NULL);
-    if (item_texture_sheet_loader == NULL) return;
+    IF_ASSERT(item_texture_sheet_loader == NULL) return;
     item_texture_sheet_loader->generate_texture();
 }
 
@@ -425,6 +421,11 @@ void save_badge_texture()
 SpriteSheet badge_texture_alias(const char* filename)
 {
     return badge_texture_sheet_loader->load_texture(filename);
+}
+
+void init_badge_texture()
+{
+    badge_texture_sheet_loader->generate_texture();
 }
 
 void reload_texture_sheets()

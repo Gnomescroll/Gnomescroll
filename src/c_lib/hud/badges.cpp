@@ -55,6 +55,7 @@ void register_badges()
     
     add_badge("paid_alpha_user", b1, 3, 2);
 
+    TextureSheetLoader::init_badge_texture();
     TextureSheetLoader::save_badge_texture();
     verify_badge_conf();    
 }

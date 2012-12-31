@@ -11,12 +11,9 @@ void Scoreboard::init()
 {
     IF_ASSERT(this->inited) return;
     
-    static const Color color = Color(255,10,10,255);
-    const float start_y = 120;
-    //const float start_x = _xresf / 8.0f;
-    const float start_x = _xresf / 4.0f;
-    //const float col_width = (_xresf * 0.75f) / N_STATS;   // even spacing
-    const float col_width = (_xresf * 0.75f) / 5;
+    this->start_x = _xresf / 5.0f;
+    this->col_width = (_xresf * 0.75f) / 5;
+
     for (int i=0; i<N_STATS; i++)
     {
         tags[i] = HudText::text_list->create();
@@ -35,15 +32,13 @@ void Scoreboard::init()
     for (int i=0; i<PLAYERS_MAX; i++)
     {
         ids[i] = HudText::text_list->create();
-        GS_ASSERT(ids[i] != NULL);
-        if (ids[i] == NULL) return;
+        IF_ASSERT(ids[i] == NULL) return;
         ids[i]->set_format(id_fmt);
         ids[i]->set_format_extra_length(3 - 2);
         ids[i]->shadowed = true;
 
         names[i] = HudText::text_list->create();
-        GS_ASSERT(names[i] != NULL);
-        if (names[i] == NULL) return;
+        IF_ASSERT(names[i] == NULL) return;
         names[i]->set_format(name_fmt);
         names[i]->set_format_extra_length(PLAYER_NAME_MAX_LENGTH - 2);
         names[i]->shadowed = true;
@@ -56,32 +51,36 @@ void Scoreboard::update()
 {
     IF_ASSERT(!this->inited) return;
         
-    this->start_x = _xresf / 4.0f;
+    this->start_x = _xresf / 5.0f;
     this->col_width = (_xresf * 0.75f) / 5;
     
     Agents::agent_list->filter_none();
     for (int i=0,j=0; i<Agents::agent_list->max; i++)
     {
-        Agents::Agent* agent = Agents::agent_list->filtered_objects[i];
-        if (i >= Agents::agent_list->n_filtered || agent->id == Agents::agent_list->null_id)
-        {
-            ids[i]->set_text("");
-            names[i]->set_text("");
-            continue;
-        }
+        //Agents::Agent* agent = Agents::agent_list->filtered_objects[i];
+        //if (i >= Agents::agent_list->n_filtered || agent->id == Agents::agent_list->null_id)
+        //{
+            //ids[i]->set_text("");
+            //names[i]->set_text("");
+            //continue;
+        //}
         float y = start_y + HudFont::font->data.line_height*(j+2);
+        //float y = start_y + 32*(j+1);
         j++;
 
         this->line_pos[i].x = start_x;
         this->line_pos[i].y = _yresf - y;
 
         ids[i]->set_position(start_x + col_width*0, _yresf - y);
-        ids[i]->update_formatted_string(1, agent->id);
+        //ids[i]->update_formatted_string(1, agent->id);
         ids[i]->set_color(color);
 
         names[i]->set_position(start_x + col_width*1, _yresf - y);
-        names[i]->update_formatted_string(1, agent->status.name);
+        //names[i]->update_formatted_string(1, agent->status.name);
         names[i]->set_color(color);
+
+        ids[i]->update_formatted_string(1, i);
+        names[i]->update_formatted_string(1, "debuguser");
     }
 }
 
@@ -90,8 +89,8 @@ void Scoreboard::draw_text()
     IF_ASSERT(!this->inited) return;
     
     this->update();
-    for (int i=0; i<N_STATS; i++)
-        tags[i]->draw();
+    //for (int i=0; i<N_STATS; i++)
+        //tags[i]->draw();
     for (int i=0; i<PLAYERS_MAX; i++)
     {
         ids[i]->draw();
@@ -110,17 +109,20 @@ void Scoreboard::draw_badges()
     GS_ASSERT(badge_texture_sheet_loader->texture);
     glBindTexture(GL_TEXTURE_2D, badge_texture_sheet_loader->texture);
 
-    const float margin = 6.0f;  // between badge and first character of line
+    const float margin = 5.0f;  // between badge and first character of line
     const float z = -1.0f;
+    //const float w = badge_texture_sheet_loader->tile_size;
+    //const float h = badge_texture_sheet_loader->tile_size;
     const float w = HudFont::font->data.line_height;
     const float h = HudFont::font->data.line_height;
     const float sw = badge_texture_sheet_loader->sprite_width();
     const float sh = badge_texture_sheet_loader->sprite_height();
 
     for (int i=0; i<PLAYERS_MAX; i++)
-    {
-        float x = this->line_pos[i].x - (w + margin);
-        float y = this->line_pos[i].y;
+    {   // position it right behing the name
+        float x = this->line_pos[i].x - (w + margin) + this->col_width;
+        // keep it centered with the line
+        float y = this->line_pos[i].y + (h - HudFont::font->data.line_height)/2;
         // TODO -- get from player
         float sx = 0.0f;
         float sy = 0.0f;
@@ -131,7 +133,7 @@ void Scoreboard::draw_badges()
 }
 
 Scoreboard::Scoreboard() :
-    inited(false), start_x(0), start_y(120.0f), col_width(20.0f),
+    inited(false), start_x(0), start_y(20.0f), col_width(20.0f),
     color(Color(255,10,10,255))
 {
     for (int i=0; i<N_STATS; i++) tags[i] = NULL;
