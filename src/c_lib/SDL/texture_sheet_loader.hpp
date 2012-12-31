@@ -66,6 +66,16 @@ class TextureSheetLoader
 
         const Color* get_sprite_pixels(int sprite_id) const;
 
+        float sprite_width()
+        {   // width for rendering to texture; i.e. %width
+            return float(this->tile_size) / float(this->width);
+        }
+
+        float sprite_height()
+        {
+            return float(this->tile_size) / float(this->height);
+        }
+
     explicit TextureSheetLoader(size_t tile_size);
     ~TextureSheetLoader();
 };

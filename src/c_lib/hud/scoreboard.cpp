@@ -104,15 +104,18 @@ void Scoreboard::draw_badges()
     IF_ASSERT(!this->inited) return;
     using TextureSheetLoader::badge_texture_sheet_loader;
 
+    glColor3ub(255,255,255);
+
     glEnable(GL_TEXTURE_2D);
+    GS_ASSERT(badge_texture_sheet_loader->texture);
     glBindTexture(GL_TEXTURE_2D, badge_texture_sheet_loader->texture);
 
     const float margin = 6.0f;  // between badge and first character of line
     const float z = -1.0f;
-    const float w = badge_texture_sheet_loader->tile_size;
-    const float h = badge_texture_sheet_loader->tile_size;
-    const float sw = badge_texture_sheet_loader->tile_size;
-    const float sh = badge_texture_sheet_loader->tile_size;
+    const float w = HudFont::font->data.line_height;
+    const float h = HudFont::font->data.line_height;
+    const float sw = badge_texture_sheet_loader->sprite_width();
+    const float sh = badge_texture_sheet_loader->sprite_height();
 
     for (int i=0; i<PLAYERS_MAX; i++)
     {
@@ -121,7 +124,7 @@ void Scoreboard::draw_badges()
         // TODO -- get from player
         float sx = 0.0f;
         float sy = 0.0f;
-        draw_bound_texture_sprite(x, y-h-1, w, h, z, sx, sy, sw, sh);
+        draw_bound_texture_sprite(x, y-h, w, h, z, sx, sy, sw, sh);
     }
 
     glDisable(GL_TEXTURE_2D);

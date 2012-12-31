@@ -343,7 +343,7 @@ void init()
     cube_texture_sheet_loader = new TextureSheetLoader(32);        //pixel size for cube textures
     item_texture_sheet_loader = new TextureSheetLoader(16);
     item_texture_sheet_loader->mag_filter = GL_NEAREST;
-    badge_texture_sheet_loader = new TextureSheetLoader(16);
+    badge_texture_sheet_loader = new TextureSheetLoader(32);
 }
 
 void init_item_texture()

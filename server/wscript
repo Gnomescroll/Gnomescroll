@@ -42,6 +42,9 @@ def options(opt):
     opt.load('compiler_c compiler_cxx')
 
 def check_clang(conf, use_clang=False):
+    if OS != 'Linux':
+        return False
+        
     # use clang if requested or available
     # If you do check_tool('g++') after this, it won't compile, even though the check works
     if os.environ.get('WAF_USE_CLANG'):
