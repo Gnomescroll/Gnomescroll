@@ -3,6 +3,8 @@
 #include <hud/cube_selector.cpp>
 #include <hud/font.cpp>
 
+#include <hud/scoreboard.cpp>
+#include <hud/badges.cpp>
 #include <hud/text.cpp>
 #include <hud/map.cpp>
 #include <hud/error.hpp>
@@ -12,4 +14,3 @@
 
 #include <hud/_interface.cpp>
 
-#include <hud/badges.cpp>

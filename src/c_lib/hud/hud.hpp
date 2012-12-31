@@ -3,6 +3,7 @@
 #include <hud/font.hpp>
 #include <hud/text.hpp>
 #include <hud/meter.hpp>
+#include <hud/scoreboard.hpp>
 
 namespace Hud
 {
@@ -32,7 +33,7 @@ using HudFont::set_texture;
 
 const int CHAT_MESSAGE_RENDER_MAX = 8;
 char CHAT_NAME_DEFAULT_SEPARATOR[] = ": ";
-const int CHAT_NAME_SEPARATOR_LENGTH_MAX = (int)strlen(CHAT_NAME_DEFAULT_SEPARATOR);
+const size_t CHAT_NAME_SEPARATOR_LENGTH_MAX = strlen(CHAT_NAME_DEFAULT_SEPARATOR);
 
 class ChatRender
 {
@@ -56,26 +57,6 @@ class ChatRender
     ~ChatRender();
 };
 
-const int N_STATS = 2;
-class Scoreboard
-{
-
-    public:
-        bool inited;
-
-        Text* tags[N_STATS];
-        Text* ids[PLAYERS_MAX];
-        Text* names[PLAYERS_MAX];
-
-    void update();
-    void init();
-    void draw_text();
-    void draw_badges();
-
-    Scoreboard();
-    ~Scoreboard();
-};
-
 class HUD
 {
     public:
@@ -97,11 +78,10 @@ class HUD
         Text* awesomium_message;
 
         // scoreboard needs rewritten logic
-        // will be its own class, also holding text objects
-        Scoreboard* scoreboard;
+        class Scoreboard* scoreboard;
         
         // chat queue
-        ChatRender* chat;    // contains text objects
+        class ChatRender* chat;    // contains text objects
 
     void init();
     HUD();
