@@ -25,24 +25,24 @@ def cleanup(backup_path):
     for f in files:
         pts = f.split('-')
         if len(pts) <= 1:
-            sys.stderr.write('Unrecognized filename format: %s. [expected world-version-]' % (f,))
+            sys.stderr.write('Unrecognized filename format: %s. [expected world-version-]\n' % (f,))
             continue
         bld = pts[1]
         version_bins.setdefault(bld, []).append(f)
-    
+
     # sort them according to day
     day_bins = {}
-    for version, version_files in version_bins:
+    for version, version_files in version_bins.items():
         for f in version_files:
             pts = f.split('_')
             if len(pts) <= 1:
-                sys.stderr.write('Unrecognized filename format: %s. [expected something_something*]' % (f,))
+                sys.stderr.write('Unrecognized filename format: %s. [expected something_something*]\n' % (f,))
                 continue
             dates = pts[1].split('-')
             if len(dates) < 3:
-                sys.stderr.write('Unrecognized filename format: %s. [expected MM-DD-YYYY*]' % (f,))
+                sys.stderr.write('Unrecognized filename format: %s. [expected MM-DD-YYYY*]\n' % (f,))
                 continue
-            dates = dates[:3].join('-')
+            dates = '-'.join(dates[:3])
             day_bins.setdefault(dates, []).append(f)
 
     # skip today
@@ -52,14 +52,14 @@ def cleanup(backup_path):
 
     # reduce them
     rmfiles = []
-    for date, bin in day_bins:
+    for date, bin in day_bins.items():
         bin.sort()
         cnt = len(bin)
         if not cnt:
             continue
         save = []
         save.append(bin.pop(-1))
-        rmfiles = bin[:]
+        rmfiles += bin[:]
         day_bins[date] = save
 
     for f in rmfiles:
@@ -70,7 +70,7 @@ def cleanup(backup_path):
 if __name__ == '__main__':
     args = get_args()
     if not os.path.exists(args.backup_path):
-        sys.stderr.write('Backup path %s not found', args.backup_path)
+        sys.stderr.write('Backup path %s not found\n', args.backup_path)
         sys.exit(1)
     ret = cleanup(args.backup_path)
     if not ret:
