@@ -13,14 +13,6 @@
 
 namespace t_map
 {
-
-
-    static const MAP_ELEMENT NO_MAP_ELEMENT = {{{0}}};
-    
-    //moved to constants
-    //const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
-    //const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
-
     /*
         Constructors
     */
@@ -112,7 +104,7 @@ namespace t_map
     #if T_MAP_GET_OPTIMIZED
 
         if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
-            return NO_MAP_ELEMENT;
+            return NULL_MAP_ELEMENT;
 
         x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
         y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -120,18 +112,18 @@ namespace t_map
         class MAP_CHUNK* c;
 
         c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-        if(c == NULL) return NO_MAP_ELEMENT;
+        if(c == NULL) return NULL_MAP_ELEMENT;
         return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
     #else
 
-        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return NO_MAP_ELEMENT;
+        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return NULL_MAP_ELEMENT;
 
         class MAP_CHUNK* c;
         {
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
             c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-            if( c == NULL ) return NO_MAP_ELEMENT;
+            if( c == NULL ) return NULL_MAP_ELEMENT;
         }
 
         int xi = x & 15; //bit mask
@@ -265,7 +257,7 @@ namespace t_map
             e->damage = maxdmg;
 
             // destroy block
-            *e = NO_MAP_ELEMENT; 
+            *e = NULL_MAP_ELEMENT; 
 
             #if DC_SERVER
             if(isItemContainer(*cube_id))

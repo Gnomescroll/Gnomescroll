@@ -4,6 +4,11 @@
 */
 #ifndef WIN32
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wcast-align"
+#endif
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -434,5 +439,10 @@ enet_socket_wait (ENetSocket socket, enet_uint32 * condition, enet_uint32 timeou
 #endif
 }
 
+#endif
+
+
+#ifdef __clang__
+# pragma clang diagnostic pop
 #endif
 

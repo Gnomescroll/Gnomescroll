@@ -14,7 +14,7 @@ class AgentSpawnerComponentList: public ComponentList<AgentSpawnerComponent, COM
 {
     public:
 
-    const int get_spawner_for_user(UserID user_id)
+    int get_spawner_for_user(UserID user_id)
     {
         for (int i=0; i<this->max; i++)
             if (this->components[i] != NULL)

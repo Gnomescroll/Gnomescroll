@@ -3,7 +3,6 @@
 namespace t_map
 {
 
-
 struct MAP_ELEMENT
 {
     union
@@ -21,4 +20,4 @@ struct MAP_ELEMENT
 };
 
 const struct MAP_ELEMENT NULL_MAP_ELEMENT = {{{ 0,0,0,0 }}};
-}
+}   // t_map

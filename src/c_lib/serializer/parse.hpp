@@ -6,7 +6,7 @@ namespace serializer
 template<typename F>
 F read_bytes(const char* buf, size_t& index)
 {
-    F val = *((F*)(&buf[index]));
+    const F val = *(reinterpret_cast<const F*>(&buf[index]));
     index += sizeof(F);
     return val;
 }
@@ -14,7 +14,7 @@ F read_bytes(const char* buf, size_t& index)
 template<typename F>
 void write_bytes(char* buf, size_t& index, F val)
 {
-    *((F*)(&buf[index])) = val;
+    memcpy(buf, &val, sizeof(F));
     index += sizeof(F);
 }
 

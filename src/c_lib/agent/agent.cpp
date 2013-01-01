@@ -24,29 +24,17 @@
 namespace Agents
 {
 
-const struct Vec3 AgentState::forward_vector()
+struct Vec3 AgentState::forward_vector()
 {
-    if (theta > 1.0f)
-    {
+    IF_ASSERT(theta > 1.0f)
         theta -= 2.0f;
-        GS_ASSERT(false);
-    }
-    if (theta < -1.0f)
-    {
+    IF_ASSERT(theta < -1.0f)
         theta += 2.0f;
-        GS_ASSERT(false);
-    }
 
-    if (phi > 0.4999f)
-    {
+    IF_ASSERT(phi > 0.4999f)
         phi = 0.4999f;
-        GS_ASSERT(false);
-    }
-    if (phi < -0.4999f)
-    {
+    IF_ASSERT(phi < -0.4999f)
         phi = -0.4999f;
-        GS_ASSERT(false);
-    }
 
     Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
     f = vec3_euler_rotation(f, theta, phi, 0.0f);

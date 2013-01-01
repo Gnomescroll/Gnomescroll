@@ -1,7 +1,6 @@
-
 #include "message_handler.h"
 
-#include <net_lib/common/type_pack.h>
+#include <net_lib/common/type_pack.hpp>
 
 #include <net_lib/global.hpp>
 

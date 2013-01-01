@@ -3,7 +3,7 @@
 #include <net_lib/global.hpp>
 #include <net_lib/common/message_handler.h>
 #include <net_lib/common/packet_id_counter.hpp>
-#include <net_lib/common/type_pack.h>
+#include <net_lib/common/type_pack.hpp>
 
 #if DC_CLIENT
 #include <net_lib/client.hpp>

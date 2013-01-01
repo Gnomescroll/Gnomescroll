@@ -19,18 +19,18 @@ class RaytraceData
         memset(this->collision_point, 0, sizeof(this->collision_point));
     }
 
-    inline const CubeID get_cube_id();
+    inline CubeID get_cube_id();
     inline void set_collision_point(int x, int y, int z);
-    const void get_pre_collision_point(int pre_collision_point[3]);
+    void get_pre_collision_point(int pre_collision_point[3]);
 
-    const struct Vec3 collision_normal()
+    struct Vec3 collision_normal()
     {
         int sides[3];
         this->get_side_array(sides);
         return vec3_init(sides[0], sides[1], sides[2]);
     }
 
-    const void get_side_array(int arr[3])
+    void get_side_array(int arr[3])
     {
         get_side_array_from_cube_side(this->side, arr);
     }

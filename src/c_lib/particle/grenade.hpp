@@ -17,10 +17,10 @@ const int GRENADE_BLOCK_DESTROY_RADIUS = 2;
 const float GRENADE_DAMAGE_RADIUS = 5.0f;
 const int GRENADE_SPLASH_DAMAGE = 100;
 const int GRENADE_BLOCK_DAMAGE = 8;
-const int GRENADE_SPAWNER_DAMAGE() { return randrange(20,40); }
-const int GRENADE_TURRET_DAMAGE() { return randrange(20,40); }
-const int GRENADE_MONSTER_BOMB_DAMAGE() { return randrange(50,100); }
-const int GRENADE_MONSTER_BOX_DAMAGE() { return randrange(35,70); }
+int GRENADE_SPAWNER_DAMAGE() { return randrange(20,40); }
+int GRENADE_TURRET_DAMAGE() { return randrange(20,40); }
+int GRENADE_MONSTER_BOMB_DAMAGE() { return randrange(50,100); }
+int GRENADE_MONSTER_BOX_DAMAGE() { return randrange(35,70); }
 
 class grenade_StoC;     // forward decl
 

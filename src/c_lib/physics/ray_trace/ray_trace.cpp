@@ -252,7 +252,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
     return false;
 }
 
-inline const CubeID RaytraceData::get_cube_id()
+inline CubeID RaytraceData::get_cube_id()
 {
     return t_map::get(this->collision_point[0], this->collision_point[1], this->collision_point[2]); 
 }
@@ -264,7 +264,7 @@ inline void RaytraceData::set_collision_point(int x, int y, int z)
     this->collision_point[2] = z;
 }
 
-const void RaytraceData::get_pre_collision_point(int pre_collision_point[3])
+void RaytraceData::get_pre_collision_point(int pre_collision_point[3])
 {
     int sides[3];
     this->get_side_array(sides);

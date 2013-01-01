@@ -239,7 +239,7 @@ bool load_mech_file(const char* fn)
     if (buf == NULL) return false;
 
     size_t ibuf = 0;
-    uint32_t mech_count = ((uint32_t*)buf)[ibuf];
+    uint32_t mech_count = reinterpret_cast<uint32_t*>(buf)[ibuf];
     ibuf += sizeof(uint32_t);
 
     // file should be larger than at least the mech count

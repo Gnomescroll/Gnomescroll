@@ -30,14 +30,14 @@ class AgentState
         vx(0), vy(0), vz(0)
     {}
 
-    const struct Vec3 forward_vector();
+    struct Vec3 forward_vector();
 
-    const struct Vec3 get_position()
+    struct Vec3 get_position()
     {
         return vec3_init(x, y, z);
     }
 
-    const struct Vec3 get_velocity()
+    struct Vec3 get_velocity()
     {
         return vec3_init(vx, vy, vz);
     }
@@ -56,7 +56,7 @@ class AgentState
         this->vz = v.z;
     }
 
-    const void print()
+    void print()
     {
         printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f;\n", x,y,z,vx,vy,vz);
     }

@@ -190,7 +190,7 @@ void broadcast_set_block_palette(int x, int y, int z, CubeID block, int palette)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MAP_ELEMENT e = {{{0}}};
+    struct MAP_ELEMENT e = NULL_MAP_ELEMENT;
     e.block = block;
     e.palette = palette;
 

@@ -50,14 +50,13 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def check_clang(conf, use_clang=False):
+def check_clang(conf):
     if OS != 'Linux':
         return False
-
+        
     # use clang if requested or available
     # If you do check_tool('g++') after this, it won't compile, even though the check works
-    if os.environ.get('WAF_USE_CLANG'):
-        use_clang = True
+    use_clang = bool(os.environ.get('WAF_USE_CLANG'))
     has_clang = False
     with open(os.devnull, "w") as fnull:
         has_clang = (subprocess.call(shlex.split('which clang'), stdout=fnull, stderr=fnull) == 0)
@@ -106,7 +105,7 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awe
 
     # use clang if requested or available
     # If you do check_tool('g++') after this, it won't compile, even though the check works
-    if check_clang(conf, use_clang=use_clang):
+    if use_clang and check_clang(conf):
         print 'Using clang'
 
     #conf.cc_add_flags()     #"-g" -ggdb

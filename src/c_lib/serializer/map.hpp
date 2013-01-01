@@ -79,13 +79,14 @@ class BlockSerializer
 
     static void push_int(char* buffer, int &index, uint32_t value)
     {
-        *((uint32_t*)(buffer+index)) = value;
+        //*((uint32_t*)(&buffer[index])) = value;
+        *(reinterpret_cast<uint32_t*>(&buffer[index])) = value;
         index += sizeof(uint32_t);
     }
 
     static void pop_int(char* buffer, int &index, int &value)
     {
-        value = *((uint32_t*)(buffer+index));
+        value = *(reinterpret_cast<uint32_t*>(&buffer[index]));
         index += sizeof(uint32_t);
     }
 

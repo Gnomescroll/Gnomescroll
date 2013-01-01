@@ -109,9 +109,9 @@ void MultiObject_list<Object_interface>::print_members()
 template <class Object_interface>
 int MultiObject_list<Object_interface>::get_free_id()
 {
-    int i;
-    int id;
-    for (i=0; i<n_max; i++)
+    unsigned int i = 0;
+    int id = 0;
+    for (; i<n_max; i++)
     {
         id = (i + id_c) % n_max;
         if (a[id] == NULL) break;
@@ -127,21 +127,23 @@ int MultiObject_list<Object_interface>::get_free_id()
 template <class Object_interface>
 Object_interface* MultiObject_list<Object_interface>::create(int type)
 {
-    GS_ASSERT(create_interface != NULL);
-    if (create_interface == NULL) return NULL;
+    IF_ASSERT(create_interface == NULL) return NULL;
     //where();
-    unsigned int i;
-    int id;
-    for (i=0; i<n_max;i++)
+
+    unsigned int i = 0;
+    int id = 0;
+    for (; i<n_max;i++)
     {
         id = (i+id_c)%n_max;
         if(a[id] == NULL) break;
     }
-    if(i==n_max)
+
+    IF_ASSERT(i == n_max)
     {
         printf("%s_list Error: cannot create object, object limit exceeded\n", name());
         return NULL;
     }
+    
     a[id] = this->create_interface(type, id);
     num++;
     id_c = id+1;
