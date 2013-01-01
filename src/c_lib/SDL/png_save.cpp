@@ -150,6 +150,3 @@ void save_png_RGB(const char* filename, float* in, int xres, int yres)
     free(PBUFFER);
     free(PNG_IMAGE);
 }
-
-
-}
