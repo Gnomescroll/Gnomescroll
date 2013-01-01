@@ -65,6 +65,7 @@ bool c_lib_inited = false;
 #include <common/crash_report/stack_trace.hpp>
 #include <common/gs_assert.cpp>
 #include <common/mallox.hpp>
+#include <common/clang_warnings.h>
 #include <common/compression/miniz.c>
 #include <common/template/object_list.hpp>
 #include <common/template/multi_object_list.hpp>

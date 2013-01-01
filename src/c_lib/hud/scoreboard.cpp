@@ -64,7 +64,7 @@ void Scoreboard::update()
     IF_ASSERT(!this->inited) return;
         
     Agents::agent_list->filter_none();
-    for (int i=0,j=0; i<Agents::agent_list->max; i++)
+    for (unsigned int i=0,j=0; i<Agents::agent_list->max; i++)
     {
         //Agents::Agent* agent = Agents::agent_list->filtered_objects[i];
         //if (i >= Agents::agent_list->n_filtered || agent->id == Agents::agent_list->null_id)

@@ -648,3 +648,10 @@ class clang_ctx(ConfigurationContext):
 
 def clang(ctx):
     configure(ctx, use_clang=True)
+    
+class gcc_ctx(ConfigurationContext):
+    cmd = 'gcc'
+    fun = 'gcc'
+
+def gcc(ctx):
+    configure(ctx, use_clang=False)

@@ -407,3 +407,10 @@ class clang_ctx(ConfigurationContext):
 
 def clang(ctx, add=[], rm=[]):
     configure(ctx, add_flags=add, rm_flags=rm, use_clang=True)
+
+class gcc_ctx(ConfigurationContext):
+    cmd = 'gcc'
+    fun = 'gcc'
+
+def gcc(ctx):
+    configure(ctx, use_clang=False)
