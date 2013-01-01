@@ -287,7 +287,7 @@ class PerlinOctave2D
         }
     }
 
-    OPTIMIZED
+    //OPTIMIZED
     inline float sample(float x, float y, float persistence)
     {   
         float p = 1.0f;
