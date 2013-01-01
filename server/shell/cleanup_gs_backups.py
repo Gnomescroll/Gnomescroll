@@ -71,5 +71,7 @@ if __name__ == '__main__':
     args = get_args()
     if not os.path.exists(args.backup_path):
         sys.stderr.write('Backup path %s not found', args.backup_path)
-        return 1
-    return cleanup(args.backup_path)
+        sys.exit(1)
+    ret = cleanup(args.backup_path)
+    if not ret:
+        sys.exit(ret)
