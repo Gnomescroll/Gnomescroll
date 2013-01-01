@@ -178,7 +178,7 @@ void block_set_StoC::handle()
 
 void block_set_palette_StoC::handle()
 {
-    struct MAP_ELEMENT e = {{{0}}};
+    struct MAP_ELEMENT e = NULL_MAP_ELEMENT;
     e.block = cube_id;
     e.palette = palette;
 

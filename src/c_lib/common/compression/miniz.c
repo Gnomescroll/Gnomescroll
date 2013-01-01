@@ -1,3 +1,8 @@
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wcast-align"
+#endif
+
 /* miniz.c v1.14 - public domain deflate/inflate, zlib-subset, ZIP reading/writing/appending, PNG writing
    See "unlicense" statement at the end of this file.
    Rich Geldreich <richgel99@gmail.com>, last updated May 20, 2012
@@ -4832,3 +4837,7 @@ void *mz_zip_extract_archive_file_to_heap(const char *pZip_filename, const char 
 
   For more information, please refer to <http://unlicense.org/>
 */
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif

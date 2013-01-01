@@ -53,7 +53,7 @@
 #pragma clang diagnostic warning "-Wextra-tokens"
 #pragma clang diagnostic warning "-Wextra"
 #pragma clang diagnostic warning "-Wformat-extra-args"
-#pragma clang diagnostic warning "-Wformat-nonliteral"
+//#pragma clang diagnostic warning "-Wformat-nonliteral"
 #pragma clang diagnostic warning "-Wformat-zero-length"
 #pragma clang diagnostic warning "-Wformat"
 #pragma clang diagnostic warning "-Wformat=2"
@@ -181,6 +181,7 @@
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wconversion"
 #pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
 
 
 #endif

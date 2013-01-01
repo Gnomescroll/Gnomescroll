@@ -7,32 +7,32 @@ namespace HudContainer
 
 //221x147
 
-const int SYNTHESIZER_ITEM_COST_MAX_STRLEN = 4;
+const int SYNTHESIZER_ITEM_COST_MAX_STRLEN = 10;
 
 class AgentSynthesizerUI : public UIElement
 {
     public:
 
-    static const int cell_size = 37;    // pixel dimension
+        static const int cell_size = 37;    // pixel dimension
 
-    int xdim;
-    int ydim;
+        int xdim;
+        int ydim;
 
-    int shopping_xdim;
-    int shopping_ydim;
+        int shopping_xdim;
+        int shopping_ydim;
 
-    // size of texture/render area
-    float render_width;
-    float render_height;
+        // size of texture/render area
+        float render_width;
+        float render_height;
 
-    static const float slot_size;
-    static const float cell_offset_x;
-    static const float cell_offset_y;
-    static const float cell_offset_x_right;
-    static const float cell_offset_y_bottom;
+        static const float slot_size;
+        static const float cell_offset_x;
+        static const float cell_offset_y;
+        static const float cell_offset_x_right;
+        static const float cell_offset_y_bottom;
 
-    HudText::Text* prices;
-    HudText::Text coin_stack;
+        HudText::Text* prices;
+        HudText::Text coin_stack;
 
     void draw();
 
@@ -263,7 +263,7 @@ void AgentSynthesizerUI::draw()
     glBegin(GL_QUADS);
 
     //draw unavailable store items
-    bool any_available;
+    bool any_available = false;
     for (int xslot=0; xslot<shopping_xdim; xslot++)
     for (int yslot=0; yslot<shopping_ydim; yslot++)
     {
