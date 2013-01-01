@@ -64,7 +64,7 @@ void init_crystals()
     //int top = get_highest_block_of_type(rock) + 1;
 
     //int step = (int)ceil(((1.0f/3.0f) * ((float)top)));
-    
+
     //// calculate stratification for crystal distribution
     //for (int i=0; i<n_crystals; i++)
     //{
@@ -95,13 +95,13 @@ int get_crystal_index(int crystal_id)
 
 void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
 {
-    
+
     for (int i=x-CRYSTAL_CLUSTER_RADIUS; i<x+CRYSTAL_CLUSTER_RADIUS; i++)
     for (int j=y-CRYSTAL_CLUSTER_RADIUS; j<y+CRYSTAL_CLUSTER_RADIUS; j++)
     {
         int dist = abs(i-x) + abs(j-y); // manhattan
         float p = falloffs[dist];
-        
+
         if ((float)genrand_real1() > p) continue;
         int ii = translate_point(i);
         int jj = translate_point(j);
@@ -137,7 +137,7 @@ void populate_crystals()
 {
     printf("Begin populate crystals\n");
     init_crystals();
-    
+
     /* Heuristic:
      *      If block == "rock" and block.z+1 == 0 and genrand_real1() < p
      *          place crystal cluster

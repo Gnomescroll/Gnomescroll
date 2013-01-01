@@ -86,15 +86,15 @@ void load_crafting_dat()
     set_crafting_reagent("regolith", 1);
 
     def_crafting_recipe("plasmagen");
-    set_crafting_reagent("blackpowder", 8);
-    set_crafting_reagent("methane_ice_chunk", 8);
-    set_crafting_reagent("plasma_grenade", 4);
+    set_crafting_reagent("blackpowder", 4);
+    set_crafting_reagent("methane_ice_chunk", 4);
+    set_crafting_reagent("plasma_grenade", 2);
     set_crafting_reagent("steel_block_2", 1);
 
     def_crafting_recipe("plasmagen");
-    set_crafting_reagent("blackpowder", 8);
-    set_crafting_reagent("methane_ice_chunk", 8);
-    set_crafting_reagent("plasma_grenade", 4);
+    set_crafting_reagent("blackpowder", 4);
+    set_crafting_reagent("methane_ice_chunk", 4);
+    set_crafting_reagent("plasma_grenade", 2);
     set_crafting_reagent("steel_block_3", 1);
 
     // Energy

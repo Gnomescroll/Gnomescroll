@@ -193,18 +193,6 @@ void load_block_dat()
     //hud_def  (c1, 9,9);
     set_max_damage(48);
 
-    cube_def(SolidCube, "rock_landmine", CUBE_MATERIAL_STONE);
-    iso_texture(iceflame, 2,8);
-    push_texture();
-    set_max_damage(4);
-
-    cube_def(SolidCube, "regolith_landmine", CUBE_MATERIAL_DIRT);
-    iso_texture(iceflame, 2,10);
-    side_texture(T, iceflame, 2, 9);
-    side_texture(B, iceflame, 3, 1);
-    push_texture();
-    set_max_damage(2);
-
     cube_def(SolidCube, "coal", CUBE_MATERIAL_DIRT);
     iso_texture(tgm, 6,1);
     push_texture();
@@ -410,6 +398,21 @@ void load_block_dat()
     push_texture();
     p->explosive = true;
     set_max_damage(4);
+
+    cube_def(SolidCube, "rock_landmine", CUBE_MATERIAL_STONE);
+    iso_texture(iceflame, 2,8);
+    push_texture();
+    p->explosive = true;
+    set_max_damage(4);
+
+    cube_def(SolidCube, "regolith_landmine", CUBE_MATERIAL_DIRT);
+    iso_texture(iceflame, 2,10);
+    side_texture(T, iceflame, 2, 9);
+    side_texture(B, iceflame, 3, 1);
+    push_texture();
+    p->explosive = true;
+    set_max_damage(2);
+
 
     end_cube_def();  // finalize
 

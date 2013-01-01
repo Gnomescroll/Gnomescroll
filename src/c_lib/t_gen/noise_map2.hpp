@@ -32,7 +32,7 @@ OPTIMIZED static inline float fade(float t);
 
 int inline fast_floor(float value);
 
-int inline fast_floor(float value) 
+int inline fast_floor(float value)
 {
     return (int)(value>=0 ? (int)value : (int)value-1);
 }
@@ -49,18 +49,18 @@ static inline float dot(int gi, float x, float y, float z)
     static const int g3[12][3] = {
     {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
     {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
-    {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
+    {0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1}
     };
 
     return g3[gi][0]*x + g3[gi][1]*y + g3[gi][2]*z;
 }
 
-static inline float mix(float a, float b, float t) 
+static inline float mix(float a, float b, float t)
 {
     return a + t*(b-a);   //optimized version
 }
 
-static inline float fade(float t) 
+static inline float fade(float t)
 {
     return t*t*t*(t*(t*6-15)+10);
 }
@@ -92,7 +92,7 @@ class PerlinField2D
     {
         IF_ASSERT(this->ga != NULL) return;
         IF_ASSERT(this->grad != NULL) return;
-        
+
         if (_xsize < 1) GS_ABORT();
 
         this->xsize = _xsize;
@@ -165,7 +165,7 @@ class PerlinField2D
     
     // Classic Perlin noise, 3D version
     //OPTIMIZED
-    float base(float x, float y) 
+    float base(float x, float y)
     {
         x *= xsize;  //replace with multiplication
         y *= xsize;
@@ -180,7 +180,7 @@ class PerlinField2D
         int gi01 = get_gradient(X+0,Y+1);
         int gi10 = get_gradient(X+1,Y+0);
         int gi11 = get_gradient(X+1,Y+1);
-        
+
         // Calculate noise contributions from each of the eight corners
         /*
             float n00= dot(grad+2*gi00, x, y);
@@ -195,7 +195,7 @@ class PerlinField2D
         float n11 = dot_grad(gi11, x-1, y-1);
 
         // Compute the fade curve value for each of x, y, z
-        
+
         float u = fade(x);
         float v = fade(y);
 
@@ -230,7 +230,7 @@ class PerlinOctave2D
         this->octave_array = new PerlinField2D[octaves];
 
         this->cache = new float[(512/4)*(512/4)];
-    
+
         for (int i=0; i<octaves; i++)
             this->octave_array[i].init(primes[i+1], 16);
     }
@@ -263,7 +263,7 @@ class PerlinOctave2D
         if (persistence != cache_persistence || update)
         {
             cache_persistence = persistence;
-            populate_cache(persistence); 
+            populate_cache(persistence);
         }
 
         this->runs++;
@@ -289,7 +289,7 @@ class PerlinOctave2D
 
     //OPTIMIZED
     inline float sample(float x, float y, float persistence)
-    {   
+    {
         float p = 1.0f;
         float tmp = 0.0f;
         for (int i=0; i<octaves; i++)
@@ -307,7 +307,7 @@ class PerlinOctave2D
 
     //OPTIMIZED
     float sample2(float x, float y, float persistence)
-    {   
+    {
         float p = 1.0f;
         float tmp = 0.0f;
         for (int i=0; i<octaves; i++)
@@ -479,7 +479,7 @@ void test_octave_2d_map_gen(CubeID tile)
 
     float min_value_generated = 100000;
     float max_value_generated = -100000;
-    
+
     for (int i=0; i<512; i++)
     for (int j=0; j<512; j++)
     {
@@ -496,7 +496,7 @@ void test_octave_2d_map_gen(CubeID tile)
         if (value < min_value_generated) min_value_generated = value;
         if (value > max_value_generated) max_value_generated = value;
         values[i+512*j] = value;
-        
+
         //value += 32*oct_0.sample(x, y, 32.5, persistence);
 
         //for (int k=0; k<value; k++) t_map::set(i,j,k,tile);

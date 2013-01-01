@@ -56,7 +56,7 @@ void generate_city()
     const int ROAD_SIZE = 4;
     const int COLUMN_SIZE = 8;
     const int BUILDING_AMOUNT = 8;
-    
+
     CubeID computer = t_map::get_cube_id("control_node");
     CubeID green = t_map::get_cube_id("ruins_ceiling1");
     CubeID red = t_map::get_cube_id("ruins_ceiling2");
@@ -85,7 +85,7 @@ void generate_city()
         int prevsubwayy = 0;
         int firstsubwayx = 0;
         int firstsubwayy = 0;
-        
+
         int size = CITY_SIZE + randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
         int subwaycounter = 1;
 
@@ -100,10 +100,10 @@ void generate_city()
         create_floor(x, y, z, size, gray);
         create_roads(x, y, z, size, ROAD_SIZE, rock);
         printf("Starting to generate buildings... \n");
-        
+
         while (cy < y + size)
         {
-            if (cx + CITY_RANDOMNESS >= size)
+            if (cx + CITY_RANDOMNESS >= x + size)
             {
                 cy = cy + randrange(CITY_RANDOMNESS, CITY_RANDOMNESS * 1.5) + 1;
                 cx = x + randrange (0, CITY_RANDOMNESS);
@@ -238,7 +238,7 @@ void generate_skyscraper(int x, int y, int z, int size, int height, int floors, 
     int maxy = y + randrange(randomness * -1, randomness) + size;
     int maxz = z + height + randrange(randomness * -1, randomness);
     maxz = GS_MIN(maxz, t_map::map_dim.z);
-    
+
     int count = 1;
     generate_area(x, y, z, maxx, maxy, z, red); //generate the floor
     generate_area(x, y, z + 1, maxx, y, maxz - 1, purple); //make walls
