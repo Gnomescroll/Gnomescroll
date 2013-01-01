@@ -4,7 +4,7 @@
 import sys
 import argparse
 import os
-import datetime
+from datetime import datetime
 
 def get_args():
 
