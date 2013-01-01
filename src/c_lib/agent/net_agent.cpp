@@ -281,7 +281,7 @@ inline void agent_conflict_notification_StoC::handle()
                 if (a != NULL && a->is_you())
                     sprintf(msg, "You shot %s in the head", b_name);
                 else if (b != NULL && b->is_you())
-                    sprintf(msg, "You shot in the head by %s", a_name);
+                    sprintf(msg, "You got shot in the head by %s", a_name);
                 else
                     sprintf(msg, "%s shot %s in the head", a_name, b_name);
             }
