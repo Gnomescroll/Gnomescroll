@@ -24,8 +24,7 @@ static CubeID regolith_landmine = NULL_CUBE;
 
 static CubeID add_immune_cube(const char* name)
 {
-    GS_ASSERT(immune_cubes_ct < MAX_IMMUNE_CUBES);
-    if (immune_cubes_ct >= MAX_IMMUNE_CUBES) return NULL_CUBE;
+    IF_ASSERT(immune_cubes_ct >= MAX_IMMUNE_CUBES) return NULL_CUBE;
     CubeID cube_id = t_map::get_cube_id(name);
     GS_ASSERT(cube_id != ERROR_CUBE);
     immune_cubes[immune_cubes_ct++] = cube_id;
@@ -51,23 +50,18 @@ void init_explosives()
 }
 
 bool isLandmine(int x, int y, int z)
-{
-    CubeID place=t_map::get(x, y, z);
-    if (place==rock_landmine) return true;
-    else if (place==regolith_landmine) return true;
-    else return false;
+{   // TODO -- make property in CubeAttributes
+    CubeID place = t_map::get(x, y, z);
+    return (place == rock_landmine || place = regolith_landmine);
 }
 
 void create_explosion(const int x, const int y, const int z)
 {   // WARNING: make sure this function is called after destroying the explosive block
     // check upper bounds
     // we should not be calling this function out of bounds, so assert
-    GS_ASSERT(x >= 0 && x < t_map::map_dim.x);
-    GS_ASSERT(y >= 0 && y < t_map::map_dim.y);
-    GS_ASSERT(z > 0 && z < t_map::map_dim.z);
-    if (x < 0 || x >= t_map::map_dim.x) return; //stop if the location of the explosive is not valid
-    if (y < 0 || y >= t_map::map_dim.y) return;
-    if (z <= 0 || z >= t_map::map_dim.z) return;    // also check the floor
+    IF_ASSERT(x < 0 || x >= t_map::map_dim.x) return; //stop IF_ASSERTthe location of the explosive is not valid
+    IF_ASSERT(y < 0 || y >= t_map::map_dim.y) return;
+    IF_ASSERT(z <= 0 || z >= t_map::map_dim.z) return;    // also check the floor
 
     // constant for helping walk the axes
     static const int dir[2] = { -1, 1 };

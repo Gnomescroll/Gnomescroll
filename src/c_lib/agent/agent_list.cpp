@@ -81,6 +81,19 @@ void AgentList::draw_names()
     }
 }
 
+void AgentList::draw_badges()
+{
+    AgentID agent_id = ClientState::player_agent.agent_id;
+    for (unsigned int i=0; i<this->max; i++)
+    {
+        if (this->objects[i].id == this->null_id) continue;
+        Agent* a = &this->objects[i];
+        if (a->id == agent_id && current_camera == agent_camera)
+            continue;
+        a->event.draw_badges();
+    }
+}
+
 void AgentList::draw_equipped_items()
 {
     if (this->ct <= 0) return;

@@ -234,7 +234,7 @@ struct Glyph Font::get_missing_glyph(unsigned char c)
     return glyph;
 }
 
-void Font::get_string_pixel_dimension(char* str, int *length, int *height)
+void Font::get_string_pixel_dimension(const char* str, int *length, int *height)
 {
     char c;
     int i = 0;
@@ -250,7 +250,7 @@ void Font::get_string_pixel_dimension(char* str, int *length, int *height)
 
         len += g.xadvance;
 
-        if (i==1)
+        if (i == 1)
             len += g.xoff;
         if (g.yoff + g.h > maxy)
             maxy = g.yoff + g.h;
@@ -264,10 +264,8 @@ void Font::get_string_pixel_dimension(char* str, int *length, int *height)
         *height = maxy - miny;
 }
 
-Font::Font(char* fn)
-:
-alpha(true),
-missing_glyph('?')
+Font::Font(char* fn) :
+    alpha(true), missing_glyph('?')
 {
     // init glyphs
     for (int i=0; i<128; i++)
@@ -421,6 +419,8 @@ static GLboolean depth_test_restore = GL_FALSE;
 // call this once for all hud text
 void start_font_draw(GLenum blend_func)
 {
+    glColor4ub(255,255,255,255);
+
     // cache current render state
     glGetBooleanv(GL_BLEND, &blend_restore);
     glGetBooleanv(GL_DEPTH_TEST, &depth_test_restore);
@@ -435,6 +435,7 @@ void start_font_draw(GLenum blend_func)
 
 void start_font_draw()
 {
+    glColor4ub(255,255,255,255);
     start_font_draw(GL_ONE_MINUS_SRC_ALPHA);
 }
 
@@ -449,6 +450,7 @@ void end_font_draw()
     if (depth_test_restore == GL_TRUE)
         glEnable(GL_DEPTH_TEST);
     bound_gl_font = NULL;
+    glColor4ub(255,255,255,255);
     CHECK_GL_ERROR();
 }
 
@@ -456,6 +458,7 @@ void end_font_draw()
 void start_world_font_draw()
 {
     // all fonts must have alpha
+    glColor4ub(255,255,255,255);
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -471,6 +474,7 @@ void end_world_font_draw()
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
     bound_gl_font = NULL;
+    glColor4ub(255,255,255,255);
     CHECK_GL_ERROR();
 }
 

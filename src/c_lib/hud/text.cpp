@@ -16,6 +16,7 @@ void init()
     GS_ASSERT(text_list == NULL);
     text_list = new TextList(TEXT_MAX);
 }
+
 void teardown()
 {
     if (text_list != NULL) delete text_list;
@@ -48,9 +49,8 @@ void blit_character_rotated(
     float depth, float theta)
 {
     theta *= kPI;
-    float cx,cy;
-    cx = (screen_x_max - screen_x_min) / 2 + screen_x_min;
-    cy = (screen_y_max - screen_y_min) / 2 + screen_y_min;
+    float cx = (screen_x_max - screen_x_min) / 2 + screen_x_min;
+    float cy = (screen_y_max - screen_y_min) / 2 + screen_y_min;
 
     float rx,ry;
 
@@ -83,7 +83,7 @@ void draw_string(const char* text, const float x, const float y,
 void draw_string(const char* text, const unsigned int start, const unsigned int len,
     const float x, const float y, const float depth, const float scale)
 {
-    if (HudFont::font == NULL) return;
+    IF_ASSERT(HudFont::font == NULL) return;
 
     float tx_min, tx_max, ty_min, ty_max;
     float sx_min, sx_max, sy_min, sy_max;
@@ -176,10 +176,8 @@ char* Text::set_string(const char* text, char* this_text, size_t* this_len)
 void Text::draw_character_rotated(float theta)
 {   // draws as single character. glyph alignment offset not used
     using HudFont::font;
-    if (font == NULL)
-        return;
-    GS_ASSERT(this->text != NULL);
-    if (this->text == NULL) return;
+    IF_ASSERT(font == NULL) return;
+    IF_ASSERT(this->text == NULL) return;
 
     char c = this->text[0];
     if (c == '\0') return;
@@ -205,8 +203,7 @@ void Text::draw_character_rotated_centered(float theta)
 
 char* Text::grow_string(size_t n, char* str, size_t* str_len)
 {
-    GS_ASSERT(*str_len < n);
-    if (*str_len >= n) return str;
+    IF_ASSERT(*str_len >= n) return str;
     if (str == NULL)
         str = (char*)malloc(sizeof(char) * (n+1));
     else
@@ -301,8 +298,7 @@ void Text::set_depth(float depth)
 
 int Text::charcount()
 {
-    if (this->text == NULL)
-        return 0;
+    if (this->text == NULL) return 0;
     return (int)strlen(this->text);
 }
 
@@ -316,6 +312,7 @@ void Text::reset_alignment()
     this->x = this->refx;
     this->y = this->refy;
 }
+
 void Text::center()
 {
     if (this->alignment.center) return;
@@ -323,18 +320,22 @@ void Text::center()
     this->x = this->refx - w/2;    // -/+ is weird because of the character vertex draw order
     this->alignment.center = true;
 }
+
 void Text::left()
 {
     this->alignment.left = true;
 }
+
 void Text::right()
 {
     this->alignment.right = true;
 }
+
 void Text::top()
 {
     this->alignment.top = true;
 }
+
 void Text::bottom()
 {
     this->alignment.bottom = true;
@@ -342,12 +343,10 @@ void Text::bottom()
 
 void Text::draw()
 {
-    if (this->text == NULL || this->text_len == 0)
-        return;
-
+    if (this->text == NULL || this->text_len == 0) return;
     if (this->shadowed)
     {
-        glColor4ub(0,0,0,color.a);
+        glColor4ub(0,0,0, color.a);
         draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
     }
     
@@ -359,12 +358,12 @@ void Text::draw()
 
 int Text::get_width()
 {
-    if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL)
-        return 0;
+    if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL) return 0;
     char* buffer = (char*)calloc(this->text_len+1, sizeof(char));
 
     // check length of each line, return longest
-    int len = 0, h = 0;
+    int len = 0;
+    int h = 0;
     int longest = 0;
     int i = 0;
     int j = 0;
@@ -393,8 +392,7 @@ int Text::get_width()
 
 int Text:: get_height()
 {
-    if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL)
-        return 0;
+    if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL) return 0;
 
     // count number of newlines with !isspace chars after them + 1
     // multiply by font height
@@ -413,55 +411,52 @@ int Text:: get_height()
             check = true;    
     }
 
-    int len=0,h=0;
-    HudFont::font->get_string_pixel_dimension((char*)"X", &len, &h);
+    int len = 0;
+    int h = 0;
+    HudFont::font->get_string_pixel_dimension("X", &len, &h);
     return n * h;
 }
 
-Text::Text(int id)
-:
-text_len(0),
-format_len(0),
-formatted_extra_len(0),
-formatted(false),
-id(id),
-depth(-1.0f),
-scale(1.0f),
-color(Color(255,255,255,255)),
-text(NULL),
-format(NULL),
-x(0.0f), y(0.0f),
-refx(0.0f),refy(0.0f),
-shadowed(false)
+Text::Text(int id) :
+    text_len(0),
+    format_len(0),
+    formatted_extra_len(0),
+    formatted(false),
+    id(id),
+    depth(-1.0f),
+    scale(1.0f),
+    color(Color(255,255,255,255)),
+    text(NULL),
+    format(NULL),
+    x(0.0f), y(0.0f),
+    refx(0.0f),refy(0.0f),
+    shadowed(false)
 {
     this->reset_alignment();
 }
 
-Text::Text()
-:
-text_len(0),
-format_len(0),
-formatted_extra_len(0),
-formatted(false),
-id(-1),
-depth(-1.0f),
-scale(1.0f),
-color(Color(255,255,255,255)),
-text(NULL),
-format(NULL),
-x(0.0f), y(0.0f),
-refx(0.0f),refy(0.0f),
-shadowed(false)
+Text::Text() :
+    text_len(0),
+    format_len(0),
+    formatted_extra_len(0),
+    formatted(false),
+    id(-1),
+    depth(-1.0f),
+    scale(1.0f),
+    color(Color(255,255,255,255)),
+    text(NULL),
+    format(NULL),
+    x(0.0f), y(0.0f),
+    refx(0.0f),refy(0.0f),
+    shadowed(false)
 {
     this->reset_alignment();
 }
 
 Text::~Text()
 {
-    if (this->text != NULL)
-        free(this->text);
-    if (this->format != NULL)
-        free(this->format);
+    if (this->text != NULL) free(this->text);
+    if (this->format != NULL) free(this->format);
 }
 
 }   // HudText

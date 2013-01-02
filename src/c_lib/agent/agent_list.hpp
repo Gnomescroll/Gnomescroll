@@ -52,6 +52,7 @@ class AgentList: public ObjectList<class Agent, AgentID>
 
         #if DC_CLIENT
         void draw_names();
+        void draw_badges();
         void draw_equipped_items();
         void update_mining_lasers();
         #endif
