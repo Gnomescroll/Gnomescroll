@@ -52,7 +52,7 @@ void init_explosives()
 bool isLandmine(int x, int y, int z)
 {   // TODO -- make property in CubeAttributes
     CubeID place = t_map::get(x, y, z);
-    return (place == rock_landmine || place = regolith_landmine);
+    return (place == rock_landmine || place == regolith_landmine);
 }
 
 void create_explosion(const int x, const int y, const int z)
