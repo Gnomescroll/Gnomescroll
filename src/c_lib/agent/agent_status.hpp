@@ -83,6 +83,9 @@ class AgentStatus
 
     void send_scores(ClientID client_id);
     void send_scores();
+
+    void send_badges(ClientID client_id);
+    void broadcast_badges();
     #endif
         
     explicit AgentStatus(class Agent* a);

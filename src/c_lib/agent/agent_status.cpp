@@ -42,6 +42,10 @@ AgentStatus::AgentStatus(Agent* a) :
     voxel_model_restore_throttle(0)
 {
     this->name[0] = '\0';
+
+    #if DC_SERVER && !PRODUCTION
+    if (rand()%2) this->add_badge(Badges::get_badge("debug"));
+    #endif
 }
 
 AgentStatus::~AgentStatus()
@@ -146,14 +150,12 @@ bool AgentStatus::set_color(Color color)
 void AgentStatus::add_badge(BadgeID badge_id)
 {
     IF_ASSERT(this->n_badges >= PLAYER_MAX_BADGES) return;
-    
+
+    // no dupes
     for (size_t i=0; i<this->n_badges; i++)
         GS_ASSERT(this->badges[i] != badge_id);
         
     this->badges[this->n_badges++] = badge_id;
-    
-    #if DC_SERVER
-    #endif
 }
 
 // does not broadcast the change (useful for the deserializer) 
@@ -561,35 +563,36 @@ void AgentStatus::send_scores()
     as.broadcast();
 }
 
+void AgentStatus::send_badges(ClientID client_id)
+{
+    for (size_t i=0; i<this->n_badges; i++)
+        Badges::send_badge(this->badges[i], this->a->id, client_id);
+}
+
+void AgentStatus::broadcast_badges()
+{
+    for (size_t i=0; i<this->n_badges; i++)
+        Badges::broadcast_badge(this->badges[i], this->a->id);
+}
 
 bool AgentStatus::consume_item(ItemID item_id)
 {
     int item_type = Item::get_item_type(item_id);
-    GS_ASSERT(item_type != NULL_ITEM_TYPE);
-    if (item_type == NULL_ITEM_TYPE) return false;
+    IF_ASSERT(item_type == NULL_ITEM_TYPE) return false;
     
     ItemGroup item_group = Item::get_item_group_for_type(item_type);
-    GS_ASSERT(item_group == IG_CONSUMABLE);
-    if (item_group != IG_CONSUMABLE) return false;
+    IF_ASSERT(item_group != IG_CONSUMABLE) return false;
 
     Item::ItemAttribute* attr = Item::get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return false;
+    IF_ASSERT(attr == NULL) return false;
 
     static const int small_charge_pack = Item::get_item_type("small_charge_pack");
+    IF_ASSERT(item_type != small_charge_pack) return false;
 
-    if (item_type == small_charge_pack)
-    {
-        if (this->health >= (int)health_max) return false;
-        GS_ASSERT(attr->repair_agent_amount > 0);
-        this->heal(attr->repair_agent_amount);
-        this->send_health_msg();
-    }
-    else
-    {
-        GS_ASSERT(false);
-        return false;
-    }
+    if (this->health >= (int)health_max) return false;
+    GS_ASSERT(attr->repair_agent_amount > 0);
+    this->heal(attr->repair_agent_amount);
+    this->send_health_msg();
     return true;
 }
 #endif

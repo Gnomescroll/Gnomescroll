@@ -76,6 +76,20 @@ class TextureSheetLoader
             return float(this->tile_size) / float(this->height);
         }
 
+        void get_sprite_coordinates(int sprite_id, float* sx, float* sy)
+        {
+            IF_ASSERT(sprite_id == NULL_SPRITE)
+            {
+                *sx = 0.0f;
+                *sy = 0.0f;
+                return;
+            }
+            int x = sprite_id % this->tiles_wide;
+            int y = sprite_id / this->tiles_wide;
+            *sx = float(x) / float(this->tiles_wide);
+            *sy = float(y) / float(this->tiles_high);
+        }
+
     explicit TextureSheetLoader(size_t tile_size);
     ~TextureSheetLoader();
 };

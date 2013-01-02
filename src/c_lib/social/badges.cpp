@@ -59,28 +59,14 @@ static void verify_badge_conf()
     }
 }
 
-void register_badges()
-{
-    using TextureSheetLoader::badge_texture_alias;
-    SpriteSheet b1 = badge_texture_alias(MEDIA_PATH "sprites/badges/badges1.png");
-    
-    add_badge("paid_alpha_user", b1, 3, 2);
-
-    #if DC_CLIENT
-    TextureSheetLoader::init_badge_texture();
-    TextureSheetLoader::save_badge_texture();
-    #endif
-    
-    verify_badge_conf();  
-}
-
 BadgeID get_badge(const char* name)
 {
     IF_ASSERT(name[0] == '\0') return NULL_BADGE;
     for (size_t i=0; i<MAX_BADGES; i++)
         if (strcmp(badges[i].name, name) == 0)
             return badges[i].id;
-    IF_ASSERT(true) printf("No badge found for name: %s\n", name);
+    GS_ASSERT(false);
+    printf("No badge found for name: %s\n", name);
     return NULL_BADGE;
 }
 
@@ -141,5 +127,28 @@ inline void add_badge_StoC::handle()
     a->status.add_badge((BadgeID)this->badge_id);
 }
 #endif
+
+
+/******************
+** CONFIGURATION **
+******************/
+
+void register_badges()
+{
+    using TextureSheetLoader::badge_texture_alias;
+    SpriteSheet b2 = badge_texture_alias(MEDIA_PATH "sprites/badges/badges02.png");
+    
+    add_badge("debug", b2, 3, 1);
+    add_badge("developer", b2, 2, 1);
+    add_badge("paid_alpha_user", b2, 1, 1);
+
+    #if DC_CLIENT
+    TextureSheetLoader::init_badge_texture();
+    TextureSheetLoader::save_badge_texture();
+    #endif
+    
+    verify_badge_conf();  
+}
+
 
 }   // Badges

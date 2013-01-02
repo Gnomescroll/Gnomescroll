@@ -66,30 +66,26 @@ void Scoreboard::update()
     Agents::agent_list->filter_none();
     for (unsigned int i=0,j=0; i<Agents::agent_list->max; i++)
     {
-        //Agents::Agent* agent = Agents::agent_list->filtered_objects[i];
-        //if (i >= Agents::agent_list->n_filtered || agent->id == Agents::agent_list->null_id)
-        //{
-            //ids[i]->set_text("");
-            //names[i]->set_text("");
-            //continue;
-        //}
+        Agents::Agent* agent = Agents::agent_list->filtered_objects[i];
+        if (i >= Agents::agent_list->n_filtered || agent->id == Agents::agent_list->null_id)
+        {
+            ids[i]->set_text("");
+            names[i]->set_text("");
+            continue;
+        }
         float y = this->start_y() + HudFont::font->data.line_height*(j+2);
-        //float y = this->start_y() + 32*(j+1);
         j++;
 
         this->line_pos[i].x = this->start_x();
         this->line_pos[i].y = _yresf - y;
 
         ids[i]->set_position(this->start_x(), _yresf - y);
-        //ids[i]->update_formatted_string(1, agent->id);
+        ids[i]->update_formatted_string(1, agent->id);
         ids[i]->set_color(color);
 
         names[i]->set_position(this->start_x() + this->column_width(), _yresf - y);
-        //names[i]->update_formatted_string(1, agent->status.name);
+        names[i]->update_formatted_string(1, agent->status.name);
         names[i]->set_color(color);
-
-        ids[i]->update_formatted_string(1, i);
-        names[i]->update_formatted_string(1, "debuguser");
     }
 }
 
@@ -121,24 +117,34 @@ void Scoreboard::draw_badges()
     GS_ASSERT(badge_texture_sheet_loader->texture);
     glBindTexture(GL_TEXTURE_2D, badge_texture_sheet_loader->texture);
 
-    const float margin = 5.0f;  // between badge and first character of line
+    const float badge_text_margin = 2.0f;  // between badge and first character of line
+    const float badge_badge_margin = 2.0f;  // between badge and first character of line
     const float z = -1.0f;
-    //const float w = badge_texture_sheet_loader->tile_size;
-    //const float h = badge_texture_sheet_loader->tile_size;
-    const float w = HudFont::font->data.line_height;
-    const float h = HudFont::font->data.line_height;
+    const float w = badge_texture_sheet_loader->tile_size;
+    const float h = badge_texture_sheet_loader->tile_size;
     const float sw = badge_texture_sheet_loader->sprite_width();
     const float sh = badge_texture_sheet_loader->sprite_height();
 
-    for (int i=0; i<PLAYERS_MAX; i++)
-    {   // position it right behing the name
-        float x = this->line_pos[i].x - (w + margin) + this->column_width();
+    Agents::agent_list->filter_none();
+    for (unsigned int i=0; i<Agents::agent_list->n_filtered; i++)
+    {
+        Agents::Agent* agent = Agents::agent_list->filtered_objects[i];
+
+        // position it right behing the name
+        float x = this->line_pos[i].x + this->column_width() - (w + badge_text_margin);
         // keep it centered with the line
-        float y = this->line_pos[i].y + (h - HudFont::font->data.line_height)/2;
-        // TODO -- get from player
-        float sx = 0.0f;
-        float sy = 0.0f;
-        draw_bound_texture_sprite(x, y-h, w, h, z, sx, sy, sw, sh);
+        float y = this->line_pos[i].y - h + (h - HudFont::font->data.line_height); ///2;
+
+        for (size_t j=0; j<agent->status.n_badges; j++)
+        {
+            BadgeID badge_id = agent->status.badges[j];
+            int sprite_id = Badges::get_badge_sprite(badge_id);
+            float sx = 0.0f;
+            float sy = 0.0f;
+            badge_texture_sheet_loader->get_sprite_coordinates(sprite_id, &sx, &sy);
+            draw_bound_texture_sprite(x, y, w, h, z, sx, sy, sw, sh);
+            x -= w + badge_badge_margin;
+        }
     }
 
     glDisable(GL_TEXTURE_2D);

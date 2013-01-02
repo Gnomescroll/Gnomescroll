@@ -74,8 +74,7 @@ SpriteSheet TextureSheetLoader::load_texture(const char* filename)
             GS_ASSERT(strcmp(this->filenames[i], filename) != 0);
 
     SDL_Surface* s = create_surface_from_file(filename);
-    GS_ASSERT(s != NULL);
-    if (s == NULL) return NULL_SPRITE_SHEET;
+    IF_ASSERT(s == NULL) return NULL_SPRITE_SHEET;
 
     SpriteSheet index = this->load_texture_from_surface(s);
 
@@ -90,14 +89,9 @@ SpriteSheet TextureSheetLoader::load_texture(const char* filename)
 
 SpriteSheet TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* surface, SpriteSheet sheet_id)
 {
-    GS_ASSERT(surface != NULL);
-    if (surface == NULL) return NULL_SPRITE_SHEET;
-
-    GS_ASSERT(sheet_id != NULL_SPRITE_SHEET);
-    if (sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE_SHEET;
-    
-    GS_ASSERT(sheet_id < (SpriteSheet)N_SURFACES);
-    if (sheet_id >= (SpriteSheet)N_SURFACES) return NULL_SPRITE_SHEET;
+    IF_ASSERT(surface == NULL) return NULL_SPRITE_SHEET;
+    IF_ASSERT(sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE_SHEET;
+    IF_ASSERT(sheet_id >= (SpriteSheet)N_SURFACES) return NULL_SPRITE_SHEET;
     
     surfaces[sheet_id] = surface;
     return sheet_id;
@@ -112,8 +106,7 @@ SpriteSheet TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* su
 
 bool TextureSheetLoader::blit_meta(size_t meta_index)
 {
-    GS_ASSERT(meta_index < this->tile_num);
-    if (meta_index >= this->tile_num) return false;
+    IF_ASSERT(meta_index >= this->tile_num) return false;
 
     struct TileMeta meta = this->meta[meta_index];
 
@@ -125,8 +118,7 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
     
     // get surface
     SDL_Surface* s = this->surfaces[meta.sheet_id];
-    GS_ASSERT(s != NULL);
-    if (s == NULL) return false;
+    IF_ASSERT(s == NULL) return false;
     
     // check that tiles are in bounds
     GS_ASSERT(meta.xpos*tile_size < (size_t)s->w && meta.ypos*tile_size < (size_t)s->h);
@@ -145,16 +137,16 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
     Uint32* sheet_pixels = (Uint32*)this->surface->pixels;
 
     // sprite coordinate index into destination pixel buffers
-    size_t index = (meta_index % this->tiles_wide) + this->tiles_wide*(meta_index/this->tiles_wide);
+    size_t index = (meta_index % this->tiles_wide) + this->tiles_wide * (meta_index / this->tiles_wide);
     size_t dest_x = (index % this->tiles_wide) * this->tile_size;
     size_t dest_y = (index / this->tiles_wide) * this->tile_size;
 
     // copy sprite icon pixels from source pixel buffer to
     // sheet and stack buffers and unpacked pixel array
-    for (size_t i=0; i<tile_size; i++)
-    for (size_t j=0; j<tile_size; j++) 
+    for (size_t i=0; i<this->tile_size; i++)
+    for (size_t j=0; j<this->tile_size; j++) 
     {
-        size_t pix_index = s->w*(tile_size*meta.ypos+j) + (tile_size*meta.xpos+i);
+        size_t pix_index = s->w * (this->tile_size * meta.ypos + j) + (this->tile_size * meta.xpos + i);
         
         // convert source pixel to final format
         Uint32 pix = ((Uint32*)s->pixels)[pix_index];
@@ -162,9 +154,9 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
         SDL_GetRGBA(pix, s->format, &r, &g, &b, &a);
         pix = SDL_MapRGBA(this->surface->format, r,g,b,a);
         
-        size_t stack_index = tile_size*tile_size*index + (j*tile_size+i);
+        size_t stack_index = this->tile_size * this->tile_size * index + (j * this->tile_size + i);
         stack_pixels[stack_index] = pix;
-        size_t sheet_index = (this->width)*((dest_y+j)) + (dest_x+i);
+        size_t sheet_index = this->width * (dest_y + j) + (dest_x + i);
         sheet_pixels[sheet_index] = pix;
 
         size_t pixel_index = meta_index * this->tile_size * this->tile_size;
@@ -182,13 +174,9 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
 //blit to sheet or return texture id
 int TextureSheetLoader::blit(SpriteSheet sheet_id, size_t source_x, size_t source_y)
 {
-    GS_ASSERT(this->tile_num <= 0xff);
-    if (this->tile_num > 0xff) return NULL_SPRITE;
-
-    GS_ASSERT(source_x > 0);
-    GS_ASSERT(source_y > 0);
-    if (source_x < 1) return NULL_SPRITE;
-    if (source_y < 1) return NULL_SPRITE;
+    IF_ASSERT(this->tile_num > 0xff) return NULL_SPRITE;
+    IF_ASSERT(source_x < 1) return NULL_SPRITE;
+    IF_ASSERT(source_y < 1) return NULL_SPRITE;
 
     // decrement x,y because arguments should be 1-indexed
     source_x--;
@@ -309,8 +297,7 @@ void TextureSheetLoader::reload()
     }
 
     // re-blit from tile meta
-    for (size_t i=0; i<this->tile_num; i++)
-        this->blit_meta(i);
+    for (size_t i=0; i<this->tile_num; i++) this->blit_meta(i);
 
     // destroy existing textures
     if (this->texture != 0) glDeleteTextures(1, &this->texture);
@@ -340,7 +327,7 @@ void init()
     cube_texture_sheet_loader = new TextureSheetLoader(32);        //pixel size for cube textures
     item_texture_sheet_loader = new TextureSheetLoader(16);
     item_texture_sheet_loader->mag_filter = GL_NEAREST;
-    badge_texture_sheet_loader = new TextureSheetLoader(32);
+    badge_texture_sheet_loader = new TextureSheetLoader(16);
 }
 
 void init_item_texture()

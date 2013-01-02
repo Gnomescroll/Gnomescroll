@@ -198,6 +198,8 @@ void NetPeerManager::was_deserialized()
     msg.color = agent->status.color;
     msg.broadcast();
 
+    agent->status.broadcast_badges();
+
     // notify client of their agent
     send_player_agent_id_to_client(this->client_id);
     ItemContainer::send_container_assignments_to_agent(agent->id, this->client_id);

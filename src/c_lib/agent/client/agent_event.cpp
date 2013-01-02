@@ -69,22 +69,26 @@ void AgentEvent::draw_badges()
     using TextureSheetLoader::badge_texture_sheet_loader;
     // TODO -- frustum cull
     const float margin = 2.0f;
-    const float w = HudFont::font->data.line_height;
-    const float h = HudFont::font->data.line_height;
+    // TODO -- remove /2 after switching to 16x16
+    const float w = badge_texture_sheet_loader->tile_size;
+    const float h = badge_texture_sheet_loader->tile_size;
     const float sw = badge_texture_sheet_loader->sprite_width();
     const float sh = badge_texture_sheet_loader->sprite_height();
 
     // keep it centered with the line
-    float x = this->bb.x - (w + margin);
-    float y = this->bb.y - h + (h - HudFont::font->data.line_height)/2;
+    float x = this->bb.x;
+    float y = this->bb.y - h - (h - HudFont::font->data.line_height)/2;
 
-    // TODO -- get from player
-    float sx = 0.0f;
-    float sy = 0.0f;
-
-    // TODO -- render all badges available
-
-    draw_bound_texture_sprite(x, y, w, h, -1.0f, sx, sy, sw, sh);
+    for (size_t i=0; i<this->a->status.n_badges; i++)
+    {
+        x -= w + margin;
+        BadgeID badge_id = this->a->status.badges[i];
+        int sprite_id = Badges::get_badge_sprite(badge_id);
+        float sx = 0.0f;
+        float sy = 0.0f;
+        badge_texture_sheet_loader->get_sprite_coordinates(sprite_id, &sx, &sy);
+        draw_bound_texture_sprite(x, y, w, h, -1.0f, sx, sy, sw, sh);
+    }
 }
 
 // side effects of taking damage. dont modify health/death here
