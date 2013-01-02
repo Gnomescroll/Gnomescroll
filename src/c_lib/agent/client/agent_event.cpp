@@ -27,8 +27,7 @@ namespace Agents
 
 void AgentEvent::name_set()
 {
-    GS_ASSERT(this->a->status.name != NULL);
-    if (this->a->status.name == NULL) return;
+    IF_ASSERT(this->a->status.name == NULL) return;
     this->bb.set_text(this->a->status.name);
 }
 
@@ -46,9 +45,8 @@ void AgentEvent::update_hud_name()
     
     if (!this->a->status.dead)
     {    // calculate interpolated color from health ratio and color control health_color_points
-        int health = 0;
-        if (this->a->status.health > 0) health = this->a->status.health;
-        GS_ASSERT(this->a->status.health_max > 0);
+        int health = this->a->status.health;
+        IF_ASSERT(health < 0) health = 0;
         float h = float(health) / float(this->a->status.health_max);
         
         if (h >= health_color_points[0])
@@ -66,14 +64,35 @@ void AgentEvent::update_hud_name()
     this->bb.set_color(color);
 }
 
+void AgentEvent::draw_badges()
+{
+    using TextureSheetLoader::badge_texture_sheet_loader;
+    // TODO -- frustum cull
+    const float margin = 2.0f;
+    const float w = HudFont::font->data.line_height;
+    const float h = HudFont::font->data.line_height;
+    const float sw = badge_texture_sheet_loader->sprite_width();
+    const float sh = badge_texture_sheet_loader->sprite_height();
+
+    // keep it centered with the line
+    float x = this->bb.x - (w + margin);
+    float y = this->bb.y - h + (h - HudFont::font->data.line_height)/2;
+
+    // TODO -- get from player
+    float sx = 0.0f;
+    float sy = 0.0f;
+
+    // TODO -- render all badges available
+
+    draw_bound_texture_sprite(x, y, w, h, -1.0f, sx, sy, sw, sh);
+}
+
 // side effects of taking damage. dont modify health/death here
 void AgentEvent::took_damage(int dmg)
 {
-    GS_ASSERT(dmg > 0);
-    if (dmg <= 0) return;
+    IF_ASSERT(dmg <= 0) return;
     Particle::BillboardText* b = Particle::billboard_text_list->create();
-    GS_ASSERT(b != NULL);
-    if (b==NULL) return;
+    IF_ASSERT(b == NULL) return;
     b->reset();
 
     Vec3 p = this->a->get_position();
@@ -81,8 +100,7 @@ void AgentEvent::took_damage(int dmg)
         p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
         p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
         p.z + a->current_height(),
-        0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z
-    );
+        0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
     b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
     char txt[10+1];
     sprintf(txt, "%d", dmg);
@@ -113,8 +131,7 @@ void AgentEvent::healed(int amount)
 
     // show billboard text particle
     Particle::BillboardText* b = Particle::billboard_text_list->create();
-    GS_ASSERT(b != NULL);
-    if (b==NULL) return;
+    IF_ASSERT(b == NULL) return;
     b->reset();
 
     Vec3 p = this->a->get_position();

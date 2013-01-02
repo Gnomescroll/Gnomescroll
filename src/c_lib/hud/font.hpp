@@ -62,7 +62,7 @@ class Font
     char missing_glyph;
     struct Glyph get_missing_glyph(unsigned char c);
     struct Glyph get_glyph(unsigned char c);
-    void get_string_pixel_dimension(char* str, int *length, int *height);
+    void get_string_pixel_dimension(const char* str, int *length, int *height);
 
     int size() { return data.size; }
 

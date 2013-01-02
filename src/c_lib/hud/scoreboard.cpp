@@ -112,8 +112,11 @@ void Scoreboard::draw_badges()
     IF_ASSERT(!this->inited) return;
     using TextureSheetLoader::badge_texture_sheet_loader;
 
-    glColor3ub(255,255,255);
+    glColor4ub(255,255,255,255);
 
+    glDisable(GL_BLEND);
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.5f);    
     glEnable(GL_TEXTURE_2D);
     GS_ASSERT(badge_texture_sheet_loader->texture);
     glBindTexture(GL_TEXTURE_2D, badge_texture_sheet_loader->texture);
@@ -139,6 +142,8 @@ void Scoreboard::draw_badges()
     }
 
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_ALPHA_TEST);
+    glEnable(GL_BLEND);
 }
 
 Scoreboard::Scoreboard() :

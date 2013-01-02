@@ -42,7 +42,7 @@ void time_since(int n)
 void wait_for_login();  // forward decl
 void init(int argc, char* argv[])
 {
-    GS_MKDIR("./screenshot", S_IRWXU);
+    GS_MKDIR(SCREENSHOT_PATH, S_IRWXU);
 
     init_c_lib(argc, argv);
 
@@ -215,25 +215,17 @@ void draw_tick()
 
     // Start World Projetion
     
-
-
-
     poll_mouse();
 
     // Prep for draw
-
-
     Particle::prep_shrapnel();
     Skybox::prep_skybox();
-
-
 
     CHECK_GL_ERROR();
     Animations::prep_voxel_particles();
     CHECK_GL_ERROR();
 
     t_mech::prep();
-
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
@@ -245,8 +237,6 @@ void draw_tick()
     glDepthMask(GL_FALSE);
 
     Skybox::draw_rayleigh_scattering(); //skybox drawing
-
-
 
     //glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
