@@ -88,6 +88,10 @@ void load_block_dat()
     SpriteSheet cc = cube_texture_alias(MEDIA_PATH "sprites/terrain/corpusc.png");
     SpriteSheet tgm = cube_texture_alias(MEDIA_PATH "sprites/terrain/tgmtex.png");
 
+    // Cell: this is an example of loading a 16x16 cube sheet into the 32x32 loader
+    // just put 16 as a second argument and it will work
+    //SpriteSheet c16 = cube_texture_alias(MEDIA_PATH "sprites/terrain/old/cell_16x16/t08.png", 16);
+
     const int T = 0; //Top
     const int B = 1; //Bottom
     const int N = 2; //North

@@ -24,7 +24,7 @@ typedef unsigned int GLuint;
 
 #ifdef __MSVC__
 # include <float.h>
-# define isfinite( x ) ( _finite( x ) && x==x )  
+# define isfinite(x) (_finite((x)) && (x) == (x))  
 float cbrt(float arg) { return powf(arg, 1.0f/3.0f); }
 static int S_IRWXU = 0;
 #endif
@@ -37,19 +37,19 @@ static int S_IRWXU = 0;
 
 //Generic helper definitions for shared library support
 #if defined _WIN32 || defined __CYGWIN__
-  #define GNOMESCROLL_DSO_IMPORT __declspec(dllimport)
-  #define GNOMESCROLL_DSO_EXPORT __declspec(dllexport)
-  #define GNOMESCROLL_DSO_LOCAL
+# define GNOMESCROLL_DSO_IMPORT __declspec(dllimport)
+# define GNOMESCROLL_DSO_EXPORT __declspec(dllexport)
+# define GNOMESCROLL_DSO_LOCAL
 #else
-  #if __GNUC__ >= 4
-    #define GNOMESCROLL_DSO_IMPORT __attribute__ ((visibility ("default")))
-    #define GNOMESCROLL_DSO_EXPORT __attribute__ ((visibility ("default")))
-    #define GNOMESCROLL_DSO_LOCAL  __attribute__ ((visibility ("hidden")))
-  #else
-    #define GNOMESCROLL_DSO_IMPORT
-    #define GNOMESCROLL_DSO_EXPORT
-    #define GNOMESCROLL_DSO_LOCAL
-  #endif
+# if __GNUC__ >= 4
+#  define GNOMESCROLL_DSO_IMPORT __attribute__ ((visibility ("default")))
+#  define GNOMESCROLL_DSO_EXPORT __attribute__ ((visibility ("default")))
+#  define GNOMESCROLL_DSO_LOCAL  __attribute__ ((visibility ("hidden")))
+# else
+#  define GNOMESCROLL_DSO_IMPORT
+#  define GNOMESCROLL_DSO_EXPORT
+#  define GNOMESCROLL_DSO_LOCAL
+# endif
 #endif
 
 // Now we use the generic helper definitions above to define GNOMESCROLL_API and GNOMESCROLL_LOCAL.
@@ -57,23 +57,23 @@ static int S_IRWXU = 0;
 // GNOMESCROLL_LOCAL is used for non-api symbols.
 
 #ifdef GNOMESCROLL_DSO // defined if GNOMESCROLL is compiled as a DSO
-  #ifdef GNOMESCROLL_DSO_EXPORTS // defined if we are building the GNOMESCROLL DSO (instead of using it)
-    #define GNOMESCROLL_API GNOMESCROLL_DSO_EXPORT
-  #else
-    #define GNOMESCROLL_API GNOMESCROLL_DSO_IMPORT
-  #endif
-  #define GNOMESCROLL_LOCAL GNOMESCROLL_DSO_LOCAL
+# ifdef GNOMESCROLL_DSO_EXPORTS // defined if we are building the GNOMESCROLL DSO (instead of using it)
+#  define GNOMESCROLL_API GNOMESCROLL_DSO_EXPORT
+# else
+#  define GNOMESCROLL_API GNOMESCROLL_DSO_IMPORT
+# endif
+# define GNOMESCROLL_LOCAL GNOMESCROLL_DSO_LOCAL
 #else // GNOMESCROLL_DSO is not defined: this means GNOMESCROLL is a static lib.
-  #define GNOMESCROLL_API
-  #define GNOMESCROLL_LOCAL
+# define GNOMESCROLL_API
+# define GNOMESCROLL_LOCAL
 #endif
 
 #ifdef __GNUC__
-#define LUA_EXPORT GNOMESCROLL_API
+# define LUA_EXPORT GNOMESCROLL_API
 #endif
 
 #ifdef __MSVC__
-#define LUA_EXPORT __declspec(dllexport)
+# define LUA_EXPORT __declspec(dllexport)
 #endif
 
 #ifdef _WIN32
@@ -90,3 +90,6 @@ const int PLAYERS_MAX = 32;
 #define DATA_PATH "./data/"
 #define SCREENSHOT_PATH "./screenshot/"
 #define MEDIA_PATH "./media/"
+
+// filename max length (no reliable system macro available)
+#define GS_FN_MAX 0xFF

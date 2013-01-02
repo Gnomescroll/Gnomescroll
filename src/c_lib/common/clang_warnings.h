@@ -115,7 +115,7 @@
 #pragma clang diagnostic warning "-Wreadonly-setter-attrs"
 #pragma clang diagnostic warning "-Wredundant-decls"
 #pragma clang diagnostic warning "-Wreorder"
-#pragma clang diagnostic warning "-Wreturn-type"
+#pragma clang diagnostic fatal "-Wreturn-type"
 #pragma clang diagnostic warning "-Wself-assign"
 #pragma clang diagnostic warning "-Wsemicolon-before-method-body"
 #pragma clang diagnostic warning "-Wsequence-point"

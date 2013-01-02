@@ -20,16 +20,15 @@ TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
     surface_num(0), tile_num(0), format(GL_BGRA),
     texture(0), greyscale_texture(0), mag_filter(GL_NEAREST)
 {
-    this->meta = new struct TileMeta[this->tiles_wide*this->tiles_high];
-    this->filenames = (char**)calloc(N_SURFACES, sizeof(char*));
-    this->surfaces = (SDL_Surface**)calloc(N_SURFACES, sizeof(SDL_Surface*));
+    this->tile_meta = (struct TileMeta*)calloc(this->tiles_wide*this->tiles_high, sizeof(struct TileMeta));
+    this->surface_meta = (struct SurfaceMeta*)calloc(N_SURFACES, sizeof(struct SurfaceMeta));
 
     this->width = this->tiles_wide*this->tile_size;
     this->height = this->tiles_high*this->tile_size;
     
     this->surface = create_surface_from_nothing(this->width, this->height);
     this->greyscale_surface = create_surface_from_nothing(this->width, this->height);
-    this->texture_stack = (Uint32*) calloc(4*this->width*this->height, sizeof(char));
+    this->texture_stack = (Uint32*)calloc(4*this->width*this->height, sizeof(char));
 
     this->pixels = (Color*)calloc(this->width*this->height, sizeof(Color));
 
@@ -42,21 +41,15 @@ TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
 
 TextureSheetLoader::~TextureSheetLoader()
 {
-    if (this->surfaces != NULL)
+    if (this->surface_meta != NULL)
     {
         for (size_t i=0; i<N_SURFACES; i++)
-            if (this->surfaces[i] != NULL)
-                SDL_FreeSurface(surfaces[i]);
-        free(this->surfaces);
+            if (this->surface_meta[i].surface != NULL)
+                SDL_FreeSurface(this->surface_meta[i].surface);
+        free(this->surface_meta);
     }
-    if (this->filenames != NULL)
-    {
-        for (size_t i=0; i<N_SURFACES; i++)
-            if (this->filenames[i] != NULL)
-                free(this->filenames[i]);
-        free(this->filenames);
-    }
-    if (this->meta != NULL) delete[] this->meta;
+    
+    if (this->tile_meta != NULL) free(this->tile_meta);
     
     if (this->surface != NULL) SDL_FreeSurface(this->surface);
     if (this->greyscale_surface != NULL) SDL_FreeSurface(this->greyscale_surface);
@@ -69,9 +62,15 @@ TextureSheetLoader::~TextureSheetLoader()
 
 SpriteSheet TextureSheetLoader::load_texture(const char* filename)
 {
+    return this->load_texture(filename, this->tile_size);
+}
+
+SpriteSheet TextureSheetLoader::load_texture(const char* filename, size_t tile_size)
+{
+    IF_ASSERT(!tile_size || this->tile_size % tile_size) return NULL_SPRITE_SHEET;
+    
     for (size_t i=0; i<this->surface_num; i++)
-        if (this->filenames[i] != NULL)
-            GS_ASSERT(strcmp(this->filenames[i], filename) != 0);
+        GS_ASSERT(strcmp(this->surface_meta[i].filename, filename) != 0);
 
     SDL_Surface* s = create_surface_from_file(filename);
     IF_ASSERT(s == NULL) return NULL_SPRITE_SHEET;
@@ -79,10 +78,11 @@ SpriteSheet TextureSheetLoader::load_texture(const char* filename)
     SpriteSheet index = this->load_texture_from_surface(s);
 
     if (index < 0) SDL_FreeSurface(s);
+    GS_ASSERT(this->surface_meta[index].filename[0] == '\0');
 
-    GS_ASSERT(this->filenames[index] == NULL);
-    this->filenames[index] = (char*)malloc((strlen(filename) + 1) * sizeof(char));
-    strcpy(this->filenames[index], filename);
+    this->surface_meta[index].tile_size = tile_size;
+    strncpy(this->surface_meta[index].filename, filename, GS_FN_MAX+1);
+    this->surface_meta[index].filename[GS_FN_MAX] = '\0';
 
     return index;
 }
@@ -92,8 +92,8 @@ SpriteSheet TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* su
     IF_ASSERT(surface == NULL) return NULL_SPRITE_SHEET;
     IF_ASSERT(sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE_SHEET;
     IF_ASSERT(sheet_id >= (SpriteSheet)N_SURFACES) return NULL_SPRITE_SHEET;
-    
-    surfaces[sheet_id] = surface;
+
+    this->surface_meta[sheet_id].surface = surface;
     return sheet_id;
 }
 
@@ -108,21 +108,24 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
 {
     IF_ASSERT(meta_index >= this->tile_num) return false;
 
-    struct TileMeta meta = this->meta[meta_index];
+    struct TileMeta tile_meta = this->tile_meta[meta_index];
 
     // sanity checks
-    GS_ASSERT(meta.sheet_id != NULL_SPRITE_SHEET);
-    if (meta.sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE;
-    GS_ASSERT(meta.sheet_id < (SpriteSheet)surface_num);
-    if (meta.sheet_id >= (SpriteSheet)surface_num) return NULL_SPRITE;
+    GS_ASSERT(tile_meta.sheet_id != NULL_SPRITE_SHEET);
+    if (tile_meta.sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE;
+    GS_ASSERT(tile_meta.sheet_id < (SpriteSheet)surface_num);
+    if (tile_meta.sheet_id >= (SpriteSheet)surface_num) return NULL_SPRITE;
     
     // get surface
-    SDL_Surface* s = this->surfaces[meta.sheet_id];
+    SDL_Surface* s = this->surface_meta[tile_meta.sheet_id].surface;
     IF_ASSERT(s == NULL) return false;
+
+    // compute pixel scaling
+    size_t scale = this->tile_size / this->surface_meta[tile_meta.sheet_id].tile_size;
+    if (scale != 1) printf("SCALING SHEET: %s by %u\n", this->surface_meta[tile_meta.sheet_id].filename, (unsigned)scale);
     
     // check that tiles are in bounds
-    GS_ASSERT(meta.xpos*tile_size < (size_t)s->w && meta.ypos*tile_size < (size_t)s->h);
-    if (meta.xpos*tile_size >= (size_t)s->w || meta.ypos*tile_size >= (size_t)s->h)
+    IF_ASSERT(tile_meta.xpos*tile_size >= (size_t)s->w || tile_meta.ypos*tile_size >= (size_t)s->h)
         return false;
 
     // lock surfaces
@@ -143,25 +146,34 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
 
     // copy sprite icon pixels from source pixel buffer to
     // sheet and stack buffers and unpacked pixel array
-    for (size_t i=0; i<this->tile_size; i++)
-    for (size_t j=0; j<this->tile_size; j++) 
+    size_t surface_tile_size = this->surface_meta[tile_meta.sheet_id].tile_size;
+    for (size_t i=0; i<surface_tile_size; i++)
+    for (size_t j=0; j<surface_tile_size; j++) 
     {
-        size_t pix_index = s->w * (this->tile_size * meta.ypos + j) + (this->tile_size * meta.xpos + i);
+        size_t pix_index = s->w * (surface_tile_size * tile_meta.ypos + j) + (surface_tile_size * tile_meta.xpos + i);
         
         // convert source pixel to final format
         Uint32 pix = ((Uint32*)s->pixels)[pix_index];
         unsigned char r,g,b,a;
         SDL_GetRGBA(pix, s->format, &r, &g, &b, &a);
         pix = SDL_MapRGBA(this->surface->format, r,g,b,a);
-        
-        size_t stack_index = this->tile_size * this->tile_size * index + (j * this->tile_size + i);
-        stack_pixels[stack_index] = pix;
-        size_t sheet_index = this->width * (dest_y + j) + (dest_x + i);
-        sheet_pixels[sheet_index] = pix;
 
-        size_t pixel_index = meta_index * this->tile_size * this->tile_size;
-        pixel_index += (this->tile_size - j - 1) * this->tile_size + (this->tile_size - i - 1);
-        this->pixels[pixel_index] = Color(r,g,b,a);
+        // copy to surface stack & sheet
+        for (size_t m=0; m<scale; m++)
+        for (size_t n=0; n<scale; n++)
+        {
+            size_t stack_index = this->tile_size * this->tile_size * index;
+            stack_index += ((j * scale + n) * this->tile_size + (i * scale  + m));
+            stack_pixels[stack_index] = pix;
+
+            size_t sheet_index = this->width * (dest_y + (j * scale + n)) + (dest_x + (i * scale + m));
+            sheet_pixels[sheet_index] = pix;
+
+            // copy to raw pixel buffer
+            size_t pixel_index = meta_index * this->tile_size * this->tile_size;
+            pixel_index += (this->tile_size - (j + n) - 1) * this->tile_size + (this->tile_size - (i + m) - 1);
+            this->pixels[pixel_index] = Color(r,g,b,a);
+        }        
     }
 
     // unlock
@@ -174,7 +186,7 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
 //blit to sheet or return texture id
 int TextureSheetLoader::blit(SpriteSheet sheet_id, size_t source_x, size_t source_y)
 {
-    IF_ASSERT(this->tile_num > 0xff) return NULL_SPRITE;
+    IF_ASSERT(this->tile_num > 0xFF) return NULL_SPRITE;
     IF_ASSERT(source_x < 1) return NULL_SPRITE;
     IF_ASSERT(source_y < 1) return NULL_SPRITE;
 
@@ -184,16 +196,16 @@ int TextureSheetLoader::blit(SpriteSheet sheet_id, size_t source_x, size_t sourc
 
     //check to see if already loaded
     for (size_t i=0; i<this->tile_num; i++)
-        if (meta[i].sheet_id == sheet_id
-         && meta[i].xpos == source_x
-         && meta[i].ypos == source_y)
+        if (tile_meta[i].sheet_id == sheet_id
+         && tile_meta[i].xpos     == source_x
+         && tile_meta[i].ypos     == source_y)
             return i;
 
     // record metadata
     size_t index = this->tile_num;
-    meta[index].sheet_id = sheet_id;
-    meta[index].xpos = source_x;
-    meta[index].ypos = source_y;
+    tile_meta[index].sheet_id = sheet_id;
+    tile_meta[index].xpos = source_x;
+    tile_meta[index].ypos = source_y;
     this->tile_num++;
     
     // blit
@@ -254,19 +266,16 @@ void TextureSheetLoader::reload()
     // remove existing loaded surfaces
     for (size_t i=0; i<this->surface_num; i++)
     {
-        GS_ASSERT(this->surfaces[i] != NULL);
-        if (this->surfaces[i] == NULL) continue;
-        SDL_FreeSurface(this->surfaces[i]);
-        this->surfaces[i] = NULL;
+        IF_ASSERT(this->surface_meta[i].surface == NULL) continue;
+        SDL_FreeSurface(this->surface_meta[i].surface);
+        this->surface_meta[i].surface = NULL;
     }
 
     // regenerate surfaces from filenames
     for (size_t i=0; i<this->surface_num; i++)
     {
-        GS_ASSERT(this->filenames[i] != NULL);
-        if (this->filenames[i] == NULL) continue;
-        printf("Reloading texture file: %s\n", this->filenames[i]);
-        SDL_Surface* s = create_surface_from_file(this->filenames[i]);
+        printf("Reloading texture file: %s\n", this->surface_meta[i].filename);
+        SDL_Surface* s = create_surface_from_file(this->surface_meta[i].filename);
         IF_ASSERT(s == NULL)
         {
             this->surface_num = i;
@@ -296,7 +305,7 @@ void TextureSheetLoader::reload()
         if (lock) SDL_UnlockSurface(surface);
     }
 
-    // re-blit from tile meta
+    // re-blit from tile tile_meta
     for (size_t i=0; i<this->tile_num; i++) this->blit_meta(i);
 
     // destroy existing textures
@@ -366,6 +375,11 @@ void save_cube_texture()
 SpriteSheet cube_texture_alias(const char* filename)
 {
     return cube_texture_sheet_loader->load_texture(filename);
+}
+
+SpriteSheet cube_texture_alias(const char* filename, size_t tile_size)
+{
+    return cube_texture_sheet_loader->load_texture(filename, tile_size);
 }
 
 //Item API

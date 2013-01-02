@@ -186,8 +186,6 @@ void sigusr1_handler(int sig)
 
 void sigusr2_handler(int sig)
 {
-    // TODO -- reload settings file
-    printf("SIGUSR2\n");
     ServerState::reload_settings = true;
 }
 #endif

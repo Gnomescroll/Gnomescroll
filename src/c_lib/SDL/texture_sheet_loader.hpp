@@ -22,6 +22,13 @@ class TextureSheetLoader
             size_t ypos;
         };
 
+        struct SurfaceMeta
+        {
+            char filename[GS_FN_MAX+1];
+            SDL_Surface* surface;
+            size_t tile_size;
+        };
+
         size_t width;
         size_t height;
 
@@ -33,11 +40,9 @@ class TextureSheetLoader
         size_t tile_num;
         
         GLenum format;
-
-        char** filenames;
-        SDL_Surface** surfaces;
         
-        struct TileMeta* meta;
+        struct TileMeta* tile_meta;
+        struct SurfaceMeta* surface_meta;
 
         struct SDL_Surface* surface;  //for 2d array
         struct SDL_Surface* greyscale_surface;  //for 2d array
@@ -51,6 +56,7 @@ class TextureSheetLoader
         Color* pixels;
 
         SpriteSheet load_texture(const char* filename);
+        SpriteSheet load_texture(const char* filename, size_t tile_size);
         SpriteSheet load_texture_from_surface(struct SDL_Surface* surface);
         SpriteSheet load_texture_from_surface(struct SDL_Surface* surface, SpriteSheet sheet_id);
 
@@ -109,6 +115,7 @@ SpriteSheet load_cube_texture_sheet(const char* filename);
 int blit_cube_texture(SpriteSheet sheet_id, int source_x, int source_y);
 void save_cube_texture();
 SpriteSheet cube_texture_alias(const char* filename);
+SpriteSheet cube_texture_alias(const char* filename, size_t tile_size); // temporary crutch to use 16 and 32 together
 
 //item texture sheet api
 SpriteSheet item_texture_alias(const char* filename);
@@ -134,6 +141,11 @@ namespace TextureSheetLoader
 // client and server
 
 SpriteSheet _texture_alias(const char* spritesheet_filename)
+{
+    return (SpriteSheet)0;
+}
+
+SpriteSheet _texture_alias(const char* spritesheet_filename, size_t tile_size)
 {
     return (SpriteSheet)0;
 }
