@@ -41,7 +41,7 @@ class CHUNK_ITEM_CONTAINER
         for (int i=0; i<ibam; i++)
         {
             iba[i].container_id = NULL_CONTAINER;
-            iba[i].container_type = CONTAINER_TYPE_NONE;
+            iba[i].container_type = NULL_CONTAINER_TYPE;
         }
     }
 
@@ -59,7 +59,7 @@ class CHUNK_ITEM_CONTAINER
         for (int i=0; i<ibam; i++)
         {
             iba[i].container_id = NULL_CONTAINER;
-            iba[i].container_type = CONTAINER_TYPE_NONE;
+            iba[i].container_type = NULL_CONTAINER_TYPE;
         }
     }
     #endif

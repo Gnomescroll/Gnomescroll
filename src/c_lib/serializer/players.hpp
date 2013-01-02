@@ -104,8 +104,8 @@ class PlayerLoadData
 
     bool expect_container(ItemContainerType container_type)
     {
-        GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-        if (container_type == CONTAINER_TYPE_NONE) return false;
+        GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
+        if (container_type == NULL_CONTAINER_TYPE) return false;
         GS_ASSERT(this->n_containers_expected < N_PLAYER_CONTAINERS);
         if (this->n_containers_expected >= N_PLAYER_CONTAINERS) return false;
         for (int i=0; i<this->n_containers_expected; i++)
@@ -147,7 +147,7 @@ class PlayerLoadData
     {
         for (int i=0; i<N_PLAYER_CONTAINERS; i++)
         {
-            this->containers_expected[i] = CONTAINER_TYPE_NONE;
+            this->containers_expected[i] = NULL_CONTAINER_TYPE;
             this->containers_loaded[i] = false;
         }
     }        
@@ -161,7 +161,7 @@ class PlayerContainerLoadData
         int player_data_id;
 
     PlayerContainerLoadData(int id) :
-        id(-1), container_type(CONTAINER_TYPE_NONE), player_data_id(-1)
+        id(-1), container_type(NULL_CONTAINER_TYPE), player_data_id(-1)
     {}
 };
 

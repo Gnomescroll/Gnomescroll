@@ -77,7 +77,7 @@ bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    IF_ASSERT(container_type == CONTAINER_TYPE_NONE || container_id == NULL_CONTAINER) return false;
+    IF_ASSERT(container_type == NULL_CONTAINER_TYPE || container_id == NULL_CONTAINER) return false;
     IF_ASSERT(ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) return false;
     
     if (iban == ibam)

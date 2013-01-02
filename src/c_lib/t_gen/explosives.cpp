@@ -166,7 +166,7 @@ void create_explosion(const int x, const int y, const int z)
         class Voxels::VoxelHitscanTarget* targets = ServerState::voxel_hitscan_list->hitscan_all(position, end, &n_hit);
         if (targets == NULL) continue;
         for (size_t k=0; k<n_hit; k++)
-            Hitscan::damage_target(&targets[i], OBJECT_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);
+            Hitscan::damage_target(&targets[k], OBJECT_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);
     }
 }
 

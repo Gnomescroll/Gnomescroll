@@ -28,7 +28,7 @@ void init_container(ItemContainerInterface* container)
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
     
-    GS_ASSERT(container->type != CONTAINER_TYPE_NONE);
+    GS_ASSERT(container->type != NULL_CONTAINER_TYPE);
     class ContainerAttributes* attr = get_attr(container->type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return;

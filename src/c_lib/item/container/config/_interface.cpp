@@ -75,7 +75,7 @@ void null_container_def(const char* name)
 {
     static int i=0;
     GS_ASSERT_ABORT(!(i++));
-    container_def(CONTAINER_TYPE_NONE, name); 
+    container_def(NULL_CONTAINER_TYPE, name); 
 }
 
 void agent_container_def(ItemContainerType type, const char* name)
@@ -240,7 +240,7 @@ static void validate_settings()
     {
         class ContainerAttributes* c = &container_attributes[i];
         if (!c->loaded) continue;
-        if (c->type == CONTAINER_TYPE_NONE)
+        if (c->type == NULL_CONTAINER_TYPE)
         {
             n_none++;
             continue;
@@ -296,7 +296,7 @@ static void validate_settings()
         if (!t_map::isValidCube((CubeID)i)) continue;
         if (t_map::get_cube_type((CubeID)i) == ItemContainerCube)
         {
-            GS_ASSERT_ABORT(get_type(t_map::get_cube_name((CubeID)i)) != CONTAINER_TYPE_NONE);
+            GS_ASSERT_ABORT(get_type(t_map::get_cube_name((CubeID)i)) != NULL_CONTAINER_TYPE);
         }
     }
 
@@ -312,7 +312,7 @@ static void validate_settings()
     // check inactive name destinations against active
     for (size_t i=0; i<container_name_map->size; i++)
     {
-        GS_ASSERT_ABORT(get_type(container_name_map->get_replacement(i)) != CONTAINER_TYPE_NONE);
+        GS_ASSERT_ABORT(get_type(container_name_map->get_replacement(i)) != NULL_CONTAINER_TYPE);
     }
 
     #if DC_SERVER || !PRODUCTION
@@ -384,14 +384,14 @@ ItemContainerType get_type(const char* name)
         if (container_attributes[i].loaded && strcmp(container_attributes[i].name, name) == 0)
             return container_attributes[i].type;
     }
-    return CONTAINER_TYPE_NONE;
+    return NULL_CONTAINER_TYPE;
 }
 
 const char* get_compatible_name(const char* name)
 {
     const char* mapname = container_name_map->get_mapped_name(name);
     if (mapname != NULL) return mapname;
-    if (get_type(name) != CONTAINER_TYPE_NONE) return name;
+    if (get_type(name) != NULL_CONTAINER_TYPE) return name;
     return NULL;
 }
 

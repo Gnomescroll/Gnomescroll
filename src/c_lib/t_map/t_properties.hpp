@@ -56,7 +56,7 @@ class CubeProperties
         this->item_drop = false;
 
         this->material = CUBE_MATERIAL_NONE;
-        this->container_type = CONTAINER_TYPE_NONE;
+        this->container_type = NULL_CONTAINER_TYPE;
         this->explosive = false;
 
         this->max_damage = 32;

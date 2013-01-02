@@ -300,10 +300,10 @@ static bool load_map_restore_containers()
             if (!t_map::isItemContainer(block)) continue;
             
             ItemContainerType container_type = t_map::get_container_type_for_cube(block);
-            GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-            if (container_type == CONTAINER_TYPE_NONE)
+            GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
+            if (container_type == NULL_CONTAINER_TYPE)
             {
-                log_map_load_error("Restoring containers from map: Container type is CONTAINER_TYPE_NONE");
+                log_map_load_error("Restoring containers from map: Container type is NULL_CONTAINER_TYPE");
                 return false;
             }
             class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);

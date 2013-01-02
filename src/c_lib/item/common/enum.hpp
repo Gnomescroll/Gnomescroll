@@ -2,7 +2,7 @@
 
 typedef enum
 {
-    CONTAINER_TYPE_NONE = 0,
+    NULL_CONTAINER_TYPE = 0,
     AGENT_HAND,
     AGENT_INVENTORY,
     AGENT_TOOLBELT,
@@ -18,17 +18,17 @@ typedef enum
 
 typedef enum
 {
-    NULL_ITEM = 0xffff
+    NULL_ITEM = 0xFFFF
 } ItemID;
 
 typedef enum
 {
-    NULL_PARTICLE = 0xffff
+    NULL_PARTICLE = 0xFFFF
 } ItemParticleID;
 
 typedef enum
 {
-    NULL_CONTAINER = 0xffff
+    NULL_CONTAINER = 0xFFFF
 } ItemContainerID;
 
 typedef enum

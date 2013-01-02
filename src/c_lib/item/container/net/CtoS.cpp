@@ -607,7 +607,7 @@ void create_container_block_CtoS::handle()
     CubeID cube_id = attr->cube_id;
 
     ItemContainerType container_type = t_map::get_container_type_for_cube(cube_id);
-    IF_ASSERT(container_type == CONTAINER_TYPE_NONE) return;
+    IF_ASSERT(container_type == NULL_CONTAINER_TYPE) return;
 
     GS_ASSERT(orientation >= 0 && orientation <= 3);
     if (orientation < 0 || orientation > 3) orientation = 0;
@@ -670,8 +670,8 @@ void admin_create_container_block_CtoS::handle()
     CubeID cube_id = (CubeID)this->val;
 
     ItemContainerType container_type = t_map::get_container_type_for_cube(cube_id);
-    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
-    if (container_type == CONTAINER_TYPE_NONE) return;
+    GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
+    if (container_type == NULL_CONTAINER_TYPE) return;
 
     GS_ASSERT(orientation >= 0 && orientation <= 3);
     if (orientation < 0 || orientation > 3) orientation = 0;
