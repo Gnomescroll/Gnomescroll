@@ -56,8 +56,6 @@ class BillboardText_list: public Simple_object_list<BillboardText, BILLBOARD_TEX
     public:
         void draw();
         void tick();
-
-        BillboardText_list() { this->print(); }
 };
 
 }   // Particles

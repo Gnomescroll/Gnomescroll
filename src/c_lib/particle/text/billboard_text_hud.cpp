@@ -49,7 +49,7 @@ void BillboardTextHud::draw()
 {
     if (!this->should_draw) return;
     if (current_camera == NULL) return;
-    if(!this->charcount()) return;
+    if (!this->charcount()) return;
 
     Vec3 position = this->get_position();
     if (vec3_equal(current_camera_position, position)) return;
@@ -62,7 +62,7 @@ void BillboardTextHud::draw()
     this->center();
     int w = this->get_width();
     int h = this->get_height();
-    if (!rect_intersects(this->x, this->y-h, w, h, 0, 0, _xresf, _yresf)) // -h reason: this draw order
+    if (!rect_intersects(this->x, this->y-h, w, h, 0, 0, _xresf, _yresf))
         return; // not on screen (tested, works)
 
     this->set_depth((float)sz);

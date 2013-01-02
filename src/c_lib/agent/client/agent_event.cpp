@@ -67,9 +67,7 @@ void AgentEvent::update_hud_name()
 void AgentEvent::draw_badges()
 {
     using TextureSheetLoader::badge_texture_sheet_loader;
-    // TODO -- frustum cull
     const float margin = 2.0f;
-    // TODO -- remove /2 after switching to 16x16
     const float w = badge_texture_sheet_loader->tile_size;
     const float h = badge_texture_sheet_loader->tile_size;
     const float sw = badge_texture_sheet_loader->sprite_width();
@@ -87,7 +85,8 @@ void AgentEvent::draw_badges()
         float sx = 0.0f;
         float sy = 0.0f;
         badge_texture_sheet_loader->get_sprite_coordinates(sprite_id, &sx, &sy);
-        draw_bound_texture_sprite(x, y, w, h, -1.0f, sx, sy, sw, sh);
+        if (!rect_intersects(x, y, w, h, 0, 0, _xresf, _yresf)) continue;
+        draw_bound_texture_sprite(x, y, w, h, this->bb.depth, sx, sy, sw, sh);
     }
 }
 

@@ -27,17 +27,17 @@ class BillboardTextHud: public TextParticle
         bool should_draw;
         bool permanent;
         
-        void set_draw(bool draw);
-        void set_position(float x, float y)
-        {
-            HudText::Text::set_position(x,y);
-        }
-        void draw();
-        void tick();
+    void set_draw(bool draw);
+    void set_position(float x, float y)
+    {
+        HudText::Text::set_position(x,y);
+    }
+    void draw();
+    void tick();
 
-        inline void reset();
+    inline void reset();
 
-        BillboardTextHud();
+    BillboardTextHud();
 };
 
 }
@@ -54,8 +54,6 @@ class BillboardTextHud_list: public Simple_object_list<BillboardTextHud, BILLBOA
     public:
         void draw();
         void tick();
-
-        BillboardTextHud_list() { this->print(); }
 };
 
 }
