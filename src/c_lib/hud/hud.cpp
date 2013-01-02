@@ -683,7 +683,7 @@ void HUD::init()
     GS_ASSERT(dead != NULL);
     if (dead == NULL) return;
     dead->set_text(dead_text);
-    dead->set_color(Color(Color(255,10,10,255)));
+    dead->set_color(Color(Color(200,4,3,255)));
     dead->set_position(_xresf/2, _yresf/2);
     
     fps = text_list->create();
@@ -691,7 +691,7 @@ void HUD::init()
     if (fps == NULL) return;
     fps->set_format(fps_format);
     fps->set_format_extra_length(6 - 5);
-    fps->set_color(Color(255,10,10,255));
+    fps->set_color(Color(200,4,3,255));
     fps->set_position(3, line_height+3);
     
     ping = text_list->create();
@@ -699,7 +699,7 @@ void HUD::init()
     if (ping == NULL) return;
     ping->set_format(ping_format);
     ping->set_format_extra_length(3 - 2);
-    ping->set_color(Color(255,10,10,255));
+    ping->set_color(Color(200,4,3,255));
     ping->set_position(3, (line_height*2)+3);
     
     reliable_ping = text_list->create();
@@ -707,7 +707,7 @@ void HUD::init()
     if (reliable_ping == NULL) return;
     reliable_ping->set_format(ping_format);
     reliable_ping->set_format_extra_length(3 - 2);
-    reliable_ping->set_color(Color(255,10,10,255));
+    reliable_ping->set_color(Color(200,4,3,255));
     reliable_ping->set_position(3, (line_height*3)+3);
 
     location = text_list->create();
@@ -715,7 +715,7 @@ void HUD::init()
     if (location == NULL) return;
     location->set_format(location_format);
     location->set_format_extra_length((40 + 20 + 1 - 2) * 3);
-    location->set_color(Color(255,10,10,255));
+    location->set_color(Color(200,4,3,255));
     location->set_position(3, _yresf-3);
     
     look = text_list->create();
@@ -723,7 +723,7 @@ void HUD::init()
     if (look == NULL) return;
     look->set_format(location_format);
     look->set_format_extra_length((40 + 20 + 1 - 2) * 3);
-    look->set_color(Color(255,10,10,255));
+    look->set_color(Color(200,4,3,255));
     look->set_position(3, _yresf-3);
 
     health = new AnimatedText;
@@ -753,7 +753,7 @@ void HUD::init()
     GS_ASSERT(confirm_quit != NULL);
     if (confirm_quit == NULL) return;
     confirm_quit->set_text(confirm_quit_text);
-    confirm_quit->set_color(Color(255,10,10,255));
+    confirm_quit->set_color(Color(200,4,3,255));
     confirm_quit->set_position(_xresf/2, (3*_yresf)/4);
 
     prompt = text_list->create();
@@ -770,20 +770,20 @@ void HUD::init()
     error = text_list->create();
     GS_ASSERT(error != NULL);
     if (error == NULL) return;
-    error->set_color(Color(255,10,10,255));
+    error->set_color(Color(200,4,3,255));
     error->set_position(_xresf/2, _yresf/2);
 
     error_subtitle = text_list->create();
     GS_ASSERT(error_subtitle != NULL);
     if (error_subtitle == NULL) return;
-    error_subtitle->set_color(Color(255,10,10,255));
+    error_subtitle->set_color(Color(200,4,3,255));
     error_subtitle->set_position(_xresf/2, error->y - error->get_height());
     error_subtitle->set_text(error_subtitle_text);
     
     awesomium_message = text_list->create();
     GS_ASSERT(awesomium_message != NULL);
     if (awesomium_message == NULL) return;
-    awesomium_message->set_color(Color(255,10,10,255));
+    awesomium_message->set_color(Color(200,4,3,255));
     awesomium_message->set_position(_xresf/2, _yresf - 2);
     awesomium_message->set_text("");
     

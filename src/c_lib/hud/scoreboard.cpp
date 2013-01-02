@@ -153,7 +153,7 @@ void Scoreboard::draw_badges()
 }
 
 Scoreboard::Scoreboard() :
-    inited(false), color(Color(255,10,10,255))
+    inited(false), color(Color(200,4,3,255))
 {
     for (int i=0; i<N_STATS; i++) tags[i] = NULL;
     for (int i=0; i<PLAYERS_MAX; i++)

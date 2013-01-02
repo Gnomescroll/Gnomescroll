@@ -424,7 +424,7 @@ AgentEvent::AgentEvent(Agent* owner) :
     this->bb.permanent = true;
     if (this->a->status.name != NULL)
         this->bb.set_text(this->a->status.name);
-    this->bb.set_color(Color(255,10,10,255));
+    this->bb.set_color(Color(200,4,3,255));
     this->bb.set_scale(AgentHudName::SIZE);    
 }
 
