@@ -201,8 +201,8 @@ bool create_player_container_items_from_data(AgentID agent_id, int* containers, 
     for (int i=0; i<n_containers; i++)
     {
         ItemContainerType container_type = ItemContainer::get_container_type(containers[i]);
-        if (container_type == CONTAINER_TYPE_NONE) return false;
-        GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+        if (container_type == NULL_CONTAINER_TYPE) return false;
+        GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
         container_types[i] = container_type;
     }
     

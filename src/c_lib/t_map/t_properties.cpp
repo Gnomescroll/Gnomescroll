@@ -111,7 +111,7 @@ ItemContainerType get_container_type_for_cube(CubeID cube_id)
 {
     class CubeProperties* p = get_cube_properties(cube_id);
     GS_ASSERT(p != NULL);
-    if (p == NULL) return CONTAINER_TYPE_NONE;
+    if (p == NULL) return NULL_CONTAINER_TYPE;
     return p->container_type;
 }
 

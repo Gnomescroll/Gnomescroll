@@ -11,7 +11,7 @@ const ItemContainerType player_container_types[N_PLAYER_CONTAINERS] = {
     AGENT_TOOLBELT,
     AGENT_INVENTORY,
     AGENT_SYNTHESIZER,
-    AGENT_ENERGY_TANKS
+    AGENT_ENERGY_TANKS,
 };
 
 void init();

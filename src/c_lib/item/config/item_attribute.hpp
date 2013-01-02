@@ -113,7 +113,7 @@ class ItemAttribute
         object_damage_min = 5;
         object_damage_max = 10;
         repair_agent_amount = 0;
-        container_type = CONTAINER_TYPE_NONE;
+        container_type = NULL_CONTAINER_TYPE;
         gas = false;
         gas_lifetime = NULL_GAS_LIFETIME;
         fuel = false;

@@ -53,7 +53,7 @@ class UIElement
         :
         type(UI_ELEMENT_NONE),
         visible(false), xoff(0), yoff(0),
-        container_id(NULL_CONTAINER), container_type(CONTAINER_TYPE_NONE),
+        container_id(NULL_CONTAINER), container_type(NULL_CONTAINER_TYPE),
         texture(NULL)
         {}
     

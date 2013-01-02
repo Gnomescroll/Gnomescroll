@@ -163,7 +163,7 @@ class ItemContainerUIInterface
         }
 
         explicit ItemContainerUIInterface(int id)
-        : id(id), type(CONTAINER_TYPE_NONE),
+        : id(id), type(NULL_CONTAINER_TYPE),
         xdim(0), ydim(0),
         alt_xdim(0), alt_ydim(0),
         slot_max(0), slot_count(0),

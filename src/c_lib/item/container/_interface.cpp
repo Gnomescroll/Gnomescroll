@@ -179,7 +179,7 @@ void destroy_container(int id)
 ItemContainerType get_container_type(int container_id)
 {
     ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return CONTAINER_TYPE_NONE;
+    if (container == NULL) return NULL_CONTAINER_TYPE;
     return container->type;
 }
 
@@ -291,7 +291,7 @@ bool open_container(int container_id)
     ItemContainerInterface* container = get_container(container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return false;
-    GS_ASSERT(container->type != CONTAINER_TYPE_NONE);
+    GS_ASSERT(container->type != NULL_CONTAINER_TYPE);
     if (!container->can_be_opened_by(ClientState::player_agent.agent_id)) return false;
 
     GS_ASSERT(opened_container == NULL_CONTAINER);
@@ -956,6 +956,15 @@ void agent_born(AgentID agent_id)
             bool added = transfer_free_item_to_container(location_pointer->id, toolbelt->id, location_pointer_slot);
             if (!added) Item::destroy_item(location_pointer->id);
         }
+    }
+
+    Item::Item* rock_landmine = Item::create_item(Item::get_item_type("rock_landmine"));
+    GS_ASSERT(rock_landmine != NULL);
+    if (rock_landmine != NULL)
+    {
+        event = auto_add_free_item_to_container(client_id, toolbelt->id, rock_landmine->id);
+        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(rock_landmine->id);
+        else if (rock_landmine->stack_size <= 0) Item::destroy_item(rock_landmine->id);
     }
     #endif
 

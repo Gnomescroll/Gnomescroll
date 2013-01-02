@@ -66,7 +66,7 @@ class ContainerAttributes
     void init()
     {
         this->loaded = false;
-        this->type = CONTAINER_TYPE_NONE;
+        this->type = NULL_CONTAINER_TYPE;
         memset(this->name, 0, sizeof(this->name));
         this->xdim = 0;
         this->ydim = 0;

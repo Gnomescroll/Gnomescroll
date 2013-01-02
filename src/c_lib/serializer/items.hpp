@@ -42,7 +42,7 @@ class ParsedItemData
 
         this->item_type = NULL_ITEM_TYPE;
         this->item_location = IL_NOWHERE;
-        this->item_container_type = CONTAINER_TYPE_NONE;
+        this->item_container_type = NULL_CONTAINER_TYPE;
     }
 
     ParsedItemData(ItemID id) : id(id)

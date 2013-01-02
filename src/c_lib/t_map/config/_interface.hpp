@@ -105,7 +105,7 @@ void cube_def_error(const char* name)
 
 void cube_def_container(const char* name, ItemContainerType container_type)
 {
-    GS_ASSERT(container_type != CONTAINER_TYPE_NONE);
+    GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
     cube_def(ItemContainerCube, name, CUBE_MATERIAL_NONE);  // TODO -- cube material for chests?
     p->container_type = container_type;
 }
@@ -373,7 +373,7 @@ void verify_config()
         class CubeProperties* a = &cube_properties[i];
         class CubeProperties* b = &cube_properties[j];
         if (!a->loaded || !b->loaded) continue;
-        if (a->container_type == CONTAINER_TYPE_NONE || b->container_type == CONTAINER_TYPE_NONE) continue;
+        if (a->container_type == NULL_CONTAINER_TYPE || b->container_type == NULL_CONTAINER_TYPE) continue;
         GS_ASSERT_ABORT(a->container_type != b->container_type);
     }
 

@@ -161,7 +161,7 @@ class ItemContainerInterface
         xdim(0), ydim(0),
         alt_xdim(0), alt_ydim(0),
         slot_max(0), slot_count(0), slot(NULL),
-        owner(NULL_AGENT), chunk(0xffff),
+        owner(NULL_AGENT), chunk(0xFFFF),
         attached_to_agent(false)
         {}
 };

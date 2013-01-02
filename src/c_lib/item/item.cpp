@@ -157,7 +157,7 @@ bool is_valid_location_data(ItemLocationType location, int location_id, int cont
         VERIFY_ITEM_LOCATION(location_id != NULL_CONTAINER);
         VERIFY_ITEM_LOCATION(container_slot != NULL_SLOT);
         ItemContainerType container_type = ItemContainer::get_container_type(location_id);
-        VERIFY_ITEM_LOCATION(container_type != CONTAINER_TYPE_NONE);
+        VERIFY_ITEM_LOCATION(container_type != NULL_CONTAINER_TYPE);
         // we can't check container slot max from attr for container blocks, because the configuration is not specialized enough
         // we can check for player containers though
         if (ItemContainer::container_type_is_attached_to_agent(container_type))

@@ -127,8 +127,8 @@ bool item_block_def(const char* block_name)
 bool item_container_def(const char* container_name)
 {
     ItemContainerType container_type = ItemContainer::get_type(container_name);
-    GS_ASSERT_ABORT(container_type != CONTAINER_TYPE_NONE);
-    if (container_type == CONTAINER_TYPE_NONE) return false;
+    GS_ASSERT_ABORT(container_type != NULL_CONTAINER_TYPE);
+    if (container_type == NULL_CONTAINER_TYPE) return false;
     GS_ASSERT_ABORT(!ItemContainer::container_type_is_attached_to_agent(container_type));
     if (ItemContainer::container_type_is_attached_to_agent(container_type)) return false;
 
