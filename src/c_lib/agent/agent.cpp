@@ -267,14 +267,6 @@ class AgentState _agent_tick(const struct AgentControlState& _cs, const struct A
     float new_y = as.y + as.vy;
     float new_z = as.z + as.vz;
 
-    #if DC_SERVER
-    if(t_gen::isLandmine(new_x, new_y, new_z - 1))
-    {
-        t_map::apply_damage_broadcast(new_x, new_y, new_z - 1, 64, TMA_PLASMAGEN);
-        t_gen::create_explosion(new_x, new_y, new_z - 1);
-    }
-    #endif
-
     //collision
     bool current_collision = collision_check_final_current(box.box_r, height, as.x,as.y,as.z);
     if (current_collision)

@@ -55,6 +55,13 @@ bool isLandmine(int x, int y, int z)
     return (place == rock_landmine || place == regolith_landmine);
 }
 
+void explode_landmine_damage_players(float x, float y, float z)
+{
+    const struct Vec3 position = vec3_init(x, y, z);
+    const struct Vec3 direction = vec3_init(x, y, z + 2);
+    Hitscan::against_agents(position, direction, 2);
+}
+
 void create_explosion(const int x, const int y, const int z)
 {   // WARNING: make sure this function is called after destroying the explosive block
     // check upper bounds
