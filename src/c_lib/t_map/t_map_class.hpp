@@ -9,9 +9,6 @@
 namespace t_map
 {
 
-
-
-
 /*
     Optimization parameters
 */
@@ -68,19 +65,20 @@ class Terrain_map
 {
     public:
     
-    int xdim;
-    int ydim;
-    
-    static const int xchunk_dim = MAP_CHUNK_XDIM;
-    static const int ychunk_dim = MAP_CHUNK_XDIM;
-    
-    class MAP_CHUNK** chunk;
+        int xdim;
+        int ydim;
+        
+        static const int xchunk_dim = MAP_CHUNK_XDIM;
+        static const int ychunk_dim = MAP_CHUNK_XDIM;
+        
+        class MAP_CHUNK** chunk;
 
-    class CONTROL_NODE_LIST control_node_list; //special
+        class CONTROL_NODE_LIST control_node_list; //special
 
     #if DC_CLIENT
-    bool height_changed;
-    char chunk_heights_status[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];   // status of column height (set, unchanged, changed)
+        bool height_changed;
+        char chunk_heights_status[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];   // status of column height (set, unchanged, changed)
+        
     void reset_heights_read();
     void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler
     inline unsigned char get_cached_height(int x, int y);
@@ -98,22 +96,22 @@ class Terrain_map
     void load_chunk(int i, int j);      //only entry point for loading
     void unload_chunk(int i, int j);    //only entry point for unloading
     
-#if DC_CLIENT
+    #if DC_CLIENT
     bool chunk_loaded(int x, int y, int z); //checks if chunk is non null
-#endif
+    #endif
     
-#if TERRAIN_MAP_FORCE_INLINE
+    #if TERRAIN_MAP_FORCE_INLINE
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
 
     inline CubeID get_block(int x, int y, int z) __attribute((always_inline));
     inline void set_block(int x, int y, int z, CubeID cube_id) __attribute((always_inline));
-#else
+    #else
     struct MAP_ELEMENT get_element(int x, int y, int z);
     void set_element(int x, int y, int z, struct MAP_ELEMENT element);
     CubeID get_block(int x, int y, int z);
     void set_block(int x, int y, int z, CubeID cube_id);
-#endif
+    #endif
 
     int get_damage(int x, int y, int z);
 

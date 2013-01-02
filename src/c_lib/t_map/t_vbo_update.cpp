@@ -47,15 +47,14 @@ float light_lookup[16]; //how fast light decays
 
 void t_vbo_update_init()
 {
-    vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-    vlist_scratch_1 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    vlist_scratch_0 = (struct Vertex*)calloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4, sizeof(struct Vertex));
+    vlist_scratch_1 = (struct Vertex*)calloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4, sizeof(struct Vertex));
 
-    SIDE_BUFFER_ARRAY = (struct SIDE_BUFFER**)malloc(SIDE_BUFFER_ARRAY_SIZE * sizeof(struct SIDE_BUFFER*));
-    SIDE_BUFFER_INDEX = (int*)malloc(SIDE_BUFFER_ARRAY_SIZE * sizeof(int));
+    SIDE_BUFFER_ARRAY = (struct SIDE_BUFFER**)calloc(SIDE_BUFFER_ARRAY_SIZE, sizeof(struct SIDE_BUFFER*));
+    SIDE_BUFFER_INDEX = (int*)calloc(SIDE_BUFFER_ARRAY_SIZE, sizeof(int));
 
-    const int b_size = (1+(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT/2))*sizeof(struct SIDE_BUFFER);
-    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_ARRAY[i] = (struct SIDE_BUFFER*) malloc(b_size);
-    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
+    const int b_size = (1+(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT/2));
+    for(int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_ARRAY[i] = (struct SIDE_BUFFER*) calloc(b_size, sizeof(struct SIDE_BUFFER));
 
     init_pallete();
 
@@ -63,7 +62,6 @@ void t_vbo_update_init()
     {
         light_lookup[i] = 0.10 + 0.90f* ((float)(i))/15.0;
     }
-
 }
 
 void t_vbo_update_end()
@@ -233,16 +231,16 @@ const char _pallet[ 3*(_pallet_num) ] =
 const int _pallet_num = 1;
 const char _pallet[ 3*(_pallet_num) ] = 
 {
-    (char)0xff, (char)0xff, (char)0xff
+    (char)0xFF, (char)0xFF, (char)0xFF
 /*
     0x3d, 0x52,0x5e,
     0xa0, 0xa0,0xa0,
 */  
     //0x00, 0x32,0x64,
-    //0xff, 0xff,0xff,
+    //0xFF, 0xFF,0xFF,
     //0xa0, 0x64,0x32,
 
-    //0xff,0xff,0xff,
+    //0xFF,0xFF,0xFF,
     //0x57, 0x6e,0x62,
     //0x6d,0x8e, 0x86,
     //0x94,0xb2,0xbb,
@@ -292,7 +290,7 @@ static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x
     
     for(int i=0 ;i <4; i++)
     {
-        v_list[offset+i].color = 0xffffffff;
+        v_list[offset+i].color = 0XFFFFFFFF;
     }
 }
 
@@ -467,15 +465,8 @@ void generate_vertex_list(struct Vertex* vlist)
     for(int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
     {
         struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
-
-        int x = sb.x;
-        int y = sb.y;
-        int z = sb.z;
-
         struct MAP_ELEMENT element = sb.element;
-
-        push_quad1(vlist, offset, x,y,z, side, element);
-
+        push_quad1(vlist, offset, sb.x, sb.y, sb.z, side, element);
         offset += 4;
     }
 }

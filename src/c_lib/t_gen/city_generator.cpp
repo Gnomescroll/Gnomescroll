@@ -237,49 +237,50 @@ void generate_skyscraper(int x, int y, int z, int size, int height, int floors, 
     int maxx = x + randrange(randomness * -1, randomness) + size;
     int maxy = y + randrange(randomness * -1, randomness) + size;
     int maxz = z + height + randrange(randomness * -1, randomness);
-    maxz = GS_MIN(maxz, t_map::map_dim.z);
+    maxz = GS_MIN(maxz, t_map::map_dim.z-1);
 
-    int count = 1;
     generate_area(x, y, z, maxx, maxy, z, red); //generate the floor
     generate_area(x, y, z + 1, maxx, y, maxz - 1, purple); //make walls
     generate_area(x, y, z + 1, x, maxy, maxz - 1, purple);
     generate_area(maxx, y, z + 1, maxx, maxy, maxz - 1, purple);
     generate_area(x, maxy, z + 1, maxx, maxy, maxz - 1, purple);
     generate_area(x, y, maxz, maxx, maxy, maxz, green); //generate the roof
-    while (count <= partitions)
+
+    for (int count=1; count<=partitions; count++)
     {
         generate_area(x + (x + maxx) / 2 / partitions * count, y + 1, z + 1, x + (x + maxx) / 2 / partitions * count, maxy - 1, maxz - 1, green); //generate partitions
         degenerate_area(x + (x + maxx) / 2 / partitions * count, y + randomness, z + 1, x + (x + maxx) / 2 / partitions * count, maxy - randomness, maxz - 1); //make entrances to rooms
         count++;
     }
-    count = 1;
-    while (count <= partitions)
+
+    for (int count=1; count<=partitions; count++)
     {
         generate_area(x + 1, y + (y + maxy) / 2 / partitions * count, z + 1, maxx - 1, y + (y + maxy) / 2 / partitions * count, maxz - 1, green); //generate partitions on y axis
         degenerate_area(x + randomness, y + (y + maxy) / 2 / partitions * count, z + 1, maxx - randomness, y + (y + maxy) / 2 / partitions * count, maxz - 1); //make entrances to rooms
-        count++;
     }
-    count = 1;
-    while (count < floors)
+
+    for (int count=1; count<floors; count++)
     {
         generate_area(x + 1, y + 1, (z + (maxz - z) / (floors - 1)) * count, maxx - 1, maxy - 1, z + (maxz - z) / (floors - 1) * count, green); //generate the floors above ground
         degenerate_area(x + 1, y + 1, (z + (maxz - z) / (floors - 1)) * count, x + randomness, y + randomness, z + (maxz - z) / (floors - 1) * count); //degenerate entrances to upper floors
-        count++;
     }
-    count = 1;
-    while (count < floors)
+
+    for (int count=1; count<floors; count++)
     {
-        t_map::set(x + 2, y + 2, (z + (maxz - z) / (floors - 1)) * count + 1, red); //generate computer desks on each floor
-        t_map::set(x + 2, y + 2, (z + (maxz - z) / (floors - 1)) * count + 2, computer); //generate computers on the desks
-        count++;
+        int cz = (z + (maxz - z) / (floors - 1)) * count + 1;
+        cz = GS_MIN(maxz, t_map::map_dim.z-2);
+        t_map::set(x + 2, y + 2, cz, red); //generate computer desks on each floor
+        t_map::set(x + 2, y + 2, cz+1, computer); //generate computers on the desks
     }
-    count = 1;
-    while (count < floors)
+
+    for (int count=1; count<floors; count++)
     {
-        t_map::set(x + 8, y + 8, (z + (maxz - z) / (floors - 1)) * count + 1, battery); //generate a battery for "powering" the fridge above
-        generate_area(x + 8, y + 8, (z + (maxz - z) / (floors - 1)) * count + 2, x + 8, y + 8, (z + (maxz - z) / (floors - 1)) * count + 2, cryofreezer); //generate the "fridge"-a cryofreezer
-        count++;
+        int cz = (z + (maxz - z) / (floors - 1)) * count + 1;
+        cz = GS_MIN(maxz, t_map::map_dim.z-2);
+        t_map::set(x + 8, y + 8, cz, battery); //generate a battery for "powering" the fridge above
+        generate_area(x + 8, y + 8, cz+1, x + 8, y + 8, cz+1, cryofreezer); //generate the "fridge"-a cryofreezer
     }
+
     degenerate_area(x + randomness, y, z + 1, maxx - randomness, y, z + 3); //create an exit
 }
 
