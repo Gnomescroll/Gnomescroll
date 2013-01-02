@@ -136,11 +136,11 @@ inline void add_badge_StoC::handle()
 void register_badges()
 {
     using TextureSheetLoader::badge_texture_alias;
-    SpriteSheet b2 = badge_texture_alias(MEDIA_PATH "sprites/badges/badges02.png");
+    SpriteSheet b1 = badge_texture_alias(MEDIA_PATH "sprites/badges/badges01.png");
     
-    add_badge("debug", b2, 3, 1);
-    add_badge("developer", b2, 2, 1);
-    add_badge("paid_alpha_user", b2, 1, 1);
+    add_badge("debug", b1, 3, 1);
+    add_badge("developer", b1, 2, 1);
+    add_badge("paid_alpha_user", b1, 1, 1);
 
     #if DC_CLIENT
     TextureSheetLoader::init_badge_texture();
