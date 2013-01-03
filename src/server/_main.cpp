@@ -22,7 +22,7 @@ void default_map_gen()
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
     t_gen::place_native_plants();
-    
+
     map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_id("bedrock"));
 }
 
@@ -118,7 +118,7 @@ void init_world()
             t_map::set_fast(x,y,z, plasmagen);
         }
     }
-    
+
     //t_gen::generate_city();
 
     srand((unsigned int)time(NULL));
@@ -180,14 +180,16 @@ void tick()
         Components::healer_component_list->call();
         ServerState::check_agents_at_base();
     }
-    //if (counter % 30000 == 1)
-    //{
-        //t_gen::meteor_fall();
-    //}
-    //if (counter % 30000 == 15000)
-    //{
-        //t_gen::meteor_shower();
-    //}
+    if (counter % 30000 == 1)
+    {
+        if(randrange(1, 5)==1)
+        t_gen::meteor_fall();
+    }
+    if (counter % 30000 == 15000)
+    {
+        if (randrange(1, 3)==1)
+        t_gen::meteor_shower();
+    }
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
@@ -200,7 +202,7 @@ void tick()
         t_mech::tick(); //t_mech growth timers
     if(counter % 30 == 0)
         t_mech::floating_removal_tick();
-    
+
     t_map::environment_process_tick(); //refresh regolith etc...
 
     Auth::update(); // do it here because i need constant timer
