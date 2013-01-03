@@ -109,8 +109,8 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
         return;
     }
 
-    for (int i=0; i<N_PLAYER_CONTAINERS; i++)
-        if (ItemContainer::player_container_types[i] != AGENT_HAND) // TODO -- allow hand loading eventually
+    for (size_t i=0; i<N_PLAYER_CONTAINERS; i++)
+        if (ItemContainer::player_container_types[i] != ItemContainer::name::hand) // TODO -- allow hand loading eventually
             if (!serializer::load_player_container(serializer_id, ItemContainer::player_container_types[i]))
                 this->deserializer_failed();
     if (!serializer::end_player_load(serializer_id))
@@ -163,7 +163,7 @@ void NetPeerManager::was_deserialized()
     {
         if (Options::auth)
         {
-            int n_containers = 0;
+            size_t n_containers = 0;
             ItemContainerID* containers = ItemContainer::get_player_containers(agent->id, &n_containers);
             GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
             if (n_containers != N_PLAYER_CONTAINERS)

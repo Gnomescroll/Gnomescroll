@@ -11,14 +11,21 @@ typedef ContainerActionType (*decision_tree) (ItemContainerID, int);
 typedef ContainerActionType (*decision_tree) (AgentID, ClientID, ItemContainerID, int);
 #endif                              // agent, client, container, slot
 
+typedef ItemContainer::ItemContainerInterface* (*container_create) (ItemContainerType, ItemContainerID);
+
+namespace ItemContainer
+{
+// forward declaration
+bool is_valid_container_name(const char* name);
+}
 
 class ContainerAttributes
 {
     public:
-    
+        ItemContainerType type;
+        
         bool loaded;
 
-        ItemContainerType type;
         char name[DAT_NAME_MAX_LENGTH+1];
 
         int xdim, ydim;
@@ -36,11 +43,11 @@ class ContainerAttributes
         send_decision alpha_packet_alt;
         send_decision beta_packet_alt;
 
+        container_create create_function;
+
     void set_name(const char* name)
     {
-        size_t len = strlen(name);
-        GS_ASSERT(len <= DAT_NAME_MAX_LENGTH);
-        if (len > DAT_NAME_MAX_LENGTH) return;
+        IF_ASSERT(!ItemContainer::is_valid_container_name(name)) return;
         strcpy(this->name, name);
     }
 
@@ -66,7 +73,6 @@ class ContainerAttributes
     void init()
     {
         this->loaded = false;
-        this->type = NULL_CONTAINER_TYPE;
         memset(this->name, 0, sizeof(this->name));
         this->xdim = 0;
         this->ydim = 0;

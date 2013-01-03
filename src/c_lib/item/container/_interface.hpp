@@ -6,13 +6,7 @@
 namespace ItemContainer
 {
 
-const ItemContainerType player_container_types[N_PLAYER_CONTAINERS] = {
-    AGENT_HAND,
-    AGENT_TOOLBELT,
-    AGENT_INVENTORY,
-    AGENT_SYNTHESIZER,
-    AGENT_ENERGY_TANKS
-    };
+ItemContainerType player_container_types[N_PLAYER_CONTAINERS] = { NULL_CONTAINER_TYPE };
 
 void init();
 void teardown();
@@ -77,7 +71,7 @@ ItemContainerID get_agent_energy_tanks(AgentID agent_id);
 
 // returns array of assigned container ids for agent
 // the array does not need to be freed and is valid until the next call to this method 
-ItemContainerID* get_player_containers(AgentID agent_id, int* n_containers);
+ItemContainerID* get_player_containers(AgentID agent_id, size_t* n_containers);
 
 ItemID get_agent_toolbelt_item(AgentID agent_id, int slot);
 

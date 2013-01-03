@@ -211,7 +211,7 @@ class ItemContainerHandUI: public ItemContainerUIInterface
 
     void init(ItemContainerType type, int xdim, int ydim)
     {
-        GS_ASSERT(type == AGENT_HAND);
+        GS_ASSERT(type == name::hand);
         ItemContainerUIInterface::init(type, xdim, ydim);
     }
 
@@ -240,7 +240,7 @@ class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
         this->energy_tank_type = Item::get_item_type("energy_tank");
         GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
 
-        GS_ASSERT(type == AGENT_ENERGY_TANKS);
+        GS_ASSERT(type == name::energy_tanks);
         this->type = type;
         this->xdim = xdim;
         this->ydim = ydim;

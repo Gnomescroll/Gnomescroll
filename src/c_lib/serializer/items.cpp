@@ -188,13 +188,13 @@ bool create_container_items_from_data(ItemContainerID container_id)
     return true;
 }
 
-bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, int n_containers)
+bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, size_t n_containers)
 {
-    for (int i=0; i<n_containers; i++)
+    for (size_t i=0; i<n_containers; i++)
         IF_ASSERT(!isValid(containers[i])) return false;
 
     MALLOX(ItemContainerType, container_types, n_containers);
-    for (int i=0; i<n_containers; i++)
+    for (size_t i=0; i<n_containers; i++)
     {
         ItemContainerType container_type = ItemContainer::get_container_type(containers[i]);
         if (container_type == NULL_CONTAINER_TYPE) return false;
@@ -228,7 +228,7 @@ bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* 
         if (item->location == IL_CONTAINER)
         {
             ItemContainerID container_id = NULL_CONTAINER;
-            for (int j=0; j<n_containers; j++)
+            for (size_t j=0; j<n_containers; j++)
                 if (container_types[j] == data->item_container_type)
                 {
                     container_id = containers[j];

@@ -74,7 +74,7 @@ void ItemList::decay_gas()
             GS_ASSERT(container != NULL);
             if (container == NULL) continue;
             // ignore cryofreezer items
-            if (container->type == CONTAINER_TYPE_CRYOFREEZER_SMALL)
+            if (container->type == ItemContainer::name::cryofreezer_small)
             {
                 item->gas_decay = attr->gas_lifetime;    // reset decay
                 continue;

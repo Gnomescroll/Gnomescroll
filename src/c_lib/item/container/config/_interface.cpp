@@ -41,6 +41,7 @@ namespace ItemContainer
 /* Configuration Loader */ 
 
 static class ContainerAttributes* c = NULL;
+static int _current_id = 0;
 
 static void add_container()
 {
@@ -49,17 +50,18 @@ static void add_container()
     c->loaded = true;
 }
 
-static void container_def(ItemContainerType type, const char* name)
+static void container_def(const char* name)
 {   // Don't call this directly
-    IF_ASSERT(!isValid(type))
+    IF_ASSERT(_current_id >= MAX_CONTAINER_TYPES)
     {
         GS_ASSERT_ABORT(false);
         return;
     }
     if (c != NULL) add_container();
-    c = &container_attributes[type];
-    c->type = type;
+    c = &container_attributes[_current_id];
+    c->type = (ItemContainerType)_current_id;
     c->set_name(name);
+    _current_id++;
 }
 
 // TODO -- container names should be inherited from the block names
@@ -70,25 +72,22 @@ static void container_def(ItemContainerType type, const char* name)
 // just make sure auto-mapping still works without supervision for override item defs
 // of blocks
 
-void null_container_def(const char* name)
+static void null_container_def(const char* name)
 {
     static int i=0;
     GS_ASSERT_ABORT(!(i++));
-    container_def(NULL_CONTAINER_TYPE, name); 
+    container_def(name); 
 }
 
-void agent_container_def(ItemContainerType type, const char* name)
+static void agent_container_def(const char* name)
 {
-    container_def(type, name);
+    container_def(name);
     c->attached_to_agent = true;
 }
 
-void block_container_def(ItemContainerType type)
+static void block_container_def(const char* name)
 {
-    const char* name = t_map::get_cube_name_for_container(type);
-    GS_ASSERT_ABORT(name != NULL);
-    if (name == NULL) return;
-    container_def(type, name);  // name will be set by block later
+    container_def(name);
     c->attached_to_agent = false;
 }
         
@@ -106,28 +105,31 @@ static void register_settings()
     c->alpha_packet = &send_no_container_alpha_action;
     c->beta_packet = &send_no_container_beta_action;
 
-    agent_container_def(AGENT_HAND, "hand");
+    agent_container_def("hand");
     c->xdim = 1;
     c->ydim = 1;
+    c->create_function = &new_hand;
     // there are no alpha/beta actions for hand; it has a special role in the manipulation of inventory
 
-    agent_container_def(AGENT_INVENTORY, "inventory");
+    agent_container_def("inventory");
     c->xdim = 6;
     c->ydim = 3;
     c->alpha_action = &alpha_action_decision_tree;
     c->beta_action = &beta_action_decision_tree;
     c->alpha_packet = &send_container_alpha_action;
     c->beta_packet = &send_container_beta_action;
+    c->create_function = &new_container;
 
-    agent_container_def(AGENT_TOOLBELT, "toolbelt");
+    agent_container_def("toolbelt");
     c->xdim = 9;
     c->ydim = 1;
     c->alpha_action = &alpha_action_decision_tree;
     c->beta_action = &beta_action_decision_tree;
     c->alpha_packet = &send_container_alpha_action;
     c->beta_packet = &send_container_beta_action;
+    c->create_function = &new_container;
 
-    agent_container_def(AGENT_SYNTHESIZER, "synthesizer");
+    agent_container_def("synthesizer");
     c->xdim = 1;
     c->ydim = 1;
     c->alt_xdim = 5;
@@ -140,24 +142,27 @@ static void register_settings()
     c->beta_action_alt = &synthesizer_shopping_beta_action_decision_tree;
     c->alpha_packet_alt = &send_purchase_item_action;
     c->beta_packet_alt = &send_purchase_item_action;
+    c->create_function = &new_synthesizer;
 
-    agent_container_def(AGENT_ENERGY_TANKS, "energy_tanks");
+    agent_container_def("energy_tanks");
     c->xdim = 4;
     c->ydim = 1;
     c->alpha_action = &alpha_action_decision_tree;
     c->beta_action = &beta_action_decision_tree;
     c->alpha_packet = &send_container_alpha_action;
     c->beta_packet = &send_container_beta_action;
+    c->create_function = &new_energy_tanks;
     
-    block_container_def(CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
+    block_container_def("storage_block_small");
     c->xdim = 3;
     c->ydim = 3;
     c->alpha_action = &alpha_action_decision_tree;
     c->beta_action = &beta_action_decision_tree;
     c->alpha_packet = &send_container_alpha_action;
     c->beta_packet = &send_container_beta_action;
+    c->create_function = &new_synthesizer;
 
-    block_container_def(CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
+    block_container_def("crafting_bench_basic");
     c->xdim = 4;
     c->ydim = 1;
     c->alt_xdim = 1;
@@ -170,16 +175,18 @@ static void register_settings()
     c->beta_action_alt = &craft_output_beta_action_decision_tree;
     c->alpha_packet_alt = &send_craft_item_action;
     c->beta_packet_alt = &send_craft_item_action;
+    c->create_function = &new_crafting_bench;
 
-    block_container_def(CONTAINER_TYPE_CRYOFREEZER_SMALL);
+    block_container_def("cryofreezer_small");
     c->xdim = 2;
     c->ydim = 2;
     c->alpha_action = &alpha_action_decision_tree;
     c->beta_action = &beta_action_decision_tree;
     c->alpha_packet = &send_container_alpha_action;
     c->beta_packet = &send_container_beta_action;
+    c->create_function = &new_cryofreezer;
 
-    block_container_def(CONTAINER_TYPE_SMELTER_ONE);
+    block_container_def("smelter_basic");
     c->xdim = 1;
     c->ydim = 1;
     c->alt_xdim = 1;
@@ -188,8 +195,9 @@ static void register_settings()
     c->beta_action = &smelter_beta_action_decision_tree;
     c->alpha_packet = &send_smelter_alpha_action;
     c->beta_packet = &send_smelter_beta_action;
+    c->create_function = &new_smelter;
 
-    block_container_def(CONTAINER_TYPE_CRUSHER);
+    block_container_def("crusher");
     c->xdim = 1;
     c->ydim = 1;
     c->alpha_action = &crusher_alpha_action_decision_tree;
@@ -198,6 +206,7 @@ static void register_settings()
     c->beta_packet = &send_crusher_beta_action;
     c->alpha_action_alt = &crusher_crush_alpha_action_decision_tree;
     c->alpha_packet_alt = &send_crusher_crush_action;
+    c->create_function = &new_crusher;
   
     add_container();   // finalize
 }
@@ -239,7 +248,7 @@ static void validate_settings()
     {
         class ContainerAttributes* c = &container_attributes[i];
         if (!c->loaded) continue;
-        if (c->type == NULL_CONTAINER_TYPE)
+        if (strcmp(c->name, "none") == 0)
         {
             n_none++;
             continue;
@@ -248,7 +257,8 @@ static void validate_settings()
         GS_ASSERT_ABORT(c->xdim > 0);
         GS_ASSERT_ABORT(c->ydim > 0);
         GS_ASSERT_ABORT(c->max_dim() <= MAX_CONTAINER_SIZE);
-        if (c->type != AGENT_HAND)
+        GS_ASSERT_ABORT(c->create_function != NULL);
+        if (strcmp(c->name, "hand") != 0)
         {
             GS_ASSERT_ABORT(c->alpha_action != NULL);
             GS_ASSERT_ABORT(c->beta_action != NULL);
@@ -332,7 +342,11 @@ static void validate_settings()
 void save_container_names()
 {
     #if DC_SERVER || !PRODUCTION
-    bool saved = save_active_names(container_attributes, MAX_CONTAINER_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH CONTAINER_NAME_FILE_ACTIVE);
+    bool saved = save_active_names(
+        container_attributes,
+        MAX_CONTAINER_TYPES,
+        DAT_NAME_MAX_LENGTH,
+        DATA_PATH CONTAINER_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = container_name_map->save(DATA_PATH CONTAINER_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);
@@ -365,6 +379,7 @@ void teardown_config()
 void load_config()
 {
     register_settings();
+    name::unpack();
 }
 
 void end_config()
@@ -379,10 +394,9 @@ void end_config()
 ItemContainerType get_type(const char* name)
 {
     for (int i=0; i<MAX_CONTAINER_TYPES; i++)
-    {
-        if (container_attributes[i].loaded && strcmp(container_attributes[i].name, name) == 0)
-            return container_attributes[i].type;
-    }
+        if (container_attributes[i].loaded
+         && strcmp(container_attributes[i].name, name) == 0)
+            return (ItemContainerType)i;
     return NULL_CONTAINER_TYPE;
 }
 
@@ -403,80 +417,78 @@ class ContainerAttributes* get_attr(const char* name)
 class ContainerAttributes* get_attr(ItemContainerType type)
 {
     IF_ASSERT(!isValid(type)) return NULL;
-    if (!container_attributes[type].loaded) return NULL;
+    IF_ASSERT(!container_attributes[type].loaded) return NULL;
     return &container_attributes[type];
 }
 
 unsigned int get_container_max_slots(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL)return 0;
     return attr->max_dim();
 }
 
 int get_container_xdim(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL)return 0;
     return attr->xdim;
 }
 
 int get_container_ydim(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL)return 0;
     return attr->ydim;
 }
 
 int get_container_alt_max_slots(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL)return 0;
     return attr->max_alt_dim();
 }
 
 int get_container_alt_xdim(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL)return 0;
     return attr->alt_xdim;
 }
 
 int get_container_alt_ydim(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL)return 0;
     return attr->alt_ydim;
 }
 
 bool container_type_is_attached_to_agent(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return false;
+    IF_ASSERT(attr == NULL)return false;
     return attr->attached_to_agent;
 }
 
 bool container_type_is_block(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return false;
+    IF_ASSERT(attr == NULL)return false;
     return !attr->attached_to_agent;
 }
 
 const char* get_container_name(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL;
+    IF_ASSERT(attr == NULL)return NULL;
     return attr->name;
+}
+
+container_create get_container_create_function(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    IF_ASSERT(attr == NULL) return NULL;
+    return attr->create_function;
 }
 
 bool is_valid_container_name(const char* name)

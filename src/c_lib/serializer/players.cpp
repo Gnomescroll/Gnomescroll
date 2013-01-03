@@ -43,10 +43,10 @@ bool save_remote_player_data()
         if (!client->loaded) continue;
         IF_ASSERT(client->user_id == NULL_USER_ID || client->agent_id == NULL_AGENT) continue;
         save_player(client->user_id, client->agent_id);
-        int n_containers = 0;
+        size_t n_containers = 0;
         ItemContainerID* containers = ItemContainer::get_player_containers(client->agent_id, &n_containers);
         GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
-        for (int j=0; j<n_containers; j++)
+        for (size_t j=0; j<n_containers; j++)
             // TODO -- enable hand saving
             if (containers[j] != ItemContainer::get_agent_hand(client->agent_id))
                 save_player_container(client->client_id, containers[j]);
@@ -64,7 +64,7 @@ bool PlayerLoadData::signal_if_loaded()
         return false;
     }
     if (!this->player_data_loaded) return false;
-    for (int i=0; i<this->n_containers_expected; i++)
+    for (size_t i=0; i<this->n_containers_expected; i++)
         IF_ASSERT(!this->containers_loaded[i])
         {
             log_player_load_error("signal_if_loaded(): not all containers actually loaded", NULL,
@@ -197,7 +197,7 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
     char item_buf[ITEM_LINE_LENGTH+1] = {'\0'};
 
     ItemLocationType location = IL_NOWHERE;
-    if (container_load_data->container_type == AGENT_HAND)
+    if (container_load_data->container_type == ItemContainer::name::hand)
         location = IL_HAND;
     else
         location = IL_CONTAINER;
@@ -587,7 +587,7 @@ bool load_player_container(int player_load_id, ItemContainerType container_type)
 {
     if (!Options::serializer || !Options::auth) return true;
 
-    GS_ASSERT(container_type != AGENT_HAND);
+    GS_ASSERT(container_type != ItemContainer::name::hand);
 
     class PlayerLoadData* player_data = player_load_data_list->get(player_load_id);
     IF_ASSERT(player_data == NULL) return false;

@@ -336,28 +336,7 @@ const char USER_COUNT_FMT[] =
 
 // The following are not safe to store -- they are only valid per compilation. Only strings are safe
 
-const char* get_player_container_location_name(ItemContainerType container_type)
-{
-    switch (container_type)
-    {        
-        case AGENT_HAND:
-            return PLAYER_HAND_LOCATION_NAME;
-        case AGENT_TOOLBELT:
-            return PLAYER_TOOLBELT_LOCATION_NAME;
-        case AGENT_INVENTORY:
-            return PLAYER_INVENTORY_LOCATION_NAME;
-        case AGENT_SYNTHESIZER:
-            return PLAYER_SYNTHESIZER_LOCATION_NAME;
-        case AGENT_ENERGY_TANKS:
-            return PLAYER_ENERGY_TANKS_LOCATION_NAME;
-            
-        default:
-            GS_ASSERT(false);
-            return NULL;
-    }
-    GS_ASSERT(false);
-    return NULL;
-}
+const char* get_player_container_location_name(ItemContainerType container_type);
 
 inline bool is_valid_location_name_char(char c)
 {

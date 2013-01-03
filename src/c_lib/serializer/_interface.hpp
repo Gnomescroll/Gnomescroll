@@ -71,7 +71,7 @@ bool end_player_load(int player_load_id);
 // Called from outside this module. NetPeerManager is the only thing that knows about true failure
 void player_load_failed();
 
-bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, int n_containers);
+bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, size_t n_containers);
 
 bool save_containers();
 
@@ -95,7 +95,7 @@ bool end_player_load(int player_load_id) { return true; }
 
 void player_load_failed() {}
 
-bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, int n_containers) { return true; }
+bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, size_t n_containers) { return true; }
 
 void wait_for_redis_replies() {}
 

@@ -59,9 +59,9 @@ class AgentSynthesizerUI : public UIElement
 
     void init()
     {
-        this->shopping_xdim = ItemContainer::get_container_alt_xdim(AGENT_SYNTHESIZER);
-        this->shopping_ydim = ItemContainer::get_container_alt_ydim(AGENT_SYNTHESIZER);
-        this->xdim = shopping_xdim + ItemContainer::get_container_xdim(AGENT_SYNTHESIZER);
+        this->shopping_xdim = ItemContainer::get_container_alt_xdim(ItemContainer::name::synthesizer);
+        this->shopping_ydim = ItemContainer::get_container_alt_ydim(ItemContainer::name::synthesizer);
+        this->xdim = shopping_xdim + ItemContainer::get_container_xdim(ItemContainer::name::synthesizer);
         this->ydim = shopping_ydim;
         
         this->render_width = this->cell_size * this->xdim;

@@ -2,6 +2,7 @@
 
 #include <t_map/config/_interface.hpp>
 #include <SDL/texture_sheet_loader.hpp>
+#include <item/container/config/names.hpp>
 
 namespace t_map
 {
@@ -115,7 +116,7 @@ void load_block_dat()
     side_texture(E, error_block);
     push_texture();
 
-    cube_def_container("storage_block_small", CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
+    cube_def_container("storage_block_small");
     iso_texture(    c1, 13,4);
     side_texture(T, c1, 1,3);
     side_texture(B, c1, 1,3);
@@ -123,7 +124,7 @@ void load_block_dat()
     push_oriented_texture();
     set_max_damage(128);
 
-    cube_def_container("crafting_bench_basic", CONTAINER_TYPE_CRAFTING_BENCH_UTILITY);
+    cube_def_container("crafting_bench_basic");
     iso_texture(    c1, 3,4);
     side_texture(T, c1, 2,5);
     side_texture(B, c1, 3,6);
@@ -131,7 +132,7 @@ void load_block_dat()
     push_oriented_texture();
     set_max_damage(128);
 
-    cube_def_container("smelter_basic", CONTAINER_TYPE_SMELTER_ONE);
+    cube_def_container("smelter_basic");
     iso_texture(c1, 14,2);
     side_texture(T, c1, 14,2);
     side_texture(B, c1, 14,2);
@@ -141,7 +142,7 @@ void load_block_dat()
     push_oriented_texture();
     set_max_damage(128);
 
-    cube_def_container("cryofreezer_small", CONTAINER_TYPE_CRYOFREEZER_SMALL);
+    cube_def_container("cryofreezer_small");
     iso_texture(c1, 14,5);
     side_texture(T, c1, 14,6);
     side_texture(B, c1, 14,6);
@@ -149,7 +150,7 @@ void load_block_dat()
     push_oriented_texture();
     set_max_damage(128);
 
-    cube_def_container("crusher", CONTAINER_TYPE_CRUSHER);
+    cube_def_container("crusher");
     iso_texture(c1, 11,7);
     side_texture(T, c1, 11,5);
     side_texture(B, c1, 11,5);

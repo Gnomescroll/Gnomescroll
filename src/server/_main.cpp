@@ -119,7 +119,7 @@ void init_world()
         }
     }
     
-    t_gen::generate_city();
+    //t_gen::generate_city();
 
     srand((unsigned int)time(NULL));
 }
@@ -180,14 +180,14 @@ void tick()
         Components::healer_component_list->call();
         ServerState::check_agents_at_base();
     }
-    if (counter % 30000 == 1)
-    {
-        t_gen::meteor_fall();
-    }
-    if (counter % 30000 == 15000)
-    {
-        t_gen::meteor_shower();
-    }
+    //if (counter % 30000 == 1)
+    //{
+        //t_gen::meteor_fall();
+    //}
+    //if (counter % 30000 == 15000)
+    //{
+        //t_gen::meteor_shower();
+    //}
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);

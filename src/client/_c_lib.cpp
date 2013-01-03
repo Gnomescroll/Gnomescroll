@@ -338,9 +338,6 @@ int init_c_lib(int argc, char* argv[])
     HudFont::init();
     HudCubeSelector::init();
 
-    Item::init();
-    ItemContainer::init();
-
     t_map::init_t_map();
 
     // DAT LOADING
@@ -350,13 +347,13 @@ int init_c_lib(int argc, char* argv[])
     t_mech::init_properties();
     Entities::init_entity_dat();
 
+    ItemContainer::load_config();
     t_map::load_block_dat();
     t_map::init_for_draw();
     t_map::blit_block_item_sheet();
     t_mech::load_mech_dat();
     Entities::load_entity_dat();
     Entities::end_entity_dat();
-    ItemContainer::load_config();
     ItemContainer::end_config();
     Item::init_properties();
     Item::load_item_dat();
@@ -372,6 +369,8 @@ int init_c_lib(int argc, char* argv[])
     Item::load_smelting_dat();
 
     // This block MUST come after dat loaders. possibly others
+    Item::init();
+    ItemContainer::init();
     Toolbelt::init();   // toolbelt init depends on item dat being loaded
     TextureSheetLoader::init_greyscale();   //item sheet grey scale textures
     TextureSheetLoader::init_item_texture();

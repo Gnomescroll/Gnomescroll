@@ -1,9 +1,31 @@
 #include "constants.hpp"
 
 #include <item/container/config/_state.hpp>
+#include <item/container/config/_interface.hpp>
 
 namespace serializer
 {
+
+const char* get_player_container_location_name(ItemContainerType container_type)
+{
+    if (container_type == ItemContainer::name::hand)
+        return PLAYER_HAND_LOCATION_NAME;
+    else
+    if (container_type == ItemContainer::name::toolbelt)
+        return PLAYER_TOOLBELT_LOCATION_NAME;
+    else
+    if (container_type == ItemContainer::name::inventory)
+        return PLAYER_INVENTORY_LOCATION_NAME;
+    else
+    if (container_type == ItemContainer::name::synthesizer)
+        return PLAYER_SYNTHESIZER_LOCATION_NAME;
+    else
+    if (container_type == ItemContainer::name::energy_tanks)
+        return PLAYER_ENERGY_TANKS_LOCATION_NAME;
+
+    GS_ASSERT(false);
+    return NULL;
+}
 
 void verify_config()
 {
@@ -15,11 +37,11 @@ void verify_config()
     GS_ASSERT_ABORT(strcmp(PLAYER_SYNTHESIZER_LOCATION_NAME,  "player:synthesizer")  == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_ENERGY_TANKS_LOCATION_NAME, "player:energy_tanks") == 0);
 
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_HAND),         "player:hand")         == 0);
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_TOOLBELT),     "player:toolbelt")     == 0);
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_INVENTORY),    "player:inventory")    == 0);
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_SYNTHESIZER),  "player:synthesizer")  == 0);
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(AGENT_ENERGY_TANKS), "player:energy_tanks") == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::hand),         "player:hand")         == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::toolbelt),     "player:toolbelt")     == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::inventory),    "player:inventory")    == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::synthesizer),  "player:synthesizer")  == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::energy_tanks), "player:energy_tanks") == 0);
 
     // check that all the expected containers are loaded
     // this *could* be in item/container/config, but since the only reason this matters
@@ -40,27 +62,20 @@ void verify_config()
     {
         ContainerAttributes* attr = &ItemContainer::container_attributes[i];
         if (attr == NULL || !attr->loaded || !attr->attached_to_agent) continue;
-        switch (attr->type)
-        {
-            case AGENT_HAND:
-                agent_hand_found         = true;
-                break;
-            case AGENT_TOOLBELT:
-                agent_toolbelt_found     = true;
-                break;
-            case AGENT_INVENTORY:
-                agent_inventory_found    = true;
-                break;
-            case AGENT_SYNTHESIZER:
-                agent_synthesizer_found  = true;
-                break;
-            case AGENT_ENERGY_TANKS:
-                agent_energy_tanks_found = true;
-                break;
-
-            default:
-                break;
-        }
+        if (attr->type == ItemContainer::name::hand)
+            agent_hand_found = true;
+        else
+        if (attr->type == ItemContainer::name::toolbelt)
+            agent_toolbelt_found = true;
+        else
+        if (attr->type == ItemContainer::name::inventory)
+            agent_inventory_found = true;
+        else
+        if (attr->type == ItemContainer::name::synthesizer)
+            agent_synthesizer_found = true;
+        else
+        if (attr->type == ItemContainer::name::energy_tanks)
+            agent_energy_tanks_found = true;
     }
 
     GS_ASSERT_ABORT(agent_inventory_found);

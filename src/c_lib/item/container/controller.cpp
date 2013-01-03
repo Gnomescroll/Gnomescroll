@@ -554,7 +554,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(AgentID agent_id, Cli
     #endif
     GS_ASSERT(container != NULL);
     if (container == NULL) return action;
-    GS_ASSERT(container->type = AGENT_SYNTHESIZER);
+    GS_ASSERT(container->type = name::synthesizer);
 
     // client was inside container, but not a slot
     // do nothing
@@ -881,7 +881,7 @@ ContainerActionType synthesizer_beta_action_decision_tree(AgentID agent_id, Clie
     ItemContainerInterface* container = get_container(id);
     #endif
     if (container == NULL) return action;
-    GS_ASSERT(container->type = AGENT_SYNTHESIZER);
+    GS_ASSERT(container->type = name::synthesizer);
     GS_ASSERT(container->is_valid_slot(slot));
     if (!container->is_valid_slot(slot)) return action;
 
@@ -1079,7 +1079,7 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(AgentID agen
     ItemContainerSynthesizer* container = (ItemContainerSynthesizer*)get_container(container_id);
     #endif
     if (container == NULL) return action;
-    GS_ASSERT(container->type == AGENT_SYNTHESIZER);
+    GS_ASSERT(container->type == name::synthesizer);
 
     GS_ASSERT(slot >= 0 && slot < container->alt_xdim*container->alt_ydim);
     if (slot < 0 || slot >= container->alt_xdim*container->alt_ydim)
@@ -1390,7 +1390,7 @@ ContainerActionType crusher_crush_alpha_action_decision_tree(AgentID agent_id, C
     #if DC_CLIENT
     ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return CONTAINER_ACTION_NONE;
-    if (container->type != CONTAINER_TYPE_CRUSHER) return CONTAINER_ACTION_NONE;
+    if (container->type != name::crusher) return CONTAINER_ACTION_NONE;
     ItemContainerCrusherUI* crusher = (ItemContainerCrusherUI*)container;
     int item_type = crusher->get_input_slot_type();
     if (item_type == NULL_ITEM_TYPE) return CONTAINER_ACTION_NONE;
@@ -1399,7 +1399,7 @@ ContainerActionType crusher_crush_alpha_action_decision_tree(AgentID agent_id, C
     #if DC_SERVER
     ItemContainerInterface* container = get_container(container_id);
     if (container == NULL) return CONTAINER_ACTION_NONE;
-    if (container->type != CONTAINER_TYPE_CRUSHER) return CONTAINER_ACTION_NONE;
+    if (container->type != name::crusher) return CONTAINER_ACTION_NONE;
     ItemContainerCrusher* crusher = (ItemContainerCrusher*)container;
     ItemID item_id = crusher->get_input_slot();
     if (item_id == NULL_ITEM) return CONTAINER_ACTION_NONE;

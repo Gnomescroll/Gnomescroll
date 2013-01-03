@@ -51,7 +51,6 @@ class assign_item_container_StoC: public FixedSizeReliableNetPacketToClient<assi
         inline void handle();
 };
 
-// Container Item
 class insert_item_in_container_StoC: public FixedSizeReliableNetPacketToClient<insert_item_in_container_StoC>
 {
     public:
@@ -67,7 +66,6 @@ class insert_item_in_container_StoC: public FixedSizeReliableNetPacketToClient<i
         }
         inline void handle();
 };
-
 
 class remove_item_from_container_StoC: public FixedSizeReliableNetPacketToClient<remove_item_from_container_StoC>
 {

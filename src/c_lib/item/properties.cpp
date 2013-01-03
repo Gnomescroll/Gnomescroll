@@ -41,7 +41,7 @@ void init_properties()
     smelting_recipe_array = new SmeltingRecipe[MAX_SMELTING_RECIPE];
 
     GS_ASSERT(synthesizer_item_array == NULL);
-    const int synth_slots = ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER);
+    const int synth_slots = ItemContainer::get_container_alt_max_slots(ItemContainer::name::synthesizer);
     GS_ASSERT_ABORT(synth_slots > 0);
     if (synth_slots <= 0) return;
     synthesizer_item_array = new SynthesizerItem[synth_slots];
@@ -253,7 +253,7 @@ int get_synthesizer_item(int xslot, int yslot)
 
 int get_synthesizer_item(int xslot, int yslot, int* cost)
 {
-    int max = ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER);
+    int max = ItemContainer::get_container_alt_max_slots(ItemContainer::name::synthesizer);
     for (int i=0; i<max; i++)
     {
         class SynthesizerItem* n = &synthesizer_item_array[i];
@@ -287,7 +287,7 @@ bool is_fuel(int item_type)
 
 bool is_smelter(ItemContainerType type)
 {
-    if (type == CONTAINER_TYPE_SMELTER_ONE) return true;
+    if (type == ItemContainer::name::smelter_basic) return true;
     return false;
 }
 

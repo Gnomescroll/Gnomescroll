@@ -5,6 +5,7 @@
 #include <item/common/enum.hpp>
 #include <item/common/constants.hpp>
 #include <item/properties.hpp>
+#include <item/container/config/_interface.hpp>
 
 namespace ItemContainer
 {
@@ -46,8 +47,7 @@ class ItemContainerInterface
 
         ItemID get_item(int slot)
         {
-            GS_ASSERT(this->is_valid_slot(slot));
-            if (!this->is_valid_slot(slot)) return NULL_ITEM;
+            IF_ASSERT(!this->is_valid_slot(slot)) return NULL_ITEM;
             return this->slot[slot];
         }
 
@@ -95,8 +95,7 @@ class ItemContainerInterface
 
         virtual bool can_insert_item(int slot, ItemID item_id)
         {
-            GS_ASSERT(this->is_valid_slot(slot));
-            if (!this->is_valid_slot(slot)) return false;
+            IF_ASSERT(!this->is_valid_slot(slot)) return false;
             if (item_id == NULL_ITEM) return false;
             return true;
         }
@@ -111,18 +110,15 @@ class ItemContainerInterface
 
         virtual bool can_be_opened_by(AgentID agent_id)
         {
-            GS_ASSERT(!this->attached_to_agent || this->owner != NULL_AGENT);  // agent should be assigned
-            if (this->attached_to_agent && this->owner != agent_id) return false;
+            IF_ASSERT(this->attached_to_agent && this->owner != agent_id) return false;
             return (this->owner == agent_id || this->owner == NULL_AGENT);
         }
         
         virtual bool lock(AgentID agent_id)
         {
             GS_ASSERT(isValid(agent_id));
-            GS_ASSERT(this->can_be_opened_by(agent_id));
-            if (!this->can_be_opened_by(agent_id)) return false;
-            GS_ASSERT(!this->attached_to_agent);
-            if (this->attached_to_agent) return false;
+            IF_ASSERT(!this->can_be_opened_by(agent_id)) return false;
+            IF_ASSERT(this->attached_to_agent) return false;
             this->owner = agent_id;
             return true;
         }
@@ -131,10 +127,8 @@ class ItemContainerInterface
         {
             GS_ASSERT(isValid(agent_id));
             GS_ASSERT(this->owner != NULL_AGENT);
-            GS_ASSERT(this->owner == agent_id);
-            GS_ASSERT(!this->attached_to_agent);
-            if (this->attached_to_agent) return false;
-            if (this->owner != agent_id) return false;
+            IF_ASSERT(this->attached_to_agent) return false;
+            IF_ASSERT(this->owner != agent_id) return false;
             this->owner = NULL_AGENT;
             return true;
         }
@@ -144,9 +138,7 @@ class ItemContainerInterface
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
-            GS_ASSERT(this->slot_max > 0);
-            GS_ASSERT(this->slot_max < NULL_SLOT);
-            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+            IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
@@ -253,7 +245,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
         
         ItemContainerEnergyTanks(ItemContainerType type, ItemContainerID id)
         : ItemContainerInterface(type, id), energy_tank_type(NULL_ITEM_TYPE)
-        { GS_ASSERT(type == AGENT_ENERGY_TANKS); }
+        { GS_ASSERT(type == name::energy_tanks); }
 };
 
 class ItemContainerCryofreezer: public ItemContainer
@@ -490,9 +482,7 @@ class ItemContainerSmelter: public ItemContainerInterface
             GS_ASSERT(alt_xdim * alt_ydim > 0);
             GS_ASSERT(xdim * ydim > 0);
             this->slot_max = xdim*ydim + alt_xdim*alt_ydim + 1; // +1 for fuel
-            GS_ASSERT(this->slot_max > 0);
-            GS_ASSERT(this->slot_max < NULL_SLOT);
-            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+            IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
             this->slot = new ItemID[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
@@ -517,40 +507,38 @@ class ItemContainerCrusher: public ItemContainerInterface
 
         static const int input_slot = 0;
 
-        ItemID get_input_slot()
-        {
-            GS_ASSERT(this->is_valid_slot(this->input_slot));
-            if (!this->is_valid_slot(this->input_slot)) return NULL_ITEM;
-            return this->slot[this->input_slot];
-        }
+    ItemID get_input_slot()
+    {
+        GS_ASSERT(this->is_valid_slot(this->input_slot));
+        if (!this->is_valid_slot(this->input_slot)) return NULL_ITEM;
+        return this->slot[this->input_slot];
+    }
 
-        int get_empty_slot()
-        {
-            if (this->get_input_slot() == NULL_ITEM) return this->input_slot;
-            return NULL_SLOT;
-        }
+    int get_empty_slot()
+    {
+        if (this->get_input_slot() == NULL_ITEM) return this->input_slot;
+        return NULL_SLOT;
+    }
 
-        bool can_insert_item(int slot, ItemID item_id)
-        {
-            if (slot != this->input_slot) return false;
-            return ItemContainerInterface::can_insert_item(slot, item_id);
-        }
+    bool can_insert_item(int slot, ItemID item_id)
+    {
+        if (slot != this->input_slot) return false;
+        return ItemContainerInterface::can_insert_item(slot, item_id);
+    }
 
-        void init(int xdim, int ydim)
-        {
-            this->xdim = xdim;
-            this->ydim = ydim;
-            this->slot_max = xdim*ydim + this->alt_xdim*this->alt_ydim;
-            GS_ASSERT(this->slot_max > 0);
-            GS_ASSERT(this->slot_max < NULL_SLOT);
-            if (this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
-            this->slot = new ItemID[this->slot_max];
-            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
-        }
+    void init(int xdim, int ydim)
+    {
+        this->xdim = xdim;
+        this->ydim = ydim;
+        this->slot_max = xdim*ydim + this->alt_xdim*this->alt_ydim;
+        IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+        this->slot = new ItemID[this->slot_max];
+        for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+    }
 
-        ItemContainerCrusher(ItemContainerType type, ItemContainerID id)
-        : ItemContainerInterface(type, id)
-        {}
+    ItemContainerCrusher(ItemContainerType type, ItemContainerID id)
+    : ItemContainerInterface(type, id)
+    {}
 };
 
 }   // ItemContainer
@@ -558,72 +546,79 @@ class ItemContainerCrusher: public ItemContainerInterface
 namespace ItemContainer
 {
 
-ItemContainerInterface* create_item_container_interface(int ttype, int iid)
+ItemContainerInterface* create_item_container_interface(int type, int id)
 {
-    ItemContainerType type = (ItemContainerType)ttype;
-    ItemContainerID id = (ItemContainerID)iid;
-    switch (type)
-    {
-        case AGENT_INVENTORY:
-        case AGENT_TOOLBELT:
-        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-            return new ItemContainer(type, id);
+    container_create create_fn = get_container_create_function((ItemContainerType)type);
+    IF_ASSERT(create_fn == NULL) return NULL;
+    return create_fn((ItemContainerType)type, (ItemContainerID)id);
+}
 
-        case AGENT_HAND:
-            return new ItemContainerHand(type, id);
+ItemContainerInterface* new_crusher(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainerCrusher(type, id);    
+}
 
-        case AGENT_ENERGY_TANKS:
-            return new ItemContainerEnergyTanks(type, id);
+ItemContainerInterface* new_smelter(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainerSmelter(type, id);
+}
 
-        case AGENT_SYNTHESIZER:
-            return new ItemContainerSynthesizer(type, id);
+ItemContainerInterface* new_cryofreezer(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainerCryofreezer(type, id);
+}
 
-        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            return new ItemContainerCraftingBench(type, id);
+ItemContainerInterface* new_crafting_bench(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainerCraftingBench(type, id);
+}
 
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-            return new ItemContainerCryofreezer(type, id);
+ItemContainerInterface* new_synthesizer(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainerSynthesizer(type, id);
+}
 
-        case CONTAINER_TYPE_SMELTER_ONE:
-            return new ItemContainerSmelter(type, id);
+ItemContainerInterface* new_energy_tanks(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainerEnergyTanks(type, id);
+}
 
-        case CONTAINER_TYPE_CRUSHER:
-            return new ItemContainerCrusher(type, id);
+ItemContainerInterface* new_hand(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainerHand(type, id);
+}
 
-        default:
-            printf("ERROR -- %s -- type %d unhandled\n", __FUNCTION__, type);
-            GS_ASSERT(false);
-            return NULL;
-    }
-    return NULL;
+ItemContainerInterface* new_container(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainer(type, id);
 }
 
 class ItemContainerList: public MultiObject_list<ItemContainerInterface>
 {
     private:
-        const char* name() { return "ItemContainer"; }
+    const char* name() { return "ItemContainer"; }
         
     public:
 
-        #if DC_CLIENT
-        ItemContainerInterface* create(int type)
-        {
-            printf("must create item container with id\n");
-            GS_ASSERT(false);
-            return NULL;
-        }
+    #if DC_CLIENT
+    ItemContainerInterface* create(int type)
+    {
+        printf("must create item container with id\n");
+        GS_ASSERT(false);
+        return NULL;
+    }
 
-        ItemContainerInterface* create(int type, int id)
-        {
-            return MultiObject_list<ItemContainerInterface>::create(type, id);
-        }
-        #endif
+    ItemContainerInterface* create(int type, int id)
+    {
+        return MultiObject_list<ItemContainerInterface>::create(type, id);
+    }
+    #endif
 
-        ItemContainerList(unsigned int capacity)
-        : MultiObject_list<ItemContainerInterface>(capacity, create_item_container_interface)
-        {
-            this->print();
-        }
+    ItemContainerList(unsigned int capacity)
+    : MultiObject_list<ItemContainerInterface>(capacity, create_item_container_interface)
+    {
+        this->print();
+    }
 };
 
 }

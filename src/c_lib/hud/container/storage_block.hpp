@@ -102,24 +102,24 @@ class StorageBlockUI : public UIElement
         this->xdim = ItemContainer::get_container_xdim(container_type);
         this->ydim = ItemContainer::get_container_ydim(container_type);
 
-        switch (container_type)
+        if (container_type == ItemContainer::name::storage_block_small)
         {
-            case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-                this->texture = &StorageBlockTexture;
-                this->texture_offset_x = 0.0f;
-                this->texture_offset_y = 0.0f;
-                break;
-
-            case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-                this->texture = &StorageBlockTexture;
-                this->texture_offset_x = 0.0f;
-                this->texture_offset_y = 0.0f;
-                break;
-
-            default:
-                GS_ASSERT(false);
-                break;
+            this->texture = &StorageBlockTexture;
+            this->texture_offset_x = 0.0f;
+            this->texture_offset_y = 0.0f;
         }
+        else
+        if (container_type == ItemContainer::name::cryofreezer_small)
+        {
+            this->texture = &StorageBlockTexture;
+            this->texture_offset_x = 0.0f;
+            this->texture_offset_y = 0.0f;
+        }
+        else
+        {
+            GS_ASSERT(false);
+        }
+
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();

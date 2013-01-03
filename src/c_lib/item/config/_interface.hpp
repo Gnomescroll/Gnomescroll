@@ -484,13 +484,13 @@ void synthesizer_item_def(const char* item_name, int cost)
 
 void synthesizer_item_set(int xslot, int yslot)
 {
-    GS_ASSERT_ABORT(_current_synthesizer_item < ItemContainer::get_container_alt_max_slots(AGENT_SYNTHESIZER));
+    GS_ASSERT_ABORT(_current_synthesizer_item < ItemContainer::get_container_alt_max_slots(ItemContainer::name::synthesizer));
 
     class SynthesizerItem* n = &synthesizer_item_array[_current_synthesizer_item];
 
     GS_ASSERT_ABORT(_current_synthesizer_item_type != NULL_ITEM_TYPE);
-    GS_ASSERT_ABORT(xslot >= 0 && xslot < ItemContainer::get_container_alt_xdim(AGENT_SYNTHESIZER));
-    GS_ASSERT_ABORT(yslot >= 0 && yslot < ItemContainer::get_container_alt_ydim(AGENT_SYNTHESIZER));
+    GS_ASSERT_ABORT(xslot >= 0 && xslot < ItemContainer::get_container_alt_xdim(ItemContainer::name::synthesizer));
+    GS_ASSERT_ABORT(yslot >= 0 && yslot < ItemContainer::get_container_alt_ydim(ItemContainer::name::synthesizer));
     GS_ASSERT_ABORT(_current_synthesizer_item_cost > 0);
     GS_ASSERT_ABORT(count_digits(_current_synthesizer_item_cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);
 

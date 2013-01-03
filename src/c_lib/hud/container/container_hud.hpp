@@ -44,8 +44,8 @@ class AgentInventoryUI : public UIElement
     {
         GS_ASSERT(this->stack_numbers == NULL);
         
-        this->xdim = ItemContainer::get_container_xdim(AGENT_INVENTORY);
-        this->ydim = ItemContainer::get_container_ydim(AGENT_INVENTORY);
+        this->xdim = ItemContainer::get_container_xdim(ItemContainer::name::inventory);
+        this->ydim = ItemContainer::get_container_ydim(ItemContainer::name::inventory);
         
         // create HudText objects needed for stack rendering
         int max = this->xdim * this->ydim;
@@ -165,8 +165,8 @@ void AgentInventoryUI::draw()
             int max_durability = Item::get_max_durability(slot_types[slot]);
             ratio = ((float)durability)/((float)max_durability);
 
-			int mh = w / 8; // meter height
-			glColor4ub(255, 0, 0, alpha);               // red
+            int mh = w / 8; // meter height
+            glColor4ub(255, 0, 0, alpha);               // red
             Hud::meter_graphic.draw(x, y, w, mh, 1.0f); // full slot width background
             Hud::set_color_from_ratio(ratio, 255);
             Hud::meter_graphic.draw(x, y, w, mh, ratio);

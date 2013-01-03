@@ -34,49 +34,47 @@ class CrusherUI* crusher = NULL;
 
 void set_container_id(ItemContainerType container_type, ItemContainerID container_id)
 {
-    switch (container_type)
-    {            
-        case AGENT_INVENTORY:
-            agent_inventory->container_id = container_id;
-            break;
-        case AGENT_TOOLBELT:
-            agent_toolbelt->container_id = container_id;
-            break;
-        case AGENT_SYNTHESIZER:
-            synthesizer_container->container_id = container_id;
-            break;
-        case AGENT_ENERGY_TANKS:
-            energy_tanks->container_id = container_id;
-            break;
-            
-        case AGENT_HAND:
-            // we render the hand separately; there is no object
-            break;
-
-        case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-            crafting_container->container_id = container_id;
-            break;
-
-        case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-            storage_block->container_id = container_id;
-            storage_block->name.set_text("Storage Block");
-            break;
-        case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-            storage_block->container_id = container_id;
-            storage_block->name.set_text("Cryofreezer");
-            break;
-
-        case CONTAINER_TYPE_SMELTER_ONE:
-            smelter->container_id = container_id;
-            break;
-
-        case CONTAINER_TYPE_CRUSHER:
-            crusher->container_id = container_id;
-            break;
-                        
-        default:
-            GS_ASSERT(false);
-            break;
+    if (container_type == ItemContainer::name::inventory)
+        agent_inventory->container_id = container_id;
+    else
+    if (container_type == ItemContainer::name::toolbelt)
+        agent_toolbelt->container_id = container_id;
+    else
+    if (container_type == ItemContainer::name::synthesizer)
+        synthesizer_container->container_id = container_id;
+    else
+    if (container_type == ItemContainer::name::energy_tanks)
+        energy_tanks->container_id = container_id;
+    else
+    if (container_type == ItemContainer::name::crafting_bench_basic)
+        crafting_container->container_id = container_id;
+    else
+    if (container_type == ItemContainer::name::storage_block_small)
+    {
+        storage_block->container_id = container_id;
+        storage_block->name.set_text("Storage Block");
+    }
+    else
+    if (container_type == ItemContainer::name::cryofreezer_small)
+    {
+        storage_block->container_id = container_id;
+        storage_block->name.set_text("Cryofreezer");
+    }
+    else
+    if (container_type == ItemContainer::name::smelter_basic)
+        smelter->container_id = container_id;
+    else
+    if (container_type == ItemContainer::name::crusher)
+        crusher->container_id = container_id;
+    else
+    if (container_type == ItemContainer::name::hand)
+    {
+        // ignored
+    }
+    else
+    {
+        GS_ASSERT(false);
+        printf("No container UI element for container type %d\n", container_type);
     }
 }
 
@@ -481,31 +479,25 @@ void draw()
         GS_ASSERT(container != NULL);
         if (container != NULL)
         {
-            ItemContainerType container_type = container->type;
-            GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
-            switch (container_type)
+            GS_ASSERT(container->type != NULL_CONTAINER_TYPE);
+            if (container->type == ItemContainer::name::storage_block_small
+             || container->type == ItemContainer::name::cryofreezer_small)
             {
-                case CONTAINER_TYPE_STORAGE_BLOCK_SMALL:
-                case CONTAINER_TYPE_CRYOFREEZER_SMALL:
-                    storage_block->set_container_type(container_type);
-                    storage_block->draw();
-                    break;
-
-                case CONTAINER_TYPE_CRAFTING_BENCH_UTILITY:
-                    crafting_container->draw();
-                    break;
-
-                case CONTAINER_TYPE_SMELTER_ONE:
-                    smelter->draw();
-                    break;
-
-                case CONTAINER_TYPE_CRUSHER:
-                    crusher->draw();
-                    break;
-                    
-                default:
-                    GS_ASSERT(false);
-                    break;
+                storage_block->set_container_type(container->type);
+                storage_block->draw();
+            }
+            else
+            if (container->type == ItemContainer::name::crafting_bench_basic)
+                crafting_container->draw();
+            else
+            if (container->type == ItemContainer::name::smelter_basic)
+                smelter->draw();
+            else
+            if (container->type == ItemContainer::name::crusher)
+                crusher->draw();
+            else
+            {
+                GS_ASSERT(false);
             }
         }
     }
@@ -552,21 +544,21 @@ void init()
 
     storage_block = new StorageBlockUI;
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
-    storage_block->set_container_type(CONTAINER_TYPE_STORAGE_BLOCK_SMALL);
+    storage_block->set_container_type(ItemContainer::name::storage_block_small);
     storage_block->init();
     storage_block->centered = true;
     storage_block->yoff = -150.0f + (_yresf + storage_block->height())/2;
 
     smelter = new SmelterUI;
     smelter->type = UI_ELEMENT_SMELTER;
-    smelter->set_container_type(CONTAINER_TYPE_SMELTER_ONE);
+    smelter->set_container_type(ItemContainer::name::smelter_basic);
     smelter->init();
     smelter->centered = true;
     smelter->yoff = -150.0f + (_yresf + smelter->height())/2;
 
     crusher = new CrusherUI;
     crusher->type = UI_ELEMENT_CRUSHER;
-    crusher->set_container_type(CONTAINER_TYPE_CRUSHER);
+    crusher->set_container_type(ItemContainer::name::crusher);
     crusher->init();
     crusher->centered = true;
     crusher->yoff = -150.0f + (_yresf + crusher->height())/2;

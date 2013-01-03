@@ -25,14 +25,11 @@ namespace ItemContainer
 
 void init_container(ItemContainerInterface* container)
 {
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    IF_ASSERT(container == NULL) return;
     
     GS_ASSERT(container->type != NULL_CONTAINER_TYPE);
     class ContainerAttributes* attr = get_attr(container->type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return;
-    GS_ASSERT(attr->loaded);
+    IF_ASSERT(attr == NULL) return;
     
     container->attached_to_agent = attr->attached_to_agent;
     container->set_alt_parameters(attr->alt_xdim, attr->alt_ydim);

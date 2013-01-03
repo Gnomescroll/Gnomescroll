@@ -102,20 +102,19 @@ class SmelterUI : public UIElement
         
         this->container_type = container_type;
 
-        switch (container_type)
+        if (container_type == ItemContainer::name::smelter_basic)
         {
-            case CONTAINER_TYPE_SMELTER_ONE:
-                this->texture = &SmelterTexture;
-                this->texture_offset_x = 0.0f;
-                this->texture_offset_y = 0.0f;
-                this->xdim = 3;
-                this->ydim = 2;
-                break;
-
-            default:
-                GS_ASSERT(false);
-                break;
+            this->texture = &SmelterTexture;
+            this->texture_offset_x = 0.0f;
+            this->texture_offset_y = 0.0f;
+            this->xdim = 3;
+            this->ydim = 2;
         }
+        else
+        {
+            GS_ASSERT(false);
+        }
+
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();

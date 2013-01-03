@@ -79,7 +79,7 @@ class PlayerLoadData
         // loaded state
         bool player_data_loaded;
 
-        int n_containers_expected;
+        size_t n_containers_expected;
         ItemContainerType containers_expected[N_PLAYER_CONTAINERS];
         bool containers_loaded[N_PLAYER_CONTAINERS];
 
@@ -108,10 +108,9 @@ class PlayerLoadData
         if (container_type == NULL_CONTAINER_TYPE) return false;
         GS_ASSERT(this->n_containers_expected < N_PLAYER_CONTAINERS);
         if (this->n_containers_expected >= N_PLAYER_CONTAINERS) return false;
-        for (int i=0; i<this->n_containers_expected; i++)
+        for (size_t i=0; i<this->n_containers_expected; i++)
         {
-            GS_ASSERT(this->containers_expected[i] != container_type);
-            if (this->containers_expected[i] == container_type) return false;
+            IF_ASSERT(this->containers_expected[i] == container_type) return false;
         }
         this->containers_expected[this->n_containers_expected++] = container_type;
         return true;
@@ -121,7 +120,7 @@ class PlayerLoadData
     bool container_was_loaded(ItemContainerType container_type)
     {
         if (this->error) return false;
-        for (int i=0; i<this->n_containers_expected; i++)
+        for (size_t i=0; i<this->n_containers_expected; i++)
             if (this->containers_expected[i] == container_type)
             {
                 GS_ASSERT(!this->containers_loaded[i]);
@@ -145,7 +144,7 @@ class PlayerLoadData
         player_data_loaded(false), n_containers_expected(0),
         loaded(false), error(false)
     {
-        for (int i=0; i<N_PLAYER_CONTAINERS; i++)
+        for (size_t i=0; i<N_PLAYER_CONTAINERS; i++)
         {
             this->containers_expected[i] = NULL_CONTAINER_TYPE;
             this->containers_loaded[i] = false;

@@ -16,7 +16,6 @@ inline void create_item_container_StoC::handle()
 {
     ItemContainerInterface* container = create_container((ItemContainerType)container_type,  (ItemContainerID)container_id);
     IF_ASSERT(container == NULL) return;
-    init_container(container);
     container->chunk = chunk;  // TODO
 }
 
@@ -31,58 +30,62 @@ inline void assign_item_container_StoC::handle()
     ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     IF_ASSERT(container == NULL) return;
     ItemContainerType type = (ItemContainerType)container_type;
-    switch (type)
+    
+    if (type == name::inventory)
     {
-        case AGENT_INVENTORY:
-            player_container = (ItemContainer*)container;
-            if (player_container_ui != NULL) delete player_container_ui;
-            player_container_ui = new ItemContainerUI(container->id);
-            player_container_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
-            player_container_ui->init(container->type, container->xdim, container->ydim);
-            player_container_ui->load_data(container->slot);
-            break;
-
-        case AGENT_HAND:
-            player_hand = (ItemContainerHand*)container;
-            if (player_hand_ui != NULL) delete player_hand_ui;
-            player_hand_ui = new ItemContainerHandUI(container->id);
-            player_hand_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
-            player_hand_ui->init(container->type, container->xdim, container->ydim);
-            player_hand_ui->load_data(container->slot);
-            break;
-
-        case AGENT_TOOLBELT:
-            player_toolbelt = (ItemContainer*)container;
-            if (player_toolbelt_ui != NULL) delete player_toolbelt_ui;
-            player_toolbelt_ui = new ItemContainerUI(container->id);
-            player_toolbelt_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
-            player_toolbelt_ui->init(container->type, container->xdim, container->ydim);
-            player_toolbelt_ui->load_data(container->slot);
-            Toolbelt::assign_toolbelt(container->id);
-            break;
-        
-        case AGENT_SYNTHESIZER:
-            player_synthesizer = (ItemContainerSynthesizer*)container;
-            if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
-            player_synthesizer_ui = new ItemContainerSynthesizerUI(container->id);
-            player_synthesizer_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
-            player_synthesizer_ui->init(container->type, container->xdim, container->ydim);
-            player_synthesizer_ui->load_data(container->slot);
-            break;
-        
-        case AGENT_ENERGY_TANKS:
-            player_energy_tanks = (ItemContainerEnergyTanks*)container;
-            if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
-            player_energy_tanks_ui = new ItemContainerEnergyTanksUI(container->id);
-            player_energy_tanks_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
-            player_energy_tanks_ui->init(container->type, container->xdim, container->ydim);
-            player_energy_tanks_ui->load_data(container->slot);
-            break;
-        
-        default:
-            GS_ASSERT(false);
-            return;
+        player_container = (ItemContainer*)container;
+        if (player_container_ui != NULL) delete player_container_ui;
+        player_container_ui = new ItemContainerUI(container->id);
+        player_container_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
+        player_container_ui->init(container->type, container->xdim, container->ydim);
+        player_container_ui->load_data(container->slot);
     }
+    else
+    if (type == name::hand)
+    {
+        player_hand = (ItemContainerHand*)container;
+        if (player_hand_ui != NULL) delete player_hand_ui;
+        player_hand_ui = new ItemContainerHandUI(container->id);
+        player_hand_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
+        player_hand_ui->init(container->type, container->xdim, container->ydim);
+        player_hand_ui->load_data(container->slot);
+    }
+    else
+    if (type == name::toolbelt)
+    {
+        player_toolbelt = (ItemContainer*)container;
+        if (player_toolbelt_ui != NULL) delete player_toolbelt_ui;
+        player_toolbelt_ui = new ItemContainerUI(container->id);
+        player_toolbelt_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
+        player_toolbelt_ui->init(container->type, container->xdim, container->ydim);
+        player_toolbelt_ui->load_data(container->slot);
+        Toolbelt::assign_toolbelt(container->id);
+    }
+    else   
+    if (type == name::synthesizer)
+    {
+        player_synthesizer = (ItemContainerSynthesizer*)container;
+        if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
+        player_synthesizer_ui = new ItemContainerSynthesizerUI(container->id);
+        player_synthesizer_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
+        player_synthesizer_ui->init(container->type, container->xdim, container->ydim);
+        player_synthesizer_ui->load_data(container->slot);
+    }
+    else
+    if (type == name::energy_tanks)
+    {
+        player_energy_tanks = (ItemContainerEnergyTanks*)container;
+        if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
+        player_energy_tanks_ui = new ItemContainerEnergyTanksUI(container->id);
+        player_energy_tanks_ui->set_alt_parameters(container->alt_xdim, container->alt_ydim);
+        player_energy_tanks_ui->init(container->type, container->xdim, container->ydim);
+        player_energy_tanks_ui->load_data(container->slot);
+    }
+    else
+    {
+        GS_ASSERT(false);
+    }
+    
     HudContainer::set_container_id(type, (ItemContainerID)container_id);
 }
 

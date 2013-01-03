@@ -293,9 +293,6 @@ int init_c_lib(int argc, char* argv[])
     
     t_map::init_t_map();
 
-    Item::init();
-    ItemContainer::init();
-    
     // DAT LOADING
     // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
     ItemContainer::init_config();
@@ -303,11 +300,11 @@ int init_c_lib(int argc, char* argv[])
     t_mech::init_properties();
     Entities::init_entity_dat();
 
+    ItemContainer::load_config();
     t_map::load_block_dat();
     t_mech::load_mech_dat();
     Entities::load_entity_dat();
     Entities::end_entity_dat();
-    ItemContainer::load_config();
     ItemContainer::end_config();
     Item::init_properties();
     Item::load_item_dat();
@@ -329,6 +326,8 @@ int init_c_lib(int argc, char* argv[])
     Item::load_smelting_dat();
     ItemContainer::load_crusher_dat();
         
+    Item::init();
+    ItemContainer::init();
     Toolbelt::init();
 
     t_mech::init();

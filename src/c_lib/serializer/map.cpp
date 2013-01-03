@@ -290,8 +290,8 @@ static bool load_map_restore_containers()
     for (int cj=0; cj < MAP_CHUNK_YDIM; cj++)
     {
         class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[MAP_CHUNK_XDIM*cj+ci];
-        GS_ASSERT(mp != NULL);
-        if (mp == NULL) continue;
+        IF_ASSERT(mp == NULL) continue;
+
         for (int k=0; k<ZMAX; k++)
         for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
         for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
@@ -300,20 +300,20 @@ static bool load_map_restore_containers()
             if (!t_map::isItemContainer(block)) continue;
             
             ItemContainerType container_type = t_map::get_container_type_for_cube(block);
-            GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
-            if (container_type == NULL_CONTAINER_TYPE)
+
+            IF_ASSERT(container_type == NULL_CONTAINER_TYPE)
             {
                 log_map_load_error("Restoring containers from map: Container type is NULL_CONTAINER_TYPE");
                 return false;
             }
+
             class ItemContainer::ItemContainerInterface* container = ItemContainer::create_container(container_type);
-            GS_ASSERT(container != NULL);
-            if (container == NULL)
+            IF_ASSERT(container == NULL)
             {
                 log_map_load_error("Restoring containers from map: Container creation failed");
                 return false;
             }
-            init_container(container);            
+
             t_map::create_item_container_block(ci*TERRAIN_CHUNK_WIDTH+i, cj*TERRAIN_CHUNK_WIDTH+j, k, container->type, container->id);
             loaded_containers[container->id] = CONTAINER_LOAD_MAP;
         }

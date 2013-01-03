@@ -16,7 +16,7 @@ class EnergyTanksUI : public UIElement
 
     static const int slot_size = 32;    // pixel dimension
 
-	bool inv_open;
+    bool inv_open;
 
     int xdim;    // slot dimensions
     int ydim;
@@ -61,9 +61,9 @@ class EnergyTanksUI : public UIElement
 
     void init()
     {
-		this->inv_open = false;
-        this->xdim = ItemContainer::get_container_xdim(AGENT_ENERGY_TANKS);
-        this->ydim = ItemContainer::get_container_ydim(AGENT_ENERGY_TANKS);
+        this->inv_open = false;
+        this->xdim = ItemContainer::get_container_xdim(ItemContainer::name::energy_tanks);
+        this->ydim = ItemContainer::get_container_ydim(ItemContainer::name::energy_tanks);
         this->name.set_text("Energy Tanks");
     }
 
@@ -126,41 +126,41 @@ void EnergyTanksUI::draw()
 
 
 
-	if (inv_open) 
-	{
-		// draw larger rect for border of slot
-		int g1 = 80-16;
-		glColor4ub(1,1,1, 128+64); //128+64);
-		glBegin(GL_QUADS);
-		for (int i=0; i<xdim; i++)
-		for (int j=0; j<ydim; j++)
-		{
-			float x = xoff + border + i*(span_tween_slots+w);
-			float y = _yresf - (yoff + border + (j+1)*(span_tween_slots+w));
+    if (inv_open) 
+    {
+        // draw larger rect for border of slot
+        int g1 = 80-16;
+        glColor4ub(1,1,1, 128+64); //128+64);
+        glBegin(GL_QUADS);
+        for (int i=0; i<xdim; i++)
+        for (int j=0; j<ydim; j++)
+        {
+            float x = xoff + border + i*(span_tween_slots+w);
+            float y = _yresf - (yoff + border + (j+1)*(span_tween_slots+w));
 
-			glVertex2f(x-inc2,y+w+inc2);
-			glVertex2f(x+w+inc2, y+w+inc2);
-			glVertex2f(x+w+inc2, y-inc2);
-			glVertex2f(x-inc2, y-inc2);
-		}
-		glEnd();
+            glVertex2f(x-inc2,y+w+inc2);
+            glVertex2f(x+w+inc2, y+w+inc2);
+            glVertex2f(x+w+inc2, y-inc2);
+            glVertex2f(x-inc2, y-inc2);
+        }
+        glEnd();
 
-		// draw slot rect behind tanks
-		glColor4ub(g1,g1,g1, 128+64); //128+64);
-		glBegin(GL_QUADS);
-		for (int i=0; i<xdim; i++)
-		for (int j=0; j<ydim; j++)
-		{
-			float x = xoff + border + i*(span_tween_slots+w);
-			float y = _yresf - (yoff + border + (j+1)*(span_tween_slots+w));
+        // draw slot rect behind tanks
+        glColor4ub(g1,g1,g1, 128+64); //128+64);
+        glBegin(GL_QUADS);
+        for (int i=0; i<xdim; i++)
+        for (int j=0; j<ydim; j++)
+        {
+            float x = xoff + border + i*(span_tween_slots+w);
+            float y = _yresf - (yoff + border + (j+1)*(span_tween_slots+w));
 
-			glVertex2f(x,y+w);
-			glVertex2f(x+w, y+w);
-			glVertex2f(x+w, y);
-			glVertex2f(x, y);
-		}
-		glEnd();
-	}
+            glVertex2f(x,y+w);
+            glVertex2f(x+w, y+w);
+            glVertex2f(x+w, y);
+            glVertex2f(x, y);
+        }
+        glEnd();
+    }
 
     // draw hover highlight
     glBegin(GL_QUADS);

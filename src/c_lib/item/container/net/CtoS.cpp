@@ -438,8 +438,8 @@ inline void crusher_crush_item_CtoS::handle()
     ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
-    GS_ASSERT(container->type == CONTAINER_TYPE_CRUSHER);
-    if (container->type != CONTAINER_TYPE_CRUSHER) return;
+    GS_ASSERT(container->type == name::crusher);
+    if (container->type != name::crusher) return;
 
     ItemContainerCrusher* crusher = (ItemContainerCrusher*)container;
     
@@ -648,7 +648,6 @@ void create_container_block_CtoS::handle()
     t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
     t_map::broadcast_set_block_palette(x,y,z, cube_id, orientation);
 
-    init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
     broadcast_container_create(container->id);
 
@@ -659,8 +658,7 @@ void create_container_block_CtoS::handle()
 
 void admin_create_container_block_CtoS::handle()
 {
-    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     if (z == 0) return;     // no floor
 
     Agents::Agent* a = NetServer::agents[client_id];
@@ -704,13 +702,11 @@ void admin_create_container_block_CtoS::handle()
     if (collides) return;
 
     ItemContainerInterface* container = create_container(container_type);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
+    IF_ASSERT(container == NULL) return;
 
     t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
     t_map::broadcast_set_block_palette(x,y,z,cube_id,orientation);
 
-    init_container(container);
     t_map::create_item_container_block(x,y,z, container->type, container->id);
     broadcast_container_create(container->id);
 

@@ -103,9 +103,11 @@ void cube_def_error(const char* name)
     cube_def(ERROR_CUBE, ErrorCube, name, CUBE_MATERIAL_NONE);
 }
 
-void cube_def_container(const char* name, ItemContainerType container_type)
+void cube_def_container(const char* name)
 {
-    GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
+    ItemContainerType container_type = ItemContainer::get_type(name);
+    GS_ASSERT_ABORT(isValid(container_type));
+    if (!isValid(container_type)) return;
     cube_def(ItemContainerCube, name, CUBE_MATERIAL_NONE);  // TODO -- cube material for chests?
     p->container_type = container_type;
 }
