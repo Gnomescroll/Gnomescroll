@@ -72,7 +72,7 @@ void toggle_agent_inventory()
     else enable_agent_inventory();
 }
 
-void enable_container_block(int container_id)
+void enable_container_block(ItemContainerID container_id)
 {
     if (input_state.container_block || input_state.agent_inventory) return;
     
@@ -98,7 +98,7 @@ void disable_container_block()
         set_mouse_bind(input_state.rebind_mouse);
     input_state.ignore_mouse_motion = true;
 
-    int container_id = ItemContainer::opened_container;
+    ItemContainerID container_id = ItemContainer::opened_container;
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id != NULL_CONTAINER)
     {

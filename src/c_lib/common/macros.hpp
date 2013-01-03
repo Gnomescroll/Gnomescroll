@@ -27,13 +27,6 @@
 #define ASSERT_VALID_MECH_TYPE(mech_type) GS_ASSERT((mech_type) >= 0 && (mech_type) < MAX_MECHS && (mech_type) != NULL_MECH_TYPE)
 #define IF_INVALID_MECH_TYPE(mech_type) if (unlikely((mech_type) < 0 || (mech_type) >= MAX_MECHS || (mech_type) == NULL_MECH_TYPE))
 
-#define ASSERT_VALID_CONTAINER_TYPE(container_type) GS_ASSERT((container_type) >= 0 && (container_type) < MAX_CONTAINER_TYPES)
-#define IF_INVALID_CONTAINER_TYPE(container_type) if (unlikely((container_type) < 0 || (container_type) >= MAX_CONTAINER_TYPES))
-
-#define ASSERT_VALID_CONTAINER_ID(container_id) GS_ASSERT((container_id) >= 0 && (container_id) < MAX_CONTAINERS)
-#define IS_VALID_CONTAINER_ID(container_id) ((container_id) >= 0 && (container_id) < MAX_CONTAINERS) 
-#define IF_INVALID_CONTAINER_ID(container_id) if (unlikely(!IS_VALID_CONTAINER_ID((container_id))))
-
 #define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT((spawner_id) == BASE_SPAWN_ID || ((spawner_id) >= 0 && (spawner_id) < MAX_SPAWNERS));
 #define IF_INVALID_SPAWNER_ID(spawner_id) if (unlikely((spawner_id) != BASE_SPAWN_ID && ((spawner_id) < 0 || (spawner_id) >= MAX_SPAWNERS)))
 

@@ -157,7 +157,7 @@ static bool beta_scan_world()
             block_pos, side, &tile, &block_distance
         );
 
-    int container_id = NULL_CONTAINER;
+    ItemContainerID container_id = NULL_CONTAINER;
     switch (target_type)
     {
         case HITSCAN_TARGET_VOXEL:

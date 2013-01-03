@@ -17,7 +17,7 @@ namespace ItemContainer
 void remove_item_from_hand(AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
-    int hand_id = get_agent_hand(agent_id);
+    ItemContainerID hand_id = get_agent_hand(agent_id);
     IF_ASSERT(hand_id == NULL_CONTAINER) return;
 
     ItemContainerHand* hand = (ItemContainerHand*)get_container(hand_id);
@@ -39,7 +39,7 @@ static void insert_item_in_hand(AgentID agent_id, ItemID item_id)
     IF_ASSERT(!isValid(agent_id)) return;
     IF_ASSERT(item_id == NULL_ITEM) return;
 
-    int hand_id = get_agent_hand(agent_id);
+    ItemContainerID hand_id = get_agent_hand(agent_id);
     if (hand_id == NULL_CONTAINER) return;
     ItemContainerHand* hand = (ItemContainerHand*)get_container(hand_id);
     IF_ASSERT(hand == NULL) return;
@@ -57,7 +57,7 @@ static void insert_item_in_hand(AgentID agent_id, ItemID item_id)
 
 // 2nd order transactions
 
-void transfer_item_between_containers(ItemID item_id, int container_id_a, int slot_a, int container_id_b, int slot_b)
+void transfer_item_between_containers(ItemID item_id, ItemContainerID container_id_a, int slot_a, ItemContainerID container_id_b, int slot_b)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id_a != NULL_CONTAINER);
@@ -66,15 +66,11 @@ void transfer_item_between_containers(ItemID item_id, int container_id_a, int sl
     GS_ASSERT(slot_b != NULL_SLOT);
     
     ItemContainerInterface* container_a = get_container(container_id_a);
-    GS_ASSERT(container_a != NULL);
-    if (container_a == NULL) return;
+    IF_ASSERT(container_a == NULL) return;
     
     ItemContainerInterface* container_b = get_container(container_id_b);
-    GS_ASSERT(container_b != NULL);
-    if (container_b == NULL) return;
-
-    GS_ASSERT(container_a->get_item(slot_a) == item_id);
-    if (container_a->get_item(slot_a) != item_id) return;
+    IF_ASSERT(container_b == NULL) return;
+    IF_ASSERT(container_a->get_item(slot_a) != item_id) return;
 
     Agents::Agent* owner_a = NULL;
     if (container_a->owner != NULL_AGENT)
@@ -110,7 +106,7 @@ void transfer_item_between_containers(ItemID item_id, int container_id_a, int sl
         Item::unsubscribe_agent_from_item(owner_a->id, item_id);
 }
 
-void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int slot, AgentID agent_id)
+void transfer_item_from_container_to_hand(ItemID item_id, ItemContainerID container_id, int slot, AgentID agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -154,7 +150,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, int container_id, int 
         Item::unsubscribe_agent_from_item(owner->id, item_id);
 }
 
-void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int slot, AgentID agent_id)
+void transfer_item_from_hand_to_container(ItemID item_id, ItemContainerID container_id, int slot, AgentID agent_id)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -199,7 +195,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, int container_id, int 
         Item::unsubscribe_agent_from_item(hand_owner->id, item_id);
 }
 
-bool swap_item_between_hand_and_container(AgentID agent_id, int container_id, int slot)
+bool swap_item_between_hand_and_container(AgentID agent_id, ItemContainerID container_id, int slot)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return false;
     IF_ASSERT(slot == NULL_SLOT) return false;
@@ -269,7 +265,7 @@ bool swap_item_between_hand_and_container(AgentID agent_id, int container_id, in
 }
 
 // new unassigned item to container
-bool transfer_free_item_to_container(ItemID item_id, int container_id, int slot)
+bool transfer_free_item_to_container(ItemID item_id, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -330,7 +326,7 @@ bool transfer_free_item_to_hand(ItemID item_id, AgentID agent_id)
     return true;
 }
 
-bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, int container_id, int slot)
+bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -428,7 +424,7 @@ void transfer_hand_to_particle(AgentID agent_id)
 /* Network */
 
 //  tell client to assign container to an agent
-void send_container_assign(ClientID client_id, int container_id)
+void send_container_assign(ClientID client_id, ItemContainerID container_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
@@ -441,7 +437,7 @@ void send_container_assign(ClientID client_id, int container_id)
     msg.sendToClient(client_id);
 }
 
-static bool pack_container_create(int container_id, create_item_container_StoC* msg)
+static bool pack_container_create(ItemContainerID container_id, create_item_container_StoC* msg)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return false;
     ItemContainerInterface* container = get_container(container_id);
@@ -452,7 +448,7 @@ static bool pack_container_create(int container_id, create_item_container_StoC* 
     return true;
 }
 
-void send_container_create(ClientID client_id, int container_id)
+void send_container_create(ClientID client_id, ItemContainerID container_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     create_item_container_StoC msg;
@@ -460,7 +456,7 @@ void send_container_create(ClientID client_id, int container_id)
     msg.sendToClient(client_id);
 }
 
-void broadcast_container_create(int container_id)
+void broadcast_container_create(ItemContainerID container_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     create_item_container_StoC msg;
@@ -468,7 +464,7 @@ void broadcast_container_create(int container_id)
     msg.broadcast();
 }
 
-void send_container_delete(ClientID client_id, int container_id)
+void send_container_delete(ClientID client_id, ItemContainerID container_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     delete_item_container_StoC msg;
@@ -476,7 +472,7 @@ void send_container_delete(ClientID client_id, int container_id)
     msg.sendToClient(client_id);
 }
 
-void broadcast_container_delete(int container_id)
+void broadcast_container_delete(ItemContainerID container_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     delete_item_container_StoC msg;
@@ -484,7 +480,7 @@ void broadcast_container_delete(int container_id)
     msg.broadcast();
 }
 
-static bool pack_container_lock(int container_id, lock_container_StoC* msg)
+static bool pack_container_lock(ItemContainerID container_id, lock_container_StoC* msg)
 {
     GS_ASSERT(msg != NULL);
     if (msg == NULL) return false;
@@ -500,21 +496,21 @@ static bool pack_container_lock(int container_id, lock_container_StoC* msg)
     return true;
 }
 
-void send_container_lock(ClientID client_id, int container_id)
+void send_container_lock(ClientID client_id, ItemContainerID container_id)
 {
     lock_container_StoC msg;
     if (!pack_container_lock(container_id, &msg)) return;
     msg.sendToClient(client_id);
 }
 
-void broadcast_container_lock(int container_id)
+void broadcast_container_lock(ItemContainerID container_id)
 {
     lock_container_StoC msg;
     if (!pack_container_lock(container_id, &msg)) return;
     msg.broadcast();
 }
 
-void broadcast_container_unlock(int container_id, int unlocking_agent_id)
+void broadcast_container_unlock(ItemContainerID container_id, int unlocking_agent_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
@@ -528,7 +524,7 @@ void broadcast_container_unlock(int container_id, int unlocking_agent_id)
     msg.broadcast();
 }
 
-void send_container_state(ClientID client_id, int container_id)
+void send_container_state(ClientID client_id, ItemContainerID container_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
@@ -537,7 +533,7 @@ void send_container_state(ClientID client_id, int container_id)
     if (container->owner != NULL_AGENT) send_container_lock(client_id, container_id);
 }
 
-void send_container_item_create(ClientID client_id, ItemID item_id, int container_id, int slot)
+void send_container_item_create(ClientID client_id, ItemID item_id, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(item_id != NULL_ITEM);
     GS_ASSERT(slot != NULL_SLOT);
@@ -546,7 +542,7 @@ void send_container_item_create(ClientID client_id, ItemID item_id, int containe
     send_container_insert(client_id, item_id, container_id, slot);
 }
 
-void send_container_close(AgentID agent_id, int container_id)
+void send_container_close(AgentID agent_id, ItemContainerID container_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
     IF_ASSERT(container_id == NULL_CONTAINER) return;
@@ -559,7 +555,7 @@ void send_container_close(AgentID agent_id, int container_id)
     msg.sendToClient(a->client_id);
 }
 
-void send_container_open(AgentID agent_id, int container_id)
+void send_container_open(AgentID agent_id, ItemContainerID container_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
 
@@ -571,7 +567,7 @@ void send_container_open(AgentID agent_id, int container_id)
     msg.sendToClient(a->client_id);
 }
 
-void send_open_container_failed(ClientID client_id, int container_id, int event_id)
+void send_open_container_failed(ClientID client_id, ItemContainerID container_id, int event_id)
 {
     open_container_failed_StoC msg;
     msg.container_id = container_id;
@@ -579,7 +575,7 @@ void send_open_container_failed(ClientID client_id, int container_id, int event_
     msg.sendToClient(client_id);
 }
 
-void send_smelter_fuel(int container_id)
+void send_smelter_fuel(ItemContainerID container_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
@@ -600,7 +596,7 @@ void send_smelter_fuel(int container_id)
     msg.sendToClient(owner->client_id);
 }
 
-void send_smelter_progress(int container_id)
+void send_smelter_progress(ItemContainerID container_id)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
@@ -620,7 +616,7 @@ void send_smelter_progress(int container_id)
 }
 
 // transactions
-bool agent_open_container(AgentID agent_id, int container_id)
+bool agent_open_container(AgentID agent_id, ItemContainerID container_id)
 {
     IF_ASSERT(opened_containers == NULL) return false;
     IF_ASSERT(!isValid(agent_id)) return false;
@@ -672,7 +668,7 @@ bool agent_open_container(AgentID agent_id, int container_id)
     return true;
 }
 
-static void agent_close_container(AgentID agent_id, int container_id, bool send_close)
+static void agent_close_container(AgentID agent_id, ItemContainerID container_id, bool send_close)
 {
     GS_ASSERT(opened_containers != NULL);
     if (opened_containers == NULL) return;
@@ -700,12 +696,12 @@ static void agent_close_container(AgentID agent_id, int container_id, bool send_
     unsubscribe_agent_from_container_contents(agent_id, container_id);
 }
 
-void agent_close_container(AgentID agent_id, int container_id)
+void agent_close_container(AgentID agent_id, ItemContainerID container_id)
 {
     agent_close_container(agent_id, container_id, true);    // send close as normal
 }
 
-void agent_close_container_silent(AgentID agent_id, int container_id)
+void agent_close_container_silent(AgentID agent_id, ItemContainerID container_id)
 {   // dont send container_close packet
     // this should be used if the client initiated the closing
     // there is a race condition that occurs otherwise
@@ -715,7 +711,7 @@ void agent_close_container_silent(AgentID agent_id, int container_id)
     agent_close_container(agent_id, container_id, false); 
 }
 
-void unsubscribe_agent_from_container_contents(AgentID agent_id, int container_id)
+void unsubscribe_agent_from_container_contents(AgentID agent_id, ItemContainerID container_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
     IF_ASSERT(container_id == NULL_CONTAINER) return;

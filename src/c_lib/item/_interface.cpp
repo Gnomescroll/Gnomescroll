@@ -172,7 +172,7 @@ void destroy_item(ItemID id)
 
     if (item->location == IL_CONTAINER)
     {
-        int container_id = item->location_id;
+        ItemContainerID container_id = (ItemContainerID)item->location_id;
         int slot = item->container_slot;
         ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
         if (container != NULL && slot != NULL_SLOT)

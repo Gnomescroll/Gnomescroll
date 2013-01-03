@@ -164,7 +164,7 @@ void NetPeerManager::was_deserialized()
         if (Options::auth)
         {
             int n_containers = 0;
-            int* containers = ItemContainer::get_player_containers(agent->id, &n_containers);
+            ItemContainerID* containers = ItemContainer::get_player_containers(agent->id, &n_containers);
             GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
             if (n_containers != N_PLAYER_CONTAINERS)
             {

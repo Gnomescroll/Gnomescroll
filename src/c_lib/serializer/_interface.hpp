@@ -62,7 +62,7 @@ namespace serializer
 
 // defined in players.hpp
 bool save_player(UserID user_id, AgentID agent_id);
-bool save_player_container(ClientID client_id, int container_id);
+bool save_player_container(ClientID client_id, ItemContainerID container_id);
 
 int begin_player_load(UserID user_id, ClientID client_id);
 bool load_player_container(int player_load_id, ItemContainerType container_type); 
@@ -71,7 +71,7 @@ bool end_player_load(int player_load_id);
 // Called from outside this module. NetPeerManager is the only thing that knows about true failure
 void player_load_failed();
 
-bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers);
+bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, int n_containers);
 
 bool save_containers();
 
@@ -87,7 +87,7 @@ bool save_containers() { return true; }
 void check_save_state() {}
 
 bool save_player(UserID user_id, AgentID agent_id) { return true; }
-bool save_player_container(ClientID client_id, int container_id) { return true; }
+bool save_player_container(ClientID client_id, ItemContainerID container_id) { return true; }
 
 int begin_player_load(UserID user_id, ClientID client_id) { return 0; }
 bool load_player_container(int player_load_id, ItemContainerType container_type) { return true; }
@@ -95,7 +95,7 @@ bool end_player_load(int player_load_id) { return true; }
 
 void player_load_failed() {}
 
-bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers) { return true; }
+bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, int n_containers) { return true; }
 
 void wait_for_redis_replies() {}
 

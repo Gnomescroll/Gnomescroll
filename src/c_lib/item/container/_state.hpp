@@ -10,7 +10,7 @@ extern class ItemContainerList* item_container_list;
 #if DC_CLIENT
 extern bool did_open_container_block;
 extern bool did_close_container_block;
-extern int opened_container;
+extern ItemContainerID opened_container;
 extern int opened_container_event_id;
 
 extern class ItemContainer* player_container;
@@ -38,12 +38,12 @@ extern class ItemContainerCrusherUI* crusher_ui;
 
 // Server
 #if DC_SERVER
-extern int* agent_inventory_list;
-extern int* agent_toolbelt_list;
-extern int* agent_synthesizer_list;
-extern int* agent_energy_tanks_list;
-extern int* agent_hand_list;
-extern int* opened_containers;
+extern ItemContainerID* agent_inventory_list;
+extern ItemContainerID* agent_toolbelt_list;
+extern ItemContainerID* agent_synthesizer_list;
+extern ItemContainerID* agent_energy_tanks_list;
+extern ItemContainerID* agent_hand_list;
+extern ItemContainerID* opened_containers;
 #endif
 
 }   // ItemContainer

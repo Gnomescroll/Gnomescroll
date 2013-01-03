@@ -17,7 +17,7 @@ struct inventory_block
 {
     int x,y,z;
     ItemContainerType container_type;
-    int container_id;
+    ItemContainerID container_id;
 };
 
 class CHUNK_ITEM_CONTAINER
@@ -67,9 +67,9 @@ class CHUNK_ITEM_CONTAINER
     bool _remove(int index);
 
     bool remove(int x, int y, int z);
-    bool remove(int container_id);
+    bool remove(ItemContainerID container_id);
 
-    void get_container_location(int container_id, int position[3])
+    void get_container_location(ItemContainerID container_id, int position[3])
     {
         for (int i=0; i<iban; i++)
             if (iba[i].container_id == container_id)
@@ -84,9 +84,9 @@ class CHUNK_ITEM_CONTAINER
         GS_ASSERT(false);
     }
     
-    bool add(int x, int y, int z, ItemContainerType container_type, int container_id);
+    bool add(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id);
 
-    int get(int x, int y, int z)
+    ItemContainerID get(int x, int y, int z)
     {
         for(int i=0; i<iban; i++)
             if(x == iba[i].x && y == iba[i].y && z == iba[i].z)

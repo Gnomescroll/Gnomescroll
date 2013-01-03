@@ -13,7 +13,7 @@ namespace HudContainer
 
 static bool agent_inventory_enabled = false;
 static bool container_block_enabled = false;
-static int container_block_enabled_id = NULL_CONTAINER;
+static ItemContainerID container_block_enabled_id = NULL_CONTAINER;
 float mouse_x = -1;
 float mouse_y = -1;
 bool lm_down = false;
@@ -32,7 +32,7 @@ class StorageBlockUI* storage_block = NULL;
 class SmelterUI* smelter = NULL;
 class CrusherUI* crusher = NULL;
 
-void set_container_id(ItemContainerType container_type, int container_id)
+void set_container_id(ItemContainerType container_type, ItemContainerID container_id)
 {
     switch (container_type)
     {            
@@ -80,7 +80,7 @@ void set_container_id(ItemContainerType container_type, int container_id)
     }
 }
 
-void close_container(int container_id)
+void close_container(ItemContainerID container_id)
 {
     // unset ids for variable container UIs
     bool closed = false;
@@ -127,7 +127,7 @@ void disable_agent_inventory_hud()
     agent_inventory_enabled = false;
 }
 
-void enable_container_block_hud(int container_id)
+void enable_container_block_hud(ItemContainerID container_id)
 {
     GS_ASSERT(!agent_inventory_enabled);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -187,7 +187,7 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     int slot;
     UIElement* container = get_container_and_slot(x,y, &slot);
 
-    int container_id = NULL_CONTAINER;
+    ItemContainerID container_id = NULL_CONTAINER;
     if (container != NULL) container_id = container->container_id;
     
     ContainerInputEvent event;

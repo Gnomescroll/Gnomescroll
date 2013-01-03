@@ -705,42 +705,38 @@ void generate_tunnel(int x, int y, int z, int otherx, int othery, int size, Cube
 
 void create_cryofreezer(int x, int y, int z)
 {
-    int id = ItemContainer::create_container_block("cryofreezer_small", x, y, z);
-    if (id != NULL_CONTAINER)
-    {
-        ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
-        ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
-        ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
-        ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
-    }
+    ItemContainerID id = ItemContainer::create_container_block("cryofreezer_small", x, y, z);
+    IF_ASSERT(!isValid(id)) return;
+    ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
+    ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
+    ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
+    ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
 }
 
 void create_storage(int x, int y, int z)
 {
-    int id = ItemContainer::create_container_block("storage_block_small", x, y, z);
-    if (id != NULL_CONTAINER)
+    ItemContainerID id = ItemContainer::create_container_block("storage_block_small", x, y, z);
+    IF_ASSERT(!isValid(id)) return;
+    if (randrange(0, 2) == 0)
     {
-        if (randrange(0, 2) == 0)
-        {
-            ItemContainer::auto_add_item_to_container("iron_bar", id);
-            ItemContainer::auto_add_item_to_container("iridium_bar", id);
-            ItemContainer::auto_add_item_to_container("gallium_bar", id);
-            ItemContainer::auto_add_item_to_container("copper_bar", id);
-        }
-        if (randrange(0, 1) == 0)
-        {
-            ItemContainer::auto_add_item_to_container("coal_nugget", id);
-        }
-        if (randrange(0, 3) == 0)
-        {
-            ItemContainer::auto_add_item_to_container("green_mining_laser", id);
-            ItemContainer::auto_add_item_to_container("laser_rifle", id);
-        }
-        if (randrange(0, 4) == 0)
-        {
-            ItemContainer::auto_add_item_to_container("small_charge_pack", id);
-            ItemContainer::auto_add_item_to_container("energy_tank", id);
-        }
+        ItemContainer::auto_add_item_to_container("iron_bar", id);
+        ItemContainer::auto_add_item_to_container("iridium_bar", id);
+        ItemContainer::auto_add_item_to_container("gallium_bar", id);
+        ItemContainer::auto_add_item_to_container("copper_bar", id);
+    }
+    if (randrange(0, 1) == 0)
+    {
+        ItemContainer::auto_add_item_to_container("coal_nugget", id);
+    }
+    if (randrange(0, 3) == 0)
+    {
+        ItemContainer::auto_add_item_to_container("green_mining_laser", id);
+        ItemContainer::auto_add_item_to_container("laser_rifle", id);
+    }
+    if (randrange(0, 4) == 0)
+    {
+        ItemContainer::auto_add_item_to_container("small_charge_pack", id);
+        ItemContainer::auto_add_item_to_container("energy_tank", id);
     }
 }
 

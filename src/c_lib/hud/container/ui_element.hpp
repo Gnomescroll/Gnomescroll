@@ -17,7 +17,7 @@ class UIElement
         float xoff;
         float yoff;
 
-        int container_id;
+        ItemContainerID container_id;
         ItemContainerType container_type;
 
         GLuint* texture;

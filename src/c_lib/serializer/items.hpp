@@ -70,8 +70,8 @@ int write_container_contents_string(char* buf, size_t buffer_size, const class I
 
 bool parse_item_token(const char* key, const char* val, class ParsedItemData* data);
 
-bool create_container_items_from_data(int container_id);
-bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers);
+bool create_container_items_from_data(ItemContainerID container_id);
+bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, int n_containers);
 
 void init_items();
 void teardown_items();

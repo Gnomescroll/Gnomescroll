@@ -214,20 +214,14 @@ ItemParticle::ItemParticle(ItemParticleID id) :
 #if DC_SERVER
 static bool pickup_item_particle(ItemParticleID particle_id)
 {    // this method takes care of all state updates, including particle destruction
-    
-    GS_ASSERT(particle_id != NULL_PARTICLE);
-    if (particle_id == NULL_PARTICLE) return false;
+    IF_ASSERT(particle_id == NULL_PARTICLE) return false;
 
     ItemParticle* particle = get(particle_id);
-    GS_ASSERT(particle != NULL);
-    if (particle == NULL) return false;
-    
-    GS_ASSERT(particle->target_agent != NULL_AGENT);
-    if (particle->target_agent == NULL_AGENT) return false;
+    IF_ASSERT(particle == NULL) return false;
+    IF_ASSERT(particle->target_agent == NULL_AGENT) return false;
     
     Item::Item* item = Item::get_item(particle->item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return false;
+    IF_ASSERT(item == NULL) return false;
 
     Agents::Agent* agent = Agents::get_agent(particle->target_agent);
     if (agent == NULL) return false;    
@@ -253,7 +247,7 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     
     if (item->type == coin_type)
     {
-        int container_id = ItemContainer::get_agent_synthesizer(agent->id);
+        ItemContainerID container_id = ItemContainer::get_agent_synthesizer(agent->id);
         GS_ASSERT(container_id != NULL_CONTAINER);
         if (container_id != NULL_CONTAINER)
             containers[container_index++] = ItemContainer::get_container(container_id);
@@ -261,13 +255,13 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     else
     if (item->type == energy_tank_type)
     {
-        int container_id = ItemContainer::get_agent_energy_tanks(agent->id);
+        ItemContainerID container_id = ItemContainer::get_agent_energy_tanks(agent->id);
         GS_ASSERT(container_id != NULL_CONTAINER);
         if (container_id != NULL_CONTAINER)
             containers[container_index++] = ItemContainer::get_container(container_id);
     }
     
-    int container_id = ItemContainer::get_agent_toolbelt(agent->id);
+    ItemContainerID container_id = ItemContainer::get_agent_toolbelt(agent->id);
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id != NULL_CONTAINER)
         containers[container_index++] = ItemContainer::get_container(container_id);

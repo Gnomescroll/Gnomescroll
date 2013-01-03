@@ -327,7 +327,7 @@ class CraftingRecipe* get_craft_recipe(int recipe_id)
     return &crafting_recipe_array[recipe_id];
 }
 
-class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
+class CraftingRecipe* get_selected_craft_recipe(ItemContainerID container_id, int slot)
 {
     // get container
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -430,7 +430,7 @@ class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot)
     return craft_recipes_possible[slot];
 }
 
-int get_selected_craft_recipe_type(int container_id, int slot, bool* available)
+int get_selected_craft_recipe_type(ItemContainerID container_id, int slot, bool* available)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
@@ -438,21 +438,21 @@ int get_selected_craft_recipe_type(int container_id, int slot, bool* available)
     return recipe->output;
 }
 
-int get_selected_craft_recipe_type(int container_id, int slot)
+int get_selected_craft_recipe_type(ItemContainerID container_id, int slot)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
     return recipe->output;
 }
 
-int get_selected_craft_recipe_stack(int container_id, int slot)
+int get_selected_craft_recipe_stack(ItemContainerID container_id, int slot)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return 1;
     return recipe->output_stack;
 }
 
-class SmeltingRecipe* get_selected_smelting_recipe(int container_id)
+class SmeltingRecipe* get_selected_smelting_recipe(ItemContainerID container_id)
 {
     // get container
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -531,13 +531,13 @@ class SmeltingRecipe* get_smelting_recipe(int recipe_id)
     return &smelting_recipe_array[recipe_id];
 }
 
-int* get_selected_smelting_recipe_types(int container_id, int* recipe_count)
+int* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count)
 {
     bool available;
     return get_selected_smelting_recipe_types(container_id, recipe_count, &available);
 }
 
-int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available)
+int* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count, bool* available)
 {
     class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id);
     if (recipe == NULL)
@@ -550,7 +550,7 @@ int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, boo
     return recipe->output;
 }
 
-int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count)
+int* get_selected_smelting_recipe_stacks(ItemContainerID container_id, int* recipe_count)
 {
     class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id);
     if (recipe == NULL)

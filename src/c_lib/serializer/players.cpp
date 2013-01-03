@@ -44,7 +44,7 @@ bool save_remote_player_data()
         IF_ASSERT(client->user_id == NULL_USER_ID || client->agent_id == NULL_AGENT) continue;
         save_player(client->user_id, client->agent_id);
         int n_containers = 0;
-        int* containers = ItemContainer::get_player_containers(client->agent_id, &n_containers);
+        ItemContainerID* containers = ItemContainer::get_player_containers(client->agent_id, &n_containers);
         GS_ASSERT(n_containers == N_PLAYER_CONTAINERS);
         for (int j=0; j<n_containers; j++)
             // TODO -- enable hand saving
@@ -450,7 +450,7 @@ void player_container_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     player_container_load_data_list->destroy(data->id);
 }
 
-const char* write_player_container_string(int container_id, UserID user_id)
+const char* write_player_container_string(ItemContainerID container_id, UserID user_id)
 {
     class ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     IF_ASSERT(container == NULL)
@@ -525,7 +525,7 @@ const char* write_player_string(AgentID agent_id)
     return _buffer;
 }
 
-bool save_player_container(ClientID client_id, int container_id)
+bool save_player_container(ClientID client_id, ItemContainerID container_id)
 {
     if (!Options::serializer || !Options::auth) return true;
 

@@ -4,13 +4,11 @@
 #include <item/toolbelt/common/types.hpp>
 #include <entity/object/main.hpp>
 #include <entity/objects/fabs/constants.hpp>
-
 #include <physics/ray_trace/ray_trace.hpp>
-
 #include <t_mech/_interface.hpp>
 
 #if DC_CLIENT
-#include <hud/cube_selector.hpp>
+# include <hud/cube_selector.hpp>
 #endif
 
 namespace Toolbelt

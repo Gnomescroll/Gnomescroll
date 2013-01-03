@@ -72,7 +72,7 @@
 #pragma clang diagnostic warning "-Wincompatible-pointer-types"
 #pragma clang diagnostic warning "-Winit-self"
 #pragma clang diagnostic warning "-Winitializer-overrides"
-#pragma clang diagnostic warning "-Winline"
+//#pragma clang diagnostic warning "-Winline"
 #pragma clang diagnostic warning "-Wint-to-pointer-cast"
 #pragma clang diagnostic warning "-Winvalid-offsetof"
 #pragma clang diagnostic warning "-Winvalid-pch"
@@ -182,6 +182,8 @@
 #pragma clang diagnostic ignored "-Wconversion"
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
-
+#if PRODUCTION
+# pragma clang diagnostic ignored "-Winline"
+#endif
 
 #endif

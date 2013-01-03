@@ -104,7 +104,7 @@ void toggle_agent_inventory();
 void enable_agent_inventory();
 void disable_agent_inventory();
 
-void enable_container_block(int container_id);
+void enable_container_block(ItemContainerID container_id);
 void disable_container_block();
 
 void disable_awesomium();

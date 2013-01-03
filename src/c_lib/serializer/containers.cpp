@@ -48,7 +48,7 @@ static bool parse_container_token(const char* key, const char* val, class Parsed
         long long container_id = parse_int(val, err);
         GS_ASSERT(!err && container_id >= 0 && container_id < MAX_CONTAINERS);
         if (err || container_id < 0 || container_id >= MAX_CONTAINERS) return false;
-        data->container_id = container_id;
+        data->container_id = (ItemContainerID)container_id;
     }
     else
     if (strcmp(NAME_TAG, key) == 0)
@@ -128,7 +128,7 @@ static bool process_container_blob(const char* str, size_t filesize)
         GS_ASSERT(container_data.container_id == m+1);  // not fatal, but indicates a problem with container serializer
 
         // get container by map position
-        int container_id = t_map::get_block_item_container(container_data.position.x,
+        ItemContainerID container_id = t_map::get_block_item_container(container_data.position.x,
             container_data.position.y, container_data.position.z);
         GS_ASSERT(container_id != NULL_CONTAINER);
         if (container_id == NULL_CONTAINER) return false;

@@ -12,7 +12,7 @@ extern int fist_item_type;    // cached item type lookup
 // Client
 #if DC_CLIENT
 extern int selected_slot;
-extern int toolbelt_id;
+extern ItemContainerID toolbelt_id;
 #endif
 
 // Server

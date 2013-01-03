@@ -67,7 +67,7 @@ def check_clang(conf):
         conf.env['CXX'] = ['clang']
     return use_clang
 
-def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awesomium=False, awesomium_debug=False, assimp=True, use_clang=False):
+def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awesomium=False, awesomium_debug=False, assimp=True, use_clang=True):
     global OS
     global os_libpth
 
@@ -611,14 +611,14 @@ class prodtest_ctx(ConfigurationContext):
     fun = 'prodtest'
 
 def prodtest(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-Winline', '-DNOSTRIPSYMBOLS'], rm_flags=rm, production=True)
+    configure(ctx, add_flags=add+['-Winline', '-DNOSTRIPSYMBOLS'], rm_flags=rm, production=True, use_clang=False)
 
 class production_dbg_ctx(ConfigurationContext):
     cmd = 'production_dbg'
     fun = 'production_dbg'
 
 def production_dbg(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm, production=True)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm, production=True, use_clang=False)
     
 class awesomium_ctx(ConfigurationContext):
     cmd = 'awe'

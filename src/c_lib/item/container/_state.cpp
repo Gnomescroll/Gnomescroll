@@ -10,7 +10,7 @@ ItemContainerList* item_container_list = NULL;
 #if DC_CLIENT
 bool did_open_container_block = false;
 bool did_close_container_block = false;
-int opened_container = NULL_CONTAINER;
+ItemContainerID opened_container = NULL_CONTAINER;
 int opened_container_event_id = 0;
 
 class ItemContainer* player_container = NULL;
@@ -39,12 +39,12 @@ class ItemContainerCrusherUI* crusher_ui = NULL;
 
 //Server
 #if DC_SERVER
-int* agent_inventory_list = NULL;
-int* agent_toolbelt_list = NULL;
-int* agent_synthesizer_list = NULL;
-int* agent_energy_tanks_list = NULL;
-int* agent_hand_list = NULL;
-int* opened_containers = NULL;
+ItemContainerID* agent_inventory_list = NULL;
+ItemContainerID* agent_toolbelt_list = NULL;
+ItemContainerID* agent_synthesizer_list = NULL;
+ItemContainerID* agent_energy_tanks_list = NULL;
+ItemContainerID* agent_hand_list = NULL;
+ItemContainerID* opened_containers = NULL;
 #endif
 
 }   // ItemContainer

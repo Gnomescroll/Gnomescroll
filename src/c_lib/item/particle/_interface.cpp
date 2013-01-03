@@ -104,7 +104,7 @@ ItemParticle* create_item_particle(
     if (item->location == IL_CONTAINER)
     {
         ItemContainer::ItemContainerInterface* container =
-            ItemContainer::get_container(item->location_id);
+            ItemContainer::get_container((ItemContainerID)item->location_id);
         GS_ASSERT(container != NULL);
         if (container != NULL
          && ItemContainer::get_agent_toolbelt(container->owner) == container->id
@@ -318,7 +318,7 @@ void check_item_pickups()
         bool item_remaining = true;
         bool item_altered = false;
         ItemContainer::ItemContainerInterface* container = NULL;
-        int container_id = NULL_CONTAINER;
+        ItemContainerID container_id = NULL_CONTAINER;
         
         // for chips/coins, try to add to synthesizer first
         if (item->type == coin_type)

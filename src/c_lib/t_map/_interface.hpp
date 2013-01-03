@@ -10,8 +10,8 @@ void end_t_map();
 
 void init_packets();
 
-int get_block_item_container(int x, int y, int z);
-bool get_container_location(int container_id, int position[3]); // returns false is container not found
+ItemContainerID get_block_item_container(int x, int y, int z);
+bool get_container_location(ItemContainerID container_id, int position[3]); // returns false is container not found
 
 CubeID get(int x, int y, int z);
 CubeID set(int x, int y, int z, CubeID cube_id);
@@ -67,11 +67,11 @@ extern CubeID requested_cube_id;
 #endif
 
 #if DC_SERVER
-bool create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id);
+bool create_item_container_block(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id);
 bool destroy_item_container_block(int x, int y, int z);
 
-void smelter_on(int container_id);
-void smelter_off(int container_id);
+void smelter_on(ItemContainerID container_id);
+void smelter_off(ItemContainerID container_id);
 
 //server/env_process.hpp
 void map_post_processing();
@@ -90,7 +90,7 @@ void broadcast_set_palette(int x, int y, int z, int palette);
 void handle_explosive_block(int x, int y, int z);
 
 /*
-	Lighting
+    Lighting
 */
 int get_skylight(int x, int y, int z); //
 #endif

@@ -160,10 +160,9 @@ static class Item::Item* make_item(class ParsedItemData* data)
     return item;
 }
 
-bool create_container_items_from_data(int container_id)
+bool create_container_items_from_data(ItemContainerID container_id)
 {
-    ASSERT_VALID_CONTAINER_ID(container_id);
-    IF_INVALID_CONTAINER_ID(container_id) return false;
+    IF_ASSERT(!isValid(container_id)) return false;
 
     unsigned int item_space = Item::item_space();
     GS_ASSERT(item_load_data_list->ct <= item_space);
@@ -189,13 +188,10 @@ bool create_container_items_from_data(int container_id)
     return true;
 }
 
-bool create_player_container_items_from_data(AgentID agent_id, int* containers, int n_containers)
+bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* containers, int n_containers)
 {
     for (int i=0; i<n_containers; i++)
-    {
-        ASSERT_VALID_CONTAINER_ID(containers[i]);
-        IF_INVALID_CONTAINER_ID(containers[i]) return false;
-    }
+        IF_ASSERT(!isValid(containers[i])) return false;
 
     MALLOX(ItemContainerType, container_types, n_containers);
     for (int i=0; i<n_containers; i++)
@@ -231,7 +227,7 @@ bool create_player_container_items_from_data(AgentID agent_id, int* containers, 
         //else
         if (item->location == IL_CONTAINER)
         {
-            int container_id = NULL_CONTAINER;
+            ItemContainerID container_id = NULL_CONTAINER;
             for (int j=0; j<n_containers; j++)
                 if (container_types[j] == data->item_container_type)
                 {

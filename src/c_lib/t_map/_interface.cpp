@@ -44,7 +44,7 @@ void init_packets()
 }
 
 
-int get_block_item_container(int x, int y, int z)
+ItemContainerID get_block_item_container(int x, int y, int z)
 {
     GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0);
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_CONTAINER;
@@ -58,7 +58,7 @@ int get_block_item_container(int x, int y, int z)
     return c->chunk_item_container.get(x,y,z); 
 }
 
-bool get_container_location(int container_id, int position[3])
+bool get_container_location(ItemContainerID container_id, int position[3])
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return false;
@@ -191,7 +191,7 @@ void received_block_damage_response(unsigned int request_id, unsigned int dmg)
 #endif
 
 #if DC_SERVER
-bool create_item_container_block(int x, int y, int z, ItemContainerType container_type, int container_id)
+bool create_item_container_block(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
 
@@ -221,7 +221,7 @@ bool destroy_item_container_block(int x, int y, int z)
     return c->chunk_item_container.remove(x,y,z);
 }
 
-void smelter_on(int container_id)
+void smelter_on(ItemContainerID container_id)
 {
     int p[3] = {0};
     bool success = get_container_location(container_id, p);
@@ -235,7 +235,7 @@ void smelter_on(int container_id)
     broadcast_set_palette(x,y,z, palette);
 }
 
-void smelter_off(int container_id)
+void smelter_off(ItemContainerID container_id)
 {
     int p[3] = {0};
     bool success = get_container_location(container_id, p);

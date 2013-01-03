@@ -66,7 +66,7 @@ int process_events()
     else
         unbind_mouse();
 
-    int container_id = NULL_CONTAINER;
+    ItemContainerID container_id = NULL_CONTAINER;
     if (ItemContainer::container_block_was_closed())
     {
         disable_container_block();

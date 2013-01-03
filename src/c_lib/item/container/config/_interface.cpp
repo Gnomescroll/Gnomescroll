@@ -5,31 +5,31 @@
 #include <item/container/config/_state.hpp>
 
 #if DC_CLIENT
-#include <item/container/client.hpp>
+# include <item/container/client.hpp>
 #endif
 
 #if DC_SERVER
-#include <item/container/config/crusher_dat.hpp>
-#include <item/container/server.hpp>
+# include <item/container/config/crusher_dat.hpp>
+# include <item/container/server.hpp>
 
 // packet send stubs
 // client has these defined and we want them in config
 // but dont want to have to split the config up for client/server
-void send_container_alpha_action(ContainerActionType action, int container_id, int slot){}
-void send_container_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_synthesizer_alpha_action(ContainerActionType action, int container_id, int slot){}
-void send_synthesizer_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_craft_alpha_action(ContainerActionType action, int container_id, int slot){}
-void send_purchase_item_action(ContainerActionType action, int container_id, int slot){}
-void send_craft_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_craft_item_action(ContainerActionType action, int container_id, int slot){}
-void send_no_container_alpha_action(ContainerActionType action, int container_id, int slot){}
-void send_no_container_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot){}
-void send_smelter_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_crusher_alpha_action(ContainerActionType action, int container_id, int slot){}
-void send_crusher_beta_action(ContainerActionType action, int container_id, int slot){}
-void send_crusher_crush_action(ContainerActionType action, int container_id, int slot){}
+void send_container_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_container_beta_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_synthesizer_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_synthesizer_beta_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_craft_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_purchase_item_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_craft_beta_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_craft_item_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_no_container_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_no_container_beta_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_smelter_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_smelter_beta_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_crusher_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_crusher_beta_action(ContainerActionType action, ItemContainerID container_id, int slot){}
+void send_crusher_crush_action(ContainerActionType action, ItemContainerID container_id, int slot){}
 #endif
 
 namespace ItemContainer
@@ -51,8 +51,7 @@ static void add_container()
 
 static void container_def(ItemContainerType type, const char* name)
 {   // Don't call this directly
-    ASSERT_VALID_CONTAINER_TYPE(type);
-    IF_INVALID_CONTAINER_TYPE(type)
+    IF_ASSERT(!isValid(type))
     {
         GS_ASSERT_ABORT(false);
         return;
@@ -403,8 +402,7 @@ class ContainerAttributes* get_attr(const char* name)
 
 class ContainerAttributes* get_attr(ItemContainerType type)
 {
-    ASSERT_VALID_CONTAINER_TYPE(type);
-    IF_INVALID_CONTAINER_TYPE(type) return NULL;
+    IF_ASSERT(!isValid(type)) return NULL;
     if (!container_attributes[type].loaded) return NULL;
     return &container_attributes[type];
 }

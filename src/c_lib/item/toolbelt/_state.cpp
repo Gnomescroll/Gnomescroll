@@ -12,7 +12,7 @@ int fist_item_type = NULL_ITEM_TYPE;
 //Client
 #if DC_CLIENT
 int selected_slot = 0;
-int toolbelt_id = NULL_CONTAINER;
+ItemContainerID toolbelt_id = NULL_CONTAINER;
 #endif
 
 //Server

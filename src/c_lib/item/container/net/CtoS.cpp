@@ -52,12 +52,12 @@ inline void container_action_alpha_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)(ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = alpha_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = alpha_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -82,12 +82,12 @@ inline void container_action_beta_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = beta_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = beta_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -113,12 +113,12 @@ inline void synthesizer_container_action_alpha_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = synthesizer_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = synthesizer_alpha_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -143,12 +143,12 @@ inline void synthesizer_container_action_beta_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = synthesizer_beta_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = synthesizer_beta_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -174,7 +174,7 @@ inline void purchase_item_from_synthesizer_action_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
     purchase_item_from_synthesizer(a->id, slot);
 }
@@ -185,11 +185,11 @@ inline void craft_container_action_alpha_CtoS::handle()
     if (a == NULL) return;
     if (a->status.dead) return;
 
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
-    ContainerActionType action = craft_input_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = craft_input_alpha_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -214,12 +214,12 @@ inline void craft_container_action_beta_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = craft_input_beta_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = craft_input_beta_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -245,9 +245,9 @@ inline void craft_item_from_bench_action_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    craft_item_from_bench(a->id, container_id, slot);
+    craft_item_from_bench(a->id, (ItemContainerID)container_id, slot);
 }
 
 inline void no_container_action_alpha_CtoS::handle()
@@ -299,12 +299,12 @@ inline void smelter_container_action_alpha_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = smelter_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = smelter_alpha_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -329,12 +329,12 @@ inline void smelter_container_action_beta_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = smelter_beta_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = smelter_beta_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -360,12 +360,12 @@ inline void crusher_container_action_alpha_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = crusher_alpha_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = crusher_alpha_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -390,12 +390,12 @@ inline void crusher_container_action_beta_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     if (container == NULL) return;
 
-    ContainerActionType action = crusher_beta_action_decision_tree(a->id, client_id, container_id, slot);
+    ContainerActionType action = crusher_beta_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, slot);
 
     if (this->action != action)
     {
@@ -431,11 +431,11 @@ inline void crusher_crush_item_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-    if (container_id != NULL_CONTAINER && !agent_can_access_container(a->id, container_id)) return;
+    if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
     
-    if (!crusher_crush_alpha_action_decision_tree(a->id, client_id, container_id, NULL_SLOT)) return;
+    if (!crusher_crush_alpha_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, NULL_SLOT)) return;
 
-    ItemContainerInterface* container = get_container(container_id);
+    ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     GS_ASSERT(container != NULL);
     if (container == NULL) return;
     GS_ASSERT(container->type == CONTAINER_TYPE_CRUSHER);
@@ -553,42 +553,42 @@ inline void crusher_crush_item_CtoS::handle()
 
 inline void open_container_CtoS::handle()
 {
-    if (container_id == NULL_CONTAINER) return;
+    if ((ItemContainerID)container_id == NULL_CONTAINER) return;
     
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
-    bool in_reach = agent_in_container_range(a->id, container_id);
+    bool in_reach = agent_in_container_range(a->id, (ItemContainerID)container_id);
     if (!in_reach)
     {
-        send_open_container_failed(a->client_id, container_id, event_id);
+        send_open_container_failed(a->client_id, (ItemContainerID)container_id, event_id);
         return;
     }
 
-    bool opened = agent_open_container(a->id, container_id);
+    bool opened = agent_open_container(a->id, (ItemContainerID)container_id);
     if (!opened)
     {
-        send_open_container_failed(a->client_id, container_id, event_id);
+        send_open_container_failed(a->client_id, (ItemContainerID)container_id, event_id);
         return;
     }
 
-    send_container_open(a->id, container_id);
+    send_container_open(a->id, (ItemContainerID)container_id);
 }
 
 inline void close_container_CtoS::handle()
 {
-    if (container_id == NULL_CONTAINER) return;
+    if ((ItemContainerID)container_id == NULL_CONTAINER) return;
 
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
 
-    if (container_id != opened_containers[a->id]) return;
+    if ((ItemContainerID)container_id != opened_containers[a->id]) return;
 
-    if (!agent_can_access_container(a->id, container_id)) return;
+    if (!agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
 
-    agent_close_container_silent(a->id, container_id);
+    agent_close_container_silent(a->id, (ItemContainerID)container_id);
 }
 
 void create_container_block_CtoS::handle()

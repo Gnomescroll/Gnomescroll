@@ -14,18 +14,18 @@ const int MAX_CONTAINER_TYPES = 16;
 
 const int NULL_SLOT = 0xff;           // invalid slot value
 const ItemGroup NULL_ITEM_GROUP = IG_NONE;
-const int NULL_DURABILITY = 0xffff;
+const int NULL_DURABILITY = 0xFFFF;
 const int NULL_COST = 0;
-const int NULL_CRAFTING_RECIPE = 0xffff;
-const int NULL_SMELTING_RECIPE = 0xffff;
+const int NULL_CRAFTING_RECIPE = 0xFFFF;
+const int NULL_SMELTING_RECIPE = 0xFFFF;
 const int NULL_STACK_SIZE = 0;
 const int NULL_GAS_LIFETIME = 1;
 const int NULL_LOCATION = -1;   // this represents a "not set" value, helpful for error checking
 
 // These are hard maximums for configuration, the actual maximum is defined per-item
 // and you should use the appropriate functions defined in properties.hpp
-const int MAX_STACK_SIZE = 0xffff;
-const int MAX_DURABILITY = 0xffff;
+const int MAX_STACK_SIZE = 0xFFFF;
+const int MAX_DURABILITY = 0xFFFF;
 
 const unsigned int MAX_CONTAINER_SIZE = NULL_SLOT;
 
@@ -92,4 +92,9 @@ inline bool isValid(ItemParticleID particle_id)
 inline bool isValid(ItemContainerID container_id)
 {
     return (container_id >= 0 && container_id < MAX_CONTAINERS);
+}
+
+inline bool isValid(ItemContainerType container_type)
+{
+    return (container_type >= 0 && container_type < MAX_CONTAINER_TYPES);
 }

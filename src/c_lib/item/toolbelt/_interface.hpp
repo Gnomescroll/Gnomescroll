@@ -31,10 +31,10 @@ void end_item(AgentID agent_id, int item_type);
 bool trigger_local_item_beta(ItemID item_id, int item_type);
 
 // network events
-void assign_toolbelt(int container_id);
+void assign_toolbelt(ItemContainerID container_id);
 
 // UI events
-void toolbelt_item_selected_event(int container_id, int slot);
+void toolbelt_item_selected_event(ItemContainerID container_id, int slot);
 void left_trigger_down_event();
 void left_trigger_up_event();
 void right_trigger_down_event();

@@ -232,7 +232,7 @@ void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage
 
 bool FAILED_merge_of_cntainr_draws(
     int slot_size, 
-    int container_id, 
+    ItemContainerID container_id, 
     GLubyte alpha_bord, // border
     float alpha_bkgd, // background
     const int xdim, 

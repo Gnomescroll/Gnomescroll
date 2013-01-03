@@ -15,7 +15,7 @@ void init_container(class ItemContainerInterface* container);
 class ItemContainerInterface
 {
     public:
-        int id;
+        ItemContainerID id;
         ItemContainerType type;
 
         int xdim;
@@ -156,7 +156,7 @@ class ItemContainerInterface
            if (this->slot != NULL) delete[] this->slot;
         }
 
-        ItemContainerInterface(ItemContainerType type, int id)
+        ItemContainerInterface(ItemContainerType type, ItemContainerID id)
         : id(id), type(type),
         xdim(0), ydim(0),
         alt_xdim(0), alt_ydim(0),
@@ -169,7 +169,7 @@ class ItemContainerInterface
 class ItemContainer: public ItemContainerInterface
 {
     public:
-        ItemContainer(ItemContainerType type, int id)
+        ItemContainer(ItemContainerType type, ItemContainerID id)
         : ItemContainerInterface(type, id)
         {}
 };
@@ -208,7 +208,7 @@ class ItemContainerHand: public ItemContainerInterface
             return NULL_SLOT;
         }
         
-        ItemContainerHand(ItemContainerType type, int id)
+        ItemContainerHand(ItemContainerType type, ItemContainerID id)
         : ItemContainerInterface(type, id)
         {}
 };
@@ -251,7 +251,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
             ItemContainerInterface::init(xdim, ydim);
         }
         
-        ItemContainerEnergyTanks(ItemContainerType type, int id)
+        ItemContainerEnergyTanks(ItemContainerType type, ItemContainerID id)
         : ItemContainerInterface(type, id), energy_tank_type(NULL_ITEM_TYPE)
         { GS_ASSERT(type == AGENT_ENERGY_TANKS); }
 };
@@ -262,7 +262,7 @@ class ItemContainerCryofreezer: public ItemContainer
 
         int insert_item(int slot, ItemID item_id);
         
-        ItemContainerCryofreezer(ItemContainerType type, int id)
+        ItemContainerCryofreezer(ItemContainerType type, ItemContainerID id)
         : ItemContainer(type,id)
         {}
 };
@@ -299,7 +299,7 @@ class ItemContainerSynthesizer: public ItemContainerInterface
             ItemContainerInterface::init(xdim, ydim);
         }
         
-        ItemContainerSynthesizer(ItemContainerType type, int id)
+        ItemContainerSynthesizer(ItemContainerType type, ItemContainerID id)
         : ItemContainerInterface(type, id), coins_type(NULL_ITEM_TYPE)
         {}
 };
@@ -308,7 +308,7 @@ class ItemContainerCraftingBench: public ItemContainerInterface
 {
     public:
 
-        ItemContainerCraftingBench(ItemContainerType type, int id)
+        ItemContainerCraftingBench(ItemContainerType type, ItemContainerID id)
         : ItemContainerInterface(type, id)
         {}
 };
@@ -497,17 +497,17 @@ class ItemContainerSmelter: public ItemContainerInterface
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
 
-    ItemContainerSmelter(ItemContainerType type, int id)
-    : ItemContainerInterface(type, id),
-    #if DC_SERVER
-    on(false),
-    #endif
-    fuel(0.0f),
-    fuel_type(NULL_ITEM_TYPE),
-    burn_rate(1.0f/30.0f),
-    recipe_id(NULL_SMELTING_RECIPE),
-    progress(0.0f),
-    progress_rate(1.0f/30.0f)
+    ItemContainerSmelter(ItemContainerType type, ItemContainerID id) :
+        ItemContainerInterface(type, id),
+        #if DC_SERVER
+        on(false),
+        #endif
+        fuel(0.0f),
+        fuel_type(NULL_ITEM_TYPE),
+        burn_rate(1.0f/30.0f),
+        recipe_id(NULL_SMELTING_RECIPE),
+        progress(0.0f),
+        progress_rate(1.0f/30.0f)
     {}
 };
 
@@ -548,7 +548,7 @@ class ItemContainerCrusher: public ItemContainerInterface
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
 
-        ItemContainerCrusher(ItemContainerType type, int id)
+        ItemContainerCrusher(ItemContainerType type, ItemContainerID id)
         : ItemContainerInterface(type, id)
         {}
 };
@@ -558,9 +558,10 @@ class ItemContainerCrusher: public ItemContainerInterface
 namespace ItemContainer
 {
 
-ItemContainerInterface* create_item_container_interface(int ttype, int id)
+ItemContainerInterface* create_item_container_interface(int ttype, int iid)
 {
     ItemContainerType type = (ItemContainerType)ttype;
+    ItemContainerID id = (ItemContainerID)iid;
     switch (type)
     {
         case AGENT_INVENTORY:

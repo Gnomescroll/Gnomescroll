@@ -2,13 +2,13 @@
 
 #include <item/common/constants.hpp>
 
-typedef void (*send_decision) (ContainerActionType, int, int);
+typedef void (*send_decision) (ContainerActionType, ItemContainerID, int);
                                  // action, container, slot
 #if DC_CLIENT
-typedef ContainerActionType (*decision_tree) (int, int);
+typedef ContainerActionType (*decision_tree) (ItemContainerID, int);
 #endif                                 // container, slot
 #if DC_SERVER
-typedef ContainerActionType (*decision_tree) (AgentID, ClientID, int, int);
+typedef ContainerActionType (*decision_tree) (AgentID, ClientID, ItemContainerID, int);
 #endif                              // agent, client, container, slot
 
 

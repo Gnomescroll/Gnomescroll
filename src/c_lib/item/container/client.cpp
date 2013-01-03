@@ -8,9 +8,9 @@ namespace ItemContainer
 {
 
 static uint16_t container_event_id = 0;
-int* container_event = NULL;
+ItemContainerID* container_event = NULL;
 
-int record_container_event(int container_id)
+int record_container_event(ItemContainerID container_id)
 {
     GS_ASSERT(container_event != NULL);
     if (container_event == NULL) return -1;
@@ -20,7 +20,7 @@ int record_container_event(int container_id)
     return container_event_id;
 }
 
-void send_container_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_container_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -58,7 +58,7 @@ void send_container_alpha_action(ContainerActionType action, int container_id, i
     msg.send();
 }
 
-void send_container_beta_action(ContainerActionType action, int container_id, int slot)
+void send_container_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -97,7 +97,7 @@ void send_container_beta_action(ContainerActionType action, int container_id, in
     msg.send();
 }
 
-void send_synthesizer_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_synthesizer_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -134,7 +134,7 @@ void send_synthesizer_alpha_action(ContainerActionType action, int container_id,
     msg.send();
 }
 
-void send_synthesizer_beta_action(ContainerActionType action, int container_id, int slot)
+void send_synthesizer_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -173,7 +173,7 @@ void send_synthesizer_beta_action(ContainerActionType action, int container_id, 
     msg.send();
 }
 
-void send_craft_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_craft_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -210,7 +210,7 @@ void send_craft_alpha_action(ContainerActionType action, int container_id, int s
     msg.send();
 }
 
-void send_purchase_item_action(ContainerActionType action, int container_id, int slot)
+void send_purchase_item_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -229,7 +229,7 @@ void send_purchase_item_action(ContainerActionType action, int container_id, int
     msg.send();
 }
 
-void send_craft_beta_action(ContainerActionType action, int container_id, int slot)
+void send_craft_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -268,7 +268,7 @@ void send_craft_beta_action(ContainerActionType action, int container_id, int sl
     msg.send();
 }
 
-void send_craft_item_action(ContainerActionType action, int container_id, int slot)
+void send_craft_item_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -287,7 +287,7 @@ void send_craft_item_action(ContainerActionType action, int container_id, int sl
     msg.send();
 }
 
-void send_no_container_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_no_container_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -302,7 +302,7 @@ void send_no_container_alpha_action(ContainerActionType action, int container_id
     msg.send();
 }
 
-void send_no_container_beta_action(ContainerActionType action, int container_id, int slot)
+void send_no_container_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     record_container_event(NULL_CONTAINER);
 
@@ -314,7 +314,7 @@ void send_no_container_beta_action(ContainerActionType action, int container_id,
     msg.send();
 }
 
-void send_smelter_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_smelter_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -352,7 +352,7 @@ void send_smelter_alpha_action(ContainerActionType action, int container_id, int
     msg.send();
 }
 
-void send_smelter_beta_action(ContainerActionType action, int container_id, int slot)
+void send_smelter_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -391,7 +391,7 @@ void send_smelter_beta_action(ContainerActionType action, int container_id, int 
     msg.send();
 }
 
-void send_crusher_alpha_action(ContainerActionType action, int container_id, int slot)
+void send_crusher_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(action != CONTAINER_ACTION_NONE);
     if (container_id == NULL_CONTAINER) return;
@@ -427,7 +427,7 @@ void send_crusher_alpha_action(ContainerActionType action, int container_id, int
     msg.send();
 }
 
-void send_crusher_beta_action(ContainerActionType action, int container_id, int slot)
+void send_crusher_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui == NULL) return;
@@ -466,7 +466,7 @@ void send_crusher_beta_action(ContainerActionType action, int container_id, int 
     msg.send();
 }
 
-void send_crusher_crush_action(ContainerActionType action, int container_id, int slot)
+void send_crusher_crush_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
     GS_ASSERT(action == CRUSHER_CRUSH_ITEM);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -484,7 +484,7 @@ void send_crusher_crush_action(ContainerActionType action, int container_id, int
 
 // Handlers
 
-void mouse_left_click_handler(int container_id, int slot, bool alt_action)
+void mouse_left_click_handler(ItemContainerID container_id, int slot, bool alt_action)
 {
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
@@ -526,7 +526,7 @@ void mouse_left_click_handler(int container_id, int slot, bool alt_action)
     }
 }
 
-void mouse_right_click_handler(int container_id, int slot, bool alt_action)
+void mouse_right_click_handler(ItemContainerID container_id, int slot, bool alt_action)
 {
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
@@ -568,7 +568,7 @@ void mouse_right_click_handler(int container_id, int slot, bool alt_action)
     }
 }
 
-void send_container_open(int container_id, int event_id)
+void send_container_open(ItemContainerID container_id, int event_id)
 {
     GS_ASSERT(event_id >= 0);
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -579,7 +579,7 @@ void send_container_open(int container_id, int event_id)
     msg.send();
 }
 
-void send_container_close(int container_id)
+void send_container_close(ItemContainerID container_id)
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id == NULL_CONTAINER) return;

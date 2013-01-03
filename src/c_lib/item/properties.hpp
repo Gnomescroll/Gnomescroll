@@ -73,16 +73,16 @@ int get_smelting_recipe_creation_time(int recipe_id);
 
 class CraftingRecipe* get_craft_recipe(int recipe_id);
 
-class CraftingRecipe* get_selected_craft_recipe(int container_id, int slot);
-int get_selected_craft_recipe_type(int container_id, int slot);
-int get_selected_craft_recipe_type(int container_id, int slot, bool* available);
-int get_selected_craft_recipe_stack(int container_id, int slot);
+class CraftingRecipe* get_selected_craft_recipe(ItemContainerID container_id, int slot);
+int get_selected_craft_recipe_type(ItemContainerID container_id, int slot);
+int get_selected_craft_recipe_type(ItemContainerID container_id, int slot, bool* available);
+int get_selected_craft_recipe_stack(ItemContainerID container_id, int slot);
 
 class SmeltingRecipe* get_smelting_recipe(int recipe_id);
-class SmeltingRecipe* get_selected_smelting_recipe(int container_id);
-int* get_selected_smelting_recipe_types(int container_id, int* recipe_count);
-int* get_selected_smelting_recipe_types(int container_id, int* recipe_count, bool* available);
-int* get_selected_smelting_recipe_stacks(int container_id, int* recipe_count);
+class SmeltingRecipe* get_selected_smelting_recipe(ItemContainerID container_id);
+int* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count);
+int* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count, bool* available);
+int* get_selected_smelting_recipe_stacks(ItemContainerID container_id, int* recipe_count);
 
 ItemContainerType get_container_type_for_cube(CubeID cube_id);
 }   // Item

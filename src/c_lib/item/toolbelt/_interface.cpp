@@ -306,12 +306,12 @@ void update_selected_item_type()
     Animations::stop_equipped_item_animation();
 }
 
-void assign_toolbelt(int container_id)
+void assign_toolbelt(ItemContainerID container_id)
 {
     toolbelt_id = container_id;
 }
 
-void toolbelt_item_selected_event(int container_id, int slot)
+void toolbelt_item_selected_event(ItemContainerID container_id, int slot)
 {
     if (selected_slot == slot) return;
     // dont check for death here

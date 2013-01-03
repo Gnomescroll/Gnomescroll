@@ -66,7 +66,7 @@ void ItemList::decay_gas()
         }
         else if (item->location == IL_CONTAINER)
         {   // get container
-            int container_id = item->location_id;
+            ItemContainerID container_id = (ItemContainerID)item->location_id;
             GS_ASSERT(container_id != NULL_CONTAINER);  // if it wasnt a particle it should be in a container
             if (container_id == NULL_CONTAINER) continue;
 
@@ -153,10 +153,10 @@ bool is_valid_location_data(ItemLocationType location, int location_id, int cont
     else
     if (location == IL_CONTAINER)
     {
-        VERIFY_ITEM_LOCATION(IS_VALID_CONTAINER_ID(location_id));
+        VERIFY_ITEM_LOCATION(isValid((ItemContainerID)location_id));
         VERIFY_ITEM_LOCATION(location_id != NULL_CONTAINER);
         VERIFY_ITEM_LOCATION(container_slot != NULL_SLOT);
-        ItemContainerType container_type = ItemContainer::get_container_type(location_id);
+        ItemContainerType container_type = ItemContainer::get_container_type((ItemContainerID)location_id);
         VERIFY_ITEM_LOCATION(container_type != NULL_CONTAINER_TYPE);
         // we can't check container slot max from attr for container blocks, because the configuration is not specialized enough
         // we can check for player containers though
@@ -203,8 +203,8 @@ void ItemList::verify_items()
         else
         if (i->location == IL_CONTAINER)
         {
-            ItemContainerType type = ItemContainer::get_container_type(i->location_id);
-            int owner = ItemContainer::get_container_owner(i->location_id);
+            ItemContainerType type = ItemContainer::get_container_type((ItemContainerID)i->location_id);
+            int owner = ItemContainer::get_container_owner((ItemContainerID)i->location_id);
             if (ItemContainer::container_type_is_attached_to_agent(type))
             {
                 GS_ASSERT_LIMIT(i->subscribers.count == 1, LIMIT);

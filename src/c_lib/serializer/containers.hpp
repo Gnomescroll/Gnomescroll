@@ -32,7 +32,7 @@ class ParsedContainerData
 {
     public:
 
-        int container_id;
+        ItemContainerID container_id;
         char name[DAT_NAME_MAX_LENGTH+1];
         int item_count;
         struct MapPosition position;
@@ -41,7 +41,7 @@ class ParsedContainerData
     void reset()
     {
         this->valid = false;
-        this->container_id = -1;
+        this->container_id = NULL_CONTAINER;
         this->name[0] = '\0';
         this->item_count = 0;
         this->position.x = -1;

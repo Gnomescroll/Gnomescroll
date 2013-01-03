@@ -226,7 +226,7 @@ int AgentStatus::apply_damage(int dmg)
 
     if (this->health <= 0)
     {    // attempt to burn energy tank
-        int energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
+        ItemContainerID energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
         GS_ASSERT(energy_tanks_container_id != NULL_CONTAINER);
         using ItemContainer::ItemContainerEnergyTanks;
         ItemContainerEnergyTanks* container = (ItemContainerEnergyTanks*)

@@ -12,6 +12,7 @@
 #include <item/container/config/types.hpp>
 #include <item/container/config/_state.cpp>
 #include <item/container/config/_interface.cpp>
+#include <item/container/config/names.cpp>
 
 #if DC_SERVER
 # include <item/container/config/crusher_dat.cpp>

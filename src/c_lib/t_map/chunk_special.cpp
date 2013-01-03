@@ -25,7 +25,7 @@ bool CHUNK_ITEM_CONTAINER::remove_index(int i)
     return this->_remove(i);
 }
 
-bool CHUNK_ITEM_CONTAINER::remove(int container_id)
+bool CHUNK_ITEM_CONTAINER::remove(ItemContainerID container_id)
 {
     // find container
     int i;
@@ -70,7 +70,7 @@ bool CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
     return this->remove_index(i);
 }
 
-bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_type, int container_id)
+bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
 

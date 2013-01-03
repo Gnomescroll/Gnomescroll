@@ -110,7 +110,7 @@ class MAP_CHUNK_SUBSCRIPTION
         }
     }
 
-    void container_block_create(int x, int y, int z, int container_type, int container_id)
+    void container_block_create(int x, int y, int z, int container_type, ItemContainerID container_id)
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
@@ -128,7 +128,7 @@ class MAP_CHUNK_SUBSCRIPTION
         }
     }
 
-    void container_block_delete(int chunk_index, int container_id)
+    void container_block_delete(int chunk_index, ItemContainerID container_id)
     {
         class container_block_delete_StoC msg;
         msg.chunk_index = chunk_index;
@@ -205,12 +205,12 @@ class Terrain_map_subscription
         chunk[xchunk_dim*_y + _x].send_set_block_palette(x,y,z,cube_id,palette);
     }
 
-    void container_block_create(int chunk_index, int x, int y, int z, int container_type, int container_id)
+    void container_block_create(int chunk_index, int x, int y, int z, int container_type, ItemContainerID container_id)
     {
         chunk[chunk_index].container_block_create(x,y,z,container_type,container_id);
     }
 
-    void container_block_delete(int chunk_index, int container_id)
+    void container_block_delete(int chunk_index, ItemContainerID container_id)
     {
         chunk[chunk_index].container_block_delete(chunk_index, container_id);
     }
