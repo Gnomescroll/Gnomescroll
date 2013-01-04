@@ -139,10 +139,10 @@ void meteor_fall(void)
         xcurrent=translate_point(xcurrent);
         ycurrent=randrange(y + (zcurrent - z) - METEOR_SIZE * 5, y - (zcurrent - z) + METEOR_SIZE * 6);
         ycurrent=translate_point(ycurrent);
+        degenerate_column(xcurrent, ycurrent, zcurrent + 1);
         if (zcurrent > t_map::get_highest_open_block(xcurrent, ycurrent)) zcurrent = t_map::get_highest_open_block(xcurrent, ycurrent);
         if (randrange(1, 5) == 1) t_map::set(xcurrent, ycurrent, zcurrent, tile_id);
         else t_map::set(xcurrent, ycurrent, zcurrent, rock); //lots of impurities here because the crater is mainly made out of stuff that the meteor pushed away from itself
-        if (randrange(1, 5) < 5) degenerate_column(xcurrent, ycurrent, zcurrent + 1);
     }
 
     //now degenerate the blocks above the side rounders(not all rounders will be uncovered, but that brings some randomness)
@@ -253,6 +253,8 @@ void meteor_shower()
 
 void degenerate_column(int x, int y, int z)
 {
+    x = translate_point(x);
+    y = translate_point(y);
     for(int k = z; k < t_map::map_dim.z; k++)
     {
         t_map::set(x, y, k, EMPTY_CUBE);
