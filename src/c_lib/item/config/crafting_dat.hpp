@@ -51,10 +51,6 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("iridium_bar", 1);
 
-    def_crafting_recipe("laser_rifle");
-    set_crafting_reagent("silicon_crystal", 1);
-    set_crafting_reagent("iron_bar", 1);
-
     // blocks
      def_crafting_recipe("steel_block_1", 4);
     set_crafting_reagent("iron_bar", 1);
