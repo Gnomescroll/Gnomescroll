@@ -151,7 +151,7 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awe
         conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
 
     warning_sound_flag = '-DENABLE_WARNING_SOUND=1'
-    if OS == 'Linux':
+    if production or OS != 'Windows':
         warning_sound_flag = '-DENABLE_WARNING_SOUND=0'
 
     extra_options = [

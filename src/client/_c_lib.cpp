@@ -17,11 +17,11 @@
 #endif
 
 #ifndef ENABLE_WARNING_SOUND
-# if PRODUCTION
-#  define ENABLE_WARNING_SOUND 0
-# else
-#  define ENABLE_WARNING_SOUND 1
-# endif
+# define ENABLE_WARNING_SOUND 1
+#endif
+
+#if PRODUCTION
+# define ENABLE_WARNING_SOUND 0
 #endif
 
 #ifdef GS_SERIALIZER
