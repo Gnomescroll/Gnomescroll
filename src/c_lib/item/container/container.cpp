@@ -23,17 +23,25 @@ namespace ItemContainer
     
 /* Initializer */
 
-void init_container(ItemContainerInterface* container)
+ItemContainerInterface* create_item_container_interface(int type, int id)
 {
-    IF_ASSERT(container == NULL) return;
+    containerCreate create_fn = get_container_create_function((ItemContainerType)type);
+    IF_ASSERT(create_fn == NULL) return NULL;
+    ItemContainerInterface* container = create_fn((ItemContainerType)type, (ItemContainerID)id);
+    IF_ASSERT(container == NULL) return NULL;
     
-    GS_ASSERT(container->type != NULL_CONTAINER_TYPE);
     class ContainerAttributes* attr = get_attr(container->type);
-    IF_ASSERT(attr == NULL) return;
+    IF_ASSERT(attr == NULL)
+    {
+        destroy_container(container->id);
+        return NULL;
+    }
     
     container->attached_to_agent = attr->attached_to_agent;
     container->set_alt_parameters(attr->alt_xdim, attr->alt_ydim);
     container->init(attr->xdim, attr->ydim);
+
+    return container;
 }
 
 /* Interface */

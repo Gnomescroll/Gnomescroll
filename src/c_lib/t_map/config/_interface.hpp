@@ -11,7 +11,7 @@ namespace t_map
 
 class CubeProperties* p = NULL;
 
-int _current_cube_id = EMPTY_CUBE + 1;
+int _current_cube_type = EMPTY_CUBE + 1;
 int _palette_number = 0;
 
 int _side_texture[6];
@@ -26,34 +26,34 @@ void _finish_cube()
 }
 
 // private method; don't call this one directly
-static void cube_def(CubeID id, CubeType type, const char* name, CubeMaterial material)
+static void cube_def(CubeType type, CubeGroup group, const char* name, CubeMaterial material)
 {
-    GS_ASSERT_ABORT(id == NULL_CUBE || id == ERROR_CUBE || id == EMPTY_CUBE);
+    GS_ASSERT_ABORT(type == NULL_CUBE || type == ERROR_CUBE || type == EMPTY_CUBE);
     
     if (p != NULL)
         _finish_cube();
     
-    if (id == NULL_CUBE) id = (CubeID)_current_cube_id++;
+    if (type == NULL_CUBE) type = (CubeType)_current_cube_type++;
 
     GS_ASSERT_ABORT(is_valid_cube_name(name));
     if (!is_valid_cube_name(name)) return;
     
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return;
+    ASSERT_VALID_CUBE_TYPE(type);
+    IF_INVALID_CUBE_TYPE(type) return;
 
-    p = &cube_properties[id];
+    p = &cube_properties[type];
 
     GS_ASSERT_ABORT(!p->loaded);
     if (p->loaded) return;
     
-    p->id = id;    
+    p->type = type;    
     strncpy(p->name, name, DAT_NAME_MAX_LENGTH);
     p->name[DAT_NAME_MAX_LENGTH] = '\0';
     p->max_damage = DEFAULT_MAX_DAMAGE;
-    p->type = type;
+    p->group = group;
     p->material = material;
     
-    switch (type)
+    switch (group)
     {
         case ErrorCube:
         case SolidCube:
@@ -79,14 +79,14 @@ static void cube_def(CubeID id, CubeType type, const char* name, CubeMaterial ma
 }
 
 // this is the public method
-void cube_def(CubeType type, const char* name, CubeMaterial material)
+void cube_def(CubeGroup group, const char* name, CubeMaterial material)
 {
-    cube_def(NULL_CUBE, type, name, material);
+    cube_def(NULL_CUBE, group, name, material);
 }
 
-void cube_def(CubeType type, const char* name)
+void cube_def(CubeGroup group, const char* name)
 {
-    cube_def(type, name, CUBE_MATERIAL_NONE);
+    cube_def(group, name, CUBE_MATERIAL_NONE);
 }
 
 void cube_def_empty(const char* name)
@@ -105,11 +105,8 @@ void cube_def_error(const char* name)
 
 void cube_def_container(const char* name)
 {
-    ItemContainerType container_type = ItemContainer::get_type(name);
-    GS_ASSERT_ABORT(isValid(container_type));
-    if (!isValid(container_type)) return;
-    cube_def(ItemContainerCube, name, CUBE_MATERIAL_NONE);  // TODO -- cube material for chests?
-    p->container_type = container_type;
+    // TODO -- cube material for chests?
+    cube_def(ItemContainerCube, name, CUBE_MATERIAL_NONE);
 }
 
 static void copy_cube_properties(class CubeProperties* a, struct FastCubeProperties* b)
@@ -202,9 +199,9 @@ void push_texture()
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
     
-    start_cube_palette(p->id);
-    for (int i=0; i<6; i++) set_cube_side_texture(p->id, i, _side_texture[i]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, i, _side_texture[i]);
+    start_cube_palette(p->type);
+    for (int i=0; i<6; i++) set_cube_side_texture(p->type, i, _side_texture[i]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, i, _side_texture[i]);
     push_cube_palette();
     _palette_number++;
 }
@@ -228,47 +225,47 @@ void push_oriented_texture()
     const int W = 4;
     const int E = 5;
 
-    //printf("current_block= %i \n", p->id);
-    for (int i=0; i<6; i++) set_cube_side_texture(p->id, i, _side_texture[i]);
+    //printf("current_block= %i \n", p->type);
+    for (int i=0; i<6; i++) set_cube_side_texture(p->type, i, _side_texture[i]);
 
     //NORTH
-    start_cube_palette(p->id);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, T, _side_texture[0]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, B, _side_texture[1]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, N, _side_texture[2]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, S, _side_texture[3]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, W, _side_texture[4]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, E, _side_texture[5]);
+    start_cube_palette(p->type);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, T, _side_texture[0]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, B, _side_texture[1]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, N, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, S, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, W, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, E, _side_texture[5]);
     push_cube_palette();
 
     //WEST
-    start_cube_palette(p->id);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, T, _side_texture[0]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, B, _side_texture[1]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, E, _side_texture[2]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, W, _side_texture[3]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, N, _side_texture[4]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, S, _side_texture[5]);
+    start_cube_palette(p->type);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, T, _side_texture[0]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, B, _side_texture[1]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, E, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, W, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, N, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, S, _side_texture[5]);
     push_cube_palette();
 
     //SOUTH
-    start_cube_palette(p->id);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, T, _side_texture[0]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, B, _side_texture[1]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, S, _side_texture[2]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, N, _side_texture[3]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, E, _side_texture[4]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, W, _side_texture[5]);
+    start_cube_palette(p->type);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, T, _side_texture[0]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, B, _side_texture[1]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, S, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, N, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, E, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, W, _side_texture[5]);
     push_cube_palette();
 
     //EAST
-    start_cube_palette(p->id);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, T, _side_texture[0]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, B, _side_texture[1]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, W, _side_texture[2]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, E, _side_texture[3]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, S, _side_texture[4]);
-    for (int i=0; i<6; i++) set_cube_palette_texture(p->id, N, _side_texture[5]);
+    start_cube_palette(p->type);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, T, _side_texture[0]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, B, _side_texture[1]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, W, _side_texture[2]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, E, _side_texture[3]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, S, _side_texture[4]);
+    for (int i=0; i<6; i++) set_cube_palette_texture(p->type, N, _side_texture[5]);
     push_cube_palette();
 
     _palette_number += 4;
@@ -296,7 +293,7 @@ static void hud_def(int yhud, int xhud, int tex_id)
         GS_ASSERT_ABORT(found);
     }
 
-    HudCubeSelector::set_cube_hud(xhud, yhud, p->id, tex_id);
+    HudCubeSelector::set_cube_hud(xhud, yhud, p->type, tex_id);
 }
 
 void hud_def(int yhud, int xhud, SpriteSheet sheet_id, int ypos, int xpos)
@@ -325,7 +322,7 @@ void hud_def(SpriteSheet sheet_id, int ypos, int xpos)
         GS_ASSERT_ABORT(found);
     }
 
-    HudCubeSelector::set_cube_hud(p->id, tex_id);
+    HudCubeSelector::set_cube_hud(p->type, tex_id);
 }
 
 int sprite_alias(SpriteSheet sheet_id, int ypos, int xpos)
@@ -356,13 +353,13 @@ void verify_config()
         class CubeProperties* p = &cube_properties[i];
         if (!cube_properties[i].loaded) continue;
 
-        GS_ASSERT_ABORT(p->id == (CubeID)i);
-        GS_ASSERT_ABORT(p->id != NULL_CUBE);
+        GS_ASSERT_ABORT(p->type == (CubeType)i);
+        GS_ASSERT_ABORT(p->type != NULL_CUBE);
 
-        GS_ASSERT_ABORT(p->id != EMPTY_CUBE || p->type == EmptyCube);
-        GS_ASSERT_ABORT(p->id != ERROR_CUBE || p->type == ErrorCube);
-        GS_ASSERT_ABORT(p->id == EMPTY_CUBE || p->type != EmptyCube);
-        GS_ASSERT_ABORT(p->id == ERROR_CUBE || p->type != ErrorCube);
+        GS_ASSERT_ABORT(p->type != EMPTY_CUBE || p->group == EmptyCube);
+        GS_ASSERT_ABORT(p->type != ERROR_CUBE || p->group == ErrorCube);
+        GS_ASSERT_ABORT(p->type == EMPTY_CUBE || p->group != EmptyCube);
+        GS_ASSERT_ABORT(p->type == ERROR_CUBE || p->group != ErrorCube);
 
         GS_ASSERT_ABORT(p->max_damage <= MAX_CUBE_DAMAGE);
         GS_ASSERT_ABORT(is_valid_cube_name(p->name));
@@ -391,7 +388,7 @@ void verify_config()
     // check inactive name destinations against active
     for (size_t i=0; i<cube_name_map->size; i++)
     {
-        GS_ASSERT_ABORT(get_cube_id(cube_name_map->get_replacement(i)) != ERROR_CUBE);
+        GS_ASSERT_ABORT(get_cube_type(cube_name_map->get_replacement(i)) != ERROR_CUBE);
     }
 
     #if DC_SERVER || !PRODUCTION

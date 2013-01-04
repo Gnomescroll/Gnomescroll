@@ -17,28 +17,28 @@ static int cube_texture_palette_debug[MAX_CUBES];
 //static unsigned short cube_color_palette_lookup_max[MAX_CUBES];
 //static struct ColorElement cube_color_palette[MAX_CUBES];
 
-void start_cube_palette(CubeID cube_id);
+void start_cube_palette(CubeType cube_type);
 void end_cube_palette();
-void set_cube_palette_texture(CubeID id, int side, int tex_id);
+void set_cube_palette_texture(CubeType id, int side, int tex_id);
 
 
-void start_cube_palette(CubeID cube_id)
+void start_cube_palette(CubeType cube_type)
 {
-    static int last_cube_id = -1;
+    static int last_cube_type = -1;
     cube_texture_palette_debug[cube_texture_palette_index] = 1;
 
-    if(cube_texture_palette_lookup[cube_id] == 0)
+    if(cube_texture_palette_lookup[cube_type] == 0)
     {
-        cube_texture_palette_lookup[cube_id] = cube_texture_palette_index;
-        //cube_color_palette_lookup[cube_id] = cube_color_palette_index;
+        cube_texture_palette_lookup[cube_type] = cube_texture_palette_index;
+        //cube_color_palette_lookup[cube_type] = cube_color_palette_index;
     }
     else
     {
         //if this cube id has been used before
-        GS_ASSERT_ABORT(cube_id == last_cube_id);
+        GS_ASSERT_ABORT(cube_type == last_cube_type);
     }
-    cube_texture_palette_lookup_max[cube_id]++;
-    last_cube_id = cube_id;
+    cube_texture_palette_lookup_max[cube_type]++;
+    last_cube_type = cube_type;
 }
 
 void push_cube_palette()
@@ -46,7 +46,7 @@ void push_cube_palette()
     cube_texture_palette_index++;
 }
 
-void set_cube_palette_texture(CubeID id, int side, int tex_id)
+void set_cube_palette_texture(CubeType id, int side, int tex_id)
 {
     GS_ASSERT_ABORT(cube_texture_palette_debug[cube_texture_palette_index] == 1);
 

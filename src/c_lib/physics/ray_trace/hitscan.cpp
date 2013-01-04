@@ -45,7 +45,7 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 HitscanTargetTypes hitscan_against_world(
     struct Vec3 p, struct Vec3 v, int ignore_id, EntityType ignore_type,    // inputs
     class Voxels::VoxelHitscanTarget* target, float* vox_distance, float collision_point[3],
-    int block_pos[3], int side[3], CubeID* cube_id, float* block_distance // outputs
+    int block_pos[3], int side[3], CubeType* cube_type, float* block_distance // outputs
 )
 {   // hitscan against voxels
     *vox_distance = 10000000.0f;
@@ -66,14 +66,14 @@ HitscanTargetTypes hitscan_against_world(
     if (block_hit)
     {
         *block_distance = terrain_data.interval * max_dist;
-        *cube_id = terrain_data.get_cube_id();
+        *cube_type = terrain_data.get_cube_type();
         terrain_data.get_side_array(side);
         for (int i=0; i<3; i++) block_pos[i] = terrain_data.collision_point[i];
     }
     else
     {
         *block_distance = 10000000.0f;
-        *cube_id = NULL_CUBE;
+        *cube_type = NULL_CUBE;
         side[2] = 1;
         for (int i=0; i<3; i++) block_pos[i] = -1;
     }

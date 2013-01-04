@@ -55,7 +55,7 @@ int get_particle_voxel_texture(int item_type);
 int get_item_cube_height(int item_type);
 
 float get_weapon_range(int weapon_type);
-int get_item_block_damage(int weapon_type, CubeID cube_id);
+int get_item_block_damage(int weapon_type, CubeType cube_type);
 int get_item_object_damage(int weapon_type);
 
 int get_synthesizer_item(int xslot, int yslot);
@@ -84,5 +84,5 @@ int* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recip
 int* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count, bool* available);
 int* get_selected_smelting_recipe_stacks(ItemContainerID container_id, int* recipe_count);
 
-ItemContainerType get_container_type_for_cube(CubeID cube_id);
+ItemContainerType get_container_type_for_cube(CubeType cube_type);
 }   // Item

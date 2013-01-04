@@ -97,14 +97,14 @@ class block_set_StoC: public MapMessagePacketToClient<block_set_StoC>
     public:
 
         uint16_t x,y,z;
-        uint8_t cube_id;
+        uint8_t cube_type;
         
     inline void packet(char* buff, unsigned int* buff_n, bool pack) 
     {
         pack_u16(&x, buff, buff_n, pack);
         pack_u16(&y, buff, buff_n, pack);
         pack_u16(&z, buff, buff_n, pack);
-        pack_u8(&cube_id, buff, buff_n, pack);
+        pack_u8(&cube_type, buff, buff_n, pack);
     }
     
     inline void handle() __attribute((always_inline));
@@ -115,7 +115,7 @@ class block_set_palette_StoC: public MapMessagePacketToClient<block_set_palette_
     public:
 
         uint16_t x,y,z;
-        uint8_t cube_id;
+        uint8_t cube_type;
         uint8_t palette;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack) 
@@ -123,20 +123,20 @@ class block_set_palette_StoC: public MapMessagePacketToClient<block_set_palette_
         pack_u16(&x, buff, buff_n, pack);
         pack_u16(&y, buff, buff_n, pack);
         pack_u16(&z, buff, buff_n, pack);
-        pack_u8(&cube_id, buff, buff_n, pack);
+        pack_u8(&cube_type, buff, buff_n, pack);
         pack_u8(&palette, buff, buff_n, pack);
     }
     
     inline void handle() __attribute((always_inline));
 };
 
-// sets a cube_id, but also provides information on how the cube_id was set
+// sets a cube_type, but also provides information on how the cube_type was set
 class block_action_StoC: public MapMessagePacketToClient<block_action_StoC>
 {
     public:
 
         uint16_t x,y,z;
-        uint8_t cube_id;
+        uint8_t cube_type;
         uint8_t action;
         
     inline void packet(char* buff, unsigned int* buff_n, bool pack) 
@@ -144,7 +144,7 @@ class block_action_StoC: public MapMessagePacketToClient<block_action_StoC>
         pack_u16(&x, buff, buff_n, pack);
         pack_u16(&y, buff, buff_n, pack);
         pack_u16(&z, buff, buff_n, pack);
-        pack_u8(&cube_id, buff, buff_n, pack);
+        pack_u8(&cube_type, buff, buff_n, pack);
         pack_u8(&action, buff, buff_n, pack);
     }
     

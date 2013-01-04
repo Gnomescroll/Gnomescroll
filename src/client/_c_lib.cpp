@@ -233,16 +233,8 @@ void atexit_handler()
     close_c_lib();
 }
 
-int init_c_lib(int argc, char* argv[]) 
+void print_working_directory()
 {
-    /*
-        Time startup functions to determine delay/slow down
-    */
-    GS_ASSERT(!c_lib_inited);
-
-    int ret = atexit(&atexit_handler);
-    GS_ASSERT_ABORT(ret == 0);
-
     #ifdef linux
     // print working directory
     const size_t DIR_SIZE = 1024;
@@ -253,7 +245,15 @@ int init_c_lib(int argc, char* argv[])
     else
         printf("Working directory is: %s\n", wd);
     free(wd);
-    
+    #endif
+}
+
+void register_signals()
+{
+    int ret = atexit(&atexit_handler);
+    GS_ASSERT_ABORT(ret == 0);
+
+    #ifdef linux    
     // Set signal handlers
 
     // SIGTERM  kill `pidof gnomescroll_server`
@@ -275,6 +275,50 @@ int init_c_lib(int argc, char* argv[])
     sigemptyset(&sa_usr1.sa_mask);
     ret = sigaction(SIGUSR1, &sa_usr1, NULL);
     GS_ASSERT(ret == 0);
+    #endif
+}
+
+void init_configs()
+{
+    // DAT LOADING
+    // HIGHLY ORDER SENSTITIVE
+    ItemContainer::init_config();
+    t_map::init_t_properties();
+    t_mech::init_properties();
+    Entities::init_entity_dat();
+
+    t_map::load_block_dat();
+    t_map::init_for_draw();
+    t_map::blit_block_item_sheet();
+    t_mech::load_mech_dat();
+    Entities::load_entity_dat();
+    Entities::end_entity_dat();
+    ItemContainer::load_config();
+    ItemContainer::end_config();
+    Item::init_properties();
+    Item::load_item_dat();
+
+    t_map::init_block_drop_dat();
+    t_map::load_block_drop_dat();
+
+    Item::create_items_from_blocks();
+    Item::end_item_dat();
+
+    Item::load_synthesizer();
+    Item::load_crafting_dat();
+    Item::load_smelting_dat();
+}
+
+int init_c_lib(int argc, char* argv[]) 
+{
+    /*
+        Time startup functions to determine delay/slow down
+    */
+    GS_ASSERT(!c_lib_inited);
+
+    #ifdef linux
+    print_working_directory();
+    register_signals();
     #endif
 
     _test_common();
@@ -340,33 +384,7 @@ int init_c_lib(int argc, char* argv[])
 
     t_map::init_t_map();
 
-    // DAT LOADING
-    // HIGHLY ORDER SENSTITIVE
-    ItemContainer::init_config();
-    t_map::init_t_properties();
-    t_mech::init_properties();
-    Entities::init_entity_dat();
-
-    ItemContainer::load_config();
-    t_map::load_block_dat();
-    t_map::init_for_draw();
-    t_map::blit_block_item_sheet();
-    t_mech::load_mech_dat();
-    Entities::load_entity_dat();
-    Entities::end_entity_dat();
-    ItemContainer::end_config();
-    Item::init_properties();
-    Item::load_item_dat();
-
-    t_map::init_block_drop_dat();
-    t_map::load_block_drop_dat();
-
-    Item::create_items_from_blocks();
-    Item::end_item_dat();
-
-    Item::load_synthesizer();
-    Item::load_crafting_dat();
-    Item::load_smelting_dat();
+    init_configs();
 
     // This block MUST come after dat loaders. possibly others
     Item::init();

@@ -20,7 +20,7 @@ typedef enum
     EMPTY_CUBE = 0,
     ERROR_CUBE = MAX_CUBES - 1,
     NULL_CUBE  = MAX_CUBES,
-} CubeID;
+} CubeType;
 
 typedef enum
 {
@@ -28,7 +28,7 @@ typedef enum
     ErrorCube,
     SolidCube,
     ItemContainerCube,
-} CubeType;
+} CubeGroup;
 
 typedef enum
 {

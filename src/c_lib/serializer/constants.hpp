@@ -99,7 +99,7 @@ static const size_t SAVE_FOLDER_LEN = sizeof(save_folder_fmt) + sizeof(GS_STR(GS
 #define UUID_TAG                 "GID"
 #define NAME_TAG                 "NAM"
 #define COLOR_TAG                "RGB"
-#define CUBE_ID_TAG              "CUB"
+#define CUBE_TYPE_TAG              "CUB"
 #define USER_ID_TAG              "UID"
 #define VERSION_TAG              "VER"
 #define MECH_TYPE_TAG            "MCH"
@@ -132,7 +132,7 @@ const size_t UUID_STRING_LENGTH = 36;
 
 #define VERSION_LENGTH                4
 #define USER_ID_LENGTH                10
-#define CUBE_ID_LENGTH                4
+#define CUBE_TYPE_LENGTH                4
 #define MECH_TYPE_LENGTH              4
 #define ENTITY_ID_LENGTH              5
 #define ITEM_UUID_LENGTH              36
@@ -201,7 +201,7 @@ const size_t CONTAINER_FILE_LINE_LENGTH =
 const size_t MAP_PALETTE_LINE_LENGTH =
        MAP_PALETTE_FIELD_COUNT * (TAG_LENGTH + TAG_DELIMITER_LENGTH)
     + (MAP_PALETTE_FIELD_COUNT - 1) * PROPERTY_DELIMITER_LENGTH
-    + CUBE_ID_LENGTH
+    + CUBE_TYPE_LENGTH
     + DAT_NAME_MAX_LENGTH;
     
 const size_t MECH_PALETTE_LINE_LENGTH =
@@ -278,8 +278,8 @@ const char MAP_PALETTE_FMT[] =
     NAME_TAG    TAG_DELIMITER
         "%-" GS_STR(DAT_NAME_MAX_LENGTH) "s"
         PROPERTY_DELIMITER
-    CUBE_ID_TAG TAG_DELIMITER
-        "%0" GS_STR(CUBE_ID_LENGTH)      "d";
+    CUBE_TYPE_TAG TAG_DELIMITER
+        "%0" GS_STR(CUBE_TYPE_LENGTH)      "d";
         
 const char MECH_PALETTE_FMT[] =
     NAME_TAG    TAG_DELIMITER

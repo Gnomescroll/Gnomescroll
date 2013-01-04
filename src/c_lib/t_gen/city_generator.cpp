@@ -57,24 +57,24 @@ void generate_city()
     const int COLUMN_SIZE = 8;
     const int BUILDING_AMOUNT = 8;
 
-    CubeID computer = t_map::get_cube_id("control_node");
-    CubeID green = t_map::get_cube_id("ruins_ceiling1");
-    CubeID red = t_map::get_cube_id("ruins_ceiling2");
-    CubeID purple = t_map::get_cube_id("ruins_ceiling3");
-    CubeID gray = t_map::get_cube_id("ruins_ceiling4");
-    CubeID storage = t_map::get_cube_id("storage_block_small");
-    CubeID cryofreezer = t_map::get_cube_id("cryofreezer_small");
-    CubeID smelter = t_map::get_cube_id("smelter_basic");
-    CubeID bench = t_map::get_cube_id("crafting_bench_basic");
-    CubeID crusher = t_map::get_cube_id("crusher");
-    CubeID steelA = t_map::get_cube_id("steel_block_1");
-    CubeID steelB = t_map::get_cube_id("steel_block_2");
-    CubeID steelC = t_map::get_cube_id("steel_block_3");
-    CubeID glowgreen = t_map::get_cube_id("green_glow");
-    CubeID glowblue = t_map::get_cube_id("blue_glow");
-    CubeID battery = t_map::get_cube_id("battery2");
-    CubeID rock = t_map::get_cube_id("rock");
-    CubeID regolith = t_map::get_cube_id("regolith");
+    CubeType computer = t_map::get_cube_type("control_node");
+    CubeType green = t_map::get_cube_type("ruins_ceiling1");
+    CubeType red = t_map::get_cube_type("ruins_ceiling2");
+    CubeType purple = t_map::get_cube_type("ruins_ceiling3");
+    CubeType gray = t_map::get_cube_type("ruins_ceiling4");
+    CubeType storage = t_map::get_cube_type("storage_block_small");
+    CubeType cryofreezer = t_map::get_cube_type("cryofreezer_small");
+    CubeType smelter = t_map::get_cube_type("smelter_basic");
+    CubeType bench = t_map::get_cube_type("crafting_bench_basic");
+    CubeType crusher = t_map::get_cube_type("crusher");
+    CubeType steelA = t_map::get_cube_type("steel_block_1");
+    CubeType steelB = t_map::get_cube_type("steel_block_2");
+    CubeType steelC = t_map::get_cube_type("steel_block_3");
+    CubeType glowgreen = t_map::get_cube_type("green_glow");
+    CubeType glowblue = t_map::get_cube_type("blue_glow");
+    CubeType battery = t_map::get_cube_type("battery2");
+    CubeType rock = t_map::get_cube_type("rock");
+    CubeType regolith = t_map::get_cube_type("regolith");
 
     int count = 1;
     while (count <= CITY_AMOUNT)
@@ -176,7 +176,7 @@ void generate_city()
     }
 }
 
-void generate_lab(int x, int y, int z, int size, int height, int floors, int randomness, int door_probability, CubeID computer, CubeID steelA, CubeID steelB, CubeID steelC, CubeID battery, CubeID smelter, CubeID cryofreezer, CubeID bench, CubeID crusher, CubeID storage)
+void generate_lab(int x, int y, int z, int size, int height, int floors, int randomness, int door_probability, CubeType computer, CubeType steelA, CubeType steelB, CubeType steelC, CubeType battery, CubeType smelter, CubeType cryofreezer, CubeType bench, CubeType crusher, CubeType storage)
 {
     printf("Generating a lab at %d, %d, %d \n", x, y, z);
     int maxx = x + randrange(randomness * -1, randomness) + size;
@@ -231,7 +231,7 @@ void generate_lab(int x, int y, int z, int size, int height, int floors, int ran
     degenerate_area(x, y + 1, z + 1, x, maxy - 1, z + 3);
 }
 
-void generate_skyscraper(int x, int y, int z, int size, int height, int floors, int randomness, int partitions, CubeID computer, CubeID purple, CubeID green, CubeID red, CubeID cryofreezer, CubeID battery)
+void generate_skyscraper(int x, int y, int z, int size, int height, int floors, int randomness, int partitions, CubeType computer, CubeType purple, CubeType green, CubeType red, CubeType cryofreezer, CubeType battery)
 {
     printf ("Generating a skyscraper at %d, %d, %d \n", x, y, z);
     int maxx = x + randrange(randomness * -1, randomness) + size;
@@ -284,7 +284,7 @@ void generate_skyscraper(int x, int y, int z, int size, int height, int floors, 
     degenerate_area(x + randomness, y, z + 1, maxx - randomness, y, z + 3); //create an exit
 }
 
-void generate_subway_station(int x, int y, int z, int prevsubwayx, int prevsubwayy, int firstsubwayx, int firstsubwayy, bool laststation, int size, int height, int tunnel_size, CubeID gray, CubeID steelA, CubeID steelB, CubeID steelC, CubeID battery, CubeID rock)
+void generate_subway_station(int x, int y, int z, int prevsubwayx, int prevsubwayy, int firstsubwayx, int firstsubwayy, bool laststation, int size, int height, int tunnel_size, CubeType gray, CubeType steelA, CubeType steelB, CubeType steelC, CubeType battery, CubeType rock)
 {
     printf ("Generating a subway station at %d, %d, %d \n", x, y, z);
     int maxx = x + size;
@@ -303,7 +303,7 @@ void generate_subway_station(int x, int y, int z, int prevsubwayx, int prevsubwa
     degenerate_area(x + 2, y, z + 1, maxx - 2, y, z + 3); //make the actual entrance
 }
 
-void generate_house(int x, int y, int z, int size, int height, int partition_probability, int randomness, int garden, int garage, CubeID computer, CubeID green, CubeID red, CubeID purple, CubeID storage, CubeID cryofreezer, CubeID smelter, CubeID bench, CubeID crusher, CubeID regolith, CubeID steelA)
+void generate_house(int x, int y, int z, int size, int height, int partition_probability, int randomness, int garden, int garage, CubeType computer, CubeType green, CubeType red, CubeType purple, CubeType storage, CubeType cryofreezer, CubeType smelter, CubeType bench, CubeType crusher, CubeType regolith, CubeType steelA)
 {
     printf ("Generating a house at %d, %d, %d \n", x, y, z);
     const int maxx = x + size + garden * 2 + randrange(randomness * -1, randomness);
@@ -417,7 +417,7 @@ void generate_house(int x, int y, int z, int size, int height, int partition_pro
     generate_area(maxx - garage, maxy - garage, z + garage, maxx, maxy, z + garage, steelA); //generate the roof for the garage
 }
 
-void generate_shop(int x, int y, int z, int size, int height, int goods, CubeID steelA, CubeID steelB, CubeID steelC, CubeID computer, CubeID storage, CubeID cryofreezer)
+void generate_shop(int x, int y, int z, int size, int height, int goods, CubeType steelA, CubeType steelB, CubeType steelC, CubeType computer, CubeType storage, CubeType cryofreezer)
 {
     printf ("Generating a shop at %d, %d, %d \n", x, y, z);
     generate_area(x, y, z, x + size, y + size, z, steelA);
@@ -432,7 +432,7 @@ void generate_shop(int x, int y, int z, int size, int height, int goods, CubeID 
     generate_area(x + size / 3, y + size * 2 / 3, z + 1, x + size * 2 / 3, y + size * 2 / 3, z + height - 2, cryofreezer);
 }
 
-void generate_transmission_tower(int x, int y, int z, int height, CubeID steelA, CubeID steelB, CubeID steelC, CubeID gray, CubeID battery, CubeID computer)
+void generate_transmission_tower(int x, int y, int z, int height, CubeType steelA, CubeType steelB, CubeType steelC, CubeType gray, CubeType battery, CubeType computer)
 {
     printf ("Generating a transmission tower at %d, %d, %d \n", x, y, z);
     generate_area(x + 1, y + 1,z + 1, x + 1, y + 1,z + 1, battery);
@@ -455,7 +455,7 @@ void degenerate_space(int x, int y, int z, int size)
     }
 }
 
-void create_floor(int x, int y, int z, int size, CubeID gray)
+void create_floor(int x, int y, int z, int size, CubeType gray)
 {
     printf ("Generating city floor at %d, %d, %d \n", x, y, z);
     int cx = x;
@@ -482,7 +482,7 @@ void create_floor(int x, int y, int z, int size, CubeID gray)
     }
 }
 
-void create_roads(int x, int y, int z, int city_size, int size, CubeID rock)
+void create_roads(int x, int y, int z, int city_size, int size, CubeType rock)
 {
     printf ("Generating roads \n");
     generate_area(x + city_size / 2 - size / 2, 0, z, x + city_size / 2 + size / 2, y, z, rock); //generate trade routes going out of the city to the borders of the map, so that they connect on ends
@@ -495,7 +495,7 @@ void create_roads(int x, int y, int z, int city_size, int size, CubeID rock)
     degenerate_area(x + city_size, y + city_size / 2 - size / 2, z + 1, t_map::map_dim.x - 1, y + city_size / 2 + size / 2, z + size);
 }
 
-void generate_temple(int x, int y, int z, int size, CubeID glowgreen, CubeID glowblue, CubeID rock)
+void generate_temple(int x, int y, int z, int size, CubeType glowgreen, CubeType glowblue, CubeType rock)
 {
     printf ("Generating a temple at %d, %d, %d \n", x, y, z);
     generate_area(x, y, z, x + size, y + size, z, glowblue); //make the floor
@@ -521,7 +521,7 @@ void generate_temple(int x, int y, int z, int size, CubeID glowgreen, CubeID glo
     degenerate_area(x + size / 2, y + size / 2, 1, x + size / 2 + 1, y + size / 2 + 1, z - 1); //generate a "well" under the altar, inside the column
 }
 
-void generate_bunker(int x, int y, int maxz, int size, int depth, int floors, int partition_probability, int randomness, CubeID gray, CubeID computer, CubeID storage, CubeID cryofreezer)
+void generate_bunker(int x, int y, int maxz, int size, int depth, int floors, int partition_probability, int randomness, CubeType gray, CubeType computer, CubeType storage, CubeType cryofreezer)
 {
     printf ("Generating a bunker at %d, %d, %d \n", x, y, maxz);
     int z = maxz - depth - randrange(randomness * -1, randomness);
@@ -571,36 +571,36 @@ void generate_bunker(int x, int y, int maxz, int size, int depth, int floors, in
     generate_area(x + randrange(1, 2), maxy - 1, maxz - randrange (1, 3), maxx - randrange(1, 3), maxy - 1, maxz - 1, storage);
 }
 
-void generate_column(int x, int y, int z, int size, CubeID rock)
+void generate_column(int x, int y, int z, int size, CubeType rock)
 {
     printf ("Generating a column at %d, %d, %d \n", x, y, z);
     generate_area(x, y, 1, x + size, y + size, z - 1, rock);
     generate_area(x - 1, y - 1, z, x + size + 1, y + size + 1, z, rock);
 }
 
-void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeID material)
+void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeType material)
 {
     if (maxz >= t_map::map_dim.z) return;
     if (maxx >= t_map::map_dim.x) return;
     if (maxy >= t_map::map_dim.y) return;
     int special = 0;
-    if (material == t_map::get_cube_id("cryofreezer_small"))
+    if (material == t_map::get_cube_type("cryofreezer_small"))
     {
         special = 1;
     }
-    if (material == t_map::get_cube_id("storage_block_small"))
+    if (material == t_map::get_cube_type("storage_block_small"))
     {
         special = 2;
     }
-    if (material == t_map::get_cube_id("smelter_basic"))
+    if (material == t_map::get_cube_type("smelter_basic"))
     {
         special = 3;
     }
-    if (material == t_map::get_cube_id("crafting_bench_basic"))
+    if (material == t_map::get_cube_type("crafting_bench_basic"))
     {
         special = 4;
     }
-    if (material == t_map::get_cube_id("crusher"))
+    if (material == t_map::get_cube_type("crusher"))
     {
         special = 5;
     }
@@ -662,7 +662,7 @@ void degenerate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz)
     t_map::set(i,j,k,EMPTY_CUBE);
 }
 
-void generate_tunnel(int x, int y, int z, int otherx, int othery, int size, CubeID steelA, CubeID steelB, CubeID battery, CubeID rock)
+void generate_tunnel(int x, int y, int z, int otherx, int othery, int size, CubeType steelA, CubeType steelB, CubeType battery, CubeType rock)
 {
     printf ("Generating a subway tunnel at %d, %d, %d, other end at %d, %d, %d \n", x, y, z, otherx, othery, z);
     int minx;

@@ -19,7 +19,7 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-void block_crumble(float x, float y, float z, int n, int cube_id, float momentum)
+void block_crumble(float x, float y, float z, int n, int cube_type, float momentum)
 {
     if (Options::animation_level <= 0) return;
     const float crumble_size = 0.17f;
@@ -55,7 +55,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         phi = randf() * PI * 2;
 
         side = randrange(0,5);
-        tex_id = t_map::get_cube_side_texture(cube_id, side);
+        tex_id = t_map::get_cube_side_texture(cube_type, side);
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
         ttl = randrange(60,95);
@@ -70,7 +70,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
     }
 }
 
-void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModificationAction action)
+void block_crumble(float x, float y, float z, int n, int cube_type, TerrainModificationAction action)
 {
     float momentum = 5.0f;
     switch (action)
@@ -97,28 +97,28 @@ void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModific
             GS_ASSERT(false);
             break;
     }
-    block_crumble(x,y,z, n, cube_id, momentum);
+    block_crumble(x,y,z, n, cube_type, momentum);
 }
 
 // surface block dmg
 // takes encoded side int and translates to side[3];
-// collision point, incident vector, cube_id, side
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int cube_side)
+// collision point, incident vector, cube_type, side
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int cube_side)
 {
     int side[3];
     get_side_array_from_cube_side(cube_side, side);
-    block_damage(x,y,z,ix,iy,iz,cube_id,side, cube_side);
+    block_damage(x,y,z,ix,iy,iz,cube_type,side, cube_side);
 }
 
 // surface block dmg
-// collision point, incident vector, cube_id, side
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int side[3])
+// collision point, incident vector, cube_type, side
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int side[3])
 {
     int cube_side = get_cube_side_from_side_array(side);
-    block_damage(x,y,z,ix,iy,iz,cube_id, side, cube_side);
+    block_damage(x,y,z,ix,iy,iz,cube_type, side, cube_side);
 }
 
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int side[3], int cube_side)
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int side[3], int cube_side)
 {
     if (Options::animation_level <= 0) return;
 
@@ -126,7 +126,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     float scale = ((float)Options::animation_level)/3.0f;
     n = scale*((float)n);
 
-    int tex_id = t_map::get_cube_side_texture(cube_id, cube_side);
+    int tex_id = t_map::get_cube_side_texture(cube_type, cube_side);
 
     float theta,phi;
 

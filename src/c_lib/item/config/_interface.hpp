@@ -103,15 +103,15 @@ void make_pretty_name(const char* src, char* dest, const size_t len)
 // use in place of item_def for items that are equivalent to a block
 bool item_block_def(const char* block_name)
 {
-    CubeID cube_id = t_map::get_cube_id(block_name);
-    GS_ASSERT(t_map::isValidCube(cube_id));
-    if (!t_map::isValidCube(cube_id)) return true;
+    CubeType cube_type = t_map::get_cube_type(block_name);
+    GS_ASSERT(t_map::isValidCube(cube_type));
+    if (!t_map::isValidCube(cube_type)) return true;
 
     // item will have same name as the block
     if (!item_def(IG_PLACER, block_name)) return false;
 
     iso_block_sprite_def(block_name);
-    s->cube_id = cube_id;
+    s->cube_type = cube_type;
     s->max_stack_size = 64;
     s->particle_voxel = true;
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index(block_name);
@@ -148,7 +148,7 @@ void block_damage_def(CubeMaterial material, int damage)
     GS_ASSERT_ABORT(damage >= 0 && damage <= MAX_CUBE_DAMAGE);
     bool set_any = false;
     for (int i=0; i<MAX_CUBES; i++)
-        if (t_map::isInUse((CubeID)i) && t_map::get_cube_material((CubeID)i) == material)
+        if (t_map::isInUse((CubeType)i) && t_map::get_cube_material((CubeType)i) == material)
         {
             s->block_damage[i] = damage;
             set_any = true;
@@ -198,12 +198,12 @@ void iso_block_sprite_def(const char* block_name)
     GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id != -1);
     if (_item_cube_iso_spritesheet_id == -1) return;
     
-    int cube_id = t_map::get_cube_id(block_name);
-    ASSERT_VALID_CUBE_ID(cube_id);
-    IF_INVALID_CUBE_ID(cube_id) return;
+    int cube_type = t_map::get_cube_type(block_name);
+    ASSERT_VALID_CUBE_TYPE(cube_type);
+    IF_INVALID_CUBE_TYPE(cube_type) return;
     
-    int xpos = (cube_id % 16) + 1;
-    int ypos = (cube_id / 16) + 1;
+    int xpos = (cube_type % 16) + 1;
+    int ypos = (cube_type / 16) + 1;
     int sprite = TextureSheetLoader::blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
     GS_ASSERT_ABORT(sprite != NULL_SPRITE);
     if (sprite == NULL_SPRITE) return;

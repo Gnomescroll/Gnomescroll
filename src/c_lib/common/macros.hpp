@@ -30,8 +30,8 @@
 #define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT((spawner_id) == BASE_SPAWN_ID || ((spawner_id) >= 0 && (spawner_id) < MAX_SPAWNERS));
 #define IF_INVALID_SPAWNER_ID(spawner_id) if (unlikely((spawner_id) != BASE_SPAWN_ID && ((spawner_id) < 0 || (spawner_id) >= MAX_SPAWNERS)))
 
-#define ASSERT_VALID_CUBE_ID(cube_id) GS_ASSERT((cube_id) >= 0 && (cube_id) < MAX_CUBES);
-#define IF_INVALID_CUBE_ID(cube_id) if (unlikely((cube_id) < 0 || (cube_id) >= MAX_CUBES))
+#define ASSERT_VALID_CUBE_TYPE(cube_type) GS_ASSERT((cube_type) >= 0 && (cube_type) < MAX_CUBES);
+#define IF_INVALID_CUBE_TYPE(cube_type) if (unlikely((cube_type) < 0 || (cube_type) >= MAX_CUBES))
 
 #define ASSERT_VALID_OBJECT_TYPE(object_type) GS_ASSERT((object_type) >= 0 && (object_type) < MAX_OBJECT_TYPES);
 #define IF_INVALID_OBJECT_TYPE(object_type) if (unlikely((object_type) < 0 || (object_type) >= MAX_OBJECT_TYPES))

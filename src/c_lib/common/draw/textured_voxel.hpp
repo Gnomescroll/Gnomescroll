@@ -20,7 +20,7 @@ class TexturedVoxel: public Voxel
         int texture_index;
         int pixel_width;
 
-        int cube_id;
+        int cube_type;
         
         void set_texture();
 
@@ -31,7 +31,7 @@ class TexturedVoxel: public Voxel
         }
 
     TexturedVoxel() :
-    texture_index(0), pixel_width(1), cube_id(255)
+    texture_index(0), pixel_width(1), cube_type(255)
     {}
 
 };

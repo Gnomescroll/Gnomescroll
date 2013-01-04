@@ -173,13 +173,13 @@ void block_set_StoC::handle()
 {
     GS_ASSERT(x < map_dim.x && y < map_dim.y && z < map_dim.z);
     if (x >= map_dim.x || y >= map_dim.y || z >= map_dim.z) return;
-    main_map->set_block(x,y,z, (CubeID)cube_id);
+    main_map->set_block(x,y,z, (CubeType)cube_type);
 }
 
 void block_set_palette_StoC::handle()
 {
     struct MAP_ELEMENT e = NULL_MAP_ELEMENT;
-    e.block = cube_id;
+    e.block = cube_type;
     e.palette = palette;
 
     main_map->set_element(x,y,z, e);
@@ -187,16 +187,16 @@ void block_set_palette_StoC::handle()
 
 void block_action_StoC::handle()
 {
-    if ((CubeID)this->cube_id == EMPTY_CUBE)
+    if ((CubeType)this->cube_type == EMPTY_CUBE)
     {
-        CubeID old_cube_id = get(x,y,z);
-        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), old_cube_id, (TerrainModificationAction)action);
+        CubeType old_cube_type = get(x,y,z);
+        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), old_cube_type, (TerrainModificationAction)action);
         Sound::play_3d_sound("block_destroyed", x+0.5f,y+0.5f,z+0.5f, 0,0,0);
     }
     else
         Sound::play_3d_sound("block_set", x+0.5f,y+0.5f,z+0.5f,0,0,0);
 
-    main_map->set_block(x,y,z, (CubeID)this->cube_id);
+    main_map->set_block(x,y,z, (CubeType)this->cube_type);
 }
 
 void map_metadata_StoC::handle() 
@@ -207,7 +207,7 @@ void map_metadata_StoC::handle()
 }
 
 /*
-    Container cube_id
+    Container cube_type
 */
 
 void container_block_chunk_reset_StoC::handle()

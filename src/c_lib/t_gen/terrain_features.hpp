@@ -17,10 +17,10 @@ const float HALF_PI = PI / 2;
 const float QUARTER_PI = HALF_PI / 2;
 const float EIGHTH_PI = QUARTER_PI / 2;
 
-const size_t NUM_LEAVES = 3;      CubeID leaves[NUM_LEAVES];
-const size_t NUM_TRUNKS = 3;      CubeID trunks[NUM_TRUNKS];
-const size_t NUM_SHROOMCAPS = 3;   CubeID shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
-const size_t NUM_SHROOMSTEMS = 2;  CubeID shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
+const size_t NUM_LEAVES = 3;      CubeType leaves[NUM_LEAVES];
+const size_t NUM_TRUNKS = 3;      CubeType trunks[NUM_TRUNKS];
+const size_t NUM_SHROOMCAPS = 3;   CubeType shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
+const size_t NUM_SHROOMSTEMS = 2;  CubeType shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
 
 const float persistence = 0.5f; // tweak
 const size_t octaves = 6;  // tweak
@@ -40,13 +40,13 @@ typedef enum {
 
 
 
-void set_me_maybe(int x, int y, int z, CubeID block, CubeID an_overwriteable = NULL_CUBE) {
+void set_me_maybe(int x, int y, int z, CubeType block, CubeType an_overwriteable = NULL_CUBE) {
     if (t_map::get(x, y, z) == EMPTY_CUBE
     || (an_overwriteable != NULL_CUBE && t_map::get(x, y, z) == an_overwriteable))
         t_map::set(x, y, z, block);
 }
 
-void make_circle(int x, int y, int z, float dist, CubeID block, CubeID an_overwriteable = NULL_CUBE) { // instead of from the center of given block
+void make_circle(int x, int y, int z, float dist, CubeType block, CubeType an_overwriteable = NULL_CUBE) { // instead of from the center of given block
     float fx = 0;
     float fy = 0;
     float angle = 0;
@@ -61,7 +61,7 @@ void make_circle(int x, int y, int z, float dist, CubeID block, CubeID an_overwr
 
 
 
-bool corner_origin_heart(int x, int y, int z, float dist, CubeID new_block = NULL_CUBE, bool extend_down = false) {
+bool corner_origin_heart(int x, int y, int z, float dist, CubeType new_block = NULL_CUBE, bool extend_down = false) {
     float fx = 0;
     float fy = 0;
     float angle = 0;
@@ -101,13 +101,13 @@ bool corner_origin_circle_untouched(int x, int y, int z, float dist) {
 
 
 
-void corner_origin_make_circle(int x, int y, int z, float dist, CubeID block, bool extend_down = false) { // instead of from the center of given block
+void corner_origin_make_circle(int x, int y, int z, float dist, CubeType block, bool extend_down = false) { // instead of from the center of given block
     corner_origin_heart(x, y, z, dist, block, extend_down);  
 }
 
 
 
-bool blocks_are_invalid(CubeID arr[], int len) {
+bool blocks_are_invalid(CubeType arr[], int len) {
     for (int i = 0; i < len; i++) { 
         GS_ASSERT(t_map::isValidCube(arr[i]));
         
@@ -123,9 +123,9 @@ bool blocks_are_invalid(CubeID arr[], int len) {
 
 
 void make_shroom(int x, int y, int z) {
-    CubeID shroom_cap = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
-    //CubeID shroom_stem = shroom_stems[randrange(0, NUM_SHROOMSTEMS - 1)];
-	// (need to make some stem textures)
+    CubeType shroom_cap = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
+    //CubeType shroom_stem = shroom_stems[randrange(0, NUM_SHROOMSTEMS - 1)];
+    // (need to make some stem textures)
 
     int cap_height = randrange(4, 15);
     int hei = 0;
@@ -157,8 +157,8 @@ void make_shroom(int x, int y, int z) {
 
 void make_tree(int x, int y, int z) {
     // set bark/leaf textures
-    CubeID leaf = leaves[randrange(0, NUM_LEAVES - 1)];
-    CubeID trunk = trunks[randrange(0, NUM_TRUNKS - 1)];
+    CubeType leaf = leaves[randrange(0, NUM_LEAVES - 1)];
+    CubeType trunk = trunks[randrange(0, NUM_TRUNKS - 1)];
 
     int segs = randrange(2, 6);
     float rad = 2.0f; // radius of leaf layer from center voxel
@@ -218,22 +218,22 @@ namespace t_gen {
         printf("    shrooms\n");
 
         // setup blocks
-        leaves[0] = t_map::get_cube_id("leaves1");
-        leaves[1] = t_map::get_cube_id("leaves2"); 
-        leaves[2] = t_map::get_cube_id("leaves3"); 
+        leaves[0] = t_map::get_cube_type("leaves1");
+        leaves[1] = t_map::get_cube_type("leaves2"); 
+        leaves[2] = t_map::get_cube_type("leaves3"); 
         
-        trunks[0] = t_map::get_cube_id("space_tree_trunk1"); 
-        trunks[1] = t_map::get_cube_id("space_tree_trunk2");
-        trunks[2] = t_map::get_cube_id("space_tree_trunk3");
+        trunks[0] = t_map::get_cube_type("space_tree_trunk1"); 
+        trunks[1] = t_map::get_cube_type("space_tree_trunk2");
+        trunks[2] = t_map::get_cube_type("space_tree_trunk3");
 
-        shroom_caps[0] = t_map::get_cube_id("mushroom_cap1");
-        shroom_caps[1] = t_map::get_cube_id("mushroom_cap2");
-        shroom_caps[2] = t_map::get_cube_id("mushroom_cap3");
+        shroom_caps[0] = t_map::get_cube_type("mushroom_cap1");
+        shroom_caps[1] = t_map::get_cube_type("mushroom_cap2");
+        shroom_caps[2] = t_map::get_cube_type("mushroom_cap3");
 
-        shroom_stems[0] = t_map::get_cube_id("mushroom_stem1");
-        shroom_stems[1] = t_map::get_cube_id("mushroom_stem2");
+        shroom_stems[0] = t_map::get_cube_type("mushroom_stem1");
+        shroom_stems[1] = t_map::get_cube_type("mushroom_stem2");
 
-        CubeID regolith = t_map::get_cube_id("regolith");
+        CubeType regolith = t_map::get_cube_type("regolith");
         GS_ASSERT(t_map::isValidCube(regolith));
         if (!t_map::isValidCube(regolith)) return;
 

@@ -604,9 +604,9 @@ void create_container_block_CtoS::handle()
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
     IF_ASSERT(attr == NULL) return;
-    CubeID cube_id = attr->cube_id;
+    CubeType cube_type = attr->cube_type;
 
-    ItemContainerType container_type = t_map::get_container_type_for_cube(cube_id);
+    ItemContainerType container_type = t_map::get_container_type_for_cube(cube_type);
     IF_ASSERT(container_type == NULL_CONTAINER_TYPE) return;
 
     GS_ASSERT(orientation >= 0 && orientation <= 3);
@@ -616,10 +616,10 @@ void create_container_block_CtoS::handle()
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     // dont set on existing block
-    if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
+    if (!t_map::block_can_be_placed(x,y,z,cube_type)) return;
 
     bool collides = false;
-    t_map::set_fast(x,y,z, cube_id); // set temporarily to test against
+    t_map::set_fast(x,y,z, cube_type); // set temporarily to test against
     if (agent_collides_terrain(a))
         collides = true;  // test against our agent, most likely to collide
     else
@@ -645,8 +645,8 @@ void create_container_block_CtoS::handle()
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
 
-    t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
-    t_map::broadcast_set_block_palette(x,y,z, cube_id, orientation);
+    t_map::broadcast_set_block_action(x,y,z, cube_type, TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_palette(x,y,z, cube_type, orientation);
 
     t_map::create_item_container_block(x,y,z, container->type, container->id);
     broadcast_container_create(container->id);
@@ -665,9 +665,9 @@ void admin_create_container_block_CtoS::handle()
     if (a == NULL) return;
     if (a->status.dead) return;
 
-    CubeID cube_id = (CubeID)this->val;
+    CubeType cube_type = (CubeType)this->val;
 
-    ItemContainerType container_type = t_map::get_container_type_for_cube(cube_id);
+    ItemContainerType container_type = t_map::get_container_type_for_cube(cube_type);
     GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
     if (container_type == NULL_CONTAINER_TYPE) return;
 
@@ -679,10 +679,10 @@ void admin_create_container_block_CtoS::handle()
 
     // TODO -- when this is a /real/ admin tool, remove this check
     // since we're giving it to players, do this check
-    if (!t_map::block_can_be_placed(x,y,z,cube_id)) return;
+    if (!t_map::block_can_be_placed(x,y,z,cube_type)) return;
 
     bool collides = false;
-    t_map::set_fast(x,y,z, cube_id); // set temporarily to test against
+    t_map::set_fast(x,y,z, cube_type); // set temporarily to test against
     if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else
     {
@@ -704,8 +704,8 @@ void admin_create_container_block_CtoS::handle()
     ItemContainerInterface* container = create_container(container_type);
     IF_ASSERT(container == NULL) return;
 
-    t_map::broadcast_set_block_action(x,y,z, cube_id, TMA_PLACE_BLOCK);
-    t_map::broadcast_set_block_palette(x,y,z,cube_id,orientation);
+    t_map::broadcast_set_block_action(x,y,z, cube_type, TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_palette(x,y,z,cube_type,orientation);
 
     t_map::create_item_container_block(x,y,z, container->type, container->id);
     broadcast_container_create(container->id);

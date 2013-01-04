@@ -24,8 +24,8 @@ struct FastCubeProperties
 class CubeProperties 
 {
     public:
-        CubeID id;
         CubeType type;
+        CubeGroup group;
         
         bool solid;
         bool occludes;  // occludes on all 6 faces only
@@ -46,8 +46,8 @@ class CubeProperties
 
     CubeProperties()
     {
-        this->id = NULL_CUBE;
-        this->type = ErrorCube;
+        this->type = NULL_CUBE;
+        this->group = ErrorCube;
         
         this->solid = true;
         this->occludes = true;
@@ -74,17 +74,17 @@ extern class DatNameMap* cube_name_map;
 void init_t_properties();
 void end_t_properties();
 
-class CubeProperties* get_cube_properties(CubeID id);
+class CubeProperties* get_cube_properties(CubeType id);
 
-CubeMaterial get_cube_material(CubeID cube_id);
+CubeMaterial get_cube_material(CubeType cube_type);
 
-const char* get_cube_name(CubeID id);
-CubeID get_cube_id(const char* name);
+const char* get_cube_name(CubeType id);
+CubeType get_cube_type(const char* name);
 
-CubeType get_cube_type(CubeID id);
+CubeType get_cube_type(CubeType id);
 
 const char* get_cube_name_for_container(ItemContainerType container_type);
-CubeID get_cube_id_for_container(ItemContainerType container_type);
+CubeType get_cube_type_for_container(ItemContainerType container_type);
 
 bool is_valid_cube_name(const char* name);
 
@@ -92,21 +92,21 @@ bool is_valid_cube_name(const char* name);
 // use only for the serializer
 const char* get_compatible_cube_name(const char* name);
 
-ItemContainerType get_container_type_for_cube(CubeID cube_id);
+ItemContainerType get_container_type_for_cube(CubeType cube_type);
 
 // checks against ERROR_CUBE/NULL_CUBE/EMPTY_CUBE and value range and used
-inline bool isValidCube(CubeID cube_id) __attribute((always_inline));
-inline bool isInUse(CubeID id) __attribute((always_inline));
+inline bool isValidCube(CubeType cube_type) __attribute((always_inline));
+inline bool isInUse(CubeType id) __attribute((always_inline));
 
 // Properties by cube id
 
-inline bool isSolid(CubeID id) __attribute((always_inline));
-inline bool isOccludes(CubeID id) __attribute((always_inline));
-inline bool isActive(CubeID id) __attribute((always_inline));
-inline bool isTransparent(CubeID id) __attribute((always_inline));
-inline bool isItemContainer(CubeID id) __attribute((always_inline));
-inline bool isExplosive(CubeID id) __attribute((always_inline));
-inline unsigned char maxDamage(CubeID id) __attribute((always_inline));
+inline bool isSolid(CubeType id) __attribute((always_inline));
+inline bool isOccludes(CubeType id) __attribute((always_inline));
+inline bool isActive(CubeType id) __attribute((always_inline));
+inline bool isTransparent(CubeType id) __attribute((always_inline));
+inline bool isItemContainer(CubeType id) __attribute((always_inline));
+inline bool isExplosive(CubeType id) __attribute((always_inline));
+inline unsigned char maxDamage(CubeType id) __attribute((always_inline));
 
 //Properties by coordinates
 

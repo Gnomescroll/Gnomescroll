@@ -10,9 +10,6 @@
 namespace ItemContainer
 {
 
-// init
-void init_container(class ItemContainerInterface* container);
-
 class ItemContainerInterface
 {
     public:
@@ -148,13 +145,13 @@ class ItemContainerInterface
            if (this->slot != NULL) delete[] this->slot;
         }
 
-        ItemContainerInterface(ItemContainerType type, ItemContainerID id)
-        : id(id), type(type),
-        xdim(0), ydim(0),
-        alt_xdim(0), alt_ydim(0),
-        slot_max(0), slot_count(0), slot(NULL),
-        owner(NULL_AGENT), chunk(0xFFFF),
-        attached_to_agent(false)
+        ItemContainerInterface(ItemContainerType type, ItemContainerID id) :
+            id(id), type(type),
+            xdim(0), ydim(0),
+            alt_xdim(0), alt_ydim(0),
+            slot_max(0), slot_count(0), slot(NULL),
+            owner(NULL_AGENT), chunk(0xFFFF),
+            attached_to_agent(false)
         {}
 };
 
@@ -200,8 +197,8 @@ class ItemContainerHand: public ItemContainerInterface
             return NULL_SLOT;
         }
         
-        ItemContainerHand(ItemContainerType type, ItemContainerID id)
-        : ItemContainerInterface(type, id)
+        ItemContainerHand(ItemContainerType type, ItemContainerID id) :
+            ItemContainerInterface(type, id)
         {}
 };
 
@@ -243,20 +240,22 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
             ItemContainerInterface::init(xdim, ydim);
         }
         
-        ItemContainerEnergyTanks(ItemContainerType type, ItemContainerID id)
-        : ItemContainerInterface(type, id), energy_tank_type(NULL_ITEM_TYPE)
-        { GS_ASSERT(type == name::energy_tanks); }
+        ItemContainerEnergyTanks(ItemContainerType type, ItemContainerID id) :
+            ItemContainerInterface(type, id), energy_tank_type(NULL_ITEM_TYPE)
+        {
+            GS_ASSERT(type == name::energy_tanks);
+        }
 };
 
 class ItemContainerCryofreezer: public ItemContainer
 {
     public:
 
-        int insert_item(int slot, ItemID item_id);
-        
-        ItemContainerCryofreezer(ItemContainerType type, ItemContainerID id)
-        : ItemContainer(type,id)
-        {}
+    int insert_item(int slot, ItemID item_id);
+    
+    ItemContainerCryofreezer(ItemContainerType type, ItemContainerID id) :
+        ItemContainer(type, id)
+    {}
 };
 
 class ItemContainerSynthesizer: public ItemContainerInterface
@@ -266,43 +265,43 @@ class ItemContainerSynthesizer: public ItemContainerInterface
         static const int coins_slot = 0;
         int coins_type;
     
-        ItemID get_coins()
-        {
-            return this->get_item(this->coins_slot);
-        }
-        
-        int insert_coins(ItemID item_id)
-        {
-            GS_ASSERT(Item::get_item_type(item_id) == this->coins_type);
-            return this->insert_item(this->coins_slot, item_id);
-        }
+    ItemID get_coins()
+    {
+        return this->get_item(this->coins_slot);
+    }
+    
+    int insert_coins(ItemID item_id)
+    {
+        GS_ASSERT(Item::get_item_type(item_id) == this->coins_type);
+        return this->insert_item(this->coins_slot, item_id);
+    }
 
-        bool can_insert_item(int slot, ItemID item_id)
-        {
-            // only allow coins
-            if (Item::get_item_type(item_id) != this->coins_type) return false;
-            return ItemContainerInterface::can_insert_item(slot, item_id);
-        }
+    bool can_insert_item(int slot, ItemID item_id)
+    {
+        // only allow coins
+        if (Item::get_item_type(item_id) != this->coins_type) return false;
+        return ItemContainerInterface::can_insert_item(slot, item_id);
+    }
 
-        void init(int xdim, int ydim)
-        {
-            this->coins_type = Item::get_item_type("synthesizer_coin");
-            GS_ASSERT(this->coins_type != NULL_ITEM_TYPE);
-            ItemContainerInterface::init(xdim, ydim);
-        }
-        
-        ItemContainerSynthesizer(ItemContainerType type, ItemContainerID id)
-        : ItemContainerInterface(type, id), coins_type(NULL_ITEM_TYPE)
-        {}
+    void init(int xdim, int ydim)
+    {
+        this->coins_type = Item::get_item_type("synthesizer_coin");
+        GS_ASSERT(this->coins_type != NULL_ITEM_TYPE);
+        ItemContainerInterface::init(xdim, ydim);
+    }
+    
+    ItemContainerSynthesizer(ItemContainerType type, ItemContainerID id) :
+        ItemContainerInterface(type, id), coins_type(NULL_ITEM_TYPE)
+    {}
 };
 
 class ItemContainerCraftingBench: public ItemContainerInterface
 {
     public:
 
-        ItemContainerCraftingBench(ItemContainerType type, ItemContainerID id)
-        : ItemContainerInterface(type, id)
-        {}
+    ItemContainerCraftingBench(ItemContainerType type, ItemContainerID id) :
+        ItemContainerInterface(type, id)
+    {}
 };
 
 
@@ -325,167 +324,167 @@ class ItemContainerSmelter: public ItemContainerInterface
         float progress;   // 0.0f - 1.0f
         float progress_rate;  // for recipe type
         
-        bool is_output_slot(int slot)
-        {   // output slot is if xslot == xdim-1;
-            int xslot = slot % (this->xdim);
-            return (xslot == this->xdim-1);
-        }
+    bool is_output_slot(int slot)
+    {   // output slot is if xslot == xdim-1;
+        int xslot = slot % (this->xdim);
+        return (xslot == this->xdim-1);
+    }
 
-        bool is_fuel_slot(int slot)
+    bool is_fuel_slot(int slot)
+    {
+        return (slot == this->fuel_slot);
+    }
+
+    ItemID get_fuel()
+    {
+        GS_ASSERT(this->slot_max > 0);
+        if (this->slot_max <= 0) return NULL_ITEM;
+        GS_ASSERT(this->is_valid_slot(this->fuel_slot));
+        if (!this->is_valid_slot(this->fuel_slot)) return NULL_ITEM;
+        return this->slot[this->fuel_slot];
+    }
+
+    #if DC_SERVER
+    void burn_fuel();
+    void reset_fuel();
+    void fill_fuel(int fuel_type);
+    void begin_smelting(int recipe_id);
+    void tick_smelting();
+    void reset_smelting();
+    #endif
+
+    bool can_produce_output();
+    bool can_produce_output(class Item::SmeltingRecipe** pRecipe, int* pRecipe_id);
+    bool can_insert_outputs(int* outputs, int* output_stacks, int n_outputs);
+
+    unsigned int get_max_input_slots()
+    {
+        if (this->slot_max <= 0) return 0;
+        int max  = this->slot_max - this->alt_xdim*this->alt_ydim - 1;
+        if (max <= 0) return 0;
+        return (unsigned int)max;
+    }
+
+    // fills *inputs with input items, sorted by type, up to max_inputs
+    // return number of inputs filled
+    int get_sorted_inputs(ItemID* inputs, unsigned int max_inputs)
+    {
+        // iterate input slots
+        // inserting to *inputs, sorted
+        GS_ASSERT(max_inputs > 0);
+        if (max_inputs <= 0) return 0;
+        GS_ASSERT(max_inputs == this->get_max_input_slots());
+
+        int n_inputs = 0;
+        //int input_types[max_inputs];
+        MALLOX(int, input_types, max_inputs); //type, name, size
+
+        for (unsigned int i=0; i<max_inputs; i++)
         {
-            return (slot == this->fuel_slot);
-        }
-
-        ItemID get_fuel()
-        {
-            GS_ASSERT(this->slot_max > 0);
-            if (this->slot_max <= 0) return NULL_ITEM;
-            GS_ASSERT(this->is_valid_slot(this->fuel_slot));
-            if (!this->is_valid_slot(this->fuel_slot)) return NULL_ITEM;
-            return this->slot[this->fuel_slot];
-        }
-
-        #if DC_SERVER
-        void burn_fuel();
-        void reset_fuel();
-        void fill_fuel(int fuel_type);
-        void begin_smelting(int recipe_id);
-        void tick_smelting();
-        void reset_smelting();
-        #endif
-
-        bool can_produce_output();
-        bool can_produce_output(class Item::SmeltingRecipe** pRecipe, int* pRecipe_id);
-        bool can_insert_outputs(int* outputs, int* output_stacks, int n_outputs);
-
-        unsigned int get_max_input_slots()
-        {
-            if (this->slot_max <= 0) return 0;
-            int max  = this->slot_max - this->alt_xdim*this->alt_ydim - 1;
-            if (max <= 0) return 0;
-            return (unsigned int)max;
-        }
-
-        // fills *inputs with input items, sorted by type, up to max_inputs
-        // return number of inputs filled
-        int get_sorted_inputs(ItemID* inputs, unsigned int max_inputs)
-        {
-            // iterate input slots
-            // inserting to *inputs, sorted
-            GS_ASSERT(max_inputs > 0);
-            if (max_inputs <= 0) return 0;
-            GS_ASSERT(max_inputs == this->get_max_input_slots());
-
-            int n_inputs = 0;
-            //int input_types[max_inputs];
-            MALLOX(int, input_types, max_inputs); //type, name, size
-
-            for (unsigned int i=0; i<max_inputs; i++)
+            int slot = this->convert_input_slot(i);
+            ItemID input = this->slot[slot];
+            if (input == NULL_ITEM) continue;
+            int input_type = Item::get_item_type(input);
+            GS_ASSERT(input_type != NULL_ITEM_TYPE);
+            if (input_type == NULL_ITEM_TYPE) continue;
+            if (n_inputs == 0)
             {
-                int slot = this->convert_input_slot(i);
-                ItemID input = this->slot[slot];
-                if (input == NULL_ITEM) continue;
-                int input_type = Item::get_item_type(input);
-                GS_ASSERT(input_type != NULL_ITEM_TYPE);
-                if (input_type == NULL_ITEM_TYPE) continue;
-                if (n_inputs == 0)
+                inputs[0] = input;
+                input_types[0] = input_type;
+            }
+            else
+            {   //  insert sorted
+                int j = 0;
+                for (; j<n_inputs; j++)
                 {
-                    inputs[0] = input;
-                    input_types[0] = input_type;
+                    if (input_types[j] <= input_type) continue;
+
+                    // shift forward
+                    for (int k=n_inputs; k>j; k--) inputs[k] = inputs[k-1];
+                    for (int k=n_inputs; k>j; k--) input_types[k] = input_types[k-1];
+                    
+                    // insert
+                    inputs[j] = input;
+                    input_types[j] = input_type;
+                    break;
                 }
-                else
-                {   //  insert sorted
-                    int j = 0;
-                    for (; j<n_inputs; j++)
-                    {
-                        if (input_types[j] <= input_type) continue;
 
-                        // shift forward
-                        for (int k=n_inputs; k>j; k--) inputs[k] = inputs[k-1];
-                        for (int k=n_inputs; k>j; k--) input_types[k] = input_types[k-1];
-                        
-                        // insert
-                        inputs[j] = input;
-                        input_types[j] = input_type;
-                        break;
-                    }
-
-                    if (j == n_inputs)
-                    {   // append to end
-                        inputs[j] = input;
-                        input_types[j] = input_type;
-                    }
+                if (j == n_inputs)
+                {   // append to end
+                    inputs[j] = input;
+                    input_types[j] = input_type;
                 }
-                n_inputs++;
             }
-
-            // Test output
-            int last_type = -1;
-            for (int i=0; i<n_inputs; i++)
-            {
-                GS_ASSERT(input_types[i] >= last_type);
-                last_type = input_types[i];
-            }
-            
-            return n_inputs;
+            n_inputs++;
         }
 
-        int convert_input_slot(int input_slot)
+        // Test output
+        int last_type = -1;
+        for (int i=0; i<n_inputs; i++)
         {
-            return 1;
+            GS_ASSERT(input_types[i] >= last_type);
+            last_type = input_types[i];
         }
+        
+        return n_inputs;
+    }
 
-        int convert_product_slot(int product_slot)
-        {   // translate product_slot to native slot
-            return 2;
-        }
+    int convert_input_slot(int input_slot)
+    {
+        return 1;
+    }
 
-        bool is_smelter_output(int slot)
+    int convert_product_slot(int product_slot)
+    {   // translate product_slot to native slot
+        return 2;
+    }
+
+    bool is_smelter_output(int slot)
+    {
+        return (slot == 2);
+    }
+
+    bool can_insert_item(int slot, ItemID item_id)
+    {
+        GS_ASSERT(this->is_valid_slot(slot));
+        if (!this->is_valid_slot(slot)) return false;
+        if (item_id == NULL_ITEM) return false;
+
+        // check fuel slot
+        if (slot == this->fuel_slot)
+            return Item::is_fuel(Item::get_item_type(item_id));
+        else if (this->is_smelter_output(slot))
+            // last row of x is a fuel slot
+            // we can't insert anything here through an action.
+            // the insert can only be done by server with special function
+            return false;
+        return ItemContainerInterface::can_insert_item(slot, item_id);
+    }
+
+    int get_empty_slot()
+    {
+        for (int i=1; i<this->slot_max; i++)    // skip fuel slot
         {
-            return (slot == 2);
+            if (this->is_smelter_output(i)) continue;
+            if (this->slot[i] == NULL_ITEM)
+                return i;
         }
+        return NULL_SLOT;
+    }
 
-        bool can_insert_item(int slot, ItemID item_id)
-        {
-            GS_ASSERT(this->is_valid_slot(slot));
-            if (!this->is_valid_slot(slot)) return false;
-            if (item_id == NULL_ITEM) return false;
+    void remove_fuel() { this->remove_item(this->fuel_slot); }
 
-            // check fuel slot
-            if (slot == this->fuel_slot)
-                return Item::is_fuel(Item::get_item_type(item_id));
-            else if (this->is_smelter_output(slot))
-                // last row of x is a fuel slot
-                // we can't insert anything here through an action.
-                // the insert can only be done by server with special function
-                return false;
-            return ItemContainerInterface::can_insert_item(slot, item_id);
-        }
-
-        int get_empty_slot()
-        {
-            for (int i=1; i<this->slot_max; i++)    // skip fuel slot
-            {
-                if (this->is_smelter_output(i)) continue;
-                if (this->slot[i] == NULL_ITEM)
-                    return i;
-            }
-            return NULL_SLOT;
-        }
-
-        void remove_fuel() { this->remove_item(this->fuel_slot); }
-
-        void init(int xdim, int ydim)
-        {
-            this->xdim = xdim;
-            this->ydim = ydim;
-            GS_ASSERT(alt_xdim * alt_ydim > 0);
-            GS_ASSERT(xdim * ydim > 0);
-            this->slot_max = xdim*ydim + alt_xdim*alt_ydim + 1; // +1 for fuel
-            IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
-            this->slot = new ItemID[this->slot_max];
-            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
-        }
+    void init(int xdim, int ydim)
+    {
+        this->xdim = xdim;
+        this->ydim = ydim;
+        GS_ASSERT(alt_xdim * alt_ydim > 0);
+        GS_ASSERT(xdim * ydim > 0);
+        this->slot_max = xdim*ydim + alt_xdim*alt_ydim + 1; // +1 for fuel
+        IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+        this->slot = new ItemID[this->slot_max];
+        for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+    }
 
     ItemContainerSmelter(ItemContainerType type, ItemContainerID id) :
         ItemContainerInterface(type, id),
@@ -536,8 +535,8 @@ class ItemContainerCrusher: public ItemContainerInterface
         for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
     }
 
-    ItemContainerCrusher(ItemContainerType type, ItemContainerID id)
-    : ItemContainerInterface(type, id)
+    ItemContainerCrusher(ItemContainerType type, ItemContainerID id) :
+        ItemContainerInterface(type, id)
     {}
 };
 
@@ -546,12 +545,7 @@ class ItemContainerCrusher: public ItemContainerInterface
 namespace ItemContainer
 {
 
-ItemContainerInterface* create_item_container_interface(int type, int id)
-{
-    container_create create_fn = get_container_create_function((ItemContainerType)type);
-    IF_ASSERT(create_fn == NULL) return NULL;
-    return create_fn((ItemContainerType)type, (ItemContainerID)id);
-}
+ItemContainerInterface* create_item_container_interface(int type, int id);
 
 ItemContainerInterface* new_crusher(ItemContainerType type, ItemContainerID id)
 {
@@ -603,8 +597,8 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface>
     #if DC_CLIENT
     ItemContainerInterface* create(int type)
     {
-        printf("must create item container with id\n");
         GS_ASSERT(false);
+        printf("must create item container with id\n");
         return NULL;
     }
 
@@ -614,11 +608,9 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface>
     }
     #endif
 
-    ItemContainerList(unsigned int capacity)
-    : MultiObject_list<ItemContainerInterface>(capacity, create_item_container_interface)
-    {
-        this->print();
-    }
+    ItemContainerList(unsigned int capacity) :
+        MultiObject_list<ItemContainerInterface>(capacity, create_item_container_interface)
+    {}
 };
 
 }

@@ -7,9 +7,9 @@ namespace map_gen
 
 void fill(const char* cube_name)
 {
-    CubeID cube = t_map::get_cube_id(cube_name);
-    ASSERT_VALID_CUBE_ID(cube);
-    IF_INVALID_CUBE_ID(cube) return;
+    CubeType cube = t_map::get_cube_type(cube_name);
+    ASSERT_VALID_CUBE_TYPE(cube);
+    IF_INVALID_CUBE_TYPE(cube) return;
 
     for (int i=0; i<t_map::map_dim.x; i++)
     for (int j=0; j<t_map::map_dim.y; j++)
@@ -17,7 +17,7 @@ void fill(const char* cube_name)
         t_map::set_fast(i,j,k, cube);
 }
 
-void ceiling(int x, int y, int z, int height, CubeID tile)
+void ceiling(int x, int y, int z, int height, CubeType tile)
 {
     z -= 1;
     for (int i=0; i<x; i++)
@@ -26,7 +26,7 @@ void ceiling(int x, int y, int z, int height, CubeID tile)
         t_map::set_fast(i,j,k, tile);
 }
 
-void floor(int x, int y, int z_start, int height, CubeID tile)
+void floor(int x, int y, int z_start, int height, CubeType tile)
 {
     for (int k=z_start; k<z_start+height; k++)
     for (int i=0; i<x; i++)
@@ -35,7 +35,7 @@ void floor(int x, int y, int z_start, int height, CubeID tile)
 }
 
 // white noise floor
-void rough_floor(int x, int y, int z_start, int height, CubeID tile)
+void rough_floor(int x, int y, int z_start, int height, CubeType tile)
 {
     GS_ASSERT(height > 0);
     if (height <= 0) return;
@@ -50,7 +50,7 @@ void rough_floor(int x, int y, int z_start, int height, CubeID tile)
 }
 
 
-void walls(int x, int y, int z_start, int height, CubeID tile)
+void walls(int x, int y, int z_start, int height, CubeType tile)
 {
     for (int i=0; i<x; i+=x-1)
     for (int j=0; j<y; j++)
@@ -63,7 +63,7 @@ void walls(int x, int y, int z_start, int height, CubeID tile)
         t_map::set_fast(i,j,k,tile);
 }
 
-void box(int x, int y, int z_start, int height, CubeID tile)
+void box(int x, int y, int z_start, int height, CubeType tile)
 {
     walls(x,y,z_start,height,tile);
     map_gen::floor(x,y,z_start, 1, tile);
@@ -103,7 +103,7 @@ void erosion(const int x, const int y, const int passes, const int h_diff, const
                 }
             }
 
-            CubeID tile = t_map::get(i,j,h);
+            CubeType tile = t_map::get(i,j,h);
 
             // redistribute from high to low
             int n = 0;

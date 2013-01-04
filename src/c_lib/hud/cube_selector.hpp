@@ -20,19 +20,19 @@ class CubeSelector
 
         struct CubeSelectElement
         {
-            CubeID cube_id;
+            CubeType cube_type;
             int tex_id;
         };
         
         struct CubeSelectElement* cubes;
 
         void set_position(float x, float y);
-        void set_block_selector(int pos, CubeID cube_id, int tex_id);
-        void set_block_selector(CubeID cube_id, int tex_id);
+        void set_block_selector(int pos, CubeType cube_type, int tex_id);
+        void set_block_selector(CubeType cube_type, int tex_id);
         void set_active_pos(int pos);
         void set_active_id(int id);
         int get_active_pos();
-        CubeID get_active_id();
+        CubeType get_active_id();
         void draw();
 
         void up();
@@ -40,7 +40,7 @@ class CubeSelector
         void left();
         void right();
 
-        bool set_block_type(CubeID cube_id);
+        bool set_block_type(CubeType cube_type);
 
         CubeSelector();
 };
@@ -48,7 +48,7 @@ class CubeSelector
 extern CubeSelector cube_selector;
 
 void init();
-void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id);
-void set_cube_hud(CubeID cube_id, int tex_id);
+void set_cube_hud(int hudx, int hudy, CubeType cube_type, int tex_id);
+void set_cube_hud(CubeType cube_type, int tex_id);
 
 }   // HudCubeSelector

@@ -20,13 +20,13 @@ void def_drop(const char* block_name)
     GS_ASSERT_ABORT(defined_drops != NULL);
     if (defined_drops == NULL) return;
 
-    CubeID cube_id = get_cube_id(block_name);
-    GS_ASSERT_ABORT(isValidCube(cube_id));
-    if (!isValidCube(cube_id)) return;
+    CubeType cube_type = get_cube_type(block_name);
+    GS_ASSERT_ABORT(isValidCube(cube_type));
+    if (!isValidCube(cube_type)) return;
 
-    GS_ASSERT_ABORT(defined_drops[cube_id] == DROP_UNDEFINED);
+    GS_ASSERT_ABORT(defined_drops[cube_type] == DROP_UNDEFINED);
 
-    defined_drops[cube_id] = DROP_DEFINED;
+    defined_drops[cube_type] = DROP_DEFINED;
 
     #if DC_SERVER
     block_drop_dat->def_drop(block_name);
@@ -38,13 +38,13 @@ void no_drop(const char* block_name)
     GS_ASSERT_ABORT(defined_drops != NULL);
     if (defined_drops == NULL) return;
 
-    CubeID cube_id = get_cube_id(block_name);
-    GS_ASSERT_ABORT(isValidCube(cube_id));
-    if (!isValidCube(cube_id)) return;
+    CubeType cube_type = get_cube_type(block_name);
+    GS_ASSERT_ABORT(isValidCube(cube_type));
+    if (!isValidCube(cube_type)) return;
 
-    GS_ASSERT_ABORT(defined_drops[cube_id] == DROP_UNDEFINED);
+    GS_ASSERT_ABORT(defined_drops[cube_type] == DROP_UNDEFINED);
 
-    defined_drops[cube_id] = DROP_NEVER;
+    defined_drops[cube_type] = DROP_NEVER;
 }
 
 void drop_always(const char* item_name)
@@ -57,22 +57,22 @@ void drop_always(const char* item_name)
 #if DC_SERVER
 static void add_drop_callback(int block_id)
 {
-    ASSERT_VALID_CUBE_ID(block_id);
-    IF_INVALID_CUBE_ID(block_id) return;
+    ASSERT_VALID_CUBE_TYPE(block_id);
+    IF_INVALID_CUBE_TYPE(block_id) return;
     GS_ASSERT(cube_properties != NULL);
     if (cube_properties == NULL) return;
     cube_properties[block_id].item_drop = true;
 }
 
 // wrappers for the drop dat ptr config
-static int get_cube_id_ptr(const char* name)
+static int get_cube_type_ptr(const char* name)
 {
-    return (int)get_cube_id(name);
+    return (int)get_cube_type(name);
 }
 
-static const char* get_cube_name_ptr(int cube_id)
+static const char* get_cube_name_ptr(int cube_type)
 {
-    return get_cube_name((CubeID)cube_id);
+    return get_cube_name((CubeType)cube_type);
 }
 
 void apply_automatic_block_drops()
@@ -85,10 +85,10 @@ void apply_automatic_block_drops()
     if (defined_drops == NULL) return;
     for (int i=0; i<MAX_CUBES; i++)
     {
-        if (!isValidCube((CubeID)i)) continue;  // skips empty and error blocks
+        if (!isValidCube((CubeType)i)) continue;  // skips empty and error blocks
         if (defined_drops[i] != DROP_UNDEFINED) continue;
 
-        const char* name = get_cube_name((CubeID)i);
+        const char* name = get_cube_name((CubeType)i);
         GS_ASSERT_ABORT(name != NULL);
         if (name == NULL) continue;
 
@@ -214,7 +214,7 @@ void init_block_drop_dat()
     GS_ASSERT(block_drop_dat == NULL);
     block_drop_dat = new Item::ItemDropConfig;
     block_drop_dat->init("block", MAX_CUBES);
-    block_drop_dat->get_id_from_name = &get_cube_id_ptr;
+    block_drop_dat->get_id_from_name = &get_cube_type_ptr;
     block_drop_dat->get_name_from_id = &get_cube_name_ptr;
     block_drop_dat->add_drop_callback = &add_drop_callback;
     #endif
@@ -230,17 +230,17 @@ void teardown_block_drop_dat()
 }
 
 #if DC_SERVER
-void handle_block_drop(int x, int y, int z, CubeID cube_id)
+void handle_block_drop(int x, int y, int z, CubeType cube_type)
 {
     GS_ASSERT(block_drop_dat != NULL);
     if (block_drop_dat == NULL) return;
 
-    ASSERT_VALID_CUBE_ID(cube_id);
-    IF_INVALID_CUBE_ID(cube_id) return;
+    ASSERT_VALID_CUBE_TYPE(cube_type);
+    IF_INVALID_CUBE_TYPE(cube_type) return;
 
-    for (int i=0; i < block_drop_dat->meta_drop_table[cube_id].num_drop; i++)
+    for (int i=0; i < block_drop_dat->meta_drop_table[cube_type].num_drop; i++)
     {
-        struct Item::ItemDropTable* cidt = &block_drop_dat->item_drop_table[i+block_drop_dat->meta_drop_table[cube_id].index];
+        struct Item::ItemDropTable* cidt = &block_drop_dat->item_drop_table[i+block_drop_dat->meta_drop_table[cube_type].index];
         float p = randf();
 
         if (p <= cidt->drop_cumulative_probabilities[0]) continue;

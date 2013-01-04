@@ -13,9 +13,9 @@ void init_packets();
 ItemContainerID get_block_item_container(int x, int y, int z);
 bool get_container_location(ItemContainerID container_id, int position[3]); // returns false is container not found
 
-CubeID get(int x, int y, int z);
-CubeID set(int x, int y, int z, CubeID cube_id);
-inline void set_fast(int x, int y, int z, CubeID cube_id) __attribute__((always_inline));
+CubeType get(int x, int y, int z);
+CubeType set(int x, int y, int z, CubeType cube_type);
+inline void set_fast(int x, int y, int z, CubeType cube_type) __attribute__((always_inline));
 void set_palette(int x, int y, int z, int palette);
 
 int get_block_damage(int x, int y, int z);
@@ -34,7 +34,7 @@ inline int get_solid_block_below(int x, int y, int z);
 
 inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
 
-bool block_can_be_placed(int x, int y, int z, CubeID cube_id);
+bool block_can_be_placed(int x, int y, int z, CubeType cube_type);
 
 
 #if DC_CLIENT
@@ -63,7 +63,7 @@ int get_requested_block_remaining_health();
 void get_requested_block_position(int* x, int* y, int* z);
 bool is_last_requested_block(int x, int y, int z);
 extern unsigned int requested_block_damage;
-extern CubeID requested_cube_id;
+extern CubeType requested_cube_type;
 #endif
 
 #if DC_SERVER
@@ -82,9 +82,9 @@ void add_control_node(int x, int y, int z);
 
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
 
-void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action);
-bool broadcast_set_block(int x, int y, int z, CubeID cube_id);
-void broadcast_set_block_palette(int x, int y, int z, CubeID cube_id, int palette);
+void broadcast_set_block_action(int x, int y, int z, CubeType cube_type, int action);
+bool broadcast_set_block(int x, int y, int z, CubeType cube_type);
+void broadcast_set_block_palette(int x, int y, int z, CubeType cube_type, int palette);
 void broadcast_set_palette(int x, int y, int z, int palette);
 
 void handle_explosive_block(int x, int y, int z);

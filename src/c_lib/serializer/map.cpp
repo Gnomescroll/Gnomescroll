@@ -9,7 +9,7 @@ namespace serializer
 
 static const size_t CHUNK_SIZE = CHUNK_ELEMENT_COUNT * sizeof(struct t_map::MAP_ELEMENT);
 
-static int* cube_id_map = NULL;
+static int* cube_type_map = NULL;
 
 bool should_save_world = false;
 BlockSerializer* block_serializer = NULL;
@@ -22,15 +22,15 @@ void init_map_serializer()
     GS_ASSERT(block_serializer == NULL);
     block_serializer = new BlockSerializer;
 
-    GS_ASSERT(cube_id_map == NULL);
-    cube_id_map = (int*)malloc(MAX_CUBES * sizeof(int));
-    for (int i=0; i<MAX_CUBES; cube_id_map[i++] = -1);
+    GS_ASSERT(cube_type_map == NULL);
+    cube_type_map = (int*)malloc(MAX_CUBES * sizeof(int));
+    for (int i=0; i<MAX_CUBES; cube_type_map[i++] = -1);
 }
 
 void teardown_map_serializer()
 {
     if (block_serializer != NULL) delete block_serializer;
-    if (cube_id_map != NULL) free(cube_id_map);
+    if (cube_type_map != NULL) free(cube_type_map);
 }
 
 #if PTHREADS_ENABLED
@@ -142,14 +142,14 @@ bool save_map_iter(int max_ms)
 static bool parse_map_palette_token(const char* key, const char* val, class ParsedMapPaletteData* data)
 {
     bool err = false;
-    if (strcmp(CUBE_ID_TAG, key) == 0)
+    if (strcmp(CUBE_TYPE_TAG, key) == 0)
     {
-        long long cube_id = parse_int(val, err);
-        ASSERT_VALID_CUBE_ID(cube_id);
-        IF_INVALID_CUBE_ID(cube_id) return false;
+        long long cube_type = parse_int(val, err);
+        ASSERT_VALID_CUBE_TYPE(cube_type);
+        IF_INVALID_CUBE_TYPE(cube_type) return false;
         GS_ASSERT(!err);
         if (err) return false;
-        data->cube_id = (int)cube_id;
+        data->cube_type = (int)cube_type;
     }
     else
     if (strcmp(NAME_TAG, key) == 0)
@@ -220,20 +220,20 @@ bool load_map_palette_file(const char* fn)
             free(str);
             return false;
         }
-        CubeID actual_cube_id = t_map::get_cube_id(actual_name);
-        GS_ASSERT(t_map::isInUse(actual_cube_id));
-        if (!t_map::isInUse(actual_cube_id))
+        CubeType actual_cube_type = t_map::get_cube_type(actual_name);
+        GS_ASSERT(t_map::isInUse(actual_cube_type));
+        if (!t_map::isInUse(actual_cube_type))
         {   // we failed to get a compatible block type
             free(str);
             return false;
         }
-        GS_ASSERT(cube_id_map[palette_data.cube_id] < 0);
-        if (cube_id_map[palette_data.cube_id] >= 0)
+        GS_ASSERT(cube_type_map[palette_data.cube_type] < 0);
+        if (cube_type_map[palette_data.cube_type] >= 0)
         {   // duplicate entry
             free(str);
             return false;
         }
-        cube_id_map[palette_data.cube_id] = actual_cube_id;
+        cube_type_map[palette_data.cube_type] = actual_cube_type;
         
         if (c == '\0') break;
     }
@@ -257,8 +257,8 @@ bool save_map_palette_file()
 
     for (int i=0; i<MAX_CUBES; i++)
     {
-        if (!t_map::isInUse((CubeID)i)) continue; 
-        const char* cube_name = t_map::get_cube_name((CubeID)i);
+        if (!t_map::isInUse((CubeType)i)) continue; 
+        const char* cube_name = t_map::get_cube_name((CubeType)i);
         if (cube_name == NULL) continue;
         int len = snprintf(buf, MAP_PALETTE_LINE_LENGTH+1, MAP_PALETTE_FMT, cube_name, i);
         GS_ASSERT(len >= 0 && (size_t)len < MAP_PALETTE_LINE_LENGTH+1);
@@ -296,7 +296,7 @@ static bool load_map_restore_containers()
         for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
         for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
         {
-            CubeID block = (CubeID)mp->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*k + TERRAIN_CHUNK_WIDTH*j + i].block;
+            CubeType block = (CubeType)mp->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*k + TERRAIN_CHUNK_WIDTH*j + i].block;
             if (!t_map::isItemContainer(block)) continue;
             
             ItemContainerType container_type = t_map::get_container_type_for_cube(block);
@@ -505,10 +505,10 @@ bool BlockSerializer::load(const char* filename)
     for (size_t i=0; i<filesize; i++)
     {
         char c = buffer[i];
-        ASSERT_VALID_CUBE_ID(c);
-        IF_INVALID_CUBE_ID(c)
+        ASSERT_VALID_CUBE_TYPE(c);
+        IF_INVALID_CUBE_TYPE(c)
             c = (char)EMPTY_CUBE;
-        buffer[i] = cube_id_map[(unsigned char)c];
+        buffer[i] = cube_type_map[(unsigned char)c];
     }
 
     for (int i=0; i<CHUNK_COUNT; i++)

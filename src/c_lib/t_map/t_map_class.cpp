@@ -75,7 +75,7 @@ void MAP_CHUNK::refresh_height_cache()
     for(int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
     for(int k=ZMAX-1; k>=0; k--)
     {
-        if (isSolid((CubeID)e[(k<<8)+(j<<4)+i].block))
+        if (isSolid((CubeType)e[(k<<8)+(j<<4)+i].block))
         {
             this->height_cache[TERRAIN_CHUNK_WIDTH*j+i] = j+1; //first block above the firs solid block
             break;
@@ -90,9 +90,9 @@ Get Methods
 */
 
 
-CubeID MAP_CHUNK::get_block(int x, int y, int z)
+CubeType MAP_CHUNK::get_block(int x, int y, int z)
 {
-    return (CubeID)e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+    return (CubeType)e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 }
 
 struct MAP_ELEMENT MAP_CHUNK::get_element(int x, int y, int z)
@@ -225,7 +225,7 @@ int Terrain_map::get_damage(int x, int y, int z)
 }
 
 // return negative on error, 0 on destruction of underlying block, or total damage so far on block 
-int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeID* cube_id)
+int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
 {
     if (dmg <= 0) return -4;
 
@@ -248,10 +248,10 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeID* cube_id)
 
     struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
     
-    *cube_id = (CubeID)e->block;
+    *cube_type = (CubeType)e->block;
 
     if(e->block == 0) return -1;
-    int maxdmg = maxDamage((CubeID)e->block);
+    int maxdmg = maxDamage((CubeType)e->block);
     if (maxdmg >= INVINCIBLE_CUBE_DAMAGE) return -5;
     if(e->damage + dmg >= maxdmg) 
     {
@@ -261,9 +261,9 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeID* cube_id)
         *e = NULL_MAP_ELEMENT; 
 
         #if DC_SERVER
-        if(isItemContainer(*cube_id))
+        if(isItemContainer(*cube_type))
             destroy_item_container_block(x,y,z);
-        if (isExplosive(*cube_id))
+        if (isExplosive(*cube_type))
             handle_explosive_block(x,y,z);
         #endif
 
@@ -381,12 +381,12 @@ inline unsigned char Terrain_map::get_cached_height(int x, int y)
 /*
 DEPRECATE
 */
-void Terrain_map::update_heights(int x, int y, int z, CubeID cube_id)
+void Terrain_map::update_heights(int x, int y, int z, CubeType cube_type)
 {
     z += 1; // heights are not 0 indexed;
     int new_h = -1;
     int h = this->column_heights[x + y*MAP_WIDTH];
-    if (cube_id != EMPTY_CUBE)
+    if (cube_type != EMPTY_CUBE)
     {   // setting higher block
         if (z > h)
             new_h = z;
@@ -411,7 +411,7 @@ void Terrain_map::update_heights(int x, int y, int z, CubeID cube_id)
 /*
 Block Methodss
 */
-CubeID Terrain_map::get_block(int x, int y, int z)
+CubeType Terrain_map::get_block(int x, int y, int z)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return EMPTY_CUBE;
 
@@ -420,20 +420,20 @@ CubeID Terrain_map::get_block(int x, int y, int z)
 
     class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if (c == NULL) return EMPTY_CUBE;
-    return (CubeID)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+    return (CubeType)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 }
 
-void Terrain_map::set_block(int x, int y, int z, CubeID cube_id)
+void Terrain_map::set_block(int x, int y, int z, CubeType cube_type)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MAP_ELEMENT element = {{{(unsigned char)cube_id, 0,0,0}}};
+    struct MAP_ELEMENT element = {{{(unsigned char)cube_type, 0,0,0}}};
     set_element(x,y,z, element);
     #if DC_CLIENT
-    update_heights(x,y,z, cube_id);
+    update_heights(x,y,z, cube_type);
     #endif
 }
 

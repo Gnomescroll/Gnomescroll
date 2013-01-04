@@ -15,19 +15,19 @@
 namespace HudCubeSelector
 {
 
-void CubeSelector::set_block_selector(int pos, CubeID cube_id, int tex_id)
+void CubeSelector::set_block_selector(int pos, CubeType cube_type, int tex_id)
 {
     int ct = this->n_x*this->n_y;
-    GS_ASSERT(cube_id != NULL_CUBE);
+    GS_ASSERT(cube_type != NULL_CUBE);
     GS_ASSERT(tex_id != NULL_SPRITE && tex_id >= 0);
     GS_ASSERT(pos >= 0 && pos < ct);
-    if (cube_id == NULL_CUBE) return;
+    if (cube_type == NULL_CUBE) return;
     if (tex_id == NULL_SPRITE || tex_id < 0) return;
     if (pos < 0 || pos >= ct) return;
 
-    GS_ASSERT(cubes[pos].cube_id == NULL_CUBE);
+    GS_ASSERT(cubes[pos].cube_type == NULL_CUBE);
     GS_ASSERT(cubes[pos].tex_id == NULL_SPRITE);
-    cubes[pos].cube_id = cube_id;
+    cubes[pos].cube_type = cube_type;
 
     for (int i=0; i<ct; i++)
         if (cubes[i].tex_id != NULL_SPRITE)
@@ -36,7 +36,7 @@ void CubeSelector::set_block_selector(int pos, CubeID cube_id, int tex_id)
     cubes[pos].tex_id = tex_id;
 }
 
-void CubeSelector::set_block_selector(CubeID cube_id, int tex_id)
+void CubeSelector::set_block_selector(CubeType cube_type, int tex_id)
 {
     int pos = 0;
     for (; pos<this->n_x*this->n_y; pos++)
@@ -47,7 +47,7 @@ void CubeSelector::set_block_selector(CubeID cube_id, int tex_id)
         printf("WARNING: Hud cube selector is full\n");
         return;
     }
-    this->set_block_selector(pos, cube_id, tex_id);
+    this->set_block_selector(pos, cube_type, tex_id);
 }
 
 void CubeSelector::set_position(float x, float y)
@@ -56,9 +56,9 @@ void CubeSelector::set_position(float x, float y)
     this->y = y;
 }
 
-CubeID CubeSelector::get_active_id()    //get the cube selected by hud
+CubeType CubeSelector::get_active_id()    //get the cube selected by hud
 {
-    return cubes[this->get_active_pos()].cube_id;
+    return cubes[this->get_active_pos()].cube_type;
 }
 
 int CubeSelector::get_active_pos()
@@ -77,7 +77,7 @@ void CubeSelector::set_active_id(int id)
 {
     if (id == 0xFF) return;
     for (int i=0; i<MAX_CUBES; i++)
-        if (cubes[i].cube_id == id)
+        if (cubes[i].cube_type == id)
         {
             this->set_active_pos(i);
             break;
@@ -116,8 +116,8 @@ void CubeSelector::draw()
     for(int i=0; i<this->n_x; i++)
     for(int j=0; j<this->n_y; j++)
     {
-        CubeID cube_id = cubes[i+8*j].cube_id;
-        if (cube_id == NULL_CUBE) continue;
+        CubeType cube_type = cubes[i+8*j].cube_type;
+        if (cube_type == NULL_CUBE) continue;
         int tex_id = cubes[i+8*j].tex_id;
         
         float x0 = x + i*(_ssize+sborder) + sborder/2;
@@ -221,20 +221,20 @@ void CubeSelector::vertical(bool up)
     this->set_active_pos(n);
 }
 
-bool CubeSelector::set_block_type(CubeID cube_id)
+bool CubeSelector::set_block_type(CubeType cube_type)
 {
     GS_ASSERT(this->cubes != NULL);
     if (this->cubes == NULL) return false;
     
-    ASSERT_VALID_CUBE_ID(cube_id);
-    GS_ASSERT(t_map::isInUse(cube_id));
-    GS_ASSERT(cube_id != ERROR_CUBE);
-    if (!t_map::isInUse(cube_id) || cube_id == ERROR_CUBE) return false;
-    IF_INVALID_CUBE_ID(cube_id) return false;
+    ASSERT_VALID_CUBE_TYPE(cube_type);
+    GS_ASSERT(t_map::isInUse(cube_type));
+    GS_ASSERT(cube_type != ERROR_CUBE);
+    if (!t_map::isInUse(cube_type) || cube_type == ERROR_CUBE) return false;
+    IF_INVALID_CUBE_TYPE(cube_type) return false;
 
     for (int i=0; i<this->n_x*this->n_y; i++)
     {
-        if (this->cubes[i].cube_id == cube_id)
+        if (this->cubes[i].cube_type == cube_type)
         {
             this->set_active_pos(i);
             return true;
@@ -252,7 +252,7 @@ CubeSelector::CubeSelector() :
     this->cubes = (struct CubeSelectElement*)malloc(MAX_CUBES * sizeof(struct CubeSelectElement));
     for(int i=0; i<MAX_CUBES; i++)
     {
-        cubes[i].cube_id = NULL_CUBE;
+        cubes[i].cube_type = NULL_CUBE;
         cubes[i].tex_id = NULL_SPRITE;
     }
 }
@@ -264,7 +264,7 @@ void init()
     cube_selector.set_position(150,250);
 }
 
-void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id)
+void set_cube_hud(int hudx, int hudy, CubeType cube_type, int tex_id)
 {
     if(hudx < 1 || hudy < 1 || hudx > 8 || hudy > 8)
     {
@@ -273,12 +273,12 @@ void set_cube_hud(int hudx, int hudy, CubeID cube_id, int tex_id)
     }
     hudx--;
     hudy--;
-    HudCubeSelector::cube_selector.set_block_selector(8*hudy+hudx, cube_id, tex_id);
+    HudCubeSelector::cube_selector.set_block_selector(8*hudy+hudx, cube_type, tex_id);
 }
 
-void set_cube_hud(CubeID cube_id, int tex_id)
+void set_cube_hud(CubeType cube_type, int tex_id)
 {
-    HudCubeSelector::cube_selector.set_block_selector(cube_id, tex_id);
+    HudCubeSelector::cube_selector.set_block_selector(cube_type, tex_id);
 }
 
 }   // HudCubeSelector

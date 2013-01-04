@@ -10,13 +10,13 @@ dont_include_this_file_in_client
 
 
 const size_t  NUM_FLOORS = 4; 
-CubeID floors[NUM_FLOORS];
+CubeType floors[NUM_FLOORS];
 const size_t NUM_WALLS = 4; 
-CubeID walls[NUM_WALLS];
+CubeType walls[NUM_WALLS];
 const size_t NUM_CEILS = 4; 
-CubeID ceils[NUM_CEILS];
+CubeType ceils[NUM_CEILS];
 const size_t NUM_TRIMS = 4;
-CubeID trims[NUM_TRIMS];
+CubeType trims[NUM_TRIMS];
 
 const int ruins_across_world = 8;
 const int cubes_across_room = 16;
@@ -53,7 +53,7 @@ enum direction_type_t {
     DIRTYPE_BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
 };
 
-CubeID randcube(CubeID arr[], int num) {
+CubeType randcube(CubeType arr[], int num) {
     return arr[randrange(0, num - 1)];
 }
 
@@ -78,10 +78,10 @@ struct Rect3D {
     
 struct Room : Rect3D{
     direction_type_t dir_types[DIR_MAX];
-    CubeID wall_block;
-    CubeID floor_block;
-    CubeID ceil;
-    CubeID trim;
+    CubeType wall_block;
+    CubeType floor_block;
+    CubeType ceil;
+    CubeType trim;
     Rect3D eh; // east hall
     Rect3D nh; // north hall
     Rect air; // a region that guarantees airspace, only used for stairways
@@ -89,7 +89,7 @@ struct Room : Rect3D{
     
 Room rooms[rooms_going_up][rooms_across_ruins][rooms_across_ruins];
     
-void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeID tile_id)
+void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeType tile_id)
 {
     for (int z = i_z; z < i_z + i_h; z++) {
         for (int y = i_y; y < i_y + i_dep; y++) {
@@ -198,7 +198,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
     for (int cy = 0; cy < cubes_across_room; cy++) {
     for (int cz = 1; cz < cubes_going_up - 1; cz++) { // excluding floor/ceiling layers
         Room r = rooms[ri.z][ri.y][ri.x];
-        CubeID block = r.wall_block;
+        CubeType block = r.wall_block;
         bool need_block = false;
         Rect ne, se, sw, nw; // corner of room to fill w/ blocks
         Rect3D sh, wh; // north hall, south hall, etc.     ** we add size in certain dimensions, so it represents door frames **
@@ -359,7 +359,7 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
         if (need_block) {
             // change rim/frame blocks
             if (cz == 1 ||
-				rect_plus_margin_contains(r.nh, 1, cx, cy, cz) || 
+                rect_plus_margin_contains(r.nh, 1, cx, cy, cz) || 
                 rect_plus_margin_contains(sh,   1, cx, cy, cz) || 
                 rect_plus_margin_contains(r.eh, 1, cx, cy, cz) || 
                 rect_plus_margin_contains(wh,   1, cx, cy, cz) 
@@ -368,14 +368,14 @@ void make_walls_or_airspace(IntVec3 ri, int ox, int oy) {
             t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, block); 
         } else {
             t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, EMPTY_CUBE);
-		}
+        }
     }
     }
     }
 }
 
 
-void make_stairs(int rx, int ry, int rz, int ox, int oy, CubeID floor_block) { // room indexes, origin
+void make_stairs(int rx, int ry, int rz, int ox, int oy, CubeType floor_block) { // room indexes, origin
     t_gen::set_region(
         rx * cubes_across_room + ox + fixed_stair_x,
         ry * cubes_across_room + oy + fixed_stair_y,
@@ -416,18 +416,18 @@ void setup_rooms() {
         // floors have 1 stairway up
         int stairway_up_x = randrange(0, rooms_across_ruins - 1);
         int stairway_up_y = randrange(0, rooms_across_ruins - 1);
-		CubeID floo = randcube(floors, NUM_FLOORS);
-		CubeID wall = randcube(walls, NUM_WALLS);
-		CubeID ceil = randcube(ceils, NUM_CEILS);
-		CubeID trim = randcube(trims, NUM_TRIMS);
+        CubeType floo = randcube(floors, NUM_FLOORS);
+        CubeType wall = randcube(walls, NUM_WALLS);
+        CubeType ceil = randcube(ceils, NUM_CEILS);
+        CubeType trim = randcube(trims, NUM_TRIMS);
 
         for (int x = 0; x < rooms_across_ruins; x++) {
         for (int y = 0; y < rooms_across_ruins; y++) {
             Room r;
             r.floor_block = floo;
             r.wall_block = wall;
-			r.ceil = ceil;
-			r.trim = trim;
+            r.ceil = ceil;
+            r.trim = trim;
 
             // spans refer to the AIRSPACE, and don't include outer shell of blocks
             // but offset, for cleaner comparisons, should actually be the absolute offset from the corner of the room (including shell)
@@ -510,8 +510,8 @@ void setup_rooms() {
 void make_outer_shell(int x, int y) {
     int ruin_z_span   = cubes_going_up    * rooms_going_up; // z       extent
     int ruin_lat_span = cubes_across_room * rooms_across_ruins; // lateral span of ruin shell
-    CubeID rib = randcube(trims, NUM_TRIMS);
-    CubeID shell = randcube(walls, NUM_WALLS);
+    CubeType rib = randcube(trims, NUM_TRIMS);
+    CubeType shell = randcube(walls, NUM_WALLS);
     //while (rib == shell) rib = random_pic();  *** atm, we have no textures that fall into more than one category
 
     // make planes for shell ribbing
@@ -550,7 +550,7 @@ void make_ruins(int x, int y) {
     for (int ry = 0; ry < rooms_across_ruins; ry++) {
     for (int rz = 0; rz < rooms_going_up; rz++) {
         // make floor
-		CubeID fl = (randrange(0,7) == 0) ? t_map::get_cube_id("rock") : rooms[rz][ry][rx].floor_block;
+        CubeType fl = (randrange(0,7) == 0) ? t_map::get_cube_type("rock") : rooms[rz][ry][rx].floor_block;
         t_gen::set_region(
             rx * cubes_across_room + x,
             ry * cubes_across_room + y,
@@ -576,50 +576,50 @@ void make_ruins(int x, int y) {
                 rx * cubes_across_room + x + fixed_stair_x - 1,
                 ry * cubes_across_room + y + fixed_stair_y - 1,
                 rz * cubes_going_up + bedrock_offset - 1,
-				fixed_stair_w + 2, fixed_stair_d + 2, 2, rooms[rz][ry][rx].trim);
+                fixed_stair_w + 2, fixed_stair_d + 2, 2, rooms[rz][ry][rx].trim);
             // clear well in floor of this room, and ceiling of room underneath
             t_gen::set_region(
                 rx * cubes_across_room + x + fixed_stair_x,
                 ry * cubes_across_room + y + fixed_stair_y,
                 rz * cubes_going_up + bedrock_offset - 1,
                 fixed_stair_w, fixed_stair_d, 2, EMPTY_CUBE);
-		}
+        }
     }
     }
     }
 }
 
-    void check_textures(CubeID arr[], int num) {
-		for (int i = 0; i < num; i++) { 
-			GS_ASSERT(t_map::isValidCube(trims[i])); 
-			if (!t_map::isValidCube(trims[i])) { printf("** cube id %d invalid ***", trims[i]); return; }
-		}
-	}
+    void check_textures(CubeType arr[], int num) {
+        for (int i = 0; i < num; i++) { 
+            GS_ASSERT(t_map::isValidCube(trims[i])); 
+            if (!t_map::isValidCube(trims[i])) { printf("** cube id %d invalid ***", trims[i]); return; }
+        }
+    }
 
 
 
     void generate_ruins() {
         printf("Making ruins\n");
 
-        floors[0] = t_map::get_cube_id("ruins_floor1");
-        floors[1] = t_map::get_cube_id("ruins_floor2"); 
-        floors[2] = t_map::get_cube_id("ruins_floor3"); 
-        floors[3] = t_map::get_cube_id("ruins_floor4"); 
+        floors[0] = t_map::get_cube_type("ruins_floor1");
+        floors[1] = t_map::get_cube_type("ruins_floor2"); 
+        floors[2] = t_map::get_cube_type("ruins_floor3"); 
+        floors[3] = t_map::get_cube_type("ruins_floor4"); 
 
-        walls[0] = t_map::get_cube_id("ruins_wall1");
-        walls[1] = t_map::get_cube_id("ruins_wall2"); 
-        walls[2] = t_map::get_cube_id("ruins_wall3");
-        walls[3] = t_map::get_cube_id("ruins_wall4"); 
+        walls[0] = t_map::get_cube_type("ruins_wall1");
+        walls[1] = t_map::get_cube_type("ruins_wall2"); 
+        walls[2] = t_map::get_cube_type("ruins_wall3");
+        walls[3] = t_map::get_cube_type("ruins_wall4"); 
 
-        ceils[0] = t_map::get_cube_id("ruins_ceiling1");
-        ceils[1] = t_map::get_cube_id("ruins_ceiling2"); 
-        ceils[2] = t_map::get_cube_id("ruins_ceiling3");
-        ceils[3] = t_map::get_cube_id("ruins_ceiling4"); 
+        ceils[0] = t_map::get_cube_type("ruins_ceiling1");
+        ceils[1] = t_map::get_cube_type("ruins_ceiling2"); 
+        ceils[2] = t_map::get_cube_type("ruins_ceiling3");
+        ceils[3] = t_map::get_cube_type("ruins_ceiling4"); 
 
-        trims[0] = t_map::get_cube_id("ruins_trim1");
-        trims[1] = t_map::get_cube_id("ruins_trim2"); 
-        trims[2] = t_map::get_cube_id("ruins_trim3");
-        trims[3] = t_map::get_cube_id("ruins_trim4"); 
+        trims[0] = t_map::get_cube_type("ruins_trim1");
+        trims[1] = t_map::get_cube_type("ruins_trim2"); 
+        trims[2] = t_map::get_cube_type("ruins_trim3");
+        trims[3] = t_map::get_cube_type("ruins_trim4"); 
 
         check_textures(floors, NUM_FLOORS);
         check_textures(walls, NUM_WALLS);

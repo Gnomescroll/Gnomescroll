@@ -463,7 +463,7 @@ class MapGenerator1
     }
 
     OPTIMIZED
-    void generate_map(CubeID tile_id)
+    void generate_map(CubeType tile_id)
     {
         for (int k=0; k<this->zmax-1; k++)
         for (int i=0; i<this->xmax; i++)
@@ -524,7 +524,7 @@ void test_octave_3d()
 
 class MapGenerator1* map_generator = NULL;
 
-void test_octave_3d_map_gen(CubeID tile_id)
+void test_octave_3d_map_gen(CubeType tile_id)
 {
     IF_ASSERT(map_generator == NULL) return;
     
@@ -647,7 +647,7 @@ float* LUA_get_map_lerp_array()
 void LUA_generate_map()
 {
     #if !PRODUCTION
-    CubeID tile = t_map::get_cube_id("regolith");
+    CubeType tile = t_map::get_cube_type("regolith");
     map_generator->generate_map(tile);
     t_map::map_post_processing();
     #endif

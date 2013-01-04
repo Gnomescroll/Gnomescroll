@@ -252,7 +252,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
     return false;
 }
 
-inline CubeID RaytraceData::get_cube_id()
+inline CubeType RaytraceData::get_cube_type()
 {
     return t_map::get(this->collision_point[0], this->collision_point[1], this->collision_point[2]); 
 }

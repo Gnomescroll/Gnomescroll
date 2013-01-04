@@ -439,8 +439,8 @@ void create_items_from_blocks()
 
     for (int i=0; i<MAX_CUBES; i++)
     {
-        if (!t_map::isValidCube((CubeID)i)) continue;  // skips empty and error blocks
-        const char* name = t_map::get_cube_name((CubeID)i);
+        if (!t_map::isValidCube((CubeType)i)) continue;  // skips empty and error blocks
+        const char* name = t_map::get_cube_name((CubeType)i);
         GS_ASSERT_ABORT(name != NULL);
         if (name == NULL) continue;
 
@@ -458,12 +458,12 @@ void create_items_from_blocks()
             }
         if (already_defined) continue;
 
-        CubeID cube_id = t_map::get_cube_id(name);
-        GS_ASSERT_ABORT(t_map::isValidCube(cube_id));
-        if (!t_map::isValidCube(cube_id)) continue;
+        CubeType cube_type = t_map::get_cube_type(name);
+        GS_ASSERT_ABORT(t_map::isValidCube(cube_type));
+        if (!t_map::isValidCube(cube_type)) continue;
 
         // blocks that have drops defined (at this point) will not be dropping themselves
-        if (t_map::defined_drops[cube_id] != t_map::DROP_UNDEFINED) continue;
+        if (t_map::defined_drops[cube_type] != t_map::DROP_UNDEFINED) continue;
 
         bool defined = item_block_def(name);
         GS_ASSERT_ABORT(defined);
@@ -515,7 +515,7 @@ void verify_item_dat()
         // particle voxel should have a cube height of 1
         GS_ASSERT_ABORT(!a->particle_voxel || a->cube_height == 1);
 
-        GS_ASSERT_ABORT(!a->particle_voxel || (a->cube_id != NULL_CUBE && a->cube_id != ERROR_CUBE && a->cube_id != EMPTY_CUBE));
+        GS_ASSERT_ABORT(!a->particle_voxel || (a->cube_type != NULL_CUBE && a->cube_type != ERROR_CUBE && a->cube_type != EMPTY_CUBE));
 
         // gas lifetime should be set, if it is a gas
         GS_ASSERT_ABORT(!a->gas || a->gas_lifetime != NULL_GAS_LIFETIME);
@@ -524,7 +524,7 @@ void verify_item_dat()
         GS_ASSERT_ABORT(a->group == IG_ERROR || a->particle_voxel || a->sprite != ERROR_SPRITE);
         #endif
 
-        GS_ASSERT_ABORT(a->cube_id == NULL_CUBE || t_map::isValidCube(a->cube_id));
+        GS_ASSERT_ABORT(a->cube_type == NULL_CUBE || t_map::isValidCube(a->cube_type));
 
         if (a->group == IG_ERROR) errct++;
     }
@@ -541,7 +541,7 @@ void verify_item_dat()
         GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
         GS_ASSERT_ABORT(a->sprite == ERROR_SPRITE || a->sprite != b->sprite);
         GS_ASSERT_ABORT(a->item_type != b->item_type);
-        GS_ASSERT_ABORT(a->cube_id == NULL_CUBE || a->cube_id != b->cube_id);
+        GS_ASSERT_ABORT(a->cube_type == NULL_CUBE || a->cube_type != b->cube_type);
     }
 
     GS_ASSERT_ABORT(item_name_map->condensed);

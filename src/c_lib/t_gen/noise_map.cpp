@@ -30,7 +30,7 @@ void noise_map_test()
 void noise_map_generate_map()
 {
     #if DC_SERVER
-    CubeID tile = t_map::get_cube_id("regolith");
+    CubeType tile = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(tile)) return;
     test_octave_3d_map_gen(tile);
     #endif

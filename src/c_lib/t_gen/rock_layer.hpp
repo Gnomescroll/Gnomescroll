@@ -23,10 +23,10 @@ void generate_rock_layer()
         regolith_depth_array[512*j+i] = 9.0f + 9.0f*(0.5+_2d_noise_array[512*j+i]);
     }
 
-    int regolith = t_map::get_cube_id("regolith");
-    //int rock_layer = t_map::get_cube_id("rock");
-    //int rock_layer = t_map::get_cube_id("space_tree_trunk");
-    int rock_layer = t_map::get_cube_id("rock");
+    int regolith = t_map::get_cube_type("regolith");
+    //int rock_layer = t_map::get_cube_type("rock");
+    //int rock_layer = t_map::get_cube_type("space_tree_trunk");
+    int rock_layer = t_map::get_cube_type("rock");
 
     struct t_map::MAP_ELEMENT rock_layer_element = {{{(unsigned char)rock_layer, 0,0,0}}};
 

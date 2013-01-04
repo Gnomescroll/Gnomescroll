@@ -47,7 +47,7 @@ class MAP_CHUNK
 
     MAP_CHUNK(int _xpos, int _ypos);
 
-    inline CubeID get_block(int x, int y, int z) __attribute__((always_inline)); //for VBO generator
+    inline CubeType get_block(int x, int y, int z) __attribute__((always_inline)); //for VBO generator
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute__((always_inline)); //for VBO generator
 
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT e) __attribute__((always_inline)); //for VBO generator
@@ -82,7 +82,7 @@ class Terrain_map
     void reset_heights_read();
     void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler
     inline unsigned char get_cached_height(int x, int y);
-    void update_heights(int x, int y, int z, CubeID cube_id);
+    void update_heights(int x, int y, int z, CubeType cube_type);
     unsigned char column_heights[MAP_WIDTH * MAP_HEIGHT];               // 1x1 columns
     #endif
     
@@ -104,18 +104,18 @@ class Terrain_map
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
 
-    inline CubeID get_block(int x, int y, int z) __attribute((always_inline));
-    inline void set_block(int x, int y, int z, CubeID cube_id) __attribute((always_inline));
+    inline CubeType get_block(int x, int y, int z) __attribute((always_inline));
+    inline void set_block(int x, int y, int z, CubeType cube_type) __attribute((always_inline));
     #else
     struct MAP_ELEMENT get_element(int x, int y, int z);
     void set_element(int x, int y, int z, struct MAP_ELEMENT element);
-    CubeID get_block(int x, int y, int z);
-    void set_block(int x, int y, int z, CubeID cube_id);
+    CubeType get_block(int x, int y, int z);
+    void set_block(int x, int y, int z, CubeType cube_type);
     #endif
 
     int get_damage(int x, int y, int z);
 
-    int apply_damage(int x, int y, int z, int dmg, CubeID* cube_id);
+    int apply_damage(int x, int y, int z, int dmg, CubeType* cube_type);
 
     inline int get_height(int x, int y);
 };

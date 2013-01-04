@@ -11,7 +11,7 @@ typedef ContainerActionType (*decision_tree) (ItemContainerID, int);
 typedef ContainerActionType (*decision_tree) (AgentID, ClientID, ItemContainerID, int);
 #endif                              // agent, client, container, slot
 
-typedef ItemContainer::ItemContainerInterface* (*container_create) (ItemContainerType, ItemContainerID);
+typedef ItemContainer::ItemContainerInterface* (*containerCreate) (ItemContainerType, ItemContainerID);
 
 namespace ItemContainer
 {
@@ -43,7 +43,7 @@ class ContainerAttributes
         send_decision alpha_packet_alt;
         send_decision beta_packet_alt;
 
-        container_create create_function;
+        containerCreate create_function;
 
     void set_name(const char* name)
     {

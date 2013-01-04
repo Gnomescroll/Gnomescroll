@@ -17,13 +17,13 @@ class ParsedMapPaletteData
     public:
         bool valid;
         
-        int cube_id;
+        int cube_type;
         char name[DAT_NAME_MAX_LENGTH+1];
         
     void reset()
     {
         this->valid = false;
-        this->cube_id = ERROR_CUBE;
+        this->cube_type = ERROR_CUBE;
         memset(this->name, 0, sizeof(this->name));
     }
 

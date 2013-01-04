@@ -85,10 +85,16 @@ static void agent_container_def(const char* name)
     c->attached_to_agent = true;
 }
 
-static void block_container_def(const char* name)
+static void cube_container_def(const char* name)
 {
     container_def(name);
     c->attached_to_agent = false;
+
+    CubeType cube_type = t_map::get_cube_type(name);
+    t_map::CubeProperties* attr = t_map::get_cube_properties(cube_type);
+    GS_ASSERT_ABORT(attr != NULL);
+    if (attr == NULL) return;
+    attr->container_type = c->type;
 }
         
 static void register_settings()
@@ -153,7 +159,7 @@ static void register_settings()
     c->beta_packet = &send_container_beta_action;
     c->create_function = &new_energy_tanks;
     
-    block_container_def("storage_block_small");
+    cube_container_def("storage_block_small");
     c->xdim = 3;
     c->ydim = 3;
     c->alpha_action = &alpha_action_decision_tree;
@@ -162,7 +168,7 @@ static void register_settings()
     c->beta_packet = &send_container_beta_action;
     c->create_function = &new_synthesizer;
 
-    block_container_def("crafting_bench_basic");
+    cube_container_def("crafting_bench_basic");
     c->xdim = 4;
     c->ydim = 1;
     c->alt_xdim = 1;
@@ -177,7 +183,7 @@ static void register_settings()
     c->beta_packet_alt = &send_craft_item_action;
     c->create_function = &new_crafting_bench;
 
-    block_container_def("cryofreezer_small");
+    cube_container_def("cryofreezer_small");
     c->xdim = 2;
     c->ydim = 2;
     c->alpha_action = &alpha_action_decision_tree;
@@ -186,7 +192,7 @@ static void register_settings()
     c->beta_packet = &send_container_beta_action;
     c->create_function = &new_cryofreezer;
 
-    block_container_def("smelter_basic");
+    cube_container_def("smelter_basic");
     c->xdim = 1;
     c->ydim = 1;
     c->alt_xdim = 1;
@@ -197,7 +203,7 @@ static void register_settings()
     c->beta_packet = &send_smelter_beta_action;
     c->create_function = &new_smelter;
 
-    block_container_def("crusher");
+    cube_container_def("crusher");
     c->xdim = 1;
     c->ydim = 1;
     c->alpha_action = &crusher_alpha_action_decision_tree;
@@ -273,7 +279,7 @@ static void validate_settings()
         bool block_match = false;
         for (int i=0; i<MAX_CUBES; i++)
         {
-            class t_map::CubeProperties* p = t_map::get_cube_properties((CubeID)i);
+            class t_map::CubeProperties* p = t_map::get_cube_properties((CubeType)i);
             if (p != NULL && strcmp(p->name, c->name) == 0)
             {
                 GS_ASSERT_ABORT(p->container_type == c->type);
@@ -302,10 +308,10 @@ static void validate_settings()
     // all ItemContainer blocks must have a container defined
     for (int i=0; i<MAX_CUBES; i++)
     {
-        if (!t_map::isValidCube((CubeID)i)) continue;
-        if (t_map::get_cube_type((CubeID)i) == ItemContainerCube)
+        if (!t_map::isValidCube((CubeType)i)) continue;
+        if (t_map::get_cube_group((CubeType)i) == ItemContainerCube)
         {
-            GS_ASSERT_ABORT(get_type(t_map::get_cube_name((CubeID)i)) != NULL_CONTAINER_TYPE);
+            GS_ASSERT_ABORT(get_type(t_map::get_cube_name((CubeType)i)) != NULL_CONTAINER_TYPE);
         }
     }
 
@@ -484,7 +490,7 @@ const char* get_container_name(ItemContainerType type)
     return attr->name;
 }
 
-container_create get_container_create_function(ItemContainerType type)
+containerCreate get_container_create_function(ItemContainerType type)
 {
     class ContainerAttributes* attr = get_attr(type);
     IF_ASSERT(attr == NULL) return NULL;

@@ -16,19 +16,19 @@ namespace t_gen
 
 static const size_t MAX_IMMUNE_CUBES = 10;
 static size_t immune_cubes_ct = 0;
-static CubeID immune_cubes[MAX_IMMUNE_CUBES];
+static CubeType immune_cubes[MAX_IMMUNE_CUBES];
 
-static CubeID plasmagen = NULL_CUBE;
-static CubeID rock_landmine = NULL_CUBE;
-static CubeID regolith_landmine = NULL_CUBE;
+static CubeType plasmagen = NULL_CUBE;
+static CubeType rock_landmine = NULL_CUBE;
+static CubeType regolith_landmine = NULL_CUBE;
 
-static CubeID add_immune_cube(const char* name)
+static CubeType add_immune_cube(const char* name)
 {
     IF_ASSERT(immune_cubes_ct >= MAX_IMMUNE_CUBES) return NULL_CUBE;
-    CubeID cube_id = t_map::get_cube_id(name);
-    GS_ASSERT(cube_id != ERROR_CUBE);
-    immune_cubes[immune_cubes_ct++] = cube_id;
-    return cube_id;
+    CubeType cube_type = t_map::get_cube_type(name);
+    GS_ASSERT(cube_type != ERROR_CUBE);
+    immune_cubes[immune_cubes_ct++] = cube_type;
+    return cube_type;
 }
 
 void init_explosives()
@@ -39,19 +39,19 @@ void init_explosives()
     add_immune_cube("steel_block_2");
     add_immune_cube("steel_block_3");
 
-    plasmagen = t_map::get_cube_id("plasmagen");
+    plasmagen = t_map::get_cube_type("plasmagen");
     GS_ASSERT(t_map::isValidCube(plasmagen));
 
-    rock_landmine = t_map::get_cube_id("rock_landmine");
+    rock_landmine = t_map::get_cube_type("rock_landmine");
     GS_ASSERT(t_map::isValidCube(rock_landmine));
 
-    regolith_landmine = t_map::get_cube_id("regolith_landmine");
+    regolith_landmine = t_map::get_cube_type("regolith_landmine");
     GS_ASSERT(t_map::isValidCube(regolith_landmine));
 }
 
 bool isLandmine(int x, int y, int z)
 {   // TODO -- make property in CubeAttributes
-    CubeID place = t_map::get(x, y, z);
+    CubeType place = t_map::get(x, y, z);
     return (place == rock_landmine || place == regolith_landmine);
 }
 
@@ -91,7 +91,7 @@ void create_explosion(const int x, const int y, const int z)
     // boundaries for the explosion, which can be contained by iron and bedrock
     const int pos[3] = { x,y,z };
     int bounds[3][2];
-    CubeID cubes[3][2];
+    CubeType cubes[3][2];
     for (int i=0; i<3; i++)
     for (int j=0; j<2; j++)
     {
@@ -115,11 +115,11 @@ void create_explosion(const int x, const int y, const int z)
 
         if (bounds[i][k] >= j)
         {
-            CubeID cube_id = t_map::get(p[0], p[1], p[2]);
-            if (cube_id != EMPTY_CUBE)
+            CubeType cube_type = t_map::get(p[0], p[1], p[2]);
+            if (cube_type != EMPTY_CUBE)
             {
                 bounds[i][k] = j;
-                cubes[i][k] = cube_id;
+                cubes[i][k] = cube_type;
             }
         }
     }

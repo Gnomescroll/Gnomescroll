@@ -22,7 +22,7 @@ class ItemAttribute
         int sprite;
 
         //IG_PLACER
-        CubeID cube_id;   //id of block type that it creates
+        CubeType cube_type;   //id of block type that it creates
 
         //IG_MECH_PLACER_PLAYER
         MechType mech_type;
@@ -76,7 +76,7 @@ class ItemAttribute
         // PUT ALL DEFAULTS HERE
         memset(this->name, 0, sizeof(this->name));
         memset(this->pretty_name, 0, sizeof(this->pretty_name));
-        cube_id = NULL_CUBE;
+        cube_type = NULL_CUBE;
         mech_type = NULL_MECH_TYPE;
 
         max_durability = NULL_DURABILITY;
@@ -89,9 +89,9 @@ class ItemAttribute
         // match defaults with fist
         for (int i=0; i<MAX_CUBES; i++)
         {
-            if (!t_map::isInUse((CubeID)i)) continue;
+            if (!t_map::isInUse((CubeType)i)) continue;
             int dmg = 1;
-            switch (t_map::get_cube_material((CubeID)i))
+            switch (t_map::get_cube_material((CubeType)i))
             {
                 case CUBE_MATERIAL_DIRT:
                     dmg = 2;

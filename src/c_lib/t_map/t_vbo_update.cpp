@@ -128,16 +128,16 @@ int get_lighting(int x,int y,int z, int side)
     return main_map->get_element(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]).light;
 }
 
-inline int _is_occluded_transparent(int x,int y,int z, int side_num, CubeID _cube_id) 
+inline int _is_occluded_transparent(int x,int y,int z, int side_num, CubeType _cube_type) 
 {
     int i = 3*side_num;
     x += s_array[i+0];
     y += s_array[i+1];
     z += s_array[i+2];
 
-    CubeID cube_id =  t_map::get(x,y,z);
-    if (cube_id == _cube_id) return 1;
-    return isActive(cube_id);
+    CubeType cube_type =  t_map::get(x,y,z);
+    if (cube_type == _cube_type) return 1;
+    return isActive(cube_type);
 }
 
 #define AO_DEBUG 0
@@ -559,11 +559,11 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                 int _y = y + chunk->ypos;
 
                 struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z); //faster
-                CubeID cube_id = (CubeID)element.block;
+                CubeType cube_type = (CubeType)element.block;
 
-                if( !isActive(cube_id) ) continue;
+                if( !isActive(cube_type) ) continue;
 
-                if( !isTransparent(cube_id) )
+                if( !isTransparent(cube_type) )
                 {
                     //for each side
                     //for(int i=0; i<6; i++) if(! _is_occluded(_x,_y,_z,i)) push_buffer1(i, _x,_y,_z, element);
@@ -581,7 +581,7 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                     //active block that does not occlude
                     for(int side_num=0; side_num<6; side_num++) 
                     {
-                        if(!_is_occluded_transparent(_x,_y,_z,side_num, (CubeID)cube_id))
+                        if(!_is_occluded_transparent(_x,_y,_z,side_num, (CubeType)cube_type))
                             push_buffer2(side_num, _x,_y,_z, element);
                     }
                 }

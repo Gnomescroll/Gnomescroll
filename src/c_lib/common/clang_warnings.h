@@ -49,6 +49,7 @@
 #pragma clang diagnostic warning "-Weffc++"
 #pragma clang diagnostic warning "-Wempty-body"
 #pragma clang diagnostic warning "-Wendif-labels"
+#pragma clang diagnostic warning "-Wenum-compare"
 //#pragma clang diagnostic warning "-Wexit-time-destructors"
 #pragma clang diagnostic warning "-Wextra-tokens"
 #pragma clang diagnostic warning "-Wextra"

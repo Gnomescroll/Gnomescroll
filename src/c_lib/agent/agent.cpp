@@ -754,7 +754,7 @@ int Agent::get_facing_block_type()
     bool collided = raytrace_terrain(p, f, CUBE_SELECT_MAX_DISTANCE, &data);
 
     if (!collided) return 0;
-    return data.get_cube_id();
+    return data.get_cube_type();
 }
 
 bool Agent::point_can_cast(float x, float y, float z, float max_dist)
@@ -1040,7 +1040,7 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float
     *distance = data.interval * max_dist;
 
     GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
-    return data.get_cube_id();
+    return data.get_cube_type();
 }
 
 // returns side as int

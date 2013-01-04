@@ -199,11 +199,8 @@ void atexit_handler()
     close_c_lib();
 }
 
-int init_c_lib(int argc, char* argv[])
+void register_signals()
 {
-    static int inited = 0;
-    GS_ASSERT_ABORT(!(inited++));
-
     int ret = atexit(&atexit_handler);
     GS_ASSERT_ABORT(ret == 0);
 
@@ -241,6 +238,50 @@ int init_c_lib(int argc, char* argv[])
     ret = sigaction(SIGUSR2, &sa_usr2, NULL);
     GS_ASSERT(ret == 0);
     #endif
+}
+
+void init_configs()
+{
+    // DAT LOADING
+    // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
+    ItemContainer::init_config();
+    t_map::init_t_properties();
+    t_mech::init_properties();
+    Entities::init_entity_dat();
+
+    t_map::load_block_dat();
+    t_mech::load_mech_dat();
+    Entities::load_entity_dat();
+    Entities::end_entity_dat();
+    ItemContainer::load_config();
+    ItemContainer::end_config();
+    Item::init_properties();
+    Item::load_item_dat();
+
+    t_mech::init_drop_dat();
+    t_mech::load_drop_dat();
+
+    t_map::init_block_drop_dat();
+    t_map::load_block_drop_dat();         // load drop dat after items
+    
+    Item::create_items_from_blocks();     // create items tied to block that drop themselves
+    Item::end_item_dat();
+
+    t_map::apply_automatic_block_drops(); // automatically drop associated block item from block
+    t_map::end_drop_dat();
+    
+    Item::load_synthesizer();
+    Item::load_crafting_dat();
+    Item::load_smelting_dat();
+    ItemContainer::load_crusher_dat();
+}
+
+int init_c_lib(int argc, char* argv[])
+{
+    static int inited = 0;
+    GS_ASSERT_ABORT(!(inited++));
+
+    register_signals();
 
     create_path(SCREENSHOT_PATH);
     create_path(DATA_PATH);
@@ -293,39 +334,8 @@ int init_c_lib(int argc, char* argv[])
     
     t_map::init_t_map();
 
-    // DAT LOADING
-    // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
-    ItemContainer::init_config();
-    t_map::init_t_properties();
-    t_mech::init_properties();
-    Entities::init_entity_dat();
+    init_configs();
 
-    ItemContainer::load_config();
-    t_map::load_block_dat();
-    t_mech::load_mech_dat();
-    Entities::load_entity_dat();
-    Entities::end_entity_dat();
-    ItemContainer::end_config();
-    Item::init_properties();
-    Item::load_item_dat();
-
-    t_mech::init_drop_dat();
-    t_mech::load_drop_dat();
-
-    t_map::init_block_drop_dat();
-    t_map::load_block_drop_dat();         // load drop dat after items
-    
-    Item::create_items_from_blocks();     // create items tied to block that drop themselves
-    Item::end_item_dat();
-
-    t_map::apply_automatic_block_drops(); // automatically drop associated block item from block
-    t_map::end_drop_dat();
-    
-    Item::load_synthesizer();
-    Item::load_crafting_dat();
-    Item::load_smelting_dat();
-    ItemContainer::load_crusher_dat();
-        
     Item::init();
     ItemContainer::init();
     Toolbelt::init();

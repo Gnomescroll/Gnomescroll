@@ -464,7 +464,7 @@ void test_octave_2d()
     //m.save_octaves2(8, "test");
 }
 
-void test_octave_2d_map_gen(CubeID tile)
+void test_octave_2d_map_gen(CubeType tile)
 {
     class PerlinOctave2D* m1 = new class PerlinOctave2D(6);
     class PerlinOctave2D* m2 = new class PerlinOctave2D(6);

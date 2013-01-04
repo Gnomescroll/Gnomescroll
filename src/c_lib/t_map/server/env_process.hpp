@@ -10,7 +10,7 @@ namespace t_map
 
 void regolith_post_processing()
 {
-    CubeID regolith_id = get_cube_id("regolith");
+    CubeType regolith_id = get_cube_type("regolith");
 
     class MAP_CHUNK* c;
         for(int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
@@ -31,7 +31,7 @@ void regolith_post_processing()
                     {
                         e2  = c->get_element(x,y,z+1);
 
-                        if( isOccludes((CubeID)e2.block) )
+                        if( isOccludes((CubeType)e2.block) )
                         {
                             e1.palette = 0;
                         }

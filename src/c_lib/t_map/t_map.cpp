@@ -28,38 +28,38 @@ namespace t_map
 
 class Terrain_map* main_map = NULL;
 
-CubeID get(int x, int y, int z)
+CubeType get(int x, int y, int z)
 {
     if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return EMPTY_CUBE;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if (c == NULL) return EMPTY_CUBE;
-    return (CubeID)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+    return (CubeType)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 
 }
 
-CubeID set(int x, int y, int z, CubeID cube_id)
+CubeType set(int x, int y, int z, CubeType cube_type)
 {
     #if DC_SERVER
-    CubeID existing_cube_id = t_map::get(x,y,z);
+    CubeType existing_cube_type = t_map::get(x,y,z);
     // dont overwrite existing cubes with new ones
-    //IF_ASSERT(cube_id != EMPTY_CUBE && existing_cube_id != EMPTY_CUBE) return existing_cube_id;
+    //IF_ASSERT(cube_type != EMPTY_CUBE && existing_cube_type != EMPTY_CUBE) return existing_cube_type;
 
     // TODO -- make a single handler for this item container check,
     // and the explosives checks (any special destruction required blocks)
     // and call it here (along with the apply_damage location)
-    if (isItemContainer(existing_cube_id))
+    if (isItemContainer(existing_cube_type))
         destroy_item_container_block(x,y,z);
     #endif
-    main_map->set_block(x,y,z, cube_id);
-    return cube_id;
+    main_map->set_block(x,y,z, cube_type);
+    return cube_type;
 }
 
 OPTIMIZED
-void set_fast(int x, int y, int z, CubeID cube_id)
+void set_fast(int x, int y, int z, CubeType cube_type)
 {
-    main_map->set_block(x,y,z, cube_id);
+    main_map->set_block(x,y,z, cube_type);
 }
 
 struct MAP_ELEMENT get_element(int x, int y, int z)
@@ -150,41 +150,41 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    CubeID cube_id = ERROR_CUBE;
-    int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_id);
+    CubeType cube_type = ERROR_CUBE;
+    int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_type);
     if (ret != 0) return;
 
     // always explode explosives with force
-    if (isExplosive(cube_id)) action = TMA_PLASMAGEN;
+    if (isExplosive(cube_type)) action = TMA_PLASMAGEN;
 
     // block_action packet expects final value of cube, not initial value
     map_history->send_block_action(x,y,z, EMPTY_CUBE, action);
 
-    if (cube_properties[cube_id].item_drop) 
-        handle_block_drop(x,y,z, cube_id);
+    if (cube_properties[cube_type].item_drop) 
+        handle_block_drop(x,y,z, cube_type);
 }
 
-void broadcast_set_block_action(int x, int y, int z, CubeID cube_id, int action)
+void broadcast_set_block_action(int x, int y, int z, CubeType cube_type, int action)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    map_history->send_block_action(x,y,z, cube_id, action);
+    map_history->send_block_action(x,y,z, cube_type, action);
 }
 
-bool broadcast_set_block(int x, int y, int z, CubeID cube_id)
+bool broadcast_set_block(int x, int y, int z, CubeType cube_type)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    main_map->set_block(x,y,z, cube_id);
-    map_history->send_set_block(x,y,z, cube_id);
+    main_map->set_block(x,y,z, cube_type);
+    map_history->send_set_block(x,y,z, cube_type);
     return true;
 }
 
-void broadcast_set_block_palette(int x, int y, int z, CubeID block, int palette)
+void broadcast_set_block_palette(int x, int y, int z, CubeType block, int palette)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -208,7 +208,7 @@ void broadcast_set_palette(int x, int y, int z, int palette)
     e.palette = palette;
 
     main_map->set_element(x,y,z,e);
-    map_history->send_set_block_palette(x,y,z, (CubeID)e.block, e.palette);
+    map_history->send_set_block_palette(x,y,z, (CubeType)e.block, e.palette);
 }
 
 #endif
@@ -219,13 +219,13 @@ inline int get_highest_open_block(int x, int y, int n)
     if (n == 1) return get_highest_open_block(x, y);
 
     int open = n;
-    CubeID cube_id;
+    CubeType cube_type;
     int i;
 
     for (i=map_dim.z-1; i>=0; i--)
     {
-        cube_id = get(x, y, i);
-        if (!isSolid(cube_id))
+        cube_type = get(x, y, i);
+        if (!isSolid(cube_type))
             open++;
         else
         {
@@ -323,12 +323,12 @@ inline int get_lowest_open_block(int x, int y, int n)
     IF_ASSERT(n < 1) return -1;
 
     int i;
-    CubeID cube_id;
+    CubeType cube_type;
     int open=0;
     for (i=0; i<map_dim.z; i++)
     {
-        cube_id = get(x,y,i);
-        if (isSolid(cube_id)) open = 0;
+        cube_type = get(x,y,i);
+        if (isSolid(cube_type)) open = 0;
         else open++;
         if (open >= n) return i-open+1;
     }
@@ -363,13 +363,13 @@ inline bool position_is_loaded(int x, int y)
     #endif
 }
 
-bool block_can_be_placed(int x, int y, int z, CubeID cube_id)
+bool block_can_be_placed(int x, int y, int z, CubeType cube_type)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    bool valid_cube = isValidCube(cube_id);
+    bool valid_cube = isValidCube(cube_type);
     IF_ASSERT(!valid_cube) return false;
     
     if (get(x,y,z) != EMPTY_CUBE) return false;

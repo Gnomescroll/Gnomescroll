@@ -11,16 +11,16 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-void block_crumble(float x, float y, float z, int n, int cube_id, float momentum);
-void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModificationAction action);
+void block_crumble(float x, float y, float z, int n, int cube_type, float momentum);
+void block_crumble(float x, float y, float z, int n, int cube_type, TerrainModificationAction action);
 
-// pos, incident vector, cube_id, side[3] array returned from ray_cast6
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int side[3]);
-// pos, incident vector, cube_id, side id
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int cube_side);
+// pos, incident vector, cube_type, side[3] array returned from ray_cast6
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int side[3]);
+// pos, incident vector, cube_type, side id
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int cube_side);
 
 // actual method called by convenience methods
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int side[3], int cube_side);
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int side[3], int cube_side);
 void terrain_sparks(float x, float y, float z);
 
 void grenade_explode(float x, float y, float z);

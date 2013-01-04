@@ -19,7 +19,7 @@ class RaytraceData
         memset(this->collision_point, 0, sizeof(this->collision_point));
     }
 
-    inline CubeID get_cube_id();
+    inline CubeType get_cube_type();
     inline void set_collision_point(int x, int y, int z);
     void get_pre_collision_point(int pre_collision_point[3]);
 

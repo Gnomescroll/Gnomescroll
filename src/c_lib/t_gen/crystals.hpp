@@ -55,11 +55,11 @@ void init_crystals()
     crystals[i++] = t_mech::get_mech_type("green_crystal");
     // TODO -- check that all crystals are not ERROR_MECH
 
-    bedrock = t_map::get_cube_id("bedrock");
-    ASSERT_VALID_CUBE_ID(bedrock);
+    bedrock = t_map::get_cube_type("bedrock");
+    ASSERT_VALID_CUBE_TYPE(bedrock);
 
-    rock = t_map::get_cube_id("rock");
-    ASSERT_VALID_CUBE_ID(rock);
+    rock = t_map::get_cube_type("rock");
+    ASSERT_VALID_CUBE_TYPE(rock);
 
     //int top = get_highest_block_of_type(rock) + 1;
 

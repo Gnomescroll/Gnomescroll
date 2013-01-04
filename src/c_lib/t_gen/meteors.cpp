@@ -14,10 +14,10 @@ namespace t_gen
 
 void meteor_fall(void)
 {
-    static const CubeID bedrock = t_map::get_cube_id("bedrock");
+    static const CubeType bedrock = t_map::get_cube_type("bedrock");
     GS_ASSERT(t_map::isValidCube(bedrock));
     if (!t_map::isValidCube(bedrock)) return;
-    static CubeID rock = t_map::get_cube_id("rock");
+    static CubeType rock = t_map::get_cube_type("rock");
     GS_ASSERT(t_map::isValidCube(rock));
     if (!t_map::isValidCube(rock)) return;
 
@@ -36,29 +36,29 @@ void meteor_fall(void)
     int ycurrent = y;
     int zcurrent = z;
 
-    CubeID tile_id = NULL_CUBE;
+    CubeType tile_id = NULL_CUBE;
     switch (randrange(1,7))
     {
         case 1:
-            tile_id = t_map::get_cube_id("iron_ore");
+            tile_id = t_map::get_cube_type("iron_ore");
             break;
         case 2:
-            tile_id = t_map::get_cube_id("coal");
+            tile_id = t_map::get_cube_type("coal");
             break;
         case 3:
-            tile_id = t_map::get_cube_id("copper_ore");
+            tile_id = t_map::get_cube_type("copper_ore");
             break;
         case 4:
-            tile_id = t_map::get_cube_id("iridium_ore");
+            tile_id = t_map::get_cube_type("iridium_ore");
             break;
         case 5:
-            tile_id = t_map::get_cube_id("gallium_ore");
+            tile_id = t_map::get_cube_type("gallium_ore");
             break;
         case 6:
-            tile_id = t_map::get_cube_id("methane_ice");
+            tile_id = t_map::get_cube_type("methane_ice");
             break;
         case 7:
-            tile_id = t_map::get_cube_id("silicon_ore");
+            tile_id = t_map::get_cube_type("silicon_ore");
             break;
         default:
             GS_ASSERT(false);
@@ -175,39 +175,39 @@ void meteor_shower()
     int x;
     int y;
     int z;
-    CubeID bedrock=t_map::get_cube_id("bedrock");
-    CubeID steelA=t_map::get_cube_id("steel_block_1");
-    CubeID steelB=t_map::get_cube_id("steel_block_2");
-    CubeID steelC=t_map::get_cube_id("steel_block_3");
-    CubeID material;
+    CubeType bedrock=t_map::get_cube_type("bedrock");
+    CubeType steelA=t_map::get_cube_type("steel_block_1");
+    CubeType steelB=t_map::get_cube_type("steel_block_2");
+    CubeType steelC=t_map::get_cube_type("steel_block_3");
+    CubeType material;
     switch (randrange(1, 7))
     {
         case 1:
-            material = t_map::get_cube_id("iron_ore");
+            material = t_map::get_cube_type("iron_ore");
             printf("Starting iron meteor shower \n");
             break;
         case 2:
-            material = t_map::get_cube_id("coal");
+            material = t_map::get_cube_type("coal");
             printf("Starting coal meteor shower \n");
             break;
         case 3:
-            material = t_map::get_cube_id("copper_ore");
+            material = t_map::get_cube_type("copper_ore");
             printf("Starting copper meteor shower \n");
             break;
         case 4:
-            material = t_map::get_cube_id("iridium_ore");
+            material = t_map::get_cube_type("iridium_ore");
             printf("Starting iridium meteor shower \n");
             break;
         case 5:
-            material = t_map::get_cube_id("gallium_ore");
+            material = t_map::get_cube_type("gallium_ore");
             printf("Starting gallium meteor shower \n");
             break;
         case 6:
-            material = t_map::get_cube_id("methane_ice");
+            material = t_map::get_cube_type("methane_ice");
             printf("Starting methane meteor shower \n");
             break;
         case 7:
-            material = t_map::get_cube_id("silicon_ore");
+            material = t_map::get_cube_type("silicon_ore");
             printf("Starting silicon meteor shower \n");
             break;
         default:

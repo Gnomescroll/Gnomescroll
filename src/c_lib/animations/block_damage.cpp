@@ -138,7 +138,7 @@ void render_block_damage()
     int x=0,y=0,z=0;
     t_map::get_requested_block_position(&x, &y, &z);
     if (x < 0 || y < 0 || z < 0) return;
-    CubeID b = t_map::get(x,y,z);
+    CubeType b = t_map::get(x,y,z);
     if (b <= 0) return;
     if (t_map::maxDamage(b) == INVINCIBLE_CUBE_DAMAGE) return;   // dont render damage for invincible blocks
     
@@ -151,7 +151,7 @@ void render_block_damage()
     if (dist > 32.0f) margin *= 2;
 
     int dmg = t_map::requested_block_damage;
-    int max_dmg = t_map::maxDamage(t_map::requested_cube_id);
+    int max_dmg = t_map::maxDamage(t_map::requested_cube_type);
     dmg += predicted_block_damage;
     if (dmg < 0) dmg = 0;
     if (dmg >= max_dmg) dmg = max_dmg;

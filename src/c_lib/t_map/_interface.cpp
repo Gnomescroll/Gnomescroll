@@ -123,7 +123,7 @@ static struct { int x,y,z; } last_requested_block = {-1, -1, -1};
 static unsigned int last_request_id = 0;
 static int requested_block_health = 0;
 
-CubeID requested_cube_id = NULL_CUBE;
+CubeType requested_cube_type = NULL_CUBE;
 unsigned int requested_block_damage = 0;
 
 bool is_last_requested_block(int x, int y, int z)
@@ -146,8 +146,8 @@ void request_block_damage(int x, int y, int z)
     last_requested_block.y = y;
     last_requested_block.z = z;
     
-    requested_cube_id = get(x,y,z);
-    requested_block_health = maxDamage(requested_cube_id);
+    requested_cube_type = get(x,y,z);
+    requested_block_health = maxDamage(requested_cube_type);
 
     // send packet
     request_block_damage_CtoS msg;

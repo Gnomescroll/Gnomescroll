@@ -98,7 +98,7 @@ static void prep_textured_voxel_particles()
         class ItemParticle::ItemParticle* item = &item_particle_list->objects[i];
         if (!item->is_voxel || !item->should_draw) continue;
         item->voxel.delta_rotation(0.01f, 0.0f);
-        GS_ASSERT(item->voxel.cube_id != 255);
+        GS_ASSERT(item->voxel.cube_type != 255);
 
         // frustum test
         float size = item->voxel.size;
@@ -142,7 +142,7 @@ static void prep_textured_voxel_particles()
         // draw voxel
         for (int i=0; i<6; i++)
         {
-            int tex_id = t_map::get_cube_side_texture(item->voxel.cube_id, i);
+            int tex_id = t_map::get_cube_side_texture(item->voxel.cube_type, i);
 
             float tx = (tex_id % 16) * tw;
             float ty = (tex_id / 16) * th;

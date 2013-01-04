@@ -23,7 +23,7 @@ void default_map_gen()
     t_gen::add_terrain_features();
     t_gen::place_native_plants();
     
-    map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_id("bedrock"));
+    map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_type("bedrock"));
 }
 
 void init_world()
@@ -82,8 +82,8 @@ void init_world()
 
     if (corpusc_map)
     {
-        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
-        t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_id("regolith") );
+        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
+        t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_type("regolith") );
         t_gen::excavate();
         t_gen::add_terrain_features();
         t_gen::generate_ruins();
@@ -93,21 +93,21 @@ void init_world()
     if (art_map)
     {
         int floor_h = 10; // height
-        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_id("bedrock"));
-        t_gen::set_region(0,0,1, XMAX,YMAX,floor_h, t_map::get_cube_id("regolith") );
+        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
+        t_gen::set_region(0,0,1, XMAX,YMAX,floor_h, t_map::get_cube_type("regolith") );
         t_gen::make_art_gallery(floor_h);
     }
 
     if (valgrind_map)
     {
-        map_gen::floor(XMAX,YMAX,0, 1,       t_map::get_cube_id("bedrock"));
-        map_gen::floor(XMAX,YMAX,1, 9,       t_map::get_cube_id("regolith"));
-        map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_id("regolith"));
+        map_gen::floor(XMAX,YMAX,0, 1,       t_map::get_cube_type("bedrock"));
+        map_gen::floor(XMAX,YMAX,1, 9,       t_map::get_cube_type("regolith"));
+        map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_type("regolith"));
     }
 
     if (explosive_map)
     {
-        static const CubeID plasmagen = t_map::get_cube_id("plasmagen");
+        static const CubeType plasmagen = t_map::get_cube_type("plasmagen");
         GS_ASSERT(t_map::isValidCube(plasmagen));
         static const size_t n_explosives = 10000;
         for (size_t i=0; i<n_explosives; i++)

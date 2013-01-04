@@ -31,7 +31,7 @@ void place_native_plants()
     int plants_max = 128;
     int tries = 0;
 
-    int regolith = t_map::get_cube_id("regolith");
+    int regolith = t_map::get_cube_type("regolith");
 
 
     int plant_num = 0;

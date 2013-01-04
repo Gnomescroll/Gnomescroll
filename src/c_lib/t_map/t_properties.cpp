@@ -26,15 +26,15 @@ void end_t_properties()
     if (cube_name_map != NULL) delete cube_name_map;
 }
 
-class CubeProperties* get_cube_properties(CubeID id)
+class CubeProperties* get_cube_properties(CubeType id)
 {
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return NULL;
+    ASSERT_VALID_CUBE_TYPE(id);
+    IF_INVALID_CUBE_TYPE(id) return NULL;
     if (!cube_properties[id].loaded) return NULL;
     return &cube_properties[id];
 }
 
-const char* get_cube_name(CubeID id)
+const char* get_cube_name(CubeType id)
 {
     class CubeProperties* p = get_cube_properties(id);
     GS_ASSERT(p != NULL);
@@ -48,68 +48,67 @@ const char* get_compatible_cube_name(const char* name)
     if (mapname != NULL) return mapname;
 
     // look for the name defined in the cube list
-    // (we don't reuse get_cube_id() becuase that returns ERROR_CUBE when not found,
+    // (we don't reuse get_cube_type() becuase that returns ERROR_CUBE when not found,
     // which is technically a valid cube for other purposes
     for (int i=0; i<MAX_CUBES; i++)
     {
-        class CubeProperties* p = get_cube_properties((CubeID)i);
+        class CubeProperties* p = get_cube_properties((CubeType)i);
         if (p != NULL && strcmp(name, p->name) == 0)
             return name;
     }
     return NULL;
 }
 
-CubeID get_cube_id(const char* name)
+CubeType get_cube_type(const char* name)
 {
     // TODO -- use hashes
     for (int i=0; i<MAX_CUBES; i++)
     {
-        class CubeProperties* p = get_cube_properties((CubeID)i);
+        class CubeProperties* p = get_cube_properties((CubeType)i);
         if (p != NULL && strcmp(name, p->name) == 0)
-            return (CubeID)i;
+            return (CubeType)i;
     }
     GS_ASSERT(false);
     printf("No cube id found for name %s\n", name);
     return ERROR_CUBE;
 }
 
-CubeType get_cube_type(CubeID id)
+CubeGroup get_cube_group(CubeType type)
 {
-    class CubeProperties* p = get_cube_properties(id);
-    GS_ASSERT(p != NULL);
-    if (p == NULL) return ErrorCube;
-    return p->type;
+    class CubeProperties* p = get_cube_properties(type);
+    IF_ASSERT(p == NULL) return ErrorCube;
+    return p->group;
 }
 
 const char* get_cube_name_for_container(ItemContainerType container_type)
 {   // not indexed/fast, use only for init/cached values
-    CubeID cube_id = get_cube_id_for_container(container_type);
-    if (cube_id == NULL_CUBE) return NULL;
-    return get_cube_properties(cube_id)->name;
+    CubeType cube_type = get_cube_type_for_container(container_type);
+    if (cube_type == NULL_CUBE) return NULL;
+    return get_cube_properties(cube_type)->name;
 }
 
-CubeID get_cube_id_for_container(ItemContainerType container_type)
+CubeType get_cube_type_for_container(ItemContainerType container_type)
 {
     for (int i=0; i<MAX_CUBES; i++)
     {
-        class CubeProperties* p = get_cube_properties((CubeID)i);
+        class CubeProperties* p = get_cube_properties((CubeType)i);
         if (p != NULL && p->container_type == container_type)
-            return (CubeID)i;
+            return (CubeType)i;
     }
     return NULL_CUBE;
 }
 
-CubeMaterial get_cube_material(CubeID cube_id)
+CubeMaterial get_cube_material(CubeType cube_type)
 {
-    class CubeProperties* p = get_cube_properties(cube_id);
+    class CubeProperties* p = get_cube_properties(cube_type);
     GS_ASSERT(p != NULL);
     if (p == NULL) return CUBE_MATERIAL_NONE;
     return p->material;
 }
 
-ItemContainerType get_container_type_for_cube(CubeID cube_id)
+ItemContainerType get_container_type_for_cube(CubeType cube_type)
 {
-    class CubeProperties* p = get_cube_properties(cube_id);
+    class CubeProperties* p = get_cube_properties(cube_type);
     GS_ASSERT(p != NULL);
     if (p == NULL) return NULL_CONTAINER_TYPE;
     return p->container_type;
@@ -126,57 +125,57 @@ bool is_valid_cube_name(const char* name)
     return true;
 }
 
-inline bool isValidCube(CubeID cube_id)
+inline bool isValidCube(CubeType cube_type)
 {
-    IF_INVALID_CUBE_ID(cube_id) return false;   // range check
-    if (!isInUse(cube_id)) return false;
-    return (cube_id != ERROR_CUBE && cube_id != EMPTY_CUBE && cube_id != NULL_CUBE);
+    IF_INVALID_CUBE_TYPE(cube_type) return false;   // range check
+    if (!isInUse(cube_type)) return false;
+    return (cube_type != ERROR_CUBE && cube_type != EMPTY_CUBE && cube_type != NULL_CUBE);
 }
 
-bool isInUse(CubeID id)
+bool isInUse(CubeType id)
 {
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return false;
+    ASSERT_VALID_CUBE_TYPE(id);
+    IF_INVALID_CUBE_TYPE(id) return false;
     return cube_properties[id].loaded;
 }
 
-bool isSolid(CubeID id) 
+bool isSolid(CubeType id) 
 {   // make sure you don't call this with a cube out of range
     return t_map::fast_cube_properties[id].solid;
 }
 
-bool isOccludes(CubeID id) 
+bool isOccludes(CubeType id) 
 {
     // don't check id because this shouldnt be used publicly
     return t_map::fast_cube_properties[id].occludes;
 }
 
-bool isActive(CubeID id)
+bool isActive(CubeType id)
 {
     // don't check id because this shouldnt be used publicly
     return t_map::fast_cube_properties[id].active;
 }
 
-bool isTransparent(CubeID id)
+bool isTransparent(CubeType id)
 {
     // don't check id because this shouldnt be used publicly
     return t_map::fast_cube_properties[id].transparent;
 }
 
-bool isItemContainer(CubeID id)
+bool isItemContainer(CubeType id)
 {
     return t_map::fast_cube_properties[id].item_container;
 }
 
-bool isExplosive(CubeID id)
+bool isExplosive(CubeType id)
 {
     return t_map::fast_cube_properties[id].explosive;
 }
 
-unsigned char maxDamage(CubeID id) 
+unsigned char maxDamage(CubeType id) 
 {
-    ASSERT_VALID_CUBE_ID(id);
-    IF_INVALID_CUBE_ID(id) return 32;
+    ASSERT_VALID_CUBE_TYPE(id);
+    IF_INVALID_CUBE_TYPE(id) return 32;
     return t_map::cube_properties[id].max_damage;
 }
 

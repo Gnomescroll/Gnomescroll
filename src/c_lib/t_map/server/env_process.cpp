@@ -26,7 +26,7 @@ void environment_process_tick()
     GS_ASSERT(_random != NULL);
     if (_random == NULL) return;
     
-    static int regolith_id = get_cube_id("regolith");
+    static int regolith_id = get_cube_type("regolith");
 
     static int _random_index = rand();
     _random_index = (_random_index+rand()) % RAS;
@@ -46,12 +46,12 @@ void environment_process_tick()
             {
                 struct MAP_ELEMENT e2 = get_element(x,y,z+1);
                 
-                if(isOccludes((CubeID)e2.block) == 0)
+                if(isOccludes((CubeType)e2.block) == 0)
                 {
                     _random_index = (_random_index+1) % RAS;
                     if(_random[_random_index] % 7 == 0) //14% chance
                     {
-                        broadcast_set_block_palette(x,y,z, (CubeID)e1.block, 1); //setting regolith
+                        broadcast_set_block_palette(x,y,z, (CubeType)e1.block, 1); //setting regolith
                     }
                 }
             }
@@ -60,12 +60,12 @@ void environment_process_tick()
             {
                 struct MAP_ELEMENT e2 = get_element(x,y,z+1);
                 
-                if(isOccludes((CubeID)e2.block) == 1)
+                if(isOccludes((CubeType)e2.block) == 1)
                 {
                     _random_index = (_random_index+1) % RAS;
                     if(_random[_random_index] % 3 == 0) //33% chance
                     {
-                        broadcast_set_block_palette(x,y,z, (CubeID)e1.block, 0); //setting regolith
+                        broadcast_set_block_palette(x,y,z, (CubeType)e1.block, 0); //setting regolith
                     }
                 }
             }
@@ -94,7 +94,7 @@ void environment_process_tick()
 OPTIMIZED
 void environment_process_startup()
 {
-    int regolith_id = get_cube_id("regolith");
+    int regolith_id = get_cube_type("regolith");
     int s_time = _GET_MS_TIME();
 
     for(int z=0; z<ZMAX; z++)
@@ -110,9 +110,9 @@ void environment_process_startup()
             {
                 struct MAP_ELEMENT e2 = get_element(x,y,z+1);
                 
-                if(isOccludes((CubeID)e2.block) == 0)
+                if(isOccludes((CubeType)e2.block) == 0)
                 {
-                    broadcast_set_block_palette(x,y,z, (CubeID)e1.block, 1); //setting regolith
+                    broadcast_set_block_palette(x,y,z, (CubeType)e1.block, 1); //setting regolith
                 }
             }
             //flip pallete if there is no space above regolith
@@ -120,9 +120,9 @@ void environment_process_startup()
             {
                 struct MAP_ELEMENT e2 = get_element(x,y,z+1);
                 
-                if(isOccludes((CubeID)e2.block) == 1)
+                if(isOccludes((CubeType)e2.block) == 1)
                 {
-                    broadcast_set_block_palette(x,y,z, (CubeID)e1.block, 0); //setting regolith
+                    broadcast_set_block_palette(x,y,z, (CubeType)e1.block, 0); //setting regolith
                 }
             }
 

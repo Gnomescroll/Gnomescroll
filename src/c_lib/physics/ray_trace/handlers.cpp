@@ -76,7 +76,7 @@ HitscanTarget shoot_at_agent(
     float collision_point[3];
     int block_pos[3];
     int side[3];
-    CubeID tile = EMPTY_CUBE;
+    CubeType tile = EMPTY_CUBE;
     float block_distance;
     HitscanTargetTypes
     target_type = hitscan_against_world(

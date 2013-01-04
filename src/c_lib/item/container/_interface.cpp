@@ -253,10 +253,7 @@ namespace ItemContainer
 
 ItemContainerInterface* create_container(ItemContainerType type, ItemContainerID id)
 {
-    ItemContainerInterface* container = item_container_list->create(type, id);
-    IF_ASSERT(container == NULL) return NULL;
-    init_container(container);
-    return container;
+    return item_container_list->create(type, id);
 }
 
 void update_container_ui_from_state()
@@ -685,15 +682,12 @@ ItemContainerID* get_player_containers(AgentID agent_id, size_t* n_containers)
 
 ItemContainerInterface* create_container(ItemContainerType type)
 {
-    ItemContainerInterface* container = item_container_list->create(type);
-    IF_ASSERT(container == NULL) return NULL;
-    init_container(container);
-    return container;
+    return item_container_list->create(type);
 }
 
 static void assign_container_to_agent(ItemContainerInterface* container, ItemContainerID* container_list, AgentID agent_id, ClientID client_id)
 {
-    GS_ASSERT(container_list[agent_id] == NULL_ITEM);
+    GS_ASSERT(container_list[agent_id] == NULL_CONTAINER);
     IF_ASSERT(container == NULL) return;
     container_list[agent_id] = container->id;
     container->assign_owner(agent_id);
@@ -1494,13 +1488,13 @@ ItemContainerID create_container_block(ItemContainerType container_type, int x, 
 {
     IF_ASSERT(!isValid(container_type)) return NULL_CONTAINER;
 
-    CubeID cube_id = t_map::get_cube_id_for_container(container_type);
-    IF_ASSERT(cube_id == NULL_CUBE) return NULL_CONTAINER;
+    CubeType cube_type = t_map::get_cube_type_for_container(container_type);
+    IF_ASSERT(cube_type == NULL_CUBE) return NULL_CONTAINER;
     
     ItemContainerInterface* container = create_container(container_type);
     IF_ASSERT(container == NULL) return NULL_CONTAINER;
 
-    t_map::broadcast_set_block(x,y,z, cube_id);
+    t_map::broadcast_set_block(x,y,z, cube_type);
 
     bool added = t_map::create_item_container_block(x,y,z, container->type, container->id);
     IF_ASSERT(!added)

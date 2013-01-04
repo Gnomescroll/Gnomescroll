@@ -181,8 +181,8 @@ int get_block_type_id(int item_type)
     ItemAttribute* attr = get_item_attributes(item_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
-    GS_ASSERT(attr->cube_id != -1)
-    return attr->cube_id;
+    GS_ASSERT(attr->cube_type != -1)
+    return attr->cube_type;
 }
 
 MechType get_mech_type(int item_type)
@@ -223,15 +223,15 @@ float get_weapon_range(int weapon_type)
     return attr->firing_range;
 }
 
-int get_item_block_damage(int weapon_type, CubeID cube_id)
+int get_item_block_damage(int weapon_type, CubeType cube_type)
 {
-    ASSERT_VALID_CUBE_ID(cube_id);
-    IF_INVALID_CUBE_ID(cube_id) return 0;
+    ASSERT_VALID_CUBE_TYPE(cube_type);
+    IF_INVALID_CUBE_TYPE(cube_type) return 0;
     if (weapon_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(weapon_type);
     GS_ASSERT(attr != NULL);
     if (attr == NULL) return 0;
-    return attr->block_damage[cube_id];
+    return attr->block_damage[cube_type];
 }
 
 int get_item_object_damage(int weapon_type)

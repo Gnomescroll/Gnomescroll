@@ -34,7 +34,7 @@ int get_cube_side_texture(int id, int side)
 
 int get_cube_primary_texture_index(const char* name)
 {
-    int id = get_cube_id(name);
+    int id = get_cube_type(name);
     const int primary_side = 0;
     int cube = get_cube_side_texture(id, primary_side);
     return cube;
@@ -47,7 +47,7 @@ int get_cube_primary_texture_index(int id)
     return cube;
 }
 
-void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
+void get_random_pixel(int cube_type, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
 void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
 
 void set_cube_side_texture(int id, int side, int tex_id);
