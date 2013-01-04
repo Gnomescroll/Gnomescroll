@@ -7,7 +7,7 @@
 namespace t_mech 
 {
 
-const int MECH_HARD_MAX = 0xffff-1;
+const int MECH_HARD_MAX = 0XFFFF-1;
 
 static void pack_mech(struct MECH &m, class mech_create_StoC &p);
 static bool unpack_mech(struct MECH &m, class mech_create_StoC &p);
@@ -31,7 +31,7 @@ struct MECH_LIST
         mli = 0;
         mlm = 8;
         mln = 0;
-        mla = (MECH*) malloc(8*sizeof(struct MECH));
+        mla = (MECH*)malloc(8*sizeof(struct MECH));
         for(int i=0; i<mlm; i++) mla[i].id = -1;
 
         needs_update = true;
@@ -51,13 +51,13 @@ struct MECH_LIST
     #if DC_CLIENT
     void add_mech(int id, const struct MECH &m)
     {
-        GS_ASSERT( mln < MECH_HARD_MAX );
+        GS_ASSERT(mln < MECH_HARD_MAX);
 
-        while(id >= mlm)
+        while (id >= mlm)
         {
             //printf("add_mech: expand array id= %i mlm= %i from %i \n", id, 2*mlm, mlm);
-            mla = (struct MECH*) realloc(mla, 2*mlm*sizeof(struct MECH));
-            for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
+            mla = (struct MECH*)realloc(mla, 2*mlm*sizeof(struct MECH));
+            for (int i=mlm; i<2*mlm; i++) mla[i].id = -1;
             mlm *= 2;
         }
 
@@ -107,10 +107,8 @@ struct MECH_LIST
 
     bool remove_mech(int id)
     {
-        GS_ASSERT(mla[id].id != -1);
-        GS_ASSERT(id >= 0 && id < mlm);
-        if (id < 0 || id >= this->mlm) return false;
-        if (mla[id].id == -1) return false;
+        IF_ASSERT(id < 0 || id >= this->mlm) return false;
+        IF_ASSERT(mla[id].id == -1) return false;
 
         mla[id].id = -1;
         mln--;
@@ -133,7 +131,7 @@ struct MECH_LIST
 
     void server_add_mech(struct MECH &m)
     {
-        if(mln >= MECH_HARD_MAX)
+        IF_ASSERT(mln >= MECH_HARD_MAX)
         {
             printf("MECH_LIST::server_add_mech error: t_mech limit reached \n");
             return;

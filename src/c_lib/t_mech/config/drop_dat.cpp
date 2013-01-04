@@ -12,10 +12,8 @@ namespace t_mech
 
 static void add_drop_callback(int id)
 {
-    ASSERT_VALID_MECH_TYPE(id);
-    IF_INVALID_MECH_TYPE(id) return;
-    GS_ASSERT(mech_attributes != NULL);
-    if (mech_attributes == NULL) return;
+    IF_ASSERT(!isValid((MechType)id)) return;
+    IF_ASSERT(mech_attributes == NULL) return;
     mech_attributes[id].item_drop = true;
 }
 
@@ -48,8 +46,7 @@ void teardown_drop_dat()
 
 void load_drop_dat()
 {
-    GS_ASSERT(drop_dat != NULL);
-    if (drop_dat == NULL) return;
+    IF_ASSERT(drop_dat == NULL) return;
     class Item::ItemDropConfig* b = drop_dat;
     
     ////////////////////
@@ -126,8 +123,7 @@ void load_drop_dat()
 
 void handle_drop(int x, int y, int z, int type)
 {
-    GS_ASSERT(drop_dat != NULL);
-    if (drop_dat == NULL) return;
+    IF_ASSERT(drop_dat == NULL) return;
     
     for (int i=0; i < drop_dat->meta_drop_table[type].num_drop; i++)
     {

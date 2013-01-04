@@ -14,7 +14,7 @@ F read_bytes(const char* buf, size_t& index)
 template<typename F>
 void write_bytes(char* buf, size_t& index, F val)
 {
-    memcpy(buf, &val, sizeof(F));
+    *(reinterpret_cast<F*>(&buf[index])) = val;
     index += sizeof(F);
 }
 

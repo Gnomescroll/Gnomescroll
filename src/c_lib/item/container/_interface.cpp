@@ -522,7 +522,7 @@ ItemContainerUIInterface* get_container_ui(ItemContainerID container_id)
 
 ItemID get_toolbelt_item(int slot)
 {
-    IF_ASSERT(player_toolbelt == NULL) return NULL_ITEM;
+    if (player_toolbelt == NULL) return NULL_ITEM;  // dont assert, its normal if server is not connected
     GS_ASSERT(slot >= 0 && slot < player_toolbelt->xdim);
     return player_toolbelt->get_item(slot);
 }

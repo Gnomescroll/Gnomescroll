@@ -294,9 +294,7 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
     if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
 
     MechType mech_type = Item::get_mech_type(item_type);
-
-    ASSERT_VALID_MECH_TYPE(mech_type);
-    IF_INVALID_MECH_TYPE(mech_type) return;
+    IF_ASSERT(!isValid(mech_type)) return;
     
     if (!t_mech::can_place_mech(b[0],b[1],b[2], 0)) return;
 

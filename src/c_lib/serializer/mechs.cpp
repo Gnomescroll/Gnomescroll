@@ -28,18 +28,15 @@ static bool parse_mech_palette_token(const char* key, const char* val, class Par
     if (strcmp(MECH_TYPE_TAG, key) == 0)
     {
         long long mech_type = parse_int(val, err);
-        ASSERT_VALID_MECH_TYPE(mech_type);
-        IF_INVALID_MECH_TYPE(mech_type) return false;
-        GS_ASSERT(!err);
-        if (err) return false;
+        IF_ASSERT(!isValid((MechType)mech_type)) return false;
+        IF_ASSERT(err) return false;
         data->mech_type = (MechType)mech_type;
     }
     else
     if (strcmp(NAME_TAG, key) == 0)
     {
         bool valid_name = t_mech::is_valid_mech_name(val);
-        GS_ASSERT(valid_name);
-        if (!valid_name) return false;
+        IF_ASSERT(!valid_name) return false;
         strncpy(data->name, val, DAT_NAME_MAX_LENGTH);
         data->name[DAT_NAME_MAX_LENGTH] = '\0';
     }
@@ -58,14 +55,7 @@ bool load_mech_palette_file(const char* fn)
 
     size_t size = 0;
     char* str = read_file_to_buffer(fn, &size);
-    GS_ASSERT(str != NULL)
-    GS_ASSERT(size > 0);
-    if (str == NULL) return false;
-    if (size <= 0)
-    {
-        free(str);
-        return false;
-    }
+    IF_ASSERT(str == NULL) return false;
 
     // allocate scratch buffer long enough to hold the largest line
     static const size_t LONGEST_LINE = MECH_PALETTE_LINE_LENGTH;
@@ -74,45 +64,40 @@ bool load_mech_palette_file(const char* fn)
     size_t istr = 0;
     class ParsedMechPaletteData palette_data;
     while (istr < size)
-    {    
-        // copy line
+    {   // copy line
         size_t ibuf = 0;
         char c = '\0';
         while ((c = str[istr++]) != '\0' && c != '\n' && ibuf < LONGEST_LINE)
             buf[ibuf++] = c;
         buf[ibuf] = '\0';
-        GS_ASSERT(c == '\n' || c == '\0');
-        if (c != '\0' && c != '\n')
+        IF_ASSERT(c != '\0' && c != '\n')
         {
             free(str);
             return false;
         }
 
         parse_line<class ParsedMechPaletteData>(&parse_mech_palette_token, buf, ibuf, &palette_data);
-        GS_ASSERT(palette_data.valid);
-        if (!palette_data.valid)
+        IF_ASSERT(!palette_data.valid)
         {
             free(str);
             return false;
         }
 
         const char* actual_name = t_mech::get_compatible_mech_name(palette_data.name);
-        GS_ASSERT(actual_name != NULL);
-        if (actual_name == NULL)
+        IF_ASSERT(actual_name == NULL)
         {
             free(str);
             return false;
         }
 
         MechType mech_type = t_mech::get_mech_type(actual_name);
-        GS_ASSERT(mech_type != NULL_MECH_TYPE);
-        if (mech_type == NULL_MECH_TYPE)
+        IF_ASSERT(mech_type == NULL_MECH_TYPE)
         {   // we failed to get a compatible mech type
             free(str);
             return false;
         }
-        GS_ASSERT(mech_type_map[palette_data.mech_type] = NULL_MECH_TYPE);
-        if (mech_type_map[palette_data.mech_type] != NULL_MECH_TYPE)
+
+        IF_ASSERT(mech_type_map[palette_data.mech_type] != NULL_MECH_TYPE)
         {   // we already loaded this mech (duplicate entry)
             free(str);
             return false;
@@ -131,8 +116,7 @@ bool load_mech_palette_file(const char* fn)
 bool save_mech_palette_file()
 {
     FILE* f = fopen(mech_palette_path_tmp, "w");
-    GS_ASSERT(f != NULL);
-    if (f == NULL) return false;
+    IF_ASSERT(f == NULL) return false;
 
     char buf[MECH_PALETTE_LINE_LENGTH+2] = {'\0'};
 
@@ -142,14 +126,12 @@ bool save_mech_palette_file()
         const char* mech_name = t_mech::get_mech_name((MechType)i);
         if (mech_name == NULL) continue;
         int len = snprintf(buf, MECH_PALETTE_LINE_LENGTH+1, MECH_PALETTE_FMT, mech_name, i);
-        GS_ASSERT(len >= 0 && (size_t)len < MECH_PALETTE_LINE_LENGTH+1);
-        if (len < 0 || (size_t)len >= MECH_PALETTE_LINE_LENGTH+1) return false;
+        IF_ASSERT(len < 0 || (size_t)len >= MECH_PALETTE_LINE_LENGTH+1) return false;
         buf[len++] = '\n';
         buf[len] = '\0';
         
         size_t wrote = fwrite(buf, sizeof(char), (size_t)len, f);
-        GS_ASSERT(wrote == (size_t)len);
-        if (wrote != (size_t)len) return false;
+        IF_ASSERT(wrote != (size_t)len) return false;
     }
 
     int ret = fclose(f);
@@ -171,8 +153,7 @@ bool write_mech_file(FILE* f)
     size_t index = 0;
     write_bytes<uint32_t>(buf, index, mech_count);
     size_t wrote = fwrite(buf, sizeof(uint32_t), 1, f);
-    GS_ASSERT(wrote == 1);
-    if (wrote != 1) return false;
+    IF_ASSERT(wrote != 1) return false;
 
     // write mech data
     size_t actual_mech_count = 0;
@@ -181,17 +162,12 @@ bool write_mech_file(FILE* f)
         index = 0;
         struct MECH* mech = &mech_list->mla[i];
         if (mech->id == -1) continue;
-        ASSERT_VALID_MECH_TYPE(mech->mech_type);
-        GS_ASSERT(mech->subtype >= 0 && (unsigned int)mech->subtype <= UINT8_MAX);
-        GS_ASSERT(mech->x >= 0 && mech->x < XMAX);
-        GS_ASSERT(mech->y >= 0 && mech->y < YMAX);
-        GS_ASSERT(mech->z >= 0 && mech->z < ZMAX);
 
-        IF_INVALID_MECH_TYPE(mech->mech_type) continue;
-        if (mech->subtype < 0 || (unsigned int)mech->subtype > UINT8_MAX) continue;
-        if (mech->x < 0 || mech->x >= XMAX) continue;
-        if (mech->y < 0 || mech->y >= YMAX) continue;
-        if (mech->z < 0 || mech->z >= ZMAX) continue;
+        IF_ASSERT(!isValid(mech->mech_type)) continue;
+        IF_ASSERT(mech->subtype < 0 || (unsigned int)mech->subtype > UINT8_MAX) continue;
+        IF_ASSERT(mech->x < 0 || mech->x >= XMAX) continue;
+        IF_ASSERT(mech->y < 0 || mech->y >= YMAX) continue;
+        IF_ASSERT(mech->z < 0 || mech->z >= ZMAX) continue;
 
         write_bytes<uint8_t>(buf, index, mech->mech_type);
         write_bytes<uint8_t>(buf, index, mech->subtype);
@@ -200,28 +176,23 @@ bool write_mech_file(FILE* f)
         write_bytes<uint16_t>(buf, index, mech->z);
 
         #if !PRODUCTION
-        GS_ASSERT(index <= buflen);
-        if (index > buflen) return false;   // this is a programming error
+        IF_ASSERT(index > buflen) return false;   // this is a programming error
         #endif
 
         wrote = fwrite(buf, sizeof(char), index, f);
-        GS_ASSERT(wrote == buflen);
-        if (wrote != buflen) return false;
+        IF_ASSERT(wrote != buflen) return false;
 
         actual_mech_count++;
     }
 
-    GS_ASSERT(mech_count == actual_mech_count);
-
     // write actual count, if different
-    if (mech_count != actual_mech_count)
+    IF_ASSERT(mech_count != actual_mech_count)
     {
         rewind(f);
         index = 0;
         write_bytes<uint32_t>(buf, index, actual_mech_count);
         wrote = fwrite(buf, sizeof(uint32_t), 1, f);
-        GS_ASSERT(wrote == 1);
-        if (wrote != 1) return false;
+        IF_ASSERT(wrote != 1) return false;
     }
     
     return true;
@@ -235,21 +206,18 @@ bool load_mech_file(const char* fn)
     
     size_t size = 0;
     char* buf = read_binary_file_to_buffer(fn, &size);
-    GS_ASSERT(buf != NULL);
-    if (buf == NULL) return false;
+    IF_ASSERT(buf == NULL) return false;
 
     size_t ibuf = 0;
     uint32_t mech_count = reinterpret_cast<uint32_t*>(buf)[ibuf];
     ibuf += sizeof(uint32_t);
 
     // file should be larger than at least the mech count
-    GS_ASSERT(size >= sizeof(uint32_t));
-    if (size < sizeof(uint32_t)) goto error;
+    IF_ASSERT(size < sizeof(uint32_t)) goto error;
 
     for (size_t i=0; i<mech_count; i++)
     {
-        GS_ASSERT(size - ibuf >= mech_size);
-        if (size - ibuf < mech_size) goto error;
+        IF_ASSERT(size - ibuf < mech_size) goto error;
 
         int type = read_bytes<uint8_t>(buf, ibuf);
         int subtype = read_bytes<uint8_t>(buf, ibuf);
@@ -257,26 +225,28 @@ bool load_mech_file(const char* fn)
         int y = read_bytes<uint16_t>(buf, ibuf);
         int z = read_bytes<uint16_t>(buf, ibuf);
         
-        ASSERT_VALID_MECH_TYPE(type);
-        GS_ASSERT(subtype >= 0);
-        GS_ASSERT(x >= 0 && x < XMAX);
-        GS_ASSERT(y >= 0 && y < YMAX);
-        GS_ASSERT(z >= 0 && z < ZMAX);
+        #define LOG_GOTO_ERROR { \
+            log_mech_load_error("Mech values invalid", x,y,z, (MechType)type, subtype); \
+            goto error;}
 
-        if (x < 0 || x >= XMAX) goto error;
-        if (y < 0 || y >= YMAX) goto error;
-        if (z < 0 || z >= ZMAX) goto error;
-        IF_INVALID_MECH_TYPE(type) goto error;
-        if (subtype < 0) goto error;
+        IF_ASSERT(x < 0 || x >= XMAX) LOG_GOTO_ERROR
+        IF_ASSERT(y < 0 || y >= YMAX) LOG_GOTO_ERROR
+        IF_ASSERT(z < 0 || z >= ZMAX) LOG_GOTO_ERROR
+        IF_ASSERT(!isValid((MechType)type)) LOG_GOTO_ERROR
+        IF_ASSERT(subtype < 0) LOG_GOTO_ERROR
+
+        #undef LOG_GOTO_ERROR
 
         // apply renaming
         MechType mech_type = mech_type_map[type];
-        ASSERT_VALID_MECH_TYPE(mech_type);
-        IF_INVALID_MECH_TYPE(mech_type) goto error;
+        IF_ASSERT(!isValid(mech_type))
+        {
+            log_mech_load_error("Mech type not valid", x,y,z, mech_type, subtype);
+            goto error;
+        }
 
         success = t_mech::create_mech(x,y,z, mech_type, subtype);
-        GS_ASSERT(success);
-        if (!success)
+        IF_ASSERT(!success)
             log_mech_load_error("Failed to create mech", x,y,z, mech_type, subtype);
     }
 
@@ -291,16 +261,13 @@ bool load_mech_file(const char* fn)
 bool save_mechs()
 {
     bool saved_palette = save_mech_palette_file();
-    GS_ASSERT(saved_palette);
-    if (!saved_palette) return false;
+    IF_ASSERT(!saved_palette) return false;
     
     FILE* f = fopen(mech_path_tmp, "wb");
-    GS_ASSERT(f != NULL);
-    if (f == NULL) return false;
+    IF_ASSERT(f == NULL) return false;
 
     bool wrote = write_mech_file(f);
-    GS_ASSERT(wrote);
-    if (!wrote) return false;
+    IF_ASSERT(!wrote) return false;
 
     int ret = fclose(f);
     GS_ASSERT(ret == 0);

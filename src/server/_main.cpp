@@ -180,16 +180,26 @@ void tick()
         Components::healer_component_list->call();
         ServerState::check_agents_at_base();
     }
-    if (counter % 30000 == 1)
+
+    const int meteor_fall_rate = 30 * 60 * 60 * 12; // 12hrs
+    const int meteor_shower_rate = 30 * 60 * 60 * 24 * 3; // 3 days
+    #define NEXT_METEOR_FALL() randrange(meteor_fall_rate/12, meteor_fall_rate-1)
+    #define NEXT_METEOR_SHOWER() randrange(meteor_shower_rate/3, meteor_shower_rate-1)
+    int next_meteor_fall = NEXT_METEOR_FALL();
+    int next_meteor_shower = NEXT_METEOR_SHOWER();
+    if (counter == next_meteor_fall)
     {
-        if(randrange(1, 5)==1)
         t_gen::meteor_fall();
+        next_meteor_fall += NEXT_METEOR_FALL();
     }
-    if (counter % 30000 == 15000)
+    if (counter == next_meteor_shower)
     {
-        if (randrange(1, 3)==1)
         t_gen::meteor_shower();
+        next_meteor_shower += NEXT_METEOR_SHOWER();
     }
+
+    #undef NEXT_METEOR_FALL
+    #undef NEXT_METEOR_SHOWER
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);

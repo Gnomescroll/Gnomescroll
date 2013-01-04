@@ -24,8 +24,7 @@ class MechAttribute* s = NULL;
 
 void load_mech()
 {
-    GS_ASSERT(s != NULL);
-    if (s == NULL) return;
+    IF_ASSERT(s == NULL) return;
     s->loaded = true;
     _current_mech_index++;
 }
@@ -35,8 +34,7 @@ void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_r
     if (s != NULL) load_mech();
 
     // check names
-    GS_ASSERT(is_valid_mech_name(name));
-    if (!is_valid_mech_name(name)) return;
+    IF_ASSERT(!is_valid_mech_name(name)) return;
     for (int i=0; i<_current_mech_index; i++)
         if (strcmp(name, mech_attributes[i].name) == 0)
         {
@@ -46,11 +44,8 @@ void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_r
 
     MechType mech_type = (MechType)_current_mech_index;
 
-    ASSERT_VALID_MECH_TYPE(mech_type);
-    IF_INVALID_MECH_TYPE(mech_type) return;
-
-    GS_ASSERT(!mech_attributes[mech_type].loaded);
-    if(mech_attributes[mech_type].loaded) return;
+    IF_ASSERT(!isValid(mech_type)) return;
+    IF_ASSERT(mech_attributes[mech_type].loaded) return;
 
     s = &mech_attributes[mech_type];
     
@@ -66,8 +61,7 @@ void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_r
 
 void set_sprite_index(int sprite_index)
 {
-    GS_ASSERT(s != NULL);
-    if (s == NULL) return;
+    IF_ASSERT(s == NULL) return;
     GS_ASSERT(s->sprite_index == NULL_MECH_SPRITE);
     s->sprite_index = (MechSpriteIndex)sprite_index;
 }

@@ -142,8 +142,7 @@ static bool _mech_update(struct MECH &m)
 
 static bool unpack_mech(struct MECH &m, class mech_create_StoC &p)
 {
-    ASSERT_VALID_MECH_TYPE(p.mech_type);
-    IF_INVALID_MECH_TYPE(p.mech_type) return false;
+    IF_ASSERT(!isValid((MechType)p.mech_type)) return false;
     
     m.id = p.id;
     m.mech_type = (MechType)p.mech_type;
@@ -268,7 +267,7 @@ void force_mech_growth(int mech_id)
 
     MechType growth_stage = mech_attributes[mech_type].growth_stage;  //next growth stage
 
-    ASSERT_VALID_MECH_TYPE(growth_stage);
+    GS_ASSERT(isValid(growth_stage));
     GS_ASSERT(mla[mech_id].id != -1);
     GS_ASSERT(mech_id >= 0 && mech_id < mlm);
 
@@ -290,16 +289,14 @@ void force_mech_growth(int mech_id)
 
 bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
 {
-    ASSERT_VALID_MECH_TYPE(mech_type);
-    IF_INVALID_MECH_TYPE(mech_type)
+    IF_ASSERT(!isValid(mech_type))
     {
         printf("Mech type %d invalid\n", mech_type);
         return false;
     }
 
     // TODO -- check valid mech type properly
-    GS_ASSERT(mech_attributes[mech_type].loaded);
-    if (!mech_attributes[mech_type].loaded)
+    IF_ASSERT(!mech_attributes[mech_type].loaded)
     {
         printf("Mech type %d not in use\n", mech_type);
         return false;
@@ -307,9 +304,6 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
 
     if (!can_place_mech(x,y,z, 0))
     {
-        
-
-
         if (t_map::isSolid(x,y,z))
         {
             printf("Can't place mech: reason 1 at %d,%d,%d\n", x,y,z);
@@ -354,8 +348,7 @@ bool create_mech(int x, int y, int z, MechType mech_type)
 bool create_crystal(int x, int y, int z, MechType mech_type)
 {
     MechClass mech_class = get_mech_class(mech_type);
-    GS_ASSERT(mech_class == MECH_CRYSTAL);
-    if (mech_class != MECH_CRYSTAL) return false;
+    IF_ASSERT(mech_class != MECH_CRYSTAL) return false;
     return create_mech(x,y,z, mech_type);
 }
 #endif
@@ -382,19 +375,16 @@ void place_vine(int x, int y, int z, int side)
 
 void tick(int x, int y, int z)
 {
-#ifdef DC_CLIENT
+    #ifdef DC_CLIENT
     //printf("create crystal: %d %d %d \n", x,y,z);
     //create_crystal(x,y,z);
-#endif
+    #endif
 }
 
 #if DC_CLIENT
-
-#if DC_CLIENT
-
 void draw(const struct MECH &m)
 {
-#if 0
+    #if 0
     float vn[3*8];
 
     float dx1 = sin(m.rotation * PI);
@@ -417,7 +407,7 @@ void draw(const struct MECH &m)
     _y[1] = cos(m.rotation * 0.50f*PI);
     _y[2] = cos(m.rotation * 1.00f*PI);
     _y[3] = cos(m.rotation * 1.50f*PI);
-#endif
+    #endif
 }
 
 struct MECH* _selected_mech = NULL;
@@ -463,10 +453,6 @@ void draw_selected_mech_bounding_box()
 
 }
 
-
-
-
-#endif 
 bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* _distance)
 {
 /*
@@ -684,7 +670,7 @@ void send_client_mech_list(ClientID client_id)
 void handle_block_removal(int x, int y, int z)
 {
     MechType mech_type = mech_list->handle_block_removal(x,y,z);
-    IF_INVALID_MECH_TYPE(mech_type) return;
+    IF_ASSERT(!isValid(mech_type)) return;
 
     // drop item from mech
     if(mech_attributes[mech_type].item_drop) 
@@ -697,11 +683,10 @@ bool remove_mech(int mech_id)   //removes mech with drop
     
     struct MECH m = mech_list->mla[mech_id];
     MechType mech_type = m.mech_type;
+    IF_ASSERT(!isValid(mech_type)) return false;
 
-    int ret = mech_list->server_remove_mech(mech_id);
-    IF_INVALID_MECH_TYPE(mech_type) return false;
-
-    GS_ASSERT(ret == true);
+    bool ret = mech_list->server_remove_mech(mech_id);
+    GS_ASSERT(ret);
     
     if(mech_attributes[mech_type].item_drop) 
         handle_drop(m.x,m.y,m.z, mech_type);

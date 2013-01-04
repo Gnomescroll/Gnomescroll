@@ -26,8 +26,7 @@ void teardown_properties()
 const char* get_mech_name(MechType type)
 {
     class MechAttribute* attr = get_mech_attribute(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL;
+    IF_ASSERT(attr == NULL) return NULL;
     return attr->name;
 }
 
@@ -59,8 +58,7 @@ MechType get_mech_type_dat(const char* name) //fatal on failure
 
 class MechAttribute* get_mech_attribute(MechType mech_type)
 {
-    ASSERT_VALID_MECH_TYPE(mech_type);
-    IF_INVALID_MECH_TYPE(mech_type) return NULL;
+    IF_ASSERT(!isValid(mech_type)) return NULL;
     if (!mech_attributes[mech_type].loaded) return NULL;
     return &mech_attributes[mech_type];
 }
@@ -68,16 +66,14 @@ class MechAttribute* get_mech_attribute(MechType mech_type)
 MechClass get_mech_class(MechType mech_type)
 {
     class MechAttribute* attr = get_mech_attribute(mech_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL_MECH_CLASS;
+    IF_ASSERT(attr == NULL) return NULL_MECH_CLASS;
     return attr->mech_type_class;
 }
 
 int get_mech_render_type(MechType mech_type)
 {
     class MechAttribute* attr = get_mech_attribute(mech_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return MECH_RENDER_TYPE_NONE;
+    IF_ASSERT(attr == NULL) return MECH_RENDER_TYPE_NONE;
     return attr->render_type;
 }
 
