@@ -35,6 +35,7 @@ void init_world()
     bool corpusc_map = false;
     bool art_map = false;
     bool explosive_map = false;
+    bool iceflame_map = false;
 
     if (strcmp(Options::map, "valgrind") == 0)
         valgrind_map = true;
@@ -52,6 +53,10 @@ void init_world()
     {
         valgrind_map = true;
         explosive_map = true;
+    }
+    if (strcmp(Options::map, "iceflame") == 0)
+    {
+        iceflame_map = true;
     }
     else
     if (serializer::load_data())
@@ -119,7 +124,11 @@ void init_world()
         }
     }
 
-    //t_gen::generate_city();
+    if (iceflame_map)
+    {
+        t_gen::generate_city();
+    }
+
 
     srand((unsigned int)time(NULL));
 }
@@ -181,23 +190,23 @@ void tick()
         ServerState::check_agents_at_base();
     }
 
-    const int meteor_fall_rate = 30 * 60 * 60 * 12; // 12hrs
-    const int meteor_shower_rate = 30 * 60 * 60 * 24 * 3; // 3 days
-    #define NEXT_METEOR_FALL() randrange(meteor_fall_rate/12, meteor_fall_rate-1)
-    #define NEXT_METEOR_SHOWER() randrange(meteor_shower_rate/3, meteor_shower_rate-1)
+    // Meteors
+    const int meteor_fall_rate = 30 * 60 * 60 * 16; // 16hrs
+    const int meteor_shower_rate = 30 * 60 * 60 * 4; // 4hrs
+    #define NEXT_METEOR_FALL() randrange(meteor_fall_rate/2, meteor_fall_rate)
+    #define NEXT_METEOR_SHOWER() randrange(meteor_shower_rate/2, meteor_shower_rate)
     int next_meteor_fall = NEXT_METEOR_FALL();
     int next_meteor_shower = NEXT_METEOR_SHOWER();
-    if (counter == next_meteor_fall)
+    if (counter >= next_meteor_fall)
     {
         t_gen::meteor_fall();
         next_meteor_fall += NEXT_METEOR_FALL();
     }
-    if (counter == next_meteor_shower)
+    if (counter >= next_meteor_shower)
     {
         t_gen::meteor_shower();
         next_meteor_shower += NEXT_METEOR_SHOWER();
     }
-
     #undef NEXT_METEOR_FALL
     #undef NEXT_METEOR_SHOWER
 
@@ -208,9 +217,9 @@ void tick()
     ItemContainer::update_smelters();
     Item::tick();
 
-    if(counter % 5 == 0) // 6 times a second
+    if (counter % 5 == 0) // 6 times a second
         t_mech::tick(); //t_mech growth timers
-    if(counter % 30 == 0)
+    if (counter % 30 == 0)
         t_mech::floating_removal_tick();
 
     t_map::environment_process_tick(); //refresh regolith etc...

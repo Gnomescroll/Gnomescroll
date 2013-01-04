@@ -4,11 +4,6 @@
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/common/color.hpp>
 
-//always inline
-
-/*
-__attribute__((always_inline)); will force gcc to inline
-*/
 ALWAYS_INLINE void pack_message_id(uint8_t message_id, char* buff, unsigned int* buff_n);
 ALWAYS_INLINE void unpack_message_id(uint8_t* message_id, char* buff, unsigned int* buff_n);
 
@@ -31,11 +26,6 @@ ALWAYS_INLINE void pack_u8(uint8_t* x, char* buff, unsigned int* buff_n, bool pa
 
 ALWAYS_INLINE void pack_string(char* str, unsigned int len, char* buff, unsigned int* buff_n, bool pack);
 
-//use pack_string
-
-
-//combined pack/unpack
-
 // TO BRANON: The reinterpret_casts get rid of possible -Wcast-align problems
 
 ALWAYS_INLINE void pack_message_id(uint8_t message_id, char* buff, unsigned int* buff_n)
@@ -53,7 +43,7 @@ ALWAYS_INLINE void unpack_message_id(uint8_t* message_id, char* buff, unsigned i
 ALWAYS_INLINE void pack_float(float* x, char* buff, unsigned int* buff_n, bool pack)
 {
     if (pack) *(reinterpret_cast<float*>(buff+*buff_n)) = *x;
-    else   *x = *(reinterpret_cast<float*>(buff+*buff_n));
+    else      *x = *(reinterpret_cast<float*>(buff+*buff_n));
     *buff_n += (unsigned int)sizeof(float);
 }
 

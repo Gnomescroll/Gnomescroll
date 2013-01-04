@@ -60,20 +60,15 @@ ItemContainerID get_block_item_container(int x, int y, int z)
 
 bool get_container_location(ItemContainerID container_id, int position[3])
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return false;
+    IF_ASSERT(container_id == NULL_CONTAINER) return false;
     
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return false;
-    GS_ASSERT(container->chunk >= 0);
-    if (container->chunk < 0) return false;
-    GS_ASSERT(container->chunk < main_map->xchunk_dim*main_map->ychunk_dim);
-    if (container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return false;
+    IF_ASSERT(container == NULL) return false;
+    IF_ASSERT(container->chunk < 0) return false;
+    IF_ASSERT(container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return false;
     
     class MAP_CHUNK* c = main_map->chunk[container->chunk];
-    GS_ASSERT(c != NULL);
-    if (c == NULL) return false;
+    IF_ASSERT(c == NULL) return false;
 
     c->chunk_item_container.get_container_location(container_id, position);
     return true;
@@ -168,8 +163,7 @@ void request_block_damage(int x, int y, int z)
 int get_requested_block_remaining_health()
 {
     int health = requested_block_health - requested_block_damage;
-    GS_ASSERT(health >= 0);
-    if (health < 0) health = 0;
+    IF_ASSERT(health < 0) health = 0;
     return health;
 }
 
@@ -182,8 +176,7 @@ void get_requested_block_position(int* x, int* y, int* z)
 
 void received_block_damage_response(unsigned int request_id, unsigned int dmg)
 {
-    GS_ASSERT(request_id < REQUEST_DMG_ID_MAX);
-    if (request_id >= REQUEST_DMG_ID_MAX) return;
+    IF_ASSERT(request_id >= REQUEST_DMG_ID_MAX) return;
     // if request_id matches last request id,
     if (request_id == last_request_id)
         requested_block_damage = dmg;   // set current dmg
@@ -208,15 +201,13 @@ bool create_item_container_block(int x, int y, int z, ItemContainerType containe
 
 bool destroy_item_container_block(int x, int y, int z)
 {
-    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK)) == 0)
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-    GS_ASSERT(c != NULL);
-    if (c == NULL) return false;
+    IF_ASSERT(c == NULL) return false;
 
     return c->chunk_item_container.remove(x,y,z);
 }
@@ -251,8 +242,7 @@ void smelter_off(ItemContainerID container_id)
 
 void handle_explosive_block(int x, int y, int z)
 {   // make sure to destroy the block before calling this
-    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0)
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
