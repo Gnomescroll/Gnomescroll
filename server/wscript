@@ -96,28 +96,22 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
     if OS == 'Darwin':
         cxxflags += ['-s']
 
-    #version = get_version()
-
     extra_options = [
         '-Wall',
         '-Wempty-body',
         '-DDC_SERVER=1',
         '-fno-exceptions',
         '-Wvla', #warns variable array
-        '-Wno-switch-enum',
-        '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
         prodflag,
         optflag,
-        #'-DGS_VERSION=%d' % (version,),
     ]
 
     if production:
         extra_options.append('-Wno-inline')
     else:
         extra_options.append('-Winline')
-
 
     cxxflags += extra_options
 

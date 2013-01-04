@@ -160,8 +160,6 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awe
         '-DDC_CLIENT=1',
         '-fno-exceptions',
         '-Wvla', #warns variable array
-        '-Wno-switch-enum',
-        '-Wno-switch',
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
         aweflag,
@@ -536,11 +534,11 @@ def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
     
 def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm+['-ggdb', '-g'], production=True)
+    configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm+['-ggdb', '-g'], production=True, use_clang=False)
 
 # developers' build of the production build
 def production_dev(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION_DEV=1', '-Winline'], optlevel=3, rm_flags=rm+['-ggdb', '-g'], production=True)
+    configure(ctx, add_flags=add+['-DPRODUCTION_DEV=1', '-Winline'], optlevel=3, rm_flags=rm+['-ggdb', '-g'], production=True, use_clang=False)
 
 def profile(ctx):
     configure(ctx)
