@@ -159,7 +159,6 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awe
         '-Wempty-body',
         '-DDC_CLIENT=1',
         '-fno-exceptions',
-        #'-Winline',
         '-Wvla', #warns variable array
         '-Wno-switch-enum',
         '-Wno-switch',
@@ -172,6 +171,11 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awe
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]
+
+    if production:
+        extra_options.append('-Wno-inline')
+    else:
+        extra_options.append('-Winline')
 
     cxxflags += extra_options
 

@@ -103,7 +103,6 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
         '-Wempty-body',
         '-DDC_SERVER=1',
         '-fno-exceptions',
-        '-Winline',
         '-Wvla', #warns variable array
         '-Wno-switch-enum',
         '-Wno-switch',
@@ -113,6 +112,12 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
         optflag,
         #'-DGS_VERSION=%d' % (version,),
     ]
+
+    if production:
+        extra_options.append('-Wno-inline')
+    else:
+        extra_options.append('-Winline')
+
 
     cxxflags += extra_options
 

@@ -5,19 +5,18 @@
 typedef float (*randFloat)();
 
 // returns random integer with lowest value min, and highest value max
-inline int randrange(int min, int max)
+inline int randrange(int lower, int upper)
 {
-    GS_ASSERT(min <= max);
-    if (min > max) return min;
+    IF_ASSERT(lower > upper) return lower;
     
     int off = 0;
-    if (min < 0)
+    if (lower < 0)
     {
-        off = min;
-        min -= min;
-        max -= min;
+        off = lower;
+        lower -= lower;
+        upper -= lower;
     }
-    return rand() % (max - min + 1) + min + off;
+    return rand() % (upper - lower + 1) + lower + off;
 }
 
 inline float randf()
@@ -50,7 +49,10 @@ void shuffle(T *array, size_t n)
 template <typename T>
 T random_choice(T* arr, size_t size)
 {
-    GS_ASSERT(size > 0);
-    if (size == 0) { T t; return t; }
+    IF_ASSERT(size <= 0)
+    {
+        T t;
+        return t;
+    }
     return arr[randrange(0,size-1)];
 }
