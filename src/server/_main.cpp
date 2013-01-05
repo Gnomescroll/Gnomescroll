@@ -193,29 +193,18 @@ void tick()
     // Meteors
     const int meteor_fall_rate = 30 * 60 * 60 * 16; // 16hrs
     const int meteor_shower_rate = 30 * 60 * 60 * 4; // 4hrs
-    #define NEXT_METEOR_FALL() randrange(meteor_fall_rate/2, meteor_fall_rate)
-    #define NEXT_METEOR_SHOWER() randrange(meteor_shower_rate/2, meteor_shower_rate)
-    if(counter==0)
-    {
-        GS_ASSERT(NEXT_METEOR_FALL() > 0);
-        GS_ASSERT(NEXT_METEOR_SHOWER() > 0);
-    }
-    int next_meteor_fall = NEXT_METEOR_FALL();
-    int next_meteor_shower = NEXT_METEOR_SHOWER();
-    if (counter == next_meteor_fall)
+    static int next_meteor_fall = 0;
+    static int next_meteor_shower = 0;
+    if (counter >= next_meteor_fall)
     {
         t_gen::meteor_fall();
-        GS_ASSERT(next_meteor_fall < next_meteor_fall + NEXT_METEOR_FALL());
-        next_meteor_fall += NEXT_METEOR_FALL();
+        next_meteor_fall += randrange(meteor_fall_rate/2, meteor_fall_rate);
     }
-    if (counter == next_meteor_shower)
+    if (counter >= next_meteor_shower)
     {
         t_gen::meteor_shower();
-        GS_ASSERT(next_meteor_shower < next_meteor_shower + NEXT_METEOR_SHOWER());
-        next_meteor_shower += NEXT_METEOR_SHOWER();
+        next_meteor_shower += randrange(meteor_shower_rate/2, meteor_shower_rate);
     }
-    #undef NEXT_METEOR_FALL
-    #undef NEXT_METEOR_SHOWER
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);

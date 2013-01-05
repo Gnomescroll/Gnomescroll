@@ -65,12 +65,12 @@ void meteor_fall()
     }
     IF_ASSERT(!t_map::isValidCube(tile_id)) return;
 
-    #if !PRODUCTION
-    const char* cube_name = t_map::get_cube_name(tile_id);
-    GS_ASSERT(cube_name != NULL);
-    if (cube_name != NULL)
-        printf("Incoming %s meteor at %d, %d, %d!\n", cube_name, x, y, z);
-    #endif
+    //#if !PRODUCTION
+    //const char* cube_name = t_map::get_cube_name(tile_id);
+    //GS_ASSERT(cube_name != NULL);
+    //if (cube_name != NULL)
+    //    printf("Incoming %s meteor at %d, %d, %d!\n", cube_name, x, y, z);
+    //#endif
 
     for(int i = x; i <= x + METEOR_SIZE; i++) //generate the actual meteor
     for(int j = y; j <= y + METEOR_SIZE; j++)
@@ -224,7 +224,7 @@ void meteor_shower()
         y = randrange(1, t_map::map_dim.y - 1);
         z = t_map::map_dim.z - 1;
         #if !PRODUCTION
-        printf("Creating meteor from meteor shower at %d, %d \n", x, y);
+        //printf("Creating meteor from meteor shower at %d, %d \n", x, y);
         #endif
         killed_blocks = 0;
         while(z > 1 && killed_blocks <= 3)
