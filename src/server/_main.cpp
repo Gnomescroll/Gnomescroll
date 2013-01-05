@@ -190,25 +190,25 @@ void tick()
         ServerState::check_agents_at_base();
     }
 
-    // Meteors
-    const int meteor_fall_rate = 30 * 60 * 60 * 16; // 16hrs
-    const int meteor_shower_rate = 30 * 60 * 60 * 4; // 4hrs
-    #define NEXT_METEOR_FALL() randrange(meteor_fall_rate/2, meteor_fall_rate)
-    #define NEXT_METEOR_SHOWER() randrange(meteor_shower_rate/2, meteor_shower_rate)
-    int next_meteor_fall = NEXT_METEOR_FALL();
-    int next_meteor_shower = NEXT_METEOR_SHOWER();
-    if (counter >= next_meteor_fall)
-    {
-        t_gen::meteor_fall();
-        next_meteor_fall += NEXT_METEOR_FALL();
-    }
-    if (counter >= next_meteor_shower)
-    {
-        t_gen::meteor_shower();
-        next_meteor_shower += NEXT_METEOR_SHOWER();
-    }
-    #undef NEXT_METEOR_FALL
-    #undef NEXT_METEOR_SHOWER
+    //// Meteors
+    //const int meteor_fall_rate = 30 * 60 * 60 * 16; // 16hrs
+    //const int meteor_shower_rate = 30 * 60 * 60 * 4; // 4hrs
+    //#define NEXT_METEOR_FALL() randrange(meteor_fall_rate/2, meteor_fall_rate)
+    //#define NEXT_METEOR_SHOWER() randrange(meteor_shower_rate/2, meteor_shower_rate)
+    //int next_meteor_fall = NEXT_METEOR_FALL();
+    //int next_meteor_shower = NEXT_METEOR_SHOWER();
+    //if (counter == next_meteor_fall)
+    //{
+        //t_gen::meteor_fall();
+        //next_meteor_fall += NEXT_METEOR_FALL();
+    //}
+    //if (counter == next_meteor_shower)
+    //{
+        //t_gen::meteor_shower();
+        //next_meteor_shower += NEXT_METEOR_SHOWER();
+    //}
+    //#undef NEXT_METEOR_FALL
+    //#undef NEXT_METEOR_SHOWER
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
