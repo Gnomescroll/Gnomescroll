@@ -30,176 +30,176 @@ class ItemContainerInterface
 
         bool attached_to_agent; // true for containers permanently attached to agents (inventory, synthesizer)
 
-        bool is_full()
-        {
-            GS_ASSERT(this->slot_count <= this->slot_max && this->slot_count >= 0);
-            return (this->slot_count >= this->slot_max);
-        }
+    bool is_full()
+    {
+        GS_ASSERT(this->slot_count <= this->slot_max && this->slot_count >= 0);
+        return (this->slot_count >= this->slot_max);
+    }
 
-        bool is_valid_slot(int slot)
-        {
-            GS_ASSERT(this->slot_max > 0);
-            return (slot != NULL_SLOT && slot >= 0 && slot < this->slot_max);
-        }
+    bool is_valid_slot(int slot)
+    {
+        GS_ASSERT(this->slot_max > 0);
+        return (slot != NULL_SLOT && slot >= 0 && slot < this->slot_max);
+    }
 
-        ItemID get_item(int slot)
-        {
-            IF_ASSERT(!this->is_valid_slot(slot)) return NULL_ITEM;
-            return this->slot[slot];
-        }
+    ItemID get_item(int slot)
+    {
+        IF_ASSERT(!this->is_valid_slot(slot)) return NULL_ITEM;
+        return this->slot[slot];
+    }
 
-        void assign_owner(AgentID owner)
-        {
-            GS_ASSERT(this->attached_to_agent); // should only use this for attached containers
-            this->owner = owner;
-        }
+    void assign_owner(AgentID owner)
+    {
+        GS_ASSERT(this->attached_to_agent); // should only use this for attached containers
+        this->owner = owner;
+    }
 
-        void print()
-        {
-            for (int i=0; i<this->slot_max; printf("%d ", this->slot[i++]));
-            printf("\n");
-        }
+    void print()
+    {
+        for (int i=0; i<this->slot_max; printf("%d ", this->slot[i++]));
+        printf("\n");
+    }
 
-        int get_stackable_slot(int item_type, int stack_size)
+    int get_stackable_slot(int item_type, int stack_size)
+    {
+        for (int i=0; i<this->slot_max; i++)
         {
-            for (int i=0; i<this->slot_max; i++)
-            {
-                if (this->slot[i] == NULL_ITEM) continue;
-                if (Item::get_item_type(this->slot[i]) == item_type   // stacks
-                && Item::get_stack_space(this->slot[i]) >= stack_size) // stack will fit
-                    return i;
-            }
-            return NULL_SLOT;
+            if (this->slot[i] == NULL_ITEM) continue;
+            if (Item::get_item_type(this->slot[i]) == item_type   // stacks
+            && Item::get_stack_space(this->slot[i]) >= stack_size) // stack will fit
+                return i;
         }
+        return NULL_SLOT;
+    }
 
-        // Add alt actions here
-        void set_alt_parameters(int xdim, int ydim)
-        {
-            this->alt_xdim = xdim;
-            this->alt_ydim = ydim;
-        }
+    // Add alt actions here
+    void set_alt_parameters(int xdim, int ydim)
+    {
+        this->alt_xdim = xdim;
+        this->alt_ydim = ydim;
+    }
 
-        #if DC_CLIENT
-        void clear()
-        {
-            for (int i=0; i<this->slot_max; i++)
-                this->slot[i] = NULL_ITEM;
-        }
-        #endif
+    #if DC_CLIENT
+    void clear()
+    {
+        for (int i=0; i<this->slot_max; i++)
+            this->slot[i] = NULL_ITEM;
+    }
+    #endif
 
-        virtual int insert_item(int slot, ItemID item_id);  // returns slot it was inserted in, or NULL_SLOT on error
-        virtual void remove_item(int slot);
+    virtual int insert_item(int slot, ItemID item_id);  // returns slot it was inserted in, or NULL_SLOT on error
+    virtual void remove_item(int slot);
 
-        virtual bool can_insert_item(int slot, ItemID item_id)
-        {
-            IF_ASSERT(!this->is_valid_slot(slot)) return false;
-            if (item_id == NULL_ITEM) return false;
-            return true;
-        }
+    virtual bool can_insert_item(int slot, ItemID item_id)
+    {
+        IF_ASSERT(!this->is_valid_slot(slot)) return false;
+        return (item_id != NULL_ITEM);
+    }
 
-        virtual int get_empty_slot()
-        {
-            for (int i=0; i<this->slot_max; i++)
-                if (this->slot[i] == NULL_ITEM)
-                    return i;
-            return NULL_SLOT;
-        }
+    virtual int get_empty_slot()
+    {
+        for (int i=0; i<this->slot_max; i++)
+            if (this->slot[i] == NULL_ITEM)
+                return i;
+        return NULL_SLOT;
+    }
 
-        virtual bool can_be_opened_by(AgentID agent_id)
-        {
-            IF_ASSERT(this->attached_to_agent && this->owner != agent_id) return false;
-            return (this->owner == agent_id || this->owner == NULL_AGENT);
-        }
-        
-        virtual bool lock(AgentID agent_id)
-        {
-            GS_ASSERT(isValid(agent_id));
-            IF_ASSERT(!this->can_be_opened_by(agent_id)) return false;
-            IF_ASSERT(this->attached_to_agent) return false;
-            this->owner = agent_id;
-            return true;
-        }
+    virtual bool can_be_opened_by(AgentID agent_id)
+    {
+        IF_ASSERT(this->attached_to_agent && this->owner != agent_id) return false;
+        return (this->owner == agent_id || this->owner == NULL_AGENT);
+    }
+    
+    virtual bool lock(AgentID agent_id)
+    {
+        GS_ASSERT(isValid(agent_id));
+        IF_ASSERT(!this->can_be_opened_by(agent_id)) return false;
+        IF_ASSERT(this->attached_to_agent) return false;
+        this->owner = agent_id;
+        return true;
+    }
 
-        virtual bool unlock(AgentID agent_id)
-        {
-            GS_ASSERT(isValid(agent_id));
-            GS_ASSERT(this->owner != NULL_AGENT);
-            IF_ASSERT(this->attached_to_agent) return false;
-            IF_ASSERT(this->owner != agent_id) return false;
-            this->owner = NULL_AGENT;
-            return true;
-        }
+    virtual bool unlock(AgentID agent_id)
+    {
+        GS_ASSERT(isValid(agent_id));
+        GS_ASSERT(this->owner != NULL_AGENT);
+        IF_ASSERT(this->attached_to_agent) return false;
+        IF_ASSERT(this->owner != agent_id) return false;
+        this->owner = NULL_AGENT;
+        return true;
+    }
 
-        virtual void init(int xdim, int ydim)
-        {
-            this->xdim = xdim;
-            this->ydim = ydim;
-            this->slot_max = xdim*ydim;
-            IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
-            this->slot = new ItemID[this->slot_max];
-            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
-        }
+    virtual void init(int xdim, int ydim)
+    {
+        this->xdim = xdim;
+        this->ydim = ydim;
+        this->slot_max = xdim*ydim;
+        IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+        this->slot = new ItemID[this->slot_max];
+        for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+    }
 
-        virtual ~ItemContainerInterface()
-        {
-           if (this->slot != NULL) delete[] this->slot;
-        }
+    virtual ~ItemContainerInterface()
+    {
+       if (this->slot != NULL) delete[] this->slot;
+    }
 
-        ItemContainerInterface(ItemContainerType type, ItemContainerID id) :
-            id(id), type(type),
-            xdim(0), ydim(0),
-            alt_xdim(0), alt_ydim(0),
-            slot_max(0), slot_count(0), slot(NULL),
-            owner(NULL_AGENT), chunk(0xFFFF),
-            attached_to_agent(false)
-        {}
+    ItemContainerInterface(ItemContainerType type, ItemContainerID id) :
+        id(id), type(type),
+        xdim(0), ydim(0),
+        alt_xdim(0), alt_ydim(0),
+        slot_max(0), slot_count(0), slot(NULL),
+        owner(NULL_AGENT), chunk(0xFFFF),
+        attached_to_agent(false)
+    {}
 };
 
 class ItemContainer: public ItemContainerInterface
 {
     public:
-        ItemContainer(ItemContainerType type, ItemContainerID id)
-        : ItemContainerInterface(type, id)
-        {}
+
+    ItemContainer(ItemContainerType type, ItemContainerID id) :
+        ItemContainerInterface(type, id)
+    {}
 };
 
 class ItemContainerHand: public ItemContainerInterface
 {
     public:
 
-        ItemID get_item()
-        {
-            return ItemContainerInterface::get_item(0);
-        }
+    ItemID get_item()
+    {
+        return ItemContainerInterface::get_item(0);
+    }
 
-        void remove_item()
-        {
-            ItemContainerInterface::remove_item(0);
-        }
+    void remove_item()
+    {
+        ItemContainerInterface::remove_item(0);
+    }
 
-        int insert_item(ItemID item_id);
+    int insert_item(ItemID item_id);
 
-        // dont use this interface
-        void remove_item(int slot)
-        {
-            GS_ASSERT(false);
-        }
+    // dont use this interface
+    void remove_item(int slot)
+    {
+        GS_ASSERT(false);
+    }
 
-        ItemID get_item(int slot)
-        {
-            GS_ASSERT(false);
-            return NULL_ITEM;
-        }
-        
-        int insert_item(int slot, ItemID item_id)
-        {
-            GS_ASSERT(false);
-            return NULL_SLOT;
-        }
-        
-        ItemContainerHand(ItemContainerType type, ItemContainerID id) :
-            ItemContainerInterface(type, id)
-        {}
+    ItemID get_item(int slot)
+    {
+        GS_ASSERT(false);
+        return NULL_ITEM;
+    }
+    
+    int insert_item(int slot, ItemID item_id)
+    {
+        GS_ASSERT(false);
+        return NULL_SLOT;
+    }
+    
+    ItemContainerHand(ItemContainerType type, ItemContainerID id) :
+        ItemContainerInterface(type, id)
+    {}
 };
 
 class ItemContainerEnergyTanks: public ItemContainerInterface
@@ -208,43 +208,43 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
 
         int energy_tank_type;
 
-        int insert_item(int slot, ItemID item_id);
+    int insert_item(int slot, ItemID item_id);
 
-        bool can_insert_item(int slot, ItemID item_id)
-        {
-            GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
-            if (Item::get_item_type(item_id) != this->energy_tank_type) return false;
-            return ItemContainerInterface::can_insert_item(slot, item_id);
-        }
+    bool can_insert_item(int slot, ItemID item_id)
+    {
+        GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
+        if (Item::get_item_type(item_id) != this->energy_tank_type) return false;
+        return ItemContainerInterface::can_insert_item(slot, item_id);
+    }
 
-        int consume_energy_tank()
-        {   // returns number of energy tanks before consumption
-            int n = this->slot_count;
-            GS_ASSERT(n >= 0);
-            if (n <= 0) return n;
-            
-            for (int i=this->slot_max-1; i>=0; i--)
-            {   // consume from the end of the slot array
-                if (this->slot[i] == NULL_ITEM) continue;
-                Item::destroy_item(this->slot[i]);
-                break;
-            }
-            
-            return n;
-        }
-
-        void init(int xdim, int ydim)
-        {
-            this->energy_tank_type = Item::get_item_type("energy_tank");
-            GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
-            ItemContainerInterface::init(xdim, ydim);
+    int consume_energy_tank()
+    {   // returns number of energy tanks before consumption
+        int n = this->slot_count;
+        GS_ASSERT(n >= 0);
+        if (n <= 0) return n;
+        
+        for (int i=this->slot_max-1; i>=0; i--)
+        {   // consume from the end of the slot array
+            if (this->slot[i] == NULL_ITEM) continue;
+            Item::destroy_item(this->slot[i]);
+            break;
         }
         
-        ItemContainerEnergyTanks(ItemContainerType type, ItemContainerID id) :
-            ItemContainerInterface(type, id), energy_tank_type(NULL_ITEM_TYPE)
-        {
-            GS_ASSERT(type == name::energy_tanks);
-        }
+        return n;
+    }
+
+    void init(int xdim, int ydim)
+    {
+        this->energy_tank_type = Item::get_item_type("energy_tank");
+        GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
+        ItemContainerInterface::init(xdim, ydim);
+    }
+    
+    ItemContainerEnergyTanks(ItemContainerType type, ItemContainerID id) :
+        ItemContainerInterface(type, id), energy_tank_type(NULL_ITEM_TYPE)
+    {
+        GS_ASSERT(type == name::energy_tanks);
+    }
 };
 
 class ItemContainerCryofreezer: public ItemContainer

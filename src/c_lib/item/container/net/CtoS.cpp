@@ -49,7 +49,6 @@ namespace ItemContainer
 
 inline void container_action_alpha_CtoS::handle()
 {
-    printf("received container action alpha\n");
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
@@ -62,7 +61,6 @@ inline void container_action_alpha_CtoS::handle()
 
     if (this->action != action)
     {
-        GS_ASSERT(false);
         send_container_failed_action(client_id, event_id);
         return;
     }
@@ -70,17 +68,13 @@ inline void container_action_alpha_CtoS::handle()
     ItemID hand_item = get_agent_hand_item(a->id);
     if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
-        GS_ASSERT(false);
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
     if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
-    {
-        GS_ASSERT(false);
         send_container_failed_action(client_id, event_id);
-    }
 }
 
 inline void container_action_beta_CtoS::handle()

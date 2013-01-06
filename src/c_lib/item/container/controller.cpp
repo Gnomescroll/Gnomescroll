@@ -45,11 +45,10 @@ ContainerActionType full_hand_to_empty_slot(
     ItemContainerUIInterface* container, int slot,
     int* hand_item_type, int* hand_item_stack, int* hand_item_durability)
 {   // put hand item in slot
-    GS_ASSERT(container != NULL);
     GS_ASSERT(*hand_item_type != NULL_ITEM_TYPE);
     GS_ASSERT(*hand_item_stack > 0);
 
-    if (container == NULL) return CONTAINER_ACTION_NONE;
+    IF_ASSERT(container == NULL) return CONTAINER_ACTION_NONE;
 
     container->insert_item(slot, *hand_item_type, *hand_item_stack, *hand_item_durability);
     *hand_item_type = NULL_ITEM_TYPE;
@@ -63,13 +62,12 @@ ContainerActionType full_hand_to_occupied_slot(
     int* hand_item_type, int* hand_item_stack, int* hand_item_durability,
     int slot_item_type, int slot_item_stack, int slot_item_durability)
 { // add stacks
-    GS_ASSERT(container != NULL);
     GS_ASSERT(*hand_item_type != NULL_ITEM_TYPE);
     GS_ASSERT(*hand_item_stack > 0);
     GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
     GS_ASSERT(slot_item_stack > 0);
 
-    if (container == NULL) return CONTAINER_ACTION_NONE;
+    IF_ASSERT(container == NULL) return CONTAINER_ACTION_NONE;
 
     container->insert_item(slot, slot_item_type, slot_item_stack + *hand_item_stack, slot_item_durability);
     *hand_item_type = NULL_ITEM_TYPE;
@@ -211,8 +209,7 @@ ContainerActionType partial_hand_to_world(AgentID agent_id, int transfer_stack_s
 
 ContainerActionType full_hand_to_empty_slot(AgentID agent_id, ItemContainerInterface* container, int slot)
 {   // put hand item in slot
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return CONTAINER_ACTION_NONE;
+    IF_ASSERT(container == NULL) return CONTAINER_ACTION_NONE;
 
     GS_ASSERT(isValid(agent_id));
     ItemID hand_item = get_agent_hand_item(agent_id);
@@ -308,10 +305,8 @@ ContainerActionType full_slot_to_empty_hand(AgentID agent_id, ItemContainerInter
 
 ContainerActionType full_hand_swap_with_slot(ClientID client_id, AgentID agent_id, ItemContainerInterface* container, int slot, ItemID slot_item)
 {
-    GS_ASSERT(container != NULL);
     GS_ASSERT(slot_item != NULL_ITEM);
-
-    if (container == NULL) return CONTAINER_ACTION_NONE;
+    IF_ASSERT(container == NULL) return CONTAINER_ACTION_NONE;
 
     bool success = swap_item_between_hand_and_container(agent_id, container->id, slot);
     if (!success) return CONTAINER_ACTION_NONE;
@@ -349,7 +344,7 @@ ContainerActionType alpha_action_decision_tree(AgentID agent_id, ClientID client
 
     // client was inside container, but not a slot
     // do nothing
-    if (slot < 0 || slot == NULL_SLOT) return action;
+    IF_ASSERT(slot < 0 || slot == NULL_SLOT) return action;
 
     // get container
     GS_ASSERT(container_id != NULL_CONTAINER);
@@ -359,8 +354,7 @@ ContainerActionType alpha_action_decision_tree(AgentID agent_id, ClientID client
     #if DC_SERVER
     ItemContainerInterface* container = get_container(container_id);
     #endif
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return action;
+    IF_ASSERT(container == NULL) return action;
 
     #if DC_CLIENT
     int slot_item_type = container->get_slot_type(slot);
@@ -414,8 +408,7 @@ ContainerActionType alpha_action_decision_tree(AgentID agent_id, ClientID client
             action = full_slot_to_empty_hand(
                 container, slot,
                 &hand_item_type, &hand_item_stack, &hand_item_durability,
-                slot_item_type, slot_item_stack, slot_item_durability
-           );
+                slot_item_type, slot_item_stack, slot_item_durability);
             #endif
             #if DC_SERVER
             action = full_slot_to_empty_hand(agent_id, container, slot, slot_item);

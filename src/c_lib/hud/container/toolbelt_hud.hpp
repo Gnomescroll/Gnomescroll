@@ -39,7 +39,10 @@ class AgentToolbeltUI : public UIElement
 
     int get_slot_at(int px, int py);
 
-    bool point_inside(int px, int py) { return (this->get_slot_at(px,py) != NULL_SLOT); }
+    bool point_inside(int px, int py)
+    {
+        return (this->get_slot_at(px,py) != NULL_SLOT);
+    }
 
     void init()
     {

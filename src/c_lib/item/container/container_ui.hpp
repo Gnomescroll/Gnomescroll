@@ -43,22 +43,19 @@ class ItemContainerUIInterface
 
     int get_slot_durability(int slot)
     {
-        GS_ASSERT(this->is_valid_slot(slot));
-        if (!this->is_valid_slot(slot)) return NULL_DURABILITY;
+        IF_ASSERT(!this->is_valid_slot(slot)) return NULL_DURABILITY;
         return this->slot_durability[slot];
     }
 
     int get_slot_stack(int slot)
     {
-        GS_ASSERT(this->is_valid_slot(slot));
-        if (!this->is_valid_slot(slot)) return 1;
+        IF_ASSERT(!this->is_valid_slot(slot)) return 1;
         return this->slot_stack[slot];
     }
 
     int get_slot_type(int slot)
     {
-        GS_ASSERT(this->is_valid_slot(slot));
-        if (!this->is_valid_slot(slot)) return NULL_ITEM_TYPE;
+        IF_ASSERT(!this->is_valid_slot(slot)) return NULL_ITEM_TYPE;
         return this->slot_type[slot];
     }
 
@@ -66,8 +63,7 @@ class ItemContainerUIInterface
     {
         GS_ASSERT(item_type != NULL_ITEM_TYPE);
         GS_ASSERT(stack_size > 0);
-        GS_ASSERT(this->is_valid_slot(slot));
-        if (!this->is_valid_slot(slot)) return;
+        IF_ASSERT(!this->is_valid_slot(slot)) return;
         this->slot_type[slot] = item_type;
         this->slot_stack[slot] = stack_size;
         this->slot_durability[slot] = durability;
@@ -76,8 +72,7 @@ class ItemContainerUIInterface
 
     void remove_item(int slot)
     {
-        GS_ASSERT(this->is_valid_slot(slot));
-        if (!this->is_valid_slot(slot)) return;
+        IF_ASSERT(!this->is_valid_slot(slot)) return;
         this->slot_type[slot] = NULL_ITEM_TYPE;
         this->slot_stack[slot] = 1;
         this->slot_durability[slot] = NULL_DURABILITY;
@@ -119,11 +114,8 @@ class ItemContainerUIInterface
 
     virtual bool can_insert_item(int slot, int item_type)
     {
-        GS_ASSERT(this->is_valid_slot(slot));
-        if (!this->is_valid_slot(slot)) return false;
-        if (item_type == NULL_ITEM_TYPE) return false;
-
-        return true;
+        IF_ASSERT(!this->is_valid_slot(slot)) return false;
+        return (item_type != NULL_ITEM_TYPE);
     }
 
     virtual int get_empty_slot()

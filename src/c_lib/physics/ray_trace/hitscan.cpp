@@ -43,10 +43,9 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 }
 
 HitscanTargetTypes hitscan_against_world(
-    struct Vec3 p, struct Vec3 v, int ignore_id, EntityType ignore_type,    // inputs
+    struct Vec3 p, struct Vec3 v, int ignore_id, EntityType ignore_type,        // inputs
     class Voxels::VoxelHitscanTarget* target, float* vox_distance, float collision_point[3],
-    int block_pos[3], int side[3], CubeType* cube_type, float* block_distance // outputs
-)
+    int block_pos[3], int side[3], CubeType* cube_type, float* block_distance)  // outputs
 {   // hitscan against voxels
     *vox_distance = 10000000.0f;
     bool voxel_hit = STATE::voxel_hitscan_list->hitscan(
@@ -54,8 +53,7 @@ HitscanTargetTypes hitscan_against_world(
         v.x, v.y, v.z,
         ignore_id, ignore_type,
         collision_point, vox_distance,
-        target
-    );
+        target);
 
      //hitscan against terrain
     class RaytraceData terrain_data;

@@ -951,13 +951,22 @@ void agent_born(AgentID agent_id)
         }
     }
 
-    Item::Item* rock_landmine = Item::create_item(Item::get_item_type("rock_landmine"));
-    GS_ASSERT(rock_landmine != NULL);
-    if (rock_landmine != NULL)
+    //Item::Item* rock_landmine = Item::create_item(Item::get_item_type("rock_landmine"));
+    //GS_ASSERT(rock_landmine != NULL);
+    //if (rock_landmine != NULL)
+    //{
+        //event = auto_add_free_item_to_container(client_id, toolbelt->id, rock_landmine->id);
+        //if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(rock_landmine->id);
+        //else if (rock_landmine->stack_size <= 0) Item::destroy_item(rock_landmine->id);
+    //}
+    
+    Item::Item* storage_block_small = Item::create_item(Item::get_item_type("storage_block_small"));
+    GS_ASSERT(storage_block_small != NULL);
+    if (storage_block_small != NULL)
     {
-        event = auto_add_free_item_to_container(client_id, toolbelt->id, rock_landmine->id);
-        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(rock_landmine->id);
-        else if (rock_landmine->stack_size <= 0) Item::destroy_item(rock_landmine->id);
+        event = auto_add_free_item_to_container(client_id, toolbelt->id, storage_block_small->id);
+        if (event == CONTAINER_ACTION_NONE || event == PARTIAL_WORLD_TO_OCCUPIED_SLOT) Item::destroy_item(storage_block_small->id);
+        else if (storage_block_small->stack_size <= 0) Item::destroy_item(storage_block_small->id);
     }
     #endif
 

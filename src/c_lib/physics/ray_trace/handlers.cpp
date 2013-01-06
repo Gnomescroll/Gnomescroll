@@ -51,7 +51,6 @@ Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, c
 { // find agents in range
     using Agents::agent_list;
     agent_list->objects_within_sphere(firing_position.x, firing_position.y, firing_position.z, range);
-
     if (!agent_list->n_filtered) return NULL;
 
     Agents::Agent* agent = NULL;
@@ -83,8 +82,7 @@ HitscanTarget shoot_at_agent(
         source, firing_direction,
         id, type,
         &target, &vox_distance, collision_point,
-        block_pos, side, &tile, &block_distance
-    );
+        block_pos, side, &tile, &block_distance);
 
     // process target information
     HitscanTarget target_information;
@@ -138,8 +136,7 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
             if (t.collision_point.z > 0)    // dont damage floor
                 t_map::apply_damage_broadcast(
                     t.collision_point.x, t.collision_point.y, t.collision_point.z,
-                    p.block_damage, p.terrain_modification_action
-                );
+                    p.block_damage, p.terrain_modification_action);
             break;
 
         case HITSCAN_TARGET_VOXEL:
@@ -161,8 +158,6 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
 
         case HITSCAN_TARGET_NONE:
             break;
-            
-        default: break;
     }
     #endif
 }
@@ -205,8 +200,6 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
             none_msg.z = t.collision_point.z;
             none_msg.broadcast();
             break;
-            
-        default: break;
     }
 }
 
@@ -214,16 +207,14 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
 static void damage_agent(AgentID agent_id, int part_id, EntityType inflictor_type, int dmg)
 {
     class Agents::Agent* agent = Agents::get_agent(agent_id);
-    GS_ASSERT(agent != NULL);
-    if (agent == NULL) return;
+    IF_ASSERT(agent == NULL) return;
     agent->status.apply_damage(dmg, NULL_AGENT, inflictor_type, part_id);
 }
 
 static void damage_entity(EntityType entity_type, int entity_id, int part_id, EntityType inflictor_type, int dmg)
 {
     class Entities::Entity* entity = Entities::get(entity_type, entity_id);
-    GS_ASSERT(entity != NULL);
-    if (entity == NULL) return;
+    IF_ASSERT(entity == NULL) return;
 
     using Components::HealthComponent;
     class HealthComponent* health = (class HealthComponent*)entity->get_component_interface(COMPONENT_INTERFACE_HEALTH);
