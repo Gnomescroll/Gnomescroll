@@ -49,11 +49,6 @@ void set_container_id(ItemContainerType container_type, ItemContainerID containe
     container_ui->set_container_id(container_id);
     container_ui->set_container_type(container_type);
     container_ui->name.set_text(ItemContainer::get_container_display_name(container_type));
-    if (container_type == ItemContainer::name::premium_cache)
-    {
-        printf("SET CONTAINER ID FOR PREMIUM CACHE TO %d\n", container_id);
-        GS_ASSERT(ItemContainer::get_container(container_id) != NULL);
-    }
 }
 
 void close_container(ItemContainerID container_id)
@@ -543,8 +538,6 @@ void init()
     ui_elements[ItemContainer::name::cryofreezer_small] = storage_block;    // both use storage block instance
     ui_elements[ItemContainer::name::smelter_basic] = smelter;
     ui_elements[ItemContainer::name::crusher] = crusher;
-
-    printf("PREMIUM CACHE: %d\n", ItemContainer::name::premium_cache);
 }
 
 void teardown()
