@@ -160,6 +160,7 @@ static void register_settings()
     c->create_function = &new_energy_tanks;
 
     agent_container_def("premium_cache");
+    c->set_display_name("Cache");
     c->xdim = 4;
     c->ydim = 4;
     c->alpha_action = &alpha_action_decision_tree;
