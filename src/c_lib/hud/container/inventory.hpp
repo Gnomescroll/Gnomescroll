@@ -272,4 +272,4 @@ void AgentInventoryUI::draw()
     glDisable(GL_BLEND);
 }
 
-}
+}   // HudContainer

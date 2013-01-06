@@ -307,128 +307,64 @@ bool open_container(ItemContainerID container_id)
     ItemContainerInterface* container = get_container(container_id);
     IF_ASSERT(container == NULL) return false;
     GS_ASSERT(container->type != NULL_CONTAINER_TYPE);
-    if (!container->can_be_opened_by(ClientState::player_agent.agent_id)) return false;
-
-    GS_ASSERT(opened_container == NULL_CONTAINER);
+    IF_ASSERT(container_type_is_attached_to_agent(container->type)) return false;
     
+    if (!container->can_be_opened_by(ClientState::player_agent.agent_id)) return false;
+    GS_ASSERT(opened_container == NULL_CONTAINER);
+
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
+        if (i == (size_t)container->type)
+        {
+            containers[i] = NULL;
+            container_uis[i] = NULL;
+        }
+        else
+        {
+            ContainerAttributes* attr = get_attr((ItemContainerType)i);
+            if (attr == NULL || attr->attached_to_agent) continue;
+            GS_ASSERT(containers[i] == NULL);
+            GS_ASSERT(container_uis[i] == NULL);
+        }
+        
+    #define ASSIGN_CONTAINER(NAME, CLASS, UI_CLASS) { do { \
+        NAME = (CLASS*)container; \
+        if (NAME##_ui != NULL) delete NAME##_ui; \
+        NAME##_ui = new UI_CLASS(NAME->id); \
+        NAME##_ui->set_alt_parameters(NAME->alt_xdim, NAME->alt_ydim); \
+        NAME##_ui->init(NAME->type, NAME->xdim, NAME->ydim); \
+        NAME##_ui->load_data(NAME->slot); \
+        containers[container->type] = NAME; \
+        container_uis[container->type] = NAME##_ui; \
+        } while(0); }
+
     // setup UI widget
     if (container->type == name::crafting_bench_basic)
-    {
-        GS_ASSERT(storage_block == NULL);
-        GS_ASSERT(storage_block_ui == NULL);
-        GS_ASSERT(cryofreezer == NULL);
-        GS_ASSERT(cryofreezer_ui == NULL);
-        GS_ASSERT(smelter == NULL);
-        GS_ASSERT(smelter_ui == NULL);
-        GS_ASSERT(crusher_ui == NULL);
-
-        player_craft_bench = (ItemContainerCraftingBench*)container;
-        if (player_craft_bench == NULL) return false;
-        // setup ui
-        if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
-        player_craft_bench_ui = new ItemContainerUI(container_id);
-        player_craft_bench_ui->set_alt_parameters(player_craft_bench->alt_xdim, player_craft_bench->alt_ydim);
-        player_craft_bench_ui->init(player_craft_bench->type, player_craft_bench->xdim, player_craft_bench->ydim);
-        player_craft_bench_ui->load_data(player_craft_bench->slot);
-        HudContainer::set_container_id(player_craft_bench->type, player_craft_bench->id);
-        did_open_container_block = true;
-    }
+        ASSIGN_CONTAINER(player_craft_bench, ItemContainerCraftingBench, ItemContainerUI)
     else
     if (container->type == name::storage_block_small)
-    {
-        GS_ASSERT(player_craft_bench == NULL);
-        GS_ASSERT(player_craft_bench_ui == NULL);
-        GS_ASSERT(cryofreezer == NULL);
-        GS_ASSERT(cryofreezer_ui == NULL);
-        GS_ASSERT(smelter == NULL);
-        GS_ASSERT(smelter_ui == NULL);
-        GS_ASSERT(crusher_ui == NULL);
-
-        storage_block = (ItemContainer*)container;
-        if (storage_block == NULL) return false;
-        // setup ui
-        if (storage_block_ui == NULL) delete storage_block_ui;
-        storage_block_ui = new ItemContainerUI(container_id);
-        storage_block_ui->set_alt_parameters(storage_block->alt_xdim, storage_block->alt_ydim);
-        storage_block_ui->init(storage_block->type, storage_block->xdim, storage_block->ydim);
-        storage_block_ui->load_data(storage_block->slot);
-        HudContainer::set_container_id(storage_block->type, storage_block->id);
-        did_open_container_block = true;
-    }
+        ASSIGN_CONTAINER(storage_block, ItemContainer, ItemContainerUI)
     else
     if (container->type == name::cryofreezer_small)
-    {
-        GS_ASSERT(player_craft_bench == NULL);
-        GS_ASSERT(player_craft_bench_ui == NULL);
-        GS_ASSERT(storage_block == NULL);
-        GS_ASSERT(storage_block_ui == NULL);
-        GS_ASSERT(smelter == NULL);
-        GS_ASSERT(smelter_ui == NULL);
-        GS_ASSERT(crusher_ui == NULL);
-        
-        cryofreezer = (ItemContainerCryofreezer*)container;
-        if (cryofreezer == NULL) return false;
-        // setup ui
-        if (cryofreezer_ui == NULL) delete cryofreezer_ui;
-        cryofreezer_ui = new ItemContainerUI(container_id);
-        cryofreezer_ui->set_alt_parameters(cryofreezer->alt_xdim, cryofreezer->alt_ydim);
-        cryofreezer_ui->init(cryofreezer->type, cryofreezer->xdim, cryofreezer->ydim);
-        cryofreezer_ui->load_data(cryofreezer->slot);
-        HudContainer::set_container_id(cryofreezer->type, cryofreezer->id);
-        did_open_container_block = true;
-    }
+        ASSIGN_CONTAINER(cryofreezer, ItemContainerCryofreezer, ItemContainerUI)
     else
     if (container->type == name::smelter_basic)
-    {
-        GS_ASSERT(player_craft_bench == NULL);
-        GS_ASSERT(player_craft_bench_ui == NULL);
-        GS_ASSERT(storage_block == NULL);
-        GS_ASSERT(storage_block_ui == NULL);
-        GS_ASSERT(cryofreezer == NULL);
-        GS_ASSERT(cryofreezer_ui == NULL);
-        GS_ASSERT(crusher_ui == NULL);
-        
-        smelter = (ItemContainerSmelter*)container;
-        if (smelter == NULL) return false;
-        // setup ui
-        if (smelter_ui == NULL) delete smelter_ui;
-        smelter_ui = new ItemContainerSmelterUI(container_id);
-        smelter_ui->set_alt_parameters(smelter->alt_xdim, smelter->alt_ydim);
-        smelter_ui->init(smelter->type, smelter->xdim, smelter->ydim);
-        smelter_ui->load_data(smelter->slot);
-        HudContainer::set_container_id(smelter->type, smelter->id);
-        did_open_container_block = true;
-    }
+        ASSIGN_CONTAINER(smelter, ItemContainerSmelter, ItemContainerSmelterUI)
     else
     if (container->type == name::crusher)
-    {
-        GS_ASSERT(player_craft_bench == NULL);
-        GS_ASSERT(player_craft_bench_ui == NULL);
-        GS_ASSERT(storage_block == NULL);
-        GS_ASSERT(storage_block_ui == NULL);
-        GS_ASSERT(cryofreezer == NULL);
-        GS_ASSERT(cryofreezer_ui == NULL);
-        GS_ASSERT(smelter_ui == NULL);
-
-        crusher = (ItemContainerCrusher*)container;
-        if (crusher == NULL) return false;
-        if (crusher_ui != NULL) delete crusher_ui;
-        crusher_ui = new ItemContainerCrusherUI(container_id);
-        crusher_ui->set_alt_parameters(crusher->alt_xdim, crusher->alt_ydim);
-        crusher_ui->init(crusher->type, crusher->xdim, crusher->ydim);
-        crusher_ui->load_data(crusher->slot);
-        HudContainer::set_container_id(crusher->type, crusher->id);
-        did_open_container_block = true;
-    }
+        ASSIGN_CONTAINER(crusher, ItemContainerCrusher, ItemContainerCrusherUI)
     else
     {
         GS_ASSERT(false);
         return false;
     }
 
-    if (did_open_container_block)
-        did_close_container_block = false;
+    #undef ASSIGN_CONTAINER
 
+    HudContainer::set_container_id(container->type, container->id);
+
+    did_open_container_block = true;
+    did_close_container_block = false;
+    
     opened_container = container_id;
 
     // send open packet
@@ -518,17 +454,10 @@ ItemContainerID get_event_container_id(int event_id)
 
 ItemContainerUIInterface* get_container_ui(ItemContainerID container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (player_craft_bench_ui  != NULL && player_craft_bench_ui->id  == container_id) return player_craft_bench_ui;
-    if (player_hand_ui         != NULL && player_hand_ui->id         == container_id) return player_hand_ui;
-    if (player_container_ui    != NULL && player_container_ui->id    == container_id) return player_container_ui;
-    if (player_energy_tanks_ui != NULL && player_energy_tanks_ui->id == container_id) return player_energy_tanks_ui;
-    if (player_toolbelt_ui     != NULL && player_toolbelt_ui->id     == container_id) return player_toolbelt_ui;
-    if (player_synthesizer_ui  != NULL && player_synthesizer_ui->id  == container_id) return player_synthesizer_ui;
-    if (storage_block_ui       != NULL && storage_block_ui->id       == container_id) return storage_block_ui;
-    if (cryofreezer_ui         != NULL && cryofreezer_ui->id         == container_id) return cryofreezer_ui;
-    if (crusher_ui             != NULL && crusher_ui->id             == container_id) return crusher_ui;
-    if (smelter_ui             != NULL && smelter_ui->id             == container_id) return smelter_ui;
+    IF_ASSERT(!isValid(container_id)) return NULL;
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
+        if (container_uis[i] != NULL && container_uis[i]->id == container_id)
+            return container_uis[i];
     return NULL;
 }
 
@@ -1058,12 +987,11 @@ void agent_quit(AgentID agent_id)
     IF_ASSERT(a == NULL) return;
 
     // close opened free container (this will throw any items sitting in hand)
-    GS_ASSERT(opened_containers != NULL);
-    if (opened_containers != NULL && opened_containers[agent_id] != NULL_CONTAINER)
+    if (opened_containers[agent_id] != NULL_CONTAINER)
         agent_close_container(agent_id, opened_containers[agent_id]);
 
-    GS_ASSERT(opened_containers != NULL && opened_containers[agent_id] == NULL_CONTAINER);
-    if (opened_containers != NULL) opened_containers[agent_id] = NULL_CONTAINER;
+    IF_ASSERT(opened_containers[agent_id] != NULL_CONTAINER);
+        opened_containers[agent_id] = NULL_CONTAINER;
 
     // still have to throw any items in hand, in case we have our private inventory opened
     ItemID hand_item = get_agent_hand_item(agent_id);
@@ -1104,21 +1032,17 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     IF_ASSERT(!isValid(agent_id)) return;
     
     // get container
-    GS_ASSERT(agent_synthesizer_list != NULL);
-    if (agent_synthesizer_list == NULL) return;
     if (agent_synthesizer_list[agent_id] == NULL_CONTAINER) return;
     ItemContainerSynthesizer* synthesizer = (ItemContainerSynthesizer*)get_container(agent_synthesizer_list[agent_id]);
     if (synthesizer == NULL) return;
-    GS_ASSERT(agent_can_access_container(agent_id, synthesizer->id));
-    if (!agent_can_access_container(agent_id, synthesizer->id)) return;
+    IF_ASSERT(!agent_can_access_container(agent_id, synthesizer->id)) return;
 
     // get the store item
     int xslot = shopping_slot % synthesizer->alt_xdim;
     int yslot = shopping_slot / synthesizer->alt_xdim;
     int cost;
     int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
-    GS_ASSERT(cost >= 0);
-    if (cost < 0) return;
+    IF_ASSERT(cost < 0) return;
     if (item_type == NULL_ITEM_TYPE) return;
     
     // compare to hand
@@ -1143,15 +1067,13 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     if (coin_stack < cost) return;
     
     Item::Item* coin_item = Item::get_item(coins);
-    GS_ASSERT(coin_item != NULL);
-    if (coin_item == NULL) return;
+    IF_ASSERT(coin_item == NULL) return;
 
     if (hand_item == NULL_ITEM)
     {
         // create shopped item
         Item::Item* purchase = Item::create_item(item_type);
-        GS_ASSERT(purchase != NULL);
-        if (purchase == NULL) return;
+        IF_ASSERT(purchase == NULL) return;
 
         // add to hand
         transfer_free_item_to_hand(purchase->id, agent_id);
@@ -1160,8 +1082,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     {
         // get hand item pointer
         Item::Item* hand = Item::get_item(hand_item);
-        GS_ASSERT(hand != NULL);
-        if (hand == NULL) return;
+        IF_ASSERT(hand == NULL) return;
         
         // increase count by 1
         hand->stack_size += 1;
@@ -1188,7 +1109,6 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
 void craft_item_from_bench(AgentID agent_id, ItemContainerID container_id, int craft_slot)
 {
     GS_ASSERT(isValid(agent_id));
-
     Agents::Agent* agent = Agents::get_agent(agent_id);
     if (agent == NULL) return;
 
@@ -1233,7 +1153,6 @@ bool consume_crafting_reagents(AgentID agent_id, ItemContainerID container_id, i
 {
     GS_ASSERT(container_id != NULL_CONTAINER);
     GS_ASSERT(recipe_id != NULL_CRAFTING_RECIPE);
-
     GS_ASSERT(isValid(agent_id));
 
     Agents::Agent* agent = Agents::get_agent(agent_id);

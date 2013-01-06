@@ -4,7 +4,7 @@ namespace ItemContainer
 {
 
 #define UNPACK_NAME(NAME) \
-    NAME = get_type(#NAME);\
+    NAME = get_type(#NAME); \
     IF_ASSERT(!isValid(NAME)) all_valid = false;
 
 namespace name

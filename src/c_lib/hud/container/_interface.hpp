@@ -7,6 +7,7 @@ namespace HudContainer
 extern class AgentInventoryUI* agent_inventory;
 extern class AgentToolbeltUI* agent_toolbelt;
 extern class AgentSynthesizerUI* synthesizer_container;
+extern class CacheUI* premium_cache;
 extern class CraftingUI* crafting_container;
 extern class StorageBlockUI* storage_block;
 extern class EnergyTanksUI* energy_tanks;

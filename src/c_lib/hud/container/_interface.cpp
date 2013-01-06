@@ -2,11 +2,12 @@
 
 #include <entity/constants.hpp>
 #include <hud/container/constants.hpp>
-#include <hud/container/container_hud.hpp>
-#include <hud/container/toolbelt_hud.hpp>
-#include <hud/container/synthesizer_hud.hpp>
+#include <hud/container/inventory.hpp>
+#include <hud/container/toolbelt.hpp>
+#include <hud/container/synthesizer.hpp>
 #include <hud/container/storage_block.hpp>
 #include <hud/container/crusher.hpp>
+#include <hud/container/cache.hpp>
 
 namespace HudContainer
 {
@@ -23,6 +24,7 @@ class AgentInventoryUI* agent_inventory = NULL;
 class AgentToolbeltUI* agent_toolbelt = NULL;
 class AgentSynthesizerUI* synthesizer_container = NULL;
 class EnergyTanksUI* energy_tanks = NULL;
+class CacheUI* premium_cache = NULL;
 
 // public containers
 class CraftingUI* crafting_container = NULL;
@@ -41,11 +43,17 @@ UIElement* get_ui_element(ItemContainerType type)
 
 void set_container_id(ItemContainerType container_type, ItemContainerID container_id)
 {
+    if (container_type == ItemContainer::name::hand) return;
     UIElement* container_ui = get_ui_element(container_type);
-    if (container_ui == NULL) return;
+    IF_ASSERT(container_ui == NULL) return;
     container_ui->set_container_id(container_id);
     container_ui->set_container_type(container_type);
     container_ui->name.set_text(ItemContainer::get_container_display_name(container_type));
+    if (container_type == ItemContainer::name::premium_cache)
+    {
+        printf("SET CONTAINER ID FOR PREMIUM CACHE TO %d\n", container_id);
+        GS_ASSERT(ItemContainer::get_container(container_id) != NULL);
+    }
 }
 
 void close_container(ItemContainerID container_id)
@@ -412,6 +420,7 @@ void draw()
     agent_toolbelt->draw_name();
     agent_inventory->draw();
     synthesizer_container->draw();    
+    premium_cache->draw();    
     
     if (container_block_enabled)
     {
@@ -503,6 +512,13 @@ void init()
     crusher->centered = true;
     crusher->yoff = -150.0f + (_yresf + crusher->height())/2;
 
+    premium_cache = new CacheUI;
+    premium_cache->type = UI_ELEMENT_CACHE;
+    premium_cache->set_container_type(ItemContainer::name::premium_cache);
+    premium_cache->init();
+    premium_cache->xoff = (agent_inventory->xoff + agent_inventory->width()) + 10;  // +1 because the width is odd with odd valued inc1 and even valued xdim
+    premium_cache->yoff = agent_inventory->yoff;
+
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format("%d");
     grabbed_icon_stack_text->set_format_extra_length(11 + 1 - 2);
@@ -520,12 +536,15 @@ void init()
     ui_elements[ItemContainer::name::inventory] = agent_inventory;
     ui_elements[ItemContainer::name::toolbelt] = agent_toolbelt;
     ui_elements[ItemContainer::name::energy_tanks] = energy_tanks;
+    ui_elements[ItemContainer::name::premium_cache] = premium_cache;
     ui_elements[ItemContainer::name::synthesizer] = synthesizer_container;
     ui_elements[ItemContainer::name::crafting_bench_basic] = crafting_container;
     ui_elements[ItemContainer::name::storage_block_small] = storage_block;
     ui_elements[ItemContainer::name::cryofreezer_small] = storage_block;    // both use storage block instance
     ui_elements[ItemContainer::name::smelter_basic] = smelter;
     ui_elements[ItemContainer::name::crusher] = crusher;
+
+    printf("PREMIUM CACHE: %d\n", ItemContainer::name::premium_cache);
 }
 
 void teardown()
@@ -538,8 +557,11 @@ void teardown()
     if (smelter != NULL) delete smelter;
     if (energy_tanks != NULL) delete energy_tanks;
     if (crusher != NULL) delete crusher;
+    if (premium_cache != NULL) delete premium_cache;
 
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
+
+    if (ui_elements != NULL) free(ui_elements);
 }
 
 #if DC_CLIENT

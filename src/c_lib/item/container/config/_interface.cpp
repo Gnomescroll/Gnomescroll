@@ -119,7 +119,7 @@ static void register_settings()
 
     agent_container_def("inventory");
     c->xdim = 6;
-    c->ydim = 3;
+    c->ydim = 4;
     c->alpha_action = &alpha_action_decision_tree;
     c->beta_action = &beta_action_decision_tree;
     c->alpha_packet = &send_container_alpha_action;
@@ -251,9 +251,11 @@ static void validate_settings()
 {
     // if the dimensions change, we need to know as it affects the serializer
     // It is safe to increase the max dimensions of a container, but not to shrink it
+    // NEVER LOWER MAX DIMENSIONS OF A CONTAINER
     GS_ASSERT_ABORT(get_attr("none") != NULL && get_attr("none")->max_dim() == 0);
     GS_ASSERT_ABORT(get_attr("hand") != NULL && get_attr("hand")->max_dim() == 1);
-    GS_ASSERT_ABORT(get_attr("inventory") != NULL && get_attr("inventory")->max_dim() == 18);
+    GS_ASSERT_ABORT(get_attr("inventory") != NULL && get_attr("inventory")->max_dim() == 24);
+    GS_ASSERT_ABORT(get_attr("premium_cache") != NULL && get_attr("premium_cache")->max_dim() == 16);
     GS_ASSERT_ABORT(get_attr("toolbelt") != NULL && get_attr("toolbelt")->max_dim() == 9);
     GS_ASSERT_ABORT(get_attr("synthesizer") != NULL && get_attr("synthesizer")->max_dim() == 1);
     GS_ASSERT_ABORT(get_attr("energy_tanks") != NULL && get_attr("energy_tanks")->max_dim() == 4);
@@ -438,7 +440,7 @@ class ContainerAttributes* get_attr(const char* name)
 class ContainerAttributes* get_attr(ItemContainerType type)
 {
     IF_ASSERT(!isValid(type)) return NULL;
-    IF_ASSERT(!container_attributes[type].loaded) return NULL;
+    if (!container_attributes[type].loaded) return NULL;
     return &container_attributes[type];
 }
 

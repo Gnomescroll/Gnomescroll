@@ -3,11 +3,11 @@
 namespace HudContainer
 {
 
-const int STACK_COUNT_MAX_LENGTH = 10;   // 9999
+const int STACK_COUNT_MAX_LENGTH = 11;
 
 typedef enum
 {
-    UI_ELEMENT_NONE,
+    UI_ELEMENT_NONE = 0,
     UI_ELEMENT_AGENT_INVENTORY,
     UI_ELEMENT_AGENT_TOOLBELT,
     UI_ELEMENT_SYNTHESIZER_CONTAINER,
@@ -16,6 +16,7 @@ typedef enum
     UI_ELEMENT_SMELTER,
     UI_ELEMENT_ENERGY_TANKS,
     UI_ELEMENT_CRUSHER,
+    UI_ELEMENT_CACHE,
 } UIElementType;
 
 } // HudContainer

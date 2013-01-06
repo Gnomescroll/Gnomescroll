@@ -37,6 +37,7 @@ inline void assign_item_container_StoC::handle()
         if (NAME##_ui != NULL) delete NAME##_ui; \
         NAME##_ui = new CLASS##UI(container->id); \
         container_uis[type] = NAME##_ui; \
+        containers[type] = NAME; \
         } while (0); }
     
     if (type == name::inventory)
