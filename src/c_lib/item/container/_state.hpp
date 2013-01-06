@@ -34,6 +34,9 @@ extern class ItemContainerUI* storage_block_ui;
 extern class ItemContainerUI* cryofreezer_ui;
 extern class ItemContainerSmelterUI* smelter_ui;
 extern class ItemContainerCrusherUI* crusher_ui;
+
+extern class ItemContainerInterface** containers;
+extern class ItemContainerUIInterface** container_uis;
 #endif
 
 // Server

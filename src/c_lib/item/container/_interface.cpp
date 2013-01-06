@@ -56,6 +56,11 @@ void init()
     GS_ASSERT(container_event == NULL);
     container_event = (ItemContainerID*)malloc(CONTAINER_EVENT_MAX * sizeof(ItemContainerID));
     for (int i=0; i<CONTAINER_EVENT_MAX; container_event[i++] = NULL_CONTAINER);
+
+    GS_ASSERT(containers == NULL);
+    GS_ASSERT(container_uis == NULL);
+    containers = (ItemContainerInterface**)calloc(MAX_CONTAINER_TYPES, sizeof(ItemContainerInterface*));
+    container_uis = (ItemContainerUIInterface**)calloc(MAX_CONTAINER_TYPES, sizeof(ItemContainerUIInterface*));
     #endif
 }
 
@@ -73,6 +78,8 @@ void teardown()
     if (storage_block_ui       != NULL) delete storage_block_ui;
     
     if (container_event != NULL) free(container_event);
+    if (containers != NULL) free(containers);
+    if (container_uis != NULL) free(container_uis);
     #endif
 
     #if DC_SERVER

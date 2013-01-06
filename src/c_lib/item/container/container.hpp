@@ -85,6 +85,11 @@ class ItemContainerInterface
         for (int i=0; i<this->slot_max; i++)
             this->slot[i] = NULL_ITEM;
     }
+
+    virtual void was_assigned()
+    {
+        
+    }
     #endif
 
     virtual int insert_item(int slot, ItemID item_id);  // returns slot it was inserted in, or NULL_SLOT on error
@@ -157,6 +162,15 @@ class ItemContainerInterface
 class ItemContainer: public ItemContainerInterface
 {
     public:
+
+
+    #if DC_CLIENT
+    void was_assigned()
+    {
+        if (this->type == name::toolbelt)
+            Toolbelt::assign_toolbelt(this->id);
+    }
+    #endif
 
     ItemContainer(ItemContainerType type, ItemContainerID id) :
         ItemContainerInterface(type, id)
@@ -539,11 +553,6 @@ class ItemContainerCrusher: public ItemContainerInterface
     {}
 };
 
-}   // ItemContainer
-
-namespace ItemContainer
-{
-
 ItemContainerInterface* create_item_container_interface(int type, int id);
 
 ItemContainerInterface* new_crusher(ItemContainerType type, ItemContainerID id)
@@ -612,4 +621,4 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface>
     {}
 };
 
-}
+}   // ItemContainer

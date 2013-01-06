@@ -1,7 +1,6 @@
 #include "CtoS.hpp"
 
 #if DC_CLIENT
-
 namespace ItemContainer
 {
 

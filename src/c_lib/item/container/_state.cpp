@@ -34,6 +34,11 @@ class ItemContainerUI* storage_block_ui = NULL;
 class ItemContainerUI* cryofreezer_ui = NULL;
 class ItemContainerSmelterUI* smelter_ui = NULL;
 class ItemContainerCrusherUI* crusher_ui = NULL;
+
+// these are convenience arrays of the previous values.
+// they may not contain all unique pointers and are not authoritatize
+class ItemContainerInterface** containers;
+class ItemContainerUIInterface** container_uis;
 #endif
 
 
