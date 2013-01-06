@@ -61,4 +61,4 @@ ContainerActionType crusher_beta_action_decision_tree(AgentID agent_id, ClientID
 ContainerActionType crusher_crush_alpha_action_decision_tree(AgentID agent_id, ClientID client_id, ItemContainerID id, int slot);
 #endif
 
-}
+}   // ItemContainer
