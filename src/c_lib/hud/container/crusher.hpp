@@ -117,8 +117,7 @@ class CrusherUI : public UIElement
         }
         
         int max = xdim * ydim + alt_ydim*alt_xdim;
-        GS_ASSERT(max > 0);
-        if (max <= 0) return;
+        IF_ASSERT(max <= 0) return;
         this->stacks = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
@@ -187,10 +186,8 @@ class CrusherUI : public UIElement
 
 void CrusherUI::draw()
 {
-    GS_ASSERT(this->texture != NULL);
-    if (this->texture == NULL) return;
-    GS_ASSERT(*this->texture != 0);
-    if (*this->texture == 0) return;
+    IF_ASSERT(this->texture == NULL) return;
+    IF_ASSERT(this->texture == 0) return;
  
     this->draw_name();
 
@@ -200,11 +197,9 @@ void CrusherUI::draw()
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     int slot_max = ItemContainer::get_container_ui_slot_max(this->container_id);
-    GS_ASSERT(slot_max > 0);
-    if (slot_max <= 0) return;
     if (slot_types == NULL) return;
-    GS_ASSERT(slot_stacks != NULL);
-    if (slot_stacks == NULL) return;
+    IF_ASSERT(slot_max <= 0) return;
+    IF_ASSERT(slot_stacks == NULL) return;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);

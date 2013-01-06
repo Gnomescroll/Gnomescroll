@@ -333,8 +333,7 @@ static HudText::Text* tooltip_text = NULL;
 
 static void draw_grabbed_icon()
 {
-    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
-    if (TextureSheetLoader::item_texture_sheet_loader->texture == 0) return;
+    IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture == 0) return;
 
     using ItemContainer::player_hand_ui;
     if (player_hand_ui == NULL) return;
@@ -439,10 +438,8 @@ static void draw_tooltip()
     
     // get name
     const char* name = Item::get_item_pretty_name(item_type);
-    GS_ASSERT(name != NULL);
-    if (name == NULL) return;
-    GS_ASSERT(name[0] != '\0');
-    if (name[0] == '\0') return;
+    IF_ASSERT(name == NULL) return;
+    IF_ASSERT(name[0] == '\0') return;
 
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;

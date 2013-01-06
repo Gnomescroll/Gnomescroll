@@ -66,8 +66,7 @@ class StorageBlockUI : public UIElement
         }
         
         int max = xdim * ydim;
-        GS_ASSERT(max > 0);
-        if (max <= 0) return;
+        IF_ASSERT(max <= 0) return;
         this->stacks = new HudText::Text[max];
         for (int i=0; i<max; i++)
         {
@@ -157,10 +156,8 @@ int StorageBlockUI::get_slot_at(int px, int py)
 
 void StorageBlockUI::draw()
 {
-    GS_ASSERT(this->texture != NULL);
-    if (this->texture == NULL) return;
-    GS_ASSERT(*this->texture != 0);
-    if (*this->texture == 0) return;
+    IF_ASSERT(this->texture == NULL) return;
+    IF_ASSERT(this->texture == 0) return;
  
     this->draw_name();
     
@@ -231,8 +228,7 @@ void StorageBlockUI::draw()
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     if (slot_types == NULL) return;
-    GS_ASSERT(slot_stacks != NULL);
-    if (slot_stacks == NULL) return;
+    IF_ASSERT(slot_stacks == NULL) return;
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);

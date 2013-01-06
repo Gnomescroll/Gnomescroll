@@ -122,9 +122,8 @@ bool AgentSynthesizerUI::in_shopping_region(int px, int py)
     GS_ASSERT(xslot >= 0 && xslot < xdim);
     GS_ASSERT(yslot >= 0 && yslot < ydim);
     
-    if (xslot < 0 || xslot >= shopping_xdim) return false;
-    if (yslot < 0 || yslot >= shopping_ydim) return false;
-    return true;
+    return (xslot >= 0 && xslot < shopping_xdim
+         && yslot >= 0 && yslot < shopping_ydim);
 }
 
 bool AgentSynthesizerUI::in_coins_region(int px, int py)

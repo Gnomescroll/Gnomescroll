@@ -27,8 +27,7 @@ class EnergyTanksUI : public UIElement
     { // count loaded energy tanks
         if (this->container_id == NULL_CONTAINER) return 0;
         int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-        GS_ASSERT(slot_types != NULL);
-        if (slot_types == NULL) return 0;
+        IF_ASSERT(slot_types == NULL) return 0;
 
         int num_loaded = 0;
 
@@ -118,14 +117,9 @@ void EnergyTanksUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
-
     if (this->container_id == NULL_CONTAINER) return;
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    GS_ASSERT(slot_types != NULL);
-    if (slot_types == NULL) return;
-
-
+    IF_ASSERT(slot_types == NULL) return;
 
     if (inv_open) 
     {
@@ -189,8 +183,7 @@ void EnergyTanksUI::draw()
     int energy_tank_sprite_index = Item::get_sprite_index_for_type(energy_tank_type);
     GS_ASSERT(energy_tank_sprite_index != ERROR_SPRITE);
 
-    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->greyscale_texture != 0);
-    if (TextureSheetLoader::item_texture_sheet_loader->greyscale_texture == 0) return;
+    IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->greyscale_texture == 0) return;
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
 
@@ -199,8 +192,7 @@ void EnergyTanksUI::draw()
     // in order to only draw the empty tanks:
     //         if (slot_types[slot] != NULL_ITEM_TYPE) continue;
     
-    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
-    if (TextureSheetLoader::item_texture_sheet_loader->texture == 0)
+    IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture == 0)
     {
         glDisable(GL_TEXTURE_2D);
         return;

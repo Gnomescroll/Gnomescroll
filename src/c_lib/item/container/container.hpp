@@ -277,8 +277,7 @@ class ItemContainerSynthesizer: public ItemContainerInterface
     }
 
     bool can_insert_item(int slot, ItemID item_id)
-    {
-        // only allow coins
+    {   // only allow coins
         if (Item::get_item_type(item_id) != this->coins_type) return false;
         return ItemContainerInterface::can_insert_item(slot, item_id);
     }

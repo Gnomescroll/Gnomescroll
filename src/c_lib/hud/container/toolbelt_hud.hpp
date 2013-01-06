@@ -46,8 +46,7 @@ class AgentToolbeltUI : public UIElement
 
     void init()
     {
-        GS_ASSERT(this->stack_numbers == NULL);
-        if (this->stack_numbers != NULL) return;
+        IF_ASSERT(this->stack_numbers != NULL) return;
         
         // create HudText objects needed for stack rendering
         int max = xdim * ydim;
@@ -141,27 +140,6 @@ void AgentToolbeltUI::draw()
     IF_ASSERT(slot_stacks == NULL) return;
     IF_ASSERT(slot_durabilities == NULL) return;
 
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     // render slot backgrounds
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)

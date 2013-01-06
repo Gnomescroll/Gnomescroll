@@ -186,7 +186,10 @@ int CraftingUI::get_slot_at(int px, int py)
         xslot -= input_xdim + input_output_gap;
         slot = yslot * output_xdim + xslot;
     }
-    else GS_ASSERT(false);  // it shouldnt be anywhere else
+    else
+    {
+        GS_ASSERT(false);  // it shouldnt be anywhere else
+    }
     return slot;
 }
 
@@ -214,8 +217,7 @@ void CraftingUI::draw()
 {
     this->draw_name();
     
-    GS_ASSERT(CraftingTexture != 0);
-    if (CraftingTexture == 0) return;
+    IF_ASSERT(CraftingTexture == 0) return;
     
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
@@ -284,8 +286,7 @@ void CraftingUI::draw()
     int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     if (slot_types == NULL) return;
-    GS_ASSERT(slot_stacks != NULL);
-    if (slot_stacks == NULL) return;
+    IF_ASSERT(slot_stacks == NULL) return;
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);

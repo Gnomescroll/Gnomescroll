@@ -145,8 +145,8 @@ void AgentInventoryUI::draw()
     int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     int* slot_durabilities = ItemContainer::get_container_ui_durabilities(this->container_id);
     if (slot_types == NULL) return;
-    GS_ASSERT(slot_stacks != NULL);
-    GS_ASSERT(slot_durabilities != NULL);
+    IF_ASSERT(slot_stacks == NULL) return;
+    IF_ASSERT(slot_durabilities == NULL) return;
 
     // render slot backgrounds
     for (int i=0; i<xdim; i++)
