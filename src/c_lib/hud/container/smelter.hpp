@@ -77,8 +77,6 @@ class SmelterUI : public UIElement
             t->set_color(Color(255,255,255,255));
             t->set_depth(-0.1f);
         }
-
-        this->name.set_text("Smelter");
     }
 
     void center()
@@ -162,7 +160,7 @@ class SmelterUI : public UIElement
         centered(true)
     {}
 
-    ~SmelterUI()
+    virtual ~SmelterUI()
     {
         if (this->stacks != NULL) delete[] this->stacks;
     }

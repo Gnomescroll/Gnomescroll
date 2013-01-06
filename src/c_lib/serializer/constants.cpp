@@ -58,7 +58,7 @@ void verify_config()
 
     // make sure all container types are loaded
     
-    for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
     {
         ContainerAttributes* attr = &ItemContainer::container_attributes[i];
         if (attr == NULL || !attr->loaded || !attr->attached_to_agent) continue;

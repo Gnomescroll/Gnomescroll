@@ -248,14 +248,14 @@ void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
     {
         acs = cs_local[cs_index%128]; //check seq number
 
-        tmp = _agent_tick(acs, a->box, tmp);
+        tmp = agent_tick(acs, a->box, tmp);
         tmp.seq = (tmp.seq+1) % 256;
 
         cs_index = (cs_index+1) % 256;
     }
     s0 = tmp;
     acs = cs_local[cs_seq_local % 128];
-    s1 = _agent_tick(acs, a->box, s0);
+    s1 = agent_tick(acs, a->box, s0);
 
     // tick sound motion
     bool s1_on_ground = on_ground(a->box.box_r, s1.x, s1.y, s1.z);

@@ -13,12 +13,12 @@ class UIElement
 
         UIElementType type;
 
+        ItemContainerID container_id;
+        ItemContainerType container_type;
+
         bool visible;
         float xoff;
         float yoff;
-
-        ItemContainerID container_id;
-        ItemContainerType container_type;
 
         GLuint* texture;
         
@@ -47,13 +47,18 @@ class UIElement
 
     virtual void set_container_type(ItemContainerType container_type)
     {
-        this->type = type;
+        this->container_type = container_type;
+    }
+
+    virtual void set_container_id(ItemContainerID container_id)
+    {
+        this->container_id = container_id;
     }
 
     UIElement() :
         type(UI_ELEMENT_NONE),
-        visible(false), xoff(0), yoff(0),
         container_id(NULL_CONTAINER), container_type(NULL_CONTAINER_TYPE),
+        visible(false), xoff(0), yoff(0),
         texture(NULL)
     {}
 

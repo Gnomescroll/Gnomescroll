@@ -7,12 +7,12 @@ const size_t ITEM_PRETTY_NAME_MAX_LENGTH = 64;
 
 const int MAX_ITEMS = NULL_ITEM;
 
-const int NULL_ITEM_TYPE = 0xff;
+const int NULL_ITEM_TYPE = 0xFF;
 const int MAX_ITEM_TYPES = NULL_ITEM_TYPE;
 
-const int MAX_CONTAINER_TYPES = 16;
+const size_t MAX_CONTAINER_TYPES = 16;
 
-const int NULL_SLOT = 0xff;           // invalid slot value
+const int NULL_SLOT = 0xFF;           // invalid slot value
 const ItemGroup NULL_ITEM_GROUP = IG_NONE;
 const int NULL_DURABILITY = 0xFFFF;
 const int NULL_COST = 0;
@@ -26,6 +26,8 @@ const int NULL_LOCATION = -1;   // this represents a "not set" value, helpful fo
 // and you should use the appropriate functions defined in properties.hpp
 const int MAX_STACK_SIZE = 0xFFFF;
 const int MAX_DURABILITY = 0xFFFF;
+
+const size_t CONTAINER_DISPLAY_NAME_MAX_LENGTH = 63;
 
 const unsigned int MAX_CONTAINER_SIZE = NULL_SLOT;
 

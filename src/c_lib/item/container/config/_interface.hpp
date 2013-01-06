@@ -22,6 +22,7 @@ int get_container_alt_ydim(ItemContainerType type);
 bool container_type_is_attached_to_agent(ItemContainerType type);
 bool container_type_is_block(ItemContainerType type);
 const char* get_container_name(ItemContainerType type);
+const char* get_container_display_name(ItemContainerType type);
 containerCreate get_container_create_function(ItemContainerType type);
 
 /* Configuration Loader */

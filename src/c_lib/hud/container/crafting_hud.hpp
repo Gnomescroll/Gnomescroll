@@ -96,8 +96,6 @@ class CraftingUI : public UIElement
             t->set_color(Color(255,255,255,255));
             t->set_depth(-0.1f);
         }
-
-        this->name.set_text("Crafting Bench");
     }
 
     void set_container_type(ItemContainerType container_type)
@@ -109,7 +107,7 @@ class CraftingUI : public UIElement
         stacks(NULL), output_stacks(NULL)
     {}
 
-    ~CraftingUI()
+    virtual ~CraftingUI()
     {
         if (this->stacks != NULL) delete[] this->stacks;
         if (this->output_stacks != NULL) delete[] this->output_stacks;

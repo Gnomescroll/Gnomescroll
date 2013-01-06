@@ -95,11 +95,9 @@ class AgentSynthesizerUI : public UIElement
         xdim(0), ydim(0),
         shopping_xdim(0), shopping_ydim(0),
         render_width(0.0f), render_height(0.0f), prices(NULL)
-    {
-        this->name.set_text("Synthesizer");  
-    }
+    {}
 
-    ~AgentSynthesizerUI()
+    virtual ~AgentSynthesizerUI()
     {
         if (this->prices != NULL) delete[] this->prices;
     }

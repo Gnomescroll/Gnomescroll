@@ -222,9 +222,6 @@ class Agent
         ~Agent();
 };
 
-class AgentState _agent_tick(const struct AgentControlState& _cs, const struct AgentCollisionBox& box, class AgentState as);
-
-bool agent_collides_terrain(Agent* a);
 void force_update_agent_vox(Agent* a);
 
 }   // Agents

@@ -54,7 +54,6 @@ class StorageBlockUI : public UIElement
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
-        this->name.set_text("Storage Block");
     }
 
     void init_text()
@@ -132,7 +131,7 @@ class StorageBlockUI : public UIElement
         centered(true)
     {}
 
-    ~StorageBlockUI()
+    virtual ~StorageBlockUI()
     {
         if (this->stacks != NULL) delete[] this->stacks;
     }

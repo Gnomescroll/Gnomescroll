@@ -104,7 +104,6 @@ class CrusherUI : public UIElement
         this->init_text();
         this->refresh_render_size();
         if (this->centered) this->center();
-        this->name.set_text("Crusher");
         this->texture = &CrusherTexture;
     }
 
@@ -177,7 +176,7 @@ class CrusherUI : public UIElement
         centered(true)
     {}
 
-    ~CrusherUI()
+    virtual ~CrusherUI()
     {
         if (this->stacks != NULL) delete[] this->stacks;
     }

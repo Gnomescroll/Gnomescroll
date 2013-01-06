@@ -5,7 +5,7 @@ namespace ItemContainer
 
 #define UNPACK_NAME(NAME) \
     NAME = get_type(#NAME);\
-    GS_ASSERT(isValid(NAME));
+    IF_ASSERT(!isValid(NAME)) all_valid = false;
 
 namespace name
 {
@@ -24,18 +24,8 @@ ItemContainerType crusher = NULL_CONTAINER_TYPE;
 
 void unpack()
 {
-    //hand = get_type("hand");
-    //inventory = get_type("inventory");
-    //toolbelt = get_type("toolbelt");
-    //synthesizer = get_type("synthesizer");
-    //energy_tanks = get_type("energy_tanks");
+    bool all_valid = true;
     
-    //storage_block_small = get_type("storage_block_small");
-    //crafting_bench_basic = get_type("crafting_bench_basic");
-    //cryofreezer_small = get_type("cryofreezer_small");
-    //smelter_basic = get_type("smelter_basic");
-    //crusher = get_type("crusher");
-
     UNPACK_NAME(hand);
     UNPACK_NAME(inventory);
     UNPACK_NAME(toolbelt);
@@ -47,6 +37,8 @@ void unpack()
     UNPACK_NAME(cryofreezer_small);
     UNPACK_NAME(smelter_basic);
     UNPACK_NAME(crusher);
+
+    GS_ASSERT_ABORT(all_valid);
 }
 
 }   // name

@@ -18,8 +18,6 @@ float mouse_x = -1;
 float mouse_y = -1;
 bool lm_down = false;
 
-const int n_inventories = 8;
-
 // private containers
 class AgentInventoryUI* agent_inventory = NULL;
 class AgentToolbeltUI* agent_toolbelt = NULL;
@@ -32,84 +30,47 @@ class StorageBlockUI* storage_block = NULL;
 class SmelterUI* smelter = NULL;
 class CrusherUI* crusher = NULL;
 
+// array holding all those containers for convenient lookup
+UIElement** ui_elements = NULL;
+
+UIElement* get_ui_element(ItemContainerType type)
+{
+    IF_ASSERT(!isValid(type)) return NULL;
+    return ui_elements[type];
+}
+
 void set_container_id(ItemContainerType container_type, ItemContainerID container_id)
 {
-    if (container_type == ItemContainer::name::inventory)
-        agent_inventory->container_id = container_id;
-    else
-    if (container_type == ItemContainer::name::toolbelt)
-        agent_toolbelt->container_id = container_id;
-    else
-    if (container_type == ItemContainer::name::synthesizer)
-        synthesizer_container->container_id = container_id;
-    else
-    if (container_type == ItemContainer::name::energy_tanks)
-        energy_tanks->container_id = container_id;
-    else
-    if (container_type == ItemContainer::name::crafting_bench_basic)
-        crafting_container->container_id = container_id;
-    else
-    if (container_type == ItemContainer::name::storage_block_small)
-    {
-        storage_block->container_id = container_id;
-        storage_block->name.set_text("Storage Block");
-    }
-    else
-    if (container_type == ItemContainer::name::cryofreezer_small)
-    {
-        storage_block->container_id = container_id;
-        storage_block->name.set_text("Cryofreezer");
-    }
-    else
-    if (container_type == ItemContainer::name::smelter_basic)
-        smelter->container_id = container_id;
-    else
-    if (container_type == ItemContainer::name::crusher)
-        crusher->container_id = container_id;
-    else
-    if (container_type == ItemContainer::name::hand)
-    {
-        // ignored
-    }
-    else
-    {
-        GS_ASSERT(false);
-        printf("No container UI element for container type %d\n", container_type);
-    }
+    UIElement* container_ui = get_ui_element(container_type);
+    if (container_ui == NULL) return;
+    container_ui->set_container_id(container_id);
+    container_ui->set_container_type(container_type);
+    container_ui->name.set_text(ItemContainer::get_container_display_name(container_type));
 }
 
 void close_container(ItemContainerID container_id)
 {
-    // unset ids for variable container UIs
+    // unset ids for free-world container UIs
     bool closed = false;
-    if (crafting_container != NULL && crafting_container->container_id == container_id)
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
     {
-        crafting_container->container_id = NULL_CONTAINER;
-        closed = true;
-    }
-    if (storage_block != NULL && storage_block->container_id == container_id)
-    {
-        storage_block->container_id = NULL_CONTAINER;
-        closed = true;
-    }
-    if (crusher != NULL && crusher->container_id == container_id)
-    {
-        crusher->container_id = NULL_CONTAINER;
-        closed = true;
-    }
-    if (smelter != NULL && smelter->container_id == container_id)
-    {
-        smelter->container_id = NULL_CONTAINER;
-        closed = true;
+        if (ui_elements[i] == NULL) continue;
+        if (!ItemContainer::container_type_is_attached_to_agent((ItemContainerType)i)) continue;
+        if (ui_elements[i]->container_id == container_id)
+        {
+            // should not have 2 ui_elements with same container id active,
+            // but we are closing them all just in case
+            GS_ASSERT(!closed);
+            closed = true;
+            ui_elements[i]->container_id = NULL_CONTAINER;
+        }
     }
 
     if (container_block_enabled && closed)
         disable_container_block_hud();
 }
 
-/*
-    Input Handling
-*/
+// Input Handling
 
 void enable_agent_inventory_hud()
 {
@@ -148,30 +109,16 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
     UIElement* closest_container = NULL;
     int closest_slot = NULL_SLOT;
 
-    // set up container array
-    UIElement* inventories[n_inventories] = {
-        agent_inventory,
-        agent_toolbelt,
-        synthesizer_container,
-        crafting_container,
-        storage_block,
-        smelter,
-        energy_tanks,
-        crusher,
-    };
-
     // get topmost container click
-    UIElement* container;
-    int slot_tmp;
-    for (int i=0; i<n_inventories; i++)
+    // WARNING: doesnt support overlapping containers yet.
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
     {
-        container = inventories[i];
+        UIElement* container = ui_elements[i];
         if (container == NULL) continue;
         if (container->container_id == NULL_CONTAINER) continue;
         if (!container->point_inside(x,y)) continue;
-        slot_tmp = container->get_slot_at(x,y);
         closest_container = container;
-        closest_slot = slot_tmp;
+        closest_slot = container->get_slot_at(x,y);
     }
 
     *slot = closest_slot;
@@ -239,12 +186,11 @@ static int get_item_type_at(int x, int y)
     return container->get_slot_type(slot);
 }
 
-static const ContainerInputEvent NULL_EVENT =
-{
+static const ContainerInputEvent NULL_EVENT = {
     NULL_CONTAINER,         // null container id
     NULL_SLOT,              // null slot
     false,                  // alt action
-};
+    };
 
 ContainerInputEvent left_mouse_down(int x, int y)
 {
@@ -324,9 +270,7 @@ ContainerInputEvent select_slot(int numkey)
     return event;
 }
 
-/*
-    Drawing
-*/
+// Drawing
 
 static HudText::Text* grabbed_icon_stack_text = NULL;
 static HudText::Text* tooltip_text = NULL;
@@ -501,13 +445,12 @@ void draw()
 
     draw_grabbed_icon();
     draw_tooltip();
-
 }
 
 /* Main init/teardown */
 
 void init()
-{
+{    
     agent_inventory = new AgentInventoryUI;
     agent_inventory->type = UI_ELEMENT_AGENT_INVENTORY;
     agent_inventory->init();
@@ -569,6 +512,20 @@ void init()
     tooltip_text = new HudText::Text;
     tooltip_text->set_color(Color(255,255,255,255));
     tooltip_text->set_depth(-0.1f);
+
+    // pack ui elements into the array
+    GS_ASSERT(ui_elements == NULL);
+    ui_elements = (UIElement**)calloc(MAX_CONTAINER_TYPES, sizeof(UIElement*));
+
+    ui_elements[ItemContainer::name::inventory] = agent_inventory;
+    ui_elements[ItemContainer::name::toolbelt] = agent_toolbelt;
+    ui_elements[ItemContainer::name::energy_tanks] = energy_tanks;
+    ui_elements[ItemContainer::name::synthesizer] = synthesizer_container;
+    ui_elements[ItemContainer::name::crafting_bench_basic] = crafting_container;
+    ui_elements[ItemContainer::name::storage_block_small] = storage_block;
+    ui_elements[ItemContainer::name::cryofreezer_small] = storage_block;    // both use storage block instance
+    ui_elements[ItemContainer::name::smelter_basic] = smelter;
+    ui_elements[ItemContainer::name::crusher] = crusher;
 }
 
 void teardown()
@@ -586,7 +543,6 @@ void teardown()
 }
 
 #if DC_CLIENT
-
 void draw_init()
 {
     init_texture();
@@ -599,9 +555,7 @@ void draw_teardown()
 
 void draw_tracking_pixel(float x, float y)
 {
-    /*
-        Draw dot in upper left corner
-    */
+    // Draw dot in upper left corner
     GL_ASSERT(GL_TEXTURE_2D, false);
 
     glColor4ub(255, 0, 0, 255);
@@ -616,7 +570,6 @@ void draw_tracking_pixel(float x, float y)
 
     glEnd();
 }
-
 #endif
 
 }   // HudContainer

@@ -52,7 +52,7 @@ static void add_container()
 
 static void container_def(const char* name)
 {   // Don't call this directly
-    IF_ASSERT(_current_id >= MAX_CONTAINER_TYPES)
+    IF_ASSERT(_current_id >= (int)MAX_CONTAINER_TYPES)
     {
         GS_ASSERT_ABORT(false);
         return;
@@ -160,6 +160,7 @@ static void register_settings()
     c->create_function = &new_energy_tanks;
     
     cube_container_def("storage_block_small");
+    c->set_display_name("Storage Block");
     c->xdim = 3;
     c->ydim = 3;
     c->alpha_action = &alpha_action_decision_tree;
@@ -169,6 +170,7 @@ static void register_settings()
     c->create_function = &new_container;
 
     cube_container_def("crafting_bench_basic");
+    c->set_display_name("Crafting Bench");
     c->xdim = 4;
     c->ydim = 1;
     c->alt_xdim = 1;
@@ -184,6 +186,7 @@ static void register_settings()
     c->create_function = &new_crafting_bench;
 
     cube_container_def("cryofreezer_small");
+    c->set_display_name("Cryofreezer");
     c->xdim = 2;
     c->ydim = 2;
     c->alpha_action = &alpha_action_decision_tree;
@@ -193,6 +196,7 @@ static void register_settings()
     c->create_function = &new_cryofreezer;
 
     cube_container_def("smelter_basic");
+    c->set_display_name("Smelter");
     c->xdim = 1;
     c->ydim = 1;
     c->alt_xdim = 1;
@@ -250,7 +254,7 @@ static void validate_settings()
     GS_ASSERT_ABORT(get_attr("crusher") != NULL && get_attr("crusher")->max_dim() == 1);
     
     int n_none = 0;
-    for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
     {
         class ContainerAttributes* c = &container_attributes[i];
         if (!c->loaded) continue;
@@ -260,6 +264,7 @@ static void validate_settings()
             continue;
         }
         GS_ASSERT_ABORT(is_valid_container_name(c->name));
+        GS_ASSERT_ABORT(c->display_name[0] != '\0');
         GS_ASSERT_ABORT(c->xdim > 0);
         GS_ASSERT_ABORT(c->ydim > 0);
         GS_ASSERT_ABORT(c->max_dim() <= MAX_CONTAINER_SIZE);
@@ -296,8 +301,8 @@ static void validate_settings()
     GS_ASSERT_ABORT(n_none == 1);
 
     // make sure no names collide
-    for (int i=0; i<MAX_CONTAINER_TYPES-1; i++)
-    for (int j=i+1; j<MAX_CONTAINER_TYPES; j++)
+    for (size_t i=0; i<MAX_CONTAINER_TYPES-1; i++)
+    for (size_t j=i+1; j<MAX_CONTAINER_TYPES; j++)
     {
         class ContainerAttributes* c = &container_attributes[i];
         class ContainerAttributes* d = &container_attributes[j];
@@ -318,7 +323,7 @@ static void validate_settings()
     GS_ASSERT_ABORT(container_name_map->condensed);
 
     // check inactive names against active
-    for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
         if (container_attributes[i].loaded)
         {
             GS_ASSERT_ABORT(container_name_map->get_mapped_name(container_attributes[i].name) == NULL);
@@ -399,7 +404,7 @@ void end_config()
 
 ItemContainerType get_type(const char* name)
 {
-    for (int i=0; i<MAX_CONTAINER_TYPES; i++)
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
         if (container_attributes[i].loaded
          && strcmp(container_attributes[i].name, name) == 0)
             return (ItemContainerType)i;
@@ -488,6 +493,13 @@ const char* get_container_name(ItemContainerType type)
     class ContainerAttributes* attr = get_attr(type);
     IF_ASSERT(attr == NULL)return NULL;
     return attr->name;
+}
+
+const char* get_container_display_name(ItemContainerType type)
+{
+    class ContainerAttributes* attr = get_attr(type);
+    IF_ASSERT(attr == NULL)return NULL;
+    return attr->display_name;
 }
 
 containerCreate get_container_create_function(ItemContainerType type)

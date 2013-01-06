@@ -62,15 +62,13 @@ class AgentInventoryUI : public UIElement
             t->set_color(Color(255,255,255,255));
             t->set_depth(-0.1f);
         }
-
-        this->name.set_text("Inventory");
     }
 
     AgentInventoryUI() :
         xdim(0), ydim(0), stack_numbers(NULL)
     {}
     
-    ~AgentInventoryUI()
+    virtual ~AgentInventoryUI()
     {
         if (this->stack_numbers != NULL) delete[] this->stack_numbers;
     }
