@@ -6,20 +6,18 @@ template <class ObjectState, typename IDType=int>
 class ObjectList
 {
     private:
-        virtual const char* name() = 0;
-
         unsigned int start;         // indexing offset for quicker lookups
 
-        void init()
-        {
-            GS_ASSERT(this->max > 0);
-            if (this->max <= 0) return;
+    virtual const char* name() = 0;
 
-            GS_ASSERT(this->null_id < 0 || (unsigned int)this->null_id >= this->max);
-            
-            this->objects = (ObjectState*)calloc(this->max, sizeof(ObjectState));
-            for (unsigned int i=0; i<this->max; i++) this->objects[i].id = this->null_id;
-        }
+    void init()
+    {
+        IF_ASSERT(this->max <= 0) return;
+        GS_ASSERT(this->null_id < 0 || (unsigned int)this->null_id >= this->max);
+        
+        this->objects = (ObjectState*)calloc(this->max, sizeof(ObjectState));
+        for (unsigned int i=0; i<this->max; i++) this->objects[i].id = this->null_id;
+    }
         
     public:
         IDType null_id;    
@@ -60,8 +58,7 @@ class ObjectList
     
     bool destroy(IDType id)
     {
-        GS_ASSERT(id >= 0 && (unsigned int)id < this->max);
-        if (id < 0 || (unsigned int)id >= this->max) return false;
+        IF_ASSERT(id < 0 || (unsigned int)id >= this->max) return false;
         if (this->objects[id].id == this->null_id) return false;
         this->objects[id].ObjectState::~ObjectState();
         this->objects[id].id = this->null_id;
@@ -71,8 +68,7 @@ class ObjectList
 
     ObjectState* get(IDType id)
     {
-        GS_ASSERT(id >= 0 && (unsigned int)id < this->max);
-        if (id < 0 || (unsigned int)id >= this->max) return NULL;
+        IF_ASSERT(id < 0 || (unsigned int)id >= this->max) return NULL;
         ObjectState* obj = &this->objects[id];
         if (obj->id == this->null_id) return NULL;
         return obj;
@@ -85,8 +81,7 @@ class ObjectList
 
     unsigned int space()
     {
-        GS_ASSERT(this->ct <= this->max);
-        if (this->ct > this->max) return 0;
+        IF_ASSERT(this->ct > this->max) return 0;
         return this->max - this->ct;
     }
 

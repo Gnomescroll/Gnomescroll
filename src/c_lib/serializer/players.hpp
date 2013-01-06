@@ -104,10 +104,8 @@ class PlayerLoadData
 
     bool expect_container(ItemContainerType container_type)
     {
-        GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
-        if (container_type == NULL_CONTAINER_TYPE) return false;
-        GS_ASSERT(this->n_containers_expected < N_PLAYER_CONTAINERS);
-        if (this->n_containers_expected >= N_PLAYER_CONTAINERS) return false;
+        IF_ASSERT(container_type == NULL_CONTAINER_TYPE) return false;
+        IF_ASSERT(this->n_containers_expected >= N_PLAYER_CONTAINERS) return false;
         for (size_t i=0; i<this->n_containers_expected; i++)
         {
             IF_ASSERT(this->containers_expected[i] == container_type) return false;
@@ -138,7 +136,7 @@ class PlayerLoadData
         return this->signal_if_loaded();
     }
 
-    PlayerLoadData(int id) :
+    explicit PlayerLoadData(int id) :
         id(-1), user_id(NULL_USER_ID), client_id(NULL_CLIENT),
         waiting_for_setup(true),
         player_data_loaded(false), n_containers_expected(0),
@@ -159,7 +157,7 @@ class PlayerContainerLoadData
         ItemContainerType container_type;
         int player_data_id;
 
-    PlayerContainerLoadData(int id) :
+    explicit PlayerContainerLoadData(int id) :
         id(-1), container_type(NULL_CONTAINER_TYPE), player_data_id(-1)
     {}
 };
@@ -169,9 +167,9 @@ class PlayerLoadDataList: public ObjectList<class PlayerLoadData>
     public:
         const char* name() { return "PlayerLoadData"; }
 
-    PlayerLoadDataList(unsigned int capacity) :
+    explicit PlayerLoadDataList(unsigned int capacity) :
         ObjectList<class PlayerLoadData>(capacity)
-    { this->print(); }
+    {}
 };
 
 class PlayerContainerLoadDataList: public ObjectList<class PlayerContainerLoadData>
@@ -179,9 +177,9 @@ class PlayerContainerLoadDataList: public ObjectList<class PlayerContainerLoadDa
     public:
         const char* name() { return "PlayerContainerLoadData"; }
 
-    PlayerContainerLoadDataList(unsigned int capacity) :
+    explicit PlayerContainerLoadDataList(unsigned int capacity) :
         ObjectList<class PlayerContainerLoadData>(capacity)
-    { this->print(); }
+    {}
 };
 
 }   // serializer

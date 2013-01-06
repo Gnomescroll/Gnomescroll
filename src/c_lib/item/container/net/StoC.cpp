@@ -16,7 +16,7 @@ inline void create_item_container_StoC::handle()
 {
     ItemContainerInterface* container = create_container((ItemContainerType)container_type,  (ItemContainerID)container_id);
     IF_ASSERT(container == NULL) return;
-    container->chunk = chunk;  // TODO
+    container->chunk = chunk;  // TODO -- should only be not attached_to_agent block subclass
 }
 
 inline void delete_item_container_StoC::handle()
@@ -31,51 +31,38 @@ inline void assign_item_container_StoC::handle()
     IF_ASSERT(container == NULL) return;
     ItemContainerType type = (ItemContainerType)container_type;
     IF_ASSERT(!isValid(type)) return;
+
+    #define ASSIGN_CONTAINER(NAME, CLASS) { do { \
+        NAME = (CLASS*)container; \
+        if (NAME##_ui != NULL) delete NAME##_ui; \
+        NAME##_ui = new CLASS##UI(container->id); \
+        container_uis[type] = NAME##_ui; \
+        } while (0); }
     
     if (type == name::inventory)
-    {
-        player_container = (ItemContainer*)container;
-        if (player_container_ui != NULL) delete player_container_ui;
-        player_container_ui = new ItemContainerUI(container->id);
-        container_uis[type] = player_container_ui;
-    }
+        ASSIGN_CONTAINER(player_container, ItemContainer)
     else
     if (type == name::hand)
-    {
-        player_hand = (ItemContainerHand*)container;
-        if (player_hand_ui != NULL) delete player_hand_ui;
-        player_hand_ui = new ItemContainerHandUI(container->id);
-        container_uis[type] = player_hand_ui;
-    }
+        ASSIGN_CONTAINER(player_hand, ItemContainerHand)
     else
     if (type == name::toolbelt)
-    {
-        player_toolbelt = (ItemContainer*)container;
-        if (player_toolbelt_ui != NULL) delete player_toolbelt_ui;
-        player_toolbelt_ui = new ItemContainerUI(container->id);
-        container_uis[type] = player_toolbelt_ui;
-    }
+        ASSIGN_CONTAINER(player_toolbelt, ItemContainer)
     else   
     if (type == name::synthesizer)
-    {
-        player_synthesizer = (ItemContainerSynthesizer*)container;
-        if (player_synthesizer_ui != NULL) delete player_synthesizer_ui;
-        player_synthesizer_ui = new ItemContainerSynthesizerUI(container->id);
-        container_uis[type] = player_synthesizer_ui;
-    }
+        ASSIGN_CONTAINER(player_synthesizer, ItemContainerSynthesizer)
     else
     if (type == name::energy_tanks)
-    {
-        player_energy_tanks = (ItemContainerEnergyTanks*)container;
-        if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
-        player_energy_tanks_ui = new ItemContainerEnergyTanksUI(container->id);
-        container_uis[type] = player_energy_tanks_ui;
-    }
+        ASSIGN_CONTAINER(player_energy_tanks, ItemContainerEnergyTanks)
+    else
+    if (type == name::premium_cache)
+        ASSIGN_CONTAINER(premium_cache, ItemContainer)
     else
     {
         GS_ASSERT(false);
         return;
     }
+
+    #undef ASSIGN_CONTAINER
     
     containers[type] = container;
     container->was_assigned();

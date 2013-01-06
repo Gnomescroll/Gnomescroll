@@ -158,6 +158,15 @@ static void register_settings()
     c->alpha_packet = &send_container_alpha_action;
     c->beta_packet = &send_container_beta_action;
     c->create_function = &new_energy_tanks;
+
+    agent_container_def("premium_cache");
+    c->xdim = 4;
+    c->ydim = 4;
+    c->alpha_action = &alpha_action_decision_tree;
+    c->beta_action = &beta_action_decision_tree;
+    c->alpha_packet = &send_container_alpha_action;
+    c->beta_packet = &send_container_beta_action;
+    c->create_function = &new_container;
     
     cube_container_def("storage_block_small");
     c->set_display_name("Storage Block");

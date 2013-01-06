@@ -63,7 +63,7 @@ const float ITEM_PARTICLE_RADIUS = 0.35f;
 const float ITEM_PARTICLE_SPRITE_RENDER_SCALE = 0.25f;
 const float ITEM_PARTICLE_VOXEL_RENDER_SCALE = 0.20f;
 
-const size_t N_PLAYER_CONTAINERS = 5;  // hand, inventory, synthesizer, energy_tanks, toolbelt
+const size_t N_PLAYER_CONTAINERS = 6;  // hand, inventory, synthesizer, energy_tanks, toolbelt, premium_cache
 
 // how long to wait before allowing item to be picked up after being thrown by agent
 const int ITEM_PICKUP_PREVENTION_DELAY = 30 * 3; // 4 seconds

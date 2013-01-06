@@ -22,6 +22,9 @@ const char* get_player_container_location_name(ItemContainerType container_type)
     else
     if (container_type == ItemContainer::name::energy_tanks)
         return PLAYER_ENERGY_TANKS_LOCATION_NAME;
+    else
+    if (container_type == ItemContainer::name::premium_cache)
+        return PLAYER_PREMIUM_CACHE_LOCATION_NAME;
 
     GS_ASSERT(false);
     return NULL;
@@ -31,30 +34,33 @@ void verify_config()
 {
     GS_ASSERT_ABORT(DAT_NAME_MAX_LENGTH >= 32);
     
-    GS_ASSERT_ABORT(strcmp(PLAYER_HAND_LOCATION_NAME,         "player:hand")         == 0);
-    GS_ASSERT_ABORT(strcmp(PLAYER_TOOLBELT_LOCATION_NAME,     "player:toolbelt")     == 0);
-    GS_ASSERT_ABORT(strcmp(PLAYER_INVENTORY_LOCATION_NAME,    "player:inventory")    == 0);
-    GS_ASSERT_ABORT(strcmp(PLAYER_SYNTHESIZER_LOCATION_NAME,  "player:synthesizer")  == 0);
-    GS_ASSERT_ABORT(strcmp(PLAYER_ENERGY_TANKS_LOCATION_NAME, "player:energy_tanks") == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_HAND_LOCATION_NAME,          "player:hand")          == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_TOOLBELT_LOCATION_NAME,      "player:toolbelt")      == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_INVENTORY_LOCATION_NAME,     "player:inventory")     == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_SYNTHESIZER_LOCATION_NAME,   "player:synthesizer")   == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_ENERGY_TANKS_LOCATION_NAME,  "player:energy_tanks")  == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_PREMIUM_CACHE_LOCATION_NAME, "player:premium_cache") == 0);
 
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::hand),         "player:hand")         == 0);
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::toolbelt),     "player:toolbelt")     == 0);
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::inventory),    "player:inventory")    == 0);
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::synthesizer),  "player:synthesizer")  == 0);
-    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::energy_tanks), "player:energy_tanks") == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::hand),          "player:hand")          == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::toolbelt),      "player:toolbelt")      == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::inventory),     "player:inventory")     == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::synthesizer),   "player:synthesizer")   == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::energy_tanks),  "player:energy_tanks")  == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::premium_cache), "player:premium_cache") == 0);
 
     // check that all the expected containers are loaded
     // this *could* be in item/container/config, but since the only reason this matters
     // is because of the seriousness of the serializer, i'll leave it here
     GS_ASSERT_ABORT(ItemContainer::container_attributes != NULL);
     
-    GS_ASSERT_ABORT(N_PLAYER_CONTAINERS == 5);
+    GS_ASSERT_ABORT(N_PLAYER_CONTAINERS == 6);
 
     bool agent_hand_found         = false;
     bool agent_toolbelt_found     = false;
     bool agent_inventory_found    = false;
     bool agent_synthesizer_found  = false;
     bool agent_energy_tanks_found = false;
+    bool premium_cache_found      = false;
 
     // make sure all container types are loaded
     
@@ -76,6 +82,9 @@ void verify_config()
         else
         if (attr->type == ItemContainer::name::energy_tanks)
             agent_energy_tanks_found = true;
+        else
+        if (attr->type == ItemContainer::name::premium_cache)
+            premium_cache_found = true;
     }
 
     GS_ASSERT_ABORT(agent_inventory_found);
@@ -83,19 +92,22 @@ void verify_config()
     GS_ASSERT_ABORT(agent_synthesizer_found);
     GS_ASSERT_ABORT(agent_energy_tanks_found);
     GS_ASSERT_ABORT(agent_hand_found);
+    GS_ASSERT_ABORT(premium_cache_found);
 
     // length of location names
-    GS_ASSERT_ABORT(strlen(PLAYER_HAND_LOCATION_NAME)         <= LOCATION_NAME_MAX_LENGTH);
-    GS_ASSERT_ABORT(strlen(PLAYER_TOOLBELT_LOCATION_NAME)     <= LOCATION_NAME_MAX_LENGTH);
-    GS_ASSERT_ABORT(strlen(PLAYER_INVENTORY_LOCATION_NAME)    <= LOCATION_NAME_MAX_LENGTH);
-    GS_ASSERT_ABORT(strlen(PLAYER_SYNTHESIZER_LOCATION_NAME)  <= LOCATION_NAME_MAX_LENGTH);
-    GS_ASSERT_ABORT(strlen(PLAYER_ENERGY_TANKS_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_HAND_LOCATION_NAME)          <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_TOOLBELT_LOCATION_NAME)      <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_INVENTORY_LOCATION_NAME)     <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_SYNTHESIZER_LOCATION_NAME)   <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_ENERGY_TANKS_LOCATION_NAME)  <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_PREMIUM_CACHE_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
 
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_INVENTORY_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_ENERGY_TANKS_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_SYNTHESIZER_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_TOOLBELT_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_HAND_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_PREMIUM_CACHE_LOCATION_NAME));
 
     // semicolon ; is reserved for redis key format, which may need to link back to the redis key
     // space is reserved for string padding

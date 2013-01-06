@@ -15,6 +15,7 @@ extern int opened_container_event_id;
 
 extern class ItemContainer* player_container;
 extern class ItemContainer* player_toolbelt;
+extern class ItemContainer* premium_cache;
 extern class ItemContainerHand* player_hand;
 extern class ItemContainerSynthesizer* player_synthesizer;
 extern class ItemContainerEnergyTanks* player_energy_tanks;
@@ -26,6 +27,7 @@ extern class ItemContainerCrusher* crusher;
 
 extern class ItemContainerUI* player_container_ui;
 extern class ItemContainerUI* player_toolbelt_ui;
+extern class ItemContainerUI* premium_cache_ui;
 extern class ItemContainerHandUI* player_hand_ui;
 extern class ItemContainerSynthesizerUI* player_synthesizer_ui;
 extern class ItemContainerEnergyTanksUI* player_energy_tanks_ui;
@@ -46,6 +48,7 @@ extern ItemContainerID* agent_toolbelt_list;
 extern ItemContainerID* agent_synthesizer_list;
 extern ItemContainerID* agent_energy_tanks_list;
 extern ItemContainerID* agent_hand_list;
+extern ItemContainerID* premium_cache_list;
 extern ItemContainerID* opened_containers;
 #endif
 

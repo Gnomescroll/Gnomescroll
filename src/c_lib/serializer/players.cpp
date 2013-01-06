@@ -615,7 +615,6 @@ bool end_player_load(int player_load_id)
 
     class PlayerLoadData* data = player_load_data_list->get(player_load_id);
     IF_ASSERT(data == NULL) return false;
-
     IF_ASSERT(data->user_id == NULL_USER_ID) return false;
 
     data->setup_complete();

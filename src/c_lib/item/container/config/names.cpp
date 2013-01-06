@@ -15,6 +15,7 @@ ItemContainerType inventory = NULL_CONTAINER_TYPE;
 ItemContainerType toolbelt = NULL_CONTAINER_TYPE;
 ItemContainerType synthesizer = NULL_CONTAINER_TYPE;
 ItemContainerType energy_tanks = NULL_CONTAINER_TYPE;
+ItemContainerType premium_cache = NULL_CONTAINER_TYPE;
 
 ItemContainerType storage_block_small = NULL_CONTAINER_TYPE;
 ItemContainerType crafting_bench_basic = NULL_CONTAINER_TYPE;
@@ -31,6 +32,7 @@ void unpack()
     UNPACK_NAME(toolbelt);
     UNPACK_NAME(synthesizer);
     UNPACK_NAME(energy_tanks);
+    UNPACK_NAME(premium_cache);
     
     UNPACK_NAME(storage_block_small);
     UNPACK_NAME(crafting_bench_basic);

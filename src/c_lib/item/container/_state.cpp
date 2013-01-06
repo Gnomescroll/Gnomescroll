@@ -15,6 +15,7 @@ int opened_container_event_id = 0;
 
 class ItemContainer* player_container = NULL;
 class ItemContainer* player_toolbelt = NULL;
+class ItemContainer* premium_cache = NULL;
 class ItemContainerHand* player_hand = NULL;
 class ItemContainerSynthesizer* player_synthesizer = NULL;
 class ItemContainerEnergyTanks* player_energy_tanks = NULL;
@@ -26,6 +27,7 @@ class ItemContainerCrusher* crusher = NULL;
 
 class ItemContainerUI* player_container_ui = NULL;
 class ItemContainerUI* player_toolbelt_ui = NULL;
+class ItemContainerUI* premium_cache_ui = NULL;
 class ItemContainerHandUI* player_hand_ui = NULL;
 class ItemContainerSynthesizerUI* player_synthesizer_ui = NULL;
 class ItemContainerEnergyTanksUI* player_energy_tanks_ui;
@@ -49,6 +51,7 @@ ItemContainerID* agent_toolbelt_list = NULL;
 ItemContainerID* agent_synthesizer_list = NULL;
 ItemContainerID* agent_energy_tanks_list = NULL;
 ItemContainerID* agent_hand_list = NULL;
+ItemContainerID* premium_cache_list = NULL;
 ItemContainerID* opened_containers = NULL;
 #endif
 
