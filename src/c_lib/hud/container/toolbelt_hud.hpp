@@ -62,7 +62,8 @@ class AgentToolbeltUI : public UIElement
         this->name.set_text("Toolbelt");
     }
 
-    AgentToolbeltUI() : selected_slot(0), stack_numbers(NULL)
+    AgentToolbeltUI() :
+        selected_slot(0), stack_numbers(NULL)
     {}
     
     ~AgentToolbeltUI()
@@ -179,8 +180,8 @@ void AgentToolbeltUI::draw()
             int max_durability = Item::get_max_durability(slot_types[slot]);
             ratio = ((float)durability)/((float)max_durability);
 
-			int mh = w / 8; // meter height
-			glColor4ub(255, 0, 0, alpha);               // red
+            int mh = w / 8; // meter height
+            glColor4ub(255, 0, 0, alpha);               // red
             Hud::meter_graphic.draw(x, y, w, mh, 1.0f); // full slot width background
             Hud::set_color_from_ratio(ratio, 255);
             Hud::meter_graphic.draw(x, y, w, mh, ratio); 

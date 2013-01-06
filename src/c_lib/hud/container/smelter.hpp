@@ -9,26 +9,26 @@ class SmelterUI : public UIElement
 {
     public:
           
-    static const int cell_size = 37;
-    int xdim;    // grid cell size
-    int ydim;
+        static const int cell_size = 37;
+        int xdim;    // grid cell size
+        int ydim;
 
-    // size of texture/render area
-    float render_width;
-    float render_height;
+        // size of texture/render area
+        float render_width;
+        float render_height;
 
-    static const int slot_size = 32;
-    static const int cell_offset_x = 3;
-    static const int cell_offset_y = 3;
-    static const int cell_offset_x_right = 2;
-    static const int cell_offset_y_bottom = 2;
+        static const int slot_size = 32;
+        static const int cell_offset_x = 3;
+        static const int cell_offset_y = 3;
+        static const int cell_offset_x_right = 2;
+        static const int cell_offset_y_bottom = 2;
 
-    float texture_offset_x;
-    float texture_offset_y;
+        float texture_offset_x;
+        float texture_offset_y;
 
-    HudText::Text* stacks;
+        HudText::Text* stacks;
 
-    bool centered;
+        bool centered;
 
     void draw();
 
@@ -155,12 +155,12 @@ class SmelterUI : public UIElement
 
     void draw_meter(float x, float y, float src_x, float src_y, float w, float h, float amount);
 
-    SmelterUI()
-    : xdim(1), ydim(1),
-    render_width(1.0f), render_height(1.0f),
-    texture_offset_x(0.0f), texture_offset_y(0.0f),
-    stacks(NULL),
-    centered(true)
+    SmelterUI() :
+        xdim(1), ydim(1),
+        render_width(1.0f), render_height(1.0f),
+        texture_offset_x(0.0f), texture_offset_y(0.0f),
+        stacks(NULL),
+        centered(true)
     {}
 
     ~SmelterUI()
@@ -432,7 +432,7 @@ void SmelterUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    //u_dot(xoff,yoff);
+    //draw_tracking_pixel(xoff,yoff);
     glColor4ub(255, 255, 255, 255);
 
 }

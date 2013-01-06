@@ -3,7 +3,7 @@
 namespace HudContainer
 {
 
-const int STACK_COUNT_MAX_LENGTH = 4;   // 9999
+const int STACK_COUNT_MAX_LENGTH = 10;   // 9999
 
 typedef enum
 {

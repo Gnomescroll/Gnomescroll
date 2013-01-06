@@ -416,7 +416,7 @@ bool set_agent_toolbelt_slot(AgentID agent_id, int slot)
     IF_ASSERT(!isValid(agent_id)) return false;
     
     int max = ItemContainer::get_container_max_slots(ItemContainer::name::toolbelt);
-    GS_ASSERT(max > 0);
+    IF_ASSERT(max <= 0) return false;
     IF_ASSERT(slot < 0 || slot >= max || slot == NULL_SLOT) return false;
     agent_selected_slot[agent_id] = slot;
     ItemID item_id = ItemContainer::get_agent_toolbelt_item(agent_id, slot);

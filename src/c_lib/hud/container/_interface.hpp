@@ -59,5 +59,6 @@ void draw_teardown();
 
 // render
 void draw();
+void draw_tracking_pixel(float x, float y);
 
 }   // HudContainer

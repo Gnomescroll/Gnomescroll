@@ -1,3 +1,4 @@
+#pragma once
 
 #include <hud/container/constants.hpp>
 #include <hud/container/common.hpp>

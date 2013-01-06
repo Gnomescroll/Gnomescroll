@@ -271,8 +271,7 @@ int get_gas_lifetime(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return NULL_GAS_LIFETIME;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL_GAS_LIFETIME;
+    IF_ASSERT(attr == NULL) return NULL_GAS_LIFETIME;
     return attr->gas_lifetime;
 }
 
@@ -280,23 +279,20 @@ bool is_fuel(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return false;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return false;
+    IF_ASSERT(attr == NULL) return false;
     return attr->fuel;
 }
 
 bool is_smelter(ItemContainerType type)
 {
-    if (type == ItemContainer::name::smelter_basic) return true;
-    return false;
+    return (type == ItemContainer::name::smelter_basic);
 }
 
 int get_animation_id(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL) return 0;
     return attr->animation_id;
 }
 
@@ -305,25 +301,21 @@ int get_fuel_burn_rate(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return 30;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 30;
+    IF_ASSERT(attr == NULL) return 30;
     return attr->fuel_burn_rate;
 }
 
 int get_smelting_recipe_creation_time(int recipe_id)
 {
-    GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
-    if (recipe_id == NULL_SMELTING_RECIPE) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
+    IF_ASSERT(recipe_id == NULL_SMELTING_RECIPE) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
     class SmeltingRecipe* recipe = get_smelting_recipe(recipe_id);
-    GS_ASSERT(recipe != NULL);
-    if (recipe == NULL) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
+    IF_ASSERT(recipe == NULL) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
     return recipe->creation_time;
 }
 
 class CraftingRecipe* get_craft_recipe(int recipe_id)
 {
-    GS_ASSERT(recipe_id >= 0 && recipe_id < crafting_recipe_count);
-    if (recipe_id < 0 || recipe_id >= crafting_recipe_count) return NULL;
+    IF_ASSERT(recipe_id < 0 || recipe_id >= crafting_recipe_count) return NULL;
     return &crafting_recipe_array[recipe_id];
 }
 
@@ -458,13 +450,11 @@ class SmeltingRecipe* get_selected_smelting_recipe(ItemContainerID container_id)
     GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     if (container == NULL) return NULL;
-    GS_ASSERT(is_smelter(container->type));
-    if (!is_smelter(container->type)) return NULL;
+    IF_ASSERT(!is_smelter(container->type)) return NULL;
     ItemContainer::ItemContainerSmelter* smelter = (ItemContainer::ItemContainerSmelter*)container;
 
     unsigned int max_inputs = smelter->get_max_input_slots();
-    GS_ASSERT(max_inputs > 0);
-    if (max_inputs <= 0) return NULL;
+    IF_ASSERT(max_inputs <= 0) return NULL;
     //ItemID inputs[max_inputs];
     MALLOX(ItemID, inputs, max_inputs); //type, name, size
 
@@ -489,8 +479,7 @@ class SmeltingRecipe* get_selected_smelting_recipe(ItemContainerID container_id)
     for (int i=0; i<smelting_recipe_count; i++)
     {
         SmeltingRecipe* recipe = &smelting_recipe_array[i];
-        GS_ASSERT(recipe->output_num > 0);
-        if (recipe->output_num <= 0) continue;
+        IF_ASSERT(recipe->output_num <= 0) continue;
         GS_ASSERT(recipe->output[0] != NULL_ITEM_TYPE);
         GS_ASSERT(recipe->reagent_num > 0);
         // make sure to set availability state to default
@@ -526,8 +515,7 @@ class SmeltingRecipe* get_selected_smelting_recipe(ItemContainerID container_id)
 class SmeltingRecipe* get_smelting_recipe(int recipe_id)
 {
     GS_ASSERT(recipe_id != NULL_SMELTING_RECIPE);
-    GS_ASSERT(recipe_id >= 0 && recipe_id < smelting_recipe_count);
-    if (recipe_id < 0 || recipe_id >= smelting_recipe_count) return NULL;
+    IF_ASSERT(recipe_id < 0 || recipe_id >= smelting_recipe_count) return NULL;
     return &smelting_recipe_array[recipe_id];
 }
 

@@ -670,6 +670,7 @@ void send_client_mech_list(ClientID client_id)
 void handle_block_removal(int x, int y, int z)
 {
     MechType mech_type = mech_list->handle_block_removal(x,y,z);
+    if (mech_type == NULL_MECH_TYPE) return;
     IF_ASSERT(!isValid(mech_type)) return;
 
     // drop item from mech

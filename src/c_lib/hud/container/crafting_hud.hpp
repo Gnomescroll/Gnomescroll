@@ -12,41 +12,41 @@ class CraftingUI : public UIElement
 
     public:
           
-    static const int cell_size = 37;
+        static const int cell_size = 37;
 
-    static const int input_xdim = 4;
-    static const int input_ydim = 1;
+        static const int input_xdim = 4;
+        static const int input_ydim = 1;
 
-    static const int output_xdim = 1;
-    static const int output_ydim = 3;
+        static const int output_xdim = 1;
+        static const int output_ydim = 3;
 
-    static const int input_slots = input_xdim * input_ydim;
-    static const int output_slots = output_xdim * output_ydim;
-    static const int input_output_gap = 1;
+        static const int input_slots = input_xdim * input_ydim;
+        static const int output_slots = output_xdim * output_ydim;
+        static const int input_output_gap = 1;
 
-    static const int xdim = input_xdim + input_output_gap + output_xdim;    // grid cell size
-    static const int ydim = (input_ydim > output_ydim) ? input_ydim : output_ydim;
+        static const int xdim = input_xdim + input_output_gap + output_xdim;    // grid cell size
+        static const int ydim = (input_ydim > output_ydim) ? input_ydim : output_ydim;
 
-    // size of render area (texture + clickable area (will render highlights there still)
-    static const float render_width;
-    static const float render_height;
+        // size of render area (texture + clickable area (will render highlights there still)
+        static const float render_width;
+        static const float render_height;
 
-    // texture area
-    static const float texture_width;
-    static const float texture_height;
+        // texture area
+        static const float texture_width;
+        static const float texture_height;
 
-    static const float slot_size;
-    static const float cell_offset_x;
-    static const float cell_offset_y;
-    static const float cell_offset_x_right;
-    static const float cell_offset_y_bottom;
-    static const float input_offset_x;
-    static const float input_offset_y;
-    static const float output_offset_x;
-    static const float output_offset_y;
+        static const float slot_size;
+        static const float cell_offset_x;
+        static const float cell_offset_y;
+        static const float cell_offset_x_right;
+        static const float cell_offset_y_bottom;
+        static const float input_offset_x;
+        static const float input_offset_y;
+        static const float output_offset_x;
+        static const float output_offset_y;
 
-    HudText::Text* stacks;
-    HudText::Text* output_stacks;
+        HudText::Text* stacks;
+        HudText::Text* output_stacks;
 
     void draw();
 
@@ -72,10 +72,8 @@ class CraftingUI : public UIElement
 
     void init()
     {
-        GS_ASSERT(this->stacks == NULL);
-        GS_ASSERT(this->output_stacks == NULL);
-        if (this->stacks != NULL) return;
-        if (this->output_stacks != NULL) return;
+        IF_ASSERT(this->stacks != NULL) return;
+        IF_ASSERT(this->output_stacks != NULL) return;
 
         int max = input_slots;
         this->stacks = new HudText::Text[max];
@@ -107,8 +105,8 @@ class CraftingUI : public UIElement
         this->container_type = container_type;
     }
 
-    CraftingUI()
-    : stacks(NULL), output_stacks(NULL)
+    CraftingUI() :
+        stacks(NULL), output_stacks(NULL)
     {}
 
     ~CraftingUI()
@@ -484,7 +482,7 @@ void CraftingUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    //u_dot(xoff,yoff);
+    //draw_tracking_pixel(xoff,yoff);
     glColor4ub(255, 255, 255, 255);
 
 }

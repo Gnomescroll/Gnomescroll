@@ -10,18 +10,18 @@ class EnergyTanksUI : public UIElement
 {
     public:
 
-    static const int border = 0;       // border around entire panel
-    static const int span_tween_slots = 8;
-    static const int inc2 = 2;  // border around a slot icon
+        static const int border = 0;       // border around entire panel
+        static const int span_tween_slots = 8;
+        static const int inc2 = 2;  // border around a slot icon
 
-    static const int slot_size = 32;    // pixel dimension
+        static const int slot_size = 32;    // pixel dimension
 
-    bool inv_open;
+        bool inv_open;
 
-    int xdim;    // slot dimensions
-    int ydim;
+        int xdim;    // slot dimensions
+        int ydim;
 
-    int selected_slot;
+        int selected_slot;
 
     int count()
     { // count loaded energy tanks
@@ -67,7 +67,8 @@ class EnergyTanksUI : public UIElement
         this->name.set_text("Energy Tanks");
     }
 
-    EnergyTanksUI() : xdim(0), ydim(0), selected_slot(0)
+    EnergyTanksUI() :
+        xdim(0), ydim(0), selected_slot(0)
     {}
     
     ~EnergyTanksUI()

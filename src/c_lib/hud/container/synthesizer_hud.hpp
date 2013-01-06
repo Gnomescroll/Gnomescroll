@@ -91,7 +91,8 @@ class AgentSynthesizerUI : public UIElement
         this->container_type = container_type;
     }
 
-    AgentSynthesizerUI() : xdim(0), ydim(0),
+    AgentSynthesizerUI() :
+        xdim(0), ydim(0),
         shopping_xdim(0), shopping_ydim(0),
         render_width(0.0f), render_height(0.0f), prices(NULL)
     {

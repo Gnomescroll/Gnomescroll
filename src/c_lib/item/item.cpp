@@ -27,8 +27,7 @@ void Item::init_from_loading()
 {   // use only by serializer
     // we will set defaults for state properties that are not important enough to serialize
     ItemAttribute* attr = get_item_attributes(this->type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return;
+    IF_ASSERT(attr == NULL) return;
     this->gas_decay = attr->gas_lifetime;
 }
 # endif
@@ -48,8 +47,7 @@ void ItemList::decay_gas()
         if (this->objects[i].id == this->null_id) continue;
         class Item* item = &this->objects[i];
         class ItemAttribute* attr = get_item_attributes(item->type);
-        GS_ASSERT(attr != NULL);
-        if (attr == NULL) continue;
+        IF_ASSERT(attr == NULL) continue;
         if (!attr->gas) continue;
 
         // particle items -- gases decay much faster
@@ -67,12 +65,10 @@ void ItemList::decay_gas()
         else if (item->location == IL_CONTAINER)
         {   // get container
             ItemContainerID container_id = (ItemContainerID)item->location_id;
-            GS_ASSERT(container_id != NULL_CONTAINER);  // if it wasnt a particle it should be in a container
-            if (container_id == NULL_CONTAINER) continue;
+            IF_ASSERT(container_id == NULL_CONTAINER) continue;
 
             class ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
-            GS_ASSERT(container != NULL);
-            if (container == NULL) continue;
+            IF_ASSERT(container == NULL) continue;
             // ignore cryofreezer items
             if (container->type == ItemContainer::name::cryofreezer_small)
             {
@@ -127,7 +123,10 @@ void ItemList::decay_gas()
                 }
             }
         }
-        else GS_ASSERT(false);
+        else
+        {
+            GS_ASSERT(false);
+        }
     }
 }
 

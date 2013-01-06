@@ -12,17 +12,17 @@ class AgentInventoryUI : public UIElement
 {
     public:
 
-    int xdim;    // slot dimensions
-    int ydim;
+        int xdim;    // slot dimensions
+        int ydim;
 
-    //static const float border = 16;       // border around entire panel
-    static const float border;       // border around entire panel
-    static const float inc1; // spacing between slot icons
-    static const float inc2;  // border around a slot icon
+        //static const float border = 16;       // border around entire panel
+        static const float border;       // border around entire panel
+        static const float inc1; // spacing between slot icons
+        static const float inc2;  // border around a slot icon
 
-    static const float slot_size;    // pixel dimension
+        static const float slot_size;    // pixel dimension
 
-    HudText::Text* stack_numbers;
+        HudText::Text* stack_numbers;
 
     void draw();
 
@@ -38,7 +38,10 @@ class AgentInventoryUI : public UIElement
 
     int get_slot_at(int px, int py);
 
-    bool point_inside(int px, int py) { return (this->get_slot_at(px,py) != NULL_SLOT); }
+    bool point_inside(int px, int py)
+    {
+        return (this->get_slot_at(px,py) != NULL_SLOT);
+    }
 
     void init()
     {
@@ -63,7 +66,8 @@ class AgentInventoryUI : public UIElement
         this->name.set_text("Inventory");
     }
 
-    AgentInventoryUI() : xdim(0), ydim(0), stack_numbers(NULL)
+    AgentInventoryUI() :
+        xdim(0), ydim(0), stack_numbers(NULL)
     {}
     
     ~AgentInventoryUI()

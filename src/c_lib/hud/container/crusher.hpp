@@ -9,50 +9,50 @@ class CrusherUI : public UIElement
 {
     public:
           
-    static const int cell_size = 37;
-    int xdim;    // grid cell size
-    int ydim;
-    int alt_xdim;
-    int alt_ydim;
+        static const int cell_size = 37;
+        int xdim;    // grid cell size
+        int ydim;
+        int alt_xdim;
+        int alt_ydim;
 
-    // size of texture/render area
-    float render_width;
-    float render_height;
+        // size of texture/render area
+        float render_width;
+        float render_height;
 
-    static const int slot_size = 32;
-    static const int cell_offset_x = 3;
-    static const int cell_offset_y = 3;
-    static const int cell_offset_x_right = 2;
-    static const int cell_offset_y_bottom = 2;
+        static const int slot_size = 32;
+        static const int cell_offset_x = 3;
+        static const int cell_offset_y = 3;
+        static const int cell_offset_x_right = 2;
+        static const int cell_offset_y_bottom = 2;
 
-    // hardcoded sprite indices. multiply by cell size to get pixel index
-    static const int input_sprite_x = 0;
-    static const int input_sprite_y = 0;
-    static const int input_overlay_x = 2;
-    static const int input_overlay_y = 0;
-    static const int button_inactive_x = 0;
-    static const int button_inactive_y = 1;
-    static const int button_inactive_hover_x = 0;
-    static const int button_inactive_hover_y = 2;
-    static const int button_available_x = 1;
-    static const int button_available_y = 1;
-    static const int button_available_hover_x = 1;
-    static const int button_available_hover_y = 2;
-    static const int button_unavailable_x = 2;
-    static const int button_unavailable_y = 1;
-    static const int button_unavailable_hover_x = 2;
-    static const int button_unavailable_hover_y = 2;
-    static const int button_overlay_x = 3;
-    static const int button_overlay_y = 1;
-    static const int button_overlay_pressed_x = 3;
-    static const int button_overlay_pressed_y = 2;
-    
-    float texture_offset_x;
-    float texture_offset_y;
+        // hardcoded sprite indices. multiply by cell size to get pixel index
+        static const int input_sprite_x = 0;
+        static const int input_sprite_y = 0;
+        static const int input_overlay_x = 2;
+        static const int input_overlay_y = 0;
+        static const int button_inactive_x = 0;
+        static const int button_inactive_y = 1;
+        static const int button_inactive_hover_x = 0;
+        static const int button_inactive_hover_y = 2;
+        static const int button_available_x = 1;
+        static const int button_available_y = 1;
+        static const int button_available_hover_x = 1;
+        static const int button_available_hover_y = 2;
+        static const int button_unavailable_x = 2;
+        static const int button_unavailable_y = 1;
+        static const int button_unavailable_hover_x = 2;
+        static const int button_unavailable_hover_y = 2;
+        static const int button_overlay_x = 3;
+        static const int button_overlay_y = 1;
+        static const int button_overlay_pressed_x = 3;
+        static const int button_overlay_pressed_y = 2;
+        
+        float texture_offset_x;
+        float texture_offset_y;
 
-    HudText::Text* stacks;
+        HudText::Text* stacks;
 
-    bool centered;
+        bool centered;
 
     void draw();
 
@@ -170,12 +170,12 @@ class CrusherUI : public UIElement
         HudFont::end_font_draw();
     }
 
-    CrusherUI()
-    : xdim(1), ydim(1), alt_xdim(0), alt_ydim(0),
-    render_width(1.0f), render_height(1.0f),
-    texture_offset_x(0.0f), texture_offset_y(0.0f),
-    stacks(NULL),
-    centered(true)
+    CrusherUI() :
+        xdim(1), ydim(1), alt_xdim(0), alt_ydim(0),
+        render_width(1.0f), render_height(1.0f),
+        texture_offset_x(0.0f), texture_offset_y(0.0f),
+        stacks(NULL),
+        centered(true)
     {}
 
     ~CrusherUI()
@@ -362,7 +362,7 @@ void CrusherUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    //u_dot(xoff,yoff);
+    //draw_tracking_pixel(xoff,yoff);
     glColor4ub(255, 255, 255, 255);
 
 }
