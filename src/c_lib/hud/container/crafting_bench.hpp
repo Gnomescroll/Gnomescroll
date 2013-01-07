@@ -425,28 +425,17 @@ void CraftingUI::draw()
     HudFont::set_properties(font_size);
     HudFont::set_texture();
 
-    HudText::Text* text;
     // inputs
     for (int xslot=0; xslot<input_xdim; xslot++)
     for (int yslot=0; yslot<input_ydim; yslot++)
     {
-        // the synthesizer store slots in dat are indexed from 0
-        // it is not aware of the implementation detail we have for food
         const int slot = input_xdim*yslot + xslot;
-
         int stack = slot_metadata[slot].stack_size;
-        if (stack <= 1) continue;
-
-        GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
-
-        text = &this->stacks[slot];
-        text->update_formatted_string(1, stack);
-
+        int charges = slot_metadata[slot].charges;
+        HudText::Text* text = &this->stacks[slot];
         const float x = xoff + input_offset_x + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (input_offset_y + cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
-
-        text->set_position(x,y);
-        text->draw();
+        draw_slot_numbers(text, x, y, stack, charges);
     }
     
     // outputs
@@ -456,20 +445,11 @@ void CraftingUI::draw()
         // the synthesizer store slots in dat are indexed from 0
         // it is not aware of the implementation detail we have for food
         const int slot = output_xdim*yslot + xslot;
-
         int stack = Item::get_selected_craft_recipe_stack(this->container_id, slot);
-        if (stack <= 1) continue;
-
-        GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
-
-        text = &this->output_stacks[slot];
-        text->update_formatted_string(1, stack);
-
+        HudText::Text* text = &this->output_stacks[slot];
         const float x = xoff + output_offset_x + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (output_offset_y + cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
-
-        text->set_position(x,y);
-        text->draw();
+        draw_slot_numbers(text, x, y, stack, NULL_CHARGES);
     }
 
     HudFont::reset_default();

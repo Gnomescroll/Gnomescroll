@@ -42,6 +42,9 @@ inline void item_charges_StoC::handle()
     Item* item = item_list->get((ItemID)id);
     IF_ASSERT(item == NULL) return;
     item->charges = charges;
+
+    // update UI
+    ItemContainer::update_container_ui_from_state();
 }
 
 } // Item

@@ -244,14 +244,13 @@ void AgentInventoryUI::draw()
     HudFont::set_properties(font_size);
     HudFont::set_texture();
 
-    HudText::Text* text;
     for (int i=0; i<this->xdim; i++)
     for (int j=0; j<this->ydim; j++)
     {
         const int slot = j * this->xdim + i;
         int stack = slot_metadata[slot].stack_size;
         int charges = slot_metadata[slot].charges;
-        text = &this->stack_numbers[slot];
+        HudText::Text* text = &this->stack_numbers[slot];
         const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - text->get_height());
         draw_slot_numbers(text, x, y, stack, charges);         

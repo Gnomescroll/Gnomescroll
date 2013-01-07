@@ -13,9 +13,14 @@ void draw_slot_numbers(HudText::Text* text, float x, float y, int stack_size, in
     Color color = Color(255,255,255);
     if (charges != NULL_CHARGES)
     {
-        color = Color(200,10,10);
         val = charges;
+        if (val)
+            color = Color(20, 200, 200);
+        else
+            color = Color(200, 20, 20);
     }
+    else if (val == 1)
+        return;
 
     text->set_color(color);
     text->update_formatted_string(1, val);

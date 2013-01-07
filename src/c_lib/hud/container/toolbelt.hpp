@@ -277,18 +277,12 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<this->ydim; j++)
     {
         const int slot = j * this->xdim + i;
-        int count = slot_metadata[slot].stack_size;
-        if (count <= 1) continue;
-        GS_ASSERT(count_digits(count) < STACK_COUNT_MAX_LENGTH);
-        
+        int stack = slot_metadata[slot].stack_size;
+        int charges = slot_metadata[slot].charges;
         HudText::Text* text = &this->stack_numbers[slot];
-        text->update_formatted_string(1, count);
-
         const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - text->get_height());
-
-        text->set_position(x,y);
-        text->draw();
+        draw_slot_numbers(text, x, y, stack, charges);         
     }
     HudFont::reset_default();
     HudFont::end_font_draw();

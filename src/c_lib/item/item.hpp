@@ -94,7 +94,7 @@ class Item
         location(IL_NOWHERE),
         location_id(NULL_LOCATION),
         container_slot(NULL_SLOT),
-        charges(0)
+        charges(NULL_CHARGES)
         #if DC_SERVER
         , recharge_tick(0)
         , gas_decay(NULL_GAS_LIFETIME)

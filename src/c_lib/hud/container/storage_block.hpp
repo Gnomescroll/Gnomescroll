@@ -281,23 +281,13 @@ void StorageBlockUI::draw()
     for (int xslot=0; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {
-        // the synthesizer store slots in dat are indexed from 0
-        // it is not aware of the implementation detail we have for food
         const int slot = xdim*yslot + xslot;
-
         int stack = slot_metadata[slot].stack_size;
-        if (stack <= 1) continue;
-
-        GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
-
+        int charges = slot_metadata[slot].charges;
         text = &this->stacks[slot];
-        text->update_formatted_string(1, stack);
-
         const float x = xoff + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
-
-        text->set_position(x,y);
-        text->draw();
+        draw_slot_numbers(text, x, y, stack, charges);         
     }
 
     HudFont::reset_default();

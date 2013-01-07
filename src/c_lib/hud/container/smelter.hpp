@@ -390,20 +390,16 @@ void SmelterUI::draw()
     HudFont::set_properties(font_size);
     HudFont::set_texture();
 
-    HudText::Text* text;
     for (int slot=0; slot<smelter->slot_max; slot++)
     {
         int stack = slot_metadata[slot].stack_size;
-        if (stack <= 1) continue;
+        int charges = slot_metadata[slot].charges;
+        HudText::Text* text = &this->stacks[slot];
 
         int grid = this->get_grid_for_slot(slot);
         int xslot = grid % this->xdim;
         int yslot = grid / this->xdim;
 
-        GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
-
-        text = &this->stacks[slot];
-        text->update_formatted_string(1, stack);
 
         if (slot == smelter->slot_max-1)
             yslot = 0;
@@ -412,9 +408,8 @@ void SmelterUI::draw()
         float y = yoff - (cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
         if (slot == smelter->slot_max-1)
             y -= 18;
-            
-        text->set_position(x,y);
-        text->draw();
+
+        draw_slot_numbers(text, x, y, stack, charges);         
     }
 
     HudFont::reset_default();

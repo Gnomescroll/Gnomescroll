@@ -324,27 +324,16 @@ void CrusherUI::draw()
     HudFont::set_properties(font_size);
     HudFont::set_texture();
 
-    HudText::Text* text;
-    
-    //draw items
     for (int slot=0; slot<slot_max; slot++)
     {
         int xslot = 0;
         int yslot = slot;
-
         int stack = slot_metadata[slot].stack_size;
-        if (stack <= 1) continue;
-
-        GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);
-
-        text = &this->stacks[slot];
-        text->update_formatted_string(1, stack);
-
+        int charges = slot_metadata[slot].charges;
+        HudText::Text* text = &this->stacks[slot];
         const float x = xoff + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
-
-        text->set_position(x,y);
-        text->draw();
+        draw_slot_numbers(text, x, y, stack, charges);
     }
 
     HudFont::reset_default();

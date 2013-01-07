@@ -281,13 +281,10 @@ static HudText::Text* tooltip_text = NULL;
 static void draw_grabbed_icon()
 {
     IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture == 0) return;
-
     using ItemContainer::player_hand_ui;
     if (player_hand_ui == NULL) return;
-    int hand_item_type = player_hand_ui->get_item_type();
-    if (hand_item_type == NULL_ITEM_TYPE) return;
-    int hand_item_stack = player_hand_ui->get_item_stack();
-    int hand_item_durability = player_hand_ui->get_item_durability();
+    struct ItemContainer::SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
+    if (hand_metadata.type == NULL_ITEM_TYPE) return;
     
     const float w = 32;
 
@@ -302,10 +299,10 @@ static void draw_grabbed_icon()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // render durability
-    if (hand_item_durability != NULL_DURABILITY)
+    if (hand_metadata.durability != NULL_DURABILITY)
     {
-        int max_durability = Item::get_max_durability(hand_item_type);
-        float ratio = (float)hand_item_durability / (float)max_durability;
+        int max_durability = Item::get_max_durability(hand_metadata.type);
+        float ratio = (float)hand_metadata.durability / (float)max_durability;
 
         int mh = w / 8; // meter height
         glColor4ub(255, 0, 0, 255);               // red
@@ -324,7 +321,7 @@ static void draw_grabbed_icon()
 
     glBegin(GL_QUADS);
         
-    int tex_id = Item::get_sprite_index_for_type(hand_item_type);
+    int tex_id = Item::get_sprite_index_for_type(hand_metadata.type);
 
     const float iw = 16.0f; // icon_width
     const int iiw = 16; // integer icon width
@@ -350,9 +347,7 @@ static void draw_grabbed_icon()
     glDisable(GL_TEXTURE_2D);
 
     // Draw stack numbers
-    if (grabbed_icon_stack_text == NULL) return;
-    if (hand_item_stack <= 1) return;
-    GS_ASSERT(count_digits(hand_item_stack) < STACK_COUNT_MAX_LENGTH);
+    IF_ASSERT(grabbed_icon_stack_text == NULL) return;
 
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
@@ -362,9 +357,7 @@ static void draw_grabbed_icon()
     // calc posuition
     x = x + (w/2) + font_size;
     y = y + (w/2) - font_size;
-    grabbed_icon_stack_text->update_formatted_string(1, hand_item_stack);
-    grabbed_icon_stack_text->set_position(x,y);
-    grabbed_icon_stack_text->draw();
+    draw_slot_numbers(grabbed_icon_stack_text, x, y, hand_metadata.stack_size, hand_metadata.charges);
 
     HudFont::reset_default();
     HudFont::end_font_draw();

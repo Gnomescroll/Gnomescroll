@@ -415,13 +415,9 @@ void AgentSynthesizerUI::draw()
     GS_ASSERT(count_digits(coin_stack_size) < STACK_COUNT_MAX_LENGTH);
     if (coin_stack_size > 1)
     {
-        this->coin_stack.update_formatted_string(1, coin_stack_size);
-
         const float x = xoff + xdim*cell_size - cell_offset_x_right - this->coin_stack.get_width();
         const float y = yoff - (ydim*cell_size - cell_offset_y_bottom - this->coin_stack.get_height());
-
-        this->coin_stack.set_position(x,y);
-        this->coin_stack.draw();
+        draw_slot_numbers(&this->coin_stack, x, y, coin_stack_size, NULL_CHARGES);         
     }
 
     HudFont::reset_default();
