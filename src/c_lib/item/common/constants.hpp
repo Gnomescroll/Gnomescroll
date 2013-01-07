@@ -102,3 +102,8 @@ inline bool isValid(ItemContainerType container_type)
 {
     return (container_type >= 0 && container_type < MAX_CONTAINER_TYPES);
 }
+
+inline bool is_tangible_group(ItemGroup group)
+{
+    return (group != IG_NONE && group != IG_ERROR && group != IG_UNKNOWN && group != IG_DEBUG);
+}

@@ -423,7 +423,8 @@ void load_item_dat()
     item_def(IG_SPECIAL, "magic_stick");
     sprite_def(i0, 5,4);
     s->max_charges = 3;
-    s->recharge_rate = ONE_HOUR * 8;
+    //s->recharge_rate = ONE_HOUR * 4;
+    s->recharge_rate = ONE_SECOND * 5;
 
     finish_item_def();
 }

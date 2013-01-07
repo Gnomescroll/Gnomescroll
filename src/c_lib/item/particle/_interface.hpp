@@ -20,8 +20,7 @@ void draw();
 class ItemParticle* create_item_particle(
     ItemParticleID particle_id, int item_type,
     float x, float y, float z, 
-    float vx, float vy, float vz
-);
+    float vx, float vy, float vz);
 #endif
 
 #if DC_SERVER
@@ -29,8 +28,7 @@ class ItemParticle* create_item_particle(
 class ItemParticle* create_item_particle(
     ItemID item_id, int item_type,
     float x, float y, float z, 
-    float vx, float vy, float vz
-);
+    float vx, float vy, float vz);
 
 // create Item and ItemParticle
 class Item::Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz);

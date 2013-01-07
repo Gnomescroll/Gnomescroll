@@ -118,6 +118,7 @@ void send_item_state(ItemID item_id)
 {
     Item* item = get_item(item_id);
     IF_ASSERT(item == NULL) return;
+    if (item->subscribers.count <= 0) return;
     GS_ASSERT(item->subscribers.count == 1);
 
     item_state_StoC msg;

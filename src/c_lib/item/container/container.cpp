@@ -101,8 +101,7 @@ int ItemContainerHand::insert_item(ItemID item_id)
     int slot = ItemContainerInterface::insert_item(0, item_id);
     if (slot == NULL_SLOT) return NULL_SLOT;
     class Item::Item* item = Item::get_item(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return NULL_SLOT;
+    IF_ASSERT(item == NULL) return NULL_SLOT;
     item->location = IL_HAND;
     item->location_id = this->owner;
     return slot;
@@ -158,10 +157,8 @@ bool ItemContainerSmelter::can_produce_output(Item::SmeltingRecipe** pRecipe, in
 
 bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, int n_outputs)
 {
-    GS_ASSERT(n_outputs > 0);
-    if (n_outputs <= 0) return false;
-    GS_ASSERT(n_outputs <= alt_xdim*alt_ydim);
-    if (n_outputs > alt_xdim*alt_ydim) return false;
+    IF_ASSERT(n_outputs <= 0) return false;
+    IF_ASSERT(n_outputs > alt_xdim*alt_ydim) return false;
 
     for (int i=0; i<n_outputs; i++)
     {
@@ -181,8 +178,7 @@ bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, 
 void ItemContainerSmelter::burn_fuel()
 {
     GS_ASSERT(this->fuel_type != NULL_ITEM_TYPE);
-    GS_ASSERT(this->fuel > 0.0f);
-    if (this->fuel <= 0.0f) return;
+    IF_ASSERT(this->fuel <= 0.0f) return;
     this->fuel -= this->burn_rate;
     if (this->fuel <= 0.0f)
         this->reset_fuel();
@@ -194,8 +190,7 @@ void ItemContainerSmelter::fill_fuel(int fuel_type)
     this->fuel = 1.0f;
     this->fuel_type = fuel_type;
     this->burn_rate = 1.0f / ((float)Item::get_fuel_burn_rate(fuel_type));
-    GS_ASSERT(this->burn_rate > 0.0f);
-    if (this->burn_rate <= 0.0f) this->burn_rate = 1.0f/30.0f;
+    IF_ASSERT(this->burn_rate <= 0.0f) this->burn_rate = 1.0f/30.0f;
     send_smelter_fuel(this->id);
 }
 
@@ -215,8 +210,7 @@ void ItemContainerSmelter::begin_smelting(int recipe_id)
     GS_ASSERT(this->progress <= 0.0f);
     this->recipe_id = recipe_id;
     this->progress_rate = 1.0f / ((float)Item::get_smelting_recipe_creation_time(recipe_id));
-    GS_ASSERT(this->progress_rate > 0.0f);
-    if (this->progress_rate <= 0.0f) this->progress_rate = 1.0f/30.0f;
+    IF_ASSERT(this->progress_rate <= 0.0f) this->progress_rate = 1.0f/30.0f;
     this->progress += this->progress_rate;
     send_smelter_progress(this->id);
 
@@ -224,8 +218,7 @@ void ItemContainerSmelter::begin_smelting(int recipe_id)
     {
         int b[3];
         bool found = t_map::get_container_location(this->id, b);
-        GS_ASSERT(found);
-        if (!found) return;
+        IF_ASSERT(!found) return;
         struct Vec3 p = vec3_init(b[0], b[1], b[2]);
         p = vec3_add(p, vec3_init(0.5f, 0.5f, 0.5f));
         Sound::broadcast_play_3d_sound("smelter_on", p);

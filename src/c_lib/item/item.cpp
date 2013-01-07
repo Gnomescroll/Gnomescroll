@@ -40,11 +40,11 @@ void ItemList::recharge_items()
     {
         if (this->objects[i].id == this->null_id) continue;
         Item* item = &this->objects[i];
-        int max_charges = get_max_charges(item->id);
+        int max_charges = get_max_charges(item->type);
         if (item->charges >= max_charges) continue;
-        int recharge_rate = get_recharge_rate(item->id);
+        int recharge_rate = get_recharge_rate(item->type);
         item->recharge_tick++;
-        if (item->recharge_tick % recharge_rate != 0) continue;
+        if (item->recharge_tick < recharge_rate) continue;
         item->recharge_tick = 0;
         item->charges++;
         send_item_charges(item->id);
@@ -62,7 +62,6 @@ void ItemList::decay_gas()
 
     for (unsigned int i=0; i<this->max; i++)
     {
-        // get item
         if (this->objects[i].id == this->null_id) continue;
         class Item* item = &this->objects[i];
         class ItemAttribute* attr = get_item_attributes(item->type);

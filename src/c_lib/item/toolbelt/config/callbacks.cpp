@@ -60,8 +60,7 @@ void begin_mining_laser(AgentID agent_id, int item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     Agents::Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
     a->event.begin_mining_laser();
 }
 
@@ -177,7 +176,8 @@ void decrement_stack(AgentID agent_id, ItemID item_id, int item_type)
 void consume_item(AgentID agent_id, ItemID item_id, int item_type)
 {
     Agents::Agent* a = Agents::get_agent(agent_id);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
+    
     bool consumed = a->status.consume_item(item_id);
     if (!consumed) return;
     decrement_stack(agent_id, item_id, item_type);
@@ -186,7 +186,8 @@ void consume_item(AgentID agent_id, ItemID item_id, int item_type)
 void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_type)
 {
     Agents::Agent* a = Agents::get_agent(agent_id);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
+    
     AgentID teammate_id = Hitscan::against_agents(
         a->get_camera_position(), a->forward_vector(),
         APPLY_REPAIR_KIT_MAX_DISTANCE, a->id);
@@ -198,8 +199,7 @@ void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_t
 static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, int item_type, const EntityType object_type, const float object_height)
 {
     Agents::Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return NULL;
+    IF_ASSERT(a == NULL) return NULL;
     
     const int max_dist = 4.0f;
     int b[3];
@@ -212,8 +212,7 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, in
     
     // make sure will fit height
     int h = (int)ceil(object_height);
-    GS_ASSERT(h > 0);
-    if (h <= 0) h = 1;
+    IF_ASSERT(h <= 0) h = 1;
     for (int i=0; i<h; i++)
         if (t_map::get(b[0], b[1], b[2] + i) != 0)
             return NULL;
@@ -225,8 +224,7 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, in
         return NULL;
 
     class Entities::Entity* obj = Entities::create(object_type);
-    GS_ASSERT(obj != NULL);
-    if (obj == NULL) return NULL;
+    IF_ASSERT(obj == NULL) return NULL;
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -247,8 +245,7 @@ void place_spawner(AgentID agent_id, ItemID item_id, int item_type)
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
 
     Agents::Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
 
     class Entities::Entity* obj = place_object(agent_id, item_id, item_type, OBJECT_AGENT_SPAWNER, Entities::AGENT_SPAWNER_HEIGHT);
     if (obj == NULL) return;
@@ -281,8 +278,7 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
     
     Agents::Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
     
     const int max_dist = 4.0f;
     int b[3];
@@ -300,10 +296,55 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
 
     //printf("place mech %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
     bool ret = t_mech::create_mech(b[0],b[1],b[2], mech_type);
-
-    if(ret == true)
+    if (ret)
         decrement_stack(agent_id, item_id, item_type);
+}
 
+// magic stick
+
+void use_magic_stick(AgentID agent_id, ItemID item_id, int item_type)
+{
+    Item::Item* item = Item::get_item(item_id);
+    if (item->charges <= 0) return;
+
+    Agents::Agent* a = Agents::get_agent(agent_id);
+    IF_ASSERT(a == NULL) return;
+
+    // find an item type. it should not be the same item or an abstract item
+    int random_type = NULL_ITEM_TYPE;
+    do {
+        random_type = randrange(0, MAX_ITEM_TYPES-1);
+    } while (!Item::type_used(random_type)
+          || random_type == item_type
+          || !is_tangible_group(Item::get_item_group_for_type(random_type)));
+
+    // place item in front of player, near the head, but at a distance away
+    const float distance_from_player = 1.3f;
+    // incase first attempt is inside a block
+    const float backup_distance_from_player = a->box.box_r * 0.5f;
+    
+    // calculate position
+    struct Vec3 forward = a->forward_vector();
+    struct Vec3 start_position = a->get_position();
+    start_position.z += a->box.b_height * 0.95f;    // near head
+    struct Vec3 position = vec3_add(start_position, vec3_scalar_mult(forward, distance_from_player));
+    if (t_map::get(position.x, position.y, position.z) != EMPTY_CUBE)
+    {
+        start_position = a->get_camera_position();
+        position = vec3_add(start_position, vec3_scalar_mult(forward, backup_distance_from_player));
+    }
+
+    // create item particle, no velocity
+    Item::Item* new_item = ItemParticle::create_item_particle(random_type, position, vec3_init(0,0,0));
+    IF_ASSERT(new_item == NULL) return;
+
+    // give it a random stack size
+    int stack_size = randrange(1, Item::get_max_stack_size(random_type));
+    new_item->stack_size = stack_size;
+
+    // consume charge
+    item->charges--;
+    Item::send_item_charges(item_id);    
 }
 
 #endif

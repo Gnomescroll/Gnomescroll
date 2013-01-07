@@ -13,6 +13,7 @@ class ItemParticle_list* item_particle_list = NULL;
 
 void init()
 {
+    GS_ASSERT(item_particle_list == NULL);
     item_particle_list = new ItemParticle_list(MAX_ITEM_PARTICLES);
 }
 
@@ -32,9 +33,6 @@ void init_packets()
 
 void tick()
 {
-    GS_ASSERT(item_particle_list != NULL);
-    if (item_particle_list == NULL) return;
-
     item_particle_list->tick();
 
     #if DC_SERVER
@@ -54,8 +52,7 @@ void destroy(ItemParticleID particle_id)
     #if DC_SERVER
     GS_ASSERT(particle_id != NULL_PARTICLE);
     ItemParticle* particle = item_particle_list->get(particle_id);
-    GS_ASSERT(particle != NULL);
-    if (particle == NULL) return;
+    IF_ASSERT(particle == NULL) return;
     Item::Item* item = Item::get_item(particle->item_id);
     if (item != NULL) item->location = IL_NOWHERE;
 
@@ -67,8 +64,7 @@ void destroy(ItemParticleID particle_id)
 
 class ItemParticle* get(ItemParticleID particle_id)
 {
-    GS_ASSERT(particle_id != NULL_PARTICLE);
-    if (particle_id == NULL_PARTICLE) return NULL;
+    IF_ASSERT(particle_id == NULL_PARTICLE) return NULL;
     return item_particle_list->get(particle_id);
 }
 
@@ -76,15 +72,14 @@ class ItemParticle* get(ItemParticleID particle_id)
 
 void draw()
 {
-    GS_ASSERT(item_particle_list != NULL);
     item_particle_list->draw();
 }
 
 ItemParticle* create_item_particle(
     ItemParticleID particle_id, int item_type,
     float x, float y, float z, 
-    float vx, float vy, float vz
-) {
+    float vx, float vy, float vz)
+{
     ItemParticle* particle = item_particle_list->create(particle_id);
     if (particle == NULL) return NULL;
     particle->init(item_type, x,y,z,vx,vy,vz);
@@ -96,8 +91,8 @@ ItemParticle* create_item_particle(
 ItemParticle* create_item_particle(
     ItemID item_id, int item_type,
     float x, float y, float z, 
-    float vx, float vy, float vz
-) {
+    float vx, float vy, float vz)
+{
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return NULL;
     // transitioning to item particle, remove all subscribers
@@ -132,8 +127,7 @@ class Item::Item* create_item_particle(int item_type, float x, float y, float z,
     if (item == NULL) return NULL;
     // no subscribers
     ItemParticle* particle = create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
-    GS_ASSERT(particle != NULL);
-    if (particle == NULL) return item;
+    IF_ASSERT(particle == NULL) return item;
     GS_ASSERT(item->location == IL_PARTICLE);
     // location stuff was already set
     broadcast_particle_item_create(particle->id);
@@ -148,8 +142,7 @@ class Item::Item* create_item_particle(int item_type, Vec3 position, Vec3 moment
 static bool pack_particle_item_create(ItemParticleID particle_id, item_particle_create_StoC* msg)
 {
     ItemParticle* particle = item_particle_list->get(particle_id);
-    GS_ASSERT(particle != NULL);
-    if (particle == NULL) return false;
+    IF_ASSERT(particle == NULL) return false;
     
     msg->id = particle->id;
     msg->item_type = particle->item_type;
@@ -205,8 +198,7 @@ void broadcast_particle_item_state(ItemParticleID particle_id)
 
 void broadcast_particle_item_destroy(ItemParticleID particle_id)
 {
-    GS_ASSERT(particle_id != NULL_PARTICLE);
-    if (particle_id == NULL_PARTICLE) return;
+    IF_ASSERT(particle_id == NULL_PARTICLE) return;
     class item_particle_destroy_StoC msg;
     msg.id = particle_id;
     msg.broadcast();
@@ -246,9 +238,7 @@ void broadcast_particle_item_pickup_cancelled(ItemParticleID particle_id)
 // set to be pickup
 static void split_item_particle(Item::Item* item, ItemParticle* particle, int item_type, int stack_size, AgentID target_agent)
 {
-    GS_ASSERT(item != NULL);
-    GS_ASSERT(particle != NULL);
-    if (item == NULL || particle == NULL) return;
+    IF_ASSERT(item == NULL || particle == NULL) return;
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
     GS_ASSERT(stack_size > 0);
     GS_ASSERT(item->stack_size > stack_size);    // its not splitting if it uses up the whole item
@@ -262,8 +252,7 @@ static void split_item_particle(Item::Item* item, ItemParticle* particle, int it
 
     // create new particle
     Item::Item* split_item = create_item_particle(item_type, p, v);
-    GS_ASSERT(split_item != NULL);
-    if (split_item == NULL) return;
+    IF_ASSERT(split_item == NULL) return;
     GS_ASSERT(split_item->location = IL_PARTICLE);
     GS_ASSERT(split_item->location_id != NULL_PARTICLE);
     // set stack size
@@ -271,8 +260,7 @@ static void split_item_particle(Item::Item* item, ItemParticle* particle, int it
     
     // set new particle as picked_up
     ItemParticle* split_particle = get((ItemParticleID)split_item->location_id);
-    GS_ASSERT(split_particle != NULL);
-    if (split_particle == NULL) return;
+    IF_ASSERT(split_particle == NULL) return;
     split_particle->picked_up(target_agent);
 }
 
@@ -302,8 +290,7 @@ void check_item_pickups()
         if (!item_particle->can_be_picked_up()) continue;
         GS_ASSERT(item_particle->item_id != NULL_ITEM);
         Item::Item* item = Item::get_item(item_particle->item_id);
-        GS_ASSERT(item != NULL);
-        if (item == NULL)
+        IF_ASSERT(item == NULL)
         {   // BAD ERROR -- source item is missing. just die
             destroy(item_particle->id);
             continue;
@@ -467,8 +454,7 @@ void check_item_pickups()
                         GS_ASSERT(stack_size > 0);
                         if (container->slot[i] == NULL_ITEM) continue;
                         Item::Item* slot_item = Item::get_item(container->slot[i]);
-                        GS_ASSERT(slot_item != NULL);
-                        if (slot_item == NULL) continue;
+                        IF_ASSERT(slot_item == NULL) continue;
                         if (slot_item->type != item_type) continue;
                         int stack_space = Item::get_stack_space(slot_item->id);
                         if (stack_space == 0) continue;
@@ -541,8 +527,7 @@ void check_item_pickups()
                         GS_ASSERT(stack_size > 0);
                         if (container->slot[i] == NULL_ITEM) continue;
                         Item::Item* slot_item = Item::get_item(container->slot[i]);
-                        GS_ASSERT(slot_item != NULL);
-                        if (slot_item == NULL) continue;
+                        IF_ASSERT(slot_item == NULL) continue;
                         if (slot_item->type != item_type) continue;
                         int stack_space = Item::get_stack_space(slot_item->id);
                         if (stack_space == 0) continue;
@@ -593,11 +578,9 @@ void check_item_pickups()
 
 static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
 {
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id == NULL_ITEM) return;
+    IF_ASSERT(item_id == NULL_ITEM) return;
     Item::Item* item = Item::get_item(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    IF_ASSERT(item == NULL) return;
     item->location = IL_NOWHERE;
 
     position = translate_position(position);
@@ -606,8 +589,7 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
     ItemParticle* particle = create_item_particle(
         item->id, item->type,
         position.x, position.y, position.z,
-        velocity.x, velocity.y, velocity.z
-   );
+        velocity.x, velocity.y, velocity.z);
     if (particle == NULL) return;
     GS_ASSERT(item->location == IL_PARTICLE);
     broadcast_particle_item_create(particle->id);
@@ -616,12 +598,10 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
 
 void throw_agent_item(AgentID agent_id, ItemID item_id)
 {
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id == NULL_ITEM) return;
+    IF_ASSERT(item_id == NULL_ITEM) return;
     
     Agents::Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL)
+    IF_ASSERT(a == NULL)
     {   // we cannot get the agent state, so just destroy the item
         GS_ASSERT(false);
         Item::destroy_item(item_id);
@@ -643,7 +623,7 @@ void throw_agent_item(AgentID agent_id, ItemID item_id)
 
 void dump_container_item(ItemID item_id, float x, float y, float z)
 {
-    GS_ASSERT(item_id != NULL_ITEM);
+    IF_ASSERT(item_id == NULL_ITEM) return;
     
     Vec3 position = vec3_init(x,y,z);
     position = vec3_add(position, vec3_init(randf(), randf(), randf())); // random point inside box

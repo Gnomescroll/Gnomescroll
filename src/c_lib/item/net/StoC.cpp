@@ -42,7 +42,6 @@ inline void item_charges_StoC::handle()
     Item* item = item_list->get((ItemID)id);
     IF_ASSERT(item == NULL) return;
     item->charges = charges;
-    printf("Item %d has %d charges\n", item->id, charges);
 }
 
 } // Item
