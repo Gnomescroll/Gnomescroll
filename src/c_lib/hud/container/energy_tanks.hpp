@@ -28,7 +28,7 @@ class EnergyTanksUI : public UIElement
         if (this->container_id == NULL_CONTAINER) return 0;
         struct ItemContainer::SlotMetadata* slot_metadata =
             ItemContainer::get_container_ui_slot_metadata(container_id);
-        IF_ASSERT(slot_metadata == NULL) return 0;
+        if (slot_metadata == NULL) return 0;
 
         int num_loaded = 0;
 
@@ -121,7 +121,7 @@ void EnergyTanksUI::draw()
     
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
-    IF_ASSERT(slot_metadata == NULL) return;
+    if (slot_metadata == NULL) return;
 
     if (inv_open) 
     {

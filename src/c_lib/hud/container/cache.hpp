@@ -35,6 +35,11 @@ class CacheUI : public AgentInventoryUI
             t->set_depth(-0.1f);
         }
     }
+
+    CacheUI()
+    {
+        this->slot_background_border_color = Color(183, 110, 121);
+    }
 };
 
 }   // HudContainer

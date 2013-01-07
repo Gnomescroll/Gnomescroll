@@ -226,7 +226,7 @@ void StorageBlockUI::draw()
     // get data for rendering items
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
-    IF_ASSERT(slot_metadata == NULL) return;
+    if (slot_metadata == NULL) return;
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);

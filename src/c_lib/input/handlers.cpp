@@ -98,13 +98,13 @@ void disable_container_block()
         set_mouse_bind(input_state.rebind_mouse);
     input_state.ignore_mouse_motion = true;
 
+    // if we are requesting the close client-side, then we need to tell the
+    // container module and server.
+    // else, it was already closed by the container module
     ItemContainerID container_id = ItemContainer::opened_container;
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id != NULL_CONTAINER)
-    {
-        ItemContainer::close_container(container_id);
-        ItemContainer::send_container_close(container_id);
-    }
+    if (container_id == NULL_CONTAINER) return;
+    ItemContainer::close_container(container_id);
+    ItemContainer::send_container_close(container_id);
 }
 
 void close_all_containers()

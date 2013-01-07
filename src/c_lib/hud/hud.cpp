@@ -247,7 +247,7 @@ bool FAILED_merge_of_cntainr_draws(
     // abort if slots aren't copasetic
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
-    IF_ASSERT(slot_metadata == NULL) return false;
+    if (slot_metadata == NULL) return false;
 
     const float w = slot_size;
 

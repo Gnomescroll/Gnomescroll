@@ -208,43 +208,6 @@ AgentID get_container_owner(ItemContainerID container_id)
     return container->owner;
 }
 
-void container_block_destroyed(ItemContainerID container_id, int x, int y, int z)
-{
-    IF_ASSERT(container_id == NULL_CONTAINER) return;
-
-    ItemContainerInterface* container = get_container(container_id);
-    if (container == NULL) return;
-
-    #if DC_SERVER
-    // close all opened containers
-    GS_ASSERT(opened_containers != NULL);
-    for (int i=0; i<MAX_AGENTS; i++)
-        if (opened_containers[i] == container_id)
-            opened_containers[i] = NULL_CONTAINER;
-
-    // queue the container delete packet first
-    // the handler will destroy the contents -- then the item_particle create will recreate
-    broadcast_container_delete(container_id);
-
-    // dump contents
-    for (int i=0; i<container->slot_max; i++)
-    {
-        if (container->slot[i] == NULL_ITEM) continue;
-        ItemID item_id = container->slot[i];
-        container->remove_item(i);
-        ItemParticle::dump_container_item(item_id, x,y,z);
-        // no need to send container removal packet
-    }
-    #endif
-
-    #if DC_CLIENT
-    close_container(container_id);
-    #endif
-
-    // destroy container
-    destroy_container(container_id);
-}
-
 bool container_block_in_range_of(Vec3 pos, int block[3])
 {
     Vec3 container_position = vec3_init(block[0], block[1], block[2]);
@@ -270,16 +233,12 @@ ItemContainerInterface* create_container(ItemContainerType type, ItemContainerID
 
 void update_container_ui_from_state()
 {
-    if (player_container_ui    != NULL) player_container_ui    ->load_data (player_container    ->slot);
-    if (player_hand_ui         != NULL) player_hand_ui         ->load_data (player_hand         ->slot);
-    if (player_toolbelt_ui     != NULL) player_toolbelt_ui     ->load_data (player_toolbelt     ->slot);
-    if (player_synthesizer_ui  != NULL) player_synthesizer_ui  ->load_data (player_synthesizer  ->slot);
-    if (player_energy_tanks_ui != NULL) player_energy_tanks_ui ->load_data (player_energy_tanks ->slot);
-    if (player_craft_bench_ui  != NULL) player_craft_bench_ui  ->load_data (player_craft_bench  ->slot);
-    if (storage_block_ui       != NULL) storage_block_ui       ->load_data (storage_block       ->slot);
-    if (cryofreezer_ui         != NULL) cryofreezer_ui         ->load_data (cryofreezer         ->slot);
-    if (crusher_ui             != NULL) crusher_ui             ->load_data (crusher             ->slot);
-    if (smelter_ui             != NULL) smelter_ui             ->load_data (smelter             ->slot);
+    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
+        if (container_uis[i] != NULL)
+        {
+            IF_ASSERT(containers[i] == NULL) continue;
+            container_uis[i]->load_data(containers[i]->slot);
+        }
 }
 
 void update_smelter_ui()
@@ -393,31 +352,24 @@ bool close_container(ItemContainerID container_id)
     containers[container->type] = NULL;
     container_uis[container->type] = NULL;
 
-    // teardown UI widget
-    player_craft_bench = NULL;
-    if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
-    player_craft_bench_ui = NULL;
+    #define TEARDOWN_CONTAINER(NAME) { do { \
+        NAME = NULL; \
+        if (NAME##_ui != NULL) delete NAME##_ui; \
+        NAME##_ui = NULL; \
+    } while(0); }
 
-    storage_block = NULL;
-    if (storage_block_ui != NULL) delete storage_block_ui;
-    storage_block_ui = NULL;
+    // public block types go here
+    TEARDOWN_CONTAINER(player_craft_bench);
+    TEARDOWN_CONTAINER(storage_block);
+    TEARDOWN_CONTAINER(cryofreezer);
+    TEARDOWN_CONTAINER(smelter);
+    TEARDOWN_CONTAINER(crusher);
 
-    cryofreezer = NULL;
-    if (cryofreezer_ui != NULL) delete cryofreezer_ui;
-    cryofreezer_ui = NULL;
-
-    smelter = NULL;
-    if (smelter_ui != NULL) delete smelter_ui;
-    smelter_ui = NULL;
-
-    crusher = NULL;
-    if (crusher_ui != NULL) delete crusher_ui;
-    crusher_ui = NULL;
-
+    #undef TEARDOWN_CONTAINER
+    
     // unset hud container id
     HudContainer::close_container(container_id);
 
-    //print_trace();
     opened_container = NULL_CONTAINER;
     did_open_container_block = false;
     did_close_container_block = true;
@@ -1685,6 +1637,36 @@ void test_container_list_capacity()
     for (int i=0; i<MAX_CONTAINERS*2; i++)
         item_container_list->create(name::inventory);
 }
+
+void container_block_destroyed(ItemContainerID container_id, int x, int y, int z)
+{
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
+    ItemContainerInterface* container = get_container(container_id);
+    IF_ASSERT(container == NULL) return;
+
+    // close all opened containers
+    for (int i=0; i<MAX_AGENTS; i++)
+        if (opened_containers[i] == container_id)
+            opened_containers[i] = NULL_CONTAINER;
+
+    // queue the container delete packet first
+    // the handler will destroy the contents -- then the item_particle create will recreate
+    broadcast_container_delete(container_id);
+
+    // dump contents
+    for (int i=0; i<container->slot_max; i++)
+    {
+        if (container->slot[i] == NULL_ITEM) continue;
+        ItemID item_id = container->slot[i];
+        container->remove_item(i);
+        ItemParticle::dump_container_item(item_id, x,y,z);
+        // no need to send container removal packet
+    }
+
+    // destroy container
+    destroy_container(container_id);
+}
+
 
 }   // ItemContainer
 

@@ -17,7 +17,6 @@ class ItemContainerInterface* get_container(ItemContainerID id);
 ItemContainerType get_container_type(ItemContainerID container_id);
 AgentID get_container_owner(ItemContainerID container_id);
 void destroy_container(ItemContainerID container_id);
-void container_block_destroyed(ItemContainerID container_id, int x, int y, int z);
 
 bool container_block_in_range_of(struct Vec3 pos, int block[3]);
 
@@ -115,6 +114,8 @@ void update_smelters();
 // returns false on error
 bool load_item_into_container(ItemID item_id, ItemContainerID container_id, int container_slot);
 bool load_item_into_hand(ItemID item_id, AgentID agent_id);
+
+void container_block_destroyed(ItemContainerID container_id, int x, int y, int z);
 
 // tests
 void test_container_list_capacity();

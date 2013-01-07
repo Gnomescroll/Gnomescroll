@@ -197,7 +197,7 @@ void CrusherUI::draw()
     IF_ASSERT(slot_max <= 0) return;
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
-    IF_ASSERT(slot_metadata == NULL) return;
+    if (slot_metadata == NULL) return;
     
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);

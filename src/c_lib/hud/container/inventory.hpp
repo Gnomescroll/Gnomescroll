@@ -22,6 +22,8 @@ class AgentInventoryUI : public UIElement
 
         static const float slot_size;    // pixel dimension
 
+        Color slot_background_border_color;
+
         HudText::Text* stack_numbers;
 
     void draw();
@@ -65,7 +67,9 @@ class AgentInventoryUI : public UIElement
     }
 
     AgentInventoryUI() :
-        xdim(0), ydim(0), stack_numbers(NULL)
+        xdim(0), ydim(0),
+        slot_background_border_color(Color(127,127,127)),
+        stack_numbers(NULL)
     {}
     
     virtual ~AgentInventoryUI()
@@ -118,12 +122,11 @@ void AgentInventoryUI::draw()
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
-    int g1 = 127; //color 1
-    //int g2 = 80-8;  //color 2
-
     glBegin(GL_QUADS);
-    glColor4ub(g1,g1,g1, 255); //128+64);
+    unsigned char sbr = this->slot_background_border_color.r;
+    unsigned char sbg = this->slot_background_border_color.g;
+    unsigned char sbb = this->slot_background_border_color.b;
+    glColor4ub(sbr, sbg, sbb, 255); //128+64);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -140,7 +143,7 @@ void AgentInventoryUI::draw()
     if (this->container_id == NULL_CONTAINER) return;
 
     struct ItemContainer::SlotMetadata* slot_metadata = ItemContainer::get_container_ui_slot_metadata(this->container_id);
-    IF_ASSERT(slot_metadata == NULL) return;
+    if (slot_metadata == NULL) return;
 
     // render slot backgrounds
     for (int i=0; i<xdim; i++)

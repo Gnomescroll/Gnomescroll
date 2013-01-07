@@ -435,41 +435,32 @@ inline void crusher_crush_item_CtoS::handle()
     if (!crusher_crush_alpha_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, NULL_SLOT)) return;
 
     ItemContainerInterface* container = get_container((ItemContainerID)container_id);
-    GS_ASSERT(container != NULL);
-    if (container == NULL) return;
-    GS_ASSERT(container->type == name::crusher);
-    if (container->type != name::crusher) return;
+    IF_ASSERT(container == NULL) return;
+    IF_ASSERT(container->type != name::crusher) return;
 
     ItemContainerCrusher* crusher = (ItemContainerCrusher*)container;
     
     ItemID item_id = crusher->get_input_slot();
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id == NULL_ITEM) return;
+    IF_ASSERT(item_id == NULL_ITEM) return;
     int type = Item::get_item_type(item_id);
-    GS_ASSERT(type != NULL_ITEM_TYPE);
-    if (type == NULL_ITEM_TYPE) return;
+    IF_ASSERT(type == NULL_ITEM_TYPE) return;
 
     int b[3];
     bool found = t_map::get_container_location(crusher->id, b);
-    GS_ASSERT(found);
-    if (!found) return;
+    IF_ASSERT(!found) return;
     Vec3 p = vec3_add(vec3_init(b[0], b[1], b[2]), vec3_init(0.5f, 0.5f, 0.5f));
 
     int plasma_grenade_type = Item::get_item_type("plasma_grenade");
     GS_ASSERT(plasma_grenade_type != NULL_ITEM_TYPE);
     if (type == plasma_grenade_type)
     {   // explde
-        GS_ASSERT(Particle::grenade_list != NULL);
-        if (Particle::grenade_list == NULL) return;
         Particle::Grenade* g = Particle::grenade_list->create();
-        GS_ASSERT(g != NULL);
-        if (g == NULL) return;
+        IF_ASSERT(g == NULL) return;
         g->set_position(p);
         g->owner = a->id;
         g->broadcast();
         int stack_size = Item::get_stack_size(item_id);
-        GS_ASSERT(stack_size >= 1);
-        if (stack_size < 1) return;
+        IF_ASSERT(stack_size < 1) return;
         g->explode(stack_size);
 
         Sound::broadcast_play_3d_sound("plasma_grenade_explode", p);
@@ -592,8 +583,7 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
-    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     if (z == 0) return;     // no floor
 
     Agents::Agent* a = NetServer::agents[client_id];
@@ -607,9 +597,7 @@ void create_container_block_CtoS::handle()
 
     ItemContainerType container_type = t_map::get_container_type_for_cube(cube_type);
     IF_ASSERT(container_type == NULL_CONTAINER_TYPE) return;
-
-    GS_ASSERT(orientation >= 0 && orientation <= 3);
-    if (orientation < 0 || orientation > 3) orientation = 0;
+    IF_ASSERT(orientation < 0 || orientation > 3) orientation = 0;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -667,11 +655,9 @@ void admin_create_container_block_CtoS::handle()
     CubeType cube_type = (CubeType)this->val;
 
     ItemContainerType container_type = t_map::get_container_type_for_cube(cube_type);
-    GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
-    if (container_type == NULL_CONTAINER_TYPE) return;
+    IF_ASSERT(container_type == NULL_CONTAINER_TYPE) return;
 
-    GS_ASSERT(orientation >= 0 && orientation <= 3);
-    if (orientation < 0 || orientation > 3) orientation = 0;
+    IF_ASSERT(orientation < 0 || orientation > 3) orientation = 0;
     
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;

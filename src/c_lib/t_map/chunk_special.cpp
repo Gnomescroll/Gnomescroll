@@ -13,14 +13,8 @@ bool CHUNK_ITEM_CONTAINER::remove_index(int i)
 {
     #if DC_SERVER
     map_history->container_block_delete(chunk_index, iba[i].container_id);
-
-    // dump contents into world
-    //int subscriber_count;
-    //unsigned short* subscribers = map_history->get_subscribers(&subscriber_count)
-    // dont send to subscribers only here -- there may be different subscriber infrastructure for this later
-    #endif
-
     ItemContainer::container_block_destroyed(iba[i].container_id, iba[i].x, iba[i].y, iba[i].z);
+    #endif
     
     return this->_remove(i);
 }

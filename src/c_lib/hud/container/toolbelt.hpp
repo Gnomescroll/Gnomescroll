@@ -133,7 +133,7 @@ void AgentToolbeltUI::draw()
     if (this->container_id == NULL_CONTAINER) return;
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
-    IF_ASSERT(slot_metadata == NULL) return;
+    if (slot_metadata == NULL) return;
 
     // render slot backgrounds
     for (int i=0; i<xdim; i++)
