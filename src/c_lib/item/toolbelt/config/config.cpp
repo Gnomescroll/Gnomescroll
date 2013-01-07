@@ -246,8 +246,8 @@ static void register_item_type_callbacks()
     c.trigger = &apply_charge_pack_to_teammates;
     c.beta_trigger = &consume_item;
 
-    set_type("magic_stick");
-    c.beta_trigger = &use_magic_stick;
+    set_type("boon_crank");
+    c.beta_trigger = &use_boon_crank;
     #endif
 
     apply_type_settings(active_type); // finalize

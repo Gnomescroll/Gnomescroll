@@ -34,10 +34,8 @@ class EnergyTanksUI : public UIElement
 
         for (int i=0; i<xdim; i++)
         for (int j=0; j<ydim; j++)
-        {
             if (slot_metadata[j * xdim + i].type != NULL_ITEM_TYPE) 
                 num_loaded++;
-        }
 
         return num_loaded;
     }

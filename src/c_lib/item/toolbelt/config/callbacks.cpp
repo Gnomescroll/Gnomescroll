@@ -302,7 +302,7 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
 
 // magic stick
 
-void use_magic_stick(AgentID agent_id, ItemID item_id, int item_type)
+void use_boon_crank(AgentID agent_id, ItemID item_id, int item_type)
 {
     Item::Item* item = Item::get_item(item_id);
     if (item->charges <= 0) return;

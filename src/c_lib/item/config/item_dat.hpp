@@ -420,11 +420,14 @@ void load_item_dat()
     item_block_def("rock_landmine");
     item_block_def("regolith_landmine");
 
-    item_def(IG_SPECIAL, "magic_stick");
+    item_def(IG_SPECIAL, "boon_crank");
     sprite_def(i0, 5,4);
     s->max_charges = 3;
-    //s->recharge_rate = ONE_HOUR * 4;
+    #if PRODUCTION
+    s->recharge_rate = ONE_HOUR * 4;
+    #else
     s->recharge_rate = ONE_SECOND * 5;
+    #endif
 
     finish_item_def();
 }
