@@ -54,22 +54,29 @@ void init_world()
         valgrind_map = true;
         explosive_map = true;
     }
+    else
     if (strcmp(Options::map, "iceflame") == 0)
-    {
         iceflame_map = true;
-    }
     else
-    if (serializer::load_data())
+    if (strcmp(Options::map, "") == 0)
     {
-        if (Options::serializer)
-        {   // only resave the data if we're in serializer mode
-            bool saved = serializer::save_data();    // re-save immediately after loading, so that palette changes are up to date
-            GS_ASSERT_ABORT(saved);
-            serializer::wait_for_save_complete();
+        if (serializer::load_data())
+        {
+            if (Options::serializer)
+            {   // only resave the data if we're in serializer mode
+                bool saved = serializer::save_data();    // re-save immediately after loading, so that palette changes are up to date
+                GS_ASSERT_ABORT(saved);
+                serializer::wait_for_save_complete();
+            }
         }
+        else
+            new_map = true;
     }
     else
-        new_map = true;
+    {
+        printf("Unrecognized map option: %s\n", Options::map);
+        exit(0);
+    }
 
     if (new_map)
     {

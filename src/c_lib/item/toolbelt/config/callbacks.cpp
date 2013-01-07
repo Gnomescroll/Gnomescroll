@@ -344,7 +344,10 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, int item_type)
 
     // consume charge
     item->charges--;
-    Item::send_item_charges(item_id);    
+    Item::send_item_charges(item_id);
+
+    Sound::send_play_2d_sound("boon_crank", a->client_id);
+    Sound::broadcast_exclude_play_3d_sound("boon_crank", a->get_center(), a->client_id); 
 }
 
 #endif
