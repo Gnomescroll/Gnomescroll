@@ -93,3 +93,12 @@ const int PLAYERS_MAX = 32;
 
 // filename max length (no reliable system macro available)
 #define GS_FN_MAX 0xFF
+
+// tick time
+#define ONE_SECOND 30
+#define ONE_MINUTE ONE_SECOND * 60
+#define ONE_HOUR   ONE_MINUTE * 60
+#define ONE_DAY    ONE_HOUR * 60
+#define ONE_WEEK   ONE_DAY * 7
+#define ONE_MONTH  ONE_DAY * 30
+#define ONE_YEAR   ONE_DAY * 365

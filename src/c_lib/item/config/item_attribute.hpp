@@ -65,6 +65,10 @@ class ItemAttribute
         // animation
         int animation_id;
 
+        // charges
+        int max_charges;
+        int recharge_rate;
+
     ItemAttribute() :
         loaded(false), item_type(NULL_ITEM_TYPE), group(IG_NONE)
     {
@@ -73,6 +77,8 @@ class ItemAttribute
 
     void load_defaults()
     {
+        loaded = false;
+
         // PUT ALL DEFAULTS HERE
         memset(this->name, 0, sizeof(this->name));
         memset(this->pretty_name, 0, sizeof(this->pretty_name));
@@ -120,7 +126,9 @@ class ItemAttribute
         fuel_burn_rate = 30;
         cube_height = 0;
         animation_id = 0;
-        loaded = false;
+
+        this->max_charges = 0;
+        this->recharge_rate = 1;
     }
 
     void set_type(int item_type, ItemGroup group)

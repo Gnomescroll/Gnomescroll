@@ -13,11 +13,9 @@ namespace Item
 inline void item_create_StoC::handle()
 {
     Item* item = get_item((ItemID)this->id);
-    GS_ASSERT(item == NULL);
-    if (item != NULL) destroy_item((ItemID)this->id);
+    IF_ASSERT(item != NULL) destroy_item((ItemID)this->id);
     item = create_item(this->type, (ItemID)this->id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    IF_ASSERT(item == NULL) return;
     item->type = type;
     item->durability = durability;
     item->stack_size = stack_size;
@@ -31,13 +29,20 @@ inline void item_destroy_StoC::handle()
 inline void item_state_StoC::handle()
 {
     Item* item = item_list->get((ItemID)id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    IF_ASSERT(item == NULL) return;
     item->stack_size = stack_size;
     item->durability = durability;
 
     // update UI
     ItemContainer::update_container_ui_from_state();
+}
+
+inline void item_charges_StoC::handle()
+{
+    Item* item = item_list->get((ItemID)id);
+    IF_ASSERT(item == NULL) return;
+    item->charges = charges;
+    printf("Item %d has %d charges\n", item->id, charges);
 }
 
 } // Item
@@ -52,6 +57,7 @@ namespace Item
 inline void item_create_StoC::handle() {}
 inline void item_destroy_StoC::handle() {}
 inline void item_state_StoC::handle() {}
+inline void item_charges_StoC::handle() {}
 
 } // Item
 

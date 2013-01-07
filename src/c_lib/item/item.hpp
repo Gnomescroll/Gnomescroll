@@ -33,7 +33,14 @@ class Item
         int location_id;
         int container_slot;
 
+        // if these item-specific properties get out of hand,
+        // might need to switch to a void* with metadata struct
+        // or generic fields
+        int charges;
+        #if DC_SERVER
+        int recharge_tick;
         int gas_decay;
+        #endif
 
         #if DC_SERVER
         SubscriberList<ClientID> subscribers;
@@ -41,7 +48,7 @@ class Item
         #endif
 
     #if DC_SERVER && GS_SERIALIZER
-    uuid_t uuid;
+        uuid_t uuid;
     void init_from_loading();   // only to be used by serializer
     #endif
     
@@ -59,8 +66,10 @@ class Item
         printf("Location %d\n", location);
         printf("Location ID %d\n", location_id);
         printf("Container slot %d\n", container_slot);
-        printf("Gas decay %d\n", gas_decay);
+        printf("Charges %d\n", charges);
         #if DC_SERVER
+        printf("Gas decay %d\n", this->gas_decay);
+        printf("Recharge tick %d\n", this->recharge_tick);
         # if GS_SERIALIZER
         if (Options::serializer)
         {
@@ -76,8 +85,8 @@ class Item
         #endif
     }
 
-    explicit Item(ItemID id)
-    :   id(id),
+    explicit Item(ItemID id) :
+        id(id),
         type(NULL_ITEM_TYPE),
         global_id(0),
         durability(NULL_DURABILITY),
@@ -85,8 +94,10 @@ class Item
         location(IL_NOWHERE),
         location_id(NULL_LOCATION),
         container_slot(NULL_SLOT),
-        gas_decay(NULL_GAS_LIFETIME)
+        charges(0)
         #if DC_SERVER
+        , recharge_tick(0)
+        , gas_decay(NULL_GAS_LIFETIME)
         , subscribers(ITEM_SUBSCRIBER_LIST_INITIAL_SIZE, ITEM_SUBSCRIBER_LIST_HARD_MAX)
         , valid(true)
         #endif
@@ -99,7 +110,7 @@ class Item
 
 };
 
-}
+}   // Item
 
 #include <common/template/object_list.hpp>
 
@@ -112,17 +123,16 @@ class ItemList: public ObjectList<Item, ItemID>
         const char* name() { return "Item"; }
 
     public:
-        ItemList(unsigned int capacity) : ObjectList<Item, ItemID>(capacity, NULL_ITEM),
+        ItemList(unsigned int capacity) :
+            ObjectList<Item, ItemID>(capacity, NULL_ITEM),
             gas_tick(0)
-        {
-            this->print();
-        }
+        {}
 
         #if DC_CLIENT && !PRODUCTION
         Item* create()
         {
-            printf("must create item with id\n");
             GS_ASSERT(false);
+            printf("Must create item with id\n");
             return NULL;
         }
         #endif
@@ -141,8 +151,7 @@ class ItemList: public ObjectList<Item, ItemID>
         Item* create_type(int item_type)
         {
             Item* item = this->create();
-            GS_ASSERT(item != NULL);
-            if (item == NULL) return NULL;
+            IF_ASSERT(item == NULL) return NULL;
             item->init(item_type);
             return item;
         }
@@ -154,6 +163,7 @@ class ItemList: public ObjectList<Item, ItemID>
     public:
         #if DC_SERVER
         void decay_gas();
+        void recharge_items();
         void verify_items();
         #endif
 };

@@ -422,6 +422,8 @@ void load_item_dat()
 
     item_def(IG_SPECIAL, "magic_stick");
     sprite_def(i0, 5,4);
+    s->max_charges = 3;
+    s->recharge_rate = ONE_HOUR * 8;
 
     finish_item_def();
 }
@@ -522,6 +524,9 @@ void verify_item_dat()
 
         // gas lifetime should be set, if it is a gas
         GS_ASSERT_ABORT(!a->gas || a->gas_lifetime != NULL_GAS_LIFETIME);
+
+        GS_ASSERT_ABORT(a->max_charges >= 0 && a->max_charges < MAX_MAX_CHARGES);
+        GS_ASSERT_ABORT(a->recharge_rate > 0);
 
         #if DC_CLIENT
         GS_ASSERT_ABORT(a->group == IG_ERROR || a->particle_voxel || a->sprite != ERROR_SPRITE);

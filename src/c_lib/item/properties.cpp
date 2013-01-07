@@ -72,33 +72,42 @@ bool type_used(int item_type)
 
 int get_item_fire_rate(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return 8;
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 8;
     return attr->firing_rate;
 }
 
+int get_max_charges(int item_type)
+{
+    class ItemAttribute* attr = get_item_attributes(item_type);
+    IF_ASSERT(attr == NULL) return 0;
+    return attr->max_charges;
+}
+
+int get_recharge_rate(int item_type)
+{
+    class ItemAttribute* attr = get_item_attributes(item_type);
+    IF_ASSERT(attr == NULL) return 1;
+    return attr->recharge_rate;
+}
+
 int get_sprite_index_for_id(ItemID id)
 {
-    GS_ASSERT(isValid(id));
     int type = get_item_type(id);
     return get_sprite_index_for_type(type);
 }
 
 int get_sprite_index_for_type(int type)
 {
-    if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
     class ItemAttribute* attr = get_item_attributes(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return ERROR_SPRITE;
+    IF_ASSERT(attr == NULL) return ERROR_SPRITE;
     return attr->sprite;
 }
 
 const char* get_item_name(int type)
 {
     class ItemAttribute* attr = get_item_attributes(type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL;
+    IF_ASSERT(attr == NULL) return NULL;
     return attr->name;
 }
 
@@ -126,14 +135,11 @@ const char* get_compatible_item_name(const char* name)
 
 const char* get_item_pretty_name(int item_type)
 {
-    GS_ASSERT(item_type != NULL_ITEM_TYPE);
-    if (item_type == NULL_ITEM_TYPE) return NULL;
+    IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL;
-    GS_ASSERT(attr->pretty_name != NULL);
+    IF_ASSERT(attr == NULL) return NULL;
     const char* name = NULL;
-    if (attr->pretty_name == NULL) name = get_item_name(item_type); // use item name is no pretty name defined
+    IF_ASSERT(attr->pretty_name == NULL) name = get_item_name(item_type); // use item name is no pretty name defined
     else name = attr->pretty_name;
     GS_ASSERT(name != NULL);
     return name;
@@ -143,17 +149,14 @@ ItemGroup get_item_group_for_type(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return IG_NONE;
     class ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return IG_ERROR;
+    IF_ASSERT(attr == NULL) return IG_ERROR;
     return attr->group;
 }
 
 bool item_type_is_voxel(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return false;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return false;
+    IF_ASSERT(attr == NULL) return false;
     return attr->particle_voxel;
 }
 
@@ -161,64 +164,51 @@ int get_max_stack_size(int item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return 1;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 1;
+    IF_ASSERT(attr == NULL) return 1;
     return attr->max_stack_size;
 }
 
 int get_max_durability(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return NULL_DURABILITY;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL_DURABILITY;
+    IF_ASSERT(attr == NULL) return NULL_DURABILITY;
     return attr->max_durability;
 }
 
 int get_block_type_id(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
-    GS_ASSERT(attr->cube_type != -1)
+    IF_ASSERT(attr == NULL) return 0;
+    GS_ASSERT(attr->cube_type != NULL_CUBE)
     return attr->cube_type;
 }
 
 MechType get_mech_type(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return NULL_MECH_TYPE;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return NULL_MECH_TYPE;
+    IF_ASSERT(attr == NULL) return NULL_MECH_TYPE;
     GS_ASSERT(attr->mech_type != NULL_MECH_TYPE)
     return attr->mech_type;
 }
 
 int get_particle_voxel_texture(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL) return 0;
     return attr->particle_voxel_texture;
 }
 
 int get_item_cube_height(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL) return 0;
     return attr->cube_height;
 }
 
 float get_weapon_range(int weapon_type)
 {
-    if (weapon_type == NULL_ITEM_TYPE) return 1.0f;
     ItemAttribute* attr = get_item_attributes(weapon_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 1.0f;
+    IF_ASSERT(attr == NULL) return 1.0f;
     GS_ASSERT(attr->firing_range != NULL_FIRING_RANGE);
     return attr->firing_range;
 }
@@ -227,19 +217,15 @@ int get_item_block_damage(int weapon_type, CubeType cube_type)
 {
     ASSERT_VALID_CUBE_TYPE(cube_type);
     IF_INVALID_CUBE_TYPE(cube_type) return 0;
-    if (weapon_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(weapon_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL) return 0;
     return attr->block_damage[cube_type];
 }
 
 int get_item_object_damage(int weapon_type)
 {
-    if (weapon_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(weapon_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return 0;
+    IF_ASSERT(attr == NULL) return 0;
     if (attr->object_damage) return attr->object_damage;
     GS_ASSERT(attr->object_damage_min < attr->object_damage_max);
     return randrange(attr->object_damage_min, attr->object_damage_max);
@@ -269,7 +255,6 @@ int get_synthesizer_item(int xslot, int yslot, int* cost)
 
 int get_gas_lifetime(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return NULL_GAS_LIFETIME;
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return NULL_GAS_LIFETIME;
     return attr->gas_lifetime;
@@ -277,7 +262,6 @@ int get_gas_lifetime(int item_type)
 
 bool is_fuel(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return false;
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return false;
     return attr->fuel;
@@ -290,7 +274,6 @@ bool is_smelter(ItemContainerType type)
 
 int get_animation_id(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return 0;
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 0;
     return attr->animation_id;
@@ -299,7 +282,6 @@ int get_animation_id(int item_type)
 // total ticks to burn
 int get_fuel_burn_rate(int item_type)
 {
-    if (item_type == NULL_ITEM_TYPE) return 30;
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 30;
     return attr->fuel_burn_rate;
@@ -307,7 +289,6 @@ int get_fuel_burn_rate(int item_type)
 
 int get_smelting_recipe_creation_time(int recipe_id)
 {
-    IF_ASSERT(recipe_id == NULL_SMELTING_RECIPE) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
     class SmeltingRecipe* recipe = get_smelting_recipe(recipe_id);
     IF_ASSERT(recipe == NULL) return DEFAULT_SMELTING_RECIPE_CREATION_TIME;
     return recipe->creation_time;

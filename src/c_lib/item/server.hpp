@@ -18,4 +18,6 @@ void send_item_create(ItemID item_id);
 void send_item_state(ItemID item_id);
 void send_item_destroy(ItemID item_id);
 
+void send_item_charges(ItemID item_id);
+
 }   // ItemContainer

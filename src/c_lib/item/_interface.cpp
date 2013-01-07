@@ -2,20 +2,19 @@
 
 #include <common/crash_report/stack_trace.hpp>
 #include <agent/_interface.hpp>
-
 #include <item/item.hpp>
 #include <item/_state.hpp>
 
 #if DC_SERVER
-#include <item/net/StoC.hpp>
-#include <item/container/_state.hpp>
-#include <item/container/_interface.hpp>
-#include <item/toolbelt/_interface.hpp>
-#include <item/toolbelt/_state.hpp>
+# include <item/net/StoC.hpp>
+# include <item/container/_state.hpp>
+# include <item/container/_interface.hpp>
+# include <item/toolbelt/_interface.hpp>
+# include <item/toolbelt/_state.hpp>
 #endif
 
 #if DC_CLIENT
-#include <item/client.hpp>
+# include <item/client.hpp>
 #endif
 
 namespace Item
@@ -37,6 +36,7 @@ void init_packets()
     item_create_StoC::register_client_packet();
     item_state_StoC::register_client_packet();
     item_destroy_StoC::register_client_packet();
+    item_charges_StoC::register_client_packet();
 }
 
 Item* get_item(ItemID id)
@@ -49,14 +49,15 @@ int get_item_type(ItemID id)
 {
     if (id == NULL_ITEM) return NULL_ITEM_TYPE;
     Item* item = get_item(id);
-    if (item == NULL) return NULL_ITEM_TYPE;
+    IF_ASSERT(item == NULL) return NULL_ITEM_TYPE;
     return item->type;
 }
 
 ItemGroup get_item_group(ItemID id)
 {
+    if (id == NULL_ITEM) return IG_ERROR;
     Item* item = get_item(id);
-    if (item == NULL) return IG_ERROR;
+    IF_ASSERT(item == NULL) return IG_ERROR;
     return get_item_group_for_type(item->type);
 }
 
@@ -64,8 +65,7 @@ int get_stack_size(ItemID id)
 {   // space used in a stack
     if (id == NULL_ITEM) return 1;
     Item* item = get_item(id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return 1;
+    IF_ASSERT(item == NULL) return 1;
     return item->stack_size;
 }
 
@@ -73,35 +73,26 @@ int get_stack_space(ItemID id)
 {   // space left in a stack
     if (id == NULL_ITEM) return 0;
     Item* item = get_item(id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return 0;
+    IF_ASSERT(item == NULL) return 0;
     int stack_space = get_max_stack_size(item->type) - item->stack_size;
-    GS_ASSERT(stack_space >= 0);
-    if (stack_space < 0) return 0;
+    IF_ASSERT(stack_space < 0) return 0;
     return stack_space;
 }
 
 int get_item_durability(ItemID id)
 {
     Item* item = get_item(id);
-    if (item == NULL) return NULL_DURABILITY;
+    IF_ASSERT(item == NULL) return NULL_DURABILITY;
     return item->durability;
 }
 
 // Caller of this function is expected to destroy the src
 void merge_item_stack(ItemID src, ItemID dest)
 {
-    GS_ASSERT(src != NULL_ITEM);
-    GS_ASSERT(dest != NULL_ITEM);
-    if (src == NULL_ITEM) return;
-    if (dest == NULL_ITEM) return;
-
     Item* src_item = get_item(src);
-    GS_ASSERT(src_item != NULL);
-    if (src_item == NULL) return;
+    IF_ASSERT(src_item == NULL) return;
     Item* dest_item = get_item(dest);
-    GS_ASSERT(dest_item != NULL);
-    if (dest_item == NULL) return;
+    IF_ASSERT(dest_item == NULL) return;
 
     // add src's stack to dest
     dest_item->stack_size += src_item->stack_size;
@@ -110,19 +101,12 @@ void merge_item_stack(ItemID src, ItemID dest)
 
 void merge_item_stack(ItemID src, ItemID dest, int amount)
 {
-    GS_ASSERT(src != NULL_ITEM);
-    GS_ASSERT(dest != NULL_ITEM);
-    GS_ASSERT(amount > 0);
-    if (src == NULL_ITEM) return;
-    if (dest == NULL_ITEM) return;
-    if (amount <= 0) return;
+    IF_ASSERT(amount <= 0) return;
     
     Item* src_item = get_item(src);
-    GS_ASSERT(src_item != NULL);
-    if (src_item == NULL) return;
+    IF_ASSERT(src_item == NULL) return;
     Item* dest_item = get_item(dest);
-    GS_ASSERT(dest_item != NULL);
-    if (dest_item == NULL) return;
+    IF_ASSERT(dest_item == NULL) return;
 
     // add src's stack to dest
     dest_item->stack_size += amount;
@@ -147,12 +131,8 @@ void destroy_item(ItemID id)
     
 Item* create_item(int item_type, ItemID item_id)
 {
-    GS_ASSERT(item_type != NULL_ITEM_TYPE);
-    GS_ASSERT(item_list != NULL);
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_type == NULL_ITEM_TYPE) return NULL;
-    if (item_list == NULL) return NULL;
-    if (item_id == NULL_ITEM) return NULL;
+    IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
+    IF_ASSERT(!isValid(item_id)) return NULL;
     return item_list->create_type(item_type, item_id);
 }
 
@@ -167,8 +147,7 @@ namespace Item
 void destroy_item(ItemID id)
 {
     Item* item = get_item(id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return;
+    IF_ASSERT(item == NULL) return;
 
     if (item->location == IL_CONTAINER)
     {
@@ -215,40 +194,32 @@ void destroy_item_for_loading(ItemID id)
 
 ItemID split_item_stack(ItemID src, int amount)
 {
-    GS_ASSERT(src != NULL_ITEM);
-    if (src == NULL_ITEM) return NULL_ITEM;
-    GS_ASSERT(amount >= 1);
-    if (amount < 1) return NULL_ITEM;
+    IF_ASSERT(src == NULL_ITEM) return NULL_ITEM;
+    IF_ASSERT(amount < 1) return NULL_ITEM;
 
     Item* src_item = get_item(src);
-    GS_ASSERT(src_item != NULL);
-    if (src_item == NULL) return NULL_ITEM;
+    IF_ASSERT(src_item == NULL) return NULL_ITEM;
     src_item->stack_size -= amount;
-    GS_ASSERT(src_item->stack_size >= 1);
-    if (src_item->stack_size < 1) return NULL_ITEM;
+    IF_ASSERT(src_item->stack_size < 1) return NULL_ITEM;
 
     Item* new_item = create_item(src_item->type);
-    GS_ASSERT(new_item != NULL);
-    if (new_item == NULL) return NULL_ITEM;
+    IF_ASSERT(new_item == NULL) return NULL_ITEM;
     new_item->stack_size = amount;
     return new_item->id;
 }
 
 ItemID split_item_stack_in_half(ItemID src)
-{
-    GS_ASSERT(src != NULL_ITEM);
-    if (src == NULL_ITEM) return NULL_ITEM;
+{   // Do not call this function for a stack with only 1 (cannot split)
+    IF_ASSERT(src == NULL_ITEM) return NULL_ITEM;
 
     Item* src_item = get_item(src);
-    GS_ASSERT(src_item != NULL);
-    if (src_item == NULL) return NULL_ITEM;
+    IF_ASSERT(src_item == NULL) return NULL_ITEM;
     int split_amount = src_item->stack_size / 2;
-    GS_ASSERT(split_amount >= 1);  // Do not call this function for a stack with only 1 (cannot split)
-    if (split_amount < 1) return NULL_ITEM;
+    IF_ASSERT(split_amount < 1) return NULL_ITEM;
     src_item->stack_size -= split_amount;
 
     Item* new_item = create_item(src_item->type);
-    if (new_item == NULL) return NULL_ITEM;
+    IF_ASSERT(new_item == NULL) return NULL_ITEM;
     new_item->stack_size = split_amount;
     return new_item->id;
 }
@@ -260,23 +231,21 @@ unsigned int item_space()
 
 class Item* create_item(int item_type)
 {
-    GS_ASSERT(item_type != NULL_ITEM_TYPE);
-    if (item_type == NULL_ITEM_TYPE) return NULL;
+    IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
     return item_list->create_type(item_type);
 }
 
 class Item* create_item(const char* item_name)
 {
     int item_type = get_item_type(item_name);
-    GS_ASSERT(item_type != NULL_ITEM_TYPE);
-    if (item_type == NULL_ITEM_TYPE) return NULL;
+    IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
     return create_item(item_type);
 }
 
 int consume_stack_item(ItemID item_id, int amount, bool auto_destroy)
 {
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id == NULL_ITEM) return 0;
+    IF_ASSERT(item_id == NULL_ITEM) return 0;
+    
     int stack_size = get_stack_size(item_id);
     GS_ASSERT(stack_size >= amount);
     if (auto_destroy && stack_size <= amount)
@@ -284,12 +253,11 @@ int consume_stack_item(ItemID item_id, int amount, bool auto_destroy)
         destroy_item(item_id);
         return 0;
     }
+
     Item* item = get_item(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return 0;
+    IF_ASSERT(item == NULL) return 0;
     item->stack_size -= amount;
-    GS_ASSERT(item->stack_size >= 0);
-    if (item->stack_size < 0) item->stack_size = 0;
+    IF_ASSERT(item->stack_size < 0) item->stack_size = 0;
     return item->stack_size;
 }
 
@@ -311,8 +279,8 @@ int consume_stack_item(ItemID item_id, int amount)
 // return remaining durability
 int consume_durability(ItemID item_id, int amount, bool auto_destroy)
 {
-    GS_ASSERT(item_id != NULL_ITEM);
-    if (item_id == NULL_ITEM) return 0;
+    IF_ASSERT(item_id == NULL_ITEM) return 0;
+    
     int durability = get_item_durability(item_id);
     GS_ASSERT(durability >= amount);
     if (auto_destroy && durability <= amount)
@@ -320,12 +288,11 @@ int consume_durability(ItemID item_id, int amount, bool auto_destroy)
         destroy_item(item_id);
         return 0;
     }
+
     Item* item = get_item(item_id);
-    GS_ASSERT(item != NULL);
-    if (item == NULL) return 0;
+    IF_ASSERT(item == NULL) return 0;
     item->durability -= amount;
-    GS_ASSERT(item->durability >= 0);
-    if (item->durability < 0) item->durability = 0;
+    IF_ASSERT(item->durability < 0) item->durability = 0;
     return item->durability;
 }
 
@@ -346,8 +313,7 @@ int consume_durability(ItemID item_id, int amount)
 void agent_quit(AgentID agent_id)
 {
     Agents::Agent* agent = Agents::get_agent(agent_id);
-    GS_ASSERT(agent != NULL);
-    if (agent == NULL) return;
+    IF_ASSERT(agent == NULL) return;
 
     // remove client from item subscription lists
     // TODO -- reverse lookup from agent
@@ -357,7 +323,6 @@ void agent_quit(AgentID agent_id)
         if (item_list->objects[i].id != item_list->null_id)
             item_list->objects[i].subscribers.remove(client_id);
 }
-
 
 // tests
 void test_item_list_capacity()
@@ -369,9 +334,8 @@ void test_item_list_capacity()
 
 void tick()
 {
-    GS_ASSERT(item_list != NULL);
-    if (item_list == NULL) return;
     item_list->decay_gas();
+    item_list->recharge_items();
     item_list->verify_items();
 }
 

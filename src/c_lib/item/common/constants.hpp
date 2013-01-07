@@ -33,6 +33,8 @@ const unsigned int MAX_CONTAINER_SIZE = NULL_SLOT;
 
 const int MAX_CONTAINERS = NULL_CONTAINER;
 
+const int MAX_MAX_CHARGES = 0xFF;
+
 const int ERROR_SPRITE = 0; // id of item that renders as error
 const int UNKNOWN_SPRITE = 14; // id of item that renders as unknown
 

@@ -44,6 +44,9 @@ bool item_type_is_voxel(int item_type);
 
 int get_item_fire_rate(int item_type);
 
+int get_max_charges(int item_type);
+int get_recharge_rate(int item_type);
+
 int get_max_stack_size(int item_type);
 int get_max_durability(int item_type);
 

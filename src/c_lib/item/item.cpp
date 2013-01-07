@@ -13,10 +13,12 @@ void Item::init(int item_type)
 {
     this->type = item_type;
     ItemAttribute* attr = get_item_attributes(item_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return;
+    IF_ASSERT(attr == NULL) return;
     this->durability = attr->max_durability;
+    #if DC_SERVER
     this->gas_decay = attr->gas_lifetime;
+    this->charges = attr->max_charges;
+    #endif
 }
 
 
@@ -31,6 +33,23 @@ void Item::init_from_loading()
     this->gas_decay = attr->gas_lifetime;
 }
 # endif
+
+void ItemList::recharge_items()
+{
+    for (unsigned int i=0; i<this->max; i++)
+    {
+        if (this->objects[i].id == this->null_id) continue;
+        Item* item = &this->objects[i];
+        int max_charges = get_max_charges(item->id);
+        if (item->charges >= max_charges) continue;
+        int recharge_rate = get_recharge_rate(item->id);
+        item->recharge_tick++;
+        if (item->recharge_tick % recharge_rate != 0) continue;
+        item->recharge_tick = 0;
+        item->charges++;
+        send_item_charges(item->id);
+    }
+}
 
 void ItemList::decay_gas()
 {
