@@ -77,6 +77,7 @@ typedef enum
     IG_ENERGY_TANK,
     IG_AGENT_SPAWNER,
     IG_ENERGY_CORE,
+    IG_SPECIAL,
     //IG_MECH_PLACER,
 } ItemGroup;
 

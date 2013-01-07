@@ -471,7 +471,6 @@ void init()
     energy_tanks->type = UI_ELEMENT_ENERGY_TANKS;
     energy_tanks->init();
     energy_tanks->xoff = ((_xresf - agent_toolbelt->width())/2);
-    //energy_tanks->yoff = _yresf - (energy_tanks->height() + agent_toolbelt->height() - 6);
     energy_tanks->yoff = 0; // _yresf - energy_tanks->height() / 2;
 
     synthesizer_container = new AgentSynthesizerUI;

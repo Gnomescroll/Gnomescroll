@@ -56,6 +56,9 @@ void load_synthesizer()
     
     synthesizer_item_def("green_mining_laser", 1);
     synthesizer_item_set(2,1);
+
+    synthesizer_item_def("magic_stick", 1);
+    synthesizer_item_set(1,2);
     #endif
 }
 

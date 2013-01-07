@@ -420,6 +420,9 @@ void load_item_dat()
     item_block_def("rock_landmine");
     item_block_def("regolith_landmine");
 
+    item_def(IG_SPECIAL, "magic_stick");
+    sprite_def(i0, 5,4);
+
     finish_item_def();
 }
 

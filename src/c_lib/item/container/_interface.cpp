@@ -423,7 +423,6 @@ bool close_container(ItemContainerID container_id)
 
 bool container_block_was_opened(ItemContainerID* container_id)
 {
-
     if (did_open_container_block)
     {
         GS_ASSERT(opened_container != NULL_CONTAINER);
@@ -437,12 +436,9 @@ bool container_block_was_opened(ItemContainerID* container_id)
 
 bool container_block_was_closed()
 {
-    if (did_close_container_block)
-    {
-        did_close_container_block = false;
-        return true;
-    }
-    return false;
+    if (!did_close_container_block) return false;
+    did_close_container_block = false;
+    return true;
 }
 
 ItemContainerID get_event_container_id(int event_id)
@@ -975,6 +971,9 @@ void dump_agent_containers(ClientID client_id, AgentID agent_id)
     if (agent_energy_tanks_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(client_id, agent_id, agent_energy_tanks_list[agent_id]);
 
+    if (premium_cache_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, premium_cache_list[agent_id]);
+
     // DO NOT throw_items_from_container(agent_hand), we need to use the transactional method for hand throwing
     ItemID hand_item = get_agent_hand_item(agent_id);
     if (hand_item != NULL_ITEM)
@@ -990,7 +989,7 @@ void agent_quit(AgentID agent_id)
     if (opened_containers[agent_id] != NULL_CONTAINER)
         agent_close_container(agent_id, opened_containers[agent_id]);
 
-    IF_ASSERT(opened_containers[agent_id] != NULL_CONTAINER);
+    IF_ASSERT(opened_containers[agent_id] != NULL_CONTAINER)
         opened_containers[agent_id] = NULL_CONTAINER;
 
     // still have to throw any items in hand, in case we have our private inventory opened
