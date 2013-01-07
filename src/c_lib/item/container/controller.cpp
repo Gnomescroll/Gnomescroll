@@ -34,8 +34,7 @@ ContainerActionType partial_hand_to_world(int* hand_item_stack, int transfer_sta
 }
 
 ContainerActionType full_hand_to_empty_slot(
-    ItemContainerUIInterface* container,
-    int slot,
+    ItemContainerUIInterface* container, int slot,
     struct SlotMetadata* hand_metadata)
 {   // put hand item in slot
     IF_ASSERT(container == NULL) return CONTAINER_ACTION_NONE;
@@ -445,7 +444,7 @@ ContainerActionType alpha_action_decision_tree(AgentID agent_id, ClientID client
     }
 
     #if DC_CLIENT
-    if (hand_item_type == NULL_ITEM_TYPE)
+    if (hand_metadata.type == NULL_ITEM_TYPE)
         player_hand_ui->remove_item();
     else
         player_hand_ui->insert_item(hand_metadata);
@@ -576,7 +575,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(AgentID agent_id, Cli
     }
 
     #if DC_CLIENT
-    if (hand_item_type == NULL_ITEM_TYPE)
+    if (hand_metadata.type == NULL_ITEM_TYPE)
         player_hand_ui->remove_item();
     else
         player_hand_ui->insert_item(hand_metadata);
@@ -741,7 +740,7 @@ ContainerActionType beta_action_decision_tree(AgentID agent_id, ClientID client_
     }
 
     #if DC_CLIENT
-    if (hand_item_type == NULL_ITEM_TYPE)
+    if (hand_metadata.type == NULL_ITEM_TYPE)
         player_hand_ui->remove_item();
     else
         player_hand_ui->insert_item(hand_metadata);
@@ -920,7 +919,7 @@ ContainerActionType synthesizer_beta_action_decision_tree(AgentID agent_id, Clie
     }
 
     #if DC_CLIENT
-    if (hand_item_type == NULL_ITEM_TYPE)
+    if (hand_metadata.type == NULL_ITEM_TYPE)
         player_hand_ui->remove_item();
     else
         player_hand_ui->insert_item(hand_metadata);
@@ -1099,7 +1098,6 @@ ContainerActionType no_container_alpha_action_decision_tree(AgentID agent_id, Cl
     struct SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
     GS_ASSERT(hand_metadata.stack_size >= 1);
-    int hand_item_type = hand_metadata.type;
     #endif
 
     #if DC_SERVER
@@ -1118,7 +1116,7 @@ ContainerActionType no_container_alpha_action_decision_tree(AgentID agent_id, Cl
     }
 
     #if DC_CLIENT
-    if (hand_item_type == NULL_ITEM_TYPE)
+    if (hand_metadata.type == NULL_ITEM_TYPE)
         player_hand_ui->remove_item();
     else
         player_hand_ui->insert_item(hand_metadata);
@@ -1176,7 +1174,7 @@ ContainerActionType no_container_beta_action_decision_tree(AgentID agent_id, Cli
     }
 
     #if DC_CLIENT
-    if (hand_item_type == NULL_ITEM_TYPE)
+    if (hand_metadata.type == NULL_ITEM_TYPE)
         player_hand_ui->remove_item();
     else
     {
