@@ -65,6 +65,7 @@ def check_clang(conf):
     if use_clang:
         conf.env['CC'] = ['clang']
         conf.env['CXX'] = ['clang']
+        print 'Using clang'
     return use_clang
 
 def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awesomium=False, awesomium_debug=False, assimp=True, use_clang=True):
@@ -105,8 +106,8 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awe
 
     # use clang if requested or available
     # If you do check_tool('g++') after this, it won't compile, even though the check works
-    if use_clang and check_clang(conf):
-        print 'Using clang'
+    if use_clang:
+        use_clang = check_clang(conf)
 
     #conf.cc_add_flags()     #"-g" -ggdb
     #conf.link_add_flags()   #"-g" -ggdb
@@ -169,6 +170,9 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, awe
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]
+
+    if use_clang:
+        extra_options.append('-ferror-limit=0')
 
     if production:
         extra_options.append('-Wno-inline')

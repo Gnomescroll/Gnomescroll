@@ -3,6 +3,8 @@
 namespace Animations
 {
 
+const size_t ANIMATION_NAME_MAX_LENGTH = 63;
+
 const int MAX_ANIMATIONS = 256;
 
 typedef void (*anim_callback)(int, void*);
@@ -21,13 +23,18 @@ typedef enum
     AnimDataSimple,
 } AnimationMetadataType;
 
+bool is_valid_animation_name(const char* name)
+{
+    return (name != NULL && strlen(name) <= ANIMATION_NAME_MAX_LENGTH);
+}
+
 class AnimationData
 {
     public:
         int id;
-        char* name;
-        unsigned int hash;
         bool loaded;
+
+        char name[ANIMATION_NAME_MAX_LENGTH+1];
 
         AnimationMetadataType metadata_type;
         void* metadata;
@@ -46,17 +53,17 @@ class AnimationData
         int ttl_max;
 
     AnimationData():
-        id(-1), name(NULL), hash(0), loaded(false),
+        id(-1), loaded(false),
         metadata_type(AnimDataNone), metadata(NULL), callback(NULL),
         count(1), max_count(1), use_rand_range(false),
         color(Color(255,255,255)), jitter_scale(0.0f), momentum(1.0f),
         ttl_min(10), ttl_max(15)
     {
+        memset(this->name, 0, sizeof(this->name));
     }
 
     ~AnimationData()
     {
-        if (this->name != NULL) free(this->name);
         if (this->metadata != NULL) free(this->metadata);
     }
 };

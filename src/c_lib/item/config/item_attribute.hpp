@@ -127,7 +127,7 @@ class ItemAttribute
         cube_height = 0;
         animation_id = 0;
 
-        this->max_charges = 0;
+        this->max_charges = NULL_CHARGES;
         this->recharge_rate = 1;
     }
 

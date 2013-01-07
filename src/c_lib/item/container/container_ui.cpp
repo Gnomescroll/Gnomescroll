@@ -7,6 +7,18 @@ dont_include_this_file_in_server
 namespace ItemContainer
 {
 
+struct SlotMetadata copy_item_metadata(ItemID item_id)
+{
+    Item::Item* item = Item::get_item(item_id);
+    IF_ASSERT(item == NULL) return NULL_SLOT_METADATA;
+    struct SlotMetadata metadata;
+    metadata.type = item->type;
+    metadata.stack_size = item->stack_size;
+    metadata.durability = item->durability;
+    metadata.charges = item->charges;
+    return metadata;
+}
+
 void ItemContainerSmelterUI::tick_fuel()
 {
     if (fuel <= 0.0f) return;

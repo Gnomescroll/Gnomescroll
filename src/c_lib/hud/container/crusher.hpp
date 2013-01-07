@@ -193,13 +193,12 @@ void CrusherUI::draw()
     if (this->container_id == NULL_CONTAINER) return;
 
     // get data for rendering items
-    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
     int slot_max = ItemContainer::get_container_ui_slot_max(this->container_id);
-    if (slot_types == NULL) return;
     IF_ASSERT(slot_max <= 0) return;
-    IF_ASSERT(slot_stacks == NULL) return;
-
+    struct ItemContainer::SlotMetadata* slot_metadata =
+        ItemContainer::get_container_ui_slot_metadata(container_id);
+    IF_ASSERT(slot_metadata == NULL) return;
+    
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -226,7 +225,7 @@ void CrusherUI::draw()
     y -= cell_size;
     if (this->in_button_region(mouse_x, mouse_y))
     {   // draw hover sprite
-        if (slot_types[0] != NULL_ITEM_TYPE)
+        if (slot_metadata[0].type != NULL_ITEM_TYPE)
             draw_bound_texture_sprite(x,y, sw,sh, z, button_available_hover_x*tw, button_available_hover_y*th, tw, th);
         else
             draw_bound_texture_sprite(x,y, sw,sh, z, button_inactive_hover_x*tw, button_inactive_hover_y*th, tw, th);
@@ -237,7 +236,7 @@ void CrusherUI::draw()
     }
     else
     {
-        if (slot_types[0] != NULL_ITEM_TYPE)
+        if (slot_metadata[0].type != NULL_ITEM_TYPE)
             draw_bound_texture_sprite(x,y, sw,sh, z, button_available_x*tw, button_available_y*th, tw, th);
         else
             draw_bound_texture_sprite(x,y, sw,sh, z, button_inactive_x*tw, button_inactive_y*th, tw, th);
@@ -281,7 +280,7 @@ void CrusherUI::draw()
         int xslot = 0;
         int yslot = slot;
 
-        int item_type = slot_types[slot];
+        int item_type = slot_metadata[slot].type;
 
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
@@ -333,7 +332,7 @@ void CrusherUI::draw()
         int xslot = 0;
         int yslot = slot;
 
-        int stack = slot_stacks[slot];
+        int stack = slot_metadata[slot].stack_size;
         if (stack <= 1) continue;
 
         GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);

@@ -26,15 +26,16 @@ class EnergyTanksUI : public UIElement
     int count()
     { // count loaded energy tanks
         if (this->container_id == NULL_CONTAINER) return 0;
-        int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-        IF_ASSERT(slot_types == NULL) return 0;
+        struct ItemContainer::SlotMetadata* slot_metadata =
+            ItemContainer::get_container_ui_slot_metadata(container_id);
+        IF_ASSERT(slot_metadata == NULL) return 0;
 
         int num_loaded = 0;
 
         for (int i=0; i<xdim; i++)
         for (int j=0; j<ydim; j++)
         {
-            if (slot_types[j * xdim + i] != NULL_ITEM_TYPE) 
+            if (slot_metadata[j * xdim + i].type != NULL_ITEM_TYPE) 
                 num_loaded++;
         }
 
@@ -117,8 +118,10 @@ void EnergyTanksUI::draw()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (this->container_id == NULL_CONTAINER) return;
-    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    IF_ASSERT(slot_types == NULL) return;
+    
+    struct ItemContainer::SlotMetadata* slot_metadata =
+        ItemContainer::get_container_ui_slot_metadata(container_id);
+    IF_ASSERT(slot_metadata == NULL) return;
 
     if (inv_open) 
     {
@@ -189,7 +192,7 @@ void EnergyTanksUI::draw()
     // draw unloaded energy tanks as greyscale
     // (here's where we ALSO used the LOADED tank drawing code below, but with the following line changed
     // in order to only draw the empty tanks:
-    //         if (slot_types[slot] != NULL_ITEM_TYPE) continue;
+    //         if (slot_metadata[slot].type != NULL_ITEM_TYPE) continue;
     
     IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture == 0)
     {
@@ -206,8 +209,8 @@ void EnergyTanksUI::draw()
     for (int j=0; j<ydim; j++)
     {
         int slot = j * xdim + i;
-        if (slot_types[slot] == NULL_ITEM_TYPE) continue;
-        GS_ASSERT(slot_types[slot] == energy_tank_type);
+        if (slot_metadata[slot].type == NULL_ITEM_TYPE) continue;
+        GS_ASSERT(slot_metadata[slot].type == energy_tank_type);
         const float x = xoff + border + i * (span_tween_slots + w);
         const float y = _yresf - (yoff + border + (j+1)*(span_tween_slots + w));
 

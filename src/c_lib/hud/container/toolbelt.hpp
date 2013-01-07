@@ -131,12 +131,9 @@ void AgentToolbeltUI::draw()
     glEnd();
 
     if (this->container_id == NULL_CONTAINER) return;
-    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
-    int* slot_durabilities = ItemContainer::get_container_ui_durabilities(this->container_id);
-    if (slot_types == NULL) return;
-    IF_ASSERT(slot_stacks == NULL) return;
-    IF_ASSERT(slot_durabilities == NULL) return;
+    struct ItemContainer::SlotMetadata* slot_metadata =
+        ItemContainer::get_container_ui_slot_metadata(container_id);
+    IF_ASSERT(slot_metadata == NULL) return;
 
     // render slot backgrounds
     for (int i=0; i<xdim; i++)
@@ -153,10 +150,10 @@ void AgentToolbeltUI::draw()
         Hud::meter_graphic.draw(x, y, w, w, ratio);
 
         // maybe draw a dura meter on it
-        int durability = slot_durabilities[slot];
+        int durability = slot_metadata[slot].durability;
         if (durability != NULL_DURABILITY)
         {
-            int max_durability = Item::get_max_durability(slot_types[slot]);
+            int max_durability = Item::get_max_durability(slot_metadata[slot].type);
             ratio = ((float)durability)/((float)max_durability);
 
             int mh = w / 8; // meter height
@@ -198,8 +195,8 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<ydim; j++)
     {
         int slot = j * xdim + i;
-        if (slot_types[slot] == NULL_ITEM_TYPE) continue;
-        int tex_id = Item::get_sprite_index_for_type(slot_types[slot]);
+        if (slot_metadata[slot].type == NULL_ITEM_TYPE) continue;
+        int tex_id = Item::get_sprite_index_for_type(slot_metadata[slot].type);
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
@@ -280,7 +277,7 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<this->ydim; j++)
     {
         const int slot = j * this->xdim + i;
-        int count = slot_stacks[slot];
+        int count = slot_metadata[slot].stack_size;
         if (count <= 1) continue;
         GS_ASSERT(count_digits(count) < STACK_COUNT_MAX_LENGTH);
         

@@ -12,8 +12,6 @@ ItemContainerID* container_event = NULL;
 
 int record_container_event(ItemContainerID container_id)
 {
-    GS_ASSERT(container_event != NULL);
-    if (container_event == NULL) return -1;
     container_event_id += 1;
     container_event_id %= CONTAINER_EVENT_MAX;
     container_event[container_event_id] = container_id;
@@ -22,11 +20,9 @@ int record_container_event(ItemContainerID container_id)
 
 void send_container_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
     
@@ -48,8 +44,7 @@ void send_container_alpha_action(ContainerActionType action, ItemContainerID con
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -60,12 +55,9 @@ void send_container_alpha_action(ContainerActionType action, ItemContainerID con
 
 void send_container_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
 
     record_container_event(container_id);
 
@@ -87,8 +79,7 @@ void send_container_beta_action(ContainerActionType action, ItemContainerID cont
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
         
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -99,10 +90,9 @@ void send_container_beta_action(ContainerActionType action, ItemContainerID cont
 
 void send_synthesizer_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
     
@@ -124,8 +114,7 @@ void send_synthesizer_alpha_action(ContainerActionType action, ItemContainerID c
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -136,12 +125,9 @@ void send_synthesizer_alpha_action(ContainerActionType action, ItemContainerID c
 
 void send_synthesizer_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
 
@@ -163,8 +149,7 @@ void send_synthesizer_beta_action(ContainerActionType action, ItemContainerID co
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -175,10 +160,9 @@ void send_synthesizer_beta_action(ContainerActionType action, ItemContainerID co
 
 void send_craft_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     
     record_container_event(container_id);
     
@@ -200,8 +184,7 @@ void send_craft_alpha_action(ContainerActionType action, ItemContainerID contain
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -212,11 +195,9 @@ void send_craft_alpha_action(ContainerActionType action, ItemContainerID contain
 
 void send_purchase_item_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(action == PURCHASE_ITEM_FROM_SYNTHESIZER);
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(action != PURCHASE_ITEM_FROM_SYNTHESIZER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
     
@@ -231,12 +212,9 @@ void send_purchase_item_action(ContainerActionType action, ItemContainerID conta
 
 void send_craft_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
     
     record_container_event(container_id);
 
@@ -258,8 +236,7 @@ void send_craft_beta_action(ContainerActionType action, ItemContainerID containe
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -270,11 +247,9 @@ void send_craft_beta_action(ContainerActionType action, ItemContainerID containe
 
 void send_craft_item_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(action == CRAFT_ITEM_FROM_BENCH);
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(action != CRAFT_ITEM_FROM_BENCH) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
     
@@ -289,8 +264,7 @@ void send_craft_item_action(ContainerActionType action, ItemContainerID containe
 
 void send_no_container_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
 
     record_container_event(NULL_CONTAINER);
 
@@ -316,11 +290,9 @@ void send_no_container_beta_action(ContainerActionType action, ItemContainerID c
 
 void send_smelter_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
 
     record_container_event(container_id);
     
@@ -342,8 +314,7 @@ void send_smelter_alpha_action(ContainerActionType action, ItemContainerID conta
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -354,12 +325,9 @@ void send_smelter_alpha_action(ContainerActionType action, ItemContainerID conta
 
 void send_smelter_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
 
     record_container_event(container_id);
 
@@ -381,8 +349,7 @@ void send_smelter_beta_action(ContainerActionType action, ItemContainerID contai
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
         
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -393,9 +360,8 @@ void send_smelter_beta_action(ContainerActionType action, ItemContainerID contai
 
 void send_crusher_alpha_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
 
     record_container_event(container_id);
     
@@ -417,8 +383,7 @@ void send_crusher_alpha_action(ContainerActionType action, ItemContainerID conta
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -429,12 +394,9 @@ void send_crusher_alpha_action(ContainerActionType action, ItemContainerID conta
 
 void send_crusher_beta_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(player_hand_ui != NULL);
-    if (player_hand_ui == NULL) return;
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    GS_ASSERT(action != CONTAINER_ACTION_NONE);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(player_hand_ui == NULL) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
 
     record_container_event(container_id);
 
@@ -456,8 +418,7 @@ void send_crusher_beta_action(ContainerActionType action, ItemContainerID contai
     else
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
-        GS_ASSERT(container != NULL);
-        if (container == NULL) return;
+        IF_ASSERT(container == NULL) return;
         
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
@@ -468,10 +429,8 @@ void send_crusher_beta_action(ContainerActionType action, ItemContainerID contai
 
 void send_crusher_crush_action(ContainerActionType action, ItemContainerID container_id, int slot)
 {
-    GS_ASSERT(action == CRUSHER_CRUSH_ITEM);
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
-    if (action == CONTAINER_ACTION_NONE) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
+    IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
     
     record_container_event(container_id);
     
@@ -492,21 +451,18 @@ void mouse_left_click_handler(ItemContainerID container_id, int slot, bool alt_a
     
     ItemContainerType container_type = get_container_type(container_id);
     class ContainerAttributes* attr = get_attr(container_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return;
+    IF_ASSERT(attr == NULL) return;
     GS_ASSERT(attr->loaded);
     
     ContainerActionType action = CONTAINER_ACTION_NONE;
     if (alt_action)
     {
-        GS_ASSERT(attr->alpha_action_alt != NULL);
-        if (attr->alpha_action_alt == NULL) return;
+        IF_ASSERT(attr->alpha_action_alt == NULL) return;
         action = attr->alpha_action_alt(container_id, slot);        
     }
     else
     {
-        GS_ASSERT(attr->alpha_action != NULL);
-        if (attr->alpha_action == NULL) return;
+        IF_ASSERT(attr->alpha_action == NULL) return;
         action = attr->alpha_action(container_id, slot);        
     }
         
@@ -514,14 +470,12 @@ void mouse_left_click_handler(ItemContainerID container_id, int slot, bool alt_a
 
     if (alt_action)
     {
-        GS_ASSERT(attr->alpha_packet_alt != NULL);
-        if (attr->alpha_packet_alt == NULL) return;
+        IF_ASSERT(attr->alpha_packet_alt == NULL) return;
         attr->alpha_packet_alt(action, container_id, slot);        
     }
     else
     {
-        GS_ASSERT(attr->alpha_packet != NULL);
-        if (attr->alpha_packet == NULL) return;
+        IF_ASSERT(attr->alpha_packet == NULL) return;
         attr->alpha_packet(action, container_id, slot);
     }
 }
@@ -534,21 +488,18 @@ void mouse_right_click_handler(ItemContainerID container_id, int slot, bool alt_
 
     ItemContainerType container_type = get_container_type(container_id);
     class ContainerAttributes* attr = get_attr(container_type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return;
+    IF_ASSERT(attr == NULL) return;
     GS_ASSERT(attr->loaded);
 
     ContainerActionType action = CONTAINER_ACTION_NONE;
     if (alt_action)
     {
-        GS_ASSERT(attr->beta_action_alt != NULL);
-        if (attr->beta_action_alt == NULL) return;
+        IF_ASSERT(attr->beta_action_alt == NULL) return;
         action = attr->beta_action_alt(container_id, slot);        
     }
     else
     {
-        GS_ASSERT(attr->beta_action != NULL);
-        if (attr->beta_action == NULL) return;
+        IF_ASSERT(attr->beta_action == NULL) return;
         action = attr->beta_action(container_id, slot);        
     }
 
@@ -556,23 +507,19 @@ void mouse_right_click_handler(ItemContainerID container_id, int slot, bool alt_
 
     if (alt_action)
     {
-        GS_ASSERT(attr->beta_packet_alt != NULL);
-        if (attr->beta_packet_alt == NULL) return;
+        IF_ASSERT(attr->beta_packet_alt == NULL) return;
         attr->beta_packet_alt(action, container_id, slot);        
     }
     else
     {
-        GS_ASSERT(attr->beta_packet != NULL);
-        if (attr->beta_packet == NULL) return;
+        IF_ASSERT(attr->beta_packet == NULL) return;
         attr->beta_packet(action, container_id, slot);        
     }
 }
 
 void send_container_open(ItemContainerID container_id, int event_id)
 {
-    GS_ASSERT(event_id >= 0);
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (event_id < 0 || container_id == NULL_CONTAINER) return;
+    IF_ASSERT(event_id < 0 || container_id == NULL_CONTAINER) return;
     open_container_CtoS msg;
     msg.container_id = container_id;
     msg.event_id = event_id;
@@ -581,8 +528,7 @@ void send_container_open(ItemContainerID container_id, int event_id)
 
 void send_container_close(ItemContainerID container_id)
 {
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    if (container_id == NULL_CONTAINER) return;
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     close_container_CtoS msg;
     msg.container_id = container_id;
     msg.send();    

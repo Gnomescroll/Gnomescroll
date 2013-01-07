@@ -13,10 +13,6 @@
 # include <item/toolbelt/_state.hpp>
 #endif
 
-#if DC_CLIENT
-# include <item/client.hpp>
-#endif
-
 namespace Item
 {
 
@@ -84,6 +80,13 @@ int get_item_durability(ItemID id)
     Item* item = get_item(id);
     IF_ASSERT(item == NULL) return NULL_DURABILITY;
     return item->durability;
+}
+
+int get_item_charges(ItemID id)
+{
+    Item* item = get_item(id);
+    IF_ASSERT(item == NULL) return NULL_CHARGES;
+    return item->charges;
 }
 
 // Caller of this function is expected to destroy the src

@@ -43,7 +43,7 @@ class AgentInventoryUI : public UIElement
         return (this->get_slot_at(px,py) != NULL_SLOT);
     }
 
-    void init()
+    virtual void init()
     {
         GS_ASSERT(this->stack_numbers == NULL);
         
@@ -139,12 +139,8 @@ void AgentInventoryUI::draw()
 
     if (this->container_id == NULL_CONTAINER) return;
 
-    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
-    int* slot_durabilities = ItemContainer::get_container_ui_durabilities(this->container_id);
-    if (slot_types == NULL) return;
-    IF_ASSERT(slot_stacks == NULL) return;
-    IF_ASSERT(slot_durabilities == NULL) return;
+    struct ItemContainer::SlotMetadata* slot_metadata = ItemContainer::get_container_ui_slot_metadata(this->container_id);
+    IF_ASSERT(slot_metadata == NULL) return;
 
     // render slot backgrounds
     for (int i=0; i<xdim; i++)
@@ -161,10 +157,10 @@ void AgentInventoryUI::draw()
         Hud::meter_graphic.draw(x, y, w, w, ratio);
 
         // maybe draw a dura meter on it
-        int durability = slot_durabilities[slot];
+        int durability = slot_metadata[slot].durability;
         if (durability != NULL_DURABILITY)
         {
-            int max_durability = Item::get_max_durability(slot_types[slot]);
+            int max_durability = Item::get_max_durability(slot_metadata[slot].type);
             ratio = ((float)durability)/((float)max_durability);
 
             int mh = w / 8; // meter height
@@ -205,8 +201,8 @@ void AgentInventoryUI::draw()
     for (int j=0; j<ydim; j++)
     {
         int slot = j * xdim + i;
-        if (slot_types[slot] == NULL_ITEM_TYPE) continue;
-        int tex_id = Item::get_sprite_index_for_type(slot_types[slot]);
+        if (slot_metadata[slot].type == NULL_ITEM_TYPE) continue;
+        int tex_id = Item::get_sprite_index_for_type(slot_metadata[slot].type);
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
@@ -253,17 +249,12 @@ void AgentInventoryUI::draw()
     for (int j=0; j<this->ydim; j++)
     {
         const int slot = j * this->xdim + i;
-        int count = slot_stacks[slot];
-        if (count <= 1) continue;
-        
+        int stack = slot_metadata[slot].stack_size;
+        int charges = slot_metadata[slot].charges;
         text = &this->stack_numbers[slot];
-        text->update_formatted_string(1, count);
-
         const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - text->get_height());
-
-        text->set_position(x,y);
-        text->draw();
+        draw_slot_numbers(text, x, y, stack, charges);         
     }
     HudFont::reset_default();
     HudFont::end_font_draw();

@@ -379,17 +379,21 @@ bool close_container(ItemContainerID container_id)
     IF_ASSERT(container_id == NULL_CONTAINER) return false;
     if (container_id != opened_container) return false;
 
+    ItemContainerInterface* container = get_container(container_id);
+    IF_ASSERT(container == NULL) return false;
+    IF_ASSERT(!isValid(container->type)) return false;
+        
     // attempt throw
     mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT, false);
 
-    ItemContainerInterface* container = get_container(container_id);
-    GS_ASSERT(container != NULL);
     // clear the contents, for public containers
-    if (container != NULL && !container->attached_to_agent)
+    if (!container->attached_to_agent)
         container->clear();
 
+    containers[container->type] = NULL;
+    container_uis[container->type] = NULL;
+
     // teardown UI widget
-    // TODO -- handle multiple UI types
     player_craft_bench = NULL;
     if (player_craft_bench_ui != NULL) delete player_craft_bench_ui;
     player_craft_bench_ui = NULL;
@@ -478,25 +482,11 @@ int get_container_ui_slot_max(ItemContainerID container_id)
     return container->slot_max;
 }
 
-int* get_container_ui_types(ItemContainerID container_id)
+struct SlotMetadata* get_container_ui_slot_metadata(ItemContainerID container_id)
 {
     ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return NULL;
-    return container->slot_type;
-}
-
-int* get_container_ui_stacks(ItemContainerID container_id)
-{
-    ItemContainerUIInterface* container = get_container_ui(container_id);
-    if (container == NULL) return NULL;
-    return container->slot_stack;
-}
-
-int* get_container_ui_durabilities(ItemContainerID container_id)
-{
-    ItemContainerUIInterface* container = get_container_ui(container_id);
-    if (container == NULL) return NULL;
-    return container->slot_durability;
+    return container->slot_metadata;
 }
 
 void set_ui_slot_durability(ItemContainerID container_id, int slot, int durability)
@@ -504,9 +494,10 @@ void set_ui_slot_durability(ItemContainerID container_id, int slot, int durabili
     if (slot == NULL_SLOT) return;
     ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return;
-    int item_type = container->get_slot_type(slot);
-    int item_stack = container->get_slot_stack(slot);
-    container->insert_item(slot, item_type, item_stack, durability);
+
+    struct SlotMetadata metadata = container->get_slot_metadata(slot);
+    metadata.durability = durability;
+    container->insert_item(slot, metadata);
 }
 
 void set_ui_slot_stack_size(ItemContainerID container_id, int slot, int stack_size)
@@ -514,9 +505,21 @@ void set_ui_slot_stack_size(ItemContainerID container_id, int slot, int stack_si
     if (slot == NULL_SLOT) return;
     ItemContainerUIInterface* container = get_container_ui(container_id);
     if (container == NULL) return;
-    int item_type = container->get_slot_type(slot);
-    int item_durability = container->get_slot_durability(slot);
-    container->insert_item(slot, item_type, stack_size, item_durability);
+
+    struct SlotMetadata metadata = container->get_slot_metadata(slot);
+    metadata.stack_size = stack_size;
+    container->insert_item(slot, metadata);
+}
+
+void set_ui_slot_charges(ItemContainerID container_id, int slot, int charges)
+{
+    if (slot == NULL_SLOT) return;
+    ItemContainerUIInterface* container = get_container_ui(container_id);
+    if (container == NULL) return;
+
+    struct SlotMetadata metadata = container->get_slot_metadata(slot);
+    metadata.charges = charges;
+    container->insert_item(slot, metadata);
 }
 
 }   // ItemContainer

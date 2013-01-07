@@ -281,10 +281,9 @@ void CraftingUI::draw()
     if (this->container_id == NULL_CONTAINER) return;
 
     // get data for rendering items
-    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
-    if (slot_types == NULL) return;
-    IF_ASSERT(slot_stacks == NULL) return;
+    struct ItemContainer::SlotMetadata* slot_metadata =
+        ItemContainer::get_container_ui_slot_metadata(container_id);
+    IF_ASSERT(slot_metadata == NULL) return;
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
@@ -297,7 +296,7 @@ void CraftingUI::draw()
     for (int yslot=0; yslot<input_ydim; yslot++)
     {
         int slot = input_xdim*yslot + xslot;
-        int item_type = slot_types[slot];
+        int item_type = slot_metadata[slot].type;
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
@@ -435,7 +434,7 @@ void CraftingUI::draw()
         // it is not aware of the implementation detail we have for food
         const int slot = input_xdim*yslot + xslot;
 
-        int stack = slot_stacks[slot];
+        int stack = slot_metadata[slot].stack_size;
         if (stack <= 1) continue;
 
         GS_ASSERT(count_digits(stack) < STACK_COUNT_MAX_LENGTH);

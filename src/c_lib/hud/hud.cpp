@@ -245,8 +245,9 @@ bool FAILED_merge_of_cntainr_draws(
     int hover_slot)
 {
     // abort if slots aren't copasetic
-    int* slot_types = ItemContainer::get_container_ui_types(container_id);
-    if (slot_types == NULL) return false;
+    struct ItemContainer::SlotMetadata* slot_metadata =
+        ItemContainer::get_container_ui_slot_metadata(container_id);
+    IF_ASSERT(slot_metadata == NULL) return false;
 
     const float w = slot_size;
 
@@ -274,34 +275,28 @@ bool FAILED_merge_of_cntainr_draws(
     }
     glEnd();
 
-
     // render slot backgrounds
-    int* slot_durabilities = ItemContainer::get_container_ui_durabilities(container_id);
-    if (slot_durabilities != NULL) 
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
     {
-        for (int i=0; i<xdim; i++)
-        for (int j=0; j<ydim; j++)
-        {
-            // always draw grey background
-            int slot = j*xdim + i;
-            float x = xoff + border + i*(inc1+slot_size);
-            float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-            glColor4ub(80, 80, 80, alpha_bkgd);    // grey
-            float ratio = 1.0f;
-            Hud::meter_graphic.draw(x, y, w, w, ratio);
+        // always draw grey background
+        int slot = j*xdim + i;
+        float x = xoff + border + i*(inc1+slot_size);
+        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+        glColor4ub(80, 80, 80, alpha_bkgd);    // grey
+        float ratio = 1.0f;
+        Hud::meter_graphic.draw(x, y, w, w, ratio);
 
-            // maybe draw a dura meter on it
-            int durability = slot_durabilities[slot];
-            if (durability != NULL_DURABILITY)
-            {
-                int max_durability = Item::get_max_durability(slot_types[slot]);
-                ratio = ((float)durability)/((float)max_durability);
-                Hud::set_color_from_ratio(ratio, alpha_bkgd);
-                Hud::meter_graphic.draw(x, y, w, w, ratio);
-            }
+        // maybe draw a dura meter on it
+        int durability = slot_metadata[slot].durability;
+        if (durability != NULL_DURABILITY)
+        {
+            int max_durability = Item::get_max_durability(slot_metadata[slot].type);
+            ratio = ((float)durability)/((float)max_durability);
+            Hud::set_color_from_ratio(ratio, alpha_bkgd);
+            Hud::meter_graphic.draw(x, y, w, w, ratio);
         }
     }
-
 
     // draw hover highlight background
     glBegin(GL_QUADS);
@@ -336,8 +331,8 @@ bool FAILED_merge_of_cntainr_draws(
     for (int j=0; j<ydim; j++)
     {
         int slot = j * xdim + i;
-        if (slot_types[slot] == NULL_ITEM_TYPE) continue;
-        int tex_id = Item::get_sprite_index_for_type(slot_types[slot]);
+        if (slot_metadata[slot].type == NULL_ITEM_TYPE) continue;
+        int tex_id = Item::get_sprite_index_for_type(slot_metadata[slot].type);
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
@@ -373,11 +368,8 @@ bool FAILED_merge_of_cntainr_draws(
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
 
-
-
     return true; // success
 }
-
 
 /* Display logic */
 

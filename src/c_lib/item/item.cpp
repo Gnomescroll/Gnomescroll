@@ -41,7 +41,7 @@ void ItemList::recharge_items()
         if (this->objects[i].id == this->null_id) continue;
         Item* item = &this->objects[i];
         int max_charges = get_max_charges(item->type);
-        if (item->charges >= max_charges) continue;
+        if (max_charges == NULL_CHARGES || item->charges >= max_charges) continue;
         int recharge_rate = get_recharge_rate(item->type);
         item->recharge_tick++;
         if (item->recharge_tick < recharge_rate) continue;

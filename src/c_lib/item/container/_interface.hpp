@@ -47,8 +47,6 @@ ItemID* get_container_contents(ItemContainerID container_id);
 int get_sprite_index_for_id(ItemID item_id);
 int get_sprite_index_for_type(int item_type);
 int get_container_ui_slot_max(ItemContainerID container_id);
-int* get_container_ui_types(ItemContainerID container_id);
-int* get_container_ui_stacks(ItemContainerID container_id);
 
 void set_ui_slot_durability(ItemContainerID container_id, int slot, int durability);
 void set_ui_slot_stack_size(ItemContainerID container_id, int slot, int stack_size);

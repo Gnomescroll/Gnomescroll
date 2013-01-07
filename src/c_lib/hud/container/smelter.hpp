@@ -329,10 +329,9 @@ void SmelterUI::draw()
     glEnd();
 
     // get data for rendering items
-    int* slot_types = ItemContainer::get_container_ui_types(this->container_id);
-    int* slot_stacks = ItemContainer::get_container_ui_stacks(this->container_id);
-    if (slot_types == NULL) return;
-    IF_ASSERT(slot_stacks == NULL) return;
+    struct ItemContainer::SlotMetadata* slot_metadata =
+        ItemContainer::get_container_ui_slot_metadata(container_id);
+    IF_ASSERT(slot_metadata == NULL) return;
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
@@ -343,7 +342,7 @@ void SmelterUI::draw()
     //draw items
     for (int slot=0; slot<smelter->slot_max; slot++)
     {
-        int item_type = slot_types[slot];
+        int item_type = slot_metadata[slot].type;
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
@@ -394,7 +393,7 @@ void SmelterUI::draw()
     HudText::Text* text;
     for (int slot=0; slot<smelter->slot_max; slot++)
     {
-        int stack = slot_stacks[slot];
+        int stack = slot_metadata[slot].stack_size;
         if (stack <= 1) continue;
 
         int grid = this->get_grid_for_slot(slot);

@@ -7,6 +7,22 @@
 namespace HudContainer
 {
 
+void draw_slot_numbers(HudText::Text* text, float x, float y, int stack_size, int charges)
+{
+    int val = stack_size;
+    Color color = Color(255,255,255);
+    if (charges != NULL_CHARGES)
+    {
+        color = Color(200,10,10);
+        val = charges;
+    }
+
+    text->set_color(color);
+    text->update_formatted_string(1, val);
+    text->set_position(x, y);
+    text->draw();
+}
+
 class UIElement
 {
     public:

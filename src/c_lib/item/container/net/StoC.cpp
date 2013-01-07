@@ -91,10 +91,7 @@ inline void insert_item_in_container_StoC::handle()
     container->insert_item(slot, (ItemID)item_id);
     ItemContainerUIInterface* ui = get_container_ui((ItemContainerID)container_id);
     if (ui == NULL) return;
-    int item_type = Item::get_item_type((ItemID)item_id);
-    int item_stack = Item::get_stack_size((ItemID)item_id);
-    int item_durability = Item::get_item_durability((ItemID)item_id);
-    ui->insert_item(slot, item_type, item_stack, item_durability);
+    ui->insert_item(slot, (ItemID)item_id);
 }
 
 inline void remove_item_from_container_StoC::handle()
@@ -127,12 +124,7 @@ inline void insert_item_in_hand_StoC::handle()
 
     GS_ASSERT(player_hand_ui != NULL);
     if (player_hand_ui != NULL)
-    {    
-        int item_type = Item::get_item_type((ItemID)item_id);
-        int item_stack = Item::get_stack_size((ItemID)item_id);
-        int item_durability = Item::get_item_durability((ItemID)item_id);
-        player_hand_ui->insert_item(item_type, item_stack, item_durability);
-    }
+        player_hand_ui->insert_item((ItemID)item_id);
 }
 
 inline void remove_item_from_hand_StoC::handle()
@@ -166,12 +158,7 @@ inline void container_action_failed_StoC::handle()
         if (hand_item == NULL_ITEM)
             player_hand_ui->remove_item();
         else
-        {
-            int item_type = Item::get_item_type(hand_item);
-            int item_stack = Item::get_stack_size(hand_item);
-            int item_durability = Item::get_item_durability(hand_item);
-            player_hand_ui->insert_item(item_type, item_stack, item_durability);
-        }
+            player_hand_ui->insert_item(hand_item);
     }
 
     // copy network state to render state

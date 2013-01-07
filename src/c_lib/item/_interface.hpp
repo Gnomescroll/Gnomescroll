@@ -17,6 +17,7 @@ ItemGroup get_item_group(ItemID id);
 int get_stack_size(ItemID id);  // space used in a stack
 int get_stack_space(ItemID id); // space left in a stack
 int get_item_durability(ItemID id);
+int get_item_charges(ItemID id);
 
 void merge_item_stack(ItemID src, ItemID dest); // Caller of this function is expected to destroy the src
 void merge_item_stack(ItemID src, ItemID dest, int amount);

@@ -31,6 +31,8 @@ const size_t CONTAINER_DISPLAY_NAME_MAX_LENGTH = 63;
 
 const unsigned int MAX_CONTAINER_SIZE = NULL_SLOT;
 
+const int NULL_CHARGES = -1;
+
 const int MAX_CONTAINERS = NULL_CONTAINER;
 
 const int MAX_MAX_CHARGES = 0xFF;

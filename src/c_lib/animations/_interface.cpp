@@ -1,11 +1,11 @@
 #include "_interface.hpp"
 
 #if DC_CLIENT
-#include <animations/insect_mob.hpp>
-#include <animations/hitscan.hpp>
-#include <animations/mining_laser.hpp>
-#include <animations/weapon.hpp>
-#include <animations/voxel_particle.hpp>
+# include <animations/insect_mob.hpp>
+# include <animations/hitscan.hpp>
+# include <animations/mining_laser.hpp>
+# include <animations/weapon.hpp>
+# include <animations/voxel_particle.hpp>
 #endif
 
 #include <animations/packets.hpp>
@@ -60,11 +60,8 @@ void draw_mining_laser_effect()
 void play_animation(int animation_id, struct Vec3 position)
 {
     class AnimationData* data = get_animation_data(animation_id);
-    GS_ASSERT(data != NULL);
-    if (data == NULL) return;
-    GS_ASSERT(data->callback != NULL);
-    GS_ASSERT(data->metadata != NULL);
-    if (data->callback == NULL || data->metadata == NULL) return;
+    IF_ASSERT(data == NULL) return;
+    IF_ASSERT(data->callback == NULL || data->metadata == NULL) return;
 
     switch (data->metadata_type)
     {
@@ -100,13 +97,12 @@ void spawn_insect_mob(float x, float y, float z)
     y13 = y;
     z13 = z;
 
-    return;
-    InsectMob* im = insect_mob_list->create();
-    if(im == NULL) return;
+    //InsectMob* im = insect_mob_list->create();
+    //if (im == NULL) return;
 
-    im->init(x,y,z+2.5f);
+    //im->init(x,y,z+2.5f);
 
-    //printf("insect at: %f %f %f \n", x,y,z);
+    ////printf("insect at: %f %f %f \n", x,y,z);
 }
 
 void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation, const float speed, const float length)
@@ -149,8 +145,7 @@ void send_play_animation(const char* name, ClientID client_id, struct Vec3 posit
 {
     ASSERT_BOXED_POSITION(position);
     int animation_id = get_animation_id(name);
-    GS_ASSERT(animation_id >= 0);
-    if (animation_id < 0) return;
+    IF_ASSERT(animation_id < 0) return;
     play_animation_StoC msg;
     msg.animation_id = animation_id;
     msg.position = position;
@@ -161,8 +156,7 @@ void broadcast_play_animation(const char* name, struct Vec3 position)
 {
     ASSERT_BOXED_POSITION(position);
     int animation_id = get_animation_id(name);
-    GS_ASSERT(animation_id >= 0);
-    if (animation_id < 0) return;
+    IF_ASSERT(animation_id < 0) return;
     play_animation_StoC msg;
     msg.animation_id = animation_id;
     msg.position = position;

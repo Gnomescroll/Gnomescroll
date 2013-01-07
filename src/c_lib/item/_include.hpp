@@ -18,18 +18,9 @@
 #include <item/config/synthesizer_dat.hpp>
 #include <item/config/crafting_dat.hpp>
 #include <item/config/smelting_dat.hpp>
+
 #if DC_SERVER
-#include <item/config/item_drop.cpp>
-#include <item/config/item_drop_alt.cpp>
-#endif
-
-
-// Client
-#if DC_CLIENT
-#include <item/client.cpp>
-#endif
-
-// Server
-#if DC_SERVER
-#include <item/server.cpp>
+# include <item/config/item_drop.cpp>
+# include <item/config/item_drop_alt.cpp>
+# include <item/server.cpp>
 #endif
