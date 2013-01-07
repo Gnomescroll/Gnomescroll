@@ -418,24 +418,14 @@ void draw()
         if (container != NULL)
         {
             GS_ASSERT(container->type != NULL_CONTAINER_TYPE);
-            if (container->type == ItemContainer::name::storage_block_small
-             || container->type == ItemContainer::name::cryofreezer_small)
+            if (isValid(container->type))
             {
-                storage_block->set_container_type(container->type);
-                storage_block->draw();
-            }
-            else
-            if (container->type == ItemContainer::name::crafting_bench_basic)
-                crafting_container->draw();
-            else
-            if (container->type == ItemContainer::name::smelter_basic)
-                smelter->draw();
-            else
-            if (container->type == ItemContainer::name::crusher)
-                crusher->draw();
-            else
-            {
-                GS_ASSERT(false);
+                GS_ASSERT(ui_elements[container->type] != NULL);
+                if (ui_elements[container->type] != NULL)
+                {
+                    ui_elements[container->type]->set_container_type(container->type);
+                    ui_elements[container->type]->draw();
+                }
             }
         }
     }

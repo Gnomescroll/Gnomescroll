@@ -24,7 +24,7 @@ class EnergyTanksUI : public UIElement
         int selected_slot;
 
     int count()
-    { // count loaded energy tanks
+    {   // count loaded energy tanks
         if (this->container_id == NULL_CONTAINER) return 0;
         struct ItemContainer::SlotMetadata* slot_metadata =
             ItemContainer::get_container_ui_slot_metadata(container_id);
@@ -102,13 +102,15 @@ void EnergyTanksUI::draw_name()
     HudFont::reset_default();
     HudFont::set_texture();
     // this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() - 3);
-    this->name.set_position(this->xoff, _yresf - this->height() );
+    this->name.set_position(this->xoff, _yresf - this->height());
     this->name.draw();
     HudFont::end_font_draw();
 }
 
 void EnergyTanksUI::draw()
 {
+    if (this->container_id == NULL_CONTAINER) return;
+
     const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
@@ -116,8 +118,6 @@ void EnergyTanksUI::draw()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    if (this->container_id == NULL_CONTAINER) return;
     
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
@@ -180,9 +180,9 @@ void EnergyTanksUI::draw()
     glEnd();
     glColor4ub(255, 255, 255, 255);
     
-    int energy_tank_type = Item::get_item_type("energy_tank");
+    static int energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
-    int energy_tank_sprite_index = Item::get_sprite_index_for_type(energy_tank_type);
+    static int energy_tank_sprite_index = Item::get_sprite_index_for_type(energy_tank_type);
     GS_ASSERT(energy_tank_sprite_index != ERROR_SPRITE);
 
     IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->greyscale_texture == 0) return;
@@ -201,7 +201,7 @@ void EnergyTanksUI::draw()
     }
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
-    xoff = (_xresf - count() * slot_size) / 2;
+    xoff = (_xresf - this->width()) / 2;
 
     // draw loaded energy tanks
     glBegin(GL_QUADS);
