@@ -39,17 +39,17 @@ void init_shaders()
 
     if (GLEW_EXT_texture_array)
     {
-        if (PRODUCTION) printf("Video cards reports GL_EXT_texture_array as supported \n");
+        printf("GLEW_EXT_texture_array supposedly supported\n");
     }
     else
     {
-        printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
+        printf("Warning: GLEW_EXT_texture_array not supported. Using Backup Shader.\n");
         T_MAP_BACKUP_SHADER = 1;
     }
 
     if (!GLEW_EXT_texture_sRGB)
     {
-        printf("!!! Warning: EXT_texture_sRGB not supported. \n");
+        printf("Warning: GLEW_EXT_texture_sRGB not supported.\n");
     }
 
 
