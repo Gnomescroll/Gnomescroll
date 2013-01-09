@@ -529,7 +529,7 @@ void verify_item_dat()
         // gas lifetime should be set, if it is a gas
         GS_ASSERT_ABORT(!a->gas || a->gas_lifetime != NULL_GAS_LIFETIME);
 
-        GS_ASSERT_ABORT(a->max_charges == NULL_CHARGES || a->max_charges > 0 && a->max_charges < MAX_MAX_CHARGES);
+        GS_ASSERT_ABORT(a->max_charges == NULL_CHARGES || (a->max_charges > 0 && a->max_charges < MAX_MAX_CHARGES));
         GS_ASSERT_ABORT(a->recharge_rate > 0);
 
         #if DC_CLIENT
