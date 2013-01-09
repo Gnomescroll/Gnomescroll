@@ -57,6 +57,7 @@ def check_clang(conf):
     if use_clang:
         conf.env['CC'] = ['clang']
         conf.env['CXX'] = ['clang']
+        print 'Using clang'
     return use_clang
 
 def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use_clang=True):
@@ -104,6 +105,7 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
         '-Wvla', #warns variable array
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
+        '-Wparentheses',
         prodflag,
         optflag,
     ]
