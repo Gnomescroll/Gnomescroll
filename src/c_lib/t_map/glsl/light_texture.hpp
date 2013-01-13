@@ -31,7 +31,7 @@ class LightTextureGenerator
 		float t = 1.0;
 		for(int i=0; i<it; i++)
 			t *= falloff;
-		return t
+		return t;
 	}
 
 	void init()
