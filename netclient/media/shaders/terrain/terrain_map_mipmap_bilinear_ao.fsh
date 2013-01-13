@@ -80,10 +80,10 @@ void main()
 
     color = pow(color, gamma_factor3);
 
-    //color = color*texture2D(clut_light_texture, Light).rgb;
+    color = color*texture2D(clut_light_texture, Light).rgb;
     //color = vec3(1.0,1.0,1.0)*Light.x;
 
-    color = texture2D(clut_light_texture, Light).rgb;
+    //color = texture2D(clut_light_texture, Light).rgb;
 
     const float clut_start = 64;
     const float _clut_depth = 1.0/32.0;
