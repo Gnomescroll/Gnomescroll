@@ -34,15 +34,14 @@ const vec3 gamma_factor3 = vec3(gamma_factor);
 
 const vec3 luma_const = vec3(0.299, 0.587, 0.114);
 
-/*
-    How to calculate pixel brightness
 
-    Brightness Calculation in Digital Image Processing - KWE
- 
- Y' = 0.299 r + 0.587 g + 0.114 b
- V = max (r, g, b)
+//How to calculate pixel brightness
+//Brightness Calculation in Digital Image Processing - KWE
+//Y = 0.299 r + 0.587 g + 0.114 b
+//V = max (r, g, b)
+//B = (r+g+b) /3.0  //works best
 
-*/
+
 void main() 
 {
 /*
