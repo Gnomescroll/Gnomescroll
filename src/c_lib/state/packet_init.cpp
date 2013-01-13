@@ -1,10 +1,10 @@
-#include "./packet_init.hpp"
+#include "packet_init.hpp"
 
 #include <agent/net_agent.hpp>
-#if DC_CLIENT
-#include <agent/client/player_agent.hpp>
-#endif
 
+#if DC_CLIENT
+# include <agent/client/player_agent.hpp>
+#endif
 
 #include <t_map/_interface.hpp>
 
@@ -186,4 +186,4 @@ void RegisterMessages()
     Badges::init_packets();
 }
 
-}
+}   // PacketInit

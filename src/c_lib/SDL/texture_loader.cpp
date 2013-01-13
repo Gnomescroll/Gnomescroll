@@ -1,4 +1,4 @@
-#include "./texture_loader.hpp"
+#include "texture_loader.hpp"
 
 #include <common/compat_gl.h>
 #include <math.h>

@@ -1,4 +1,4 @@
-#include "./camera.hpp"
+#include "camera.hpp"
 
 #include <camera/fulstrum_test.hpp>
 

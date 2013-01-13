@@ -1,16 +1,15 @@
-#include "./net_peer.hpp"
+#include "net_peer.hpp"
 
 //#include <sys/types.h>
 
 #define NET_PEER_DEBUG 0
 
-NetPeer::NetPeer()
-:
-client_id(NULL_CLIENT),
-connected(0),
-version(0),
-disconnect_code(DISCONNECT_TIMEOUT),
-enet_peer(NULL)
+NetPeer::NetPeer() :
+    client_id(NULL_CLIENT),
+    connected(0),
+    version(0),
+    disconnect_code(DISCONNECT_TIMEOUT),
+    enet_peer(NULL)
 {
     #if DC_SERVER
     map_message_buffer = new char[ NET_PEER_MAP_MESSAGE_BUFFER_DEFAULT ];

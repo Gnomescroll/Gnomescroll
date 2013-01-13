@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "./sequencer.h"
+//#include <net_lib/common/sequencer.h>
 //#include <net_lib/client/pviz.h>
 //#include <net_lib/common/sequencer.h>
 //#include <net_lib/common/python_channel.hpp>
@@ -14,7 +14,8 @@
 
 class NetMessageArray; //forward declaration
 
-struct packet_sequence {
+struct packet_sequence
+{
     class NetMessageArray* nma;   //pointer to buffer
     short read_index;  //starting index in buffer
     short messages_n;    //number of packets
@@ -26,7 +27,8 @@ struct packet_sequence {
     //int retry_attempts; //can only use for reliable, ordered packet sequences
 };
 
-struct packet_sequence2 {
+struct packet_sequence2
+{
     short seq;
     short received;
 };
