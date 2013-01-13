@@ -18,6 +18,7 @@
 
 //clut support
 #include <t_map/glsl/haldCLUT/hald_clut.hpp>
+#include <t_map/glsl/light_texture.hpp>
 
 namespace t_map
 {
@@ -317,14 +318,19 @@ void Vbo_map::draw_map()
     //uniform sampler2DArray base_texture;
 
     glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, generate_clut_light_texture());
+
+    glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
     
-    glActiveTexture(GL_TEXTURE2);
+    glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
 
+    GLint clut_light_texture = glGetUniformLocation(map_shader.shader->shader, "clut_light_texture");
     GLint clut_texture = glGetUniformLocation(map_shader.shader->shader, "clut_texture");
     GLint base_texture = glGetUniformLocation(map_shader.shader->shader, "base_texture");
 
+    GS_ASSERT(clut_light_texture != 0);
     GS_ASSERT(clut_texture != 0);
     GS_ASSERT(base_texture != 0);
 
@@ -333,8 +339,9 @@ void Vbo_map::draw_map()
     //CHECK_GL_ERROR();
     //glActiveTextureARB(GL_TEXTURE0);
 
-    glUniform1i(clut_texture, 1); //Texture unit 0 is for clut_texture
-    glUniform1i(base_texture, 2); //Texture unit 1 is for base_texture
+    glUniform1i(clut_texture, 1); //Texture unit 0 is for clut_light_texture
+    glUniform1i(clut_texture, 2); //Texture unit 1 is for clut_texture
+    glUniform1i(base_texture, 3); //Texture unit 2 is for base_texture
 
     //glEnable(GL_TEXTURE_2D);
 
@@ -451,6 +458,9 @@ void Vbo_map::draw_map()
     glBindTexture(GL_TEXTURE_3D, 0);
 
     glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+    glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
     glActiveTexture(GL_TEXTURE0);

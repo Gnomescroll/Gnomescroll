@@ -97,7 +97,7 @@ class LightTextureGenerator
 
 class LightTextureGenerator* LTG;
 
-unsigned int get_light_texture_CLUT()
+unsigned int generate_clut_light_texture()
 {
 	return LTG->texture_array[0];
 }

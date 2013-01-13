@@ -43,7 +43,8 @@ struct SIDE_BUFFER** SIDE_BUFFER_ARRAY = NULL;
 struct Vertex* vlist_scratch_0 = NULL;
 struct Vertex* vlist_scratch_1 = NULL;
 
-float light_lookup[16]; //how fast light decays
+//float light_lookup[16]; //how fast light decays
+float light_lookup[16]; //lookup in light CLUT textuer
 
 void t_vbo_update_init()
 {
@@ -58,10 +59,16 @@ void t_vbo_update_init()
 
     init_pallete();
 
+/*
     for(int i=0; i<16; i++)
     {
         light_lookup[i] = 0.10 + 0.90f* ((float)(i))/15.0;
     }
+*/
+    for(int i=0; i<16; i++)
+    {
+        light_lookup[i] = ((float)(i))/((float) 16-1);
+    }  
 }
 
 void t_vbo_update_end()
@@ -433,6 +440,11 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+1].lighting[0] = light;
     v_list[offset+2].lighting[0] = light;
     v_list[offset+3].lighting[0] = light;
+
+    v_list[offset+0].lighting[1] = 0.0f;
+    v_list[offset+1].lighting[1] = 0.0f;
+    v_list[offset+2].lighting[1] = 0.0f;
+    v_list[offset+3].lighting[1] = 0.0f;
 
     {
         int _x = x & 15;

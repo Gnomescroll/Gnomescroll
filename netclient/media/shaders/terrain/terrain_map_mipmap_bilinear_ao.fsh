@@ -21,6 +21,7 @@ varying vec3 inColor;
 
 varying float fogFragDepth;
 
+uniform sampler2D clut_light_texture;
 uniform sampler3D clut_texture;
 uniform sampler2DArray base_texture;
 
@@ -38,7 +39,12 @@ void main()
 
     float tmp = dot(vx, lightMatrix * vy);
 
-    vec3 color = tmp*inColor.rgb;
+    vec3 color = tmp*inColor;
+
+    //color = color*texture2D(clut_light_texture, vec2(0.05, 0.5)).rgb;
+
+    //color = color* clut_light_texture
+    
     color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
 
 /*
@@ -58,7 +64,7 @@ void main()
         color = mix(color, gl_Fog.color.xyz, 1.0f-fogFactor); 
     }
 
-    color = color * skyLight;
+    //color = color * skyLight;
 
     color = pow(color, gamma_factor3);
 
@@ -67,7 +73,11 @@ void main()
     gl_FragColor.rgb = color;
 */
 
-    color = color * skyLight;
+    //color = color * skyLight;
+
+    //apply texture for sky and player light
+    color = color*texture2D(clut_light_texture, vec2(skyLight, playerLight)).rgb;
+
     color = pow(color, gamma_factor3);
 
 
