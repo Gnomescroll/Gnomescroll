@@ -196,8 +196,11 @@ static void register_item_group_callbacks()
     
     // assist the client in predicting what the server will do
     set_group(IG_CONSUMABLE);
+    c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
+    
     set_group(IG_SPECIAL);
+    c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     #endif
     
@@ -215,7 +218,7 @@ static void register_item_group_callbacks()
     c.trigger = &decrement_durability;
     
     set_group(IG_CONSUMABLE);
-    c.trigger = &consume_item;
+    c.beta_trigger = &consume_item;
     
     set_group(IG_AGENT_SPAWNER);
     c.trigger = &place_spawner;
