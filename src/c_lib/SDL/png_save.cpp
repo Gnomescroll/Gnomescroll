@@ -97,7 +97,7 @@ void save_png_RGB(const char* filename, float* in, int xres, int yres)
         int index = j*xres + i;
         for(int k=0; k<3;k++)
         {
-            float _v = in[3*(j*xres+i)];
+            float _v = in[3*(j*xres+i)+k];
 
             if( _v < 0.0) _v = 0.0f;
             if( _v > 1.0) _v = 1.0f;
@@ -106,7 +106,7 @@ void save_png_RGB(const char* filename, float* in, int xres, int yres)
 
             PBUFFER[4*index+k] = v2;
         }
-        PBUFFER[index+3] = 255;
+        PBUFFER[4*index+3] = 255;
     }
 
     {

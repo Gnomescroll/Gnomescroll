@@ -370,9 +370,9 @@ bool vec3_is_valid(Vec3 v)
 
 
 ALWAYS_INLINE
-bool vec3_lerp(struct Vec3 a, struct Vec3 b, float f)
+struct Vec3 vec3_lerp(struct Vec3 a, struct Vec3 b, float f)
 {
-    struct vec3 v;
+    struct Vec3 v;
     const float _f = 1.0 - f;
     v.x = _f*a.x + f*b.x;
     v.y = _f*a.y + f*b.y;
