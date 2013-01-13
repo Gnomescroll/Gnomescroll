@@ -35,7 +35,7 @@ class LightTextureGenerator
 		struct Vec3 br;
 		struct Vec3 bl;
 
-		ul = vec3_init(0.0, 0.0, 0.0);	//darkness
+		ul = vec3_init(1.0, 0.0, 0.0);	//darkness
 		br = vec3_init(1.0, 1.0, 1.0);	//light
 
 		ur = vec3_init(0.0, 0.0, 1.0);
@@ -81,8 +81,8 @@ class LightTextureGenerator
             glBindTexture(GL_TEXTURE_2D, texture_array[i]);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, dim, dim, 0, GL_RGB, GL_FLOAT, values );
         

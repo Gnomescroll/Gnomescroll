@@ -31,12 +31,14 @@ Varying
 
 #ifdef GL_EXT_gpu_shader4
     flat varying mat2 lightMatrix;
-    flat varying float skyLight;
-    flat varying float playerLight;
+    //flat varying float skyLight;
+    //flat varying float playerLight;
+    flat varying vec2 Light;
 #else
     varying mat2 lightMatrix;
-    varying float skyLight;
-    varying float playerLight;
+    //varying float skyLight;
+    //varying float playerLight;
+    flat varying vec2 Light;
 #endif
 
 varying vec3 texCoord;
@@ -57,6 +59,8 @@ void main(void)
     texCoord = InTexCoord;
 
     lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
-    skyLight = InLight.x;
-    playerLight = InLight.y;
+    
+    Light = InLight;
+    //skyLight = InLight.x;
+    //playerLight = InLight.y;
 }

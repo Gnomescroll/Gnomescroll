@@ -453,7 +453,6 @@ void Vbo_map::draw_map()
     //;
     glDisable(GL_CULL_FACE);
 
-
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_3D, 0);
 

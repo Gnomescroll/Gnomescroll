@@ -67,8 +67,10 @@ void t_vbo_update_init()
 */
     for(int i=0; i<16; i++)
     {
-        light_lookup[i] = ((float)(i))/((float) 16-1);
-    }  
+        //light_lookup[i] = (1.0/32.0)+((float)(i))/ ((float) (16-1)); //texel aligned
+        light_lookup[i] = (1.0/32.0)+ ((float)(i)) / ((float) (16)); //texel aligned
+        GS_ASSERT_ABORT(light_lookup[i] > 0.0 && light_lookup[i] < 1.0);
+    }
 }
 
 void t_vbo_update_end()
@@ -434,17 +436,26 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+3].pos = _v_index[4*side+3].pos;
 #endif
 
+
     float light = light_lookup[get_lighting(x,y,z,side)];
 
+/*
+    int light_value = get_lighting(x,y,z,side);
+    GS_ASSERT(light_value >= 0 && light_value < 16);
+    GS_ASSERT( light_lookup[light_value] == ((float)(light_value)) / ((float) (16)) ); //texel aligned )
+*/
+
+    GS_ASSERT(light > 0.0 && light < 1.0);
+    
     v_list[offset+0].lighting[0] = light;
     v_list[offset+1].lighting[0] = light;
     v_list[offset+2].lighting[0] = light;
     v_list[offset+3].lighting[0] = light;
 
-    v_list[offset+0].lighting[1] = 0.0f;
-    v_list[offset+1].lighting[1] = 0.0f;
-    v_list[offset+2].lighting[1] = 0.0f;
-    v_list[offset+3].lighting[1] = 0.0f;
+    v_list[offset+0].lighting[1] = light_lookup[5];
+    v_list[offset+1].lighting[1] = light_lookup[5];
+    v_list[offset+2].lighting[1] = light_lookup[5];
+    v_list[offset+3].lighting[1] = light_lookup[5];
 
     {
         int _x = x & 15;

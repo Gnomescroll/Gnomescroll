@@ -8,13 +8,16 @@
 
 #ifdef GL_EXT_gpu_shader4
     flat varying mat2 lightMatrix;
-    flat varying float skyLight;
-    flat varying float playerLight;
+    //flat varying float skyLight;
+    //flat varying float playerLight;
+    flat varying vec2 Light;
 #else
     varying mat2 lightMatrix;
-    varying float skyLight;
-    varying float playerLight;
+    //varying float skyLight;
+    //varying float playerLight;
+    flat varying vec2 Light;
 #endif
+
 
 varying vec3 texCoord;
 varying vec3 inColor;
@@ -65,21 +68,19 @@ void main()
     }
 
     //color = color * skyLight;
-
     color = pow(color, gamma_factor3);
-
     color = texture3D(clut_texture, color.rgb); //clut correction
-
     gl_FragColor.rgb = color;
 */
 
     //color = color * skyLight;
 
     //apply texture for sky and player light
-    color = color*texture2D(clut_light_texture, vec2(skyLight, playerLight)).rgb;
+    //color = color* Light.x;
 
     color = pow(color, gamma_factor3);
 
+    color = color*texture2D(clut_light_texture, Light).rgb;
 
     const float clut_start = 64;
     const float _clut_depth = 1.0/32.0;
