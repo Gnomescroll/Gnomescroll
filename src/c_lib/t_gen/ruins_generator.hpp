@@ -228,9 +228,9 @@ bool valid_room_idx_to(direction_t dir, IntVec3 ri) { // room index
 		switch((direction_t)i) 
 		{
 			case DIR_NORTH: if (rect_spans(rooms[ri.z][ri.y][ri.x].nh) ) return true; break;
-			case DIR_SOUTH: if (!rooms[ri.z][ri.y - 1][ri.x].dead) ; break;
+			case DIR_SOUTH: if (rect_spans(rooms[ri.z][ri.y][ri.x].sh) ) return true; break;
 			case DIR_EAST:  if (rect_spans(rooms[ri.z][ri.y][ri.x].eh) ) return true; break;
-			case DIR_WEST:  if (!rooms[ri.z][ri.y][ri.x - 1].dead) ; break;
+			case DIR_WEST:  if (rect_spans(rooms[ri.z][ri.y][ri.x].wh) ) return true; break;
 		}
 	}
     return false;
