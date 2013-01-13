@@ -36,7 +36,7 @@ class LightTextureGenerator
 		struct Vec3 bl;
 
 		ul = vec3_init(1.0, 0.0, 0.0);	//darkness
-		br = vec3_init(1.0, 1.0, 1.0);	//light
+		br = vec3_init(1.0, 0.0, 0.0);	//light
 
 		ur = vec3_init(0.0, 0.0, 1.0);
 		bl = vec3_init(0.0, 1.0, 0.0);
@@ -76,9 +76,9 @@ class LightTextureGenerator
 		glEnable(GL_TEXTURE_2D);
         glGenTextures(1, texture_array);
 
-        for(int i=0; i<1; i++)
-        {
-            glBindTexture(GL_TEXTURE_2D, texture_array[i]);
+        //for(int i=0; i<1; i++)
+        //{
+            glBindTexture(GL_TEXTURE_2D, texture_array[0]);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -86,7 +86,7 @@ class LightTextureGenerator
 
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, dim, dim, 0, GL_RGB, GL_FLOAT, values );
         
-        }
+        //}
         glBindTexture(GL_TEXTURE_2D, 0);
 
         glDisable(GL_TEXTURE_2D);

@@ -438,14 +438,6 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
 
 
     float light = light_lookup[get_lighting(x,y,z,side)];
-
-/*
-    int light_value = get_lighting(x,y,z,side);
-    GS_ASSERT(light_value >= 0 && light_value < 16);
-    GS_ASSERT( light_lookup[light_value] == ((float)(light_value)) / ((float) (16)) ); //texel aligned )
-*/
-
-    GS_ASSERT(light > 0.0 && light < 1.0);
     
     v_list[offset+0].lighting[0] = light;
     v_list[offset+1].lighting[0] = light;

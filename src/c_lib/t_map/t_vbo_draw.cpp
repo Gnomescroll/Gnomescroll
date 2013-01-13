@@ -339,7 +339,7 @@ void Vbo_map::draw_map()
     //CHECK_GL_ERROR();
     //glActiveTextureARB(GL_TEXTURE0);
 
-    glUniform1i(clut_texture, 1); //Texture unit 0 is for clut_light_texture
+    glUniform1i(clut_light_texture, 1); //Texture unit 0 is for clut_light_texture
     glUniform1i(clut_texture, 2); //Texture unit 1 is for clut_texture
     glUniform1i(base_texture, 3); //Texture unit 2 is for base_texture
 
