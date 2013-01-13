@@ -32,6 +32,17 @@ uniform sampler2DArray base_texture;
 const float gamma_factor = 1.0f / 2.2f;
 const vec3 gamma_factor3 = vec3(gamma_factor);
 
+const vec3 luma_const = vec3(0.299, 0.587, 0.114);
+
+/*
+    How to calculate pixel brightness
+
+    Brightness Calculation in Digital Image Processing - KWE
+ 
+ Y' = 0.299 r + 0.587 g + 0.114 b
+ V = max (r, g, b)
+
+*/
 void main() 
 {
 /*
@@ -51,13 +62,26 @@ void main()
     color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
 
     //color = color * skyLight;
-    color = pow(color, gamma_factor3);
 
-    //apply texture for sky and player light
-    //color = color* Light.x;
+
+    //float color_power = color.length();
+
+/*
+    vec3 cp = (color.r+color.b+color.g) * vec3(0.33, 0.33, 0.33);
+    color = color*texture2D(clut_light_texture, Light).rgb;
+    const float desat = 0.50;
+    color = mix(color, cp, desat);
+*/
+/*
+    const float saturation = 0.50;
+    color = color + saturation*color*texture2D(clut_light_texture, Light).rgb;
+*/
 
     color = color*texture2D(clut_light_texture, Light).rgb;
-    //color = vec3(1.0,1.0,1.0)*Light.x;
+
+    color = pow(color, gamma_factor3);
+
+    //color = color*texture2D(clut_light_texture, Light).rgb;
 
     //color = texture2D(clut_light_texture, Light).rgb;
     const float clut_start = 64;
