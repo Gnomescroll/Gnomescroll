@@ -87,7 +87,7 @@ dont_include_this_file_in_client
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
 #include <common/subscriber_list.hpp>
-#include <common/analytics/sessions.cpp>
+#include <common/analytics/sessions.hpp>
 #include <common/dat/name_map.hpp>
  
 // logging

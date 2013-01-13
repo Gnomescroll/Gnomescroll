@@ -83,18 +83,20 @@ class Session
 
     void set_name(const char* username)
     {
-        GS_ASSERT(this->username == NULL);
-        if (this->username != NULL) free(this->username);
+        IF_ASSERT(this->username != NULL) free(this->username);
         size_t len = strlen(username);
         this->username = (char*)malloc((len+1)*sizeof(char));
         strcpy(this->username, username);
     }
 
     Session(uint32_t ip_addr) :
-    ip_addr(ip_addr), client_id(NULL_CLIENT), user_id(0), username(NULL),
-    login_time(0), logout_time(0), number(-1), id(-1), version(0), killed(false)
-    {
-    }
+        ip_addr(ip_addr),
+        client_id(NULL_CLIENT), user_id(0),
+        username(NULL),
+        login_time(0), logout_time(0),
+        number(-1), id(-1), version(0),
+        killed(false)
+    {}
 
     ~Session()
     {
@@ -136,16 +138,15 @@ class User
         if (this->n_sessions <= 0) return NULL;
         for (int i=this->n_sessions-1; i>=0; i--)
         {
-            GS_ASSERT(this->sessions[i] != NULL);
-            if (this->sessions[i] == NULL) continue;
+            IF_ASSERT(this->sessions[i] == NULL) continue;
             if (this->sessions[i]->client_id == client_id) return this->sessions[i];
         }
         return NULL;
     }
         
-    User(uint32_t ip_addr)
-    : max_sessions(USER_INITIAL_MAX_SESSIONS), n_sessions(0),
-    ip_addr(ip_addr)
+    User(uint32_t ip_addr) :
+        max_sessions(USER_INITIAL_MAX_SESSIONS), n_sessions(0),
+        ip_addr(ip_addr)
     {
         GS_ASSERT(this->max_sessions > 0);
         this->sessions = (class Session**)calloc(max_sessions, sizeof(class Session*));
@@ -200,8 +201,7 @@ class UserRecorder
     {
         for (int i=0; i<this->n_users; i++)
         {
-            GS_ASSERT(this->users[i] != NULL);
-            if (this->users[i] == NULL) continue;
+            IF_ASSERT(this->users[i] == NULL) continue;
             if (this->users[i]->ip_addr == ip_addr)
                 return this->users[i];
         }
@@ -214,14 +214,9 @@ class UserRecorder
         // if none found, create
         // attach
 
-        GS_ASSERT(this->users != NULL);
-        if (this->users == NULL) return;
-        
-        GS_ASSERT(session != NULL);
-        if (session == NULL) return;
-        
-        GS_ASSERT(session->ip_addr != 0);
-        if (session->ip_addr == 0) return;
+        IF_ASSERT(this->users == NULL) return;
+        IF_ASSERT(session == NULL) return;
+        IF_ASSERT(session->ip_addr == 0) return;
 
         // find an existing user
         class User* user = this->get_or_create_user(session->ip_addr);
@@ -232,12 +227,10 @@ class UserRecorder
     {
         for (int i=0; i<this->n_users; i++)
         {
-            GS_ASSERT(this->users[i] != NULL);
-            if (this->users[i] == NULL) continue;
+            IF_ASSERT(this->users[i] == NULL) continue;
             class Session* session = this->users[i]->get_latest_session(client_id);
             if (session == NULL) continue;
-            GS_ASSERT(session->client_id == client_id);
-            if (session->client_id != client_id) continue;
+            IF_ASSERT(session->client_id != client_id) continue;
             if (!session->is_active()) continue;
             return session;
         }
@@ -247,37 +240,30 @@ class UserRecorder
     void set_name_for_client_id(ClientID client_id, const char* username)
     {
         class Session* session = get_active_session_for_client(client_id);
-        GS_ASSERT(session != NULL);
-        if (session == NULL) return;
-        GS_ASSERT(session->is_active());
-        if (!session->is_active()) return;
+        IF_ASSERT(session == NULL) return;
+        IF_ASSERT(!session->is_active()) return;
         session->set_name(username);
     }
     
     void record_client_force_disconnect(ClientID client_id)
     {
         class Session* session = get_active_session_for_client(client_id);
-        GS_ASSERT(session != NULL);
-        if (session == NULL) return;
-        GS_ASSERT(session->is_active());
-        if (!session->is_active()) return;
+        IF_ASSERT(session == NULL) return;
+        IF_ASSERT(!session->is_active()) return;
         session->killed = true;
     }
 
     void record_client_version(ClientID client_id, int version)
     {
         class Session* session = get_active_session_for_client(client_id);
-        GS_ASSERT(session != NULL);
-        if (session == NULL) return;
-        GS_ASSERT(session->is_active());
-        if (!session->is_active()) return;
+        IF_ASSERT(session == NULL) return;
+        IF_ASSERT(!session->is_active()) return;
         session->version = version;
     }
 
-    UserRecorder()
-    : users(NULL), n_users(0), max_users(USER_RECORDER_INITIAL_MAX_IP_ADDR)
+    UserRecorder() :
+        users(NULL), n_users(0), max_users(USER_RECORDER_INITIAL_MAX_IP_ADDR)
     {
-        this->max_users = max_users;
         this->users = (class User**)calloc(this->max_users, sizeof(class User*));
     }
 
@@ -287,8 +273,7 @@ class UserRecorder
         {
             for (int i=0; i<this->n_users; i++)
             {
-                GS_ASSERT(this->users[i] != NULL);
-                if (this->users[i] == NULL) continue;
+                IF_ASSERT(this->users[i] == NULL) continue;
                 delete this->users[i];
             }
             free(users);

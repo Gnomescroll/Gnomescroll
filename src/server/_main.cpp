@@ -136,7 +136,6 @@ void init_world()
         t_gen::generate_city();
     }
 
-
     srand((unsigned int)time(NULL));
 }
 
