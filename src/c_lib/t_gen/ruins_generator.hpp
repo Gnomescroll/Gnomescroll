@@ -110,8 +110,10 @@ struct Room : Rect3D {
     }
 };
 
-Room rooms[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
-    
+//Room rooms[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
+Room*** rooms = NULL; //[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
+
+
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeType tile_id)
 {
     for (int z = i_z; z < i_z + i_h; z++) {
@@ -477,50 +479,38 @@ Rect3D get_open_connection(direction_t d)
     return r;
 }
 
-//void assert_room_index_range(IntVec3 v)
-//{
-    //GS_ASSERT(v.x >= 0 && v.x < MAX_ROOMS_ACROSS);
-    //GS_ASSERT(v.y >= 0 && v.y < MAX_ROOMS_ACROSS);
-    //GS_ASSERT(v.z >= 0 && v.z < rooms_going_up);
-//}
-
-void connect_these(IntVec3 src, direction_t d, IntVec3& dst) 
+void connect_these(IntVec3 src, direction_t d, IntVec3 dst) 
 {
-    //assert_room_index_range(src);
-    // set vars and make root to hall connections
-    switch(d) 
-    {
-        case DIR_NORTH: 
-            dst.x = src.x; dst.y = src.y + 1; dst.z = src.z;  // set offset of destination
-            //assert_room_index_range(dst);
-            rooms[src.z][src.y][src.x].nh = get_open_connection(DIR_NORTH);
-            rooms[dst.z][dst.y][dst.x].sh = get_open_connection(DIR_SOUTH);
-            break;
-        case DIR_SOUTH: 
-            dst.x = src.x; dst.y = src.y - 1; dst.z = src.z;  // set offset of destination
-            //assert_room_index_range(dst);
-            rooms[src.z][src.y][src.x].sh = get_open_connection(DIR_SOUTH);
-            rooms[dst.z][dst.y][dst.x].nh = get_open_connection(DIR_NORTH);
-            break;
-        case DIR_EAST:  
-            dst.x = src.x + 1; dst.y = src.y; dst.z = src.z;  // set offset of destination
-            //assert_room_index_range(dst);
-            rooms[src.z][src.y][src.x].eh = get_open_connection(DIR_EAST);
-            rooms[dst.z][dst.y][dst.x].wh = get_open_connection(DIR_WEST);
-            break;
-        case DIR_WEST:  
-            dst.x = src.x - 1; dst.y = src.y; dst.z = src.z;  // set offset of destination
-            //assert_room_index_range(dst);
-            rooms[src.z][src.y][src.x].wh = get_open_connection(DIR_WEST);
-            rooms[dst.z][dst.y][dst.x].eh = get_open_connection(DIR_EAST);
-            break;
+        // set vars and make root to hall connections
+        switch(d) 
+        {
+            case DIR_NORTH: 
+                dst.x = src.x; dst.y = src.y + 1; dst.z = src.z;  // set offset of destination  
+                rooms[src.z][src.y][src.x].nh = get_open_connection(DIR_NORTH);
+                rooms[dst.z][dst.y][dst.x].sh = get_open_connection(DIR_SOUTH);
+                break;
+            case DIR_SOUTH: 
+                dst.x = src.x; dst.y = src.y - 1; dst.z = src.z;  // set offset of destination
+                rooms[src.z][src.y][src.x].sh = get_open_connection(DIR_SOUTH);
+                rooms[dst.z][dst.y][dst.x].nh = get_open_connection(DIR_NORTH);
+                break;
+            case DIR_EAST:  
+                dst.x = src.x + 1; dst.y = src.y; dst.z = src.z;  // set offset of destination
+                rooms[src.z][src.y][src.x].eh = get_open_connection(DIR_EAST);
+                rooms[dst.z][dst.y][dst.x].wh = get_open_connection(DIR_WEST);
+                break;
+            case DIR_WEST:  
+                dst.x = src.x - 1; dst.y = src.y; dst.z = src.z;  // set offset of destination
+                rooms[src.z][src.y][src.x].wh = get_open_connection(DIR_WEST);
+                rooms[dst.z][dst.y][dst.x].eh = get_open_connection(DIR_EAST);
+                break;
 
-        case DIR_UP:
-        case DIR_DOWN:
-        case DIR_MAX:
-            GS_ASSERT(false);
-            break;
-    }
+            case DIR_UP:
+            case DIR_DOWN:
+            case DIR_MAX:
+                GS_ASSERT(false);
+                break;
+        }
 }
 
 IntVec3 root;
@@ -530,8 +520,7 @@ bool empty_lat_space_around(IntVec3 iv)
 {
     // find out how many, and which are valid directions
     int num_choices = 0;
-    const int MAX_NUM_CHOICES = 4;
-    direction_t choices[MAX_NUM_CHOICES]; // 4 lateral possibilities
+    direction_t choices[4]; // 4 lateral possibilities
 
     for (int i = 0; i < 4; i++) // consider all directions
     {
@@ -548,12 +537,6 @@ bool empty_lat_space_around(IntVec3 iv)
                 GS_ASSERT(false);
                 break;
         }
-    }
-
-    IF_ASSERT(num_choices > MAX_NUM_CHOICES)
-    {
-        printf("NUM CHOICES: %d\n", num_choices);
-        return false;
     }
 
     if (num_choices < 1) return false;
@@ -771,6 +754,20 @@ void make_ruins(int x, int y) {
 
     void generate_ruins() {
         printf("Making ruins\n");
+
+        if(rooms == NULL) 
+        {
+            rooms = new Room**[rooms_going_up];
+            for(int i=0; i<rooms_going_up; i++)
+            {
+                rooms[i] = new Room*[MAX_ROOMS_ACROSS];
+                for(int j=0; j<MAX_ROOMS_ACROSS; j++)
+                {
+                    rooms[i][j] = new Room[MAX_ROOMS_ACROSS];
+                }
+            }
+        }
+        //rooms = new (Room[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS]);
 
         floors[0] = t_map::get_cube_type("ruins_floor1");
         floors[1] = t_map::get_cube_type("ruins_floor2"); 
