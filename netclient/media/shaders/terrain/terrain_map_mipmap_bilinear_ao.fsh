@@ -51,13 +51,11 @@ void main()
     color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
 
     //color = color * skyLight;
+    color = color*texture2D(clut_light_texture, Light).rgb;
+
     color = pow(color, gamma_factor3);
 
-    //apply texture for sky and player light
-    //color = color* Light.x;
-
-    color = color*texture2D(clut_light_texture, Light).rgb;
-    //color = vec3(1.0,1.0,1.0)*Light.x;
+    //color = color*texture2D(clut_light_texture, Light).rgb;
 
     //color = texture2D(clut_light_texture, Light).rgb;
     const float clut_start = 64;
