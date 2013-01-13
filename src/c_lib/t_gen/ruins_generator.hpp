@@ -95,7 +95,7 @@ struct Rect3D {
     
 struct Room : Rect3D {
 	bool dead;
-	room_t room_t;
+	enum room_t room_t;
     CubeType wall;
     CubeType floo;
     CubeType ceil;
