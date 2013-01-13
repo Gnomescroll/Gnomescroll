@@ -12,6 +12,7 @@
 #ifdef __clang__
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wcast-align"
+# pragma clang diagnostic ignored "-Wswitch-enum"
 #endif
 
 static size_t commandSizes [ENET_PROTOCOL_COMMAND_COUNT] =

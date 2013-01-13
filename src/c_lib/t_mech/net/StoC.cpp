@@ -1,4 +1,4 @@
-#include "./StoC.hpp"
+#include "StoC.hpp"
 
 #include <t_mech/common/common.hpp>
 #include <t_mech/_interface.hpp>
