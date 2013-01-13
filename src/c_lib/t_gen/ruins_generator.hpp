@@ -110,8 +110,10 @@ struct Room : Rect3D {
     }
 };
 
-Room rooms[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
-    
+//Room rooms[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
+Room*** rooms = NULL; //[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
+
+
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeType tile_id)
 {
     for (int z = i_z; z < i_z + i_h; z++) {
@@ -752,6 +754,20 @@ void make_ruins(int x, int y) {
 
     void generate_ruins() {
         printf("Making ruins\n");
+
+        if(rooms == NULL) 
+        {
+        	rooms = new Room**[rooms_going_up];
+        	for(int i=0; i<rooms_going_up; i++)
+        	{
+        		rooms[i] = new Room*[MAX_ROOMS_ACROSS];
+        		for(int j=0; j<MAX_ROOMS_ACROSS; j++)
+        		{
+        			rooms[i][j] = new Room[MAX_ROOMS_ACROSS];
+        		}
+        	}
+        }
+       	//rooms = new (Room[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS]);
 
         floors[0] = t_map::get_cube_type("ruins_floor1");
         floors[1] = t_map::get_cube_type("ruins_floor2"); 

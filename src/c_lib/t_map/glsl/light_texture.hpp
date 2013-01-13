@@ -66,7 +66,6 @@ class LightTextureGenerator
 
 			}
 		}	
-
 	}
 
 	void init2()
