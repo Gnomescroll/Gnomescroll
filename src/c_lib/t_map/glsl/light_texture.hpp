@@ -26,14 +26,6 @@ class LightTextureGenerator
 
 	}
 
-	static float falloff(int it, float falloff)
-	{
-		float t = 1.0;
-		for(int i=0; i<it; i++)
-			t *= falloff;
-		return t;
-	}
-
 	void init()
 	{
 		struct Vec3 ul;
@@ -68,51 +60,81 @@ class LightTextureGenerator
 		}	
 	}
 
+
+	/*
+		As sunset proceeds
+		- the falloff should approach 1
+		- total brightness should decrease
+
+		During peak sunlight
+		- the highest 3-4 brightness levels should have "gamma twist"
+		- gamma twist represents the danger of the radiation
+		- gamma twist is modulated by artificial light (shifted towards blue)
+
+		Possibly:
+		- use alpha channel of the color for saturation/desaturation CLUT operation before applying in lighting
+		- apply desaturation CLUT, then use alpha channel as mixing between desaturated color and base color
+		
+		(independent of original pixel color, only brightness)
+		Desaturation Blending vs Multiplicative Blending
+		- desaturate with CLUT
+		- apply lighting to desaturated pixel
+		- blend the desaturated pixel with the sunlight color
+		- mix the the original pixel and desaturated pixel for resultant
+
+		(cheaper is to average in pixel brightness before applying)
+	*/
+
+	static float falloff(int it, float falloff)
+	{
+		float t = 1.0;
+		for(int i=0; i<it; i++)
+			t *= falloff;
+		return t;
+	}
+
 	void init2()
 	{
 
 		struct Vec3 d1 = vec3_init(1.0, 0.0, 0.0);
-		struct Vec3 d2 = vec3_init(1.0, 0.0, 0.0);
+		struct Vec3 d2 = vec3_init(1.0, 1.0, 1.0);
 
 		struct Vec3 L1[16];	//natural light
 		struct Vec3 L2[16];	//artificial light
 
 
-		/*
-			As sunset proceeds
-			- the falloff should approach 1
-			- total brightness should decrease
-
-			During peak sunlight
-			- the highest 3-4 brightness levels should have "gamma twist"
-			- gamma twist represents the danger of the radiation
-			- gamma twist is modulated by artificial light (shifted towards blue)
-
-			Possibly:
-			- use alpha channel of the color for saturation/desaturation CLUT operation before applying in lighting
-			- apply desaturation CLUT, then use alpha channel as mixing between desaturated color and base color
-			
-			(independent of original pixel color, only brightness)
-			Desaturation Blending vs Multiplicative Blending
-			- desaturate with CLUT
-			- apply lighting to desaturated pixel
-			- blend the desaturated pixel with the sunlight color
-			- mix the the original pixel and desaturated pixel for resultant
-
-			(cheaper is to average in pixel brightness before applying)
-		*/
 		for(int i=0; i<16; i++)
 		{
-			float factor = falloff(i, 0.85);
+			float factor = falloff(i, 0.80);
 			L1[i] = vec3_scalar_mult(d1, factor); //add in gamma twist latter
 		}
 
 		for(int i=0; i<16; i++)
 		{
-			float factor = falloff(i, 0.85);
-			L2[i] = vec3_scalar_mult(d1, factor); //add in twist latter
+			float factor = falloff(16-i, 0.80);
+			L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
 		}
 
+		for(int i=0; i<dim; i++)
+		{
+
+			for(int j=0; j<dim; j++)
+			{
+
+				struct Vec3 t3;
+
+				t3.x = L1[i].x + L2[j].x;
+				t3.y = L1[i].y + L2[j].y;
+				t3.z = L1[i].z + L2[j].z;
+
+				values[3*(dim*j+i)+0] = t3.x;
+				values[3*(dim*j+i)+1] = t3.y;
+				values[3*(dim*j+i)+2] = t3.z;
+
+			}
+		}
+
+/*
 		struct Vec3 ul;
 		struct Vec3 ur;
 		struct Vec3 br;
@@ -143,6 +165,7 @@ class LightTextureGenerator
 
 			}
 		}
+*/
 	}
 
 	void save(const char* filename)
@@ -188,7 +211,7 @@ void generate_light_texture()
 {
 
 	LTG = new LightTextureGenerator;
-	LTG->init();
+	LTG->init2();
 	LTG->save("light_texture");
 	LTG->gen_textures();
 
