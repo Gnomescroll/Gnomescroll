@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #ifdef _WIN32
 void print_trace() {}

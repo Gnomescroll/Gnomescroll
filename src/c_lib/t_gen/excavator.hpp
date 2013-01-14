@@ -12,12 +12,8 @@ dont_include_this_file_in_client
 #include <t_mech/_interface.hpp>
 #include <t_mech/properties.hpp>
 
-
-
 namespace t_gen 
 {
-
-
 
 // v is starting point of line
 // vz is unit vector for direction of line

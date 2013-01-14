@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <hud/error.hpp>

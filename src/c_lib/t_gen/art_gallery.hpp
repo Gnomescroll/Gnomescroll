@@ -7,8 +7,6 @@ dont_include_this_file_in_client
 #include <t_gen/twister.hpp>
 #include <t_map/t_map.hpp>
 
-
-
 namespace t_gen {
     void make_art_gallery(int z_start) {
         printf("Making art gallery\n");

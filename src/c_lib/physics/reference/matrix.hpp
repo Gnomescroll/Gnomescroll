@@ -1,5 +1,4 @@
-#ifndef __EPSILON_3D__MATRIX_H__
-#define __EPSILON_3D__MATRIX_H__
+#pragma once
 
 #include "vector3.h"
 
@@ -373,5 +372,3 @@ e3dMatrix4x4::transform (const e3dVector3& v) const
     ((v.x * zx) + (v.y * zy) + (v.z * zz) + zw) / w
   );
 }
-
-#endif /* __EPSILON_3D__MATRIX_H__ */

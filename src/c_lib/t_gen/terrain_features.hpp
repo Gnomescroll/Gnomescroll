@@ -10,8 +10,6 @@ dont_include_this_file_in_client
 
 #include <physics/vec3.hpp>
 
-
-
 const float DOUBLE_PI = PI * 2;
 const float HALF_PI = PI / 2;
 const float QUARTER_PI = HALF_PI / 2;
@@ -29,8 +27,6 @@ const float tree_zone_threshold = 0.3f;  // move to a config file maybe
 const float tree_threshold = 0.997f;
 const float shroom_zone_threshold = 0.3f;  // move to a config file maybe
 const float shroom_threshold = 0.997f;
-
-
 
 typedef enum {
     TREE_RANDOM,    // Dr. Suess style!

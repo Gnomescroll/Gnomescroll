@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
  
 template <class ObjectState, unsigned int hard_cap>
 class Simple_object_list
