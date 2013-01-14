@@ -1,3 +1,5 @@
+#pragma once
+
 #include <hud/meter.hpp>
 #include <hud/reticle.cpp>
 #include <hud/cube_selector.cpp>
@@ -12,4 +14,3 @@
 #include <hud/harvest_bar.hpp>
 
 #include <hud/_interface.cpp>
-

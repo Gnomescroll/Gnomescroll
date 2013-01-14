@@ -1,5 +1,3 @@
-// Twister.h
-
 #pragma once
 
 typedef long unsigned int DWORD;
