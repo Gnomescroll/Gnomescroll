@@ -1,12 +1,6 @@
 #pragma once
 
-
-namespace t_mech
-{
-    class mech_create_StoC;
-    class mech_type_change_StoC;
-    class mech_delete_StoC;
-}
+#include <t_map/net/t_net.hpp>
 
 namespace t_mech
 {
