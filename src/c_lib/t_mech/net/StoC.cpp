@@ -8,6 +8,8 @@ namespace t_mech
 {
 
 #if DC_CLIENT
+class mech_create_StoC;
+
 void mech_create_StoC::handle()
 {
     //printf("client adding mech node at: %i %i %i \n", x,y,z);
@@ -23,6 +25,8 @@ void mech_type_change_StoC::handle()
     //printf("client removing mech %i \n", id);
     //mech_list->remove_mech(id);
     //mech_list->needs_update = true;
+
+    IF_ASSERT(id < 0 || id >= mech_list->mlm) return;
 
     GS_ASSERT(mech_list->mla[id].id != -1);
     mech_list->mla[id].mech_type = (MechType) mech_type;

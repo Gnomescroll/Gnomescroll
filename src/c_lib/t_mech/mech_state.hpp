@@ -16,15 +16,15 @@ struct MECH_LIST
 {
     public:
 
-    int mli; //mech index
-    int mlm; //mech max
-    int mln; //number of mech
+        int mli; //mech index
+        int mlm; //mech max
+        int mln; //number of mech
 
-    //const static HARD_MAX = 0xffff-1;
+        //const static HARD_MAX = 0xffff-1;
 
-    struct MECH* mla; //mech array;
+        struct MECH* mla; //mech array;
 
-    bool needs_update; //for drawing
+        bool needs_update; //for drawing
 
     MECH_LIST()
     {

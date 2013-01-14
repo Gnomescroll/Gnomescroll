@@ -133,7 +133,7 @@ class MapMessagePacketToClient
         void broadcast() 
         {
             #if DC_SERVER
-            if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
+            if (NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
             unsigned int buff_n = 0;
