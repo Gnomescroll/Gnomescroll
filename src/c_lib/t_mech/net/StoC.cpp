@@ -4,7 +4,6 @@
 #include <t_mech/_interface.hpp>
 #include <t_mech/mech_state.hpp>
 
-
 namespace t_mech
 {
     class mech_create_StoC;
@@ -12,12 +11,10 @@ namespace t_mech
     class mech_delete_StoC;
 }
 
-
 namespace t_mech
 {
 
 #if DC_CLIENT
-
 inline void mech_create_StoC::handle()
 {
     //printf("client adding mech node at: %i %i %i \n", x,y,z);
@@ -49,17 +46,13 @@ inline void mech_delete_StoC::handle()
     mech_list->remove_mech(id);
     //mech_list->needs_update = true;
 };
-
-
 #endif
 
 
 #if DC_SERVER
-
 inline void mech_create_StoC::handle() {}
 inline void mech_type_change_StoC::handle() {}
 inline void mech_delete_StoC::handle() {}
-
 #endif
 
 }   // t_mech
