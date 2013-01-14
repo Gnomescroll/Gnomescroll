@@ -212,36 +212,6 @@ bool rect_plus_margin_contains(Rect3D r, int mar, int x, int y, int z) {
     return false;
 }
 
-bool valid_room_idx_to(direction_t dir, IntVec3 ri) { // room index
-    //// needs to be the dir adjusted indexes, cuz THAT'S what could be out of bounds
-    //if (
-    //  ri.x < 0 || ri.x >= MAX_ROOMS_ACROSS
-    //  ri.y < 0 || ri.y >= MAX_ROOMS_ACROSS
-    //  ri.z < 0 || ri.z >= MAX_ROOMS_ACROSS
-    //  ) 
-    //{
-    //}
-    ////// also can get an early out by checking if room in that space is dead.... then its halls are irrel
-
-    for (int i = 0; i < 4; i++) // consider all lateral directions
-    {
-        switch((direction_t)i) 
-        {
-            case DIR_NORTH: if (rect_spans(rooms[ri.z][ri.y][ri.x].nh) ) return true; break;
-            case DIR_SOUTH: if (rect_spans(rooms[ri.z][ri.y][ri.x].sh) ) return true; break;
-            case DIR_EAST:  if (rect_spans(rooms[ri.z][ri.y][ri.x].eh) ) return true; break;
-            case DIR_WEST:  if (rect_spans(rooms[ri.z][ri.y][ri.x].wh) ) return true; break;
-
-            case DIR_UP:
-            case DIR_DOWN:
-            case DIR_MAX:
-                GS_ASSERT(false);
-                return false;
-        }
-    }
-    return false;
-}
-
 // params:  room indexes,  origin x/y
 void make_room_filling(IntVec3 ri, int ox, int oy) {
     for (int cx = 0; cx < cubes_across_room; cx++) {
@@ -479,30 +449,89 @@ Rect3D get_open_connection(direction_t d)
     return r;
 }
 
+bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) { // room index
+	IntVec3 to;
+
+    switch(dir) 
+    {
+        case DIR_NORTH: 
+            to.x = from.x;
+			to.y = from.y + 1; 
+			to.z = from.z;  // set offset of destination  
+			break;
+        case DIR_SOUTH: 
+            to.x = from.x; 
+			to.y = from.y - 1; 
+			to.z = from.z;  // set offset of destination
+            break;
+        case DIR_EAST:  
+            to.x = from.x + 1; 
+			to.y = from.y; 
+			to.z = from.z;  // set offset of destination
+            break;
+        case DIR_WEST:  
+            to.x = from.x - 1; 
+			to.y = from.y; 
+			to.z = from.z;  // set offset of destination
+            break;
+
+        case DIR_UP:
+        case DIR_DOWN:
+        case DIR_MAX:
+            GS_ASSERT(false);
+            break;
+    }
+
+    if (
+      to.x < 0 || to.x >= MAX_ROOMS_ACROSS
+	 ||
+      to.y < 0 || to.y >= MAX_ROOMS_ACROSS
+	 ||
+      to.z < 0 || to.z >= rooms_going_up
+      ) 
+    {
+		return false;
+    }
+
+    return true;
+}
+
 void connect_these(IntVec3 src, direction_t d, IntVec3 dst) 
 {
         // set vars and make root to hall connections
         switch(d) 
         {
             case DIR_NORTH: 
-                dst.x = src.x; dst.y = src.y + 1; dst.z = src.z;  // set offset of destination  
-                rooms[src.z][src.y][src.x].nh = get_open_connection(DIR_NORTH);
-                rooms[dst.z][dst.y][dst.x].sh = get_open_connection(DIR_SOUTH);
-                break;
+                dst.x = src.x;
+				dst.y = src.y + 1; 
+				dst.z = src.z;  // set offset of destination  
+
+					rooms[src.z][src.y][src.x].nh = get_open_connection(DIR_NORTH);
+					rooms[dst.z][dst.y][dst.x].sh = get_open_connection(DIR_SOUTH);
+				break;
             case DIR_SOUTH: 
-                dst.x = src.x; dst.y = src.y - 1; dst.z = src.z;  // set offset of destination
-                rooms[src.z][src.y][src.x].sh = get_open_connection(DIR_SOUTH);
-                rooms[dst.z][dst.y][dst.x].nh = get_open_connection(DIR_NORTH);
+                dst.x = src.x; 
+				dst.y = src.y - 1; 
+				dst.z = src.z;  // set offset of destination
+
+					rooms[src.z][src.y][src.x].sh = get_open_connection(DIR_SOUTH);
+					rooms[dst.z][dst.y][dst.x].nh = get_open_connection(DIR_NORTH);
                 break;
             case DIR_EAST:  
-                dst.x = src.x + 1; dst.y = src.y; dst.z = src.z;  // set offset of destination
-                rooms[src.z][src.y][src.x].eh = get_open_connection(DIR_EAST);
-                rooms[dst.z][dst.y][dst.x].wh = get_open_connection(DIR_WEST);
+                dst.x = src.x + 1; 
+				dst.y = src.y; 
+				dst.z = src.z;  // set offset of destination
+
+					rooms[src.z][src.y][src.x].eh = get_open_connection(DIR_EAST);
+					rooms[dst.z][dst.y][dst.x].wh = get_open_connection(DIR_WEST);
                 break;
             case DIR_WEST:  
-                dst.x = src.x - 1; dst.y = src.y; dst.z = src.z;  // set offset of destination
-                rooms[src.z][src.y][src.x].wh = get_open_connection(DIR_WEST);
-                rooms[dst.z][dst.y][dst.x].eh = get_open_connection(DIR_EAST);
+                dst.x = src.x - 1; 
+				dst.y = src.y; 
+				dst.z = src.z;  // set offset of destination
+
+					rooms[src.z][src.y][src.x].wh = get_open_connection(DIR_WEST);
+					rooms[dst.z][dst.y][dst.x].eh = get_open_connection(DIR_EAST);
                 break;
 
             case DIR_UP:
@@ -522,14 +551,14 @@ bool empty_lat_space_around(IntVec3 iv)
     int num_choices = 0;
     direction_t choices[4]; // 4 lateral possibilities
 
-    for (int i = 0; i < 4; i++) // consider all directions
+    for (int i = 0; i < 4; i++) // consider all lateral directions
     {
         switch((direction_t)i) 
         {
-            case DIR_NORTH: if (rooms[iv.z][iv.y + 1][iv.x].dead) choices[num_choices++] = DIR_NORTH; break;
-            case DIR_SOUTH: if (rooms[iv.z][iv.y - 1][iv.x].dead) choices[num_choices++] = DIR_SOUTH; break;
-            case DIR_EAST:  if (rooms[iv.z][iv.y][iv.x + 1].dead) choices[num_choices++] = DIR_EAST; break;
-            case DIR_WEST:  if (rooms[iv.z][iv.y][iv.x - 1].dead) choices[num_choices++] = DIR_WEST; break;
+            case DIR_NORTH: if (valid_room_idx_to_dir_from(DIR_NORTH, iv) && rooms[iv.z][iv.y + 1][iv.x].dead) choices[num_choices++] = DIR_NORTH; break;
+            case DIR_SOUTH: if (valid_room_idx_to_dir_from(DIR_SOUTH, iv) && rooms[iv.z][iv.y - 1][iv.x].dead) choices[num_choices++] = DIR_SOUTH; break;
+            case DIR_EAST:  if (valid_room_idx_to_dir_from(DIR_EAST,  iv) && rooms[iv.z][iv.y][iv.x + 1].dead) choices[num_choices++] = DIR_EAST; break;
+            case DIR_WEST:  if (valid_room_idx_to_dir_from(DIR_WEST,  iv) && rooms[iv.z][iv.y][iv.x - 1].dead) choices[num_choices++] = DIR_WEST; break;
 
             case DIR_UP:
             case DIR_DOWN:
@@ -545,31 +574,6 @@ bool empty_lat_space_around(IntVec3 iv)
     if (/* root passed */ iv.x == root.x && iv.y == root.y && iv.z == root.z) 
     {
         connect_these(root, dir, hall);
-        
-        //// set vars and make root to hall connections
-        //switch(choices[randrange(0, num_choices - 1)]) 
-        //{
-        //  case DIR_NORTH: 
-        //      hall.x = root.x; hall.y = root.y + 1; hall.z = root.z; hall_dir = DIR_NORTH;  // set offset of destination     //FIXME   think hall_dir is never used
-        //      rooms[root.z][root.y][root.x].nh = get_open_connection(DIR_NORTH);
-        //      rooms[hall.z][hall.y][hall.x].sh = get_open_connection(DIR_SOUTH);
-        //      break;
-        //  case DIR_SOUTH: 
-        //      hall.x = root.x; hall.y = root.y - 1; hall.z = root.z; hall_dir = DIR_SOUTH;  // set offset of destination
-        //      rooms[root.z][root.y][root.x].sh = get_open_connection(DIR_SOUTH);
-        //      rooms[hall.z][hall.y][hall.x].nh = get_open_connection(DIR_NORTH);
-        //      break;
-        //  case DIR_EAST:  
-        //      hall.x = root.x + 1; hall.y = root.y; hall.z = root.z; hall_dir = DIR_EAST;  // set offset of destination
-        //      rooms[root.z][root.y][root.x].eh = get_open_connection(DIR_EAST);
-        //      rooms[hall.z][hall.y][hall.x].wh = get_open_connection(DIR_WEST);
-        //      break;
-        //  case DIR_WEST:  
-        //      hall.x = root.x - 1; hall.y = root.y; hall.z = root.z; hall_dir = DIR_WEST; // set offset of destination
-        //      rooms[root.z][root.y][root.x].wh = get_open_connection(DIR_WEST);
-        //      rooms[hall.z][hall.y][hall.x].eh = get_open_connection(DIR_EAST);
-        //      break;
-        //}
         return true;
     }
     else 
@@ -580,7 +584,8 @@ bool empty_lat_space_around(IntVec3 iv)
     }
     else
     {   
-        printf("Ruins generator: neither root or hall passed\n");
+        printf("Ruins generator: neither root or hall was passed into: bool empty_lat_space_around(IntVec3 iv)\n");
+		GS_ASSERT(false);
         return false;
     }
 }
