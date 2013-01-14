@@ -3,14 +3,18 @@
 #include <t_map/net/t_CtoS.hpp>
 #include <t_map/t_map.hpp>
 
-namespace t_map
-{
-
 #if DC_CLIENT
 
 #include <animations/animations.hpp>
 #include <common/random.hpp>
 #include <sound/sound.hpp>
+
+#endif
+
+namespace t_map
+{
+
+#if DC_CLIENT
 
 
 int client_chunk_alias_list[1024] = {0};
