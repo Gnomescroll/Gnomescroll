@@ -96,7 +96,7 @@ class LightTextureGenerator
 	void init2()
 	{
 
-		struct Vec3 d1 = vec3_init(1.0, 0.0, 0.0);
+		struct Vec3 d1 = vec3_init(1.0, 1.0, 1.0);
 		struct Vec3 d2 = vec3_init(1.0, 1.0, 1.0);
 
 		struct Vec3 L1[16];	//natural light
