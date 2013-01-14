@@ -14,7 +14,7 @@
 namespace t_mech
 {
 
-struct MECH_LIST* mech_list;
+struct MechList* mech_list;
 
 #if DC_CLIENT
 class MechListRenderer* mech_list_renderer = NULL;
@@ -30,7 +30,7 @@ void init_packets()
 void init() 
 {
     GS_ASSERT(mech_list == NULL);
-    mech_list = new MECH_LIST;
+    mech_list = new MechList;
     #if DC_CLIENT
     GS_ASSERT(mech_list_renderer == NULL);
     mech_list_renderer = new MechListRenderer;
@@ -153,11 +153,7 @@ void client_ray_cast()
 {
     //struct Vec3 pos  = agent_camera->get_position();
     //struct Vec3 look = agent_camera->forward_vector();
-
-
 }
-
-
 #endif
 
 

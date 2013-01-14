@@ -8,8 +8,6 @@ namespace t_mech
 {
 
 #if DC_CLIENT
-class mech_create_StoC;
-
 void mech_create_StoC::handle()
 {
     //printf("client adding mech node at: %i %i %i \n", x,y,z);

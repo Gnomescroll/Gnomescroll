@@ -6,7 +6,7 @@
 namespace t_mech
 {
 
-extern struct MECH_LIST* mech_list;
+extern struct MechList* mech_list;
 
 void init();
 void teardown();
@@ -46,6 +46,8 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype);
 void send_client_mech_list(ClientID client_id);
 void handle_block_removal(int x, int y, int z); //react to block destruction
 bool remove_mech(int mech_id);
+
+static void pack_mech(struct MECH &m, class mech_create_StoC &p);
 #endif
 
 }   // t_mech
