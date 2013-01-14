@@ -13,8 +13,8 @@ void mech_create_StoC::handle()
     //printf("client adding mech node at: %i %i %i \n", x,y,z);
     
     struct MECH m;
-    if (t_mech::unpack_mech(m, *this))
-        t_mech::mech_list->add_mech(id, m);
+    if (unpack_mech(m, *this))
+        mech_list->add_mech(id, m);
     //mech_list->needs_update = true;
 };
 
