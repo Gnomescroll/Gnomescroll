@@ -9,25 +9,25 @@ dont_include_this_file_in_client
 
 namespace t_gen {
 
-const size_t  NUM_FLOOR_CUBES = 4; 
+const size_t    NUM_FLOOR_CUBES = 4; 
 CubeType floors[NUM_FLOOR_CUBES];
-const size_t NUM_WALL_CUBES = 4; 
-CubeType walls[NUM_WALL_CUBES];
-const size_t NUM_CEIL_CUBES = 4; 
-CubeType ceils[NUM_CEIL_CUBES];
-const size_t NUM_TRIM_CUBES = 4;
-CubeType trims[NUM_TRIM_CUBES];
+const size_t    NUM_WALL_CUBES = 4; 
+CubeType walls [NUM_WALL_CUBES];
+const size_t    NUM_CEIL_CUBES = 4; 
+CubeType ceils [NUM_CEIL_CUBES];
+const size_t    NUM_TRIM_CUBES = 4;
+CubeType trims [NUM_TRIM_CUBES];
 
 const int MAX_ROOMS_ACROSS = 32; // across ruins
+const int ROOMS_GOING_UP = 3; // levels/floors
 const int HALLWAY_HEIGHT = 3;
-const int cubes_across_room = 10;
-const int cubes_going_up = 8;
-const int rooms_going_up = 3; // levels/floors
-const int bedrock_offset = 3;
-const int min_lip = 2; // minimum lip
+const int CUBES_ACROSS_ROOM = 10;
+const int CUBES_GOING_UP_ROOM = 8;
+const int BEDROCK_OFFSET = 3;
+const int MIN_LIP = 2; // minimum lip
 
-const int fixed_hall_wid = 2;
-const int fixed_hall_offs = 4; // hall offset
+const int FIXED_CONNECTION_SPAN = 2;
+const int FIXED_CONNECTION_OFFSET = 4; // hall offset
 
 enum direction_t {
     DIR_NORTH, DIR_SOUTH,
@@ -110,8 +110,8 @@ struct Room : Rect3D {
     }
 };
 
-//Room rooms[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
-Room*** rooms = NULL; //[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
+//Room rooms[ROOMS_GOING_UP][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
+Room*** rooms = NULL; //[ROOMS_GOING_UP][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS];
 
 
 void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeType tile_id)
@@ -127,14 +127,14 @@ void set_region(int i_x, int i_y, int i_z, int i_w, int i_dep, int i_h, CubeType
 
 
 bool far_north_cube(int y) {
-    return y == cubes_across_room - 1;
+    return y == CUBES_ACROSS_ROOM - 1;
 }
 bool far_south_cube(int y) {
 
     return y == 0;
 }
 bool far_east_cube(int x) {
-    return x == cubes_across_room - 1;
+    return x == CUBES_ACROSS_ROOM - 1;
 }
 bool far_west_cube(int x) {
     return x == 0;
@@ -158,7 +158,7 @@ bool s_of_e_opening(int rx, int ry, int rz, int cy) {
 }
 bool s_edge_of_e_opening(Room r, int cx, int cy, int cz) {
     return
-        cy == r.eh.y - 1 && cz <= r.eh.hei; // && far_east_cube(cx); shouldn't be needed now that halls use min_lip
+        cy == r.eh.y - 1 && cz <= r.eh.hei; // && far_east_cube(cx); shouldn't be needed now that halls use MIN_LIP
 }
 
 bool n_of_e_opening(int rx, int ry, int rz, int cy) {
@@ -214,9 +214,9 @@ bool rect_plus_margin_contains(Rect3D r, int mar, int x, int y, int z) {
 
 // params:  room indexes,  origin x/y
 void make_room_filling(IntVec3 ri, int ox, int oy) {
-    for (int cx = 0; cx < cubes_across_room; cx++) {
-    for (int cy = 0; cy < cubes_across_room; cy++) {
-    for (int cz = 1; cz < cubes_going_up - 1; cz++) { // excluding floor/ceiling layers
+    for (int cx = 0; cx < CUBES_ACROSS_ROOM; cx++) {
+    for (int cy = 0; cy < CUBES_ACROSS_ROOM; cy++) {
+    for (int cz = 1; cz < CUBES_GOING_UP_ROOM - 1; cz++) { // excluding floor/ceiling layers
         Room r = rooms[ri.z][ri.y][ri.x];
         CubeType cube = r.wall;
         bool need_cube = false;
@@ -336,15 +336,15 @@ void make_room_filling(IntVec3 ri, int ox, int oy) {
   //      if (opens_to(DIR_DOWN, ri) ) {
   //          // make trim cube region to hollow out for stairwell
   //          t_gen::set_region(
-  //              rx * cubes_across_room + x + fixed_stair.x - 1,
-  //              ry * cubes_across_room + y + fixed_stair.y - 1,
-  //              rz * cubes_going_up + bedrock_offset - 1,
+  //              rx * CUBES_ACROSS_ROOM + x + fixed_stair.x - 1,
+  //              ry * CUBES_ACROSS_ROOM + y + fixed_stair.y - 1,
+  //              rz * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET - 1,
         //      fixed_stair.wid + 2, fixed_stair.dep + 2, 2, rooms[rz][ry][rx].trim);
   //          // clear well in floor of this room, and ceiling of room underneath
   //          t_gen::set_region(
-  //              rx * cubes_across_room + x + fixed_stair.x,
-  //              ry * cubes_across_room + y + fixed_stair.y,
-  //              rz * cubes_going_up + bedrock_offset - 1,
+  //              rx * CUBES_ACROSS_ROOM + x + fixed_stair.x,
+  //              ry * CUBES_ACROSS_ROOM + y + fixed_stair.y,
+  //              rz * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET - 1,
   //              fixed_stair.wid, fixed_stair.dep, 2, EMPTY_CUBE);
         //}
 
@@ -358,9 +358,9 @@ void make_room_filling(IntVec3 ri, int ox, int oy) {
                 rect_plus_margin_contains(r.wh,   1, cx, cy, cz) 
             ) cube = r.trim;
             
-            t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, cube); 
+            t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, cube); 
         } else {
-            t_map::set(ri.x * cubes_across_room + cx + ox, ri.y * cubes_across_room + cy + oy, ri.z * cubes_going_up + cz + bedrock_offset, EMPTY_CUBE);
+            t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, EMPTY_CUBE);
         }
     }
     }
@@ -372,24 +372,24 @@ void outside_space_span() {
 
 void make_stairs(int rx, int ry, int rz, int ox, int oy, CubeType floo) { // room indexes, origin
     t_gen::set_region(
-        rx * cubes_across_room + ox + (cubes_across_room / 2 - 1 /* stair x */),
-        ry * cubes_across_room + oy + fixed_stair.y,
-        rz * cubes_going_up + 3 + 1,
+        rx * CUBES_ACROSS_ROOM + ox + (CUBES_ACROSS_ROOM / 2 - 1 /* stair x */),
+        ry * CUBES_ACROSS_ROOM + oy + fixed_stair.y,
+        rz * CUBES_GOING_UP_ROOM + 3 + 1,
         1, fixed_stair.dep, 2, floo);
     t_gen::set_region(
-        rx * cubes_across_room + ox + fixed_stair.x + 1,
-        ry * cubes_across_room + oy + fixed_stair.y,
-        rz * cubes_going_up + 3 + 2,
+        rx * CUBES_ACROSS_ROOM + ox + fixed_stair.x + 1,
+        ry * CUBES_ACROSS_ROOM + oy + fixed_stair.y,
+        rz * CUBES_GOING_UP_ROOM + 3 + 2,
         1, fixed_stair.dep, 3, floo);
     t_gen::set_region(
-        rx * cubes_across_room + ox + fixed_stair.x + 2,
-        ry * cubes_across_room + oy + fixed_stair.y,
-        rz * cubes_going_up + 3 + 4,
+        rx * CUBES_ACROSS_ROOM + ox + fixed_stair.x + 2,
+        ry * CUBES_ACROSS_ROOM + oy + fixed_stair.y,
+        rz * CUBES_GOING_UP_ROOM + 3 + 4,
         1, fixed_stair.dep, 3, floo);
     t_gen::set_region(
-        rx * cubes_across_room + ox + fixed_stair.x + 3,
-        ry * cubes_across_room + oy + fixed_stair.y,
-        rz * cubes_going_up + 3 + 6,
+        rx * CUBES_ACROSS_ROOM + ox + fixed_stair.x + 3,
+        ry * CUBES_ACROSS_ROOM + oy + fixed_stair.y,
+        rz * CUBES_GOING_UP_ROOM + 3 + 6,
         1, fixed_stair.dep, 3, floo);
 }
 
@@ -407,10 +407,10 @@ Room setup_stairspace_for(direction_t d, Room r) {
 Rect3D get_open_connection(direction_t d)
 {
     Rect3D r;
-    r.wid = r.dep = 2;
+    r.wid = r.dep = FIXED_CONNECTION_SPAN;
     r.hei = HALLWAY_HEIGHT;
 
-    int co = cubes_across_room / 2 - 1; // connection offset
+    int co = CUBES_ACROSS_ROOM / 2 - 1; // connection offset
     switch(d)
     {
         case DIR_NORTH:
@@ -431,8 +431,8 @@ Rect3D get_open_connection(direction_t d)
 
     switch(d)
     {
-        case DIR_NORTH: r.y = cubes_across_room - 1; break;
-        case DIR_EAST:  r.x = cubes_across_room - 1; break;
+        case DIR_NORTH: r.y = CUBES_ACROSS_ROOM - 1; break;
+        case DIR_EAST:  r.x = CUBES_ACROSS_ROOM - 1; break;
 
         case DIR_WEST:
         case DIR_SOUTH:
@@ -487,7 +487,7 @@ bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) { // room index
 	 ||
       to.y < 0 || to.y >= MAX_ROOMS_ACROSS
 	 ||
-      to.z < 0 || to.z >= rooms_going_up
+      to.z < 0 || to.z >= ROOMS_GOING_UP
       ) 
     {
 		return false;
@@ -595,34 +595,21 @@ void UNUSED_make_a_simple_room()
     // spans refer to the AIRSPACE, and don't include outer shell of cubes
     // but offset, for cleaner comparisons, should actually be the absolute offset from the corner of the room (including shell)
     IntVec3 mal_span; // malleable/dynamic space span
-    mal_span.x = cubes_across_room - 2 /* shell of 2 walls */ - min_lip * 2;
-    mal_span.y = cubes_across_room - 2 /* shell of 2 walls */ - min_lip * 2;
-    mal_span.z = cubes_going_up    - 2 /* shell of 2 walls */ - min_lip; // floors of the same height are fine, altho ceiling should be lipped
+    mal_span.x = CUBES_ACROSS_ROOM - 2 /* shell of 2 walls */ - MIN_LIP * 2;
+    mal_span.y = CUBES_ACROSS_ROOM - 2 /* shell of 2 walls */ - MIN_LIP * 2;
+    mal_span.z = CUBES_GOING_UP_ROOM    - 2 /* shell of 2 walls */ - MIN_LIP; // floors of the same height are fine, altho ceiling should be lipped
 
     // fixme    to provide stairs ONLY in rooms, and choose one AFTER a whole floor is generated
     int stairway_up_x = randrange(0, MAX_ROOMS_ACROSS - 1);
     int stairway_up_y = randrange(0, MAX_ROOMS_ACROSS - 1);
 
 
-            //// figure lateral opening sizes
-   //         if (curr.x != MAX_ROOMS_ACROSS - 1) { 
-   //             r.eh.x = cubes_across_room - 1;
-   //             r.eh.y = 4;
-   //             r.eh.wid = 1;     
-   //             r.eh.dep = 2; 
-   //         }
-   //         if (curr.y != MAX_ROOMS_ACROSS - 1) { 
-   //             r.nh.x = 4;     
-   //             r.nh.y = cubes_across_room - 1;  
-   //             r.nh.wid = 2; 
-   //             r.nh.dep = 1;     
-   //         }
 
             //// connections in directions (inclu stairs)
             //for (int i = 0; i < DIR_MAX; i++) {
             //    if /* lateral dir */ (i < DIR_UP) 
             //        r.dir_types[i] = (direction_type_t)randrange(1, 2); // randomly choose door or hall
-            //    else if /* stairway up should be here */ (i == DIR_UP && z < rooms_going_up - 1 && x == stairway_up_x && y == stairway_up_y)
+            //    else if /* stairway up should be here */ (i == DIR_UP && z < ROOMS_GOING_UP - 1 && x == stairway_up_x && y == stairway_up_y)
             //        r = setup_stairspace_for(DIR_UP, r);
             //    else {
             //        r.dir_types[i] = DIRTYPE_BLOCKED_FOREVER;
@@ -653,8 +640,8 @@ void make_and_setup_new_room(IntVec3 iv)
                 
     // set subspace of grid node
     // currently its always giving the tiniest "room" possible (hallway dimensions), cuz we just ignore those dimensions for other ROOMT_ stuff
-    r.x = r.y = 4;
-    r.wid = r.dep = 2;
+    r.x = r.y = FIXED_CONNECTION_OFFSET;
+    r.wid = r.dep = FIXED_CONNECTION_SPAN;
     rooms[iv.z][iv.y][iv.x] = r;
 }
 
@@ -667,7 +654,7 @@ IntVec3 find_valid_root()
     
 void snake_a_new_path() 
 {
-    for (int z = 0; z < rooms_going_up; z++) {
+    for (int z = 0; z < ROOMS_GOING_UP; z++) {
         printf("floor == %d ----------------------------------------------------------\n", z);
 
         // setup floorwide settings
@@ -723,23 +710,23 @@ void make_ruins(int x, int y) {
     // generate each cube now that connections/openings are all setup
     for (int rx = 0; rx < MAX_ROOMS_ACROSS; rx++) {
     for (int ry = 0; ry < MAX_ROOMS_ACROSS; ry++) {
-    for (int rz = 0; rz < rooms_going_up; rz++) {
+    for (int rz = 0; rz < ROOMS_GOING_UP; rz++) {
         if (rooms[rz][ry][rx].dead) continue;
 
         // make floor crust
         CubeType fl = (randrange(0,7) == 0) ? t_map::get_cube_type("rock") : rooms[rz][ry][rx].floo;
         t_gen::set_region(
-            rx * cubes_across_room + x,
-            ry * cubes_across_room + y,
-            rz * cubes_going_up + bedrock_offset,
-            cubes_across_room, cubes_across_room, 1, fl);
+            rx * CUBES_ACROSS_ROOM + x,
+            ry * CUBES_ACROSS_ROOM + y,
+            rz * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET,
+            CUBES_ACROSS_ROOM, CUBES_ACROSS_ROOM, 1, fl);
 
         // make ceiling crust
         //t_gen::set_region(
-        //    rx * cubes_across_room + x,
-        //    ry * cubes_across_room + y,
-        //    rz * cubes_going_up + bedrock_offset + cubes_going_up - 1,
-        //    cubes_across_room, cubes_across_room, 1, rooms[rz][ry][rx].ceil);
+        //    rx * CUBES_ACROSS_ROOM + x,
+        //    ry * CUBES_ACROSS_ROOM + y,
+        //    rz * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET + CUBES_GOING_UP_ROOM - 1,
+        //    CUBES_ACROSS_ROOM, CUBES_ACROSS_ROOM, 1, rooms[rz][ry][rx].ceil);
         
         IntVec3 ri; /* room index */ ri.x = rx; ri.y = ry; ri.z = rz;
         make_room_filling(ri, x, y);
@@ -762,8 +749,8 @@ void make_ruins(int x, int y) {
 
         if(rooms == NULL) 
         {
-            rooms = new Room**[rooms_going_up];
-            for(int i=0; i<rooms_going_up; i++)
+            rooms = new Room**[ROOMS_GOING_UP];
+            for(int i=0; i<ROOMS_GOING_UP; i++)
             {
                 rooms[i] = new Room*[MAX_ROOMS_ACROSS];
                 for(int j=0; j<MAX_ROOMS_ACROSS; j++)
@@ -772,7 +759,7 @@ void make_ruins(int x, int y) {
                 }
             }
         }
-        //rooms = new (Room[rooms_going_up][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS]);
+        //rooms = new (Room[ROOMS_GOING_UP][MAX_ROOMS_ACROSS][MAX_ROOMS_ACROSS]);
 
         floors[0] = t_map::get_cube_type("ruins_floor1");
         floors[1] = t_map::get_cube_type("ruins_floor2"); 
