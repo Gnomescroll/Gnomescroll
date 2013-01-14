@@ -2,17 +2,13 @@
 
 #include <t_mech/net/CtoS.hpp>
 #include <t_mech/net/StoC.hpp>
-
-#if DC_CLIENT
-#include <camera/camera.hpp>
-#include <physics/ray_trace/hitscan.hpp>
-#include <t_mech/mech_draw.hpp>
-#endif
-
 #include <t_mech/mech_state.hpp>
 
 #if DC_CLIENT
-#include <physics/geometry.hpp>
+# include <camera/camera.hpp>
+# include <physics/ray_trace/hitscan.hpp>
+# include <t_mech/mech_draw.hpp>
+# include <physics/geometry.hpp>
 #endif
 
 namespace t_mech
@@ -20,18 +16,16 @@ namespace t_mech
 
 struct MECH_LIST* mech_list;
 
+#if DC_CLIENT
+class MechListRenderer* mech_list_renderer = NULL;
+#endif
+
 void init_packets()
 {
     mech_create_StoC::register_client_packet();
     mech_type_change_StoC::register_client_packet();
     mech_delete_StoC::register_client_packet();
 }
-
-
-
-#if DC_CLIENT
-class MechListRenderer* mech_list_renderer = NULL;
-#endif
 
 void init() 
 {

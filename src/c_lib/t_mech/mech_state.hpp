@@ -1,7 +1,7 @@
 #pragma once
 
 #if DC_SERVER
-#include <t_mech/net/StoC.hpp>
+# include <t_mech/net/StoC.hpp>
 #endif
 
 namespace t_mech 
