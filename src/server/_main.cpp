@@ -19,7 +19,7 @@ void default_map_gen()
     t_gen::generate_rock_layer();
     t_gen::start_cave_generator();
     t_gen::populate_ore();
-    //t_gen::generate_ruins();
+    t_gen::generate_ruins();
     t_gen::add_terrain_features();
     t_gen::place_native_plants();
 
@@ -95,7 +95,7 @@ void init_world()
     if (corpusc_map)
     {
         map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, XMAX,YMAX,ZMAX/2, t_map::get_cube_type("regolith") );
+        t_gen::set_region(0,0,1, XMAX,YMAX,/*ZMAX/2*/7, t_map::get_cube_type("regolith") );
         t_gen::excavate();
         t_gen::add_terrain_features();
         t_gen::generate_ruins();
