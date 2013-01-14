@@ -4,6 +4,7 @@
 #include <t_mech/_interface.hpp>
 #include <t_mech/mech_state.hpp>
 
+// fuck msvc
 namespace t_mech
 {
 

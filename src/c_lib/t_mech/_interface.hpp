@@ -1,5 +1,6 @@
 #pragma once
 
+#include <t_mech/net/StoC.hpp>
 #include <t_mech/common/common.hpp>
 #include <t_mech/mech_state.hpp>
 
