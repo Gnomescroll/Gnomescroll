@@ -15,7 +15,7 @@ namespace t_mech
 {
 
 #if DC_CLIENT
-inline void mech_create_StoC::handle()
+void mech_create_StoC::handle()
 {
     //printf("client adding mech node at: %i %i %i \n", x,y,z);
     
@@ -25,7 +25,7 @@ inline void mech_create_StoC::handle()
     //mech_list->needs_update = true;
 };
 
-inline void mech_type_change_StoC::handle()
+void mech_type_change_StoC::handle()
 {
     //printf("client removing mech %i \n", id);
     //mech_list->remove_mech(id);
@@ -40,7 +40,7 @@ inline void mech_type_change_StoC::handle()
 };
 
 //    uint16_t x,y,z;
-inline void mech_delete_StoC::handle()
+void mech_delete_StoC::handle()
 {
     //printf("client removing mech %i \n", id);
     mech_list->remove_mech(id);
@@ -50,9 +50,9 @@ inline void mech_delete_StoC::handle()
 
 
 #if DC_SERVER
-inline void mech_create_StoC::handle() {}
-inline void mech_type_change_StoC::handle() {}
-inline void mech_delete_StoC::handle() {}
+void mech_create_StoC::handle() {}
+void mech_type_change_StoC::handle() {}
+void mech_delete_StoC::handle() {}
 #endif
 
 }   // t_mech
