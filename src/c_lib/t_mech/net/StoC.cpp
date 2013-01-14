@@ -5,12 +5,12 @@
 #include <t_mech/mech_state.hpp>
 
 
-namespace t_mech
-{
-    class mech_create_StoC;
-    class mech_type_change_StoC;
-    class mech_delete_StoC;
-}
+//namespace t_mech
+//{
+    class t_mech::mech_create_StoC;
+    class t_mech::mech_type_change_StoC;
+    class t_mech::mech_delete_StoC;
+//}
 
 
 namespace t_mech
