@@ -267,20 +267,24 @@ Room setup_stairspace_for(direction_t d, Room r) {
 
 Rect3D get_open_connection(direction_t d)
 {
-    Rect3D r;
-    r.wid = r.dep = FIXED_CONNECTION_SPAN;
-    r.hei = HALLWAY_HEIGHT;
+    Rect3D rct;
+    rct.wid = rct.dep = FIXED_CONNECTION_SPAN;
+    rct.hei = HALLWAY_HEIGHT;
 
-    int co = CUBES_ACROSS_ROOM / 2 - 1; // connection offset
+    int co = CUBES_ACROSS_ROOM / 2 - FIXED_CONNECTION_SPAN / 2; // connection offset
     switch(d)
     {
         case DIR_NORTH:
+			rct.y = CUBES_ACROSS_ROOM - 1;
+			// fallthru
         case DIR_SOUTH:
-            r.x = co;
+            rct.x = co;
             break;
         case DIR_EAST:
+			rct.x = CUBES_ACROSS_ROOM - 1;
+			// fallthru
         case DIR_WEST:
-            r.y = co;
+            rct.y = co;
             break;
 
         case DIR_UP:
@@ -290,24 +294,8 @@ Rect3D get_open_connection(direction_t d)
             break;
     }
 
-    switch(d)
-    {
-        case DIR_NORTH: r.y = CUBES_ACROSS_ROOM - 1; break;
-        case DIR_EAST:  r.x = CUBES_ACROSS_ROOM - 1; break;
-
-        case DIR_WEST:
-        case DIR_SOUTH:
-            break;
-            
-        case DIR_UP:
-        case DIR_DOWN:
-        case DIR_MAX:
-            GS_ASSERT(false);
-            break;
-    }
-
-    r.z = 1;
-    return r;
+    rct.z = 1;
+    return rct;
 }
 
 bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) { // room index
@@ -357,7 +345,7 @@ bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) { // room index
     return true;
 }
 
-void connect_these(IntVec3 src, direction_t d, IntVec3 dst) 
+void connect_these(IntVec3 src, direction_t d, IntVec3& dst) 
 {
         // set vars and make root to hall connections
         switch(d) 
@@ -367,32 +355,32 @@ void connect_these(IntVec3 src, direction_t d, IntVec3 dst)
 				dst.y = src.y + 1; 
 				dst.z = src.z;  // set offset of destination  
 
-					rooms[src.z][src.y][src.x].nh = get_open_connection(DIR_NORTH);
-					rooms[dst.z][dst.y][dst.x].sh = get_open_connection(DIR_SOUTH);
+				rooms[src.z][src.y][src.x].nh = get_open_connection(DIR_NORTH);
+				rooms[dst.z][dst.y][dst.x].sh = get_open_connection(DIR_SOUTH);
 				break;
             case DIR_SOUTH: 
                 dst.x = src.x; 
 				dst.y = src.y - 1; 
 				dst.z = src.z;  // set offset of destination
 
-					rooms[src.z][src.y][src.x].sh = get_open_connection(DIR_SOUTH);
-					rooms[dst.z][dst.y][dst.x].nh = get_open_connection(DIR_NORTH);
+				rooms[src.z][src.y][src.x].sh = get_open_connection(DIR_SOUTH);
+				rooms[dst.z][dst.y][dst.x].nh = get_open_connection(DIR_NORTH);
                 break;
             case DIR_EAST:  
                 dst.x = src.x + 1; 
 				dst.y = src.y; 
 				dst.z = src.z;  // set offset of destination
 
-					rooms[src.z][src.y][src.x].eh = get_open_connection(DIR_EAST);
-					rooms[dst.z][dst.y][dst.x].wh = get_open_connection(DIR_WEST);
+				rooms[src.z][src.y][src.x].eh = get_open_connection(DIR_EAST);
+				rooms[dst.z][dst.y][dst.x].wh = get_open_connection(DIR_WEST);
                 break;
             case DIR_WEST:  
                 dst.x = src.x - 1; 
 				dst.y = src.y; 
 				dst.z = src.z;  // set offset of destination
 
-					rooms[src.z][src.y][src.x].wh = get_open_connection(DIR_WEST);
-					rooms[dst.z][dst.y][dst.x].eh = get_open_connection(DIR_EAST);
+				rooms[src.z][src.y][src.x].wh = get_open_connection(DIR_WEST);
+				rooms[dst.z][dst.y][dst.x].eh = get_open_connection(DIR_EAST);
                 break;
 
             case DIR_UP:
@@ -401,6 +389,16 @@ void connect_these(IntVec3 src, direction_t d, IntVec3 dst)
                 GS_ASSERT(false);
                 break;
         }
+}
+
+bool idx_passed_was(IntVec3 iv) 
+{
+    //if (/* root passed */ iv.x == root.x && iv.y == root.y && iv.z == root.z) 
+    //{
+    //    connect_these(root, dir, hall);
+    //    return true;
+    //}
+	return false;
 }
 
 IntVec3 root;
