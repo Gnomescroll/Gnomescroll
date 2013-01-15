@@ -571,6 +571,9 @@ void update_envlight(int chunk_i, int chunk_j)
     for(int j=0; j<16; j++)
     {
 
+        int x = 16*chunk_i + i;
+        int y = 16*chunk_j + j;
+
         e = mc->get_element(i,j,k);
         //if(e.block != 0)    //iterate until we hit top block
         //    break;
@@ -579,6 +582,11 @@ void update_envlight(int chunk_i, int chunk_j)
         if(fast_cube_properties[e.block].light_source == false)
             continue;
 
+        int lv = fast_cube_attributes[e.block].light_value;
+        if(lv == 0)
+            continue;
+
+        _envlight_add_block(x,y,k,lv);
         //e.light = 15;
         //mc->set_element(i,j,k,e);
 

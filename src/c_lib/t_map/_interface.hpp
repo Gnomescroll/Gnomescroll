@@ -21,6 +21,7 @@ void set_palette(int x, int y, int z, int palette);
 int get_block_damage(int x, int y, int z);
 
 void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
+void update_envlight(int chunk_i, int chunk_j);
 
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);
