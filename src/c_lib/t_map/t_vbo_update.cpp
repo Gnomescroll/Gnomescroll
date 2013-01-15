@@ -436,18 +436,28 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+3].pos = _v_index[4*side+3].pos;
 #endif
 
+    int _lv = get_lighting(x,y,z,side);
 
-    float light = light_lookup[get_lighting(x,y,z,side)];
-    
-    v_list[offset+0].lighting[0] = light;
-    v_list[offset+1].lighting[0] = light;
-    v_list[offset+2].lighting[0] = light;
-    v_list[offset+3].lighting[0] = light;
+/*
+    int _sky_light = _lv & 0x0f;
+    int _env_light = (_lv << 4) & 0x0f;
 
-    v_list[offset+0].lighting[1] = light_lookup[0];
-    v_list[offset+1].lighting[1] = light_lookup[0];
-    v_list[offset+2].lighting[1] = light_lookup[0];
-    v_list[offset+3].lighting[1] = light_lookup[0];
+    float sky_light = light_lookup[_sky_light ];
+    float env_light = light_lookup[_env_light ];
+*/
+
+    float sky_light = light_lookup[ _lv & 0x0f ];
+    float env_light = light_lookup[ (_lv >> 4) & 0x0f ];
+
+    v_list[offset+0].lighting[0] = sky_light;
+    v_list[offset+1].lighting[0] = sky_light;
+    v_list[offset+2].lighting[0] = sky_light;
+    v_list[offset+3].lighting[0] = sky_light;
+
+    v_list[offset+0].lighting[1] = env_light;
+    v_list[offset+1].lighting[1] = env_light;
+    v_list[offset+2].lighting[1] = env_light;
+    v_list[offset+3].lighting[1] = env_light;
 
     {
         int _x = x & 15;

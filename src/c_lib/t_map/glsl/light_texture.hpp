@@ -62,6 +62,12 @@ class LightTextureGenerator
 	}
 
 	/*
+		Adjustments:
+		- brightest 3 sunlight textures should be very close together
+		- need to adjust darkness of darkest light level
+
+	*/
+	/*
 		As sunset proceeds
 		- the falloff should approach 1
 		- total brightness should decrease
@@ -97,7 +103,7 @@ class LightTextureGenerator
 	{
 
 		struct Vec3 d1 = vec3_init(1.0, 1.0, 1.0);
-		struct Vec3 d2 = vec3_init(1.0, 1.0, 1.0);
+		struct Vec3 d2 = vec3_init(0.0, 1.0, 1.0);
 
 		struct Vec3 L1[16];	//natural light
 		struct Vec3 L2[16];	//artificial light
