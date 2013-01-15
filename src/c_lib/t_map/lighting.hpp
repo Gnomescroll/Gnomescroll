@@ -80,9 +80,9 @@ int get_skylight(int x, int y, int z)
     if(mc == NULL)
         return 15;  //so it does not try to update
 
-    return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
+    //return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
 
-    //return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
+    return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
 
 void set_skylight(int x, int y, int z, int value)
@@ -102,10 +102,10 @@ void set_skylight(int x, int y, int z, int value)
     //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
 
     int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
-    light = value;
+    //light = value;
     //light &= 0xf0;          //clear lower byte
     //light |= (value & 0x0f); //set lower byte
-
+    light = (light & 0xf0) | (light & 0x0f);
     //light = (light & 0xf0)
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
     //mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value & 0x0f);  //bottom half
@@ -561,6 +561,8 @@ void envlight_add_block(int x, int y, int z)
 
 void update_envlight(int chunk_i, int chunk_j)
 {
+    return;
+
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     struct MAP_ELEMENT e;
 
