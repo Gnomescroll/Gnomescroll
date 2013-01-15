@@ -146,9 +146,18 @@ void set_max_damage(int max_damage)
     p->max_damage = max_damage;
 }
 
+//max light value is 16
 void set_light_value(int light_value)
 {
-    GS_ASSERT_ABORT(light_value >= 0 && light_value < 16);
+    if(light_value < 0 || light_value > 16)
+    {
+
+        printf("FATAL ERROR: BLOCK_DAT, SET_LIGHT_VALUE, light_value must be between 0 and 16, block= %s light= %d \n", 
+            p->name, light_value);
+        GS_ASSERT_ABORT(false);
+
+    }
+
     p->light_source = true;
     p->light_value = light_value;
 
