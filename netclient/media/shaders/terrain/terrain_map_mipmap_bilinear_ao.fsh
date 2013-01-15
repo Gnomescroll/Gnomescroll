@@ -59,6 +59,7 @@ void main()
     //color = color* clut_light_texture
     
     color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
+    color = color*texture2D(clut_light_texture, Light).rgb;
 
     //color = color * skyLight;
 
@@ -75,8 +76,6 @@ void main()
     const float saturation = 0.50;
     color = color + saturation*color*texture2D(clut_light_texture, Light).rgb;
 */
-
-    color = color*texture2D(clut_light_texture, Light).rgb;
 
     color = pow(color, gamma_factor3);
 

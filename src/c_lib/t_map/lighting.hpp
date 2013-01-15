@@ -71,9 +71,9 @@ int get_skylight(int x, int y, int z)
 
     class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if(mc == NULL)
-        return 16;  //so it does not try to update
+        return 15;  //so it does not try to update
 
-    return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
+    return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light && 15;  //bottom half
 }
 
 void set_skylight(int x, int y, int z, int value)
@@ -89,10 +89,10 @@ void set_skylight(int x, int y, int z, int value)
     GS_ASSERT(mc != NULL);
     GS_ASSERT( (y >> 4) < 32);
     GS_ASSERT( (x >> 4) < 32);
- 
+    GS_ASSERT(value < 16 && value > 0);
     //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
 
-    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = value;
+    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value && 15);  //bottom half
 }
 
 //proprogate out
@@ -372,6 +372,422 @@ void update_skylight2(int ci, int cj)
 
         update_skylight_out(16*ci+i,16*cj+j,k);
 
+    }
+
+}
+
+/*
+    Env Light
+*/
+
+
+//for comparision purpose
+int get_envlight(int x, int y, int z)
+{
+    if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
+        return 0;
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    if(mc == NULL)
+        return 0;  //so it does not try to update
+
+    return (mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light >> 4);  //upper half
+}
+
+void set_envlight(int x, int y, int z, int value)
+{
+    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    if(mc == NULL)
+        return;
+    GS_ASSERT(mc != NULL);
+    GS_ASSERT( (y >> 4) < 32);
+    GS_ASSERT( (x >> 4) < 32);
+    GS_ASSERT(value < 16 && value > 0);
+    //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
+
+    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value << 4);  //upper half
+}
+
+
+/*
+    Add block operations
+*/
+
+//optimize the hell out of this
+void _envlight_add_block_helper(int _x, int _y, int _z, int li)
+{
+    //this is place to handle chunk not loaded stuff
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )   //do a single get block for this!!
+    {
+        set_envlight(_x,_y,_z, li-1);
+        _envlight_add_block(_x,_y,_z);
+    }
+}
+
+void _envlight_add_block(int x, int y, int z, int li)
+{  
+    //set light value?
+    //int li = get_envlight(x,y,z);
+
+    int _x,_y,_z;
+
+    _x = (x+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _y = y;
+    _z = z;
+    //x
+
+/*
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )   //do a single get block for this!!
+    {
+        set_envlight(_x,_y,_z, li-1);
+        _envlight_add_block(_x,_y,_z);
+    }
+*/
+
+    _envlight_add_block_helper(_x,_y,_z, li);
+    //GS_ASSERT( ((x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2) == (x+512-1) % 512);
+
+    _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _y = y;
+    _z = z;
+
+    _envlight_add_block_helper(_x,_y,_z, li);
+
+    /*
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        _envlight_add_block(_x,_y,_z);
+    }
+    */
+
+    //y
+    _x = x;
+    _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _z = z;
+    //x
+    
+    _envlight_add_block_helper(_x,_y,_z, li);
+/*
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        _envlight_add_block(_x,_y,_z);
+    }
+*/
+    _x = x;
+    _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _z = z;
+
+    _envlight_add_block_helper(_x,_y,_z, li);
+/*
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        _envlight_add_block(_x,_y,_z);
+    }
+*/
+    //y
+    _x = x;
+    _y = y;
+    _z = (z+1) % map_dim.z;
+
+    _envlight_add_block_helper(_x,_y,_z, li);
+/*
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        _envlight_add_block(_x,_y,_z);
+    }
+*/
+    _x = x;
+    _y = y;
+    _z = (z-1+map_dim.z)%map_dim.z; //z -1
+
+    _envlight_add_block_helper(_x,_y,_z, li);
+
+/*
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        _envlight_add_block(_x,_y,_z);
+    }
+*/
+}
+
+
+void envlight_add_block(int x, int y, int z)
+{  
+    //set light value?
+    int li = get_envlight(x,y,z);
+
+    _envlight_add_block(x,y,z,li);
+}
+
+//proprogate out
+void update_envlight_out(int x, int y, int z)
+{
+    int li = get_envlight(x,y,z);
+
+    //GS_ASSERT(! isSolid(x,y,z));
+    if(li-1 <= 0) return;
+
+/*
+    !isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 ) {
+        set_envlight(_x,_y,_z, li-1);
+    These can be combined into a single function
+*/
+
+/*
+    Recursion can be replaced by poping onto a circular buffer
+*/
+
+    int _x,_y,_z;
+
+    _x = (x+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _y = y;
+    _z = z;
+    //x
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )   //do a single get block for this!!
+    {
+        set_envlight(_x,_y,_z, li-1);
+        update_envlight_out(_x,_y,_z);
+    }
+
+    //GS_ASSERT( ((x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2) == (x+512-1) % 512);
+
+    _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _y = y;
+    _z = z;
+
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        update_envlight_out(_x,_y,_z);
+    }
+
+    //y
+    _x = x;
+    _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _z = z;
+    //x
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        update_envlight_out(_x,_y,_z);
+    }
+
+    _x = x;
+    _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _z = z;
+
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        update_envlight_out(_x,_y,_z);
+    }
+
+    //y
+    _x = x;
+    _y = y;
+    _z = (z+1) % map_dim.z;
+
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        update_envlight_out(_x,_y,_z);
+    }
+
+    _x = x;
+    _y = y;
+    _z = (z-1+map_dim.z)%map_dim.z; //z -1
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
+    {
+        set_envlight(_x,_y,_z, li-1);
+        update_envlight_out(_x,_y,_z);
+    }
+
+}
+
+//call this when removing a block
+void update_envlight_in(int x, int y, int z)
+{
+    //int li = get_envlight(x,y,z);
+
+    if(isSolid(x,y,z))
+    {
+        GS_ASSERT(false);
+        return;
+    }
+    //technically, if top block of height map
+    if( get_envlight(x,y,z+1) == 15 )
+    {
+        GS_ASSERT( z+1 == main_map->get_height(x,y) );
+        
+        /*
+            BUG:
+            Fails on removing block capping a column?
+        */
+
+        int _z = z;
+        //assume first element is not solid
+        while(1)
+        {
+            set_envlight(x,y,_z,15);
+            if(isSolid(x,y,_z-1) || _z==0)
+                break;
+            _z--;
+        }
+
+        for(int tz=_z; tz <= z; tz++)
+            update_envlight_out(x,y,tz);
+
+        return;
+    }
+    int li = 0;
+
+    int _x,_y,_z, tli;
+
+    //x
+    _x = (x+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _y = y;
+    _z = z;
+
+    tli = get_envlight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
+
+    _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _y = y;
+    _z = z;
+
+    tli = get_envlight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
+
+    //y
+    _x = x;
+    _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _z = z;
+
+    tli = get_envlight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
+
+    _x = x;
+    _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
+    _z = z;
+
+    tli = get_envlight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
+
+    //z
+    _x = x;
+    _y = y;
+    _z = (z+1) % map_dim.z;
+
+    tli = get_envlight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
+
+    _x = x;
+    _y = y;
+    _z = (z+(map_dim.z-1))%map_dim.z;
+
+    tli = get_envlight(_x,_y,_z);
+    if(tli > li )
+        li = tli;
+
+
+    if(li != 0)
+    {
+        set_envlight(x,y,z, li);
+        update_envlight_out(x,y,z);
+    }
+}
+
+void update_envlight_boundary(int _ci, int _cj)
+{
+    class MAP_CHUNK* mc;
+    int ci, cj;
+
+    //north?
+    ci = (_ci + 1 +32 ) % 32;
+    cj = (_cj + 0 +32 ) % 32;
+    mc = main_map->chunk[32*cj + ci];
+
+    if(mc != NULL)
+    {
+        const int i = 0;
+        for(int j=0; j<16; j++)
+        for(int k=0; k<map_dim.z; k++)
+        {
+            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
+                continue;
+            update_envlight_out(16*ci+i,16*cj+j,k);
+        }
+    }
+
+
+    //south?
+    ci = (_ci + -1 +32 ) % 32;
+    cj = (_cj + 0 +32 ) % 32;
+    mc = main_map->chunk[32*cj + ci];
+
+    if(mc != NULL)
+    {
+        const int i = 15;
+        for(int j=0; j<16; j++)
+        for(int k=0; k<map_dim.z; k++)
+        {
+            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
+                continue;
+            update_envlight_out(16*ci+i,16*cj+j,k);
+        }
+    }
+
+    //west?
+    ci = (_ci + 0 +32 ) % 32;
+    cj = (_cj + 1 +32 ) % 32;
+    mc = main_map->chunk[32*cj + ci];
+
+    if(mc != NULL)
+    {
+        const int j = 0;
+        for(int i=0; i<16; i++)
+        for(int k=0; k<map_dim.z; k++)
+        {
+            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
+                continue;
+            update_envlight_out(16*ci+i,16*cj+j,k);
+        }
+    }
+
+
+    //east?
+    ci = (_ci + 0 +32 ) % 32;
+    cj = (_cj + -1 +32 ) % 32;
+    mc = main_map->chunk[32*cj + ci];
+
+    if(mc != NULL)
+    {
+        const int j = 15;
+        for(int i=0; i<16; i++)
+        for(int k=0; k<map_dim.z; k++)
+        {
+            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
+                continue;
+            update_envlight_out(16*ci+i,16*cj+j,k);
+        }
     }
 
 }

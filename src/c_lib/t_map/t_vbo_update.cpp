@@ -444,10 +444,10 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
     v_list[offset+2].lighting[0] = light;
     v_list[offset+3].lighting[0] = light;
 
-    v_list[offset+0].lighting[1] = light_lookup[5];
-    v_list[offset+1].lighting[1] = light_lookup[5];
-    v_list[offset+2].lighting[1] = light_lookup[5];
-    v_list[offset+3].lighting[1] = light_lookup[5];
+    v_list[offset+0].lighting[1] = light_lookup[0];
+    v_list[offset+1].lighting[1] = light_lookup[0];
+    v_list[offset+2].lighting[1] = light_lookup[0];
+    v_list[offset+3].lighting[1] = light_lookup[0];
 
     {
         int _x = x & 15;

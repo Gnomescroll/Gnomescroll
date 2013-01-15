@@ -83,7 +83,7 @@ void save_png(const char* filename, float* in, int xres, int yres)
 }
 
 
-void save_png_RGB(const char* filename, float* in, int xres, int yres)
+void save_png_RGB(const char* filename, float* in, int xres, int yres, bool gamma_correction = true)
 {
     char FileName[128];
     sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) filename);
@@ -102,9 +102,16 @@ void save_png_RGB(const char* filename, float* in, int xres, int yres)
             if( _v < 0.0) _v = 0.0f;
             if( _v > 1.0) _v = 1.0f;
             unsigned char v = ((int) 255.0f*_v );
-            unsigned char v2 = _png_gamma_correction[v];
 
-            PBUFFER[4*index+k] = v2;
+            if(gamma_correction)
+            {
+                unsigned char v2 = _png_gamma_correction[v];
+                PBUFFER[4*index+k] = v2;
+            }
+            else
+            {
+                PBUFFER[4*index+k] = (unsigned char) v;
+            }
         }
         PBUFFER[4*index+3] = 255;
     }

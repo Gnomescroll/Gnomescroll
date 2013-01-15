@@ -13,6 +13,7 @@ class LightTextureGenerator
 	static const int dim = 16;
 
 	float values[3*dim*dim];
+	float values2[3*dim*dim];
 
 	unsigned int texture_array[1];
 
@@ -60,7 +61,6 @@ class LightTextureGenerator
 		}	
 	}
 
-
 	/*
 		As sunset proceeds
 		- the falloff should approach 1
@@ -105,13 +105,13 @@ class LightTextureGenerator
 
 		for(int i=0; i<16; i++)
 		{
-			float factor = falloff(i, 0.80);
+			float factor = falloff(15-i, 0.75);
 			L1[i] = vec3_scalar_mult(d1, factor); //add in gamma twist latter
 		}
 
 		for(int i=0; i<16; i++)
 		{
-			float factor = falloff(16-i, 0.80);
+			float factor = falloff(15-i, 0.75);
 			L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
 		}
 
@@ -120,12 +120,14 @@ class LightTextureGenerator
 
 			for(int j=0; j<dim; j++)
 			{
+				int _i = i;
+				int _j = 15-j;
 
 				struct Vec3 t3;
 
-				t3.x = L1[i].x + L2[j].x;
-				t3.y = L1[i].y + L2[j].y;
-				t3.z = L1[i].z + L2[j].z;
+				t3.x = L1[_i].x + L2[_j].x;
+				t3.y = L1[_i].y + L2[_j].y;
+				t3.z = L1[_i].z + L2[_j].z;
 
 				values[3*(dim*j+i)+0] = t3.x;
 				values[3*(dim*j+i)+1] = t3.y;
@@ -173,11 +175,23 @@ class LightTextureGenerator
 		
 
 		//save_png_RGB(const char* filename, float* in, int xres, int yres)
-		save_png_RGB("light_texture", values, dim, dim);
+		save_png_RGB("light_texture0", values, dim, dim, false);
+		save_png_RGB("light_texture1", values, dim, dim, true);
 	}
 
 	void gen_textures()
 	{
+
+		for(int i=0; i<dim; i++)
+		{
+			for(int j=0; j<dim; j++)
+			{
+				values2[3*(j*dim +i)+0] = values[3*((15-j)*dim + i)+0];
+				values2[3*(j*dim +i)+1] = values[3*((15-j)*dim + i)+1];
+				values2[3*(j*dim +i)+2] = values[3*((15-j)*dim + i)+2];
+			}
+		}
+
 		glEnable(GL_TEXTURE_2D);
         glGenTextures(1, texture_array);
 
@@ -189,7 +203,9 @@ class LightTextureGenerator
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, dim, dim, 0, GL_RGB, GL_FLOAT, values );
+            
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, dim, dim, 0, GL_RGB, GL_FLOAT, values2 );
+            //glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, dim, dim, 0, GL_RGB, GL_FLOAT, values );
         
         //}
         glBindTexture(GL_TEXTURE_2D, 0);
