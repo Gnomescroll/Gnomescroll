@@ -11,6 +11,8 @@ syntax: glob
 
 *-old1*
 
+*(*)
+
 html_doxygen
 
 a.out
