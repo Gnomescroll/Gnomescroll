@@ -18,7 +18,12 @@ struct FastCubeProperties
     bool item_drop;
     bool item_container;
     bool explosive;
-    bool reserved8;
+    bool light_source; //is light source
+};
+
+struct FastCubeAttributes
+{
+    unsigned char light_value; //how much light cube emits
 };
 
 class CubeProperties 
@@ -36,6 +41,9 @@ class CubeProperties
         CubeMaterial material;
         ItemContainerType container_type;  // inventory and crafting bench blocks
         bool explosive; // causes an explosion when destroyed
+
+        bool light_source;
+        int light_value;
 
         unsigned char max_damage;
 
@@ -59,6 +67,9 @@ class CubeProperties
         this->container_type = NULL_CONTAINER_TYPE;
         this->explosive = false;
 
+        this->light_source = false;
+        this->light_value  = 0;
+
         this->max_damage = 32;
         
         memset(this->name, 0, sizeof(this->name));
@@ -68,6 +79,8 @@ class CubeProperties
 };
 
 extern struct FastCubeProperties* fast_cube_properties;
+extern struct FastCubeAttributes* fast_cube_attributes;
+
 extern class CubeProperties* cube_properties;
 extern class DatNameMap* cube_name_map;
 

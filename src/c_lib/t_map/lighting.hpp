@@ -102,7 +102,7 @@ void set_skylight(int x, int y, int z, int value)
     //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
 
     int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
-    
+    light = value;
     //light &= 0xf0;          //clear lower byte
     //light |= (value & 0x0f); //set lower byte
 
@@ -429,7 +429,15 @@ void set_envlight(int x, int y, int z, int value)
     GS_ASSERT(value < 16 && value > 0);
     //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
 
-    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value << 4);  //upper half
+    int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
+
+    //light &= 0x0f;          //clear upper nibble
+    //light |= (value << 4);  //set upper nibble
+
+    light = (light & 0x0f) | (value << 4); // clear upper nib, set upper nib
+
+    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
+    //mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value << 4);  //upper half
 }
 
 
@@ -548,6 +556,34 @@ void envlight_add_block(int x, int y, int z)
     int li = get_envlight(x,y,z);
 
     _envlight_add_block(x,y,z,li);
+}
+
+
+void update_envlight(int chunk_i, int chunk_j)
+{
+    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+    struct MAP_ELEMENT e;
+
+    //struct MAP_e e;
+
+    for(int k=0; k<128; k++)
+    for(int i=0; i<16; i++)
+    for(int j=0; j<16; j++)
+    {
+
+        e = mc->get_element(i,j,k);
+        //if(e.block != 0)    //iterate until we hit top block
+        //    break;
+
+        //skip if its not a light source
+        if(fast_cube_properties[e.block].light_source == false)
+            continue;
+
+        //e.light = 15;
+        //mc->set_element(i,j,k,e);
+
+    }
+
 }
 
 //proprogate out

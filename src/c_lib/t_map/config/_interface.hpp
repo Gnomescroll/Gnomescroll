@@ -118,6 +118,7 @@ static void copy_cube_properties(class CubeProperties* a, struct FastCubePropert
     b->item_drop = a->item_drop;
     b->item_container = (a->group == ItemContainerCube);
     b->explosive = a->explosive;
+    b->light_source = a->light_source;
 }
 
 void end_cube_def()
@@ -143,6 +144,15 @@ void set_max_damage(int max_damage)
     GS_ASSERT_ABORT(max_damage > 0 && max_damage <= MAX_CUBE_DAMAGE);
     if (max_damage <= 0 || max_damage > MAX_CUBE_DAMAGE) return;
     p->max_damage = max_damage;
+}
+
+void set_light_value(int light_value)
+{
+    GS_ASSERT_ABORT(light_value >= 0 && light_value < 16);
+    p->light_source = true;
+    p->light_value = light_value;
+
+    fast_cube_attributes[p->type].light_value = light_value;
 }
 
 #if DC_SERVER

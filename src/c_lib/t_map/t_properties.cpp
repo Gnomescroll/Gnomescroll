@@ -6,6 +6,8 @@ namespace t_map
 {
 
 struct FastCubeProperties* fast_cube_properties = NULL;
+struct FastCubeAttributes* fast_cube_attributes = NULL;
+
 class CubeProperties* cube_properties = NULL;
 class DatNameMap* cube_name_map = NULL;
 
@@ -15,6 +17,10 @@ void init_t_properties()
     cube_properties = new class CubeProperties[MAX_CUBES];
     GS_ASSERT(fast_cube_properties == NULL);
     fast_cube_properties = (struct FastCubeProperties*)calloc(MAX_CUBES, sizeof(struct FastCubeProperties));
+
+    GS_ASSERT(fast_cube_attributes == NULL);
+    fast_cube_attributes = (struct FastCubeAttributes*)calloc(MAX_CUBES, sizeof(struct FastCubeAttributes));
+
     GS_ASSERT(cube_name_map == NULL);
     cube_name_map = new class DatNameMap(256, DAT_NAME_MAX_LENGTH);
 }
