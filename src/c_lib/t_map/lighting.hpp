@@ -6,6 +6,8 @@
 namespace t_map
 {
 
+//15 is now highest light level
+
 /*
     Update skylights seperately
 */
@@ -29,7 +31,10 @@ void update_skylight(int chunk_i, int chunk_j)
             e = mc->get_element(i,j,k);
             if(e.block != 0)    //iterate until we hit top block
                 break;
-            e.light  = 15; //upper bits for skylight
+            //e.light = 0x0f; //clear bottom bits, set to 15
+            //e.light = 0x0f; //clear bottom bits, set to 15
+            e.light = 15;
+
             mc->set_element(i,j,k,e);
         }
         if (k < 0) return;
@@ -52,7 +57,9 @@ void update_skylight(int chunk_i, int chunk_j)
             e = mc->get_element(i,j,k);
             if(e.block != 0)
                 continue;
-            e.light = 0; //clear upper bits
+            //e.light |= 0xf0;  //clear bottom bits, set to zero
+            //e.light = 0x00;     //clear bottom bits, set to zero
+            e.light = 0;
             mc->set_element(i,j,k,e);
         }
     }
@@ -73,7 +80,9 @@ int get_skylight(int x, int y, int z)
     if(mc == NULL)
         return 15;  //so it does not try to update
 
-    return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light && 15;  //bottom half
+    return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
+
+    //return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
 
 void set_skylight(int x, int y, int z, int value)
@@ -92,7 +101,14 @@ void set_skylight(int x, int y, int z, int value)
     GS_ASSERT(value < 16 && value > 0);
     //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
 
-    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value && 15);  //bottom half
+    int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
+    
+    //light &= 0xf0;          //clear lower byte
+    //light |= (value & 0x0f); //set lower byte
+
+    //light = (light & 0xf0)
+    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
+    //mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value & 0x0f);  //bottom half
 }
 
 //proprogate out
@@ -421,14 +437,16 @@ void set_envlight(int x, int y, int z, int value)
     Add block operations
 */
 
+void _envlight_add_block(int x, int y, int z, int li);
+
 //optimize the hell out of this
 void _envlight_add_block_helper(int _x, int _y, int _z, int li)
 {
     //this is place to handle chunk not loaded stuff
-    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )   //do a single get block for this!!
+    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li )   //do a single get block for this!!
     {
-        set_envlight(_x,_y,_z, li-1);
-        _envlight_add_block(_x,_y,_z);
+        set_envlight(_x,_y,_z, li);
+        _envlight_add_block(_x,_y,_z, li);
     }
 }
 
@@ -459,7 +477,7 @@ void _envlight_add_block(int x, int y, int z, int li)
     _y = y;
     _z = z;
 
-    _envlight_add_block_helper(_x,_y,_z, li);
+    _envlight_add_block_helper(_x,_y,_z, li-1);
 
     /*
     if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
@@ -475,7 +493,7 @@ void _envlight_add_block(int x, int y, int z, int li)
     _z = z;
     //x
     
-    _envlight_add_block_helper(_x,_y,_z, li);
+    _envlight_add_block_helper(_x,_y,_z, li-1);
 /*
     if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
     {
@@ -487,7 +505,7 @@ void _envlight_add_block(int x, int y, int z, int li)
     _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
     _z = z;
 
-    _envlight_add_block_helper(_x,_y,_z, li);
+    _envlight_add_block_helper(_x,_y,_z, li-1);
 /*
     if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
     {
@@ -500,7 +518,7 @@ void _envlight_add_block(int x, int y, int z, int li)
     _y = y;
     _z = (z+1) % map_dim.z;
 
-    _envlight_add_block_helper(_x,_y,_z, li);
+    _envlight_add_block_helper(_x,_y,_z, li-1);
 /*
     if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
     {
@@ -512,7 +530,7 @@ void _envlight_add_block(int x, int y, int z, int li)
     _y = y;
     _z = (z-1+map_dim.z)%map_dim.z; //z -1
 
-    _envlight_add_block_helper(_x,_y,_z, li);
+    _envlight_add_block_helper(_x,_y,_z, li-1);
 
 /*
     if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
