@@ -489,7 +489,7 @@ void _envlight_helper_out(int x, int y, int z, int li)
     _z = z;
     _envlight_helper_out2(_x,_y,_z, li-1);
 
-    //y
+    //z
     _x = x;
     _y = y;
     _z = (z+1) % map_dim.z;
