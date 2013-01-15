@@ -8,4 +8,4 @@ fi
 
 secret=`./shell/make_secret_key.py`
 echo $secret > ./keys/secret_key.$ext.new
-echo $secret > /var/www/gnomescroll.com/secret_key.$ext
+echo $secret > /var/www/gnomescroll.com/data/gamekeys/secret_key.$ext
