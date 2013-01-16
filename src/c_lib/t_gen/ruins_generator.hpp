@@ -265,39 +265,6 @@ Room setup_stairspace_for(direction_t d, Room r) {
     return r;
 }
 
-Rect3D get_open_connection(direction_t d)
-{
-    Rect3D rct;
-    rct.wid = rct.dep = FIXED_CONNECTION_SPAN;
-    rct.hei = HALLWAY_HEIGHT;
-
-    int co = CUBES_ACROSS_ROOM / 2 - FIXED_CONNECTION_SPAN / 2; // connection offset
-    switch(d)
-    {
-        case DIR_NORTH:
-			rct.y = CUBES_ACROSS_ROOM - 1;
-			// fallthru
-        case DIR_SOUTH:
-            rct.x = co;
-            break;
-        case DIR_EAST:
-			rct.x = CUBES_ACROSS_ROOM - 1;
-			// fallthru
-        case DIR_WEST:
-            rct.y = co;
-            break;
-
-        case DIR_UP:
-        case DIR_DOWN:
-        case DIR_MAX:
-            GS_ASSERT(false);
-            break;
-    }
-
-    rct.z = 1;
-    return rct;
-}
-
 bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) { // room index
 	IntVec3 to;
 
@@ -345,6 +312,43 @@ bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) { // room index
     return true;
 }
 
+void open_connection_to(direction_t d, Room& rm)
+{
+    switch(d)
+    {
+        case DIR_NORTH:
+			rm.nh.x = FIXED_CONNECTION_OFFSET;
+			rm.nh.y = rm.y + rm.dep;
+			rm.nh.wid = FIXED_CONNECTION_SPAN;
+			rm.nh.dep = CUBES_ACROSS_ROOM / 2;  // longer than needed
+			break;
+        case DIR_SOUTH:
+            rm.sh.x = FIXED_CONNECTION_OFFSET;
+			rm.sh.y = 0;
+			rm.sh.wid = FIXED_CONNECTION_SPAN;
+			rm.sh.dep = CUBES_ACROSS_ROOM / 2;  // longer than needed
+            break;
+        case DIR_EAST:
+			rm.eh.x =  rm.x + rm.wid;
+			rm.eh.y = FIXED_CONNECTION_OFFSET;
+			rm.eh.wid = CUBES_ACROSS_ROOM / 2;  // longer than needed
+			rm.eh.dep = FIXED_CONNECTION_SPAN;
+            break;
+        case DIR_WEST:
+			rm.wh.x =  0;
+			rm.wh.y = FIXED_CONNECTION_OFFSET;
+			rm.wh.wid = CUBES_ACROSS_ROOM / 2;  // longer than needed
+			rm.wh.dep = FIXED_CONNECTION_SPAN;
+            break;
+
+        case DIR_UP:
+        case DIR_DOWN:
+        case DIR_MAX:
+            GS_ASSERT(false);
+            break;
+    }
+}
+
 void connect_these(IntVec3 src, direction_t d, IntVec3& dst) 
 {
         // set vars and make root to hall connections
@@ -355,32 +359,32 @@ void connect_these(IntVec3 src, direction_t d, IntVec3& dst)
 				dst.y = src.y + 1; 
 				dst.z = src.z;  // set offset of destination  
 
-				rooms[src.z][src.y][src.x].nh = get_open_connection(DIR_NORTH);
-				rooms[dst.z][dst.y][dst.x].sh = get_open_connection(DIR_SOUTH);
+				open_connection_to(DIR_NORTH, rooms[src.z][src.y][src.x]);
+				open_connection_to(DIR_SOUTH, rooms[dst.z][dst.y][dst.x]);
 				break;
             case DIR_SOUTH: 
                 dst.x = src.x; 
 				dst.y = src.y - 1; 
 				dst.z = src.z;  // set offset of destination
 
-				rooms[src.z][src.y][src.x].sh = get_open_connection(DIR_SOUTH);
-				rooms[dst.z][dst.y][dst.x].nh = get_open_connection(DIR_NORTH);
+				open_connection_to(DIR_SOUTH, rooms[src.z][src.y][src.x]);
+				open_connection_to(DIR_NORTH, rooms[dst.z][dst.y][dst.x]);
                 break;
             case DIR_EAST:  
                 dst.x = src.x + 1; 
 				dst.y = src.y; 
 				dst.z = src.z;  // set offset of destination
 
-				rooms[src.z][src.y][src.x].eh = get_open_connection(DIR_EAST);
-				rooms[dst.z][dst.y][dst.x].wh = get_open_connection(DIR_WEST);
+				open_connection_to(DIR_EAST, rooms[src.z][src.y][src.x]);
+				open_connection_to(DIR_WEST, rooms[dst.z][dst.y][dst.x]);
                 break;
             case DIR_WEST:  
                 dst.x = src.x - 1; 
 				dst.y = src.y; 
 				dst.z = src.z;  // set offset of destination
 
-				rooms[src.z][src.y][src.x].wh = get_open_connection(DIR_WEST);
-				rooms[dst.z][dst.y][dst.x].eh = get_open_connection(DIR_EAST);
+				open_connection_to(DIR_WEST, rooms[src.z][src.y][src.x]);
+				open_connection_to(DIR_EAST, rooms[dst.z][dst.y][dst.x]);
                 break;
 
             case DIR_UP:
@@ -479,18 +483,15 @@ void UNUSED_make_a_simple_room()
             //    r = setup_stairspace_for(DIR_DOWN, r);
 }
 
-void make_alive_and_setup(Room &r) 
+void make_alive_and_setup(Room& r, room_t room_t) 
 {
     //printf("make_alive_and_setup\n");
 
     r.dead = false;
-    
-	if (randrange(0,1) == 0)
-        r.room_t = ROOMT_HALL;
-	else
-	    r.room_t = ROOMT_NORMAL;
+	r.room_t = room_t;
 
-    r.floo = randcube(floors, NUM_FLOOR_CUBES);//floo;
+    // for now we're randomizing each room for maximum debug patchwork quilting
+	r.floo = randcube(floors, NUM_FLOOR_CUBES);//floo;
     r.wall = randcube(walls, NUM_WALL_CUBES);//wall;
     r.ceil = randcube(ceils, NUM_CEIL_CUBES);//ceil;
     r.trim = randcube(trims, NUM_TRIM_CUBES);//trim;
@@ -500,14 +501,20 @@ void make_alive_and_setup(Room &r)
     r.sh.z = 1;
     r.eh.z = 1;
     r.wh.z = 1;
-                
+    
+	// always want to differ from default height
+	r.nh.hei = HALLWAY_HEIGHT;
+    r.sh.hei = HALLWAY_HEIGHT;
+    r.eh.hei = HALLWAY_HEIGHT;
+    r.wh.hei = HALLWAY_HEIGHT;
+
     // set subspace of grid node
 	if (ROOMT_HALL == r.room_t) 
 	{
 		r.x = r.y = FIXED_CONNECTION_OFFSET;
 		r.wid = r.dep = FIXED_CONNECTION_SPAN;
 	}
-	else
+	else // just 1 cube span inwards (of the room possibility space)
 	{
 		r.x = r.y = 1;
 		r.wid = r.dep = CUBES_ACROSS_ROOM - 2;
@@ -532,7 +539,7 @@ void snake_a_new_path()
         root.x = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room wid */);
         root.y = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room dep */);
         root.z = z;
-        make_alive_and_setup(rooms[root.z][root.y][root.x]);
+        make_alive_and_setup(rooms[root.z][root.y][root.x], ROOMT_NORMAL);
         
         CubeType floo = randcube(floors, NUM_FLOOR_CUBES);
         CubeType wall = randcube(walls, NUM_WALL_CUBES);
@@ -551,11 +558,11 @@ void snake_a_new_path()
         
                 if (empty_lat_space_around(hall) )
                 {
-                    make_alive_and_setup(rooms[hall.z][hall.y][hall.x]);
+                    make_alive_and_setup(rooms[hall.z][hall.y][hall.x], ROOMT_HALL);
                     root.x = room.x;
                     root.y = room.y;
                     root.z = room.z;
-                    make_alive_and_setup(rooms[room.z][room.y][room.x]);
+                    make_alive_and_setup(rooms[room.z][room.y][room.x], ROOMT_NORMAL);
                 }
             }
             else // must start a new snake, cuz can't build off ROOT room
