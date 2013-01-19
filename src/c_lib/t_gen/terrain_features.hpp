@@ -36,10 +36,18 @@ typedef enum {
 
 
 
-void set_me_maybe(int x, int y, int z, CubeType block, CubeType an_overwriteable = NULL_CUBE) {
-    if (t_map::get(x, y, z) == EMPTY_CUBE
-    || (an_overwriteable != NULL_CUBE && t_map::get(x, y, z) == an_overwriteable))
-        t_map::set(x, y, z, block);
+void set_me_maybe(int x, int y, int z, CubeType ct, CubeType an_overwriteable = NULL_CUBE) {
+    if 
+	(
+		t_map::get(x, y, z) == EMPTY_CUBE
+		|| 
+		(
+			an_overwriteable != NULL_CUBE 
+			&& 
+			t_map::get(x, y, z) == an_overwriteable
+		)
+	)
+        t_map::set(x, y, z, ct);
 }
 
 void make_circle(int x, int y, int z, float dist, CubeType block, CubeType an_overwriteable = NULL_CUBE) { // instead of from the center of given block
@@ -203,6 +211,47 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num) {
     return true;
 }
 
+void make_gorge(int x_, int y_, int z_) 
+{
+    //float x, y, z;
+	//x = y = z = 0.0f;
+	//float fspan = 0.9f;  // float span
+	int length = randrange(30, 160);
+	for (int y = y_; y <= y_ + length; y++)
+	{
+		int port      = x_;
+		int starboard = x_;
+		int countdown_til_widening = 1;
+		int max_ups_per_width = 1; // iterations upwards
+
+		for (int z = z_; z <= ZMAX; z++) 
+		{
+			for (int x = port; x < starboard + 1; x++) 
+			{
+				t_map::set(x, y, z, EMPTY_CUBE);
+			}
+
+			countdown_til_widening--;
+			if (countdown_til_widening == 0)
+			{
+				countdown_til_widening = max_ups_per_width;
+				max_ups_per_width += 2; // ++ made it more like canyons
+				port--;
+				starboard++;
+			}
+		}
+	}
+}
+
+void make_gorges() 
+{
+	int num_gorges = 140;
+	for (int i = 0; i < num_gorges; i++)
+	{
+		make_gorge(randrange(0, XMAX - 1), randrange(0, YMAX - 1), 6); // 3 above bedrock (which is 3 high)
+	}
+}
+
 
 
 
@@ -210,10 +259,11 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num) {
 namespace t_gen {
     void add_terrain_features() {
         printf("Adding terrain features\n");
-        printf("    trees\n");
-        printf("    shrooms\n");
+        //printf("    gorges\n");
 
-        // setup blocks
+		//make_gorges();
+
+        // setup cube sets
         leaves[0] = t_map::get_cube_type("leaves1");
         leaves[1] = t_map::get_cube_type("leaves2"); 
         leaves[2] = t_map::get_cube_type("leaves3"); 
@@ -229,7 +279,8 @@ namespace t_gen {
         shroom_stems[0] = t_map::get_cube_type("mushroom_stem1");
         shroom_stems[1] = t_map::get_cube_type("mushroom_stem2");
 
-        CubeType regolith = t_map::get_cube_type("regolith");
+        // check that all cubes are legit
+		CubeType regolith = t_map::get_cube_type("regolith");
         GS_ASSERT(t_map::isValidCube(regolith));
         if (!t_map::isValidCube(regolith)) return;
 
@@ -242,6 +293,9 @@ namespace t_gen {
         float* noise = t_gen::create_2d_noise_array(persistence, octaves, XMAX, YMAX);  // must free return value
         GS_ASSERT(noise != NULL);
         if (noise == NULL) return;
+
+        printf("    trees\n");
+        printf("    shrooms\n");
 
         // make groves
         for (int x=0; x<XMAX; x++)
