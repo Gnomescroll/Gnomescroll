@@ -256,8 +256,10 @@ void make_gorges()
 
 
 
-namespace t_gen {
-    void add_terrain_features() {
+namespace t_gen 
+{
+    void add_terrain_features() 
+	{
         printf("Adding terrain features\n");
         //printf("    gorges\n");
 

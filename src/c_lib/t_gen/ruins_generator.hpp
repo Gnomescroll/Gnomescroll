@@ -218,6 +218,35 @@ void make_alive_and_setup(Room& r, room_t room_t)
 	setup_room(r, room_t);
 }
 
+void make_chest(int x, int y, int z) 
+{
+    ItemContainerID id = ItemContainer::create_container_block("storage_block_small", x, y, z);
+    if (id != NULL_CONTAINER)
+    {
+        if (randrange(0, 2) == 0)
+        {
+            ItemContainer::auto_add_item_to_container("iron_bar", id);
+            ItemContainer::auto_add_item_to_container("iridium_bar", id);
+            ItemContainer::auto_add_item_to_container("gallium_bar", id);
+            ItemContainer::auto_add_item_to_container("copper_bar", id);
+        }
+        if (randrange(0, 1) == 0)
+        {
+            ItemContainer::auto_add_item_to_container("coal_nugget", id);
+        }
+        if (randrange(0, 3) == 0)
+        {
+            ItemContainer::auto_add_item_to_container("green_mining_laser", id);
+            ItemContainer::auto_add_item_to_container("laser_rifle", id);
+        }
+        if (randrange(0, 4) == 0)
+        {
+            ItemContainer::auto_add_item_to_container("small_charge_pack", id);
+            ItemContainer::auto_add_item_to_container("energy_tank", id);
+        }
+    }
+}
+
 // params:  room indexes,  origin x/y
 void make_room_filling(IntVec3 ri, int ox, int oy) 
 {
@@ -265,7 +294,8 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
         //}
 
         // make the cubes at last       
-        if (need_cube) {
+        if (need_cube) 
+		{
             // change rim/frame cubes
             if (cz == 1 ||
                 rect_plus_margin_contains(r.nconn, 1, cx, cy, cz) || 
@@ -276,8 +306,15 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
 				cube = r.trim;
             
             t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, cube); 
-        } else {
-            t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, EMPTY_CUBE);
+        } 
+		else 
+		{
+			if (cz == 1 && randrange(0, 256) == 0)
+			{ 
+				make_chest(cx, cy, cz);
+			}
+			else
+				t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, EMPTY_CUBE);
         }
     }
 }
