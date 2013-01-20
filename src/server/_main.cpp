@@ -133,7 +133,18 @@ void init_world()
 
     if (iceflame_map)
     {
+        serializer::begin_new_world_version();
+        default_map_gen();
+        t_gen::populate_crystals();
+        t_map::environment_process_startup();
+        if (Options::serializer)
+        {
+            bool saved = serializer::save_data();
+            GS_ASSERT_ABORT(saved);
+            serializer::wait_for_save_complete();
+        }
         t_gen::generate_city();
+
     }
 
     srand((unsigned int)time(NULL));

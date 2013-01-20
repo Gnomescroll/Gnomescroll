@@ -262,6 +262,22 @@ void load_item_dat()
     set_pretty_name("Silicon Crystal");
     s->max_stack_size = 64;
 
+    item_def(IG_SHOVEL, "silicon_dagger");
+    sprite_def(i1, 13,3);
+    set_pretty_name("Silicon Dagger");
+    s->melee_fire_cooldown = 500;
+    s->melee_damage = 60;
+    s->max_durability = 25;
+    s->max_stack_size = 1;
+    s->firing_range = 4.0f;
+    s->firing_rate = 6;
+    block_damage_def(3);
+    block_damage_def(CUBE_MATERIAL_DIRT, 7);
+    block_damage_def(CUBE_MATERIAL_STONE, 1);
+    block_damage_def(CUBE_MATERIAL_DECORATION, 8);
+    s->object_damage_min = 50;
+    s->object_damage_max = 75;
+
     item_def(IG_FIST, "fist");
     sprite_def(i1, 6, 2);
     set_pretty_name("Fist");

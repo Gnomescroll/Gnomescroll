@@ -51,6 +51,23 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("iridium_bar", 1);
 
+    //weapons
+    def_crafting_recipe("silicon_dagger");
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("silicon_crystal", 1);
+
+    def_crafting_recipe("silicon_dagger");
+    set_crafting_reagent("copper_bar", 1);
+    set_crafting_reagent("silicon_crystal", 1);
+
+    def_crafting_recipe("silicon_dagger");
+    set_crafting_reagent("gallium_bar", 1);
+    set_crafting_reagent("silicon_crystal", 1);
+
+    def_crafting_recipe("silicon_dagger");
+    set_crafting_reagent("iridium_bar", 1);
+    set_crafting_reagent("silicon_crystal", 1);
+
     // blocks
      def_crafting_recipe("steel_block_1", 4);
     set_crafting_reagent("iron_bar", 1);
