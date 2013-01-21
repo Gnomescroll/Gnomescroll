@@ -109,8 +109,10 @@ void generate_city()
             if (cy >= t_map::map_dim.y) cy = CITY_RANDOMNESS / 2;
             if (cx < 0) cx = t_map::map_dim.x - CITY_RANDOMNESS * 2;
             if (cy < 0) cy = t_map::map_dim.y - CITY_RANDOMNESS * 2;
-            if (isGood(cx, cy, cx + CITY_RANDOMNESS, cy + CITY_RANDOMNESS, t_map::map_dim.z - SKYSCRAPER_HEIGHT - SKYSCRAPER_RANDOMNESS - 1, rock) && create_roads(ROAD_SIZE, steelC, cx, cx, cx + CITY_RANDOMNESS, cy + CITY_RANDOMNESS) != 1)
+            if (isGood(cx, cy, cx + CITY_RANDOMNESS, cy + CITY_RANDOMNESS, t_map::map_dim.z - SKYSCRAPER_HEIGHT - SKYSCRAPER_RANDOMNESS - 1, rock))
             {
+                printf("isGood actually returned 1! Now that's rare... \n");
+                create_roads(ROAD_SIZE, steelC, cx, cx, cx + CITY_RANDOMNESS, cy + CITY_RANDOMNESS);
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
                 if (building_randomizer == 1)
                 {
@@ -165,6 +167,7 @@ void generate_city()
                 generate_temple(cx, cy, t_map::get_highest_open_block(cx, cy), TEMPLE_SIZE, glowgreen, glowblue, rock);
             }
         }
+        else printf("isGood returned 0. \n");
         }
     }
 }
@@ -475,20 +478,17 @@ void create_floor(int x, int y, int z, int size, CubeType gray)
     }
 }
 
-bool create_roads(int size, CubeType steel, int minx, int miny, int maxx, int maxy)
+void create_roads(int size, CubeType steel, int minx, int miny, int maxx, int maxy)
 {
     printf ("Generating roads from %d, %d to %d, %d\n", minx, miny, maxx, maxy);
-    bool out=0;
     for (int i = minx; i < t_map::map_dim.x; i++)
     for (int j = miny; j < t_map::map_dim.y; j++)
     {
         if(isRoad(i, j, size))
         {
             t_map::set(i, j, t_map::get_highest_open_block(i, j), steel);
-            out=1;
         }
     }
-    return out;
 }
 
 bool isRoad(int x, int y, int size)
@@ -759,6 +759,7 @@ void create_crusher(int x, int y, int z)
 
 bool isGood(int x, int y, int maxx, int maxy, int maxheight, CubeType rock)
 {
+    printf("Testing if position %d, %d is good for a building... \n", x, y);
     GS_ASSERT(x < maxx);
     GS_ASSERT(y < maxy);
     if (maxx >= t_map::map_dim.x || maxy >= t_map::map_dim.y || x < 0 || y < 0) return 0;
@@ -772,7 +773,7 @@ bool isGood(int x, int y, int maxx, int maxy, int maxheight, CubeType rock)
         if(t_map::get_highest_open_block(i, j) > maxlevel) maxlevel = t_map::get_highest_open_block(i, j);
         if(t_map::get_highest_open_block(i, j) < minlevel) minlevel = t_map::get_highest_open_block(i, j);
     }
-    if (minlevel + 5 < maxlevel) return 0;
+    if (minlevel + 10 < maxlevel) return 0;
     else return 1;
 }
 
