@@ -480,6 +480,15 @@ void _envlight_update(int x, int y, int z)
     //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     //z &= 127;
+    static const int va[3*6] =
+    {
+        0,0,1,
+        0,0,-1,
+        1,0,0,
+        -1,0,0,
+        0,1,0,
+        0,-1,0
+    };
 
 
     struct MAP_ELEMENT e = get_element(x,y,z);
@@ -491,27 +500,45 @@ void _envlight_update(int x, int y, int z)
 
     if(fast_cube_properties[e.block].light_source == true)
     {
-        //block should have light value set on placement
-        GS_ASSERT(li == fast_cube_attributes[e.block].light_value)
-        li = fast_cube_attributes[e.block].light_value;
-    }
-    else
-    {
-        //can do this before calling get_env
-        //move to get_envlight check
-        if(fast_cube_properties[e.block].solid == true)
+            //light source block
+        #if 0
+            for(int i=0; i<6; i++)
+            {
+                if(get_envlight(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]) < li -1)
+                    _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+            }
             return;
+        #else
+            for(int i=0; i<6; i++)
+            {
+                struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+                if(_e.light < li -1 && fast_cube_properties[_e.block].solid == false)
+                    _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+            }
+            return;
+        #endif
+        }
+        else
+        {
+            //solid, not light source
+            return;
+        }
+
     }
 
-    static const int va[3*6] =
+    else
     {
-        0,0,1,
-        0,0,-1,
-        1,0,0,
-        -1,0,0,
-        0,1,0,
-        0,-1,0
-    };
+
+        //solid non-light source
+        if(fast_cube_properties[e.block].solid == true)
+        {
+            return;
+        }
+       //non-solid non-light source
+
+    }
+
+
 
     int lia[6];
     for(int i=0; i<6; i++)
@@ -521,6 +548,15 @@ void _envlight_update(int x, int y, int z)
 
     int min = ENV_LIGHT_MIN(lia);
     int max = ENV_LIGHT_MAX(lia);
+
+    if(li == max -1)
+    {
+        //done, lighting is correct
+        return;
+    }
+
+
+    //check for removal condition
 
     //proprogate outward
     if(li < max -1)
