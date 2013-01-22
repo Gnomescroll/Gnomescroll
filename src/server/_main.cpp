@@ -94,12 +94,13 @@ void init_world()
 
     if (corpusc_map)
     {
-        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, XMAX,YMAX,27, t_map::get_cube_type("regolith") );
-        t_gen::excavate();
+        int height = 27;
+		map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
+        t_gen::set_region(0,0,1, XMAX,YMAX,height, t_map::get_cube_type("regolith") );
+        //t_gen::excavate();
         t_gen::add_terrain_features();  // this needs like about 27 heighth to the ground or *CRASH*
         t_gen::generate_ruins();
-        t_gen::make_art_gallery(ZMAX/2);
+        t_gen::make_art_gallery(height);
     }
 
     if (art_map)

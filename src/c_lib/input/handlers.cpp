@@ -265,6 +265,8 @@ void toggle_camera_mode()
     {
         case INPUT_STATE_AGENT:
             input_state.camera_mode = INPUT_STATE_CAMERA;
+            free_camera->copy_state_from(agent_camera);
+			free_camera->move(0, 0, 3);
             break;
         case INPUT_STATE_CAMERA:
             if (ClientState::player_agent.you() != NULL)

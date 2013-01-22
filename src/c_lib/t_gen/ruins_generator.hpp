@@ -36,17 +36,6 @@ enum direction_t {
     DIR_MAX // use only as a max value when iterating thru all directions
 };
         
-enum direction_type_t {
-    DIRTYPE_OPENAIR,
-    DIRTYPE_HALL,
-    DIRTYPE_DOOR,
-    DIRTYPE_STAIRS,
-    // if editing this, keep in mind code makes random openings assuming 0-2 are valid openings
-    DIRTYPE_BLOCKED_BY_ROOM, // ..... and this is used as the excluded max for openings
-    DIRTYPE_BLOCKED_BY_OUTSIDE,
-    DIRTYPE_BLOCKED_FOREVER, // stops connecting to upper part of large room like Boss Room, or treating stairs same as lateral connections
-};
-
 enum room_t {
     ROOMT_NORMAL,
     ROOMT_HALL,
@@ -220,7 +209,9 @@ void make_alive_and_setup(Room& r, room_t room_t)
 
 void make_chest(int x, int y, int z) 
 {
-    ItemContainerID id = ItemContainer::create_container_block("storage_block_small", x, y, z);
+	t_map::set(x, y, z, EMPTY_CUBE);
+	t_map::set(x, y, z, t_map::get_cube_type("storage_block_small"));
+	ItemContainerID id = ItemContainer::create_container_block(ItemContainer::name::storage_block_small, x, y, z);
     if (id != NULL_CONTAINER)
     {
         if (randrange(0, 2) == 0)
@@ -297,24 +288,25 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
         if (need_cube) 
 		{
             // change rim/frame cubes
-            if (cz == 1 ||
-                rect_plus_margin_contains(r.nconn, 1, cx, cy, cz) || 
-                rect_plus_margin_contains(r.sconn, 1, cx, cy, cz) || 
-                rect_plus_margin_contains(r.econn, 1, cx, cy, cz) || 
-                rect_plus_margin_contains(r.wconn, 1, cx, cy, cz) 
-            ) 
-				cube = r.trim;
+			if (r.room_t != ROOMT_HALL)
+				if (cz == 1 ||
+					rect_plus_margin_contains(r.nconn, 1, cx, cy, cz) || 
+					rect_plus_margin_contains(r.sconn, 1, cx, cy, cz) || 
+					rect_plus_margin_contains(r.econn, 1, cx, cy, cz) || 
+					rect_plus_margin_contains(r.wconn, 1, cx, cy, cz) 
+				) 
+					cube = r.trim;
             
             t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, cube); 
         } 
 		else 
 		{
-			if (cz == 1 && randrange(0, 256) == 0)
+			t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, EMPTY_CUBE);
+			
+			if (cz == 1 && (randrange(0, 156) == 0))
 			{ 
 				make_chest(cx, cy, cz);
 			}
-			else
-				t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, EMPTY_CUBE);
         }
     }
 }
