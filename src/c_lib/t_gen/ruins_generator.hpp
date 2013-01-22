@@ -305,7 +305,7 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
 			
 			if (cz == 1 && (randrange(0, 156) == 0))
 			{ 
-				make_chest(cx, cy, cz);
+				//make_chest(cx, cy, cz);
 			}
         }
     }

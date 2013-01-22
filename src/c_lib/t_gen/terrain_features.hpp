@@ -241,36 +241,6 @@ void carve_aligned_gorge_slice(int x_, int y_, int z_) {
 		}
 }
 
-void make_gorge(int x_, int y_, int z_) 
-{
-	int length = 15; // randrange(30, 160);
-
-	float fx = 0;
-	float fy = 0;
-	float angle = 0;
-
-	while (length > 0) 
-	{
-		fx += sinf(angle);
-		fy += cosf(angle);
-
-		t_map::set(             x_ + (int)fx, y_ + (int)fy, z_, shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)]);
-		//carve_aligned_gorge_slice(x_ + (int)fx, y_ + (int)fy, z_);
-
-		angle += PI / 32;
-		length--;
-	}
-}
-
-void make_gorges() 
-{
-	int num_gorges = 5;
-	for (int i = 0; i < num_gorges; i++)
-	{
-		make_gorge(randrange(0, XMAX - 1), randrange(0, YMAX - 1), 6); // 3 above bedrock (which is 3 high)
-	}
-}
-
 
 
 
@@ -280,9 +250,6 @@ namespace t_gen
     void add_terrain_features() 
 	{
         printf("Adding terrain features\n");
-        printf("    gorges\n");
-
-		make_gorges();
 
         // setup cube sets
         leaves[0] = t_map::get_cube_type("leaves1");
@@ -312,8 +279,52 @@ namespace t_gen
 
         // setup perlin array
         float* noise = t_gen::create_2d_noise_array(persistence, octaves, XMAX, YMAX);  // must free return value
-        GS_ASSERT(noise != NULL);
+        GS_ASSERT(&noise != NULL);
         if (noise == NULL) return;
+
+        printf("    gorges\n");
+		float lowest = 999.9f;
+		float highest = 0.0f;
+		for (int i = 0; i < XMAX; i++)
+		for (int j = 0; j < YMAX; j++)
+		{
+			float f = noise[i + j * XMAX];
+			if (lowest > f)
+				lowest = f;
+			if (highest < f)
+				highest = f;
+		}
+		printf("noise lowest: %f\n", lowest);
+		printf("noise highest: %f\n", highest);
+		
+		// make gorges
+		int num_gorges = 20;
+		for (int i = 0; i < num_gorges; i++)
+		{
+			int x_ = randrange(0, XMAX - 1);
+			int y_ = randrange(0, YMAX - 1);
+			CubeType ct = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
+
+
+			int length = 305; // randrange(30, 160);
+			int rand_idx = randrange(0, XMAX - 1);
+
+			float fx = 0;
+			float fy = 0;
+			float angle = 0;
+
+			while (length > 0) 
+			{
+				fx += sinf(angle);
+				fy += cosf(angle);
+
+				t_map::set(               x_ + (int)fx, y_ + (int)fy, 28, ct);
+				carve_aligned_gorge_slice(x_ + (int)fx, y_ + (int)fy, 6);
+
+				angle = noise[rand_idx + length * XMAX];  //PI / 32;
+				length--;
+			}
+		}
 
         printf("    trees\n");
         printf("    shrooms\n");
