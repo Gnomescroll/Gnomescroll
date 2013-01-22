@@ -504,7 +504,7 @@ void _envlight_update(int x, int y, int z)
 
         GS_ASSERT(li == fast_cube_attributes[e.block].light_value);
             //light source block
-        #if 1
+        #if 0
             for(int i=0; i<6; i++)
             {
                 if(get_envlight(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]) < li -1)
@@ -549,7 +549,7 @@ void _envlight_update(int x, int y, int z)
         // 1> check to make sure light value is correct; not too high, or too low
         // 2> If light value in adjacent block is 
 
-        for(int i=1; i<6; i++)
+        for(int i=0; i<6; i++)
         {
             struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
 
@@ -568,7 +568,7 @@ void _envlight_update(int x, int y, int z)
                 //asserts that solid blocks are always light zero
                 if(fast_cube_properties[_e.block].solid == true)
                 {
-                    GS_ASSERT(fast_cube_properties[e.block].light_source == true);
+                    GS_ASSERT(fast_cube_properties[_e.block].light_source == true);
                 }
                 //max = _e.light;
                 li = (_e.light >> 4) -1;
@@ -865,6 +865,8 @@ void update_envlight(int chunk_i, int chunk_j)
         //    continue;
     
         //if(fast_cube_properties[e.block].solid == false)
+        if(fast_cube_properties[e.block].solid == false || 
+            fast_cube_properties[e.block].light_source == true)
         _envlight_update(x,y,k);
 
     /*
