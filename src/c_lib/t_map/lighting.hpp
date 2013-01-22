@@ -426,7 +426,7 @@ void set_envlight(int x, int y, int z, int value)
     GS_ASSERT(mc != NULL);
     GS_ASSERT( (y >> 4) < 32);
     GS_ASSERT( (x >> 4) < 32);
-    GS_ASSERT(value < 16 && value > 0);
+    GS_ASSERT(value < 16 && value >= 0);
     //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
 
     int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
@@ -495,13 +495,16 @@ void _envlight_update(int x, int y, int z)
     //fast_cube_properties[e.block].light_source == false
 
     //int li = get_envlight(x,y,z); //light value at current position
-    int li = e.light;
+    int li = (e.light >> 4);
 
+    GS_ASSERT(li == get_envlight(x,y,z));
 
     if(fast_cube_properties[e.block].light_source == true)
     {
+
+        GS_ASSERT(li == fast_cube_attributes[e.block].light_value);
             //light source block
-        #if 0
+        #if 1
             for(int i=0; i<6; i++)
             {
                 if(get_envlight(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]) < li -1)
@@ -550,11 +553,33 @@ void _envlight_update(int x, int y, int z)
         {
             struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
 
-            if(_e.light > li + 1)
+            //set light at current position if neighorbing positions are brighter
+
+        #if 0
+            if( ( (_e.light >> 4) > li + 1 ) && 
+                (fast_cube_properties[_e.block].solid == false ||  //this never gets triggered; solid non-light source bloks are light 0
+                 fast_cube_properties[e.block].light_source == true)
+                )
+        #else
+            if( (_e.light >> 4) > li + 1 )
+        #endif
             {
+
+                //asserts that solid blocks are always light zero
+                if(fast_cube_properties[_e.block].solid == true)
+                {
+                    GS_ASSERT(fast_cube_properties[e.block].light_source == true);
+                }
                 //max = _e.light;
-                li = (_e.light & 0x0f) -1;
-                set_envlight(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2], li);
+                li = (_e.light >> 4) -1;
+
+                if(li < 0 || li > 15)
+                {
+                    GS_ASSERT(false);
+                    printf("ERROR: li= %d \n", li);
+                    return;
+                }
+                set_envlight(x,y,z, li);
             
                 //proprogate
             #if 0
@@ -564,7 +589,7 @@ void _envlight_update(int x, int y, int z)
                 for(int j=0; j<6; j++)
                 {
                     struct MAP_ELEMENT _e2 = get_element(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
-                    if( (_e2.light & 0x0f) < li -1 && fast_cube_properties[_e2.block].solid == false)
+                    if( (_e2.light >> 4) < li -1 && fast_cube_properties[_e2.block].solid == false)
                         _envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
                 }
             #endif
@@ -589,7 +614,7 @@ void _envlight_update(int x, int y, int z)
     }
 
     return;
-
+#if 0
     int lia[6];
     for(int i=0; i<6; i++)
     {
@@ -702,6 +727,8 @@ void _envlight_update(int x, int y, int z)
     //int min = ENV_LIGHT_MIN(li_t, li_b, li_n, li_s, li_s, li_w, li_e);
 
     */
+
+#endif
 }
 
 /*
@@ -785,6 +812,34 @@ void update_envlight(int chunk_i, int chunk_j)
 
     //struct MAP_e e;
 
+
+    for(int k=0; k<128; k++)
+    for(int i=0; i<16; i++)
+    for(int j=0; j<16; j++)
+    {
+        int x = 16*chunk_i + i;
+        int y = 16*chunk_j + j;
+
+        e = mc->get_element(i,j,k);
+
+        if(fast_cube_properties[e.block].light_source == true)
+        {
+            set_envlight(x,y,k, fast_cube_attributes[e.block].light_value);
+        }
+        else
+        {
+            if(fast_cube_properties[e.block].solid == true)
+            {
+                set_envlight(x,y,k, 0);
+            }
+            else
+            {
+                set_envlight(x,y,k, 0);
+            }
+        }
+    }
+
+
     for(int k=0; k<128; k++)
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
@@ -809,8 +864,8 @@ void update_envlight(int chunk_i, int chunk_j)
         //if(fast_cube_properties[e.block].light_source == false)
         //    continue;
     
-        if(fast_cube_properties[e.block].solid == false)
-            _envlight_update(x,y,z)
+        //if(fast_cube_properties[e.block].solid == false)
+        _envlight_update(x,y,k);
 
     /*
         int lv = fast_cube_attributes[e.block].light_value;
@@ -825,7 +880,7 @@ void update_envlight(int chunk_i, int chunk_j)
     }
 
 
-    update_envlight_boundary(chunk_i, chunk_j);
+    //update_envlight_boundary(chunk_i, chunk_j);
 
 }
 
