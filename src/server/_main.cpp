@@ -94,12 +94,13 @@ void init_world()
 
     if (corpusc_map)
     {
-        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, XMAX,YMAX,27, t_map::get_cube_type("regolith") );
-        t_gen::excavate();
+        int height = 27;
+		map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
+        t_gen::set_region(0,0,1, XMAX,YMAX,height, t_map::get_cube_type("regolith") );
+        //t_gen::excavate();
         t_gen::add_terrain_features();  // this needs like about 27 heighth to the ground or *CRASH*
         t_gen::generate_ruins();
-        t_gen::make_art_gallery(ZMAX/2);
+        t_gen::make_art_gallery(height);
     }
 
     if (art_map)
@@ -135,6 +136,18 @@ void init_world()
     {
         serializer::begin_new_world_version();
         default_map_gen();
+        t_gen::noise_map_generate_map();
+
+        t_map::map_post_processing(); //regolith stuff
+        t_gen::generate_rock_layer();
+        t_gen::start_cave_generator();
+        t_gen::populate_ore();
+        t_gen::generate_ruins();
+        t_gen::generate_city();
+        t_gen::add_terrain_features();
+        t_gen::place_native_plants();
+
+        map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_type("bedrock"));
         t_gen::populate_crystals();
         t_map::environment_process_startup();
         if (Options::serializer)
@@ -143,7 +156,6 @@ void init_world()
             GS_ASSERT_ABORT(saved);
             serializer::wait_for_save_complete();
         }
-        t_gen::generate_city();
 
     }
 

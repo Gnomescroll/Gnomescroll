@@ -109,9 +109,9 @@ void generate_city()
             if (cy >= t_map::map_dim.y) cy = CITY_RANDOMNESS / 2;
             if (cx < 0) cx = t_map::map_dim.x - CITY_RANDOMNESS * 2;
             if (cy < 0) cy = t_map::map_dim.y - CITY_RANDOMNESS * 2;
-            if (isGood(cx, cy, cx + CITY_RANDOMNESS, cy + CITY_RANDOMNESS, t_map::map_dim.z - SKYSCRAPER_HEIGHT - SKYSCRAPER_RANDOMNESS - 1, rock))
+            if (isGood(cx, cy, cx + CITY_RANDOMNESS, cy + CITY_RANDOMNESS, t_map::map_dim.z - SKYSCRAPER_HEIGHT - SKYSCRAPER_RANDOMNESS - 1, rock, regolith, steelC))
             {
-                printf("isGood actually returned 1! Now that's rare... \n");
+                printf("isGood actually returned 1! \n");
                 create_roads(ROAD_SIZE, steelC, cx, cx, cx + CITY_RANDOMNESS, cy + CITY_RANDOMNESS);
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
                 if (building_randomizer == 1)
@@ -510,8 +510,8 @@ void generate_temple(int x, int y, int z, int size, CubeType glowgreen, CubeType
         generate_area(x + count, y + size - count, z + count, x + size - count, y + size - count, z + count, glowgreen);
         count++;
     }
-    count = 7;
-    while (count <= size / 3.2 + 5) //make the staircase hover in the air above the altar
+    count = 8;
+    while (count <= size / 3.2 + 6) //make the staircase hover in the air above the altar
     {
         generate_area(x + count, y + count, z + count - 5, x + size - count, y + count, z + count - 5, glowblue);
         generate_area(x + count, y + count, z + count - 5, x + count, y + size - count, z + count - 5, glowblue);
@@ -757,9 +757,9 @@ void create_crusher(int x, int y, int z)
     ItemContainer::create_container_block("crusher", x, y, z);
 }
 
-bool isGood(int x, int y, int maxx, int maxy, int maxheight, CubeType rock)
+bool isGood(int x, int y, int maxx, int maxy, int maxheight, CubeType rock, CubeType regolith, CubeType steel)
 {
-    printf("Testing if position %d, %d is good for a building... \n", x, y);
+    printf("Testing if position %d, %d to %d, %d is good for a building with maxheight = %d... \n", x, y, maxx, maxy, maxheight);
     GS_ASSERT(x < maxx);
     GS_ASSERT(y < maxy);
     if (maxx >= t_map::map_dim.x || maxy >= t_map::map_dim.y || x < 0 || y < 0) return 0;
@@ -768,11 +768,20 @@ bool isGood(int x, int y, int maxx, int maxy, int maxheight, CubeType rock)
     for (int i = x; i <= maxx; i++)
     for (int j = y; j <= maxy; j++)
     {
-        if(t_map::get_highest_open_block(i, j) > maxheight) return 0;
-        if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != rock) return 0;
+        if(t_map::get_highest_open_block(i, j) > maxheight)
+        {
+            printf("Block is too high! \n");
+            return 0;
+        }
+        if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != rock && t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != regolith && t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != steel)
+        {
+            printf("Block is neither rock nor regolith! \n");
+            return 0;
+        }
         if(t_map::get_highest_open_block(i, j) > maxlevel) maxlevel = t_map::get_highest_open_block(i, j);
         if(t_map::get_highest_open_block(i, j) < minlevel) minlevel = t_map::get_highest_open_block(i, j);
     }
+    printf("minlevel = %d \n maxlevel = %d \n", minlevel, maxlevel);
     if (minlevel + 10 < maxlevel) return 0;
     else return 1;
 }
