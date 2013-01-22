@@ -18,6 +18,8 @@ CubeType set(int x, int y, int z, CubeType cube_type);
 inline void set_fast(int x, int y, int z, CubeType cube_type) __attribute__((always_inline));
 void set_palette(int x, int y, int z, int palette);
 
+struct MAP_ELEMENT get_element(int x, int y, int z);
+
 int get_block_damage(int x, int y, int z);
 
 void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
