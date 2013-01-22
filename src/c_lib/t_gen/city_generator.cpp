@@ -510,8 +510,8 @@ void generate_temple(int x, int y, int z, int size, CubeType glowgreen, CubeType
         generate_area(x + count, y + size - count, z + count, x + size - count, y + size - count, z + count, glowgreen);
         count++;
     }
-    count = 7;
-    while (count <= size / 3.2 + 5) //make the staircase hover in the air above the altar
+    count = 8;
+    while (count <= size / 3.2 + 6) //make the staircase hover in the air above the altar
     {
         generate_area(x + count, y + count, z + count - 5, x + size - count, y + count, z + count - 5, glowblue);
         generate_area(x + count, y + count, z + count - 5, x + count, y + size - count, z + count - 5, glowblue);
