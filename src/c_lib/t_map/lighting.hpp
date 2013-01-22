@@ -512,33 +512,83 @@ void _envlight_update(int x, int y, int z)
             for(int i=0; i<6; i++)
             {
                 struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
-                if(_e.light < li -1 && fast_cube_properties[_e.block].solid == false)
+                if( (_e.light & 0x0f) < li -1 && fast_cube_properties[_e.block].solid == false)
                     _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
             }
             return;
         #endif
-        }
-        else
+    /*
+        if(fast_cube_properties[e.block].solid == true)
         {
+            GS_ASSERT(false); //try to avoid calling on solids, but may not be possible
             //solid, not light source
             return;
         }
+    */
 
     }
-
     else
     {
-
+/*
+    ASSERT!!!
+    - If a cube is not solid, the max difference between min adn non-light source, non-solid blocks adjacent blocks
+    - is 2
+    - if difference is more than 2, then suggests removal of block
+*/
         //solid non-light source
         if(fast_cube_properties[e.block].solid == true)
         {
+            GS_ASSERT(false);
             return;
         }
-       //non-solid non-light source
 
+        //non-solid non-light source
+        // 1> check to make sure light value is correct; not too high, or too low
+        // 2> If light value in adjacent block is 
+
+        for(int i=1; i<6; i++)
+        {
+            struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+
+            if(_e.light > li + 1)
+            {
+                //max = _e.light;
+                li = (_e.light & 0x0f) -1;
+                set_envlight(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2], li);
+            
+                //proprogate
+            #if 0
+                for(int j=0; j<6; j++)
+                    _envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
+            #else
+                for(int j=0; j<6; j++)
+                {
+                    struct MAP_ELEMENT _e2 = get_element(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
+                    if( (_e2.light & 0x0f) < li -1 && fast_cube_properties[_e2.block].solid == false)
+                        _envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
+                }
+            #endif
+            }
+            //if(_e.light < li -1 && fast_cube_properties[_e.block].solid == false)
+            //    _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+        }
+
+    /*
+        if()
+
+        //int min = li;
+
+        //if proprogation 
+        for(int i=0; i<6; i++)
+        {
+            struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+            if(_e.light < li -1 && fast_cube_properties[_e.block].solid == false)
+                _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+        }
+    */
     }
 
-
+    return;
 
     int lia[6];
     for(int i=0; i<6; i++)
@@ -749,20 +799,26 @@ void update_envlight(int chunk_i, int chunk_j)
 
         //skip if its not a light source
 
+    /*
         if(fast_cube_properties[e.block].light_source == false && 
             fast_cube_attributes[e.block].light_value != 0)
         {
             GS_ASSERT(false);
         }
-
+    */
         //if(fast_cube_properties[e.block].light_source == false)
         //    continue;
+    
+        if(fast_cube_properties[e.block].solid == false)
+            _envlight_update(x,y,z)
 
+    /*
         int lv = fast_cube_attributes[e.block].light_value;
         if(lv == 0)
             continue;
 
         _envlight_helper_out(x,y,k,lv);
+    */
         //e.light = 15;
         //mc->set_element(i,j,k,e);
 
