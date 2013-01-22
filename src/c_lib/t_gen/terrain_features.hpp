@@ -318,8 +318,8 @@ namespace t_gen
 				fx += sinf(angle);
 				fy += cosf(angle);
 
-				t_map::set(               x_ + (int)fx, y_ + (int)fy, 28, ct);
 				carve_aligned_gorge_slice(x_ + (int)fx, y_ + (int)fy, 6);
+				t_map::set(               x_ + (int)fx, y_ + (int)fy, 28, ct);
 
 				angle = noise[rand_idx + length * XMAX];  //PI / 32;
 				length--;
@@ -333,53 +333,29 @@ namespace t_gen
 		//// trees
         for (int x=0; x<XMAX; x++)
         for (int y=0; y<YMAX; y++) {
-  //          // trees
-		//	if (noise[x + y*XMAX] > tree_zone_threshold
-		//		&& genrand_real1() > tree_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-  //          {   // we're in tree land
-  //              int z = t_map::get_highest_solid_block(x,y);
+            // trees
+			if (noise[x + y*XMAX] > tree_zone_threshold
+				&& genrand_real1() > tree_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
+            {   // we're in tree land
+                int z = t_map::get_highest_solid_block(x,y);
 
-  //              if (z >= 1 && t_map::get(x,y,z) == regolith)
-  //                  if (strip_of_solid_blocks_underneath(x,y,z, 6) ) {
-  //                      make_tree(x,y,z);
-  //                      continue;
-  //                  }
-  //          }
+                if (z >= 1 && t_map::get(x,y,z) == regolith)
+                    if (strip_of_solid_blocks_underneath(x,y,z, 6) ) {
+                        make_tree(x,y,z);
+                        continue;
+                    }
+            }
 
-  //          // shrooms
-		//	if (noise[x + y*XMAX] > shroom_zone_threshold
-  //           && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-  //          {   // we're in shroom land
-  //              int z = t_map::get_highest_solid_block(x,y);
+            // shrooms
+			if (noise[x + y*XMAX] > shroom_zone_threshold
+             && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
+            {   // we're in shroom land
+                int z = t_map::get_highest_solid_block(x,y);
 
-  //              if (z >= 1 && t_map::get(x,y,z) == regolith)
-  //                  if (strip_of_solid_blocks_underneath(x,y,z, 6) )
-  //                      make_shroom(x,y,z);
-  //          }
-
-            // experimental gorges
-			//if (noise[x + y*XMAX] > 0.95f) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-   //         {
-			//	int bottom = 35;
-
-			//	if (noise[x + y*XMAX] > 0.96f)
-			//		bottom = 24;
-			//	if (noise[x + y*XMAX] > 0.97f)
-			//		bottom = 16;
-			//	if (noise[x + y*XMAX] > 0.98f)
-			//		bottom = 8;
-			//	if (noise[x + y*XMAX] > 0.99f)
-			//		bottom = 3;
-
-			//	// drill_down_thru
-			//	int z_start = t_map::get_highest_solid_block(x,y);
-   //             
-			//	if (bottom > z_start) 
-			//		break;
-
-			//	for (int z = z_start; z >= bottom; z--)
-   //                 t_map::set(x, y, z, EMPTY_CUBE);
-   //         }
+                if (z >= 1 && t_map::get(x,y,z) == regolith)
+                    if (strip_of_solid_blocks_underneath(x,y,z, 6) )
+                        make_shroom(x,y,z);
+            }
         }
 
         free(noise);
