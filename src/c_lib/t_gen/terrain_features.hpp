@@ -9,6 +9,7 @@ dont_include_this_file_in_client
 #include <t_map/t_map.hpp>
 
 #include <physics/vec3.hpp>
+#include <physics/mat3.hpp>
 
 const float DOUBLE_PI = PI * 2;
 const float HALF_PI = PI / 2;
@@ -28,13 +29,14 @@ const float tree_threshold = 0.997f;
 const float shroom_zone_threshold = 0.3f;  // move to a config file maybe
 const float shroom_threshold = 0.997f;
 
-typedef enum {
+
+
+typedef enum 
+{
     TREE_RANDOM,    // Dr. Suess style!
     TREE_INVERSIVE, // opposite of earth leaf layers being broadest at base
     TREE_MAX        // for iteration
 } TreeType;
-
-
 
 void set_me_maybe(int x, int y, int z, CubeType ct, CubeType an_overwriteable = NULL_CUBE) {
     if 
@@ -50,7 +52,8 @@ void set_me_maybe(int x, int y, int z, CubeType ct, CubeType an_overwriteable = 
         t_map::set(x, y, z, ct);
 }
 
-void make_circle(int x, int y, int z, float dist, CubeType block, CubeType an_overwriteable = NULL_CUBE) { // instead of from the center of given block
+void make_circle(int x, int y, int z, float dist, CubeType ct, CubeType an_overwriteable = NULL_CUBE) 
+{ // instead of from the center of given block
     float fx = 0;
     float fy = 0;
     float angle = 0;
@@ -58,7 +61,7 @@ void make_circle(int x, int y, int z, float dist, CubeType block, CubeType an_ov
     while (angle < DOUBLE_PI) {
         fx = sinf(angle) * dist;
         fy = cosf(angle) * dist;
-        set_me_maybe(x + (int)fx, y + (int)fy, z, block, an_overwriteable);
+        set_me_maybe(x + (int)fx, y + (int)fy, z, ct, an_overwriteable);
         angle += PI / 32;
     }
 }
@@ -203,32 +206,28 @@ void make_tree(int x, int y, int z) {
     }
 }
 
-
-
 bool strip_of_solid_blocks_underneath(int x, int y, int z, int num) {
     for (int i = 1; i <= num; i++) 
         if /* negspace or air */ (z-i < 0 || t_map::get(x, y, z-i) == EMPTY_CUBE) return false;
     return true;
 }
 
-void make_gorge(int x_, int y_, int z_) 
-{
-    //float x, y, z;
-	//x = y = z = 0.0f;
-	//float fspan = 0.9f;  // float span
-	int length = randrange(30, 160);
-	for (int y = y_; y <= y_ + length; y++)
-	{
+void carve_aligned_gorge_slice(int x_, int y_, int z_) {
 		int port      = x_;
 		int starboard = x_;
 		int countdown_til_widening = 1;
 		int max_ups_per_width = 1; // iterations upwards
 
+
 		for (int z = z_; z <= ZMAX; z++) 
 		{
 			for (int x = port; x < starboard + 1; x++) 
 			{
-				t_map::set(x, y, z, EMPTY_CUBE);
+				//fx = * starboard;
+				//fy = * starboard;
+				t_map::set(x_ + x, y_, z, EMPTY_CUBE);
+				//	t_map::set((int)tx.x, (int)tx.y, (int)tx.z, EMPTY_CUBE);
+				//	curr_angle += 0.01f;
 			}
 
 			countdown_til_widening--;
@@ -240,12 +239,32 @@ void make_gorge(int x_, int y_, int z_)
 				starboard++;
 			}
 		}
+}
+
+void make_gorge(int x_, int y_, int z_) 
+{
+	int length = 15; // randrange(30, 160);
+
+	float fx = 0;
+	float fy = 0;
+	float angle = 0;
+
+	while (length > 0) 
+	{
+		fx += sinf(angle);
+		fy += cosf(angle);
+
+		t_map::set(             x_ + (int)fx, y_ + (int)fy, z_, shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)]);
+		//carve_aligned_gorge_slice(x_ + (int)fx, y_ + (int)fy, z_);
+
+		angle += PI / 32;
+		length--;
 	}
 }
 
 void make_gorges() 
 {
-	int num_gorges = 140;
+	int num_gorges = 5;
 	for (int i = 0; i < num_gorges; i++)
 	{
 		make_gorge(randrange(0, XMAX - 1), randrange(0, YMAX - 1), 6); // 3 above bedrock (which is 3 high)
@@ -256,12 +275,14 @@ void make_gorges()
 
 
 
-namespace t_gen {
-    void add_terrain_features() {
+namespace t_gen 
+{
+    void add_terrain_features() 
+	{
         printf("Adding terrain features\n");
-        //printf("    gorges\n");
+        printf("    gorges\n");
 
-		//make_gorges();
+		make_gorges();
 
         // setup cube sets
         leaves[0] = t_map::get_cube_type("leaves1");
@@ -298,29 +319,56 @@ namespace t_gen {
         printf("    shrooms\n");
 
         // make groves
+		//// trees
         for (int x=0; x<XMAX; x++)
         for (int y=0; y<YMAX; y++) {
-            if (noise[x + y*XMAX] > tree_zone_threshold
-             && genrand_real1() > tree_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-            {   // we're in tree land
-                int z = t_map::get_highest_solid_block(x,y);
+  //          // trees
+		//	if (noise[x + y*XMAX] > tree_zone_threshold
+		//		&& genrand_real1() > tree_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
+  //          {   // we're in tree land
+  //              int z = t_map::get_highest_solid_block(x,y);
 
-                if (z >= 1 && t_map::get(x,y,z) == regolith)
-                    if (strip_of_solid_blocks_underneath(x,y,z, 6) ) {
-                        make_tree(x,y,z);
-                        continue;
-                    }
-            }
+  //              if (z >= 1 && t_map::get(x,y,z) == regolith)
+  //                  if (strip_of_solid_blocks_underneath(x,y,z, 6) ) {
+  //                      make_tree(x,y,z);
+  //                      continue;
+  //                  }
+  //          }
 
-            if (noise[x + y*XMAX] > shroom_zone_threshold
-             && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-            {   // we're in shroom land
-                int z = t_map::get_highest_solid_block(x,y);
+  //          // shrooms
+		//	if (noise[x + y*XMAX] > shroom_zone_threshold
+  //           && genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
+  //          {   // we're in shroom land
+  //              int z = t_map::get_highest_solid_block(x,y);
 
-                if (z >= 1 && t_map::get(x,y,z) == regolith)
-                    if (strip_of_solid_blocks_underneath(x,y,z, 6) )
-                        make_shroom(x,y,z);
-            }
+  //              if (z >= 1 && t_map::get(x,y,z) == regolith)
+  //                  if (strip_of_solid_blocks_underneath(x,y,z, 6) )
+  //                      make_shroom(x,y,z);
+  //          }
+
+            // experimental gorges
+			//if (noise[x + y*XMAX] > 0.95f) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
+   //         {
+			//	int bottom = 35;
+
+			//	if (noise[x + y*XMAX] > 0.96f)
+			//		bottom = 24;
+			//	if (noise[x + y*XMAX] > 0.97f)
+			//		bottom = 16;
+			//	if (noise[x + y*XMAX] > 0.98f)
+			//		bottom = 8;
+			//	if (noise[x + y*XMAX] > 0.99f)
+			//		bottom = 3;
+
+			//	// drill_down_thru
+			//	int z_start = t_map::get_highest_solid_block(x,y);
+   //             
+			//	if (bottom > z_start) 
+			//		break;
+
+			//	for (int z = z_start; z >= bottom; z--)
+   //                 t_map::set(x, y, z, EMPTY_CUBE);
+   //         }
         }
 
         free(noise);
