@@ -501,7 +501,6 @@ void _envlight_update(int x, int y, int z)
 
     if(fast_cube_properties[e.block].light_source == true)
     {
-
         GS_ASSERT(li == fast_cube_attributes[e.block].light_value);
             //light source block
         #if 0
@@ -554,6 +553,11 @@ void _envlight_update(int x, int y, int z)
             struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
 
             //set light at current position if neighorbing positions are brighter
+
+            if(fast_cube_properties[_e.block].solid == true)
+            {
+                GS_ASSERT( (_e.light >> 4) == 0);
+            }
 
         #if 0
             if( ( (_e.light >> 4) > li + 1 ) && 
