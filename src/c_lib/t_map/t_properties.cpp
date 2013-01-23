@@ -15,6 +15,7 @@ void init_t_properties()
 {
     GS_ASSERT(cube_properties == NULL);
     cube_properties = new class CubeProperties[MAX_CUBES];
+
     GS_ASSERT(fast_cube_properties == NULL);
     fast_cube_properties = (struct FastCubeProperties*)calloc(MAX_CUBES, sizeof(struct FastCubeProperties));
 
