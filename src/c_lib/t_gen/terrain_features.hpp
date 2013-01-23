@@ -319,7 +319,7 @@ namespace t_gen
 				fy += cosf(angle);
 
 				carve_aligned_gorge_slice(x_ + (int)fx, y_ + (int)fy, 6);
-				t_map::set(               x_ + (int)fx, y_ + (int)fy, 28, ct);
+				//t_map::set(               x_ + (int)fx, y_ + (int)fy, 28, ct);
 
 				angle = noise[rand_idx + length * XMAX];  //PI / 32;
 				length--;
