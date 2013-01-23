@@ -19,9 +19,9 @@ void default_map_gen()
     t_gen::generate_rock_layer();
     t_gen::start_cave_generator();
     t_gen::populate_ore();
+    t_gen::place_native_plants();
     t_gen::generate_ruins();
     t_gen::add_terrain_features();
-    t_gen::place_native_plants();
 
     map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_type("bedrock"));
 }
