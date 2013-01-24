@@ -163,7 +163,8 @@ void Font::parse_font_file()
                 add_glyph(g, x, y, xoff, yoff, w, h, xadvance);
                 processed_line = true;
                 break;
-            default: break;
+            case UNKNOWN:
+                break;
         }
     }
     

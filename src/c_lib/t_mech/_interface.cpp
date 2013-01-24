@@ -81,14 +81,16 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 
     switch (mech_attributes[m.mech_type].mech_type_class)
     {
-    case MECH_CRYSTAL:
-        break;
-    case MECH_CROP:
-        break;
-    case MECH_MYCELIUM:
-        break;
-    default:
-        printf("pack_mech error: unhandled mech type\n");
+        case MECH_CRYSTAL:
+            break;
+        case MECH_CROP:
+            break;
+        case MECH_MYCELIUM:
+            break;
+        case MECH_WIRE:
+        case MECH_SWITCH:
+        case NULL_MECH_CLASS:
+            printf("pack_mech error: unhandled mech type\n");
     }
 }
 #endif
@@ -104,31 +106,34 @@ static bool _mech_update(struct MECH &m)
 
     switch (ma->mech_type_class)
     {
-    case MECH_CRYSTAL:
-        //do something
-        m.render_type = ma->render_type;
+        case MECH_CRYSTAL:
+            //do something
+            m.render_type = ma->render_type;
 
-        m.size = 0.80f;  //diameter
-        m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
+            m.size = 0.80f;  //diameter
+            m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
 
-        m.rotation = 0.0f;
-        m.offset = rand()%255;
-        //m.subtype = rand()%6;
+            m.rotation = 0.0f;
+            m.offset = rand()%255;
+            //m.subtype = rand()%6;
 
-        m.offset_x = (randf()-0.5f)* (1.0f-m.size);
-        m.offset_y = (randf()-0.5f)* (1.0f-m.size);
+            m.offset_x = (randf()-0.5f)* (1.0f-m.size);
+            m.offset_y = (randf()-0.5f)* (1.0f-m.size);
 
-        m.offset_x = 0.0f;
-        m.offset_y = 0.0f;
-        m.size = 1.00;
-        break;
-    case MECH_CROP:
-        break;
-    case MECH_MYCELIUM:
-        break;
-    default:
-        GS_ASSERT(false);
-        return false;
+            m.offset_x = 0.0f;
+            m.offset_y = 0.0f;
+            m.size = 1.00;
+            break;
+        case MECH_CROP:
+            break;
+        case MECH_MYCELIUM:
+            break;
+
+        case MECH_WIRE:
+        case MECH_SWITCH:
+        case NULL_MECH_CLASS:
+            GS_ASSERT(false);
+            return false;
     }
 
     return true;
@@ -617,25 +622,28 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
 
         switch ( mla[i].render_type )
         {
-        case MECH_RENDER_TYPE_0: //MECH_CRYSTAL:
-            //do something
-            ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
-            if(ret == true)
-            {
-                printf("mech raycast hit: %i distance= %f \n", i, d);
-                //return true;
-            }
+            case MECH_RENDER_TYPE_0: //MECH_CRYSTAL:
+                //do something
+                ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
+                if(ret == true)
+                {
+                    printf("mech raycast hit: %i distance= %f \n", i, d);
+                    //return true;
+                }
 
-            if(ret == true && d < distance)
-            {
-                distance = d;
-                mech_id = i;
-                GS_ASSERT( i == mla[i].id );
-            }
+                if(ret == true && d < distance)
+                {
+                    distance = d;
+                    mech_id = i;
+                    GS_ASSERT( i == mla[i].id );
+                }
 
-            break;
-        default:
-            printf("pack_mech error: unhandled mech type\n");
+                break;
+
+            case MECH_RENDER_TYPE_1:
+            case MECH_RENDER_TYPE_2:
+            case MECH_RENDER_TYPE_NONE:
+                printf("pack_mech error: unhandled mech type\n");
         }
     }
 

@@ -93,7 +93,9 @@ void block_crumble(float x, float y, float z, int n, int cube_type, TerrainModif
             break;
         case TMA_NONE:
             break;
-        default:
+        case TMA_APPLIER:
+        case TMA_TURRET:
+        case TMA_PLACE_BLOCK:
             GS_ASSERT(false);
             break;
     }

@@ -501,7 +501,7 @@ static void bomb_state_router(class Entity* object, EntityState state)
                 in_transit_to_waiting(object);
             break;
             
-        default:
+        case STATE_NONE:
             GS_ASSERT(false);
             break;
     }
@@ -539,7 +539,7 @@ void tick_mob_bomb(Entity* object)
             chase_agent(object);
             break;
             
-        default:
+        case STATE_NONE:
             GS_ASSERT(false);
             break;
     }

@@ -1,5 +1,10 @@
 #include "skeleton_editor.hpp"
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wswitch-enum"
+#endif
+
 #include <input/handlers.hpp>
 #include <time.h>
 
@@ -415,3 +420,7 @@ void save()
 }
 
 }   // SkeletonEditor
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif

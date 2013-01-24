@@ -108,7 +108,7 @@ class ItemAttribute
                 case CUBE_MATERIAL_DECORATION:
                     dmg = 4;
                     break;
-                default:
+                case CUBE_MATERIAL_NONE:
                     dmg = 1;
                     break;
             }

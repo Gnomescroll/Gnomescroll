@@ -2,6 +2,11 @@
 
 #if GS_AWESOMIUM
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wswitch-enum"
+#endif
+
 #include <hud/hud.hpp>
 #include <chat/_interface.hpp>
 
@@ -524,5 +529,9 @@ void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
 }
 
 }   // Awesomium
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
 
 #endif

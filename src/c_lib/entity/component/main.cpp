@@ -139,7 +139,11 @@ Component* get_switch(ComponentType type)
             return healer_component_list->subscribe();
         #endif
         
-        default:
+        #if DC_CLIENT
+        case COMPONENT_HEALER:
+        case COMPONENT_AGENT_SPAWNER:
+        #endif
+        case COMPONENT_NONE:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
             return NULL;
     }
@@ -249,7 +253,11 @@ void release_switch(Component* component)
             break;
         #endif
 
-        default:
+        #if DC_CLIENT
+        case COMPONENT_HEALER:
+        case COMPONENT_AGENT_SPAWNER:
+        #endif
+        case COMPONENT_NONE:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
             break;
     }

@@ -114,7 +114,7 @@ HitscanTarget shoot_at_agent(
             target_information.side = get_cube_side_from_side_array(side);
             break;
 
-        default:
+        case HITSCAN_TARGET_NONE:
             target_type = HITSCAN_TARGET_NONE;
             break;
     }
