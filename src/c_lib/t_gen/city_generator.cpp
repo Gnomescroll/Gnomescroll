@@ -20,7 +20,7 @@ void generate_city()
 
     const int CITY_RANDOMNESS = 64; //the maximal amount of buildings by which to change buildings_in_city, also used for other stuff
     const int CITY_AMOUNT = 1;
-    const int BUILDINGS_IN_CITY = 100;
+    const int BUILDINGS_IN_CITY = 64;
     const int LAB_SIZE = 16;
     const int LAB_DOOR_PROBABILITY = 10; //the probability of a partition wall generating, in percent
     const int LAB_HEIGHT = 12;
