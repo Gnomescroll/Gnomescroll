@@ -124,84 +124,61 @@ struct RunState
 
 struct RunState run_state;
 
-//GAFFER LOOP
-//http://gafferongames.com/game-physics/fix-your-timestep/
-int physics_tick()
+void draw_hud()
 {
+    if (!input_state.draw_hud) return;
+    
+    glEnable(GL_TEXTURE_2D);
+    // switch to hud  projection
     poll_mouse();
-    // physics loop
-    int physics_ticks = 0;
-    while (1)
+    hud_projection();
+    glDisable(GL_DEPTH_TEST);
+
+    if (agent_camera->is_current())
     {
-        int tick_count = _GET_TICK();
-        if (tick_count == 0 || physics_ticks > 1)   //2 physics loko per tix max
-            break;
-        physics_ticks++;
-        ClientState::tick_id += 1;
-
-        // input
+        glDisable(GL_BLEND);
         poll_mouse();
-        // Make names clealer
-        process_events();           //RENAME THIS
-        get_key_state();            //RENAME THIS
-        trigger_keys_held_down();   //RENAME THIS
+        Animations::render_voxelized_sprite_fbo();
+    }
+    
+    glEnable(GL_BLEND);
+    
+    // draw hud
+    poll_mouse();
+    Hud::set_hud_fps_display(run_state.fps_value);
 
+    poll_mouse();
+    Hud::update_hud_draw_settings();
+
+    poll_mouse();
+    Hud::draw();
+
+    //Hud::draw_harvest_bar(400,400);
+
+    if (input_state.awesomium)
+    {
         poll_mouse();
-        Toolbelt::tick();
-
-        // tick animations
+        Awesomium::draw();
+    }
+    else
+    {
+        glDisable(GL_BLEND);
         poll_mouse();
-        Animations::animations_tick();
-
-        // tick client state
-        poll_mouse();
-        ClientState::tick(); 
-
-        // update sound listener
-        poll_mouse();
-        ClientState::player_agent.update_sound();
-
-        poll_mouse();
-        Entities::tick();    // update physics state
-
-        if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
+        HudContainer::draw();
 
         poll_mouse();
-        ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
-
-        poll_mouse();
-        Auth::update();   // put it in the physics tick because i want a fixed time counter
-
-        poll_mouse();
-        Skybox::tick_rayleigh_scattering(); //update skybox time and update physics
-
-        poll_mouse();
-        _SET_LAST_TICK();
+        Hud::draw_error_status();
     }
 
-    if (physics_ticks > 0)
-        _SET_LAST_TICK();
-
-        //if (physics_ticks >= 2)
-        //printf("Physics: %d ticks this frame\n", physics_ticks);
+    glDisable(GL_BLEND);
 
     poll_mouse();
-    return physics_ticks;
-}
-
-
-void network_tick()
-{   // Networking
-    //send_bullshit_data();
-    poll_mouse();
-    NetClient::client_dispatch_network_events();
-    poll_mouse();
-    NetClient::flush_to_net();
-
-    poll_mouse();
-    if (!NetClient::Server.version_match())
-        NetClient::shutdown_net_client();
-    poll_mouse();
+    if (input_state.vbo_debug)
+        t_map::draw_vbo_debug(400, 400);
+    
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    CHECK_GL_ERROR();  //check error after hud rendering
 }
 
 void draw_tick()
@@ -450,61 +427,85 @@ void draw_tick()
     CHECK_GL_ERROR();   //check error before hud
 
     if (input_state.draw_hud)
+        draw_hud();
+    
+    poll_mouse();
+}
+
+//GAFFER LOOP
+//http://gafferongames.com/game-physics/fix-your-timestep/
+int physics_tick()
+{
+    poll_mouse();
+    // physics loop
+    int physics_ticks = 0;
+    while (1)
     {
-        glEnable(GL_TEXTURE_2D);
-        // switch to hud  projection
-        poll_mouse();
-        hud_projection();
-        glDisable(GL_DEPTH_TEST);
+        int tick_count = _GET_TICK();
+        if (tick_count == 0 || physics_ticks > 1)   //2 physics loko per tix max
+            break;
+        physics_ticks++;
+        ClientState::tick_id += 1;
 
-        if (agent_camera->is_current())
-        {
-            glDisable(GL_BLEND);
-            poll_mouse();
-            Animations::render_voxelized_sprite_fbo();
-        }
-        
-        glEnable(GL_BLEND);
-        
-        // draw hud
+        // input
         poll_mouse();
-        Hud::set_hud_fps_display(run_state.fps_value);
+        // Make names clealer
+        process_events();           //RENAME THIS
+        get_key_state();            //RENAME THIS
+        trigger_keys_held_down();   //RENAME THIS
 
         poll_mouse();
-        Hud::update_hud_draw_settings();
+        Toolbelt::tick();
+
+        // tick animations
+        poll_mouse();
+        Animations::animations_tick();
+
+        // tick client state
+        poll_mouse();
+        ClientState::tick(); 
+
+        // update sound listener
+        poll_mouse();
+        ClientState::player_agent.update_sound();
 
         poll_mouse();
-        Hud::draw();
+        Entities::tick();    // update physics state
 
-        //Hud::draw_harvest_bar(400,400);
-
-        if (input_state.awesomium)
-        {
-            poll_mouse();
-            Awesomium::draw();
-        }
-        else
-        {
-            glDisable(GL_BLEND);
-            poll_mouse();
-            HudContainer::draw();
-
-            poll_mouse();
-            Hud::draw_error_status();
-        }
-
-        glDisable(GL_BLEND);
+        if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
 
         poll_mouse();
-        if (input_state.vbo_debug)
-            t_map::draw_vbo_debug(400, 400);
+        ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
 
-        
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_DEPTH_TEST);
-        CHECK_GL_ERROR();  //check error after hud rendering
+        poll_mouse();
+        Auth::update();   // put it in the physics tick because i want a fixed time counter
+
+        poll_mouse();
+        Skybox::tick_rayleigh_scattering(); //update skybox time and update physics
+
+        poll_mouse();
+        _SET_LAST_TICK();
     }
 
+    if (physics_ticks > 0)
+        _SET_LAST_TICK();
+
+    poll_mouse();
+    return physics_ticks;
+}
+
+
+void network_tick()
+{   // Networking
+    //send_bullshit_data();
+    poll_mouse();
+    NetClient::client_dispatch_network_events();
+    poll_mouse();
+    NetClient::flush_to_net();
+
+    poll_mouse();
+    if (!NetClient::Server.version_match())
+        NetClient::shutdown_net_client();
     poll_mouse();
 }
 
