@@ -713,7 +713,7 @@ void MechListRenderer::prep_vbo()
                 break;
             case MECH_RENDER_TYPE_2:
                 break;
-            default:
+            case MECH_RENDER_TYPE_NONE:
                 GS_ASSERT(false);
                 break;
         }

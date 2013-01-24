@@ -71,12 +71,7 @@ void init()
     set_interface_for_component(COMPONENT_RATE_LIMIT, COMPONENT_INTERFACE_RATE_LIMIT);
 
     #if DC_CLIENT
-    set_interface_for_component(COMPONENT_BILLBOARD_SPRITE, COMPONENT_INTERFACE_DRAW);
-    set_interface_for_component(COMPONENT_COLORED_VOXEL, COMPONENT_INTERFACE_DRAW);
-    set_interface_for_component(COMPONENT_TEXTURED_VOXEL, COMPONENT_INTERFACE_DRAW);
-
     set_interface_for_component(COMPONENT_VOXEL_ANIMATION, COMPONENT_INTERFACE_ANIMATION);
-    set_interface_for_component(COMPONENT_SPRITE_ANIMATION, COMPONENT_INTERFACE_ANIMATION);
     #endif
 
     #if DC_SERVER

@@ -386,7 +386,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 Sound::play_3d_sound("block_took_damage", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             break;
             
-        default:
+        case HITSCAN_TARGET_NONE:
             break;
     }
 

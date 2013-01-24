@@ -458,7 +458,17 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
             //if (attacker != NULL)
                 //attacker->status.kill(this->a->id);
             //break;
-        default:
+        case OBJECT_CANNONBALL:
+        case OBJECT_PLASMAGEN:
+        case OBJECT_MONSTER_SPAWNER:
+        case OBJECT_MONSTER_BOX:
+        case OBJECT_MONSTER_BOMB:
+        case OBJECT_ENERGY_CORE:
+        case OBJECT_TURRET:
+        case OBJECT_AGENT_SPAWNER:
+        case OBJECT_BASE:
+        case OBJECT_DESTINATION:
+        case OBJECT_NONE:
             //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
             break;
     }
@@ -488,7 +498,18 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
             //msg.broadcast();
             //break;
 
-        default: break;
+        case OBJECT_CANNONBALL:
+        case OBJECT_PLASMAGEN:
+        case OBJECT_MONSTER_SPAWNER:
+        case OBJECT_MONSTER_BOX:
+        case OBJECT_MONSTER_BOMB:
+        case OBJECT_ENERGY_CORE:
+        case OBJECT_TURRET:
+        case OBJECT_AGENT_SPAWNER:
+        case OBJECT_BASE:
+        case OBJECT_DESTINATION:
+        case OBJECT_NONE:
+            break;
     }
     #endif
     

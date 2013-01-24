@@ -118,7 +118,6 @@ class ItemParticle_list: public ObjectList<ItemParticle, ItemParticleID>
         ItemParticle_list(unsigned int capacity) :
             ObjectList<ItemParticle, ItemParticleID>(capacity, NULL_PARTICLE)
         {
-            this->print();
         }
 
         void draw();
