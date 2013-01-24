@@ -35,7 +35,7 @@ namespace Skybox
 int print_max_light = 0 ;
 unsigned char sun_color[4];
 
-float sun_w[4]; //wavelenght_factor for each channel
+float sun_w[4]; //wavelength_factor for each channel
 float sun_g[4]; //g factor for each channels
 float sun_h[4];//h0, scale height for each channel
 float sun_b[4];//brightness for each channel
@@ -84,11 +84,11 @@ class SkyplaneSettings
     public:
 
     float planet_radius;
-    float atomosphere_depth;
+    float atmosphere_depth;
     float sun_distance;                 //sun distance from surface
 
     //float brightness_log_factor;
-    float wavelenght_factor;
+    float wavelength_factor;
     //float phase_factor;
     float phase_g_factor;
     float light_epsilon;
@@ -105,11 +105,11 @@ class SkyplaneSettings
     SkyplaneSettings()
     {
         planet_radius =     512.0;
-        atomosphere_depth = 1.0;    //how far until stop raycasting scattering through atomosphere
+        atmosphere_depth = 1.0;    //how far until stop raycasting scattering through atomosphere
         sun_distance =      256.0; 
 
         //brightness_log_factor = 1.0;
-        wavelenght_factor =     1.00;
+        wavelength_factor =     1.00;
         //phase_factor =            0.75;   //deprecate
         phase_g_factor  =       0.00;
         light_epsilon =         0.0000001;
@@ -129,70 +129,77 @@ static class SkyplaneSettings SPS; //default sun setting
 
 class Skyplane
 {
-
-
-    //unsigned char color[4*dim*dim];
-
     public:
-    static const int dim = 16;
-    const static int samples = 5;
+        //unsigned char color[4*dim*dim];
+        static const int dim = 16;
+        const static int samples = 5;
 
-    int sun_i, sun_j, sun_side; //used to find pixel for tracking sun
-    float sun_cos_max;
+        int sun_i, sun_j, sun_side; //used to find pixel for tracking sun
+        float sun_cos_max;
 
-/*
-    Settings
-*/
-    
-    float planet_radius;
-    float atomosphere_depth;
-    float sun_distance;                 //sun distance from surface
+        /*
+            Settings
+        */
+        float planet_radius;
+        float atmosphere_depth;
+        float sun_distance;                 //sun distance from surface
 
-    //float brightness_log_factor;
-    float wavelenght_factor;
-    //float phase_factor;
-    float phase_g_factor;
-    float light_epsilon;
+        //float brightness_log_factor;
+        float wavelength_factor;
+        //float phase_factor;
+        float phase_g_factor;
+        float light_epsilon;
 
-    float brightness_scale_factor;
-    float brightness_sum_factor;
+        float brightness_scale_factor;
+        float brightness_sum_factor;
 
-    float H0;
-    float skybox_height;
-    float camera_z;
+        float H0;
+        float skybox_height;
+        float camera_z;
 
-    float plane_size;   //size of skybox box
+        float plane_size;   //size of skybox box
 
-    Skyplane() 
+        float farray[6][dim*dim]; //intensity array
+
+        float gf;
+        float gfc; //constant
+        float gf2; //gf squared
+
+        
+    Skyplane() :
+        sun_i(0), sun_j(0), sun_side(0), sun_cos_max(1.0f),
+        planet_radius(0.0f), atmosphere_depth(1.0f), sun_distance(1.0),
+        wavelength_factor(0.0f), phase_g_factor(0.0f), light_epsilon(1.0f),
+        brightness_scale_factor(1.0f), brightness_sum_factor(1.0f), H0(0.0f),
+        skybox_height(0.0f), camera_z(128.0f), plane_size(0.0f),
+        gf(0.0f), gfc(0.0f), gf2(0.0f)
     {
-
+        for (int i=0; i<6; i++)
+        for (int j=0; j<dim*dim; j++)
+            this->farray[i][j] = 0.0f;
     }
-
 
     void load_settings(class SkyplaneSettings &s)
     {
-        planet_radius =         s.planet_radius;
-        atomosphere_depth =     s.atomosphere_depth;
-        sun_distance =          s.sun_distance;
+        planet_radius = s.planet_radius;
+        atmosphere_depth = s.atmosphere_depth;
+        sun_distance = s.sun_distance;
 
         //brightness_log_factor = s.brightness_log_factor;
-        wavelenght_factor =     s.wavelenght_factor;
-        //phase_factor =            s.phase_factor;
-        phase_g_factor =        s.phase_g_factor;
-        light_epsilon =         s.light_epsilon;
+        wavelength_factor = s.wavelength_factor;
+        //phase_factor = s.phase_factor;
+        phase_g_factor = s.phase_g_factor;
+        light_epsilon = s.light_epsilon;
 
-        brightness_scale_factor =   s.brightness_scale_factor;
-        brightness_sum_factor =     s.brightness_sum_factor;
+        brightness_scale_factor = s.brightness_scale_factor;
+        brightness_sum_factor = s.brightness_sum_factor;
 
-        H0 =            s.H0;
+        H0 = s.H0;
         skybox_height = s.skybox_height;
-        camera_z =      s.camera_z;
+        camera_z = s.camera_z;
 
         plane_size = s.plane_size;
     }
-
-    float farray[6][dim*dim]; //intensity array
-
 
     void draw_sun(float theta, float phi, float x,float y,float z)
     {
@@ -224,23 +231,19 @@ class Skyplane
         glColor3ub(255, 255, 255);
         glEnable(GL_DEPTH_TEST);
         glPointSize(1.0);
-
     }
-
 
     //return false if ray hits planet
     static bool sphere_line_intersection_test0(struct Vec3 a, struct Vec3 b, float radius)
     {
         float d1 = vec3_dot(a,b);
         float d2 = d1*d1 - vec3_dot(a,a) + radius*radius;
-        if(d2 <= 0.0)
+        if (d2 <= 0.0)
             return true;
         float d3 = sqrt(d2);
         float s1 =      d3 - d1;
         float s2 = -1.0*d3 - d1;
-        if(s1 < 0.0f && s2 < 0.0f)
-            return true;
-        return false; // set to true to disable
+        return (s1 < 0.0f && s2 < 0.0f);
     }
     //a is start point of line, b is direction
     //cente is 0
@@ -280,9 +283,9 @@ class Skyplane
     void update(float theta, float phi)
     {
         update_phase_constants();
-/*
-    Cube Stuff
-*/
+        /*
+            Cube Stuff
+        */
         const float plane_depth = plane_size*0.5;
 
         const float _df = 2.0/ ((float) dim);
@@ -331,8 +334,8 @@ class Skyplane
         
         //debug
         float _epsilon = 0.1f;
-        if(c.z > planet_radius + atomosphere_depth - _epsilon)
-            c.z = planet_radius + atomosphere_depth - _epsilon;
+        if(c.z > planet_radius + atmosphere_depth - _epsilon)
+            c.z = planet_radius + atmosphere_depth - _epsilon;
         if(c.z < planet_radius + _epsilon)
             c.z = planet_radius + _epsilon;
 
@@ -340,7 +343,7 @@ class Skyplane
         const int dim_half = dim/2;
 
 
-        if(vec3_length(c) > planet_radius + atomosphere_depth + _epsilon)
+        if(vec3_length(c) > planet_radius + atmosphere_depth + _epsilon)
         {
             printf("WTF: camera outside of sphere\n");
             GS_ASSERT_ABORT(false);
@@ -354,7 +357,7 @@ class Skyplane
 
         float _max_light2 = 0.00;
 
-        const float sphere_radius = planet_radius + atomosphere_depth;
+        const float sphere_radius = planet_radius + atmosphere_depth;
 
         for(int side=0; side<6; side++)
         {
@@ -493,10 +496,6 @@ class Skyplane
         return 0;
     }
 
-    float gf;
-    float gfc; //constant
-    float gf2; //gf squared
-
     void update_phase_constants()
     {
         gf  = phase_g_factor;
@@ -549,9 +548,9 @@ class Skyplane
             float s_height = vec3_length(tmp1) - planet_radius - _epsilon;
 
         /*
-            if(s_height > atomosphere_depth)
+            if(s_height > atmosphere_depth)
             {
-                printf("ERROR out_scatter: s_height= %.2f %2.f \n", s_height , atomosphere_depth);
+                printf("ERROR out_scatter: s_height= %.2f %2.f \n", s_height , atmosphere_depth);
             }
         */
             _r[i] = s_height < 0.0 ? 0.0 : exp(s_height *sbh_norm); //intergrate over exp(-height / H0) 
@@ -564,7 +563,7 @@ class Skyplane
         for(int i=0; i<samples; i++)
             tmp += _d_half*(_r[i] + _r[i+1]);  // _d*(_r[i] + _r[i+1])*0.5
 
-        return wavelenght_factor*tmp;
+        return wavelength_factor*tmp;
         //return 4.0*3.14159*tmp;
     }
 
@@ -577,14 +576,14 @@ class Skyplane
         const float _epsilon = 0.1;
 
     /*
-        if(sphere_wedge_test(a, planet_radius, planet_radius + atomosphere_depth) != 0)
+        if(sphere_wedge_test(a, planet_radius, planet_radius + atmosphere_depth) != 0)
         {
             printf("WTF 3: %0.2f, min %0.2f \n", vec3_length(a), planet_radius);
         }
 
-        if(sphere_wedge_test(b, planet_radius, planet_radius + atomosphere_depth) != 0)
+        if(sphere_wedge_test(b, planet_radius, planet_radius + atmosphere_depth) != 0)
         {
-            printf("WTF 4: %0.2f, max %0.2f \n", vec3_length(b), planet_radius + atomosphere_depth);
+            printf("WTF 4: %0.2f, max %0.2f \n", vec3_length(b), planet_radius + atmosphere_depth);
         }
     */
         //For each point P along the ray from Pa to Pb , 
@@ -596,7 +595,7 @@ class Skyplane
         const float _d_half = 0.5f* _d;
         const float sbh_norm = -1.0f / (H0*skybox_height); //skybox height normalization
 
-        const float sphere_radius = planet_radius + atomosphere_depth;
+        const float sphere_radius = planet_radius + atmosphere_depth;
         //GS_ASSERT(abs( vec3_distance(a,b) - vec3_length(vec3_sub(b,a))) < 0.0001 );
 
 
@@ -612,7 +611,7 @@ class Skyplane
         {
             if(vec3_length(tmp1[i]) >= sphere_radius) // + _epsilon; this is more serious
             {
-                printf("WTF 1: %0.2f, max %0.2f \n", vec3_length(tmp1[i]), planet_radius + atomosphere_depth);
+                printf("WTF 1: %0.2f, max %0.2f \n", vec3_length(tmp1[i]), planet_radius + atmosphere_depth);
             }
             if(vec3_length(tmp1[i]) <= planet_radius - _epsilon)
             {
@@ -660,9 +659,9 @@ class Skyplane
             */
         }
 
-        float _t0 [samples+1]; //exp(h/H0)
-        float _t1 [samples+1]; //out_scatter PPc
-        float _t2 [samples+1]; //out_scatter PPa
+        float _t0[samples+1]; //exp(h/H0)
+        float _t1[samples+1]; //out_scatter PPc
+        float _t2[samples+1]; //out_scatter PPa
         //float _r  [samples+1]; //result
 
         //t0 calculation
@@ -671,9 +670,9 @@ class Skyplane
             //_t0[i] = expf( -tmp1[i].z / (H0*skybox_height));
             float s_height = vec3_length(tmp1[i]) - planet_radius - _epsilon;
         /*
-            if(s_height > atomosphere_depth)
+            if(s_height > atmosphere_depth)
             {
-                printf("ERROR in_scatter: s_height= %.2f %2.f \n", s_height , atomosphere_depth);
+                printf("ERROR in_scatter: s_height= %.2f %2.f \n", s_height , atmosphere_depth);
             }
         */
             _t0[i] = s_height < 0.0 ? 0.0 : expf(sbh_norm*s_height); // expf( -tmp1[i].z / (H0*skybox_height));
@@ -690,14 +689,14 @@ class Skyplane
         float _r [samples+1];
         for(int i=0; i<=samples; i++)
             _r[i] = _t0[i]*expf( -1.0*(_t1[i] + _t2[i]) );
-/*
+        /*
         for(int i=0; i<=samples; i++)
         {
             printf("%i: _r[i] = %.2f, _t0,_t1,_t2= %.2f %.2f %.2f, -_t1[i] -_t2[i]= %.2f, exp= %.2f \n", 
                 i, _r[i], _t0[i],_t1[i],_t2[i],
                 -_t1[i] -_t2[i], exp(-_t1[i] -_t2[i]));
         }
-*/
+        */
 
         float tmp = 0.0f;
 
@@ -707,17 +706,17 @@ class Skyplane
         //struct Vec3 s2 = vec3_sub(v2, c); 
 
         //printf("phase: %.2f\n", phase(v2, s));
-/*
+        /*
         printf("a= %.2f %.2f %.2f  b= %.2f %.2f %.2f s= %.2f %.2f %.2f  phase: %.2f \n", 
             a.x,a.y,a.z, 
             b.x,b.y,b.z,
             s.x,s.y,s.z, 
             phase(b, s) );
-*/
+        */
         //debug
         struct Vec3 bc = vec3_sub(b,c);
         struct Vec3 bs = vec3_sub(s,c);
-        tmp *= wavelenght_factor*phase(bc, bs);
+        tmp *= wavelength_factor*phase(bc, bs);
         
         //return brightness_scale_factor*(brightness_log_factor*log(tmp) + brightness_sum_factor);
         return tmp;
@@ -731,7 +730,7 @@ class Skyplane
 
         float v = vec3_dot(tb, ts);
 
-        if(v <= 0.0) v = 0.0;
+        if (v <= 0.0) v = 0.0;
         v *= v;
         return v;
     }
@@ -739,7 +738,7 @@ class Skyplane
     //sun distaWnce
     //atmosphere height
     //planet radius
-/*
+    /*
     float update_point(const struct Vec3 &c, const struct Vec3 &b, const struct Vec3 &s)
     {
         //const float ATMOSPHERE_DEPTH = 128.0;
@@ -755,7 +754,8 @@ class Skyplane
         return in_scatter(c, _b, s);
 
     }
-*/
+    */
+
     void save(const char* filename, int side)
     {
         save_png(filename, farray[side], dim, dim);
@@ -763,7 +763,6 @@ class Skyplane
 
     void blit_to_buffer(float* fbuffer, int row)
     {
-
         if(row == 0)
         {
             for(int i=0; i<dim; i++)
@@ -792,29 +791,26 @@ class Skyplane
         }
 
     }
-
 };
 
 class SkyboxRender
 {
     public:
-    int time_count;
+        int time_count;
+        int time_speed;
 
-    class Skyplane sun0;        //Rayleigh scattering channel
-    class Skyplane sunR;    //Mie aerosol scattering channel
-    class Skyplane sunG;
-    class Skyplane sunB;
+        class Skyplane sun0;        //Rayleigh scattering channel
+        class Skyplane sunR;    //Mie aerosol scattering channel
+        class Skyplane sunG;
+        class Skyplane sunB;
 
-    unsigned char* sun_rgba[6];
+        unsigned char* sun_rgba[6];
 
-    unsigned int texture_array[6];
-
-    int time_speed;
-    SkyboxRender()
+        unsigned int texture_array[6];
+        
+    SkyboxRender() :
+        time_count(0), time_speed(1)
     {
-        time_count = 0;
-        time_speed = 1;
-
         glEnable(GL_TEXTURE_2D);
         glGenTextures(6, texture_array);
 
@@ -830,13 +826,15 @@ class SkyboxRender
 
         for(int i=0; i<6; i++)
         {
-            sun_rgba[i] = new unsigned char[sun0.dim*sun0.dim*6];
+            this->texture_array[i] = 0;
+            this->sun_rgba[i] = (unsigned char*)calloc(sun0.dim*sun0.dim*6, sizeof(unsigned char));
         }
     }
 
     ~SkyboxRender()
     {
-
+        for (int i=0; i<6; i++)
+            free(this->sun_rgba[i]);
     }
 
     void increment_time()
@@ -871,7 +869,7 @@ class SkyboxRender
         //float sun_phi = time_count / 3000.0;
         float sun_phi = 0;
 
-        //float sun_w[4];   //wavelenght_factor for each channel
+        //float sun_w[4];   //wavelength_factor for each channel
         //float sun_g[4];   //g factor for each channels
         //float sun_h[4];//h0, scale height for each channel
         //float sun_b[4];//brightness for each channel
@@ -892,10 +890,10 @@ class SkyboxRender
         sunG.H0 = sun_h[2];
         sunB.H0 = sun_h[3];
 
-        sun0.wavelenght_factor = sun_w[0];
-        sunR.wavelenght_factor = sun_w[1];
-        sunG.wavelenght_factor = sun_w[2];
-        sunB.wavelenght_factor = sun_w[3];
+        sun0.wavelength_factor = sun_w[0];
+        sunR.wavelength_factor = sun_w[1];
+        sunG.wavelength_factor = sun_w[2];
+        sunB.wavelength_factor = sun_w[3];
 
         //run update
         if(sun_num==0) sun0.update(sun_theta, sun_phi); //update float array
@@ -1260,14 +1258,13 @@ class _PerlinField3D
 
 class PerlinClouds
 {
+    private:
+        class _PerlinField3D pf3d;
 
-    
-    class _PerlinField3D pf3d;
+        static const int xsize = 32;
+        static const int zsize = 32;
 
-    static const int xsize = 32;
-    static const int zsize = 32;
-
-    float farray[zsize*xsize*xsize];
+        float farray[zsize*xsize*xsize];
 
     public:
 
@@ -1475,10 +1472,10 @@ void init_rayleigh_scattering()
     //CFL.set_float("test", &test_float);
 
     CFL.set_float("planet_radius", &SPS.planet_radius);
-    CFL.set_float("atomosphere_depth", &SPS.atomosphere_depth);
+    CFL.set_float("atmosphere_depth", &SPS.atmosphere_depth);
     CFL.set_float("sun_distance", &SPS.sun_distance);
 
-    CFL.set_float("wavelenght_factor", &SPS.wavelenght_factor);
+    CFL.set_float("wavelength_factor", &SPS.wavelength_factor);
     CFL.set_float("phase_g_factor", &SPS.phase_g_factor);
     CFL.set_color("color", (char*) sun_color);
 

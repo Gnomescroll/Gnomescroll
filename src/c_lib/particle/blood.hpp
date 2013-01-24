@@ -29,12 +29,16 @@ namespace Particle
 class Blood_list: public Simple_object_list<Blood, BLOOD_MAX>
 {
     private:
-        const char* name() { return "Blood"; }
-    public:
-        void draw();
-        void tick();
 
-    Blood_list() { this->print(); }
+    const char* name()
+    {
+        return "Blood";
+    }
+
+    public:
+
+    void draw();
+    void tick();
 };
     
 }   // Particle

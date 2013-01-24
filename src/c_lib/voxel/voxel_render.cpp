@@ -35,12 +35,11 @@ int InTex;
 void init_voxel_render_list_shader1()
 {
     static int init=0;
-    if (init++)
+    IF_ASSERT(init++)
     {
-        printf("VoxelRenderList::init_voxel_render_list_shader1, error, tried to init more than once\n");
+        printf("Warning: Tried to init voxel shader more than once\n");
         return;
     }
-    printf("init voxel shader\n");
 
     int DEBUG1 = 1;
 
@@ -50,8 +49,8 @@ void init_voxel_render_list_shader1()
 
     char *vs, *fs;
 
-    vs = textFileRead("./media/shaders/voxel/voxel.vsh");
-    fs = textFileRead("./media/shaders/voxel/voxel.fsh");
+    vs = textFileRead(MEDIA_PATH "shaders/voxel/voxel.vsh");
+    fs = textFileRead(MEDIA_PATH "shaders/voxel/voxel.fsh");
 
     glShaderSourceARB(voxel_shader_vert, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);

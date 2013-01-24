@@ -66,11 +66,11 @@ void init_shaders()
         if (GLEW_EXT_texture_filter_anisotropic) // ANISOTROPY_EXT
         {
             glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
-            printf("anisotropic filtering supported: max supported= %f \n", ANISOTROPY_LARGEST_SUPPORTED);
+            printf("Anisotropic filtering supported: Max supported is %f\n", ANISOTROPY_LARGEST_SUPPORTED);
         } 
         else 
         {
-            printf("anisotropic filtering not supported ! \n");
+            printf("Anisotropic filtering is not supported\n");
             ANISOTROPIC_FILTERING = 0;
         }
     }

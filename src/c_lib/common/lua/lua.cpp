@@ -163,7 +163,7 @@ void load_options()
     char* options = options_file;
     if (options == NULL)
         options = (char*)default_options_file;
-    printf("Loading settings file %s\n", options);
+    printf("Loading settings file \"%s\"\n", options);
 
     static int inited = 0;
 

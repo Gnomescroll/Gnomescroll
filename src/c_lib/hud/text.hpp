@@ -299,13 +299,17 @@ class AnimatedText: public Text
 class TextList: public ObjectList<Text>
 {
     private:
-        const char* name() { return "Text"; }
+
+    const char* name()
+    {
+        return "Text";
+    }
 
     public:
-        explicit TextList(unsigned int capacity) : ObjectList<Text>(capacity)
-        {
-            this->print();
-        }
+
+    explicit TextList(unsigned int capacity) : ObjectList<Text>(capacity)
+    {
+    }
 };
 
 extern TextList* text_list;

@@ -144,13 +144,19 @@ class ChatClient
 class ChatMessageList: public ObjectList<ChatMessage>
 {
     private:
-        void quicksort_timestamp_asc(int beg, int end);
-        void quicksort_timestamp_desc(int beg, int end);
-        void swap_object_state(ChatMessage **a, ChatMessage **b)
-            {ChatMessage* t=*a; *a=*b; *b=t;}
 
-        const char* name() { return "ChatMessage"; }
+    void quicksort_timestamp_asc(int beg, int end);
+    void quicksort_timestamp_desc(int beg, int end);
+    void swap_object_state(ChatMessage **a, ChatMessage **b)
+        {ChatMessage* t=*a; *a=*b; *b=t;}
+
+    const char* name()
+    {
+        return "ChatMessage";
+    }
+
     public:
+
         ChatMessage** filtered_objects; // tmp array for filtering objects
         float* filtered_object_distances;
 
@@ -158,21 +164,20 @@ class ChatMessageList: public ObjectList<ChatMessage>
         void sort_by_most_recent();
         void filter_none(); // copies pointers/null into filtered list, unchanged
 
-        explicit ChatMessageList(unsigned int capacity) :
-            ObjectList<ChatMessage>(capacity)
-        {
-            this->filtered_objects = (ChatMessage**)calloc(this->max, sizeof(ChatMessage*));
-            this->filtered_object_distances = (float*)calloc(this->max, sizeof(float));
-            this->print();
-        }
+    explicit ChatMessageList(unsigned int capacity) :
+        ObjectList<ChatMessage>(capacity)
+    {
+        this->filtered_objects = (ChatMessage**)calloc(this->max, sizeof(ChatMessage*));
+        this->filtered_object_distances = (float*)calloc(this->max, sizeof(float));
+    }
 
-        ~ChatMessageList()
-        {
-            if (this->filtered_objects != NULL)
-                free(this->filtered_objects);
-            if (this->filtered_object_distances != NULL)
-                free(this->filtered_object_distances);
-        }
+    ~ChatMessageList()
+    {
+        if (this->filtered_objects != NULL)
+            free(this->filtered_objects);
+        if (this->filtered_object_distances != NULL)
+            free(this->filtered_object_distances);
+    }
 };
 
 // collection of methods
