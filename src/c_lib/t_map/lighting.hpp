@@ -475,11 +475,20 @@ int ENV_LIGHT_MAX(int li[6])
     Each block should only set its own values
 */
 
+void _envlight_update(int x, int y, int z);
+
 //handle block addition
 void light_add_block(int x, int y, int z)
 {
     struct MAP_ELEMENT e = get_element(x,y,z);
-    set_envlight(x,y,z, fast_cube_attributes[e.block].light_value);
+
+    if( (e.light >> 4) != fast_cube_attributes[e.block].light_value )
+    {
+        set_envlight(x,y,z, fast_cube_attributes[e.block].light_value);
+    }
+
+    if(fast_cube_properties[e.block].solid == false)
+        _envlight_update(x,y,z);
 }
 
 void _envlight_update(int x, int y, int z)
