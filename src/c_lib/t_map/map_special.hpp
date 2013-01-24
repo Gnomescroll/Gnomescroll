@@ -223,19 +223,19 @@ class ControlNodeShader
 {
     public:
 
-    SDL_Surface* s;
+        SDL_Surface* s;
 
-    unsigned int texture1;
-    class Shader* shader;
+        unsigned int texture1;
+        class Shader* shader;
 
-    //uniforms
-    unsigned int CameraPosition;
-    //attributes
-    unsigned int TexCoord;
-    unsigned int Brightness;
+        //uniforms
+        unsigned int CameraPosition;
+        //attributes
+        unsigned int TexCoord;
+        unsigned int Brightness;
 
-    ControlNodeShader()
-    : s(NULL), texture1(0), shader(NULL)
+    ControlNodeShader() :
+        s(NULL), texture1(0), shader(NULL)
     {
         init_texture();
         init_shader();
@@ -253,29 +253,18 @@ class ControlNodeShader
         shader->set_debug(true);
 
         shader->load_shader( "control_node_shader",
-            "./media/shaders/effect/control_node.vsh",
-            "./media/shaders/effect/control_node.fsh" );
+            MEDIA_PATH "shaders/effect/control_node.vsh",
+            MEDIA_PATH "shaders/effect/control_node.fsh" );
 
-        printf("Shader loaded\n");
-
-        CameraPosition =    shader->get_uniform("CameraPosition");
-
-        printf("Got cam position\n");
-
-        TexCoord    =       shader->get_attribute("InTexCoord");
-
-        printf("Got tex coord\n");
-
-        Brightness  =       shader->get_attribute("InBrightness");
-
-        printf("Got brightness\n");
+        CameraPosition = shader->get_uniform("CameraPosition");
+        TexCoord = shader->get_attribute("InTexCoord");
+        Brightness = shader->get_attribute("InBrightness");
     }
 
     void init_texture()
     {
         s = create_surface_from_file("./media/sprites/mech/territory_00.png");
-        GS_ASSERT(s != NULL);
-        if (s == NULL) return;
+        IF_ASSERT(s == NULL) return;
         
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &texture1);
@@ -308,8 +297,8 @@ class ControlNodeRenderer
 {
     public:
 
-    class ControlNodeShader shader;
-    class ControlNodeVertexList vertex_list;
+        class ControlNodeShader shader;
+        class ControlNodeVertexList vertex_list;
 
     void draw()
     {

@@ -16,7 +16,7 @@ void generate_shop(int x, int y, int z, int size, int height, int goods, CubeTyp
 void generate_transmission_tower(int x, int y, int z, int height, CubeType steelA, CubeType steelB, CubeType steelC, CubeType gray, CubeType battery, CubeType computer);
 void degenerate_space(int x, int y, int z, int size);
 void create_floor(int x, int y, int z, int size, CubeType gray);
-void create_roads(int size, CubeType steel, int minx, int miny, int maxx, int maxy);
+void create_roads(int size, CubeType steel, int minx, int miny, int maxx, int maxy, CubeType rock, CubeType regolith);
 void generate_temple(int x, int y, int z, int size, CubeType glowgreen, CubeType glowblue, CubeType rock);
 void generate_bunker(int x, int y, int maxz, int size, int depth, int floors, int partition_probability, int randomness, CubeType gray, CubeType computer, CubeType storage, CubeType cryofreezer);
 void generate_column(int x, int y, int z, int size, CubeType rock);
@@ -28,7 +28,8 @@ void create_storage(int x, int y, int z);
 void create_smelter(int x, int y, int z);
 void create_bench(int x, int y, int z);
 void create_crusher(int x, int y, int z);
-bool isGood(int x, int y, int maxx, int maxy, int maxheight, CubeType rock, CubeType regolith, CubeType steel);
-bool isRoad(int x, int y, int size);
+bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith);
+bool isRoad(int xory, int size);
+int get_highest_area_block(int x, int y, int maxx, int maxy);
 
 }   // t_gen

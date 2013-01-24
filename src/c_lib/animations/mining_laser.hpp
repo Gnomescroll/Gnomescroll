@@ -163,15 +163,17 @@ const int MINING_LASER_MAX = 1024;
 class MiningLaserEffectList: public Simple_object_list<MiningLaser, MINING_LASER_MAX>
 {
     private:
-        const char* name() { return "MiningLaserEffectList"; }
+
+    const char* name()
+    {
+        return "MiningLaserEffectList";
+    }
 
     public:
-        MiningLaserEffectList() { print();}
 
-        void prep();
-        void draw();
-        void tick();
-
+    void prep();
+    void draw();
+    void tick();
 };
 
 

@@ -1,5 +1,10 @@
 #include "handlers.hpp"
 
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wswitch-enum"
+#endif
+
 #include <math.h>
 #include <chat/_interface.hpp>
 #include <input/skeleton_editor.hpp>
@@ -266,7 +271,7 @@ void toggle_camera_mode()
         case INPUT_STATE_AGENT:
             input_state.camera_mode = INPUT_STATE_CAMERA;
             free_camera->copy_state_from(agent_camera);
-			free_camera->move(0, 0, 3);
+            free_camera->move(0, 0, 3);
             break;
         case INPUT_STATE_CAMERA:
             if (ClientState::player_agent.you() != NULL)
@@ -537,9 +542,9 @@ void container_mouse_up_handler(SDL_Event* event)
     Toolbelt::left_trigger_up_event(); // clear any trigger events
     Toolbelt::right_trigger_up_event(); // clear any trigger events
     
-    if (!input_state.mouse_bound // for whatever reason it only needs to be done when mouse is unbound
-      && input_state.ignore_next_right_click_event
-      && event->button.button == SDL_BUTTON_RIGHT)
+    if (!input_state.mouse_bound && // for whatever reason it only needs to be done when mouse is unbound
+        input_state.ignore_next_right_click_event &&
+        event->button.button == SDL_BUTTON_RIGHT)
     {
         input_state.ignore_next_right_click_event = false;
         return;
@@ -750,13 +755,14 @@ void agent_mouse_up_handler(SDL_Event* event)
     }
 }
 
-void agent_mouse_motion_handler(SDL_Event* event){}
+void agent_mouse_motion_handler(SDL_Event* event)
+{
+}
 
 void agent_key_state_handler(Uint8 *keystate, int numkeys,
     char *f, char *b, char *l, char *r,
     char *jet, char *jump, char *crouch, char *boost,
-    char *m1, char *m2, char *m3
-)
+    char *m1, char *m2, char *m3)
 {
     if (keystate[SDLK_w])
         *f = 1;
@@ -798,10 +804,8 @@ void camera_key_down_handler(SDL_Event* event)
 }
 
 void print_mob_id()
-{
-    // hitscan against mobs
-    GS_ASSERT(current_camera != NULL);
-    if (current_camera == NULL) return;
+{   // hitscan against mobs
+    IF_ASSERT(current_camera == NULL) return;
     
     struct Vec3 p = current_camera->get_position();
     struct Vec3 v = current_camera->forward_vector();
@@ -823,7 +827,10 @@ void print_mob_id()
     printf("mob id: %d\n", target.entity_id);
 }
 
-void camera_key_up_handler(SDL_Event* event){}
+void camera_key_up_handler(SDL_Event* event)
+{
+}
+
 void camera_mouse_down_handler(SDL_Event* event)
 {
     switch (event->button.button)
@@ -840,8 +847,13 @@ void camera_mouse_down_handler(SDL_Event* event)
     }
 }
 
-void camera_mouse_up_handler(SDL_Event* event){}
-void camera_mouse_motion_handler(SDL_Event* event){}
+void camera_mouse_up_handler(SDL_Event* event)
+{
+}
+
+void camera_mouse_motion_handler(SDL_Event* event)
+{
+}
 
 void camera_key_state_handler(Uint8 *keystate, int numkeys)
 {
@@ -871,7 +883,6 @@ void camera_key_state_handler(Uint8 *keystate, int numkeys)
 // key down
 void key_down_handler(SDL_Event* event)
 {
-
     if (input_state.skeleton_editor)
     {
         SkeletonEditor::key_down_handler(event);
@@ -1185,7 +1196,6 @@ void mouse_button_down_handler(SDL_Event* event)
     
 }
 
-// mouse up
 void mouse_button_up_handler(SDL_Event* event)
 {
     if (input_state.last_mouse_button_up_event_frame == ClientState::frame_id) return;
@@ -1213,11 +1223,9 @@ void mouse_button_up_handler(SDL_Event* event)
     }
 }
 
-// mouse motion
 void mouse_motion_handler(SDL_Event* event)
 {
     // chat doesnt affect mouse
-
     if (input_state.ignore_mouse_motion)
     {
         input_state.ignore_mouse_motion = false;
@@ -1239,13 +1247,11 @@ void mouse_motion_handler(SDL_Event* event)
     }
 }
 
-// quit
 void quit_event_handler(SDL_Event* event)
 {
     input_state.quit = true;
 }
 
-// keyboard state
 void key_state_handler(Uint8 *keystate, int numkeys)
 {
     if (input_state.skeleton_editor)
@@ -1260,13 +1266,17 @@ void key_state_handler(Uint8 *keystate, int numkeys)
     if (!input_state.chat && !input_state.awesomium)
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
-            agent_key_state_handler(keystate, numkeys, &f, &b, &l, &r, &jet, &jump, &crouch, &boost, &m1, &m2, &m3);
+            agent_key_state_handler(keystate, numkeys, &f, &b, &l, &r, &jet,
+                                    &jump, &crouch, &boost, &m1, &m2, &m3);
         else
             camera_key_state_handler(keystate, numkeys);
     }
 
     // always set control state
-    ClientState::player_agent.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
+    ClientState::player_agent.set_control_state(f, b, l, r, jet, jump, crouch,
+                                                boost, m1, m2, m3,
+                                                agent_camera->theta,
+                                                agent_camera->phi);
 }
 
 // active event (window / input focus)
@@ -1287,6 +1297,10 @@ void active_event_handler(SDL_Event* event)
     else
     if (event->active.state & SDL_APPACTIVE)
         input_state.app_active = gained;
+
+    // force mouse position out of window
+    if (!input_state.mouse_focus)
+        HudContainer::set_mouse_position(-1, -1);
 
     if (!mouse_unlocked_for_ui_element())
     {   // only do this if container/inventory not open 
@@ -1310,3 +1324,7 @@ void active_event_handler(SDL_Event* event)
         //if (event->active.gain)
             //input_state.mouse_bound = input_state.rebind_mouse;
 }
+
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif

@@ -306,7 +306,6 @@ void init()
     
     enabled = true;
     inited = true;
-    printf("OpenAL inited\n");
 }
 
 void close()

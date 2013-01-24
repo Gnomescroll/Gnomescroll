@@ -193,34 +193,37 @@ static const ContainerInputEvent NULL_EVENT = {
     NULL_CONTAINER,         // null container id
     NULL_SLOT,              // null slot
     false,                  // alt action
-    };
+};
 
 ContainerInputEvent left_mouse_down(int x, int y)
 {
+    set_mouse_position(x, y);
     lm_down = true;
     return NULL_EVENT;
 }
 
 ContainerInputEvent left_mouse_up(int x, int y)
 {
+    set_mouse_position(x, y);
     lm_down = false;
     return get_container_hud_ui_event(x,y);
 }
 
 ContainerInputEvent right_mouse_down(int x, int y)
 {
+    set_mouse_position(x, y);
     return NULL_EVENT;
 }
 
 ContainerInputEvent right_mouse_up(int x, int y)
 {
+    set_mouse_position(x, y);
     return get_container_hud_ui_event(x,y);
 }
 
 ContainerInputEvent mouse_motion(int x, int y)
 {
-    mouse_x = x;
-    mouse_y = y;
+    set_mouse_position(x, y);
     return NULL_EVENT;
 }
 

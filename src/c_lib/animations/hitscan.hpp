@@ -49,12 +49,17 @@ class HitscanEffect
 class HitscanEffectList: public Simple_object_list<HitscanEffect, 1024>
 {
     private:
-        const char* name() { return "HitscanEffect"; }
+        const char* name()
+        {
+            return "HitscanEffect";
+        }
     public:
         void draw();
         void tick();
 
-        HitscanEffectList() { this->print(); }
+        HitscanEffectList()
+        {
+        }
 };
 
 }   // Animations

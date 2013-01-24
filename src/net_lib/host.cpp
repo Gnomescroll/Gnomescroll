@@ -1,28 +1,23 @@
 #include "host.hpp"
 
 #include <net_lib/enet/enet.h>
-
 #include <net_lib/global.hpp>
-
 #include <net_lib/common/net_peer.hpp>
 #include <net_lib/common/message_handler.h>
-
 #include <agent/net_agent.hpp>
 #include <state/packet_init.hpp>
-
 #include <common/common.hpp>
-
 #include <options/options.hpp>
 
 #if DC_CLIENT
-#include <net_lib/client.hpp>
-#include <state/client_state.hpp>
-#include <hud/error.hpp>
+# include <net_lib/client.hpp>
+# include <state/client_state.hpp>
+# include <hud/error.hpp>
 #endif
 
 #if DC_SERVER
-#include <net_lib/server.hpp>
-#include <common/analytics/sessions.hpp>
+# include <net_lib/server.hpp>
+# include <common/analytics/sessions.hpp>
 #endif
 
 const int DEFAULT_PORT = 4096;
@@ -159,8 +154,8 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
 
     if (client_host == NULL)
     {
-        fprintf (stderr, "An error occurred while trying to create an ENet client host.\n");
-        exit (EXIT_FAILURE);
+        fprintf(stderr, "An error occurred while trying to create an ENet client host.\n");
+        exit(EXIT_FAILURE);
     }
 
     if (port == 0)
@@ -175,9 +170,12 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     //use local host if 0,0,0,0
     if (a==0 && b==0 && c==0 && d== 0)
     {
-        a=127;b=0;c=0;d=1;
+        a = 127;
+        b = 0;
+        c = 0;
+        d = 1;
     }
-    printf("connecting to %i.%i.%i.%i on port %i \n", a,b,c,d,port);
+    printf("Connecting to %d.%d.%d.%d on port %d\n", a, b, c, d, port);
     
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
@@ -186,8 +184,8 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     
     if (peer == NULL)
     {
-       fprintf (stderr, "No available peers for initiating an ENet connection.\n");
-       exit (EXIT_FAILURE);
+       fprintf(stderr, "No available peers for initiating an ENet connection.\n");
+       exit(EXIT_FAILURE);
     }
 }
 
@@ -520,13 +518,11 @@ static void client_connect(ENetEvent* event)
         uint8_t address[4];
         address_from_uint32(event->peer->address.host, address);
 
-        printf(
-            "client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
-            npm->client_id,
-            address[0], address[1], address[2], address[3],
-            event->peer->address.port, 
-            NetServer::number_of_clients
-        );
+        printf("Client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
+               npm->client_id,
+               address[0], address[1], address[2], address[3],
+               event->peer->address.port, 
+               NetServer::number_of_clients);
     
         Session* session = begin_session(event->peer->address.host, npm->client_id);
         users->assign_session_to_user(session);

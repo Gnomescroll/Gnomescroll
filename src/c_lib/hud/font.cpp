@@ -163,7 +163,8 @@ void Font::parse_font_file()
                 add_glyph(g, x, y, xoff, yoff, w, h, xadvance);
                 processed_line = true;
                 break;
-            default: break;
+            case UNKNOWN:
+                break;
         }
     }
     
@@ -293,7 +294,7 @@ Font::Font(char* fn) :
     load_font_png();    // load font png from acquired filename
     update_glyphs();    // post process glyphs (scaling texture coordinates; tab character)
 
-    printf("Loaded font %s\n", data.file);
+    //printf("Loaded font %s\n", data.file);
 }
 
 int read_fonts_used()

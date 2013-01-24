@@ -38,7 +38,7 @@ Varying
     varying mat2 lightMatrix;
     //varying float skyLight;
     //varying float playerLight;
-    flat varying vec2 Light;
+    varying vec2 Light;
 #endif
 
 varying vec3 texCoord;

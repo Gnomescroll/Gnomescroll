@@ -124,107 +124,107 @@ struct RunState
 
 struct RunState run_state;
 
-//GAFFER LOOP
-//http://gafferongames.com/game-physics/fix-your-timestep/
-int physics_tick()
+void draw_hud()
 {
+    if (!input_state.draw_hud) return;
+    
+    glEnable(GL_TEXTURE_2D);
+    // switch to hud  projection
     poll_mouse();
-    // physics loop
-    int physics_ticks = 0;
-    while (1)
+    hud_projection();
+    glDisable(GL_DEPTH_TEST);
+
+    if (agent_camera->is_current())
     {
-        int tick_count = _GET_TICK();
-        if (tick_count == 0 || physics_ticks > 1)   //2 physics loko per tix max
-            break;
-        physics_ticks++;
-        ClientState::tick_id += 1;
-
-        // input
-
-        // Make names clealer
-        process_events();           //RENAME THIS
-        get_key_state();            //RENAME THIS
-        trigger_keys_held_down();   //RENAME THIS
-
-        Toolbelt::tick();
-
-        // tick animations
-        Animations::animations_tick();
-        // tick client state
-        ClientState::tick(); 
-        // update sound listener
-        ClientState::player_agent.update_sound();
-        // update mouse
+        glDisable(GL_BLEND);
         poll_mouse();
+        Animations::render_voxelized_sprite_fbo();
+    }
+    
+    glEnable(GL_BLEND);
+    
+    // draw hud
+    poll_mouse();
+    Hud::set_hud_fps_display(run_state.fps_value);
 
-        Entities::tick();    // update physics state
+    poll_mouse();
+    Hud::update_hud_draw_settings();
 
-        if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
+    poll_mouse();
+    Hud::draw();
 
-        ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
+    //Hud::draw_harvest_bar(400,400);
 
-        Auth::update();   // put it in the physics tick because i want a fixed time counter
+    if (input_state.awesomium)
+    {
+        poll_mouse();
+        Awesomium::draw();
+    }
+    else
+    {
+        glDisable(GL_BLEND);
+        poll_mouse();
+        HudContainer::draw();
 
-        Skybox::tick_rayleigh_scattering(); //update skybox time and update physics
-
-        _SET_LAST_TICK();
+        poll_mouse();
+        Hud::draw_error_status();
     }
 
-    if (physics_ticks > 0)
-        _SET_LAST_TICK();
-
-        //if (physics_ticks >= 2)
-        //printf("Physics: %d ticks this frame\n", physics_ticks);
+    glDisable(GL_BLEND);
 
     poll_mouse();
-    return physics_ticks;
-}
-
-
-void network_tick()
-{   // Networking
-    poll_mouse();
-
-    //send_bullshit_data();
-
-    NetClient::client_dispatch_network_events();
-    NetClient::flush_to_net();
-
-    if (!NetClient::Server.version_match())
-        NetClient::shutdown_net_client();
-    poll_mouse();
+    if (input_state.vbo_debug)
+        t_map::draw_vbo_debug(400, 400);
+    
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    CHECK_GL_ERROR();  //check error after hud rendering
 }
 
 void draw_tick()
 {
     using Profiling::frame_graph;
     
+    poll_mouse();
     apply_camera_physics();         //apply velocity
+
+    poll_mouse();
     ClientState::update_camera();   //update camera state
+
+    poll_mouse();
     world_projection();             //set fulstrum crap
+
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
+    poll_mouse();
     frame_graph->frame_stage(2); // call draw functions
 
+    poll_mouse();
     Entities::harvest(); // remove dead objects
-    Entities::update(); // update render state
-    Agents::agent_list->update_models();
 
     poll_mouse();
+    Entities::update(); // update render state
+
+    poll_mouse();
+    Agents::agent_list->update_models();
+
 
     // Start World Projetion
     
-    poll_mouse();
-
     // Prep for draw
+    poll_mouse();
     Particle::prep_shrapnel();
+
+    poll_mouse();
     Skybox::prep_skybox();
 
     CHECK_GL_ERROR();
+    poll_mouse();
     Animations::prep_voxel_particles();
     CHECK_GL_ERROR();
 
+    poll_mouse();
     t_mech::prep();
 
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -236,6 +236,7 @@ void draw_tick()
     glEnable(GL_BLEND);
     glDepthMask(GL_FALSE);
 
+    poll_mouse();
     Skybox::draw_rayleigh_scattering(); //skybox drawing
 
     //glEnable(GL_DEPTH_TEST);
@@ -245,7 +246,6 @@ void draw_tick()
     // Map
 
     poll_mouse();
-    
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
@@ -256,11 +256,12 @@ void draw_tick()
 
     CHECK_GL_ERROR();
 
-    poll_mouse();
-
     // Non-transparent
 
+    poll_mouse();
     t_mob::draw();
+
+    poll_mouse();
     t_mech::draw();
 
     //top_z_projection(0.0f,0.0f);
@@ -273,6 +274,7 @@ void draw_tick()
 
     CHECK_GL_ERROR();
 
+    poll_mouse();
     glDisable(GL_TEXTURE_2D);
     GL_ASSERT(GL_TEXTURE_2D, false);
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -283,6 +285,7 @@ void draw_tick()
     CHECK_GL_ERROR();
 
     // quads
+    poll_mouse();
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
     GL_ASSERT(GL_TEXTURE_2D, false);
@@ -305,19 +308,23 @@ void draw_tick()
         Alpha tested non-transparent
     */
 
+    poll_mouse();
     Animations::render_block_damage(); //GL blend with depth test on
+    poll_mouse();
     ItemParticle::draw();
+    poll_mouse();
     Animations::draw_textured_voxel_particles(); //moved out of transparent
 
 
+    poll_mouse();
     visualize_line(); //debug
     //visualize_bounding_box();
+    poll_mouse();
     t_mech::draw_selected_mech_bounding_box();
 
     GL_ASSERT(GL_BLEND, false);
 
     CHECK_GL_ERROR();
-
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
@@ -329,6 +336,7 @@ void draw_tick()
     glEnable(GL_BLEND);
     glDepthMask(GL_FALSE);  //START
 
+    poll_mouse();
     Particle::billboard_text_list->draw();  //enables and disables GL_BLEND
     glEnable(GL_BLEND);
 
@@ -336,29 +344,49 @@ void draw_tick()
 
     // draw animations
 
+    poll_mouse();
     t_map::control_node_render_update();    //move this somewhere later
+
+    poll_mouse();
     t_map::control_node_render_draw();      //draw control node perimeter
 
+    poll_mouse();
     GL_ASSERT(GL_BLEND, true);
     Skybox::draw();
 
 
+    poll_mouse();
     GL_ASSERT(GL_BLEND, true);
     Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
+
+    poll_mouse();
     GL_ASSERT(GL_BLEND, true);
     Animations::draw_hitscan_effect();
+
+    poll_mouse();
     GL_ASSERT(GL_BLEND, true);
     Agents::agent_list->update_mining_lasers();
+
+    poll_mouse();
     ClientState::player_agent.action.update_mining_laser();
+
+    poll_mouse();
     Animations::draw_mining_laser_effect();
     GL_ASSERT(GL_BLEND, true);
 
     poll_mouse();
-
     Particle::begin_particle_draw();
+
+    poll_mouse();
     Particle::grenade_list->draw();
+
+    poll_mouse();
     Particle::blood_list->draw();
+
+    poll_mouse();
     Particle::plasmagen_spur_list->draw();
+
+    poll_mouse();
     Particle::end_particle_draw();
 
     GL_ASSERT(GL_BLEND, true);
@@ -368,23 +396,22 @@ void draw_tick()
     glDepthMask(GL_TRUE);   //END
 
     poll_mouse();
-
     Agents::agent_list->draw_equipped_items();
 
     CHECK_GL_ERROR();
-
-    // update mouse
-    poll_mouse();
 
     // with depth test disable
     int equipped_item_type = Toolbelt::get_selected_item_type();
 
     if (input_state.draw_hud)
     {
+        poll_mouse();
         //glDisable(GL_DEPTH_TEST);
         if (agent_camera->is_current())
             Animations::use_voxelized_sprite_fbo();
+        poll_mouse();
         Animations::draw_equipped_item(equipped_item_type);
+        poll_mouse();
         if (agent_camera->is_current())
             Animations::unuse_voxelized_sprite_fbo();
         //glEnable(GL_DEPTH_TEST);
@@ -393,54 +420,93 @@ void draw_tick()
     if (Options::placement_outline)
     {
         // draw outline of facing block
+        poll_mouse();
         Animations::draw_placement_outline(equipped_item_type);
     }
 
     CHECK_GL_ERROR();   //check error before hud
 
     if (input_state.draw_hud)
+        draw_hud();
+    
+    poll_mouse();
+}
+
+//GAFFER LOOP
+//http://gafferongames.com/game-physics/fix-your-timestep/
+int physics_tick()
+{
+    poll_mouse();
+    // physics loop
+    int physics_ticks = 0;
+    while (1)
     {
-        glEnable(GL_TEXTURE_2D);
-        // switch to hud  projection
-        hud_projection();
-        glDisable(GL_DEPTH_TEST);
+        int tick_count = _GET_TICK();
+        if (tick_count == 0 || physics_ticks > 1)   //2 physics loko per tix max
+            break;
+        physics_ticks++;
+        ClientState::tick_id += 1;
 
-        if (agent_camera->is_current())
-        {
-            glDisable(GL_BLEND);
-            Animations::render_voxelized_sprite_fbo();
-        }
-        
-        glEnable(GL_BLEND);
-        
-        // draw hud
-        Hud::set_hud_fps_display(run_state.fps_value);
-        Hud::update_hud_draw_settings();
-        Hud::draw();
+        // input
+        poll_mouse();
+        // Make names clealer
+        process_events();           //RENAME THIS
+        get_key_state();            //RENAME THIS
+        trigger_keys_held_down();   //RENAME THIS
 
-        //Hud::draw_harvest_bar(400,400);
+        poll_mouse();
+        Toolbelt::tick();
 
-        if (input_state.awesomium)
-        {
-            Awesomium::draw();
-        }
-        else
-        {
-            glDisable(GL_BLEND);
-            HudContainer::draw();
-            Hud::draw_error_status();
-        }
+        // tick animations
+        poll_mouse();
+        Animations::animations_tick();
 
-        glDisable(GL_BLEND);
+        // tick client state
+        poll_mouse();
+        ClientState::tick(); 
 
-        if (input_state.vbo_debug)
-            t_map::draw_vbo_debug(400, 400);
+        // update sound listener
+        poll_mouse();
+        ClientState::player_agent.update_sound();
 
-        
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_DEPTH_TEST);
-        CHECK_GL_ERROR();  //check error after hud rendering
+        poll_mouse();
+        Entities::tick();    // update physics state
+
+        if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
+
+        poll_mouse();
+        ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
+
+        poll_mouse();
+        Auth::update();   // put it in the physics tick because i want a fixed time counter
+
+        poll_mouse();
+        Skybox::tick_rayleigh_scattering(); //update skybox time and update physics
+
+        poll_mouse();
+        _SET_LAST_TICK();
     }
+
+    if (physics_ticks > 0)
+        _SET_LAST_TICK();
+
+    poll_mouse();
+    return physics_ticks;
+}
+
+
+void network_tick()
+{   // Networking
+    //send_bullshit_data();
+    poll_mouse();
+    NetClient::client_dispatch_network_events();
+    poll_mouse();
+    NetClient::flush_to_net();
+
+    poll_mouse();
+    if (!NetClient::Server.version_match())
+        NetClient::shutdown_net_client();
+    poll_mouse();
 }
 
 

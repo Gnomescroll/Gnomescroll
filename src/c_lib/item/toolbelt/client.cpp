@@ -183,7 +183,7 @@ static bool beta_scan_world()
             }
             return false;
 
-        default:
+        case HITSCAN_TARGET_NONE:
             return false;
     }
     return false;

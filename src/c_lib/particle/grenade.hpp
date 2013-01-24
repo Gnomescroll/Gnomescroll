@@ -67,7 +67,6 @@ class GrenadeList: public ObjectList<Grenade>
         explicit GrenadeList(unsigned int capacity) :
             ObjectList<Grenade>(capacity)
         {
-            this->print();
         }
 };
  
@@ -87,8 +86,16 @@ int get_grenade_damage(EntityType type)
             
         case OBJECT_MONSTER_BOX:
             return GRENADE_MONSTER_BOX_DAMAGE();
-            
-        default: return 0;
+
+        case OBJECT_GRENADE:
+        case OBJECT_AGENT:
+        case OBJECT_CANNONBALL:
+        case OBJECT_PLASMAGEN:
+        case OBJECT_ENERGY_CORE:
+        case OBJECT_BASE:
+        case OBJECT_DESTINATION:
+        case OBJECT_NONE:
+            return 0;
     }
 }
 
