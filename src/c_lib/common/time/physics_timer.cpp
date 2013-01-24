@@ -23,7 +23,8 @@
 
 long c_tick = 0;
 
-void _START_CLOCK() {
+void _START_CLOCK()
+{
 /*
     c_tick = 0;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
@@ -53,7 +54,8 @@ void _START_CLOCK() {
 
 long _last_tick;
 
-int _GET_TICK() {
+int _GET_TICK()
+{
     //long s_sec, n_sec;
     long _ti;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time

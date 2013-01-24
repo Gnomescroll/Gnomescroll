@@ -258,3 +258,13 @@
    fun:alcGetString
    fun:_ZN11OpenALSound17enumerate_devicesEv
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   obj:/usr/lib/i386-linux-gnu/libSDL-1.2.so.0.11.4
+   obj:/usr/lib/i386-linux-gnu/libSDL-1.2.so.0.11.4
+   obj:/usr/lib/i386-linux-gnu/libSDL-1.2.so.0.11.4
+   fun:_ZN4Main3runEv
+   fun:main
+}
+

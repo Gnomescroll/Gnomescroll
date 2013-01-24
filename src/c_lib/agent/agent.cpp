@@ -329,7 +329,7 @@ Agent::Agent(AgentID id) :
 
     CS_seq = 0;
 
-    printf("Agent::Agent, new agent, id=%i \n", id);
+    printf("Created agent: %d\n", id);
 
     state_snapshot.seq = -1;
     state_rollback.seq = -1;

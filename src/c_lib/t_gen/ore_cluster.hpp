@@ -57,10 +57,8 @@ void populate_ore_veins(int number, const char* block_name)
     GS_ASSERT(tile_id >= 0);
     if (tile_id < 0) return;
     const float dephchange=2.0f; //how much more probable it is for an ore to generate lower than higher
-    if (dephchange>1)
-    {
-    printf("Ores have a higher probability of generating lower\n");
-    }
+    //if (dephchange>1)
+        //printf("Ores have a higher probability of generating lower\n");
 
     for(int i=0; i<number; i++)
     {
@@ -143,8 +141,8 @@ int generate_ore_vein(int x, int y, int z, int size, CubeType tile_id)
         ct++;
     }
 
-    if(tries >= 20)
-        printf("Warning: generate_ore_vein 20 attemps made to populate ore vein\n");
+    //if(tries >= 20)
+        //printf("Warning: generate_ore_vein 20 attemps made to populate ore vein\n");
 
     return ct;
 }

@@ -135,7 +135,6 @@ MechType get_crystal_type(float percent_complete)
 
 void populate_crystals()
 {
-    printf("Begin populate crystals\n");
     init_crystals();
 
     /* Heuristic:
