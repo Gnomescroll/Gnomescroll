@@ -18,7 +18,7 @@ namespace t_gen
 void generate_city()
 {
 
-    const int CITY_RANDOMNESS = 32; //the maximal amount of buildings by which to change buildings_in_city
+    const int CITY_RANDOMNESS = 64; //the maximal amount of buildings by which to change buildings_in_city, also used for other stuff
     const int CITY_AMOUNT = 1;
     const int BUILDINGS_IN_CITY = 100;
     const int LAB_SIZE = 16;
@@ -51,7 +51,6 @@ void generate_city()
     const int SHOP_HEIGHT = 5;
     const int TRANSMISSION_TOWER_HEIGHT = 64;
     const int ROAD_SIZE = 4;
-    const int COLUMN_SIZE = 8;
     const int BUILDING_AMOUNT = 9;
 
     CubeType computer = t_map::get_cube_type("control_node");
@@ -114,11 +113,12 @@ void generate_city()
                 if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS, rock, regolith))
                 {
                     generate_lab(cx, cy, get_highest_area_block(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS), LAB_SIZE, LAB_HEIGHT, LAB_FLOORS, LAB_RANDOMNESS, LAB_DOOR_PROBABILITY, computer, steelA, steelB, steelC, battery, smelter, cryofreezer, bench, crusher, storage);
+                    generate_column(cx, cy, get_highest_area_block(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS) - 1, LAB_SIZE + LAB_RANDOMNESS, rock);
                 }
                 if (building_randomizer == 2 && isGood(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, rock, regolith))
                 {
                     generate_skyscraper(cx, cy, get_highest_area_block(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS), SKYSCRAPER_SIZE, t_map::map_dim.z - t_map::get_highest_open_block(cx, cy) - 1, SKYSCRAPER_FLOORS, SKYSCRAPER_RANDOMNESS, SKYSCRAPER_PARTITIONS, computer, purple, green, red, cryofreezer, battery);
-                    generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS) - 1, COLUMN_SIZE, rock);
+                    generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS) - 1, SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, rock);
                 }
                 if (building_randomizer == 3 && isGood(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE, rock, regolith))
                 {
@@ -133,6 +133,7 @@ void generate_city()
                         subwaycounter = 1;
                     }
                     else laststation = 0;
+                    generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE) - SUBWAY_STATION_HEIGHT - 1, SUBWAY_STATION_SIZE, rock);
                     generate_subway_station(cx, cy, get_highest_area_block(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE), prevsubwayx, prevsubwayy, firstsubwayx, firstsubwayy, laststation, SUBWAY_STATION_SIZE, SUBWAY_STATION_HEIGHT, SUBWAY_TUNNEL_SIZE, gray, steelA, steelB, steelC, battery, rock);
                     subwaycounter++;
                     prevsubwayx = cx;
@@ -141,10 +142,12 @@ void generate_city()
             if (building_randomizer == 4 && isGood(cx, cy, cx + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, rock, regolith))
             {
                 generate_house(cx, cy, get_highest_area_block(cx, cy, cx + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS), HOUSE_SIZE, HOUSE_HEIGHT, HOUSE_PARTITION_PROBABILITY, HOUSE_RANDOMNESS, HOUSE_GARDEN, HOUSE_GARAGE_SIZE, computer, green, red, purple, storage, cryofreezer, smelter, bench, crusher, regolith, steelA);
+                generate_column(cx, cy, get_highest_area_block(cx, cy, cx + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS) - 1, HOUSE_SIZE + HOUSE_RANDOMNESS, rock);
             }
             if (building_randomizer == 5 && isGood(cx, cy, cx + SHOP_SIZE, cy + SHOP_SIZE, rock, regolith))
             {
                 generate_shop(cx, cy, get_highest_area_block(cx, cy, cx + SHOP_SIZE, cy + SHOP_SIZE), SHOP_SIZE, SHOP_HEIGHT, SHOP_GOODS_AMOUNT, steelA, steelB, steelC, computer, storage, cryofreezer);
+                generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SHOP_SIZE, cy + SHOP_SIZE) - 1, SHOP_SIZE, rock);
             }
             if (building_randomizer == 6 && isGood(cx, cy, cx + 2, cy + 2, rock, regolith))
             {
@@ -159,9 +162,11 @@ void generate_city()
             if (building_randomizer == 8 && isGood(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS, rock, regolith))
             {
                 generate_bunker(cx, cy, get_highest_area_block(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS), BUNKER_SIZE, BUNKER_DEPTH, BUNKER_FLOORS, BUNKER_PARTITION_PROBABILITY, BUNKER_RANDOMNESS, gray, computer, storage, cryofreezer);
+                generate_column(cx, cy, get_highest_area_block(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS), BUNKER_SIZE, rock);
             }
             if (building_randomizer == 9 && isGood(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE, rock, regolith))
             {
+                generate_column(cx, cy, get_highest_area_block(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE) - 1, TEMPLE_SIZE, rock);
                 generate_temple(cx, cy, get_highest_area_block(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE), TEMPLE_SIZE, glowgreen, glowblue, rock);
             }
         }
@@ -483,7 +488,7 @@ void create_roads(int size, CubeType steel, int minx, int miny, int maxx, int ma
     for (int i = minx; i < t_map::map_dim.x; i++)
     for (int j = miny; j < t_map::map_dim.y; j++)
     {
-        if(isRoad(i, j, size))
+        if(isRoad(j, size))
         {
             if (t_map::get_highest_open_block(i, j) > prevheight - 3 && t_map::get_highest_open_block(i, j) < prevheight + 3)
             {
@@ -498,22 +503,54 @@ void create_roads(int size, CubeType steel, int minx, int miny, int maxx, int ma
             {
                 if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith ||t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == EMPTY_CUBE)
                 {
-                t_map::set(i, j, (prevheight * 9 + t_map::get_highest_open_block(i, j)) / 10, steel);
-                degenerate_area(i, j, (prevheight * 9 + t_map::get_highest_open_block(i, j)) / 10 + 1, i, j, (prevheight * 9 + t_map::get_highest_open_block(i, j)) / 10 + size);
-                attemptcount++;
-                if(attemptcount == 60)
-                {
-                    prevheight = t_map::get_highest_open_block(i, j);
+                    t_map::set(i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20, steel);
+                    degenerate_area(i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20 + 1, i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20 + size);
+                    attemptcount++;
+                    if(attemptcount == 60)
+                    {
+                        prevheight = t_map::get_highest_open_block(i, j);
+                    }
                 }
+            }
+        }
+    }
+    prevheight = 60;
+    attemptcount = 0;
+    if(t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == rock || t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == regolith) prevheight = t_map::get_highest_open_block(minx, miny);
+    for (int j = miny; j < t_map::map_dim.y; j++)
+    for (int i = minx; i < t_map::map_dim.x; i++)
+    {
+        if(isRoad(i, size))
+        {
+            if (t_map::get_highest_open_block(i, j) > prevheight - 3 && t_map::get_highest_open_block(i, j) < prevheight + 3)
+            {
+                if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
+                {
+                t_map::set(i, j, t_map::get_highest_open_block(i, j), steel);
+                prevheight = t_map::get_highest_open_block(i, j);
+                attemptcount=0;
+                }
+            }
+            if (t_map::get_highest_open_block(i, j) <= prevheight - 3 || t_map::get_highest_open_block(i, j) >= prevheight + 3)
+            {
+                if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith ||t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == EMPTY_CUBE)
+                {
+                    t_map::set(i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20, steel);
+                    degenerate_area(i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20 + 1, i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20 + size);
+                    attemptcount++;
+                    if(attemptcount == 60)
+                    {
+                        prevheight = t_map::get_highest_open_block(i, j);
+                    }
                 }
             }
         }
     }
 }
 
-bool isRoad(int x, int y, int size)
+bool isRoad(int xory, int size)
 {
-    if (x % 50 < size || y % 50 < size) return true;
+    if (xory % 50 < size) return true;
     else return false;
 }
 
@@ -796,8 +833,8 @@ bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith)
         if(t_map::get_highest_open_block(i, j) > maxlevel) maxlevel = t_map::get_highest_open_block(i, j);
         if(t_map::get_highest_open_block(i, j) < minlevel) minlevel = t_map::get_highest_open_block(i, j);
     }
-    printf("minlevel = %d \n maxlevel = %d \n", minlevel, maxlevel);
-    if (minlevel + 10 < maxlevel) return 0;
+    printf("minlevel = %d \nmaxlevel = %d \n", minlevel, maxlevel);
+    if (minlevel + 40 < maxlevel) return 0;
     else return 1;
 }
 

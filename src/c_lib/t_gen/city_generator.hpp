@@ -29,7 +29,7 @@ void create_smelter(int x, int y, int z);
 void create_bench(int x, int y, int z);
 void create_crusher(int x, int y, int z);
 bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith);
-bool isRoad(int x, int y, int size);
+bool isRoad(int xory, int size);
 int get_highest_area_block(int x, int y, int maxx, int maxy);
 
 }   // t_gen
