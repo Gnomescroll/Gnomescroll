@@ -99,7 +99,8 @@ bool corner_origin_heart(int x, int y, int z, float dist,
         {
             // make sure it extends all the way to the ground
             int z_extender = z - 1;
-            while (t_map::get(fi_x, fi_y, z_extender) == EMPTY_CUBE)
+            while (t_map::get(fi_x, fi_y, z_extender) == EMPTY_CUBE &&
+                   z_extender >= 0)
             {
                 t_map::set(fi_x, fi_y, z_extender, new_block);
                 z_extender--;
@@ -245,7 +246,7 @@ void carve_aligned_gorge_slice(int x_, int y_, int z_)
     int countdown_til_widening = 1;
     int max_ups_per_width = 1; // iterations upwards
 
-    for (int z = z_; z <= ZMAX; z++) 
+    for (int z = z_; z <= t_map::map_dim.z-1; z++) 
     {
         for (int x = port; x < starboard + 1; x++) 
         {

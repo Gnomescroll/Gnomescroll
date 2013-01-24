@@ -67,7 +67,6 @@ class GrenadeList: public ObjectList<Grenade>
         explicit GrenadeList(unsigned int capacity) :
             ObjectList<Grenade>(capacity)
         {
-            this->print();
         }
 };
  
