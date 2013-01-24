@@ -191,6 +191,8 @@ void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
 
     c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
 
+    light_add_block(x,y,z); //update lighting
+    
     #if DC_CLIENT
     c->needs_update = true; 
 
@@ -351,6 +353,8 @@ void Terrain_map::chunk_received(int cx, int cy)
         Update Lighting
     */
 
+    init_update_envlight(cx, cy);   //init env_light values for blocks in chunk
+
     update_skylight(cx, cy);
     update_skylight2(cx,cy);    //update skylight
 }
@@ -430,8 +434,10 @@ void Terrain_map::set_block(int x, int y, int z, CubeType cube_type)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MAP_ELEMENT element = {{{(unsigned char)cube_type, 0,0,0}}};
+    struct MAP_ELEMENT element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
     set_element(x,y,z, element);
+
+    light_add_block(x,y,z);
     #if DC_CLIENT
     update_heights(x,y,z, cube_type);
     #endif

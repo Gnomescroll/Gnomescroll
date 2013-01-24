@@ -183,10 +183,12 @@ void block_set_StoC::handle()
 void block_set_palette_StoC::handle()
 {
     struct MAP_ELEMENT e = NULL_MAP_ELEMENT;
-    e.block = cube_type;
+    e.block   = cube_type;
     e.palette = palette;
+    //e.light   = fast_cube_attributes[cube_type].light_value;
 
     main_map->set_element(x,y,z, e);
+    light_add_block(x,y,z); //handle block addition
 }
 
 void block_action_StoC::handle()

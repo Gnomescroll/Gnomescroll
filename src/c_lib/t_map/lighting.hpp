@@ -474,6 +474,23 @@ int ENV_LIGHT_MAX(int li[6])
 /*
     Each block should only set its own values
 */
+
+void _envlight_update(int x, int y, int z);
+
+//handle block addition
+void light_add_block(int x, int y, int z)
+{
+    struct MAP_ELEMENT e = get_element(x,y,z);
+
+    if( (e.light >> 4) != fast_cube_attributes[e.block].light_value )
+    {
+        set_envlight(x,y,z, fast_cube_attributes[e.block].light_value);
+    }
+
+    if(fast_cube_properties[e.block].solid == false)
+        _envlight_update(x,y,z);
+}
+
 void _envlight_update(int x, int y, int z)
 {
 
@@ -501,7 +518,6 @@ void _envlight_update(int x, int y, int z)
 
     if(fast_cube_properties[e.block].light_source == true)
     {
-
         GS_ASSERT(li == fast_cube_attributes[e.block].light_value);
             //light source block
         #if 0
@@ -554,6 +570,11 @@ void _envlight_update(int x, int y, int z)
             struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
 
             //set light at current position if neighorbing positions are brighter
+
+            if(fast_cube_properties[_e.block].solid == true && fast_cube_properties[_e.block].light_source == false)
+            {
+                GS_ASSERT( (_e.light >> 4) == 0);
+            }
 
         #if 0
             if( ( (_e.light >> 4) > li + 1 ) && 
@@ -731,87 +752,46 @@ void _envlight_update(int x, int y, int z)
 #endif
 }
 
-/*
-    Add block operations
-*/
-
-//proprogates light out from a block
-void _envlight_helper_out(int x, int y, int z, int li);
-
-//optimize the hell out of this
-void _envlight_helper_out2(int _x, int _y, int _z, int li)
-{
-    //this is place to handle chunk not loaded stuff
-    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li )   //do a single get block for this!!
-    {
-        set_envlight(_x,_y,_z, li);
-        _envlight_helper_out(_x,_y,_z, li);
-    }
-}
-
-void _envlight_helper_out(int x, int y, int z, int li)
-{  
-    //set light value?
-    //int li = get_envlight(x,y,z);
-
-
-    int _x,_y,_z;
-
-    //x
-    _x = (x+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _y = y;
-    _z = z;
-    _envlight_helper_out2(_x,_y,_z, li-1);
-
-    _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _y = y;
-    _z = z;
-    _envlight_helper_out2(_x,_y,_z, li-1);
-
-    //y
-    _x = x;
-    _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _z = z;
-    _envlight_helper_out2(_x,_y,_z, li-1);
-
-    _x = x;
-    _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _z = z;
-    _envlight_helper_out2(_x,_y,_z, li-1);
-
-    //z
-    _x = x;
-    _y = y;
-    _z = (z+1) % map_dim.z;
-    _envlight_helper_out2(_x,_y,_z, li-1);
-
-    _x = x;
-    _y = y;
-    _z = (z-1+map_dim.z)%map_dim.z;
-    _envlight_helper_out2(_x,_y,_z, li-1);
-}
-
-/*
-void envlight_add_block(int x, int y, int z)
-{  
-    //set light value?
-    int li = get_envlight(x,y,z);
-
-    _envlight_helper_out(x,y,z,li);
-}
-*/
 
 void update_envlight_boundary(int _ci, int _cj);
 
-void update_envlight(int chunk_i, int chunk_j)
+//checks that block lighting values are correct
+void asssert_envlight_0(int chunk_i, int chunk_j)
 {
-    //return;
-
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     struct MAP_ELEMENT e;
 
-    //struct MAP_e e;
+    for(int k=0; k<128; k++)
+    for(int i=0; i<16; i++)
+    for(int j=0; j<16; j++)
+    {
+        int x = 16*chunk_i + i;
+        int y = 16*chunk_j + j;
 
+        e = mc->get_element(i,j,k);
+
+        if(fast_cube_properties[e.block].light_source == true)
+        {
+            //assert that light source blocks have the proper light value
+            GS_ASSERT( get_envlight(x,y,k) == fast_cube_attributes[e.block].light_value);
+        }
+        else
+        {
+            if(fast_cube_properties[e.block].solid == true)
+            {
+                //assert that solid blocks have lighting 0
+                GS_ASSERT( get_envlight(x,y,k) == 0 );
+            }
+        }
+    }
+
+}
+
+//call on chunk init
+void init_update_envlight(int chunk_i, int chunk_j)
+{
+    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+    struct MAP_ELEMENT e;
 
     for(int k=0; k<128; k++)
     for(int i=0; i<16; i++)
@@ -838,7 +818,12 @@ void update_envlight(int chunk_i, int chunk_j)
             }
         }
     }
+}
 
+void update_envlight(int chunk_i, int chunk_j)
+{
+    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+    struct MAP_ELEMENT e;
 
     for(int k=0; k<128; k++)
     for(int i=0; i<16; i++)
@@ -882,192 +867,12 @@ void update_envlight(int chunk_i, int chunk_j)
     }
 
 
-    //update_envlight_boundary(chunk_i, chunk_j);
-
-}
+    update_envlight_boundary(chunk_i, chunk_j);
 
 
-//proprogate out
-void update_envlight_out(int x, int y, int z)
-{
-    int li = get_envlight(x,y,z);
-
-    //GS_ASSERT(! isSolid(x,y,z));
-    if(li-1 <= 0) return;
-
-/*
-    !isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 ) {
-        set_envlight(_x,_y,_z, li-1);
-    These can be combined into a single function
-*/
-
-/*
-    Recursion can be replaced by poping onto a circular buffer
-*/
-
-    int _x,_y,_z;
-
-    _x = (x+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _y = y;
-    _z = z;
-    //x
-    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )   //do a single get block for this!!
-    {
-        set_envlight(_x,_y,_z, li-1);
-        update_envlight_out(_x,_y,_z);
-    }
-
-    //GS_ASSERT( ((x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2) == (x+512-1) % 512);
-
-    _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _y = y;
-    _z = z;
-
-    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
-    {
-        set_envlight(_x,_y,_z, li-1);
-        update_envlight_out(_x,_y,_z);
-    }
-
-    //y
-    _x = x;
-    _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _z = z;
-    //x
-    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
-    {
-        set_envlight(_x,_y,_z, li-1);
-        update_envlight_out(_x,_y,_z);
-    }
-
-    _x = x;
-    _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _z = z;
-
-    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
-    {
-        set_envlight(_x,_y,_z, li-1);
-        update_envlight_out(_x,_y,_z);
-    }
-
-    //y
-    _x = x;
-    _y = y;
-    _z = (z+1) % map_dim.z;
-
-    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
-    {
-        set_envlight(_x,_y,_z, li-1);
-        update_envlight_out(_x,_y,_z);
-    }
-
-    _x = x;
-    _y = y;
-    _z = (z-1+map_dim.z)%map_dim.z; //z -1
-    if(!isSolid(_x,_y,_z) && get_envlight(_x,_y,_z) < li-1 )
-    {
-        set_envlight(_x,_y,_z, li-1);
-        update_envlight_out(_x,_y,_z);
-    }
-
-}
-
-//call this when removing a block
-void update_envlight_in(int x, int y, int z)
-{
-    //int li = get_envlight(x,y,z);
-
-    if(isSolid(x,y,z))
-    {
-        GS_ASSERT(false);
-        return;
-    }
-    //technically, if top block of height map
-    if( get_envlight(x,y,z+1) == 15 )
-    {
-        GS_ASSERT( z+1 == main_map->get_height(x,y) );
-        
-        /*
-            BUG:
-            Fails on removing block capping a column?
-        */
-
-        int _z = z;
-        //assume first element is not solid
-        while(1)
-        {
-            set_envlight(x,y,_z,15);
-            if(isSolid(x,y,_z-1) || _z==0)
-                break;
-            _z--;
-        }
-
-        for(int tz=_z; tz <= z; tz++)
-            update_envlight_out(x,y,tz);
-
-        return;
-    }
-    int li = 0;
-
-    int _x,_y,_z, tli;
-
-    //x
-    _x = (x+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _y = y;
-    _z = z;
-
-    tli = get_envlight(_x,_y,_z);
-    if(tli > li )
-        li = tli;
-
-    _x = (x-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _y = y;
-    _z = z;
-
-    tli = get_envlight(_x,_y,_z);
-    if(tli > li )
-        li = tli;
-
-    //y
-    _x = x;
-    _y = (y+1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _z = z;
-
-    tli = get_envlight(_x,_y,_z);
-    if(tli > li )
-        li = tli;
-
-    _x = x;
-    _y = (y-1) & TERRAIN_MAP_WIDTH_BIT_MASK2;
-    _z = z;
-
-    tli = get_envlight(_x,_y,_z);
-    if(tli > li )
-        li = tli;
-
-    //z
-    _x = x;
-    _y = y;
-    _z = (z+1) % map_dim.z;
-
-    tli = get_envlight(_x,_y,_z);
-    if(tli > li )
-        li = tli;
-
-    _x = x;
-    _y = y;
-    _z = (z+(map_dim.z-1))%map_dim.z;
-
-    tli = get_envlight(_x,_y,_z);
-    if(tli > li )
-        li = tli;
+    asssert_envlight_0(chunk_i, chunk_j);
 
 
-    if(li != 0)
-    {
-        set_envlight(x,y,z, li);
-        update_envlight_out(x,y,z);
-    }
 }
 
 void update_envlight_boundary(int _ci, int _cj)
@@ -1088,7 +893,7 @@ void update_envlight_boundary(int _ci, int _cj)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
                 continue;
-            update_envlight_out(16*ci+i,16*cj+j,k);
+            _envlight_update(16*ci+i,16*cj+j,k);
         }
     }
 
@@ -1106,7 +911,7 @@ void update_envlight_boundary(int _ci, int _cj)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
                 continue;
-            update_envlight_out(16*ci+i,16*cj+j,k);
+            _envlight_update(16*ci+i,16*cj+j,k);
         }
     }
 
@@ -1123,7 +928,7 @@ void update_envlight_boundary(int _ci, int _cj)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
                 continue;
-            update_envlight_out(16*ci+i,16*cj+j,k);
+            _envlight_update(16*ci+i,16*cj+j,k);
         }
     }
 
@@ -1141,7 +946,7 @@ void update_envlight_boundary(int _ci, int _cj)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
                 continue;
-            update_envlight_out(16*ci+i,16*cj+j,k);
+            _envlight_update(16*ci+i,16*cj+j,k);
         }
     }
 
