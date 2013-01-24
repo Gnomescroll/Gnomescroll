@@ -9,7 +9,7 @@ static Uint8* keystate = NULL;
 
 struct MouseMotionAverage 
 {
-    float x,y;
+    float x, y;
 };
 
 // forward decl
@@ -19,8 +19,7 @@ void teardown_mouse();
 int init_input()
 {
     static int inited = 0;
-    GS_ASSERT(inited == 0);
-    if (inited++) return 1;
+    IF_ASSERT(inited++) return 1;
 
     keystate = SDL_GetKeyState(&numkeys);
     SDL_EnableUNICODE(SDL_ENABLE);
@@ -38,12 +37,9 @@ void teardown_input()
 int get_key_state()
 {
     SDL_PumpEvents();
-
     //for (int i=0; i<numkeys; i++) if (keystate[i]) printf("%d ", i);
     //for (int i=0; i<numkeys; i++) if (keystate[i]) { printf("\n"); break; }
-
     key_state_handler(keystate, numkeys);
-
     return 0;
 }
 
@@ -113,7 +109,8 @@ int process_events()
                 mouse_button_up_handler(&event);
                 break;
 
-            default: break;
+            default:
+                break;
         }
     }
 
@@ -124,7 +121,8 @@ int process_events()
 char getUnicodeValue(SDL_keysym keysym) 
 {
     // magic numbers courtesy of SDL docs :)
-    const int INTERNATIONAL_MASK = 0xFF80, UNICODE_MASK = 0x7F;
+    const int INTERNATIONAL_MASK = 0xFF80;
+    const int UNICODE_MASK = 0x7F;
     int uni = keysym.unicode;
     if (uni == 0) // not translatable key (like up or down arrows)
         return 0;
@@ -143,6 +141,7 @@ char getUnicodeValue(SDL_keysym keysym)
 /* Separate Mouse querying for physics-independent camera */
 const int MOUSE_INPUT_BUFFER_SIZE = 32;
 const float MOUSE_BUFFER_DECAY = 0.70f;
+const float INITIAL_MOUSE_WEIGHT = 1.0f;
 
 static int mouse_input_buffer_y[MOUSE_INPUT_BUFFER_SIZE];
 static int mouse_input_buffer_x[MOUSE_INPUT_BUFFER_SIZE];
@@ -150,8 +149,6 @@ static float mouse_input_buffer_timestamps[MOUSE_INPUT_BUFFER_SIZE];
 static int mouse_buffer_index = 0;
 
 static struct MouseMotionAverage mm = {0.0f, 0.0f};
-
-#define INITIAL_MOUSE_WEIGHT 1.0f
 
 static inline float _mouse_weight(float t)
 {
@@ -163,12 +160,13 @@ static inline float mouse_axis_average(int* buffer)
     float total = 0.0f; 
     float divisor = 0.0f; 
     float t = 0.0f;
-
-    int i, index; 
+    int index; 
     float weight;
 
-    for (i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++) { 
-        index = (MOUSE_INPUT_BUFFER_SIZE + mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; 
+    for (int i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++)
+    {
+        index = MOUSE_INPUT_BUFFER_SIZE + mouse_buffer_index - i;
+        index %= MOUSE_INPUT_BUFFER_SIZE;
 
         weight = _mouse_weight(t);
         divisor += weight; 
@@ -176,25 +174,24 @@ static inline float mouse_axis_average(int* buffer)
         total += buffer[index] * weight; 
 
         t += mouse_input_buffer_timestamps[index];
-    } 
+    }
 
+    IF_ASSERT(divisor == 0.0f) return 1.0f;
     total /= divisor; 
 
     return total; 
 }
 
-
 static inline void calculate_mouse_state(int t) // t is time since last tick
 {
     int current_time = _GET_MS_TIME();
-
     static int otime = _GET_MS_TIME();
     static int counter = 0;
     static int non_zero = 0;
-    if (current_time -otime > 1000)
+    if (current_time - otime > 1000)
     {
         otime = _GET_MS_TIME();
-        printf("%i mouse polls, %i non_zero \n", counter, non_zero);
+        printf("%d mouse polls, %d non_zero\n", counter, non_zero);
         counter = 0; //reset
         non_zero = 0;
     }
@@ -208,8 +205,7 @@ static inline void calculate_mouse_state(int t) // t is time since last tick
     if (dx == 0 && dy == 0) return;
     non_zero++;
 
-    printf("event= %i %i \n", dx,dy);
-
+    printf("event= %d %d\n", dx,dy);
 
     mouse_input_buffer_x[mouse_buffer_index] = dx;
     mouse_input_buffer_y[mouse_buffer_index] = dy;
@@ -233,7 +229,7 @@ struct MouseMotionAverage* get_mouse_render_state(int t)
 static float vx = 0.0f;
 static float vy = 0.0f;
 
-struct MOUSE_MOVEMENT
+struct MouseMovement
 {
     long time;  
     int dx;
@@ -255,35 +251,29 @@ static const float dampening = DEFAULT_DAMPENING;
 static float linear_sensitivity = 1 / (2 * 3.14159f * DEFAULT_LINEAR_SENSITIVITY_COEFFICIENT* DEFAULT_SENSITIVITY_OPTION);
 
 static const unsigned int MOUSE_MOVEMENT_ARRAY_INDEX_MAX = 1000;
-static struct MOUSE_MOVEMENT* MOUSE_MOVEMENT_ARRAY = NULL;
-static unsigned int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
+static struct MouseMovement* mouse_movement_array = NULL;
+static unsigned int mouse_movement_array_index = 0;
 
 void init_mouse()
 {
-    GS_ASSERT(MOUSE_MOVEMENT_ARRAY == NULL);
-    if (MOUSE_MOVEMENT_ARRAY != NULL) return;
-    MOUSE_MOVEMENT_ARRAY = (struct MOUSE_MOVEMENT*)calloc(MOUSE_MOVEMENT_ARRAY_INDEX_MAX, sizeof(struct MOUSE_MOVEMENT));
+    IF_ASSERT(mouse_movement_array != NULL) return;
+    mouse_movement_array = (struct MouseMovement*)calloc(MOUSE_MOVEMENT_ARRAY_INDEX_MAX, sizeof(struct MouseMovement));
 }
 
 void teardown_mouse()
 {
-    if (MOUSE_MOVEMENT_ARRAY != NULL) free(MOUSE_MOVEMENT_ARRAY);
+    if (mouse_movement_array != NULL) free(mouse_movement_array);
 }
 
-/*
-    Normalize vx,vy by time since last frame!
-*/
 void apply_camera_physics()
 {
-    GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
-    if (MOUSE_MOVEMENT_ARRAY == NULL) return;
+    IF_ASSERT(mouse_movement_array == NULL) return;
 
-    static long LAST_MOUSE_MOVEMENT_TIME = _GET_MS_TIME();
+    static long last_mouse_movement_time = _GET_MS_TIME();
     long current_time = _GET_MS_TIME();
-    if (current_time == LAST_MOUSE_MOVEMENT_TIME) return;
+    if (current_time == last_mouse_movement_time) return;
 
-    GS_ASSERT(current_time > LAST_MOUSE_MOVEMENT_TIME);
-    if (current_time < LAST_MOUSE_MOVEMENT_TIME) return;
+    IF_ASSERT(current_time < last_mouse_movement_time) return;
     
     const float cfactor = 1.0f/33.3333f;
     float _dampening = powf(dampening, cfactor); // dampening per frame
@@ -296,12 +286,12 @@ void apply_camera_physics()
     float accum_vx = 0;
     float accum_vy = 0;
 
-    while (LAST_MOUSE_MOVEMENT_TIME <= current_time)
+    while (last_mouse_movement_time <= current_time)
     {
-        while (MOUSE_MOVEMENT_ARRAY[index].time == LAST_MOUSE_MOVEMENT_TIME &&  index < MOUSE_MOVEMENT_ARRAY_INDEX)
+        while (mouse_movement_array[index].time == last_mouse_movement_time &&  index < mouse_movement_array_index)
         {
-            int dx = MOUSE_MOVEMENT_ARRAY[index].dx;
-            int dy = MOUSE_MOVEMENT_ARRAY[index].dy;
+            int dx = mouse_movement_array[index].dx;
+            int dy = mouse_movement_array[index].dy;
 
             float dvx,dvy, daccum_dx,daccum_dy;
 
@@ -332,25 +322,9 @@ void apply_camera_physics()
         vx *= _dampening;
         vy *= _dampening;
 
-        LAST_MOUSE_MOVEMENT_TIME++;
+        last_mouse_movement_time++;
     }
-    LAST_MOUSE_MOVEMENT_TIME--;
-
-    /*
-    if (index != MOUSE_MOVEMENT_ARRAY_INDEX)
-    {
-        printf("apply_camera_physics, error: index= %d MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
-
-        printf("start_time= %li \n ",_start_time);
-        printf("end_time= %li \n ",LAST_MOUSE_MOVEMENT_TIME);
-        
-        for (unsigned int i=0; i<MOUSE_MOVEMENT_ARRAY_INDEX; i++)
-        {
-            printf("mouse move %d: at time %li \n", i, MOUSE_MOVEMENT_ARRAY[i].time);
-        }
-        printf("end error\n");
-    }
-    //*/
+    last_mouse_movement_time--;
 
     if (input_state.login_mode)
         current_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
@@ -362,21 +336,20 @@ void apply_camera_physics()
             free_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
     }
 
-    MOUSE_MOVEMENT_ARRAY_INDEX = 0;
+    mouse_movement_array_index = 0;
 }
 
 void poll_mouse()
 {
-    GS_ASSERT(MOUSE_MOVEMENT_ARRAY != NULL);
-    if (MOUSE_MOVEMENT_ARRAY == NULL) return;
+    IF_ASSERT(mouse_movement_array == NULL) return;
     if (!input_state.login_mode && mouse_unlocked_for_ui_element()) return;
 
     if (input_state.ignore_mouse_motion)
     {   // flush mouse buffer
-        MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX].dx = 0;
-        MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX].dy = 0;
-        MOUSE_MOVEMENT_ARRAY_INDEX++;
-        MOUSE_MOVEMENT_ARRAY_INDEX %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
+        mouse_movement_array[mouse_movement_array_index].dx = 0;
+        mouse_movement_array[mouse_movement_array_index].dy = 0;
+        mouse_movement_array_index++;
+        mouse_movement_array_index %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
         return;
     }
     
@@ -401,15 +374,16 @@ void poll_mouse()
     non_zero++;
 
     dx *= -1;
-    dy *=  input_state.invert_mouse ? -1 : 1;
+    if (input_state.invert_mouse)
+        dy *= -1;
 
-    struct MOUSE_MOVEMENT m;
+    struct MouseMovement m;
 
     m.time = _GET_MS_TIME();
     m.dx = dx;
     m.dy = dy;
 
-    MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX] = m;
-    MOUSE_MOVEMENT_ARRAY_INDEX++;
-    MOUSE_MOVEMENT_ARRAY_INDEX %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
+    mouse_movement_array[mouse_movement_array_index] = m;
+    mouse_movement_array_index++;
+    mouse_movement_array_index %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
 }
