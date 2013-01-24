@@ -28,7 +28,7 @@ void create_storage(int x, int y, int z);
 void create_smelter(int x, int y, int z);
 void create_bench(int x, int y, int z);
 void create_crusher(int x, int y, int z);
-bool isGood(int x, int y, int maxx, int maxy, int maxheight, CubeType rock, CubeType regolith, CubeType steel);
+bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith);
 bool isRoad(int x, int y, int size);
 
 }   // t_gen
