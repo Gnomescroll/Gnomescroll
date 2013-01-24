@@ -1298,6 +1298,10 @@ void active_event_handler(SDL_Event* event)
     if (event->active.state & SDL_APPACTIVE)
         input_state.app_active = gained;
 
+    // force mouse position out of window
+    if (!input_state.mouse_focus)
+        HudContainer::set_mouse_position(-1, -1);
+
     if (!mouse_unlocked_for_ui_element())
     {   // only do this if container/inventory not open 
         // handle alt tab
