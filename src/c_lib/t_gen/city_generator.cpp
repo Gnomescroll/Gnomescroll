@@ -88,8 +88,8 @@ void generate_city()
     {
         subwaycounter = 1;
 
-        x = randrange(4, t_map::map_dim.x - 4);
-        y = randrange(4, t_map::map_dim.y - 4);
+        x = distribute_gaussian(0, t_map::map_dim.x - 1, 3);
+        y = distribute_gaussian(0, t_map::map_dim.y - 1, 3);
         cx = x;
         cy = y;
         printf("Generating alien city at %d, %d, %d \n", x, y, t_map::get_highest_open_block(x, y) - 1);

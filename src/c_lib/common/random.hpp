@@ -8,7 +8,7 @@ typedef float (*randFloat)();
 inline int randrange(int lower, int upper)
 {
     IF_ASSERT(lower > upper) return lower;
-    
+
     int off = 0;
     if (lower < 0)
     {
@@ -17,6 +17,26 @@ inline int randrange(int lower, int upper)
         upper -= lower;
     }
     return rand() % (upper - lower + 1) + lower + off;
+}
+
+inline int distribute_gaussian(int lower, int upper, int times)
+{
+    IF_ASSERT(lower > upper) return lower;
+
+    int off = 0;
+    int retval = rand() % (upper - lower + 1) + lower + off;
+    if (lower < 0)
+    {
+        off = lower;
+        lower -= lower;
+        upper -= lower;
+    }
+    for (int counter = 1; counter < times; counter++)
+    {
+        retval += rand() % (upper - lower + 1) + lower + off;
+        retval /= 2;
+    }
+    return retval;
 }
 
 inline float randf()
