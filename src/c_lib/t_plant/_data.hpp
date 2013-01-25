@@ -251,6 +251,6 @@ struct PlantPlacementData
 	int x,y,z;
 };
 
-struct PlantPlacementData place_placement_data;
+struct PlantPlacementData plant_placement_data;
 
 }

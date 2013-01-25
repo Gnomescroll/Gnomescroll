@@ -368,7 +368,7 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, int item_type)
     if (b[2] <= 0) return;  // can't place on nothing. it CAN be placed on top of the map for now
     if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
 
-    printf("plant_placer: %d %d %d \n", b[0],b[1],b[2]);
+    //printf("plant_placer: %d %d %d \n", b[0],b[1],b[2]);
 
     t_plant::create_plant(b[0],b[1],b[2], 0);   //make plant type variable in future
 

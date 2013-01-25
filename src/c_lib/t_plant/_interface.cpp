@@ -57,9 +57,9 @@ namespace t_plant
 	{
 		GS_ASSERT(type_id == 0);
 
-		place_placement_data.x = x;
-		place_placement_data.y = y;
-		place_placement_data.z = z;
+		plant_placement_data.x = x;
+		plant_placement_data.y = y;
+		plant_placement_data.z = z;
 
 		plant_array.element_create(type_id);
 	}
