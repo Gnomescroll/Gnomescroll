@@ -49,7 +49,7 @@ class PlantCallbacks
 		for(int i=0; i<cn; i++)
 		{
 			if(ca[i].type_id == type_id 
-				&& strcmp(ca[i].name, ca[i].name) == 0 )
+				&& strcmp(ca[i].name, callback_name) == 0 )
 			{
 				return ca[i].func_ptr;
 			}
@@ -117,6 +117,9 @@ class PlantTypeArray
 
 class PlantTypeArray plant_type_array;
 
+/*
+	Can optimize by keeping a list of indices for each type
+*/
 class PlantArray
 {
 	public:
@@ -135,23 +138,84 @@ class PlantArray
 	{
 		index = 0;
 		array = new struct PlantStruct[PLANT_ARRAY_MAX];
-		//for(int i=0; i<PLANT_ARRAY_MAX; i++)
-		//	array[i] = NULL;
+		for(int i=0; i<PLANT_ARRAY_MAX; i++)
+		{
+			array[i].type_id  = -1;
+			array[i].data_ptr = NULL;
+		}
 	}
 
 	~PlantArray()
 	{
+		for(int i=0; i<PLANT_ARRAY_MAX; i++)
+		{
+			if(i<index)
+			{
+				free(array[i].data_ptr);
+			}
+			else
+			{
+				GS_ASSERT(array[i].data_ptr == NULL);
+				GS_ASSERT(array[i].type_id  ==  -1);
+			}
 
+		}
 	}
 
-	void element_create(int type_id)
+	int element_create(int type_id)
 	{
 
+		if(index >= PLANT_ARRAY_MAX)
+		{
+			printf("Warning: PlantArray, element_creat failed, array full \n");
+			return -1;
+		}
+
+		int struct_size = plant_type_array.array[type_id].struct_size;
+		GS_ASSERT(struct_size != 0);
+
+		fptr_void init_func_ptr = plant_callbacks.get_callback(type_id, "init");
+		if(init_func_ptr == NULL)
+		{
+			GS_ASSERT(false);
+			return -1;
+		}
+
+		void* data_ptr = (char*) malloc(struct_size);
+		init_func_ptr(data_ptr);
+
+		array[index].type_id  = type_id;
+		array[index].data_ptr = data_ptr;
+
+		int id = index;
+		index++;
+		return id;
 	}
 
-	void element_delete()
+	void element_delete(int element_id)
 	{
+		GS_ASSERT(element_id >= 0 && element_id < index);
+		GS_ASSERT(index >= 0); //cannot call delete on 0 elements
+		GS_ASSERT(array[element_id].type_id != -1);
 
+		int type_id = array[element_id].type_id;
+		fptr_void teardown_func_ptr = plant_callbacks.get_callback(type_id, "teardown");
+		if(teardown_func_ptr == NULL)
+		{
+			GS_ASSERT(false);
+			return ;
+		}
+
+		void* data_ptr = array[element_id].data_ptr;
+		GS_ASSERT(data_ptr != NULL);
+		teardown_func_ptr(data_ptr);
+		free(data_ptr);
+
+		index--;
+		array[element_id] = array[index];
+
+		array[index+1].type_id  = -1;	
+		array[index+1].data_ptr = NULL;
 	}
 };
 
