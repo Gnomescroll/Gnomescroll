@@ -493,7 +493,7 @@ void light_add_block(int x, int y, int z)
 
 void _envlight_update(int x, int y, int z)
 {
-    return; //delete this line!
+
     //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     //z &= 127;
