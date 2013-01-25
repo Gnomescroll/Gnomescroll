@@ -98,16 +98,6 @@ class BlockList
 	{
 		const int bit = 512-1;
 
-		if(    ((x == ((_x-1) & bit)) || (x == ((_x+1) & bit)))
-			&& ((y == ((_y-1) & bit)) || (y == ((_y+1) & bit)))
-			&& ((z == ((_z-1) & bit)) || (z == ((_z+1) & bit)))
-			)
-		{
-			return true;
-		}
-
-
-
 		if( y == _y && z == _z && (((x == ((_x-1) & bit)) || (x == ((_x+1) & bit)))) )
 		{
 			return true;
@@ -123,30 +113,6 @@ class BlockList
 			return true;
 		}
 
-		return false;
-		
-			&& ((y == ((_y-1) & bit)) || (y == ((_y+1) & bit)))
-			&& ((z == ((_z-1) & bit)) || (z == ((_z+1) & bit)))
-			)
-		{
-			return true;
-		}
-
-
-		return false;
-
-	/*
-		if( x == (_x-1)&bit || x == (_x+1)&bit )
-		{
-			if( y == (_y-1)&bit || y == (_y+1)&bit )
-			{
-				if( z == (_z-1)&bit || z == (_z+1)&bit )
-				{
-					return true;
-				}
-			}
-		}
-	*/
 		return false;
 	}
 	//returns list indices of blocks adjccent to current block
