@@ -19,23 +19,24 @@ inline int randrange(int lower, int upper)
     return rand() % (upper - lower + 1) + lower + off;
 }
 
-inline int distribute_gaussian(int lower, int upper, int times)
+inline int distribute_gaussian(int lower, int upper, size_t precision)
 {
     IF_ASSERT(lower > upper) return lower;
+    IF_ASSERT(precision == 0) return (upper - lower) / 2;
 
     int off = 0;
-    int retval = rand() % (upper - lower + 1) + lower + off;
     if (lower < 0)
     {
         off = lower;
         lower -= lower;
         upper -= lower;
     }
-    for (int counter = 1; counter < times; counter++)
-    {
+    
+    int retval = 0;
+    for (size_t counter=0; counter<precision; counter++)
         retval += rand() % (upper - lower + 1) + lower + off;
-        retval /= 2;
-    }
+    retval /= precision;
+    
     return retval;
 }
 
