@@ -209,22 +209,23 @@ void plant_example_init(struct PlantExampleStruct &m)
 
 	//trunk
 
-	int height = 4+randf()%6;
+	int height = 4+rand()%6;
 
 	for(int i=1;i<=height; i++)
 	{
 		m.bl.add(m.x, m.y, m.z+i, plant_example_trunk, 0);
 	}
 
-	int width = 1 + randf()%4;
+	int width = 1 + rand()%4;
 
 	for(int i=-width;i<=width;i++)
 	for(int j=-width;j<=width;j++)
 	{
 		if(i==0 && j== 0)
-			continue
-
-		
+			continue;
+		if( abs(i) + abs(j) < width)
+			continue;
+		m.bl.add(m.x, m.y, m.z+i, plant_example_leaves, 0);
 	}
 }
 
@@ -311,15 +312,15 @@ void plant_example_tick(struct PlantExampleStruct &m)
 					e = t_map::get_element(x,y,z);
 
 					if(e.palette == 0)
-						t_map::broadcast_set_block_palette(x,y,z,cube_id_master, 1);
+						t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 1);
 					if(e.palette == 1) 
-						t_map::broadcast_set_block_palette(x,y,z,cube_id_master, 0);
+						t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 0);
 					if(e.palette == 2)
-						t_map::broadcast_set_block_palette(x,y,z,cube_id_master, 3);
+						t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 3);
 					if(e.palette == 3)
-						t_map::broadcast_set_block_palette(x,y,z,cube_id_master, 2);
+						t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 2);
 
-					//t_map::broadcast_set_block_palette(x,y,z,cube_id_master, (e.pallete + 1)%3; 
+					//t_map::broadcast_set_block_palette(x,y,z,plant_example_master , (e.pallete + 1)%3; 
 				}
 			}
 		}
