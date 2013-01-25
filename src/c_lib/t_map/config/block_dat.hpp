@@ -431,17 +431,46 @@ void load_block_dat()
     cube_def(SolidCube, "plant_example_master", CUBE_MATERIAL_STONE);
     set_max_damage(128);
 
+    iso_texture(    tree_00, 1, 1);
+    side_texture(T, tree_00, 2, 2);
+    side_texture(B, tree_00, 2, 2);
+    push_texture();
+
     iso_texture(    tree_00, 2, 1);
     side_texture(T, tree_00, 2, 2);
     side_texture(B, tree_00, 2, 2);
     push_texture();
+
     iso_texture(    tree_00, 3, 1);
     side_texture(T, tree_00, 3, 2);
     side_texture(B, tree_00, 3, 2);
     push_texture();
+    
     iso_texture(    tree_00, 4, 1);
     side_texture(T, tree_00, 4, 2);
     side_texture(B, tree_00, 4, 2);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_root", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 1, 2);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_trunk", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 1, 3);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_trunk_dead", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 2, 3);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_leaves", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 1, 4);
+    push_texture();
+    iso_texture(    tree_00, 2, 4);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_leaves_dead", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 3, 4);
     push_texture();
 
 

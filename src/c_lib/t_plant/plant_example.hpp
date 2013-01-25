@@ -2,6 +2,7 @@
 
 #include <t_map/_interface.hpp>
 #include <t_map/t_properties.hpp>
+#include <t_map/common/map_element.hpp>
 
 namespace t_plant
 {
@@ -179,20 +180,103 @@ void plant_example_init(struct PlantExampleStruct &m)
 	t_map::broadcast_set_block(m.x,m.y,m.z, cube_id);
 
 	//t_map::set(m.x,m.y,m.z+1s, cube_id);
-	t_map::broadcast_set_block(m.x,m.y,m.z+1, cube_id);
+	//t_map::broadcast_set_block(m.x,m.y,m.z+1, cube_id);
 
 	//t_map::set(m.x,m.y,m.z, cube_id);
-	t_map::broadcast_set_block(m.x,m.y,m.z+2, cube_id);
+	//t_map::broadcast_set_block(m.x,m.y,m.z+2, cube_id);
+	//m.bl.add(m.x, m.y, m.z+1, 0,0);
+	//m.bl.add(m.x, m.y, m.z+2, 0,0);
 
-	m.bl.add(m.x, m.y, m.z, 0, 0);
-	m.bl.add(m.x, m.y, m.z+1, 0,0);
-	m.bl.add(m.x, m.y, m.z+2, 0,0);
+	CubeType plant_example_master 		= t_map::get_cube_type("plant_example_master");
+	CubeType plant_example_root 		= t_map::get_cube_type("plant_example_root");
+	CubeType plant_example_trunk 		= t_map::get_cube_type("plant_example_trunk");
+	CubeType plant_example_trunk_dead 	= t_map::get_cube_type("plant_example_trunk_dead");
+	CubeType plant_example_leaves 		= t_map::get_cube_type("plant_example_master");
+	CubeType plant_example_leaves_dead 	= t_map::get_cube_type("plant_example_leaves_dead");
+
+	m.bl.add(m.x, m.y, m.z, plant_example_master, 0);
+
+	//roots
+	for(int i=-1;i<3; i++)
+	{
+		m.bl.add(m.x-1, m.y, m.z+i, plant_example_root, 0);
+		m.bl.add(m.x+1, m.y, m.z+i, plant_example_root, 0);
+		m.bl.add(m.x, m.y-1, m.z+i, plant_example_root, 0);
+		m.bl.add(m.x, m.y+1, m.z+i, plant_example_root, 0);
+	}
+		m.bl.add(m.x, m.y, m.z-1, plant_example_root, 0);
+		m.bl.add(m.x, m.y, m.z-2, plant_example_root, 0);
+
+	//trunk
+
+	int height = 4+randf()%6;
+
+	for(int i=1;i<=height; i++)
+	{
+		m.bl.add(m.x, m.y, m.z+i, plant_example_trunk, 0);
+	}
+
+	int width = 1 + randf()%4;
+
+	for(int i=-width;i<=width;i++)
+	for(int j=-width;j<=width;j++)
+	{
+		if(i==0 && j== 0)
+			continue
+
+		
+	}
 }
 
 void plant_example_teardown(struct PlantExampleStruct &m)
 {
 
 }
+
+/*
+    cube_def(SolidCube, "plant_example_master", CUBE_MATERIAL_STONE);
+    set_max_damage(128);
+
+    iso_texture(    tree_00, 1, 1);
+    side_texture(T, tree_00, 2, 2);
+    side_texture(B, tree_00, 2, 2);
+    push_texture();
+
+    iso_texture(    tree_00, 2, 1);
+    side_texture(T, tree_00, 2, 2);
+    side_texture(B, tree_00, 2, 2);
+    push_texture();
+
+    iso_texture(    tree_00, 3, 1);
+    side_texture(T, tree_00, 3, 2);
+    side_texture(B, tree_00, 3, 2);
+    push_texture();
+    
+    iso_texture(    tree_00, 4, 1);
+    side_texture(T, tree_00, 4, 2);
+    side_texture(B, tree_00, 4, 2);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_root", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 1, 2);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_trunk", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 1, 3);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_trunk_dead", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 2, 3);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_leaves", CUBE_MATERIAL_STONE);
+    iso_texture(    tree_00, 1, 4);
+    push_texture();
+    iso_texture(    tree_00, 2, 4);
+    push_texture();
+
+    cube_def(SolidCube, "plant_example_leaves_dead", CUBE_MATERIAL_STONE);
+*/
 
 void plant_example_tick(struct PlantExampleStruct &m)
 {
@@ -203,7 +287,12 @@ void plant_example_tick(struct PlantExampleStruct &m)
 	}
 */
 
-	CubeType cube_id_master = t_map::get_cube_type("plant_example_master");
+	static CubeType plant_example_master 		= t_map::get_cube_type("plant_example_master");
+	static CubeType plant_example_root 			= t_map::get_cube_type("plant_example_root");
+	static CubeType plant_example_trunk 		= t_map::get_cube_type("plant_example_trunk");
+	static CubeType plant_example_trunk_dead 	= t_map::get_cube_type("plant_example_trunk_dead");
+	static CubeType plant_example_leaves 		= t_map::get_cube_type("plant_example_master");
+	static CubeType plant_example_leaves_dead 	= t_map::get_cube_type("plant_example_leaves_dead");
 
 	if(m.counter % 15 == 0)
 	{
@@ -214,11 +303,23 @@ void plant_example_tick(struct PlantExampleStruct &m)
 			int y = m.bl.ba[i].y;
 			int z = m.bl.ba[i].z;
 
-			if(t_map::get(x,y,z) == cube_id_master)
+			if(t_map::get(x,y,z) == plant_example_master)
 			{
 				if( rand()% 10 == 0)
 				{
-					t_map::broadcast_set_block_palette(x,y,z,cube_id_master, rand()%3); 
+					struct t_map::MAP_ELEMENT e;
+					e = t_map::get_element(x,y,z);
+
+					if(e.palette == 0)
+						t_map::broadcast_set_block_palette(x,y,z,cube_id_master, 1);
+					if(e.palette == 1) 
+						t_map::broadcast_set_block_palette(x,y,z,cube_id_master, 0);
+					if(e.palette == 2)
+						t_map::broadcast_set_block_palette(x,y,z,cube_id_master, 3);
+					if(e.palette == 3)
+						t_map::broadcast_set_block_palette(x,y,z,cube_id_master, 2);
+
+					//t_map::broadcast_set_block_palette(x,y,z,cube_id_master, (e.pallete + 1)%3; 
 				}
 			}
 		}
