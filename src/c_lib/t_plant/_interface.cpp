@@ -53,11 +53,15 @@ namespace t_plant
 
 
 
-	void create_plant(int x, int y, int z, int type)
+	void create_plant(int x, int y, int z, int type_id)
 	{
-		GS_ASSERT(type == 0);
+		GS_ASSERT(type_id == 0);
 
+		place_placement_data.x = x;
+		place_placement_data.y = y;
+		place_placement_data.z = z;
 
+		plant_array.element_create(type_id);
 	}
 
 

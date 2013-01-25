@@ -243,4 +243,14 @@ void teardown_data()
 
 }
 
+/*
+	Global used when create_plant is called
+*/
+struct PlantPlacementData
+{
+	int x,y,z;
+};
+
+struct PlantPlacementData place_placement_data;
+
 }

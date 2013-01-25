@@ -354,7 +354,7 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, int item_type)
 
 void plant_placer_action(AgentID agent_id, ItemID item_id, int item_type)
 {
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_PLANT_PLACER);
     
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
@@ -369,6 +369,8 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, int item_type)
     if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
 
     printf("plant_placer: %d %d %d \n", b[0],b[1],b[2]);
+
+    t_plant::create_plant(b[0],b[1],b[2], 0);   //make plant type variable in future
 
 /*
     MechType mech_type = Item::get_mech_type(item_type);

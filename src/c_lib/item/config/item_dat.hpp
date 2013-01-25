@@ -447,11 +447,8 @@ void load_item_dat()
 
 
     item_def(IG_PLANT_PLACER, "placer_plant_example");
-    sprite_def(i0, 5,4);
-    
-    
-    //s->mech_type = t_mech::get_mech_type("placer_plant_example");
-    set_pretty_name("placer_plant_example");
+    sprite_def(i1, 7,6);
+    set_pretty_name("placer plant example");
     s->max_stack_size = 16;
 
 
