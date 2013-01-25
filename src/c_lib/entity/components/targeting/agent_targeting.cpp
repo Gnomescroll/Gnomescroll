@@ -16,13 +16,11 @@ namespace Components
 void AgentTargetingComponent::set_target(AgentID agent_id)
 {
     Agents::Agent* a = Agents::get_agent((AgentID)agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return;
+    IF_ASSERT(physics == NULL) return;
     Vec3 position = physics->get_position();
 
     Vec3 dest = a->get_position();
@@ -91,8 +89,7 @@ bool AgentTargetingComponent::move_on_surface()
     // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return false;
+    IF_ASSERT(physics == NULL) return false;
 
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
@@ -107,11 +104,9 @@ bool AgentTargetingComponent::move_on_surface()
     }
     normalize_vector(&motion_direction);
 
-    bool moved = move_along_terrain_surface(
-        physics->get_position(), motion_direction,
-        this->speed, this->max_z_diff,
-        &new_position, &new_momentum
-    );
+    bool moved = move_within_terrain_surface(physics->get_position(), motion_direction,
+                                            this->speed, this->max_z_diff,
+                                            &new_position, &new_momentum);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 

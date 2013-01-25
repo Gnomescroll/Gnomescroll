@@ -15,12 +15,10 @@ namespace Components
 
 void MotionTargetingComponent::set_target(EntityType target_type, int target_id)
 {
-    GS_ASSERT(target_type == OBJECT_AGENT);
-    if (target_type != OBJECT_AGENT) return;
+    IF_ASSERT(target_type != OBJECT_AGENT) return;
 
     Agents::Agent* a = Agents::get_agent((AgentID)target_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -78,8 +76,7 @@ void MotionTargetingComponent::choose_destination()
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return;
+    IF_ASSERT(physics == NULL) return;
 
     Vec3 position = physics->get_position();
     position.x += x;
@@ -108,18 +105,15 @@ bool MotionTargetingComponent::move_on_surface()
     // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return false;
+    IF_ASSERT(physics == NULL) return false;
 
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
     Vec3 new_momentum;
     Vec3 motion_direction = vec3_init(this->target_direction.x, this->target_direction.y, 0);
-    bool moved = move_along_terrain_surface(
-        physics->get_position(), motion_direction,
-        this->speed, this->max_z_diff,
-        &new_position, &new_momentum
-    );
+    bool moved = move_along_terrain_surface(physics->get_position(), motion_direction,
+                                            this->speed, this->max_z_diff,
+                                            &new_position, &new_momentum);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
@@ -139,8 +133,7 @@ bool MotionTargetingComponent::move_on_surface()
 #if DC_SERVER
 void MotionTargetingComponent::broadcast_target_choice()
 {
-    GS_ASSERT(this->object != NULL);
-    if (this->object == NULL) return;
+    IF_ASSERT(this->object == NULL) return;
     object_choose_motion_target_StoC msg;
     msg.id = this->object->id;
     msg.type = this->object->type;
@@ -151,8 +144,7 @@ void MotionTargetingComponent::broadcast_target_choice()
 
 void MotionTargetingComponent::broadcast_remove_target()
 {
-    GS_ASSERT(this->object != NULL);
-    if (this->object == NULL) return;
+    IF_ASSERT(this->object == NULL) return;
     object_remove_motion_target_StoC msg;
     msg.id = this->object->id;
     msg.type = this->object->type;

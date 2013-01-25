@@ -30,7 +30,7 @@ class Terrain_map* main_map = NULL;
 
 CubeType get(int x, int y, int z)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return EMPTY_CUBE;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return EMPTY_CUBE;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
@@ -64,7 +64,7 @@ void set_fast(int x, int y, int z, CubeType cube_type)
 
 struct MAP_ELEMENT get_element(int x, int y, int z)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_MAP_ELEMENT;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_MAP_ELEMENT;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
@@ -91,7 +91,8 @@ class Terrain_map* get_map()
 }
 
 void init_t_map()
-{   
+{
+    GS_ASSERT(main_map == NULL);
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
     #if DC_CLIENT
@@ -101,6 +102,7 @@ void init_t_map()
     #endif
 
     #if DC_SERVER
+    GS_ASSERT(map_history == NULL);
     map_history = new Terrain_map_subscription(MAP_WIDTH, MAP_HEIGHT);
     init_env_process();
     #endif
@@ -133,7 +135,7 @@ void end_t_map()
 
 int get_block_damage(int x, int y, int z)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -284,6 +286,26 @@ inline int get_nearest_open_block(int x, int y, int z, int n)
     }
     
     return -1;
+}
+
+inline bool is_surface_block(int x, int y, int z)
+{
+    return (t_map::get(x,y,z) == EMPTY_CUBE &&
+             t_map::get(x,y,z-1) != EMPTY_CUBE);
+}
+
+inline int get_nearest_surface_block(int x, int y, int z)
+{   // TODO -- can be optimized to reduce t_map::get calls
+    int upper = z;
+    int lower = z - 1;
+    while (lower > 0 || upper < map_dim.z)
+    {
+        if (is_surface_block(x, y, upper)) return upper;
+        if (is_surface_block(x, y, lower)) return lower;
+        lower--;
+        upper++;
+    }
+    return map_dim.z;
 }
 
 inline int get_nearest_open_block(int x, int y, int z)

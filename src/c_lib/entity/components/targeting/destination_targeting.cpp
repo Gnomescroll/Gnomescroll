@@ -23,8 +23,7 @@ void DestinationTargetingComponent::choose_destination()
 {
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return;
+    IF_ASSERT(physics == NULL) return;
 
     float x,y;
     const float r2 = this->stop_proximity * this->stop_proximity;
@@ -58,13 +57,11 @@ void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
     this->target_direction.z = 0.0f;
     if (vec3_length_squared(this->target_direction) == 0.0f)
     {
-        //GS_ASSERT(false);
         this->at_destination = true;
         this->target_direction = vec3_init(1,0,0);
         return;
     }
     normalize_vector(&this->target_direction);
-    //printf("target direction: "); vec3_print(this->target_direction);
 }
 
 // adjusts position & momentum by moving over the terrain surface
@@ -73,11 +70,9 @@ bool DestinationTargetingComponent::move_on_surface()
     // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return false;
+    IF_ASSERT(physics == NULL) return false;
 
-    GS_ASSERT(this->speed != 0.0f);
-    if (this->speed == 0.0f)
+    IF_ASSERT(this->speed == 0.0f)
     {
         physics->set_momentum(vec3_init(0,0,0));
         return false;
@@ -90,19 +85,16 @@ bool DestinationTargetingComponent::move_on_surface()
     Vec3 motion_direction = this->target_direction;
     motion_direction.z = 0.0f;
 
-    if (vec3_length_squared(motion_direction) == 0.0f)
+    IF_ASSERT(vec3_length_squared(motion_direction) == 0.0f)
     {
-        GS_ASSERT(false);
         physics->set_momentum(vec3_init(0,0,0));
         return false;
     }
     normalize_vector(&motion_direction);
 
-    bool moved = move_along_terrain_surface(
-        physics->get_position(), motion_direction,
-        this->speed, this->max_z_diff,
-        &new_position, &new_momentum
-    );
+    bool moved = move_within_terrain_surface(physics->get_position(), motion_direction,
+                                            this->speed, this->max_z_diff,
+                                            &new_position, &new_momentum);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
@@ -118,8 +110,7 @@ bool DestinationTargetingComponent::check_at_destination()
     
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL)
+    IF_ASSERT(physics == NULL)
     {
         this->at_destination = true;
         return true;

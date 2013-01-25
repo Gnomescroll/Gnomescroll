@@ -268,10 +268,80 @@ void carve_aligned_gorge_slice(int x_, int y_, int z_)
     }
 }
 
+void add_gorges(float* noise, int xnoise, int ynoise, int n_gorges)
+{
+    printf("\tgorges\n");
+    for (int i = 0; i < n_gorges; i++)
+    {
+        int x_ = randrange(0, t_map::map_dim.x - 1);
+        int y_ = randrange(0, t_map::map_dim.y - 1);
+        //CubeType ct = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
+
+        int length = 305; // randrange(30, 160);
+        int rand_idx = randrange(0, xnoise - 1);
+
+        float fx = 0;
+        float fy = 0;
+        float angle = 0;
+
+        while (length > 0) 
+        {
+            fx += sinf(angle);
+            fy += cosf(angle);
+
+            carve_aligned_gorge_slice(x_ + (int)fx, y_ + (int)fy, 6);
+            angle = noise[rand_idx + length * xnoise];  //PI / 32;
+            length--;
+        }
+    }
+}
+
+void add_trees(float* noise, int xnoise, int ynoise)
+{
+    printf("\ttrees\n");
+    static CubeType regolith = t_map::get_cube_type("regolith");
+    IF_ASSERT(!t_map::isValidCube(regolith)) return;
+    for (int x=0; x<xnoise; x++)
+    for (int y=0; y<ynoise; y++)
+    {
+        if (noise[x + y*xnoise] > tree_zone_threshold &&
+            genrand_real1() > tree_threshold)
+        {
+            int z = t_map::get_highest_solid_block(x,y);
+            if (z >= 1 && t_map::get(x,y,z) == regolith &&
+                strip_of_solid_blocks_underneath(x,y,z, 6))
+                {
+                    make_tree(x,y,z);
+                    continue;
+                }
+        }
+    }
+}
+
+void add_shrooms(float* noise, int xnoise, int ynoise)
+{
+    printf("\tshrooms\n");
+    static CubeType regolith = t_map::get_cube_type("regolith");
+    IF_ASSERT(!t_map::isValidCube(regolith)) return;
+    for (int x=0; x<xnoise; x++)
+    for (int y=0; y<ynoise; y++)
+    {
+        if (noise[x + y*xnoise] > shroom_zone_threshold &&
+            genrand_real1() > shroom_threshold)
+        {
+            int z = t_map::get_highest_solid_block(x,y);
+            if (z >= 1 && t_map::get(x,y,z) == regolith &&
+                strip_of_solid_blocks_underneath(x,y,z, 6))
+                    make_shroom(x,y,z);
+        }
+    }
+}
 
 void add_terrain_features() 
 {
     printf("Adding terrain features\n");
+
+    using t_map::map_dim;
 
     // setup cube sets
     leaves[0] = t_map::get_cube_type("leaves1");
@@ -289,10 +359,6 @@ void add_terrain_features()
     shroom_stems[0] = t_map::get_cube_type("mushroom_stem1");
     shroom_stems[1] = t_map::get_cube_type("mushroom_stem2");
 
-    // check that all cubes are legit
-    static CubeType regolith = t_map::get_cube_type("regolith");
-    IF_ASSERT(!t_map::isValidCube(regolith)) return;
-
     if (blocks_are_invalid(leaves, NUM_LEAVES)) return;
     if (blocks_are_invalid(trunks, NUM_TRUNKS)) return;
     if (blocks_are_invalid(shroom_caps, NUM_SHROOMCAPS)) return;
@@ -300,82 +366,12 @@ void add_terrain_features()
 
     // setup perlin array
     float* noise = t_gen::create_2d_noise_array(persistence, octaves,
-                                                 t_map::map_dim.x,
-                                                 t_map::map_dim.y);
+                                                 map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
-    printf("\tgorges\n");
-    float lowest = 999.9f;
-    float highest = -lowest;
-    for (int i = 0; i < t_map::map_dim.x; i++)
-    for (int j = 0; j < t_map::map_dim.y; j++)
-    {
-        float f = noise[i + j * t_map::map_dim.x];
-        if (lowest > f) lowest = f;
-        if (highest < f) highest = f;
-    }
-    printf("noise lowest: %f\n", lowest);
-    printf("noise highest: %f\n", highest);
-    
-    // make gorges
-    int num_gorges = 20;
-    for (int i = 0; i < num_gorges; i++)
-    {
-        int x_ = randrange(0, t_map::map_dim.x - 1);
-        int y_ = randrange(0, t_map::map_dim.y - 1);
-        //CubeType ct = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
-
-
-        int length = 305; // randrange(30, 160);
-        int rand_idx = randrange(0, t_map::map_dim.x - 1);
-
-        float fx = 0;
-        float fy = 0;
-        float angle = 0;
-
-        while (length > 0) 
-        {
-            fx += sinf(angle);
-            fy += cosf(angle);
-
-            carve_aligned_gorge_slice(x_ + (int)fx, y_ + (int)fy, 6);
-            //t_map::set(               x_ + (int)fx, y_ + (int)fy, 28, ct);
-
-            angle = noise[rand_idx + length * t_map::map_dim.x];  //PI / 32;
-            length--;
-        }
-    }
-
-    printf("\ttrees\n");
-    printf("\tshrooms\n");
-
-    // make groves
-    for (int x=0; x<XMAX; x++)
-    for (int y=0; y<YMAX; y++)
-    {
-        if (noise[x + y*XMAX] > tree_zone_threshold &&
-            genrand_real1() > tree_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-        {   // we're in tree land
-            int z = t_map::get_highest_solid_block(x,y);
-            if (z >= 1 && t_map::get(x,y,z) == regolith &&
-                strip_of_solid_blocks_underneath(x,y,z, 6))
-                {
-                    make_tree(x,y,z);
-                    continue;
-                }
-        }
-
-        // shrooms
-        if (noise[x + y*XMAX] > shroom_zone_threshold &&
-            genrand_real1() > shroom_threshold) // genrand_real1 uses the mersenne twister instead of whatever randf() uses
-        {   // we're in shroom land
-            int z = t_map::get_highest_solid_block(x,y);
-
-            if (z >= 1 && t_map::get(x,y,z) == regolith &&
-                strip_of_solid_blocks_underneath(x,y,z, 6))
-                    make_shroom(x,y,z);
-        }
-    }
+    //add_gorges(noise, map_dim.x, map_dim.y, 20);
+    add_trees(noise, map_dim.x, map_dim.y);
+    add_shrooms(noise, map_dim.x, map_dim.y);
 
     free(noise);
 }

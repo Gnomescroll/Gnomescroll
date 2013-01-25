@@ -34,6 +34,7 @@ inline int get_highest_solid_block(int x, int y);
 inline int get_highest_solid_block(int x, int y, int z);
 inline int get_lowest_solid_block(int x, int y);
 inline int get_solid_block_below(int x, int y, int z);
+inline int get_nearest_surface_block(int x, int y, int z);
 
 inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
 
