@@ -89,6 +89,10 @@ void load_block_dat()
     SpriteSheet cc = cube_texture_alias(MEDIA_PATH "sprites/terrain/corpusc.png");
     SpriteSheet tgm = cube_texture_alias(MEDIA_PATH "sprites/terrain/tgmtex.png");
 
+
+    //trees
+    SpriteSheet tree_00 = cube_texture_alias(MEDIA_PATH "sprites/terrain/tree_00.png", 16);
+
     // Cell: this is an example of loading a 16x16 cube sheet into the 32x32 loader
     // just put 16 as a second argument and it will work
     //SpriteSheet c16 = cube_texture_alias(MEDIA_PATH "sprites/terrain/old/cell_16x16/t08.png", 16);
@@ -418,6 +422,27 @@ void load_block_dat()
     push_texture();
     p->explosive = true;
     set_max_damage(2);
+
+/*
+    plant_example
+*/
+
+
+    cube_def(SolidCube, "plant_example_master", CUBE_MATERIAL_STONE);
+    set_max_damage(128);
+
+    iso_texture(    tree_00, 2, 1);
+    side_texture(T, tree_00, 2, 2);
+    side_texture(B, tree_00, 2, 2);
+    push_texture();
+    iso_texture(    tree_00, 3, 1);
+    side_texture(T, tree_00, 3, 2);
+    side_texture(B, tree_00, 3, 2);
+    push_texture();
+    iso_texture(    tree_00, 4, 1);
+    side_texture(T, tree_00, 4, 2);
+    side_texture(B, tree_00, 4, 2);
+    push_texture();
 
 
     end_cube_def();  // finalize
