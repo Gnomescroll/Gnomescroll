@@ -206,6 +206,10 @@ void tick()
         ServerState::check_agents_at_base();
     }
 
+    if (counter % 7  == 0)
+    {
+        t_plant::tick();
+    }
     // Meteors
     const int meteor_fall_rate = 30 * 60 * 60 * 16; // 16hrs
     const int meteor_shower_rate = 30 * 60 * 60 * 4; // 4hrs
