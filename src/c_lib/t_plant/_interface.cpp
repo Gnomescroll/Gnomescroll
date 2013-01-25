@@ -25,9 +25,10 @@ namespace t_plant
 
 	void tick()
 	{
+
 		for(int i=0; i<plant_array.index; i++)
 		{
-
+			
 		}
 
 	}
@@ -38,7 +39,7 @@ namespace t_plant
 	{
 		GS_ASSERT(type == 0);
 
-
+		
 	}
 
 

@@ -9,6 +9,7 @@ namespace t_plant
 
 /*
 	This Stores a list of function pointers by name and object type
+	- this is generic for no reason
 */
 class PlantCallbacks
 {
@@ -70,35 +71,6 @@ class PlantCallbacks
 
 class PlantCallbacks plant_callbacks;
 
-class PlantArray
-{
-	public:
-
-	struct PlantStruct
-	{
-		int type;
-		void* data_ptr;
-	};
-
-	static const int PLANT_ARRAY_MAX = 1024;
-	struct PlantStruct* array;
-	int index;
-
-	PlantArray()
-	{
-		index = 0;
-		array = new struct PlantStruct[PLANT_ARRAY_MAX];
-		//for(int i=0; i<PLANT_ARRAY_MAX; i++)
-		//	array[i] = NULL;
-	}
-
-	~PlantArray()
-	{
-
-	}
-
-
-};
 
 class PlantTypeArray
 {
@@ -119,7 +91,7 @@ class PlantTypeArray
 	{
 		//index = 0;
 		array = new struct PlantTypeStruct[PLANT_TYPE_MAX];
-		for(int i=0; i<PLANT_ARRAY_MAX; i++)
+		for(int i=0; i<PLANT_TYPE_MAX; i++)
 		{
 			array[i].struct_size = 0;
 			array[i].type_name = NULL;
@@ -133,7 +105,7 @@ class PlantTypeArray
 
 	int get_type_id(const char* type_name)
 	{
-		for(int i=0; i<PLANT_ARRAY_MAX; i++)
+		for(int i=0; i<PLANT_TYPE_MAX; i++)
 		{
 			if(strcmp(array[i].type_name, type_name) ==0)
 				return i;
@@ -145,12 +117,51 @@ class PlantTypeArray
 
 class PlantTypeArray plant_type_array;
 
-//save name array somewhere
-void register_plant_meta(int type_id, const char* plant_type_name, int struct_size)
+class PlantArray
 {
-	GS_ASSERT(type_id < PLANT_TYPE_MAX);
+	public:
+
+	struct PlantStruct
+	{
+		int type_id;
+		void* data_ptr;
+	};
+
+	static const int PLANT_ARRAY_MAX = 1024;
+	struct PlantStruct* array;
+	int index;
+
+	PlantArray()
+	{
+		index = 0;
+		array = new struct PlantStruct[PLANT_ARRAY_MAX];
+		//for(int i=0; i<PLANT_ARRAY_MAX; i++)
+		//	array[i] = NULL;
+	}
+
+	~PlantArray()
+	{
+
+	}
+
+	void element_create(int type_id)
+	{
+
+	}
+
+	void element_delete()
+	{
+
+	}
+};
+
+class PlantArray plant_array;
+
+void register_plant(int type_id, const char* plant_type_name, int struct_size)
+{
+	GS_ASSERT(type_id < plant_type_array.PLANT_TYPE_MAX);
 	plant_type_array.array[type_id].struct_size = struct_size;
-	plant_type_array.array[type_id].name = (char*) plant_type_name;
+	plant_type_array.array[type_id].type_name = (char*) plant_type_name;
 }
 
 void register_plant_function(const char* plant_name, const char* function_name, fptr_void function_ptr)
