@@ -108,7 +108,7 @@ void generate_city()
             if (cx < 0) cx = t_map::map_dim.x - CITY_RANDOMNESS * 2;
             if (cy < 0) cy = t_map::map_dim.y - CITY_RANDOMNESS * 2;
 
-                create_roads(ROAD_SIZE, steelC, cx - CITY_RANDOMNESS, cy - CITY_RANDOMNESS, cx + CITY_RANDOMNESS, cy + CITY_RANDOMNESS, rock, regolith);
+                create_roads(ROAD_SIZE, steelC, cx - CITY_RANDOMNESS / 2, cy - CITY_RANDOMNESS / 2, cx + CITY_RANDOMNESS / 2, cy + CITY_RANDOMNESS / 2, rock, regolith);
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
                 if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS, rock, regolith))
                 {
@@ -161,8 +161,8 @@ void generate_city()
             }
             if (building_randomizer == 8 && isGood(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS, rock, regolith))
             {
-                generate_bunker(cx, cy, get_highest_area_block(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS), BUNKER_SIZE, BUNKER_DEPTH, BUNKER_FLOORS, BUNKER_PARTITION_PROBABILITY, BUNKER_RANDOMNESS, gray, computer, storage, cryofreezer);
                 generate_column(cx, cy, get_highest_area_block(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS), BUNKER_SIZE, rock);
+                generate_bunker(cx, cy, get_highest_area_block(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS), BUNKER_SIZE, BUNKER_DEPTH, BUNKER_FLOORS, BUNKER_PARTITION_PROBABILITY, BUNKER_RANDOMNESS, gray, computer, storage, cryofreezer);
             }
             if (building_randomizer == 9 && isGood(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE, rock, regolith))
             {
@@ -481,70 +481,93 @@ void create_floor(int x, int y, int z, int size, CubeType gray)
 
 void create_roads(int size, CubeType steel, int minx, int miny, int maxx, int maxy, CubeType rock, CubeType regolith)
 {
+    bool endpoint_gorge=0;
     int prevheight=60;
-    int attemptcount=0;
     printf ("Generating roads from %d, %d to %d, %d\n", minx, miny, maxx, maxy);
     if(t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == rock || t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == regolith) prevheight = t_map::get_highest_open_block(minx, miny);
-    for (int i = minx; i < t_map::map_dim.x; i++)
-    for (int j = miny; j < t_map::map_dim.y; j++)
+    int mh = prevheight;
+    for (int i = minx; i <= maxx && i < t_map::map_dim.x; i++)
     {
+    if(t_map::get(i, maxy, t_map::get_highest_open_block(i, maxy) - 1) == EMPTY_CUBE) endpoint_gorge = true;
+    else endpoint_gorge = false;
+    for (int j = miny; j <= maxy && j < t_map::map_dim.y; j++)
+    {
+        if(j < miny - size * 2 && endpoint_gorge == 1) break;
         if(isRoad(j, size))
         {
-            if (t_map::get_highest_open_block(i, j) > prevheight - 3 && t_map::get_highest_open_block(i, j) < prevheight + 3)
+            if (t_map::get_highest_open_block(i, j) > prevheight - 2 && t_map::get_highest_open_block(i, j) < prevheight + 2)
             {
                 if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
                 {
                 t_map::set(i, j, t_map::get_highest_open_block(i, j), steel);
                 prevheight = t_map::get_highest_open_block(i, j);
-                attemptcount=0;
+                mh = prevheight;
                 }
             }
-            if (t_map::get_highest_open_block(i, j) <= prevheight - 3 || t_map::get_highest_open_block(i, j) >= prevheight + 3)
+            if (t_map::get_highest_open_block(i, j) <= prevheight - 2 || t_map::get_highest_open_block(i, j) >= prevheight + 2)
             {
+                if(prevheight > mh - 2 && prevheight < mh + 2)
                 if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith ||t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == EMPTY_CUBE)
                 {
                     t_map::set(i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20, steel);
                     degenerate_area(i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20 + 1, i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20 + size);
-                    attemptcount++;
-                    if(attemptcount == 60)
-                    {
-                        prevheight = t_map::get_highest_open_block(i, j);
-                    }
+                    mh = prevheight * 19 + t_map::get_highest_open_block(i, j) / 20;
+                }
+                if(prevheight <= mh - 2 || prevheight >= mh + 2)
+                if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith ||t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == EMPTY_CUBE)
+                {
+                    t_map::set(i, j, (mh * 19 + t_map::get_highest_open_block(i, j)) / 20, steel);
+                    degenerate_area(i, j, (mh * 19 + t_map::get_highest_open_block(i, j)) / 20 + 1, i, j, (mh * 19 + t_map::get_highest_open_block(i, j)) / 20 + size);
                 }
             }
         }
     }
-    prevheight = 60;
-    attemptcount = 0;
     if(t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == rock || t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == regolith) prevheight = t_map::get_highest_open_block(minx, miny);
-    for (int j = miny; j < t_map::map_dim.y; j++)
-    for (int i = minx; i < t_map::map_dim.x; i++)
+    else prevheight = 60;
+    mh = prevheight;
+    }
+    prevheight = 60;
+    if(t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == rock || t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == regolith) prevheight = t_map::get_highest_open_block(minx, miny);
+    mh = prevheight;
+    for (int j = miny; j <= maxy && j < t_map::map_dim.y; j++)
     {
+    if(t_map::get(maxx, j, t_map::get_highest_open_block(maxx, j) - 1) == EMPTY_CUBE) endpoint_gorge = true;
+    else endpoint_gorge = false;
+    for (int i = minx; i <= maxx && i < t_map::map_dim.x; i++)
+    {
+        if(i < minx - size * 2 && endpoint_gorge == 1) break;
         if(isRoad(i, size))
         {
-            if (t_map::get_highest_open_block(i, j) > prevheight - 3 && t_map::get_highest_open_block(i, j) < prevheight + 3)
+            if (t_map::get_highest_open_block(i, j) > prevheight - 2 && t_map::get_highest_open_block(i, j) < prevheight + 2)
             {
                 if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
                 {
                 t_map::set(i, j, t_map::get_highest_open_block(i, j), steel);
                 prevheight = t_map::get_highest_open_block(i, j);
-                attemptcount=0;
+                mh = prevheight;
                 }
             }
-            if (t_map::get_highest_open_block(i, j) <= prevheight - 3 || t_map::get_highest_open_block(i, j) >= prevheight + 3)
+            if (t_map::get_highest_open_block(i, j) <= prevheight - 2 || t_map::get_highest_open_block(i, j) >= prevheight + 2)
             {
+                if(prevheight > mh - 2 && prevheight < mh + 2)
                 if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith ||t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == EMPTY_CUBE)
                 {
                     t_map::set(i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20, steel);
                     degenerate_area(i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20 + 1, i, j, (prevheight * 19 + t_map::get_highest_open_block(i, j)) / 20 + size);
-                    attemptcount++;
-                    if(attemptcount == 60)
-                    {
-                        prevheight = t_map::get_highest_open_block(i, j);
-                    }
+                    mh = prevheight * 19 + t_map::get_highest_open_block(i, j) / 20;
+                }
+                if(prevheight <= mh - 2 || prevheight >= mh + 2)
+                if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith ||t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == EMPTY_CUBE)
+                {
+                    t_map::set(i, j, (mh * 19 + t_map::get_highest_open_block(i, j)) / 20, steel);
+                    degenerate_area(i, j, (mh * 19 + t_map::get_highest_open_block(i, j)) / 20 + 1, i, j, (mh * 19 + t_map::get_highest_open_block(i, j)) / 20 + size);
                 }
             }
         }
+    }
+    if(t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == rock || t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == regolith) prevheight = t_map::get_highest_open_block(minx, miny);
+    else prevheight = 60;
+    mh = prevheight;
     }
 }
 

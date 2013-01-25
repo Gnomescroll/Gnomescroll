@@ -40,7 +40,7 @@ void update_skylight(int chunk_i, int chunk_j)
         if (k < 0) return;
 
         // render gradient down from top block
-        
+
 /*
         for (int _k=0; k>=0 && _k<16; k--, _k++)
         {
@@ -210,7 +210,7 @@ void update_skylight_in(int x, int y, int z)
     if( get_skylight(x,y,z+1) == 15 )
     {
         GS_ASSERT( z+1 == main_map->get_height(x,y) );
-        
+
         /*
             BUG:
             Fails on removing block capping a column?
@@ -493,7 +493,7 @@ void light_add_block(int x, int y, int z)
 
 void _envlight_update(int x, int y, int z)
 {
-
+    return; //delete this line!
     //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     //z &= 127;
@@ -563,7 +563,7 @@ void _envlight_update(int x, int y, int z)
 
         //non-solid non-light source
         // 1> check to make sure light value is correct; not too high, or too low
-        // 2> If light value in adjacent block is 
+        // 2> If light value in adjacent block is
 
         for(int i=0; i<6; i++)
         {
@@ -577,7 +577,7 @@ void _envlight_update(int x, int y, int z)
             }
 
         #if 0
-            if( ( (_e.light >> 4) > li + 1 ) && 
+            if( ( (_e.light >> 4) > li + 1 ) &&
                 (fast_cube_properties[_e.block].solid == false ||  //this never gets triggered; solid non-light source bloks are light 0
                  fast_cube_properties[e.block].light_source == true)
                 )
@@ -601,7 +601,7 @@ void _envlight_update(int x, int y, int z)
                     return;
                 }
                 set_envlight(x,y,z, li);
-            
+
                 //proprogate
             #if 0
                 for(int j=0; j<6; j++)
@@ -624,7 +624,7 @@ void _envlight_update(int x, int y, int z)
 
         //int min = li;
 
-        //if proprogation 
+        //if proprogation
         for(int i=0; i<6; i++)
         {
             struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
@@ -660,7 +660,7 @@ void _envlight_update(int x, int y, int z)
         GS_ASSERT(max - 1 >= 0); //cannot have negative values
         if(fast_cube_properties[e.block].light_source == true)
             return;
-        
+
         //set light of current block to max -1 of sourounding blocks
         set_envlight(x,y,z, max-1);
         for(int i=0; i<6; i++)
@@ -682,17 +682,17 @@ void _envlight_update(int x, int y, int z)
     for(int i=0; i<6; i++)
     {
         //proprogate out to all blocks that are not solid
-        if(fast_cube_properties[ea[i].block].solid == false && 
+        if(fast_cube_properties[ea[i].block].solid == false &&
             ea[i].light < li-1)
         {
-        
+
         }
 
     }
 
     for(int i=0; i<6; i++)
     {
-        if(fast_cube_properties[ea[i].block].solid == false && 
+        if(fast_cube_properties[ea[i].block].solid == false &&
             ea[i].light < li-1)
         {
             set_envlight(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+0], li-1);
@@ -711,7 +711,7 @@ void _envlight_update(int x, int y, int z)
     int min = ENV_LIGHT_MIN(lia);
     int max = ENV_LIGHT_MAX(lia);
 
-    if(min < 
+    if(min <
 
     if(lia[0] < li-1) _envlight_update(x ,y , z+1);
     if(lia[1] < li-1) _envlight_update(x ,y , z-1);
@@ -738,7 +738,7 @@ void _envlight_update(int x, int y, int z)
             //GS_ASSERT(li > max -1);
         }
 
-        
+
 
         //update blocks if they are less than current light value
         //if(lia[0] < max-1) _envlight_update
@@ -840,7 +840,7 @@ void update_envlight(int chunk_i, int chunk_j)
         //skip if its not a light source
 
     /*
-        if(fast_cube_properties[e.block].light_source == false && 
+        if(fast_cube_properties[e.block].light_source == false &&
             fast_cube_attributes[e.block].light_value != 0)
         {
             GS_ASSERT(false);
@@ -848,9 +848,9 @@ void update_envlight(int chunk_i, int chunk_j)
     */
         //if(fast_cube_properties[e.block].light_source == false)
         //    continue;
-    
+
         //if(fast_cube_properties[e.block].solid == false)
-        if(fast_cube_properties[e.block].solid == false || 
+        if(fast_cube_properties[e.block].solid == false ||
             fast_cube_properties[e.block].light_source == true)
         _envlight_update(x,y,k);
 
