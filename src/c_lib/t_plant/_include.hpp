@@ -6,8 +6,10 @@
 
 #if DC_SERVER
 
-#include <t_plant/_data.hpp>
 #include <t_plant/_interface.hpp>
+
+#include <t_plant/_data.hpp>
+#include <t_plant/_interface.cpp>
 
 #include <t_plant/example_plant.hpp>
 
