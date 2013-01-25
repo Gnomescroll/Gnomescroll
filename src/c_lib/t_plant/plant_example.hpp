@@ -191,7 +191,7 @@ void plant_example_init(struct PlantExampleStruct &m)
 	CubeType plant_example_root 		= t_map::get_cube_type("plant_example_root");
 	CubeType plant_example_trunk 		= t_map::get_cube_type("plant_example_trunk");
 	CubeType plant_example_trunk_dead 	= t_map::get_cube_type("plant_example_trunk_dead");
-	CubeType plant_example_leaves 		= t_map::get_cube_type("plant_example_master");
+	CubeType plant_example_leaves 		= t_map::get_cube_type("plant_example_leaves");
 	CubeType plant_example_leaves_dead 	= t_map::get_cube_type("plant_example_leaves_dead");
 
 	m.bl.add(m.x, m.y, m.z, plant_example_master, 0);
@@ -223,9 +223,9 @@ void plant_example_init(struct PlantExampleStruct &m)
 	{
 		if(i==0 && j== 0)
 			continue;
-		if( abs(i) + abs(j) < width)
+		if( abs(i) + abs(j) <= width)
 			continue;
-		m.bl.add(m.x, m.y, m.z+i, plant_example_leaves, 0);
+		m.bl.add(m.x+i, m.y+j, m.z+height, plant_example_leaves, 0);
 	}
 }
 
@@ -292,7 +292,7 @@ void plant_example_tick(struct PlantExampleStruct &m)
 	static CubeType plant_example_root 			= t_map::get_cube_type("plant_example_root");
 	static CubeType plant_example_trunk 		= t_map::get_cube_type("plant_example_trunk");
 	static CubeType plant_example_trunk_dead 	= t_map::get_cube_type("plant_example_trunk_dead");
-	static CubeType plant_example_leaves 		= t_map::get_cube_type("plant_example_master");
+	static CubeType plant_example_leaves 		= t_map::get_cube_type("plant_example_leaves");
 	static CubeType plant_example_leaves_dead 	= t_map::get_cube_type("plant_example_leaves_dead");
 
 	if(m.counter % 15 == 0)
@@ -304,9 +304,10 @@ void plant_example_tick(struct PlantExampleStruct &m)
 			int y = m.bl.ba[i].y;
 			int z = m.bl.ba[i].z;
 
-			if(t_map::get(x,y,z) == plant_example_master)
+			CubeType current_block = t_map::get(x,y,z);
+			if(current_block == plant_example_master)
 			{
-				if( rand()% 10 == 0)
+				if( rand()% 25 == 0)
 				{
 					struct t_map::MAP_ELEMENT e;
 					e = t_map::get_element(x,y,z);
@@ -322,6 +323,28 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
 					//t_map::broadcast_set_block_palette(x,y,z,plant_example_master , (e.pallete + 1)%3; 
 				}
+			}
+
+			if(current_block == plant_example_leaves)
+			{
+				if(rand()%60 != 0)
+					continue;
+
+				struct t_map::MAP_ELEMENT e;
+				e = t_map::get_element(x,y,z);
+
+				if(e.palette == 0)
+					t_map::broadcast_set_block_palette(x,y,z,plant_example_leaves , 1);
+				if(e.palette == 1) 
+					t_map::broadcast_set_block_palette(x,y,z,plant_example_leaves , 0);
+			}
+
+			if(current_block == 0)
+			{
+				if( rand()% 30 != 0)
+					continue;
+				int block_id = m.bl.ba[i].type;
+				t_map::broadcast_set_block(x,y,z, (CubeType) block_id);
 			}
 		}
 	}
