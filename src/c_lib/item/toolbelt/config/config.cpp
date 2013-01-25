@@ -228,6 +228,10 @@ static void register_item_group_callbacks()
 
     set_group(IG_MECH_PLACER);
     c.trigger = &place_mech;
+
+    set_group(IG_PLANT_PLACER);
+    c.trigger = &plant_placer_action;
+
     #endif
 
     apply_group_settings(active_group); // finalize

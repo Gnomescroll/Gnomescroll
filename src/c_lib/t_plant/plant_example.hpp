@@ -30,17 +30,8 @@ void plant_example_teardown(struct PlantExampleStruct &m)
 
 void plant_example_tick(struct PlantExampleStruct &m)
 {
-	//printf("x,y,z= %d %d %d \n", m.x,m.y,m.z);
+
 }
 
-
-/*
-	//registering callbacks
-
-	register_plant(0, "plant_example", sizeof(struct PlantExampleStruct));
-	register_plant_function("plant_example", "init",		(fptr_void) &plant_example_init);
-	register_plant_function("plant_example", "teardown",	(fptr_void) &plant_example_teardown);
-	register_plant_function("plant_example", "tick",		(fptr_void) &plant_example_tick );
-*/
 
 }

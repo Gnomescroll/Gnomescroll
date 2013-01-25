@@ -13,7 +13,6 @@ namespace t_plant
 */
 class PlantCallbacks
 {
-
 	static const int MAX_CALLBACKS = 64;
 
 	struct PlantCallback

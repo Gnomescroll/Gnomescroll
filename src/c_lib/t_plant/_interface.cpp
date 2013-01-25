@@ -15,9 +15,6 @@ namespace t_plant
 		register_plant_function("plant_example", "init",		(fptr_void) &plant_example_init);
 		register_plant_function("plant_example", "teardown",	(fptr_void) &plant_example_teardown);
 		register_plant_function("plant_example", "tick",		(fptr_void) &plant_example_tick );
-
-
-		int element_id = plant_array.element_create(0);
 	}
 
 	void teardown()

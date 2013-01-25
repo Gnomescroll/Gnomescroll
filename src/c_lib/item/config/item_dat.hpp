@@ -445,6 +445,16 @@ void load_item_dat()
     s->recharge_rate = ONE_SECOND * 5;
     #endif
 
+
+    item_def(IG_PLANT_PLACER, "placer_plant_example");
+    sprite_def(i0, 5,4);
+    
+    
+    //s->mech_type = t_mech::get_mech_type("placer_plant_example");
+    set_pretty_name("placer_plant_example");
+    s->max_stack_size = 16;
+
+
     finish_item_def();
 }
 

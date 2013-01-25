@@ -350,6 +350,40 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, int item_type)
     Sound::broadcast_exclude_play_3d_sound("boon_crank", a->get_center(), a->client_id); 
 }
 
+// IG_PLAMT_PLACER
+
+void plant_placer_action(AgentID agent_id, ItemID item_id, int item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
+    
+    Agents::Agent* a = Agents::get_agent(agent_id);
+    IF_ASSERT(a == NULL) return;
+    
+    const int max_dist = 4.0f;
+    int b[3];
+    bool collided = a->nearest_open_block(max_dist, b);
+    if (!collided) return;
+    
+    // must be placed on solid block
+    if (b[2] <= 0) return;  // can't place on nothing. it CAN be placed on top of the map for now
+    if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
+
+    printf("plant_placer: %d %d %d \n", b[0],b[1],b[2]);
+
+/*
+    MechType mech_type = Item::get_mech_type(item_type);
+    IF_ASSERT(!isValid(mech_type)) return;
+    
+    if (!t_mech::can_place_mech(b[0],b[1],b[2], 0)) return;
+
+    //printf("place mech %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
+    bool ret = t_mech::create_mech(b[0],b[1],b[2], mech_type);
+    if (ret)
+        decrement_stack(agent_id, item_id, item_type);
+*/
+}
+
+
 #endif
 
 }    // Toolbelt
