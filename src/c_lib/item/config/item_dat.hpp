@@ -445,6 +445,13 @@ void load_item_dat()
     s->recharge_rate = ONE_SECOND * 5;
     #endif
 
+
+    item_def(IG_PLANT_PLACER, "placer_plant_example");
+    sprite_def(i1, 7,6);
+    set_pretty_name("placer plant example");
+    s->max_stack_size = 16;
+
+
     finish_item_def();
 }
 

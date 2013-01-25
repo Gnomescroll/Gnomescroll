@@ -102,6 +102,9 @@ dont_include_this_file_in_client
 /* mechanisms */
 #include <t_mech/_include.hpp>
 
+/* plants */
+#include <t_plant/_include.hpp>
+
 // ray tracing
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>
@@ -341,6 +344,8 @@ int init_c_lib(int argc, char* argv[])
     Toolbelt::init();
 
     t_mech::init();
+    t_plant::init();
+
     Agents::init();
     ServerState::init_lists();
     Particle::init_particles();
@@ -388,6 +393,8 @@ void close_c_lib()
     t_mech::teardown_properties();
     t_mech::teardown();
 
+    t_plant::teardown();
+    
     t_gen::teardown_map_generator();
     t_gen::teardown();
 

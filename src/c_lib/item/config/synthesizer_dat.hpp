@@ -59,6 +59,10 @@ void load_synthesizer()
 
     synthesizer_item_def("boon_crank", 1);
     synthesizer_item_set(1,2);
+
+    synthesizer_item_def("placer_plant_example", 1);
+    synthesizer_item_set(2,2);
+
     #endif
 }
 

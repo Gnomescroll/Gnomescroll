@@ -96,6 +96,9 @@ int get_grenade_damage(EntityType type)
         case OBJECT_DESTINATION:
         case OBJECT_NONE:
             return 0;
+        default:
+            GS_ASSERT(false);
+            return 0;
     }
 }
 

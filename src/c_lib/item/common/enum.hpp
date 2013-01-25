@@ -65,6 +65,7 @@ typedef enum
     IG_RESOURCE,    //does nothing, resources, stackable
     IG_PLACER,      //consumed to create block
     IG_MECH_PLACER, //consued to create mech
+    IG_PLANT_PLACER, //places plant objects
     IG_HITSCAN_WEAPON,
     IG_MELEE_WEAPON,
     IG_MINING_LASER,
@@ -78,7 +79,6 @@ typedef enum
     IG_AGENT_SPAWNER,
     IG_ENERGY_CORE,
     IG_SPECIAL,
-    //IG_MECH_PLACER,
 } ItemGroup;
 
 typedef enum
