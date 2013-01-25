@@ -96,7 +96,7 @@ class BlockList
 
 	static inline bool _adj(int x, int y, int z, int _x,int _y,int _z)
 	{
-		static const int bit = 512-1;
+		const int bit = 512-1;
 
 		if(    ((x == ((_x-1) & bit)) || (x == ((_x+1) & bit)))
 			&& ((y == ((_y-1) & bit)) || (y == ((_y+1) & bit)))
@@ -105,10 +105,36 @@ class BlockList
 		{
 			return true;
 		}
-		else
+
+
+
+		if( y == _y && z == _z && (((x == ((_x-1) & bit)) || (x == ((_x+1) & bit)))) )
 		{
-			return false;
+			return true;
 		}
+
+		if( x == _x && z == _z && ((y == ((_y-1) & bit)) || (y == ((_y+1) & bit))) )
+		{
+			return true;
+		}
+
+		if( x == _x && y == _y && ((z == ((_z-1) & bit)) || (z == ((_z+1) & bit))) )
+		{
+			return true;
+		}
+
+		return false;
+		
+			&& ((y == ((_y-1) & bit)) || (y == ((_y+1) & bit)))
+			&& ((z == ((_z-1) & bit)) || (z == ((_z+1) & bit)))
+			)
+		{
+			return true;
+		}
+
+
+		return false;
+
 	/*
 		if( x == (_x-1)&bit || x == (_x+1)&bit )
 		{
@@ -135,13 +161,14 @@ class BlockList
 		for(int i=0; i<ban; i++)
 		{
 
-			if(!_adj(x,y,z,ba[i].x,ba[i].y,ba[i].z))
+			if(!_adj(x,y,z, ba[i].x,ba[i].y,ba[i].z))
 				continue;
 			b_array[num] = i;
 			num++;
 		}
 		*num_results = num;
 
+		GS_ASSERT(num <= 6);
 		if(num > 0)
 			printf("adj: %d %d %d \n", x,y,z);
 		for(int i=0; i<num; i++)
@@ -211,7 +238,7 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
 	CubeType cube_id_master = t_map::get_cube_type("plant_example_master");
 
-	if(m.counter % 5 == 0)
+	if(m.counter % 15 == 0)
 	{
 
 		for(int i=0; i<m.bl.ban; i++)
@@ -222,7 +249,7 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
 			if(t_map::get(x,y,z) == cube_id_master)
 			{
-				if( rand()% 5 == 0)
+				if( rand()% 10 == 0)
 				{
 					t_map::broadcast_set_block_palette(x,y,z,cube_id_master, rand()%3); 
 				}
