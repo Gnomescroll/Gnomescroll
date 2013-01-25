@@ -9,6 +9,8 @@ namespace t_plant
 	void init()
 	{
 		init_data();
+
+
 	}
 
 	void teardown()
@@ -20,14 +22,17 @@ namespace t_plant
 	{
 		for(int i=0; i<plant_array.index; i++)
 		{
-			
+
 		}
 
 	}
 
 
+
 	void create_plant(int x, int y, int z, int type)
 	{
+		GS_ASSERT(type == 0);
+
 
 	}
 

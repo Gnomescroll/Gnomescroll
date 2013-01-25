@@ -15,7 +15,7 @@ class PlantCallbacks
 
 	struct PlantCallback
 	{
-		int type;		//type of object
+		int type_id;		//type of object
 		fptr func_ptr;	//function pointer for callback
 		char* name;		//name of callback
 	};
@@ -30,7 +30,7 @@ class PlantCallbacks
 		cn = 0;
 		for(int i=0;i<MAX_CALLBACKS;i++)
 		{
-			ca[i].type = -1;
+			ca[i].type_id = -1;
 			ca[i].func_ptr	= NULL;
 			ca[i].name  =  NULL;
 		}
@@ -41,30 +41,32 @@ class PlantCallbacks
 
 	}
 
-	fptr get_callback(int object_type, const char* callback_name)
+	fptr get_callback(int type_id, const char* callback_name)
 	{
 		for(int i=0; i<cn; i++)
 		{
-			if(ca[i].type == object_type 
+			if(ca[i].type_id == type_id 
 				&& strcmp(ca[i].name, ca[i].name) == 0 )
 			{
 				return ca[i].func_ptr;
 			}
 		}
 		GS_ASSERT(false);
-		printf("ERROR: PlantCallbacks, cannot find callback function %s for object type %d \n", callback_name, object_type);
+		printf("ERROR: PlantCallbacks, cannot find callback function %s for object type %d \n", callback_name, type_id);
 		return NULL;
 	}
 
-	void set_Callback(int object_type, const char* callback_name, fptr func_ptr)
+	void set_Callback(int type_id, const char* callback_name, fptr func_ptr)
 	{
-		ca[cn].type = object_type;
+		ca[cn].type_id = type_id;
 		ca[cn].func_ptr = func_ptr;
 		ca[cn].name = callback_name; //this might not be safe
 		cn++;
 		GS_ASSERT_ABBORT(cn < MAX_CALLBACKS);
 	}
 };
+
+class PlantCallbacks plant_callbacks;
 
 class PlantArray
 {
@@ -99,6 +101,7 @@ class PlantArray
 
 class PlantArray plant_array;
 
+void register_object(int type_id, int )
 void init_data()
 {
 
