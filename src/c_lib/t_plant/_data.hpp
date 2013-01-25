@@ -5,6 +5,8 @@ namespace t_plant
 {
 
 	typedef void (*fptr)();
+	typedef void (*fptr_void)(void*);
+
 /*
 	This Stores a list of function pointers by name and object type
 */
@@ -101,11 +103,12 @@ class PlantArray
 
 class PlantArray plant_array;
 
-void register_plant(int type_id, const char* plant_type_name, fptr init, fptr teardown, fptr tick)
+//save name array somewhere
+void register_plant(int type_id, const char* plant_type_name, fptr_void init, fptr_void teardown, fptr_void tick)
 {
-	plant_callbacks.set_callback(type_id, "init",		init);
-	plant_callbacks.set_callback(type_id, "teardown",	teardown);
-	plant_callbacks.set_callback(type_id, "tick",		tick);
+	plant_callbacks.set_callback(type_id, "init",		(fptr) init);
+	plant_callbacks.set_callback(type_id, "teardown",	(fptr) teardown);
+	plant_callbacks.set_callback(type_id, "tick",		(fptr) tick);
 }
 
 void init_data()
