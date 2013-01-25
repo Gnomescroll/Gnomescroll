@@ -4,7 +4,7 @@
 namespace t_plant
 {
 
-	typedef void (*fptr)();
+	//typedef void (*fptr)();
 	typedef void (*fptr_void)(void*);
 
 /*
@@ -18,7 +18,7 @@ class PlantCallbacks
 	struct PlantCallback
 	{
 		int type_id;		//type of object
-		fptr func_ptr;	//function pointer for callback
+		fptr_void func_ptr;	//function pointer for callback
 		char* name;		//name of callback
 	};
 
@@ -43,7 +43,7 @@ class PlantCallbacks
 
 	}
 
-	fptr get_callback(int type_id, const char* callback_name)
+	fptr_void get_callback(int type_id, const char* callback_name)
 	{
 		for(int i=0; i<cn; i++)
 		{
@@ -58,7 +58,7 @@ class PlantCallbacks
 		return NULL;
 	}
 
-	void set_callback(int type_id, const char* callback_name, fptr func_ptr)
+	void set_callback(int type_id, const char* callback_name, fptr_void func_ptr)
 	{
 		ca[cn].type_id = type_id;
 		ca[cn].func_ptr = func_ptr;
@@ -74,20 +74,20 @@ class PlantArray
 {
 	public:
 
-	struct PLANET_STRUCT
+	struct PlantStruct
 	{
 		int type;
 		void* data_ptr;
 	};
 
 	static const int PLANT_ARRAY_MAX = 1024;
-	struct PLANET_STRUCT* array;
+	struct PlantStruct* array;
 	int index;
 
 	PlantArray()
 	{
 		index = 0;
-		array = new struct PLANET_STRUCT[PLANT_ARRAY_MAX];
+		array = new struct PlantStruct[PLANT_ARRAY_MAX];
 		//for(int i=0; i<PLANT_ARRAY_MAX; i++)
 		//	array[i] = NULL;
 	}
@@ -100,15 +100,63 @@ class PlantArray
 
 };
 
+class PlantTypeArray
+{
+	public:
 
-class PlantArray plant_array;
+	struct PlantTypeStruct
+	{
+		//int type_id;
+		int struct_size;
+		char* type_name;
+	};
+
+	static const int PLANT_TYPE_MAX = 32;
+	struct PlantTypeStruct* array;
+	int index;
+
+	PlantTypeArray()
+	{
+		//index = 0;
+		array = new struct PlantTypeStruct[PLANT_TYPE_MAX];
+		for(int i=0; i<PLANT_ARRAY_MAX; i++)
+		{
+			array[i].struct_size = 0;
+			array[i].type_name = NULL;
+		}
+	}
+
+	~PlantTypeArray()
+	{
+
+	}
+
+	int get_type_id(const char* type_name)
+	{
+		for(int i=0; i<PLANT_ARRAY_MAX; i++)
+		{
+			if(strcmp(array[i].type_name, type_name) ==0)
+				return i;
+		}
+		printf("ERROR: PlantTypeArray,  get_type_id, plant %s does not exist \n", type_name);
+		GS_ABORT();
+	}
+};
+
+class PlantTypeArray plant_type_array;
 
 //save name array somewhere
-void register_plant(int type_id, const char* plant_type_name, fptr_void init, fptr_void teardown, fptr_void tick)
+void register_plant_meta(int type_id, const char* plant_type_name, int struct_size)
 {
-	plant_callbacks.set_callback(type_id, "init",		(fptr) init);
-	plant_callbacks.set_callback(type_id, "teardown",	(fptr) teardown);
-	plant_callbacks.set_callback(type_id, "tick",		(fptr) tick);
+	GS_ASSERT(type_id < PLANT_TYPE_MAX);
+	plant_type_array.array[type_id].struct_size = struct_size;
+	plant_type_array.array[type_id].name = (char*) plant_type_name;
+}
+
+void register_plant_function(const char* plant_name, const char* function_name, fptr_void function_ptr)
+{
+	int type_id = plant_type_array.get_type_id(plant_name);
+	plant_callbacks.set_callback(type_id, function_name, function_ptr);
 }
 
 void init_data()

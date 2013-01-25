@@ -11,7 +11,11 @@ namespace t_plant
 	{
 		init_data();
 
-		register_plant(0, "plant_example", &plant_example_init, &plant_example_teardown, &plant_example_tick );
+		register_plant(0, "plant_example", sizeof(struct PlantExampleStruct));
+		register_plant_function("plant_example", "init",		(fptr_void) &plant_example_init);
+		register_plant_function("plant_example", "teardown",	(fptr_void) &plant_example_teardown);
+		register_plant_function("plant_example", "tick",		(fptr_void) &plant_example_tick );
+
 	}
 
 	void teardown()
