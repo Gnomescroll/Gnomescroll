@@ -11,6 +11,6 @@
 #include <t_plant/_data.hpp>
 #include <t_plant/_interface.cpp>
 
-#include <t_plant/example_plant.hpp>
+#include <t_plant/plant_example.hpp>
 
 #endif
