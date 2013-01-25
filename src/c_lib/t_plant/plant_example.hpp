@@ -133,7 +133,7 @@ class BlockList
 			num++;
 		}
 		*num_results = num;
-
+	/*
 		GS_ASSERT(num <= 6);
 		if(num > 0)
 			printf("adj: %d %d %d \n", x,y,z);
@@ -142,6 +142,7 @@ class BlockList
 			int in = b_array[i];
 			printf("_adj: %d: %d %d %d \n", i, ba[in].x,ba[in].y,ba[in].z );
 		}
+	*/
 	}
 };
 
@@ -228,6 +229,16 @@ void plant_example_tick(struct PlantExampleStruct &m)
 	
 	for(int i=0; i<m.bl.ban; i++)
 	{
+		int x = m.bl.ba[i].x;
+		int y = m.bl.ba[i].y;
+		int z = m.bl.ba[i].z;
+
+		//etc does block exist
+		if( t_map::get(x,y,z) == 0 )
+		{
+
+		}
+
 		m.bl.adjacent_blocks(i, adj, &adjn);
 	}
 }
