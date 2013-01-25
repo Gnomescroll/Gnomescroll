@@ -1,6 +1,7 @@
 #include "_interface.hpp"
 
 #include <t_plant/_data.hpp>
+#include <t_plant/example_plant.hpp>
 
 namespace t_plant
 {
@@ -10,7 +11,7 @@ namespace t_plant
 	{
 		init_data();
 
-
+		register_plant(0, "example_plant", &plant_example_init, &plant_example_teardown, &plant_example_tick );
 	}
 
 	void teardown()

@@ -56,13 +56,13 @@ class PlantCallbacks
 		return NULL;
 	}
 
-	void set_Callback(int type_id, const char* callback_name, fptr func_ptr)
+	void set_callback(int type_id, const char* callback_name, fptr func_ptr)
 	{
 		ca[cn].type_id = type_id;
 		ca[cn].func_ptr = func_ptr;
-		ca[cn].name = callback_name; //this might not be safe
+		ca[cn].name = (char*) callback_name; //this might not be safe
 		cn++;
-		GS_ASSERT_ABBORT(cn < MAX_CALLBACKS);
+		GS_ASSERT(cn < MAX_CALLBACKS);
 	}
 };
 
@@ -101,7 +101,13 @@ class PlantArray
 
 class PlantArray plant_array;
 
-void register_object(int type_id, int )
+void register_plant(int type_id, const char* plant_type_name, fptr init, fptr teardown, fptr tick)
+{
+	plant_callbacks.set_callback(type_id, "init",		init);
+	plant_callbacks.set_callback(type_id, "teardown",	teardown);
+	plant_callbacks.set_callback(type_id, "tick",		tick);
+}
+
 void init_data()
 {
 
