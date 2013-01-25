@@ -197,7 +197,7 @@ void plant_example_init(struct PlantExampleStruct &m)
 	m.bl.add(m.x, m.y, m.z, plant_example_master, 0);
 
 	//roots
-	for(int i=-1;i<3; i++)
+	for(int i=1;i<3; i++)
 	{
 		m.bl.add(m.x-1, m.y, m.z+i, plant_example_root, 0);
 		m.bl.add(m.x+1, m.y, m.z+i, plant_example_root, 0);
@@ -218,8 +218,8 @@ void plant_example_init(struct PlantExampleStruct &m)
 
 	int width = 1 + rand()%4;
 
-	for(int i=-width;i<=width;i++)
-	for(int j=-width;j<=width;j++)
+	for(int i= -1*width;i<=width;i++)
+	for(int j= -1*width;j<=width;j++)
 	{
 		if(i==0 && j== 0)
 			continue;
@@ -344,11 +344,12 @@ void plant_example_tick(struct PlantExampleStruct &m)
 				if( rand()% 30 != 0)
 					continue;
 				int block_id = m.bl.ba[i].type;
-				t_map::broadcast_set_block(x,y,z, (CubeType) block_id);
+				if(block_id != plant_example_master)
+					t_map::broadcast_set_block(x,y,z, (CubeType) block_id);
 			}
 		}
 	}
-
+/*
 	int adj[6];	 //adjacent blocks
 	int adjn =0; //adjacent block array
 	
@@ -366,6 +367,7 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
 		m.bl.adjacent_blocks(i, adj, &adjn);
 	}
+*/
 }
 
 
