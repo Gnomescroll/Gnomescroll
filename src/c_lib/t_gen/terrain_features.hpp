@@ -24,10 +24,18 @@ const size_t NUM_TRUNKS = 3;
 const size_t NUM_SHROOMCAPS = 3; 
 const size_t NUM_SHROOMSTEMS = 2;
 
+const int _MAX_NUM = 8;
+/*
 CubeType leaves[NUM_LEAVES] = {NULL_CUBE};
 CubeType trunks[NUM_TRUNKS] = {NULL_CUBE};
 CubeType shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
 CubeType shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
+*/
+
+CubeType leaves[_MAX_NUM] = {NULL_CUBE};
+CubeType trunks[_MAX_NUM] = {NULL_CUBE};
+CubeType shroom_caps [_MAX_NUM]  = {NULL_CUBE};
+CubeType shroom_stems[_MAX_NUM] = {NULL_CUBE};
 
 const float persistence = 0.5f; // tweak
 const size_t octaves = 6;  // tweak

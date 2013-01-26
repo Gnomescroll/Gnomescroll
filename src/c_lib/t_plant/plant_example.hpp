@@ -190,9 +190,9 @@ void plant_example_init(struct PlantExampleStruct &m)
 	CubeType plant_example_master 		= t_map::get_cube_type("plant_example_master");
 	CubeType plant_example_root 		= t_map::get_cube_type("plant_example_root");
 	CubeType plant_example_trunk 		= t_map::get_cube_type("plant_example_trunk");
-	CubeType plant_example_trunk_dead 	= t_map::get_cube_type("plant_example_trunk_dead");
+	//CubeType plant_example_trunk_dead 	= t_map::get_cube_type("plant_example_trunk_dead");
 	CubeType plant_example_leaves 		= t_map::get_cube_type("plant_example_leaves");
-	CubeType plant_example_leaves_dead 	= t_map::get_cube_type("plant_example_leaves_dead");
+	//CubeType plant_example_leaves_dead 	= t_map::get_cube_type("plant_example_leaves_dead");
 
 	m.bl.add(m.x, m.y, m.z, plant_example_master, 0);
 
