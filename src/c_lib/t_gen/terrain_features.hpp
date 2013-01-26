@@ -254,63 +254,6 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num)
     return true;
 }
 
-void carve_aligned_gorge_slice(int x_, int y_, int z_)
-{
-    int port      = x_;
-    int starboard = x_;
-    int countdown_til_widening = 1;
-    int max_ups_per_width = 1; // iterations upwards
-
-    for (int z = z_; z <= t_map::map_dim.z-1; z++) 
-    {
-        for (int x = port; x < starboard + 1; x++) 
-        {
-            //fx = * starboard;
-            //fy = * starboard;
-            t_map::set(x_ + x, y_, z, EMPTY_CUBE);
-            //  t_map::set((int)tx.x, (int)tx.y, (int)tx.z, EMPTY_CUBE);
-            //  curr_angle += 0.01f;
-        }
-
-        countdown_til_widening--;
-        if (countdown_til_widening == 0)
-        {
-            countdown_til_widening = max_ups_per_width;
-            max_ups_per_width += 2; // ++ made it more like canyons
-            port--;
-            starboard++;
-        }
-    }
-}
-
-void add_gorges(float* noise, int xnoise, int ynoise, int n_gorges)
-{
-    printf("\tgorges\n");
-    for (int i = 0; i < n_gorges; i++)
-    {
-        int x_ = randrange(0, t_map::map_dim.x - 1);
-        int y_ = randrange(0, t_map::map_dim.y - 1);
-        //CubeType ct = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
-
-        int length = 305; // randrange(30, 160);
-        int rand_idx = randrange(0, xnoise - 1);
-
-        float fx = 0;
-        float fy = 0;
-        float angle = 0;
-
-        while (length > 0) 
-        {
-            fx += sinf(angle);
-            fy += cosf(angle);
-
-            carve_aligned_gorge_slice(x_ + (int)fx, y_ + (int)fy, 6);
-            angle = noise[rand_idx + length * xnoise];  //PI / 32;
-            length--;
-        }
-    }
-}
-
 void add_trees(float* noise, int xnoise, int ynoise)
 {
     printf("\ttrees\n");
@@ -348,6 +291,69 @@ void add_shrooms(float* noise, int xnoise, int ynoise)
             if (z >= 1 && t_map::get(x,y,z) == regolith &&
                 strip_of_solid_blocks_underneath(x,y,z, 6))
                     make_shroom(x,y,z);
+        }
+    }
+}
+
+void carve_angled_gorge_slice(float x_, float y_, int z_, float scale_x, float scale_y)
+{
+    float port      = x_;
+    float starboard = x_;
+    int countdown_til_widening = 1;
+    int max_ups_per_width = 1; // iterations upwards
+
+    for (int z = z_; z <= t_map::map_dim.z - 1; z++) 
+    {
+        for (int x = port; x < starboard + 1; x++) 
+        {
+            t_map::set(
+				x_ + (x * scale_x),
+				y_ + (0 * scale_y),
+				z_, EMPTY_CUBE);
+        }
+
+        countdown_til_widening--;
+        if (countdown_til_widening == 0)
+        {
+            countdown_til_widening = max_ups_per_width;
+            max_ups_per_width *= 2; //+= 2; canyons // ++ made it more like valleys
+            port--;
+            starboard++;
+        }
+    }
+}
+
+void add_gorges(float* noise, int n_gorges)
+{
+    using t_map::map_dim;
+    printf("\tgorges\n");
+
+    for (int i = 0; i < n_gorges; i++)
+    {
+        int x = randrange(0, map_dim.x - 1);
+        int y = randrange(0, map_dim.y - 1);
+        //CubeType ct = shroom_caps[randrange(0, NUM_SHROOMCAPS - 1)];
+
+        int length = 305; // randrange(30, 160);
+        int rand_idx = randrange(0, map_dim.x - 1);
+
+        float scale_x = 0;
+        float scale_y = 0;
+        float fx = 0;
+        float fy = 0;
+        float angle = 0;
+
+        while (length > 0) 
+        {
+            angle = noise[rand_idx + length * map_dim.x];
+
+            scale_x = sinf(angle);
+            scale_y = cosf(angle);
+            carve_angled_gorge_slice(x + fx, y + fy, 6,	scale_x, scale_y);
+
+			fx += scale_x;
+            fy += scale_y;
+            length--;
         }
     }
 }
@@ -390,11 +396,10 @@ void add_terrain_features()
     if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS)) return;
 
     // setup perlin array
-    float* noise = t_gen::create_2d_noise_array(persistence, octaves,
-                                                 map_dim.x, map_dim.y);
+    float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
-    //add_gorges(noise, map_dim.x, map_dim.y, 20);
+    add_gorges(noise, 10);
     add_trees(noise, map_dim.x, map_dim.y);
     add_shrooms(noise, map_dim.x, map_dim.y);
 
