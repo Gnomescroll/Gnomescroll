@@ -24,7 +24,7 @@ const size_t NUM_TRUNKS = 3;
 const size_t NUM_SHROOMCAPS = 3; 
 const size_t NUM_SHROOMSTEMS = 2;
 
-const int _MAX_NUM = 8;
+//const int _MAX_NUM = 8;
 /*
 CubeType leaves[NUM_LEAVES] = {NULL_CUBE};
 CubeType trunks[NUM_TRUNKS] = {NULL_CUBE};
@@ -32,10 +32,17 @@ CubeType shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
 CubeType shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
 */
 
+/*
 CubeType leaves[_MAX_NUM] = {NULL_CUBE};
 CubeType trunks[_MAX_NUM] = {NULL_CUBE};
 CubeType shroom_caps [_MAX_NUM]  = {NULL_CUBE};
 CubeType shroom_stems[_MAX_NUM] = {NULL_CUBE};
+*/
+
+CubeType* leaves = NULL;
+CubeType* trunks = NULL;
+CubeType* shroom_caps = NULL;
+CubeType* shroom_stems = NULL;
 
 const float persistence = 0.5f; // tweak
 const size_t octaves = 6;  // tweak
@@ -350,6 +357,16 @@ void add_terrain_features()
     printf("Adding terrain features\n");
 
     using t_map::map_dim;
+    /*
+    CubeType leaves[NUM_LEAVES] = {NULL_CUBE};
+    CubeType trunks[NUM_TRUNKS] = {NULL_CUBE};
+    CubeType shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
+    CubeType shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
+    */
+    leaves = new CubeType[NUM_LEAVES];
+    trunks = new CubeType[NUM_TRUNKS];
+    shroom_caps = new CubeType[NUM_SHROOMCAPS];
+    shroom_stems = new CubeType[NUM_SHROOMSTEMS];
 
     // setup cube sets
     leaves[0] = t_map::get_cube_type("leaves1");
@@ -382,6 +399,11 @@ void add_terrain_features()
     add_shrooms(noise, map_dim.x, map_dim.y);
 
     free(noise);
+
+    delete[] leaves;
+    delete[] trunks;
+    delete[] shroom_caps;
+    delete[] shroom_stems;
 }
     
 }   // t_gen
