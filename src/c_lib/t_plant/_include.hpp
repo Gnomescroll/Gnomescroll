@@ -1,16 +1,11 @@
 #pragma once
 
 #ifdef DC_CLIENT
- ERRORR WTWFSDFSDFS
+dont_include_this_file_in_client
 #endif
 
-#if DC_SERVER
-
 #include <t_plant/_interface.hpp>
-
 #include <t_plant/_data.hpp>
 #include <t_plant/_interface.cpp>
 
 #include <t_plant/plant_example.hpp>
-
-#endif

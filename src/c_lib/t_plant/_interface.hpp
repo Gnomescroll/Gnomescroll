@@ -21,10 +21,11 @@ void update_tool();
 
 namespace t_plant
 {
-	void init();
-	void teardown();
-	void tick();
+    void init();
+    void teardown();
+    void tick();
 
 
-	void create_plant(int x, int y, int z, int type);
-}
+    void create_plant(int x, int y, int z, int type);
+}   // t_plant
+
