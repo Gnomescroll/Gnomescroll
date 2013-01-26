@@ -104,12 +104,14 @@ class LightTextureGenerator
 		struct Vec3 b = vec3_init(1.0, 1.0, 1.0);	//white light
 		struct Vec3 a = vec3_init(1.6, 0.4, 0.4);	//gamma danger twist
 
-		if(i<=12)
+		if(i<=11)
 			return b;
+		if(i==12)
+			return  vec3_add(vec3_scalar_mult(a, 0.4),  vec3_scalar_mult(b, 0.6));
 		if(i==13)
-			return  vec3_add(vec3_scalar_mult(a, 0.3),  vec3_scalar_mult(b, 0.7));
+			return  vec3_add(vec3_scalar_mult(a, 0.6),  vec3_scalar_mult(b, 0.4));
 		if(i==14)
-			return  vec3_add(vec3_scalar_mult(a, 0.7),  vec3_scalar_mult(b, 0.3));
+			return  vec3_add(vec3_scalar_mult(a, 0.8),  vec3_scalar_mult(b, 0.2));
 		if(i==15)
 			return  vec3_add(vec3_scalar_mult(a, 1.0),  vec3_scalar_mult(b, 0.0));
 
