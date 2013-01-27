@@ -46,7 +46,7 @@ class PlayerAgent
         //class AgentState s;   use s1              //client side predicted from control state
         class AgentState c;                 //client side prediction with interpolation
         class AgentState state_snapshot;    //last snapshot from server
-        //camera update functions   
+        //camera update functions
         void update_client_side_prediction_interpolated();
         //camera mode
         int camera_mode;
@@ -100,7 +100,7 @@ class PlayerAgent
 
         bool facing_block(int pos[3]);
         int facing_container(); // returns container_id
-        
+
         void update_sound();
 
         bool nearest_open_block(const float max_dist, int open_point[3]);
@@ -110,7 +110,7 @@ class PlayerAgent
         #if !PRODUCTION
         void teleport_to(struct Vec3 p);
         #endif
-        
+
         PlayerAgent();
         ~PlayerAgent();
 };

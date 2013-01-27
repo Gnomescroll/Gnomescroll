@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-	This class 
+	This class
 */
 
 class ConfigFileLoader
@@ -11,8 +11,8 @@ class ConfigFileLoader
 	typedef enum
 	{
 	    CONFIG_TYPE_NONE = 0,
-	    CONFIG_TYPE_FLOAT, 
-	    CONFIG_TYPE_INT, 
+	    CONFIG_TYPE_FLOAT,
+	    CONFIG_TYPE_INT,
 	   	CONFIG_TYPE_COLOR,
 
 	} CONFIG_TYPE;
@@ -107,7 +107,7 @@ class ConfigFileLoader
 				if(ret != 2 )
 				{
 					printf("ConfigFileLoader CONFIG_TYPE_FLOAT input_line error: %s \n", input_line);
-					printf("ConfigFileLoader CONFIG_TYPE_FLOAT proces_line: var_name= %s ret= %i value= %f \n", 
+					printf("ConfigFileLoader CONFIG_TYPE_FLOAT proces_line: var_name= %s ret= %i value= %f \n",
 					var_name, ret, value_float);
 					break;
 				}
@@ -124,7 +124,7 @@ class ConfigFileLoader
 				if(ret != 2 )
 				{
 					printf("ConfigFileLoader CONFIG_TYPE_INT input_line error: %s \n", input_line);
-					printf("ConfigFileLoader CONFIG_TYPE_INT proces_line: var_name= %s ret= %d value= %d \n", 
+					printf("ConfigFileLoader CONFIG_TYPE_INT proces_line: var_name= %s ret= %d value= %d \n",
 					var_name, ret, value_int);
 					break;
 				}
@@ -141,8 +141,8 @@ class ConfigFileLoader
 				if(ret != 5 )
 				{
 					printf("ConfigFileLoader CONFIG_TYPE_COLOR input_line error: %s \n", input_line);
-					printf("ConfigFileLoader CONFIG_TYPE_COLOR proces_line: var_name= %s ret= %d value= %d %d %d %d \n", 
-					var_name, ret, 
+					printf("ConfigFileLoader CONFIG_TYPE_COLOR proces_line: var_name= %s ret= %d value= %d %d %d %d \n",
+					var_name, ret,
 					value_r,value_g,value_b,value_a);
 					break;
 				}
@@ -167,7 +167,7 @@ class ConfigFileLoader
 		delete[] var_name;
 		delete[] rest;
 		//printf("input_line: %s \n", input_line);
-		//printf("proces_line: var_name= %s ret= %i read= %i value= %f \n", 
+		//printf("proces_line: var_name= %s ret= %i read= %i value= %f \n",
 		//	var_name, ret, read, value);
 
 	}
@@ -198,7 +198,7 @@ class ConfigFileLoader
 				continue;
 			}
 
-			for(int i=0; i<1024; i++) 
+			for(int i=0; i<1024; i++)
 				tmp_str[i] = 0x00;
 			memcpy(tmp_str, buffer+offset, marker - offset);
 			tmp_str[marker - offset] = 0x00;

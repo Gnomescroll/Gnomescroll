@@ -42,7 +42,7 @@ class FrameGraph
         index = 0;
         pixel_column = 0;
 
-        for(int i=0; i<128; i++) 
+        for(int i=0; i<128; i++)
         for(int j=0; j<STAGES; j++)
         {
             timer[i][j] = 0;
@@ -112,7 +112,7 @@ class FrameGraph
         long _time = _GET_MS_TIME();
 
         timer[index][n] = _time;
-        
+
         //Sample input every 1ms during wait!!
 
         #if 0
@@ -155,7 +155,7 @@ class FrameGraph
 
         for(int i=0; i< STAGES-1; i++)
         {
-            t[i] = (int) (timer[index][i+1] - timer[index][i]); 
+            t[i] = (int) (timer[index][i+1] - timer[index][i]);
             if(t[i] < 0) printf("frame_graph timer: WTF temporal error on index %i \n", i);
             //if(t[i] == 1) t[i] = 0;
             if(t[i] == 0) t[i] = 1;

@@ -22,14 +22,14 @@ class NetPeerManager
         bool waiting_for_auth;
         bool authorized;
         bool deserialized;
-        
+
         time_t connection_time;
 
         // auth stuff
         time_t auth_expiration;
         char username[PLAYER_NAME_MAX_LENGTH+1];
         UserID user_id;
-        
+
         int auth_attempts;
 
         int clock_time_tick;
@@ -47,7 +47,7 @@ class NetPeerManager
     #else
     void was_deserialized();
     #endif
-    
+
     void broadcast_disconnect();
 
     void init(ClientID client_id);

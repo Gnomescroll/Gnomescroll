@@ -22,7 +22,7 @@ class Shader
     unsigned int vert_shader;
 
     bool DEBUG1;
-    
+
     char* name; //shader name
 
     int attribute_array[16]; //atribute list
@@ -41,7 +41,7 @@ class Shader
         shader = 0;
         frag_shader = 0;
         vert_shader = 0;
-        
+
         DEBUG1 = true;
         this->name = NULL;
 
@@ -160,7 +160,7 @@ class Shader
     }
 
 
-    void enable_attributes()  
+    void enable_attributes()
     {
         GS_ASSERT(shader_valid == true);
         glUseProgramObjectARB(this->shader);

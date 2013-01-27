@@ -16,13 +16,13 @@ struct Vec4 {
     union
     {
         float f[4];
-        struct 
+        struct
         {
             float x,y,z,w;
         };
-        struct 
+        struct
         {
-            Vec3 v3;    
+            Vec3 v3;
         };
     };
 };

@@ -11,12 +11,12 @@ class Entity;
 class EntityDataList
 {
     private:
-        // keep track of component type buffers for 
+        // keep track of component type buffers for
         ComponentInterfaceType** interface_types;
         ComponentType** component_types;
         int* expected_component_sizes;
         int* component_sizes;
-        
+
     public:
 
         void set_components(EntityType type, int n_components);

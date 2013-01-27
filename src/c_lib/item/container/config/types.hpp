@@ -23,7 +23,7 @@ class ContainerAttributes
 {
     public:
         ItemContainerType type;
-        
+
         bool loaded;
 
         char name[DAT_NAME_MAX_LENGTH+1];
@@ -37,7 +37,7 @@ class ContainerAttributes
         decision_tree beta_action;
         send_decision alpha_packet;
         send_decision beta_packet;
-        
+
         // alt actions (synth purchase, craft output etc)
         decision_tree alpha_action_alt;
         decision_tree beta_action_alt;
@@ -70,12 +70,12 @@ class ContainerAttributes
     {
         return this->xdim * this->ydim;
     }
-    
+
     int max_alt_dim()
     {
         return this->alt_xdim * this->alt_ydim;
     }
-    
+
     virtual ~ContainerAttributes()
     {
     }
@@ -94,7 +94,7 @@ class ContainerAttributes
         this->ydim = 0;
         this->alt_xdim = 0;
         this->alt_ydim = 0;
-        this->attached_to_agent = false;        
+        this->attached_to_agent = false;
         this->alpha_action = NULL;
         this->beta_action = NULL;
         this->alpha_packet = NULL;
@@ -103,5 +103,5 @@ class ContainerAttributes
         this->beta_action_alt = NULL;
         this->alpha_packet_alt = NULL;
         this->beta_packet_alt = NULL;
-    }  
+    }
 };

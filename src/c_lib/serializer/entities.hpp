@@ -19,7 +19,7 @@ class ParsedEntityFileData
         this->version = 0;
         this->entity_count = 0;
     }
-    
+
     ParsedEntityFileData()
     {
         this->reset();
@@ -40,7 +40,7 @@ class ParsedEntityData
         this->entity_id = -1;
         this->valid = false;
     }
-    
+
     ParsedEntityData()
     {
         this->reset();
@@ -48,9 +48,9 @@ class ParsedEntityData
 };
 
 class ParsedAgentSpawnerData
-{    
+{
     public:
-    
+
         struct MapPosition position;
         size_t user_count;
         size_t added_users;

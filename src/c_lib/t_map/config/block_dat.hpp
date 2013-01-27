@@ -445,7 +445,7 @@ void load_block_dat()
     side_texture(T, tree_00, 3, 2);
     side_texture(B, tree_00, 3, 2);
     push_texture();
-    
+
     iso_texture(    tree_00, 4, 1);
     side_texture(T, tree_00, 4, 2);
     side_texture(B, tree_00, 4, 2);

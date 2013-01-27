@@ -5,7 +5,7 @@
 
 namespace Log
 {
-    
+
 typedef enum
 {
     GENERIC = 0,

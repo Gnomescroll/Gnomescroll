@@ -17,7 +17,7 @@ class CacheUI : public AgentInventoryUI
         GS_ASSERT(this->stack_numbers == NULL);
         GS_ASSERT(this->container_type != NULL_CONTAINER_TYPE);
         GS_ASSERT(this->container_type == ItemContainer::name::premium_cache);
-        
+
         this->xdim = ItemContainer::get_container_xdim(this->container_type);
         this->ydim = ItemContainer::get_container_ydim(this->container_type);
 

@@ -15,7 +15,7 @@ namespace Chat
 
 void init_packets();
 
-#if DC_CLIENT    
+#if DC_CLIENT
 extern class ChatMessageList* chat_message_list;
 extern class ChatClient* chat_client;
 extern class ChatSystemMessage* system_message;

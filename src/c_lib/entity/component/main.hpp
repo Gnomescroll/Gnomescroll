@@ -15,7 +15,7 @@ namespace Components
  * If creating new interface, add interface type
  * typedef list from template, declare extern, intern and alloc/free
  * Add subscribe/unsubscribe to switches
- * 
+ *
  */
 
 /* ComponentList declarations */

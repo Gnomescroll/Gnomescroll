@@ -12,7 +12,7 @@ class EntityAttributes
 {
     public:
         bool loaded;
-        
+
         EntityType type;
         char name[DAT_NAME_MAX_LENGTH+1];
 
@@ -24,7 +24,7 @@ class EntityAttributes
         //class CreatePacketDelegate* create;
         //class StatePacketDelegate* state;
 
-        //// Component Properties: 
+        //// Component Properties:
 
         //// dimension
         //float dim_height;

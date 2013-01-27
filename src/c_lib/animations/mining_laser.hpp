@@ -11,7 +11,7 @@ dont_include_this_file_in_server
 #include <SDL/texture_loader.hpp>
 #include <camera/camera.hpp>
 
-namespace Animations 
+namespace Animations
 {
 
 VertexElementList1* mining_laser_vlist = NULL;
@@ -56,7 +56,7 @@ void init_mining_laser_shader()
     mining_laser_shader.load_shader( "mining shader",
         "./media/shaders/weapon/mining_laser.vsh",
         "./media/shaders/weapon/mining_laser.fsh" );
-    
+
     mining_laser_TexCoord = mining_laser_shader.get_attribute("InTexCoord");
 }
 
@@ -75,7 +75,7 @@ class MiningLaser
         int type;
 
         int ttl;
-        
+
     void reset()
     {
         this->verlet.dampening = MINING_LASER_DAMPENING;
@@ -86,7 +86,7 @@ class MiningLaser
     {
         this->type = (row_index*4)+(randrange(0,3));
     }
-        
+
     inline void set_state(float x, float y, float z, float mx, float my, float mz, const float speed, const float length)
     {
         verlet.position = vec3_init(x,y,z);
@@ -155,7 +155,7 @@ class MiningLaser
 
 #include <common/template/object_list.hpp>
 
-namespace Animations 
+namespace Animations
 {
 
 const int MINING_LASER_MAX = 1024;
@@ -181,7 +181,7 @@ void MiningLaserEffectList::prep()
 {
     GS_ASSERT(mining_laser_vlist != NULL);
     if (mining_laser_vlist == NULL) return;
-    
+
     for (unsigned int i=0; i<this->num; i++)
         this->a[i].prep();
 
@@ -193,7 +193,7 @@ void MiningLaserEffectList::draw()
 {
     GS_ASSERT(mining_laser_vlist != NULL);
     if (mining_laser_vlist == NULL) return;
-    
+
     if (!mining_laser_shader.shader_valid) return;
 
     if(mining_laser_vlist->vertex_number == 0) return;

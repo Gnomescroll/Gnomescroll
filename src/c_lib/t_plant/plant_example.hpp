@@ -10,7 +10,7 @@ namespace t_plant
 class BlockList
 {
     public:
-    
+
     //CubeType bl[16]; //block lookup
 
     enum
@@ -252,7 +252,7 @@ void plant_example_teardown(struct PlantExampleStruct &m)
     side_texture(T, tree_00, 3, 2);
     side_texture(B, tree_00, 3, 2);
     push_texture();
-    
+
     iso_texture(    tree_00, 4, 1);
     side_texture(T, tree_00, 4, 2);
     side_texture(B, tree_00, 4, 2);
@@ -314,14 +314,14 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
                     if(e.palette == 0)
                         t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 1);
-                    if(e.palette == 1) 
+                    if(e.palette == 1)
                         t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 0);
                     if(e.palette == 2)
                         t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 3);
                     if(e.palette == 3)
                         t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 2);
 
-                    //t_map::broadcast_set_block_palette(x,y,z,plant_example_master , (e.pallete + 1)%3; 
+                    //t_map::broadcast_set_block_palette(x,y,z,plant_example_master , (e.pallete + 1)%3;
                 }
             }
 
@@ -335,7 +335,7 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
                 if(e.palette == 0)
                     t_map::broadcast_set_block_palette(x,y,z,plant_example_leaves , 1);
-                if(e.palette == 1) 
+                if(e.palette == 1)
                     t_map::broadcast_set_block_palette(x,y,z,plant_example_leaves , 0);
             }
 
@@ -352,7 +352,7 @@ void plant_example_tick(struct PlantExampleStruct &m)
 /*
     int adj[6];  //adjacent blocks
     int adjn =0; //adjacent block array
-    
+
     for(int i=0; i<m.bl.ban; i++)
     {
         int x = m.bl.ba[i].x;

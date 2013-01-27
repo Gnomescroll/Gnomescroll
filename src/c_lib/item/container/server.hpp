@@ -60,7 +60,7 @@ void send_container_insert(ClientID client_id, ItemID item_id, ItemContainerID c
 }
 
 void send_container_remove(ClientID client_id, ItemContainerID container_id, int slot)
-{    
+{
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     IF_ASSERT(slot == NULL_SLOT) return;
     remove_item_from_container_StoC msg;

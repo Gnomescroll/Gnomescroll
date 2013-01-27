@@ -26,13 +26,13 @@ class container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<con
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -61,13 +61,13 @@ class container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<cont
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -96,13 +96,13 @@ class synthesizer_container_action_alpha_CtoS: public FixedSizeReliableNetPacket
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -131,13 +131,13 @@ class synthesizer_container_action_beta_CtoS: public FixedSizeReliableNetPacketT
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -155,7 +155,7 @@ class purchase_item_from_synthesizer_action_CtoS: public FixedSizeReliableNetPac
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
         }
@@ -184,13 +184,13 @@ class craft_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServ
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -219,13 +219,13 @@ class craft_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServe
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -244,7 +244,7 @@ class craft_item_from_bench_action_CtoS: public FixedSizeReliableNetPacketToServ
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
         }
@@ -267,7 +267,7 @@ class no_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<
             pack_u8(&action, buff, buff_n, pack);
 
             pack_u8(&hand_type, buff, buff_n, pack);
-            pack_u8(&hand_stack, buff, buff_n, pack);            
+            pack_u8(&hand_stack, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -286,7 +286,7 @@ class no_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<n
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -315,13 +315,13 @@ class smelter_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToSe
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -350,13 +350,13 @@ class smelter_container_action_beta_CtoS: public FixedSizeReliableNetPacketToSer
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -385,13 +385,13 @@ class crusher_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToSe
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }
@@ -420,13 +420,13 @@ class crusher_container_action_beta_CtoS: public FixedSizeReliableNetPacketToSer
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
-            
+
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
 
             pack_u8(&slot_type, buff, buff_n, pack);
             pack_u8(&slot_stack, buff, buff_n, pack);
-            
+
             pack_u8(&hand_type, buff, buff_n, pack);
             pack_u8(&hand_stack, buff, buff_n, pack);
         }

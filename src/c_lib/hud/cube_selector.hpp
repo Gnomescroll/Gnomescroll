@@ -23,7 +23,7 @@ class CubeSelector
             CubeType cube_type;
             int tex_id;
         };
-        
+
         struct CubeSelectElement* cubes;
 
         void set_position(float x, float y);

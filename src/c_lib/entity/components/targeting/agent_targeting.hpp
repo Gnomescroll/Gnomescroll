@@ -30,9 +30,9 @@ class AgentTargetingComponent: public TargetingComponent
     bool move_on_surface();
 
     void call();
-    
+
     virtual ~AgentTargetingComponent() {}
-    
+
     AgentTargetingComponent() :
         TargetingComponent(COMPONENT_AGENT_TARGETING),
         speed(1.0f), max_z_diff(128),

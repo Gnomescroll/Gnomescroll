@@ -17,7 +17,7 @@ class Session
         ClientID client_id;
         int user_id;
         char* username;
-        
+
         time_t login_time;
         time_t logout_time;
 
@@ -30,7 +30,7 @@ class Session
     void login()
     {
         GS_ASSERT(this->client_id >= 0);
-        this->login_time = utc_now();        
+        this->login_time = utc_now();
         printf("Session began at %ld\n", this->login_time);
     }
 
@@ -48,12 +48,12 @@ class Session
     void print(FILE* f)
     {
         if (f == NULL) f = stdout;
-        
+
         fprintf(f, "Session %04d; ", this->id);
 
         // version
         fprintf(f, "Version %04d; ", this->version);
-        
+
         // time
         fprintf(f, "%05d seconds; ", (int)difftime(this->logout_time, this->login_time));
 
@@ -73,7 +73,7 @@ class Session
             fprintf(f, "username was not set");
         else
             fprintf(f, "username: %s", this->username);
-        
+
         // was killed
         if (this->killed)
             fprintf(f, "; NOTE: Was forcibly disconnected");
@@ -143,7 +143,7 @@ class User
         }
         return NULL;
     }
-        
+
     User(uint32_t ip_addr) :
         max_sessions(USER_INITIAL_MAX_SESSIONS), n_sessions(0),
         ip_addr(ip_addr)
@@ -160,7 +160,7 @@ class User
                 delete sessions[i];
             free(sessions);
         }
-    }    
+    }
 };
 
 class UserRecorder
@@ -173,7 +173,7 @@ class UserRecorder
             this->users = (class User**)realloc(this->users, sizeof(class User*) * this->max_users);
             for (int i=this->n_users; i<this->max_users; this->users[i++] = NULL);
         }
-        
+
     public:
         class User** users;
         int n_users;
@@ -244,7 +244,7 @@ class UserRecorder
         IF_ASSERT(!session->is_active()) return;
         session->set_name(username);
     }
-    
+
     void record_client_force_disconnect(ClientID client_id)
     {
         class Session* session = get_active_session_for_client(client_id);

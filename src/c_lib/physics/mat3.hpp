@@ -21,7 +21,7 @@ struct Mat3
 
         struct Vec3 v[3];
 
-        struct 
+        struct
         {
             struct Vec3 vx;
             struct Vec3 vy;
@@ -32,7 +32,7 @@ struct Mat3
 
 ALWAYS_INLINE
 struct Mat3 mat3_euler_rotation(float x, float y, float z)
-{   
+{
     x *= PI;
     y *= PI;
     z *= PI;
@@ -43,16 +43,16 @@ struct Mat3 mat3_euler_rotation(float x, float y, float z)
     double sy = sin(y);
     double cz = cos(z);
     double sz = sin(z);
-    
+
     struct Mat3 m;
 
-    m.v[0].x = (float)(cy*cx); 
+    m.v[0].x = (float)(cy*cx);
     m.v[0].y = (float)(cy*sx);
     m.v[0].z = (float)(-sy);
 
     double szsy = sz*sy;
     double czsy = cz*sy;
-    
+
     m.v[1].x = (float)(szsy*cx-cz*sx);
     m.v[1].y = (float)(szsy*sx+cz*cx);
     m.v[1].z = (float)(sz*cy);
@@ -66,11 +66,11 @@ struct Mat3 mat3_euler_rotation(float x, float y, float z)
 
 ALWAYS_INLINE
 struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat3 m)
-{   
+{
     struct Vec3 u;
 
-    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
-    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x,
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y,
     u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
 
     return u;
@@ -78,11 +78,11 @@ struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat3 m)
 
 ALWAYS_INLINE
 struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat3 m)
-{   
+{
     struct Vec4 u;
 
-    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
-    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x,
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y,
     u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
     u.w = 0;
 

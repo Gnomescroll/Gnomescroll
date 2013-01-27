@@ -11,7 +11,7 @@ class AgentList: public ObjectList<class Agent, AgentID>
 {
     private:
         const char* name() { return "Agent"; }
-        
+
         // quicksort helpers
         void quicksort_distance_asc(int beg, int end);
         void quicksort_distance_desc(int beg, int end);
@@ -19,10 +19,10 @@ class AgentList: public ObjectList<class Agent, AgentID>
         void swap_float(float *a, float *b);
 
         int check_name_interval;
-        
+
     public:
 
-    
+
         #if DC_SERVER
         void update_map_manager_positions();
         void send_to_client(ClientID client_id);
@@ -35,7 +35,7 @@ class AgentList: public ObjectList<class Agent, AgentID>
         void update_models();
 
         int ids_in_use[MAX_AGENTS];
-    
+
         int get_ids();
 
         // filtering
@@ -58,7 +58,7 @@ class AgentList: public ObjectList<class Agent, AgentID>
         #endif
 
         explicit AgentList(unsigned int capacity);
-        
+
         ~AgentList()
         {
             if (this->filtered_objects != NULL)

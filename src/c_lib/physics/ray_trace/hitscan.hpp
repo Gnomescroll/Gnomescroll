@@ -12,7 +12,7 @@ typedef enum {
 
 namespace Hitscan
 {
-    
+
 // for agents hitscanning strictly agents:
 AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentID firing_agent_id);
 // for mobs hitscanning strictly agents:

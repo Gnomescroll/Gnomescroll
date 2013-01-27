@@ -20,7 +20,7 @@ struct InputState
     bool full_chat;
     bool skeleton_editor;
     bool equipped_sprite_adjuster;
-    
+
     bool can_jump;
     bool confirm_quit;
     bool quit;
@@ -28,7 +28,7 @@ struct InputState
     bool ignore_mouse_motion;
     int last_mouse_button_down_event_frame;
     int last_mouse_button_up_event_frame;
-    
+
     InputStateMode input_mode;
     InputStateMode camera_mode;
 

@@ -15,14 +15,14 @@ class Char_buffer {
     char buffer[CHAR_BUFFER_SIZE];
 
     OBJECT_POOL_OBJECT_MACRO
-    
+
     Char_buffer() {}
 };
 
 class Char_buffer_pool: public Object_pool<Char_buffer, 128>  //64, 2048 byte buffers
 {
     public:
-    const char* name() { static const char x[] = "Generic Char_buffer_pool"; return x; } 
+    const char* name() { static const char x[] = "Generic Char_buffer_pool"; return x; }
 };
 
 Char_buffer_pool char_buffer_pool;
@@ -39,7 +39,7 @@ class Fifo_char_buffer
 
     Char_buffer* cb_read;
     int read_index;
-    
+
     Char_buffer* cb_write;
     int write_index;
 
@@ -92,7 +92,7 @@ class Fifo_char_buffer
         //DEBUG
         if(n > size)
         {
-          printf("Fifo_char_buffer: FATAL ERROR, n greater than size, n=%i, size=%i \n", n, size);   
+          printf("Fifo_char_buffer: FATAL ERROR, n greater than size, n=%i, size=%i \n", n, size);
           printf("segfault= %li \n", (long)((int*)NULL));
         } //debug
         //if(n == size) printf("Fifo_char_buffer: full read of buffer, n=%i, size=%i \n", n, size); //debug
@@ -109,7 +109,7 @@ class Fifo_char_buffer
             Char_buffer* tmp = cb_read;
             cb_read = cb_read->next;
             char_buffer_pool.retire(tmp);
-            
+
             read_index = 0;
 
             rb = CHAR_BUFFER_SIZE - read_index;
@@ -152,7 +152,7 @@ class Char_buffer_ref {
 class Char_buffer: public Object_pool<Char_buffer_ref, 32>  //64, 2048 byte buffers
 {
     public:
-    char* name() { static char x[] = "Generic Char_buffer_ref_pool"; return x; } 
+    char* name() { static char x[] = "Generic Char_buffer_ref_pool"; return x; }
 };
 
 Char_buffer_ref_pool char_buffer_ref_pool;
@@ -190,7 +190,7 @@ class char_buffer_inheritance_template {
 class char_buffer_ref_inheritance_template {
     public:
     int reference_count;
-      
+
 };
 
 class Char_buffer2 {
@@ -200,11 +200,11 @@ class Char_buffer2 {
     int remaining;
     char* offset;
 
-    
+
         //Entity can acquire a char buffer as long it decrements cbf reference count when its done
-    
+
     void acquire(int length, char** b, Char_buffer_ref** cbf) {
-        if(remaining < length) 
+        if(remaining < length)
         {
             current = char_buffer_ref_pool.acquire();
             current.reference_count = 0;
@@ -214,15 +214,15 @@ class Char_buffer2 {
         remaining -= length;
         offset += length;
         current->reference_count++;
-        
+
         *b = offset;
         *cbf = current;
         remaining -= length;
         offset += length;
-        current->reference_count++; 
+        current->reference_count++;
     }
 
-    Char_buffer2 
+    Char_buffer2
     {
         current = NULL;
         offset = NULL;
@@ -231,12 +231,12 @@ class Char_buffer2 {
 };
 
 
-inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb) 
+inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb)
 {
     static Net_message_buffer* current = NULL;
     static int remaining = 0;
     static char* offset = NULL;
-    if(remaining < length) 
+    if(remaining < length)
     {
         current = net_message_buffer_pool.acquire();
         remaining = NET_MESSAGE_BUFFER_SIZE;

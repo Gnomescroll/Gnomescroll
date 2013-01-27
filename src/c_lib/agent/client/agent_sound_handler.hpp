@@ -19,7 +19,7 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
     static const float SOFT_FALL_VELOCITY_THRESHOLD   = 0.07f;
     static const float MEDIUM_FALL_VELOCITY_THRESHOLD = 0.50f;
     static const float HARD_FALL_VELOCITY_THRESHOLD   = 0.75f;
-    
+
     static const float distance_per_step = 1.5f;
     static float total_distance = 0.0f;
 
@@ -78,7 +78,7 @@ void player_agent_sound_ground_movement_event(class AgentState s0,  class AgentS
 
     const size_t n_perturb_footsteps = 4;
     int perturb_footsteps[n_perturb_footsteps] = {1,2,3,4};
-    
+
     #define RANDOM_STEPS 0
     #define RANDOM_CHANGE 1
     #define RANDOM_CHANGE_PER_LOOP 1

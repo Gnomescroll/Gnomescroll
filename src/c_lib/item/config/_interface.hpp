@@ -58,13 +58,13 @@ bool item_def(ItemGroup group, const char* name)
             printf("First item MUST be the error item, with group IG_ERROR\n");
         GS_ASSERT_ABORT(group == IG_ERROR);
     }
-    
+
     if (s != NULL)
         finish_item_def();   // locks in old attribute
-        
+
     GS_ASSERT_ABORT(group != IG_NONE);
     if (group == IG_NONE) return false;
-    
+
     GS_ASSERT_ABORT(is_valid_item_name(name));
     if (!is_valid_item_name(name)) return false;
 
@@ -182,14 +182,14 @@ void sprite_def(SpriteSheet spritesheet, int ypos, int xpos)
     // can't check maximums because they are unknown
     GS_ASSERT_ABORT(xpos >= 1 && ypos >= 1);
     if (xpos < 1 || ypos < 1) return;
-        
+
     // check if we have already set this sprite
     GS_ASSERT_ABORT(s->sprite == ERROR_SPRITE);
 
     int sprite = TextureSheetLoader::blit_item_texture(spritesheet, xpos, ypos);
     GS_ASSERT_ABORT(sprite != NULL_SPRITE);
     if (sprite == NULL_SPRITE) return;
-    
+
     s->sprite = sprite;
 }
 
@@ -197,11 +197,11 @@ void iso_block_sprite_def(const char* block_name)
 {
     GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id != -1);
     if (_item_cube_iso_spritesheet_id == -1) return;
-    
+
     int cube_type = t_map::get_cube_type(block_name);
     ASSERT_VALID_CUBE_TYPE(cube_type);
     IF_INVALID_CUBE_TYPE(cube_type) return;
-    
+
     int xpos = (cube_type % 16) + 1;
     int ypos = (cube_type / 16) + 1;
     int sprite = TextureSheetLoader::blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
@@ -242,13 +242,13 @@ void set_crafting_reagent(const char* item_name, int quantity)
 {
     GS_ASSERT_ABORT(crafting_recipe_count < MAX_CRAFTING_RECIPE);
     if (crafting_recipe_count >= MAX_CRAFTING_RECIPE) return;
-    
+
     GS_ASSERT_ABORT(_cr.reagent_num < CRAFT_BENCH_INPUTS_MAX);
     if (_cr.reagent_num >= CRAFT_BENCH_INPUTS_MAX) return;
 
     int type = get_item_type(item_name);
     GS_ASSERT_ABORT(type != NULL_ITEM_TYPE);
-    
+
     // Make sure we aren't adding two types of different stack values
     // Why? our sorting methods for doing recipe matches do not sort by
     // stack values per type, so there will be undefined behaviour
@@ -271,33 +271,33 @@ void set_crafting_reagent(const char* item_name, int quantity)
             // shift forward
             for (int j=_cr.reagent_num; j>i; j--) _cr.reagent[j] = _cr.reagent[j-1];
             for (int j=_cr.reagent_num; j>i; j--) _cr.reagent_count[j] = _cr.reagent_count[j-1];
-            
+
             // insert
             _cr.reagent[i] = type;
             _cr.reagent_count[i] = quantity;
             break;
         }
-        
+
         if (i == _cr.reagent_num)
         {   // append to end
             _cr.reagent[_cr.reagent_num] = type;
             _cr.reagent_count[_cr.reagent_num] = quantity;
         }
     }
-    
+
     _cr.reagent_num++;
 }
 
 void end_crafting_recipe()
 {
     GS_ASSERT_ABORT(crafting_recipe_count < MAX_CRAFTING_RECIPE);
-    
+
     GS_ASSERT_ABORT(_cr.reagent_num > 0);
     GS_ASSERT_ABORT(_cr.output != NULL_ITEM_TYPE);
     GS_ASSERT_ABORT(_cr.output_stack >= 1);
     for (int i=0; i<_cr.reagent_num; i++)
         GS_ASSERT_ABORT(_cr.reagent[i] != NULL_ITEM_TYPE);
-    
+
     // check that adding this recipe will not increase the total outputs
     // per recipe above limit
     int matching_recipes = 0;
@@ -326,10 +326,10 @@ void end_crafting_recipe()
         // reagents matched, check products
         GS_ASSERT_ABORT(crafting_recipe_array[i].output != _cr.output);
     }
-    
+
     // check if recursive recipe (reagents == output)
     if (_cr.reagent_num == 1) GS_ASSERT_ABORT(_cr.reagent[0] != _cr.output);
-    
+
     _cr.id = crafting_recipe_count;
     crafting_recipe_array[crafting_recipe_count] = _cr;
     _cr.init();
@@ -352,7 +352,7 @@ void add_smelting_product(const char* item_name, int amount)
     GS_ASSERT_ABORT(_sr.output_num < SMELTER_OUTPUTS_MAX);
     _sr.output[_sr.output_num] = get_item_type(item_name);
     _sr.output_stack[_sr.output_num] = amount;
-    _sr.output_num++;    
+    _sr.output_num++;
 }
 
 void add_smelting_product(const char* item_name)
@@ -379,7 +379,7 @@ void set_smelting_reagent(const char* item_name, int quantity)
 
     int type = get_item_type(item_name);
     GS_ASSERT_ABORT(type != NULL_ITEM_TYPE);
-    
+
     // Make sure we aren't adding two types of different stack values
     // Why? our sorting methods for doing recipe matches do not sort by
     // stack values per type, so there will be undefined behaviour
@@ -402,13 +402,13 @@ void set_smelting_reagent(const char* item_name, int quantity)
             // shift forward
             for (int j=_sr.reagent_num; j>i; j--) _sr.reagent[j] = _sr.reagent[j-1];
             for (int j=_sr.reagent_num; j>i; j--) _sr.reagent_count[j] = _sr.reagent_count[j-1];
-            
+
             // insert
             _sr.reagent[i] = type;
             _sr.reagent_count[i] = quantity;
             break;
         }
-        
+
         if (i == _sr.reagent_num)
         {   // append to end
             _sr.reagent[_sr.reagent_num] = type;
@@ -428,7 +428,7 @@ void set_smelting_creation_time(int creation_time)
 void end_smelting_recipe()
 {
     GS_ASSERT_ABORT(smelting_recipe_count <= MAX_SMELTING_RECIPE);
-    
+
     GS_ASSERT_ABORT(_sr.reagent_num > 0);
     GS_ASSERT_ABORT(_sr.output_num > 0);
 
@@ -442,7 +442,7 @@ void end_smelting_recipe()
                 break;
         GS_ASSERT_ABORT(j < smelting_recipe_array[i].reagent_num);
     }
-    
+
     // check that inputs != outputs
     if (_sr.reagent_num == _sr.output_num)
     {
@@ -451,7 +451,7 @@ void end_smelting_recipe()
             if (_sr.reagent[i] != _sr.output[i]) break;
         GS_ASSERT_ABORT(i < _sr.reagent_num);
     }
-    
+
     _sr.reagent_num = _sr.reagent_num;
     _sr.id = smelting_recipe_count;
     smelting_recipe_array[smelting_recipe_count] = _sr;

@@ -46,7 +46,7 @@ class NetMessageArray_pool: public Object_pool<NetMessageArray_pool, NetMessageA
 
 char* NetMessageArray_pool::name() {
     static char* x = (char*) "NetMessageArray_pool"; return x;
-} 
+}
 
 
 class Net_message {

@@ -12,7 +12,7 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
         uint8_t mech_type;
         uint8_t subtype;
         uint16_t x,y,z;
-    
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
@@ -23,7 +23,7 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
         pack_u16(&y, buff, buff_n, pack);
         pack_u16(&z, buff, buff_n, pack);
     }
-    
+
     void handle();
 };
 
@@ -32,13 +32,13 @@ class mech_type_change_StoC: public MapMessagePacketToClient<mech_type_change_St
     public:
         uint16_t id;
         uint8_t mech_type;
-    
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&mech_type, buff, buff_n, pack);
     }
-    
+
     void handle();
 };
 
@@ -47,12 +47,12 @@ class mech_delete_StoC: public MapMessagePacketToClient<mech_delete_StoC>
 {
     public:
         uint16_t id;
-    
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
     }
-    
+
     void handle();
 };
 

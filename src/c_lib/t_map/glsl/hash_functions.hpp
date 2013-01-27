@@ -34,7 +34,7 @@ static inline int hash_function4(int x,int y,int z)
 
 
 
-static const int _vi2[3*4*6] = 
+static const int _vi2[3*4*6] =
 {
     1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
     0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom

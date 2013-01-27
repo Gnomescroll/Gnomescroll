@@ -8,10 +8,10 @@ dont_include_this_file_in_client
 static int grad3[][3] = {
 {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
 {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
-{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
+{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1}
 };
 
-const static int p[] = 
+const static int p[] =
 {
 151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
 190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
@@ -27,7 +27,7 @@ const static int p[] =
 138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
 };
 
-class ClassicNoise 
+class ClassicNoise
 { // Classic Perlin noise in 3D, for comparison
 //    public:
 
@@ -45,7 +45,7 @@ class ClassicNoise
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-static int fast_floor(double x) 
+static int fast_floor(double x)
 {
 return x>0 ? (int)x : (int)x-1;
 }
@@ -55,12 +55,12 @@ static double dot(int g[], double x, double y, double z)
 return g[0]*x + g[1]*y + g[2]*z;
 }
 
-static double mix(double a, double b, double t) 
+static double mix(double a, double b, double t)
 {
 return (1-t)*a + t*b;
 }
 
-static double fade(double t) 
+static double fade(double t)
 {
 return t*t*t*(t*(t*6-15)+10);
 }
@@ -68,7 +68,7 @@ return t*t*t*(t*(t*6-15)+10);
 public:
 
 // Classic Perlin noise, 3D version
-static double noise(double x, double y, double z) 
+static double noise(double x, double y, double z)
 {
     // Find unit grid cell containing point
     int X = fast_floor(x);
@@ -102,7 +102,7 @@ static double noise(double x, double y, double z)
     // g101 = grad3[gi101];
     // g110 = grad3[gi110];
     // g111 = grad3[gi111];
-    
+
     // Calculate noise contributions from each of the eight corners
     double n000= dot(grad3[gi000], x, y, z);
     double n100= dot(grad3[gi100], x-1, y, z);

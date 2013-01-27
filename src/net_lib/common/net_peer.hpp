@@ -51,7 +51,7 @@ class NetPeer
     int connected;
     int version;
     DisconnectType disconnect_code;
-    
+
     ENetPeer* enet_peer;
 
     //uint32_t ip;
@@ -98,7 +98,7 @@ class NetPeer
 
     char* map_message_buffer;
     unsigned int map_message_buffer_index;
-    unsigned int map_message_buffer_max; 
+    unsigned int map_message_buffer_max;
     /*
         packet sequencer
     */

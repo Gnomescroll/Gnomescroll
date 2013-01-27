@@ -21,7 +21,7 @@ class TexturedVoxel: public Voxel
         int pixel_width;
 
         int cube_type;
-        
+
         void set_texture();
 
         void init()
@@ -35,5 +35,5 @@ class TexturedVoxel: public Voxel
     {}
 
 };
-    
+
 } // Draw

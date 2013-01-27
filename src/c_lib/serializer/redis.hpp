@@ -7,7 +7,7 @@ namespace serializer
 {
 
 extern redisAsyncContext* ctx;
-extern bool redis_connected; 
+extern bool redis_connected;
 
 void redis_get_cb(redisAsyncContext* ctx, void* _reply, void* note);
 

@@ -35,5 +35,5 @@ class TexturedMinivox_list: public Simple_object_list<TexturedMinivox, MINIVOX_M
 
         TexturedMinivox_list() {}
 };
-    
+
 }   // Particle

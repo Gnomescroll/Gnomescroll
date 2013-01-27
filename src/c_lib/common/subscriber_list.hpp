@@ -9,7 +9,7 @@ dont_include_this_file_in_client
 
 template<typename T>
 class SubscriberList
-{    
+{
     private:
         // grow by doubling max, capped at HARD_MAX
         bool grow()
@@ -35,7 +35,7 @@ class SubscriberList
     {
         return (this->count >= this->hard_max);
     }
-        
+
     // returns true is subscriber is added to the list
     // if subscriber was already in the list, or if the list is maxed out, returns false
     bool add(T id)
@@ -47,7 +47,7 @@ class SubscriberList
 
         // resize
         if (this->count >= this->max && !this->grow()) return false;
-        
+
         this->subscribers[this->count++] = id;
         return true;
     }

@@ -7,7 +7,7 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-// TODO: move this somewhere. its for caching/restoring cull mode state 
+// TODO: move this somewhere. its for caching/restoring cull mode state
 extern GLint cull_face_mode;
 
 class AlignmentNode
@@ -97,7 +97,7 @@ void move_focal_horizontal(float delta);    // horizontal distance
 void move_origin_vertical(float delta);         // vertical distance along agent plane
 void move_origin_horizontal(float delta);    // horizontal distance along agent plane
 void move_origin_depth(float delta);        // distance from agent plane
-    
+
 void print_sprite_alignment_config();
 
 void cycle_current_config();

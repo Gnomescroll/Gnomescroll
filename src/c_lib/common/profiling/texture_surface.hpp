@@ -4,7 +4,7 @@ struct PIXEL
 {
     union
     {
-        struct 
+        struct
         {
             unsigned char b,g,r,a; //GL_BGRA
         };
@@ -36,7 +36,7 @@ class Texture_surface
     {
         return this->ydim * this->scale;
     }
-    
+
     Texture_surface(int x, int y)
     :
     scale(4.0f)
@@ -50,7 +50,7 @@ class Texture_surface
         needs_update = false;
 
         //surface = create_surface_from_nothing(x, y);
-        
+
         //pixels = (struct PIXEL*) calloc(x*y, sizeof(struct PIXEL));
         pixels = (struct PIXEL*) malloc(x*y*sizeof(struct PIXEL));
 
@@ -58,13 +58,13 @@ class Texture_surface
 
 
         for(int i = 0; i < xdim; i++)
-        { 
+        {
             set_pixel(i,0, 255, 0,0,150);
             set_pixel(i,ydim-1, 255, 0,0,150);
         }
 
         for(int i = 0; i < ydim; i++)
-        { 
+        {
             set_pixel(0, i, 255, 0,0,150);
             set_pixel(xdim-1,i, 255, 0,0,150);
         }
@@ -112,7 +112,7 @@ class Texture_surface
         glEnable(GL_TEXTURE_2D);
 
         glEnable(GL_BLEND);
-        
+
         //glBlendFunc (GL_SRC_ALPHA, GL_ONE);
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         //glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -202,7 +202,7 @@ int generate_clut_texture()
 	//	correction_dark_color(&data[i * 3], 0.6, 0.3, 1);
 	//	correction_deep_dark_color(&data[i * 3], 0.6, 0.3, 1);
 	}
-	for(int i = 0; i < 3 * level * level * level * level * level * level; i++) 
+	for(int i = 0; i < 3 * level * level * level * level * level * level; i++)
 	{
 		if(data[i] > 1)
 			data[i] = 1;

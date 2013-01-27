@@ -51,7 +51,7 @@ void set_ui_slot_durability(ItemContainerID container_id, int slot, int durabili
 void set_ui_slot_stack_size(ItemContainerID container_id, int slot, int stack_size);
 
 }   // ItemContainer
-#endif 
+#endif
 
 #if DC_SERVER
 namespace ItemContainer
@@ -67,7 +67,7 @@ ItemContainerID get_agent_synthesizer(AgentID agent_id);
 ItemContainerID get_agent_energy_tanks(AgentID agent_id);
 
 // returns array of assigned container ids for agent
-// the array does not need to be freed and is valid until the next call to this method 
+// the array does not need to be freed and is valid until the next call to this method
 ItemContainerID* get_player_containers(AgentID agent_id, size_t* n_containers);
 
 ItemID get_agent_toolbelt_item(AgentID agent_id, int slot);

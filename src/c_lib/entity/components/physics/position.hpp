@@ -14,7 +14,7 @@ class PositionPhysicsComponent: public PhysicsComponent
     public:
         Vec3 position;
         Vec3 angles;
-        
+
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {

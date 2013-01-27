@@ -10,7 +10,7 @@ namespace t_gen
 void generate_rock_layer()
 {
     float* _2d_noise_array = new float [512*512];
-    int* regolith_depth_array = new int[512*512]; 
+    int* regolith_depth_array = new int[512*512];
 
     const float persistence = 0.99f;
     const int octaves = 8;
@@ -38,7 +38,7 @@ void generate_rock_layer()
 
         c = t_map::main_map->chunk[i];
         if(c == NULL) continue;
-        
+
         int _x = c->xpos;
         int _y = c->ypos;
 

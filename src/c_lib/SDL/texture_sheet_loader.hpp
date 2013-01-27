@@ -12,7 +12,7 @@ class TextureSheetLoader
 {
     private:
         bool blit_meta(size_t meta_index);
-        
+
     public:
 
         struct TileMeta
@@ -35,12 +35,12 @@ class TextureSheetLoader
         size_t tile_size; // pixel dimension of each sprite/tile in sheet
         size_t tiles_wide;
         size_t tiles_high;
-        
+
         size_t surface_num;
         size_t tile_num;
-        
+
         GLenum format;
-        
+
         struct TileMeta* tile_meta;
         struct SurfaceMeta* surface_meta;
 

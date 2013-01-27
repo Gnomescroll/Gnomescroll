@@ -14,7 +14,7 @@ const int CHAT_CLIENT_CHANNELS_MAX = 3; // pm, global, system
 class ChatMessage
 {
     public:
-    
+
     int id; // only used by object list
 
     char* payload;
@@ -28,7 +28,7 @@ class ChatMessage
 
     void set_color();
     void set_name();
-    
+
     explicit ChatMessage(int id);
 
     ~ChatMessage()
@@ -59,10 +59,10 @@ typedef enum ChannelTypes
 class ChatClientChannel
 {
     public:
-    
+
     int id;
     int type;
-    
+
     // history
     int history_size;
     ChatMessageHistoryObject* history;
@@ -70,7 +70,7 @@ class ChatClientChannel
 
     void add_message(ChatMessage* m);
     void clear_history();
-    
+
     ChatClientChannel();
     ~ChatClientChannel();
 };
@@ -78,7 +78,7 @@ class ChatClientChannel
 class ChatInputHistoryObject
 {
     public:
-    
+
     char* m;
     ChatInputHistoryObject *next;
     ChatInputHistoryObject *prev;
@@ -95,7 +95,7 @@ class ChatInput
     ChatInputHistoryObject* history_tail;
     int history_size;
     int history_index;
-    
+
     char *buffer;
     int buffer_len;
     int cursor;

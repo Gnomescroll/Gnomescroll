@@ -11,7 +11,7 @@ void print_trace(int frame_start)
     void *array[PRINT_TRACE_STACK_SIZE];
     int size;
     char **strings;
-    
+
     size = backtrace(array, PRINT_TRACE_STACK_SIZE);
     if (frame_start >= size) return;
 

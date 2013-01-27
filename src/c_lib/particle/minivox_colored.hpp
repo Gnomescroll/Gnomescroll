@@ -28,7 +28,7 @@ class ColoredMinivox: public ParticleMotion
     public:
 
         Draw::ColoredVoxel voxel;
-    
+
     void set_color(Color color);
     void set_color(unsigned char r, unsigned char g, unsigned char b);
 
@@ -49,5 +49,5 @@ class ColoredMinivox_list: public Simple_object_list<ColoredMinivox, MINIVOX_MAX
 
         ColoredMinivox_list() {}
 };
-    
+
 }   // Particle

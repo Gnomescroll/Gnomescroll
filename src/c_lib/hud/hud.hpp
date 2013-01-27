@@ -42,7 +42,7 @@ class ChatRender
         Text* messages[CHAT_MESSAGE_RENDER_MAX];
         Text* input;
         int paging_offset;
-    
+
     void init();
     void draw_messages();
     void draw_input();
@@ -62,7 +62,7 @@ class HUD
 {
     public:
         bool inited;
-        
+
         // text objects
         Text* help;
         Text* dead;
@@ -80,7 +80,7 @@ class HUD
 
         // scoreboard needs rewritten logic
         class Scoreboard* scoreboard;
-        
+
         // chat queue
         class ChatRender* chat;    // contains text objects
 
@@ -93,8 +93,8 @@ class HUD
 MeterGraphic meter_graphic;
 void set_color_from_ratio(float ratio, float alpha = 175, bool invert_color_for_damage = false);
 bool FAILED_merge_of_cntainr_draws(
-    int slot_size, 
-    ItemContainerID container_id, 
+    int slot_size,
+    ItemContainerID container_id,
     GLubyte alpha_bord, // border
     float alpha_bkgd,   // background
     const int xdim, const int ydim, float xoff, float yoff,

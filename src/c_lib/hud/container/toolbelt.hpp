@@ -47,7 +47,7 @@ class AgentToolbeltUI : public UIElement
     void init()
     {
         IF_ASSERT(this->stack_numbers != NULL) return;
-        
+
         // create HudText objects needed for stack rendering
         int max = xdim * ydim;
         this->stack_numbers = new HudText::Text[max];
@@ -65,7 +65,7 @@ class AgentToolbeltUI : public UIElement
     AgentToolbeltUI() :
         selected_slot(0), stack_numbers(NULL)
     {}
-    
+
     virtual ~AgentToolbeltUI()
     {
         if (this->stack_numbers != NULL) delete[] this->stack_numbers;
@@ -88,7 +88,7 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
     int yslot = py / (inc1 + slot_size);
 
     int slot = yslot * this->xdim + xslot;
-    
+
     return slot;
 }
 
@@ -100,7 +100,7 @@ void AgentToolbeltUI::draw_name()
     HudFont::set_texture();
     this->name.set_position(this->xoff + this->width() - this->name.get_width() - this->inc1/2, _yresf - this->yoff + this->name.get_height() - 3);
     this->name.draw();
-    HudFont::end_font_draw();   
+    HudFont::end_font_draw();
 }
 
 void AgentToolbeltUI::draw()
@@ -160,7 +160,7 @@ void AgentToolbeltUI::draw()
             glColor4ub(255, 0, 0, alpha);               // red
             Hud::meter_graphic.draw(x, y, w, mh, 1.0f); // full slot width background
             Hud::set_color_from_ratio(ratio, 255);
-            Hud::meter_graphic.draw(x, y, w, mh, ratio); 
+            Hud::meter_graphic.draw(x, y, w, mh, ratio);
         }
     }
 

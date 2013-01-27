@@ -48,7 +48,7 @@ class VoxelHitscanList
 {
     private:
         class VoxelHitscanElement** hitscan_list;
-    
+
     public:
         int num_elements;
 
@@ -62,11 +62,11 @@ class VoxelHitscanList
         int skip_id, EntityType skip_type,
         float collision_point[3], float *distance,
         class VoxelHitscanTarget* target);
-    
+
     class VoxelHitscanTarget* hitscan_all(struct Vec3 start, struct Vec3 end, size_t* n_targets);
 
     bool point_collision(struct Vec3 position, class VoxelHitscanTarget* target);
-    
+
     VoxelHitscanList();
     ~VoxelHitscanList();
 };

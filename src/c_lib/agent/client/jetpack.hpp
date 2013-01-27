@@ -25,9 +25,9 @@ class JetPack
         int ticks_til_loop;
         int ticks_til_end;
         float prev_gain;
-        
+
         bool prev_thrusting; // was previously thrusting
-        bool underfueled_thrusting; // we are attempting to thrust but underfueld 
+        bool underfueled_thrusting; // we are attempting to thrust but underfueld
 
     public:
         int fuel;

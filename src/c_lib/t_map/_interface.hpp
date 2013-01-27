@@ -27,8 +27,8 @@ void update_envlight(int chunk_i, int chunk_j);
 
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);
-inline int get_nearest_open_block(int x, int y, int z, int vertical_gap); 
-inline int get_nearest_open_block(int x, int y, int z); 
+inline int get_nearest_open_block(int x, int y, int z, int vertical_gap);
+inline int get_nearest_open_block(int x, int y, int z);
 inline int get_lowest_open_block(int x, int y, int n);
 inline int get_highest_solid_block(int x, int y);
 inline int get_highest_solid_block(int x, int y, int z);

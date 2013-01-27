@@ -15,7 +15,7 @@ class AnimationStateMetadata
     public:
         struct Vec3 position;
         struct Vec3 velocity;
-};  
+};
 
 typedef enum
 {

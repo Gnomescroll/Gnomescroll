@@ -25,7 +25,7 @@ class BillboardText: public TextParticle
         bool gravity;
         bool should_draw;
         bool permanent;
-        
+
         void set_position(Vec3 p)
         {
             ParticleMotionCore::set_position(p);
@@ -33,7 +33,7 @@ class BillboardText: public TextParticle
 
         void set_gravity(bool grav);
         void set_draw(bool draw);
-    
+
         void draw();
         void tick();
 

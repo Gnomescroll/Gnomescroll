@@ -61,7 +61,7 @@ namespace t_map
             unsigned int n;
         };
     };
-    
+
     /*
         Replace x,y,z and tx,ty,tz by char
         to reduce size from x 36 to 16 bytes per vertex for normal blocks
@@ -70,7 +70,7 @@ namespace t_map
     /*
         Steves computer requires 4 byte aligned data
     */
-    struct Vertex 
+    struct Vertex
     {
         union   //0
         {
@@ -104,7 +104,7 @@ namespace t_map
 
         union   //12
         {
-            unsigned char ao[4]; 
+            unsigned char ao[4];
             unsigned int AO;
         };
 
@@ -139,7 +139,7 @@ namespace t_map
 
         union               //28
         {
-            unsigned char ao[4]; 
+            unsigned char ao[4];
             unsigned int AO;
         };
 

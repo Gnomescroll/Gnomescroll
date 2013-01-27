@@ -16,10 +16,10 @@ class ParsedMapPaletteData
 {
     public:
         bool valid;
-        
+
         int cube_type;
         char name[DAT_NAME_MAX_LENGTH+1];
-        
+
     void reset()
     {
         this->valid = false;
@@ -60,7 +60,7 @@ class BlockSerializer
 
         static const int prefix_length = sizeof(uint32_t);
         static const int version = GS_VERSION;
-        static const int CHUNK_COUNT = MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; 
+        static const int CHUNK_COUNT = MAP_CHUNK_XDIM*MAP_CHUNK_YDIM;
 
         char filename[NAME_MAX+1];
         size_t file_size;
@@ -73,7 +73,7 @@ class BlockSerializer
         #else
         struct SerializedChunk chunks[CHUNK_COUNT];
         #endif
-    
+
     BlockSerializer();
     ~BlockSerializer();
 

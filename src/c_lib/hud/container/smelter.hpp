@@ -8,7 +8,7 @@ namespace HudContainer
 class SmelterUI : public UIElement
 {
     public:
-          
+
         static const int cell_size = 37;
         int xdim;    // grid cell size
         int ydim;
@@ -65,7 +65,7 @@ class SmelterUI : public UIElement
         int input_ct = ItemContainer::get_container_xdim(this->container_type) * ItemContainer::get_container_ydim(this->container_type);
         int output_ct = ItemContainer::get_container_alt_xdim(this->container_type) * ItemContainer::get_container_alt_ydim(this->container_type);
         int fuel_ct = 1;
-        
+
         int max = input_ct + output_ct + fuel_ct;
         IF_ASSERT(max <= 0) return;
         this->stacks = new HudText::Text[max];
@@ -96,7 +96,7 @@ class SmelterUI : public UIElement
     void set_container_type(ItemContainerType container_type)
     {
         if (this->container_type == container_type) return;
-        
+
         this->container_type = container_type;
 
         if (container_type == ItemContainer::name::smelter_basic)
@@ -167,7 +167,7 @@ class SmelterUI : public UIElement
 };
 
 int SmelterUI::get_grid_at(int px, int py)
-{  
+{
     //pixels from upper left
     px -= xoff;
     py -= _yresf - yoff;
@@ -220,7 +220,7 @@ void SmelterUI::draw_meter(float x, float y, float src_x, float src_y, float w, 
     float ty_min = src_y / 512.0f;
     float tx_max = tx_min + (w/512.0f);
     float ty_max = ty_min + (h/512.0f);
-    
+
     float dh = h * (1.0f - amount);
 
     // draw from bottom of meter
@@ -234,10 +234,10 @@ void SmelterUI::draw_meter(float x, float y, float src_x, float src_y, float w, 
 
     glTexCoord2f(tx_max, ty_max);
     glVertex2f(x + w, y - h);
-    
+
     glTexCoord2f(tx_max, ty_min);
     glVertex2f(x + w, y - dh);
-    
+
     glEnd();
 }
 
@@ -253,7 +253,7 @@ void SmelterUI::draw()
     IF_ASSERT(container_ui == NULL) return;
     GS_ASSERT(Item::is_smelter(container_ui->type));
     ItemContainer::ItemContainerSmelterUI* smelter = (ItemContainer::ItemContainerSmelterUI*)container_ui;
-    
+
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -305,7 +305,7 @@ void SmelterUI::draw()
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
     int hover_slot = this->get_grid_at(mouse_x, mouse_y);
-    
+
     if (hover_slot != NULL_SLOT && !this->in_inactive_region(mouse_x, mouse_y))
     {
         int w = slot_size;
@@ -320,7 +320,7 @@ void SmelterUI::draw()
 
         if (this->in_output_region(mouse_x, mouse_y))
             y -= 18;
-        
+
         glVertex2f(x,y);
         glVertex2f(x, y-w);
         glVertex2f(x+w, y-w);
@@ -409,7 +409,7 @@ void SmelterUI::draw()
         if (slot == smelter->slot_max-1)
             y -= 18;
 
-        draw_slot_numbers(text, x, y, stack, charges);         
+        draw_slot_numbers(text, x, y, stack, charges);
     }
 
     HudFont::reset_default();

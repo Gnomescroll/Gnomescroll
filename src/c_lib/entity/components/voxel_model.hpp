@@ -32,7 +32,7 @@ class VoxelModelComponent: public Component
         {
             return this->get_radius(0);
         }
-        
+
         float get_radius(int part)
         {
             if (this->vox == NULL) return 1.0f;
@@ -46,7 +46,7 @@ class VoxelModelComponent: public Component
             if (this->vox == NULL) return vec3_init(0,0,0);
             return this->vox->get_center();
         }
-        
+
         struct Vec3 get_center(int part)
         {
             if (this->vox == NULL) return vec3_init(0,0,0);

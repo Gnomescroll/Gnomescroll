@@ -17,7 +17,7 @@
 
 #ifdef _WIN32
     #include <enet/win32.c>
-#else 
+#else
     #include <enet/unix.c>
 #endif
 

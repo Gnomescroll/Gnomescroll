@@ -7,7 +7,7 @@
 namespace Voxels
 {
 
-class VoxelModel 
+class VoxelModel
 {
     public:
         //skeleton
@@ -19,7 +19,7 @@ class VoxelModel
         void update_skeleton();  //recalculate world view matrices
 
         void draw_skeleton();
-        
+
         //skeleton
         bool skeleton_inited;
 
@@ -36,7 +36,7 @@ class VoxelModel
         bool frozen;    // if true, refuse to update no matter what
         void freeze();
         void thaw();
-        
+
         VoxDat* vox_dat;
 
         int n_parts;
@@ -50,7 +50,7 @@ class VoxelModel
 
         void set_part_color(int part_num);
         void set_colors();
-        
+
         void fill_part_color(int part_num, Color color);
         void fill_color(Color color);
 

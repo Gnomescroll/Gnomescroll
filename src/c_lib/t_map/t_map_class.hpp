@@ -64,13 +64,13 @@ class MAP_CHUNK
 class Terrain_map
 {
     public:
-    
+
         int xdim;
         int ydim;
-        
+
         static const int xchunk_dim = MAP_CHUNK_XDIM;
         static const int ychunk_dim = MAP_CHUNK_XDIM;
-        
+
         class MAP_CHUNK** chunk;
 
         class CONTROL_NODE_LIST control_node_list; //special
@@ -78,14 +78,14 @@ class Terrain_map
     #if DC_CLIENT
         bool height_changed;
         char chunk_heights_status[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];   // status of column height (set, unchanged, changed)
-        
+
     void reset_heights_read();
     void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler
     inline unsigned char get_cached_height(int x, int y);
     void update_heights(int x, int y, int z, CubeType cube_type);
     unsigned char column_heights[MAP_WIDTH * MAP_HEIGHT];               // 1x1 columns
     #endif
-    
+
     Terrain_map(int _xdim, int _ydim);
     ~Terrain_map();
 
@@ -95,11 +95,11 @@ class Terrain_map
 
     void load_chunk(int i, int j);      //only entry point for loading
     void unload_chunk(int i, int j);    //only entry point for unloading
-    
+
     #if DC_CLIENT
     bool chunk_loaded(int x, int y, int z); //checks if chunk is non null
     #endif
-    
+
     #if TERRAIN_MAP_FORCE_INLINE
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));

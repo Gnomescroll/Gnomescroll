@@ -17,7 +17,7 @@ class AgentSpawnerComponent: public SpawnerComponent
         unsigned int radius;
         SubscriberList<AgentID> agents;
         SubscriberList<UserID> users;
-        
+
         struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius);
 
         void add_user(UserID user_id)
@@ -48,7 +48,7 @@ class AgentSpawnerComponent: public SpawnerComponent
         {
             this->agents.remove(agent_id);
         }
-    
+
     AgentSpawnerComponent() : SpawnerComponent(COMPONENT_AGENT_SPAWNER),
         radius(0),
         agents(Entities::AGENT_SPAWNER_INITIAL_CHILDREN_SIZE, MAX_AGENTS),

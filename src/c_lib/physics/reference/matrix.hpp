@@ -102,7 +102,7 @@ public:
 
     // set matrix
     m[0] = tx*nAxis.x + c;
-    m[4] = txy - sz; 
+    m[4] = txy - sz;
     m[8] = txz + sy;
     m[12] = 0.0f;
 
@@ -136,10 +136,10 @@ public:
     Identity ();
 
     yrot (fAngle);
-    
+
     return *this;
   }
-  
+
   inline e3dMatrix4x4& RotationZ (const float fAngle) {
     Identity ();
 
@@ -166,19 +166,19 @@ public:
 
     xx =  c;
     xz = -s;
-    zx =  s;  
+    zx =  s;
     zz =  c;
 
     ww = 1.0f;
   }
-  
+
   void zrot (const float fAngle) {
     const float c = cosf (fAngle);
     const float s = sinf (fAngle);
 
-    xx =  c;   
+    xx =  c;
     xy =  s;
-    yx = -s;  
+    yx = -s;
     yy =  c;
 
     ww = 1.0f;
@@ -239,29 +239,29 @@ public:
                       float top,
                       float zNear,
                       float zFar )
-  { 
+  {
     float r_l = right - left;
     float t_b = top   - bottom;
     float f_n = zFar  - zNear;
     float tx  = - (right + left)   / (right - left);
     float ty  = - (top   + bottom) / (top   - bottom);
     float tz  = - (zFar  + zNear)  / (zFar  - zNear);
- 
+
     m [ 0] = 2.0f / r_l;
     m [ 4] = 0.0f;
     m [ 8] = 0.0f;
     m [12] = tx;
- 
+
     m [ 1] = 0.0f;
     m [ 5] = 2.0f / t_b;
     m [ 9] = 0.0f;
     m [13] = ty;
- 
+
     m [ 2] = 0.0f;
     m [ 6] = 0.0f;
     m [10] = 2.0f / f_n;
     m [14] = tz;
- 
+
     m [ 3] = 0.0f;
     m [ 7] = 0.0f;
     m [11] = 0.0f;
@@ -304,7 +304,7 @@ public:
   }
 
   inline void Perspective (float fovy, float aspect, float zNear, float zFar)
-  { 
+  {
     float ymax, xmax;
     ymax   = zNear * tanf (fovy * 3.14159265358979323846f / 360.0f);
     //ymin = -ymax;

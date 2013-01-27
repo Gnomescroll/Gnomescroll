@@ -8,7 +8,7 @@ namespace HudContainer
 class CrusherUI : public UIElement
 {
     public:
-          
+
         static const int cell_size = 37;
         int xdim;    // grid cell size
         int ydim;
@@ -46,7 +46,7 @@ class CrusherUI : public UIElement
         static const int button_overlay_y = 1;
         static const int button_overlay_pressed_x = 3;
         static const int button_overlay_pressed_y = 2;
-        
+
         float texture_offset_x;
         float texture_offset_y;
 
@@ -67,7 +67,7 @@ class CrusherUI : public UIElement
     }
 
     int get_grid_at(int px, int py)
-    {  
+    {
         //pixels from upper left
         px -= xoff;
         py -= _yresf - yoff;
@@ -114,7 +114,7 @@ class CrusherUI : public UIElement
             delete[] this->stacks;
             this->stacks = NULL;
         }
-        
+
         int max = xdim * ydim + alt_ydim*alt_xdim;
         IF_ASSERT(max <= 0) return;
         this->stacks = new HudText::Text[max];
@@ -145,7 +145,7 @@ class CrusherUI : public UIElement
     void set_container_type(ItemContainerType container_type)
     {
         if (this->container_type == container_type) return;
-        
+
         this->container_type = container_type;
 
         this->xdim = ItemContainer::get_container_xdim(container_type);
@@ -187,7 +187,7 @@ void CrusherUI::draw()
 {
     IF_ASSERT(this->texture == NULL) return;
     IF_ASSERT(this->texture == 0) return;
- 
+
     this->draw_name();
 
     if (this->container_id == NULL_CONTAINER) return;
@@ -198,7 +198,7 @@ void CrusherUI::draw()
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
     if (slot_metadata == NULL) return;
-    
+
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -217,7 +217,7 @@ void CrusherUI::draw()
     float x = xoff;
     float y = yoff - sh;    // -sh because draw_bound_texture_sprite draws bottom up
     float z = -0.1f;
-    
+
     // draw input slot
     draw_bound_texture_sprite(x,y, sw,sh, z, input_sprite_x*tw, input_sprite_y*th, tw, th);
 
@@ -257,7 +257,7 @@ void CrusherUI::draw()
 
             const float x = xoff + cell_size*xslot + cell_offset_x;
             const float y = yoff - (cell_size*yslot + cell_offset_y);
-            
+
             glColor4ub(160, 160, 160, 128);
             glBegin(GL_QUADS);
             glVertex2f(x,y);
@@ -267,7 +267,7 @@ void CrusherUI::draw()
             glEnd();
         }
     }
-    
+
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);

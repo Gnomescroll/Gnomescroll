@@ -63,11 +63,11 @@ class AgentSynthesizerUI : public UIElement
         this->shopping_ydim = ItemContainer::get_container_alt_ydim(ItemContainer::name::synthesizer);
         this->xdim = shopping_xdim + ItemContainer::get_container_xdim(ItemContainer::name::synthesizer);
         this->ydim = shopping_ydim;
-        
+
         this->render_width = this->cell_size * this->xdim;
         this->render_height = this->cell_size * this->ydim;
 
-        
+
         GS_ASSERT(this->prices == NULL);
         int max = shopping_xdim * shopping_ydim;    // last slot is coins
         this->prices = new HudText::Text[max];
@@ -114,12 +114,12 @@ bool AgentSynthesizerUI::in_shopping_region(int px, int py)
 {
     int slot = this->get_grid_at(px,py);
     if (slot == NULL_SLOT) return false;
-    
+
     int xslot = slot % xdim;
     int yslot = slot / xdim;
     GS_ASSERT(xslot >= 0 && xslot < xdim);
     GS_ASSERT(yslot >= 0 && yslot < ydim);
-    
+
     return (xslot >= 0 && xslot < shopping_xdim
          && yslot >= 0 && yslot < shopping_ydim);
 }
@@ -144,7 +144,7 @@ int AgentSynthesizerUI::get_grid_at(int px, int py)
     int slot = xslot + yslot * xdim;
 
     GS_ASSERT(slot < xdim*ydim);
-    
+
     return slot;
 }
 
@@ -152,7 +152,7 @@ int AgentSynthesizerUI::get_slot_at(int px, int py)
 {
     int slot = this->get_grid_at(px,py);
     if (slot == NULL_SLOT) return NULL_SLOT;
-    
+
     if (this->in_coins_region(px,py)) return 0;
 
     // convert grid slot to shopping slot (0-indexed)
@@ -161,7 +161,7 @@ int AgentSynthesizerUI::get_slot_at(int px, int py)
     int yslot = slot / xdim;
     if (xslot >= shopping_xdim) return NULL_SLOT;
     if (yslot >= shopping_ydim) return NULL_SLOT;
-    
+
     slot = xslot + yslot * shopping_xdim;
     return slot;
 }
@@ -171,10 +171,10 @@ void AgentSynthesizerUI::draw()
 {
     // draw name
     this->draw_name();
-    
+
     //GS_ASSERT(SynthesizerTexture != 0);
     if (SynthesizerTexture == 0) return;
-    
+
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
@@ -212,7 +212,7 @@ void AgentSynthesizerUI::draw()
 
     glTexCoord2f(tx_max, ty_min);
     glVertex2f(x+w, y);
-    
+
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -243,7 +243,7 @@ void AgentSynthesizerUI::draw()
 
     // draw food
     using ItemContainer::ItemContainerSynthesizerUI;
-    ItemContainerSynthesizerUI* container = 
+    ItemContainerSynthesizerUI* container =
         (ItemContainerSynthesizerUI*)ItemContainer::get_container_ui(this->container_id);
     if (container == NULL) return;
 
@@ -320,7 +320,7 @@ void AgentSynthesizerUI::draw()
 
             const float x = xoff + cell_size*xslot + cell_offset_x;
             const float y = yoff - (cell_size*yslot + cell_offset_y);
-            
+
             const float w = slot_size;
             const float iw = 16.0f; // icon_width
             const int iiw = 16; // integer icon width
@@ -417,7 +417,7 @@ void AgentSynthesizerUI::draw()
     {
         const float x = xoff + xdim*cell_size - cell_offset_x_right - this->coin_stack.get_width();
         const float y = yoff - (ydim*cell_size - cell_offset_y_bottom - this->coin_stack.get_height());
-        draw_slot_numbers(&this->coin_stack, x, y, coin_stack_size, NULL_CHARGES);         
+        draw_slot_numbers(&this->coin_stack, x, y, coin_stack_size, NULL_CHARGES);
     }
 
     HudFont::reset_default();

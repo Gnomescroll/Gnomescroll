@@ -7,7 +7,7 @@ dont_include_this_file_in_server
 #include <physics/vec3.hpp>
 #include <animations/common.hpp>
 
-namespace Animations 
+namespace Animations
 {
 
 static float insect_mob_t = 0.0f;
@@ -72,7 +72,7 @@ void init_insect_mob_texture()
         printf("init_insect_mob: texture load error\n");
         GS_ABORT();
     }
- 
+
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &insect_mob_texture );
     glBindTexture( GL_TEXTURE_2D, insect_mob_texture  );
@@ -85,7 +85,7 @@ void init_insect_mob_texture()
     GLenum format = GL_BGRA;
     if (s->format->Rmask == 0x000000ff)
         format = GL_RGBA;
-   
+
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
     glDisable(GL_TEXTURE_2D);
 
@@ -99,7 +99,7 @@ void init_insect_mob_shader()
     insect_mob_shader.load_shader( "insect mob shader",
         "./media/shaders/mob/insect_mob.vsh",
         "./media/shaders/mob/insect_mob.fsh" );
-    
+
     //uniforms
     //map_ChunkPosition = glGetUniformLocation(insect_mob_shader[index], "ChunkPosition");
 
@@ -127,8 +127,8 @@ class InsectMob
     float th;   //torso height
 
     //float phase[max_sides];
-    float speed[max_sides]; 
-    
+    float speed[max_sides];
+
     InsectMob() {}
     InsectMob(int _id) { id = _id; }
 
@@ -178,7 +178,7 @@ class InsectMob
 
             for(int j=0; j<3; j++)
             {
-                
+
                 v1 = vec3_init( _x + 0.3f*sinf(speed[i]*t), _y, _z-h );
                 v2 = vec3_init( _x+li*sinf(f2*j), _y+li*cosf(f2*j), _z );
                 v3 = vec3_init( _x+li*sinf(f2*(j+1)), _y+li*cosf(f2*(j+1)), _z );
@@ -231,7 +231,7 @@ class InsectMob
             insect_mob_vlist->push_vertex(v3, sinf(f1*(i+1))/2 + 0.5f,  cosf(f1*(i+1))/2 + 0.5f);
         }
     }
-/* 
+/*
     Create vertex data, upload to card
 */
 
@@ -253,7 +253,7 @@ class InsectMob
 
 #include <common/template/object_list.hpp>
 
-namespace Animations 
+namespace Animations
 {
 
 const int INSECT_MOB_MAX = 1024;
@@ -310,7 +310,7 @@ void InsectMobList::draw()
     glBindTexture( GL_TEXTURE_2D, insect_mob_texture );
 
     glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vlist->VBO);
-    
+
     glUseProgramObjectARB(insect_mob_shader.shader);
 
     glEnableClientState(GL_VERTEX_ARRAY);

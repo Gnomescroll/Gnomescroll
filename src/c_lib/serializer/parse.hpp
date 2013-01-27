@@ -54,7 +54,7 @@ void parse_line(bool (*process_token) (const char*, const char*, Data*), char* s
         // check that the tag delimiter is correct
         GS_ASSERT(key[TAG_LENGTH] == TAG_DELIMITER[0]);
         if (key[TAG_LENGTH] != TAG_DELIMITER[0]) return;
-        
+
         // replace the tag delimiter with NUL
         key[TAG_LENGTH] = '\0';
 
@@ -64,7 +64,7 @@ void parse_line(bool (*process_token) (const char*, const char*, Data*), char* s
 
         token_length = 0;
     }
-    
+
     data->valid = true;
 }
 
@@ -136,7 +136,7 @@ static bool parse_map_position(const char* val, struct MapPosition* position)
     if (cmp_len != MAP_POSITION_COMPONENT_LENGTH) return false;
     GS_ASSERT(pts == 3);
     if (pts != 3) return false;
-    
+
     int base_offset = MAP_POSITION_COMPONENT_LENGTH + MAP_POSITION_COMPONENT_DELIMITER_LENGTH;
     long long x = parse_int(&buf[0 * base_offset], err);
     GS_ASSERT(!err && x >= 0 && x < XMAX);

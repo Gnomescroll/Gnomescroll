@@ -29,15 +29,15 @@ void _finish_cube()
 static void cube_def(CubeType type, CubeGroup group, const char* name, CubeMaterial material)
 {
     GS_ASSERT_ABORT(type == NULL_CUBE || type == ERROR_CUBE || type == EMPTY_CUBE);
-    
+
     if (p != NULL)
         _finish_cube();
-    
+
     if (type == NULL_CUBE) type = (CubeType)_current_cube_type++;
 
     GS_ASSERT_ABORT(is_valid_cube_name(name));
     if (!is_valid_cube_name(name)) return;
-    
+
     ASSERT_VALID_CUBE_TYPE(type);
     IF_INVALID_CUBE_TYPE(type) return;
 
@@ -45,14 +45,14 @@ static void cube_def(CubeType type, CubeGroup group, const char* name, CubeMater
 
     GS_ASSERT_ABORT(!p->loaded);
     if (p->loaded) return;
-    
-    p->type = type;    
+
+    p->type = type;
     strncpy(p->name, name, DAT_NAME_MAX_LENGTH);
     p->name[DAT_NAME_MAX_LENGTH] = '\0';
     p->max_damage = DEFAULT_MAX_DAMAGE;
     p->group = group;
     p->material = material;
-    
+
     switch (group)
     {
         case ErrorCube:
@@ -131,7 +131,7 @@ void end_cube_def()
     for (int i=0; i<MAX_CUBES; i++)
         if (cube_properties[i].loaded)
             copy_cube_properties(&cube_properties[i], &fast_cube_properties[i]);
-    
+
     #if DC_CLIENT
     TextureSheetLoader::save_cube_texture();
     #endif
@@ -152,7 +152,7 @@ void set_light_value(int light_value)
     if(light_value < 0 || light_value > 16)
     {
 
-        printf("FATAL ERROR: BLOCK_DAT, SET_LIGHT_VALUE, light_value must be between 0 and 16, block= %s light= %d \n", 
+        printf("FATAL ERROR: BLOCK_DAT, SET_LIGHT_VALUE, light_value must be between 0 and 16, block= %s light= %d \n",
             p->name, light_value);
         GS_ASSERT_ABORT(false);
 
@@ -198,7 +198,7 @@ void side_texture(int side, int tex_id)
 {
     GS_ASSERT_ABORT(side >= 0 && side < 6);
     if (side < 0 || side >= 6) return;
-    
+
     _side_texture[side] = tex_id;
 }
 
@@ -206,7 +206,7 @@ void side_texture(int side, SpriteSheet sheet_id, int ypos, int xpos)
 {
     GS_ASSERT_ABORT(xpos >= 1 && ypos >= 1);
     if (xpos < 1 || ypos < 1) return;
-    
+
     int tex_id = TextureSheetLoader::blit_cube_texture(sheet_id, xpos, ypos);
     GS_ASSERT_ABORT(tex_id != NULL_SPRITE);
     if (tex_id == NULL_SPRITE) return;
@@ -217,7 +217,7 @@ void push_texture()
 {
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
-    
+
     start_cube_palette(p->type);
     for (int i=0; i<6; i++) set_cube_side_texture(p->type, i, _side_texture[i]);
     for (int i=0; i<6; i++) set_cube_palette_texture(p->type, i, _side_texture[i]);
@@ -229,7 +229,7 @@ void push_oriented_texture()
 {
     GS_ASSERT_ABORT(p != NULL);
     if (p == NULL) return;
-    
+
     /*
         NSWE //normal
         EWNS
@@ -326,7 +326,7 @@ void hud_def(int yhud, int xhud, SpriteSheet sheet_id, int ypos, int xpos)
 void hud_def(SpriteSheet sheet_id, int ypos, int xpos)
 {
     int tex_id = TextureSheetLoader::blit_cube_texture(sheet_id, xpos, ypos);
-    
+
     // check that the texture is use somewhere in the cube
     bool found = false;
     for (int i=0; i<6; i++)
@@ -359,7 +359,7 @@ int sprite_alias(SpriteSheet sheet_id, int ypos, int xpos)
 void change_block(const char* original, const char* replacement)
 {
     GS_ASSERT_ABORT(is_valid_cube_name(original));
-    GS_ASSERT_ABORT(is_valid_cube_name(replacement));        
+    GS_ASSERT_ABORT(is_valid_cube_name(replacement));
     bool mapped = cube_name_map->add_definition(original, replacement);
     GS_ASSERT_ABORT(mapped);
 }

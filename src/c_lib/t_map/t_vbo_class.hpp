@@ -8,7 +8,7 @@
 
 #include <physics/quadrant.hpp>
 
-namespace t_map 
+namespace t_map
 {
 
 
@@ -63,7 +63,7 @@ class Map_vbo
 
         xoff = m->xpos;
         yoff = m->ypos;
-        
+
         v_list = NULL;
         v_list_backup = NULL;
         vnum_max = 0;
@@ -88,7 +88,7 @@ class Vbo_map
 {
     const static int CHUNK_START_DISTANCE2 = (128+16)*(128+16);
     const static int CHUNK_IGNORE_DISTANCE2 = (128+64)*(128+64);
-    public:    
+    public:
 
     class Map_vbo** vbo_array;
     class Terrain_map* map;
@@ -136,7 +136,7 @@ class Vbo_map
 
         #if MAP_VBO_CULLING_MAP_CHUNK_NULL
 
-            if( m == NULL ) 
+            if( m == NULL )
             {
                 if(vbo_array[index] != NULL )
                 {
@@ -158,7 +158,7 @@ class Vbo_map
             {
                 if( vbo_array[index] != NULL )
                 {
-                    delete vbo_array[index]; 
+                    delete vbo_array[index];
                     vbo_array[index] = NULL;
                     m->needs_update = false;    //so it gets recreated if in range
                     continue;
@@ -199,11 +199,11 @@ class Vbo_map
             m = map->chunk[index];
 
             m->needs_update = false; //reset flag
-            
+
             GS_ASSERT( vbo_array[index] != NULL);
             //if( vbo_array[index] == NULL ) vbo_array[index] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
-            
+
             if(T_MAP_BACKUP_SHADER == 0)
             {
                 update_vbo(_i, _j);

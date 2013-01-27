@@ -14,13 +14,13 @@ class ObjectList
     {
         IF_ASSERT(this->max <= 0) return;
         GS_ASSERT(this->null_id < 0 || (unsigned int)this->null_id >= this->max);
-        
+
         this->objects = (ObjectState*)calloc(this->max, sizeof(ObjectState));
         for (unsigned int i=0; i<this->max; i++) this->objects[i].id = this->null_id;
     }
-        
+
     public:
-        IDType null_id;    
+        IDType null_id;
         ObjectState* objects;        // the actual object array
 
         unsigned int max;           // maximum list size
@@ -44,7 +44,7 @@ class ObjectList
         }
         return NULL;
     }
-    
+
     ObjectState* create(IDType id)
     {
         if (id < 0 || (unsigned int)id >= this->max) return NULL;
@@ -55,7 +55,7 @@ class ObjectList
         this->objects[id].id = id;
         return &this->objects[id];
     }
-    
+
     bool destroy(IDType id)
     {
         IF_ASSERT(id < 0 || (unsigned int)id >= this->max) return false;
@@ -102,16 +102,16 @@ class ObjectList
                     this->objects[i].ObjectState::~ObjectState();
             free(this->objects);
         }
-    }    
+    }
 
     explicit ObjectList(unsigned int capacity) :
-        start(0), null_id(-1), max(capacity), ct(0) 
+        start(0), null_id(-1), max(capacity), ct(0)
     {
         this->init();
     }
-    
+
     explicit ObjectList(unsigned int capacity, IDType null_id) :
-        start(0), null_id(null_id), max(capacity), ct(0) 
+        start(0), null_id(null_id), max(capacity), ct(0)
     {
         this->init();
     }

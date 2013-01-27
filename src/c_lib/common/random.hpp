@@ -36,7 +36,7 @@ inline int distribute_gaussian(int lower, int upper, size_t precision)
     for (size_t counter=0; counter<precision; counter++)
         retval += rand() % (upper - lower + 1) + lower + off;
     retval /= precision;
-    
+
     return retval;
 }
 

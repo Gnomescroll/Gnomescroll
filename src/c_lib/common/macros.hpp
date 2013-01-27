@@ -46,12 +46,12 @@
 #define GS_STR(x) GS_STR2(x)
 
 // __GNUG__
-// The GNU C++ compiler defines this. Testing it is equivalent to testing (__GNUC__ && __cplusplus). 
-// preprocessor macros 
+// The GNU C++ compiler defines this. Testing it is equivalent to testing (__GNUC__ && __cplusplus).
+// preprocessor macros
 // http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
 
 #ifdef __GNUC__
-# define ALWAYS_INLINE __attribute__((__always_inline__)) inline 
+# define ALWAYS_INLINE __attribute__((__always_inline__)) inline
 # if __clang__ && (!__has_attribute(optimize))
 #  define OPTIMIZED
 # else

@@ -24,7 +24,7 @@ class CHUNK_ITEM_CONTAINER
 {
     private:
     bool remove_index(int index);
-        
+
     public:
 
         int chunk_index;
@@ -83,7 +83,7 @@ class CHUNK_ITEM_CONTAINER
         printf("ERROR - container %d not found in chunk %d\n", container_id, chunk_index);
         GS_ASSERT(false);
     }
-    
+
     bool add(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id);
 
     ItemContainerID get(int x, int y, int z)

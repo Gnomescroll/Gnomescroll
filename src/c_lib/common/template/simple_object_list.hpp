@@ -1,11 +1,11 @@
 #pragma once
- 
+
 template <class ObjectState, unsigned int hard_cap>
 class Simple_object_list
 {
     private:
         virtual const char* name() = 0;
-        
+
     public:
         ObjectState a[hard_cap];
 
@@ -16,7 +16,7 @@ class Simple_object_list
         virtual ~Simple_object_list(); //default deconstructor
 
         inline ObjectState* create();         //object auto id
-        
+
         inline void destroy(int _id);
 
         void print()
@@ -25,20 +25,20 @@ class Simple_object_list
         }
 };
 
-template <class ObjectState, unsigned int hard_cap> 
+template <class ObjectState, unsigned int hard_cap>
 Simple_object_list<ObjectState, hard_cap>::Simple_object_list()
 : num(0)
 {
     for (unsigned int i=0; i<hard_cap; i++) this->a[i].id = i;
 }
 
-template <class ObjectState, unsigned int hard_cap> 
+template <class ObjectState, unsigned int hard_cap>
 Simple_object_list<ObjectState, hard_cap>::~Simple_object_list()
 {
 }
 
 template <class ObjectState, unsigned int hard_cap>
-inline ObjectState* Simple_object_list<ObjectState, hard_cap>::create() 
+inline ObjectState* Simple_object_list<ObjectState, hard_cap>::create()
 {
     if (this->num >= hard_cap)
     {

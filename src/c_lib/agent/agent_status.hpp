@@ -37,7 +37,7 @@ class AgentStatus
         bool vox_crouched;
 
         int lifetime;
-        
+
         Color color;
 
     void tick();
@@ -62,7 +62,7 @@ class AgentStatus
 
     #if DC_SERVER
     void identify(const char* name);    // returns false if malformed
-    
+
     void respawn();
     void set_fresh_state();
 
@@ -87,7 +87,7 @@ class AgentStatus
     void send_badges(ClientID client_id);
     void broadcast_badges();
     #endif
-        
+
     explicit AgentStatus(class Agent* a);
     ~AgentStatus();
 

@@ -79,7 +79,7 @@ class PerlinField3D
 
     // Classic Perlin noise, 3D version
     OPTIMIZED
-    float base(float x, float y, float z) 
+    float base(float x, float y, float z)
     {
         x *= xsize;
         y *= xsize;
@@ -103,7 +103,7 @@ class PerlinField3D
         int gi101 = get_gradient(X+1,Y+0,Z+1);
         int gi110 = get_gradient(X+1,Y+1,Z+0);
         int gi111 = get_gradient(X+1,Y+1,Z+1);
-        
+
         // Calculate noise contributions from each of the eight corners
         float n000= dot(gi000, x, y, z);
         float n100= dot(gi100, x-1, y, z);
@@ -114,7 +114,7 @@ class PerlinField3D
         float n011= dot(gi011, x, y-1, z-1);
         float n111= dot(gi111, x-1, y-1, z-1);
         // Compute the fade curve value for each of x, y, z
-        
+
     #if 1
         float u = fade(x);
         float v = fade(y);
@@ -136,7 +136,7 @@ class PerlinField3D
         // Interpolate the two last results along z
         float nxyz = mix(nxy0, nxy1, w);
 
-        return nxyz * 0.707106781f;   //-1 to 1 
+        return nxyz * 0.707106781f;   //-1 to 1
     }
 
 };
@@ -179,7 +179,7 @@ class PerlinOctave3D
 
     OPTIMIZED
     float sample(float x, float y, float z, float persistence)
-    {   
+    {
         float p = 1.0f;
         float tmp = 0.0f;
         for (int i=0; i<octaves; i++)
@@ -222,7 +222,7 @@ class PerlinOctave3D
         if (persistence != cache_persistence || update)
         {
             cache_persistence = persistence;
-            populate_cache(persistence); 
+            populate_cache(persistence);
         }
 
         runs++;
@@ -277,7 +277,7 @@ inline float sigmoid2(float t, float mean, float reaction)
 class MapGenerator1
 {
     public:
-    
+
         PerlinOctave3D* erosion3D;
         PerlinOctave2D* erosion2D;
 
@@ -293,7 +293,7 @@ class MapGenerator1
 
         /*
             Multiply by 3, subtract 2 and then clamp to -1 to 1
-        */  
+        */
         float* cache;
 
     /*
@@ -320,7 +320,7 @@ class MapGenerator1
         if (this->ridge2D != NULL) delete this->ridge2D;
         if (this->roughness2D != NULL) delete this->roughness2D;
     }
-    
+
     void set_persistence(float p1, float p2, float p3, float p4, float p5)
     {
         this->erosion2D->set_persistence(p2);
@@ -351,7 +351,7 @@ class MapGenerator1
     //ROCK if less than zero
     ALWAYS_INLINE OPTIMIZED
     float calc(int i, int j, int k)
-    {        
+    {
         //float x = i*4;
         //float y = j*4;
         float z = k*4;
@@ -392,7 +392,7 @@ class MapGenerator1
 
         static const float _hmix = 0.050f; //0.25;
 
-        //if (r2 < 0.125f) r2 = 0.0125f; 
+        //if (r2 < 0.125f) r2 = 0.0125f;
         //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
 
         //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
@@ -405,7 +405,7 @@ class MapGenerator1
         v += tmp1;
 
         return v;
-        #else 
+        #else
         /*
             Threshold height
         */
@@ -440,7 +440,7 @@ class MapGenerator1
 
         static const float _hmix = 0.01f; //0.125;
 
-        if (r2 < 0.125f) r2 = 0.0125f; 
+        if (r2 < 0.125f) r2 = 0.0125f;
         float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
 
         if (tmp1 < _hmin) tmp1 = _hmin;
@@ -479,7 +479,7 @@ class MapGenerator1
             float n011 = this->get_cache(i+0,j+1,k+1);
             float n111 = this->get_cache(i+1,j+1,k+1);
 
-            //map volume lerp: 962 ms 
+            //map volume lerp: 962 ms
             for (int i0=0; i0<4; i0++)
             {
                 float u = 0.25f * i0;    //x interpolation
@@ -527,7 +527,7 @@ class MapGenerator1* map_generator = NULL;
 void test_octave_3d_map_gen(CubeType tile_id)
 {
     IF_ASSERT(map_generator == NULL) return;
-    
+
     int ti[6];
     int i=0;
     ti[i++] = _GET_MS_TIME();
@@ -584,11 +584,11 @@ static unsigned long hash_string(unsigned char *str)
 
 extern "C"
 {
-    
+
 void LUA_set_noisemap_param(int noise_map, float persistence, unsigned char* seed_string)
 {
     IF_ASSERT(map_generator == NULL) return;
-    
+
     switch(noise_map)
     {
         case 0:

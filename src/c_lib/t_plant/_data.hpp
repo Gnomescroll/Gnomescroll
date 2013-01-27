@@ -47,7 +47,7 @@ class PlantCallbacks
     {
         for(int i=0; i<cn; i++)
         {
-            if(ca[i].type_id == type_id 
+            if(ca[i].type_id == type_id
                 && strcmp(ca[i].name, callback_name) == 0 )
             {
                 return ca[i].func_ptr;
@@ -213,7 +213,7 @@ class PlantArray
         index--;
         array[element_id] = array[index];
 
-        array[index+1].type_id  = -1;   
+        array[index+1].type_id  = -1;
         array[index+1].data_ptr = NULL;
     }
 };

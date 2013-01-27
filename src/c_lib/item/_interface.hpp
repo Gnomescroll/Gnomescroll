@@ -30,7 +30,7 @@ namespace Item
 void destroy_item(ItemID id);
 class Item* create_item(int item_type, ItemID item_id);
 }   // Item
-#endif 
+#endif
 
 //SERVER
 #if DC_SERVER
@@ -42,7 +42,7 @@ class Item* create_item(const char* item_name);
 
 void destroy_item(ItemID id);
 void destroy_item_for_loading(ItemID id);   // only used by serializer
-    
+
 ItemID split_item_stack(ItemID src, int amount);
 ItemID split_item_stack_in_half(ItemID src);
 

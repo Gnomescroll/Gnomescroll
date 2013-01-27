@@ -91,28 +91,28 @@ ALWAYS_INLINE void pack_u32(uint32_t* x, char* buff, unsigned int* buff_n, bool 
 
 ALWAYS_INLINE void pack_16(int16_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
-    if (pack) *(reinterpret_cast<int16_t*>(buff+*buff_n)) = *x; 
+    if (pack) *(reinterpret_cast<int16_t*>(buff+*buff_n)) = *x;
     else      *x = *(reinterpret_cast<int16_t*>(buff+*buff_n));
     *buff_n += (unsigned int)sizeof(int16_t);
 }
 
 ALWAYS_INLINE void pack_u16(uint16_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
-    if (pack) *(reinterpret_cast<uint16_t*>(buff+*buff_n)) = *x; 
+    if (pack) *(reinterpret_cast<uint16_t*>(buff+*buff_n)) = *x;
     else      *x = *(reinterpret_cast<uint16_t*>(buff+*buff_n));
     *buff_n += (unsigned int)sizeof(uint16_t);
 }
 
 ALWAYS_INLINE void pack_8(int8_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
-    if (pack) *(reinterpret_cast<int8_t*>(buff+*buff_n)) = *x; 
+    if (pack) *(reinterpret_cast<int8_t*>(buff+*buff_n)) = *x;
     else      *x = *(reinterpret_cast<int8_t*>(buff+*buff_n));
     *buff_n += (unsigned int)sizeof(int8_t);
 }
 
 ALWAYS_INLINE void pack_u8(uint8_t* x, char* buff, unsigned int* buff_n, bool pack)
 {
-    if (pack) *(reinterpret_cast<uint8_t*>(buff+*buff_n)) = *x; 
+    if (pack) *(reinterpret_cast<uint8_t*>(buff+*buff_n)) = *x;
     else      *x = *(reinterpret_cast<uint8_t*>(buff+*buff_n));
     *buff_n += (unsigned int)sizeof(uint8_t);
 }

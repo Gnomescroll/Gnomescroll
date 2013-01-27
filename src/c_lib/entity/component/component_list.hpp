@@ -31,7 +31,7 @@ class ComponentList
             printf("No component found\n");
             return NULL;
         }
-        
+
         void unsubscribe(Component* component)
         {   // deallocate/release component in components
             GS_ASSERT(component != NULL);
@@ -41,7 +41,7 @@ class ComponentList
             this->components[component->id] = NULL;
             delete component;
         }
-            
+
         void init()
         {
             GS_ASSERT(this->components == NULL);
@@ -50,13 +50,13 @@ class ComponentList
             if (this->max <= 0) return;
             this->components = (Component**)calloc(this->max, sizeof(Component*));
         }
-    
+
     ComponentList<Component,TYPE,SIZE>()
     : type(TYPE), count(0), max(SIZE), components(NULL)
     {
         this->init();
     }
-    
+
     ~ComponentList<Component,TYPE,SIZE>()
     {
         if (this->components == NULL) return;

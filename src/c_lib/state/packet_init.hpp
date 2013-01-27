@@ -1,6 +1,6 @@
 #pragma once
 
-namespace PacketInit 
+namespace PacketInit
 {
 
 void RegisterMessages();

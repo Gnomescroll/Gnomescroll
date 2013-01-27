@@ -25,7 +25,7 @@ class Badge
 {
     public:
         bool loaded;
-        
+
         BadgeID id;
         char name[BADGE_NAME_MAX_LENGTH+1];
         int sprite_id;

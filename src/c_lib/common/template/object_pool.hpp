@@ -83,7 +83,7 @@ void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
     {
         printf("%s: Batch Alloc  %i:NEW RETURNED NULL, MEMORY ERROR! \n", Base::name(), batch_num);
     }
-    
+
     #if OBJECT_POOL_DEBUG
         for(int i=0; i<BUFFER_POOL_SIZE; i++) ar[i].allocated = 0;
     #endif
@@ -118,20 +118,20 @@ void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
 ALWAYS_INLINE Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
 {
-    #if OBJECT_POOL_DEBUG_BATCH 
+    #if OBJECT_POOL_DEBUG_BATCH
         Entity* tmp2 = (Entity*) malloc(sizeof(Entity));
         tmp2->next = NULL; //debug
         return tmp2;
     #endif
 
-    if(first == NULL) 
+    if(first == NULL)
     {
-        batch_alloc();       
+        batch_alloc();
     }
     Entity* tmp = first;
     first = first->next;
 
-    #if OBJECT_POOL_DEBUG 
+    #if OBJECT_POOL_DEBUG
         if(tmp->allocated != 0)
         {
             //static const char* _name = name();

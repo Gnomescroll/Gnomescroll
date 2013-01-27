@@ -8,7 +8,7 @@
 
 namespace t_map
 {
-    
+
 const int MAX_TEXTURES = MAX_CUBES*6;
 
 extern unsigned char cube_side_texture_array[MAX_CUBES*6]; // for now?
@@ -27,9 +27,9 @@ extern struct SDL_Surface* block_item_16_surface;
 void init_textures();
 
 void set_cube_side_texture(int id, int side, int tex_id);
-int get_cube_side_texture(int id, int side) 
+int get_cube_side_texture(int id, int side)
 {
-    return cube_side_texture_array[6*id + side]; 
+    return cube_side_texture_array[6*id + side];
 }
 
 int get_cube_primary_texture_index(const char* name)

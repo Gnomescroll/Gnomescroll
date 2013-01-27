@@ -28,7 +28,7 @@ void load_synthesizer()
 
     synthesizer_item_def("crusher", 25);
     synthesizer_item_set(3,0);
-    
+
     #if !PRODUCTION
     synthesizer_item_def("cryptid_larvae", 5);
     synthesizer_item_set(3,1);
@@ -44,7 +44,7 @@ void load_synthesizer()
 
     synthesizer_item_def("agent_spawner", 25);
     synthesizer_item_set(4,0);
-    
+
     synthesizer_item_def("energy_core", 25);
     synthesizer_item_set(4,2);
 
@@ -53,7 +53,7 @@ void load_synthesizer()
 
     synthesizer_item_def("red_mining_laser", 1);
     synthesizer_item_set(1,1);
-    
+
     synthesizer_item_def("green_mining_laser", 1);
     synthesizer_item_set(2,1);
 

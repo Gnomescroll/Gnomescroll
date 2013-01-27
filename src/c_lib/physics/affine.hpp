@@ -14,7 +14,7 @@ struct Affine {
 
         struct Vec3 v[4];
 
-        struct 
+        struct
         {
             struct Vec3 vx;
             struct Vec3 vy;
@@ -55,7 +55,7 @@ struct Affine affine_mult(Affine a, Affine b)
 
 ALWAYS_INLINE
 struct Affine affine_identity()
-{   
+{
     struct Affine m;
 
     m.v[0] = vec3_init(1.0f, 0.0f, 0.0f);
@@ -68,7 +68,7 @@ struct Affine affine_identity()
 
 ALWAYS_INLINE
 struct Affine affine_euler_rotation_and_translation(float _x, float _y, float _z, float x, float y, float z)
-{   
+{
     x *= PI;
     y *= PI;
     z *= PI;
@@ -79,16 +79,16 @@ struct Affine affine_euler_rotation_and_translation(float _x, float _y, float _z
     double sy = sin(y);
     double cz = cos(z);
     double sz = sin(z);
-    
+
     struct Affine m;
 
-    m.v[0].x = (float)(cy*cx); 
+    m.v[0].x = (float)(cy*cx);
     m.v[0].y = (float)(cy*sx);
     m.v[0].z = (float)(-sy);
 
     double szsy = sz*sy;
     double czsy = cz*sy;
-    
+
     m.v[1].x = (float)(szsy*cx-cz*sx);
     m.v[1].y = (float)(szsy*sx+cz*cx);
     m.v[1].z = (float)(sz*cy);

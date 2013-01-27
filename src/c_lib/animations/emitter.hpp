@@ -9,7 +9,7 @@ namespace Animations
 
 /*
  *  Give one of these to each agent
- * 
+ *
 
         Turn on: draw all particles
         Turn off: stop draw all particles
@@ -34,7 +34,7 @@ const float MINING_LASER_PARTICLE_SPEED = 6.0f;
 class MiningLaserEmitter
 {
     public:
-    
+
         bool on;
         struct Vec3 position;
         struct Vec3 direction;
@@ -62,7 +62,7 @@ class MiningLaserEmitter
         struct Vec3 center = vec3_add(this->position, vec3_scalar_mult(this->direction, this->length * 0.5f));
         return sphere_fulstrum_test(center.x, center.y, center.z, this->length * 0.5f);
     }
-    
+
     void prep_draw()
     {
         if (!this->on) return;

@@ -12,7 +12,7 @@ optimization: compute matix and return matrix
 DEPRECATED: use vec3_euler_rotation
 
 struct Vector euler_rotation(Vector v, float x, float y, float z)
-{   
+{
     x *= PI;
     y *= PI;
     z *= PI;
@@ -23,17 +23,17 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     double sy = sin(y);
     double cz = cos(z);
     double sz = sin(z);
-    
+
     Vector m[3];
     Vector u;
 
-    //m[0].x = (cy*cz); 
+    //m[0].x = (cy*cz);
     //m[0].y = (cy*sz);
     //m[0].z = (-sy);
 
     //double sxsy = sx*sy;
     //double cxsy = cx*sy;
-    
+
     //m[1].x = (sxsy*cz-cx*sz);
     //m[1].y = (sxsy*sz+cx*cz);
     //m[1].z = (sx*cy);
@@ -42,17 +42,17 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     //m[2].y = (cxsy*sz-sx*cz);
     //m[2].z = (cx*cy);
 
-    //u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
-    //u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
+    //u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x,
+    //u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y,
     //u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
-    
-    m[0].x = (cy*cx); 
+
+    m[0].x = (cy*cx);
     m[0].y = (cy*sx);
     m[0].z = (-sy);
 
     double szsy = sz*sy;
     double czsy = cz*sy;
-    
+
     m[1].x = (szsy*cx-cz*sx);
     m[1].y = (szsy*sx+cz*cx);
     m[1].z = (sz*cy);
@@ -61,8 +61,8 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     m[2].y = (czsy*sx-sz*cx);
     m[2].z = (cz*cy);
 
-    u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
-    u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
+    u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x,
+    u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y,
     u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
 
     return u;
@@ -74,7 +74,7 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
 /*
 void _3D::RotateFill(double *A, double xAngle, double yAngle, double zAngle)
 {
-   // Fill the rotation matrix, using Euler angles 
+   // Fill the rotation matrix, using Euler angles
 
    double x[12];
    double y[12];
@@ -104,7 +104,7 @@ void _3D::RotateFill(double *A, double xAngle, double yAngle, double zAngle)
    z[8]=0;     z[9]=0;     z[10]=1;     z[11]=0;
 
    //Note we are multiplying x*y*z. You can change the order,
-   //  but you will get different results. 
+   //  but you will get different results.
 
    MatrixMultiply(z,y,tempArray);   // multiply 2 matrices
    MatrixMultiply(tempArray,x,A);   // multiply result by 3rd matrix
@@ -120,18 +120,18 @@ void _3D::RotateFill(double *A, double xAngle, double yAngle, double zAngle)
         double sy = sin(y);
         double cz = cos(z);
         double sz = sin(z);
-        
-        m.col[0].x = (float)(cy*cz); 
+
+        m.col[0].x = (float)(cy*cz);
         m.col[0].y = (float)(cy*sz);
         m.col[0].z = (float)(-sy);
 
         double sxsy = sx*sy;
         double cxsy = cx*sy;
-        
+
         m.col[1].x = (float)(sxsy*cz-cx*sz);
         m.col[1].y = (float)(sxsy*sz+cx*cz);
         m.col[1].z = (float)(sx*cy);
-    
+
         m.col[2].x = (float)(cxsy*cz+sx*sz);
         m.col[2].y = (float)(cxsy*sz-sx*cz);
         m.col[2].z = (float)(cx*cy);

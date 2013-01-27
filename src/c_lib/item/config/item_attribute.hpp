@@ -5,7 +5,7 @@
 
 namespace Item
 {
-    
+
 class ItemAttribute
 {
     public:
@@ -54,7 +54,7 @@ class ItemAttribute
 
         bool gas;
         int gas_lifetime;
-        
+
         bool fuel;
         int fuel_burn_rate; // in ticks
 
@@ -114,7 +114,7 @@ class ItemAttribute
             }
             this->block_damage[i] = dmg;
         }
-        
+
         object_damage = 0;
         object_damage_min = 5;
         object_damage_max = 10;

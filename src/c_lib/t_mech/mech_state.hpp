@@ -6,7 +6,7 @@
 
 #include <t_mech/_interface.hpp>
 
-namespace t_mech 
+namespace t_mech
 {
 
 const int MECH_HARD_MAX = 0XFFFF-1;
@@ -42,7 +42,7 @@ struct MechList
     }
 
     bool is_occupied(int x, int y, int z); //check if there is a t_mech on the square already
-    
+
     #if DC_SERVER
     MechType handle_block_removal(int x, int y, int z);
     #endif
@@ -66,7 +66,7 @@ struct MechList
         mla[id] = m; //store mech
         mla[id].id = id;
         mln++;
-    
+
         //printf("create mech %i type %d at: %i %i %i \n", m.id, m.mech_type, m.x,m.y,m.z);
     }
     #endif
@@ -95,7 +95,7 @@ struct MechList
         GS_ASSERT(i != mlm);
         if (i == mlm) return -1;
         mli = _mli;
-        
+
         m.id = mli;   //set id
         mla[mli] = m; //store mech
         mln++;

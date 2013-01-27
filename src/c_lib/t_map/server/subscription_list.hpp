@@ -20,8 +20,8 @@ class MAP_CHUNK_SUBSCRIPTION
     int version;
 
     unsigned short subscribers[ SMC_MAX_SUBSCRIBERS ];
-    unsigned short chunk_aliases[ SMC_MAX_SUBSCRIBERS ]; 
-    
+    unsigned short chunk_aliases[ SMC_MAX_SUBSCRIBERS ];
+
     int subscriber_num;
 
     MAP_CHUNK_SUBSCRIPTION()
@@ -33,7 +33,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
     ~MAP_CHUNK_SUBSCRIPTION()
     {
-                
+
     }
 
     void add_subscriber(ClientID client_id, int chunk_alias, int client_map_version)
@@ -61,7 +61,7 @@ class MAP_CHUNK_SUBSCRIPTION
     {
         GS_ASSERT(x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y);
         if (x < 0 || x >= map_dim.x || y < 0 || y >= map_dim.y || z < 0 || z >= map_dim.z) return;
-        
+
         block_action_StoC msg;
         msg.x = x;
         msg.y = y;
@@ -145,22 +145,22 @@ class MAP_CHUNK_SUBSCRIPTION
 class Terrain_map_subscription
 {
     public:
-    
+
     int xdim;
     int ydim;
-    
+
     int xchunk_dim;
     int ychunk_dim;
-    
+
     class MAP_CHUNK_SUBSCRIPTION* chunk;
 
     Terrain_map_subscription(int _xdim, int _ydim)
     {
-        xdim = (_xdim/16)*16; 
+        xdim = (_xdim/16)*16;
         ydim = (_ydim/16)*16;
         GS_ASSERT(xdim == _xdim && ydim == _ydim);
 
-        xchunk_dim = _xdim/16; 
+        xchunk_dim = _xdim/16;
         ychunk_dim = _ydim/16;
 
         chunk = new MAP_CHUNK_SUBSCRIPTION[xchunk_dim*ychunk_dim];

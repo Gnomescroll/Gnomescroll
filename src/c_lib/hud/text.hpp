@@ -39,7 +39,7 @@ class Text
 
         char* text;
         char* format;
-        
+
         float x,y;  // active x,y
         float refx, refy; // reference x,y
 
@@ -59,9 +59,9 @@ class Text
         void set_format(const char* format);
         void set_format_extra_length(int size);
         void update_formatted_string(int n_args, ...);
-        
+
         void set_color(Color color);
-        
+
         void set_position(float x, float y);
         void set_scale(float scale);
         void set_depth(float depth);
@@ -69,7 +69,7 @@ class Text
         int get_width();
         int get_height();
         int charcount();
-        
+
         void draw();
         void draw_character_rotated(float theta);   // draws as single character. glyph alignment offset not used
         void draw_character_rotated_centered(float theta);   // draws as single character. glyph alignment offset not used
@@ -81,11 +81,11 @@ class Text
         void operator=(Text& t)
         {
             if (this == &t) return;
-            
+
             set_text(t.text);
             set_format(t.format);
             formatted_extra_len = t.formatted_extra_len;
-            
+
             id = t.id;
             depth = t.depth;
             scale = t.scale;
@@ -107,7 +107,7 @@ void* set_and_update_array_range(unsigned int n, unsigned int* max, unsigned int
 {
     if (n == *max) return NULL;
     *max = n;
-    
+
     if (n == 0)
     {
         if (arr != NULL) free(arr);
@@ -126,11 +126,11 @@ void* set_and_update_array_range(unsigned int n, unsigned int* max, unsigned int
 class AnimatedText: public Text
 {
     public:
-    
+
         unsigned int max_colors;
         unsigned int n_colors;
         Color* colors;
-    
+
         struct CharRange
         {
             unsigned int start;
@@ -140,14 +140,14 @@ class AnimatedText: public Text
         unsigned int max_char_ranges;
         unsigned int n_char_ranges;
         struct CharRange* char_ranges;
-    
+
         void set_color_count(unsigned int n)
         {
             this->colors = (Color*)set_and_update_array_range(
                 n, &this->max_colors, &this->n_colors,
                 this->colors, sizeof(Color));
         }
-        
+
         int add_color(Color color)
         {
             GS_ASSERT(this->n_colors < this->max_colors);
@@ -165,7 +165,7 @@ class AnimatedText: public Text
                     return i;
             return -1;
         }
-        
+
         void set_color_index_color(int color_index, Color color)
         {
             if (color_index < 0) return;
@@ -176,10 +176,10 @@ class AnimatedText: public Text
         void set_char_range_count(unsigned int n)
         {
             this->char_ranges = (struct CharRange*)set_and_update_array_range(
-                n, &this->max_char_ranges, &this->n_char_ranges, 
+                n, &this->max_char_ranges, &this->n_char_ranges,
                 this->char_ranges, sizeof(struct CharRange));
         }
-        
+
         int add_char_range(unsigned int char_start, int char_end)
         {
             GS_ASSERT(this->n_char_ranges < this->max_char_ranges);
@@ -191,7 +191,7 @@ class AnimatedText: public Text
             this->char_ranges[this->n_char_ranges].color_index = -1;
             return this->n_char_ranges++;
         }
-        
+
         void update_char_range(int char_range_index, unsigned int start, int end)
         {
             if (char_range_index < 0) return;
@@ -200,7 +200,7 @@ class AnimatedText: public Text
             this->char_ranges[char_range_index].start = start;
             this->char_ranges[char_range_index].end = end;
         }
-        
+
         void set_char_range_color(int char_range_index, int color_index)
         {
             if (color_index < 0) return;
@@ -211,7 +211,7 @@ class AnimatedText: public Text
             if (char_range_index >= (int)this->max_char_ranges) return;
             this->char_ranges[char_range_index].color_index = color_index;
         }
-        
+
         int get_color_range(int color_index)
         {
             if (color_index < 0) return -1;
@@ -220,7 +220,7 @@ class AnimatedText: public Text
                     return i;
             return -1;
         }
-        
+
         int get_char_range(int color_index, unsigned int char_start, int char_end)
         {
             if (color_index < 0) return -1;
@@ -231,12 +231,12 @@ class AnimatedText: public Text
                     return i;
             return -1;
         }
-        
+
     void draw()
     {
         if (this->text == NULL || this->text_len == 0)
             return;
-        
+
         for (unsigned int i=0; i<this->n_char_ranges; i++)
         {
             int color_index = this->char_ranges[i].color_index;
@@ -254,13 +254,13 @@ class AnimatedText: public Text
             draw_string(this->text, start, range,
                          this->x, this->y, this->depth, this->scale);
         }
-        
+
         // TODO -- draw uncovered line segments with base color
         // for now require user to manage uncovered line segments
-         
+
         this->reset_alignment();
     }
-        
+
     void operator=(AnimatedText& t)
     {   // copy any data
         if (this != &t) // handle self copy
@@ -269,7 +269,7 @@ class AnimatedText: public Text
             this->n_colors = 0;
             for (unsigned int i=0; i<t.n_colors; i++)
                 this->add_color(t.colors[i]);
-                
+
             // copy char ranges
             this->set_char_range_count(t.max_char_ranges);
             this->n_char_ranges = 0;
@@ -281,12 +281,12 @@ class AnimatedText: public Text
         }
         Text::operator=(t);
     }
-    
+
     AnimatedText() :
         max_colors(0), n_colors(0), colors(NULL),
         max_char_ranges(0), n_char_ranges(0), char_ranges(NULL)
     {}
-    
+
     ~AnimatedText()
     {
         if (this->colors != NULL)

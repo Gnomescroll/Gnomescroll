@@ -17,13 +17,13 @@ class WeaponTargetingComponent: public TargetingComponent
         bool attack_at_random;
 
         bool locked_on_target;
-        
+
         int fire_delay;
         int fire_delay_max;
 
         struct Vec3 firing_direction;
         bool firing_direction_set;
-        
+
         void tick()
         {
             this->fire_tick++;
@@ -42,12 +42,12 @@ class WeaponTargetingComponent: public TargetingComponent
                 return true;
             return false;
         }
-        
+
         void set_random_fire_tick()
         {
             this->fire_tick = randrange(0, fire_rate_limit);
         }
-        
+
         void add_random_fire_delay()
         {
             this->fire_delay = randrange(0, fire_delay_max);
@@ -61,7 +61,7 @@ class WeaponTargetingComponent: public TargetingComponent
         void lock_target_part(Vec3 camera_position);
 
     virtual ~WeaponTargetingComponent() {}
-    
+
     WeaponTargetingComponent()
     : TargetingComponent(COMPONENT_WEAPON_TARGETING),
     fire_tick(0), fire_rate_limit(1), uses_bias(false), accuracy_bias(0.0f),

@@ -12,7 +12,7 @@ class ChatServerChannel
     ClientID* listeners;
     int n;
     int max;
-    
+
     void broadcast(ClientID sender, char* payload);
     bool add_listener(ClientID id);
     bool remove_listener(ClientID id);
@@ -38,7 +38,7 @@ class ChatServer
     void player_quit(ClientID id);
     void receive_message(int channel, ClientID sender, char* payload);
     void log_message(int channel, ClientID sender, char* payload);
-    
+
     ChatServer();
     ~ChatServer();
 };

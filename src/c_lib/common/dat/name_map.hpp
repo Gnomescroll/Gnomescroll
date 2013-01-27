@@ -11,11 +11,11 @@ template <class Property>
 bool save_active_names(Property* properties, size_t count, size_t name_len, const char* filename)
 {
     bool worked = false;
-    
+
     const char tmp[] = ".tmp";
     char* tmp_filename = (char*)malloc((strlen(filename) + sizeof(tmp)) * sizeof(char));
     sprintf(tmp_filename, "%s%s", filename, tmp);
-    
+
     const char bak[] = ".bak";
     char* bak_filename = (char*)malloc((strlen(filename) + sizeof(bak)) * sizeof(char));
     sprintf(bak_filename, "%s%s", filename, bak);
@@ -46,7 +46,7 @@ bool save_active_names(Property* properties, size_t count, size_t name_len, cons
     worked = true;
 
     error:  // ERROR LABEL
-    
+
     if (f != NULL)
     {
         worked = (fclose(f) == 0);
@@ -56,24 +56,24 @@ bool save_active_names(Property* properties, size_t count, size_t name_len, cons
     if (worked)
     {
         worked = save_tmp_file(filename, tmp_filename, bak_filename);
-        GS_ASSERT(worked);    
+        GS_ASSERT(worked);
     }
 
     free(tmp_filename);
     free(bak_filename);
     free(buf);
-        
+
     return worked;
 }
 
 /* Forward-compatible name mapper */
 
 class DatNameMap
-{    
+{
     public:
         const size_t max;
         const size_t name_max;
-        
+
         size_t size;
         char* originals;
         char* replacements;
@@ -88,7 +88,7 @@ class DatNameMap
         GS_ASSERT(replacement[0] != '\0');
         GS_ASSERT(this->size < this->max);
         GS_ASSERT(cmp != 0);
-        
+
         if (original[0] == '\0') return false;
         if (replacement[0] == '\0') return false;
         if (this->size >= this->max) return false;
@@ -109,7 +109,7 @@ class DatNameMap
         strncpy(&this->replacements[index], replacement, this->name_max);
         this->replacements[index + this->name_max] = '\0';
         this->size++;
-        
+
         return true;
     }
 
@@ -144,9 +144,9 @@ class DatNameMap
                 // make sure name does not resolve to self, for circular definitions
                 bool same = (strcmp(&this->originals[index], dest) == 0);
                 if (same)
-                    printf("ERROR: chained name mapping resolves to self, for name %s\n", dest); 
+                    printf("ERROR: chained name mapping resolves to self, for name %s\n", dest);
                 GS_ASSERT_ABORT(!same);
-                
+
                 strncpy(&this->replacements[index], dest, this->name_max+1);
                 this->replacements[index+this->name_max] = '\0';
                 this->condensed = false;
@@ -158,7 +158,7 @@ class DatNameMap
     bool save(const char* filename)
     {
         bool worked = false;
-        
+
         const char line_ending[] = "\n";
 
         const char tmp[] = ".tmp";
@@ -187,7 +187,7 @@ class DatNameMap
             if (wrote != sizeof(line_ending)-1)
                 goto error;
         }
-        
+
         worked = true;
 
         error:  // ERROR LABEL
@@ -201,9 +201,9 @@ class DatNameMap
         if (worked)
         {
             worked = save_tmp_file(filename, tmp_filename, bak_filename);
-            GS_ASSERT(worked);    
+            GS_ASSERT(worked);
         }
-        
+
         free(tmp_filename);
         free(bak_filename);
 
@@ -221,7 +221,7 @@ class DatNameMap
         if (i >= this->size) return NULL;
         return &this->originals[this->get_index(i)];
     }
-    
+
     const char* get_replacement(size_t i)
     {
         GS_ASSERT(i < this->size);
@@ -251,7 +251,7 @@ char* read_names(const char* filename, const size_t name_length, size_t* name_co
     *name_count = 0;
 
     if (!file_exists(filename)) return NULL;
-    
+
     size_t size = 0;
     char* buf = read_file_to_buffer(filename, &size);
     if (buf == NULL) return NULL;
@@ -259,7 +259,7 @@ char* read_names(const char* filename, const size_t name_length, size_t* name_co
     char* lines = NULL;
     bool read = read_fixed_lines(buf, name_length, &lines, name_count);
     free(buf);
-    
+
     GS_ASSERT(read);
     if (!read) return NULL;
     return lines;
@@ -373,7 +373,7 @@ bool name_changes_valid(const char* active_filename, const char* inactive_filena
 
             if (!found && map->get_mapped_name(&active_names[index]) == NULL)
             {
-                printf("ERROR: serialized active name %s from file %s was not found in loaded mapping or loaded definitions\n", &active_names[index], active_filename); 
+                printf("ERROR: serialized active name %s from file %s was not found in loaded mapping or loaded definitions\n", &active_names[index], active_filename);
                 valid = false;
             }
         }

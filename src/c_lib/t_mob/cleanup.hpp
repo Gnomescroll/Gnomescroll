@@ -1,6 +1,6 @@
 #pragma once
 
-class cBone 
+class cBone
 {
     public:
 
@@ -26,7 +26,7 @@ class cBone
         bca = NULL;
         bcan = 0;
     }
-    
+
 
     ~cBone()
     {
@@ -131,13 +131,13 @@ void CalculateBoneToWorldTransform(class cBone* bone)
     while( parent )
     {
         bone->global_transform = mat4_mult(bone->global_transform, parent->local_transform);
-        parent = parent->parent; // get the parent of the bone we are working on 
+        parent = parent->parent; // get the parent of the bone we are working on
     }
 }
 
 // Recursively updates the internal node transformations from the given matrix array
 // ** calls updateTransforms on each bone in skeleton **
-void UpdateTransforms(cBone* bone) 
+void UpdateTransforms(cBone* bone)
 {
     CalculateBoneToWorldTransform(bone);// update global transform as well
 
@@ -146,7 +146,7 @@ void UpdateTransforms(cBone* bone)
 }
 
 /*
-ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory( 
+ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     const char* pBuffer,
     unsigned int pLength,
     unsigned int pFlags,
@@ -203,7 +203,7 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
             //C_STRUCT aiVector3D mValue;  //The value of this key
 
             //struct aiQuatKey
-            //double mTime;     //The time of this key 
+            //double mTime;     //The time of this key
             //C_STRUCT aiQuaternion mValue;  //The value of this key
         }
 
@@ -225,7 +225,7 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
      *  a single node. */
     unsigned int mNumChannels;
 
-    /** The node animation channels. Each channel affects a single node. 
+    /** The node animation channels. Each channel affects a single node.
      *  The array is mNumChannels in size. */
     C_STRUCT aiNodeAnim** mChannels;
 
@@ -233,11 +233,11 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
      *  a single mesh and defines vertex-based animation. */
     unsigned int mNumMeshChannels;
 
-    /** The mesh animation channels. Each channel affects a single mesh. 
+    /** The mesh animation channels. Each channel affects a single mesh.
      *  The array is mNumMeshChannels in size. */
     C_STRUCT aiMeshAnim** mMeshChannels;
 
-    /** The array of animations. 
+    /** The array of animations.
     *
     * All animations imported from the given file are listed here.
     * The array is mNumAnimations in size.
@@ -271,13 +271,13 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 /*
     if(!pScene->HasAnimations()) return;
     Release();
-    
+
     Skeleton = CreateBoneTree( pScene->mRootNode, NULL);
     ExtractAnimations(pScene);
-    
+
     for (unsigned int i = 0; i < pScene->mNumMeshes;++i){
         const aiMesh* mesh = pScene->mMeshes[i];
-        
+
         for (unsigned int n = 0; n < mesh->mNumBones;++n){
             const aiBone* bone = mesh->mBones[n];
             std::map<std::string, cBone*>::iterator found = BonesByName.find(bone->mName.data);
@@ -297,7 +297,7 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
                     Bones.push_back(found->second);
                     BonesToIndex[found->first] = Bones.size()-1;
                 }
-            } 
+            }
         }
     }
     Transforms.resize( Bones.size());
@@ -326,7 +326,7 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     /** The number of position keys */
     //unsigned int mNumPositionKeys;
 
-    /** The position keys of this animation channel. Positions are 
+    /** The position keys of this animation channel. Positions are
      * specified as 3D vector. The array is mNumPositionKeys in size.
      *
      * If there are position keys, there will also be at least one
@@ -336,8 +336,8 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     /** The number of rotation keys */
     //unsigned int mNumRotationKeys;
 
-    /** The rotation keys of this animation channel. Rotations are 
-     *  given as quaternions,  which are 4D vectors. The array is 
+    /** The rotation keys of this animation channel. Rotations are
+     *  given as quaternions,  which are 4D vectors. The array is
      *  mNumRotationKeys in size.
      *
      * If there are rotation keys, there will also be at least one
@@ -347,7 +347,7 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     /** The number of scaling keys */
     //unsigned int mNumScalingKeys;
 
-    /** The scaling keys of this animation channel. Scalings are 
+    /** The scaling keys of this animation channel. Scalings are
      *  specified as 3D vector. The array is mNumScalingKeys in size.
      *
      * If there are scaling keys, there will also be at least one
@@ -368,7 +368,7 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     //unsigned int mNumChannels;
     //C_STRUCT aiNodeAnim** mChannels;
 
-    //unsigned int mNumAnimations; 
+    //unsigned int mNumAnimations;
     //_STRUCT aiAnimation** mAnimations;
 
 
@@ -428,7 +428,7 @@ aiMesh
                     aiVector3D pos = mesh->mVertices[index1];
                     aiVector3D tex = mesh->mTextureCoords[0][index1];
 
-                    struct _Vertex v; 
+                    struct _Vertex v;
                     v.v.x = pos.x ;
                     v.v.y =  pos.y ;
                     v.v.z = pos.z ;

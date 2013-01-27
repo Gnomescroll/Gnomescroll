@@ -14,7 +14,7 @@ class HarvestBar
     {
 
         levelm = 300;
-        level = 0;  
+        level = 0;
     };
 
     void start(int _levelm)
@@ -93,7 +93,7 @@ class HarvestBar
 
         glColor4ub(0,64,128,127);
 
-        
+
 /*
         glLineWidth(border_height - 2*border_line_width);
 

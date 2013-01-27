@@ -37,14 +37,14 @@ class Grenade: public ParticleMotion, public BillboardSprite
         void tick();
         void explode() { this->explode(1); }
         void explode(int multiplier);
-        
+
         void damage_blocks() { this->damage_blocks(1); }
         void damage_blocks(int multiplier);
 
         #if DC_SERVER
         void broadcast();
         #endif
-        
+
         explicit Grenade(int id);
         ~Grenade();
 };
@@ -69,7 +69,7 @@ class GrenadeList: public ObjectList<Grenade>
         {
         }
 };
- 
+
 int get_grenade_damage(EntityType type)
 {
     switch (type)
@@ -77,13 +77,13 @@ int get_grenade_damage(EntityType type)
         case OBJECT_AGENT_SPAWNER:
         case OBJECT_MONSTER_SPAWNER:
             return GRENADE_SPAWNER_DAMAGE();
-            
+
         case OBJECT_TURRET:
             return GRENADE_TURRET_DAMAGE();
-            
+
         case OBJECT_MONSTER_BOMB:
             return GRENADE_MONSTER_BOMB_DAMAGE();
-            
+
         case OBJECT_MONSTER_BOX:
             return GRENADE_MONSTER_BOX_DAMAGE();
 

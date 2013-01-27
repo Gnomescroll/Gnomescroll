@@ -92,7 +92,7 @@ class ItemContainerUIInterface
         this->slot_metadata[slot] = metadata;
         this->slot_count++;
     }
-    
+
     void insert_item(int slot, ItemID item_id)
     {
         struct SlotMetadata metadata = copy_item_metadata(item_id);
@@ -265,7 +265,7 @@ class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
     {
         IF_ASSERT(!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
-        
+
         return (item_type == this->energy_tank_type);
     }
 
@@ -291,7 +291,7 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
     {
         return this->get_slot_type(0);
     }
-    
+
     int get_coin_stack()
     {
         return this->get_slot_stack(0);
@@ -302,7 +302,7 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
         GS_ASSERT(this->is_valid_slot(slot));
         if (!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
-        
+
         // synthesizer coins only
         static int coin_type = Item::get_item_type("synthesizer_coin");
         GS_ASSERT(coin_type != NULL_ITEM_TYPE);
@@ -426,7 +426,7 @@ class ItemContainerCrusherUI: public ItemContainerUIInterface
 class ItemContainerEquipmentUI: public ItemContainerUIInterface
 {
     public:
-    
+
         explicit ItemContainerEquipmentUI(ItemContainerID id) :
             ItemContainerUIInterface(id)
         {}

@@ -3,7 +3,7 @@
 namespace Voxels
 {
 
-union Voxel 
+union Voxel
 {
     struct
     {
@@ -45,7 +45,7 @@ struct VoxelTex
 class VoxelVertex
 {
     public:
-    
+
     float x,y,z;
 
     // these all must be 32bit aligned due to some GPU model bugs
@@ -110,20 +110,20 @@ int pow2_1(int n)
 {
     int x = 1;
     int i = 0;
-    while(x < n) 
+    while(x < n)
     {
         i++;
         x <<= 1;
     }
     return i;
-} 
+}
 
 //round up to next power of two
 int pow2_2(int n)
 {
     int x = 1;
     //int i = 0;
-    while(x < n) 
+    while(x < n)
     {
         //i++;
         x <<= 1;

@@ -8,8 +8,8 @@ namespace Item
 {
 
 // id/name conversion pointers
-typedef int (*IDFromName)(const char*); 
-typedef const char* (*NameFromID)(int); 
+typedef int (*IDFromName)(const char*);
+typedef const char* (*NameFromID)(int);
 
 typedef void (*addDropCallback)(int);
 
@@ -32,14 +32,14 @@ struct ItemDropTable
 class ItemDropConfig
 {
     public:
-    
+
         char* name;
         int max;
 
         IDFromName get_id_from_name;
         NameFromID get_name_from_id;
         addDropCallback add_drop_callback;
-        
+
         int _table_index;
         float probability_table[4096];
         float cumulative_probability_table[4096];
@@ -70,7 +70,7 @@ class ItemDropConfig
         if (max <= 0) return;
         GS_ASSERT(name[0] != '\0');
         if (name[0] == '\0') return;
-        
+
         this->name = (char*)malloc((strlen(name)+1) * sizeof(char));
         strcpy(this->name, name);
 
@@ -95,7 +95,7 @@ class ItemDropConfig
 
         memset(this->item_drop_table, 0, sizeof(this->item_drop_table));
     }
-    
+
     ~ItemDropConfig()
     {
         if (this->name != NULL) free(this->name);

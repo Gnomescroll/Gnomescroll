@@ -18,7 +18,7 @@ class Voxel
 
     public:
 
-        struct Mat3 rotation_matrix;    
+        struct Mat3 rotation_matrix;
 
         float size;
         float theta, phi;

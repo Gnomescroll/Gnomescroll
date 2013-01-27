@@ -14,7 +14,7 @@ class ParsedItemData
 {
     public:
         ItemID id;
-    
+
         uuid_t uuid;
         char name[DAT_NAME_MAX_LENGTH+1];
         unsigned int durability;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Animations 
+namespace Animations
 {
 
 #if DC_CLIENT

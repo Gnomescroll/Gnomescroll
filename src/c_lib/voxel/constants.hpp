@@ -78,7 +78,7 @@ static const Vec3 v_normal_vec3[6] = {
     {{{ -1.0f, 0.0f, 0.0f }}},
     };
 
-static const struct Voxels::VoxelNormal voxel_normal_array[6] = { 
+static const struct Voxels::VoxelNormal voxel_normal_array[6] = {
     {{{0,0,1,0}}},
     {{{0,0,-1,0}}},
     {{{1,0,0,0}}},
@@ -121,7 +121,7 @@ static const int_fast8_t ao_perm[6*8*3] = {
      0, -1,  1,
      1, -1,  1,
      1,  0,  1,
-     
+
     -1,  1, -1,
      0,  1, -1,
      1,  1, -1,

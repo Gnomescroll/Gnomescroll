@@ -18,9 +18,9 @@ class VerletComponent
         float dampening;
         float mass;
         float box_radius;
-        
+
         /* Base api */
-        
+
         struct Vec3 get_position()
         {
             return this->position;
@@ -50,7 +50,7 @@ class VerletComponent
         {
             return this->set_momentum(vec3_init(mx,my,mz));
         }
-        
+
         bool set_momentum(struct Vec3 momentum)
         {
             this->velocity = vec3_scalar_mult(momentum, 1.0f/this->mass);

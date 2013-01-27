@@ -42,7 +42,7 @@ class FixedSizeNetPacketToClient
 
         FixedSizeNetPacketToClient() { nm = NULL; }
         virtual ~FixedSizeNetPacketToClient() {}
-    
+
         ALWAYS_INLINE
         void serialize(char* buff, unsigned int* buff_n)
         {
@@ -62,13 +62,13 @@ class FixedSizeNetPacketToClient
         /*
             For higher performance, require explicit serialization
         */
-        void sendToClient(ClientID client_id) 
+        void sendToClient(ClientID client_id)
         {
             #if DC_SERVER
             nm = Net_message::acquire(Derived::size);
             unsigned int buff_n = 0;
             serialize(nm->buff, &buff_n);
-  
+
             if (NetServer::staging_pool[client_id] == NULL && NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
@@ -100,7 +100,7 @@ class FixedSizeNetPacketToClient
 
             ClientID client_id;
             class NetPeer* np;
-            for (unsigned int i=0; i<n_clients; i++) 
+            for (unsigned int i=0; i<n_clients; i++)
             {
                 client_id = client_ids[i];
                 GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
@@ -115,7 +115,7 @@ class FixedSizeNetPacketToClient
             #endif
         }
 
-        void broadcast() 
+        void broadcast()
         {
             #if DC_SERVER
             if (NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
@@ -128,7 +128,7 @@ class FixedSizeNetPacketToClient
 
             class NetPeer* np;
 
-            for (int i=0; i<HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
             {
                 np = NetServer::pool[i];
                 if (np == NULL) continue;
@@ -138,8 +138,8 @@ class FixedSizeNetPacketToClient
             GS_ASSERT(false);
             #endif
         }
-        
-        void broadcast_exclude(int ignore_client_id) 
+
+        void broadcast_exclude(int ignore_client_id)
         {
             #if DC_SERVER
             if (NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
@@ -152,7 +152,7 @@ class FixedSizeNetPacketToClient
 
             class NetPeer* np;
 
-            for (int i=0; i<HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
             {
                 if (i == ignore_client_id) continue;
                 np = NetServer::pool[i];
@@ -177,14 +177,14 @@ class FixedSizeNetPacketToClient
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read)
         {
             Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
         }
 
-        static void register_client_packet() 
+        static void register_client_packet()
         {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
@@ -192,7 +192,7 @@ class FixedSizeNetPacketToClient
             x.size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
-}; 
+};
 
 template <class Derived> uint8_t FixedSizeNetPacketToClient<Derived>::message_id(255);
 template <class Derived> unsigned int FixedSizeNetPacketToClient<Derived>::size(0);
@@ -217,14 +217,14 @@ class FixedSizeReliableNetPacketToClient
 
         FixedSizeReliableNetPacketToClient(){ nm = NULL; }
         virtual ~FixedSizeReliableNetPacketToClient() {}
-    
+
         ALWAYS_INLINE void serialize(char* buff, unsigned int* buff_n)
         {
             //GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
-        
+
         ALWAYS_INLINE void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
         {
             unsigned int _buff_n = *buff_n;
@@ -232,7 +232,7 @@ class FixedSizeReliableNetPacketToClient
             *size = *buff_n - _buff_n;
         }
 
-        void sendToClient(ClientID client_id) 
+        void sendToClient(ClientID client_id)
         {
             #if DC_SERVER
             //printf("%d Sending packet %d,%d to %d\n", _in++, message_id, size, client_id);
@@ -271,7 +271,7 @@ class FixedSizeReliableNetPacketToClient
 
             ClientID client_id;
             class NetPeer* np;
-            for (unsigned int i=0; i<n_clients; i++) 
+            for (unsigned int i=0; i<n_clients; i++)
             {
                 client_id = client_ids[i];
                 GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
@@ -286,7 +286,7 @@ class FixedSizeReliableNetPacketToClient
             #endif
         }
 
-        void broadcast() 
+        void broadcast()
         {
             #if DC_SERVER
             if (NetServer::number_of_clients == 0) return;  //prevents memory leak when no clients are connected
@@ -297,7 +297,7 @@ class FixedSizeReliableNetPacketToClient
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
-            for (int i=0; i<HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
             {
                 class NetPeer* np = NetServer::pool[i];
                 if (np == NULL) continue;
@@ -307,8 +307,8 @@ class FixedSizeReliableNetPacketToClient
             GS_ASSERT(false);
             #endif
         }
-        
-        void broadcast_exclude(int ignore_client_id) 
+
+        void broadcast_exclude(int ignore_client_id)
         {
             #if DC_SERVER
             if (NetServer::number_of_clients == 0) return;  //prevents memory leak when no clients are connected
@@ -319,7 +319,7 @@ class FixedSizeReliableNetPacketToClient
 
             //printf("%d Sending packet %d,%d\n", _in++, message_id, size);
 
-            for (int i=0; i<HARD_MAX_CONNECTIONS; i++) 
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
             {
                 if (i == ignore_client_id) continue;
                 class NetPeer* np = NetServer::pool[i];
@@ -344,14 +344,14 @@ class FixedSizeReliableNetPacketToClient
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read)
         {
             Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
         }
 
-        static void register_client_packet() 
+        static void register_client_packet()
         {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size

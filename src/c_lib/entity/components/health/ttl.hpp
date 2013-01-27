@@ -18,7 +18,7 @@ class TTLHealthComponent: public HealthComponent
         {
             return true;   // assume died under whatever circumstance. should only be used temporarily here
         }
-    
+
         bool is_dead()
         {
             if (this->ttl >= ttl_max) return true;

@@ -41,12 +41,12 @@ class VoxPart
         VoxPartDimension dimension;
         VoxColors colors;
         VoxDat* dat;    // parent
-        
+
         int part_num;
 
         int skeleton_parent_matrix;
         float sx, sy, sz, srx, sry, srz;    // skeleton local matrix parameters
-        
+
         float vox_size;
         bool biaxial; // true for horizontal+vertical (head). default=false
 
@@ -84,9 +84,9 @@ class VoxDat {
         struct Affine* vox_skeleton_local_matrix;
         float** vox_skeleton_local_matrix_reference;
         int n_skeleton_nodes;
-        
+
         void init_skeleton(int n_skeleton);
-        
+
         void reset_skeleton_local_matrix(int node);
         void set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
         void set_skeleton_node_parent(int node, int parent);

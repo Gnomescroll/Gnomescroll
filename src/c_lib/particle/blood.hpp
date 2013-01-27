@@ -40,5 +40,5 @@ class Blood_list: public Simple_object_list<Blood, BLOOD_MAX>
     void draw();
     void tick();
 };
-    
+
 }   // Particle

@@ -23,7 +23,7 @@ typedef enum
 typedef enum
 {
     CONTAINER_ACTION_NONE = 0,      // null
-    
+
     FULL_HAND_TO_WORLD,             // remove
     PARTIAL_HAND_TO_WORLD,
 
@@ -54,7 +54,7 @@ typedef enum
     FULL_WORLD_TO_EMPTY_SLOT,
     FULL_WORLD_TO_OCCUPIED_SLOT,
     PARTIAL_WORLD_TO_OCCUPIED_SLOT,
-    
+
 } ContainerActionType;
 
 typedef enum

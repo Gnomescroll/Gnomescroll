@@ -11,7 +11,7 @@
 
 //note that c uses row major order
 //glsl uses column major order
- 
+
 struct Mat4 {
     union
     {
@@ -20,7 +20,7 @@ struct Mat4 {
 
         struct Vec4 v[4];
 
-        struct 
+        struct
         {
             struct Vec4 vx;
             struct Vec4 vy;
@@ -54,7 +54,7 @@ void mat4_print(struct Mat4 m)
     printf("%.2f %.2f %.2f %.2f \n", f[1*4+0],f[1*4+1],f[1*4+2],f[1*4+3] );
     printf("%.2f %.2f %.2f %.2f \n", f[2*4+0],f[2*4+1],f[2*4+2],f[2*4+3] );
     printf("%.2f %.2f %.2f %.2f \n", f[3*4+0],f[3*4+1],f[3*4+2],f[3*4+3] );
-    
+
     printf("\n");
 
     printf("%f %f %f %f \n", f[0*4+0],f[0*4+1],f[0*4+2],f[0*4+3] );
@@ -79,7 +79,7 @@ struct Mat4 mat4_mult(Mat4 a, Mat4 b)
     int i,j;
     for(i=0; i<4; i++) //row
     {
-        for(j=0; j<4; j++) 
+        for(j=0; j<4; j++)
         {
             c._f[4*j+i] = mat4_row_mult_column( a._f, i, b._f, j );
         }
@@ -120,116 +120,116 @@ struct Mat4 mat4_inverse(Mat4 m)
 {
     Mat4 n;
 
-    n._f[0] = m._f[5]  * m._f[10] * m._f[15] - 
-             m._f[5]  * m._f[11] * m._f[14] - 
-             m._f[9]  * m._f[6]  * m._f[15] + 
+    n._f[0] = m._f[5]  * m._f[10] * m._f[15] -
+             m._f[5]  * m._f[11] * m._f[14] -
+             m._f[9]  * m._f[6]  * m._f[15] +
              m._f[9]  * m._f[7]  * m._f[14] +
-             m._f[13] * m._f[6]  * m._f[11] - 
+             m._f[13] * m._f[6]  * m._f[11] -
              m._f[13] * m._f[7]  * m._f[10];
 
-    n._f[4] = -m._f[4]  * m._f[10] * m._f[15] + 
-              m._f[4]  * m._f[11] * m._f[14] + 
-              m._f[8]  * m._f[6]  * m._f[15] - 
-              m._f[8]  * m._f[7]  * m._f[14] - 
-              m._f[12] * m._f[6]  * m._f[11] + 
+    n._f[4] = -m._f[4]  * m._f[10] * m._f[15] +
+              m._f[4]  * m._f[11] * m._f[14] +
+              m._f[8]  * m._f[6]  * m._f[15] -
+              m._f[8]  * m._f[7]  * m._f[14] -
+              m._f[12] * m._f[6]  * m._f[11] +
               m._f[12] * m._f[7]  * m._f[10];
 
-    n._f[8] = m._f[4]  * m._f[9] * m._f[15] - 
-             m._f[4]  * m._f[11] * m._f[13] - 
-             m._f[8]  * m._f[5] * m._f[15] + 
-             m._f[8]  * m._f[7] * m._f[13] + 
-             m._f[12] * m._f[5] * m._f[11] - 
+    n._f[8] = m._f[4]  * m._f[9] * m._f[15] -
+             m._f[4]  * m._f[11] * m._f[13] -
+             m._f[8]  * m._f[5] * m._f[15] +
+             m._f[8]  * m._f[7] * m._f[13] +
+             m._f[12] * m._f[5] * m._f[11] -
              m._f[12] * m._f[7] * m._f[9];
 
-    n._f[12] = -m._f[4]  * m._f[9] * m._f[14] + 
+    n._f[12] = -m._f[4]  * m._f[9] * m._f[14] +
                m._f[4]  * m._f[10] * m._f[13] +
-               m._f[8]  * m._f[5] * m._f[14] - 
-               m._f[8]  * m._f[6] * m._f[13] - 
-               m._f[12] * m._f[5] * m._f[10] + 
+               m._f[8]  * m._f[5] * m._f[14] -
+               m._f[8]  * m._f[6] * m._f[13] -
+               m._f[12] * m._f[5] * m._f[10] +
                m._f[12] * m._f[6] * m._f[9];
 
-    n._f[1] = -m._f[1]  * m._f[10] * m._f[15] + 
-              m._f[1]  * m._f[11] * m._f[14] + 
-              m._f[9]  * m._f[2] * m._f[15] - 
-              m._f[9]  * m._f[3] * m._f[14] - 
-              m._f[13] * m._f[2] * m._f[11] + 
+    n._f[1] = -m._f[1]  * m._f[10] * m._f[15] +
+              m._f[1]  * m._f[11] * m._f[14] +
+              m._f[9]  * m._f[2] * m._f[15] -
+              m._f[9]  * m._f[3] * m._f[14] -
+              m._f[13] * m._f[2] * m._f[11] +
               m._f[13] * m._f[3] * m._f[10];
 
-    n._f[5] = m._f[0]  * m._f[10] * m._f[15] - 
-             m._f[0]  * m._f[11] * m._f[14] - 
-             m._f[8]  * m._f[2] * m._f[15] + 
-             m._f[8]  * m._f[3] * m._f[14] + 
-             m._f[12] * m._f[2] * m._f[11] - 
+    n._f[5] = m._f[0]  * m._f[10] * m._f[15] -
+             m._f[0]  * m._f[11] * m._f[14] -
+             m._f[8]  * m._f[2] * m._f[15] +
+             m._f[8]  * m._f[3] * m._f[14] +
+             m._f[12] * m._f[2] * m._f[11] -
              m._f[12] * m._f[3] * m._f[10];
 
-    n._f[9] = -m._f[0]  * m._f[9] * m._f[15] + 
-              m._f[0]  * m._f[11] * m._f[13] + 
-              m._f[8]  * m._f[1] * m._f[15] - 
-              m._f[8]  * m._f[3] * m._f[13] - 
-              m._f[12] * m._f[1] * m._f[11] + 
+    n._f[9] = -m._f[0]  * m._f[9] * m._f[15] +
+              m._f[0]  * m._f[11] * m._f[13] +
+              m._f[8]  * m._f[1] * m._f[15] -
+              m._f[8]  * m._f[3] * m._f[13] -
+              m._f[12] * m._f[1] * m._f[11] +
               m._f[12] * m._f[3] * m._f[9];
 
-    n._f[13] = m._f[0]  * m._f[9] * m._f[14] - 
-              m._f[0]  * m._f[10] * m._f[13] - 
-              m._f[8]  * m._f[1] * m._f[14] + 
-              m._f[8]  * m._f[2] * m._f[13] + 
-              m._f[12] * m._f[1] * m._f[10] - 
+    n._f[13] = m._f[0]  * m._f[9] * m._f[14] -
+              m._f[0]  * m._f[10] * m._f[13] -
+              m._f[8]  * m._f[1] * m._f[14] +
+              m._f[8]  * m._f[2] * m._f[13] +
+              m._f[12] * m._f[1] * m._f[10] -
               m._f[12] * m._f[2] * m._f[9];
 
-    n._f[2] = m._f[1]  * m._f[6] * m._f[15] - 
-             m._f[1]  * m._f[7] * m._f[14] - 
-             m._f[5]  * m._f[2] * m._f[15] + 
-             m._f[5]  * m._f[3] * m._f[14] + 
-             m._f[13] * m._f[2] * m._f[7] - 
+    n._f[2] = m._f[1]  * m._f[6] * m._f[15] -
+             m._f[1]  * m._f[7] * m._f[14] -
+             m._f[5]  * m._f[2] * m._f[15] +
+             m._f[5]  * m._f[3] * m._f[14] +
+             m._f[13] * m._f[2] * m._f[7] -
              m._f[13] * m._f[3] * m._f[6];
 
-    n._f[6] = -m._f[0]  * m._f[6] * m._f[15] + 
-              m._f[0]  * m._f[7] * m._f[14] + 
-              m._f[4]  * m._f[2] * m._f[15] - 
-              m._f[4]  * m._f[3] * m._f[14] - 
-              m._f[12] * m._f[2] * m._f[7] + 
+    n._f[6] = -m._f[0]  * m._f[6] * m._f[15] +
+              m._f[0]  * m._f[7] * m._f[14] +
+              m._f[4]  * m._f[2] * m._f[15] -
+              m._f[4]  * m._f[3] * m._f[14] -
+              m._f[12] * m._f[2] * m._f[7] +
               m._f[12] * m._f[3] * m._f[6];
 
-    n._f[10] = m._f[0]  * m._f[5] * m._f[15] - 
-              m._f[0]  * m._f[7] * m._f[13] - 
-              m._f[4]  * m._f[1] * m._f[15] + 
-              m._f[4]  * m._f[3] * m._f[13] + 
-              m._f[12] * m._f[1] * m._f[7] - 
+    n._f[10] = m._f[0]  * m._f[5] * m._f[15] -
+              m._f[0]  * m._f[7] * m._f[13] -
+              m._f[4]  * m._f[1] * m._f[15] +
+              m._f[4]  * m._f[3] * m._f[13] +
+              m._f[12] * m._f[1] * m._f[7] -
               m._f[12] * m._f[3] * m._f[5];
 
-    n._f[14] = -m._f[0]  * m._f[5] * m._f[14] + 
-               m._f[0]  * m._f[6] * m._f[13] + 
-               m._f[4]  * m._f[1] * m._f[14] - 
-               m._f[4]  * m._f[2] * m._f[13] - 
-               m._f[12] * m._f[1] * m._f[6] + 
+    n._f[14] = -m._f[0]  * m._f[5] * m._f[14] +
+               m._f[0]  * m._f[6] * m._f[13] +
+               m._f[4]  * m._f[1] * m._f[14] -
+               m._f[4]  * m._f[2] * m._f[13] -
+               m._f[12] * m._f[1] * m._f[6] +
                m._f[12] * m._f[2] * m._f[5];
 
-    n._f[3] = -m._f[1] * m._f[6] * m._f[11] + 
-              m._f[1] * m._f[7] * m._f[10] + 
-              m._f[5] * m._f[2] * m._f[11] - 
-              m._f[5] * m._f[3] * m._f[10] - 
-              m._f[9] * m._f[2] * m._f[7] + 
+    n._f[3] = -m._f[1] * m._f[6] * m._f[11] +
+              m._f[1] * m._f[7] * m._f[10] +
+              m._f[5] * m._f[2] * m._f[11] -
+              m._f[5] * m._f[3] * m._f[10] -
+              m._f[9] * m._f[2] * m._f[7] +
               m._f[9] * m._f[3] * m._f[6];
 
-    n._f[7] = m._f[0] * m._f[6] * m._f[11] - 
-             m._f[0] * m._f[7] * m._f[10] - 
-             m._f[4] * m._f[2] * m._f[11] + 
-             m._f[4] * m._f[3] * m._f[10] + 
-             m._f[8] * m._f[2] * m._f[7] - 
+    n._f[7] = m._f[0] * m._f[6] * m._f[11] -
+             m._f[0] * m._f[7] * m._f[10] -
+             m._f[4] * m._f[2] * m._f[11] +
+             m._f[4] * m._f[3] * m._f[10] +
+             m._f[8] * m._f[2] * m._f[7] -
              m._f[8] * m._f[3] * m._f[6];
 
-    n._f[11] = -m._f[0] * m._f[5] * m._f[11] + 
-               m._f[0] * m._f[7] * m._f[9] + 
-               m._f[4] * m._f[1] * m._f[11] - 
-               m._f[4] * m._f[3] * m._f[9] - 
-               m._f[8] * m._f[1] * m._f[7] + 
+    n._f[11] = -m._f[0] * m._f[5] * m._f[11] +
+               m._f[0] * m._f[7] * m._f[9] +
+               m._f[4] * m._f[1] * m._f[11] -
+               m._f[4] * m._f[3] * m._f[9] -
+               m._f[8] * m._f[1] * m._f[7] +
                m._f[8] * m._f[3] * m._f[5];
 
-    n._f[15] = m._f[0] * m._f[5] * m._f[10] - 
-              m._f[0] * m._f[6] * m._f[9] - 
-              m._f[4] * m._f[1] * m._f[10] + 
-              m._f[4] * m._f[2] * m._f[9] + 
-              m._f[8] * m._f[1] * m._f[6] - 
+    n._f[15] = m._f[0] * m._f[5] * m._f[10] -
+              m._f[0] * m._f[6] * m._f[9] -
+              m._f[4] * m._f[1] * m._f[10] +
+              m._f[4] * m._f[2] * m._f[9] +
+              m._f[8] * m._f[1] * m._f[6] -
               m._f[8] * m._f[2] * m._f[5];
 
     double det = m._f[0] * n._f[0] + m._f[1] * n._f[4] + m._f[2] * n._f[8] + m._f[3] * n._f[12];
@@ -251,7 +251,7 @@ ALWAYS_INLINE
 struct Mat4 mat4_transpose(Mat4 a)
 {
     struct Mat4 b;
-    
+
     for(int i = 0; i < 4; i++){
     for(int j = 0; j < 4; j++){
         b._f[4*i+j] = a._f[4*j+i];
@@ -261,7 +261,7 @@ struct Mat4 mat4_transpose(Mat4 a)
 
 ALWAYS_INLINE
 struct Mat4 mat4_identity()
-{   
+{
     struct Mat4 m;
 
     m.v[0] = vec4_init(1.0f, 0.0f, 0.0f, 0.0f);
@@ -274,7 +274,7 @@ struct Mat4 mat4_identity()
 
 ALWAYS_INLINE
 struct Mat4 mat4_euler_rotation(float x, float y, float z)
-{   
+{
     x *= PI;
     y *= PI;
     z *= PI;
@@ -285,17 +285,17 @@ struct Mat4 mat4_euler_rotation(float x, float y, float z)
     double sy = sin(y);
     double cz = cos(z);
     double sz = sin(z);
-    
+
     struct Mat4 m;
 
-    m.v[0].x = (float)(cy*cx); 
+    m.v[0].x = (float)(cy*cx);
     m.v[0].y = (float)(cy*sx);
     m.v[0].z = (float)(-sy);
     m.v[0].w = 0.0f;
 
     double szsy = sz*sy;
     double czsy = cz*sy;
-    
+
     m.v[1].x = (float)(szsy*cx-cz*sx);
     m.v[1].y = (float)(szsy*sx+cz*cx);
     m.v[1].z = (float)(sz*cy);
@@ -313,7 +313,7 @@ struct Mat4 mat4_euler_rotation(float x, float y, float z)
 
 ALWAYS_INLINE
 struct Mat4 mat4_euler_rotation_and_translation(float _x, float _y, float _z, float x, float y, float z)
-{   
+{
     x *= PI;
     y *= PI;
     z *= PI;
@@ -324,17 +324,17 @@ struct Mat4 mat4_euler_rotation_and_translation(float _x, float _y, float _z, fl
     double sy = sin(y);
     double cz = cos(z);
     double sz = sin(z);
-    
+
     struct Mat4 m;
 
-    m.v[0].x = (float)(cy*cx); 
+    m.v[0].x = (float)(cy*cx);
     m.v[0].y = (float)(cy*sx);
     m.v[0].z = (float)(-sy);
     m.v[0].w = 0.0f;
 
     double szsy = sz*sy;
     double czsy = cz*sy;
-    
+
     m.v[1].x = (float)(szsy*cx-cz*sx);
     m.v[1].y = (float)(szsy*sx+cz*cx);
     m.v[1].z = (float)(sz*cy);
@@ -353,7 +353,7 @@ struct Mat4 mat4_euler_rotation_and_translation(float _x, float _y, float _z, fl
 /*
 ALWAYS_INLINE
 struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
-{   
+{
     struct Mat4 m;
     //not used/implemented yet
     return m;
@@ -362,11 +362,11 @@ struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
 
 ALWAYS_INLINE
 struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m)
-{   
+{
     struct Vec3 u;
 
-    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
-    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x,
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y,
     u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
 
     return u;
@@ -374,11 +374,11 @@ struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m)
 
 ALWAYS_INLINE
 struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m)
-{   
+{
     struct Vec4 u;
 
-    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
-    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x,
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y,
     u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
     u.w = 0;
 
@@ -392,16 +392,16 @@ struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m)
 //translation and rotation by mat4
 ALWAYS_INLINE
 struct Vec3 vec3_mat3_apply(struct Vec3 v, struct Mat4 m)
-{   
+{
     struct Vec3 u;
 /*
-    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x + m.v[3].x, 
-    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y + m.v[3].y, 
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x + m.v[3].x,
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y + m.v[3].y,
     u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z + m.v[3].z;
 */
 
-    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
-    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x,
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y,
     u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
 
     u.x += m.v[3].x;

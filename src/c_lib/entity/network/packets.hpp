@@ -10,7 +10,7 @@ class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_creat
         uint8_t type;
         uint16_t id;
         float x,y,z;
-        
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
@@ -22,7 +22,7 @@ class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_creat
     inline void handle();
 };
 
-// Owner 
+// Owner
 class object_create_owner_StoC: public FixedSizeReliableNetPacketToClient<object_create_owner_StoC>
 {
     public:
@@ -30,7 +30,7 @@ class object_create_owner_StoC: public FixedSizeReliableNetPacketToClient<object
         uint16_t id;
         uint8_t owner;
         float x,y,z;
-        
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
@@ -80,7 +80,7 @@ class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToCli
         float mx,my,mz;
         float theta, phi;
 
-    
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
@@ -108,7 +108,7 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
         float theta, phi;
         uint16_t max_health;
 
-    
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
@@ -151,7 +151,7 @@ class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_
         uint8_t type;
         float x,y,z;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
@@ -169,8 +169,8 @@ class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<obje
         uint8_t type;
         float x,y,z;
         float mx,my,mz;
-    
-        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
+
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
@@ -193,8 +193,8 @@ class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClie
         float x,y,z;
         float mx,my,mz;
         float theta, phi;
-    
-        inline void packet(char* buff, unsigned int* buff_n, bool pack) 
+
+        inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);

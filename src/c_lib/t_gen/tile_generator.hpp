@@ -41,13 +41,13 @@ void _save_png(const char* filename, int xres, int yres)
         int h = yres;
 
         height_div_2 = (int) (yres * .5);
-        for(index = 0; index < height_div_2; index++)    
+        for(index = 0; index < height_div_2; index++)
         {
             memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
             memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
             memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
-        free(temp_row); 
+        free(temp_row);
     }
 
     size_t png_size;

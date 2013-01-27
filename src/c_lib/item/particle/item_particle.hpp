@@ -14,20 +14,20 @@
     * the ttl should be reset to a fixed max lifespan here
 
     will need to do item splits in the check_item_pickups method
-    
+
     the "picked_up" packet will be sent when the target is decided
     * client sets target
-    
+
     both client and server will apply the same tick method
     and advance the item towards the player
-    
+
     in the server, if close enough to the target, or ttl=0,
     die
-    
+
     the client will play the sound for picking up when it
-    receives a destroy() packet for an item that is 
+    receives a destroy() packet for an item that is
     targeting the player's agent
-* 
+*
 */
 
 namespace ItemParticle
@@ -40,9 +40,9 @@ class ItemParticle
 
         ItemParticleID id;
         int item_type;
-        
+
         AgentID target_agent; // when being picked up
-        
+
         // render stuff
         #if DC_CLIENT
         // config
@@ -60,7 +60,7 @@ class ItemParticle
 
         int pickup_prevention;    // timer lock against auto pickup
         bool get_picked_up;
-        
+
         bool can_be_picked_up()
         {
             return (this->pickup_prevention <= 0
@@ -74,7 +74,7 @@ class ItemParticle
 
         void picked_up(AgentID agent_id);
         void pickup_cancelled();
-        
+
         void tick();
 
         void set_state(float x, float y, float z, float mx, float my, float mz)

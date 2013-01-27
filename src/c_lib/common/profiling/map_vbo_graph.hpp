@@ -22,7 +22,7 @@ class MapGraph
 		index = 128;
 		pixel_column = 0;
 
-		for(int i=0; i<128; i++) 
+		for(int i=0; i<128; i++)
 		{
 			_frame_start[i] = 0;
 			_frame_wait_start[i] = 0;
@@ -67,7 +67,7 @@ class MapGraph
             #ifdef __GNUC__
 			  usleep(1000*wait);
             #endif
-            
+
             #ifdef __MSVC__
               Sleep(wait); //ms
             #endif

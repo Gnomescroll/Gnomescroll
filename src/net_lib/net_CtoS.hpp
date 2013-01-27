@@ -40,7 +40,7 @@ void send_bullshit_data()
     class Net_message* nm = arbitrary_acquire(size);
     GS_ASSERT(nm != NULL);
     if (nm == NULL) return;
-    
+
     unsigned int buff_n = 0;
     unsigned int message_id = rand()&0xff;
     pack_message_id(message_id, nm->buff, &buff_n);
@@ -63,7 +63,7 @@ class FixedSizeNetPacketToServer
 
         FixedSizeNetPacketToServer() {}
         virtual ~FixedSizeNetPacketToServer() {}
-    
+
         //flatten this
         ALWAYS_INLINE
         void serialize(char* buff, unsigned int* buff_n)
@@ -71,7 +71,7 @@ class FixedSizeNetPacketToServer
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
-        
+
         ALWAYS_INLINE
         void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
         {
@@ -79,8 +79,8 @@ class FixedSizeNetPacketToServer
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
-        
-        void send() 
+
+        void send()
         {
             #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
@@ -91,7 +91,7 @@ class FixedSizeNetPacketToServer
             GS_ASSERT(false);
             #endif
         }
-        
+
         //will overflow if more than 128 bytes
         unsigned int _size()
         {
@@ -149,7 +149,7 @@ class FixedSizeReliableNetPacketToServer
 
         FixedSizeReliableNetPacketToServer() {}
         virtual ~FixedSizeReliableNetPacketToServer() {}
-    
+
         ALWAYS_INLINE
         void serialize(char* buff, unsigned int* buff_n)
         {
@@ -157,7 +157,7 @@ class FixedSizeReliableNetPacketToServer
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
-        
+
         ALWAYS_INLINE
         void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
         {
@@ -165,8 +165,8 @@ class FixedSizeReliableNetPacketToServer
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
-        
-        void send() 
+
+        void send()
         {
             #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
@@ -179,7 +179,7 @@ class FixedSizeReliableNetPacketToServer
             GS_ASSERT(false);
             #endif
         }
-        
+
         //will overflow if more than 128 bytes
         unsigned int _size()
         {

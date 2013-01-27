@@ -18,7 +18,7 @@ class SynthesizerItem
     {
         item_type = NULL_ITEM_TYPE;
         cost = NULL_COST;
-        
+
         xslot = NULL_SLOT;
         yslot = NULL_SLOT;
     }
@@ -66,7 +66,7 @@ class CraftingRecipe
             //this->output_stack = other.output_stack;
             //this->reagent_num = other.reagent_num;
             //this->available = other.available;
-            
+
             //for (int i=0; i<CRAFT_BENCH_INPUTS_MAX; i++)
             //{
                 //this->reagent[i] = other.reagent[i];
@@ -91,7 +91,7 @@ class SmeltingRecipe
     int reagent[SMELTER_INPUTS_MAX];
     int reagent_count[SMELTER_INPUTS_MAX];
     int creation_time;  // total ticks to synthesize
-    
+
     bool available;
 
     SmeltingRecipe()

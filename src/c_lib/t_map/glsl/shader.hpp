@@ -2,7 +2,7 @@
 
 
 namespace t_map
-{ 
+{
 
 void init_shaders();
 void reload_textures();
@@ -113,7 +113,7 @@ class MapCompatibilityShader
     {
 
     }
-    
+
     ~MapCompatibilityShader()
     {
         if (shader != NULL) delete shader;

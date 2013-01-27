@@ -17,7 +17,7 @@ class HitscanEffect
     private:
     // DO NOT USE:: TESTING PURPOSES ONLY
     void add_plane_bias();   // for player agent, so laser isnt in the eyes
-    
+
     public:
         int id;
         float x,y,z;

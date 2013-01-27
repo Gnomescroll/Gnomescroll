@@ -30,7 +30,7 @@ void load_mech()
 }
 
 void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_render_type, MechBehaviorType mech_behavior_type)
-{    
+{
     if (s != NULL) load_mech();
 
     // check names
@@ -48,7 +48,7 @@ void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_r
     IF_ASSERT(mech_attributes[mech_type].loaded) return;
 
     s = &mech_attributes[mech_type];
-    
+
     s->mech_type = mech_type;
     s->mech_type_class = mech_type_class;
     strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
@@ -70,7 +70,7 @@ void set_sprite_index(int sprite_index)
 void change_mech(const char* original, const char* replacement)
 {
     GS_ASSERT_ABORT(is_valid_mech_name(original));
-    GS_ASSERT_ABORT(is_valid_mech_name(replacement));        
+    GS_ASSERT_ABORT(is_valid_mech_name(replacement));
     bool mapped = mech_name_map->add_definition(original, replacement);
     GS_ASSERT_ABORT(mapped);
 }

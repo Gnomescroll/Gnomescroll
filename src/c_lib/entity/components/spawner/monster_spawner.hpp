@@ -23,7 +23,7 @@ class MonsterSpawnerComponent: public SpawnerComponent
         struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius);
 
         void notify_children_of_death();
-        
+
         void set_max_children(int max_children)
         {
             if (this->max_children == max_children) return;
@@ -39,13 +39,13 @@ class MonsterSpawnerComponent: public SpawnerComponent
             }
             else
                 this->children = (int*)malloc(max_children * sizeof(int));
-                
+
             for (int i=0; i<max_children; i++)
                 this->children[i] = NULL_ENTITY_ID;
 
             this->max_children = max_children;
         }
-        
+
     MonsterSpawnerComponent()
     : SpawnerComponent(COMPONENT_MONSTER_SPAWNER),
     max_children(0), children(NULL), spawn_type(OBJECT_NONE), radius(1.0f), children_ct(0)

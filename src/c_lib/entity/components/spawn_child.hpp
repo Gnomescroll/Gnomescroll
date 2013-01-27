@@ -19,7 +19,7 @@ class SpawnChildComponent: public Component
         }
         void notify_parent_of_death();
         void parent_died();
-    
+
     ~SpawnChildComponent() {}
 
     SpawnChildComponent()

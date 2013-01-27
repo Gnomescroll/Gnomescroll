@@ -62,7 +62,7 @@ class BoneTree
 
     BoneTree() :
     pScene(NULL),
-    nl(NULL), 
+    nl(NULL),
     ml(NULL),
     tvl(NULL),
     vll(NULL), vln(NULL),
@@ -71,7 +71,7 @@ class BoneTree
     bvll(NULL),
     s(NULL)
     {}
-    
+
     ~BoneTree()
     {
         if (s != NULL) SDL_FreeSurface(s);
@@ -117,7 +117,7 @@ class BoneTree
         count_nodes(pScene->mRootNode); //count the nodes with meshes
         nlm = nli;
         nl = new aiNode*[nlm];
-        
+
         ml = new aiMesh*[nlm];
 
         for(int i=0; i<nlm; i++) nl[i] = NULL;
@@ -237,7 +237,7 @@ class BoneTree
 
     int bvllm;              //max index for vertex lookup table
     int* bvll;              //base vertex lookup
-    
+
     void init_base_vertex_list()
     {
         bvlo = new int[nlm];
@@ -279,7 +279,7 @@ class BoneTree
                 aiVector3D pos = mesh->mVertices[j];
                 aiVector3D tex = mesh->mTextureCoords[0][j];
 
-                struct _Vertex v; 
+                struct _Vertex v;
                 v.v.x = pos.x;
                 v.v.y = pos.y;
                 v.v.z = pos.z;
@@ -374,7 +374,7 @@ class BoneTree
 
     void count_bones()
     {
-        
+
         //aiNode* pNode = pScene->mRootNode;
         aiNode* pNode = NULL;
 
@@ -417,7 +417,7 @@ class BoneTree
         count_bones(&bone_count, pNode);
 
         printf("DAE LOADER: %d bones \n", bone_count);
-    }   
+    }
 
 
     void init_bone_list()
@@ -439,9 +439,9 @@ class BoneTree
 
                 bool new_bone = true;
 
-                for(int _i=0; _i<=i; _i++) 
+                for(int _i=0; _i<=i; _i++)
                 {
-                    for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++) 
+                    for(unsigned int _j=0; _j<ml[_i]->mNumBones; _j++)
                     {
                         if(_i == i && _j == j) break;
                         //if(bone == ml[_i]->mBones[_j])
@@ -499,7 +499,7 @@ class BoneTree
             texture_format = GL_BGRA;
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-        
+
         glDisable(GL_TEXTURE_2D);
     }
 
@@ -514,7 +514,7 @@ void Animator::CalculateBoneToWorldTransform(cBone* child)
     while( parent )
     {// this will climb the nodes up along through the parents concentating all the matrices to get the Entity to World transform, or in this case, the Bone To World transform
         child->GlobalTransform *= parent->LocalTransform;
-        parent  = parent->Parent;// get the parent of the bone we are working on 
+        parent  = parent->Parent;// get the parent of the bone we are working on
     }
 }
 
@@ -525,7 +525,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 */
 
 /*
-    Just replaced 
+    Just replaced
     mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
     with
@@ -541,11 +541,11 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
     for( size_t a = 0; a < mesh->mNumBones; ++a)
     {
       const aiBone* bone = mesh->mBones[a];
-      
+
       // find the corresponding node by again looking recursively through the node hierarchy for the same name
       aiNode* node = FindNodeRecursivelyByName( scene->mRootNode, bone->mName);
-      
-      // start with the mesh-to-bone matrix 
+
+      // start with the mesh-to-bone matrix
       boneMatrices[a] = bone->mOffsetMatrix;
       // and now append all node transformations down the parent chain until we're back at mesh coordinates again
       const aiNode* tempNode = node;
@@ -559,7 +559,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
 
 /*
- Debug things separately. 
+ Debug things separately.
  First try to visualize the bone structure itsself and verify that it's movement looks fine before using the pose to transform vertices.
 */
 
@@ -601,7 +601,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
         for(int i=0; i<nli; i++)
         {
-            aiMesh* mesh = ml[i]; 
+            aiMesh* mesh = ml[i];
 
             GS_ASSERT(mesh->mNumBones != 0);
 
@@ -613,7 +613,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 GS_ASSERT(node != NULL)
-                // start with the mesh-to-bone matrix 
+                // start with the mesh-to-bone matrix
 
                 Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
                 //Mat4 boneMatrix = mat4_identity();
@@ -644,7 +644,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
                         //mat4_print( _ConvertMatrix(tempNode->mTransformation) ) ;
                     }
                         //boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
-                    
+
                     boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
                     GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
 
@@ -662,7 +662,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 
                 const float size = 1.0f;
                 glBegin(GL_LINES);
-                    
+
                     Vec3 vv;
                     vv.x = boneMatrix._f[4*3+0];
                     vv.y = boneMatrix._f[4*3+1];
@@ -767,7 +767,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         end.y = -end.y;
         end.z = -end.z;
         end.w = -end.w;
-    } 
+    }
 
     // Calculate coefficients
     float sclp, sclq;
@@ -793,9 +793,9 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
 }
 
 /*
-Another complication is how to use interpolation. It is possible to create a transformation matrix from the rotation, location and scaling, 
-but interpolating rotation using transformation matrices are not good. If you interpolate an object moved in an arch defined 
-by two keys 90 degrees rotated to each other, the result will be a straight line (at best). It actually looks quite fun, 
+Another complication is how to use interpolation. It is possible to create a transformation matrix from the rotation, location and scaling,
+but interpolating rotation using transformation matrices are not good. If you interpolate an object moved in an arch defined
+by two keys 90 degrees rotated to each other, the result will be a straight line (at best). It actually looks quite fun,
 but is not good. Therefore, you usually should do the interpolation on the quaternions first, then create the transformation matrix.
 */
     //get matrix for a node, if not is not animated, just returns the scene matrix
@@ -811,7 +811,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
             {
                 GS_ASSERT(anim->mNumPositionKeys == anim->mNumRotationKeys);
                 int tmax = anim->mNumPositionKeys;
-                
+
                 aiVectorKey pos =  anim->mPositionKeys[frame_time % tmax];
                 aiQuatKey rot = anim->mRotationKeys[frame_time % tmax];
                 GS_ASSERT( pos.mTime == rot.mTime );
@@ -836,7 +836,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         {
 
 
-            
+
             aiNodeAnim* anim = node_channels[i];
             //printf("node channel= %s \n", anim->mNodeName.data);
              int tmax = anim->mNumPositionKeys;
@@ -854,15 +854,15 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                 //GS_ASSERT( pos.mTime == result.mTime );
                 }else{
                 GS_ASSERT(anim->mNumPositionKeys == anim->mNumRotationKeys);
-               
-                
+
+
                 pos =  anim->mPositionKeys[frame_time % tmax];
                 //aiVectorKey tpos =  anim->mPositionKeys[(frame_time % tmax)+1];
 
                 aiQuatKey rot = anim->mRotationKeys[frame_time % tmax];
                 aiQuatKey trot = anim->mRotationKeys[(frame_time % tmax)+1];
 
-                
+
                 result.mTime=rot.mTime;
 
                 Interpolate(result.mValue,rot.mValue,trot.mValue,0.5);
@@ -946,10 +946,10 @@ but is not good. Therefore, you usually should do the interpolation on the quate
             for(unsigned int j=0; j<mesh->mNumBones; j++)
             {
                 aiBone* bone = mesh->mBones[j];
-                
+
                 aiNode* node = FindNodeRecursivelyByName( pScene->mRootNode, bone->mName.data);
                 GS_ASSERT(node != NULL)
-                // start with the mesh-to-bone matrix 
+                // start with the mesh-to-bone matrix
                 Mat4 boneMatrix = _ConvertMatrix(bone->mOffsetMatrix);  //node to vertex matrix?
                 GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
 
@@ -968,12 +968,12 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                         //mat4_print( _ConvertMatrix(tempNode->mTransformation) ) ;
                     }
                     //boneMatrix = mat4_mult(boneMatrix, _ConvertMatrix(tempNode->mTransformation));
-                    
+
                     boneMatrix = mat4_mult(get_anim_matrix(frame_time, node_channels, node_channels_max, tempNode), boneMatrix );
                     GS_ASSERT(boneMatrix._f[0*4+3] == 0.0f && boneMatrix._f[1*4+3] == 0.0f && boneMatrix._f[2*4+3] == 0.0f && boneMatrix._f[3*4+3] == 1.0f);
                     //boneMatrix = mat4_mult(_ConvertMatrix(tempNode->mTransformation), boneMatrix);
                     //armature is the last node that gets multiplied in
-                    
+
                     if( strcmp(tempNode->mName.data, "Armature") == 0 )
                         break;
                     if(tempNode == NULL)
@@ -1043,7 +1043,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
                     //unsigned int mNumWeights; //number of vertices affected by this bone
                     //C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
 
-                    //struct aiVertexWeight 
+                    //struct aiVertexWeight
                     //unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
                     //! The strength of the influence in the range (0...1).
                     //! The influence from all bones at one vertex amounts to 1.
@@ -1107,7 +1107,7 @@ but is not good. Therefore, you usually should do the interpolation on the quate
         }
 
         glEnd();
-        
+
         glBindTexture(GL_TEXTURE_2D, 0);
         check_gl_error();
 
@@ -1125,7 +1125,7 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
     for(unsigned int i=0; i < pNode->mNumMeshes; i++)
     {
         unsigned int index = pNode->mMeshes[i];
-        printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index, 
+        printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index,
             pScene->mMeshes[index]->mName.data,
             pScene->mMeshes[index]->mNumVertices,
             pScene->mMeshes[index]->mNumFaces);
@@ -1135,13 +1135,13 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
         {
             //aiBone* bone = mesh->mBones[j];
 
-            printf("\t\tBone %02d: %s affects %d vertices \n", j, 
+            printf("\t\tBone %02d: %s affects %d vertices \n", j,
                 mesh->mBones[j]->mName.data,
                 mesh->mBones[j]->mNumWeights
                 );
             //C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
             //C_STRUCT aiMatrix4x4 mOffsetMatrix; //! Matrix that transforms from mesh space to bone space in bind pose
-        
+
             for(unsigned int k=0; k < mesh->mBones[j]->mNumWeights; k++)
             {
                 //aiVertexWeight* vertex_weight = bone->mWeights[k];
@@ -1150,7 +1150,7 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
                 //bone->mWeights[k].mVertexId;
                 //bone->mWeights[k].mWeight;
 
-                //struct aiVertexWeight 
+                //struct aiVertexWeight
                 //unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
                 //! The strength of the influence in the range (0...1).
                 //! The influence from all bones at one vertex amounts to 1.
@@ -1184,7 +1184,7 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
         for(int _i=0; _i<depth; _i++)
             printf("\t");
 
-        printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index, 
+        printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index,
             pScene->mMeshes[index]->mName.data,
             pScene->mMeshes[index]->mNumVertices,
             pScene->mMeshes[index]->mNumFaces);
@@ -1204,7 +1204,7 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
                 );
             //C_STRUCT aiVertexWeight* mWeights; //The vertices affected by this bone
             //C_STRUCT aiMatrix4x4 mOffsetMatrix; //! Matrix that transforms from mesh space to bone space in bind pose
-        
+
             for(unsigned int k=0; k < mesh->mBones[j]->mNumWeights; k++)
             {
                 //aiVertexWeight* vertex_weight = bone->mWeights[k];
@@ -1213,7 +1213,7 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
                 //bone->mWeights[k].mVertexId;
                 //bone->mWeights[k].mWeight;
 
-                //struct aiVertexWeight 
+                //struct aiVertexWeight
                 //unsigned int mVertexId; //! Index of the vertex which is influenced by the bone.
                 //! The strength of the influence in the range (0...1).
                 //! The influence from all bones at one vertex amounts to 1.
@@ -1236,10 +1236,10 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
 
     aiComponent_TANGENTS_AND_BITANGENTS
     aiComponent_COLORS
-    aiComponent_LIGHTS 
-    aiComponent_CAMERAS 
+    aiComponent_LIGHTS
+    aiComponent_CAMERAS
     aiComponent_TEXTURES //remove embedded textures
-    aiComponent_MATERIALS 
+    aiComponent_MATERIALS
 */
 
 /*
@@ -1247,14 +1247,14 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
     http://assimp.sourceforge.net/lib_html/postprocess_8h.html
 
     aiProcess_ImproveCacheLocality  Reorders triangles for better vertex cache locality.
-    aiProcess_ValidateDataStructure 
+    aiProcess_ValidateDataStructure
 
-    aiProcess_JoinIdenticalVertices  
+    aiProcess_JoinIdenticalVertices
     If this flag is not specified, no vertices are referenced by more than one face and no index buffer is required for rendering.
 
     Add cache locality and join identical values even if not using index buffers
 
-    aiProcess_TransformUVCoords 
+    aiProcess_TransformUVCoords
 
 */
 
@@ -1266,14 +1266,14 @@ void init()
     /*
         !!!!!
     */
-    
+
     size_t bsize = 0;
     char* buffer = read_file_to_buffer( (char*) "media/mesh/player.dae", &bsize);
     GS_ASSERT(buffer != NULL);
     if (buffer == NULL) return;
-    
-    int aFlag = aiProcess_Triangulate | 
-    //aiProcess_GenUVCoords | 
+
+    int aFlag = aiProcess_Triangulate |
+    //aiProcess_GenUVCoords |
     //aiProcess_TransformUVCoords |
     aiProcess_ValidateDataStructure;// |
     //aiProcess_RemoveComponent; //strip components on
@@ -1300,7 +1300,7 @@ void init()
     bt = new BoneTree;
     bt->init( (aiScene*) pScene);
     printf("BT: bone tree finished\n");
-    
+
     printf("Bone tree: \n");
 
     int _total = 0;

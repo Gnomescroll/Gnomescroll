@@ -9,7 +9,7 @@
  * void client_tick();
  * void server_tick();
  */
- 
+
 //#include <common/common.hpp>
 //#include <physics/common.hpp>
 
@@ -28,7 +28,7 @@ class MultiObject_list
 
     protected:
         int id_c;
-        
+
     public:
         unsigned int n_max;
         int num;
@@ -41,12 +41,12 @@ class MultiObject_list
     Object_interface* get(int id);
     Object_interface* create(int type);         //object auto id
     Object_interface* create(int type, int id);   //create object with id
-    
+
     bool contains(int id);
     bool full();
 
     int get_free_id();
-    
+
     void destroy(int _id);
 
     void where();
@@ -62,7 +62,7 @@ class MultiObject_list
     virtual ~MultiObject_list(); //default deconstructor
 };
 
-template <class Object_interface> 
+template <class Object_interface>
 MultiObject_list<Object_interface>::MultiObject_list(unsigned int capacity, Object_interface* (*create_interface_fn)(int, int)) :
     id_c(0), n_max(capacity), num(0), create_interface(create_interface_fn)
 {
@@ -70,7 +70,7 @@ MultiObject_list<Object_interface>::MultiObject_list(unsigned int capacity, Obje
     //where();
 }
 
-template <class Object_interface> 
+template <class Object_interface>
 MultiObject_list<Object_interface>::~MultiObject_list()
 {
     if (a != NULL)
@@ -120,7 +120,7 @@ int MultiObject_list<Object_interface>::get_free_id()
         id = (i + id_c) % n_max;
         if (a[id] == NULL) break;
     }
-    
+
     if (i == n_max)
     {
         printf("%s_list Error: no free ids found\n", name());
@@ -145,7 +145,7 @@ Object_interface* MultiObject_list<Object_interface>::create(int type)
         printf("%s_list Error: cannot create object, object limit exceeded\n", name());
         return NULL;
     }
-    
+
     a[id] = this->create_interface(type, id);
     num++;
     id_c = id+1;
@@ -186,12 +186,12 @@ void MultiObject_list<Object_interface>::destroy(int id)
         printf("%s_list: Cannot delete object %d: object is null\n", name(), id);
         return;
     }
-    
+
     delete a[id];
     a[id] = NULL;
     num--;
 }
- 
+
 template <class Object_interface>
 bool MultiObject_list<Object_interface>::full()
 {

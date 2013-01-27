@@ -28,10 +28,10 @@ class MapMessagePacketToServer
         static unsigned int size;
         ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
-        
+
         MapMessagePacketToServer() {}
         virtual ~MapMessagePacketToServer() {}
-        
+
         ALWAYS_INLINE void serialize(char* buff, unsigned int* buff_n)
         {
             pack_message_id(Derived::message_id, buff, buff_n);
@@ -43,8 +43,8 @@ class MapMessagePacketToServer
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
-        
-        void send() 
+
+        void send()
         {
             #if DC_CLIENT
             Net_message* nm = Net_message::acquire(Derived::size);
@@ -55,7 +55,7 @@ class MapMessagePacketToServer
             GS_ASSERT(false);
             #endif
         }
-        
+
         //will overflow if more than 128 bytes
         unsigned int _size()
         {
@@ -114,7 +114,7 @@ class MapMessagePacketToClient
 
         MapMessagePacketToClient() { }
         virtual ~MapMessagePacketToClient() {}
-    
+
         ALWAYS_INLINE void serialize(char* buff, unsigned int* buff_n)
         {
             pack_message_id(Derived::message_id, buff, buff_n);
@@ -130,7 +130,7 @@ class MapMessagePacketToClient
         /*
             Deprecate This
         */
-        void broadcast() 
+        void broadcast()
         {
             #if DC_SERVER
             if (NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
@@ -141,7 +141,7 @@ class MapMessagePacketToClient
 
             class NetPeer* np;
 
-            for(int i=0; i<HARD_MAX_CONNECTIONS; i++) 
+            for(int i=0; i<HARD_MAX_CONNECTIONS; i++)
             {
                 np = NetServer::pool[i]; //use better iterator
                 if(np == NULL) continue;
@@ -152,14 +152,14 @@ class MapMessagePacketToClient
             #endif
         }
 
-        void sendToClient(ClientID client_id) 
+        void sendToClient(ClientID client_id)
         {
             #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
             if (np == NULL) np = NetServer::pool[client_id];
             IF_ASSERT(np == NULL) return;
 
-            if(np->map_message_buffer_index + size >= np->map_message_buffer_max) 
+            if(np->map_message_buffer_index + size >= np->map_message_buffer_max)
                 np->resize_map_message_buffer(np->map_message_buffer_index + size);
 
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
@@ -181,7 +181,7 @@ class MapMessagePacketToClient
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read)
         {
             Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
@@ -194,7 +194,7 @@ class MapMessagePacketToClient
             Derived::size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
-}; 
+};
 
 template <class Derived> uint8_t MapMessagePacketToClient<Derived>::message_id(255);
 template <class Derived> unsigned int MapMessagePacketToClient<Derived>::size(0);
@@ -238,7 +238,7 @@ class MapMessageArrayPacketToClient
             *size = *buff_n - _buff_n;
         }
 
-        void sendToClient(ClientID client_id, char* buff, int len) 
+        void sendToClient(ClientID client_id, char* buff, int len)
         {
             #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
@@ -250,12 +250,12 @@ class MapMessageArrayPacketToClient
             }
 
             //printf("1 size= %i \n", size);
-            //printf("2 size= %i \n", Derived::size);       
-                
-            if(np->map_message_buffer_index + size + len >= np->map_message_buffer_max) 
+            //printf("2 size= %i \n", Derived::size);
+
+            if(np->map_message_buffer_index + size + len >= np->map_message_buffer_max)
                 np->resize_map_message_buffer(np->map_message_buffer_index + size + len);
 
-            //if(len > 1024) 
+            //if(len > 1024)
             //{
                 //printf("MapMessagePacketToClient: large map message, prefix length= %i length= %i \n", size, len);
             //}
@@ -288,7 +288,7 @@ class MapMessageArrayPacketToClient
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read) 
+        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read)
         {
             Derived x;
 
@@ -313,7 +313,7 @@ class MapMessageArrayPacketToClient
             Derived::size = x._size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
-}; 
+};
 
 template <class Derived> uint8_t MapMessageArrayPacketToClient<Derived>::message_id(255);
 template <class Derived> unsigned int MapMessageArrayPacketToClient<Derived>::size(0);

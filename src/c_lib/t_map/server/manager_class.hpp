@@ -49,7 +49,7 @@ class MAP_MANAGER_ELEMENT
 
     MAP_MANAGER_ELEMENT()
     {
-        version = NO_ALIAS;    
+        version = NO_ALIAS;
     }
 };
 
@@ -80,9 +80,9 @@ class Map_manager
 
     int xchunk_dim;
     int ychunk_dim;
-    
+
     class MAP_MANAGER_ELEMENT* version_list;
-    
+
     int subed_chunks;
     int alias_list[ MAP_MANAGER_ALIAS_LIST_SIZE ];  //aliases are ints
 
@@ -100,7 +100,7 @@ class Map_manager
 
         needs_update = false;
         this->client_id = client_id;
-        
+
         chunk_que_num = 0;
 
         SUB_RADIUS = DEFAULT_SUB_RADIUS;
@@ -166,7 +166,7 @@ void Map_manager::init_compressor()
 {
     //int level = MZ_BEST_COMPRESSION;
     int level = 5;
-    memset(&stream, 0, sizeof(stream));  
+    memset(&stream, 0, sizeof(stream));
 
     if (mz_deflateInit(&stream, level) != MZ_OK)
     {
@@ -191,7 +191,7 @@ void Map_manager::send_compressed_chunk(int alias, int index)
     stream.next_in = (unsigned char*) t->chunk[index]->e;
     stream.avail_in = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
     stream.next_out = (unsigned char*) COMPRESSION_BUFFER;
-    stream.avail_out = COMPRESSION_BUFFER_SIZE;  
+    stream.avail_out = COMPRESSION_BUFFER_SIZE;
 
     int status = mz_deflate(&stream, MZ_SYNC_FLUSH); //Z_FINISH
     if (status != MZ_OK)
@@ -221,7 +221,7 @@ void Map_manager::send_uncompressed_chunk(int alias, int index)
     //c.byte_size = size;
     c.sendToClient(client_id, (char*)t->chunk[index]->e, size);
 
-    //void sendToClient(ClientID client_id, char* buff, int len) 
+    //void sendToClient(ClientID client_id, char* buff, int len)
     //map_chunk_uncompressed_StoC
 }
 
@@ -248,7 +248,7 @@ void Map_manager::update()
     //printf("map manager: xpos= %i ypos= %i \n", xpos, ypos);
 
     int _xpos = xpos / 16;
-    int _ypos = ypos / 16;  
+    int _ypos = ypos / 16;
 
     int _SUB_RADIUS = (SUB_RADIUS/16) + 1;
 
@@ -257,13 +257,13 @@ void Map_manager::update()
 
     for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
-        if( alias_list[i] == NO_ALIAS) continue;  //QUED || NO_ALIAS 
+        if( alias_list[i] == NO_ALIAS) continue;  //QUED || NO_ALIAS
 
         int x = 16*(alias_list[i] % xchunk_dim)+8;
         int y = 16*(alias_list[i] / ychunk_dim)+8;
 
         //x = x - xpos;
-        //y = y - ypos; 
+        //y = y - ypos;
 
         int dx = xpos - quadrant_translate_i(xpos, x);
         int dy = ypos - quadrant_translate_i(ypos, y);
@@ -299,7 +299,7 @@ void Map_manager::update()
 
 /*
     Quadrant Math
-*/  
+*/
         int x = xpos - quadrant_translate_i(xpos, i*16 + 8);
         int y = ypos - quadrant_translate_i(ypos, j*16 + 8);
 
@@ -340,7 +340,7 @@ void Map_manager::que_for_sub(int x, int y)
     }
 
 
-    struct QUE_ELEMENT q; 
+    struct QUE_ELEMENT q;
 
     q.version = version_list[index].version;   //save version
 
@@ -355,7 +355,7 @@ void Map_manager::que_for_sub(int x, int y)
 }
 
 /*
-static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, int xpos, int ypos) 
+static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, int xpos, int ypos)
 {
     for(unsigned int i=0; i<n; i++)
     {

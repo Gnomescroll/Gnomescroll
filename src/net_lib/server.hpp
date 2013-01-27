@@ -16,7 +16,7 @@ class Agent;
 
 namespace NetServer
 {
-   
+
 extern unsigned int number_of_clients;
 extern unsigned int session_count;
 

@@ -81,9 +81,9 @@ void print_palette()
     for(int i=0; i<MAX_CUBES; i++)
     {
         //printf("block_id= %i index= %i max= %i \n", i, cube_texture_palette_lookup[i], cube_texture_palette_lookup_max[i] );
-        if(cube_texture_palette_lookup[i] != 0) 
+        if(cube_texture_palette_lookup[i] != 0)
         {
-            for(int j=0;j<cube_texture_palette_lookup_max[i]; j++) 
+            for(int j=0;j<cube_texture_palette_lookup_max[i]; j++)
             {
                 printf("\t %i: ", j);
                 for(int k=0; k<6; k++) printf("%i ",  cube_texture_palette[6*(cube_texture_palette_lookup[i]+j)+k] );

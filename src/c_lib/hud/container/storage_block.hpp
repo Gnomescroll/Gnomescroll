@@ -8,7 +8,7 @@ namespace HudContainer
 class StorageBlockUI : public UIElement
 {
     public:
-          
+
         static const int cell_size = 37;
         int xdim;    // grid cell size
         int ydim;
@@ -63,7 +63,7 @@ class StorageBlockUI : public UIElement
             delete[] this->stacks;
             this->stacks = NULL;
         }
-        
+
         int max = xdim * ydim;
         IF_ASSERT(max <= 0) return;
         this->stacks = new HudText::Text[max];
@@ -94,7 +94,7 @@ class StorageBlockUI : public UIElement
     void set_container_type(ItemContainerType container_type)
     {
         if (this->container_type == container_type) return;
-        
+
         this->container_type = container_type;
 
         this->xdim = ItemContainer::get_container_xdim(container_type);
@@ -138,7 +138,7 @@ class StorageBlockUI : public UIElement
 };
 
 int StorageBlockUI::get_slot_at(int px, int py)
-{  
+{
     //pixels from upper left
     px -= xoff;
     py -= _yresf - yoff;
@@ -157,9 +157,9 @@ void StorageBlockUI::draw()
 {
     IF_ASSERT(this->texture == NULL) return;
     IF_ASSERT(this->texture == 0) return;
- 
+
     this->draw_name();
-    
+
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -204,7 +204,7 @@ void StorageBlockUI::draw()
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
     int hover_slot = this->get_slot_at(mouse_x, mouse_y);
-    
+
     if (hover_slot != NULL_SLOT)
     {
         int w = slot_size;
@@ -213,7 +213,7 @@ void StorageBlockUI::draw()
 
         const float x = xoff + cell_size*xslot + cell_offset_x;
         const float y = yoff - (cell_size*yslot + cell_offset_y);
-        
+
         glVertex2f(x,y);
         glVertex2f(x, y-w);
         glVertex2f(x+w, y-w);
@@ -287,7 +287,7 @@ void StorageBlockUI::draw()
         text = &this->stacks[slot];
         const float x = xoff + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
-        draw_slot_numbers(text, x, y, stack, charges);         
+        draw_slot_numbers(text, x, y, stack, charges);
     }
 
     HudFont::reset_default();

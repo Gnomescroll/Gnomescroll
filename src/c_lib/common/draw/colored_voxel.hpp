@@ -13,7 +13,7 @@ class ColoredVoxel: public Voxel
 {
     public:
         Color color;
-        
+
         void call();
 
         void set_color(unsigned char r, unsigned char g, unsigned char b)
@@ -27,5 +27,5 @@ class ColoredVoxel: public Voxel
     {}
 
 };
-    
+
 } // Draw

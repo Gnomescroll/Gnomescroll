@@ -14,7 +14,7 @@ class HealerComponent: public Component
 {
     public:
         float radius;
-        
+
         void heal_agents_in_range();
         void call() { this->heal_agents_in_range(); }
 

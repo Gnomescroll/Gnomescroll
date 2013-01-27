@@ -35,7 +35,7 @@ class Camera
         bool first_person;
         bool zoomed;
         float zoom_factor;
-        
+
         void pan(float dx, float dy);
 
         void set_aspect(float fov, float z_near, float z_far);
@@ -44,15 +44,15 @@ class Camera
         void set_fov(float fov);
         void move(float dx, float dy, float dz);
         void set_angles(float theta, float phi);
-        
+
         void set_position(struct Vec3 p);
         struct Vec3 get_position() const
         {
             return this->position;
         }
-        
+
         struct Vec3 forward_vector();
-        
+
         struct Vec3 right_vector()
         {
             Vec3 right = vec3_init(0.0f, 1.0f, 0.0f);
@@ -60,7 +60,7 @@ class Camera
             normalize_vector(&right);
             return right;
         }
-        
+
         struct Vec3 up_vector()
         {
             Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
@@ -68,7 +68,7 @@ class Camera
             normalize_vector(&up);
             return up;
         }
-        
+
         void hud_projection();
         void world_projection();
 

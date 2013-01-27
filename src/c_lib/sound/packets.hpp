@@ -16,7 +16,7 @@ class play_2d_sound_StoC: public FixedSizeReliableNetPacketToClient<play_2d_soun
         pack_u8(&sound_id, buff, buff_n, pack);
     }
     inline void handle();
-};  
+};
 
 class play_3d_sound_StoC: public FixedSizeReliableNetPacketToClient<play_3d_sound_StoC>
 {

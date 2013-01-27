@@ -45,7 +45,7 @@ class VoxelVolume
 
     bool needs_vbo_update;
     bool damaged;
-    
+
     class VoxelHitscanElement vhe;
 
     //hitscan registration
@@ -63,7 +63,7 @@ class VoxelVolume
     //inline struct Vec3 get_center() __attribute((always_inline));
 
     inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision);
-    
+
     inline struct Vec3 get_center(){ return world_matrix.c; }
 
     void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);

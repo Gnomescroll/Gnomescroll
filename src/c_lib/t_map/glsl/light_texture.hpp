@@ -1,7 +1,7 @@
 #pragma once
 
 namespace t_map
-{ 
+{
 
 	//unsigned int light_texture_CLUT = 0;
 
@@ -209,10 +209,10 @@ class LightTextureGenerator
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-            
+
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, dim, dim, 0, GL_RGB, GL_FLOAT, values2 );
             //glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, dim, dim, 0, GL_RGB, GL_FLOAT, values );
-        
+
         //}
         glBindTexture(GL_TEXTURE_2D, 0);
 

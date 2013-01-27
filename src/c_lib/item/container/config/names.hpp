@@ -5,7 +5,7 @@ namespace ItemContainer
 
 namespace name
 {
-    
+
 extern ItemContainerType hand;
 extern ItemContainerType inventory;
 extern ItemContainerType toolbelt;

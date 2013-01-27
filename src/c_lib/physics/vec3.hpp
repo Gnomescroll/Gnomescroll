@@ -14,12 +14,12 @@
 
 #define PI 3.14159265f
 
-struct Vec3 
+struct Vec3
 {
     union
     {
         float f[3];
-        struct 
+        struct
         {
             float x,y,z;
         };
@@ -74,18 +74,18 @@ struct Vec3 vec3_copy(Vec3 f)
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_normalize(struct Vec3 v) 
+struct Vec3 vec3_normalize(struct Vec3 v)
 {
     float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
 
-    if (l == 0.0f) 
+    if (l == 0.0f)
     {
         GS_ASSERT_LIMIT(l != 0.0f, 1);
         return v;
     }
 
     l = 1.0f/l;
-    v.x *= l; 
+    v.x *= l;
     v.y *= l;
     v.z *= l;
     return v;
@@ -139,7 +139,7 @@ struct Vec3 vec3_scalar_add(struct Vec3 v, float scalar)
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2) 
+struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2)
 {
     v1.x += v2.x;
     v1.y += v2.y;
@@ -148,7 +148,7 @@ struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2)
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3) 
+struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3)
 {
     struct Vec3 v;
     v.x = v1.x + v2.x + v3.x;
@@ -158,7 +158,7 @@ struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3)
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) 
+struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4)
 {
     struct Vec3 v;
     v.x = v1.x + v2.x + v3.x + v4.x;
@@ -173,7 +173,7 @@ static Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
     struct Vec3 v;
     //v = vec3_add(i, vec3_scalar_mult(vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)), -1));
     v = vec3_sub(i, vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)));
-    //v = inc - 2*(nor.inc)*nor   <<< pseudocode    
+    //v = inc - 2*(nor.inc)*nor   <<< pseudocode
     return v;
 }
 
@@ -190,16 +190,16 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
     double sy = sin(y);
     double cz = cos(z);
     double sz = sin(z);
-    
+
     struct Vec3 m[3];
 
-    m[0].x = (float)(cy*cx); 
+    m[0].x = (float)(cy*cx);
     m[0].y = (float)(cy*sx);
     m[0].z = (float)(-sy);
 
     double szsy = sz*sy;
     double czsy = cz*sy;
-    
+
     m[1].x = (float)(szsy*cx-cz*sx);
     m[1].y = (float)(szsy*sx+cz*cx);
     m[1].z = (float)(sz*cy);
@@ -215,8 +215,8 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
 
     struct Vec3 u;
 
-    u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
-    u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
+    u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x,
+    u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y,
     u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
 
     return u;
@@ -254,25 +254,25 @@ struct Vec3 vec3_bias(struct Vec3 v, const float bias)
 */
 
 ALWAYS_INLINE
-float vec3_dot(struct Vec3 v1, struct Vec3 v2) 
+float vec3_dot(struct Vec3 v1, struct Vec3 v2)
 {
     return v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
 }
 
 ALWAYS_INLINE
-float vec3_length(struct Vec3 v) 
+float vec3_length(struct Vec3 v)
 {
     return sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
 ALWAYS_INLINE
-float vec3_length_squared(struct Vec3 v) 
+float vec3_length_squared(struct Vec3 v)
 {
     return v.x*v.x + v.y*v.y + v.z*v.z;
 }
 
 ALWAYS_INLINE
-float vec3_cos2(struct Vec3 v1, struct Vec3 v2) 
+float vec3_cos2(struct Vec3 v1, struct Vec3 v2)
 {
     float dot =  (v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z);
     return (dot*dot) / ((v1.x*v1.x + v1.y*v1.y + v1.z*v1.z)*(v2.x*v2.x + v2.y*v2.y + v2.z*v2.z));
@@ -391,7 +391,7 @@ void vec3_print(struct Vec3 v)
     printf("Vec3: %0.2f %0.2f %0.2f\n", v.x, v.y, v.z);
 }
 
-void vec3_print_length(struct Vec3 v) 
+void vec3_print_length(struct Vec3 v)
 {
     float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
     printf("Vec3_length= %fs \n", l);
@@ -399,7 +399,7 @@ void vec3_print_length(struct Vec3 v)
 
 
 //diagnostic
-void vec3_print_dot(struct Vec3 v1, struct Vec3 v2) 
+void vec3_print_dot(struct Vec3 v1, struct Vec3 v2)
 {
     float d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
     printf("dot= %f \n", d);

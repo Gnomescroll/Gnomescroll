@@ -42,7 +42,7 @@ class UIElement
         float yoff;
 
         GLuint* texture;
-        
+
         HudText::Text name;
 
     void set_position(float x, float y)

@@ -44,7 +44,7 @@ Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,co
 HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, EntityType type,
     Agents::Agent* agent, const float range);
-    
+
 void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p);
 void broadcast_object_fired(int id, EntityType type, HitscanTarget t);
 

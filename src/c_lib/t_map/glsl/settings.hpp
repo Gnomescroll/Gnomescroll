@@ -2,7 +2,7 @@
 
 
 namespace t_map
-{ 
+{
 	int T_MAP_BACKUP_SHADER = 0;
 	
     int T_MAP_3D_TEXTURES = 1;
@@ -16,7 +16,7 @@ namespace t_map
 
     int ANISOTROPIC_FILTERING = 1;
     float ANISOTROPY_LARGEST_SUPPORTED = 0.0f;
-    
+
     //glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST)
 
 }

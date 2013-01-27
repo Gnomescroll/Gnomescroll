@@ -11,5 +11,5 @@
 #endif
 
 #if DC_SERVER
-# include <chat/server.cpp> 
+# include <chat/server.cpp>
 #endif

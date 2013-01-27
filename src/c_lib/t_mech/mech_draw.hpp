@@ -6,10 +6,10 @@
 
 #include <t_mech/config/_interface.hpp>
 
-namespace t_mech 
+namespace t_mech
 {
 
-//class MechListVertexList 
+//class MechListVertexList
 //class MechListShader
 //class MechListRenderer
 
@@ -17,7 +17,7 @@ namespace t_mech
     Use this as example for other shaders
 */
 
-class MechListVertexList 
+class MechListVertexList
 {
     public:
     // visibility will default to private unless you specify it
@@ -36,7 +36,7 @@ class MechListVertexList
     int vi; //vertex index
     int vm; //vertex max
 
-    unsigned int VBO; //for drawing 
+    unsigned int VBO; //for drawing
 
     struct Vertex v; //set this and then push vertex
 
@@ -52,7 +52,7 @@ class MechListVertexList
     {
         free(va);
     }
-    
+
 
     void vertex3f(float x, float y, float z)
     {
@@ -93,10 +93,10 @@ class MechListVertexList
             glBufferData(GL_ARRAY_BUFFER, vi*stride, NULL, GL_STATIC_DRAW);
             glBufferData(GL_ARRAY_BUFFER, vi*stride, va, GL_STATIC_DRAW);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
-        } 
+        }
         else
         {
-            if(vi > 0) 
+            if(vi > 0)
             {
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
@@ -176,7 +176,7 @@ class MechListShader
             texture_format = GL_BGRA;
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-        
+
         glDisable(GL_TEXTURE_2D);
 
         init_sprite_meta();
@@ -280,7 +280,7 @@ class MechListShader
                     {
                         int index2 = offset + (31-_k)*512;
                         pixels[4*index2 + 3] = 255;
-                        pixels[4*index2 + 0] = 255; 
+                        pixels[4*index2 + 0] = 255;
                     }
 
                     break;
@@ -314,7 +314,7 @@ class MechListShader
                         break;
                     }
                 }
-            
+
                 if(empty_row == true)
                 {
                     for(int _k=0; _k<16; _k++)
@@ -326,7 +326,7 @@ class MechListShader
 
                     break;
                 }
-            
+
             }
 
         }
@@ -408,7 +408,7 @@ class MechListRenderer
 
         glBindTexture( GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        
+
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_ALPHA_TEST);
         glDisable(GL_CULL_FACE);
@@ -489,7 +489,7 @@ struct _MECH
 void MechListRenderer::push_crystal_vertex(const struct MECH &m)
 {
 /*
-    static const float vin[72] = 
+    static const float vin[72] =
     {
         1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
         0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
@@ -520,7 +520,7 @@ void MechListRenderer::push_crystal_vertex(const struct MECH &m)
         return;
 
     int tex_id = mech_attributes[m.mech_type].sprite_index;
-    
+
     GS_ASSERT(mech_attributes[m.mech_type].mech_type != -1);
 
     const float txmargin = 0.0f;
@@ -682,7 +682,7 @@ enum MECH_TYPE
 void MechListRenderer::prep_vbo()
 {
 /*
-    static const float vin[72] = 
+    static const float vin[72] =
     {
         1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
         0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
@@ -697,7 +697,7 @@ void MechListRenderer::prep_vbo()
 
     const int mlm = mech_list->mlm;
     const struct MECH* mla = mech_list->mla;
-    
+
     int num =0;
 
     for(int i=0; i<mlm; i++)

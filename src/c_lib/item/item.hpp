@@ -51,9 +51,9 @@ class Item
         uuid_t uuid;
     void init_from_loading();   // only to be used by serializer
     #endif
-    
+
     void init(int item_type);
-    
+
     void print()
     {
         printf("Item:\n");

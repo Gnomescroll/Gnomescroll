@@ -59,7 +59,7 @@ void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, co
 
 class ChromeViewport
 {
-    public: 
+    public:
         int xoff;
         int yoff;
         int width;
@@ -69,7 +69,7 @@ class ChromeViewport
 
         awe_webview* webView;
         awe_string* js_obj_name;
-        
+
         unsigned int tex;
 
         bool crashed;
@@ -97,7 +97,7 @@ class ChromeViewport
         if (this->js_obj_name != NULL) awe_string_destroy(this->js_obj_name);
         if (this->webView != NULL) awe_webview_destroy(this->webView);
     }
-    
+
     void set_callbacks();
 
     void add_site_to_whitelist(const char* _url)
@@ -136,7 +136,7 @@ class ChromeViewport
     {
         GS_ASSERT(this->webView != NULL);
         if (this->webView == NULL) return;
-        
+
         this->js_obj_name = get_awe_string(JS_OBJ_NAME);
         awe_webview_create_object(this->webView, this->js_obj_name);
 
@@ -171,7 +171,7 @@ class ChromeViewport
             this->set_js_value(JS_OBJ_USERNAME_NAME, "");
 
         this->set_js_value(JS_OBJ_REMEMBER_PASSWORD_NAME, get_remember_password_setting());
-        
+
         // set some null values on the object
         this->set_js_value(JS_OBJ_LOGIN_ERROR_NAME);
         this->set_js_value(JS_OBJ_GAME_TOKEN_NAME);
@@ -187,7 +187,7 @@ class ChromeViewport
         this->register_js_callback(JS_CB_SAVE_USERNAME_NAME);
         this->register_js_callback(JS_CB_SAVE_PASSWORD_NAME);
         this->register_js_callback(JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME);
-        
+
         // callbacks for error handling
         awe_webview_set_callback_js_callback(this->webView, &js_callback_handler);
     }
@@ -197,7 +197,7 @@ class ChromeViewport
         GS_ASSERT(this->webView != NULL);
         GS_ASSERT(this->js_obj_name != NULL);
         if (this->webView == NULL || this->js_obj_name == NULL) return;
-        
+
         awe_string* name = get_awe_string(_name);
         awe_webview_set_object_callback(this->webView, this->js_obj_name, name);
         awe_string_destroy(name);
@@ -215,7 +215,7 @@ class ChromeViewport
         awe_string_destroy(name);
         awe_jsvalue_destroy(value);
     }
-    
+
     void set_js_value(const char* _name, double _value)
     {   // sets value with name to the global js obj
         GS_ASSERT(this->webView != NULL);
@@ -228,7 +228,7 @@ class ChromeViewport
         awe_string_destroy(name);
         awe_jsvalue_destroy(value);
     }
-    
+
     void set_js_value(const char* _name, int _value)
     {   // sets value with name to the global js obj
         GS_ASSERT(this->webView != NULL);
@@ -241,7 +241,7 @@ class ChromeViewport
         awe_string_destroy(name);
         awe_jsvalue_destroy(value);
     }
-    
+
     void set_js_value(const char* _name)
     {   // sets value with name to the global js obj
         GS_ASSERT(this->webView != NULL);
@@ -254,7 +254,7 @@ class ChromeViewport
         awe_string_destroy(name);
         awe_jsvalue_destroy(value);
     }
-    
+
     void set_js_value(const char* _name, const char* _value)
     {   // sets value with name to the global js obj
         GS_ASSERT(this->webView != NULL);
@@ -324,7 +324,7 @@ class ChromeViewport
 
         GS_ASSERT(renderBuffer != NULL);
         if (renderBuffer == NULL) return;
-       
+
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &this->tex);
 
@@ -354,7 +354,7 @@ class ChromeViewport
         const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
 
         GS_ASSERT(renderBuffer != NULL);
-        if (renderBuffer == NULL) 
+        if (renderBuffer == NULL)
         {
             this->tex = 0;
             return;
@@ -400,7 +400,7 @@ class ChromeViewport
         glVertex3f(x0, y1, z);
 
         glEnd();
-        
+
         glDisable(GL_TEXTURE_2D);
     }
 
@@ -428,29 +428,29 @@ class ChromeViewport
         awe_string_destroy(html_str);
     }
 
-    void set_url(char* url) 
+    void set_url(char* url)
     {
         awe_string* url_str = awe_string_create_from_ascii(url, strlen(url));
-        awe_webview_load_url(webView, url_str, awe_string_empty(), awe_string_empty(), awe_string_empty()); 
+        awe_webview_load_url(webView, url_str, awe_string_empty(), awe_string_empty(), awe_string_empty());
         awe_string_destroy(url_str);
     }
 
 
-    void processKeyEvent(const SDL_Event* event) 
+    void processKeyEvent(const SDL_Event* event)
     {
         GS_ASSERT_LIMIT(this->webView != NULL, 1);
         if (this->webView == NULL) return;
-        
+
         if (!this->in_focus)
         {
             printf("Error? ChromeViewport::processKeyEvent, possible error. ChromeViewport received keyboard event but is not in focus\n");
             return;
         }
-        
+
         injectSDLKeyEvent(this->webView, event);
 
         SDLKey key = event->key.keysym.sym;
-    
+
         // Separate handling for history navigation -- awesomium does not do this by default
         if (event->type == SDL_KEYDOWN)
         {
@@ -461,7 +461,7 @@ class ChromeViewport
                 if (key == SDLK_RIGHT)
                     awe_webview_go_to_history_offset(cv->webView, 1);
             }
-    
+
             //#if !PRODUCTION
             if (key == SDLK_MINUS)
             {

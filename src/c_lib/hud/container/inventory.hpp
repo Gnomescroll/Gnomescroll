@@ -48,10 +48,10 @@ class AgentInventoryUI : public UIElement
     virtual void init()
     {
         GS_ASSERT(this->stack_numbers == NULL);
-        
+
         this->xdim = ItemContainer::get_container_xdim(ItemContainer::name::inventory);
         this->ydim = ItemContainer::get_container_ydim(ItemContainer::name::inventory);
-        
+
         // create HudText objects needed for stack rendering
         int max = this->xdim * this->ydim;
         this->stack_numbers = new HudText::Text[max];
@@ -71,7 +71,7 @@ class AgentInventoryUI : public UIElement
         slot_background_border_color(Color(127,127,127)),
         stack_numbers(NULL)
     {}
-    
+
     virtual ~AgentInventoryUI()
     {
         if (this->stack_numbers != NULL) delete[] this->stack_numbers;
@@ -98,7 +98,7 @@ int AgentInventoryUI::get_slot_at(int px, int py)
     int yslot = py / (inc1 + slot_size);
 
     int slot = yslot * this->xdim + xslot;
-    
+
     return slot;
 }
 

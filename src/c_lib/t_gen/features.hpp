@@ -4,7 +4,7 @@
 
 namespace map_gen
 {
-    
+
 void ceiling(int x, int y, int z, int height, CubeType tile);
 void floor(int x, int y, int z_start, int height, CubeType tile);
 void rough_floor(int x, int y, int z_start, int height, CubeType tile);    // white noise

@@ -18,7 +18,7 @@ class PositionMomentumChangedPhysicsComponent: public PhysicsComponent
     public:
         Vec3 angles;
         bool changed;
-        
+
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {

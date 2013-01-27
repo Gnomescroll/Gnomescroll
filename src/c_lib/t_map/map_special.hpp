@@ -6,7 +6,7 @@ namespace t_map
 class control_node
 {
     public:
-    
+
     int x;
     int y;
     int z;
@@ -76,7 +76,7 @@ class CONTROL_NODE_LIST
     bool control_node_in_range_check(int x, int y, int z)
     {
         for (int i=0; i<cpi; i++)
-            if (abs(x-cpa[i].x) <= 6 && abs(y-cpa[i].y) <= 6 && abs(z-cpa[i].z) <= 6)  
+            if (abs(x-cpa[i].x) <= 6 && abs(y-cpa[i].y) <= 6 && abs(z-cpa[i].z) <= 6)
                 return true;
         return false;
     }
@@ -127,7 +127,7 @@ class CONTROL_NODE_LIST
     Use this as example for other shaders
 */
 
-class ControlNodeVertexList 
+class ControlNodeVertexList
 {
     public:
     // visibility will default to private unless you specify it
@@ -146,7 +146,7 @@ class ControlNodeVertexList
     int vi; //vertex index
     int vm; //vertex max
 
-    unsigned int VBO; //for drawing 
+    unsigned int VBO; //for drawing
 
     struct Vertex v; //set this and then push vertex
 
@@ -162,7 +162,7 @@ class ControlNodeVertexList
     {
         free(va);
     }
-    
+
 
     void vertex3f(float x, float y, float z)
     {
@@ -203,10 +203,10 @@ class ControlNodeVertexList
             glBufferData(GL_ARRAY_BUFFER, vi*stride, NULL, GL_STATIC_DRAW);
             glBufferData(GL_ARRAY_BUFFER, vi*stride, va, GL_STATIC_DRAW);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
-        } 
+        }
         else
         {
-            if(vi > 0) 
+            if(vi > 0)
             {
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
@@ -265,7 +265,7 @@ class ControlNodeShader
     {
         s = create_surface_from_file("./media/sprites/mech/territory_00.png");
         IF_ASSERT(s == NULL) return;
-        
+
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &texture1);
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -286,7 +286,7 @@ class ControlNodeShader
             texture_format = GL_BGRA;
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-        
+
         glDisable(GL_TEXTURE_2D);
     }
 
@@ -373,7 +373,7 @@ class ControlNodeRenderer
         free(cnra);
     }
 
-    void update() 
+    void update()
     {
         control_node_render_update();
     };
@@ -418,7 +418,7 @@ void control_node_render_draw()
 
 void ControlNodeRenderer::draw_intermediate()
 {
-    static const float vin[72] = 
+    static const float vin[72] =
     {
         1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
         0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom

@@ -44,7 +44,7 @@ class MeterGraphic
         float s_h = h;
         float dyn_w = s_w * ratio; // dynamic width (the current size of the meter itself)
         float lo = s_w - dyn_w; // dynamic leftover
-        
+
         if      (anchor == METANCH_LEFT)
         {
             ;
@@ -70,7 +70,7 @@ class MeterGraphic
 				//  i,
 				//  s_y,
 				//  randrange(-4, 4), // x_speed
-				//  randrange(-7, -31), 
+				//  randrange(-7, -31),
 				//  s_y - s_h - 240);
 			}
 			prev_w = dyn_w;
@@ -97,7 +97,7 @@ class MeterGraphic
             {
                 num_alive_tallied++;
                 draw_bound_texture(
-                    quadticles[i].x, 
+                    quadticles[i].x,
                     quadticles[i].y, 1, h);
             }
         }
@@ -130,7 +130,7 @@ class MeterGraphic
         bool blink_on;
         //// handle blinking
         //ticks_til_blink--;
-        //if (ticks_til_blink < 1) 
+        //if (ticks_til_blink < 1)
         //{
         //  if (green_to_red > .75f) ticks_til_blink = slowest_blink_delay;
         //  blink_on = !blink_on;
@@ -139,7 +139,7 @@ class MeterGraphic
 
         // quadticles
         int num_qticles; // number of alive quadticles
-        Quadticle quadticles[LUDICROUS_REZ]; 
+        Quadticle quadticles[LUDICROUS_REZ];
 };
 
 }   // Hud

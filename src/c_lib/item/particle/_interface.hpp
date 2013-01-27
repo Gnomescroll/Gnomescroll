@@ -19,7 +19,7 @@ void draw();
 
 class ItemParticle* create_item_particle(
     ItemParticleID particle_id, int item_type,
-    float x, float y, float z, 
+    float x, float y, float z,
     float vx, float vy, float vz);
 #endif
 
@@ -27,7 +27,7 @@ class ItemParticle* create_item_particle(
 
 class ItemParticle* create_item_particle(
     ItemID item_id, int item_type,
-    float x, float y, float z, 
+    float x, float y, float z,
     float vx, float vy, float vz);
 
 // create Item and ItemParticle

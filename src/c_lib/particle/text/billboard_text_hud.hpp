@@ -22,11 +22,11 @@ class BillboardTextHud: public TextParticle
 {
     private:
         inline void init_properties();
-        
+
     public:
         bool should_draw;
         bool permanent;
-        
+
     void set_draw(bool draw);
     void set_position(float x, float y)
     {

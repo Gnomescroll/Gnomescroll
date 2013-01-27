@@ -24,7 +24,7 @@ class ItemContainerInterface
         int slot_max;
         int slot_count;
         ItemID* slot;
-        
+
         AgentID owner;
         int chunk;  // TODO -- move to subclass for container blocks
 
@@ -88,7 +88,7 @@ class ItemContainerInterface
 
     virtual void was_assigned()
     {
-        
+
     }
     #endif
 
@@ -114,7 +114,7 @@ class ItemContainerInterface
         IF_ASSERT(this->attached_to_agent && this->owner != agent_id) return false;
         return (this->owner == agent_id || this->owner == NULL_AGENT);
     }
-    
+
     virtual bool lock(AgentID agent_id)
     {
         GS_ASSERT(isValid(agent_id));
@@ -204,13 +204,13 @@ class ItemContainerHand: public ItemContainerInterface
         GS_ASSERT(false);
         return NULL_ITEM;
     }
-    
+
     int insert_item(int slot, ItemID item_id)
     {
         GS_ASSERT(false);
         return NULL_SLOT;
     }
-    
+
     ItemContainerHand(ItemContainerType type, ItemContainerID id) :
         ItemContainerInterface(type, id)
     {}
@@ -236,14 +236,14 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
         int n = this->slot_count;
         GS_ASSERT(n >= 0);
         if (n <= 0) return n;
-        
+
         for (int i=this->slot_max-1; i>=0; i--)
         {   // consume from the end of the slot array
             if (this->slot[i] == NULL_ITEM) continue;
             Item::destroy_item(this->slot[i]);
             break;
         }
-        
+
         return n;
     }
 
@@ -253,7 +253,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
         GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
         ItemContainerInterface::init(xdim, ydim);
     }
-    
+
     ItemContainerEnergyTanks(ItemContainerType type, ItemContainerID id) :
         ItemContainerInterface(type, id), energy_tank_type(NULL_ITEM_TYPE)
     {
@@ -266,7 +266,7 @@ class ItemContainerCryofreezer: public ItemContainer
     public:
 
     int insert_item(int slot, ItemID item_id);
-    
+
     ItemContainerCryofreezer(ItemContainerType type, ItemContainerID id) :
         ItemContainer(type, id)
     {}
@@ -275,15 +275,15 @@ class ItemContainerCryofreezer: public ItemContainer
 class ItemContainerSynthesizer: public ItemContainerInterface
 {
     public:
-        
+
         static const int coins_slot = 0;
         int coins_type;
-    
+
     ItemID get_coins()
     {
         return this->get_item(this->coins_slot);
     }
-    
+
     int insert_coins(ItemID item_id)
     {
         GS_ASSERT(Item::get_item_type(item_id) == this->coins_type);
@@ -302,7 +302,7 @@ class ItemContainerSynthesizer: public ItemContainerInterface
         GS_ASSERT(this->coins_type != NULL_ITEM_TYPE);
         ItemContainerInterface::init(xdim, ydim);
     }
-    
+
     ItemContainerSynthesizer(ItemContainerType type, ItemContainerID id) :
         ItemContainerInterface(type, id), coins_type(NULL_ITEM_TYPE)
     {}
@@ -328,15 +328,15 @@ class ItemContainerSmelter: public ItemContainerInterface
         #if DC_SERVER
         bool on;
         #endif
-        
+
         float fuel;       // 0.0f - 1.0f
         int fuel_type;  // item type
         float burn_rate;  // for item type
-        
+
         int recipe_id;  // recipe identifier
         float progress;   // 0.0f - 1.0f
         float progress_rate;  // for recipe type
-        
+
     bool is_output_slot(int slot)
     {   // output slot is if xslot == xdim-1;
         int xslot = slot % (this->xdim);
@@ -415,7 +415,7 @@ class ItemContainerSmelter: public ItemContainerInterface
                     // shift forward
                     for (int k=n_inputs; k>j; k--) inputs[k] = inputs[k-1];
                     for (int k=n_inputs; k>j; k--) input_types[k] = input_types[k-1];
-                    
+
                     // insert
                     inputs[j] = input;
                     input_types[j] = input_type;
@@ -438,7 +438,7 @@ class ItemContainerSmelter: public ItemContainerInterface
             GS_ASSERT(input_types[i] >= last_type);
             last_type = input_types[i];
         }
-        
+
         return n_inputs;
     }
 
@@ -556,7 +556,7 @@ class ItemContainerCrusher: public ItemContainerInterface
 class ItemContainerEquipment: ItemContainerInterface
 {
     public:
-    
+
     ItemContainerEquipment(ItemContainerType type, ItemContainerID id) :
         ItemContainerInterface(type, id)
     {
@@ -568,7 +568,7 @@ ItemContainerInterface* create_item_container_interface(int type, int id);
 
 ItemContainerInterface* new_crusher(ItemContainerType type, ItemContainerID id)
 {
-    return new ItemContainerCrusher(type, id);    
+    return new ItemContainerCrusher(type, id);
 }
 
 ItemContainerInterface* new_smelter(ItemContainerType type, ItemContainerID id)
@@ -619,7 +619,7 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface>
     {
         return "ItemContainer";
     }
-        
+
     public:
 
     #if DC_CLIENT

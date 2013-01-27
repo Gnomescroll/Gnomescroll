@@ -12,7 +12,7 @@ class ExplosionComponent: public Component
 {
     private:
         int get_block_damage(float distance);
-        
+
     public:
         float radius;
         int damage;

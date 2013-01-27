@@ -18,7 +18,7 @@ const int CHAT_MESSAGE_SIZE_MAX = 90;
 const int CHAT_MESSAGE_RENDER_TIMEOUT = 1000*10; // 10 seconds
 
 // first 16 are reserved
-// next [16,PLAYERS_MAX] are for pm channels 
+// next [16,PLAYERS_MAX] are for pm channels
 const int CHANNEL_ID_AGENT_OFFSET = 16;
 
 const ClientID CHAT_SENDER_SYSTEM = NULL_CLIENT;
@@ -37,7 +37,7 @@ bool is_valid_chat_character(char c)
 bool is_valid_chat_message(char* msg)
 {
     IF_ASSERT(msg == NULL) return false;
-    
+
     if (msg[0] == '\0') return false;   // empty
     if (msg[0] == '/') return false;    // chat command
 

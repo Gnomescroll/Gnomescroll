@@ -14,7 +14,7 @@ class benchmarkCtoS: public FixedSizeNetPacketToServer<benchmarkCtoS>
         float theta;
         float phi;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
@@ -44,7 +44,7 @@ class benchmarkReliableCtoS: public FixedSizeReliableNetPacketToServer<benchmark
         float theta;
         float phi;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);

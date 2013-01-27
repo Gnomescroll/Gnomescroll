@@ -9,7 +9,7 @@
 namespace t_map
 {
 
-struct FastCubeProperties 
+struct FastCubeProperties
 {
     bool active;
     bool solid;
@@ -26,12 +26,12 @@ struct FastCubeAttributes
     unsigned char light_value; //how much light cube emits
 };
 
-class CubeProperties 
+class CubeProperties
 {
     public:
         CubeType type;
         CubeGroup group;
-        
+
         bool solid;
         bool occludes;  // occludes on all 6 faces only
         bool active;  // Brandon's special flag
@@ -56,7 +56,7 @@ class CubeProperties
     {
         this->type = NULL_CUBE;
         this->group = ErrorCube;
-        
+
         this->solid = true;
         this->occludes = true;
         this->active = true;
@@ -71,7 +71,7 @@ class CubeProperties
         this->light_value  = 0;
 
         this->max_damage = 32;
-        
+
         memset(this->name, 0, sizeof(this->name));
 
         this->loaded = false;

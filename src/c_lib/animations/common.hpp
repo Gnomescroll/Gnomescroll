@@ -9,7 +9,7 @@ dont_include_this_file_in_server
 #include <common/color.hpp>
 #include <voxel/common.hpp>
 
-namespace Animations 
+namespace Animations
 {
 
 /*
@@ -76,10 +76,10 @@ class VertexElementList1
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
             glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
-        } 
+        }
         else
         {
-            if(vertex_number > 0) 
+            if(vertex_number > 0)
             {
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
@@ -138,7 +138,7 @@ class VertexElementList
         this->vlist[this->vlist_index].ty       = ty;
         this->add_element();
     }
-     
+
     ALWAYS_INLINE
     void push_vertex(struct Vec3 position, float tx, float ty)
     {
@@ -191,17 +191,17 @@ class VertexElementList
                 glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
                 glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, NULL, GL_DYNAMIC_DRAW);   // clears data or something
                 glBufferData(GL_ARRAY_BUFFER, this->vlist_index*this->stride, this->vlist, GL_DYNAMIC_DRAW);
-            } 
+            }
             else
             {
-                if (this->vertex_number > 0) 
+                if (this->vertex_number > 0)
                 {
                     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
                     glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
                 }
             }
         }
-        
+
         this->vertex_number = this->vlist_index;
         this->vlist_index = 0;
     }

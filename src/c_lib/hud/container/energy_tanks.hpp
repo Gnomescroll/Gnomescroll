@@ -34,7 +34,7 @@ class EnergyTanksUI : public UIElement
 
         for (int i=0; i<xdim; i++)
         for (int j=0; j<ydim; j++)
-            if (slot_metadata[j * xdim + i].type != NULL_ITEM_TYPE) 
+            if (slot_metadata[j * xdim + i].type != NULL_ITEM_TYPE)
                 num_loaded++;
 
         return num_loaded;
@@ -67,7 +67,7 @@ class EnergyTanksUI : public UIElement
     EnergyTanksUI() :
         xdim(0), ydim(0), selected_slot(0)
     {}
-    
+
     virtual ~EnergyTanksUI()
     {
     }
@@ -89,7 +89,7 @@ int EnergyTanksUI::get_slot_at(int px, int py)
     int yslot = py / (span_tween_slots + slot_size);
 
     int slot = yslot * this->xdim + xslot;
-    
+
     return slot;
 }
 
@@ -116,12 +116,12 @@ void EnergyTanksUI::draw()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
     if (slot_metadata == NULL) return;
 
-    if (inv_open) 
+    if (inv_open)
     {
         // draw larger rect for border of slot
         int g1 = 80-16;
@@ -165,7 +165,7 @@ void EnergyTanksUI::draw()
     {
         int i = hover_slot % this->xdim;
         int j = hover_slot / this->xdim;
-        
+
         float x = xoff + border + i*(span_tween_slots+w);
         float y = _yresf - (yoff - border + (j+1)*(span_tween_slots+w));
 
@@ -177,7 +177,7 @@ void EnergyTanksUI::draw()
 
     glEnd();
     glColor4ub(255, 255, 255, 255);
-    
+
     static int energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
     static int energy_tank_sprite_index = Item::get_sprite_index_for_type(energy_tank_type);
@@ -191,7 +191,7 @@ void EnergyTanksUI::draw()
     // (here's where we ALSO used the LOADED tank drawing code below, but with the following line changed
     // in order to only draw the empty tanks:
     //         if (slot_metadata[slot].type != NULL_ITEM_TYPE) continue;
-    
+
     IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture == 0)
     {
         glDisable(GL_TEXTURE_2D);
@@ -214,7 +214,7 @@ void EnergyTanksUI::draw()
 
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
-        
+
         const float tx_min = (1.0f/iw)*(energy_tank_sprite_index % iiw);
         const float ty_min = (1.0f/iw)*(energy_tank_sprite_index / iiw);
         const float tx_max = tx_min + 1.0f/iw;
@@ -225,7 +225,7 @@ void EnergyTanksUI::draw()
 
         glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y+w);
-            
+
         glTexCoord2f(tx_max, ty_max);
         glVertex2f(x+w, y);
 

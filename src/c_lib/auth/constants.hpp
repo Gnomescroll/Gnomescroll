@@ -4,11 +4,11 @@
 
 namespace Auth
 {
-    
+
 typedef enum
 {
     AUTH_ERROR_NONE = 0,            // no error
-    AUTH_ERROR_TOKEN_MISSING,   // token was NULL, did not exist 
+    AUTH_ERROR_TOKEN_MISSING,   // token was NULL, did not exist
     AUTH_ERROR_TOKEN_MALFORMED, // token failed to parse
     AUTH_ERROR_TOKEN_EXPIRED,   // token had expired
 } AuthError;
@@ -56,7 +56,7 @@ const char AUTH_TOKEN_DELIMITER = '|';  // delimiter for components of the token
 
 const char UNDEFINED_NAME[] = "undefined-name";
 
-const time_t AUTH_TOKEN_LIFETIME = 60 * 60; // 1 hour, in seconds 
+const time_t AUTH_TOKEN_LIFETIME = 60 * 60; // 1 hour, in seconds
 const time_t AUTHORIZATION_TIMEOUT = 60;   // 1 minute to authorize before being disconnected
 
 const unsigned int AUTH_TOKEN_ID_LENGTH = 9;

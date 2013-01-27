@@ -50,7 +50,7 @@ struct MECH
     MechType mech_type;       //mech type
     int subtype;        //sprite
     MechRenderType render_type;
-    
+
     float size;
     int offset;
     float rotation;
@@ -74,7 +74,7 @@ class MechAttribute
         MechType mech_type;
         MechClass mech_type_class;
         MechRenderType render_type;
-        
+
         MechBehaviorType mech_behavior_type;
         int growth_ttl;         //starting growth ttl
         MechType growth_stage;  //next growth stage
@@ -87,7 +87,7 @@ class MechAttribute
         loaded(false),
         mech_type(NULL_MECH_TYPE),
         mech_type_class(NULL_MECH_CLASS),
-        render_type(MECH_RENDER_TYPE_NONE), 
+        render_type(MECH_RENDER_TYPE_NONE),
         mech_behavior_type(MECH_BEHAVIOR_TYPE_DEFAULT),
         growth_ttl(-1), growth_stage(NULL_MECH_TYPE),
         sprite_index(NULL_MECH_SPRITE),

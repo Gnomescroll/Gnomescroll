@@ -17,7 +17,7 @@ class auth_token_CtoS: public FixedSizeReliableNetPacketToServer<auth_token_CtoS
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_string(this->token, AUTH_TOKEN_LENGTH+1, buff, buff_n, pack); 
+        pack_string(this->token, AUTH_TOKEN_LENGTH+1, buff, buff_n, pack);
     }
 
     inline void handle();
@@ -49,12 +49,12 @@ class clock_time_StoC: public FixedSizeReliableNetPacketToClient<clock_time_StoC
 {
     public:
         uint64_t server_time;
-    
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u64(&server_time, buff, buff_n, pack);
     }
     inline void handle();
-};  
+};
 
 }   // Auth

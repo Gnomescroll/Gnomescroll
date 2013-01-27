@@ -18,7 +18,7 @@ class EntityList
         char** used;
         Entity** staging_objects;
         Entity*** objects;
-        
+
         int get_free_id(EntityType type);
 
     public:
@@ -58,7 +58,7 @@ class EntityList
 
         // network iterators
         void send_to_client(EntityType type, ClientID client_id);
-        
+
     ~EntityList();
 
     EntityList() :

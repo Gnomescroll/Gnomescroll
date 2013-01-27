@@ -77,8 +77,8 @@ static unsigned int strhash(const char* s)
     {
          highorder = h & 0xf8000000;    // extract high-order 5 bits from h
                                         // 0xf8000000 is the hexadecimal representation
-                                        //   for the 32-bit number with the first five 
-                                        //   bits = 1 and the other bits = 0   
+                                        //   for the 32-bit number with the first five
+                                        //   bits = 1 and the other bits = 0
          h = h << 5;                    // shift h left by 5 bits
          h = h ^ (highorder >> 27);     // move the highorder 5 bits to the low-order
                                         //   end and XOR into h
@@ -125,7 +125,7 @@ static long long int parse_int(const char* str, bool& err)
     long long int val = strtoll(str, &endptr, 10);
     err = (*str == '\0' || *endptr != '\0');
     return val;
-} 
+}
 
 bool is_valid_name_char(char c)
 {   // For string names used in configs. Don't fuck with this

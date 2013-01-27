@@ -11,7 +11,7 @@ bool line_plane_intersection1(
 	)
 {
 	float num = (px-lx)*nx + (py-ly)*ny + (pz-lz)*nz;
-	float denum = lvx*nx + lvy*ny + lvz*nz; 
+	float denum = lvx*nx + lvy*ny + lvz*nz;
 
 	static const float epsilon = 0.001f;
 
@@ -25,7 +25,7 @@ bool line_plane_intersection1(
 		return true;
 	}
 
-	//If the line starts outside the plane and is parallel to the plane, there is no intersection. 
+	//If the line starts outside the plane and is parallel to the plane, there is no intersection.
 	//In this case, the above denominator will be zero and the numerator will be non-zero.
 
 	if(_denum < epsilon && _num > epsilon)
@@ -34,7 +34,7 @@ bool line_plane_intersection1(
 		return false;
 	}
 
-	//If the line starts inside the plane and is parallel to the plane, the line intersects the plane everywhere. 
+	//If the line starts inside the plane and is parallel to the plane, the line intersects the plane everywhere.
 	//In this case, both the numerator and denominator above will be zero.
 
 	if(_denum < epsilon && _num < epsilon)
@@ -79,10 +79,10 @@ bool line_plane_intersection2(
 	pz = bz+sn*n.z;
 
 
-	ret = line_plane_intersection1(lx,ly,lz, 
-		lvx,lvy,lvz, 
-		px,py,pz, 
-		n.x,n.y,n.z, 
+	ret = line_plane_intersection1(lx,ly,lz,
+		lvx,lvy,lvz,
+		px,py,pz,
+		n.x,n.y,n.z,
 		a);
 
 	if( ret)
@@ -226,7 +226,7 @@ void visualize_bounding_box(
 	struct Vec3 u
 	)
 {
-	static const int vi[2*12] = 
+	static const int vi[2*12] =
 	{
         0,1,
         1,2,
@@ -244,7 +244,7 @@ void visualize_bounding_box(
         3,7,
 	};
 
-	static const int vs[3*8] = 
+	static const int vs[3*8] =
 	{
         -1,-1,0,
         1,-1,0,

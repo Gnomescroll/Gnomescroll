@@ -12,7 +12,7 @@ namespace t_gen
 static const int _grad3[][3] = {
 {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
 {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
-{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1} 
+{0,1,1},{0,-1,1},{0,1,-1},{0,-1,-1}
 };
 
 class PerlinField3D
@@ -45,7 +45,7 @@ class PerlinField3D
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-static inline int fast_floor(float x) 
+static inline int fast_floor(float x)
 {
 return x>=0 ? (int)x : (int)x-1;
 }
@@ -55,13 +55,13 @@ static inline float dot(const int g[], float x, float y, float z)
 return g[0]*x + g[1]*y + g[2]*z;
 }
 
-static inline float mix(float a, float b, float t) 
+static inline float mix(float a, float b, float t)
 {
 //    return (1-t)*a + t*b;
     return a + t*(b-a);   //optimized version
 }
 
-static inline float fade(float t) 
+static inline float fade(float t)
 {
 return t*t*t*(t*(t*6-15)+10);
 }
@@ -80,7 +80,7 @@ inline int get_gradient(int x, int y, int z)
 public:
 
 // Classic Perlin noise, 3D version
-float base(float x, float y, float z) 
+float base(float x, float y, float z)
 {
 /*
     // Find unit grid cell containing point
@@ -148,7 +148,7 @@ float base(float x, float y, float z)
     // g101 = grad3[gi101];
     // g110 = grad3[gi110];
     // g111 = grad3[gi111];
-    
+
     // Calculate noise contributions from each of the eight corners
     float n000= dot(_grad3[gi000], x, y, z);
     float n100= dot(_grad3[gi100], x-1, y, z);
@@ -159,7 +159,7 @@ float base(float x, float y, float z)
     float n011= dot(_grad3[gi011], x, y-1, z-1);
     float n111= dot(_grad3[gi111], x-1, y-1, z-1);
     // Compute the fade curve value for each of x, y, z
-    
+
 #if 1
     float u = fade(x);
     float v = fade(y);
@@ -189,8 +189,8 @@ float noise(float x, float y, float z)
     return base(x,y,z);
 }
 
-float one_over_f(float x, float y, float z) 
-{   
+float one_over_f(float x, float y, float z)
+{
     float tmp = 0;
     tmp += base(x,y,z);
     tmp += 0.50 * base(2*x, 2*y,2*z);
@@ -261,7 +261,7 @@ class PerlinField2D
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-static inline int fast_floor(float x) 
+static inline int fast_floor(float x)
 {
 return x>=0 ? (int)x : (int)x-1;
 }
@@ -271,13 +271,13 @@ static inline float dot(float* g, float x, float y)
 return g[0]*x + g[1]*y;
 }
 
-static inline float mix(float a, float b, float t) 
+static inline float mix(float a, float b, float t)
 {
 //    return (1-t)*a + t*b;
     return a + t*(b-a);   //optimized version
 }
 
-static inline float fade(float t) 
+static inline float fade(float t)
 {
 return t*t*t*(t*(t*6-15)+10);
 }
@@ -295,7 +295,7 @@ inline int get_gradient(int x, int y)
 public:
 
 // Classic Perlin noise, 3D version
-float base(float x, float y) 
+float base(float x, float y)
 {
 
     x *= xscale;  //replace with multiplication
@@ -311,14 +311,14 @@ float base(float x, float y)
     int gi01 = get_gradient(X+0,Y+1);
     int gi10 = get_gradient(X+1,Y+0);
     int gi11 = get_gradient(X+1,Y+1);
-    
+
     // Calculate noise contributions from each of the eight corners
     float n00= dot(grad+2*gi00, x, y);
     float n10= dot(grad+2*gi10, x-1, y);
     float n01= dot(grad+2*gi01, x, y-1);
     float n11= dot(grad+2*gi11, x-1, y-1);
     // Compute the fade curve value for each of x, y, z
-    
+
 #if 1
     float u = fade(x);
     float v = fade(y);
@@ -342,8 +342,8 @@ float noise(float x, float y)
     return base(x,y);
 }
 
-float one_over_f(float x, float y) 
-{   
+float one_over_f(float x, float y)
+{
     float tmp = 0;
     tmp += base(x,y);
     tmp += 0.50 * base(2*x, 2*y);
@@ -353,8 +353,8 @@ float one_over_f(float x, float y)
     return tmp;
 }
 
-float one_over_f(float x, float y, float persistence) 
-{   
+float one_over_f(float x, float y, float persistence)
+{
     float tmp = 0;
     float m = 1.0;
 
@@ -368,15 +368,15 @@ float one_over_f(float x, float y, float persistence)
     m *= persistence;
 
     tmp += m * base(8*x,8*y);
-    
+
     m *= persistence;
     tmp += m * base(16*x,16*y);
     return tmp;
 }
 
 //order 0 is base
-float order(float x, float y, float persistence, int order) 
-{   
+float order(float x, float y, float persistence, int order)
+{
     float tmp = 0;
     float m = 1.0;
     int b = 1;

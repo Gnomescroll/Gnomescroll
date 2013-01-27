@@ -80,7 +80,7 @@ void place_native_plants()
                     else
                     {
                         ret = t_mech::create_mech(x,y,z+1, plant_5);
-                    }   
+                    }
                 }
 
                 if(ret == false)

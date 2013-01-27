@@ -9,7 +9,7 @@
 
 namespace t_map
 {
-    
+
 void blit_block_item_sheet()
 {
     GLuint block_item_64_texture = 0;
@@ -64,7 +64,7 @@ void blit_block_item_sheet()
         glViewport(0, 0, xres, yres);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0.0f, (float) xres, 0.0f, (float) yres, -1.0f, 1.0f); 
+        glOrtho(0.0f, (float) xres, 0.0f, (float) yres, -1.0f, 1.0f);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -93,7 +93,7 @@ void blit_block_item_sheet()
             int s1 = get_cube_side_texture(index, 0); //T
             int s2 = get_cube_side_texture(index, 2); //N
             int s3 = get_cube_side_texture(index, 4); //W
-            
+
             draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
         }
         glEnd();
@@ -182,7 +182,7 @@ void blit_block_item_sheet()
         glViewport(0, 0, xres, yres);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0.0f, (float) xres, 0.0f, (float) yres, -1.0f, 1.0f); 
+        glOrtho(0.0f, (float) xres, 0.0f, (float) yres, -1.0f, 1.0f);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
@@ -211,7 +211,7 @@ void blit_block_item_sheet()
             //int s1 = get_cube_side_texture(index, 0); //T
             //int s2 = get_cube_side_texture(index, 2); //N
             //int s3 = get_cube_side_texture(index, 4); //W
-            
+
             //draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
         //}
         //glEnd();
@@ -231,7 +231,7 @@ void blit_block_item_sheet()
 
         //glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);
         glReadPixels(0, 0, xres, yres, format, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);
-        
+
         SDL_UnlockSurface(block_item_16_surface);
 
         save_surface_to_png(block_item_16_surface, "screenshot/fbo_test_16.png");
@@ -243,7 +243,7 @@ void blit_block_item_sheet()
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         glDeleteFramebuffersEXT(1, &fb);
     }
-  
+
     glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glViewport (0, 0, _xres, _yres);

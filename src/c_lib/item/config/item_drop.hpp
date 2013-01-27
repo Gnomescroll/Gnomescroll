@@ -21,14 +21,14 @@ class ItemDropEntry
                 p += this->probability[i];
             return p;
         }
-        
+
     public:
-        
+
         int n_drops;
         int item_type;
         int* amount;
         float* probability;
-    
+
     void set_drops(int n)
     {
         GS_ASSERT(n > 0);
@@ -39,19 +39,19 @@ class ItemDropEntry
         this->amount = (int*)calloc(n, sizeof(int));
         this->probability = (float*)calloc(n, sizeof(float));
     }
-    
+
     void add_drop(int amount, float probability)
     {
         GS_ASSERT(amount > 0);
         if (amount <= 0) return;
         GS_ASSERT(probability > 0.0f && probability < 1.001f);
-        
+
         GS_ASSERT(this->get_cumulative_probability() + probability < 1.001f);
-        
+
         // check that this drop has not been recorded
         for (int i=0; i<this->n_drops; i++)
             GS_ASSERT(this->amount[i] != amount);
-        
+
         for (int i=0; i<this->n_drops; i++)
             if (this->amount[i] <= 0)
             {    // free slot
@@ -61,14 +61,14 @@ class ItemDropEntry
             }
         GS_ASSERT(false);
     }
-    
+
     void drop_item(struct Vec3 position, float vx,  float vy, float vz, randFloat vx_func, randFloat vy_func, randFloat vz_func);
     class Item* drop_item();
-    
+
     ItemDropEntry() :
     n_drops(0), item_type(NULL_ITEM_TYPE), amount(NULL), probability(NULL)
     {}
-    
+
     ~ItemDropEntry()
     {
         if (this->amount != NULL) free(this->amount);
@@ -82,12 +82,12 @@ class ItemDrop
         int n_drops;
         int max_drops;
         class ItemDropEntry* drop;
-        
+
         int get_or_create_drop_enty(int item_type)
         {
             GS_ASSERT(item_type != NULL_ITEM_TYPE);
             if (item_type == NULL_ITEM_TYPE) return -1;
-            
+
             for (int i=0; i<this->max_drops; i++)
             {
                 if (this->drop[i].item_type == item_type)
@@ -103,12 +103,12 @@ class ItemDrop
             GS_ASSERT(false);
             return -1;
         }
-        
+
         class ItemDropEntry* get_or_create_drop_entry(int item_type)
         {
             GS_ASSERT(this->drop != NULL);
             if (this->drop == NULL) return NULL;
-            
+
             GS_ASSERT(item_type != NULL_ITEM_TYPE);
             if (item_type == NULL_ITEM_TYPE) return NULL;
 
@@ -129,7 +129,7 @@ class ItemDrop
             if (i >= this->max_drops) return NULL;
             return &this->drop[i];
         }
-        
+
     public:
 
         class Item** dropped_items;
@@ -152,7 +152,7 @@ class ItemDrop
             this->drop = new ItemDropEntry[n];
             this->dropped_items = (class Item**)calloc(n, sizeof(class Item*));
         }
-        
+
         void set_max_drop_amounts(const char* item_name, int n)
         {
             int item_type = get_item_type(item_name);
@@ -164,7 +164,7 @@ class ItemDrop
 
             drop->set_drops(n);
         }
-        
+
         void add_drop(const char* item_name, int amount, float probability)
         {
             int item_type = get_item_type(item_name);
@@ -175,7 +175,7 @@ class ItemDrop
             if (drop == NULL) return;
             drop->add_drop(amount, probability);
         }
-        
+
         void add_drop_range(const char* item_name, int lower_amount, int higher_amount, float probability)
         {    // gives all drop amounts in a range equal probability
             GS_ASSERT(lower_amount < higher_amount);
@@ -189,7 +189,7 @@ class ItemDrop
 
         bool is_loaded()
         {
-            return (n_drops >= 0 && max_drops >= 0 && drop != NULL); 
+            return (n_drops >= 0 && max_drops >= 0 && drop != NULL);
         }
 
     ItemDrop() :
@@ -198,13 +198,13 @@ class ItemDrop
         vx_func(NULL), vy_func(NULL), vz_func(NULL),
         vx(0.0f), vy(0.0f), vz(0.0f)
     {}
-    
+
     ~ItemDrop()
     {
         if (this->drop != NULL) delete[] this->drop;
         if (this->dropped_items != NULL) free(this->dropped_items);
     }
-    
+
 };
 
 }   // Item

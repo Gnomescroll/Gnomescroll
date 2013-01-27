@@ -162,7 +162,7 @@ class PerlinField2D
     {
         return grad[2*index+0]*x + grad[2*index+1]*y;
     }
-    
+
     // Classic Perlin noise, 3D version
     //OPTIMIZED
     float base(float x, float y)

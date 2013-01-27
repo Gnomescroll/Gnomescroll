@@ -11,7 +11,7 @@ class CraftingUI : public UIElement
         int get_grid_at(int px, int py);
 
     public:
-          
+
         static const int cell_size = 37;
 
         static const int input_xdim = 4;
@@ -85,7 +85,7 @@ class CraftingUI : public UIElement
             t->set_color(Color(255,255,255,255));
             t->set_depth(-0.1f);
         }
-        
+
         max = output_slots;
         this->output_stacks = new HudText::Text[max];
         for (int i=0; i<max; i++)
@@ -133,7 +133,7 @@ const float CraftingUI::output_offset_x = CraftingUI::cell_size * (CraftingUI::i
 const float CraftingUI::output_offset_y = 0;
 
 int CraftingUI::get_grid_at(int px, int py)
-{  
+{
     //pixels from upper left
     px -= xoff;
     py -= _yresf - yoff;
@@ -151,7 +151,7 @@ int CraftingUI::get_grid_at(int px, int py)
 }
 
 int CraftingUI::get_slot_at(int px, int py)
-{  
+{
     int slot = this->get_grid_at(px,py);
     if (slot == NULL_SLOT) return NULL_SLOT;
     int xslot = slot % xdim;
@@ -164,7 +164,7 @@ int CraftingUI::get_slot_at(int px, int py)
     GS_ASSERT(yslot < yslots_max);
 
     // detect blank regions
-    
+
     // in gap between input & output
     if (xslot >= input_xdim && xslot < input_xdim + input_output_gap) return NULL_SLOT;
 
@@ -214,9 +214,9 @@ bool CraftingUI::in_craft_output_region(int px, int py)
 void CraftingUI::draw()
 {
     this->draw_name();
-    
+
     IF_ASSERT(CraftingTexture == 0) return;
-    
+
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_TEXTURE_2D);
 
@@ -261,7 +261,7 @@ void CraftingUI::draw()
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
     int hover_slot = this->get_grid_at(mouse_x, mouse_y);
-    
+
     if (hover_slot != NULL_SLOT && (this->in_craft_input_region(mouse_x,mouse_y) || this->in_craft_output_region(mouse_x,mouse_y)))
     {
         int w = slot_size;
@@ -270,7 +270,7 @@ void CraftingUI::draw()
 
         const float x = xoff + cell_size*xslot + cell_offset_x;
         const float y = yoff - (cell_size*yslot + cell_offset_y);
-        
+
         glVertex2f(x,y);
         glVertex2f(x, y-w);
         glVertex2f(x+w, y-w);
@@ -340,7 +340,7 @@ void CraftingUI::draw()
             any_unavailable = true;
             continue;
         }
-        
+
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
         x = xoff + output_offset_x + cell_offset_x + cell_size*xslot;
@@ -369,7 +369,7 @@ void CraftingUI::draw()
         glVertex2f(x+w, y);
         glEnd();
     }
-    
+
     //draw unavailable output items
     // switch to greyscale texture if unavailable
     if (any_unavailable)
@@ -383,7 +383,7 @@ void CraftingUI::draw()
             int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
             if (available) continue;
             if (item_type == NULL_ITEM_TYPE) continue;
-            
+
             int tex_id = Item::get_sprite_index_for_type(item_type);
 
             // switch to greyscale texture if unavailable
@@ -437,7 +437,7 @@ void CraftingUI::draw()
         const float y = yoff - (input_offset_y + cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
         draw_slot_numbers(text, x, y, stack, charges);
     }
-    
+
     // outputs
     for (int xslot=0; xslot<output_xdim; xslot++)
     for (int yslot=0; yslot<output_ydim; yslot++)

@@ -20,13 +20,13 @@ class EntityListFilter
         int within_sphere(EntityList* list, const EntityType* types, const int n_types, Vec3 position, float radius);
 
         void init();
-        
+
     ~EntityListFilter();
     EntityListFilter()
     : objects(NULL), distances(NULL), count(0), max(OBJECT_FILTER_SIZE)
     {}
 };
 
-    
+
 
 } // Entities

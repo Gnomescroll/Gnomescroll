@@ -10,20 +10,20 @@ class HitPointsHealthComponent: public HealthComponent
 {
     private:
         bool died;
-        
+
     public:
         int health;
         int max_health;
 
         void take_damage(int dmg);
-        
+
         bool did_die()
         {
             bool ret = this->died;
             this->died = false;     // reset due to read
             return ret;
         }
-    
+
         bool is_dead()
         {
             if (this->health <= 0) return true;

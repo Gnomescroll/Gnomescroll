@@ -49,10 +49,10 @@ float rayTriangleIntersection(lbVec3f& rayOrigin,lbVec3f& rayDir, lbVec3f& vertA
 */
 
 /*
-    Smoothing Groups: 
+    Smoothing Groups:
     http://www.martinreddy.net/gfx/3d/OBJ.spec
 
-    Calculating Normals for Smoothing Groups: 
+    Calculating Normals for Smoothing Groups:
     http://www.gamedev.net/topic/486058-normal-calculation-by-using-smoothing-groups-in-meshes/
 */
 
@@ -135,7 +135,7 @@ void load_model()
    printf("Object Model: nVertex= %d \n", model->nVertex);
    printf("Object Model: nTexCoord= %d \n", model->nTexCoord);
    printf("Object Model: nNormal= %d \n", model->nNormal);
- 
+
     v_num = model->nTriangle*3;
     v_array = new Vertex[v_num];
     memset(v_array, 0, v_num*sizeof(Vertex));
@@ -170,13 +170,13 @@ void load_model()
 
             v.u = model->TexCoordArray[itx].u;
             v.v = 1.0f - model->TexCoordArray[itx].v;
-            
+
             v.n[0] = model->NormalArray[in].x;
             v.n[1] = model->NormalArray[in].y;
             v.n[2] = model->NormalArray[in].z;
 
             //printf("len= %f \n", v.n[0]*v.n[0] + v.n[1]*v.n[1] + v.n[2]*v.n[2]);
-            
+
             //printf("normal= %f %f %f \n",  v.n[0],v.n[1],v.n[2]);
 
             v_array[3*i+j] = v;
@@ -201,7 +201,7 @@ void init_shader()
     monster_shader.load_shader( "monster mob shader",
         "./media/shaders/mob/monster_mob.vsh",
         "./media/shaders/mob/monster_mob.fsh" );
-   
+
     monster_TexCoord = monster_shader.get_attribute("InTexCoord");
 
     monster_InPosition = monster_shader.get_uniform("InPosition");
@@ -217,7 +217,7 @@ void init_texture()
         printf("init_monster_mob: texture load error\n");
         GS_ABORT();
     }
- 
+
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &monster_texture );
     glBindTexture( GL_TEXTURE_2D, monster_texture );
@@ -230,7 +230,7 @@ void init_texture()
     GLenum format = GL_BGRA;
     if (s->format->Rmask == 0x000000ff)
         format = GL_RGBA;
- 
+
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
     glDisable(GL_TEXTURE_2D);
 
@@ -269,7 +269,7 @@ void draw_model(float x, float y, float z)
     glBindTexture( GL_TEXTURE_2D, monster_texture );
 
     glBindBuffer(GL_ARRAY_BUFFER, monster_vbo);
-    
+
     glUseProgramObjectARB(monster_shader.shader);
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -279,7 +279,7 @@ void draw_model(float x, float y, float z)
     glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
     glVertexAttribPointer(monster_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
     glNormalPointer(GL_FLOAT, stride, (GLvoid*)20);
-    
+
     glUniform4f(monster_InPosition, x,y,z,0.0f);
 
     glDrawArrays(GL_TRIANGLES,0, v_num);

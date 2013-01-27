@@ -12,7 +12,7 @@ class item_particle_create_StoC: public FixedSizeReliableNetPacketToClient<item_
         uint8_t item_type;
         float x,y,z;
         float mx,my,mz;
-        
+
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
@@ -45,7 +45,7 @@ class item_particle_state_StoC: public FixedSizeReliableNetPacketToClient<item_p
         uint16_t id;
         float x,y,z;
         float mx,my,mz;
-        
+
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
