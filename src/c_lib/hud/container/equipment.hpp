@@ -55,16 +55,12 @@ void EquipmentUI::draw()
 
     IF_ASSERT(EquipmentTexture == 0) return;
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     glBindTexture(GL_TEXTURE_2D, EquipmentTexture);
-
     glColor4ub(255, 255, 255, 255);
-
     draw_bound_texture_sprite(
         this->xoff, this->yoff - this->height - 4,  // -4 to align with inventory correctly
         this->width, this->height,
@@ -72,7 +68,6 @@ void EquipmentUI::draw()
         0.0f, 0.0f,
         float(this->width)/float(this->texture_width),
         float(this->height)/float(this->texture_height));
-
     glDisable(GL_TEXTURE_2D);
 }
 
