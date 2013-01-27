@@ -33,7 +33,7 @@ class ItemContainerHandUI* player_hand_ui = NULL;
 class ItemContainerSynthesizerUI* player_synthesizer_ui = NULL;
 class ItemContainerEnergyTanksUI* player_energy_tanks_ui;
 class ItemContainerEquipmentUI* player_equipment_ui = NULL;
-class ItemContainerUI* player_craft_bench_ui = NULL;
+class ItemContainerUI* crafting_bench_ui = NULL;
 class ItemContainerUI* storage_block_ui = NULL;
 class ItemContainerUI* cryofreezer_ui = NULL;
 class ItemContainerSmelterUI* smelter_ui = NULL;

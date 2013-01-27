@@ -33,7 +33,7 @@ extern class ItemContainerHandUI* player_hand_ui;
 extern class ItemContainerSynthesizerUI* player_synthesizer_ui;
 extern class ItemContainerEnergyTanksUI* player_energy_tanks_ui;
 extern class ItemContainerEquipmentUI* player_equipment_ui;
-extern class ItemContainerUI* player_craft_bench_ui;
+extern class ItemContainerUI* crafting_bench_ui;
 extern class ItemContainerUI* storage_block_ui;
 extern class ItemContainerUI* cryofreezer_ui;
 extern class ItemContainerSmelterUI* smelter_ui;

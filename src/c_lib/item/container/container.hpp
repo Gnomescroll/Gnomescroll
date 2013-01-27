@@ -553,7 +553,7 @@ class ItemContainerCrusher: public ItemContainerInterface
     {}
 };
 
-class ItemContainerEquipment: ItemContainerInterface
+class ItemContainerEquipment: public ItemContainerInterface
 {
     public:
 

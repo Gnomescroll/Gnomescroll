@@ -82,7 +82,7 @@ void teardown()
     if (player_synthesizer_ui  != NULL) delete player_synthesizer_ui;
     if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
     if (player_equipment_ui    != NULL) delete player_equipment_ui;
-    if (player_craft_bench_ui  != NULL) delete player_craft_bench_ui;
+    if (crafting_bench_ui  != NULL) delete crafting_bench_ui;
     if (premium_cache_ui       != NULL) delete premium_cache_ui;
     if (storage_block_ui       != NULL) delete storage_block_ui;
     
@@ -608,9 +608,9 @@ bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
     ItemContainer* agent_toolbelt  = (ItemContainer*)create_container(name::toolbelt);
     ItemContainer* agent_inventory = (ItemContainer*)create_container(name::inventory);
     ItemContainerHand* agent_hand  = (ItemContainerHand*)create_container(name::hand);
+    ItemContainerEquipment* agent_equipment = (ItemContainerEquipment*)create_container(name::equipment);
     ItemContainerSynthesizer* agent_synthesizer  = (ItemContainerSynthesizer*)create_container(name::synthesizer);
     ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)create_container(name::energy_tanks);
-    ItemContainerEnergyTanks* agent_equipment    = (ItemContainerEquipment*)create_container(name::equipment);
 
     IF_ASSERT(agent_hand         == NULL) goto error;
     IF_ASSERT(agent_toolbelt     == NULL) goto error;

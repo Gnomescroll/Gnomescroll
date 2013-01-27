@@ -171,7 +171,7 @@ static void register_settings()
 
     agent_container_def("equipment");
     c->xdim = 9;
-    x->ydim = 1;
+    c->ydim = 1;
     c->alpha_action = &alpha_action_decision_tree;
     c->beta_action = &beta_action_decision_tree;
     c->alpha_packet = &send_container_alpha_action;
