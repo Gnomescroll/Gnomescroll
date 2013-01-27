@@ -254,15 +254,15 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num)
     return true;
 }
 
-void add_trees(float* noise, int xnoise, int ynoise)
+void add_trees(float* noise)
 {
     printf("\ttrees\n");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
-    for (int x=0; x<xnoise; x++)
-    for (int y=0; y<ynoise; y++)
+    for (int x=0; x < t_map::map_dim.x; x++)
+    for (int y=0; y < t_map::map_dim.y; y++)
     {
-        if (noise[x + y*xnoise] > tree_zone_threshold &&
+        if (noise[x + y * t_map::map_dim.x] > tree_zone_threshold &&
             genrand_real1() > tree_threshold)
         {
             int z = t_map::get_highest_solid_block(x,y);
@@ -276,15 +276,15 @@ void add_trees(float* noise, int xnoise, int ynoise)
     }
 }
 
-void add_shrooms(float* noise, int xnoise, int ynoise)
+void add_shrooms(float* noise)
 {
     printf("\tshrooms\n");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
-    for (int x=0; x<xnoise; x++)
-    for (int y=0; y<ynoise; y++)
+    for (int x=0; x < t_map::map_dim.x; x++)
+    for (int y=0; y < t_map::map_dim.y; y++)
     {
-        if (noise[x + y*xnoise] > shroom_zone_threshold &&
+        if (noise[x + y * t_map::map_dim.x] > shroom_zone_threshold &&
             genrand_real1() > shroom_threshold)
         {
             int z = t_map::get_highest_solid_block(x,y);
@@ -399,9 +399,9 @@ void add_terrain_features()
     float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
-    add_gorges(noise, 10);
-    add_trees(noise, map_dim.x, map_dim.y);
-    add_shrooms(noise, map_dim.x, map_dim.y);
+    //add_gorges(noise, 10);
+    add_trees(noise);
+    add_shrooms(noise);
 
     free(noise);
 

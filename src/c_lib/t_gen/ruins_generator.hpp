@@ -1,3 +1,4 @@
+// fixme: look for all " = "
 #pragma once
 
 #if DC_CLIENT
@@ -144,8 +145,8 @@ struct Room
     CubeType floo;
     CubeType ceil;
     CubeType trim;
-    Rect3D stairwell_up;
-    Rect3D stairwell_down;
+    Rect3D uconn;
+    Rect3D dconn;
     Rect3D nconn;  // north connection
     Rect3D sconn; 
     Rect3D econn;
@@ -307,9 +308,9 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
         // determine need_cube status
         if (!rect_contains(r.air, cx, cy, cz) )
         {
-            if (!rect_contains(r.stairwell_up, cx, cy, cz)
+            if (!rect_contains(r.uconn, cx, cy, cz)
                 &&
-                !rect_contains(r.stairwell_down, cx, cy, cz)
+                !rect_contains(r.dconn, cx, cy, cz)
                 &&
                 !rect_contains(r.nconn, cx, cy, cz)
                 &&
@@ -328,8 +329,8 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
             // change rim/frame cubes
             if (r.room_t != ROOMT_HALL)
                 if (cz == 1 ||
-                    rect_plus_margin_contains(r.stairwell_up,   1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.stairwell_down, 1, cx, cy, cz) || 
+                    rect_plus_margin_contains(r.uconn,   1, cx, cy, cz) || 
+                    rect_plus_margin_contains(r.dconn, 1, cx, cy, cz) || 
                     rect_plus_margin_contains(r.nconn,          1, cx, cy, cz) || 
                     rect_plus_margin_contains(r.sconn,          1, cx, cy, cz) || 
                     rect_plus_margin_contains(r.econn,          1, cx, cy, cz) || 
@@ -466,11 +467,11 @@ void open_connection_to(direction_t d, Room& rm)
             rm.wconn.dep = FIXED_CONNECTION_SPAN;
             break;
         case DIR_UP:// FIXME  must close down these connections btween each dungeon
-            rm.stairwell_up.Clone(fixed_stair);
-            rm.stairwell_up.z =  CUBES_GOING_UP_ROOM - 1;
+            rm.uconn.Clone(fixed_stair);
+            rm.uconn.z =  CUBES_GOING_UP_ROOM - 1;
             break;
         case DIR_DOWN:
-            rm.stairwell_down.Clone(fixed_stair);
+            rm.dconn.Clone(fixed_stair);
             break;
 
         case DIR_MAX:
@@ -600,13 +601,6 @@ void UNUSED_make_a_simple_room()
             //    r = setup_stairspace_for(DIR_DOWN, r);
 }
 
-IntVec3 find_valid_root() 
-{
-    printf("find_valid_root() is doing NOTHING ATM!!!!!!***********\n");
-        IntVec3 iv; // dead = true by default, and that can be checked, so that if it isn't an alive room returned, we know no valid roots could be found
-    return iv;
-}
-    
 void finish_room(IntVec3 iv) 
 {
     rooms[iv.z][iv.y][iv.x].wall = curr_wall;
@@ -616,15 +610,95 @@ void finish_room(IntVec3 iv)
     rooms[iv.z][iv.y][iv.x].dead = false;
 } 
 
+
+IntVec3 find_valid_root() 
+{
+    IntVec3 iv;
+	int num_alives = 0;
+
+    // 1st pass: find out how many alives, and assure we have a dead value to return, if nothing valid
+	for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
+    for (int ry = 0; ry < ROOMS_GOING_ACROSS; ry++)
+    for (int rz = 0; rz < ROOMS_GOING_UP; rz++) 
+	{
+        if (rooms[rz][ry][rx].dead)
+		{
+			iv.x = rx;
+			iv.y = ry;
+			iv.z = rz;
+		}
+		else
+		{
+			num_alives++;
+		}
+    }
+
+	if (num_alives == 0)
+		return iv; 
+
+    // 2nd pass: return a random alive
+	int chosen_alive = randrange(0, num_alives - 1);
+	num_alives = 0;  // can reuse this now that we got random # using it
+	for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
+    for (int ry = 0; ry < ROOMS_GOING_ACROSS; ry++)
+    for (int rz = 0; rz < ROOMS_GOING_UP; rz++) 
+	{
+        if (!rooms[rz][ry][rx].dead)
+		{
+			if (num_alives == chosen_alive)
+			{
+				iv.x = rx;
+				iv.y = ry;
+				iv.z = rz;
+				return iv;
+			}
+
+			num_alives++;
+		}
+    }
+
+    return iv;  // will be dead if we don't return somewhere earlier....
+				// then we know no valid roots could be found
+}
+
+bool added_pair()
+{
+    int num_tries = 0;
+    if (empty_lat_space_around(root))
+    {
+        num_tries++;
+        if (num_tries > 4000) 
+		{
+			printf("ruins_generator: > 4000 tries!  I GIVE!\n");
+			return false;
+		}
+        
+        if (empty_lat_space_around(hall, ROOMT_HALL) )
+        {
+            finish_room(hall);
+            finish_room(room);
+            root.x = room.x;
+            root.y = room.y;
+            root.z = room.z;
+			return true;
+        }
+    }
+
+	return false;
+}
+
 void set_pathing_data(int ox, int oy)  // origin x/y
 {
-    for (int z = 0; z < ROOMS_GOING_UP; z++) {
+    for (int z = 0; z < ROOMS_GOING_UP; z++) 
+	{
         // setup floorwide settings
-        // this root room will be diff for each floor.  it's the corner of a boss room on floor 0 (which will be a 2x3 joining of grid nodes, prob should exceptionally generate bossroom the moment
-                        // the corner room is established.  since it would be easy to special case, and we could skip its other nodes in the later generation stage
+        curr_floo = randcube(floors, NUM_FLOOR_CUBES);
+        curr_wall = randcube(walls, NUM_WALL_CUBES);
+        curr_ceil = randcube(ceils, NUM_CEIL_CUBES);
+        curr_trim = randcube(trims, NUM_TRIM_CUBES);
         
-        // 
-        if (z == 0) // bottom level
+        // make boss room or stairway-down
+        if (z == 0) // (bottom level) 2x3 joining of grid nodes
         {
             root.x = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room wid */);
             root.y = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room dep */);
@@ -639,39 +713,33 @@ void set_pathing_data(int ox, int oy)  // origin x/y
         }
         
         make_alive_and_setup(rooms[root.z][root.y][root.x], ROOMT_NORMAL);
-        
-        curr_floo = randcube(floors, NUM_FLOOR_CUBES);
-        curr_wall = randcube(walls, NUM_WALL_CUBES);
-        curr_ceil = randcube(ceils, NUM_CEIL_CUBES);
-        curr_trim = randcube(trims, NUM_TRIM_CUBES);
-
-        // snake a path
-        // for each room desired, keep trying to make a valid hall-then-room (2 car) train of Rect3D spans
-        int num_desired_rooms = 12;
-        for (int i = 0; i < num_desired_rooms; i++) {
-
-            int num_tries = 0;
-            if (empty_lat_space_around(root))
+        finish_room(root);
+       
+        // snake a linear path
+        // for each pair desired, keep trying to make a valid hall-then-room (2 car) train of Rect3D spans
+        for (int i = 0; i < 5; i++) 
+		{
+            if (!added_pair())  // must start a new snake, cuz can't build off ROOT room
             {
-                num_tries++;
-                if (num_tries > 4000) {printf("ruins_generator: > 4000 tries!  I GIVE!\n");break;}
-        
-                if (empty_lat_space_around(hall, ROOMT_HALL) )
-                {
-                    finish_room(hall);
-                    finish_room(room);
-                    root.x = room.x;
-                    root.y = room.y;
-                    root.z = room.z;
-                }
-            }
-            else  // must start a new snake, cuz can't build off ROOT room
-            {
-                IntVec3 iv = find_valid_root();
-                root.Clone(iv);
-                if (rooms[iv.z][iv.y][iv.x].dead) break;
+                root = find_valid_root();
+				if (rooms[root.z][root.y][root.x].dead) 
+					break;  // couldn't find valid room
             }
         }
+
+        // add offshoot pairs randomly
+        // for each pair desired, keep trying to make a valid hall-then-room (2 car) train of Rect3D spans
+        for (int i = 0; i < 7; i++) 
+		{
+            root = find_valid_root();
+			if (rooms[root.z][root.y][root.x].dead) 
+				break;  // couldn't find valid room
+
+            if (!added_pair())  // must start a new snake, cuz can't build off ROOT room
+            {
+				break;  // couldn't find valid room
+            }
+		}
     }
 }
     
@@ -720,7 +788,8 @@ bool contains_1_or_more_cubes(Rect3D r)
 }
 
 void make_ruins(int x, int y) {
-    printf("\truin (%d, %d)\n", x, y);
+    printf("__________________________________________________________________\n");
+    printf("Making ruin @ %d, %d\n", x, y);
 
     set_pathing_data(x, y);
 
@@ -761,13 +830,13 @@ void make_ruins(int x, int y) {
             ri.z = rz;
             make_room_filling(ri, x, y);
 
-            if (contains_1_or_more_cubes(rooms[rz][ry][rx].stairwell_up))
+            if (contains_1_or_more_cubes(rooms[rz][ry][rx].uconn))
             {
                 make_stairs(ri, x, y);
-                set_region(rooms[rz][ry][rx].stairwell_up, EMPTY_CUBE);
+                set_region(rooms[rz][ry][rx].uconn, EMPTY_CUBE);
             }
-            if (contains_1_or_more_cubes(rooms[rz][ry][rx].stairwell_down))
-                set_region(rooms[rz][ry][rx].stairwell_down, EMPTY_CUBE);
+            if (contains_1_or_more_cubes(rooms[rz][ry][rx].dconn))
+                set_region(rooms[rz][ry][rx].dconn, EMPTY_CUBE);
         }
 
         draw_ASCII_floorplan(rz, northernmost, southernmost);
@@ -775,9 +844,14 @@ void make_ruins(int x, int y) {
 }
 
     void check_textures(CubeType arr[], int num) {
-        for (int i = 0; i < num; i++) { 
+        for (int i = 0; i < num; i++) 
+		{ 
             GS_ASSERT(t_map::isValidCube(trims[i])); 
-            if (!t_map::isValidCube(trims[i])) { printf("** cube id %d invalid ***", trims[i]); return; }
+
+            if (!t_map::isValidCube(trims[i])) 
+			{ 
+				printf("** cube id %d invalid ***", trims[i]); return; 
+			}
         }
     }
 
@@ -785,10 +859,11 @@ void make_ruins(int x, int y) {
     {
         for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
         for (int ry = 0; ry < ROOMS_GOING_ACROSS; ry++)
-        for (int rz = 0; rz < ROOMS_GOING_UP; rz++) {
+        for (int rz = 0; rz < ROOMS_GOING_UP; rz++) 
+		{
             rooms[rz][ry][rx].dead = true;
-            rooms[rz][ry][rx].stairwell_up.Close();
-            rooms[rz][ry][rx].stairwell_down.Close();
+            rooms[rz][ry][rx].uconn.Close();
+            rooms[rz][ry][rx].dconn.Close();
             rooms[rz][ry][rx].nconn.Close();
             rooms[rz][ry][rx].sconn.Close();
             rooms[rz][ry][rx].econn.Close();
@@ -802,9 +877,8 @@ void make_ruins(int x, int y) {
     }
 
     void generate_ruins() {
-        printf("Making ruins\n");
-        
-        if(rooms == NULL) 
+        // setup rooms array
+		if(rooms == NULL) 
         {
             rooms = new Room**[ROOMS_GOING_UP];
             for(int i=0; i<ROOMS_GOING_UP; i++)
@@ -816,9 +890,9 @@ void make_ruins(int x, int y) {
                 }
             }
         }
-        //rooms = new (Room[ROOMS_GOING_UP][ROOMS_GOING_ACROSS][ROOMS_GOING_ACROSS]);
 
-        floors[0] = t_map::get_cube_type("ruins_floor1");
+        // texture set lists
+		floors[0] = t_map::get_cube_type("ruins_floor1");
         floors[1] = t_map::get_cube_type("ruins_floor2"); 
         floors[2] = t_map::get_cube_type("ruins_floor3"); 
         floors[3] = t_map::get_cube_type("ruins_floor4"); 
@@ -838,7 +912,8 @@ void make_ruins(int x, int y) {
         trims[2] = t_map::get_cube_type("ruins_trim3");
         trims[3] = t_map::get_cube_type("ruins_trim4"); 
 
-        check_textures(floors, NUM_FLOOR_CUBES);
+        // check that they're valid
+		check_textures(floors, NUM_FLOOR_CUBES);
         check_textures(walls,  NUM_WALL_CUBES);
         check_textures(ceils,  NUM_CEIL_CUBES);
         check_textures(trims,  NUM_TRIM_CUBES);
@@ -848,8 +923,8 @@ void make_ruins(int x, int y) {
         {
             make_ruins
             (
-                randrange(0, t_map::map_dim.x), 
-                randrange(0, t_map::map_dim.y)
+                randrange(0, t_map::map_dim.x - 1), 
+                randrange(0, t_map::map_dim.y - 1)
             );
 
             reset_to_dead_and_closed();
