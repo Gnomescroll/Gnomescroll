@@ -6,7 +6,6 @@ dont_include_this_file_in_client
 
 #include <common/random.hpp>
 #include <item/common/constants.hpp>
-#include <item/common/struct.hpp>
 
 namespace Item
 {

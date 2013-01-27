@@ -10,6 +10,7 @@ GLuint CraftingTexture = 0;
 GLuint StorageBlockTexture = 0;
 GLuint SmelterTexture = 0;
 GLuint CrusherTexture = 0;
+GLuint EquipmentTexture = 0;
 
 static void init_synthesizer_texture()
 {
@@ -56,6 +57,15 @@ static void init_crusher_texture()
     GS_ASSERT(CrusherTexture != 0);
 }
 
+static void init_equipment_texture()
+{
+    GLuint min_filter = GL_LINEAR;
+    GLuint mag_filter = GL_NEAREST;
+    int ret = create_texture_from_file("media/sprites/container/equipment.png", &EquipmentTexture, min_filter, mag_filter);
+    GS_ASSERT(ret == 0);
+    GS_ASSERT(EquipmentTexture != 0);
+}
+
 void init_texture()
 {
     init_synthesizer_texture();
@@ -63,6 +73,7 @@ void init_texture()
     init_storage_block_texture();
     init_smelter_texture();
     init_crusher_texture();
+    init_equipment_texture();
 }
 
 void teardown_texture()

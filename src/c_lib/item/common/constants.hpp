@@ -86,6 +86,8 @@ const float ITEM_PARTICLE_PICKUP_BEGIN_DISTANCE = 1.5f;
 // distance where initiated pickup will become final
 const float ITEM_PARTICLE_PICKUP_END_DISTANCE = AGENT_BOX_RADIUS;
 
+const int N_ACCESSORIES = 3;
+
 inline bool isValid(ItemID item_id)
 {
     return (item_id >= 0 && item_id < MAX_ITEMS);
@@ -108,5 +110,6 @@ inline bool isValid(ItemContainerType container_type)
 
 inline bool is_tangible_group(ItemGroup group)
 {
-    return (group != IG_NONE && group != IG_ERROR && group != IG_UNKNOWN && group != IG_DEBUG);
+    return (group != IG_NONE && group != IG_ERROR &&
+            group != IG_UNKNOWN && group != IG_DEBUG);
 }

@@ -55,17 +55,19 @@ class EnergyTanksUI : public UIElement
 
     int get_slot_at(int px, int py);
 
-    bool point_inside(int px, int py) { return (this->get_slot_at(px,py) != NULL_SLOT); }
+    bool point_inside(int px, int py)
+    {
+        return (this->get_slot_at(px,py) != NULL_SLOT);
+    }
 
     void init()
     {
-        this->inv_open = false;
         this->xdim = ItemContainer::get_container_xdim(ItemContainer::name::energy_tanks);
         this->ydim = ItemContainer::get_container_ydim(ItemContainer::name::energy_tanks);
     }
 
     EnergyTanksUI() :
-        xdim(0), ydim(0), selected_slot(0)
+        inv_open(false), xdim(0), ydim(0), selected_slot(0)
     {}
 
     virtual ~EnergyTanksUI()

@@ -2,7 +2,6 @@
 
 #include <item/common/constants.hpp>
 #include <item/common/enum.hpp>
-#include <item/common/struct.hpp>
 
 #include <item/properties.cpp>
 #include <item/item.cpp>

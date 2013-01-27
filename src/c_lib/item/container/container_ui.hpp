@@ -157,7 +157,7 @@ class ItemContainerUIInterface
         this->allocate_slots();
     }
 
-    void set_alt_parameters(int xdim, int ydim)
+    virtual void set_alt_parameters(int xdim, int ydim)
     {
         this->alt_xdim = xdim;
         this->alt_ydim = ydim;
@@ -176,7 +176,7 @@ class ItemContainerUIInterface
         slot_metadata(NULL)
     {}
 
-    private:
+    protected:
 
     virtual void set_dimensions(ItemContainerType type, int xdim, int ydim)
     {
@@ -228,12 +228,12 @@ class ItemContainerHandUI: public ItemContainerUIInterface
         return ItemContainerUIInterface::get_slot_metadata(0);
     }
 
-    void insert_item(struct SlotMetadata metadata)
+    virtual void insert_item(struct SlotMetadata metadata)
     {
         ItemContainerUIInterface::insert_item(0, metadata);
     }
 
-    void insert_item(ItemID item_id)
+    virtual void insert_item(ItemID item_id)
     {
         struct SlotMetadata metadata = copy_item_metadata(item_id);
         this->insert_item(metadata);
@@ -244,7 +244,7 @@ class ItemContainerHandUI: public ItemContainerUIInterface
         ItemContainerUIInterface::remove_item(0);
     }
 
-    void init(ItemContainerType type, int xdim, int ydim)
+    virtual void init(ItemContainerType type, int xdim, int ydim)
     {
         GS_ASSERT(type == name::hand);
         ItemContainerUIInterface::init(type, xdim, ydim);
@@ -261,7 +261,7 @@ class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
 
         int energy_tank_type;
 
-    bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, int item_type)
     {
         IF_ASSERT(!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
@@ -269,7 +269,7 @@ class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
         return (item_type == this->energy_tank_type);
     }
 
-    void init(ItemContainerType type, int xdim, int ydim)
+    virtual void init(ItemContainerType type, int xdim, int ydim)
     {
         this->energy_tank_type = Item::get_item_type("energy_tank");
         GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
@@ -297,7 +297,7 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
         return this->get_slot_stack(0);
     }
 
-    bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, int item_type)
     {
         GS_ASSERT(this->is_valid_slot(slot));
         if (!this->is_valid_slot(slot)) return false;
@@ -327,21 +327,20 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
 
     bool is_smelter_output(int slot)
     {
-        if (slot >= this->slot_max-(this->alt_xdim*this->alt_ydim)) return true;
+        if (slot >= this->slot_max - this->alt_xdim*this->alt_ydim) return true;
         return false;
     }
 
     int get_fuel()
     {
-        GS_ASSERT(this->slot_max > 0);
-        if (this->slot_max <= 0) return NULL_ITEM_TYPE;
+        IF_ASSERT(this->slot_max < 0) return NULL_ITEM_TYPE;
+        if (this->slot_max == 0) return NULL_ITEM_TYPE;
         return this->slot_metadata[0].type;
     }
 
-    bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, int item_type)
     {
-        GS_ASSERT(this->is_valid_slot(slot));
-        if (!this->is_valid_slot(slot)) return false;
+        IF_ASSERT(!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
 
         if (slot == 0)
@@ -351,7 +350,7 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
         return true;
     }
 
-    int get_empty_slot()
+    virtual int get_empty_slot()
     {
         for (int i=1; i<this->slot_max; i++)    // skip fuel slot
         {
@@ -367,7 +366,7 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
         fuel(0.0f), fuel_type(NULL_ITEM_TYPE), progress(0.0f)
     {}
 
-    private:
+    protected:
 
     virtual void set_dimensions(ItemContainerType type, int xdim, int ydim)
     {
@@ -386,15 +385,13 @@ class ItemContainerCrusherUI: public ItemContainerUIInterface
 
     int get_input_slot_type()
     {
-        GS_ASSERT(this->is_valid_slot(this->input_slot));
-        if (!this->is_valid_slot(this->input_slot)) return false;
+        IF_ASSERT(!this->is_valid_slot(this->input_slot)) return false;
         return this->slot_metadata[this->input_slot].type;
     }
 
     bool can_insert_item(int slot, int item_type)
     {
-        GS_ASSERT(this->is_valid_slot(slot));
-        if (!this->is_valid_slot(slot)) return false;
+        IF_ASSERT(!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
 
         if (slot == 0) return true;
@@ -412,7 +409,7 @@ class ItemContainerCrusherUI: public ItemContainerUIInterface
         ItemContainerUIInterface(id)
     {}
 
-    private:
+    protected:
 
     virtual void set_dimensions(ItemContainerType type, int xdim, int ydim)
     {
@@ -427,9 +424,21 @@ class ItemContainerEquipmentUI: public ItemContainerUIInterface
 {
     public:
 
-        explicit ItemContainerEquipmentUI(ItemContainerID id) :
-            ItemContainerUIInterface(id)
-        {}
+        EquipmentType* slot_equipment_types;
+
+    virtual void init(ItemContainerType type, int xdim, int ydim)
+    {
+        GS_ASSERT(type == name::equipment);
+        ItemContainerUIInterface::init(type, xdim, ydim);
+        IF_ASSERT(this->slot_max <= 0) return;
+        GS_ASSERT(this->slot_equipment_types == NULL);
+        this->slot_equipment_types = (EquipmentType*)malloc(this->slot_max * sizeof(EquipmentType));
+        ItemContainerEquipment::set_slot_equipment_types(this->slot_equipment_types, this->slot_max);
+    }
+
+    explicit ItemContainerEquipmentUI(ItemContainerID id) :
+        ItemContainerUIInterface(id)
+    {}
 };
 
 } // Item

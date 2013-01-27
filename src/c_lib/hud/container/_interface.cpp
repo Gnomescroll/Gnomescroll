@@ -25,6 +25,7 @@ class AgentToolbeltUI* agent_toolbelt = NULL;
 class AgentSynthesizerUI* synthesizer_container = NULL;
 class EnergyTanksUI* energy_tanks = NULL;
 class CacheUI* premium_cache = NULL;
+class EquipmentUI* equipment = NULL;
 
 // public containers
 class CraftingUI* crafting_container = NULL;
@@ -137,19 +138,17 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
 
     ItemContainerID container_id = NULL_CONTAINER;
     if (container != NULL) container_id = container->container_id;
-    
+
     ContainerInputEvent event;
     event.container_id = container_id;
     event.slot = slot;
-    event.alt_action = (container != NULL && (
-        (container->type == UI_ELEMENT_SYNTHESIZER_CONTAINER
-     && ((AgentSynthesizerUI*)container)->in_shopping_region(x,y))
-     || (container->type == UI_ELEMENT_CRAFTING_CONTAINER
-     && ((CraftingUI*)container)->in_craft_output_region(x,y))
-     || (container->type == UI_ELEMENT_CRUSHER
-     && ((CrusherUI*)container)->in_button_region(x,y))
-    ));
-
+    event.alt_action = (container != NULL &&
+                       ((container->type == UI_ELEMENT_SYNTHESIZER_CONTAINER &&
+                       ((AgentSynthesizerUI*)container)->in_shopping_region(x,y)) ||
+                       (container->type == UI_ELEMENT_CRAFTING_CONTAINER &&
+                       ((CraftingUI*)container)->in_craft_output_region(x,y)) ||
+                       (container->type == UI_ELEMENT_CRUSHER &&
+                       ((CrusherUI*)container)->in_button_region(x,y))));
     return event;
 }
 
@@ -179,13 +178,13 @@ static int get_item_type_at(int x, int y)
             return ((ItemContainerSynthesizerUI*)container)->get_coin_type();
         return NULL_ITEM_TYPE;
     }
-    
+
     if (ui->type == UI_ELEMENT_CRAFTING_CONTAINER)
     {
         if (((CraftingUI*)ui)->in_craft_output_region(x,y))
             return Item::get_selected_craft_recipe_type(container->id, slot);
     }
-    
+
     return container->get_slot_type(slot);
 }
 
@@ -239,7 +238,7 @@ ContainerInputEvent scroll_up()
     agent_toolbelt->selected_slot -= 1;
     agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
     if (agent_toolbelt->selected_slot < 0) agent_toolbelt->selected_slot += agent_toolbelt->xdim;
-    
+
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
@@ -252,7 +251,7 @@ ContainerInputEvent scroll_down()
     if (agent_toolbelt == NULL) return NULL_EVENT;
     agent_toolbelt->selected_slot += 1;
     agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
-    
+
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
@@ -268,7 +267,7 @@ ContainerInputEvent select_slot(int numkey)
     int slot = numkey-1;
     if (slot < 0 || slot >= agent_toolbelt->xdim) return NULL_EVENT;
     agent_toolbelt->selected_slot = slot;
-    
+
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = slot;
@@ -288,7 +287,7 @@ static void draw_grabbed_icon()
     if (player_hand_ui == NULL) return;
     struct ItemContainer::SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     if (hand_metadata.type == NULL_ITEM_TYPE) return;
-    
+
     const float w = 32;
 
     // center icon on mouse position
@@ -323,12 +322,12 @@ static void draw_grabbed_icon()
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
     glBegin(GL_QUADS);
-        
+
     int tex_id = Item::get_sprite_index_for_type(hand_metadata.type);
 
     const float iw = 16.0f; // icon_width
     const int iiw = 16; // integer icon width
-    
+
     const float tx_min = (1.0f/iw)*(tex_id % iiw);
     const float ty_min = (1.0f/iw)*(tex_id / iiw);
     const float tx_max = tx_min + 1.0f/iw;
@@ -339,7 +338,7 @@ static void draw_grabbed_icon()
 
     glTexCoord2f(tx_max, ty_min);
     glVertex2f(x+w, y+w);
-        
+
     glTexCoord2f(tx_max, ty_max);
     glVertex2f(x+w, y);
 
@@ -378,7 +377,7 @@ static void draw_tooltip()
     // get item type hovered
     int item_type = get_item_type_at(mouse_x, mouse_y);
     if (item_type == NULL_ITEM_TYPE) return;
-    
+
     // get name
     const char* name = Item::get_item_pretty_name(item_type);
     IF_ASSERT(name == NULL) return;
@@ -410,9 +409,10 @@ void draw()
     energy_tanks->draw_name();
     agent_toolbelt->draw_name();
     agent_inventory->draw();
-    synthesizer_container->draw();    
-    premium_cache->draw();    
-    
+    synthesizer_container->draw();
+    premium_cache->draw();
+    equipment->draw();
+
     if (container_block_enabled)
     {
         GS_ASSERT(container_block_enabled_id != NULL_CONTAINER);
@@ -440,7 +440,7 @@ void draw()
 /* Main init/teardown */
 
 void init()
-{    
+{
     agent_inventory = new AgentInventoryUI;
     agent_inventory->type = UI_ELEMENT_AGENT_INVENTORY;
     agent_inventory->init();
@@ -452,7 +452,7 @@ void init()
     agent_toolbelt->init();
     agent_toolbelt->xoff = (_xresf - agent_toolbelt->width())/2;
     agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
-    
+
     energy_tanks = new EnergyTanksUI;
     energy_tanks->type = UI_ELEMENT_ENERGY_TANKS;
     energy_tanks->init();
@@ -496,8 +496,15 @@ void init()
     premium_cache->type = UI_ELEMENT_CACHE;
     premium_cache->set_container_type(ItemContainer::name::premium_cache);
     premium_cache->init();
-    premium_cache->xoff = (agent_inventory->xoff + agent_inventory->width()) + 10;  // +1 because the width is odd with odd valued inc1 and even valued xdim
+    premium_cache->xoff = (agent_inventory->xoff + agent_inventory->width()) + 10;
     premium_cache->yoff = agent_inventory->yoff;
+
+    equipment = new EquipmentUI;
+    equipment->type = UI_ELEMENT_EQUIPMENT;
+    equipment->set_container_type(ItemContainer::name::equipment);
+    equipment->init();
+    equipment->xoff = agent_inventory->xoff - (equipment->width + 10);
+    equipment->yoff = agent_inventory->yoff + agent_inventory->height();
 
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format("%d");
@@ -522,6 +529,7 @@ void init()
     ui_elements[ItemContainer::name::storage_block_small] = storage_block;
     ui_elements[ItemContainer::name::cryofreezer_small] = storage_block;    // both use storage block instance
     ui_elements[ItemContainer::name::smelter_basic] = smelter;
+    ui_elements[ItemContainer::name::equipment] = equipment;
     ui_elements[ItemContainer::name::crusher] = crusher;
 }
 
@@ -536,6 +544,7 @@ void teardown()
     if (energy_tanks != NULL) delete energy_tanks;
     if (crusher != NULL) delete crusher;
     if (premium_cache != NULL) delete premium_cache;
+    if (equipment != NULL) delete equipment;
 
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
 

@@ -20,7 +20,7 @@
 
 namespace ItemContainer
 {
-    
+
 /* Initializer */
 
 ItemContainerInterface* create_item_container_interface(int type, int id)
@@ -29,14 +29,14 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
     IF_ASSERT(create_fn == NULL) return NULL;
     ItemContainerInterface* container = create_fn((ItemContainerType)type, (ItemContainerID)id);
     IF_ASSERT(container == NULL) return NULL;
-    
+
     class ContainerAttributes* attr = get_attr(container->type);
     IF_ASSERT(attr == NULL)
     {
         destroy_container(container->id);
         return NULL;
     }
-    
+
     container->attached_to_agent = attr->attached_to_agent;
     container->set_alt_parameters(attr->alt_xdim, attr->alt_ydim);
     container->init(attr->xdim, attr->ydim);
@@ -51,7 +51,7 @@ int ItemContainerInterface::insert_item(int slot, ItemID item_id)  // virtual
     IF_ASSERT(!isValid(item_id)) return NULL_SLOT;
     IF_ASSERT(!this->is_valid_slot(slot)) return NULL_SLOT;
     IF_ASSERT(this->slot[slot] != NULL_ITEM) return NULL_SLOT;
-    
+
     Item::Item* item = Item::get_item(item_id);
     IF_ASSERT(item == NULL) return slot;
 
@@ -254,5 +254,26 @@ void ItemContainerSmelter::reset_smelting()
     }
 }
 #endif
+
+/* Equipment */
+
+bool ItemContainerEquipment::can_insert_item(int slot, ItemID item_id)
+{
+    if (!ItemContainerInterface::can_insert_item(slot, item_id))
+        return false;
+    if (Item::get_item_group(item_id) != IG_EQUIPMENT)
+        return false;
+    if (Item::get_item_equipment_type(item_id) != this->slot_equipment_types[slot])
+        return false;
+    return true;
+}
+
+int ItemContainerEquipment::insert_item(int slot, ItemID item_id)
+{
+    GS_ASSERT(Item::get_item_group(item_id) == IG_EQUIPMENT);
+    GS_ASSERT(Item::get_item_equipment_type(item_id) == this->get_slot_equipment_type(slot));
+    return ItemContainerInterface::insert_item(slot, item_id);
+}
+
 
 }   // ItemContainer

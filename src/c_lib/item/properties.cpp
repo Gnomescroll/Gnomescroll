@@ -2,7 +2,6 @@
 
 #include <item/_interface.hpp>
 #include <item/common/constants.hpp>
-#include <item/common/struct.hpp>
 
 #include <item/config/item_attribute.hpp>
 #include <item/config/crafting_dat.hpp>
@@ -31,7 +30,7 @@ void init_properties()
 {
     GS_ASSERT(item_name_map == NULL);
     item_name_map = new DatNameMap(256, DAT_NAME_MAX_LENGTH);
-    
+
     GS_ASSERT(item_attributes == NULL);
     item_attributes = new ItemAttribute[MAX_ITEM_TYPES];
 
@@ -75,6 +74,19 @@ int get_item_fire_rate(int item_type)
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 8;
     return attr->firing_rate;
+}
+
+EquipmentType get_item_equipment_type(int type)
+{
+    ItemAttribute* attr = get_item_attributes(type);
+    IF_ASSERT(attr == NULL) return NULL_EQUIPMENT_TYPE;
+    return attr->equipment_type;
+}
+
+EquipmentType get_item_equipment_type(ItemID id)
+{
+    int type = get_item_type(id);
+    return get_item_equipment_type(type);
 }
 
 int get_max_charges(int item_type)
@@ -360,7 +372,7 @@ class CraftingRecipe* get_selected_craft_recipe(ItemContainerID container_id, in
     // reset outputs buffer
     for (int i=0; i<CRAFT_BENCH_OUTPUTS_MAX; craft_recipes_possible[i++] = NULL);
     craft_recipes_possible_count = 0;
-    
+
     // iterate available recipes
     // if types match exactly, add recipe to available recipes
 
@@ -399,7 +411,7 @@ class CraftingRecipe* get_selected_craft_recipe(ItemContainerID container_id, in
 
     // slot is out of recipe range
     if (craft_recipes_possible_count < slot) return NULL;
-    
+
     return craft_recipes_possible[slot];
 }
 

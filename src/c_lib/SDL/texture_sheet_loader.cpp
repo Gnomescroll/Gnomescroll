@@ -25,7 +25,7 @@ TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
 
     this->width = this->tiles_wide*this->tile_size;
     this->height = this->tiles_high*this->tile_size;
-    
+
     this->surface = create_surface_from_nothing(this->width, this->height);
     this->greyscale_surface = create_surface_from_nothing(this->width, this->height);
     this->texture_stack = (Uint32*)calloc(4*this->width*this->height, sizeof(char));
@@ -48,9 +48,9 @@ TextureSheetLoader::~TextureSheetLoader()
                 SDL_FreeSurface(this->surface_meta[i].surface);
         free(this->surface_meta);
     }
-    
+
     if (this->tile_meta != NULL) free(this->tile_meta);
-    
+
     if (this->surface != NULL) SDL_FreeSurface(this->surface);
     if (this->greyscale_surface != NULL) SDL_FreeSurface(this->greyscale_surface);
     if (this->texture_stack != NULL) free(this->texture_stack);
@@ -68,7 +68,7 @@ SpriteSheet TextureSheetLoader::load_texture(const char* filename)
 SpriteSheet TextureSheetLoader::load_texture(const char* filename, size_t tile_size)
 {
     IF_ASSERT(!tile_size || this->tile_size % tile_size) return NULL_SPRITE_SHEET;
-    
+
     for (size_t i=0; i<this->surface_num; i++)
         GS_ASSERT(strcmp(this->surface_meta[i].filename, filename) != 0);
 
@@ -115,15 +115,15 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
     if (tile_meta.sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE;
     GS_ASSERT(tile_meta.sheet_id < (SpriteSheet)surface_num);
     if (tile_meta.sheet_id >= (SpriteSheet)surface_num) return NULL_SPRITE;
-    
+
     // get surface
     SDL_Surface* s = this->surface_meta[tile_meta.sheet_id].surface;
     IF_ASSERT(s == NULL) return false;
 
     // compute pixel scaling
     size_t scale = this->tile_size / this->surface_meta[tile_meta.sheet_id].tile_size;
-    if (scale != 1) printf("SCALING SHEET: %s by %u\n", this->surface_meta[tile_meta.sheet_id].filename, (unsigned)scale);
-    
+    //if (scale != 1) printf("SCALING SHEET: %s by %u\n", this->surface_meta[tile_meta.sheet_id].filename, (unsigned)scale);
+
     // check that tiles are in bounds
     IF_ASSERT(tile_meta.xpos*tile_size >= (size_t)s->w || tile_meta.ypos*tile_size >= (size_t)s->h)
         return false;
@@ -148,10 +148,10 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
     // sheet and stack buffers and unpacked pixel array
     size_t surface_tile_size = this->surface_meta[tile_meta.sheet_id].tile_size;
     for (size_t i=0; i<surface_tile_size; i++)
-    for (size_t j=0; j<surface_tile_size; j++) 
+    for (size_t j=0; j<surface_tile_size; j++)
     {
         size_t pix_index = s->w * (surface_tile_size * tile_meta.ypos + j) + (surface_tile_size * tile_meta.xpos + i);
-        
+
         // convert source pixel to final format
         Uint32 pix = ((Uint32*)s->pixels)[pix_index];
         unsigned char r,g,b,a;
@@ -173,7 +173,7 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
             size_t pixel_index = meta_index * this->tile_size * this->tile_size;
             pixel_index += (this->tile_size - (j + n) - 1) * this->tile_size + (this->tile_size - (i + m) - 1);
             this->pixels[pixel_index] = Color(r,g,b,a);
-        }        
+        }
     }
 
     // unlock
@@ -207,10 +207,10 @@ int TextureSheetLoader::blit(SpriteSheet sheet_id, size_t source_x, size_t sourc
     tile_meta[index].xpos = source_x;
     tile_meta[index].ypos = source_y;
     this->tile_num++;
-    
+
     // blit
     if (!this->blit_meta(index)) return NULL_SPRITE;
-    
+
     return index;
 }
 
@@ -258,7 +258,7 @@ void TextureSheetLoader::generate_greyscale()
 
 void TextureSheetLoader::generate_texture()
 {
-    create_texture_from_surface(this->surface, &this->texture, this->mag_filter);    
+    create_texture_from_surface(this->surface, &this->texture, this->mag_filter);
 }
 
 void TextureSheetLoader::reload()
@@ -317,7 +317,7 @@ void TextureSheetLoader::reload()
     this->generate_greyscale();
 }
 
-const Color* TextureSheetLoader::get_sprite_pixels(int sprite_id) const 
+const Color* TextureSheetLoader::get_sprite_pixels(int sprite_id) const
 {
     IF_ASSERT(sprite_id < 0 || sprite_id >= (int)this->tile_num) return NULL;
     size_t index = sprite_id * this->tile_size * this->tile_size;
@@ -346,7 +346,7 @@ void init_item_texture()
 }
 
 void init_greyscale()
-{    
+{
     item_texture_sheet_loader->generate_greyscale();
 }
 

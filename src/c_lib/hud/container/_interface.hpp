@@ -12,6 +12,7 @@ extern class CraftingUI* crafting_container;
 extern class StorageBlockUI* storage_block;
 extern class EnergyTanksUI* energy_tanks;
 extern class CrusherUI* crusher;
+extern class EquipmentUI* equipment;
 
 void set_container_id(ItemContainerType container_type, ItemContainerID container_id);
 

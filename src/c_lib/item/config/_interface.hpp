@@ -1,11 +1,10 @@
 #pragma once
 
 #include <item/common/enum.hpp>
-#include <item/common/struct.hpp>
 #include <SDL/constants.hpp>
 
 #if DC_CLIENT
-#include <SDL/texture_sheet_loader.hpp>
+# include <SDL/texture_sheet_loader.hpp>
 #endif
 
 #include <item/properties.hpp>

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <item/common/struct.hpp>
-
 namespace Item
 {
 

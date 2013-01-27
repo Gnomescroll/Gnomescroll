@@ -35,7 +35,7 @@ class AgentInventoryUI : public UIElement
 
     int height()
     {
-        return ydim*slot_size + ydim*inc1 + inc2*2;
+        return ydim*slot_size + (ydim-1)*inc1 + inc2*2;
     }
 
     int get_slot_at(int px, int py);
@@ -150,7 +150,7 @@ void AgentInventoryUI::draw()
     for (int j=0; j<ydim; j++)
     {
         const float alpha = 128;
-        
+
         // always draw grey background
         int slot = j*xdim + i;
         float x = xoff + border + i*(inc1+slot_size);
@@ -173,7 +173,7 @@ void AgentInventoryUI::draw()
             Hud::meter_graphic.draw(x, y, w, mh, ratio);
         }
     }
-    
+
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
@@ -182,7 +182,7 @@ void AgentInventoryUI::draw()
     {
         int i = hover_slot % this->xdim;
         int j = hover_slot / this->xdim;
-        
+
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
@@ -213,7 +213,7 @@ void AgentInventoryUI::draw()
         //const int iiw = 8; // integer icon width
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
-        
+
         const float tx_min = (1.0f/iw)*(tex_id % iiw);
         const float ty_min = (1.0f/iw)*(tex_id / iiw);
         const float tx_max = tx_min + 1.0f/iw;
@@ -224,7 +224,7 @@ void AgentInventoryUI::draw()
 
         glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y+w);
-            
+
         glTexCoord2f(tx_max, ty_max);
         glVertex2f(x+w, y);
 
@@ -235,7 +235,7 @@ void AgentInventoryUI::draw()
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
-    
+
     glColor4ub(255, 255, 255, 255);
 
     /*
@@ -256,7 +256,7 @@ void AgentInventoryUI::draw()
         HudText::Text* text = &this->stack_numbers[slot];
         const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - text->get_height());
-        draw_slot_numbers(text, x, y, stack, charges);         
+        draw_slot_numbers(text, x, y, stack, charges);
     }
     HudFont::reset_default();
     HudFont::end_font_draw();

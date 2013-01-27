@@ -2,9 +2,6 @@
 
 #include <item/config/_interface.hpp>
 
-#include <item/common/struct.hpp>
-//#include <t_map/t_properties.hpp>
-
 namespace Item
 {
 

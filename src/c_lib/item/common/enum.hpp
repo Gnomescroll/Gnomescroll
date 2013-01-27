@@ -79,6 +79,7 @@ typedef enum
     IG_AGENT_SPAWNER,
     IG_ENERGY_CORE,
     IG_SPECIAL,
+    IG_EQUIPMENT,
 } ItemGroup;
 
 typedef enum
@@ -89,4 +90,14 @@ typedef enum
     IL_HAND,
 } ItemLocationType;
 
-/* No typedef for ItemType, use string names */
+typedef enum
+{
+    NULL_EQUIPMENT_TYPE = 0,
+    EQUIPMENT_TYPE_BODY,
+    EQUIPMENT_TYPE_HEAD,
+    EQUIPMENT_TYPE_FEET,
+    EQUIPMENT_TYPE_HANDS,
+    EQUIPMENT_TYPE_ACCESSORY,
+} EquipmentType;
+
+/* No typedef for ItemType, ItemContainerType, use string or unpacked names */

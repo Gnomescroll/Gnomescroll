@@ -17,6 +17,7 @@ typedef enum
     UI_ELEMENT_ENERGY_TANKS,
     UI_ELEMENT_CRUSHER,
     UI_ELEMENT_CACHE,
+    UI_ELEMENT_EQUIPMENT,
 } UIElementType;
 
 } // HudContainer

@@ -13,5 +13,6 @@
 #include <hud/container/energy_tanks.hpp>
 #include <hud/container/crusher.hpp>
 #include <hud/container/cache.hpp>
+#include <hud/container/equipment.hpp>
 
 #include <hud/container/_interface.cpp>

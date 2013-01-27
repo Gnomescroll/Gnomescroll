@@ -38,7 +38,7 @@ namespace ItemContainer
 #define CONTAINER_NAME_FILE_ACTIVE   "container_names.active"
 #define CONTAINER_NAME_FILE_INACTIVE "container_names.inactive"
 
-/* Configuration Loader */ 
+/* Configuration Loader */
 
 static class ContainerAttributes* c = NULL;
 static int _current_id = 0;
@@ -76,7 +76,7 @@ static void null_container_def(const char* name)
 {
     static int i=0;
     GS_ASSERT_ABORT(!(i++));
-    container_def(name); 
+    container_def(name);
 }
 
 static void agent_container_def(const char* name)
@@ -96,7 +96,7 @@ static void cube_container_def(const char* name)
     if (attr == NULL) return;
     attr->container_type = c->type;
 }
-        
+
 static void register_settings()
 {
     GS_ASSERT_ABORT(c == NULL);
@@ -170,14 +170,14 @@ static void register_settings()
     c->create_function = &new_container;
 
     agent_container_def("equipment");
-    c->xdim = 9;
+    c->xdim = 7;
     c->ydim = 1;
     c->alpha_action = &alpha_action_decision_tree;
     c->beta_action = &beta_action_decision_tree;
     c->alpha_packet = &send_container_alpha_action;
     c->beta_packet = &send_container_beta_action;
     c->create_function = &new_equipment;
-    
+
     cube_container_def("storage_block_small");
     c->set_display_name("Storage Block");
     c->xdim = 3;
@@ -236,14 +236,14 @@ static void register_settings()
     c->alpha_action_alt = &crusher_crush_alpha_action_decision_tree;
     c->alpha_packet_alt = &send_crusher_crush_action;
     c->create_function = &new_crusher;
-  
+
     add_container();   // finalize
 }
 
 void change_container(const char* original, const char* replacement)
 {
     GS_ASSERT_ABORT(is_valid_container_name(original));
-    GS_ASSERT_ABORT(is_valid_container_name(replacement));        
+    GS_ASSERT_ABORT(is_valid_container_name(replacement));
     bool mapped = container_name_map->add_definition(original, replacement);
     GS_ASSERT_ABORT(mapped);
 }
@@ -266,6 +266,7 @@ static void validate_settings()
     GS_ASSERT_ABORT(get_attr("inventory") != NULL && get_attr("inventory")->max_dim() == 24);
     GS_ASSERT_ABORT(get_attr("premium_cache") != NULL && get_attr("premium_cache")->max_dim() == 16);
     GS_ASSERT_ABORT(get_attr("toolbelt") != NULL && get_attr("toolbelt")->max_dim() == 9);
+    GS_ASSERT_ABORT(get_attr("equipment") != NULL && get_attr("equipment")->max_dim() == 7);
     GS_ASSERT_ABORT(get_attr("synthesizer") != NULL && get_attr("synthesizer")->max_dim() == 1);
     GS_ASSERT_ABORT(get_attr("energy_tanks") != NULL && get_attr("energy_tanks")->max_dim() == 4);
     GS_ASSERT_ABORT(get_attr("storage_block_small") != NULL && get_attr("storage_block_small")->max_dim() == 9);
@@ -273,7 +274,7 @@ static void validate_settings()
     GS_ASSERT_ABORT(get_attr("cryofreezer_small") != NULL && get_attr("cryofreezer_small")->max_dim() == 4);
     GS_ASSERT_ABORT(get_attr("smelter_basic") != NULL && get_attr("smelter_basic")->max_dim() == 1);
     GS_ASSERT_ABORT(get_attr("crusher") != NULL && get_attr("crusher")->max_dim() == 1);
-    
+
     int n_none = 0;
     for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
     {
@@ -392,7 +393,7 @@ void init_config()
 
     GS_ASSERT(container_name_map == NULL);
     container_name_map = new class DatNameMap(32, DAT_NAME_MAX_LENGTH);
-    
+
     #if DC_SERVER
     init_crusher_dat();
     #endif
@@ -402,7 +403,7 @@ void teardown_config()
 {
     if (container_attributes != NULL) delete[] container_attributes;
     if (container_name_map != NULL) delete container_name_map;
-    
+
     #if DC_SERVER
     teardown_crusher_dat();
     #endif

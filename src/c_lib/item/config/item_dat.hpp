@@ -370,25 +370,29 @@ void load_item_dat()
     set_pretty_name("Copper Wire");
     s->max_stack_size = 1;
 
-    item_def(IG_RESOURCE, "iron_helmet");
+    item_def(IG_EQUIPMENT, "iron_helmet");
     sprite_def(i1, 5,3);
     set_pretty_name("Iron Helmet");
     s->max_stack_size = 1;
+    s->equipment_type = EQUIPMENT_TYPE_HEAD;
 
-    item_def(IG_RESOURCE, "gallium_helmet");
+    item_def(IG_EQUIPMENT, "gallium_helmet");
     sprite_def(i1, 5,4);
     set_pretty_name("Gallium Helmet");
     s->max_stack_size = 1;
+    s->equipment_type = EQUIPMENT_TYPE_HEAD;
 
-    item_def(IG_RESOURCE, "copper_helmet");
+    item_def(IG_EQUIPMENT, "copper_helmet");
     sprite_def(i1, 5,5);
     set_pretty_name("Copper Helmet");
     s->max_stack_size = 1;
+    s->equipment_type = EQUIPMENT_TYPE_HEAD;
 
-    item_def(IG_RESOURCE, "iridium_helmet");
+    item_def(IG_EQUIPMENT, "iridium_helmet");
     sprite_def(i1, 5,6);
     set_pretty_name("Iridium Helmet");
     s->max_stack_size = 1;
+    s->equipment_type = EQUIPMENT_TYPE_HEAD;
 
     item_def(IG_RESOURCE, "blue_crystal");
     sprite_def(i1, 3,4);
@@ -560,6 +564,9 @@ void verify_item_dat()
         #endif
 
         GS_ASSERT_ABORT(a->cube_type == NULL_CUBE || t_map::isValidCube(a->cube_type));
+
+        GS_ASSERT_ABORT((a->group == IG_EQUIPMENT && a->equipment_type != NULL_EQUIPMENT_TYPE) ||
+                        (a->group != IG_EQUIPMENT && a->equipment_type == NULL_EQUIPMENT_TYPE));
 
         if (a->group == IG_ERROR) errct++;
     }

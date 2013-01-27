@@ -105,7 +105,7 @@ void update_hud_draw_settings()
     int reliable_ping_val = ClientState::last_reliable_ping_time;
     reliable_ping_val = (reliable_ping_val >= 1000) ? 999 : reliable_ping_val;
     hud_draw_settings.reliable_ping_val = (reliable_ping_val < 0) ? 0 : reliable_ping_val;
-    
+
     hud_draw_settings.agent_status = true;
 
     hud_draw_settings.chat = true;
@@ -119,7 +119,7 @@ void update_hud_draw_settings()
 
     hud_draw_settings.diagnostics = input_state.diagnostics;
     hud_draw_settings.vbo_debug = input_state.vbo_debug;
-    
+
     // update chat rendering
     if (hud != NULL && hud->inited
      && hud->chat != NULL && hud->chat->inited)
@@ -192,13 +192,13 @@ void draw_reference_center()
     int w = 2;
     float x = (_xresf/2.0f) - w/2;
     float y = (_yresf/2.0f) - w/2;
-    _draw_rect(10, 255, 255, x, y, w, w);
+    draw_rect(Color(10, 255, 255), x, y, w, w);
 }
 
-void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage) 
+void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage)
 {
     // old durability color jumps
-    
+
     //glColor4ub(7, 247, 0, alpha);    // green
     //glColor4ub(243, 247, 0, alpha);  // yellow
     //glColor4ub(247, 71, 0, alpha);   // red-orange
@@ -213,7 +213,7 @@ void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage
     Color empty = red;
     Color dyn;
 
-    if (invert_color_for_damage) 
+    if (invert_color_for_damage)
     {
         full = red;
         empty = green;
@@ -226,18 +226,18 @@ void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage
     }
     else
         dyn = interpolate_color(empty, yellow, small_to_big);
-            
+
     glColor4ub(dyn.r, dyn.g, dyn.b, alpha);
 }
 
 bool FAILED_merge_of_cntainr_draws(
-    int slot_size, 
-    ItemContainerID container_id, 
+    int slot_size,
+    ItemContainerID container_id,
     GLubyte alpha_bord, // border
     float alpha_bkgd, // background
-    const int xdim, 
-    const int ydim, 
-    float xoff, 
+    const int xdim,
+    const int ydim,
+    float xoff,
     float yoff,
     const float inc1,  // spacing between slot icons
     const float inc2,  // border around a slot icon
@@ -267,7 +267,7 @@ bool FAILED_merge_of_cntainr_draws(
     {
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-    
+
         glVertex2f(x-inc2,y+w+inc2);
         glVertex2f(x+w+inc2, y+w+inc2);
         glVertex2f(x+w+inc2, y-inc2);
@@ -305,7 +305,7 @@ bool FAILED_merge_of_cntainr_draws(
     {
         int i = hover_slot % xdim;
         int j = hover_slot / xdim;
-        
+
         float x = xoff + border + i*(inc1+slot_size);
         // VV container_hud version VV
         //float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
@@ -319,7 +319,7 @@ bool FAILED_merge_of_cntainr_draws(
     }
     glEnd();
 
-    
+
     // draw icons
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
@@ -340,7 +340,7 @@ bool FAILED_merge_of_cntainr_draws(
         //const int iiw = 8; // integer icon width
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
-        
+
         const float tx_min = (1.0f/iw)*(tex_id % iiw);
         const float ty_min = (1.0f/iw)*(tex_id / iiw);
         const float tx_max = tx_min + 1.0f/iw;
@@ -351,7 +351,7 @@ bool FAILED_merge_of_cntainr_draws(
 
         glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y+w);
-            
+
         glTexCoord2f(tx_max, ty_max);
         glVertex2f(x+w, y);
 
@@ -385,16 +385,16 @@ void draw_hud_textures()
     // jetpack
     glColor4ub(255,255,255,115); // white, more than half translucent
     meter_graphic.draw(0,0, w,h, (float)ClientState::player_agent.jetpack.fuel / (float)Agents::JETPACK_FUEL_MAX, MeterGraphic::METANCH_RIGHT);
-    
+
     // health/energy
     Agents::Agent* a = ClientState::player_agent.you();
-    if (a != NULL) 
-    { 
+    if (a != NULL)
+    {
         float extra_from_tanks = HudContainer::energy_tanks->count() * AGENT_HEALTH;
         float max  = a->status.health_max + extra_from_tanks;
         if (largest_total_health_seen < max)
             largest_total_health_seen = max;
-        float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage 
+        float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage
 
         set_color_from_ratio(curr / largest_total_health_seen, 175, true);
         meter_graphic.draw(0,       _yresf-h, _xresf/2,h, curr / largest_total_health_seen, MeterGraphic::METANCH_LEFT,  true);
@@ -470,7 +470,7 @@ void draw_hud_text()
             hud->dead->draw_centered();
 
         hud->awesomium_message->draw_centered();
-        
+
         if (hud_draw_settings.map)
         {
             HudFont::set_properties(HudMap::text_icon_size);
@@ -505,7 +505,7 @@ void draw_hud_text()
         HudFont::reset_default();
         set_texture();
     }
-        
+
     if (hud->chat->inited)
     {
         if (hud_draw_settings.chat)
@@ -526,7 +526,7 @@ void draw_hud_text()
             return;
         }
     }
-    
+
     if (hud_draw_settings.diagnostics)
     {
         float fps_val = 0.0f;
@@ -563,7 +563,7 @@ void draw_hud_text()
                 health = (health > AGENT_HEALTH) ? AGENT_HEALTH : health;
                 health = (health < 0) ? 0 : health;
                 hud->health->update_formatted_string(1, health);
-                
+
                 int len = (int)strlen(health_color_string);
                 int n = 0;
                 if (health >= AGENT_HEALTH)
@@ -593,7 +593,7 @@ void draw_hud_text()
                 }
                 else
                     hud->health->update_char_range(grey_range, n, len);
-                    
+
                 // update numbers color
                 static int white_color_index = hud->health->get_color(HEALTH_WHITE);
                 GS_ASSERT(white_color_index >= 0);
@@ -601,7 +601,7 @@ void draw_hud_text()
                 static int red_color_index = hud->health->get_color(HEALTH_RED);
                 GS_ASSERT(red_color_index >= 0);
                 int red_range = hud->health->get_color_range(red_color_index);
-                
+
                 static int blink_tick = 0;
                 static int blink_step = 1;
                 if (health <= 0)
@@ -615,13 +615,13 @@ void draw_hud_text()
                             blink_step = -1;
                         else if (blink_tick <= 0)
                             blink_step = 1;
-                            
+
                         float t = ((float)blink_tick)/((float)NO_HEALTH_WARNING_TEXT_BLINK_RATE);
                         blink_color = interpolate_color(HEALTH_WHITE, HEALTH_RED, t);
                     }
 
                     hud->health->set_color_index_color(red_color_index, blink_color);
-                        
+
                     int range = red_range;
                     if (range < 0) range = white_range;
                     GS_ASSERT(range >= 0);
@@ -638,11 +638,11 @@ void draw_hud_text()
             }
             else
                 hud->health->set_text(no_agent_text);
-                
+
             //hud->health->draw();
         }   // agent_status
     }
-    
+
     end_font_draw();
 }
 
@@ -661,7 +661,7 @@ void HUD::init()
 
     using HudText::text_list;
     using HudText::Text;
-    
+
     help = text_list->create();
     GS_ASSERT(help != NULL);
     if (help == NULL) return;
@@ -677,7 +677,7 @@ void HUD::init()
     dead->set_text(dead_text);
     dead->set_color(Color(Color(200,4,3,255)));
     dead->set_position(_xresf/2, _yresf/2);
-    
+
     fps = text_list->create();
     GS_ASSERT(fps != NULL);
     if (fps == NULL) return;
@@ -685,7 +685,7 @@ void HUD::init()
     fps->set_format_extra_length(6 - 5);
     fps->set_color(Color(200,4,3,255));
     fps->set_position(3, line_height+3);
-    
+
     ping = text_list->create();
     GS_ASSERT(ping != NULL);
     if (ping == NULL) return;
@@ -693,7 +693,7 @@ void HUD::init()
     ping->set_format_extra_length(3 - 2);
     ping->set_color(Color(200,4,3,255));
     ping->set_position(3, (line_height*2)+3);
-    
+
     reliable_ping = text_list->create();
     GS_ASSERT(reliable_ping != NULL);
     if (reliable_ping == NULL) return;
@@ -709,7 +709,7 @@ void HUD::init()
     location->set_format_extra_length((40 + 20 + 1 - 2) * 3);
     location->set_color(Color(200,4,3,255));
     location->set_position(3, _yresf-3);
-    
+
     look = text_list->create();
     GS_ASSERT(look != NULL);
     if (look == NULL) return;
@@ -734,13 +734,13 @@ void HUD::init()
     health->add_color(HEALTH_GREY);
     health->add_color(HEALTH_GREEN);
     health->add_color(HEALTH_RED);
-    
+
     int white_range_index = health->add_char_range(strlen(health_color_string), -1);
     GS_ASSERT(white_range_index >= 0);
     int white_color_index = health->add_color(HEALTH_WHITE);
     GS_ASSERT(white_color_index >= 0);
     health->set_char_range_color(white_range_index, white_color_index);
-    
+
     confirm_quit = text_list->create();
     GS_ASSERT(confirm_quit != NULL);
     if (confirm_quit == NULL) return;
@@ -771,14 +771,14 @@ void HUD::init()
     error_subtitle->set_color(Color(200,4,3,255));
     error_subtitle->set_position(_xresf/2, error->y - error->get_height());
     error_subtitle->set_text(error_subtitle_text);
-    
+
     awesomium_message = text_list->create();
     GS_ASSERT(awesomium_message != NULL);
     if (awesomium_message == NULL) return;
     awesomium_message->set_color(Color(200,4,3,255));
     awesomium_message->set_position(_xresf/2, _yresf - 2);
     awesomium_message->set_text("");
-    
+
     scoreboard = new Scoreboard();
     scoreboard->init();
 
@@ -867,7 +867,7 @@ void ChatRender::init()
     input->set_color(AGENT_DEFAULT_COLOR);
     input->set_position(x_offset, line_height*lines_offset);
     input->shadowed = true;
-    
+
     this->inited = true;
 }
 
@@ -875,7 +875,7 @@ void ChatRender::set_cursor(const char* text, float x, float y)
 {
     if (HudFont::font == NULL) return;
     if (Chat::chat_client == NULL) return;
-    
+
     int len = 0;
     int h = 0;
     const int w = 8;
@@ -888,7 +888,7 @@ void ChatRender::set_cursor(const char* text, float x, float y)
     HudFont::font->get_string_pixel_dimension(tmp_text, &len, &h);
     free(tmp_text);
     h = HudFont::font->data.line_height;
-    
+
     cursor_x = x + len;
     if (s_len && Chat::chat_client->input->cursor == s_len)
         cursor_x += 4;  // margin at the end
@@ -903,7 +903,7 @@ void ChatRender::draw_cursor()
     using ClientState::player_agent;
     class Agents::Agent* you = player_agent.you();
     if (you != NULL) color = you->status.color;
-    _draw_rect(color, cursor_x, cursor_y, cursor_w, cursor_h);
+    draw_rect(color, cursor_x, cursor_y, cursor_w, cursor_h);
 }
 
 void ChatRender::draw_messages()
@@ -947,7 +947,7 @@ void ChatRender::update(bool timeout, bool other_players)
 
     j = n_draw;
     i = 0;
-    
+
     if (!other_players)
     {
         HudText::Text* t = this->messages[i++];

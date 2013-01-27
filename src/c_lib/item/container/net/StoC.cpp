@@ -39,7 +39,7 @@ inline void assign_item_container_StoC::handle()
         container_uis[type] = NAME##_ui; \
         containers[type] = NAME; \
         } while (0); }
-    
+
     if (type == name::inventory)
         ASSIGN_CONTAINER(player_container, ItemContainer)
     else
@@ -48,7 +48,7 @@ inline void assign_item_container_StoC::handle()
     else
     if (type == name::toolbelt)
         ASSIGN_CONTAINER(player_toolbelt, ItemContainer)
-    else   
+    else
     if (type == name::synthesizer)
         ASSIGN_CONTAINER(player_synthesizer, ItemContainerSynthesizer)
     else
@@ -59,7 +59,7 @@ inline void assign_item_container_StoC::handle()
         ASSIGN_CONTAINER(premium_cache, ItemContainer)
     else
     if (type == name::equipment)
-        ASSIGN_CONTAINER(premium_cache, ItemContainer)
+        ASSIGN_CONTAINER(player_equipment, ItemContainerEquipment)
     else
     {
         GS_ASSERT(false);
@@ -67,14 +67,14 @@ inline void assign_item_container_StoC::handle()
     }
 
     #undef ASSIGN_CONTAINER
-    
+
     containers[type] = container;
     container->was_assigned();
 
     container_uis[type]->set_alt_parameters(container->alt_xdim, container->alt_ydim);
     container_uis[type]->init(container->type, container->xdim, container->ydim);
     container_uis[type]->load_data(container->slot);
-    
+
     HudContainer::set_container_id(type, (ItemContainerID)container_id);
 }
 
@@ -86,7 +86,7 @@ inline void insert_item_in_container_StoC::handle()
 
     ItemContainerInterface* container = get_container((ItemContainerID)container_id);
     IF_ASSERT(container == NULL) return;
-    
+
     // we received an message for a container we are not accessing;
     //this is a normal race condition when opening and closing containers fast
     if (!container->attached_to_agent && container->id != opened_container) return;
@@ -105,7 +105,7 @@ inline void remove_item_from_container_StoC::handle()
     // we received an message for a container we are not accessing;
     //this is a normal race condition when opening and closing containers fast
     if (!container->attached_to_agent && container->id != opened_container) return;
-    
+
     container->remove_item(slot);
     ItemContainerUIInterface* ui = get_container_ui((ItemContainerID)container_id);
     if (ui == NULL) return;
@@ -142,7 +142,7 @@ inline void remove_item_from_hand_StoC::handle()
 
     GS_ASSERT(player_hand != NULL);
     GS_ASSERT(player_hand_ui != NULL);
-    
+
     if (player_hand != NULL)
         player_hand->remove_item();
     if (player_hand_ui != NULL)
@@ -190,7 +190,7 @@ inline void open_container_StoC::handle()
 
 inline void close_container_StoC::handle()
 {
-    IF_ASSERT(container_id == NULL_CONTAINER) return;    
+    IF_ASSERT(container_id == NULL_CONTAINER) return;
     close_container((ItemContainerID)container_id);
 }
 
@@ -219,7 +219,7 @@ inline void smelter_fuel_StoC::handle()
     // we received an message for a container we are not accessing;
     //this is a normal race condition when opening and closing containers fast
     if (!container->attached_to_agent && container->id != opened_container) return;
-    
+
     IF_ASSERT(!Item::is_smelter(container->type)) return;
 
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
@@ -235,7 +235,7 @@ inline void smelter_fuel_StoC::handle()
     IF_ASSERT(fuel > 1.0f) fuel = 1.0f;
     container_ui->fuel = fuel;
     container_ui->fuel_type = fuel_type;
-    
+
 }
 
 inline void smelter_progress_StoC::handle()
@@ -251,7 +251,7 @@ inline void smelter_progress_StoC::handle()
     IF_ASSERT(!Item::is_smelter(container->type)) return;
 
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
-    
+
     smelter->progress = progress;
 
     // update UI

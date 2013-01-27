@@ -87,8 +87,9 @@ class ItemContainerInterface
     }
 
     virtual void was_assigned()
-    {
-
+    {   // callback triggered when container is assigned
+        // intentionally blank. only need to override this if
+        // the container cares about the event
     }
     #endif
 
@@ -136,12 +137,8 @@ class ItemContainerInterface
 
     virtual void init(int xdim, int ydim)
     {
-        this->xdim = xdim;
-        this->ydim = ydim;
-        this->slot_max = xdim*ydim;
-        IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
-        this->slot = new ItemID[this->slot_max];
-        for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+        this->init_slot_max(xdim, ydim);
+        this->init_slots();
     }
 
     virtual ~ItemContainerInterface()
@@ -157,12 +154,28 @@ class ItemContainerInterface
         owner(NULL_AGENT), chunk(0xFFFF),
         attached_to_agent(false)
     {}
+
+    protected:
+
+    virtual void init_slot_max(int xdim, int ydim)
+    {
+        this->xdim = xdim;
+        this->ydim = ydim;
+        this->slot_max = xdim*ydim;
+    }
+
+    virtual void init_slots()
+    {
+        GS_ASSERT(this->slot == NULL);
+        IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
+        this->slot = new ItemID[this->slot_max];
+        for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+    }
 };
 
 class ItemContainer: public ItemContainerInterface
 {
     public:
-
 
     #if DC_CLIENT
     void was_assigned()
@@ -181,31 +194,31 @@ class ItemContainerHand: public ItemContainerInterface
 {
     public:
 
-    ItemID get_item()
+    virtual ItemID get_item()
     {
         return ItemContainerInterface::get_item(0);
     }
 
-    void remove_item()
+    virtual void remove_item()
     {
         ItemContainerInterface::remove_item(0);
     }
 
-    int insert_item(ItemID item_id);
+    virtual int insert_item(ItemID item_id);
 
     // dont use this interface
-    void remove_item(int slot)
+    virtual void remove_item(int slot)
     {
         GS_ASSERT(false);
     }
 
-    ItemID get_item(int slot)
+    virtual ItemID get_item(int slot)
     {
         GS_ASSERT(false);
         return NULL_ITEM;
     }
 
-    int insert_item(int slot, ItemID item_id)
+    virtual int insert_item(int slot, ItemID item_id)
     {
         GS_ASSERT(false);
         return NULL_SLOT;
@@ -222,9 +235,9 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
 
         int energy_tank_type;
 
-    int insert_item(int slot, ItemID item_id);
+    virtual int insert_item(int slot, ItemID item_id);
 
-    bool can_insert_item(int slot, ItemID item_id)
+    virtual bool can_insert_item(int slot, ItemID item_id)
     {
         GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
         if (Item::get_item_type(item_id) != this->energy_tank_type) return false;
@@ -234,8 +247,8 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
     int consume_energy_tank()
     {   // returns number of energy tanks before consumption
         int n = this->slot_count;
-        GS_ASSERT(n >= 0);
-        if (n <= 0) return n;
+        IF_ASSERT(n < 0) return n;
+        if (n == 0) return n;
 
         for (int i=this->slot_max-1; i>=0; i--)
         {   // consume from the end of the slot array
@@ -247,7 +260,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
         return n;
     }
 
-    void init(int xdim, int ydim)
+    virtual void init(int xdim, int ydim)
     {
         this->energy_tank_type = Item::get_item_type("energy_tank");
         GS_ASSERT(this->energy_tank_type != NULL_ITEM_TYPE);
@@ -290,13 +303,13 @@ class ItemContainerSynthesizer: public ItemContainerInterface
         return this->insert_item(this->coins_slot, item_id);
     }
 
-    bool can_insert_item(int slot, ItemID item_id)
+    virtual bool can_insert_item(int slot, ItemID item_id)
     {   // only allow coins
         if (Item::get_item_type(item_id) != this->coins_type) return false;
         return ItemContainerInterface::can_insert_item(slot, item_id);
     }
 
-    void init(int xdim, int ydim)
+    virtual void init(int xdim, int ydim)
     {
         this->coins_type = Item::get_item_type("synthesizer_coin");
         GS_ASSERT(this->coins_type != NULL_ITEM_TYPE);
@@ -350,8 +363,7 @@ class ItemContainerSmelter: public ItemContainerInterface
 
     ItemID get_fuel()
     {
-        GS_ASSERT(this->slot_max > 0);
-        if (this->slot_max <= 0) return NULL_ITEM;
+        IF_ASSERT(this->slot_max <= 0) return NULL_ITEM;
         GS_ASSERT(this->is_valid_slot(this->fuel_slot));
         if (!this->is_valid_slot(this->fuel_slot)) return NULL_ITEM;
         return this->slot[this->fuel_slot];
@@ -384,8 +396,7 @@ class ItemContainerSmelter: public ItemContainerInterface
     {
         // iterate input slots
         // inserting to *inputs, sorted
-        GS_ASSERT(max_inputs > 0);
-        if (max_inputs <= 0) return 0;
+        IF_ASSERT(max_inputs <= 0) return 0;
         GS_ASSERT(max_inputs == this->get_max_input_slots());
 
         int n_inputs = 0;
@@ -457,7 +468,7 @@ class ItemContainerSmelter: public ItemContainerInterface
         return (slot == 2);
     }
 
-    bool can_insert_item(int slot, ItemID item_id)
+    virtual bool can_insert_item(int slot, ItemID item_id)
     {
         GS_ASSERT(this->is_valid_slot(slot));
         if (!this->is_valid_slot(slot)) return false;
@@ -474,7 +485,7 @@ class ItemContainerSmelter: public ItemContainerInterface
         return ItemContainerInterface::can_insert_item(slot, item_id);
     }
 
-    int get_empty_slot()
+    virtual int get_empty_slot()
     {
         for (int i=1; i<this->slot_max; i++)    // skip fuel slot
         {
@@ -485,18 +496,9 @@ class ItemContainerSmelter: public ItemContainerInterface
         return NULL_SLOT;
     }
 
-    void remove_fuel() { this->remove_item(this->fuel_slot); }
-
-    void init(int xdim, int ydim)
+    void remove_fuel()
     {
-        this->xdim = xdim;
-        this->ydim = ydim;
-        GS_ASSERT(alt_xdim * alt_ydim > 0);
-        GS_ASSERT(xdim * ydim > 0);
-        this->slot_max = xdim*ydim + alt_xdim*alt_ydim + 1; // +1 for fuel
-        IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
-        this->slot = new ItemID[this->slot_max];
-        for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
+        this->remove_item(this->fuel_slot);
     }
 
     ItemContainerSmelter(ItemContainerType type, ItemContainerID id) :
@@ -504,13 +506,21 @@ class ItemContainerSmelter: public ItemContainerInterface
         #if DC_SERVER
         on(false),
         #endif
-        fuel(0.0f),
-        fuel_type(NULL_ITEM_TYPE),
-        burn_rate(1.0f/30.0f),
+        fuel(0.0f), fuel_type(NULL_ITEM_TYPE), burn_rate(1.0f/30.0f),
         recipe_id(NULL_SMELTING_RECIPE),
-        progress(0.0f),
-        progress_rate(1.0f/30.0f)
+        progress(0.0f), progress_rate(1.0f/30.0f)
     {}
+
+    protected:
+
+        virtual void init_slot_max(int xdim, int ydim)
+        {
+            this->xdim = xdim;
+            this->ydim = ydim;
+            GS_ASSERT(alt_xdim * alt_ydim > 0);
+            GS_ASSERT(xdim * ydim > 0);
+            this->slot_max = xdim*ydim + alt_xdim*alt_ydim + 1; // +1 for fuel
+        }
 };
 
 class ItemContainerCrusher: public ItemContainerInterface
@@ -526,43 +536,99 @@ class ItemContainerCrusher: public ItemContainerInterface
         return this->slot[this->input_slot];
     }
 
-    int get_empty_slot()
+    virtual int get_empty_slot()
     {
         if (this->get_input_slot() == NULL_ITEM) return this->input_slot;
         return NULL_SLOT;
     }
 
-    bool can_insert_item(int slot, ItemID item_id)
+    virtual bool can_insert_item(int slot, ItemID item_id)
     {
         if (slot != this->input_slot) return false;
         return ItemContainerInterface::can_insert_item(slot, item_id);
     }
 
-    void init(int xdim, int ydim)
-    {
-        this->xdim = xdim;
-        this->ydim = ydim;
-        this->slot_max = xdim*ydim + this->alt_xdim*this->alt_ydim;
-        IF_ASSERT(this->slot_max <= 0 || this->slot_max >= NULL_SLOT) return;
-        this->slot = new ItemID[this->slot_max];
-        for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
-    }
-
     ItemContainerCrusher(ItemContainerType type, ItemContainerID id) :
         ItemContainerInterface(type, id)
     {}
+
+    protected:
+
+        virtual void set_slot_max(int xdim, int ydim)
+        {
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim + this->alt_xdim*this->alt_ydim;
+        }
 };
 
 class ItemContainerEquipment: public ItemContainerInterface
 {
     public:
 
+        EquipmentType* slot_equipment_types;
+
+    virtual int insert_item(int slot, ItemID item_id);
+    virtual bool can_insert_item(int slot, ItemID item_id);
+
+    EquipmentType get_slot_equipment_type(int slot)
+    {
+        if (!this->is_valid_slot(slot)) return NULL_EQUIPMENT_TYPE;
+        return this->slot_equipment_types[slot];
+    }
+
+    static void set_slot_equipment_types(EquipmentType* slot_equipment_types, int slot_max)
+    {
+        int i=0;
+        // We define which equipment type goes in each slot.
+        // If you ever need to add a new equipment type,
+        // It must be APPENDED to this array
+        // or the deserializer will break.
+        // Also, NEVER CHANGE THIS ORDER
+        slot_equipment_types[i++] = EQUIPMENT_TYPE_BODY;
+        slot_equipment_types[i++] = EQUIPMENT_TYPE_HEAD;
+        slot_equipment_types[i++] = EQUIPMENT_TYPE_FEET;
+        slot_equipment_types[i++] = EQUIPMENT_TYPE_HANDS;
+        slot_equipment_types[i++] = EQUIPMENT_TYPE_ACCESSORY;
+        slot_equipment_types[i++] = EQUIPMENT_TYPE_ACCESSORY;
+        slot_equipment_types[i++] = EQUIPMENT_TYPE_ACCESSORY;
+        //slot_equipment_types[i++] = A_NEW_EQUIPMENT_TYPE;
+
+        GS_ASSERT(i == slot_max);
+
+        // check that the number of accesories assigned matches our const
+        // we dont iterate N_ACCESSORIES to add our accessories, because
+        // the deserializer does not support remapping equipment type positions
+        int accessory_count = 0;
+        for (int j=0; j<i; j++)
+            if (slot_equipment_types[j] == EQUIPMENT_TYPE_ACCESSORY)
+                accessory_count++;
+        GS_ASSERT(accessory_count == N_ACCESSORIES);
+    }
+
+    virtual void init(int xdim, int ydim)
+    {
+        ItemContainerInterface::init(xdim, ydim);
+        IF_ASSERT(this->slot_max <= 0) return;
+        GS_ASSERT(this->slot_equipment_types == NULL);
+        this->slot_equipment_types = (EquipmentType*)malloc(this->slot_max * sizeof(EquipmentType));
+        this->set_slot_equipment_types(this->slot_equipment_types, this->slot_max);
+    }
+
+    virtual ~ItemContainerEquipment()
+    {
+        if (this->slot_equipment_types != NULL) free(this->slot_equipment_types);
+    }
+
     ItemContainerEquipment(ItemContainerType type, ItemContainerID id) :
-        ItemContainerInterface(type, id)
+        ItemContainerInterface(type, id),
+        slot_equipment_types(NULL)
     {
         GS_ASSERT(type == name::equipment);
     }
 };
+
+/* Ctor wrappers */
 
 ItemContainerInterface* create_item_container_interface(int type, int id);
 
@@ -610,6 +676,8 @@ ItemContainerInterface* new_equipment(ItemContainerType type, ItemContainerID id
 {
     return new ItemContainerEquipment(type, id);
 }
+
+/* ObjectList */
 
 class ItemContainerList: public MultiObject_list<ItemContainerInterface>
 {

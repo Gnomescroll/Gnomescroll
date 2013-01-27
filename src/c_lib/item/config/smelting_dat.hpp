@@ -1,7 +1,6 @@
 #pragma once
 
 #include <item/config/_interface.hpp>
-#include <item/common/struct.hpp>
 
 namespace Item
 {

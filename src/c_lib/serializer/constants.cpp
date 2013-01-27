@@ -17,6 +17,9 @@ const char* get_player_container_location_name(ItemContainerType container_type)
     if (container_type == ItemContainer::name::inventory)
         return PLAYER_INVENTORY_LOCATION_NAME;
     else
+    if (container_type == ItemContainer::name::equipment)
+        return PLAYER_EQUIPMENT_LOCATION_NAME;
+    else
     if (container_type == ItemContainer::name::synthesizer)
         return PLAYER_SYNTHESIZER_LOCATION_NAME;
     else
@@ -33,10 +36,11 @@ const char* get_player_container_location_name(ItemContainerType container_type)
 void verify_config()
 {
     GS_ASSERT_ABORT(DAT_NAME_MAX_LENGTH >= 32);
-    
+
     GS_ASSERT_ABORT(strcmp(PLAYER_HAND_LOCATION_NAME,          "player:hand")          == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_TOOLBELT_LOCATION_NAME,      "player:toolbelt")      == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_INVENTORY_LOCATION_NAME,     "player:inventory")     == 0);
+    GS_ASSERT_ABORT(strcmp(PLAYER_EQUIPMENT_LOCATION_NAME,     "player:equipment")     == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_SYNTHESIZER_LOCATION_NAME,   "player:synthesizer")   == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_ENERGY_TANKS_LOCATION_NAME,  "player:energy_tanks")  == 0);
     GS_ASSERT_ABORT(strcmp(PLAYER_PREMIUM_CACHE_LOCATION_NAME, "player:premium_cache") == 0);
@@ -44,6 +48,7 @@ void verify_config()
     GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::hand),          "player:hand")          == 0);
     GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::toolbelt),      "player:toolbelt")      == 0);
     GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::inventory),     "player:inventory")     == 0);
+    GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::equipment),     "player:equipment")     == 0);
     GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::synthesizer),   "player:synthesizer")   == 0);
     GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::energy_tanks),  "player:energy_tanks")  == 0);
     GS_ASSERT_ABORT(strcmp(get_player_container_location_name(ItemContainer::name::premium_cache), "player:premium_cache") == 0);
@@ -52,18 +57,19 @@ void verify_config()
     // this *could* be in item/container/config, but since the only reason this matters
     // is because of the seriousness of the serializer, i'll leave it here
     GS_ASSERT_ABORT(ItemContainer::container_attributes != NULL);
-    
-    GS_ASSERT_ABORT(N_PLAYER_CONTAINERS == 6);
+
+    GS_ASSERT_ABORT(N_PLAYER_CONTAINERS == 7);
 
     bool agent_hand_found         = false;
     bool agent_toolbelt_found     = false;
     bool agent_inventory_found    = false;
+    bool agent_equipment_found    = false;
     bool agent_synthesizer_found  = false;
     bool agent_energy_tanks_found = false;
     bool premium_cache_found      = false;
 
     // make sure all container types are loaded
-    
+
     for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
     {
         ContainerAttributes* attr = &ItemContainer::container_attributes[i];
@@ -77,6 +83,9 @@ void verify_config()
         if (attr->type == ItemContainer::name::inventory)
             agent_inventory_found = true;
         else
+        if (attr->type == ItemContainer::name::equipment)
+            agent_equipment_found = true;
+        else
         if (attr->type == ItemContainer::name::synthesizer)
             agent_synthesizer_found = true;
         else
@@ -87,17 +96,19 @@ void verify_config()
             premium_cache_found = true;
     }
 
-    GS_ASSERT_ABORT(agent_inventory_found);
+    GS_ASSERT_ABORT(agent_hand_found);
     GS_ASSERT_ABORT(agent_toolbelt_found);
+    GS_ASSERT_ABORT(agent_inventory_found);
+    GS_ASSERT_ABORT(agent_equipment_found);
     GS_ASSERT_ABORT(agent_synthesizer_found);
     GS_ASSERT_ABORT(agent_energy_tanks_found);
-    GS_ASSERT_ABORT(agent_hand_found);
     GS_ASSERT_ABORT(premium_cache_found);
 
     // length of location names
     GS_ASSERT_ABORT(strlen(PLAYER_HAND_LOCATION_NAME)          <= LOCATION_NAME_MAX_LENGTH);
     GS_ASSERT_ABORT(strlen(PLAYER_TOOLBELT_LOCATION_NAME)      <= LOCATION_NAME_MAX_LENGTH);
     GS_ASSERT_ABORT(strlen(PLAYER_INVENTORY_LOCATION_NAME)     <= LOCATION_NAME_MAX_LENGTH);
+    GS_ASSERT_ABORT(strlen(PLAYER_EQUIPMENT_LOCATION_NAME)     <= LOCATION_NAME_MAX_LENGTH);
     GS_ASSERT_ABORT(strlen(PLAYER_SYNTHESIZER_LOCATION_NAME)   <= LOCATION_NAME_MAX_LENGTH);
     GS_ASSERT_ABORT(strlen(PLAYER_ENERGY_TANKS_LOCATION_NAME)  <= LOCATION_NAME_MAX_LENGTH);
     GS_ASSERT_ABORT(strlen(PLAYER_PREMIUM_CACHE_LOCATION_NAME) <= LOCATION_NAME_MAX_LENGTH);
@@ -105,6 +116,7 @@ void verify_config()
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_INVENTORY_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_ENERGY_TANKS_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_SYNTHESIZER_LOCATION_NAME));
+    GS_ASSERT_ABORT(is_valid_location_name(PLAYER_EQUIPMENT_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_TOOLBELT_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_HAND_LOCATION_NAME));
     GS_ASSERT_ABORT(is_valid_location_name(PLAYER_PREMIUM_CACHE_LOCATION_NAME));
@@ -121,7 +133,7 @@ void verify_config()
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, PROPERTY_DELIMITER)        == NULL);
     GS_ASSERT_ABORT(strstr(TAG_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
     GS_ASSERT_ABORT(TAG_DELIMITER_LENGTH == 1);
-    
+
     GS_ASSERT_ABORT(strcmp(PROPERTY_DELIMITER, ";") == 0);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, ":") == NULL);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, " ") == NULL);
@@ -130,7 +142,7 @@ void verify_config()
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, TAG_DELIMITER)             == NULL);
     GS_ASSERT_ABORT(strstr(PROPERTY_DELIMITER, COLOR_COMPONENT_DELIMITER) == NULL);
     GS_ASSERT_ABORT(PROPERTY_DELIMITER_LENGTH == 1);
-    
+
     GS_ASSERT_ABORT(strcmp(COLOR_COMPONENT_DELIMITER, ",") == 0);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, ":") == NULL);
     GS_ASSERT_ABORT(strstr(COLOR_COMPONENT_DELIMITER, " ") == NULL);
@@ -166,7 +178,7 @@ void verify_config()
     GS_ASSERT_ABORT(strlen(CONTAINER_SLOT_TAG)       == TAG_LENGTH);
     GS_ASSERT_ABORT(strlen(CONTAINER_COUNT_TAG)      == TAG_LENGTH);
     GS_ASSERT_ABORT(strlen(CONTAINER_ITEM_COUNT_TAG) == TAG_LENGTH);
-    
+
     // THIS NUMBER CAN NEVER GO LOWER
     GS_ASSERT_ABORT(ITEM_LINE_LENGTH                >= 71);
     GS_ASSERT_ABORT(PLAYER_LINE_LENGTH              >= 15);
