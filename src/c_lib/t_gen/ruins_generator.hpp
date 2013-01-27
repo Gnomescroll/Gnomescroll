@@ -329,12 +329,12 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
             // change rim/frame cubes
             if (r.room_t != ROOMT_HALL)
                 if (cz == 1 ||
-                    rect_plus_margin_contains(r.uconn,   1, cx, cy, cz) || 
+                    rect_plus_margin_contains(r.uconn, 1, cx, cy, cz) || 
                     rect_plus_margin_contains(r.dconn, 1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.nconn,          1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.sconn,          1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.econn,          1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.wconn,          1, cx, cy, cz) 
+                    rect_plus_margin_contains(r.nconn, 1, cx, cy, cz) || 
+                    rect_plus_margin_contains(r.sconn, 1, cx, cy, cz) || 
+                    rect_plus_margin_contains(r.econn, 1, cx, cy, cz) || 
+                    rect_plus_margin_contains(r.wconn, 1, cx, cy, cz) 
                 ) 
                     cube = r.trim;
             
@@ -346,7 +346,7 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
             
             if (cz == 1 && (randrange(0, 156) == 0))
             { 
-                //make_chest(cx, cy, cz);
+                make_chest(cx, cy, cz);
             }
         }
     }
@@ -357,7 +357,7 @@ void make_stairs(IntVec3 iv, int ox, int oy)
     CubeType floo = rooms[iv.z][iv.y][iv.x].floo;
 
     t_gen::set_region(
-        iv.x * CUBES_ACROSS_ROOM + ox + (CUBES_ACROSS_ROOM / 2 - 1 /* stair x */),
+        iv.x * CUBES_ACROSS_ROOM + ox + fixed_stair.x,
         iv.y * CUBES_ACROSS_ROOM + oy + fixed_stair.y,
         iv.z * CUBES_GOING_UP_ROOM + 3 + 1,
         1, fixed_stair.dep, 2, floo);
@@ -389,7 +389,8 @@ Room setup_stairspace_for(direction_t d, Room r) {
     return r;
 }
 
-bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) { // room index
+bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) 
+{ // room index
     IntVec3 to;
 
     switch(dir) 
@@ -522,7 +523,7 @@ void connect_these(IntVec3& src, direction_t d, IntVec3& dst)
 IntVec3 root;
 IntVec3 hall;
 IntVec3 room;
-bool empty_lat_space_around(IntVec3 iv, room_t rt = ROOMT_NORMAL) 
+bool empty_lat_space_around(IntVec3 iv) 
 {
     // find out how many, and which are valid directions
     int num_choices = 0;
@@ -550,7 +551,7 @@ bool empty_lat_space_around(IntVec3 iv, room_t rt = ROOMT_NORMAL)
     
     if (iv.Equals(root)) 
     {
-        setup_room(rooms[root.z][root.y][root.x], ROOMT_NORMAL);
+		setup_room(rooms[root.z][root.y][root.x], rooms[root.z][root.y][root.x].room_t);  // fixme?   room_t might not be deliberately set yet?
         setup_room(rooms[hall.z][hall.y][hall.x], ROOMT_HALL);
         connect_these(root, dir, hall);
         return true;
@@ -673,13 +674,11 @@ bool added_pair()
 			return false;
 		}
         
-        if (empty_lat_space_around(hall, ROOMT_HALL) )
+        if (empty_lat_space_around(hall) )
         {
             finish_room(hall);
             finish_room(room);
-            root.x = room.x;
-            root.y = room.y;
-            root.z = room.z;
+            root.Clone(room);
 			return true;
         }
     }
@@ -818,11 +817,11 @@ void make_ruins(int x, int y) {
                 CUBES_ACROSS_ROOM, CUBES_ACROSS_ROOM, 1, fl);
 
             // make ceiling crust
-            //t_gen::set_region(
-            //    rx * CUBES_ACROSS_ROOM + x,
-            //    ry * CUBES_ACROSS_ROOM + y,
-            //    rz * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET + CUBES_GOING_UP_ROOM - 1,
-            //    CUBES_ACROSS_ROOM, CUBES_ACROSS_ROOM, 1, rooms[rz][ry][rx].ceil);
+            t_gen::set_region(
+                rx * CUBES_ACROSS_ROOM + x,
+                ry * CUBES_ACROSS_ROOM + y,
+                rz * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET + CUBES_GOING_UP_ROOM - 1,
+                CUBES_ACROSS_ROOM, CUBES_ACROSS_ROOM, 1, rooms[rz][ry][rx].ceil);
         
             IntVec3 ri;  // room index
             ri.x = rx; 
