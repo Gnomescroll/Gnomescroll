@@ -58,6 +58,9 @@ inline void assign_item_container_StoC::handle()
     if (type == name::premium_cache)
         ASSIGN_CONTAINER(premium_cache, ItemContainer)
     else
+    if (type == name::equipment)
+        ASSIGN_CONTAINER(premium_cache, ItemContainer)
+    else
     {
         GS_ASSERT(false);
         return;

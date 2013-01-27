@@ -553,6 +553,17 @@ class ItemContainerCrusher: public ItemContainerInterface
     {}
 };
 
+class ItemContainerEquipment: ItemContainerInterface
+{
+    public:
+    
+    ItemContainerEquipment(ItemContainerType type, ItemContainerID id) :
+        ItemContainerInterface(type, id)
+    {
+        GS_ASSERT(type == name::equipment);
+    }
+};
+
 ItemContainerInterface* create_item_container_interface(int type, int id);
 
 ItemContainerInterface* new_crusher(ItemContainerType type, ItemContainerID id)
@@ -595,10 +606,19 @@ ItemContainerInterface* new_container(ItemContainerType type, ItemContainerID id
     return new ItemContainer(type, id);
 }
 
+ItemContainerInterface* new_equipment(ItemContainerType type, ItemContainerID id)
+{
+    return new ItemContainerEquipment(type, id);
+}
+
 class ItemContainerList: public MultiObject_list<ItemContainerInterface>
 {
     private:
-    const char* name() { return "ItemContainer"; }
+
+    const char* name()
+    {
+        return "ItemContainer";
+    }
         
     public:
 

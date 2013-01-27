@@ -12,6 +12,7 @@ extern ItemContainerType toolbelt;
 extern ItemContainerType synthesizer;
 extern ItemContainerType energy_tanks;
 extern ItemContainerType premium_cache;
+extern ItemContainerType equipment;
 
 extern ItemContainerType storage_block_small;
 extern ItemContainerType crafting_bench_basic;

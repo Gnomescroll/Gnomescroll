@@ -168,6 +168,15 @@ static void register_settings()
     c->alpha_packet = &send_container_alpha_action;
     c->beta_packet = &send_container_beta_action;
     c->create_function = &new_container;
+
+    agent_container_def("equipment");
+    c->xdim = 9;
+    x->ydim = 1;
+    c->alpha_action = &alpha_action_decision_tree;
+    c->beta_action = &beta_action_decision_tree;
+    c->alpha_packet = &send_container_alpha_action;
+    c->beta_packet = &send_container_beta_action;
+    c->create_function = &new_equipment;
     
     cube_container_def("storage_block_small");
     c->set_display_name("Storage Block");

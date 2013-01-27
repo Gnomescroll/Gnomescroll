@@ -22,7 +22,8 @@ namespace ItemContainer
 {
 
 void init()
-{    
+{
+    GS_ASSERT(item_container_list == NULL);
     item_container_list = new ItemContainerList(MAX_CONTAINERS);
 
     size_t i = 0;
@@ -32,6 +33,7 @@ void init()
     player_container_types[i++] = name::synthesizer;
     player_container_types[i++] = name::energy_tanks;
     player_container_types[i++] = name::premium_cache;
+    player_container_types[i++] = name::equipment;
     GS_ASSERT(i == N_PLAYER_CONTAINERS);
 
     #if DC_SERVER
@@ -39,6 +41,7 @@ void init()
     agent_toolbelt_list     = (ItemContainerID*) malloc(MAX_AGENTS * sizeof(ItemContainerID));
     agent_synthesizer_list  = (ItemContainerID*) malloc(MAX_AGENTS * sizeof(ItemContainerID));
     agent_energy_tanks_list = (ItemContainerID*) malloc(MAX_AGENTS * sizeof(ItemContainerID));
+    agent_equipment_list    = (ItemContainerID*) malloc(MAX_AGENTS * sizeof(ItemContainerID));
     premium_cache_list      = (ItemContainerID*) malloc(MAX_AGENTS * sizeof(ItemContainerID));
     opened_containers       = (ItemContainerID*) malloc(MAX_AGENTS * sizeof(ItemContainerID));
     agent_hand_list         = (ItemContainerID*) malloc(MAX_AGENTS * sizeof(ItemContainerID));
@@ -49,6 +52,7 @@ void init()
         agent_toolbelt_list    [i] = NULL_CONTAINER;
         agent_synthesizer_list [i] = NULL_CONTAINER;
         agent_energy_tanks_list[i] = NULL_CONTAINER;
+        agent_equipment_list   [i] = NULL_CONTAINER;
         premium_cache_list     [i] = NULL_CONTAINER;
         opened_containers      [i] = NULL_CONTAINER;
         agent_hand_list        [i] = NULL_CONTAINER;
@@ -77,6 +81,7 @@ void teardown()
     if (player_toolbelt_ui     != NULL) delete player_toolbelt_ui;
     if (player_synthesizer_ui  != NULL) delete player_synthesizer_ui;
     if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
+    if (player_equipment_ui    != NULL) delete player_equipment_ui;
     if (player_craft_bench_ui  != NULL) delete player_craft_bench_ui;
     if (premium_cache_ui       != NULL) delete premium_cache_ui;
     if (storage_block_ui       != NULL) delete storage_block_ui;
@@ -91,6 +96,7 @@ void teardown()
     if (agent_toolbelt_list     != NULL) free(agent_toolbelt_list);
     if (agent_synthesizer_list  != NULL) free(agent_synthesizer_list);
     if (agent_energy_tanks_list != NULL) free(agent_energy_tanks_list);
+    if (agent_equipment_list    != NULL) free(agent_equipment_list);
     if (premium_cache_list      != NULL) free(premium_cache_list);
     if (agent_hand_list         != NULL) free(agent_hand_list);
     if (opened_containers       != NULL) free(opened_containers);
@@ -298,7 +304,7 @@ bool open_container(ItemContainerID container_id)
 
     // setup UI widget
     if (container->type == name::crafting_bench_basic)
-        ASSIGN_CONTAINER(player_craft_bench, ItemContainerCraftingBench, ItemContainerUI)
+        ASSIGN_CONTAINER(crafting_bench, ItemContainerCraftingBench, ItemContainerUI)
     else
     if (container->type == name::storage_block_small)
         ASSIGN_CONTAINER(storage_block, ItemContainer, ItemContainerUI)
@@ -359,7 +365,7 @@ bool close_container(ItemContainerID container_id)
     } while(0); }
 
     // public block types go here
-    TEARDOWN_CONTAINER(player_craft_bench);
+    TEARDOWN_CONTAINER(crafting_bench);
     TEARDOWN_CONTAINER(storage_block);
     TEARDOWN_CONTAINER(cryofreezer);
     TEARDOWN_CONTAINER(smelter);
@@ -547,6 +553,12 @@ ItemContainerID get_agent_premium_cache(AgentID agent_id)
     return premium_cache_list[agent_id];
 }
 
+ItemContainerID get_agent_equipment(AgentID agent_id)
+{
+    IF_ASSERT(!isValid(agent_id)) return NULL_CONTAINER;
+    return agent_equipment_list[agent_id];
+}
+
 ItemContainerID* get_player_containers(AgentID agent_id, size_t* n_containers)
 {
     static ItemContainerID containers[N_PLAYER_CONTAINERS] = {NULL_CONTAINER};
@@ -563,8 +575,10 @@ ItemContainerID* get_player_containers(AgentID agent_id, size_t* n_containers)
     if (containers[n] != NULL_CONTAINER) n++;
     containers[n] = get_agent_premium_cache(agent_id);
     if (containers[n] != NULL_CONTAINER) n++;
-    GS_ASSERT(n == N_PLAYER_CONTAINERS);
+    containers[n] = get_agent_equipment(agent_id);
+    if (containers[n] != NULL_CONTAINER) n++;
     
+    GS_ASSERT(n == N_PLAYER_CONTAINERS);
     *n_containers = n;
     return containers;
 }
@@ -596,6 +610,7 @@ bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
     ItemContainerHand* agent_hand  = (ItemContainerHand*)create_container(name::hand);
     ItemContainerSynthesizer* agent_synthesizer  = (ItemContainerSynthesizer*)create_container(name::synthesizer);
     ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)create_container(name::energy_tanks);
+    ItemContainerEnergyTanks* agent_equipment    = (ItemContainerEquipment*)create_container(name::equipment);
 
     IF_ASSERT(agent_hand         == NULL) goto error;
     IF_ASSERT(agent_toolbelt     == NULL) goto error;
@@ -603,6 +618,7 @@ bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
     IF_ASSERT(agent_synthesizer  == NULL) goto error;
     IF_ASSERT(agent_energy_tanks == NULL) goto error;
     IF_ASSERT(premium_cache      == NULL) goto error;
+    IF_ASSERT(agent_equipment    == NULL) goto error;
         
     assign_container_to_agent(agent_hand,         agent_hand_list,         agent_id, client_id);
     assign_container_to_agent(agent_toolbelt,     agent_toolbelt_list,     agent_id, client_id);
@@ -610,6 +626,7 @@ bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
     assign_container_to_agent(agent_synthesizer,  agent_synthesizer_list,  agent_id, client_id);
     assign_container_to_agent(agent_energy_tanks, agent_energy_tanks_list, agent_id, client_id);
     assign_container_to_agent(premium_cache,      premium_cache_list,      agent_id, client_id);
+    assign_container_to_agent(agent_equipment,    agent_equipment_list,    agent_id, client_id);
 
     return true;
 
@@ -620,6 +637,7 @@ bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
         if (agent_synthesizer  != NULL) destroy_container(agent_synthesizer->id);
         if (agent_energy_tanks != NULL) destroy_container(agent_energy_tanks->id);
         if (premium_cache      != NULL) destroy_container(premium_cache->id);
+        if (agent_equipment    != NULL) destroy_container(agent_equipment->id);
         return false;
 }
 
@@ -907,6 +925,7 @@ static void save_agent_containers(ClientID client_id, AgentID agent_id)
     serializer::save_player_container(client_id, agent_synthesizer_list[agent_id]);
     serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id]);
     serializer::save_player_container(client_id, premium_cache_list[agent_id]);
+    serializer::save_player_container(client_id, agent_equipment_list[agent_id]);
 }
 
 void dump_agent_containers(ClientID client_id, AgentID agent_id)
@@ -1003,8 +1022,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     ItemID hand_item = get_agent_hand_item(agent_id);
     int hand_item_type = Item::get_item_type(hand_item);
     if (hand_item != NULL_ITEM)
-    {   
-        // can it stack
+    {   // can it stack
         if (hand_item_type != item_type) return;
         
         // will it fit
@@ -1024,8 +1042,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     IF_ASSERT(coin_item == NULL) return;
 
     if (hand_item == NULL_ITEM)
-    {
-        // create shopped item
+    {   // create shopped item
         Item::Item* purchase = Item::create_item(item_type);
         IF_ASSERT(purchase == NULL) return;
 
@@ -1033,8 +1050,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
         transfer_free_item_to_hand(purchase->id, agent_id);
     }
     else
-    {
-        // get hand item pointer
+    {   // get hand item pointer
         Item::Item* hand = Item::get_item(hand_item);
         IF_ASSERT(hand == NULL) return;
         
@@ -1044,9 +1060,8 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
         Item::send_item_state(hand->id);
     }
 
-    // update coins
     if (cost && coin_item != NULL)
-    {
+    {   // update coins
         if (coin_stack == cost)
         {   // delete coins
             Item::destroy_item(coins);

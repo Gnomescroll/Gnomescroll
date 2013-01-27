@@ -24,7 +24,7 @@ const struct SlotMetadata NULL_SLOT_METADATA = {
     1,
     NULL_DURABILITY,
     NULL_CHARGES
-    };
+};
 
 struct SlotMetadata copy_item_metadata(ItemID item_id);
 
@@ -421,6 +421,15 @@ class ItemContainerCrusherUI: public ItemContainerUIInterface
         this->ydim = ydim;
         this->slot_max = xdim*ydim + this->alt_xdim * this->alt_ydim;
     }
+};
+
+class ItemContainerEquipmentUI: public ItemContainerUIInterface
+{
+    public:
+    
+        explicit ItemContainerEquipmentUI(ItemContainerID id) :
+            ItemContainerUIInterface(id)
+        {}
 };
 
 } // Item
