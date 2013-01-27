@@ -163,6 +163,14 @@ struct Room
 //Room rooms[ROOMS_GOING_UP][ROOMS_GOING_ACROSS][ROOMS_GOING_ACROSS];
 Room*** rooms = NULL; //[ROOMS_GOING_UP][ROOMS_GOING_ACROSS][ROOMS_GOING_ACROSS];
 
+IntVec3 get_room_origin(IntVec3 ri /* room index */, int ox, int oy)
+{
+	IntVec3 iv;
+	iv.x = ri.x * CUBES_ACROSS_ROOM + ox;  
+	iv.y = ri.y * CUBES_ACROSS_ROOM + oy;  
+	iv.z = ri.z * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET; 
+	return iv;
+}
 
 void set_region(int x_, int y_, int z_, int wid, int dep, int hei, CubeType ct)
 {
@@ -177,16 +185,16 @@ void set_region(int x_, int y_, int z_, int wid, int dep, int hei, CubeType ct)
     }
     }
 }
-void set_region(Rect3D r, CubeType ct)
+void set_region(Rect3D r, CubeType ct, IntVec3 ri /* room index */, int ox, int oy) // x/y offset
 {
-    set_region(r.x, r.y, r.z, r.wid, r.dep, r.hei, ct);
-}
+    IntVec3 ori = get_room_origin(ri, ox, oy);
 
-bool in_air_region(Room r, int x, int y) 
-{
-    if (x >= r.air.x && x < r.air.x + r.air.wid &&
-        y >= r.air.y && y < r.air.y + r.air.dep) return true;
-    return false;
+    set_region(
+		ori.x + r.x, 
+		ori.y + r.y, 
+		ori.z + r.z, 
+		r.wid, r.dep, r.hei, 
+		ct);
 }
 
 bool rect_spans(Rect3D r) // if wid, dep, hei are all 0, it doesn't span any space or represent any space
@@ -266,9 +274,8 @@ void make_alive_and_setup(Room& r, room_t room_t)
 
 void make_chest(int x, int y, int z) 
 {
-    t_map::set(x, y, z, EMPTY_CUBE);
-    t_map::set(x, y, z, t_map::get_cube_type("storage_block_small"));
     ItemContainerID id = ItemContainer::create_container_block(ItemContainer::name::storage_block_small, x, y, z);
+    t_map::set(x, y, z, t_map::get_cube_type("storage_block_small"));
     if (id != NULL_CONTAINER)
     {
         if (randrange(0, 2) == 0)
@@ -293,6 +300,12 @@ void make_chest(int x, int y, int z)
             ItemContainer::auto_add_item_to_container("energy_tank", id);
         }
     }
+}
+
+void set_at_room_offset(CubeType ct, int x, int y, int z, IntVec3 ri /* room index */, int ox, int oy)
+{
+    IntVec3 ori = get_room_origin(ri, ox, oy);
+	t_map::set(ori.x + x, ori.y + y, ori.z + z, ct);
 }
 
 // params:  room indexes,  origin x/y
@@ -338,11 +351,11 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
                 ) 
                     cube = r.trim;
             
-            t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, cube); 
+			set_at_room_offset(cube,       cx, cy, cz, ri, ox, oy);
         } 
         else 
         {
-            t_map::set(ri.x * CUBES_ACROSS_ROOM + cx + ox, ri.y * CUBES_ACROSS_ROOM + cy + oy, ri.z * CUBES_GOING_UP_ROOM + cz + BEDROCK_OFFSET, EMPTY_CUBE);
+			set_at_room_offset(EMPTY_CUBE, cx, cy, cz, ri, ox, oy);
             
             if (cz == 1 && (randrange(0, 156) == 0))
             { 
@@ -832,10 +845,10 @@ void make_ruins(int x, int y) {
             if (contains_1_or_more_cubes(rooms[rz][ry][rx].uconn))
             {
                 make_stairs(ri, x, y);
-                set_region(rooms[rz][ry][rx].uconn, EMPTY_CUBE);
+                set_region(rooms[rz][ry][rx].uconn, EMPTY_CUBE, ri, x, y);
             }
             if (contains_1_or_more_cubes(rooms[rz][ry][rx].dconn))
-                set_region(rooms[rz][ry][rx].dconn, EMPTY_CUBE);
+                set_region(rooms[rz][ry][rx].dconn, EMPTY_CUBE, ri, x, y);
         }
 
         draw_ASCII_floorplan(rz, northernmost, southernmost);
