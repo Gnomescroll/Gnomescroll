@@ -265,7 +265,9 @@ void EquipmentUI::draw_highlight()
 
 void EquipmentUI::draw_slot_labels()
 {
-    struct ItemContainer::SlotMetadata* slot_metadata = ItemContainer::get_container_ui_slot_metadata(this->container_id);
+    struct ItemContainer::SlotMetadata* slot_metadata = NULL;
+    if (this->container_id != NULL_CONTAINER)
+        slot_metadata = ItemContainer::get_container_ui_slot_metadata(this->container_id);
 
     IF_ASSERT(*this->texture == 0) return;
     glColor4ub(255, 255, 255, 255);
@@ -332,6 +334,7 @@ void EquipmentUI::draw_accessories_label()
 
 void EquipmentUI::draw_items()
 {
+    if (this->container_id == NULL_CONTAINER) return;
     struct ItemContainer::SlotMetadata* slot_metadata = ItemContainer::get_container_ui_slot_metadata(this->container_id);
     if (slot_metadata == NULL) return;
 
@@ -380,6 +383,7 @@ void EquipmentUI::draw_items()
 
 void EquipmentUI::draw_item_labels()
 {
+    if (this->container_id == NULL_CONTAINER) return;
     struct ItemContainer::SlotMetadata* slot_metadata = ItemContainer::get_container_ui_slot_metadata(this->container_id);
     if (slot_metadata == NULL) return;
 
