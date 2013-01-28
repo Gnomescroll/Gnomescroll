@@ -31,7 +31,7 @@ void init_voxel_particle()
     textured_voxel_particle_shader.load_shader( "textured voxel particle",
         "./media/shaders/animation/textured_voxel_particle.vsh",
         "./media/shaders/animation/textured_voxel_particle.fsh" );
-    
+
     textured_voxel_particle_TexCoord = textured_voxel_particle_shader.get_attribute("InTexCoord");
     textured_voxel_particle_Normal = textured_voxel_particle_shader.get_attribute("InNormal");
     //textured_voxel_particle_CameraPos = textured_voxel_particle_shader.get_uniform("InCameraPos");
@@ -44,7 +44,7 @@ void init_voxel_particle()
     colored_voxel_particle_shader.load_shader( "colored voxel particle",
         "./media/shaders/animation/colored_voxel_particle.vsh",
         "./media/shaders/animation/colored_voxel_particle.fsh" );
-    
+
     colored_voxel_particle_Normal = colored_voxel_particle_shader.get_attribute("InNormal");
     colored_voxel_particle_Color = colored_voxel_particle_shader.get_attribute("InColor");
     //colored_voxel_particle_CameraPos = colored_voxel_particle_shader.get_uniform("InCameraPos");
@@ -71,13 +71,13 @@ static void prep_textured_voxel_particles()
 
     class Particle::TexturedMinivox_list* particle_list = Particle::textured_minivox_list;
     GS_ASSERT(particle_list != NULL);
-    
+
     if (item_particle_list == NULL && particle_list == NULL)
     {
         textured_voxel_particle_vlist->vertex_number = 0;
         return;
     }
-    
+
     if ((item_particle_list->max <= 0 || item_particle_list->ct <= 0) && (particle_list->n_max <= 0 || particle_list->num <= 0))
     {
         textured_voxel_particle_vlist->vertex_number = 0;
@@ -91,14 +91,14 @@ static void prep_textured_voxel_particles()
     static const float tp = 1.0f/512.0f;    // pixel width
     static const float tw = tp * 32.0f;     // sprite width
     static const float th = tw;             // sprite height
-    
+
     for (unsigned int i=0; i<item_particle_list->max; i++)
     {
         if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
         class ItemParticle::ItemParticle* item = &item_particle_list->objects[i];
         if (!item->is_voxel || !item->should_draw) continue;
         item->voxel.delta_rotation(0.01f, 0.0f);
-        GS_ASSERT(item->voxel.cube_type != 255);
+        IF_INVALID_CUBE_TYPE(item->voxel.cube_type) continue;
 
         // frustum test
         float size = item->voxel.size;
@@ -146,12 +146,12 @@ static void prep_textured_voxel_particles()
 
             float tx = (tex_id % 16) * tw;
             float ty = (tex_id / 16) * th;
-            
+
             float tx_min = tx;
             float tx_max = tx + tw;
             float ty_min = ty;
             float ty_max = ty + th;
-            
+
             textured_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], tx_min, ty_min);
             textured_voxel_particle_vlist->push_vertex(veb2[4*i+0], vn[i], tx_min, ty_max);
             textured_voxel_particle_vlist->push_vertex(veb2[4*i+1], vn[i], tx_max, ty_max);
@@ -164,7 +164,7 @@ static void prep_textured_voxel_particles()
     {
         class Particle::TexturedMinivox* particle = &particle_list->a[i];
         particle->voxel.delta_rotation();
-        
+
         // frustum test
         float size = particle->voxel.size;
         struct Vec3 p = quadrant_translate_position(current_camera_position, particle->verlet.position);
@@ -218,7 +218,7 @@ static void prep_textured_voxel_particles()
             textured_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], tx_max, ty_min);
         }
     }
-    
+
     textured_voxel_particle_vlist->buffer();
 }
 
@@ -227,7 +227,7 @@ static void prep_colored_voxel_particles()
     GS_ASSERT(colored_voxel_particle_vlist != NULL);
     if (colored_voxel_particle_vlist == NULL)
         return;
-    
+
     class Particle::ColoredMinivox_list* list = Particle::colored_minivox_list;
     GS_ASSERT(list != NULL);
     if (list == NULL)
@@ -235,7 +235,7 @@ static void prep_colored_voxel_particles()
         colored_voxel_particle_vlist->vertex_number = 0;
         return;
     }
-    
+
     if (list->n_max <= 0 || list->num <= 0)
     {
         colored_voxel_particle_vlist->vertex_number = 0;
@@ -248,9 +248,9 @@ static void prep_colored_voxel_particles()
 
     for (unsigned int i=0; i<list->num; i++)
     {
-        Particle::ColoredMinivox* vox = &list->a[i]; 
+        Particle::ColoredMinivox* vox = &list->a[i];
         vox->voxel.delta_rotation();
-        
+
         // frustum test
         float size = vox->voxel.size;
         Vec3 p = quadrant_translate_position(current_camera_position, vox->verlet.position);
@@ -303,7 +303,7 @@ static void prep_colored_voxel_particles()
             colored_voxel_particle_vlist->push_vertex(veb2[4*i+3], vn[i], c3);
         }
     }
-    
+
     colored_voxel_particle_vlist->buffer();
 }
 
@@ -316,7 +316,7 @@ void prep_voxel_particles()
 void draw_textured_voxel_particles()
 {
     if (!textured_voxel_particle_shader.shader_valid) return;
-    
+
     GS_ASSERT(current_camera != NULL);
     if (current_camera == NULL) return;
 
@@ -351,11 +351,11 @@ void draw_textured_voxel_particles()
 
     int offset = 0;
     glVertexPointer(3, GL_FLOAT, textured_voxel_particle_vlist->stride, (GLvoid*)offset);
-    offset += 3 * sizeof(GL_FLOAT);    
+    offset += 3 * sizeof(GL_FLOAT);
     glVertexAttribPointer(textured_voxel_particle_Normal, 3, GL_FLOAT, GL_FALSE, textured_voxel_particle_vlist->stride, (GLvoid*)offset);
     offset += 3 * sizeof(GL_FLOAT);
     glVertexAttribPointer(textured_voxel_particle_TexCoord, 2, GL_FLOAT, GL_FALSE, textured_voxel_particle_vlist->stride, (GLvoid*)offset);
-    
+
     glDrawArrays(GL_QUADS, 0, textured_voxel_particle_vlist->vertex_number);
 
     glDisableVertexAttribArray(textured_voxel_particle_TexCoord);
@@ -373,7 +373,7 @@ void draw_colored_voxel_particles()
 {
     GS_ASSERT_LIMIT(colored_voxel_particle_shader.shader_valid, 1);
     if (!colored_voxel_particle_shader.shader_valid) return;
-    
+
     GS_ASSERT(current_camera != NULL);
     if (current_camera == NULL) return;
 
@@ -408,7 +408,7 @@ void draw_colored_voxel_particles()
     offset += sizeof(struct Vec3);
     glVertexAttribPointer(colored_voxel_particle_Color, 3, GL_UNSIGNED_BYTE, GL_TRUE, colored_voxel_particle_vlist->stride, (GLvoid*)offset);
     offset += sizeof(Color);
-    
+
     glDrawArrays(GL_QUADS, 0, colored_voxel_particle_vlist->vertex_number);
 
     glDisableVertexAttribArray(colored_voxel_particle_Normal);

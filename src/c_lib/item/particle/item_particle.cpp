@@ -11,13 +11,13 @@ namespace ItemParticle
 #if DC_CLIENT
 
 void ItemParticle::draw()
-{    
+{
     const float scale = ITEM_PARTICLE_SPRITE_RENDER_SCALE;
     const float h = 0.35f;
 
     Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
     if (!sphere_fulstrum_test(position.x, position.y, position.z+h, scale*2)) return;
-    
+
     Vec3 up = vec3_init(
         model_view_matrix[0]*scale,
         model_view_matrix[4]*scale,
@@ -62,7 +62,7 @@ void ItemParticle::die()
     Item::Item* item = Item::get_item(this->item_id);
     GS_ASSERT(item != NULL);
     if (item != NULL) item->location = IL_NOWHERE;
-    
+
     // destroy source item if we weren't picked up
     if (this->target_agent == NULL_AGENT)
         Item::destroy_item(this->item_id);
@@ -73,13 +73,13 @@ void ItemParticle::tick()
 {
     #if DC_SERVER
     GS_ASSERT(!this->get_picked_up || this->target_agent != NULL_AGENT);
-    
+
     this->ttl--;
     if (this->ttl <= 0 && this->target_agent != NULL_AGENT)
         // particle failed to reach target agent in time, reset
         this->pickup_cancelled();
     #endif
-    
+
     // orient to target agent
     if (this->target_agent != NULL_AGENT)
     {
@@ -89,7 +89,7 @@ void ItemParticle::tick()
             Vec3 p = a->get_center();
 
             // die if very close
-            if (vec3_distance_squared(p, this->verlet.position) < 
+            if (vec3_distance_squared(p, this->verlet.position) <
               ITEM_PARTICLE_PICKUP_END_DISTANCE*ITEM_PARTICLE_PICKUP_END_DISTANCE)
             {
                 #if DC_SERVER
@@ -101,7 +101,7 @@ void ItemParticle::tick()
             {    // orient towards agent
                 Vec3 pos = quadrant_translate_position(p, this->verlet.position);
                 if (!vec3_equal(p, pos))
-                { 
+                {
                     Vec3 direction = vec3_sub(p, pos);
                     normalize_vector(&direction);
                     direction = vec3_scalar_mult(direction, ITEM_PARTICLE_PICKUP_MOMENTUM);
@@ -110,7 +110,7 @@ void ItemParticle::tick()
             }
         }
     }
-    
+
     // dont apply physics if the chunk is not loaded (in client)
     #if DC_CLIENT
     if (t_map::position_is_loaded(this->verlet.position.x, this->verlet.position.y))
@@ -142,13 +142,13 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
         this->voxel.size = ITEM_PARTICLE_VOXEL_RENDER_SCALE / 2.0f;   // cut in half because v_set2(centered) is [-1,1](2x)
         this->voxel.pixel_width = 32;
         this->voxel.texture_index = Item::get_particle_voxel_texture(item_type);
-        this->voxel.cube_type = Item::get_block_type_id(item_type);
+        this->voxel.cube_type = Item::get_cube_type(item_type);
         this->voxel.theta = randf();
         this->voxel.init();
     }
-    
+
     this->should_draw = true;
-    #endif    
+    #endif
     #if DC_SERVER
     this->item_id = item_id;
     this->pickup_prevention = ITEM_INITIAL_PICKUP_PREVENTION;
@@ -160,7 +160,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
 
     GS_ASSERT(vec3_is_valid(verlet.position));
     GS_ASSERT(vec3_is_valid(verlet.velocity));
-    
+
     verlet.dampening = ITEM_PARTICLE_DAMPENING;
 }
 
@@ -219,24 +219,24 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     ItemParticle* particle = get(particle_id);
     IF_ASSERT(particle == NULL) return false;
     IF_ASSERT(particle->target_agent == NULL_AGENT) return false;
-    
+
     Item::Item* item = Item::get_item(particle->item_id);
     IF_ASSERT(item == NULL) return false;
 
     Agents::Agent* agent = Agents::get_agent(particle->target_agent);
-    if (agent == NULL) return false;    
-    
+    if (agent == NULL) return false;
+
     // attempt to transfer item particle to intended destination
     // the particle should automatically add to the client's inventories
     // it was pre-split in the pickup initiation phase
     // since the particles fly and may reach out-of-order, this can fail
     // if this fails, return false, and the particle should be reset to normal
-    
+
     static int coin_type = Item::get_item_type("synthesizer_coin");
     GS_ASSERT(coin_type != NULL_ITEM_TYPE);
     static int energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
-    
+
     // get agent toolbelt and container in array
     int n_containers = 2;
     if (item->type == coin_type || item->type == energy_tank_type)
@@ -244,7 +244,7 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     int container_index = 0;
     MALLOX(ItemContainer::ItemContainerInterface*, containers, n_containers);
     memset(containers, 0, n_containers * sizeof(ItemContainer::ItemContainerInterface*));
-    
+
     if (item->type == coin_type)
     {
         ItemContainerID container_id = ItemContainer::get_agent_synthesizer(agent->id);
@@ -260,7 +260,7 @@ static bool pickup_item_particle(ItemParticleID particle_id)
         if (container_id != NULL_CONTAINER)
             containers[container_index++] = ItemContainer::get_container(container_id);
     }
-    
+
     ItemContainerID container_id = ItemContainer::get_agent_toolbelt(agent->id);
     GS_ASSERT(container_id != NULL_CONTAINER);
     if (container_id != NULL_CONTAINER)
@@ -282,7 +282,7 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     {
         container = containers[i];
         if (container == NULL) continue;
-        
+
         // try to stack with a slot
         int slot = container->get_stackable_slot(item->type, item->stack_size);
         if (slot != NULL_SLOT)
@@ -296,8 +296,8 @@ static bool pickup_item_particle(ItemParticleID particle_id)
                 Item::send_item_state(slot_item_id);
                 return true;
             }
-        }        
-        
+        }
+
         // try to put in empty slot
         slot = container->get_empty_slot();
         if (slot != NULL_SLOT)
@@ -321,7 +321,7 @@ void ItemParticle_list::tick()
         ip = &this->objects[i];
 
         ip->tick();
-        
+
         #if DC_SERVER
         if (ip->get_picked_up)
         {    // attempt to transfer to container

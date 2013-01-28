@@ -157,8 +157,7 @@ inline void object_state_momentum_angles_StoC::handle()
     Entity* obj = Entities::get((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return;
+    IF_ASSERT(physics == NULL) return;
 
     struct Vec3 pos = vec3_init(x,y,z);
     physics->set_position(pos);
@@ -240,7 +239,7 @@ inline void object_shot_object_StoC::handle()
     if (a == NULL || a->vox == NULL) return;
     // update the model, in case it is out of date.
     force_update_agent_vox(a);
-    
+
     Vec3 dest = a->vox->get_center(this->target_part);
     dest = quadrant_translate_position(position, dest);
 
@@ -274,19 +273,17 @@ inline void object_shot_terrain_StoC::handle()
 
     Vec3 dest = vec3_init(this->x, this->y, this->z);
     dest = quadrant_translate_position(position, dest);
-    Vec3 v = vec3_sub(dest, position); 
+    Vec3 v = vec3_sub(dest, position);
     normalize_vector(&v);
     const float hitscan_effect_speed = 200.0f;
     v = vec3_scalar_mult(v, hitscan_effect_speed);
     Animations::create_hitscan_effect(
         position.x, position.y, position.z,
-        v.x, v.y, v.z
-    );
+        v.x, v.y, v.z);
 
     Animations::block_damage(
         this->x, this->y, this->z, position.x, position.y, position.z,
-        this->cube, this->side
-    );
+        (CubeType)this->cube, this->side);
     Animations::terrain_sparks(this->x, this->y, this->z);
     //Sound::play_3d_sound("laser_hit_block", this->x, this->y, this->z, 0,0,0);
     Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
@@ -313,8 +310,7 @@ inline void object_shot_nothing_StoC::handle()
     v = vec3_scalar_mult(v, hitscan_effect_speed);
     Animations::create_hitscan_effect(
         position.x, position.y, position.z,
-        v.x, v.y, v.z
-    );
+        v.x, v.y, v.z);
     Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
 }
 
@@ -367,7 +363,7 @@ inline void object_choose_destination_StoC::handle()
 {
     Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
-    
+
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
     if (motion == NULL) return;
@@ -376,11 +372,11 @@ inline void object_choose_destination_StoC::handle()
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
-    
+
     motion->destination = vec3_init(this->x, this->y, this->z);
     Vec3 destination = quadrant_translate_position(position, motion->destination);
     motion->ticks_to_destination = this->ticks_to_destination;
-    
+
     // set momentum from destination :: TODO MOVE
     Vec3 direction = vec3_sub(destination, position);
     direction.z = 0;
@@ -441,12 +437,10 @@ inline void object_took_damage_StoC::handle()
     // create billboard text at position
     Particle::BillboardText* b = Particle::billboard_text_list->create();
     if (b == NULL) return;
-    b->set_state(
-        position.x + (radius * (2*randf() - 1)),
-        position.y + (radius * (2*randf() - 1)),
-        position.z,
-        0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z
-    );
+    b->set_state(position.x + (radius * (2*randf() - 1)),
+                 position.y + (radius * (2*randf() - 1)),
+                 position.z,
+                 0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
     b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
     char txt[10+1];
     sprintf(txt, "%d", this->damage);
@@ -459,7 +453,7 @@ inline void object_begin_waiting_StoC::handle()
 {
     Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
-    
+
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -485,26 +479,26 @@ inline void object_in_transit_StoC::handle()
         obj->get_component(COMPONENT_DESTINATION_TARGETING);
     GS_ASSERT(dest_target != NULL);
     if (dest_target == NULL) return;
-    
+
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return;
     struct Vec3 pos = physics->get_position();
-    
+
     dest_target->ticks_to_destination = this->ticks_to_destination;
 
     dest_target->set_destination(destination);
     dest_target->orient_to_target(pos);
 
     ASSERT_BOXED_POSITION(destination);
-    
+
     if (this->ticks_to_destination)
     {
         destination = quadrant_translate_position(pos, destination);
         Vec3 direction = vec3_sub(destination, pos);
-        direction.z = 0.0f;        
+        direction.z = 0.0f;
         float len = vec3_length(direction);
         dest_target->speed = len / ((float)this->ticks_to_destination);
         dest_target->speed = Entities::MONSTER_BOMB_WALK_SPEED;
@@ -515,7 +509,7 @@ inline void object_in_transit_StoC::handle()
         dest_target->speed = 0.0f;
         dest_target->at_destination = true;
     }
-    
+
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -529,7 +523,7 @@ inline void object_chase_agent_StoC::handle()
 {
     Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
-    
+
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -542,7 +536,7 @@ inline void object_chase_agent_StoC::handle()
     target->target_type = OBJECT_AGENT;
     if (physics != NULL)
         target->orient_to_target(physics->get_position());
-    
+
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);

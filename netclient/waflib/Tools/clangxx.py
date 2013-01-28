@@ -14,18 +14,18 @@ from waflib.Tools import ccroot, ar
 from waflib.Configure import conf
 
 @conf
-def find_gxx(conf):
+def find_clangxx(conf):
     """
     Find the program g++, and if present, try to detect its version number
     """
-    cxx = conf.find_program(['g++', 'c++'], var='CXX')
+    cxx = conf.find_program(['clang++', 'c++'], var='CXX')
     cxx = conf.cmd_to_list(cxx)
     conf.get_cc_version(cxx, gcc=True)
-    conf.env.CXX_NAME = 'gcc'
+    conf.env.CXX_NAME = 'clang'
     conf.env.CXX      = cxx
 
 @conf
-def gxx_common_flags(conf):
+def clangxx_common_flags(conf):
     """
     Common flags for g++ on nearly all platforms
     """
@@ -69,7 +69,7 @@ def gxx_common_flags(conf):
     v['macbundle_PATTERN']   = '%s.bundle'
 
 @conf
-def gxx_modifier_win32(conf):
+def clangxx_modifier_win32(conf):
     """Configuration flags for executing gcc on Windows"""
     v = conf.env
     v['cxxprogram_PATTERN']  = '%s.exe'
@@ -88,16 +88,16 @@ def gxx_modifier_win32(conf):
     v.append_value('LINKFLAGS', ['-Wl,--enable-auto-import'])
 
 @conf
-def gxx_modifier_cygwin(conf):
+def clangxx_modifier_cygwin(conf):
     """Configuration flags for executing g++ on Cygwin"""
-    gxx_modifier_win32(conf)
+    clangxx_modifier_win32(conf)
     v = conf.env
     v['cxxshlib_PATTERN']    = 'cyg%s.dll'
     v.append_value('LINKFLAGS_cxxshlib', ['-Wl,--enable-auto-image-base'])
     v['CXXFLAGS_cxxshlib']   = []
 
 @conf
-def gxx_modifier_darwin(conf):
+def clangxx_modifier_darwin(conf):
     """Configuration flags for executing g++ on MacOS"""
     v = conf.env
     v['CXXFLAGS_cxxshlib']   = ['-fPIC', '-compatibility_version', '1', '-current_version', '1']
@@ -114,7 +114,7 @@ def gxx_modifier_darwin(conf):
     v['SONAME_ST']           = []
 
 @conf
-def gxx_modifier_aix(conf):
+def clangxx_modifier_aix(conf):
     """Configuration flags for executing g++ on AIX"""
     v = conf.env
     v['LINKFLAGS_cxxprogram']= ['-Wl,-brtl']
@@ -123,30 +123,30 @@ def gxx_modifier_aix(conf):
     v['SHLIB_MARKER']        = []
 
 @conf
-def gxx_modifier_hpux(conf):
+def clangxx_modifier_hpux(conf):
     v = conf.env
     v['SHLIB_MARKER']        = []
     v['CFLAGS_cxxshlib']     = ['-fPIC','-DPIC']
     v['cxxshlib_PATTERN']    = 'lib%s.sl'
 
 @conf
-def gxx_modifier_platform(conf):
-    """Execute platform-specific functions based on *gxx_modifier_+NAME*"""
+def clangxx_modifier_platform(conf):
+    """Execute platform-specific functions based on *clangxx_modifier_+NAME*"""
     # * set configurations specific for a platform.
     # * the destination platform is detected automatically by looking at the macros the compiler predefines,
     #   and if it's not recognised, it fallbacks to sys.platform.
-    gxx_modifier_func = getattr(conf, 'gxx_modifier_' + conf.env.DEST_OS, None)
-    if gxx_modifier_func:
-            gxx_modifier_func()
+    clangxx_modifier_func = getattr(conf, 'clangxx_modifier_' + conf.env.DEST_OS, None)
+    if clangxx_modifier_func:
+            clangxx_modifier_func()
 
 def configure(conf):
     """
     Configuration for g++
     """
-    conf.find_gxx()
+    conf.find_clangxx()
     conf.find_ar()
-    conf.gxx_common_flags()
-    conf.gxx_modifier_platform()
+    conf.clangxx_common_flags()
+    conf.clangxx_modifier_platform()
     conf.cxx_load_tools()
     conf.cxx_add_flags()
     conf.link_add_flags()

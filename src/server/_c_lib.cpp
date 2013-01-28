@@ -44,7 +44,7 @@ dont_include_this_file_in_client
 #else
 # define GS_SERIALIZER 0
 #endif
-    
+
 
 // threads
 #ifdef linux
@@ -77,7 +77,7 @@ dont_include_this_file_in_client
 #include <options/option_macros.hpp>
 #include <options/argparse.cpp>
 #include <options/server_options.cpp>
- 
+
 // utility
 #include <common/time/physics_timer.cpp>
 #include <common/common.cpp>
@@ -89,16 +89,16 @@ dont_include_this_file_in_client
 #include <common/subscriber_list.hpp>
 #include <common/analytics/sessions.hpp>
 #include <common/dat/name_map.hpp>
- 
+
 // logging
 #include <common/logger.cpp>
 
-// LUA 
+// LUA
 #include <common/lua/lua.cpp>
 
-// map 
+// map
 #include <t_map/_include.hpp>
- 
+
 /* mechanisms */
 #include <t_mech/_include.hpp>
 
@@ -109,7 +109,7 @@ dont_include_this_file_in_client
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>
 #include <physics/ray_trace/handlers.cpp>
- 
+
 // physics
 #include <physics/verlet.cpp>
 #include <physics/motion.cpp>
@@ -128,7 +128,7 @@ dont_include_this_file_in_client
 #include <voxel/voxel_hitscan.cpp>
 #include <voxel/voxel_dat.cpp>
 #include <voxel/voxel_model.cpp>
-#include <voxel/voxel_loader.cpp> 
+#include <voxel/voxel_loader.cpp>
 #include <voxel/vox_dat_init.cpp>
 
 /* Entity system */
@@ -212,7 +212,7 @@ void register_signals()
     char* wdr = getcwd(wd, NAME_MAX);
     GS_ASSERT(wdr == wd);
     printf("Working directory is: %s\n", wd);
-    
+
     // Set signal handlers
     // SIGTERM  kill `pidof gnomescroll_server`
     struct sigaction sa_term;
@@ -221,7 +221,7 @@ void register_signals()
     sigemptyset(&sa_term.sa_mask);
     ret = sigaction(SIGTERM, &sa_term, NULL);
     GS_ASSERT(ret == 0);
-    
+
     // SIGINT ctrl-C
     ret = sigaction(SIGINT, &sa_term, NULL);
     GS_ASSERT(ret == 0);
@@ -266,13 +266,13 @@ void init_configs()
 
     t_map::init_block_drop_dat();
     t_map::load_block_drop_dat();         // load drop dat after items
-    
+
     Item::create_items_from_blocks();     // create items tied to block that drop themselves
     Item::end_item_dat();
 
     t_map::apply_automatic_block_drops(); // automatically drop associated block item from block
     t_map::end_drop_dat();
-    
+
     Item::load_synthesizer();
     Item::load_crafting_dat();
     Item::load_smelting_dat();
@@ -288,7 +288,7 @@ int init_c_lib(int argc, char* argv[])
 
     create_path(SCREENSHOT_PATH);
     create_path(DATA_PATH);
-    
+
     Log::init();
 
     Options::init_option_tables();
@@ -298,7 +298,7 @@ int init_c_lib(int argc, char* argv[])
 
     Options::parse_args(argc, argv);
     Options::validate();
-    
+
     printf("Server init\n");
     srand((unsigned int)time(NULL));
 
@@ -307,7 +307,7 @@ int init_c_lib(int argc, char* argv[])
         printf("enabled\n");
     else
         printf("disabled\n");
-        
+
     printf("Serializer ");
     if (Options::serializer)
         printf("enabled\n");
@@ -334,7 +334,7 @@ int init_c_lib(int argc, char* argv[])
 
     Sound::init();
     Animations::init();
-    
+
     t_map::init_t_map();
 
     init_configs();
@@ -357,7 +357,7 @@ int init_c_lib(int argc, char* argv[])
     t_gen::init_map_generator();
 
     Badges::register_badges();
-    
+
     return 0;
 }
 
@@ -388,13 +388,13 @@ void close_c_lib()
     Item::teardown_properties();
     ItemContainer::teardown();
     ItemContainer::teardown_config();
-    
+
     t_mech::teardown_drop_dat();
     t_mech::teardown_properties();
     t_mech::teardown();
 
     t_plant::teardown();
-    
+
     t_gen::teardown_map_generator();
     t_gen::teardown();
 
@@ -406,8 +406,8 @@ void close_c_lib()
     Animations::teardown();
 
     Auth::teardown();
-    
-    printf("Server closed\n"); 
+
+    printf("Server closed\n");
     Log::teardown();
     _GS_ASSERT_TEARDOWN();
 

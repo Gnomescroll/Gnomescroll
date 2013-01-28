@@ -16,6 +16,8 @@ class EquipmentUI: public UIElement
         static const int texture_width = 256;
         static const int texture_height = 256;
 
+        // TODO -- a bunch of parameters for specific offsets
+
         int xdim;
         int ydim;
 
@@ -69,6 +71,12 @@ void EquipmentUI::draw()
         float(this->width)/float(this->texture_width),
         float(this->height)/float(this->texture_height));
     glDisable(GL_TEXTURE_2D);
+
+    // draw slot highlight
+
+    // draw item sprites
+
+    // draw text
 }
 
 }   // HudContainer

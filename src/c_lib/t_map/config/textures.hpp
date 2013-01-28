@@ -90,9 +90,13 @@ void blit_block_item_sheet()
             */
 
             int index = 16*j+i;
-            int s1 = get_cube_side_texture(index, 0); //T
-            int s2 = get_cube_side_texture(index, 2); //N
-            int s3 = get_cube_side_texture(index, 4); //W
+            // the NULL_CUBE is reserved at 255 (so that it fits in a packet)
+            // must skip it
+            IF_INVALID_CUBE_TYPE((CubeType)index) continue;
+
+            int s1 = get_cube_side_texture((CubeType)index, 0); //T
+            int s2 = get_cube_side_texture((CubeType)index, 2); //N
+            int s3 = get_cube_side_texture((CubeType)index, 4); //W
 
             draw_iso_cube(i*scale, j*scale, scale, s1,s2,s3);
         }
@@ -103,7 +107,7 @@ void blit_block_item_sheet()
         SDL_LockSurface(block_item_64_surface);
 
         GLenum format = GL_BGRA;
-        if (block_item_64_surface->format->Rmask == 0x000000ff)
+        if (block_item_64_surface->format->Rmask == 0X000000FF)
             format = GL_RGBA;
 
         //glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_64_surface->pixels);
@@ -226,7 +230,7 @@ void blit_block_item_sheet()
         SDL_LockSurface(block_item_16_surface);
 
         GLenum format = GL_BGRA;
-        if (block_item_16_surface->format->Rmask == 0x000000ff)
+        if (block_item_16_surface->format->Rmask == 0X000000FF)
             format = GL_RGBA;
 
         //glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) block_item_16_surface->pixels);

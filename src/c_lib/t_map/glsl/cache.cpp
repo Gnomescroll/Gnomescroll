@@ -8,7 +8,7 @@
 /*
     Deprecate the Quad Cache
 */
-    
+
 
 namespace t_map
 {
@@ -22,12 +22,13 @@ void init_quad_cache_vertex_cordinates_compatibility();
 
 void init_cache()
 {
-    static int init = 0; if(init ==0 ) {init = 1; } else { printf("Error: init_cache() called twice!"); return;}
-    
-    if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( MAX_CUBES*6*4 * sizeof(struct Vertex));
+    static int init = 0;
+    IF_ASSERT(init++) return;
+
+    if (quad_cache == NULL) quad_cache = (struct Vertex*) malloc(MAX_CUBES*6*4 * sizeof(struct Vertex));
     memset(quad_cache, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
 
-    if( quad_cache_compatibility == NULL ) quad_cache_compatibility = (struct Vertex*) malloc( MAX_CUBES*6*4 * sizeof(struct Vertex));
+    if (quad_cache_compatibility == NULL) quad_cache_compatibility = (struct Vertex*) malloc(MAX_CUBES*6*4 * sizeof(struct Vertex));
     memset(quad_cache_compatibility, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
 
     //init_quad_cache_normals();
@@ -40,7 +41,7 @@ void init_cache()
 
 }
 
-static const int v_index[72] = 
+static const int v_index[72] =
 {
     1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
     0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
@@ -53,9 +54,9 @@ static const int v_index[72] =
 void init_quad_cache_vertex_cordinates()
 {
 
-    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++) 
+    for(int cube_type=0; cube_type<MAX_CUBES; cube_type++)
     {
-        for(int side=0;side<6;side++) 
+        for(int side=0; side<6; side++)
         {
             for(int i=0; i<4; i++)
             {
@@ -70,13 +71,13 @@ void init_quad_cache_vertex_cordinates()
 }
 void init_quad_cache_texture_cordinates()
 {
-    
+
     static const unsigned char _0 = 0;
     static const unsigned char _1 = 1;
-    
-    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++) 
+
+    for(int cube_type=0; cube_type<MAX_CUBES; cube_type++)
     {
-        for(int side=0;side<6;side++) 
+        for(int side=0; side<6; side++)
         {
             quad_cache[cube_type*6*4 +4*side + 0].tex = 0;
             quad_cache[cube_type*6*4 +4*side + 1].tex = 0;
@@ -85,8 +86,8 @@ void init_quad_cache_texture_cordinates()
 
             unsigned char tmp = (unsigned char) cube_side_texture_array[6*cube_type+side];
 
-            //if(cube_type == 1 ) printf("cube tex= %i \n", tmp);
-            
+            //if(cube_type == 1) printf("cube tex= %i \n", tmp);
+
             quad_cache[cube_type*6*4 +4*side + 0].tx = _0;
             quad_cache[cube_type*6*4 +4*side + 0].ty = _0;
             quad_cache[cube_type*6*4 +4*side + 0].tz = tmp;
@@ -110,9 +111,9 @@ void init_quad_cache_texture_cordinates()
 void init_quad_cache_vertex_cordinates_compatibility()
 {
 
-    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++) 
+    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++)
     {
-        for(int side=0;side<6;side++) 
+        for(int side=0;side<6;side++)
         {
             for(int i=0; i<4; i++)
             {
@@ -127,9 +128,6 @@ void init_quad_cache_vertex_cordinates_compatibility()
 }
 void init_quad_cache_texture_cordinates_compatibility()
 {
-    
-    //static const unsigned char _0 = 0;
-    //static const unsigned char _1 = 255;
 
     //static const unsigned char _0 = 0;
     //static const unsigned char _1 = 255;
@@ -137,9 +135,12 @@ void init_quad_cache_texture_cordinates_compatibility()
     //static const unsigned char _0 = 0;
     //static const unsigned char _1 = 255;
 
-    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++) 
+    //static const unsigned char _0 = 0;
+    //static const unsigned char _1 = 255;
+
+    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++)
     {
-        for(int side=0;side<6;side++) 
+        for(int side=0;side<6;side++)
         {
         /*
             quad_cache_compatibility[cube_type*6*4 +4*side + 0].tex = 0;
@@ -154,7 +155,7 @@ void init_quad_cache_texture_cordinates_compatibility()
 
             ix = 0;
             iy = 0;
-        
+
             quad_cache_compatibility[cube_type*6*4 +4*side + 0].tx = _0;
             quad_cache_compatibility[cube_type*6*4 +4*side + 0].ty = _0;
             quad_cache_compatibility[cube_type*6*4 +4*side + 0].tz = ix;
@@ -226,13 +227,13 @@ void init_quad_cache_texture_cordinates_compatibility()
 }
 
 
-void init_quad_cache_normals() 
+void init_quad_cache_normals()
 {
-    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++) 
+    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++)
     {
-        for(int side=0;side<6;side++) 
+        for(int side=0;side<6;side++)
         {
-            for(int i=0;i<4;i++) 
+            for(int i=0;i<4;i++)
             {
             /*
                 int index = cube_type*6*4 +4*side +i;
@@ -244,10 +245,10 @@ void init_quad_cache_normals()
 }
 
 /*
-void init_quad_cache_normals() 
+void init_quad_cache_normals()
 {
 
-    static const struct NormalElement normal_array[6] = { 
+    static const struct NormalElement normal_array[6] = {
         {{{0,0,1,0}}},
         {{{0,0,-1,0}}},
         {{{1,0,0,0}}},
@@ -256,11 +257,11 @@ void init_quad_cache_normals()
         {{{0,-1,0,0}}}
         };
 
-    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++) 
+    for(int cube_type=0;cube_type<MAX_CUBES;cube_type++)
     {
-        for(int side=0;side<6;side++) 
+        for(int side=0;side<6;side++)
         {
-            for(int i=0;i<4;i++) 
+            for(int i=0;i<4;i++)
             {
                 int index = cube_type*6*4 +4*side +i;
                 //quad_cache[index].n = normal_array[side].n;

@@ -19,7 +19,7 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-void block_crumble(float x, float y, float z, int n, int cube_type, float momentum)
+void block_crumble(float x, float y, float z, int n, CubeType cube_type, float momentum)
 {
     if (Options::animation_level <= 0) return;
     const float crumble_size = 0.17f;
@@ -37,7 +37,7 @@ void block_crumble(float x, float y, float z, int n, int cube_type, float moment
     float theta,phi;
 
     class Particle::TexturedMinivox* minivox;
-    
+
     for (int i=0; i < n; i++)
     {
         nx = x + randf() - 0.5f;
@@ -70,7 +70,7 @@ void block_crumble(float x, float y, float z, int n, int cube_type, float moment
     }
 }
 
-void block_crumble(float x, float y, float z, int n, int cube_type, TerrainModificationAction action)
+void block_crumble(float x, float y, float z, int n, CubeType cube_type, TerrainModificationAction action)
 {
     float momentum = 5.0f;
     switch (action)
@@ -105,7 +105,7 @@ void block_crumble(float x, float y, float z, int n, int cube_type, TerrainModif
 // surface block dmg
 // takes encoded side int and translates to side[3];
 // collision point, incident vector, cube_type, side
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int cube_side)
+void block_damage(float x, float y, float z, float ix, float iy, float iz, CubeType cube_type, int cube_side)
 {
     int side[3];
     get_side_array_from_cube_side(cube_side, side);
@@ -114,13 +114,13 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 
 // surface block dmg
 // collision point, incident vector, cube_type, side
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int side[3])
+void block_damage(float x, float y, float z, float ix, float iy, float iz, CubeType cube_type, int side[3])
 {
     int cube_side = get_cube_side_from_side_array(side);
     block_damage(x,y,z,ix,iy,iz,cube_type, side, cube_side);
 }
 
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_type, int side[3], int cube_side)
+void block_damage(float x, float y, float z, float ix, float iy, float iz, CubeType cube_type, int side[3], int cube_side)
 {
     if (Options::animation_level <= 0) return;
 
@@ -170,10 +170,10 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 
         theta = randf() * PI * 2;
         phi = randf() * PI * 2;
-        
+
         nx = translate_point(nx);
         ny = translate_point(ny);
-        
+
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
         ttl = randrange(75,85);
@@ -210,7 +210,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     //{ 0,-0.70711,0.70711 },
     //{ 0,0.70711,-0.70711 },
     //{ 0,-0.70711,-0.70711 },    // 4
-    
+
     //{ 0.70711,0,0.70711 },
     //{ -0.70711,0,0.70711 },
     //{ 0.70711,0,-0.70711 },
@@ -298,7 +298,7 @@ void voxel_explode(Vec3 position, int count, float size, float force, Color colo
 
     float scale = ((float)Options::animation_level)/3.0f;
     count = scale*((float)count);
-    
+
     float cx,cy,cz;
     float cvx,cvy,cvz;
     float theta, phi;
@@ -388,7 +388,7 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     int n = randrange(140,170);
     float scale = ((float)Options::animation_level)/3.0f;
     n = scale*((float)n);
-    
+
     float len = sqrtf(ix*ix + iy*iy + iz*iz);
     ix /= len;
     iy /= len;
@@ -461,7 +461,7 @@ void create_shrapnel(int animation_id, void* metadata)
     int n = anim_data->count;
     if (anim_data->use_rand_range)
         n = randrange(anim_data->count, anim_data->max_count);
-        
+
     const float scale = ((float)Options::animation_level)/3.0f;
     n = scale*((float)n);
 

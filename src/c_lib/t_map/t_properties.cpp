@@ -146,12 +146,12 @@ bool isInUse(CubeType id)
     return cube_properties[id].loaded;
 }
 
-bool isSolid(CubeType id) 
+bool isSolid(CubeType id)
 {   // make sure you don't call this with a cube out of range
     return t_map::fast_cube_properties[id].solid;
 }
 
-bool isOccludes(CubeType id) 
+bool isOccludes(CubeType id)
 {
     // don't check id because this shouldnt be used publicly
     return t_map::fast_cube_properties[id].occludes;
@@ -179,7 +179,7 @@ bool isExplosive(CubeType id)
     return t_map::fast_cube_properties[id].explosive;
 }
 
-unsigned char maxDamage(CubeType id) 
+unsigned char maxDamage(CubeType id)
 {
     ASSERT_VALID_CUBE_TYPE(id);
     IF_INVALID_CUBE_TYPE(id) return 32;

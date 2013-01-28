@@ -52,7 +52,7 @@ int get_recharge_rate(int item_type);
 int get_max_stack_size(int item_type);
 int get_max_durability(int item_type);
 
-int get_block_type_id(int item_type);
+CubeType get_cube_type(int item_type);
 MechType get_mech_type(int item_type);
 
 int get_particle_voxel_texture(int item_type);

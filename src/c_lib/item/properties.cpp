@@ -187,10 +187,10 @@ int get_max_durability(int item_type)
     return attr->max_durability;
 }
 
-int get_block_type_id(int item_type)
+CubeType get_cube_type(int item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    IF_ASSERT(attr == NULL) return 0;
+    IF_ASSERT(attr == NULL) return ERROR_CUBE;
     GS_ASSERT(attr->cube_type != NULL_CUBE)
     return attr->cube_type;
 }
