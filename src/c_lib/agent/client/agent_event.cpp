@@ -36,19 +36,19 @@ void AgentEvent::update_hud_name()
     const float z_margin = 0.4f;
     Vec3 p = this->a->get_position();
     this->bb.set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
-    
+
     // determine color based on health
 
     using namespace AgentHudName;
 
     Color color = HEALTH_TEXT_DEAD_COLOR;    // default, dead color
-    
+
     if (!this->a->status.dead)
     {    // calculate interpolated color from health ratio and color control health_color_points
         int health = this->a->status.health;
         IF_ASSERT(health < 0) health = 0;
         float h = float(health) / float(this->a->status.health_max);
-        
+
         if (h >= health_color_points[0])
             color = health_colors[0];    // degenerate case, out of range
         else
@@ -281,7 +281,7 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
                 Vec3 c = vv->get_center();
                 Animations::blood_spray(c.x, c.y, c.z, f.x, f.y, f.z);
                 //Sound::play_3d_sound("pick_hit_agent",  // TODO: play weapon sound from a config
-                    //c.x, c.y, c.z, 
+                    //c.x, c.y, c.z,
                     //0,0,0);
             }
         }
@@ -293,7 +293,7 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
     Vec3 arm_center = this->a->arm_center();
 
     f = vec3_scalar_mult(f, hitscan_speed);
-    
+
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
         f.x, f.y, f.z
@@ -301,12 +301,12 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
 
 }
 
-void AgentEvent::fired_weapon_at_block(float x, float y, float z, int cube, int side)
+void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube, int side)
 {
     ASSERT_BOXED_POINTf(x);
     ASSERT_BOXED_POINTf(y);
     GS_ASSERT(side >= 0 && side <= 6);
-    
+
     AgentState s = this->a->get_state();
     s.z = this->a->camera_z();
 
@@ -321,7 +321,7 @@ void AgentEvent::fired_weapon_at_block(float x, float y, float z, int cube, int 
     //Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     Vec3 arm_center = this->a->vox->get_node(5)->c;
     ASSERT_BOXED_POSITION(arm_center);
-    
+
     // vector from camera to collision point
     Vec3 p = vec3_init(x,y,z);
     p = quadrant_translate_position(this->a->get_camera_position(), p);
@@ -332,8 +332,7 @@ void AgentEvent::fired_weapon_at_block(float x, float y, float z, int cube, int 
     f = vec3_scalar_mult(f, hitscan_speed);
     Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
-        f.x, f.y, f.z
-    );
+        f.x, f.y, f.z);
 
     // play block surface crumble
     Animations::block_damage(x,y,z, f.x, f.y, f.z, cube, side);
@@ -349,9 +348,9 @@ void AgentEvent::fired_weapon_at_nothing()
     Sound::play_3d_sound("fire_laser", s.x, s.y, s.z, s.vx, s.vy, s.vz);
 
     if (this->a->vox == NULL) return;
-    
+
     Vec3 f = this->a->forward_vector();
-    
+
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
     f = vec3_scalar_mult(f, hitscan_speed);
@@ -424,7 +423,7 @@ AgentEvent::AgentEvent(Agent* owner) :
     if (this->a->status.name != NULL)
         this->bb.set_text(this->a->status.name);
     this->bb.set_color(Color(200,4,3,255));
-    this->bb.set_scale(AgentHudName::SIZE);    
+    this->bb.set_scale(AgentHudName::SIZE);
 }
 
 }   // Agents

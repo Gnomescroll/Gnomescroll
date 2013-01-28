@@ -3,10 +3,10 @@
 #include <t_map/_interface.hpp>
 #include <t_map/t_properties.hpp>
 #include <t_map/t_map_class.hpp>
+#include <t_map/glsl/texture.hpp>
 
 #if DC_CLIENT
 # include <t_map/glsl/cache.hpp>
-# include <t_map/glsl/texture.hpp>
 # include <t_map/glsl/shader.hpp>
 # include <t_map/net/t_StoC.hpp>
 #endif
@@ -56,7 +56,7 @@ CubeType set(int x, int y, int z, CubeType cube_type)
     return cube_type;
 }
 
-OPTIMIZED
+OPTIMIZED ALWAYS_INLINE
 void set_fast(int x, int y, int z, CubeType cube_type)
 {
     main_map->set_block(x,y,z, cube_type);
@@ -68,7 +68,7 @@ struct MAP_ELEMENT get_element(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-    if(c == NULL) return NULL_MAP_ELEMENT;
+    if (c == NULL) return NULL_MAP_ELEMENT;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 }
 
@@ -95,10 +95,11 @@ void init_t_map()
     GS_ASSERT(main_map == NULL);
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
+    init_textures();
+
     #if DC_CLIENT
     init_client_compressors();
     init_t_vbo();
-    init_textures();
     #endif
 
     #if DC_SERVER
@@ -116,7 +117,7 @@ void init_for_draw()
     init_shaders();
 }
 #endif
-    
+
 void end_t_map()
 {
     if (main_map != NULL) delete main_map;
@@ -131,6 +132,8 @@ void end_t_map()
     if (map_history != NULL) delete map_history;
     teardown_env_process();
     #endif
+
+    teardown_textures();
 }
 
 int get_block_damage(int x, int y, int z)
@@ -162,7 +165,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     // block_action packet expects final value of cube, not initial value
     map_history->send_block_action(x,y,z, EMPTY_CUBE, action);
 
-    if (cube_properties[cube_type].item_drop) 
+    if (cube_properties[cube_type].item_drop)
         handle_block_drop(x,y,z, cube_type);
 }
 
@@ -239,7 +242,7 @@ inline int get_highest_open_block(int x, int y, int n)
     return -1;
 }
 
-inline int get_highest_open_block(int x, int y) 
+inline int get_highest_open_block(int x, int y)
 {
     return get_highest_solid_block(x, y) + 1;
 }
@@ -257,7 +260,7 @@ inline int get_nearest_open_block(int x, int y, int z, int n)
         int start = up;
         if (inc < 0)
             start = down;
-            
+
         // look for gap of height n
         bool found = true;
         for (int j=0; j<n; j++)
@@ -269,13 +272,13 @@ inline int get_nearest_open_block(int x, int y, int z, int n)
             }
         }
         if (found) return start;
-        
+
         // advance up/down cursors
         if (inc > 0)
             up++;
         else
             down--;
-        
+
         // set direction
         if (up >= map_dim.z)
             inc = -1;
@@ -284,7 +287,7 @@ inline int get_nearest_open_block(int x, int y, int z, int n)
         else
             inc *= -1;  // flip
     }
-    
+
     return -1;
 }
 
@@ -393,7 +396,7 @@ bool block_can_be_placed(int x, int y, int z, CubeType cube_type)
 
     bool valid_cube = isValidCube(cube_type);
     IF_ASSERT(!valid_cube) return false;
-    
+
     if (get(x,y,z) != EMPTY_CUBE) return false;
     // check against all spawners
     if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x,y,z))

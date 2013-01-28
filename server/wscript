@@ -11,16 +11,18 @@ import shutil
 import subprocess
 import shlex
 
-from waflib import Tools, Errors
-Tools.c_preproc.go_absolute = True
+#from waflib import c_preproc
+#c_preproc.go_absolute = True
+#from waflib import Tools, Errors
+#Tools.c_preproc.go_absolute = True
 
 OS = None
 
-MAIN_TEST_CODE = """
+MAIN_TEST_CODE = '''
 int main(int argc, char *argv[]) {
     return 0;
 }
-"""
+'''
 
 
 def _grab_output(*cmd):
@@ -42,25 +44,22 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def check_clang(conf):
+def check_clang(conf, requested=False):
     if OS != 'Linux':
         return False
-        
+
     # use clang if requested or available
     # If you do check_tool('g++') after this, it won't compile, even though the check works
-    use_clang = bool(os.environ.get('WAF_USE_CLANG'))
+    use_clang = requested or bool(os.environ.get('WAF_USE_CLANG'))
     has_clang = False
-    with open(os.devnull, "w") as fnull:
+    with open(os.devnull, 'w') as fnull:
         has_clang = (subprocess.call(shlex.split('which clang'), stdout=fnull, stderr=fnull) == 0)
     if use_clang and not has_clang:
         raise Errors.ConfigurationError('ERROR: Clang requested, but not found on system')
-    if use_clang:
-        conf.env['CC'] = ['clang']
-        conf.env['CXX'] = ['clang']
-        print 'Using clang'
     return use_clang
 
-def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use_clang=True):
+def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
+               production=False, use_clang=False):
     optflag = '-O' + str(optlevel)
 
     global OS
@@ -73,20 +72,12 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
     else:
         prodflag += '0'
 
-    #conf.check_tool('gcc')
-    conf.check_tool('g++')
+    use_clang = check_clang(conf, requested=use_clang)
 
-    # use clang if requested or available
-    # If you do check_tool('g++') after this, it won't compile, even though the check works
     if use_clang:
-        use_clang = check_clang(conf)
-
-    #from waflib.Tools.compiler_c import c_compiler
-    #c_compiler['linux'] = ['clang', 'gcc']
-    #conf.load('compiler_c compiler_cxx')
-
-    #conf.cc_add_flags()     #"-g"
-    #conf.link_add_flags()   #"-g"
+        conf.check_tool('clang++')
+    else:
+        conf.check_tool('g++')
 
     cxxflags = []
     if OS == 'Windows':
@@ -125,38 +116,37 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
 
     conf.env.append_value('CXXFLAGS', cxxflags)
 
-    #conf.env.append_value("LINKFLAGS", "-lz") ??
-
     #    #'-Wl', '--export-dynamic'  to export symbols from exe to shared libaries
     if OS == 'Windows':
-        conf.env.append_value("LINKFLAGS", "-lmingw32")
-        conf.env.append_value("LINKFLAGS", "-lwsock32")
-        conf.env.append_value("LINKFLAGS", "-lws2_32")
-        conf.env.append_value("LINKFLAGS", "-lwinmm")
-        conf.env.append_value("CXXFLAGS", "-DNOMINMAX")
+        conf.env.append_value('LINKFLAGS', '-lmingw32')
+        conf.env.append_value('LINKFLAGS', '-lwsock32')
+        conf.env.append_value('LINKFLAGS', '-lws2_32')
+        conf.env.append_value('LINKFLAGS', '-lwinmm')
+        conf.env.append_value('CXXFLAGS', '-DNOMINMAX')
 
     if OS == 'Linux':
-        conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
-        conf.env.append_value("LINKFLAGS", "-lpthread") #threaded
+        conf.env.append_value('LINKFLAGS', '-lrt') #64 bit support
+        conf.env.append_value('LINKFLAGS', '-lpthread') #threaded
     if OS != 'Windows':
-        conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
+        conf.env.append_value('LINKFLAGS', '-rdynamic') #64 bit support
 
     if OS == 'Darwin':
         # 64 bit lua shit
-        conf.env.append_value("CXXFLAGS", "-Xlinker -pagezero_size -Xlinker 10000")
-        conf.env.append_value("CXXFLAGS", "-Xlinker -image_base -Xlinker 100000000")
+        conf.env.append_value('CXXFLAGS', '-Xlinker -pagezero_size -Xlinker 10000')
+        conf.env.append_value('CXXFLAGS', '-Xlinker -image_base -Xlinker 100000000')
+
+    conf.env.append_value('LINKFLAGS', ' '.join(link_flags))
 
     if OS == 'Windows':
         libpath = os.path.abspath('../lib/win32')
 
-    
     if OS == 'Windows':
         lua_inc_path = os.path.join(libpath, 'LuaJIT-2.0.0-beta10')
         lua_lib_path = [os.path.join(libpath, 'lib')]
     else:
         lua_lib_path = ['/usr/local/lib']
         lua_inc_path = '/usr/include/luajit-2.0'
-        
+
         redis_lib_path = ['../lib/server/hiredis/lib32/', '../lib/server/hiredis/lib64/']
         redis_inc_path = '../lib/server/hiredis/include/'
 
@@ -164,7 +154,7 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
         libev_inc_path = ['/usr/include', redis_inc_path]
 
         libuuid_lib_path = ['/usr/lib']
-        libuuid_inc_path = ['/usr/include']        
+        libuuid_inc_path = ['/usr/include']
 
     if OS == 'Windows':
         conf.check(header_name='lua.hpp',
@@ -177,49 +167,43 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
                    mandatory=True)
     else:
         conf.check(header_name='lua.h',
-               lib='luajit-5.1', #'lua5.1',
-               use='luajit-5.1', #'lua5.1',
-               uselib_store='LUA',
-               fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
-               libpath=lua_lib_path,
-               includes=lua_inc_path,
-               mandatory=True)
-               
+                   lib='luajit-5.1', #'lua5.1',
+                   use='luajit-5.1', #'lua5.1',
+                   uselib_store='LUA',
+                   fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
+                   libpath=lua_lib_path,
+                   includes=lua_inc_path,
+                   mandatory=True)
+
         # is already included in the lib/lin32/ folder
         conf.check(header_name='hiredis.h',
-            lib='hiredis',
-            use='hiredis',
-            uselib_store='REDIS',
-            fragment='#include <hiredis/hiredis.h>' + MAIN_TEST_CODE,
-            libpath=map(os.path.abspath, redis_lib_path),
-            includes=os.path.abspath(redis_inc_path),
-            mandatory=True)
+                   lib='hiredis',
+                   use='hiredis',
+                   uselib_store='REDIS',
+                   fragment='#include <hiredis/hiredis.h>' + MAIN_TEST_CODE,
+                   libpath=map(os.path.abspath, redis_lib_path),
+                   includes=os.path.abspath(redis_inc_path),
+                   mandatory=True)
 
         # sudo apt-get install libev-dev
         conf.check(header_name='ev.h',
-            lib=['ev', 'hiredis'],
-            use='ev',
-            uselib_store='EV',
-            fragment='#include <hiredis/adapters/libev.h>' + MAIN_TEST_CODE,
-            libpath=map(os.path.abspath, libev_lib_path),
-            includes=map(os.path.abspath, libev_inc_path),
-            mandatory=True)
+                   lib=['ev', 'hiredis'],
+                   use='ev',
+                   uselib_store='EV',
+                   fragment='#include <hiredis/adapters/libev.h>' + MAIN_TEST_CODE,
+                   libpath=map(os.path.abspath, libev_lib_path),
+                   includes=map(os.path.abspath, libev_inc_path),
+                   mandatory=True)
 
         # sudo apt-get install uuid-dev
         conf.check(header_name='uuid.h',
-            lib=['uuid'],
-            use='uuid',
-            uselib_store='UUID',
-            fragment='#include <uuid/uuid.h>' + MAIN_TEST_CODE,
-            libpath=map(os.path.abspath, libuuid_lib_path),
-            includes=map(os.path.abspath, libuuid_inc_path),
-            mandatory=True)
-            
-
-    #conf.check(header_name="noise/noise.h",
-                #lib="noise",
-                #use="noise",
-                #mandatory=True)
+                   lib=['uuid'],
+                   use='uuid',
+                   uselib_store='UUID',
+                   fragment='#include <uuid/uuid.h>' + MAIN_TEST_CODE,
+                   libpath=map(os.path.abspath, libuuid_lib_path),
+                   includes=map(os.path.abspath, libuuid_inc_path),
+                   mandatory=True)
 
     conf.env.INCLUDES = ['../src/c_lib', '../src/net_lib', '../src','/usr/local/include', '/usr/include']
     conf.env.RPATH = ['.','..', '$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
@@ -228,13 +212,14 @@ def configure(conf, add_flags=[], rm_flags=[], optlevel=0, production=False, use
         conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib32')
         conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib64')
 
+
 def build(bld):
     OS = platform.system()
     if OS != 'Windows':
         time_lib = ['rt']
     else:
         time_lib = []
-    if OS == "Darwin":
+    if OS == 'Darwin':
         time_lib = []
 
     use = time_lib+['LUA']
@@ -243,13 +228,11 @@ def build(bld):
 
     ##attemping C++ build
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
-    bld(
-        features = 'cxx cxxprogram',
+    bld(features = 'cxx cxxprogram',
         source = ['../src/server/_server.cpp',],
         use = use,
         lib = time_lib,
-        target = 'run'
-    )
+        target = 'run')
     bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
     bld.add_post_fun(install_bin)
@@ -259,24 +242,24 @@ def install_bin(ctx):
     OS = platform.system()
 
     out = ''
-    if OS == "Windows":
+    if OS == 'Windows':
         out = 'build'
 
-    if OS == "Linux":
+    if OS == 'Linux':
         out = 'build'
 
     dests = []
-    if OS == "Windows":
+    if OS == 'Windows':
         dests = ['run.exe']
     else:
         dests = ['run']
-    if OS == "Linux":
+    if OS == 'Linux':
         dests.append('gnomescroll_server')
-        
+
     run_target = 'run'
     if OS == 'Windows':
         run_target = 'run.exe'
-        
+
     for run_dest in dests:
         try:
             src = os.path.join(out, run_target)
@@ -285,10 +268,10 @@ def install_bin(ctx):
                 continue
             if os.path.exists(src):
                 shutil.copy2(src, dest)
-                print "Copied %s to %s" % (src, dest,)
+                print 'Copied %s to %s' % (src, dest,)
         except Exception, e:
-            print "Failed to copy %s to %s. Reason: %s" % (src, dest, e,)
-        
+            print 'Failed to copy %s to %s. Reason: %s' % (src, dest, e,)
+
     try:
         if OS == 'Windows': # copy dlls into directory, so Cell can run the exe from the folder.
             dll_path = '../lib/win32/dll/'
@@ -298,16 +281,9 @@ def install_bin(ctx):
                 src_dll = os.path.join(dll_path, dll)
                 dst_dll = os.path.join('./', dll)
                 shutil.copy2(src_dll, dst_dll)
-            print "Copied dlls to current directory"
+            print 'Copied dlls to current directory'
     except Exception, e:
-        print "Error copying dlls from %s to current directory. Reason: %s" % (dll_path, e,)
-        
-#def ensure_dir(path):
-    #try:
-        #os.makedirs(path)
-    #except OSError, e:
-        #if e.errno != errno.EEXIST:
-            #raise
+        print 'Error copying dlls from %s to current directory. Reason: %s' % (dll_path, e,)
 
 
 '''
@@ -332,7 +308,7 @@ class map_gen_ctx(ConfigurationContext):
 class linux_production_ctx(ConfigurationContext):
     cmd = 'linux'
     fun = 'linux'
-    
+
 class linux64_production_ctx(ConfigurationContext):
     cmd = 'linux64'
     fun = 'linux64'
@@ -348,22 +324,22 @@ class extra_ctx(ConfigurationContext):
 class profile_ctx(ConfigurationContext):
     cmd = 'profile'
     fun = 'profile'
-    
+
 def profile(ctx):
     configure(ctx, optlevel=3)
     ctx.env.CFLAGS.append('-pg')
     ctx.env.CXXFLAGS.append('-pg')
-    ctx.env.append_value("LINKFLAGS", "-pg")
+    ctx.env.append_value('LINKFLAGS', '-pg')
 
 def extra(ctx):
     configure(ctx, add_flags=['-Wextra'])
 
 def linux(ctx):
     production(ctx, add=['-shared-libgcc'])
-    
+
 def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
-    
+
 def optimized(ctx):
     configure(ctx, optlevel=3)
 
@@ -389,14 +365,14 @@ class production_ctx(ConfigurationContext):
 
 def production(ctx, add=[], rm=[]):
     configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm, production=True, use_clang=False)
-    
+
 class production_dbg_ctx(ConfigurationContext):
     cmd = 'production_dbg'
     fun = 'production_dbg'
 
 def production_dbg(ctx, add=[], rm=[]):
     configure(ctx, add_flags=add+['-DNDEBUG', '-Winline'], optlevel=3, rm_flags=rm, production=True, use_clang=False)
-    
+
 class prodtest_ctx(ConfigurationContext):
     cmd = 'prodtest'
     fun = 'prodtest'
@@ -417,3 +393,17 @@ class gcc_ctx(ConfigurationContext):
 
 def gcc(ctx):
     configure(ctx, use_clang=False)
+
+class address_sanitizer_ctx(ConfigurationContext):
+    cmd = 'asan'
+    fun = 'asan'
+
+def asan(ctx, add=[], rm=[]):
+    asan_path = os.environ.get('ASAN_PATH')
+    if not asan_path:
+        raise ValueError('ASAN_PATH not defined in your environment')
+    flags = ['-fsanitize=address', '-fno-omit-frame-pointer', '-fno-common']
+    link_flags = ['-fsanitize=address']
+    os.environ['PATH'] = '{0}:{1}'.format(asan_path, os.environ['PATH'])
+    configure(ctx, add_flags=add+flags, rm_flags=rm, link_flags=link_flags,
+              optlevel=1, use_clang=True)

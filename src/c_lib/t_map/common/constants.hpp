@@ -5,7 +5,7 @@ const int XMAX = 512;
 const int YMAX = 512;
 const int ZMAX = 128;
 
-const int MAX_CUBES = 0xff;
+const int MAX_CUBES = 0xFF;
 
 const int TERRAIN_MAP_HEIGHT = 128;
 const int TERRAIN_CHUNK_WIDTH = 16; // width of a chunk
@@ -26,7 +26,7 @@ const int MAP_CHUNK_YDIM = MAP_HEIGHT/TERRAIN_CHUNK_WIDTH;  // # of chunks in y
 const float QUADRANT_DIVIDEf = 256.0f;
 const int QUADRANT_DIVIDEi = 256;
 
-const unsigned char MAX_CUBE_DAMAGE = 0xff;
+const unsigned char MAX_CUBE_DAMAGE = 0XFF;
 const unsigned char INVINCIBLE_CUBE_DAMAGE = MAX_CUBE_DAMAGE;   // any blocks with this value will be invincible
 
 const size_t CHUNK_ELEMENT_COUNT = ZMAX*TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH;

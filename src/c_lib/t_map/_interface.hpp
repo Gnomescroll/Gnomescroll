@@ -40,7 +40,6 @@ inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
 
 bool block_can_be_placed(int x, int y, int z, CubeType cube_type);
 
-
 #if DC_CLIENT
 extern class Vbo_map* vbo_map;
 
