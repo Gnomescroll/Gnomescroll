@@ -35,7 +35,6 @@ void load_item_dat()
     // special purpose
     item_def(IG_UNKNOWN, "unknown");
     sprite_def(i0, 5,1);
-    set_pretty_name("Unknown");
 
     // containers
     item_container_def("storage_block_small");
@@ -68,11 +67,9 @@ void load_item_dat()
 
     item_def(IG_RESOURCE, "quartz_crystal");
     sprite_def(i0, 1,5);
-    set_pretty_name("Quartz Crystal");
 
     item_def(IG_HITSCAN_WEAPON, "laser_rifle");
     sprite_def(i1, 5,8);
-    set_pretty_name("Laser Rifle");
     s->hitscan_fire_cooldown = 30;
     s->hitscan_damage = 5;
     s->hitscan_bullet_effect_enum = 0;
@@ -136,16 +133,13 @@ void load_item_dat()
 
     item_def(IG_GRENADE_LAUNCHER, "plasma_grenade");
     sprite_def(i0, 1,7);
-    set_pretty_name("Plasma Grenade");
     s->max_stack_size = 100;
 
     item_def(IG_DEBUG, "location_pointer");
     sprite_def(i0, 4,2);
-    set_pretty_name("Location Pointer");
 
     item_def(IG_DEBUG, "block_placer");
     sprite_def(i0, 4,5);
-    set_pretty_name("Block Placer");
     s->cube_height = 1;
 
     item_def(IG_RESOURCE, "copper_ore_piece");
@@ -155,12 +149,10 @@ void load_item_dat()
 
     item_def(IG_RESOURCE, "copper_bar");
     sprite_def(i1, 3,2);
-    set_pretty_name("Copper Bar");
     s->max_stack_size = 64;
 
     item_def(IG_SHOVEL, "copper_shovel");
     sprite_def(i1, 3,1);
-    set_pretty_name("Copper Shovel");
     s->melee_fire_cooldown = 250;
     s->melee_damage = 2;
     s->max_durability = 400;
@@ -181,12 +173,10 @@ void load_item_dat()
 
     item_def(IG_RESOURCE, "iron_bar");
     sprite_def(i1, 1,2);
-    set_pretty_name("Iron Bar");
     s->max_stack_size = 64;
 
     item_def(IG_SHOVEL, "iron_shovel");
     sprite_def(i1, 1,1);
-    set_pretty_name("Iron Shovel");
     s->melee_fire_cooldown = 250;
     s->melee_damage = 6;
     s->max_durability = 400;
@@ -207,12 +197,10 @@ void load_item_dat()
 
     item_def(IG_RESOURCE, "gallium_bar");
     sprite_def(i1, 2,2);
-    set_pretty_name("Gallium Bar");
     s->max_stack_size = 64;
 
     item_def(IG_SHOVEL, "gallium_shovel");
     sprite_def(i1, 2,1);
-    set_pretty_name("Gallium Shovel");
     s->melee_fire_cooldown = 250;
     s->melee_damage = 4;
     s->max_durability = 400;
@@ -233,12 +221,10 @@ void load_item_dat()
 
     item_def(IG_RESOURCE, "iridium_bar");
     sprite_def(i1, 4,2);
-    set_pretty_name("Iridium Bar");
     s->max_stack_size = 64;
 
     item_def(IG_SHOVEL, "iridium_shovel");
     sprite_def(i1, 4,1);
-    set_pretty_name("Iridium Shovel");
     s->melee_fire_cooldown = 250;
     s->melee_damage = 30;
     s->max_durability = 400;
@@ -259,7 +245,6 @@ void load_item_dat()
 
     item_def(IG_RESOURCE, "silicon_crystal");
     sprite_def(i1, 13,1);
-    set_pretty_name("Silicon Crystal");
     s->max_stack_size = 64;
 
     item_def(IG_SHOVEL, "silicon_dagger");
@@ -280,7 +265,6 @@ void load_item_dat()
 
     item_def(IG_FIST, "fist");
     sprite_def(i1, 6, 2);
-    set_pretty_name("Fist");
     s->firing_range = 4.0f;
     s->firing_rate = 6;
     block_damage_def(1);
@@ -298,7 +282,6 @@ void load_item_dat()
 
     item_def(IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
-    set_pretty_name("Small Charge Pack");
     s->max_stack_size = 16;
     s->repair_agent_amount = 25;
 
@@ -324,25 +307,22 @@ void load_item_dat()
 
     item_def(IG_ENERGY_CORE, "energy_core");
     sprite_def(i1, 3,6);
-    set_pretty_name("Energy Core");
     s->max_stack_size = 1;
     s->cube_height = 1;
 
     item_def(IG_MECH_PLACER, "crystal_seed");
     sprite_def(i1, 5,1);
     s->mech_type = t_mech::get_mech_type("red_crystal");
-    set_pretty_name("Crystal Seed");
     s->max_stack_size = 8;
 
     item_def(IG_MECH_PLACER, "crystal_seed2");
     sprite_def(i1, 5,2);
     s->mech_type = t_mech::get_mech_type("blue_crystal");
-    set_pretty_name("Crystal Seed");
     s->max_stack_size = 8;
 
     item_def(IG_RESOURCE, "powdered_regolith");
     sprite_def(i0, 4,6);
-    set_pretty_name("Powdered Regolith");
+    set_pretty_name("Fine Regolith");
     s->max_stack_size = 64;
 
     item_def(IG_RESOURCE, "crushed_rock");
@@ -352,46 +332,34 @@ void load_item_dat()
 
     item_def(IG_RESOURCE, "iron_rod");
     sprite_def(i1, 1,7);
-    set_pretty_name("Iron Rod");
     s->max_stack_size = 1;
 
     item_def(IG_RESOURCE, "iron_star");
     sprite_def(i1, 4,7);
-    set_pretty_name("Iron Star");
     s->max_stack_size = 1;
 
     item_def(IG_RESOURCE, "iron_blade");
     sprite_def(i1, 4,6);
-    set_pretty_name("Iron Blade");
     s->max_stack_size = 1;
 
     item_def(IG_RESOURCE, "copper_wire");
     sprite_def(i1, 1,6);
-    set_pretty_name("Copper Wire");
     s->max_stack_size = 1;
 
     item_def(IG_EQUIPMENT, "iron_helmet");
     sprite_def(i1, 5,3);
-    set_pretty_name("Iron Helmet");
-    s->max_stack_size = 1;
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
 
     item_def(IG_EQUIPMENT, "gallium_helmet");
     sprite_def(i1, 5,4);
-    set_pretty_name("Gallium Helmet");
-    s->max_stack_size = 1;
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
 
     item_def(IG_EQUIPMENT, "copper_helmet");
     sprite_def(i1, 5,5);
-    set_pretty_name("Copper Helmet");
-    s->max_stack_size = 1;
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
 
     item_def(IG_EQUIPMENT, "iridium_helmet");
     sprite_def(i1, 5,6);
-    set_pretty_name("Iridium Helmet");
-    s->max_stack_size = 1;
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
 
     item_def(IG_RESOURCE, "blue_crystal");
@@ -412,24 +380,20 @@ void load_item_dat()
     item_def(IG_MECH_PLACER, "acadia_seed");
     sprite_def(p0, 1,1);
     s->mech_type = t_mech::get_mech_type("acadia_flower_stage_0");
-    set_pretty_name("Acadia Seed");
     s->max_stack_size = 16;
 
     item_def(IG_RESOURCE, "acadia_fruit");
     sprite_def(p0, 1,2);
     s->max_stack_size = 16;
-    set_pretty_name("Acadia Fruit");
 
     item_def(IG_MECH_PLACER, "blob_seed");
     sprite_def(p0, 2,1);
     s->mech_type = t_mech::get_mech_type("blob_flower");
-    set_pretty_name("Blob Seed");
     s->max_stack_size = 64;
 
     item_def(IG_MECH_PLACER, "cryptid_larvae");
     sprite_def(p0, 3,1);
     s->mech_type = t_mech::get_mech_type("cryptid_larvae_stage_0");
-    set_pretty_name("Cryptid Larvae");
     s->max_stack_size = 16;
 
     item_def(IG_RESOURCE, "blackpowder");
@@ -567,6 +531,9 @@ void verify_item_dat()
 
         GS_ASSERT_ABORT((a->group == IG_EQUIPMENT && a->equipment_type != NULL_EQUIPMENT_TYPE) ||
                         (a->group != IG_EQUIPMENT && a->equipment_type == NULL_EQUIPMENT_TYPE));
+
+        GS_ASSERT_ABORT(a->group != IG_EQUIPMENT || a->max_stack_size == 1)
+        GS_ASSERT_ABORT(a->group != IG_EQUIPMENT || a->max_charges == NULL_CHARGES)
 
         if (a->group == IG_ERROR) errct++;
     }
