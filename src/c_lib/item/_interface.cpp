@@ -41,7 +41,7 @@ Item* get_item(ItemID id)
     return item_list->get(id);
 }
 
-int get_item_type(ItemID id)
+ItemType get_item_type(ItemID id)
 {
     if (id == NULL_ITEM) return NULL_ITEM_TYPE;
     Item* item = get_item(id);
@@ -105,7 +105,7 @@ void merge_item_stack(ItemID src, ItemID dest)
 void merge_item_stack(ItemID src, ItemID dest, int amount)
 {
     IF_ASSERT(amount <= 0) return;
-    
+
     Item* src_item = get_item(src);
     IF_ASSERT(src_item == NULL) return;
     Item* dest_item = get_item(dest);
@@ -114,14 +114,14 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
     // add src's stack to dest
     dest_item->stack_size += amount;
     GS_ASSERT(dest_item->stack_size <= get_max_stack_size(dest_item->type));
-    
+
     // remove from src
     src_item->stack_size -= amount;
     GS_ASSERT(src_item->stack_size >= 1);
 }
 
 }   // Item
- 
+
 // Client
 #if DC_CLIENT
 namespace Item
@@ -131,8 +131,8 @@ void destroy_item(ItemID id)
 {
     item_list->destroy(id);
 }
-    
-Item* create_item(int item_type, ItemID item_id)
+
+Item* create_item(ItemType item_type, ItemID item_id)
 {
     IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
     IF_ASSERT(!isValid(item_id)) return NULL;
@@ -140,7 +140,7 @@ Item* create_item(int item_type, ItemID item_id)
 }
 
 }   // Item
-#endif 
+#endif
 
 // Server
 #if DC_SERVER
@@ -232,7 +232,7 @@ unsigned int item_space()
     return item_list->space();
 }
 
-class Item* create_item(int item_type)
+class Item* create_item(ItemType item_type)
 {
     IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
     return item_list->create_type(item_type);
@@ -240,7 +240,7 @@ class Item* create_item(int item_type)
 
 class Item* create_item(const char* item_name)
 {
-    int item_type = get_item_type(item_name);
+    ItemType item_type = get_item_type(item_name);
     IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
     return create_item(item_type);
 }
@@ -248,7 +248,7 @@ class Item* create_item(const char* item_name)
 int consume_stack_item(ItemID item_id, int amount, bool auto_destroy)
 {
     IF_ASSERT(item_id == NULL_ITEM) return 0;
-    
+
     int stack_size = get_stack_size(item_id);
     GS_ASSERT(stack_size >= amount);
     if (auto_destroy && stack_size <= amount)
@@ -283,7 +283,7 @@ int consume_stack_item(ItemID item_id, int amount)
 int consume_durability(ItemID item_id, int amount, bool auto_destroy)
 {
     IF_ASSERT(item_id == NULL_ITEM) return 0;
-    
+
     int durability = get_item_durability(item_id);
     GS_ASSERT(durability >= amount);
     if (auto_destroy && durability <= amount)
@@ -332,7 +332,7 @@ void test_item_list_capacity()
 {
     printf("Testing item list capacity\n");
     for (int i=0; i<MAX_ITEMS+1024; i++)
-        item_list->create_type(0);
+        item_list->create_type((ItemType)0);
 }
 
 void tick()
@@ -344,4 +344,4 @@ void tick()
 
 }   // Item
 
-#endif 
+#endif

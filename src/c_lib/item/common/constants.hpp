@@ -7,9 +7,7 @@ const size_t ITEM_PRETTY_NAME_MAX_LENGTH = 64;
 
 const int MAX_ITEMS = NULL_ITEM;
 
-const int NULL_ITEM_TYPE = 0xFF;
-const int MAX_ITEM_TYPES = NULL_ITEM_TYPE;
-
+const size_t MAX_ITEM_TYPES = NULL_ITEM_TYPE;
 const size_t MAX_CONTAINER_TYPES = 16;
 
 const int NULL_SLOT = 0xFF;           // invalid slot value
@@ -93,9 +91,9 @@ inline bool isValid(ItemID item_id)
     return (item_id >= 0 && item_id < MAX_ITEMS);
 }
 
-inline bool isValid(ItemParticleID particle_id)
+inline bool isValid(ItemType item_type)
 {
-    return (particle_id >= 0 && particle_id < MAX_ITEM_PARTICLES);
+    return (item_type >= 0 && item_type < MAX_ITEM_TYPES);
 }
 
 inline bool isValid(ItemContainerID container_id)
@@ -106,6 +104,11 @@ inline bool isValid(ItemContainerID container_id)
 inline bool isValid(ItemContainerType container_type)
 {
     return (container_type >= 0 && container_type < MAX_CONTAINER_TYPES);
+}
+
+inline bool isValid(ItemParticleID particle_id)
+{
+    return (particle_id >= 0 && particle_id < MAX_ITEM_PARTICLES);
 }
 
 inline bool is_tangible_group(ItemGroup group)

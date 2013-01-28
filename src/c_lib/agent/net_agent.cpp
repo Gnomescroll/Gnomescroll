@@ -550,12 +550,12 @@ inline void hit_block_CtoS::handle()
     msg.broadcast();
 
     // TODO -- load this from dat
-    //TerrainModificationAction tma = Item::get_item_terrain_modification_enum(weapon_type);
+    //TerrainModificationAction tma = Item::get_item_terrain_modification_enum((ItemType)weapon_type);
 
     if (z <= 0) return; // dont damage floor
     CubeType block = t_map::get(x,y,z);
     if (block == EMPTY_CUBE) return;
-    int block_damage = Item::get_item_block_damage(weapon_type, block);
+    int block_damage = Item::get_item_block_damage((ItemType)weapon_type, block);
     if (block_damage <= 0) return;
     t_map::apply_damage_broadcast(x,y,z, block_damage, TMA_PICK);
 }
@@ -675,9 +675,8 @@ inline void hitscan_block_CtoS::handle()
     if (p.z <= 0) return; // dont damage floor
     if (!t_map::isValidCube(cube_type)) return;
 
-    static int laser_rifle_type = Item::get_item_type("laser_rifle");
-    ASSERT_VALID_ITEM_TYPE(laser_rifle_type);
-    IF_INVALID_ITEM_TYPE(laser_rifle_type) return;
+    static ItemType laser_rifle_type = Item::get_item_type("laser_rifle");
+    IF_ASSERT(!isValid(laser_rifle_type)) return;
 
     int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, cube_type);
     if (weapon_block_damage <= 0) return;
@@ -712,7 +711,7 @@ inline void melee_object_CtoS::handle()
         if (obj == NULL) return;
 
         // apply damage
-        const int obj_dmg = Item::get_item_object_damage(weapon_type);
+        const int obj_dmg = Item::get_item_object_damage((ItemType)weapon_type);
         using Components::HealthComponent;
         HealthComponent* health = (HealthComponent*)
             obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);

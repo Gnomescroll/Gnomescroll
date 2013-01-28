@@ -266,7 +266,7 @@ void AgentSynthesizerUI::draw()
     for (int yslot=0; yslot<shopping_ydim; yslot++)
     {
         int cost;
-        int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
+        ItemType item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
         if (coins >= cost)
         {
             any_available = true;
@@ -313,7 +313,7 @@ void AgentSynthesizerUI::draw()
         for (int yslot=0; yslot<shopping_ydim; yslot++)
         {
             int cost;
-            int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
+            ItemType item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
             if (coins < cost) continue; // we can't afford it; move on
             if (item_type == NULL_ITEM_TYPE) continue;
             int tex_id = Item::get_sprite_index_for_type(item_type);
@@ -346,7 +346,7 @@ void AgentSynthesizerUI::draw()
     }
 
     // draw coins
-    int coin_item_type = container->get_coin_type();
+    ItemType coin_item_type = container->get_coin_type();
     if (coin_item_type != NULL_ITEM_TYPE)
     {
         int coin_sprite_id = Item::get_sprite_index_for_type(coin_item_type);
@@ -390,7 +390,7 @@ void AgentSynthesizerUI::draw()
     for (int yslot=0; yslot<shopping_ydim; yslot++)
     {
         int cost;
-        int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
+        ItemType item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
         if (item_type == NULL_ITEM_TYPE) continue;
 
         GS_ASSERT(count_digits(cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);

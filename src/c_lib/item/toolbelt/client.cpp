@@ -17,14 +17,14 @@ void turn_fire_on(AgentID agent_id)
 {
     IF_ASSERT(agent_fire_on == NULL) return;
     IF_ASSERT(agent_fire_tick == NULL) return;
-    
+
     IF_ASSERT(!isValid(agent_id)) return;
 
     agent_fire_tick[agent_id] = 0;
     if (agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = true;
 
-    int item_type = get_agent_selected_item_type(agent_id);
+    ItemType item_type = get_agent_selected_item_type(agent_id);
     if (ClientState::player_agent.agent_id == agent_id)
         toolbelt_item_begin_local_alpha_action_event_handler(item_type);
     else
@@ -36,14 +36,14 @@ void turn_fire_off(AgentID agent_id)
     IF_ASSERT(click_and_hold == NULL) return;
     IF_ASSERT(agent_fire_on == NULL) return;
     IF_ASSERT(agent_fire_tick == NULL) return;
-    
+
     IF_ASSERT(!isValid(agent_id)) return;
 
     agent_fire_tick[agent_id] = 0;
     if (!agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = false;
 
-    int item_type = get_agent_selected_item_type(agent_id);
+    ItemType item_type = get_agent_selected_item_type(agent_id);
     if (ClientState::player_agent.agent_id == agent_id)
         toolbelt_item_end_local_alpha_action_event_handler(item_type);
     else
@@ -73,7 +73,7 @@ bool toolbelt_item_begin_alpha_action()
     turn_fire_on(agent_id);
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    int item_type = Item::get_item_type(item_id);
+    ItemType item_type = Item::get_item_type(item_id);
 
     Animations::begin_equipped_item_animation(item_type, item_is_click_and_hold(item_type));
     return true;
@@ -81,7 +81,7 @@ bool toolbelt_item_begin_alpha_action()
 
 // returns true if an event was or should be triggered
 bool toolbelt_item_end_alpha_action()
-{    
+{
     GS_ASSERT(agent_fire_on != NULL);
     if (agent_fire_on == NULL) return false;
     GS_ASSERT(click_and_hold != NULL);
@@ -94,8 +94,8 @@ bool toolbelt_item_end_alpha_action()
     turn_fire_off(agent_id);
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    int item_type = Item::get_item_type(item_id);
-    
+    ItemType item_type = Item::get_item_type(item_id);
+
     if (item_is_click_and_hold(item_type))
     {
         Animations::stop_equipped_item_animation();
@@ -105,26 +105,26 @@ bool toolbelt_item_end_alpha_action()
     return false;
 }
 
-void toolbelt_item_begin_local_alpha_action_event_handler(int item_type)
+void toolbelt_item_begin_local_alpha_action_event_handler(ItemType item_type)
 {
     if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
     begin_local_item(item_type);
 }
 
-void toolbelt_item_end_local_alpha_action_event_handler(int item_type)
+void toolbelt_item_end_local_alpha_action_event_handler(ItemType item_type)
 {
     if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
     end_local_item(item_type);
 }
 
-void toolbelt_item_begin_alpha_action_event_handler(AgentID agent_id, int item_type)
+void toolbelt_item_begin_alpha_action_event_handler(AgentID agent_id, ItemType item_type)
 {
     GS_ASSERT(agent_id != ClientState::player_agent.agent_id); // use local
     if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
     begin_item(agent_id, item_type);
 }
 
-void toolbelt_item_end_alpha_action_event_handler(AgentID agent_id, int item_type)
+void toolbelt_item_end_alpha_action_event_handler(AgentID agent_id, ItemType item_type)
 {
     GS_ASSERT(agent_id != ClientState::player_agent.agent_id); // use local
     if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
@@ -135,7 +135,7 @@ static bool beta_scan_world()
 {   // check for things in world that respond to beta action
     using ClientState::player_agent;
     if (agent_camera == NULL) return false;
-    
+
     float range = BETA_WORLD_EFFECT_RANGE - 0.2f;   // reduce margin to correct for discrepancy btwn client and server camera position
     //float range = BETA_WORLD_EFFECT_RANGE;   // reduce margin to correct for discrepancy btwn client and server camera position
 
@@ -170,9 +170,9 @@ static bool beta_scan_world()
                 return true;
             }
             return false;
-        
+
         case HITSCAN_TARGET_BLOCK:
-            if (!ItemContainer::container_block_in_range_of(pos, block_pos)) return false; 
+            if (!ItemContainer::container_block_in_range_of(pos, block_pos)) return false;
             container_id = t_map::get_block_item_container(block_pos[0], block_pos[1], block_pos[2]);
             if (container_id != NULL_CONTAINER)
             {
@@ -203,12 +203,12 @@ bool toolbelt_item_beta_action()
     if (agent_fire_on[agent_id]) return false;
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
-    int item_type = NULL_ITEM_TYPE;
+    ItemType item_type = NULL_ITEM_TYPE;
     if (item_id == NULL_ITEM) item_type = fist_item_type;
     else item_type = Item::get_item_type(item_id);
     GS_ASSERT(item_type != NULL_ITEM_TYPE)
     if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return false;
-    
+
     bool triggered = trigger_local_item_beta(item_id, item_type);
     if (triggered) return true;
 

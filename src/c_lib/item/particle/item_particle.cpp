@@ -126,10 +126,10 @@ void ItemParticle::tick()
 }
 
 #if DC_CLIENT
-void ItemParticle::init(int item_type, float x, float y, float z, float mx, float my, float mz)
+void ItemParticle::init(ItemType item_type, float x, float y, float z, float mx, float my, float mz)
 #endif
 #if DC_SERVER
-void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z, float mx, float my, float mz)
+void ItemParticle::init(ItemID item_id, ItemType item_type, float x, float y, float z, float mx, float my, float mz)
 #endif
 {
     this->verlet.box_radius = ITEM_PARTICLE_RADIUS;
@@ -232,9 +232,9 @@ static bool pickup_item_particle(ItemParticleID particle_id)
     // since the particles fly and may reach out-of-order, this can fail
     // if this fails, return false, and the particle should be reset to normal
 
-    static int coin_type = Item::get_item_type("synthesizer_coin");
+    static ItemType coin_type = Item::get_item_type("synthesizer_coin");
     GS_ASSERT(coin_type != NULL_ITEM_TYPE);
-    static int energy_tank_type = Item::get_item_type("energy_tank");
+    static ItemType energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
 
     // get agent toolbelt and container in array

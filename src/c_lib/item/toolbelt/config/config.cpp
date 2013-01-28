@@ -20,7 +20,7 @@ namespace Toolbelt
  *
  * -- tick[Local]Item is deprecated for the client.  may become deprecated in server
  * -- things that would go in tick[Local]Item for client-side should really be activated by begin/end
- * -- and the main loop can call a function that advances/renders the animations for everyone, outside of the toolbelt module  
+ * -- and the main loop can call a function that advances/renders the animations for everyone, outside of the toolbelt module
  */
 
 
@@ -30,7 +30,7 @@ struct CallbackConfig
     tickItem tick;
     triggerItem trigger;
     triggerItem beta_trigger;
-    
+
     #if DC_CLIENT
     // use for non-self agents
     beginItem begin;
@@ -43,40 +43,40 @@ struct CallbackConfig
     beginLocalItem local_begin;
     endLocalItem local_end;
     #endif
-    
+
     #if DC_SERVER
     // these are dummy variables, so we dont have to #if DC_CLIENT
     // every config block
-    void (*local_tick) (int);
-    void (*local_trigger) (int);
-    void (*local_beta_trigger) (int);
-    void (*begin) (int);
-    void (*end) (int);
+    void (*local_tick) (ItemType);
+    void (*local_trigger) (ItemType);
+    void (*local_beta_trigger) (ItemType);
+    void (*begin) (ItemType);
+    void (*end) (ItemType);
     #endif
 };
 
 struct CallbackConfig c;
 
 static ItemGroup active_group = IG_ERROR;
-static int active_type = NULL_ITEM_TYPE;
+static ItemType active_type = NULL_ITEM_TYPE;
 
 static void set_callback_config_defaults(struct CallbackConfig* c)
 {
     memset(c, 0, sizeof(struct CallbackConfig));
 }
 
-static void apply_type_settings(int type)
+static void apply_type_settings(ItemType type)
 {   // assign callbacks to registry
-    IF_ASSERT(type < 0 || type >= MAX_ITEM_TYPES) return;
-    
+    IF_ASSERT(!isValid(type)) return;
+
     ticks[type] = c.tick;
     triggers[type] = c.trigger;
     beta_triggers[type] = c.beta_trigger;
-    
+
     #if DC_CLIENT
     begin_triggers[type] = c.begin;
     end_triggers[type] = c.end;
-    
+
     local_ticks[type] = c.local_tick;
     local_triggers[type] = c.local_trigger;
     local_beta_triggers[type] = c.local_beta_trigger;
@@ -88,40 +88,40 @@ static void apply_type_settings(int type)
 static void apply_group_settings(ItemGroup group)
 {
     GS_ASSERT(group != IG_ERROR);
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
-        if (Item::type_used(i) && Item::get_item_group_for_type(i) == group)
-            apply_type_settings(i);
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+        if (Item::type_used((ItemType)i) && Item::get_item_group_for_type((ItemType)i) == group)
+            apply_type_settings((ItemType)i);
 }
 
 static void apply_click_and_hold_settings_for(bool cnh)
 {   // begin applying settings to all items with click_and_hold == cnh
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
-        if (item_is_click_and_hold(i) == cnh)
-            apply_type_settings(i);
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+        if (item_is_click_and_hold((ItemType)i) == cnh)
+            apply_type_settings((ItemType)i);
 }
 
 static void set_group(ItemGroup group)
 {
     GS_ASSERT(group != IG_ERROR);
-    
+
     if (active_group != IG_ERROR)   // 0 condition
         apply_group_settings(active_group);
-    
+
     // reset struct
     set_callback_config_defaults(&c);
-    
+
     // set new group
     active_group = group;
 }
 
 static void set_type(const char* name)
 {
-    int type = Item::get_item_type(name);
-    GS_ASSERT(type != NULL_ITEM_TYPE);
-    
+    ItemType type = Item::get_item_type(name);
+    GS_ASSERT(isValid(type));
+
     if (active_type != NULL_ITEM_TYPE)
         apply_type_settings(active_type);
-    
+
     // reset struct
     set_callback_config_defaults(&c);
 
@@ -135,14 +135,14 @@ static void set_type(const char* name)
 static void click_and_hold_group(ItemGroup group, bool cnh)
 {
     GS_ASSERT(group != IG_ERROR);
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
-        if (Item::type_used(i) && Item::get_item_group_for_type(i) == group)
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+        if (Item::type_used((ItemType)i) && Item::get_item_group_for_type((ItemType)i) == group)
             click_and_hold[i] = cnh;
 }
 
-static void click_and_hold_type(int type, bool cnh)
+static void click_and_hold_type(ItemType type, bool cnh)
 {
-    IF_ASSERT(type < 0 || type >= MAX_ITEM_TYPES) return;
+    IF_ASSERT(!isValid(type)) return;
     click_and_hold[type] = cnh;
 }
 
@@ -169,7 +169,7 @@ static void register_click_and_hold_callbacks()
     c.local_trigger = &fire_close_range_weapon;
     #endif
     apply_click_and_hold_settings_for(true);
-    
+
     // apply any general non-click_and_hold methods here
     //apply_click_and_hold_settings_for(false);
 }
@@ -187,42 +187,42 @@ static void register_item_group_callbacks()
     set_group(IG_PLACER);
     c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &trigger_local_block_placer;
-    
+
     set_group(IG_GRENADE_LAUNCHER);
     c.local_trigger = &trigger_local_plasma_grenade;
-    
+
     set_group(IG_HITSCAN_WEAPON);
     c.local_trigger = &trigger_local_hitscan_laser;
-    
+
     // assist the client in predicting what the server will do
     set_group(IG_CONSUMABLE);
     c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
-    
+
     set_group(IG_SPECIAL);
     c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     #endif
-    
+
     #if DC_SERVER
     set_group(IG_HITSCAN_WEAPON);
     c.trigger = &decrement_durability;
-    
+
     set_group(IG_GRENADE_LAUNCHER);
     c.trigger = &decrement_stack;
-    
+
     set_group(IG_SHOVEL);
     c.trigger = &decrement_durability;
-    
+
     set_group(IG_MINING_LASER);
     c.trigger = &decrement_durability;
-    
+
     set_group(IG_CONSUMABLE);
     c.beta_trigger = &consume_item;
-    
+
     set_group(IG_AGENT_SPAWNER);
     c.trigger = &place_spawner;
-    
+
     set_group(IG_ENERGY_CORE);
     c.trigger = &place_energy_core;
 
@@ -247,7 +247,7 @@ static void register_item_type_callbacks()
     c.local_trigger = &trigger_local_admin_block_placer;
     c.local_beta_trigger = &select_facing_block;
     #endif
-    
+
     #if DC_SERVER
     set_type("small_charge_pack");
     c.trigger = &apply_charge_pack_to_teammates;
@@ -265,7 +265,7 @@ void register_callbacks()
     // set click and hold
     register_click_and_hold();
     // bind click and hold callbacks
-    register_click_and_hold_callbacks();    
+    register_click_and_hold_callbacks();
     // apply groups, broadly
     register_item_group_callbacks();
     // overwrite with type-specific callbacks
@@ -301,8 +301,8 @@ void validate_callbacks()
     if (local_begin_triggers == NULL) return;
     if (local_end_triggers   == NULL) return;
     #endif
-    
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
+
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
     {
         GS_ASSERT(click_and_hold[i] || !ticks[i]);
         #if DC_CLIENT

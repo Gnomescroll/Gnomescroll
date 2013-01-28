@@ -21,7 +21,7 @@ struct ItemDropMeta
 
 struct ItemDropTable
 {
-    int item_type;
+    ItemType item_type;
     int drop_entries;                //number of entries
     float* drop_probabilities;      //index into probability table
     float* drop_cumulative_probabilities;

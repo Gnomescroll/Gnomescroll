@@ -253,7 +253,7 @@ void CrusherUI::draw()
         int xslot = 0;
         int yslot = slot;
 
-        int item_type = slot_metadata[slot].type;
+        ItemType item_type = slot_metadata[slot].type;
 
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);

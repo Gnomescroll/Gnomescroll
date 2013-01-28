@@ -5,9 +5,9 @@
 namespace Animations
 {
 
-void MiningLaserEmitter::set_laser_type(int type)
+void MiningLaserEmitter::set_laser_type(ItemType type)
 {
-    GS_ASSERT(type != NULL_ITEM_TYPE);
+    IF_ASSERT(!isValid(type)) return;
     if (this->laser_type == type) return;
     this->laser_type = type;
     this->texture_row = Item::get_animation_id(type);

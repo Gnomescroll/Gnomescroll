@@ -78,16 +78,16 @@ class EquippedItemConfig
 
 extern class EquippedItemConfig voxelized_sprite_config;
 
-void draw_equipped_voxel_item_other_agent(AgentID agent_id, int item_type);
-void draw_equipped_sprite_item_other_agent(AgentID agent_id, int item_type);
-void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, int item_type);
+void draw_equipped_voxel_item_other_agent(AgentID agent_id, ItemType item_type);
+void draw_equipped_sprite_item_other_agent(AgentID agent_id, ItemType item_type);
+void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, ItemType item_type);
 
-void draw_equipped_item(int item_type);
-void begin_equipped_item_animation(int item_type, bool continuous);
+void draw_equipped_item(ItemType item_type);
+void begin_equipped_item_animation(ItemType item_type, bool continuous);
 void tick_equipped_item_animation();
 void stop_equipped_item_animation();
 
-void draw_placement_outline(int item_type);
+void draw_placement_outline(ItemType item_type);
 
 // controls for adjusting the sprite
 void move_focal_depth(float delta);            // distance from agent plane

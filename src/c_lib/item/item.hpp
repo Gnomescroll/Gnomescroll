@@ -23,7 +23,7 @@ class Item
     public:
 
         ItemID id;
-        int type;  // stone_block, dirt_block, mining_laser_beta,
+        ItemType type;
         int32_t global_id;
 
         int durability;
@@ -49,10 +49,11 @@ class Item
 
     #if DC_SERVER && GS_SERIALIZER
         uuid_t uuid;
+
     void init_from_loading();   // only to be used by serializer
     #endif
 
-    void init(int item_type);
+    void init(ItemType item_type);
 
     void print()
     {
@@ -138,7 +139,7 @@ class ItemList: public ObjectList<Item, ItemID>
         #endif
 
         #if DC_CLIENT
-        Item* create_type(int item_type, ItemID item_id)
+        Item* create_type(ItemType item_type, ItemID item_id)
         {
             Item* item = ObjectList<Item, ItemID>::create(item_id);
             if (item == NULL) return NULL;
@@ -148,7 +149,7 @@ class ItemList: public ObjectList<Item, ItemID>
         #endif
 
         #if DC_SERVER
-        Item* create_type(int item_type)
+        Item* create_type(ItemType item_type)
         {
             Item* item = this->create();
             IF_ASSERT(item == NULL) return NULL;

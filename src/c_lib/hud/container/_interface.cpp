@@ -153,7 +153,7 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
 }
 
 // returns item type at screen position x,y
-static int get_item_type_at(int x, int y)
+static ItemType get_item_type_at(int x, int y)
 {
     int slot;
     UIElement* ui = get_container_and_slot(x,y, &slot);
@@ -375,7 +375,7 @@ static void draw_tooltip()
     if (player_hand_ui == NULL || player_hand_ui->get_item_type() != NULL_ITEM_TYPE) return;
 
     // get item type hovered
-    int item_type = get_item_type_at(mouse_x, mouse_y);
+    ItemType item_type = get_item_type_at(mouse_x, mouse_y);
     if (item_type == NULL_ITEM_TYPE) return;
 
     // get name

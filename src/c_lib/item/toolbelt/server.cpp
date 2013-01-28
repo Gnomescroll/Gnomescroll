@@ -8,7 +8,7 @@ dont_include_this_file_in_client
 
 namespace Toolbelt
 {
-    
+
 void turn_fire_on(AgentID agent_id)
 {
     IF_ASSERT(agent_fire_on == NULL) return;
@@ -21,7 +21,7 @@ void turn_fire_on(AgentID agent_id)
     agent_fire_on[agent_id] = true;
 
     ItemID item_id = get_agent_selected_item(agent_id);
-    int item_type = Item::get_item_type(item_id);
+    ItemType item_type = Item::get_item_type(item_id);
     broadcast_agent_toolbelt_begin_alpha_action_packet(agent_id, item_type);
 }
 
@@ -29,17 +29,17 @@ void turn_fire_off(AgentID agent_id)
 {
     IF_ASSERT(agent_fire_on == NULL) return;
     IF_ASSERT(agent_fire_tick == NULL) return;
-    
+
     IF_ASSERT(!isValid(agent_id)) return;
 
     agent_fire_tick[agent_id] = 0;
     if (!agent_fire_on[agent_id]) return;
     agent_fire_on[agent_id] = false;
-    
+
     broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
 }
 
-void broadcast_agent_set_active_item_packet(AgentID agent_id, int item_type)
+void broadcast_agent_set_active_item_packet(AgentID agent_id, ItemType item_type)
 {
     IF_ASSERT(!isValid(agent_id)) return;
     toolbelt_set_active_item_StoC msg;
@@ -48,7 +48,7 @@ void broadcast_agent_set_active_item_packet(AgentID agent_id, int item_type)
     msg.broadcast();
 }
 
-void broadcast_agent_toolbelt_begin_alpha_action_packet(AgentID agent_id, int item_type)
+void broadcast_agent_toolbelt_begin_alpha_action_packet(AgentID agent_id, ItemType item_type)
 {
     IF_ASSERT(!isValid(agent_id)) return;
     toolbelt_item_begin_alpha_action_StoC msg;
@@ -65,7 +65,7 @@ void broadcast_agent_toolbelt_end_alpha_action_packet(AgentID agent_id)
     msg.broadcast();
 }
 
-void broadcast_agent_toolbelt_beta_action_packet(AgentID agent_id, int item_type)
+void broadcast_agent_toolbelt_beta_action_packet(AgentID agent_id, ItemType item_type)
 {
     IF_ASSERT(!isValid(agent_id)) return;
     toolbelt_item_beta_action_StoC msg;
@@ -74,7 +74,7 @@ void broadcast_agent_toolbelt_beta_action_packet(AgentID agent_id, int item_type
     msg.broadcast();
 }
 
-void send_agent_set_active_item_packet(ClientID client_id, AgentID agent_id, int item_type)
+void send_agent_set_active_item_packet(ClientID client_id, AgentID agent_id, ItemType item_type)
 {
     IF_ASSERT(!isValid(client_id)) return;
     IF_ASSERT(!isValid(agent_id)) return;

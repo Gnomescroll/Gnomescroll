@@ -17,17 +17,16 @@ float crusher_item_jump_out_velocity()
 
 static class Item::ItemDrop* drops;
 
-/* Configuration Loader */ 
-    
+/* Configuration Loader */
+
 static class Item::ItemDrop* d = NULL;
 
-static void set_crusher_drop(int item_type)
+static void set_crusher_drop(ItemType item_type)
 {
     GS_ASSERT_ABORT(drops != NULL);
     if (drops == NULL) return;
 
-    ASSERT_VALID_ITEM_TYPE(item_type);
-    IF_INVALID_ITEM_TYPE(item_type)
+    IF_ASSERT(!isValid(item_type))
     {
         GS_ASSERT_ABORT(false);
         return;
@@ -40,16 +39,16 @@ static void set_crusher_drop(int item_type)
 
 static void crusher_def(const char* name)
 {
-    int item_type = Item::get_item_type(name);
+    ItemType item_type = Item::get_item_type(name);
     GS_ASSERT_ABORT(item_type != NULL_ITEM_TYPE);
     set_crusher_drop(item_type);
 }
 
 static void register_crusher_settings()
-{    
+{
     crusher_def("regolith");
         d->set_max_drop_types(6);
-        
+
         d->set_max_drop_amounts("powdered_regolith", 3);
         d->add_drop("powdered_regolith", 1, 0.85f);
         d->add_drop("powdered_regolith", 2, 0.12f);
@@ -57,7 +56,7 @@ static void register_crusher_settings()
 
         d->set_max_drop_amounts("copper_ore_piece", 1);
         d->add_drop("copper_ore_piece", 1, 0.005f);
-        
+
         d->set_max_drop_amounts("iron_ore_piece", 1);
         d->add_drop("iron_ore_piece", 1, 0.005f);
 
@@ -72,7 +71,7 @@ static void register_crusher_settings()
 
     crusher_def("rock");
         d->set_max_drop_types(6);
-        
+
         d->set_max_drop_amounts("crushed_rock", 3);
         d->add_drop("crushed_rock", 1, 0.85f);
         d->add_drop("crushed_rock", 2, 0.12f);
@@ -80,7 +79,7 @@ static void register_crusher_settings()
 
         d->set_max_drop_amounts("copper_ore_piece", 1);
         d->add_drop("copper_ore_piece", 1, 0.015f);
-        
+
         d->set_max_drop_amounts("iron_ore_piece", 1);
         d->add_drop("iron_ore_piece", 1, 0.015f);
 
@@ -102,7 +101,7 @@ static void register_crusher_settings()
         d->set_max_drop_types(1);
         d->set_max_drop_amounts("iron_bar", 1);
         d->add_drop("iron_bar", 1, 1.0f);
-    
+
     crusher_def("iron_blade");
         d->set_max_drop_types(1);
         d->set_max_drop_amounts("iron_bar", 1);
@@ -162,10 +161,9 @@ void teardown_crusher_dat()
     if (drops != NULL) delete[] drops;
 }
 
-class Item::ItemDrop* get_crusher_drop(int item_type)
+class Item::ItemDrop* get_crusher_drop(ItemType item_type)
 {
-    ASSERT_VALID_ITEM_TYPE(item_type);
-    IF_INVALID_ITEM_TYPE(item_type) return NULL;
+    IF_ASSERT(!isValid(item_type)) return NULL;
     if (!drops[item_type].is_loaded()) return NULL;
     return &drops[item_type];
 }

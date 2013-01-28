@@ -112,7 +112,7 @@ int ItemContainerHand::insert_item(ItemID item_id)
 
 int ItemContainerEnergyTanks::insert_item(int slot, ItemID item_id)
 {
-    int item_type = Item::get_item_type(item_id);
+    ItemType item_type = Item::get_item_type(item_id);
     GS_ASSERT(item_type == this->energy_tank_type);
     return ItemContainerInterface::insert_item(slot, item_id);
 }
@@ -155,7 +155,7 @@ bool ItemContainerSmelter::can_produce_output(Item::SmeltingRecipe** pRecipe, in
           && this->can_insert_outputs(recipe->output, recipe->output_stack, recipe->output_num));
 }
 
-bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, int n_outputs)
+bool ItemContainerSmelter::can_insert_outputs(ItemType* outputs, int* output_stacks, int n_outputs)
 {
     IF_ASSERT(n_outputs <= 0) return false;
     IF_ASSERT(n_outputs > alt_xdim*alt_ydim) return false;
@@ -167,7 +167,7 @@ bool ItemContainerSmelter::can_insert_outputs(int* outputs, int* output_stacks, 
         int slot = this->convert_product_slot(i);
         ItemID slot_item = this->get_item(slot);
         if (slot_item == NULL_ITEM) continue;
-        int slot_item_type = Item::get_item_type(slot_item);
+        ItemType slot_item_type = Item::get_item_type(slot_item);
         if (outputs[i] != slot_item_type) return false;   // items won't stack
         if (output_stacks[i] >= Item::get_stack_space(slot_item)) return false; // no room to stack
     }
@@ -184,7 +184,7 @@ void ItemContainerSmelter::burn_fuel()
         this->reset_fuel();
 }
 
-void ItemContainerSmelter::fill_fuel(int fuel_type)
+void ItemContainerSmelter::fill_fuel(ItemType fuel_type)
 {
     GS_ASSERT(this->fuel <= 0.0f);
     this->fuel = 1.0f;

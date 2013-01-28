@@ -55,28 +55,27 @@ void teardown_properties()
     if (smelting_recipe_array  != NULL) delete[] smelting_recipe_array;
 }
 
-class ItemAttribute* get_item_attributes(int item_type)
+class ItemAttribute* get_item_attributes(ItemType item_type)
 {
-    ASSERT_VALID_ITEM_TYPE(item_type);
-    IF_INVALID_ITEM_TYPE(item_type) return NULL;
+    IF_ASSERT(!isValid(item_type)) return NULL;
     if (!item_attributes[item_type].loaded) return NULL;
     return &item_attributes[item_type];
 }
 
-bool type_used(int item_type)
+bool type_used(ItemType item_type)
 {
     class ItemAttribute* attr = get_item_attributes(item_type);
     return (attr != NULL);
 }
 
-int get_item_fire_rate(int item_type)
+int get_item_fire_rate(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 8;
     return attr->firing_rate;
 }
 
-EquipmentType get_item_equipment_type(int type)
+EquipmentType get_item_equipment_type(ItemType type)
 {
     ItemAttribute* attr = get_item_attributes(type);
     IF_ASSERT(attr == NULL) return NULL_EQUIPMENT_TYPE;
@@ -85,18 +84,18 @@ EquipmentType get_item_equipment_type(int type)
 
 EquipmentType get_item_equipment_type(ItemID id)
 {
-    int type = get_item_type(id);
+    ItemType type = get_item_type(id);
     return get_item_equipment_type(type);
 }
 
-int get_max_charges(int item_type)
+int get_max_charges(ItemType item_type)
 {
     class ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 0;
     return attr->max_charges;
 }
 
-int get_recharge_rate(int item_type)
+int get_recharge_rate(ItemType item_type)
 {
     class ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 1;
@@ -105,35 +104,35 @@ int get_recharge_rate(int item_type)
 
 int get_sprite_index_for_id(ItemID id)
 {
-    int type = get_item_type(id);
+    ItemType type = get_item_type(id);
     return get_sprite_index_for_type(type);
 }
 
-int get_sprite_index_for_type(int type)
+int get_sprite_index_for_type(ItemType type)
 {
     class ItemAttribute* attr = get_item_attributes(type);
     IF_ASSERT(attr == NULL) return ERROR_SPRITE;
     return attr->sprite;
 }
 
-const char* get_item_name(int type)
+const char* get_item_name(ItemType type)
 {
     class ItemAttribute* attr = get_item_attributes(type);
     IF_ASSERT(attr == NULL) return NULL;
     return attr->name;
 }
 
-int get_item_type(const char* name)
+ItemType get_item_type(const char* name)
 {
     if (name[0] == '\0') return NULL_ITEM_TYPE;
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
     {
-        class ItemAttribute* attr = get_item_attributes(i);
+        class ItemAttribute* attr = get_item_attributes((ItemType)i);
         if (attr != NULL && strcmp(attr->name, name) == 0)
-            return i;
+            return (ItemType)i;
     }
     GS_ASSERT(false);
-    printf("In function %s:%d -- No item for name %s\n", __FUNCTION__, __LINE__, name);
+    printf("No item for name %s\n", name);
     return NULL_ITEM_TYPE;
 }
 
@@ -145,7 +144,7 @@ const char* get_compatible_item_name(const char* name)
     return NULL;
 }
 
-const char* get_item_pretty_name(int item_type)
+const char* get_item_pretty_name(ItemType item_type)
 {
     IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
     ItemAttribute* attr = get_item_attributes(item_type);
@@ -157,7 +156,7 @@ const char* get_item_pretty_name(int item_type)
     return name;
 }
 
-ItemGroup get_item_group_for_type(int item_type)
+ItemGroup get_item_group_for_type(ItemType item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return IG_NONE;
     class ItemAttribute* attr = get_item_attributes(item_type);
@@ -165,14 +164,14 @@ ItemGroup get_item_group_for_type(int item_type)
     return attr->group;
 }
 
-bool item_type_is_voxel(int item_type)
+bool item_type_is_voxel(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return false;
     return attr->particle_voxel;
 }
 
-int get_max_stack_size(int item_type)
+int get_max_stack_size(ItemType item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return 1;
     ItemAttribute* attr = get_item_attributes(item_type);
@@ -180,14 +179,14 @@ int get_max_stack_size(int item_type)
     return attr->max_stack_size;
 }
 
-int get_max_durability(int item_type)
+int get_max_durability(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return NULL_DURABILITY;
     return attr->max_durability;
 }
 
-CubeType get_cube_type(int item_type)
+CubeType get_cube_type(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return ERROR_CUBE;
@@ -195,7 +194,7 @@ CubeType get_cube_type(int item_type)
     return attr->cube_type;
 }
 
-MechType get_mech_type(int item_type)
+MechType get_mech_type(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return NULL_MECH_TYPE;
@@ -203,21 +202,21 @@ MechType get_mech_type(int item_type)
     return attr->mech_type;
 }
 
-int get_particle_voxel_texture(int item_type)
+int get_particle_voxel_texture(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 0;
     return attr->particle_voxel_texture;
 }
 
-int get_item_cube_height(int item_type)
+int get_item_cube_height(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 0;
     return attr->cube_height;
 }
 
-float get_weapon_range(int weapon_type)
+float get_weapon_range(ItemType weapon_type)
 {
     ItemAttribute* attr = get_item_attributes(weapon_type);
     IF_ASSERT(attr == NULL) return 1.0f;
@@ -225,7 +224,7 @@ float get_weapon_range(int weapon_type)
     return attr->firing_range;
 }
 
-int get_item_block_damage(int weapon_type, CubeType cube_type)
+int get_item_block_damage(ItemType weapon_type, CubeType cube_type)
 {
     ASSERT_VALID_CUBE_TYPE(cube_type);
     IF_INVALID_CUBE_TYPE(cube_type) return 0;
@@ -234,7 +233,7 @@ int get_item_block_damage(int weapon_type, CubeType cube_type)
     return attr->block_damage[cube_type];
 }
 
-int get_item_object_damage(int weapon_type)
+int get_item_object_damage(ItemType weapon_type)
 {
     ItemAttribute* attr = get_item_attributes(weapon_type);
     IF_ASSERT(attr == NULL) return 0;
@@ -243,13 +242,13 @@ int get_item_object_damage(int weapon_type)
     return randrange(attr->object_damage_min, attr->object_damage_max);
 }
 
-int get_synthesizer_item(int xslot, int yslot)
+ItemType get_synthesizer_item(int xslot, int yslot)
 {
     int cost;
     return get_synthesizer_item(xslot, yslot, &cost);
 }
 
-int get_synthesizer_item(int xslot, int yslot, int* cost)
+ItemType get_synthesizer_item(int xslot, int yslot, int* cost)
 {
     int max = ItemContainer::get_container_alt_max_slots(ItemContainer::name::synthesizer);
     for (int i=0; i<max; i++)
@@ -265,14 +264,14 @@ int get_synthesizer_item(int xslot, int yslot, int* cost)
     return NULL_ITEM_TYPE;
 }
 
-int get_gas_lifetime(int item_type)
+int get_gas_lifetime(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return NULL_GAS_LIFETIME;
     return attr->gas_lifetime;
 }
 
-bool is_fuel(int item_type)
+bool is_fuel(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return false;
@@ -284,15 +283,22 @@ bool is_smelter(ItemContainerType type)
     return (type == ItemContainer::name::smelter_basic);
 }
 
-int get_animation_id(int item_type)
+int get_animation_id(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 0;
     return attr->animation_id;
 }
 
+bool can_be_booned(ItemType item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    if (attr == NULL) return false;
+    return attr->boonable;
+}
+
 // total ticks to burn
-int get_fuel_burn_rate(int item_type)
+int get_fuel_burn_rate(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return 30;
@@ -330,7 +336,7 @@ class CraftingRecipe* get_selected_craft_recipe(ItemContainerID container_id, in
         // get slot content data
         ItemID item_id = container->get_item(i);
         if (item_id == NULL_ITEM) continue;
-        int item_type = get_item_type(item_id);
+        ItemType item_type = get_item_type(item_id);
         GS_ASSERT(item_type != NULL_ITEM_TYPE);    // item type should exist here, because we are skipping empty slots
         int stack_size = get_stack_size(item_id);
         GS_ASSERT(stack_size >= 1);
@@ -415,7 +421,7 @@ class CraftingRecipe* get_selected_craft_recipe(ItemContainerID container_id, in
     return craft_recipes_possible[slot];
 }
 
-int get_selected_craft_recipe_type(ItemContainerID container_id, int slot, bool* available)
+ItemType get_selected_craft_recipe_type(ItemContainerID container_id, int slot, bool* available)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
@@ -423,7 +429,7 @@ int get_selected_craft_recipe_type(ItemContainerID container_id, int slot, bool*
     return recipe->output;
 }
 
-int get_selected_craft_recipe_type(ItemContainerID container_id, int slot)
+ItemType get_selected_craft_recipe_type(ItemContainerID container_id, int slot)
 {
     CraftingRecipe* recipe = get_selected_craft_recipe(container_id, slot);
     if (recipe == NULL) return NULL_ITEM_TYPE;
@@ -512,13 +518,13 @@ class SmeltingRecipe* get_smelting_recipe(int recipe_id)
     return &smelting_recipe_array[recipe_id];
 }
 
-int* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count)
+ItemType* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count)
 {
     bool available;
     return get_selected_smelting_recipe_types(container_id, recipe_count, &available);
 }
 
-int* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count, bool* available)
+ItemType* get_selected_smelting_recipe_types(ItemContainerID container_id, int* recipe_count, bool* available)
 {
     class SmeltingRecipe* recipe = get_selected_smelting_recipe(container_id);
     if (recipe == NULL)

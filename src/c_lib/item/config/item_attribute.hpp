@@ -11,7 +11,7 @@ class ItemAttribute
     public:
         bool loaded;
 
-        int item_type;
+        ItemType item_type;
         ItemGroup group;
         char name[DAT_NAME_MAX_LENGTH+1];
         char pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH+1];
@@ -71,6 +71,8 @@ class ItemAttribute
 
         // IG_EQUIPMENT
         EquipmentType equipment_type;
+
+        bool boonable;  // boon crank
 
 
     ItemAttribute() :
@@ -135,9 +137,10 @@ class ItemAttribute
         this->recharge_rate = 1;
 
         this->equipment_type = NULL_EQUIPMENT_TYPE;
+        this->boonable = true;
     }
 
-    void set_type(int item_type, ItemGroup group)
+    void set_type(ItemType item_type, ItemGroup group)
     {
         this->group = group;
         this->item_type = item_type;
@@ -149,7 +152,7 @@ class SynthesizerItem
 {
     public:
 
-        int item_type;
+        ItemType item_type;
         int cost;
 
         int xslot;
@@ -171,10 +174,10 @@ class CraftingRecipe
     public:
 
         int id;
-        int output; //item type
+        ItemType output;
         int output_stack;
         int reagent_num;
-        int reagent[CRAFT_BENCH_INPUTS_MAX];
+        ItemType reagent[CRAFT_BENCH_INPUTS_MAX];
         int reagent_count[CRAFT_BENCH_INPUTS_MAX];
 
         // temporary state information
@@ -207,10 +210,10 @@ class SmeltingRecipe
 
         int id;
         int output_num;
-        int output[SMELTER_OUTPUTS_MAX]; //item type
+        ItemType output[SMELTER_OUTPUTS_MAX]; //item type
         int output_stack[SMELTER_OUTPUTS_MAX];
         int reagent_num;
-        int reagent[SMELTER_INPUTS_MAX];
+        ItemType reagent[SMELTER_INPUTS_MAX];
         int reagent_count[SMELTER_INPUTS_MAX];
         int creation_time;  // total ticks to synthesize
 

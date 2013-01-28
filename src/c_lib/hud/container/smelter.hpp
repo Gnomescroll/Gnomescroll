@@ -322,7 +322,7 @@ void SmelterUI::draw()
     //draw items
     for (int slot=0; slot<smelter->slot_max; slot++)
     {
-        int item_type = slot_metadata[slot].type;
+        ItemType item_type = slot_metadata[slot].type;
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 

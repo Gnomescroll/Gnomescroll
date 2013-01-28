@@ -688,13 +688,13 @@ void agent_born(AgentID agent_id)
 
     int toolbelt_space = toolbelt->slot_max - toolbelt->slot_count;
 
-    int laser_rifle_type = Item::get_item_type("laser_rifle");
+    ItemType laser_rifle_type = Item::get_item_type("laser_rifle");
     GS_ASSERT(laser_rifle_type != NULL_ITEM_TYPE);
     bool has_laser_rifle = false;
     Item::Item* most_durable_laser_rifle = NULL;
     int most_durable_laser_rifle_value = 0;
 
-    int shovel_type = Item::get_item_type("copper_shovel");
+    ItemType shovel_type = Item::get_item_type("copper_shovel");
     GS_ASSERT(shovel_type != NULL_ITEM_TYPE);
     bool has_shovel = false;
     Item::Item* most_durable_shovel = NULL;
@@ -794,7 +794,7 @@ void agent_born(AgentID agent_id)
         int n_energy_tanks = energy_tanks->slot_count;
         for (int i=0; i<max_energy_tanks-n_energy_tanks; i++)
         {
-            int energy_tank_type = Item::get_item_type("energy_tank");
+            ItemType energy_tank_type = Item::get_item_type("energy_tank");
             GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
             if (energy_tank_type == NULL_ITEM_TYPE) break;
             Item::Item* energy_tank = Item::create_item(energy_tank_type);
@@ -1023,7 +1023,7 @@ void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)
     int xslot = shopping_slot % synthesizer->alt_xdim;
     int yslot = shopping_slot / synthesizer->alt_xdim;
     int cost;
-    int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
+    ItemType item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
     IF_ASSERT(cost < 0) return;
     if (item_type == NULL_ITEM_TYPE) return;
 
@@ -1162,7 +1162,7 @@ bool consume_crafting_reagents(AgentID agent_id, ItemContainerID container_id, i
     {
         ItemID item_id = bench->get_item(i);
         if (item_id == NULL_ITEM) continue;
-        int item_type = Item::get_item_type(item_id);
+        ItemType item_type = Item::get_item_type(item_id);
         GS_ASSERT(item_type != NULL_ITEM_TYPE);
 
         // insert sorted
@@ -1320,7 +1320,7 @@ ContainerActionType auto_add_free_item_to_container(ClientID client_id, ItemCont
         {   // no empty slot found, try to break this stack up and redistribute
             int starting_stack_size = item->stack_size;
             int stack_size = item->stack_size;
-            int item_type = item->type;
+            ItemType item_type = item->type;
 
             // distribute as much as we can into slots
             for (int i=0; i<container->slot_max; i++)
@@ -1472,7 +1472,7 @@ void update_smelters()
         {
             smelter->fuel = 0;
             ItemID fuel_item = smelter->get_fuel();
-            int fuel_item_type = NULL_ITEM_TYPE;
+            ItemType fuel_item_type = NULL_ITEM_TYPE;
             bool is_fuel = false;
             if (fuel_item != NULL_ITEM)
             {
@@ -1498,10 +1498,9 @@ void update_smelters()
                     // look where the item is located
                     // if its located here, throw() it
                     // else, just unset it
-                    bool is_here =
-                        (fuel->location == IL_CONTAINER
-                      && fuel->location_id == smelter->id
-                      && fuel->container_slot == smelter->fuel_slot);
+                    bool is_here = (fuel->location == IL_CONTAINER &&
+                                    fuel->location_id == smelter->id &&
+                                    fuel->container_slot == smelter->fuel_slot);
                     GS_ASSERT(is_here);
                     if (is_here)
                     {   // throw it out
@@ -1510,8 +1509,8 @@ void update_smelters()
                         {
                             Vec3 pos = vec3_init(p[0], p[1], p[2]);
                             pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 1.05f));
-                            ItemParticle::dump_container_item(fuel_item,
-                                pos.x, pos.y, pos.z);
+                            ItemParticle::dump_container_item(
+                                fuel_item, pos.x, pos.y, pos.z);
                         }
                         else
                         {

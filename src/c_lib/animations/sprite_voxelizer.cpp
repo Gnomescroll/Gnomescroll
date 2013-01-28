@@ -20,7 +20,7 @@ static struct
 } sprite_voxelizer_shader_vars;
 
 const size_t SPRITE_VOXELIZER_MAX = MAX_ITEMS;
-static VertexElementListColorByte* sprite_voxelizer_vlists[SPRITE_VOXELIZER_MAX] = {NULL}; 
+static VertexElementListColorByte* sprite_voxelizer_vlists[SPRITE_VOXELIZER_MAX] = {NULL};
 
 static const unsigned char ALPHA_TEST = 0xFF/2;
 
@@ -91,11 +91,11 @@ static void generate_sprite_vertices(
         sprite_voxelizer_vlists[sprite_id] = new VertexElementListColorByte;
     VertexElementListColorByte* vlist = sprite_voxelizer_vlists[sprite_id];
     vlist->clear();
-    
+
     const size_t tile_size = sheet_loader->tile_size;
     const size_t n_pixels =  tile_size*tile_size;
     for (size_t i=0; i<n_pixels; i++)
-        if (pixels[i].a > ALPHA_TEST)        
+        if (pixels[i].a > ALPHA_TEST)
             push_sprite_vertex_cube(vlist, pixels, n_pixels, tile_size, i);
 
     // check if the sprite wasn't completely invisible
@@ -110,7 +110,7 @@ static void generate_sprite_vertices(
 
 void load_sprite_voxelizer()
 {   // generate vertex arrays from items in the spritesheet
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
     {
         class Item::ItemAttribute* attr = &Item::item_attributes[i];
         if (!attr->loaded || attr->particle_voxel) continue;
@@ -142,16 +142,16 @@ void draw_voxelized_sprite(int sprite_id, const struct Mat4& rotation_matrix)
     offset += sizeof(struct Vec3);
     glColorPointer(3, GL_UNSIGNED_BYTE, vlist->stride, (GLvoid*)offset);
     offset += sizeof(Color);
-    
+
     glVertexAttribPointer(sprite_voxelizer_shader_vars.normal, 3, GL_BYTE, GL_FALSE, vlist->stride, (GLvoid*)offset);
     offset += 4 * sizeof(char);
 
     GS_ASSERT(offset == sizeof(struct VertexElementColorNormalByte));
-    
+
     glDrawArrays(GL_QUADS, 0, vlist->vertex_number);
 
     glDisableVertexAttribArray(sprite_voxelizer_shader_vars.normal);
-    
+
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
 
@@ -240,12 +240,12 @@ void render_voxelized_sprite_fbo()
 
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5f);
-    
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, voxelized_sprite_hud_texture);
 
     draw_bound_texture(0, 0, _xres, _yres);
-    
+
     glDisable(GL_ALPHA_TEST);
     glDisable(GL_TEXTURE_2D);
 }
@@ -253,7 +253,7 @@ void render_voxelized_sprite_fbo()
 void init_sprite_voxelizer()
 {
     CHECK_GL_ERROR();
-    
+
     sprite_voxelizer_shader.set_debug(true);
     sprite_voxelizer_shader.load_shader("sprite voxelizer",
         "./media/shaders/animation/sprite_voxelizer.vsh",

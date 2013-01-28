@@ -11,20 +11,18 @@ namespace Toolbelt
 
 #if DC_CLIENT
 
-inline void toolbelt_set_active_item_StoC::handle() 
+inline void toolbelt_set_active_item_StoC::handle()
 {
     IF_ASSERT(!isValid((AgentID)this->agent_id)) return;
-    GS_ASSERT(agent_selected_type != NULL);
-    if (agent_selected_type == NULL) return;
-    if (item_type == agent_selected_type[this->agent_id]) return;
+    IF_ASSERT(agent_selected_type == NULL) return;
+    if ((ItemType)item_type == agent_selected_type[this->agent_id]) return;
     turn_fire_off((AgentID)this->agent_id);
-    agent_selected_type[agent_id] = item_type;
+    agent_selected_type[agent_id] = (ItemType)item_type;
 }
 
-inline void toolbelt_item_begin_alpha_action_StoC::handle() 
+inline void toolbelt_item_begin_alpha_action_StoC::handle()
 {
     if (agent_id == ClientState::player_agent.agent_id) return;    // ignore ourself
-    
     turn_fire_on((AgentID)this->agent_id);
 
     // TODO --
@@ -34,12 +32,12 @@ inline void toolbelt_item_begin_alpha_action_StoC::handle()
         // So we will need 2 packets (don't really need the force command one right yet)
 }
 
-inline void toolbelt_item_end_alpha_action_StoC::handle() 
+inline void toolbelt_item_end_alpha_action_StoC::handle()
 {
     turn_fire_off((AgentID)this->agent_id);
 }
 
-inline void toolbelt_item_beta_action_StoC::handle() 
+inline void toolbelt_item_beta_action_StoC::handle()
 {
     if (agent_id == ClientState::player_agent.agent_id) return;
     // play sound/anim

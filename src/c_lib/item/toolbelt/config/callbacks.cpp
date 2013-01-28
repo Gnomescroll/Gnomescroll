@@ -30,33 +30,33 @@ static void update_predicted_durability()
     ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
 }
 
-void fire_close_range_weapon(ItemID item_id, int item_type)
+void fire_close_range_weapon(ItemID item_id, ItemType item_type)
 {
-    ClientState::player_agent.action.fire_close_range_weapon(item_type);    
+    ClientState::player_agent.action.fire_close_range_weapon(item_type);
     update_predicted_durability();
 }
 
 // IG_MINING_LASER
 
-void trigger_local_mining_laser(ItemID item_id, int item_type)
+void trigger_local_mining_laser(ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     fire_close_range_weapon(item_id, item_type);
 }
 
-void begin_local_mining_laser(int item_type)
+void begin_local_mining_laser(ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     ClientState::player_agent.action.begin_mining_laser();
 }
 
-void end_local_mining_laser(int item_type)
+void end_local_mining_laser(ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     ClientState::player_agent.action.end_mining_laser();
 }
 
-void begin_mining_laser(AgentID agent_id, int item_type)
+void begin_mining_laser(AgentID agent_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     Agents::Agent* a = Agents::get_agent(agent_id);
@@ -64,7 +64,7 @@ void begin_mining_laser(AgentID agent_id, int item_type)
     a->event.begin_mining_laser();
 }
 
-void end_mining_laser(AgentID agent_id, int item_type)
+void end_mining_laser(AgentID agent_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
     Agents::Agent* a = Agents::get_agent(agent_id);
@@ -74,7 +74,7 @@ void end_mining_laser(AgentID agent_id, int item_type)
 
 // IG_PLACER
 
-void trigger_local_block_placer(ItemID item_id, int item_type)
+void trigger_local_block_placer(ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_PLACER);
     ClientState::player_agent.action.set_block(item_id);
@@ -82,7 +82,7 @@ void trigger_local_block_placer(ItemID item_id, int item_type)
 
 // IG_DEBUG
 
-void trigger_local_location_pointer(ItemID item_id, int item_type)
+void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
 {
     /*
         DEBUG STUFF HERE!!!
@@ -90,18 +90,14 @@ void trigger_local_location_pointer(ItemID item_id, int item_type)
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_DEBUG);
     ClientState::set_location_pointer();
 
-#if 1
-    Vec3 pos = agent_camera->get_position();
-    Vec3 dir = agent_camera->forward_vector();
-
-    float d;
-    int mech_id;
-
-    t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &mech_id, &d);
-#endif
+    //Vec3 pos = agent_camera->get_position();
+    //Vec3 dir = agent_camera->forward_vector();
+    //float d = 0.0f;
+    //int mech_id = 0;
+    //t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &mech_id, &d);
 }
 
-void trigger_local_admin_block_placer(ItemID item_id, int item_type)
+void trigger_local_admin_block_placer(ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_DEBUG);
     ClientState::player_agent.action.admin_set_block();
@@ -109,7 +105,7 @@ void trigger_local_admin_block_placer(ItemID item_id, int item_type)
 
 // IG_GRENADE_LAUNCHER
 
-void trigger_local_plasma_grenade(ItemID item_id, int item_type)
+void trigger_local_plasma_grenade(ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_GRENADE_LAUNCHER);
     ClientState::player_agent.action.throw_grenade();
@@ -117,7 +113,7 @@ void trigger_local_plasma_grenade(ItemID item_id, int item_type)
 
 // IG_HITSCAN_WEAPON
 
-void trigger_local_hitscan_laser(ItemID item_id, int item_type)
+void trigger_local_hitscan_laser(ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_HITSCAN_WEAPON);
     ClientState::player_agent.action.hitscan_laser(item_type);
@@ -125,7 +121,7 @@ void trigger_local_hitscan_laser(ItemID item_id, int item_type)
 
 // block placer
 
-void select_facing_block(ItemID item_id, int item_type)
+void select_facing_block(ItemID item_id, ItemType item_type)
 {
     static int block_placer_type = Item::get_item_type("block_placer");
     GS_ASSERT(block_placer_type != NULL_ITEM_TYPE);
@@ -142,7 +138,7 @@ void select_facing_block(ItemID item_id, int item_type)
 
 #if DC_SERVER
 
-void decrement_durability(AgentID agent_id, ItemID item_id, int item_type)
+void decrement_durability(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     int durability = Item::get_item_durability(item_id);
     if (durability == NULL_DURABILITY) return;
@@ -157,7 +153,7 @@ void decrement_durability(AgentID agent_id, ItemID item_id, int item_type)
         Item::send_item_state(item_id);
 }
 
-void decrement_stack(AgentID agent_id, ItemID item_id, int item_type)
+void decrement_stack(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     int stack_size = Item::get_stack_size(item_id);
     GS_ASSERT(stack_size > 0);
@@ -173,21 +169,21 @@ void decrement_stack(AgentID agent_id, ItemID item_id, int item_type)
 
 // IG_CONSUMABLE
 
-void consume_item(AgentID agent_id, ItemID item_id, int item_type)
+void consume_item(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
-    
+
     bool consumed = a->status.consume_item(item_id);
     if (!consumed) return;
     decrement_stack(agent_id, item_id, item_type);
 }
 
-void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_type)
+void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
-    
+
     AgentID teammate_id = Hitscan::against_agents(
         a->get_camera_position(), a->forward_vector(),
         APPLY_REPAIR_KIT_MAX_DISTANCE, a->id);
@@ -196,27 +192,27 @@ void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, int item_t
 }
 
 // simple creator for objects
-static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, int item_type, const EntityType object_type, const float object_height)
+static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, ItemType item_type, const EntityType object_type, const float object_height)
 {
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return NULL;
-    
+
     const int max_dist = 4.0f;
     int b[3];
     bool collided = a->nearest_open_block(max_dist, b);
     if (!collided) return NULL;
-    
+
     // must be placed on solid block
     if (b[2] <= 0) return NULL;  // can't place on nothing
     if (!t_map::isSolid(b[0], b[1], b[2]-1)) return NULL;
-    
+
     // make sure will fit height
     int h = (int)ceil(object_height);
     IF_ASSERT(h <= 0) h = 1;
     for (int i=0; i<h; i++)
         if (t_map::get(b[0], b[1], b[2] + i) != 0)
             return NULL;
-    
+
     // check against all known spawners & energy cores
     if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
         return NULL;
@@ -233,14 +229,14 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, in
         Vec3 pos = vec3_init(b[0] + 0.5f, b[1] + 0.5f, b[2]);
         physics->set_position(pos);
     }
-    
+
     // WARNING :: MUST CALL Entities::ready(obj);
-    return obj;    
+    return obj;
 }
 
 // IG_AGENT_SPAWNER
 
-void place_spawner(AgentID agent_id, ItemID item_id, int item_type)
+void place_spawner(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_AGENT_SPAWNER);
 
@@ -250,7 +246,7 @@ void place_spawner(AgentID agent_id, ItemID item_id, int item_type)
     class Entities::Entity* obj = place_object(agent_id, item_id, item_type, OBJECT_AGENT_SPAWNER, Entities::AGENT_SPAWNER_HEIGHT);
     if (obj == NULL) return;
     Entities::ready(obj);
-    
+
     decrement_stack(agent_id, item_id, item_type);
 
     // select spawner automatically if spawn pt is base
@@ -260,38 +256,38 @@ void place_spawner(AgentID agent_id, ItemID item_id, int item_type)
 
 // IG_ENERGY_CORE
 
-void place_energy_core(AgentID agent_id, ItemID item_id, int item_type)
+void place_energy_core(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_ENERGY_CORE);
-    
+
     class Entities::Entity* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Entities::ENERGY_CORE_HEIGHT);
     if (obj == NULL) return;
     Entities::ready(obj);
-    
+
     decrement_stack(agent_id, item_id, item_type);
 }
 
 //IG_MECH_PLACER
 
-void place_mech(AgentID agent_id, ItemID item_id, int item_type)
+void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
-    
+
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
-    
+
     const int max_dist = 4.0f;
     int b[3];
     bool collided = a->nearest_open_block(max_dist, b);
     if (!collided) return;
-    
+
     // must be placed on solid block
     if (b[2] <= 0) return;  // can't place on nothing. it CAN be placed on top of the map for now
     if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
 
     MechType mech_type = Item::get_mech_type(item_type);
     IF_ASSERT(!isValid(mech_type)) return;
-    
+
     if (!t_mech::can_place_mech(b[0],b[1],b[2], 0)) return;
 
     //printf("place mech %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
@@ -302,7 +298,7 @@ void place_mech(AgentID agent_id, ItemID item_id, int item_type)
 
 // magic stick
 
-void use_boon_crank(AgentID agent_id, ItemID item_id, int item_type)
+void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     Item::Item* item = Item::get_item(item_id);
     if (item->charges <= 0) return;
@@ -311,18 +307,16 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, int item_type)
     IF_ASSERT(a == NULL) return;
 
     // find an item type. it should not be the same item or an abstract item
-    int random_type = NULL_ITEM_TYPE;
+    ItemType random_type = NULL_ITEM_TYPE;
     do {
-        random_type = randrange(0, MAX_ITEM_TYPES-1);
-    } while (!Item::type_used(random_type)
-          || random_type == item_type
-          || !is_tangible_group(Item::get_item_group_for_type(random_type)));
+        random_type = (ItemType)randrange(0, MAX_ITEM_TYPES-1);
+    } while (!Item::can_be_booned(random_type));
 
     // place item in front of player, near the head, but at a distance away
     const float distance_from_player = 1.3f;
     // incase first attempt is inside a block
     const float backup_distance_from_player = a->box.box_r * 0.5f;
-    
+
     // calculate position
     struct Vec3 forward = a->forward_vector();
     struct Vec3 start_position = a->get_position();
@@ -347,23 +341,23 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, int item_type)
     Item::send_item_charges(item_id);
 
     Sound::send_play_2d_sound("boon_crank", a->client_id);
-    Sound::broadcast_exclude_play_3d_sound("boon_crank", a->get_center(), a->client_id); 
+    Sound::broadcast_exclude_play_3d_sound("boon_crank", a->get_center(), a->client_id);
 }
 
 // IG_PLAMT_PLACER
 
-void plant_placer_action(AgentID agent_id, ItemID item_id, int item_type)
+void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_PLANT_PLACER);
-    
+
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
-    
+
     const int max_dist = 4.0f;
     int b[3];
     bool collided = a->nearest_open_block(max_dist, b);
     if (!collided) return;
-    
+
     // must be placed on solid block
     if (b[2] <= 0) return;  // can't place on nothing. it CAN be placed on top of the map for now
     if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
@@ -375,7 +369,7 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, int item_type)
 /*
     MechType mech_type = Item::get_mech_type(item_type);
     IF_ASSERT(!isValid(mech_type)) return;
-    
+
     if (!t_mech::can_place_mech(b[0],b[1],b[2], 0)) return;
 
     //printf("place mech %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);

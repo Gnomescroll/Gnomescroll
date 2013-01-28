@@ -13,7 +13,7 @@ dont_include_this_file_in_client
 namespace Item
 {
 
-static void create_dropped_item(int item_type, int amount, Vec3 position, float vx, float vy, float vz, randFloat vx_func, randFloat vy_func, randFloat vz_func)
+static void create_dropped_item(ItemType item_type, int amount, Vec3 position, float vx, float vy, float vz, randFloat vx_func, randFloat vy_func, randFloat vz_func)
 {
     GS_ASSERT(amount > 0);
 
@@ -21,14 +21,14 @@ static void create_dropped_item(int item_type, int amount, Vec3 position, float 
     float x = position.x;
     float y = position.y;
     float z = position.z;
-    
+
     for (int i=0; i<amount; i++)
     {
         // create item
         class Item* item = create_item(item_type);
         GS_ASSERT(item != NULL);
         if (item == NULL) break;
-        
+
         // create item particle
         if (vx_func != NULL) vx = vx_func();
         if (vy_func != NULL) vy = vy_func();
@@ -81,7 +81,7 @@ void ItemDrop::drop_item(Vec3 position)
     if (this->drop == NULL) return;
     GS_ASSERT(this->max_drops > 0);
     GS_ASSERT(this->n_drops == max_drops);
-        
+
     for (int i=0; i<this->max_drops; i++)
         this->drop[i].drop_item(position, vx, vy, vz, vx_func, vy_func, vz_func);
 }

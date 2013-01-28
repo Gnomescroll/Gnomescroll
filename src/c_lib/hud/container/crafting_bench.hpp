@@ -267,7 +267,7 @@ void CraftingUI::draw()
     for (int yslot=0; yslot<input_ydim; yslot++)
     {
         int slot = input_xdim*yslot + xslot;
-        int item_type = slot_metadata[slot].type;
+        ItemType item_type = slot_metadata[slot].type;
         if (item_type == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(item_type);
 
@@ -304,7 +304,7 @@ void CraftingUI::draw()
     {
         int slot = output_xdim*yslot + xslot;
         bool available;
-        int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
+        ItemType item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
         if (item_type == NULL_ITEM_TYPE) continue;
         if (!available)
         {
@@ -351,7 +351,7 @@ void CraftingUI::draw()
         {
             int slot = output_xdim*yslot + xslot;
             bool available;
-            int item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
+            ItemType item_type = Item::get_selected_craft_recipe_type(this->container_id, slot, &available);
             if (available) continue;
             if (item_type == NULL_ITEM_TYPE) continue;
 

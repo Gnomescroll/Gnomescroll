@@ -92,7 +92,7 @@ static bool process_container_blob(const char* str, size_t filesize)
         buf[i++] = c;
     buf[i] = '\0';
     IF_ASSERT(c != '\n') return false;
-    
+
     // read file header
     class ParsedContainerFileData container_file_data;
     parse_line<class ParsedContainerFileData>(&parse_container_file_header_token, buf, i, &container_file_data);
@@ -103,7 +103,7 @@ static bool process_container_blob(const char* str, size_t filesize)
     for (int m=0; m<container_file_data.container_count; m++)
     {
         IF_ASSERT(c == '\0') return false;
-        
+
         // copy ctr header line to buffer
         size_t k = 0;
         while ((c = str[i++]) != '\0' && c != '\n' && k < LONGEST_LINE)
@@ -136,7 +136,7 @@ static bool process_container_blob(const char* str, size_t filesize)
         IF_ASSERT(container_data.item_count > container->slot_max) return false;
 
         clear_slot_checker();
-        
+
         // parse contents
         for (int n=0; n<container_data.item_count; n++)
         {
@@ -146,14 +146,14 @@ static bool process_container_blob(const char* str, size_t filesize)
                 buf[k++] = c;
             buf[k] = '\0';
             IF_ASSERT(c != '\n') return false;
-            
+
             class ParsedItemData* item_data = create_item_data();
             parse_line<class ParsedItemData>(&parse_item_token, buf, k, item_data);
             IF_ASSERT(!item_data->valid) return false;
 
             item_data->item_location = IL_CONTAINER;
 
-            int item_type = Item::get_item_type(item_data->name);
+            ItemType item_type = Item::get_item_type(item_data->name);
             IF_ASSERT(item_type == NULL_ITEM_TYPE) return false;
 
             item_data->item_type = item_type;
@@ -164,7 +164,7 @@ static bool process_container_blob(const char* str, size_t filesize)
 
         if (!create_container_items_from_data(container->id)) return false;
 
-        // mark container with next phase of loaded status 
+        // mark container with next phase of loaded status
         loaded_containers[container->id] = CONTAINER_LOAD_ITEMS;
 
         // check separator
@@ -187,7 +187,7 @@ static bool process_container_blob(const char* str, size_t filesize)
 static bool load_container_file(const char* filename)
 {
     printf("Loading container file %s\n", filename);
-    
+
     size_t filesize = 0;
     char* buffer = read_file_to_buffer(filename, &filesize);
     IF_ASSERT(buffer == NULL) return false;
@@ -288,12 +288,12 @@ static bool save_container(FILE* f, const class ItemContainer::ItemContainerInte
 {
     size_t container_string_length = 0;
     const char* container_string = write_container_string(container, container_entry, &container_string_length);
-    
+
     IF_ASSERT(container_string == NULL) return false;
     IF_ASSERT(container_string_length <= 0) return false;
-    
+
     size_t wrote = fwrite(container_string, sizeof(char), container_string_length, f);
-    
+
     GS_ASSERT(wrote == container_string_length);
     return (wrote == container_string_length);
 }
@@ -312,7 +312,7 @@ static bool save_container_file_header(FILE* f, int container_ct)
         log_container_save_error("Failed to write temporary container header");
         return false;
     }
-    return true;    
+    return true;
 }
 
 
@@ -337,7 +337,7 @@ bool save_containers()
         return false;
     }
 
-    // write a temporary file header. the container count is wrong, so we have to rewrite it later 
+    // write a temporary file header. the container count is wrong, so we have to rewrite it later
     err = (!save_container_file_header(f, item_container_list->n_max));
     IF_ASSERT(err) goto Error;
 

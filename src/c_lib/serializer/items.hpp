@@ -25,7 +25,7 @@ class ParsedItemData
         bool valid;
 
         // additional item data attached after processing, but before item creation
-        int item_type;
+        ItemType item_type;
         ItemLocationType item_location;
         ItemContainerType item_container_type;
 

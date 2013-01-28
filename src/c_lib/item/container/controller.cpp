@@ -43,7 +43,7 @@ ContainerActionType full_hand_to_empty_slot(
 
     container->insert_item(slot, *hand_metadata);
     *hand_metadata = NULL_SLOT_METADATA;
-    
+
     return FULL_HAND_TO_EMPTY_SLOT;
 }
 
@@ -76,7 +76,7 @@ ContainerActionType partial_hand_to_empty_slot(
     struct SlotMetadata new_metadata = *hand_metadata;
     new_metadata.stack_size = 1;
     container->insert_item(slot, new_metadata);
-    
+
     // hand item type unchanged
     (*hand_metadata).stack_size -= 1;
     GS_ASSERT((*hand_metadata).stack_size > 0);
@@ -179,7 +179,7 @@ ContainerActionType partial_hand_to_world(AgentID agent_id, int transfer_stack_s
 
     // update items
     Item::send_item_state(hand_item);
-    //Item::broadcast_item_create(new_item); 
+    //Item::broadcast_item_create(new_item);
 
     // throw item
     ItemParticle::throw_agent_item(agent_id, new_item);
@@ -229,7 +229,7 @@ ContainerActionType partial_hand_to_empty_slot(ItemContainerInterface* container
     // put in slot
 
     transfer_free_item_to_container(new_item, container->id, slot);
-    
+
     // update items
     Item::send_item_state(hand_item);
 
@@ -274,7 +274,7 @@ ContainerActionType full_slot_to_empty_hand(AgentID agent_id, ItemContainerInter
     IF_ASSERT(slot == NULL_SLOT) return CONTAINER_ACTION_NONE;
 
     transfer_item_from_container_to_hand(slot_item, container->id, slot, agent_id);
-    
+
     return FULL_SLOT_TO_EMPTY_HAND;
 }
 
@@ -285,7 +285,7 @@ ContainerActionType full_hand_swap_with_slot(ClientID client_id, AgentID agent_i
 
     bool success = swap_item_between_hand_and_container(agent_id, container->id, slot);
     if (!success) return CONTAINER_ACTION_NONE;
-    
+
     return FULL_HAND_SWAP_WITH_SLOT;
 }
 #endif
@@ -314,12 +314,12 @@ ContainerActionType alpha_action_decision_tree(AgentID agent_id, ClientID client
 
     struct SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
-    int hand_item_type = hand_metadata.type;
+    ItemType hand_item_type = hand_metadata.type;
     int hand_item_stack = hand_metadata.stack_size;
 
     struct SlotMetadata slot_metadata = container->get_slot_metadata(slot);
     bool slot_empty = (slot_metadata.type == NULL_ITEM_TYPE);
-    int slot_item_type = slot_metadata.type;
+    ItemType slot_item_type = slot_metadata.type;
     int slot_item_stack = slot_metadata.stack_size;
     int slot_item_space = Item::get_max_stack_size(slot_item_type) - slot_item_stack;
 
@@ -329,18 +329,18 @@ ContainerActionType alpha_action_decision_tree(AgentID agent_id, ClientID client
     #if DC_SERVER
     ItemID hand_item = get_agent_hand_item(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    int hand_item_type = Item::get_item_type(hand_item);
+    ItemType hand_item_type = Item::get_item_type(hand_item);
     int hand_item_stack = Item::get_stack_size(hand_item);
 
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
-    int slot_item_type = Item::get_item_type(slot_item);
+    ItemType slot_item_type = Item::get_item_type(slot_item);
     //int slot_item_stack = Item::get_stack_size(slot_item);
     int slot_item_space = Item::get_stack_space(slot_item);
 
     bool can_insert = container->can_insert_item(slot, hand_item);
     #endif
-    
+
     GS_ASSERT(hand_item_stack >= 1);
 
     // NORMAL
@@ -478,12 +478,12 @@ ContainerActionType synthesizer_alpha_action_decision_tree(AgentID agent_id, Cli
 
     struct SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
-    int hand_item_type = hand_metadata.type;
+    ItemType hand_item_type = hand_metadata.type;
     int hand_item_stack = hand_metadata.stack_size;
 
     struct SlotMetadata slot_metadata = container->get_slot_metadata(slot);
     bool slot_empty = (slot_metadata.type == NULL_ITEM_TYPE);
-    int slot_item_type = slot_metadata.type;
+    ItemType slot_item_type = slot_metadata.type;
     int slot_item_stack = slot_metadata.stack_size;
     int slot_item_space = Item::get_max_stack_size(slot_item_type) - slot_item_stack;
 
@@ -497,13 +497,13 @@ ContainerActionType synthesizer_alpha_action_decision_tree(AgentID agent_id, Cli
 
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
-    //int slot_item_type = Item::get_item_type(slot_item);
+    //ItemType slot_item_type = Item::get_item_type(slot_item);
     //int slot_item_stack = Item::get_stack_size(slot_item);
     int slot_item_space = Item::get_stack_space(slot_item);
 
     bool can_insert = container->can_insert_item(slot, hand_item);
     #endif
-    
+
     GS_ASSERT(hand_item_stack >= 1);
 
     if (hand_empty)
@@ -569,7 +569,7 @@ ContainerActionType synthesizer_alpha_action_decision_tree(AgentID agent_id, Cli
                         action = partial_hand_to_occupied_slot(slot, hand_item, slot_item, slot_item_space);
                         #endif
                     }
-                }                    
+                }
             }
         }
     }
@@ -607,12 +607,12 @@ ContainerActionType beta_action_decision_tree(AgentID agent_id, ClientID client_
 
     struct SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
-    int hand_item_type = hand_metadata.type;
+    ItemType hand_item_type = hand_metadata.type;
     int hand_item_stack = hand_metadata.stack_size;
 
     struct SlotMetadata slot_metadata = container->get_slot_metadata(slot);
     bool slot_empty = (slot_metadata.type == NULL_ITEM_TYPE);
-    int slot_item_type = slot_metadata.type;
+    ItemType slot_item_type = slot_metadata.type;
     int slot_item_stack = slot_metadata.stack_size;
     int slot_item_space = Item::get_max_stack_size(slot_item_type) - slot_item_stack;
     #endif
@@ -620,13 +620,13 @@ ContainerActionType beta_action_decision_tree(AgentID agent_id, ClientID client_
     #if DC_SERVER
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
-    int slot_item_type = Item::get_item_type(slot_item);
+    ItemType slot_item_type = Item::get_item_type(slot_item);
     int slot_item_stack = Item::get_stack_size(slot_item);
     int slot_item_space = Item::get_stack_space(slot_item);
 
     ItemID hand_item = get_agent_hand_item(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    int hand_item_type = Item::get_item_type(hand_item);
+    ItemType hand_item_type = Item::get_item_type(hand_item);
     int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
 
@@ -774,26 +774,26 @@ ContainerActionType synthesizer_beta_action_decision_tree(AgentID agent_id, Clie
 
     struct SlotMetadata slot_metadata = container->get_slot_metadata(slot);
     bool slot_empty = (slot_metadata.type == NULL_ITEM_TYPE);
-    int slot_item_type = slot_metadata.type;
+    ItemType slot_item_type = slot_metadata.type;
     int slot_item_stack = slot_metadata.stack_size;
     int slot_item_space = Item::get_max_stack_size(slot_item_type) - slot_item_stack;
 
     struct SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
-    int hand_item_type = hand_metadata.type;
+    ItemType hand_item_type = hand_metadata.type;
     int hand_item_stack = hand_metadata.stack_size;
     #endif
 
     #if DC_SERVER
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
-    int slot_item_type = Item::get_item_type(slot_item);
+    ItemType slot_item_type = Item::get_item_type(slot_item);
     int slot_item_stack = Item::get_stack_size(slot_item);
     int slot_item_space = Item::get_stack_space(slot_item);
 
     ItemID hand_item = get_agent_hand_item(agent_id);
     bool hand_empty = (hand_item == NULL_ITEM);
-    int hand_item_type = Item::get_item_type(hand_item);
+    ItemType hand_item_type = Item::get_item_type(hand_item);
     int hand_item_stack = Item::get_stack_size(hand_item);
     #endif
 
@@ -956,14 +956,14 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(AgentID agen
     struct SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
     GS_ASSERT(hand_metadata.stack_size >= 1);
-    int hand_item_type = hand_metadata.type;
+    ItemType hand_item_type = hand_metadata.type;
     int hand_item_stack = hand_metadata.stack_size;
     int stack_space = Item::get_max_stack_size(hand_item_type) - hand_item_stack;
     #endif
-    
+
     #if DC_SERVER
     ItemID hand_item = get_agent_hand_item(agent_id);
-    int hand_item_type = Item::get_item_type(hand_item);
+    ItemType hand_item_type = Item::get_item_type(hand_item);
     bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
     int stack_space = Item::get_stack_space(hand_item);
     #endif
@@ -978,7 +978,7 @@ ContainerActionType synthesizer_shopping_alpha_action_decision_tree(AgentID agen
         int xslot = slot % container->alt_xdim;
         int yslot = slot / container->alt_xdim;
         int cost;
-        int item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
+        ItemType item_type = Item::get_synthesizer_item(xslot, yslot, &cost);
         GS_ASSERT(cost >= 0);
         if (item_type == NULL_ITEM_TYPE) return action;
         if (item_type != hand_item_type) return action;
@@ -1042,25 +1042,25 @@ ContainerActionType craft_output_alpha_action_decision_tree(AgentID agent_id, Cl
     if (slot == NULL_SLOT || container_id == NULL_CONTAINER) return CONTAINER_ACTION_NONE;
 
     #if DC_CLIENT
-    IF_ASSERT(player_hand_ui == NULL) return action;    
+    IF_ASSERT(player_hand_ui == NULL) return action;
 
     struct SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
     GS_ASSERT(hand_metadata.stack_size >= 1);
-    int hand_item_type = hand_metadata.type;
+    ItemType hand_item_type = hand_metadata.type;
     int hand_item_stack = hand_metadata.stack_size;
 
     int stack_space = Item::get_max_stack_size(hand_item_type) - hand_item_stack;
     if (hand_empty) stack_space = 1; // special case
     #endif
-    
+
     #if DC_SERVER
     ItemID hand_item = get_agent_hand_item(agent_id);
-    int hand_item_type = Item::get_item_type(hand_item);
+    ItemType hand_item_type = Item::get_item_type(hand_item);
     bool hand_empty = (hand_item_type == NULL_ITEM_TYPE);
     int stack_space = Item::get_stack_space(hand_item);
     #endif
- 
+
     GS_ASSERT(stack_space >= 0);
 
     if (hand_empty) return CRAFT_ITEM_FROM_BENCH;
@@ -1094,7 +1094,7 @@ ContainerActionType no_container_alpha_action_decision_tree(AgentID agent_id, Cl
 
     #if DC_CLIENT
     IF_ASSERT(player_hand_ui == NULL) return action;
-    
+
     struct SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
     GS_ASSERT(hand_metadata.stack_size >= 1);
@@ -1141,7 +1141,7 @@ ContainerActionType no_container_beta_action_decision_tree(AgentID agent_id, Cli
     bool hand_empty = (hand_metadata.type == NULL_ITEM_TYPE);
     GS_ASSERT(hand_metadata.stack_size >= 1);
 
-    int hand_item_type = hand_metadata.type;
+    ItemType hand_item_type = hand_metadata.type;
     int hand_item_stack = hand_metadata.stack_size;
     #endif
 
@@ -1261,7 +1261,7 @@ ContainerActionType crusher_crush_alpha_action_decision_tree(AgentID agent_id, C
     if (container == NULL) return CONTAINER_ACTION_NONE;
     if (container->type != name::crusher) return CONTAINER_ACTION_NONE;
     ItemContainerCrusherUI* crusher = (ItemContainerCrusherUI*)container;
-    int item_type = crusher->get_input_slot_type();
+    ItemType item_type = crusher->get_input_slot_type();
     if (item_type == NULL_ITEM_TYPE) return CONTAINER_ACTION_NONE;
     #endif
 

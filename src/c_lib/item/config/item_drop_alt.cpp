@@ -13,7 +13,7 @@ void ItemDropConfig::save_to_file()
 {
     GS_ASSERT(max > 0);
     GS_ASSERT(this->get_name_from_id != NULL);
-    
+
     const char fmt[] = DATA_PATH "%s_drop_dat.txt";
     char* name = this->name;
     GS_ASSERT(name != NULL);
@@ -21,7 +21,7 @@ void ItemDropConfig::save_to_file()
     unsigned int len = strlen(fmt) + strlen(this->name) - 2;
     char* filename = (char*)malloc((len+1) * sizeof(char));
     sprintf(filename, fmt, name);
-    
+
     FILE *fp = fopen(filename, "w");
     free(filename);
     GS_ASSERT(fp != NULL);
@@ -31,7 +31,7 @@ void ItemDropConfig::save_to_file()
     {
         int index = this->meta_drop_table[i].index;
         if (index < 0) continue;
-        
+
         int num_drop = this->meta_drop_table[i].num_drop;
         if (num_drop == 0) continue;
 
@@ -60,10 +60,10 @@ void ItemDropConfig::save_to_file()
             {
                 cdrop += cidt->item_drop_num[k]*cidt->drop_probabilities[k];
                 //cumulative probability, probability, drop average, cumulative drop average
-                fprintf(fp,"\t\t%i: %2.4f \t %2.4f \t %2.2f \t %2.2f \n", 
+                fprintf(fp,"\t\t%i: %2.4f \t %2.4f \t %2.2f \t %2.2f \n",
                     cidt->item_drop_num[k],
                     cidt->drop_probabilities[k],
-                    cidt->drop_cumulative_probabilities[k], 
+                    cidt->drop_cumulative_probabilities[k],
                     cidt->item_drop_num[k]*cidt->drop_probabilities[k],
                     cdrop);
             }
@@ -80,7 +80,7 @@ void ItemDropConfig::end()
     {
         int index = this->meta_drop_table[i].index;
         if (index < 0) continue;
-        
+
         int num_drop = this->meta_drop_table[i].num_drop;
         if (num_drop == 0) continue;
 
@@ -134,7 +134,7 @@ void ItemDropConfig::add_drop(const char* item_name, int drop_entries)
 
     drop_entries++; // why? reserved "no drop" slot?
 
-    int item_type = get_item_type(item_name);
+    ItemType item_type = get_item_type(item_name);
     int id = this->_current_drop_id;
 
     if (this->add_drop_callback != NULL)
@@ -145,7 +145,7 @@ void ItemDropConfig::add_drop(const char* item_name, int drop_entries)
         GS_ASSERT(this->meta_drop_table[id].num_drop == 0);
         this->meta_drop_table[id].index = this->item_drop_table_index;
     }
-        
+
     this->meta_drop_table[id].num_drop++;
 
     struct ItemDropTable* cide;
@@ -200,7 +200,7 @@ bool ItemDropConfig::has_drop_defined(const char* name)
     if (this->get_id_from_name == NULL) return false;
     int id = this->get_id_from_name(name);
     GS_ASSERT(id >= 0 && id < this->max);
-    if (id < 0 || id >= this->max) return false; 
+    if (id < 0 || id >= this->max) return false;
     if (this->meta_drop_table[id].index >= 0) return true;
     return false;
 }

@@ -65,14 +65,14 @@ inline void container_action_alpha_CtoS::handle()
     }
 
     ItemID hand_item = get_agent_hand_item(a->id);
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -93,17 +93,17 @@ inline void container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
         return;
     }
-    
+
     ItemID hand_item = get_agent_hand_item(a->id);
 
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -126,14 +126,14 @@ inline void synthesizer_container_action_alpha_CtoS::handle()
     }
 
     ItemID hand_item = get_agent_hand_item(a->id);
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -154,17 +154,17 @@ inline void synthesizer_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
         return;
     }
-    
+
     ItemID hand_item = get_agent_hand_item(a->id);
 
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -197,14 +197,14 @@ inline void craft_container_action_alpha_CtoS::handle()
     }
 
     ItemID hand_item = get_agent_hand_item(a->id);
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -225,17 +225,17 @@ inline void craft_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
         return;
     }
-    
+
     ItemID hand_item = get_agent_hand_item(a->id);
 
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -264,7 +264,7 @@ inline void no_container_action_alpha_CtoS::handle()
     }
 
     ItemID hand_item = get_agent_hand_item(a->id);
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
@@ -286,7 +286,7 @@ inline void no_container_action_beta_CtoS::handle()
     }
 
     ItemID hand_item = get_agent_hand_item(a->id);
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
@@ -312,14 +312,14 @@ inline void smelter_container_action_alpha_CtoS::handle()
     }
 
     ItemID hand_item = get_agent_hand_item(a->id);
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -340,17 +340,17 @@ inline void smelter_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
         return;
     }
-    
+
     ItemID hand_item = get_agent_hand_item(a->id);
 
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -373,14 +373,14 @@ inline void crusher_container_action_alpha_CtoS::handle()
     }
 
     ItemID hand_item = get_agent_hand_item(a->id);
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -401,17 +401,17 @@ inline void crusher_container_action_beta_CtoS::handle()
         send_container_failed_action(client_id, event_id);
         return;
     }
-    
+
     ItemID hand_item = get_agent_hand_item(a->id);
 
-    if (hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
+    if ((ItemType)hand_type != Item::get_item_type(hand_item) || hand_stack != Item::get_stack_size(hand_item))
     {
         send_container_failed_action(client_id, event_id);
         return;
     }
 
     ItemID slot_item = container->get_item(slot);
-    if (slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
+    if ((ItemType)slot_type != Item::get_item_type(slot_item) || slot_stack != Item::get_stack_size(slot_item))
         send_container_failed_action(client_id, event_id);
 }
 
@@ -431,7 +431,7 @@ inline void crusher_crush_item_CtoS::handle()
     if (a == NULL) return;
     if (a->status.dead) return;
     if ((ItemContainerID)container_id != NULL_CONTAINER && !agent_can_access_container(a->id, (ItemContainerID)container_id)) return;
-    
+
     if (!crusher_crush_alpha_action_decision_tree(a->id, client_id, (ItemContainerID)container_id, NULL_SLOT)) return;
 
     ItemContainerInterface* container = get_container((ItemContainerID)container_id);
@@ -439,10 +439,10 @@ inline void crusher_crush_item_CtoS::handle()
     IF_ASSERT(container->type != name::crusher) return;
 
     ItemContainerCrusher* crusher = (ItemContainerCrusher*)container;
-    
+
     ItemID item_id = crusher->get_input_slot();
     IF_ASSERT(item_id == NULL_ITEM) return;
-    int type = Item::get_item_type(item_id);
+    ItemType type = Item::get_item_type(item_id);
     IF_ASSERT(type == NULL_ITEM_TYPE) return;
 
     int b[3];
@@ -466,13 +466,13 @@ inline void crusher_crush_item_CtoS::handle()
         Sound::broadcast_play_3d_sound("plasma_grenade_explode", p);
         if (t_map::get(b[0], b[1], b[2]) == 0)  // only play anim if block got destroyed
             Animations::broadcast_play_animation("plasma_grenade_explode", p);
-        
+
         Particle::grenade_list->destroy(g->id);
         Item::destroy_item(item_id);
         return;
     }
 
-    class Item::ItemDrop* drop = get_crusher_drop(type);
+    class Item::ItemDrop* drop = get_crusher_drop((ItemType)type);
     if (drop == NULL) return;   // TOOD -- send "failed" packet
 
     // unset any velocity state
@@ -482,8 +482,8 @@ inline void crusher_crush_item_CtoS::handle()
 
     if (t_map::get(b[0], b[1], b[2]+1) == 0)
     {   // pop out of the top
-        p.x += randf() - 0.5f; 
-        p.y += randf() - 0.5f; 
+        p.x += randf() - 0.5f;
+        p.y += randf() - 0.5f;
         p.z += 0.51f;
         drop->vz = crusher_item_jump_out_velocity();
     }
@@ -495,7 +495,7 @@ inline void crusher_crush_item_CtoS::handle()
         data.get_pre_collision_point(c);
         int side[3];
         data.get_side_array(side);
-        
+
         if (!collided
          || (c[0] != b[0] || c[1] != b[1] || c[2] != b[2])
          || t_map::get(b[0]+side[0], b[1]+side[1], b[2]+side[2]) != 0)
@@ -508,7 +508,7 @@ inline void crusher_crush_item_CtoS::handle()
                     float v = crusher_item_jump_out_velocity();
                     drop->vx = v * side[0];
                     drop->vy = v * side[1];
-                    drop->vz = v * side[2];                
+                    drop->vz = v * side[2];
                     p.x += 0.51f * side[0] + (abs(side[0])-1) * (randf()-0.5f);
                     p.y += 0.51f * side[1] + (abs(side[1])-1) * (randf()-0.5f);
                     p.z += 0.51f * side[2] + (abs(side[2])-1) * (randf()-0.5f);
@@ -544,7 +544,7 @@ inline void crusher_crush_item_CtoS::handle()
 inline void open_container_CtoS::handle()
 {
     if ((ItemContainerID)container_id == NULL_CONTAINER) return;
-    
+
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
@@ -622,7 +622,7 @@ void create_container_block_CtoS::handle()
             }
         }
     }
-    
+
     t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
 
     if (collides) return;
@@ -658,7 +658,7 @@ void admin_create_container_block_CtoS::handle()
     IF_ASSERT(container_type == NULL_CONTAINER_TYPE) return;
 
     IF_ASSERT(orientation < 0 || orientation > 3) orientation = 0;
-    
+
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 

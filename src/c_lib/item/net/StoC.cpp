@@ -14,9 +14,9 @@ inline void item_create_StoC::handle()
 {
     Item* item = get_item((ItemID)this->id);
     IF_ASSERT(item != NULL) destroy_item((ItemID)this->id);
-    item = create_item(this->type, (ItemID)this->id);
+    item = create_item((ItemType)this->type, (ItemID)this->id);
     IF_ASSERT(item == NULL) return;
-    item->type = type;
+    item->type = (ItemType)type;
     item->durability = durability;
     item->stack_size = stack_size;
 }

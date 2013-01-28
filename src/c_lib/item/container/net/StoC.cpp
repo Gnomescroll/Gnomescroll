@@ -225,7 +225,7 @@ inline void smelter_fuel_StoC::handle()
     ItemContainerSmelter* smelter = (ItemContainerSmelter*)container;
 
     smelter->fuel = fuel;
-    smelter->fuel_type = fuel_type;
+    smelter->fuel_type = (ItemType)fuel_type;
 
     // update UI
     ItemContainerSmelterUI* container_ui = (ItemContainerSmelterUI*)get_container_ui((ItemContainerID)container_id);
@@ -234,7 +234,7 @@ inline void smelter_fuel_StoC::handle()
     IF_ASSERT(fuel < 0.0f) fuel = 0.0f;
     IF_ASSERT(fuel > 1.0f) fuel = 1.0f;
     container_ui->fuel = fuel;
-    container_ui->fuel_type = fuel_type;
+    container_ui->fuel_type = (ItemType)fuel_type;
 
 }
 

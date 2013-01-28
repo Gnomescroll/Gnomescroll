@@ -67,12 +67,10 @@ bool item_def(ItemGroup group, const char* name)
     GS_ASSERT_ABORT(is_valid_item_name(name));
     if (!is_valid_item_name(name)) return false;
 
-    int type = _current_item_index;
+    ItemType type = (ItemType)_current_item_index;
 
-    GS_ASSERT_ABORT(type != NULL_ITEM_TYPE);
-    if (type == NULL_ITEM_TYPE) return false;
-    ASSERT_VALID_ITEM_TYPE(type);
-    IF_INVALID_ITEM_TYPE(type) return false;
+    GS_ASSERT_ABORT(isValid(type));
+    IF_ASSERT(!isValid(type)) return false;
 
     GS_ASSERT_ABORT(!item_attributes[type].loaded);
     if (item_attributes[type].loaded) return false;
@@ -245,7 +243,7 @@ void set_crafting_reagent(const char* item_name, int quantity)
     GS_ASSERT_ABORT(_cr.reagent_num < CRAFT_BENCH_INPUTS_MAX);
     if (_cr.reagent_num >= CRAFT_BENCH_INPUTS_MAX) return;
 
-    int type = get_item_type(item_name);
+    ItemType type = get_item_type(item_name);
     GS_ASSERT_ABORT(type != NULL_ITEM_TYPE);
 
     // Make sure we aren't adding two types of different stack values
@@ -376,8 +374,9 @@ void set_smelting_reagent(const char* item_name, int quantity)
     GS_ASSERT_ABORT(_sr.reagent_num < SMELTER_INPUTS_MAX);
     GS_ASSERT_ABORT(_sr.output_num < SMELTER_OUTPUTS_MAX);
 
-    int type = get_item_type(item_name);
-    GS_ASSERT_ABORT(type != NULL_ITEM_TYPE);
+    ItemType type = get_item_type(item_name);
+    GS_ASSERT_ABORT(isValid(type));
+    IF_ASSERT(!isValid(type)) return;
 
     // Make sure we aren't adding two types of different stack values
     // Why? our sorting methods for doing recipe matches do not sort by
@@ -465,7 +464,7 @@ namespace Item
 {
 
 int _current_synthesizer_item = 0;
-int _current_synthesizer_item_type = NULL_ITEM_TYPE;
+ItemType _current_synthesizer_item_type = NULL_ITEM_TYPE;
 int _current_synthesizer_item_cost = NULL_COST;
 
 void synthesizer_item_def(const char* item_name, int cost);
@@ -475,7 +474,7 @@ void synthesizer_item_set(int xslot, int yslot);
 void synthesizer_item_def(const char* item_name, int cost)
 {
     GS_ASSERT_ABORT(cost != NULL_COST && cost > 0 && count_digits(cost) <= SYNTHESIZER_ITEM_COST_MAX_STRLEN);
-    int item_type = get_item_type(item_name);
+    ItemType item_type = get_item_type(item_name);
     GS_ASSERT_ABORT(item_type != NULL_ITEM_TYPE);
     _current_synthesizer_item_type = item_type;
     _current_synthesizer_item_cost = cost;
@@ -501,7 +500,7 @@ void synthesizer_item_set(int xslot, int yslot)
         GS_ASSERT_ABORT(synthesizer_item_array[i].xslot != xslot || synthesizer_item_array[i].yslot != yslot);
     }
 
-    n->item_type = _current_synthesizer_item_type;
+    n->item_type = (ItemType)_current_synthesizer_item_type;
     n->cost = _current_synthesizer_item_cost;
     n->xslot = xslot;
     n->yslot = yslot;

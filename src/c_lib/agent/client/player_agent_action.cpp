@@ -23,7 +23,7 @@ dont_include_this_file_in_server
 namespace Agents
 {
 
-void PlayerAgent_action::hitscan_laser(int weapon_type)
+void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -70,7 +70,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
     hitscan_object_CtoS obj_msg;
 
     Agent* agent;
-    
+
     int x,y,z;
     CubeType cube_type = NULL_CUBE;
     int weapon_dmg;
@@ -111,7 +111,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
             x = block_pos[0];
             y = block_pos[1];
             z = block_pos[2];
-            
+
             // update predicted dmg
             // TODO -- all of this should be in the toolbelt callback probably
             // get block dmg for selected weapon
@@ -131,7 +131,7 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
                 Animations::predicted_block_damage = weapon_dmg;
                 Animations::damaging_block = true;
             }
-            
+
             // make & record dmg request
             t_map::request_block_damage(x,y,z);
 
@@ -161,9 +161,9 @@ void PlayerAgent_action::hitscan_laser(int weapon_type)
             );
             Animations::terrain_sparks(collision_point[0], collision_point[1], collision_point[2]);
             //Sound::play_3d_sound("laser_hit_block", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
-            
+
             break;
-            
+
         case HITSCAN_TARGET_NONE:
             // for no target, leave translated animation origin
             none_msg.send();    // server will know to forward a fire weapon packet
@@ -190,13 +190,13 @@ void PlayerAgent_action::update_mining_laser()
     if (you->status.dead) return;
     if (!you->event.mining_laser_emitter.on) return;
     if (agent_camera == NULL) return;
-    
+
     Vec3 origin = this->p->get_weapon_fire_animation_origin();
     ASSERT_BOXED_POSITION(origin);
 
     struct Vec3 focal_point = vec3_add(agent_camera->get_position(), vec3_scalar_mult(agent_camera->forward_vector(), 50.0f));
     struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
-    
+
     you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
     you->event.mining_laser_emitter.length_position = agent_camera->get_position();
     you->event.mining_laser_emitter.length_direction = agent_camera->forward_vector();
@@ -210,14 +210,14 @@ void PlayerAgent_action::begin_mining_laser()
     class Agent* you = p->you();
     if (you == NULL) return;
 
-    int laser_type = Toolbelt::get_agent_selected_item_type(you->id);
-    GS_ASSERT(laser_type != NULL_ITEM_TYPE);
+    ItemType laser_type = Toolbelt::get_agent_selected_item_type(you->id);
+    GS_ASSERT(isValid(laser_type));
     GS_ASSERT(Item::get_item_group_for_type(laser_type) == IG_MINING_LASER);
     float range = Item::get_weapon_range(laser_type);
 
     you->event.mining_laser_emitter.set_base_length(range);
     you->event.mining_laser_emitter.set_laser_type(laser_type);
-    
+
     you->event.mining_laser_emitter.turn_on();
 
     GS_ASSERT(this->mining_laser_sound_id < 0);
@@ -237,8 +237,8 @@ void PlayerAgent_action::end_mining_laser()
     this->mining_laser_sound_id = -1;
 }
 
-void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
-{    
+void PlayerAgent_action::fire_close_range_weapon(ItemType weapon_type)
+{
     class Agent* you = p->you();
     if (you == NULL) return;
     if (you->status.dead) return;
@@ -284,7 +284,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 target_type = HITSCAN_TARGET_NONE;
                 break;
             }
-        
+
             obj_msg.id = target.entity_id;
             obj_msg.type = target.entity_type;
             obj_msg.part = target.part_id;
@@ -330,7 +330,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                 int x = block_pos[0];
                 int y = block_pos[1];
                 int z = block_pos[2];
-                
+
                 // update predicted dmg
                 // TODO -- all of this should be in the toolbelt callback probably
                 // get block dmg for selected weapon
@@ -350,7 +350,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
                     Animations::predicted_block_damage = weapon_dmg;
                     Animations::damaging_block = true;
                 }
-                
+
                 // make & record dmg request
                 t_map::request_block_damage(x,y,z);
 
@@ -371,7 +371,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
             collision_point[0] = quadrant_translate_f(current_camera_position.x, translate_point(look.x));
             collision_point[1] = quadrant_translate_f(current_camera_position.y, translate_point(look.y));
             collision_point[2] = look.z;
-            
+
             // subtract translated animation origin from collision point (look) to get new vector
             look = vec3_sub(vec3_init(collision_point[0], collision_point[1], collision_point[2]), this->p->get_weapon_fire_animation_origin());
             normalize_vector(&look);
@@ -385,7 +385,7 @@ void PlayerAgent_action::fire_close_range_weapon(int weapon_type)
             if (weapon_group != IG_MINING_LASER)
                 Sound::play_3d_sound("block_took_damage", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             break;
-            
+
         case HITSCAN_TARGET_NONE:
             break;
     }
@@ -404,16 +404,15 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     class Agent* you = this->p->you();
     if (you == NULL || you->status.dead) return false;
 
-    int placer_type = Item::get_item_type(placer_id);
-    ASSERT_VALID_ITEM_TYPE(placer_type);
-    IF_INVALID_ITEM_TYPE(placer_type) return false;
-    
+    ItemType placer_type = Item::get_item_type(placer_id);
+    IF_ASSERT(!isValid(placer_type)) return false;
+
     GS_ASSERT(placer_id != NULL_ITEM);
     if (placer_id == NULL_ITEM) return false;
 
     // get nearest empty block
     const float max_dist = 4.0f;
-    class RaytraceData data; 
+    class RaytraceData data;
     bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
     if (!collided) return false;
 
@@ -538,7 +537,7 @@ void PlayerAgent_action::place_spawner()
 
     int block[3];
     data.get_pre_collision_point(block);
-    
+
     place_spawner_CtoS msg;
     msg.x = block[0];
     msg.y = block[1];
@@ -560,7 +559,7 @@ void PlayerAgent_action::place_turret()
 
     int block[3];
     data.get_pre_collision_point(block);
-    
+
     place_turret_CtoS msg;
     msg.x = block[0];
     msg.y = block[1];

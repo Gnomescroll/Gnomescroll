@@ -48,7 +48,7 @@ class MiningLaserEmitter
         int start;
         float h_mult;   // height adjustment for sprite
         int texture_row;
-        int laser_type;
+        ItemType laser_type;
 
         // state used to calculate length of beam.
         // we want to use the agent camera's state for this, instead of the adjusted beam vector
@@ -175,14 +175,14 @@ class MiningLaserEmitter
         this->on = false;
     }
 
-    void set_laser_type(int type);
+    void set_laser_type(ItemType type);
 
-    MiningLaserEmitter()
-    : on(false), position(vec3_init(0,0,0)), direction(vec3_init(1,0,0)),
-    count(MINING_LASER_EMITTER_PARTICLE_COUNT), speed(MINING_LASER_PARTICLE_SPEED),
-    base_length(4.0f), length(4.0f), ttl_max((base_length/speed)*30), start(0), h_mult(0.0f),
-    texture_row(0), laser_type(NULL_ITEM_TYPE),
-    length_position(vec3_init(0,0,0)), length_direction(vec3_init(1,0,0))
+    MiningLaserEmitter() :
+        on(false), position(vec3_init(0,0,0)), direction(vec3_init(1,0,0)),
+        count(MINING_LASER_EMITTER_PARTICLE_COUNT), speed(MINING_LASER_PARTICLE_SPEED),
+        base_length(4.0f), length(4.0f), ttl_max((base_length/speed)*30), start(0), h_mult(0.0f),
+        texture_row(0), laser_type(NULL_ITEM_TYPE),
+        length_position(vec3_init(0,0,0)), length_direction(vec3_init(1,0,0))
     {
         this->set_count();
         this->set_base_length(4.0f);

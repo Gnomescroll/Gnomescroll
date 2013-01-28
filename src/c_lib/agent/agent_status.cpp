@@ -70,11 +70,11 @@ void AgentStatus::set_spawner(int pt)
         {
             AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)old_spawner->get_component(COMPONENT_AGENT_SPAWNER);
             GS_ASSERT(agent_spawner != NULL);
-            if (agent_spawner != NULL) agent_spawner->remove_all(this->a->id);                
+            if (agent_spawner != NULL) agent_spawner->remove_all(this->a->id);
         }
     }
     #endif
-    
+
     this->spawner = pt;
 
     #if DC_SERVER
@@ -108,7 +108,7 @@ void AgentStatus::set_spawner(int pt)
     }
     else
         pos = vox->get_center();
-        
+
     Sound::send_play_2d_sound("spawner_activate", this->a->client_id); // play sound as 2d for client
     Sound::broadcast_exclude_play_3d_sound("spawner_activate", pos, this->a->client_id);    // play 3d sound for everyone else
     #endif
@@ -154,19 +154,19 @@ void AgentStatus::add_badge(BadgeID badge_id)
     // no dupes
     for (size_t i=0; i<this->n_badges; i++)
         GS_ASSERT(this->badges[i] != badge_id);
-        
+
     this->badges[this->n_badges++] = badge_id;
 }
 
-// does not broadcast the change (useful for the deserializer) 
+// does not broadcast the change (useful for the deserializer)
 bool AgentStatus::set_color_silent(Color color)
 {
     if (colors_equal(color, this->color)) return false;
 
     if (!color.r && !color.g && !color.b) color = Color(1,1,1); // dont allow 0,0,0 (interpreted as empty voxel)
-        
+
     this->color = color;
-    
+
     #if DC_CLIENT
     this->a->event.color_changed = true;
     #endif
@@ -178,7 +178,7 @@ bool AgentStatus::set_color_silent(Color color)
     if (color.r == 255) this->color.r = 254;
     if (color.g == 255) this->color.g = 254;
     if (color.b == 255) this->color.b = 254;
-    
+
     #if DC_SERVER
     this->a->vox->fill_color(this->color);
     #endif
@@ -207,7 +207,7 @@ int AgentStatus::apply_damage(int dmg)
     if (dmg <= 0) return this->health;
 
     if (this->dead || this->should_die) return this->health;
-    
+
     agent_damage_StoC dmg_msg;
     dmg_msg.id = a->id;
     dmg_msg.dmg = dmg;
@@ -235,11 +235,11 @@ int AgentStatus::apply_damage(int dmg)
         int n_energy_tanks = 0;
         if (container != NULL)
             n_energy_tanks = container->consume_energy_tank();
-        
+
         if (n_energy_tanks > 0)
             this->restore_health();
     }
-        
+
     return this->health;
 }
 
@@ -266,7 +266,7 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
         if ((inflictor_type == OBJECT_AGENT || inflictor_type == OBJECT_GRENADE)
           && inflictor_id != this->a->id) return this->health;
     }
-    
+
     int health = this->apply_damage(dmg);
     AgentDeathMethod death_method = DEATH_NORMAL;
     if (inflictor_type == OBJECT_GRENADE)
@@ -277,7 +277,7 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
         death_method = DEATH_PLASMAGEN;
     else if (part_id == AGENT_PART_HEAD)
         death_method = DEATH_HEADSHOT;
-        
+
     if (this->should_die)
         die(inflictor_id, inflictor_type, death_method);
 
@@ -353,7 +353,7 @@ void AgentStatus::set_fresh_state()
     a->spawn_state();
     this->lifetime = 0;
     this->restore_health();
-    
+
     // revive
     this->dead = false;
     this->should_die = false;
@@ -368,7 +368,7 @@ void AgentStatus::set_fresh_state()
 void AgentStatus::respawn()
 {
     if (!this->dead) return;  // ignore if not waiting to respawn
-    
+
     respawn_countdown--;                  // decrement
     if (respawn_countdown > 0) return;  // abort if not ready
     this->set_fresh_state();
@@ -401,7 +401,7 @@ void AgentStatus::quit()
             using Components::AgentSpawnerComponent;
             AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
             GS_ASSERT(agent_spawner != NULL);
-            if (agent_spawner != NULL) agent_spawner->remove(this->a->id);                
+            if (agent_spawner != NULL) agent_spawner->remove(this->a->id);
         }
     }
     #endif
@@ -419,7 +419,7 @@ bool AgentStatus::die()
     deaths_msg.id = this->a->id;
     deaths_msg.deaths = this->deaths;
     deaths_msg.broadcast();
-    
+
     agent_dead_StoC dead_msg;
     dead_msg.id = this->a->id;
     dead_msg.dead = this->dead;
@@ -436,7 +436,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
 {
     bool killed = this->die();
     if (!killed) return false;
-    
+
     Agent* attacker;
     //Turret* turret;
     switch (inflictor_type)
@@ -512,7 +512,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
             break;
     }
     #endif
-    
+
     return true;
 }
 
@@ -553,7 +553,7 @@ void AgentStatus::send_scores(ClientID client_id)
     ak.id = a->id;
     ak.kills = kills;
     ak.sendToClient(client_id);
-    
+
     AgentDeaths_StoC ad;
     ad.id = a->id;
     ad.deaths = deaths;
@@ -572,7 +572,7 @@ void AgentStatus::send_scores()
     ak.id = a->id;
     ak.kills = kills;
     ak.broadcast();
-    
+
     AgentDeaths_StoC ad;
     ad.id = a->id;
     ad.deaths = deaths;
@@ -598,9 +598,9 @@ void AgentStatus::broadcast_badges()
 
 bool AgentStatus::consume_item(ItemID item_id)
 {
-    int item_type = Item::get_item_type(item_id);
+    ItemType item_type = Item::get_item_type(item_id);
     IF_ASSERT(item_type == NULL_ITEM_TYPE) return false;
-    
+
     ItemGroup item_group = Item::get_item_group_for_type(item_type);
     IF_ASSERT(item_group != IG_CONSUMABLE) return false;
 

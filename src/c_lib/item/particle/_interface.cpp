@@ -58,7 +58,7 @@ void destroy(ItemParticleID particle_id)
 
     broadcast_particle_item_destroy(particle->id);
     #endif
-    
+
     item_particle_list->destroy(particle_id);
 }
 
@@ -76,8 +76,8 @@ void draw()
 }
 
 ItemParticle* create_item_particle(
-    ItemParticleID particle_id, int item_type,
-    float x, float y, float z, 
+    ItemParticleID particle_id, ItemType item_type,
+    float x, float y, float z,
     float vx, float vy, float vz)
 {
     ItemParticle* particle = item_particle_list->create(particle_id);
@@ -89,8 +89,8 @@ ItemParticle* create_item_particle(
 
 #if DC_SERVER
 ItemParticle* create_item_particle(
-    ItemID item_id, int item_type,
-    float x, float y, float z, 
+    ItemID item_id, ItemType item_type,
+    float x, float y, float z,
     float vx, float vy, float vz)
 {
     Item::Item* item = Item::get_item(item_id);
@@ -110,7 +110,7 @@ ItemParticle* create_item_particle(
         }
     }
     Item::unsubscribe_all_from_item(item->id);
-    
+
     ItemParticle* particle = item_particle_list->create();
     if (particle == NULL) return NULL;
     particle->init(item_id, item_type, x,y,z,vx,vy,vz);
@@ -121,8 +121,8 @@ ItemParticle* create_item_particle(
 }
 
 // create Item and ItemParticle
-class Item::Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz)
-{    
+class Item::Item* create_item_particle(ItemType item_type, float x, float y, float z, float vx, float vy, float vz)
+{
     Item::Item* item = Item::create_item(item_type);
     if (item == NULL) return NULL;
     // no subscribers
@@ -134,7 +134,7 @@ class Item::Item* create_item_particle(int item_type, float x, float y, float z,
     return item;
 }
 
-class Item::Item* create_item_particle(int item_type, Vec3 position, Vec3 momentum)
+class Item::Item* create_item_particle(ItemType item_type, Vec3 position, Vec3 momentum)
 {
     return create_item_particle(item_type, position.x, position.y, position.z, momentum.x, momentum.y, momentum.z);
 }
@@ -143,7 +143,7 @@ static bool pack_particle_item_create(ItemParticleID particle_id, item_particle_
 {
     ItemParticle* particle = item_particle_list->get(particle_id);
     IF_ASSERT(particle == NULL) return false;
-    
+
     msg->id = particle->id;
     msg->item_type = particle->item_type;
     msg->x = particle->verlet.position.x;
@@ -236,16 +236,16 @@ void broadcast_particle_item_pickup_cancelled(ItemParticleID particle_id)
 // split item into new item
 // create particle for it
 // set to be pickup
-static void split_item_particle(Item::Item* item, ItemParticle* particle, int item_type, int stack_size, AgentID target_agent)
+static void split_item_particle(Item::Item* item, ItemParticle* particle, ItemType item_type, int stack_size, AgentID target_agent)
 {
     IF_ASSERT(item == NULL || particle == NULL) return;
     GS_ASSERT(item_type != NULL_ITEM_TYPE);
     GS_ASSERT(stack_size > 0);
     GS_ASSERT(item->stack_size > stack_size);    // its not splitting if it uses up the whole item
-    
+
     // decrement source item stack size
     item->stack_size -= stack_size;
-        
+
     // set position
     Vec3 p = particle->verlet.position;
     Vec3 v = particle->verlet.velocity;
@@ -257,7 +257,7 @@ static void split_item_particle(Item::Item* item, ItemParticle* particle, int it
     GS_ASSERT(split_item->location_id != NULL_PARTICLE);
     // set stack size
     split_item->stack_size = stack_size;
-    
+
     // set new particle as picked_up
     ItemParticle* split_particle = get((ItemParticleID)split_item->location_id);
     IF_ASSERT(split_particle == NULL) return;
@@ -277,12 +277,12 @@ static void split_item_particle(Item::Item* item, ItemParticle* particle, int it
 // into container/etc that I was not able to write generically while ensuring correct state transition order
 void check_item_pickups()
 {
-    static int coin_type = Item::get_item_type("synthesizer_coin");
+    static ItemType coin_type = Item::get_item_type("synthesizer_coin");
     GS_ASSERT(coin_type != NULL_ITEM_TYPE);
-    
-    static int energy_tank_type = Item::get_item_type("energy_tank");
+
+    static ItemType energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
-    
+
     for (unsigned int i=0; i<item_particle_list->max; i++)
     {
         if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
@@ -306,21 +306,21 @@ void check_item_pickups()
         bool item_altered = false;
         ItemContainer::ItemContainerInterface* container = NULL;
         ItemContainerID container_id = NULL_CONTAINER;
-        
+
         // for chips/coins, try to add to synthesizer first
         if (item->type == coin_type)
         {
             container_id = ItemContainer::get_agent_synthesizer(agent->id);
             if (container_id != NULL_CONTAINER)
                 container = ItemContainer::get_container(container_id);
-                
+
             GS_ASSERT(container != NULL);
             if (container != NULL)
             {
                 // empty slot
                 // full stack
                 // partial stack
-                
+
                 int slot = container->get_empty_slot();
                 if (slot != NULL_SLOT)
                 {
@@ -340,7 +340,7 @@ void check_item_pickups()
                         using ItemContainer::ItemContainerSynthesizer;
                         ItemID slot_item = ((ItemContainerSynthesizer*)container)->get_coins();
                         GS_ASSERT(slot_item != NULL_ITEM);
-                        int slot_item_type = Item::get_item_type(slot_item);
+                        ItemType slot_item_type = Item::get_item_type(slot_item);
                         GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
                         GS_ASSERT(slot_item_type == item->type);
                         int slot_item_stack_size = Item::get_stack_size(slot_item);
@@ -350,7 +350,7 @@ void check_item_pickups()
                         {
                             item_remaining = true;
                             item_altered = true;
-                            split_item_particle(item, item_particle, item->type, stack_space, agent->id);                            
+                            split_item_particle(item, item_particle, item->type, stack_space, agent->id);
                         }
                     }
                 }
@@ -362,7 +362,7 @@ void check_item_pickups()
             container_id = ItemContainer::get_agent_energy_tanks(agent->id);
             if (container_id != NULL_CONTAINER)
                 container = ItemContainer::get_container(container_id);
-                
+
             GS_ASSERT(container != NULL);
             if (container != NULL)
             {
@@ -379,7 +379,7 @@ void check_item_pickups()
                 {
                     int slot = container->get_stackable_slot(item->type, item->stack_size);
                     if (slot != NULL_SLOT)
-                    {   
+                    {
                         item_particle->picked_up(agent->id);
                         item_remaining = false;
                     }
@@ -391,7 +391,7 @@ void check_item_pickups()
                         {
                             ItemID slot_item = container->slot[i];
                             GS_ASSERT(slot_item != NULL_ITEM);
-                            int slot_item_type = Item::get_item_type(slot_item);
+                            ItemType slot_item_type = Item::get_item_type(slot_item);
                             GS_ASSERT(slot_item_type != NULL_ITEM_TYPE);
                             GS_ASSERT(slot_item_type == item->type);
                             int stack_space = Item::get_stack_space(slot_item);
@@ -411,7 +411,7 @@ void check_item_pickups()
 
                             if (stack_size <= 0) break;
                         }
-                        
+
                         if (stack_size <= 0)
                         {    // source item was fully consumed
                             item_altered = true;
@@ -425,16 +425,16 @@ void check_item_pickups()
                     }
                 }
             }
-        }        
-        
+        }
+
         if (!item_remaining) continue;
 
         // try to add to toolbelt
-        
+
         container_id = ItemContainer::get_agent_toolbelt(agent->id);
         if (container_id != NULL_CONTAINER)
             container = ItemContainer::get_container(container_id);
-            
+
         if (container != NULL)
         {
             int slot = container->get_stackable_slot(item->type, item->stack_size);
@@ -446,7 +446,7 @@ void check_item_pickups()
                 {   // no empty slot found, try to break this stack up and redistribute
                     int starting_stack_size = item->stack_size;
                     int stack_size = item->stack_size;
-                    int item_type = item->type;
+                    ItemType item_type = item->type;
 
                     // distribute as much as we can into slots
                     for (int i=0; i<container->slot_max; i++)
@@ -473,7 +473,7 @@ void check_item_pickups()
 
                         if (stack_size <= 0) break;
                     }
-                    
+
                     if (stack_size <= 0)
                     {    // source item was fully consumed
                         item_altered = true;
@@ -519,7 +519,7 @@ void check_item_pickups()
                 {   // no empty slot found, try to break this stack up and redistribute
                     int starting_stack_size = item->stack_size;
                     int stack_size = item->stack_size;
-                    int item_type = item->type;
+                    ItemType item_type = item->type;
 
                     // distribute as much as we can into slots
                     for (int i=0; i<container->slot_max; i++)
@@ -546,7 +546,7 @@ void check_item_pickups()
 
                         if (stack_size <= 0) break;
                     }
-                    
+
                     if (stack_size <= 0)
                     {
                         item_altered = true;
@@ -599,7 +599,7 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
 void throw_agent_item(AgentID agent_id, ItemID item_id)
 {
     IF_ASSERT(item_id == NULL_ITEM) return;
-    
+
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL)
     {   // we cannot get the agent state, so just destroy the item
@@ -624,7 +624,7 @@ void throw_agent_item(AgentID agent_id, ItemID item_id)
 void dump_container_item(ItemID item_id, float x, float y, float z)
 {
     IF_ASSERT(item_id == NULL_ITEM) return;
-    
+
     Vec3 position = vec3_init(x,y,z);
     position = vec3_add(position, vec3_init(randf(), randf(), randf())); // random point inside box
 

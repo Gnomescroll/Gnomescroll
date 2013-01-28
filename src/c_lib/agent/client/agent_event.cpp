@@ -247,8 +247,8 @@ void AgentEvent::update_mining_laser()
 
 void AgentEvent::begin_mining_laser()
 {
-    int laser_type = Toolbelt::get_agent_selected_item_type(this->a->id);
-    GS_ASSERT(laser_type != NULL_ITEM_TYPE);
+    ItemType laser_type = Toolbelt::get_agent_selected_item_type(this->a->id);
+    GS_ASSERT(isValid(laser_type));
     GS_ASSERT(Item::get_item_group_for_type(laser_type) == IG_MINING_LASER);
     float range = Item::get_weapon_range(laser_type);
     this->mining_laser_emitter.set_base_length(range);

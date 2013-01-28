@@ -39,7 +39,7 @@ class ItemParticle
         Verlet::VerletComponent verlet;
 
         ItemParticleID id;
-        int item_type;
+        ItemType item_type;
 
         AgentID target_agent; // when being picked up
 
@@ -92,10 +92,10 @@ class ItemParticle
     explicit ItemParticle(ItemParticleID id);
 
     #if DC_CLIENT
-    void init(int item_type, float x, float y, float z, float mx, float my, float mz);
+    void init(ItemType item_type, float x, float y, float z, float mx, float my, float mz);
     #endif
     #if DC_SERVER
-    void init(ItemID item_id, int item_type, float x, float y, float z, float mx, float my, float mz);
+    void init(ItemID item_id, ItemType item_type, float x, float y, float z, float mx, float my, float mz);
     #endif
 };
 

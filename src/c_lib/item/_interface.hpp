@@ -12,7 +12,7 @@ void init_packets();
 
 class Item* get_item(ItemID id);
 
-int get_item_type(ItemID id);
+ItemType get_item_type(ItemID id);
 ItemGroup get_item_group(ItemID id);
 int get_stack_size(ItemID id);  // space used in a stack
 int get_stack_space(ItemID id); // space left in a stack
@@ -28,7 +28,7 @@ void merge_item_stack(ItemID src, ItemID dest, int amount);
 namespace Item
 {
 void destroy_item(ItemID id);
-class Item* create_item(int item_type, ItemID item_id);
+class Item* create_item(ItemType item_type, ItemID item_id);
 }   // Item
 #endif
 
@@ -37,7 +37,7 @@ class Item* create_item(int item_type, ItemID item_id);
 namespace Item
 {
 
-class Item* create_item(int item_type);
+class Item* create_item(ItemType item_type);
 class Item* create_item(const char* item_name);
 
 void destroy_item(ItemID id);

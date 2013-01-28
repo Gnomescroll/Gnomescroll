@@ -31,10 +31,12 @@ void load_item_dat()
     item_def(IG_ERROR, "error_item");
     set_pretty_name("Error");
     sprite_def(i0, 4,1);
+    s->boonable = false;
 
     // special purpose
     item_def(IG_UNKNOWN, "unknown");
     sprite_def(i0, 5,1);
+    s->boonable = false;
 
     // containers
     item_container_def("storage_block_small");
@@ -137,10 +139,12 @@ void load_item_dat()
 
     item_def(IG_DEBUG, "location_pointer");
     sprite_def(i0, 4,2);
+    s->boonable = false;
 
     item_def(IG_DEBUG, "block_placer");
     sprite_def(i0, 4,5);
     s->cube_height = 1;
+    s->boonable = false;
 
     item_def(IG_RESOURCE, "copper_ore_piece");
     sprite_def(i1, 3,3);
@@ -272,6 +276,7 @@ void load_item_dat()
     block_damage_def(CUBE_MATERIAL_DECORATION, 4);
     s->object_damage_min = 5;
     s->object_damage_max = 10;
+    s->boonable = false;
 
     item_def(IG_RESOURCE, "coal_nugget");
     sprite_def(i0, 5,2);
@@ -407,6 +412,7 @@ void load_item_dat()
     item_def(IG_SPECIAL, "boon_crank");
     sprite_def(i0, 5,4);
     s->max_charges = 3;
+    s->boonable = false;
     #if PRODUCTION
     s->recharge_rate = ONE_HOUR * 4;
     #else
@@ -446,7 +452,7 @@ void create_items_from_blocks()
 
         // ignore blocks that have been overriden
         bool already_defined = false;
-        for (int i=0; i<MAX_ITEM_TYPES; i++)
+        for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
             if (item_attributes[i].loaded && strcmp(name, item_attributes[i].name) == 0)
             {
                 if (item_attributes[i].group != IG_PLACER)
@@ -475,7 +481,7 @@ void create_items_from_blocks()
 void set_pretty_names()
 {   // automatically set "pretty" names for items
     const size_t len = GS_MIN(DAT_NAME_MAX_LENGTH, ITEM_PRETTY_NAME_MAX_LENGTH);
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
     {
         class ItemAttribute* a = &item_attributes[i];
         if (!a->loaded) continue;
@@ -487,7 +493,7 @@ void set_pretty_names()
 void verify_item_dat()
 {
     int errct = 0;  // count error items
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
     {
         class ItemAttribute* a = &item_attributes[i];
 
@@ -541,8 +547,8 @@ void verify_item_dat()
     // only 1 error item allowed
     GS_ASSERT_ABORT(errct == 1);
 
-    for (int i=0; i<MAX_ITEM_TYPES-1; i++)
-    for (int j=i+1; j<MAX_ITEM_TYPES; j++)
+    for (int i=0; i<(int)MAX_ITEM_TYPES-1; i++)
+    for (int j=i+1; j<(int)MAX_ITEM_TYPES; j++)
     {
         class ItemAttribute* a = &item_attributes[i];
         class ItemAttribute* b = &item_attributes[j];
@@ -556,7 +562,7 @@ void verify_item_dat()
     GS_ASSERT_ABORT(item_name_map->condensed);
 
     // check inactive names against active
-    for (int i=0; i<MAX_ITEM_TYPES; i++)
+    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
         if (item_attributes[i].loaded)
         {
             GS_ASSERT_ABORT(item_name_map->get_mapped_name(item_attributes[i].name) == NULL);

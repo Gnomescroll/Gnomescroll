@@ -60,7 +60,7 @@ class ItemContainerInterface
         printf("\n");
     }
 
-    int get_stackable_slot(int item_type, int stack_size)
+    int get_stackable_slot(ItemType item_type, int stack_size)
     {
         for (int i=0; i<this->slot_max; i++)
         {
@@ -233,7 +233,7 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
 {
     public:
 
-        int energy_tank_type;
+        ItemType energy_tank_type;
 
     virtual int insert_item(int slot, ItemID item_id);
 
@@ -290,7 +290,7 @@ class ItemContainerSynthesizer: public ItemContainerInterface
     public:
 
         static const int coins_slot = 0;
-        int coins_type;
+        ItemType coins_type;
 
     ItemID get_coins()
     {
@@ -343,7 +343,7 @@ class ItemContainerSmelter: public ItemContainerInterface
         #endif
 
         float fuel;       // 0.0f - 1.0f
-        int fuel_type;  // item type
+        ItemType fuel_type;  // item type
         float burn_rate;  // for item type
 
         int recipe_id;  // recipe identifier
@@ -372,7 +372,7 @@ class ItemContainerSmelter: public ItemContainerInterface
     #if DC_SERVER
     void burn_fuel();
     void reset_fuel();
-    void fill_fuel(int fuel_type);
+    void fill_fuel(ItemType fuel_type);
     void begin_smelting(int recipe_id);
     void tick_smelting();
     void reset_smelting();
@@ -380,7 +380,7 @@ class ItemContainerSmelter: public ItemContainerInterface
 
     bool can_produce_output();
     bool can_produce_output(class Item::SmeltingRecipe** pRecipe, int* pRecipe_id);
-    bool can_insert_outputs(int* outputs, int* output_stacks, int n_outputs);
+    bool can_insert_outputs(ItemType* outputs, int* output_stacks, int n_outputs);
 
     unsigned int get_max_input_slots()
     {

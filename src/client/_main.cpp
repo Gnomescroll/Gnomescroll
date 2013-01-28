@@ -1,7 +1,7 @@
 #pragma once
 
 #include <common/defines.h>
-  
+
 #include <state/client_state.hpp>
 #include <SDL/SDL_functions.hpp>
 #include <sound/sound.hpp>
@@ -22,9 +22,9 @@
 #include <physics/quadrant.hpp>
 
 #include <t_mech/_interface.hpp>
- 
+
 bool _quit = false;
- 
+
 namespace Main
 {
 
@@ -50,7 +50,7 @@ void init(int argc, char* argv[])
 
     // queue version packet, so it is sent first
     ClientState::send_version();
-    
+
     // start authorization. waits for a valid-looking game token to be received
     #if GS_AWESOMIUM
     Auth::begin_auth();
@@ -69,7 +69,7 @@ void wait_for_login()
         process_events();
         get_key_state();
         apply_camera_physics();
-        
+
         // poll input and update camera so the stars move while we move the mouse
         // draw skybox, then awesomium window
         ClientState::update_camera();
@@ -89,7 +89,7 @@ void wait_for_login()
         // awesomium
         hud_projection();
         Awesomium::draw();
-        
+
         Hud::draw_awesomium_message();
         CHECK_GL_ERROR();
 
@@ -127,7 +127,7 @@ struct RunState run_state;
 void draw_hud()
 {
     if (!input_state.draw_hud) return;
-    
+
     glEnable(GL_TEXTURE_2D);
     // switch to hud  projection
     poll_mouse();
@@ -140,9 +140,9 @@ void draw_hud()
         poll_mouse();
         Animations::render_voxelized_sprite_fbo();
     }
-    
+
     glEnable(GL_BLEND);
-    
+
     // draw hud
     poll_mouse();
     Hud::set_hud_fps_display(run_state.fps_value);
@@ -175,7 +175,7 @@ void draw_hud()
     poll_mouse();
     if (input_state.vbo_debug)
         t_map::draw_vbo_debug(400, 400);
-    
+
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     CHECK_GL_ERROR();  //check error after hud rendering
@@ -184,7 +184,7 @@ void draw_hud()
 void draw_tick()
 {
     using Profiling::frame_graph;
-    
+
     poll_mouse();
     apply_camera_physics();         //apply velocity
 
@@ -211,7 +211,7 @@ void draw_tick()
 
 
     // Start World Projetion
-    
+
     // Prep for draw
     poll_mouse();
     Particle::prep_shrapnel();
@@ -304,7 +304,7 @@ void draw_tick()
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
-    /* 
+    /*
         Alpha tested non-transparent
     */
 
@@ -401,7 +401,7 @@ void draw_tick()
     CHECK_GL_ERROR();
 
     // with depth test disable
-    int equipped_item_type = Toolbelt::get_selected_item_type();
+    ItemType equipped_item_type = Toolbelt::get_selected_item_type();
 
     if (input_state.draw_hud)
     {
@@ -428,7 +428,7 @@ void draw_tick()
 
     if (input_state.draw_hud)
         draw_hud();
-    
+
     poll_mouse();
 }
 
@@ -463,7 +463,7 @@ int physics_tick()
 
         // tick client state
         poll_mouse();
-        ClientState::tick(); 
+        ClientState::tick();
 
         // update sound listener
         poll_mouse();
@@ -516,7 +516,7 @@ int run()
     int address[4];
     address_from_string(Options::server, address);
     NetClient::client_connect_to(address[0], address[1], address[2], address[3], Options::port);
-    
+
     using Profiling::frame_graph;
     Profiling::init_frame_graph();
 
@@ -529,7 +529,7 @@ int run()
 
     // update mouse
     poll_mouse();
- 
+
     while (!input_state.quit)
     {
         if (signal_exit) break;

@@ -35,7 +35,7 @@ void teardown_players()
 }
 
 bool save_remote_player_data()
-{ 
+{
     for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
     {
         NetPeerManager* client = NetServer::clients[i];
@@ -51,7 +51,7 @@ bool save_remote_player_data()
             if (containers[j] != ItemContainer::get_agent_hand(client->agent_id))
                 save_player_container(client->client_id, containers[j]);
     }
-    
+
     return true;
 }
 
@@ -149,7 +149,7 @@ static bool parse_player_token(const char* key, const char* val, class ParsedPla
         static char buf[COLOR_LENGTH+1] = {'\0'};
         strncpy(buf, val, COLOR_LENGTH);
         buf[COLOR_LENGTH] = '\0';
-        
+
         int pts = 1;
         char d;
         int j = 0;
@@ -214,7 +214,7 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
             player_load_data, container_load_data, NULL, NULL, NULL);
         return false;
     }
-    
+
     // read header
     class ParsedPlayerContainerData container_data;
     parse_line<class ParsedPlayerContainerData>(&parse_player_container_token, buf, i, &container_data);
@@ -229,7 +229,7 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
     // Check properties on the container data
     // The parser only makes sure the values it found were in range
     // It doesn't handle missing values (so that the format can remain flexible)
-    
+
     IF_ASSERT(container_data.user_id != player_load_data->user_id)
     {
         log_player_load_error("Player load data user_id does not match container_data user_id (bug)", buf,
@@ -292,10 +292,10 @@ bool process_player_container_blob(const char* str, class PlayerLoadData* player
         parse_line<class ParsedItemData>(&parse_item_token, item_buf, k, item_data);
         const char* actual_name = Item::get_compatible_item_name(item_data->name);
 
-        int item_type = NULL_ITEM_TYPE;
+        ItemType item_type = NULL_ITEM_TYPE;
         if (actual_name != NULL)
             item_type = Item::get_item_type(actual_name);
-        
+
         // attach data needed for the final item creation
         item_data->item_type = item_type;
         item_data->item_location = location;
@@ -358,14 +358,14 @@ bool process_player_blob(const char* str, class PlayerLoadData* player_load_data
         return false;
     }
     i++;
-    
+
     return true;
 }
 
 void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
 {
     received_redis_reply();
-    
+
     class PlayerLoadData* data = (class PlayerLoadData*)_data;
     redisReply* reply = (redisReply*)_reply;
 
@@ -396,7 +396,7 @@ void player_load_cb(redisAsyncContext* ctx, void* _reply, void* _data)
     }
 
     if (!worked) data->load_error();
-    
+
     player_load_data_list->destroy(data->id);
 }
 
@@ -467,7 +467,7 @@ const char* write_player_container_string(ItemContainerID container_id, UserID u
     }
 
     size_t ibuf = 0;
-    
+
     // write header
     int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, PLAYER_CONTAINER_HEADER_FMT,
         container_name, user_id, container->slot_count);
@@ -477,7 +477,7 @@ const char* write_player_container_string(ItemContainerID container_id, UserID u
         return NULL;
     }
     ibuf += (size_t)could_write;
-    
+
     _buffer[ibuf++] = '\n';
     IF_ASSERT(ibuf >= BUF_SIZE)
     {
@@ -495,7 +495,7 @@ const char* write_player_container_string(ItemContainerID container_id, UserID u
         }
         ibuf += wrote;
     }
-    
+
     _buffer[ibuf] = '\0';
 
     return _buffer;
@@ -514,7 +514,7 @@ const char* write_player_string(AgentID agent_id)
 
     int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, PLAYER_DATA_FMT,
         agent->status.color.r, agent->status.color.g, agent->status.color.b);
-        
+
     IF_ASSERT(could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf)
     {
         log_player_save_error("Could not save player string; overran buffer", NULL_USER_ID, agent_id, NULL);
@@ -530,7 +530,7 @@ bool save_player_container(ClientID client_id, ItemContainerID container_id)
     if (!Options::serializer || !Options::auth) return true;
 
     IF_ASSERT(!isValid(client_id)) return false;
-    
+
     NetPeerManager* client = NetServer::get_client(client_id);
     IF_ASSERT(client == NULL) return false;
     IF_ASSERT(client->user_id == NULL_USER_ID) return false;
@@ -552,13 +552,13 @@ bool save_player_container(ClientID client_id, ItemContainerID container_id)
 bool save_player(UserID user_id, AgentID agent_id)
 {
     if (!Options::serializer || !Options::auth) return true;
-    
+
     IF_ASSERT(!isValid(user_id)) return false;
     IF_ASSERT(!isValid(agent_id)) return false;
-    
+
     const char* player_string = write_player_string(agent_id);
     IF_ASSERT(player_string == NULL) return false;
-    
+
     int ret = send_redis_command(ctx, NULL, NULL,
         "SET " PLAYER_REDIS_KEY_PREFIX "%d %s", user_id, player_string);
 
@@ -575,11 +575,11 @@ int begin_player_load(UserID user_id, ClientID client_id)
 
     class PlayerLoadData* data = player_load_data_list->create();
     IF_ASSERT(data == NULL) return -1;
-    
+
     data->setup_begin();
     data->user_id = user_id;
     data->client_id = client_id;
-        
+
     return data->id;
 }
 
@@ -604,7 +604,7 @@ bool load_player_container(int player_load_id, ItemContainerType container_type)
 
     int ret = send_redis_command(ctx, &player_container_load_cb, data,
         "GET %s:%d", container_name, player_data->user_id);
-        
+
     GS_ASSERT(ret == REDIS_OK);
     return (ret == REDIS_OK);
 }
@@ -623,7 +623,7 @@ bool end_player_load(int player_load_id)
     // callbacks return in-order
     int ret = send_redis_command(ctx, &player_load_cb, data,
         "GET " PLAYER_REDIS_KEY_PREFIX "%d", data->user_id);
-    
+
     GS_ASSERT(ret == REDIS_OK);
     return (ret == REDIS_OK);
 }

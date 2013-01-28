@@ -41,7 +41,7 @@ void AgentList::send_to_client(ClientID client_id)
         if (this->objects[i].client_id == client_id) continue;
 
         class Agent* agent = &this->objects[i];
-        
+
         agent_create_StoC msg;
         msg.id = agent->id;
         msg.client_id = agent->client_id;
@@ -56,8 +56,8 @@ void AgentList::send_to_client(ClientID client_id)
         dead_msg.sendToClient(client_id);
 
         agent->status.send_health_msg(client_id);
-        
-        int item_type = Toolbelt::get_agent_selected_item_type(agent->id);
+
+        ItemType item_type = Toolbelt::get_agent_selected_item_type(agent->id);
         Toolbelt::send_agent_set_active_item_packet(client_id, agent->id, item_type);
 
         for (size_t j=0; j<agent->status.n_badges; j++)
@@ -108,7 +108,7 @@ void AgentList::draw_equipped_items()
             if (this->objects[i].id == this->null_id) continue;
             if (this->objects[i].id == agent_id) continue; // skip you
             if (this->objects[i].vox == NULL) continue;
-            int equipped_item_type = Toolbelt::get_agent_selected_item_type(this->objects[i].id);
+            ItemType equipped_item_type = Toolbelt::get_agent_selected_item_type(this->objects[i].id);
             if (!Item::item_type_is_voxel(equipped_item_type)) continue;
 
             float radius = this->objects[i].vox->get_part(0)->radius;
@@ -137,7 +137,7 @@ void AgentList::draw_equipped_items()
             if (this->objects[i].id == this->null_id) continue;
             if (this->objects[i].id == agent_id) continue; // skip you
             if (this->objects[i].vox == NULL) continue;
-            int equipped_item_type = Toolbelt::get_agent_selected_item_type(this->objects[i].id);
+            ItemType equipped_item_type = Toolbelt::get_agent_selected_item_type(this->objects[i].id);
             if (Item::item_type_is_voxel(equipped_item_type)) continue;
 
             float radius = this->objects[i].vox->get_part(0)->radius;
@@ -273,7 +273,7 @@ int AgentList::objects_within_sphere(float x, float y, float z, float radius)
         {   // agent in sphere
             this->filtered_objects[num] = &this->objects[i];
             this->filtered_object_distances[num] = dist;
-            num++;            
+            num++;
         }
     }
     this->n_filtered = num;
@@ -299,7 +299,7 @@ int AgentList::object_models_within_sphere(float x, float y, float z, float radi
         {   // agent in sphere
             this->filtered_objects[num] = &this->objects[i];
             this->filtered_object_distances[num] = dist;
-            num++;            
+            num++;
         }
     }
     this->n_filtered = num;
@@ -357,7 +357,7 @@ int AgentList::get_ids()
         ids_in_use[j] = objects[i].id;
         j++;
     }
-    return j;            
+    return j;
 }
 
 Agent* nearest_agent_in_range(const Vec3 position, const float radius)
@@ -413,7 +413,7 @@ Agent* random_agent_in_range(const Vec3 position, const float radius)
     // find nearby players
     int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
     if (n == 0) return NULL;
-    
+
     // target random nearby player
     MALLOX(int, chosen, n); //type, name, size
 

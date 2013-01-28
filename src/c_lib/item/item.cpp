@@ -9,7 +9,7 @@
 namespace Item
 {
 
-void Item::init(int item_type)
+void Item::init(ItemType item_type)
 {
     this->type = item_type;
     ItemAttribute* attr = get_item_attributes(item_type);
@@ -55,7 +55,7 @@ void ItemList::decay_gas()
 {
     gas_tick++;
     if (gas_tick % GAS_TICK_INTERVAL != 0) return;
-    
+
     // iterate item list
     // decay any gases
     // dont decay if container is cryofreezer
@@ -195,7 +195,7 @@ void ItemList::verify_items()
     #define VERIFY_ITEM(COND, LIMIT, ITEM) \
         GS_ASSERT_LIMIT((COND), (LIMIT)); \
         if (!(COND)) (ITEM)->valid = false;
-    
+
     const int LIMIT = 1;
     for (unsigned int k=0; k<this->max; k++)
     {
@@ -205,7 +205,7 @@ void ItemList::verify_items()
         VERIFY_ITEM(is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT), LIMIT, i);
 
         VERIFY_ITEM(i->type != NULL_ITEM_TYPE, LIMIT, i);
-    
+
         GS_ASSERT_LIMIT(i->subscribers.count >= 0, LIMIT);  // this should warn, but not mark the item as invalid
         VERIFY_ITEM((i->stack_size > 0 && i->stack_size <= MAX_STACK_SIZE) || i->stack_size == NULL_STACK_SIZE, LIMIT, i);
         VERIFY_ITEM((i->durability > 0 && i->durability <= MAX_DURABILITY) || i->durability == NULL_DURABILITY, LIMIT, i);

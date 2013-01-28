@@ -16,7 +16,7 @@ namespace ServerState
     bool main_inited = false;
     bool signal_exit = false;
     bool reload_settings = false;
-    
+
     Voxels::VoxelHitscanList* voxel_hitscan_list = NULL;
 
     class Entities::Entity* base;
@@ -36,10 +36,10 @@ namespace ServerState
     {
         // always start the base at the map center in fast map mode
         if (strcmp(Options::map, "art") == 0) return vec3_init(0,0,0);
-        
+
         GS_ASSERT(base != NULL);
         if (base == NULL) return vec3_init(0,0,0);
-        
+
         using Components::DimensionComponent;
         DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
         GS_ASSERT(dims != NULL);
@@ -90,7 +90,7 @@ namespace ServerState
     void check_agents_at_base()
     {
         using Agents::agent_list;
-        
+
         Entities::Entity* base = Entities::get(OBJECT_BASE, 0);
         GS_ASSERT(base != NULL);
         if (base == NULL) return;
@@ -100,13 +100,13 @@ namespace ServerState
         GS_ASSERT(physics != NULL);
         if (physics == NULL) return;
         Vec3 p = physics->get_position();
-        
+
         using Components::VoxelModelComponent;
         float r = 1.0f;
         VoxelModelComponent* vox = (VoxelModelComponent*)base->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
         GS_ASSERT(vox != NULL);
         if (vox != NULL) r = vox->get_radius();
-        
+
         agent_list->objects_within_sphere(p.x, p.y, p.z, r);
         for (unsigned int i=0; i<agent_list->n_filtered; i++)
         {
@@ -144,11 +144,11 @@ namespace ServerState
         Entities::damage_objects_within_sphere(types, n_types, p, radius, damage);
 
     }
-        
+
     // TODO -- move this test/convenince method
     void spawn_items(int n)
     {
-        int type = randrange(1,8);
+        ItemType type = (ItemType)randrange(1,8);
         float x = randf() * t_map::map_dim.x;
         float y = randf() * t_map::map_dim.y;
         float z = 128.0f;

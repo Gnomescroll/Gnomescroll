@@ -24,7 +24,7 @@ class ItemDropEntry
     public:
 
         int n_drops;
-        int item_type;
+        ItemType item_type;
         int* amount;
         float* probability;
 
@@ -82,7 +82,7 @@ class ItemDrop
         int max_drops;
         class ItemDropEntry* drop;
 
-        int get_or_create_drop_enty(int item_type)
+        int get_or_create_drop_enty(ItemType item_type)
         {
             GS_ASSERT(item_type != NULL_ITEM_TYPE);
             if (item_type == NULL_ITEM_TYPE) return -1;
@@ -103,7 +103,7 @@ class ItemDrop
             return -1;
         }
 
-        class ItemDropEntry* get_or_create_drop_entry(int item_type)
+        class ItemDropEntry* get_or_create_drop_entry(ItemType item_type)
         {
             GS_ASSERT(this->drop != NULL);
             if (this->drop == NULL) return NULL;
@@ -154,7 +154,7 @@ class ItemDrop
 
         void set_max_drop_amounts(const char* item_name, int n)
         {
-            int item_type = get_item_type(item_name);
+            ItemType item_type = get_item_type(item_name);
             GS_ASSERT(item_type != NULL_ITEM_TYPE);
             if (item_type == NULL_ITEM_TYPE) return;
             class ItemDropEntry* drop = this->get_or_create_drop_entry(item_type);
@@ -166,7 +166,7 @@ class ItemDrop
 
         void add_drop(const char* item_name, int amount, float probability)
         {
-            int item_type = get_item_type(item_name);
+            ItemType item_type = get_item_type(item_name);
             GS_ASSERT(item_type != NULL_ITEM_TYPE);
             if (item_type == NULL_ITEM_TYPE) return;
             class ItemDropEntry* drop = this->get_or_create_drop_entry(item_type);

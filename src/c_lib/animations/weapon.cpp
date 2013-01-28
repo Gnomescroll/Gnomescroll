@@ -13,7 +13,7 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-static int rendered_item = NULL_ITEM_TYPE;
+static ItemType rendered_item = NULL_ITEM_TYPE;
 static bool equipped_item_animating = false;
 static int equipped_item_animation_tick = 0;
 static int equipped_item_animation_tick_nudge = 1;
@@ -23,7 +23,7 @@ static class EquippedItemConfig sprite_config;
 static class EquippedItemConfig voxel_config;
 class EquippedItemConfig voxelized_sprite_config;
 
-static class EquippedItemConfig* current_config; 
+static class EquippedItemConfig* current_config;
 
 static class EquippedItemAlignment animation_state;
 
@@ -33,11 +33,11 @@ void EquippedItemConfig::parse()
     char* buffer = read_file_to_buffer(this->filename, &size);
     IF_ASSERT(buffer == NULL) return;
     IF_ASSERT(size <= 0) return;
-    
+
     size_t index = 0;
     int read = 0;
-    
-    // scanf for alignment config    
+
+    // scanf for alignment config
     sscanf(&buffer[index], "scale: %f %n", &this->scale, &read);
     index += read;
     sscanf(&buffer[index], "focal.dz: %f %n", &this->alignment.focal.dz, &read);
@@ -54,7 +54,7 @@ void EquippedItemConfig::parse()
     index += read;
 
     GS_ASSERT(index <= size);
-    
+
     // free file contents
     free(buffer);
 }
@@ -135,7 +135,7 @@ void cycle_current_config()
             break;
     }
     printf("\n");
-    
+
 }
 
 void print_sprite_alignment_config()
@@ -163,7 +163,7 @@ static Vec3 compute_point_offset(
     // move depth
     forward = vec3_scalar_mult(forward, depth);
     final = vec3_add(final, forward);
-    
+
     return final;
 }
 
@@ -176,7 +176,7 @@ bool draw_sprite_gl_begin()
 
     // set up opengl state
     glColor4ub(255,255,255,255);
-    
+
     GL_ASSERT(GL_BLEND, false);
 
     glEnable(GL_TEXTURE_2D);
@@ -194,7 +194,7 @@ bool draw_sprite_gl_begin()
 void draw_sprite_gl_end()
 {
     glEnd();
-    
+
     // cleanup
     glDisable(GL_ALPHA_TEST);
     glDisable(GL_TEXTURE_2D);
@@ -202,7 +202,7 @@ void draw_sprite_gl_end()
     CHECK_GL_ERROR();
 }
 
-static void draw_planar_sprite(int item_type, Vec3 origin, Vec3 right, Vec3 up)
+static void draw_planar_sprite(ItemType item_type, Vec3 origin, Vec3 right, Vec3 up)
 {
     origin = quadrant_translate_position(current_camera_position, origin);
     int item_sprite = Item::get_sprite_index_for_type(item_type);
@@ -240,7 +240,7 @@ GLint cull_face_mode = GL_BACK;
 bool draw_voxel_gl_begin(GLint cull_mode)
 {
     IF_ASSERT(t_map::block_textures_normal == 0) return false;
-    
+
     glColor4ub(255,255,255,255);
 
     GL_ASSERT(GL_BLEND, false);
@@ -250,12 +250,12 @@ bool draw_voxel_gl_begin(GLint cull_mode)
     // save culling state
     cull_face_enabled = glIsEnabled(GL_CULL_FACE);
     glGetIntegerv(GL_CULL_FACE_MODE, &cull_face_mode);
-    
+
     // enable culling
     if (!cull_face_enabled)
         glEnable(GL_CULL_FACE);
     glCullFace(cull_mode);
-    
+
     // draw textured voxels
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal); // block texture sheet
@@ -280,22 +280,22 @@ void draw_voxel_gl_end()
     CHECK_GL_ERROR();
 }
 
-static void draw_voxel(int item_type, Vec3 origin, Vec3 forward, Vec3 right, Vec3 up)
+static void draw_voxel(ItemType item_type, Vec3 origin, Vec3 forward, Vec3 right, Vec3 up)
 {
     IF_ASSERT(item_type == NULL_ITEM_TYPE) return;
     const int sprite_id = Item::get_particle_voxel_texture(item_type);
     GS_ASSERT(sprite_id != ERROR_SPRITE);
     const float sprite_width = 32.0f/512.0f;
-    
+
     float tx = (2.0f / 32.0f) * (sprite_id % (512/32));
     float ty = (2.0f / 32.0f) * (sprite_id / (512/32));
-    
+
     Draw::drawTexturedMinivox(
         origin, right, forward, up,
         tx, ty, sprite_width);
 }
 
-void draw_equipped_item(int item_type)
+void draw_equipped_item(ItemType item_type)
 {    // draw item in hud
     if (item_type == NULL_ITEM_TYPE)
         item_type = Item::get_item_type("fist");
@@ -312,7 +312,7 @@ void draw_equipped_item(int item_type)
             printf("Equipped item animating but weapon switched from %s to %s\n",
                 old_name, new_name);
     }
-        
+
     rendered_item = item_type;
 
     if (Item::item_type_is_voxel(item_type))
@@ -324,7 +324,7 @@ void draw_equipped_item(int item_type)
 
 
     IF_ASSERT(agent_camera == NULL) return;
-    
+
     // camera state
     struct Vec3 position = agent_camera->get_position();
     struct Vec3 forward = agent_camera->forward_vector();
@@ -334,7 +334,7 @@ void draw_equipped_item(int item_type)
     // calculate focal,origin points from camera and focal/origin deltas
     struct Vec3 focal;
     struct Vec3 origin;
-    
+
     if (equipped_item_animating)
     {    // use animated state
         focal = compute_point_offset(
@@ -368,7 +368,7 @@ void draw_equipped_item(int item_type)
     normalize_vector(&forward);
 
     origin = translate_position(origin);
-    
+
     // scale to size
     up = vec3_scalar_mult(up, current_config->scale);
     right = vec3_scalar_mult(right, current_config->scale);
@@ -407,7 +407,7 @@ void draw_equipped_item(int item_type)
                 draw_voxelized_sprite_gl_end();
             }
         }
-        
+
     }
 }
 
@@ -420,13 +420,13 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
 
     class Voxels::VoxelVolume* vv = a->get_arm();
     IF_ASSERT(vv == NULL) return false;
-    
+
     // HACKED UP MODEL DEPENDENT CRAP
     struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);
     float offset = (((vv->zdim)/2) * vv->scale) + (current_config->scale / 2.0f);
     struct Vec3 origin = vec3_add(a->arm_center(), vec3_scalar_mult(right, offset));
     origin = translate_position(origin);
-    
+
     if (!sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, current_config->scale))
         return false;
 
@@ -439,11 +439,11 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
     *pForward = vec3_scalar_mult(forward, current_config->scale);
 
     *pOrigin = origin;
-    
+
     return true;
 }
 
-void draw_equipped_voxel_item_other_agent(AgentID agent_id, int item_type)
+void draw_equipped_voxel_item_other_agent(AgentID agent_id, ItemType item_type)
 {
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
@@ -453,7 +453,7 @@ void draw_equipped_voxel_item_other_agent(AgentID agent_id, int item_type)
     draw_voxel(item_type, origin, forward, right, up);
 }
 
-void draw_equipped_sprite_item_other_agent(AgentID agent_id, int item_type)
+void draw_equipped_sprite_item_other_agent(AgentID agent_id, ItemType item_type)
 {
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
@@ -463,7 +463,7 @@ void draw_equipped_sprite_item_other_agent(AgentID agent_id, int item_type)
     draw_planar_sprite(item_type, origin, right, up);
 }
 
-void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, int item_type)
+void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, ItemType item_type)
 {
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
@@ -476,23 +476,23 @@ void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, int item_
     draw_voxelized_sprite(sprite_id, m);
 }
 
-void begin_equipped_item_animation(int item_type, bool continuous)
+void begin_equipped_item_animation(ItemType item_type, bool continuous)
 {
     stop_equipped_item_animation();
-    
+
     if (item_type == NULL_ITEM_TYPE)
     {
-        static int fist = Item::get_item_type("fist");
+        static ItemType fist = Item::get_item_type("fist");
         item_type = fist;
     }
-        
+
     // begin action animation for item type
     equipped_item_animating = true;
     rendered_item = item_type;
     equipped_item_continuous_animation = continuous;
 
     equipped_item_animation_tick = 0;
-    
+
     // copy default state
     animation_state.focal.dz = current_config->alignment.focal.dz;
     animation_state.focal.dxy = current_config->alignment.focal.dxy;
@@ -524,7 +524,7 @@ void tick_equipped_item_animation()
         if (equipped_item_continuous_animation)
             equipped_item_animation_tick_nudge *= -1;
     }
-    
+
     // calculate offsets based on tick value
     const float delta = 0.05f;
     animation_state.origin.depth = current_config->alignment.origin.depth;
@@ -532,7 +532,7 @@ void tick_equipped_item_animation()
         animation_state.origin.depth += delta * (float)equipped_item_animation_tick;
     else
         animation_state.origin.depth += delta * (float)(duration - equipped_item_animation_tick);
-    
+
     // clamp
     if (animation_state.origin.depth < current_config->alignment.origin.depth) animation_state.origin.depth = current_config->alignment.origin.depth;
 }
@@ -544,11 +544,11 @@ void stop_equipped_item_animation()
     equipped_item_animation_tick = 0;
     equipped_item_animation_tick_nudge = 1;
 }
-    
-void draw_placement_outline(int item_type)
+
+void draw_placement_outline(ItemType item_type)
 {
     GL_ASSERT(GL_TEXTURE_2D, false);
-    
+
     int cube_height = Item::get_item_cube_height(item_type);
     if (cube_height <= 0) return;
 
@@ -578,7 +578,7 @@ void draw_placement_outline(int item_type)
             size = 1.005f;
             glColor3ub(180,20,20);
         }
-            
+
         p = vec3_add(p, vec3_init(0.5f, 0.5f, 0.5f));
 
         // render

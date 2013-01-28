@@ -180,7 +180,7 @@ void EnergyTanksUI::draw()
     glEnd();
     glColor4ub(255, 255, 255, 255);
 
-    static int energy_tank_type = Item::get_item_type("energy_tank");
+    static ItemType energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
     static int energy_tank_sprite_index = Item::get_sprite_index_for_type(energy_tank_type);
     GS_ASSERT(energy_tank_sprite_index != ERROR_SPRITE);

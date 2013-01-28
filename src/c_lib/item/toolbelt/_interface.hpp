@@ -14,21 +14,21 @@ void tick();
 
 void remove_agent(AgentID agent_id);
 void agent_died(AgentID agent_id);
-int get_agent_selected_item_type(AgentID agent_id);
+ItemType get_agent_selected_item_type(AgentID agent_id);
 
 #if DC_CLIENT
-int get_selected_item_type();
+ItemType get_selected_item_type();
 
 void update_selected_item_type();
 
 // animation begin/ends for click-and-hold
-void begin_local_item(int item_type);
-void end_local_item(int item_type);
-void begin_item(AgentID agent_id, int item_type);
-void end_item(AgentID agent_id, int item_type);
+void begin_local_item(ItemType item_type);
+void end_local_item(ItemType item_type);
+void begin_item(AgentID agent_id, ItemType item_type);
+void end_item(AgentID agent_id, ItemType item_type);
 
 // triggers
-bool trigger_local_item_beta(ItemID item_id, int item_type);
+bool trigger_local_item_beta(ItemID item_id, ItemType item_type);
 
 // network events
 void assign_toolbelt(ItemContainerID container_id);
@@ -42,7 +42,7 @@ void right_trigger_up_event();
 #endif
 
 #if DC_SERVER
-void trigger_item_beta(AgentID agent_id, ItemID item_id, int item_type);
+void trigger_item_beta(AgentID agent_id, ItemID item_id, ItemType item_type);
 
 void update_toolbelt_items();
 

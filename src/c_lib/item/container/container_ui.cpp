@@ -47,7 +47,7 @@ void ItemContainerSmelterUI::tick_progress()
 
 /* Equipment */
 
-bool ItemContainerEquipmentUI::can_insert_item(int slot, int item_type)
+bool ItemContainerEquipmentUI::can_insert_item(int slot, ItemType item_type)
 {
     if (!ItemContainerUIInterface::can_insert_item(slot, item_type))
         return false;

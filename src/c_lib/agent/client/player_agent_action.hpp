@@ -27,7 +27,7 @@ class PlayerAgent_action
         // compute this vector whenever a htiscan target is acquired
         Vec3 target_direction;
 
-        void hitscan_laser(int weapon_type);
+        void hitscan_laser(ItemType weapon_type);
 
         // mining laser
         int mining_laser_sound_id;
@@ -35,7 +35,7 @@ class PlayerAgent_action
         void end_mining_laser();
         void update_mining_laser();
 
-        void fire_close_range_weapon(int weapon_type);
+        void fire_close_range_weapon(ItemType weapon_type);
 
         bool set_block(ItemID placer_id);
 

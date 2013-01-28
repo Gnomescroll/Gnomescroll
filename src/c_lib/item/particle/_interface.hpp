@@ -18,7 +18,7 @@ class ItemParticle* get(ItemParticleID particle_id);
 void draw();
 
 class ItemParticle* create_item_particle(
-    ItemParticleID particle_id, int item_type,
+    ItemParticleID particle_id, ItemType item_type,
     float x, float y, float z,
     float vx, float vy, float vz);
 #endif
@@ -26,13 +26,13 @@ class ItemParticle* create_item_particle(
 #if DC_SERVER
 
 class ItemParticle* create_item_particle(
-    ItemID item_id, int item_type,
+    ItemID item_id, ItemType item_type,
     float x, float y, float z,
     float vx, float vy, float vz);
 
 // create Item and ItemParticle
-class Item::Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz);
-class Item::Item* create_item_particle(int item_type, Vec3 position, Vec3 momentum);
+class Item::Item* create_item_particle(ItemType item_type, float x, float y, float z, float vx, float vy, float vz);
+class Item::Item* create_item_particle(ItemType item_type, Vec3 position, Vec3 momentum);
 
 void broadcast_particle_item_create(ItemParticleID particle_id);
 void send_particle_items_to_client(ClientID client_id);

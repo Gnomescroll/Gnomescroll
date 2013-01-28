@@ -21,9 +21,6 @@
 # define fmax(x,y) ((x) > (y)) ? (x) : (y)
 #endif
 
-#define ASSERT_VALID_ITEM_TYPE(item_type) GS_ASSERT((item_type) >= 0 && (item_type) < MAX_ITEM_TYPES)
-#define IF_INVALID_ITEM_TYPE(item_type) if (unlikely((item_type) < 0 || (item_type) >= MAX_ITEM_TYPES))
-
 #define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT((spawner_id) == BASE_SPAWN_ID || ((spawner_id) >= 0 && (spawner_id) < MAX_SPAWNERS));
 #define IF_INVALID_SPAWNER_ID(spawner_id) if (unlikely((spawner_id) != BASE_SPAWN_ID && ((spawner_id) < 0 || (spawner_id) >= MAX_SPAWNERS)))
 

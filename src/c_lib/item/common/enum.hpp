@@ -2,23 +2,28 @@
 
 typedef enum
 {
-    NULL_CONTAINER_TYPE = 0,
-} ItemContainerType;
-
-typedef enum
-{
     NULL_ITEM = 0xFFFF
 } ItemID;
 
 typedef enum
 {
-    NULL_PARTICLE = 0xFFFF
-} ItemParticleID;
+    NULL_ITEM_TYPE = 0xFF
+} ItemType;
 
 typedef enum
 {
     NULL_CONTAINER = 0xFFFF
 } ItemContainerID;
+
+typedef enum
+{
+    NULL_CONTAINER_TYPE = 0
+} ItemContainerType;
+
+typedef enum
+{
+    NULL_PARTICLE = 0xFFFF
+} ItemParticleID;
 
 typedef enum
 {

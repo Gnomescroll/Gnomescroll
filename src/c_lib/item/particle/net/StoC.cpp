@@ -16,14 +16,14 @@ inline void item_particle_create_StoC::handle()
     if (id == NULL_PARTICLE) return;
     ASSERT_BOXED_POINTf(x);
     ASSERT_BOXED_POINTf(y);
-    create_item_particle((ItemParticleID)id, item_type, x,y,z,mx,my,mz);
+    create_item_particle((ItemParticleID)id, (ItemType)item_type, x,y,z,mx,my,mz);
 }
 
 inline void item_particle_destroy_StoC::handle()
 {
     GS_ASSERT(id != NULL_PARTICLE);
     if (id == NULL_PARTICLE) return;
-    
+
     // if particle destroyed while targeting agent (i.e. it is being
     // picked up by agent) then assume agent picked it up
     ItemParticle* particle = get((ItemParticleID)id);
@@ -39,7 +39,7 @@ inline void item_particle_destroy_StoC::handle()
             Sound::play_2d_sound("pickup_item");
         }
     }
-    
+
     destroy((ItemParticleID)id);
 }
 
@@ -59,7 +59,7 @@ inline void item_particle_picked_up_StoC::handle()
     ItemParticle* particle = get((ItemParticleID)id);
     GS_ASSERT(particle != NULL);
     if (particle == NULL) return;
-    
+
     particle->picked_up((AgentID)this->agent_id);
 }
 

@@ -13,7 +13,7 @@ namespace ItemContainer
 
 struct SlotMetadata
 {
-    int type;
+    ItemType type;
     int stack_size;
     int durability;
     int charges;
@@ -56,7 +56,7 @@ class ItemContainerUIInterface
         return (slot != NULL_SLOT && slot >= 0 && slot < this->slot_max);
     }
 
-    int get_slot_type(int slot)
+    ItemType get_slot_type(int slot)
     {
         IF_ASSERT(!this->is_valid_slot(slot)) return NULL_ITEM_TYPE;
         return this->slot_metadata[slot].type;
@@ -124,7 +124,7 @@ class ItemContainerUIInterface
         }
     }
 
-    int get_stackable_slot(int item_type, int stack_size)
+    int get_stackable_slot(ItemType item_type, int stack_size)
     {
         for (int i=0; i<this->slot_max; i++)
         {
@@ -137,7 +137,7 @@ class ItemContainerUIInterface
         return NULL_SLOT;
     }
 
-    virtual bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, ItemType item_type)
     {
         IF_ASSERT(!this->is_valid_slot(slot)) return false;
         return (item_type != NULL_ITEM_TYPE);
@@ -218,7 +218,7 @@ class ItemContainerHandUI: public ItemContainerUIInterface
         return ItemContainerUIInterface::get_slot_stack(0);
     }
 
-    int get_item_type()
+    ItemType get_item_type()
     {
         return ItemContainerUIInterface::get_slot_type(0);
     }
@@ -259,9 +259,9 @@ class ItemContainerEnergyTanksUI: public ItemContainerUIInterface
 {
     public:
 
-        int energy_tank_type;
+        ItemType energy_tank_type;
 
-    virtual bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, ItemType item_type)
     {
         IF_ASSERT(!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
@@ -287,7 +287,7 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
 {
     public:
 
-    int get_coin_type()
+    ItemType get_coin_type()
     {
         return this->get_slot_type(0);
     }
@@ -297,14 +297,14 @@ class ItemContainerSynthesizerUI: public ItemContainerUIInterface
         return this->get_slot_stack(0);
     }
 
-    virtual bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, ItemType item_type)
     {
         GS_ASSERT(this->is_valid_slot(slot));
         if (!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
 
         // synthesizer coins only
-        static int coin_type = Item::get_item_type("synthesizer_coin");
+        static ItemType coin_type = Item::get_item_type("synthesizer_coin");
         GS_ASSERT(coin_type != NULL_ITEM_TYPE);
         return (item_type == coin_type);
     }
@@ -319,7 +319,7 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
     public:
 
         float fuel;
-        int fuel_type;
+        ItemType fuel_type;
         float progress;
 
     void tick_fuel();
@@ -338,7 +338,7 @@ class ItemContainerSmelterUI: public ItemContainerUIInterface
         return this->slot_metadata[0].type;
     }
 
-    virtual bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, ItemType item_type)
     {
         IF_ASSERT(!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
@@ -383,13 +383,13 @@ class ItemContainerCrusherUI: public ItemContainerUIInterface
 
         static const int input_slot = 0;
 
-    int get_input_slot_type()
+    ItemType get_input_slot_type()
     {
-        IF_ASSERT(!this->is_valid_slot(this->input_slot)) return false;
+        IF_ASSERT(!this->is_valid_slot(this->input_slot)) return NULL_ITEM_TYPE;
         return this->slot_metadata[this->input_slot].type;
     }
 
-    virtual bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, ItemType item_type)
     {
         IF_ASSERT(!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
@@ -432,7 +432,7 @@ class ItemContainerEquipmentUI: public ItemContainerUIInterface
         return this->slot_equipment_types[slot];
     }
 
-    virtual bool can_insert_item(int slot, int item_type);
+    virtual bool can_insert_item(int slot, ItemType item_type);
     virtual void insert_item(int slot, struct SlotMetadata metadata);
 
     virtual int get_empty_slot()
