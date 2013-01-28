@@ -102,7 +102,6 @@ ItemID auto_add_item_to_container(const char* item_name, ItemContainerID contain
 // Create a container at a map location and returns the container ID
 // Remember to broadcast_container_create(id) if you are calling this
 // outside of the init phase (when players may be playing)
-ItemContainerID create_container_block(const char* container_name, int x, int y, int z);
 ItemContainerID create_container_block(ItemContainerType container_type, int x, int y, int z);
 
 // definition in server.hpp

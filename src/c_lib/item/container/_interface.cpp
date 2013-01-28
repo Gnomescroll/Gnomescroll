@@ -1392,12 +1392,6 @@ ItemID auto_add_item_to_container(const char* item_name, ItemContainerID contain
     return item->id;
 }
 
-ItemContainerID create_container_block(const char* container_name, int x, int y, int z)
-{
-    ItemContainerType container_type = get_type(container_name);
-    return create_container_block(container_type, x,y,z);
-}
-
 ItemContainerID create_container_block(ItemContainerType container_type, int x, int y, int z)
 {
     IF_ASSERT(!isValid(container_type)) return NULL_CONTAINER;

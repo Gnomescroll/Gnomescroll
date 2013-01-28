@@ -437,7 +437,8 @@ class ItemContainerEquipmentUI: public ItemContainerUIInterface
     }
 
     explicit ItemContainerEquipmentUI(ItemContainerID id) :
-        ItemContainerUIInterface(id)
+        ItemContainerUIInterface(id),
+        slot_equipment_types(NULL)
     {}
 };
 

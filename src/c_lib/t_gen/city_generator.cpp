@@ -772,7 +772,7 @@ void generate_tunnel(int x, int y, int z, int otherx, int othery, int size, Cube
 
 void create_cryofreezer(int x, int y, int z)
 {
-    ItemContainerID id = ItemContainer::create_container_block("cryofreezer_small", x, y, z);
+    ItemContainerID id = ItemContainer::create_container_block(ItemContainer::name::cryofreezer_small, x, y, z);
     IF_ASSERT(!isValid(id)) return;
     ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
     ItemContainer::auto_add_item_to_container("methane_ice_chunk", id);
@@ -782,7 +782,7 @@ void create_cryofreezer(int x, int y, int z)
 
 void create_storage(int x, int y, int z)
 {
-    ItemContainerID id = ItemContainer::create_container_block("storage_block_small", x, y, z);
+    ItemContainerID id = ItemContainer::create_container_block(ItemContainer::name::storage_block_small, x, y, z);
     IF_ASSERT(!isValid(id)) return;
     if (randrange(0, 2) == 0)
     {
@@ -809,17 +809,17 @@ void create_storage(int x, int y, int z)
 
 void create_smelter(int x, int y, int z)
 {
-    ItemContainer::create_container_block("smelter_basic", x, y, z);
+    ItemContainer::create_container_block(ItemContainer::name::smelter_basic, x, y, z);
 }
 
 void create_bench(int x, int y, int z)
 {
-    ItemContainer::create_container_block("crafting_bench_basic", x, y, z);
+    ItemContainer::create_container_block(ItemContainer::name::crafting_bench_basic, x, y, z);
 }
 
 void create_crusher(int x, int y, int z)
 {
-    ItemContainer::create_container_block("crusher", x, y, z);
+    ItemContainer::create_container_block(ItemContainer::name::crusher, x, y, z);
 }
 
 bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith)
