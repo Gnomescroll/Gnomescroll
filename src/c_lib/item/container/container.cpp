@@ -275,5 +275,4 @@ int ItemContainerEquipment::insert_item(int slot, ItemID item_id)
     return ItemContainerInterface::insert_item(slot, item_id);
 }
 
-
 }   // ItemContainer

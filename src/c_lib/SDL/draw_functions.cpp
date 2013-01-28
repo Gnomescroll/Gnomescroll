@@ -34,7 +34,7 @@ void draw_rect(Color color, float x, float y, float w, float h)
     float x2 = x + w;
     float y2 = y + h;
 
-    glColor3ub( color.r, color.g, color.b);
+    glColor3ub(color.r, color.g, color.b);
     glBegin(GL_QUADS);
     glVertex2f(x1, y1);
     glVertex2f(x2, y1);
@@ -65,16 +65,16 @@ void draw_bound_texture(float x, float y, float w, float h, float z)
 {   // y coordinates start along the bottom
     glBegin(GL_QUADS);
 
-    glTexCoord2f(0.0f,0.0f);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(x, y, z);  // Top left
 
-    glTexCoord2f(1.0f,0.0f);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(x+w, y, z);  // Top right
 
-    glTexCoord2f(1.0f,1.0f);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(x+w, y+h, z);  // Bottom right
 
-    glTexCoord2f(0.0f,1.0f);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(x, y+h, z);  // Bottom left
     glEnd();
 }
@@ -84,16 +84,16 @@ void draw_bound_texture(float x, float y, float w, float h)
 {   // y coordinates start along the bottom
     glBegin(GL_QUADS);
 
-    glTexCoord2f(0.0f,0.0f);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex2f(x, y);  // Top left
 
-    glTexCoord2f(1.0f,0.0f);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex2f(x+w, y);  // Top right
 
-    glTexCoord2f(1.0f,1.0f);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex2f(x+w, y+h);  // Bottom right
 
-    glTexCoord2f(0.0f,1.0f);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex2f(x, y+h);  // Bottom left
     glEnd();
 }

@@ -389,7 +389,7 @@ class ItemContainerCrusherUI: public ItemContainerUIInterface
         return this->slot_metadata[this->input_slot].type;
     }
 
-    bool can_insert_item(int slot, int item_type)
+    virtual bool can_insert_item(int slot, int item_type)
     {
         IF_ASSERT(!this->is_valid_slot(slot)) return false;
         if (item_type == NULL_ITEM_TYPE) return false;
@@ -398,7 +398,7 @@ class ItemContainerCrusherUI: public ItemContainerUIInterface
         return false;
     }
 
-    int get_empty_slot()
+    virtual int get_empty_slot()
     {
         if (this->slot_max <= 0) return NULL_SLOT;
         if (this->slot_metadata[0].type == NULL_ITEM_TYPE) return 0;
@@ -425,6 +425,20 @@ class ItemContainerEquipmentUI: public ItemContainerUIInterface
     public:
 
         EquipmentType* slot_equipment_types;
+
+    EquipmentType get_slot_equipment_type(int slot)
+    {
+        if (!this->is_valid_slot(slot)) return NULL_EQUIPMENT_TYPE;
+        return this->slot_equipment_types[slot];
+    }
+
+    virtual bool can_insert_item(int slot, int item_type);
+    virtual void insert_item(int slot, struct SlotMetadata metadata);
+
+    virtual int get_empty_slot()
+    {
+        return NULL_SLOT;
+    }
 
     virtual void init(ItemContainerType type, int xdim, int ydim)
     {

@@ -44,6 +44,7 @@ class UIElement
         GLuint* texture;
 
         HudText::Text name;
+        HudText::Text* item_labels;
 
     void set_position(float x, float y)
     {
@@ -55,6 +56,25 @@ class UIElement
     virtual void draw() = 0;
     virtual int get_slot_at(int px, int py) = 0;
     virtual bool point_inside(int px, int py) = 0;
+
+    virtual void init_item_labels(int count)
+    {
+        if (this->item_labels != NULL)
+        {
+            delete[] this->item_labels;
+            this->item_labels = NULL;
+        }
+        IF_ASSERT(count <= 0) return;
+        this->item_labels = new HudText::Text[count];
+        for (int i=0; i<count; i++)
+        {
+            HudText::Text* t = &this->item_labels[i];
+            t->set_format("%d");
+            t->set_format_extra_length(11 + 1 - 2);
+            t->set_color(Color(255,255,255,255));
+            t->set_depth(-0.1f);
+        }
+    }
 
     virtual void draw_name()
     {
@@ -80,10 +100,13 @@ class UIElement
         type(UI_ELEMENT_NONE),
         container_id(NULL_CONTAINER), container_type(NULL_CONTAINER_TYPE),
         visible(false), xoff(0), yoff(0),
-        texture(NULL)
+        texture(NULL), item_labels(NULL)
     {}
 
-    virtual ~UIElement() {} //abc virtual deconstructor
+    virtual ~UIElement()
+    {
+        if (this->item_labels != NULL) delete[] this->item_labels;
+    }
 };
 
 } // HudContainer

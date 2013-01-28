@@ -98,6 +98,9 @@ typedef enum
     EQUIPMENT_TYPE_FEET,
     EQUIPMENT_TYPE_HANDS,
     EQUIPMENT_TYPE_ACCESSORY,
+
+    // keep this at the end
+    N_EQUIPMENT_TYPES
 } EquipmentType;
 
 /* No typedef for ItemType, ItemContainerType, use string or unpacked names */

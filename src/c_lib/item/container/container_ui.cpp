@@ -45,5 +45,25 @@ void ItemContainerSmelterUI::tick_progress()
     if (progress < 0.0f) progress = 0.0f;
 }
 
+/* Equipment */
+
+bool ItemContainerEquipmentUI::can_insert_item(int slot, int item_type)
+{
+    if (!ItemContainerUIInterface::can_insert_item(slot, item_type))
+        return false;
+    if (Item::get_item_group_for_type(item_type) != IG_EQUIPMENT)
+        return false;
+    if (Item::get_item_equipment_type(item_type) != this->slot_equipment_types[slot])
+        return false;
+    return true;
+}
+
+void ItemContainerEquipmentUI::insert_item(int slot, struct SlotMetadata metadata)
+{
+    GS_ASSERT(Item::get_item_group_for_type(metadata.type) == IG_EQUIPMENT);
+    GS_ASSERT(Item::get_item_equipment_type(metadata.type) == this->get_slot_equipment_type(slot));
+    ItemContainerUIInterface::insert_item(slot, metadata);
+}
+
 } // Item
 

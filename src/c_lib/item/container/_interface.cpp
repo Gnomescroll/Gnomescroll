@@ -604,13 +604,13 @@ bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
     IF_ASSERT(!isValid(agent_id)) return false;
     IF_ASSERT(!isValid(client_id)) return false;
 
-    ItemContainer* premium_cache   = (ItemContainer*)create_container(name::premium_cache);
-    ItemContainer* agent_toolbelt  = (ItemContainer*)create_container(name::toolbelt);
-    ItemContainer* agent_inventory = (ItemContainer*)create_container(name::inventory);
-    ItemContainerHand* agent_hand  = (ItemContainerHand*)create_container(name::hand);
-    ItemContainerEquipment* agent_equipment = (ItemContainerEquipment*)create_container(name::equipment);
-    ItemContainerSynthesizer* agent_synthesizer  = (ItemContainerSynthesizer*)create_container(name::synthesizer);
-    ItemContainerEnergyTanks* agent_energy_tanks = (ItemContainerEnergyTanks*)create_container(name::energy_tanks);
+    ItemContainerInterface* premium_cache      = create_container(name::premium_cache);
+    ItemContainerInterface* agent_toolbelt     = create_container(name::toolbelt);
+    ItemContainerInterface* agent_inventory    = create_container(name::inventory);
+    ItemContainerInterface* agent_hand         = create_container(name::hand);
+    ItemContainerInterface* agent_equipment    = create_container(name::equipment);
+    ItemContainerInterface* agent_synthesizer  = create_container(name::synthesizer);
+    ItemContainerInterface* agent_energy_tanks = create_container(name::energy_tanks);
 
     IF_ASSERT(agent_hand         == NULL) goto error;
     IF_ASSERT(agent_toolbelt     == NULL) goto error;
@@ -946,6 +946,9 @@ void dump_agent_containers(ClientID client_id, AgentID agent_id)
     if (premium_cache_list[agent_id] != NULL_CONTAINER)
         throw_items_from_container(client_id, agent_id, premium_cache_list[agent_id]);
 
+    if (agent_equipment_list[agent_id] != NULL_CONTAINER)
+        throw_items_from_container(client_id, agent_id, agent_equipment_list[agent_id]);
+
     // DO NOT throw_items_from_container(agent_hand), we need to use the transactional method for hand throwing
     ItemID hand_item = get_agent_hand_item(agent_id);
     if (hand_item != NULL_ITEM)
@@ -991,11 +994,19 @@ void agent_quit(AgentID agent_id)
     if (agent_hand_list[agent_id] != NULL_CONTAINER)
         destroy_container(agent_hand_list[agent_id]);
 
+    if (agent_equipment_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_equipment_list[agent_id]);
+
+    if (premium_cache_list[agent_id] != NULL_CONTAINER)
+        destroy_container(agent_equipment_list[agent_id]);
+
     agent_inventory_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;
     agent_synthesizer_list[agent_id] = NULL_CONTAINER;
     agent_energy_tanks_list[agent_id] = NULL_CONTAINER;
     agent_hand_list[agent_id] = NULL_CONTAINER;
+    agent_equipment_list[agent_id] = NULL_CONTAINER;
+    premium_cache_list[agent_id] = NULL_CONTAINER;
 }
 
 void purchase_item_from_synthesizer(AgentID agent_id, int shopping_slot)

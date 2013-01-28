@@ -26,8 +26,6 @@ class SmelterUI : public UIElement
         float texture_offset_x;
         float texture_offset_y;
 
-        HudText::Text* stacks;
-
         bool centered;
 
     void draw();
@@ -53,30 +51,13 @@ class SmelterUI : public UIElement
 
     void init()
     {
-        this->init_text();
-        this->refresh_render_size();
-        if (this->centered) this->center();
-    }
-
-    void init_text()
-    {
-        if (this->stacks != NULL) delete[] this->stacks;
-
         int input_ct = ItemContainer::get_container_xdim(this->container_type) * ItemContainer::get_container_ydim(this->container_type);
         int output_ct = ItemContainer::get_container_alt_xdim(this->container_type) * ItemContainer::get_container_alt_ydim(this->container_type);
         int fuel_ct = 1;
+        this->init_item_labels(input_ct + output_ct + fuel_ct);
 
-        int max = input_ct + output_ct + fuel_ct;
-        IF_ASSERT(max <= 0) return;
-        this->stacks = new HudText::Text[max];
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->stacks[i];
-            t->set_format("%d");
-            t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(Color(255,255,255,255));
-            t->set_depth(-0.1f);
-        }
+        this->refresh_render_size();
+        if (this->centered) this->center();
     }
 
     void center()
@@ -112,9 +93,7 @@ class SmelterUI : public UIElement
             GS_ASSERT(false);
         }
 
-        this->init_text();
-        this->refresh_render_size();
-        if (this->centered) this->center();
+        this->init();
     }
 
     bool in_fuel_region(int px, int py)
@@ -142,12 +121,15 @@ class SmelterUI : public UIElement
         x += xoff;
         y += _yres - yoff;
 
-        return (px >= x && px < x + cell_size && py >= y && py < y + cell_size);
+        return (px >= x && px < x + cell_size &&
+                py >= y && py < y + cell_size);
     }
 
     bool in_inactive_region(int px, int py)
     {
-        return (!this->in_fuel_region(px,py) && !this->in_input_region(px,py) && !this->in_output_region(px,py));
+        return (!this->in_fuel_region(px,py) &&
+                !this->in_input_region(px,py) &&
+                !this->in_output_region(px,py));
     }
 
     void draw_meter(float x, float y, float src_x, float src_y, float w, float h, float amount);
@@ -156,13 +138,11 @@ class SmelterUI : public UIElement
         xdim(1), ydim(1),
         render_width(1.0f), render_height(1.0f),
         texture_offset_x(0.0f), texture_offset_y(0.0f),
-        stacks(NULL),
         centered(true)
     {}
 
     virtual ~SmelterUI()
     {
-        if (this->stacks != NULL) delete[] this->stacks;
     }
 };
 
@@ -384,7 +364,7 @@ void SmelterUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    // draw stacks
+    // draw item_labels
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
     HudFont::set_properties(font_size);
@@ -394,7 +374,7 @@ void SmelterUI::draw()
     {
         int stack = slot_metadata[slot].stack_size;
         int charges = slot_metadata[slot].charges;
-        HudText::Text* text = &this->stacks[slot];
+        HudText::Text* text = &this->item_labels[slot];
 
         int grid = this->get_grid_for_slot(slot);
         int xslot = grid % this->xdim;

@@ -22,8 +22,6 @@ class AgentToolbeltUI : public UIElement
 
         int selected_slot;
 
-        HudText::Text* stack_numbers;
-
     int width()
     {
         return xdim*slot_size + (xdim-1)*inc1 + inc2*2;
@@ -46,29 +44,15 @@ class AgentToolbeltUI : public UIElement
 
     void init()
     {
-        IF_ASSERT(this->stack_numbers != NULL) return;
-
-        // create HudText objects needed for stack rendering
-        int max = xdim * ydim;
-        this->stack_numbers = new HudText::Text[max];
-
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->stack_numbers[i];
-            t->set_format("%d");
-            t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(Color(255,255,255,255));
-            t->set_depth(-0.1f);
-        }
+        this->init_item_labels(this->xdim * this->ydim);
     }
 
     AgentToolbeltUI() :
-        selected_slot(0), stack_numbers(NULL)
+        selected_slot(0)
     {}
 
     virtual ~AgentToolbeltUI()
     {
-        if (this->stack_numbers != NULL) delete[] this->stack_numbers;
     }
 };
 
@@ -140,7 +124,7 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<ydim; j++)
     {
         const float alpha = 128;
-        
+
         // always draw grey background
         int slot = j*xdim + i;
         float x = xoff + border + i*(inc1+slot_size);
@@ -172,7 +156,7 @@ void AgentToolbeltUI::draw()
     {
         int i = hover_slot % this->xdim;
         int j = hover_slot / this->xdim;
-        
+
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff - border + (j+1)*(inc1+slot_size));
 
@@ -204,7 +188,7 @@ void AgentToolbeltUI::draw()
         //const int iiw = 8; // integer icon width
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
-        
+
         const float tx_min = (1.0f/iw)*(tex_id % iiw);
         const float ty_min = (1.0f/iw)*(tex_id / iiw);
         const float tx_max = tx_min + 1.0f/iw;
@@ -215,7 +199,7 @@ void AgentToolbeltUI::draw()
 
         glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y+w);
-            
+
         glTexCoord2f(tx_max, ty_max);
         glVertex2f(x+w, y);
 
@@ -229,10 +213,10 @@ void AgentToolbeltUI::draw()
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
-    
+
     // draw border highlight
     if (this->selected_slot != NULL_SLOT)
-    {   
+    {
         int slotx = this->selected_slot % xdim;
         int sloty = ydim - (this->selected_slot / xdim);
         const float x = xoff + border + slotx*(inc1+slot_size);
@@ -279,10 +263,10 @@ void AgentToolbeltUI::draw()
         const int slot = j * this->xdim + i;
         int stack = slot_metadata[slot].stack_size;
         int charges = slot_metadata[slot].charges;
-        HudText::Text* text = &this->stack_numbers[slot];
+        HudText::Text* text = &this->item_labels[slot];
         const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - text->get_height());
-        draw_slot_numbers(text, x, y, stack, charges);         
+        draw_slot_numbers(text, x, y, stack, charges);
     }
     HudFont::reset_default();
     HudFont::end_font_draw();

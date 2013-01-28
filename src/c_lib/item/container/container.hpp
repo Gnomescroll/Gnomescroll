@@ -65,7 +65,7 @@ class ItemContainerInterface
         for (int i=0; i<this->slot_max; i++)
         {
             if (this->slot[i] == NULL_ITEM) continue;
-            if (Item::get_item_type(this->slot[i]) == item_type   // stacks
+            if (Item::get_item_type(this->slot[i]) == item_type   // it stacks
             && Item::get_stack_space(this->slot[i]) >= stack_size) // stack will fit
                 return i;
         }
@@ -604,6 +604,11 @@ class ItemContainerEquipment: public ItemContainerInterface
             if (slot_equipment_types[j] == EQUIPMENT_TYPE_ACCESSORY)
                 accessory_count++;
         GS_ASSERT(accessory_count == N_ACCESSORIES);
+    }
+
+    virtual int get_empty_slot()
+    {
+        return NULL_SLOT;
     }
 
     virtual void init(int xdim, int ydim)

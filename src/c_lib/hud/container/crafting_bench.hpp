@@ -45,9 +45,6 @@ class CraftingUI : public UIElement
         static const float output_offset_x;
         static const float output_offset_y;
 
-        HudText::Text* stacks;
-        HudText::Text* output_stacks;
-
     void draw();
 
     int width()
@@ -72,30 +69,7 @@ class CraftingUI : public UIElement
 
     void init()
     {
-        IF_ASSERT(this->stacks != NULL) return;
-        IF_ASSERT(this->output_stacks != NULL) return;
-
-        int max = input_slots;
-        this->stacks = new HudText::Text[max];
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->stacks[i];
-            t->set_format("%d");
-            t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(Color(255,255,255,255));
-            t->set_depth(-0.1f);
-        }
-
-        max = output_slots;
-        this->output_stacks = new HudText::Text[max];
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->output_stacks[i];
-            t->set_format("%d");
-            t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(Color(255,255,255,255));
-            t->set_depth(-0.1f);
-        }
+        this->init_item_labels(this->input_slots + this->output_slots);
     }
 
     void set_container_type(ItemContainerType container_type)
@@ -103,14 +77,11 @@ class CraftingUI : public UIElement
         this->container_type = container_type;
     }
 
-    CraftingUI() :
-        stacks(NULL), output_stacks(NULL)
+    CraftingUI()
     {}
 
     virtual ~CraftingUI()
     {
-        if (this->stacks != NULL) delete[] this->stacks;
-        if (this->output_stacks != NULL) delete[] this->output_stacks;
     }
 };
 
@@ -432,7 +403,7 @@ void CraftingUI::draw()
         const int slot = input_xdim*yslot + xslot;
         int stack = slot_metadata[slot].stack_size;
         int charges = slot_metadata[slot].charges;
-        HudText::Text* text = &this->stacks[slot];
+        HudText::Text* text = &this->item_labels[slot];
         const float x = xoff + input_offset_x + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (input_offset_y + cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
         draw_slot_numbers(text, x, y, stack, charges);
@@ -446,7 +417,7 @@ void CraftingUI::draw()
         // it is not aware of the implementation detail we have for food
         const int slot = output_xdim*yslot + xslot;
         int stack = Item::get_selected_craft_recipe_stack(this->container_id, slot);
-        HudText::Text* text = &this->output_stacks[slot];
+        HudText::Text* text = &this->item_labels[slot + this->input_slots];
         const float x = xoff + output_offset_x + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (output_offset_y + cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
         draw_slot_numbers(text, x, y, stack, NULL_CHARGES);

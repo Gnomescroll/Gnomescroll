@@ -26,11 +26,9 @@ class StorageBlockUI : public UIElement
         float texture_offset_x;
         float texture_offset_y;
 
-        HudText::Text* stacks;
-
         bool centered;
 
-        void draw();
+    void draw();
 
     int width()
     {
@@ -51,30 +49,9 @@ class StorageBlockUI : public UIElement
 
     void init()
     {
-        this->init_text();
+        this->init_item_labels(this->xdim * this->ydim);
         this->refresh_render_size();
         if (this->centered) this->center();
-    }
-
-    void init_text()
-    {
-        if (this->stacks != NULL)
-        {
-            delete[] this->stacks;
-            this->stacks = NULL;
-        }
-
-        int max = xdim * ydim;
-        IF_ASSERT(max <= 0) return;
-        this->stacks = new HudText::Text[max];
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->stacks[i];
-            t->set_format("%d");
-            t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(Color(255,255,255,255));
-            t->set_depth(-0.1f);
-        }
     }
 
     void center()
@@ -118,22 +95,18 @@ class StorageBlockUI : public UIElement
             GS_ASSERT(false);
         }
 
-        this->init_text();
-        this->refresh_render_size();
-        if (this->centered) this->center();
+        this->init();
     }
 
     StorageBlockUI() :
         xdim(1), ydim(1),
         render_width(1.0f), render_height(1.0f),
         texture_offset_x(0.0f), texture_offset_y(0.0f),
-        stacks(NULL),
         centered(true)
     {}
 
     virtual ~StorageBlockUI()
     {
-        if (this->stacks != NULL) delete[] this->stacks;
     }
 };
 
@@ -271,7 +244,7 @@ void StorageBlockUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    // draw stacks
+    // draw item_labels
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
     HudFont::set_properties(font_size);
@@ -284,7 +257,7 @@ void StorageBlockUI::draw()
         const int slot = xdim*yslot + xslot;
         int stack = slot_metadata[slot].stack_size;
         int charges = slot_metadata[slot].charges;
-        text = &this->stacks[slot];
+        text = &this->item_labels[slot];
         const float x = xoff + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         const float y = yoff - (cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
         draw_slot_numbers(text, x, y, stack, charges);

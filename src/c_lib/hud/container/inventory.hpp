@@ -24,8 +24,6 @@ class AgentInventoryUI : public UIElement
 
         Color slot_background_border_color;
 
-        HudText::Text* stack_numbers;
-
     void draw();
 
     int width()
@@ -47,34 +45,18 @@ class AgentInventoryUI : public UIElement
 
     virtual void init()
     {
-        GS_ASSERT(this->stack_numbers == NULL);
-
         this->xdim = ItemContainer::get_container_xdim(ItemContainer::name::inventory);
         this->ydim = ItemContainer::get_container_ydim(ItemContainer::name::inventory);
-
-        // create HudText objects needed for stack rendering
-        int max = this->xdim * this->ydim;
-        this->stack_numbers = new HudText::Text[max];
-
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->stack_numbers[i];
-            t->set_format("%d");
-            t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(Color(255,255,255,255));
-            t->set_depth(-0.1f);
-        }
+        this->init_item_labels(this->xdim * this->ydim);
     }
 
     AgentInventoryUI() :
         xdim(0), ydim(0),
-        slot_background_border_color(Color(127,127,127)),
-        stack_numbers(NULL)
+        slot_background_border_color(Color(127,127,127))
     {}
 
     virtual ~AgentInventoryUI()
     {
-        if (this->stack_numbers != NULL) delete[] this->stack_numbers;
     }
 };
 
@@ -253,7 +235,7 @@ void AgentInventoryUI::draw()
         const int slot = j * this->xdim + i;
         int stack = slot_metadata[slot].stack_size;
         int charges = slot_metadata[slot].charges;
-        HudText::Text* text = &this->stack_numbers[slot];
+        HudText::Text* text = &this->item_labels[slot];
         const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
         const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - text->get_height());
         draw_slot_numbers(text, x, y, stack, charges);

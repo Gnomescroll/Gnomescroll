@@ -503,8 +503,9 @@ void init()
     equipment->type = UI_ELEMENT_EQUIPMENT;
     equipment->set_container_type(ItemContainer::name::equipment);
     equipment->init();
+    // coordinates are point to top left on screen, where y=0 is along the bottom
     equipment->xoff = agent_inventory->xoff - (equipment->width + 10);
-    equipment->yoff = agent_inventory->yoff + agent_inventory->height();
+    equipment->yoff = agent_inventory->yoff + agent_inventory->height() - 5;  // -5 to align with inventory correctly
 
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format("%d");
@@ -572,7 +573,7 @@ void draw_tracking_pixel(float x, float y)
     float p = 1.0f;
     glBegin(GL_QUADS);
 
-    glVertex2f(x-p,y+p);
+    glVertex2f(x-p, y+p);
     glVertex2f(x+p, y+p);
     glVertex2f(x+p, y-p);
     glVertex2f(x-p, y-p);

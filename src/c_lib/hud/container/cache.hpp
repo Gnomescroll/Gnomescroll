@@ -14,26 +14,13 @@ class CacheUI : public AgentInventoryUI
 
     void init()
     {
-        GS_ASSERT(this->stack_numbers == NULL);
         GS_ASSERT(this->container_type != NULL_CONTAINER_TYPE);
         GS_ASSERT(this->container_type == ItemContainer::name::premium_cache);
 
         this->xdim = ItemContainer::get_container_xdim(this->container_type);
         this->ydim = ItemContainer::get_container_ydim(this->container_type);
 
-        // create HudText objects needed for stack rendering
-        int max = this->xdim * this->ydim;
-        IF_ASSERT(max <= 0) return;
-        this->stack_numbers = new HudText::Text[max];
-
-        for (int i=0; i<max; i++)
-        {
-            HudText::Text* t = &this->stack_numbers[i];
-            t->set_format("%d");
-            t->set_format_extra_length(11 + 1 - 2);
-            t->set_color(Color(255,255,255,255));
-            t->set_depth(-0.1f);
-        }
+        this->init_item_labels(this->xdim * this->ydim);
     }
 
     CacheUI()
