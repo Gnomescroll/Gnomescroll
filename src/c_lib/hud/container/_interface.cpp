@@ -49,7 +49,7 @@ void set_container_id(ItemContainerType container_type, ItemContainerID containe
     IF_ASSERT(container_ui == NULL) return;
     container_ui->set_container_id(container_id);
     container_ui->set_container_type(container_type);
-    container_ui->name.set_text(ItemContainer::get_container_display_name(container_type));
+    container_ui->name.set_text(ItemContainer::get_container_pretty_name(container_type));
 }
 
 void close_container(ItemContainerID container_id)

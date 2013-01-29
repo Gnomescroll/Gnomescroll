@@ -25,7 +25,7 @@ void send_container_alpha_action(ContainerActionType action, ItemContainerID con
     IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
-    
+
     container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
@@ -47,7 +47,7 @@ void send_container_alpha_action(ContainerActionType action, ItemContainerID con
         IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
 
     msg.send();
@@ -67,7 +67,7 @@ void send_container_beta_action(ContainerActionType action, ItemContainerID cont
 
     msg.container_id = container_id;
     msg.slot = slot;
-    
+
     msg.hand_type = player_hand_ui->get_item_type();
     msg.hand_stack = player_hand_ui->get_item_stack();
 
@@ -80,11 +80,11 @@ void send_container_beta_action(ContainerActionType action, ItemContainerID cont
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         IF_ASSERT(container == NULL) return;
-        
+
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
-    
+
     msg.send();
 }
 
@@ -95,7 +95,7 @@ void send_synthesizer_alpha_action(ContainerActionType action, ItemContainerID c
     IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
-    
+
     synthesizer_container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
@@ -117,7 +117,7 @@ void send_synthesizer_alpha_action(ContainerActionType action, ItemContainerID c
         IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
 
     msg.send();
@@ -137,7 +137,7 @@ void send_synthesizer_beta_action(ContainerActionType action, ItemContainerID co
 
     msg.container_id = container_id;
     msg.slot = slot;
-    
+
     msg.hand_type = player_hand_ui->get_item_type();
     msg.hand_stack = player_hand_ui->get_item_stack();
 
@@ -152,9 +152,9 @@ void send_synthesizer_beta_action(ContainerActionType action, ItemContainerID co
         IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
-    
+
     msg.send();
 }
 
@@ -163,9 +163,9 @@ void send_craft_alpha_action(ContainerActionType action, ItemContainerID contain
     IF_ASSERT(player_hand_ui == NULL) return;
     IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
     IF_ASSERT(container_id == NULL_CONTAINER) return;
-    
+
     record_container_event(container_id);
-    
+
     craft_container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
@@ -187,7 +187,7 @@ void send_craft_alpha_action(ContainerActionType action, ItemContainerID contain
         IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
 
     msg.send();
@@ -200,10 +200,10 @@ void send_purchase_item_action(ContainerActionType action, ItemContainerID conta
     IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
-    
+
     purchase_item_from_synthesizer_action_CtoS msg;
     msg.event_id = container_event_id;
-    
+
     msg.container_id = container_id;
     msg.slot = slot;
 
@@ -215,7 +215,7 @@ void send_craft_beta_action(ContainerActionType action, ItemContainerID containe
     IF_ASSERT(player_hand_ui == NULL) return;
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
-    
+
     record_container_event(container_id);
 
     craft_container_action_beta_CtoS msg;
@@ -224,7 +224,7 @@ void send_craft_beta_action(ContainerActionType action, ItemContainerID containe
 
     msg.container_id = container_id;
     msg.slot = slot;
-    
+
     msg.hand_type = player_hand_ui->get_item_type();
     msg.hand_stack = player_hand_ui->get_item_stack();
 
@@ -239,9 +239,9 @@ void send_craft_beta_action(ContainerActionType action, ItemContainerID containe
         IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
-    
+
     msg.send();
 }
 
@@ -252,10 +252,10 @@ void send_craft_item_action(ContainerActionType action, ItemContainerID containe
     IF_ASSERT(container_id == NULL_CONTAINER) return;
 
     record_container_event(container_id);
-    
+
     craft_item_from_bench_action_CtoS msg;
     msg.event_id = container_event_id;
-    
+
     msg.container_id = container_id;
     msg.slot = slot;
 
@@ -295,7 +295,7 @@ void send_smelter_alpha_action(ContainerActionType action, ItemContainerID conta
     IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
 
     record_container_event(container_id);
-    
+
     smelter_container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
@@ -317,7 +317,7 @@ void send_smelter_alpha_action(ContainerActionType action, ItemContainerID conta
         IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
 
     msg.send();
@@ -337,7 +337,7 @@ void send_smelter_beta_action(ContainerActionType action, ItemContainerID contai
 
     msg.container_id = container_id;
     msg.slot = slot;
-    
+
     msg.hand_type = player_hand_ui->get_item_type();
     msg.hand_stack = player_hand_ui->get_item_stack();
 
@@ -350,11 +350,11 @@ void send_smelter_beta_action(ContainerActionType action, ItemContainerID contai
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         IF_ASSERT(container == NULL) return;
-        
+
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
-    
+
     msg.send();
 }
 
@@ -364,7 +364,7 @@ void send_crusher_alpha_action(ContainerActionType action, ItemContainerID conta
     IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
 
     record_container_event(container_id);
-    
+
     crusher_container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
     msg.action = action;
@@ -386,7 +386,7 @@ void send_crusher_alpha_action(ContainerActionType action, ItemContainerID conta
         IF_ASSERT(container == NULL) return;
 
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
 
     msg.send();
@@ -419,11 +419,11 @@ void send_crusher_beta_action(ContainerActionType action, ItemContainerID contai
     {
         ItemContainerUIInterface* container = get_container_ui(container_id);
         IF_ASSERT(container == NULL) return;
-        
+
         msg.slot_type = container->get_slot_type(slot);
-        msg.slot_stack = container->get_slot_stack(slot);    
+        msg.slot_stack = container->get_slot_stack(slot);
     }
-    
+
     msg.send();
 }
 
@@ -431,12 +431,12 @@ void send_crusher_crush_action(ContainerActionType action, ItemContainerID conta
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     IF_ASSERT(action == CONTAINER_ACTION_NONE) return;
-    
+
     record_container_event(container_id);
-    
+
     crusher_crush_item_CtoS msg;
     msg.event_id = container_event_id;
-    
+
     msg.container_id = container_id;
     msg.send();
 }
@@ -448,30 +448,30 @@ void mouse_left_click_handler(ItemContainerID container_id, int slot, bool alt_a
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
-    
+
     ItemContainerType container_type = get_container_type(container_id);
-    class ContainerAttributes* attr = get_attr(container_type);
+    class ContainerAttribute* attr = get_attr(container_type);
     IF_ASSERT(attr == NULL) return;
     GS_ASSERT(attr->loaded);
-    
+
     ContainerActionType action = CONTAINER_ACTION_NONE;
     if (alt_action)
     {
         IF_ASSERT(attr->alpha_action_alt == NULL) return;
-        action = attr->alpha_action_alt(container_id, slot);        
+        action = attr->alpha_action_alt(container_id, slot);
     }
     else
     {
         IF_ASSERT(attr->alpha_action == NULL) return;
-        action = attr->alpha_action(container_id, slot);        
+        action = attr->alpha_action(container_id, slot);
     }
-        
+
     if (action == CONTAINER_ACTION_NONE) return;
 
     if (alt_action)
     {
         IF_ASSERT(attr->alpha_packet_alt == NULL) return;
-        attr->alpha_packet_alt(action, container_id, slot);        
+        attr->alpha_packet_alt(action, container_id, slot);
     }
     else
     {
@@ -487,7 +487,7 @@ void mouse_right_click_handler(ItemContainerID container_id, int slot, bool alt_
     if (you->status.dead) return;
 
     ItemContainerType container_type = get_container_type(container_id);
-    class ContainerAttributes* attr = get_attr(container_type);
+    class ContainerAttribute* attr = get_attr(container_type);
     IF_ASSERT(attr == NULL) return;
     GS_ASSERT(attr->loaded);
 
@@ -495,12 +495,12 @@ void mouse_right_click_handler(ItemContainerID container_id, int slot, bool alt_
     if (alt_action)
     {
         IF_ASSERT(attr->beta_action_alt == NULL) return;
-        action = attr->beta_action_alt(container_id, slot);        
+        action = attr->beta_action_alt(container_id, slot);
     }
     else
     {
         IF_ASSERT(attr->beta_action == NULL) return;
-        action = attr->beta_action(container_id, slot);        
+        action = attr->beta_action(container_id, slot);
     }
 
     if (action == CONTAINER_ACTION_NONE) return;
@@ -508,12 +508,12 @@ void mouse_right_click_handler(ItemContainerID container_id, int slot, bool alt_
     if (alt_action)
     {
         IF_ASSERT(attr->beta_packet_alt == NULL) return;
-        attr->beta_packet_alt(action, container_id, slot);        
+        attr->beta_packet_alt(action, container_id, slot);
     }
     else
     {
         IF_ASSERT(attr->beta_packet == NULL) return;
-        attr->beta_packet(action, container_id, slot);        
+        attr->beta_packet(action, container_id, slot);
     }
 }
 
@@ -531,7 +531,7 @@ void send_container_close(ItemContainerID container_id)
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     close_container_CtoS msg;
     msg.container_id = container_id;
-    msg.send();    
+    msg.send();
 }
 
 }   // ItemContainer

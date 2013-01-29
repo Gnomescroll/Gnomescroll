@@ -70,9 +70,9 @@ void verify_config()
 
     // make sure all container types are loaded
 
-    for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
+    for (size_t i=0; i<ItemContainer::container_attributes->max; i++)
     {
-        ContainerAttributes* attr = &ItemContainer::container_attributes[i];
+        ContainerAttribute* attr = &ItemContainer::container_attributes->properties[i];
         if (attr == NULL || !attr->loaded || !attr->attached_to_agent) continue;
         if (attr->type == ItemContainer::name::hand)
             agent_hand_found = true;

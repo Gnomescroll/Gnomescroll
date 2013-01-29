@@ -47,19 +47,6 @@ bool item_def(ItemGroup group, const char* name)
     return true;
 }
 
-void make_pretty_name(const char* src, char* dest, const size_t len)
-{   // capitalize string
-    MALLOX(char, title, len+1);
-    size_t wrote = title_string(src, title, len);
-    title[wrote] = '\0';
-    // remove numbers
-    size_t j=0;
-    for (size_t i=0; title[i] != '\0'; i++)
-        if (!isdigit(title[i]))
-            dest[j++] = title[i];
-    dest[j] = '\0';
-}
-
 // use in place of item_def for items that are equivalent to a block
 bool item_block_def(const char* block_name)
 {
@@ -104,11 +91,13 @@ bool item_container_def(const char* container_name)
 void block_damage_def(CubeMaterial material, int damage)
 {
     GS_ASSERT_ABORT(s != NULL);
-    if (s == NULL) return;
+    IF_ASSERT(s == NULL) return;
     GS_ASSERT_ABORT(damage >= 0 && damage <= MAX_CUBE_DAMAGE);
+    IF_ASSERT(damage < 0 || damage > MAX_CUBE_DAMAGE) return;
     bool set_any = false;
     for (int i=0; i<MAX_CUBES; i++)
-        if (t_map::isInUse((CubeType)i) && t_map::get_cube_material((CubeType)i) == material)
+        if (t_map::isInUse((CubeType)i) &&
+            t_map::get_cube_material((CubeType)i) == material)
         {
             s->block_damage[i] = damage;
             set_any = true;
@@ -120,7 +109,7 @@ void block_damage_def(CubeMaterial material, int damage)
 void block_damage_def(int damage)
 {   // apply to all groups
     GS_ASSERT_ABORT(s != NULL);
-    if (s == NULL) return;
+    IF_ASSERT(s == NULL) return;
     GS_ASSERT_ABORT(damage >= 0);
     for (int i=0; i<MAX_CUBES; i++)
         s->block_damage[i] = damage;
@@ -129,26 +118,26 @@ void block_damage_def(int damage)
 void set_pretty_name(const char* pretty_name)
 {
     GS_ASSERT_ABORT(s != NULL);
-    if (s == NULL) return;
-    strncpy(s->pretty_name, pretty_name, ITEM_PRETTY_NAME_MAX_LENGTH);
-    s->pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH] = '\0';
+    IF_ASSERT(s == NULL) return;
+    item_attributes->set_pretty_name(s->type, pretty_name,
+        ITEM_PRETTY_NAME_MAX_LENGTH);
 }
 
 #if DC_CLIENT
 void sprite_def(SpriteSheet spritesheet, int ypos, int xpos)
 {
     GS_ASSERT_ABORT(s != NULL);
-    if (s == NULL) return;
+    IF_ASSERT(s == NULL) return;
     // can't check maximums because they are unknown
     GS_ASSERT_ABORT(xpos >= 1 && ypos >= 1);
-    if (xpos < 1 || ypos < 1) return;
+    IF_ASSERT(xpos < 1 || ypos < 1) return;
 
     // check if we have already set this sprite
     GS_ASSERT_ABORT(s->sprite == ERROR_SPRITE);
 
     int sprite = TextureSheetLoader::blit_item_texture(spritesheet, xpos, ypos);
     GS_ASSERT_ABORT(sprite != NULL_SPRITE);
-    if (sprite == NULL_SPRITE) return;
+    IF_ASSERT(sprite == NULL_SPRITE) return;
 
     s->sprite = sprite;
 }
@@ -156,7 +145,7 @@ void sprite_def(SpriteSheet spritesheet, int ypos, int xpos)
 void iso_block_sprite_def(const char* block_name)
 {
     GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id != -1);
-    if (_item_cube_iso_spritesheet_id == -1) return;
+    IF_ASSERT(_item_cube_iso_spritesheet_id == -1) return;
 
     CubeType cube_type = t_map::get_cube_type(block_name);
     IF_ASSERT(!isValid(cube_type)) return;
@@ -165,7 +154,7 @@ void iso_block_sprite_def(const char* block_name)
     int ypos = (cube_type / 16) + 1;
     int sprite = TextureSheetLoader::blit_item_texture(_item_cube_iso_spritesheet_id, xpos, ypos);
     GS_ASSERT_ABORT(sprite != NULL_SPRITE);
-    if (sprite == NULL_SPRITE) return;
+    IF_ASSERT(sprite == NULL_SPRITE) return;
     s->sprite = sprite;
 }
 

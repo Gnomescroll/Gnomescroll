@@ -476,18 +476,6 @@ void create_items_from_blocks()
     item_attributes->done_loading();
 }
 
-void set_pretty_names()
-{   // automatically set "pretty" names for items
-    const size_t len = GS_MIN(DAT_NAME_MAX_LENGTH, ITEM_PRETTY_NAME_MAX_LENGTH);
-    for (size_t i=0; i<item_attributes->max; i++)
-    {
-        class ItemAttribute* a = &item_attributes->properties[i];
-        if (!a->loaded) continue;
-        if (a->pretty_name[0] == '\0')
-            make_pretty_name(a->name, a->pretty_name, len);
-    }
-}
-
 void verify_item_dat()
 {
     int errct = 0;  // count error items
@@ -660,7 +648,7 @@ void apply_item_dat_changes()
 void end_item_dat()
 {
     item_attributes->done_loading();
-    set_pretty_names();
+    item_attributes->set_pretty_names(ITEM_PRETTY_NAME_MAX_LENGTH);
     apply_item_dat_changes();
     verify_item_dat();
     save_item_names();

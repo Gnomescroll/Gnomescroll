@@ -1,6 +1,7 @@
 #pragma once
 
 #include <item/common/constants.hpp>
+#include <common/dat/properties.hpp>
 
 typedef void (*send_decision) (ContainerActionType, ItemContainerID, int);
                                  // action, container, slot
@@ -19,15 +20,10 @@ namespace ItemContainer
 bool is_valid_container_name(const char* name);
 }
 
-class ContainerAttributes
+class ContainerAttribute: public Property<ItemContainerType>
 {
     public:
-        ItemContainerType type;
-
-        bool loaded;
-
-        char name[DAT_NAME_MAX_LENGTH+1];
-        char display_name[CONTAINER_DISPLAY_NAME_MAX_LENGTH+1];
+        char pretty_name[CONTAINER_PRETTY_NAME_MAX_LENGTH+1];
 
         int xdim, ydim;
         int alt_xdim, alt_ydim;
@@ -46,26 +42,6 @@ class ContainerAttributes
 
         containerCreate create_function;
 
-    void set_name(const char* name)
-    {
-        GS_ASSERT(ItemContainer::is_valid_container_name(name));
-        strncpy(this->name, name, DAT_NAME_MAX_LENGTH+1);
-        this->name[DAT_NAME_MAX_LENGTH] = '\0';
-
-        // set the display name by default to the titled form
-        char titled_name[DAT_NAME_MAX_LENGTH+1] = {'\0'};
-        title_string(this->name, titled_name, DAT_NAME_MAX_LENGTH+1);
-        titled_name[DAT_NAME_MAX_LENGTH] = '\0';
-        this->set_display_name(titled_name);
-    }
-
-    void set_display_name(const char* name)
-    {
-        GS_ASSERT(name[0] != '\0');
-        strncpy(this->display_name, name, CONTAINER_DISPLAY_NAME_MAX_LENGTH+1);
-        this->display_name[CONTAINER_DISPLAY_NAME_MAX_LENGTH] = '\0';
-    }
-
     unsigned int max_dim()
     {
         return this->xdim * this->ydim;
@@ -76,20 +52,10 @@ class ContainerAttributes
         return this->alt_xdim * this->alt_ydim;
     }
 
-    virtual ~ContainerAttributes()
+    ContainerAttribute() :
+        Property<ItemContainerType>(NULL_CONTAINER_TYPE)
     {
-    }
-
-    ContainerAttributes()
-    {
-        this->init();
-    }
-
-    void init()
-    {
-        this->loaded = false;
-        memset(this->name, 0, sizeof(this->name));
-        memset(this->display_name, 0, sizeof(this->display_name));
+        memset(this->pretty_name, 0, sizeof(this->pretty_name));
         this->xdim = 0;
         this->ydim = 0;
         this->alt_xdim = 0;
@@ -104,4 +70,14 @@ class ContainerAttributes
         this->alpha_packet_alt = NULL;
         this->beta_packet_alt = NULL;
     }
+};
+
+
+class ContainerAttributes: public Properties<ContainerAttribute, ItemContainerType>
+{
+    public:
+
+    ContainerAttributes() :
+        Properties<ContainerAttribute, ItemContainerType>(MAX_CONTAINER_TYPES)
+    {}
 };

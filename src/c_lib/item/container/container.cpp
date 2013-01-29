@@ -30,7 +30,7 @@ ItemContainerInterface* create_item_container_interface(int type, int id)
     ItemContainerInterface* container = create_fn((ItemContainerType)type, (ItemContainerID)id);
     IF_ASSERT(container == NULL) return NULL;
 
-    class ContainerAttributes* attr = get_attr(container->type);
+    class ContainerAttribute* attr = get_attr(container->type);
     IF_ASSERT(attr == NULL)
     {
         destroy_container(container->id);

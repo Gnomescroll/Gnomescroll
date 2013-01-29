@@ -11,8 +11,8 @@ namespace ItemContainer
 
 ItemContainerType get_type(const char* name);
 const char* get_compatible_name(const char* name);
-class ContainerAttributes* get_attr(const char* name);
-class ContainerAttributes* get_attr(ItemContainerType type);
+class ContainerAttribute* get_attr(const char* name);
+class ContainerAttribute* get_attr(ItemContainerType type);
 unsigned int get_container_max_slots(ItemContainerType type);
 int get_container_xdim(ItemContainerType type);
 int get_container_ydim(ItemContainerType type);

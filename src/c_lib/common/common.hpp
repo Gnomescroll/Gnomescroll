@@ -181,3 +181,16 @@ size_t title_string(const char* str, char* out, size_t size)
     if (i < size) out[i] = '\0';
     return i;
 }
+
+void make_pretty_name(const char* src, char* dest, const size_t len)
+{   // capitalize string
+    MALLOX(char, title, len+1);
+    size_t wrote = title_string(src, title, len);
+    title[wrote] = '\0';
+    // remove numbers
+    size_t j=0;
+    for (size_t i=0; title[i] != '\0'; i++)
+        if (!isdigit(title[i]))
+            dest[j++] = title[i];
+    dest[j] = '\0';
+}

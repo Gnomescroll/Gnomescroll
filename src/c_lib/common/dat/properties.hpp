@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/common.hpp>
+
 template <typename Type>
 class Property
 {
@@ -66,8 +68,8 @@ class Properties
 
     Property* get(Type type)
     {
-        IF_ASSERT(!isValid(type)) return NULL;
-        Property* p = &this->properties[type];
+        Property* p = this->_get_any(type);
+        IF_ASSERT(p == NULL) return NULL;
         if (!p->loaded) return NULL;
         return p;
     }
@@ -97,6 +99,12 @@ class Properties
         return this->current_property;
     }
 
+    Property* _get_any(Type type)
+    {
+        IF_ASSERT(!isValid(type)) return NULL;
+        return &this->properties[type];
+    }
+
     void done_loading()
     {
         if (this->current_property == NULL) return;
@@ -114,4 +122,28 @@ class Properties
     {
         delete[] this->properties;
     }
+
+    /* Additional helpers that will only work on specialized Propertys */
+
+    void set_pretty_name(Type type, const char* pretty_name, size_t max_len)
+    {
+        Property* p = this->_get_any(type);
+        IF_ASSERT(p == NULL) return;
+        GS_ASSERT(strlen(pretty_name) <= max_len);
+        strncpy(p->pretty_name, pretty_name, max_len);
+        p->pretty_name[max_len] = '\0';
+    }
+
+    void set_pretty_names(size_t max_len)
+    {   // automatically set "pretty" names for items
+        const size_t len = GS_MIN(DAT_NAME_MAX_LENGTH, max_len);
+        for (size_t i=0; i<this->max; i++)
+        {
+            Property* a = &this->properties[i];
+            if (!a->loaded) continue;
+            if (a->pretty_name[0] == '\0')
+                make_pretty_name(a->name, a->pretty_name, len);
+        }
+    }
+
 };

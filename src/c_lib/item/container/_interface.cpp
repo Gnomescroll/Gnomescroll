@@ -285,7 +285,7 @@ bool open_container(ItemContainerID container_id)
         }
         else
         {
-            ContainerAttributes* attr = get_attr((ItemContainerType)i);
+            ContainerAttribute* attr = get_attr((ItemContainerType)i);
             if (attr == NULL || attr->attached_to_agent) continue;
             GS_ASSERT(containers[i] == NULL);
             GS_ASSERT(container_uis[i] == NULL);
