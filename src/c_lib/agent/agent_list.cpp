@@ -123,8 +123,8 @@ void AgentList::draw_equipped_items()
         Animations::draw_voxel_gl_end();
     }
 
-    GS_ASSERT(this->ct >= num);
-    if (this->ct <= num) return;
+    IF_ASSERT(this->ct < num) return;
+    if (this->ct == num) return;
 
     if (Options::animation_level <= 1)
         works = Animations::draw_sprite_gl_begin();

@@ -166,6 +166,7 @@ ItemGroup get_item_group_for_type(ItemType item_type)
 
 bool item_type_is_voxel(ItemType item_type)
 {
+    if (item_type == NULL_ITEM_TYPE) return false;
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return false;
     return attr->particle_voxel;
