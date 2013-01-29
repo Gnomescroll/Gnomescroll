@@ -99,7 +99,7 @@ class Properties
 
     void done_loading()
     {
-        IF_ASSERT(this->current_property == NULL) return;
+        if (this->current_property == NULL) return;
         this->current_property->done_loading();
         this->current_property = NULL;
     }

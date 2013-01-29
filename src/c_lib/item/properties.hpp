@@ -8,7 +8,7 @@ namespace Item
 {
 
 extern class DatNameMap* item_name_map;
-extern class ItemAttribute* item_attributes;
+extern class ItemAttributes* item_attributes;
 
 extern class SynthesizerItem* synthesizer_item_array;
 

@@ -2,18 +2,15 @@
 
 #include <item/common/constants.hpp>
 #include <t_map/common/constants.hpp>
+#include <common/dat/properties.hpp>
 
 namespace Item
 {
 
-class ItemAttribute
+class ItemAttribute: public Property<ItemType>
 {
     public:
-        bool loaded;
-
-        ItemType item_type;
         ItemGroup group;
-        char name[DAT_NAME_MAX_LENGTH+1];
         char pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH+1];
 
         // All items
@@ -74,30 +71,21 @@ class ItemAttribute
 
         bool boonable;  // boon crank
 
-
     ItemAttribute() :
-        loaded(false), item_type(NULL_ITEM_TYPE), group(IG_NONE)
+        Property<ItemType>(NULL_ITEM_TYPE)
     {
-        this->load_defaults();
-    }
-
-    void load_defaults()
-    {
-        loaded = false;
-
-        // PUT ALL DEFAULTS HERE
-        memset(this->name, 0, sizeof(this->name));
+        this->group = IG_NONE;
         memset(this->pretty_name, 0, sizeof(this->pretty_name));
-        cube_type = NULL_CUBE;
-        mech_type = NULL_MECH_TYPE;
+        this->cube_type = NULL_CUBE;
+        this->mech_type = NULL_MECH_TYPE;
 
-        max_durability = NULL_DURABILITY;
-        max_stack_size = 1;
-        sprite = ERROR_SPRITE;
-        particle_voxel = false;
-        particle_voxel_texture = 0;
-        firing_range = DEFAULT_FIRING_RANGE;
-        firing_rate = 6;
+        this->max_durability = NULL_DURABILITY;
+        this->max_stack_size = 1;
+        this->sprite = ERROR_SPRITE;
+        this->particle_voxel = false;
+        this->particle_voxel_texture = 0;
+        this->firing_range = DEFAULT_FIRING_RANGE;
+        this->firing_rate = 6;
         // match defaults with fist
         for (int i=0; i<MAX_CUBES; i++)
         {
@@ -121,17 +109,17 @@ class ItemAttribute
             this->block_damage[i] = dmg;
         }
 
-        object_damage = 0;
-        object_damage_min = 5;
-        object_damage_max = 10;
-        repair_agent_amount = 0;
-        container_type = NULL_CONTAINER_TYPE;
-        gas = false;
-        gas_lifetime = NULL_GAS_LIFETIME;
-        fuel = false;
-        fuel_burn_rate = 30;
-        cube_height = 0;
-        animation_id = 0;
+        this->object_damage = 0;
+        this->object_damage_min = 5;
+        this->object_damage_max = 10;
+        this->repair_agent_amount = 0;
+        this->container_type = NULL_CONTAINER_TYPE;
+        this->gas = false;
+        this->gas_lifetime = NULL_GAS_LIFETIME;
+        this->fuel = false;
+        this->fuel_burn_rate = 30;
+        this->cube_height = 0;
+        this->animation_id = 0;
 
         this->max_charges = NULL_CHARGES;
         this->recharge_rate = 1;
@@ -139,14 +127,17 @@ class ItemAttribute
         this->equipment_type = NULL_EQUIPMENT_TYPE;
         this->boonable = true;
     }
-
-    void set_type(ItemType item_type, ItemGroup group)
-    {
-        this->group = group;
-        this->item_type = item_type;
-    }
 };
 
+
+class ItemAttributes: public Properties<ItemAttribute, ItemType>
+{
+    public:
+
+    ItemAttributes():
+        Properties<ItemAttribute, ItemType>(MAX_ITEM_TYPES)
+    {}
+};
 
 class SynthesizerItem
 {

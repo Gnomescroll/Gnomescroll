@@ -110,9 +110,9 @@ static void generate_sprite_vertices(
 
 void load_sprite_voxelizer()
 {   // generate vertex arrays from items in the spritesheet
-    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+    for (size_t i=0; i<Item::item_attributes->max; i++)
     {
-        class Item::ItemAttribute* attr = &Item::item_attributes[i];
+        class Item::ItemAttribute* attr = &Item::item_attributes->properties[i];
         if (!attr->loaded || attr->particle_voxel) continue;
         generate_sprite_vertices(TextureSheetLoader::item_texture_sheet_loader, attr->sprite);
     }

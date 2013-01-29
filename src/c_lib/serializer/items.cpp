@@ -10,7 +10,7 @@
 namespace serializer
 {
 
-class ParsedItemDataList* item_load_data_list = NULL; 
+class ParsedItemDataList* item_load_data_list = NULL;
 
 void init_items()
 {
@@ -39,9 +39,8 @@ bool parse_item_token(const char* key, const char* val, class ParsedItemData* da
     else
     if (strcmp(NAME_TAG, key) == 0)
     {
-        bool valid_name = Item::is_valid_item_name(val);
-        GS_ASSERT(valid_name);
-        if (!valid_name) return false;
+        bool valid_name = is_valid_name(val);
+        IF_ASSERT(!valid_name) return false;
         strncpy(data->name, val, DAT_NAME_MAX_LENGTH);
         data->name[DAT_NAME_MAX_LENGTH] = '\0';
     }
@@ -121,7 +120,7 @@ size_t write_item_string(char* buf, size_t buffer_size, ItemID item_id)
         buf[0] = '\0';
         return 0;
     }
-    
+
     buf[could_write++] = '\n';
 
     return (size_t)could_write;
@@ -172,7 +171,7 @@ bool create_container_items_from_data(ItemContainerID container_id)
     {
         class ParsedItemData* data = &item_load_data_list->objects[i];
         if (data->id == item_load_data_list->null_id) continue;
-        
+
         class Item::Item* item = make_item(data);
         GS_ASSERT(item != NULL);
         if (item == NULL) return false; // Can/should never happen. Critical part
@@ -201,7 +200,7 @@ bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* 
         GS_ASSERT(container_type != NULL_CONTAINER_TYPE);
         container_types[i] = container_type;
     }
-    
+
     unsigned int item_space = Item::item_space();
     GS_ASSERT(item_load_data_list->ct <= item_space);
     if (item_load_data_list->ct > item_space) return false;

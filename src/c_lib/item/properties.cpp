@@ -14,7 +14,7 @@ namespace Item
 {
 
 class DatNameMap* item_name_map = NULL;
-class ItemAttribute* item_attributes = NULL;
+class ItemAttributes* item_attributes = NULL;
 class SynthesizerItem* synthesizer_item_array = NULL;
 class CraftingRecipe* crafting_recipe_array = NULL;
 class SmeltingRecipe* smelting_recipe_array = NULL;
@@ -32,7 +32,7 @@ void init_properties()
     item_name_map = new DatNameMap(256, DAT_NAME_MAX_LENGTH);
 
     GS_ASSERT(item_attributes == NULL);
-    item_attributes = new ItemAttribute[MAX_ITEM_TYPES];
+    item_attributes = new ItemAttributes;
 
     GS_ASSERT(crafting_recipe_array == NULL);
     crafting_recipe_array = new CraftingRecipe[MAX_CRAFTING_RECIPE];
@@ -49,7 +49,7 @@ void init_properties()
 void teardown_properties()
 {
     if (item_name_map          != NULL) delete item_name_map;
-    if (item_attributes        != NULL) delete[] item_attributes;
+    if (item_attributes        != NULL) delete item_attributes;
     if (synthesizer_item_array != NULL) delete[] synthesizer_item_array;
     if (crafting_recipe_array  != NULL) delete[] crafting_recipe_array;
     if (smelting_recipe_array  != NULL) delete[] smelting_recipe_array;
@@ -57,9 +57,12 @@ void teardown_properties()
 
 class ItemAttribute* get_item_attributes(ItemType item_type)
 {
-    IF_ASSERT(!isValid(item_type)) return NULL;
-    if (!item_attributes[item_type].loaded) return NULL;
-    return &item_attributes[item_type];
+    return item_attributes->get(item_type);
+}
+
+class ItemAttribute* get_item_attributes(const char* name)
+{
+    return item_attributes->get(name);
 }
 
 bool type_used(ItemType item_type)

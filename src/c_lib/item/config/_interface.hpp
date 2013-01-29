@@ -15,71 +15,34 @@ namespace Item
 
 void iso_block_sprite_def(const char* block_name);
 
-bool is_valid_item_name(const char* name)
-{
-    size_t len = strlen(name);
-    if (len <= 0 || len > DAT_NAME_MAX_LENGTH) return false;
-    for (size_t i=0; i<len; i++)
-        if (!is_valid_name_char(name[i]))
-            return false;
-    return true;
-}
-
 class ItemAttribute* s = NULL;
-static int _current_item_index = 0;
 
 #if DC_CLIENT
 static SpriteSheet _item_cube_iso_spritesheet_id = NULL_SPRITE_SHEET;
 #endif
 
-void finish_item_def()
-{
-    GS_ASSERT_ABORT(s != NULL);
-    if (s == NULL) return;
-    if (s->loaded) return;
-    s->loaded = true;
-    _current_item_index++;
-}
-
 bool item_def(ItemGroup group, const char* name)
 {
-    #if DC_CLIENT
-    if (s == NULL)
-    {
-        GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id == -1);
-        _item_cube_iso_spritesheet_id = TextureSheetLoader::item_texture_alias(SCREENSHOT_PATH "fbo_test_16.png");
-    }
-    #endif
-
     if (s == NULL)
     {
         if (group != IG_ERROR)
             printf("First item MUST be the error item, with group IG_ERROR\n");
         GS_ASSERT_ABORT(group == IG_ERROR);
+        IF_ASSERT(group != IG_ERROR) return false;
+        #if DC_CLIENT
+        GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id == -1);
+        _item_cube_iso_spritesheet_id = TextureSheetLoader::item_texture_alias(SCREENSHOT_PATH "fbo_test_16.png");
+        #endif
     }
 
-    if (s != NULL)
-        finish_item_def();   // locks in old attribute
-
     GS_ASSERT_ABORT(group != IG_NONE);
-    if (group == IG_NONE) return false;
+    IF_ASSERT(group == IG_NONE) return false;
 
-    GS_ASSERT_ABORT(is_valid_item_name(name));
-    if (!is_valid_item_name(name)) return false;
+    s = item_attributes->get_next();
+    IF_ASSERT(s == NULL) return false;
 
-    ItemType type = (ItemType)_current_item_index;
-
-    GS_ASSERT_ABORT(isValid(type));
-    IF_ASSERT(!isValid(type)) return false;
-
-    GS_ASSERT_ABORT(!item_attributes[type].loaded);
-    if (item_attributes[type].loaded) return false;
-
-    s = &item_attributes[type];
-
-    s->set_type(type, group);
-    strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
-    s->name[DAT_NAME_MAX_LENGTH] = '\0';
+    s->group = group;
+    s->set_name(name);
 
     return true;
 }

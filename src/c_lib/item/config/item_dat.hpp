@@ -1,10 +1,8 @@
 #pragma once
 
 #include <item/config/_interface.hpp>
-
 #include <t_map/t_properties.hpp>
 #include <t_map/common/types.hpp>
-
 #include <SDL/texture_sheet_loader.hpp>
 
 namespace Item
@@ -425,8 +423,7 @@ void load_item_dat()
     set_pretty_name("placer plant example");
     s->max_stack_size = 16;
 
-
-    finish_item_def();
+    item_attributes->done_loading();
 }
 
 void create_items_from_blocks()
@@ -441,24 +438,25 @@ void create_items_from_blocks()
     // Need to give it enough access to figure out which automatic items to make
 
     GS_ASSERT_ABORT(t_map::defined_drops != NULL);
-    if (t_map::defined_drops == NULL) return;
+    IF_ASSERT(t_map::defined_drops == NULL) return;
 
     for (int i=0; i<MAX_CUBES; i++)
     {
         if (!t_map::isValidCube((CubeType)i)) continue;  // skips empty and error blocks
         const char* name = t_map::get_cube_name((CubeType)i);
         GS_ASSERT_ABORT(name != NULL);
-        if (name == NULL) continue;
+        IF_ASSERT(name == NULL) continue;
 
         // ignore blocks that have been overriden
         bool already_defined = false;
-        for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
-            if (item_attributes[i].loaded && strcmp(name, item_attributes[i].name) == 0)
+        for (size_t i=0; i<item_attributes->max; i++)
+            if (item_attributes->properties[i].loaded &&
+                strcmp(name, item_attributes->properties[i].name) == 0)
             {
-                if (item_attributes[i].group != IG_PLACER)
+                if (item_attributes->properties[i].group != IG_PLACER)
                     printf("This name is already in use by a block: %s\n", name);
                 // an item with this name has been defined, but it is not a block
-                GS_ASSERT_ABORT(item_attributes[i].group == IG_PLACER);
+                GS_ASSERT_ABORT(item_attributes->properties[i].group == IG_PLACER);
                 already_defined = true;
                 break;
             }
@@ -475,15 +473,15 @@ void create_items_from_blocks()
         GS_ASSERT_ABORT(defined);
     }
 
-    finish_item_def();
+    item_attributes->done_loading();
 }
 
 void set_pretty_names()
 {   // automatically set "pretty" names for items
     const size_t len = GS_MIN(DAT_NAME_MAX_LENGTH, ITEM_PRETTY_NAME_MAX_LENGTH);
-    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+    for (size_t i=0; i<item_attributes->max; i++)
     {
-        class ItemAttribute* a = &item_attributes[i];
+        class ItemAttribute* a = &item_attributes->properties[i];
         if (!a->loaded) continue;
         if (a->pretty_name[0] == '\0')
             make_pretty_name(a->name, a->pretty_name, len);
@@ -493,16 +491,16 @@ void set_pretty_names()
 void verify_item_dat()
 {
     int errct = 0;  // count error items
-    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+    for (size_t i=0; i<item_attributes->max; i++)
     {
-        class ItemAttribute* a = &item_attributes[i];
+        class ItemAttribute* a = &item_attributes->properties[i];
 
         if (!a->loaded) continue;
 
-        GS_ASSERT_ABORT(a->item_type != NULL_ITEM_TYPE);
-        GS_ASSERT_ABORT(a->item_type == i);
+        GS_ASSERT_ABORT(a->type != NULL_ITEM_TYPE);
+        GS_ASSERT_ABORT(a->type == i);
 
-        GS_ASSERT_ABORT(is_valid_item_name(a->name));
+        GS_ASSERT_ABORT(is_valid_name(a->name));
 
         // make sure group is set
         GS_ASSERT_ABORT(a->group != IG_NONE);
@@ -547,25 +545,25 @@ void verify_item_dat()
     // only 1 error item allowed
     GS_ASSERT_ABORT(errct == 1);
 
-    for (int i=0; i<(int)MAX_ITEM_TYPES-1; i++)
-    for (int j=i+1; j<(int)MAX_ITEM_TYPES; j++)
+    for (size_t i=0; i<item_attributes->max-1; i++)
+    for (size_t j=i+1; j<item_attributes->max; j++)
     {
-        class ItemAttribute* a = &item_attributes[i];
-        class ItemAttribute* b = &item_attributes[j];
+        class ItemAttribute* a = &item_attributes->properties[i];
+        class ItemAttribute* b = &item_attributes->properties[j];
         if (!a->loaded || !b->loaded) continue;
         GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
         GS_ASSERT_ABORT(a->sprite == ERROR_SPRITE || a->sprite != b->sprite);
-        GS_ASSERT_ABORT(a->item_type != b->item_type);
+        GS_ASSERT_ABORT(a->type != b->type);
         GS_ASSERT_ABORT(a->cube_type == NULL_CUBE || a->cube_type != b->cube_type);
     }
 
     GS_ASSERT_ABORT(item_name_map->condensed);
 
     // check inactive names against active
-    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
-        if (item_attributes[i].loaded)
+    for (size_t i=0; i<item_attributes->max; i++)
+        if (item_attributes->properties[i].loaded)
         {
-            GS_ASSERT_ABORT(item_name_map->get_mapped_name(item_attributes[i].name) == NULL);
+            GS_ASSERT_ABORT(item_name_map->get_mapped_name(item_attributes->properties[i].name) == NULL);
         }
 
     // check inactive name destinations against active
@@ -583,8 +581,10 @@ void verify_item_dat()
     if (active_dat && inactive_dat)
     {   // check that all names declared a valid with respect to past name definitions
         // but only if the files are present
-        GS_ASSERT_ABORT(name_changes_valid(DATA_PATH ITEM_NAME_FILE_ACTIVE, DATA_PATH ITEM_NAME_FILE_INACTIVE,
-            DAT_NAME_MAX_LENGTH, item_attributes, MAX_ITEM_TYPES, item_name_map));
+        GS_ASSERT_ABORT(name_changes_valid(
+            DATA_PATH ITEM_NAME_FILE_ACTIVE, DATA_PATH ITEM_NAME_FILE_INACTIVE,
+            DAT_NAME_MAX_LENGTH,
+            item_attributes->properties, MAX_ITEM_TYPES, item_name_map));
     }
     #endif
 }
@@ -592,7 +592,8 @@ void verify_item_dat()
 void save_item_names()
 {
     #if DC_SERVER || !PRODUCTION
-    bool saved = save_active_names(item_attributes, MAX_ITEM_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH ITEM_NAME_FILE_ACTIVE);
+    bool saved = save_active_names(item_attributes->properties,
+        MAX_ITEM_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH ITEM_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = item_name_map->save(DATA_PATH ITEM_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);
@@ -602,8 +603,8 @@ void save_item_names()
 // Use this to remove or rename a item
 void change_item(const char* original, const char* replacement)
 {
-    GS_ASSERT_ABORT(is_valid_item_name(original));
-    GS_ASSERT_ABORT(is_valid_item_name(replacement));
+    GS_ASSERT_ABORT(is_valid_name(original));
+    GS_ASSERT_ABORT(is_valid_name(replacement));
     bool mapped = item_name_map->add_definition(original, replacement);
     GS_ASSERT_ABORT(mapped);
 }
@@ -658,7 +659,7 @@ void apply_item_dat_changes()
 
 void end_item_dat()
 {
-    finish_item_def();
+    item_attributes->done_loading();
     set_pretty_names();
     apply_item_dat_changes();
     verify_item_dat();

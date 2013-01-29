@@ -76,10 +76,6 @@ class CubeProperty: public Property<CubeType>
         this->light_value  = 0;
 
         this->max_damage = 32;
-
-        //memset(this->name, 0, sizeof(this->name));
-
-        //this->loaded = false;
     }
 };
 
