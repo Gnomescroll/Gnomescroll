@@ -10,7 +10,10 @@ namespace Agents
 class AgentList: public ObjectList<class Agent, AgentID>
 {
     private:
-        const char* name() { return "Agent"; }
+        const char* name()
+        {
+            return "Agent";
+        }
 
         // quicksort helpers
         void quicksort_distance_asc(int beg, int end);

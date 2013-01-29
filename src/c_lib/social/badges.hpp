@@ -30,7 +30,8 @@ class Badge
         char name[BADGE_NAME_MAX_LENGTH+1];
         int sprite_id;
 
-    Badge() : loaded(false), id(NULL_BADGE), sprite_id(NULL_SPRITE)
+    Badge() :
+        loaded(false), id(NULL_BADGE), sprite_id(NULL_SPRITE)
     {
         memset(name, 0, sizeof(this->name));
     }

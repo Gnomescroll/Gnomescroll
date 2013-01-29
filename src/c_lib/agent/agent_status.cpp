@@ -43,6 +43,9 @@ AgentStatus::AgentStatus(Agent* a) :
 {
     this->name[0] = '\0';
 
+    for (size_t i=0; i<PLAYER_MAX_BADGES; i++)
+        this->badges[i] = NULL_BADGE;
+
     #if DC_SERVER && !PRODUCTION
     if (rand()%2) this->add_badge(Badges::get_badge("debug"));
     #endif
@@ -85,8 +88,7 @@ void AgentStatus::set_spawner(int pt)
     if (pt == BASE_SPAWN_ID) return;
 
     class Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, pt);
-    GS_ASSERT(spawner != NULL);
-    if (spawner == NULL) return;
+    IF_ASSERT(spawner == NULL) return;
 
     AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
     GS_ASSERT(agent_spawner != NULL);
@@ -97,8 +99,7 @@ void AgentStatus::set_spawner(int pt)
     struct Vec3 pos;
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    GS_ASSERT(vox != NULL);
-    if (vox == NULL)
+    IF_ASSERT(vox == NULL)
     {
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -114,30 +115,6 @@ void AgentStatus::set_spawner(int pt)
     #endif
 }
 
-#if DC_SERVER
-
-void AgentStatus::identify(const char* name)
-{
-    this->set_name(name);
-}
-
-void AgentStatus::broadcast_color()
-{
-    agent_color_StoC msg;
-    msg.agent_id = this->a->id;
-    msg.color = this->color;
-    msg.broadcast();
-}
-
-void AgentStatus::send_color(ClientID client_id)
-{
-    agent_color_StoC msg;
-    msg.agent_id = this->a->id;
-    msg.color = this->color;
-    msg.sendToClient(client_id);
-}
-#endif
-
 bool AgentStatus::set_color(Color color)
 {
     if (!this->set_color_silent(color)) return false;
@@ -150,6 +127,7 @@ bool AgentStatus::set_color(Color color)
 void AgentStatus::add_badge(BadgeID badge_id)
 {
     IF_ASSERT(this->n_badges >= PLAYER_MAX_BADGES) return;
+    IF_ASSERT(!isValid(badge_id)) return;
 
     // no dupes
     for (size_t i=0; i<this->n_badges; i++)
@@ -191,7 +169,193 @@ void AgentStatus::set_name(const char* name)
     strcpy(this->name, name);
 }
 
+void AgentStatus::quit()
+{
+    #if DC_SERVER
+    if (this->spawner != BASE_SPAWN_ID)
+    {
+        class Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->spawner);
+        GS_ASSERT(spawner != NULL);
+        if (spawner != NULL)
+        {
+            using Components::AgentSpawnerComponent;
+            AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            GS_ASSERT(agent_spawner != NULL);
+            if (agent_spawner != NULL) agent_spawner->remove(this->a->id);
+        }
+    }
+    #endif
+}
+
+bool AgentStatus::die()
+{
+    if (this->dead) return false;
+    this->should_die = false;
+    this->dead = true;
+    this->deaths++;
+
+    #if DC_SERVER
+    AgentDeaths_StoC deaths_msg;
+    deaths_msg.id = this->a->id;
+    deaths_msg.deaths = this->deaths;
+    deaths_msg.broadcast();
+
+    agent_dead_StoC dead_msg;
+    dead_msg.id = this->a->id;
+    dead_msg.dead = this->dead;
+    dead_msg.broadcast();
+
+    Toolbelt::agent_died(this->a->id);
+    ItemContainer::agent_died(this->a->id);
+    #endif
+
+    return true;
+}
+
+bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method)
+{
+    bool killed = this->die();
+    if (!killed) return false;
+
+    Agent* attacker;
+    //Turret* turret;
+    switch (inflictor_type)
+    {
+        case OBJECT_GRENADE:
+        case OBJECT_AGENT:
+            attacker = Agents::get_agent(inflictor_id);
+            if (attacker != NULL)
+                attacker->status.kill(this->a->id);
+            break;
+        //case OBJECT_MONSTER_BOMB:
+            //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
+            //if (slime != NULL) {}
+            //break;
+        //case OBJECT_TURRET:
+            //turret = (Turret*)STATE::entity_list->get(inflictor_type, inflictor_id);
+            //if (turret == NULL) break;
+            //attacker = Agents::get_agent(turret->get_owner());
+            //if (attacker != NULL)
+                //attacker->status.kill(this->a->id);
+            //break;
+        case OBJECT_CANNONBALL:
+        case OBJECT_PLASMAGEN:
+        case OBJECT_MONSTER_SPAWNER:
+        case OBJECT_MONSTER_BOX:
+        case OBJECT_MONSTER_BOMB:
+        case OBJECT_ENERGY_CORE:
+        case OBJECT_TURRET:
+        case OBJECT_AGENT_SPAWNER:
+        case OBJECT_BASE:
+        case OBJECT_DESTINATION:
+        case OBJECT_NONE:
+            //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
+            break;
+    }
+
+    #if DC_SERVER
+    // send conflict notification to clients
+    agent_conflict_notification_StoC msg;
+    //Turret* turret;
+    switch (inflictor_type)
+    {
+        case OBJECT_GRENADE:
+        case OBJECT_AGENT:
+            msg.victim = this->a->id;
+            msg.attacker = inflictor_id;
+            msg.method = death_method;    // put headshot, grenades here
+            msg.broadcast();
+            break;
+
+        //case OBJECT_TURRET:
+            //// lookup turret object, get owner, this will be the inflictor id
+            //turret = (Turret*)ServerState::entity_list->get(inflictor_type, inflictor_id);
+            //if (turret == NULL) break;
+            //inflictor_id = turret->get_owner();
+            //msg.victim = this->a->id;
+            //msg.attacker = inflictor_id;
+            //msg.method = death_method;    // put headshot, grenades here
+            //msg.broadcast();
+            //break;
+
+        case OBJECT_CANNONBALL:
+        case OBJECT_PLASMAGEN:
+        case OBJECT_MONSTER_SPAWNER:
+        case OBJECT_MONSTER_BOX:
+        case OBJECT_MONSTER_BOMB:
+        case OBJECT_ENERGY_CORE:
+        case OBJECT_TURRET:
+        case OBJECT_AGENT_SPAWNER:
+        case OBJECT_BASE:
+        case OBJECT_DESTINATION:
+        case OBJECT_NONE:
+            break;
+    }
+    #endif
+
+    return true;
+}
+
+void AgentStatus::kill(int victim_id)
+{
+    if (victim_id == this->a->id)
+    {
+        suicides++;
+        AgentSuicides_StoC as;
+        as.id = this->a->id;
+        as.suicides = suicides;
+        as.broadcast();
+    }
+    else
+    {
+        kills++;
+        AgentKills_StoC ak;
+        ak.id = this->a->id;
+        ak.kills = kills;
+        ak.broadcast();
+    }
+}
+
+void AgentStatus::kill_slime()
+{
+    this->slime_kills++;
+}
+
+float AgentStatus::get_spawn_angle()
+{
+    return 0.5f;
+}
+
+void AgentStatus::tick()
+{
+    if (this->dead || this->should_die)
+        this->lifetime = 0;
+    else
+        this->lifetime++;
+}
+
 #if DC_SERVER
+void AgentStatus::identify(const char* name)
+{
+    this->set_name(name);
+}
+
+void AgentStatus::broadcast_color()
+{
+    agent_color_StoC msg;
+    msg.agent_id = this->a->id;
+    msg.color = this->color;
+    msg.broadcast();
+}
+
+void AgentStatus::send_color(ClientID client_id)
+{
+    agent_color_StoC msg;
+    msg.agent_id = this->a->id;
+    msg.color = this->color;
+    msg.sendToClient(client_id);
+}
+
 void AgentStatus::heal(unsigned int amt)
 {
     GS_ASSERT(amt > 0);
@@ -387,166 +551,6 @@ void AgentStatus::at_base()
     this->restore_health();
 }
 
-#endif
-
-void AgentStatus::quit()
-{
-    #if DC_SERVER
-    if (this->spawner != BASE_SPAWN_ID)
-    {
-        class Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->spawner);
-        GS_ASSERT(spawner != NULL);
-        if (spawner != NULL)
-        {
-            using Components::AgentSpawnerComponent;
-            AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
-            GS_ASSERT(agent_spawner != NULL);
-            if (agent_spawner != NULL) agent_spawner->remove(this->a->id);
-        }
-    }
-    #endif
-}
-
-bool AgentStatus::die()
-{
-    if (this->dead) return false;
-    this->should_die = false;
-    this->dead = true;
-    this->deaths++;
-
-    #if DC_SERVER
-    AgentDeaths_StoC deaths_msg;
-    deaths_msg.id = this->a->id;
-    deaths_msg.deaths = this->deaths;
-    deaths_msg.broadcast();
-
-    agent_dead_StoC dead_msg;
-    dead_msg.id = this->a->id;
-    dead_msg.dead = this->dead;
-    dead_msg.broadcast();
-
-    Toolbelt::agent_died(this->a->id);
-    ItemContainer::agent_died(this->a->id);
-    #endif
-
-    return true;
-}
-
-bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method)
-{
-    bool killed = this->die();
-    if (!killed) return false;
-
-    Agent* attacker;
-    //Turret* turret;
-    switch (inflictor_type)
-    {
-        case OBJECT_GRENADE:
-        case OBJECT_AGENT:
-            attacker = Agents::get_agent(inflictor_id);
-            if (attacker != NULL)
-                attacker->status.kill(this->a->id);
-            break;
-        //case OBJECT_MONSTER_BOMB:
-            //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
-            //if (slime != NULL) {}
-            //break;
-        //case OBJECT_TURRET:
-            //turret = (Turret*)STATE::entity_list->get(inflictor_type, inflictor_id);
-            //if (turret == NULL) break;
-            //attacker = Agents::get_agent(turret->get_owner());
-            //if (attacker != NULL)
-                //attacker->status.kill(this->a->id);
-            //break;
-        case OBJECT_CANNONBALL:
-        case OBJECT_PLASMAGEN:
-        case OBJECT_MONSTER_SPAWNER:
-        case OBJECT_MONSTER_BOX:
-        case OBJECT_MONSTER_BOMB:
-        case OBJECT_ENERGY_CORE:
-        case OBJECT_TURRET:
-        case OBJECT_AGENT_SPAWNER:
-        case OBJECT_BASE:
-        case OBJECT_DESTINATION:
-        case OBJECT_NONE:
-            //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
-            break;
-    }
-
-    #if DC_SERVER
-    // send conflict notification to clients
-    agent_conflict_notification_StoC msg;
-    //Turret* turret;
-    switch (inflictor_type)
-    {
-        case OBJECT_GRENADE:
-        case OBJECT_AGENT:
-            msg.victim = this->a->id;
-            msg.attacker = inflictor_id;
-            msg.method = death_method;    // put headshot, grenades here
-            msg.broadcast();
-            break;
-
-        //case OBJECT_TURRET:
-            //// lookup turret object, get owner, this will be the inflictor id
-            //turret = (Turret*)ServerState::entity_list->get(inflictor_type, inflictor_id);
-            //if (turret == NULL) break;
-            //inflictor_id = turret->get_owner();
-            //msg.victim = this->a->id;
-            //msg.attacker = inflictor_id;
-            //msg.method = death_method;    // put headshot, grenades here
-            //msg.broadcast();
-            //break;
-
-        case OBJECT_CANNONBALL:
-        case OBJECT_PLASMAGEN:
-        case OBJECT_MONSTER_SPAWNER:
-        case OBJECT_MONSTER_BOX:
-        case OBJECT_MONSTER_BOMB:
-        case OBJECT_ENERGY_CORE:
-        case OBJECT_TURRET:
-        case OBJECT_AGENT_SPAWNER:
-        case OBJECT_BASE:
-        case OBJECT_DESTINATION:
-        case OBJECT_NONE:
-            break;
-    }
-    #endif
-
-    return true;
-}
-
-void AgentStatus::kill(int victim_id)
-{
-    if (victim_id == this->a->id)
-    {
-        suicides++;
-        AgentSuicides_StoC as;
-        as.id = this->a->id;
-        as.suicides = suicides;
-        as.broadcast();
-    }
-    else
-    {
-        kills++;
-        AgentKills_StoC ak;
-        ak.id = this->a->id;
-        ak.kills = kills;
-        ak.broadcast();
-    }
-}
-
-void AgentStatus::kill_slime()
-{
-    this->slime_kills++;
-}
-
-float AgentStatus::get_spawn_angle()
-{
-    return 0.5f;
-}
-
-#if DC_SERVER
 void AgentStatus::send_scores(ClientID client_id)
 {
     AgentKills_StoC ak;
@@ -616,14 +620,6 @@ bool AgentStatus::consume_item(ItemID item_id)
     this->send_health_msg();
     return true;
 }
-#endif
-
-void AgentStatus::tick()
-{
-    if (this->dead || this->should_die)
-        this->lifetime = 0;
-    else
-        this->lifetime++;
-}
+#endif  // DC_SERVER
 
 }   // Agents

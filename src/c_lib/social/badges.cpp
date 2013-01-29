@@ -13,7 +13,7 @@ class Badge badges[MAX_BADGES];
 static void add_badge(const char* name, SpriteSheet sheet_id, int xpos, int ypos)
 {
     IF_ASSERT(n_badges >= MAX_BADGES) return;
-    
+
     GS_ASSERT(name[0] != '\0');
     GS_ASSERT(is_valid_name(name));
     GS_ASSERT(sheet_id != NULL_SPRITE_SHEET);
@@ -37,7 +37,7 @@ static void add_badge(const char* name, SpriteSheet sheet_id, int xpos, int ypos
 static void verify_badge_conf()
 {
     if (!n_badges) return;
-    
+
     // check valid values
     for (size_t i=0; i<n_badges; i++)
     {
@@ -94,14 +94,13 @@ static bool prep_add_badge(add_badge_StoC* msg, BadgeID badge_id, AgentID agent_
 {
     IF_ASSERT(!isValid(agent_id)) return false;
     IF_ASSERT(!isValid(badge_id)) return false;
-    
     msg->badge_id = badge_id;
     msg->agent_id = agent_id;
     return true;
 }
 
 void broadcast_badge(BadgeID badge_id, AgentID agent_id)
-{    
+{
     add_badge_StoC msg;
     if (!prep_add_badge(&msg, badge_id, agent_id)) return;
     msg.broadcast();
@@ -123,7 +122,7 @@ inline void add_badge_StoC::handle()
 {
     class Agents::Agent* a = Agents::get_agent((AgentID)this->agent_id);
     if (a == NULL) return;
-    
+
     a->status.add_badge((BadgeID)this->badge_id);
 }
 #endif
@@ -137,7 +136,7 @@ void register_badges()
 {
     using TextureSheetLoader::badge_texture_alias;
     SpriteSheet b1 = badge_texture_alias(MEDIA_PATH "sprites/badges/badges01.png");
-    
+
     add_badge("debug", b1, 3, 1);
     add_badge("developer", b1, 2, 1);
     add_badge("paid_alpha_user", b1, 1, 1);
@@ -146,8 +145,8 @@ void register_badges()
     TextureSheetLoader::init_badge_texture();
     TextureSheetLoader::save_badge_texture();
     #endif
-    
-    verify_badge_conf();  
+
+    verify_badge_conf();
 }
 
 

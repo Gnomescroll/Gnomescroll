@@ -391,9 +391,9 @@ AgentControlState Agent::get_current_control_state()
     return this->cs[(this->CS_seq-1+256)%256];
 }
 
-int Agent::crouched()
+bool Agent::crouched()
 {
-    return this->get_current_control_state().cs & CS_CROUCH;
+    return (this->get_current_control_state().cs & CS_CROUCH);
 }
 
 float Agent::camera_height()

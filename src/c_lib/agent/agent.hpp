@@ -14,6 +14,8 @@
 namespace Agents
 {
 
+void force_update_agent_vox(class Agent* a);
+
 class AgentState
 {
     public:
@@ -100,14 +102,10 @@ class Agent
         AgentID id;
         ClientID client_id;
         UserID user_id;
-
         EntityType type;
 
         struct AgentCollisionBox box;
-
         class AgentStatus status;
-        //class Agent_weapons weapons;
-
         class Voxels::VoxelModel* vox;
 
         #if DC_CLIENT
@@ -115,113 +113,120 @@ class Agent
         bool initial_teleport;  // record first teleport from server
         #endif
 
-        int crouched();
+    bool crouched();
+    void tick();
 
-        void tick();
+    bool in_sight_of(struct Vec3 source, struct Vec3 *sink);
+    bool in_sight_of(struct Vec3 source, struct Vec3 *sink, float failure_rate);
 
-        bool in_sight_of(struct Vec3 source, struct Vec3 *sink);
-        bool in_sight_of(struct Vec3 source, struct Vec3 *sink, float failure_rate);
+    #if DC_SERVER
+    AgentState camera;    // agent's camera state, sent by client
+    bool camera_ready;
+    AgentState get_camera_state()
+    {
+        return this->camera;
+    }
+    //Vec3 get_camera_state_position() { return vec3_init(this->camera.x, this->camera.y, this->camera.z); }
+    void set_camera_state(float x, float y, float z, float theta, float phi);
 
-        #if DC_SERVER
-        AgentState camera;    // agent's camera state, sent by client
-        bool camera_ready;
-        AgentState get_camera_state() { return this->camera; }
-        //Vec3 get_camera_state_position() { return vec3_init(this->camera.x, this->camera.y, this->camera.z); }
-        void set_camera_state(float x, float y, float z, float theta, float phi);
+    void spawn_state();
+    void spawn_state(struct Vec3 p);
+    #endif
 
-        void spawn_state();
-        void spawn_state(struct Vec3 p);
-        #endif
+    #if DC_CLIENT
+    void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
+    bool is_you();
+    #endif
 
-        AgentState get_state() { return this->s; }
-        void set_position(float x, float y, float z);
-        void set_state(float x, float y, float z, float vx, float vy, float vz);
-        AgentState get_state_snapshot() { return this->state_snapshot; }
-        void set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz);
-        void set_angles(float theta, float phi);
-        void teleport(float x,float y,float z); //should only be used on server
-        void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
-        void teleport(struct Vec3 p) { this->teleport(p.x, p.y, p.z); }
+    AgentState get_state()
+    {
+        return this->s;
+    }
+    void set_position(float x, float y, float z);
+    void set_state(float x, float y, float z, float vx, float vy, float vz);
+    AgentState get_state_snapshot()
+    {
+        return this->state_snapshot;
+    }
+    void set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz);
+    void set_angles(float theta, float phi);
+    void teleport(float x,float y,float z); //should only be used on server
+    void teleport(float x,float y,float z, float vx, float vy, float vz, float theta, float phi); //should only be used on server
+    void teleport(struct Vec3 p)
+    {
+        this->teleport(p.x, p.y, p.z);
+    }
 
-        // returns side, as integer. side<0 if failure
-        int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
-        int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);
-        int get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance);
+    // returns side, as integer. side<0 if failure
+    int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
+    int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);
+    int get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance);
 
-        bool nearest_open_block(const float max_dist, int open_point[3]);
+    bool nearest_open_block(const float max_dist, int open_point[3]);
 
-        Vec3 forward_vector()
-        {
-            return this->s.forward_vector();
-        }
+    Vec3 forward_vector()
+    {
+        return this->s.forward_vector();
+    }
 
-        Vec3 get_position()
-        {
-            return vec3_init(this->s.x, this->s.y, this->s.z);
-        }
+    Vec3 get_position()
+    {
+        return vec3_init(this->s.x, this->s.y, this->s.z);
+    }
 
-        Vec3 get_camera_position()
-        {
+    Vec3 get_camera_position()
+    {
+        struct Vec3 p = this->get_position();
+        p.z += this->camera_height();
+        return p;
+    }
+
+    Vec3 get_center()
+    {
+        if (this->vox == NULL || !this->vox->was_updated)
+        {   // use approximate center of model
             struct Vec3 p = this->get_position();
-            p.z += this->camera_height();
+            p.z += this->box.b_height/2.0f;
             return p;
         }
+        return this->vox->get_part(AGENT_PART_TORSO)->get_center();
+    }
 
-        Vec3 get_center()
-        {
-            if (this->vox == NULL || !this->vox->was_updated)
-            {   // use approximate center of model
-                struct Vec3 p = this->get_position();
-                p.z += this->box.b_height/2.0f;
-                return p;
-            }
-            return this->vox->get_part(AGENT_PART_TORSO)->get_center();
-        }
+    //this is for client
+    void handle_control_state(int _seq, int _cs, float _theta, float _phi);
 
-        //void send_id_to_client(ClientID client_id);
+    void revert_to_snapshot();
+    void revert_to_rollback();
 
-        #if DC_CLIENT
-        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
-        bool is_you();
-        #endif
+    //int last_direction_change;
+    int last_control_state_update_message;  //acts like ghost for now
+    int last_full_state_message;
 
-        //this is for client
-        void handle_control_state(int _seq, int _cs, float _theta, float _phi);
+    void draw();
+    void update_model();
+    void update_legs();
 
-        void revert_to_snapshot();
-        void revert_to_rollback();
+    bool point_can_cast(float x, float y, float z, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it
 
-        //int last_direction_change;
-        int last_control_state_update_message;  //acts like ghost for now
-        int last_full_state_message;
+    float camera_height();
+    float current_height();
+    int current_height_int();
+    int get_facing_block_type();
+    bool near_base();   // is within the base's spawn radius
+    void init_vox();
 
-        void draw();
-        void update_model();
-        void update_legs();
+    float camera_z();
+    Vec3 camera_position();
 
-        bool point_can_cast(float x, float y, float z, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it
+    class Voxels::VoxelVolume* get_arm();
+    Vec3 arm_center();
+    Vec3 arm_forward();
+    Vec3 arm_right();
+    Vec3 arm_up();
 
-        float camera_height();
-        float current_height();
-        int current_height_int();
-        int get_facing_block_type();
-        bool near_base();   // is within the base's spawn radius
-        void init_vox();
+    explicit Agent(AgentID id); //default constructor
 
-        float camera_z();
-        Vec3 camera_position();
-
-        class Voxels::VoxelVolume* get_arm();
-        Vec3 arm_center();
-        Vec3 arm_forward();
-        Vec3 arm_right();
-        Vec3 arm_up();
-
-        explicit Agent(AgentID id); //default constructor
-
-        ~Agent();
+    ~Agent();
 };
-
-void force_update_agent_vox(Agent* a);
 
 }   // Agents

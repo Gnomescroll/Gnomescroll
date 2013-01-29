@@ -61,7 +61,7 @@ void AgentList::send_to_client(ClientID client_id)
         Toolbelt::send_agent_set_active_item_packet(client_id, agent->id, item_type);
 
         for (size_t j=0; j<agent->status.n_badges; j++)
-            Badges::send_badge(agent->status.badges[i], agent->id, client_id);
+            Badges::send_badge(agent->status.badges[j], agent->id, client_id);
     }
 }
 #endif
