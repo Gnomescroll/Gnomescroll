@@ -2,9 +2,8 @@
 
 #include <item/toolbelt/_interface.hpp>
 #include <item/toolbelt/_state.hpp>
-
 #if DC_SERVER
-#include <item/toolbelt/server.hpp>
+# include <item/toolbelt/server.hpp>
 #endif
 
 namespace Toolbelt
@@ -18,7 +17,6 @@ inline void toolbelt_beta_action_CtoS::handle() {}
 #endif
 
 #if DC_SERVER
-
 inline void toolbelt_set_slot_CtoS::handle()
 {
     class Agents::Agent* a = NetServer::agents[client_id];
@@ -60,7 +58,6 @@ inline void toolbelt_beta_action_CtoS::handle()
     trigger_item_beta(a->id, item_id, item_type);
     broadcast_agent_toolbelt_beta_action_packet(a->id, item_type);
 }
-
 #endif
 
 } // Toolbelt

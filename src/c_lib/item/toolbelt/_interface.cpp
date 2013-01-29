@@ -295,12 +295,13 @@ void update_selected_item_type()
     if (!isValid(agent_id)) return;
 
     ItemType item_type = NULL_ITEM_TYPE;
-    ItemContainer::ItemContainer* toolbelt = NULL;
-    if (toolbelt_id != NULL_CONTAINER) toolbelt =
-        (ItemContainer::ItemContainer*)ItemContainer::get_container(toolbelt_id);
-    if (toolbelt != NULL) item_type =
-        Item::get_item_type(toolbelt->get_item(selected_slot));
-    if (agent_selected_type[agent_id] == item_type) return;
+    ItemContainer::ItemContainerInterface* toolbelt = NULL;
+    if (toolbelt_id != NULL_CONTAINER)
+        toolbelt = ItemContainer::get_container(toolbelt_id);
+    if (toolbelt != NULL)
+        item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
+    if (agent_selected_type[agent_id] == item_type)
+        return;
     turn_fire_off(agent_id);
     agent_selected_type[agent_id] = item_type;
     Animations::stop_equipped_item_animation();
@@ -317,9 +318,8 @@ void toolbelt_item_selected_event(ItemContainerID container_id, int slot)
     // dont check for death here
     // let them switch selected
     // if we want to prevent this, we need to have the UI also check for dead
-    GS_ASSERT(container_id != NULL_CONTAINER);
-    GS_ASSERT(container_id == toolbelt_id);
-    if (container_id == NULL_CONTAINER || container_id != toolbelt_id) return;
+    IF_ASSERT(!isValid(container_id)) return;
+    IF_ASSERT(container_id != toolbelt_id) return;
 
     // cancel current triggers
     left_trigger_up_event();
@@ -446,8 +446,12 @@ void use_block_placer(AgentID agent_id, ItemID placer_id)
 void force_remove_selected_item(AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
-
     turn_fire_off(agent_id);
+    if (agent_selected_item[agent_id] != NULL_ITEM)
+    {
+        GS_ASSERT(agent_selected_type[agent_id] != NULL_ITEM_TYPE);
+        broadcast_agent_set_active_item_packet(agent_id, NULL_ITEM_TYPE);
+    }
     agent_selected_item[agent_id] = NULL_ITEM;
     agent_selected_type[agent_id] = NULL_ITEM_TYPE;
 }

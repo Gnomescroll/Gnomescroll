@@ -1,16 +1,14 @@
 #include "StoC.hpp"
 
 #include <item/toolbelt/_state.hpp>
-
 #if DC_CLIENT
-#include <item/toolbelt/client.hpp>
+# include <item/toolbelt/client.hpp>
 #endif
 
 namespace Toolbelt
 {
 
 #if DC_CLIENT
-
 inline void toolbelt_set_active_item_StoC::handle()
 {
     IF_ASSERT(!isValid((AgentID)this->agent_id)) return;

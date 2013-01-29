@@ -159,7 +159,8 @@ void load_item_dat()
     sprite_def(i1, 3,1);
     s->melee_fire_cooldown = 250;
     s->melee_damage = 2;
-    s->max_durability = 400;
+    //s->max_durability = 400;
+    s->max_durability = 20;
     s->max_stack_size = 1;
     s->firing_range = 4.0f;
     s->firing_rate = 6;
@@ -283,7 +284,7 @@ void load_item_dat()
     set_pretty_name("Coal");
     s->max_stack_size = 64;
     s->fuel = true;
-    s->fuel_burn_rate = 30 * 30; // 30 seconds
+    s->fuel_burn_rate = ONE_SECOND * 30;
 
     item_def(IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
@@ -295,9 +296,9 @@ void load_item_dat()
     set_pretty_name("Methane Ice");
     s->max_stack_size = 16;
     s->gas = true;
-    s->gas_lifetime = 30 * 60 * 5;   // 5 minutes
+    s->gas_lifetime = ONE_MINUTE * 5;
     s->fuel = true;
-    s->fuel_burn_rate = 30 * 30; // 30 seconds
+    s->fuel_burn_rate = ONE_SECOND * 30;
 
     item_def(IG_ENERGY_TANK, "energy_tank");
     sprite_def(i0, 2,8);

@@ -1,13 +1,7 @@
 #pragma once
 
-
 namespace Toolbelt
 {
-
-// set active slot
-// alpha trigger
-// beta trigger
-// reload
 
 class toolbelt_set_slot_CtoS: public FixedSizeReliableNetPacketToServer<toolbelt_set_slot_CtoS>
 {
