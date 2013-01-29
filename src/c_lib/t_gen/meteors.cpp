@@ -189,7 +189,7 @@ void meteor_shower()
     CubeType steelB = t_map::get_cube_type("steel_block_2");
     CubeType steelC = t_map::get_cube_type("steel_block_3");
     CubeType material;
-    
+
     switch (randrange(1, 7))
     {
         case 1:
@@ -217,7 +217,7 @@ void meteor_shower()
             GS_ASSERT(false);
             return;
     }
-    
+
     for(int count = 1; count <= AMOUNT; count++)
     {
         x = randrange(1, t_map::map_dim.x - 1);

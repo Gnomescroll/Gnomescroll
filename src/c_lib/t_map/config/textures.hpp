@@ -92,7 +92,7 @@ void blit_block_item_sheet()
             int index = 16*j+i;
             // the NULL_CUBE is reserved at 255 (so that it fits in a packet)
             // must skip it
-            IF_INVALID_CUBE_TYPE((CubeType)index) continue;
+            if (!isValid((CubeType)index)) continue;
 
             int s1 = get_cube_side_texture((CubeType)index, 0); //T
             int s2 = get_cube_side_texture((CubeType)index, 2); //N

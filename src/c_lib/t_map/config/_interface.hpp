@@ -9,46 +9,27 @@ namespace t_map
 #define CUBE_NAME_FILE_ACTIVE   "cube_names.active"
 #define CUBE_NAME_FILE_INACTIVE "cube_names.inactive"
 
-class CubeProperties* p = NULL;
-
-int _current_cube_type = EMPTY_CUBE + 1;
+class CubeProperty* p = NULL;
 int _palette_number = 0;
-
 int _side_texture[6];
-
 int DEFAULT_MAX_DAMAGE = 32;
 
-void _finish_cube()
-{
-    GS_ASSERT_ABORT(p != NULL);
-    if (p == NULL) return;
-    p->loaded = true;
-}
-
 // private method; don't call this one directly
-static void cube_def(CubeType type, CubeGroup group, const char* name, CubeMaterial material)
+static void _cube_def(CubeType type, CubeGroup group, const char* name, CubeMaterial material)
 {
     GS_ASSERT_ABORT(type == NULL_CUBE || type == ERROR_CUBE || type == EMPTY_CUBE);
 
-    if (p != NULL)
-        _finish_cube();
+    if (type == NULL_CUBE)
+        p = cube_properties->get_next();
+    else
+        p = cube_properties->get_next(type);
 
-    if (type == NULL_CUBE) type = (CubeType)_current_cube_type++;
-
-    GS_ASSERT_ABORT(is_valid_cube_name(name));
-    if (!is_valid_cube_name(name)) return;
-
-    ASSERT_VALID_CUBE_TYPE(type);
-    IF_INVALID_CUBE_TYPE(type) return;
-
-    p = &cube_properties[type];
-
+    GS_ASSERT_ABORT(p != NULL);
+    IF_ASSERT(p == NULL) return;
     GS_ASSERT_ABORT(!p->loaded);
-    if (p->loaded) return;
+    IF_ASSERT(p->loaded) return;
 
-    p->type = type;
-    strncpy(p->name, name, DAT_NAME_MAX_LENGTH);
-    p->name[DAT_NAME_MAX_LENGTH] = '\0';
+    p->set_name(name);
     p->max_damage = DEFAULT_MAX_DAMAGE;
     p->group = group;
     p->material = material;
@@ -81,7 +62,7 @@ static void cube_def(CubeType type, CubeGroup group, const char* name, CubeMater
 // this is the public method
 void cube_def(CubeGroup group, const char* name, CubeMaterial material)
 {
-    cube_def(NULL_CUBE, group, name, material);
+    _cube_def(NULL_CUBE, group, name, material);
 }
 
 void cube_def(CubeGroup group, const char* name)
@@ -91,16 +72,16 @@ void cube_def(CubeGroup group, const char* name)
 
 void cube_def_empty(const char* name)
 {
-    static int i=0;
+    static int i = 0;
     GS_ASSERT_ABORT(!(i++));
-    cube_def(EMPTY_CUBE, EmptyCube, name, CUBE_MATERIAL_NONE);
+    _cube_def(EMPTY_CUBE, EmptyCube, name, CUBE_MATERIAL_NONE);
 }
 
 void cube_def_error(const char* name)
 {
-    static int i=0;
+    static int i = 0;
     GS_ASSERT_ABORT(!(i++));
-    cube_def(ERROR_CUBE, ErrorCube, name, CUBE_MATERIAL_NONE);
+    _cube_def(ERROR_CUBE, ErrorCube, name, CUBE_MATERIAL_NONE);
 }
 
 void cube_def_container(const char* name)
@@ -109,7 +90,7 @@ void cube_def_container(const char* name)
     cube_def(ItemContainerCube, name, CUBE_MATERIAL_NONE);
 }
 
-static void copy_cube_properties(class CubeProperties* a, struct FastCubeProperties* b)
+static void copy_cube_properties(class CubeProperty* a, struct FastCubeProperties* b)
 {
     b->active = a->active;
     b->solid = a->solid;
@@ -123,14 +104,10 @@ static void copy_cube_properties(class CubeProperties* a, struct FastCubePropert
 
 void end_cube_def()
 {
-    GS_ASSERT_ABORT(p != NULL);
-    if (p == NULL) return;
-    _finish_cube();
-
-    // copy CubeProperties data to fast cube properties
-    for (int i=0; i<MAX_CUBES; i++)
-        if (cube_properties[i].loaded)
-            copy_cube_properties(&cube_properties[i], &fast_cube_properties[i]);
+    cube_properties->done_loading();
+    for (size_t i=0; i<cube_properties->max; i++)
+        if (cube_properties->properties[i].loaded)
+            copy_cube_properties(&cube_properties->properties[i], &fast_cube_properties[i]);
 
     #if DC_CLIENT
     TextureSheetLoader::save_cube_texture();
@@ -140,9 +117,9 @@ void end_cube_def()
 void set_max_damage(int max_damage)
 {
     GS_ASSERT_ABORT(p != NULL);
-    if (p == NULL) return;
+    IF_ASSERT(p == NULL) return;
     GS_ASSERT_ABORT(max_damage > 0 && max_damage <= MAX_CUBE_DAMAGE);
-    if (max_damage <= 0 || max_damage > MAX_CUBE_DAMAGE) return;
+    IF_ASSERT(max_damage <= 0 || max_damage > MAX_CUBE_DAMAGE) return;
     p->max_damage = max_damage;
 }
 
@@ -358,8 +335,8 @@ int sprite_alias(SpriteSheet sheet_id, int ypos, int xpos)
 // Use this to remove or rename a block
 void change_block(const char* original, const char* replacement)
 {
-    GS_ASSERT_ABORT(is_valid_cube_name(original));
-    GS_ASSERT_ABORT(is_valid_cube_name(replacement));
+    GS_ASSERT_ABORT(is_valid_name(original));
+    GS_ASSERT_ABORT(is_valid_name(replacement));
     bool mapped = cube_name_map->add_definition(original, replacement);
     GS_ASSERT_ABORT(mapped);
 }
@@ -367,10 +344,10 @@ void change_block(const char* original, const char* replacement)
 void verify_config()
 {
     // check validity of individual cubes
-    for (int i=0; i<MAX_CUBES; i++)
+    for (size_t i=0; i<cube_properties->max; i++)
     {
-        class CubeProperties* p = &cube_properties[i];
-        if (!cube_properties[i].loaded) continue;
+        class CubeProperty* p = &cube_properties->properties[i];
+        if (!cube_properties->properties[i].loaded) continue;
 
         GS_ASSERT_ABORT(p->type == (CubeType)i);
         GS_ASSERT_ABORT(p->type != NULL_CUBE);
@@ -381,15 +358,15 @@ void verify_config()
         GS_ASSERT_ABORT(p->type == ERROR_CUBE || p->group != ErrorCube);
 
         GS_ASSERT_ABORT(p->max_damage <= MAX_CUBE_DAMAGE);
-        GS_ASSERT_ABORT(is_valid_cube_name(p->name));
+        GS_ASSERT_ABORT(is_valid_name(p->name));
     }
 
     // check uniqueness among cubes
-    for (int i=0; i<MAX_CUBES-1; i++)
-    for (int j=i+1; j<MAX_CUBES; j++)
+    for (size_t i=0; i<cube_properties->max-1; i++)
+    for (size_t j=i+1; j<cube_properties->max; j++)
     {
-        class CubeProperties* a = &cube_properties[i];
-        class CubeProperties* b = &cube_properties[j];
+        class CubeProperty* a = &cube_properties->properties[i];
+        class CubeProperty* b = &cube_properties->properties[j];
         if (!a->loaded || !b->loaded) continue;
         if (a->container_type == NULL_CONTAINER_TYPE || b->container_type == NULL_CONTAINER_TYPE) continue;
         GS_ASSERT_ABORT(a->container_type != b->container_type);
@@ -398,10 +375,10 @@ void verify_config()
     GS_ASSERT_ABORT(cube_name_map->condensed);
 
     // check inactive names against active
-    for (int i=0; i<MAX_CUBES; i++)
-        if (cube_properties[i].loaded)
+    for (size_t i=0; i<cube_properties->max; i++)
+        if (cube_properties->properties[i].loaded)
         {
-            GS_ASSERT_ABORT(cube_name_map->get_mapped_name(cube_properties[i].name) == NULL);
+            GS_ASSERT_ABORT(cube_name_map->get_mapped_name(cube_properties->properties[i].name) == NULL);
         }
 
     // check inactive name destinations against active
@@ -419,8 +396,11 @@ void verify_config()
     if (active_dat && inactive_dat)
     {   // check that all names declared a valid with respect to past name definitions
         // but only if the files are present
-        GS_ASSERT_ABORT(name_changes_valid(DATA_PATH CUBE_NAME_FILE_ACTIVE, DATA_PATH CUBE_NAME_FILE_INACTIVE,
-            DAT_NAME_MAX_LENGTH, cube_properties, MAX_CUBES, cube_name_map));
+        GS_ASSERT_ABORT(name_changes_valid(
+            DATA_PATH CUBE_NAME_FILE_ACTIVE, DATA_PATH CUBE_NAME_FILE_INACTIVE,
+            DAT_NAME_MAX_LENGTH,
+            cube_properties->properties, cube_properties->max,
+            cube_name_map));
     }
     #endif
 }
@@ -428,7 +408,8 @@ void verify_config()
 void save_cube_names()
 {
     #if DC_SERVER || !PRODUCTION
-    bool saved = save_active_names(cube_properties, MAX_CUBES, DAT_NAME_MAX_LENGTH, DATA_PATH CUBE_NAME_FILE_ACTIVE);
+    bool saved = save_active_names(cube_properties->properties,
+        MAX_CUBES, DAT_NAME_MAX_LENGTH, DATA_PATH CUBE_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = cube_name_map->save(DATA_PATH CUBE_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);

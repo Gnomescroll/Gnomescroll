@@ -11,7 +11,7 @@ typedef enum
 {
     CRYSTAL_CLUSTER_LINEAR,
     CRYSTAL_CLUSTER_GAUSSIAN,
-} CrystalClusterMode;
+}   CrystalClusterMode;
 
 const float CRYSTAL_CLUSTER_PROBABILITY = 0.012f; // this might need to be dynamic to meet a target cluster count
 const int CRYSTAL_CLUSTER_RADIUS = 3;
@@ -23,8 +23,8 @@ const int n_crystals = 3;
 MechType crystals[n_crystals] = { NULL_MECH_TYPE };
 float crystal_strata[n_crystals*2] = {0};
 
-int rock = ERROR_CUBE;
-int bedrock = ERROR_CUBE;
+CubeType rock = ERROR_CUBE;
+CubeType bedrock = ERROR_CUBE;
 
 float falloffs[CRYSTAL_CLUSTER_RADIUS*2+1] = {1.0f};
 
@@ -33,12 +33,12 @@ int cluster_id = 0;
 int crystal_type_count[n_crystals] = {0};
 
 // TODO: move
-int get_highest_block_of_type(int block_id)
+int get_highest_block_of_type(CubeType cube_type)
 {
     for (int k=127; k>=0; k--)
     for (int i=0; i<512; i++)
     for (int j=0; j<512; j++)
-        if (t_map::get(i,j,k) == block_id)
+        if (t_map::get(i,j,k) == cube_type)
             return k;
     return -1;
 }
@@ -56,10 +56,10 @@ void init_crystals()
     // TODO -- check that all crystals are not ERROR_MECH
 
     bedrock = t_map::get_cube_type("bedrock");
-    ASSERT_VALID_CUBE_TYPE(bedrock);
+    IF_ASSERT(!isValid(bedrock)) return;
 
     rock = t_map::get_cube_type("rock");
-    ASSERT_VALID_CUBE_TYPE(rock);
+    IF_ASSERT(!isValid(rock)) return;
 
     //int top = get_highest_block_of_type(rock) + 1;
 

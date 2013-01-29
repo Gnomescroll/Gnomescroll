@@ -8,8 +8,7 @@ namespace map_gen
 void fill(const char* cube_name)
 {
     CubeType cube = t_map::get_cube_type(cube_name);
-    ASSERT_VALID_CUBE_TYPE(cube);
-    IF_INVALID_CUBE_TYPE(cube) return;
+    IF_ASSERT(!isValid(cube)) return;
 
     for (int i=0; i<t_map::map_dim.x; i++)
     for (int j=0; j<t_map::map_dim.y; j++)
@@ -56,7 +55,7 @@ void walls(int x, int y, int z_start, int height, CubeType tile)
     for (int j=0; j<y; j++)
     for (int k=z_start; k<height; k++)
         t_map::set_fast(i,j,k,tile);
-    
+
     for (int j=0; j<y; j+=y-1)
     for (int i=0; i<y; i++)
     for (int k=z_start; k<height; k++)
@@ -126,8 +125,8 @@ void erosion(const int x, const int y, const int passes, const int h_diff, const
         }
 
     }
-    
-    
+
+
 }
 
 }   // map_gen

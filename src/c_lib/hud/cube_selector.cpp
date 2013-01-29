@@ -1,15 +1,12 @@
 #include "cube_selector.hpp"
 
-#include <common/compat_gl.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <common/compat_gl.h>
 #include <SDL/draw_functions.hpp>
 #include <agent/agent.hpp>
-//#include <agent/agent_weapons.hpp>
-//#include <weapons/weapons.hpp>
-
 #include <t_map/glsl/texture.hpp>
 
 namespace HudCubeSelector
@@ -18,12 +15,9 @@ namespace HudCubeSelector
 void CubeSelector::set_block_selector(int pos, CubeType cube_type, int tex_id)
 {
     int ct = this->n_x*this->n_y;
-    GS_ASSERT(cube_type != NULL_CUBE);
-    GS_ASSERT(tex_id != NULL_SPRITE && tex_id >= 0);
-    GS_ASSERT(pos >= 0 && pos < ct);
-    if (cube_type == NULL_CUBE) return;
-    if (tex_id == NULL_SPRITE || tex_id < 0) return;
-    if (pos < 0 || pos >= ct) return;
+    IF_ASSERT(cube_type == NULL_CUBE) return;
+    IF_ASSERT(tex_id == NULL_SPRITE || tex_id < 0) return;
+    IF_ASSERT(pos < 0 || pos >= ct) return;
 
     GS_ASSERT(cubes[pos].cube_type == NULL_CUBE);
     GS_ASSERT(cubes[pos].tex_id == NULL_SPRITE);
@@ -31,8 +25,8 @@ void CubeSelector::set_block_selector(int pos, CubeType cube_type, int tex_id)
 
     for (int i=0; i<ct; i++)
         if (cubes[i].tex_id != NULL_SPRITE)
-            GS_ASSERT(cubes[i].tex_id != tex_id); 
-    
+            GS_ASSERT(cubes[i].tex_id != tex_id);
+
     cubes[pos].tex_id = tex_id;
 }
 
@@ -86,8 +80,7 @@ void CubeSelector::set_active_id(int id)
 
 void CubeSelector::draw()
 {
-    GS_ASSERT(this->cubes != NULL);
-    if (this->cubes == NULL) return;
+    IF_ASSERT(this->cubes == NULL) return;
 
     const float _ssize = 16;
     const float sborder = 1;
@@ -119,7 +112,7 @@ void CubeSelector::draw()
         CubeType cube_type = cubes[i+8*j].cube_type;
         if (cube_type == NULL_CUBE) continue;
         int tex_id = cubes[i+8*j].tex_id;
-        
+
         float x0 = x + i*(_ssize+sborder) + sborder/2;
         float x1 = x0 + _ssize - sborder;
         float y0 = y - j*(_ssize+sborder) + sborder/2;
@@ -157,7 +150,7 @@ void CubeSelector::draw()
     float x1 = x0 + _ssize - sborder;
     float y0 = y - j*(_ssize+sborder) + sborder/2;
     float y1 = y0 - _ssize + sborder;
-    
+
     glLineWidth(1.0f);
     glColor4ub(0,0,255,255);  // blue
     glBegin(GL_LINE_STRIP);
@@ -216,21 +209,15 @@ void CubeSelector::vertical(bool up)
     if (row < 0) row += this->n_y;
     int n = (row * this->n_x) + col;
 
-    if (n < 0 || n > (this->n_x*this->n_y-1)) return;
+    if (n < 0 || n > (this->n_x*this->n_y - 1)) return;
 
     this->set_active_pos(n);
 }
 
 bool CubeSelector::set_block_type(CubeType cube_type)
 {
-    GS_ASSERT(this->cubes != NULL);
-    if (this->cubes == NULL) return false;
-    
-    ASSERT_VALID_CUBE_TYPE(cube_type);
-    GS_ASSERT(t_map::isInUse(cube_type));
-    GS_ASSERT(cube_type != ERROR_CUBE);
-    if (!t_map::isInUse(cube_type) || cube_type == ERROR_CUBE) return false;
-    IF_INVALID_CUBE_TYPE(cube_type) return false;
+    IF_ASSERT(this->cubes == NULL) return false;
+    IF_ASSERT(!t_map::isValidCube(cube_type)) return false;
 
     for (int i=0; i<this->n_x*this->n_y; i++)
     {
@@ -238,7 +225,7 @@ bool CubeSelector::set_block_type(CubeType cube_type)
         {
             this->set_active_pos(i);
             return true;
-        } 
+        }
     }
     return false;
 }
@@ -266,14 +253,10 @@ void init()
 
 void set_cube_hud(int hudx, int hudy, CubeType cube_type, int tex_id)
 {
-    if(hudx < 1 || hudy < 1 || hudx > 8 || hudy > 8)
-    {
-        printf("set_cube_hud error! hux= %i hudy= %i \n", hudx,hudy);
-        return;
-    }
+    IF_ASSERT(hudx < 1 || hudy < 1 || hudx > 8 || hudy > 8) return;
     hudx--;
     hudy--;
-    HudCubeSelector::cube_selector.set_block_selector(8*hudy+hudx, cube_type, tex_id);
+    HudCubeSelector::cube_selector.set_block_selector(8*hudy + hudx, cube_type, tex_id);
 }
 
 void set_cube_hud(CubeType cube_type, int tex_id)

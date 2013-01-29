@@ -195,9 +195,8 @@ void iso_block_sprite_def(const char* block_name)
     GS_ASSERT_ABORT(_item_cube_iso_spritesheet_id != -1);
     if (_item_cube_iso_spritesheet_id == -1) return;
 
-    int cube_type = t_map::get_cube_type(block_name);
-    ASSERT_VALID_CUBE_TYPE(cube_type);
-    IF_INVALID_CUBE_TYPE(cube_type) return;
+    CubeType cube_type = t_map::get_cube_type(block_name);
+    IF_ASSERT(!isValid(cube_type)) return;
 
     int xpos = (cube_type % 16) + 1;
     int ypos = (cube_type / 16) + 1;

@@ -91,9 +91,9 @@ static void cube_container_def(const char* name)
     c->attached_to_agent = false;
 
     CubeType cube_type = t_map::get_cube_type(name);
-    t_map::CubeProperties* attr = t_map::get_cube_properties(cube_type);
+    t_map::CubeProperty* attr = t_map::get_cube_properties(cube_type);
     GS_ASSERT_ABORT(attr != NULL);
-    if (attr == NULL) return;
+    IF_ASSERT(attr == NULL) return;
     attr->container_type = c->type;
 }
 
@@ -306,7 +306,7 @@ static void validate_settings()
         bool block_match = false;
         for (int i=0; i<MAX_CUBES; i++)
         {
-            class t_map::CubeProperties* p = t_map::get_cube_properties((CubeType)i);
+            class t_map::CubeProperty* p = t_map::get_cube_properties((CubeType)i);
             if (p != NULL && strcmp(p->name, c->name) == 0)
             {
                 GS_ASSERT_ABORT(p->container_type == c->type);

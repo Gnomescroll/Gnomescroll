@@ -165,7 +165,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     // block_action packet expects final value of cube, not initial value
     map_history->send_block_action(x,y,z, EMPTY_CUBE, action);
 
-    if (cube_properties[cube_type].item_drop)
+    if (hasItemDrop(cube_type))
         handle_block_drop(x,y,z, cube_type);
 }
 
@@ -394,8 +394,7 @@ bool block_can_be_placed(int x, int y, int z, CubeType cube_type)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    bool valid_cube = isValidCube(cube_type);
-    IF_ASSERT(!valid_cube) return false;
+    IF_ASSERT(!isValidCube(cube_type)) return false;
 
     if (get(x,y,z) != EMPTY_CUBE) return false;
     // check against all spawners

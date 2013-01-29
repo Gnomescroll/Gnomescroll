@@ -11,7 +11,7 @@ dont_include_this_file_in_client
 #include <physics/vec3.hpp>
 #include <physics/mat3.hpp>
 
-namespace t_gen 
+namespace t_gen
 {
 
 const float DOUBLE_PI = PI * 2;
@@ -19,9 +19,9 @@ const float HALF_PI = PI / 2;
 const float QUARTER_PI = HALF_PI / 2;
 const float EIGHTH_PI = QUARTER_PI / 2;
 
-const size_t NUM_LEAVES = 3;     
-const size_t NUM_TRUNKS = 3;     
-const size_t NUM_SHROOMCAPS = 3; 
+const size_t NUM_LEAVES = 3;
+const size_t NUM_TRUNKS = 3;
+const size_t NUM_SHROOMCAPS = 3;
 const size_t NUM_SHROOMSTEMS = 2;
 
 //const int _MAX_NUM = 8;
@@ -52,7 +52,7 @@ const float tree_threshold = 0.997f;
 const float shroom_zone_threshold = 0.3f;  // move to a config file maybe
 const float shroom_threshold = 0.997f;
 
-typedef enum 
+typedef enum
 {
     TREE_RANDOM,    // Dr. Suess style!
     TREE_INVERSIVE, // opposite of earth leaf layers being broadest at base
@@ -62,8 +62,8 @@ typedef enum
 void set_me_maybe(int x, int y, int z, CubeType ct,
                   CubeType an_overwriteable = NULL_CUBE)
 {
-    if (t_map::get(x, y, z) == EMPTY_CUBE || 
-        (an_overwriteable != NULL_CUBE && 
+    if (t_map::get(x, y, z) == EMPTY_CUBE ||
+        (an_overwriteable != NULL_CUBE &&
          t_map::get(x, y, z) == an_overwriteable))
     {
         t_map::set(x, y, z, ct);
@@ -71,7 +71,7 @@ void set_me_maybe(int x, int y, int z, CubeType ct,
 }
 
 void make_circle(int x, int y, int z, float dist, CubeType ct,
-                 CubeType an_overwriteable = NULL_CUBE) 
+                 CubeType an_overwriteable = NULL_CUBE)
 { // instead of from the center of given block
     float fx = 0;
     float fy = 0;
@@ -134,7 +134,7 @@ bool corner_origin_circle_untouched(int x, int y, int z, float dist)
 void corner_origin_make_circle(int x, int y, int z, float dist,
                                CubeType block, bool extend_down = false)
 { // instead of from the center of given block
-    corner_origin_heart(x, y, z, dist, block, extend_down);  
+    corner_origin_heart(x, y, z, dist, block, extend_down);
 }
 
 bool blocks_are_invalid(CubeType arr[], int len)
@@ -144,8 +144,8 @@ bool blocks_are_invalid(CubeType arr[], int len)
         GS_ASSERT(t_map::isValidCube(arr[i]));
         if (!t_map::isValidCube(arr[i]))
         {
-            printf("*** invalid cube %d ***", arr[i]); 
-            return true; 
+            printf("*** invalid cube %d ***", arr[i]);
+            return true;
         }
     }
     return false;
@@ -197,7 +197,7 @@ void make_tree(int x, int y, int z)
     int segs = randrange(2, 6);
     float rad = 2.0f; // radius of leaf layer from center voxel
     TreeType tt = (TreeType)randrange(0, (int)TREE_MAX-1);
-    
+
     // make tree, segment by segment
     for (int seg = 0; seg < segs; seg++)
     {   // height of current trunk segment
@@ -227,7 +227,7 @@ void make_tree(int x, int y, int z)
 
                 // limbs
                 for (int i = -rad; i < rad; i++)
-                    set_me_maybe(x+i, y, z+j, trunk); 
+                    set_me_maybe(x+i, y, z+j, trunk);
                 for (int i = -rad; i < rad; i++)
                     set_me_maybe(x, y+i, z+j, trunk);
 
@@ -248,7 +248,7 @@ void make_tree(int x, int y, int z)
 
 bool strip_of_solid_blocks_underneath(int x, int y, int z, int num)
 {
-    for (int i = 1; i <= num; i++) 
+    for (int i = 1; i <= num; i++)
         if (z-i < 0 || t_map::get(x, y, z-i) == EMPTY_CUBE)
             return false;
     return true;
@@ -302,14 +302,14 @@ void carve_angled_gorge_slice(float x_, float y_, int z_, float scale_x, float s
     int countdown_til_widening = 1;
     int max_ups_per_width = 1; // iterations upwards
 
-    for (int z = z_; z <= t_map::map_dim.z - 1; z++) 
+    for (int z = z_; z <= t_map::map_dim.z - 1; z++)
     {
-        for (int x = port; x < starboard + 1; x++) 
+        for (int x = port; x < starboard + 1; x++)
         {
             t_map::set(
-				x_ + (x * scale_x),
-				y_ + (0 * scale_y),
-				z_, EMPTY_CUBE);
+                x_ + (x * scale_x),
+                y_ + (0 * scale_y),
+                z_, EMPTY_CUBE);
         }
 
         countdown_til_widening--;
@@ -343,22 +343,22 @@ void add_gorges(float* noise, int n_gorges)
         float fy = 0;
         float angle = 0;
 
-        while (length > 0) 
+        while (length > 0)
         {
             angle = noise[rand_idx + length * map_dim.x];
 
             scale_x = sinf(angle);
             scale_y = cosf(angle);
-            carve_angled_gorge_slice(x + fx, y + fy, 6,	scale_x, scale_y);
+            carve_angled_gorge_slice(x + fx, y + fy, 6, scale_x, scale_y);
 
-			fx += scale_x;
+            fx += scale_x;
             fy += scale_y;
             length--;
         }
     }
 }
 
-void add_terrain_features() 
+void add_terrain_features()
 {
     printf("Adding terrain features\n");
 
@@ -376,10 +376,10 @@ void add_terrain_features()
 
     // setup cube sets
     leaves[0] = t_map::get_cube_type("leaves1");
-    leaves[1] = t_map::get_cube_type("leaves2"); 
-    leaves[2] = t_map::get_cube_type("leaves3"); 
-    
-    trunks[0] = t_map::get_cube_type("space_tree_trunk1"); 
+    leaves[1] = t_map::get_cube_type("leaves2");
+    leaves[2] = t_map::get_cube_type("leaves3");
+
+    trunks[0] = t_map::get_cube_type("space_tree_trunk1");
     trunks[1] = t_map::get_cube_type("space_tree_trunk2");
     trunks[2] = t_map::get_cube_type("space_tree_trunk3");
 
@@ -410,5 +410,5 @@ void add_terrain_features()
     delete[] shroom_caps;
     delete[] shroom_stems;
 }
-    
+
 }   // t_gen

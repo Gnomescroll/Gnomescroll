@@ -22,7 +22,7 @@ void def_drop(const char* block_name)
 
     CubeType cube_type = get_cube_type(block_name);
     GS_ASSERT_ABORT(isValidCube(cube_type));
-    if (!isValidCube(cube_type)) return;
+    IF_ASSERT(!isValidCube(cube_type)) return;
 
     GS_ASSERT_ABORT(defined_drops[cube_type] == DROP_UNDEFINED);
 
@@ -40,7 +40,7 @@ void no_drop(const char* block_name)
 
     CubeType cube_type = get_cube_type(block_name);
     GS_ASSERT_ABORT(isValidCube(cube_type));
-    if (!isValidCube(cube_type)) return;
+    IF_ASSERT(!isValidCube(cube_type)) return;
 
     GS_ASSERT_ABORT(defined_drops[cube_type] == DROP_UNDEFINED);
 
@@ -55,13 +55,14 @@ void drop_always(const char* item_name)
 }
 
 #if DC_SERVER
-static void add_drop_callback(int block_id)
+static void add_drop_callback(int _cube_type)
 {
-    ASSERT_VALID_CUBE_TYPE(block_id);
-    IF_INVALID_CUBE_TYPE(block_id) return;
-    GS_ASSERT(cube_properties != NULL);
-    if (cube_properties == NULL) return;
-    cube_properties[block_id].item_drop = true;
+    CubeType cube_type = (CubeType)_cube_type;
+    IF_ASSERT(!isValid(cube_type)) return;
+    IF_ASSERT(cube_properties == NULL) return;
+    CubeProperty* p = get_cube_properties(cube_type);
+    IF_ASSERT(p == NULL) return;
+    p->item_drop = true;
 }
 
 // wrappers for the drop dat ptr config
@@ -113,8 +114,8 @@ void end_drop_dat()
 {
     block_drop_dat->end();
     block_drop_dat->save_to_file();
-    for (int i=0; i<MAX_CUBES; i++)
-        cube_properties[i].item_drop = (defined_drops[i] == DROP_DEFINED);
+    for (size_t i=0; i<cube_properties->max; i++)
+        cube_properties->properties[i].item_drop = (defined_drops[i] == DROP_DEFINED);
 }
 #endif
 
@@ -235,8 +236,7 @@ void handle_block_drop(int x, int y, int z, CubeType cube_type)
     GS_ASSERT(block_drop_dat != NULL);
     if (block_drop_dat == NULL) return;
 
-    ASSERT_VALID_CUBE_TYPE(cube_type);
-    IF_INVALID_CUBE_TYPE(cube_type) return;
+    IF_ASSERT(!isValid(cube_type)) return;
 
     for (int i=0; i < block_drop_dat->meta_drop_table[cube_type].num_drop; i++)
     {

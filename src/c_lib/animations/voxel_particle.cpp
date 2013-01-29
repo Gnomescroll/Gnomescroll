@@ -98,7 +98,7 @@ static void prep_textured_voxel_particles()
         class ItemParticle::ItemParticle* item = &item_particle_list->objects[i];
         if (!item->is_voxel || !item->should_draw) continue;
         item->voxel.delta_rotation(0.01f, 0.0f);
-        IF_INVALID_CUBE_TYPE(item->voxel.cube_type) continue;
+        if (!t_map::isValidCube(item->voxel.cube_type)) continue;
 
         // frustum test
         float size = item->voxel.size;

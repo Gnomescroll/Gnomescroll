@@ -1,7 +1,7 @@
 #pragma once
 
 #if DC_SERVER
-#include <item/config/item_drop_alt.hpp>
+# include <item/config/item_drop_alt.hpp>
 #endif
 
 namespace t_map

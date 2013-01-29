@@ -11,12 +11,7 @@ unsigned char* cube_side_texture_array;
 
 int get_cube_side_texture(CubeType type, int side)
 {
-    ASSERT_VALID_CUBE_TYPE(type);
-    IF_INVALID_CUBE_TYPE(type)
-    {
-        printf("bad type: %d\n", type);
-        return 0;
-    }
+    IF_ASSERT(!isValid(type)) return 0;
     IF_ASSERT(side < 0 || side >= N_SIDES) return 0;
     return cube_side_texture_array[N_SIDES*type + side];
 }
@@ -39,7 +34,7 @@ static unsigned char** pixel_data = NULL;
 
 void set_cube_side_texture(CubeType type, int side, int tex_id)
 {
-    IF_INVALID_CUBE_TYPE(type) return;
+    IF_ASSERT(!isValid(type)) return;
     IF_ASSERT(side < 0 || side >= N_SIDES) return;
     IF_ASSERT(tex_id < 0 || tex_id >= MAX_TEXTURES) return;
     cube_side_texture_array[N_SIDES*type + side] = tex_id;
