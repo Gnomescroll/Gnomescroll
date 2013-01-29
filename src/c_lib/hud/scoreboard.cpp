@@ -25,7 +25,7 @@ float Scoreboard::start_y()
 void Scoreboard::init()
 {
     IF_ASSERT(this->inited) return;
-    
+
     for (int i=0; i<N_STATS; i++)
     {
         tags[i] = HudText::text_list->create();
@@ -62,7 +62,7 @@ void Scoreboard::init()
 void Scoreboard::update()
 {
     IF_ASSERT(!this->inited) return;
-        
+
     Agents::agent_list->filter_none();
     for (unsigned int i=0,j=0; i<Agents::agent_list->max; i++)
     {
@@ -92,7 +92,7 @@ void Scoreboard::update()
 void Scoreboard::draw_text()
 {
     IF_ASSERT(!this->inited) return;
-    
+
     this->update();
     //for (int i=0; i<N_STATS; i++)
         //tags[i]->draw();
@@ -112,7 +112,7 @@ void Scoreboard::draw_badges()
 
     glDisable(GL_BLEND);
     glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.5f);    
+    glAlphaFunc(GL_GREATER, 0.5f);
     glEnable(GL_TEXTURE_2D);
     GS_ASSERT(badge_texture_sheet_loader->texture);
     glBindTexture(GL_TEXTURE_2D, badge_texture_sheet_loader->texture);
@@ -137,7 +137,7 @@ void Scoreboard::draw_badges()
 
         for (size_t j=0; j<agent->status.n_badges; j++)
         {
-            BadgeID badge_id = agent->status.badges[j];
+            BadgeType badge_id = agent->status.badges[j];
             int sprite_id = Badges::get_badge_sprite(badge_id);
             float sx = 0.0f;
             float sy = 0.0f;
@@ -173,7 +173,7 @@ Scoreboard::~Scoreboard()
     {
         if (ids[i] != NULL) HudText::text_list->destroy(ids[i]->id);
         if (names[i] != NULL) HudText::text_list->destroy(names[i]->id);
-    }    
+    }
 }
 
 }   // Scoreboard

@@ -80,7 +80,7 @@ void AgentEvent::draw_badges()
     for (size_t i=0; i<this->a->status.n_badges; i++)
     {
         x -= w + margin;
-        BadgeID badge_id = this->a->status.badges[i];
+        BadgeType badge_id = this->a->status.badges[i];
         int sprite_id = Badges::get_badge_sprite(badge_id);
         float sx = 0.0f;
         float sy = 0.0f;

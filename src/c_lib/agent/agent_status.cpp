@@ -47,7 +47,7 @@ AgentStatus::AgentStatus(Agent* a) :
         this->badges[i] = NULL_BADGE;
 
     #if DC_SERVER && !PRODUCTION
-    if (rand()%2) this->add_badge(Badges::get_badge("debug"));
+    if (rand()%2) this->add_badge(Badges::get_badge_type("debug"));
     #endif
 }
 
@@ -124,7 +124,7 @@ bool AgentStatus::set_color(Color color)
     return true;
 }
 
-void AgentStatus::add_badge(BadgeID badge_id)
+void AgentStatus::add_badge(BadgeType badge_id)
 {
     IF_ASSERT(this->n_badges >= PLAYER_MAX_BADGES) return;
     IF_ASSERT(!isValid(badge_id)) return;

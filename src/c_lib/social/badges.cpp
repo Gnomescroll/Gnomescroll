@@ -7,82 +7,102 @@
 namespace Badges
 {
 
-size_t n_badges = 0;
-class Badge badges[MAX_BADGES];
+class Badge: public Property<BadgeType>
+{
+    public:
+        int sprite_id;
+
+    Badge() :
+        Property<BadgeType>(NULL_BADGE),
+        sprite_id(NULL_SPRITE)
+    {}
+};
+
+class Badges: public Properties<Badge, BadgeType>
+{
+    public:
+
+    Badges() :
+        Properties<Badge, BadgeType>(MAX_BADGES)
+    {}
+};
+
+
+class Badges badges;
 
 static void add_badge(const char* name, SpriteSheet sheet_id, int xpos, int ypos)
 {
-    IF_ASSERT(n_badges >= MAX_BADGES) return;
+    Badge* b = badges.get_next();
+    IF_ASSERT(b == NULL) return;
 
-    GS_ASSERT(name[0] != '\0');
-    GS_ASSERT(is_valid_name(name));
     GS_ASSERT(sheet_id != NULL_SPRITE_SHEET);
     GS_ASSERT(xpos > 0 && ypos > 0);
 
-    badges[n_badges].id = (BadgeID)n_badges;
-    badges[n_badges].loaded = true;
-
-    strncpy(badges[n_badges].name, name, BADGE_NAME_MAX_LENGTH+1);
-    badges[n_badges].name[BADGE_NAME_MAX_LENGTH] = '\0';
+    b->set_name(name);
 
     #if DC_CLIENT
     int sprite_id = TextureSheetLoader::badge_texture_sheet_loader->blit(sheet_id, xpos, ypos);
     GS_ASSERT(sprite_id != NULL_SPRITE);
-    badges[n_badges].sprite_id = sprite_id;
+    b->sprite_id = sprite_id;
     #endif
-
-    n_badges++;
 }
 
 static void verify_badge_conf()
 {
-    if (!n_badges) return;
-
-    // check valid values
-    for (size_t i=0; i<n_badges; i++)
-    {
-        GS_ASSERT(badges[i].name[0] != '\0');
-        GS_ASSERT(is_valid_name(badges[i].name));
+    for (size_t i=0; i<badges.max; i++)
+    {   // check valid values
+        if (!badges.properties[i].loaded) continue;
+        GS_ASSERT(badges.properties[i].name[0] != '\0');
+        GS_ASSERT(is_valid_name(badges.properties[i].name));
         #if DC_CLIENT
-        GS_ASSERT(badges[i].sprite_id != NULL_SPRITE);
+        GS_ASSERT(badges.properties[i].sprite_id != NULL_SPRITE);
         #endif
     }
 
-    // check configs against each other for duplicates
-    for (size_t i=0; i<n_badges-1; i++)
-    for (size_t j=i+1; j<n_badges; j++)
-    {
-        GS_ASSERT(strcmp(badges[i].name, badges[j].name) != 0);
+    for (size_t i=0; i<badges.max-1; i++)
+    for (size_t j=i+1; j<badges.max; j++)
+    {   // check configs against each other for duplicates
+        Badge* a = &badges.properties[i];
+        Badge* b = &badges.properties[j];
+        if (!a->loaded || !b->loaded) continue;
+        GS_ASSERT(strcmp(a->name, b->name) != 0);
         #if DC_CLIENT
-        GS_ASSERT(badges[i].sprite_id != badges[j].sprite_id);
+        GS_ASSERT(a->sprite_id != b->sprite_id);
         #endif
     }
 }
 
-BadgeID get_badge(const char* name)
+Badge* get_badge(const char* name)
 {
-    IF_ASSERT(name[0] == '\0') return NULL_BADGE;
-    for (size_t i=0; i<MAX_BADGES; i++)
-        if (strcmp(badges[i].name, name) == 0)
-            return badges[i].id;
-    GS_ASSERT(false);
-    printf("No badge found for name: %s\n", name);
-    return NULL_BADGE;
+    return badges.get(name);
 }
 
-int get_badge_sprite(BadgeID id)
+Badge* get_badge(BadgeType type)
 {
-    IF_ASSERT(!isValid(id)) return NULL_SPRITE;
-    IF_ASSERT(!badges[id].loaded) return NULL_SPRITE;
-    return badges[id].sprite_id;
+    return badges.get(type);
 }
 
-const char* get_badge_name(BadgeID id)
+BadgeType get_badge_type(const char* name)
 {
-    IF_ASSERT(!isValid(id)) return NULL;
-    IF_ASSERT(!badges[id].loaded) return NULL;
-    return badges[id].name;
+    Badge* b = get_badge(name);
+    IF_ASSERT(b == NULL) return NULL_BADGE;
+    return b->type;
 }
+
+const char* get_badge_name(BadgeType type)
+{
+    Badge* b = get_badge(type);
+    IF_ASSERT(b == NULL) return NULL;
+    return b->name;
+}
+
+int get_badge_sprite(BadgeType type)
+{
+    Badge* b = get_badge(type);
+    IF_ASSERT(b == NULL) return NULL_SPRITE;
+    return b->sprite_id;
+}
+
 
 void init_packets()
 {
@@ -90,27 +110,27 @@ void init_packets()
 }
 
 #if DC_SERVER
-static bool prep_add_badge(add_badge_StoC* msg, BadgeID badge_id, AgentID agent_id)
+static bool prep_add_badge(add_badge_StoC* msg, BadgeType badge_type, AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return false;
-    IF_ASSERT(!isValid(badge_id)) return false;
-    msg->badge_id = badge_id;
+    IF_ASSERT(!isValid(badge_type)) return false;
+    msg->badge_type = badge_type;
     msg->agent_id = agent_id;
     return true;
 }
 
-void broadcast_badge(BadgeID badge_id, AgentID agent_id)
+void broadcast_badge(BadgeType badge_type, AgentID agent_id)
 {
     add_badge_StoC msg;
-    if (!prep_add_badge(&msg, badge_id, agent_id)) return;
+    if (!prep_add_badge(&msg, badge_type, agent_id)) return;
     msg.broadcast();
 }
 
-void send_badge(BadgeID badge_id, AgentID agent_id, ClientID client_id)
+void send_badge(BadgeType badge_type, AgentID agent_id, ClientID client_id)
 {
     IF_ASSERT(!isValid(client_id)) return;
     add_badge_StoC msg;
-    if (!prep_add_badge(&msg, badge_id, agent_id)) return;
+    if (!prep_add_badge(&msg, badge_type, agent_id)) return;
     msg.sendToClient(client_id);
 }
 
@@ -123,7 +143,7 @@ inline void add_badge_StoC::handle()
     class Agents::Agent* a = Agents::get_agent((AgentID)this->agent_id);
     if (a == NULL) return;
 
-    a->status.add_badge((BadgeID)this->badge_id);
+    a->status.add_badge((BadgeType)this->badge_type);
 }
 #endif
 

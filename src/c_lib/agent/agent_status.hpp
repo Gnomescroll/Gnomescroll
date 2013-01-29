@@ -32,7 +32,7 @@ class AgentStatus
         char name[PLAYER_NAME_MAX_LENGTH + 1];
 
         size_t n_badges;
-        BadgeID badges[PLAYER_MAX_BADGES];
+        BadgeType badges[PLAYER_MAX_BADGES];
 
         bool vox_crouched;
 
@@ -58,7 +58,7 @@ class AgentStatus
 
     float get_spawn_angle();
 
-    void add_badge(BadgeID badge_id);
+    void add_badge(BadgeType badge_id);
 
     #if DC_SERVER
     void identify(const char* name);    // returns false if malformed
