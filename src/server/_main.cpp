@@ -81,6 +81,7 @@ void init_world()
 
     if (new_map)
     {
+        printf("Creating new map\n");
         serializer::begin_new_world_version();
         default_map_gen();
         t_map::environment_process_startup();
@@ -95,7 +96,7 @@ void init_world()
     if (corpusc_map)
     {
         int height = 27;
-		map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
+        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
         t_gen::set_region(0,0,1, XMAX,YMAX,height, t_map::get_cube_type("regolith") );
         //t_gen::excavate();
         t_gen::add_terrain_features();  // this needs like about 27 heighth to the ground or *CRASH*
