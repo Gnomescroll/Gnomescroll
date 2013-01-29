@@ -43,9 +43,13 @@ void enable_agent_inventory()
 {
     // we check "did_open_container_block" here, in case agent container is opened with container block in same frame
     if (input_state.agent_inventory || ItemContainer::did_open_container_block) return;
-    
+
     input_state.agent_inventory = true;
-    
+
+    // release all toolbelt
+    Toolbelt::left_trigger_up_event();
+    Toolbelt::right_trigger_up_event();
+
     HudContainer::enable_agent_inventory_hud();
     ItemContainer::open_inventory();
     set_mouse_rebind(input_state.mouse_bound);
@@ -62,7 +66,7 @@ void disable_agent_inventory()
     Uint8 btns = SDL_GetMouseState(&x,&y);
     if (!(btns & SDL_BUTTON_LEFT)) Toolbelt::left_trigger_up_event();
     if (!(btns & SDL_BUTTON_RIGHT)) Toolbelt::right_trigger_up_event();
-    
+
     HudContainer::disable_agent_inventory_hud();
     ItemContainer::close_inventory();
     //if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
@@ -80,13 +84,13 @@ void toggle_agent_inventory()
 void enable_container_block(ItemContainerID container_id)
 {
     if (input_state.container_block || input_state.agent_inventory) return;
-    
+
     GS_ASSERT(container_id != NULL_CONTAINER);
-    
+
     // release all toolbelt
     Toolbelt::left_trigger_up_event();
     Toolbelt::right_trigger_up_event();
-    
+
     input_state.container_block = true;
     input_state.container_block_id = container_id;
     HudContainer::enable_container_block_hud(container_id);
@@ -430,7 +434,7 @@ void chat_key_down_handler(SDL_Event* event)
 {
     using Chat::chat_client;
     if (chat_client == NULL) return;
-    
+
     switch (event->key.keysym.sym)
     {
         case SDLK_ESCAPE:
@@ -466,7 +470,7 @@ void chat_key_down_handler(SDL_Event* event)
             //return;
         default: break;
     }
-    
+
     int t = getUnicodeValue(event->key.keysym);
     t = (t) ? t : event->key.keysym.sym;
 
@@ -538,10 +542,10 @@ void container_mouse_up_handler(SDL_Event* event)
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     if (you->status.dead) return;
-    
+
     Toolbelt::left_trigger_up_event(); // clear any trigger events
     Toolbelt::right_trigger_up_event(); // clear any trigger events
-    
+
     if (!input_state.mouse_bound && // for whatever reason it only needs to be done when mouse is unbound
         input_state.ignore_next_right_click_event &&
         event->button.button == SDL_BUTTON_RIGHT)
@@ -549,7 +553,7 @@ void container_mouse_up_handler(SDL_Event* event)
         input_state.ignore_next_right_click_event = false;
         return;
     }
-    
+
     // check intersection with any slots
 
     //SDL_MouseButtonEvent e = event->button;
@@ -677,10 +681,10 @@ void agent_key_down_handler(SDL_Event* event)
             container_event = HudContainer::select_slot(9);
             Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
             break;
-            
+
         default: break;
     }
-    
+
 }
 
 void agent_key_up_handler(SDL_Event* event)
@@ -693,7 +697,7 @@ void agent_key_up_handler(SDL_Event* event)
         case SDLK_SPACE:
             enable_jump();
             break;
-            
+
         default: break;
     }
 }
@@ -798,7 +802,7 @@ void camera_key_down_handler(SDL_Event* event)
                 ClientState::player_agent.teleport_to(free_camera->get_position());
             break;
         #endif
-            
+
         default: break;
     }
 }
@@ -806,7 +810,7 @@ void camera_key_down_handler(SDL_Event* event)
 void print_mob_id()
 {   // hitscan against mobs
     IF_ASSERT(current_camera == NULL) return;
-    
+
     struct Vec3 p = current_camera->get_position();
     struct Vec3 v = current_camera->forward_vector();
     int ignore_id = -1;
@@ -838,7 +842,7 @@ void camera_mouse_down_handler(SDL_Event* event)
         case SDL_BUTTON_LEFT:
             print_mob_id();
             break;
-            
+
         case SDL_BUTTON_RIGHT:
             free_camera->toggle_zoom();
             break;
@@ -858,7 +862,7 @@ void camera_mouse_motion_handler(SDL_Event* event)
 void camera_key_state_handler(Uint8 *keystate, int numkeys)
 {
     const float speed = 0.8f;
-    
+
     if (keystate[SDLK_w])
         free_camera->move(speed, 0,0);
     if (keystate[SDLK_s])
@@ -943,12 +947,12 @@ void key_down_handler(SDL_Event* event)
                         ClientState::player_agent.camera_state.z
                     );
                 break;
-                
+
             case SDLK_g:
                 if (input_state.admin_controls)
                     toggle_camera_mode();
                 break;
-                
+
             case SDLK_h:
                 toggle_help_menu();
                 break;
@@ -990,8 +994,8 @@ void key_down_handler(SDL_Event* event)
                     toggle_skeleton_editor();
                 #endif
                 break;
-                
-            
+
+
             case SDLK_t:
                 if (input_state.admin_controls)
                     toggle_input_mode();
@@ -1001,7 +1005,7 @@ void key_down_handler(SDL_Event* event)
                     Chat::use_global_channel();
                 }
                 break;
-                
+
             case SDLK_u:
                 #if PRODUCTION
                 if (!input_state.mouse_bound || input_state.admin_controls)
@@ -1106,7 +1110,7 @@ void key_down_handler(SDL_Event* event)
             if (event->user.code != SDL_EVENT_USER_TRIGGER)
                 keys_held_down[kDOWN_ARROW].pressed = true;
             break;
-            
+
         default: break;
     }
 }
@@ -1193,7 +1197,7 @@ void mouse_button_down_handler(SDL_Event* event)
     {
         default: break;
     }
-    
+
 }
 
 void mouse_button_up_handler(SDL_Event* event)
@@ -1262,7 +1266,7 @@ void key_state_handler(Uint8 *keystate, int numkeys)
 
     char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
     f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
-    
+
     if (!input_state.chat && !input_state.awesomium)
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -1303,7 +1307,7 @@ void active_event_handler(SDL_Event* event)
         HudContainer::set_mouse_position(-1, -1);
 
     if (!mouse_unlocked_for_ui_element())
-    {   // only do this if container/inventory not open 
+    {   // only do this if container/inventory not open
         // handle alt tab
         if (event->active.state & SDL_APPINPUTFOCUS)
         {

@@ -1,15 +1,12 @@
 #pragma once
 
 #include <common/time/physics_timer.hpp>
-
 #include <t_gen/_interface.hpp>
 #include <t_map/_interface.hpp>
-
 #include <net_lib/server.hpp>
 
 namespace Main
 {
-
 
 void default_map_gen()
 {
@@ -24,11 +21,12 @@ void default_map_gen()
     t_gen::add_terrain_features();  // gorges, trees, shrooms
     t_gen::place_native_plants();
 
-    map_gen::rough_floor(XMAX,YMAX,0,3, t_map::get_cube_type("bedrock"));
+    map_gen::rough_floor(t_map::map_dim.x,t_map::map_dim.y,0,3, t_map::get_cube_type("bedrock"));
 }
 
 void init_world()
 {
+    using t_map::map_dim;
     srand(Options::seed);
 
     bool new_map = false;
@@ -96,8 +94,8 @@ void init_world()
     if (corpusc_map)
     {
         int height = 27;
-        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, XMAX,YMAX,height, t_map::get_cube_type("regolith") );
+        map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
+        t_gen::set_region(0,0,1, map_dim.x, map_dim.y,height, t_map::get_cube_type("regolith") );
         //t_gen::excavate();
         t_gen::add_terrain_features();  // this needs like about 27 heighth to the ground or *CRASH*
         t_gen::generate_ruins();
@@ -107,16 +105,16 @@ void init_world()
     if (art_map)
     {
         int floor_h = 10; // height
-        map_gen::floor(XMAX,YMAX,0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, XMAX,YMAX,floor_h, t_map::get_cube_type("regolith") );
+        map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
+        t_gen::set_region(0,0,1, map_dim.x, map_dim.y, floor_h, t_map::get_cube_type("regolith") );
         t_gen::make_art_gallery(floor_h);
     }
 
     if (valgrind_map)
     {
-        map_gen::floor(XMAX,YMAX,0, 1,       t_map::get_cube_type("bedrock"));
-        map_gen::floor(XMAX,YMAX,1, 9,       t_map::get_cube_type("regolith"));
-        map_gen::floor(XMAX,YMAX,20,ZMAX-20, t_map::get_cube_type("regolith"));
+        map_gen::floor(map_dim.x, map_dim.y, 0, 1,       t_map::get_cube_type("bedrock"));
+        map_gen::floor(map_dim.x, map_dim.y, 1, 9,       t_map::get_cube_type("regolith"));
+        map_gen::floor(map_dim.x, map_dim.y, 20,ZMAX-20, t_map::get_cube_type("regolith"));
     }
 
     if (explosive_map)
@@ -126,25 +124,18 @@ void init_world()
         static const size_t n_explosives = 10000;
         for (size_t i=0; i<n_explosives; i++)
         {
-            int x = randrange(0, t_map::map_dim.x-1);
-            int y = randrange(0, t_map::map_dim.y-1);
-            int z = randrange(0, t_map::map_dim.z-1);
+            int x = randrange(0, map_dim.x-1);
+            int y = randrange(0, map_dim.y-1);
+            int z = randrange(0, map_dim.z-1);
             t_map::set_fast(x,y,z, plasmagen);
         }
     }
 
     if (iceflame_map)
     {
-        serializer::begin_new_world_version();
         default_map_gen();
         t_map::environment_process_startup();
         t_gen::generate_city();
-        if (Options::serializer)
-        {
-            bool saved = serializer::save_data();
-            GS_ASSERT_ABORT(saved);
-            serializer::wait_for_save_complete();
-        }
     }
 
     srand((unsigned int)time(NULL));

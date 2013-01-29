@@ -159,8 +159,7 @@ void load_item_dat()
     sprite_def(i1, 3,1);
     s->melee_fire_cooldown = 250;
     s->melee_damage = 2;
-    //s->max_durability = 400;
-    s->max_durability = 20;
+    s->max_durability = 400;
     s->max_stack_size = 1;
     s->firing_range = 4.0f;
     s->firing_rate = 6;
