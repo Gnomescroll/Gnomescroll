@@ -286,11 +286,11 @@ bool is_smelter(ItemContainerType type)
     return (type == ItemContainer::name::smelter_basic);
 }
 
-int get_animation_id(ItemType item_type)
+AnimationType get_animation_type(ItemType item_type)
 {
     ItemAttribute* attr = get_item_attributes(item_type);
-    IF_ASSERT(attr == NULL) return 0;
-    return attr->animation_id;
+    IF_ASSERT(attr == NULL) return NULL_ANIMATION_TYPE;
+    return attr->animation_type;
 }
 
 bool can_be_booned(ItemType item_type)

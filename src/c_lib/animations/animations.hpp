@@ -36,6 +36,6 @@ void voxel_explode(Vec3 position, int count_min, int count_max, float size, floa
 void confetti_stream();
 
 // new style callbacks
-void create_shrapnel(int animation_id, void* metadata);
+void create_shrapnel(AnimationType animation_type, void* metadata);
 
 }   // Animations

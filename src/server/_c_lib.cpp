@@ -245,6 +245,8 @@ void register_signals()
 
 void init_configs()
 {
+    Animations::init_config();
+
     // DAT LOADING
     // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
     ItemContainer::init_config();
@@ -320,6 +322,7 @@ int init_c_lib(int argc, char* argv[])
     else
         printf("disabled\n");
 
+    Badges::init();
     Components::init();
     Entities::init_net_interfaces();
     Entities::init();    // Entity system
@@ -404,6 +407,9 @@ void close_c_lib()
 
     Sound::close();
     Animations::teardown();
+    Animations::teardown_config();
+
+    Badges::teardown();
 
     Auth::teardown();
 

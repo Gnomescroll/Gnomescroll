@@ -3,6 +3,7 @@
 #include <common/dat/name_map.hpp>
 #include <item/common/constants.hpp>
 #include <t_mech/common/common.hpp>
+#include <animations/constants.hpp>
 
 namespace Item
 {
@@ -71,7 +72,7 @@ int get_gas_lifetime(ItemType item_type);
 bool is_fuel(ItemType item_type);
 bool is_smelter(ItemContainerType type);
 
-int get_animation_id(ItemType item_type);
+AnimationType get_animation_type(ItemType item_type);
 
 bool can_be_booned(ItemType item_type);
 

@@ -35,7 +35,7 @@ dont_include_this_file_in_server
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
- 
+
 #include <string.h>
 #include <math.h>
 
@@ -92,7 +92,7 @@ bool c_lib_inited = false;
 // logging
 #include <common/logger.cpp>
 
-// time 
+// time
 #include <common/time/physics_timer.cpp>
 
 /* Vectors, Ray Tracers, Physics */
@@ -253,7 +253,7 @@ void register_signals()
     int ret = atexit(&atexit_handler);
     GS_ASSERT_ABORT(ret == 0);
 
-    #ifdef linux    
+    #ifdef linux
     // Set signal handlers
 
     // SIGTERM  kill `pidof gnomescroll_server`
@@ -263,7 +263,7 @@ void register_signals()
     sigemptyset(&sa_term.sa_mask);
     ret = sigaction(SIGTERM, &sa_term, NULL);
     GS_ASSERT(ret == 0);
-    
+
     // SIGINT ctrl-C
     ret = sigaction(SIGINT, &sa_term, NULL);
     GS_ASSERT(ret == 0);
@@ -280,6 +280,7 @@ void register_signals()
 
 void init_configs()
 {
+    Animations::init_config();
     // DAT LOADING
     // HIGHLY ORDER SENSTITIVE
     ItemContainer::init_config();
@@ -309,7 +310,7 @@ void init_configs()
     Item::load_smelting_dat();
 }
 
-int init_c_lib(int argc, char* argv[]) 
+int init_c_lib(int argc, char* argv[])
 {
     /*
         Time startup functions to determine delay/slow down
@@ -328,11 +329,11 @@ int init_c_lib(int argc, char* argv[])
     // this path is for build/debug data
     create_path(DATA_PATH);
     #endif
-    
+
     Log::init();
     printf("init c_lib\n");
 
-    AgentHudName::verify_configuration();   // test agent constant parameters 
+    AgentHudName::verify_configuration();   // test agent constant parameters
 
     GS_ASSERT(quadrant_translate_f(500,30) == 542);
     GS_ASSERT(quadrant_translate_f(10,500) == -12);
@@ -349,9 +350,10 @@ int init_c_lib(int argc, char* argv[])
     Options::validate();
 
     update_camera_settings(Options::view_distance);
-    
+
     srand((unsigned int)time(NULL));
 
+    Badges::init();
     Components::init();
     Entities::init_net_interfaces();
     Entities::init();    // Entity system
@@ -359,7 +361,7 @@ int init_c_lib(int argc, char* argv[])
 
     init_network();
     NetClient::init_net_client();
-    
+
     Agents::init();
     ClientState::init_lists();
 
@@ -384,7 +386,7 @@ int init_c_lib(int argc, char* argv[])
 
     t_map::init_t_map();
     t_map::generate_light_texture();
-    
+
     init_configs();
 
     // This block MUST come after dat loaders. possibly others
@@ -404,10 +406,10 @@ int init_c_lib(int argc, char* argv[])
     ItemParticle::init();
 
     Skybox::init();
- 
+
     VoxDats::init();
     Voxels::init_voxel_volume();
-    
+
     Sound::init();
     init_input();
     init_cameras();
@@ -415,13 +417,13 @@ int init_c_lib(int argc, char* argv[])
 
     Animations::init();
     Animations::load_sprite_voxelizer();
-    
+
     Hud::init();
 
     Voxels::init_voxel_render_list_shader1();   //used to be called from ClientState::init
 
     //init shaders
-    
+
     //t_map::init_shaders();
     t_mob::init();
     //CHECK_GL_ERROR();
@@ -454,7 +456,7 @@ void close_c_lib()
     t_mech::teardown();
     if (TEARDOWN_DEBUG) printf("particle draw teardown\n");
     Particle::draw_teardown();
-    
+
     if (TEARDOWN_DEBUG) printf("item particle teardown\n");
     ItemParticle::teardown();
 
@@ -482,12 +484,12 @@ void close_c_lib()
     Entities::teardown_net_interfaces();
     if (TEARDOWN_DEBUG) printf("entity dat teardown\n");
     Entities::teardown_entity_dat();
-    
+
     if (TEARDOWN_DEBUG) printf("voxel volume teardown\n");
     Voxels::teardown_voxel_volume();
     if (TEARDOWN_DEBUG) printf("hud teardown\n");
     Hud::teardown();
-    
+
     // free surfaces
     if (TEARDOWN_DEBUG) printf("t_map teardown\n");
     t_map::teardown_shader();
@@ -518,6 +520,10 @@ void close_c_lib()
 
     if (TEARDOWN_DEBUG) printf("Animations teardown\n");
     Animations::teardown();
+    Animations::teardown_config();
+
+    if (TEARDOWN_DEBUG) printf("Badges teardown\n");
+    Badges::teardown();
 
     if (TEARDOWN_DEBUG) printf("sound close\n");
     Sound::close();

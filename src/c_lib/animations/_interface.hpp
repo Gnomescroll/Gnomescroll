@@ -23,7 +23,7 @@ void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation,
 void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float length);
 
 void play_animation(const char* name, struct Vec3 position);
-void play_animation(int animation_id, struct Vec3 position);
+void play_animation(AnimationType animation_type, struct Vec3 position);
 #endif
 
 #if DC_SERVER

@@ -9,54 +9,49 @@
 namespace Animations
 {
 
+void dummy(AnimationType type, void* metadata) {}
+
 #if DC_SERVER
 // stubs
-void create_shrapnel(int id, void* metadata) {}
+void create_shrapnel(AnimationType type, void* metadata) {}
 #endif
 
-static AnimationData* d = NULL;
-static int anim_index = 0;
+static AnimationProperty* d = NULL;
 
-static void add_animation(class AnimationData* d)
-{
-    IF_ASSERT(d == NULL) return;
-    d->loaded = true;
-}
 
 static void animation_def(const char* name, AnimationMetadataType metadata_type)
 {
-    GS_ASSERT(anim_index < MAX_ANIMATIONS);
-    IF_ASSERT(anim_index >= MAX_ANIMATIONS) return;
-    IF_ASSERT(!is_valid_animation_name(name)) return;
-    
-    d = &animation_data[anim_index];
-    d->id = anim_index;
+    d = animation_data->get_next();
+    IF_ASSERT(d == NULL) return;
 
-    strncpy(d->name, name, ANIMATION_NAME_MAX_LENGTH+1);
-    d->name[ANIMATION_NAME_MAX_LENGTH] = '\0';
+    d->set_name(name);
 
+    d->metadata_type = metadata_type;
     switch (metadata_type)
     {
         case AnimDataNone:
             d->metadata = NULL;
             break;
-            
+
         case AnimDataSimple:
             d->metadata = (class AnimationStateMetadata*)calloc(1, sizeof(class AnimationStateMetadata));
             break;
-            
+
         default:
             GS_ASSERT(false);
             break;
     }
-    d->metadata_type = metadata_type;
-    d->loaded = true;
-
-    anim_index++;
 }
 
 static void register_settings()
 {
+    animation_def("blue_mining_laser", AnimDataNone);
+    d->callback = &dummy;
+    animation_def("red_mining_laser", AnimDataNone);
+    d->callback = &dummy;
+    animation_def("green_mining_laser", AnimDataNone);
+    d->callback = &dummy;
+
     animation_def("plasma_grenade_explode", AnimDataSimple);
     d->callback = &create_shrapnel;
     d->count = 45;
@@ -77,73 +72,73 @@ static void register_settings()
     d->ttl_max = 30;
     d->momentum = 20.0f;
 
-    add_animation(d);    // finalize
+    animation_data->done_loading();
 }
 
 static void validate_config()
 {
-    for (int i=0; i<MAX_ANIMATIONS; i++)
+    for (size_t i=0; i<animation_data->max; i++)
     {
-        if (!animation_data[i].loaded) continue;
-        GS_ASSERT(is_valid_animation_name(animation_data[i].name));
-        GS_ASSERT(animation_data[i].callback != NULL);
-        GS_ASSERT(animation_data[i].metadata_type == AnimDataNone || animation_data[i].metadata != NULL);
+        AnimationProperty* a = &animation_data->properties[i];
+        if (!a->loaded) continue;
+        GS_ASSERT(is_valid_name(a->name));
+        GS_ASSERT(a->callback != NULL);
+        GS_ASSERT(a->metadata_type == AnimDataNone || a->metadata != NULL);
     }
 
-    for (int i=0; i<MAX_ANIMATIONS-1; i++)
-    for (int j=i+1; j<MAX_ANIMATIONS; j++)
+    for (size_t i=0; i<animation_data->max-1; i++)
+    for (size_t j=i+1; j<animation_data->max; j++)
     {
-        if (!animation_data[i].loaded) continue;
-        if (!animation_data[j].loaded) continue;
-        GS_ASSERT(strcmp(animation_data[i].name, animation_data[j].name) != 0);
+        AnimationProperty* a = &animation_data->properties[i];
+        AnimationProperty* b = &animation_data->properties[j];
+        if (!a->loaded || !b->loaded) continue;
+        GS_ASSERT(strcmp(a->name, b->name) != 0);
     }
 }
 
 void init_config()
 {
     GS_ASSERT(animation_data == NULL);
-    animation_data = new AnimationData[MAX_ANIMATIONS];
-    
+    animation_data = new AnimationProperties;
+
     register_settings();
     validate_config();
 }
 
 void teardown_config()
 {
-    if (animation_data != NULL) delete[] animation_data;
+    if (animation_data != NULL) delete animation_data;
 }
 
-class AnimationData* get_animation_data(int animation_id)
+class AnimationProperty* get_animation_data(AnimationType type)
 {
-    IF_ASSERT(animation_data == NULL) return NULL;
-    IF_ASSERT(animation_id < 0 || animation_id >= MAX_ANIMATIONS) return NULL;
-    IF_ASSERT(!animation_data[animation_id].loaded) return NULL;
-
-    return &animation_data[animation_id];    
+    return animation_data->get(type);
 }
 
-anim_callback get_animation_callback(int animation_id)
+class AnimationProperty* get_animation_data(const char* name)
 {
-    class AnimationData* data = get_animation_data(animation_id);
+    return animation_data->get(name);
+}
+
+anim_callback get_animation_callback(AnimationType animation_type)
+{
+    class AnimationProperty* data = get_animation_data(animation_type);
     if (data == NULL) return NULL;
     return data->callback;
 }
 
 anim_callback get_animation_callback(const char* name)
 {
-    int id = get_animation_id(name);
-    if (id < 0) return NULL;
-    return get_animation_callback(id);
+    AnimationType type = get_animation_type(name);
+    IF_ASSERT(!isValid(type)) return NULL;
+    return get_animation_callback(type);
 }
 
-int get_animation_id(const char* name)
+AnimationType get_animation_type(const char* name)
 {
-    for (int i=0; i<MAX_ANIMATIONS; i++)
-        if (animation_data[i].loaded && strcmp(animation_data[i].name, name) == 0)
-            return i;
-
-    printf("WARNING: No animation found with name %s\n", name);
-    return -1;
+    AnimationProperty* p = get_animation_data(name);
+    IF_ASSERT(p == NULL) return NULL_ANIMATION_TYPE;
+    return p->type;
 }
 
 }   // Animations

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <animations/constants.hpp>
+
 #if DC_CLIENT
 # include <animations/animations.cpp>
 # include <animations/hitscan.cpp>

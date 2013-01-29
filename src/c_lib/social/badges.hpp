@@ -2,7 +2,6 @@
 
 #include <SDL/constants.hpp>
 #include <net_lib/net_StoC.hpp>
-#include <common/dat/properties.hpp>
 
 const size_t PLAYER_MAX_BADGES = 5;
 const size_t MAX_BADGES = 64;
@@ -26,6 +25,9 @@ int get_badge_sprite(BadgeType type);
 
 BadgeType get_badge_type(const char* name);
 const char* get_badge_name(BadgeType type);
+
+void init();
+void teardown();
 
 void init_packets();
 

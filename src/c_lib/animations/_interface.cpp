@@ -11,7 +11,7 @@
 #include <animations/packets.hpp>
 #include <animations/config/_interface.hpp>
 
-namespace Animations 
+namespace Animations
 {
 
 #if DC_CLIENT
@@ -25,9 +25,9 @@ void animations_tick()
 {
     hitscan_effect_list->tick();
     mining_laser_effect_list->tick();
-    
+
     //insect_mob_list->tick();
-    
+
     tick_equipped_item_animation();
 }
 
@@ -57,9 +57,9 @@ void draw_mining_laser_effect()
     mining_laser_effect_list->draw();
 }
 
-void play_animation(int animation_id, struct Vec3 position)
+void play_animation(AnimationType animation_type, struct Vec3 position)
 {
-    class AnimationData* data = get_animation_data(animation_id);
+    class AnimationProperty* data = get_animation_data(animation_type);
     IF_ASSERT(data == NULL) return;
     IF_ASSERT(data->callback == NULL || data->metadata == NULL) return;
 
@@ -78,13 +78,13 @@ void play_animation(int animation_id, struct Vec3 position)
             break;
     }
 
-    data->callback(animation_id, data->metadata);
+    data->callback(animation_type, data->metadata);
 }
 
 void play_animation(const char* name, struct Vec3 position)
 {
-    int animation_id = get_animation_id(name);
-    play_animation(animation_id, position);
+    AnimationType animation_type = get_animation_type(name);
+    play_animation(animation_type, position);
 }
 
 float x13 = 0.0f;
@@ -144,10 +144,10 @@ void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float leng
 void send_play_animation(const char* name, ClientID client_id, struct Vec3 position)
 {
     ASSERT_BOXED_POSITION(position);
-    int animation_id = get_animation_id(name);
-    IF_ASSERT(animation_id < 0) return;
+    AnimationType animation_type = get_animation_type(name);
+    IF_ASSERT(!isValid(animation_type)) return;
     play_animation_StoC msg;
-    msg.animation_id = animation_id;
+    msg.animation_type = animation_type;
     msg.position = position;
     msg.sendToClient(client_id);
 }
@@ -155,10 +155,10 @@ void send_play_animation(const char* name, ClientID client_id, struct Vec3 posit
 void broadcast_play_animation(const char* name, struct Vec3 position)
 {
     ASSERT_BOXED_POSITION(position);
-    int animation_id = get_animation_id(name);
-    IF_ASSERT(animation_id < 0) return;
+    AnimationType animation_type = get_animation_type(name);
+    IF_ASSERT(!isValid(animation_type)) return;
     play_animation_StoC msg;
-    msg.animation_id = animation_id;
+    msg.animation_type = animation_type;
     msg.position = position;
     msg.broadcast();
 }
@@ -171,7 +171,7 @@ void init()
     #if DC_CLIENT
     GS_ASSERT(hitscan_effect_list == NULL);
     GS_ASSERT(mining_laser_effect_list == NULL);
-    
+
     hitscan_effect_list = new HitscanEffectList;
     mining_laser_effect_list = new MiningLaserEffectList;
 
@@ -187,8 +187,6 @@ void init()
     init_voxel_particle();
     init_block_damage();
     #endif
-
-    init_config();
 }
 
 void init_packets()
@@ -211,8 +209,6 @@ void teardown()
 
     teardown_voxel_particle();
     #endif
-
-    teardown_config();
 }
 
 }   // Animations

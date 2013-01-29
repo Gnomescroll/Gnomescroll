@@ -3,6 +3,7 @@
 #include <animations/mining_laser.hpp>
 #include <camera/fulstrum_test.hpp>
 #include <item/common/constants.hpp>
+#include <animations/constants.hpp>
 
 namespace Animations
 {
@@ -47,7 +48,7 @@ class MiningLaserEmitter
         int ttl_max;
         int start;
         float h_mult;   // height adjustment for sprite
-        int texture_row;
+        AnimationType texture_row;
         ItemType laser_type;
 
         // state used to calculate length of beam.
@@ -181,7 +182,7 @@ class MiningLaserEmitter
         on(false), position(vec3_init(0,0,0)), direction(vec3_init(1,0,0)),
         count(MINING_LASER_EMITTER_PARTICLE_COUNT), speed(MINING_LASER_PARTICLE_SPEED),
         base_length(4.0f), length(4.0f), ttl_max((base_length/speed)*30), start(0), h_mult(0.0f),
-        texture_row(0), laser_type(NULL_ITEM_TYPE),
+        texture_row(NULL_ANIMATION_TYPE), laser_type(NULL_ITEM_TYPE),
         length_position(vec3_init(0,0,0)), length_direction(vec3_init(1,0,0))
     {
         this->set_count();

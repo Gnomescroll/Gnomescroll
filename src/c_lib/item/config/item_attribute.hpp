@@ -60,7 +60,7 @@ class ItemAttribute: public Property<ItemType>
         int cube_height;    // if the item occupies space, the height it occupies in cubes
 
         // animation
-        int animation_id;
+        AnimationType animation_type;
 
         // charges
         int max_charges;
@@ -119,7 +119,7 @@ class ItemAttribute: public Property<ItemType>
         this->fuel = false;
         this->fuel_burn_rate = 30;
         this->cube_height = 0;
-        this->animation_id = 0;
+        this->animation_type = NULL_ANIMATION_TYPE;
 
         this->max_charges = NULL_CHARGES;
         this->recharge_rate = 1;

@@ -3,6 +3,6 @@
 namespace Animations
 {
 
-class AnimationData* animation_data = NULL;
+class AnimationProperties* animation_data = NULL;
 
 }   // Animations

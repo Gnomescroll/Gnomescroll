@@ -3,6 +3,7 @@
 #include <SDL/texture_sheet_loader.hpp>
 #include <common/common.hpp>
 #include <agent/_interface.hpp>
+#include <common/dat/properties.hpp>
 
 namespace Badges
 {
@@ -28,11 +29,11 @@ class Badges: public Properties<Badge, BadgeType>
 };
 
 
-class Badges badges;
+class Badges* badges;
 
 static void add_badge(const char* name, SpriteSheet sheet_id, int xpos, int ypos)
 {
-    Badge* b = badges.get_next();
+    Badge* b = badges->get_next();
     IF_ASSERT(b == NULL) return;
 
     GS_ASSERT(sheet_id != NULL_SPRITE_SHEET);
@@ -49,21 +50,22 @@ static void add_badge(const char* name, SpriteSheet sheet_id, int xpos, int ypos
 
 static void verify_badge_conf()
 {
-    for (size_t i=0; i<badges.max; i++)
+    for (size_t i=0; i<badges->max; i++)
     {   // check valid values
-        if (!badges.properties[i].loaded) continue;
-        GS_ASSERT(badges.properties[i].name[0] != '\0');
-        GS_ASSERT(is_valid_name(badges.properties[i].name));
+        Badge* a = &badges->properties[i];
+        if (!a->loaded) continue;
+        GS_ASSERT(a->name[0] != '\0');
+        GS_ASSERT(is_valid_name(a->name));
         #if DC_CLIENT
-        GS_ASSERT(badges.properties[i].sprite_id != NULL_SPRITE);
+        GS_ASSERT(a->sprite_id != NULL_SPRITE);
         #endif
     }
 
-    for (size_t i=0; i<badges.max-1; i++)
-    for (size_t j=i+1; j<badges.max; j++)
+    for (size_t i=0; i<badges->max-1; i++)
+    for (size_t j=i+1; j<badges->max; j++)
     {   // check configs against each other for duplicates
-        Badge* a = &badges.properties[i];
-        Badge* b = &badges.properties[j];
+        Badge* a = &badges->properties[i];
+        Badge* b = &badges->properties[j];
         if (!a->loaded || !b->loaded) continue;
         GS_ASSERT(strcmp(a->name, b->name) != 0);
         #if DC_CLIENT
@@ -74,12 +76,12 @@ static void verify_badge_conf()
 
 Badge* get_badge(const char* name)
 {
-    return badges.get(name);
+    return badges->get(name);
 }
 
 Badge* get_badge(BadgeType type)
 {
-    return badges.get(type);
+    return badges->get(type);
 }
 
 BadgeType get_badge_type(const char* name)
@@ -103,6 +105,17 @@ int get_badge_sprite(BadgeType type)
     return b->sprite_id;
 }
 
+
+void init()
+{
+    GS_ASSERT(badges == NULL);
+    badges = new Badges;
+}
+
+void teardown()
+{
+    if (badges != NULL) delete badges;
+}
 
 void init_packets()
 {
@@ -166,6 +179,7 @@ void register_badges()
     TextureSheetLoader::save_badge_texture();
     #endif
 
+    badges->done_loading();
     verify_badge_conf();
 }
 

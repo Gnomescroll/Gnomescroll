@@ -447,7 +447,7 @@ void confetti_stream()
 
 // new style callback
 
-void create_shrapnel(int animation_id, void* metadata)
+void create_shrapnel(AnimationType animation_type, void* metadata)
 {
     if (Options::animation_level <= 0) return;
 
@@ -455,7 +455,7 @@ void create_shrapnel(int animation_id, void* metadata)
     if (metadata == NULL) return;
     class AnimationStateMetadata* data = (class AnimationStateMetadata*)metadata;
 
-    class AnimationData* anim_data = get_animation_data(animation_id);
+    class AnimationProperty* anim_data = get_animation_data(animation_type);
     GS_ASSERT(anim_data != NULL);
 
     int n = anim_data->count;

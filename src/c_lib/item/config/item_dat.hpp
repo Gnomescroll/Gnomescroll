@@ -4,6 +4,7 @@
 #include <t_map/t_properties.hpp>
 #include <t_map/common/types.hpp>
 #include <SDL/texture_sheet_loader.hpp>
+#include <animations/config/_interface.hpp>
 
 namespace Item
 {
@@ -94,7 +95,7 @@ void load_item_dat()
     block_damage_def(CUBE_MATERIAL_DECORATION, 8);
     s->object_damage_min = 15;
     s->object_damage_max = 20;
-    s->animation_id = 0;
+    s->animation_type = Animations::get_animation_type("blue_mining_laser");
 
     item_def(IG_MINING_LASER, "red_mining_laser");
     sprite_def(i0, 3,7);
@@ -109,7 +110,7 @@ void load_item_dat()
     block_damage_def(CUBE_MATERIAL_DECORATION, 12);
     s->object_damage_min = 20;
     s->object_damage_max = 25;
-    s->animation_id = 1;
+    s->animation_type = Animations::get_animation_type("red_mining_laser");
 
     item_def(IG_MINING_LASER, "green_mining_laser");
     sprite_def(i0, 4,7);
@@ -124,7 +125,7 @@ void load_item_dat()
     block_damage_def(CUBE_MATERIAL_DECORATION, 16);
     s->object_damage_min = 25;
     s->object_damage_max = 30;
-    s->animation_id = 2;
+    s->animation_type = Animations::get_animation_type("green_mining_laser");
 
     item_def(IG_SYNTHESIZER_COIN, "synthesizer_coin");
     sprite_def(i1, 2, 7);
