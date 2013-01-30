@@ -89,6 +89,7 @@ dont_include_this_file_in_client
 #include <common/subscriber_list.hpp>
 #include <common/analytics/sessions.hpp>
 #include <common/dat/name_map.hpp>
+#include <common/dat/attributes.cpp>
 
 // logging
 #include <common/logger.cpp>
@@ -246,6 +247,8 @@ void register_signals()
 void init_configs()
 {
     Animations::init_config();
+    Badges::register_badges();
+    Agents::register_attributes();
 
     // DAT LOADING
     // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
@@ -279,6 +282,8 @@ void init_configs()
     Item::load_crafting_dat();
     Item::load_smelting_dat();
     ItemContainer::load_crusher_dat();
+
+    Attributes::verify();
 }
 
 int init_c_lib(int argc, char* argv[])
@@ -322,6 +327,9 @@ int init_c_lib(int argc, char* argv[])
     else
         printf("disabled\n");
 
+    Attributes::init();
+    Agents::init_attributes();
+
     Badges::init();
     Components::init();
     Entities::init_net_interfaces();
@@ -358,8 +366,6 @@ int init_c_lib(int argc, char* argv[])
 
     t_gen::init();
     t_gen::init_map_generator();
-
-    Badges::register_badges();
 
     return 0;
 }
@@ -412,6 +418,9 @@ void close_c_lib()
     Badges::teardown();
 
     Auth::teardown();
+
+    Agents::teardown_attributes();
+    Attributes::teardown();
 
     printf("Server closed\n");
     Log::teardown();

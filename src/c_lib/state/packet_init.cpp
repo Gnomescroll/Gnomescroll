@@ -1,22 +1,15 @@
 #include "packet_init.hpp"
 
 #include <agent/net_agent.hpp>
-
-#if DC_CLIENT
-# include <agent/client/player_agent.hpp>
-#endif
-
 #include <t_map/_interface.hpp>
-
 #include <item/_interface.hpp>
 #include <item/toolbelt/_interface.hpp>
 #include <item/container/_interface.hpp>
 #include <item/particle/_interface.hpp>
-
-#include <particle/grenade.hpp> // move into net folder in particles
+#include <particle/grenade.hpp>
 #include <auth/_interface.hpp>
-
 #include <social/badges.hpp>
+#include <common/dat/attributes.hpp>
 
 namespace PacketInit
 {
@@ -28,10 +21,10 @@ void RegisterMessages()
     version_StoC::register_client_packet();
 
     /*
-    add back in 
+    add back in
     benchmarkCtoS::register_server_packet();    //packet for benchmarking
-    benchmarkReliableCtoS::register_server_packet();  
-    */  
+    benchmarkReliableCtoS::register_server_packet();
+    */
 
     Agent_state_message::register_client_packet();
     Agent_teleport_message::register_client_packet();
@@ -39,7 +32,7 @@ void RegisterMessages()
     agent_camera_state_CtoS::register_server_packet();
 
     SendClientId_StoC::register_client_packet();
-    
+
     Agent_cs_CtoS::register_server_packet();
     Agent_cs_StoC::register_client_packet();
 
@@ -51,14 +44,14 @@ void RegisterMessages()
     agent_create_StoC::register_client_packet();
     agent_destroy_StoC::register_client_packet();
     client_disconnected_StoC::register_client_packet();
-    
+
     agent_set_block_CtoS::register_server_packet();
     admin_set_block_CtoS::register_server_packet();
 
     // particle system messages
     Particle::grenade_StoC::register_client_packet();
     Particle::plasmagen_explode_StoC::register_client_packet();
- 
+
     // agent hit block action
     hit_block_CtoS::register_server_packet();
 
@@ -122,14 +115,14 @@ void RegisterMessages()
     object_create_momentum_StoC::register_client_packet();
     object_create_momentum_angles_StoC::register_client_packet();
     object_create_momentum_angles_health_StoC::register_client_packet();
-    
+
     object_destroy_StoC::register_client_packet();
 
     object_state_StoC::register_client_packet();
     object_state_momentum_StoC::register_client_packet();
     object_state_momentum_angles_StoC::register_client_packet();
     object_state_health_StoC::register_client_packet();
-    
+
     // object actions
     object_picked_up_StoC::register_client_packet();
 
@@ -160,12 +153,12 @@ void RegisterMessages()
     ItemParticle::init_packets();
 
     // Map Messages
-    
+
     t_map::init_packets();
     t_mech::init_packets();
     // suicide
     killme_CtoS::register_server_packet();
-    
+
     // coloring
     colorme_CtoS::register_server_packet();
     agent_color_StoC::register_client_packet();
@@ -180,10 +173,11 @@ void RegisterMessages()
     Auth::init_packets();
 
     teleport_me_CtoS::register_server_packet();
-    
+
     gohome_CtoS::register_server_packet();
 
     Badges::init_packets();
+    Attributes::init_packets();
 }
 
 }   // PacketInit

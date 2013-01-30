@@ -35,6 +35,7 @@ dont_include_this_file_in_server
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include <string.h>
 #include <math.h>
@@ -72,6 +73,7 @@ bool c_lib_inited = false;
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>
 #include <common/dat/name_map.hpp>
+#include <common/dat/attributes.cpp>
 
 
 /* configuration options */
@@ -236,7 +238,7 @@ void atexit_handler()
 void print_working_directory()
 {
     #ifdef linux
-    // print working directory
+    // printf working directory
     const size_t DIR_SIZE = 1024;
     char* wd = (char*)calloc((DIR_SIZE+1), sizeof(char));
     char* wdr = getcwd(wd, DIR_SIZE);
@@ -281,6 +283,9 @@ void register_signals()
 void init_configs()
 {
     Animations::init_config();
+    Badges::register_badges();
+    Agents::register_attributes();
+
     // DAT LOADING
     // HIGHLY ORDER SENSTITIVE
     ItemContainer::init_config();
@@ -308,6 +313,8 @@ void init_configs()
     Item::load_synthesizer();
     Item::load_crafting_dat();
     Item::load_smelting_dat();
+
+    Attributes::verify();
 }
 
 int init_c_lib(int argc, char* argv[])
@@ -353,6 +360,8 @@ int init_c_lib(int argc, char* argv[])
 
     srand((unsigned int)time(NULL));
 
+    Attributes::init();
+    Agents::init_attributes();
     Badges::init();
     Components::init();
     Entities::init_net_interfaces();
@@ -427,8 +436,6 @@ int init_c_lib(int argc, char* argv[])
     //t_map::init_shaders();
     t_mob::init();
     //CHECK_GL_ERROR();
-
-    Badges::register_badges();
 
     c_lib_inited = true;
 
@@ -539,8 +546,17 @@ void close_c_lib()
     if (TEARDOWN_DEBUG) printf("awesomium teardown\n");
     Awesomium::teardown();
 
+    if (TEARDOWN_DEBUG) printf("attributes teardown\n");
+    Attributes::teardown();
+    Agents::teardown_attributes();
+
+    if (TEARDOWN_DEBUG) printf("logger teardown\n");
     Log::teardown();
+
+    if (TEARDOWN_DEBUG) printf("Options teardown\n");
     Options::teardown_option_tables();
+
+    if (TEARDOWN_DEBUG) printf("Assertion teardown\n");
     _GS_ASSERT_TEARDOWN();
 
     printf("Game closed\n");
