@@ -160,6 +160,10 @@ void register_attributes()
 
     printf("%s: %d\n", "max_health", Attributes::get_int("max_health"));
     printf("%s: %d\n", "health", Attributes::get_int("health"));
+    Attributes::set("max_health", 25);
+    Attributes::set("health", 50);
+    printf("%s: %d\n", "max_health", Attributes::get_int("max_health"));
+    printf("%s: %d\n", "health", Attributes::get_int("health"));
 }
 
 /*********************
