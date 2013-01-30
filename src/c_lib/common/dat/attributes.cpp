@@ -182,6 +182,8 @@ class Attribute: public Property<AttributeType>
         this->sync_type = sync_type;
     }
 
+    /* Networking */
+
     void send()
     {
         if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PRIVATE) return;
@@ -326,13 +328,15 @@ class Attributes: public Properties<Attribute, AttributeType>
     void send()
     {
         for (size_t i=0; i<this->index; i++)
-            this->properties[i].send();
+            if (this->properties[i].loaded)
+                this->properties[i].send();
     }
 
     void send_changes()
     {
         for (size_t i=0; i<this->index; i++)
-            this->properties[i].send_changes();
+            if (this->properties[i].loaded)
+                this->properties[i].send_changes();
     }
 
     Attributes() :
