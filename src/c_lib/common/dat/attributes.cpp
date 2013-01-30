@@ -256,8 +256,6 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(strcmp(this->name, other->name) != 0);
     }
 
-    /* Init */
-
     Attribute() :
         Property<AttributeType>(NULL_ATTRIBUTE),
         group(NULL_ATTRIBUTE_GROUP), value_type(NULL_ATTRIBUTE_VALUE_TYPE),
@@ -351,6 +349,92 @@ class Attributes: public Properties<Attribute, AttributeType>
 
 
 static Attributes* attributes;
+
+/* Read/Write API */
+
+void set(AttributeType type, int value)
+{
+    Attribute* a = attributes->get(type);
+    IF_ASSERT(a == NULL) return;
+    a->set(value);
+}
+
+void set(AttributeType type, float value)
+{
+    Attribute* a = attributes->get(type);
+    IF_ASSERT(a == NULL) return;
+    a->set(value);
+}
+
+void set(AttributeType type, const char* value)
+{
+    Attribute* a = attributes->get(type);
+    IF_ASSERT(a == NULL) return;
+    a->set(value);
+}
+
+void set(const char* name, int value)
+{
+    Attribute* a = attributes->get(name);
+    IF_ASSERT(a == NULL) return;
+    a->set(value);
+}
+
+void set(const char* name, float value)
+{
+    Attribute* a = attributes->get(name);
+    IF_ASSERT(a == NULL) return;
+    a->set(value);
+}
+
+void set(const char* name, const char* value)
+{
+    Attribute* a = attributes->get(name);
+    IF_ASSERT(a == NULL) return;
+    a->set(value);
+}
+
+int get_int(AttributeType type)
+{
+    Attribute* a = attributes->get(type);
+    IF_ASSERT(a == NULL) return 1;
+    return a->get_int();
+}
+
+float get_float(AttributeType type)
+{
+    Attribute* a = attributes->get(type);
+    IF_ASSERT(a == NULL) return 1.0f;
+    return a->get_float();
+}
+
+const char* get_string(AttributeType type)
+{
+    Attribute* a = attributes->get(type);
+    IF_ASSERT(a == NULL) return NULL;
+    return a->get_string();
+}
+
+int get_int(const char* name)
+{
+    Attribute* a = attributes->get(name);
+    IF_ASSERT(a == NULL) return 1;
+    return a->get_int();
+}
+
+float get_float(const char* name)
+{
+    Attribute* a = attributes->get(name);
+    IF_ASSERT(a == NULL) return 1.0f;
+    return a->get_float();
+}
+
+const char* get_string(const char* name)
+{
+    Attribute* a = attributes->get(name);
+    IF_ASSERT(a == NULL) return NULL;
+    return a->get_string();
+}
 
 /* Boilerplate */
 

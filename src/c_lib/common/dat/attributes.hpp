@@ -52,6 +52,22 @@ bool isValid(AttributeType type)
 namespace Attributes
 {
 
+/* Read/write API */
+
+void set(AttributeType type, int value);
+void set(AttributeType type, float value);
+void set(AttributeType type, const char* value);
+void set(const char* name, int value);
+void set(const char* name, float value);
+void set(const char* name, const char* value);
+
+int get_int(AttributeType type);
+float get_float(AttributeType type);
+const char* get_string(AttributeType type);
+int get_int(const char* name);
+float get_float(const char* name);
+const char* get_string(const char* name);
+
 /* Boilerplate */
 
 void init();
