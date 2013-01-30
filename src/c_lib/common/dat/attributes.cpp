@@ -241,7 +241,7 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(this->sync_type != ATTRIBUTE_SYNC_TYPE_PLAYER ||
                   this->sync_to != NULL_CLIENT);
 
-        GS_ASSERT((this->location == NULL && (this->getter != NULL **
+        GS_ASSERT((this->location == NULL && (this->getter != NULL &&
                                                this->setter != NULL)) ||
                   (this->location != NULL && (this->getter == NULL &&
                                                this->setter == NULL)));
