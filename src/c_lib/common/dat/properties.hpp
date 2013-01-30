@@ -44,8 +44,10 @@ class Property
 template <class Property, typename Type>
 class Properties
 {
-    public:
+    private:
         size_t current;
+    public:
+        size_t index;
         size_t max;
         Property* properties;
         Property* current_property;
@@ -86,6 +88,8 @@ class Properties
         } while (this->current_property->loaded &&
                  this->current <= this->max);
         this->current_property->set_type((Type)(this->current-1));
+        if (this->current > this->index)
+            this->index = this->current;
         return this->current_property;
     }
 
@@ -96,6 +100,8 @@ class Properties
         IF_ASSERT(this->properties[type].loaded) return NULL;
         this->current_property = &this->properties[type];
         this->current_property->set_type(type);
+        if (type > this->index)
+            this->index = type;
         return this->current_property;
     }
 
