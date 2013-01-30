@@ -21,7 +21,7 @@ class Attribute: public Property<AttributeType>
 
     /* Read/write API */
 
-    int get_int()
+    int get_int() const
     {
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_INT) return 1;
         if (this->location != NULL)
@@ -29,7 +29,7 @@ class Attribute: public Property<AttributeType>
         return reinterpret_cast<getInt>(this->getter)();
     }
 
-    float get_float()
+    float get_float() const
     {
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_FLOAT) return 1.0f;
         if (this->location != NULL)
@@ -37,7 +37,7 @@ class Attribute: public Property<AttributeType>
         return reinterpret_cast<getFloat>(this->getter)();
     }
 
-    const char* get_string()
+    const char* get_string() const
     {
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_STRING) return NULL;
         if (this->location != NULL)
@@ -184,7 +184,7 @@ class Attribute: public Property<AttributeType>
 
     /* Networking */
 
-    void send()
+    void send() const
     {
         if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PRIVATE) return;
 
@@ -249,8 +249,10 @@ class Attribute: public Property<AttributeType>
 
     void verify_other(const Attribute* other) const
     {
-        GS_ASSERT(this->getter != other->getter);
-        GS_ASSERT(this->setter != other->setter);
+        GS_ASSERT(this->getter == NULL || this->getter != other->getter);
+        GS_ASSERT(this->setter == NULL || this->setter != other->setter);
+        GS_ASSERT(this->location == NULL ||
+                  this->location != other->location);
         GS_ASSERT(strcmp(this->name, other->name) != 0);
     }
 
@@ -288,21 +290,21 @@ class Attribute: public Property<AttributeType>
         this->location = location;
     }
 
-    void _pack_message(set_attribute_int_StoC* msg)
+    void _pack_message(set_attribute_int_StoC* msg) const
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_INT);
         msg->attribute_type = this->type;
         msg->value = this->get_int();
     }
 
-    void _pack_message(set_attribute_float_StoC* msg)
+    void _pack_message(set_attribute_float_StoC* msg) const
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_FLOAT);
         msg->attribute_type = this->type;
         msg->value = this->get_float();
     }
 
-    void _pack_message(set_attribute_string_StoC* msg)
+    void _pack_message(set_attribute_string_StoC* msg) const
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_STRING);
         msg->attribute_type = this->type;
@@ -316,7 +318,7 @@ class Attributes: public Properties<Attribute, AttributeType>
 {
     public:
 
-    void verify()
+    void verify() const
     {
         for (size_t i=0; i<this->max; i++)
             if (this->properties[i].loaded)
@@ -328,7 +330,7 @@ class Attributes: public Properties<Attribute, AttributeType>
                 this->properties[i].verify_other(&this->properties[j]);
     }
 
-    void send()
+    void send() const
     {
         for (size_t i=0; i<this->index; i++)
             if (this->properties[i].loaded)

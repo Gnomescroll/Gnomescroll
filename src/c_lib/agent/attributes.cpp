@@ -86,6 +86,8 @@ void register_attributes()
     attribute_def("health");
     set_location(&base_stats->health);
     set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
+
+    Attributes::done_loading();
 }
 
 /*********************
