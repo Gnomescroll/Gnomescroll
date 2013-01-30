@@ -72,7 +72,8 @@ void done_loading();
 
 void init_packets();
 
-class set_attribute_int_StoC: public FixedSizeNetPacketToClient<set_attribute_int_StoC>
+class set_attribute_int_StoC:
+    public FixedSizeNetPacketToClient<set_attribute_int_StoC>
 {
     public:
         uint8_t attribute_type;
@@ -87,7 +88,8 @@ class set_attribute_int_StoC: public FixedSizeNetPacketToClient<set_attribute_in
     inline void handle();
 };
 
-class set_attribute_float_StoC: public FixedSizeNetPacketToClient<set_attribute_float_StoC>
+class set_attribute_float_StoC:
+    public FixedSizeNetPacketToClient<set_attribute_float_StoC>
 {
     public:
         uint8_t attribute_type;
@@ -102,7 +104,8 @@ class set_attribute_float_StoC: public FixedSizeNetPacketToClient<set_attribute_
     inline void handle();
 };
 
-class set_attribute_string_StoC: public FixedSizeNetPacketToClient<set_attribute_string_StoC>
+class set_attribute_string_StoC:
+    public FixedSizeNetPacketToClient<set_attribute_string_StoC>
 {
     public:
 
