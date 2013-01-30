@@ -29,6 +29,7 @@ void init_textures();
 void set_cube_side_texture(int id, int side, int tex_id);
 int get_cube_side_texture(int id, int side) 
 {
+	GS_ASSERT(id < MAX_CUBES && side < 6 && side >= 0)
     return cube_side_texture_array[6*id + side]; 
 }
 
