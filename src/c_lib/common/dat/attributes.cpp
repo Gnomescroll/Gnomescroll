@@ -238,10 +238,13 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(this->value_type != NULL_ATTRIBUTE_VALUE_TYPE);
         GS_ASSERT(this->name[0] != '\0');
         GS_ASSERT(this->sync_type != NULL_ATTRIBUTE_SYNC_TYPE);
-        GS_ASSERT(this->sync_type != ATTRIBUTE_SYNC_TYPE_PLAYER || this->sync_to != NULL_CLIENT);
+        GS_ASSERT(this->sync_type != ATTRIBUTE_SYNC_TYPE_PLAYER ||
+                  this->sync_to != NULL_CLIENT);
 
-        GS_ASSERT((this->location == NULL && (this->getter != NULL && this->setter != NULL)) ||
-                  (this->location != NULL && (this->getter == NULL && this->setter == NULL)));
+        GS_ASSERT((this->location == NULL && (this->getter != NULL **
+                                               this->setter != NULL)) ||
+                  (this->location != NULL && (this->getter == NULL &&
+                                               this->setter == NULL)));
     }
 
     void verify_other(const Attribute* other) const
