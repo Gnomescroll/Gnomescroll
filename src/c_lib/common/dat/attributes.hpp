@@ -76,7 +76,10 @@ void verify();
 
 /* Registration */
 
-AttributeType def(AttributeGroup group, const char* name);
+AttributeType def(AttributeGroup group, const char* name, int value);
+AttributeType def(AttributeGroup group, const char* name, float value);
+AttributeType def(AttributeGroup group, const char* name, const char* value);
+
 void set_sync_type(AttributeType type, AttributeSyncType sync_type);
 void set_location(AttributeType type, int* location);
 void set_location(AttributeType type, float* location);

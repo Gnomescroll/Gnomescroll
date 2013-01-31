@@ -51,71 +51,22 @@ static StatModifiers* stats;
 
 static AttributeType attr_type = NULL_ATTRIBUTE;
 
-// TODO -- allow this loading API from Attributes itself
-
-// value trackers to allow late-loading of defaults
-static AttributeValueType _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
-static int _ival;
-static float _fval;
-static char _sval[STRING_ATTRIBUTE_MAX_LENGTH+1];
-
-static void _set_saved()
-{
-    Attributes::done_loading();
-    switch (_vtype)
-    {
-        case ATTRIBUTE_VALUE_INT:
-            Attributes::set(attr_type, _ival);
-            _ival = 0;
-            _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
-            break;
-
-        case ATTRIBUTE_VALUE_FLOAT:
-            Attributes::set(attr_type, _fval);
-            _fval = 0.0f;
-            _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
-            break;
-
-        case ATTRIBUTE_VALUE_STRING:
-            Attributes::set(attr_type, _sval);
-            _sval[0] = '\0';
-            _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
-            break;
-
-        case NULL_ATTRIBUTE_VALUE_TYPE:
-            GS_ASSERT(false);
-            break;
-    }
-
-    _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
-}
-
 static void attribute_def(const char* name, int value)
 {
-    if (_vtype != NULL_ATTRIBUTE_VALUE_TYPE) _set_saved();
-    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name);
+    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name, value);
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
-    _ival = value;
-    _vtype = ATTRIBUTE_VALUE_INT;
 }
 
 static void attribute_def(const char* name, float value)
 {
-    if (_vtype != NULL_ATTRIBUTE_VALUE_TYPE) _set_saved();
-    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name);
+    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name, value);
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
-    _fval = value;
-    _vtype = ATTRIBUTE_VALUE_FLOAT;
 }
 
 static void attribute_def(const char* name, const char* value)
 {
-    if (_vtype != NULL_ATTRIBUTE_VALUE_TYPE) _set_saved();
-    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name);
+    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name, value);
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
-    strncpy(_sval, value, STRING_ATTRIBUTE_MAX_LENGTH+1);
-    _sval[STRING_ATTRIBUTE_MAX_LENGTH] = '\0';
-    _vtype = ATTRIBUTE_VALUE_STRING;
 }
 
 static void set_sync_type(AttributeSyncType sync_type)
@@ -125,25 +76,17 @@ static void set_sync_type(AttributeSyncType sync_type)
 
 static void set_location(int* location)
 {
-    GS_ASSERT(_vtype == ATTRIBUTE_VALUE_INT);
     Attributes::set_location(attr_type, location);
 }
 
 static void set_location(float* location)
 {
-    GS_ASSERT(_vtype == ATTRIBUTE_VALUE_FLOAT);
     Attributes::set_location(attr_type, location);
 }
 
 static void set_location(char** location)
 {
-    GS_ASSERT(_vtype == ATTRIBUTE_VALUE_STRING);
     Attributes::set_location(attr_type, location);
-}
-
-static void end_def()
-{
-    _set_saved();
 }
 
 void register_attributes()
@@ -156,7 +99,7 @@ void register_attributes()
     set_location(&base_stats->health);
     set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
 
-    end_def();
+    Attributes::done_loading();
 
     printf("%s: %d\n", "max_health", Attributes::get_int("max_health"));
     printf("%s: %d\n", "health", Attributes::get_int("health"));

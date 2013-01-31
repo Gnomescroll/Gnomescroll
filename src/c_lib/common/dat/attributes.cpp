@@ -456,14 +456,85 @@ void verify()
 
 /* Registration API */
 
-AttributeType def(AttributeGroup group, const char* name)
+// value trackers to allow late-loading of defaults
+static AttributeType _type = NULL_ATTRIBUTE;
+static AttributeValueType _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
+static int _ival;
+static float _fval;
+static char _sval[STRING_ATTRIBUTE_MAX_LENGTH+1];
+
+static void _set_saved()
 {
+    attributes->done_loading();
+    switch (_vtype)
+    {
+        case ATTRIBUTE_VALUE_INT:
+            set(_type, _ival);
+            _ival = 0;
+            _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
+            break;
+
+        case ATTRIBUTE_VALUE_FLOAT:
+            set(_type, _fval);
+            _fval = 0.0f;
+            _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
+            break;
+
+        case ATTRIBUTE_VALUE_STRING:
+            set(_type, _sval);
+            _sval[0] = '\0';
+            _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
+            break;
+
+        case NULL_ATTRIBUTE_VALUE_TYPE:
+            GS_ASSERT(false);
+            break;
+    }
+
+    _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
+}
+
+static AttributeType def(AttributeGroup group, const char* name)
+{
+    if (_vtype != NULL_ATTRIBUTE_VALUE_TYPE) _set_saved();
     Attribute* a = attributes->get_next();
     IF_ASSERT(a == NULL) return NULL_ATTRIBUTE;
     a->group = group;
     a->set_name(name);
     return a->type;
 }
+
+AttributeType def(AttributeGroup group, const char* name, int value)
+{
+    AttributeType type = def(group, name);
+    IF_ASSERT(type == NULL_ATTRIBUTE) return NULL_ATTRIBUTE;
+    _ival = value;
+    _vtype = ATTRIBUTE_VALUE_INT;
+    _type = type;
+    return type;
+}
+
+AttributeType def(AttributeGroup group, const char* name, float value)
+{
+    AttributeType type = def(group, name);
+    IF_ASSERT(type == NULL_ATTRIBUTE) return NULL_ATTRIBUTE;
+    _fval = value;
+    _vtype = ATTRIBUTE_VALUE_FLOAT;
+    _type = type;
+    return type;
+}
+
+AttributeType def(AttributeGroup group, const char* name, const char* value)
+{
+    AttributeType type = def(group, name);
+    IF_ASSERT(type == NULL_ATTRIBUTE) return NULL_ATTRIBUTE;
+    strncpy(_sval, value, STRING_ATTRIBUTE_MAX_LENGTH+1);
+    _sval[STRING_ATTRIBUTE_MAX_LENGTH] = '\0';
+    _vtype = ATTRIBUTE_VALUE_STRING;
+    _type = type;
+    return type;
+}
+
 
 void set_sync_type(AttributeType type, AttributeSyncType sync_type)
 {
@@ -474,6 +545,7 @@ void set_sync_type(AttributeType type, AttributeSyncType sync_type)
 
 void set_location(AttributeType type, int* location)
 {
+    GS_ASSERT(_vtype == ATTRIBUTE_VALUE_INT);
     Attribute* a = attributes->_get_any(type);
     IF_ASSERT(a == NULL) return;
     a->set_location(location);
@@ -481,6 +553,7 @@ void set_location(AttributeType type, int* location)
 
 void set_location(AttributeType type, float* location)
 {
+    GS_ASSERT(_vtype == ATTRIBUTE_VALUE_FLOAT);
     Attribute* a = attributes->_get_any(type);
     IF_ASSERT(a == NULL) return;
     a->set_location(location);
@@ -488,6 +561,7 @@ void set_location(AttributeType type, float* location)
 
 void set_location(AttributeType type, char** location)
 {
+    GS_ASSERT(_vtype == ATTRIBUTE_VALUE_STRING);
     Attribute* a = attributes->_get_any(type);
     IF_ASSERT(a == NULL) return;
     a->set_location(location);
@@ -495,6 +569,7 @@ void set_location(AttributeType type, char** location)
 
 void done_loading()
 {
+    if (_vtype != NULL_ATTRIBUTE_VALUE_TYPE) _set_saved();
     attributes->done_loading();
 }
 
