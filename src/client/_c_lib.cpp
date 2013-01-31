@@ -210,6 +210,7 @@ bool c_lib_inited = false;
 
 #include <state/client_state.cpp>
 #include <state/packet_init.cpp>
+#include <state/attributes.cpp>
 
 // authentication
 #include <auth/_include.hpp>
@@ -285,6 +286,7 @@ void init_configs()
     Animations::init_config();
     Badges::register_badges();
     Agents::register_attributes();
+    World::register_attributes();
 
     // DAT LOADING
     // HIGHLY ORDER SENSTITIVE
@@ -362,6 +364,7 @@ int init_c_lib(int argc, char* argv[])
 
     Attributes::init();
     Agents::init_attributes();
+    World::init_attributes();
     Badges::init();
     Components::init();
     Entities::init_net_interfaces();
@@ -450,7 +453,7 @@ void close_c_lib()
 
     printf("Closing game...\n");
 
-    if (TEARDOWN_DEBUG) printf("t_map end t map\n");
+    if (TEARDOWN_DEBUG) printf("t_map teardown\n");
     t_map::end_t_properties();
     t_map::end_t_map();
 
@@ -547,8 +550,9 @@ void close_c_lib()
     Awesomium::teardown();
 
     if (TEARDOWN_DEBUG) printf("attributes teardown\n");
-    Attributes::teardown();
     Agents::teardown_attributes();
+    World::teardown_attributes();
+    Attributes::teardown();
 
     if (TEARDOWN_DEBUG) printf("logger teardown\n");
     Log::teardown();

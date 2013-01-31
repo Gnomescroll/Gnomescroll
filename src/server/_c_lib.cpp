@@ -157,6 +157,7 @@ dont_include_this_file_in_client
 
 #include <state/packet_init.cpp>
 #include <state/server_state.cpp>
+#include <state/attributes.cpp>
 
 #include <sound/_include.hpp>
 #include <animations/_include.hpp>
@@ -249,6 +250,7 @@ void init_configs()
     Animations::init_config();
     Badges::register_badges();
     Agents::register_attributes();
+    World::register_attributes();
 
     // DAT LOADING
     // HIGHLY ORDER SENSITIVE -- DON'T MOVE AROUND
@@ -329,6 +331,7 @@ int init_c_lib(int argc, char* argv[])
 
     Attributes::init();
     Agents::init_attributes();
+    World::init_attributes();
 
     Badges::init();
     Components::init();
@@ -420,6 +423,7 @@ void close_c_lib()
     Auth::teardown();
 
     Agents::teardown_attributes();
+    World::teardown_attributes();
     Attributes::teardown();
 
     printf("Server closed\n");

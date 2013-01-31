@@ -10,13 +10,6 @@ typedef enum
 
 typedef enum
 {
-    NULL_ATTRIBUTE_GROUP,
-    ATTRIBUTE_GROUP_AGENT,
-    ATTRIBUTE_GROUP_SERVER,
-}   AttributeGroup;
-
-typedef enum
-{
     NULL_ATTRIBUTE_VALUE_TYPE,
     ATTRIBUTE_VALUE_INT,
     ATTRIBUTE_VALUE_FLOAT,
@@ -33,8 +26,8 @@ typedef enum
 
 typedef enum
 {
-    NULL_ATTRIBUTES_ID = MAX_AGENTS + 2
-}   AttributesID;
+    NULL_ATTRIBUTE_GROUP = MAX_AGENTS + 2
+}   AttributeGroup;
 
 typedef void (*voidFunction)();
 
@@ -48,7 +41,7 @@ typedef bool (*setString)(const char*);
 
 const size_t MAX_ATTRIBUTES = NULL_ATTRIBUTE;
 
-const size_t MAX_ATTRIBUTES_IDS = NULL_ATTRIBUTES_ID;
+const size_t MAX_ATTRIBUTE_GROUPS = NULL_ATTRIBUTE_GROUP;
 
 
 const size_t STRING_ATTRIBUTE_MAX_LENGTH = 63;
@@ -58,32 +51,50 @@ bool isValid(AttributeType type)
     return (type >= 0 && type < MAX_ATTRIBUTES);
 }
 
-bool isValid(AttributesID id)
+bool isValid(AttributeGroup group)
 {
-    return (id >= 0 && id < MAX_ATTRIBUTES_IDS);
+    return (group >= 0 && group < MAX_ATTRIBUTE_GROUPS);
 }
 
 namespace Attributes
 {
 
+class AttributesHolder
+{
+    public:
+        AttributeGroup attribute_group;
+
+    void set_attribute_group(AttributeGroup group)
+    {
+        GS_ASSERT(this->attribute_group == NULL_ATTRIBUTE_GROUP);
+        GS_ASSERT(group != NULL_ATTRIBUTE_GROUP);
+        this->attribute_group = group;
+    }
+
+    AttributesHolder() :
+        attribute_group(NULL_ATTRIBUTE_GROUP)
+    {
+    }
+};
+
 /* Read/write API */
 
-AttributesID start_registration();
+AttributeGroup start_registration();
 void end_registration();
 
-void set(AttributesID id, AttributeType type, int value);
-void set(AttributesID id, const char* name, int value);
-void set(AttributesID id, AttributeType type, float value);
-void set(AttributesID id, const char* name, float value);
-void set(AttributesID id, AttributeType type, const char* value);
-void set(AttributesID id, const char* name, const char* value);
+void set(AttributeGroup group, AttributeType type, int value);
+void set(AttributeGroup group, const char* name, int value);
+void set(AttributeGroup group, AttributeType type, float value);
+void set(AttributeGroup group, const char* name, float value);
+void set(AttributeGroup group, AttributeType type, const char* value);
+void set(AttributeGroup group, const char* name, const char* value);
 
-int get_int(AttributesID id, AttributeType type);
-int get_int(AttributesID id, const char* name);
-float get_float(AttributesID id, AttributeType type);
-float get_float(AttributesID id, const char* name);
-const char* get_string(AttributesID id, AttributeType type);
-const char* get_string(AttributesID id, const char* name);
+int get_int(AttributeGroup group, AttributeType type);
+int get_int(AttributeGroup group, const char* name);
+float get_float(AttributeGroup group, AttributeType type);
+float get_float(AttributeGroup group, const char* name);
+const char* get_string(AttributeGroup group, AttributeType type);
+const char* get_string(AttributeGroup group, const char* name);
 
 /* Boilerplate */
 
@@ -93,9 +104,9 @@ void verify();
 
 /* Registration */
 
-AttributeType def(AttributeGroup group, const char* name, int value);
-AttributeType def(AttributeGroup group, const char* name, float value);
-AttributeType def(AttributeGroup group, const char* name, const char* value);
+AttributeType def(const char* name, int value);
+AttributeType def(const char* name, float value);
+AttributeType def(const char* name, const char* value);
 
 void set_sync_type(AttributeType type, AttributeSyncType sync_type);
 void set_location(AttributeType type, int* location);
@@ -112,13 +123,13 @@ class set_attribute_int_StoC:
     public FixedSizeNetPacketToClient<set_attribute_int_StoC>
 {
     public:
-        uint8_t attributes_id;
+        uint8_t attribute_group;
         uint8_t attribute_type;
         int32_t value;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u8(&attributes_id, buff, buff_n, pack);
+        pack_u8(&attribute_group, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);
         pack_32(&value, buff, buff_n, pack);
     }
@@ -130,13 +141,13 @@ class set_attribute_float_StoC:
     public FixedSizeNetPacketToClient<set_attribute_float_StoC>
 {
     public:
-        uint8_t attributes_id;
+        uint8_t attribute_group;
         uint8_t attribute_type;
         float value;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u8(&attributes_id, buff, buff_n, pack);
+        pack_u8(&attribute_group, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);
         pack_float(&value, buff, buff_n, pack);
     }
@@ -148,13 +159,13 @@ class set_attribute_string_StoC:
     public FixedSizeNetPacketToClient<set_attribute_string_StoC>
 {
     public:
-        uint8_t attributes_id;
+        uint8_t attribute_group;
         uint8_t attribute_type;
         char value[STRING_ATTRIBUTE_MAX_LENGTH+1];
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u8(&attributes_id, buff, buff_n, pack);
+        pack_u8(&attribute_group, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);
         pack_string(value, STRING_ATTRIBUTE_MAX_LENGTH+1, buff, buff_n, pack);
     }

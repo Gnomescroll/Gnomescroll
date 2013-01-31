@@ -6,23 +6,14 @@
 namespace Agents
 {
 
-class Stats
+class Stats: public Attributes::AttributesHolder
 {
     public:
-        AttributesID attributes_id;
-
         int max_health;
         int health;
 
-    void set_attributes_id(AttributesID id)
-    {
-        GS_ASSERT(this->attributes_id == NULL_ATTRIBUTES_ID);
-        GS_ASSERT(id != NULL_ATTRIBUTES_ID);
-        this->attributes_id = id;
-    }
-
     Stats() :
-        attributes_id(NULL_ATTRIBUTES_ID)
+        Attributes::AttributesHolder()
     {
     }
 };
@@ -39,7 +30,7 @@ static AttributeType attr_type = NULL_ATTRIBUTE;
 template <typename Type>
 static void attribute_def(const char* name, Type value)
 {
-    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name, value);
+    attr_type = Attributes::def(name, value);
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
 }
 
@@ -56,8 +47,8 @@ static void set_sync_type(AttributeSyncType sync_type)
 
 static void start_registration(Stats* stats)
 {
-    AttributesID id = Attributes::start_registration();
-    stats->set_attributes_id(id);
+    AttributeGroup group = Attributes::start_registration();
+    stats->set_attribute_group(group);
 }
 
 static void register_attributes(Stats* stats)
@@ -75,17 +66,18 @@ static void register_attributes(Stats* stats)
     Attributes::end_registration();
 }
 
-static void test_registration(Stats* stats)
+static void test_registration()
 {
-    int val = Attributes::get_int(stats->attributes_id, "max_health");
-    Attributes::set(stats->attributes_id, "max_health", 75);
-    GS_ASSERT(75 == Attributes::get_int(stats->attributes_id, "max_health"));
-    Attributes::set(stats->attributes_id, "max_health", val);
+    int val = get_attribute_int("max_health");
+    set_attribute("max_health", 75);
+    GS_ASSERT(75 == get_attribute_int("max_health"));
+    set_attribute("max_health", val);
 
-    val = Attributes::get_int(stats->attributes_id, "health");
-    Attributes::set(stats->attributes_id, "health", 50);
-    GS_ASSERT(50 == Attributes::get_int(stats->attributes_id, "health"));
-    Attributes::set(stats->attributes_id, "health", val);
+    const AgentID agent_id = (AgentID)(MAX_AGENTS/2);
+    val = get_attribute_int(agent_id, "health");
+    set_attribute(agent_id, "health", 50);
+    GS_ASSERT(50 == get_attribute_int(agent_id, "health"));
+    set_attribute(agent_id, "health", val);
 }
 
 void register_attributes()
@@ -95,8 +87,7 @@ void register_attributes()
         register_attributes(&stats[i]);
 
     #if !PRODUCTION
-    test_registration(base_stats);
-    test_registration(&stats[MAX_AGENTS/2]);
+    test_registration();
     #endif
 }
 
@@ -109,23 +100,23 @@ void register_attributes()
     { \
         IF_ASSERT(!isValid(agent_id)) return; \
         Stats* s = &stats[agent_id]; \
-        Attributes::set(s->attributes_id, key, value); \
+        Attributes::set(s->attribute_group, key, value); \
     } \
     void set_attribute(KEYTYPE key, TYPE value) \
     { \
-        Attributes::set(base_stats->attributes_id, key, value); \
+        Attributes::set(base_stats->attribute_group, key, value); \
     }
 
 #define GET_ATTRIBUTE(KEYTYPE, TYPE, NAME, RETVAL) \
-    TYPE get_##NAME(AgentID agent_id, KEYTYPE key) \
+    TYPE get_attribute_##NAME(AgentID agent_id, KEYTYPE key) \
     { \
         IF_ASSERT(!isValid(agent_id)) return RETVAL; \
         Stats* s = &stats[agent_id]; \
-        return Attributes::get_##NAME(s->attributes_id, key); \
+        return Attributes::get_##NAME(s->attribute_group, key); \
     } \
-    TYPE get_##NAME(KEYTYPE key) \
+    TYPE get_attribute_##NAME(KEYTYPE key) \
     { \
-        return Attributes::get_##NAME(base_stats->attributes_id, key); \
+        return Attributes::get_##NAME(base_stats->attribute_group, key); \
     }
 
 SET_ATTRIBUTE(AttributeType, int);

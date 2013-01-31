@@ -60,9 +60,7 @@ class Properties
         for (size_t i=0; i<this->max; i++)
             if (this->properties[i].loaded &&
                 this->properties[i].hash == hash)
-                {
                     return &this->properties[i];
-                }
         GS_ASSERT(false);
         printf("No property found for name: %s\n", name);
         return NULL;
