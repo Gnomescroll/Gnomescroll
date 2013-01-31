@@ -315,6 +315,7 @@ class Attribute: public Property<AttributeType>
 class Attributes: public Properties<Attribute, AttributeType>
 {
     public:
+        AttributesID id;
 
     void verify() const
     {
@@ -348,89 +349,157 @@ class Attributes: public Properties<Attribute, AttributeType>
 };
 
 
-static Attributes* attributes;
+class AttributesManager
+{
+    public:
+
+        size_t count;
+        size_t max;
+
+        Attributes** attributes;
+
+    Attributes* create()
+    {
+        IF_ASSERT(this->count >= this->max) return NULL;
+        Attributes* a = new Attributes;
+        a->id = (AttributesID)this->count;
+        this->attributes[this->count++] = a;
+        return a;
+    }
+
+    Attributes* get(AttributesID id)
+    {
+        IF_ASSERT(!isValid(id)) return NULL;
+        return this->attributes[id];
+    }
+
+    void verify() const
+    {
+        for (size_t i=0; i<this->count; i++)
+            this->attributes[i]->verify();
+    }
+
+    AttributesManager(size_t max) :
+        count(0), max(max)
+    {
+        this->attributes = new Attributes*[max];
+    }
+
+    ~AttributesManager()
+    {
+        for (size_t i=0; i<this->count; i++)
+            delete this->attributes[i];
+        delete[] this->attributes;
+    }
+};
+
+static AttributesManager* attributes_manager;
 
 /* Read/Write API */
 
-void set(AttributeType type, int value)
+void set(AttributesID id, AttributeType type, int value)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* a = attributes->get(type);
     IF_ASSERT(a == NULL) return;
     a->set(value);
 }
 
-void set(AttributeType type, float value)
+void set(AttributesID id, AttributeType type, float value)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* a = attributes->get(type);
     IF_ASSERT(a == NULL) return;
     a->set(value);
 }
 
-void set(AttributeType type, const char* value)
+void set(AttributesID id, AttributeType type, const char* value)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* a = attributes->get(type);
     IF_ASSERT(a == NULL) return;
     a->set(value);
 }
 
-void set(const char* name, int value)
+void set(AttributesID id, const char* name, int value)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* a = attributes->get(name);
     IF_ASSERT(a == NULL) return;
     a->set(value);
 }
 
-void set(const char* name, float value)
+void set(AttributesID id, const char* name, float value)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* a = attributes->get(name);
     IF_ASSERT(a == NULL) return;
     a->set(value);
 }
 
-void set(const char* name, const char* value)
+void set(AttributesID id, const char* name, const char* value)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* a = attributes->get(name);
     IF_ASSERT(a == NULL) return;
     a->set(value);
 }
 
-int get_int(AttributeType type)
+int get_int(AttributesID id, AttributeType type)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return 1;
     Attribute* a = attributes->get(type);
     IF_ASSERT(a == NULL) return 1;
     return a->get_int();
 }
 
-float get_float(AttributeType type)
+float get_float(AttributesID id, AttributeType type)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return 1.0f;
     Attribute* a = attributes->get(type);
     IF_ASSERT(a == NULL) return 1.0f;
     return a->get_float();
 }
 
-const char* get_string(AttributeType type)
+const char* get_string(AttributesID id, AttributeType type)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return NULL;
     Attribute* a = attributes->get(type);
     IF_ASSERT(a == NULL) return NULL;
     return a->get_string();
 }
 
-int get_int(const char* name)
+int get_int(AttributesID id, const char* name)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return 1;
     Attribute* a = attributes->get(name);
     IF_ASSERT(a == NULL) return 1;
     return a->get_int();
 }
 
-float get_float(const char* name)
+float get_float(AttributesID id, const char* name)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return 1.0f;
     Attribute* a = attributes->get(name);
     IF_ASSERT(a == NULL) return 1.0f;
     return a->get_float();
 }
 
-const char* get_string(const char* name)
+const char* get_string(AttributesID id, const char* name)
 {
+    Attributes* attributes = attributes_manager->get(id);
+    IF_ASSERT(attributes == NULL) return NULL;
     Attribute* a = attributes->get(name);
     IF_ASSERT(a == NULL) return NULL;
     return a->get_string();
@@ -440,21 +509,23 @@ const char* get_string(const char* name)
 
 void init()
 {
-    GS_ASSERT(attributes == NULL);
-    attributes = new Attributes;
+    GS_ASSERT(attributes_manager == NULL);
+    attributes_manager = new AttributesManager(MAX_ATTRIBUTES_IDS);
 }
 
 void teardown()
 {
-    if (attributes != NULL) delete attributes;
+    if (attributes_manager != NULL) delete attributes_manager;
 }
 
 void verify()
 {
-    attributes->verify();
+    attributes_manager->verify();
 }
 
 /* Registration API */
+
+static Attributes* current_attributes;
 
 // value trackers to allow late-loading of defaults
 static AttributeType _type = NULL_ATTRIBUTE;
@@ -465,23 +536,24 @@ static char _sval[STRING_ATTRIBUTE_MAX_LENGTH+1];
 
 static void _set_saved()
 {
-    attributes->done_loading();
+    IF_ASSERT(current_attributes == NULL) return;
+    current_attributes->done_loading();
     switch (_vtype)
     {
         case ATTRIBUTE_VALUE_INT:
-            set(_type, _ival);
+            set(current_attributes->id, _type, _ival);
             _ival = 0;
             _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
             break;
 
         case ATTRIBUTE_VALUE_FLOAT:
-            set(_type, _fval);
+            set(current_attributes->id, _type, _fval);
             _fval = 0.0f;
             _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
             break;
 
         case ATTRIBUTE_VALUE_STRING:
-            set(_type, _sval);
+            set(current_attributes->id, _type, _sval);
             _sval[0] = '\0';
             _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
             break;
@@ -494,10 +566,25 @@ static void _set_saved()
     _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
 }
 
+AttributesID start_registration()
+{
+    GS_ASSERT(current_attributes == NULL);
+    current_attributes = attributes_manager->create();
+    IF_ASSERT(current_attributes == NULL) return NULL_ATTRIBUTES_ID;
+    return current_attributes->id;
+}
+
+void end_registration()
+{
+    done_loading();
+    current_attributes = NULL;
+}
+
 static AttributeType def(AttributeGroup group, const char* name)
 {
+    IF_ASSERT(current_attributes == NULL) return NULL_ATTRIBUTE;
     if (_vtype != NULL_ATTRIBUTE_VALUE_TYPE) _set_saved();
-    Attribute* a = attributes->get_next();
+    Attribute* a = current_attributes->get_next();
     IF_ASSERT(a == NULL) return NULL_ATTRIBUTE;
     a->group = group;
     a->set_name(name);
@@ -537,39 +624,44 @@ AttributeType def(AttributeGroup group, const char* name, const char* value)
 
 void set_sync_type(AttributeType type, AttributeSyncType sync_type)
 {
-    Attribute* a = attributes->_get_any(type);
+    IF_ASSERT(current_attributes == NULL) return;
+    Attribute* a = current_attributes->_get_any(type);
     IF_ASSERT(a == NULL) return;
     a->set_sync_type(sync_type);
 }
 
 void set_location(AttributeType type, int* location)
 {
+    IF_ASSERT(current_attributes == NULL) return;
     GS_ASSERT(_vtype == ATTRIBUTE_VALUE_INT);
-    Attribute* a = attributes->_get_any(type);
+    Attribute* a = current_attributes->_get_any(type);
     IF_ASSERT(a == NULL) return;
     a->set_location(location);
 }
 
 void set_location(AttributeType type, float* location)
 {
+    IF_ASSERT(current_attributes == NULL) return;
     GS_ASSERT(_vtype == ATTRIBUTE_VALUE_FLOAT);
-    Attribute* a = attributes->_get_any(type);
+    Attribute* a = current_attributes->_get_any(type);
     IF_ASSERT(a == NULL) return;
     a->set_location(location);
 }
 
 void set_location(AttributeType type, char** location)
 {
+    IF_ASSERT(current_attributes == NULL) return;
     GS_ASSERT(_vtype == ATTRIBUTE_VALUE_STRING);
-    Attribute* a = attributes->_get_any(type);
+    Attribute* a = current_attributes->_get_any(type);
     IF_ASSERT(a == NULL) return;
     a->set_location(location);
 }
 
 void done_loading()
 {
+    IF_ASSERT(current_attributes == NULL) return;
     if (_vtype != NULL_ATTRIBUTE_VALUE_TYPE) _set_saved();
-    attributes->done_loading();
+    current_attributes->done_loading();
 }
 
 /* Network */
@@ -584,6 +676,8 @@ void init_packets()
 #if DC_CLIENT
 inline void set_attribute_int_StoC::handle()
 {
+    Attributes* attributes = attributes_manager->get((AttributesID)this->attributes_id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* attr = attributes->get((AttributeType)this->attribute_type);
     IF_ASSERT(attr == NULL) return;
     attr->set((int)this->value);
@@ -591,6 +685,8 @@ inline void set_attribute_int_StoC::handle()
 
 inline void set_attribute_float_StoC::handle()
 {
+    Attributes* attributes = attributes_manager->get((AttributesID)this->attributes_id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* attr = attributes->get((AttributeType)this->attribute_type);
     IF_ASSERT(attr == NULL) return;
     attr->set(this->value);
@@ -598,6 +694,8 @@ inline void set_attribute_float_StoC::handle()
 
 inline void set_attribute_string_StoC::handle()
 {
+    Attributes* attributes = attributes_manager->get((AttributesID)this->attributes_id);
+    IF_ASSERT(attributes == NULL) return;
     Attribute* attr = attributes->get((AttributeType)this->attribute_type);
     IF_ASSERT(attr == NULL) return;
     attr->set(this->value);

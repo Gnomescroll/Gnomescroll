@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agent/constants.hpp>
 #include <net_lib/net_StoC.hpp>
 
 typedef enum
@@ -30,6 +31,11 @@ typedef enum
     ATTRIBUTE_SYNC_TYPE_ALL,
 }   AttributeSyncType;
 
+typedef enum
+{
+    NULL_ATTRIBUTES_ID = MAX_AGENTS + 2
+}   AttributesID;
+
 typedef void (*voidFunction)();
 
 typedef int (*getInt)();
@@ -42,6 +48,9 @@ typedef bool (*setString)(const char*);
 
 const size_t MAX_ATTRIBUTES = NULL_ATTRIBUTE;
 
+const size_t MAX_ATTRIBUTES_IDS = NULL_ATTRIBUTES_ID;
+
+
 const size_t STRING_ATTRIBUTE_MAX_LENGTH = 63;
 
 bool isValid(AttributeType type)
@@ -49,24 +58,32 @@ bool isValid(AttributeType type)
     return (type >= 0 && type < MAX_ATTRIBUTES);
 }
 
+bool isValid(AttributesID id)
+{
+    return (id >= 0 && id < MAX_ATTRIBUTES_IDS);
+}
+
 namespace Attributes
 {
 
 /* Read/write API */
 
-void set(AttributeType type, int value);
-void set(AttributeType type, float value);
-void set(AttributeType type, const char* value);
-void set(const char* name, int value);
-void set(const char* name, float value);
-void set(const char* name, const char* value);
+AttributesID start_registration();
+void end_registration();
 
-int get_int(AttributeType type);
-float get_float(AttributeType type);
-const char* get_string(AttributeType type);
-int get_int(const char* name);
-float get_float(const char* name);
-const char* get_string(const char* name);
+void set(AttributesID id, AttributeType type, int value);
+void set(AttributesID id, const char* name, int value);
+void set(AttributesID id, AttributeType type, float value);
+void set(AttributesID id, const char* name, float value);
+void set(AttributesID id, AttributeType type, const char* value);
+void set(AttributesID id, const char* name, const char* value);
+
+int get_int(AttributesID id, AttributeType type);
+int get_int(AttributesID id, const char* name);
+float get_float(AttributesID id, AttributeType type);
+float get_float(AttributesID id, const char* name);
+const char* get_string(AttributesID id, AttributeType type);
+const char* get_string(AttributesID id, const char* name);
 
 /* Boilerplate */
 
@@ -95,11 +112,13 @@ class set_attribute_int_StoC:
     public FixedSizeNetPacketToClient<set_attribute_int_StoC>
 {
     public:
+        uint8_t attributes_id;
         uint8_t attribute_type;
         int32_t value;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
+        pack_u8(&attributes_id, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);
         pack_32(&value, buff, buff_n, pack);
     }
@@ -111,11 +130,13 @@ class set_attribute_float_StoC:
     public FixedSizeNetPacketToClient<set_attribute_float_StoC>
 {
     public:
+        uint8_t attributes_id;
         uint8_t attribute_type;
         float value;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
+        pack_u8(&attributes_id, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);
         pack_float(&value, buff, buff_n, pack);
     }
@@ -127,12 +148,13 @@ class set_attribute_string_StoC:
     public FixedSizeNetPacketToClient<set_attribute_string_StoC>
 {
     public:
-
+        uint8_t attributes_id;
         uint8_t attribute_type;
         char value[STRING_ATTRIBUTE_MAX_LENGTH+1];
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
+        pack_u8(&attributes_id, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);
         pack_string(value, STRING_ATTRIBUTE_MAX_LENGTH+1, buff, buff_n, pack);
     }

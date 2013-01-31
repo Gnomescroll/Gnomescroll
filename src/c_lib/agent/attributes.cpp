@@ -1,6 +1,7 @@
 #include "attributes.hpp"
 
 #include <common/dat/attributes.hpp>
+#include <common/dat/modifiers.hpp>
 
 namespace Agents
 {
@@ -8,42 +9,26 @@ namespace Agents
 class Stats
 {
     public:
-        int max_health;
-        int health;
-};
+        AttributesID attributes_id;
 
-class StatModifiers
-{
-    private:
-        Stats* base;
-
-    public:
         int max_health;
         int health;
 
-    int get_max_health()
+    void set_attributes_id(AttributesID id)
     {
-        return this->base->max_health + this->max_health;
+        GS_ASSERT(this->attributes_id == NULL_ATTRIBUTES_ID);
+        GS_ASSERT(id != NULL_ATTRIBUTES_ID);
+        this->attributes_id = id;
     }
 
-    int get_health()
+    Stats() :
+        attributes_id(NULL_ATTRIBUTES_ID)
     {
-        return this->base->health + this->health;
     }
-
-
-    void _set_base_stats(Stats* base)
-    {
-        GS_ASSERT(base != NULL);
-        this->base = base;
-    }
-
-    StatModifiers()
-    {}
 };
 
 static Stats* base_stats;
-static StatModifiers* stats;
+static Stats* stats;
 
 /*********************
  * Registration
@@ -69,42 +54,56 @@ static void set_sync_type(AttributeSyncType sync_type)
     Attributes::set_sync_type(attr_type, sync_type);
 }
 
-void register_attributes()
+static void start_registration(Stats* stats)
 {
+    AttributesID id = Attributes::start_registration();
+    stats->set_attributes_id(id);
+}
+
+static void register_attributes(Stats* stats)
+{
+    start_registration(stats);
+
     attribute_def("max_health", 100);
-    set_location(&base_stats->max_health);
+    set_location(&stats->max_health);
     set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
 
     attribute_def("health", 100);
-    set_location(&base_stats->health);
+    set_location(&stats->health);
     set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
 
-    Attributes::done_loading();
+    Attributes::end_registration();
+}
 
-    printf("%s: %d\n", "max_health", Attributes::get_int("max_health"));
-    Attributes::set("max_health", 25);
-    printf("%s: %d\n", "max_health", Attributes::get_int("max_health"));
+static void test_registration(Stats* stats)
+{
+    int val = Attributes::get_int(stats->attributes_id, "max_health");
+    Attributes::set(stats->attributes_id, "max_health", 75);
+    GS_ASSERT(75 == Attributes::get_int(stats->attributes_id, "max_health"));
+    Attributes::set(stats->attributes_id, "max_health", val);
 
-    printf("%s: %d\n", "health", Attributes::get_int("health"));
-    Attributes::set("health", 50);
-    printf("%s: %d\n", "health", Attributes::get_int("health"));
+    val = Attributes::get_int(stats->attributes_id, "health");
+    Attributes::set(stats->attributes_id, "health", 50);
+    GS_ASSERT(50 == Attributes::get_int(stats->attributes_id, "health"));
+    Attributes::set(stats->attributes_id, "health", val);
+}
+
+void register_attributes()
+{
+    register_attributes(base_stats);
+    for (int i=0; i<MAX_AGENTS; i++)
+        register_attributes(&stats[i]);
+
+    #if !PRODUCTION
+    test_registration(base_stats);
+    test_registration(&stats[MAX_AGENTS/2]);
+    #endif
 }
 
 /*********************
  * API
  *********************/
 
-int get_agent_max_health(AgentID agent_id)
-{
-    IF_ASSERT(!isValid(agent_id)) return base_stats->max_health;
-    return stats[agent_id].get_max_health();
-}
-
-int get_agent_health(AgentID agent_id)
-{
-    IF_ASSERT(!isValid(agent_id)) return 0;
-    return stats[agent_id].get_health();
-}
 
 /*********************
  * Boilerplate
@@ -116,12 +115,7 @@ void init_attributes()
     GS_ASSERT(stats == NULL);
 
     base_stats = new Stats;
-    memset(base_stats, 0, sizeof(Stats));
-
-    stats = new StatModifiers[MAX_AGENTS];
-    memset(stats, 0, MAX_AGENTS * sizeof(StatModifiers));
-    for (int i=0; i<MAX_AGENTS; i++)
-        stats[i]._set_base_stats(base_stats);
+    stats = new Stats[MAX_AGENTS];
 }
 
 void teardown_attributes()
