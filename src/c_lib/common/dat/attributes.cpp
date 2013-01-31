@@ -535,7 +535,6 @@ AttributeType def(AttributeGroup group, const char* name, const char* value)
     return type;
 }
 
-
 void set_sync_type(AttributeType type, AttributeSyncType sync_type)
 {
     Attribute* a = attributes->_get_any(type);

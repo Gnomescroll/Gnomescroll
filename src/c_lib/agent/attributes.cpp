@@ -51,42 +51,22 @@ static StatModifiers* stats;
 
 static AttributeType attr_type = NULL_ATTRIBUTE;
 
-static void attribute_def(const char* name, int value)
+template <typename Type>
+static void attribute_def(const char* name, Type value)
 {
     attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name, value);
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
 }
 
-static void attribute_def(const char* name, float value)
+template <typename Type>
+static void set_location(Type location)
 {
-    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name, value);
-    GS_ASSERT(attr_type != NULL_ATTRIBUTE);
-}
-
-static void attribute_def(const char* name, const char* value)
-{
-    attr_type = Attributes::def(ATTRIBUTE_GROUP_AGENT, name, value);
-    GS_ASSERT(attr_type != NULL_ATTRIBUTE);
+    Attributes::set_location(attr_type, location);
 }
 
 static void set_sync_type(AttributeSyncType sync_type)
 {
     Attributes::set_sync_type(attr_type, sync_type);
-}
-
-static void set_location(int* location)
-{
-    Attributes::set_location(attr_type, location);
-}
-
-static void set_location(float* location)
-{
-    Attributes::set_location(attr_type, location);
-}
-
-static void set_location(char** location)
-{
-    Attributes::set_location(attr_type, location);
 }
 
 void register_attributes()
@@ -102,10 +82,11 @@ void register_attributes()
     Attributes::done_loading();
 
     printf("%s: %d\n", "max_health", Attributes::get_int("max_health"));
-    printf("%s: %d\n", "health", Attributes::get_int("health"));
     Attributes::set("max_health", 25);
-    Attributes::set("health", 50);
     printf("%s: %d\n", "max_health", Attributes::get_int("max_health"));
+
+    printf("%s: %d\n", "health", Attributes::get_int("health"));
+    Attributes::set("health", 50);
     printf("%s: %d\n", "health", Attributes::get_int("health"));
 }
 
