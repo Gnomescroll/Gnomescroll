@@ -44,7 +44,7 @@ extern struct SDL_Surface* block_item_64_surface;
 extern struct SDL_Surface* block_item_16_surface;
 
 void get_random_pixel(CubeType type, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
-	GS_ASSERT(id < MAX_CUBES && side < 6 && side >= 0)
+
 void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
 
 void set_cube_side_texture(CubeType type, int side, int tex_id);
