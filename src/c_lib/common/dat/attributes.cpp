@@ -96,12 +96,6 @@ class Attribute: public Property<AttributeType>
             this->changed = true;
     }
 
-    void set_sync_to(ClientID client_id)
-    {
-        GS_ASSERT(this->sync_to == NULL_CLIENT);
-        this->sync_to = client_id;
-    }
-
     /* Registration API */
 
     void add_setter(setInt setter)
@@ -187,6 +181,13 @@ class Attribute: public Property<AttributeType>
 
     /* Networking */
     #if DC_SERVER
+    void set_sync_to(ClientID client_id)
+    {
+        GS_ASSERT(this->sync_to == NULL_CLIENT);
+        GS_ASSERT(isValid(client_id));
+        this->sync_to = client_id;
+    }
+
     void send_changes()
     {
         if (!this->changed) return;
@@ -277,14 +278,15 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(this->group != NULL_ATTRIBUTE_GROUP);
         GS_ASSERT(this->value_type != NULL_ATTRIBUTE_VALUE_TYPE);
         GS_ASSERT(this->name[0] != '\0');
-        GS_ASSERT(this->sync_type != NULL_ATTRIBUTE_SYNC_TYPE);
-        GS_ASSERT(this->sync_type != ATTRIBUTE_SYNC_TYPE_PLAYER ||
-                  this->sync_to != NULL_CLIENT);
-
         GS_ASSERT((this->location == NULL && (this->getter != NULL &&
                                                this->setter != NULL)) ||
                   (this->location != NULL && (this->getter == NULL &&
                                                this->setter == NULL)));
+        #if DC_SERVER
+        GS_ASSERT(this->sync_type != NULL_ATTRIBUTE_SYNC_TYPE);
+        GS_ASSERT(this->sync_type != ATTRIBUTE_SYNC_TYPE_PLAYER ||
+                  this->sync_to != NULL_CLIENT);
+        #endif
     }
 
     void verify_other(const Attribute* other) const
@@ -376,6 +378,14 @@ class Attributes: public Properties<Attribute, AttributeType>
     }
 
     #if DC_SERVER
+    void set_sync_to(ClientID client_id)
+    {
+        for (size_t i=0; i<this->index; i++)
+            if (this->properties[i].loaded &&
+                this->properties[i].sync_type == ATTRIBUTE_SYNC_TYPE_PLAYER)
+                    this->properties[i].set_sync_to(client_id);
+    }
+
     void send_to_client(ClientID client_id) const
     {
         for (size_t i=0; i<this->index; i++)
@@ -762,6 +772,13 @@ void init_packets()
 }
 
 #if DC_SERVER
+void set_sync_to(AttributeGroup group, ClientID client_id)
+{
+    Attributes* attr = attributes_manager->get(group);
+    IF_ASSERT(attr == NULL) return;
+    attr->set_sync_to(client_id);
+}
+
 void send_to_client(AttributeGroup group, ClientID client_id)
 {
     Attributes* a = attributes_manager->get(group);

@@ -84,7 +84,12 @@ void register_attributes()
 {
     register_attributes(base_stats);
     for (int i=0; i<MAX_AGENTS; i++)
+    {
         register_attributes(&stats[i]);
+        #if DC_SERVER
+        Attributes::set_sync_to(stats[i].attribute_group, (ClientID)i);
+        #endif
+    }
 
     #if !PRODUCTION
     test_registration();

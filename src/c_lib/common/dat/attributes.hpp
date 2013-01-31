@@ -123,6 +123,7 @@ void done_loading();
 void init_packets();
 
 #if DC_SERVER
+void set_sync_to(AttributeGroup group, ClientID client_id);
 void send_to_client(AttributeGroup group, ClientID client_id);
 void send_changes();
 #endif
