@@ -104,6 +104,46 @@ void register_attributes()
  * API
  *********************/
 
+#define SET_ATTRIBUTE(KEYTYPE, TYPE) \
+    void set_attribute(AgentID agent_id, KEYTYPE key, TYPE value) \
+    { \
+        IF_ASSERT(!isValid(agent_id)) return; \
+        Stats* s = &stats[agent_id]; \
+        Attributes::set(s->attributes_id, key, value); \
+    } \
+    void set_attribute(KEYTYPE key, TYPE value) \
+    { \
+        Attributes::set(base_stats->attributes_id, key, value); \
+    }
+
+#define GET_ATTRIBUTE(KEYTYPE, TYPE, NAME, RETVAL) \
+    TYPE get_##NAME(AgentID agent_id, KEYTYPE key) \
+    { \
+        IF_ASSERT(!isValid(agent_id)) return RETVAL; \
+        Stats* s = &stats[agent_id]; \
+        return Attributes::get_##NAME(s->attributes_id, key); \
+    } \
+    TYPE get_##NAME(KEYTYPE key) \
+    { \
+        return Attributes::get_##NAME(base_stats->attributes_id, key); \
+    }
+
+SET_ATTRIBUTE(AttributeType, int);
+SET_ATTRIBUTE(AttributeType, float);
+SET_ATTRIBUTE(AttributeType, const char*);
+SET_ATTRIBUTE(const char*, int);
+SET_ATTRIBUTE(const char*, float);
+SET_ATTRIBUTE(const char*, const char*);
+
+GET_ATTRIBUTE(AttributeType, int, int, 1);
+GET_ATTRIBUTE(AttributeType, float, float, 1.0f);
+GET_ATTRIBUTE(AttributeType, const char*, string, NULL);
+GET_ATTRIBUTE(const char*, int, int, 1);
+GET_ATTRIBUTE(const char*, float, float, 1.0f);
+GET_ATTRIBUTE(const char*, const char*, string, NULL);
+
+#undef SET_ATTRIBUTE
+#undef GET_ATTRIBUTE
 
 /*********************
  * Boilerplate
