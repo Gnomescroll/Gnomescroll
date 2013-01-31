@@ -92,6 +92,20 @@ void register_attributes()
 }
 
 /*********************
+ * Network
+ *********************/
+
+#if DC_SERVER
+void send_attributes_to_client(ClientID client_id)
+{
+    AgentID agent_id = NetServer::get_agent_id_for_client(client_id);
+    IF_ASSERT(!isValid(agent_id)) return;
+    Attributes::send_to_client(base_stats->attribute_group, client_id);
+    Attributes::send_to_client(stats[agent_id].attribute_group, client_id);
+}
+#endif
+
+/*********************
  * API
  *********************/
 

@@ -4,6 +4,7 @@
 #include <t_gen/_interface.hpp>
 #include <t_map/_interface.hpp>
 #include <net_lib/server.hpp>
+#include <common/dat/attributes.hpp>
 
 namespace Main
 {
@@ -246,10 +247,10 @@ int run()
         {
             tick();
             tc++;
+            Attributes::send_changes();
+            NetServer::flush_to_net();
         }
 
-        if (tc > 0)
-            NetServer::flush_to_net();
         if (tc > 1)
             printf("Warning:: %d ticks this frame", tc);
 

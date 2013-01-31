@@ -3,12 +3,17 @@
 namespace Agents
 {
 
+// Boilerplate
 void init_attributes();
 void teardown_attributes();
 void register_attributes();
 
-// API
+// Network
+#if DC_SERVER
+void send_attributes_to_client(ClientID client_id);
+#endif
 
+// API
 #define SET_ATTRIBUTE_HEADER(KEY, TYPE) \
     void set_attribute(AgentID agent_id, KEY key, TYPE value); \
     void set_attribute(KEY key, TYPE value); \

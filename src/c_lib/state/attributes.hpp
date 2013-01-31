@@ -3,12 +3,17 @@
 namespace World
 {
 
+// Boilerplate
 void init_attributes();
 void teardown_attributes();
 void register_attributes();
 
-// API
+// Network
+#if DC_SERVER
+void send_attributes_to_client(ClientID client_id);
+#endif
 
+// API
 #define SET_ATTRIBUTE_HEADER(KEY, TYPE) \
     void set_attribute(KEY key, TYPE value);
 
@@ -31,7 +36,5 @@ GET_ATTRIBUTE_HEADER(const char*, const char*, string);
 
 #undef SET_ATTRIBUTE_HEADER
 #undef GET_ATTRIBUTE_HEADER
-
-
 
 }   // World

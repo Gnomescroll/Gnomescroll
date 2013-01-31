@@ -3,6 +3,8 @@
 #include <agent/constants.hpp>
 #include <net_lib/net_StoC.hpp>
 
+const size_t STRING_ATTRIBUTE_MAX_LENGTH = 63;
+
 typedef enum
 {
     NULL_ATTRIBUTE = 0xFF
@@ -40,11 +42,7 @@ typedef bool (*setFloat)(float);
 typedef bool (*setString)(const char*);
 
 const size_t MAX_ATTRIBUTES = NULL_ATTRIBUTE;
-
 const size_t MAX_ATTRIBUTE_GROUPS = NULL_ATTRIBUTE_GROUP;
-
-
-const size_t STRING_ATTRIBUTE_MAX_LENGTH = 63;
 
 bool isValid(AttributeType type)
 {
@@ -76,6 +74,11 @@ class AttributesHolder
     {
     }
 };
+
+/* Meta API */
+
+const char* get_name(AttributeGroup group, AttributeType type);
+AttributeType get_type(AttributeGroup group, const char* name);
 
 /* Read/write API */
 
@@ -118,6 +121,11 @@ void done_loading();
 /* Network */
 
 void init_packets();
+
+#if DC_SERVER
+void send_to_client(AttributeGroup group, ClientID client_id);
+void send_changes();
+#endif
 
 class set_attribute_int_StoC:
     public FixedSizeNetPacketToClient<set_attribute_int_StoC>

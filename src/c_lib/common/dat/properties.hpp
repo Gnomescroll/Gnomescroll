@@ -117,7 +117,7 @@ class Properties
     }
 
     Properties(size_t max) :
-        current(0), max(max), current_property(NULL)
+        current(0), index(0), max(max), current_property(NULL)
     {
         this->properties = new Property[max];
     }

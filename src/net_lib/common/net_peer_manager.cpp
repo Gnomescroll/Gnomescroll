@@ -17,6 +17,8 @@ dont_include_this_file_in_client
 #include <common/common.hpp>
 #include <auth/constants.hpp>
 #include <auth/server.hpp>
+#include <agent/attributes.hpp>
+#include <state/attributes.hpp>
 
 /*
     Utility Functions
@@ -41,7 +43,7 @@ void send_version_to_client(ClientID client_id)
 /*
  * Phase 1:
  * send version
- * begin waiting for auth 
+ * begin waiting for auth
  */
 void NetPeerManager::init(ClientID client_id)
 {
@@ -83,13 +85,13 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
 
     this->user_id = user_id;
     strcpy(this->username, username);
-    
+
     // move peer from staging to active pool
     NetServer::pool[this->client_id] = NetServer::staging_pool[this->client_id];
     NetServer::staging_pool[this->client_id] = NULL;
 
     NetServer::users->set_name_for_client_id(this->client_id, this->username);
-    
+
     if (!Options::serializer || !Options::auth)
     {
         #if GS_SERIALIZER
@@ -110,7 +112,7 @@ void NetPeerManager::was_authorized(UserID user_id, time_t expiration_time, cons
         if (ItemContainer::player_container_types[i] != ItemContainer::name::hand) // TODO -- allow hand loading eventually
             if (!serializer::load_player_container(serializer_id, ItemContainer::player_container_types[i]))
                 this->deserializer_failed();
-                
+
     if (!serializer::end_player_load(serializer_id))
         this->deserializer_failed();
 }
@@ -144,7 +146,7 @@ void NetPeerManager::was_deserialized()
     if (data != NULL)
         agent->status.set_color_silent(data->color);
     #endif
-    
+
     bool assigned_ctrs = ItemContainer::assign_containers_to_agent(agent->id, this->client_id);
     GS_ASSERT(assigned_ctrs);
     if (!assigned_ctrs)
@@ -167,14 +169,16 @@ void NetPeerManager::was_deserialized()
             }
             serializer::create_player_container_items_from_data(agent->id, containers, n_containers);
         }
-
         // find spawner
         spawner_id = Components::agent_spawner_component_list->get_spawner_for_user(this->user_id);
     }
 
-    // Register agent with subsystems and send state 
+    // Register agent with subsystems and send state
+    Agents::send_attributes_to_client(this->client_id);
+    World::send_attributes_to_client(this->client_id);
+
     Chat::add_player_to_chat(this->client_id);
-    
+
     Agents::agent_list->send_to_client(this->client_id);
     t_mech::send_client_mech_list(this->client_id);
     Entities::send_to_client(this->client_id);

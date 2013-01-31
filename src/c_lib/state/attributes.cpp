@@ -66,6 +66,17 @@ void register_attributes()
 }
 
 /*********************
+ * Network
+ *********************/
+
+#if DC_SERVER
+void send_attributes_to_client(ClientID client_id)
+{
+    Attributes::send_to_client(attributes->attribute_group, client_id);
+}
+#endif
+
+/*********************
  * API
  *********************/
 

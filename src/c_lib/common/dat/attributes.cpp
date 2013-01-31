@@ -8,6 +8,7 @@ namespace Attributes
 class Attribute: public Property<AttributeType>
 {
     public:
+        AttributeGroup group;
         AttributeValueType value_type;
         AttributeSyncType sync_type;
 
@@ -156,6 +157,7 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(this->value_type == NULL_ATTRIBUTE_VALUE_TYPE ||
                   this->value_type == ATTRIBUTE_VALUE_INT);
         this->value_type = ATTRIBUTE_VALUE_INT;
+        *location = 1;
         this->_set_location(location);
     }
 
@@ -164,6 +166,7 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(this->value_type == NULL_ATTRIBUTE_VALUE_TYPE ||
                   this->value_type == ATTRIBUTE_VALUE_FLOAT);
         this->value_type = ATTRIBUTE_VALUE_FLOAT;
+        *location = 1.0f;
         this->_set_location(location);
     }
 
@@ -172,6 +175,7 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(this->value_type == NULL_ATTRIBUTE_VALUE_TYPE ||
                   this->value_type == ATTRIBUTE_VALUE_STRING);
         this->value_type = ATTRIBUTE_VALUE_STRING;
+        memset(*location, 0, (STRING_ATTRIBUTE_MAX_LENGTH+1)*sizeof(char));
         this->_set_location(location);
     }
 
@@ -182,9 +186,10 @@ class Attribute: public Property<AttributeType>
     }
 
     /* Networking */
-
-    void send() const
+    #if DC_SERVER
+    void send_changes()
     {
+        if (!this->changed) return;
         if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PRIVATE) return;
 
         #define ROUTE_MESSAGE(MSG_TYPE) \
@@ -215,24 +220,61 @@ class Attribute: public Property<AttributeType>
         {
             ROUTE_MESSAGE(set_attribute_string_StoC);
         }
-
+        else
+        {
+            GS_ASSERT(false);
+        }
         #undef ROUTE_MESSAGE
-
-        GS_ASSERT(false);
-    }
-
-    void send_changes()
-    {
-        if (!this->changed) return;
-        this->send();
         this->changed = false;
     }
+
+    void send_to_client(ClientID client_id) const
+    {
+        IF_ASSERT(!isValid(client_id)) return;
+        if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PRIVATE) return;
+
+        #define ROUTE_MESSAGE(MSG_TYPE) \
+        { do { \
+            MSG_TYPE msg; \
+            this->_pack_message(&msg); \
+            if (this->sync_type == ATTRIBUTE_SYNC_TYPE_ALL) \
+                msg.sendToClient(client_id); \
+            else \
+            if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PLAYER) \
+            { \
+                GS_ASSERT(this->sync_to == client_id); \
+                msg.sendToClient(this->sync_to); \
+            } \
+        } while (0); }
+
+        if (this->value_type == ATTRIBUTE_VALUE_INT)
+        {
+            ROUTE_MESSAGE(set_attribute_int_StoC);
+        }
+        else
+        if (this->value_type == ATTRIBUTE_VALUE_FLOAT)
+        {
+            ROUTE_MESSAGE(set_attribute_float_StoC);
+        }
+        else
+        if (this->value_type == ATTRIBUTE_VALUE_STRING)
+        {
+            ROUTE_MESSAGE(set_attribute_string_StoC);
+        }
+        else
+        {
+            GS_ASSERT(false);
+        }
+        #undef ROUTE_MESSAGE
+    }
+    #endif
 
     /* Verification */
 
     void verify() const
     {
         GS_ASSERT(this->type != NULL_ATTRIBUTE);
+        GS_ASSERT(this->group != NULL_ATTRIBUTE_GROUP);
         GS_ASSERT(this->value_type != NULL_ATTRIBUTE_VALUE_TYPE);
         GS_ASSERT(this->name[0] != '\0');
         GS_ASSERT(this->sync_type != NULL_ATTRIBUTE_SYNC_TYPE);
@@ -256,6 +298,7 @@ class Attribute: public Property<AttributeType>
 
     Attribute() :
         Property<AttributeType>(NULL_ATTRIBUTE),
+        group(NULL_ATTRIBUTE_GROUP),
         value_type(NULL_ATTRIBUTE_VALUE_TYPE),
         sync_type(NULL_ATTRIBUTE_SYNC_TYPE),
         location(NULL), getter(NULL), setter(NULL),
@@ -286,9 +329,11 @@ class Attribute: public Property<AttributeType>
         this->location = location;
     }
 
+    #if DC_SERVER
     void _pack_message(set_attribute_int_StoC* msg) const
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_INT);
+        msg->attribute_group = this->group;
         msg->attribute_type = this->type;
         msg->value = this->get_int();
     }
@@ -296,6 +341,7 @@ class Attribute: public Property<AttributeType>
     void _pack_message(set_attribute_float_StoC* msg) const
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_FLOAT);
+        msg->attribute_group = this->group;
         msg->attribute_type = this->type;
         msg->value = this->get_float();
     }
@@ -303,10 +349,12 @@ class Attribute: public Property<AttributeType>
     void _pack_message(set_attribute_string_StoC* msg) const
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_STRING);
+        msg->attribute_group = this->group;
         msg->attribute_type = this->type;
         strncpy(msg->value, this->get_string(), STRING_ATTRIBUTE_MAX_LENGTH);
         msg->value[STRING_ATTRIBUTE_MAX_LENGTH] = '\0';
     }
+    #endif
 };
 
 
@@ -327,11 +375,12 @@ class Attributes: public Properties<Attribute, AttributeType>
                 this->properties[i].verify_other(&this->properties[j]);
     }
 
-    void send() const
+    #if DC_SERVER
+    void send_to_client(ClientID client_id) const
     {
         for (size_t i=0; i<this->index; i++)
             if (this->properties[i].loaded)
-                this->properties[i].send();
+                this->properties[i].send_to_client(client_id);
     }
 
     void send_changes()
@@ -339,6 +388,15 @@ class Attributes: public Properties<Attribute, AttributeType>
         for (size_t i=0; i<this->index; i++)
             if (this->properties[i].loaded)
                 this->properties[i].send_changes();
+    }
+    #endif
+
+    void done_loading()
+    {
+        for (size_t i=0; i<this->index; i++)
+            if (this->properties[i].loaded)
+                this->properties[i].group = this->group;
+        Properties<Attribute, AttributeType>::done_loading();
     }
 
     Attributes() :
@@ -376,6 +434,14 @@ class AttributesManager
         for (size_t i=0; i<this->count; i++)
             this->attributes[i]->verify();
     }
+
+    #if DC_SERVER
+    void send_changes()
+    {
+        for (size_t i=0; i<this->count; i++)
+            this->attributes[i]->send_changes();
+    }
+    #endif
 
     AttributesManager(size_t max) :
         count(0), max(max)
@@ -521,6 +587,27 @@ void verify()
     attributes_manager->verify();
 }
 
+/* Meta API */
+
+const char* get_name(AttributeGroup group, AttributeType type)
+{
+    Attributes* attr = attributes_manager->get(group);
+    IF_ASSERT(attr == NULL) return NULL;
+    Attribute* a = attr->get(type);
+    IF_ASSERT(a == NULL) return NULL;
+    return a->name;
+}
+
+AttributeType get_type(AttributeGroup group, const char* name)
+{
+    Attributes* attr = attributes_manager->get(group);
+    IF_ASSERT(attr == NULL) return NULL_ATTRIBUTE;
+    Attribute* a = attr->get(name);
+    IF_ASSERT(a == NULL) return NULL_ATTRIBUTE;
+    return a->type;
+}
+
+
 /* Registration API */
 
 static Attributes* current_attributes;
@@ -560,6 +647,10 @@ static void _set_saved()
             GS_ASSERT(false);
             break;
     }
+
+    // unset changed; it should be false at init
+    Attribute* a = current_attributes->get(_type);
+    a->changed = false;
 
     _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
 }
@@ -670,30 +761,50 @@ void init_packets()
     set_attribute_string_StoC::register_client_packet();
 }
 
+#if DC_SERVER
+void send_to_client(AttributeGroup group, ClientID client_id)
+{
+    Attributes* a = attributes_manager->get(group);
+    IF_ASSERT(a == NULL) return;
+    a->send_to_client(client_id);
+}
+
+void send_changes()
+{
+    attributes_manager->send_changes();
+}
+#endif
+
 #if DC_CLIENT
 inline void set_attribute_int_StoC::handle()
 {
-    Attributes* attributes = attributes_manager->get((AttributeGroup)this->attribute_group);
+    AttributeGroup group = (AttributeGroup)this->attribute_group;
+    AttributeType type = (AttributeType)this->attribute_type;
+    Attributes* attributes = attributes_manager->get(group);
     IF_ASSERT(attributes == NULL) return;
-    Attribute* attr = attributes->get((AttributeType)this->attribute_type);
+    Attribute* attr = attributes->get(type);
     IF_ASSERT(attr == NULL) return;
     attr->set((int)this->value);
 }
 
 inline void set_attribute_float_StoC::handle()
 {
-    Attributes* attributes = attributes_manager->get((AttributeGroup)this->attribute_group);
+    AttributeGroup group = (AttributeGroup)this->attribute_group;
+    AttributeType type = (AttributeType)this->attribute_type;
+    Attributes* attributes = attributes_manager->get(group);
     IF_ASSERT(attributes == NULL) return;
-    Attribute* attr = attributes->get((AttributeType)this->attribute_type);
+    Attribute* attr = attributes->get(type);
     IF_ASSERT(attr == NULL) return;
     attr->set(this->value);
 }
 
 inline void set_attribute_string_StoC::handle()
 {
-    Attributes* attributes = attributes_manager->get((AttributeGroup)this->attribute_group);
+    AttributeGroup group = (AttributeGroup)this->attribute_group;
+    AttributeType type = (AttributeType)this->attribute_type;
+    Attributes* attributes = attributes_manager->get(group);
     IF_ASSERT(attributes == NULL) return;
-    Attribute* attr = attributes->get((AttributeType)this->attribute_type);
+    Attribute* attr = attributes->get(type);
     IF_ASSERT(attr == NULL) return;
     attr->set(this->value);
 }
