@@ -450,7 +450,7 @@ int light_update_array_max      = 1024;
 int light_update_array_index    = 0;
 //int light_update_array_n        = 0;
 
-void _push_envlight_update(int x, int y, int z)
+void _push_envlight_update2(int x, int y, int z)
 {
     if(light_update_array_index == light_update_array_max)
     {
@@ -473,7 +473,9 @@ void _envlight_update2(int _x, int _y, int _z)
         light_update_array = (struct LightUpdateElement*) malloc(light_update_array_max* sizeof(struct LightUpdateElement));
     }
 
-    _push_envlight_update(_x,_y,_z);
+    _push_envlight_update2(_x,_y,_z);
+
+    GS_ASSERT_ABORT(_x == light_update_array[0].x && _y == light_update_array[0].y && _z == light_update_array[0].z);
 
     static const int va[3*6] =
     {
@@ -504,7 +506,7 @@ void _envlight_update2(int _x, int _y, int _z)
                 for(int i=0; i<6; i++)
                 {
                     if(get_envlight(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]) < li -1)
-                        _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+                        _envlight_update2(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
                 }
                 return;
             #else
@@ -512,7 +514,7 @@ void _envlight_update2(int _x, int _y, int _z)
                 {
                     struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
                     if( (_e.light & 0x0f) < li -1 && fast_cube_properties[_e.block].solid == false)
-                        _push_envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+                        _push_envlight_update2(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
                 }
                 index++;
                 continue;
@@ -571,7 +573,7 @@ void _envlight_update2(int _x, int _y, int _z)
                     {
                         struct MAP_ELEMENT _e2 = get_element(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
                         if( (_e2.light >> 4) < li -1 && fast_cube_properties[_e2.block].solid == false)
-                            _push_envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
+                            _push_envlight_update2(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
                     }
 
                 }
@@ -625,7 +627,7 @@ int ENV_LIGHT_MAX(int li[6])
     Each block should only set its own values
 */
 
-void _envlight_update(int x, int y, int z);
+void _envlight_update2(int x, int y, int z);
 
 //handle block addition
 void light_add_block(int x, int y, int z)
@@ -637,15 +639,23 @@ void light_add_block(int x, int y, int z)
         set_envlight(x,y,z, fast_cube_attributes[e.block].light_value);
     }
 
-    if(fast_cube_properties[e.block].solid == false)
-        _envlight_update(x,y,z);
+    //placed solid block
+    if(fast_cube_properties[e.block].solid == true)
+    {
+
+    }
+    else
+    {
+        _envlight_update2(x,y,z);
+
+    }
 }
 
 void _envlight_update(int x, int y, int z)
 {
     _envlight_update2(x,y,z);
     return;
-    
+
     //x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     //y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     //z &= 127;
@@ -676,7 +686,7 @@ void _envlight_update(int x, int y, int z)
             for(int i=0; i<6; i++)
             {
                 if(get_envlight(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]) < li -1)
-                    _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+                    _envlight_update2(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
             }
             return;
         #else
@@ -684,7 +694,7 @@ void _envlight_update(int x, int y, int z)
             {
                 struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
                 if( (_e.light & 0x0f) < li -1 && fast_cube_properties[_e.block].solid == false)
-                    _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+                    _envlight_update2(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
             }
             return;
         #endif
@@ -757,18 +767,18 @@ void _envlight_update(int x, int y, int z)
                 //proprogate
             #if 0
                 for(int j=0; j<6; j++)
-                    _envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
+                    _envlight_update2(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
             #else
                 for(int j=0; j<6; j++)
                 {
                     struct MAP_ELEMENT _e2 = get_element(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
                     if( (_e2.light >> 4) < li -1 && fast_cube_properties[_e2.block].solid == false)
-                        _envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
+                        _envlight_update2(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
                 }
             #endif
             }
             //if(_e.light < li -1 && fast_cube_properties[_e.block].solid == false)
-            //    _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+            //    _envlight_update2(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
         }
 
     /*
@@ -781,7 +791,7 @@ void _envlight_update(int x, int y, int z)
         {
             struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
             if(_e.light < li -1 && fast_cube_properties[_e.block].solid == false)
-                _envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+                _envlight_update2(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
         }
     */
     }
@@ -818,7 +828,7 @@ void _envlight_update(int x, int y, int z)
         for(int i=0; i<6; i++)
         {
             //conditions?
-            _envlight_update(x+va[3*i+0] ,y+va[3*i+1], z+va[3*i+2]);
+            _envlight_update2(x+va[3*i+0] ,y+va[3*i+1], z+va[3*i+2]);
         }
         return;
     }
@@ -865,12 +875,12 @@ void _envlight_update(int x, int y, int z)
 
     if(min <
 
-    if(lia[0] < li-1) _envlight_update(x ,y , z+1);
-    if(lia[1] < li-1) _envlight_update(x ,y , z-1);
-    if(lia[2] < li-1) _envlight_update(x+1,y, z);
-    if(lia[3] < li-1) _envlight_update(x-1,y, z);
-    if(lia[4] < li-1) _envlight_update(x, y+1, z);
-    if(lia[5] < li-1) _envlight_update(x, y-1, z);
+    if(lia[0] < li-1) _envlight_update2(x ,y , z+1);
+    if(lia[1] < li-1) _envlight_update2(x ,y , z-1);
+    if(lia[2] < li-1) _envlight_update2(x+1,y, z);
+    if(lia[3] < li-1) _envlight_update2(x-1,y, z);
+    if(lia[4] < li-1) _envlight_update2(x, y+1, z);
+    if(lia[5] < li-1) _envlight_update2(x, y-1, z);
 
     if(li != max -1)
     {
@@ -893,7 +903,7 @@ void _envlight_update(int x, int y, int z)
 
 
         //update blocks if they are less than current light value
-        //if(lia[0] < max-1) _envlight_update
+        //if(lia[0] < max-1) _envlight_update2
 
         //proprogate outwards
     }
@@ -1004,7 +1014,7 @@ void update_envlight(int chunk_i, int chunk_j)
         //if(fast_cube_properties[e.block].solid == false)
         if(fast_cube_properties[e.block].solid == false ||
             fast_cube_properties[e.block].light_source == true)
-        _envlight_update(x,y,k);
+        _envlight_update2(x,y,k);
 
     /*
         int lv = fast_cube_attributes[e.block].light_value;
@@ -1045,7 +1055,7 @@ void update_envlight_boundary(int _ci, int _cj)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
                 continue;
-            _envlight_update(16*ci+i,16*cj+j,k);
+            _envlight_update2(16*ci+i,16*cj+j,k);
         }
     }
 
@@ -1063,7 +1073,7 @@ void update_envlight_boundary(int _ci, int _cj)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
                 continue;
-            _envlight_update(16*ci+i,16*cj+j,k);
+            _envlight_update2(16*ci+i,16*cj+j,k);
         }
     }
 
@@ -1080,7 +1090,7 @@ void update_envlight_boundary(int _ci, int _cj)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
                 continue;
-            _envlight_update(16*ci+i,16*cj+j,k);
+            _envlight_update2(16*ci+i,16*cj+j,k);
         }
     }
 
@@ -1098,7 +1108,7 @@ void update_envlight_boundary(int _ci, int _cj)
         {
             if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
                 continue;
-            _envlight_update(16*ci+i,16*cj+j,k);
+            _envlight_update2(16*ci+i,16*cj+j,k);
         }
     }
 
