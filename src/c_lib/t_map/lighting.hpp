@@ -499,6 +499,7 @@ void _envlight_update2(int _x, int _y, int _z)
 
     GS_ASSERT(_x == light_update_array[0].x && _y == light_update_array[0].y && _z == light_update_array[0].z);
     GS_ASSERT(isSolid(_x,_y,_z) == false);
+    GS_ASSERT(fast_cube_properties[get_element(_x,_y,_z).block].solid == false);
 
     int index = 0;
     while(index != light_update_array_index)
@@ -510,6 +511,12 @@ void _envlight_update2(int _x, int _y, int _z)
         struct MAP_ELEMENT e = get_element(x,y,z);
         int li = (e.light >> 4);
         GS_ASSERT(li == get_envlight(x,y,z));
+
+        if(index == 0)
+        {
+            GS_ASSERT(isSolid(x,y,z) == false);
+            GS_ASSERT(fast_cube_properties[e.block].solid == false);
+        }
 
         if(fast_cube_properties[e.block].light_source == true)
         {
@@ -533,6 +540,7 @@ void _envlight_update2(int _x, int _y, int _z)
         - if difference is more than 2, then suggests removal of block
     */
             //solid non-light source
+
             if(fast_cube_properties[e.block].solid == true)
             {
                 GS_ASSERT(false);
