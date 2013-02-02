@@ -30,7 +30,7 @@ extern class UserRecorder* users;
 
 class NetPeerManager* get_client(ClientID client_id);
 class NetPeerManager* get_client_from_user_id(UserID user_id);
-
+bool client_is_connected(ClientID client_id);
 AgentID get_agent_id_for_client(ClientID client_id);
 
 void init_globals();

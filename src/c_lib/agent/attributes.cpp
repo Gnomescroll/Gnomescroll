@@ -65,6 +65,13 @@ class AgentModifierList: public ObjectList<AgentModifier, ModifierID>
         return NULL;
     }
 
+    void flush()
+    {
+        for (size_t i=0; i<this->max; i++)
+            if (this->objects[i].id != this->null_id)
+                this->destroy(this->objects[i].id);
+    }
+
     AgentModifierList() :
         ObjectList<AgentModifier, ModifierID>(MAX_AGENT_MODIFIERS, NULL_MODIFIER)
     {}
@@ -250,21 +257,22 @@ static bool update_agent_attribute(AgentID agent_id,
 static void apply_timed_modifiers(AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
+    if (!agent_modifiers[agent_id].ct) return;
     for (size_t i=0; i<agent_modifiers[agent_id].max; i++)
     {
         AgentModifier* m = &agent_modifiers[agent_id].objects[i];
         if (m->id == agent_modifiers[agent_id].null_id) continue;
+        AttributeValueType value_type = Attributes::get_value_type(stats[agent_id], m->attribute_type);
+        m->tick++;
+        if (m->tick % m->period == 0)
+            update_agent_attribute(agent_id, m->attribute_type, value_type,
+                                   m->amount, m->percent);
         if (m->tick >= m->duration)
         {
             GS_ASSERT(m->duration > 0);
             agent_modifiers[agent_id].destroy(m->id);
             continue;
         }
-        AttributeValueType value_type = Attributes::get_value_type(stats[agent_id], m->attribute_type);
-        if (m->tick % m->duration == 0)
-            update_agent_attribute(agent_id, m->attribute_type, value_type,
-                                   m->amount, m->percent);
-        m->tick++;
     }
 }
 
@@ -361,5 +369,13 @@ void teardown_attributes()
     if (agent_modifiers != NULL) delete[] agent_modifiers;
     if (modifier_sums != NULL) free(modifier_sums);
 }
+
+void reset_attributes(AgentID agent_id)
+{
+    IF_ASSERT(!isValid(agent_id)) return;
+    agent_modifiers[agent_id].flush();
+    Attributes::copy_from(stats[agent_id], base_stats);
+}
+
 
 }   // Agents

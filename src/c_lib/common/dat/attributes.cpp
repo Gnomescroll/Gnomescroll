@@ -1,6 +1,9 @@
 #include "attributes.hpp"
 
 #include <common/dat/properties.hpp>
+#if DC_SERVER
+# include <net_lib/server.hpp>
+#endif
 
 namespace Attributes
 {
@@ -58,6 +61,7 @@ class Attribute: public Property<AttributeType>
         if (old != value)
         {
             *(reinterpret_cast<int*>(this->value)) = value;
+            this->changed = true;
             return true;
         }
         return false;
@@ -72,6 +76,7 @@ class Attribute: public Property<AttributeType>
         if (old != value)
         {
             *(reinterpret_cast<float*>(this->value)) = value;
+            this->changed = true;
             return true;
         }
         return false;
@@ -80,6 +85,7 @@ class Attribute: public Property<AttributeType>
     bool set(const char* value)
     {
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_STRING) return false;
+        IF_ASSERT(value == NULL) value = "";
         char* old = *(reinterpret_cast<char**>(this->value));
         if (this->set_callback != NULL)
             value = reinterpret_cast<setString>(this->set_callback)(old, value);
@@ -88,6 +94,7 @@ class Attribute: public Property<AttributeType>
             char* loc = *(reinterpret_cast<char**>(this->value));
             strncpy(loc, value, STRING_ATTRIBUTE_MAX_LENGTH);
             loc[STRING_ATTRIBUTE_MAX_LENGTH] = '\0';
+            this->changed = true;
             return true;
         }
         return false;
@@ -171,6 +178,23 @@ class Attribute: public Property<AttributeType>
         }
     }
 
+    void copy_from(const Attribute* other)
+    {
+        IF_ASSERT(this->value_type != other->value_type) return;
+        if (this->value_type == ATTRIBUTE_VALUE_INT)
+            this->set(other->get_int());
+        else
+        if (this->value_type == ATTRIBUTE_VALUE_FLOAT)
+            this->set(other->get_float());
+        else
+        if (this->value_type == ATTRIBUTE_VALUE_STRING)
+            this->set(other->get_string());
+        else
+        {
+            GS_ASSERT(false);
+        }
+    }
+
     /* Networking */
     #if DC_SERVER
     void set_sync_to(ClientID client_id)
@@ -184,6 +208,8 @@ class Attribute: public Property<AttributeType>
     {
         if (!this->changed) return;
         if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PRIVATE) return;
+        if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PLAYER &&
+            !NetServer::client_is_connected(this->sync_to)) return;
 
         #define ROUTE_MESSAGE(MSG_TYPE) \
         { do { \
@@ -379,7 +405,13 @@ class Attributes: public Properties<Attribute, AttributeType>
                 this->properties[i].verify_other(&this->properties[j]);
     }
 
-
+    void copy_from(const Attributes* other)
+    {
+        IF_ASSERT(this->max != other->max) return;
+        IF_ASSERT(this->index != other->index) return;
+        for (size_t i=0; i<this->index; i++)
+            this->properties[i].copy_from(&other->properties[i]);
+    }
 
     #if DC_SERVER
     void set_sync_to(ClientID client_id)
@@ -581,6 +613,16 @@ const char* get_string(AttributeGroup group, const char* name)
     Attribute* a = attributes->get(name);
     IF_ASSERT(a == NULL) return NULL;
     return a->get_string();
+}
+
+void copy_from(AttributeGroup dest_group, AttributeGroup src_group)
+{   // copies attribute values from src to dest.
+    // their attributes must match exactly otherwise
+    Attributes* dest = attributes_manager->get(dest_group);
+    IF_ASSERT(dest == NULL) return;
+    Attributes* src = attributes_manager->get(src_group);
+    IF_ASSERT(src == NULL) return;
+    dest->copy_from(src);
 }
 
 /* Boilerplate */

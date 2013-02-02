@@ -229,6 +229,7 @@ void NetPeerManager::teardown()
         this->broadcast_disconnect();
     }
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
+    Agents::reset_attributes(this->agent_id);
 }
 
 void NetPeerManager::broadcast_disconnect()

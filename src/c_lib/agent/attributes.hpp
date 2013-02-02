@@ -11,6 +11,8 @@ void init_attributes();
 void teardown_attributes();
 void register_attributes();
 
+void reset_attributes(AgentID agent_id);
+
 #if DC_SERVER
 // Modifiers
 void apply_agent_modifiers();

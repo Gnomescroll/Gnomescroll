@@ -34,6 +34,5 @@ inline void request_item_create_CtoS::handle()
     #endif
 }
 
-
 } // Item
 #endif

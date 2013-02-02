@@ -11,7 +11,7 @@ namespace NetServer
 
 unsigned int number_of_clients = 0;
 unsigned int session_count = 0;
-    
+
 NetPeer** pool = NULL;
 NetPeer** staging_pool = NULL;
 class NetPeerManager** clients = NULL;
@@ -35,6 +35,11 @@ class NetPeerManager* get_client_from_user_id(UserID user_id)
         if (clients[i] != NULL && clients[i]->user_id == user_id)
             return clients[i];
     return NULL;
+}
+
+bool client_is_connected(ClientID client_id)
+{
+    return (get_client(client_id) != NULL);
 }
 
 AgentID get_agent_id_for_client(ClientID client_id)
@@ -188,7 +193,7 @@ void kill_client(ClientID client_id, DisconnectType error_code)
     IF_ASSERT(!isValid(client_id)) return;
     IF_ASSERT(staging_pool == NULL) return;
     IF_ASSERT(pool == NULL) return;
-    
+
     class NetPeer* peer = staging_pool[client_id];
     if (peer == NULL) peer = pool[client_id];
     IF_ASSERT(peer == NULL) return;

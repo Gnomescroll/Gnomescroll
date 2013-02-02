@@ -90,6 +90,8 @@ float get_float(AttributeGroup group, const char* name);
 const char* get_string(AttributeGroup group, AttributeType type);
 const char* get_string(AttributeGroup group, const char* name);
 
+void copy_from(AttributeGroup dest_group, AttributeGroup src_group);
+
 /* Boilerplate */
 
 void init();
