@@ -51,15 +51,17 @@ CubeType set(int x, int y, int z, CubeType cube_type)
     // and call it here (along with the apply_damage location)
     if (isItemContainer(existing_cube_type))
         destroy_item_container_block(x,y,z);
+
     #endif
     main_map->set_block(x,y,z, cube_type);
+    light_add_block(x,y,z);
     return cube_type;
 }
 
 OPTIMIZED ALWAYS_INLINE
 void set_fast(int x, int y, int z, CubeType cube_type)
 {
-    main_map->set_block(x,y,z, cube_type);
+    main_map->set_block_fast(x,y,z, cube_type);
 }
 
 struct MAP_ELEMENT get_element(int x, int y, int z)
@@ -158,6 +160,10 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     CubeType cube_type = ERROR_CUBE;
     int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_type);
     if (ret != 0) return;
+
+
+    set(x,y,z, EMPTY_CUBE);  //clear block
+    t_mech::handle_block_removal(x,y,z);    //block removal
 
     // always explode explosives with force
     if (isExplosive(cube_type)) action = TMA_PLASMAGEN;

@@ -135,7 +135,7 @@ int generate_ore_vein(int x, int y, int z, int size, CubeType tile_id)
         // we need this, because x,y are exceeding twice the bounds
         // of the map
 
-        t_map::set(x,y,z,tile_id);
+        t_map::set_fast(x,y,z,tile_id);
 
         tries = 0; //reset
         ct++;
@@ -250,7 +250,7 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeType tile
             int ty = (_y+j+512) % 512;
             int tz = (_z+k+128) % 128;
 
-            t_map::set(tx,ty,tz,tile_id);
+            t_map::set_fast(tx,ty,tz,tile_id);
             _set ++;
 
         }
@@ -359,7 +359,7 @@ int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeType t
             int ty = (_y+j+512) % 512;
             int tz = (_z+k+128) % 128;
 
-            t_map::set(tx,ty,tz, tile_id);
+            t_map::set_fast(tx,ty,tz, tile_id);
             _set ++;
 
         }

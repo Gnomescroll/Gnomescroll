@@ -69,6 +69,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.cube_type = cube_type;
         msg.action = action;
 
+        printf("block_action: cube_type= %d action= %d, x,y,z= %d %d %d \n", cube_type, action, x,y,z);
         for(int i=0; i < subscriber_num; i++)
         {
             msg.sendToClient((ClientID)subscribers[i]);
@@ -85,6 +86,8 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.y = y;
         msg.z = z;
         msg.cube_type = cube_type;
+
+        printf("block_set: cube_type= %d, x,y,z= %d %d %d \n", cube_type, x,y,z);
 
         for(int i=0; i < subscriber_num; i++)
         {

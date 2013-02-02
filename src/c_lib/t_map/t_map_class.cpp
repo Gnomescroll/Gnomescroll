@@ -191,8 +191,6 @@ void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
 
     c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
 
-    light_add_block(x,y,z); //update lighting
-    
     #if DC_CLIENT
     c->needs_update = true; 
 
@@ -259,8 +257,10 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
     {
         e->damage = maxdmg;
 
+/*
         // destroy block
-        *e = NULL_MAP_ELEMENT; 
+        *e = NULL_MAP_ELEMENT;   
+        _envlight_update2(x,y,z); //light update
 
         #if DC_SERVER
         if(isItemContainer(*cube_type))
@@ -281,8 +281,8 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
         #if DC_SERVER
         t_mech::handle_block_removal(x,y,z);
         #endif
-
-        return 0;
+*/
+        return 0;   //tells it to set to 0
     } 
     else 
     {
@@ -435,12 +435,23 @@ void Terrain_map::set_block(int x, int y, int z, CubeType cube_type)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     struct MAP_ELEMENT element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
+    
     set_element(x,y,z, element);
 
-    light_add_block(x,y,z);
     #if DC_CLIENT
     update_heights(x,y,z, cube_type);
     #endif
+}
+
+void Terrain_map::set_block_fast(int x, int y, int z, CubeType cube_type)
+{
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+    struct MAP_ELEMENT element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
+    set_element(x,y,z, element);
 }
 
 

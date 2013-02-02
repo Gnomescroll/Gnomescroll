@@ -108,8 +108,8 @@ void erosion(const int x, const int y, const int passes, const int h_diff, const
             int n = 0;
             while (max_h > h_diff && n < max_iters)
             {
-                t_map::set(i,j,h, EMPTY_CUBE);
-                t_map::set(i+dis[max_d],j+djs[max_d],heights[max_d]+1,tile);
+                t_map::set_fast(i,j,h, EMPTY_CUBE);
+                t_map::set_fast(i+dis[max_d],j+djs[max_d],heights[max_d]+1,tile);
                 heights[max_d] += 1;
                 max_h -= 1;
                 for (int p=0; p<4; p++)
