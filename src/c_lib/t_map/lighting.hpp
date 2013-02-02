@@ -415,6 +415,9 @@ int get_envlight(int x, int y, int z)
 
 void set_envlight(int x, int y, int z, int value)
 {
+
+    printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
+
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -731,6 +734,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
         }
         else
         {
+        /*
             if(fast_cube_properties[e.block].solid == true)
             {
                 set_envlight(x,y,k, 0);
@@ -739,6 +743,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
             {
                 set_envlight(x,y,k, 0);
             }
+        */
         }
     }
 }
