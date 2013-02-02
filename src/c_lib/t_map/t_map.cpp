@@ -51,7 +51,10 @@ CubeType set(int x, int y, int z, CubeType cube_type)
     // and call it here (along with the apply_damage location)
     if (isItemContainer(existing_cube_type))
         destroy_item_container_block(x,y,z);
+    #endif
 
+    #if DC_CLIENT
+        printf("set: %d %d %d \n", x,y,z);
     #endif
     main_map->set_block(x,y,z, cube_type);
     light_add_block(x,y,z);

@@ -188,7 +188,6 @@ void block_set_palette_StoC::handle()
     //e.light   = fast_cube_attributes[cube_type].light_value;
 
     set_element(x,y,z, e);
-    light_add_block(x,y,z); //handle block addition
 }
 
 void block_action_StoC::handle()
@@ -200,8 +199,9 @@ void block_action_StoC::handle()
         Sound::play_3d_sound("block_destroyed", x+0.5f,y+0.5f,z+0.5f, 0,0,0);
     }
     else
+    {
         Sound::play_3d_sound("block_set", x+0.5f,y+0.5f,z+0.5f,0,0,0);
-
+    }
     set(x,y,z, (CubeType)this->cube_type);
 }
 

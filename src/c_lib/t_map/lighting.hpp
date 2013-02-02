@@ -619,6 +619,7 @@ void _envlight_update_core()
     if(index > 1)
     printf("light_index= %d \n", index); 
 
+
 #if DC_CLIENT
     if(index > 1000)
         GS_ASSERT(false);
@@ -634,6 +635,12 @@ void _envlight_update2(int x, int y, int z);
 //handle block addition
 void light_add_block(int x, int y, int z)
 {
+
+    #if DC_CLIENT
+        printf("light_add_block: %d %d %d \n", x,y,z);
+    #endif
+
+
     struct MAP_ELEMENT e = get_element(x,y,z);
 
     if( (e.light >> 4) != fast_cube_attributes[e.block].light_value )
