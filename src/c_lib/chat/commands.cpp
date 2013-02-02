@@ -28,7 +28,7 @@ void cmd_die(const char* cmd, size_t cmdlen, char* args, size_t argslen)
 void cmd_color(const char* cmd, size_t cmdlen, char* args, size_t argslen)
 {
     const char* usage = "Usage: /color R G B (R G B must be between 0 and 255)";
-    
+
     Color color = Color(0,0,0);
     bool valid = true;
 
@@ -48,16 +48,16 @@ void cmd_color(const char* cmd, size_t cmdlen, char* args, size_t argslen)
         }
     }
     i = 0;
-    
+
     if (c != '\0') valid = false;    // encountered invalid char
     if (n != 3) valid = false;       // invalid arg count
-    
+
     if (!valid)
     {
         chat_client->send_system_message(usage);
         return;
     }
-    
+
     char buf[3+1] = {'\0'};
 
     int j = 0;  // copy red
@@ -72,7 +72,7 @@ void cmd_color(const char* cmd, size_t cmdlen, char* args, size_t argslen)
         else color.r = r;
     }
     printf("r: %s\n", buf);
-    
+
     j = 0;      // copy green
     while ((c = args[i++]) != '\0' && j < 3)
         buf[j++] = c;
@@ -85,7 +85,7 @@ void cmd_color(const char* cmd, size_t cmdlen, char* args, size_t argslen)
         else color.g = g;
     }
     printf("g: %s\n", buf);
-            
+
     j = 0;      // copy blue
     while ((c = args[i++]) != '\0' && j < 3)
         buf[j++] = c;
@@ -98,7 +98,7 @@ void cmd_color(const char* cmd, size_t cmdlen, char* args, size_t argslen)
         else color.b = b;
     }
     printf("b: %s\n", buf);
-    
+
     if (!valid)
     {
         chat_client->send_system_message(usage);
@@ -134,6 +134,61 @@ void cmd_home(const char* cmd, size_t cmdlen, char* args, size_t argslen)
     msg.send();
 }
 
+void cmd_item(const char* cmd, size_t cmdlen, char* args, size_t arglen)
+{
+    #if !PRODUCTION
+    const char USAGE[] = "/%s <item_name> [<stack_size>]";
+
+    char item_name[DAT_NAME_MAX_LENGTH+1] = {'\0'};
+    int i = 0;
+    char c = '\0';
+    while ((c = args[i]) && !isspace(c) && i <= DAT_NAME_MAX_LENGTH)
+        item_name[i++] = c;
+    item_name[i] = '\0';
+
+    if (!i)
+    {
+        chat_client->send_system_messagef(USAGE, cmd);
+        return;
+    }
+
+    int stack = 1;
+    char stack_size[11+1] = {'\0'};
+    if (c != '\0')
+    {
+        while ((c = args[i]) && isspace(c)) i++;
+        if (c != '\0')
+        {
+            int j = 0;
+            while ((c = args[i]) && !isspace(c) && j <= 11)
+            {
+                i++;
+                stack_size[j++] = c;
+            }
+            stack_size[j] = '\0';
+        }
+        bool err = false;
+        long long int _stack = parse_int(stack_size, err);
+        if (err)
+        {
+            chat_client->send_system_messagef("Invalid stack size: %s", stack_size);
+            return;
+        }
+        else
+        {
+            stack = (int)_stack;
+            if (_stack > MAX_STACK_SIZE)
+                stack = MAX_STACK_SIZE;
+            if (_stack <= 0)
+                stack = 1;
+        }
+    }
+
+    if (!Item::request_item_create(item_name, stack))
+        chat_client->send_system_messagef("Unknown item: %s", item_name);
+    #endif
+}
+
 /****************************
  ******* REGISTRATION *******
  ****************************/
@@ -150,7 +205,7 @@ static void add_command(const char* cmd, chatCommand action)
     commands[n_commands].action = action;
     strncpy(commands[n_commands].name, cmd, COMMAND_MAX_LENGTH+1);
     commands[n_commands].name[COMMAND_MAX_LENGTH] = '\0';
-    
+
     n_commands++;
 }
 
@@ -176,16 +231,13 @@ void register_chat_commands()
 {
     add_command("chaton", cmd_chaton);
     add_command("chatoff", cmd_chatoff);
-    
     add_command("kill", cmd_die);
     add_command("die", cmd_die);
-
     add_command("color", cmd_color);
     add_command("colour", cmd_color);
-
     add_command("url", cmd_url);
-
     add_command("home", cmd_home);
+    add_command("item", cmd_item);
 
     verify_command_conf();
 }

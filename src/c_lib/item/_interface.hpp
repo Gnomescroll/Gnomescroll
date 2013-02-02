@@ -29,6 +29,11 @@ namespace Item
 {
 void destroy_item(ItemID id);
 class Item* create_item(ItemType item_type, ItemID item_id);
+
+#if !PRODUCTION
+bool request_item_create(const char* name, int stack_size);
+#endif
+
 }   // Item
 #endif
 

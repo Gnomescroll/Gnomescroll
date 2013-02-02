@@ -269,10 +269,7 @@ void ChatInput::history_newer()
     }
 
     ChatInputHistoryObject* o = history;
-    for (int i=0; i<history_index; i++)
-    {
-        o = o->prev;
-    }
+    for (int i=0; i<history_index; i++) o = o->prev;
     strcpy(buffer, o->m);
     buffer_len = (int)strlen(buffer);
     cursor = buffer_len;
@@ -287,10 +284,7 @@ void ChatInput::history_older()
     history_index = (history_index > history_size-1) ? history_size-1 : history_index;
 
     ChatInputHistoryObject* o = history;
-    for (int i=0; i<history_index; i++)
-    {
-        o = o->prev;
-    }
+    for (int i=0; i<history_index; i++) o = o->prev;
     strcpy(buffer, o->m);
     buffer_len = (int)strlen(buffer);
     cursor = buffer_len;

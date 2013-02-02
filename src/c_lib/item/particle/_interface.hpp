@@ -17,18 +17,15 @@ class ItemParticle* get(ItemParticleID particle_id);
 #if DC_CLIENT
 void draw();
 
-class ItemParticle* create_item_particle(
-    ItemParticleID particle_id, ItemType item_type,
-    float x, float y, float z,
-    float vx, float vy, float vz);
+class ItemParticle* create_item_particle(ItemParticleID particle_id, ItemType item_type,
+                                          float x, float y, float z,
+                                          float vx, float vy, float vz);
 #endif
 
 #if DC_SERVER
-
-class ItemParticle* create_item_particle(
-    ItemID item_id, ItemType item_type,
-    float x, float y, float z,
-    float vx, float vy, float vz);
+class ItemParticle* create_item_particle(ItemID item_id, ItemType item_type,
+                                          float x, float y, float z,
+                                          float vx, float vy, float vz);
 
 // create Item and ItemParticle
 class Item::Item* create_item_particle(ItemType item_type, float x, float y, float z, float vx, float vy, float vz);
@@ -45,7 +42,6 @@ void broadcast_particle_item_pickup_cancelled(ItemParticleID particle_id);
 void check_item_pickups();
 void throw_agent_item(AgentID agent_id, ItemID item_id);
 void dump_container_item(ItemID item_id, float x, float y, float z);
-
 #endif
 
 }   // ItemParticle

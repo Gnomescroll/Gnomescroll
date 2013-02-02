@@ -75,10 +75,9 @@ void draw()
     item_particle_list->draw();
 }
 
-ItemParticle* create_item_particle(
-    ItemParticleID particle_id, ItemType item_type,
-    float x, float y, float z,
-    float vx, float vy, float vz)
+ItemParticle* create_item_particle(ItemParticleID particle_id, ItemType item_type,
+                                    float x, float y, float z,
+                                    float vx, float vy, float vz)
 {
     ItemParticle* particle = item_particle_list->create(particle_id);
     if (particle == NULL) return NULL;
@@ -88,10 +87,9 @@ ItemParticle* create_item_particle(
 #endif
 
 #if DC_SERVER
-ItemParticle* create_item_particle(
-    ItemID item_id, ItemType item_type,
-    float x, float y, float z,
-    float vx, float vy, float vz)
+ItemParticle* create_item_particle(ItemID item_id, ItemType item_type,
+                                    float x, float y, float z,
+                                    float vx, float vy, float vz)
 {
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return NULL;
@@ -121,7 +119,9 @@ ItemParticle* create_item_particle(
 }
 
 // create Item and ItemParticle
-class Item::Item* create_item_particle(ItemType item_type, float x, float y, float z, float vx, float vy, float vz)
+class Item::Item* create_item_particle(ItemType item_type,
+                                        float x, float y, float z,
+                                        float vx, float vy, float vz)
 {
     Item::Item* item = Item::create_item(item_type);
     if (item == NULL) return NULL;

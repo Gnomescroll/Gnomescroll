@@ -33,6 +33,7 @@ void init_packets()
     item_state_StoC::register_client_packet();
     item_destroy_StoC::register_client_packet();
     item_charges_StoC::register_client_packet();
+    request_item_create_CtoS::register_server_packet();
 }
 
 Item* get_item(ItemID id)
@@ -138,6 +139,21 @@ Item* create_item(ItemType item_type, ItemID item_id)
     IF_ASSERT(!isValid(item_id)) return NULL;
     return item_list->create_type(item_type, item_id);
 }
+
+#if !PRODUCTION
+bool request_item_create(const char* name, int stack_size)
+{
+    IF_ASSERT(stack_size <= 0 || stack_size > MAX_STACK_SIZE) return false;
+    ItemType type = get_item_type(name);
+    IF_ASSERT(type == NULL_ITEM_TYPE) return false;
+    request_item_create_CtoS msg;
+    msg.type = type;
+    msg.stack_size = stack_size;
+    msg.send();
+    return true;
+}
+#endif
+
 
 }   // Item
 #endif

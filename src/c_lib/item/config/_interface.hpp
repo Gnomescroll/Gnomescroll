@@ -205,9 +205,6 @@ void set_modifier_periodic(int duration, int period)
     // apply modifier once every 20 seconds, for 5 minutes
     // set_modifier_periodic(ONE_MINUTE * 5, 20 * ONE_SECOND);
     IF_ASSERT(_current_modifier == NULL) return;
-    IF_ASSERT(s->group == IG_EQUIPMENT)
-        printf("Time-based modifiers are invalid for IG_EQUIPMENT\n");
-    IF_ASSERT(_current_modifier == NULL) return;
     _current_modifier->set_periodic(duration, period);
 }
 
