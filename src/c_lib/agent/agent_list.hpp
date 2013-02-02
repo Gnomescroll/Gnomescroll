@@ -60,7 +60,7 @@ class AgentList: public ObjectList<class Agent, AgentID>
         void update_mining_lasers();
         #endif
 
-        explicit AgentList(unsigned int capacity);
+        explicit AgentList(size_t capacity);
 
         ~AgentList()
         {

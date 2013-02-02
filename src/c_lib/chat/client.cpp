@@ -9,7 +9,7 @@
 
 namespace Chat
 {
-    
+
 /* ChatMessage */
 
 void ChatMessage::set_name()
@@ -18,7 +18,7 @@ void ChatMessage::set_name()
         strcpy(name, (char*)"System");
     else
     {
-        AgentID agent_id = NetClient::get_agent_id_for_client(this->sender); 
+        AgentID agent_id = NetClient::get_agent_id_for_client(this->sender);
         Agents::Agent* a = Agents::get_agent(agent_id);
         if (a==NULL || a->status.name[0] == '\0')
             strcpy(name, Auth::UNDEFINED_NAME);
@@ -37,7 +37,7 @@ void ChatMessage::set_color()
         this->color = CHAT_PM_COLOR;
     else // global
     {
-        AgentID agent_id = NetClient::get_agent_id_for_client(this->sender); 
+        AgentID agent_id = NetClient::get_agent_id_for_client(this->sender);
         Agents::Agent *a = Agents::get_agent(agent_id);
         Color color = AGENT_DEFAULT_COLOR;
         if (a != NULL) color = a->status.color;
@@ -68,7 +68,7 @@ ChatMessageHistoryObject::~ChatMessageHistoryObject()
 void ChatClientChannel::add_message(ChatMessage* m)
 {
     ChatMessageHistoryObject* in = new ChatMessageHistoryObject(m);
-        
+
     if (history_size == CHAT_CLIENT_MESSAGE_HISTORY_MAX)
     {
         GS_ASSERT(this->tail != NULL);
@@ -191,7 +191,7 @@ void ChatInput::submit(int channel)
         msg.channel = channel;
         msg.send();
     }
-    
+
     // add to history
     if (was_cmd || valid)
         this->add_to_history(buffer);
@@ -239,7 +239,7 @@ void ChatInput::remove()
     char c;
     while ((c = buffer[i++]) != '\0')
         buffer[i-2] = c;
-        
+
     buffer[--buffer_len] = '\0';
     cursor--;
 }
@@ -282,7 +282,7 @@ void ChatInput::history_older()
 {
     if (history==NULL) return;
     if (!history_size) return;
-    
+
     history_index++;
     history_index = (history_index > history_size-1) ? history_size-1 : history_index;
 
@@ -297,7 +297,7 @@ void ChatInput::history_older()
 }
 
 bool ChatInput::route_command()
-{   // return false if the buffer doesn't start with command syntax; else return true (whether the command is valid/recognized or not) 
+{   // return false if the buffer doesn't start with command syntax; else return true (whether the command is valid/recognized or not)
     if (this->buffer_len <= 1) return false;
     if (this->buffer[0] != '/') return false;
     if (!isalnum(this->buffer[1]) && !ispunct(this->buffer[1])) return false;
@@ -320,7 +320,7 @@ bool ChatInput::route_command()
 
     char args[CHAT_BUFFER_SIZE] = {'\0'};
     IF_ASSERT(this->buffer_len < i) return true;
-    
+
     for (size_t cmd_id=0; cmd_id<n_commands; cmd_id++)
         if (!strcmp(cmd, commands[cmd_id].name))
         {
@@ -383,7 +383,7 @@ void ChatClient::received_message(int channel, ClientID sender, const char* payl
     m->set_color();
     m->set_name();
     m->timestamp = _GET_MS_TIME();
-    
+
     chan->add_message(m);
 }
 
@@ -481,7 +481,7 @@ ChatClient::ChatClient() : channel(1)
     this->channels = (ChatClientChannel**)malloc(sizeof(ChatClientChannel*)*CHAT_CLIENT_CHANNELS_MAX);
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; channels[i++] = NULL);
     this->subscribe_system_channel();
-    
+
     this->input = new ChatInput;
 }
 
@@ -563,7 +563,7 @@ void ChatMessageList::sort_by_most_recent()
 void ChatMessageList::filter_none()
 {   // moves all non null objects to the filtered list
     unsigned int c = 0;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != this->null_id)
             this->filtered_objects[c++] = &this->objects[i];
     this->n_filtered = c;
@@ -576,7 +576,7 @@ void ChatMessageList::filter_none()
 
 namespace SystemMessage
 {
-    
+
 char* spawner_created(Entities::Entity* s)
 {
     return NULL;

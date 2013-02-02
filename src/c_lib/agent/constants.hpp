@@ -63,13 +63,15 @@ const float AGENT_BOX_RADIUS = 0.38f;
 
 typedef enum
 {
-    NULL_AGENT = 0xff,
+    NULL_AGENT = 0xFF,
 } AgentID;
 
 inline bool isValid(AgentID agent_id)
 {
     return (agent_id >= 0 && agent_id < MAX_AGENTS);
 }
+
+const size_t MAX_AGENT_MODIFIERS = 0xFF;
 
 /* Status */
 const int AGENT_HEALTH = 99;

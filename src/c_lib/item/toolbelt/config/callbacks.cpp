@@ -173,7 +173,6 @@ void consume_item(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
-
     bool consumed = a->status.consume_item(item_id);
     if (!consumed) return;
     decrement_stack(agent_id, item_id, item_type);

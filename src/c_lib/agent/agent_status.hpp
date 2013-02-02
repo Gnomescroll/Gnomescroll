@@ -4,6 +4,9 @@
 #include <agent/constants.hpp>
 #include <common/color.hpp>
 #include <social/badges.hpp>
+#if DC_SERVER
+# include <common/dat/modifiers.hpp>
+#endif
 
 namespace Agents
 {
@@ -79,6 +82,8 @@ class AgentStatus
     void send_color(ClientID client_id);
     void broadcast_color();
 
+    bool add_modifier(const Modifier* modifier);
+    bool apply_modifier(const Modifier* modifier);
     bool consume_item(ItemID item_id);
 
     void send_scores(ClientID client_id);

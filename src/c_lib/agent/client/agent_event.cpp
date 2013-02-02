@@ -52,7 +52,7 @@ void AgentEvent::update_hud_name()
         if (h >= health_color_points[0])
             color = health_colors[0];    // degenerate case, out of range
         else
-            for (unsigned int i=0; i<COLOR_COUNT-1; i++)
+            for (size_t i=0; i<COLOR_COUNT-1; i++)
                 if (h < health_color_points[i] && h >= health_color_points[i+1])
                 {
                     color = interpolate_color(health_colors[i], health_colors[i+1],

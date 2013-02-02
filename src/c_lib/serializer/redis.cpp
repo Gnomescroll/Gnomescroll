@@ -9,8 +9,8 @@ namespace serializer
 static int expected_redis_replies = 0;
 
 redisAsyncContext* ctx = NULL;
-static bool waiting_to_connect = false; 
-static bool waiting_to_disconnect = false; 
+static bool waiting_to_connect = false;
+static bool waiting_to_disconnect = false;
 bool redis_connected = false;
 
 static void handle_reply(redisReply* reply)
@@ -20,7 +20,7 @@ static void handle_reply(redisReply* reply)
         case REDIS_REPLY_ERROR:
             printf("Error reply: %s\n", reply->str);
             break;
-            
+
         case REDIS_REPLY_STATUS:
             printf("Status reply: %s\n", reply->str);
             break;
@@ -39,7 +39,7 @@ static void handle_reply(redisReply* reply)
 
         case REDIS_REPLY_ARRAY:
             printf("Reply (multi-bulk): %lu elements\n", (unsigned long)reply->elements);
-            for (unsigned int i=0; i<reply->elements; i++)
+            for (size_t i=0; i<reply->elements; i++)
                 handle_reply(reply->element[i]);
             break;
 
@@ -94,7 +94,7 @@ void connect()
 {
     GS_ASSERT(!redis_connected);
     if (redis_connected) return;
-    
+
     // CONNECT NEW
     waiting_to_connect = true;
     ctx = redisAsyncConnect("127.0.0.1", 6379);
@@ -147,19 +147,19 @@ void init_redis()
 {
     GS_ASSERT(ctx == NULL);
     if (ctx != NULL) return;
-    
+
     signal(SIGPIPE, SIG_IGN);
 
     struct ev_loop* evl = ev_default_loop(EVFLAG_AUTO);
     GS_ASSERT(evl != NULL);
-    
+
     connect();
 }
 
 void teardown_redis()
 {
     GS_ASSERT(expected_redis_replies == 0);
-    
+
     if (!redis_connected)
     {
         if (ctx != NULL)

@@ -22,14 +22,14 @@ Agents::Agent* lock_agent_target(
 
     if (random)
     {
-        for (unsigned int i=0; i<agent_list->n_filtered; i++)
+        for (size_t i=0; i<agent_list->n_filtered; i++)
             chosen[i] = i;
         shuffle<unsigned int>(chosen, agent_list->n_filtered);  // randomize
     }
-    
+
     Agents::Agent* agent = NULL;
     Vec3 sink;
-    unsigned int i=0;
+    size_t i=0;
     for (i=0; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         if (random)
@@ -54,7 +54,7 @@ Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction, c
     if (!agent_list->n_filtered) return NULL;
 
     Agents::Agent* agent = NULL;
-    unsigned int i=0;
+    size_t i=0;
     for (i=0; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         agent = agent_list->filtered_objects[i];
@@ -180,7 +180,7 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
             obj_msg.voxel_z = t.voxel[2];
             obj_msg.broadcast();
             break;
-            
+
         case HITSCAN_TARGET_BLOCK:
             terrain_msg.id = id;
             terrain_msg.type = type;
@@ -191,7 +191,7 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
             terrain_msg.side = t.side;
             terrain_msg.broadcast();
             break;
-            
+
         case HITSCAN_TARGET_NONE:
             none_msg.id = id;
             none_msg.type = type;

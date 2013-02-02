@@ -59,7 +59,7 @@ bool is_valid_username(const char* username, size_t len)
 
     // valid characters
     bool has_alphabet = false;
-    for (unsigned int i=0; i<len; i++)
+    for (size_t i=0; i<len; i++)
     {
         if (!is_valid_name_character(username[i]))
             return false;
@@ -70,11 +70,11 @@ bool is_valid_username(const char* username, size_t len)
     // contains at least one alpha character
     if (!has_alphabet)
         return false;
-        
+
     // not equal to placeholder name
     if (strcmp(UNDEFINED_NAME, username) == 0)
         return false;
-        
+
     return true;
 }
 
@@ -98,7 +98,7 @@ bool parse_auth_token(const char* token, UserID* user_id, time_t* expiration_tim
     unsigned int timestamp_len = 0;
     unsigned int hash_len = 0;
     unsigned int username_len = 0;
-    
+
     for (unsigned int i = 0; i<AUTH_TOKEN_LENGTH && _token[i] != '\0'; i++)
     {
         if (_token[i] == AUTH_TOKEN_DELIMITER)
@@ -149,7 +149,7 @@ bool parse_auth_token(const char* token, UserID* user_id, time_t* expiration_tim
             }
         }
     }
-    
+
     // check length of pieces
     if (id_len        != AUTH_TOKEN_ID_LENGTH
      || timestamp_len != AUTH_TOKEN_TIMESTAMP_LENGTH
@@ -180,7 +180,7 @@ bool parse_auth_token(const char* token, UserID* user_id, time_t* expiration_tim
     time_t _expiration_time = atott(&token[AUTH_TOKEN_ID_LENGTH + 1]);
 
     // verify hash and username
-    const char* phash = &token[AUTH_TOKEN_ID_LENGTH + 1 + AUTH_TOKEN_TIMESTAMP_LENGTH + 1]; 
+    const char* phash = &token[AUTH_TOKEN_ID_LENGTH + 1 + AUTH_TOKEN_TIMESTAMP_LENGTH + 1];
     const char* pusername = &phash[AUTH_TOKEN_HASH_LENGTH + 1];
     if (!is_valid_username(pusername, username_len))
     {
@@ -290,7 +290,7 @@ void run_tests()
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char more_delimiters[] = "||||";
     ok = parse_auth_token(more_delimiters, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
@@ -305,7 +305,7 @@ void run_tests()
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char malformed_user_id[] = "000a00001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(malformed_user_id, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
@@ -319,105 +319,105 @@ void run_tests()
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char large_user_id[] = "0100000001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(large_user_id, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char missing_user_id[] = "|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(missing_user_id, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char negative_timestamp[] = "000000001|-347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(negative_timestamp, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char malformed_timestamp[] = "000000001|13r7071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(malformed_timestamp, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char small_timestamp[] = "000000001|347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(small_timestamp, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char large_timestamp[] = "000000001|11347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(large_timestamp, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char missing_timestamp[] = "000000001||7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(missing_timestamp, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char malformed_hash[] = "000000001|1347071435|7(a756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(malformed_hash, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char small_hash[] = "000000001|1347071435|7da7567e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(small_hash, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char large_hash[] = "000000001|1347071435|7da7456f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|get";
     ok = parse_auth_token(large_hash, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char missing_hash[] = "000000001|1347071435||get";
     ok = parse_auth_token(missing_hash, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char malformed_username[] = "000000001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|g/et";
     ok = parse_auth_token(malformed_username, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char missing_username[] = "000000001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|";
     ok = parse_auth_token(missing_username, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char small_username[] = "000000001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|as";
     ok = parse_auth_token(small_username, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char large_username[] = "000000001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|a23456789qwertya";
     ok = parse_auth_token(large_username, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(ok);
@@ -440,7 +440,7 @@ void run_tests()
     #if DC_SERVER
     GS_ASSERT(!verify_token(valid_token));
     #endif
-    
+
     const char last_char_is_delim2[] = "000000001|1347071435|7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2|123456789qwert|";
     ok = parse_auth_token(last_char_is_delim2, &user_id, &expiration_time, &hash, &username);
     GS_ASSERT(!ok);

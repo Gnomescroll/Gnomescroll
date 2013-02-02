@@ -81,7 +81,7 @@ class Item
         # endif
         printf("Subscribers %lu\n", (long unsigned)subscribers.count);
         printf("\t");
-        for (unsigned int i=0; i<subscribers.count; i++) printf("%d ", subscribers.subscribers[i]);
+        for (size_t i=0; i<subscribers.count; i++) printf("%d ", subscribers.subscribers[i]);
         printf("\n");
         #endif
     }
@@ -124,7 +124,7 @@ class ItemList: public ObjectList<Item, ItemID>
         const char* name() { return "Item"; }
 
     public:
-        ItemList(unsigned int capacity) :
+        ItemList(size_t capacity) :
             ObjectList<Item, ItemID>(capacity, NULL_ITEM),
             gas_tick(0)
         {}

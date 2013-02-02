@@ -235,6 +235,8 @@ void tick()
 
     Auth::update(); // do it here because i need constant timer
 
+    Agents::apply_agent_modifiers();
+
     counter++;
 }
 

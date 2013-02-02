@@ -1288,7 +1288,7 @@ bool agent_in_container_range(AgentID agent_id, ItemContainerID container_id)
 void check_agents_in_container_range()
 {
     using Agents::agent_list;
-    for (unsigned int i=0; i<agent_list->max; i++)
+    for (size_t i=0; i<agent_list->max; i++)
     {
         if (agent_list->objects[i].id == agent_list->null_id) continue;
         Agents::Agent* a = &agent_list->objects[i];
@@ -1426,7 +1426,7 @@ ItemContainerID create_container_block(ItemContainerType container_type, int x, 
 
 void update_smelters()
 {
-    for (unsigned int i=0; i<item_container_list->n_max; i++)
+    for (size_t i=0; i<item_container_list->n_max; i++)
     {
         if (item_container_list->a[i] == NULL) continue;
         ItemContainerInterface* container = item_container_list->a[i];

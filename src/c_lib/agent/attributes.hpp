@@ -8,15 +8,22 @@ void init_attributes();
 void teardown_attributes();
 void register_attributes();
 
-// Network
+// Misc
+AttributeGroup get_base_stats_attribute_group();
+
 #if DC_SERVER
+// Modifiers
+void apply_agent_modifiers();
+bool apply_agent_modifier(AgentID agent_id, const Modifier* modifier);
+
+// Network
 void send_attributes_to_client(ClientID client_id);
 #endif
 
 // API
 #define SET_ATTRIBUTE_HEADER(KEY, TYPE) \
-    void set_attribute(AgentID agent_id, KEY key, TYPE value); \
-    void set_attribute(KEY key, TYPE value); \
+    bool set_attribute(AgentID agent_id, KEY key, TYPE value); \
+    bool set_attribute(KEY key, TYPE value); \
 
 #define GET_ATTRIBUTE_HEADER(KEY, TYPE, NAME) \
     TYPE get_attribute_##NAME(AgentID agent_id, KEY key); \

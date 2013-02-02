@@ -41,6 +41,8 @@ const char* get_item_pretty_name(ItemType type);
 
 ItemGroup get_item_group_for_type(ItemType item_type);
 
+const class ModifierList* get_item_modifiers();
+
 bool item_type_is_voxel(ItemType item_type);
 
 int get_item_fire_rate(ItemType item_type);

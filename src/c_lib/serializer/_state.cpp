@@ -40,7 +40,7 @@ void clear_loaded_containers()
 
 void clear_slot_checker()
 {
-    for (unsigned int i=0; i<MAX_CONTAINER_SIZE; slot_checker[i++] = NULL_ITEM);
+    for (size_t i=0; i<MAX_CONTAINER_SIZE; slot_checker[i++] = NULL_ITEM);
 }
 
 }   // serializer

@@ -51,7 +51,7 @@ class PlasmagenSpurList: public ObjectList<PlasmagenSpur>
         #endif
         void tick();
 
-    PlasmagenSpurList(unsigned int capacity) :
+    PlasmagenSpurList(size_t capacity) :
         ObjectList<PlasmagenSpur>(capacity)
     {}
 };

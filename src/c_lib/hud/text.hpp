@@ -160,7 +160,7 @@ class AnimatedText: public Text
 
         int get_color(Color color)
         {
-            for (unsigned int i=0; i<this->n_colors; i++)
+            for (size_t i=0; i<this->n_colors; i++)
                 if (colors_equal_alpha(this->colors[i], color))
                     return i;
             return -1;
@@ -215,7 +215,7 @@ class AnimatedText: public Text
         int get_color_range(int color_index)
         {
             if (color_index < 0) return -1;
-            for (unsigned int i=0; i<this->n_char_ranges; i++)
+            for (size_t i=0; i<this->n_char_ranges; i++)
                 if (this->char_ranges[i].color_index == (unsigned int)color_index)
                     return i;
             return -1;
@@ -224,7 +224,7 @@ class AnimatedText: public Text
         int get_char_range(int color_index, unsigned int char_start, int char_end)
         {
             if (color_index < 0) return -1;
-            for (unsigned int i=0; i<this->n_char_ranges; i++)
+            for (size_t i=0; i<this->n_char_ranges; i++)
                 if (this->char_ranges[i].color_index == (unsigned int)color_index
                  && this->char_ranges[i].start == char_start
                  && this->char_ranges[i].end == char_end)
@@ -237,7 +237,7 @@ class AnimatedText: public Text
         if (this->text == NULL || this->text_len == 0)
             return;
 
-        for (unsigned int i=0; i<this->n_char_ranges; i++)
+        for (size_t i=0; i<this->n_char_ranges; i++)
         {
             int color_index = this->char_ranges[i].color_index;
             if (color_index < 0 || color_index >= (int)this->n_colors) continue;
@@ -267,13 +267,13 @@ class AnimatedText: public Text
         {   // copy colors
             this->set_color_count(t.max_colors);
             this->n_colors = 0;
-            for (unsigned int i=0; i<t.n_colors; i++)
+            for (size_t i=0; i<t.n_colors; i++)
                 this->add_color(t.colors[i]);
 
             // copy char ranges
             this->set_char_range_count(t.max_char_ranges);
             this->n_char_ranges = 0;
-            for (unsigned int i=0; i<t.n_char_ranges; i++)
+            for (size_t i=0; i<t.n_char_ranges; i++)
             {
                 int index = this->add_char_range(t.char_ranges[i].start, t.char_ranges[i].end);
                 this->set_char_range_color(index, t.char_ranges[i].color_index);
@@ -307,7 +307,7 @@ class TextList: public ObjectList<Text>
 
     public:
 
-    explicit TextList(unsigned int capacity) : ObjectList<Text>(capacity)
+    explicit TextList(size_t capacity) : ObjectList<Text>(capacity)
     {
     }
 };

@@ -19,7 +19,7 @@ inline void BillboardTextHud::init_properties()
 {
     this->should_draw = true;
     this->permanent = false;
-    
+
     this->ttl = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
     this->scale = BILLBOARD_TEXT_HUD_TEXTURE_SCALE;
@@ -80,7 +80,7 @@ namespace Particle
 
 void BillboardTextHud_list::tick()
 {
-    for (unsigned int i=0; i<this->num; i++)
+    for (size_t i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0)
@@ -91,7 +91,7 @@ void BillboardTextHud_list::tick()
 void BillboardTextHud_list::draw()
 {
     if (num == 0) return;
-    for (unsigned int i=0; i<this->num; i++)
+    for (size_t i=0; i<this->num; i++)
         a[i].draw();
     glColor4ub(255,255,255,255);
 }

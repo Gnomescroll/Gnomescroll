@@ -62,7 +62,7 @@ unsigned char* hexstr_to_char(const char* hexstr)
     GS_ASSERT(len%2 == 0);
     unsigned int final_len = len / 2;
     unsigned char* chrs = (unsigned char*)malloc((final_len+1) * sizeof(unsigned char));
-    unsigned int i=0,j=0;
+    size_t i=0,j=0;
     for (; i<len; i+=2, j++)
         chrs[j] = (hexstr[i] % 32 + 9) % 25 * 16 + (hexstr[i+1] % 32 + 9) % 25;
     chrs[final_len] = '\0';
@@ -193,4 +193,9 @@ void make_pretty_name(const char* src, char* dest, const size_t len)
         if (!isdigit(title[i]))
             dest[j++] = title[i];
     dest[j] = '\0';
+}
+
+template <typename T> int sgn(T val)
+{
+    return (T(0) < val) - (val < T(0));
 }

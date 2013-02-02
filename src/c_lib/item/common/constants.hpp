@@ -10,6 +10,8 @@ const int MAX_ITEMS = NULL_ITEM;
 const size_t MAX_ITEM_TYPES = NULL_ITEM_TYPE;
 const size_t MAX_CONTAINER_TYPES = 16;
 
+const size_t MAX_ITEM_MODIFIERS = 8;
+
 const int NULL_SLOT = 0xFF;           // invalid slot value
 const ItemGroup NULL_ITEM_GROUP = IG_NONE;
 const int NULL_DURABILITY = 0xFFFF;

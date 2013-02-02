@@ -92,7 +92,7 @@ static void prep_textured_voxel_particles()
     static const float tw = tp * 32.0f;     // sprite width
     static const float th = tw;             // sprite height
 
-    for (unsigned int i=0; i<item_particle_list->max; i++)
+    for (size_t i=0; i<item_particle_list->max; i++)
     {
         if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
         class ItemParticle::ItemParticle* item = &item_particle_list->objects[i];
@@ -160,7 +160,7 @@ static void prep_textured_voxel_particles()
     }
 
     // iterate particle animations
-    for (unsigned int i=0; i<particle_list->num; i++)
+    for (size_t i=0; i<particle_list->num; i++)
     {
         class Particle::TexturedMinivox* particle = &particle_list->a[i];
         particle->voxel.delta_rotation();
@@ -246,7 +246,7 @@ static void prep_colored_voxel_particles()
     static struct Vec3 vn[6];      //normals
     static struct Vec3 veb2[6*4];  //vertex array for rendering
 
-    for (unsigned int i=0; i<list->num; i++)
+    for (size_t i=0; i<list->num; i++)
     {
         Particle::ColoredMinivox* vox = &list->a[i];
         vox->voxel.delta_rotation();

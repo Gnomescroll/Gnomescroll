@@ -106,7 +106,7 @@ void Shrapnel::prep()
 
 void Shrapnel_list::tick()
 {
-    for(unsigned int i=0; i<this->num; i++)
+    for(size_t i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) destroy(i);
@@ -115,22 +115,22 @@ void Shrapnel_list::tick()
 
 void Shrapnel_list::prep()
 {
-    for(unsigned int i=0; i<this->num; a[i++].prep());
+    for(size_t i=0; i<this->num; a[i++].prep());
     shrapnel_vlist->buffer();
 }
- 
+
 
 void Shrapnel_list::draw()
 {
     if (!shrapnel_shader.shader_valid) return;
-    
+
     if(shrapnel_vlist->vertex_number == 0) return;
 
     GS_ASSERT(particle_texture != 0);
     if (particle_texture == 0) return;
     GS_ASSERT(shrapnel_vlist->VBO != 0);
     if (shrapnel_vlist->VBO == 0) return;
-    
+
     const unsigned int stride = shrapnel_vlist->stride;
 
     glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
@@ -146,10 +146,10 @@ void Shrapnel_list::draw()
     glBindTexture(GL_TEXTURE_2D, particle_texture);
 
     glUseProgramObjectARB(shrapnel_shader.shader);
-    
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(shrapnel_TexCoord);
-    
+
     GS_ASSERT(sizeof(float) == sizeof(GL_FLOAT));
     GS_ASSERT(sizeof(Vec3) == sizeof(GL_FLOAT)*3);
     glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
@@ -157,7 +157,7 @@ void Shrapnel_list::draw()
     glVertexAttribPointer(shrapnel_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
 
     glDrawArrays(GL_QUADS, 0, shrapnel_vlist->vertex_number);
-    
+
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(shrapnel_TexCoord);
     glUseProgramObjectARB(0);

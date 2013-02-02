@@ -23,14 +23,14 @@ class MultiObject_list
 
     bool id_in_range(int id)
     {
-        return (id >=0 && (unsigned int)id < this->n_max);
+        return (id >=0 && (size_t)id < this->n_max);
     }
 
     protected:
         int id_c;
 
     public:
-        unsigned int n_max;
+        size_t n_max;
         int num;
 
         // pointer to function that accepts type,id and creates obj
@@ -58,12 +58,12 @@ class MultiObject_list
     }
 
     // initialize with pointer to creator
-    MultiObject_list(unsigned int capacity, Object_interface* (*create_interface)(int, int)); //default constructor
+    MultiObject_list(size_t capacity, Object_interface* (*create_interface)(int, int)); //default constructor
     virtual ~MultiObject_list(); //default deconstructor
 };
 
 template <class Object_interface>
-MultiObject_list<Object_interface>::MultiObject_list(unsigned int capacity, Object_interface* (*create_interface_fn)(int, int)) :
+MultiObject_list<Object_interface>::MultiObject_list(size_t capacity, Object_interface* (*create_interface_fn)(int, int)) :
     id_c(0), n_max(capacity), num(0), create_interface(create_interface_fn)
 {
     this->a = (Object_interface**)calloc(this->n_max, sizeof(Object_interface*));
@@ -75,7 +75,7 @@ MultiObject_list<Object_interface>::~MultiObject_list()
 {
     if (a != NULL)
     {
-        for (unsigned int i=0; i<this->n_max; i++)
+        for (size_t i=0; i<this->n_max; i++)
         {
             if (this->a[i] != NULL)
                 delete this->a[i];
@@ -112,7 +112,7 @@ void MultiObject_list<Object_interface>::print_members()
 template <class Object_interface>
 int MultiObject_list<Object_interface>::get_free_id()
 {
-    unsigned int i = 0;
+    size_t i = 0;
     int id = 0;
 
     for (; i<n_max; i++)
@@ -132,7 +132,7 @@ int MultiObject_list<Object_interface>::get_free_id()
 template <class Object_interface>
 Object_interface* MultiObject_list<Object_interface>::create(int type)
 {
-    unsigned int i = 0;
+    size_t i = 0;
     int id = 0;
     for (; i<n_max;i++)
     {

@@ -265,7 +265,7 @@ class InsectMobList: public ObjectList<InsectMob>
 
         bool needs_update;
     public:
-        explicit InsectMobList(unsigned int capacity) :
+        explicit InsectMobList(size_t capacity) :
             ObjectList<InsectMob>(capacity)
         {
             this->print();
@@ -286,7 +286,7 @@ void InsectMobList::prep()
     if( needs_update == false) return;
     insect_mob_t += 0.04f;
 
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != this->null_id)
             this->objects[i].prep();
     needs_update = false;
@@ -333,7 +333,7 @@ void InsectMobList::draw()
 void InsectMobList::tick()
 {
     this->needs_update = true;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != this->null_id)
             this->objects[i].tick();
 }

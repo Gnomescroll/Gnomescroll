@@ -109,7 +109,7 @@ class MeshAnimation
 
         bone->set_children(pNode->mNumChildren);
 
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
         {
             CreateBoneTree( &bone->bca[i], pNode->mChildren[i], bone);
         }
@@ -169,7 +169,7 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     printf("Scene animations: %d \n", pScene->mNumAnimations);
 
 
-    for(unsigned int i=0; i<pScene->mNumAnimations; i++)
+    for(size_t i=0; i<pScene->mNumAnimations; i++)
     {
         aiAnimation* anim = pScene->mAnimations[i];
 
@@ -249,13 +249,13 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 /*
     printf("pScene->mMeshes: \n");
 
-    for(unsigned int i=0; i < pScene->mNumMeshes; i++)
+    for(size_t i=0; i < pScene->mNumMeshes; i++)
     {
         printf("Mesh %02d: %s \n", i, pScene->mMeshes[i]->mName.data);
     }
 */
 #if 0
-    for(unsigned int i=0; i < pScene->mNumMeshes; i++)
+    for(size_t i=0; i < pScene->mNumMeshes; i++)
     {
         printf("Mesh %02d: name= %s numBones= %d \n", i, pScene->mMeshes[i]->mName.data, pScene->mMeshes[i]->mNumBones);
 

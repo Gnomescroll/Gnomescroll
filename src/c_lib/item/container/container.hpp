@@ -403,7 +403,7 @@ class ItemContainerSmelter: public ItemContainerInterface
         //int input_types[max_inputs];
         MALLOX(int, input_types, max_inputs); //type, name, size
 
-        for (unsigned int i=0; i<max_inputs; i++)
+        for (size_t i=0; i<max_inputs; i++)
         {
             int slot = this->convert_input_slot(i);
             ItemID input = this->slot[slot];
@@ -709,7 +709,7 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface>
     }
     #endif
 
-    ItemContainerList(unsigned int capacity) :
+    ItemContainerList(size_t capacity) :
         MultiObject_list<ItemContainerInterface>(capacity, create_item_container_interface)
     {}
 };

@@ -12,6 +12,9 @@ class Attribute: public Property<AttributeType>
         AttributeValueType value_type;
         AttributeSyncType sync_type;
 
+        // TODO -- remove location, keep int,float,char*
+        // change getter/setter to get/set callback
+
         void* location;
         voidFunction getter;
         voidFunction setter;
@@ -45,9 +48,9 @@ class Attribute: public Property<AttributeType>
         return reinterpret_cast<getString>(this->getter)();
     }
 
-    void set(int value)
+    bool set(int value)
     {
-        IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_INT) return;
+        IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_INT) return false;
         if (this->location != NULL)
         {
             int current = *(reinterpret_cast<int*>(this->location));
@@ -55,15 +58,20 @@ class Attribute: public Property<AttributeType>
             {
                 *(reinterpret_cast<int*>(this->location)) = value;
                 this->changed = true;
+                return true;
             }
         }
         else if (reinterpret_cast<setInt>(this->setter)(value))
+        {
             this->changed = true;
+            return true;
+        }
+        return false;
     }
 
-    void set(float value)
+    bool set(float value)
     {
-        IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_FLOAT) return;
+        IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_FLOAT) return false;
         if (this->location != NULL)
         {
             float current = *(reinterpret_cast<float*>(this->location));
@@ -71,16 +79,21 @@ class Attribute: public Property<AttributeType>
             {
                 *(reinterpret_cast<float*>(this->location)) = value;
                 this->changed = true;
+                return true;
             }
         }
         else
         if (reinterpret_cast<setFloat>(this->setter)(value))
+        {
             this->changed = true;
+            return true;
+        }
+        return false;
     }
 
-    void set(const char* value)
+    bool set(const char* value)
     {
-        IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_STRING) return;
+        IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_STRING) return false;
         if (this->location != NULL)
         {
             char* current = *(reinterpret_cast<char**>(this->location));
@@ -89,11 +102,16 @@ class Attribute: public Property<AttributeType>
                 strncpy(current, value, STRING_ATTRIBUTE_MAX_LENGTH);
                 current[STRING_ATTRIBUTE_MAX_LENGTH] = '\0';
                 this->changed = true;
+                return true;
             }
         }
         else
         if (reinterpret_cast<setString>(this->setter)(value))
+        {
             this->changed = true;
+            return true;
+        }
+        return false;
     }
 
     /* Registration API */
@@ -367,6 +385,22 @@ class Attributes: public Properties<Attribute, AttributeType>
 
     void verify() const
     {
+        // attributes should be laid out continuously from 0, although properties allows otherwise
+        bool loaded = this->properties[0].loaded;
+        int switch_ct = 0;
+        GS_ASSERT(this->index == 0 || loaded);
+        for (size_t i=0; i<this->max; i++)
+        {
+            if (this->properties[i].loaded)
+                loaded = true;
+            else
+            {
+                if (loaded) switch_ct++;
+                loaded = false;
+            }
+        }
+        GS_ASSERT(switch_ct <= 1);
+
         for (size_t i=0; i<this->max; i++)
             if (this->properties[i].loaded)
                 this->properties[i].verify();
@@ -376,6 +410,8 @@ class Attributes: public Properties<Attribute, AttributeType>
             if (this->properties[i].loaded && this->properties[j].loaded)
                 this->properties[i].verify_other(&this->properties[j]);
     }
+
+
 
     #if DC_SERVER
     void set_sync_to(ClientID client_id)
@@ -471,58 +507,58 @@ static AttributesManager* attributes_manager;
 
 /* Read/Write API */
 
-void set(AttributeGroup group, AttributeType type, int value)
+bool set(AttributeGroup group, AttributeType type, int value)
 {
     Attributes* attributes = attributes_manager->get(group);
-    IF_ASSERT(attributes == NULL) return;
+    IF_ASSERT(attributes == NULL) return false;
     Attribute* a = attributes->get(type);
-    IF_ASSERT(a == NULL) return;
-    a->set(value);
+    IF_ASSERT(a == NULL) return false;
+    return a->set(value);
 }
 
-void set(AttributeGroup group, AttributeType type, float value)
+bool set(AttributeGroup group, AttributeType type, float value)
 {
     Attributes* attributes = attributes_manager->get(group);
-    IF_ASSERT(attributes == NULL) return;
+    IF_ASSERT(attributes == NULL) return false;
     Attribute* a = attributes->get(type);
-    IF_ASSERT(a == NULL) return;
-    a->set(value);
+    IF_ASSERT(a == NULL) return false;
+    return a->set(value);
 }
 
-void set(AttributeGroup group, AttributeType type, const char* value)
+bool set(AttributeGroup group, AttributeType type, const char* value)
 {
     Attributes* attributes = attributes_manager->get(group);
-    IF_ASSERT(attributes == NULL) return;
+    IF_ASSERT(attributes == NULL) return false;
     Attribute* a = attributes->get(type);
-    IF_ASSERT(a == NULL) return;
-    a->set(value);
+    IF_ASSERT(a == NULL) return false;
+    return a->set(value);
 }
 
-void set(AttributeGroup group, const char* name, int value)
+bool set(AttributeGroup group, const char* name, int value)
 {
     Attributes* attributes = attributes_manager->get(group);
-    IF_ASSERT(attributes == NULL) return;
+    IF_ASSERT(attributes == NULL) return false;
     Attribute* a = attributes->get(name);
-    IF_ASSERT(a == NULL) return;
-    a->set(value);
+    IF_ASSERT(a == NULL) return false;
+    return a->set(value);
 }
 
-void set(AttributeGroup group, const char* name, float value)
+bool set(AttributeGroup group, const char* name, float value)
 {
     Attributes* attributes = attributes_manager->get(group);
-    IF_ASSERT(attributes == NULL) return;
+    IF_ASSERT(attributes == NULL) return false;
     Attribute* a = attributes->get(name);
-    IF_ASSERT(a == NULL) return;
-    a->set(value);
+    IF_ASSERT(a == NULL) return false;
+    return a->set(value);
 }
 
-void set(AttributeGroup group, const char* name, const char* value)
+bool set(AttributeGroup group, const char* name, const char* value)
 {
     Attributes* attributes = attributes_manager->get(group);
-    IF_ASSERT(attributes == NULL) return;
+    IF_ASSERT(attributes == NULL) return false;
     Attribute* a = attributes->get(name);
-    IF_ASSERT(a == NULL) return;
-    a->set(value);
+    IF_ASSERT(a == NULL) return false;
+    return a->set(value);
 }
 
 int get_int(AttributeGroup group, AttributeType type)
@@ -617,6 +653,32 @@ AttributeType get_type(AttributeGroup group, const char* name)
     return a->type;
 }
 
+size_t get_attribute_count(AttributeGroup group)
+{
+    Attributes* attr = attributes_manager->get(group);
+    IF_ASSERT(attr == NULL) return NULL_ATTRIBUTE;
+    // Attributes are guaranteed continuous in the property array,
+    // so its safe to return the index
+    return attr->index;
+}
+
+AttributeValueType get_value_type(AttributeGroup group, const char* name)
+{
+    Attributes* attr = attributes_manager->get(group);
+    IF_ASSERT(attr == NULL) return NULL_ATTRIBUTE_VALUE_TYPE;
+    Attribute* a = attr->get(name);
+    IF_ASSERT(a == NULL) return NULL_ATTRIBUTE_VALUE_TYPE;
+    return a->value_type;
+}
+
+AttributeValueType get_value_type(AttributeGroup group, AttributeType type)
+{
+    Attributes* attr = attributes_manager->get(group);
+    IF_ASSERT(attr == NULL) return NULL_ATTRIBUTE_VALUE_TYPE;
+    Attribute* a = attr->get(type);
+    IF_ASSERT(a == NULL) return NULL_ATTRIBUTE_VALUE_TYPE;
+    return a->value_type;
+}
 
 /* Registration API */
 
@@ -802,6 +864,8 @@ inline void set_attribute_int_StoC::handle()
     Attribute* attr = attributes->get(type);
     IF_ASSERT(attr == NULL) return;
     attr->set((int)this->value);
+
+    printf("%s set to %d\n", get_name(group, type), get_int(group, type));
 }
 
 inline void set_attribute_float_StoC::handle()

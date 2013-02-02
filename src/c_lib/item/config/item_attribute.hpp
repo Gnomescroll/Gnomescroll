@@ -3,6 +3,7 @@
 #include <item/common/constants.hpp>
 #include <t_map/common/constants.hpp>
 #include <common/dat/properties.hpp>
+#include <common/dat/modifiers.hpp>
 
 namespace Item
 {
@@ -46,9 +47,6 @@ class ItemAttribute: public Property<ItemType>
         bool particle_voxel;
         int particle_voxel_texture;
 
-        // health
-        unsigned int repair_agent_amount;
-
         bool gas;
         int gas_lifetime;
 
@@ -69,10 +67,15 @@ class ItemAttribute: public Property<ItemType>
         // IG_EQUIPMENT
         EquipmentType equipment_type;
 
-        bool boonable;  // boon crank
+        // boon crank
+        bool boonable;
+
+        // agent stat modifiers
+        ModifierList modifiers;
 
     ItemAttribute() :
-        Property<ItemType>(NULL_ITEM_TYPE)
+        Property<ItemType>(NULL_ITEM_TYPE),
+        modifiers(MAX_ITEM_MODIFIERS)
     {
         this->group = IG_NONE;
         memset(this->pretty_name, 0, sizeof(this->pretty_name));
@@ -112,7 +115,6 @@ class ItemAttribute: public Property<ItemType>
         this->object_damage = 0;
         this->object_damage_min = 5;
         this->object_damage_max = 10;
-        this->repair_agent_amount = 0;
         this->container_type = NULL_CONTAINER_TYPE;
         this->gas = false;
         this->gas_lifetime = NULL_GAS_LIFETIME;

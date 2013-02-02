@@ -167,7 +167,7 @@ bool create_container_items_from_data(ItemContainerID container_id)
     GS_ASSERT(item_load_data_list->ct <= item_space);
     if (item_load_data_list->ct > item_space) return false;
 
-    for (unsigned int i=0; i<item_load_data_list->max; i++)
+    for (size_t i=0; i<item_load_data_list->max; i++)
     {
         class ParsedItemData* data = &item_load_data_list->objects[i];
         if (data->id == item_load_data_list->null_id) continue;
@@ -205,7 +205,7 @@ bool create_player_container_items_from_data(AgentID agent_id, ItemContainerID* 
     GS_ASSERT(item_load_data_list->ct <= item_space);
     if (item_load_data_list->ct > item_space) return false;
 
-    for (unsigned int i=0; i<item_load_data_list->max; i++)
+    for (size_t i=0; i<item_load_data_list->max; i++)
     {
         class ParsedItemData* data = &item_load_data_list->objects[i];
         if (data->id == item_load_data_list->null_id) continue;

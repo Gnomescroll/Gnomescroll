@@ -604,21 +604,21 @@ bool AgentStatus::consume_item(ItemID item_id)
 {
     ItemType item_type = Item::get_item_type(item_id);
     IF_ASSERT(item_type == NULL_ITEM_TYPE) return false;
-
     ItemGroup item_group = Item::get_item_group_for_type(item_type);
     IF_ASSERT(item_group != IG_CONSUMABLE) return false;
-
     Item::ItemAttribute* attr = Item::get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return false;
+    const ModifierList* modifiers = Item::get_item_modifiers(item_type);
+    IF_ASSERT(modifiers == NULL) return false;
 
-    static const int small_charge_pack = Item::get_item_type("small_charge_pack");
-    IF_ASSERT(item_type != small_charge_pack) return false;
-
-    if (this->health >= (int)health_max) return false;
-    GS_ASSERT(attr->repair_agent_amount > 0);
-    this->heal(attr->repair_agent_amount);
-    this->send_health_msg();
-    return true;
+    bool applied = false;
+    for (size_t i=0; i<modifiers->max; i++)
+        if (modifiers->objects[i].id != modifiers->null_id)
+        {
+            bool _applied = apply_agent_modifier(this->a->id, &modifiers->objects[i]);
+            if (_applied) applied = true;
+        }
+    return applied;
 }
 #endif  // DC_SERVER
 

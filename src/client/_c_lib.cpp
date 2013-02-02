@@ -74,6 +74,8 @@ bool c_lib_inited = false;
 #include <common/template/object_pool.hpp>
 #include <common/dat/name_map.hpp>
 #include <common/dat/attributes.cpp>
+#include <common/dat/modifiers.hpp>
+#include <common/dat/properties.hpp>
 
 
 /* configuration options */

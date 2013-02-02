@@ -13,7 +13,7 @@
 #include <item/_interface.cpp>
 
 #include <item/config/_interface.hpp>
-#include <item/config/item_dat.hpp>
+#include <item/config/item_dat.cpp>
 #include <item/config/synthesizer_dat.hpp>
 #include <item/config/crafting_dat.hpp>
 #include <item/config/smelting_dat.hpp>

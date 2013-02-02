@@ -182,7 +182,7 @@ void MiningLaserEffectList::prep()
     GS_ASSERT(mining_laser_vlist != NULL);
     if (mining_laser_vlist == NULL) return;
 
-    for (unsigned int i=0; i<this->num; i++)
+    for (size_t i=0; i<this->num; i++)
         this->a[i].prep();
 
     mining_laser_vlist->buffer(); //upload data to GPU and reset list
@@ -231,7 +231,7 @@ void MiningLaserEffectList::draw()
 
 void MiningLaserEffectList::tick()
 {
-    for (unsigned int i=0; i<this->num; i++)
+    for (size_t i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) this->destroy(i);

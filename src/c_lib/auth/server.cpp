@@ -23,7 +23,7 @@ unsigned char* secret_key = NULL;   // hex str converted to bytes
 
 // Init loaders
 void load_secret_key()
-{    
+{
     size_t size = 0;
     char* buf = read_file_to_buffer(SECRET_KEY_PATH, &size);
     GS_ASSERT(buf != NULL);
@@ -48,12 +48,12 @@ void load_secret_key()
         if (secret_key != NULL) free(secret_key);
         secret_key_str = _secret_key_str;
         secret_key = _secret_key;
-        
+
         int len = (int)strlen(secret_key_str);
         GS_ASSERT(len == SECRET_KEY_SIZE*2);
         for (int i=0; i<len; i++)
             GS_ASSERT(isxdigit(secret_key_str[i]));
-            
+
         GS_ASSERT(strlen((char*)secret_key) == SECRET_KEY_SIZE);
     }
 }
@@ -68,7 +68,7 @@ uint8_t* compute_hash(const unsigned char* secret_key, const char* msg, const si
     sha256_initialize(&sha);
 
     // hash the key if necessary (SECRET_KEY_SIZE > 64)
-    unsigned int i=0;
+    size_t i=0;
     for (; i<SECRET_KEY_SIZE; i++)
     {
         if (i > 0 && i % 64 == 0)
@@ -139,11 +139,11 @@ static bool verify_token(const char* _token, UserID* user_id, time_t* expiration
 {
     GS_ASSERT(secret_key != NULL);
     if (secret_key == NULL) return false;
-    
+
     char* token = NULL;
     bool ok = parse_auth_token(_token, user_id, expiration_time, &token, username);
     if (!ok) return false;
-    
+
     const unsigned int payload_len = AUTH_TOKEN_ID_LENGTH + AUTH_TOKEN_TIMESTAMP_LENGTH + strlen(*username);
     char* payload = (char*)malloc((payload_len+1)*sizeof(char));
 
@@ -164,7 +164,7 @@ static bool verify_token(const char* _token, UserID* user_id, time_t* expiration
 
     // do a constant-time token comparison here, to eliminate that side-channel attack
     bool match = true;
-    for (unsigned int i=0; i<AUTH_TOKEN_HASH_LENGTH; i++)
+    for (size_t i=0; i<AUTH_TOKEN_HASH_LENGTH; i++)
         if (token[i] != hash[i])
             match = false;
 
@@ -172,7 +172,7 @@ static bool verify_token(const char* _token, UserID* user_id, time_t* expiration
 
     free(token);
     free(hash);
-    
+
     ok = (match && !expired);
     if (!ok) free(*username);
 

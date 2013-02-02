@@ -2,13 +2,12 @@
 
 #include <item/_interface.hpp>
 #include <item/common/constants.hpp>
-
 #include <item/config/item_attribute.hpp>
 #include <item/config/crafting_dat.hpp>
-
 #include <item/container/_interface.hpp>
 #include <item/container/container.hpp>
 #include <item/container/config/_interface.hpp>
+#include <common/dat/modifiers.hpp>
 
 namespace Item
 {
@@ -165,6 +164,14 @@ ItemGroup get_item_group_for_type(ItemType item_type)
     class ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return IG_ERROR;
     return attr->group;
+}
+
+const class ModifierList* get_item_modifiers(ItemType item_type)
+{
+    IF_ASSERT(!isValid(item_type)) return NULL;
+    class ItemAttribute* attr = get_item_attributes(item_type);
+    IF_ASSERT(attr == NULL) return NULL;
+    return &attr->modifiers;
 }
 
 bool item_type_is_voxel(ItemType item_type)

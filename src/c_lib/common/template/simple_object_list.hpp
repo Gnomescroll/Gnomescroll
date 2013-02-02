@@ -1,6 +1,6 @@
 #pragma once
 
-template <class ObjectState, unsigned int hard_cap>
+template <class ObjectState, size_t hard_cap>
 class Simple_object_list
 {
     private:
@@ -8,36 +8,34 @@ class Simple_object_list
 
     public:
         ObjectState a[hard_cap];
+        static const size_t n_max = hard_cap;
+        size_t num;
 
-        static const unsigned int n_max = hard_cap;
-        unsigned int num;
+    inline ObjectState* create();         //object auto id
+    inline void destroy(int _id);
 
-        Simple_object_list(); //default constructor
-        virtual ~Simple_object_list(); //default deconstructor
+    void print()
+    {
+        printf("%s list instantiated at %p\n", this->name(), this);
+    }
 
-        inline ObjectState* create();         //object auto id
-
-        inline void destroy(int _id);
-
-        void print()
-        {
-            printf("%s list instantiated at %p\n", this->name(), this);
-        }
+    Simple_object_list(); //default constructor
+    virtual ~Simple_object_list(); //default deconstructor
 };
 
-template <class ObjectState, unsigned int hard_cap>
-Simple_object_list<ObjectState, hard_cap>::Simple_object_list()
-: num(0)
+template <class ObjectState, size_t hard_cap>
+Simple_object_list<ObjectState, hard_cap>::Simple_object_list() :
+    num(0)
 {
-    for (unsigned int i=0; i<hard_cap; i++) this->a[i].id = i;
+    for (size_t i=0; i<hard_cap; i++) this->a[i].id = i;
 }
 
-template <class ObjectState, unsigned int hard_cap>
+template <class ObjectState, size_t hard_cap>
 Simple_object_list<ObjectState, hard_cap>::~Simple_object_list()
 {
 }
 
-template <class ObjectState, unsigned int hard_cap>
+template <class ObjectState, size_t hard_cap>
 inline ObjectState* Simple_object_list<ObjectState, hard_cap>::create()
 {
     if (this->num >= hard_cap)
@@ -47,16 +45,15 @@ inline ObjectState* Simple_object_list<ObjectState, hard_cap>::create()
         #endif
         return NULL;
     }
-
     return &this->a[this->num++];
 }
 
 
-template <class ObjectState, unsigned int hard_cap>
+template <class ObjectState, size_t hard_cap>
 inline void Simple_object_list<ObjectState, hard_cap>::destroy(int index)
 {
     GS_ASSERT(this->num > 0);
-    unsigned int uindex = index;
+    size_t uindex = index;
     GS_ASSERT(index >= 0 && uindex < this->n_max);
     GS_ASSERT(uindex < this->num);
     if (index < 0 || uindex >= this->n_max || uindex >= this->num) return;

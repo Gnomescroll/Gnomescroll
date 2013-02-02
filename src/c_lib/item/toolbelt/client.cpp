@@ -150,12 +150,11 @@ static bool beta_scan_world()
     CubeType tile = EMPTY_CUBE;
     float block_distance;
 
-    HitscanTargetTypes target_type =
-        Hitscan::hitscan_against_world(
-            pos, look, player_agent.agent_id, OBJECT_AGENT,
-            &target, &vox_distance, collision_point,
-            block_pos, side, &tile, &block_distance
-        );
+    HitscanTargetTypes target_type = Hitscan::hitscan_against_world(
+        pos, look,
+        player_agent.agent_id, OBJECT_AGENT,
+        &target, &vox_distance, collision_point,
+        block_pos, side, &tile, &block_distance);
 
     ItemContainerID container_id = NULL_CONTAINER;
     switch (target_type)

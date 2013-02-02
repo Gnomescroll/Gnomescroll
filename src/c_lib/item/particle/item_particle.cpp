@@ -315,7 +315,7 @@ static bool pickup_item_particle(ItemParticleID particle_id)
 void ItemParticle_list::tick()
 {
     ItemParticle* ip;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         ip = &this->objects[i];

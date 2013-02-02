@@ -37,7 +37,7 @@ void tick()
 
     #if DC_SERVER
     static int tick = 0;
-    for (unsigned int i=0; i<item_particle_list->max; i++)
+    for (size_t i=0; i<item_particle_list->max; i++)
     {
         if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
         if ((tick + item_particle_list->objects[i].broadcast_tick) % ITEM_PARTICLE_STATE_BROADCAST_TICK_RATE == 0)
@@ -171,7 +171,7 @@ static void send_particle_item_create_to_client(ItemParticleID particle_id, Clie
 
 void send_particle_items_to_client(ClientID client_id)
 {
-    for (unsigned int i=0; i<item_particle_list->max; i++)
+    for (size_t i=0; i<item_particle_list->max; i++)
     {
         if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
         ItemParticle* p = &item_particle_list->objects[i];
@@ -283,7 +283,7 @@ void check_item_pickups()
     static ItemType energy_tank_type = Item::get_item_type("energy_tank");
     GS_ASSERT(energy_tank_type != NULL_ITEM_TYPE);
 
-    for (unsigned int i=0; i<item_particle_list->max; i++)
+    for (size_t i=0; i<item_particle_list->max; i++)
     {
         if (item_particle_list->objects[i].id == item_particle_list->null_id) continue;
         ItemParticle* item_particle = &item_particle_list->objects[i];

@@ -36,7 +36,7 @@ void Item::init_from_loading()
 
 void ItemList::recharge_items()
 {
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         Item* item = &this->objects[i];
@@ -60,7 +60,7 @@ void ItemList::decay_gas()
     // decay any gases
     // dont decay if container is cryofreezer
 
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         class Item* item = &this->objects[i];

@@ -792,7 +792,7 @@ inline void agent_set_block_CtoS::handle()
         collides = true;
     else
     {
-        for (unsigned int i=0; i<Agents::agent_list->max; i++)
+        for (size_t i=0; i<Agents::agent_list->max; i++)
         {
             Agents::Agent* agent = &Agents::agent_list->objects[i];
             if (agent->id == Agents::agent_list->null_id || agent == a) continue;
@@ -848,7 +848,7 @@ inline void admin_set_block_CtoS::handle()
     bool collides = agent_collides_terrain(a);
     if (!collides)
     {   // check the rest of the players
-        for (unsigned int i=0; i<Agents::agent_list->max; i++)
+        for (size_t i=0; i<Agents::agent_list->max; i++)
         {
             Agents::Agent* agent = &Agents::agent_list->objects[i];
             if (agent->id == Agents::agent_list->null_id || agent == a) continue;

@@ -38,7 +38,7 @@ class grenade_StoC: public FixedSizeReliableNetPacketToClient<grenade_StoC>
         uint16_t ttl_max;
         uint8_t type;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack) 
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_vec3(&p, buff, buff_n, pack);
         pack_vec3(&m, buff, buff_n, pack);
@@ -162,7 +162,7 @@ void Grenade::damage_blocks(int multiplier)
     int mx = position.x;
     int my = position.y;
     int mz = position.z;
-    
+
     for (int i=mx-ir; i<mx+ir; i++)
     for (int j=my-ir; j<my+ir; j++)
     for (int k=mz-ir; k<mz+ir; k++)
@@ -185,7 +185,7 @@ void Grenade::damage_blocks(int multiplier)
 void GrenadeList::tick()
 {
     if (this->ct <= 0) return;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == -1) continue;
         this->objects[i].tick();
@@ -201,7 +201,7 @@ void GrenadeList::draw()
 {
     #if DC_CLIENT
     if (this->ct <= 0) return;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != -1)
             this->objects[i].draw(this->objects[i].get_position());
     #endif

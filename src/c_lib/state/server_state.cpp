@@ -108,7 +108,7 @@ namespace ServerState
         if (vox != NULL) r = vox->get_radius();
 
         agent_list->objects_within_sphere(p.x, p.y, p.z, r);
-        for (unsigned int i=0; i<agent_list->n_filtered; i++)
+        for (size_t i=0; i<agent_list->n_filtered; i++)
         {
             Agents::Agent* a = agent_list->filtered_objects[i];
             GS_ASSERT(a->id != agent_list->null_id);
@@ -127,7 +127,7 @@ namespace ServerState
         agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
         const float blast_mean = 0;
         const float blast_stddev = 1.0f;
-        for (unsigned int i=0; i<agent_list->n_filtered; i++)
+        for (size_t i=0; i<agent_list->n_filtered; i++)
         {
             Agents::Agent* a = agent_list->filtered_objects[i];
             if (a->id == agent_list->null_id) continue;

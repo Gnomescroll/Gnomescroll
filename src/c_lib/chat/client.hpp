@@ -164,7 +164,7 @@ class ChatMessageList: public ObjectList<ChatMessage>
         void sort_by_most_recent();
         void filter_none(); // copies pointers/null into filtered list, unchanged
 
-    explicit ChatMessageList(unsigned int capacity) :
+    explicit ChatMessageList(size_t capacity) :
         ObjectList<ChatMessage>(capacity)
     {
         this->filtered_objects = (ChatMessage**)calloc(this->max, sizeof(ChatMessage*));

@@ -611,7 +611,7 @@ void create_container_block_CtoS::handle()
         collides = true;  // test against our agent, most likely to collide
     else
     {
-        for (unsigned int i=0; i<Agents::agent_list->max; i++)
+        for (size_t i=0; i<Agents::agent_list->max; i++)
         {
             class Agents::Agent* agent = &Agents::agent_list->objects[i];
             if (agent->id == Agents::agent_list->null_id || agent == a) continue;
@@ -671,7 +671,7 @@ void admin_create_container_block_CtoS::handle()
     if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
     else
     {
-        for (unsigned int i=0; i<Agents::agent_list->max; i++)
+        for (size_t i=0; i<Agents::agent_list->max; i++)
         {
             Agents::Agent* agent = &Agents::agent_list->objects[i];
             if (agent->id == Agents::agent_list->null_id || agent == a) continue;

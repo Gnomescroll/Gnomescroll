@@ -188,9 +188,9 @@ class ModelLoader
     void count_nodes(aiNode* pNode)
     {
         GS_ASSERT(pNode->mNumMeshes < 2); //assume only one mesh per node for now
-        for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+        for(size_t i=0; i < pNode->mNumMeshes; i++)
             nli++;
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
             count_nodes(pNode->mChildren[i]);
     }
 
@@ -204,7 +204,7 @@ class ModelLoader
             GS_ASSERT(pNode->mNumMeshes == 0 || pNode->mNumMeshes == 1);
             nli++;
         }
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
         {
             set_node_parents(pNode->mChildren[i]);
         }
@@ -786,7 +786,7 @@ class ModelLoader
         if( strcmp(node_name, pNode->mName.data) == 0 )
             return pNode;
 
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
         {
             aiNode* tmp = FindNodeRecursivelyByName(pNode->mChildren[i], node_name);
 

@@ -79,18 +79,21 @@ class AttributesHolder
 
 const char* get_name(AttributeGroup group, AttributeType type);
 AttributeType get_type(AttributeGroup group, const char* name);
+size_t get_attribute_count(AttributeGroup group);
+AttributeValueType get_value_type(AttributeGroup group, const char* name);
+AttributeValueType get_value_type(AttributeGroup group, AttributeType type);
 
 /* Read/write API */
 
 AttributeGroup start_registration();
 void end_registration();
 
-void set(AttributeGroup group, AttributeType type, int value);
-void set(AttributeGroup group, const char* name, int value);
-void set(AttributeGroup group, AttributeType type, float value);
-void set(AttributeGroup group, const char* name, float value);
-void set(AttributeGroup group, AttributeType type, const char* value);
-void set(AttributeGroup group, const char* name, const char* value);
+bool set(AttributeGroup group, AttributeType type, int value);
+bool set(AttributeGroup group, const char* name, int value);
+bool set(AttributeGroup group, AttributeType type, float value);
+bool set(AttributeGroup group, const char* name, float value);
+bool set(AttributeGroup group, AttributeType type, const char* value);
+bool set(AttributeGroup group, const char* name, const char* value);
 
 int get_int(AttributeGroup group, AttributeType type);
 int get_int(AttributeGroup group, const char* name);

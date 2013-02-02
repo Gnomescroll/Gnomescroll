@@ -19,7 +19,7 @@ void init()
 
 void teardown()
 {
-    
+
 }
 
 void populate_2d_noise_array(float* _2d_noise_array, float persistence, int octaves)
@@ -29,7 +29,7 @@ void populate_2d_noise_array(float* _2d_noise_array, float persistence, int octa
 
     float sum = 0.0f;
     for(int i=0; i<XMAX; i++)
-    for(int j=0; j<YMAX; j++)  
+    for(int j=0; j<YMAX; j++)
     {
         float _x = i*(1.0f/(float)XMAX); // + (0.5/512.0);
         float _y = j*(1.0f/(float)YMAX); // + (0.5/512.0);
@@ -57,10 +57,10 @@ float* create_2d_noise_array(const float persistence, const int octaves, const u
 
     const float xscale = 1.0f/(float)x;
     const float yscale = 1.0f/(float)y;
-    
+
     class PerlinOctave2D* pgen = new class PerlinOctave2D(octaves);
 
-    for (unsigned int i=0; i<x; i++)
+    for (size_t i=0; i<x; i++)
     for (unsigned int j=0; j<y; j++)
         noise[i + x*j] = pgen->sample((float)i * xscale, (float)j * yscale, persistence);
 
@@ -84,7 +84,7 @@ void save_png(const char* filename, float* in, int xres, int yres)
         gamma_correction[i] = (unsigned char)((int) intensity);
     }
 
-    for(int i=0; i < xres; i++) 
+    for(int i=0; i < xres; i++)
     for(int j=0; j < yres; j++)
     {
         int index = 4*(j*xres + i);
@@ -123,13 +123,13 @@ void save_png(const char* filename, float* in, int xres, int yres)
         int h = yres;
 
         height_div_2 = (int) (yres * .5);
-        for(index = 0; index < height_div_2; index++)    
+        for(index = 0; index < height_div_2; index++)
         {
             memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
             memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
             memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
-        free(temp_row); 
+        free(temp_row);
     }
 
     size_t png_size;
@@ -167,7 +167,7 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
         gamma_correction[i] = (unsigned char)((int) intensity);
     }
 
-    for(int i=0; i < xres; i++) 
+    for(int i=0; i < xres; i++)
     for(int j=0; j < yres; j++)
     {
         int index = 4*(j*xres + i);
@@ -220,13 +220,13 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
         int h = yres;
 
         height_div_2 = (int) (yres * .5);
-        for(index = 0; index < height_div_2; index++)    
+        for(index = 0; index < height_div_2; index++)
         {
             memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
             memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
             memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
-        free(temp_row); 
+        free(temp_row);
     }
 
     size_t png_size;

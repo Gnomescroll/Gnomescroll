@@ -121,7 +121,7 @@ void init_surface()
     MALLOX(char, grad_str, strlen(grad_fmt) -2 +1);
 
     sprintf(grad_str, grad_fmt, grad_num);
-    
+
     gradient_surface = create_surface_from_file(grad_str);
     GS_ASSERT(gradient_surface != NULL);
     if (gradient_surface == NULL) return;
@@ -139,7 +139,7 @@ void init_surface()
     for (int i=0; i<map_surface->w; i++)
         for (int j=0; j<map_surface->h; j++)
             ((Uint32*)map_surface->pixels)[i + map_surface->w*j] = SDL_MapRGBA(map_surface->format, 0,0,0,255);
-    
+
     // texture
     glEnable(GL_TEXTURE_2D);
     glGenTextures(2, map_textures);
@@ -210,7 +210,7 @@ void update_texture(GLuint texture, SDL_Surface* surface)
 
     GS_ASSERT(t_map::map_dim.x != 0 && t_map::map_dim.y != 0);
     if (t_map::map_dim.x == 0 || t_map::map_dim.y == 0) return;
-    
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_map::map_dim.x, t_map::map_dim.y, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
@@ -256,9 +256,9 @@ void draw_text_icons(float z)
     using Agents::agent_list;
     class Agents::Agent* you = player_agent.you();
     if (you == NULL) return;
-            
+
     float x,y;
-    for (unsigned int i=0; i<agent_list->max; i++)
+    for (size_t i=0; i<agent_list->max; i++)
     {
         Agents::Agent* a = &agent_list->objects[i];
         if (a->id == agent_list->null_id) continue;
@@ -300,7 +300,7 @@ void draw_text_icons(float z)
     if (you_star == NULL) return;
     if (you_A == NULL) return;
     if (camera == NULL) return;
-    
+
     if (!text_icons_inited) return;
     if (player_agent.you() == NULL) return;
     world_to_map_screen_coordinates(
@@ -323,7 +323,7 @@ void draw_text_icons(float z)
         camera->set_depth(z);
         camera->draw_character_rotated_centered(free_camera->theta - 0.5f);
     }
-    
+
     // -0.5 offset to orient texture properly
 }
 
@@ -339,7 +339,7 @@ void draw()
 
     static int draw_map_texture_index = 0;
     static int update_map_texture_index = 1;
-    
+
     static unsigned int update_counter = 0;
 
     const int tick_update_rate = 3;

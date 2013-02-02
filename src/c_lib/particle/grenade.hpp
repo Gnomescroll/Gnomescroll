@@ -64,7 +64,7 @@ class GrenadeList: public ObjectList<Grenade>
         void draw();
         void tick();
 
-        explicit GrenadeList(unsigned int capacity) :
+        explicit GrenadeList(size_t capacity) :
             ObjectList<Grenade>(capacity)
         {
         }

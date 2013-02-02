@@ -29,7 +29,7 @@ inline void BillboardText::reset()
 
     this->ttl = BILLBOARD_TEXT_TTL;
     this->type = BILLBOARD_TEXT_TYPE;
-    
+
     this->verlet.dampening = BILLBOARD_TEXT_DAMP;
 }
 
@@ -67,7 +67,7 @@ void BillboardText::draw()
     if (HudFont::font == NULL) return;
     if (current_camera == NULL) return;
     if(text == NULL || text[0] == '\0') return;
-    
+
     Vec3 position = this->get_position();
     Vec3 p = current_camera->get_position();
     position = quadrant_translate_position(p,position);
@@ -107,7 +107,7 @@ void BillboardText::draw()
     HudFont::font->get_string_pixel_dimension(text, &_l, &_h);
     len = (float)_l;
     height = (float)_h;
-    
+
     // calcalute half length pixel offset to center the text
     const float scale = 1.0f/16.0f * this->scale; // pixels to meters
     float start = -(0.5f * len * scale);
@@ -134,7 +134,7 @@ void BillboardText::draw()
         tx_max = glyph.x + glyph.tw;
         ty_min = glyph.y;
         ty_max = glyph.y + glyph.th;
-        
+
         // get char x offset and width, adjusted
         xoff = (cursor + glyph.xoff) * scale;
         xw = (cursor + glyph.xoff + glyph.w) * scale;
@@ -151,7 +151,7 @@ void BillboardText::draw()
         glBegin(GL_QUADS);
         glTexCoord2f(tx_max,ty_max);
         glVertex3f(ax, ay, az);
-        
+
         glTexCoord2f(tx_max,ty_min);
         glVertex3f(ax, ay, bz);
 
@@ -173,7 +173,7 @@ namespace Particle
 
 void BillboardText_list::tick()
 {
-    for (unsigned int i=0; i<this->num; i++)
+    for (size_t i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) destroy(i);
@@ -189,7 +189,7 @@ void BillboardText_list::draw()
     HudFont::reset_default();
     HudFont::start_world_font_draw(); // gl calls
     HudFont::set_texture();
-    for(unsigned int i=0; i<this->num; i++)
+    for(size_t i=0; i<this->num; i++)
     {
         if (!a[i].should_draw) continue;
         a[i].draw();

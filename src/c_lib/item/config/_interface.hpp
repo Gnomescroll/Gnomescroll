@@ -2,20 +2,21 @@
 
 #include <item/common/enum.hpp>
 #include <SDL/constants.hpp>
-
+#include <item/properties.hpp>
+#include <item/container/config/_interface.hpp>
+#include <agent/attributes.hpp>
+#include <common/dat/attributes.hpp>
 #if DC_CLIENT
 # include <SDL/texture_sheet_loader.hpp>
 #endif
-
-#include <item/properties.hpp>
-#include <item/container/config/_interface.hpp>
 
 namespace Item
 {
 
 void iso_block_sprite_def(const char* block_name);
 
-class ItemAttribute* s = NULL;
+ItemAttribute* s = NULL;
+static Modifier* _current_modifier = NULL;
 
 #if DC_CLIENT
 static SpriteSheet _item_cube_iso_spritesheet_id = NULL_SPRITE_SHEET;
@@ -23,6 +24,7 @@ static SpriteSheet _item_cube_iso_spritesheet_id = NULL_SPRITE_SHEET;
 
 bool item_def(ItemGroup group, const char* name)
 {
+    _current_modifier = NULL;
     if (s == NULL)
     {
         if (group != IG_ERROR)
@@ -163,6 +165,72 @@ void sprite_def(SpriteSheet spritesheet, int xpos, int ypos) {}
 void iso_block_sprite_def(const char* block_name) {}
 #endif
 
+// item_def("regen_potion", IG_CONSUMABLE);
+// set_modifier_amount("health", 5);
+// set_modifier_period(ONE_SECOND * 10);
+// set_modifier_duration(ONE_MINUTE * 5);
+
+static void _set_next_modifier(const char* name)
+{
+    _current_modifier = NULL;
+    AttributeGroup group = Agents::get_base_stats_attribute_group();
+    IF_ASSERT(group == NULL_ATTRIBUTE_GROUP) return;
+    AttributeType type = Attributes::get_type(group, name);
+    IF_ASSERT(type == NULL_ATTRIBUTE) return;
+    _current_modifier = s->modifiers.create();
+    _current_modifier->set_attribute_type(type);
+}
+
+void set_modifier_amount(const char* name, int amount)
+{   // for +/- value
+    // EXAMPLE:
+    // item takes 30 health (poisonous)
+    // set_modifier_percent("health", -30);
+    _set_next_modifier(name);
+    IF_ASSERT(_current_modifier == NULL) return;
+    _current_modifier->set_amount(amount);
+}
+
+void set_modifier_percent(const char* name, float percent)
+{   // for +/- %value.
+    // EXAMPLE:
+    // item gives +10% health
+    // set_modifier_percent("health", 10);
+    _set_next_modifier(name);
+    IF_ASSERT(_current_modifier == NULL) return;
+    _current_modifier->set_percent(percent);
+}
+
+void set_modifier_periodic(int duration, int period)
+{   // For an effect that lasts for "duration" ticks, triggering every "period" ticks
+    // EXAMPLE:
+    // apply modifier once every 20 seconds, for 5 minutes
+    // set_modifier_periodic(ONE_MINUTE * 5, 20 * ONE_SECOND);
+    IF_ASSERT(_current_modifier == NULL) return;
+    IF_ASSERT(s->group == IG_EQUIPMENT)
+        printf("Time-based modifiers are invalid for IG_EQUIPMENT\n");
+    IF_ASSERT(_current_modifier == NULL) return;
+    _current_modifier->set_periodic(duration, period);
+}
+
+void set_modifier_duration(int duration)
+{   // For an effect that lasts for "duration" ticks
+    // EXAMPLE:
+    // effect lasts 20 minutes
+    // set_modifier_duration(ONE_MINUTE * 20);
+    set_modifier_periodic(duration, 0);
+}
+
+void set_modifier_instant()
+{   // For an effect that occurs instantly
+    // EXAMPLE
+    // item_def("apple", IG_CONSUMABLE);
+    // ...
+    // set_modifier_amount("health", 5);
+    // set_modifier_instant();
+    set_modifier_duration(0);
+}
+
 }   // Item
 
 
@@ -170,7 +238,7 @@ namespace Item
 {
 
 int crafting_recipe_count = 0;
-class CraftingRecipe _cr;
+CraftingRecipe _cr;
 
 void end_crafting_recipe();
 
@@ -291,7 +359,7 @@ namespace Item
 {
 
 int smelting_recipe_count = 0;
-class SmeltingRecipe _sr;
+SmeltingRecipe _sr;
 
 void end_smelting_recipe();
 
@@ -435,7 +503,7 @@ void synthesizer_item_set(int xslot, int yslot)
 {
     GS_ASSERT_ABORT(_current_synthesizer_item < ItemContainer::get_container_alt_max_slots(ItemContainer::name::synthesizer));
 
-    class SynthesizerItem* n = &synthesizer_item_array[_current_synthesizer_item];
+    SynthesizerItem* n = &synthesizer_item_array[_current_synthesizer_item];
 
     GS_ASSERT_ABORT(_current_synthesizer_item_type != NULL_ITEM_TYPE);
     GS_ASSERT_ABORT(xslot >= 0 && xslot < ItemContainer::get_container_alt_xdim(ItemContainer::name::synthesizer));

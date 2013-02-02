@@ -143,9 +143,9 @@ class BoneTree
     void count_nodes(aiNode* pNode)
     {
         GS_ASSERT(pNode->mNumMeshes < 2); //assume only one mesh per node for now
-        for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+        for(size_t i=0; i < pNode->mNumMeshes; i++)
             nli++;
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
             count_nodes(pNode->mChildren[i]);
     }
 
@@ -162,7 +162,7 @@ class BoneTree
             ml[nli] = pScene->mMeshes[mesh_index];
             nli++;
         }
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
         {
             set_node_parents(pNode->mChildren[i]);
         }
@@ -175,7 +175,7 @@ class BoneTree
         for(int i=0; i<nli; i++)
         {
             struct aiNode* pNode = nl[i];
-            for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+            for(size_t i=0; i < pNode->mNumMeshes; i++)
             {
                 unsigned int index = pNode->mMeshes[i];
                 aiMesh* mesh = pScene->mMeshes[index];
@@ -365,7 +365,7 @@ class BoneTree
     void count_bones(int* count, aiNode* pNode)
     {
         GS_ASSERT(pNode->mNumMeshes == 0);  //RECOVER FROM THIS
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
         {
             (*count)++;
             count_bones(count, pNode->mChildren[i]);
@@ -378,7 +378,7 @@ class BoneTree
         //aiNode* pNode = pScene->mRootNode;
         aiNode* pNode = NULL;
 
-        for(unsigned int i=0; i < pScene->mRootNode->mNumChildren; i++)
+        for(size_t i=0; i < pScene->mRootNode->mNumChildren; i++)
         {
             if( strcmp("Armature", pScene->mRootNode->mChildren[i]->mName.data) == 0)
             {
@@ -396,7 +396,7 @@ class BoneTree
         aiNode* _pNode = NULL;
 
         //get the root_bone as child of the Amature
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
         {
             if( strcmp("root_bone", pNode->mChildren[i]->mName.data) == 0)
             {
@@ -568,7 +568,7 @@ mat = Bones[a]->Offset * Bones[a]->GlobalTransform;
         if( strcmp(node_name, pNode->mName.data) == 0 )
             return pNode;
 
-        for(unsigned int i=0; i < pNode->mNumChildren; i++)
+        for(size_t i=0; i < pNode->mNumChildren; i++)
         {
             aiNode* tmp = FindNodeRecursivelyByName(pNode->mChildren[i], node_name);
 
@@ -1122,7 +1122,7 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
 {
     printf("aiNode: %02d pNode name= %s \n", num, pNode->mName.data);
 
-    for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+    for(size_t i=0; i < pNode->mNumMeshes; i++)
     {
         unsigned int index = pNode->mMeshes[i];
         printf("\tMesh: %02d index %02d: name= %s vertices= %d faces= %d \n", i, index,
@@ -1159,7 +1159,7 @@ void PrintBoneTree(const aiScene* pScene, int num, aiNode* pNode)
         }
     }
 
-    for(unsigned int i=0; i < pNode->mNumChildren; i++)
+    for(size_t i=0; i < pNode->mNumChildren; i++)
     {
         PrintBoneTree(pScene, num+1, pNode->mChildren[i]);
     }
@@ -1178,7 +1178,7 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
 
     printf("node %02d: mName= %s depth= %d mNumMeshes= %d \n", *total, pNode->mName.data, depth, pNode->mNumMeshes);
 
-    for(unsigned int i=0; i < pNode->mNumMeshes; i++)
+    for(size_t i=0; i < pNode->mNumMeshes; i++)
     {
         unsigned int index = pNode->mMeshes[i];
         for(int _i=0; _i<depth; _i++)
@@ -1222,7 +1222,7 @@ void PrintNodeTree(const aiScene* pScene, aiNode* pNode, int num, int depth, int
         }
     }
 
-    for(unsigned int i=0; i < pNode->mNumChildren; i++)
+    for(size_t i=0; i < pNode->mNumChildren; i++)
     {
         PrintNodeTree(pScene, pNode->mChildren[i], i, depth+1, total);
     }

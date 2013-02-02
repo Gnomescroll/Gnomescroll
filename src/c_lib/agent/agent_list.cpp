@@ -23,7 +23,7 @@ const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
 #if DC_SERVER
 void AgentList::update_map_manager_positions()
 {
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         struct Vec3 p = this->objects[i].camera.get_position();
@@ -35,7 +35,7 @@ void AgentList::update_map_manager_positions()
 
 void AgentList::send_to_client(ClientID client_id)
 {
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         if (this->objects[i].client_id == client_id) continue;
@@ -70,7 +70,7 @@ void AgentList::send_to_client(ClientID client_id)
 void AgentList::draw_names()
 {
     AgentID agent_id = ClientState::player_agent.agent_id;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         Agent* a = &this->objects[i];
@@ -84,7 +84,7 @@ void AgentList::draw_names()
 void AgentList::draw_badges()
 {
     AgentID agent_id = ClientState::player_agent.agent_id;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         Agent* a = &this->objects[i];
@@ -103,7 +103,7 @@ void AgentList::draw_equipped_items()
     bool works = Animations::draw_voxel_gl_begin(GL_BACK);
     if (works)
     {
-        for (unsigned int i=0; i<this->max; i++)
+        for (size_t i=0; i<this->max; i++)
         {
             if (this->objects[i].id == this->null_id) continue;
             if (this->objects[i].id == agent_id) continue; // skip you
@@ -132,7 +132,7 @@ void AgentList::draw_equipped_items()
         works = Animations::draw_voxelized_sprite_gl_begin(GL_FRONT);
     if (works)
     {
-        for (unsigned int i=0; i<this->max; i++)
+        for (size_t i=0; i<this->max; i++)
         {
             if (this->objects[i].id == this->null_id) continue;
             if (this->objects[i].id == agent_id) continue; // skip you
@@ -159,7 +159,7 @@ void AgentList::draw_equipped_items()
 
 void AgentList::update_mining_lasers()
 {
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != this->null_id && i != ClientState::player_agent.agent_id)
             this->objects[i].event.update_mining_laser();
 }
@@ -170,7 +170,7 @@ void AgentList::update_mining_lasers()
 
 void AgentList::update_models() // doesnt actually draw, but updates draw/hitscan properties
 {
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != this->null_id)
             this->objects[i].update_model();
 }
@@ -246,7 +246,7 @@ void AgentList::sort_filtered_objects_by_distance(bool ascending)
 void AgentList::filter_none()
 {   // moves all non null objects to the filtered list
     unsigned int c = 0;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         this->filtered_objects[c++] = &this->objects[i];
@@ -262,7 +262,7 @@ int AgentList::objects_within_sphere(float x, float y, float z, float radius)
     unsigned int num = 0;
     float dist;
     const float radius_squared = radius*radius;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         Vec3 p = this->objects[i].get_position();
@@ -288,7 +288,7 @@ int AgentList::object_models_within_sphere(float x, float y, float z, float radi
     unsigned int num = 0;
     float dist;
     const float radius_squared = radius*radius;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id || this->objects[i].vox == NULL) continue;
         Vec3 p = this->objects[i].vox->get_center();
@@ -320,7 +320,7 @@ void AgentList::objects_in_cone(float x, float y, float z, float vx, float vy, f
     vx /= len;
     vy /= len;
     vz /= len;
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
     {
         Agent* a = &this->objects[i];
         if (a == NULL) continue;
@@ -350,7 +350,7 @@ void AgentList::objects_in_cone(float x, float y, float z, float vx, float vy, f
 int AgentList::get_ids()
 {
     int j=0;
-    for (unsigned int i=0; i<this->max;i++)
+    for (size_t i=0; i<this->max;i++)
     {
         if (this->objects[i].id == this->null_id) continue;
         if (objects[i].id == 0) continue;// skip 0th agent
@@ -432,7 +432,7 @@ Agent* random_agent_in_range(const Vec3 position, const float radius)
     return agent;
 }
 
-AgentList::AgentList(unsigned int capacity) :
+AgentList::AgentList(size_t capacity) :
     ObjectList<Agent, AgentID>(capacity, NULL_AGENT),
     check_name_interval(0)
 {

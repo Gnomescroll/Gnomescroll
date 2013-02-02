@@ -90,6 +90,8 @@ dont_include_this_file_in_client
 #include <common/analytics/sessions.hpp>
 #include <common/dat/name_map.hpp>
 #include <common/dat/attributes.cpp>
+#include <common/dat/modifiers.hpp>
+#include <common/dat/properties.hpp>
 
 // logging
 #include <common/logger.cpp>

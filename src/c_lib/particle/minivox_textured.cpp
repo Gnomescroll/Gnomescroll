@@ -80,7 +80,7 @@ void TexturedMinivox::set_texture(int tex_id)
 
 void TexturedMinivox::tick()
 {
-    struct Vec3 p = this->verlet.position; 
+    struct Vec3 p = this->verlet.position;
     this->verlet.bounce();
     if (vec3_equal(p, this->verlet.position))
         this->voxel.set_rotation_delta(0.0f, 0.0f);
@@ -91,7 +91,7 @@ void TexturedMinivox::tick()
 
 void TexturedMinivox_list::tick()
 {
-    for (unsigned int i=0; i<num; i++)
+    for (size_t i=0; i<num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) this->destroy(i);

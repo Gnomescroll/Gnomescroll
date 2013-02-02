@@ -59,7 +59,7 @@ void HitscanEffect::add_plane_bias()
 
     //float dxy = (randf() * (ceil_ - floor_)) + floor_;
     //float dz = (randf() * (ceil_ - floor_)) + floor_;
-    
+
     //this->x += dxy * negxy * right.x;
     //this->y += dxy * negxy * right.y;
     //this->z += dz * negz;
@@ -89,10 +89,10 @@ void HitscanEffect::add_plane_bias()
 void HitscanEffect::tick()
 {
     const float tick_rate = 30.0f;
-    
+
     x += vx / tick_rate;
     y += vy / tick_rate;
-    z += vz / tick_rate;    
+    z += vz / tick_rate;
 
     x = translate_point(x);
     y = translate_point(y);
@@ -121,7 +121,7 @@ void HitscanEffect::draw(float delta, Vec3 camera)
 
     Vec3 u1 = vec3_cross(look, v);
     normalize_vector(&u1);
-    
+
     Vec3 x2 = vec3_init(x - height*vx, y - height*vy, z - height*vz);
     look = vec3_sub(x2, camera);
 
@@ -129,7 +129,7 @@ void HitscanEffect::draw(float delta, Vec3 camera)
     normalize_vector(&u2);
 
     u1 = vec3_scalar_mult(u1, width);
-    u2 = vec3_scalar_mult(u2, width);   
+    u2 = vec3_scalar_mult(u2, width);
 
     static const float tx_min = 0.0f;
     static const float tx_max = 1.0f;
@@ -138,10 +138,10 @@ void HitscanEffect::draw(float delta, Vec3 camera)
 
     glTexCoord2f(tx_max,ty_max);
     glVertex3f( x2.x + u2.x, x2.y + u2.y, x2.z + u2.z );  // Bottom left
-    
+
     glTexCoord2f(tx_min,ty_max);
     glVertex3f( x1.x + u1.x, x1.y + u1.y, x1.z + u1.z);  // Top left
-    
+
     glTexCoord2f(tx_min,ty_min);
     glVertex3f( x1.x - u1.x, x1.y - u1.y, x1.z - u1.z );  // Top right
 
@@ -167,7 +167,7 @@ void HitscanEffectList::draw()
     }
 
     if(this->num == 0) return;
-    
+
     const float tick_rate = 30.0f;
 
     int last_tick = (int)_LAST_TICK();
@@ -191,9 +191,9 @@ void HitscanEffectList::draw()
 
     glBegin( GL_QUADS );
 
-    for(unsigned int i=0; i<this->num; i++) 
+    for(size_t i=0; i<this->num; i++)
         a[i].draw(delta, camera);
-    
+
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
@@ -221,7 +221,7 @@ void HitscanEffectList::tick()
 
     }
 
-    for(unsigned int i=0; i<this->num; i++)
+    for(size_t i=0; i<this->num; i++)
     {
         a[i].tick();
         a[i].ttl--;

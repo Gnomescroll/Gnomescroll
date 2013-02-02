@@ -115,7 +115,7 @@ class ItemParticle_list: public ObjectList<ItemParticle, ItemParticleID>
     private:
         const char* name() { return "ItemParticle"; }
     public:
-        ItemParticle_list(unsigned int capacity) :
+        ItemParticle_list(size_t capacity) :
             ObjectList<ItemParticle, ItemParticleID>(capacity, NULL_PARTICLE)
         {
         }
@@ -144,7 +144,7 @@ void ItemParticle_list::draw()
     glBindTexture(GL_TEXTURE_2D, item_texture_sheet_loader->texture);
 
     glBegin(GL_QUADS);
-    for (unsigned int i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != this->null_id && !this->objects[i].is_voxel && this->objects[i].should_draw)
             this->objects[i].draw();
     glEnd();

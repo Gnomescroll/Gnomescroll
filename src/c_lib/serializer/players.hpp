@@ -167,7 +167,7 @@ class PlayerLoadDataList: public ObjectList<class PlayerLoadData>
     public:
         const char* name() { return "PlayerLoadData"; }
 
-    explicit PlayerLoadDataList(unsigned int capacity) :
+    explicit PlayerLoadDataList(size_t capacity) :
         ObjectList<class PlayerLoadData>(capacity)
     {}
 };
@@ -177,7 +177,7 @@ class PlayerContainerLoadDataList: public ObjectList<class PlayerContainerLoadDa
     public:
         const char* name() { return "PlayerContainerLoadData"; }
 
-    explicit PlayerContainerLoadDataList(unsigned int capacity) :
+    explicit PlayerContainerLoadDataList(size_t capacity) :
         ObjectList<class PlayerContainerLoadData>(capacity)
     {}
 };

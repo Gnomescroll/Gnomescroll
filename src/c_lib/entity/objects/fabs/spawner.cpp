@@ -26,11 +26,11 @@ void load_agent_spawner_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
+    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);
     entity_data->attach_component(type, COMPONENT_DIMENSION);
     entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     entity_data->attach_component(type, COMPONENT_HIT_POINTS);
-    
+
     #if DC_SERVER
     entity_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
@@ -43,12 +43,12 @@ void load_agent_spawner_data()
 
 static void set_agent_spawner_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION_CHANGED);    
+    add_component_to_object(object, COMPONENT_POSITION_CHANGED);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
     dims->height = AGENT_SPAWNER_HEIGHT;
-    
+
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
     vox->vox_dat = &VoxDats::agent_spawner;
@@ -103,13 +103,13 @@ void ready_agent_spawner(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
-    
+
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
-    
+
     vox->ready(position, angles.x, angles.y);
     vox->freeze();
 
@@ -119,7 +119,7 @@ void ready_agent_spawner(Entity* object)
 }
 
 void die_agent_spawner(Entity* object)
-{    
+{
     #if DC_SERVER
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
@@ -128,11 +128,11 @@ void die_agent_spawner(Entity* object)
 
     // remove self from any agents using us
     using Agents::agent_list;
-    for (unsigned int i=0; i<agent_list->max; i++)
+    for (size_t i=0; i<agent_list->max; i++)
         if (agent_list->objects[i].id != agent_list->null_id)
             if (agent_list->objects[i].status.spawner == object->id)
                 agent_list->objects[i].status.set_spawner(BASE_SPAWN_ID);
-                
+
     object->broadcastDeath();
     #endif
 
@@ -171,7 +171,7 @@ void update_agent_spawner(Entity* object)
 {
     typedef Components::PositionChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
-    
+
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 

@@ -182,7 +182,7 @@ void destroy_item(ItemID id)
     else if (item->location == IL_PARTICLE)
         ItemParticle::destroy((ItemParticleID)item->location_id);
 
-    //for (unsigned int i=0; i<item->subscribers.n; i++)
+    //for (size_t i=0; i<item->subscribers.n; i++)
         //printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], id);
 
     send_item_destroy(id);
@@ -322,7 +322,7 @@ void agent_quit(AgentID agent_id)
     // TODO -- reverse lookup from agent
 
     ClientID client_id = agent->client_id;
-    for (unsigned int i=0; i<item_list->max; i++)
+    for (size_t i=0; i<item_list->max; i++)
         if (item_list->objects[i].id != item_list->null_id)
             item_list->objects[i].subscribers.remove(client_id);
 }
