@@ -621,8 +621,8 @@ void _envlight_update_core()
 
 
 #if DC_CLIENT
-    if(index > 1000)
-        GS_ASSERT(false);
+    //if(index > 1000)
+    //    GS_ASSERT(false);
 #endif
 }
 
@@ -711,6 +711,8 @@ void asssert_envlight_0(int chunk_i, int chunk_j)
 //call on chunk init
 void init_update_envlight(int chunk_i, int chunk_j)
 {
+    printf("init_update_envlight: %d %d \n", chunk_i, chunk_j);
+
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     struct MAP_ELEMENT e;
 
