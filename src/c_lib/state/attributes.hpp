@@ -3,6 +3,8 @@
 namespace World
 {
 
+extern AttributeGroup attributes;
+
 // Boilerplate
 void init_attributes();
 void teardown_attributes();

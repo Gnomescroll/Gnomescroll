@@ -33,13 +33,19 @@ typedef enum
 
 typedef void (*voidFunction)();
 
-typedef int (*getInt)();
-typedef float (*getFloat)();
-typedef const char* (*getString)();
+// Get callbacks; When an attribute is requested, the current attribute value is
+// passed to the get callback, and the return value of the get callback is returned
+// to the requester
+typedef int (*getInt)(int);
+typedef float (*getFloat)(float);
+typedef const char* (*getString)(char*);
 
-typedef bool (*setInt)(int);
-typedef bool (*setFloat)(float);
-typedef bool (*setString)(const char*);
+// Set callbacks; When an attribute is being set, the old value and new value
+// are passed to the set callback, and the return value of the set callback
+// is used as the new value.
+typedef int (*setInt)(int, int);
+typedef float (*setFloat)(float, float);
+typedef const char* (*setString)(const char*, const char*);
 
 const size_t MAX_ATTRIBUTES = NULL_ATTRIBUTE;
 const size_t MAX_ATTRIBUTE_GROUPS = NULL_ATTRIBUTE_GROUP;
@@ -56,24 +62,6 @@ bool isValid(AttributeGroup group)
 
 namespace Attributes
 {
-
-class AttributesHolder
-{
-    public:
-        AttributeGroup attribute_group;
-
-    void set_attribute_group(AttributeGroup group)
-    {
-        GS_ASSERT(this->attribute_group == NULL_ATTRIBUTE_GROUP);
-        GS_ASSERT(group != NULL_ATTRIBUTE_GROUP);
-        this->attribute_group = group;
-    }
-
-    AttributesHolder() :
-        attribute_group(NULL_ATTRIBUTE_GROUP)
-    {
-    }
-};
 
 /* Meta API */
 
@@ -113,11 +101,14 @@ void verify();
 AttributeType def(const char* name, int value);
 AttributeType def(const char* name, float value);
 AttributeType def(const char* name, const char* value);
-
 void set_sync_type(AttributeType type, AttributeSyncType sync_type);
-void set_location(AttributeType type, int* location);
-void set_location(AttributeType type, float* location);
-void set_location(AttributeType type, char** location);
+void add_get_callback(AttributeType type, getInt cb);
+void add_get_callback(AttributeType type, getFloat cb);
+void add_get_callback(AttributeType type, getString cb);
+void add_set_callback(AttributeType type, setInt cb);
+void add_set_callback(AttributeType type, setFloat cb);
+void add_set_callback(AttributeType type, setString cb);
+
 
 void done_loading();
 

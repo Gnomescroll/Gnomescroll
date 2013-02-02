@@ -5,23 +5,31 @@
 namespace World
 {
 
-class WorldAttributes: public Attributes::AttributesHolder
-{
-    public:
-
-        int time_of_day;
-        int temperature;
-
-    WorldAttributes() :
-        Attributes::AttributesHolder()
-    {
-    }
-};
-
-static WorldAttributes* attributes;
+//forward decl
+template <typename Type> static void attribute_def(const char* name, Type value);
+static void set_sync_type(AttributeSyncType sync_type);
 
 /*********************
  * Registration
+ *********************/
+
+static void _register_attributes()
+{
+    attribute_def("time_of_day", 0);
+    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
+
+    attribute_def("temperature", 40);
+    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
+}
+
+/*********************
+ * State
+ *********************/
+
+AttributeGroup attributes = NULL_ATTRIBUTE_GROUP;
+
+/*********************
+ * Registration Helpers
  *********************/
 
 static AttributeType attr_type = NULL_ATTRIBUTE;
@@ -33,35 +41,16 @@ static void attribute_def(const char* name, Type value)
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
 }
 
-template <typename Type>
-static void set_location(Type location)
-{
-    Attributes::set_location(attr_type, location);
-}
-
 static void set_sync_type(AttributeSyncType sync_type)
 {
     Attributes::set_sync_type(attr_type, sync_type);
 }
 
-static void start_registration()
-{
-    AttributeGroup group = Attributes::start_registration();
-    attributes->set_attribute_group(group);
-}
-
 void register_attributes()
 {
-    start_registration();
-
-    attribute_def("time_of_day", 0);
-    set_location(&attributes->time_of_day);
-    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
-
-    attribute_def("temperature", 40);
-    set_location(&attributes->temperature);
-    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
-
+    attributes = Attributes::start_registration();
+    GS_ASSERT(attributes != NULL_ATTRIBUTE_GROUP);
+    _register_attributes();
     Attributes::end_registration();
 }
 
@@ -72,7 +61,7 @@ void register_attributes()
 #if DC_SERVER
 void send_attributes_to_client(ClientID client_id)
 {
-    Attributes::send_to_client(attributes->attribute_group, client_id);
+    Attributes::send_to_client(attributes, client_id);
 }
 #endif
 
@@ -83,13 +72,13 @@ void send_attributes_to_client(ClientID client_id)
 #define SET_ATTRIBUTE(KEYTYPE, TYPE) \
     void set_attribute(KEYTYPE key, TYPE value) \
     { \
-        Attributes::set(attributes->attribute_group, key, value); \
+        Attributes::set(attributes, key, value); \
     }
 
 #define GET_ATTRIBUTE(KEYTYPE, TYPE, NAME, RETVAL) \
     TYPE get_attribute_##NAME(KEYTYPE key) \
     { \
-        return Attributes::get_##NAME(attributes->attribute_group, key); \
+        return Attributes::get_##NAME(attributes, key); \
     }
 
 SET_ATTRIBUTE(AttributeType, int);
@@ -115,13 +104,11 @@ GET_ATTRIBUTE(const char*, const char*, string, NULL);
 
 void init_attributes()
 {
-    GS_ASSERT(attributes == NULL);
-    attributes = new WorldAttributes;
+    GS_ASSERT(attributes == NULL_ATTRIBUTE_GROUP);
 }
 
 void teardown_attributes()
 {
-    if (attributes != NULL) delete attributes;
 }
 
 

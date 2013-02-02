@@ -1,7 +1,6 @@
 #include "attributes.hpp"
 
 #include <math.h>
-
 #include <common/dat/attributes.hpp>
 #include <common/dat/modifiers.hpp>
 #include <common/common.hpp>
@@ -9,17 +8,26 @@
 namespace Agents
 {
 
-class Stats: public Attributes::AttributesHolder
-{
-    public:
-        int max_health;
-        int health;
+// forward decl
+template <typename Type> static void attribute_def(const char* name, Type value);
+static void set_sync_type(AttributeSyncType sync_type);
 
-    Stats() :
-        Attributes::AttributesHolder()
-    {
-    }
-};
+/*******************
+ * Main Registration
+ *******************/
+
+static void _register_attributes()
+{
+    attribute_def("max_health", 100);
+    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
+
+    attribute_def("health", 100);
+    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
+}
+
+/*******************
+ * Classes and state
+ *******************/
 
 class AgentModifier: public Modifier
 {
@@ -69,15 +77,15 @@ struct ModifierSum
 };
 
 
-static Stats* base_stats;
-static Stats* stats;
+AttributeGroup base_stats = NULL_ATTRIBUTE_GROUP;
+AttributeGroup* stats;
 
 static AgentModifierList* agent_modifiers;
 static struct ModifierSum* modifier_sums;
 
 
 /*********************
- * Registration
+ * Registration Helpers
  *********************/
 
 static AttributeType attr_type = NULL_ATTRIBUTE;
@@ -89,42 +97,9 @@ static void attribute_def(const char* name, Type value)
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
 }
 
-template <typename Type>
-static void set_location(Type location)
-{
-    Attributes::set_location(attr_type, location);
-}
-
 static void set_sync_type(AttributeSyncType sync_type)
 {
     Attributes::set_sync_type(attr_type, sync_type);
-}
-
-static void start_registration(Stats* stats)
-{
-    AttributeGroup group = Attributes::start_registration();
-    stats->set_attribute_group(group);
-}
-
-static void register_attributes(Stats* stats)
-{
-    start_registration(stats);
-
-    attribute_def("max_health", 100);
-    set_location(&stats->max_health);
-    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
-
-    attribute_def("health", 100);
-    set_location(&stats->health);
-    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
-
-    Attributes::end_registration();
-}
-
-AttributeGroup get_base_stats_attribute_group()
-{
-    IF_ASSERT(base_stats == NULL) return NULL_ATTRIBUTE_GROUP;
-    return base_stats->attribute_group;
 }
 
 static void test_registration()
@@ -141,15 +116,25 @@ static void test_registration()
     set_attribute(agent_id, "health", val);
 }
 
+static void start_registration(AttributeGroup& stats)
+{
+    stats = Attributes::start_registration();
+    GS_ASSERT(stats != NULL_ATTRIBUTE_GROUP);
+}
+
 void register_attributes()
 {
-    register_attributes(base_stats);
+    start_registration(base_stats);
+    _register_attributes();
+    Attributes::end_registration();
     for (int i=0; i<MAX_AGENTS; i++)
     {
-        register_attributes(&stats[i]);
+        start_registration(stats[i]);
+        _register_attributes();
         #if DC_SERVER
-        Attributes::set_sync_to(stats[i].attribute_group, (ClientID)i);
+        Attributes::set_sync_to(stats[i], (ClientID)i);
         #endif
+        Attributes::end_registration();
     }
 
     #if !PRODUCTION
@@ -166,8 +151,8 @@ void send_attributes_to_client(ClientID client_id)
 {
     AgentID agent_id = NetServer::get_agent_id_for_client(client_id);
     IF_ASSERT(!isValid(agent_id)) return;
-    Attributes::send_to_client(base_stats->attribute_group, client_id);
-    Attributes::send_to_client(stats[agent_id].attribute_group, client_id);
+    Attributes::send_to_client(base_stats, client_id);
+    Attributes::send_to_client(stats[agent_id], client_id);
 }
 #endif
 
@@ -179,24 +164,22 @@ void send_attributes_to_client(ClientID client_id)
     bool set_attribute(AgentID agent_id, KEYTYPE key, TYPE value) \
     { \
         IF_ASSERT(!isValid(agent_id)) return false; \
-        Stats* s = &stats[agent_id]; \
-        return Attributes::set(s->attribute_group, key, value); \
+        return Attributes::set(stats[agent_id], key, value); \
     } \
     bool set_attribute(KEYTYPE key, TYPE value) \
     { \
-        return Attributes::set(base_stats->attribute_group, key, value); \
+        return Attributes::set(base_stats, key, value); \
     }
 
 #define GET_ATTRIBUTE(KEYTYPE, TYPE, NAME, RETVAL) \
     TYPE get_attribute_##NAME(AgentID agent_id, KEYTYPE key) \
     { \
         IF_ASSERT(!isValid(agent_id)) return RETVAL; \
-        Stats* s = &stats[agent_id]; \
-        return Attributes::get_##NAME(s->attribute_group, key); \
+        return Attributes::get_##NAME(stats[agent_id], key); \
     } \
     TYPE get_attribute_##NAME(KEYTYPE key) \
     { \
-        return Attributes::get_##NAME(base_stats->attribute_group, key); \
+        return Attributes::get_##NAME(base_stats, key); \
     }
 
 SET_ATTRIBUTE(AttributeType, int);
@@ -277,8 +260,7 @@ static void apply_timed_modifiers(AgentID agent_id)
             agent_modifiers[agent_id].destroy(m->id);
             continue;
         }
-        AttributeValueType value_type = Attributes::get_value_type(
-            stats[agent_id].attribute_group, m->attribute_type);
+        AttributeValueType value_type = Attributes::get_value_type(stats[agent_id], m->attribute_type);
         if (m->tick % m->duration == 0)
             update_agent_attribute(agent_id, m->attribute_type, value_type,
                                    m->amount, m->percent);
@@ -292,7 +274,7 @@ static void apply_cumulative_modifiers(AgentID agent_id)
 
     memset(modifier_sums, 0, MAX_ATTRIBUTES*sizeof(struct ModifierSum));
 
-    AttributeGroup group = stats[agent_id].attribute_group;
+    AttributeGroup group = stats[agent_id];
     size_t count = Attributes::get_attribute_count(group);
 
     // sum up modifier amounts
@@ -339,7 +321,7 @@ static bool apply_instant_agent_modifier(AgentID agent_id, const Modifier* modif
 {
     IF_ASSERT(!isValid(agent_id)) return false;
     AttributeValueType value_type = Attributes::get_value_type(
-        stats[agent_id].attribute_group, modifier->attribute_type);
+        stats[agent_id], modifier->attribute_type);
     return update_agent_attribute(agent_id, modifier->attribute_type, value_type,
                                   modifier->amount, modifier->percent);
 }
@@ -362,20 +344,20 @@ bool apply_agent_modifier(AgentID agent_id, const Modifier* modifier)
 
 void init_attributes()
 {
-    GS_ASSERT(base_stats == NULL);
+    GS_ASSERT(base_stats == NULL_ATTRIBUTE_GROUP);
     GS_ASSERT(stats == NULL);
+    GS_ASSERT(agent_modifiers == NULL);
     GS_ASSERT(modifier_sums == NULL);
 
-    base_stats = new Stats;
-    stats = new Stats[MAX_AGENTS];
+    stats = (AttributeGroup*)malloc(MAX_AGENTS * sizeof(AttributeGroup));
+    for (int i=0; i<MAX_AGENTS; stats[i++] = NULL_ATTRIBUTE_GROUP);
     agent_modifiers = new AgentModifierList[MAX_AGENTS];
     modifier_sums = (struct ModifierSum*)calloc(MAX_ATTRIBUTES, sizeof(struct ModifierSum));
 }
 
 void teardown_attributes()
 {
-    if (base_stats != NULL) delete base_stats;
-    if (stats != NULL) delete[] stats;
+    if (stats != NULL) free(stats);
     if (agent_modifiers != NULL) delete[] agent_modifiers;
     if (modifier_sums != NULL) free(modifier_sums);
 }

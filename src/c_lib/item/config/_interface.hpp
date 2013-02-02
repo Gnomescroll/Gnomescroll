@@ -173,9 +173,7 @@ void iso_block_sprite_def(const char* block_name) {}
 static void _set_next_modifier(const char* name)
 {
     _current_modifier = NULL;
-    AttributeGroup group = Agents::get_base_stats_attribute_group();
-    IF_ASSERT(group == NULL_ATTRIBUTE_GROUP) return;
-    AttributeType type = Attributes::get_type(group, name);
+    AttributeType type = Attributes::get_type(Agents::base_stats, name);
     IF_ASSERT(type == NULL_ATTRIBUTE) return;
     _current_modifier = s->modifiers.create();
     _current_modifier->set_attribute_type(type);

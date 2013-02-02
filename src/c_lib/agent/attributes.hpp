@@ -3,13 +3,13 @@
 namespace Agents
 {
 
+extern AttributeGroup base_stats;
+extern AttributeGroup* stats;
+
 // Boilerplate
 void init_attributes();
 void teardown_attributes();
 void register_attributes();
-
-// Misc
-AttributeGroup get_base_stats_attribute_group();
 
 #if DC_SERVER
 // Modifiers
@@ -23,7 +23,7 @@ void send_attributes_to_client(ClientID client_id);
 // API
 #define SET_ATTRIBUTE_HEADER(KEY, TYPE) \
     bool set_attribute(AgentID agent_id, KEY key, TYPE value); \
-    bool set_attribute(KEY key, TYPE value); \
+    bool set_attribute(KEY key, TYPE value);
 
 #define GET_ATTRIBUTE_HEADER(KEY, TYPE, NAME) \
     TYPE get_attribute_##NAME(AgentID agent_id, KEY key); \
