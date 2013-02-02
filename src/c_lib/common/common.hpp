@@ -195,6 +195,11 @@ void make_pretty_name(const char* src, char* dest, const size_t len)
     dest[j] = '\0';
 }
 
+float round_half_from_zero(float r)
+{
+    return (r > 0.0f) ? floorf(r + 0.5f) : ceilf(r - 0.5f);
+}
+
 template <typename T> int sgn(T val)
 {
     return (T(0) < val) - (val < T(0));

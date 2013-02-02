@@ -1,6 +1,5 @@
 #include "attributes.hpp"
 
-#include <math.h>
 #include <common/dat/attributes.hpp>
 #include <common/dat/modifiers.hpp>
 #include <common/common.hpp>
@@ -214,10 +213,11 @@ GET_ATTRIBUTE(const char*, const char*, string, NULL);
 // read our modifiers
 //  apply any time based ones
 // read our modifiers and our equipment modifiers
-//  sum percents
-//      apply sum
-//  sum deltas
-//      apply deltas
+//  sum percent deltas
+//      base_val = (percent + 1) * base_stat
+//  sum amount deltas
+//      base_val += amount
+//  stat = stat + delta + percent * base_stat
 
 static bool update_agent_attribute(AgentID agent_id,
     AttributeType attribute_type, AttributeValueType value_type,
@@ -227,25 +227,18 @@ static bool update_agent_attribute(AgentID agent_id,
         return false;
     if (value_type == ATTRIBUTE_VALUE_INT)
     {
-        int val = get_attribute_int(agent_id, attribute_type);
-        if (percent)
-        {   // percents are defined as +/-%;
-            float fval = float(val) * fabs(percent); // get amount to adjust by
-            val += int(roundf(fval)*sgn(percent));   // round value and restore sign
-        }
-        if (amount)
-            val += amount;
-        return set_attribute(agent_id, attribute_type, val);
+        int stat = get_attribute_int(agent_id, attribute_type);
+        int base_stat = get_attribute_int(attribute_type);
+        stat = stat + amount + int(round_half_from_zero(percent * float(base_stat)));
+        return set_attribute(agent_id, attribute_type, stat);
     }
     else
     if (value_type == ATTRIBUTE_VALUE_FLOAT)
     {
-        float val = get_attribute_float(agent_id, attribute_type);
-        if (percent)
-            val += val * percent;
-        if (amount)
-            val += amount;
-        return set_attribute(agent_id, attribute_type, val);
+        float stat = get_attribute_float(agent_id, attribute_type);
+        float base_stat = get_attribute_float(attribute_type);
+        stat = stat + amount + percent * base_stat;
+        return set_attribute(agent_id, attribute_type, stat);
     }
     else
     {

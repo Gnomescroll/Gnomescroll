@@ -285,7 +285,7 @@ void load_item_dat()
     sprite_def(i1, 6,1);
     s->max_stack_size = 16;
     set_modifier_amount("health", 25);
-    set_modifier_periodic(ONE_SECOND*30, ONE_SECOND*3);
+    set_modifier_instant();
 
     item_def(IG_RESOURCE, "methane_ice_chunk");
     sprite_def(i0, 1,4);
