@@ -42,7 +42,8 @@ typedef const char* (*getString)(char*);
 
 // Set callbacks; When an attribute is being set, the old value and new value
 // are passed to the set callback, and the return value of the set callback
-// is used as the new value.
+// is used as the new value. Any limits are applied to both the value sent to
+// and the value returned from set_callback.
 typedef int (*setInt)(int, int);
 typedef float (*setFloat)(float, float);
 typedef const char* (*setString)(const char*, const char*);
@@ -110,8 +111,10 @@ void add_get_callback(AttributeType type, getString cb);
 void add_set_callback(AttributeType type, setInt cb);
 void add_set_callback(AttributeType type, setFloat cb);
 void add_set_callback(AttributeType type, setString cb);
-
-
+void set_lower_limit(AttributeType type, int lower);
+void set_upper_limit(AttributeType type, int upper);
+void set_lower_limit(AttributeType type, float lower);
+void set_upper_limit(AttributeType type, float upper);
 void done_loading();
 
 /* Network */

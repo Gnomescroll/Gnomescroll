@@ -23,6 +23,21 @@ class Attribute: public Property<AttributeType>
         bool changed;
         ClientID sync_to;
 
+        struct
+        {
+            bool lower, upper;
+        } use_limits;
+
+        struct LimitInt
+        {
+            int lower, upper;
+        } limiti;
+
+        struct
+        {
+            float lower, upper;
+        } limitf;
+
     /* Read/write API */
 
     int get_int() const
@@ -56,8 +71,18 @@ class Attribute: public Property<AttributeType>
     {
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_INT) return false;
         int old = *(reinterpret_cast<int*>(this->value));
+        if (this->use_limits.lower)
+            value = GS_MAX(value, this->limiti.lower);
+        if (this->use_limits.upper)
+            value = GS_MIN(value, this->limiti.upper);
         if (this->set_callback != NULL)
+        {
             value = reinterpret_cast<setInt>(this->set_callback)(old, value);
+            if (this->use_limits.lower)
+                value = GS_MAX(value, this->limiti.lower);
+            if (this->use_limits.upper)
+                value = GS_MIN(value, this->limiti.upper);
+        }
         if (old != value)
         {
             *(reinterpret_cast<int*>(this->value)) = value;
@@ -71,8 +96,18 @@ class Attribute: public Property<AttributeType>
     {
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_FLOAT) return false;
         float old = *(reinterpret_cast<float*>(this->value));
+        if (this->use_limits.lower)
+            value = GS_MAX(value, this->limitf.lower);
+        if (this->use_limits.upper)
+            value = GS_MIN(value, this->limitf.upper);
         if (this->set_callback != NULL)
+        {
             value = reinterpret_cast<setFloat>(this->set_callback)(old, value);
+            if (this->use_limits.lower)
+                value = GS_MAX(value, this->limitf.lower);
+            if (this->use_limits.upper)
+                value = GS_MIN(value, this->limitf.upper);
+        }
         if (old != value)
         {
             *(reinterpret_cast<float*>(this->value)) = value;
@@ -176,6 +211,34 @@ class Attribute: public Property<AttributeType>
                 GS_ASSERT(false);
                 break;
         }
+    }
+
+    void set_lower_limit(int lower)
+    {
+        GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_INT);
+        this->use_limits.lower = true;
+        this->limiti.lower = lower;
+    }
+
+    void set_upper_limit(int upper)
+    {
+        GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_INT);
+        this->use_limits.upper = true;
+        this->limiti.upper = upper;
+    }
+
+    void set_lower_limit(float lower)
+    {
+        GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_FLOAT);
+        this->use_limits.lower = true;
+        this->limitf.lower = lower;
+    }
+
+    void set_upper_limit(float upper)
+    {
+        GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_FLOAT);
+        this->use_limits.upper = true;
+        this->limitf.upper = upper;
     }
 
     void copy_from(const Attribute* other)
@@ -297,6 +360,28 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(this->value_type != NULL_ATTRIBUTE_VALUE_TYPE);
         GS_ASSERT(this->name[0] != '\0');
         GS_ASSERT(this->value != NULL);
+
+
+        if (this->value_type == ATTRIBUTE_VALUE_INT)
+        {
+            GS_ASSERT(this->use_limits.lower || this->limiti.lower == 0);
+            GS_ASSERT(this->use_limits.upper || this->limiti.upper == 0);
+            GS_ASSERT(this->limitf.lower == 0 && this->limitf.upper == 0);
+        }
+        else
+        if (this->value_type == ATTRIBUTE_VALUE_STRING)
+        {
+            GS_ASSERT(!this->use_limits.lower && !this->use_limits.upper);
+            GS_ASSERT(this->limiti.lower == 0 && this->limiti.upper == 0);
+            GS_ASSERT(this->limitf.lower == 0 && this->limitf.upper == 0);
+        }
+        else
+        if (this->value_type == ATTRIBUTE_VALUE_FLOAT)
+        {
+            GS_ASSERT(this->use_limits.lower || this->limitf.lower == 0);
+            GS_ASSERT(this->use_limits.upper || this->limitf.upper == 0);
+            GS_ASSERT(this->limiti.lower == 0 && this->limiti.upper == 0);
+        }
         #if DC_SERVER
         GS_ASSERT(this->sync_type != NULL_ATTRIBUTE_SYNC_TYPE);
         GS_ASSERT(this->sync_type != ATTRIBUTE_SYNC_TYPE_PLAYER ||
@@ -320,6 +405,9 @@ class Attribute: public Property<AttributeType>
         value(NULL), get_callback(NULL), set_callback(NULL),
         changed(false), sync_to(NULL_CLIENT)
     {
+        memset(&this->use_limits, 0, sizeof(this->use_limits));
+        memset(&this->limiti, 0, sizeof(this->limiti));
+        memset(&this->limitf, 0, sizeof(this->limitf));
     }
 
     ~Attribute()
@@ -704,7 +792,7 @@ static char _sval[STRING_ATTRIBUTE_MAX_LENGTH+1];
 static void set_value_type(AttributeType type, AttributeValueType value_type)
 {
     IF_ASSERT(current_attributes == NULL) return;
-    Attribute* a = current_attributes->get(type);
+    Attribute* a = current_attributes->_get_any(type);
     IF_ASSERT(a == NULL) return;
     a->set_value_type(value_type);
 }
@@ -716,21 +804,18 @@ static void _set_saved()
     switch (_vtype)
     {
         case ATTRIBUTE_VALUE_INT:
-            set_value_type(_type, ATTRIBUTE_VALUE_INT);
             set(current_attributes->group, _type, _ival);
             _ival = 0;
             _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
             break;
 
         case ATTRIBUTE_VALUE_FLOAT:
-            set_value_type(_type, ATTRIBUTE_VALUE_FLOAT);
             set(current_attributes->group, _type, _fval);
             _fval = 0.0f;
             _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
             break;
 
         case ATTRIBUTE_VALUE_STRING:
-            set_value_type(_type, ATTRIBUTE_VALUE_STRING);
             set(current_attributes->group, _type, _sval);
             _sval[0] = '\0';
             _vtype = NULL_ATTRIBUTE_VALUE_TYPE;
@@ -779,6 +864,7 @@ AttributeType def(const char* name, int value)
     _ival = value;
     _vtype = ATTRIBUTE_VALUE_INT;
     _type = type;
+    set_value_type(_type, _vtype);
     return type;
 }
 
@@ -789,6 +875,7 @@ AttributeType def(const char* name, float value)
     _fval = value;
     _vtype = ATTRIBUTE_VALUE_FLOAT;
     _type = type;
+    set_value_type(_type, _vtype);
     return type;
 }
 
@@ -800,6 +887,7 @@ AttributeType def(const char* name, const char* value)
     _sval[STRING_ATTRIBUTE_MAX_LENGTH] = '\0';
     _vtype = ATTRIBUTE_VALUE_STRING;
     _type = type;
+    set_value_type(_type, _vtype);
     return type;
 }
 
@@ -848,6 +936,30 @@ void add_set_callback(AttributeType type, setString cb)
 {
     UNPACK_CURRENT_ATTRIBUTE
     a->add_set_callback(cb);
+}
+
+void set_lower_limit(AttributeType type, int lower)
+{
+    UNPACK_CURRENT_ATTRIBUTE
+    a->set_lower_limit(lower);
+}
+
+void set_upper_limit(AttributeType type, int upper)
+{
+    UNPACK_CURRENT_ATTRIBUTE
+    a->set_upper_limit(upper);
+}
+
+void set_lower_limit(AttributeType type, float lower)
+{
+    UNPACK_CURRENT_ATTRIBUTE
+    a->set_lower_limit(lower);
+}
+
+void set_upper_limit(AttributeType type, float upper)
+{
+    UNPACK_CURRENT_ATTRIBUTE
+    a->set_upper_limit(upper);
 }
 
 #undef UNPACK_CURRENT_ATTRIBUTE

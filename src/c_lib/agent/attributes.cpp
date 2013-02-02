@@ -9,6 +9,9 @@ namespace Agents
 
 // forward decl
 template <typename Type> static void attribute_def(const char* name, Type value);
+template <typename Type> static void set_limits(Type lower, Type upper);
+template <typename Type> static void set_lower_limit(Type lower);
+template <typename Type> static void set_upper_limit(Type upper);
 static void set_sync_type(AttributeSyncType sync_type);
 
 /*******************
@@ -22,6 +25,7 @@ static void _register_attributes()
 
     attribute_def("health", 100);
     set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
+    set_limits(0, 140);
 }
 
 /*******************
@@ -101,6 +105,25 @@ static void attribute_def(const char* name, Type value)
 {
     attr_type = Attributes::def(name, value);
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
+}
+
+template <typename Type>
+static void set_lower_limit(Type lower)
+{
+    Attributes::set_lower_limit(attr_type, lower);
+}
+
+template <typename Type>
+static void set_upper_limit(Type upper)
+{
+    Attributes::set_upper_limit(attr_type, upper);
+}
+
+template <typename Type>
+static void set_limits(Type lower, Type upper)
+{
+    set_lower_limit(lower);
+    set_upper_limit(upper);
 }
 
 static void set_sync_type(AttributeSyncType sync_type)
