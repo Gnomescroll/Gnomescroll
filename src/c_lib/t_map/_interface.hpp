@@ -13,14 +13,14 @@ void init_packets();
 ItemContainerID get_block_item_container(int x, int y, int z);
 bool get_container_location(ItemContainerID container_id, int position[3]); // returns false is container not found
 
-CubeType get(int x, int y, int z);
-CubeType set(int x, int y, int z, CubeType cube_type);
-inline void set_fast(int x, int y, int z, CubeType cube_type) __attribute__((always_inline));
-void set_palette(int x, int y, int z, int palette);
+CubeType 			get(int x, int y, int z);
+int 	 			get_block_damage(int x, int y, int z);
+struct MAP_ELEMENT  get_element(int x, int y, int z);
 
-struct MAP_ELEMENT get_element(int x, int y, int z);
-
-int get_block_damage(int x, int y, int z);
+CubeType 			set(int x, int y, int z, CubeType cube_type);
+void				set_fast(int x, int y, int z, CubeType cube_type);
+void				set_palette(int x, int y, int z, int palette);
+void				set_element(int x, int y, int z, struct MAP_ELEMENT e);
 
 void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
 void update_envlight(int chunk_i, int chunk_j);

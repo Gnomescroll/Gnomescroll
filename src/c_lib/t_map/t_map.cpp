@@ -74,6 +74,12 @@ struct MAP_ELEMENT get_element(int x, int y, int z)
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 }
 
+void set_element(int x, int y, int z, struct MAP_ELEMENT e)
+{
+    main_map->set_element(x,y,z,e);
+    light_add_block(x,y,z);
+}
+
 void set_palette(int x, int y, int z, int palette)
 {
     struct MAP_ELEMENT element = main_map->get_element(x,y,z);
@@ -190,7 +196,7 @@ bool broadcast_set_block(int x, int y, int z, CubeType cube_type)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    main_map->set_block(x,y,z, cube_type);
+    set(x,y,z, cube_type);
     map_history->send_set_block(x,y,z, cube_type);
     return true;
 }
@@ -205,7 +211,7 @@ void broadcast_set_block_palette(int x, int y, int z, CubeType block, int palett
     e.block = block;
     e.palette = palette;
 
-    main_map->set_element(x,y,z,e);
+    set_element(x,y,z,e);
     map_history->send_set_block_palette(x,y,z, block,palette);
 }
 
@@ -218,7 +224,7 @@ void broadcast_set_palette(int x, int y, int z, int palette)
     struct MAP_ELEMENT e = get_element(x,y,z);
     e.palette = palette;
 
-    main_map->set_element(x,y,z,e);
+    set_element(x,y,z,e);
     map_history->send_set_block_palette(x,y,z, (CubeType)e.block, e.palette);
 }
 

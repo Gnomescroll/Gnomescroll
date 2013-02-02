@@ -516,7 +516,7 @@ void _envlight_update_core()
 
     for(int i=0; i<light_update_array_index; i++)
     { 
-        GS_ASSERT(isSolid(light_update_array[i].x, light_update_array[i].y, light_update_array[i].z));
+        GS_ASSERT(isSolid(light_update_array[i].x, light_update_array[i].y, light_update_array[i].z) == false);
     }
 
     int index = 0;
