@@ -360,13 +360,15 @@ class Attribute: public Property<AttributeType>
         GS_ASSERT(this->value_type != NULL_ATTRIBUTE_VALUE_TYPE);
         GS_ASSERT(this->name[0] != '\0');
         GS_ASSERT(this->value != NULL);
-
-
         if (this->value_type == ATTRIBUTE_VALUE_INT)
         {
             GS_ASSERT(this->use_limits.lower || this->limiti.lower == 0);
             GS_ASSERT(this->use_limits.upper || this->limiti.upper == 0);
             GS_ASSERT(this->limitf.lower == 0 && this->limitf.upper == 0);
+            if (this->use_limits.lower && this->use_limits.upper)
+            {
+                GS_ASSERT(this->limiti.lower <= this->limiti.upper);
+            }
         }
         else
         if (this->value_type == ATTRIBUTE_VALUE_STRING)
@@ -381,6 +383,10 @@ class Attribute: public Property<AttributeType>
             GS_ASSERT(this->use_limits.lower || this->limitf.lower == 0);
             GS_ASSERT(this->use_limits.upper || this->limitf.upper == 0);
             GS_ASSERT(this->limiti.lower == 0 && this->limiti.upper == 0);
+            if (this->use_limits.lower && this->use_limits.upper)
+            {
+                GS_ASSERT(this->limitf.lower <= this->limitf.upper);
+            }
         }
         #if DC_SERVER
         GS_ASSERT(this->sync_type != NULL_ATTRIBUTE_SYNC_TYPE);
