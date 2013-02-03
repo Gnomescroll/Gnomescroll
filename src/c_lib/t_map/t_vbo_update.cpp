@@ -785,14 +785,20 @@ static void push_quad_compatibility(struct VertexBackup* v_list, int offset, int
     }
 
 #endif
+  
+    float sky_light = light_lookup[ _lv & 0x0f ];
+    float env_light = light_lookup[ (_lv >> 4) & 0x0f ];
 
-    float light = light_lookup[get_lighting(x,y,z,side)];
+    v_list[offset+0].lighting[0] = sky_light;
+    v_list[offset+1].lighting[0] = sky_light;
+    v_list[offset+2].lighting[0] = sky_light;
+    v_list[offset+3].lighting[0] = sky_light;
 
-    v_list[offset+0].lighting[0] = light;
-    v_list[offset+1].lighting[0] = light;
-    v_list[offset+2].lighting[0] = light;
-    v_list[offset+3].lighting[0] = light;
-    
+    v_list[offset+0].lighting[1] = env_light;
+    v_list[offset+1].lighting[1] = env_light;
+    v_list[offset+2].lighting[1] = env_light;
+    v_list[offset+3].lighting[1] = env_light;
+
     {
         int _x = x & 15;
         int _y = y & 15;

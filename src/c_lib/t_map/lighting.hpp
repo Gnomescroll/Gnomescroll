@@ -424,17 +424,17 @@ int get_envlight(int x, int y, int z)
 
 void set_envlight(int x, int y, int z, int value)
 {
-
-    printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
-
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
+    printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
+
     class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if(mc == NULL)
         return;
+
     GS_ASSERT(mc != NULL);
     GS_ASSERT( (y >> 4) < 32);
     GS_ASSERT( (x >> 4) < 32);
@@ -450,6 +450,9 @@ void set_envlight(int x, int y, int z, int value)
 
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
     //mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value << 4);  //upper half
+
+
+    GS_ASSERT(value == get_envlight(x,y,z));
 }
 
 struct LightUpdateElement
@@ -692,6 +695,8 @@ void update_envlight_boundary(int _ci, int _cj);
 //checks that block lighting values are correct
 void asssert_envlight_0(int chunk_i, int chunk_j)
 {
+    return; 
+
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     struct MAP_ELEMENT e;
 
@@ -724,6 +729,7 @@ void asssert_envlight_0(int chunk_i, int chunk_j)
 //call on chunk init
 void init_update_envlight(int chunk_i, int chunk_j)
 {
+    return;
     //printf("init_update_envlight: %d %d \n", chunk_i, chunk_j);
 
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
@@ -761,6 +767,11 @@ void init_update_envlight(int chunk_i, int chunk_j)
 
 void update_envlight(int chunk_i, int chunk_j)
 {
+
+    return;
+
+    printf("update_envlight: %d %d \n", chunk_i, chunk_j);
+
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     struct MAP_ELEMENT e;
 
