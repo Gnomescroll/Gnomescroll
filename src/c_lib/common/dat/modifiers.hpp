@@ -18,6 +18,8 @@ typedef enum
 {
     NULL_MODIFIER_EVENT = 0,
     MODIFIER_EVENT_CONSTANT,
+    MODIFIER_EVENT_INSTANT,
+    MODIFIER_EVENT_DURATION,
     MODIFIER_EVENT_PERIODIC,
 }   ModifierEventType;
 
@@ -70,9 +72,22 @@ class Modifier
     {
         GS_ASSERT(this->duration == -1 && this->period == -1);
         GS_ASSERT(duration >= 0 && period >= 0);
+        GS_ASSERT(duration >= period);
         this->duration = duration;
         this->period = period;
         this->event_type = MODIFIER_EVENT_PERIODIC;
+    }
+
+    void set_duration(int duration)
+    {
+        GS_ASSERT(this->duration == -1);
+        this->duration = duration;
+        this->event_type = MODIFIER_EVENT_DURATION;
+    }
+
+    void set_instant()
+    {
+        this->event_type = MODIFIER_EVENT_INSTANT;
     }
 
     void set_attribute_type(AttributeType attribute_type)
@@ -105,12 +120,20 @@ class Modifier
         GS_ASSERT((this->amount != 0 && this->percent == 0.0f) ||
                   (this->amount == 0 && this->percent != 0.0f));
         GS_ASSERT(this->event_type != NULL_MODIFIER_EVENT);
-        GS_ASSERT(this->event_type != MODIFIER_EVENT_PERIODIC ||
-                  (this->duration >= 0 && this->period >= 0));
-        GS_ASSERT(this->event_type != MODIFIER_EVENT_CONSTANT ||
-                  (this->duration == -1 && this->period == -1));
-        GS_ASSERT(this->duration == -1 ||
-                  (this->duration != 0 || this->period == 0));
+        if (this->event_type == MODIFIER_EVENT_INSTANT ||
+            this->event_type == MODIFIER_EVENT_CONSTANT)
+        {
+            GS_ASSERT(this->duration == -1 && this->period == -1);
+        }
+        if (this->event_type == MODIFIER_EVENT_DURATION)
+        {
+            GS_ASSERT(this->duration > 0 && this->period == -1);
+        }
+        if (this->event_type == MODIFIER_EVENT_PERIODIC)
+        {
+            GS_ASSERT(this->duration > 0 & this->period > 0);
+            GS_ASSERT(this->duration >= this->period);
+        }
     }
 
     void verify_other(const Modifier* other) const

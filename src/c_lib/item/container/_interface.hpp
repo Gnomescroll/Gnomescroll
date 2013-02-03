@@ -65,6 +65,7 @@ ItemContainerID get_agent_inventory(AgentID agent_id);
 ItemContainerID get_agent_toolbelt(AgentID agent_id);
 ItemContainerID get_agent_synthesizer(AgentID agent_id);
 ItemContainerID get_agent_energy_tanks(AgentID agent_id);
+ItemContainerID get_agent_equipment(AgentID agent_id);
 
 // returns array of assigned container ids for agent
 // the array does not need to be freed and is valid until the next call to this method
