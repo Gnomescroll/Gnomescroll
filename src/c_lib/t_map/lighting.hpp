@@ -13,6 +13,9 @@ namespace t_map
 */
 
 //e[ (z<<8)+((y&15)<<4)+(x&15) ] = e;
+
+void set_skylight(int x, int y, int z, int value);
+
 void update_skylight(int chunk_i, int chunk_j)
 {
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
@@ -31,11 +34,12 @@ void update_skylight(int chunk_i, int chunk_j)
             e = mc->get_element(i,j,k);
             if(e.block != 0)    //iterate until we hit top block
                 break;
-            //e.light = 0x0f; //clear bottom bits, set to 15
-            //e.light = 0x0f; //clear bottom bits, set to 15
-            e.light = 15;
 
-            mc->set_element(i,j,k,e);
+            set_skylight(i,j,k, 15);
+            //e.light = 0x0f; //clear bottom bits, set to 15
+            //e.light = 0x0f; //clear bottom bits, set to 15
+            //e.light = e.light &15;
+            //mc->set_element(i,j,k,e);
         }
         if (k < 0) return;
 
@@ -57,10 +61,13 @@ void update_skylight(int chunk_i, int chunk_j)
             e = mc->get_element(i,j,k);
             if(e.block != 0)
                 continue;
+            set_skylight(i,j,k, 0);
+
             //e.light |= 0xf0;  //clear bottom bits, set to zero
             //e.light = 0x00;     //clear bottom bits, set to zero
-            e.light = 0;
-            mc->set_element(i,j,k,e);
+            //e.light = 0;
+            //e.light &= 0xf0; //zero sunlight
+            //mc->set_element(i,j,k,e);
         }
     }
 
@@ -732,7 +739,7 @@ void asssert_envlight_0(int chunk_i, int chunk_j)
 //call on chunk init
 void init_update_envlight(int chunk_i, int chunk_j)
 {
-    return;
+    //return;
     //printf("init_update_envlight: %d %d \n", chunk_i, chunk_j);
 
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
@@ -771,7 +778,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
 void update_envlight(int chunk_i, int chunk_j)
 {
 
-    return;
+    //return;
 
     printf("update_envlight: %d %d \n", chunk_i, chunk_j);
 
