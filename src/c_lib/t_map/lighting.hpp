@@ -56,6 +56,7 @@ void update_skylight(int chunk_i, int chunk_j)
         }
 */
         // black out everything below
+    
         for (; k>=0; k--)
         {
             e = mc->get_element(i,j,k);
@@ -69,6 +70,7 @@ void update_skylight(int chunk_i, int chunk_j)
             //e.light &= 0xf0; //zero sunlight
             //mc->set_element(i,j,k,e);
         }
+    
     }
 
 }
@@ -105,7 +107,7 @@ void set_skylight(int x, int y, int z, int value)
     GS_ASSERT(mc != NULL);
     GS_ASSERT( (y >> 4) < 32);
     GS_ASSERT( (x >> 4) < 32);
-    GS_ASSERT(value < 16 && value > 0);
+    GS_ASSERT(value < 16 && value >= 0);
     //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
 
     int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
@@ -470,20 +472,15 @@ struct LightUpdateElement
     int x,y,z;
 };
 
+/*
+    Lighting variables
+*/
 struct LightUpdateElement* light_update_array = NULL;
 int light_update_array_max      = 8*1024;
 int light_update_array_index    = 0;
 
 void _push_envlight_update2(int x, int y, int z)
 {
-    //move to init
-    if(light_update_array == NULL)
-    {
-        light_update_array_max = 1024;
-        light_update_array_index = 0;
-        light_update_array = (struct LightUpdateElement*) malloc(light_update_array_max* sizeof(struct LightUpdateElement));
-    }
-
     //cannot update light value of solid block!
     struct MAP_ELEMENT e = get_element(x,y,z);
     if(fast_cube_properties[e.block].solid == true)
@@ -814,83 +811,15 @@ void update_envlight(int chunk_i, int chunk_j)
 
 }
 
-/*
-void update_envlight_boundary(int _ci, int _cj)
+void init_lighting()
 {
-    class MAP_CHUNK* mc;
-    int ci, cj;
-
-    //north?
-    ci = (_ci + 1 +32 ) % 32;
-    cj = (_cj + 0 +32 ) % 32;
-    mc = main_map->chunk[32*cj + ci];
-
-    if(mc != NULL)
-    {
-        const int i = 0;
-        for(int j=0; j<16; j++)
-        for(int k=0; k<map_dim.z; k++)
-        {
-            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
-                continue;
-            _envlight_update2(16*ci+i,16*cj+j,k);
-        }
-    }
-
-
-    //south?
-    ci = (_ci + -1 +32 ) % 32;
-    cj = (_cj + 0 +32 ) % 32;
-    mc = main_map->chunk[32*cj + ci];
-
-    if(mc != NULL)
-    {
-        const int i = 15;
-        for(int j=0; j<16; j++)
-        for(int k=0; k<map_dim.z; k++)
-        {
-            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
-                continue;
-            _envlight_update2(16*ci+i,16*cj+j,k);
-        }
-    }
-
-    //west?
-    ci = (_ci + 0 +32 ) % 32;
-    cj = (_cj + 1 +32 ) % 32;
-    mc = main_map->chunk[32*cj + ci];
-
-    if(mc != NULL)
-    {
-        const int j = 0;
-        for(int i=0; i<16; i++)
-        for(int k=0; k<map_dim.z; k++)
-        {
-            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
-                continue;
-            _envlight_update2(16*ci+i,16*cj+j,k);
-        }
-    }
-
-
-    //east?
-    ci = (_ci + 0 +32 ) % 32;
-    cj = (_cj + -1 +32 ) % 32;
-    mc = main_map->chunk[32*cj + ci];
-
-    if(mc != NULL)
-    {
-        const int j = 15;
-        for(int i=0; i<16; i++)
-        for(int k=0; k<map_dim.z; k++)
-        {
-            if(isSolid(16*ci+i,16*cj+j,k) ) //|| get_envlight(16*ci+i,16*cj+j,k) != 15) // || get_envlight(i,j,k) < 16)
-                continue;
-            _envlight_update2(16*ci+i,16*cj+j,k);
-        }
-    }
-
+    light_update_array = (struct LightUpdateElement*) malloc(light_update_array_max* sizeof(struct LightUpdateElement));
 }
-*/
+
+void teardown_lighting()
+{
+    if(light_update_array != NULL)
+        free(light_update_array);
+}
 
 }   // t_map

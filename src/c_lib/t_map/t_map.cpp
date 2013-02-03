@@ -5,6 +5,8 @@
 #include <t_map/t_map_class.hpp>
 #include <t_map/glsl/texture.hpp>
 
+#include <t_map/lighting.hpp>
+
 #if DC_CLIENT
 # include <t_map/glsl/cache.hpp>
 # include <t_map/glsl/shader.hpp>
@@ -53,9 +55,6 @@ CubeType set(int x, int y, int z, CubeType cube_type)
         destroy_item_container_block(x,y,z);
     #endif
 
-    #if DC_CLIENT
-        printf("set: %d %d %d \n", x,y,z);
-    #endif
     main_map->set_block(x,y,z, cube_type);
     light_add_block(x,y,z);
     return cube_type;
@@ -108,6 +107,8 @@ void init_t_map()
 
     init_textures();
 
+    init_lighting();
+
     #if DC_CLIENT
     init_client_compressors();
     init_t_vbo();
@@ -145,6 +146,8 @@ void end_t_map()
     #endif
 
     teardown_textures();
+    teardown_lighting();
+
 }
 
 int get_block_damage(int x, int y, int z)
