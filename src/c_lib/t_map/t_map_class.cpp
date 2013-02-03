@@ -257,6 +257,7 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
     {
         e->damage = maxdmg;
 
+        //moved to set function
 /*
         // destroy block
         *e = NULL_MAP_ELEMENT;   
@@ -353,11 +354,11 @@ void Terrain_map::chunk_received(int cx, int cy)
         Update Lighting
     */
 
-    init_update_envlight(cx, cy);   //init env_light values for blocks in chunk
-    update_envlight(cx,cy);
-
     update_skylight(cx, cy);
     update_skylight2(cx,cy);    //update skylight
+    
+    init_update_envlight(cx, cy);   //init env_light values for blocks in chunk
+    update_envlight(cx,cy);
 }
 
 /*
