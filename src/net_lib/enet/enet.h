@@ -189,7 +189,14 @@ typedef enum _ENetPeerState
 //@param acceleration rate at which to increase the throttle probability as mean RTT declines
 //@param deceleration rate at which to decrease the throttle probability as mean RTT increases
 
-#define TIMEOUT_MULTIPLE 1024 // set to 1024 to disable timeouts
+
+#define DISABLE_TIMEOUT 0
+
+#if DISABLE_TIMEOUT
+  #define TIMEOUT_MULTIPLE 1024
+#else
+  #define TIMEOUT_MULTIPLE 1
+#endif
 
 enum
 {
