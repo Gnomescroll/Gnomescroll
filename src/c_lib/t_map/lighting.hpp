@@ -481,8 +481,20 @@ int light_update_array_index    = 0;
 
 void _push_envlight_update2(int x, int y, int z)
 {
+    if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
+        return;
+    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+    //skip update of blocks in null chunks
+    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    if(mc == NULL)
+    {
+        return;
+    }
+
     //cannot update light value of solid block!
-    struct MAP_ELEMENT e = get_element(x,y,z);
+    struct MAP_ELEMENT e = mc->get_element(x,y,z);
     if(fast_cube_properties[e.block].solid == true)
     {
         GS_ASSERT(false);
@@ -528,12 +540,6 @@ void _envlight_update2(int _x, int _y, int _z)
     _envlight_update_core();
 }
 
-void _t_break()
-{
-
-}
-
-
 void _envlight_update_core()
 {
 
@@ -552,7 +558,15 @@ void _envlight_update_core()
         int y = light_update_array[index].y;
         int z = light_update_array[index].z;
 
-        struct MAP_ELEMENT e = get_element(x,y,z);
+        class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+        if(mc == NULL)
+        {
+            index++;
+            continue;
+        }
+
+        struct MAP_ELEMENT e = mc->get_element(x,y,z);
+
         int li = (e.light >> 4);
         GS_ASSERT(li == get_envlight(x,y,z));
 
@@ -614,8 +628,6 @@ void _envlight_update_core()
                     GS_ASSERT(li+1 < (_e.light >> 4) );
 
                     li = (_e.light >> 4) -1;
-
-                    GS_ASSERT(li >= 0 && li <= 15)
                     set_envlight(x,y,z, li);
 
                     //update neighboring blocks if current block light value is updated
@@ -635,18 +647,7 @@ void _envlight_update_core()
     }
 
     light_update_array_index = 0;
-/*
-#if DC_CLIENT
-    if(index > 1)
-    printf("light_index= %d \n", index); 
-#endif
 
-#if DC_CLIENT
-if(index > 256) _t_break();
-*/
-    //if(index > 1000)
-    //    GS_ASSERT(false);
-//#endif
 }
 
 /*
@@ -658,11 +659,6 @@ void _envlight_update2(int x, int y, int z);
 //handle block addition
 void light_add_block(int x, int y, int z)
 {
-
-    //#if DC_CLIENT
-   //     printf("light_add_block: %d %d %d \n", x,y,z);
-    //#endif
-
 
     struct MAP_ELEMENT e = get_element(x,y,z);
 
