@@ -85,7 +85,7 @@ int get_skylight(int x, int y, int z)
     return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
 
-void set_skylight(int x, int y, int z, int value)
+void _set_skylight(int x, int y, int z, int value)
 {
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
 
@@ -109,6 +109,15 @@ void set_skylight(int x, int y, int z, int value)
     //light = (light & 0xf0)
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
     //mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value & 0x0f);  //bottom half
+}
+
+int get_envlight(int x, int y, int z);
+
+void set_skylight(int x, int y, int z, int value)
+{
+    int env_light = get_envlight(x,y,z);
+    _set_skylight(x,y,z,value);
+    GS_ASSERT(env_light == get_envlight(x,y,z));
 }
 
 //proprogate out
@@ -648,6 +657,7 @@ void light_add_block(int x, int y, int z)
 
     if( (e.light >> 4) != fast_cube_attributes[e.block].light_value )
     {
+        //GS_ASSERT(false) //should not happen!
         set_envlight(x,y,z, fast_cube_attributes[e.block].light_value);
     }
 
@@ -714,7 +724,7 @@ void asssert_envlight_0(int chunk_i, int chunk_j)
 //call on chunk init
 void init_update_envlight(int chunk_i, int chunk_j)
 {
-    printf("init_update_envlight: %d %d \n", chunk_i, chunk_j);
+    //printf("init_update_envlight: %d %d \n", chunk_i, chunk_j);
 
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     struct MAP_ELEMENT e;
@@ -734,16 +744,17 @@ void init_update_envlight(int chunk_i, int chunk_j)
         }
         else
         {
-        /*
+        
             if(fast_cube_properties[e.block].solid == true)
             {
-                set_envlight(x,y,k, 0);
+                GS_ASSERT(get_envlight(x,y,k) == 0);
+                //set_envlight(x,y,k, 0);
             }
             else
             {
-                set_envlight(x,y,k, 0);
+                //set_envlight(x,y,k, 0);
             }
-        */
+        
         }
     }
 }
