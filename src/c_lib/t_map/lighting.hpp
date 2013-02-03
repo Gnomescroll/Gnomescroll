@@ -26,6 +26,9 @@ void update_skylight(int chunk_i, int chunk_j)
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
     {
+        int x = i + 16*chunk_i;
+        int y = j + 16*chunk_j;
+
         int k = map_dim.z-1;
 
         // get highest block
@@ -35,7 +38,7 @@ void update_skylight(int chunk_i, int chunk_j)
             if(e.block != 0)    //iterate until we hit top block
                 break;
 
-            set_skylight(i,j,k, 15);
+            set_skylight(x,y,k, 15);
             //e.light = 0x0f; //clear bottom bits, set to 15
             //e.light = 0x0f; //clear bottom bits, set to 15
             //e.light = e.light &15;
@@ -62,7 +65,7 @@ void update_skylight(int chunk_i, int chunk_j)
             e = mc->get_element(i,j,k);
             if(e.block != 0)
                 continue;
-            set_skylight(i,j,k, 0);
+            set_skylight(x,y,k, 0);
 
             //e.light |= 0xf0;  //clear bottom bits, set to zero
             //e.light = 0x00;     //clear bottom bits, set to zero
@@ -494,7 +497,8 @@ void _push_envlight_update2(int x, int y, int z)
     }
 
     //cannot update light value of solid block!
-    struct MAP_ELEMENT e = mc->get_element(x,y,z);
+    struct MAP_ELEMENT e = mc->get_element(x & 15, y & 15 ,z);
+    
     if(fast_cube_properties[e.block].solid == true)
     {
         GS_ASSERT(false);
