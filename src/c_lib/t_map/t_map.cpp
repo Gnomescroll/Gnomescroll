@@ -52,14 +52,19 @@ CubeType set(int x, int y, int z, CubeType cube_type)
     if (isItemContainer(existing_cube_type))
         destroy_item_container_block(x,y,z);
     #endif
+
+    #if DC_CLIENT
+        printf("set: %d %d %d \n", x,y,z);
+    #endif
     main_map->set_block(x,y,z, cube_type);
+    light_add_block(x,y,z);
     return cube_type;
 }
 
 OPTIMIZED ALWAYS_INLINE
 void set_fast(int x, int y, int z, CubeType cube_type)
 {
-    main_map->set_block(x,y,z, cube_type);
+    main_map->set_block_fast(x,y,z, cube_type);
 }
 
 struct MAP_ELEMENT get_element(int x, int y, int z)
@@ -70,6 +75,12 @@ struct MAP_ELEMENT get_element(int x, int y, int z)
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if (c == NULL) return NULL_MAP_ELEMENT;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
+}
+
+void set_element(int x, int y, int z, struct MAP_ELEMENT e)
+{
+    main_map->set_element(x,y,z,e);
+    light_add_block(x,y,z);
 }
 
 void set_palette(int x, int y, int z, int palette)
@@ -159,6 +170,10 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_type);
     if (ret != 0) return;
 
+
+    set(x,y,z, EMPTY_CUBE);  //clear block
+    t_mech::handle_block_removal(x,y,z);    //block removal
+
     // always explode explosives with force
     if (isExplosive(cube_type)) action = TMA_PLASMAGEN;
 
@@ -184,7 +199,7 @@ bool broadcast_set_block(int x, int y, int z, CubeType cube_type)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    main_map->set_block(x,y,z, cube_type);
+    set(x,y,z, cube_type);
     map_history->send_set_block(x,y,z, cube_type);
     return true;
 }
@@ -199,7 +214,7 @@ void broadcast_set_block_palette(int x, int y, int z, CubeType block, int palett
     e.block = block;
     e.palette = palette;
 
-    main_map->set_element(x,y,z,e);
+    set_element(x,y,z,e);
     map_history->send_set_block_palette(x,y,z, block,palette);
 }
 
@@ -212,7 +227,7 @@ void broadcast_set_palette(int x, int y, int z, int palette)
     struct MAP_ELEMENT e = get_element(x,y,z);
     e.palette = palette;
 
-    main_map->set_element(x,y,z,e);
+    set_element(x,y,z,e);
     map_history->send_set_block_palette(x,y,z, (CubeType)e.block, e.palette);
 }
 

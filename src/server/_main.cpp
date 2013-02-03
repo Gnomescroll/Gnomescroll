@@ -203,11 +203,14 @@ void tick()
     {
         t_plant::tick();
     }
+
+#if 0
     // Meteors
     const int meteor_fall_rate = 30 * 60 * 60 * 16; // 16hrs
     const int meteor_shower_rate = 30 * 60 * 60 * 4; // 4hrs
     static int next_meteor_fall = 0;
     static int next_meteor_shower = 0;
+
     if (counter >= next_meteor_fall)
     {
         t_gen::meteor_fall();
@@ -218,7 +221,7 @@ void tick()
         t_gen::meteor_shower();
         next_meteor_shower += randrange(meteor_shower_rate/2, meteor_shower_rate);
     }
-
+#endif
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);

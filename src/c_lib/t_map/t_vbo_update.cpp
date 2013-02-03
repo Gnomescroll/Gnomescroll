@@ -680,7 +680,7 @@ void Vbo_map::update_vbo(int i, int j)
 
     update_skylight(i,j); //update skylights
     update_skylight2(i,j);
-    update_envlight(i,j);
+    //update_envlight(i,j);
 
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
@@ -860,7 +860,7 @@ void Vbo_map::update_vbo_compatibility(int i, int j)
 
     update_skylight(i,j); //update skylights
     update_skylight2(i,j);
-    update_envlight(i,j);
+    //update_envlight(i,j);
 
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
