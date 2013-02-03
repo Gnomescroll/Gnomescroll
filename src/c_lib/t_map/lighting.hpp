@@ -431,9 +431,9 @@ void set_envlight(int x, int y, int z, int value)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-#if DC_CLIENT
-    printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
-#endif
+//#if DC_CLIENT
+//    printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
+//#endif
 
     class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if(mc == NULL)
@@ -459,7 +459,7 @@ void set_envlight(int x, int y, int z, int value)
     //mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value << 4);  //upper half
 
 #if DC_CLIENT
-    printf("ptr value = %p \n", &(mc->e[ (z<<8)+((y&15)<<4)+(x&15) ]) );
+    //printf("ptr value = %p \n", &(mc->e[ (z<<8)+((y&15)<<4)+(x&15) ]) );
     main_map->set_update(x,y);
 #endif
     GS_ASSERT(value == get_envlight(x,y,z));
@@ -471,7 +471,7 @@ struct LightUpdateElement
 };
 
 struct LightUpdateElement* light_update_array = NULL;
-int light_update_array_max      = 1024;
+int light_update_array_max      = 8*1024;
 int light_update_array_index    = 0;
 
 void _push_envlight_update2(int x, int y, int z)
@@ -612,7 +612,7 @@ void _envlight_update_core()
                         GS_ASSERT(fast_cube_properties[_e.block].light_source == true);
                     }
 
-                    printf("light_set index: %d, at %d %d %d, was %d, now %d \n", index, x,y,z, li, (_e.light >> 4) -1 );
+                    //printf("light_set index: %d, at %d %d %d, was %d, now %d \n", index, x,y,z, li, (_e.light >> 4) -1 );
 
                     GS_ASSERT(li+1 < (_e.light >> 4) );
 
@@ -638,7 +638,7 @@ void _envlight_update_core()
     }
 
     light_update_array_index = 0;
-
+/*
 #if DC_CLIENT
     if(index > 1)
     printf("light_index= %d \n", index); 
@@ -646,9 +646,10 @@ void _envlight_update_core()
 
 #if DC_CLIENT
 if(index > 256) _t_break();
+*/
     //if(index > 1000)
     //    GS_ASSERT(false);
-#endif
+//#endif
 }
 
 /*
@@ -661,9 +662,9 @@ void _envlight_update2(int x, int y, int z);
 void light_add_block(int x, int y, int z)
 {
 
-    #if DC_CLIENT
-        printf("light_add_block: %d %d %d \n", x,y,z);
-    #endif
+    //#if DC_CLIENT
+   //     printf("light_add_block: %d %d %d \n", x,y,z);
+    //#endif
 
 
     struct MAP_ELEMENT e = get_element(x,y,z);
@@ -780,7 +781,7 @@ void update_envlight(int chunk_i, int chunk_j)
 
     //return;
 
-    printf("update_envlight: %d %d \n", chunk_i, chunk_j);
+   //printf("update_envlight: %d %d \n", chunk_i, chunk_j);
 
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     struct MAP_ELEMENT e;
