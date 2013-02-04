@@ -948,7 +948,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         }
     }
 
-    _sunlight_update_core();
+    _skylight_update_core();
 }
 
 void init_lighting()
