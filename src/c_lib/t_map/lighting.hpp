@@ -58,7 +58,7 @@ void set_skylight(int x, int y, int z, int value)
 
 void update_skylight(int chunk_i, int chunk_j)
 {
-    return;
+    //return;
 
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     GS_ASSERT(mc != NULL);
@@ -84,7 +84,7 @@ void update_skylight(int chunk_i, int chunk_j)
             e = get_element(x,y,k);
             if(e.block != 0)    //iterate until we hit top block
                 break;
-            set_skylight(x,y,k, 14);
+            set_skylight(x,y,k, 15);
         }
         if (k < 0) return;
         // black out everything below
