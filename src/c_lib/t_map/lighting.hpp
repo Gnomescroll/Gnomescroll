@@ -530,14 +530,8 @@ void _push_envlight_update(int _x, int _y, int _z)
 
 void _envlight_update_core(int max_iterations)
 {
-
     if(env_light_array_index == 0)
         return;
-
-    for(int i=0; i<env_light_array_index; i++)
-    { 
-        GS_ASSERT(isSolid(env_light_array[i].x, env_light_array[i].y, env_light_array[i].z) == false);
-    }
 
     int index = env_light_array_n;
 
@@ -716,44 +710,6 @@ void _envlight_update_core(int max_iterations)
                 continue;
             }
 
-            //if(index > 2000)
-            //    break;
-            
-            //GS_ASSERT(_max == li +1 || li == 0 );
-        /*
-            for(int i=0; i<6; i++)
-            {
-                struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
-                //set light at current position if neighorbing positions are brighter
-                if(fast_cube_properties[_e.block].solid == true && fast_cube_properties[_e.block].light_source == false)
-                {
-                    GS_ASSERT( (_e.light >> 4) == 0);
-                }
-
-                if( (_e.light >> 4) > li + 1 )
-                {
-                    if(fast_cube_properties[_e.block].solid == true)
-                    {
-                        GS_ASSERT(fast_cube_properties[_e.block].light_source == true);
-                    }
-
-                    //printf("light_set index: %d, at %d %d %d, was %d, now %d \n", index, x,y,z, li, (_e.light >> 4) -1 );
-
-                    GS_ASSERT(li+1 < (_e.light >> 4) );
-
-                    li = (_e.light >> 4) -1;
-                    set_envlight(x,y,z, li);
-
-                    //update neighboring blocks if current block light value is updated
-                    for(int j=0; j<6; j++)
-                    {
-                        struct MAP_ELEMENT _e2 = get_element(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
-                        if( (_e2.light >> 4) +1 < li && fast_cube_properties[_e2.block].solid == false)
-                            _push_envlight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
-                    }
-                }
-            }
-        */
         }
 
             
