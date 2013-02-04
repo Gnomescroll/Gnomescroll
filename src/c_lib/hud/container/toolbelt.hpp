@@ -2,6 +2,7 @@
 
 #include <hud/hud.hpp>
 #include <hud/container/texture.hpp>
+#include <hud/container/_interface.hpp>
 
 namespace HudContainer
 {
@@ -133,19 +134,7 @@ void AgentToolbeltUI::draw()
         glColor4ub(80, 80, 80, alpha);    // grey
         Hud::meter_graphic.draw(x, y, w, w, ratio);
 
-        // maybe draw a dura meter on it
-        int durability = slot_metadata[slot].durability;
-        if (durability != NULL_DURABILITY)
-        {
-            int max_durability = Item::get_max_durability(slot_metadata[slot].type);
-            ratio = ((float)durability)/((float)max_durability);
-
-            int mh = w / 8; // meter height
-            glColor4ub(255, 0, 0, alpha);               // red
-            Hud::meter_graphic.draw(x, y, w, mh, 1.0f); // full slot width background
-            Hud::set_color_from_ratio(ratio, 255);
-            Hud::meter_graphic.draw(x, y, w, mh, ratio);
-        }
+        draw_durability_meter(x, y, slot_size, alpha, slot_metadata[slot]);
     }
 
     // draw hover highlight

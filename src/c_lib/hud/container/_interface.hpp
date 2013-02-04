@@ -1,5 +1,7 @@
 #pragma once
 
+#include <item/container/container_ui.hpp>
+
 namespace HudContainer
 {
 
@@ -26,7 +28,7 @@ typedef struct
     ItemContainerID container_id;
     int slot;
     bool alt_action;
-} ContainerInputEvent;
+}   ContainerInputEvent;
 
 void enable_agent_inventory_hud();
 void disable_agent_inventory_hud();
@@ -62,5 +64,8 @@ void draw_teardown();
 // render
 void draw();
 void draw_tracking_pixel(float x, float y);
+
+void draw_durability_meter(float x, float y, int slot_size, unsigned char alpha,
+                           const struct ItemContainer::SlotMetadata& metadata);
 
 }   // HudContainer

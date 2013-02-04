@@ -552,7 +552,20 @@ void teardown()
     if (ui_elements != NULL) free(ui_elements);
 }
 
-#if DC_CLIENT
+void draw_durability_meter(float x, float y, int slot_size, unsigned char alpha,
+                           const struct ItemContainer::SlotMetadata& metadata)
+{
+    int durability = metadata.durability;
+    if (durability == NULL_DURABILITY) return;
+    int max_durability = Item::get_max_durability(metadata.type);
+    float ratio = float(durability)/float(max_durability);
+    int mh = slot_size / 8; // meter height
+    glColor4ub(255, 0, 0, alpha);               // red
+    Hud::meter_graphic.draw(x, y, slot_size, mh, 1.0f); // full slot width background
+    Hud::set_color_from_ratio(ratio, 255);
+    Hud::meter_graphic.draw(x, y, slot_size, mh, ratio);
+}
+
 void draw_init()
 {
     init_texture();
@@ -580,6 +593,5 @@ void draw_tracking_pixel(float x, float y)
 
     glEnd();
 }
-#endif
 
 }   // HudContainer

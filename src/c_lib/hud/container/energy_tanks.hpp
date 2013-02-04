@@ -2,6 +2,7 @@
 
 #include <item/common/constants.hpp>
 #include <hud/container/ui_element.hpp>
+#include <hud/container/_interface.hpp>
 
 namespace HudContainer
 {
@@ -123,11 +124,12 @@ void EnergyTanksUI::draw()
         ItemContainer::get_container_ui_slot_metadata(container_id);
     if (slot_metadata == NULL) return;
 
+    const unsigned char alpha = 128+64;
     if (inv_open)
     {
         // draw larger rect for border of slot
         int g1 = 80-16;
-        glColor4ub(1,1,1, 128+64); //128+64);
+        glColor4ub(1,1,1, alpha); //128+64);
         glBegin(GL_QUADS);
         for (int i=0; i<xdim; i++)
         for (int j=0; j<ydim; j++)
@@ -157,6 +159,16 @@ void EnergyTanksUI::draw()
             glVertex2f(x, y);
         }
         glEnd();
+    }
+
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
+    {
+        int slot = j * xdim + i;
+        if (slot_metadata[slot].type == NULL_ITEM_TYPE) continue;
+        const float x = xoff + border + i * (span_tween_slots + w);
+        const float y = _yresf - (yoff + border + (j+1)*(span_tween_slots + w));
+        draw_durability_meter(x, y, slot_size, alpha, slot_metadata[slot]);
     }
 
     // draw hover highlight

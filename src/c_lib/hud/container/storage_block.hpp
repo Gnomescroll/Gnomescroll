@@ -1,6 +1,7 @@
 #pragma once
 
 #include <item/properties.hpp>
+#include <hud/container/_interface.hpp>
 
 namespace HudContainer
 {
@@ -201,13 +202,22 @@ void StorageBlockUI::draw()
         ItemContainer::get_container_ui_slot_metadata(container_id);
     if (slot_metadata == NULL) return;
 
+    for (int xslot=0; xslot<xdim; xslot++)
+    for (int yslot=0; yslot<ydim; yslot++)
+    {
+        int slot = xdim*yslot + xslot;
+        const float x = xoff + cell_offset_x + cell_size*xslot;
+        const float y = yoff - (cell_size*(yslot+1));
+        draw_durability_meter(x, y + float(slot_size)/8.0f, slot_size, 0xFF,
+                              slot_metadata[slot]);
+    }
+
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
-    glBegin(GL_QUADS);
-
     //draw items
+    glBegin(GL_QUADS);
     for (int xslot=0; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {

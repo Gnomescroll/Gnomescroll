@@ -58,5 +58,4 @@ class BodyMesh
     void init_texture();
 };
 
-
 }   // t_mob

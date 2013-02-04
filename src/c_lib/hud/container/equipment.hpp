@@ -1,5 +1,6 @@
 #pragma once
 
+#include <hud/container/_interface.hpp>
 #include <hud/container/ui_element.hpp>
 #include <SDL/draw_functions.hpp>
 
@@ -148,6 +149,7 @@ class EquipmentUI: public UIElement
 
     void draw_background();
     void draw_highlight();
+    void draw_durabilities();
     void draw_items();
     void draw_item_labels();
     void draw_slot_labels();
@@ -203,6 +205,7 @@ void EquipmentUI::draw()
     this->draw_background();
     this->draw_highlight();
     this->draw_slot_labels();
+    this->draw_durabilities();
     this->draw_items();
     this->draw_accessories_label();
     this->draw_item_labels();
@@ -380,6 +383,28 @@ void EquipmentUI::draw_items()
     glDisable(GL_TEXTURE_2D);
 }
 
+void EquipmentUI::draw_durabilities()
+{
+    const unsigned char alpha = 128;
+    if (this->container_id == NULL_CONTAINER) return;
+    struct ItemContainer::SlotMetadata* slot_metadata = ItemContainer::get_container_ui_slot_metadata(this->container_id);
+    if (slot_metadata == NULL) return;
+    int equipment_type_counts[N_EQUIPMENT_TYPES] = {0};
+    for (int i=0; i<this->xdim*this->ydim; i++)
+    {
+        EquipmentType eq_type = this->slot_equipment_types[i];
+        equipment_type_counts[eq_type] += 1;   // increment first in case we continue;
+        int slot = this->get_render_slot_for_equipment_type(eq_type, equipment_type_counts[eq_type] - 1);
+        IF_ASSERT(slot == NULL_SLOT) continue;
+        if (slot_metadata[i].type == NULL_ITEM_TYPE) continue;
+        int xslot = slot % this->render_xdim;
+        int yslot = slot / this->render_xdim;
+        float x = this->xoff + (this->slot_highlight_offset + this->slot_area_offset.x + xslot*slot_size);
+        float y = this->yoff - (this->slot_item_offset + this->slot_area_offset.y + (yslot+1)*slot_size);
+        y += float(this->item_size)/8.0f;
+        draw_durability_meter(x, y, this->highlight_size, alpha, slot_metadata[i]);
+    }
+}
 
 void EquipmentUI::draw_item_labels()
 {
