@@ -91,26 +91,26 @@ class Terrain_map
 
     #if DC_CLIENT
     void set_update(int x, int y);
+    bool chunk_loaded(int x, int y, int z); //checks if chunk is non null
     #endif
 
     void load_chunk(int i, int j);      //only entry point for loading
     void unload_chunk(int i, int j);    //only entry point for unloading
-
-    #if DC_CLIENT
-    bool chunk_loaded(int x, int y, int z); //checks if chunk is non null
-    #endif
 
     #if TERRAIN_MAP_FORCE_INLINE
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
 
     inline CubeType get_block(int x, int y, int z) __attribute((always_inline));
-    inline void set_block(int x, int y, int z, CubeType cube_type) __attribute((always_inline));
+    void set_block(int x, int y, int z, CubeType cube_type) __attribute((always_inline));
+    void set_block_fast(int x, int y, int z, CubeType cube_type) __attribute((always_inline));
+
     #else
     struct MAP_ELEMENT get_element(int x, int y, int z);
     void set_element(int x, int y, int z, struct MAP_ELEMENT element);
     CubeType get_block(int x, int y, int z);
     void set_block(int x, int y, int z, CubeType cube_type);
+    void set_block_fast(int x, int y, int z, CubeType cube_type) __attribute((always_inline));
     #endif
 
     int get_damage(int x, int y, int z);

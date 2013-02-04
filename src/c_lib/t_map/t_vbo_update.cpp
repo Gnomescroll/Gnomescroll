@@ -438,14 +438,6 @@ void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side
 
     int _lv = get_lighting(x,y,z,side);
 
-/*
-    int _sky_light = _lv & 0x0f;
-    int _env_light = (_lv << 4) & 0x0f;
-
-    float sky_light = light_lookup[_sky_light ];
-    float env_light = light_lookup[_env_light ];
-*/
-
     float sky_light = light_lookup[ _lv & 0x0f ];
     float env_light = light_lookup[ (_lv >> 4) & 0x0f ];
 
@@ -680,7 +672,7 @@ void Vbo_map::update_vbo(int i, int j)
 
     update_skylight(i,j); //update skylights
     update_skylight2(i,j);
-    update_envlight(i,j);
+    //update_envlight(i,j);
 
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
@@ -786,13 +778,21 @@ static void push_quad_compatibility(struct VertexBackup* v_list, int offset, int
 
 #endif
 
-    float light = light_lookup[get_lighting(x,y,z,side)];
-
-    v_list[offset+0].lighting[0] = light;
-    v_list[offset+1].lighting[0] = light;
-    v_list[offset+2].lighting[0] = light;
-    v_list[offset+3].lighting[0] = light;
+    int _lv = get_lighting(x,y,z,side);
     
+    float sky_light = light_lookup[ _lv & 0x0f ];
+    float env_light = light_lookup[ (_lv >> 4) & 0x0f ];
+
+    v_list[offset+0].lighting[0] = sky_light;
+    v_list[offset+1].lighting[0] = sky_light;
+    v_list[offset+2].lighting[0] = sky_light;
+    v_list[offset+3].lighting[0] = sky_light;
+
+    v_list[offset+0].lighting[1] = env_light;
+    v_list[offset+1].lighting[1] = env_light;
+    v_list[offset+2].lighting[1] = env_light;
+    v_list[offset+3].lighting[1] = env_light;
+
     {
         int _x = x & 15;
         int _y = y & 15;
@@ -860,7 +860,7 @@ void Vbo_map::update_vbo_compatibility(int i, int j)
 
     update_skylight(i,j); //update skylights
     update_skylight2(i,j);
-    update_envlight(i,j);
+    //update_envlight(i,j);
 
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
