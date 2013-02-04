@@ -16,9 +16,9 @@ static const int va[3*6] =
     1,0,0,
     -1,0,0,
     0,1,0,
-    0,-1,0
+    0,-1,0,
     0,0,1,
-    0,0,-1,
+    0,0,-1
 };
 
 /*
@@ -187,7 +187,7 @@ void _skylight_update_core(int max_iterations)
 
         //top level must be sunlight
         //if block is not sunlight and sunlight is above block, set sunlight
-        if(ea[4].light & 0x0f == 15 && li != 15)
+        if( (ea[4].light & 0x0f) == 15 && li != 15)
         {
             li = 15;
             set_skylight(x,y,z, li);
@@ -891,7 +891,6 @@ void init_update_envlight(int chunk_i, int chunk_j)
     //printf("init_update_envlight: %d %d \n", chunk_i, chunk_j);
 
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
-    struct MAP_ELEMENT e;
 
     /*
         Envlight
@@ -904,7 +903,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
             int x = 16*chunk_i + i;
             int y = 16*chunk_j + j;
 
-            e = mc->get_element(i,j,k);
+            struct MAP_ELEMENT e = mc->get_element(i,j,k);
 
             if(fast_cube_properties[e.block].light_source == true)
             {
@@ -932,6 +931,9 @@ void init_update_envlight(int chunk_i, int chunk_j)
 
 void init_update_sunlight(int chunk_i, int chunk_j)
 {
+
+    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
     {
@@ -939,7 +941,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         int y = 16*chunk_j + j;
         int z = 127;
 
-        e = mc->get_element(i,j,z);
+        struct MAP_ELEMENT e = mc->get_element(i,j,z);
         if(fast_cube_properties[e.block].solid != true)
         {
             _push_skylight_update(x,y,z);
