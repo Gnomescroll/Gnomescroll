@@ -66,7 +66,7 @@ class ObjectList
         return true;
     }
 
-    ObjectState* get(IDType id)
+    ObjectState* get(IDType id) const
     {
         IF_ASSERT(id < 0 || (size_t)id >= this->max) return NULL;
         ObjectState* obj = &this->objects[id];

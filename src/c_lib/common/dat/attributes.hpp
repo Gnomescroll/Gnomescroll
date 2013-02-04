@@ -28,7 +28,7 @@ typedef enum
 
 typedef enum
 {
-    NULL_ATTRIBUTE_GROUP = MAX_AGENTS + 2
+    NULL_ATTRIBUTE_GROUP = MAX_AGENTS*2 + 2
 }   AttributeGroup;
 
 typedef void (*voidFunction)();

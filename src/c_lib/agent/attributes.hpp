@@ -18,9 +18,6 @@ void reset_attributes(AgentID agent_id);
 void apply_agent_modifiers();
 bool apply_agent_modifier(AgentID agent_id, const Modifier* modifier);
 
-void add_equipment_item_callback(AgentID agent_id, ItemID item_id);
-void remove_equipment_item_callback(AgentID agent_id, ItemID item_id);
-
 // Network
 void send_attributes_to_client(ClientID client_id);
 #endif

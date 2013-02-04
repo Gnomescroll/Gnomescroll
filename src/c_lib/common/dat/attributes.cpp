@@ -774,7 +774,7 @@ AttributeType get_type(AttributeGroup group, const char* name)
 size_t get_attribute_count(AttributeGroup group)
 {
     Attributes* attr = attributes_manager->get(group);
-    IF_ASSERT(attr == NULL) return NULL_ATTRIBUTE;
+    IF_ASSERT(attr == NULL) return 0;
     // Attributes are guaranteed continuous in the property array,
     // so its safe to return the index
     return attr->index;

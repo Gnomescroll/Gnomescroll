@@ -19,7 +19,9 @@ template <typename Type> static void set_upper_limit(Type upper);
 
 static void _register_attributes()
 {
+    // TODO -- some way to automatically bind set_callback to update health limit
     attribute_def("max_health", 100);
+    set_limits(10, 125);
 
     attribute_def("health", 100);
     set_limits(0, 140);
@@ -83,12 +85,23 @@ struct ModifierSum
     float percent;
 };
 
+struct StatDifference
+{
+    AttributeValueType value_type;
+    union
+    {
+        int i;
+        float f;
+    };
+};
 
 AttributeGroup base_stats = NULL_ATTRIBUTE_GROUP;
-AttributeGroup* stats;
+AttributeGroup* agent_stats;
+AttributeGroup* agent_base_stats;
 
 static AgentModifierList* agent_modifiers;
-static struct ModifierSum** modifier_sums;
+static struct StatDifference* stat_differences;
+static struct ModifierSum* modifier_sums;
 
 
 /*********************
@@ -147,23 +160,27 @@ static void test_registration()
     set_attribute(agent_id, "health", val);
 }
 
-static void start_registration(AttributeGroup& stats)
-{
-    stats = Attributes::start_registration();
-    GS_ASSERT(stats != NULL_ATTRIBUTE_GROUP);
-}
-
 void register_attributes()
 {
-    start_registration(base_stats);
+    base_stats = Attributes::start_registration();
+    GS_ASSERT(base_stats != NULL_ATTRIBUTE_GROUP);
     _register_attributes();
     Attributes::set_sync_type(base_stats, SYNC_TYPE_ALL);
     Attributes::end_registration();
     for (int i=0; i<MAX_AGENTS; i++)
     {
-        start_registration(stats[i]);
+        agent_base_stats[i] = Attributes::start_registration();
+        GS_ASSERT(agent_base_stats[i] != NULL_ATTRIBUTE_GROUP);
         _register_attributes();
-        Attributes::set_sync_to(stats[i], (ClientID)i);
+        Attributes::set_sync_type(agent_base_stats[i], SYNC_TYPE_PRIVATE);
+        Attributes::end_registration();
+    }
+    for (int i=0; i<MAX_AGENTS; i++)
+    {
+        agent_stats[i] = Attributes::start_registration();
+        GS_ASSERT(agent_stats[i] != NULL_ATTRIBUTE_GROUP);
+        _register_attributes();
+        Attributes::set_sync_to(agent_stats[i], (ClientID)i);
         Attributes::end_registration();
     }
 
@@ -182,7 +199,7 @@ void send_attributes_to_client(ClientID client_id)
     AgentID agent_id = NetServer::get_agent_id_for_client(client_id);
     IF_ASSERT(!isValid(agent_id)) return;
     Attributes::send_to_client(base_stats, client_id);
-    Attributes::send_to_client(stats[agent_id], client_id);
+    Attributes::send_to_client(agent_stats[agent_id], client_id);
 }
 #endif
 
@@ -194,7 +211,7 @@ void send_attributes_to_client(ClientID client_id)
     bool set_attribute(AgentID agent_id, KEYTYPE key, TYPE value) \
     { \
         IF_ASSERT(!isValid(agent_id)) return false; \
-        return Attributes::set(stats[agent_id], key, value); \
+        return Attributes::set(agent_stats[agent_id], key, value); \
     } \
     static bool set_base_attribute(KEYTYPE key, TYPE value) \
     { \
@@ -205,7 +222,7 @@ void send_attributes_to_client(ClientID client_id)
     TYPE get_attribute_##NAME(AgentID agent_id, KEYTYPE key) \
     { \
         IF_ASSERT(!isValid(agent_id)) return RETVAL; \
-        return Attributes::get_##NAME(stats[agent_id], key); \
+        return Attributes::get_##NAME(agent_stats[agent_id], key); \
     } \
     TYPE get_base_attribute_##NAME(KEYTYPE key) \
     { \
@@ -245,89 +262,36 @@ GET_ATTRIBUTE(const char*, const char*, string, NULL);
 
 static bool _apply_cumulative_modifier(AgentID agent_id,
     AttributeType attribute_type, AttributeValueType value_type,
-    int amount, float percent)
-{
-    IF_ASSERT(value_type != ATTRIBUTE_VALUE_INT &&
-              value_type != ATTRIBUTE_VALUE_FLOAT)
-        return false;
-    if (value_type == ATTRIBUTE_VALUE_INT)
-    {
-        int stat = get_attribute_int(agent_id, attribute_type);
-        int base_stat = get_base_attribute_int(attribute_type);
-        stat = stat + amount + int(round_half_from_zero(percent * float(base_stat)));
-        return set_attribute(agent_id, attribute_type, stat);
-    }
-    else
-    if (value_type == ATTRIBUTE_VALUE_FLOAT)
-    {
-        float stat = get_attribute_float(agent_id, attribute_type);
-        float base_stat = get_base_attribute_float(attribute_type);
-        stat = stat + amount + percent * base_stat;
-        return set_attribute(agent_id, attribute_type, stat);
-    }
-    else
-    {
-        GS_ASSERT(false);
-    }
-    return false;
-}
-
-static bool _change_temporary_modifier(AgentID agent_id, const Modifier* modifier, int direction)
-{
+    ModifierSum sum)
+{   // add sum to base_stat to get agent_base_stat
     IF_ASSERT(!isValid(agent_id)) return false;
-    AttributeValueType value_type = Attributes::get_value_type(
-        stats[agent_id], modifier->attribute_type);
     IF_ASSERT(value_type != ATTRIBUTE_VALUE_INT &&
-              value_type != ATTRIBUTE_VALUE_FLOAT)
-        return false;
+              value_type != ATTRIBUTE_VALUE_FLOAT) return false;
     if (value_type == ATTRIBUTE_VALUE_INT)
     {
-        int stat = get_base_attribute_int(modifier->attribute_type);
-        if (modifier->change_type == MODIFIER_CHANGE_AMOUNT)
-            stat += direction * modifier->amount;
-        else
-        if (modifier->change_type == MODIFIER_CHANGE_PERCENT)
-            stat += direction * int(round_half_from_zero(modifier->percent * float(stat)));
-        return set_attribute(agent_id, modifier->attribute_type, stat);
+        int stat = get_base_attribute_int(attribute_type);
+        stat = sum.amount + int(round_half_from_zero((sum.percent+1) * float(stat)));
+        return Attributes::set(agent_base_stats[agent_id], attribute_type, stat);
     }
     else
     if (value_type == ATTRIBUTE_VALUE_FLOAT)
     {
-        float stat = get_base_attribute_float(modifier->attribute_type);
-        if (modifier->change_type == MODIFIER_CHANGE_AMOUNT)
-            stat += direction * modifier->amount;
-        else
-        if (modifier->change_type == MODIFIER_CHANGE_PERCENT)
-            stat += direction * modifier->percent * stat;
-        return set_attribute(agent_id, modifier->attribute_type, stat);
+        float stat = get_base_attribute_float(attribute_type);
+        stat = sum.amount + (sum.percent+1) * stat;
+        return Attributes::set(agent_base_stats[agent_id], attribute_type, stat);
     }
     else
     {
         GS_ASSERT(false);
     }
     return false;
-}
-
-static inline bool _add_temporary_modifier(AgentID agent_id, const Modifier* modifier)
-{
-    // when equipment is added/removed, or when duration is added/remove
-    return _change_temporary_modifier(agent_id, modifier, 1);
-}
-
-
-static inline bool _remove_temporary_modifier(AgentID agent_id, const Modifier* modifier)
-{
-    return _change_temporary_modifier(agent_id, modifier, -1);
 }
 
 static bool _add_instant_modifier(AgentID agent_id, const Modifier* modifier)
 {
     IF_ASSERT(!isValid(agent_id)) return false;
     AttributeValueType value_type = Attributes::get_value_type(
-        stats[agent_id], modifier->attribute_type);
-    IF_ASSERT(value_type != ATTRIBUTE_VALUE_INT &&
-              value_type != ATTRIBUTE_VALUE_FLOAT)
-        return false;
+        agent_stats[agent_id], modifier->attribute_type);
     if (value_type == ATTRIBUTE_VALUE_INT)
     {
         int stat = get_attribute_int(agent_id, modifier->attribute_type);
@@ -373,27 +337,133 @@ static void _apply_timed_modifiers(AgentID agent_id)
         if (m->tick >= m->duration)
         {
             GS_ASSERT(m->duration > 0);
-            if (m->event_type == MODIFIER_EVENT_DURATION)
-                _remove_temporary_modifier(agent_id, m);
             agent_modifiers[agent_id].destroy(m->id);
             continue;
         }
     }
 }
 
-static void _apply_cumulative_modifiers(AgentID agent_id)
+static void _apply_stat_difference(AgentID agent_id, AttributeType type, struct StatDifference diff)
 {
-    AttributeGroup group = stats[agent_id];
-    size_t count = Attributes::get_attribute_count(group);
+    IF_ASSERT(!isValid(agent_id)) return;
+    if (diff.value_type == ATTRIBUTE_VALUE_INT)
+    {
+        int value = Attributes::get_int(agent_base_stats[agent_id], type);
+        value += diff.i;
+        set_attribute(agent_id, type, value);
+    }
+    else
+    if (diff.value_type == ATTRIBUTE_VALUE_FLOAT)
+    {
+        float value = Attributes::get_float(agent_base_stats[agent_id], type);
+        value += diff.f;
+        set_attribute(agent_id, type, value);
+    }
+    else
+    {
+        GS_ASSERT(false);
+    }
+}
+
+static void _apply_stat_differences(AgentID agent_id)
+{
+    IF_ASSERT(!isValid(agent_id)) return;
+    size_t count = Attributes::get_attribute_count(base_stats);
+    for (size_t i=0; i<count; i++)
+        if (stat_differences[i].value_type != NULL_ATTRIBUTE_VALUE_TYPE)
+            _apply_stat_difference(agent_id, (AttributeType)i, stat_differences[i]);
+}
+
+static void _apply_cumulative_modifiers(AgentID agent_id)
+{   // modifiers + base_stats = agent_base_stats
+    IF_ASSERT(!isValid(agent_id)) return;
+    size_t count = Attributes::get_attribute_count(base_stats);
     for (size_t i=0; i<count; i++)
     {
-        int amount = modifier_sums[agent_id][i].amount;
-        float percent = modifier_sums[agent_id][i].percent;
-        if (!amount && !percent) continue;
-        AttributeValueType value_type = Attributes::get_value_type(group, (AttributeType)i);
+        AttributeValueType value_type = Attributes::get_value_type(base_stats, (AttributeType)i);
         IF_ASSERT(value_type != ATTRIBUTE_VALUE_INT &&
                   value_type != ATTRIBUTE_VALUE_FLOAT) continue;
-        _apply_cumulative_modifier(agent_id, (AttributeType)i, value_type, amount, percent);
+        _apply_cumulative_modifier(agent_id, (AttributeType)i, value_type, modifier_sums[i]);
+    }
+}
+
+static void _sum_status_modifiers(AgentID agent_id)
+{
+    IF_ASSERT(!isValid(agent_id)) return;
+    const Agent* agent = get_agent(agent_id);
+    IF_ASSERT(agent == NULL) return;
+    const AgentModifierList* modifiers = &agent_modifiers[agent_id];
+    for (size_t i=0; i<modifiers->max; i++)
+    {
+        const AgentModifier* m = modifiers->get((ModifierID)i);
+        if (m == NULL) continue;
+        if (m->event_type != MODIFIER_EVENT_DURATION) continue;
+        IF_ASSERT(m->attribute_type == NULL_ATTRIBUTE) continue;
+        modifier_sums[m->attribute_type].amount += m->amount;
+        modifier_sums[m->attribute_type].percent += m->percent;
+    }
+}
+
+static void _sum_equipment_modifiers(AgentID agent_id)
+{
+    ItemContainerID equipment_id = ItemContainer::get_agent_equipment(agent_id);
+    const ItemContainer::ItemContainerInterface* equipment = ItemContainer::get_container(equipment_id);
+    IF_ASSERT(equipment == NULL) return;
+    for (int i=0; i<equipment->slot_max; i++)
+    {
+        ItemID item_id = equipment->slot[i];
+        if (item_id == NULL_ITEM) continue;
+        const ModifierList* modifiers = Item::get_item_modifiers(item_id);
+        IF_ASSERT(modifiers == NULL) continue;
+        for (size_t j=0; j<modifiers->max; j++)
+        {
+            const Modifier* m = modifiers->get((ModifierID)j);
+            if (m == NULL) continue;
+            IF_ASSERT(m->attribute_type == NULL_ATTRIBUTE) continue;
+            modifier_sums[m->attribute_type].amount += m->amount;
+            modifier_sums[m->attribute_type].percent += m->percent;
+        }
+    }
+}
+
+static void _sum_cumulative_modifiers(AgentID agent_id)
+{   // sum all temporary modifiers and equipment modifiers
+    memset(modifier_sums, 0, MAX_ATTRIBUTES * sizeof(struct ModifierSum));
+    _sum_status_modifiers(agent_id);
+    _sum_equipment_modifiers(agent_id);
+}
+
+static void _calculate_stat_differences(AgentID agent_id)
+{
+    IF_ASSERT(!isValid(agent_id)) return;
+    size_t count = Attributes::get_attribute_count(base_stats);
+    memset(stat_differences, 0, MAX_ATTRIBUTES * sizeof(struct StatDifference));
+    for (size_t i=0; i<count; i++)
+        stat_differences[i].value_type = NULL_ATTRIBUTE_VALUE_TYPE;
+    for (size_t i=0; i<count; i++)
+    {
+        AttributeType type = (AttributeType)i;
+        AttributeValueType value_type = Attributes::get_value_type(agent_stats[agent_id], type);
+        if (value_type == ATTRIBUTE_VALUE_STRING) continue;
+        if (value_type == ATTRIBUTE_VALUE_INT)
+        {
+            int diff = (Attributes::get_int(agent_stats[agent_id], type) -
+                        Attributes::get_int(agent_base_stats[agent_id], type));
+            stat_differences[i].value_type = ATTRIBUTE_VALUE_INT;
+            stat_differences[i].i = diff;
+        }
+        else
+        if (value_type == ATTRIBUTE_VALUE_FLOAT)
+        {
+            float diff = (Attributes::get_float(agent_stats[agent_id], type) -
+                          Attributes::get_float(agent_base_stats[agent_id], type));
+            stat_differences[i].value_type = ATTRIBUTE_VALUE_FLOAT;
+            stat_differences[i].f = diff;
+        }
+        else
+        {
+            GS_ASSERT(false);
+        }
     }
 }
 
@@ -403,7 +473,6 @@ static bool _load_temporary_modifier(AgentID agent_id, const Modifier* modifier)
     AgentModifier* agent_modifier = agent_modifiers[agent_id].create();
     IF_ASSERT(agent_modifier == NULL) return false;
     agent_modifier->load_modifier(modifier);
-    _add_temporary_modifier(agent_id, modifier);
     return true;
 }
 
@@ -411,29 +480,6 @@ static bool _apply_instant_agent_modifier(AgentID agent_id, const Modifier* modi
 {
     IF_ASSERT(!isValid(agent_id)) return false;
     return _add_instant_modifier(agent_id, modifier);
-}
-
-static void _equipment_item_change(AgentID agent_id, ItemID item_id,
-                                    bool (*changer)(AgentID, const Modifier*))
-{
-    const ModifierList* modifiers = Item::get_item_modifiers(item_id);
-    IF_ASSERT(modifiers == NULL) return;
-    for (size_t i=0; i<modifiers->max; i++)
-    {
-        const Modifier* m = &modifiers->objects[i];
-        if (m->id == modifiers->null_id) continue;
-        changer(agent_id, m);
-    }
-}
-
-void add_equipment_item_callback(AgentID agent_id, ItemID item_id)
-{
-    _equipment_item_change(agent_id, item_id, &_add_temporary_modifier);
-}
-
-void remove_equipment_item_callback(AgentID agent_id, ItemID item_id)
-{
-    _equipment_item_change(agent_id, item_id, &_remove_temporary_modifier);
 }
 
 bool apply_agent_modifier(AgentID agent_id, const Modifier* modifier)
@@ -454,11 +500,18 @@ void apply_agent_modifiers()
     {
         Agent* agent = get_agent((AgentID)i);
         if (agent == NULL) continue;
-        _apply_timed_modifiers(agent->id);
+        // compute difference between agent_stats and agent_base_stats
+        _calculate_stat_differences(agent->id);
+        // sum up equipment and status modifiers
+        _sum_cumulative_modifiers(agent->id);
+        // apply the final modifiers to base_stats to get agent_base_stats
         _apply_cumulative_modifiers(agent->id);
+        // apply the original differences back to agent_base_stats
+        _apply_stat_differences(agent->id);
+        // trigger any periodic modifiers and remove expired ones
+        _apply_timed_modifiers(agent->id);
     }
 }
-
 #endif
 
 /*********************
@@ -468,29 +521,32 @@ void apply_agent_modifiers()
 void init_attributes()
 {
     GS_ASSERT(base_stats == NULL_ATTRIBUTE_GROUP);
-    GS_ASSERT(stats == NULL);
+    GS_ASSERT(agent_stats == NULL);
+    GS_ASSERT(agent_base_stats == NULL);
     GS_ASSERT(agent_modifiers == NULL);
     GS_ASSERT(modifier_sums == NULL);
-
-    stats = (AttributeGroup*)malloc(MAX_AGENTS * sizeof(AttributeGroup));
-    for (int i=0; i<MAX_AGENTS; stats[i++] = NULL_ATTRIBUTE_GROUP);
-    agent_modifiers = new AgentModifierList[MAX_AGENTS];
-    modifier_sums = (struct ModifierSum**)calloc(MAX_AGENTS, sizeof(struct ModifierSum));
+    GS_ASSERT(stat_differences == NULL);
+    agent_stats = (AttributeGroup*)malloc(MAX_AGENTS * sizeof(AttributeGroup));
+    agent_base_stats = (AttributeGroup*)malloc(MAX_AGENTS * sizeof(AttributeGroup));
     for (int i=0; i<MAX_AGENTS; i++)
-        modifier_sums[i] = (struct ModifierSum*)calloc(MAX_ATTRIBUTES, sizeof(struct ModifierSum));
+    {
+        agent_stats[i] = NULL_ATTRIBUTE_GROUP;
+        agent_base_stats[i] = NULL_ATTRIBUTE_GROUP;
+    }
+    agent_modifiers = new AgentModifierList[MAX_AGENTS];
+    modifier_sums = (struct ModifierSum*)calloc(MAX_ATTRIBUTES, sizeof(struct ModifierSum));
+    stat_differences = (struct StatDifference*)calloc(MAX_ATTRIBUTES, sizeof(struct StatDifference));
+    for (size_t i=0; i<MAX_ATTRIBUTES; i++)
+        stat_differences[i].value_type = NULL_ATTRIBUTE_VALUE_TYPE;
 }
 
 void teardown_attributes()
 {
-    if (stats != NULL) free(stats);
+    if (agent_stats != NULL) free(agent_stats);
+    if (agent_base_stats != NULL) free(agent_base_stats);
+    if (stat_differences != NULL) free(stat_differences);
     if (agent_modifiers != NULL) delete[] agent_modifiers;
-    if (modifier_sums != NULL)
-    {
-        for (int i=0; i<MAX_AGENTS; i++)
-            if (modifier_sums[i] != NULL)
-                free(modifier_sums[i]);
-        free(modifier_sums);
-    }
+    if (modifier_sums != NULL) free(modifier_sums);
 }
 
 void reset_attributes(AgentID agent_id)
@@ -498,7 +554,8 @@ void reset_attributes(AgentID agent_id)
     IF_ASSERT(!isValid(agent_id)) return;
     memset(&modifier_sums[agent_id], 0, MAX_ATTRIBUTES*sizeof(struct ModifierSum));
     agent_modifiers[agent_id].flush();
-    Attributes::copy_from(stats[agent_id], base_stats);
+    Attributes::copy_from(agent_base_stats[agent_id], base_stats);
+    Attributes::copy_from(agent_stats[agent_id], agent_base_stats[agent_id]);
 }
 
 

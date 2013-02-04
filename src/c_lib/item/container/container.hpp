@@ -570,7 +570,6 @@ class ItemContainerEquipment: public ItemContainerInterface
 
     virtual int insert_item(int slot, ItemID item_id);
     virtual bool can_insert_item(int slot, ItemID item_id);
-    virtual void remove_item(int slot);
 
     EquipmentType get_slot_equipment_type(int slot)
     {

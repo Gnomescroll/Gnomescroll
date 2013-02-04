@@ -272,21 +272,7 @@ int ItemContainerEquipment::insert_item(int slot, ItemID item_id)
 {
     GS_ASSERT(Item::get_item_group(item_id) == IG_EQUIPMENT);
     GS_ASSERT(Item::get_item_equipment_type(item_id) == this->get_slot_equipment_type(slot));
-    #if DC_SERVER
-    Agents::add_equipment_item_callback(this->owner, item_id);
-    #endif
     return ItemContainerInterface::insert_item(slot, item_id);
 }
-
-void ItemContainerEquipment::remove_item(int slot)
-{
-    #if DC_SERVER
-    IF_ASSERT(!this->is_valid_slot(slot)) return;
-    if (this->slot[slot] != NULL_ITEM)
-        Agents::remove_equipment_item_callback(this->owner, this->slot[slot]);
-    #endif
-    ItemContainerInterface::remove_item(slot);
-}
-
 
 }   // ItemContainer
