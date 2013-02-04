@@ -112,13 +112,12 @@ void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation,
     effect->set_state(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z, speed, length);
 }
 
-void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)
+void create_hitscan_effect(struct Vec3 center, struct Vec3 velocity)
 {
     HitscanEffect* he = hitscan_effect_list->create();
     if (he == NULL) return;
-    x = translate_point(x);
-    y = translate_point(y);
-    he->set_state(x,y,z,vx,vy,vz);
+    center = translate_position(center);
+    he->set_state(center, velocity);
 }
 
 void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float length)

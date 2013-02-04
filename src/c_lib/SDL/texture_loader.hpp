@@ -27,10 +27,7 @@ SDL_Surface* create_texture_and_surface_from_file(const char* filename, GLuint* 
 
 SDL_Surface* create_surface_from_nothing(int w, int h);
 
-void load_colored_texture(
-    const char* path, GLuint* texture,
-    unsigned char br, unsigned char bg, unsigned char bb,   // base color
-    unsigned char r, unsigned char g, unsigned char b       // replace with
-);
+void load_colored_texture(const char* path, GLuint* texture,
+                          class Color base_color, class Color color);
 
 void save_surface_to_png(SDL_Surface* surface, const char* filename);

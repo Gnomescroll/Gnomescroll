@@ -31,15 +31,14 @@ namespace Main
 void time_since(int n)
 {
     static int c_time = _GET_MS_TIME();
-
     int t = _GET_MS_TIME();
-
-    if(n != -1  && (t - c_time > 2) ) printf("%i: = %i ms \n", n, t - c_time);
+    if (n != -1 && t - c_time > 2)
+        printf("%d: = %d ms \n", n, t - c_time);
     c_time = t;
-
 }
 
 void wait_for_login();  // forward decl
+
 void init(int argc, char* argv[])
 {
     GS_MKDIR(SCREENSHOT_PATH, S_IRWXU);
@@ -569,7 +568,7 @@ int run()
         //int _then = _GET_MS_TIME();
 
         //if(_then-_now > 2)
-        //    printf("time= %i \n", _then-_now);
+        //    printf("time= %d \n", _then-_now);
 
         poll_mouse();
 

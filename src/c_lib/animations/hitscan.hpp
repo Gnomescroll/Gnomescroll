@@ -20,22 +20,22 @@ class HitscanEffect
 
     public:
         int id;
-        float x,y,z;
-        float vx,vy,vz;
+        struct Vec3 p;
+        struct Vec3 v;
         int ttl;
 
     inline void draw(float delta, Vec3 camera) __attribute((always_inline));
     inline void tick();
 
-    void set_state(float x, float y, float z, float vx, float vy, float vz)
+    void set_state(struct Vec3 p, struct Vec3 v)
     {
-        ASSERT_BOXED_POINTf(x);
-        ASSERT_BOXED_POINTf(y);
-        GS_ASSERT(fabsf(vx)/30.0f < 128.0f);
-        GS_ASSERT(fabsf(vy)/30.0f < 128.0f);
-        GS_ASSERT(fabsf(vz)/30.0f < 128.0f);
-        this->x = x; this->y = y; this->z = z;
-        this->vx = vx; this->vy = vy; this->vz = vz;
+        ASSERT_BOXED_POSITION(p);
+        struct Vec3 scaled = vec3_scalar_mult(vec3_abs(v), 1.0f/30.0f);
+        GS_ASSERT(scaled.x < 128.0f);
+        GS_ASSERT(scaled.y < 128.0f);
+        GS_ASSERT(scaled.z < 128.0f);
+        this->p = p;
+        this->v = v;
     }
 
     void reset();
@@ -49,17 +49,16 @@ class HitscanEffect
 class HitscanEffectList: public Simple_object_list<HitscanEffect, 1024>
 {
     private:
-        const char* name()
-        {
-            return "HitscanEffect";
-        }
+    const char* name()
+    {
+        return "HitscanEffect";
+    }
     public:
-        void draw();
-        void tick();
-
-        HitscanEffectList()
-        {
-        }
+    void draw();
+    void tick();
+    HitscanEffectList()
+    {
+    }
 };
 
 }   // Animations

@@ -124,7 +124,7 @@ dont_include_this_file_in_client
 #include <physics/mat3.hpp>
 #include <physics/mat4.hpp>
 #include <physics/affine.hpp>
-#include <physics/quadrant.cpp>
+#include <physics/quadrant.hpp>
 
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>

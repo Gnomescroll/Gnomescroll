@@ -1,5 +1,6 @@
 #include "map.hpp"
 
+#include <common/color.hpp>
 #include <common/common.hpp>
 #include <t_map/common/constants.hpp>
 #include <t_map/t_map.hpp>
@@ -25,17 +26,12 @@ static GLuint map_textures[2] = {0};
 
 static SDL_Surface* gradient_surface = NULL;
 
-void load_colored_icon(
-    char* fn, GLuint* texture,
-    unsigned char br, unsigned char bg, unsigned char bb,   // base color
-    unsigned char r, unsigned char g, unsigned char b       // replace with
-)
+void load_colored_icon(char* fn, GLuint* texture, Color base_color, Color color)
 {
-    // format path
-    const char icon_path_fmt[] = "./media/sprites/icons/%s";
+    const char icon_path_fmt[] = MEDIA_PATH "sprites/icons/%s";
     char* path = (char*)calloc(strlen(icon_path_fmt) + strlen(fn) - 2 + 1, sizeof(char));
     sprintf(path, icon_path_fmt, fn);
-    load_colored_texture(path, texture, br,bg,bb, r,g,b);
+    load_colored_texture(path, texture, base_color, color);
     free(path);
 }
 

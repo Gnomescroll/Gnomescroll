@@ -57,14 +57,17 @@ class VoxelVolume
     void update_vertex_list();
     #endif
 
-    int hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2,  int voxel[3]);
+    int hitscan_test(struct Vec3 p, struct Vec3 f, float r2,  int voxel[3]);
 
     //inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision) __attribute((always_inline));
     //inline struct Vec3 get_center() __attribute((always_inline));
 
     inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision);
 
-    inline struct Vec3 get_center(){ return world_matrix.c; }
+    inline struct Vec3 get_center()
+    {
+        return world_matrix.c;
+    }
 
     void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4]);

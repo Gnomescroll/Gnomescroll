@@ -10,7 +10,7 @@
 
 namespace SkeletonEditor
 {
-    
+
 bool rotate = false;
 bool use_skeleton = false;
 EntityType type = OBJECT_AGENT;
@@ -32,7 +32,7 @@ void move_in_x(float s)
     vp->sx += s;
     vp->set_local_matrix();    // TODO: use node
     vox->set_vox_dat(vox_dat);
-    vox->reset_skeleton();   
+    vox->reset_skeleton();
 }
 
 void move_in_y(float s)
@@ -41,7 +41,7 @@ void move_in_y(float s)
     vp->sy += s;
     vp->set_local_matrix();    // TODO: use node
     vox->set_vox_dat(vox_dat);
-    vox->reset_skeleton();   
+    vox->reset_skeleton();
 }
 
 void move_in_z(float s)
@@ -50,7 +50,7 @@ void move_in_z(float s)
     vp->sz += s;
     vp->set_local_matrix();    // TODO: use node
     vox->set_vox_dat(vox_dat);
-    vox->reset_skeleton();   
+    vox->reset_skeleton();
 }
 
 void rotate_in_x(float s)
@@ -59,7 +59,7 @@ void rotate_in_x(float s)
     vp->srx += s;
     vp->set_local_matrix();    // TODO: use node
     vox->set_vox_dat(vox_dat);
-    vox->reset_skeleton();   
+    vox->reset_skeleton();
 }
 
 void rotate_in_y(float s)
@@ -68,7 +68,7 @@ void rotate_in_y(float s)
     vp->sry += s;
     vp->set_local_matrix();    // TODO: use node
     vox->set_vox_dat(vox_dat);
-    vox->reset_skeleton();   
+    vox->reset_skeleton();
 }
 
 void rotate_in_z(float s)
@@ -77,7 +77,7 @@ void rotate_in_z(float s)
     vp->srz += s;
     vp->set_local_matrix();    // TODO: use node
     vox->set_vox_dat(vox_dat);
-    vox->reset_skeleton();   
+    vox->reset_skeleton();
 }
 
 void reset_part()
@@ -91,7 +91,7 @@ void reset_part()
     vp->srz = 0;
     vp->set_local_matrix();    // TODO: use node
     vox->set_vox_dat(vox_dat);
-    vox->reset_skeleton();   
+    vox->reset_skeleton();
 }
 
 /*
@@ -115,13 +115,7 @@ void raycast_to_part()
     float collision_point[3];
     Voxels::VoxelHitscanTarget target;
     bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
-        p.x,p.y,p.z,
-        vec.x,vec.y,vec.z,
-        -1, (EntityType)-1,
-        collision_point, &vox_distance,
-        &target
-    );
-
+        p, vec, -1, (EntityType)-1, collision_point, &vox_distance, &target);
     if (!voxel_hit)
         return;
 
@@ -213,7 +207,7 @@ void move_node_in_z(float s)
 {
     if (vox_dat == NULL || vox == NULL) return;
     vox_dat->vox_skeleton_local_matrix_reference[node][2] += s;
-    vox_dat->reset_skeleton_local_matrix(node);  
+    vox_dat->reset_skeleton_local_matrix(node);
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
@@ -241,7 +235,7 @@ void rotate_node_in_y(float s)
 {
     if (vox_dat == NULL || vox == NULL) return;
     vox_dat->vox_skeleton_local_matrix_reference[node][4] += s;
-    vox_dat->reset_skeleton_local_matrix(node); 
+    vox_dat->reset_skeleton_local_matrix(node);
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
@@ -255,7 +249,7 @@ void rotate_node_in_z(float s)
 {
     if (vox_dat == NULL || vox == NULL) return;
     vox_dat->vox_skeleton_local_matrix_reference[node][5] += s;
-    vox_dat->reset_skeleton_local_matrix(node); 
+    vox_dat->reset_skeleton_local_matrix(node);
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
@@ -266,7 +260,7 @@ void rotate_node_in_z(float s)
 }
 
 /* Handlers */
-    
+
 void key_down_handler(SDL_Event* event)
 {
     switch (event->key.keysym.sym)
@@ -294,7 +288,7 @@ void key_down_handler(SDL_Event* event)
         case SDLK_RETURN:
             save();
             break;
-        
+
         case SDLK_LEFT:
             if (rotate)
                 if (use_skeleton)
@@ -382,7 +376,7 @@ void key_down_handler(SDL_Event* event)
             node %= vox->n_skeleton_nodes;
             printf("Selected node %d\n", node);
             break;
-            
+
         default: break;
     }
 }

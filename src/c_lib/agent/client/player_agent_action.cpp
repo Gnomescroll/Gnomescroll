@@ -34,24 +34,22 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
 
     class Voxels::VoxelHitscanTarget target;
     float vox_distance;
-    float collision_point[3];
+    struct Vec3 collision_point;
     int block_pos[3];
     int side[3];
     CubeType tile;
     float block_distance;
-
     HitscanTargetTypes target_type = Hitscan::hitscan_against_world(
         pos, look, this->p->agent_id, OBJECT_AGENT,
-        &target, &vox_distance, collision_point,
+        &target, &vox_distance, collision_point.f,
         block_pos, side, &tile, &block_distance);
 
     // for hitscan animation:
     // readjust the vector so that the translated position points to target
     // get the right vector for translating the hitscan laser anim
-    normalize_vector(&look);
     Vec3 up = vec3_init(0,0,1);
     Vec3 right = vec3_cross(look, up);
-    normalize_vector(&right);
+    right = vec3_normalize(right);
 
     // magic offset numbers found by rotating the laser to the right spot
     // fixed in the bottom right corner
@@ -59,10 +57,11 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
     const float dz = -0.13f;
 
     // animation origin
-    float origin[3];
-    origin[0] = translate_point(pos.x + dxy * right.x);
-    origin[1] = translate_point(pos.y + dxy * right.y);
-    origin[2] = pos.z + dz;
+    struct Vec3 origin;
+    origin.x = pos.x + dxy * right.x;
+    origin.y = pos.y + dxy * right.y;
+    origin.z = pos.z + dz;
+    origin = translate_position(origin);
 
     // send packet
     hitscan_block_CtoS block_msg;
@@ -87,18 +86,13 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
             obj_msg.send();
 
             // subtract the collision point from the origin to get the new vector for animation
-            look.x = quadrant_translate_f(origin[0], collision_point[0]) - origin[0];
-            look.y = quadrant_translate_f(origin[1], collision_point[1]) - origin[1];
-            look.z = collision_point[2] - origin[2];
-            normalize_vector(&look);
+            look = vec3_sub(quadrant_translate_position(origin, collision_point), origin);
+            look = vec3_normalize(look);
 
             if (target.entity_type == OBJECT_AGENT)
             {
-                Animations::blood_spray(
-                    collision_point[0], collision_point[1], collision_point[2],
-                    look.x, look.y, look.z
-                );
-                //Sound::play_3d_sound("laser_hit_agent",
+                Animations::blood_spray(collision_point, look);
+                //Sound::play_3d_sound("laser_hit_agent", vec3_init
                     //collision_point[0], collision_point[1], collision_point[2],
                     //0,0,0
                 //);
@@ -131,10 +125,8 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
                 Animations::predicted_block_damage = weapon_dmg;
                 Animations::damaging_block = true;
             }
-
             // make & record dmg request
             t_map::request_block_damage(x,y,z);
-
             block_msg.x = x;
             block_msg.y = y;
             block_msg.z = z;
@@ -145,23 +137,14 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
             // add agent position, now we have collision point
             look = vec3_add(look, pos);
             // copy this to collision_point, for block damage animation
-            collision_point[0] = quadrant_translate_f(current_camera_position.x, translate_point(look.x));
-            collision_point[1] = quadrant_translate_f(current_camera_position.y, translate_point(look.y));
-            collision_point[2] = look.z;
+            look = translate_position(look);
+            collision_point = quadrant_translate_position(current_camera_position, look);
             // subtract translated animation origin from collision point (vec) to get new vector
-            look.x -= origin[0];
-            look.y -= origin[1];
-            look.z -= origin[2];
-            normalize_vector(&look);
-
-            Animations::block_damage(
-                collision_point[0], collision_point[1], collision_point[2],
-                look.x, look.y, look.z,
-                tile, side
-            );
-            Animations::terrain_sparks(collision_point[0], collision_point[1], collision_point[2]);
-            //Sound::play_3d_sound("laser_hit_block", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
-
+            look = vec3_sub(look, origin);
+            look = vec3_normalize(look);
+            Animations::block_damage(collision_point, look, tile, side);
+            Animations::terrain_sparks(collision_point);
+            //Sound::play_3d_sound("laser_hit_block", collision_point);
             break;
 
         case HITSCAN_TARGET_NONE:
@@ -173,14 +156,10 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
     }
 
     Sound::play_2d_sound("fire_laser");
-
     // play laser anim (client viewport)
     const float hitscan_speed = 200.0f;
     look = vec3_scalar_mult(look, hitscan_speed);
-    Animations::create_hitscan_effect(
-        origin[0], origin[1], origin[2],
-        look.x, look.y, look.z
-    );
+    Animations::create_hitscan_effect(origin, look);
 }
 
 void PlayerAgent_action::update_mining_laser()
@@ -254,21 +233,16 @@ void PlayerAgent_action::fire_close_range_weapon(ItemType weapon_type)
 
     class Voxels::VoxelHitscanTarget target;
     float vox_distance;
-    float collision_point[3];
+    struct Vec3 collision_point;
     int block_pos[3];
     int side[3];
     CubeType tile;
     float block_distance;
-
-    HitscanTargetTypes target_type =
-        Hitscan::hitscan_against_world(
+    HitscanTargetTypes target_type = Hitscan::hitscan_against_world(
             pos, look, this->p->agent_id, OBJECT_AGENT,
-            &target, &vox_distance, collision_point,
-            block_pos, side, &tile, &block_distance
-        );
-
-    normalize_vector(&look);    // already normalized?
-
+            &target, &vox_distance, collision_point.f,
+            block_pos, side, &tile, &block_distance);
+    look = vec3_normalize(look);    // already normalized?
     // send packet
     hit_block_CtoS block_msg;
     melee_object_CtoS obj_msg;
@@ -302,14 +276,8 @@ void PlayerAgent_action::fire_close_range_weapon(ItemType weapon_type)
                     target_type = HITSCAN_TARGET_NONE;
                     break;
                 }
-                Animations::blood_spray(
-                    collision_point[0], collision_point[1], collision_point[2],
-                    look.x, look.y, look.z
-                );
-                //Sound::play_3d_sound("pick_hit_agent",
-                    //collision_point[0], collision_point[1], collision_point[2],
-                    //0,0,0
-                //);
+                Animations::blood_spray(collision_point, look);
+                //Sound::play_3d_sound("pick_hit_agent", collision_point);
                 //voxel_blast_radius = 3;
             }
             //else if (target.entity_type == OBJECT_MONSTER_BOMB)
@@ -350,10 +318,8 @@ void PlayerAgent_action::fire_close_range_weapon(ItemType weapon_type)
                     Animations::predicted_block_damage = weapon_dmg;
                     Animations::damaging_block = true;
                 }
-
                 // make & record dmg request
                 t_map::request_block_damage(x,y,z);
-
                 block_msg.x = x;
                 block_msg.y = y;
                 block_msg.z = z;
@@ -368,22 +334,16 @@ void PlayerAgent_action::fire_close_range_weapon(ItemType weapon_type)
             // add agent position, now we have collision point
             look = vec3_add(look, pos);
             // copy this to collision_point, for block damage animation
-            collision_point[0] = quadrant_translate_f(current_camera_position.x, translate_point(look.x));
-            collision_point[1] = quadrant_translate_f(current_camera_position.y, translate_point(look.y));
-            collision_point[2] = look.z;
+            look = translate_position(look);
+            collision_point = quadrant_translate_position(current_camera_position, look);
 
             // subtract translated animation origin from collision point (look) to get new vector
-            look = vec3_sub(vec3_init(collision_point[0], collision_point[1], collision_point[2]), this->p->get_weapon_fire_animation_origin());
-            normalize_vector(&look);
-
-            Animations::block_damage(
-                collision_point[0], collision_point[1], collision_point[2],
-                look.x, look.y, look.z,
-                tile, side
-            );
-            //Sound::play_3d_sound("pick_hit_block", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            look = vec3_sub(collision_point, this->p->get_weapon_fire_animation_origin());
+            look = vec3_normalize(look);
+            Animations::block_damage(collision_point, look, tile, side);
+            //Sound::play_3d_sound("pick_hit_block", collision_point);
             if (weapon_group != IG_MINING_LASER)
-                Sound::play_3d_sound("block_took_damage", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+                Sound::play_3d_sound("block_took_damage", collision_point);
             break;
 
         case HITSCAN_TARGET_NONE:

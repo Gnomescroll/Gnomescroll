@@ -11,30 +11,23 @@ dont_include_this_file_in_server
 namespace Animations
 {
 
-void block_crumble(float x, float y, float z, int n, CubeType cube_type, float momentum);
-void block_crumble(float x, float y, float z, int n, CubeType cube_type, TerrainModificationAction action);
-
+void block_crumble(struct Vec3 pos, int n, CubeType cube_type, float momentum);
+void block_crumble(struct Vec3 pos, int n, CubeType cube_type, TerrainModificationAction action);
 // pos, incident vector, cube_type, side[3] array returned from ray_cast6
-void block_damage(float x, float y, float z, float ix, float iy, float iz, CubeType cube_type, int side[3]);
+void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int side[3]);
 // pos, incident vector, cube_type, side id
-void block_damage(float x, float y, float z, float ix, float iy, float iz, CubeType cube_type, int cube_side);
-
+void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int cube_side);
 // actual method called by convenience methods
-void block_damage(float x, float y, float z, float ix, float iy, float iz, CubeType cube_type, int side[3], int cube_side);
-void terrain_sparks(float x, float y, float z);
-
-void grenade_explode(float x, float y, float z);
-
-void agent_bleed(float x, float y, float z);
-void blood_spray(float x, float y, float z, float ix, float iy, float iz);  // pos, incident vector
-
+void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int side[3], int cube_side);
+void terrain_sparks(struct Vec3 pos);
+void grenade_explode(struct Vec3 pos);
+void agent_bleed(struct Vec3 pos);
+void blood_spray(struct Vec3 pos, struct Vec3 incident);  // pos, incident vector
 void voxel_explode(Vec3 position, int count, float size, float force, Color color);
 // will generate random count between count_min and count_max
 void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, Color color);
-
 // DEBUG
 void confetti_stream();
-
 // new style callbacks
 void create_shrapnel(AnimationType animation_type, void* metadata);
 

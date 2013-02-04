@@ -3,6 +3,7 @@
 #include <t_map/common/types.hpp>
 
 inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float pos[3], float* _rad2);
+inline float sphere_line_distance(struct Vec3 p, struct Vec3 o, struct Vec3 t, struct Vec3* out, float* _rad2);
 
 int get_cube_side_from_side_array(int side[3]);
 void get_side_array_from_cube_side(int side_id, int side[3]);

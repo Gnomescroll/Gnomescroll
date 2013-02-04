@@ -127,7 +127,7 @@ void Grenade::explode(int multiplier)
     int anim_ct = Options::animation_level * multiplier;
     if (ANIM_CT_MAX > 6) anim_ct = ANIM_CT_MAX;
     for (int i=0; i<anim_ct; i++)
-        Animations::grenade_explode(position.x, position.y, position.z);
+        Animations::grenade_explode(position);
     #endif
 
     #if DC_SERVER

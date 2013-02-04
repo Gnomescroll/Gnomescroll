@@ -6,32 +6,22 @@
 namespace Voxels
 {
 
-bool VoxelHitscanList::hitscan(
-    const float x0, const float y0, const float z0,     // source
-    const float x1, const float y1, const float z1,     // direction
-    int skip_id, EntityType skip_type, // skip player agent id
-    float collision_point[3], float *distance,
-    class VoxelHitscanTarget* target)
+bool VoxelHitscanList::hitscan(const struct Vec3 pos, const struct Vec3 forward,
+                                 int skip_id, EntityType skip_type, // skip player agent id
+                                 float collision_point[3], float *distance,
+                                 class VoxelHitscanTarget* target)
 {
-    float x2,y2,z2;
-
     float r2 = 100000.0f;
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-
+    struct Vec3 dest;
     float radius;
     class VoxelHitscanElement* vhe;
     class VoxelHitscanElement* target_hit;
     target_hit = NULL;
     int voxel[3];
-
     float dist;
     float min_dist = 1000000.0f;
     float max_dist = 256.0f;
-    float tpos[3] = {0};
-
-    Vec3 source = vec3_init(x0,y0,z0);
+    struct Vec3 tv = vec3_init(0);
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         vhe = hitscan_list[i];
@@ -40,36 +30,29 @@ bool VoxelHitscanList::hitscan(
         // skip firing agent
         if (vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
 
-        Vec3 p = quadrant_translate_position(source, vhe->vv->world_matrix.c);
-        float* _tmp = p.f;
-        x2 = _tmp[0];
-        y2 = _tmp[1];
-        z2 = _tmp[2];
+        Vec3 p = quadrant_translate_position(pos, vhe->vv->world_matrix.c);
         radius = vhe->vv->radius;
-        dist = sphere_line_distance(x0, y0, z0, x1,y1,z1, x2,y2,z2, tpos, &r2);
+        dist = sphere_line_distance(pos, forward, p, &tv, &r2);
 
         if (dist < 0.0f || dist > max_dist) continue;
         if (r2 < radius*radius)
         {
             if (dist > min_dist) continue;
-            tpos[0] = translate_point(tpos[0]);
-            tpos[1] = translate_point(tpos[1]);
-            if (!vhe->vv->hitscan_test(
-                tpos[0], tpos[1], tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
+            tv = translate_position(tv);
+            if (!vhe->vv->hitscan_test(tv, forward, r2, voxel))
+                continue; //test for voxel hit
             min_dist = dist;
             target_hit = vhe;
-            x = tpos[0];
-            y = tpos[1];
-            z = tpos[2];
+            dest = tv;
         }
     }
 
-    if (target_hit != NULL) 
+    if (target_hit != NULL)
     {
         *distance = min_dist;
-        collision_point[0] = x;
-        collision_point[1] = y;
-        collision_point[2] = z;
+        collision_point[0] = dest.x;
+        collision_point[1] = dest.y;
+        collision_point[2] = dest.z;
         target->copy_vhe(target_hit);
         target->copy_voxel(voxel);
         return true;
@@ -98,25 +81,19 @@ class VoxelHitscanTarget* VoxelHitscanList::hitscan_all(
         if (!vhe->vv->hitscan) continue;
 
         struct Vec3 p = quadrant_translate_position(start, vhe->vv->world_matrix.c);
-        float tpos[3] = {0};
+        struct Vec3 tpos = vec3_init(0);
         float r2 = 0.0f;
         float radius = vhe->vv->radius;
-        float dist = sphere_line_distance(
-            start.x, start.y, start.z,
-            direction.x, direction.y, direction.z, 
-            p.x, p.y, p.z, tpos, &r2);
+        float dist = sphere_line_distance(start, direction, p, &tpos, &r2);
 
         if (dist < 0.0f || dist > max_dist) continue;
         if (r2 < radius*radius)
         {
-            tpos[0] = translate_point(tpos[0]);
-            tpos[1] = translate_point(tpos[1]);
+            tpos = translate_position(tpos);
             // test for voxel hit
             int voxel[3] = {0};
-            if (!vhe->vv->hitscan_test(
-                tpos[0], tpos[1], tpos[2],
-                direction.x, direction.y, direction.z, r2, voxel)) continue;
-
+            if (!vhe->vv->hitscan_test(tpos, direction, r2, voxel))
+                continue;
             class VoxelHitscanTarget* target = &targets[n++];
             target->copy_vhe(vhe);
             target->copy_voxel(voxel);
@@ -148,7 +125,7 @@ void VoxelHitscanList::register_voxel_volume(class VoxelVolume* vv)
 {
     GS_ASSERT(this->num_elements < VOXEL_HITSCAN_LIST_SIZE);
     if (this->num_elements >= VOXEL_HITSCAN_LIST_SIZE) return;
-    
+
     for (int i=0; i<VOXEL_HITSCAN_LIST_SIZE; i++)
         if (hitscan_list[i] == NULL)
         {

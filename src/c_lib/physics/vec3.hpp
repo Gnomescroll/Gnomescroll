@@ -64,7 +64,27 @@ struct Vec3 vec3_init(float p[3])
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_copy(Vec3 f)
+struct Vec3 vec3_init(int p[3])
+{
+    struct Vec3 v;
+    v.x = p[0];
+    v.y = p[1];
+    v.z = p[2];
+    return v;
+}
+
+ALWAYS_INLINE struct Vec3 vec3_init(float n)
+{
+    return vec3_init(n, n, n);
+}
+
+ALWAYS_INLINE struct Vec3 vec3_init(int n)
+{
+    return vec3_init(n, n, n);
+}
+
+ALWAYS_INLINE
+struct Vec3 vec3_copy(struct Vec3 f)
 {
     struct Vec3 v;
     v.x = f.x;
@@ -88,6 +108,15 @@ struct Vec3 vec3_normalize(struct Vec3 v)
     v.x *= l;
     v.y *= l;
     v.z *= l;
+    return v;
+}
+
+ALWAYS_INLINE
+struct Vec3 vec3_abs(struct Vec3 v)
+{
+    v.x = fabsf(v.x);
+    v.y = fabsf(v.y);
+    v.z = fabsf(v.z);
     return v;
 }
 
@@ -294,7 +323,7 @@ float vec3_distance_squared(struct Vec3 v1, struct Vec3 v2)
 ALWAYS_INLINE
 float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)
 {
-    normalize_vector(&look);
+    look = vec3_normalize(look);
     pt2 = vec3_sub(pt2, pt);
     normalize_vector(&pt2);
     float x = vec3_dot(look, pt2);
@@ -339,6 +368,19 @@ void vec3_to_angles(Vec3 direction, float* theta, float* phi)
 
 
 ALWAYS_INLINE
+struct Vec3 vec3_rand()
+{
+    return vec3_init(randf(), randf(), randf());
+}
+
+ALWAYS_INLINE
+struct Vec3 vec3_rand_center()
+{
+    static const struct Vec3 half = vec3_init(0.5f);
+    return vec3_sub(vec3_rand(), half);
+}
+
+ALWAYS_INLINE
 bool vec3_equal(Vec3 v1, Vec3 v2)
 {
     if (v1.x == v2.x && v1.y == v2.y && v1.z == v2.z) return true;
@@ -366,8 +408,6 @@ bool vec3_is_valid(Vec3 v)
 {
     return (vec3_isfinite(v) && !vec3_isnan(v));
 }
-
-
 
 ALWAYS_INLINE
 struct Vec3 vec3_lerp(struct Vec3 a, struct Vec3 b, float f)

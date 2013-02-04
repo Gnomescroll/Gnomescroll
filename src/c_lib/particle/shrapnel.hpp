@@ -16,40 +16,41 @@ void teardown_shrapnel();
 class Shrapnel
 {
     public:
-
         int id;
         int ttl;
-
         Verlet::VerletComponent verlet;
-
         float scale;
         int texture_index;
 
-        inline void reset();
-        void prep();
-        void tick();
+    inline void reset();
+    void prep();
+    void tick();
 
-        void set_state(float x, float y, float z, float mx, float my, float mz)
-        {
-            this->verlet.position = vec3_init(x,y,z);
-            this->verlet.velocity = vec3_init(mx,my,mz);
-        }
+    void set_state(struct Vec3 p, struct Vec3 v)
+    {
+        this->verlet.position = p;
+        this->verlet.velocity = v;
+    }
 
-        Shrapnel() { this->reset(); }
+    Shrapnel()
+    {
+        this->reset();
+    }
 };
 
 const int SHRAPNEL_MAX = 4096;
 class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
 {
     private:
-        const char* name() { return "Shrapnel"; }
+    const char* name()
+    {
+        return "Shrapnel";
+    }
     public:
-
-        void prep();
-        void draw();
-        void tick();
-
-        Shrapnel_list() {}
+    void prep();
+    void draw();
+    void tick();
+    Shrapnel_list() {}
 };
 
 }   // Particle

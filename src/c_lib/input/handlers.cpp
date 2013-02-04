@@ -810,24 +810,16 @@ void camera_key_down_handler(SDL_Event* event)
 void print_mob_id()
 {   // hitscan against mobs
     IF_ASSERT(current_camera == NULL) return;
-
     struct Vec3 p = current_camera->get_position();
     struct Vec3 v = current_camera->forward_vector();
     int ignore_id = -1;
     EntityType ignore_type = OBJECT_NONE;
-
     class Voxels::VoxelHitscanTarget target;
     float vox_distance = 0.0f;
     float collision_point[3] = {0.0f};
     bool voxel_hit = STATE::voxel_hitscan_list->hitscan(
-        p.x, p.y, p.z,
-        v.x, v.y, v.z,
-        ignore_id, ignore_type,
-        collision_point, &vox_distance,
-        &target
-    );
+        p, v, ignore_id, ignore_type, collision_point, &vox_distance, &target);
     if (!voxel_hit) return;
-
     printf("mob id: %d\n", target.entity_id);
 }
 
@@ -941,11 +933,7 @@ void key_down_handler(SDL_Event* event)
         {
             case SDLK_b:
                 if (input_state.admin_controls)
-                    Animations::agent_bleed(
-                        ClientState::player_agent.camera_state.x,
-                        ClientState::player_agent.camera_state.y,
-                        ClientState::player_agent.camera_state.z
-                    );
+                    Animations::agent_bleed(ClientState::player_agent.camera_position());
                 break;
 
             case SDLK_g:

@@ -17,7 +17,7 @@ void spawn_insect_mob(float x, float y, float z);
 void draw_hitscan_effect();
 void draw_mining_laser_effect();
 
-void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz);
+void create_hitscan_effect(struct Vec3 center, struct Vec3 velocity);
 void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation, const float speed);
 
 void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float length);

@@ -171,7 +171,12 @@ class Agent
 
     Vec3 get_position()
     {
-        return vec3_init(this->s.x, this->s.y, this->s.z);
+        return this->s.get_position();
+    }
+
+    Vec3 get_velocity()
+    {
+        return this->s.get_velocity();
     }
 
     Vec3 get_camera_position()

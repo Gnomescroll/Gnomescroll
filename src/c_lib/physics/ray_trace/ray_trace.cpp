@@ -21,8 +21,7 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
 {
     if (unlikely(ox == 0.0f && oy == 0.0f && oz == 0.0f))
     {
-        for (int i=0; i<3; i++)
-            pos[i] = 0;
+        for (int i=0; i<3; i++) pos[i] = 0;
         float d = t_map::map_dim.x * 4;
         *_rad2 = d*d;
         return d;
@@ -51,6 +50,11 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
     pos[2] = z;
 
     return d;
+}
+
+inline float sphere_line_distance(struct Vec3 p, struct Vec3 o, struct Vec3 t, struct Vec3* out, float* _rad2)
+{
+    return sphere_line_distance(p.x, p.y, p.z, o.x, o.y, o.z, t.x, t.y, t.z, out->f, _rad2);
 }
 
 int get_cube_side_from_side_array(int side[3])

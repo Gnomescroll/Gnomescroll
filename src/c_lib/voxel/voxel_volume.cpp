@@ -90,7 +90,7 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
                 cx -= _bsize;
                 //_x = x;
                 x += cdx;
-                if(_test_occludes_safe(x,y,z) != 0) 
+                if(_test_occludes_safe(x,y,z) != 0)
                 {
                     col =1;
                     break;
@@ -100,7 +100,7 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
                 cy -= _bsize;
                 //_y = y;
                 y += cdy;
-                if(_test_occludes_safe(x,y,z) != 0) 
+                if(_test_occludes_safe(x,y,z) != 0)
                 {
                     col=1;
                     break;
@@ -110,7 +110,7 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
                 cz -= _bsize;
                 //_z = z;
                 z += cdz;
-                if(_test_occludes_safe(x,y,z) != 0) 
+                if(_test_occludes_safe(x,y,z) != 0)
                 {
                     col=1;
                     break;
@@ -118,12 +118,12 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
             }
         }
     }
-    if(col == 1) 
+    if(col == 1)
     {
         *distance = len * (((float)i) / ((float)max_i));
-        collision[0]=x; collision[1]=y; collision[2]=z; 
+        collision[0]=x; collision[1]=y; collision[2]=z;
         return 1;
-    } else 
+    } else
     {
         //*distance = 0;
         return 0; //no collision
@@ -137,29 +137,26 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
     Enables using faster, Sagitta ray cast
 
 */
-int VoxelVolume::hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2, int voxel[3])
+int VoxelVolume::hitscan_test(struct Vec3 p, struct Vec3 f, float r2, int voxel[3])
 {
-
-    x -= world_matrix.v[3].x;
-    y -= world_matrix.v[3].y;
-    z -= world_matrix.v[3].z;
+    p.x -= world_matrix.v[3].x;
+    p.y -= world_matrix.v[3].y;
+    p.z -= world_matrix.v[3].z;
 
     struct Vec3 u;
-    
-    u.x = vx*world_matrix.v[0].x + vy*world_matrix.v[0].y + vz*world_matrix.v[0].z, 
-    u.y = vx*world_matrix.v[1].x + vy*world_matrix.v[1].y + vz*world_matrix.v[1].z, 
-    u.z = vx*world_matrix.v[2].x + vy*world_matrix.v[2].y + vz*world_matrix.v[2].z;
+    u.x = f.x*world_matrix.v[0].x + f.y*world_matrix.v[0].y + f.z*world_matrix.v[0].z,
+    u.y = f.x*world_matrix.v[1].x + f.y*world_matrix.v[1].y + f.z*world_matrix.v[1].z,
+    u.z = f.x*world_matrix.v[2].x + f.y*world_matrix.v[2].y + f.z*world_matrix.v[2].z;
 
     struct Vec3 v;
-
-    v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z, 
-    v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z, 
-    v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
+    v.x = p.x*world_matrix.v[0].x + p.y*world_matrix.v[0].y + p.z*world_matrix.v[0].z,
+    v.y = p.x*world_matrix.v[1].x + p.y*world_matrix.v[1].y + p.z*world_matrix.v[1].z,
+    v.z = p.x*world_matrix.v[2].x + p.y*world_matrix.v[2].y + p.z*world_matrix.v[2].z;
 
 
 #if HITSCAN_TEST_FAST
     const float s = this->radius - sqrtf(r2); // Sagitta
-    const float l = 0.01f + sqrtf( s*(this->radius*2.0f - s) ) ;
+    const float l = 0.01f + sqrtf(s*(this->radius*2.0f - s));
 
     v.x = ((v.x - l*u.x) / scale) + xdim/2;
     v.y = ((v.y - l*u.y) / scale) + ydim/2;
@@ -179,8 +176,8 @@ int VoxelVolume::hitscan_test(float x, float y, float z, float vx, float vy, flo
     if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, voxel))
 #else
     if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*l/scale, &distance, voxel))
-#endif 
-    {   
+#endif
+    {
         distance *= scale;
         needs_vbo_update = true;
         return 1;
@@ -189,51 +186,51 @@ int VoxelVolume::hitscan_test(float x, float y, float z, float vx, float vy, flo
 }
 
 #define DEBUG_POINT_COLLISION_TEST 1
-int VoxelVolume::point_collision_test(Vec3 p, unsigned int vxl[3]) 
+int VoxelVolume::point_collision_test(Vec3 p, unsigned int vxl[3])
 {
 #if DEBUG_POINT_COLLISION_TEST
         float x = p.x;
         float y = p.y;
         float z = p.z;
- 
+
         x -= world_matrix.v[3].x;
         y -= world_matrix.v[3].y;
         z -= world_matrix.v[3].z;
- 
+
         struct Vec3 v;
- 
-        v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z; 
+
+        v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z;
         v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z;
         v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
- 
+
         v.x = (v.x / scale) + xdim/2;
         v.y = (v.y / scale) + ydim/2;
         v.z = (v.z / scale) + zdim/2;
- 
+
         return _test_occludes_safe(v.x,v.y,v.z, vxl);
 #else
         p = vec3_sub(p, world_matrix_v[3]);
- 
+
         struct Vec3 v;
- 
+
         v.x = vec3_dot(p,world_matrix_v[0]);
         v.x = vec3_dot(p,world_matrix_v[1]);
         v.x = vec3_dot(p,world_matrix_v[2]);
- 
+
         v.x = (v.x / scale) + xdim/2;
         v.y = (v.y / scale) + ydim/2;
         v.z = (v.z / scale) + zdim/2;
- 
+
         return _test_occludes_safe(v.x,v.y,v.z, vxl);
 #endif
 }
- 
+
 //int VoxelVolume::point_collision_test(Vec3 p, float voxel[3])
 //{
     //struct Vec3 v;
     //p = vec3_sub(p, world_matrix.v[3]);
-    //v.x = p.x*world_matrix.v[0].x + p.y*world_matrix.v[0].y + p.z*world_matrix.v[0].z, 
-    //v.y = p.x*world_matrix.v[1].x + p.y*world_matrix.v[1].y + p.z*world_matrix.v[1].z, 
+    //v.x = p.x*world_matrix.v[0].x + p.y*world_matrix.v[0].y + p.z*world_matrix.v[0].z,
+    //v.y = p.x*world_matrix.v[1].x + p.y*world_matrix.v[1].y + p.z*world_matrix.v[1].z,
     //v.z = p.x*world_matrix.v[2].x + p.y*world_matrix.v[2].y + p.z*world_matrix.v[2].z;
     //return _test_occludes_safe(v.x,v.y,v.z, voxel);
 //}
@@ -356,16 +353,16 @@ inline void VoxelVolume::set(unsigned int x, unsigned int y, unsigned int z, uns
 static unsigned char _gamma_correction[256];
 
 /*
-static const int vnset[18] = { 0,0,1, 
-0,0,-1, 
-1,0,0 , 
+static const int vnset[18] = { 0,0,1,
+0,0,-1,
+1,0,0 ,
 -1,0,0 ,
-0,1,0 , 
-0,-1,0 
+0,1,0 ,
+0,-1,0
 };
 */
 
-inline int get_ao_weight(int side_1, int side_2, int corner) 
+inline int get_ao_weight(int side_1, int side_2, int corner)
 {
     static const int occ_array[3] = { 255, 128, 64 };
 
@@ -416,8 +413,8 @@ void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int
     //AO
     {
         int CX[8];
-        
-        for(int i=0; i<8; i++) 
+
+        for(int i=0; i<8; i++)
         {
             int index = side*8*3+i*3;
             CX[i] = _test_occludes_safe(x+ao_perm[index+0],y+ao_perm[index+1],z+ao_perm[index+2]);
@@ -449,21 +446,21 @@ void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int
         float fx = this->scale*((float) x) - ox;
         float fy = this->scale*((float) y) - oy;
         float fz = this->scale*((float) z) - oz;
-        
+
         int _side = side*12;
 
         scratch[*index + 0].x = fx + vset[_side + 0 ];
         scratch[*index + 0].y = fy + vset[_side + 1 ];
         scratch[*index + 0].z = fz + vset[_side + 2 ];
-        
+
         scratch[*index + 1].x = fx + vset[_side + 3 ];
         scratch[*index + 1].y = fy + vset[_side + 4 ];
         scratch[*index + 1].z = fz + vset[_side + 5 ];
-        
+
         scratch[*index + 2].x = fx + vset[_side + 6 ];
         scratch[*index + 2].y = fy + vset[_side + 7 ];
         scratch[*index + 2].z = fz + vset[_side + 8 ];
-        
+
         scratch[*index + 3].x = fx + vset[_side + 9 ];
         scratch[*index + 3].y = fy + vset[_side + 10];
         scratch[*index + 3].z = fz + vset[_side + 11];
@@ -492,7 +489,7 @@ l = [
 void VoxelVolume::update_vertex_list()
 {
     static int compute_gamma_chart = 0;
-    if(compute_gamma_chart == 0) 
+    if(compute_gamma_chart == 0)
     {
         compute_gamma_chart = 1;
 
@@ -505,7 +502,7 @@ void VoxelVolume::update_vertex_list()
         }
     }
 
-    static const float vset[72] = { 
+    static const float vset[72] = {
         1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
         0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
         1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
@@ -516,7 +513,7 @@ void VoxelVolume::update_vertex_list()
 
     float vset_dynamic[72];
     for(int i=0; i<72; i++) vset_dynamic[i] = this->scale*vset[i];
-    
+
     const float ox = this->hdx*this->scale;
     const float oy = this->hdy*this->scale;
     const float oz = this->hdz*this->scale;
@@ -558,7 +555,7 @@ void VoxelVolume::update_vertex_list()
         vvl.vnum = 0;
         return;
     }
-    
+
     GS_ASSERT(index < VOXEL_VERTEX_SCRATCH_SIZE);
     GS_ASSERT(index >= 0);
     if (index >= VOXEL_VERTEX_SCRATCH_SIZE) return;
@@ -566,18 +563,18 @@ void VoxelVolume::update_vertex_list()
 
     vvl.vertex_list = new VoxelVertex[index];
     memcpy(vvl.vertex_list, voxel_vertex_scratch_buffer, index*sizeof(VoxelVertex));
-    
+
     vvl.vnum = index;
 }
 #endif
 
-void VoxelVolume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
+void VoxelVolume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     _set(x,y,z, r,g,b,a);
     needs_vbo_update = true;
 }
 
-void VoxelVolume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4]) 
+void VoxelVolume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4])
 {
     _set(x,y,z, rgba[0], rgba[1], rgba[2], rgba[3]);
     needs_vbo_update = true;
@@ -611,10 +608,10 @@ void VoxelVolume::draw_bounding_box()
 
     //world_matrix
 
-    for(i=0; i<12; i++) 
+    for(i=0; i<12; i++)
     {
             j = 3*vertex_index2[2*i+0];
-            
+
             vx = vec3_scalar_mult(world_matrix.v[0], v_set2[j+0]*hdx*scale);
             vy = vec3_scalar_mult(world_matrix.v[1], v_set2[j+1]*hdy*scale);
             vz = vec3_scalar_mult(world_matrix.v[2], v_set2[j+2]*hdz*scale);
@@ -649,29 +646,29 @@ void VoxelVolume::draw_bounding_box()
     #endif
 }
 
-inline Voxel* VoxelVolume::get(unsigned int x, unsigned int y, unsigned int z) 
+inline Voxel* VoxelVolume::get(unsigned int x, unsigned int y, unsigned int z)
 {   return &voxel[x+(y << index1)+(z << index12)]; }
 
-inline unsigned int VoxelVolume::get_as_int(unsigned int x, unsigned int y, unsigned int z) 
+inline unsigned int VoxelVolume::get_as_int(unsigned int x, unsigned int y, unsigned int z)
 { return voxel[x+(y << index1)+(z << index12)].color; }
 
 /*
 Tests whether a voxel is occupied, for AO
 */
-inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) 
-{ 
+inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z)
+{
     if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
     if(voxel[index].color == 0) return 0;
     return 1;
 }
 // fills voxel[3] with the voxel location
-inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3]) 
-{ 
+inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3])
+{
     if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
     if(index >= index_max) printf("VoxelVolume::_test_occludes_safe IMPOSSIBLE \n");
-    vxl[0] = x; vxl[1] = y; vxl[2] = z; 
+    vxl[0] = x; vxl[1] = y; vxl[2] = z;
     if(voxel[index].color == 0) return 0;
     return 1;
 }

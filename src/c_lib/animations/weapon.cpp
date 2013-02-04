@@ -299,8 +299,6 @@ void draw_equipped_item(ItemType item_type)
 {    // draw item in hud
     if (item_type == NULL_ITEM_TYPE)
         item_type = Item::get_item_type("fist");
-
-    GS_ASSERT(!equipped_item_animating || rendered_item == item_type);
     if (equipped_item_animating && rendered_item != item_type)
     {
         const char* old_name = Item::get_item_name(rendered_item);
@@ -308,22 +306,18 @@ void draw_equipped_item(ItemType item_type)
         GS_ASSERT(old_name != NULL);
         GS_ASSERT(new_name != NULL);
         GS_ASSERT(strcmp(old_name, new_name) != 0);
-        if (old_name != NULL && new_name != NULL)
-            printf("Equipped item animating but weapon switched from %s to %s\n",
-                old_name, new_name);
+        //if (old_name != NULL && new_name != NULL)
+            //printf("Equipped item animating but weapon switched from %s to %s\n",
+                //old_name, new_name);
     }
-
     rendered_item = item_type;
-
+    IF_ASSERT(agent_camera == NULL) return;
     if (Item::item_type_is_voxel(item_type))
         current_config = &voxel_config;
     else if (Options::animation_level <= 1)
             current_config = &sprite_config;
     else
         current_config = &voxelized_sprite_config;
-
-
-    IF_ASSERT(agent_camera == NULL) return;
 
     // camera state
     struct Vec3 position = agent_camera->get_position();

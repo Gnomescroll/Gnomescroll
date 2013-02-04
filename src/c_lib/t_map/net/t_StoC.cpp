@@ -72,7 +72,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     int size = DECOMPRESSION_BUFFER_SIZE - stream.avail_out;
 
     //printf("compressed chunk: %i bytes decompressed to %i bytes \n", byte_num, size);
-    
+
     /*
         Handle
     */
@@ -80,8 +80,8 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
     //printf("received chunk: index = %i compressed \n", chunk_index);
-    
-    
+
+
     GS_ASSERT( main_map->chunk[chunk_index] == NULL);
 
     GS_ASSERT(MAP_CHUNK_XDIM == 32 && MAP_CHUNK_YDIM == 32);
@@ -139,7 +139,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 void clear_alias_StoC::handle()
 {
     int chunk_index = client_chunk_alias_list[chunk_alias];
-    
+
 #if 0
     int _x = client_chunk_alias_list[chunk_alias]%32;
     int _y = client_chunk_alias_list[chunk_alias]/32;
@@ -173,7 +173,7 @@ void map_element_update::handle()
 }
 
 
-void block_set_StoC::handle() 
+void block_set_StoC::handle()
 {
     GS_ASSERT(x < map_dim.x && y < map_dim.y && z < map_dim.z);
     if (x >= map_dim.x || y >= map_dim.y || z >= map_dim.z) return;
@@ -192,20 +192,21 @@ void block_set_palette_StoC::handle()
 
 void block_action_StoC::handle()
 {
+    struct Vec3 p = vec3_scalar_add(vec3_init(x, y, z), 0.5f);
     if ((CubeType)this->cube_type == EMPTY_CUBE)
     {
         CubeType old_cube_type = get(x,y,z);
-        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), old_cube_type, (TerrainModificationAction)action);
-        Sound::play_3d_sound("block_destroyed", x+0.5f,y+0.5f,z+0.5f, 0,0,0);
+        Animations::block_crumble(p, randrange(10,30), old_cube_type, (TerrainModificationAction)action);
+        Sound::play_3d_sound("block_destroyed", p);
     }
     else
     {
-        Sound::play_3d_sound("block_set", x+0.5f,y+0.5f,z+0.5f,0,0,0);
+        Sound::play_3d_sound("block_set", p);
     }
     set(x,y,z, (CubeType)this->cube_type);
 }
 
-void map_metadata_StoC::handle() 
+void map_metadata_StoC::handle()
 {
     map_dim.x = x;
     map_dim.y = y;

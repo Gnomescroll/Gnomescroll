@@ -114,7 +114,7 @@ bool c_lib_inited = false;
 #include <physics/common.cpp>
 #include <physics/verlet.cpp>
 #include <physics/motion.cpp>
-#include <physics/quadrant.cpp>
+#include <physics/quadrant.hpp>
 /* SDL */
 #include <SDL/shader_loader.cpp>
 #include <SDL/texture_loader.cpp>
@@ -436,16 +436,11 @@ int init_c_lib(int argc, char* argv[])
 
     Voxels::init_voxel_render_list_shader1();   //used to be called from ClientState::init
 
-    //init shaders
-
-    //t_map::init_shaders();
     t_mob::init();
-    //CHECK_GL_ERROR();
-
-    c_lib_inited = true;
 
     CHECK_GL_ERROR();
 
+    c_lib_inited = true;
     return 0;
 }
 

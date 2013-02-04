@@ -248,12 +248,8 @@ inline void object_shot_object_StoC::handle()
     Vec3 v = vec3_sub(dest, position);
     normalize_vector(&v);
     v = vec3_scalar_mult(v, hitscan_effect_speed);
-    Animations::create_hitscan_effect(
-        position.x, position.y, position.z,
-        v.x, v.y, v.z
-    );
-
-    Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
+    Animations::create_hitscan_effect(position, v);
+    Sound::play_3d_sound("turret_shoot", position);
 }
 
 inline void object_shot_terrain_StoC::handle()
@@ -274,19 +270,15 @@ inline void object_shot_terrain_StoC::handle()
     Vec3 dest = vec3_init(this->x, this->y, this->z);
     dest = quadrant_translate_position(position, dest);
     Vec3 v = vec3_sub(dest, position);
-    normalize_vector(&v);
+    v = vec3_normalize(v);
     const float hitscan_effect_speed = 200.0f;
     v = vec3_scalar_mult(v, hitscan_effect_speed);
-    Animations::create_hitscan_effect(
-        position.x, position.y, position.z,
-        v.x, v.y, v.z);
-
-    Animations::block_damage(
-        this->x, this->y, this->z, position.x, position.y, position.z,
-        (CubeType)this->cube, this->side);
-    Animations::terrain_sparks(this->x, this->y, this->z);
-    //Sound::play_3d_sound("laser_hit_block", this->x, this->y, this->z, 0,0,0);
-    Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
+    Animations::create_hitscan_effect(position, v);
+    Animations::block_damage(dest, position,
+                              (CubeType)this->cube, this->side);
+    Animations::terrain_sparks(dest);
+    //Sound::play_3d_sound("laser_hit_block", dest);
+    Sound::play_3d_sound("turret_shoot", position);
 }
 
 inline void object_shot_nothing_StoC::handle()
@@ -308,10 +300,8 @@ inline void object_shot_nothing_StoC::handle()
     normalize_vector(&v);
     const float hitscan_effect_speed = 200.0f;
     v = vec3_scalar_mult(v, hitscan_effect_speed);
-    Animations::create_hitscan_effect(
-        position.x, position.y, position.z,
-        v.x, v.y, v.z);
-    Sound::play_3d_sound("turret_shoot", position.x, position.y, position.z, 0,0,0);
+    Animations::create_hitscan_effect(position, v);
+    Sound::play_3d_sound("turret_shoot", position);
 }
 
 inline void object_choose_weapon_target_StoC::handle()

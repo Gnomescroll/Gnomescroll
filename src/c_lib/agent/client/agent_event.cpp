@@ -115,7 +115,7 @@ void AgentEvent::took_damage(int dmg)
         Sound::play_2d_sound("agent_took_damage");
     // TODO: attenuated damage sound
     //else
-        //Sound::play_3d_sound("agent_took_damage", p.x, p.y, p.z, 0,0,0);
+        //Sound::play_3d_sound("agent_took_damage", p, vec3_init(0,0,0));
 }
 
 void AgentEvent::healed(int amount)
@@ -129,7 +129,7 @@ void AgentEvent::healed(int amount)
     else
     {
         //Vec3 p = this->a->get_position();
-        //Sound::play_3d_sound("restore_health", p.x, p.y, p.z, 0,0,0);
+        //Sound::play_3d_sound("restore_health", p, vec3_init(0,0,0));
     }
 
     // show billboard text particle
@@ -138,11 +138,10 @@ void AgentEvent::healed(int amount)
     b->reset();
 
     Vec3 p = this->a->get_position();
-    b->set_state(
-        p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
-        p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
-        p.z + a->current_height(),
-        0.0f,0.0f, Particle::BB_PARTICLE_HEAL_VELOCITY_Z
+    b->set_state(p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
+                 p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
+                 p.z + a->current_height(),
+                 0.0f, 0.0f, Particle::BB_PARTICLE_HEAL_VELOCITY_Z
     );
     b->set_color(Particle::BB_PARTICLE_HEAL_COLOR);   // red
     char txt[10+1];
@@ -165,7 +164,7 @@ void AgentEvent::died()
         //else
         //{
             //Vec3 p = this->a->get_position();
-            //Sound::play_3d_sound("died", p.x, p.y, p.z, 0,0,0);
+            //Sound::play_3d_sound("died", p, vec3_init(0,0,0));
         //}
         this->a->vox->set_vox_dat(&VoxDats::agent_dead);
         this->a->vox->reset_skeleton();
@@ -179,7 +178,7 @@ void AgentEvent::born()
     //if (a->is_you())
         //Sound::play_2d_sound("respawned");
     //else
-        //Sound::play_3d_sound("respawned", a->s.x, a->s.y, a->s.z, 0,0,0);
+        //Sound::play_3d_sound("respawned", this->a->get_position(), vec3_init(0,0,0));
     this->a->status.dead = false;
 
     // reset skeleton
@@ -263,10 +262,8 @@ void AgentEvent::end_mining_laser()
 
 void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
 {
-    AgentState s = this->a->get_state();
-    s.z = this->a->camera_z();
-
-    Sound::play_3d_sound("fire_laser", s.x, s.y, s.z, s.vx, s.vy, s.vz);
+    Sound::play_3d_sound("fire_laser",
+        this->a->get_camera_position(), this->a->get_velocity());
 
     Vec3 f = this->a->forward_vector();
 
@@ -279,10 +276,8 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
             if (vv != NULL)
             {
                 Vec3 c = vv->get_center();
-                Animations::blood_spray(c.x, c.y, c.z, f.x, f.y, f.z);
-                //Sound::play_3d_sound("pick_hit_agent",  // TODO: play weapon sound from a config
-                    //c.x, c.y, c.z,
-                    //0,0,0);
+                Animations::blood_spray(c, f);
+                //Sound::play_3d_sound("pick_hit_agent",c, vec3_init(0,0,0));
             }
         }
     }
@@ -291,14 +286,8 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
     Vec3 arm_center = this->a->arm_center();
-
     f = vec3_scalar_mult(f, hitscan_speed);
-
-    Animations::create_hitscan_effect(
-        arm_center.x, arm_center.y, arm_center.z,
-        f.x, f.y, f.z
-    );
-
+    Animations::create_hitscan_effect(arm_center, f);
 }
 
 void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube, int side)
@@ -327,16 +316,14 @@ void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube,
     p = quadrant_translate_position(this->a->get_camera_position(), p);
     if (vec3_equal(p, arm_center)) return;
     Vec3 f = vec3_sub(p, arm_center);
-    normalize_vector(&f);
+    f = vec3_normalize(f);
 
     f = vec3_scalar_mult(f, hitscan_speed);
-    Animations::create_hitscan_effect(
-        arm_center.x, arm_center.y, arm_center.z,
-        f.x, f.y, f.z);
+    Animations::create_hitscan_effect(arm_center, f);
 
     // play block surface crumble
-    Animations::block_damage(x,y,z, f.x, f.y, f.z, cube, side);
-    Animations::terrain_sparks(x,y,z);
+    Animations::block_damage(p, f, cube, side);
+    Animations::terrain_sparks(p);
     //Sound::play_3d_sound("laser_hit_block", x,y,z, 0,0,0);
 }
 
@@ -355,10 +342,7 @@ void AgentEvent::fired_weapon_at_nothing()
     const float hitscan_speed = 200.0f;
     f = vec3_scalar_mult(f, hitscan_speed);
     Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
-    Animations::create_hitscan_effect(
-        arm_center.x, arm_center.y, arm_center.z,
-        f.x, f.y, f.z
-    );
+    Animations::create_hitscan_effect(arm_center, f);
 }
 
 void AgentEvent::threw_grenade()
