@@ -10,12 +10,12 @@ namespace Attributes
 
 class Attribute: public Property<AttributeType>
 {
+    private:
+        void* value;
     public:
         AttributeGroup group;
         AttributeValueType value_type;
         AttributeSyncType sync_type;
-
-        void* value;
 
         voidFunction get_callback;
         voidFunction set_callback;
@@ -412,10 +412,11 @@ class Attribute: public Property<AttributeType>
 
     Attribute() :
         Property<AttributeType>(NULL_ATTRIBUTE),
+        value(NULL),
         group(NULL_ATTRIBUTE_GROUP),
         value_type(NULL_ATTRIBUTE_VALUE_TYPE),
         sync_type(NULL_SYNC_TYPE),
-        value(NULL), get_callback(NULL), set_callback(NULL),
+        get_callback(NULL), set_callback(NULL),
         changed(false), sync_to(NULL_CLIENT)
     {
         memset(&this->use_limits, 0, sizeof(this->use_limits));
