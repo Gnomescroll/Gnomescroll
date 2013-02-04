@@ -657,7 +657,6 @@ void _envlight_update_core(int max_iterations)
 
                 for(int j=0; j<6; j++)
                 {
-                    //if( (ea[j].light >> 4) +1 < li && fast_cube_properties[ea[j].block].solid == false)
                     if(fast_cube_properties[ea[j].block].solid == false)
                         _push_envlight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
                 }
@@ -666,9 +665,8 @@ void _envlight_update_core(int max_iterations)
                 index++;
                 continue;
             }
-            /*
-                These two loops can be merged
-            */
+        
+        #if 0
             if(li > _max -1 && li > 0)
             {
                 printf("min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
@@ -709,7 +707,7 @@ void _envlight_update_core(int max_iterations)
                 index++;
                 continue;
             }
-
+        #endif
         }
 
             
