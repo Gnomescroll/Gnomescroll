@@ -81,7 +81,7 @@ int sky_light_array_n        = 0;
 void _push_skylight_update(int x, int y, int z)
 {
     return;
-    
+
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -154,7 +154,8 @@ void _skylight_update_core(int max_iterations)
         if(fast_cube_properties[e.block].solid == true)
         {
             GS_ASSERT(false);
-            return;
+            index++;
+            continue;
         }
 
 
@@ -176,7 +177,7 @@ void _skylight_update_core(int max_iterations)
             if(isSolid(x,y,z-1) == false)
                 _push_skylight_update(x,y,z-1);
 
-            //_push_skylight_update(x,y,z);
+            _push_skylight_update(x,y,z);
 
             index++;
             continue;
@@ -224,7 +225,7 @@ void _skylight_update_core(int max_iterations)
         {
             for(int j=0; j<6; j++)
             {
-                if( (ea[j].light & 0x0f)+1 < li && fast_cube_properties[ea[j].block].solid == false)
+                if( (ea[j].light & 0x0f) < 15 && fast_cube_properties[ea[j].block].solid == false)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
 
@@ -233,6 +234,7 @@ void _skylight_update_core(int max_iterations)
         }
 
         //proprogate light below level 15
+    /*
         if(li != 15 && li != _max -1 && !(_max == 0 && li == 0))
         {
             //printf("min/max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
@@ -253,6 +255,49 @@ void _skylight_update_core(int max_iterations)
             index++;
             continue;
         }
+    */
+
+        if(li != 15 && li > _max -1 && li > 0)
+        {
+            //printf("sky_min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+            
+            li = li - 1;
+
+            //GS_ASSERT(_max == 0 || li == _max-1); //not always true
+
+            set_skylight(x,y,z, li);
+            for(int j=0; j<6; j++)
+            {
+                if( fast_cube_properties[ea[j].block].solid == false)
+                    _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
+            }
+            _push_skylight_update(x,y,z);
+            index++;
+            continue;
+        }  
+
+
+        if(li != 15 && _max > li +1)
+        {
+            //printf("sky_max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+
+            li = _max - 1;
+            //GS_ASSERT(_max - 1 >= 0);
+
+            set_skylight(x,y,z, li);
+
+            for(int j=0; j<6; j++)
+            {
+                //if( (ea[j].light >> 4) +1 < li && fast_cube_properties[ea[j].block].solid == false)
+                if(fast_cube_properties[ea[j].block].solid == false)
+                    _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
+            }
+            _push_skylight_update(x,y,z);
+
+            index++;
+            continue;
+        }
+
 
         index++;
         continue;
@@ -806,7 +851,7 @@ void _envlight_update_core(int max_iterations)
 
             //if(li >= _max -1 && li > 0)
 
-
+        /*
             if(li != _max -1 && !(_max == 0 && li ==0) )
             {
                 //printf("min/max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
@@ -826,15 +871,15 @@ void _envlight_update_core(int max_iterations)
                 index++;
                 continue;
             }
-        
-        #if 0
+        */        
+        #if 1
             if(li > _max -1 && li > 0)
             {
-                printf("min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+                //printf("env_min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
                 
                 li = li - 1;
 
-                GS_ASSERT(_max == 0 || li == _max-1);
+                //GS_ASSERT(_max == 0 || li == _max-1); //not always true
 
                 set_envlight(x,y,z, li);
                 for(int j=0; j<6; j++)
@@ -850,7 +895,7 @@ void _envlight_update_core(int max_iterations)
 
             if(_max > li +1)
             {
-                printf("max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+                //printf("env_max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
 
                 li = _max - 1;
                 //GS_ASSERT(_max - 1 >= 0);
