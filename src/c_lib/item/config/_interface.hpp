@@ -167,11 +167,12 @@ void iso_block_sprite_def(const char* block_name) {}
 
 // item_def("regen_potion", IG_CONSUMABLE);
 // set_modifier_amount("health", 5);
-// set_modifier_period(ONE_SECOND * 10);
-// set_modifier_duration(ONE_MINUTE * 5);
+// set_modifier_periodic(ONE_MINUTE * 5, ONE_SECOND * 10);
 
 static void _set_next_modifier(const char* name)
 {
+    // modifiers on groups other than these are not used yet:
+    GS_ASSERT(s->group == IG_EQUIPMENT || s->group == IG_CONSUMABLE);
     _current_modifier = NULL;
     AttributeType type = Attributes::get_type(Agents::base_stats, name);
     IF_ASSERT(type == NULL_ATTRIBUTE) return;
@@ -213,7 +214,8 @@ void set_modifier_duration(int duration)
     // EXAMPLE:
     // effect lasts 20 minutes
     // set_modifier_duration(ONE_MINUTE * 20);
-    set_modifier_periodic(duration, 0);
+    IF_ASSERT(_current_modifier == NULL) return;
+    _current_modifier->set_duration(duration);
 }
 
 void set_modifier_instant()
@@ -223,7 +225,8 @@ void set_modifier_instant()
     // ...
     // set_modifier_amount("health", 5);
     // set_modifier_instant();
-    set_modifier_duration(0);
+    IF_ASSERT(_current_modifier == NULL) return;
+    _current_modifier->set_instant();
 }
 
 }   // Item

@@ -1,10 +1,10 @@
 #include "container.hpp"
 
 #include <sound/sound.hpp>
-
 #include <item/container/_interface.hpp>
 #include <item/container/_state.hpp>
 #include <item/container/config/_interface.hpp>
+#include <agent/attributes.hpp>
 
 #if DC_CLIENT
 # include <item/container/container_ui.hpp>

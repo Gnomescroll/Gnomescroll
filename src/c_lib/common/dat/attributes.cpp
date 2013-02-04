@@ -10,12 +10,12 @@ namespace Attributes
 
 class Attribute: public Property<AttributeType>
 {
+    private:
+        void* value;
     public:
         AttributeGroup group;
         AttributeValueType value_type;
         AttributeSyncType sync_type;
-
-        void* value;
 
         voidFunction get_callback;
         voidFunction set_callback;
@@ -123,11 +123,15 @@ class Attribute: public Property<AttributeType>
         IF_ASSERT(value == NULL) value = "";
         char* old = *(reinterpret_cast<char**>(this->value));
         if (this->set_callback != NULL)
+        {
             value = reinterpret_cast<setString>(this->set_callback)(old, value);
+            IF_ASSERT(value == NULL) value = "";
+        }
         if (strcmp(old, value) != 0)
         {
             char* loc = *(reinterpret_cast<char**>(this->value));
             strncpy(loc, value, STRING_ATTRIBUTE_MAX_LENGTH);
+            GS_ASSERT(loc[STRING_ATTRIBUTE_MAX_LENGTH] == '\0');
             loc[STRING_ATTRIBUTE_MAX_LENGTH] = '\0';
             this->changed = true;
             return true;
@@ -183,12 +187,6 @@ class Attribute: public Property<AttributeType>
                   this->value_type == ATTRIBUTE_VALUE_STRING);
         this->value_type = ATTRIBUTE_VALUE_STRING;
         this->_add_set_callback(reinterpret_cast<voidFunction>(set_callback));
-    }
-
-    void set_sync_type(AttributeSyncType sync_type)
-    {
-        GS_ASSERT(this->sync_type == NULL_ATTRIBUTE_SYNC_TYPE);
-        this->sync_type = sync_type;
     }
 
     void set_value_type(AttributeValueType value_type)
@@ -260,28 +258,37 @@ class Attribute: public Property<AttributeType>
 
     /* Networking */
     #if DC_SERVER
+    void set_sync_type(AttributeSyncType sync_type)
+    {
+        GS_ASSERT(this->sync_type == NULL_SYNC_TYPE);
+        this->sync_type = sync_type;
+    }
+
     void set_sync_to(ClientID client_id)
     {
         GS_ASSERT(this->sync_to == NULL_CLIENT);
         GS_ASSERT(isValid(client_id));
+        GS_ASSERT(this->sync_type == NULL_SYNC_TYPE ||
+                  this->sync_type == SYNC_TYPE_PLAYER);
+        this->sync_type = SYNC_TYPE_PLAYER;
         this->sync_to = client_id;
     }
 
     void send_changes()
     {
         if (!this->changed) return;
-        if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PRIVATE) return;
-        if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PLAYER &&
+        if (this->sync_type == SYNC_TYPE_PRIVATE) return;
+        if (this->sync_type == SYNC_TYPE_PLAYER &&
             !NetServer::client_is_connected(this->sync_to)) return;
 
         #define ROUTE_MESSAGE(MSG_TYPE) \
         { do { \
             MSG_TYPE msg; \
             this->_pack_message(&msg); \
-            if (this->sync_type == ATTRIBUTE_SYNC_TYPE_ALL) \
+            if (this->sync_type == SYNC_TYPE_ALL) \
                 msg.broadcast(); \
             else \
-            if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PLAYER) \
+            if (this->sync_type == SYNC_TYPE_PLAYER) \
             { \
                 GS_ASSERT(this->sync_to != NULL_CLIENT); \
                 msg.sendToClient(this->sync_to); \
@@ -313,16 +320,16 @@ class Attribute: public Property<AttributeType>
     void send_to_client(ClientID client_id) const
     {
         IF_ASSERT(!isValid(client_id)) return;
-        if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PRIVATE) return;
+        if (this->sync_type == SYNC_TYPE_PRIVATE) return;
 
         #define ROUTE_MESSAGE(MSG_TYPE) \
         { do { \
             MSG_TYPE msg; \
             this->_pack_message(&msg); \
-            if (this->sync_type == ATTRIBUTE_SYNC_TYPE_ALL) \
+            if (this->sync_type == SYNC_TYPE_ALL) \
                 msg.sendToClient(client_id); \
             else \
-            if (this->sync_type == ATTRIBUTE_SYNC_TYPE_PLAYER) \
+            if (this->sync_type == SYNC_TYPE_PLAYER) \
             { \
                 GS_ASSERT(this->sync_to == client_id); \
                 msg.sendToClient(this->sync_to); \
@@ -389,8 +396,8 @@ class Attribute: public Property<AttributeType>
             }
         }
         #if DC_SERVER
-        GS_ASSERT(this->sync_type != NULL_ATTRIBUTE_SYNC_TYPE);
-        GS_ASSERT(this->sync_type != ATTRIBUTE_SYNC_TYPE_PLAYER ||
+        GS_ASSERT(this->sync_type != NULL_SYNC_TYPE);
+        GS_ASSERT(this->sync_type != SYNC_TYPE_PLAYER ||
                   this->sync_to != NULL_CLIENT);
         #endif
     }
@@ -405,10 +412,11 @@ class Attribute: public Property<AttributeType>
 
     Attribute() :
         Property<AttributeType>(NULL_ATTRIBUTE),
+        value(NULL),
         group(NULL_ATTRIBUTE_GROUP),
         value_type(NULL_ATTRIBUTE_VALUE_TYPE),
-        sync_type(NULL_ATTRIBUTE_SYNC_TYPE),
-        value(NULL), get_callback(NULL), set_callback(NULL),
+        sync_type(NULL_SYNC_TYPE),
+        get_callback(NULL), set_callback(NULL),
         changed(false), sync_to(NULL_CLIENT)
     {
         memset(&this->use_limits, 0, sizeof(this->use_limits));
@@ -511,9 +519,16 @@ class Attributes: public Properties<Attribute, AttributeType>
     void set_sync_to(ClientID client_id)
     {
         for (size_t i=0; i<this->index; i++)
-            if (this->properties[i].loaded &&
-                this->properties[i].sync_type == ATTRIBUTE_SYNC_TYPE_PLAYER)
+            if (this->properties[i].sync_type == SYNC_TYPE_PLAYER ||
+                this->properties[i].sync_type == NULL_SYNC_TYPE)
                     this->properties[i].set_sync_to(client_id);
+    }
+
+    void set_sync_type(AttributeSyncType sync_type)
+    {
+        for (size_t i=0; i<this->index; i++)
+            if (this->properties[i].sync_type == NULL_SYNC_TYPE)
+                this->properties[i].set_sync_type(sync_type);
     }
 
     void send_to_client(ClientID client_id) const
@@ -760,7 +775,7 @@ AttributeType get_type(AttributeGroup group, const char* name)
 size_t get_attribute_count(AttributeGroup group)
 {
     Attributes* attr = attributes_manager->get(group);
-    IF_ASSERT(attr == NULL) return NULL_ATTRIBUTE;
+    IF_ASSERT(attr == NULL) return 0;
     // Attributes are guaranteed continuous in the property array,
     // so its safe to return the index
     return attr->index;
@@ -902,11 +917,13 @@ AttributeType def(const char* name, const char* value)
     Attribute* a = current_attributes->_get_any(type); \
     IF_ASSERT(a == NULL) return;
 
+#if DC_SERVER
 void set_sync_type(AttributeType type, AttributeSyncType sync_type)
 {
     UNPACK_CURRENT_ATTRIBUTE
     a->set_sync_type(sync_type);
 }
+#endif
 
 void add_get_callback(AttributeType type, getInt cb)
 {
@@ -992,6 +1009,13 @@ void set_sync_to(AttributeGroup group, ClientID client_id)
     Attributes* attr = attributes_manager->get(group);
     IF_ASSERT(attr == NULL) return;
     attr->set_sync_to(client_id);
+}
+
+void set_sync_type(AttributeGroup group, AttributeSyncType sync_type)
+{
+    Attributes* attr = attributes_manager->get(group);
+    IF_ASSERT(attr == NULL) return;
+    attr->set_sync_type(sync_type);
 }
 
 void send_to_client(AttributeGroup group, ClientID client_id)

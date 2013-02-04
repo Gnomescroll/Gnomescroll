@@ -174,6 +174,12 @@ const class ModifierList* get_item_modifiers(ItemType item_type)
     return &attr->modifiers;
 }
 
+const class ModifierList* get_item_modifiers(ItemID item_id)
+{
+    ItemType item_type = get_item_type(item_id);
+    return get_item_modifiers(item_type);
+}
+
 bool item_type_is_voxel(ItemType item_type)
 {
     if (item_type == NULL_ITEM_TYPE) return false;
