@@ -258,7 +258,9 @@ void draw_tick()
     // Non-transparent
 
     poll_mouse();
+    #if !PRODUCTION
     t_mob::draw();
+    #endif
 
     poll_mouse();
     t_mech::draw();

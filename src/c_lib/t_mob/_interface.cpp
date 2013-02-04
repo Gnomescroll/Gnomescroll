@@ -49,7 +49,7 @@ void init()
     aiReleasePropertyStore(property_store);
 
     model_loader = new ModelLoader;
-    model_loader->init((aiScene*) pScene);
+    model_loader->init(pScene);
 
     body_mesh = new BodyMesh;
     body_mesh->load(model_loader);
@@ -60,15 +60,9 @@ void init()
 void draw()
 {
     struct Vec3 p = ClientState::location_pointer;
-    if (!ClientState::location_pointer_set)
-    {
-        p.x = 128.0f;
-        p.y = 128.0f;
-        p.z = 128.0f;
-    }
+    if (!ClientState::location_pointer_set) p = vec3_init(128.0f);
     body_mesh->draw_prep();
     body_mesh->draw(p.x, p.y, p.z + 3.0f);
-
     //bt->draw_skeleton(p.x+0.0, p.y+0.0f, p.z + 5.0f);
 }
 

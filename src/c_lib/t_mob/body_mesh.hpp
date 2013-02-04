@@ -49,6 +49,7 @@ class BodyMesh
         if (this->tbone_matrix != NULL) delete[] this->tbone_matrix;
         if (this->tnode_matrix != NULL) delete[] this->tnode_matrix;
         if (this->s != NULL) SDL_FreeSurface(this->s);
+        if (this->ml != NULL) delete[] this->ml;
     }
 
     void load(class ModelLoader* ml);

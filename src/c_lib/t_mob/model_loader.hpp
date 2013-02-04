@@ -7,7 +7,7 @@ class ModelLoader
 {
     public:
 
-        aiScene* pScene;    //the scene
+        const aiScene* pScene;    //the scene
         aiNode** nl;    //node list
         int nlm;        //node list max
         int nli;        //node list index (just a counter variable)
@@ -49,9 +49,22 @@ class ModelLoader
     {
         if (this->pScene != NULL) aiReleaseImport(this->pScene);
         if (this->nl != NULL) delete[] this->nl;
+        if (this->_nl != NULL)
+        {
+            for (int i=0; i<this->_nlm; i++)
+            {
+                if (this->_nl[i].c != NULL)
+                    delete[] this->_nl[i].c;
+                if (this->_nl[i].name != NULL)
+                    free(this->_nl[i].name);
+            }
+            delete[] this->_nl;
+        }
+        if (this->_ml != NULL) delete[] this->_ml;
+        if (this->bnl != NULL) delete[] this->bnl;
     }
 
-    void init(aiScene* pScene);
+    void init(const aiScene* pScene);
     void count_nodes(aiNode* pNode);
     void set_node_parents(aiNode* pNode);
     bool bone_in_list(aiBone* bone, int bone_count);

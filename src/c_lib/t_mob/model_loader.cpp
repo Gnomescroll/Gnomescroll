@@ -19,7 +19,7 @@ extern "C"
 namespace t_mob
 {
 
-void ModelLoader::init(aiScene* pScene)
+void ModelLoader::init(const aiScene* pScene)
 {
     this->pScene = pScene;
     this->nli = 0;

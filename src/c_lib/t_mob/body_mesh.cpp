@@ -5,11 +5,11 @@
 namespace t_mob
 {
 
-void BodyMesh::load(class ModelLoader* ml)
+void BodyMesh::load(class ModelLoader* loader)
 {
     static int loaded = 0;
     IF_ASSERT(loaded++) return;
-    this->nm = ml->_nlm;
+    this->nm = loader->_nlm;
     this->nnl = new char*[nm];
     this->npl = new int[nm];
 
@@ -18,16 +18,16 @@ void BodyMesh::load(class ModelLoader* ml)
 
     for (int i=0; i<this->nm; i++)
     {
-        GS_ASSERT(ml->_nl[i].index == i);
-        this->nnl[i] = ml->_nl[i].name;
-        this->npl[i] = (ml->_nl[i].p == NULL ? 0 : ml->_nl[i].p->index);
-        //if (ml->_nl[i].p != NULL)
-            //printf("node %d parent %d p2= %d \n", i, this->npl[i], ml->_nl[i].p->index);
-        this->node_mTransformation[i] = ml->_nl[i].mTransformation;
+        GS_ASSERT(loader->_nl[i].index == i);
+        this->nnl[i] = loader->_nl[i].name;
+        this->npl[i] = (loader->_nl[i].p == NULL ? 0 : loader->_nl[i].p->index);
+        //if (loader->_nl[i].p != NULL)
+            //printf("node %d parent %d p2= %d \n", i, this->npl[i], loader->_nl[i].p->index);
+        this->node_mTransformation[i] = loader->_nl[i].mTransformation;
     }
 
     //load bone list
-    this->blm = ml->bnlm;
+    this->blm = loader->bnlm;
     this->bnl = new char*[this->blm];
     this->bone_mOffsetMatrix = new struct Mat4[this->blm];
     this->tbone_matrix = new struct Mat4[this->blm];
@@ -35,19 +35,19 @@ void BodyMesh::load(class ModelLoader* ml)
 
     for (int i=0; i<this->blm; i++)
     {
-        this->bnl[i] = ml->bnl[i].name;
-        this->bone_mOffsetMatrix[i] = ml->bnl[i].mOffsetMatrix;
-        this->bpl[i] = ml->bnl[i].parent_index;
+        this->bnl[i] = loader->bnl[i].name;
+        this->bone_mOffsetMatrix[i] = loader->bnl[i].mOffsetMatrix;
+        this->bpl[i] = loader->bnl[i].parent_index;
         IF_ASSERT(this->bpl[i] == -1)
             printf("ERROR: bone parent for bone %d is -1 \n", i);
     }
 
     //load meshes
-    GS_ASSERT(ml->_nl[0].p == 0);
-    this->mlm = ml->_mlm;
+    GS_ASSERT(loader->_nl[0].p == 0);
+    this->mlm = loader->_mlm;
     this->ml = new class BodyPartMesh[this->mlm];
-    for (int i=0; i<ml->_mlm; i++)
-        this->ml[i].load(&(ml->_ml[i]));
+    for (int i=0; i<loader->_mlm; i++)
+        this->ml[i].load(&loader->_ml[i]);
     init_texture();
 }
 

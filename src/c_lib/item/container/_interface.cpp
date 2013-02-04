@@ -85,6 +85,9 @@ void teardown()
     if (crafting_bench_ui      != NULL) delete crafting_bench_ui;
     if (premium_cache_ui       != NULL) delete premium_cache_ui;
     if (storage_block_ui       != NULL) delete storage_block_ui;
+    if (cryofreezer_ui         != NULL) delete cryofreezer_ui;
+    if (smelter_ui             != NULL) delete smelter_ui;
+    if (crusher_ui             != NULL) delete crusher_ui;
 
     if (container_event != NULL) free(container_event);
     if (container_uis   != NULL) free(container_uis);

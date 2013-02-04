@@ -454,6 +454,12 @@ class ItemContainerEquipmentUI: public ItemContainerUIInterface
         ItemContainerUIInterface(id),
         slot_equipment_types(NULL)
     {}
+
+    virtual ~ItemContainerEquipmentUI()
+    {
+        if (this->slot_equipment_types != NULL)
+            free(this->slot_equipment_types);
+    }
 };
 
 } // Item
