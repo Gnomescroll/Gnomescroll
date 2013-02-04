@@ -284,7 +284,7 @@ void load_item_dat()
     item_def(IG_CONSUMABLE, "small_charge_pack");
     sprite_def(i1, 6,1);
     s->max_stack_size = 16;
-    set_modifier_amount("max_health", -25);
+    set_modifier_amount("health", 25);
     set_modifier_instant();
 
     item_def(IG_RESOURCE, "methane_ice_chunk");

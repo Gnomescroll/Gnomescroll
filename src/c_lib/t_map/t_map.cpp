@@ -245,7 +245,7 @@ inline int get_highest_open_block(int x, int y, int n)
     CubeType cube_type;
     int i;
 
-    for (i=map_dim.z-1; i>=0; i--)
+    for (i=map_dim.z; i>=0; i--)
     {
         cube_type = get(x, y, i);
         if (!isSolid(cube_type))
@@ -272,7 +272,7 @@ inline int get_nearest_open_block(int x, int y, int z, int n)
     int inc = 1;    // direction (+/- up/down)
     int up = z;     // up cursor
     int down = z-1; // down cursor
-    while (down >= 0 && up < map_dim.z)
+    while (down >= 0 && up <= map_dim.z)
     {
         // choose start pt
         int start = up;
@@ -298,7 +298,7 @@ inline int get_nearest_open_block(int x, int y, int z, int n)
             down--;
 
         // set direction
-        if (up >= map_dim.z)
+        if (up > map_dim.z)
             inc = -1;
         else if (down < 0)
             inc = 1;
@@ -319,7 +319,7 @@ inline int get_nearest_surface_block(int x, int y, int z)
 {   // TODO -- can be optimized to reduce t_map::get calls
     int upper = z;
     int lower = z - 1;
-    while (lower > 0 || upper < map_dim.z)
+    while (lower > 0 || upper <= map_dim.z)
     {
         if (is_surface_block(x, y, upper)) return upper;
         if (is_surface_block(x, y, lower)) return lower;
@@ -348,17 +348,11 @@ inline int get_highest_solid_block(int x, int y)
 
 inline int get_highest_solid_block(int x, int y, int z)
 {
-    //#if DC_CLIENT
-    // HEIGHTMAP CACHE IS INVALID
-    //return main_map->get_cached_height(x,y)-1;
-    //#endif
-
-    //#if DC_SERVER
+    // TODO -- use heightmap cache
     int i = z-1;
     for (; i>=0; i--)
         if (isSolid(x,y,i)) break;
     return i;
-    //#endif
 }
 
 inline int get_lowest_open_block(int x, int y, int n)
@@ -368,7 +362,7 @@ inline int get_lowest_open_block(int x, int y, int n)
     int i;
     CubeType cube_type;
     int open=0;
-    for (i=0; i<map_dim.z; i++)
+    for (i=0; i<=map_dim.z; i++)
     {
         cube_type = get(x,y,i);
         if (isSolid(cube_type)) open = 0;
