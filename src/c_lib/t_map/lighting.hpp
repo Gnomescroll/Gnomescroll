@@ -54,15 +54,20 @@ void set_skylight(int x, int y, int z, int value)
     light = (light & 0xf0) | (value & 0x0f);
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
 
+
     #if DC_CLIENT
-    //main_map->set_update(x,y);
+    main_map->set_update(x,y);
     #endif
+
 }
 
 
 void update_skylight(int chunk_i, int chunk_j)
 {
     //return;
+
+    GS_ASSERT(chunk_i >= 0 && chunk_i < 32);
+    GS_ASSERT(chunk_j >= 0 && chunk_j < 32);
 
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     GS_ASSERT(mc != NULL);

@@ -670,8 +670,8 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 void Vbo_map::update_vbo(int i, int j)
 {
 
-    update_skylight(i,j); //update skylights
-    update_skylight2(i,j);
+    //update_skylight(i,j); //update skylights
+    //update_skylight2(i,j);
     //update_envlight(i,j);
 
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
@@ -858,8 +858,8 @@ void generate_quad_ao_values_compatibility(struct VertexBackup* vlist)
 void Vbo_map::update_vbo_compatibility(int i, int j)
 {
 
-    update_skylight(i,j); //update skylights
-    update_skylight2(i,j);
+    //update_skylight(i,j); //update skylights
+    //update_skylight2(i,j);
     //update_envlight(i,j);
 
     class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
