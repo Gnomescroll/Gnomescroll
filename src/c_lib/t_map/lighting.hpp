@@ -1035,7 +1035,7 @@ void assert_skylight(int chunk_i, int chunk_j)
         int x = i + 16*chunk_i;
         int y = j + 16*chunk_j;
        
-       if(isSolid(i,j,k) == false)
+       if(isSolid(x,y,k) == false)
             _push_skylight_update(x,y,k);
     }
 
@@ -1077,7 +1077,9 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         int y = j + 16*chunk_j;
         int k = map_dim.z-1;
 
-        _push_skylight_update(x,y,k);
+       
+       if(isSolid(i,j,k) == false)
+            _push_skylight_update(x,y,k);
     /*
         // get highest block
         for (; k>=0; k--)
