@@ -168,7 +168,7 @@ void EnergyTanksUI::draw()
         if (slot_metadata[slot].type == NULL_ITEM_TYPE) continue;
         const float x = xoff + border + i * (span_tween_slots + w);
         const float y = _yresf - (yoff + border + (j+1)*(span_tween_slots + w));
-        draw_durability_meter(x, y, slot_size, alpha, slot_metadata[slot]);
+        draw_durability_meter(x, y, slot_size, 128, slot_metadata[slot]);
     }
 
     // draw hover highlight
