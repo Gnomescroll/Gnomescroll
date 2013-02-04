@@ -460,6 +460,7 @@ struct LightUpdateElement
 struct LightUpdateElement* env_light_array = NULL;
 int env_light_array_max      = 8*1024;
 int env_light_array_index    = 0;
+int env_light_array_n    = 0;
 
 void _push_envlight_update(int x, int y, int z)
 {
@@ -513,7 +514,12 @@ static const int va[3*6] =
     0,-1,0
 };
 
-void _envlight_update_core();
+void _envlight_update_core(int max_iterations);
+
+void _envlight_update_core()
+{
+    _envlight_update_core(1000); //do 1000 iteratations maxs
+}
 
 /*
 void _push_envlight_update(int _x, int _y, int _z)
@@ -522,7 +528,7 @@ void _push_envlight_update(int _x, int _y, int _z)
 }
 */
 
-void _envlight_update_core()
+void _envlight_update_core(int max_iterations)
 {
 
     if(env_light_array_index == 0)
@@ -533,8 +539,17 @@ void _envlight_update_core()
         GS_ASSERT(isSolid(env_light_array[i].x, env_light_array[i].y, env_light_array[i].z) == false);
     }
 
-    int index = 0;
-    while(index != env_light_array_index)
+    int index = env_light_array_n;
+
+    int stop_index = index + max_iterations;
+    if(stop_index > env_light_array_index)
+        stop_index = env_light_array_index;
+    if(max_iterations == 0)
+        stop_index = env_light_array_index;
+
+    index = env_light_array_n;
+
+    while(index != stop_index)
     {
         int x = env_light_array[index].x;
         int y = env_light_array[index].y;
@@ -635,9 +650,34 @@ void _envlight_update_core()
             //min: x,y,z= 413 152 61 max= 10 min= 6 li= 9  //this is error!
 
             //if(li >= _max -1 && li > 0)
+
+
+            if(li != _max -1 && !(_max == 0 && li ==0) )
+            {
+                //printf("min/max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+                li = _max - 1;
+                if(li < 0) li = 0;
+                //GS_ASSERT(_max - 1 >= 0);
+
+                set_envlight(x,y,z, li);
+
+                for(int j=0; j<6; j++)
+                {
+                    //if( (ea[j].light >> 4) +1 < li && fast_cube_properties[ea[j].block].solid == false)
+                    if(fast_cube_properties[ea[j].block].solid == false)
+                        _push_envlight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
+                }
+                _push_envlight_update(x,y,z);
+
+                index++;
+                continue;
+            }
+            /*
+                These two loops can be merged
+            */
             if(li > _max -1 && li > 0)
             {
-                //printf("min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+                printf("min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
                 
                 li = li - 1;
 
@@ -657,10 +697,10 @@ void _envlight_update_core()
 
             if(_max > li +1)
             {
-                //printf("max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+                printf("max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
 
                 li = _max - 1;
-                GS_ASSERT(_max - 1 >= 0);
+                //GS_ASSERT(_max - 1 >= 0);
 
                 set_envlight(x,y,z, li);
 
@@ -720,11 +760,18 @@ void _envlight_update_core()
         index++;
         continue;
     }
+    
 
-    if(index > 1000)
-        printf("index= %d \n", index);
-    env_light_array_index = 0;
+    //if(index > 2000)
+    //    printf("index= %d \n", index);
 
+    env_light_array_n = index;
+
+    if(index == env_light_array_index)
+    {
+        env_light_array_n = 0;
+        env_light_array_index = 0;
+    }
 }
 
 /*
@@ -761,15 +808,6 @@ void light_add_block(int x, int y, int z)
         _push_envlight_update(x,y,z);
     }
 }
-
-/*
-void _push_envlight_update(int x, int y, int z)
-{
-    _push_envlight_update(x,y,z);
-    return;
-}
-*/
-
 
 //call on chunk init
 void init_update_envlight(int chunk_i, int chunk_j)
