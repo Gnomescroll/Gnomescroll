@@ -1024,12 +1024,33 @@ void init_update_envlight(int chunk_i, int chunk_j)
 
 }
 
-void assert_sunlight()
+void assert_skylight(int chunk_i, int chunk_j)
 {
-    while(sun_light_array_index > 0)
-        _sun_light_update_core(0);
+    int k = map_dim.z-1;
 
-    
+    for (; k>=0; k--) 
+    for(int i=0; i<16; i++)
+    for(int j=0; j<16; j++)
+    {
+        int x = i + 16*chunk_i;
+        int y = j + 16*chunk_j;
+       
+        _push_skylight_update(x,y,k);
+    }
+
+    while(sky_light_array_index > 0)
+    {
+        _skylight_update_core(0);
+    }
+
+    for(int k=0; k<map_dim.z; k++) 
+    for(int i=0; i<16; i++)
+    for(int j=0; j<16; j++)
+    {
+
+
+    }
+
 }
 
 void init_update_sunlight(int chunk_i, int chunk_j)
@@ -1069,6 +1090,9 @@ void init_update_sunlight(int chunk_i, int chunk_j)
 
 
     _skylight_update_core(0);
+
+    assert_skylight(chunk_i, chunk_j);
+
     //_skylight_update_core(0);
 /*
     for(int i=0; i<16; i++)
