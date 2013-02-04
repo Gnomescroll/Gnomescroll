@@ -458,16 +458,10 @@ void set_envlight(int x, int y, int z, int value)
     light = (light & 0x0f) | (value << 4); // clear upper nib, set upper nib
 
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
-   
-
-    //printf("")
-    //mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value << 4);  //upper half
 
 #if DC_CLIENT
-    //printf("ptr value = %p \n", &(mc->e[ (z<<8)+((y&15)<<4)+(x&15) ]) );
     main_map->set_update(x,y);
 #endif
-    GS_ASSERT(value == get_envlight(x,y,z));
 }
 
 struct LightUpdateElement
@@ -498,7 +492,7 @@ void _push_envlight_update2(int x, int y, int z)
 
     //cannot update light value of solid block!
     struct MAP_ELEMENT e = mc->get_element(x & 15, y & 15 ,z);
-    
+
     if(fast_cube_properties[e.block].solid == true)
     {
         GS_ASSERT(false);
