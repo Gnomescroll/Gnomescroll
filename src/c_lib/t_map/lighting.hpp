@@ -315,8 +315,8 @@ void _skylight_update_core(int max_iterations)
 
     sky_light_array_n = index;
 
-    if(max_iterations == 0)
-    printf("sunlight_update: array_clean: itr= %d max_iterators= %d index= %d \n", sky_light_array_index, max_iterations, index);
+    //if(max_iterations == 0)
+    //printf("sunlight_update: array_clean: itr= %d max_iterators= %d index= %d \n", sky_light_array_index, max_iterations, index);
 
     if(index == sky_light_array_index)
     {
@@ -1035,7 +1035,8 @@ void assert_skylight(int chunk_i, int chunk_j)
         int x = i + 16*chunk_i;
         int y = j + 16*chunk_j;
        
-        _push_skylight_update(x,y,k);
+       if(isSolid(i,j,k) == false)
+            _push_skylight_update(x,y,k);
     }
 
     while(sky_light_array_index > 0)
@@ -1047,8 +1048,20 @@ void assert_skylight(int chunk_i, int chunk_j)
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
     {
+        int x = i + 16*chunk_i;
+        int y = j + 16*chunk_j;
+        int z = k;
 
+        int li = get_skylight(x,y,z);
 
+        if(isSolid(x,y,z) == true)
+            continue;
+
+        if(li==15 && isSolid(x,y,z+1) == true)
+            GS_ASSERT(false);
+
+        if(li==15)
+            GS_ASSERT( get_skylight(x,y,z+1) == 15 );
     }
 
 }
