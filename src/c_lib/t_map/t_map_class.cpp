@@ -139,17 +139,11 @@ struct MAP_ELEMENT Terrain_map::get_element(int x, int y, int z)
 #if DC_CLIENT
 void Terrain_map::set_update(int x, int y)
 {
-    //printf("set update: %i %i \n", x,y);
-
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    int index = MAP_CHUNK_XDIM*(y >> 4) + (x >> 4);
-    GS_ASSERT(index >= 0 && index < 32*32);
-    
     class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
-    GS_ASSERT(c != NULL);
+    //GS_ASSERT(c != NULL);
     if( c != NULL ) 
         c->needs_update = true;
 }
