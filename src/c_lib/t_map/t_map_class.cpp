@@ -260,7 +260,7 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
 /*
         // destroy block
         *e = NULL_MAP_ELEMENT;   
-        _envlight_update2(x,y,z); //light update
+        _push_envlight_update2(x,y,z); //light update
 
         #if DC_SERVER
         if(isItemContainer(*cube_type))

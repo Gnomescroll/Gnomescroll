@@ -515,11 +515,12 @@ static const int va[3*6] =
 
 void _envlight_update_core();
 
-
-void _envlight_update(int _x, int _y, int _z)
+/*
+void _push_envlight_update(int _x, int _y, int _z)
 {
     _push_envlight_update(_x,_y,_z);
 }
+*/
 
 void _envlight_update_core()
 {
@@ -730,7 +731,7 @@ void _envlight_update_core()
     Each block should only set its own values
 */
 
-void _envlight_update(int x, int y, int z);
+void _push_envlight_update(int x, int y, int z);
 
 //handle block addition
 void light_add_block(int x, int y, int z)
@@ -757,14 +758,14 @@ void light_add_block(int x, int y, int z)
     }
     else
     {
-        _envlight_update(x,y,z);
+        _push_envlight_update(x,y,z);
     }
 }
 
 /*
-void _envlight_update(int x, int y, int z)
+void _push_envlight_update(int x, int y, int z)
 {
-    _envlight_update(x,y,z);
+    _push_envlight_update(x,y,z);
     return;
 }
 */
@@ -815,41 +816,39 @@ void init_update_envlight(int chunk_i, int chunk_j)
     struct MAP_ELEMENT e;
 
     for(int k=0; k<128; k++)
-    for(int i=0; i<16; i++)
-    for(int j=0; j<16; j++)
     {
-        int x = 16*chunk_i + i;
-        int y = 16*chunk_j + j;
-
-        e = mc->get_element(i,j,k);
-
-        if(fast_cube_properties[e.block].light_source == true)
+        for(int i=0; i<16; i++)
+        for(int j=0; j<16; j++)
         {
-            set_envlight(x,y,k, fast_cube_attributes[e.block].light_value);
-        }
-        else
-        {
-        
-            if(fast_cube_properties[e.block].solid == true)
+            int x = 16*chunk_i + i;
+            int y = 16*chunk_j + j;
+
+            e = mc->get_element(i,j,k);
+
+            if(fast_cube_properties[e.block].light_source == true)
             {
-                GS_ASSERT(get_envlight(x,y,k) == 0);
-                //set_envlight(x,y,k, 0);
+                set_envlight(x,y,k, fast_cube_attributes[e.block].light_value);
             }
             else
             {
-                //set_envlight(x,y,k, 0);
+                if(fast_cube_properties[e.block].solid == true)
+                {
+                    GS_ASSERT(get_envlight(x,y,k) == 0);
+                }
+                else
+                {
+                    //set_envlight(x,y,k, 0);
+                }
             }
-        
         }
+
+        if(k % 8 == 0 )
+            _envlight_update_core();
     }
 }
 
 void update_envlight(int chunk_i, int chunk_j)
 {
-
-    //return;
-
-   //printf("update_envlight: %d %d \n", chunk_i, chunk_j);
 
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     struct MAP_ELEMENT e;
@@ -866,10 +865,10 @@ void update_envlight(int chunk_i, int chunk_j)
     /*
         if(fast_cube_properties[e.block].solid == false ||
             fast_cube_properties[e.block].light_source == true)
-        _envlight_update(x,y,k);
+        _push_envlight_update(x,y,k);
     */
         if(fast_cube_properties[e.block].solid == false)
-            _envlight_update(x,y,k);
+            _push_envlight_update(x,y,k);
 
     }
 
