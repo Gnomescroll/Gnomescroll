@@ -14,76 +14,6 @@ namespace t_map
 
 //e[ (z<<8)+((y&15)<<4)+(x&15) ] = e;
 
-void set_skylight(int x, int y, int z, int value);
-
-void update_skylight(int chunk_i, int chunk_j)
-{
-    return;
-    
-    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
-    GS_ASSERT(mc != NULL);
-
-    struct MAP_ELEMENT e;
-
-    //struct MAP_e e;
-
-    for(int i=0; i<16; i++)
-    for(int j=0; j<16; j++)
-    {
-        int x = i + 16*chunk_i;
-        int y = j + 16*chunk_j;
-
-        int k = map_dim.z-1;
-
-        // get highest block
-        for (; k>=0; k--)
-        {
-            //e = mc->get_element(i,j,k);
-            e = get_element(x,y,k);
-            if(e.block != 0)    //iterate until we hit top block
-                break;
-
-            set_skylight(x,y,k, 15);
-            //e.light = 0x0f; //clear bottom bits, set to 15
-            //e.light = 0x0f; //clear bottom bits, set to 15
-            //e.light = e.light &15;
-            //mc->set_element(i,j,k,e);
-        }
-        if (k < 0) return;
-
-        // render gradient down from top block
-
-/*
-        for (int _k=0; k>=0 && _k<16; k--, _k++)
-        {
-            e = mc->get_element(i,j,k);
-            if(e.block != 0)
-                continue;
-            e.light  |= 16*(15-_k)+ 0x0f; //clear upper bits
-            mc->set_element(i,j,k,e);
-        }
-*/
-        // black out everything below
-    
-        for (; k>=0; k--)
-        {
-            //e = mc->get_element(i,j,k);
-            e = get_element(x,y,k);
-            if(e.block != 0)
-                continue;
-            set_skylight(x,y,k, 0);
-
-            //e.light |= 0xf0;  //clear bottom bits, set to zero
-            //e.light = 0x00;     //clear bottom bits, set to zero
-            //e.light = 0;
-            //e.light &= 0xf0; //zero sunlight
-            //mc->set_element(i,j,k,e);
-        }
-    
-    }
-
-}
-
 //for comparision purpose
 int get_skylight(int x, int y, int z)
 {
@@ -105,6 +35,8 @@ int get_skylight(int x, int y, int z)
 
 void set_skylight(int x, int y, int z, int value)
 {
+    GS_ASSERT(z >= 0 && z <= 128);
+
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -132,6 +64,54 @@ void set_skylight(int x, int y, int z, int value)
     main_map->set_update(x,y);
     #endif
 }
+
+
+void update_skylight(int chunk_i, int chunk_j)
+{
+    return;
+
+    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+    GS_ASSERT(mc != NULL);
+
+    for(int i=0; i<16; i++)
+    for(int j=0; j<16; j++)
+    {
+
+        struct MAP_ELEMENT e;
+
+        int x = i + 16*chunk_i;
+        int y = j + 16*chunk_j;
+
+        GS_ASSERT(x >= 0 && x < 512)
+        GS_ASSERT(y >= 0 && y < 512)
+
+        int k = map_dim.z-1;
+
+        // get highest block
+        for (; k>=0; k--)
+        {
+            //e = mc->get_element(i,j,k);
+            e = get_element(x,y,k);
+            if(e.block != 0)    //iterate until we hit top block
+                break;
+            set_skylight(x,y,k, 14);
+        }
+        if (k < 0) return;
+        // black out everything below
+    
+        for (; k>=0; k--)
+        {
+            //e = mc->get_element(i,j,k);
+            e = get_element(x,y,k);
+            if(e.block != 0)
+                continue;
+            set_skylight(x,y,k, 0);
+        }
+    
+    }
+
+}
+
 
 //proprogate out
 void update_skylight_out(int x, int y, int z)
