@@ -18,9 +18,11 @@ void set_skylight(int x, int y, int z, int value);
 
 void update_skylight(int chunk_i, int chunk_j)
 {
+    return;
+    
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
     GS_ASSERT(mc != NULL);
-    
+
     struct MAP_ELEMENT e;
 
     //struct MAP_e e;
