@@ -80,6 +80,8 @@ int sky_light_array_n        = 0;
 
 void _push_skylight_update(int x, int y, int z)
 {
+    return;
+    
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -129,10 +131,10 @@ void _skylight_update_core(int max_iterations)
     int stop_index = index + max_iterations;
     if(stop_index > sky_light_array_index)
         stop_index = sky_light_array_index;
-    if(max_iterations == 0)
-        stop_index = sky_light_array_index;
+    //if(max_iterations == 0)
+    //    stop_index = sky_light_array_index;
 
-    while(index != stop_index)
+    while(index != sky_light_array_index)
     {
         int x = sky_light_array[index].x;
         int y = sky_light_array[index].y;
@@ -258,9 +260,11 @@ void _skylight_update_core(int max_iterations)
 
     sky_light_array_n = index;
 
+    if(max_iterations == 0)
+    printf("sunlight_update: array_clean: itr= %d max_iterators= %d index= %d \n", sky_light_array_index, max_iterations, index);
+
     if(index == sky_light_array_index)
     {
-        printf("array_clean: itr= %d \n", sky_light_array_index);
         sky_light_array_n = 0;
         sky_light_array_index = 0;
     }
@@ -710,7 +714,8 @@ void _envlight_update_core(int max_iterations)
     if(max_iterations == 0)
         stop_index = env_light_array_index;
 
-    while(index != stop_index)
+    //while(index != stop_index)
+    while(index != env_light_array_index)
     {
         int x = env_light_array[index].x;
         int y = env_light_array[index].y;
