@@ -422,7 +422,7 @@ void set_envlight(int x, int y, int z, int value)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
 //#if DC_CLIENT
-    printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
+    //printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
 //#endif
 
     class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
@@ -518,11 +518,7 @@ void _envlight_update_core();
 
 void _envlight_update(int _x, int _y, int _z)
 {
-    GS_ASSERT(env_light_array_index == 0);
-    GS_ASSERT(isSolid(_x,_y,_z) == false);
-
     _push_envlight_update(_x,_y,_z);
-    _envlight_update_core();
 }
 
 void _envlight_update_core()
@@ -615,28 +611,9 @@ void _envlight_update_core()
                 if a cube is brigther than li+1, then set lighting to _max-1
             */
 
-            if(_max != 0 || _min != 0 || li != 0)
-                printf("test: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+            //if(_max != 0 || _min != 0 || li != 0)
+            //    printf("test: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
 
-            if(_max > li +1)
-            {
-                printf("max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
-
-                li = _max - 1;
-                GS_ASSERT(_max - 1 >= 0);
-
-                set_envlight(x,y,z, li);
-
-                for(int j=0; j<6; j++)
-                {
-                    if( (ea[j].light >> 4) +1 < li && fast_cube_properties[ea[j].block].solid == false)
-                        _push_envlight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
-                }
-                _push_envlight_update(x,y,z);
-
-                index++;
-                continue;
-            }
 
             /*
                 If there is no light to proprogate inwards, check if light value is too high
@@ -652,9 +629,14 @@ void _envlight_update_core()
                 test: x,y,z= 298 399 58 max= 14 min= 14 li= 13 
 
             */
-            if(li >= _max && li > 0)
+            //if(li >= _max && li > 0)
+
+            //min: x,y,z= 413 152 61 max= 10 min= 6 li= 9  //this is error!
+
+            //if(li >= _max -1 && li > 0)
+            if(li > _max -1 && li > 0)
             {
-                printf("min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+                //printf("min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
                 
                 li = li - 1;
 
@@ -670,6 +652,28 @@ void _envlight_update_core()
                 index++;
                 continue;
             }  
+
+
+            if(_max > li +1)
+            {
+                //printf("max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
+
+                li = _max - 1;
+                GS_ASSERT(_max - 1 >= 0);
+
+                set_envlight(x,y,z, li);
+
+                for(int j=0; j<6; j++)
+                {
+                    //if( (ea[j].light >> 4) +1 < li && fast_cube_properties[ea[j].block].solid == false)
+                    if(fast_cube_properties[ea[j].block].solid == false)
+                        _push_envlight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
+                }
+                _push_envlight_update(x,y,z);
+
+                index++;
+                continue;
+            }
 
             //if(index > 2000)
             //    break;
@@ -749,7 +753,7 @@ void light_add_block(int x, int y, int z)
             if( fast_cube_properties[e.block].solid == false )
                 _push_envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
         }
-        _envlight_update_core();
+        //_envlight_update_core();
     }
     else
     {
