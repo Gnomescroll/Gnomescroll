@@ -36,8 +36,8 @@ int get_skylight(int x, int y, int z)
 void set_skylight(int x, int y, int z, int value)
 {
     GS_ASSERT(z >= 0 && z <= 128);
-
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
+    GS_ASSERT(value < 16 && value >= 0);
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -45,20 +45,10 @@ void set_skylight(int x, int y, int z, int value)
     class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if(mc == NULL)
         return;
-    GS_ASSERT(mc != NULL);
-    GS_ASSERT( (y >> 4) < 32);
-    GS_ASSERT( (x >> 4) < 32);
-    GS_ASSERT(value < 16 && value >= 0);
-    //printf("%i\n", (z<<8)+((y&15)<<4)+(x&15) );
 
     int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
-    //light = value;
-    //light &= 0xf0;          //clear lower byte
-    //light |= (value & 0x0f); //set lower byte
     light = (light & 0xf0) | (value & 0x0f);
-    //light = (light & 0xf0)
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
-    //mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light &= (value & 0x0f);  //bottom half
 
     #if DC_CLIENT
     main_map->set_update(x,y);
