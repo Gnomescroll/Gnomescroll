@@ -80,8 +80,6 @@ int sky_light_array_n        = 0;
 
 void _push_skylight_update(int x, int y, int z)
 {
-    return;
-
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -186,7 +184,7 @@ void _skylight_update_core(int max_iterations)
 
         if(li == 15 && fast_cube_properties[te.block].solid == true)
         {
-            li = 0; //maybe zero?
+            li = 14; //maybe zero?
             set_skylight(x,y,z, li);
 
             if(isSolid(x,y,z-1) == false)
@@ -225,7 +223,7 @@ void _skylight_update_core(int max_iterations)
         {
             for(int j=0; j<6; j++)
             {
-                if( (ea[j].light & 0x0f) < 15 && fast_cube_properties[ea[j].block].solid == false)
+                if( (ea[j].light & 0x0f) < 14 && fast_cube_properties[ea[j].block].solid == false)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
 
@@ -1034,6 +1032,15 @@ void init_update_sunlight(int chunk_i, int chunk_j)
                 break;
             set_skylight(x,y,k, 15);
             _push_skylight_update(x,y,k);
+        }
+
+        for (; k>=0; k--)
+        {
+            struct MAP_ELEMENT e = mc->get_element(i,j,k);
+            //e = get_element(x,y,k);
+            if(fast_cube_properties[e.block].solid == true)    //iterate until we hit top block
+                continue;
+            set_skylight(x,y,k, 0);
         }
     }
 
