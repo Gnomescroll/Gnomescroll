@@ -566,7 +566,8 @@ int run()
 
         //int _now = _GET_MS_TIME();
 
-        t_map::_envlight_update_core(); //update lighting
+        t_map::_sunlight_update_core(); //update sun lighting
+        t_map::_envlight_update_core(); //update env lighting
 
         t_map::update_map();
         //int _then = _GET_MS_TIME();
