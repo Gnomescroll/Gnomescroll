@@ -117,6 +117,7 @@ void _skylight_update_core(int max_iterations);
 void _skylight_update_core()
 {
     _skylight_update_core(1000); //do 1000 iteratations maxs
+    _skylight_update_core(1000); //do 1000 iteratations maxs
 }
 
 void _skylight_update_core(int max_iterations)
@@ -129,10 +130,10 @@ void _skylight_update_core(int max_iterations)
     int stop_index = index + max_iterations;
     if(stop_index > sky_light_array_index)
         stop_index = sky_light_array_index;
-    //if(max_iterations == 0)
-    //    stop_index = sky_light_array_index;
+    if(max_iterations == 0)
+        stop_index = sky_light_array_index;
 
-    while(index != sky_light_array_index)
+    while(index != stop_index)
     {
         int x = sky_light_array[index].x;
         int y = sky_light_array[index].y;
@@ -167,13 +168,25 @@ void _skylight_update_core(int max_iterations)
         //if block is not sunlight and sunlight is above block, set sunlight
 
 
+        struct MAP_ELEMENT ea[6];
+
+        for(int i=0; i<6; i++)
+            ea[i] = get_element(x+va[3*i+0], y+va[3*i+1], z+va[3*i+2]);
+
+
         if( (te.light & 0x0f) == 15 && li != 15)
         {
             li = 15;
             set_skylight(x,y,z, li);
             
-            if(isSolid(x,y,z-1) == false)
-                _push_skylight_update(x,y,z-1);
+            //if(isSolid(x,y,z-1) == false)
+            //    _push_skylight_update(x,y,z-1);
+
+            for(int j=0; j<6; j++)
+            {
+                if( (ea[j].light & 0x0f) < 14 && fast_cube_properties[ea[j].block].solid == false)
+                    _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
+            }
 
             _push_skylight_update(x,y,z);
 
@@ -201,15 +214,11 @@ void _skylight_update_core(int max_iterations)
             Normal Light
         */
 
-
-        struct MAP_ELEMENT ea[6];
-
         int _min = 16;
         int _max = 0;
 
         for(int i=0; i<6; i++)
         {
-            ea[i] = get_element(x+va[3*i+0], y+va[3*i+1], z+va[3*i+2]);
             if(fast_cube_properties[ea[i].block].solid == false)
             {
                 int _li = (ea[i].light & 0x0f);
@@ -219,6 +228,9 @@ void _skylight_update_core(int max_iterations)
         }
 
         //update around
+
+
+/*
         if(li == 15 )
         {
             for(int j=0; j<6; j++)
@@ -230,7 +242,7 @@ void _skylight_update_core(int max_iterations)
             index++;
             continue;
         }
-
+*/
         //proprogate light below level 15
     /*
         if(li != 15 && li != _max -1 && !(_max == 0 && li == 0))
@@ -742,6 +754,7 @@ void _envlight_update_core(int max_iterations);
 void _envlight_update_core()
 {
     _envlight_update_core(1000); //do 1000 iteratations maxs
+    _envlight_update_core(1000); //do 1000 iteratations maxs
 }
 
 void _envlight_update_core(int max_iterations)
@@ -757,8 +770,8 @@ void _envlight_update_core(int max_iterations)
     if(max_iterations == 0)
         stop_index = env_light_array_index;
 
-    //while(index != stop_index)
-    while(index != env_light_array_index)
+    while(index != stop_index)
+    //while(index != env_light_array_index)
     {
         int x = env_light_array[index].x;
         int y = env_light_array[index].y;
@@ -1013,8 +1026,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
 
 void init_update_sunlight(int chunk_i, int chunk_j)
 {
-    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
-
+    //class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
 
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
@@ -1023,6 +1035,20 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         int y = j + 16*chunk_j;
         int k = map_dim.z-1;
 
+        for (; k>=0; k--)
+            set_skylight(x,y,k, 0);
+
+    }
+
+    for(int i=0; i<16; i++)
+    for(int j=0; j<16; j++)
+    {
+        int x = i + 16*chunk_i;
+        int y = j + 16*chunk_j;
+        int k = map_dim.z-1;
+
+        _push_skylight_update(x,y,k);
+    /*
         // get highest block
         for (; k>=0; k--)
         {
@@ -1042,6 +1068,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
                 continue;
             set_skylight(x,y,k, 0);
         }
+    */
     }
 
 
