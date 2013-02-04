@@ -18,14 +18,14 @@ namespace Entities
 void load_mob_robot_box_data()
 {
     EntityType type = OBJECT_MONSTER_BOX;
-    
+
     #if DC_SERVER
     const int n_components = 9;
     #endif
     #if DC_CLIENT
     const int n_components = 7;
     #endif
-    
+
     entity_data->set_components(type, n_components);
 
     entity_data->attach_component(type, COMPONENT_POSITION_MOMENTUM_CHANGED);
@@ -70,7 +70,7 @@ static void set_mob_robot_box_properties(Entity* object)
     health->health = health_amt;
     health->max_health = health_amt;
     #endif
-    
+
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
     target->target_acquisition_failure_rate = MONSTER_BOX_TARGET_ACQUISITION_FAILURE_RATE;
@@ -108,7 +108,7 @@ static void set_mob_robot_box_properties(Entity* object)
     item_drop->drop.add_drop("synthesizer_coin", 1, 0.2f);
     item_drop->drop.add_drop("synthesizer_coin", 2, 0.05f);
     item_drop->drop.add_drop("synthesizer_coin", 3, 0.01f);
-    
+
     item_drop->drop.set_max_drop_amounts("small_charge_pack", 1);
     item_drop->drop.add_drop("small_charge_pack", 1, 0.02f);
     #endif
@@ -144,16 +144,16 @@ void ready_mob_robot_box(Entity* object)
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* target = (WeaponTargetingComponent*)object->get_component_interface(COMPONENT_INTERFACE_TARGETING);
     target->attacker_properties.id = object->id;
-    
+
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
-    
+
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
-    
+
     vox->ready(position, angles.x, angles.y);
 
     #if DC_SERVER
@@ -201,11 +201,11 @@ void server_tick_mob_robot_box(Entity* object)
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     const Vec3 position = physics->get_position();
     Vec3 camera_position = position;
-    
+
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
     camera_position.z += dims->get_camera_height();
-    
+
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
     using Components::MotionTargetingComponent;
@@ -215,7 +215,7 @@ void server_tick_mob_robot_box(Entity* object)
     bool was_on_target = weapon->locked_on_target;
     int old_target_id = weapon->target_id;
     int old_target_type = weapon->target_type;
-    
+
     Agents::Agent* agent = NULL;
     if (weapon->locked_on_target)
     {   // target locked
@@ -245,7 +245,7 @@ void server_tick_mob_robot_box(Entity* object)
         if (!was_on_target || old_target_id != weapon->target_id || old_target_type != weapon->target_type)
             weapon->broadcast_target_choice();
     }
-    
+
     if (weapon->locked_on_target)
     {   // target is locked
         // face target
@@ -293,7 +293,7 @@ void server_tick_mob_robot_box(Entity* object)
         motion->destination = translate_position(destination);
         motion->en_route = true;
         motion->at_destination = false;
-        
+
         if (len)
         {
             direction.z = 0;
@@ -327,7 +327,7 @@ void server_tick_mob_robot_box(Entity* object)
 
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
-    GS_ASSERT(limiter != NULL);
+    IF_ASSERT(limiter == NULL) return;
     if (limiter->allowed()) object->broadcastState();
 }
 #endif
@@ -343,7 +343,7 @@ void client_tick_mob_robot_box(Entity* object)
 
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
-    
+
     if (weapon->locked_on_target)
     {   // target locked
         if (weapon->target_type != OBJECT_AGENT) return;    // TODO -- more objects
@@ -355,7 +355,7 @@ void client_tick_mob_robot_box(Entity* object)
         Agents::Agent* agent = Agents::get_agent((AgentID)weapon->target_id);
         if (agent == NULL) return;
         Vec3 agent_position = quadrant_translate_position(position, agent->get_center());
-        
+
         // face target
         Vec3 direction = vec3_sub(agent_position, position);
         if (vec3_length_squared(direction))
@@ -411,7 +411,7 @@ void update_mob_robot_box(Entity* object)
 {
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
-    
+
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 

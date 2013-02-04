@@ -173,7 +173,6 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_type);
     if (ret != 0) return;
 
-
     set(x,y,z, EMPTY_CUBE);  //clear block
     t_mech::handle_block_removal(x,y,z);    //block removal
 

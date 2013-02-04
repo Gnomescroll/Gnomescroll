@@ -3,13 +3,11 @@
 #include <t_map/t_map.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 #include <physics/quadrant.hpp>
-
 #if DC_SERVER
-#include <state/server_state.hpp>
+# include <state/server_state.hpp>
 #endif
-
 #if DC_CLIENT
-#include <state/client_state.hpp>
+# include <state/client_state.hpp>
 #endif
 
 namespace Hitscan
@@ -22,7 +20,7 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentI
     float vox_distance = 1000000.0f;
     class Voxels::VoxelHitscanTarget target;
     float collision_point[3];
-    
+
     // TODO -- keep agents in their own hitscan list
     bool hit = STATE::voxel_hitscan_list->hitscan(
         position.x, position.y, position.z,
@@ -30,8 +28,8 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentI
         firing_agent_id, OBJECT_AGENT,
         collision_point, &vox_distance,
         &target);
-    
-    if (!hit) return NULL_AGENT;  
+
+    if (!hit) return NULL_AGENT;
     if (target.entity_type != OBJECT_AGENT) return NULL_AGENT;
     if (vox_distance > max_distance) return NULL_AGENT;
     return (AgentID)target.entity_id;
@@ -46,21 +44,16 @@ HitscanTargetTypes hitscan_against_world(
     struct Vec3 p, struct Vec3 v, int ignore_id, EntityType ignore_type,        // inputs
     class Voxels::VoxelHitscanTarget* target, float* vox_distance, float collision_point[3],
     int block_pos[3], int side[3], CubeType* cube_type, float* block_distance)  // outputs
-{   // hitscan against voxels
+{
     *vox_distance = 10000000.0f;
-    bool voxel_hit = STATE::voxel_hitscan_list->hitscan(
-        p.x, p.y, p.z,
-        v.x, v.y, v.z,
-        ignore_id, ignore_type,
-        collision_point, vox_distance,
-        target);
-
-     //hitscan against terrain
+    bool voxel_hit = STATE::voxel_hitscan_list->hitscan(p.x, p.y, p.z,
+                                                        v.x, v.y, v.z,
+                                                        ignore_id, ignore_type,
+                                                        collision_point, vox_distance,
+                                                        target);
     class RaytraceData terrain_data;
     const float max_dist = 128.0f;
-
     bool block_hit = raytrace_terrain(p, v, max_dist, &terrain_data);
-
     if (block_hit)
     {
         *block_distance = terrain_data.interval * max_dist;
@@ -76,9 +69,10 @@ HitscanTargetTypes hitscan_against_world(
         for (int i=0; i<3; i++) block_pos[i] = -1;
     }
 
-    HitscanTargetTypes target_type = HITSCAN_TARGET_NONE;
-    
+    // TODO -- add mech hitscan
+
     // choose closer collision (or none)
+    HitscanTargetTypes target_type = HITSCAN_TARGET_NONE;
     bool voxel_closer = (*vox_distance <= *block_distance);
     if (voxel_hit && block_hit)
     {

@@ -16,8 +16,7 @@ void WeaponTargetingComponent::lock_target(Vec3 camera_position)
     Agents::Agent* target = Hitscan::lock_agent_target(
         camera_position, &this->target_direction,
         this->sight_range, this->target_acquisition_failure_rate,
-        this->attack_at_random
-    );
+        this->attack_at_random);
     if (target == NULL)
     {
         this->target_type = OBJECT_NONE;
@@ -46,26 +45,25 @@ void WeaponTargetingComponent::lock_target_part(Vec3 camera_position)
     Vec3 direction = this->target_direction;
     if (this->uses_bias)    // apply bias
         direction = vec3_bias_random(this->target_direction, this->accuracy_bias);
-    
+
     this->firing_direction = direction;
     this->firing_direction_set = true;
 }
 
 bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
-{    
+{
     if (this->target_type == OBJECT_NONE) return false;
     if (this->target_type != OBJECT_AGENT) return false;    // TODO -- target all types
-    
+
     if (!this->firing_direction_set) return false;
-    
+
     // get target
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL) return false;
-    
+
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
         camera_position, this->firing_direction, this->object->id, this->object->type,
-        target, this->sight_range
-    );
+        target, this->sight_range);
 
     // let handle target hit based on attacker properties
     Hitscan::handle_hitscan_target(t, this->attacker_properties);
@@ -76,7 +74,7 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
     // apply custom handling
     // play sounds
     // play animations
-    
+
     if (t.hitscan == HITSCAN_TARGET_VOXEL) return true;
     return false;
 }

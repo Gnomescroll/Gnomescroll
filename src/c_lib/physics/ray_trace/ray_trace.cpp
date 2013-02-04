@@ -2,14 +2,10 @@
 
 #include <stdio.h>
 #include <math.h>
-
 #include <common/defines.h>
-
 #include <t_map/_interface.hpp>
 #include <t_map/t_properties.hpp>
-
 #include <physics/common.hpp>
-
 #include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 
@@ -31,7 +27,7 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
         *_rad2 = d*d;
         return d;
     }
-    
+
     tx -= px;
     ty -= py;
     tz -= pz;
@@ -119,7 +115,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
         }
         return false;
     }
-    
+
     const float dx = fabsf(end.x - start.x);
     const float dy = fabsf(end.y - start.y);
     const float dz = fabsf(end.z - start.z);
@@ -175,7 +171,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
         n += y - int(end.y);
         t_next_y = (start.y - floorf(start.y)) * dt_dy;
     }
-    
+
     if (dz == 0)
     {
         z_inc = 0;
@@ -220,7 +216,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
         }
 
         for (int i=0; i<3; side[i++] = 0);
-        
+
         if (t_next_x < t_next_y && t_next_x < t_next_z)
         {
             x += x_inc;
@@ -248,13 +244,13 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
             t_next_z += dt_dz;
         }
     }
-    
+
     return false;
 }
 
 inline CubeType RaytraceData::get_cube_type()
 {
-    return t_map::get(this->collision_point[0], this->collision_point[1], this->collision_point[2]); 
+    return t_map::get(this->collision_point[0], this->collision_point[1], this->collision_point[2]);
 }
 
 inline void RaytraceData::set_collision_point(int x, int y, int z)
