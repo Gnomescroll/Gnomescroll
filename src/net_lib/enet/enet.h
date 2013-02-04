@@ -190,13 +190,7 @@ typedef enum _ENetPeerState
 //@param deceleration rate at which to decrease the throttle probability as mean RTT increases
 
 
-#define DISABLE_TIMEOUT 0
-
-#if DISABLE_TIMEOUT
-  #define TIMEOUT_MULTIPLE 1024
-#else
-  #define TIMEOUT_MULTIPLE 1
-#endif
+#define DISABLE_ENET_TIMEOUT 0
 
 enum
 {
@@ -221,9 +215,16 @@ enum
    ENET_PEER_PACKET_LOSS_SCALE            = (1 << 16),
    ENET_PEER_PACKET_LOSS_INTERVAL         = 10000,
    ENET_PEER_WINDOW_SIZE_SCALE            = 32 * 1024,
-   ENET_PEER_TIMEOUT_LIMIT                = TIMEOUT_MULTIPLE*64, //32
-   ENET_PEER_TIMEOUT_MINIMUM              = TIMEOUT_MULTIPLE*8000,  //5000
-   ENET_PEER_TIMEOUT_MAXIMUM              = TIMEOUT_MULTIPLE*16000, //30000
+
+#if DISABLE_ENET_TIMEOUT
+   ENET_PEER_TIMEOUT_LIMIT                = 1024*64, //32
+   ENET_PEER_TIMEOUT_MINIMUM              = 1024*8000,  //5000
+   ENET_PEER_TIMEOUT_MAXIMUM              = 1024*32000, //30000
+#else
+   ENET_PEER_TIMEOUT_LIMIT                = 64, //32
+   ENET_PEER_TIMEOUT_MINIMUM              = 8000,  //5000
+   ENET_PEER_TIMEOUT_MAXIMUM              = 32000, //30000
+#endif
    ENET_PEER_PING_INTERVAL                = 500,
    ENET_PEER_UNSEQUENCED_WINDOWS          = 64,    //64
    ENET_PEER_UNSEQUENCED_WINDOW_SIZE      = 1024,
