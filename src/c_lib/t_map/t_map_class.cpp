@@ -357,7 +357,6 @@ void Terrain_map::chunk_received(int cx, int cy)
     update_skylight2(cx,cy);    //update skylight
     
     init_update_envlight(cx, cy);   //init env_light values for blocks in chunk
-    update_envlight(cx,cy);
 }
 
 /*

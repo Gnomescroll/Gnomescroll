@@ -770,41 +770,6 @@ void _push_envlight_update(int x, int y, int z)
 }
 */
 
-void update_envlight_boundary(int _ci, int _cj);
-
-//checks that block lighting values are correct
-void asssert_envlight_0(int chunk_i, int chunk_j)
-{
-    return; 
-
-    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
-    struct MAP_ELEMENT e;
-
-    for(int k=0; k<128; k++)
-    for(int i=0; i<16; i++)
-    for(int j=0; j<16; j++)
-    {
-        int x = 16*chunk_i + i;
-        int y = 16*chunk_j + j;
-
-        e = mc->get_element(i,j,k);
-
-        if(fast_cube_properties[e.block].light_source == true)
-        {
-            //assert that light source blocks have the proper light value
-            GS_ASSERT( get_envlight(x,y,k) == fast_cube_attributes[e.block].light_value);
-        }
-        else
-        {
-            if(fast_cube_properties[e.block].solid == true)
-            {
-                //assert that solid blocks have lighting 0
-                GS_ASSERT( get_envlight(x,y,k) == 0 );
-            }
-        }
-    }
-
-}
 
 //call on chunk init
 void init_update_envlight(int chunk_i, int chunk_j)
@@ -845,40 +810,6 @@ void init_update_envlight(int chunk_i, int chunk_j)
         if(k % 8 == 0 )
             _envlight_update_core();
     }
-}
-
-void update_envlight(int chunk_i, int chunk_j)
-{
-
-    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
-    struct MAP_ELEMENT e;
-
-    for(int k=0; k<128; k++)
-    for(int i=0; i<16; i++)
-    for(int j=0; j<16; j++)
-    {
-
-        int x = 16*chunk_i + i;
-        int y = 16*chunk_j + j;
-
-        e = mc->get_element(i,j,k);
-    /*
-        if(fast_cube_properties[e.block].solid == false ||
-            fast_cube_properties[e.block].light_source == true)
-        _push_envlight_update(x,y,k);
-    */
-        if(fast_cube_properties[e.block].solid == false)
-            _push_envlight_update(x,y,k);
-
-    }
-
-
-    //update_envlight_boundary(chunk_i, chunk_j);
-
-
-    asssert_envlight_0(chunk_i, chunk_j);
-
-
 }
 
 void init_lighting()
