@@ -491,7 +491,7 @@ void _push_envlight_update2(int x, int y, int z)
     }
 
     //cannot update light value of solid block!
-    struct MAP_ELEMENT e = mc->get_element(x & 15, y & 15, z);
+    //struct MAP_ELEMENT e = mc->get_element(x & 15, y & 15, z);
 
     //struct MAP_ELEMENT e = mc->get_element(x & 15, y & 15 ,z);
     struct MAP_ELEMENT e = get_element(x, y, z);
