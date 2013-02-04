@@ -28,8 +28,6 @@ int get_skylight(int x, int y, int z)
     if(mc == NULL)
         return 16;  //so it does not try to update
 
-    //return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
-
     return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
 
@@ -42,16 +40,22 @@ void set_skylight(int x, int y, int z, int value)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
+    GS_ASSERT(x >= 0 && x < 512)
+    GS_ASSERT(y >= 0 && y < 512)
+
     class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if(mc == NULL)
+    {
+        GS_ASSERT(false);
         return;
+    }
 
     int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
     light = (light & 0xf0) | (value & 0x0f);
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
 
     #if DC_CLIENT
-    main_map->set_update(x,y);
+    //main_map->set_update(x,y);
     #endif
 }
 
