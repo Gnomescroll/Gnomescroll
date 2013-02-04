@@ -166,8 +166,8 @@ const struct EquipmentUI::Offset EquipmentUI::slot_label_offsets[N_EQUIPMENT_TYP
 
 const struct EquipmentUI::Offset EquipmentUI::slot_label_origins[N_EQUIPMENT_TYPES] = {
     { 0, 0 },      // NULL
-    { 136, 0 },    // BODY
-    { 136, 9 },    // HEAD
+    { 136, 9 },    // BODY
+    { 136, 0 },    // HEAD
     { 136, 18 },   // FEET
     { 136, 27 },   // HANDS
     { 136, 36  },  // ACCESSORY

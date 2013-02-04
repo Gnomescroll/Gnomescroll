@@ -20,15 +20,15 @@ typedef enum
 
 typedef enum
 {
-    NULL_ATTRIBUTE_SYNC_TYPE,
-    ATTRIBUTE_SYNC_TYPE_PRIVATE,
-    ATTRIBUTE_SYNC_TYPE_PLAYER,
-    ATTRIBUTE_SYNC_TYPE_ALL,
+    NULL_SYNC_TYPE,
+    SYNC_TYPE_PRIVATE,
+    SYNC_TYPE_PLAYER,
+    SYNC_TYPE_ALL,
 }   AttributeSyncType;
 
 typedef enum
 {
-    NULL_ATTRIBUTE_GROUP = MAX_AGENTS + 2
+    NULL_ATTRIBUTE_GROUP = MAX_AGENTS*2 + 2
 }   AttributeGroup;
 
 typedef void (*voidFunction)();
@@ -122,6 +122,7 @@ void done_loading();
 void init_packets();
 
 #if DC_SERVER
+void set_sync_type(AttributeGroup group, AttributeSyncType sync_type);
 void set_sync_to(AttributeGroup group, ClientID client_id);
 void send_to_client(AttributeGroup group, ClientID client_id);
 void send_changes();
@@ -181,4 +182,13 @@ class set_attribute_string_StoC:
     inline void handle();
 };
 
+void _attr_dummy() {}
+#if DC_CLIENT
+# define set_sync_type(...) _attr_dummy();
+# define set_sync_type(...) _attr_dummy();
+# define set_sync_to(...) _attr_dummy();
+#endif
+
 }   // Attributes
+
+void _attr_dummy() {}

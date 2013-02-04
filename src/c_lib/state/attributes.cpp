@@ -7,7 +7,9 @@ namespace World
 
 //forward decl
 template <typename Type> static void attribute_def(const char* name, Type value);
+#if DC_SERVER
 static void set_sync_type(AttributeSyncType sync_type);
+#endif
 
 /*********************
  * Registration
@@ -16,10 +18,10 @@ static void set_sync_type(AttributeSyncType sync_type);
 static void _register_attributes()
 {
     attribute_def("time_of_day", 0);
-    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
+    set_sync_type(SYNC_TYPE_ALL);
 
     attribute_def("temperature", 40);
-    set_sync_type(ATTRIBUTE_SYNC_TYPE_ALL);
+    set_sync_type(SYNC_TYPE_ALL);
 }
 
 /*********************
@@ -41,10 +43,12 @@ static void attribute_def(const char* name, Type value)
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
 }
 
+#if DC_SERVER
 static void set_sync_type(AttributeSyncType sync_type)
 {
     Attributes::set_sync_type(attr_type, sync_type);
 }
+#endif
 
 void register_attributes()
 {

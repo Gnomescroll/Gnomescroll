@@ -24,12 +24,11 @@ void send_attributes_to_client(ClientID client_id);
 
 // API
 #define SET_ATTRIBUTE_HEADER(KEY, TYPE) \
-    bool set_attribute(AgentID agent_id, KEY key, TYPE value); \
-    bool set_attribute(KEY key, TYPE value);
+    bool set_attribute(AgentID agent_id, KEY key, TYPE value);
 
 #define GET_ATTRIBUTE_HEADER(KEY, TYPE, NAME) \
     TYPE get_attribute_##NAME(AgentID agent_id, KEY key); \
-    TYPE get_attribute_##NAME(KEY key);
+    TYPE get_base_attribute_##NAME(KEY key);
 
 SET_ATTRIBUTE_HEADER(AttributeType, int);
 SET_ATTRIBUTE_HEADER(AttributeType, float);
