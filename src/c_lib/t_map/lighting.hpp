@@ -89,8 +89,8 @@ void update_skylight(int chunk_i, int chunk_j)
         // get highest block
         for (; k>=0; k--)
         {
-            //e = mc->get_element(i,j,k);
-            e = get_element(x,y,k);
+            e = mc->get_element(i,j,k);
+            //e = get_element(x,y,k);
             if(e.block != 0)    //iterate until we hit top block
                 break;
             set_skylight(x,y,k, 15);
@@ -100,8 +100,8 @@ void update_skylight(int chunk_i, int chunk_j)
     
         for (; k>=0; k--)
         {
-            //e = mc->get_element(i,j,k);
-            e = get_element(x,y,k);
+            e = mc->get_element(i,j,k);
+            //e = get_element(x,y,k);
             if(e.block != 0)
                 continue;
             set_skylight(x,y,k, 0);
@@ -461,7 +461,7 @@ struct LightUpdateElement* light_update_array = NULL;
 int light_update_array_max      = 8*1024;
 int light_update_array_index    = 0;
 
-void _push_envlight_update2(int x, int y, int z)
+void _push_envlight_update(int x, int y, int z)
 {
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
         return;
@@ -521,7 +521,7 @@ void _envlight_update2(int _x, int _y, int _z)
     GS_ASSERT(light_update_array_index == 0);
     GS_ASSERT(isSolid(_x,_y,_z) == false);
 
-    _push_envlight_update2(_x,_y,_z);
+    _push_envlight_update(_x,_y,_z);
     _envlight_update_core();
 }
 
@@ -564,7 +564,7 @@ void _envlight_update_core()
             {
                 struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
                 if( (_e.light >> 4) < li -1 && fast_cube_properties[_e.block].solid == false)
-                    _push_envlight_update2(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+                    _push_envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
             }
             index++;
             continue;
@@ -620,7 +620,7 @@ void _envlight_update_core()
                     {
                         struct MAP_ELEMENT _e2 = get_element(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
                         if( (_e2.light >> 4) +1 < li && fast_cube_properties[_e2.block].solid == false)
-                            _push_envlight_update2(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
+                            _push_envlight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
                     }
                 }
             }
@@ -660,7 +660,7 @@ void light_add_block(int x, int y, int z)
         {
             struct MAP_ELEMENT e = get_element(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
             if( fast_cube_properties[e.block].solid == false )
-                _push_envlight_update2(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
+                _push_envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
         }
         _envlight_update_core();
     }
