@@ -8,11 +8,12 @@
 namespace Attributes
 {
 
+class Attributes;
+
 class Attribute: public Property<AttributeType>
 {
-    private:
-        void* value;
     public:
+        Attributes* parent;
         AttributeGroup group;
         AttributeValueType value_type;
         AttributeSyncType sync_type;
@@ -28,15 +29,24 @@ class Attribute: public Property<AttributeType>
             bool lower, upper;
         } use_limits;
 
-        struct LimitInt
-        {
-            int lower, upper;
-        } limiti;
-
         struct
         {
-            float lower, upper;
-        } limitf;
+            union
+            {
+                int loweri;
+                float lowerf;
+            };
+            union
+            {
+                int upperi;
+                float upperf;
+            };
+            AttributeType lower;
+            AttributeType upper;
+            AttributeType dest;
+        } limit;
+
+    // when
 
     /* Read/write API */
 
@@ -71,22 +81,17 @@ class Attribute: public Property<AttributeType>
     {
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_INT) return false;
         int old = *(reinterpret_cast<int*>(this->value));
-        if (this->use_limits.lower)
-            value = GS_MAX(value, this->limiti.lower);
-        if (this->use_limits.upper)
-            value = GS_MIN(value, this->limiti.upper);
+        value = this->enforce_limit(value);
         if (this->set_callback != NULL)
         {
             value = reinterpret_cast<setInt>(this->set_callback)(old, value);
-            if (this->use_limits.lower)
-                value = GS_MAX(value, this->limiti.lower);
-            if (this->use_limits.upper)
-                value = GS_MIN(value, this->limiti.upper);
+            value = this->enforce_limit(value);
         }
         if (old != value)
         {
             *(reinterpret_cast<int*>(this->value)) = value;
             this->changed = true;
+            this->notify_dest();
             return true;
         }
         return false;
@@ -96,22 +101,17 @@ class Attribute: public Property<AttributeType>
     {
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_FLOAT) return false;
         float old = *(reinterpret_cast<float*>(this->value));
-        if (this->use_limits.lower)
-            value = GS_MAX(value, this->limitf.lower);
-        if (this->use_limits.upper)
-            value = GS_MIN(value, this->limitf.upper);
+        value = this->enforce_limit(value);
         if (this->set_callback != NULL)
         {
             value = reinterpret_cast<setFloat>(this->set_callback)(old, value);
-            if (this->use_limits.lower)
-                value = GS_MAX(value, this->limitf.lower);
-            if (this->use_limits.upper)
-                value = GS_MIN(value, this->limitf.upper);
+            value = this->enforce_limit(value);
         }
         if (old != value)
         {
             *(reinterpret_cast<float*>(this->value)) = value;
             this->changed = true;
+            this->notify_dest();
             return true;
         }
         return false;
@@ -214,30 +214,37 @@ class Attribute: public Property<AttributeType>
     void set_lower_limit(int lower)
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_INT);
+        GS_ASSERT(!this->use_limits.lower);
         this->use_limits.lower = true;
-        this->limiti.lower = lower;
+        this->limit.loweri = lower;
     }
 
     void set_upper_limit(int upper)
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_INT);
+        GS_ASSERT(!this->use_limits.upper);
         this->use_limits.upper = true;
-        this->limiti.upper = upper;
+        this->limit.upperi = upper;
     }
 
     void set_lower_limit(float lower)
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_FLOAT);
+        GS_ASSERT(!this->use_limits.lower);
         this->use_limits.lower = true;
-        this->limitf.lower = lower;
+        this->limit.lowerf = lower;
     }
 
     void set_upper_limit(float upper)
     {
         GS_ASSERT(this->value_type == ATTRIBUTE_VALUE_FLOAT);
+        GS_ASSERT(!this->use_limits.upper);
         this->use_limits.upper = true;
-        this->limitf.upper = upper;
+        this->limit.upperf = upper;
     }
+
+    void set_lower_limit(AttributeType lower);
+    void set_upper_limit(AttributeType upper);
 
     void copy_from(const Attribute* other)
     {
@@ -363,37 +370,62 @@ class Attribute: public Property<AttributeType>
     void verify() const
     {
         GS_ASSERT(this->type != NULL_ATTRIBUTE);
+        GS_ASSERT(this->parent != NULL);
         GS_ASSERT(this->group != NULL_ATTRIBUTE_GROUP);
         GS_ASSERT(this->value_type != NULL_ATTRIBUTE_VALUE_TYPE);
         GS_ASSERT(this->name[0] != '\0');
         GS_ASSERT(this->value != NULL);
         if (this->value_type == ATTRIBUTE_VALUE_INT)
         {
-            GS_ASSERT(this->use_limits.lower || this->limiti.lower == 0);
-            GS_ASSERT(this->use_limits.upper || this->limiti.upper == 0);
-            GS_ASSERT(this->limitf.lower == 0 && this->limitf.upper == 0);
-            if (this->use_limits.lower && this->use_limits.upper)
+            GS_ASSERT(this->use_limits.lower ||
+                      (this->limit.lower == NULL_ATTRIBUTE &&
+                       this->limit.loweri == 0));
+            GS_ASSERT(this->use_limits.upper ||
+                      (this->limit.upper == NULL_ATTRIBUTE &&
+                       this->limit.upperi == 0));
+            if (this->use_limits.lower &&
+                this->use_limits.upper &&
+                this->limit.lower == NULL_ATTRIBUTE &&
+                this->limit.upper == NULL_ATTRIBUTE)
             {
-                GS_ASSERT(this->limiti.lower <= this->limiti.upper);
+                GS_ASSERT(this->limit.loweri <= this->limit.upperi);
+            }
+        }
+        else
+        if (this->value_type == ATTRIBUTE_VALUE_FLOAT)
+        {
+            GS_ASSERT(this->use_limits.lower ||
+                      (this->limit.lower == NULL_ATTRIBUTE &&
+                       this->limit.lowerf == 0));
+            GS_ASSERT(this->use_limits.upper ||
+                      (this->limit.upper == NULL_ATTRIBUTE &&
+                       this->limit.upperf == 0));
+            if (this->use_limits.lower &&
+                this->use_limits.upper &&
+                this->limit.lower == NULL_ATTRIBUTE &&
+                this->limit.upper == NULL_ATTRIBUTE)
+            {
+                GS_ASSERT(this->limit.lowerf <= this->limit.upperf);
             }
         }
         else
         if (this->value_type == ATTRIBUTE_VALUE_STRING)
         {
             GS_ASSERT(!this->use_limits.lower && !this->use_limits.upper);
-            GS_ASSERT(this->limiti.lower == 0 && this->limiti.upper == 0);
-            GS_ASSERT(this->limitf.lower == 0 && this->limitf.upper == 0);
+            GS_ASSERT(this->limit.loweri == 0 && this->limit.upperi == 0);
+            GS_ASSERT(this->limit.lowerf == 0 && this->limit.upperf == 0);
+            GS_ASSERT(this->limit.lower == NULL_ATTRIBUTE &&
+                      this->limit.upper == NULL_ATTRIBUTE);
         }
-        else
-        if (this->value_type == ATTRIBUTE_VALUE_FLOAT)
+        if (this->use_limits.upper)
         {
-            GS_ASSERT(this->use_limits.lower || this->limitf.lower == 0);
-            GS_ASSERT(this->use_limits.upper || this->limitf.upper == 0);
-            GS_ASSERT(this->limiti.lower == 0 && this->limiti.upper == 0);
-            if (this->use_limits.lower && this->use_limits.upper)
-            {
-                GS_ASSERT(this->limitf.lower <= this->limitf.upper);
-            }
+            GS_ASSERT(this->limit.upper == NULL_ATTRIBUTE ||
+                      this->limit.upperi == 0);
+        }
+        if (this->use_limits.lower)
+        {
+            GS_ASSERT(this->limit.lower == NULL_ATTRIBUTE ||
+                      this->limit.loweri == 0);
         }
         #if DC_SERVER
         GS_ASSERT(this->sync_type != NULL_SYNC_TYPE);
@@ -404,24 +436,29 @@ class Attribute: public Property<AttributeType>
 
     void verify_other(const Attribute* other) const
     {
-        GS_ASSERT(this->get_callback == NULL || this->get_callback != other->get_callback);
-        GS_ASSERT(this->set_callback == NULL || this->set_callback != other->set_callback);
+        GS_ASSERT(this->get_callback == NULL ||
+                  this->get_callback != other->get_callback);
+        GS_ASSERT(this->set_callback == NULL ||
+                  this->set_callback != other->set_callback);
         GS_ASSERT(this->value != other->value);
         GS_ASSERT(strcmp(this->name, other->name) != 0);
     }
 
     Attribute() :
         Property<AttributeType>(NULL_ATTRIBUTE),
-        value(NULL),
+        parent(NULL),
         group(NULL_ATTRIBUTE_GROUP),
         value_type(NULL_ATTRIBUTE_VALUE_TYPE),
         sync_type(NULL_SYNC_TYPE),
         get_callback(NULL), set_callback(NULL),
-        changed(false), sync_to(NULL_CLIENT)
+        changed(false), sync_to(NULL_CLIENT),
+        value(NULL)
     {
         memset(&this->use_limits, 0, sizeof(this->use_limits));
-        memset(&this->limiti, 0, sizeof(this->limiti));
-        memset(&this->limitf, 0, sizeof(this->limitf));
+        memset(&this->limit, 0, sizeof(this->limit));
+        this->limit.dest = NULL_ATTRIBUTE;
+        this->limit.lower = NULL_ATTRIBUTE;
+        this->limit.upper = NULL_ATTRIBUTE;
     }
 
     ~Attribute()
@@ -430,6 +467,26 @@ class Attribute: public Property<AttributeType>
     }
 
     private:
+        void* value;
+
+    int enforce_limit(int value);
+    float enforce_limit(float value);
+    void notify_dest();
+
+    void constraints_changed()
+    {
+        GS_ASSERT(this->limit.lower != NULL_ATTRIBUTE ||
+                  this->limit.upper != NULL_ATTRIBUTE);
+        if (this->value_type == ATTRIBUTE_VALUE_INT)
+            this->set(this->get_int());
+        else
+        if (this->value_type == ATTRIBUTE_VALUE_FLOAT)
+            this->set(this->get_float());
+        else
+        {
+            GS_ASSERT(false);
+        }
+    }
 
     void _add_set_callback(voidFunction set_callback)
     {
@@ -556,9 +613,112 @@ class Attributes: public Properties<Attribute, AttributeType>
 
     Attributes() :
         Properties<Attribute, AttributeType>(MAX_ATTRIBUTES)
-    {}
+    {
+        for (size_t i=0; i<this->max; i++)
+            this->properties[i].parent = this;
+    }
 };
 
+void Attribute::set_lower_limit(AttributeType lower)
+{
+    Attribute* a = this->parent->_get_any(lower);
+    IF_ASSERT(a == NULL) return;
+    GS_ASSERT(this->value_type == a->value_type);
+    GS_ASSERT(!this->use_limits.lower);
+    GS_ASSERT(this->limit.lower == NULL_ATTRIBUTE);
+    GS_ASSERT(a->limit.dest == NULL_ATTRIBUTE);
+    this->use_limits.lower = true;
+    this->limit.lower = lower;
+    a->limit.dest = this->type;
+}
+
+void Attribute::set_upper_limit(AttributeType upper)
+{
+    Attribute* a = this->parent->_get_any(upper);
+    IF_ASSERT(a == NULL) return;
+    GS_ASSERT(this->value_type == a->value_type);
+    GS_ASSERT(!this->use_limits.upper);
+    GS_ASSERT(this->limit.upper == NULL_ATTRIBUTE);
+    GS_ASSERT(a->limit.dest == NULL_ATTRIBUTE);
+    this->use_limits.upper = true;
+    this->limit.upper = upper;
+    a->limit.dest = this->type;
+}
+
+int Attribute::enforce_limit(int value)
+{
+    if (this->use_limits.lower)
+    {
+        int lower = 0;
+        if (this->limit.lower != NULL_ATTRIBUTE)
+        {
+            Attribute* a = this->parent->get(this->limit.lower);
+            GS_ASSERT(a != NULL);
+            if (a != NULL)
+                lower = a->get_int();
+        }
+        else
+            lower = this->limit.loweri;
+        value = GS_MAX(value, lower);
+    }
+    if (this->use_limits.upper)
+    {
+        int upper = 0;
+        if (this->limit.upper != NULL_ATTRIBUTE)
+        {
+            Attribute* a = this->parent->get(this->limit.upper);
+            GS_ASSERT(a != NULL);
+            if (a != NULL)
+                upper = a->get_int();
+        }
+        else
+            upper = this->limit.upperi;
+
+        value = GS_MIN(value, upper);
+    }
+    return value;
+}
+
+float Attribute::enforce_limit(float value)
+{
+    if (this->use_limits.lower)
+    {
+        float lower = 0;
+        if (this->limit.lower != NULL_ATTRIBUTE)
+        {
+            Attribute* a = this->parent->get(this->limit.lower);
+            GS_ASSERT(a != NULL);
+            if (a != NULL)
+                lower = a->get_float();
+        }
+        else
+            lower = this->limit.lowerf;
+        value = GS_MAX(value, lower);
+    }
+    if (this->use_limits.upper)
+    {
+        float upper = 0;
+        if (this->limit.upper != NULL_ATTRIBUTE)
+        {
+            Attribute* a = this->parent->get(this->limit.upper);
+            GS_ASSERT(a != NULL);
+            if (a != NULL)
+                upper = a->get_float();
+        }
+        else
+            upper = this->limit.upperf;
+        value = GS_MIN(value, upper);
+    }
+    return value;
+}
+
+void Attribute::notify_dest()
+{
+    if (this->limit.dest == NULL_ATTRIBUTE) return;
+    Attribute* dest = this->parent->get(this->limit.dest);
+    IF_ASSERT(dest == NULL) return;
+    dest->constraints_changed();
+}
 
 class AttributesManager
 {
@@ -984,6 +1144,35 @@ void set_upper_limit(AttributeType type, float upper)
     UNPACK_CURRENT_ATTRIBUTE
     a->set_upper_limit(upper);
 }
+
+void set_lower_limit(AttributeType type, AttributeType lower)
+{
+    UNPACK_CURRENT_ATTRIBUTE
+    a->set_lower_limit(lower);
+}
+
+void set_upper_limit(AttributeType type, AttributeType upper)
+{
+    UNPACK_CURRENT_ATTRIBUTE
+    a->set_upper_limit(upper);
+}
+
+void set_lower_limit(AttributeType type, const char* lower)
+{
+    UNPACK_CURRENT_ATTRIBUTE
+    Attribute* attr = current_attributes->get(lower);
+    IF_ASSERT(attr == NULL) return;
+    a->set_lower_limit(attr->type);
+}
+
+void set_upper_limit(AttributeType type, const char* upper)
+{
+    UNPACK_CURRENT_ATTRIBUTE
+    Attribute* attr = current_attributes->get(upper);
+    IF_ASSERT(attr == NULL) return;
+    a->set_upper_limit(attr->type);
+}
+
 
 #undef UNPACK_CURRENT_ATTRIBUTE
 

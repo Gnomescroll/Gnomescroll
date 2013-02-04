@@ -115,6 +115,10 @@ void set_lower_limit(AttributeType type, int lower);
 void set_upper_limit(AttributeType type, int upper);
 void set_lower_limit(AttributeType type, float lower);
 void set_upper_limit(AttributeType type, float upper);
+void set_lower_limit(AttributeType type, AttributeType lower);
+void set_upper_limit(AttributeType type, AttributeType upper);
+void set_lower_limit(AttributeType type, const char* lower);
+void set_upper_limit(AttributeType type, const char* upper);
 void done_loading();
 
 /* Network */
