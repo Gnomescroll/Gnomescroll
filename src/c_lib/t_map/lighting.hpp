@@ -579,9 +579,7 @@ void _envlight_update_core(int max_iterations)
         {
     /*
         ASSERT!!!
-        - If a cube is not solid, the max difference between min adn non-light source, non-solid blocks adjacent blocks
-        - is 2
-        - if difference is more than 2, then suggests removal of block
+        - determine invariants and stationary conditions
     */
             //solid non-light source
 
@@ -614,23 +612,14 @@ void _envlight_update_core(int max_iterations)
                 }
             }
 
-            //if blocks around are less than they should be, then problem
-        
-            /*
-                propagate inward:
-                if a cube is brigther than li+1, then set lighting to _max-1
-            */
-
             //if(_max != 0 || _min != 0 || li != 0)
             //    printf("test: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
-
 
             /*
                 If there is no light to proprogate inwards, check if light value is too high
                 - the light value of current cube can be maximum of one less than the brightest adjacent cube
 
                 min=0, max=2, li=2 //value is too high, set to max-1
-
 
                 set block to 0 at 298, 399, 58
                 test: x,y,z= 298 399 58 max= 14 min= 14 li= 0 
@@ -714,10 +703,6 @@ void _envlight_update_core(int max_iterations)
         index++;
         continue;
     }
-    
-
-    //if(index > 2000)
-    //    printf("index= %d \n", index);
 
     env_light_array_n = index;
 
