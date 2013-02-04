@@ -13,12 +13,12 @@ struct LightUpdateElement
 
 static const int va[3*6] =
 {
-    0,0,1,
-    0,0,-1,
     1,0,0,
     -1,0,0,
     0,1,0,
     0,-1,0
+    0,0,1,
+    0,0,-1,
 };
 
 /*
@@ -29,13 +29,13 @@ static const int va[3*6] =
 int get_skylight(int x, int y, int z)
 {
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
-        return 0;
+        return 15;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if(mc == NULL)
-        return 16;  //so it does not try to update
+        return 0;  //so it does not try to update
 
     return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
@@ -150,6 +150,46 @@ void _skylight_update_core(int max_iterations)
         struct MAP_ELEMENT e = mc->get_element(x,y,z);
         int li = (e.light & 0x0f);
 
+        if(fast_cube_properties[e.block].solid == true)
+        {
+            GS_ASSERT(false);
+            return;
+        }
+
+        struct MAP_ELEMENT ea[6];
+
+        int _min = 16;
+        int _max = 0;
+
+        for(int i=0; i<6; i++)
+        {
+            ea[i] = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+            if(fast_cube_properties[ea[i].block].solid == false || fast_cube_properties[ea[i].block].light_source == true)
+            {
+                int _li = (ea[i].light & 0x0f);
+                if( _li < _min) _min = _li;
+                if( _li > _max) _max = _li;
+            }
+        }
+
+        if(li != 15 && get_envlight(x,y,z+1) == 15)
+        {
+            set_skylight(x,y,z, 15);
+
+            if(fast_cube_properties[ea[j].block].solid == false)
+                _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
+
+        }
+                
+        }
+
+        if(li == 15 && z < 127)
+        {
+            if(get_envlight(x,y,z, ))
+        }
+
+
+
     /*
         ASSERT!!!
         - determine invariants and stationary conditions
@@ -169,21 +209,7 @@ void _skylight_update_core(int max_iterations)
             // 1> check to make sure light value is correct; not too high, or too low
             // 2> If light value in adjacent block is
 
-            struct MAP_ELEMENT ea[6];
 
-            int _min = 16;
-            int _max = 0;
-
-            for(int i=0; i<6; i++)
-            {
-                ea[i] = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
-                if(fast_cube_properties[ea[i].block].solid == false || fast_cube_properties[ea[i].block].light_source == true)
-                {
-                    int _li = (ea[i].light & 0x0f);
-                    if( _li < _min) _min = _li;
-                    if( _li > _max) _max = _li;
-                }
-            }
 
             if(li != _max -1 && !(_max == 0 && li ==0) )
             {

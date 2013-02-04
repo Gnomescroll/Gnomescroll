@@ -68,7 +68,7 @@ void set_fast(int x, int y, int z, CubeType cube_type)
 
 struct MAP_ELEMENT get_element(int x, int y, int z)
 {
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_MAP_ELEMENT;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return ABOVE_MAP_ELEMENT;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
