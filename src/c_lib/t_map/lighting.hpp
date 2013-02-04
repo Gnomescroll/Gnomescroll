@@ -19,6 +19,8 @@ void set_skylight(int x, int y, int z, int value);
 void update_skylight(int chunk_i, int chunk_j)
 {
     class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+    GS_ASSERT(mc != NULL);
+    
     struct MAP_ELEMENT e;
 
     //struct MAP_e e;
@@ -34,7 +36,8 @@ void update_skylight(int chunk_i, int chunk_j)
         // get highest block
         for (; k>=0; k--)
         {
-            e = mc->get_element(i,j,k);
+            //e = mc->get_element(i,j,k);
+            e = get_element(x,y,k);
             if(e.block != 0)    //iterate until we hit top block
                 break;
 
@@ -62,7 +65,8 @@ void update_skylight(int chunk_i, int chunk_j)
     
         for (; k>=0; k--)
         {
-            e = mc->get_element(i,j,k);
+            //e = mc->get_element(i,j,k);
+            e = get_element(x,y,k);
             if(e.block != 0)
                 continue;
             set_skylight(x,y,k, 0);
