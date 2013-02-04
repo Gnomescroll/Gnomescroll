@@ -301,17 +301,8 @@ static void draw_grabbed_icon()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // render durability
-    if (hand_metadata.durability != NULL_DURABILITY)
-    {
-        int max_durability = Item::get_max_durability(hand_metadata.type);
-        float ratio = (float)hand_metadata.durability / (float)max_durability;
-
-        int mh = w / 8; // meter height
-        glColor4ub(255, 0, 0, 255);               // red
-        Hud::meter_graphic.draw(x, y, w, mh, 1.0f); // full slot width background
-        Hud::set_color_from_ratio(ratio, 255);
-        Hud::meter_graphic.draw(x, y, w, mh, ratio);
-    }
+    const unsigned char alpha = 128;
+    draw_durability_meter(x, y, w, alpha, hand_metadata);
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_BLEND);
@@ -562,7 +553,7 @@ void draw_durability_meter(float x, float y, int slot_size, unsigned char alpha,
     int mh = slot_size / 8; // meter height
     glColor4ub(255, 0, 0, alpha);               // red
     Hud::meter_graphic.draw(x, y, slot_size, mh, 1.0f); // full slot width background
-    Hud::set_color_from_ratio(ratio, 255);
+    Hud::set_color_from_ratio(ratio, alpha);
     Hud::meter_graphic.draw(x, y, slot_size, mh, ratio);
 }
 

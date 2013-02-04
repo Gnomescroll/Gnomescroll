@@ -195,7 +195,7 @@ void draw_reference_center()
     draw_rect(Color(10, 255, 255), x, y, w, w);
 }
 
-void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage)
+void set_color_from_ratio(float ratio, unsigned char alpha, bool invert_color_for_damage)
 {
     // old durability color jumps
 
@@ -205,9 +205,9 @@ void set_color_from_ratio(float ratio, float alpha, bool invert_color_for_damage
     //glColor4ub(247, 14, 0, alpha);   // red
 
     float small_to_big = ratio * 2.0f;
-    Color red    = Color(255,   0, 0);
-    Color green  = Color(0,   255, 0);
-    Color yellow = Color(255, 190, 0);
+    Color red    = Color(255,   0, 0, alpha);
+    Color green  = Color(0,   255, 0, alpha);
+    Color yellow = Color(255, 190, 0, alpha);
 
     Color full = green;
     Color empty = red;

@@ -91,7 +91,11 @@ class HUD
 
 // meter
 MeterGraphic meter_graphic;
-void set_color_from_ratio(float ratio, float alpha = 175, bool invert_color_for_damage = false);
+void set_color_from_ratio(float ratio, unsigned char alpha, bool invert_color_for_damage);
+void set_color_from_ratio(float ratio, unsigned char alpha)
+{
+    set_color_from_ratio(ratio, alpha, false);
+}
 bool FAILED_merge_of_cntainr_draws(
     int slot_size,
     ItemContainerID container_id,
