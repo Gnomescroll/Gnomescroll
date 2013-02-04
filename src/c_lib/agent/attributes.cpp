@@ -9,9 +9,20 @@ namespace Agents
 
 // forward decl
 template <typename Type> static void attribute_def(const char* name, Type value);
-template <typename Type> static void set_limits(Type lower, Type upper);
-template <typename Type> static void set_lower_limit(Type lower);
-template <typename Type> static void set_upper_limit(Type upper);
+static void set_limits(int lower, int upper);
+static void set_limits(float lower, float upper);
+static void set_limits(const char* lower, int upper);
+static void set_limits(const char* lower, float upper);
+static void set_limits(int lower, const char* upper);
+static void set_limits(float lower, const char* upper);
+static void set_limits(const char* lower, const char* upper);
+static void set_limits(const char* lower, const char* upper);
+static void set_lower_limit(int lower);
+static void set_lower_limit(float lower);
+static void set_lower_limit(const char* lower);
+static void set_upper_limit(int upper);
+static void set_upper_limit(float upper);
+static void set_upper_limit(const char* upper);
 
 /*******************
  * Main Registration
@@ -19,12 +30,11 @@ template <typename Type> static void set_upper_limit(Type upper);
 
 static void _register_attributes()
 {
-    // TODO -- some way to automatically bind set_callback to update health limit
     attribute_def("max_health", 100);
-    set_limits(10, 125);
+    set_lower_limit(0);
 
     attribute_def("health", 100);
-    set_limits(0, 140);
+    set_limits(0, "max_health");
 }
 
 /*******************
@@ -127,24 +137,44 @@ static void attribute_def(const char* name, Type value)
     GS_ASSERT(attr_type != NULL_ATTRIBUTE);
 }
 
-template <typename Type>
-static void set_lower_limit(Type lower)
-{
-    Attributes::set_lower_limit(attr_type, lower);
-}
+#define SET_LIMITS_BODY \
+    { set_lower_limit(lower); \
+      set_upper_limit(upper); }\
 
-template <typename Type>
-static void set_upper_limit(Type upper)
-{
-    Attributes::set_upper_limit(attr_type, upper);
-}
+#define SET_LIMITS(TYPE) \
+    static void set_limits(TYPE lower, TYPE upper) SET_LIMITS_BODY \
+    static void set_limits(TYPE lower, const char* upper) SET_LIMITS_BODY  \
+    static void set_limits(const char* lower, TYPE upper) SET_LIMITS_BODY
 
-template <typename Type>
-static void set_limits(Type lower, Type upper)
-{
-    set_lower_limit(lower);
-    set_upper_limit(upper);
-}
+#define SET_LOWER_LIMIT_BODY \
+    { Attributes::set_lower_limit(attr_type, lower); }
+
+#define SET_LOWER_LIMIT(TYPE) \
+    static void set_lower_limit(TYPE lower) SET_LOWER_LIMIT_BODY
+
+#define SET_UPPER_LIMIT_BODY \
+    { Attributes::set_upper_limit(attr_type, upper); }
+
+#define SET_UPPER_LIMIT(TYPE) \
+    static void set_upper_limit(TYPE upper) SET_UPPER_LIMIT_BODY
+
+SET_LIMITS(int)
+SET_LIMITS(float)
+static void set_limits(const char* lower, const char* upper) SET_LIMITS_BODY
+
+SET_LOWER_LIMIT(int)
+SET_LOWER_LIMIT(float)
+SET_LOWER_LIMIT(const char*)
+SET_UPPER_LIMIT(int)
+SET_UPPER_LIMIT(float)
+SET_UPPER_LIMIT(const char*)
+
+#undef SET_LIMITS_BODY
+#undef SET_LIMITS
+#undef SET_LOWER_LIMIT_BODY
+#undef SET_LOWER_LIMIT
+#undef SET_UPPER_LIMIT_BODY
+#undef SET_UPPER_LIMIT
 
 static void test_registration()
 {
@@ -185,7 +215,7 @@ void register_attributes()
     }
 
     #if !PRODUCTION
-    test_registration();
+    //test_registration();
     #endif
 }
 
@@ -552,11 +582,9 @@ void teardown_attributes()
 void reset_attributes(AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
-    memset(&modifier_sums[agent_id], 0, MAX_ATTRIBUTES*sizeof(struct ModifierSum));
     agent_modifiers[agent_id].flush();
     Attributes::copy_from(agent_base_stats[agent_id], base_stats);
     Attributes::copy_from(agent_stats[agent_id], agent_base_stats[agent_id]);
 }
-
 
 }   // Agents
