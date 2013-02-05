@@ -25,28 +25,25 @@ void send_attributes_to_client(ClientID client_id);
 #endif
 
 // API
-#define SET_ATTRIBUTE_HEADER(KEY, TYPE) \
-    bool set_attribute(AgentID agent_id, KEY key, TYPE value);
+bool set_attribute(AgentID agent_id, AttributeType key, int value);
+bool set_attribute(AgentID agent_id, AttributeType key, float value);
+bool set_attribute(AgentID agent_id, AttributeType key, const char* value);
+bool set_attribute(AgentID agent_id, const char* key, int value);
+bool set_attribute(AgentID agent_id, const char* key, float value);
+bool set_attribute(AgentID agent_id, const char* key, const char* value);
 
-#define GET_ATTRIBUTE_HEADER(KEY, TYPE, NAME) \
-    TYPE get_attribute_##NAME(AgentID agent_id, KEY key); \
-    TYPE get_base_attribute_##NAME(KEY key);
+int get_attribute_int(AgentID agent_id, AttributeType key);
+float get_attribute_float(AgentID agent_id, AttributeType key);
+const char* get_attribute_string(AgentID agent_id, AttributeType key);
+int get_attribute_int(AgentID agent_id, const char* key);
+float get_attribute_float(AgentID agent_id, const char* key);
+const char* get_attribute_string(AgentID agent_id, const char* key);
 
-SET_ATTRIBUTE_HEADER(AttributeType, int);
-SET_ATTRIBUTE_HEADER(AttributeType, float);
-SET_ATTRIBUTE_HEADER(AttributeType, const char*);
-SET_ATTRIBUTE_HEADER(const char*, int);
-SET_ATTRIBUTE_HEADER(const char*, float);
-SET_ATTRIBUTE_HEADER(const char*, const char*);
-
-GET_ATTRIBUTE_HEADER(AttributeType, int, int);
-GET_ATTRIBUTE_HEADER(AttributeType, float, float);
-GET_ATTRIBUTE_HEADER(AttributeType, const char*, string);
-GET_ATTRIBUTE_HEADER(const char*, int, int);
-GET_ATTRIBUTE_HEADER(const char*, float, float);
-GET_ATTRIBUTE_HEADER(const char*, const char*, string);
-
-#undef SET_ATTRIBUTE_HEADER
-#undef GET_ATTRIBUTE_HEADER
+int get_base_attribute_int(AttributeType key);
+float get_base_attribute_float(AttributeType key);
+const char* get_base_attribute_string(AttributeType key);
+int get_base_attribute_int(const char* key);
+float get_base_attribute_float(const char* key);
+const char* get_base_attribute_string(const char* key);
 
 }   // Agents
