@@ -373,8 +373,6 @@ bool FAILED_merge_of_cntainr_draws(
 
 /* Display logic */
 
-static int largest_total_health_seen = 0;
-
 void draw_hud_textures()
 {
     // meters
@@ -384,21 +382,18 @@ void draw_hud_textures()
 
     // jetpack
     glColor4ub(255,255,255,115); // white, more than half translucent
-    meter_graphic.draw(0,0, w,h, (float)ClientState::player_agent.jetpack.fuel / (float)Agents::JETPACK_FUEL_MAX, MeterGraphic::METANCH_RIGHT);
+    float ratio = float(ClientState::player_agent.jetpack.fuel) / float(Agents::JETPACK_FUEL_MAX);
+    meter_graphic.draw(0,0, w,h, ratio, MeterGraphic::METANCH_RIGHT);
 
     // health/energy
     Agents::Agent* a = ClientState::player_agent.you();
     if (a != NULL)
     {
-        float extra_from_tanks = HudContainer::energy_tanks->count() * AGENT_HEALTH;
-        float max  = a->status.health_max + extra_from_tanks;
-        if (largest_total_health_seen < max)
-            largest_total_health_seen = max;
-        float curr = largest_total_health_seen - a->status.health - extra_from_tanks; // inverted to represent how much damage
-
-        set_color_from_ratio(curr / largest_total_health_seen, 175, true);
-        meter_graphic.draw(0,       _yresf-h, _xresf/2,h, curr / largest_total_health_seen, MeterGraphic::METANCH_LEFT,  true);
-        meter_graphic.draw(_xresf/2,_yresf-h, _xresf/2,h, curr / largest_total_health_seen, MeterGraphic::METANCH_RIGHT/*, true*/);
+        const unsigned char alpha = 175;
+        float ratio = float(a->status.health) / float(a->status.health_max);
+        set_color_from_ratio(ratio, alpha, true);
+        meter_graphic.draw(0, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_LEFT, true);
+        meter_graphic.draw(_xresf/2, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_RIGHT, false);
     }
 
     if (!hud_draw_settings.draw) return;

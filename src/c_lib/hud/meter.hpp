@@ -36,7 +36,7 @@ class MeterGraphic
         this->draw(x,y,w,h,ratio, METANCH_LEFT);
     }
 
-    void draw(int x, int y, int w, int h, float ratio, MeterAnchor anchor, bool is_dmg_meter = false)
+    void draw(int x, int y, int w, int h, float ratio, MeterAnchor anchor, bool is_dmg_meter=false)
     {
         float s_x = x;
         float s_y = y;
@@ -60,23 +60,22 @@ class MeterGraphic
 
         draw_bound_texture(s_x, s_y, dyn_w, s_h);
 
-		
-		if (is_dmg_meter) // do particle stuff
-		{
-			// spawn for every pixel of the difference between current and previous meter
-			for (int i = s_x + prev_w; i < s_x + dyn_w; i++)
-			{
-				//spawn_quadticle(
-				//  i,
-				//  s_y,
-				//  randrange(-4, 4), // x_speed
-				//  randrange(-7, -31),
-				//  s_y - s_h - 240);
-			}
-			prev_w = dyn_w;
+        if (is_dmg_meter) // do particle stuff
+        {
+            // spawn for every pixel of the difference between current and previous meter
+            for (int i = s_x + prev_w; i < s_x + dyn_w; i++)
+            {
+                //spawn_quadticle(
+                //  i,
+                //  s_y,
+                //  randrange(-4, 4), // x_speed
+                //  randrange(-7, -31),
+                //  s_y - s_h - 240);
+            }
+            prev_w = dyn_w;
 
-	        update_and_draw_alive_particles(s_h);
-		}
+            update_and_draw_alive_particles(s_h);
+        }
     }
 
     void update_and_draw_alive_particles(int h)
@@ -101,7 +100,7 @@ class MeterGraphic
                     quadticles[i].y, 1, h);
             }
         }
-	}
+    }
 
     bool spawn_quadticle(int x, int y, int x_speed, int y_speed, int y_dest)
     {
