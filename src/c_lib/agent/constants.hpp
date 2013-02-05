@@ -33,6 +33,7 @@ typedef enum
     DEATH_SLIME,
     DEATH_KILLME,
     DEATH_PLASMAGEN,
+    DEATH_STARVATION,
 } AgentDeathMethod;
 
 enum AGENT_BODY_PARTS
@@ -60,6 +61,17 @@ const float AGENT_SPEED_CROUCHED = 0.9f;
 const float AGENT_JUMP_POWER = 0.25f;
 
 const float AGENT_BOX_RADIUS = 0.38f;
+
+//const int HUNGER_INCREASE_RATE = ONE_MINUTE * 2;
+const int HUNGER_INCREASE_RATE = ONE_SECOND * 5;
+const int HUNGER_REGEN_THRESHOLD = 2;
+//const int HUNGER_REGEN_RATE = ONE_SECOND * 30;
+const int HUNGER_REGEN_RATE = ONE_SECOND;
+const int HUNGER_REGEN_AMOUNT = 10;
+const int HUNGER_DAMAGE_THRESHOLD = 8;
+//const int HUNGER_DAMAGE_RATE = ONE_MINUTE;
+const int HUNGER_DAMAGE_RATE = ONE_SECOND;
+const int HUNGER_DAMAGE_AMOUNT = 10;
 
 typedef enum
 {

@@ -43,6 +43,9 @@ static void _register_attributes()
     attribute_def("health", 100);
     set_limits(0, "max_health");
     add_set_callback(&health_changed);
+
+    attribute_def("hunger", 0);
+    set_limits(0, 10);
 }
 
 /*******************

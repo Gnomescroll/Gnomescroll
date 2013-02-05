@@ -790,9 +790,9 @@ void agent_born(AgentID agent_id)
     if (energy_tanks != NULL)
     {
         #if PRODUCTION
-        int max_energy_tanks = 1;
+        int max_energy_tanks = 0;
         #else
-        int max_energy_tanks = energy_tanks->slot_max - 1;
+        int max_energy_tanks = 1;
         #endif
         int n_energy_tanks = energy_tanks->slot_count;
         for (int i=0; i<max_energy_tanks-n_energy_tanks; i++)

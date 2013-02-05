@@ -24,6 +24,9 @@ namespace Agents
 const int VOXEL_MODEL_RESTORE_WAIT = 30 * 10; // ~ once every 10 seconds
 
 AgentStatus::AgentStatus(Agent* a) :
+    hunger_tick(0),
+    hunger_regen_tick(0),
+    hunger_damage_tick(0),
     should_die(false),
     dead(true),
     respawn_countdown(RESPAWN_TICKS),
@@ -354,13 +357,52 @@ void AgentStatus::send_color(ClientID client_id)
     msg.sendToClient(client_id);
 }
 
-void AgentStatus::heal(unsigned int amt)
+int AgentStatus::heal(unsigned int amt)
 {
-    GS_ASSERT(amt > 0);
-    if (this->dead || this->should_die) return;
+    if (this->dead || this->should_die) return 0;
     int health = get_attribute_int(this->a->id, "health");
     health += amt;
     set_attribute(this->a->id, "health", health);
+    return get_attribute_int(this->a->id, "health");
+}
+
+int AgentStatus::hurt(unsigned int amt)
+{
+    if (this->dead || this->should_die) return 0;
+    int health = get_attribute_int(this->a->id, "health");
+    health -= amt;
+    if (health <= 0) this->should_die = true;
+    set_attribute(this->a->id, "health", health);
+    return get_attribute_int(this->a->id, "health");
+}
+
+void AgentStatus::tick_hunger()
+{
+    if (this->dead || this->should_die) return;
+    int hunger = get_attribute_int(this->a->id, "hunger");
+    if (hunger <= HUNGER_REGEN_THRESHOLD)
+    {
+        if (++this->hunger_regen_tick % HUNGER_REGEN_RATE == 0)
+            this->heal(HUNGER_REGEN_AMOUNT);
+    }
+    else
+        this->hunger_regen_tick = 0;
+
+    if (hunger >= HUNGER_DAMAGE_THRESHOLD)
+    {
+        if (++this->hunger_damage_tick % HUNGER_DAMAGE_RATE == 0)
+        {
+            this->hurt(HUNGER_DAMAGE_AMOUNT);
+            if (this->should_die)
+                this->die(this->a->id, OBJECT_AGENT, DEATH_STARVATION);
+        }
+    }
+    else
+        this->hunger_damage_tick = 0;
+
+    if (++this->hunger_tick % HUNGER_INCREASE_RATE) return;
+    hunger += 1;
+    set_attribute(this->a->id, "hunger", hunger);
 }
 
 int AgentStatus::apply_damage(int dmg)
@@ -380,10 +422,7 @@ int AgentStatus::apply_damage(int dmg)
     if (container != NULL)
         remaining_dmg = container->consume_energy_tanks(dmg);
 
-    health -= remaining_dmg;
-    if (health <= 0) this->should_die = true;
-    set_attribute(this->a->id, "health", health);
-    return health;
+    return this->hurt(remaining_dmg);
 }
 
 int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id)
@@ -410,7 +449,7 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
         death_method = DEATH_HEADSHOT;
 
     if (this->should_die)
-        die(inflictor_id, inflictor_type, death_method);
+        this->die(inflictor_id, inflictor_type, death_method);
 
     return health;
 }
@@ -484,6 +523,15 @@ void AgentStatus::set_fresh_state()
     a->spawn_state();
     this->lifetime = 0;
     this->restore_health();
+    this->hunger_damage_tick = 0;
+    this->hunger_regen_tick = 0;
+    this->hunger_tick = 0;
+
+    // TODO -- attributes should be labelled as stateful or not
+        // Stateful etc attributes are restored to default on birth;
+    int health = get_attribute_int(this->a->id, "max_health");
+    set_attribute(this->a->id, "health", health);
+    set_attribute(this->a->id, "hunger", 0);
 
     // revive
     this->dead = false;

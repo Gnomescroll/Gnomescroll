@@ -300,6 +300,11 @@ inline void agent_conflict_notification_StoC::handle()
                 sprintf(msg, "%s's skin melted off.", a_name);
             break;
 
+        case DEATH_STARVATION:
+            if (a != NULL && a->is_you())
+                strcpy(msg, "You starved to death.");
+            else
+                sprintf(msg, "%s collapsed.", a_name);
 
         default: break;
     }

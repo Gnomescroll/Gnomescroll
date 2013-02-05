@@ -17,6 +17,11 @@ namespace Agents
 // In client side, ignore properties such as health
 class AgentStatus
 {
+    private:
+        int hunger_tick;
+        int hunger_regen_tick;
+        int hunger_damage_tick;
+
     public:
 
         bool should_die;
@@ -67,7 +72,10 @@ class AgentStatus
     void set_fresh_state();
 
     void restore_health();
-    void heal(unsigned int amt);
+    int heal(unsigned int amt);
+    int hurt(unsigned int amt);
+
+    // use apply_damage for when getting attacked (energy shields will be accounted for)
     int apply_damage(int dmg);
     int apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id=-1);
     int apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
@@ -86,6 +94,8 @@ class AgentStatus
 
     void send_badges(ClientID client_id);
     void broadcast_badges();
+
+    void tick_hunger();
     #endif
 
     explicit AgentStatus(class Agent* a);

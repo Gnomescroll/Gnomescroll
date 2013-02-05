@@ -96,7 +96,7 @@ void init_world()
     {
         int height = 27;
         map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, map_dim.x, map_dim.y,height, t_map::get_cube_type("regolith") );
+        t_gen::set_region(0,0,1, map_dim.x, map_dim.y,height, t_map::get_cube_type("regolith"));
         //t_gen::excavate();
         t_gen::add_terrain_features();  // this needs like about 27 heighth to the ground or *CRASH*
         t_gen::generate_ruins();
@@ -107,7 +107,7 @@ void init_world()
     {
         int floor_h = 10; // height
         map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, map_dim.x, map_dim.y, floor_h, t_map::get_cube_type("regolith") );
+        t_gen::set_region(0,0,1, map_dim.x, map_dim.y, floor_h, t_map::get_cube_type("regolith"));
         t_gen::make_art_gallery(floor_h);
     }
 
@@ -204,12 +204,16 @@ void tick()
         t_plant::tick();
     }
 
-#if 0
     // Meteors
-    const int meteor_fall_rate = 30 * 60 * 60 * 16; // 16hrs
-    const int meteor_shower_rate = 30 * 60 * 60 * 4; // 4hrs
+    const int meteor_fall_rate = ONE_HOUR * 16; // 16hrs
+    const int meteor_shower_rate = ONE_HOUR * 4; // 4hrs
+    #if PRODUCTION
     static int next_meteor_fall = 0;
     static int next_meteor_shower = 0;
+    #else
+    static int next_meteor_fall = ONE_MINUTE * 10;
+    static int next_meteor_shower = ONE_MINUTE * 10;
+    #endif
 
     if (counter >= next_meteor_fall)
     {
@@ -221,7 +225,7 @@ void tick()
         t_gen::meteor_shower();
         next_meteor_shower += randrange(meteor_shower_rate/2, meteor_shower_rate);
     }
-#endif
+
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);
@@ -238,6 +242,7 @@ void tick()
 
     Auth::update(); // do it here because i need constant timer
 
+    Agents::agent_list->tick_hunger();
     Agents::apply_agent_modifiers();
 
     counter++;

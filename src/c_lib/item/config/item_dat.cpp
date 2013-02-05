@@ -349,20 +349,20 @@ void load_item_dat()
     sprite_def(i1, 1,6);
     s->max_stack_size = 1;
 
+    item_def(IG_EQUIPMENT, "copper_helmet");
+    sprite_def(i1, 5,5);
+    s->equipment_type = EQUIPMENT_TYPE_HEAD;
+    set_modifier_amount("max_health", 10);
+
     item_def(IG_EQUIPMENT, "iron_helmet");
     sprite_def(i1, 5,3);
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
-    set_modifier_amount("max_health", 50);
+    set_modifier_amount("max_health", 20);
 
     item_def(IG_EQUIPMENT, "gallium_helmet");
     sprite_def(i1, 5,4);
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
-    set_modifier_amount("max_health", 50);
-
-    item_def(IG_EQUIPMENT, "copper_helmet");
-    sprite_def(i1, 5,5);
-    s->equipment_type = EQUIPMENT_TYPE_HEAD;
-    set_modifier_amount("max_health", 50);
+    set_modifier_amount("max_health", 35);
 
     item_def(IG_EQUIPMENT, "iridium_helmet");
     sprite_def(i1, 5,6);
@@ -392,7 +392,7 @@ void load_item_dat()
     item_def(IG_CONSUMABLE, "acadia_fruit");
     sprite_def(p0, 1,2);
     s->max_stack_size = 16;
-    set_modifier_amount("health", 20);
+    set_modifier_amount("hunger", -2);
     set_modifier_instant();
 
     item_def(IG_MECH_PLACER, "blob_seed");
@@ -422,7 +422,6 @@ void load_item_dat()
     #else
     s->recharge_rate = ONE_SECOND * 5;
     #endif
-
 
     item_def(IG_PLANT_PLACER, "placer_plant_example");
     sprite_def(i1, 7,6);

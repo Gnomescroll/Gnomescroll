@@ -62,6 +62,16 @@ void AgentList::send_to_client(ClientID client_id)
             Badges::send_badge(agent->status.badges[j], agent->id, client_id);
     }
 }
+
+void AgentList::tick_hunger()
+{
+    for (size_t i=0; i<this->max; i++)
+    {
+        if (this->objects[i].id == this->null_id) continue;
+        Agent* agent = &this->objects[i];
+        agent->status.tick_hunger();
+    }
+}
 #endif
 
 #if DC_CLIENT
@@ -343,19 +353,6 @@ void AgentList::objects_in_cone(float x, float y, float z, float vx, float vy, f
     }
 
     this->n_filtered = num;
-}
-
-int AgentList::get_ids()
-{
-    int j=0;
-    for (size_t i=0; i<this->max;i++)
-    {
-        if (this->objects[i].id == this->null_id) continue;
-        if (objects[i].id == 0) continue;// skip 0th agent
-        ids_in_use[j] = objects[i].id;
-        j++;
-    }
-    return j;
 }
 
 Agent* nearest_agent_in_range(const Vec3 position, const float radius)
