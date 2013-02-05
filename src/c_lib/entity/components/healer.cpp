@@ -5,6 +5,7 @@ dont_include_this_file_in_server
 #endif
 
 #include <agent/_interface.hpp>
+#include <agent/attributes.hpp>
 
 namespace Components
 {
@@ -40,7 +41,9 @@ void HealerComponent::heal_agents_in_range()
         Agents::Agent* a = &agent_list->objects[i];
         if (a->id == agent_list->null_id) continue;
         if (a->status.dead) continue;
-        if (a->status.health == AGENT_HEALTH) continue;
+        int health = Agents::get_attribute_int(a->id, "health");
+        int max_health = Agents::get_attribute_int(a->id, "max_health");
+        if (health >= max_health) continue;
         if (vec3_distance_squared(a->get_position(), pos) > rad2) continue;
         a->status.restore_health();
     }

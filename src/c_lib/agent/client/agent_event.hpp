@@ -26,11 +26,8 @@ class AgentEvent
         AgentVoxStatus vox_status;
         bool model_was_changed;
     public:
-
         bool color_changed;
-
         class Animations::MiningLaserEmitter mining_laser_emitter;
-
         class Particle::BillboardTextHud bb;
         void update_hud_name();
         void draw_badges();

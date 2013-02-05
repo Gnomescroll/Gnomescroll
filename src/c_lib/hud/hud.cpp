@@ -1,18 +1,15 @@
 #include "hud.hpp"
 
 #include <float.h>
-
 #include <hud/reticle.hpp>
 #include <hud/cube_selector.hpp>
 #include <hud/font.hpp>
 #include <input/handlers.hpp>
 #include <options/options.hpp>
 #include <common/profiling/frame_graph.hpp>
-
 #include <item/_interface.hpp>
 #include <item/toolbelt/_interface.hpp>
 #include <t_map/_interface.hpp>
-
 #include <hud/_interface.hpp>
 
 /* Configuration */
@@ -68,7 +65,7 @@ static struct HudDrawSettings
     bool prompt;
     bool diagnostics;
     bool vbo_debug;
-} hud_draw_settings;
+}   hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
 {   // sanitize
@@ -121,8 +118,8 @@ void update_hud_draw_settings()
     hud_draw_settings.vbo_debug = input_state.vbo_debug;
 
     // update chat rendering
-    if (hud != NULL && hud->inited
-     && hud->chat != NULL && hud->chat->inited)
+    if (hud != NULL && hud->inited &&
+        hud->chat != NULL && hud->chat->inited)
     {
         HudText::Text *t = hud->chat->input;
         if (t != NULL)
@@ -143,45 +140,40 @@ void update_hud_draw_settings()
     hud_draw_settings.confirm_quit = input_state.confirm_quit;
     hud_draw_settings.prompt = true;
 
-    GS_ASSERT_LIMIT(hud != NULL, 1);
-    if (hud == NULL)
-        hud_draw_settings.prompt = (hud->prompt->text != NULL && hud->prompt->text[0] != '\0');
+    IF_ASSERT(hud == NULL)
+        hud_draw_settings.prompt = (hud->prompt->text != NULL &&
+                                    hud->prompt->text[0] != '\0');
 }
 
 void set_prompt(const char* msg)
 {   // Set prompt text for flashy message
-    GS_ASSERT(hud != NULL);
-    if (hud == NULL) return;
+    IF_ASSERT(hud == NULL) return;
     hud->prompt->set_text(msg);
 }
 
 void clear_prompt(const char* msg)
 {
-    GS_ASSERT(hud != NULL);
-    if (hud == NULL) return;
+    IF_ASSERT(hud == NULL) return;
     if (strcmp(msg, hud->prompt->text) == 0)
         hud->prompt->set_text("");
 }
 
 void set_awesomium_message(const char* msg)
 {
-    GS_ASSERT(hud != NULL);
-    if (hud == NULL) return;
+    IF_ASSERT(hud == NULL) return;
     hud->awesomium_message->set_text(msg);
 }
 
 void clear_awesomium_message(const char* msg)
 {   // clears if msg matches current text
-    GS_ASSERT(hud != NULL);
-    if (hud == NULL) return;
+    IF_ASSERT(hud == NULL) return;
     if (strcmp(msg, hud->awesomium_message->text) == 0)
         clear_awesomium_message();
 }
 
 void clear_awesomium_message()
 {
-    GS_ASSERT(hud != NULL);
-    if (hud == NULL) return;
+    IF_ASSERT(hud == NULL) return;
     hud->awesomium_message->set_text("");
 }
 
@@ -292,7 +284,7 @@ bool FAILED_merge_of_cntainr_draws(
         if (durability != NULL_DURABILITY)
         {
             int max_durability = Item::get_max_durability(slot_metadata[slot].type);
-            ratio = ((float)durability)/((float)max_durability);
+            ratio = float(durability)/float(max_durability);
             Hud::set_color_from_ratio(ratio, alpha_bkgd);
             Hud::meter_graphic.draw(x, y, w, w, ratio);
         }
@@ -390,7 +382,9 @@ void draw_hud_textures()
     if (a != NULL)
     {
         const unsigned char alpha = 175;
-        float ratio = float(a->status.health_max - a->status.health) / float(a->status.health_max);
+        int max_health = Agents::get_attribute_int(a->id, "max_health");
+        int health = Agents::get_attribute_int(a->id, "health");
+        float ratio = float(max_health - health) / float(max_health);
         set_color_from_ratio(ratio, alpha, true);
         meter_graphic.draw(0, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_LEFT, true);
         meter_graphic.draw(_xresf/2, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_RIGHT, false);
@@ -436,8 +430,7 @@ void draw_awesomium_message()
     HudFont::set_properties(large_text_size);
     set_texture();
 
-    GS_ASSERT(hud != NULL && hud->awesomium_message != NULL);
-    if (hud == NULL || hud->awesomium_message == NULL) return;
+    IF_ASSERT(hud == NULL || hud->awesomium_message == NULL) return;
     hud->awesomium_message->draw_centered();
 
     end_font_draw();
@@ -554,17 +547,15 @@ void draw_hud_text()
             Agents::Agent* a = ClientState::player_agent.you();
             if (a != NULL)
             {
-                int health = a->status.health;
-                health = (health > AGENT_HEALTH) ? AGENT_HEALTH : health;
-                health = (health < 0) ? 0 : health;
+                int max_health = Agents::get_attribute_int(a->id, "max_health");
+                int health = Agents::get_attribute_int(a->id, "health");
                 hud->health->update_formatted_string(1, health);
-
                 int len = (int)strlen(health_color_string);
                 int n = 0;
-                if (health >= AGENT_HEALTH)
+                if (health >= max_health)
                     n = len;
                 else if (health > 0)    // force to 0 in case of float point error
-                    n = (((float)health/(float)AGENT_HEALTH)*(float)len);
+                    n = (float(health)/float(max_health))*float(len);
                 if (health > 0 && n == 0) n = 1;
 
                 // update green portion of health text
@@ -645,21 +636,16 @@ void draw_hud_text()
 
 void HUD::init()
 {
-    if (this->inited) return;
-
-    init_errors();
-
-    if (HudFont::font == NULL)
-        printf("WARNING: initing HUD before HudFont\n");
-
-    int line_height = HudFont::font->data.line_height;
-
+    IF_ASSERT(this->inited) return;
+    IF_ASSERT(HudFont::font == NULL) return;
     using HudText::text_list;
     using HudText::Text;
 
+    init_errors();
+    int line_height = HudFont::font->data.line_height;
+
     help = text_list->create();
-    GS_ASSERT(help != NULL);
-    if (help == NULL) return;
+    IF_ASSERT(help == NULL) return;
     help->set_text(help_text);
     help->shadowed = true;
     int help_width = help->get_width();
@@ -667,47 +653,41 @@ void HUD::init()
     help->set_position(_xres - help_width - 5, _yresf - 5);
 
     dead = text_list->create();
-    GS_ASSERT(dead != NULL);
-    if (dead == NULL) return;
+    IF_ASSERT(dead == NULL) return;
     dead->set_text(dead_text);
     dead->set_color(Color(Color(200,4,3,255)));
     dead->set_position(_xresf/2, _yresf/2);
 
     fps = text_list->create();
-    GS_ASSERT(fps != NULL);
-    if (fps == NULL) return;
+    IF_ASSERT(fps == NULL) return;
     fps->set_format(fps_format);
     fps->set_format_extra_length(6 - 5);
     fps->set_color(Color(200,4,3,255));
     fps->set_position(3, line_height+3);
 
     ping = text_list->create();
-    GS_ASSERT(ping != NULL);
-    if (ping == NULL) return;
+    IF_ASSERT(ping == NULL) return;
     ping->set_format(ping_format);
     ping->set_format_extra_length(3 - 2);
     ping->set_color(Color(200,4,3,255));
     ping->set_position(3, (line_height*2)+3);
 
     reliable_ping = text_list->create();
-    GS_ASSERT(reliable_ping != NULL);
-    if (reliable_ping == NULL) return;
+    IF_ASSERT(reliable_ping == NULL) return;
     reliable_ping->set_format(ping_format);
     reliable_ping->set_format_extra_length(3 - 2);
     reliable_ping->set_color(Color(200,4,3,255));
     reliable_ping->set_position(3, (line_height*3)+3);
 
     location = text_list->create();
-    GS_ASSERT(location != NULL);
-    if (location == NULL) return;
+    IF_ASSERT(location == NULL) return;
     location->set_format(location_format);
     location->set_format_extra_length((40 + 20 + 1 - 2) * 3);
     location->set_color(Color(200,4,3,255));
     location->set_position(3, _yresf-3);
 
     look = text_list->create();
-    GS_ASSERT(look != NULL);
-    if (look == NULL) return;
+    IF_ASSERT(look == NULL) return;
     look->set_format(location_format);
     look->set_format_extra_length((40 + 20 + 1 - 2) * 3);
     look->set_color(Color(200,4,3,255));
@@ -715,10 +695,11 @@ void HUD::init()
 
     health = new AnimatedText;
 
+    int max_health = Agents::get_base_attribute_int("max_health");
     health->set_format(health_format);
-    health->set_format_extra_length(count_digits(AGENT_HEALTH) - 4);
-    health->update_formatted_string(1, AGENT_HEALTH);
-    GS_ASSERT(HudContainer::energy_tanks != NULL);
+    health->set_format_extra_length(11);
+    health->update_formatted_string(1, max_health);
+    IF_ASSERT(HudContainer::energy_tanks == NULL) return;
     float health_x = HudContainer::energy_tanks->xoff + HudContainer::energy_tanks->width() + 1;
     health->set_position(health_x, _yresf - HudContainer::energy_tanks->yoff - health->get_height());
     health->set_color(Color(255,255,255,255));
@@ -737,15 +718,13 @@ void HUD::init()
     health->set_char_range_color(white_range_index, white_color_index);
 
     confirm_quit = text_list->create();
-    GS_ASSERT(confirm_quit != NULL);
-    if (confirm_quit == NULL) return;
+    IF_ASSERT(confirm_quit == NULL) return;
     confirm_quit->set_text(confirm_quit_text);
     confirm_quit->set_color(Color(200,4,3,255));
     confirm_quit->set_position(_xresf/2, (3*_yresf)/4);
 
     prompt = text_list->create();
-    GS_ASSERT(prompt != NULL);
-    if (prompt == NULL) return;
+    IF_ASSERT(prompt == NULL) return;
     if (Options::show_tips)
         prompt->set_text(press_help_text);
     else
@@ -755,21 +734,18 @@ void HUD::init()
     prompt->shadowed = true;
 
     error = text_list->create();
-    GS_ASSERT(error != NULL);
-    if (error == NULL) return;
+    IF_ASSERT(error == NULL) return;
     error->set_color(Color(200,4,3,255));
     error->set_position(_xresf/2, _yresf/2);
 
     error_subtitle = text_list->create();
-    GS_ASSERT(error_subtitle != NULL);
-    if (error_subtitle == NULL) return;
+    IF_ASSERT(error_subtitle == NULL) return;
     error_subtitle->set_color(Color(200,4,3,255));
     error_subtitle->set_position(_xresf/2, error->y - error->get_height());
     error_subtitle->set_text(error_subtitle_text);
 
     awesomium_message = text_list->create();
-    GS_ASSERT(awesomium_message != NULL);
-    if (awesomium_message == NULL) return;
+    IF_ASSERT(awesomium_message == NULL) return;
     awesomium_message->set_color(Color(200,4,3,255));
     awesomium_message->set_position(_xresf/2, _yresf - 2);
     awesomium_message->set_text("");

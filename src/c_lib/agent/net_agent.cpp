@@ -156,15 +156,6 @@ inline void agent_dead_StoC::handle()
     a->event.life_changing((bool)this->dead);
 }
 
-inline void agent_health_StoC::handle()
-{
-    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
-    IF_ASSERT(a == NULL) return;
-    if (health > a->status.health)
-        a->event.healed(health - a->status.health);
-    a->status.health = health;
-}
-
 inline void agent_create_StoC::handle()
 {
     Agents::Agent* a = Agents::create_agent((AgentID)this->id);
@@ -454,7 +445,6 @@ inline void agent_melee_nothing_StoC::handle(){}
 inline void agent_hit_block_StoC::handle(){}
 inline void agent_threw_grenade_StoC::handle(){}
 inline void agent_placed_block_StoC::handle(){}
-inline void agent_health_StoC::handle() {}
 inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
 inline void agent_destroy_StoC::handle() {}

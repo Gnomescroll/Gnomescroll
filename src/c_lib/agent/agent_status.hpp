@@ -19,7 +19,6 @@ class AgentStatus
 {
     public:
 
-        int health;
         bool should_die;
         bool dead;
         int respawn_countdown;
@@ -29,8 +28,6 @@ class AgentStatus
         unsigned int deaths;
         unsigned int suicides;
         unsigned int slime_kills;
-
-        unsigned int health_max;
 
         char name[PLAYER_NAME_MAX_LENGTH + 1];
 
@@ -69,8 +66,6 @@ class AgentStatus
     void respawn();
     void set_fresh_state();
 
-    void send_health_msg();
-    void send_health_msg(ClientID client_id);
     void restore_health();
     void heal(unsigned int amt);
     int apply_damage(int dmg);

@@ -5,21 +5,16 @@ dont_include_this_file_in_server
 #endif
 
 #include <input/handlers.hpp>
-
 #include <state/client_state.hpp>
 #include <sound/sound.hpp>
 #include <chat/_interface.hpp>
 #include <hud/map.hpp>
-
 #include <particle/_interface.hpp>
 #include <particle/constants.hpp>
-
 #include <animations/_interface.hpp>
 #include <animations/animations.hpp>
 #include <animations/emitter.hpp>
-
 #include <item/properties.hpp>
-
 #include <common/color.hpp>
 
 namespace Agents
@@ -36,31 +31,35 @@ void AgentEvent::update_hud_name()
     const float z_margin = 0.4f;
     Vec3 p = this->a->get_position();
     this->bb.set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
-
-    // determine color based on health
-
     using namespace AgentHudName;
-
     Color color = HEALTH_TEXT_DEAD_COLOR;    // default, dead color
-
-    if (!this->a->status.dead)
-    {    // calculate interpolated color from health ratio and color control health_color_points
-        int health = this->a->status.health;
-        IF_ASSERT(health < 0) health = 0;
-        float h = float(health) / float(this->a->status.health_max);
-
-        if (h >= health_color_points[0])
-            color = health_colors[0];    // degenerate case, out of range
-        else
-            for (size_t i=0; i<COLOR_COUNT-1; i++)
-                if (h < health_color_points[i] && h >= health_color_points[i+1])
-                {
-                    color = interpolate_color(health_colors[i], health_colors[i+1],
-                        (health_color_points[i] - h) / (health_color_points[i] - health_color_points[i+1]));
-                    break;
-                }
+    if (this->a->status.dead)
+    {
+        this->bb.set_color(color);
+        return;
     }
 
+    // calculate interpolated color from health ratio and color control health_color_points
+    int health = get_attribute_int(this->a->id, "health");
+    int max_health = get_attribute_int(this->a->id, "max_health");
+    float h = float(health) / float(max_health);
+    if (h >= health_color_points[0])
+        color = health_colors[0];    // degenerate case, out of range
+    else
+    {
+        for (size_t i=0; i<COLOR_COUNT-1; i++)
+        {
+            if (h < health_color_points[i] && h >= health_color_points[i+1])
+            {
+                float ratio = ((health_color_points[i] - h) /
+                               (health_color_points[i] -
+                                health_color_points[i+1]));
+                color = interpolate_color(health_colors[i], health_colors[i+1],
+                                          ratio);
+                break;
+            }
+        }
+    }
     this->bb.set_color(color);
 }
 

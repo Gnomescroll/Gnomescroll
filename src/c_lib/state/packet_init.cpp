@@ -38,8 +38,6 @@ void RegisterMessages()
 
     // agent took damage indicator
     agent_damage_StoC::register_client_packet();
-    // player health update
-    agent_health_StoC::register_client_packet();
     agent_dead_StoC::register_client_packet();
     agent_create_StoC::register_client_packet();
     agent_destroy_StoC::register_client_packet();

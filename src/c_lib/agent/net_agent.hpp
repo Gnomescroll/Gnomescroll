@@ -447,21 +447,6 @@ class agent_dead_StoC: public FixedSizeReliableNetPacketToClient<agent_dead_StoC
         inline void handle();
 };
 
-class agent_health_StoC: public FixedSizeReliableNetPacketToClient<agent_health_StoC>
-{
-    public:
-        uint8_t id;
-        uint16_t health;
-
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u16(&health, buff, buff_n, pack);
-        }
-
-        inline void handle();
-};
-
 class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_StoC>
 {
     public:

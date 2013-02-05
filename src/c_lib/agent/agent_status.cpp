@@ -24,7 +24,6 @@ namespace Agents
 const int VOXEL_MODEL_RESTORE_WAIT = 30 * 10; // ~ once every 10 seconds
 
 AgentStatus::AgentStatus(Agent* a) :
-    health(AGENT_HEALTH),
     should_die(false),
     dead(true),
     respawn_countdown(RESPAWN_TICKS),
@@ -33,7 +32,6 @@ AgentStatus::AgentStatus(Agent* a) :
     deaths(0),
     suicides(0),
     slime_kills(0),
-    health_max(AGENT_HEALTH),
     n_badges(0),
     vox_crouched(false),
     lifetime(0),
@@ -360,17 +358,17 @@ void AgentStatus::heal(unsigned int amt)
 {
     GS_ASSERT(amt > 0);
     if (this->dead || this->should_die) return;
-    this->health += amt;
-    if (this->health > (int)this->health_max)
-        this->health = this->health_max;
+    int health = get_attribute_int(this->a->id, "health");
+    health += amt;
+    set_attribute(this->a->id, "health", health);
 }
 
 int AgentStatus::apply_damage(int dmg)
 {
+    int health = get_attribute_int(this->a->id, "health");
     GS_ASSERT(dmg >= 0);
-    if (dmg <= 0) return this->health;
-
-    if (this->dead || this->should_die) return this->health;
+    if (dmg <= 0) return health;
+    if (this->dead || this->should_die) return health;
 
     agent_damage_StoC dmg_msg;
     dmg_msg.id = a->id;
@@ -387,35 +385,22 @@ int AgentStatus::apply_damage(int dmg)
     if (container != NULL)
         remaining_dmg = container->consume_energy_tanks(dmg);
 
-    this->health -= remaining_dmg;
-    this->health = GS_MAX(this->health, 0);
-    this->send_health_msg();
-    if (this->health <= 0) this->should_die = true;
-    return this->health;
-}
-
-void AgentStatus::send_health_msg()
-{
-    agent_health_StoC health_msg;
-    health_msg.id = a->id;
-    health_msg.health = this->health;
-    health_msg.broadcast();
-}
-
-void AgentStatus::send_health_msg(ClientID client_id)
-{
-    agent_health_StoC health_msg;
-    health_msg.id = a->id;
-    health_msg.health = this->health;
-    health_msg.sendToClient(client_id);
+    health -= remaining_dmg;
+    if (health <= 0) this->should_die = true;
+    set_attribute(this->a->id, "health", health);
+    return health;
 }
 
 int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id)
 {
     if (!Options::pvp)
     {   // dont allow player kills
-        if ((inflictor_type == OBJECT_AGENT || inflictor_type == OBJECT_GRENADE)
-          && inflictor_id != this->a->id) return this->health;
+        if ((inflictor_type == OBJECT_AGENT ||
+             inflictor_type == OBJECT_GRENADE) &&
+            inflictor_id != this->a->id)
+        {
+            return get_attribute_int(this->a->id, "health");
+        }
     }
 
     int health = this->apply_damage(dmg);
@@ -528,9 +513,9 @@ void AgentStatus::respawn()
 
 void AgentStatus::restore_health()
 {
-    if (this->health == AGENT_HEALTH) return;
-    this->health = AGENT_HEALTH;
-    this->send_health_msg();
+    int max_health = get_attribute_int(this->a->id, "max_health");
+    if (get_attribute_int(this->a->id, "health") == max_health) return;
+    set_attribute(this->a->id, "health", max_health);
 }
 
 void AgentStatus::at_base()

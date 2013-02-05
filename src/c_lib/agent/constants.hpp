@@ -74,7 +74,6 @@ inline bool isValid(AgentID agent_id)
 const size_t MAX_AGENT_MODIFIERS = 0xFF;
 
 /* Status */
-const int AGENT_HEALTH = 99;
 const int RESPAWN_TICKS = 30 * 4; // 4 seconds
 const int AGENT_MAX_TURRETS = 10;    // (256/64)*2 == 8
 const int AGENT_MAX_SPAWNERS = 3;

@@ -55,8 +55,6 @@ void AgentList::send_to_client(ClientID client_id)
         dead_msg.id = agent->id;
         dead_msg.sendToClient(client_id);
 
-        agent->status.send_health_msg(client_id);
-
         ItemType item_type = Toolbelt::get_agent_selected_item_type(agent->id);
         Toolbelt::send_agent_set_active_item_packet(client_id, agent->id, item_type);
 
