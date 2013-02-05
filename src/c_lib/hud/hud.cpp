@@ -390,7 +390,7 @@ void draw_hud_textures()
     if (a != NULL)
     {
         const unsigned char alpha = 175;
-        float ratio = float(a->status.health) / float(a->status.health_max);
+        float ratio = float(a->status.health_max - a->status.health) / float(a->status.health_max);
         set_color_from_ratio(ratio, alpha, true);
         meter_graphic.draw(0, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_LEFT, true);
         meter_graphic.draw(_xresf/2, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_RIGHT, false);
