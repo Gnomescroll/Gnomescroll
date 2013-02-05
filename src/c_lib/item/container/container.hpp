@@ -244,21 +244,9 @@ class ItemContainerEnergyTanks: public ItemContainerInterface
         return ItemContainerInterface::can_insert_item(slot, item_id);
     }
 
-    int consume_energy_tank()
-    {   // returns number of energy tanks before consumption
-        int n = this->slot_count;
-        IF_ASSERT(n < 0) return n;
-        if (n == 0) return n;
-
-        for (int i=this->slot_max-1; i>=0; i--)
-        {   // consume from the end of the slot array
-            if (this->slot[i] == NULL_ITEM) continue;
-            Item::destroy_item(this->slot[i]);
-            break;
-        }
-
-        return n;
-    }
+    #if DC_SERVER
+    int consume_energy_tanks(int damage);
+    #endif
 
     virtual void init(int xdim, int ydim)
     {

@@ -377,33 +377,20 @@ int AgentStatus::apply_damage(int dmg)
     dmg_msg.dmg = dmg;
     dmg_msg.broadcast();
 
-    if (this->health <= 0)
-    {
-        this->should_die = true;
-        return this->health;
-    }
+    ItemContainerID energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
+    GS_ASSERT(energy_tanks_container_id != NULL_CONTAINER);
+    using ItemContainer::ItemContainerEnergyTanks;
+    ItemContainerEnergyTanks* container = (ItemContainerEnergyTanks*)
+            ItemContainer::get_container(energy_tanks_container_id);
+    GS_ASSERT(container != NULL);
+    int remaining_dmg = dmg;
+    if (container != NULL)
+        remaining_dmg = container->consume_energy_tanks(dmg);
 
-    this->health -= dmg;
-    this->health = (this->health < 0) ? 0 : this->health;
-
+    this->health -= remaining_dmg;
+    this->health = GS_MAX(this->health, 0);
     this->send_health_msg();
-
-    if (this->health <= 0)
-    {    // attempt to burn energy tank
-        ItemContainerID energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
-        GS_ASSERT(energy_tanks_container_id != NULL_CONTAINER);
-        using ItemContainer::ItemContainerEnergyTanks;
-        ItemContainerEnergyTanks* container = (ItemContainerEnergyTanks*)
-                ItemContainer::get_container(energy_tanks_container_id);
-        GS_ASSERT(container != NULL);
-        int n_energy_tanks = 0;
-        if (container != NULL)
-            n_energy_tanks = container->consume_energy_tank();
-
-        if (n_energy_tanks > 0)
-            this->restore_health();
-    }
-
+    if (this->health <= 0) this->should_die = true;
     return this->health;
 }
 

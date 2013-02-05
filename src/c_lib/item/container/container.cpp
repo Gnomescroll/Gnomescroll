@@ -117,6 +117,38 @@ int ItemContainerEnergyTanks::insert_item(int slot, ItemID item_id)
     return ItemContainerInterface::insert_item(slot, item_id);
 }
 
+#if DC_SERVER
+int ItemContainerEnergyTanks::consume_energy_tanks(int damage)
+{   // applies damage to energy tanks,
+    // returning amount of damage not consumed
+    if (damage <= 0) return damage;
+    while (damage > 0)
+    {   // consume durability from the weakest energy tanks first
+        if (this->slot_count <= 0) break;
+        int lowest_dur = MAX_DURABILITY + 1;
+        int lowest_slot = NULL_SLOT;
+        for (int i=0; i<this->slot_max; i++)
+        {
+            if (this->slot[i] == NULL_ITEM) continue;
+            int dur = Item::get_item_durability(this->slot[i]);
+            if (dur <= lowest_dur)
+            {
+                lowest_dur = dur;
+                lowest_slot = i;
+            }
+        }
+        int consume_dur = GS_MIN(damage, lowest_dur);
+        int remains = Item::consume_durability(this->slot[lowest_slot], consume_dur, true);
+        if (remains)
+            Item::send_item_state(this->slot[lowest_slot]);
+        damage -= consume_dur;
+    }
+
+    return damage;
+}
+#endif
+
+
 /* Cryofreezer */
 
 int ItemContainerCryofreezer::insert_item(int slot, ItemID item_id)
