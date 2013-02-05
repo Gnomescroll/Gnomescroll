@@ -1231,7 +1231,9 @@ inline void set_attribute_int_StoC::handle()
     IF_ASSERT(attr == NULL) return;
     attr->set((int)this->value);
 
+    #if !PRODUCTION
     printf("%s set to %d\n", get_name(group, type), get_int(group, type));
+    #endif
 }
 
 inline void set_attribute_float_StoC::handle()
