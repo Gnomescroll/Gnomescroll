@@ -55,7 +55,7 @@ class Attribute: public Property<AttributeType>
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_INT) return 1;
         int s = *(reinterpret_cast<int*>(this->value));
         if (this->get_callback != NULL)
-            return reinterpret_cast<getInt>(this->get_callback)(s);
+            return reinterpret_cast<getInt>(this->get_callback)(this->group, this->type, s);
         return s;
     }
 
@@ -64,7 +64,7 @@ class Attribute: public Property<AttributeType>
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_FLOAT) return 1.0f;
         float s = *(reinterpret_cast<float*>(this->value));
         if (this->get_callback != NULL)
-            return reinterpret_cast<getFloat>(this->get_callback)(s);
+            return reinterpret_cast<getFloat>(this->get_callback)(this->group, this->type, s);
         return s;
     }
 
@@ -73,7 +73,7 @@ class Attribute: public Property<AttributeType>
         IF_ASSERT(this->value_type != ATTRIBUTE_VALUE_STRING) return NULL;
         char* s = *(reinterpret_cast<char**>(this->value));
         if (this->get_callback != NULL)
-            return reinterpret_cast<getString>(this->get_callback)(s);
+            return reinterpret_cast<getString>(this->get_callback)(this->group, this->type, s);
         return s;
     }
 
@@ -84,7 +84,7 @@ class Attribute: public Property<AttributeType>
         value = this->enforce_limit(value);
         if (this->set_callback != NULL)
         {
-            value = reinterpret_cast<setInt>(this->set_callback)(old, value);
+            value = reinterpret_cast<setInt>(this->set_callback)(this->group, this->type, old, value);
             value = this->enforce_limit(value);
         }
         if (old != value)
@@ -104,7 +104,7 @@ class Attribute: public Property<AttributeType>
         value = this->enforce_limit(value);
         if (this->set_callback != NULL)
         {
-            value = reinterpret_cast<setFloat>(this->set_callback)(old, value);
+            value = reinterpret_cast<setFloat>(this->set_callback)(this->group, this->type, old, value);
             value = this->enforce_limit(value);
         }
         if (old != value)
@@ -124,7 +124,7 @@ class Attribute: public Property<AttributeType>
         char* old = *(reinterpret_cast<char**>(this->value));
         if (this->set_callback != NULL)
         {
-            value = reinterpret_cast<setString>(this->set_callback)(old, value);
+            value = reinterpret_cast<setString>(this->set_callback)(this->group, this->type, old, value);
             IF_ASSERT(value == NULL) value = "";
         }
         if (strcmp(old, value) != 0)
@@ -491,14 +491,14 @@ class Attribute: public Property<AttributeType>
     void _add_set_callback(voidFunction set_callback)
     {
         GS_ASSERT(!this->loaded);
-        GS_ASSERT(this->set_callback != NULL);
+        GS_ASSERT(this->set_callback == NULL);
         this->set_callback = set_callback;
     }
 
     void _add_get_callback(voidFunction get_callback)
     {
         GS_ASSERT(!this->loaded);
-        GS_ASSERT(this->get_callback != NULL);
+        GS_ASSERT(this->get_callback == NULL);
         this->get_callback = get_callback;
     }
 

@@ -13,6 +13,8 @@ void register_attributes();
 
 void reset_attributes(AgentID agent_id);
 
+class Agent* get_agent_from_attribute_group(AttributeGroup group);
+
 #if DC_SERVER
 // Modifiers
 void apply_agent_modifiers();

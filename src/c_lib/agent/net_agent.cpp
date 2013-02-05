@@ -77,14 +77,6 @@ inline void Agent_cs_StoC::handle()
     ClientState::player_agent.handle_net_control_state(seq, cs, theta, phi);
 }
 
-// damage indicator packet
-inline void agent_damage_StoC::handle()
-{
-    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
-    IF_ASSERT(a == NULL) return;
-    a->event.took_damage(dmg);
-}
-
 inline void agent_shot_object_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
@@ -436,7 +428,6 @@ inline void AgentSuicides_StoC::handle() {}
 inline void Agent_state_message::handle() {}
 inline void Agent_teleport_message::handle() {}
 inline void Agent_cs_StoC::handle() {}
-inline void agent_damage_StoC::handle() {}
 inline void agent_shot_object_StoC::handle(){}
 inline void agent_shot_block_StoC::handle(){}
 inline void agent_shot_nothing_StoC::handle(){}

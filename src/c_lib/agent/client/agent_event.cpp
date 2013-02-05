@@ -90,9 +90,9 @@ void AgentEvent::draw_badges()
 }
 
 // side effects of taking damage. dont modify health/death here
-void AgentEvent::took_damage(int dmg)
+void AgentEvent::took_damage(int amount)
 {
-    IF_ASSERT(dmg <= 0) return;
+    IF_ASSERT(amount <= 0) return;
     Particle::BillboardText* b = Particle::billboard_text_list->create();
     IF_ASSERT(b == NULL) return;
     b->reset();
@@ -104,8 +104,8 @@ void AgentEvent::took_damage(int dmg)
         p.z + a->current_height(),
         0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
     b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
-    char txt[10+1];
-    sprintf(txt, "%d", dmg);
+    char txt[11+1];
+    sprintf(txt, "%d", amount);
     b->set_text(txt);
     b->set_scale(1.0f);
     b->set_ttl(245);
@@ -140,8 +140,7 @@ void AgentEvent::healed(int amount)
     b->set_state(p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
                  p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
                  p.z + a->current_height(),
-                 0.0f, 0.0f, Particle::BB_PARTICLE_HEAL_VELOCITY_Z
-    );
+                 0.0f, 0.0f, Particle::BB_PARTICLE_HEAL_VELOCITY_Z);
     b->set_color(Particle::BB_PARTICLE_HEAL_COLOR);   // red
     char txt[10+1];
     sprintf(txt, "%d", amount);

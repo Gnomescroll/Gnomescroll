@@ -293,23 +293,6 @@ class agent_placed_block_StoC: public FixedSizeReliableNetPacketToClient<agent_p
         inline void handle();
 };
 
-// damage indicator packet (USE THIS FOR BLOOD!)
-class agent_damage_StoC: public FixedSizeReliableNetPacketToClient<agent_damage_StoC>
-{
-    public:
-
-        uint8_t id;
-        uint16_t dmg;
-
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u16(&dmg, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-
 /*
  *  Client -> Server packets
  */

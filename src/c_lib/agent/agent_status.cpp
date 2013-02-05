@@ -370,11 +370,6 @@ int AgentStatus::apply_damage(int dmg)
     if (dmg <= 0) return health;
     if (this->dead || this->should_die) return health;
 
-    agent_damage_StoC dmg_msg;
-    dmg_msg.id = a->id;
-    dmg_msg.dmg = dmg;
-    dmg_msg.broadcast();
-
     ItemContainerID energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
     GS_ASSERT(energy_tanks_container_id != NULL_CONTAINER);
     using ItemContainer::ItemContainerEnergyTanks;

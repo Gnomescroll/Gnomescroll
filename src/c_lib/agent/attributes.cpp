@@ -3,6 +3,7 @@
 #include <common/dat/attributes.hpp>
 #include <common/dat/modifiers.hpp>
 #include <common/common.hpp>
+#include <agent/attribute_callbacks.hpp>
 
 namespace Agents
 {
@@ -23,6 +24,12 @@ static void set_lower_limit(const char* lower);
 static void set_upper_limit(int upper);
 static void set_upper_limit(float upper);
 static void set_upper_limit(const char* upper);
+static void add_set_callback(setInt);
+static void add_set_callback(setFloat);
+static void add_set_callback(setString);
+static void add_get_callback(getInt);
+static void add_get_callback(getFloat);
+static void add_get_callback(getString);
 
 /*******************
  * Main Registration
@@ -35,6 +42,7 @@ static void _register_attributes()
 
     attribute_def("health", 100);
     set_limits(0, "max_health");
+    add_set_callback(&health_changed);
 }
 
 /*******************
@@ -175,6 +183,37 @@ SET_UPPER_LIMIT(const char*)
 #undef SET_LOWER_LIMIT
 #undef SET_UPPER_LIMIT_BODY
 #undef SET_UPPER_LIMIT
+
+static void add_set_callback(setInt cb)
+{
+    Attributes::add_set_callback(attr_type, cb);
+}
+
+static void add_set_callback(setFloat cb)
+{
+    Attributes::add_set_callback(attr_type, cb);
+}
+
+static void add_set_callback(setString cb)
+{
+    Attributes::add_set_callback(attr_type, cb);
+}
+
+static void add_get_callback(getInt cb)
+{
+    Attributes::add_get_callback(attr_type, cb);
+}
+
+static void add_get_callback(getFloat cb)
+{
+    Attributes::add_get_callback(attr_type, cb);
+}
+
+static void add_get_callback(getString cb)
+{
+    Attributes::add_get_callback(attr_type, cb);
+}
+
 
 static void test_registration()
 {
@@ -585,6 +624,16 @@ void reset_attributes(AgentID agent_id)
     agent_modifiers[agent_id].flush();
     Attributes::copy_from(agent_base_stats[agent_id], base_stats);
     Attributes::copy_from(agent_stats[agent_id], agent_base_stats[agent_id]);
+}
+
+class Agent* get_agent_from_attribute_group(AttributeGroup group)
+{
+    if (group < agent_stats[0] || group > agent_stats[MAX_AGENTS-1])
+        return NULL;
+    int offset = group - agent_stats[0];
+    if (offset < 0 || offset >= MAX_AGENTS)
+        return NULL;
+    return get_agent((AgentID)offset);
 }
 
 }   // Agents

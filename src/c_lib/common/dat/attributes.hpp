@@ -36,17 +36,17 @@ typedef void (*voidFunction)();
 // Get callbacks; When an attribute is requested, the current attribute value is
 // passed to the get callback, and the return value of the get callback is returned
 // to the requester
-typedef int (*getInt)(int);
-typedef float (*getFloat)(float);
-typedef const char* (*getString)(char*);
+typedef int (*getInt)(AttributeGroup, AttributeType, int);
+typedef float (*getFloat)(AttributeGroup, AttributeType, float);
+typedef const char* (*getString)(AttributeGroup, AttributeType, char*);
 
 // Set callbacks; When an attribute is being set, the old value and new value
 // are passed to the set callback, and the return value of the set callback
 // is used as the new value. Any limits are applied to both the value sent to
 // and the value returned from set_callback.
-typedef int (*setInt)(int, int);
-typedef float (*setFloat)(float, float);
-typedef const char* (*setString)(const char*, const char*);
+typedef int (*setInt)(AttributeGroup, AttributeType, int, int);
+typedef float (*setFloat)(AttributeGroup, AttributeType, float, float);
+typedef const char* (*setString)(AttributeGroup, AttributeType, const char*, const char*);
 
 const size_t MAX_ATTRIBUTES = NULL_ATTRIBUTE;
 const size_t MAX_ATTRIBUTE_GROUPS = NULL_ATTRIBUTE_GROUP;

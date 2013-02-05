@@ -33,8 +33,8 @@ class AgentEvent
         void draw_badges();
 
     // side effects of taking damage. dont modify health/death here
-    void took_damage(int dmg);
-    void healed(int health);
+    void took_damage(int amount);
+    void healed(int amount);
     void died();
     void born();
     void crouched();

@@ -4,6 +4,7 @@
 #include <agent/agent.cpp>
 #include <agent/agent_list.cpp>
 #include <agent/net_agent.cpp>
+#include <agent/attribute_callbacks.cpp>
 #include <agent/attributes.cpp>
 #include <agent/agent_status.cpp>
 #include <agent/agent_physics.cpp>
