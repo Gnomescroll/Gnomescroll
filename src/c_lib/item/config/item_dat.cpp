@@ -298,7 +298,7 @@ void load_item_dat()
 
     item_def(IG_ENERGY_TANK, "energy_tank");
     sprite_def(i0, 2,8);
-    set_pretty_name("Energy Tank");
+    set_pretty_name("Energy Shield");
     s->max_stack_size = 1;
     s->max_durability = 100;
 

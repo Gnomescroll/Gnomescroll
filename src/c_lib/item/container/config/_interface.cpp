@@ -150,6 +150,7 @@ static void register_settings()
     c->create_function = &new_synthesizer;
 
     agent_container_def("energy_tanks");
+    set_pretty_name("Energy Shields");
     c->xdim = 4;
     c->ydim = 1;
     c->alpha_action = &alpha_action_decision_tree;
