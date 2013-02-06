@@ -198,22 +198,42 @@ void EnergyTanksUI::draw()
     GS_ASSERT(energy_tank_sprite_index != ERROR_SPRITE);
 
     IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->greyscale_texture == 0) return;
+    IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture == 0) return;
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
-
-    // draw unloaded energy tanks as greyscale
-    // (here's where we ALSO used the LOADED tank drawing code below, but with the following line changed
-    // in order to only draw the empty tanks:
-    //         if (slot_metadata[slot].type != NULL_ITEM_TYPE) continue;
-
-    IF_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture == 0)
-    {
-        glDisable(GL_TEXTURE_2D);
-        return;
-    }
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
-
     xoff = (_xresf - this->width()) / 2;
+
+    // draw empty slots as greyscale energy tanks
+    if (inv_open)
+    {
+        glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
+        glBegin(GL_QUADS);
+        for (int i=0; i<xdim; i++)
+        for (int j=0; j<ydim; j++)
+        {
+            int slot = j * xdim + i;
+            if (slot_metadata[slot].type != NULL_ITEM_TYPE) continue;
+            const float x = xoff + border + i * (span_tween_slots + w);
+            const float y = _yresf - (yoff + border + (j+1)*(span_tween_slots + w));
+            const float iw = 16.0f; // icon_width
+            const int iiw = 16; // integer icon width
+            const float tx_min = (1.0f/iw)*(energy_tank_sprite_index % iiw);
+            const float ty_min = (1.0f/iw)*(energy_tank_sprite_index / iiw);
+            const float tx_max = tx_min + 1.0f/iw;
+            const float ty_max = ty_min + 1.0f/iw;
+
+            glTexCoord2f(tx_min, ty_min);
+            glVertex2f(x,y+w);
+            glTexCoord2f(tx_max, ty_min);
+            glVertex2f(x+w, y+w);
+            glTexCoord2f(tx_max, ty_max);
+            glVertex2f(x+w, y);
+            glTexCoord2f(tx_min, ty_max);
+            glVertex2f(x, y);
+        }
+        glEnd();
+    }
+
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
     // draw loaded energy tanks
     glBegin(GL_QUADS);
@@ -225,10 +245,8 @@ void EnergyTanksUI::draw()
         GS_ASSERT(slot_metadata[slot].type == energy_tank_type);
         const float x = xoff + border + i * (span_tween_slots + w);
         const float y = _yresf - (yoff + border + (j+1)*(span_tween_slots + w));
-
         const float iw = 16.0f; // icon_width
         const int iiw = 16; // integer icon width
-
         const float tx_min = (1.0f/iw)*(energy_tank_sprite_index % iiw);
         const float ty_min = (1.0f/iw)*(energy_tank_sprite_index / iiw);
         const float tx_max = tx_min + 1.0f/iw;
@@ -236,17 +254,13 @@ void EnergyTanksUI::draw()
 
         glTexCoord2f(tx_min, ty_min);
         glVertex2f(x,y+w);
-
         glTexCoord2f(tx_max, ty_min);
         glVertex2f(x+w, y+w);
-
         glTexCoord2f(tx_max, ty_max);
         glVertex2f(x+w, y);
-
         glTexCoord2f(tx_min, ty_max);
         glVertex2f(x, y);
     }
-
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
