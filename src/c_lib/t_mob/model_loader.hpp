@@ -1272,10 +1272,11 @@ class BodyMesh
     };
 */
 
-    void draw(float x, float y)
+    void draw(float x, float y, float z)
     {
-        draw(x,y, 0.0, 0.0);
+        draw(x,y,z, 0.0, 0.0);
     }
+
     void draw(float x, float y, float z, float theta, float phi)
     {
 
