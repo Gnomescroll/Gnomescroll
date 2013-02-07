@@ -11,25 +11,25 @@ class EquipmentUI: public UIElement
 {
     public:
 
-        static const int height = 147;
-        static const int width = 136;
-
         static const int texture_width = 256;
         static const int texture_height = 256;
 
-        static const int slot_size = 37;
+        static const int slot_size = 53;
         static const int render_xdim = 3;
         static const int render_ydim = 3;
         static const int render_dim = render_xdim * render_ydim;
 
+        static const int width = slot_size * render_xdim;
+        static const int height = slot_size * render_ydim;
+
         static const int slots_width = render_xdim * slot_size;
         static const int slots_height = render_ydim * slot_size;
 
-        static const int highlight_size = 34;
-        static const int slot_highlight_offset = 1;
+        static const int highlight_size = 48;
+        static const int slot_highlight_offset = 3;
 
         static const int item_size = ITEM_ICON_RENDER_SIZE;
-        static const int slot_item_offset = 2;
+        static const int slot_item_offset = 3;
 
         static const struct Offset slot_label_offsets[N_EQUIPMENT_TYPES];
         static const struct Offset slot_label_origins[N_EQUIPMENT_TYPES];
@@ -149,32 +149,32 @@ class EquipmentUI: public UIElement
 
 const struct Offset EquipmentUI::slot_label_offsets[N_EQUIPMENT_TYPES] = {
     { 0, 0 },   // NULL
-    { 5, 12 },  // BODY
-    { 5, 12 },  // HEAD
-    { 5, 12 },  // FEET
-    { 2, 12 },  // HANDS
-    { 2, 32 },  // ACCESSORY
+    { 13, 21 },  // BODY
+    { 13, 21 },  // HEAD
+    { 13, 21 },  // FEET
+    { 9,  21 },  // HANDS
+    { -7, 39 },  // ACCESSORY
 };
 
 const struct Offset EquipmentUI::slot_label_origins[N_EQUIPMENT_TYPES] = {
     { 0, 0 },      // NULL
-    { 136, 9 },    // BODY
-    { 136, 0 },    // HEAD
-    { 136, 18 },   // FEET
-    { 136, 27 },   // HANDS
-    { 136, 36 },  // ACCESSORY
+    { 159, 12 },    // BODY
+    { 159, 0 },    // HEAD
+    { 159, 24 },   // FEET
+    { 159, 36 },   // HANDS
+    { 159, 48 },  // ACCESSORY
 };
 
 const struct Dim EquipmentUI::slot_label_dimensions[N_EQUIPMENT_TYPES] = {
     { 0, 0 },     // NULL
-    { 25, 9 },    // BODY
-    { 25, 9 },    // HEAD
-    { 25, 9 },    // FEET
-    { 31, 9 },    // HANDS
+    { 29, 12 },    // BODY
+    { 29, 12 },    // HEAD
+    { 29, 12 },    // FEET
+    { 36, 12 },    // HANDS
     { 14, 82 },  // ACCESSORY
 };
 
-const struct Offset EquipmentUI::slot_area_offset = { 13, 18 };   // from the top
+const struct Offset EquipmentUI::slot_area_offset = { 0, 0 };
 
 const EquipmentType EquipmentUI::render_slot_equipment_types[EquipmentUI::render_dim] = {
     EQUIPMENT_TYPE_ACCESSORY,
@@ -191,7 +191,7 @@ const EquipmentType EquipmentUI::render_slot_equipment_types[EquipmentUI::render
 
 void EquipmentUI::draw()
 {
-    //this->draw_name();
+    this->draw_name();
     this->draw_background();
     this->draw_highlight();
     this->draw_slot_labels();
@@ -285,11 +285,11 @@ void EquipmentUI::draw_slot_labels()
         int w = this->slot_label_dimensions[i].x;
         int h = this->slot_label_dimensions[i].y;
         int x = xslot*this->slot_size + this->slot_label_offsets[i].x;
-        int y = (this->render_ydim - yslot - 1)*this->slot_size + (this->slot_size - this->slot_label_offsets[i].y - h);
+        int y = (this->render_ydim - yslot)*this->slot_size - (this->slot_label_offsets[i].y + h);
 
         draw_bound_texture_sprite(
             this->xoff + this->slot_area_offset.x + x,
-            (this->yoff - this->height) + y + this->slot_area_offset.y - 2,
+            (this->yoff - this->height) + y + this->slot_area_offset.y,
             w, h,
             -1.0f,
             float(this->slot_label_origins[i].x) / (this->texture_width),
@@ -313,7 +313,7 @@ void EquipmentUI::draw_accessories_label()
     int h = this->slot_label_dimensions[type].y;
     draw_bound_texture_sprite(
         this->xoff + this->slot_label_offsets[type].x,
-        this->yoff + this->slot_label_offsets[type].y - this->height,
+        this->yoff - (this->slot_label_offsets[type].y + this->slot_label_dimensions[type].y),
         w, h,
         -1.0f,
         float(this->slot_label_origins[type].x) / (this->texture_width),

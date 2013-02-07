@@ -99,6 +99,7 @@ int EnergyTanksUI::get_slot_at(int px, int py)
 void EnergyTanksUI::draw_name()
 {
     // TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
+    glColor4ub(255, 255, 255, 255);
     HudFont::start_font_draw();
     HudFont::reset_default();
     HudFont::set_texture();

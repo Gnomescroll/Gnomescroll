@@ -492,7 +492,7 @@ void init()
     equipment->init();
     // coordinates are point to top left on screen, where y=0 is along the bottom
     equipment->xoff = agent_inventory->xoff - (equipment->width + 10);
-    equipment->yoff = agent_inventory->yoff + agent_inventory->height() - 5;  // -5 to align with inventory correctly
+    equipment->yoff = agent_inventory->yoff + agent_inventory->height();
 
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format("%d");
@@ -533,9 +533,7 @@ void teardown()
     if (crusher != NULL) delete crusher;
     if (premium_cache != NULL) delete premium_cache;
     if (equipment != NULL) delete equipment;
-
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
-
     if (ui_elements != NULL) free(ui_elements);
 }
 

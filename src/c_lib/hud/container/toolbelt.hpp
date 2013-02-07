@@ -79,6 +79,7 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
 
 void AgentToolbeltUI::draw_name()
 {
+    glColor4ub(255, 255, 255, 255);
     // TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
     HudFont::start_font_draw();
     HudFont::reset_default();

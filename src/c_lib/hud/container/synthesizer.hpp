@@ -182,7 +182,6 @@ int AgentSynthesizerUI::get_slot_at(int px, int py)
 //221x147
 void AgentSynthesizerUI::draw()
 {
-    // draw name
     this->draw_name();
     IF_ASSERT(this->texture == NULL || *this->texture == 0) return;
 

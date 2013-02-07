@@ -89,6 +89,7 @@ class UIElement
 
     virtual void draw_name()
     {
+        glColor4ub(255, 255, 255, 255);
         HudFont::start_font_draw();
         HudFont::reset_default();
         HudFont::set_texture();
