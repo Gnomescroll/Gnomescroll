@@ -7,13 +7,13 @@ namespace HudContainer
 
 //221x147
 
-const int SYNTHESIZER_ITEM_COST_MAX_STRLEN = 10;
+const int SYNTHESIZER_ITEM_COST_MAX_STRLEN = 11;
 
 class AgentSynthesizerUI : public UIElement
 {
     public:
 
-        static const int cell_size = 37;    // pixel dimension
+        static const int cell_size = ITEM_ICON_RENDER_SIZE + 5;
 
         int xdim;
         int ydim;
@@ -30,6 +30,13 @@ class AgentSynthesizerUI : public UIElement
         static const float cell_offset_y;
         static const float cell_offset_x_right;
         static const float cell_offset_y_bottom;
+        static const struct Offset highlight_offset;
+
+        static const struct Dim coins_label_dimensions;
+        static const struct Offset coins_label_origin;
+        static const struct Offset coins_label_offset;
+
+        static const Dim texture_dim;
 
         HudText::Text* prices;
         HudText::Text coin_stack;
@@ -67,6 +74,7 @@ class AgentSynthesizerUI : public UIElement
         this->render_width = this->cell_size * this->xdim;
         this->render_height = this->cell_size * this->ydim;
 
+        this->texture = &SynthesizerTexture;
 
         GS_ASSERT(this->prices == NULL);
         int max = shopping_xdim * shopping_ydim;    // last slot is coins
@@ -104,11 +112,16 @@ class AgentSynthesizerUI : public UIElement
 };
 
 // constants
-const float AgentSynthesizerUI::slot_size = 32;
+const Dim AgentSynthesizerUI::texture_dim = { 512, 512 };
+const float AgentSynthesizerUI::slot_size = ITEM_ICON_RENDER_SIZE;
 const float AgentSynthesizerUI::cell_offset_x = 3;
 const float AgentSynthesizerUI::cell_offset_y = 3;
 const float AgentSynthesizerUI::cell_offset_x_right = 2;
 const float AgentSynthesizerUI::cell_offset_y_bottom = 2;
+const struct Offset AgentSynthesizerUI::highlight_offset = { 3, 3 };
+const struct Dim AgentSynthesizerUI::coins_label_dimensions = { 36, 12 };
+const struct Offset AgentSynthesizerUI::coins_label_origin = { 318, 0 };
+const struct Offset AgentSynthesizerUI::coins_label_offset = { 6, 18 };
 
 bool AgentSynthesizerUI::in_shopping_region(int px, int py)
 {
@@ -120,8 +133,8 @@ bool AgentSynthesizerUI::in_shopping_region(int px, int py)
     GS_ASSERT(xslot >= 0 && xslot < xdim);
     GS_ASSERT(yslot >= 0 && yslot < ydim);
 
-    return (xslot >= 0 && xslot < shopping_xdim
-         && yslot >= 0 && yslot < shopping_ydim);
+    return (xslot >= 0 && xslot < shopping_xdim &&
+            yslot >= 0 && yslot < shopping_ydim);
 }
 
 bool AgentSynthesizerUI::in_coins_region(int px, int py)
@@ -171,9 +184,7 @@ void AgentSynthesizerUI::draw()
 {
     // draw name
     this->draw_name();
-
-    //GS_ASSERT(SynthesizerTexture != 0);
-    if (SynthesizerTexture == 0) return;
+    IF_ASSERT(this->texture == NULL || *this->texture == 0) return;
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
@@ -182,7 +193,7 @@ void AgentSynthesizerUI::draw()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     GS_ASSERT(SynthesizerTexture != 0);
-    glBindTexture(GL_TEXTURE_2D, SynthesizerTexture);
+    glBindTexture(GL_TEXTURE_2D, *this->texture);
 
     glColor4ub(255, 255, 255, 255);
 
@@ -195,24 +206,19 @@ void AgentSynthesizerUI::draw()
 
     float tx_min = 0.0f;
     float ty_min = 0.0f;
-    float tx_max = w/512.0f;
-    float ty_max = h/512.0f;
+    float tx_max = w/float(this->texture_dim.x);
+    float ty_max = h/float(this->texture_dim.y);
 
     //draw background
     glBegin(GL_QUADS);
-
     glTexCoord2f(tx_min, ty_min);
     glVertex2f(x, y);
-
     glTexCoord2f(tx_min, ty_max);
     glVertex2f(x,y-h);
-
     glTexCoord2f(tx_max, ty_max);
     glVertex2f(x+w, y-h);
-
     glTexCoord2f(tx_max, ty_min);
     glVertex2f(x+w, y);
-
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -220,17 +226,15 @@ void AgentSynthesizerUI::draw()
     // draw hover highlight
     glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128);
-    if (this->in_shopping_region(mouse_x, mouse_y)
-     || this->in_coins_region(mouse_x, mouse_y))
+    if (this->in_shopping_region(mouse_x, mouse_y) ||
+        this->in_coins_region(mouse_x, mouse_y))
     {
         int w = slot_size;
-        int xslot,yslot;
-
         int hover_slot = this->get_grid_at(mouse_x, mouse_y);
-        xslot = hover_slot % this->xdim;
-        yslot = hover_slot / this->xdim;
-        float x = xoff + cell_size*xslot + cell_offset_x;
-        float y = yoff - (cell_size*yslot + cell_offset_y);
+        int xslot = hover_slot % this->xdim;
+        int yslot = hover_slot / this->xdim;
+        float x = xoff + cell_size*xslot + this->highlight_offset.x;
+        float y = yoff - (cell_size*yslot + this->highlight_offset.y);
 
         glVertex2f(x,y);
         glVertex2f(x, y-w);
@@ -240,21 +244,38 @@ void AgentSynthesizerUI::draw()
     glEnd();
 
     if (this->container_id == NULL_CONTAINER) return;
-
     // draw food
     using ItemContainer::ItemContainerSynthesizerUI;
     ItemContainerSynthesizerUI* container =
         (ItemContainerSynthesizerUI*)ItemContainer::get_container_ui(this->container_id);
     if (container == NULL) return;
+    ItemType coin_item_type = container->get_coin_type();
+
+    // draw labels
+    glEnable(GL_TEXTURE_2D);
+    glColor4ub(255, 255, 255, 255);
+    glBindTexture(GL_TEXTURE_2D, *this->texture);
+    if (coin_item_type == NULL_ITEM_TYPE)
+    {
+        const float x = xoff + (xdim-1)*cell_size + cell_offset_x;
+        const float y = yoff - ((ydim-1)*cell_size + cell_offset_y + 1);
+        draw_bound_texture_sprite(
+            x + this->coins_label_offset.x,
+            y - this->coins_label_offset.y - this->coins_label_dimensions.y,
+            this->coins_label_dimensions.x, this->coins_label_dimensions.y,
+            -1.0f,
+            float(this->coins_label_origin.x) / float(this->texture_dim.x),
+            float(this->coins_label_origin.y) / float(this->texture_dim.y),
+            float(this->coins_label_dimensions.x) / float(this->texture_dim.x),
+            float(this->coins_label_dimensions.y) / float(this->texture_dim.y));
+    }
 
     int coins = 0;
-    if (container->get_coin_type() != NULL_ITEM_TYPE)
+    if (coin_item_type != NULL_ITEM_TYPE)
         coins = container->get_coin_stack();
 
     // greyscale items
-
     glColor4ub(255, 255, 255, 255);
-    glEnable(GL_TEXTURE_2D);
     GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->greyscale_texture != 0);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->greyscale_texture);
 
@@ -346,7 +367,6 @@ void AgentSynthesizerUI::draw()
     }
 
     // draw coins
-    ItemType coin_item_type = container->get_coin_type();
     if (coin_item_type != NULL_ITEM_TYPE)
     {
         int coin_sprite_id = Item::get_sprite_index_for_type(coin_item_type);
@@ -425,8 +445,8 @@ void AgentSynthesizerUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 }
 
-}
+}   // HudContainer

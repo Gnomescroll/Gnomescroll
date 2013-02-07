@@ -288,7 +288,7 @@ static void draw_grabbed_icon()
     struct ItemContainer::SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     if (hand_metadata.type == NULL_ITEM_TYPE) return;
 
-    const float w = 32;
+    const float w = ITEM_ICON_RENDER_SIZE;
 
     // center icon on mouse position
     float x = mouse_x - (w / 2);
@@ -304,7 +304,7 @@ static void draw_grabbed_icon()
     const unsigned char alpha = 128;
     draw_durability_meter(x, y, w, alpha, hand_metadata);
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
 
     glColor4ub(255, 255, 255, 255);
@@ -341,21 +341,17 @@ static void draw_grabbed_icon()
 
     // Draw stack numbers
     IF_ASSERT(grabbed_icon_stack_text == NULL) return;
-
     HudFont::start_font_draw(GL_ONE_MINUS_DST_COLOR);
     const int font_size = 12;
     HudFont::set_properties(font_size);
     HudFont::set_texture();
-
-    // calc posuition
-    x = x + (w/2) + font_size;
-    y = y + (w/2) - font_size;
+    x = x + (w/2) + font_size - 7;
+    y = y + (w/2) - font_size - 2;
     draw_slot_numbers(grabbed_icon_stack_text, x, y, hand_metadata.stack_size, hand_metadata.charges);
-
     HudFont::reset_default();
     HudFont::end_font_draw();
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 }
 

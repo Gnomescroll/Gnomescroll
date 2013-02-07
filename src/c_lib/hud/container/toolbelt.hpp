@@ -16,7 +16,7 @@ class AgentToolbeltUI : public UIElement
         static const int inc1 = 8; // spacing between slot icons
         static const int inc2 = 2;  // border around a slot icon
 
-        static const int slot_size = 32;    // pixel dimension
+        static const int slot_size = ITEM_ICON_RENDER_SIZE;    // pixel dimension
 
         static const int xdim = 9;    // slot dimensions
         static const int ydim = 1;
@@ -92,7 +92,7 @@ void AgentToolbeltUI::draw()
 {
     const float w = slot_size;
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
@@ -200,7 +200,7 @@ void AgentToolbeltUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
     // draw border highlight
@@ -260,7 +260,7 @@ void AgentToolbeltUI::draw()
     HudFont::reset_default();
     HudFont::end_font_draw();
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 }
 

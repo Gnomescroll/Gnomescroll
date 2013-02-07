@@ -9,7 +9,7 @@ class SmelterUI : public UIElement
 {
     public:
 
-        static const int cell_size = 37;
+        static const int cell_size = ITEM_ICON_RENDER_SIZE + 5;
         int xdim;    // grid cell size
         int ydim;
 
@@ -17,14 +17,26 @@ class SmelterUI : public UIElement
         float render_width;
         float render_height;
 
-        static const int slot_size = 32;
+        static const int slot_size = ITEM_ICON_RENDER_SIZE;
+        static const int highlight_size = ITEM_ICON_RENDER_SIZE;
+        static const struct Offset highlight_offset;
         static const int cell_offset_x = 3;
         static const int cell_offset_y = 3;
         static const int cell_offset_x_right = 2;
         static const int cell_offset_y_bottom = 2;
 
+        static const int texture_width = 512;
+        static const int texture_height = 512;
+
+        static const int output_offset_y = 26;
+
         float texture_offset_x;
         float texture_offset_y;
+
+        static const int slot_label_max = 2;
+        static const struct Dim slot_label_dimensions[slot_label_max];
+        static const struct Offset slot_label_origins[slot_label_max];
+        static const struct Offset slot_label_offsets[slot_label_max];
 
         bool centered;
 
@@ -116,7 +128,7 @@ class SmelterUI : public UIElement
     bool in_output_region(int px, int py)
     {
         int x = this->cell_size * 2;
-        int y = 18; // hardcoded values
+        int y = this->output_offset_y;
 
         x += xoff;
         y += _yres - yoff;
@@ -146,6 +158,22 @@ class SmelterUI : public UIElement
     }
 };
 
+const struct Offset SmelterUI::highlight_offset = { 3, 3 };
+
+const struct Dim SmelterUI::slot_label_dimensions[SmelterUI::slot_label_max] = {
+    { 29, 12 },
+    { 29, 12 },
+};
+const struct Offset SmelterUI::slot_label_origins[SmelterUI::slot_label_max] = {
+    { 212, 25 },
+    { 212, 13 },
+};
+const struct Offset SmelterUI::slot_label_offsets[SmelterUI::slot_label_max] = {
+    { 10, 18 },
+    { 10, 18 },
+};
+
+
 int SmelterUI::get_grid_at(int px, int py)
 {
     //pixels from upper left
@@ -173,13 +201,9 @@ int SmelterUI::get_slot_at(int px, int py)
 int SmelterUI::get_grid_for_slot(int slot)
 {
     IF_ASSERT(slot == NULL_SLOT) return NULL_SLOT;
-
     if (slot == 0) return (this->xdim * 1) + 1; // fuel slot
-
     if (slot == 1) return 1;    // input slot
-
     if (slot == 2) return 2;    // WARNING -- output slot is not grid aligned
-
     return NULL_SLOT;
 }
 
@@ -192,14 +216,13 @@ void SmelterUI::draw_meter(float x, float y, float src_x, float src_y, float w, 
     GL_ASSERT(GL_TEXTURE_2D, true);
 
     // force the amount in range
-    GS_ASSERT(0.0f <= amount && amount <= 1.0f);
-    if (amount < 0.0f) amount = 0.0f;
-    if (amount > 1.0f) amount = 1.0f;
+    IF_ASSERT(amount < 0.0f) amount = 0.0f;
+    IF_ASSERT(amount > 1.0f) amount = 1.0f;
 
-    float tx_min = src_x / 512.0f;
-    float ty_min = src_y / 512.0f;
-    float tx_max = tx_min + (w/512.0f);
-    float ty_max = ty_min + (h/512.0f);
+    float tx_min = src_x / float(this->texture_height);
+    float ty_min = src_y / float(this->texture_height);
+    float tx_max = tx_min + (w/float(this->texture_height));
+    float ty_max = ty_min + (h/float(this->texture_height));
 
     float dh = h * (1.0f - amount);
 
@@ -229,12 +252,11 @@ void SmelterUI::draw()
 
     if (this->container_id == NULL_CONTAINER) return;
     ItemContainer::ItemContainerUIInterface* container_ui = ItemContainer::get_container_ui(this->container_id);
-    GS_ASSERT(container_ui != NULL);
     IF_ASSERT(container_ui == NULL) return;
     GS_ASSERT(Item::is_smelter(container_ui->type));
     ItemContainer::ItemContainerSmelterUI* smelter = (ItemContainer::ItemContainerSmelterUI*)container_ui;
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
@@ -252,8 +274,8 @@ void SmelterUI::draw()
 
     float tx_min = texture_offset_x;
     float ty_min = texture_offset_y;
-    float tx_max = render_width/512.0f;
-    float ty_max = render_height/512.0f;
+    float tx_max = render_width/float(this->texture_height);
+    float ty_max = render_height/float(this->texture_height);
 
     //draw background
     glBegin(GL_QUADS);
@@ -275,8 +297,16 @@ void SmelterUI::draw()
     if (smelter != NULL)
     {
         int grid_xoff = 0;
-        this->draw_meter(xoff + 37.0f*grid_xoff + 6.0f, yoff - 2.0f, 195.0f, 0.0f, 9.0f, 70.0f, smelter->fuel); // fuel
-        this->draw_meter(xoff + 37.0f*grid_xoff + 23.0f, yoff - 2.0f, 205.0f, 0.0f, 9.0f, 70.0f, smelter->progress); // progress
+        // background meters
+        this->draw_meter(xoff + float(this->cell_size)*grid_xoff + 8.0f,
+                         yoff - 2.0f, 160.0f, 2.0f, 14.0f, 102.0f, 1.0f);
+        this->draw_meter(xoff + float(this->cell_size)*grid_xoff + 32.0f,
+                         yoff - 2.0f, 160.0f, 2.0f, 14.0f, 102.0f, 1.0f);
+
+        this->draw_meter(xoff + float(this->cell_size)*grid_xoff + 8.0f,
+                         yoff - 2.0f, 174.0f, 2.0f, 14.0f, 102.0f, smelter->fuel);
+        this->draw_meter(xoff + float(this->cell_size)*grid_xoff + 32.0f,
+                         yoff - 2.0f, 188.0f, 2.0f, 14.0f, 102.0f, smelter->progress);
     }
 
     glDisable(GL_TEXTURE_2D);
@@ -288,18 +318,18 @@ void SmelterUI::draw()
 
     if (hover_slot != NULL_SLOT && !this->in_inactive_region(mouse_x, mouse_y))
     {
-        int w = slot_size;
+        int w = this->highlight_size;
         int xslot = hover_slot % this->xdim;
         int yslot = hover_slot / this->xdim;
 
         if (this->in_output_region(mouse_x, mouse_y))
             yslot = 0;
 
-        float x = xoff + cell_size*xslot + cell_offset_x;
-        float y = yoff - (cell_size*yslot + cell_offset_y);
+        float x = xoff + cell_size*xslot + highlight_offset.x;
+        float y = yoff - (cell_size*yslot + highlight_offset.y);
 
         if (this->in_output_region(mouse_x, mouse_y))
-            y -= 18;
+            y -= this->output_offset_y;
 
         glVertex2f(x,y);
         glVertex2f(x, y-w);
@@ -312,14 +342,45 @@ void SmelterUI::draw()
     struct ItemContainer::SlotMetadata* slot_metadata =
         ItemContainer::get_container_ui_slot_metadata(container_id);
     if (slot_metadata == NULL) return;
+    IF_ASSERT(this->slot_label_max > smelter->slot_max) return;
+
+    // draw durabilities
+    for (int slot=0; slot<smelter->slot_max; slot++)
+    {
+        int grid = this->get_grid_for_slot(slot);
+        int xslot = grid % this->xdim;
+        int yslot = grid / this->xdim;
+        const float x = xoff + cell_offset_x + cell_size*xslot;
+        const float y = yoff - (cell_size*(yslot+1)) + cell_offset_y_bottom;
+        draw_durability_meter(x, y, slot_size, 128, slot_metadata[slot]);
+    }
+
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
 
-    glBegin(GL_QUADS);
+    // draw slot labels
+    glBindTexture(GL_TEXTURE_2D, *this->texture);
+    for (int i=0; i<this->slot_label_max; i++)
+    {
+        if (slot_metadata[i].type != NULL_ITEM_TYPE) continue;
+        int slot = this->get_grid_for_slot(i);
+        int xslot = slot % this->xdim;
+        int yslot = this->ydim - (slot / this->xdim);
+        draw_bound_texture_sprite(
+            this->xoff + cell_offset_x + cell_size*xslot + this->slot_label_offsets[i].x,
+            (this->yoff - this->height()) + (cell_offset_y + cell_size*(yslot-1) + this->slot_label_offsets[i].y),
+            this->slot_label_dimensions[i].x, this->slot_label_dimensions[i].y,
+            -1.0f,
+            float(this->slot_label_origins[i].x) / float(this->texture_width),
+            float(this->slot_label_origins[i].y) / float(this->texture_height),
+            float(this->slot_label_dimensions[i].x) / float(this->texture_width),
+            float(this->slot_label_dimensions[i].y) / float(this->texture_height));
+    }
 
     //draw items
+    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
+    glBegin(GL_QUADS);
     for (int slot=0; slot<smelter->slot_max; slot++)
     {
         ItemType item_type = slot_metadata[slot].type;
@@ -337,7 +398,7 @@ void SmelterUI::draw()
         float y = yoff - (cell_offset_y + cell_size*yslot);
 
         if (slot == smelter->slot_max-1)
-            y -= 18;
+            y -= this->output_offset_y;
 
         const float w = slot_size;
         const float iw = 16.0f; // icon_width
@@ -380,14 +441,13 @@ void SmelterUI::draw()
         int xslot = grid % this->xdim;
         int yslot = grid / this->xdim;
 
-
         if (slot == smelter->slot_max-1)
             yslot = 0;
 
         float x = xoff + cell_size*(xslot+1) - cell_offset_x_right - text->get_width();
         float y = yoff - (cell_size*(yslot+1) - cell_offset_y_bottom - text->get_height());
         if (slot == smelter->slot_max-1)
-            y -= 18;
+            y -= this->output_offset_y;
 
         draw_slot_numbers(text, x, y, stack, charges);
     }

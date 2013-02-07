@@ -5,6 +5,8 @@
 namespace HudContainer
 {
 
+const int ITEM_ICON_RENDER_SIZE = 48;
+
 // UI State
 extern class AgentInventoryUI* agent_inventory;
 extern class AgentToolbeltUI* agent_toolbelt;

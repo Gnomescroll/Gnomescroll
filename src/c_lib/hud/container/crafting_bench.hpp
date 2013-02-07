@@ -12,7 +12,7 @@ class CraftingUI : public UIElement
 
     public:
 
-        static const int cell_size = 37;
+        static const int cell_size = ITEM_ICON_RENDER_SIZE + 5;
 
         static const int input_xdim = 4;
         static const int input_ydim = 1;
@@ -93,7 +93,7 @@ const float CraftingUI::render_height = CraftingUI::cell_size * CraftingUI::ydim
 const float CraftingUI::texture_width = CraftingUI::cell_size * 6;
 const float CraftingUI::texture_height = CraftingUI::cell_size;
 
-const float CraftingUI::slot_size = 32;
+const float CraftingUI::slot_size = ITEM_ICON_RENDER_SIZE;
 const float CraftingUI::cell_offset_x = 3;
 const float CraftingUI::cell_offset_y = 3;
 const float CraftingUI::cell_offset_x_right = 2;
@@ -188,7 +188,7 @@ void CraftingUI::draw()
 
     IF_ASSERT(CraftingTexture == 0) return;
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);

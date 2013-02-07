@@ -9,7 +9,7 @@ class CrusherUI : public UIElement
 {
     public:
 
-        static const int cell_size = 37;
+        static const int cell_size = ITEM_ICON_RENDER_SIZE + 3;
         int xdim;    // grid cell size
         int ydim;
         int alt_xdim;
@@ -19,7 +19,7 @@ class CrusherUI : public UIElement
         float render_width;
         float render_height;
 
-        static const int slot_size = 32;
+        static const int slot_size = ITEM_ICON_RENDER_SIZE;
         static const int cell_offset_x = 3;
         static const int cell_offset_y = 3;
         static const int cell_offset_x_right = 2;
@@ -172,7 +172,7 @@ void CrusherUI::draw()
         ItemContainer::get_container_ui_slot_metadata(container_id);
     if (slot_metadata == NULL) return;
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);

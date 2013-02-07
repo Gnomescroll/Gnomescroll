@@ -7,6 +7,17 @@
 namespace HudContainer
 {
 
+struct Offset
+{
+    int x,y;
+};
+
+struct Dim
+{
+    int x,y;
+};
+
+
 void draw_slot_numbers(HudText::Text* text, float x, float y, int stack_size, int charges)
 {
     int val = stack_size;

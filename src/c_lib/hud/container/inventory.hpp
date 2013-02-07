@@ -62,7 +62,7 @@ class AgentInventoryUI : public UIElement
 const float AgentInventoryUI::border = 0;       // border around entire panel
 const float AgentInventoryUI::inc1 = 5; // spacing between slot icons
 const float AgentInventoryUI::inc2 = 2;  // border around a slot icon
-const float AgentInventoryUI::slot_size = 32;    // pixel dimension
+const float AgentInventoryUI::slot_size = ITEM_ICON_RENDER_SIZE;    // pixel dimension
 
 int AgentInventoryUI::get_slot_at(int px, int py)
 {
@@ -96,7 +96,7 @@ void AgentInventoryUI::draw()
 
     const float w = slot_size;
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
@@ -230,7 +230,7 @@ void AgentInventoryUI::draw()
     HudFont::reset_default();
     HudFont::end_font_draw();
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 }
 

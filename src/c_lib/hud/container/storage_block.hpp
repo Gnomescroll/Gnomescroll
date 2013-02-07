@@ -10,7 +10,7 @@ class StorageBlockUI : public UIElement
 {
     public:
 
-        static const int cell_size = 37;
+        static const int cell_size = ITEM_ICON_RENDER_SIZE + 5;
         int xdim;    // grid cell size
         int ydim;
 
@@ -18,7 +18,7 @@ class StorageBlockUI : public UIElement
         float render_width;
         float render_height;
 
-        static const int slot_size = 32;
+        static const int slot_size = ITEM_ICON_RENDER_SIZE;
         static const int cell_offset_x = 3;
         static const int cell_offset_y = 3;
         static const int cell_offset_x_right = 2;
@@ -129,12 +129,11 @@ int StorageBlockUI::get_slot_at(int px, int py)
 
 void StorageBlockUI::draw()
 {
-    IF_ASSERT(this->texture == NULL) return;
-    IF_ASSERT(this->texture == 0) return;
+    IF_ASSERT(this->texture == NULL || *this->texture == 0) return;
 
     this->draw_name();
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
@@ -208,8 +207,7 @@ void StorageBlockUI::draw()
         int slot = xdim*yslot + xslot;
         const float x = xoff + cell_offset_x + cell_size*xslot;
         const float y = yoff - (cell_size*(yslot+1));
-        draw_durability_meter(x, y + float(slot_size)/8.0f, slot_size, 0xFF,
-                              slot_metadata[slot]);
+        draw_durability_meter(x, y + 2, slot_size, 128, slot_metadata[slot]);
     }
 
     glColor4ub(255, 255, 255, 255);

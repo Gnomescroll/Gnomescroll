@@ -408,8 +408,8 @@ void AgentStatus::tick_hunger()
 int AgentStatus::apply_damage(int dmg)
 {
     int health = get_attribute_int(this->a->id, "health");
-    GS_ASSERT(dmg >= 0);
-    if (dmg <= 0) return health;
+    IF_ASSERT(dmg < 0) return health;
+    if (dmg == 0) return health;
     if (this->dead || this->should_die) return health;
 
     ItemContainerID energy_tanks_container_id = ItemContainer::get_agent_energy_tanks(this->a->id);
@@ -584,7 +584,6 @@ void AgentStatus::send_scores(ClientID client_id)
     as.sendToClient(client_id);
 }
 
-// to all
 void AgentStatus::send_scores()
 {
     AgentKills_StoC ak;

@@ -11,16 +11,6 @@ class EquipmentUI: public UIElement
 {
     public:
 
-        struct Offset
-        {
-            int x,y;
-        };
-
-        struct Dim
-        {
-            int x,y;
-        };
-
         static const int height = 147;
         static const int width = 136;
 
@@ -38,7 +28,7 @@ class EquipmentUI: public UIElement
         static const int highlight_size = 34;
         static const int slot_highlight_offset = 1;
 
-        static const int item_size = 32;
+        static const int item_size = ITEM_ICON_RENDER_SIZE;
         static const int slot_item_offset = 2;
 
         static const struct Offset slot_label_offsets[N_EQUIPMENT_TYPES];
@@ -157,7 +147,7 @@ class EquipmentUI: public UIElement
 };
 
 
-const struct EquipmentUI::Offset EquipmentUI::slot_label_offsets[N_EQUIPMENT_TYPES] = {
+const struct Offset EquipmentUI::slot_label_offsets[N_EQUIPMENT_TYPES] = {
     { 0, 0 },   // NULL
     { 5, 12 },  // BODY
     { 5, 12 },  // HEAD
@@ -166,25 +156,25 @@ const struct EquipmentUI::Offset EquipmentUI::slot_label_offsets[N_EQUIPMENT_TYP
     { 2, 32 },  // ACCESSORY
 };
 
-const struct EquipmentUI::Offset EquipmentUI::slot_label_origins[N_EQUIPMENT_TYPES] = {
+const struct Offset EquipmentUI::slot_label_origins[N_EQUIPMENT_TYPES] = {
     { 0, 0 },      // NULL
     { 136, 9 },    // BODY
     { 136, 0 },    // HEAD
     { 136, 18 },   // FEET
     { 136, 27 },   // HANDS
-    { 136, 36  },  // ACCESSORY
+    { 136, 36 },  // ACCESSORY
 };
 
-const struct EquipmentUI::Dim EquipmentUI::slot_label_dimensions[N_EQUIPMENT_TYPES] = {
+const struct Dim EquipmentUI::slot_label_dimensions[N_EQUIPMENT_TYPES] = {
     { 0, 0 },     // NULL
     { 25, 9 },    // BODY
     { 25, 9 },    // HEAD
     { 25, 9 },    // FEET
     { 31, 9 },    // HANDS
-    { 14, 82  },  // ACCESSORY
+    { 14, 82 },  // ACCESSORY
 };
 
-const struct EquipmentUI::Offset EquipmentUI::slot_area_offset = { 13, 18 };   // from the top
+const struct Offset EquipmentUI::slot_area_offset = { 13, 18 };   // from the top
 
 const EquipmentType EquipmentUI::render_slot_equipment_types[EquipmentUI::render_dim] = {
     EQUIPMENT_TYPE_ACCESSORY,
@@ -439,7 +429,7 @@ void EquipmentUI::draw_item_labels()
     HudFont::reset_default();
     HudFont::end_font_draw();
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 }
 

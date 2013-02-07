@@ -15,7 +15,7 @@ class EnergyTanksUI : public UIElement
         static const int span_tween_slots = 8;
         static const int inc2 = 2;  // border around a slot icon
 
-        static const int slot_size = 32;    // pixel dimension
+        static const int slot_size = ITEM_ICON_RENDER_SIZE;    // pixel dimension
 
         bool inv_open;
 
@@ -114,7 +114,7 @@ void EnergyTanksUI::draw()
 
     const float w = slot_size;
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
