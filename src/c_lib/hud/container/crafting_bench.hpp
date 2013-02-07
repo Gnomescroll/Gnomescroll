@@ -22,7 +22,7 @@ class CraftingUI : public UIElement
 
         static const int input_slots = input_xdim * input_ydim;
         static const int output_slots = output_xdim * output_ydim;
-        static const int input_output_gap = 1;
+        static const int input_output_gap = 0;
 
         static const int xdim = input_xdim + input_output_gap + output_xdim;    // grid cell size
         static const int ydim = (input_ydim > output_ydim) ? input_ydim : output_ydim;

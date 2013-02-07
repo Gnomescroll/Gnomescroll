@@ -404,7 +404,7 @@ void draw()
     {
         GS_ASSERT(container_block_enabled_id != NULL_CONTAINER);
         ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_block_enabled_id);
-        GS_ASSERT(container != NULL);
+        //GS_ASSERT(container != NULL);
         if (container != NULL)
         {
             GS_ASSERT(container->type != NULL_CONTAINER_TYPE);
