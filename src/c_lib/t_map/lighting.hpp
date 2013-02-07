@@ -1061,7 +1061,7 @@ void assert_skylight(int chunk_i, int chunk_j)
             GS_ASSERT(false);
 
         if(li==15)
-            GS_ASSERT( get_skylight(x,y,z+1) == 15 );
+            GS_ASSERT( get_skylight(x,y,z+1) == 15 );       //this is getting triggered
     }
 
 }
