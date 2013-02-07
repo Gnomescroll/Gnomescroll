@@ -40,8 +40,12 @@ int get_skylight(int x, int y, int z)
     return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
 
+void get_envlight(int x,int y, int z);
+
 void set_skylight(int x, int y, int z, int value)
 {
+    int env_light =  get_envlight(x,y,z);
+
     GS_ASSERT(z >= 0 && z <= 128);
     GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
     GS_ASSERT(value < 16 && value >= 0);
@@ -67,6 +71,8 @@ void set_skylight(int x, int y, int z, int value)
     #if DC_CLIENT
     main_map->set_update(x,y);
     #endif
+
+    GS_ASSERT(env_light == get_envlight(x,y,z));
 }
 
 /*
@@ -682,6 +688,10 @@ int get_envlight(int x, int y, int z)
 
 void set_envlight(int x, int y, int z, int value)
 {
+
+    int sky_light =  get_skylight(x,y,z);
+
+
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -703,6 +713,8 @@ void set_envlight(int x, int y, int z, int value)
 #if DC_CLIENT
     main_map->set_update(x,y);
 #endif
+
+    GS_ASSERT(sky_light == get_skylight(x,y,z));
 }
 
 /*
@@ -1061,7 +1073,19 @@ void assert_skylight(int chunk_i, int chunk_j)
             GS_ASSERT(false);
 
         if(li==15)
+        {
+
+            struct MAP_ELEMENT e = get_element(x,y,z+1);
+            if(get_skylight(x,y,z+1) != 15)
+            {
+                printf("ERROR: block= %d light= %d \n", e.block, get_skylight(x,y,z+1) );
+            }
+
+
             GS_ASSERT( get_skylight(x,y,z+1) == 15 );       //this is getting triggered
+            GS_ASSERT(isSolid(x,y,z+1) == false);
+        }
+
     }
 
 }
