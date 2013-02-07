@@ -40,7 +40,7 @@ int get_skylight(int x, int y, int z)
     return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
 
-void get_envlight(int x,int y, int z);
+int get_envlight(int x,int y, int z);
 
 void set_skylight(int x, int y, int z, int value)
 {
@@ -200,8 +200,9 @@ void _skylight_update_core(int max_iterations)
             continue;
         }
 
-
-        if(li == 15 && fast_cube_properties[te.block].solid == true)
+        //if li=15 and block on top is solid, set to 14
+        //if li=15 and block on top is not 15, set to 14
+        if(li == 15 && (fast_cube_properties[te.block].solid == true || (te.light & 0x0f) != 15))
         {
             li = 14; //maybe zero?
             set_skylight(x,y,z, li);
