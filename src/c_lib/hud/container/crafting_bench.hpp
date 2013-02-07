@@ -143,9 +143,9 @@ int CraftingUI::get_slot_at(int px, int py)
     if (xslot < input_xdim && yslot >= input_ydim) return NULL_SLOT;
 
     // in unused output region
-    if (xslot >= input_xdim + input_output_gap
-     && xslot < input_xdim + input_output_gap + output_xdim
-     && yslot >= output_ydim)
+    if (xslot >= input_xdim + input_output_gap &&
+        xslot < input_xdim + input_output_gap + output_xdim &&
+        yslot >= output_ydim)
         return NULL_SLOT;
 
     if (this->in_craft_input_region(px,py)) slot = yslot * input_xdim + xslot;

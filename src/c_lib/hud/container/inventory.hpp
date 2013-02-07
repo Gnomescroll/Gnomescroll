@@ -42,6 +42,8 @@ class AgentInventoryUI : public UIElement
         return (this->get_slot_at(px,py) != NULL_SLOT);
     }
 
+    virtual void draw_name();
+
     virtual void init()
     {
         this->xdim = ItemContainer::get_container_xdim(ItemContainer::name::inventory);
@@ -83,31 +85,31 @@ int AgentInventoryUI::get_slot_at(int px, int py)
     return slot;
 }
 
-void AgentInventoryUI::draw()
+void AgentInventoryUI::draw_name()
 {
-    //this->draw_name();
-    // TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
     HudFont::start_font_draw();
     HudFont::reset_default();
     HudFont::set_texture();
     this->name.set_position(this->xoff, _yresf - this->yoff + this->name.get_height() + 1);
     this->name.draw();
     HudFont::end_font_draw();
+}
 
+void AgentInventoryUI::draw()
+{
+    this->draw_name();
+    // TODO -- stop drawing this shit upside down, so we can use the common method defined on UIElement
     const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
-
     glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     glBegin(GL_QUADS);
     unsigned char sbr = this->slot_background_border_color.r;
     unsigned char sbg = this->slot_background_border_color.g;
     unsigned char sbb = this->slot_background_border_color.b;
-    glColor4ub(sbr, sbg, sbb, 255); //128+64);
+    glColor4ub(sbr, sbg, sbb, 255);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -135,7 +137,7 @@ void AgentInventoryUI::draw()
         // always draw grey background
         int slot = j*xdim + i;
         float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
+        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - 1);
         float ratio = 1.0f;
         glColor4ub(80, 80, 80, alpha);    // grey
         Hud::meter_graphic.draw(x, y, w, w, ratio);

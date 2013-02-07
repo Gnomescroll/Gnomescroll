@@ -428,11 +428,17 @@ void draw()
 
 void init()
 {
+    synthesizer_container = new AgentSynthesizerUI;
+    synthesizer_container->type = UI_ELEMENT_SYNTHESIZER_CONTAINER;
+    synthesizer_container->init();
+    synthesizer_container->xoff = (_xresf - synthesizer_container->width())/2;
+    synthesizer_container->yoff = 120.0f + (_yresf + synthesizer_container->height())/2;
+
     agent_inventory = new AgentInventoryUI;
     agent_inventory->type = UI_ELEMENT_AGENT_INVENTORY;
     agent_inventory->init();
     agent_inventory->xoff = (_xresf - agent_inventory->width())/2 + 1;  // +1 because the width is odd with odd valued inc1 and even valued xdim
-    agent_inventory->yoff = _yresf/2 - (agent_inventory->height())/2;
+    agent_inventory->yoff = _yresf - (synthesizer_container->yoff - synthesizer_container->height() - 18);
 
     agent_toolbelt = new AgentToolbeltUI;
     agent_toolbelt->type = UI_ELEMENT_AGENT_TOOLBELT;
@@ -444,46 +450,43 @@ void init()
     energy_tanks->type = UI_ELEMENT_ENERGY_TANKS;
     energy_tanks->init();
     energy_tanks->xoff = ((_xresf - agent_toolbelt->width())/2);
-    energy_tanks->yoff = 0; // _yresf - energy_tanks->height() / 2;
-
-    synthesizer_container = new AgentSynthesizerUI;
-    synthesizer_container->type = UI_ELEMENT_SYNTHESIZER_CONTAINER;
-    synthesizer_container->init();
-    synthesizer_container->xoff = (_xresf - synthesizer_container->width())/2;
-    synthesizer_container->yoff = 150.0f + (_yresf + synthesizer_container->height())/2;
+    energy_tanks->yoff = 0;
 
     crafting_container = new CraftingUI;
     crafting_container->type = UI_ELEMENT_CRAFTING_CONTAINER;
     crafting_container->init();
-    crafting_container->xoff = (_xresf - crafting_container->width())/2 + 1;
-    crafting_container->yoff = -150.0f + (_yresf + crafting_container->height())/2;
+    crafting_container->xoff = agent_inventory->xoff + agent_inventory->width() + 6;
+    crafting_container->yoff = _yresf - agent_inventory->yoff - 2;
 
     storage_block = new StorageBlockUI;
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
     storage_block->set_container_type(ItemContainer::name::storage_block_small);
     storage_block->init();
     storage_block->centered = true;
-    storage_block->yoff = -150.0f + (_yresf + storage_block->height())/2;
+    storage_block->xoff = agent_inventory->xoff + agent_inventory->width() + 6;
+    storage_block->yoff = _yresf - agent_inventory->yoff - 2;
 
     smelter = new SmelterUI;
     smelter->type = UI_ELEMENT_SMELTER;
     smelter->set_container_type(ItemContainer::name::smelter_basic);
     smelter->init();
     smelter->centered = true;
-    smelter->yoff = -150.0f + (_yresf + smelter->height())/2;
+    smelter->xoff = agent_inventory->xoff + agent_inventory->width() + 6;
+    smelter->yoff = _yresf - agent_inventory->yoff - 2;
 
     crusher = new CrusherUI;
     crusher->type = UI_ELEMENT_CRUSHER;
     crusher->set_container_type(ItemContainer::name::crusher);
     crusher->init();
     crusher->centered = true;
-    crusher->yoff = -150.0f + (_yresf + crusher->height())/2;
+    crusher->xoff = agent_inventory->xoff + agent_inventory->width() + 6;
+    crusher->yoff = _yresf - agent_inventory->yoff - 2;
 
     premium_cache = new CacheUI;
     premium_cache->type = UI_ELEMENT_CACHE;
     premium_cache->set_container_type(ItemContainer::name::premium_cache);
     premium_cache->init();
-    premium_cache->xoff = (agent_inventory->xoff + agent_inventory->width()) + 10;
+    premium_cache->xoff = agent_inventory->xoff - (premium_cache->width() + 8);
     premium_cache->yoff = agent_inventory->yoff;
 
     equipment = new EquipmentUI;
@@ -491,8 +494,8 @@ void init()
     equipment->set_container_type(ItemContainer::name::equipment);
     equipment->init();
     // coordinates are point to top left on screen, where y=0 is along the bottom
-    equipment->xoff = agent_inventory->xoff - (equipment->width + 10);
-    equipment->yoff = agent_inventory->yoff + agent_inventory->height();
+    equipment->xoff = agent_inventory->xoff - (equipment->width + 6);
+    equipment->yoff = synthesizer_container->yoff;
 
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format("%d");

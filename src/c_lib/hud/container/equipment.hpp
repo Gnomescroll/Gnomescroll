@@ -120,7 +120,6 @@ class EquipmentUI: public UIElement
     }
 
     virtual void draw();
-    virtual void draw_name();
 
     EquipmentUI() :
         xdim(0), ydim(0), slot_equipment_types(NULL)
@@ -199,18 +198,6 @@ void EquipmentUI::draw()
     this->draw_items();
     this->draw_accessories_label();
     this->draw_item_labels();
-}
-
-
-void EquipmentUI::draw_name()
-{
-    HudFont::start_font_draw();
-    HudFont::reset_default();
-    HudFont::set_texture();
-    float y = this->yoff + this->name.get_height() + 4;
-    this->name.set_position(this->xoff, y);
-    this->name.draw();
-    HudFont::end_font_draw();
 }
 
 
