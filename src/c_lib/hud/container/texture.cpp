@@ -52,7 +52,7 @@ static void init_crusher_texture()
 {
     GLuint min_filter = GL_LINEAR;
     GLuint mag_filter = GL_NEAREST;
-    int ret = create_texture_from_file("media/sprites/container/crusher.png", &CrusherTexture, min_filter, mag_filter);
+    int ret = create_texture_from_file("media/sprites/container/crusher48.png", &CrusherTexture, min_filter, mag_filter);
     GS_ASSERT(ret == 0);
     GS_ASSERT(CrusherTexture != 0);
 }

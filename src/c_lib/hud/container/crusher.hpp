@@ -9,7 +9,7 @@ class CrusherUI : public UIElement
 {
     public:
 
-        static const int cell_size = ITEM_ICON_RENDER_SIZE + 3;
+        static const int cell_size = ITEM_ICON_RENDER_SIZE + 5;
         int xdim;    // grid cell size
         int ydim;
         int alt_xdim;
@@ -46,6 +46,8 @@ class CrusherUI : public UIElement
         static const int button_overlay_y = 1;
         static const int button_overlay_pressed_x = 3;
         static const int button_overlay_pressed_y = 2;
+
+        static const struct Dim texture_dim;
 
         float texture_offset_x;
         float texture_offset_y;
@@ -156,11 +158,11 @@ class CrusherUI : public UIElement
     }
 };
 
+const struct Dim CrusherUI::texture_dim = { 256, 256 };
 
 void CrusherUI::draw()
 {
-    IF_ASSERT(this->texture == NULL) return;
-    IF_ASSERT(this->texture == 0) return;
+    IF_ASSERT(this->texture == NULL || *this->texture == 0) return;
 
     this->draw_name();
 
@@ -185,8 +187,8 @@ void CrusherUI::draw()
 
     float sw = cell_size;
     float sh = cell_size;
-    float tw = ((float)cell_size)/256.0f;
-    float th = ((float)cell_size)/256.0f;
+    float tw = ((float)cell_size)/float(this->texture_dim.x);
+    float th = ((float)cell_size)/float(this->texture_dim.x);
 
     float x = xoff;
     float y = yoff - sh;    // -sh because draw_bound_texture_sprite draws bottom up
