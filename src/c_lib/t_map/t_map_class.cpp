@@ -260,7 +260,7 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
 /*
         // destroy block
         *e = NULL_MAP_ELEMENT;   
-        _envlight_update2(x,y,z); //light update
+        _push_envlight_update2(x,y,z); //light update
 
         #if DC_SERVER
         if(isItemContainer(*cube_type))
@@ -350,14 +350,11 @@ void Terrain_map::chunk_received(int cx, int cy)
     //DEBUG
     GS_ASSERT( ((cy+CW1) % CW) == ((cy-1) & MASK) );
     /*
-        Update Lighting
+        Init Update Lighting
     */
 
-    update_skylight(cx, cy);
-    update_skylight2(cx,cy);    //update skylight
-    
+    init_update_sunlight(cx, cy);   //init env_light values for blocks in chunk
     init_update_envlight(cx, cy);   //init env_light values for blocks in chunk
-    update_envlight(cx,cy);
 }
 
 /*
