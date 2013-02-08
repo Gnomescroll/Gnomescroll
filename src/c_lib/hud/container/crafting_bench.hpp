@@ -25,7 +25,7 @@ class CraftingUI : public UIElement
         static const int input_output_gap = 0;
 
         static const int xdim = input_xdim + input_output_gap + output_xdim;    // grid cell size
-        static const int ydim = (input_ydim > output_ydim) ? input_ydim : output_ydim;
+        static const int ydim = GS_MAX(input_ydim, output_ydim);
 
         // size of render area (texture + clickable area (will render highlights there still)
         static const float render_width;

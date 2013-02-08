@@ -59,17 +59,10 @@ void close_container(ItemContainerID container_id)
     for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
     {
         if (ui_elements[i] == NULL) continue;
-        if (!ItemContainer::container_type_is_attached_to_agent((ItemContainerType)i)) continue;
-        if (ui_elements[i]->container_id == container_id)
-        {
-            // should not have 2 ui_elements with same container id active,
-            // but we are closing them all just in case
-            GS_ASSERT(!closed);
-            closed = true;
-            ui_elements[i]->container_id = NULL_CONTAINER;
-        }
+        if (ItemContainer::container_type_is_attached_to_agent((ItemContainerType)i)) continue;
+        if (ui_elements[i]->container_id != NULL_CONTAINER) closed = true;
+        ui_elements[i]->container_id = NULL_CONTAINER;
     }
-
     if (container_block_enabled && closed)
         disable_container_block_hud();
 }
@@ -84,7 +77,6 @@ void enable_agent_inventory_hud()
 
 void disable_agent_inventory_hud()
 {
-    // reset mouse state
     mouse_x = -1;
     mouse_y = -1;
     agent_inventory_enabled = false;
@@ -109,10 +101,8 @@ void disable_container_block_hud()
 
 static UIElement* get_container_and_slot(int x, int y, int* slot)
 {
-    // track topmost clicked container
     UIElement* closest_container = NULL;
     int closest_slot = NULL_SLOT;
-
     // get topmost container click
     // WARNING: doesnt support overlapping containers yet.
     for (size_t i=0; i<MAX_CONTAINER_TYPES; i++)
@@ -132,10 +122,8 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
 
 static ContainerInputEvent get_container_hud_ui_event(int x, int y)
 {
-    // detect click
-    int slot;
+    int slot = NULL_SLOT;
     UIElement* container = get_container_and_slot(x,y, &slot);
-
     ItemContainerID container_id = NULL_CONTAINER;
     if (container != NULL) container_id = container->container_id;
 
