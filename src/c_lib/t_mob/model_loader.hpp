@@ -42,13 +42,8 @@ class ModelLoader
     ModelLoader() :
         pScene(NULL), nl(NULL), nlm(0), nli(0), _ml(NULL), _mlm(0),
         _nl(NULL), _nlm(0), bnl(NULL), bnlm(0)
-        draw(x,y,z, 0.0, 0.0);
-    }
+    {
 
-    void draw(float x, float y, float z, float theta, float phi)
-    {
-        struct Mat3 rotation_mat = mat3_euler_rotation(theta, phi, 0.0f);
-    {
     }
 
     ~ModelLoader()
