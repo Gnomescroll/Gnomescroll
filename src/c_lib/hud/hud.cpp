@@ -378,17 +378,17 @@ void draw_hud_textures()
     meter_graphic.draw(0,0, w,h, ratio, MeterGraphic::METANCH_RIGHT);
 
     // health/energy
-    Agents::Agent* a = ClientState::player_agent.you();
-    if (a != NULL)
-    {
-        const unsigned char alpha = 175;
-        int max_health = Agents::get_attribute_int(a->id, "max_health");
-        int health = Agents::get_attribute_int(a->id, "health");
-        float ratio = float(max_health - health) / float(max_health);
-        set_color_from_ratio(ratio, alpha, true);
-        meter_graphic.draw(0, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_LEFT, true);
-        meter_graphic.draw(_xresf/2, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_RIGHT, false);
-    }
+    //Agents::Agent* a = ClientState::player_agent.you();
+    //if (a != NULL)
+    //{
+        //const unsigned char alpha = 175;
+        //int max_health = Agents::get_attribute_int(a->id, "max_health");
+        //int health = Agents::get_attribute_int(a->id, "health");
+        //float ratio = float(max_health - health) / float(max_health);
+        //set_color_from_ratio(ratio, alpha, true);
+        //meter_graphic.draw(0, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_LEFT, true);
+        //meter_graphic.draw(_xresf/2, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_RIGHT, false);
+    //}
 
     if (!hud_draw_settings.draw) return;
 
@@ -730,7 +730,7 @@ void HUD::init()
     else
         prompt->set_text("");
     prompt->set_color(Color(255,255,255,255));
-    prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::agent_toolbelt->height() );
+    prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::toolbelt->height() );
     prompt->shadowed = true;
 
     error = text_list->create();

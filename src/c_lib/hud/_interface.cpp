@@ -1,5 +1,6 @@
 #include "_interface.hpp"
 
+#include <hud/status.hpp>
 #include <hud/harvest_bar.hpp>
 #include <hud/error.hpp>
 #include <hud/map.hpp>
@@ -23,6 +24,8 @@ void init()
     error_init();
     HudReticle::init();
     init_hud_draw_settings();
+
+    HudStatus::init();
 }
 
 void teardown()
@@ -37,7 +40,7 @@ void teardown()
 void draw()
 {
     // hud projected names should be underneath everything
-    
+
     start_font_draw();
     HudFont::reset_default();
     HudFont::set_texture();
@@ -51,10 +54,11 @@ void draw()
     // badges
     glDisable(GL_BLEND);
     glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.5f);    
+    glAlphaFunc(GL_GREATER, 0.5f);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::badge_texture_sheet_loader->texture);
     Agents::agent_list->draw_badges();
+    HudStatus::draw();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_ALPHA_TEST);
     glEnable(GL_BLEND);
@@ -81,7 +85,7 @@ void draw_error_status()
     update_error_text(hud->error);
     hud->error->draw_centered();
     hud->error_subtitle->set_position(hud->error_subtitle->x, hud->error->y - hud->error->get_height()*2);
-    
+
     HudFont::reset_default();
     set_texture();
     hud->error_subtitle->draw_centered();

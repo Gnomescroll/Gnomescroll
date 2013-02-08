@@ -8,11 +8,11 @@ namespace HudContainer
 const int ITEM_ICON_RENDER_SIZE = 48;
 
 // UI State
-extern class AgentInventoryUI* agent_inventory;
-extern class AgentToolbeltUI* agent_toolbelt;
-extern class AgentSynthesizerUI* synthesizer_container;
-extern class CacheUI* premium_cache;
-extern class CraftingUI* crafting_container;
+extern class AgentInventoryUI* inventory;
+extern class AgentToolbeltUI* toolbelt;
+extern class AgentSynthesizerUI* synthesizer;
+extern class CacheUI* cache;
+extern class CraftingUI* crafting_bench;
 extern class StorageBlockUI* storage_block;
 extern class EnergyTanksUI* energy_tanks;
 extern class CrusherUI* crusher;

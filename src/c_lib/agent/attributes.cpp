@@ -37,15 +37,18 @@ static void add_get_callback(getString);
 
 static void _register_attributes()
 {
-    attribute_def("max_health", 100);
+    attribute_def("max_health", 40);
     set_lower_limit(0);
 
-    attribute_def("health", 100);
+    attribute_def("health", 40);
     set_limits(0, "max_health");
     add_set_callback(&health_changed);
 
+    attribute_def("max_hunger", 10);
+    set_limits(10, 10);
+
     attribute_def("hunger", 0);
-    set_limits(0, 10);
+    set_limits(0, "max_hunger");
 }
 
 /*******************

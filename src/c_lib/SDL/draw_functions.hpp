@@ -11,7 +11,7 @@ struct VertexDraw
 
 struct Quad
 {
-  struct VertexDraw vertex[4];
+    struct VertexDraw vertex[4];
 };
 
 void draw_rect(Color color, float x, float y, float w, float h);

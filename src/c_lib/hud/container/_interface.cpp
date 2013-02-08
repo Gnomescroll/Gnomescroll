@@ -20,15 +20,15 @@ float mouse_y = -1;
 bool lm_down = false;
 
 // private containers
-class AgentInventoryUI* agent_inventory = NULL;
-class AgentToolbeltUI* agent_toolbelt = NULL;
-class AgentSynthesizerUI* synthesizer_container = NULL;
+class AgentInventoryUI* inventory = NULL;
+class AgentToolbeltUI* toolbelt = NULL;
+class AgentSynthesizerUI* synthesizer = NULL;
 class EnergyTanksUI* energy_tanks = NULL;
-class CacheUI* premium_cache = NULL;
+class CacheUI* cache = NULL;
 class EquipmentUI* equipment = NULL;
 
 // public containers
-class CraftingUI* crafting_container = NULL;
+class CraftingUI* crafting_bench = NULL;
 class StorageBlockUI* storage_block = NULL;
 class SmelterUI* smelter = NULL;
 class CrusherUI* crusher = NULL;
@@ -234,42 +234,42 @@ void set_mouse_position(int x, int y)
 
 ContainerInputEvent scroll_up()
 {
-    if (agent_toolbelt == NULL) return NULL_EVENT;
-    agent_toolbelt->selected_slot -= 1;
-    agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
-    if (agent_toolbelt->selected_slot < 0) agent_toolbelt->selected_slot += agent_toolbelt->xdim;
+    if (toolbelt == NULL) return NULL_EVENT;
+    toolbelt->selected_slot -= 1;
+    toolbelt->selected_slot %= toolbelt->xdim;
+    if (toolbelt->selected_slot < 0) toolbelt->selected_slot += toolbelt->xdim;
 
     ContainerInputEvent event;
-    event.container_id = agent_toolbelt->container_id;
-    event.slot = agent_toolbelt->selected_slot;
+    event.container_id = toolbelt->container_id;
+    event.slot = toolbelt->selected_slot;
     event.alt_action = false;
     return event;
 }
 
 ContainerInputEvent scroll_down()
 {
-    if (agent_toolbelt == NULL) return NULL_EVENT;
-    agent_toolbelt->selected_slot += 1;
-    agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
+    if (toolbelt == NULL) return NULL_EVENT;
+    toolbelt->selected_slot += 1;
+    toolbelt->selected_slot %= toolbelt->xdim;
 
     ContainerInputEvent event;
-    event.container_id = agent_toolbelt->container_id;
-    event.slot = agent_toolbelt->selected_slot;
+    event.container_id = toolbelt->container_id;
+    event.slot = toolbelt->selected_slot;
     event.alt_action = false;
     return event;
 }
 
 ContainerInputEvent select_slot(int numkey)
 {
-    if (agent_toolbelt == NULL) return NULL_EVENT;
+    if (toolbelt == NULL) return NULL_EVENT;
 
     if (numkey == 0) numkey = 10;
     int slot = numkey-1;
-    if (slot < 0 || slot >= agent_toolbelt->xdim) return NULL_EVENT;
-    agent_toolbelt->selected_slot = slot;
+    if (slot < 0 || slot >= toolbelt->xdim) return NULL_EVENT;
+    toolbelt->selected_slot = slot;
 
     ContainerInputEvent event;
-    event.container_id = agent_toolbelt->container_id;
+    event.container_id = toolbelt->container_id;
     event.slot = slot;
     event.alt_action = false;
     return event;
@@ -387,17 +387,17 @@ static void draw_tooltip()
 
 void draw()
 {
-    agent_toolbelt->draw();
-    energy_tanks->inv_open = agent_inventory_enabled;
+    toolbelt->draw();
+    energy_tanks->inv_open = (agent_inventory_enabled || container_block_enabled);
     energy_tanks->draw();
 
     if (!agent_inventory_enabled && !container_block_enabled) return;
 
     energy_tanks->draw_name();
-    agent_toolbelt->draw_name();
-    agent_inventory->draw();
-    synthesizer_container->draw();
-    premium_cache->draw();
+    //toolbelt->draw_name();
+    inventory->draw();
+    synthesizer->draw();
+    cache->draw();
     equipment->draw();
 
     if (container_block_enabled)
@@ -428,74 +428,74 @@ void draw()
 
 void init()
 {
-    synthesizer_container = new AgentSynthesizerUI;
-    synthesizer_container->type = UI_ELEMENT_SYNTHESIZER_CONTAINER;
-    synthesizer_container->init();
-    synthesizer_container->xoff = (_xresf - synthesizer_container->width())/2;
-    synthesizer_container->yoff = 120.0f + (_yresf + synthesizer_container->height())/2;
+    synthesizer = new AgentSynthesizerUI;
+    synthesizer->type = UI_ELEMENT_SYNTHESIZER_CONTAINER;
+    synthesizer->init();
+    synthesizer->xoff = (_xresf - synthesizer->width())/2;
+    synthesizer->yoff = 120.0f + (_yresf + synthesizer->height())/2;
 
-    agent_inventory = new AgentInventoryUI;
-    agent_inventory->type = UI_ELEMENT_AGENT_INVENTORY;
-    agent_inventory->init();
-    agent_inventory->xoff = (_xresf - agent_inventory->width())/2 + 1;  // +1 because the width is odd with odd valued inc1 and even valued xdim
-    agent_inventory->yoff = _yresf - (synthesizer_container->yoff - synthesizer_container->height() - 18);
+    inventory = new AgentInventoryUI;
+    inventory->type = UI_ELEMENT_AGENT_INVENTORY;
+    inventory->init();
+    inventory->xoff = (_xresf - inventory->width())/2 + 1;  // +1 because the width is odd with odd valued inc1 and even valued xdim
+    inventory->yoff = _yresf - (synthesizer->yoff - synthesizer->height() - 18);
 
-    agent_toolbelt = new AgentToolbeltUI;
-    agent_toolbelt->type = UI_ELEMENT_AGENT_TOOLBELT;
-    agent_toolbelt->init();
-    agent_toolbelt->xoff = (_xresf - agent_toolbelt->width())/2;
-    agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
+    toolbelt = new AgentToolbeltUI;
+    toolbelt->type = UI_ELEMENT_AGENT_TOOLBELT;
+    toolbelt->init();
+    toolbelt->xoff = (_xresf - toolbelt->width())/2;
+    toolbelt->yoff = _yresf - (toolbelt->height());
 
     energy_tanks = new EnergyTanksUI;
     energy_tanks->type = UI_ELEMENT_ENERGY_TANKS;
     energy_tanks->init();
-    energy_tanks->xoff = ((_xresf - agent_toolbelt->width())/2);
+    energy_tanks->xoff = ((_xresf - toolbelt->width())/2);
     energy_tanks->yoff = 0;
 
-    crafting_container = new CraftingUI;
-    crafting_container->type = UI_ELEMENT_CRAFTING_CONTAINER;
-    crafting_container->init();
-    crafting_container->xoff = agent_inventory->xoff + agent_inventory->width()+ 20;
-    crafting_container->yoff = _yresf - agent_inventory->yoff - 2;
+    crafting_bench = new CraftingUI;
+    crafting_bench->type = UI_ELEMENT_CRAFTING_CONTAINER;
+    crafting_bench->init();
+    crafting_bench->xoff = inventory->xoff + inventory->width()+ 20;
+    crafting_bench->yoff = _yresf - inventory->yoff - 2;
 
     storage_block = new StorageBlockUI;
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
     storage_block->set_container_type(ItemContainer::name::storage_block_small);
     storage_block->init();
     storage_block->centered = true;
-    storage_block->xoff = agent_inventory->xoff + agent_inventory->width()+ 20;
-    storage_block->yoff = _yresf - agent_inventory->yoff - 2;
+    storage_block->xoff = inventory->xoff + inventory->width()+ 20;
+    storage_block->yoff = _yresf - inventory->yoff - 2;
 
     smelter = new SmelterUI;
     smelter->type = UI_ELEMENT_SMELTER;
     smelter->set_container_type(ItemContainer::name::smelter_basic);
     smelter->init();
     smelter->centered = true;
-    smelter->xoff = agent_inventory->xoff + agent_inventory->width()+ 20;
-    smelter->yoff = _yresf - agent_inventory->yoff - 2;
+    smelter->xoff = inventory->xoff + inventory->width()+ 20;
+    smelter->yoff = _yresf - inventory->yoff - 2;
 
     crusher = new CrusherUI;
     crusher->type = UI_ELEMENT_CRUSHER;
     crusher->set_container_type(ItemContainer::name::crusher);
     crusher->init();
     crusher->centered = true;
-    crusher->xoff = agent_inventory->xoff + agent_inventory->width()+ 20;
-    crusher->yoff = _yresf - agent_inventory->yoff - 2;
+    crusher->xoff = inventory->xoff + inventory->width()+ 20;
+    crusher->yoff = _yresf - inventory->yoff - 2;
 
-    premium_cache = new CacheUI;
-    premium_cache->type = UI_ELEMENT_CACHE;
-    premium_cache->set_container_type(ItemContainer::name::premium_cache);
-    premium_cache->init();
-    premium_cache->xoff = agent_inventory->xoff - (premium_cache->width() + 22);
-    premium_cache->yoff = agent_inventory->yoff;
+    cache = new CacheUI;
+    cache->type = UI_ELEMENT_CACHE;
+    cache->set_container_type(ItemContainer::name::premium_cache);
+    cache->init();
+    cache->xoff = inventory->xoff - (cache->width() + 22);
+    cache->yoff = inventory->yoff;
 
     equipment = new EquipmentUI;
     equipment->type = UI_ELEMENT_EQUIPMENT;
     equipment->set_container_type(ItemContainer::name::equipment);
     equipment->init();
     // coordinates are point to top left on screen, where y=0 is along the bottom
-    equipment->xoff = agent_inventory->xoff - (equipment->width+ 20);
-    equipment->yoff = synthesizer_container->yoff;
+    equipment->xoff = inventory->xoff - (equipment->width+ 20);
+    equipment->yoff = synthesizer->yoff;
 
     grabbed_icon_stack_text = new HudText::Text;
     grabbed_icon_stack_text->set_format("%d");
@@ -511,12 +511,12 @@ void init()
     GS_ASSERT(ui_elements == NULL);
     ui_elements = (UIElement**)calloc(MAX_CONTAINER_TYPES, sizeof(UIElement*));
 
-    ui_elements[ItemContainer::name::inventory] = agent_inventory;
-    ui_elements[ItemContainer::name::toolbelt] = agent_toolbelt;
+    ui_elements[ItemContainer::name::inventory] = inventory;
+    ui_elements[ItemContainer::name::toolbelt] = toolbelt;
     ui_elements[ItemContainer::name::energy_tanks] = energy_tanks;
-    ui_elements[ItemContainer::name::premium_cache] = premium_cache;
-    ui_elements[ItemContainer::name::synthesizer] = synthesizer_container;
-    ui_elements[ItemContainer::name::crafting_bench_basic] = crafting_container;
+    ui_elements[ItemContainer::name::premium_cache] = cache;
+    ui_elements[ItemContainer::name::synthesizer] = synthesizer;
+    ui_elements[ItemContainer::name::crafting_bench_basic] = crafting_bench;
     ui_elements[ItemContainer::name::storage_block_small] = storage_block;
     ui_elements[ItemContainer::name::cryofreezer_small] = storage_block;    // both use storage block instance
     ui_elements[ItemContainer::name::smelter_basic] = smelter;
@@ -526,15 +526,15 @@ void init()
 
 void teardown()
 {
-    if (agent_inventory != NULL) delete agent_inventory;
-    if (agent_toolbelt != NULL) delete agent_toolbelt;
-    if (synthesizer_container != NULL) delete synthesizer_container;
-    if (crafting_container != NULL) delete crafting_container;
+    if (inventory != NULL) delete inventory;
+    if (toolbelt != NULL) delete toolbelt;
+    if (synthesizer != NULL) delete synthesizer;
+    if (crafting_bench != NULL) delete crafting_bench;
     if (storage_block != NULL) delete storage_block;
     if (smelter != NULL) delete smelter;
     if (energy_tanks != NULL) delete energy_tanks;
     if (crusher != NULL) delete crusher;
-    if (premium_cache != NULL) delete premium_cache;
+    if (cache != NULL) delete cache;
     if (equipment != NULL) delete equipment;
     if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
     if (ui_elements != NULL) free(ui_elements);

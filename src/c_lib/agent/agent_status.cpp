@@ -529,8 +529,8 @@ void AgentStatus::set_fresh_state()
 
     // TODO -- attributes should be labelled as stateful or not
         // Stateful etc attributes are restored to default on birth;
-    int health = get_attribute_int(this->a->id, "max_health");
-    set_attribute(this->a->id, "health", health);
+    int max_health = get_attribute_int(this->a->id, "max_health");
+    set_attribute(this->a->id, "health", max_health);
     set_attribute(this->a->id, "hunger", 0);
 
     // revive
@@ -557,13 +557,12 @@ void AgentStatus::respawn()
 void AgentStatus::restore_health()
 {
     int max_health = get_attribute_int(this->a->id, "max_health");
-    if (get_attribute_int(this->a->id, "health") == max_health) return;
     set_attribute(this->a->id, "health", max_health);
 }
 
 void AgentStatus::at_base()
 {
-    this->restore_health();
+    //this->restore_health();
 }
 
 void AgentStatus::send_scores(ClientID client_id)
