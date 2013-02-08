@@ -41,7 +41,7 @@ inline void SendClientId_StoC::handle()
 inline void Agent_state_message::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)id);
-    IF_ASSERT(a == NULL) return;
+    if (a == NULL) return;
     a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 

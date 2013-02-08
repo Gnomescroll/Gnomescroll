@@ -11,14 +11,14 @@ dont_include_this_file_in_client
 #include <physics/vec3.hpp>
 #include <physics/mat3.hpp>
 
-namespace t_gen 
+namespace t_gen
 {
 
 const float DOUBLE_PI = PI * 2;
 
-const size_t NUM_LEAVES = 3;     
-const size_t NUM_TRUNKS = 3;     
-const size_t NUM_SHROOMCAPS = 3; 
+const size_t NUM_LEAVES = 3;
+const size_t NUM_TRUNKS = 3;
+const size_t NUM_SHROOMCAPS = 3;
 const size_t NUM_SHROOMSTEMS = 2;
 
 // perlin noise
@@ -38,7 +38,7 @@ CubeType* trunks = NULL;
 CubeType* shroom_caps = NULL;
 CubeType* shroom_stems = NULL;
 
-typedef enum 
+typedef enum
 {
     TREE_RANDOM,    // Dr. Suess style!
     TREE_INVERSIVE, // opposite of earth leaf layers being broadest at base
@@ -47,16 +47,16 @@ typedef enum
 
 void set_me_maybe(int x, int y, int z, CubeType ct, CubeType an_overwriteable = NULL_CUBE)
 {
-    if (t_map::get(x, y, z) == EMPTY_CUBE || 
-        (an_overwriteable != NULL_CUBE && 
+    if (t_map::get(x, y, z) == EMPTY_CUBE ||
+        (an_overwriteable != NULL_CUBE &&
          t_map::get(x, y, z) == an_overwriteable))
     {
-		t_map::set_fast(x, y, z, ct);
+        t_map::set_fast(x, y, z, ct);
     }
 }
 
 void make_circle(int x, int y, int z, float dist, CubeType ct,
-                 CubeType an_overwriteable = NULL_CUBE) 
+                 CubeType an_overwriteable = NULL_CUBE)
 { // instead of from the center of given block
     float fx = 0;
     float fy = 0;
@@ -119,7 +119,7 @@ bool corner_origin_circle_untouched(int x, int y, int z, float dist)
 void corner_origin_make_circle(int x, int y, int z, float dist,
                                CubeType block, bool extend_down = false)
 { // instead of from the center of given block
-    corner_origin_heart(x, y, z, dist, block, extend_down);  
+    corner_origin_heart(x, y, z, dist, block, extend_down);
 }
 
 bool blocks_are_invalid(CubeType arr[], int len)
@@ -129,8 +129,8 @@ bool blocks_are_invalid(CubeType arr[], int len)
         GS_ASSERT(t_map::isValidCube(arr[i]));
         if (!t_map::isValidCube(arr[i]))
         {
-            printf("*** invalid cube %d ***", arr[i]); 
-            return true; 
+            printf("*** invalid cube %d ***", arr[i]);
+            return true;
         }
     }
     return false;
@@ -182,7 +182,7 @@ void make_tree(int x, int y, int z)
     int segs = randrange(2, 6);
     float rad = 2.0f; // radius of leaf layer from center voxel
     TreeType tt = (TreeType)randrange(0, (int)TREE_MAX-1);
-    
+
     // make tree, segment by segment
     for (int seg = 0; seg < segs; seg++)
     {   // height of current trunk segment
@@ -212,7 +212,7 @@ void make_tree(int x, int y, int z)
 
                 // limbs
                 for (int i = -rad; i < rad; i++)
-                    set_me_maybe(x+i, y, z+j, trunk); 
+                    set_me_maybe(x+i, y, z+j, trunk);
                 for (int i = -rad; i < rad; i++)
                     set_me_maybe(x, y+i, z+j, trunk);
 
@@ -233,7 +233,7 @@ void make_tree(int x, int y, int z)
 
 bool strip_of_solid_blocks_underneath(int x, int y, int z, int num)
 {
-    for (int i = 1; i <= num; i++) 
+    for (int i = 1; i <= num; i++)
         if (z-i < 0 || t_map::get(x, y, z-i) == EMPTY_CUBE)
             return false;
     return true;
@@ -282,14 +282,15 @@ void add_shrooms(float* noise)
 
 void carve_ray(float x_, float y_, float z_, int tiny_angle, int distance)
 {
-    for (int i = 0; i < distance; i++) 
+    GS_ASSERT(tiny_angle >= 0 && tiny_angle < NUM_LOOKUP_ANGLES);
+    for (int i = 0; i < distance; i++)
     {
-        //for (int x = port; x < starboard + 1; x++) 
+        //for (int x = port; x < starboard + 1; x++)
         //{
             t_map::set_fast(
-				(int)(x_ + (i * sin_lookup_table[tiny_angle])),
-				(int)(y_ + (i * cos_lookup_table[tiny_angle])),
-				(int)z_, EMPTY_CUBE);
+                (int)(x_ + (i * sin_lookup_table[tiny_angle])),
+                (int)(y_ + (i * cos_lookup_table[tiny_angle])),
+                (int)z_, EMPTY_CUBE);
         //}
     }
 }
@@ -298,18 +299,14 @@ void carve_angled_gorge_slice(float x_, float y_, float z_, int tiny_angle)
 {
     int countdown_til_widening = 1;
     int max_ups_per_width = 1; // iterations upwards
-	int ray_length = 0;
+    int ray_length = 0;
 
-    for (int z = z_; z <= t_map::map_dim.z - 1; z++) 
+    for (int z = z_; z<t_map::map_dim.z; z++)
     {
-		int ta = tiny_angle + 8;
-		while (ta > NUM_LOOKUP_ANGLES)
-			ta -= NUM_LOOKUP_ANGLES;
+        int ta = (tiny_angle + 8) % NUM_LOOKUP_ANGLES;
         carve_ray(x_, y_, z, ta, ray_length);
-		
-		ta = tiny_angle + 24;
-		while (ta > NUM_LOOKUP_ANGLES)
-			ta -= NUM_LOOKUP_ANGLES;
+
+        ta = (tiny_angle + 24) % NUM_LOOKUP_ANGLES;;
         carve_ray(x_, y_, z, ta, ray_length);
 
         countdown_til_widening--;
@@ -317,7 +314,7 @@ void carve_angled_gorge_slice(float x_, float y_, float z_, int tiny_angle)
         {
             countdown_til_widening = max_ups_per_width;
             max_ups_per_width *= 2; //+= 2; canyons // ++ made it more like valleys
-			ray_length++;
+            ray_length++;
         }
     }
 }
@@ -339,70 +336,60 @@ void add_gorges(float* noise, int num_gorges, int length_)
         float rand_angle = DOUBLE_PI / NUM_LOOKUP_ANGLES * randrange(0, NUM_LOOKUP_ANGLES - 1);
         float curr_angle;
 
-		int hei_from_topside = 1;
+        int hei_from_topside = 1;
         int len_remain = length_ * 2; // length remaining before we're done with this gorge
-		while (len_remain > 0) 
+        while (len_remain > 0)
         {
-			// get full res angle
+            // get full res angle
             curr_angle = rand_angle + noise[rand_idx + len_remain * map_dim.x];
-			while (curr_angle < 0) // needed so this maps to an array
-				curr_angle += DOUBLE_PI;
-			while (curr_angle >= DOUBLE_PI) // needed so this maps to an array
-				curr_angle -= DOUBLE_PI;
-			
-			// get tiny/quantized angle for lookup table index
-			int tiny_angle = 0;
-			while (curr_angle > 0)
-			{
-				curr_angle -= (DOUBLE_PI / NUM_LOOKUP_ANGLES);
-				tiny_angle++;
-			}
+            while (curr_angle < 0) // needed so this maps to an array
+                curr_angle += DOUBLE_PI;
+            while (curr_angle >= DOUBLE_PI) // needed so this maps to an array
+                curr_angle -= DOUBLE_PI;
+
+            // get tiny/quantized angle for lookup table index
+            int tiny_angle = 0;
+            while (curr_angle > 0)
+            {
+                curr_angle -= (DOUBLE_PI / NUM_LOOKUP_ANGLES);
+                tiny_angle++;
+                tiny_angle %= NUM_LOOKUP_ANGLES;
+            }
 
             // get a valid z
-			int z = t_map::get_highest_solid_block(ox + fx, oy + fy) - hei_from_topside;
-			if (z < 6) // keep from getting close to bedrock
-				z = 6;
+            int z = t_map::get_highest_solid_block(ox + fx, oy + fy) - hei_from_topside;
+            if (z < 6) // keep from getting close to bedrock
+                z = 6;
 
-			carve_angled_gorge_slice(ox + fx, oy + fy, z, tiny_angle);
+            carve_angled_gorge_slice(ox + fx, oy + fy, z, tiny_angle);
 
-			// move half unit forward
-			fx += sin_lookup_table[tiny_angle] / 2;
+            // move half unit forward
+            fx += sin_lookup_table[tiny_angle] / 2;
             fy += cos_lookup_table[tiny_angle] / 2;
-			
-			if (len_remain < length_) // half to match the * 2 of len_remain
-				hei_from_topside--;
-			else
-				hei_from_topside++;
 
-			len_remain--;
+            if (len_remain < length_) // half to match the * 2 of len_remain
+                hei_from_topside--;
+            else
+                hei_from_topside++;
+
+            len_remain--;
         }
     }
 }
 
-void add_terrain_features() 
+void add_terrain_features()
 {
     using t_map::map_dim;
     printf("Adding terrain features\n");
 
-    // setup_angle_lookup_tables();    
-	// ......** when i pulled this out into its own function it says sin_lookup_table is undefined or someshit (thought that shit was global)
-	// i just wanna get something done atm and should FIXME later
-	if (sin_lookup_table == NULL) 
-    {
-        sin_lookup_table = new float[NUM_LOOKUP_ANGLES];
-		for (int i = 0; i < NUM_LOOKUP_ANGLES; i++) 
-		{
-			sin_lookup_table[i] = sinf(DOUBLE_PI / NUM_LOOKUP_ANGLES * i);
-		}
-    }
-	if (cos_lookup_table == NULL) 
-    {
-        cos_lookup_table = new float[NUM_LOOKUP_ANGLES];
-		for (int i = 0; i < NUM_LOOKUP_ANGLES; i++) 
-		{
-			cos_lookup_table[i] = cosf(DOUBLE_PI / NUM_LOOKUP_ANGLES * i);
-		}
-    }
+    GS_ASSERT(sin_lookup_table == NULL);
+    GS_ASSERT(cos_lookup_table == NULL);
+    sin_lookup_table = new float[NUM_LOOKUP_ANGLES];
+    for (int i = 0; i < NUM_LOOKUP_ANGLES; i++)
+        sin_lookup_table[i] = sinf(DOUBLE_PI / NUM_LOOKUP_ANGLES * i);
+    cos_lookup_table = new float[NUM_LOOKUP_ANGLES];
+    for (int i = 0; i < NUM_LOOKUP_ANGLES; i++)
+        cos_lookup_table[i] = cosf(DOUBLE_PI / NUM_LOOKUP_ANGLES * i);
 
     // setup cube sets
     leaves = new CubeType[NUM_LEAVES];
@@ -411,10 +398,10 @@ void add_terrain_features()
     shroom_stems = new CubeType[NUM_SHROOMSTEMS];
 
     leaves[0] = t_map::get_cube_type("leaves1");
-    leaves[1] = t_map::get_cube_type("leaves2"); 
-    leaves[2] = t_map::get_cube_type("leaves3"); 
-    
-    trunks[0] = t_map::get_cube_type("space_tree_trunk1"); 
+    leaves[1] = t_map::get_cube_type("leaves2");
+    leaves[2] = t_map::get_cube_type("leaves3");
+
+    trunks[0] = t_map::get_cube_type("space_tree_trunk1");
     trunks[1] = t_map::get_cube_type("space_tree_trunk2");
     trunks[2] = t_map::get_cube_type("space_tree_trunk3");
 
@@ -435,7 +422,7 @@ void add_terrain_features()
     IF_ASSERT(noise == NULL) return;
 
     // add the features
-	add_gorges(noise, 50, 70);
+    add_gorges(noise, 50, 70);
     add_trees(noise);
     add_shrooms(noise);
 
@@ -448,5 +435,5 @@ void add_terrain_features()
     delete[] shroom_caps;
     delete[] shroom_stems;
 }
-    
+
 }   // t_gen
