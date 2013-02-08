@@ -49,8 +49,7 @@ enum room_t
 {
     ROOMT_NORMAL,
     ROOMT_HALL,
-    ROOMT_BOSS_CORNER,
-    ROOMT_BOSS_NORMAL,
+    ROOMT_BOSS,
 };
         
 CubeType randcube(CubeType arr[], int num) 
@@ -360,10 +359,11 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
         {
 			set_at_room_offset(EMPTY_CUBE, cx, cy, cz, ri, ox, oy);
             
-            if (cz == 1 && (randrange(0, 156) == 0))
+            if (cz == 1 && (randrange(0, 256) == 0))
             { 
-                make_chest(cx, cy, 64);//cz);
-            }
+				IntVec3 ori = get_room_origin(ri, ox, oy);
+				make_chest(ori.x + cx, ori.y + cy, ori.z + cz);
+			}
         }
 
 		// make column of cubes in the middle to show room id (should be the order rooms were generated)
@@ -506,9 +506,10 @@ void open_connection_to(direction_t d, Room& rm)
     }
 }
 
-void connect_these(IntVec3& src, direction_t d, IntVec3& dst) 
+void connect_room(IntVec3& src, direction_t d) 
 {
-        dst.Clone(src);  // starting point, gets offset in correct direction below
+        IntVec3 dst;
+		dst.Clone(src);  // starting point.  gets offset in direction below
 
         switch(d) 
         {
@@ -578,7 +579,7 @@ bool empty_lat_space_around(IntVec3 iv)
     {
 		setup_room(rooms[root.z][root.y][root.x], rooms[root.z][root.y][root.x].room_t);  // fixme?   room_t might not be deliberately set yet?
         setup_room(rooms[hall.z][hall.y][hall.x], ROOMT_HALL);
-        connect_these(root, dir, hall);
+        connect_room(root, dir);
         return true;
     }
     else 
@@ -586,7 +587,7 @@ bool empty_lat_space_around(IntVec3 iv)
     {
         setup_room(rooms[hall.z][hall.y][hall.x], ROOMT_HALL);
         setup_room(rooms[room.z][room.y][room.x], ROOMT_NORMAL);
-        connect_these(hall, dir, room);
+        connect_room(hall, dir);
         return true;
     }
     else
@@ -627,6 +628,14 @@ void UNUSED_make_a_simple_room()
             //    r = setup_stairspace_for(DIR_DOWN, r);
 }
 
+void finish_room(Room r) 
+{
+    r.wall = curr_wall;
+    r.floo = curr_floo;
+    r.ceil = curr_ceil;
+    r.trim = curr_trim;
+    r.dead = false;
+}
 void finish_room(IntVec3 iv, int id = 0) 
 {
     rooms[iv.z][iv.y][iv.x].wall = curr_wall;
@@ -723,18 +732,41 @@ void set_pathing_data(int ox, int oy)  // origin x/y
     for (int z = 0; z < ROOMS_GOING_UP; z++) 
 	{
         // make boss room or stairway-down
-        if (z == 0) // (bottom level) 2x3 joining of grid nodes
+        if (z == 0) // boos needs 2x3 joining of grid nodes
         {
             root.x = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room wid */);
             root.y = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room dep */);
             root.z = z;
+
+	        // make extra rooms to be joined together as boss room
+			make_alive_and_setup(rooms[root.z][root.y + 1][root.x + 1], ROOMT_BOSS);
+			finish_room(         rooms[root.z][root.y + 1][root.x + 1]);
+			make_alive_and_setup(rooms[root.z][root.y + 1][root.x],     ROOMT_BOSS);
+			finish_room(         rooms[root.z][root.y + 1][root.x]);
+			make_alive_and_setup(rooms[root.z][root.y]    [root.x + 1], ROOMT_BOSS);
+			finish_room(         rooms[root.z][root.y]    [root.x + 1]);
+
+			if (randrange(0, 1) == 0)
+			{ // 2x3
+				make_alive_and_setup(rooms[root.z][root.y + 2][root.x],     ROOMT_BOSS);
+				finish_room(         rooms[root.z][root.y + 2][root.x]);
+				make_alive_and_setup(rooms[root.z][root.y + 2][root.x + 1], ROOMT_BOSS);
+				finish_room(         rooms[root.z][root.y + 2][root.x + 1]);
+			}
+			else
+			{ // 3x2
+				make_alive_and_setup(rooms[root.z][root.y]    [root.x + 2], ROOMT_BOSS);
+				finish_room(         rooms[root.z][root.y]    [root.x + 2]);
+				make_alive_and_setup(rooms[root.z][root.y + 1][root.x + 2], ROOMT_BOSS);
+				finish_room(         rooms[root.z][root.y + 1][root.x + 2]);
+			}
         }
         else  // need stairs
         {
             IntVec3 lower;
             lower.Clone(root); 
             root.z++;
-            connect_these(lower, DIR_UP, root);
+            connect_room(lower, DIR_UP);
         }
         
         make_alive_and_setup(rooms[root.z][root.y][root.x], ROOMT_NORMAL);
@@ -812,7 +844,8 @@ bool contains_1_or_more_cubes(Rect3D r)
     return false;
 }
 
-void make_ruins(int x, int y) {
+void make_ruins(int x, int y) 
+{
     printf("__________________________________________________________________\n");
     printf("Making ruin @ %d, %d\n", x, y);
 
@@ -828,6 +861,23 @@ void make_ruins(int x, int y) {
         {
             if (rooms[rz][ry][rx].dead) 
                 continue;
+
+            IntVec3 ri;  // room index
+            ri.x = rx; 
+            ri.y = ry; 
+            ri.z = rz;
+
+			if (rooms[rz][ry][rx].room_t == ROOMT_BOSS) 
+			{
+				if (rx != 0 && rooms[rz][ry][rx - 1].room_t == ROOMT_BOSS) 
+				{
+					connect_room(ri, DIR_WEST);
+				}
+				if (ry != 0 && rooms[rz][ry - 1][rx].room_t == ROOMT_BOSS) 
+				{
+					connect_room(ri, DIR_SOUTH);
+				}
+			}
 
             if (northernmost < ry)
                 northernmost = ry;
@@ -849,10 +899,6 @@ void make_ruins(int x, int y) {
                 rz * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET + CUBES_GOING_UP_ROOM - 1,
                 CUBES_ACROSS_ROOM, CUBES_ACROSS_ROOM, 1, rooms[rz][ry][rx].ceil);
         
-            IntVec3 ri;  // room index
-            ri.x = rx; 
-            ri.y = ry; 
-            ri.z = rz;
             make_room_filling(ri, x, y);
 
             if (contains_1_or_more_cubes(rooms[rz][ry][rx].uconn))

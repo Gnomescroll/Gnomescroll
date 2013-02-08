@@ -15,9 +15,6 @@ namespace t_gen
 {
 
 const float DOUBLE_PI = PI * 2;
-const float HALF_PI = PI / 2;
-const float QUARTER_PI = HALF_PI / 2;
-const float EIGHTH_PI = QUARTER_PI / 2;
 
 const size_t NUM_LEAVES = 3;     
 const size_t NUM_TRUNKS = 3;     
@@ -332,36 +329,52 @@ void add_gorges(float* noise, int num_gorges, int length_)
 
     for (int i = 0; i < num_gorges; i++)
     {
-        int x = randrange(0, map_dim.x - 1);
-        int y = randrange(0, map_dim.y - 1);
+        int ox = randrange(0, map_dim.x - 1);
+        int oy = randrange(0, map_dim.y - 1);
 
         int rand_idx = randrange(0, map_dim.x - 1);
 
         float fx = 0;
         float fy = 0;
-        float angle = 0;
+        float rand_angle = DOUBLE_PI / NUM_LOOKUP_ANGLES * randrange(0, NUM_LOOKUP_ANGLES - 1);
+        float curr_angle;
 
-        int length = length_ * 2;
-		while (length > 0) 
+		int hei_from_topside = 1;
+        int len_remain = length_ * 2; // length remaining before we're done with this gorge
+		while (len_remain > 0) 
         {
-            angle = noise[rand_idx + length * map_dim.x];
-			while (angle < 0) angle += DOUBLE_PI;
+			// get full res angle
+            curr_angle = rand_angle + noise[rand_idx + len_remain * map_dim.x];
+			while (curr_angle < 0) // needed so this maps to an array
+				curr_angle += DOUBLE_PI;
+			while (curr_angle >= DOUBLE_PI) // needed so this maps to an array
+				curr_angle -= DOUBLE_PI;
 			
-			// figure tiny/quantized angle for lookup table index
+			// get tiny/quantized angle for lookup table index
 			int tiny_angle = 0;
-			while (angle > 0)
+			while (curr_angle > 0)
 			{
-				angle -= (DOUBLE_PI / NUM_LOOKUP_ANGLES);
+				curr_angle -= (DOUBLE_PI / NUM_LOOKUP_ANGLES);
 				tiny_angle++;
 			}
 
-            //scale_x = sinf(angle);
-            //scale_y = cosf(angle);
-            carve_angled_gorge_slice(x + fx, y + fy, 6,	tiny_angle);
+            // get a valid z
+			int z = t_map::get_highest_solid_block(ox + fx, oy + fy) - hei_from_topside;
+			if (z < 6) // keep from getting close to bedrock
+				z = 6;
 
+			carve_angled_gorge_slice(ox + fx, oy + fy, z, tiny_angle);
+
+			// move half unit forward
 			fx += sin_lookup_table[tiny_angle] / 2;
             fy += cos_lookup_table[tiny_angle] / 2;
-            length--;
+			
+			if (len_remain < length_) // half to match the * 2 of len_remain
+				hei_from_topside--;
+			else
+				hei_from_topside++;
+
+			len_remain--;
         }
     }
 }
@@ -371,8 +384,10 @@ void add_terrain_features()
     using t_map::map_dim;
     printf("Adding terrain features\n");
 
-    // setup angle lookup tables
-	if(sin_lookup_table == NULL) 
+    // setup_angle_lookup_tables();    
+	// ......** when i pulled this out into its own function it says sin_lookup_table is undefined or someshit (thought that shit was global)
+	// i just wanna get something done atm and should FIXME later
+	if (sin_lookup_table == NULL) 
     {
         sin_lookup_table = new float[NUM_LOOKUP_ANGLES];
 		for (int i = 0; i < NUM_LOOKUP_ANGLES; i++) 
@@ -380,7 +395,7 @@ void add_terrain_features()
 			sin_lookup_table[i] = sinf(DOUBLE_PI / NUM_LOOKUP_ANGLES * i);
 		}
     }
-	if(cos_lookup_table == NULL) 
+	if (cos_lookup_table == NULL) 
     {
         cos_lookup_table = new float[NUM_LOOKUP_ANGLES];
 		for (int i = 0; i < NUM_LOOKUP_ANGLES; i++) 
@@ -389,18 +404,12 @@ void add_terrain_features()
 		}
     }
 
-    /*
-    CubeType leaves[NUM_LEAVES] = {NULL_CUBE};
-    CubeType trunks[NUM_TRUNKS] = {NULL_CUBE};
-    CubeType shroom_caps [NUM_SHROOMCAPS]  = {NULL_CUBE};
-    CubeType shroom_stems[NUM_SHROOMSTEMS] = {NULL_CUBE};
-    */
+    // setup cube sets
     leaves = new CubeType[NUM_LEAVES];
     trunks = new CubeType[NUM_TRUNKS];
     shroom_caps = new CubeType[NUM_SHROOMCAPS];
     shroom_stems = new CubeType[NUM_SHROOMSTEMS];
 
-    // setup cube sets
     leaves[0] = t_map::get_cube_type("leaves1");
     leaves[1] = t_map::get_cube_type("leaves2"); 
     leaves[2] = t_map::get_cube_type("leaves3"); 
@@ -425,7 +434,8 @@ void add_terrain_features()
     float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
-    add_gorges(noise, 10, 70);
+    // add the features
+	add_gorges(noise, 50, 70);
     add_trees(noise);
     add_shrooms(noise);
 
