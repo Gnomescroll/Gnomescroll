@@ -826,7 +826,7 @@ void _envlight_update_core(int max_iterations)
 
             if(fast_cube_properties[e.block].solid == true)
             {
-                GS_ASSERT(false);
+                //GS_ASSERT(false);
                 if(index != 0)
                     printf("ERROR: env_light called on solid block on index %d of %d \n", index, env_light_array_index);
                 index++;
@@ -1040,7 +1040,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
 void assert_skylight(int chunk_i, int chunk_j)
 {
     //debugging
-    return;
+    //return;
 
     int k = map_dim.z-1;
 
@@ -1091,6 +1091,12 @@ void assert_skylight(int chunk_i, int chunk_j)
         }
 
     }
+
+}
+
+void lighting_rolling_update(int chunk_i, int chunk_j)
+{
+
 
 }
 
