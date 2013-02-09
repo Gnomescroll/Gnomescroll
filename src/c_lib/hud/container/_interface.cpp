@@ -276,7 +276,7 @@ static void draw_grabbed_icon()
     struct ItemContainer::SlotMetadata hand_metadata = player_hand_ui->get_item_metadata();
     if (hand_metadata.type == NULL_ITEM_TYPE) return;
 
-    const float w = ITEM_ICON_RENDER_SIZE;
+    const float w = float(ITEM_ICON_RENDER_SIZE);
 
     // center icon on mouse position
     float x = mouse_x - (w / 2);

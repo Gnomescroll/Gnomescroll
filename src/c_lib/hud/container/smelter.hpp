@@ -219,9 +219,9 @@ void SmelterUI::draw_meter(float x, float y, float src_x, float src_y, float w, 
     IF_ASSERT(amount < 0.0f) amount = 0.0f;
     IF_ASSERT(amount > 1.0f) amount = 1.0f;
 
-    float tx_min = src_x / float(this->texture_height);
+    float tx_min = src_x / float(this->texture_width);
     float ty_min = src_y / float(this->texture_height);
-    float tx_max = tx_min + (w/float(this->texture_height));
+    float tx_max = tx_min + (w/float(this->texture_width));
     float ty_max = ty_min + (h/float(this->texture_height));
 
     float dh = h * (1.0f - amount);
@@ -274,7 +274,7 @@ void SmelterUI::draw()
 
     float tx_min = texture_offset_x;
     float ty_min = texture_offset_y;
-    float tx_max = render_width/float(this->texture_height);
+    float tx_max = render_width/float(this->texture_width);
     float ty_max = render_height/float(this->texture_height);
 
     //draw background

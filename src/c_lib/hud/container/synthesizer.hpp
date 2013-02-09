@@ -114,10 +114,10 @@ class AgentSynthesizerUI : public UIElement
 // constants
 const Dim AgentSynthesizerUI::texture_dim = { 512, 512 };
 const float AgentSynthesizerUI::slot_size = ITEM_ICON_RENDER_SIZE;
-const float AgentSynthesizerUI::cell_offset_x = 3;
-const float AgentSynthesizerUI::cell_offset_y = 3;
-const float AgentSynthesizerUI::cell_offset_x_right = 2;
-const float AgentSynthesizerUI::cell_offset_y_bottom = 2;
+const float AgentSynthesizerUI::cell_offset_x = 3.0f;
+const float AgentSynthesizerUI::cell_offset_y = 3.0f;
+const float AgentSynthesizerUI::cell_offset_x_right = 2.0f;
+const float AgentSynthesizerUI::cell_offset_y_bottom = 2.0f;
 const struct Offset AgentSynthesizerUI::highlight_offset = { 3, 3 };
 const struct Dim AgentSynthesizerUI::coins_label_dimensions = { 36, 12 };
 const struct Offset AgentSynthesizerUI::coins_label_origin = { 318, 0 };
