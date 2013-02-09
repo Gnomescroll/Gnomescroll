@@ -122,8 +122,12 @@ void _skylight_update_core(int max_iterations);
 
 void _skylight_update_core()
 {
-    _skylight_update_core(1000); //do 1000 iteratations maxs
-    _skylight_update_core(1000); //do 1000 iteratations maxs
+    _skylight_update_core(1000*6); //do 1000 iteratations maxs
+    _skylight_update_core(1000*6); //do 1000 iteratations maxs
+    _skylight_update_core(1000*6); //do 1000 iteratations maxs
+    _skylight_update_core(1000*6); //do 1000 iteratations maxs
+    _skylight_update_core(1000*6); //do 1000 iteratations maxs
+    _skylight_update_core(1000*6); //do 1000 iteratations maxs
 }
 
 void _skylight_update_core(int max_iterations)
@@ -133,11 +137,14 @@ void _skylight_update_core(int max_iterations)
 
     int index = sky_light_array_n;
 
+    if(max_iterations == 0)
+        max_iterations = 1000;
+
     int stop_index = index + max_iterations;
     if(stop_index > sky_light_array_index)
         stop_index = sky_light_array_index;
-    if(max_iterations == 0)
-        stop_index = sky_light_array_index;
+//    if(max_iterations == 0)
+//        stop_index = sky_light_array_index;
 
     while(index != stop_index)
     {
@@ -1063,7 +1070,7 @@ void assert_skylight(int chunk_i, int chunk_j)
 
     //_skylight_update_core(0);
     //_skylight_update_core(0);
-    _skylight_update_core(0);
+    _skylight_update_core(1600);
 
     return;
 
