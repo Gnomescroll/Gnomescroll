@@ -511,7 +511,7 @@ void Terrain_map::lighting_rolling_update()
     {
         if(this->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
             continue;
-        lighting_rolling_update(int chunk_i, int chunk_j);
+        _lighting_rolling_update(i,j);
     }
 }
 

@@ -1094,7 +1094,7 @@ void assert_skylight(int chunk_i, int chunk_j)
 
 }
 
-void lighting_rolling_update(int chunk_i, int chunk_j)
+void _lighting_rolling_update(int chunk_i, int chunk_j)
 {
 
 
