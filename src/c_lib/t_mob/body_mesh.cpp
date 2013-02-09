@@ -78,8 +78,9 @@ void BodyMesh::draw_prep()
     }
 }
 
-void BodyMesh::draw(float x, float y, float z)
+void BodyMesh::draw(float x, float y, float z, float theta, float phi)
 {
+    struct Mat3 rotation_mat = mat3_euler_rotation(theta, phi, 0.0f);
     // TODO - Move this stuff onto the mesh
     for (int i=0; i<this->mlm; i++)
     {
@@ -139,6 +140,7 @@ void BodyMesh::draw(float x, float y, float z)
         for (int j=0; j<m->tvln; j++)
         {
             struct _Vertex v = m->tvl[j];
+            v.v = vec3_apply_rotation(v.v, rotation_mat); //apply rotation
             glTexCoord2f(v.ux, v.uy);
             glVertex3f(v.v.x + x, v.v.y + y, v.v.z + z);
         }

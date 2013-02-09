@@ -20,4 +20,6 @@ struct MAP_ELEMENT
 };
 
 const struct MAP_ELEMENT NULL_MAP_ELEMENT = {{{ 0,0,0,0 }}};
+
+const struct MAP_ELEMENT ABOVE_MAP_ELEMENT = {{{ 0,0,0x0f,0 }}}; //max sunlight
 }   // t_map

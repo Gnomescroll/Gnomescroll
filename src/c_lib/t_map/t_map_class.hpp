@@ -117,6 +117,9 @@ class Terrain_map
     int apply_damage(int x, int y, int z, int dmg, CubeType* cube_type);
 
     inline int get_height(int x, int y);
+
+
+    void lighting_rolling_update();
 };
 
 } //

@@ -54,7 +54,17 @@ class BodyMesh
 
     void load(class ModelLoader* ml);
     void draw_prep();
-    void draw(float x, float y, float z);
+
+
+    void draw(float x, float y, float z, float theta, float phi);
+
+
+    void draw(float x, float y, float z)
+    {
+        draw(x,y,z, 0.0, 0.0);
+    }
+
+
     void init_texture();
 };
 

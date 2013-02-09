@@ -22,8 +22,8 @@ void				set_fast(int x, int y, int z, CubeType cube_type);
 void				set_palette(int x, int y, int z, int palette);
 void				set_element(int x, int y, int z, struct MAP_ELEMENT e);
 
-void update_skylight(int chunk_i, int chunk_j); //update skylighting for chunk
-void update_envlight(int chunk_i, int chunk_j);
+void _sunlight_update_core();	//update sunlight
+void _envlight_update_core();	//update envlight
 
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);
