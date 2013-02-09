@@ -1040,7 +1040,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
 void assert_skylight(int chunk_i, int chunk_j)
 {
     //debugging
-    return;
+    //return;
 
     int k = map_dim.z-1;
 
@@ -1054,11 +1054,19 @@ void assert_skylight(int chunk_i, int chunk_j)
        if(isSolid(x,y,k) == false)
             _push_skylight_update(x,y,k);
     }
-
+/*
     while(sky_light_array_index > 0)
     {
         _skylight_update_core(0);
     }
+*/
+
+    //_skylight_update_core(0);
+    //_skylight_update_core(0);
+    _skylight_update_core(0);
+
+    return;
+
 
     for(int k=0; k<map_dim.z; k++) 
     for(int i=0; i<16; i++)
