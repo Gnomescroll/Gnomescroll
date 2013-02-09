@@ -15,7 +15,7 @@ namespace Particle
 const unsigned int MAX_GRENADES = 1024;
 const int GRENADE_BLOCK_DESTROY_RADIUS = 2;
 const float GRENADE_DAMAGE_RADIUS = 5.0f;
-const int GRENADE_SPLASH_DAMAGE = 100;
+const int GRENADE_SPLASH_DAMAGE = 40;
 const int GRENADE_BLOCK_DAMAGE = 8;
 int GRENADE_SPAWNER_DAMAGE() { return randrange(20,40); }
 int GRENADE_TURRET_DAMAGE() { return randrange(20,40); }
