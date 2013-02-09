@@ -12,7 +12,6 @@ namespace Item
 
 #if DC_SERVER
 void verify_items();
-bool is_valid_location_data(ItemLocationType location, int location_id, int container_slot, const int assert_limit);
 #endif
 
 const int ITEM_SUBSCRIBER_LIST_INITIAL_SIZE = 1;

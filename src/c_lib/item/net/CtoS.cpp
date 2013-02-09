@@ -15,10 +15,10 @@ namespace Item
 
 inline void request_item_create_CtoS::handle()
 {
-    #if PRODUCTION
-    GS_ASSERT(false);
-    return;
-    #else
+    //#if PRODUCTION
+    //GS_ASSERT(false);
+    //return;
+    //#else
     Agents::Agent* agent = NetServer::agents[this->client_id];
     if (agent == NULL) return;
 
@@ -31,7 +31,7 @@ inline void request_item_create_CtoS::handle()
     Item* item = ItemParticle::create_item_particle((ItemType)this->type, position, vec3_init(0,0,0));
     IF_ASSERT(item == NULL) return;
     item->stack_size = stack_size;
-    #endif
+    //#endif
 }
 
 } // Item

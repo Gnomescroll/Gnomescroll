@@ -136,7 +136,7 @@ void cmd_home(const char* cmd, size_t cmdlen, char* args, size_t argslen)
 
 void cmd_item(const char* cmd, size_t cmdlen, char* args, size_t arglen)
 {
-    #if !PRODUCTION
+    //#if !PRODUCTION
     const char USAGE[] = "/%s <item_name> [<stack_size>]";
 
     char item_name[DAT_NAME_MAX_LENGTH+1] = {'\0'};
@@ -186,7 +186,7 @@ void cmd_item(const char* cmd, size_t cmdlen, char* args, size_t arglen)
 
     if (!Item::request_item_create(item_name, stack))
         chat_client->send_system_messagef("Unknown item: %s", item_name);
-    #endif
+    //#endif
 }
 
 /****************************

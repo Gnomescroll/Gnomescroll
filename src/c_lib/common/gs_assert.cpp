@@ -32,13 +32,13 @@ const size_t GS_ASSERT_MAX = 4096;
 char* _GS_ASSERT_ARRAY[GS_ASSERT_MAX] = {NULL};
 size_t _GS_ASSERT_COUNT[GS_ASSERT_MAX] = {0};
 
-int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
+void _GS_ASSERT_INTERNAL_MAIN(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
 {   // always return 1, so IF_ASSERT works correctly
     #if ENABLE_WARNING_SOUND
     if (c_lib_inited)
         Sound::play_2d_sound("debug_warning");
     #endif
-    
+
     const size_t tlen = 0xFF;
     static char t[tlen+1];
 
@@ -60,16 +60,16 @@ int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t 
         if (strcmp(t, _GS_ASSERT_ARRAY[i]) == 0)
         {   //match
             _GS_ASSERT_COUNT[i]++;
-            if(_GS_ASSERT_COUNT[i] >= LIMIT) return 1;
+            if(_GS_ASSERT_COUNT[i] >= LIMIT) return;
             //print and return;
             print_trace(2);
             puts(t);
-            return 1;
+            return;
         }
         i++;
     }
 
-    if (i >= GS_ASSERT_MAX) return 1;
+    if (i >= GS_ASSERT_MAX) return;
 
     //insert into array
     _GS_ASSERT_ARRAY[i] = (char*) malloc(strlen(t)+1);
@@ -78,22 +78,28 @@ int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t 
     _GS_ASSERT_COUNT[i]++;
     print_trace(2);
     printf("%s\n", t);
-
-    return 1;
 }
 
 inline int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
-    return _GS_ASSERT_INTERNAL(FILE, FUNC, LINE, GS_ASSERT_DEFAULT_PRINT_LIMIT);
+    _GS_ASSERT_INTERNAL_MAIN(FILE, FUNC, LINE, GS_ASSERT_DEFAULT_PRINT_LIMIT);
+    return 1;
 }
+
+inline int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
+{
+    _GS_ASSERT_INTERNAL_MAIN(FILE, FUNC, LINE, LIMIT);
+    return 1;
+}
+
 
 void _GS_ASSERT_TEARDOWN()
 {
-    for(size_t i=0; i<GS_ASSERT_MAX; i++) 
+    for(size_t i=0; i<GS_ASSERT_MAX; i++)
         if(_GS_ASSERT_ARRAY[i] != NULL)
             printf("%s triggered %lu times \n", _GS_ASSERT_ARRAY[i], (unsigned long)_GS_ASSERT_COUNT[i]);
 
-    for(size_t i=0; i<GS_ASSERT_MAX; i++) 
+    for(size_t i=0; i<GS_ASSERT_MAX; i++)
         if(_GS_ASSERT_ARRAY[i] != NULL)
             free(_GS_ASSERT_ARRAY[i]);
 }

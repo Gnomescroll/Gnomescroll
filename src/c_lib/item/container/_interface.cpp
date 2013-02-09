@@ -1001,7 +1001,7 @@ void agent_quit(AgentID agent_id)
         destroy_container(agent_equipment_list[agent_id]);
 
     if (premium_cache_list[agent_id] != NULL_CONTAINER)
-        destroy_container(agent_equipment_list[agent_id]);
+        destroy_container(premium_cache_list[agent_id]);
 
     agent_inventory_list[agent_id] = NULL_CONTAINER;
     agent_toolbelt_list[agent_id] = NULL_CONTAINER;

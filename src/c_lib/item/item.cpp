@@ -1,6 +1,7 @@
 #include "item.hpp"
 
 #if DC_SERVER
+#include <common/gs_assert.hpp>
 #include <item/server.hpp>
 #include <item/container/_state.hpp>
 #include <agent/_interface.hpp>
@@ -148,11 +149,11 @@ void ItemList::decay_gas()
     }
 }
 
-bool is_valid_location_data(ItemLocationType location, int location_id, int container_slot, const int assert_limit)
+static bool is_valid_location_data(ItemLocationType location, int location_id, int container_slot)
 {
     bool valid = true;
     #define VERIFY_ITEM_LOCATION(COND) \
-        GS_ASSERT_LIMIT((COND), assert_limit); \
+        GS_ASSERT((COND)); \
         if (!(COND)) valid = false;
 
     VERIFY_ITEM_LOCATION(location != IL_NOWHERE);
@@ -192,30 +193,30 @@ void ItemList::verify_items()
 {
     // use this macro for conditions which should mark the item as invalid item state
     // dont use it if the item's state does not align with meta info, like subscribers
-    #define VERIFY_ITEM(COND, LIMIT, ITEM) \
-        GS_ASSERT_LIMIT((COND), (LIMIT)); \
+    #define VERIFY_ITEM(COND, ITEM) \
+        GS_ASSERT((COND)); \
         if (!(COND)) (ITEM)->valid = false;
 
-    const int LIMIT = 1;
+    //const int LIMIT = 1;
     for (unsigned int k=0; k<this->max; k++)
     {
         if (this->objects[k].id == this->null_id) continue;
         Item* i = &this->objects[k];
 
-        VERIFY_ITEM(is_valid_location_data(i->location, i->location_id, i->container_slot, LIMIT), LIMIT, i);
+        VERIFY_ITEM(is_valid_location_data(i->location, i->location_id, i->container_slot), i);
 
-        VERIFY_ITEM(i->type != NULL_ITEM_TYPE, LIMIT, i);
+        VERIFY_ITEM(i->type != NULL_ITEM_TYPE, i);
 
-        GS_ASSERT_LIMIT(i->subscribers.count >= 0, LIMIT);  // this should warn, but not mark the item as invalid
-        VERIFY_ITEM((i->stack_size > 0 && i->stack_size <= MAX_STACK_SIZE) || i->stack_size == NULL_STACK_SIZE, LIMIT, i);
-        VERIFY_ITEM((i->durability > 0 && i->durability <= MAX_DURABILITY) || i->durability == NULL_DURABILITY, LIMIT, i);
+        GS_ASSERT(i->subscribers.count >= 0);  // this should warn, but not mark the item as invalid
+        VERIFY_ITEM((i->stack_size > 0 && i->stack_size <= MAX_STACK_SIZE) || i->stack_size == NULL_STACK_SIZE, i);
+        VERIFY_ITEM((i->durability > 0 && i->durability <= MAX_DURABILITY) || i->durability == NULL_DURABILITY, i);
 
         if (i->location == IL_HAND)
         {
-            GS_ASSERT_LIMIT(i->subscribers.count == 1, LIMIT);
-            GS_ASSERT_LIMIT(i->subscribers.count <= 0 || i->location_id == i->subscribers.subscribers[0], LIMIT); // WARNING -- assumes client_id==agent_id
-            GS_ASSERT_LIMIT(ItemContainer::get_agent_hand_item((AgentID)i->location_id) == i->id, LIMIT);
-            VERIFY_ITEM(i->location_id >= 0 && i->location_id < MAX_AGENTS, LIMIT, i);
+            GS_ASSERT(i->subscribers.count == 1);
+            GS_ASSERT(i->subscribers.count <= 0 || i->location_id == i->subscribers.subscribers[0]); // WARNING -- assumes client_id==agent_id
+            GS_ASSERT(ItemContainer::get_agent_hand_item((AgentID)i->location_id) == i->id);
+            VERIFY_ITEM(i->location_id >= 0 && i->location_id < MAX_AGENTS, i);
         }
         else
         if (i->location == IL_CONTAINER)
@@ -224,19 +225,19 @@ void ItemList::verify_items()
             int owner = ItemContainer::get_container_owner((ItemContainerID)i->location_id);
             if (ItemContainer::container_type_is_attached_to_agent(type))
             {
-                GS_ASSERT_LIMIT(i->subscribers.count == 1, LIMIT);
-                GS_ASSERT_LIMIT(i->subscribers.count <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
+                GS_ASSERT(i->subscribers.count == 1);
+                GS_ASSERT(i->subscribers.count <= 0 || owner == i->subscribers.subscribers[0]);
             }
             else if (owner != NULL_AGENT)
             {
-                GS_ASSERT_LIMIT(i->subscribers.count == 1, LIMIT);
-                GS_ASSERT_LIMIT(i->subscribers.count <= 0 || owner == i->subscribers.subscribers[0], LIMIT);
+                GS_ASSERT(i->subscribers.count == 1);
+                GS_ASSERT(i->subscribers.count <= 0 || owner == i->subscribers.subscribers[0]);
             }
         }
     }
 
     #undef VERIFY_ITEM
 }
-#endif
+#endif  // DC_SERVER
 
 }   // Item
