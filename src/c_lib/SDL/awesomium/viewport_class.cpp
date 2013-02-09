@@ -27,11 +27,11 @@ struct chromeDisplay {
 /*
     Begin navigation callback triggered
     URL on webView is: http://127.0.0.1:5002/server/token
-    Frame name is: 
+    Frame name is:
 
     Begin loading callback triggered
     URL on webView is: http://127.0.0.1:5002/server/list
-    Frame name is: 
+    Frame name is:
     Status code is; 200
     Mime type is: text/html
 
@@ -45,7 +45,7 @@ void js_console_message_callback(awe_webview *webView, const awe_string *_messag
     char* source = get_str_from_awe(_source);
     char* message = get_str_from_awe(_message);
     printf("console.log: %s:%d\n", source, line_number);
-    printf("%s\n", message); 
+    printf("%s\n", message);
     free(message);
     free(source);
 }
@@ -87,7 +87,7 @@ void finish_loading_cb(awe_webview* webView)
 
     if (str_ends_with(url, GNOMESCROLL_LOGIN_HTML))
         _login_page_loaded = true;
-    
+
     free(url);
 }
 
@@ -122,9 +122,8 @@ void web_view_crashed_cb(awe_webview* webView)
 void js_set_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
     const awe_jsvalue* vmsg = awe_jsarray_get_element(_args, 0);
-    GS_ASSERT(vmsg != NULL);
-    if (vmsg == NULL) return;
-    
+    IF_ASSERT(vmsg == NULL) return;
+
     awe_string* _msg = awe_jsvalue_to_string(vmsg);
     char* msg = get_str_from_awe(_msg);
     Hud::set_awesomium_message(msg);
@@ -140,16 +139,14 @@ void js_unset_message_callback(awe_webview* webView, const awe_string* _obj_name
 void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
     const awe_jsvalue* vtoken = awe_jsarray_get_element(_args, 0);
-    GS_ASSERT(vtoken != NULL);
-    if (vtoken == NULL) return;
+    IF_ASSERT(vtoken == NULL) return;
 
     awe_string* _token = awe_jsvalue_to_string(vtoken);
     char* token = get_str_from_awe(_token);
     Auth::AuthError error = Auth::update_token(token);
     if (error != Auth::AUTH_ERROR_NONE)
         printf("Auth error code: %d\n", error);
-    GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
-    if (error != Auth::AUTH_ERROR_NONE)
+    IF_ASSERT(error != Auth::AUTH_ERROR_NONE)
     {
         Hud::set_awesomium_message("Authentication server failure. Try again soon.");
         Auth::token_failure = true;
@@ -166,7 +163,7 @@ void js_token_failure_callback(awe_webview* webView, const awe_string* _obj_name
 void js_login_required_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
     // Required token refreshing is disabled for now
-    
+
     //Auth::needs_login = true;
     //Chat::send_system_message("There was a server reset. You will need to again soon to continue playing.");
     //Chat::send_system_message(Hud::open_login_text);
@@ -276,7 +273,7 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 {
     if (event->type != SDL_KEYDOWN && event->type != SDL_KEYUP)
         return;
-        
+
     awe_webkeyboardevent key_event;
     key_event.type = event->type == SDL_KEYDOWN ? AWE_WKT_KEYDOWN : AWE_WKT_KEYUP;
 
@@ -481,7 +478,7 @@ static awe_mousebutton get_awe_mouse_button_from_SDL(Uint8 button)
         case SDL_BUTTON_WHEELDOWN:
         case SDL_BUTTON_MIDDLE:
             return AWE_MB_MIDDLE;
-            
+
         default:
             GS_ASSERT(false);
             return AWE_MB_LEFT;
@@ -492,8 +489,7 @@ static awe_mousebutton get_awe_mouse_button_from_SDL(Uint8 button)
 
 bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy)
 {
-    GS_ASSERT_LIMIT(cv != NULL, 1);
-    if (cv == NULL) return false;
+    IF_ASSERT(cv == NULL) return false;
 
     // subtract top left of webview window
     int left = cv->xoff;
@@ -506,7 +502,7 @@ bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, in
 }
 
 void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
-{    
+{
     if (event->button.button == SDL_BUTTON_WHEELDOWN || event->button.button == SDL_BUTTON_WHEELUP)
     {
         int horiz_scroll_amt = 0;

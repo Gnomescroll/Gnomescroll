@@ -26,6 +26,7 @@ const char JS_OBJ_TOKEN_NAME_NAME[] = "token_name";
 const char JS_OBJ_USERNAME_NAME[] = "gs_username";
 const char JS_OBJ_PASSWORD_NAME[] = "gs_pass";
 const char JS_OBJ_REMEMBER_PASSWORD_NAME[] = "remember_password";
+const char JS_OBJ_VERSION_NAME[] = "version";
 
 // js -> C callbacks (registered on the Gnomescroll object)
 const char JS_CB_SET_MESSAGE_NAME[] = "set_message";
@@ -75,7 +76,7 @@ class ChromeViewport
         bool crashed;
 
     ChromeViewport() :
-    in_focus(false), js_obj_name(NULL), tex(0), crashed(false)
+        in_focus(false), js_obj_name(NULL), tex(0), crashed(false)
     {
         this->xoff = (int) (_xresf * 0.125f);
         this->yoff = (int) (_yresf * 0.0625);    // from bottom
@@ -102,9 +103,7 @@ class ChromeViewport
 
     void add_site_to_whitelist(const char* _url)
     {
-        GS_ASSERT(this->webView != NULL);
-        if (this->webView == NULL) return;
-
+        IF_ASSERT(this->webView == NULL) return;
         awe_string* url = get_awe_string(_url);
         awe_webview_add_url_filter(this->webView, url);
         awe_string_destroy(url);
@@ -112,9 +111,7 @@ class ChromeViewport
 
     void setup_whitelist()
     {
-        GS_ASSERT(this->webView != NULL);
-        if (this->webView == NULL) return;
-
+        IF_ASSERT(this->webView == NULL) return;
         awe_webview_set_url_filtering_mode(this->webView, AWE_UFM_WHITELIST);
         this->add_site_to_whitelist("local://*");
         this->add_site_to_whitelist("file://*");
@@ -134,8 +131,7 @@ class ChromeViewport
 
     void setup_javascript()
     {
-        GS_ASSERT(this->webView != NULL);
-        if (this->webView == NULL) return;
+        IF_ASSERT(this->webView == NULL) return;
 
         this->js_obj_name = get_awe_string(JS_OBJ_NAME);
         awe_webview_create_object(this->webView, this->js_obj_name);
@@ -150,6 +146,7 @@ class ChromeViewport
         this->set_js_value(JS_OBJ_CREATE_URL_NAME, GNOMESCROLL_CREATE_URL);
         this->set_js_value(JS_OBJ_TOKEN_URL_NAME, GNOMESCROLL_TOKEN_URL);
         this->set_js_value(JS_OBJ_TOKEN_NAME_NAME, Auth::AUTH_TOKEN_COOKIE_NAME);
+        this->set_js_value(JS_OBJ_VERSION_NAME, GS_VERSION);
 
         // credentials
         char* username = NULL;
@@ -194,10 +191,7 @@ class ChromeViewport
 
     void register_js_callback(const char* _name)
     {   // registers a javascript callback name on the global js obj
-        GS_ASSERT(this->webView != NULL);
-        GS_ASSERT(this->js_obj_name != NULL);
-        if (this->webView == NULL || this->js_obj_name == NULL) return;
-
+        IF_ASSERT(this->webView == NULL || this->js_obj_name == NULL) return;
         awe_string* name = get_awe_string(_name);
         awe_webview_set_object_callback(this->webView, this->js_obj_name, name);
         awe_string_destroy(name);
@@ -205,10 +199,7 @@ class ChromeViewport
 
     void set_js_value(const char* _name, bool _value)
     {   // sets value with name to the global js obj
-        GS_ASSERT(this->webView != NULL);
-        GS_ASSERT(this->js_obj_name != NULL);
-        if (this->webView == NULL || this->js_obj_name == NULL) return;
-
+        IF_ASSERT(this->webView == NULL || this->js_obj_name == NULL) return;
         awe_string* name = get_awe_string(_name);
         awe_jsvalue* value = awe_jsvalue_create_bool_value(_value);
         awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
@@ -218,10 +209,7 @@ class ChromeViewport
 
     void set_js_value(const char* _name, double _value)
     {   // sets value with name to the global js obj
-        GS_ASSERT(this->webView != NULL);
-        GS_ASSERT(this->js_obj_name != NULL);
-        if (this->webView == NULL || this->js_obj_name == NULL) return;
-
+        IF_ASSERT(this->webView == NULL || this->js_obj_name == NULL) return;
         awe_string* name = get_awe_string(_name);
         awe_jsvalue* value = awe_jsvalue_create_double_value(_value);
         awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
@@ -231,10 +219,7 @@ class ChromeViewport
 
     void set_js_value(const char* _name, int _value)
     {   // sets value with name to the global js obj
-        GS_ASSERT(this->webView != NULL);
-        GS_ASSERT(this->js_obj_name != NULL);
-        if (this->webView == NULL || this->js_obj_name == NULL) return;
-
+        IF_ASSERT(this->webView == NULL || this->js_obj_name == NULL) return;
         awe_string* name = get_awe_string(_name);
         awe_jsvalue* value = awe_jsvalue_create_integer_value(_value);
         awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
@@ -244,10 +229,7 @@ class ChromeViewport
 
     void set_js_value(const char* _name)
     {   // sets value with name to the global js obj
-        GS_ASSERT(this->webView != NULL);
-        GS_ASSERT(this->js_obj_name != NULL);
-        if (this->webView == NULL || this->js_obj_name == NULL) return;
-
+        IF_ASSERT(this->webView == NULL || this->js_obj_name == NULL) return;
         awe_string* name = get_awe_string(_name);
         awe_jsvalue* value = awe_jsvalue_create_null_value();
         awe_webview_set_object_property(this->webView, this->js_obj_name, name, value);
@@ -257,10 +239,7 @@ class ChromeViewport
 
     void set_js_value(const char* _name, const char* _value)
     {   // sets value with name to the global js obj
-        GS_ASSERT(this->webView != NULL);
-        GS_ASSERT(this->js_obj_name != NULL);
-        if (this->webView == NULL || this->js_obj_name == NULL) return;
-
+        IF_ASSERT(this->webView == NULL || this->js_obj_name == NULL) return;
         awe_string* name = get_awe_string(_name);
         awe_string* val = get_awe_string(_value);
         awe_jsvalue* value = awe_jsvalue_create_string_value(val);
@@ -277,30 +256,23 @@ class ChromeViewport
 
     void load_url(const char* _url)
     {
-        GS_ASSERT(this->webView != NULL);
-        if (this->webView == NULL) return;
-
+        IF_ASSERT(this->webView == NULL) return;
         awe_string* url = get_awe_string(_url);
-        awe_webview_load_url(
-            this->webView,
-            url,  // url
-            awe_string_empty(), // frame name
-            awe_string_empty(), // username
-            awe_string_empty()  // password
-        );
+        awe_webview_load_url(this->webView,
+                             url,  // url
+                             awe_string_empty(),    // frame name
+                             awe_string_empty(),    // username
+                             awe_string_empty());   // password
         awe_string_destroy(url);
     }
 
     void load_file(const char* _file)
     {
-        GS_ASSERT(this->webView != NULL);
-        if (this->webView == NULL) return;
+        IF_ASSERT(this->webView == NULL) return;
         awe_string* file = get_awe_string(_file);
-        awe_webview_load_file(
-            this->webView,
-            file,               // filename
-            awe_string_empty()  // frame name
-        );
+        awe_webview_load_file(this->webView,
+                              file,                 // filename
+                              awe_string_empty());  // frame name
         awe_string_destroy(file);
     }
 
@@ -309,8 +281,7 @@ class ChromeViewport
         this->webView = awe_webcore_create_webview(this->width, this->height, false);
         //default loading
 
-        GS_ASSERT(this->webView != NULL);
-        if (this->webView == NULL) return;
+        IF_ASSERT(this->webView == NULL) return;
 
         awe_webview_set_transparent(this->webView, 1); ///preserve transpanency of window
         //Sets whether or not pages should be rendered with transparency preserved.
@@ -322,8 +293,7 @@ class ChromeViewport
         GS_ASSERT(this->tex == 0);
         const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
 
-        GS_ASSERT(renderBuffer != NULL);
-        if (renderBuffer == NULL) return;
+        IF_ASSERT(renderBuffer == NULL) return;
 
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &this->tex);
@@ -348,13 +318,11 @@ class ChromeViewport
     {
         if(!awe_webview_is_dirty(this->webView) || awe_webview_is_loading_page(this->webView)) return;
         //awe_rect rect = awe_webview_get_dirty_bounds(webView);
-        GS_ASSERT_LIMIT(this->tex != 0, 1);
-        if (this->tex == 0) return;
+        IF_ASSERT(this->tex == 0) return;
 
         const awe_renderbuffer* renderBuffer = awe_webview_render(webView);
 
-        GS_ASSERT(renderBuffer != NULL);
-        if (renderBuffer == NULL)
+        IF_ASSERT(renderBuffer == NULL)
         {
             this->tex = 0;
             return;
@@ -406,16 +374,14 @@ class ChromeViewport
 
     void focus()
     {
-        GS_ASSERT_LIMIT(this->webView != NULL, 1);
-        if (this->webView == NULL) return;
+        IF_ASSERT(this->webView == NULL) return;
         awe_webview_focus(this->webView);
         this->in_focus = true;
     }
 
     void unfocus()
     {
-        GS_ASSERT_LIMIT(this->webView != NULL, 1);
-        if (this->webView == NULL) return;
+        IF_ASSERT(this->webView == NULL) return;
         awe_webview_unfocus(this->webView);
         this->in_focus = false;
     }
@@ -438,8 +404,7 @@ class ChromeViewport
 
     void processKeyEvent(const SDL_Event* event)
     {
-        GS_ASSERT_LIMIT(this->webView != NULL, 1);
-        if (this->webView == NULL) return;
+        IF_ASSERT(this->webView == NULL) return;
 
         if (!this->in_focus)
         {

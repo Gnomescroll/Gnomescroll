@@ -44,6 +44,20 @@ function gs_get_token()
 function gs_submit_form(form, url, success, error)
 {
     var data = form.serializeArray();
+    var found = false;
+    for (var i=0; i<data.length; i++) {
+        if (data[i]['name'] === 'version') {
+            data[i]['value'] = Gnomescroll.version.toString(10);
+            found = true;
+        }
+    }
+    if (!found) {
+        var version_data = {
+            name: 'version',
+            value: Gnomescroll.version
+        }
+        data.push(version_data);
+    }
     $.ajax({
         type: 'POST',
         url: url,
@@ -90,7 +104,7 @@ function gs_append_form_errors(errors, form_type)
             // does not let one configure the message "CSRF Failed" (which is confusing to most users)
             // in reality this should never happen, as we request the token when the form is submitted
             // If this actually occurs, its certain to be a bug and not an expired csrf token.
-            el.append($('<div class="alert alert-error">' + form_type + ' failed due to server error. Resubmit the form, and if this error persists, please notify the developers.</div>'));
+            el.append(gs_make_error_element(form_type + ' failed due to server error. Resubmit the form, and if this error persists, please notify the developers.'));
         }
         else
         {   // set error as normal

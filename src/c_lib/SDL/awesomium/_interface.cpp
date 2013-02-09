@@ -4,7 +4,6 @@
 
 #include <SDL/awesomium/viewport_class.hpp>
 #include <SDL/awesomium/viewport_manager.hpp>
-
 #include <auth/constants.hpp>
 
 /*
@@ -13,10 +12,10 @@ ChildProcessPath
 Indicates the path to the child-process that we will use to render WebViews and plugins (this will be AwesomiumProcess if you leave this empty)
 
 5. Improved Handling of Config Paths
-Rewrote the way we handle config paths, now embedders can specify a “packagePath” that will be used to resolve all relative config paths. 
+Rewrote the way we handle config paths, now embedders can specify a “packagePath” that will be used to resolve all relative config paths.
 Embedders can now also specify a “localePath” for the location of en-US.dll on Windows and chrome.pak on Linux.
 
-Rewrote the way we handle config paths, now embedders can specify a “packagePath” that will be used to resolve all relative config paths. 
+Rewrote the way we handle config paths, now embedders can specify a “packagePath” that will be used to resolve all relative config paths.
 Embedders can now also specify a “localePath” for the location of en-US.dll on Windows and chrome.pak on Linux.
 */
 
@@ -44,15 +43,13 @@ void handle_keyboard_event(union SDL_Event* key_event)
 
 void update()
 {
-    GS_ASSERT_LIMIT(cv != NULL, 1);
-    if (cv == NULL) return;
+    IF_ASSERT(cv == NULL) return;
     awe_webcore_update();
 }
 
 void draw()
 {
-    GS_ASSERT_LIMIT(cv != NULL, 1);
-    if (cv == NULL) return;
+    IF_ASSERT(cv == NULL) return;
     cv->update_webview();
     cv->draw_webview();
 }
@@ -143,8 +140,8 @@ void init()
 
 void teardown()
 {
-    if (cv != NULL) delete cv; 
-    if (viewport_manager != NULL) delete viewport_manager; 
+    if (cv != NULL) delete cv;
+    if (viewport_manager != NULL) delete viewport_manager;
     awe_webcore_shutdown();
 }
 
@@ -174,22 +171,19 @@ void delete_auth_token_cookie()
 
 void open_url(const char* url)
 {
-    GS_ASSERT_LIMIT(cv != NULL, 1);
-    if (cv == NULL) return;
+    IF_ASSERT(cv == NULL) return;
     cv->load_url(url);
 }
 
 void open_file(const char* file)
 {
-    GS_ASSERT_LIMIT(cv != NULL, 1);
-    if (cv == NULL) return;
+    IF_ASSERT(cv == NULL) return;
     cv->load_file(file);
 }
 
 void open_token_page()
 {   // call js function that makes request for token against server
-    GS_ASSERT(cv != NULL && cv->webView != NULL);
-    if (cv == NULL || cv->webView == NULL) return;
+    IF_ASSERT(cv == NULL || cv->webView == NULL) return;
     awe_string* get_token_fn = get_awe_string(JS_CB_OPEN_TOKEN_PAGE_NAME);
     awe_jsarray* js_args = awe_jsarray_create(NULL, 0);
     awe_webview_call_javascript_function(cv->webView, awe_string_empty(), get_token_fn, js_args, awe_string_empty());
@@ -204,29 +198,25 @@ void open_login_page()
 
 void SDL_keyboard_event(const SDL_Event* event)
 {
-    GS_ASSERT_LIMIT(cv != NULL, 1);
-    if (cv == NULL) return;
+    IF_ASSERT(cv == NULL) return;
     cv->processKeyEvent(event);
 }
 
 void SDL_mouse_event(const SDL_Event* event)
 {
-    GS_ASSERT_LIMIT(cv != NULL, 1);
-    if (cv == NULL) return;
+    IF_ASSERT(cv == NULL) return;
     injectSDLMouseEvent(cv->webView, event);
 }
 
 void enable()
 {
-    GS_ASSERT(cv != NULL);
-    if (cv == NULL) return;
+    IF_ASSERT(cv == NULL) return;
     cv->focus();
 }
 
 void disable()
 {
-    GS_ASSERT(cv != NULL);
-    if (cv == NULL) return;
+    IF_ASSERT(cv == NULL) return;
     cv->unfocus();
 }
 
@@ -248,11 +238,10 @@ char* get_cookies()
 char* get_auth_token()
 {
     char* cookies = get_cookies();
-    GS_ASSERT(cookies != NULL);
-    if (cookies == NULL) return NULL;
+    IF_ASSERT(cookies == NULL) return NULL;
 
     char* token = strstr(cookies, Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME);
-    if (token == NULL) return NULL; 
+    if (token == NULL) return NULL;
 
     int i=0;
     char c;
@@ -279,8 +268,7 @@ void check_for_token_cookie(const awe_string* _url)
         if (token != NULL)
         {
             Auth::AuthError error = Auth::update_token(token);
-            GS_ASSERT(error == Auth::AUTH_ERROR_NONE);
-            if (error != Auth::AUTH_ERROR_NONE)
+            IF_ASSERT(error != Auth::AUTH_ERROR_NONE)
                 printf("Auth error code: %d\n", error);
             free(token);
         }
@@ -291,7 +279,7 @@ void check_for_token_cookie(const awe_string* _url)
 char* make_cookie_expiration_string(const time_t expiration_time)
 {   // FREE THE RETURNED STRING     //DAY, DD-MMM-YYYY HH:MM:SS GMT
     const static char timefmt[] = "%a %d-%b-%Y %H:%M:%S GMT";
-    const static size_t size = sizeof(timefmt) - 2*7 + 3 + 2 + 3 + 4 + 2 + 2 + 2; 
+    const static size_t size = sizeof(timefmt) - 2*7 + 3 + 2 + 3 + 4 + 2 + 2 + 2;
     struct tm* tmdata = gmtime(&expiration_time);
     char* expiration_str = (char*)malloc((size+1) * sizeof(char));
     strftime(expiration_str, size, timefmt, tmdata);
@@ -310,7 +298,7 @@ void set_game_token_cookie(const char* token, time_t expiration_time)
     char* _cookie = (char*)malloc((sizeof(cookie_fmt) - 2*4 + prefix_len + token_len + domain_len + expiration_len) * sizeof(char));
     sprintf(_cookie, cookie_fmt, Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME, token, expiration_str, GNOMESCROLL_COOKIE_DOMAIN);
     free(expiration_str);
-     
+
     awe_string* url = get_awe_string(GNOMESCROLL_URL);
     awe_string* cookie = get_awe_string(_cookie);
     free(_cookie);
@@ -347,7 +335,7 @@ void save_username(const char* username)
     awe_webcore_set_cookie(url, cookie, true, false);
     awe_string_destroy(cookie);
     awe_string_destroy(url);
-    free(_cookie);    
+    free(_cookie);
 
     // REFERENCE:
     //awe_webcore_set_cookie(url, cookie, is_http_only, force_session_cookie -- will be cleared on exit);
@@ -429,7 +417,7 @@ void get_credentials(char** _username, char** _password)
 {   // MUST FREE THE RESULTS
     *_username = NULL;
     *_password = NULL;
-    
+
     char* cookies = get_cookies("http://127.0.0.1");
 
     #if PRODUCTION
@@ -458,7 +446,7 @@ void get_credentials(char** _username, char** _password)
         *_username = (char*)malloc((username_len+1)*sizeof(char));
         strcpy(*_username, username);
     }
-    
+
     if (password != NULL)
     {
         password = &password[strlen(password_key)];
