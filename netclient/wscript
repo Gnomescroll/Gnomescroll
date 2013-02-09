@@ -623,19 +623,19 @@ def production_dbg(ctx, add=[], rm=[]):
 
 class awesomium_ctx(ConfigurationContext):
     cmd = 'awe'
-    fun = 'awesomium'
+    fun = 'awe'
 
-def awesomium(ctx):
+def awe(ctx):
     configure(ctx, awesomium=True)
 
 class awesomium_dbg_ctx(ConfigurationContext):
     cmd = 'awedbg'
-    fun = 'awesomiumdbg'
+    fun = 'awedbg'
 
-def awesomiumdbg(ctx):
+def awedbg(ctx):
     configure(ctx, awesomium=True, awesomium_debug=True)
 
-class noass_ctx(ConfigurationContext):
+class noassimp_ctx(ConfigurationContext):
     cmd = 'noass'
     fun = 'noass'
 
@@ -668,4 +668,4 @@ def asan(ctx, add=[], rm=[]):
     link_flags = ['-fsanitize=address']
     os.environ['PATH'] = '{0}:{1}'.format(asan_path, os.environ['PATH'])
     configure(ctx, add_flags=add+flags, rm_flags=rm, link_flags=link_flags,
-              optlevel=0, use_clang=True)
+              optlevel=3, use_clang=True, awesomium=True)

@@ -1,16 +1,14 @@
 #include "grenade.hpp"
 
 #if DC_CLIENT
-#include <animations/animations.hpp>
-#include <sound/sound.hpp>
+# include <animations/animations.hpp>
+# include <sound/sound.hpp>
 #endif
 
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
-
 #include <entity/constants.hpp>
 #include <common/random.hpp>
-
 #include <particle/_interface.hpp>
 
 /* properties */

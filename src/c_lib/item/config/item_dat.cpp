@@ -300,7 +300,7 @@ void load_item_dat()
     sprite_def(i0, 2,8);
     set_pretty_name("Energy Shield");
     s->max_stack_size = 1;
-    s->max_durability = 100;
+    s->max_durability = 30;
 
     item_def(IG_AGENT_SPAWNER, "agent_spawner");
     sprite_def(i1, 2,6);

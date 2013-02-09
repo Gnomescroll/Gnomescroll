@@ -222,6 +222,7 @@ void NetPeerManager::teardown()
         Toolbelt::agent_quit(a->id);
         Components::owner_component_list->revoke(a->id);
         Agents::destroy_agent(a->id);
+        Agents::reset_attributes(this->agent_id);
     }
     if (this->loaded)
     {
@@ -229,7 +230,6 @@ void NetPeerManager::teardown()
         this->broadcast_disconnect();
     }
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
-    Agents::reset_attributes(this->agent_id);
 }
 
 void NetPeerManager::broadcast_disconnect()

@@ -2,7 +2,6 @@
 
 #include <net_lib/net_StoC.hpp>
 #include <net_lib/net_CtoS.hpp>
-
 #include <auth/constants.hpp>
 
 namespace Auth

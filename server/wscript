@@ -44,13 +44,14 @@ VERSION = str(get_version())
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def check_clang(conf, requested=False):
+def check_clang(conf, use_clang=None):
     if OS != 'Linux':
         return False
 
     # use clang if requested or available
     # If you do check_tool('g++') after this, it won't compile, even though the check works
-    use_clang = requested or bool(os.environ.get('WAF_USE_CLANG'))
+    if use_clang is None:
+        use_clang = bool(os.environ.get('WAF_USE_CLANG'))
     has_clang = False
     with open(os.devnull, 'w') as fnull:
         has_clang = (subprocess.call(shlex.split('which clang'), stdout=fnull, stderr=fnull) == 0)
@@ -59,7 +60,7 @@ def check_clang(conf, requested=False):
     return use_clang
 
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
-               production=False, use_clang=False):
+               production=False, use_clang=None):
     optflag = '-O' + str(optlevel)
 
     global OS
@@ -72,7 +73,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     else:
         prodflag += '0'
 
-    use_clang = check_clang(conf, requested=use_clang)
+    use_clang = check_clang(conf, use_clang=use_clang)
 
     if use_clang:
         conf.check_tool('clang++')
@@ -406,4 +407,4 @@ def asan(ctx, add=[], rm=[]):
     link_flags = ['-fsanitize=address']
     os.environ['PATH'] = '{0}:{1}'.format(asan_path, os.environ['PATH'])
     configure(ctx, add_flags=add+flags, rm_flags=rm, link_flags=link_flags,
-              optlevel=1, use_clang=True)
+              optlevel=3)

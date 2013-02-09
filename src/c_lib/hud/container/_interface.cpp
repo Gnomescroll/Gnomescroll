@@ -385,8 +385,9 @@ void draw()
     //toolbelt->draw_name();
     inventory->draw();
     synthesizer->draw();
-    cache->draw();
     equipment->draw();
+    if (cache->container_id != NULL_CONTAINER)
+        cache->draw();
 
     if (container_block_enabled)
     {
@@ -535,6 +536,8 @@ void draw_durability_meter(float x, float y, int slot_size, unsigned char alpha,
     if (durability == NULL_DURABILITY) return;
     int max_durability = Item::get_max_durability(metadata.type);
     float ratio = float(durability)/float(max_durability);
+    ratio = GS_MIN(ratio, 1.0f);
+    ratio = GS_MAX(ratio, 0.0f);
     int mh = slot_size / 8; // meter height
     glColor4ub(255, 0, 0, alpha);               // red
     Hud::meter_graphic.draw(x, y, slot_size, mh, 1.0f); // full slot width background

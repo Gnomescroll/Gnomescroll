@@ -6,7 +6,7 @@
 #include <net_lib/common/type_pack.hpp>
 
 #if DC_CLIENT
-#include <net_lib/client.hpp>
+# include <net_lib/client.hpp>
 #endif
 
 //#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization

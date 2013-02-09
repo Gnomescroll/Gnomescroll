@@ -2,7 +2,6 @@
 
 #include <net_lib/net_StoC.hpp>
 #include <net_lib/net_CtoS.hpp>
-
 #include <agent/constants.hpp>
 
 /*

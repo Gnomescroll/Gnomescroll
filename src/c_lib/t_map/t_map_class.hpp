@@ -3,7 +3,6 @@
 #include <t_map/common/constants.hpp>
 #include <t_map/chunk_special.hpp>
 #include <t_map/common/map_element.hpp>
-
 #include <t_map/map_special.hpp>
 
 namespace t_map
@@ -47,10 +46,10 @@ class MAP_CHUNK
 
     MAP_CHUNK(int _xpos, int _ypos);
 
-    inline CubeType get_block(int x, int y, int z) __attribute__((always_inline)); //for VBO generator
-    inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute__((always_inline)); //for VBO generator
+    ALWAYS_INLINE CubeType get_block(int x, int y, int z); //for VBO generator
+    ALWAYS_INLINE struct MAP_ELEMENT get_element(int x, int y, int z); //for VBO generator
 
-    inline void set_element(int x, int y, int z, struct MAP_ELEMENT e) __attribute__((always_inline)); //for VBO generator
+    ALWAYS_INLINE void set_element(int x, int y, int z, struct MAP_ELEMENT e); //for VBO generator
 
     void refresh_height_cache();
 
@@ -98,19 +97,19 @@ class Terrain_map
     void unload_chunk(int i, int j);    //only entry point for unloading
 
     #if TERRAIN_MAP_FORCE_INLINE
-    inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
-    inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
+    ALWAYS_INLINE struct MAP_ELEMENT get_element(int x, int y, int z);
+    ALWAYS_INLINE void set_element(int x, int y, int z, struct MAP_ELEMENT element);
 
-    inline CubeType get_block(int x, int y, int z) __attribute((always_inline));
-    void set_block(int x, int y, int z, CubeType cube_type) __attribute((always_inline));
-    void set_block_fast(int x, int y, int z, CubeType cube_type) __attribute((always_inline));
+    ALWAYS_INLINE CubeType get_block(int x, int y, int z);
+    ALWAYS_INLINE void set_block(int x, int y, int z, CubeType cube_type);
+    ALWAYS_INLINE void set_block_fast(int x, int y, int z, CubeType cube_type);
 
     #else
     struct MAP_ELEMENT get_element(int x, int y, int z);
     void set_element(int x, int y, int z, struct MAP_ELEMENT element);
     CubeType get_block(int x, int y, int z);
     void set_block(int x, int y, int z, CubeType cube_type);
-    void set_block_fast(int x, int y, int z, CubeType cube_type) __attribute((always_inline));
+    ALWAYS_INLINE void set_block_fast(int x, int y, int z, CubeType cube_type);
     #endif
 
     int get_damage(int x, int y, int z);

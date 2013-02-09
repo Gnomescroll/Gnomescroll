@@ -23,8 +23,8 @@ void meteor_fall()
     const int METEOR_SIZE = 5; //one side of the meteor, which is a cube - will make it have a random shape later
     const int displacement = 200; //the amount of additional blocks of the ore to place around the crater
 
-    int x = randrange (65, t_map::map_dim.x - METEOR_SIZE - 65);
-    int y = randrange (65, t_map::map_dim.y - METEOR_SIZE - 65);
+    int x = randrange(65, t_map::map_dim.x - METEOR_SIZE - 65);
+    int y = randrange(65, t_map::map_dim.y - METEOR_SIZE - 65);
     x = translate_point(x);
     y = translate_point(y);
 

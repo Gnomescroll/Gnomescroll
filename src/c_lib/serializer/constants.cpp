@@ -58,7 +58,12 @@ void verify_config()
     // is because of the seriousness of the serializer, i'll leave it here
     GS_ASSERT_ABORT(ItemContainer::container_attributes != NULL);
 
+    #if PRODUCTION
+    // TODO -- enable premium_cache
+    GS_ASSERT_ABORT(N_PLAYER_CONTAINERS == 6);
+    #else
     GS_ASSERT_ABORT(N_PLAYER_CONTAINERS == 7);
+    #endif
 
     bool agent_hand_found         = false;
     bool agent_toolbelt_found     = false;

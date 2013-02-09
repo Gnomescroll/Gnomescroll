@@ -32,8 +32,11 @@ void init()
     player_container_types[i++] = name::inventory;
     player_container_types[i++] = name::synthesizer;
     player_container_types[i++] = name::energy_tanks;
-    player_container_types[i++] = name::premium_cache;
     player_container_types[i++] = name::equipment;
+    #if !PRODUCTION
+    // TODO -- enable premium_cache
+    player_container_types[i++] = name::premium_cache;
+    #endif
     GS_ASSERT(i == N_PLAYER_CONTAINERS);
 
     #if DC_SERVER
@@ -607,29 +610,37 @@ bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
     IF_ASSERT(!isValid(agent_id)) return false;
     IF_ASSERT(!isValid(client_id)) return false;
 
-    ItemContainerInterface* premium_cache      = create_container(name::premium_cache);
     ItemContainerInterface* agent_toolbelt     = create_container(name::toolbelt);
     ItemContainerInterface* agent_inventory    = create_container(name::inventory);
     ItemContainerInterface* agent_hand         = create_container(name::hand);
     ItemContainerInterface* agent_equipment    = create_container(name::equipment);
     ItemContainerInterface* agent_synthesizer  = create_container(name::synthesizer);
     ItemContainerInterface* agent_energy_tanks = create_container(name::energy_tanks);
+    #if !PRODUCTION
+    // TODO -- enable this for certain premium users
+    ItemContainerInterface* premium_cache      = create_container(name::premium_cache);
+    #endif
 
     IF_ASSERT(agent_hand         == NULL) goto error;
     IF_ASSERT(agent_toolbelt     == NULL) goto error;
     IF_ASSERT(agent_inventory    == NULL) goto error;
     IF_ASSERT(agent_synthesizer  == NULL) goto error;
     IF_ASSERT(agent_energy_tanks == NULL) goto error;
-    IF_ASSERT(premium_cache      == NULL) goto error;
     IF_ASSERT(agent_equipment    == NULL) goto error;
+    #if !PRODUCTION
+    // TODO -- enable this for certain premium users
+    IF_ASSERT(premium_cache      == NULL) goto error;
+    #endif
 
     assign_container_to_agent(agent_hand,         agent_hand_list,         agent_id, client_id);
     assign_container_to_agent(agent_toolbelt,     agent_toolbelt_list,     agent_id, client_id);
     assign_container_to_agent(agent_inventory,    agent_inventory_list,    agent_id, client_id);
     assign_container_to_agent(agent_synthesizer,  agent_synthesizer_list,  agent_id, client_id);
     assign_container_to_agent(agent_energy_tanks, agent_energy_tanks_list, agent_id, client_id);
-    assign_container_to_agent(premium_cache,      premium_cache_list,      agent_id, client_id);
     assign_container_to_agent(agent_equipment,    agent_equipment_list,    agent_id, client_id);
+    #if !PRODUCTION
+    assign_container_to_agent(premium_cache,      premium_cache_list,      agent_id, client_id);
+    #endif
 
     return true;
 
@@ -639,8 +650,10 @@ bool assign_containers_to_agent(AgentID agent_id, ClientID client_id)
         if (agent_inventory    != NULL) destroy_container(agent_inventory->id);
         if (agent_synthesizer  != NULL) destroy_container(agent_synthesizer->id);
         if (agent_energy_tanks != NULL) destroy_container(agent_energy_tanks->id);
-        if (premium_cache      != NULL) destroy_container(premium_cache->id);
         if (agent_equipment    != NULL) destroy_container(agent_equipment->id);
+        #if !PRODUCTION
+        if (premium_cache      != NULL) destroy_container(premium_cache->id);
+        #endif
         return false;
 }
 
@@ -925,8 +938,9 @@ static void save_agent_containers(ClientID client_id, AgentID agent_id)
     serializer::save_player_container(client_id, agent_inventory_list[agent_id]);
     serializer::save_player_container(client_id, agent_synthesizer_list[agent_id]);
     serializer::save_player_container(client_id, agent_energy_tanks_list[agent_id]);
-    serializer::save_player_container(client_id, premium_cache_list[agent_id]);
     serializer::save_player_container(client_id, agent_equipment_list[agent_id]);
+    if (premium_cache_list[agent_id] != NULL_CONTAINER)
+        serializer::save_player_container(client_id, premium_cache_list[agent_id]);
 }
 
 void dump_agent_containers(ClientID client_id, AgentID agent_id)

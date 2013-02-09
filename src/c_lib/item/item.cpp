@@ -32,6 +32,13 @@ void Item::init_from_loading()
     ItemAttribute* attr = get_item_attributes(this->type);
     IF_ASSERT(attr == NULL) return;
     this->gas_decay = attr->gas_lifetime;
+
+    // apply constraints
+    this->durability = GS_MAX(this->durability, 0);
+    this->durability = GS_MIN(this->durability, attr->max_durability);
+    this->stack_size = GS_MAX(this->stack_size, 0);
+    this->stack_size = GS_MIN(this->stack_size, attr->max_stack_size);
+    // TODO -- charges ??
 }
 # endif
 
@@ -180,7 +187,9 @@ static bool is_valid_location_data(ItemLocationType location, int location_id, i
         // we can check for player containers though
         if (ItemContainer::container_type_is_attached_to_agent(container_type))
         {
-            VERIFY_ITEM_LOCATION(container_slot >= 0 && (unsigned int)container_slot < ItemContainer::get_container_max_slots(container_type));
+            VERIFY_ITEM_LOCATION(container_slot >= 0 &&
+                                 ((unsigned int)container_slot <
+                                  ItemContainer::get_container_max_slots(container_type)));
         }
     }
 
@@ -197,7 +206,6 @@ void ItemList::verify_items()
         GS_ASSERT((COND)); \
         if (!(COND)) (ITEM)->valid = false;
 
-    //const int LIMIT = 1;
     for (unsigned int k=0; k<this->max; k++)
     {
         if (this->objects[k].id == this->null_id) continue;

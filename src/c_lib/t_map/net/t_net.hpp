@@ -1,10 +1,8 @@
 #pragma once
 
 #include <net_lib/global.hpp>
-
 #include <net_lib/common/type_pack.hpp>
 #include <net_lib/common/packet_buffer.hpp>
-
 #include <net_lib/common/packet_id_counter.hpp>
 #include <net_lib/common/message_handler.h>
 

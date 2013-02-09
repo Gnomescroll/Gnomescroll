@@ -131,7 +131,7 @@ class Modifier
         }
         if (this->event_type == MODIFIER_EVENT_PERIODIC)
         {
-            GS_ASSERT(this->duration > 0 & this->period > 0);
+            GS_ASSERT(this->duration > 0 && this->period > 0);
             GS_ASSERT(this->duration >= this->period);
         }
     }
