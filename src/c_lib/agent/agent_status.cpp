@@ -457,26 +457,19 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
 int AgentStatus::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
 {
     int dmg = 0;
-
     switch (part_id)
     {
         case AGENT_PART_HEAD:
-            dmg = randrange(15,25);
+            dmg = randrange(8, 12);
             break;
         case AGENT_PART_TORSO:
-            dmg = randrange(10,15);
-            break;
-        case AGENT_PART_LARM:
-            dmg = randrange(5,10);
-            break;
-        case AGENT_PART_RARM:
-            dmg = randrange(5,10);
-            break;
-        case AGENT_PART_LLEG:
-            dmg = randrange(5,10);
+            dmg = randrange(5, 8);
             break;
         case AGENT_PART_RLEG:
-            dmg = randrange(5,10);
+        case AGENT_PART_LLEG:
+        case AGENT_PART_RARM:
+        case AGENT_PART_LARM:
+            dmg = randrange(3, 5);
             break;
         default:
             GS_ASSERT(false);
@@ -488,33 +481,24 @@ int AgentStatus::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflict
 int AgentStatus::apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
 {
     int dmg = 0;
-
     switch (part_id)
     {
         case AGENT_PART_HEAD:
-            dmg = randrange(15,25);
+            dmg = randrange(4, 6);
             break;
         case AGENT_PART_TORSO:
-            dmg = randrange(10,15);
-            break;
-        case AGENT_PART_LARM:
-            dmg = randrange(5,10);
-            break;
-        case AGENT_PART_RARM:
-            dmg = randrange(5,10);
-            break;
-        case AGENT_PART_LLEG:
-            dmg = randrange(5,10);
+            dmg = randrange(2, 4);
             break;
         case AGENT_PART_RLEG:
-            dmg = randrange(5,10);
+        case AGENT_PART_LLEG:
+        case AGENT_PART_RARM:
+        case AGENT_PART_LARM:
+            dmg = randrange(1, 3);
             break;
         default:
             GS_ASSERT(false);
             break;
     }
-    dmg = ((float)dmg) * (1.0f/3.0f);
-    if (dmg <= 0) dmg = 1;
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 

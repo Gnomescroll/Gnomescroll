@@ -1,22 +1,18 @@
 #include "grenade.hpp"
 
-#if DC_CLIENT
-# include <animations/animations.hpp>
-# include <sound/sound.hpp>
-#endif
-
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 #include <entity/constants.hpp>
 #include <common/random.hpp>
 #include <particle/_interface.hpp>
-
-/* properties */
+#if DC_CLIENT
+# include <animations/animations.hpp>
+# include <sound/sound.hpp>
+#endif
 
 
 namespace Particle
 {
-
 
 const int GRENADE_TTL = 100;
 const float GRENADE_DAMP = 0.5f;
@@ -132,8 +128,7 @@ void Grenade::explode(int multiplier)
     // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
     ServerState::damage_objects_within_sphere(
         position, GRENADE_DAMAGE_RADIUS, GRENADE_SPLASH_DAMAGE,
-        this->owner, OBJECT_GRENADE, this->id
-    );
+        this->owner, OBJECT_GRENADE, this->id);
 
     // apply block damage
     damage_blocks(multiplier);
@@ -144,8 +139,8 @@ inline int Grenade::block_damage(int dist)
 {
     int max_dist = GRENADE_BLOCK_DESTROY_RADIUS*3;
     if (dist >= max_dist) return 0;
-    float ratio = (float)(max_dist - dist) / (float)(max_dist);
-    float dmg = ratio * (float)(GRENADE_BLOCK_DAMAGE);
+    float ratio = float(max_dist - dist) / float(max_dist);
+    float dmg = ratio * float(GRENADE_BLOCK_DAMAGE);
     int idmg = (int)(dmg);
     return idmg;
 }
