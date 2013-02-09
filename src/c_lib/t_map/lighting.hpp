@@ -1040,7 +1040,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
 void assert_skylight(int chunk_i, int chunk_j)
 {
     //debugging
-    //return;
+    return;
 
     int k = map_dim.z-1;
 
