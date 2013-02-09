@@ -150,7 +150,7 @@ class CrusherUI : public UIElement
         xdim(1), ydim(1), alt_xdim(0), alt_ydim(0),
         render_width(1.0f), render_height(1.0f),
         texture_offset_x(0.0f), texture_offset_y(0.0f),
-        centered(true)
+        centered(false)
     {}
 
     virtual ~CrusherUI()

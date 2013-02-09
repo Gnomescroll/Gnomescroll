@@ -451,7 +451,6 @@ void init()
     storage_block->type = UI_ELEMENT_STORAGE_BLOCK;
     storage_block->set_container_type(ItemContainer::name::storage_block_small);
     storage_block->init();
-    storage_block->centered = true;
     storage_block->xoff = inventory->xoff + inventory->width()+ 20;
     storage_block->yoff = _yresf - inventory->yoff - 2;
 
@@ -459,7 +458,6 @@ void init()
     smelter->type = UI_ELEMENT_SMELTER;
     smelter->set_container_type(ItemContainer::name::smelter_basic);
     smelter->init();
-    smelter->centered = true;
     smelter->xoff = inventory->xoff + inventory->width()+ 20;
     smelter->yoff = _yresf - inventory->yoff - 2;
 
@@ -467,7 +465,6 @@ void init()
     crusher->type = UI_ELEMENT_CRUSHER;
     crusher->set_container_type(ItemContainer::name::crusher);
     crusher->init();
-    crusher->centered = true;
     crusher->xoff = inventory->xoff + inventory->width()+ 20;
     crusher->yoff = _yresf - inventory->yoff - 2;
 

@@ -103,7 +103,7 @@ class StorageBlockUI : public UIElement
         xdim(1), ydim(1),
         render_width(1.0f), render_height(1.0f),
         texture_offset_x(0.0f), texture_offset_y(0.0f),
-        centered(true)
+        centered(false)
     {}
 
     virtual ~StorageBlockUI()
