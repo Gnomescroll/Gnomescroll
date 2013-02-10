@@ -204,7 +204,8 @@ void tick()
         t_plant::tick();
     }
 
-    if (counter % (30*1800)  == 0)
+    //every half hour
+    if (counter % (30*1800) == 0)
     {
         //t_plant::tick();
         int count = 0;
