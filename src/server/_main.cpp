@@ -205,8 +205,8 @@ void tick()
     }
 
     // Meteors
-    const int meteor_fall_rate = ONE_HOUR * 16; // 16hrs
-    const int meteor_shower_rate = ONE_HOUR * 4; // 4hrs
+    const int meteor_fall_rate = ONE_HOUR * 8;
+    const int meteor_shower_rate = ONE_HOUR * 4;
     #if PRODUCTION
     static int next_meteor_fall = 0;
     static int next_meteor_shower = 0;
