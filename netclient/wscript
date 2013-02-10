@@ -325,6 +325,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
             assert False
 
         conf.check(
+            header_name='assimp/cimport.h',
             lib=assimp_lib,
             use='assimp',
             libpath= [assimp_lib_path],
