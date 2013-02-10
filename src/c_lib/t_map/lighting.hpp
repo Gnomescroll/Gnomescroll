@@ -80,7 +80,7 @@ void set_skylight(int x, int y, int z, int value)
 */
 
 struct LightUpdateElement* sky_light_array = NULL;
-int sky_light_array_max      = 8*1024;
+int sky_light_array_max      = 64*1024;
 int sky_light_array_index    = 0;
 int sky_light_array_n        = 0;
 
@@ -130,6 +130,9 @@ void _push_skylight_update(int x, int y, int z)
         }
         else
         {
+            //add return here
+            //return; //list is full
+
             //else increase size of list
             sky_light_array_max *= 2;
             sky_light_array = (struct LightUpdateElement*) realloc(sky_light_array, sky_light_array_max* sizeof(struct LightUpdateElement));
@@ -155,7 +158,7 @@ void _skylight_update_core(int max_iterations);
 
 void _skylight_update_core()
 {
-#if 1
+#if 0
     _skylight_update_core(1000*6*6);
 #else
     _skylight_update_core(1000*6); //do 1000 iteratations maxs
@@ -334,7 +337,6 @@ void update_skylight(int chunk_i, int chunk_j)
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
     {
-
         struct MAP_ELEMENT e;
 
         int x = i + 16*chunk_i;
@@ -1031,7 +1033,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
 void assert_skylight(int chunk_i, int chunk_j)
 {
     //debugging
-    //return;
+    return;
 
     int k = map_dim.z-1;
 
@@ -1110,8 +1112,8 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         return;
     }
 
-
-
+    //_skylight_update_core(32*1024);
+    _skylight_update_core(32*1024);
 
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
@@ -1120,11 +1122,30 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         int y = j + 16*chunk_j;
         int k = map_dim.z-1;
 
-        //struct MAP_ELEMENT e = get_element(x, y, k);
-        //GS_ASSERT(fast_cube_properties[e.block].solid == isSolid(x,y,k) );
+        struct MAP_ELEMENT e;
+        // get highest block
+        for (; k>=0; k--)
+        {
+            e = mc->get_element(i,j,k);
+            //e = get_element(x,y,k);
+            if(e.block != 0)    //iterate until we hit top block
+                break;
+            set_skylight(x,y,k, 15);
+            _push_skylight_update(x,y,k);
+        }
+        if (k < 0) return;
+        // black out everything below
+    
+        for (; k>=0; k--)
+        {
+            e = mc->get_element(i,j,k);
+            //e = get_element(x,y,k);
+            if(e.block != 0)
+                continue;
+            set_skylight(x,y,k, 0);
+            _push_skylight_update(x,y,k);
+        }
 
-        if(isSolid(x,y,k) == false)
-             _push_skylight_update(x,y,k);
     /*
         // get highest block
         for (; k>=0; k--)
@@ -1148,9 +1169,10 @@ void init_update_sunlight(int chunk_i, int chunk_j)
     */
     }
 
-
-    _skylight_update_core(0);
-
+    //_skylight_update_core(32*1024);
+    _skylight_update_core(32*1024);
+    _skylight_update_core(32*1024);
+    
     assert_skylight(chunk_i, chunk_j);
 
     //_skylight_update_core(0);
