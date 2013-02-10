@@ -112,20 +112,29 @@ void _push_skylight_update(int x, int y, int z)
     }
 
 
-    if(sky_light_array_index != 0)
+    if(sky_light_array_index == sky_light_array_max)
     {
-        //move elements towards begining of list
-        for(int i=0; i<sky_light_array_index; i++)
+        if(sky_light_array_n != 0)
         {
+            printf("moving: index, n, max= %d %d %d \n", sky_light_array_index, sky_light_array_n, sky_light_array_max);
+            //move elements towards begining of list
+            const int itr_count = sky_light_array_index - sky_light_array_n; //number of elements to move
+            for(int i=0; i<itr_count; i++)
+            {
+                GS_ASSERT(i + sky_light_array_n < sky_light_array_max);
+                sky_light_array[i] = sky_light_array[i + sky_light_array_n];
+            }
+            sky_light_array_index -= sky_light_array_n;
+            sky_light_array_n = 0;
 
-        } 
-    }
-    else
-    {
-        //else increase size of list
-        sky_light_array_max *= 2;
-        sky_light_array = (struct LightUpdateElement*) realloc(sky_light_array, sky_light_array_max* sizeof(struct LightUpdateElement));
-        printf("_push_sky_light_update: reallocing light array to: %d \n", sky_light_array_max);
+        }
+        else
+        {
+            //else increase size of list
+            sky_light_array_max *= 2;
+            sky_light_array = (struct LightUpdateElement*) realloc(sky_light_array, sky_light_array_max* sizeof(struct LightUpdateElement));
+            printf("_push_sky_light_update: reallocing light array to: %d \n", sky_light_array_max);
+        }
     }
 /*
     if(sky_light_array_index == 0)
@@ -237,7 +246,7 @@ void _skylight_update_core(int max_iterations)
 
             if(isSolid(x,y,z-1) == false)
                 _push_skylight_update(x,y,z-1);
-            //_push_skylight_update(x,y,z);
+            _push_skylight_update(x,y,z);
 
             continue;
         }
@@ -273,7 +282,7 @@ void _skylight_update_core(int max_iterations)
                 if( fast_cube_properties[ea[j].block].solid == false)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
-            //_push_skylight_update(x,y,z);
+            _push_skylight_update(x,y,z);
             continue;
         }  
 
@@ -294,7 +303,7 @@ void _skylight_update_core(int max_iterations)
                 if(fast_cube_properties[ea[j].block].solid == false)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
-            //_push_skylight_update(x,y,z);
+            _push_skylight_update(x,y,z);
             continue;
         }
         continue;
