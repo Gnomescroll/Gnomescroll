@@ -87,6 +87,10 @@ int sky_light_array_n        = 0;
 void _push_skylight_update(int x, int y, int z)
 {
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+
+    if(z < 0 || z > 127)
+        return;
+
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -101,6 +105,7 @@ void _push_skylight_update(int x, int y, int z)
     if(fast_cube_properties[e.block].solid == true)
     {
         GS_ASSERT(false);
+        //printf("block error: %d %d %d \n", x,y,z);
         return;
     }
 
@@ -735,6 +740,10 @@ int env_light_array_n        = 0;
 
 void _push_envlight_update(int x, int y, int z)
 {
+
+    //DEBUGGING
+    return;
+
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
         return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -744,7 +753,7 @@ void _push_envlight_update(int x, int y, int z)
     class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if(mc == NULL)
     {
-        GS_ASSERT(false);
+        //GS_ASSERT(false);
         return;
     }
 
