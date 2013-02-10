@@ -337,7 +337,6 @@ void update_skylight(int chunk_i, int chunk_j)
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
     {
-
         struct MAP_ELEMENT e;
 
         int x = i + 16*chunk_i;
@@ -1034,7 +1033,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
 void assert_skylight(int chunk_i, int chunk_j)
 {
     //debugging
-    //return;
+    return;
 
     int k = map_dim.z-1;
 
@@ -1113,8 +1112,8 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         return;
     }
 
-
-    _skylight_update_core(64*1024);
+    //_skylight_update_core(32*1024);
+    _skylight_update_core(32*1024);
 
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
@@ -1123,6 +1122,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         int y = j + 16*chunk_j;
         int k = map_dim.z-1;
 
+        struct MAP_ELEMENT e;
         // get highest block
         for (; k>=0; k--)
         {
@@ -1143,7 +1143,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
             if(e.block != 0)
                 continue;
             set_skylight(x,y,k, 0);
-            _push_skylight_update(x,y,k);
+            //_push_skylight_update(x,y,k);
         }
 
     /*
@@ -1169,7 +1169,8 @@ void init_update_sunlight(int chunk_i, int chunk_j)
     */
     }
 
-    _skylight_update_core(64*1024);
+    //_skylight_update_core(32*1024);
+    _skylight_update_core(32*1024);
 
     assert_skylight(chunk_i, chunk_j);
 
