@@ -306,7 +306,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
             assert False
 
         conf.check(
-            lib=awesomium_name,
+            lib=[awesomium_name],
             use=awesomium_name,
             includes = [awesomium_include_path],
             libpath = [awesomium_lib_path],
@@ -329,6 +329,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
             use='assimp',
             libpath= [assimp_lib_path],
             includes = [assimp_inc_path],
+            fragment='#include <assimp/cimport.h>' + MAIN_TEST_CODE,
             uselib_store='ASSIMP')
 
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
