@@ -54,7 +54,7 @@ function gs_submit_form(form, url, success, error)
     if (!found) {
         var version_data = {
             name: 'version',
-            value: Gnomescroll.version
+            value: Gnomescroll.version.toString(10)
         }
         data.push(version_data);
     }
@@ -93,6 +93,13 @@ function gs_make_error_element(msg)
     return el;
 }
 
+function gs_make_message_element(msg)
+{
+    var el = $('<div class="alert"></div>');
+    el.text(msg);
+    return el;
+}
+
 function gs_append_form_errors(errors, form_type)
 {   // attach errors received from json response to the form
     $.each(errors, function(name, msgs)
@@ -112,6 +119,16 @@ function gs_append_form_errors(errors, form_type)
             for (var i=0; i<len; i++)
                 el.append(gs_make_error_element(msgs[i]));
         }
+    });
+}
+
+function gs_append_form_messages(messages)
+{
+    var div = $('#messages');
+    $.each(messages, function(i, message)
+    {
+        var el = gs_make_message_element(message);
+        div.append(el);
     });
 }
 

@@ -1171,7 +1171,8 @@ void init_update_sunlight(int chunk_i, int chunk_j)
 
     //_skylight_update_core(32*1024);
     _skylight_update_core(32*1024);
-
+    _skylight_update_core(32*1024);
+    
     assert_skylight(chunk_i, chunk_j);
 
     //_skylight_update_core(0);
