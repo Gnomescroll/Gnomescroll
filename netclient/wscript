@@ -291,8 +291,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
 
-
-    #awesomium
     if awesomium:
         if OS == 'Windows':
             awesomium_lib_path = os.path.abspath('../lib/win32/awesomium/lib/%s/' % (awe_stem,))
@@ -314,7 +312,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
             libpath = [awesomium_lib_path],
             uselib_store='AWESOMIUM')
 
-    #assimp
     if assimp:
         if OS == 'Linux':
             assimp_lib_path = os.path.abspath('../lib/lin32/assimp/lib/')
@@ -327,6 +324,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
 
         conf.check(
             lib=['assimp'],
+            use=['assimp'],
             libpath= [assimp_lib_path],
             includes = [assimp_inc_path],
             uselib_store='ASSIMP')
