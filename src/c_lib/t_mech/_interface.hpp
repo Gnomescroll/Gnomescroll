@@ -48,6 +48,8 @@ void send_client_mech_list(ClientID client_id);
 void handle_block_removal(int x, int y, int z); //react to block destruction
 bool remove_mech(int mech_id);
 
+int count_mech(int mech_id);
+
 static void pack_mech(struct MECH &m, class mech_create_StoC &p);
 #endif
 
