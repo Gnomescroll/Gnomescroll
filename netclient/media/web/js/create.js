@@ -12,6 +12,10 @@ function successful_create(data)
         gs_extract_and_set_token(data);
     else
         gs_auth_server_error();
+    if (data['messages'] !== undefined)
+    {
+        gs_append_form_messages(data['messages']);
+    }
 }
 
 $('form#create').submit(function(e)
@@ -49,7 +53,7 @@ $('form#create').submit(function(e)
         dataType: 'json',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-        },  
+        },
     });
 
     return false;

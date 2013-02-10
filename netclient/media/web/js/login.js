@@ -18,16 +18,20 @@ function successful_login(data)
         gs_extract_and_set_token(data);
     else
         gs_auth_server_error();
+    if (data['messages'] !== undefined)
+    {
+        gs_append_form_messages(data['messages']);
+    }
 }
 
 $('form#login').submit(function(e)
 {
     e.preventDefault();
-    
+
     Gnomescroll.set_message("Authorizing...");
 
     var form = $(this);
-    
+
     // clear previous errors displayed on form
     gs_clear_form_errors();
 
@@ -59,7 +63,7 @@ $('form#login').submit(function(e)
         dataType: 'json',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-        },  
+        },
         xhrFields: {
             withCredentials: true
         },
@@ -72,7 +76,7 @@ $('form#login').submit(function(e)
         password = '';  // will clear the password
     Gnomescroll.save_password(password);
     Gnomescroll.save_remember_password_setting(!!$('input#remember_password').prop('checked'));
-    
+
     return false;
 });
 
