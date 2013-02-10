@@ -1143,7 +1143,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
             if(e.block != 0)
                 continue;
             set_skylight(x,y,k, 0);
-            //_push_skylight_update(x,y,k);
+            _push_skylight_update(x,y,k);
         }
 
     /*
