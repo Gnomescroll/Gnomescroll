@@ -116,7 +116,7 @@ void _push_skylight_update(int x, int y, int z)
     {
         if(sky_light_array_n != 0)
         {
-            printf("moving: index, n, max= %d %d %d \n", sky_light_array_index, sky_light_array_n, sky_light_array_max);
+            //printf("moving: index, n, max= %d %d %d \n", sky_light_array_index, sky_light_array_n, sky_light_array_max);
             //move elements towards begining of list
             const int itr_count = sky_light_array_index - sky_light_array_n; //number of elements to move
             for(int i=0; i<itr_count; i++)
@@ -313,7 +313,7 @@ void _skylight_update_core(int max_iterations)
     //reset
     if( sky_light_array_n == sky_light_array_index)
     {
-        printf("skylight_array_cleared: %d elements \n", sky_light_array_index);
+        //printf("skylight_array_cleared: %d elements \n", sky_light_array_index);
         sky_light_array_n = 0;
         sky_light_array_index = 0;
     }
