@@ -314,17 +314,19 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
 
     if assimp:
         if OS == 'Linux':
+            assimp_lib = 'assimp'
             assimp_lib_path = os.path.abspath('../lib/lin32/assimp/lib/')
             assimp_inc_path = os.path.abspath('../lib/lin32/assimp/include/')
         elif OS == 'Windows':
+            assimp_lib = 'Assimp32'
             assimp_lib_path = os.path.abspath('../lib/win32/lib/')
             assimp_inc_path = os.path.abspath('../lib/win32/assimp/')
         else:
             assert False
 
         conf.check(
-            lib=['assimp'],
-            use=['assimp'],
+            lib=assimp_lib,
+            use='assimp',
             libpath= [assimp_lib_path],
             includes = [assimp_inc_path],
             uselib_store='ASSIMP')
