@@ -88,6 +88,8 @@ void _push_skylight_update(int x, int y, int z)
 {
     if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
+    //printf("%d %d %d \n", x,y,z);
+
     if(z < 0 || z > 127)
         return;
 
@@ -109,13 +111,39 @@ void _push_skylight_update(int x, int y, int z)
         return;
     }
 
+
     if(sky_light_array_index == sky_light_array_max)
+    {
+        if(sky_light_array_n != 0)
+        {
+            //printf("moving: index, n, max= %d %d %d \n", sky_light_array_index, sky_light_array_n, sky_light_array_max);
+            //move elements towards begining of list
+            const int itr_count = sky_light_array_index - sky_light_array_n; //number of elements to move
+            for(int i=0; i<itr_count; i++)
+            {
+                GS_ASSERT(i + sky_light_array_n < sky_light_array_max);
+                sky_light_array[i] = sky_light_array[i + sky_light_array_n];
+            }
+            sky_light_array_index -= sky_light_array_n;
+            sky_light_array_n = 0;
+
+        }
+        else
+        {
+            //else increase size of list
+            sky_light_array_max *= 2;
+            sky_light_array = (struct LightUpdateElement*) realloc(sky_light_array, sky_light_array_max* sizeof(struct LightUpdateElement));
+            printf("_push_sky_light_update: reallocing light array to: %d \n", sky_light_array_max);
+        }
+    }
+/*
+    if(sky_light_array_index == 0)
     {
         sky_light_array_max *= 2;
         sky_light_array = (struct LightUpdateElement*) realloc(sky_light_array, sky_light_array_max* sizeof(struct LightUpdateElement));
         printf("_push_sky_light_update: reallocing light array to: %d \n", sky_light_array_max);
     }
-
+*/
     sky_light_array[sky_light_array_index].x = x;
     sky_light_array[sky_light_array_index].y = y;
     sky_light_array[sky_light_array_index].z = z;
@@ -127,12 +155,16 @@ void _skylight_update_core(int max_iterations);
 
 void _skylight_update_core()
 {
+#if 1
+    _skylight_update_core(1000*6*6);
+#else
     _skylight_update_core(1000*6); //do 1000 iteratations maxs
     _skylight_update_core(1000*6); //do 1000 iteratations maxs
     _skylight_update_core(1000*6); //do 1000 iteratations maxs
     _skylight_update_core(1000*6); //do 1000 iteratations maxs
     _skylight_update_core(1000*6); //do 1000 iteratations maxs
     _skylight_update_core(1000*6); //do 1000 iteratations maxs
+#endif
 }
 
 void _skylight_update_core(int max_iterations)
@@ -140,27 +172,24 @@ void _skylight_update_core(int max_iterations)
     if(sky_light_array_index == 0)
         return;
 
-    int index = sky_light_array_n;
-
     if(max_iterations == 0)
         max_iterations = 1000;
 
-    int stop_index = index + max_iterations;
-    if(stop_index > sky_light_array_index)
-        stop_index = sky_light_array_index;
-//    if(max_iterations == 0)
-//        stop_index = sky_light_array_index;
+    int itr_count = 0;
 
-    while(index != stop_index)
+    while(itr_count < max_iterations && sky_light_array_n < sky_light_array_index)
     {
-        int x = sky_light_array[index].x;
-        int y = sky_light_array[index].y;
-        int z = sky_light_array[index].z;
+        itr_count++; //loop counter
+
+        int x = sky_light_array[sky_light_array_n].x;
+        int y = sky_light_array[sky_light_array_n].y;
+        int z = sky_light_array[sky_light_array_n].z;
+
+        sky_light_array_n++;
 
         class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
         if(mc == NULL)
         {
-            index++;
             continue;
         }
 
@@ -171,7 +200,6 @@ void _skylight_update_core(int max_iterations)
         if(fast_cube_properties[e.block].solid == true)
         {
             GS_ASSERT(false);
-            index++;
             continue;
         }
 
@@ -179,7 +207,7 @@ void _skylight_update_core(int max_iterations)
         struct MAP_ELEMENT te = get_element(x,y,z+1);
         //struct MAP_ELEMENT be = get_element(x,y,z-1);
 
-        if(z == 127)  GS_ASSERT((te.light & 0x0f) == 15);
+        //if(z == 127)  GS_ASSERT((te.light & 0x0f) == 15);
         //top level must be sunlight
         //if block is not sunlight and sunlight is above block, set sunlight
 
@@ -206,7 +234,6 @@ void _skylight_update_core(int max_iterations)
 
             _push_skylight_update(x,y,z);
 
-            index++;
             continue;
         }
 
@@ -221,11 +248,8 @@ void _skylight_update_core(int max_iterations)
                 _push_skylight_update(x,y,z-1);
             _push_skylight_update(x,y,z);
 
-            index++;
             continue;
         }
-
-
 
         /*
             Normal Light
@@ -244,46 +268,6 @@ void _skylight_update_core(int max_iterations)
             }
         }
 
-        //update around
-
-
-/*
-        if(li == 15 )
-        {
-            for(int j=0; j<6; j++)
-            {
-                if( (ea[j].light & 0x0f) < 14 && fast_cube_properties[ea[j].block].solid == false)
-                    _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
-            }
-
-            index++;
-            continue;
-        }
-*/
-        //proprogate light below level 15
-    /*
-        if(li != 15 && li != _max -1 && !(_max == 0 && li == 0))
-        {
-            //printf("min/max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
-            li = _max - 1;
-            //if(li < 0) li = 0;
-            GS_ASSERT(_max - 1 >= 0);
-
-            set_skylight(x,y,z, li);
-
-            for(int j=0; j<6; j++)
-            {
-                int _li =  ea[j].light & 0x0f;
-                if(_li != 15 && fast_cube_properties[ea[j].block].solid == false)
-                    _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
-            }
-            _push_skylight_update(x,y,z);
-
-            index++;
-            continue;
-        }
-    */
-
         if(li != 15 && li > _max -1 && li > 0)
         {
             //printf("sky_min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
@@ -299,7 +283,6 @@ void _skylight_update_core(int max_iterations)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
             _push_skylight_update(x,y,z);
-            index++;
             continue;
         }  
 
@@ -308,6 +291,7 @@ void _skylight_update_core(int max_iterations)
         {
             //printf("sky_max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
 
+            GS_ASSERT(li != _max -1);
             li = _max - 1;
             //GS_ASSERT(_max - 1 >= 0);
 
@@ -320,23 +304,16 @@ void _skylight_update_core(int max_iterations)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
             _push_skylight_update(x,y,z);
-
-            index++;
             continue;
         }
-
-
-        index++;
         continue;
     }
 
-    sky_light_array_n = index;
-
-    //if(max_iterations == 0)
-    //printf("sunlight_update: array_clean: itr= %d max_iterators= %d index= %d \n", sky_light_array_index, max_iterations, index);
-
-    if(index == sky_light_array_index)
+    GS_ASSERT( sky_light_array_n <= sky_light_array_index );
+    //reset
+    if( sky_light_array_n == sky_light_array_index)
     {
+        //printf("skylight_array_cleared: %d elements \n", sky_light_array_index);
         sky_light_array_n = 0;
         sky_light_array_index = 0;
     }
