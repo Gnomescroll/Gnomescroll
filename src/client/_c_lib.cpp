@@ -105,9 +105,7 @@ bool c_lib_inited = false;
 #include <physics/mat3.hpp>
 #include <physics/mat4.hpp>
 #include <physics/affine.hpp>
-
 #include <physics/geometry.hpp>
-
 #include <physics/ray_trace/ray_trace.cpp>
 #include <physics/ray_trace/hitscan.cpp>
 #include <physics/ray_trace/handlers.cpp>
@@ -115,6 +113,7 @@ bool c_lib_inited = false;
 #include <physics/verlet.cpp>
 #include <physics/motion.cpp>
 #include <physics/quadrant.hpp>
+
 /* SDL */
 #include <SDL/shader_loader.cpp>
 #include <SDL/texture_loader.cpp>
@@ -122,7 +121,6 @@ bool c_lib_inited = false;
 #include <SDL/draw_functions.cpp>
 #include <SDL/SDL_functions.cpp>
 #include <SDL/png_save.cpp>
-
 //#include <SDL/mesh_loader/obj_loader.cpp>
 
 #if GS_ASSIMP

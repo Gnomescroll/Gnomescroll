@@ -373,16 +373,16 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         if '-DPRODUCTION=1' in conf.env.CXXFLAGS:
             lib_base_path = '$ORIGIN/./lib/lin32/'
             conf.env.RPATH += [lib_base_path]
-                # the libs in the root of dc_mmo/lib are copied from steve's
-                # computer. they should not be on the rpath in development
+            # the libs in the root of dc_mmo/lib are copied from steve's
+            # computer. they should not be on the rpath in development
         else:
             lib_base_path = '$ORIGIN/../lib/lin32/'
         if assimp:
             conf.env.RPATH += [os.path.join(lib_base_path,
-                                            'assimp/lib')]  # assimp lib
+                                            'assimp/lib')]
         if awesomium:
             conf.env.RPATH += [os.path.join(
-                lib_base_path, 'awesomium/release')]  # awesomium lib
+                lib_base_path, 'awesomium/release')]
 
     conf.env.assimp = assimp
     conf.env.awesomium = awesomium
