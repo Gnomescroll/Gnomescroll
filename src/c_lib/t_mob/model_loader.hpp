@@ -43,25 +43,9 @@ class ModelLoader
         pScene(NULL), nl(NULL), nlm(0), nli(0), _ml(NULL), _mlm(0),
         _nl(NULL), _nlm(0), bnl(NULL), bnlm(0)
     {
-
     }
 
-    ~ModelLoader()
-    {
-        if (this->pScene != NULL) aiReleaseImport(this->pScene);
-        if (this->nl != NULL) delete[] this->nl;
-        if (this->_nl != NULL)
-        {
-            for (int i=0; i<this->_nlm; i++)
-            {
-                if (this->_nl[i].c != NULL)
-                    free(this->_nl[i].name);
-            }
-            delete[] this->_nl;
-        }
-        if (this->_ml != NULL) delete[] this->_ml;
-        if (this->bnl != NULL) delete[] this->bnl;
-    }
+    ~ModelLoader();
 
     void init(const aiScene* pScene);
     void count_nodes(aiNode* pNode);

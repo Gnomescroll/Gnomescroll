@@ -61,7 +61,7 @@ class BodyMesh
 
     void draw(float x, float y, float z)
     {
-        draw(x,y,z, 0.0, 0.0);
+        draw(x,y,z, 0.0f, 0.0f);
     }
 
 

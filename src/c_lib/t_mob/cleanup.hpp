@@ -1,5 +1,7 @@
 #pragma once
 
+ASSIMP_INCLUDE_HEADER
+
 class cBone
 {
     public:

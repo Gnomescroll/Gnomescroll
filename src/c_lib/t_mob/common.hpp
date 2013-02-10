@@ -1,19 +1,5 @@
 #pragma once
 
-#ifdef __MSVC__
-extern "C"
-{
-#endif
-
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h> //defines for postprocessor
-#include <assimp/config.h>
-
-#ifdef __MSVC__
-}
-#endif
-
 namespace t_mob
 {
 

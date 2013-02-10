@@ -1,5 +1,7 @@
 #include "body_part_mesh.hpp"
 
+#include <t_mob/common.hpp>
+
 namespace t_mob
 {
 

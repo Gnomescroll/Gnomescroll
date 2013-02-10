@@ -1,23 +1,27 @@
 #include "model_loader.hpp"
 
+#include <t_mob/assimp_includes.hpp>
 #include <physics/mat4.hpp>
-
-#ifdef __MSVC__
-extern "C"
-{
-#endif
-
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h> //defines for postprocessor
-#include <assimp/config.h>
-
-#ifdef __MSVC__
-}
-#endif
 
 namespace t_mob
 {
+
+ModelLoader::~ModelLoader()
+{
+    if (this->pScene != NULL) aiReleaseImport(this->pScene);
+    if (this->nl != NULL) delete[] this->nl;
+    if (this->_nl != NULL)
+    {
+        for (int i=0; i<this->_nlm; i++)
+        {
+            if (this->_nl[i].c != NULL)
+                free(this->_nl[i].name);
+        }
+        delete[] this->_nl;
+    }
+    if (this->_ml != NULL) delete[] this->_ml;
+    if (this->bnl != NULL) delete[] this->bnl;
+}
 
 void ModelLoader::init(const aiScene* pScene)
 {

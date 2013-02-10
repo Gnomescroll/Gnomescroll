@@ -1,20 +1,6 @@
 #include "_interface.hpp"
 
-
-#ifdef __MSVC__
-extern "C"
-{
-#endif
-
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h> //defines for postprocessor
-#include <assimp/config.h>
-
-#ifdef __MSVC__
-}
-#endif
-
+#include <t_mob/assimp_includes.hpp>
 #include <t_mob/model_loader.hpp>
 #include <t_mob/body_mesh.hpp>
 

@@ -1,53 +1,7 @@
 #pragma once
 
+ASSIMP_INCLUDE_HEADER
 #include <physics/mat4.hpp>
-
-// TODO -- clean this up after testing
-// #undef __cplusplus should not be done under linux build (it breaks some stdlib headers)
-
-//#ifdef __MSVC__
-//extern "C"
-//{
-//#include <assimp/cimport.h>
-//#include <assimp/scene.h>
-//#include <assimp/postprocess.h> //defines for postprocessor
-//#include <assimp/config.h>
-//}
-//#else
-    //#undef __cplusplus
-    //extern "C"
-    //{
-    //#include <assimp/cimport.h>
-    //#include <assimp/scene.h>
-    //#include <assimp/postprocess.h> //defines for postprocessor
-    //#include <assimp/config.h>
-    //}
-    //#define __cplusplus
-//#endif
-
-
-//#ifdef __MINGW32__
-//# undef __cplusplus
-//#endif
-
-#ifdef __MSVC__
-extern "C"
-{
-#endif
-
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h> //defines for postprocessor
-#include <assimp/config.h>
-
-#ifdef __MSVC__
-}
-#endif
-
-//#ifdef __MINGW32__
-//# define __cplusplus
-//#endif
-
 
 namespace t_mob
 {
@@ -56,54 +10,50 @@ class BoneTree
 {
     public:
 
+        aiScene* pScene;    //the scene
+
+        int nlm;        //node list max
+        aiNode** nl;    //node list
+        int nli;        //node list index (just a counter variable)
+
+        aiMesh** ml;    //mesh list
+
+        struct _Vertex
+        {
+            struct Vec3 v;
+            float ux,uy;
+        };
+
+        int vli;                //vertex list index
+        int vlm;                //vertex list max
+        struct _Vertex* tvl;    //temporary vertex list, for drawing
+
+        int* vll;           //offset of vertices in list for each mesth
+        int* vln;           //number of vertices in each mech
+
+        int bvlm;               //base vertex list max;
+        struct _Vertex* bvl;    //base vertex list
+        struct _Vertex* tbvl;   //base vertex list for matrix transforms/drawing
+
+        int* bvlo;              //offset for vertices in base list
+        int* bvln;              //number of vertices in base vertex list
+
+        int bvllm;              //max index for vertex lookup table
+        int* bvll;              //base vertex lookup
+
     BoneTree() :
-    pScene(NULL),
-    nl(NULL),
-    ml(NULL),
-    tvl(NULL),
-    vll(NULL), vln(NULL),
-    bvl(NULL), tbvl(NULL),
-    bvlo(NULL), bvln(NULL),
-    bvll(NULL),
-    s(NULL)
+        pScene(NULL),
+        nl(NULL),
+        ml(NULL),
+        tvl(NULL),
+        vll(NULL), vln(NULL),
+        bvl(NULL), tbvl(NULL),
+        bvlo(NULL), bvln(NULL),
+        bvll(NULL),
+        s(NULL)
     {}
 
-    ~BoneTree()
-    {
-        if (s != NULL) SDL_FreeSurface(s);
-        if (pScene != NULL) aiReleaseImport(pScene);
-        if (nl != NULL) delete[] nl;
-        if (ml != NULL) delete[] ml;
-        if (tvl != NULL) delete[] tvl;
-        if (vll != NULL) delete[] vll;
-        if (vln != NULL) delete[] vln;
-        if (bvl != NULL) delete[] bvl;
-        if (tbvl != NULL) delete[] tbvl;
-        if (bvlo != NULL) delete[] bvlo;
-        if (bvln != NULL) delete[] bvln;
-        if (bvll != NULL) delete[] bvll;
-    }
-
-    aiScene* pScene;    //the scene
-
-    int nlm;        //node list max
-    aiNode** nl;    //node list
-    int nli;        //node list index (just a counter variable)
-
-    aiMesh** ml;    //mesh list
-
-    struct _Vertex
-    {
-        struct Vec3 v;
-        float ux,uy;
-    };
-
-    int vli;                //vertex list index
-    int vlm;                //vertex list max
-    struct _Vertex* tvl;    //temporary vertex list, for drawing
-
-    int* vll;           //offset of vertices in list for each mesth
-    int* vln;           //number of vertices in each mech
+    ~BoneTree();
 
     void init(aiScene* _pScene)
     {
@@ -223,16 +173,6 @@ class BoneTree
             printf("Set_vertices Warning: vertex count= %d vli= %d vlm= %d \n", count, vli, vlm);
         }
     }
-
-    int bvlm;               //base vertex list max;
-    struct _Vertex* bvl;    //base vertex list
-    struct _Vertex* tbvl;   //base vertex list for matrix transforms/drawing
-
-    int* bvlo;              //offset for vertices in base list
-    int* bvln;              //number of vertices in base vertex list
-
-    int bvllm;              //max index for vertex lookup table
-    int* bvll;              //base vertex lookup
 
     void init_base_vertex_list()
     {

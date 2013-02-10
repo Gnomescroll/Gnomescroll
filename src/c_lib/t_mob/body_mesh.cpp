@@ -1,5 +1,6 @@
 #include "body_mesh.hpp"
 
+#include <t_mob/assimp_includes.hpp>
 #include <SDL/texture_loader.hpp>
 
 namespace t_mob
