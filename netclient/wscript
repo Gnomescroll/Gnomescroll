@@ -325,12 +325,10 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
             assert False
 
         conf.check(
-            header_name='assimp/cimport.h',
             lib=assimp_lib,
-            use='assimp',
+            use=assimp_lib,
             libpath= [assimp_lib_path],
             includes = [assimp_inc_path],
-            fragment='#include <assimp/cimport.h>' + MAIN_TEST_CODE,
             uselib_store='ASSIMP')
 
     conf.env.INCLUDES += ['../src/c_lib', '../src','../src/net_lib',  '/usr/include']
