@@ -104,7 +104,7 @@ void _push_skylight_update(int x, int y, int z)
     struct MAP_ELEMENT e = get_element(x, y, z);
     if(fast_cube_properties[e.block].solid == true)
     {
-        //GS_ASSERT(false);
+        GS_ASSERT(false);
         //printf("block error: %d %d %d \n", x,y,z);
         return;
     }
@@ -174,8 +174,6 @@ void _skylight_update_core(int max_iterations)
             index++;
             continue;
         }
-
-
 
         //if block is sunlight and block above is solid, then set to not-sunlight
         struct MAP_ELEMENT te = get_element(x,y,z+1);
@@ -1128,6 +1126,16 @@ void init_update_sunlight(int chunk_i, int chunk_j)
 {
     //class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
 
+    class MAP_CHUNK* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
+    if(mc == NULL)
+    {
+        GS_ASSERT(false);
+        return;
+    }
+
+
+
+
     for(int i=0; i<16; i++)
     for(int j=0; j<16; j++)
     {
@@ -1135,9 +1143,11 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         int y = j + 16*chunk_j;
         int k = map_dim.z-1;
 
-       
-       if(isSolid(i,j,k) == false)
-            _push_skylight_update(x,y,k);
+        //struct MAP_ELEMENT e = get_element(x, y, k);
+        //GS_ASSERT(fast_cube_properties[e.block].solid == isSolid(x,y,k) );
+
+        if(isSolid(x,y,k) == false)
+             _push_skylight_update(x,y,k);
     /*
         // get highest block
         for (; k>=0; k--)
