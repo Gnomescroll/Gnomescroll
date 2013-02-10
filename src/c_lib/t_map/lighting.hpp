@@ -104,7 +104,7 @@ void _push_skylight_update(int x, int y, int z)
     struct MAP_ELEMENT e = get_element(x, y, z);
     if(fast_cube_properties[e.block].solid == true)
     {
-        GS_ASSERT(false);
+        //GS_ASSERT(false);
         //printf("block error: %d %d %d \n", x,y,z);
         return;
     }
