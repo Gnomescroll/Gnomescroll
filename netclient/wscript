@@ -415,7 +415,7 @@ def _build_intro(bld): #runtime module
 def build(bld):
     OS = platform.system()
 
-    _build_intro(bld)
+    #_build_intro(bld)
 
     sound_framework = []
     sound_libraries = []
