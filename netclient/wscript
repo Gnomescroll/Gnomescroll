@@ -390,8 +390,32 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     conf.env.production = production
 
 
+def _build_intro(bld): #runtime module
+    sound_framework = []
+    sound_libraries = []
+    debug_libs = []
+
+    includes = []
+    libs = []
+
+    print "BUILD_MODULES"
+
+    bld(
+        features='cxx cxxshlib',
+        source=['../src/c_lib/camera/intro/_include.cpp'],
+        #use=use,
+        #lib=sound_libraries + png_libs + debug_libs,
+        includes=includes,
+        libpath=libs,
+        #framework=sound_framework,
+        # linkflags = ['-rdynamic'],
+        target='test_module'
+    )
+
 def build(bld):
     OS = platform.system()
+
+    _build_intro(bld)
 
     sound_framework = []
     sound_libraries = []
@@ -456,7 +480,6 @@ def build(bld):
     #     '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS):
     #    bld.add_post_fun(strip_symbols)
 
-
 def build_modules(bld):
     OS = platform.system()
 
@@ -471,7 +494,7 @@ def build_modules(bld):
 
     bld(
         features='cxx cxxshlib',
-        source=['../src/c_lib/camera/_include.hpp'],
+        source=['../src/c_lib/camera/intro/_include.hpp'],
         #use=use,
         #lib=sound_libraries + png_libs + debug_libs,
         includes=includes,
