@@ -32,8 +32,6 @@ void meteor_fall()
     z -= METEOR_SIZE * randrange(1, 2);
     if (z <= 0) return;
 
-    printf("%d,%d,%d\n", x,y,z);
-
     int xcurrent = x;
     int ycurrent = y;
     int zcurrent = z;

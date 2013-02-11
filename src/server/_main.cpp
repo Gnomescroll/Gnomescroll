@@ -209,24 +209,24 @@ void tick()
     {
         //t_plant::tick();
         int count = 0;
-        count += t_mech::count_mech( (int)t_mech::get_mech_type_dat("acadia_flower_stage_0") );
-        count += t_mech::count_mech( (int)t_mech::get_mech_type_dat("acadia_flower_stage_1") );
-        count += t_mech::count_mech( (int)t_mech::get_mech_type_dat("acadia_flower_stage_2") );
+        count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_0"));
+        count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_1"));
+        count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_2"));
 
         if(count < 256 + 128)
         {
             printf("plants low: respawning native plants\n");
             t_gen::place_native_plants();
         }
- 
+
 
         //printf("count= %d \n", count);
     }
 
 
     // Meteors
-    const int meteor_fall_rate = ONE_HOUR * 8;
-    const int meteor_shower_rate = ONE_HOUR * 4;
+    const int meteor_fall_rate = ONE_HOUR * 24;
+    const int meteor_shower_rate = ONE_HOUR * 24;
     #if PRODUCTION
     static int next_meteor_fall = 0;
     static int next_meteor_shower = 0;
