@@ -457,6 +457,30 @@ def build(bld):
     #    bld.add_post_fun(strip_symbols)
 
 
+def build_modules(bld):
+    OS = platform.system()
+
+    sound_framework = []
+    sound_libraries = []
+    debug_libs = []
+
+    includes = []
+    libs = []
+
+    print "BUILD_MODULES"
+
+    bld(
+        features='cxx cxxshlib',
+        source=['../src/camera/_include.hpp'],
+        #use=use,
+        #lib=sound_libraries + png_libs + debug_libs,
+        includes=includes,
+        libpath=libs,
+        #framework=sound_framework,
+        # linkflags = ['-rdynamic'],
+        target='test_module'
+    )
+
 def install_bin(ctx):
     OS = platform.system()
 
