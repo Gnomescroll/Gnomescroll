@@ -63,7 +63,7 @@ void place_native_plants()
                 }
                 bool ret = false;
 
-                if(rand()%4 == 0)
+                if(rand()%4 != 0)
                 {
                     int v = rand()%4;
                     if(v==0) ret = t_mech::create_mech(x,y,z+1, plant_1);

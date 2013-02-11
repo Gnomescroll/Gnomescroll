@@ -692,6 +692,23 @@ bool remove_mech(int mech_id)   //removes mech with drop
 
     return ret;
 }
+
+int count_mech(int mech_id)
+{
+    int count = 0;
+    const int mlm = mech_list->mlm;
+    struct MECH* mla = mech_list->mla;
+
+    for(int i=0; i<mlm; i++)
+    {
+        if(mla[i].mech_type == mech_id)
+            count++;
+    }
+
+    return count;
+}
+
+
 #endif
 
 }   // t_mech
