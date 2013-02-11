@@ -115,6 +115,15 @@ struct MechList
         return true;
     }
 
+    int count(MechType mech_type)
+    {
+        int count = 0;
+        for (int i=0; i<this->mlm; i++)
+            if (this->mla[i].mech_type == mech_type)
+                count++;
+        return count;
+    }
+
     #if DC_SERVER
     void send_mech_list_to_client(ClientID client_id);
     void server_add_mech(struct MECH &m);

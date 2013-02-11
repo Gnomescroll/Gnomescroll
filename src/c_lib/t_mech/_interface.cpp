@@ -27,7 +27,7 @@ void init_packets()
     mech_delete_StoC::register_client_packet();
 }
 
-void init() 
+void init()
 {
     GS_ASSERT(mech_list == NULL);
     mech_list = new MechList;
@@ -37,7 +37,7 @@ void init()
     #endif
 }
 
-void teardown() 
+void teardown()
 {
     if (mech_list != NULL) delete mech_list;
     #if DC_CLIENT
@@ -102,7 +102,7 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 //call after type or subtype changes
 static bool _mech_update(struct MECH &m)
 {
-    class MechAttribute* ma = get_mech_attribute(m.mech_type); 
+    class MechAttribute* ma = get_mech_attribute(m.mech_type);
 
     switch (ma->mech_type_class)
     {
@@ -142,7 +142,7 @@ static bool _mech_update(struct MECH &m)
 static bool unpack_mech(struct MECH &m, class mech_create_StoC &p)
 {
     IF_ASSERT(!isValid((MechType)p.mech_type)) return false;
-    
+
     m.id = p.id;
     m.mech_type = (MechType)p.mech_type;
     m.subtype = p.subtype;
@@ -170,7 +170,7 @@ void tick()
 
     const int mlm = mech_list->mlm;
     struct MECH* mla = mech_list->mla;
-    
+
     //int num =0;
 
     for(int i=0; i<mlm; i++)
@@ -210,7 +210,7 @@ void tick()
                 {
                     if(rand() % 6 != 0)
                         continue;
-                    GS_ASSERT(mla[i].growth_ttl >= 0);  
+                    GS_ASSERT(mla[i].growth_ttl >= 0);
                     mla[i].growth_ttl--;
                     if(mla[i].growth_ttl == 0)
                         force_mech_growth(i);
@@ -231,7 +231,7 @@ void floating_removal_tick() //removes floating t_mech
 {
     const int mlm = mech_list->mlm;
     struct MECH* mla = mech_list->mla;
-    
+
     //int num =0;
     int collection_count = 0;
     for(int i=0; i<mlm; i++)
@@ -269,7 +269,7 @@ void force_mech_growth(int mech_id)
     mla[mech_id].mech_type =  growth_stage;
     //mla[mech_id].subtype =  rand % 255;
 
-    //mla[mech_id].mech_class =  mech_attributes[growth_stage].mech_class; 
+    //mla[mech_id].mech_class =  mech_attributes[growth_stage].mech_class;
     mla[mech_id].growth_ttl = mech_attributes[growth_stage].growth_ttl;
 
 
@@ -305,13 +305,13 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
             return false;
         }
 
-        if (!t_map::isSolid(x,y,z-1))        
+        if (!t_map::isSolid(x,y,z-1))
         {
             printf("Can't place mech: reason 2 at %d,%d,%d\n", x,y,z);
             return false;
         }
 
-        if (mech_list->is_occupied(x,y,z))        
+        if (mech_list->is_occupied(x,y,z))
         {
             printf("Can't place mech: reason 3 at %d,%d,%d\n", x,y,z);
             return false;
@@ -352,7 +352,7 @@ bool can_place_mech(int x, int y, int z, int side)
 {
     if (z <= 0 || z > 128) return false;
     if (side != 0) return false;
-    
+
     if (t_map::isSolid(x,y,z)) return false;
     if (!t_map::isSolid(x,y,z-1)) return false;
 
@@ -451,14 +451,14 @@ void draw_selected_mech_bounding_box()
 bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* _distance)
 {
 /*
-    static const int q_set[4*6]= 
+    static const int q_set[4*6]=
     {
         4,5,6,7,
         3,2,1,0,
         2,3,7,6,
         0,1,5,4,
         3,0,4,7,
-        1,2,6,5 
+        1,2,6,5
     };
 */
     const float size = m.size/2.0f;
@@ -530,7 +530,7 @@ bool line_box_test(
     }
     return false;
 /*
-    float _x 
+    float _x
     m.size
     m.rotation
     m.offset_x
@@ -672,40 +672,30 @@ void handle_block_removal(int x, int y, int z)
     IF_ASSERT(!isValid(mech_type)) return;
 
     // drop item from mech
-    if(mech_attributes[mech_type].item_drop) 
+    if(mech_attributes[mech_type].item_drop)
         handle_drop(x,y,z, mech_type);
 }
 
 bool remove_mech(int mech_id)   //removes mech with drop
 {
     GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
-    
+
     struct MECH m = mech_list->mla[mech_id];
     MechType mech_type = m.mech_type;
     IF_ASSERT(!isValid(mech_type)) return false;
 
     bool ret = mech_list->server_remove_mech(mech_id);
     GS_ASSERT(ret);
-    
-    if(mech_attributes[mech_type].item_drop) 
+
+    if(mech_attributes[mech_type].item_drop)
         handle_drop(m.x,m.y,m.z, mech_type);
 
     return ret;
 }
 
-int count_mech(int mech_id)
+int count_mech(MechType mech_type)
 {
-    int count = 0;
-    const int mlm = mech_list->mlm;
-    struct MECH* mla = mech_list->mla;
-
-    for(int i=0; i<mlm; i++)
-    {
-        if(mla[i].mech_type == mech_id)
-            count++;
-    }
-
-    return count;
+    return mech_list->count(mech_type);
 }
 
 
