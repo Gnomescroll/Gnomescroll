@@ -240,72 +240,71 @@ def build(bld):
     if OS == 'Linux':
         use += ['REDIS', 'EV', 'UUID']
 
-    # attemping C++ build
-    bld.env.CXXFLAGS.append(
-        '-fvisibility=hidden')  # hide most dso symbols for libc_lib
+    target = 'run'
     bld(features='cxx cxxprogram',
         source=['../src/server/_server.cpp', ],
         use=use,
         lib=time_lib,
-        target='run')
-    bld.env.CXXFLAGS.remove('-fvisibility=hidden')
+        target=target)
 
-    bld.add_post_fun(install_bin)
+    bld.add_post_fun(install_bin(target, 'build', '.'))
 
 
 def build_modules(bld):
     pass
 
 
-def install_bin(ctx):
+def install_bin(target, srcdir, outdir, dest_target=None):
     OS = platform.system()
-
-    out = ''
+    if dest_target is None:
+        dest_target = target
     if OS == 'Windows':
-        out = 'build'
+        target += '.exe'
+        dest_target += '.exe'
 
-    if OS == 'Linux':
-        out = 'build'
-
-    dests = []
-    if OS == 'Windows':
-        dests = ['run.exe']
-    else:
-        dests = ['run']
-    if OS == 'Linux':
-        dests.append('gnomescroll_server')
-
-    run_target = 'run'
-    if OS == 'Windows':
-        run_target = 'run.exe'
-
-    for run_dest in dests:
+    def _install_bin(ctx):
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
         try:
-            src = os.path.join(out, run_target)
-            dest = os.path.join('./', run_dest)
-            if os.path.abspath(src) == os.path.abspath(dest):
-                continue
-            if os.path.exists(src):
+            src = os.path.join(srcdir, target)
+            dest = os.path.join(outdir, dest_target)
+            if (os.path.exists(src) and
+                    os.path.abspath(src) != os.path.abspath(dest)):
                 shutil.copy2(src, dest)
                 print 'Copied {0} to {1}'.format(src, dest)
         except Exception as e:
             msg = 'Failed to copy {0} to {1}. Reason: {2}'
             print msg.format(src, dest, str(e))
 
-    try:
-        # copy dlls into directory, so Cell can run the exe from the folder.
-        if OS == 'Windows':
-            dll_path = '../lib/win32/dll/'
-            dlls = os.listdir(dll_path)
-            dlls = [dll for dll in dlls if dll.endswith('dll')]
-            for dll in dlls:
-                src_dll = os.path.join(dll_path, dll)
-                dst_dll = os.path.join('./', dll)
-                shutil.copy2(src_dll, dst_dll)
-            print 'Copied dlls to current directory'
-    except Exception as e:
-        msg = 'Error copying dlls from {0} to current directory. Reason: {1}'
-        print msg.format(dll_path, str(e))
+        try:
+            # copy dlls into directory,
+            # so Cell can run the exe from the folder.
+            if OS == 'Windows':
+                dll_path = '../lib/win32/dll/'
+                dlls = os.listdir(dll_path)
+                dlls = [dll for dll in dlls if dll.endswith('dll')]
+                for dll in dlls:
+                    src_dll = os.path.join(dll_path, dll)
+                    dst_dll = os.path.join('./', dll)
+                    shutil.copy2(src_dll, dst_dll)
+                awe_dll_path = '../lib/win32/awesomium/bin/{0}/'
+                awe_dll_path = awe_dll_path.format(ctx.env.awe_stem)
+                for f in os.listdir(awe_dll_path):
+                    if f == 'locales':
+                        _path = os.path.join(awe_dll_path, f)
+                        for loc in os.listdir(_path):
+                            shutil.copy2(os.path.join(_path, loc),
+                                         os.path.join('./{0}'.format(f), loc))
+                    else:
+                        shutil.copy2(os.path.join(awe_dll_path, f),
+                                     os.path.join('./', f))
+                print 'Copied dlls to current directory'
+        except Exception as e:
+            msg = ('Error copying dlls from {0} to current directory. '
+                   'Reason: {1}')
+            print msg.format(dll_path, str(e))
+
+    return _install_bin
 
 
 from waflib.Build import BuildContext
