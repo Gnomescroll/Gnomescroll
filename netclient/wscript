@@ -26,9 +26,6 @@ libraries in static mode, and add '-static' to the linkflags
 to make a fully static binary.
 '''
 
-OS = None
-os_libpth = ''
-
 
 def _grab_output(*cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
@@ -53,6 +50,7 @@ def options(opt):
 
 
 def check_clang(conf, requested=False):
+    OS = platform.system()
     if OS != 'Linux':
         return False
 
@@ -62,20 +60,17 @@ def check_clang(conf, requested=False):
     use_clang = requested or bool(os.environ.get('WAF_USE_CLANG'))
     has_clang = False
     with open(os.devnull, 'w') as fnull:
-        has_clang = (subprocess.call(
-            shlex.split('which clang'), stdout=fnull, stderr=fnull) == 0)
+        has_clang = (subprocess.call(shlex.split('which clang'), stdout=fnull,
+                                     stderr=fnull) == 0)
     if use_clang and not has_clang:
-        raise Errors.ConfigurationError(
-            'ERROR: Clang requested, but not found on system')
+        msg = 'ERROR: Clang requested, but not found on system'
+        raise Errors.ConfigurationError(msg)
     return use_clang
 
 
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
               production=False, awesomium=False, awesomium_debug=False,
               assimp=True, use_clang=False):
-    global OS
-    global os_libpth
-
     OS = platform.system()
     conf.env.os = OS
 
@@ -221,8 +216,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.check(lib=['GLU'], uselib_store='GL')
         conf.check(lib=['GLEW'], uselib_store='GL')
     elif OS == 'Darwin':
-        conf.check(
-            lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'],
+                   uselib_store='GL')
 
     if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs',
@@ -231,8 +226,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         sdl_config_path = os.path.join(libpath, 'SDL/bin/sdl-config')
         sdl_inc_path = libpath
         sdl_lib_path = libpath
-        sdl_config_cmd = '%s --prefix=%s --exec-prefix=%s --cflags --libs' % (
-            sdl_config_path, sdl_inc_path, sdl_lib_path,)
+        sdl_config_cmd = '{0} --prefix={1} --exec-prefix={2} --cflags --libs'
+        sdl_config_cmd = sdl_config_cmd.format(sdl_config_path, sdl_inc_path,
+                                               sdl_lib_path)
         # subprocess.call('bash.exe ' + sdl_config_cmd, shell=True)
         conf.check_cfg(path='bash.exe',
                        args=sdl_config_cmd,
@@ -253,11 +249,10 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                mandatory=True)
 
     if OS == 'Darwin':
-        conf.check(
-            lib=[],
-            framework=['OpenAL'],
-            uselib_store='openal',
-            mandatory=True)
+        conf.check(lib=[],
+                   framework=['OpenAL'],
+                   uselib_store='openal',
+                   mandatory=True)
     elif OS == 'Windows':
         conf.check(header_name='AL/al.h',
                    lib='OpenAL32',
@@ -308,28 +303,24 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
 
     if awesomium:
         if OS == 'Windows':
-            awesomium_lib_path = os.path.abspath(
-                '../lib/win32/awesomium/lib/%s/' % (awe_stem,))
-            awesomium_include_path = os.path.abspath(
-                '../lib/win32/awesomium/include/')
+            awesomium_lib_path = '../lib/win32/awesomium/lib/{0}/'
+            awesomium_lib_path = awesomium_lib_path.format(awe_stem)
+            awesomium_include_path = '../lib/win32/awesomium/include/'
             awesomium_name = 'Awesomium'
             if awesomium_debug:
                 awesomium_name += '_d'
         elif OS == 'Linux':
-            awesomium_lib_path = os.path.abspath(
-                '../lib/lin32/awesomium/release/')
-            awesomium_include_path = os.path.abspath(
-                '../lib/lin32/awesomium/include/')
+            awesomium_lib_path = '../lib/lin32/awesomium/release/'
+            awesomium_include_path = '../lib/lin32/awesomium/include/'
             awesomium_name = 'awesomium-1.6.5'
         else:
             assert False
 
-        conf.check(
-            lib=[awesomium_name],
-            use=awesomium_name,
-            includes=[awesomium_include_path],
-            libpath=[awesomium_lib_path],
-            uselib_store='AWESOMIUM')
+        conf.check(lib=[awesomium_name],
+                   use=awesomium_name,
+                   includes=map(os.path.abspath, [awesomium_include_path]),
+                   libpath=map(os.path.abspath, [awesomium_lib_path]),
+                   uselib_store='AWESOMIUM')
 
     if assimp:
         if OS == 'Linux':
@@ -343,12 +334,11 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         else:
             assert False
 
-        conf.check(
-            lib=assimp_lib,
-            use='assimp',
-            libpath=map(os.path.abspath, assimp_lib_path),
-            includes=map(os.path.abspath, assimp_inc_path),
-            uselib_store='ASSIMP')
+        conf.check(lib=assimp_lib,
+                   use='assimp',
+                   libpath=map(os.path.abspath, assimp_lib_path),
+                   includes=map(os.path.abspath, assimp_inc_path),
+                   uselib_store='ASSIMP')
 
     conf.env.INCLUDES += ['../src/c_lib', '../src', '../src/net_lib',
                           '/usr/include']
@@ -366,8 +356,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.RPATH.append('$ORIGIN/./lib')
         conf.env.RPATH.append('./lib')
         if awesomium:
-            conf.env.RPATH += [
-                '$ORIGIN/./lib/win32/awesomium/lib/%s' % (awe_stem,)]
+            rpath = '$ORIGIN/./lib/win32/awesomium/lib/{0}'.format(awe_stem)
+            conf.env.RPATH += [rpath]
 
     if OS == 'Linux':
         if '-DPRODUCTION=1' in conf.env.CXXFLAGS:
@@ -378,19 +368,23 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         else:
             lib_base_path = '$ORIGIN/../lib/lin32/'
         if assimp:
-            conf.env.RPATH += [os.path.join(lib_base_path,
-                                            'assimp/lib')]
+            conf.env.RPATH += [os.path.join(lib_base_path, 'assimp/lib')]
         if awesomium:
-            conf.env.RPATH += [os.path.join(
-                lib_base_path, 'awesomium/release')]
+            conf.env.RPATH += [os.path.join(lib_base_path,
+                                            'awesomium/release')]
 
     conf.env.assimp = assimp
     conf.env.awesomium = awesomium
     conf.env.awe_stem = awe_stem
     conf.env.production = production
+    conf.env.build_modules = False
 
 
 def build(bld):
+    if bld.env.build_modules:
+        bld.build_modules()
+        return
+
     OS = platform.system()
 
     sound_framework = []
@@ -426,8 +420,8 @@ def build(bld):
         libpath = os.path.abspath('../lib/win32')
         includes = [os.path.join(libpath, path)
                     for path in os.listdir(libpath)]
-        libs = ['lib', 'dll', 'awesomium/lib/%s' % (bld.env.awe_stem,),
-                'awesomium/bin/%s' % (bld.env.awe_stem,)]
+        libs = ['lib', 'dll', 'awesomium/lib/{0}'.format(bld.env.awe_stem),
+                'awesomium/bin/{0}'.format(bld.env.awe_stem)]
         libs = map(lambda x: os.path.join(libpath, x), libs)
 
     # bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols
@@ -458,16 +452,8 @@ def build(bld):
 
 
 def build_modules(bld):
-    OS = platform.system()
-
-    sound_framework = []
-    sound_libraries = []
-    debug_libs = []
-
     includes = []
     libs = []
-
-    print "BUILD_MODULES"
 
     bld(
         features='cxx cxxshlib',
@@ -480,6 +466,7 @@ def build_modules(bld):
         # linkflags = ['-rdynamic'],
         target='test_module'
     )
+
 
 def install_bin(ctx):
     OS = platform.system()
@@ -500,9 +487,10 @@ def install_bin(ctx):
         if (os.path.exists(src) and
                 os.path.abspath(src) != os.path.abspath(dest)):
             shutil.copy2(src, dest)
-            print 'Copied %s to %s' % (src, dest,)
-    except Exception, e:
-        print 'Failed to copy %s to %s. Reason: %s' % (src, dest, e,)
+            print 'Copied {0} to {1}'.format(src, dest)
+    except Exception as e:
+        msg = 'Failed to copy {0} to {1}. Reason: {2}'
+        print  msg.format(src, dest, str(e))
 
     try:
         # copy dlls into directory, so Cell can run the exe from the folder.
@@ -526,24 +514,29 @@ def install_bin(ctx):
                     shutil.copy2(os.path.join(awe_dll_path, f),
                                  os.path.join('./', f))
             print 'Copied dlls to current directory'
-    except Exception, e:
+    except Exception as e:
         msg = 'Error copying dlls from {0} to current directory. Reason: {1}'
-        print msg.format(dll_path, e)
+        print msg.format(dll_path, str(e))
 
 
 from waflib.Build import BuildContext
 
-class build_modules_ctx(BuildContext):
-    cmd = 'build_modules'
-    variant = 'build_modules'
+
+BuildContext.build_modules = build_modules
 
 from waflib.Configure import ConfigurationContext
+
 
 class optimized_ctx(ConfigurationContext):
     cmd = 'optimized'
     fun = 'optimized'
 
 from waflib.Configure import ConfigurationContext
+
+
+class build_modules_ctx(ConfigurationContext):
+    cmd = 'modules'
+    fun = 'modules'
 
 
 class optimized2_ctx(ConfigurationContext):
@@ -599,6 +592,11 @@ class linux64_production_ctx(ConfigurationContext):
 class efence_ctx(ConfigurationContext):
     cmd = 'efence'
     fun = 'efence'
+
+
+def modules(ctx):
+    configure(ctx)
+    ctx.env.build_modules = True
 
 
 def efence(ctx):
@@ -698,6 +696,7 @@ def lint(ctx):
         '-Wstrict-prototypes',
         #'-Wtraditional',
         '-Wwrite-strings',
+        '-Weffc++',
     ]
     ctx.env.CFLAGS += lint_flags
     ctx.env.CXXFLAGS += lint_flags
