@@ -531,8 +531,13 @@ def install_bin(ctx):
         print msg.format(dll_path, e)
 
 
-from waflib.Configure import ConfigurationContext
+from waflib.Build import BuildContext
 
+class build_modules_ctx(BuildContext):
+    cmd = 'build_modules'
+    variant = 'build_modules'
+
+from waflib.Configure import ConfigurationContext
 
 class optimized_ctx(ConfigurationContext):
     cmd = 'optimized'

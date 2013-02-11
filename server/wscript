@@ -287,6 +287,15 @@ def install_bin(ctx):
         print 'Error copying dlls from %s to current directory. Reason: %s' % (dll_path, e,)
 
 
+def build_modules(bld):
+    pass
+
+from waflib.Build import BuildContext
+
+class build_modules_ctx(BuildContext):
+    cmd = 'build_modules'
+    variant = 'build_modules'
+
 '''
 Subclass related *Context
 e.g. ConfigurationContext, BuildContext
