@@ -471,7 +471,7 @@ def build_modules(bld):
 
     bld(
         features='cxx cxxshlib',
-        source=['../src/camera/_include.hpp'],
+        source=['../src/c_lib/camera/_include.hpp'],
         #use=use,
         #lib=sound_libraries + png_libs + debug_libs,
         includes=includes,
