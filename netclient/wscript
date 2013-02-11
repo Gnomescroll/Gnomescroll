@@ -8,8 +8,9 @@ import platform
 import shutil
 import subprocess
 import shlex
+from waflib import Errors
+from waflib import Tools
 
-from waflib import Tools, Errors
 Tools.c_preproc.go_absolute = True
 
 MAIN_TEST_CODE = '''
@@ -424,6 +425,7 @@ def build(bld):
     if bld.env.assimp:
         use.append('ASSIMP')
 
+    target = 'run'
     bld(
         features='cxx cxxprogram',
         source=['../src/client/_client.cpp'],
@@ -433,11 +435,12 @@ def build(bld):
         libpath=libs,
         framework=sound_framework,
         # linkflags = ['-rdynamic'],
-        target='run'
+        target=target
     )
     # bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
-    bld.add_post_fun(install_bin)
+    bld.add_post_fun(install_bin(target, 'build', '.'))
+
     # if ('-DPRODUCTION=1' in bld.env.CXXFLAGS and
     #     '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS):
     #    bld.add_post_fun(strip_symbols)
@@ -447,68 +450,74 @@ def build_modules(bld):
     includes = []
     libs = []
 
+    target = 'test_module'
     bld(
         features='cxx cxxshlib',
-        source=['../src/c_lib/camera/intro/_include.hpp'],
+        source=['../src/c_lib/camera/intro/_include.cpp'],
         #use=use,
         #lib=sound_libraries + png_libs + debug_libs,
         includes=includes,
         libpath=libs,
         #framework=sound_framework,
         # linkflags = ['-rdynamic'],
-        target='test_module'
+        target=target
     )
 
+    target = 'lib{0}.so'.format(target)
+    bld.add_post_fun(install_bin(target, 'build', '.plugins'))
 
-def install_bin(ctx):
+
+def install_bin(target, srcdir, outdir, dest_target=None):
     OS = platform.system()
-
-    if OS == 'Linux':
-        run_target = 'run'
-        run_dest = 'run'
-        out = 'build'
-
+    if dest_target is None:
+        dest_target = target
     if OS == 'Windows':
-        run_target = 'run.exe'
-        run_dest = 'run.exe'
-        out = 'build'
+        target += '.exe'
+        dest_target += '.exe'
 
-    try:
-        src = os.path.join(out, run_target)
-        dest = os.path.join('./', run_dest)
-        if (os.path.exists(src) and
-                os.path.abspath(src) != os.path.abspath(dest)):
-            shutil.copy2(src, dest)
-            print 'Copied {0} to {1}'.format(src, dest)
-    except Exception as e:
-        msg = 'Failed to copy {0} to {1}. Reason: {2}'
-        print msg.format(src, dest, str(e))
+    def _install_bin(ctx):
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        try:
+            src = os.path.join(srcdir, target)
+            dest = os.path.join(outdir, dest_target)
+            if (os.path.exists(src) and
+                    os.path.abspath(src) != os.path.abspath(dest)):
+                shutil.copy2(src, dest)
+                print 'Copied {0} to {1}'.format(src, dest)
+        except Exception as e:
+            msg = 'Failed to copy {0} to {1}. Reason: {2}'
+            print msg.format(src, dest, str(e))
 
-    try:
-        # copy dlls into directory, so Cell can run the exe from the folder.
-        if OS == 'Windows':
-            dll_path = '../lib/win32/dll/'
-            dlls = os.listdir(dll_path)
-            dlls = [dll for dll in dlls if dll.endswith('dll')]
-            for dll in dlls:
-                src_dll = os.path.join(dll_path, dll)
-                dst_dll = os.path.join('./', dll)
-                shutil.copy2(src_dll, dst_dll)
-            awe_dll_path = '../lib/win32/awesomium/bin/{0}/'
-            awe_dll_path = awe_dll_path.format(ctx.env.awe_stem)
-            for f in os.listdir(awe_dll_path):
-                if f == 'locales':
-                    _path = os.path.join(awe_dll_path, f)
-                    for loc in os.listdir(_path):
-                        shutil.copy2(os.path.join(_path, loc),
-                                     os.path.join('./%s' % (f,), loc))
-                else:
-                    shutil.copy2(os.path.join(awe_dll_path, f),
-                                 os.path.join('./', f))
-            print 'Copied dlls to current directory'
-    except Exception as e:
-        msg = 'Error copying dlls from {0} to current directory. Reason: {1}'
-        print msg.format(dll_path, str(e))
+        try:
+            # copy dlls into directory,
+            # so Cell can run the exe from the folder.
+            if OS == 'Windows':
+                dll_path = '../lib/win32/dll/'
+                dlls = os.listdir(dll_path)
+                dlls = [dll for dll in dlls if dll.endswith('dll')]
+                for dll in dlls:
+                    src_dll = os.path.join(dll_path, dll)
+                    dst_dll = os.path.join('./', dll)
+                    shutil.copy2(src_dll, dst_dll)
+                awe_dll_path = '../lib/win32/awesomium/bin/{0}/'
+                awe_dll_path = awe_dll_path.format(ctx.env.awe_stem)
+                for f in os.listdir(awe_dll_path):
+                    if f == 'locales':
+                        _path = os.path.join(awe_dll_path, f)
+                        for loc in os.listdir(_path):
+                            shutil.copy2(os.path.join(_path, loc),
+                                         os.path.join('./{0}'.format(f), loc))
+                    else:
+                        shutil.copy2(os.path.join(awe_dll_path, f),
+                                     os.path.join('./', f))
+                print 'Copied dlls to current directory'
+        except Exception as e:
+            msg = ('Error copying dlls from {0} to current directory. '
+                   'Reason: {1}')
+            print msg.format(dll_path, str(e))
+
+    return _install_bin
 
 
 from waflib.Build import BuildContext

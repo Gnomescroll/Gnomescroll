@@ -113,6 +113,11 @@ ___MACOSX
 
 */build/*
 
+.build
+.build/*
+.plugins
+.plugins/*
+
 *.old
 
 run 

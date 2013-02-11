@@ -10,13 +10,9 @@ import shutil
 import subprocess
 import shlex
 from waflib import Errors
+from waflib import Tools
 
-# from waflib import c_preproc
-# c_preproc.go_absolute = True
-# from waflib import Tools
-# Tools.c_preproc.go_absolute = True
-
-OS = None
+Tools.c_preproc.go_absolute = True
 
 MAIN_TEST_CODE = '''
 int main(int argc, char *argv[]) {
@@ -48,6 +44,7 @@ def options(opt):
 
 
 def check_clang(conf, use_clang=None):
+    OS = platform.system()
     if OS != 'Linux':
         return False
 
@@ -58,19 +55,17 @@ def check_clang(conf, use_clang=None):
         use_clang = bool(os.environ.get('WAF_USE_CLANG'))
     has_clang = False
     with open(os.devnull, 'w') as fnull:
-        has_clang = (subprocess.call(
-            shlex.split('which clang'), stdout=fnull, stderr=fnull) == 0)
+        has_clang = (subprocess.call(shlex.split('which clang'), stdout=fnull,
+                                     stderr=fnull) == 0)
     if use_clang and not has_clang:
-        raise Errors.ConfigurationError(
-            'ERROR: Clang requested, but not found on system')
+        msg = 'ERROR: Clang requested, but not found on system'
+        raise Errors.ConfigurationError(msg)
     return use_clang
 
 
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
               production=False, use_clang=None):
     optflag = '-O' + str(optlevel)
-
-    global OS
     OS = platform.system()
     conf.env.os = OS
 
