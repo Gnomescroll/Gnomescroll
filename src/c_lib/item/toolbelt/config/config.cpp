@@ -146,6 +146,12 @@ static void click_and_hold_type(ItemType type, bool cnh)
     click_and_hold[type] = cnh;
 }
 
+static void click_and_hold_type(const char* name, bool cnh)
+{
+    ItemType type = Item::get_item_type(name);
+    click_and_hold_type(type, cnh);
+}
+
 /* Config */
 
 static void register_click_and_hold()
@@ -154,10 +160,7 @@ static void register_click_and_hold()
     click_and_hold_group(IG_HITSCAN_WEAPON, false);
     click_and_hold_group(IG_GRENADE_LAUNCHER, false);
     click_and_hold_group(IG_DEBUG, false);
-    click_and_hold_group(IG_CONSUMABLE, false);
-    click_and_hold_group(IG_AGENT_SPAWNER, false);
-    click_and_hold_group(IG_ENERGY_CORE, false);
-    click_and_hold_group(IG_MECH_PLACER, false);
+    click_and_hold_type("small_charge_pack", false);
     // override per-type here
     //click_and_hold_type("example");
 }
@@ -196,11 +199,19 @@ static void register_item_group_callbacks()
 
     // assist the client in predicting what the server will do
     set_group(IG_CONSUMABLE);
-    c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
 
     set_group(IG_SPECIAL);
     c.local_trigger = &fire_close_range_weapon;
+    c.local_beta_trigger = &local_trigger_dummy;
+
+    set_group(IG_AGENT_SPAWNER);
+    c.local_beta_trigger = &local_trigger_dummy;
+    set_group(IG_ENERGY_CORE);
+    c.local_beta_trigger = &local_trigger_dummy;
+    set_group(IG_MECH_PLACER);
+    c.local_beta_trigger = &local_trigger_dummy;
+    set_group(IG_PLANT_PLACER);
     c.local_beta_trigger = &local_trigger_dummy;
     #endif
 
@@ -221,17 +232,16 @@ static void register_item_group_callbacks()
     c.beta_trigger = &consume_item;
 
     set_group(IG_AGENT_SPAWNER);
-    c.trigger = &place_spawner;
+    c.beta_trigger = &place_spawner;
 
     set_group(IG_ENERGY_CORE);
-    c.trigger = &place_energy_core;
+    c.beta_trigger = &place_energy_core;
 
     set_group(IG_MECH_PLACER);
-    c.trigger = &place_mech;
+    c.beta_trigger = &place_mech;
 
     set_group(IG_PLANT_PLACER);
-    c.trigger = &plant_placer_action;
-
+    c.beta_trigger = &plant_placer_action;
     #endif
 
     apply_group_settings(active_group); // finalize
@@ -242,6 +252,9 @@ static void register_item_type_callbacks()
     #if DC_CLIENT
     set_type("location_pointer");
     c.local_trigger = &trigger_local_location_pointer;
+
+    set_type("small_charge_pack");
+    c.local_trigger = &local_trigger_dummy;
 
     set_type("block_placer");
     c.local_trigger = &trigger_local_admin_block_placer;
