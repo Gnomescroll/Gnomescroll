@@ -24,7 +24,6 @@
 #pragma clang diagnostic warning "-Wc++-compat"
 #pragma clang diagnostic warning "-Wc++0x-compat"
 //#pragma clang diagnostic warning "-Wc++0x-extensions"
-#pragma clang diagnostic warning "-Wc++11-extra-semi"
 #pragma clang diagnostic warning "-Wcast-align"
 #pragma clang diagnostic warning "-Wcast-qual"
 #pragma clang diagnostic warning "-Wchar-align"
@@ -161,19 +160,21 @@
 
 # ifndef __APPLE__
 // Not recognized by Apple implementation:
-#  pragma clang diagnostic warning "-Wc++0x-narrowing"
-#  pragma clang diagnostic warning "-Wc++11-compat"
-//#  pragma clang diagnostic warning "-Wc++11-extensions"
-#  pragma clang diagnostic warning "-Wc++11-extra-semi"
-#  pragma clang diagnostic warning "-Wc++11-narrowing"
-#  pragma clang diagnostic warning "-Wc++98-compat-pedantic"
-#  pragma clang diagnostic warning "-Wmalformed-warning-check"
-#  pragma clang diagnostic warning "-Wmissing-method-return-type"
-#  pragma clang diagnostic warning "-Woverriding-method-mismatch"
-#  pragma clang diagnostic warning "-Wsentinel"
-#  pragma clang diagnostic warning "-Wunused-comparison"
-#  pragma clang diagnostic warning "-Wunused-result"
-#  pragma clang diagnostic warning "-Wuser-defined-literals"
+# pragma clang diagnostic warning "-Wc++0x-narrowing"
+# pragma clang diagnostic warning "-Wc++11-compat"
+//# pragma clang diagnostic warning "-Wc++11-extensions"
+# pragma clang diagnostic warning "-Wc++11-extra-semi"
+# pragma clang diagnostic warning "-Wc++11-narrowing"
+# pragma clang diagnostic warning "-Wc++98-compat-pedantic"
+# pragma clang diagnostic warning "-Wmalformed-warning-check"
+# pragma clang diagnostic warning "-Wmissing-method-return-type"
+# pragma clang diagnostic warning "-Woverriding-method-mismatch"
+# pragma clang diagnostic warning "-Wsentinel"
+# pragma clang diagnostic warning "-Wunused-comparison"
+# pragma clang diagnostic warning "-Wunused-result"
+# pragma clang diagnostic warning "-Wuser-defined-literals"
+# pragma clang diagnostic ignored "-Wunused-private-field"
+# pragma clang diagnostic ignored "-Wtautological-constant-out-of-range-compare"
 # endif
 
 // Turn these off
@@ -181,9 +182,7 @@
 #pragma clang diagnostic ignored "-Wconversion"
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
-#pragma clang diagnostic ignored "-Wunused-private-field"
 #pragma clang diagnostic ignored "-Wc++11-extensions" // only ignoring this because it complains about commas at end of enum lists and there's not a more specific warning flag
-#pragma clang diagnostic ignored "-Wtautological-constant-out-of-range-compare"
 #if PRODUCTION
 # pragma clang diagnostic ignored "-Winline"
 #endif
