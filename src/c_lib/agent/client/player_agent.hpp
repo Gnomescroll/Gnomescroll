@@ -107,6 +107,10 @@ class PlayerAgent
         int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
         int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);    // returns side, as integer. side<0 if failure
 
+        void fell(float dvz);
+        void movement_event(class AgentState s0, class AgentState s1,
+                                   bool s1_on_ground, bool camera_on_ground);
+
         #if !PRODUCTION
         void teleport_to(struct Vec3 p);
         #endif

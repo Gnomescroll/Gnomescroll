@@ -110,7 +110,7 @@ void validate()
     #if PRODUCTION
     ping_update_interval = 250;
     #else
-    ping_update_interval = GS_MAX(1, ping_update_interval)
+    ping_update_interval = GS_MAX(1, ping_update_interval);
     #endif
 }
 

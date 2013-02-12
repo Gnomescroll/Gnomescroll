@@ -6,7 +6,8 @@
 bool object_collides_terrain(Vec3 position, float height, float radius)
 {
     ASSERT_BOXED_POSITION(position);
-    return Agents::collision_check_final_current(radius, height, position.x, position.y, position.z);
+    return Agents::collision_check_current(
+        radius, height, position.x, position.y, position.z);
 }
 
 namespace Agents
@@ -16,10 +17,10 @@ bool agent_collides_terrain(Agent* a)
 {
     float h = a->current_height();
     Vec3 p = a->get_position();
-    return collision_check_final_current(a->box.box_r, h, p.x, p.y, p.z);
+    return collision_check_current(a->box.box_r, h, p.x, p.y, p.z);
 }
 
-#define GROUND_MARGIN 0.03f
+#define GROUND_MARGIN 0.003f
 // checks the (agent bottom - margin) at 4 corners of the agent
 inline bool on_ground(float box_r, float x, float y, float z)
 {
@@ -36,14 +37,15 @@ inline bool on_ground(float box_r, float x, float y, float z)
 
     int zz = z - GROUND_MARGIN;
 
-    if (t_map::isSolid(x_max,y_max,zz) || //north, west
-         t_map::isSolid(x_max,y_min,zz) || //north, east
-         t_map::isSolid(x_min,y_min,zz) || //south, east
-         t_map::isSolid(x_min,y_max,zz))   //south, west
+    if (t_map::isSolid(x_max, y_max, zz) ||  // north, west
+        t_map::isSolid(x_max, y_min, zz) ||  // north, east
+        t_map::isSolid(x_min, y_min, zz) ||  // south, east
+        t_map::isSolid(x_min, y_max, zz))    // south, west
+    {
         return true;
+    }
     return false;
 }
-#undef GROUND_MARGIN
 
 inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
 {
@@ -52,129 +54,130 @@ inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
 
     float y_min = y - box_r;
     float y_max = y + box_r;
-    
+
     x_min = translate_point(x_min);
     x_max = translate_point(x_max);
     y_min = translate_point(y_min);
     y_max = translate_point(y_max);
 
-    int n_z = (int)ceil(box_h);
+    int n_z = ceilf(box_h);
 
     for (int i=0; i<n_z; i++)
     {
-        int zz = (int)z + i;
+        int zz = int(z) + i;
         if (i == n_z-1)
-            zz = (int)(z + box_h);
+            zz = z + box_h;
 
-        if( t_map::isSolid(x_max,y_max,zz) || //north, west
-            t_map::isSolid(x_max,y_min,zz) || //north, east
-            t_map::isSolid(x_min,y_min,zz) || //south, east
-            t_map::isSolid(x_min,y_max,zz) )  //south, west
-        return true;
-    }
-    return false;
-}
-
-inline bool collision_check_final_current(float box_r, float box_h, float x, float y, float z)
-{
-    float x_min = x - box_r;
-    float x_max = x + box_r;
-
-    float y_min = y - box_r;
-    float y_max = y + box_r;
-
-    x_min = translate_point(x_min);
-    x_max = translate_point(x_max);
-    y_min = translate_point(y_min);
-    y_max = translate_point(y_max);
-
-    const int steps = 6;    // CALIBRATED TO AGENT'S HEIGHT SETTINGS. AD HOC
-    const float step_size = box_h / ((float)steps);
-
-    for (int i=0; i<steps; i++)
-    {
-        int zz = (int)(z + i*step_size);
-
-        if( t_map::isSolid(x_max,y_max,zz) || //north, west
-            t_map::isSolid(x_max,y_min,zz) || //north, east
-            t_map::isSolid(x_min,y_min,zz) || //south, east
-            t_map::isSolid(x_min,y_max,zz) )  //south, west
-        return true;
-    }
-    return false;
-}
-
-inline bool collision_check_final_xy(float box_r, float box_h, float x, float y, float z)
-{
-    float x_min = x - box_r;
-    float x_max = x + box_r;
-
-    float y_min = y - box_r;
-    float y_max = y + box_r;
-
-    x_min = translate_point(x_min);
-    x_max = translate_point(x_max);
-    y_min = translate_point(y_min);
-    y_max = translate_point(y_max);
-
-    const int steps = 6;
-    const float top_margin = 0.01f;
-    const float step_size = (box_h - top_margin) / ((float)steps);
-
-    for (int i=0; i<steps+1; i++)
-    {
-        int zz = (int)(z + i*step_size);
-
-        if( t_map::isSolid(x_max,y_max,zz) || //north, west
-            t_map::isSolid(x_max,y_min,zz) || //north, east
-            t_map::isSolid(x_min,y_min,zz) || //south, east
-            t_map::isSolid(x_min,y_max,zz) )  //south, west
-        return true;   
-    }
-    return false;
-}
-
-inline bool collision_check_final_z(float box_r, float box_h, float x, float y, float z, bool* top)
-{
-    float x_min = x - box_r;
-    float x_max = x + box_r;
-
-    float y_min = y - box_r;
-    float y_max = y + box_r;
-
-    x_min = translate_point(x_min);
-    x_max = translate_point(x_max);
-    y_min = translate_point(y_min);
-    y_max = translate_point(y_max);
-
-    const float step_size = 0.9f;
-    int steps = (int)ceil(box_h/step_size);
-
-    *top = false;
-    for (int i=0; i<=steps; i++)
-    {
-        int zz = (int)(z + i*step_size);
-
-        if (i*step_size >= box_h)
-            *top=true;
-
-        if (zz > (z+box_h))
-            zz = (int)(z + box_h);
-
-        if(t_map::isSolid(x_max,y_max,zz) || //north, west
-            t_map::isSolid(x_max,y_min,zz) || //north, east
-            t_map::isSolid(x_min,y_min,zz) || //south, east
-            t_map::isSolid(x_min,y_max,zz))  //south, west
+        if (t_map::isSolid(x_max, y_max, zz) ||  // north, west
+            t_map::isSolid(x_max, y_min, zz) ||  // north, east
+            t_map::isSolid(x_min, y_max, zz) ||  // south, east
+            t_map::isSolid(x_min, y_min, zz))    // south, west
+        {
             return true;
+        }
+    }
+    return false;
+}
+
+inline bool collision_check_current(float box_r, float box_h, float x, float y, float z)
+{
+    float x_min = x - box_r;
+    float x_max = x + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
+    static const float delta = 5.0f/6.0f;
+    for (int i=z; i < int(z + box_h*delta); i++)
+    {
+        if (t_map::isSolid(x_max, y_max, i) ||  // north, west
+            t_map::isSolid(x_max, y_min, i) ||  // north, east
+            t_map::isSolid(x_min, y_max, i) ||  // south, west
+            t_map::isSolid(x_min, y_min, i))    // south, east
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline bool collision_check_xy(float box_r, float box_h, float x, float y, float z)
+{
+    float x_min = x - box_r;
+    float x_max = x + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
+    const float top_margin = 0.01f;
+    for (int i=z; i < int(z + box_h - top_margin); i++)
+    {
+        if (t_map::isSolid(x_max, y_max, i) ||  // north, west
+            t_map::isSolid(x_max, y_min, i) ||  // north, east
+            t_map::isSolid(x_min, y_max, i) ||  // south, west
+            t_map::isSolid(x_min, y_min, i))    // south, east
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline bool collision_check_z(float box_r, float box_h, float x, float y, float z, bool* top)
+{
+    float x_min = x - box_r;
+    float x_max = x + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
+    *top = false;
+
+    int upper = int(z + box_h);
+    for (int i=z; i <= upper; i++)
+    {
+        if (t_map::isSolid(x_max, y_max, i) ||  // north, west
+            t_map::isSolid(x_max, y_min, i) ||  // north, east
+            t_map::isSolid(x_min, y_max, i) ||  // south, west
+            t_map::isSolid(x_min, y_min, i))    // south, east
+        {
+            if (i == upper) *top = true;
+            return true;
+        }
     }
 
     return false;
+}
+
+inline int clamp_agent_to_ground(float box_r, float x, float y, float z)
+{
+    float x_min = x - box_r;
+    float x_max = x + box_r;
+    float y_min = y - box_r;
+    float y_max = y + box_r;
+    x_min = translate_point(x_min);
+    x_max = translate_point(x_max);
+    y_min = translate_point(y_min);
+    y_max = translate_point(y_max);
+    int z0 = t_map::get_solid_block_below(x_min, y_min, z);
+    int z1 = t_map::get_solid_block_below(x_min, y_max, z);
+    int z2 = t_map::get_solid_block_below(x_max, y_min, z);
+    int z3 = t_map::get_solid_block_below(x_max, y_max, z);
+    return GS_MAX(GS_MAX(z0, z1), GS_MAX(z2, z3));
 }
 
 
 #define ADVANCED_JUMP 0
 
-//class AgentState agent_tick(const struct AgentControlState& _cs, const struct AgentCollisionBox& box, const class AgentState& as)
+//class AgentState agent_tick(const struct AgentControlState& _cs,
+//                            const struct AgentCollisionBox& box,
+//                            const class AgentState& as)
 //{
     //int a_cs = _cs.cs;
     ////set control state variables
@@ -212,23 +215,23 @@ inline bool collision_check_final_z(float box_r, float box_h, float x, float y, 
     //float fy = 0.0f;
     //if (forward)
     //{
-        //fx += cosf( _cs.theta * pi);
-        //fy += sinf( _cs.theta * pi);
+        //fx += cosf(_cs.theta * pi);
+        //fy += sinf(_cs.theta * pi);
     //}
     //if (backwards)
     //{
-        //fx += -cosf( _cs.theta * pi);
-        //fy += -sinf( _cs.theta * pi);
+        //fx += -cosf(_cs.theta * pi);
+        //fy += -sinf(_cs.theta * pi);
     //}
     //if (left)
     //{
-        //fx += cosf( _cs.theta * pi + pi/2);
-        //fy += sinf( _cs.theta * pi + pi/2);
+        //fx += cosf(_cs.theta * pi + pi/2);
+        //fy += sinf(_cs.theta * pi + pi/2);
     //}
     //if (right)
     //{
-        //fx += -cosf( _cs.theta * pi + pi/2);
-        //fy += -sinf( _cs.theta * pi + pi/2);
+        //fx += -cosf(_cs.theta * pi + pi/2);
+        //fy += -sinf(_cs.theta * pi + pi/2);
     //}
 
     //const float precision = 0.000001f;
@@ -264,23 +267,25 @@ inline bool collision_check_final_z(float box_r, float box_h, float x, float y, 
 //}
 
 //takes an agent state and control state and returns new agent state
-class AgentState agent_tick(const struct AgentControlState& _cs, const struct AgentCollisionBox& box, class AgentState as)
+class AgentState agent_tick(const struct AgentControlState& _cs,
+                             const struct AgentCollisionBox& box,
+                             class AgentState as)
 {
     int a_cs = _cs.cs;
     //set control state variables
-    bool forward     = a_cs & CS_FORWARD ? 1 :0;
-    bool backwards   = a_cs & CS_BACKWARD ? 1 :0;
-    bool left        = a_cs & CS_LEFT ? 1 :0;
-    bool right       = a_cs & CS_RIGHT ? 1 :0;
-    bool jetpack     = a_cs & CS_JETPACK ? 1 :0;
-    bool jump        = a_cs & CS_JUMP ? 1 :0;
-    bool crouch      = a_cs & CS_CROUCH ? 1 :0;
+    bool forward   = a_cs & CS_FORWARD  ? 1 : 0;
+    bool backwards = a_cs & CS_BACKWARD ? 1 : 0;
+    bool left      = a_cs & CS_LEFT     ? 1 : 0;
+    bool right     = a_cs & CS_RIGHT    ? 1 : 0;
+    bool jetpack   = a_cs & CS_JETPACK  ? 1 : 0;
+    bool jump      = a_cs & CS_JUMP     ? 1 : 0;
+    bool crouch    = a_cs & CS_CROUCH   ? 1 : 0;
     //implemented, but unused
     /*
-    bool boost       = a_cs & CS_BOOST ? 1 :0;
-    bool misc1       = a_cs & CS_MISC1 ? 1 :0;
-    bool misc2       = a_cs & CS_MISC2 ? 1 :0;
-    bool misc3       = a_cs & CS_MISC3 ? 1 :0;
+    bool boost       = a_cs & CS_BOOST ? 1 : 0;
+    bool misc1       = a_cs & CS_MISC1 ? 1 : 0;
+    bool misc2       = a_cs & CS_MISC2 ? 1 : 0;
+    bool misc3       = a_cs & CS_MISC3 ? 1 : 0;
     */
     const float tr = 1.0f / 10.0f;    //tick rate
     const float tr2 = tr*tr;
@@ -309,33 +314,36 @@ class AgentState agent_tick(const struct AgentControlState& _cs, const struct Ag
     //const float z_bounce_v_threshold = 1.5f * tr;
 
     const float pi = 3.14159265f;
-    float solid_z = (float)t_map::get_solid_block_below(as.x, as.y, as.z);
+    float solid_z = clamp_agent_to_ground(box.box_r, as.x, as.y, as.z);
     float dist_from_ground = as.z - solid_z;
+
+    bool current_collision = collision_check_current(box.box_r, height,
+                                                     as.x, as.y, as.z);
+    if (current_collision)
+    {
+        //#if DC_CLIENT
+        printf("Current collision\n");
+        //#endif
+        as.z += 0.02f; //nudge factor
+        as.vx = 0.0f;
+        as.vy = 0.0f;
+        as.vz = GS_MAX(as.vz, 0.0f);
+        return as;
+    }
 
     float new_x = as.x + as.vx;
     float new_y = as.y + as.vy;
     float new_z = as.z + as.vz;
 
-    //collision
-    bool current_collision = collision_check_final_current(box.box_r, height, as.x,as.y,as.z);
-    if (current_collision)
-    {
-        as.x = new_x;
-        as.y = new_y;
-        as.z += 0.02f; //nudge factor
-        if (as.vz < 0.0f) as.vz = 0.0f;
-        return as;
-    }
-
-    // Collision Order: as.x,as.y,as.z
-    bool collision_x = collision_check_final_xy(box.box_r, height, new_x,as.y,as.z);
+    // Collision Order: x, y, z
+    bool collision_x = collision_check_xy(box.box_r, height, new_x, as.y, as.z);
     if (collision_x)
     {
         new_x = as.x;
         as.vx = 0.0f;
     }
 
-    bool collision_y = collision_check_final_xy(box.box_r, height, new_x,new_y,as.z);
+    bool collision_y = collision_check_xy(box.box_r, height, new_x, new_y, as.z);
     if (collision_y)
     {
         new_y = as.y;
@@ -344,12 +352,15 @@ class AgentState agent_tick(const struct AgentControlState& _cs, const struct Ag
 
     //top and bottom matter
     bool top = false;
-    bool collision_z = collision_check_final_z(box.box_r, height, new_x, new_y, new_z, &top);
+    bool collision_z = collision_check_z(box.box_r, height, new_x, new_y, new_z, &top);
     if (collision_z)
-    {
-        new_z = (int)as.z;  // clamp to the floor
-        if (top)
-            new_z = (float)floor(as.z) + (float)ceil(height) - height;
+    {   // the "as.vz > 0" check catches erroneous top collisions that occur when
+        // falling too fast on top of certain topologies. "top" is really meant to
+        // catch upward collisions
+        if (top && as.vz > 0)
+            new_z = floorf(as.z) + ceilf(height) - height;
+        else
+            new_z = solid_z + 1;
         as.vz = 0.0f;
     }
 
@@ -357,45 +368,46 @@ class AgentState agent_tick(const struct AgentControlState& _cs, const struct Ag
     as.jump_pow = new_jump_pow;
     #endif
 
-    float CS_vx = 0.0f;
-    float CS_vy = 0.0f;
+    float cs_vx = 0.0f;
+    float cs_vy = 0.0f;
 
     if (forward)
     {
-        CS_vx += speed*cosf( _cs.theta * pi);
-        CS_vy += speed*sinf( _cs.theta * pi);
+        cs_vx += speed*cosf(_cs.theta * pi);
+        cs_vy += speed*sinf(_cs.theta * pi);
     }
     if (backwards)
     {
-        CS_vx += -speed*cosf( _cs.theta * pi);
-        CS_vy += -speed*sinf( _cs.theta * pi);
+        cs_vx += -speed*cosf(_cs.theta * pi);
+        cs_vy += -speed*sinf(_cs.theta * pi);
     }
     if (left)
     {
-        CS_vx += speed*cosf( _cs.theta * pi + pi/2);
-        CS_vy += speed*sinf( _cs.theta * pi + pi/2);
+        cs_vx += speed*cosf(_cs.theta * pi + pi/2);
+        cs_vy += speed*sinf(_cs.theta * pi + pi/2);
     }
     if (right)
     {
-        CS_vx += -speed*cosf( _cs.theta * pi + pi/2);
-        CS_vy += -speed*sinf( _cs.theta * pi + pi/2);
+        cs_vx += -speed*cosf(_cs.theta * pi + pi/2);
+        cs_vy += -speed*sinf(_cs.theta * pi + pi/2);
     }
 
     const float precision = 0.000001f;
     // normalize diagonal motion
-    if (CS_vx < -precision || CS_vx > precision || CS_vy < -precision || CS_vy > precision)
+    if (cs_vx < -precision || cs_vx > precision ||
+        cs_vy < -precision || cs_vy > precision)
     {
-        float len = 1.0f/sqrtf(CS_vx*CS_vx + CS_vy*CS_vy);
-        CS_vx *= speed*len;
-        CS_vy *= speed*len;
+        float len = 1.0f/sqrtf(cs_vx*cs_vx + cs_vy*cs_vy);
+        cs_vx *= speed*len;
+        cs_vy *= speed*len;
     }
 
-    as.vx = CS_vx;
-    as.vy = CS_vy;
+    as.vx = cs_vx;
+    as.vy = cs_vy;
 
     // need distance from ground
     const float max_jetpack_height = 8.0f;
-    const float jetpack_velocity_max = z_jetpack * 5;
+    const float jetpack_velocity_max = z_jetpack * 5.0f;
     if (jetpack)
     {
         if (dist_from_ground < max_jetpack_height)
@@ -404,14 +416,11 @@ class AgentState agent_tick(const struct AgentControlState& _cs, const struct Ag
                 as.vz += z_jetpack;
         }
         else
-        if (dist_from_ground < max_jetpack_height + 0.3f)
+        if (dist_from_ground < max_jetpack_height + GROUND_MARGIN)
             as.vz = -z_gravity;
     }
 
-    if (dist_from_ground < 0.025f)
-        as.vz -= (new_z - solid_z);
-    else
-        as.vz += z_gravity;
+    as.vz += z_gravity;
 
     #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
@@ -435,12 +444,18 @@ class AgentState agent_tick(const struct AgentControlState& _cs, const struct Ag
 
     as.x = translate_point(new_x);
     as.y = translate_point(new_y);
-    if (new_z < solid_z) new_z = solid_z;
-    as.z = new_z;
+    as.z = GS_MAX(new_z, solid_z + 1);
     as.theta = _cs.theta;
     as.phi = _cs.phi;
 
+    //#if DC_CLIENT
+    printf("x,y,z: %d,%d,%d. top? %d\n", collision_x, collision_y, collision_z, top);
+    //#endif
+
     return as;
 }
+
+#undef GROUND_MARGIN
+
 
 }   // Agents

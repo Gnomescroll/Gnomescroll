@@ -96,7 +96,7 @@ void init_world()
     {
         int height = 27;
         map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, map_dim.x, map_dim.y,height, t_map::get_cube_type("regolith"));
+        t_gen::set_region(0,0,1, map_dim.x, map_dim.y, height, t_map::get_cube_type("regolith"));
         //t_gen::excavate();
         t_gen::add_terrain_features();  // this needs like about 27 heighth to the ground or *CRASH*
         t_gen::generate_ruins();
@@ -113,9 +113,10 @@ void init_world()
 
     if (valgrind_map)
     {
-        map_gen::floor(map_dim.x, map_dim.y, 0, 1,       t_map::get_cube_type("bedrock"));
-        map_gen::floor(map_dim.x, map_dim.y, 1, 9,       t_map::get_cube_type("regolith"));
-        map_gen::floor(map_dim.x, map_dim.y, 20,ZMAX-20, t_map::get_cube_type("regolith"));
+        map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
+        map_gen::floor(map_dim.x, map_dim.y, 1, 9, t_map::get_cube_type("regolith"));
+        map_gen::floor(map_dim.x, map_dim.y, 20, map_dim.z - 30, t_map::get_cube_type("regolith"));
+        map_gen::floor(map_dim.x, map_dim.y, map_dim.z - 1, 1, t_map::get_cube_type("regolith"));
     }
 
     if (explosive_map)
@@ -125,9 +126,9 @@ void init_world()
         static const size_t n_explosives = 10000;
         for (size_t i=0; i<n_explosives; i++)
         {
-            int x = randrange(0, map_dim.x-1);
-            int y = randrange(0, map_dim.y-1);
-            int z = randrange(0, map_dim.z-1);
+            int x = randrange(0, map_dim.x - 1);
+            int y = randrange(0, map_dim.y - 1);
+            int z = randrange(0, map_dim.z - 1);
             t_map::set_fast(x,y,z, plasmagen);
         }
     }

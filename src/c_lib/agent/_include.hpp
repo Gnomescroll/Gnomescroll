@@ -16,5 +16,4 @@
 # include <agent/client/agent_draw.cpp>
 # include <agent/client/agent_event.cpp>
 # include <agent/client/player_agent_action.cpp>
-# include <agent/client/agent_sound_handler.cpp>
 #endif

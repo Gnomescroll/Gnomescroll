@@ -62,7 +62,7 @@ void _GS_ASSERT_INTERNAL_MAIN(const char* FILE, const char* FUNC, size_t LINE, s
             _GS_ASSERT_COUNT[i]++;
             if(_GS_ASSERT_COUNT[i] >= LIMIT) return;
             //print and return;
-            print_trace(2);
+            print_trace(3);
             puts(t);
             return;
         }
@@ -76,7 +76,7 @@ void _GS_ASSERT_INTERNAL_MAIN(const char* FILE, const char* FUNC, size_t LINE, s
     strcpy(_GS_ASSERT_ARRAY[i], t);
 
     _GS_ASSERT_COUNT[i]++;
-    print_trace(2);
+    print_trace(3);
     printf("%s\n", t);
 }
 

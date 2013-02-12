@@ -4,9 +4,7 @@
 dont_include_this_file_in_server
 #endif
 
-#if DC_CLIENT
 #include <state/client_state.hpp>
-#endif
 #include <agent/agent.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 #include <sound/sound.hpp>
@@ -14,7 +12,6 @@ dont_include_this_file_in_server
 #include <input/handlers.hpp>
 #include <chat/_interface.hpp>
 #include <t_map/_interface.hpp>
-#include <agent/client/agent_sound_handler.hpp>
 
 namespace Agents
 {
@@ -39,7 +36,7 @@ void PlayerAgent::set_PlayerAgent_id(AgentID id)
     ERROR INTERPOLATION IS STILL WRONG: TIME DELTA IS INVALID
 */
 void PlayerAgent::update_client_side_prediction_interpolated()
-{    
+{
     int _t = (int)_GET_MS_TIME();
     int last_tick = (int)_LAST_TICK();
 
@@ -266,7 +263,7 @@ void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
         //printf("s1 ");s1.print();
         //printf("--------------------------\n");
     //}
-    player_agent_sound_ground_movement_event(s0, s1, s1_on_ground, camera_on_ground);
+    this->movement_event(s0, s1, s1_on_ground, camera_on_ground);
 }
 
 float PlayerAgent::camera_height()
@@ -329,7 +326,7 @@ void PlayerAgent::toggle_camera_mode()
         case CAMERA_STATE_LAST_SERVER_SNAPSHOT:
             printf("Camera Mode: last_server_snapshot\n");
             break;
-            
+
         case CAMERA_STATE_END:
             printf("PlayerAgent toggle_camera_mode: error\n");
             break;
@@ -340,7 +337,7 @@ void PlayerAgent::pump_camera()
 {
     switch (this->camera_mode)
     {
-        case CAMERA_STATE_NET_AGENT:            
+        case CAMERA_STATE_NET_AGENT:
             if (this->you() != NULL)
                 this->camera_state = this->you()->get_state();
             break;
@@ -368,11 +365,11 @@ void PlayerAgent::update_model()
     if (a->vox == NULL) return;
 
     Vec3 center;
-    if (a->vox->was_updated)         
+    if (a->vox->was_updated)
         center = a->get_center();    // model is fresh, use model center for more accurate culling
     else
         center = a->get_position();  // model is stale, must use agent position
-        
+
     a->vox->was_updated = false;
 
     // other agents
@@ -411,7 +408,7 @@ void PlayerAgent::update_model()
         vox_dat = &VoxDats::agent_dead;
         a->event.set_agent_vox_status(AGENT_VOX_IS_DEAD);
     }
-        
+
     a->vox->set_vox_dat(vox_dat);
     a->update_legs();
     AgentState s = a->get_state();
@@ -479,7 +476,7 @@ int PlayerAgent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3],
     data.get_pre_collision_point(open_pos);
     data.get_side_array(side);
     *distance = data.interval * max_dist;
-    
+
     GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
     return data.get_cube_type();
 }
@@ -492,6 +489,105 @@ int PlayerAgent::get_facing_side(int solid_pos[3], int open_pos[3], float* dista
         return -1;
     return get_cube_side_from_side_array(s);
 }
+
+void PlayerAgent::fell(float dvz)
+{   // dvz is the change in vertical velocity
+    // TODO -- multiply dvz by base gain to get playable gain for fall range
+    static const float SOFT_FALL_VELOCITY_THRESHOLD   = 0.07f;
+    static const float MEDIUM_FALL_VELOCITY_THRESHOLD = 0.50f;
+    static const float HARD_FALL_VELOCITY_THRESHOLD   = 0.75f;
+    if (dvz > HARD_FALL_VELOCITY_THRESHOLD)
+        Sound::play_2d_sound("hard_fall");
+    else
+    if (dvz > MEDIUM_FALL_VELOCITY_THRESHOLD)
+        Sound::play_2d_sound("medium_fall");
+    else
+    if (dvz > SOFT_FALL_VELOCITY_THRESHOLD)
+        Sound::play_2d_sound("soft_fall");
+}
+
+void PlayerAgent::movement_event(class AgentState s0, class AgentState s1,
+                                 bool s1_on_ground, bool camera_on_ground)
+{
+    // TODO: detect if player is on ground
+    // TODO: detect when player goes form on-ground to ground (fall event)
+    // TODO: detect the type of block the player is walking on
+    // TODO: random plus-minue variation in footstep
+
+    static const float distance_per_step = 1.5f;
+    static float total_distance = 0.0f;
+
+    float dx = s1.x - quadrant_translate_f(s1.x, s0.x);
+    float dy = s1.y - quadrant_translate_f(s1.y, s0.y);
+    float d = sqrtf(dx*dx + dy*dy);
+    total_distance += d;
+    float dvz = s1.vz - s0.vz;
+    float dz  = s1.z  - s0.z;
+    //if (dvz) printf("z: %f, vz: %f, dz: %f, dvz: %f. on_ground? %d\n", s1.z, s1.vz, dz, dvz, s1_on_ground);
+    if (dz < 0 && s1_on_ground) // was falling & hit ground
+        this->fell(dvz);
+
+    if (!camera_on_ground) return;
+
+    // pre-programmed footstep sequence
+    const size_t n_footsteps = 16;
+    int footsteps[n_footsteps] =
+    {
+        2,
+        1,
+        2,
+        1,
+        3,
+        1,
+        2,
+        4,
+
+        2,
+        1,
+        2,
+        2,
+        3,
+        1,
+        4,
+        2,
+    };
+
+    const size_t n_perturb_footsteps = 4;
+    int perturb_footsteps[n_perturb_footsteps] = {1,2,3,4};
+
+    #define RANDOM_STEPS 0
+    #define RANDOM_CHANGE 1
+    #define RANDOM_CHANGE_PER_LOOP 1
+
+    const size_t footstep_sound_len = 32;
+    static char footstep_sound[footstep_sound_len] = {'\0'};
+    if (total_distance > distance_per_step)
+    {
+        total_distance = fmodf(total_distance, distance_per_step);
+        #if RANDOM_STEPS
+        int footstep_num = footsteps[randrange(0, n_footsteps-1)];
+        #else
+        int footstep_num = 1;
+        static size_t step = 0;
+        step++;
+        step %= n_footsteps;
+        if (RANDOM_CHANGE && randf() < (((float)RANDOM_CHANGE_PER_LOOP)/((float)n_footsteps)))
+            footstep_num = perturb_footsteps[randrange(0,n_perturb_footsteps-1)];
+        else
+            footstep_num = footsteps[step];
+        #endif
+
+        size_t wrote = snprintf(footstep_sound, footstep_sound_len, "soft_step_%d", footstep_num);
+        GS_ASSERT(wrote < footstep_sound_len);
+        if (wrote >= footstep_sound_len) return;
+        Sound::play_2d_sound(footstep_sound);
+    }
+
+    #undef RANDOM_STEPS
+    #undef RANDOM_CHANGE
+    #undef RANDOM_CHANGE_PER_LOOP
+}
+
 
 #if !PRODUCTION
 void PlayerAgent::teleport_to(struct Vec3 p)

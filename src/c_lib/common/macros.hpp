@@ -13,8 +13,8 @@
 # define unlikely(x) __builtin_expect(!!(x), 0)
 #endif
 
-#define GS_MAX(a,b) ((a) > (b)) ? (a) : (b);
-#define GS_MIN(a,b) ((a) < (b)) ? (a) : (b);
+#define GS_MAX(a,b) (((a) > (b)) ? (a) : (b))
+#define GS_MIN(a,b) (((a) < (b)) ? (a) : (b))
 
 #ifdef __MSVC__
 # define fmin(x,y) ((x) < (y)) ? (x) : (y)
