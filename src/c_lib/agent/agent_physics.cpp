@@ -308,7 +308,9 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     if (collision_z)
     {   // the "as.vz > 0" check catches erroneous top collisions that occur when
         // falling too fast on top of certain topologies. "top" is really meant to
-        // catch upward collisions
+        // catch upward collisions. NOTE: if vertical velocity ever gets high for
+        // some reason (maybe we have a launcher block...), then we probably need
+        // to check as.vz < 0 in the else, or something like that.
         if (top && as.vz > 0)
             new_z = floorf(as.z) + ceilf(height) - height;
         else
@@ -400,7 +402,12 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     as.z = new_z;
     as.theta = _cs.theta;
     as.phi = _cs.phi;
-    as.vz = GS_MAX(as.vz, -4.5f);
+    // cap the fall rate so as not to be able to move so fast as to blip through terrain
+    // if we have high lateral or upward velocities we will need to cap those similarly
+    // lateral velocities would have to be capped to 2*box_r.  The alternative
+    // requires doing collision detection at interpolated intervals
+    as.vz = GS_MAX(as.vz, -(height + 0.99f));
+    //as.vz = GS_MIN(as.vz, height + 0.99f);
 
     return as;
 }

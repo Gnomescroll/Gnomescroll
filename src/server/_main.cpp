@@ -115,7 +115,7 @@ void init_world()
     {
         map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
         map_gen::floor(map_dim.x, map_dim.y, 1, 9, t_map::get_cube_type("regolith"));
-        map_gen::floor(map_dim.x, map_dim.y, 20, map_dim.z - 30, t_map::get_cube_type("regolith"));
+        map_gen::floor(map_dim.x, map_dim.y, 20, map_dim.z - 23, t_map::get_cube_type("regolith"));
         map_gen::floor(map_dim.x, map_dim.y, map_dim.z - 1, 1, t_map::get_cube_type("regolith"));
     }
 
