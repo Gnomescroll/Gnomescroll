@@ -22,7 +22,7 @@ bool destroy_agent(AgentID id)
 {
     bool destroyed = agent_list->destroy(id);
     if (!destroyed) return false;
-    
+
     Toolbelt::remove_agent(id);
 
     #if DC_SERVER
