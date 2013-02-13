@@ -395,8 +395,8 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     }
     #endif
 
-    as.x = new_x;
-    as.y = new_y;
+    as.x = translate_point(new_x);
+    as.y = translate_point(new_y);
     as.z = new_z;
     as.theta = _cs.theta;
     as.phi = _cs.phi;
