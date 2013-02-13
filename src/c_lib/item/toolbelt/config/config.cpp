@@ -88,14 +88,14 @@ static void apply_type_settings(ItemType type)
 static void apply_group_settings(ItemGroup group)
 {
     GS_ASSERT(group != IG_ERROR);
-    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+    for (int i=0; i<int(MAX_ITEM_TYPES); i++)
         if (Item::type_used((ItemType)i) && Item::get_item_group_for_type((ItemType)i) == group)
             apply_type_settings((ItemType)i);
 }
 
 static void apply_click_and_hold_settings_for(bool cnh)
 {   // begin applying settings to all items with click_and_hold == cnh
-    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+    for (int i=0; i<int(MAX_ITEM_TYPES); i++)
         if (item_is_click_and_hold((ItemType)i) == cnh)
             apply_type_settings((ItemType)i);
 }
@@ -135,7 +135,7 @@ static void set_type(const char* name)
 static void click_and_hold_group(ItemGroup group, bool cnh)
 {
     GS_ASSERT(group != IG_ERROR);
-    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+    for (int i=0; i<int(MAX_ITEM_TYPES); i++)
         if (Item::type_used((ItemType)i) && Item::get_item_group_for_type((ItemType)i) == group)
             click_and_hold[i] = cnh;
 }
@@ -199,6 +199,7 @@ static void register_item_group_callbacks()
 
     // assist the client in predicting what the server will do
     set_group(IG_CONSUMABLE);
+    c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
 
     set_group(IG_SPECIAL);
@@ -206,12 +207,16 @@ static void register_item_group_callbacks()
     c.local_beta_trigger = &local_trigger_dummy;
 
     set_group(IG_AGENT_SPAWNER);
+    c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     set_group(IG_ENERGY_CORE);
+    c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     set_group(IG_MECH_PLACER);
+    c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     set_group(IG_PLANT_PLACER);
+    c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     #endif
 
@@ -255,6 +260,7 @@ static void register_item_type_callbacks()
 
     set_type("small_charge_pack");
     c.local_trigger = &local_trigger_dummy;
+    c.local_beta_trigger = &local_trigger_dummy;
 
     set_type("block_placer");
     c.local_trigger = &trigger_local_admin_block_placer;
@@ -315,7 +321,7 @@ void validate_callbacks()
     if (local_end_triggers   == NULL) return;
     #endif
 
-    for (int i=0; i<(int)MAX_ITEM_TYPES; i++)
+    for (int i=0; i<int(MAX_ITEM_TYPES); i++)
     {
         GS_ASSERT(click_and_hold[i] || !ticks[i]);
         #if DC_CLIENT
