@@ -89,7 +89,8 @@ inline bool collision_check_xy(float box_r, float box_h, float x, float y, float
     int y_min = int(translate_point(y - box_r));
     int y_max = int(translate_point(y + box_r));
     const float top_margin = 0.01f;
-    for (int i=z; i < int(z + box_h - top_margin); i++)
+    const int upper = int(z + box_h - top_margin);
+    for (int i=z; i <= upper; i++)
     {
         if (t_map::isSolid(x_max, y_max, i) ||  // north, west
             t_map::isSolid(x_max, y_min, i) ||  // north, east
@@ -109,69 +110,20 @@ inline bool collision_check_z(float box_r, float box_h, float x, float y, float 
     int y_min = int(translate_point(y - box_r));
     int y_max = int(translate_point(y + box_r));
     *top = false;
-    int upper = int(z + box_h);
+    const int upper = int(z + box_h);
     for (int i=z, j=0; i <= upper; i++, j++)
     {
-        #if DC_CLIENT
-        if (t_map::isSolid(x_max, y_max, i))
-            printf("northwest. %d, %d\n", x_max, y_max);
-        else
-        if (t_map::isSolid(x_max, y_min, i))
-            printf("northeast. %d, %d\n", x_max, y_min);
-        else
-        if (t_map::isSolid(x_min, y_max, i))
-            printf("southwest. %d, %d\n", x_min, y_max);
-        else
-        if (t_map::isSolid(x_min, y_min, i))
-            printf("southeast. %d, %d\n", x_min, y_min);
-        #endif
-
         if (t_map::isSolid(x_max, y_max, i) ||  // north, west
             t_map::isSolid(x_max, y_min, i) ||  // north, east
             t_map::isSolid(x_min, y_max, i) ||  // south, west
             t_map::isSolid(x_min, y_min, i))    // south, east
         {
-            //#if DC_CLIENT
-            printf("j: %d, i: %d\n", j, i);
-            //#endif
             if (i == upper) *top = true;
             return true;
         }
     }
-    printf("z: %d\n", int(z));
     return false;
 }
-
-//inline bool collision_check_final_z(float box_r, float box_h, float x, float y, float z, bool* top)
-//{
-    //float x_min = x - box_r;
-    //float x_max = x + box_r;
-    //float y_min = y - box_r;
-    //float y_max = y + box_r;
-    //x_min = translate_point(x_min);
-    //x_max = translate_point(x_max);
-    //y_min = translate_point(y_min);
-    //y_max = translate_point(y_max);
-    //*top = false;
-    //const float step_size = 0.9f;
-    //int steps = (int)ceil(box_h/step_size);
-    //for (int i=0; i<=steps; i++)
-    //{
-        //int zz = (int)(z + i*step_size);
-        //if (i*step_size >= box_h)
-            //*top=true;
-        //if (zz > (z+box_h))
-            //zz = (int)(z + box_h);
-        //if (t_map::isSolid(x_max, y_max, zz) || //north, west
-            //t_map::isSolid(x_max, y_min, zz) || //north, east
-            //t_map::isSolid(x_min, y_max, zz) || //south, west
-            //t_map::isSolid(x_min, y_min, zz))   //south, east
-        //{
-            //return true;
-        //}
-    //}
-    //return false;
-//}
 
 inline int clamp_agent_to_ground(float box_r, float x, float y, float z)
 {
@@ -332,9 +284,6 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
                                                      as.x, as.y, as.z);
     if (current_collision)
     {
-        //#if DC_CLIENT
-        printf("Current collision\n");
-        //#endif
         as.z += 0.02f; //nudge factor
         as.vx = 0.0f;
         as.vy = 0.0f;
@@ -346,18 +295,14 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     float new_y = translate_point(as.y + as.vy);
     float new_z = as.z + as.vz;
 
-    // Collision Order: x, y, z
     bool collision_x = collision_check_xy(box.box_r, height, new_x, as.y, as.z);
-    if (collision_x)
-        new_x = as.x;
+    if (collision_x) new_x = as.x;
 
     bool collision_y = collision_check_xy(box.box_r, height, new_x, new_y, as.z);
-    if (collision_y)
-        new_y = as.y;
+    if (collision_y) new_y = as.y;
 
     float solid_z = clamp_agent_to_ground(box.box_r, new_x, new_y, as.z);
 
-    //top and bottom matter
     bool top = false;
     bool collision_z = collision_check_z(box.box_r, height, new_x, new_y, new_z, &top);
     if (collision_z)
@@ -372,7 +317,7 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     }
 
     new_z = GS_MAX(new_z, solid_z + 1);
-    float dist_from_ground = new_z - solid_z;
+    float dist_from_ground = new_z - solid_z + 1;
 
     #if ADVANCED_JUMP
     as.jump_pow = new_jump_pow;
@@ -403,10 +348,9 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     }
 
     const float precision = 0.000001f;
-    // normalize diagonal motion
     if (cs_vx < -precision || cs_vx > precision ||
         cs_vy < -precision || cs_vy > precision)
-    {
+    {   // normalize diagonal motion
         float len = 1.0f/sqrtf(cs_vx*cs_vx + cs_vy*cs_vy);
         cs_vx *= speed*len;
         cs_vy *= speed*len;
@@ -415,7 +359,6 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     as.vx = cs_vx;
     as.vy = cs_vy;
 
-    // need distance from ground
     const float max_jetpack_height = 8.0f;
     const float jetpack_velocity_max = z_jetpack * 5.0f;
     if (jetpack)
@@ -457,10 +400,7 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     as.z = new_z;
     as.theta = _cs.theta;
     as.phi = _cs.phi;
-
-    //#if DC_CLIENT
-    printf("x,y,z: %d,%d,%d. top? %d\n", collision_x, collision_y, collision_z, top);
-    //#endif
+    as.vz = GS_MAX(as.vz, -4.5f);
 
     return as;
 }
