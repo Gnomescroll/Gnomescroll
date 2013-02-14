@@ -48,9 +48,9 @@ struct Mat4 Mat4_transpose(struct Mat4 m1)
 {
     struct Mat4 m2;
 
-    for(int i=0; i<4; i++)
+    for (int i=0; i<4; i++)
     {
-        for(int j=0; j<4; j++)
+        for (int j=0; j<4; j++)
         {
             m2.f[i][j] = m1.f[j][i];
         }
@@ -111,9 +111,9 @@ class MeshAnimation
 
         bone->set_children(pNode->mNumChildren);
 
-        for(size_t i=0; i < pNode->mNumChildren; i++)
+        for (size_t i=0; i < pNode->mNumChildren; i++)
         {
-            CreateBoneTree( &bone->bca[i], pNode->mChildren[i], bone);
+            CreateBoneTree(&bone->bca[i], pNode->mChildren[i], bone);
         }
     }
 
@@ -130,7 +130,7 @@ void CalculateBoneToWorldTransform(class cBone* bone)
     class cBone* parent = bone->parent;
 
     // this will climb the nodes up along through the parents concentating all the matrices to get the Entity to World transform, or in this case, the Bone To World transform
-    while( parent )
+    while (parent)
     {
         bone->global_transform = mat4_mult(bone->global_transform, parent->local_transform);
         parent = parent->parent; // get the parent of the bone we are working on
@@ -143,7 +143,7 @@ void UpdateTransforms(cBone* bone)
 {
     CalculateBoneToWorldTransform(bone);// update global transform as well
 
-    for(int i=0; i<bone->bcan; i++)
+    for (int i=0; i<bone->bcan; i++)
         UpdateTransforms(&bone->bca[i]);
 }
 
@@ -171,34 +171,29 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
     printf("Scene animations: %d \n", pScene->mNumAnimations);
 
 
-    for(size_t i=0; i<pScene->mNumAnimations; i++)
+    for (size_t i=0; i<pScene->mNumAnimations; i++)
     {
         aiAnimation* anim = pScene->mAnimations[i];
 
-
         printf("anim %02d: name= %s duration= %f ticks_per_second= %f channels= %d mesh_channels= %d \n", i,
-            anim->mName.data,
-            anim->mDuration,
-            anim->mTicksPerSecond,
-            anim->mNumChannels,
-            anim->mNumMeshChannels
-            );
+               anim->mName.data,
+               anim->mDuration,
+               anim->mTicksPerSecond,
+               anim->mNumChannels,
+               anim->mNumMeshChannels);
 
-
-        for(unsigned int j=0; j<anim->mNumChannels; j++)
+        for (unsigned int j=0; j<anim->mNumChannels; j++)
         {
             aiNodeAnim* node_anim = anim->mChannels[j];
 
             printf("\tnode_anim: %02d name= %s position_keys= %d rotation_keys= %d \n", j,
-            node_anim->mNodeName.data,
-            node_anim->mNumPositionKeys,    //aiVectorKey* mPositionKeys;
-            node_anim->mNumRotationKeys     //aiQuatKey* mRotationKeys;
-            );
+                   node_anim->mNodeName.data,
+                   node_anim->mNumPositionKeys,      //aiVectorKey* mPositionKeys;
+                   node_anim->mNumRotationKeys);     //aiQuatKey* mRotationKeys;
 
-
-            for(unsigned int k=0; k<node_anim->mNumPositionKeys; k++)
+            for (unsigned int k=0; k<node_anim->mNumPositionKeys; k++)
             {
-                printf("aiVector %i: time %f \n", k, node_anim->mPositionKeys[k].mTime );
+                printf("aiVector %i: time %f \n", k, node_anim->mPositionKeys[k].mTime);
             }
             //struct aiVectorKey
             //double mTime; //The time of this key
@@ -251,17 +246,17 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 /*
     printf("pScene->mMeshes: \n");
 
-    for(size_t i=0; i < pScene->mNumMeshes; i++)
+    for (size_t i=0; i < pScene->mNumMeshes; i++)
     {
         printf("Mesh %02d: %s \n", i, pScene->mMeshes[i]->mName.data);
     }
 */
 #if 0
-    for(size_t i=0; i < pScene->mNumMeshes; i++)
+    for (size_t i=0; i < pScene->mNumMeshes; i++)
     {
         printf("Mesh %02d: name= %s numBones= %d \n", i, pScene->mMeshes[i]->mName.data, pScene->mMeshes[i]->mNumBones);
 
-        for(unsigned int j=0; j < pScene->mMeshes[i]->mNumBones; j++)
+        for (unsigned int j=0; j < pScene->mMeshes[i]->mNumBones; j++)
         {
             printf("\tBone %02d: %s \n", j, pScene->mMeshes[i]->mBones[j]->mName.data);
         }
@@ -271,10 +266,10 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
 
 
 /*
-    if(!pScene->HasAnimations()) return;
+    if (!pScene->HasAnimations()) return;
     Release();
 
-    Skeleton = CreateBoneTree( pScene->mRootNode, NULL);
+    Skeleton = CreateBoneTree(pScene->mRootNode, NULL);
     ExtractAnimations(pScene);
 
     for (unsigned int i = 0; i < pScene->mNumMeshes;++i){
@@ -283,16 +278,16 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
         for (unsigned int n = 0; n < mesh->mNumBones;++n){
             const aiBone* bone = mesh->mBones[n];
             std::map<std::string, cBone*>::iterator found = BonesByName.find(bone->mName.data);
-            if(found != BonesByName.end()){// FOUND IT!!! woohoo, make sure its not already in the bone list
+            if (found != BonesByName.end()){// FOUND IT!!! woohoo, make sure its not already in the bone list
                 bool skip = false;
-                for(size_t j(0); j< Bones.size(); j++){
+                for (size_t j(0); j< Bones.size(); j++){
                     std::string bname = bone->mName.data;
-                    if(Bones[j]->Name == bname) {
+                    if (Bones[j]->Name == bname) {
                         skip = true;// already inserted, skip this so as not to insert the same bone multiple times
                         break;
                     }
                 }
-                if(!skip){// only insert the bone if it has not already been inserted
+                if (!skip){// only insert the bone if it has not already been inserted
                     std::string tes = found->second->Name;
                     TransformMatrix(found->second->Offset, bone->mOffsetMatrix);
                     found->second->Offset.Transpose();// transpoce their matrix to get in the correct format
@@ -302,17 +297,17 @@ ASSIMP_API const C_STRUCT aiScene* aiImportFileFromMemory(
             }
         }
     }
-    Transforms.resize( Bones.size());
+    Transforms.resize(Bones.size());
     float timestep = 1.0f/30.0f;// 30 per second
-    for(size_t i(0); i< Animations.size(); i++){// pre calculate the animations
+    for (size_t i(0); i< Animations.size(); i++){// pre calculate the animations
         SetAnimIndex(i);
         float dt = 0;
-        for(float ticks = 0; ticks < Animations[i].Duration; ticks += Animations[i].TicksPerSecond/30.0f){
+        for (float ticks = 0; ticks < Animations[i].Duration; ticks += Animations[i].TicksPerSecond/30.0f){
             dt +=timestep;
             Calculate(dt);
             Animations[i].Transforms.push_back(std::vector<mat4>());
             std::vector<mat4>& trans = Animations[i].Transforms.back();
-            for( size_t a = 0; a < Transforms.size(); ++a){
+            for (size_t a = 0; a < Transforms.size(); ++a){
                 mat4 rotationmat =  Bones[a]->Offset * Bones[a]->GlobalTransform;
                 trans.push_back(rotationmat);
             }
@@ -412,17 +407,17 @@ aiMesh
 
         //printf("=== \n");
 
-        for(int i=0; i<nlm; i++)
+        for (int i=0; i<nlm; i++)
         {
             aiMesh* mesh = ml[i];
             //int index1 = bvlo[i];
-            for(unsigned int j=0; j<mesh->mNumFaces; j++)
+            for (unsigned int j=0; j<mesh->mNumFaces; j++)
             {
 
-                for(int k=0; k<3; k++)
+                for (int k=0; k<3; k++)
                 {
-                    GS_ASSERT( mesh->mFaces[j].mNumIndices == 3);
-                    GS_ASSERT( mesh->mNumUVComponents[0] == 2);
+                    GS_ASSERT(mesh->mFaces[j].mNumIndices == 3);
+                    GS_ASSERT(mesh->mNumUVComponents[0] == 2);
 
                     int index1 = mesh->mFaces[j].mIndices[k];
                     //int index2 = mesh->mFaces[j].mIndices[(k+1)%3];
@@ -439,7 +434,7 @@ aiMesh
                     v.uy =  1.0 -tex.y;
 
                     //printf("pos= %f %f %f tex= %f %f \n", v.v.x,v.v.y,v.v.z, v.ux,v.uy);
-                    glTexCoord2f(v.ux, v.uy );
+                    glTexCoord2f(v.ux, v.uy);
                     glVertex3f(v.v.x +x, v.v.y+y, v.v.z+z);
                 }
 
@@ -459,7 +454,7 @@ aiMesh
         float ymax = y + 1.0;
 
         //upper left, counter clockwise
-        glTexCoord2f(0,1 );
+        glTexCoord2f(0,1);
         glVertex3f(xmax, ymax, z+2.0);
 
         glTexCoord2f(0,0);

@@ -63,7 +63,7 @@ class EntityAttributes
         //float anim_force;
         //Color anim_color;
 
-        //// motion targeting (( DEPRECATE ?? [for Dest targeting]))
+        //// motion targeting ((DEPRECATE ?? [for Dest targeting]))
         //float motion_speed;
         //int motion_max_z_diff;
 

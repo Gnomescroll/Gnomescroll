@@ -45,7 +45,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 {
     const int baseline = 0;
 
-    while( genrand_real1() < 0.999f )
+    while (genrand_real1() < 0.999f)
     {
             const static float length = 3.0f;
 
@@ -81,11 +81,11 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
 
             bool hits_bottom = false;
             //can speed up by 8
-            for(int i=xmin; i<=xmax; i++)
-            for(int j=ymin; j<=ymax; j++)
-            for(int k=zmin; k<=zmax; k++)
+            for (int i=xmin; i<=xmax; i++)
+            for (int j=ymin; j<=ymax; j++)
+            for (int k=zmin; k<=zmax; k++)
             {
-                if(k < baseline || k >= 128)
+                if (k < baseline || k >= 128)
                 {
                     hits_bottom = true;
                     continue;
@@ -99,10 +99,10 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
                 int jj = j%512;
 
                 float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
-                if(d < size*size) t_map::set_fast(ii, jj, k, EMPTY_CUBE);
+                if (d < size*size) t_map::set_fast(ii, jj, k, EMPTY_CUBE);
             }
 
-            if(hits_bottom == true) phi *= -1;
+            if (hits_bottom == true) phi *= -1;
 
             xs += length*dx;
             ys += length*dy;
@@ -114,20 +114,20 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             theta += theta_adj*((float)(2.0*genrand_real1() - 1.0));
             phi += phi_adj*((float)(2.0*genrand_real1() - 1.0));
 
-            if(phi < 0) phi += 1;
-            if(phi > 1) phi -= 1;
+            if (phi < 0) phi += 1;
+            if (phi > 1) phi -= 1;
 
             //static const float phi_target = 0.0f;
             //static const float phi_damp = 0.03f;
 
             //phi -= phi_damp*(phi - phi_target);
         /*
-            if(phi < 0) phi += 1;
-            if(phi > 1) phi -= 1;
+            if (phi < 0) phi += 1;
+            if (phi > 1) phi -= 1;
 
-            if(zs < 32 && genrand_real1() < 0.20)
+            if (zs < 32 && genrand_real1() < 0.20)
             {
-                if(phi > 0.25) phi -= 0.10;
+                if (phi > 0.25) phi -= 0.10;
             }
         */
     }

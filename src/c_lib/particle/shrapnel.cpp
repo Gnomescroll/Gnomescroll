@@ -29,9 +29,9 @@ void init_shrapnel_shader()
 {
     shrapnel_shader.set_debug(false);
 
-    shrapnel_shader.load_shader( "shrapnel shader",
+    shrapnel_shader.load_shader("shrapnel shader",
         MEDIA_PATH "shaders/weapon/shrapnel.vsh",
-        MEDIA_PATH "shaders/weapon/shrapnel.fsh" );
+        MEDIA_PATH "shaders/weapon/shrapnel.fsh");
     shrapnel_TexCoord = shrapnel_shader.get_attribute("InTexCoord");
 
 }
@@ -70,16 +70,12 @@ void Shrapnel::prep()
     if (point_fulstrum_test(position.x, position.y, position.z) == false)
         return;
 
-    Vec3 up = vec3_init(
-        model_view_matrix[0]*this->scale,
-        model_view_matrix[4]*this->scale,
-        model_view_matrix[8]*this->scale
-    );
-    Vec3 right = vec3_init(
-        model_view_matrix[1]*this->scale,
-        model_view_matrix[5]*this->scale,
-        model_view_matrix[9]*this->scale
-    );
+    Vec3 up = vec3_init(model_view_matrix[0]*this->scale,
+                        model_view_matrix[4]*this->scale,
+                        model_view_matrix[8]*this->scale);
+    Vec3 right = vec3_init(model_view_matrix[1]*this->scale,
+                           model_view_matrix[5]*this->scale,
+                           model_view_matrix[9]*this->scale);
 
     float tx_min, tx_max, ty_min, ty_max;
     tx_min = (float)(this->texture_index%16)* (1.0f/16.0f);
@@ -106,7 +102,7 @@ void Shrapnel::prep()
 
 void Shrapnel_list::tick()
 {
-    for(size_t i=0; i<this->num; i++)
+    for (size_t i=0; i<this->num; i++)
     {
         a[i].tick();
         if (a[i].ttl <= 0) destroy(i);
@@ -115,7 +111,7 @@ void Shrapnel_list::tick()
 
 void Shrapnel_list::prep()
 {
-    for(size_t i=0; i<this->num; a[i++].prep());
+    for (size_t i=0; i<this->num; a[i++].prep());
     shrapnel_vlist->buffer();
 }
 
@@ -124,7 +120,7 @@ void Shrapnel_list::draw()
 {
     if (!shrapnel_shader.shader_valid) return;
 
-    if(shrapnel_vlist->vertex_number == 0) return;
+    if (shrapnel_vlist->vertex_number == 0) return;
 
     GS_ASSERT(particle_texture != 0);
     if (particle_texture == 0) return;

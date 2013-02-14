@@ -5,145 +5,145 @@ namespace t_plant
 
 class BlockList
 {
-	public:
-	
-	//CubeType bl[16]; //block lookup
+    public:
 
-	enum
-	{
-		tree_error,
-		tree_master,
-		tree_root,
-		tree_trunk_alive,
-		tree_trunk_dead,
-		tree_leave_alive,
-		tree_leave_dead,
-	} BlockType;
+    //CubeType bl[16]; //block lookup
 
-	enum
-	{
-		tree_alive,
-		tree_dead,
-	} BlockState;
+    enum
+    {
+        tree_error,
+        tree_master,
+        tree_root,
+        tree_trunk_alive,
+        tree_trunk_dead,
+        tree_leave_alive,
+        tree_leave_dead,
+    } BlockType;
 
-	struct BlockArrayElement
-	{
-		int x,y,z;
-		int block_id;
-		int type;
-		int state;
-	};
+    enum
+    {
+        tree_alive,
+        tree_dead,
+    } BlockState;
 
-	struct BlockArrayElement* ba;
-	int ban;
-	int bam;
+    struct BlockArrayElement
+    {
+        int x,y,z;
+        int block_id;
+        int type;
+        int state;
+    };
 
-	struct BlockArrayElement* c;	//current block/last added block
+    struct BlockArrayElement* ba;
+    int ban;
+    int bam;
 
-	void init()
-	{
-		ban = 0;
-		bam = 1024;
-		ba = new struct BlockArrayElement[bam];
+    struct BlockArrayElement* c;    //current block/last added block
 
-		for(int i=0;i<bam;i++)
-			ba[i].type = tree_error;
-	}
+    void init()
+    {
+        ban = 0;
+        bam = 1024;
+        ba = new struct BlockArrayElement[bam];
 
-	void teardown() {}
+        for (int i=0;i<bam;i++)
+            ba[i].type = tree_error;
+    }
 
-	void add(int x, int y, int z, int type, int state)
-	{
-		if(ban == bam)
-		{
-			printf("Warning: BlockList::add failed, list full \n");
-			return;
-		}
+    void teardown() {}
 
-		ba[ban].x = x;
-		ba[ban].y = y;
-		ba[ban].z = z;
-		ba[ban].type  = type;
-		ba[ban].state = state;
+    void add(int x, int y, int z, int type, int state)
+    {
+        if (ban == bam)
+        {
+            printf("Warning: BlockList::add failed, list full \n");
+            return;
+        }
 
-		c = &ba[ban];
-		ban++;
-	}
+        ba[ban].x = x;
+        ba[ban].y = y;
+        ba[ban].z = z;
+        ba[ban].type  = type;
+        ba[ban].state = state;
 
-	void remove(int x, int y, int z)
-	{
+        c = &ba[ban];
+        ban++;
+    }
 
-		for(int i=0;i<ban;i++)
-		{
-			if(ba[i].x == x && ba[i].y == y && ba[i].z == z)
-			{
-				GS_ASSERT(ban > 0);
-				ban--;
-				ba[i] = ba[ban];
-				return;
-			}
-		}
-		printf("ERROR BlockList: remove, could not remove block, block not in list \n");
-	}
+    void remove(int x, int y, int z)
+    {
 
-	void check_blocks()
-	{
-		for(int i=0; i<bam; i++)
-		{
-			// do something?
-		}
-	}
+        for (int i=0;i<ban;i++)
+        {
+            if (ba[i].x == x && ba[i].y == y && ba[i].z == z)
+            {
+                GS_ASSERT(ban > 0);
+                ban--;
+                ba[i] = ba[ban];
+                return;
+            }
+        }
+        printf("ERROR BlockList: remove, could not remove block, block not in list \n");
+    }
 
-	static inline bool _adj(int x, int y, int z, int _x,int _y,int _z)
-	{
-		const int bit = 512-1;
+    void check_blocks()
+    {
+        for (int i=0; i<bam; i++)
+        {
+            // do something?
+        }
+    }
 
-		if( y == _y && z == _z && (((x == ((_x-1) & bit)) || (x == ((_x+1) & bit)))) )
-		{
-			return true;
-		}
+    static inline bool _adj(int x, int y, int z, int _x,int _y,int _z)
+    {
+        const int bit = 512-1;
 
-		if( x == _x && z == _z && ((y == ((_y-1) & bit)) || (y == ((_y+1) & bit))) )
-		{
-			return true;
-		}
+        if (y == _y && z == _z && (((x == ((_x-1) & bit)) || (x == ((_x+1) & bit)))))
+        {
+            return true;
+        }
 
-		if( x == _x && y == _y && ((z == ((_z-1) & bit)) || (z == ((_z+1) & bit))) )
-		{
-			return true;
-		}
+        if (x == _x && z == _z && ((y == ((_y-1) & bit)) || (y == ((_y+1) & bit))))
+        {
+            return true;
+        }
 
-		return false;
-	}
-	//returns list indices of blocks adjccent to current block
-	void adjacent_blocks(int index, int* b_array, int* num_results)
-	{
-		int num=0;
+        if (x == _x && y == _y && ((z == ((_z-1) & bit)) || (z == ((_z+1) & bit))))
+        {
+            return true;
+        }
 
-		int x = ba[index].x;
-		int y = ba[index].y;
-		int z = ba[index].z;
+        return false;
+    }
+    //returns list indices of blocks adjccent to current block
+    void adjacent_blocks(int index, int* b_array, int* num_results)
+    {
+        int num=0;
 
-		for(int i=0; i<ban; i++)
-		{
+        int x = ba[index].x;
+        int y = ba[index].y;
+        int z = ba[index].z;
 
-			if(!_adj(x,y,z, ba[i].x,ba[i].y,ba[i].z))
-				continue;
-			b_array[num] = i;
-			num++;
-		}
-		*num_results = num;
-	/*
-		GS_ASSERT(num <= 6);
-		if(num > 0)
-			printf("adj: %d %d %d \n", x,y,z);
-		for(int i=0; i<num; i++)
-		{
-			int in = b_array[i];
-			printf("_adj: %d: %d %d %d \n", i, ba[in].x,ba[in].y,ba[in].z );
-		}
-	*/
-	}
+        for (int i=0; i<ban; i++)
+        {
+
+            if (!_adj(x,y,z, ba[i].x,ba[i].y,ba[i].z))
+                continue;
+            b_array[num] = i;
+            num++;
+        }
+        *num_results = num;
+    /*
+        GS_ASSERT(num <= 6);
+        if (num > 0)
+            printf("adj: %d %d %d \n", x,y,z);
+        for (int i=0; i<num; i++)
+        {
+            int in = b_array[i];
+            printf("_adj: %d: %d %d %d \n", i, ba[in].x,ba[in].y,ba[in].z);
+        }
+    */
+    }
 };
 
 } // end t_plant

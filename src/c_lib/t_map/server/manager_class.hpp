@@ -117,14 +117,14 @@ class Map_manager
         ychunk_dim = t->ychunk_dim;
 
         version_list = new MAP_MANAGER_ELEMENT[xchunk_dim*ychunk_dim];
-        for(int i=0; i < MAP_MANAGER_ALIAS_LIST_SIZE; i++) alias_list[i] = NO_ALIAS;
+        for (int i=0; i < MAP_MANAGER_ALIAS_LIST_SIZE; i++) alias_list[i] = NO_ALIAS;
     }
 
     ~Map_manager()
     {
-        for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
+        for (int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
         {
-            if( alias_list[i] == NO_ALIAS) continue;
+            if (alias_list[i] == NO_ALIAS) continue;
             unsub(i);
         }
 
@@ -183,7 +183,7 @@ void Map_manager::end_compressor()
 
 void Map_manager::send_compressed_chunk(int alias, int index)
 {
-    if(t->chunk[index] == NULL)
+    if (t->chunk[index] == NULL)
     {
         printf("Map_manager::send_compressed_chunk, fatal error! NULL map chunk \n");
         return;
@@ -210,7 +210,7 @@ void Map_manager::send_compressed_chunk(int alias, int index)
 
 void Map_manager::send_uncompressed_chunk(int alias, int index)
 {
-    if(t->chunk[index] == NULL) return;
+    if (t->chunk[index] == NULL) return;
 
     map_chunk_uncompressed_StoC c;
 
@@ -255,9 +255,9 @@ void Map_manager::update()
     GS_ASSERT(xpos >= 0 && xpos <= 512.0);
     GS_ASSERT(ypos >= 0 && ypos <= 512.0);
 
-    for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
+    for (int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
-        if( alias_list[i] == NO_ALIAS) continue;  //QUED || NO_ALIAS
+        if (alias_list[i] == NO_ALIAS) continue;  //QUED || NO_ALIAS
 
         int x = 16*(alias_list[i] % xchunk_dim)+8;
         int y = 16*(alias_list[i] / ychunk_dim)+8;
@@ -268,7 +268,7 @@ void Map_manager::update()
         int dx = xpos - quadrant_translate_i(xpos, x);
         int dy = ypos - quadrant_translate_i(ypos, y);
 
-        if( dx*dx+dy*dy > UNSUB_RADIUS2 ) unsub(i);
+        if (dx*dx+dy*dy > UNSUB_RADIUS2) unsub(i);
 
     }
 
@@ -288,14 +288,14 @@ void Map_manager::update()
     //printf("xpos= %i ypos= %i \t imin= %i imax= %i jmin= %i jmax= %i \n", xpos, ypos, imin,imax, jmin,jmax);
 
     //printf("imin, imax = %i %i jmin jmax = %i %i \n", imin,imax, jmin,jmax);
-    for(int i=imin; i != imax; i= (i+1)& CHUNK_BIT_MASK )
-    for(int j=jmin; j != jmax; j= (j+1)& CHUNK_BIT_MASK )
+    for (int i=imin; i != imax; i= (i+1)& CHUNK_BIT_MASK)
+    for (int j=jmin; j != jmax; j= (j+1)& CHUNK_BIT_MASK)
     {
         //i &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
 
         unsigned int version = version_list[j*xchunk_dim + i].version;
-        if( version == SUBSCRIBED || version == QUED ) continue;
+        if (version == SUBSCRIBED || version == QUED) continue;
 
 /*
     Quadrant Math
@@ -303,14 +303,14 @@ void Map_manager::update()
         int x = xpos - quadrant_translate_i(xpos, i*16 + 8);
         int y = ypos - quadrant_translate_i(ypos, j*16 + 8);
 
-        if(x*x+y*y >= SUB_RADIUS2 ) continue;
+        if (x*x+y*y >= SUB_RADIUS2) continue;
         //int x = xpos - (i*16 + 8);
         //int y = ypos - (j*16 + 8);
 
-        //if( x + y*y >= SUB_RADIUS2 ) continue;
+        //if (x + y*y >= SUB_RADIUS2) continue;
         //printf("sub %i %i \n", i,j);
 
-        if(i<0 || i >= xchunk_dim || j<0 || j >= ychunk_dim) printf("Map_manager::update(), ERROR!!!\n");
+        if (i<0 || i >= xchunk_dim || j<0 || j >= ychunk_dim) printf("Map_manager::update(), ERROR!!!\n");
 
         que_for_sub(i,j);
         //printf("que_for_sub: i,j= %i %i \t xpos= %i ypos= %i \n", i,j, xpos, ypos);
@@ -327,7 +327,7 @@ void Map_manager::que_for_sub(int x, int y)
 
     int index = y*xchunk_dim + x;
 
-    if(version_list[index].version == QUED)
+    if (version_list[index].version == QUED)
     {
         printf("Error: Map_manager::que_for_sub, adding to que twice!\n");
         return;
@@ -335,7 +335,7 @@ void Map_manager::que_for_sub(int x, int y)
 
     if (chunk_que_num == MAP_CHUNK_QUE_SIZE)
     {
-        printf("Map_manager::que_for_sub: Warning chunk_que_num == MAP_CHUNK_QUE_SIZEs \n" );
+        printf("Map_manager::que_for_sub: Warning chunk_que_num == MAP_CHUNK_QUE_SIZEs \n");
         return;
     }
 
@@ -357,7 +357,7 @@ void Map_manager::que_for_sub(int x, int y)
 /*
 static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, int xpos, int ypos)
 {
-    for(size_t i=0; i<n; i++)
+    for (size_t i=0; i<n; i++)
     {
         int x = xpos - quadrant_translate_i(xpos, arr[i].xpos);
         int y = ypos - quadrant_translate_i(ypos, arr[i].ypos);
@@ -365,23 +365,23 @@ static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned int n, in
     }
 
     #define QUE_ELEMENT_lt(a,b) ((a)->distance2 > (b)->distance2)
-    QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt );
+    QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt);
 }
 
 void Map_manager::sort_que()
 {
-    if(chunk_que_num == 0) return;
+    if (chunk_que_num == 0) return;
     QUE_ELEMENT_qsort(chunk_que, chunk_que_num, xpos, ypos);
 }
 */
 
 void Map_manager::sort_que()
 {
-    if( chunk_que_num == 0) return;
+    if (chunk_que_num == 0) return;
     QUE_ELEMENT *arr = chunk_que;
     const int n = chunk_que_num;
 
-    for(int i=0; i<chunk_que_num; i++)
+    for (int i=0; i<chunk_que_num; i++)
     {
         int x = xpos - quadrant_translate_i(xpos, arr[i].xpos);
         int y = ypos - quadrant_translate_i(ypos, arr[i].ypos);
@@ -389,7 +389,7 @@ void Map_manager::sort_que()
     }
 
     #define QUE_ELEMENT_lt(a,b) ((a)->distance2 > (b)->distance2)
-    QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt );
+    QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt);
 }
 
 void Map_manager::dispatch_que()
@@ -397,17 +397,17 @@ void Map_manager::dispatch_que()
 /*
     Future: Check if player is in radius and if not, then skip
 */
-    if( chunk_que_num == 0) return;
+    if (chunk_que_num == 0) return;
 
 
-    while(chunk_que_num > 0)
+    while (chunk_que_num > 0)
     {
         struct QUE_ELEMENT* q = &chunk_que[chunk_que_num-1];
 
         int dx = xpos - quadrant_translate_i(xpos, q->xpos);
         int dy = ypos - quadrant_translate_i(ypos, q->ypos);
         int distance2 = dx*dx + dy*dy;
-        if(distance2 <= SUB_RADIUS2)
+        if (distance2 <= SUB_RADIUS2)
         {
             sub(q->index, q->version);
             chunk_que_num--;
@@ -427,19 +427,19 @@ void Map_manager::dispatch_que()
 
 void Map_manager::send_chunk_item_containers(int chunk_index)
 {
-    if(t->chunk[chunk_index] == NULL) return;
+    if (t->chunk[chunk_index] == NULL) return;
     t->chunk[chunk_index]->chunk_item_container.send_chunk_item_containers(client_id);
 }
 
 void Map_manager::send_chunk_item_container_reset(int chunk_index)
 {
-    if(t->chunk[chunk_index] == NULL) return;
+    if (t->chunk[chunk_index] == NULL) return;
     t->chunk[chunk_index]->chunk_item_container.send_reset_chunk_item_containers(client_id);
 }
 
 void Map_manager::set_position(int x, int y)
 {
-    if(x != xpos || y != ypos) needs_update = true;
+    if (x != xpos || y != ypos) needs_update = true;
     xpos = x;
     ypos = y;
 }
@@ -451,7 +451,7 @@ void Map_manager::sub(int chunk_index, int version)
 
     //printf("sub chunk %i \n", chunk_index);
 
-    if( subed_chunks == MAP_MANAGER_ALIAS_LIST_SIZE)
+    if (subed_chunks == MAP_MANAGER_ALIAS_LIST_SIZE)
     {
         printf("FIX THIS!!! Map_manager::sub, alias list maxed out \n");
         return;
@@ -461,7 +461,7 @@ void Map_manager::sub(int chunk_index, int version)
     subed_chunks++;
 
     int alias=0;
-    while( alias_list[alias] != NO_ALIAS) alias++;
+    while (alias_list[alias] != NO_ALIAS) alias++;
     alias_list[alias] = chunk_index;
 
     //send subscription message
@@ -477,7 +477,7 @@ void Map_manager::unsub(int alias)
     int chunk_index = alias_list[alias];
 
 
-    if(version_list[chunk_index].version == QUED)
+    if (version_list[chunk_index].version == QUED)
     {
         printf("Error: Map_manager::unsub, unsubbing element on que!? wtf\n");
         return;

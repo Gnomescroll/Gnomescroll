@@ -105,12 +105,12 @@ static void threaded_write(const char* filename, char* buffer, int buffer_len)
     threaded_write_data.buffer = buffer;
     threaded_write_data.buffer_size = buffer_len;
 
-    //pthread_join( map_save_thread, NULL);
+    //pthread_join(map_save_thread, NULL);
     /* Create independent threads each of which will execute function */
 
     _threaded_write_running = true;
 
-    int ret = pthread_create( &map_save_thread, NULL, _threaded_write, (void*)NULL);
+    int ret = pthread_create(&map_save_thread, NULL, _threaded_write, (void*)NULL);
     if (ret != 0)
     {
         printf("threaded_write error: pthread_create returned %i \n", ret);
@@ -452,7 +452,7 @@ bool BlockSerializer::save_iter(int max_ms)
 
         int _ctime = _GET_MS_TIME();
 
-        if ( _ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
+        if (_ctime > start_ms + max_ms || abs(_ctime - start_ms) > 1000)
             return false; //yield after n ms
     }
 

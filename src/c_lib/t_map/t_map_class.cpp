@@ -18,7 +18,7 @@ namespace t_map
 */
 MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
 {
-    GS_ASSERT( (_xpos % TERRAIN_CHUNK_WIDTH) == 0 && (_ypos % TERRAIN_CHUNK_WIDTH) == 0 );
+    GS_ASSERT((_xpos % TERRAIN_CHUNK_WIDTH) == 0 && (_ypos % TERRAIN_CHUNK_WIDTH) == 0);
     #if DC_CLIENT
     needs_update = false;
     #endif
@@ -28,7 +28,7 @@ MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
 
     chunk_index = (ypos / TERRAIN_CHUNK_WIDTH)*(MAP_CHUNK_XDIM) + (xpos / TERRAIN_CHUNK_WIDTH);
     chunk_item_container.chunk_index = chunk_index;
-    memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
+    memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT));
 }
 
 
@@ -39,12 +39,12 @@ Terrain_map::Terrain_map(int _xdim, int _ydim)
 
     chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
 
-    for(int i=0; i<xchunk_dim*ychunk_dim; i++) 
+    for (int i=0; i<xchunk_dim*ychunk_dim; i++)
         chunk[i] = NULL;
 
     #if DC_SERVER
-    for(int i=0; i<xchunk_dim; i++)
-    for(int j=0; j<ychunk_dim; j++)
+    for (int i=0; i<xchunk_dim; i++)
+    for (int j=0; j<ychunk_dim; j++)
         load_chunk(i,j);
     #endif
 
@@ -59,8 +59,8 @@ Terrain_map::~Terrain_map()
 {
     if (this->chunk != NULL)
     {
-        for(int i=0; i < xchunk_dim*ychunk_dim; i++)
-            if(this->chunk[i] != NULL) delete this->chunk[i];
+        for (int i=0; i < xchunk_dim*ychunk_dim; i++)
+            if (this->chunk[i] != NULL) delete this->chunk[i];
         delete[] this->chunk;
     }
 }
@@ -71,9 +71,9 @@ Height Cache
 
 void MAP_CHUNK::refresh_height_cache()
 {
-    for(int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
-    for(int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
-    for(int k=ZMAX-1; k>=0; k--)
+    for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
+    for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
+    for (int k=ZMAX-1; k>=0; k--)
     {
         if (isSolid((CubeType)e[(k<<8)+(j<<4)+i].block))
         {
@@ -104,7 +104,7 @@ struct MAP_ELEMENT Terrain_map::get_element(int x, int y, int z)
 {
     #if T_MAP_GET_OPTIMIZED
     // don't assert here -- some methods that use this will naturally pass in -1
-    // and its intended 
+    // and its intended
     //IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_MAP_ELEMENT;
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_MAP_ELEMENT;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -113,10 +113,10 @@ struct MAP_ELEMENT Terrain_map::get_element(int x, int y, int z)
     class MAP_CHUNK* c;
 
     c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-    if(c == NULL) return NULL_MAP_ELEMENT;
+    if (c == NULL) return NULL_MAP_ELEMENT;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
-    #else    
+    #else
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_MAP_ELEMENT;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -126,7 +126,7 @@ struct MAP_ELEMENT Terrain_map::get_element(int x, int y, int z)
         int xchunk = (x >> 4);
         int ychunk = (y >> 4);
         c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
-        if( c == NULL ) return NULL_MAP_ELEMENT;
+        if (c == NULL) return NULL_MAP_ELEMENT;
     }
 
     int xi = x & 15; //bit mask
@@ -144,13 +144,13 @@ void Terrain_map::set_update(int x, int y)
     class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
     //GS_ASSERT(c != NULL);
-    if( c != NULL ) 
+    if (c != NULL)
         c->needs_update = true;
 }
 #endif
 
 /*
-Set Methods 
+Set Methods
 */
 
 
@@ -191,12 +191,12 @@ void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
 
     #if DC_CLIENT
-    c->needs_update = true; 
+    c->needs_update = true;
 
-    if((x & 15) == 0)  set_update(x-1,y);
-    if((x & 15) == 15) set_update(x+1,y);
-    if((y & 15) == 0)  set_update(x,y-1);
-    if((y & 15) == 15) set_update(x,y+1);
+    if ((x & 15) == 0)  set_update(x-1,y);
+    if ((x & 15) == 15) set_update(x+1,y);
+    if ((y & 15) == 0)  set_update(x,y-1);
+    if ((y & 15) == 15) set_update(x,y+1);
     #endif
 }
 
@@ -213,17 +213,17 @@ int Terrain_map::get_damage(int x, int y, int z)
 
         c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
 
-        if( c == NULL ) return -3;
+        if (c == NULL) return -3;
     }
 
     int xi = x & 15; //bit mask
     int yi = y & 15; //bit mask
     struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
-    
+
     return e->damage;
 }
 
-// return negative on error, 0 on destruction of underlying block, or total damage so far on block 
+// return negative on error, 0 on destruction of underlying block, or total damage so far on block
 int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
 {
     if (dmg <= 0) return -4;
@@ -239,43 +239,43 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
 
         c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
 
-        if( c == NULL ) return -3;
+        if (c == NULL) return -3;
     }
 
     int xi = x & 15; //bit mask
     int yi = y & 15; //bit mask
 
     struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
-    
+
     *cube_type = (CubeType)e->block;
 
-    if(e->block == 0) return -1;
+    if (e->block == 0) return -1;
     int maxdmg = maxDamage((CubeType)e->block);
     if (maxdmg >= INVINCIBLE_CUBE_DAMAGE) return -5;
-    if(e->damage + dmg >= maxdmg) 
+    if (e->damage + dmg >= maxdmg)
     {
         e->damage = maxdmg;
 
         //moved to set function
 /*
         // destroy block
-        *e = NULL_MAP_ELEMENT;   
+        *e = NULL_MAP_ELEMENT;
         _push_envlight_update2(x,y,z); //light update
 
         #if DC_SERVER
-        if(isItemContainer(*cube_type))
+        if (isItemContainer(*cube_type))
             destroy_item_container_block(x,y,z);
         if (isExplosive(*cube_type))
             handle_explosive_block(x,y,z);
         #endif
 
         #if DC_CLIENT
-        c->needs_update = true; 
+        c->needs_update = true;
 
-        if((x & 15) == 0)  set_update(x-1,y);
-        if((x & 15) == 15) set_update(x+1,y);
-        if((y & 15) == 0)  set_update(x,y-1);
-        if((y & 15) == 15) set_update(x,y+1);
+        if ((x & 15) == 0)  set_update(x-1,y);
+        if ((x & 15) == 15) set_update(x+1,y);
+        if ((y & 15) == 0)  set_update(x,y-1);
+        if ((y & 15) == 15) set_update(x,y+1);
         #endif
 
         #if DC_SERVER
@@ -283,8 +283,8 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
         #endif
 */
         return 0;   //tells it to set to 0
-    } 
-    else 
+    }
+    else
     {
         e->damage += dmg;
         return e->damage;
@@ -312,11 +312,11 @@ void Terrain_map::chunk_received(int cx, int cy)
             for (h=map_dim.z-1; h>=0; h--)
                 if (isSolid(m->get_block(x,y,h))) break;
             h += 1;
-            
+
             if (h > highest) highest = h;
             this->column_heights[x + y*MAP_WIDTH] = h;
         }
-        
+
     this->chunk_heights_status[cx + cy*MAP_CHUNK_XDIM] = CHUNK_HEIGHT_CHANGED;
     this->height_changed = true;
 
@@ -329,26 +329,26 @@ void Terrain_map::chunk_received(int cx, int cy)
 
     CX = (cx+1) % CW;
     CY = cy;
-    if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
+    if (chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
         chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
     CX = (cx+CW1) % CW;
     CY = cy;
-    if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
+    if (chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
         chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
     CX = cx;
     CY = (cy+1) % CW;
-    if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
+    if (chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
         chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
     CX = cx;
     CY = (cy+CW1) % CW;
-    if(chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
+    if (chunk[ MAP_CHUNK_XDIM*CY + CX ] != NULL)
         chunk[ MAP_CHUNK_XDIM*CY + CX ]->needs_update = true;
 
     //DEBUG
-    GS_ASSERT( ((cy+CW1) % CW) == ((cy-1) & MASK) );
+    GS_ASSERT(((cy+CW1) % CW) == ((cy-1) & MASK));
     /*
         Init Update Lighting
     */
@@ -433,7 +433,7 @@ void Terrain_map::set_block(int x, int y, int z, CubeType cube_type)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     struct MAP_ELEMENT element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
-    
+
     set_element(x,y,z, element);
 
     #if DC_CLIENT
@@ -478,7 +478,7 @@ inline int Terrain_map::get_height(int x, int y)
 
     class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     IF_ASSERT(c == NULL) return 0;
-    
+
     return c->height_cache[ ((y&(TERRAIN_CHUNK_WIDTH-1))<<4) + (x&(TERRAIN_CHUNK_WIDTH-1)) ];
 }
 
@@ -489,7 +489,7 @@ void Terrain_map::load_chunk(int i, int j)
     IF_ASSERT(i < 0 || i >= xchunk_dim || j < 0 || j >= ychunk_dim) return;
     GS_ASSERT(this->chunk[xchunk_dim*j + i ] == NULL);
     this->chunk[xchunk_dim*j+i] = new MAP_CHUNK(TERRAIN_CHUNK_WIDTH*i, TERRAIN_CHUNK_WIDTH*j);
-}      
+}
 
 
 //only entry point for unloading chunks
@@ -506,10 +506,10 @@ void Terrain_map::unload_chunk(int i, int j)
 
 void Terrain_map::lighting_rolling_update()
 {
-    for(int i=0; i<32; i++)
-    for(int j=0; j<32; j++)
+    for (int i=0; i<32; i++)
+    for (int j=0; j<32; j++)
     {
-        if(this->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
+        if (this->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
             continue;
         _lighting_rolling_update(i,j);
     }

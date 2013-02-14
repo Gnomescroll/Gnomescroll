@@ -19,30 +19,30 @@
 /*
 void setupwindow(SDL_WindowID *window, SDL_GLContext *context)
 {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) // Initialize SDL's Video subsystem 
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) // Initialize SDL's Video subsystem
         sdldie("Unable to initialize SDL"); // Or die on error
- 
+
     // Request an opengl 3.2 context.
    //SDL doesn't have the ability to choose which profile at this time of writing,
-    //but it should default to the core profile 
+    //but it should default to the core profile
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
- 
+
     // Turn on double buffering with a 24bit Z buffer.
     // You may need to change this to 16 or 32 for your system
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
- 
-    //Create our window centered at 512x512 resolution 
+
+    //Create our window centered at 512x512 resolution
     *window = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         512, 512, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-    if (!*window) // Die if creation failed 
+    if (!*window) // Die if creation failed
         sdldie("Unable to create window");
- 
-    //Create our opengl context and attach it to our window 
+
+    //Create our opengl context and attach it to our window
     *context = SDL_GL_CreateContext(*window);
- 
-    // This makes our buffer swap syncronized with the monitor's vertical refresh 
+
+    // This makes our buffer swap syncronized with the monitor's vertical refresh
     SDL_GL_SetSwapInterval(1);
 }
 */
@@ -53,19 +53,15 @@ int DisplayBox()
     #ifdef _WIN32
     const char title[] = "Error: check console log";
     const char msg[] = "Possible Error";
-    int msgboxID = MessageBox(
-        NULL,
-        (LPCTSTR)title,
-        (LPCTSTR)msg,
-        MB_OK | MB_ICONWARNING
-    );
-
+    int msgboxID = MessageBox(NULL,
+                              (LPCTSTR)title,
+                              (LPCTSTR)msg,
+                              MB_OK | MB_ICONWARNING);
     switch (msgboxID)
     {
         case IDOK:
             break;
     }
-
     return msgboxID;
     #endif
     return 0;
@@ -84,30 +80,24 @@ int glVersionErrorPopup(const char* gl_version, const char* gl_gpu)
     char* msg = (char*)malloc((msg_len+1) * sizeof(char));
     snprintf(msg, msg_len+1, msg_fmt, gl_version, gl_gpu);
     msg[msg_len] = '\0';
-    
+
     #ifdef _WIN32
     const char title[] = "Error";
-    int msgboxID = MessageBox(
-        NULL,
-        (LPCTSTR)title,
-        (LPCTSTR)msg,
-        MB_OK | MB_ICONWARNING
-    );
-
+    int msgboxID = MessageBox(NULL,
+                              (LPCTSTR)title,
+                              (LPCTSTR)msg,
+                              MB_OK | MB_ICONWARNING);
     switch (msgboxID)
     {
         case IDOK:
             enable_quit();
             break;
     }
-
     return msgboxID;
     #else
     printf("%s\n", msg);
     #endif
-
     free(msg);
-    
     return 0;
 }
 
@@ -118,22 +108,17 @@ int VersionMismatchBox(int local_version, int server_version)
     char* message = (char*)malloc((sizeof(message_fmt) + 1 + 20 - 4) * sizeof(char));
     sprintf(message, message_fmt, local_version, server_version);
     char title[] = "Version out of date!";
-    int msgboxID = MessageBox(
-        NULL,
-        (LPCTSTR)message,
-        (LPCTSTR)title,
-        MB_OK | MB_ICONWARNING
-    );
-
+    int msgboxID = MessageBox(NULL,
+                              (LPCTSTR)message,
+                              (LPCTSTR)title,
+                              MB_OK | MB_ICONWARNING);
     switch (msgboxID)
     {
         case IDOK:
             enable_quit();
             break;
     }
-
     free(message);
-
     return msgboxID;
     #endif
     return 0;
@@ -151,7 +136,7 @@ SDL_VideoInfo *pSDLVideoInfo;
 void _del_video() {
 
     static int SDL_CLOSED = 0;
-    if(SDL_CLOSED++)
+    if (SDL_CLOSED++)
     {
         printf("Warning! SDL un-init function called twiced! \n");
         return;
@@ -160,7 +145,7 @@ void _del_video() {
     SDL_Quit();
 }
 
-void close_SDL() 
+void close_SDL()
 {
     _del_video();
 }
@@ -238,10 +223,10 @@ int init_video()
     int value;
 
     printf("Creating SDL window\n");
-    //SDL_Init( SDL_INIT_VIDEO ); // Initialise the SDL Video bit
+    //SDL_Init(SDL_INIT_VIDEO); // Initialise the SDL Video bit
 
     //-1 on error, 0 on success
-    if (SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1)
     {
        // Unrecoverable error, exit here.
        printf("SDL_Init failed: %s\n", SDL_GetError());
@@ -254,7 +239,7 @@ int init_video()
     SDL_WM_SetCaption("Gnomescroll", NULL);
 
     set_window_icon(MEDIA_PATH "icons/window.bmp");
-    
+
     const SDL_VideoInfo *pSDLVideoInfo = SDL_GetVideoInfo();
     //pSDLVideoInfo = SDL_GetVideoInfo();
     //printf("SDL_GetVideoInfo: %s\n", SDL_GetError());
@@ -268,33 +253,33 @@ int init_video()
     }
 
     nFlags = SDL_OPENGL; // | SDL_FULLSCREEN; //| SDL_GL_DOUBLEBUFFER; // | SDL_HWPALETTE;
-    
+
     if (_fullscreen)
         nFlags |= SDL_FULLSCREEN;
 /*
-    if( pSDLVideoInfo->hw_available ) // Hardware surfaces enabled?
+    if (pSDLVideoInfo->hw_available) // Hardware surfaces enabled?
         nFlags |= SDL_HWSURFACE;
     else {
         nFlags |= SDL_SWSURFACE;
-        printf( "SDL_HWSURFACE Error: Hardware surfaces not enabled!\n");
+        printf("SDL_HWSURFACE Error: Hardware surfaces not enabled!\n");
     }
-    if( pSDLVideoInfo->blit_hw ) // Hardware supported blitting?
+    if (pSDLVideoInfo->blit_hw) // Hardware supported blitting?
         nFlags |= SDL_HWACCEL;
     else
-        printf( "SDL_HWACCEL Error: Hardware blitting not enabled!\n");
+        printf("SDL_HWACCEL Error: Hardware blitting not enabled!\n");
 */
 
-    //if(0)
+    //if (0)
     //{//When the window is resized by the user a SDL_VIDEORESIZE event is generated and SDL_SetVideoMode can be called again with the new size.
         //nFlags |= SDL_RESIZABLE;
     //}
 
     nFlags |= SDL_DOUBLEBUF; // http://sdl.beuc.net/sdl.wiki/SDL_Flip
 
-    if(_multisampling)
+    if (_multisampling)
     {
-        SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 24 );
-        SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 ); // Enable OpenGL Doublebuffering
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // Enable OpenGL Doublebuffering
     }
     ///multisampling: no effect
     //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); //multisampling?
@@ -310,22 +295,22 @@ int init_video()
     //SDL_GL_MULTISAMPLESAMPLES
 
     // Create our rendering surface
-    ///SDL_Surface *pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
-    //pSDLSurface = SDL_SetVideoMode( 800, 600, 32, nFlags );
+    ///SDL_Surface *pSDLSurface = SDL_SetVideoMode(800, 600, 32, nFlags);
+    //pSDLSurface = SDL_SetVideoMode(800, 600, 32, nFlags);
 
     #ifdef linux
     if (_fullscreen != 0)
         _set_resolution(pSDLVideoInfo->current_w, pSDLVideoInfo->current_h, _fullscreen);
-    pSDLSurface = SDL_SetVideoMode( _xres, _yres, 32, nFlags );
+    pSDLSurface = SDL_SetVideoMode(_xres, _yres, 32, nFlags);
     #else
-    pSDLSurface = SDL_SetVideoMode( _xres, _yres, 32, nFlags );
+    pSDLSurface = SDL_SetVideoMode(_xres, _yres, 32, nFlags);
     #endif
-    
+
     //printf("SDL_SetVideoMode: %s\n", SDL_GetError());
 
-    if( !pSDLSurface )
+    if (!pSDLSurface)
     {
-        printf( "Call to SDL_SetVideoMode() failed! - SDL_Error: %s\n", SDL_GetError() );
+        printf("Call to SDL_SetVideoMode() failed! - SDL_Error: %s\n", SDL_GetError());
         DisplayBox();
         close_SDL();
         return 1;
@@ -333,7 +318,7 @@ int init_video()
 
     #ifdef __GNUC__
     SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
-    if(value) {
+    if (value) {
         //printf("Harware Acceleration Enabled \n");
     } else {
         printf("Warning: Hardware Acceleration Not Enabled!\n");
@@ -341,13 +326,13 @@ int init_video()
     #endif
 
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
-    if(value) {
+    if (value) {
         //printf("Double Buffering Enabled \n");
     } else {
         printf("Warning: Double Buffering Not Enabled!\n");
     }
 
-    if(_multisampling) {
+    if (_multisampling) {
         SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &value);
         printf("Multisampling: number of samples per pixel %i \n", value);
     } else {
@@ -386,36 +371,36 @@ int init_video()
     //glGetIntegerv(GL_MAJOR_VERSION, &OpenGLVersion[0]);
     //glGetIntegerv(GL_MINOR_VERSION, &OpenGLVersion[1]);
 
-    if(GLEW_ARB_multisample) {
+    if (GLEW_ARB_multisample) {
         //printf("ARB_MULTISAMPLE supported \n");
     } else {
         printf("ARB_MULTISAMPLE not supported \n");
     }
 /*
-    if(GLEW_EXT_provoking_vertex) 
+    if (GLEW_EXT_provoking_vertex)
     {
         //glProvokingVertexEXT(GL_FIRST_VERTEX_CONVENTION_EXT);
     } else {
         printf("warning: ProvokingVertex extention not supported \n");
     }
 */
-    if(GLEW_EXT_timer_query) {
-        if(PRODUCTION) printf("GL_EXT_timer_query supported\n");
+    if (GLEW_EXT_timer_query) {
+        if (PRODUCTION) printf("GL_EXT_timer_query supported\n");
     } else {
         printf("GL_EXT_timer_query not supported\n");
     }
 
-    if( GLEW_EXT_texture_array )
+    if (GLEW_EXT_texture_array)
     {
-        if(PRODUCTION) printf("GL_EXT_texture_array supported\n");
-    } else 
+        if (PRODUCTION) printf("GL_EXT_texture_array supported\n");
+    } else
     {
-        printf("GL_EXT_texture_array not supported\n"); 
+        printf("GL_EXT_texture_array not supported\n");
     }
 
     //printf("SDL: %s\n", SDL_GetError());
 
-    //if(GLEW_ATI_meminfo) { ati_meminfo(); } 
+    //if (GLEW_ATI_meminfo) { ati_meminfo(); }
 
     //printf("Finished OpenGL init\n");
 
@@ -441,7 +426,7 @@ const int _SDL_SWAP_DEBUG = 0;
 
 /*
     !!! Can assume fixed offsets for timing
-    OpenGL by default syncs to the monitor refresh. You need to use wglSwapIntervalEXT() to turn it off 
+    OpenGL by default syncs to the monitor refresh. You need to use wglSwapIntervalEXT() to turn it off
 
     Swap Interval
     http://www.opengl.org/wiki/Swap_Interval
@@ -450,21 +435,21 @@ const int _SDL_SWAP_DEBUG = 0;
 /*
 !!!
 
-A swap interval greater than 0 means that the GPU may force the CPU to wait due to previously issued buffer swaps. 
-For example, if the v-blank intervals come at 16.6ms intervals (60fps refresh), but the rendering of a frame only takes 4ms, 
-then buffer swaps can back up. Therefore, the CPU driver will stall the rendering thread in an OpenGL command 
+A swap interval greater than 0 means that the GPU may force the CPU to wait due to previously issued buffer swaps.
+For example, if the v-blank intervals come at 16.6ms intervals (60fps refresh), but the rendering of a frame only takes 4ms,
+then buffer swaps can back up. Therefore, the CPU driver will stall the rendering thread in an OpenGL command
 (it doesn't have to be in a buffer swapping command) if there are too many commands waiting for the v-blank.
 
-Alternatively, if the renderer takes slightly longer than the v-blank intervals to render, say 18ms, 
-then a different problem can result. It will effectively take two full v-blank intervals to display an image to the user, 
-turning a 60fps program into a 30fps program. It will also induce stalls, for the same reason as above: the GPU has 
+Alternatively, if the renderer takes slightly longer than the v-blank intervals to render, say 18ms,
+then a different problem can result. It will effectively take two full v-blank intervals to display an image to the user,
+turning a 60fps program into a 30fps program. It will also induce stalls, for the same reason as above: the GPU has
 to wait 15.2ms every other v-blank interval for a buffer swap. Rendering calls made in that time will
  back up, eventually forcing a stall to wait for the actual swap.
 
-Note that the problem of OpenGL commands backing up due to a waiting v-blank happen because these commands are trying to affect the back buffer. 
-If they do not affect the back buffer, either by rendering to a framebuffer object, another form of off-screen buffer, or something else that isn't the 
-back or front buffers, then these rendering commands can be scheduled as normal. Assuming that there are no other issues that would prevent such 
-execution (trying to render to a buffer that is being read from, for example). Thus, one can ease the CPU burden on waiting for v-blanks by 
+Note that the problem of OpenGL commands backing up due to a waiting v-blank happen because these commands are trying to affect the back buffer.
+If they do not affect the back buffer, either by rendering to a framebuffer object, another form of off-screen buffer, or something else that isn't the
+back or front buffers, then these rendering commands can be scheduled as normal. Assuming that there are no other issues that would prevent such
+execution (trying to render to a buffer that is being read from, for example). Thus, one can ease the CPU burden on waiting for v-blanks by
 rendering to a third buffer, then blitting that to the back buffer, and then doing a swap. This is commonly called "triple buffering".
 
 */
@@ -480,23 +465,23 @@ int _swap_buffers()
 {
     int _time1;
 
-    if(_SDL_SWAP_DEBUG)
+    if (_SDL_SWAP_DEBUG)
     {
        _time1 = SDL_GetTicks();
     }
-    
+
     // Do not call glFlush() before SDL_GL_SwapBuffers since the latter implies the former.
 
     //SDL_GL_SwapBuffers();
     //glFlush();
     //glFinish();
     SDL_GL_SwapBuffers();
-    
-    if(_SDL_SWAP_DEBUG)
+
+    if (_SDL_SWAP_DEBUG)
     {
         int _time2 = SDL_GetTicks();
 
-        _s_index = (_s_index + 1 )%_L;
+        _s_index = (_s_index + 1)%_L;
 
         _s2_buffer[_s_index] = _time2 - _last_frame_t;
         _s_buffer[_s_index] = _time2 - _time1;
@@ -505,13 +490,13 @@ int _swap_buffers()
         int _flip_time = _time2 - _time1;
 
 
-        if(_flip_time > 2) {
+        if (_flip_time > 2) {
             printf("Warning: SDL buffer swap took %i ms\n", _flip_time);
             //can do stuff here!!!
             int i;
-            for(i=0; i < 8; i++) {
-                printf("frame %i: %i ms, %i ms\n", i, _s_buffer[(_L+_s_index-i)%_L], _s2_buffer[(_L+_s_index-i)%_L] );
-                //printf("frame %i: %i ms, %i ms\n", i, _s_buffer[(_s_index+i)%_L], _s2_buffer[(_s_index+i)%_L] );
+            for (i=0; i < 8; i++) {
+                printf("frame %i: %i ms, %i ms\n", i, _s_buffer[(_L+_s_index-i)%_L], _s2_buffer[(_L+_s_index-i)%_L]);
+                //printf("frame %i: %i ms, %i ms\n", i, _s_buffer[(_s_index+i)%_L], _s2_buffer[(_s_index+i)%_L]);
             }
         }
     }
@@ -533,8 +518,8 @@ void save_screenshot()
 
     glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
 
-    for(int i=0; i < _xres; i++)
-    for(int j=0; j < _yres; j++)
+    for (int i=0; i < _xres; i++)
+    for (int j=0; j < _yres; j++)
         PBUFFER[4*(_xres*j + i) + 3] = 255;
 
     void* temp_row = (void*)malloc(4*_xres);
@@ -545,17 +530,17 @@ void save_screenshot()
         int h = _yres;
 
         int height_div_2 = (int) (_yresf * 0.5f);
-        for (int index = 0; index < height_div_2; index++)    
+        for (int index = 0; index < height_div_2; index++)
         {
-            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
-        free(temp_row); 
+        free(temp_row);
     }
 
     size_t png_size;
-    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) PBUFFER, _xres, _yres, 4, &png_size);
 
     const int LAST_FILENAME_LEN = 128;
@@ -578,7 +563,7 @@ void save_screenshot()
         GS_ASSERT(count_digits(ext_ct) <= 2);
         if (count_digits(ext_ct) > 2) ext_ct = 99;
         wrote = snprintf(filename, len, ext_fmt, filename, ext_ct);
-        
+
         for (int i=0; i<wrote; i++) // convert : to _
             if (filename[i] == ':') filename[i] = '_';
     }
@@ -586,10 +571,10 @@ void save_screenshot()
         ext_ct = 0;
     strncpy(last_filename, filename, LAST_FILENAME_LEN);
     GS_ASSERT(!strcmp(last_filename, filename));
-    
+
     const char final_fmt[] = "%s.%s";
     sprintf(filename, final_fmt, last_filename, ext);
-    
+
     printf("Saving screenshot to %s\n", filename);
 
     FILE* pFile = fopen(filename , "wb");

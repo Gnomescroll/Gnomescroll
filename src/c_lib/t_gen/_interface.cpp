@@ -28,8 +28,8 @@ void populate_2d_noise_array(float* _2d_noise_array, float persistence, int octa
     class PerlinOctave2D* p2d = new class PerlinOctave2D(octaves);
 
     float sum = 0.0f;
-    for(int i=0; i<XMAX; i++)
-    for(int j=0; j<YMAX; j++)
+    for (int i=0; i<XMAX; i++)
+    for (int j=0; j<YMAX; j++)
     {
         float _x = i*(1.0f/(float)XMAX); // + (0.5/512.0);
         float _y = j*(1.0f/(float)YMAX); // + (0.5/512.0);
@@ -77,23 +77,23 @@ void save_png(const char* filename, float* in, int xres, int yres)
 
     static unsigned char gamma_correction[256];
 
-    for(int i=0; i < 256; i++)
+    for (int i=0; i < 256; i++)
     {
         float intensity = ((float) i) / 255;
         intensity = powf(intensity, 1.0f/2.2f)*255;
         gamma_correction[i] = (unsigned char)((int) intensity);
     }
 
-    for(int i=0; i < xres; i++)
-    for(int j=0; j < yres; j++)
+    for (int i=0; i < xres; i++)
+    for (int j=0; j < yres; j++)
     {
         int index = 4*(j*xres + i);
 
         float _v = in[j*xres+i];
 
-        if( _v < 0.0) _v = 0.0f;
-        if( _v > 1.0) _v = 1.0f;
-        unsigned char v = ((int) 255.0f*_v );
+        if (_v < 0.0) _v = 0.0f;
+        if (_v > 1.0) _v = 1.0f;
+        unsigned char v = ((int) 255.0f*_v);
         unsigned char v2 = gamma_correction[v];
 
         PBUFFER[index+0] = v2;
@@ -102,8 +102,8 @@ void save_png(const char* filename, float* in, int xres, int yres)
         PBUFFER[index+3] = 255;
     }
 
-    for(int i=0; i < xres; i++)
-    for(int j=0; j < yres; j++)
+    for (int i=0; i < xres; i++)
+    for (int j=0; j < yres; j++)
     {
         PBUFFER[4*(xres*j + i) + 3] = 255;
     }
@@ -114,7 +114,7 @@ void save_png(const char* filename, float* in, int xres, int yres)
         int height_div_2;
 
         temp_row = (void *)malloc(4*xres);
-        if(NULL == temp_row)
+        if (NULL == temp_row)
         {
             printf("save_screenshot: not enough memory for surface inversion \n");
             return;
@@ -123,27 +123,27 @@ void save_png(const char* filename, float* in, int xres, int yres)
         int h = yres;
 
         height_div_2 = (int) (yres * .5);
-        for(index = 0; index < height_div_2; index++)
+        for (index = 0; index < height_div_2; index++)
         {
-            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
         free(temp_row);
     }
 
     size_t png_size;
-    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) PBUFFER, xres, yres, 4, &png_size);
 
     FILE * pFile;
-    pFile = fopen ( FileName , "wb" );
-    if(!pFile)
+    pFile = fopen (FileName , "wb");
+    if (!pFile)
     {
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
     }
-    fwrite (PNG_IMAGE , 1 , png_size, pFile );
+    fwrite (PNG_IMAGE , 1 , png_size, pFile);
     fclose (pFile);
 
     free(PBUFFER);
@@ -160,25 +160,25 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
 
     static unsigned char gamma_correction[256];
 
-    for(int i=0; i< 256; i++)
+    for (int i=0; i< 256; i++)
     {
         float intensity = ((float) i) / 255;
         intensity = powf(intensity, 1.0f/2.2f)*255;
         gamma_correction[i] = (unsigned char)((int) intensity);
     }
 
-    for(int i=0; i < xres; i++)
-    for(int j=0; j < yres; j++)
+    for (int i=0; i < xres; i++)
+    for (int j=0; j < yres; j++)
     {
         int index = 4*(j*xres + i);
 
         float _v = in[j*xres+i];
 
-        if( _v < 0.0f)
+        if (_v < 0.0f)
         {
             _v *= -1;
-            if( _v > 1.0f) _v = 1.0f;
-            unsigned char v = ((int) 255.0f*_v );
+            if (_v > 1.0f) _v = 1.0f;
+            unsigned char v = ((int) 255.0f*_v);
             unsigned char v2 = gamma_correction[v];
 
             PBUFFER[index+0] = 0;
@@ -188,8 +188,8 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
         }
         else
         {
-            if( _v > 1.0f) _v = 1.0f;
-            unsigned char v = ((int) 255.0f*_v );
+            if (_v > 1.0f) _v = 1.0f;
+            unsigned char v = ((int) 255.0f*_v);
             unsigned char v2 = gamma_correction[v];
 
             PBUFFER[index+0] = 0;
@@ -199,8 +199,8 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
         }
     }
 
-    for(int i=0; i < xres; i++)
-    for(int j=0; j < yres; j++)
+    for (int i=0; i < xres; i++)
+    for (int j=0; j < yres; j++)
     {
         PBUFFER[4*(xres*j + i) + 3] = 255;
     }
@@ -211,7 +211,7 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
         int height_div_2;
 
         temp_row = (void *)malloc(4*xres);
-        if(NULL == temp_row)
+        if (NULL == temp_row)
         {
             printf("save_screenshot: not enough memory for surface inversion \n");
             return;
@@ -220,28 +220,28 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
         int h = yres;
 
         height_div_2 = (int) (yres * .5);
-        for(index = 0; index < height_div_2; index++)
+        for (index = 0; index < height_div_2; index++)
         {
-            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
         free(temp_row);
     }
 
     size_t png_size;
-    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) PBUFFER, xres, yres, 4, &png_size);
 
     FILE * pFile;
-    pFile = fopen ( FileName , "wb" );
+    pFile = fopen (FileName , "wb");
 
-    if(!pFile)
+    if (!pFile)
     {
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
     }
-    fwrite (PNG_IMAGE , 1 , png_size, pFile );
+    fwrite (PNG_IMAGE , 1 , png_size, pFile);
     fclose (pFile);
 
     free(PBUFFER);

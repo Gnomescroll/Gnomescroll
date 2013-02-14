@@ -20,13 +20,13 @@
  */
 
 
-void printmat( float mat[4][4] )
+void printmat(float mat[4][4])
 {
     int x, y;
 
     fprintf(stderr,"\n");
-    for(y=0; y<4; y++) {
-    for(x=0; x<4; x++)
+    for (y=0; y<4; y++) {
+    for (x=0; x<4; x++)
        fprintf(stderr,"%f ",mat[y][x]);
         fprintf(stderr,"\n");
     }
@@ -44,19 +44,19 @@ void applymatrix(unsigned int *ptr, float mat[4][4], int n)
     unsigned char *cptr;
 
     cptr = (unsigned char *)ptr;
-    while(n--) {
+    while (n--) {
     ir = cptr[OFFSET_R];
     ig = cptr[OFFSET_G];
     ib = cptr[OFFSET_B];
     r = ir*mat[0][0] + ig*mat[1][0] + ib*mat[2][0] + mat[3][0];
     g = ir*mat[0][1] + ig*mat[1][1] + ib*mat[2][1] + mat[3][1];
     b = ir*mat[0][2] + ig*mat[1][2] + ib*mat[2][2] + mat[3][2];
-    if(r<0) r = 0;
-    if(r>255) r = 255;
-    if(g<0) g = 0;
-    if(g>255) g = 255;
-    if(b<0) b = 0;
-    if(b>255) b = 255;
+    if (r<0) r = 0;
+    if (r>255) r = 255;
+    if (g<0) g = 0;
+    if (g>255) g = 255;
+    if (b<0) b = 0;
+    if (b>255) b = 255;
     cptr[OFFSET_R] = r;
     cptr[OFFSET_G] = g;
     cptr[OFFSET_B] = b;
@@ -68,20 +68,20 @@ void applymatrix(unsigned int *ptr, float mat[4][4], int n)
  *  matrixmult -
  *      multiply two matricies
  */
-void matrixmult( float a[4][4], float b[4][4], float c[4][4] )
+void matrixmult(float a[4][4], float b[4][4], float c[4][4])
 {
     int x, y;
     float temp[4][4];
 
-    for(y=0; y<4 ; y++)
-        for(x=0 ; x<4 ; x++) {
+    for (y=0; y<4 ; y++)
+        for (x=0 ; x<4 ; x++) {
             temp[y][x] = b[y][0] * a[0][x]
                        + b[y][1] * a[1][x]
                        + b[y][2] * a[2][x]
                        + b[y][3] * a[3][x];
         }
-    for(y=0; y<4; y++)
-        for(x=0; x<4; x++)
+    for (y=0; y<4; y++)
+        for (x=0; x<4; x++)
             c[y][x] = temp[y][x];
 }
 
@@ -89,7 +89,7 @@ void matrixmult( float a[4][4], float b[4][4], float c[4][4] )
  *  identmat -
  *      make an identity matrix
  */
-void identmat( float matrix2[4][4] )
+void identmat(float matrix2[4][4])
 {
     float* matrix = (float *)matrix2;
 
@@ -117,7 +117,7 @@ void identmat( float matrix2[4][4] )
  */
 void xformpnt(float matrix[4][4],
 float x, float y, float z,
-float *tx,float *ty,float *tz )
+float *tx,float *ty,float *tz)
 {
     *tx = x*matrix[0][0] + y*matrix[1][0] + z*matrix[2][0] + matrix[3][0];
     *ty = x*matrix[0][1] + y*matrix[1][1] + z*matrix[2][1] + matrix[3][1];
@@ -128,7 +128,7 @@ float *tx,float *ty,float *tz )
  *  cscalemat -
  *      make a color scale marix
  */
-void cscalemat( float mat[4][4], float rscale, float gscale, float bscale )
+void cscalemat(float mat[4][4], float rscale, float gscale, float bscale)
 {
     float mmat[4][4];
 
@@ -159,7 +159,7 @@ void cscalemat( float mat[4][4], float rscale, float gscale, float bscale )
  *  lummat -
  *      make a luminance marix
  */
-void lummat( float mat[4][4] )
+void lummat(float mat[4][4])
 {
     float mmat[4][4];
     float rwgt, gwgt, bwgt;
@@ -274,8 +274,8 @@ float roffset, float goffset, float boffset)
  *  xrotate -
  *      rotate about the x (red) axis
  */
-void xrotatemat( float mat[4][4],
-float rs, float rc )
+void xrotatemat(float mat[4][4],
+float rs, float rc)
 {
     float mmat[4][4];
 
@@ -305,8 +305,8 @@ float rs, float rc )
  *  yrotate -
  *      rotate about the y (green) axis
  */
-void yrotatemat( float mat[4][4],
-float rs, float rc )
+void yrotatemat(float mat[4][4],
+float rs, float rc)
 {
     float mmat[4][4];
 
@@ -336,8 +336,8 @@ float rs, float rc )
  *  zrotate -
  *      rotate about the z (blue) axis
  */
-void zrotatemat( float mat[4][4],
-float rs, float rc )
+void zrotatemat(float mat[4][4],
+float rs, float rc)
 
 {
     float mmat[4][4];
@@ -368,8 +368,8 @@ float rs, float rc )
  *  zshear -
  *      shear z using x and y.
  */
-void zshearmat( float mat[4][4],
-float dx, float dy )
+void zshearmat(float mat[4][4],
+float dx, float dy)
 {
     float mmat[4][4];
 
@@ -399,8 +399,8 @@ float dx, float dy )
  *  simplehuerotatemat -
  *      simple hue rotation. This changes luminance
  */
-void simplehuerotatemat( float mat[4][4],
-float rot )
+void simplehuerotatemat(float mat[4][4],
+float rot)
 {
     float mag;
     float xrs, xrc;
@@ -432,8 +432,8 @@ float rot )
  *  huerotatemat -
  *      rotate the hue, while maintaining luminance.
  */
-void huerotatemat( float mat[4][4],
-float rot )
+void huerotatemat(float mat[4][4],
+float rot)
 {
     float mmat[4][4];
     float mag;

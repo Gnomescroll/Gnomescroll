@@ -26,12 +26,12 @@ void VoxColors::init(int dx, int dy, int dz)
         this->rgba[rgba_index+1] = 0;
         this->rgba[rgba_index+2] = 0;
         this->rgba[rgba_index+3] = 0;
-        
+
         int index_index = i * 3;
         this->index[index_index+0] = x;
         this->index[index_index+1] = y;
         this->index[index_index+2] = z;
-        
+
         x++;
         if (x == dx)
         {
@@ -146,10 +146,10 @@ VoxPart::~VoxPart()
 // uses cached x,y,z,rx,ry,rz values
 void VoxPart::set_local_matrix()
 {
-    this->dat->vox_volume_local_matrix[part_num] =  affine_euler_rotation_and_translation(
-        this->sx, this->sy, this->sz,
-        this->srx, this->sry, this->srz
-    );
+    this->dat->vox_volume_local_matrix[part_num] =
+        affine_euler_rotation_and_translation(this->sx, this->sy,
+                                              this->sz, this->srx,
+                                              this->sry, this->srz);
 }
 
 
@@ -219,13 +219,13 @@ void VoxDat::set_skeleton_node_parent(int node, int parent)
 
 void VoxDat::init_parts(int n_parts)
 {
-    if (voxel_volume_inited) 
+    if (voxel_volume_inited)
     {
         printf("WARNING VoxDat::init_part -- called more than once\n");
         return;
     }
     voxel_volume_inited = true;
-    
+
     this->n_parts = n_parts;
     vox_part = new VoxPart*[n_parts]; //array of pointers
 
@@ -245,14 +245,12 @@ void VoxDat::set_part_properties(
     VoxPart* p = vox_part[part_num];
     if (p == NULL)
     {
-        p = new VoxPart(
-            this,
-            part_num,
-            vox_size,
-            dimension_x, dimension_y, dimension_z,
-            filename,
-            biaxial
-        );
+        p = new VoxPart(this,
+                        part_num,
+                        vox_size,
+                        dimension_x, dimension_y, dimension_z,
+                        filename,
+                        biaxial);
         vox_part[part_num] = p;
     }
     else
@@ -268,7 +266,7 @@ void VoxDat::set_part_properties(
 }
 
 //anchor x,y,z then rotation x,y,z
-void VoxDat::set_part_local_matrix( int part_num, float x, float y, float z, float rx, float ry, float rz)
+void VoxDat::set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz)
 {
     if (!voxel_volume_inited) printf("ERROR WARNING: VoxDat not inited\n");
     VoxPart* p = vox_part[part_num];
@@ -318,9 +316,9 @@ void VoxDat::set_skeleton_parent_matrix(int part, int parent)
     if (vp == NULL)
     {
         printf("VoxDat::set_skeleton_parent_matrix ERROR!! vp is null, wrong init order \n");
-        return;  
-    } 
-    vp->skeleton_parent_matrix = parent;   
+        return;
+    }
+    vp->skeleton_parent_matrix = parent;
 }
 
 void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
@@ -347,9 +345,9 @@ vox_skeleton_local_matrix_reference(NULL)
 
 VoxDat::~VoxDat()
 {
-    if (this->vox_part != NULL) 
+    if (this->vox_part != NULL)
     {
-        for (int i=0; i<n_parts; i++) 
+        for (int i=0; i<n_parts; i++)
             if (this->vox_part[i] != NULL)
                 delete vox_part[i];
         delete[] vox_part;
@@ -371,46 +369,43 @@ void VoxDat::save(char* fn)
 {
     GS_ASSERT(fn != NULL);
     if (fn == NULL) return;
-    
+
     FILE* f = fopen(fn, "w");
     GS_ASSERT(f != NULL);
     if (f == NULL) return;
 
     fprintf(f, "#skeleton nodes, voxel volumes\n");
     fprintf(f, "%d %d\n", this->n_skeleton_nodes, this->n_parts);
-    
+
     fprintf(f, "#connection matrix\n");
     for (int i=0; i<this->n_skeleton_nodes; i++)
         fprintf(f, "%d %d\n", i, this->vox_skeleton_transveral_list[i]);
-    
+
     fprintf(f, "#skeleton_node: anchor x,y,z rotatation x,y,z\n");
     for (int i=0; i<this->n_skeleton_nodes; i++)
         fprintf(f, "%d %f %f %f  %f %f %f\n", i,
-            this->vox_skeleton_local_matrix_reference[i][0],
-            this->vox_skeleton_local_matrix_reference[i][1],
-            this->vox_skeleton_local_matrix_reference[i][2],
-            this->vox_skeleton_local_matrix_reference[i][3],
-            this->vox_skeleton_local_matrix_reference[i][4],
-            this->vox_skeleton_local_matrix_reference[i][5]
-        );
+                this->vox_skeleton_local_matrix_reference[i][0],
+                this->vox_skeleton_local_matrix_reference[i][1],
+                this->vox_skeleton_local_matrix_reference[i][2],
+                this->vox_skeleton_local_matrix_reference[i][3],
+                this->vox_skeleton_local_matrix_reference[i][4],
+                this->vox_skeleton_local_matrix_reference[i][5]);
 
     fprintf(f, "#part number, node number, voxel format filename\n");
     for (int i=0; i<this->n_parts; i++)
         fprintf(f, "%d %d %s\n", i,
-            this->vox_part[i]->skeleton_parent_matrix,
-            this->vox_part[i]->filename
-        );
-    
+                this->vox_part[i]->skeleton_parent_matrix,
+                this->vox_part[i]->filename);
+
     fprintf(f, "#voxel: anchor x,y,z rotatation x,y,z\n");
     for (int i=0; i<this->n_parts; i++)
         fprintf(f, "%d %f %f %f  %f %f %f\n", i,
-            this->vox_part[i]->sx,
-            this->vox_part[i]->sy,
-            this->vox_part[i]->sz,
-            this->vox_part[i]->srx,
-            this->vox_part[i]->sry,
-            this->vox_part[i]->srz
-        );
+                this->vox_part[i]->sx,
+                this->vox_part[i]->sy,
+                this->vox_part[i]->sz,
+                this->vox_part[i]->srx,
+                this->vox_part[i]->sry,
+                this->vox_part[i]->srz);
 
     fclose(f);
 }

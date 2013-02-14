@@ -60,7 +60,7 @@ void init_voxel_render_list_shader1()
 
     glCompileShaderARB(voxel_shader_frag);
     if (DEBUG1) printShaderInfoLog(voxel_shader_frag);
-    
+
     glAttachObjectARB(voxel_shader_prog, voxel_shader_vert);
     glAttachObjectARB(voxel_shader_prog, voxel_shader_frag);
 
@@ -93,7 +93,7 @@ VoxelRenderList::VoxelRenderList() :
 
     vbo_wrapper[0].max_size = starting_size; //in voxel vertex
     vbo_wrapper[1].max_size = starting_size;
-    
+
     vbo_wrapper[0].id = 0;
     vbo_wrapper[1].id = 0;
 
@@ -160,10 +160,10 @@ void VoxelRenderList::update_vertex_buffer_object()
     int volumes_updated = 0;
     for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if (this->render_list[i] == NULL ) continue;
+        if (this->render_list[i] == NULL) continue;
 
         vv = this->render_list[i];
-        if (vv->needs_vbo_update == true )
+        if (vv->needs_vbo_update == true)
         {
             vv->needs_vbo_update = false;
             volumes_updated++;
@@ -173,11 +173,11 @@ void VoxelRenderList::update_vertex_buffer_object()
     }
 
     _vbo->vnum = v_num;
-    
+
     if (v_num == 0) return;
     if (!this->needs_update && volumes_updated == 0) return; //return if nothing to update
     this->needs_update = false;
-    
+
     if (v_num >= _vbo->max_size)
     {
         while (v_num >= _vbo->max_size) _vbo->max_size *= 2; //double max size until its large enough and realloc
@@ -193,13 +193,13 @@ void VoxelRenderList::update_vertex_buffer_object()
 
         GS_ASSERT(vv->vvl.vnum != 0);
         GS_ASSERT(vv->vvl.vertex_list != 0)
-        
-        memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(VoxelVertex) );
+
+        memcpy(&_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(VoxelVertex));
         vv->vvl.voff = index;
         index += vv->vvl.vnum;
     }
     GS_ASSERT(index == v_num);
-    if (_vbo->id == 0 )  glGenBuffers(1, &_vbo->id);
+    if (_vbo->id == 0)  glGenBuffers(1, &_vbo->id);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(VoxelVertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(VoxelVertex), _vbo->vertex_list, GL_STATIC_DRAW);
@@ -254,7 +254,7 @@ void VoxelRenderListManager::draw()
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
-    
+
     glEnableVertexAttribArray(InNormal);
     glEnableVertexAttribArray(InAO);
     glEnableVertexAttribArray(InTex);
@@ -264,7 +264,7 @@ void VoxelRenderListManager::draw()
         VoxelRenderList* vrl = &this->lists[k];
         struct VBOmeta* _vbo = &vrl->vbo_wrapper[0];
 
-        vrl->update_vertex_buffer_object(); 
+        vrl->update_vertex_buffer_object();
 
         if (_vbo->vnum == 0) continue;
         IF_ASSERT(_vbo->id == 0) continue;
@@ -273,7 +273,7 @@ void VoxelRenderListManager::draw()
 
         glVertexPointer(3, GL_FLOAT, sizeof(class VoxelVertex), (GLvoid*)0);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(class VoxelVertex), (GLvoid*)12);
-        
+
         glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(class VoxelVertex), (GLvoid*)16);
         glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(class VoxelVertex), (GLvoid*)20);
         glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(class VoxelVertex), (GLvoid*)24);
@@ -284,7 +284,7 @@ void VoxelRenderListManager::draw()
             VoxelVolume* vv = vrl->render_list[i];
             if (!vv->draw) continue;
             if (vv->vvl.vnum == 0) continue;
-            
+
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*)vv->world_matrix._f);
             Vec3 p = quadrant_translate_position(current_camera_position, vv->world_matrix.c);
             glUniform3fv(InTranslation, 1, (GLfloat*)p.f);
@@ -321,7 +321,7 @@ void VoxelRenderListManager::draw()
     for (int k=0; k < this->max; k++)
     {
         VoxelRenderList* vrl = &this->lists[k];
-        vrl->update_vertex_buffer_object(); 
+        vrl->update_vertex_buffer_object();
     }
 
     CHECK_GL_ERROR();

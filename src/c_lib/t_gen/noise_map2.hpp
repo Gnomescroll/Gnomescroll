@@ -421,7 +421,7 @@ class PerlinOctave2D
 
         for (int n=1; n<degree; n++)
         {
-            float persistence = (n+1)*(1.0f/( (float) degree ));
+            float persistence = (n+1)*(1.0f/((float) degree));
 
             int xoff = n*xres;
 

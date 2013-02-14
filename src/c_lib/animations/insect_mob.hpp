@@ -70,19 +70,19 @@ void init_insect_mob_texture()
         return;
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &insect_mob_texture );
-    glBindTexture( GL_TEXTURE_2D, insect_mob_texture  );
+    glGenTextures(1, &insect_mob_texture);
+    glBindTexture(GL_TEXTURE_2D, insect_mob_texture);
 
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     GLenum internalFormat = 4; //GL_RGBA;
     GLenum format = GL_BGRA;
     if (s->format->Rmask == 0x000000ff)
         format = GL_RGBA;
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels);
     glDisable(GL_TEXTURE_2D);
 
     SDL_FreeSurface(s);
@@ -92,9 +92,9 @@ void init_insect_mob_shader()
 {
     insect_mob_shader.set_debug(false);
 
-    insect_mob_shader.load_shader( "insect mob shader",
+    insect_mob_shader.load_shader("insect mob shader",
         MEDIA_PATH "shaders/mob/insect_mob.vsh",
-        MEDIA_PATH "shaders/mob/insect_mob.fsh" );
+        MEDIA_PATH "shaders/mob/insect_mob.fsh");
 
     //uniforms
     //map_ChunkPosition = glGetUniformLocation(insect_mob_shader[index], "ChunkPosition");
@@ -130,7 +130,7 @@ class InsectMob
 
     void init(float _x, float _y, float _z)
     {
-        for(int i=0; i<max_sides; i++ ) speed[i] = 1.0f + (0.4f*randf() - 0.1f);
+        for (int i=0; i<max_sides; i++) speed[i] = 1.0f + (0.4f*randf() - 0.1f);
 
         sides = 3 + (rand() % 4);
         //tw = 1.0 + (randf()*.5 - 0.25);
@@ -166,18 +166,18 @@ class InsectMob
 
         struct Vec3 v1,v2,v3;
 
-        for(int i=0; i<sides; i++)
+        for (int i=0; i<sides; i++)
         {
             float _x = x+(tw-0.15f)*sinf(f1*i);
             float _y = y+(th-0.15f)*cosf(f1*i);
             float _z = z;
 
-            for(int j=0; j<3; j++)
+            for (int j=0; j<3; j++)
             {
 
-                v1 = vec3_init( _x + 0.3f*sinf(speed[i]*t), _y, _z-h );
-                v2 = vec3_init( _x+li*sinf(f2*j), _y+li*cosf(f2*j), _z );
-                v3 = vec3_init( _x+li*sinf(f2*(j+1)), _y+li*cosf(f2*(j+1)), _z );
+                v1 = vec3_init(_x + 0.3f*sinf(speed[i]*t), _y, _z-h);
+                v2 = vec3_init(_x+li*sinf(f2*j), _y+li*cosf(f2*j), _z);
+                v3 = vec3_init(_x+li*sinf(f2*(j+1)), _y+li*cosf(f2*(j+1)), _z);
 
                 insect_mob_vlist->push_vertex(v1, 0.5f, 0.5f);
                 insect_mob_vlist->push_vertex(v2, 0.0f, 0.5f+txh);
@@ -203,12 +203,12 @@ class InsectMob
 
         struct Vec3 v1,v2,v3;
 
-        for(int i=0; i<sides; i++)
+        for (int i=0; i<sides; i++)
         {
 
-            v1 = vec3_init( x, y, z1+z );
-            v2 = vec3_init( x+tw*sinf(f1*i), y+th*cosf(f1*i), z0+z );
-            v3 = vec3_init( x+tw*sinf(f1*(i+1)), y+th*cosf(f1*(i+1)), z0+z );
+            v1 = vec3_init(x, y, z1+z);
+            v2 = vec3_init(x+tw*sinf(f1*i), y+th*cosf(f1*i), z0+z);
+            v3 = vec3_init(x+tw*sinf(f1*(i+1)), y+th*cosf(f1*(i+1)), z0+z);
 
             insect_mob_vlist->push_vertex(v1, 0.5f, 0.5f);
             insect_mob_vlist->push_vertex(v2, sinf(f1*i)/2 + 0.5f,  cosf(f1*i)/2 + 0.5f);
@@ -216,11 +216,11 @@ class InsectMob
 
         }
 
-        for(int i=0; i<sides; i++)
+        for (int i=0; i<sides; i++)
         {
-            v1 = vec3_init( x, y, z2+z );
-            v2 = vec3_init( x+tw*sinf(f1*i), y+th*cosf(f1*i), z0+z );
-            v3 = vec3_init( x+tw*sinf(f1*(i+1)), y+th*cosf(f1*(i+1)), z0+z );
+            v1 = vec3_init(x, y, z2+z);
+            v2 = vec3_init(x+tw*sinf(f1*i), y+th*cosf(f1*i), z0+z);
+            v3 = vec3_init(x+tw*sinf(f1*(i+1)), y+th*cosf(f1*(i+1)), z0+z);
 
             insect_mob_vlist->push_vertex(v1, 0.5f, 0.5f);
             insect_mob_vlist->push_vertex(v2, sinf(f1*i)/2 + 0.5f,  cosf(f1*i)/2 + 0.5f);
@@ -279,7 +279,7 @@ void InsectMobList::prep()
 {
     #if DC_CLIENT
 
-    if( needs_update == false) return;
+    if (needs_update == false) return;
     insect_mob_t += 0.04f;
 
     for (size_t i=0; i<this->max; i++)
@@ -295,7 +295,7 @@ void InsectMobList::draw()
 {
     #if DC_CLIENT
 
-    if(insect_mob_vlist->vertex_number == 0) return;
+    if (insect_mob_vlist->vertex_number == 0) return;
 
     GS_ASSERT(insect_mob_vlist->VBO != 0);
     if (insect_mob_vlist->VBO == 0) return;
@@ -303,7 +303,7 @@ void InsectMobList::draw()
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, insect_mob_texture );
+    glBindTexture(GL_TEXTURE_2D, insect_mob_texture);
 
     glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vlist->VBO);
 

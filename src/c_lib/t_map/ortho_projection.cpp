@@ -24,9 +24,9 @@ void load_ortho_shader()
 {
     map_ortho_shader.set_debug(true);
 
-    map_ortho_shader.load_shader( "t_map ortho shader",
+    map_ortho_shader.load_shader("t_map ortho shader",
         MEDIA_PATH "shaders/terrain/terrain_map_mipmap_bilinear_ao_ortho.vsh",
-        MEDIA_PATH "shaders/terrain/terrain_map_mipmap_bilinear_ao_ortho.fsh" );
+        MEDIA_PATH "shaders/terrain/terrain_map_mipmap_bilinear_ao_ortho.fsh");
 
     map_ortho_Vertex = map_ortho_shader.get_attribute("InVertex");
     map_ortho_TexCoord = map_ortho_shader.get_attribute("InTexCoord");
@@ -49,7 +49,7 @@ void render_ortho()
 
     glColor3ub(255,255,255);
 
-    glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
+    glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl);
 
 
     glEnableVertexAttribArray(map_ortho_Vertex);
@@ -59,16 +59,16 @@ void render_ortho()
 
     //struct Map_vbo* vbo;
 
-    //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
+    //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array);
 
-    for(int i=0; i<MAP_CHUNK_XDIM; i++)
-    for(int j=0; j<MAP_CHUNK_YDIM; j++)
+    for (int i=0; i<MAP_CHUNK_XDIM; i++)
+    for (int j=0; j<MAP_CHUNK_YDIM; j++)
     {
         int index = j*MAP_CHUNK_XDIM + i;
 
         class Map_vbo* vbo = vbo_map->vbo_array[index];
-        if(vbo == NULL) continue;
-        if(vbo->_v_num[0] == 0) continue;
+        if (vbo == NULL) continue;
+        if (vbo->_v_num[0] == 0) continue;
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
@@ -171,7 +171,7 @@ void save_map_ortho_projection(const char* filename)
     // DEPRECATE GLU
 
 
-#if 0
+    #if 0
     float fov = 85.0;
     float ratio = 1.0;
 
@@ -188,16 +188,14 @@ void save_map_ortho_projection(const char* filename)
     Vec3 look = vec3_init(0.0, 0.0, -1.0);
     //look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
 
-    float x = 256.0;
-    float y = 256.0;
-    float z = 128.0;
+    float x = 256.0f;
+    float y = 256.0f;
+    float z = 128.0f;
 
-    gluLookAt(
-        x,y,z,
-        x + look.x, y + look.y, z + look.z,
-        up.x, up.y, up.z
-    );
-#else
+    gluLookAt(x,y,z,
+              x + look.x, y + look.y, z + look.z,
+              up.x, up.y, up.z);
+    #else
 
     float z_near = 1.0f;
     float z_far = 1024;
@@ -213,9 +211,7 @@ void save_map_ortho_projection(const char* filename)
     gluLookAt(f1*dist, f1*dist, f1*dist + f2,  /* position of camera */
               256.0f,  256.0f,  f2,   /* where camera is pointing at */
               0.0f,  0.0f,  1.0f);  /* which direction is up */
-
-
-#endif
+    #endif
 
 
     /*
@@ -255,7 +251,7 @@ void save_map_ortho_projection(const char* filename)
         int height_div_2;
 
         temp_row = (void *)malloc(4*xres);
-        if(NULL == temp_row)
+        if (NULL == temp_row)
         {
             printf("save_screenshot: not enough memory for surface inversion \n");
             return;
@@ -264,11 +260,11 @@ void save_map_ortho_projection(const char* filename)
         int h = yres;
 
         height_div_2 = (int) (yres * 0.5f);
-        for(index = 0; index < height_div_2; index++)
+        for (index = 0; index < height_div_2; index++)
         {
-            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
         free(temp_row);
     }
@@ -278,24 +274,24 @@ void save_map_ortho_projection(const char* filename)
     sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) "ortho_test");
 
     size_t png_size;
-    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) pixel_buffer, xres, yres, 4, &png_size);
 
     FILE * pFile;
-    pFile = fopen ( FileName , "wb" );
-    if(!pFile)
+    pFile = fopen (FileName , "wb");
+    if (!pFile)
     {
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
     }
-    fwrite (PNG_IMAGE , 1 , png_size, pFile );
+    fwrite (PNG_IMAGE , 1 , png_size, pFile);
     fclose (pFile);
 
     free(PNG_IMAGE);
     delete[] pixel_buffer;
 
     glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
-    glBindTexture( GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glViewport (0, 0, _xres, _yres);
 }
 

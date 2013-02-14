@@ -10,7 +10,7 @@ void draw_line(Color color,
                float x0, float y0, float z0,
                float x1, float y1, float z1)
 {
-    glColor3ub( color.r, color.g, color.b);
+    glColor3ub(color.r, color.g, color.b);
     glBegin(GL_LINES);
     glVertex3f(x0,y0,z0);  // origin of the line
     glVertex3f(x1,y1,z1);  // ending point of the line
@@ -20,7 +20,7 @@ void draw_line(Color color,
 
 void draw_point(Color color, float x, float y, float z)
 {
-    glColor3ub( color.r, color.g, color.b);
+    glColor3ub(color.r, color.g, color.b);
     glBegin(GL_POINTS);
     glVertex3f(x,y,z);  // single point
     glEnd();
@@ -225,9 +225,9 @@ void draw_iso_cube(float x, float y, float scale, int side0, int side1, int side
 
     float a[8*3];
 
-    for(int i=0; i<24; i++)  a[i] = b[i]*scale;
+    for (int i=0; i<24; i++)  a[i] = b[i]*scale;
     // flip upside down
-    for(int i=1; i<24; i+=2) a[i] *= -1;
+    for (int i=1; i<24; i+=2) a[i] *= -1;
 
     int tex_id, i;
     float tx0,tx1;

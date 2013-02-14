@@ -233,12 +233,12 @@ public:
     m11 = m22 = m33 = m44 = 1.0f;
   }
 
-  inline void Ortho ( float left,
+  inline void Ortho (float left,
                       float right,
                       float bottom,
                       float top,
                       float zNear,
-                      float zFar )
+                      float zFar)
   {
     float r_l = right - left;
     float t_b = top   - bottom;
@@ -268,12 +268,12 @@ public:
     m [15] = 1.0f;
   }
 
-  inline void Frustum ( float left,
+  inline void Frustum (float left,
                         float right,
                         float bottom,
                         float top,
                         float zNear,
-                        float zFar )
+                        float zFar)
   {
     float temp, temp2, temp3, temp4;
 
@@ -366,9 +366,7 @@ e3dMatrix4x4::transform (const e3dVector3& v) const
             v.z * wz +
             ww;
 
-  return e3dVector3 (
-    ((v.x * xx) + (v.y * xy) + (v.z * xz) + xw) / w,
-    ((v.x * yx) + (v.y * yy) + (v.z * yz) + yw) / w,
-    ((v.x * zx) + (v.y * zy) + (v.z * zz) + zw) / w
-  );
+  return e3dVector3(((v.x * xx) + (v.y * xy) + (v.z * xz) + xw) / w,
+                    ((v.x * yx) + (v.y * yy) + (v.z * yz) + yw) / w,
+                    ((v.x * zx) + (v.y * zy) + (v.z * zz) + zw) / w);
 }

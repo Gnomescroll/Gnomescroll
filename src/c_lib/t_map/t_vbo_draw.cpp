@@ -62,14 +62,14 @@ void vbo_draw_end()
 void Vbo_map::prep_frustrum_vertices()
 {
 
-    for(int i=0; i<32*32; i++)
-    for(int j=0; j<7; j++)
+    for (int i=0; i<32*32; i++)
+    for (int j=0; j<7; j++)
     {
         vbo_frustrum_voff[i][j] = -1;
         vbo_frustrum_vnum[i][j] = -1;
     }
 
-    for(int i=0;i<draw_vbo_n;i++)
+    for (int i=0;i<draw_vbo_n;i++)
     {
         class Map_vbo* vbo = draw_vbo_array[i].map_vbo;
         int xi = draw_vbo_array[i].i;
@@ -87,10 +87,10 @@ void Vbo_map::prep_frustrum_vertices()
         //printf("zmin, zmaz= %f %f \n", zmin, zmax);
 
         min = floor(zmin / 16.0);
-        if(min < 0) min = 0;
+        if (min < 0) min = 0;
 
         max = ceil(zmax / 16.0);
-        if(max > 8) max = 8;
+        if (max > 8) max = 8;
 
         GS_ASSERT(min <= 8);
         GS_ASSERT(max <= 8);
@@ -98,16 +98,16 @@ void Vbo_map::prep_frustrum_vertices()
         GS_ASSERT(max >= 0);
 
         GS_ASSERT(min <= max);  //will be true after AABB test?
-        
-        //if(min < max) printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
-        
+
+        //if (min < max) printf("i,j= %i %i min,max= %i %i \n", xi,xj, min,max);
+
         //min = 0;
         //max = 8;
 
-        for(int side=0; side<6; side++)
+        for (int side=0; side<6; side++)
         {
             //means no points in box are inside frustrum? error?
-            if(min > max)
+            if (min > max)
             {
                 int voff = vbo->vertex_offset[side];
                 int vnum = 0;
@@ -117,7 +117,7 @@ void Vbo_map::prep_frustrum_vertices()
                 continue;
             }
 
-            if(min == max)
+            if (min == max)
             {
                 //dont draw anything, prune
                 int voff = vbo->vertex_offset[side];
@@ -131,9 +131,9 @@ void Vbo_map::prep_frustrum_vertices()
             int vs = vbo->voff_array[side][min];
             int ve = vbo->voff_array[side][max];
 
-            //if(min==0 ) printf("vs=%i \n", vs);
+            //if (min==0) printf("vs=%i \n", vs);
 
-            if(min ==0) GS_ASSERT(vbo->voff_array[side][min] == vbo->vertex_offset[side]);
+            if (min ==0) GS_ASSERT(vbo->voff_array[side][min] == vbo->vertex_offset[side]);
 
             int voff = vs;
             int vnum = ve - vs;
@@ -142,7 +142,7 @@ void Vbo_map::prep_frustrum_vertices()
             vbo_frustrum_vnum[index][side] = vnum;
 
 
-            if(voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
+            if (voff+vnum > vbo->vertex_offset[side]+ vbo->vertex_num[side])
             {
                 printf("v1= %i v2= %i \n", voff+vnum, vbo->vertex_offset[side]+ vbo->vertex_num[side]);
                 printf("voff= %i vnum= %i \n", voff, vnum);
@@ -162,7 +162,7 @@ void Vbo_map::prep_frustrum_vertices()
 /*
     Do distance check
 */
-bool chunk_distance_check( float x, float y)
+bool chunk_distance_check(float x, float y)
 {
     //static const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
     //static const float dist2 = CAMERA_VIEW_DISTANCE_SQUARED;
@@ -175,7 +175,7 @@ bool chunk_distance_check( float x, float y)
 
     //x = quadrant_translate_f(cx, x);
     //y = quadrant_translate_f(cy, y);
-    
+
     float dx = cx - x;
     float dy = cy - y;
 
@@ -184,7 +184,7 @@ bool chunk_distance_check( float x, float y)
 
 void Vbo_map::prep_draw()
 {
-    for(int i=0; i<32*32; i++)
+    for (int i=0; i<32*32; i++)
         map_vbo_draw_state[i] = -1;
 
     const float cx = current_camera_position.x;
@@ -196,11 +196,11 @@ void Vbo_map::prep_draw()
     c_drawn=0; c_pruned=0;
     draw_vbo_n = 0;
 
-    for(int i=0; i<MAP_CHUNK_XDIM; i++) {
-    for(int j=0; j<MAP_CHUNK_YDIM; j++) {
+    for (int i=0; i<MAP_CHUNK_XDIM; i++) {
+    for (int j=0; j<MAP_CHUNK_YDIM; j++) {
         class Map_vbo* col = vbo_array[j*MAP_CHUNK_XDIM + i ];
 
-        if(col == NULL || col->vnum == 0) continue;
+        if (col == NULL || col->vnum == 0) continue;
 
         float x = translate_point(col->xoff);
         float y = translate_point(col->yoff);
@@ -213,21 +213,21 @@ void Vbo_map::prep_draw()
         // plain chunk distance check has errors in corners
 
 
-        if(AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0)
+        if (AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0)
          {
             map_vbo_draw_state[32*j+i] = 1; //failed AABB test
         }
-        else if(!(chunk_distance_check( col->wxoff+8.0f, col->wyoff+8.0f) &&
-            AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0))
+        else
+        if (!chunk_distance_check(col->wxoff+8.0f, col->wyoff+8.0f) ||
+            AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) == 0)
         {
             map_vbo_draw_state[32*j+i] = 0; //failed distance test
         }
 
-        if (chunk_distance_check( col->wxoff+8.0f, col->wyoff+8.0f) &&
-            AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0
-        )
+        if (chunk_distance_check(col->wxoff+8.0f, col->wyoff+8.0f) &&
+            AABB_test(col->wxoff,col->wyoff,0.0f, 16.0,16.0,128.0) != 0)
         {
-            c_drawn++; 
+            c_drawn++;
             /*
                 Fulstrum culling
             */
@@ -236,8 +236,8 @@ void Vbo_map::prep_draw()
             draw_vbo_array[draw_vbo_n].j = j;
 
             draw_vbo_n++;
-            
-            if(draw_vbo_n == MAX_DRAWN_VBO)
+
+            if (draw_vbo_n == MAX_DRAWN_VBO)
             {
                 printf("Vbo_map::prep_draw(), ERROR, draw_vbo == MAX_DRAWN_VBO \n");
                 return;
@@ -260,7 +260,7 @@ void Vbo_map::sort_draw()
     ASSERT_BOXED_POINT(cx);
     ASSERT_BOXED_POINT(cy);
 
-    for(int i=0; i<draw_vbo_n; i++ )
+    for (int i=0; i<draw_vbo_n; i++)
     {
         class Map_vbo* v = draw_vbo_array[i].map_vbo;
 
@@ -273,19 +273,19 @@ void Vbo_map::sort_draw()
   #define _VBO_DRAW_STRUCT_lt(a,b) ((a)->distance < (b)->distance)
   QSORT(struct  _VBO_DRAW_STRUCT, draw_vbo_array, draw_vbo_n, _VBO_DRAW_STRUCT_lt);
 
-  //if(draw_vbo_n > 10) draw_vbo_n = 10;
+  //if (draw_vbo_n > 10) draw_vbo_n = 10;
 }
 
 #define ADV_PRUNE 1
 
 /*
     glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
-GL_MODELVIEW_MATRIX or GL_PROJECTION_MATRIX 
+GL_MODELVIEW_MATRIX or GL_PROJECTION_MATRIX
 
 Compute matrix by hand and pass in uniform
 */
 
-void Vbo_map::draw_map() 
+void Vbo_map::draw_map()
 {
     prep_draw();
     sort_draw();
@@ -297,7 +297,7 @@ void Vbo_map::draw_map()
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
 
     glEnable(GL_CULL_FACE);
-    
+
     glDisable(GL_TEXTURE_2D);
 
     //glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -322,7 +322,7 @@ void Vbo_map::draw_map()
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
-    
+
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D_ARRAY, map_shader.terrain_map_glsl);
 
@@ -384,11 +384,11 @@ void Vbo_map::draw_map()
     /*
         Draw
     */
-    for(int i=0;i<draw_vbo_n;i++)
+    for (int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i].map_vbo;
 
-        if (vbo->_v_num[0] == 0) continue; 
+        if (vbo->_v_num[0] == 0) continue;
 
         //glLoadMatrixf(modelview);
         //glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
@@ -399,7 +399,7 @@ void Vbo_map::draw_map()
 
         glUniform4f(map_shader.InOffset, vbo->wxoff, vbo->wyoff, 0.0f, 0.0f);
 
-        glVertexAttribPointer(map_shader.InVertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
+        glVertexAttribPointer(map_shader.InVertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
         glVertexAttribPointer(map_shader.InTexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
         glVertexAttribPointer(map_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_shader.InLightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
@@ -412,17 +412,17 @@ void Vbo_map::draw_map()
         int index = 32*xj +xi;
 
         v_total += vbo->_v_num[0];
-        for(int side=0; side<6; side++)
+        for (int side=0; side<6; side++)
         {
             int voff = vbo_frustrum_voff[index][side];
             int vnum = vbo_frustrum_vnum[index][side];
 
-            if(vnum == 0) continue;
+            if (vnum == 0) continue;
 
             v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
         }
-        #else 
+        #else
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
         #endif
 
@@ -444,7 +444,7 @@ void Vbo_map::draw_map()
     //printf("%d \n", map_shader.InLight);
 
     //CHECK_GL_ERROR();
-    
+
     glUseProgramObjectARB(0);
 
     //CHECK_GL_ERROR();
@@ -497,7 +497,7 @@ void Vbo_map::draw_map()
 
         union               //28
         {
-            unsigned char ao[4]; 
+            unsigned char ao[4];
             unsigned int AO;
         };
 
@@ -527,7 +527,7 @@ void Vbo_map::draw_map_compatibility()
 
     glUseProgramObjectARB(map_compatibility_shader.shader->shader);
 
-    glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
+    glBindTexture(GL_TEXTURE_2D, block_textures_compatibility);
 
     glEnableVertexAttribArray(map_compatibility_shader.InVertex);
     glEnableVertexAttribArray(map_compatibility_shader.InTexCoord);
@@ -548,22 +548,22 @@ void Vbo_map::draw_map_compatibility()
     int v_drawn = 0;
     #endif
 
-    for(int i=0;i<draw_vbo_n;i++)
+    for (int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i].map_vbo;
 
-        if(vbo->_v_num[0] == 0)
+        if (vbo->_v_num[0] == 0)
         {
             //printf("t_vbo_draw.cpp:117 no blocks\n");
-            continue; 
-        } 
+            continue;
+        }
 
         glLoadMatrixf(modelview);
         glTranslatef(vbo->wxoff, vbo->wyoff, 0.0f);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
-        glVertexAttribPointer(map_compatibility_shader.InVertex, 3, GL_FLOAT, GL_FALSE, sizeof(struct VertexBackup), (GLvoid*)0);         
+        glVertexAttribPointer(map_compatibility_shader.InVertex, 3, GL_FLOAT, GL_FALSE, sizeof(struct VertexBackup), (GLvoid*)0);
         glVertexAttribPointer(map_compatibility_shader.InTexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct VertexBackup), (GLvoid*)12);
         glVertexAttribPointer(map_compatibility_shader.InTexCoord2, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct VertexBackup), (GLvoid*)20);
         glVertexAttribPointer(map_compatibility_shader.InRGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct VertexBackup), (GLvoid*)24);
@@ -577,17 +577,17 @@ void Vbo_map::draw_map_compatibility()
         int index = 32*xj +xi;
 
         v_total += vbo->_v_num[0];
-        for(int side=0; side<6; side++)
+        for (int side=0; side<6; side++)
         {
             int voff = vbo_frustrum_voff[index][side];
             int vnum = vbo_frustrum_vnum[index][side];
 
-            if(vnum == 0) continue;
+            if (vnum == 0) continue;
 
             v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
         }
-        #else 
+        #else
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
         #endif
 
@@ -632,22 +632,22 @@ void draw_vbo_debug(int x, int y)
 
     glBegin(GL_POINTS);
 
-    for(int i=0; i<32; i++)
-    for(int j=0; j<32; j++)
+    for (int i=0; i<32; i++)
+    for (int j=0; j<32; j++)
     {
 
         int index = 32*j +i;
         int v = map_vbo_draw_state[index];
 
-        if(v==-1) glColor3ub(255, 255, 255);
-        if(v==0) glColor3ub(255, 0, 0);
-        if(v==1) glColor3ub(0, 255, 0);
-        if(v==2) glColor3ub(0, 0, 255);
+        if (v==-1) glColor3ub(255, 255, 255);
+        if (v==0) glColor3ub(255, 0, 0);
+        if (v==1) glColor3ub(0, 255, 0);
+        if (v==2) glColor3ub(0, 0, 255);
 
-        if(i==cx && j == cy) 
+        if (i==cx && j == cy)
             glColor3ub(255, 255, 0);
 
-        glVertex3f( (float) x+(psize+sep)*i+off, (float) y+(psize+sep)*j+off, -0.1f);
+        glVertex3f((float) x+(psize+sep)*i+off, (float) y+(psize+sep)*j+off, -0.1f);
 
     }
 
@@ -659,22 +659,22 @@ void draw_vbo_debug(int x, int y)
 
     glBegin(GL_POINTS);
 
-    for(int i=0; i<32; i++)
-    for(int j=0; j<32; j++)
+    for (int i=0; i<32; i++)
+    for (int j=0; j<32; j++)
     {
 
         int index = 32*j +i;
         int v = map_vbo_draw_state[index];
 
-        if(v==-1) glColor3ub(255, 255, 255);
-        if(v==0) glColor3ub(255, 0, 0);
-        if(v==1) glColor3ub(0, 255, 0);
-        if(v==2) glColor3ub(0, 0, 255);
+        if (v==-1) glColor3ub(255, 255, 255);
+        if (v==0) glColor3ub(255, 0, 0);
+        if (v==1) glColor3ub(0, 255, 0);
+        if (v==2) glColor3ub(0, 0, 255);
 
-        if(i==cx && j == cy) 
+        if (i==cx && j == cy)
             glColor3ub(255, 255, 0);
 
-        glVertex3f( (float) x+(psize+sep)*i+off, (float) y+(psize+sep)*j+off, -0.1f);
+        glVertex3f((float) x+(psize+sep)*i+off, (float) y+(psize+sep)*j+off, -0.1f);
 
     }
 
@@ -683,33 +683,33 @@ void draw_vbo_debug(int x, int y)
     const float yoff_1 = -32*(psize+sep) - 16;
 
     glBegin(GL_POINTS);
-    for(int i=0; i<MAP_CHUNK_XDIM; i++)
-    for(int j=0; j<MAP_CHUNK_YDIM; j++)
+    for (int i=0; i<MAP_CHUNK_XDIM; i++)
+    for (int j=0; j<MAP_CHUNK_YDIM; j++)
     {
         int index = 32*j +i;
         class Map_vbo* col = vbo_map->vbo_array[index];
 
         glColor3ub(0, 255, 0); // everything find/loaded
 
-        if(main_map->chunk[index] == NULL)
+        if (main_map->chunk[index] == NULL)
         {
             glColor3ub(255, 0, 0);
         }
-        else 
+        else
         {
-            if(col == NULL)
+            if (col == NULL)
             {
                 glColor3ub(127, 0, 0);
             }
-            else if(col->vnum == 0)
+            else if (col->vnum == 0)
             {
                 glColor3ub(0,255,255);
             }
         }
-        if(i==cx && j == cy) 
+        if (i==cx && j == cy)
             glColor3ub(255, 255, 0);
 
-        glVertex3f( (float) x+(psize+sep)*i+off, (float) yoff_1+y+(psize+sep)*j+off, -0.1f);
+        glVertex3f((float) x+(psize+sep)*i+off, (float) yoff_1+y+(psize+sep)*j+off, -0.1f);
     }
     glEnd();
 
@@ -717,21 +717,21 @@ void draw_vbo_debug(int x, int y)
     const float xoff_1 = 32*(psize+sep) + 16;
 
     glBegin(GL_POINTS);
-    for(int i=0; i<MAP_CHUNK_XDIM; i++)
-    for(int j=0; j<MAP_CHUNK_YDIM; j++)
+    for (int i=0; i<MAP_CHUNK_XDIM; i++)
+    for (int j=0; j<MAP_CHUNK_YDIM; j++)
     {
         int index = 32*j +i;
         //class Map_vbo* col = vbo_map->vbo_array[index];
 
         glColor3ub(0, 255, 0); // everything find/loaded
 
-        if(main_map->chunk[index] == NULL)
+        if (main_map->chunk[index] == NULL)
         {
             glColor3ub(255, 0, 0);
         }
-        else 
+        else
         {
-            if(main_map->chunk[index]->needs_update == true)
+            if (main_map->chunk[index]->needs_update == true)
             {
                 glColor3ub(0, 0, 255);
             }
@@ -740,7 +740,7 @@ void draw_vbo_debug(int x, int y)
                 glColor3ub(0, 255, 255);
             }
         }
-        if(i==cx && j == cy) 
+        if (i==cx && j == cy)
             glColor3ub(255, 255, 0);
 
         glVertex3f(xoff_1+x+(psize+sep)*i+off, yoff_1+y+(psize+sep)*j+off, -0.1f);

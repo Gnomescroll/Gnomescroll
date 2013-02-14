@@ -25,7 +25,7 @@ void regolith_post_processing()
                 if (e1.block == regolith_id)
                 {
                     e2  = c->get_element(x,y,z+1);
-                    if ( isOccludes((CubeType)e2.block) )
+                    if (isOccludes((CubeType)e2.block))
                     {
                         e1.palette = 0;
                     }
@@ -59,7 +59,7 @@ static __inline__ unsigned long long rdtsc(void)
 {
     unsigned hi, lo;
     __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
-    return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+    return ((unsigned long long)lo)|(((unsigned long long)hi)<<32);
 }
 # endif
 #endif

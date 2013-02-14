@@ -10,7 +10,7 @@ float rayTriangleIntersection(lbVec3f& rayOrigin,lbVec3f& rayDir, lbVec3f& vertA
 
     lbVec3f pvec=rayDir.crossed(edge2); //cross product
     float det=edge1.dot(pvec);  //dot
-    if(det>-1.0e-9f && det<1.0e-9f)
+    if (det>-1.0e-9f && det<1.0e-9f)
     {
         return -1;
     }
@@ -18,14 +18,14 @@ float rayTriangleIntersection(lbVec3f& rayOrigin,lbVec3f& rayDir, lbVec3f& vertA
 
     lbVec3f dst=rayOrigin-vertA;    //sub
     float u=dst.dot(pvec)*invDet;   //dot
-    if(u<0.0f || u>1.0f)
+    if (u<0.0f || u>1.0f)
     {
         return -1;
     }
 
     lbVec3f qvec=dst.crossed(edge1);    //cross
     float v=rayDir.dot(qvec)*invDet;    //dot
-    if(v<0.0f || u+v>1.0f)
+    if (v<0.0f || u+v>1.0f)
     {
         return -1;
     }
@@ -38,12 +38,11 @@ float rayTriangleIntersection(lbVec3f& rayOrigin,lbVec3f& rayDir, lbVec3f& vertA
 <Spliter> HaltingState: yes, using that value and the start and end of the ray you can obtain the exact point at which it hit the triangle
 
 {
-    float time=rayTriangleIntersection( rayOrigin, rayDir   ,
+    float time=rayTriangleIntersection(rayOrigin, rayDir   ,
                             _verts[_tris[i].ids[0]].fpos,
                             _verts[_tris[i].ids[1]].fpos,
-                            _verts[_tris[i].ids[2]].fpos
-                            );
-        if(time<minTime&&time>=0.0f)
+                            _verts[_tris[i].ids[2]].fpos);
+        if (time<minTime&&time>=0.0f)
             minTime=time;
 }
 */
@@ -140,10 +139,10 @@ void load_model()
     v_array = new Vertex[v_num];
     memset(v_array, 0, v_num*sizeof(Vertex));
 
-    for(int i=0; i<model->nTriangle; i++)
+    for (int i=0; i<model->nTriangle; i++)
     {
 
-        for(int j=0; j<3; j++)
+        for (int j=0; j<3; j++)
         {
             struct Vertex v;
 
@@ -151,15 +150,15 @@ void load_model()
             int itx = model->TriangleArray[i].TexCoord[j] -1;
             int in = model->TriangleArray[i].Normal[j] -1;
 
-            if(iv >= model->nVertex)
+            if (iv >= model->nVertex)
             {
                 printf("ERROR: iv= %i  nVertex= %i \n", iv, model->nVertex);
             }
-            if(itx >= model->nTexCoord)
+            if (itx >= model->nTexCoord)
             {
                 printf("ERROR: itx= %i  nTexCoord= %i \n", itx, model->nTexCoord);
             }
-            if(in >= model->nNormal)
+            if (in >= model->nNormal)
             {
                 printf("ERROR: in= %i  nNormal= %i \n", in, model->nNormal);
             }
@@ -198,9 +197,9 @@ void init_shader()
 {
     monster_shader.set_debug(true);
 
-    monster_shader.load_shader( "monster mob shader",
+    monster_shader.load_shader("monster mob shader",
         MEDIA_PATH "shaders/mob/monster_mob.vsh",
-        MEDIA_PATH "shaders/mob/monster_mob.fsh" );
+        MEDIA_PATH "shaders/mob/monster_mob.fsh");
 
     monster_TexCoord = monster_shader.get_attribute("InTexCoord");
 
@@ -212,26 +211,26 @@ void init_texture()
     //SDL_Surface* s = create_surface_from_file((char*) MEDIA_PATH "mesh/drone0.png");
     SDL_Surface* s = create_surface_from_file((char*) MEDIA_PATH "mesh/red_flat.png");
 
-    if(s == NULL)
+    if (s == NULL)
     {
         printf("init_monster_mob: texture load error\n");
         GS_ABORT();
     }
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &monster_texture );
-    glBindTexture( GL_TEXTURE_2D, monster_texture );
+    glGenTextures(1, &monster_texture);
+    glBindTexture(GL_TEXTURE_2D, monster_texture);
 
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     GLenum internalFormat = 4; //GL_RGBA;
     GLenum format = GL_BGRA;
     if (s->format->Rmask == 0x000000ff)
         format = GL_RGBA;
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels);
     glDisable(GL_TEXTURE_2D);
 
     SDL_FreeSurface(s);
@@ -266,7 +265,7 @@ void draw_model(float x, float y, float z)
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    glBindTexture( GL_TEXTURE_2D, monster_texture );
+    glBindTexture(GL_TEXTURE_2D, monster_texture);
 
     glBindBuffer(GL_ARRAY_BUFFER, monster_vbo);
 

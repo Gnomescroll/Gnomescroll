@@ -8,14 +8,14 @@
 //http://mathworld.wolfram.com/HessianNormalForm.html
 
 
-/* 
+/*
     d == 0, except for near and far plane
 */
 
 /*
     If p is 0, d is zero
 */
-class PlaneG  
+class PlaneG
 {
 
 public:
@@ -25,7 +25,7 @@ public:
     float p;    //hessian form
 
     //3 points define a plane
-    void set3Points( Vec3 v1,  Vec3 v2,  Vec3 v3)
+    void set3Points(Vec3 v1,  Vec3 v2,  Vec3 v3)
     {
         struct Vec3 aux1 = vec3_sub(v1, v2);
         struct Vec3 aux2 = vec3_sub(v3, v2);
@@ -71,12 +71,12 @@ public:
     float nw,nh,fw,fh;
 
     void setCamInternals(float fov, float aspect, float nearD, float farD);
-    
+
     void setCamDef(Vec3 camera, Vec3 forward, Vec3 right, Vec3 up);
 
-    bool pointInFrustum(struct Vec3 p) 
+    bool pointInFrustum(struct Vec3 p)
     {
-        for(int i=0; i < 6; i++) 
+        for (int i=0; i < 6; i++)
         {
             if (pl[i].distance(p) < 0)
                 return false;
@@ -86,7 +86,7 @@ public:
 
     bool pointInFulstum_fast(float x, float y, float z)
     {
-        for(int i=0; i < 4; i++) 
+        for (int i=0; i < 4; i++)
         {
             if (pl[i].fast_distance(x,y,z) < 0) return false;
         }
@@ -106,7 +106,7 @@ public:
 
 //#define ANG2RAD 3.14159265358979323846/180.0
 
-void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _farD) 
+void FrustumG::setCamInternals(float _fov, float _aspect, float _nearD, float _farD)
 {
     //printf("set camera\n");
     static const float ANG2RAD = 3.14159265358979323846f/180.0f;
@@ -134,14 +134,14 @@ void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
     //struct Vec3 X,Y,Z;
 
     //nc = vec3_add(c, vec3_scalar_mult(f, nearD));
-    //fc = vec3_add(c, vec3_scalar_mult(f, farD) );
+    //fc = vec3_add(c, vec3_scalar_mult(f, farD));
     //ASSUME C = (0, 0, 0)
     nc = vec3_scalar_mult(f, nearD);
     fc = vec3_scalar_mult(f, farD);
 
 
     // compute the 4 corners of the frustum on the near plane
-    
+
 /*
     ntl = nc + Y * nh - X * nw;
     ntr = nc + Y * nh + X * nw;
@@ -149,10 +149,10 @@ void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
     nbr = nc - Y * nh + X * nw;
 */
 
-    ntl = vec3_add3( nc, vec3_scalar_mult(u,nh),  vec3_scalar_mult(r,-nw) );
-    ntr = vec3_add3( nc, vec3_scalar_mult(u,nh),  vec3_scalar_mult(r,nw)  );
-    nbl = vec3_add3( nc, vec3_scalar_mult(u,-nh), vec3_scalar_mult(r,-nw) );
-    nbr = vec3_add3( nc, vec3_scalar_mult(u,-nh), vec3_scalar_mult(r,nw)  );
+    ntl = vec3_add3(nc, vec3_scalar_mult(u,nh),  vec3_scalar_mult(r,-nw));
+    ntr = vec3_add3(nc, vec3_scalar_mult(u,nh),  vec3_scalar_mult(r,nw));
+    nbl = vec3_add3(nc, vec3_scalar_mult(u,-nh), vec3_scalar_mult(r,-nw));
+    nbr = vec3_add3(nc, vec3_scalar_mult(u,-nh), vec3_scalar_mult(r,nw));
     // compute the 4 corners of the frustum on the far plane
 
 /*
@@ -162,10 +162,10 @@ void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
     fbr = fc - Y * fh + X * fw;
 */
 
-    ftl = vec3_add3( fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,-fw)  );
-    ftr = vec3_add3( fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,fw)   );
-    fbl = vec3_add3( fc, vec3_scalar_mult(u,-fh), vec3_scalar_mult(r,-fw) );
-    fbr = vec3_add3( fc, vec3_scalar_mult(u,-fh), vec3_scalar_mult(r,fw)  );
+    ftl = vec3_add3(fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,-fw));
+    ftr = vec3_add3(fc, vec3_scalar_mult(u,fh), vec3_scalar_mult(r,fw));
+    fbl = vec3_add3(fc, vec3_scalar_mult(u,-fh), vec3_scalar_mult(r,-fw));
+    fbr = vec3_add3(fc, vec3_scalar_mult(u,-fh), vec3_scalar_mult(r,fw));
 
     // compute the six planes
     // the function set3Points assumes that the points
@@ -179,25 +179,25 @@ void FrustumG::setCamDef(Vec3 _c, Vec3 f, Vec3 r, Vec3 u)
     pl[FARP].set3Points(ftr,ftl,fbl);
 
 
-    if(u.z < 0.0) printf("u error: u= %f %f %f \n", u.x, u.y, u.z);
-    
+    if (u.z < 0.0) printf("u error: u= %f %f %f \n", u.x, u.y, u.z);
+
     //printf("B Normal= %f %f %f \n", pl[BOTTOM].normal.x, pl[BOTTOM].normal.y, pl[BOTTOM].normal.z);
     //Vec3 f2 = vec3_add(c, vec3_scalar_mult(f, 15)); //15 units in front of camera
     Vec3 f2 = vec3_scalar_mult(f, 15); //15 units in front of camera
 
-    if( pl[TOP].distance(f2) < 0 ) printf("Top\n");
-    if( pl[BOTTOM].distance(f2) < 0 ) printf("Bottom\n");
-    if( pl[LEFT].distance(f2) < 0 ) printf("Left\n");
-    if( pl[RIGHT].distance(f2) < 0 ) printf("Right\n");
-    if( pl[NEARP].distance(f2) < 0 ) printf("NearP\n");
-    if( pl[FARP].distance(f2) < 0 ) printf("FarP\n");
+    if (pl[TOP].distance(f2) < 0) printf("Top\n");
+    if (pl[BOTTOM].distance(f2) < 0) printf("Bottom\n");
+    if (pl[LEFT].distance(f2) < 0) printf("Left\n");
+    if (pl[RIGHT].distance(f2) < 0) printf("Right\n");
+    if (pl[NEARP].distance(f2) < 0) printf("NearP\n");
+    if (pl[FARP].distance(f2) < 0) printf("FarP\n");
 
 }
 
 
 class FrustumG _FrustrumG;
 
-void setup_fulstrum2(float fovy, float aspect, float znear, float zfar, 
+void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
     Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
 {
     //setCamInternals(float fov, float aspect, float nearD, float farD);
@@ -214,14 +214,14 @@ void setup_fulstrum2(float fovy, float aspect, float znear, float zfar,
 
 bool point_fulstrum_test_2(float x, float y, float z)
 {
-    //printf("p= %f \n", _FrustrumG.pl[FrustumG::TOP].p );
+    //printf("p= %f \n", _FrustrumG.pl[FrustumG::TOP].p);
 
     x -= _FrustrumG.c.x;
     y -= _FrustrumG.c.y;
     z -= _FrustrumG.c.z;
 
     Vec3 p = vec3_init(x,y,z);
-    for(int i=0; i < 6; i++) 
+    for (int i=0; i < 6; i++)
     {
         if (_FrustrumG.pl[i].distance(p) < 0)
             return false;
@@ -229,7 +229,7 @@ bool point_fulstrum_test_2(float x, float y, float z)
     return true;
 
 /*
-    for(int i=0; i < 6; i++) 
+    for (int i=0; i < 6; i++)
     {
         if (_FrustrumG.pl[i].distance(x,y,z) < 0)
             return false;
@@ -241,9 +241,9 @@ bool point_fulstrum_test_2(float x, float y, float z)
 bool point_fulstrum_test_2(struct Vec3 p)
 {
     p = vec3_sub(p, _FrustrumG.c);
-    //printf("d= %f \n", _FrustrumG.pl[FrustumG::TOP].d );
+    //printf("d= %f \n", _FrustrumG.pl[FrustumG::TOP].d);
 
-    for(int i=0; i < 6; i++) 
+    for (int i=0; i < 6; i++)
     {
         if (_FrustrumG.pl[i].distance(p) < 0)
             return false;
@@ -265,20 +265,15 @@ float chunk_top_z_projection(float x, float y)
 {
     //use binary search
     float z = 128.0f;
-
-    while(_FrustrumG.pointInFulstum_fast(x-8.0,y-8.0,z) &&
-        _FrustrumG.pointInFulstum_fast(x-8.0,y+8.0,z) &&
-        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z) &&
-        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z)
-        )
+    while (_FrustrumG.pointInFulstum_fast(x-8.0f, y-8.0f, z) &&
+           _FrustrumG.pointInFulstum_fast(x-8.0f, y+8.0f, z) &&
+           _FrustrumG.pointInFulstum_fast(x+8.0f, y+8.0f, z) &&
+           _FrustrumG.pointInFulstum_fast(x+8.0f, y+8.0f, z))
     {
-
-        z-=1.0;
-
-        if(z < 0.0) break;
+        z -= 1.0f;
+        if (z < 0.0f) break;
     }
-
-    return z +1.0;
+    return z + 1.0f;
 }
 
 //find the highest z level where all points are in fulstrum
@@ -286,18 +281,15 @@ float chunk_bottom_z_projection(float x, float y)
 {
     //use binary search
     float z = 0.0f;
-
-    while(_FrustrumG.pointInFulstum_fast(x-8.0,y-8.0,z) &&
-        _FrustrumG.pointInFulstum_fast(x-8.0,y+8.0,z) &&
-        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z) &&
-        _FrustrumG.pointInFulstum_fast(x+8.0,y+8.0,z)
-        )
+    while (_FrustrumG.pointInFulstum_fast(x-8.0f, y-8.0f, z) &&
+           _FrustrumG.pointInFulstum_fast(x-8.0f, y+8.0f, z) &&
+           _FrustrumG.pointInFulstum_fast(x+8.0f, y+8.0f, z) &&
+           _FrustrumG.pointInFulstum_fast(x+8.0f, y+8.0f, z))
     {
-        z += 1.0;
-        if(z < 0.0) break;
+        z += 1.0f;
+        if (z < 0.0f) break;
     }
-
-    return z +1.0;
+    return z + 1.0f;
 }
 
 // if z < -16  then fucks up?
@@ -315,14 +307,13 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     float z = 0.0f;
 
 
-    while(!_FrustrumG.pointInFulstum_fast2(x,y,z-_z) &&
-        !_FrustrumG.pointInFulstum_fast2(x,y+16.0,z-_z) &&
-        !_FrustrumG.pointInFulstum_fast2(x+16.0,y+16.0,z-_z) &&
-        !_FrustrumG.pointInFulstum_fast2(x+16.0,y,z-_z)
-        )
+    while (!_FrustrumG.pointInFulstum_fast2(x,y,z-_z) &&
+           !_FrustrumG.pointInFulstum_fast2(x,y+16.0,z-_z) &&
+           !_FrustrumG.pointInFulstum_fast2(x+16.0,y+16.0,z-_z) &&
+           !_FrustrumG.pointInFulstum_fast2(x+16.0,y,z-_z))
     {
         z += 1.0;
-        if(z >= zmax)
+        if (z >= zmax)
         {
             z = zmax;
             break;
@@ -333,20 +324,19 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
 
     z = 128.0f;
 
-    while(!_FrustrumG.pointInFulstum_fast2(x,y,z-_z) &&
-        !_FrustrumG.pointInFulstum_fast2(x,y+16.0,z-_z) &&
-        !_FrustrumG.pointInFulstum_fast2(x+16.0,y+16.0,z-_z) &&
-        !_FrustrumG.pointInFulstum_fast2(x+16.0,y,z-_z)
-        )
+    while (!_FrustrumG.pointInFulstum_fast2(x,y,z-_z) &&
+           !_FrustrumG.pointInFulstum_fast2(x,y+16.0,z-_z) &&
+           !_FrustrumG.pointInFulstum_fast2(x+16.0,y+16.0,z-_z) &&
+           !_FrustrumG.pointInFulstum_fast2(x+16.0,y,z-_z))
     {
         z -= 1.0;
-        //if(z < _bottom) break;
-        if(z < zmin)
-        {   
+        //if (z < _bottom) break;
+        if (z < zmin)
+        {
             z = zmin;
             break;
         }
-    }  
+    }
 
     float _top = _z;
 
@@ -370,31 +360,31 @@ int AABB_test(float cx, float cy, float cz, float sx, float sy, float sz)
     int result = 1; // Assume that the aabb will be Inside the frustum
 
     //ignore near and far plane
-    for(int i=0; i<4;i++)
+    for (int i=0; i<4;i++)
     {
         Vec3 n = _FrustrumG.pl[i].normal;
 
         //const _Plane& frustumPlane = frustumPlanes[iPlane];
 
-        float d = aabbCenter.x * n.x + 
-              aabbCenter.y * n.y + 
+        float d = aabbCenter.x * n.x +
+              aabbCenter.y * n.y +
               aabbCenter.z * n.z;
 
-        float r = aabbSize.x *  fabs(n.x) + 
-                  aabbSize.y *  fabs(n.y) + 
+        float r = aabbSize.x *  fabs(n.x) +
+                  aabbSize.y *  fabs(n.y) +
                   aabbSize.z *  fabs(n.z);
 
         float d_p_r = d + r;
         float d_m_r = d - r;
 
-        //if(d_p_r < -frustumPlane.d)
+        //if (d_p_r < -frustumPlane.d)
 
-        if(d_p_r < 0.0f)
+        if (d_p_r < 0.0f)
         {
             result = 0; // Outside
             break;
         }
-        else if(d_m_r < 0.0f)         //else if(d_m_r < -frustumPlane.d)
+        else if (d_m_r < 0.0f)         //else if (d_m_r < -frustumPlane.d)
         {
             result = 2; // Intersect
         }
@@ -421,79 +411,79 @@ void chunk_top_z_projection(float x, float y, float* bottom, float *top)
     //const _Vector3f& aabbSize = aabbList[iAABB].m_Extent;
 
     z = 128.0f;
-    while(1)
+    while (1)
     {
         float aabbCenter_z = z - _FrustrumG.c.z;
         int result = 1; // Assume that the aabb will be Inside the frustum
-        for(int i=0; i<4;i++)        //ignore near and far plane
+        for (int i=0; i<4;i++)        //ignore near and far plane
         {
             Vec3 n = _FrustrumG.pl[i].normal;
 
-            float d =   aabbCenter_x * n.x + 
-                        aabbCenter_y * n.y + 
+            float d =   aabbCenter_x * n.x +
+                        aabbCenter_y * n.y +
                         aabbCenter_z * n.z;
 
-            float r =   aabbSize_x * fabs(n.x) + 
-                        aabbSize_y * fabs(n.y) + 
+            float r =   aabbSize_x * fabs(n.x) +
+                        aabbSize_y * fabs(n.y) +
                         aabbSize_z * fabs(n.z);
 
             float d_p_r = d + r;
             float d_m_r = d - r;
 
-            if(d_p_r < 0.0f)
+            if (d_p_r < 0.0f)
             {
                 result = 0; // Outside
                 break;
             }
-            else if(d_m_r < 0.0f)         //else if(d_m_r < -frustumPlane.d)
+            else if (d_m_r < 0.0f)         //else if (d_m_r < -frustumPlane.d)
             {
                 result = 2; // Intersect
             }
         }
 
-        if(result != 0)
+        if (result != 0)
             break;
         z -= 16.0f;
-        if(z == zmin)
+        if (z == zmin)
             return;
     }
     *top = z;
 
     z = 0.0f;
-    while(1)
+    while (1)
     {
         float aabbCenter_z = z - _FrustrumG.c.z;
         int result = 1; // Assume that the aabb will be Inside the frustum
-        for(int i=0; i<4;i++)        //ignore near and far plane
+        for (int i=0; i<4;i++)        //ignore near and far plane
         {
             Vec3 n = _FrustrumG.pl[i].normal;
 
-            float d =   aabbCenter_x * n.x + 
-                        aabbCenter_y * n.y + 
+            float d =   aabbCenter_x * n.x +
+                        aabbCenter_y * n.y +
                         aabbCenter_z * n.z;
 
-            float r =   aabbSize_x * fabs(n.x) + 
-                        aabbSize_y * fabs(n.y) + 
+            float r =   aabbSize_x * fabs(n.x) +
+                        aabbSize_y * fabs(n.y) +
                         aabbSize_z * fabs(n.z);
 
             float d_p_r = d + r;
             float d_m_r = d - r;
 
-            if(d_p_r < 0.0f)
+            if (d_p_r < 0.0f)
             {
                 result = 0; // Outside
                 break;
             }
-            else if(d_m_r < 0.0f)         //else if(d_m_r < -frustumPlane.d)
+            else if (d_m_r < 0.0f)         //else if (d_m_r < -frustumPlane.d)
             {
                 result = 2; // Intersect
             }
         }
 
-        if(result != 0)
+        if (result != 0)
             break;
         z += 16.0f;
-        if(z == zmax)
+        if (z == zmax)
             return;
     }
     *bottom = z;

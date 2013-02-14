@@ -12,7 +12,7 @@ dont_include_this_file_in_client
 #include <t_mech/_interface.hpp>
 #include <t_mech/properties.hpp>
 
-namespace t_gen 
+namespace t_gen
 {
 
 // v is starting point of line
@@ -38,7 +38,7 @@ inline float cc_point_line_distance2(float vx, float vy, float vz, float wx, flo
 
 OPTIMIZED
 void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
-    while( genrand_real1() < 0.999f ) {
+    while (genrand_real1() < 0.999f) {
         const static float length = 2.0f;
         const float _theta = theta*2*PI;
         const float _phi = phi*2*PI;
@@ -62,10 +62,10 @@ void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
 
         bool out_of_bounds = false;
         //can speed up by 8
-        for(int i=xmin; i<=xmax; i++)
-        for(int j=ymin; j<=ymax; j++)
-        for(int k=zmin; k<=zmax; k++) {
-            if(k < 0 || k >= ZMAX)  {
+        for (int i=xmin; i<=xmax; i++)
+        for (int j=ymin; j<=ymax; j++)
+        for (int k=zmin; k<=zmax; k++) {
+            if (k < 0 || k >= ZMAX)  {
                 out_of_bounds = true;
                 continue;
             }
@@ -78,10 +78,10 @@ void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
             int jj = j%YMAX;
 
             float d = cc_point_line_distance2(st.x,st.y,st.z, dx,dy,dz, x,y,z);
-            if(d < size*size) t_map::set(ii, jj, k, EMPTY_CUBE);
+            if (d < size*size) t_map::set(ii, jj, k, EMPTY_CUBE);
         }
 
-        if(out_of_bounds == true) phi *= -1;
+        if (out_of_bounds == true) phi *= -1;
 
         st.x += length*dx;
         st.y += length*dy;
@@ -93,8 +93,8 @@ void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
         theta += theta_adj*((float)(2.0*genrand_real1() - 1.0));
         phi += phi_adj*((float)(2.0*genrand_real1() - 1.0));
 
-        if(phi < 0) phi += 1;
-        if(phi > 1) phi -= 1;
+        if (phi < 0) phi += 1;
+        if (phi > 1) phi -= 1;
     }
 
 }
@@ -106,7 +106,7 @@ void excavate() {
     const int nodes = 300;
     const float cave_size = 2.0f;
     const int try_limit = 10000;
-    
+
     init_genrand(rand());
 
     for (int i=0; i<nodes; i++) {
@@ -118,11 +118,11 @@ void excavate() {
             st.z = (float)genrand_real1()*(float)ZMAX;
         } while (t_map::get(st.x, st.y, st.z) == EMPTY_CUBE && tries++ < try_limit);
 
-        if (tries >= try_limit) return; 
+        if (tries >= try_limit) return;
 
         float phi = (float)genrand_real1()*2*3.14159f;
         float theta = (float)genrand_real1()*2*3.14159f;
-        
+
         dig_worm(st, theta, phi, cave_size);
     }
 }

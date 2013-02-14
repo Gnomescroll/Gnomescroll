@@ -60,7 +60,7 @@ void populate_ore_veins(int number, const char* block_name)
     //if (dephchange>1)
         //printf("Ores have a higher probability of generating lower\n");
 
-    for(int i=0; i<number; i++)
+    for (int i=0; i<number; i++)
     {
         int x = (int)genrand_int32() % t_map::map_dim.x;
         int y = (int)genrand_int32() % t_map::map_dim.y;
@@ -71,7 +71,7 @@ void populate_ore_veins(int number, const char* block_name)
             }
 
         int ctile = t_map::get(x,y,z);
-        if(ctile == 0 || ctile == regolith_id) continue;
+        if (ctile == 0 || ctile == regolith_id) continue;
 
         int s = 4 + 4*(genrand_int32() % 4);
 
@@ -107,7 +107,7 @@ int generate_ore_vein(int x, int y, int z, int size, CubeType tile_id)
         int ctile = t_map::get(cx,cy,cz);
 
         //dont change position
-        if (ctile == 0 || ctile == regolith_id )
+        if (ctile == 0 || ctile == regolith_id)
         {
             tries++;
             continue;
@@ -141,7 +141,7 @@ int generate_ore_vein(int x, int y, int z, int size, CubeType tile_id)
         ct++;
     }
 
-    //if(tries >= 20)
+    //if (tries >= 20)
         //printf("Warning: generate_ore_vein 20 attemps made to populate ore vein\n");
 
     return ct;
@@ -162,7 +162,7 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
     int ore_count = 0;
     int clusters = 0;
 
-    for(int i=0; i<number; i++)
+    for (int i=0; i<number; i++)
     {
         int x = (int)genrand_int32() % t_map::map_dim.x;
         int y = (int)genrand_int32() % t_map::map_dim.y;
@@ -174,18 +174,18 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
 
 
         //int ctile = t_map::get(x,y,z);
-        //if(ctile == 0) continue;
+        //if (ctile == 0) continue;
 
         //int s = 4 + 4*(genrand_int32() % 4);
 
         float size = 0.0f;
         float value = randf();
 
-        if( value <= 0.50)
+        if (value <= 0.50)
         {
             size = 0.50f;
         }
-        else if( value <= 0.85f)
+        else if (value <= 0.85f)
         {
             size = 0.75;
         }
@@ -199,7 +199,7 @@ void populate_ore_pocket_cuboid(int number, const char* block_name)
         clusters++;
     }
 
-    printf("populate_ore_pocket_cuboid: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, clusters );
+    printf("populate_ore_pocket_cuboid: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, clusters);
 }
 
 int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeType tile_id)
@@ -218,7 +218,7 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeType tile
     Vec3 r = vec3_init(0.0, 1.0, 0.0);
     Vec3 u = vec3_init(0.0, 0.0, 1.0);
 
-    Mat3 rot = mat3_euler_rotation(randf(), randf(), randf() );
+    Mat3 rot = mat3_euler_rotation(randf(), randf(), randf());
 
     f = vec3_apply_rotation(f, rot);
     r = vec3_apply_rotation(r, rot);
@@ -229,21 +229,20 @@ int generate_ore_pocket_cuboid(int _x, int _y, int _z, float size, CubeType tile
     int _skipped = 0;
 
     int range = 1 + (int)size;
-    for(int i= -range; i<=range; i++)
-    for(int j= -range; j<=range; j++)
-    for(int k= -range; k<=range; k++)
+    for (int i= -range; i<=range; i++)
+    for (int j= -range; j<=range; j++)
+    for (int k= -range; k<=range; k++)
     {
-        if(_z+k <= 0 || _z+k >= 127)
+        if (_z+k <= 0 || _z+k >= 127)
             continue;
 
         float x = 0.5f + (float) (i);
         float y = 0.5f + (float) (j);
         float z = 0.5f + (float) (k);
 
-        if(abs(x*f.x+y*f.y+z*f.z) < asize
-        && abs(x*r.x+y*r.y+z*r.z) < bsize
-        && abs(x*u.x+y*u.y+z*u.z) < csize
-            )
+        if (abs(x*f.x+y*f.y+z*f.z) < asize &&
+            abs(x*r.x+y*r.y+z*r.z) < bsize &&
+            abs(x*u.x+y*u.y+z*u.z) < csize)
         {
 
             int tx = (_x+i+512) % 512;
@@ -277,7 +276,7 @@ void populate_ore_pocket_elliptoid(int number, const char* block_name)
 
     int ore_count = 0;
     int clusters = 0;
-    for(int i=0; i<number; i++)
+    for (int i=0; i<number; i++)
     {
         int x = (int)genrand_int32() % t_map::map_dim.x;
         int y = (int)genrand_int32() % t_map::map_dim.y;
@@ -288,14 +287,14 @@ void populate_ore_pocket_elliptoid(int number, const char* block_name)
             continue;
 
         //int ctile = t_map::get(x,y,z);
-        //if(ctile == 0) continue;
+        //if (ctile == 0) continue;
 
         //int s = 4 + 4*(genrand_int32() % 4);
 
         float size = 0.0f;
         float value = randf();
 
-        if( value <= 0.50f)
+        if (value <= 0.50f)
         {
             size = 1.00;
         }
@@ -308,7 +307,7 @@ void populate_ore_pocket_elliptoid(int number, const char* block_name)
         clusters++;
     }
 
-    printf("populate_ore_elliptoid_pockets: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, clusters );
+    printf("populate_ore_elliptoid_pockets: ore= %s ore_units= %d clusters= %d \n", block_name, ore_count, clusters);
 }
 
 int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeType tile_id)
@@ -327,7 +326,7 @@ int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeType t
     Vec3 r = vec3_init(0.0, 1.0, 0.0);
     Vec3 u = vec3_init(0.0, 0.0, 1.0);
 
-    Mat3 rot = mat3_euler_rotation(randf(), randf(), randf() );
+    Mat3 rot = mat3_euler_rotation(randf(), randf(), randf());
 
     f = vec3_apply_rotation(f, rot);
     r = vec3_apply_rotation(r, rot);
@@ -338,11 +337,11 @@ int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeType t
     int _skipped = 0;
 
     int range = 1 + (int)size;
-    for(int i= -range; i<=range; i++)
-    for(int j= -range; j<=range; j++)
-    for(int k= -range; k<=range; k++)
+    for (int i= -range; i<=range; i++)
+    for (int j= -range; j<=range; j++)
+    for (int k= -range; k<=range; k++)
     {
-        if(_z+k <= 0 || _z+k >= 127)
+        if (_z+k <= 0 || _z+k >= 127)
             continue;
 
         float x = 0.5f + (float) (i);
@@ -353,7 +352,7 @@ int generate_ore_pocket_elliptoid(int _x, int _y, int _z, float size, CubeType t
         float dy = (x*r.x+y*r.y+z*r.z)*bsize;
         float dz = (x*u.x+y*u.y+z*u.z)*csize;
 
-        if(dx*dx + dy*dy + dz*dz < size*size)
+        if (dx*dx + dy*dy + dz*dz < size*size)
         {
             int tx = (_x+i+512) % 512;
             int ty = (_y+j+512) % 512;

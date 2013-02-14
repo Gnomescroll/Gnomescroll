@@ -45,7 +45,7 @@ class CONTROL_NODE_LIST
 
         cpi++;
 
-        if(cpi == cpm)
+        if (cpi == cpm)
         {
             cpm *= 2;
             control_node* new_cpa = (control_node*) realloc(cpa, cpm*sizeof(class control_node));
@@ -84,7 +84,7 @@ class CONTROL_NODE_LIST
     #if DC_SERVER
     void send_control_nodes_to_client(ClientID client_id)
     {
-        for(int i=0; i<cpi; i++)
+        for (int i=0; i<cpi; i++)
         {
             control_node_create_StoC p;
             p.x = cpa[i].x;
@@ -181,7 +181,7 @@ class ControlNodeVertexList
     {
         va[vi] = v;
         vi++;
-        if(vi == vm)
+        if (vi == vm)
         {
             vm *= 2;
             va = (struct Vertex*) realloc(va, vm*sizeof(struct Vertex));
@@ -195,9 +195,9 @@ class ControlNodeVertexList
 
     void buffer()
     {
-        if(VBO == 0) glGenBuffers(1, &VBO);
+        if (VBO == 0) glGenBuffers(1, &VBO);
 
-        if(vi != 0)
+        if (vi != 0)
         {
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(GL_ARRAY_BUFFER, vi*stride, NULL, GL_STATIC_DRAW);
@@ -206,7 +206,7 @@ class ControlNodeVertexList
         }
         else
         {
-            if(vi > 0)
+            if (vi > 0)
             {
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
@@ -252,9 +252,9 @@ class ControlNodeShader
         shader = new Shader;
         shader->set_debug(true);
 
-        shader->load_shader( "control_node_shader",
+        shader->load_shader("control_node_shader",
             MEDIA_PATH "shaders/effect/control_node.vsh",
-            MEDIA_PATH "shaders/effect/control_node.fsh" );
+            MEDIA_PATH "shaders/effect/control_node.fsh");
 
         CameraPosition = shader->get_uniform("CameraPosition");
         TexCoord = shader->get_attribute("InTexCoord");
@@ -305,8 +305,8 @@ class ControlNodeRenderer
 
         //printf("draw: %i \n", vertex_list.vi);
 
-        if(vertex_list.vi == 0) return;
-        if(!shader.shader->shader_valid) return;
+        if (vertex_list.vi == 0) return;
+        if (!shader.shader->shader_valid) return;
 
         //printf("draw \n");
 
@@ -318,7 +318,7 @@ class ControlNodeRenderer
         glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
         glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, shader.texture1 );
+        glBindTexture(GL_TEXTURE_2D, shader.texture1);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
@@ -330,8 +330,8 @@ class ControlNodeRenderer
         glVertexPointer(3, GL_FLOAT, vertex_list.stride, (GLvoid*)0);
         glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)12);
 
-        //glUniform4f(InTranslation, (GLfloat*) p.f );
-        //glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
+        //glUniform4f(InTranslation, (GLfloat*) p.f);
+        //glUniform3fv(InTranslation, 1, (GLfloat*) p.f);
 
         glDrawArrays(GL_QUADS, 0, vertex_list.vi);
 
@@ -339,7 +339,7 @@ class ControlNodeRenderer
 
         shader.shader->disable_attributes();
 
-        glBindTexture( GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
@@ -443,7 +443,7 @@ void ControlNodeRenderer::draw_intermediate()
     glColor4ub(255,255,255,255);
 
     glBegin(GL_QUADS);
-    for(int i=0; i<cnri; i++)
+    for (int i=0; i<cnri; i++)
     {
         float x = (float) cnra[i].x;
         float y = (float) cnra[i].y;
@@ -479,10 +479,10 @@ void ControlNodeRenderer::draw_intermediate()
         glVertex3f(x+vin[12*s +3*1 +0], y+vin[12*s+ 3*1 +1], z+vin[12*s +3*1 +2]);
 
 
-        glTexCoord2f(tx_max,ty_max );
+        glTexCoord2f(tx_max,ty_max);
         glVertex3f(x+vin[12*s +3*2 +0], y+vin[12*s+ 3*2 +1], z+vin[12*s +3*2 +2]);
 
-        glTexCoord2f(tx_max,ty_min );
+        glTexCoord2f(tx_max,ty_min);
         glVertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
 
     }
@@ -499,7 +499,7 @@ void ControlNodeRenderer::draw_intermediate()
 #else
     vertex_list.reset();
 
-    for(int i=0; i<cnri; i++)
+    for (int i=0; i<cnri; i++)
     {
 
         float x = (float) cnra[i].x;
@@ -533,11 +533,11 @@ void ControlNodeRenderer::draw_intermediate()
         vertex_list.push_vertex();
 
         vertex_list.vertex3f(x+vin[12*s +3*2 +0], y+vin[12*s+ 3*2 +1], z+vin[12*s +3*2 +2]);
-        vertex_list.tex2f(tx_max,ty_max );
+        vertex_list.tex2f(tx_max,ty_max);
         vertex_list.push_vertex();
 
         vertex_list.vertex3f(x+vin[12*s +3*3 +0], y+vin[12*s+ 3*3 +1], z+vin[12*s +3*3 +2]);
-        vertex_list.tex2f(tx_max,ty_min );
+        vertex_list.tex2f(tx_max,ty_min);
         vertex_list.push_vertex();
     }
 
@@ -559,7 +559,7 @@ void ControlNodeRenderer::_insert_control_node_render_element(short x, short y, 
     cnra[cnri] = cnr; //insert
     cnri++;
 
-    if(cnri == cnrm)
+    if (cnri == cnrm)
     {
         cnrm *= 2;
         cnra = (struct CONTROL_NODE_RENDER*) realloc(cnra, cnrm*sizeof(struct CONTROL_NODE_RENDER));
@@ -584,26 +584,26 @@ int calculate_tex(int face, int i, int j)
 
     const int size = 6;
 
-    if(i == -size)
+    if (i == -size)
     {
-        if(j == -size) return BL;
-        if(j == size) return UL;
+        if (j == -size) return BL;
+        if (j == size) return UL;
         return ML;
     }
 
-    if(i == size)
+    if (i == size)
     {
-        if(j == -size) return BR;
-        if(j == size) return UR;
+        if (j == -size) return BR;
+        if (j == size) return UR;
         return MR;
     }
 
-    if(j == -size)
+    if (j == -size)
     {
         return BM;
     }
 
-    if(j == size)
+    if (j == size)
     {
         return UM;
     }
@@ -616,28 +616,28 @@ void ControlNodeRenderer::control_node_render_update()
     static int counter = 0; //refresh, deals with loading before terrain map
     counter++;
 
-    //if(!cnl->needs_update && cnri != 0 && counter%30!=0) return;
-    if(!cnl->needs_update && cnri != 0) return;
+    //if (!cnl->needs_update && cnri != 0 && counter%30!=0) return;
+    if (!cnl->needs_update && cnri != 0) return;
     cnl->needs_update = false;
     cnri = 0; //reset index
 
     const int size = 6; //size of control grid to left or right of block
 
-    for(int _i=0; _i<cnl->cpi; _i++)
+    for (int _i=0; _i<cnl->cpi; _i++)
     {
         int _x = cnl->cpa[_i].x;
         int _y = cnl->cpa[_i].y;
         int _z = cnl->cpa[_i].z;
 
-        for(int i=-size; i<=size; i++)
-        for(int j=-size; j<=size; j++)
+        for (int i=-size; i<=size; i++)
+        for (int j=-size; j<=size; j++)
         {
             //top
             int x = _x + i;
             int y = _y + j;
             int z = _z + size;
 
-            if(!isSolid(x,y,z) && !isSolid(x,y,z+1) )
+            if (!isSolid(x,y,z) && !isSolid(x,y,z+1))
             {
                 int face = 0;   //orientation
                 int tex = calculate_tex(face, i,j);
@@ -646,14 +646,14 @@ void ControlNodeRenderer::control_node_render_update()
         }
 
         //bottom
-        for(int i=-size; i<=size; i++)
-        for(int j=-size; j<=size; j++)
+        for (int i=-size; i<=size; i++)
+        for (int j=-size; j<=size; j++)
         {
             int x = _x + i;
             int y = _y + j;
             int z = _z - size;
 
-            if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+            if (!isSolid(x,y,z) && !isSolid(x,y,z-1))
             {
                 int face = 1;   //orientation
                 int tex = calculate_tex(face, i,j);
@@ -662,14 +662,14 @@ void ControlNodeRenderer::control_node_render_update()
         }
 
         //north
-        for(int i=-size; i<=size; i++)
-        for(int j=-size; j<=size; j++)
+        for (int i=-size; i<=size; i++)
+        for (int j=-size; j<=size; j++)
         {
             int x = _x + size;
             int y = _y + i;
             int z = _z + j;
 
-            if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+            if (!isSolid(x,y,z) && !isSolid(x,y,z-1))
             {
                 int face = 2;   //orientation
                 int tex = calculate_tex(face, i,j);
@@ -678,14 +678,14 @@ void ControlNodeRenderer::control_node_render_update()
         }
 
         //south
-        for(int i=-size; i<=size; i++)
-        for(int j=-size; j<=size; j++)
+        for (int i=-size; i<=size; i++)
+        for (int j=-size; j<=size; j++)
         {
             int x = _x - size;
             int y = _y + i;
             int z = _z + j;
 
-            if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+            if (!isSolid(x,y,z) && !isSolid(x,y,z-1))
             {
                 int face = 3;   //orientation
                 int tex = calculate_tex(face, i,j);
@@ -694,14 +694,14 @@ void ControlNodeRenderer::control_node_render_update()
         }
 
         //west
-        for(int i=-size; i<=size; i++)
-        for(int j=-size; j<=size; j++)
+        for (int i=-size; i<=size; i++)
+        for (int j=-size; j<=size; j++)
         {
             int x = _x + i;
             int y = _y + size;
             int z = _z + j;
 
-            if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+            if (!isSolid(x,y,z) && !isSolid(x,y,z-1))
             {
                 int face = 4;   //orientation
                 int tex = calculate_tex(face, i,j);
@@ -710,14 +710,14 @@ void ControlNodeRenderer::control_node_render_update()
         }
 
         //east
-        for(int i=-size; i<=size; i++)
-        for(int j=-size; j<=size; j++)
+        for (int i=-size; i<=size; i++)
+        for (int j=-size; j<=size; j++)
         {
             int x = _x + i;
             int y = _y - size;
             int z = _z + j;
 
-            if(!isSolid(x,y,z) && !isSolid(x,y,z-1) )
+            if (!isSolid(x,y,z) && !isSolid(x,y,z-1))
             {
                 int face = 5;   //orientation
                 int tex = calculate_tex(face, i,j);

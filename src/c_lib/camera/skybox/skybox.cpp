@@ -26,9 +26,9 @@ void init_shader()
 {
     star_shader.set_debug(false);
 
-    star_shader.load_shader( "star shader",
+    star_shader.load_shader("star shader",
         MEDIA_PATH "shaders/skybox/stars.vsh",
-        MEDIA_PATH "shaders/skybox/stars.fsh" );
+        MEDIA_PATH "shaders/skybox/stars.fsh");
     star_TexCoord = star_shader.get_attribute("InTexCoord");
     //star_CameraPos = star_shader.get_uniform("CameraPos");
 }
@@ -57,16 +57,14 @@ void init_texture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glTexImage2D(
-        GL_TEXTURE_2D,  //target
-        0,  // level
-        4,  // internalformat, use 4 for 4 bytes per pixel
-        surface->w, surface->h, //width, height
-        0,  // border
-        tex_format, // format
-        GL_UNSIGNED_BYTE,   // type
-        surface->pixels // pixels
-    );
+    glTexImage2D(GL_TEXTURE_2D,  //target
+                 0,  // level
+                 4,  // internalformat, use 4 for 4 bytes per pixel
+                 surface->w, surface->h, //width, height
+                 0,  // border
+                 tex_format, // format
+                 GL_UNSIGNED_BYTE,   // type
+                 surface->pixels); // pixels
 
     glDisable(GL_TEXTURE_2D);
 
@@ -160,7 +158,7 @@ void pack_vertex_list()
     float cy = p.y;
     float cz = p.z;
 
-    for(int i=0; i<star_num-1; i++)
+    for (int i=0; i<star_num-1; i++)
     {
         Vec3 v;
         v.x = star_list[i].x + cx;
@@ -171,16 +169,12 @@ void pack_vertex_list()
 
         float scale = star_list[i].size / 2.0f;
 
-        Vec3 up = vec3_init(
-            model_view_matrix[0]*scale,
-            model_view_matrix[4]*scale,
-            model_view_matrix[8]*scale
-        );
-        Vec3 right = vec3_init(
-            model_view_matrix[1]*scale,
-            model_view_matrix[5]*scale,
-            model_view_matrix[9]*scale
-        );
+        Vec3 up = vec3_init(model_view_matrix[0]*scale,
+                            model_view_matrix[4]*scale,
+                            model_view_matrix[8]*scale);
+        Vec3 right = vec3_init(model_view_matrix[1]*scale,
+                               model_view_matrix[5]*scale,
+                               model_view_matrix[9]*scale);
 
         Vec3 p = vec3_sub(v, vec3_add(right, up));
         star_vlist->push_vertex(p, star_list[i].tx_min,star_list[i].ty_max);
@@ -204,16 +198,12 @@ void pack_vertex_list()
 
     float scale = s.size / 2.0f;
 
-    Vec3 up = vec3_init(
-        model_view_matrix[0]*scale,
-        model_view_matrix[4]*scale,
-        model_view_matrix[8]*scale
-    );
-    Vec3 right = vec3_init(
-        model_view_matrix[1]*scale,
-        model_view_matrix[5]*scale,
-        model_view_matrix[9]*scale
-    );
+    Vec3 up = vec3_init(model_view_matrix[0]*scale,
+                        model_view_matrix[4]*scale,
+                        model_view_matrix[8]*scale);
+    Vec3 right = vec3_init(model_view_matrix[1]*scale,
+                           model_view_matrix[5]*scale,
+                           model_view_matrix[9]*scale);
 
     // align the star to the point that it was created at
     v = vec3_sub(v, up);
@@ -224,12 +214,13 @@ void pack_vertex_list()
     Vec3 pt3 = vec3_add(v, vec3_add(up, right));
     Vec3 pt4 = vec3_add(v, vec3_sub(right, up));
 
-    if (
-        !point_fulstrum_test_no_view_distance(pt1.x, pt1.y, pt1.z) &&
+    if (!point_fulstrum_test_no_view_distance(pt1.x, pt1.y, pt1.z) &&
         !point_fulstrum_test_no_view_distance(pt2.x, pt2.y, pt2.z) &&
         !point_fulstrum_test_no_view_distance(pt3.x, pt3.y, pt3.z) &&
-        !point_fulstrum_test_no_view_distance(pt4.x, pt4.y, pt4.z)
-    ) return;
+        !point_fulstrum_test_no_view_distance(pt4.x, pt4.y, pt4.z))
+    {
+        return;
+    }
 
     star_vlist->push_vertex(pt1, s.tx_min,s.ty_max);
     star_vlist->push_vertex(pt2, s.tx_max,s.ty_max);
@@ -240,24 +231,16 @@ void pack_vertex_list()
 void prep_skybox()
 {
     pack_vertex_list();
-    GS_ASSERT(star_vlist != NULL);
-    if (star_vlist == NULL) return;
+    IF_ASSERT(star_vlist == NULL) return;
     star_vlist->buffer();
 }
 
 void draw()
 {
     if (!star_shader.shader_valid) return;
-
-    GS_ASSERT(current_camera != NULL);
-    if (current_camera == NULL) return;
-
-    GS_ASSERT(star_sheet != 0);
-    if (star_sheet == 0) return;
-
-    GS_ASSERT(star_vlist != NULL);
-    if (star_vlist == NULL) return;
-
+    IF_ASSERT(current_camera == NULL) return;
+    IF_ASSERT(star_sheet == 0) return;
+    IF_ASSERT(star_vlist == NULL) return;
     if (star_vlist->vertex_number <= 0) return;
 
     glBindBuffer(GL_ARRAY_BUFFER, star_vlist->VBO);

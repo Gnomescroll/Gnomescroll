@@ -71,7 +71,7 @@ class MechListVertexList
     {
         va[vi] = v;
         vi++;
-        if(vi == vm)
+        if (vi == vm)
         {
             vm *= 2;
             va = (struct Vertex*) realloc(va, vm*sizeof(struct Vertex));
@@ -85,9 +85,9 @@ class MechListVertexList
 
     void buffer()
     {
-        if(VBO == 0) glGenBuffers(1, &VBO);
+        if (VBO == 0) glGenBuffers(1, &VBO);
 
-        if(vi != 0)
+        if (vi != 0)
         {
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(GL_ARRAY_BUFFER, vi*stride, NULL, GL_STATIC_DRAW);
@@ -96,7 +96,7 @@ class MechListVertexList
         }
         else
         {
-            if(vi > 0)
+            if (vi > 0)
             {
                 glBindBuffer(GL_ARRAY_BUFFER, VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
@@ -142,9 +142,9 @@ class MechListShader
         shader = new Shader;
         shader->set_debug(true);
 
-        shader->load_shader( "mech_list_shader",
+        shader->load_shader("mech_list_shader",
             MEDIA_PATH "shaders/effect/mech_list.vsh",
-            MEDIA_PATH "shaders/effect/mech_list.fsh" );
+            MEDIA_PATH "shaders/effect/mech_list.fsh");
 
         CameraPosition =    shader->get_uniform("CameraPosition");
 
@@ -187,7 +187,7 @@ class MechListShader
         //int mech_sprite_width[256];  //centered
         //int mech_sprite_height[256]; //from bottom
 
-        for(int i=0; i<256; i++)
+        for (int i=0; i<256; i++)
         {
             mech_sprite_width[i]  = -1;
             mech_sprite_height[i] = -1;
@@ -198,7 +198,7 @@ class MechListShader
         unsigned char *pixels = (unsigned char *)s->pixels;
         GS_ASSERT(s->w == 16*16 && s->h == 16*16);
 
-        for(int i=0; i<256; i++)
+        for (int i=0; i<256; i++)
         {
             int w = i % 16;
             int h = i / 16;
@@ -209,21 +209,21 @@ class MechListShader
             //bool empty_column = false;
             int j;
 
-            for(j=0; j<16; j++) //column
+            for (j=0; j<16; j++) //column
             {
                 int offset = 256*16*h + 16*w;
                 offset += j;
 
-                for(int k=0; k<16; k++) //iterate over column
+                for (int k=0; k<16; k++) //iterate over column
                 {
                     int index = offset + k*256;
 
-                    if(pixels[4*index + 3] > 128)
+                    if (pixels[4*index + 3] > 128)
                     {
                         //empty_column = true;
 
                         int width = 2*(8-j);
-                        if(width > mech_sprite_width[i])
+                        if (width > mech_sprite_width[i])
                         {
                             mech_sprite_width[i] = width;
 
@@ -233,9 +233,9 @@ class MechListShader
                     }
                 }
             /*
-                if(empty_column == true)
+                if (empty_column == true)
                 {
-                    for(int _k=0; _k<32; _k++)
+                    for (int _k=0; _k<32; _k++)
                     {
                         int index2 = offset + _k*512;
                         pixels[4*index2 + 3] = 255;
@@ -249,22 +249,22 @@ class MechListShader
 
             //empty_column = false;
 
-            for(j=0; j<16; j++) //column
+            for (j=0; j<16; j++) //column
             {
                 int offset = 256*16*h + 16*w;
                 offset += 15-j;
 
-                for(int k=0; k<16; k++) //iterate over column
+                for (int k=0; k<16; k++) //iterate over column
                 {
                     int index = offset + k*256;
                     GS_ASSERT(index < 256*256);
 
-                    if(pixels[4*index + 3] > 128)
+                    if (pixels[4*index + 3] > 128)
                     {
                         //empty_column = true;
 
                         int width = 2*(8-j);
-                        if(width > mech_sprite_width[i])
+                        if (width > mech_sprite_width[i])
                         {
                             mech_sprite_width[i] = width;
 
@@ -274,9 +274,9 @@ class MechListShader
                     }
                 }
             /*
-                if(empty_column == true)
+                if (empty_column == true)
                 {
-                    for(int _k=0; _k<32; _k++)
+                    for (int _k=0; _k<32; _k++)
                     {
                         int index2 = offset + (31-_k)*512;
                         pixels[4*index2 + 3] = 255;
@@ -288,22 +288,22 @@ class MechListShader
             */
             }
 
-            if(mech_sprite_width[i] == -1)
+            if (mech_sprite_width[i] == -1)
                 continue;
 
             bool empty_row = false;
 
-            for(j=0; j<16; j++) //row
+            for (j=0; j<16; j++) //row
             {
                 int offset = 256*16*h + 16*w;
                 offset += 256*j;
 
-                for(int k=0; k<16; k++) //iterate over row
+                for (int k=0; k<16; k++) //iterate over row
                 {
                     int index = offset + k;
                     GS_ASSERT(index < 256*256);
 
-                    if(pixels[4*index + 3] > 128)
+                    if (pixels[4*index + 3] > 128)
                     {
                         empty_row = true;
                         int height = 16-j;
@@ -315,9 +315,9 @@ class MechListShader
                     }
                 }
 
-                if(empty_row == true)
+                if (empty_row == true)
                 {
-                    for(int _k=0; _k<16; _k++)
+                    for (int _k=0; _k<16; _k++)
                     {
                         int index2 = offset + _k;
                         pixels[4*index2 + 3] = 255;
@@ -337,21 +337,21 @@ class MechListShader
         //save_surface_to_png(s, SCREENSHOT_PATH "mech_surface.png");
 
         //floating point modifier
-        for(int i=0; i<256; i++)
+        for (int i=0; i<256; i++)
         {
             mech_sprite_width_f[i]  = 1.0;
             mech_sprite_height_f[i] = 1.0;
         }
 
-        for(int i=0; i<256; i++)
+        for (int i=0; i<256; i++)
         {
-            if(mech_sprite_width[i] != -1)
-                mech_sprite_width_f[i] = ((float) mech_sprite_width[i] ) / 16.0f;
-            if(mech_sprite_height[i] != -1)
-                mech_sprite_height_f[i] = ((float) mech_sprite_height[i] ) / 16.0f;
+            if (mech_sprite_width[i] != -1)
+                mech_sprite_width_f[i] = ((float) mech_sprite_width[i]) / 16.0f;
+            if (mech_sprite_height[i] != -1)
+                mech_sprite_height_f[i] = ((float) mech_sprite_height[i]) / 16.0f;
 
-            //if(mech_sprite_height[i] != -1)
-            //   printf("mech %i: %i \n", i, mech_sprite_height[i] );
+            //if (mech_sprite_height[i] != -1)
+            //   printf("mech %i: %i \n", i, mech_sprite_height[i]);
         }
 
     }
@@ -370,8 +370,8 @@ class MechListRenderer
 
         //printf("draw: %i \n", vertex_list.vi);
 
-        if(vertex_list.vi == 0) return;
-        if(shader.shader->shader_valid == false) return;
+        if (vertex_list.vi == 0) return;
+        if (shader.shader->shader_valid == false) return;
 
         //printf("draw \n");
 
@@ -388,7 +388,7 @@ class MechListRenderer
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
-        glBindTexture( GL_TEXTURE_2D, shader.texture1 );
+        glBindTexture(GL_TEXTURE_2D, shader.texture1);
 
         shader.shader->enable_attributes();
 
@@ -397,8 +397,8 @@ class MechListRenderer
         glVertexPointer(3, GL_FLOAT, vertex_list.stride, (GLvoid*)0);
         glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)12);
 
-        //glUniform4f(InTranslation, (GLfloat*) p.f );
-        //glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
+        //glUniform4f(InTranslation, (GLfloat*) p.f);
+        //glUniform3fv(InTranslation, 1, (GLfloat*) p.f);
 
         glDrawArrays(GL_QUADS, 0, vertex_list.vi);
 
@@ -406,7 +406,7 @@ class MechListRenderer
 
         shader.shader->disable_attributes();
 
-        glBindTexture( GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDisable(GL_TEXTURE_2D);
@@ -417,8 +417,8 @@ class MechListRenderer
 
     void draw_transparent()
     {
-        if(vertex_list.vi == 0) return;
-        if(shader.shader->shader_valid == false) return;
+        if (vertex_list.vi == 0) return;
+        if (shader.shader->shader_valid == false) return;
 
         glColor4ub(255,255,255,255);
 
@@ -433,7 +433,7 @@ class MechListRenderer
         glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
 
-        glBindTexture( GL_TEXTURE_2D, shader.texture1 );
+        glBindTexture(GL_TEXTURE_2D, shader.texture1);
 
         shader.shader->enable_attributes();
 
@@ -442,8 +442,8 @@ class MechListRenderer
         glVertexPointer(3, GL_FLOAT, vertex_list.stride, (GLvoid*)0);
         glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)12);
 
-        //glUniform4f(InTranslation, (GLfloat*) p.f );
-        //glUniform3fv(InTranslation, 1, (GLfloat*) p.f );
+        //glUniform4f(InTranslation, (GLfloat*) p.f);
+        //glUniform3fv(InTranslation, 1, (GLfloat*) p.f);
 
         glDrawArrays(GL_QUADS, 0, vertex_list.vi);
 
@@ -451,7 +451,7 @@ class MechListRenderer
 
         shader.shader->disable_attributes();
 
-        glBindTexture( GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDisable(GL_TEXTURE_2D);
@@ -516,7 +516,7 @@ void MechListRenderer::push_crystal_vertex(const struct MECH &m)
     /*
         Do radius render test?
     */
-    if( sphere_fulstrum_test(wx, wy, wz, 0.6f) == false)
+    if (sphere_fulstrum_test(wx, wy, wz, 0.6f) == false)
         return;
 
     int tex_id = mech_attributes[m.mech_type].sprite_index;
@@ -590,11 +590,11 @@ void MechListRenderer::push_crystal_vertex(const struct MECH &m)
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_max,ty_max );
+    vertex_list.tex2f(tx_max,ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_max,ty_min );
+    vertex_list.tex2f(tx_max,ty_min);
     vertex_list.push_vertex();
 
 
@@ -607,15 +607,15 @@ void MechListRenderer::push_crystal_vertex(const struct MECH &m)
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_max,ty_max );
+    vertex_list.tex2f(tx_max,ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_max,ty_min );
+    vertex_list.tex2f(tx_max,ty_min);
     vertex_list.push_vertex();
 
-    dx = sin( (m.rotation+0.5) * PI );
-    dy = cos( (m.rotation+0.5) * PI );
+    dx = sin((m.rotation+0.5) * PI);
+    dy = cos((m.rotation+0.5) * PI);
 
     vn[3*0+0] = wx - size*dx;
     vn[3*0+1] = wy - size*dy;
@@ -642,11 +642,11 @@ void MechListRenderer::push_crystal_vertex(const struct MECH &m)
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_max,ty_max );
+    vertex_list.tex2f(tx_max,ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_max,ty_min );
+    vertex_list.tex2f(tx_max,ty_min);
     vertex_list.push_vertex();
 
 
@@ -659,11 +659,11 @@ void MechListRenderer::push_crystal_vertex(const struct MECH &m)
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_max,ty_max );
+    vertex_list.tex2f(tx_max,ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_max,ty_min );
+    vertex_list.tex2f(tx_max,ty_min);
     vertex_list.push_vertex();
 
 }
@@ -700,7 +700,7 @@ void MechListRenderer::prep_vbo()
 
     int num =0;
 
-    for(int i=0; i<mlm; i++)
+    for (int i=0; i<mlm; i++)
     {
         if (mla[i].id == -1) continue;
 
@@ -721,7 +721,7 @@ void MechListRenderer::prep_vbo()
         num++;
     }
 
-    if(num != mech_list->mln)
+    if (num != mech_list->mln)
     {
         printf("num= %i mln= %i \n", num, mech_list->mln);
     }

@@ -139,10 +139,10 @@ class MapMessagePacketToClient
 
             class NetPeer* np;
 
-            for(int i=0; i<HARD_MAX_CONNECTIONS; i++)
+            for (int i=0; i<HARD_MAX_CONNECTIONS; i++)
             {
                 np = NetServer::pool[i]; //use better iterator
-                if(np == NULL) continue;
+                if (np == NULL) continue;
                 np->push_reliable_message(nm);
             }
             #else
@@ -157,7 +157,7 @@ class MapMessagePacketToClient
             if (np == NULL) np = NetServer::pool[client_id];
             IF_ASSERT(np == NULL) return;
 
-            if(np->map_message_buffer_index + size >= np->map_message_buffer_max)
+            if (np->map_message_buffer_index + size >= np->map_message_buffer_max)
                 np->resize_map_message_buffer(np->map_message_buffer_index + size);
 
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
@@ -241,7 +241,7 @@ class MapMessageArrayPacketToClient
             #if DC_SERVER
             NetPeer* np = NetServer::staging_pool[client_id];
             if (np == NULL) np = NetServer::pool[client_id];
-            if(np == NULL)
+            if (np == NULL)
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
                 return;
@@ -250,10 +250,10 @@ class MapMessageArrayPacketToClient
             //printf("1 size= %i \n", size);
             //printf("2 size= %i \n", Derived::size);
 
-            if(np->map_message_buffer_index + size + len >= np->map_message_buffer_max)
+            if (np->map_message_buffer_index + size + len >= np->map_message_buffer_max)
                 np->resize_map_message_buffer(np->map_message_buffer_index + size + len);
 
-            //if(len > 1024)
+            //if (len > 1024)
             //{
                 //printf("MapMessagePacketToClient: large map message, prefix length= %i length= %i \n", size, len);
             //}
@@ -264,10 +264,10 @@ class MapMessageArrayPacketToClient
             */
             byte_size = len;
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
-            memcpy( np->map_message_buffer + np->map_message_buffer_index, buff, len);
+            memcpy(np->map_message_buffer + np->map_message_buffer_index, buff, len);
             np->map_message_buffer_index += len;
 
-            if(np->map_message_buffer_index >= 1024) np->flush_map_messages();
+            if (np->map_message_buffer_index >= 1024) np->flush_map_messages();
             #else
             GS_ASSERT(false);
             #endif

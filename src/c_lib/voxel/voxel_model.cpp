@@ -33,8 +33,7 @@ void VoxelModel::set_skeleton_root(float *data)
     if (!this->skeleton_inited) return;
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(
         data[0], data[1], data[2],
-        data[3], data[4], data[5]
-    );
+        data[3], data[4], data[5]);
     vox_skeleton_world_matrix[0].c = translate_position(vox_skeleton_world_matrix[0].c);
 }
 
@@ -62,7 +61,7 @@ void VoxelModel::set_node_rotation(int node, float theta, float phi, float rho)
     if (!this->skeleton_inited) return;
     GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
     if (node < 0 || node >= this->n_skeleton_nodes) return;
-    
+
     float x  = vox_dat->vox_skeleton_local_matrix_reference[node][0];
     float y  = vox_dat->vox_skeleton_local_matrix_reference[node][1];
     float z  = vox_dat->vox_skeleton_local_matrix_reference[node][2];
@@ -89,26 +88,25 @@ void VoxelModel::update_skeleton()
     GS_ASSERT(this->skeleton_inited);
     if (!this->skeleton_inited) return;
     const int debug = 0;
-    if(debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
+    if (debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
 
-    for(int i=1; i<n_skeleton_nodes; i++)
+    for (int i=1; i<n_skeleton_nodes; i++)
     {
-        if(debug) 
-        {   
+        if (debug)
+        {
             printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
             print_affine(vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]]);
             printf("\n");
             print_affine(vox_skeleton_local_matrix[i]);
         }
 
-        vox_skeleton_world_matrix[i] = affine_mult( 
-            vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
-            vox_skeleton_local_matrix[i]
-        );
+        vox_skeleton_world_matrix[i] = affine_mult(
+            vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],
+            vox_skeleton_local_matrix[i]);
         vox_skeleton_world_matrix[i].c = translate_position(vox_skeleton_world_matrix[i].c);
     }
 
-    for(int i=0; i<this->n_parts; i++)
+    for (int i=0; i<this->n_parts; i++)
     {
         VoxelVolume* vv = &this->vv[i];
         vv->world_matrix = affine_mult(*vv->parent_world_matrix, vv->local_matrix);
@@ -134,7 +132,7 @@ void VoxelModel::draw_skeleton()
     const float len = 0.25f;
 
     // node matrix orientation
-    for(int i=0; i<n_skeleton_nodes; i++)
+    for (int i=0; i<n_skeleton_nodes; i++)
     {
         struct Affine m = vox_skeleton_world_matrix[i];
 
@@ -159,7 +157,7 @@ void VoxelModel::draw_skeleton()
     }
 
     // node->node connection
-    for(int i=1; i<n_skeleton_nodes; i++)
+    for (int i=1; i<n_skeleton_nodes; i++)
     {
 
         struct Affine m1 = vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]];
@@ -168,7 +166,7 @@ void VoxelModel::draw_skeleton()
         glColor3ub(160, 32, 240);
         v = m1.v[3];
         glVertex3f(v.x,v.y,v.z);
-        
+
         glColor3ub(255, 165, 0);
         v = m2.v[3];
         glVertex3f(v.x,v.y,v.z);
@@ -176,7 +174,7 @@ void VoxelModel::draw_skeleton()
 
 
     // part matrix orientation
-    for(int i=0; i<this->n_parts; i++)
+    for (int i=0; i<this->n_parts; i++)
     {
         struct Affine m = this->vv[i].world_matrix;
 
@@ -200,7 +198,7 @@ void VoxelModel::draw_skeleton()
     }
 
     // node->part connection
-    for(int i=0; i<this->n_parts; i++)
+    for (int i=0; i<this->n_parts; i++)
     {
         struct Affine m1 = *(this->vv[i].parent_world_matrix);
         struct Affine m2 = this->vv[i].world_matrix;
@@ -208,7 +206,7 @@ void VoxelModel::draw_skeleton()
         glColor3ub(0, 0, 0);
         v = m1.v[3];
         glVertex3f(v.x,v.y,v.z);
-        
+
         glColor3ub(255, 255, 255);
         v = m2.v[3];
         glVertex3f(v.x,v.y,v.z);
@@ -234,7 +232,7 @@ void VoxelModel::init_skeleton()
     vox_skeleton_transveral_list = (int*)calloc(this->n_skeleton_nodes, sizeof(int));
     vox_skeleton_local_matrix = (struct Affine*)calloc(this->n_skeleton_nodes, sizeof(struct Affine));
     vox_skeleton_world_matrix = (struct Affine*)calloc(this->n_skeleton_nodes, sizeof(struct Affine));
-    
+
     biaxial_nodes = (bool*)calloc(this->n_skeleton_nodes, sizeof(bool));
     for (int i=0; i<vox_dat->n_parts; i++)
     {
@@ -254,14 +252,14 @@ void VoxelModel::reset_skeleton()
 {
     this->n_skeleton_nodes = vox_dat->n_skeleton_nodes;
     this->skeleton_needs_update = true;
-    
+
     for (int i=0; i<this->n_skeleton_nodes; i++)
     {
         vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
         vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i]; //this is zero
     }
-    
-    //set pointer in voxel volume back to the skeleton parent world matrix 
+
+    //set pointer in voxel volume back to the skeleton parent world matrix
     for (int i=0; i<this->n_parts; i++)
     {
         class VoxelVolume* vv = &this->vv[i];
@@ -302,13 +300,13 @@ void VoxelModel::set_part_color(int part_num)
 {
     GS_ASSERT(part_num >= 0 && part_num < this->n_parts);
     if (part_num < 0 || part_num >= this->n_parts) return;
-    
+
     VoxPart *vp = vox_dat->vox_part[part_num];
     VoxelVolume* vv = &(this->vv[part_num]);
     int x = vp->dimension.x;
     int y = vp->dimension.y;
     int z = vp->dimension.z;
-    
+
     unsigned char r,g,b,a;
     int ix,iy,iz;
     GS_ASSERT(vp->colors.n == x*y*z);
@@ -341,13 +339,13 @@ void VoxelModel::fill_part_color(int part_num, Color color)
     if (part_num < 0 || part_num >= this->n_parts) return;
     GS_ASSERT(color.r || color.g || color.b); // 0,0,0 is interpreted as invisible
     GS_ASSERT(color.r != 255 && color.g != 255 && color.b != 255);  // 255 wraps to 0 for whatever reason
-    
+
     VoxPart *vp = vox_dat->vox_part[part_num];
     if (!vp->colorable) return;
     Color base_color = vp->base_color;
 
     VoxelVolume* vv = &(this->vv[part_num]);
-    
+
     int ix,iy,iz;
     unsigned char r,g,b,a;
     for (int i=0; i<vp->colors.n; i++)
@@ -362,7 +360,7 @@ void VoxelModel::fill_part_color(int part_num, Color color)
         ix = vp->colors.index[3*i + 0];
         iy = vp->colors.index[3*i + 1];
         iz = vp->colors.index[3*i + 2];
-        
+
         vv->set_color(ix,iy,iz, color.r, color.g, color.b, a);
     }
 }
@@ -399,11 +397,11 @@ void VoxelModel::set_hitscan(bool hitscan)
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
-void VoxelModel::update(float x, float y, float z, float theta, float phi) 
+void VoxelModel::update(float x, float y, float z, float theta, float phi)
 {
     if (this->frozen) return;
     if (this->was_updated) return;
- 
+
     ASSERT_BOXED_POINTf(x);
     ASSERT_BOXED_POINTf(y);
 
@@ -559,7 +557,7 @@ bool VoxelModel::in_sight_of(Vec3 source, Vec3* sink, float failure_rate)
     for (int i=0; i<this->n_parts; i++)
         part_numbers[i] = i;
     shuffle<int>(part_numbers, this->n_parts);
-    
+
     Vec3 c;
     for (int i=0; i<this->n_parts; i++)
     {

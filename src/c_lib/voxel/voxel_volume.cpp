@@ -36,7 +36,7 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
     const static int _ssize = 0xFF;
     const static int _bsize = 0xFFFF;
     // normalize direction
-    float len2 = sqrtf( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
+    float len2 = sqrtf(_dfx*_dfx+_dfy*_dfy+_dfz*_dfz);
     _dfx /= len2;
     _dfy /= len2;
     _dfz /= len2;
@@ -81,36 +81,36 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
 
     int col=0;
 
-    for(i =0; i < max_i; i++) {
+    for (i =0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
-        if(cx >= _bsize || cy >= _bsize || cz >= _bsize) {
-            if(cx >= _bsize) {
+        if (cx >= _bsize || cy >= _bsize || cz >= _bsize) {
+            if (cx >= _bsize) {
                 cx -= _bsize;
                 //_x = x;
                 x += cdx;
-                if(_test_occludes_safe(x,y,z) != 0)
+                if (_test_occludes_safe(x,y,z) != 0)
                 {
                     col =1;
                     break;
                 }
             }
-            if(cy >= _bsize) {
+            if (cy >= _bsize) {
                 cy -= _bsize;
                 //_y = y;
                 y += cdy;
-                if(_test_occludes_safe(x,y,z) != 0)
+                if (_test_occludes_safe(x,y,z) != 0)
                 {
                     col=1;
                     break;
                 }
             }
-            if(cz >= _bsize) {
+            if (cz >= _bsize) {
                 cz -= _bsize;
                 //_z = z;
                 z += cdz;
-                if(_test_occludes_safe(x,y,z) != 0)
+                if (_test_occludes_safe(x,y,z) != 0)
                 {
                     col=1;
                     break;
@@ -118,7 +118,7 @@ int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _df
             }
         }
     }
-    if(col == 1)
+    if (col == 1)
     {
         *distance = len * (((float)i) / ((float)max_i));
         collision[0]=x; collision[1]=y; collision[2]=z;
@@ -173,9 +173,9 @@ int VoxelVolume::hitscan_test(struct Vec3 p, struct Vec3 f, float r2, int voxel[
     //int collision[3];
 
 #if HITSCAN_TEST_FAST
-    if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, voxel))
+    if (voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, voxel))
 #else
-    if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*l/scale, &distance, voxel))
+    if (voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*l/scale, &distance, voxel))
 #endif
     {
         distance *= scale;
@@ -414,7 +414,7 @@ void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int
     {
         int CX[8];
 
-        for(int i=0; i<8; i++)
+        for (int i=0; i<8; i++)
         {
             int index = side*8*3+i*3;
             CX[i] = _test_occludes_safe(x+ao_perm[index+0],y+ao_perm[index+1],z+ao_perm[index+2]);
@@ -466,7 +466,7 @@ void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int
         scratch[*index + 3].z = fz + vset[_side + 11];
     }
 
-    //if(*index >= 65536) printf("BUFFER OVERFLOW!!! \n");
+    //if (*index >= 65536) printf("BUFFER OVERFLOW!!! \n");
     *index += 4;
 }
 
@@ -489,12 +489,12 @@ l = [
 void VoxelVolume::update_vertex_list()
 {
     static int compute_gamma_chart = 0;
-    if(compute_gamma_chart == 0)
+    if (compute_gamma_chart == 0)
     {
         compute_gamma_chart = 1;
 
         static const float gamma_correction = 2.2f;
-        for(int i=0; i< 255; i++)
+        for (int i=0; i< 255; i++)
         {
             float intensity = (float) i;
             intensity = powf(intensity/255, gamma_correction)*255;
@@ -512,7 +512,7 @@ void VoxelVolume::update_vertex_list()
     };
 
     float vset_dynamic[72];
-    for(int i=0; i<72; i++) vset_dynamic[i] = this->scale*vset[i];
+    for (int i=0; i<72; i++) vset_dynamic[i] = this->scale*vset[i];
 
     const float ox = this->hdx*this->scale;
     const float oy = this->hdy*this->scale;
@@ -520,9 +520,9 @@ void VoxelVolume::update_vertex_list()
 
     int index = 0;
 
-    for(unsigned int x=0; x < xdim; x++)
-    for(unsigned int y=0; y < ydim; y++)
-    for(unsigned int z=0; z < zdim; z++)
+    for (unsigned int x=0; x < xdim; x++)
+    for (unsigned int y=0; y < ydim; y++)
+    for (unsigned int z=0; z < zdim; z++)
     {
         if (get_as_int(x,y,z) == 0) continue;
 
@@ -534,12 +534,12 @@ void VoxelVolume::update_vertex_list()
         push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
         push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #else
-        if(z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
-        if(z == 0 || get_as_int(x,y,z-1) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
-        if(x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
-        if(x == 0 || get_as_int(x-1,y,z) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
-        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0)  push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
-        if(y == 0 || get_as_int(x,y-1,z) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
+        if (z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
+        if (z == 0 || get_as_int(x,y,z-1) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
+        if (x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
+        if (x == 0 || get_as_int(x-1,y,z) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
+        if (y+1 ==ydim || get_as_int(x,y+1,z) == 0)  push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
+        if (y == 0 || get_as_int(x,y-1,z) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #endif
     }
 
@@ -608,7 +608,7 @@ void VoxelVolume::draw_bounding_box()
 
     //world_matrix
 
-    for(i=0; i<12; i++)
+    for (i=0; i<12; i++)
     {
             j = 3*vertex_index2[2*i+0];
 
@@ -657,19 +657,19 @@ Tests whether a voxel is occupied, for AO
 */
 inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z)
 {
-    if( x >= xdim || y >= ydim || z >= zdim ) return 0;
+    if (x >= xdim || y >= ydim || z >= zdim) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
-    if(voxel[index].color == 0) return 0;
+    if (voxel[index].color == 0) return 0;
     return 1;
 }
 // fills voxel[3] with the voxel location
 inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3])
 {
-    if( x >= xdim || y >= ydim || z >= zdim ) return 0;
+    if (x >= xdim || y >= ydim || z >= zdim) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
-    if(index >= index_max) printf("VoxelVolume::_test_occludes_safe IMPOSSIBLE \n");
+    if (index >= index_max) printf("VoxelVolume::_test_occludes_safe IMPOSSIBLE \n");
     vxl[0] = x; vxl[1] = y; vxl[2] = z;
-    if(voxel[index].color == 0) return 0;
+    if (voxel[index].color == 0) return 0;
     return 1;
 }
 inline void VoxelVolume::_set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)

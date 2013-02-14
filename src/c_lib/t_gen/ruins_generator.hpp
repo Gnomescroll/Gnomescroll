@@ -10,11 +10,11 @@ dont_include_this_file_in_client
 
 namespace t_gen {
 
-const size_t    NUM_FLOOR_CUBES = 4; 
+const size_t    NUM_FLOOR_CUBES = 4;
 CubeType floors[NUM_FLOOR_CUBES];
-const size_t    NUM_WALL_CUBES = 4; 
+const size_t    NUM_WALL_CUBES = 4;
 CubeType walls [NUM_WALL_CUBES];
-const size_t    NUM_CEIL_CUBES = 4; 
+const size_t    NUM_CEIL_CUBES = 4;
 CubeType ceils [NUM_CEIL_CUBES];
 const size_t    NUM_TRIM_CUBES = 4;
 CubeType trims [NUM_TRIM_CUBES];
@@ -34,30 +34,30 @@ CubeType curr_wall = EMPTY_CUBE;
 CubeType curr_ceil = EMPTY_CUBE;
 CubeType curr_trim = EMPTY_CUBE;
 
-enum direction_t 
+enum direction_t
 {
-    DIR_NORTH, 
-	DIR_SOUTH,
-    DIR_EAST, 
-	DIR_WEST,
-    DIR_UP, 
-	DIR_DOWN,
+    DIR_NORTH,
+    DIR_SOUTH,
+    DIR_EAST,
+    DIR_WEST,
+    DIR_UP,
+    DIR_DOWN,
     DIR_MAX // use only as a max value when iterating thru directions
 };
-        
-enum room_t 
+
+enum room_t
 {
     ROOMT_NORMAL,
     ROOMT_HALL,
     ROOMT_BOSS,
 };
-        
-CubeType randcube(CubeType arr[], int num) 
+
+CubeType randcube(CubeType arr[], int num)
 {
     return arr[randrange(0, num - 1)];
 }
 
-class IntVec3 
+class IntVec3
 {
     public :
         int x;
@@ -65,66 +65,62 @@ class IntVec3
         int z;
 
     IntVec3() { x = y = z = 0; }
-    IntVec3(int x_, int y_, int z_) 
-    { 
+    IntVec3(int x_, int y_, int z_)
+    {
         x = x_;
         y = y_;
-        z = z_; 
+        z = z_;
     }
 
-    bool Equals(IntVec3 iv) 
+    bool Equals(IntVec3 iv)
     {
-        if (x == iv.x && 
-            y == iv.y && 
-            z == iv.z
-        ) 
-            return true;
-
-        return false;
+        return (x == iv.x &&
+                 y == iv.y &&
+                 z == iv.z);
     }
 
-    void Clone(IntVec3 iv) 
+    void Clone(IntVec3 iv)
     {
         x = iv.x;
         y = iv.y;
         z = iv.z;
     }
 };
-    
-struct Rect 
+
+struct Rect
 {
     int x, y, wid, dep;
 
     Rect() { x = y = wid = dep = 0; }
-    Rect(int x_, int y_, int wid_, int dep_) 
-    { 
-        x = x_; 
-        y = y_; 
-        wid = wid_; 
-        dep = dep_; 
+    Rect(int x_, int y_, int wid_, int dep_)
+    {
+        x = x_;
+        y = y_;
+        wid = wid_;
+        dep = dep_;
     }
 };
-    
-struct Rect3D 
+
+struct Rect3D
 {
     int x, y, z, wid, dep, hei;
 
-    Rect3D() 
-    { 
-        x = y = z = wid = dep = hei = 0; 
+    Rect3D()
+    {
+        x = y = z = wid = dep = hei = 0;
     }
-    Rect3D(int x_, int y_, int z_, int wid_, int dep_, int hei_) 
-    { 
-        x = x_; 
-        y = y_; 
-        z = z_; 
-        wid = wid_; 
-        dep = dep_; 
-        hei = hei_; 
+    Rect3D(int x_, int y_, int z_, int wid_, int dep_, int hei_)
+    {
+        x = x_;
+        y = y_;
+        z = z_;
+        wid = wid_;
+        dep = dep_;
+        hei = hei_;
     }
 
-    void Clone(Rect3D r) 
-    { 
+    void Clone(Rect3D r)
+    {
         x = r.x;
         y = r.y;
         z = r.z;
@@ -133,35 +129,35 @@ struct Rect3D
         hei = r.hei;
     }
 
-    void Close() 
-    { 
-        x = y = z = wid = dep = hei = 0; 
+    void Close()
+    {
+        x = y = z = wid = dep = hei = 0;
     }
 };
-    
+
 Rect3D fixed_stair(3, 4, 0, 4, 2, 1);
 
-struct Room 
+struct Room
 {
-	int id; // just used to label the order the rooms were generated
+    int id; // just used to label the order the rooms were generated
     bool dead;
     enum room_t room_t;
     CubeType wall;
     CubeType floo;
     CubeType ceil;
     CubeType trim;
-	// connections in 6 directions
+    // connections in 6 directions
     Rect3D uconn;
     Rect3D dconn;
     Rect3D nconn;
-    Rect3D sconn; 
+    Rect3D sconn;
     Rect3D econn;
     Rect3D wconn;
     Rect3D air;    // the clear/air region that connections are up against
 
-    Room() 
-	{
-		id = 0;
+    Room()
+    {
+        id = 0;
         dead = true;
         room_t = ROOMT_NORMAL;
         wall = floo = ceil = trim = EMPTY_CUBE;
@@ -173,18 +169,18 @@ Room*** rooms = NULL; //[ROOMS_GOING_UP][ROOMS_GOING_ACROSS][ROOMS_GOING_ACROSS]
 
 IntVec3 get_room_origin(IntVec3 ri /* room index */, int ox, int oy)
 {
-	IntVec3 iv;
-	iv.x = ri.x * CUBES_ACROSS_ROOM + ox;  
-	iv.y = ri.y * CUBES_ACROSS_ROOM + oy;  
-	iv.z = ri.z * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET; 
-	return iv;
+    IntVec3 iv;
+    iv.x = ri.x * CUBES_ACROSS_ROOM + ox;
+    iv.y = ri.y * CUBES_ACROSS_ROOM + oy;
+    iv.z = ri.z * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET;
+    return iv;
 }
 
 void set_region(int x_, int y_, int z_, int wid, int dep, int hei, CubeType ct)
 {
-    for (int z = z_; z < z_ + hei; z++) 
-    for (int y = y_; y < y_ + dep; y++) 
-    for (int x = x_; x < x_ + wid; x++) 
+    for (int z = z_; z < z_ + hei; z++)
+    for (int y = y_; y < y_ + dep; y++)
+    for (int x = x_; x < x_ + wid; x++)
         t_map::set_fast(x, y, z, ct);
 }
 void set_region(Rect3D r, CubeType ct, IntVec3 ri /* room index */, int ox, int oy) // x/y offset
@@ -192,30 +188,30 @@ void set_region(Rect3D r, CubeType ct, IntVec3 ri /* room index */, int ox, int 
     IntVec3 ori = get_room_origin(ri, ox, oy);
 
     set_region(
-		ori.x + r.x, 
-		ori.y + r.y, 
-		ori.z + r.z, 
-		r.wid, r.dep, r.hei, 
-		ct);
+        ori.x + r.x,
+        ori.y + r.y,
+        ori.z + r.z,
+        r.wid, r.dep, r.hei,
+        ct);
 }
 
 bool rect_spans(Rect3D r) // if wid, dep, hei are all 0, it doesn't span any space or represent any space
 {
     if (r.wid < 1 &&
         r.dep < 1 &&
-        r.hei < 1) 
+        r.hei < 1)
         return false;
 
     return true;
 }
 
-bool rect_contains(Rect r, int x, int y) 
+bool rect_contains(Rect r, int x, int y)
 {
     if (x >= r.x && x < r.x + r.wid &&
         y >= r.y && y < r.y + r.dep) return true;
     return false;
 }
-bool rect_contains(Rect3D r, int x, int y, int z) 
+bool rect_contains(Rect3D r, int x, int y, int z)
 {
     if (x >= r.x && x < r.x + r.wid &&
         y >= r.y && y < r.y + r.dep &&
@@ -223,7 +219,7 @@ bool rect_contains(Rect3D r, int x, int y, int z)
     return false;
 }
 
-bool rect_plus_margin_contains(Rect3D r, int mar, int x, int y, int z) 
+bool rect_plus_margin_contains(Rect3D r, int mar, int x, int y, int z)
 {
     if (x >= r.x-mar && x < r.x+mar + r.wid &&
         y >= r.y-mar && y < r.y+mar + r.dep &&
@@ -231,7 +227,7 @@ bool rect_plus_margin_contains(Rect3D r, int mar, int x, int y, int z)
     return false;
 }
 
-void setup_room(Room& r, room_t rt) 
+void setup_room(Room& r, room_t rt)
 {
     r.room_t = rt;
 
@@ -247,7 +243,7 @@ void setup_room(Room& r, room_t rt)
     r.econn.z = 1;
     r.wconn.z = 1;
     r.air.z = 1;
-    
+
     r.nconn.hei = CONN_HEIGHT;
     r.sconn.hei = CONN_HEIGHT;
     r.econn.hei = CONN_HEIGHT;
@@ -255,7 +251,7 @@ void setup_room(Room& r, room_t rt)
     r.air.hei = randrange(5, CUBES_GOING_UP_ROOM - 2);
 
     // set subspace of grid node
-    if (ROOMT_HALL == r.room_t) 
+    if (ROOMT_HALL == r.room_t)
     {
         r.air.x = r.air.y = CONN_OFFSET;
         r.air.wid = r.air.dep = CONN_SPAN;
@@ -268,17 +264,17 @@ void setup_room(Room& r, room_t rt)
     }
 }
 
-void make_alive_and_setup(Room& r, room_t room_t) 
+void make_alive_and_setup(Room& r, room_t room_t)
 {
     r.dead = false;
     setup_room(r, room_t);
 }
 
-void make_chest(int x, int y, int z) 
+void make_chest(int x, int y, int z)
 {
     ItemContainerID id = ItemContainer::create_container_block(ItemContainer::name::storage_block_small, x, y, z);
 
-	if (id != NULL_CONTAINER)
+    if (id != NULL_CONTAINER)
     {
         if (randrange(0, 2) == 0)
         {
@@ -307,11 +303,11 @@ void make_chest(int x, int y, int z)
 void set_at_room_offset(CubeType ct, int x, int y, int z, IntVec3 ri /* room index */, int ox, int oy)
 {
     IntVec3 ori = get_room_origin(ri, ox, oy);
-	t_map::set_fast(ori.x + x, ori.y + y, ori.z + z, ct);
+    t_map::set_fast(ori.x + x, ori.y + y, ori.z + z, ct);
 }
 
 // params:  room indexes,  origin x/y
-void make_room_filling(IntVec3 ri, int ox, int oy) 
+void make_room_filling(IntVec3 ri, int ox, int oy)
 {
     for (int cx = 0; cx < CUBES_ACROSS_ROOM; cx++)
     for (int cy = 0; cy < CUBES_ACROSS_ROOM; cy++)
@@ -321,63 +317,60 @@ void make_room_filling(IntVec3 ri, int ox, int oy)
         bool need_cube = false;
 
         // determine need_cube status
-        if (!rect_contains(r.air, cx, cy, cz) )
+        if (!rect_contains(r.air, cx, cy, cz))
         {
-            if (!rect_contains(r.uconn, cx, cy, cz)
-                &&
-                !rect_contains(r.dconn, cx, cy, cz)
-                &&
-                !rect_contains(r.nconn, cx, cy, cz)
-                &&
-                !rect_contains(r.sconn, cx, cy, cz)
-                &&
-                !rect_contains(r.econn, cx, cy, cz)
-                &&
-                !rect_contains(r.wconn, cx, cy, cz) 
-            )
+            if (!rect_contains(r.uconn, cx, cy, cz) &&
+                !rect_contains(r.dconn, cx, cy, cz) &&
+                !rect_contains(r.nconn, cx, cy, cz) &&
+                !rect_contains(r.sconn, cx, cy, cz) &&
+                !rect_contains(r.econn, cx, cy, cz) &&
+                !rect_contains(r.wconn, cx, cy, cz))
+            {
                 need_cube = true;
+            }
         }
 
         // spawn cubes
-        if (need_cube) 
+        if (need_cube)
         {
             // change rim/frame cubes
             if (r.room_t != ROOMT_HALL)
                 if (cz == 1 ||
-                    rect_plus_margin_contains(r.nconn, 1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.sconn, 1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.econn, 1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.wconn, 1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.uconn, 1, cx, cy, cz) || 
-                    rect_plus_margin_contains(r.dconn, 1, cx, cy, cz)
-                ) 
+                    rect_plus_margin_contains(r.nconn, 1, cx, cy, cz) ||
+                    rect_plus_margin_contains(r.sconn, 1, cx, cy, cz) ||
+                    rect_plus_margin_contains(r.econn, 1, cx, cy, cz) ||
+                    rect_plus_margin_contains(r.wconn, 1, cx, cy, cz) ||
+                    rect_plus_margin_contains(r.uconn, 1, cx, cy, cz) ||
+                    rect_plus_margin_contains(r.dconn, 1, cx, cy, cz))
+                {
                     cube = r.trim;
-            
-			set_at_room_offset(cube,       cx, cy, cz, ri, ox, oy);
-        } 
-        else 
+                }
+
+            set_at_room_offset(cube,       cx, cy, cz, ri, ox, oy);
+        }
+        else
         {
-			set_at_room_offset(EMPTY_CUBE, cx, cy, cz, ri, ox, oy);
-            
+            set_at_room_offset(EMPTY_CUBE, cx, cy, cz, ri, ox, oy);
+
             if (cz == 1 && (randrange(0, 256) == 0))
-            { 
-				IntVec3 ori = get_room_origin(ri, ox, oy);
-				make_chest(ori.x + cx, ori.y + cy, ori.z + cz);
-			}
+            {
+                IntVec3 ori = get_room_origin(ri, ox, oy);
+                make_chest(ori.x + cx, ori.y + cy, ori.z + cz);
+            }
         }
 
-		// make column of cubes in the middle to show room id (should be the order rooms were generated)
-		Rect3D r3d;
-		r3d.z = 1;
-		r3d.y = CUBES_ACROSS_ROOM / 2;
-		r3d.x = CUBES_ACROSS_ROOM / 2;
-		r3d.wid = r3d.dep = 1;
-		r3d.hei = r.id;
-		set_region(r3d, curr_floo, ri, ox, oy);
+        // make column of cubes in the middle to show room id (should be the order rooms were generated)
+        Rect3D r3d;
+        r3d.z = 1;
+        r3d.y = CUBES_ACROSS_ROOM / 2;
+        r3d.x = CUBES_ACROSS_ROOM / 2;
+        r3d.wid = r3d.dep = 1;
+        r3d.hei = r.id;
+        set_region(r3d, curr_floo, ri, ox, oy);
     }
 }
 
-void make_stairs(IntVec3 iv, int ox, int oy) 
+void make_stairs(IntVec3 iv, int ox, int oy)
 { // room indexes, origin
     CubeType floo = rooms[iv.z][iv.y][iv.x].floo;
 
@@ -405,7 +398,7 @@ void make_stairs(IntVec3 iv, int ox, int oy)
 
 
 
-Room setup_stairspace_for(direction_t d, Room r) {
+Room setup_stairspace_for (direction_t d, Room r) {
     //r.dir_types[d] = DIRTYPE_STAIRS;
     r.air.x = fixed_stair.x - 2;
     r.air.y = fixed_stair.y - 2;
@@ -414,30 +407,30 @@ Room setup_stairspace_for(direction_t d, Room r) {
     return r;
 }
 
-bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from) 
+bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from)
 { // room index
     IntVec3 to;
 
-    switch(dir) 
+    switch(dir)
     {
-        case DIR_NORTH: 
+        case DIR_NORTH:
             to.x = from.x;
-            to.y = from.y + 1; 
-            to.z = from.z;  // set offset of destination  
-            break;
-        case DIR_SOUTH: 
-            to.x = from.x; 
-            to.y = from.y - 1; 
+            to.y = from.y + 1;
             to.z = from.z;  // set offset of destination
             break;
-        case DIR_EAST:  
-            to.x = from.x + 1; 
-            to.y = from.y; 
+        case DIR_SOUTH:
+            to.x = from.x;
+            to.y = from.y - 1;
             to.z = from.z;  // set offset of destination
             break;
-        case DIR_WEST:  
-            to.x = from.x - 1; 
-            to.y = from.y; 
+        case DIR_EAST:
+            to.x = from.x + 1;
+            to.y = from.y;
+            to.z = from.z;  // set offset of destination
+            break;
+        case DIR_WEST:
+            to.x = from.x - 1;
+            to.y = from.y;
             to.z = from.z;  // set offset of destination
             break;
 
@@ -448,18 +441,9 @@ bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from)
             break;
     }
 
-    if (
-      to.x < 0 || to.x >= ROOMS_GOING_ACROSS
-     ||
-      to.y < 0 || to.y >= ROOMS_GOING_ACROSS
-     ||
-      to.z < 0 || to.z >= ROOMS_GOING_UP
-      ) 
-    {
-        return false;
-    }
-
-    return true;
+    return (to.x >= 0 && to.x < ROOMS_GOING_ACROSS &&
+             to.y >= 0 && to.y < ROOMS_GOING_ACROSS &&
+             to.z >= 0 && to.z < ROOMS_GOING_UP);
 }
 
 void open_connection_to(direction_t d, Room& rm)
@@ -506,35 +490,35 @@ void open_connection_to(direction_t d, Room& rm)
     }
 }
 
-void connect_room(IntVec3& src, direction_t d) 
+void connect_room(IntVec3& src, direction_t d)
 {
         IntVec3 dst;
-		dst.Clone(src);  // starting point.  gets offset in direction below
+        dst.Clone(src);  // starting point.  gets offset in direction below
 
-        switch(d) 
+        switch(d)
         {
-            case DIR_NORTH: 
-                dst.y++; 
+            case DIR_NORTH:
+                dst.y++;
                 open_connection_to(DIR_NORTH, rooms[src.z][src.y][src.x]);
                 open_connection_to(DIR_SOUTH, rooms[dst.z][dst.y][dst.x]);
                 break;
-            case DIR_SOUTH: 
-                dst.y--; 
+            case DIR_SOUTH:
+                dst.y--;
                 open_connection_to(DIR_SOUTH, rooms[src.z][src.y][src.x]);
                 open_connection_to(DIR_NORTH, rooms[dst.z][dst.y][dst.x]);
                 break;
-            case DIR_EAST:  
-                dst.x++; 
+            case DIR_EAST:
+                dst.x++;
                 open_connection_to(DIR_EAST, rooms[src.z][src.y][src.x]);
                 open_connection_to(DIR_WEST, rooms[dst.z][dst.y][dst.x]);
                 break;
-            case DIR_WEST:  
-                dst.x--; 
+            case DIR_WEST:
+                dst.x--;
                 open_connection_to(DIR_WEST, rooms[src.z][src.y][src.x]);
                 open_connection_to(DIR_EAST, rooms[dst.z][dst.y][dst.x]);
                 break;
             case DIR_UP:
-                dst.z++; 
+                dst.z++;
                 open_connection_to(DIR_UP,   rooms[src.z][src.y][src.x]);
                 open_connection_to(DIR_DOWN, rooms[dst.z][dst.y][dst.x]);
                 break;
@@ -549,7 +533,7 @@ void connect_room(IntVec3& src, direction_t d)
 IntVec3 root;
 IntVec3 hall;
 IntVec3 room;
-bool empty_lat_space_around(IntVec3 iv) 
+bool empty_lat_space_around(IntVec3 iv)
 {
     // find out how many, and which are valid directions
     int num_choices = 0;
@@ -557,7 +541,7 @@ bool empty_lat_space_around(IntVec3 iv)
 
     for (int i = 0; i < 4; i++) // consider all lateral directions
     {
-        switch((direction_t)i) 
+        switch((direction_t)i)
         {
             case DIR_NORTH: if (valid_room_idx_to_dir_from(DIR_NORTH, iv) && rooms[iv.z][iv.y + 1][iv.x].dead) choices[num_choices++] = DIR_NORTH; break;
             case DIR_SOUTH: if (valid_room_idx_to_dir_from(DIR_SOUTH, iv) && rooms[iv.z][iv.y - 1][iv.x].dead) choices[num_choices++] = DIR_SOUTH; break;
@@ -574,16 +558,16 @@ bool empty_lat_space_around(IntVec3 iv)
 
     if (num_choices < 1) return false;
     direction_t dir = choices[randrange(0, num_choices - 1)]; // get random dir
-    
-    if (iv.Equals(root)) 
+
+    if (iv.Equals(root))
     {
-		setup_room(rooms[root.z][root.y][root.x], rooms[root.z][root.y][root.x].room_t);  // fixme?   room_t might not be deliberately set yet?
+        setup_room(rooms[root.z][root.y][root.x], rooms[root.z][root.y][root.x].room_t);  // fixme?   room_t might not be deliberately set yet?
         setup_room(rooms[hall.z][hall.y][hall.x], ROOMT_HALL);
         connect_room(root, dir);
         return true;
     }
-    else 
-    if (iv.Equals(hall)) 
+    else
+    if (iv.Equals(hall))
     {
         setup_room(rooms[hall.z][hall.y][hall.x], ROOMT_HALL);
         setup_room(rooms[room.z][room.y][room.x], ROOMT_NORMAL);
@@ -591,14 +575,14 @@ bool empty_lat_space_around(IntVec3 iv)
         return true;
     }
     else
-    {   
+    {
         printf("Ruins generator: neither root or hall was passed into: bool empty_lat_space_around(iv)\n");
         GS_ASSERT(false);
         return false;
     }
 }
 
-void UNUSED_make_a_simple_room() 
+void UNUSED_make_a_simple_room()
 {
     // spans refer to the AIRSPACE, and don't include outer shell of cubes
     // but offset, for cleaner comparisons, should actually be the absolute offset from the corner of the room (including shell)
@@ -615,20 +599,20 @@ void UNUSED_make_a_simple_room()
 
             //// connections in directions (inclu stairs)
             //for (int i = 0; i < DIR_MAX; i++) {
-            //    if /* lateral dir */ (i < DIR_UP) 
+            //    if /* lateral dir */ (i < DIR_UP)
             //        r.dir_types[i] = (direction_type_t)randrange(1, 2); // randomly choose door or hall
             //    else if /* stairway up should be here */ (i == DIR_UP && z < ROOMS_GOING_UP - 1 && x == stairway_up_x && y == stairway_up_y)
-            //        r = setup_stairspace_for(DIR_UP, r);
+            //        r = setup_stairspace_for (DIR_UP, r);
             //    else {
             //        r.dir_types[i] = DIRTYPE_BLOCKED_FOREVER;
             //    }
             //}
 
             //if /* stairs going upwards in room below */ (z > 0 && rooms[z - 1][y][x].dir_types[DIR_UP] == DIRTYPE_STAIRS)
-            //    r = setup_stairspace_for(DIR_DOWN, r);
+            //    r = setup_stairspace_for (DIR_DOWN, r);
 }
 
-void finish_room(Room r) 
+void finish_room(Room r)
 {
     r.wall = curr_wall;
     r.floo = curr_floo;
@@ -636,7 +620,7 @@ void finish_room(Room r)
     r.trim = curr_trim;
     r.dead = false;
 }
-void finish_room(IntVec3 iv, int id = 0) 
+void finish_room(IntVec3 iv, int id = 0)
 {
     rooms[iv.z][iv.y][iv.x].wall = curr_wall;
     rooms[iv.z][iv.y][iv.x].floo = curr_floo;
@@ -644,57 +628,57 @@ void finish_room(IntVec3 iv, int id = 0)
     rooms[iv.z][iv.y][iv.x].trim = curr_trim;
     rooms[iv.z][iv.y][iv.x].dead = false;
     rooms[iv.z][iv.y][iv.x].id = id;
-} 
+}
 
 
-IntVec3 find_valid_root() 
+IntVec3 find_valid_root()
 {
     IntVec3 iv;
-	int num_alives = 0;
+    int num_alives = 0;
 
     // 1st pass: find out how many alives, and assure we have a dead value to return, if nothing valid
-	for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
+    for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
     for (int ry = 0; ry < ROOMS_GOING_ACROSS; ry++)
-    for (int rz = 0; rz < ROOMS_GOING_UP; rz++) 
-	{
+    for (int rz = 0; rz < ROOMS_GOING_UP; rz++)
+    {
         if (rooms[rz][ry][rx].dead)
-		{
-			iv.x = rx;
-			iv.y = ry;
-			iv.z = rz;
-		}
-		else
-		{
-			num_alives++;
-		}
+        {
+            iv.x = rx;
+            iv.y = ry;
+            iv.z = rz;
+        }
+        else
+        {
+            num_alives++;
+        }
     }
 
-	if (num_alives == 0)
-		return iv; 
+    if (num_alives == 0)
+        return iv;
 
     // 2nd pass: return a random alive
-	int chosen_alive = randrange(0, num_alives - 1);
-	num_alives = 0;  // can reuse this now that we got random # using it
-	for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
+    int chosen_alive = randrange(0, num_alives - 1);
+    num_alives = 0;  // can reuse this now that we got random # using it
+    for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
     for (int ry = 0; ry < ROOMS_GOING_ACROSS; ry++)
-    for (int rz = 0; rz < ROOMS_GOING_UP; rz++) 
-	{
+    for (int rz = 0; rz < ROOMS_GOING_UP; rz++)
+    {
         if (!rooms[rz][ry][rx].dead)
-		{
-			if (num_alives == chosen_alive)
-			{
-				iv.x = rx;
-				iv.y = ry;
-				iv.z = rz;
-				return iv;
-			}
+        {
+            if (num_alives == chosen_alive)
+            {
+                iv.x = rx;
+                iv.y = ry;
+                iv.z = rz;
+                return iv;
+            }
 
-			num_alives++;
-		}
+            num_alives++;
+        }
     }
 
     return iv;  // will be dead if we don't return somewhere earlier....
-				// then we know no valid roots could be found
+                // then we know no valid roots could be found
 }
 
 bool added_pair(int id)
@@ -703,22 +687,22 @@ bool added_pair(int id)
     if (empty_lat_space_around(root))
     {
         num_tries++;
-        if (num_tries > 4000) 
-		{
-			printf("ruins_generator: > 4000 tries!  I GIVE!\n");
-			return false;
-		}
-        
-        if (empty_lat_space_around(hall) )
+        if (num_tries > 4000)
+        {
+            printf("ruins_generator: > 4000 tries!  I GIVE!\n");
+            return false;
+        }
+
+        if (empty_lat_space_around(hall))
         {
             finish_room(hall, id);
             finish_room(room, id);
             root.Clone(room);
-			return true;
+            return true;
         }
     }
 
-	return false;
+    return false;
 }
 
 void set_pathing_data(int ox, int oy)  // origin x/y
@@ -728,9 +712,9 @@ void set_pathing_data(int ox, int oy)  // origin x/y
     curr_wall = randcube(walls, NUM_WALL_CUBES);
     curr_ceil = randcube(ceils, NUM_CEIL_CUBES);
     curr_trim = randcube(trims, NUM_TRIM_CUBES);
-        
-    for (int z = 0; z < ROOMS_GOING_UP; z++) 
-	{
+
+    for (int z = 0; z < ROOMS_GOING_UP; z++)
+    {
         // make boss room or stairway-down
         if (z == 0) // boos needs 2x3 joining of grid nodes
         {
@@ -738,68 +722,68 @@ void set_pathing_data(int ox, int oy)  // origin x/y
             root.y = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room dep */);
             root.z = z;
 
-	        // make extra rooms to be joined together as boss room
-			make_alive_and_setup(rooms[root.z][root.y + 1][root.x + 1], ROOMT_BOSS);
-			finish_room(         rooms[root.z][root.y + 1][root.x + 1]);
-			make_alive_and_setup(rooms[root.z][root.y + 1][root.x],     ROOMT_BOSS);
-			finish_room(         rooms[root.z][root.y + 1][root.x]);
-			make_alive_and_setup(rooms[root.z][root.y]    [root.x + 1], ROOMT_BOSS);
-			finish_room(         rooms[root.z][root.y]    [root.x + 1]);
+            // make extra rooms to be joined together as boss room
+            make_alive_and_setup(rooms[root.z][root.y + 1][root.x + 1], ROOMT_BOSS);
+            finish_room(        rooms[root.z][root.y + 1][root.x + 1]);
+            make_alive_and_setup(rooms[root.z][root.y + 1][root.x],     ROOMT_BOSS);
+            finish_room(        rooms[root.z][root.y + 1][root.x]);
+            make_alive_and_setup(rooms[root.z][root.y]    [root.x + 1], ROOMT_BOSS);
+            finish_room(        rooms[root.z][root.y]    [root.x + 1]);
 
-			if (randrange(0, 1) == 0)
-			{ // 2x3
-				make_alive_and_setup(rooms[root.z][root.y + 2][root.x],     ROOMT_BOSS);
-				finish_room(         rooms[root.z][root.y + 2][root.x]);
-				make_alive_and_setup(rooms[root.z][root.y + 2][root.x + 1], ROOMT_BOSS);
-				finish_room(         rooms[root.z][root.y + 2][root.x + 1]);
-			}
-			else
-			{ // 3x2
-				make_alive_and_setup(rooms[root.z][root.y]    [root.x + 2], ROOMT_BOSS);
-				finish_room(         rooms[root.z][root.y]    [root.x + 2]);
-				make_alive_and_setup(rooms[root.z][root.y + 1][root.x + 2], ROOMT_BOSS);
-				finish_room(         rooms[root.z][root.y + 1][root.x + 2]);
-			}
+            if (randrange(0, 1) == 0)
+            { // 2x3
+                make_alive_and_setup(rooms[root.z][root.y + 2][root.x],     ROOMT_BOSS);
+                finish_room(        rooms[root.z][root.y + 2][root.x]);
+                make_alive_and_setup(rooms[root.z][root.y + 2][root.x + 1], ROOMT_BOSS);
+                finish_room(        rooms[root.z][root.y + 2][root.x + 1]);
+            }
+            else
+            { // 3x2
+                make_alive_and_setup(rooms[root.z][root.y]    [root.x + 2], ROOMT_BOSS);
+                finish_room(        rooms[root.z][root.y]    [root.x + 2]);
+                make_alive_and_setup(rooms[root.z][root.y + 1][root.x + 2], ROOMT_BOSS);
+                finish_room(        rooms[root.z][root.y + 1][root.x + 2]);
+            }
         }
         else  // need stairs
         {
             IntVec3 lower;
-            lower.Clone(root); 
+            lower.Clone(root);
             root.z++;
             connect_room(lower, DIR_UP);
         }
-        
+
         make_alive_and_setup(rooms[root.z][root.y][root.x], ROOMT_NORMAL);
         finish_room(root);
-       
+
         // snake a linear path
         // for each pair desired, keep trying to make a valid hall-then-room (2 car) train of Rect3D spans
-        for (int i = 0; i < 5; i++) 
-		{
+        for (int i = 0; i < 5; i++)
+        {
             if (!added_pair(i + 1))  // must start a new snake, cuz can't build off ROOT room
             {
                 root = find_valid_root();
-				if (rooms[root.z][root.y][root.x].dead) 
-					break;  // couldn't find valid room
+                if (rooms[root.z][root.y][root.x].dead)
+                    break;  // couldn't find valid room
             }
         }
 
         // add offshoot pairs randomly
         // for each pair desired, keep trying to make a valid hall-then-room (2 car) train of Rect3D spans
-        for (int i = 0; i < 7; i++) 
-		{
+        for (int i = 0; i < 7; i++)
+        {
             root = find_valid_root();
-			if (rooms[root.z][root.y][root.x].dead) 
-				break;  // couldn't find valid room
+            if (rooms[root.z][root.y][root.x].dead)
+                break;  // couldn't find valid room
 
             if (!added_pair(i + 1 + 5 /* how many pairs probably made */))  // must start a new snake, cuz can't build off ROOT room
             {
-				break;  // couldn't find valid room
+                break;  // couldn't find valid room
             }
-		}
+        }
     }
 }
-    
+
 void draw_ASCII_floorplan(int level, int northernmost, int southernmost)
 {
     printf("_____________________________ level %d ___________________________\n", level);
@@ -809,7 +793,7 @@ void draw_ASCII_floorplan(int level, int northernmost, int southernmost)
         for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++) // do X innermostly to make ASCII easy
         {
             // show in ASCII
-            if (rooms[level][ry][rx].dead) 
+            if (rooms[level][ry][rx].dead)
             {
                 printf("  ");
                 continue;
@@ -844,7 +828,7 @@ bool contains_1_or_more_cubes(Rect3D r)
     return false;
 }
 
-void make_ruins(int x, int y) 
+void make_ruins(int x, int y)
 {
     printf("__________________________________________________________________\n");
     printf("Making ruin @ %d, %d\n", x, y);
@@ -852,32 +836,32 @@ void make_ruins(int x, int y)
     set_pathing_data(x, y);
 
     // generate each room's cubes
-    for (int rz = 0; rz < ROOMS_GOING_UP; rz++) 
+    for (int rz = 0; rz < ROOMS_GOING_UP; rz++)
     {
         int northernmost = 0;
         int southernmost = ROOMS_GOING_ACROSS;
         for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
         for (int ry = 0; ry < ROOMS_GOING_ACROSS; ry++)
         {
-            if (rooms[rz][ry][rx].dead) 
+            if (rooms[rz][ry][rx].dead)
                 continue;
 
             IntVec3 ri;  // room index
-            ri.x = rx; 
-            ri.y = ry; 
+            ri.x = rx;
+            ri.y = ry;
             ri.z = rz;
 
-			if (rooms[rz][ry][rx].room_t == ROOMT_BOSS) 
-			{
-				if (rx != 0 && rooms[rz][ry][rx - 1].room_t == ROOMT_BOSS) 
-				{
-					connect_room(ri, DIR_WEST);
-				}
-				if (ry != 0 && rooms[rz][ry - 1][rx].room_t == ROOMT_BOSS) 
-				{
-					connect_room(ri, DIR_SOUTH);
-				}
-			}
+            if (rooms[rz][ry][rx].room_t == ROOMT_BOSS)
+            {
+                if (rx != 0 && rooms[rz][ry][rx - 1].room_t == ROOMT_BOSS)
+                {
+                    connect_room(ri, DIR_WEST);
+                }
+                if (ry != 0 && rooms[rz][ry - 1][rx].room_t == ROOMT_BOSS)
+                {
+                    connect_room(ri, DIR_SOUTH);
+                }
+            }
 
             if (northernmost < ry)
                 northernmost = ry;
@@ -898,7 +882,7 @@ void make_ruins(int x, int y)
                 ry * CUBES_ACROSS_ROOM + y,
                 rz * CUBES_GOING_UP_ROOM + BEDROCK_OFFSET + CUBES_GOING_UP_ROOM - 1,
                 CUBES_ACROSS_ROOM, CUBES_ACROSS_ROOM, 1, rooms[rz][ry][rx].ceil);
-        
+
             make_room_filling(ri, x, y);
 
             if (contains_1_or_more_cubes(rooms[rz][ry][rx].uconn))
@@ -915,14 +899,14 @@ void make_ruins(int x, int y)
 }
 
     void check_textures(CubeType arr[], int num) {
-        for (int i = 0; i < num; i++) 
-		{ 
-            GS_ASSERT(t_map::isValidCube(trims[i])); 
+        for (int i = 0; i < num; i++)
+        {
+            GS_ASSERT(t_map::isValidCube(trims[i]));
 
-            if (!t_map::isValidCube(trims[i])) 
-			{ 
-				printf("** cube id %d invalid ***", trims[i]); return; 
-			}
+            if (!t_map::isValidCube(trims[i]))
+            {
+                printf("** cube id %d invalid ***", trims[i]); return;
+            }
         }
     }
 
@@ -930,8 +914,8 @@ void make_ruins(int x, int y)
     {
         for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
         for (int ry = 0; ry < ROOMS_GOING_ACROSS; ry++)
-        for (int rz = 0; rz < ROOMS_GOING_UP; rz++) 
-		{
+        for (int rz = 0; rz < ROOMS_GOING_UP; rz++)
+        {
             rooms[rz][ry][rx].dead = true;
             rooms[rz][ry][rx].uconn.Close();
             rooms[rz][ry][rx].dconn.Close();
@@ -939,9 +923,9 @@ void make_ruins(int x, int y)
             rooms[rz][ry][rx].sconn.Close();
             rooms[rz][ry][rx].econn.Close();
             rooms[rz][ry][rx].wconn.Close();
-            rooms[rz][ry][rx].wall = 
-            rooms[rz][ry][rx].floo = 
-            rooms[rz][ry][rx].ceil = 
+            rooms[rz][ry][rx].wall =
+            rooms[rz][ry][rx].floo =
+            rooms[rz][ry][rx].ceil =
             rooms[rz][ry][rx].trim = EMPTY_CUBE;
 
         }
@@ -949,13 +933,13 @@ void make_ruins(int x, int y)
 
     void generate_ruins() {
         // setup rooms array
-		if(rooms == NULL) 
+        if (rooms == NULL)
         {
             rooms = new Room**[ROOMS_GOING_UP];
-            for(int i=0; i<ROOMS_GOING_UP; i++)
+            for (int i=0; i<ROOMS_GOING_UP; i++)
             {
                 rooms[i] = new Room*[ROOMS_GOING_ACROSS];
-                for(int j=0; j<ROOMS_GOING_ACROSS; j++)
+                for (int j=0; j<ROOMS_GOING_ACROSS; j++)
                 {
                     rooms[i][j] = new Room[ROOMS_GOING_ACROSS];
                 }
@@ -963,28 +947,28 @@ void make_ruins(int x, int y)
         }
 
         // texture set lists
-		floors[0] = t_map::get_cube_type("ruins_floor1");
-        floors[1] = t_map::get_cube_type("ruins_floor2"); 
-        floors[2] = t_map::get_cube_type("ruins_floor3"); 
-        floors[3] = t_map::get_cube_type("ruins_floor4"); 
+        floors[0] = t_map::get_cube_type("ruins_floor1");
+        floors[1] = t_map::get_cube_type("ruins_floor2");
+        floors[2] = t_map::get_cube_type("ruins_floor3");
+        floors[3] = t_map::get_cube_type("ruins_floor4");
 
         walls[0] = t_map::get_cube_type("ruins_wall1");
-        walls[1] = t_map::get_cube_type("ruins_wall2"); 
+        walls[1] = t_map::get_cube_type("ruins_wall2");
         walls[2] = t_map::get_cube_type("ruins_wall3");
-        walls[3] = t_map::get_cube_type("ruins_wall4"); 
+        walls[3] = t_map::get_cube_type("ruins_wall4");
 
         ceils[0] = t_map::get_cube_type("ruins_ceiling1");
-        ceils[1] = t_map::get_cube_type("ruins_ceiling2"); 
+        ceils[1] = t_map::get_cube_type("ruins_ceiling2");
         ceils[2] = t_map::get_cube_type("ruins_ceiling3");
-        ceils[3] = t_map::get_cube_type("ruins_ceiling4"); 
+        ceils[3] = t_map::get_cube_type("ruins_ceiling4");
 
         trims[0] = t_map::get_cube_type("ruins_trim1");
-        trims[1] = t_map::get_cube_type("ruins_trim2"); 
+        trims[1] = t_map::get_cube_type("ruins_trim2");
         trims[2] = t_map::get_cube_type("ruins_trim3");
-        trims[3] = t_map::get_cube_type("ruins_trim4"); 
+        trims[3] = t_map::get_cube_type("ruins_trim4");
 
         // check that they're valid
-		check_textures(floors, NUM_FLOOR_CUBES);
+        check_textures(floors, NUM_FLOOR_CUBES);
         check_textures(walls,  NUM_WALL_CUBES);
         check_textures(ceils,  NUM_CEIL_CUBES);
         check_textures(trims,  NUM_TRIM_CUBES);
@@ -992,12 +976,8 @@ void make_ruins(int x, int y)
         // generate all ruins
         for (int i = 0; i < 3; i++)
         {
-            make_ruins
-            (
-                randrange(0, t_map::map_dim.x - 1), 
-                randrange(0, t_map::map_dim.y - 1)
-            );
-
+            make_ruins(randrange(0, t_map::map_dim.x - 1),
+                       randrange(0, t_map::map_dim.y - 1));
             reset_to_dead_and_closed();
         }
     }

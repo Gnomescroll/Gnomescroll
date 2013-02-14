@@ -40,7 +40,7 @@ void init_client_compressors()
         printf("map_chunk_compressed_StoC::handle, inflateInit() failed!\n");
     }
 
-    for(int i=0; i<1024; i++)
+    for (int i=0; i<1024; i++)
         client_chunk_alias_list[i] = -1;
     return;
 }
@@ -82,7 +82,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     //printf("received chunk: index = %i compressed \n", chunk_index);
 
 
-    GS_ASSERT( main_map->chunk[chunk_index] == NULL);
+    GS_ASSERT(main_map->chunk[chunk_index] == NULL);
 
     GS_ASSERT(MAP_CHUNK_XDIM == 32 && MAP_CHUNK_YDIM == 32);
     int cx = chunk_index % MAP_CHUNK_XDIM;
@@ -93,9 +93,9 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
     int _size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
 
-    if(size != _size) printf("map_chunk_compressed_StoC::handle, warning: invalid size!\n");
+    if (size != _size) printf("map_chunk_compressed_StoC::handle, warning: invalid size!\n");
 
-    memcpy( (char *) m->e, DECOMPRESSION_BUFFER, _size);
+    memcpy((char *) m->e, DECOMPRESSION_BUFFER, _size);
 
     m->refresh_height_cache(); //refesh height cache after memcpy
     main_map->chunk_received(cx,cy);
@@ -103,7 +103,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
 void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 {
-    //printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM );
+    //printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM);
     //printf("byte_size= %i \n", byte_size);
 #if MAP_NET_DEBUG
     printf("map chunk is %i bytes \n", byte_size);
@@ -116,7 +116,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
     int cx = chunk_index % MAP_CHUNK_XDIM;
     int cy = chunk_index / MAP_CHUNK_XDIM;
 
-    GS_ASSERT( main_map->chunk[chunk_index] == NULL);
+    GS_ASSERT(main_map->chunk[chunk_index] == NULL);
     main_map->load_chunk(cx, cy);
     class MAP_CHUNK* m = main_map->chunk[chunk_index];
 
@@ -124,7 +124,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
     This is evil, dont do this
 */
 
-    memcpy( (char *) m->e, buff, byte_num);
+    memcpy((char *) m->e, buff, byte_num);
     m->refresh_height_cache(); //refesh height cache after memcpy
 
 
@@ -146,7 +146,7 @@ void clear_alias_StoC::handle()
     printf("cleared chunk alias: %i %i \n", _x,_y);
 #endif
 
-    GS_ASSERT( main_map->chunk[chunk_index] != NULL);
+    GS_ASSERT(main_map->chunk[chunk_index] != NULL);
 
     int cx = chunk_index % MAP_CHUNK_XDIM;
     int cy = chunk_index / MAP_CHUNK_XDIM;
@@ -228,7 +228,7 @@ void container_block_chunk_reset_StoC::handle()
 
 void container_block_create_StoC::handle()
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     int chunk_index = (y/16)*(MAP_WIDTH/16) + (x/16);

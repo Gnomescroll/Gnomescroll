@@ -28,9 +28,9 @@ void init_voxel_particle()
 {
     textured_voxel_particle_shader.set_debug(true);
 
-    textured_voxel_particle_shader.load_shader( "textured voxel particle",
+    textured_voxel_particle_shader.load_shader("textured voxel particle",
         MEDIA_PATH "shaders/animation/textured_voxel_particle.vsh",
-        MEDIA_PATH "shaders/animation/textured_voxel_particle.fsh" );
+        MEDIA_PATH "shaders/animation/textured_voxel_particle.fsh");
 
     textured_voxel_particle_TexCoord = textured_voxel_particle_shader.get_attribute("InTexCoord");
     textured_voxel_particle_Normal = textured_voxel_particle_shader.get_attribute("InNormal");
@@ -41,9 +41,9 @@ void init_voxel_particle()
 
     colored_voxel_particle_shader.set_debug(true);
 
-    colored_voxel_particle_shader.load_shader( "colored voxel particle",
+    colored_voxel_particle_shader.load_shader("colored voxel particle",
         MEDIA_PATH "shaders/animation/colored_voxel_particle.vsh",
-        MEDIA_PATH "shaders/animation/colored_voxel_particle.fsh" );
+        MEDIA_PATH "shaders/animation/colored_voxel_particle.fsh");
 
     colored_voxel_particle_Normal = colored_voxel_particle_shader.get_attribute("InNormal");
     colored_voxel_particle_Color = colored_voxel_particle_shader.get_attribute("InColor");

@@ -172,7 +172,7 @@ void tick()
 
     //int num =0;
 
-    for(int i=0; i<mlm; i++)
+    for (int i=0; i<mlm; i++)
     {
         if (mla[i].id == -1) continue;
 
@@ -194,24 +194,24 @@ void tick()
                 continue;
                 break;
             case MECH_BEHAVIOR_TYPE_PLANT:
-                if(rand() % 6 != 0)
+                if (rand() % 6 != 0)
                     continue;
                 GS_ASSERT(mla[i].growth_ttl >= 0);
                 mla[i].growth_ttl--;
-                if(mla[i].growth_ttl == 0)
+                if (mla[i].growth_ttl == 0)
                     force_mech_growth(i);
             case MECH_BEHAVIOR_TYPE_LIGHT_PLANT:
                 break;
 
             case MECH_BEHAVIOR_TYPE_DARK_PLANT:
                 light_value = t_map::get_skylight(mla[i].x, mla[i].y, mla[i].z);
-                if(light_value < 10)
+                if (light_value < 10)
                 {
-                    if(rand() % 6 != 0)
+                    if (rand() % 6 != 0)
                         continue;
                     GS_ASSERT(mla[i].growth_ttl >= 0);
                     mla[i].growth_ttl--;
-                    if(mla[i].growth_ttl == 0)
+                    if (mla[i].growth_ttl == 0)
                         force_mech_growth(i);
                 }
 
@@ -233,21 +233,21 @@ void floating_removal_tick() //removes floating t_mech
 
     //int num =0;
     int collection_count = 0;
-    for(int i=0; i<mlm; i++)
+    for (int i=0; i<mlm; i++)
     {
         if (mla[i].id == -1) continue;
 
         int x = mla[i].x;
         int y = mla[i].y;
         int z = mla[i].z;
-        if(!t_map::isSolid(x,y,z-1))
+        if (!t_map::isSolid(x,y,z-1))
         {
             remove_mech(i);
             collection_count++;
         }
     }
 
-    if(collection_count != 0)
+    if (collection_count != 0)
         printf("t_mech::floating_removal_tick, removed %i floating t_mech \n", collection_count);
 }
 
@@ -384,11 +384,11 @@ void draw(const struct MECH &m)
     float dx1 = sin(m.rotation * PI);
     float dy1 = cos(m.rotation * PI);
 
-    float dx2 = sin( (m.rotation+0.5) * PI );
-    float dy2 = cos( (m.rotation+0.5) * PI );
+    float dx2 = sin((m.rotation+0.5) * PI);
+    float dy2 = cos((m.rotation+0.5) * PI);
 
-    //dx = sin( (m.rotation+0.5) * PI );
-    //dy = cos( (m.rotation+0.5) * PI );
+    //dx = sin((m.rotation+0.5) * PI);
+    //dy = cos((m.rotation+0.5) * PI);
 
     float _x[4];
     _x[0] = sin(m.rotation * 0.00f*PI);
@@ -409,7 +409,7 @@ struct MECH* _selected_mech = NULL;
 
 void draw_selected_mech_bounding_box()
 {
-    if(_selected_mech == NULL)
+    if (_selected_mech == NULL)
         return;
 
     struct MECH m = *_selected_mech;
@@ -424,9 +424,9 @@ void draw_selected_mech_bounding_box()
     wx = quadrant_translate_f(current_camera_position.x, wx);
     wy = quadrant_translate_f(current_camera_position.y, wy);
 
-    struct Vec3 f = vec3_init( sin(m.rotation * PI), cos(m.rotation * PI), 0.0f );
-    struct Vec3 r = vec3_init( sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f );
-    struct Vec3 u = vec3_init( 0.0f, 0.0f, 1.0f );
+    struct Vec3 f = vec3_init(sin(m.rotation * PI), cos(m.rotation * PI), 0.0f);
+    struct Vec3 r = vec3_init(sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f);
+    struct Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
 
     int tex_id = mech_attributes[m.mech_type].sprite_index;
 
@@ -439,11 +439,9 @@ void draw_selected_mech_bounding_box()
             //mech_sprite_width_f[i]  = 1.0;
             //mech_sprite_height_f[i] = 1.0;
 
-    visualize_bounding_box(
-    wx,wy,wz + 0.01f,
-    size_w,size_w, size_h,
-    f,r,u
-    );
+    visualize_bounding_box(wx,wy,wz + 0.01f,
+                           size_w,size_w, size_h,
+                           f,r,u);
 
 }
 
@@ -500,28 +498,19 @@ bool line_box_test(
     struct Vec3 r,
     struct Vec3 u,
 
-    float* a
-    )
+    float* a)
 */
     float a = 0.0f;
-    struct Vec3 f = vec3_init( sin(m.rotation * PI), cos(m.rotation * PI), 0.0f );
-    struct Vec3 r = vec3_init( sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f );
-    struct Vec3 u = vec3_init( 0.0f, 0.0f, 1.0f );
+    struct Vec3 f = vec3_init(sin(m.rotation * PI), cos(m.rotation * PI), 0.0f);
+    struct Vec3 r = vec3_init(sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f);
+    struct Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
 
-    bool ret = line_box_test(
-        x,y,z,
-        vx,vy,vz,
-        wx,wy,wz,
-        size,size,size,
-        f,
-        r,
-        u,
-        &a
-    );
+    bool ret = line_box_test(x, y, z, vx, vy, vz, wx, wy, wz,
+                             size, size, size, f, r, u, &a);
 
-    if(ret == true)
+    if (ret)
     {
-        printf("intercept: %0.2f %0.2f %0.2f top: %0.2f %0.2f %0.2f \n", x+a*vx, y+a*vy, z+a*vz,  wx+size*u.x, wy+size*u.y, wz+size*u.z );
+        printf("intercept: %0.2f %0.2f %0.2f top: %0.2f %0.2f %0.2f \n", x+a*vx, y+a*vy, z+a*vz,  wx+size*u.x, wy+size*u.y, wz+size*u.z);
 
         //printf("Raycast hit: %f \n", a);
         *_distance = a;
@@ -550,8 +539,8 @@ bool line_box_test(
     vn[3*0+2] = wz + size2;
 
 
-    dx = sin( (m.rotation+0.5) * PI );
-    dy = cos( (m.rotation+0.5) * PI );
+    dx = sin((m.rotation+0.5) * PI);
+    dy = cos((m.rotation+0.5) * PI);
 
     vn[3*0+0] = wx - size*dx;
     vn[3*0+1] = wy - size*dy;
@@ -605,9 +594,9 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
     const int mlm = mech_list->mlm;
     struct MECH* mla = mech_list->mla;
 
-    for(int i=0; i<mlm; i++)
+    for (int i=0; i<mlm; i++)
     {
-        if( mla[i].id == -1) continue;
+        if (mla[i].id == -1) continue;
 
         float d;
         bool ret;
@@ -616,25 +605,25 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
         int yd = yi - mla[i].y;
         int zd = zi - mla[i].z;
 
-        if(xd*xd + yd*yd + zd*zd > cutoff2)
+        if (xd*xd + yd*yd + zd*zd > cutoff2)
             continue;
 
-        switch ( mla[i].render_type )
+        switch (mla[i].render_type)
         {
             case MECH_RENDER_TYPE_0: //MECH_CRYSTAL:
                 //do something
                 ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
-                if(ret == true)
+                if (ret == true)
                 {
                     printf("mech raycast hit: %i distance= %f \n", i, d);
                     //return true;
                 }
 
-                if(ret == true && d < distance)
+                if (ret == true && d < distance)
                 {
                     distance = d;
                     mech_id = i;
-                    GS_ASSERT( i == mla[i].id );
+                    GS_ASSERT(i == mla[i].id);
                 }
 
                 break;
@@ -646,7 +635,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
         }
     }
 
-    if(mech_id != -1)
+    if (mech_id != -1)
     {
         *_mech_id = mech_id;
         *_distance = distance;
@@ -671,7 +660,7 @@ void handle_block_removal(int x, int y, int z)
     IF_ASSERT(!isValid(mech_type)) return;
 
     // drop item from mech
-    if(mech_attributes[mech_type].item_drop)
+    if (mech_attributes[mech_type].item_drop)
         handle_drop(x,y,z, mech_type);
 }
 
@@ -686,7 +675,7 @@ bool remove_mech(int mech_id)   //removes mech with drop
     bool ret = mech_list->server_remove_mech(mech_id);
     GS_ASSERT(ret);
 
-    if(mech_attributes[mech_type].item_drop)
+    if (mech_attributes[mech_type].item_drop)
         handle_drop(m.x,m.y,m.z, mech_type);
 
     return ret;

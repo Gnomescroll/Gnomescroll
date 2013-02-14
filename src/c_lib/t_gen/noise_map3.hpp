@@ -378,7 +378,7 @@ class MapGenerator1
         ri2 = ((int)(ri2 * 5));
         ri2 *= 0.20f;
         ri2 *= 40;
-        if ( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
+        if (z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
         if (v < -1) v = -1;
         if (v > 1) v = 1;
         */
@@ -393,9 +393,9 @@ class MapGenerator1
         static const float _hmix = 0.050f; //0.25;
 
         //if (r2 < 0.125f) r2 = 0.0125f;
-        //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
+        //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange));
 
-        //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
+        //float tmp1 = _hmix*(z - (hmin + r2*h2*hrange));
 
         float tmp1 = _hmix*(z - hmin - h2*hrange);
 
@@ -420,7 +420,7 @@ class MapGenerator1
 
         ri2 *= 40;
 
-        if ( z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
+        if (z < hmin + ri2) v -= 0.25f; //0,25  //hard threshold
 
         if (v < -1) v = -1;
         if (v > 1) v = 1;
@@ -441,7 +441,7 @@ class MapGenerator1
         static const float _hmix = 0.01f; //0.125;
 
         if (r2 < 0.125f) r2 = 0.0125f;
-        float tmp1 = _hmix*(z - (hmin + r2*h2*hrange) );
+        float tmp1 = _hmix*(z - (hmin + r2*h2*hrange));
 
         if (tmp1 < _hmin) tmp1 = _hmin;
         if (tmp1 > _hmax) tmp1 = _hmax;
@@ -552,11 +552,11 @@ void test_octave_3d_map_gen(CubeType tile_id)
     ti[i++] = _GET_MS_TIME();
 
     printf("Map Gen: \n");
-    printf("0 init noise map: %i ms \n", ti[1]-ti[0] );
-    printf("1 set persistence: %i ms \n", ti[2]-ti[1] );
-    printf("3 populate cache: %i ms \n", ti[3]-ti[2] );
-    printf("4 map volume lerp: %i ms \n", ti[4]-ti[3] );
-    printf("5 save noisemaps: %i ms \n", ti[5]-ti[4] );
+    printf("0 init noise map: %i ms \n", ti[1]-ti[0]);
+    printf("1 set persistence: %i ms \n", ti[2]-ti[1]);
+    printf("3 populate cache: %i ms \n", ti[3]-ti[2]);
+    printf("4 map volume lerp: %i ms \n", ti[4]-ti[3]);
+    printf("5 save noisemaps: %i ms \n", ti[5]-ti[4]);
 }
 
 void init_map_generator()

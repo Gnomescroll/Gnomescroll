@@ -35,32 +35,32 @@ struct Mat4 {
 void mat4_print(struct Mat4 m)
 {
 /*
-    printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[0].y,m.v[0].z,m.v[0].w );
-    printf("%.2f %.2f %.2f %.2f \n", m.v[1].x,m.v[1].y,m.v[1].z,m.v[1].w );
-    printf("%.2f %.2f %.2f %.2f \n", m.v[2].x,m.v[2].y,m.v[2].z,m.v[2].w );
-    printf("%.2f %.2f %.2f %.2f \n", m.v[3].x,m.v[3].y,m.v[3].z,m.v[3].w );
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[0].y,m.v[0].z,m.v[0].w);
+    printf("%.2f %.2f %.2f %.2f \n", m.v[1].x,m.v[1].y,m.v[1].z,m.v[1].w);
+    printf("%.2f %.2f %.2f %.2f \n", m.v[2].x,m.v[2].y,m.v[2].z,m.v[2].w);
+    printf("%.2f %.2f %.2f %.2f \n", m.v[3].x,m.v[3].y,m.v[3].z,m.v[3].w);
 */
 
-    printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[1].x,m.v[2].x,m.v[3].x );
-    printf("%.2f %.2f %.2f %.2f \n", m.v[0].y,m.v[1].y,m.v[2].y,m.v[3].y );
-    printf("%.2f %.2f %.2f %.2f \n", m.v[0].z,m.v[1].z,m.v[2].z,m.v[3].z );
-    printf("%.2f %.2f %.2f %.2f \n", m.v[0].w,m.v[1].w,m.v[2].w,m.v[3].w );
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[1].x,m.v[2].x,m.v[3].x);
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].y,m.v[1].y,m.v[2].y,m.v[3].y);
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].z,m.v[1].z,m.v[2].z,m.v[3].z);
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].w,m.v[1].w,m.v[2].w,m.v[3].w);
 /*
     printf("\n");
 
     float *f = m._f;
 
-    printf("%.2f %.2f %.2f %.2f \n", f[0*4+0],f[0*4+1],f[0*4+2],f[0*4+3] );
-    printf("%.2f %.2f %.2f %.2f \n", f[1*4+0],f[1*4+1],f[1*4+2],f[1*4+3] );
-    printf("%.2f %.2f %.2f %.2f \n", f[2*4+0],f[2*4+1],f[2*4+2],f[2*4+3] );
-    printf("%.2f %.2f %.2f %.2f \n", f[3*4+0],f[3*4+1],f[3*4+2],f[3*4+3] );
+    printf("%.2f %.2f %.2f %.2f \n", f[0*4+0],f[0*4+1],f[0*4+2],f[0*4+3]);
+    printf("%.2f %.2f %.2f %.2f \n", f[1*4+0],f[1*4+1],f[1*4+2],f[1*4+3]);
+    printf("%.2f %.2f %.2f %.2f \n", f[2*4+0],f[2*4+1],f[2*4+2],f[2*4+3]);
+    printf("%.2f %.2f %.2f %.2f \n", f[3*4+0],f[3*4+1],f[3*4+2],f[3*4+3]);
 
     printf("\n");
 
-    printf("%f %f %f %f \n", f[0*4+0],f[0*4+1],f[0*4+2],f[0*4+3] );
-    printf("%f %f %f %f \n", f[1*4+0],f[1*4+1],f[1*4+2],f[1*4+3] );
-    printf("%f %f %f %f \n", f[2*4+0],f[2*4+1],f[2*4+2],f[2*4+3] );
-    printf("%f %f %f %f \n", f[3*4+0],f[3*4+1],f[3*4+2],f[3*4+3] );
+    printf("%f %f %f %f \n", f[0*4+0],f[0*4+1],f[0*4+2],f[0*4+3]);
+    printf("%f %f %f %f \n", f[1*4+0],f[1*4+1],f[1*4+2],f[1*4+3]);
+    printf("%f %f %f %f \n", f[2*4+0],f[2*4+1],f[2*4+2],f[2*4+3]);
+    printf("%f %f %f %f \n", f[3*4+0],f[3*4+1],f[3*4+2],f[3*4+3]);
 */
 }
 
@@ -77,18 +77,18 @@ struct Mat4 mat4_mult(Mat4 a, Mat4 b)
 
 /*
     int i,j;
-    for(i=0; i<4; i++) //row
+    for (i=0; i<4; i++) //row
     {
-        for(j=0; j<4; j++)
+        for (j=0; j<4; j++)
         {
-            c._f[4*j+i] = mat4_row_mult_column( a._f, i, b._f, j );
+            c._f[4*j+i] = mat4_row_mult_column(a._f, i, b._f, j);
         }
     }
 */
 
 
-    for(int i = 0; i < 4; i++){
-    for(int j = 0; j < 4; j++){
+    for (int i = 0; i < 4; i++){
+    for (int j = 0; j < 4; j++){
         c._f[4*j+i] = a._f[4*0+i]*b._f[4*j+0] + a._f[4*1+i]*b._f[4*j+1] + a._f[4*2+i]*b._f[4*j+2] + a._f[4*3+i]*b._f[4*j+3];
         //matC[i][j] += matA[i][x] * matB[x][j];
     }
@@ -96,14 +96,14 @@ struct Mat4 mat4_mult(Mat4 a, Mat4 b)
 
 
 /*
-    for(int i = 0; i < 4; i++){
-    for(int j = 0; j < 4; j++){
+    for (int i = 0; i < 4; i++){
+    for (int j = 0; j < 4; j++){
         c._f[4*i+j] = 0.0f;
     }}
 
-    for(int i = 0; i < 4; i++){
-    for(int j = 0; j < 4; j++){
-    for(int k = 0; k < 4; k++) {
+    for (int i = 0; i < 4; i++){
+    for (int j = 0; j < 4; j++){
+    for (int k = 0; k < 4; k++) {
         //c._f[4*i+j] += a._f[4*i+k] * b._f[4*k+j];
 
         c._f[4*i+j] += a._f[4*i+k] * b._f[4*k+j];
@@ -240,7 +240,7 @@ struct Mat4 mat4_inverse(Mat4 m)
 
     det = 1.0 / det;
 
-    for(int i = 0; i < 16; i++)
+    for (int i = 0; i < 16; i++)
         n._f[i] *= det;
 
     return n;
@@ -252,8 +252,8 @@ struct Mat4 mat4_transpose(Mat4 a)
 {
     struct Mat4 b;
 
-    for(int i = 0; i < 4; i++){
-    for(int j = 0; j < 4; j++){
+    for (int i = 0; i < 4; i++){
+    for (int j = 0; j < 4; j++){
         b._f[4*i+j] = a._f[4*j+i];
     }}
     return b;

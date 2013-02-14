@@ -54,7 +54,7 @@ class Fifo_char_buffer
         write_index = 0;
     }
 
-    //void * memcpy ( void * destination, const void * source, size_t num );
+    //void * memcpy (void * destination, const void * source, size_t num);
     void write(char* buff, int n)
     {
         //int _n = n; //debug
@@ -62,7 +62,7 @@ class Fifo_char_buffer
 
         //printf("Fifo_char_buffer: write \n");
 
-        while(fb < n)
+        while (fb < n)
         {
             //printf("Fifo_char_buffer: write %i of %i bytes and new buffer\n", fb, n);  //debug
 
@@ -88,18 +88,18 @@ class Fifo_char_buffer
 
     void read(char* buff, int n)
     {
-        //printf("Fifo_char_buffer: read \n" );
+        //printf("Fifo_char_buffer: read \n");
         //DEBUG
-        if(n > size)
+        if (n > size)
         {
           printf("Fifo_char_buffer: FATAL ERROR, n greater than size, n=%i, size=%i \n", n, size);
           printf("segfault= %li \n", (long)((int*)NULL));
         } //debug
-        //if(n == size) printf("Fifo_char_buffer: full read of buffer, n=%i, size=%i \n", n, size); //debug
+        //if (n == size) printf("Fifo_char_buffer: full read of buffer, n=%i, size=%i \n", n, size); //debug
 
         int rb = CHAR_BUFFER_SIZE - read_index;
 
-        while(rb < n)
+        while (rb < n)
         {
             memcpy(buff, cb_read->buffer+read_index, rb);
             buff += rb;
@@ -174,7 +174,7 @@ class char_buffer_inheritance_template {
 
     void retire() {
         cbf->reference_count--;
-        if(cbf->reference_count == 0) {
+        if (cbf->reference_count == 0) {
             char_buffer_ref_pool.retire(ctf);
         }
         //return this object to object pool
@@ -204,7 +204,7 @@ class Char_buffer2 {
         //Entity can acquire a char buffer as long it decrements cbf reference count when its done
 
     void acquire(int length, char** b, Char_buffer_ref** cbf) {
-        if(remaining < length)
+        if (remaining < length)
         {
             current = char_buffer_ref_pool.acquire();
             current.reference_count = 0;
@@ -236,7 +236,7 @@ inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb)
     static Net_message_buffer* current = NULL;
     static int remaining = 0;
     static char* offset = NULL;
-    if(remaining < length)
+    if (remaining < length)
     {
         current = net_message_buffer_pool.acquire();
         remaining = NET_MESSAGE_BUFFER_SIZE;

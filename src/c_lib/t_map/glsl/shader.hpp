@@ -64,9 +64,9 @@ class MapShader
         this->shader = new Shader;
         this->shader->set_debug(true);
 
-        this->shader->load_shader( "map_shader",
+        this->shader->load_shader("map_shader",
             MEDIA_PATH "shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh",
-            MEDIA_PATH "shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh" );
+            MEDIA_PATH "shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
         //uniform
         InOffset  = shader->get_uniform("InOffset");
         //attribute
@@ -144,21 +144,21 @@ class MapCompatibilityShader
 
         if (level == 0)
         {
-            shader->load_shader( "map_compatibility_shader level 0",
+            shader->load_shader("map_compatibility_shader level 0",
                 MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh",
-                MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh" );
+                MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
         }
         else if (level ==1)
         {
-            shader->load_shader( "map_compatibility_shader level 1",
+            shader->load_shader("map_compatibility_shader level 1",
                 MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh",
-                MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh" );
+                MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh");
         }
         else if (level == 2)
         {
-            shader->load_shader( "mesa map_compatibility_shader",
+            shader->load_shader("mesa map_compatibility_shader",
                 MEDIA_PATH "shaders/terrain/terrain_map_mesa.vsh",
-                MEDIA_PATH "shaders/terrain/terrain_map_mesa.fsh" );
+                MEDIA_PATH "shaders/terrain/terrain_map_mesa.fsh");
         }
 
 

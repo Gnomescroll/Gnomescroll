@@ -41,7 +41,7 @@ void Reticle::draw()
     const float z = -0.1f;
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, this->tex_data.tex );
+    glBindTexture(GL_TEXTURE_2D, this->tex_data.tex);
 
     glEnable(GL_BLEND);
 
@@ -64,18 +64,18 @@ void Reticle::draw()
 
     glColor3ub(255, 0, 185);
 
-    glBegin( GL_QUADS );
-    glTexCoord2i( 0, 0 );
-    glVertex3f( x0, y0, z );
+    glBegin(GL_QUADS);
+    glTexCoord2i(0, 0);
+    glVertex3f(x0, y0, z);
 
-    glTexCoord2i( 1, 0 );
-    glVertex3f( x1, y0, z );
+    glTexCoord2i(1, 0);
+    glVertex3f(x1, y0, z);
 
-    glTexCoord2i( 1, 1 );
-    glVertex3f( x1, y1, z );
+    glTexCoord2i(1, 1);
+    glVertex3f(x1, y1, z);
 
-    glTexCoord2i( 0, 1 );
-    glVertex3f( x0, y1, z );
+    glTexCoord2i(0, 1);
+    glVertex3f(x0, y1, z);
     glEnd();
 
     glDisable(GL_BLEND);

@@ -42,24 +42,24 @@ char* NAME = NULL;
 /* Registrations */
 
 #define OPT_INT_REGISTER(NAME)\
-LUA::register_int_option( #NAME, & NAME );\
-register_int_option( #NAME, & NAME );
+LUA::register_int_option(#NAME, & NAME);\
+register_int_option(#NAME, & NAME);
 
 #define OPT_UINT_REGISTER(NAME)\
-LUA::register_uint_option( #NAME, & NAME );\
-register_uint_option( #NAME, & NAME );
+LUA::register_uint_option(#NAME, & NAME);\
+register_uint_option(#NAME, & NAME);
 
 #define OPT_BOOL_REGISTER(NAME)\
-LUA::register_bool_option( #NAME, & NAME );\
-register_bool_option( #NAME, & NAME );
+LUA::register_bool_option(#NAME, & NAME);\
+register_bool_option(#NAME, & NAME);
 
 #define OPT_FLOAT_REGISTER(NAME)\
-LUA::register_float_option( #NAME, & NAME );\
-register_float_option( #NAME, & NAME );
+LUA::register_float_option(#NAME, & NAME);\
+register_float_option(#NAME, & NAME);
 
 #define OPT_STRING_REGISTER(NAME, DEFAULT)\
-register_string_option( #NAME, &NAME, DEFAULT );\
-LUA::register_string_option( #NAME, &NAME );
+register_string_option(#NAME, &NAME, DEFAULT);\
+LUA::register_string_option(#NAME, &NAME);
 
 /* Value restrictions */
 

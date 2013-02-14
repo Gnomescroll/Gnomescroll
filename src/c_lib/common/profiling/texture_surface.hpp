@@ -54,22 +54,22 @@ class Texture_surface
         //pixels = (struct PIXEL*) calloc(x*y, sizeof(struct PIXEL));
         pixels = (struct PIXEL*) malloc(x*y*sizeof(struct PIXEL));
 
-        for(int i = 0; i < x*y; i++) pixels[i].color = 0;
+        for (int i = 0; i < x*y; i++) pixels[i].color = 0;
 
 
-        for(int i = 0; i < xdim; i++)
+        for (int i = 0; i < xdim; i++)
         {
             set_pixel(i,0, 255, 0,0,150);
             set_pixel(i,ydim-1, 255, 0,0,150);
         }
 
-        for(int i = 0; i < ydim; i++)
+        for (int i = 0; i < ydim; i++)
         {
             set_pixel(0, i, 255, 0,0,150);
             set_pixel(xdim-1,i, 255, 0,0,150);
         }
     /*
-        for(int i = 0; i < x*y; i++)
+        for (int i = 0; i < x*y; i++)
         {
             //this->set_pixel(i, 14, 254,0,0,120);
             pixels[i].r = 254;
@@ -78,21 +78,21 @@ class Texture_surface
     */
 
         glEnable(GL_TEXTURE_2D);
-        glGenTextures( 2, (GLuint*) &tex );
+        glGenTextures(2, (GLuint*) &tex);
 
-        glBindTexture( GL_TEXTURE_2D, tex[0] );
+        glBindTexture(GL_TEXTURE_2D, tex[0]);
 
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xdim, ydim, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, xdim, ydim, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 
         /*
-        glBindTexture( GL_TEXTURE_2D, tex[1] );
+        glBindTexture(GL_TEXTURE_2D, tex[1]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, xdim, ydim, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, xdim, ydim, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
         */
 
         glDisable(GL_TEXTURE_2D);
@@ -101,7 +101,7 @@ class Texture_surface
     ~Texture_surface()
     {
         free(pixels);
-        glDeleteTextures( 2, (GLuint*) &tex );
+        glDeleteTextures(2, (GLuint*) &tex);
     }
 
 
@@ -143,7 +143,7 @@ class Texture_surface
         glEnd();
 
 
-        if(needs_update == true) update();
+        if (needs_update == true) update();
 
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
@@ -152,7 +152,7 @@ class Texture_surface
 
     void update()
     {
-        glBindTexture(GL_TEXTURE_2D, tex[0] );    //A texture you have already created with glTexImage2D
+        glBindTexture(GL_TEXTURE_2D, tex[0]);    //A texture you have already created with glTexImage2D
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, xdim, ydim, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 
         needs_update = false;
@@ -160,7 +160,7 @@ class Texture_surface
 
     void clear()
     {
-        for(int i = 0; i < xdim*ydim; i++) pixels[i].color = 0;
+        for (int i = 0; i < xdim*ydim; i++) pixels[i].color = 0;
         needs_update = true;
     }
 

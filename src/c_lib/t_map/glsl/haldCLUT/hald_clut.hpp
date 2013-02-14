@@ -10,11 +10,11 @@ float *generate_identity(unsigned int level);
 
 void compute_hsv(float *output, float r, float g, float b)
 {
-    if(r < g)
+    if (r < g)
     {
-        if(r < b)
+        if (r < b)
         {
-            if(g < b)
+            if (g < b)
             {
                 output[0] = (4 - (g - r) / (b - r)) / 6.0;
                 output[1] = 1 - r / b;
@@ -33,19 +33,19 @@ void compute_hsv(float *output, float r, float g, float b)
         }
     }else
     {
-        if(r < b)
+        if (r < b)
         {
             output[0] = (4 + (r - g) / (b - g)) / 6.0;
             output[1] = 1 - g / b;
             output[2] = b;
         }else
         {
-            if(g < b)
+            if (g < b)
             {
                 output[0] = (6 - (b - g) / (r - g)) / 6.0;
                 output[1] = 1 - g / r;
                 output[2] = r;
-            }else if(r == g && r == b)
+            }else if (r == g && r == b)
             {
                 output[0] = 0;
                 output[1] = 0;
@@ -63,17 +63,17 @@ void compute_hsv(float *output, float r, float g, float b)
 
 void compute_rgb(float *output, float h, float s, float v)
 {
-    if(h < 0)
+    if (h < 0)
         h = h + 5;
-    if(h > 1)
+    if (h > 1)
         h = h - (float)((int)h);
-    if(s < 0)
+    if (s < 0)
         s = 0;
-    if(s > 1)
+    if (s > 1)
         s = 1;
-    if(v < 0)
+    if (v < 0)
         v = 0;
-    if(v > 1)
+    if (v > 1)
         v = 1;
     s = 1 - s;
 
@@ -119,14 +119,14 @@ float *generate_identity(unsigned int level)
     unsigned int i, j, k, size;
     float *data, *p;
     size = level * level;
-    data = (float*) malloc( sizeof(float) * size * size * size * 3);
+    data = (float*) malloc(sizeof(float) * size * size * size * 3);
     p = data;
 
-    for(i = 0; i < size; i++) /**/
+    for (i = 0; i < size; i++) /**/
     {
-        for(j = 0; j < size; j++)
+        for (j = 0; j < size; j++)
         {
-            for(k = 0; k < size; k++)
+            for (k = 0; k < size; k++)
             {
                 *p++ = (float)k / (float)(size - 1);
                 *p++ = (float)j / (float)(size - 1);
@@ -184,7 +184,7 @@ int generate_clut_texture()
 {
 
     static unsigned int _texture_id = 0;
-    if(_texture_id != 0)
+    if (_texture_id != 0)
         return _texture_id;
 
     //char *file_name = "custom_hald_clut.tga";
@@ -195,7 +195,7 @@ int generate_clut_texture()
     data = generate_identity(level);
     IF_ASSERT(data == NULL) return 0;
 
-    for(int i = 0; i < level * level * level * level * level * level; i++)
+    for (int i = 0; i < level * level * level * level * level * level; i++)
     {
         correction_end_twist(&data[i * 3], 0.3);
     //  correction_mono_edge(&data[i * 3], 1);
@@ -203,11 +203,11 @@ int generate_clut_texture()
     //  correction_dark_color(&data[i * 3], 0.6, 0.3, 1);
     //  correction_deep_dark_color(&data[i * 3], 0.6, 0.3, 1);
     }
-    for(int i = 0; i < 3 * level * level * level * level * level * level; i++)
+    for (int i = 0; i < 3 * level * level * level * level * level * level; i++)
     {
-        if(data[i] > 1)
+        if (data[i] > 1)
             data[i] = 1;
-        if(data[i] < 0)
+        if (data[i] < 0)
             data[i] = 0;
     }
 

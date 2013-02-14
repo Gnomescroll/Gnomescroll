@@ -307,7 +307,7 @@ class ChromeViewport
         //awe_renderbuffer_get_height(renderBuffer),
         //awe_renderbuffer_get_rowspan(renderBuffer)
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer) );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer));
 
         glDisable(GL_TEXTURE_2D);
 
@@ -316,7 +316,7 @@ class ChromeViewport
 
     void update_webview()
     {
-        if(!awe_webview_is_dirty(this->webView) || awe_webview_is_loading_page(this->webView)) return;
+        if (!awe_webview_is_dirty(this->webView) || awe_webview_is_loading_page(this->webView)) return;
         //awe_rect rect = awe_webview_get_dirty_bounds(webView);
         IF_ASSERT(this->tex == 0) return;
 
@@ -329,7 +329,7 @@ class ChromeViewport
         }
 
         glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, tex );
+        glBindTexture(GL_TEXTURE_2D, tex);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer));
         glDisable(GL_TEXTURE_2D);
     }
@@ -419,7 +419,7 @@ class ChromeViewport
         // Separate handling for history navigation -- awesomium does not do this by default
         if (event->type == SDL_KEYDOWN)
         {
-            if(event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
+            if (event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
             {
                 if (key == SDLK_LEFT)
                     awe_webview_go_to_history_offset(cv->webView, -1);

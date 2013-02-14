@@ -32,7 +32,7 @@ void _save_png(const char* filename, int xres, int yres)
         int height_div_2;
 
         temp_row = (void *)malloc(4*xres);
-        if(NULL == temp_row)
+        if (NULL == temp_row)
         {
             printf("save_screenshot: not enough memory for surface inversion \n");
             return;
@@ -41,27 +41,27 @@ void _save_png(const char* filename, int xres, int yres)
         int h = yres;
 
         height_div_2 = (int) (yres * .5);
-        for(index = 0; index < height_div_2; index++)
+        for (index = 0; index < height_div_2; index++)
         {
-            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
         free(temp_row);
     }
 
     size_t png_size;
-    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) PBUFFER, xres, yres, 4, &png_size);
 
     FILE * pFile;
-    pFile = fopen ( FileName , "wb" );
-    if(!pFile)
+    pFile = fopen (FileName , "wb");
+    if (!pFile)
     {
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
     }
-    fwrite (PNG_IMAGE , 1 , png_size, pFile );
+    fwrite (PNG_IMAGE , 1 , png_size, pFile);
     fclose (pFile);
 
     //free(PBUFFER);
@@ -98,8 +98,8 @@ void generate_random_tile()
     };
 
 
-    for(int x=0; x<32; x++)
-    for(int y=0; y<32; y++)
+    for (int x=0; x<32; x++)
+    for (int y=0; y<32; y++)
     {
         int index = rand() % num_colors;
 
@@ -117,8 +117,8 @@ void generate_random_tile()
     int b = 41;
 
 
-    for(int x=0; x<32; x++)
-    for(int y=0; y<32; y++)
+    for (int x=0; x<32; x++)
+    for (int y=0; y<32; y++)
     {
         int R = r + (rand() % max) - max/2;
         int G = g + (rand() % max) - max/2;

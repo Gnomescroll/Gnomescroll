@@ -53,7 +53,7 @@ Object_pool<Base, Entity, BUFFER_POOL_SIZE>::~Object_pool()
     /*
         Warning: batch_alloc() must be called at least once
     */
-    for(int i=0; i<alloc_list_index; i++ ) delete[] alloc_list[i];
+    for (int i=0; i<alloc_list_index; i++) delete[] alloc_list[i];
     delete[] alloc_list;
 }
 
@@ -62,7 +62,7 @@ template <class Base, class Entity, int BUFFER_POOL_SIZE>
 void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
 {
     static int inited = 0;
-    if(inited == 0 )
+    if (inited == 0)
     {
         inited = 1;
 
@@ -79,18 +79,18 @@ void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
 
     Entity* ar = new Entity[BUFFER_POOL_SIZE];
 
-    if( ar == NULL)
+    if (ar == NULL)
     {
         printf("%s: Batch Alloc  %i:NEW RETURNED NULL, MEMORY ERROR! \n", Base::name(), batch_num);
     }
 
     #if OBJECT_POOL_DEBUG
-        for(int i=0; i<BUFFER_POOL_SIZE; i++) ar[i].allocated = 0;
+        for (int i=0; i<BUFFER_POOL_SIZE; i++) ar[i].allocated = 0;
     #endif
 
     first = &ar[0];
 
-    for(int i=0;i<BUFFER_POOL_SIZE-1; i++)
+    for (int i=0;i<BUFFER_POOL_SIZE-1; i++)
     {
         ar[i].next = &ar[i+1];
     }
@@ -102,12 +102,12 @@ void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
     alloc_list[alloc_list_index] = ar;
     alloc_list_index++;
 
-    if( alloc_list_index >= alloc_list_max_size)
+    if (alloc_list_index >= alloc_list_max_size)
     {
-        if(alloc_list_index > alloc_list_max_size) printf("%s: Batch Alloc: ERROR!! alloc_list error!\n", Base::name() );
-        printf("%s: Batch Alloc: possible memory leak!\n", Base::name() );
+        if (alloc_list_index > alloc_list_max_size) printf("%s: Batch Alloc: ERROR!! alloc_list error!\n", Base::name());
+        printf("%s: Batch Alloc: possible memory leak!\n", Base::name());
         Entity** tmp = new Entity*[2*alloc_list_max_size];
-        for(int i=0; i < alloc_list_max_size; i++) tmp[i] = alloc_list[i];
+        for (int i=0; i < alloc_list_max_size; i++) tmp[i] = alloc_list[i];
         delete[] alloc_list;
         alloc_list = tmp;
         alloc_list_max_size *= 2;
@@ -124,7 +124,7 @@ ALWAYS_INLINE Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
         return tmp2;
     #endif
 
-    if(first == NULL)
+    if (first == NULL)
     {
         batch_alloc();
     }
@@ -132,10 +132,10 @@ ALWAYS_INLINE Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
     first = first->next;
 
     #if OBJECT_POOL_DEBUG
-        if(tmp->allocated != 0)
+        if (tmp->allocated != 0)
         {
             //static const char* _name = name();
-            printf("%s: Memory Pool Acquire Error, allocated= %i, object= %lx \n", Base::name(), tmp->allocated, (long) tmp );
+            printf("%s: Memory Pool Acquire Error, allocated= %i, object= %lx \n", Base::name(), tmp->allocated, (long) tmp);
             //int segfault = *((int*) NULL);
         }
         tmp->allocated++;
@@ -152,10 +152,10 @@ ALWAYS_INLINE void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::retire(Entity* n
     #endif
 
     #if OBJECT_POOL_DEBUG
-        if(nmb->allocated != 1)
+        if (nmb->allocated != 1)
         {
             //static const char* _name = name();
-            printf("%s: Memory Pool Retire Error, allocated= %i, object= %lx \n", Base::name(), nmb->allocated, (long) nmb );
+            printf("%s: Memory Pool Retire Error, allocated= %i, object= %lx \n", Base::name(), nmb->allocated, (long) nmb);
             int segfault = *((int*) NULL);
             printf("segfault= %i", segfault);
         }

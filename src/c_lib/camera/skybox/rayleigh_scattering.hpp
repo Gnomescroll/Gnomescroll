@@ -257,7 +257,7 @@ class Skyplane
         GS_ASSERT(d2 >= 0.0f);
 
         //no intersection
-        if(d2 <= 0.0)
+        if (d2 <= 0.0)
             return -1.0f;
 
         float d3 = sqrt(d2);
@@ -268,7 +268,7 @@ class Skyplane
         GS_ASSERT(s1 >= 0.0f || s2 >= 0.0f);
 
         //intersections are both behind the sphere
-        if(s1 < 0.0f && s2 < 0.0f)
+        if (s1 < 0.0f && s2 < 0.0f)
             return -1.0f;
         //return intersection in front of sphere
         float ret = s1 > s2 ? s1 : s2;
@@ -307,22 +307,22 @@ class Skyplane
         struct Vec3 r[6];
         struct Vec3 u[6];
 
-        for(int i=0;i<6;i++)
+        for (int i=0;i<6;i++)
         {
-            f[i] = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+2] );
-            r[i] = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+2] );
-            u[i] = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+2] );
+            f[i] = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+2]);
+            r[i] = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+2]);
+            u[i] = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+2]);
         }
 
         //center of plane
         struct Vec3 center[6];
 
-        for(int i=0;i<6;i++)
+        for (int i=0;i<6;i++)
         {
             center[i] = vec3_scalar_mult(f[i], plane_depth);
             center[i].z += plane_depth;
 
-            if(i == 1)
+            if (i == 1)
                 center[i].z -= -1.0;    //to prevent zero
         }
 
@@ -334,22 +334,22 @@ class Skyplane
 
         //debug
         float _epsilon = 0.1f;
-        if(c.z > planet_radius + atmosphere_depth - _epsilon)
+        if (c.z > planet_radius + atmosphere_depth - _epsilon)
             c.z = planet_radius + atmosphere_depth - _epsilon;
-        if(c.z < planet_radius + _epsilon)
+        if (c.z < planet_radius + _epsilon)
             c.z = planet_radius + _epsilon;
 
         //const float _dfp = _df*plane_size; //for speed
         const int dim_half = dim/2;
 
 
-        if(vec3_length(c) > planet_radius + atmosphere_depth + _epsilon)
+        if (vec3_length(c) > planet_radius + atmosphere_depth + _epsilon)
         {
             printf("WTF: camera outside of sphere\n");
             GS_ASSERT_ABORT(false);
         }
 
-        if(vec3_length(c) < planet_radius - _epsilon)
+        if (vec3_length(c) < planet_radius - _epsilon)
         {
             printf("WTF: camera inside of sphere\n");
             GS_ASSERT_ABORT(false);
@@ -359,19 +359,19 @@ class Skyplane
 
         const float sphere_radius = planet_radius + atmosphere_depth;
 
-        for(int side=0; side<6; side++)
+        for (int side=0; side<6; side++)
         {
 
             struct Vec3 _f = f[side];
             struct Vec3 _r = r[side];
             struct Vec3 _u = u[side];
 
-            for(int i=0; i<dim; i++)
+            for (int i=0; i<dim; i++)
             {
 
                 int _i = i - dim_half;
 
-                for(int j=0; j<dim; j++)
+                for (int j=0; j<dim; j++)
                 {
                     int _j = j - dim_half;
 
@@ -388,7 +388,7 @@ class Skyplane
                     float d = sphere_line_intersection(c, b, sphere_radius - _epsilon);
 
                 /*
-                    if(0 &&(side == 0 || side == 2 || side == 3 || side == 4))
+                    if (0 &&(side == 0 || side == 2 || side == 3 || side == 4))
                     {
                         printf("b len = %.2f x,y,z= %.2f %.2f %.2f  i,j,side = %d %d %d _i,_j= %d %d d= %.2f \n",
                         vec3_length(b), b.x,b.y,b.z ,i,j,side, _i,_j, d);
@@ -408,18 +408,18 @@ class Skyplane
                     //light = 0.2;
                     farray[side][j*dim+i] = light;
 
-                    if(_max_light2 < light)
+                    if (_max_light2 < light)
                         _max_light2 = light;
                 */
 
-                    if(sphere_line_intersection_test0(c, b, planet_radius) == true)
+                    if (sphere_line_intersection_test0(c, b, planet_radius) == true)
                     {
                         b = vec3_add(c, vec3_scalar_mult(b, d));
                         float light = in_scatter(c, b, s);
                         //light = 0.2;
                         farray[side][j*dim+i] = light;
 
-                        if(_max_light2 < light)
+                        if (_max_light2 < light)
                             _max_light2 = light;
                     }
                     else
@@ -429,7 +429,7 @@ class Skyplane
                     }
 
                 /*
-                    if( vec3_length(vec3_sub(b, c)) < 0.01 || vec3_length(vec3_sub(s, c)) < 0.01 )
+                    if (vec3_length(vec3_sub(b, c)) < 0.01 || vec3_length(vec3_sub(s, c)) < 0.01)
                     {
                         vec3_print(vec3_sub(b, c));
                         vec3_print(vec3_sub(s, c));
@@ -440,7 +440,7 @@ class Skyplane
 
                     float v = vec3_dot(tb, ts);
 
-                    if(v > sun_cos_max)
+                    if (v > sun_cos_max)
                     {
                         sun_cos_max = v;
                         sun_side = side;
@@ -452,7 +452,7 @@ class Skyplane
             }
         }
 
-        if(print_max_light)
+        if (print_max_light)
             printf("max_light- %f \n", farray[sun_side][sun_j*dim+sun_i]);
 
         //float light_epsilon = 0.0000001
@@ -461,13 +461,13 @@ class Skyplane
         float _max_light = 1.0 / (max_light+light_epsilon);  //need to scale factor, so it goes to limit
 
         //return brightness_scale_factor*tmp + brightness_sum_factor);
-        if(skybox_normalization)
+        if (skybox_normalization)
         {
-            for(int side=0; side<6; side++)
+            for (int side=0; side<6; side++)
             {
-                for(int i=0; i<dim; i++)
+                for (int i=0; i<dim; i++)
                 {
-                    for(int j=0; j<dim; j++)
+                    for (int j=0; j<dim; j++)
                     {
                         float light = farray[side][j*dim+i];
                         light *= _max_light;
@@ -487,10 +487,10 @@ class Skyplane
 
         float r = vec3_length(v);
 
-        if( r + _epsilon < inner_radius)
+        if (r + _epsilon < inner_radius)
             return -1;
 
-        if( r - _epsilon > outer_radius)
+        if (r - _epsilon > outer_radius)
             return 1;
 
         return 0;
@@ -509,7 +509,7 @@ class Skyplane
         float _cos2 = vec3_cos2(v1,v2);
         float _cos  = sqrt(_cos2);
 
-        float f = (1.0 + gf*(gf - 2.0*_cos) ) ;
+        float f = (1.0 + gf*(gf - 2.0*_cos)) ;
         f = f* sqrt(f);
 
         return gfc*(1.0+_cos2)/f;
@@ -540,7 +540,7 @@ class Skyplane
         /*
             !!! computute height of sample point and atomosphere density
         */
-        for(int i=0; i<=samples; i++)
+        for (int i=0; i<=samples; i++)
         {
             struct Vec3 tmp1 = vec3_add(v1, vec3_scalar_mult(vi, i));
             //float _h = tmp1.z *sbh_norm; //divide by -H0*skybox_height
@@ -548,7 +548,7 @@ class Skyplane
             float s_height = vec3_length(tmp1) - planet_radius - _epsilon;
 
         /*
-            if(s_height > atmosphere_depth)
+            if (s_height > atmosphere_depth)
             {
                 printf("ERROR out_scatter: s_height= %.2f %2.f \n", s_height , atmosphere_depth);
             }
@@ -560,7 +560,7 @@ class Skyplane
 
         float tmp = 0.0f;
 
-        for(int i=0; i<samples; i++)
+        for (int i=0; i<samples; i++)
             tmp += _d_half*(_r[i] + _r[i+1]);  // _d*(_r[i] + _r[i+1])*0.5
 
         return wavelength_factor*tmp;
@@ -576,12 +576,12 @@ class Skyplane
         const float _epsilon = 0.1;
 
     /*
-        if(sphere_wedge_test(a, planet_radius, planet_radius + atmosphere_depth) != 0)
+        if (sphere_wedge_test(a, planet_radius, planet_radius + atmosphere_depth) != 0)
         {
             printf("WTF 3: %0.2f, min %0.2f \n", vec3_length(a), planet_radius);
         }
 
-        if(sphere_wedge_test(b, planet_radius, planet_radius + atmosphere_depth) != 0)
+        if (sphere_wedge_test(b, planet_radius, planet_radius + atmosphere_depth) != 0)
         {
             printf("WTF 4: %0.2f, max %0.2f \n", vec3_length(b), planet_radius + atmosphere_depth);
         }
@@ -596,31 +596,31 @@ class Skyplane
         const float sbh_norm = -1.0f / (H0*skybox_height); //skybox height normalization
 
         const float sphere_radius = planet_radius + atmosphere_depth;
-        //GS_ASSERT(abs( vec3_distance(a,b) - vec3_length(vec3_sub(b,a))) < 0.0001 );
+        //GS_ASSERT(abs(vec3_distance(a,b) - vec3_length(vec3_sub(b,a))) < 0.0001);
 
 
         struct Vec3 vi = vec3_scalar_mult(vec3_sub(b, a), _f);
 
         //compute sample points
         struct Vec3 tmp1[samples+1];    //should be constant for MSVC
-        for(int i=0; i<=samples; i++)
+        for (int i=0; i<=samples; i++)
             tmp1[i] = vec3_add(a, vec3_scalar_mult(vi, i));
 
     /*
-        for(int i=0; i<=samples; i++)
+        for (int i=0; i<=samples; i++)
         {
-            if(vec3_length(tmp1[i]) >= sphere_radius) // + _epsilon; this is more serious
+            if (vec3_length(tmp1[i]) >= sphere_radius) // + _epsilon; this is more serious
             {
                 printf("WTF 1: %0.2f, max %0.2f \n", vec3_length(tmp1[i]), planet_radius + atmosphere_depth);
             }
-            if(vec3_length(tmp1[i]) <= planet_radius - _epsilon)
+            if (vec3_length(tmp1[i]) <= planet_radius - _epsilon)
             {
                 //printf("WTF 2: %0.2f, min %0.2f \n", vec3_length(tmp1[i]), planet_radius);
             }
         }
     */
         struct Vec3 _s[samples+1];
-        for(int i=0; i<=samples; i++)
+        for (int i=0; i<=samples; i++)
         {
             //do line sphere intersection to get length
             //vector which is 20 units in direction of sun from tmp1
@@ -631,12 +631,12 @@ class Skyplane
             //_s[i] = s; //skip to sun without raise limiting
             //dont outscatter to sun; only outscatter in direction of sun (to end of skybox)
 
-            //struct Vec3 dir = vec3_normalize(vec3_sub(s, tmp1[i]) );
+            //struct Vec3 dir = vec3_normalize(vec3_sub(s, tmp1[i]));
 
             //happens when sun is in atomosphere!
             struct Vec3 sun_dir = vec3_sub(s, tmp1[i]); //t
 
-            if(vec3_length(sun_dir) < _epsilon)
+            if (vec3_length(sun_dir) < _epsilon)
             {
                 _s[i] = tmp1[i]; //sun is in atomosphere
             }
@@ -644,7 +644,7 @@ class Skyplane
             {
                 sun_dir = vec3_normalize(sun_dir);
                 float d = sphere_line_intersection(tmp1[i], sun_dir, sphere_radius);
-                //if(d > planet_radius /2.0)
+                //if (d > planet_radius /2.0)
                 //  d = planet_radius /2.0;
 
                 _s[i] = vec3_add(tmp1[i], vec3_scalar_mult(sun_dir,d));
@@ -665,32 +665,32 @@ class Skyplane
         //float _r  [samples+1]; //result
 
         //t0 calculation
-        for(int i=0; i<=samples; i++)
+        for (int i=0; i<=samples; i++)
         {
-            //_t0[i] = expf( -tmp1[i].z / (H0*skybox_height));
+            //_t0[i] = expf(-tmp1[i].z / (H0*skybox_height));
             float s_height = vec3_length(tmp1[i]) - planet_radius - _epsilon;
         /*
-            if(s_height > atmosphere_depth)
+            if (s_height > atmosphere_depth)
             {
                 printf("ERROR in_scatter: s_height= %.2f %2.f \n", s_height , atmosphere_depth);
             }
         */
-            _t0[i] = s_height < 0.0 ? 0.0 : expf(sbh_norm*s_height); // expf( -tmp1[i].z / (H0*skybox_height));
+            _t0[i] = s_height < 0.0 ? 0.0 : expf(sbh_norm*s_height); // expf(-tmp1[i].z / (H0*skybox_height));
         }
 
         //t1 and t2
-        for(int i=0; i<=samples; i++)
+        for (int i=0; i<=samples; i++)
         {
             _t1[i] = out_scatter(tmp1[i], _s[i]); //out_scatter from current point to sun
             _t2[i] = out_scatter(tmp1[i], c); //out_scatter from current point to camera
-            //printf("%i: _t0,_t1,_t2= %.2f %.2f %.2f \n", i, _t0[i],_t1[i],_t2[i] );
+            //printf("%i: _t0,_t1,_t2= %.2f %.2f %.2f \n", i, _t0[i],_t1[i],_t2[i]);
         }
 
         float _r [samples+1];
-        for(int i=0; i<=samples; i++)
-            _r[i] = _t0[i]*expf( -1.0*(_t1[i] + _t2[i]) );
+        for (int i=0; i<=samples; i++)
+            _r[i] = _t0[i]*expf(-1.0*(_t1[i] + _t2[i]));
         /*
-        for(int i=0; i<=samples; i++)
+        for (int i=0; i<=samples; i++)
         {
             printf("%i: _r[i] = %.2f, _t0,_t1,_t2= %.2f %.2f %.2f, -_t1[i] -_t2[i]= %.2f, exp= %.2f \n",
                 i, _r[i], _t0[i],_t1[i],_t2[i],
@@ -700,7 +700,7 @@ class Skyplane
 
         float tmp = 0.0f;
 
-        for(int i=0; i<samples; i++)
+        for (int i=0; i<samples; i++)
             tmp += _d_half*(_r[i] + _r[i+1]); //  0.5f*_d*(_r[i] + _r[i+1]);//
 
         //struct Vec3 s2 = vec3_sub(v2, c);
@@ -711,7 +711,7 @@ class Skyplane
             a.x,a.y,a.z,
             b.x,b.y,b.z,
             s.x,s.y,s.z,
-            phase(b, s) );
+            phase(b, s));
         */
         //debug
         struct Vec3 bc = vec3_sub(b,c);
@@ -763,9 +763,9 @@ class Skyplane
 
     void blit_to_buffer(float* fbuffer, int row)
     {
-        if(row == 0)
+        if (row == 0)
         {
-            for(int i=0; i<dim; i++)
+            for (int i=0; i<dim; i++)
             {
                 float _d = 1.0 / ((float) dim);
                 farray[0][i*dim+0] = _d*i;
@@ -774,15 +774,15 @@ class Skyplane
 
         const int row_size = 6*dim;
 
-        for(int side=0; side<6; side++)
+        for (int side=0; side<6; side++)
         {
             int xoff = dim*side;
             int yoff = row_size*dim*row;
-            for(int j=0; j<dim; j++)
+            for (int j=0; j<dim; j++)
             {
                 int _yoff = yoff + j*row_size;
 
-                for(int i=0; i<dim; i++)
+                for (int i=0; i<dim; i++)
                 {
                     int _xoff = xoff + i;
                     fbuffer[_xoff + _yoff] = farray[side][i + j*dim];
@@ -814,7 +814,7 @@ class SkyboxRender
         glEnable(GL_TEXTURE_2D);
         glGenTextures(6, texture_array);
 
-        for(int i=0; i<6; i++)
+        for (int i=0; i<6; i++)
         {
             glBindTexture(GL_TEXTURE_2D, texture_array[i]);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -824,7 +824,7 @@ class SkyboxRender
         }
         glDisable(GL_TEXTURE_2D);
 
-        for(int i=0; i<6; i++)
+        for (int i=0; i<6; i++)
         {
             this->texture_array[i] = 0;
             this->sun_rgba[i] = (unsigned char*)calloc(sun0.dim*sun0.dim*6, sizeof(unsigned char));
@@ -846,18 +846,18 @@ class SkyboxRender
 
     unsigned char gamma_correct(float _v)
     {
-        if( _v < 0.0) _v = 0.0f;
-        if( _v > 1.0) _v = 1.0f;
-        unsigned char v = ((int) 255.0f*_v );
+        if (_v < 0.0) _v = 0.0f;
+        if (_v > 1.0) _v = 1.0f;
+        unsigned char v = ((int) 255.0f*_v);
         return (unsigned char) gamma_correction[v];
     }
 
     //modifer is 0 to 255
     unsigned char gamma_correct(float _v, float modifier)
     {
-        if( _v < 0.0) _v = 0.0f;
-        if( _v > 1.0) _v = 1.0f;
-        unsigned char v = ((int) modifier*_v );
+        if (_v < 0.0) _v = 0.0f;
+        if (_v > 1.0) _v = 1.0f;
+        unsigned char v = ((int) modifier*_v);
         return (unsigned char) gamma_correction[v];
     }
 
@@ -875,10 +875,10 @@ class SkyboxRender
         //float sun_b[4];//brightness for each channel
 
         //load default settings
-        if(sun_num==0) sun0.load_settings(SPS);
-        if(sun_num==1) sunR.load_settings(SPS);
-        if(sun_num==2) sunG.load_settings(SPS);
-        if(sun_num==3) sunB.load_settings(SPS);
+        if (sun_num==0) sun0.load_settings(SPS);
+        if (sun_num==1) sunR.load_settings(SPS);
+        if (sun_num==2) sunG.load_settings(SPS);
+        if (sun_num==3) sunB.load_settings(SPS);
 
         sun0.phase_g_factor = sun_g[0];
         sunR.phase_g_factor = sun_g[1];
@@ -896,14 +896,14 @@ class SkyboxRender
         sunB.wavelength_factor = sun_w[3];
 
         //run update
-        if(sun_num==0) sun0.update(sun_theta, sun_phi); //update float array
-        if(sun_num==1) sunR.update(sun_theta, sun_phi); //update float array
-        if(sun_num==2) sunG.update(sun_theta, sun_phi); //update float array
-        if(sun_num==3) sunB.update(sun_theta, sun_phi); //update float array
+        if (sun_num==0) sun0.update(sun_theta, sun_phi); //update float array
+        if (sun_num==1) sunR.update(sun_theta, sun_phi); //update float array
+        if (sun_num==2) sunG.update(sun_theta, sun_phi); //update float array
+        if (sun_num==3) sunB.update(sun_theta, sun_phi); //update float array
 
         int t1 = _GET_MS_TIME();
 
-        if(false)
+        if (false)
             printf("update_sun: %d ms \n", t1-t0);  //10 to 15 ms per update
     }
 
@@ -921,7 +921,7 @@ class SkyboxRender
 
         //set gamma_correction array
 
-        for(int i=0; i < 256; i++)
+        for (int i=0; i < 256; i++)
         {
             float intensity = ((float) i) / 255;
             intensity = powf(intensity, 1.0f/2.2f)*255;
@@ -934,15 +934,15 @@ class SkyboxRender
         //load RGB from array
         const int dim = sun0.dim;
 
-        for(int side = 0; side<6; side++)
+        for (int side = 0; side<6; side++)
         {
             const float* farray0 = sun0.farray[side];
             const float* farrayR = sunR.farray[side];
             const float* farrayG = sunG.farray[side];
             const float* farrayB = sunB.farray[side];
 
-            for(int i=0; i<dim; i++)
-            for(int j=0; j<dim; j++)
+            for (int i=0; i<dim; i++)
+            for (int j=0; j<dim; j++)
             {
                 float v0 = farray0[j*dim+i] * sun_b[0];
                 float vR = farrayR[j*dim+i] * sun_b[1];
@@ -959,24 +959,24 @@ class SkyboxRender
 
             }
 
-            if(skybox_corners == 1)
+            if (skybox_corners == 1)
             {
                 sun_rgba[side][4*(0+0*dim)+0] = 255;    //i=0, j=0
             }
         }
 
-        if(skybox_sundial == 1)
+        if (skybox_sundial == 1)
         {
             sun_rgba[sun0.sun_side][4*(sun0.sun_i+sun0.sun_j*sun0.dim)+1] = 255;
         }
 
         glEnable(GL_TEXTURE_2D);
 
-        for(int side = 0; side<6; side++)
+        for (int side = 0; side<6; side++)
         {
             glBindTexture(GL_TEXTURE_2D, texture_array[side]);
 
-            if(skybox_gl_linear)
+            if (skybox_gl_linear)
             {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -986,7 +986,7 @@ class SkyboxRender
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             }
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun0.dim, sun0.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, sun_rgba[side] );
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sun0.dim, sun0.dim, 0, GL_RGBA, GL_UNSIGNED_BYTE, sun_rgba[side]);
         }
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -1009,7 +1009,7 @@ class SkyboxRender
         //float sun_phi = time_count / 3000.0;
         float sun_phi = 0;
 
-        if(skybox_debug)
+        if (skybox_debug)
         {
             x = 256;
             y = 256;
@@ -1024,17 +1024,17 @@ class SkyboxRender
         struct Vec3 r[6];
         struct Vec3 u[6];
 
-        for(int i=0;i<6;i++)
+        for (int i=0;i<6;i++)
         {
-            f[i] = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+2] );
-            r[i] = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+2] );
-            u[i] = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+2] );
+            f[i] = vec3_init(_f[3*i+0],_f[3*i+1],_f[3*i+2]);
+            r[i] = vec3_init(_r[3*i+0],_r[3*i+1],_r[3*i+2]);
+            u[i] = vec3_init(_u[3*i+0],_u[3*i+1],_u[3*i+2]);
         }
 
         //center of plane
         struct Vec3 center[6];
 
-        for(int i=0;i<6;i++)
+        for (int i=0;i<6;i++)
         {
             const float plane_depth = sun0.plane_size*0.5;
             center[i] = vec3_scalar_mult(f[i], plane_depth);
@@ -1048,7 +1048,7 @@ class SkyboxRender
 
         glEnable(GL_TEXTURE_2D);
 
-        for(int i=0; i<6; i++)
+        for (int i=0; i<6; i++)
         {
             struct Vec3 rv, uv, lv, dv;
             //f = vec3_scalar_mult(_f[i], sun0.plane_size/2.0);
@@ -1062,7 +1062,7 @@ class SkyboxRender
             struct Vec3 ul,bl,br,ur;
             ul = vec3_add3(center[i], uv, lv);
             bl = vec3_add3(center[i], dv, lv);
-            br = vec3_add3(center[i], dv, rv );
+            br = vec3_add3(center[i], dv, rv);
             ur = vec3_add3(center[i], uv, rv);
 
             glBindTexture(GL_TEXTURE_2D, texture_array[i]);
@@ -1094,7 +1094,7 @@ class SkyboxRender
         glDisable(GL_TEXTURE_2D);
 
 
-        if(skybox_sundial != 0)
+        if (skybox_sundial != 0)
             sun0.draw_sun(sun_theta, sun_phi, x,y,z); //draw sun
 
         CHECK_GL_ERROR();
@@ -1278,11 +1278,11 @@ class PerlinClouds
         float xscale = 1.0/7.0;
         const float of = 0.33;
 
-        for(int i=0; i<xsize; i++)
+        for (int i=0; i<xsize; i++)
         {
-            for(int j=0; j<xsize; j++)
+            for (int j=0; j<xsize; j++)
             {
-                for(int k=0; k<zsize; k++)
+                for (int k=0; k<zsize; k++)
                 {
 
                     float _if = of + xscale*((float) i);
@@ -1291,7 +1291,7 @@ class PerlinClouds
 
                     farray[k*xsize*xsize + j*xsize + i] = 0.01 + pf3d.base(_if,_jf,_kf);
 
-                    //printf("f= %f \n", farray[k*xsize*xsize + j*xsize + i] );
+                    //printf("f= %f \n", farray[k*xsize*xsize + j*xsize + i]);
 
                 }
             }
@@ -1348,7 +1348,7 @@ class PerlinClouds
     /*
         glBegin(GL_QUADS);
 
-        for(int _i=0; _i<4; _i++)
+        for (int _i=0; _i<4; _i++)
             glVertex3f(x + 5.0*ca[_i*2+0], y + 5.0*ca[_i *2+1], z+25.0);
 
         glEnd();
@@ -1357,7 +1357,7 @@ class PerlinClouds
 
         glDisable(GL_CULL_FACE);
 
-        if(TEXTURED)
+        if (TEXTURED)
         {
             glEnable(GL_TEXTURE_2D);
             glBindTexture(GL_TEXTURE_2D, cloud_blur_texture);
@@ -1375,16 +1375,16 @@ class PerlinClouds
         //glBegin(GL_QUADS);
 
 
-        for(int i=0; i<xsize; i++)
+        for (int i=0; i<xsize; i++)
         {
-            for(int j=0; j<xsize; j++)
+            for (int j=0; j<xsize; j++)
             {
                 float s0 = farray[k0*xsize*xsize + j*xsize + i];
                 float s1 = farray[k1*xsize*xsize + j*xsize + i];
 
                 float s = (1.0-tfloat)*s0 + tfloat*s1;
             /*
-                if(i==5 && j==5)
+                if (i==5 && j==5)
                     printf("i,j= %d %d tfloat= %.2f s0= %f s1= %f s= %f k0,k1= %d %d tc= %d \n",
                         i,j, tfloat, s0,s1,s, k0,k1,tc);
             */
@@ -1401,16 +1401,16 @@ class PerlinClouds
                 s = s*size_mult + size_add;
 
                 //s = 5.0;
-                if(s <= 0.0)
+                if (s <= 0.0)
                     continue;
 
                 //printf("i,i= %d %d _x, _y= %f %f \n", i,j, _x, _y);
 
 
                 //float _csize = s*csize;
-            if(!TEXTURED)
+            if (!TEXTURED)
             {
-                for(int _i=0; _i<4; _i++)
+                for (int _i=0; _i<4; _i++)
                     glVertex3f(_x + s*ca[_i*2+0], _y + s*ca[_i *2+1], _z);
             }
             else
@@ -1520,19 +1520,19 @@ void init_rayleigh_scattering()
     CFL.load_file(MEDIA_PATH "config/skybox.cfg", true);   //load file silently first time
 
 
-    if(false)
+    if (false)
     {
         class Skyplane S;
         S.load_settings(SPS);
 
-        if(true)
+        if (true)
         {
             int max_div = 16;
             float _f = 1.0 / ((float) max_div);
 
             int dim = S.dim;
             float* fbuffer = new float[6*dim*dim*max_div];
-            for(int i=0; i<max_div; i++)
+            for (int i=0; i<max_div; i++)
             {
                 char filename[128];
 
@@ -1556,7 +1556,7 @@ void init_rayleigh_scattering()
     Load cloudblur texture
 */
     int ret= create_texture_from_file(MEDIA_PATH "sprites/skybox/blur.png", &cloud_blur_texture, GL_LINEAR, GL_LINEAR);
-    if(ret != 0)
+    if (ret != 0)
     {
         GS_ASSERT_ABORT(false);
     }
@@ -1569,7 +1569,7 @@ void tick_rayleigh_scattering()
     update_count++;
 
     //reload every 4 seconds unless skybox_debug == 1 or production is true
-    if( !PRODUCTION || skybox_debug == 1 || update_count % 120 == 0)
+    if (!PRODUCTION || skybox_debug == 1 || update_count % 120 == 0)
     {
         CFL.load_file(MEDIA_PATH "config/skybox.cfg"); //reload file during debug
     }
@@ -1581,18 +1581,18 @@ void tick_rayleigh_scattering()
     int _skybox_update_rate = skybox_update_rate < 5 ? 5 : skybox_update_rate;
     int v = update_count % _skybox_update_rate;
 
-    if(v==0) SR->sun0.load_settings(SPS);
-    if(v==1) SR->sunR.load_settings(SPS);
-    if(v==2) SR->sunG.load_settings(SPS);
-    if(v==3) SR->sunB.load_settings(SPS);
+    if (v==0) SR->sun0.load_settings(SPS);
+    if (v==1) SR->sunR.load_settings(SPS);
+    if (v==2) SR->sunG.load_settings(SPS);
+    if (v==3) SR->sunB.load_settings(SPS);
 
-    if(v==0) SR->update_sun(0);
-    if(v==1) SR->update_sun(1);
-    if(v==2) SR->update_sun(2);
-    if(v==3) SR->update_sun(3);
+    if (v==0) SR->update_sun(0);
+    if (v==1) SR->update_sun(1);
+    if (v==2) SR->update_sun(2);
+    if (v==3) SR->update_sun(3);
 
     //update skybox
-    if(v==4) SR->update_skybox();
+    if (v==4) SR->update_skybox();
 
 }
 

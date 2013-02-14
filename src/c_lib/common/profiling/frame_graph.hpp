@@ -42,13 +42,13 @@ class FrameGraph
         index = 0;
         pixel_column = 0;
 
-        for(int i=0; i<128; i++)
-        for(int j=0; j<STAGES; j++)
+        for (int i=0; i<128; i++)
+        for (int j=0; j<STAGES; j++)
         {
             timer[i][j] = 0;
         }
 
-        for(int i=0; i<STAGES; i++)
+        for (int i=0; i<STAGES; i++)
         {
             set_stage_color(i, 255,255,255,255);
         }
@@ -79,9 +79,9 @@ class FrameGraph
         delete ts;
     }
 
-    void set_stage_color(int n, unsigned char r, unsigned char g, unsigned char b, unsigned char a )
+    void set_stage_color(int n, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     {
-        if(n >= STAGES)
+        if (n >= STAGES)
         {
             printf("set_stage_color: index error!\n");
             return;
@@ -116,18 +116,18 @@ class FrameGraph
         //Sample input every 1ms during wait!!
 
         #if 0
-        if(FRAME_RATE_THOTTLE_ENABLED)
+        if (FRAME_RATE_THOTTLE_ENABLED)
         {
             int wait = FRAME_RATE_THOTTLE_TARGET - (_time - timer[index][0]);
-            if( wait <= 0) return;
+            if (wait <= 0) return;
             usleep(1000*wait);
         }
         #endif
-        if(FRAME_RATE_THOTTLE_ENABLED)
+        if (FRAME_RATE_THOTTLE_ENABLED)
         {
             //int t_start = _time;
 
-            while( (FRAME_RATE_THOTTLE_TARGET - (_GET_MS_TIME() - timer[index][0])) > 0 )
+            while ((FRAME_RATE_THOTTLE_TARGET - (_GET_MS_TIME() - timer[index][0])) > 0)
             {
                 poll_mouse();
             #ifdef __GNUC
@@ -143,7 +143,7 @@ class FrameGraph
 
     void frame_end(int n)
     {
-        if(n != STAGES-1) printf("Warning: frame_graph, frame_end() \n");
+        if (n != STAGES-1) printf("Warning: frame_graph, frame_end() \n");
         timer[index][STAGES-1] = _GET_MS_TIME();
         blit_column();
     }
@@ -153,18 +153,18 @@ class FrameGraph
 
         int t[STAGES-1];
 
-        for(int i=0; i< STAGES-1; i++)
+        for (int i=0; i< STAGES-1; i++)
         {
             t[i] = (int) (timer[index][i+1] - timer[index][i]);
-            if(t[i] < 0) printf("frame_graph timer: WTF temporal error on index %i \n", i);
-            //if(t[i] == 1) t[i] = 0;
-            if(t[i] == 0) t[i] = 1;
+            if (t[i] < 0) printf("frame_graph timer: WTF temporal error on index %i \n", i);
+            //if (t[i] == 1) t[i] = 0;
+            if (t[i] == 0) t[i] = 1;
         }
 
     /*
-        for(int i=0; i< STAGES-1; i++)
+        for (int i=0; i< STAGES-1; i++)
         {
-            if(t[i] > 5) printf("warning: stage %i took %i \n", i, t[i]);
+            if (t[i] > 5) printf("warning: stage %i took %i \n", i, t[i]);
         }
     */
 
@@ -177,10 +177,10 @@ class FrameGraph
 
         int i = 0;
 
-        for(int k=0; k< STAGES-1; k++)
+        for (int k=0; k< STAGES-1; k++)
         {
             int j=0;
-            while(j < t[k] && i<64)
+            while (j < t[k] && i<64)
             {
                 ts->set_pixel(index, i, stage_color[k][0], stage_color[k][1],stage_color[k][2],stage_color[k][3]);
                 j++;
@@ -188,7 +188,7 @@ class FrameGraph
             }
         }
 
-        while(i < 64 && i<64)
+        while (i < 64 && i<64)
         {
             ts->set_pixel(index, i, 0, 0,0, 0);
             i++;
