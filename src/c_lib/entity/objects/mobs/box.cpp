@@ -281,15 +281,15 @@ void server_tick_mob_robot_box(Entity* object)
         const int walk_len = MONSTER_BOX_WALK_RANGE;
         int dx = randrange(0,walk_len) - walk_len/2;
         int dy = randrange(0,walk_len) - walk_len/2;
-        destination = vec3_add(position, vec3_init(((float)dx)+randf(), ((float)dy)+randf(),0));
+        destination = vec3_add(position, vec3_init(float(dx)+randf(), float(dy)+randf(),0));
         // clamp
-        destination.z = (float)t_map::get_highest_open_block(destination.x,destination.y);
+        destination.z = t_map::get_nearest_open_surface_block(destination.x, destination.y, destination.z);
         if (destination.z < 0) destination.z = 0;
 
         Vec3 direction = vec3_sub(destination, position);
         float len = vec3_length(direction);
 
-        motion->ticks_to_destination = (int)ceil(len/motion->speed);
+        motion->ticks_to_destination = int(ceilf(len/motion->speed));
         motion->destination = translate_position(destination);
         motion->en_route = true;
         motion->at_destination = false;
@@ -318,7 +318,6 @@ void server_tick_mob_robot_box(Entity* object)
     if (motion->en_route)
     {   // move towards destination
         motion->move_on_surface();
-
         // face in direction of movement
         float theta, phi;
         vec3_to_angles(motion->target_direction, &theta, &phi);
@@ -385,7 +384,6 @@ void client_tick_mob_robot_box(Entity* object)
     if (motion->en_route)
     {   // move towards destination
         motion->move_on_surface();
-
         // face in direction of movement
         float theta, phi;
         vec3_to_angles(motion->target_direction, &theta, &phi);

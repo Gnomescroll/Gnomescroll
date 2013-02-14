@@ -162,28 +162,7 @@ inline void object_state_momentum_angles_StoC::handle()
     struct Vec3 pos = vec3_init(x,y,z);
     physics->set_position(pos);
     physics->set_momentum(vec3_init(mx,my,mz));
-
-    //bool do_set_angles = true;
-    //using Components::StateMachineComponent;
-    //StateMachineComponent* state = (StateMachineComponent*)obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
-    //if (state != NULL && state->state == STATE_IN_TRANSIT)
-    //{
-        //using Components::DestinationTargetingComponent;
-        //DestinationTargetingComponent* dest = (DestinationTargetingComponent*)obj->get_component(COMPONENT_DESTINATION_TARGETING);
-        //if (dest != NULL)
-        //{
-            //do_set_angles = false;
-            //if (!dest->check_at_destination())
-            //{   // recalculate speed
-                //dest->adjust_speed(pos);
-                //if (dest->speed == 0.0f)
-                    //do_set_angles = true;
-            //}
-        //}
-    //}
-
-    //if (do_set_angles)
-        physics->set_angles(vec3_init(theta, phi, 0));
+    physics->set_angles(vec3_init(theta, phi, 0));
 }
 
 inline void object_state_health_StoC::handle()
@@ -331,8 +310,7 @@ inline void object_choose_motion_target_StoC::handle()
 
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
-    GS_ASSERT(motion != NULL);
-    if (motion == NULL) return;
+    IF_ASSERT(motion == NULL) return;
     motion->set_target((EntityType)target_type, target_id);
 }
 
@@ -343,8 +321,7 @@ inline void object_remove_motion_target_StoC::handle()
 
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
-    GS_ASSERT(motion != NULL);
-    if (motion == NULL) return;
+    IF_ASSERT(motion == NULL) return;
     motion->target_type = OBJECT_NONE;
     motion->target_id = NULL_AGENT;
 }
@@ -461,7 +438,6 @@ inline void object_begin_waiting_StoC::handle()
 inline void object_in_transit_StoC::handle()
 {
     Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
-    GS_ASSERT(obj != NULL);
     if (obj == NULL) return;
 
     using Components::DestinationTargetingComponent;
@@ -490,7 +466,7 @@ inline void object_in_transit_StoC::handle()
         Vec3 direction = vec3_sub(destination, pos);
         direction.z = 0.0f;
         float len = vec3_length(direction);
-        dest_target->speed = len / ((float)this->ticks_to_destination);
+        dest_target->speed = len / float(this->ticks_to_destination);
         dest_target->speed = Entities::MONSTER_BOMB_WALK_SPEED;
     }
     else
@@ -503,8 +479,7 @@ inline void object_in_transit_StoC::handle()
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
-    GS_ASSERT(machine != NULL);
-    if (machine == NULL) return;
+    IF_ASSERT(machine == NULL) return;
     if (machine->router != NULL)
         machine->router(obj, STATE_IN_TRANSIT);
 }

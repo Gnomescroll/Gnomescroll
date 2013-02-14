@@ -287,7 +287,7 @@ inline bool _can_fit(int x, int y, int z, int n)
     return (cursor == n);
 }
 
-inline int get_nearest_open_block(int x, int y, int z, int n)
+inline int get_nearest_open_surface_block(int x, int y, int z, int n)
 {   // the block will also be a surface block, if found
     IF_ASSERT(n < 1) return z;
     int down = _get_next_down(x, y, z);
@@ -315,9 +315,9 @@ inline int get_nearest_open_block(int x, int y, int z, int n)
     return 0;
 }
 
-inline int get_nearest_open_block(int x, int y, int z)
+inline int get_nearest_open_surface_block(int x, int y, int z)
 {
-    return get_nearest_open_block(x, y, z, 1);
+    return get_nearest_open_surface_block(x, y, z, 1);
 }
 
 inline bool is_surface_block(int x, int y, int z)
@@ -326,18 +326,38 @@ inline bool is_surface_block(int x, int y, int z)
             t_map::get(x, y, z-1) != EMPTY_CUBE);
 }
 
-inline int get_nearest_surface_block(int x, int y, int z)
+inline int get_nearest_surface_block(int x, int y, int z, int n)
 {   // TODO -- can be optimized to reduce t_map::get calls
     int upper = z + 1;
     int lower = z;
     while (lower > 0 || upper <= map_dim.z)
     {
-        if (is_surface_block(x, y, lower)) return lower;
-        if (is_surface_block(x, y, upper)) return upper;
+        if (is_surface_block(x, y, lower))
+        {
+            int cursor = 0;
+            while (cursor < n && !isSolid(x, y, lower + cursor))
+                cursor++;
+            if (cursor == n)
+                return lower;
+        }
+        if (is_surface_block(x, y, upper))
+        {
+            int cursor = 0;
+            while (cursor < n && !isSolid(x, y, upper + cursor))
+                cursor++;
+            if (cursor == n)
+                return upper;
+            return upper;
+        }
         lower--;
         upper++;
     }
     return map_dim.z;
+}
+
+inline int get_nearest_surface_block(int x, int y, int z)
+{
+    return get_nearest_surface_block(x, y, z, 1);
 }
 
 inline int get_solid_block_below(int x, int y, int z)

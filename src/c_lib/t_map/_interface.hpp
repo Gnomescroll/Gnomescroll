@@ -27,8 +27,8 @@ void _envlight_update_core();   //update envlight
 
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);
-inline int get_nearest_open_block(int x, int y, int z, int vertical_gap);
-inline int get_nearest_open_block(int x, int y, int z);
+inline int get_nearest_open_surface_block(int x, int y, int z, int vertical_gap);
+inline int get_nearest_open_surface_block(int x, int y, int z);
 inline int get_lowest_open_block(int x, int y, int n);
 inline int get_highest_solid_block(int x, int y);
 inline int get_highest_solid_block(int x, int y, int z);
@@ -36,6 +36,7 @@ inline int get_lowest_solid_block(int x, int y);
 inline int get_solid_block_below(int x, int y, int z);
 inline int get_open_block_below(int x, int y, int z);
 inline int get_nearest_surface_block(int x, int y, int z);
+inline int get_nearest_surface_block(int x, int y, int z, int n);
 
 inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
 

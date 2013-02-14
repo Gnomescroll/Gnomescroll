@@ -36,11 +36,11 @@ namespace ServerState
         if (strcmp(Options::map, "art") == 0) return vec3_init(0,0,0);
         IF_ASSERT(base == NULL) return vec3_init(0,0,0);
 
+        int h = 1;
         using Components::DimensionComponent;
         DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
         GS_ASSERT(dims != NULL);
-        int h = 1;
-        if (dims != NULL) h = ceilf(dims->get_height());
+        if (dims != NULL) h = dims->get_integer_height();
         float x = randrange(0, t_map::map_dim.x-1);
         float y = randrange(0, t_map::map_dim.y-1);
         float z = t_map::get_highest_open_block(x, y, h);
@@ -124,7 +124,7 @@ namespace ServerState
             if (a->id == agent_list->null_id) continue;
             if (!suicidal && a->id == owner) continue;
             if (!a->point_can_cast(p.x, p.y, p.z, radius)) continue;  // cheap terrain cover check
-            int dmg = ((float)damage)*gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
+            int dmg = float(damage)*gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
             a->status.apply_damage(dmg, owner, inflictor_type);
         }
 
@@ -155,10 +155,18 @@ namespace ServerState
             Entities::Entity* obj = Entities::create(type);
             if (obj == NULL) break;
 
+            int h = 1;
+            using Components::DimensionComponent;
+            DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+            GS_ASSERT(dims != NULL);
+            if (dims != NULL) h = dims->get_integer_height();
+
             Vec3 position;
             position.x = randrange(0, t_map::map_dim.x-1);
             position.y = randrange(0, t_map::map_dim.y-1);
-            position.z = t_map::get_highest_open_block(position.x, position.y);
+            int z = randrange(0, t_map::map_dim.z-1);
+            position.z = t_map::get_nearest_open_surface_block(position.x,
+                position.y, z, h);
 
             using Components::PhysicsComponent;
             PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);

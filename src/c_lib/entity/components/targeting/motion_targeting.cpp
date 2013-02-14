@@ -29,7 +29,7 @@ void MotionTargetingComponent::set_target(EntityType target_type, int target_id)
     Vec3 dest = a->get_position();
     this->target_direction = quadrant_translate_position(position, dest);
     normalize_vector(&this->target_direction);
-    
+
     this->target_type = target_type;
     this->target_id = target_id;
     this->locked_on_target = true;
@@ -81,7 +81,7 @@ void MotionTargetingComponent::choose_destination()
     Vec3 position = physics->get_position();
     position.x += x;
     position.y += y;
-    position.z = t_map::get_highest_solid_block(position.x, position.y);
+    position.z = t_map::get_nearest_open_surface_block(position.x, position.y, position.z);
     this->destination = translate_position(position);
     this->at_destination = false;
     this->en_route = true;
@@ -107,13 +107,18 @@ bool MotionTargetingComponent::move_on_surface()
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return false;
 
+    int h = 1;
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    if (dims != NULL) h = dims->get_integer_height();
+
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
     Vec3 new_momentum;
     Vec3 motion_direction = vec3_init(this->target_direction.x, this->target_direction.y, 0);
-    bool moved = move_along_terrain_surface(physics->get_position(), motion_direction,
-                                            this->speed, this->max_z_diff,
-                                            &new_position, &new_momentum);
+    bool moved = move_within_terrain_surface(physics->get_position(), motion_direction,
+                                             this->speed, this->max_z_diff,
+                                             &new_position, &new_momentum, h);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
@@ -126,7 +131,7 @@ bool MotionTargetingComponent::move_on_surface()
 
     // set en_route if we are in motion
     this->en_route = moved;
-    
+
     return moved;
 }
 

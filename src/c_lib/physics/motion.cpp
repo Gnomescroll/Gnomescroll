@@ -66,7 +66,7 @@ void orient_to_point(Vec3 dest, struct Vec3 origin, float* theta, float* phi)
  *
  * returns false if position was left unchanged
  */
- 
+
 #define FLOAT_ERROR_MARGIN 0.005f
 static bool advance_move(Vec3 position, struct Vec3 move_to, int z, float speed, struct Vec3* new_position, struct Vec3* new_momentum)
 {
@@ -93,11 +93,11 @@ static bool advance_move(Vec3 position, struct Vec3 move_to, int z, float speed,
     float xy_len = vec3_length_squared(new_direction);
     if (xy_len < (speed*speed)/2) position.z = z;
     *new_position = translate_position(position);
-    return true;    
+    return true;
 }
- 
+
 static bool move_z_diff(Vec3 position, struct Vec3 move_to, int z, float speed, float max_z_diff, struct Vec3* new_position, struct Vec3* new_momentum)
-{    
+{
     float z_diff = position.z - ((float)z);
     if (fabsf(z_diff) > max_z_diff)
     {   // cant move
@@ -106,10 +106,10 @@ static bool move_z_diff(Vec3 position, struct Vec3 move_to, int z, float speed, 
         return false;
     }
     move_to.z = z;
-    
+
     return advance_move(position, move_to, z, speed, new_position, new_momentum);
 }
- 
+
 bool move_along_terrain_surface(Vec3 position, struct Vec3 direction, float speed, float max_z_diff, struct Vec3* new_position, struct Vec3* new_momentum)
 {
     // attempt to move to location defined by direction * speed
@@ -140,8 +140,10 @@ bool move_along_terrain_surface(Vec3 position, struct Vec3 direction, float spee
     GS_ASSERT_LIMIT(vec3_length_squared(direction) > 0.0f, 50);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
-    int z = t_map::get_nearest_open_block(translate_point(move_to.x), translate_point(move_to.y), move_to.z, object_height);
-
+    // WARNING: this allows things to slip through terrain. need a different method
+    int z = t_map::get_highest_open_block(translate_point(move_to.x),
+                                          translate_point(move_to.y),
+                                          object_height);
     return move_z_diff(position, move_to, z, speed, max_z_diff, new_position, new_momentum);
 }
 
@@ -180,16 +182,20 @@ bool move_along_terrain_surface(Vec3 position, struct Vec3 direction, float spee
     GS_ASSERT_LIMIT(vec3_length_squared(direction) > 0.0f, 50);
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
-    int z = t_map::get_nearest_open_block(translate_point(move_to.x), translate_point(move_to.y), move_to.z, object_height);
+    // WARNING: this allows things to slip through terrain. need a different method
+    int z = t_map::get_highest_open_block(translate_point(move_to.x),
+                                          translate_point(move_to.y),
+                                          object_height);
     move_to.z = z;
-
     return advance_move(position, move_to, z, speed, new_position, new_momentum);
 }
 
 
 // These will move between blocks if it makes sense to
 
-bool move_within_terrain_surface(Vec3 position, struct Vec3 direction, float speed, float max_z_diff, struct Vec3* new_position, struct Vec3* new_momentum)
+bool move_within_terrain_surface(
+    struct Vec3 position, struct Vec3 direction, float speed,
+    float max_z_diff, struct Vec3* new_position, struct Vec3* new_momentum)
 {
     // attempt to move to location defined by direction * speed
     // if z_level diff too high, set momentum 0, copy position, return
@@ -203,9 +209,31 @@ bool move_within_terrain_surface(Vec3 position, struct Vec3 direction, float spe
 
     Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
     int z = t_map::get_nearest_surface_block(translate_point(move_to.x),
-                                           translate_point(move_to.y),
-                                           move_to.z);
+                                             translate_point(move_to.y),
+                                             move_to.z);
 
+    return move_z_diff(position, move_to, z, speed, max_z_diff, new_position, new_momentum);
+}
+
+bool move_within_terrain_surface(
+    struct Vec3 position, struct Vec3 direction, float speed,
+    float max_z_diff, struct Vec3* new_position, struct Vec3* new_momentum,
+    int object_height)
+{
+    // attempt to move to location defined by direction * speed
+    // if z_level diff too high, set momentum 0, copy position, return
+    // else calculate new destination, reorient direction, multiply by speed, and set to new_momentum
+    // add new_momentum to position to get new_position
+    // assumes direction is normalized
+
+    GS_ASSERT_LIMIT(speed > 0.0f, 50);
+    GS_ASSERT_LIMIT(vec3_length_squared(direction) > 0.0f, 50);
+    if (vec3_length_squared(direction) == 0.0f) return false;
+
+    Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
+    int z = t_map::get_nearest_surface_block(translate_point(move_to.x),
+                                             translate_point(move_to.y),
+                                             move_to.z, object_height);
     return move_z_diff(position, move_to, z, speed, max_z_diff, new_position, new_momentum);
 }
 

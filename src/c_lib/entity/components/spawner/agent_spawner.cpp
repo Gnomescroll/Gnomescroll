@@ -23,7 +23,7 @@ struct Vec3 AgentSpawnerComponent::get_spawn_point(float spawned_object_height, 
 
     int h = ceilf(spawned_object_height);
     IF_ASSERT(h < 1) h = 1;
-    spawn_point.z = t_map::get_nearest_open_block(sx, sy, position.z, h);
+    spawn_point.z = t_map::get_nearest_open_surface_block(sx, sy, position.z, h);
     return spawn_point;
 }
 

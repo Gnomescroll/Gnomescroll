@@ -105,12 +105,11 @@ void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
         if ((float)genrand_real1() > p) continue;
         int ii = translate_point(i);
         int jj = translate_point(j);
-        int k = t_map::get_nearest_open_block(ii,jj,z);
+        int k = t_map::get_nearest_open_surface_block(ii,jj,z);
         if (abs(z-k) > CRYSTAL_CLUSTER_Z_DIFF_MAX) continue;
         int id = t_map::get(ii,jj,k-1);
         if (id != rock) continue;
-
-        if( t_mech::can_place_mech(ii,jj,k, 0) == false) //check to see if placement is valid
+        if (!t_mech::can_place_mech(ii,jj,k, 0))
             continue;
         t_mech::create_crystal(ii,jj,k,crystal_id);
         cluster_size[cluster_id]++;
@@ -123,11 +122,8 @@ MechType get_crystal_type(float percent_complete)
 {
     int i=0;
     for (; i<n_crystals; i++)
-    //{
-        //printf("pct: %f; i %d; range %0.2f-%0.2f\n", percent_complete, i, crystal_strata[2*i+0], crystal_strata[2*i+1]);
         if (percent_complete >= crystal_strata[2*i+0] && percent_complete < crystal_strata[2*i+1])
             return crystals[i];
-    //}
     GS_ASSERT(false);
     printf("pct error: %f\n", percent_complete);
     return crystals[n_crystals-1];
