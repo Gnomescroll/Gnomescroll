@@ -28,12 +28,10 @@ namespace ServerState
     void init_base();
     void check_agents_at_base();
 
-    void damage_objects_within_sphere(
-        struct Vec3 position, float radius,
-        int damage, AgentID owner,
-        EntityType inflictor_type, int inflictor_id,
-        bool suicidal=true
-    );
+    void damage_objects_within_sphere(struct Vec3 position, float radius,
+                                      int damage, AgentID owner,
+                                      EntityType inflictor_type, int inflictor_id,
+                                      bool suicidal=true);
 
     void spawn_monsters(EntityType type, int n);
 }   // ServerState

@@ -11,6 +11,7 @@ bool agent_collides_terrain(class Agent* a);
 inline bool can_stand_up(float box_r, float box_h, float x, float y, float z);
 inline bool on_ground(float box_r, float x, float y, float z);
 inline bool collision_check_current(float box_r, float box_h, float x, float y, float z);
+inline int clamp_to_ground(float box_r, float x, float y, float z);
 
 class AgentState agent_tick(const struct AgentControlState& _cs,
                              const struct AgentCollisionBox& box,

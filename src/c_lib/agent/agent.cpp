@@ -81,9 +81,7 @@ void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, floa
 
     #if DC_SERVER
     Agent_teleport_message msg;
-
     msg.id = id;
-
     msg.x = s.x;
     msg.y = s.y;
     msg.z = s.z;
@@ -103,12 +101,11 @@ void Agent::tick()
     int _tc =0;
     struct AgentControlState _cs;
 
-    while (cs[CS_seq].seq == CS_seq)
+    while (cs[cs_seq].seq == cs_seq)
     {
-        _cs = cs[CS_seq];
+        _cs = cs[cs_seq];
         s = agent_tick(_cs, box, s);
-
-        CS_seq = (CS_seq+1)%256;
+        cs_seq = (cs_seq + 1) % 256;
         _tc++;
     }
 
@@ -135,43 +132,34 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
     #if DC_SERVER
     if (client_id != NULL_CLIENT)
     {
-        class PlayerAgent_Snapshot P;
-
-        P.id = id;
-        //P.seq = (CS_seq+1) % 256;
-        P.seq = CS_seq;
-
-        P.x = s.x;
-        P.y = s.y;
-        P.z = s.z;
-        P.vx = s.vx;
-        P.vy = s.vy;
-        P.vz = s.vz;
-
-        P.theta = s.theta;
-        P.phi = s.phi;
-
-        P.sendToClient(client_id);
+        class PlayerAgent_Snapshot p;
+        p.id = id;
+        p.seq = cs_seq;
+        p.x = s.x;
+        p.y = s.y;
+        p.z = s.z;
+        p.vx = s.vx;
+        p.vy = s.vy;
+        p.vz = s.vz;
+        p.theta = s.theta;
+        p.phi = s.phi;
+        p.sendToClient(client_id);
     }
 
-    if (seq % 32 == 0 )
+    if (seq % 32 == 0)
     {
-        class Agent_state_message A;
-
-        //P.seq = (CS_seq+1) % 256;
-        A.seq = CS_seq;
-
-        A.x = s.x;
-        A.y = s.y;
-        A.z = s.z;
-        A.vx = s.vx;
-        A.vy = s.vy;
-        A.vz = s.vz;
-
-        A.theta = s.theta;
-        A.phi = s.phi;
-        A.id = this->id;
-        A.broadcast();
+        class Agent_state_message a;
+        a.seq = cs_seq;
+        a.x = s.x;
+        a.y = s.y;
+        a.z = s.z;
+        a.vx = s.vx;
+        a.vy = s.vy;
+        a.vz = s.vz;
+        a.theta = s.theta;
+        a.phi = s.phi;
+        a.id = this->id;
+        a.broadcast();
 
         //clean out old control state
         for (int i=16; i<96; i++)
@@ -184,55 +172,54 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 }
 
 #if DC_CLIENT
-void Agent::handle_state_snapshot(int seq,
-                                    float theta, float phi,
-                                    float x,float y,float z,
-                                    float vx,float vy,float vz)
+void Agent::handle_state_snapshot(int seq, float theta, float phi,
+                                  float x, float y, float z,
+                                  float vx, float vy, float vz)
 {
-    state_snapshot.seq = seq;
-    state_snapshot.theta = theta;
-    state_snapshot.phi = phi;
-    state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
-    state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
-
+    this->state_snapshot.seq = seq;
+    this->state_snapshot.theta = theta;
+    this->state_snapshot.phi = phi;
+    this->state_snapshot.x = x;
+    this->state_snapshot.y = y;
+    this->state_snapshot.z = z;
+    this->state_snapshot.vx = vx;
+    this->state_snapshot.vy = vy;
+    this->state_snapshot.vz = vz;
     for (int i=16; i<96; i++)
     {
-        int index = (seq + i)%256;
-        cs[index].seq = -1;
+        int index = (seq + i) % 256;
+        this->cs[index].seq = -1;
     }
-
-    state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
-    CS_seq = seq;
-
-    s = state_snapshot;
-
-    tick();
+    this->state_rollback = this->state_snapshot; //when new snapshot comes, in, set rollbacks
+    this->cs_seq = seq;
+    this->s = this->state_snapshot;
+    this->tick();
 }
 #endif
 
 void Agent::set_position(float x, float y, float z)
 {
-    s.x = translate_point(x);
-    s.y = translate_point(y);
-    s.z = z;
+    this->s.x = translate_point(x);
+    this->s.y = translate_point(y);
+    this->s.z = z;
 }
 
 void Agent::set_state(float  x, float y, float z, float vx, float vy, float vz)
 {
     this->set_position(x,y,z);
-    s.vx = vx;
-    s.vy = vy;
-    s.vz = vz;
+    this->s.vx = vx;
+    this->s.vy = vy;
+    this->s.vz = vz;
 }
 
 void Agent::set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz)
 {
-    state_snapshot.x = translate_point(x);
-    state_snapshot.y = translate_point(y);
-    state_snapshot.z = z;
-    state_snapshot.vx = vx;
-    state_snapshot.vy = vy;
-    state_snapshot.vz = vz;
+    this->state_snapshot.x = translate_point(x);
+    this->state_snapshot.y = translate_point(y);
+    this->state_snapshot.z = z;
+    this->state_snapshot.vx = vx;
+    this->state_snapshot.vy = vy;
+    this->state_snapshot.vz = vz;
 }
 
 void Agent::set_angles(float theta, float phi)
@@ -254,9 +241,7 @@ void Agent::set_camera_state(float x, float y, float z, float theta, float phi)
 void Agent::get_spawn_point(struct Vec3* spawn)
 {
     struct Vec3 default_spawn = vec3_init(t_map::map_dim.x/2, t_map::map_dim.y/2, t_map::map_dim.z-1);
-
     float fh = this->current_height();
-
     if (this->status.spawner == BASE_SPAWN_ID)
     {
         Entities::Entity* base = Entities::get(OBJECT_BASE, 0);
@@ -270,22 +255,20 @@ void Agent::get_spawn_point(struct Vec3* spawn)
         IF_ASSERT(spawner == NULL) *spawn = default_spawn;
         else *spawn = spawner->get_spawn_point(fh, this->box.box_r);
     }
-    else // spawner was found
-    {
+    else
+    {   // spawner was found
         Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->status.spawner);
-        GS_ASSERT(spawner != NULL);
-        if (spawner != NULL)
+        IF_ASSERT(spawner == NULL)
+            *spawn = default_spawn;
+        else
         {
             using Components::AgentSpawnerComponent;
             AgentSpawnerComponent* spawner_comp = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
-            GS_ASSERT(spawner_comp != NULL);
-            if (spawner_comp != NULL)
-                *spawn = spawner_comp->get_spawn_point(fh, this->box.box_r);
-            else
+            IF_ASSERT(spawner_comp == NULL)
                 *spawn = default_spawn;
+            else
+                *spawn = spawner_comp->get_spawn_point(fh, this->box.box_r);
         }
-        else
-            *spawn = default_spawn;
     }
 }
 
@@ -299,7 +282,7 @@ void Agent::spawn_state()
 void Agent::spawn_state(struct Vec3 p)
 {   // update position
     float theta = this->status.get_spawn_angle();
-    teleport(p.x, p.y, p.z, 0, 0, 0, theta, 0.0f);
+    this->teleport(p.x, p.y, p.z, 0, 0, 0, theta, 0.0f);
 }
 #endif
 
@@ -321,11 +304,11 @@ Agent::Agent(AgentID id) :
     , camera_ready(false)
     #endif
 {
-    box.b_height = AGENT_HEIGHT;
-    box.c_height = AGENT_HEIGHT_CROUCHED;
+    box.height = AGENT_HEIGHT;
+    box.crouch_height = AGENT_HEIGHT_CROUCHED;
     box.box_r = AGENT_BOX_RADIUS;
 
-    CS_seq = 0;
+    cs_seq = 0;
 
     printf("Created agent: %d\n", id);
 
@@ -340,41 +323,41 @@ Agent::Agent(AgentID id) :
     }
 
     set_angles(0.5f, 0.0f);
-    set_position(0,0,-256);
+    set_position(0, 0, -256.0f);
 }
 
 Agent::~Agent()
 {
-    if (this->vox != NULL) delete this->vox;
+    delete this->vox;
 }
 
 
 void Agent::revert_to_snapshot()
 {
-    s = state_snapshot;
-    CS_seq = state_snapshot.seq;
+    this->s = state_snapshot;
+    this->cs_seq = state_snapshot.seq;
 }
 
 void Agent::revert_to_rollback()
 {
-    s = state_rollback;
-    CS_seq = state_rollback.seq;
+    this->s = state_rollback;
+    this->cs_seq = state_rollback.seq;
 }
 
 void Agent::print_cs()
 {
-    uint16_t cs = this->cs[this->CS_seq].cs;
-    int forward     = cs & CS_FORWARD ? 1 :0;
-    int backwards   = cs & CS_BACKWARD ? 1 :0;
-    int left        = cs & CS_LEFT ? 1 :0;
-    int right       = cs & CS_RIGHT ? 1 :0;
-    int jetpack     = cs & CS_JETPACK ? 1 :0;
-    int jump        = cs & CS_JUMP ? 1 :0;
-    int crouch      = cs & CS_CROUCH ? 1 :0;
-    int boost       = cs & CS_BOOST ? 1 :0;
-    int misc1       = cs & CS_MISC1 ? 1 :0;
-    int misc2       = cs & CS_MISC2 ? 1 :0;
-    int misc3       = cs & CS_MISC3 ? 1 :0;
+    uint16_t cs = this->cs[this->cs_seq].cs;
+    int forward   = cs & CS_FORWARD  ? 1 : 0;
+    int backwards = cs & CS_BACKWARD ? 1 : 0;
+    int left      = cs & CS_LEFT     ? 1 : 0;
+    int right     = cs & CS_RIGHT    ? 1 : 0;
+    int jetpack   = cs & CS_JETPACK  ? 1 : 0;
+    int jump      = cs & CS_JUMP     ? 1 : 0;
+    int crouch    = cs & CS_CROUCH   ? 1 : 0;
+    int boost     = cs & CS_BOOST    ? 1 : 0;
+    int misc1     = cs & CS_MISC1    ? 1 : 0;
+    int misc2     = cs & CS_MISC2    ? 1 : 0;
+    int misc3     = cs & CS_MISC3    ? 1 : 0;
 
     printf("f,b,l,r = %d%d%d%d\n", forward, backwards, left, right);
     printf("jet=%d\n", jetpack);
@@ -386,7 +369,7 @@ void Agent::print_cs()
 
 AgentControlState Agent::get_current_control_state()
 {
-    return this->cs[(this->CS_seq-1+256)%256];
+    return this->cs[(this->cs_seq - 1 + 256) % 256];
 }
 
 bool Agent::crouched()
@@ -406,15 +389,15 @@ float Agent::camera_height()
 float Agent::current_height()
 {
     if (this->crouched())
-        return this->box.c_height;
+        return this->box.crouch_height;
     else
-        return this->box.b_height;
+        return this->box.height;
 }
 
 int Agent::current_height_int()
 {
     float h = this->current_height();
-    return (int)ceil(h);
+    return int(ceilf(h));
 }
 
 float Agent::camera_z()

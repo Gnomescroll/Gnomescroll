@@ -13,17 +13,17 @@ void init_packets();
 ItemContainerID get_block_item_container(int x, int y, int z);
 bool get_container_location(ItemContainerID container_id, int position[3]); // returns false is container not found
 
-CubeType 			get(int x, int y, int z);
-int 	 			get_block_damage(int x, int y, int z);
+CubeType            get(int x, int y, int z);
+int                 get_block_damage(int x, int y, int z);
 struct MAP_ELEMENT  get_element(int x, int y, int z);
 
-CubeType 			set(int x, int y, int z, CubeType cube_type);
-void				set_fast(int x, int y, int z, CubeType cube_type);
-void				set_palette(int x, int y, int z, int palette);
-void				set_element(int x, int y, int z, struct MAP_ELEMENT e);
+CubeType            set(int x, int y, int z, CubeType cube_type);
+void                set_fast(int x, int y, int z, CubeType cube_type);
+void                set_palette(int x, int y, int z, int palette);
+void                set_element(int x, int y, int z, struct MAP_ELEMENT e);
 
-void _sunlight_update_core();	//update sunlight
-void _envlight_update_core();	//update envlight
+void _sunlight_update_core();   //update sunlight
+void _envlight_update_core();   //update envlight
 
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);
@@ -34,6 +34,7 @@ inline int get_highest_solid_block(int x, int y);
 inline int get_highest_solid_block(int x, int y, int z);
 inline int get_lowest_solid_block(int x, int y);
 inline int get_solid_block_below(int x, int y, int z);
+inline int get_open_block_below(int x, int y, int z);
 inline int get_nearest_surface_block(int x, int y, int z);
 
 inline bool position_is_loaded(int x, int y) __attribute__((always_inline));

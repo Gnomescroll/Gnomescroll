@@ -12,14 +12,12 @@ dont_include_this_file_in_server
 namespace AgentDraw
 {
 
-void add_snapshot_to_history(Agents::Agent* g);
-
-void draw_agents(Agents::AgentList* agent_list);
 void draw_agent(Agents::Agent* g);
-
-void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle);
-void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height);
-void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height, unsigned char r, unsigned char g, unsigned char b);
-void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b);
+void draw_agent_aiming_direction(float x, float y, float z, float theta, float phi);
+void draw_agent_bounding_box(float x, float y, float z, float radius,
+                             float head_height, float height);
+void draw_agent_bounding_box(float x, float y, float z, float radius,
+                             float head_height, float height, Color color);
+void draw_agent_cube_selection(int x, int y, int z, Color color);
 
 }   // AgentDraw

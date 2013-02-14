@@ -16,9 +16,7 @@ namespace ServerState
     bool main_inited = false;
     bool signal_exit = false;
     bool reload_settings = false;
-
     Voxels::VoxelHitscanList* voxel_hitscan_list = NULL;
-
     class Entities::Entity* base;
 
     void init_lists()
@@ -29,34 +27,31 @@ namespace ServerState
 
     void teardown_voxel_lists()
     {
-        if (voxel_hitscan_list != NULL) delete voxel_hitscan_list; // must go last
+        delete voxel_hitscan_list;
     }
 
     struct Vec3 get_base_spawn_position()
     {
         // always start the base at the map center in fast map mode
         if (strcmp(Options::map, "art") == 0) return vec3_init(0,0,0);
-
-        GS_ASSERT(base != NULL);
-        if (base == NULL) return vec3_init(0,0,0);
+        IF_ASSERT(base == NULL) return vec3_init(0,0,0);
 
         using Components::DimensionComponent;
         DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
         GS_ASSERT(dims != NULL);
         int h = 1;
-        if (dims != NULL) h = (int)ceil(dims->get_height());
+        if (dims != NULL) h = ceilf(dims->get_height());
         float x = randrange(0, t_map::map_dim.x-1);
         float y = randrange(0, t_map::map_dim.y-1);
-        float z = t_map::get_highest_open_block(x,y, h);
-        struct Vec3 p = vec3_init(x+0.5f,y+0.5f,z);
+        float z = t_map::get_highest_open_block(x, y, h);
+        struct Vec3 p = vec3_init(x+0.5f, y+0.5f, z);
         return p;
     }
 
     void init_base()
     {
         base = Entities::create(OBJECT_BASE);
-        GS_ASSERT(base != NULL);
-        if (base == NULL) return;
+        IF_ASSERT(base == NULL) return;
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
         GS_ASSERT(physics != NULL);
@@ -73,8 +68,7 @@ namespace ServerState
         if (tick % Options::base_move_rate != 0) return;
         typedef Components::PositionChangedPhysicsComponent PCP;
         PCP* physics = (PCP*)base->get_component(COMPONENT_POSITION_CHANGED);
-        GS_ASSERT(physics != NULL);
-        if (physics == NULL) return;
+        IF_ASSERT(physics == NULL) return;
 
         int tries = 0;
         static const int MAX_TRIES = 100;
@@ -92,13 +86,11 @@ namespace ServerState
         using Agents::agent_list;
 
         Entities::Entity* base = Entities::get(OBJECT_BASE, 0);
-        GS_ASSERT(base != NULL);
-        if (base == NULL) return;
+        IF_ASSERT(base == NULL) return;
 
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        GS_ASSERT(physics != NULL);
-        if (physics == NULL) return;
+        IF_ASSERT(physics == NULL) return;
         Vec3 p = physics->get_position();
 
         using Components::VoxelModelComponent;
@@ -111,8 +103,7 @@ namespace ServerState
         for (size_t i=0; i<agent_list->n_filtered; i++)
         {
             Agents::Agent* a = agent_list->filtered_objects[i];
-            GS_ASSERT(a->id != agent_list->null_id);
-            if (a->id == agent_list->null_id) continue;
+            IF_ASSERT(a->id == agent_list->null_id) continue;
             a->status.at_base();
         }
     }
@@ -171,8 +162,7 @@ namespace ServerState
 
             using Components::PhysicsComponent;
             PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            GS_ASSERT(physics != NULL);
-            if (physics == NULL)
+            IF_ASSERT(physics == NULL)
             {
                 Entities::ready(obj);    // sets id
                 Entities::destroy(obj);

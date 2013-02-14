@@ -2,11 +2,6 @@
 
 #include <common/color.hpp>
 
-/*
-    Agent #defines, constants
-*/
-
-
 typedef enum
 {
     CS_FORWARD = 1,
@@ -36,17 +31,21 @@ typedef enum
     DEATH_STARVATION,
 } AgentDeathMethod;
 
-enum AGENT_BODY_PARTS
+typedef enum
 {
-    AGENT_PART_TORSO,
+    AGENT_PART_TORSO = 0,
     AGENT_PART_HEAD,
     AGENT_PART_LARM,
     AGENT_PART_RARM,
     AGENT_PART_LLEG,
     AGENT_PART_RLEG
-};
+}  AgentBodyParts;
 
-/* Main */
+typedef enum
+{
+    NULL_AGENT = 0xFF,
+} AgentID;
+
 const int MAX_AGENTS = PLAYERS_MAX;
 //const float AGENT_HEIGHT = 2.8f;
 //const float CAMERA_HEIGHT = 2.5f;
@@ -70,30 +69,20 @@ const int HUNGER_DAMAGE_THRESHOLD = 8;
 const int HUNGER_DAMAGE_RATE = ONE_MINUTE;
 const int HUNGER_DAMAGE_AMOUNT = 10;
 
-typedef enum
-{
-    NULL_AGENT = 0xFF,
-} AgentID;
+const size_t MAX_AGENT_MODIFIERS = 0xFF;
+
+const Color AGENT_DEFAULT_COLOR = Color(64,192,64);
+const int RESPAWN_TICKS = ONE_SECOND * 4;
+
+// DONT CHANGE THESE. WILL BREAK STUFF AND YOU WONT KNOW UNTIL ITS TOO LATE
+const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
+const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
 
 inline bool isValid(AgentID agent_id)
 {
     return (agent_id >= 0 && agent_id < MAX_AGENTS);
 }
 
-const size_t MAX_AGENT_MODIFIERS = 0xFF;
-
-/* Status */
-const int RESPAWN_TICKS = 30 * 4; // 4 seconds
-const int AGENT_MAX_TURRETS = 10;    // (256/64)*2 == 8
-const int AGENT_MAX_SPAWNERS = 3;
-
-// DONT CHANGE THESE. WILL BREAK STUFF AND YOU WONT KNOW UNTIL ITS TOO LATE
-const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
-const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
-
-const Color AGENT_DEFAULT_COLOR = Color(64,192,64);
-
-/* Player */
 #if DC_CLIENT
 const int AGENT_STATE_HISTORY_SIZE = 64;
 const float AGENT_INTERPOLATION_DECAY  = 0.8f;

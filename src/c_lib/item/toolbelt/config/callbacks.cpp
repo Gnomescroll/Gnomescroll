@@ -319,7 +319,7 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
     // calculate position
     struct Vec3 forward = a->forward_vector();
     struct Vec3 start_position = a->get_position();
-    start_position.z += a->box.b_height * 0.95f;    // near head
+    start_position.z += a->box.height * 0.95f;    // near head
     struct Vec3 position = vec3_add(start_position, vec3_scalar_mult(forward, distance_from_player));
     if (t_map::get(position.x, position.y, position.z) != EMPTY_CUBE)
     {

@@ -125,7 +125,7 @@ inline bool collision_check_z(float box_r, float box_h, float x, float y, float 
     return false;
 }
 
-inline int clamp_agent_to_ground(float box_r, float x, float y, float z)
+inline int clamp_to_ground(float box_r, float x, float y, float z)
 {
     int x_min = int(translate_point(x - box_r));
     int x_max = int(translate_point(x + box_r));
@@ -135,9 +135,8 @@ inline int clamp_agent_to_ground(float box_r, float x, float y, float z)
     int z1 = t_map::get_solid_block_below(x_min, y_max, int(z));
     int z2 = t_map::get_solid_block_below(x_max, y_min, int(z));
     int z3 = t_map::get_solid_block_below(x_max, y_max, int(z));
-    return GS_MAX(GS_MAX(z0, z1), GS_MAX(z2, z3));
+    return GS_MAX(GS_MAX(z0, z1), GS_MAX(z2, z3)) + 1;
 }
-
 
 #define ADVANCED_JUMP 0
 
@@ -256,11 +255,11 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     static const float tr = 1.0f / 10.0f;    //tick rate
     static const float tr2 = tr*tr;
     float speed = AGENT_SPEED * tr;
-    float height = box.b_height;
+    float height = box.height;
     if (crouch)
     {
         speed = AGENT_SPEED_CROUCHED * tr;
-        height = box.c_height;
+        height = box.crouch_height;
     }
 
     float z_gravity = -3.0f * tr2;
@@ -301,7 +300,7 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     bool collision_y = collision_check_xy(box.box_r, height, new_x, new_y, as.z);
     if (collision_y) new_y = as.y;
 
-    float solid_z = clamp_agent_to_ground(box.box_r, new_x, new_y, as.z);
+    float solid_z = clamp_to_ground(box.box_r, new_x, new_y, as.z);
 
     bool top = false;
     bool collision_z = collision_check_z(box.box_r, height, new_x, new_y, new_z, &top);
@@ -314,12 +313,12 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
         if (top && as.vz > 0)
             new_z = floorf(as.z) + ceilf(height) - height;
         else
-            new_z = solid_z + 1;
+            new_z = solid_z;
         as.vz = 0.0f;
     }
 
-    new_z = GS_MAX(new_z, solid_z + 1);
-    float dist_from_ground = new_z - solid_z + 1;
+    new_z = GS_MAX(new_z, solid_z);
+    float dist_from_ground = new_z - solid_z;
 
     #if ADVANCED_JUMP
     as.jump_pow = new_jump_pow;

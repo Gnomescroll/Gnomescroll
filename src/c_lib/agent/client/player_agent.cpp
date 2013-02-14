@@ -90,7 +90,7 @@ void PlayerAgent::handle_state_snapshot(int seq, float theta, float phi, float x
 
     state_history[index] = ss;
 
-    if ( (state_history_seq - seq) > 30 || seq > state_history_seq)
+    if ((state_history_seq - seq) > 30 || seq > state_history_seq)
     {
         state_history_index = index;
         state_history_seq = seq; //set index
@@ -168,7 +168,7 @@ uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
 
     // force staying crouched if cant stand up
     if ((this->crouching && !crouch) &&
-        can_stand_up(a->box.box_r, a->box.b_height,
+        can_stand_up(a->box.box_r, a->box.height,
                      state->x, state->y, state->z))
     {
         crouch = 1;
@@ -241,16 +241,14 @@ void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
     {
         acs = cs_local[cs_index % 128]; //check seq number
         tmp = agent_tick(acs, a->box, tmp);
-        tmp.seq = (tmp.seq+1) % 256;
-        cs_index = (cs_index+1) % 256;
+        tmp.seq = (tmp.seq + 1) % 256;
+        cs_index = (cs_index + 1) % 256;
     }
     s0 = tmp;
     acs = cs_local[cs_seq_local % 128];
     s1 = agent_tick(acs, a->box, s0);
 
-    bool s1_on_ground = on_ground(a->box.box_r, s1.x, s1.y, s1.z);
-    bool camera_on_ground = on_ground(a->box.box_r, camera_state.x, camera_state.y, camera_state.z);
-    this->movement_event(s0, s1, s1_on_ground, camera_on_ground);
+    this->movement_event(s0, s1);
 }
 
 float PlayerAgent::camera_height()
@@ -495,17 +493,19 @@ void PlayerAgent::fell(float dvz)
         Sound::play_2d_sound("soft_fall");
 }
 
-void PlayerAgent::movement_event(class AgentState s0, class AgentState s1,
-                                 bool s1_on_ground, bool camera_on_ground)
+void PlayerAgent::movement_event(class AgentState s0, class AgentState s1)
 {
     // TODO: detect if player is on ground
     // TODO: detect when player goes form on-ground to ground (fall event)
     // TODO: detect the type of block the player is walking on
     // TODO: random plus-minue variation in footstep
-
+    Agent* a = this->you();
+    if (a == NULL) return;
     static const float distance_per_step = 1.5f;
     static float total_distance = 0.0f;
-
+    bool s1_on_ground = on_ground(a->box.box_r, s1.x, s1.y, s1.z);
+    bool camera_on_ground = on_ground(a->box.box_r, this->camera_state.x,
+                                      this->camera_state.y, this->camera_state.z);
     float dx = s1.x - quadrant_translate_f(s1.x, s0.x);
     float dy = s1.y - quadrant_translate_f(s1.y, s0.y);
     float d = sqrtf(dx*dx + dy*dy);

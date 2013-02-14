@@ -9,10 +9,10 @@ namespace Components
 class SpawnerComponent: public Component
 {
     public:
-        virtual struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius) = 0;
+    virtual struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius) = 0;
 
-    explicit SpawnerComponent(ComponentType type)
-    : Component(type, COMPONENT_INTERFACE_SPAWNER)
+    explicit SpawnerComponent(ComponentType type) :
+        Component(type, COMPONENT_INTERFACE_SPAWNER)
     {}
 
     virtual ~SpawnerComponent() {}

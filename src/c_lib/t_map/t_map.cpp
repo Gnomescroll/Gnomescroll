@@ -4,7 +4,6 @@
 #include <t_map/t_properties.hpp>
 #include <t_map/t_map_class.hpp>
 #include <t_map/glsl/texture.hpp>
-
 #include <t_map/lighting.hpp>
 
 #if DC_CLIENT
@@ -38,7 +37,6 @@ CubeType get(int x, int y, int z)
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if (c == NULL) return EMPTY_CUBE;
     return (CubeType)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
-
 }
 
 CubeType set(int x, int y, int z, CubeType cube_type)
@@ -94,7 +92,6 @@ int get_palette(int x, int y, int z)
     return main_map->get_element(x,y,z).palette;
 }
 
-
 class Terrain_map* get_map()
 {
     return main_map;
@@ -132,7 +129,7 @@ void init_for_draw()
 
 void end_t_map()
 {
-    if (main_map != NULL) delete main_map;
+    delete main_map;
 
     #if DC_CLIENT
     end_client_compressors();
@@ -141,7 +138,7 @@ void end_t_map()
     #endif
 
     #if DC_SERVER
-    if (map_history != NULL) delete map_history;
+    delete map_history;
     teardown_env_process();
     #endif
 
@@ -264,80 +261,98 @@ inline int get_highest_open_block(int x, int y)
     return get_highest_solid_block(x, y) + 1;
 }
 
-inline int get_nearest_open_block(int x, int y, int z, int n)
+inline int _get_next_down(int x, int y, int z)
 {
+    if (z <= 0) return -1;
+    while (isSolid(x, y, z))
+        z--;
+    while (z >= 0 && !isSolid(x, y, z))
+        z--;
+    return z + 1;
+}
+
+inline int _get_next_up(int x, int y, int z)
+{
+    if (z >= map_dim.z) return map_dim.z + 1;
+    while (isSolid(x, y, z))
+        z++;
+    return z;
+}
+
+inline bool _can_fit(int x, int y, int z, int n)
+{
+    int cursor = 0;
+    while (cursor < n && !isSolid(x, y, z + cursor))
+        cursor++;
+    return (cursor == n);
+}
+
+inline int get_nearest_open_block(int x, int y, int z, int n)
+{   // the block will also be a surface block, if found
     IF_ASSERT(n < 1) return z;
-
-    int inc = 1;    // direction (+/- up/down)
-    int up = z;     // up cursor
-    int down = z-1; // down cursor
-    while (down >= 0 && up <= map_dim.z)
-    {
-        // choose start pt
-        int start = up;
-        if (inc < 0)
-            start = down;
-
-        // look for gap of height n
-        bool found = true;
-        for (int j=0; j<n; j++)
-        {
-            if (isSolid(x,y,start+j))
-            {
-                found = false;
-                break;
-            }
-        }
-        if (found) return start;
-
-        // advance up/down cursors
-        if (inc > 0)
+    int down = _get_next_down(x, y, z);
+    int up = z + 1;
+    if (get(x, y, z) == EMPTY_CUBE)
+        while (up <= map_dim.z && !isSolid(x, y, up))
             up++;
-        else
-            down--;
-
-        // set direction
-        if (up > map_dim.z)
-            inc = -1;
-        else if (down < 0)
-            inc = 1;
-        else
-            inc *= -1;  // flip
+    up = _get_next_up(x, y, up);
+    while (down >= 0 || up <= map_dim.z)
+    {
+        int first = down;
+        int second = up;
+        if (down < 0 || up - z < z - down)
+        {   // the up position is closer
+            first = up;
+            second = down;
+        }
+        if (_can_fit(x, y, first, n)) return first;
+        else if (_can_fit(x, y, second, n)) return second;
+        while (up <= map_dim.z && !isSolid(x, y, up))
+            up++;
+        up = _get_next_up(x, y, up);
+        down = _get_next_down(x, y, down - 1);
     }
+    return 0;
+}
 
-    return -1;
+inline int get_nearest_open_block(int x, int y, int z)
+{
+    return get_nearest_open_block(x, y, z, 1);
 }
 
 inline bool is_surface_block(int x, int y, int z)
 {
-    return (t_map::get(x,y,z) == EMPTY_CUBE &&
-             t_map::get(x,y,z-1) != EMPTY_CUBE);
+    return (t_map::get(x, y, z) == EMPTY_CUBE &&
+            t_map::get(x, y, z-1) != EMPTY_CUBE);
 }
 
 inline int get_nearest_surface_block(int x, int y, int z)
 {   // TODO -- can be optimized to reduce t_map::get calls
-    int upper = z;
-    int lower = z - 1;
+    int upper = z + 1;
+    int lower = z;
     while (lower > 0 || upper <= map_dim.z)
     {
-        if (is_surface_block(x, y, upper)) return upper;
         if (is_surface_block(x, y, lower)) return lower;
+        if (is_surface_block(x, y, upper)) return upper;
         lower--;
         upper++;
     }
     return map_dim.z;
 }
 
-inline int get_nearest_open_block(int x, int y, int z)
-{
-    return get_nearest_open_block(x,y,z,1);
-}
-
 inline int get_solid_block_below(int x, int y, int z)
 {
     for (int i=z-1; i>=0; i--)
-        if (get(x,y,i) != 0) return i;
+        if (isSolid(x, y, i))
+            return i;
     return -1;
+}
+
+inline int get_open_block_below(int x, int y, int z)
+{
+    z = get_solid_block_below(x, y, z);
+    if (z < 0) return -1;
+    return z;
 }
 
 inline int get_highest_solid_block(int x, int y)
@@ -348,7 +363,7 @@ inline int get_highest_solid_block(int x, int y)
 inline int get_highest_solid_block(int x, int y, int z)
 {
     // TODO -- use heightmap cache
-    int i = z-1;
+    int i = z - 1;
     for (; i>=0; i--)
         if (isSolid(x,y,i)) break;
     return i;
@@ -357,25 +372,22 @@ inline int get_highest_solid_block(int x, int y, int z)
 inline int get_lowest_open_block(int x, int y, int n)
 {
     IF_ASSERT(n < 1) return -1;
-
-    int i;
-    CubeType cube_type;
-    int open=0;
-    for (i=0; i<=map_dim.z; i++)
+    int open = 0;
+    int i = 0;
+    for (; i<=map_dim.z; i++)
     {
-        cube_type = get(x,y,i);
+        CubeType cube_type = get(x, y, i);
         if (isSolid(cube_type)) open = 0;
         else open++;
-        if (open >= n) return i-open+1;
+        if (open >= n) return (i - open + 1);
     }
-
     return i;
 }
 
 inline int get_lowest_solid_block(int x, int y)
 {
-    int i;
-    for (i=0; i<map_dim.z; i++)
+    int i = 0;
+    for (; i<map_dim.z; i++)
         if (isSolid(x,y,i)) break;
     if (i >= map_dim.z) i = -1;  // failure
     return i;

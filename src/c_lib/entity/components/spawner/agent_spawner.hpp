@@ -18,38 +18,37 @@ class AgentSpawnerComponent: public SpawnerComponent
         SubscriberList<AgentID> agents;
         SubscriberList<UserID> users;
 
-        struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius);
+    struct Vec3 get_spawn_point(float spawned_object_height, float spawned_object_radius);
 
-        void add_user(UserID user_id)
-        {
-            this->users.add(user_id);
-        }
+    void add_user(UserID user_id)
+    {
+        this->users.add(user_id);
+    }
 
-        void add_agent(AgentID agent_id)
-        {
-            class Agents::Agent* agent = Agents::get_agent(agent_id);
-            GS_ASSERT(agent != NULL);
-            if (agent == NULL) return;
-            if (this->agents.full()) return;
-            this->agents.add(agent->id);
-            this->add_user(agent->user_id);
-        }
+    void add_agent(AgentID agent_id)
+    {
+        class Agents::Agent* agent = Agents::get_agent(agent_id);
+        IF_ASSERT(agent == NULL) return;
+        if (this->agents.full()) return;
+        this->agents.add(agent->id);
+        this->add_user(agent->user_id);
+    }
 
-        void remove_all(AgentID agent_id)
-        {
-            this->remove(agent_id);
-            class Agents::Agent* agent = Agents::get_agent(agent_id);
-            GS_ASSERT(agent != NULL);
-            if (agent == NULL) return;
-            this->users.remove(agent->user_id);
-        }
+    void remove_all(AgentID agent_id)
+    {
+        this->remove(agent_id);
+        class Agents::Agent* agent = Agents::get_agent(agent_id);
+        IF_ASSERT(agent == NULL) return;
+        this->users.remove(agent->user_id);
+    }
 
-        void remove(AgentID agent_id)
-        {
-            this->agents.remove(agent_id);
-        }
+    void remove(AgentID agent_id)
+    {
+        this->agents.remove(agent_id);
+    }
 
-    AgentSpawnerComponent() : SpawnerComponent(COMPONENT_AGENT_SPAWNER),
+    AgentSpawnerComponent() :
+        SpawnerComponent(COMPONENT_AGENT_SPAWNER),
         radius(0),
         agents(Entities::AGENT_SPAWNER_INITIAL_CHILDREN_SIZE, MAX_AGENTS),
         users(Entities::AGENT_SPAWNER_INITIAL_USERS_SIZE, Entities::MAX_USERS_PER_AGENT_SPAWNER)

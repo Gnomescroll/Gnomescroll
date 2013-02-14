@@ -75,8 +75,8 @@ struct AgentControlState
 
 struct AgentCollisionBox
 {
-    float b_height; //standing height
-    float c_height; //crouch height
+    float height; //standing height
+    float crouch_height; //crouch height
     float box_r;
 };
 
@@ -88,7 +88,7 @@ class Agent
         class AgentState state_rollback;
         struct AgentControlState cs[256];
         int snapshot_seq;
-        int CS_seq; // <--current counter
+        int cs_seq; // <--current counter
 
         class AgentState s; //state current
         class AgentState state_snapshot;
@@ -191,7 +191,7 @@ class Agent
         if (this->vox == NULL || !this->vox->was_updated)
         {   // use approximate center of model
             struct Vec3 p = this->get_position();
-            p.z += this->box.b_height/2.0f;
+            p.z += this->box.height/2.0f;
             return p;
         }
         return this->vox->get_part(AGENT_PART_TORSO)->get_center();
