@@ -131,14 +131,13 @@ void server_update()
 // Teardown
 void server_teardown()
 {
-    if (secret_key_str != NULL) free(secret_key_str);
-    if (secret_key != NULL) free(secret_key);
+    free(secret_key_str);
+    free(secret_key);
 }
 
 static bool verify_token(const char* _token, UserID* user_id, time_t* expiration_time, char** username)
 {
-    GS_ASSERT(secret_key != NULL);
-    if (secret_key == NULL) return false;
+    IF_ASSERT(secret_key == NULL) return false;
 
     char* token = NULL;
     bool ok = parse_auth_token(_token, user_id, expiration_time, &token, username);

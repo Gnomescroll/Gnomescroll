@@ -256,8 +256,8 @@ void init_sprite_voxelizer()
 
     sprite_voxelizer_shader.set_debug(true);
     sprite_voxelizer_shader.load_shader("sprite voxelizer",
-        "./media/shaders/animation/sprite_voxelizer.vsh",
-        "./media/shaders/animation/sprite_voxelizer.fsh");
+        MEDIA_PATH "shaders/animation/sprite_voxelizer.vsh",
+        MEDIA_PATH "shaders/animation/sprite_voxelizer.fsh");
 
     // attributes
     sprite_voxelizer_shader_vars.normal = sprite_voxelizer_shader.get_attribute("InNormal");
@@ -275,8 +275,7 @@ void init_sprite_voxelizer()
 void teardown_sprite_voxelizer()
 {
     for (size_t i=0; i<SPRITE_VOXELIZER_MAX; i++)
-        if (sprite_voxelizer_vlists[i] != NULL)
-            delete sprite_voxelizer_vlists[i];
+        delete sprite_voxelizer_vlists[i];
 }
 
 }   // Animations

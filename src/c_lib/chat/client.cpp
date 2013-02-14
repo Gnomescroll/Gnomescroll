@@ -483,17 +483,10 @@ ChatClient::~ChatClient()
 {
     this->teardown();
     if (this->channels != NULL)
-    {
         for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
-        {
-            if (this->channels[i] == NULL) continue;
             delete this->channels[i];
-        }
-        free(this->channels);
-    }
-
-    if (this->input != NULL)
-        delete this->input;
+    free(this->channels);
+    delete this->input;
 }
 
 /* ChatMessageList */

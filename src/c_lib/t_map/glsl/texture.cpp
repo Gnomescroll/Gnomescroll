@@ -114,9 +114,9 @@ void init_textures()
 
 void teardown_textures()
 {
-    if (cube_side_texture_array != NULL) free(cube_side_texture_array);
+    free(cube_side_texture_array);
     #if DC_CLIENT
-    if (pixel_data != NULL) free(pixel_data);
+    free(pixel_data);
     #endif
 }
 

@@ -35,17 +35,17 @@ void init()
 
     filter = new EntityListFilter;
     filter->init();
-    
+
     entity_list = new EntityList;
     entity_list->init();
-    
+
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
         int max = get_object_max((EntityType)i);
         if (max > 0)
             entity_list->set_object_max((EntityType)i, max);
     }
-    
+
     entity_data = new EntityDataList;
     entity_data->init();
     load_object_data();
@@ -56,9 +56,9 @@ void init()
 
 void teardown()
 {
-    if (entity_list != NULL) delete entity_list;
-    if (entity_data != NULL) delete entity_data;
-    if (filter != NULL) delete filter;
+    delete entity_list;
+    delete entity_data;
+    delete filter;
     teardown_config();
 }
 
@@ -121,11 +121,11 @@ void destroy_switch(Entity* object)
     GS_ASSERT(object != NULL);
     if (object == NULL) return;
     EntityType type = object->type;
-    
+
     entityDie die = get_object_die_method(type);
     GS_ASSERT(die != NULL);
     if (die != NULL) die(object);
-    
+
     release_object_components(object);
     int id = object->id;
     entity_list->destroy(type, id);
@@ -179,7 +179,7 @@ bool point_occupied_by_type(EntityType type, int x, int y, int z)
     GS_ASSERT(used != NULL);
     int max = entity_list->max(type);
     GS_ASSERT(max > 0);
-    
+
     using Components::PhysicsComponent;
     using Components::DimensionComponent;
 
@@ -187,12 +187,12 @@ bool point_occupied_by_type(EntityType type, int x, int y, int z)
     int px,py,pz,height;
     PhysicsComponent* physics;
     DimensionComponent* dims;
-    
+
     for (int i=0; i<max; i++)
     {
         if (!used[i]) continue;
         obj = objects[i];
-        
+
         physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
         GS_ASSERT(physics != NULL);
         Vec3 position = physics->get_position();
@@ -253,7 +253,7 @@ void send_object_state_machines(const EntityType type, const ClientID client_id)
 {
     GS_ASSERT(type == OBJECT_MONSTER_BOMB);
     if (type != OBJECT_MONSTER_BOMB) return;    // TODO
-    
+
     if (entity_list->empty(type)) return;
 
     Entity** objects = entity_list->get_objects(type);
@@ -276,7 +276,7 @@ void send_to_client(ClientID client_id)
     send_to_client(OBJECT_AGENT_SPAWNER, client_id);
     send_to_client(OBJECT_ENERGY_CORE, client_id);
     send_to_client(OBJECT_MONSTER_BOMB, client_id);
-    
+
     // DOESNT WORK RIGHT:
     send_object_state_machines(OBJECT_MONSTER_BOMB, client_id);
     send_to_client(OBJECT_MONSTER_BOX, client_id);

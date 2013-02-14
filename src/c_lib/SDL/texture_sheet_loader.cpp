@@ -352,9 +352,9 @@ void init_greyscale()
 
 void teardown()
 {
-    if (cube_texture_sheet_loader  != NULL) delete cube_texture_sheet_loader;
-    if (item_texture_sheet_loader  != NULL) delete item_texture_sheet_loader;
-    if (badge_texture_sheet_loader != NULL) delete badge_texture_sheet_loader;
+    delete cube_texture_sheet_loader;
+    delete item_texture_sheet_loader;
+    delete badge_texture_sheet_loader;
 }
 
 SpriteSheet load_cube_texture_sheet(const char* filename)

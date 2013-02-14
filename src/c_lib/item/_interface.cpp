@@ -24,7 +24,7 @@ void init()
 
 void teardown()
 {
-    if (item_list != NULL) delete item_list;
+    delete item_list;
 }
 
 void init_packets()

@@ -47,16 +47,16 @@ void init_state()
 
 void teardown_state()
 {
-    if (agent_selected_type != NULL) free(agent_selected_type);
-    if (agent_fire_tick != NULL)     free(agent_fire_tick);
-    if (agent_fire_on   != NULL)     free(agent_fire_on);
+    free(agent_selected_type);
+    free(agent_fire_tick);
+    free(agent_fire_on);
     agent_selected_type = NULL;
     agent_fire_tick = NULL;
     agent_fire_on = NULL;
 
     #if DC_SERVER
-    if (agent_selected_slot != NULL) free(agent_selected_slot);
-    if (agent_selected_item != NULL) free(agent_selected_item);
+    free(agent_selected_slot);
+    free(agent_selected_item);
     agent_selected_slot = NULL;
     agent_selected_item = NULL;
     #endif

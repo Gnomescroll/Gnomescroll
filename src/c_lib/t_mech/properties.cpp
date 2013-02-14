@@ -4,7 +4,7 @@
 
 namespace t_mech
 {
-    
+
 class DatNameMap* mech_name_map = NULL;
 class MechAttribute* mech_attributes = NULL;  //index from type to attributes
 
@@ -12,15 +12,15 @@ void init_properties()
 {
     GS_ASSERT(mech_name_map == NULL);
     mech_name_map = new class DatNameMap(256, DAT_NAME_MAX_LENGTH);
-    
+
     GS_ASSERT(mech_attributes == NULL);
     mech_attributes = new class MechAttribute[MAX_MECHS];
 }
 
 void teardown_properties()
 {
-    if (mech_name_map != NULL) delete mech_name_map;
-    if (mech_attributes != NULL) delete[] mech_attributes;
+    delete mech_name_map;
+    delete[] mech_attributes;
 }
 
 const char* get_mech_name(MechType type)

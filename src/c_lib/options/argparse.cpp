@@ -135,7 +135,7 @@ void register_uint_option(const char* key, unsigned int* val)
 void register_int_option(const char* key, int* val)
 {
     GS_ASSERT(n_options < MAX_OPTIONS);
-    
+
     add_option_name(n_options, key);
     option_values[n_options] = (void*)val;
     coercion_methods[n_options] = &coerce_option_int;
@@ -146,7 +146,7 @@ void register_int_option(const char* key, int* val)
 void register_float_option(const char* key, float* val)
 {
     GS_ASSERT(n_options < MAX_OPTIONS);
-    
+
     add_option_name(n_options, key);
     option_values[n_options] = (void*)val;
     coercion_methods[n_options] = &coerce_option_float;
@@ -157,7 +157,7 @@ void register_float_option(const char* key, float* val)
 void register_bool_option(const char* key, bool* val)
 {
     GS_ASSERT(n_options < MAX_OPTIONS);
-    
+
     add_option_name(n_options, key);
     option_values[n_options] = (void*)val;
     coercion_methods[n_options] = &coerce_option_bool;
@@ -168,12 +168,12 @@ void register_bool_option(const char* key, bool* val)
 void register_string_option(const char* key, char** addr, const char* val)
 {
     *addr = (char*)calloc(ARG_STRING_MAX+1, sizeof(char));
-    
+
     GS_ASSERT(n_options < MAX_OPTIONS);
 
     strncpy(*addr, val, ARG_STRING_MAX+1);
     (*addr)[ARG_STRING_MAX] = '\0';
-    
+
     add_option_name(n_options, key);
     option_values[n_options] = (void*)addr;
     coercion_methods[n_options] = &coerce_option_str;
@@ -186,7 +186,7 @@ void register_string_option(const char* key, char** addr, const char* val)
 int parse_args(int argc, char* argv[])
 {
     if (argc < 2) return 0;
-    
+
     char argname[ARG_NAME_MAX+1] = {'\0'};
     char argstr[ARG_STRING_MAX+1] = {'\0'};
 
@@ -244,7 +244,7 @@ int parse_args(int argc, char* argv[])
             printf("Missing argument value. %s\n", str);
             continue;
         }
-        
+
         if (m == ARG_STRING_MAX && c != '\0')
         {
             printf("Argument value is too long. Error arg: %s\n", str);
@@ -282,15 +282,15 @@ void teardown_option_tables()
         for (int i=0; i<MAX_OPTIONS; i++)
             if (coercion_methods[i] == &coerce_option_str)
                 free(*((char**)(option_values[i])));
-        free(option_values);
     }
+    free(option_values);
     if (option_names != NULL)
     {
         for (int i=0; i<MAX_OPTIONS; i++)
-            if (option_names[i] != NULL) free(option_names[i]);
-        free(option_names);
+            free(option_names[i]);
     }
-    if (coercion_methods != NULL) free(coercion_methods);
+    free(option_names);
+    free(coercion_methods);
 }
 
 }   // Options

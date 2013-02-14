@@ -25,13 +25,13 @@ void teardown_players()
     if (player_load_data_list != NULL)
     {
         GS_ASSERT(player_load_data_list->ct == 0);
-        delete player_load_data_list;
     }
+    delete player_load_data_list;
     if (player_container_load_data_list != NULL)
     {
         GS_ASSERT(player_container_load_data_list->ct == 0);
-        delete player_container_load_data_list;
     }
+    delete player_container_load_data_list;
 }
 
 bool save_remote_player_data()

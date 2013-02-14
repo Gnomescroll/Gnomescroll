@@ -19,7 +19,7 @@ void init()
 
 void teardown()
 {
-    if (item_particle_list != NULL) delete item_particle_list;
+    delete item_particle_list;
 }
 
 void init_packets()

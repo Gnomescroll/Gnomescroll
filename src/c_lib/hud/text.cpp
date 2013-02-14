@@ -19,15 +19,14 @@ void init()
 
 void teardown()
 {
-    if (text_list != NULL) delete text_list;
+    delete text_list;
 }
 
-void blit_character(
-    float tex_x_min, float tex_x_max,
-    float tex_y_min, float tex_y_max,
-    float screen_x_min, float screen_x_max,
-    float screen_y_min, float screen_y_max,
-    float depth)
+void blit_character(float tex_x_min, float tex_x_max,
+                    float tex_y_min, float tex_y_max,
+                    float screen_x_min, float screen_x_max,
+                    float screen_y_min, float screen_y_max,
+                    float depth)
 {
     glBegin(GL_QUADS);
     glTexCoord2f(tex_x_min, tex_y_max);
@@ -41,12 +40,11 @@ void blit_character(
     glEnd();
 }
 
-void blit_character_rotated(
-    float tex_x_min, float tex_x_max,
-    float tex_y_min, float tex_y_max,
-    float screen_x_min, float screen_x_max,
-    float screen_y_min, float screen_y_max,
-    float depth, float theta)
+void blit_character_rotated(float tex_x_min, float tex_x_max,
+                            float tex_y_min, float tex_y_max,
+                            float screen_x_min, float screen_x_max,
+                            float screen_y_min, float screen_y_max,
+                            float depth, float theta)
 {
     theta *= kPI;
     float cx = (screen_x_max - screen_x_min) / 2 + screen_x_min;
@@ -80,8 +78,9 @@ void draw_string(const char* text, const float x, const float y,
 }
 
 // 0 len means all
-void draw_string(const char* text, const unsigned int start, const unsigned int len,
-    const float x, const float y, const float depth, const float scale)
+void draw_string(const char* text, const unsigned int start,
+                 const unsigned int len, const float x,
+                 const float y, const float depth, const float scale)
 {
     IF_ASSERT(HudFont::font == NULL) return;
 
@@ -95,7 +94,7 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
     char c;
     // draw up to len, if len != 0. always stop at \0
     while ((len == 0 || i < start+len) && (c = text[i++]) != '\0')
-    {                               
+    {
         if (c == '\n')
         {
             cursor_x = 0.0f;
@@ -124,7 +123,7 @@ void draw_string(const char* text, const unsigned int start, const unsigned int 
         blit_character(tx_min, tx_max, ty_min, ty_max,
                        sx_min, sx_max, sy_min, sy_max, depth);
 
-        cursor_x += glyph.xadvance;                 
+        cursor_x += glyph.xadvance;
     }
 }
 
@@ -137,7 +136,7 @@ void Text::draw_centered()
         glColor4ub(0,0,0,color.a);
         draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
     }
-    
+
     glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
 }
@@ -165,7 +164,7 @@ char* Text::set_string(const char* text, char* this_text, size_t* this_len)
             len = 0;
         }
         else this_text = new_this_text;
-        
+
         *this_len = len;
     }
     // copy string over
@@ -245,7 +244,7 @@ void Text::set_format_extra_length(int size)
 {
     // size large enough to fit formatted data
     // subtract format string sizes
-    // eg "id=%d" -- size would be 8 (+10 for int, -2 for %d), 
+    // eg "id=%d" -- size would be 8 (+10 for int, -2 for %d),
     this->formatted_extra_len = size;
 }
 
@@ -264,7 +263,7 @@ void Text::update_formatted_string(int n_args, ...)
         }
     }
     if (this->text == NULL || this->text_len <= 0) return;
-    
+
     va_list args;
     va_start(args, n_args);
     int wrote = vsnprintf(this->text, this->text_len, this->format, args);
@@ -349,7 +348,7 @@ void Text::draw()
         glColor4ub(0,0,0, color.a);
         draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
     }
-    
+
     glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
 
@@ -408,7 +407,7 @@ int Text:: get_height()
             n++;
         }
         if (c == '\n')
-            check = true;    
+            check = true;
     }
 
     int len = 0;

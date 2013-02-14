@@ -131,7 +131,7 @@ void error_init()
 
 void error_teardown()
 {
-    if (disconnect_msg != NULL) free(disconnect_msg);
+    free(disconnect_msg);
 }
 
 };

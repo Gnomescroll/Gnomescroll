@@ -904,7 +904,7 @@ void init()
 
 void teardown()
 {
-    if (attributes_manager != NULL) delete attributes_manager;
+    delete attributes_manager;
 }
 
 void verify()

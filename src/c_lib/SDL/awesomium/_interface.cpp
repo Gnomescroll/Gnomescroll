@@ -140,8 +140,8 @@ void init()
 
 void teardown()
 {
-    if (cv != NULL) delete cv;
-    if (viewport_manager != NULL) delete viewport_manager;
+    delete cv;
+    delete viewport_manager;
     awe_webcore_shutdown();
 }
 

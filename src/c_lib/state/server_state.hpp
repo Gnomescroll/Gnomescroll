@@ -6,32 +6,32 @@ dont_include_this_file_in_client
 
 #include <agent/agent_list.hpp>
 #include <voxel/voxel_hitscan.hpp>
-
 #include <particle/grenade.hpp>
 
 namespace ServerState
 {
 
-    extern bool main_inited;
-    extern bool signal_exit;
-    extern bool reload_settings;
+extern bool main_inited;
+extern bool signal_exit;
+extern bool reload_settings;
 
-    extern class Entities::Entity* base;
+extern class Entities::Entity* base;
 
-    // property lists
-    extern Voxels::VoxelHitscanList* voxel_hitscan_list;
+// property lists
+extern Voxels::VoxelHitscanList* voxel_hitscan_list;
 
-    void init_lists();
-    void teardown_voxel_lists();
+void init_lists();
+void teardown_voxel_lists();
 
-    struct Vec3 get_base_spawn_position();
-    void init_base();
-    void check_agents_at_base();
+struct Vec3 get_base_spawn_position();
+void init_base();
+void check_agents_at_base();
 
-    void damage_objects_within_sphere(struct Vec3 position, float radius,
-                                      int damage, AgentID owner,
-                                      EntityType inflictor_type, int inflictor_id,
-                                      bool suicidal=true);
+void damage_objects_within_sphere(struct Vec3 position, float radius,
+                                  int damage, AgentID owner,
+                                  EntityType inflictor_type, int inflictor_id,
+                                  bool suicidal=true);
 
-    void spawn_monsters(EntityType type, int n);
+void spawn_monsters(EntityType type, int n);
+
 }   // ServerState

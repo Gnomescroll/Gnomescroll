@@ -144,7 +144,6 @@ void end_t_map()
 
     teardown_textures();
     teardown_lighting();
-
 }
 
 int get_block_damage(int x, int y, int z)

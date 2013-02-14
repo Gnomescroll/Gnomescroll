@@ -61,9 +61,9 @@ void init_chat_client()
 
 void teardown_chat_client()
 {
-    if (chat_client != NULL) delete chat_client;
-    if (chat_message_list != NULL) delete chat_message_list;
-    if (system_message != NULL) delete system_message;
+    delete chat_client;
+    delete chat_message_list;
+    delete system_message;
 }
 #endif
 
@@ -78,7 +78,7 @@ void init_chat_server()
 
 void teardown_chat_server()
 {
-    if (chat_server != NULL) delete chat_server;
+    delete chat_server;
 }
 
 void add_player_to_chat(ClientID client_id)

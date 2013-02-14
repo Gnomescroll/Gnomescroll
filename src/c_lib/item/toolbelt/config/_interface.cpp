@@ -47,20 +47,18 @@ void init_config()
 
 void teardown_config()
 {
-    if (click_and_hold != NULL) free(click_and_hold);
-
-    if (ticks         != NULL) free(ticks);
-    if (triggers      != NULL) free(triggers);
-    if (beta_triggers != NULL) free(beta_triggers);
-
+    free(click_and_hold);
+    free(ticks);
+    free(triggers);
+    free(beta_triggers);
     #if DC_CLIENT
-    if (begin_triggers       != NULL) free(begin_triggers);
-    if (end_triggers         != NULL) free(end_triggers);
-    if (local_ticks          != NULL) free(local_ticks);
-    if (local_triggers       != NULL) free(local_triggers);
-    if (local_beta_triggers  != NULL) free(local_beta_triggers);
-    if (local_begin_triggers != NULL) free(local_begin_triggers);
-    if (local_end_triggers   != NULL) free(local_end_triggers);
+    free(begin_triggers);
+    free(end_triggers);
+    free(local_ticks);
+    free(local_triggers);
+    free(local_beta_triggers);
+    free(local_begin_triggers);
+    free(local_end_triggers);
     #endif
 }
 

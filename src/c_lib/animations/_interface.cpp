@@ -196,16 +196,10 @@ void init_packets()
 void teardown()
 {
     #if DC_CLIENT
-    //delete insect_mob_list;
-
-    if (hitscan_effect_list != NULL) delete hitscan_effect_list;
-    if (mining_laser_effect_list != NULL) delete mining_laser_effect_list;
-
+    delete hitscan_effect_list;
+    delete mining_laser_effect_list;
     Animations::teardown_hitscan();
     Animations::teardown_sprite_voxelizer();
-
-    //Animations::teardown_insect_mob();
-
     teardown_voxel_particle();
     #endif
 }

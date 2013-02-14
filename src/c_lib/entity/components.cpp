@@ -42,7 +42,7 @@ void init()
     set_interface_for_component(COMPONENT_STACKABLE, COMPONENT_INTERFACE_STACKABLE);
 
     set_interface_for_component(COMPONENT_PICKUP, COMPONENT_INTERFACE_PICKUP);
-    
+
     set_interface_for_component(COMPONENT_TTL, COMPONENT_INTERFACE_HEALTH);
     set_interface_for_component(COMPONENT_HIT_POINTS, COMPONENT_INTERFACE_HEALTH);
 
@@ -54,15 +54,15 @@ void init()
     set_interface_for_component(COMPONENT_MONSTER_SPAWNER, COMPONENT_INTERFACE_SPAWNER);
 
     set_interface_for_component(COMPONENT_SPAWN_CHILD, COMPONENT_INTERFACE_SPAWN_CHILD);
-    
+
     set_interface_for_component(COMPONENT_MOTION_TARGETING, COMPONENT_INTERFACE_TARGETING);
     set_interface_for_component(COMPONENT_WEAPON_TARGETING, COMPONENT_INTERFACE_TARGETING);
 
     set_interface_for_component(COMPONENT_HEALER, COMPONENT_INTERFACE_HEALING);
-    
+
     set_interface_for_component(COMPONENT_DESTINATION_TARGETING, COMPONENT_INTERFACE_TARGETING);
     set_interface_for_component(COMPONENT_AGENT_TARGETING, COMPONENT_INTERFACE_TARGETING);
-    
+
     set_interface_for_component(COMPONENT_STATE_MACHINE, COMPONENT_INTERFACE_STATE_MACHINE);
     set_interface_for_component(COMPONENT_WAITING, COMPONENT_INTERFACE_WAITING);
 
@@ -84,8 +84,7 @@ void init()
 
 void teardown()
 {
-    if (component_interface_map != NULL) free(component_interface_map);
-
+    free(component_interface_map);
     teardown_components();
 }
 

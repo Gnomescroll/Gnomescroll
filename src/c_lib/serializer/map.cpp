@@ -29,8 +29,8 @@ void init_map_serializer()
 
 void teardown_map_serializer()
 {
-    if (block_serializer != NULL) delete block_serializer;
-    if (cube_type_map != NULL) free(cube_type_map);
+    delete block_serializer;
+    free(cube_type_map);
 }
 
 #if PTHREADS_ENABLED

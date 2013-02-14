@@ -223,10 +223,9 @@ void init_block_drop_dat()
 
 void teardown_block_drop_dat()
 {
-    if (defined_drops != NULL) free(defined_drops);
-
+    free(defined_drops);
     #if DC_SERVER
-    if (block_drop_dat != NULL) delete block_drop_dat;
+    delete block_drop_dat;
     #endif
 }
 

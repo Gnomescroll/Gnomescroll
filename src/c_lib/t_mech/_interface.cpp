@@ -39,11 +39,10 @@ void init()
 
 void teardown()
 {
-    if (mech_list != NULL) delete mech_list;
+    delete mech_list;
     #if DC_CLIENT
-    if (mech_list_renderer != NULL) delete mech_list_renderer;
+    delete mech_list_renderer;
     #endif
-
 }
 
 #if DC_CLIENT

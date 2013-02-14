@@ -10,15 +10,14 @@ void init_entity_dat()
 {
     GS_ASSERT(attributes == NULL);
     attributes = new class EntityAttributes[MAX_OBJECT_TYPES];
-    
     GS_ASSERT(entity_name_map == NULL);
     entity_name_map = new DatNameMap(256, DAT_NAME_MAX_LENGTH);
 }
 
 void teardown_entity_dat()
 {
-    if (attributes != NULL) delete[] attributes;
-    if (entity_name_map != NULL) delete entity_name_map;
+    delete[] attributes;
+    delete entity_name_map;
 }
 
 
@@ -39,10 +38,10 @@ void entity_def(const char* name, EntityType type)
 
     GS_ASSERT_ABORT(type >= 0 && type < MAX_OBJECT_TYPES);
     IF_INVALID_OBJECT_TYPE(type) return;
-        
+
     e = &attributes[type];
     GS_ASSERT_ABORT(!e->loaded);
-    
+
     e->type = type;
     strncpy(e->name, name, DAT_NAME_MAX_LENGTH+1);
     e->name[DAT_NAME_MAX_LENGTH] = '\0';
@@ -109,7 +108,7 @@ static void save_entity_names()
 void change_entity_name(const char* original, const char* replacement)
 {
     GS_ASSERT_ABORT(is_valid_entity_name(original));
-    GS_ASSERT_ABORT(is_valid_entity_name(replacement));        
+    GS_ASSERT_ABORT(is_valid_entity_name(replacement));
     bool mapped = entity_name_map->add_definition(original, replacement);
     GS_ASSERT_ABORT(mapped);
 }

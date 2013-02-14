@@ -12,7 +12,7 @@ namespace Components
  * If creating new interface, add interface type
  * typedef list from template, declare extern, intern and alloc/free
  * Add subscribe/unsubscribe to switches
- * 
+ *
  */
 
 /* ComponentList declarations */
@@ -78,7 +78,7 @@ Component* get_switch(ComponentType type)
             return position_momentum_changed_physics_component_list->subscribe();
         case COMPONENT_VERLET:
             return verlet_physics_component_list->subscribe();
-            
+
         case COMPONENT_STACKABLE:
             return stackable_component_list->subscribe();
 
@@ -116,7 +116,7 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_STATE_MACHINE:
             return state_machine_component_list->subscribe();
-        
+
         case COMPONENT_WAITING:
             return waiting_component_list->subscribe();
 
@@ -138,7 +138,7 @@ Component* get_switch(ComponentType type)
         case COMPONENT_HEALER:
             return healer_component_list->subscribe();
         #endif
-        
+
         #if DC_CLIENT
         case COMPONENT_HEALER:
         case COMPONENT_AGENT_SPAWNER:
@@ -171,7 +171,7 @@ void release_switch(Component* component)
         case COMPONENT_VERLET:
             verlet_physics_component_list->unsubscribe((VerletPhysicsComponent*)component);
             break;
-            
+
         case COMPONENT_STACKABLE:
             stackable_component_list->unsubscribe((StackableComponent*)component);
             break;
@@ -186,7 +186,7 @@ void release_switch(Component* component)
         case COMPONENT_HIT_POINTS:
             hit_points_health_component_list->unsubscribe((HitPointsHealthComponent*)component);
             break;
-            
+
         case COMPONENT_OWNER:
             owner_component_list->unsubscribe((OwnerComponent*)component);
             break;
@@ -223,7 +223,7 @@ void release_switch(Component* component)
         case COMPONENT_STATE_MACHINE:
             state_machine_component_list->unsubscribe((StateMachineComponent*)component);
             break;
-            
+
         case COMPONENT_WAITING:
             waiting_component_list->unsubscribe((WaitingComponent*)component);
             break;
@@ -272,7 +272,7 @@ void init_components()
     verlet_physics_component_list = new VerletPhysicsComponentList;
 
     stackable_component_list = new StackableComponentList;
-    
+
     pickup_component_list = new PickupComponentList;
 
     ttl_health_component_list = new TTLHealthComponentList;
@@ -294,7 +294,7 @@ void init_components()
     agent_targeting_component_list = new AgentTargetingComponentList;
 
     state_machine_component_list = new StateMachineComponentList;
-    
+
     waiting_component_list = new WaitingComponentList;
 
     rate_limit_component_list = new RateLimitComponentList;
@@ -313,49 +313,35 @@ void init_components()
 
 void teardown_components()
 {
-    if (position_physics_component_list != NULL) delete position_physics_component_list;
-    if (position_momentum_physics_component_list != NULL) delete position_momentum_physics_component_list;
-    if (position_changed_physics_component_list != NULL) delete position_changed_physics_component_list;
-    if (position_momentum_changed_physics_component_list != NULL) delete position_momentum_changed_physics_component_list;
-    if (verlet_physics_component_list != NULL) delete  verlet_physics_component_list;
-    
-    if (stackable_component_list != NULL) delete stackable_component_list;
-
-    if (pickup_component_list != NULL) delete pickup_component_list;
-
-    if (ttl_health_component_list != NULL) delete ttl_health_component_list;
-    if (hit_points_health_component_list != NULL) delete hit_points_health_component_list;
-
-    if (owner_component_list != NULL) delete owner_component_list;
-
-    if (voxel_model_component_list != NULL) delete voxel_model_component_list;
-
-    if (monster_spawner_component_list != NULL) delete monster_spawner_component_list;
-
-    if (spawn_child_component_list != NULL) delete spawn_child_component_list;
-
-    if (dimension_component_list != NULL) delete dimension_component_list;
-
-    if (weapon_targeting_component_list != NULL) delete weapon_targeting_component_list;
-    if (motion_targeting_component_list != NULL) delete motion_targeting_component_list;
-    if (destination_targeting_component_list != NULL) delete destination_targeting_component_list;
-    if (agent_targeting_component_list != NULL) delete agent_targeting_component_list;
-    
-    if (state_machine_component_list != NULL) delete state_machine_component_list;
-    
-    if (waiting_component_list != NULL) delete waiting_component_list;
-
-    if (rate_limit_component_list != NULL) delete rate_limit_component_list;
-
+    delete position_physics_component_list;
+    delete position_momentum_physics_component_list;
+    delete position_changed_physics_component_list;
+    delete position_momentum_changed_physics_component_list;
+    delete verlet_physics_component_list;
+    delete stackable_component_list;
+    delete pickup_component_list;
+    delete ttl_health_component_list;
+    delete hit_points_health_component_list;
+    delete owner_component_list;
+    delete voxel_model_component_list;
+    delete monster_spawner_component_list;
+    delete spawn_child_component_list;
+    delete dimension_component_list;
+    delete weapon_targeting_component_list;
+    delete motion_targeting_component_list;
+    delete destination_targeting_component_list;
+    delete agent_targeting_component_list;
+    delete state_machine_component_list;
+    delete waiting_component_list;
+    delete rate_limit_component_list;
     #if DC_CLIENT
-    if (animation_component_list != NULL) delete animation_component_list;
+    delete animation_component_list;
     #endif
-
     #if DC_SERVER
-    if (agent_spawner_component_list != NULL) delete agent_spawner_component_list;
-    if (explosion_component_list != NULL) delete explosion_component_list;
-    if (item_drop_component_list != NULL) delete item_drop_component_list;
-    if (healer_component_list != NULL) delete healer_component_list;
+    delete agent_spawner_component_list;
+    delete explosion_component_list;
+    delete item_drop_component_list;
+    delete healer_component_list;
     #endif
 }
 

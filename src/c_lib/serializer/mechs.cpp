@@ -19,7 +19,7 @@ void init_mechs()
 
 void teardown_mechs()
 {
-    if (mech_type_map != NULL) free(mech_type_map);
+    free(mech_type_map);
 }
 
 static bool parse_mech_palette_token(const char* key, const char* val, class ParsedMechPaletteData* data)
@@ -102,9 +102,9 @@ bool load_mech_palette_file(const char* fn)
             free(str);
             return false;
         }
-        
+
         mech_type_map[palette_data.mech_type] = mech_type;
-        
+
         if (c == '\0') break;
     }
 
@@ -129,7 +129,7 @@ bool save_mech_palette_file()
         IF_ASSERT(len < 0 || (size_t)len >= MECH_PALETTE_LINE_LENGTH+1) return false;
         buf[len++] = '\n';
         buf[len] = '\0';
-        
+
         size_t wrote = fwrite(buf, sizeof(char), (size_t)len, f);
         IF_ASSERT(wrote != (size_t)len) return false;
     }
@@ -142,7 +142,7 @@ bool save_mech_palette_file()
 bool write_mech_file(FILE* f)
 {
     using t_mech::mech_list;
-    
+
     // TODO -- check mech config stuff, valid mech state etc
 
     static const size_t buflen = 3*sizeof(uint16_t) + 2*sizeof(uint8_t);
@@ -194,7 +194,7 @@ bool write_mech_file(FILE* f)
         wrote = fwrite(buf, sizeof(uint32_t), 1, f);
         IF_ASSERT(wrote != 1) return false;
     }
-    
+
     return true;
 }
 
@@ -203,7 +203,7 @@ bool load_mech_file(const char* fn)
     printf("Loading mech file %s\n", fn);
     bool success = false;
     static const size_t mech_size = 3*sizeof(uint8_t) + 2*sizeof(uint16_t);
-    
+
     size_t size = 0;
     char* buf = read_binary_file_to_buffer(fn, &size);
     IF_ASSERT(buf == NULL) return false;
@@ -224,7 +224,7 @@ bool load_mech_file(const char* fn)
         int x = read_bytes<uint16_t>(buf, ibuf);
         int y = read_bytes<uint16_t>(buf, ibuf);
         int z = read_bytes<uint16_t>(buf, ibuf);
-        
+
         #define LOG_GOTO_ERROR { \
             log_mech_load_error("Mech values invalid", x,y,z, (MechType)type, subtype); \
             goto error;}
@@ -262,7 +262,7 @@ bool save_mechs()
 {
     bool saved_palette = save_mech_palette_file();
     IF_ASSERT(!saved_palette) return false;
-    
+
     FILE* f = fopen(mech_path_tmp, "wb");
     IF_ASSERT(f == NULL) return false;
 
@@ -275,7 +275,7 @@ bool save_mechs()
 }
 
 bool load_mechs()
-{    
+{
     if (file_exists(mech_path) && fsize(mech_path) > 0)
     {
         if (!load_mech_palette_file(mech_palette_path)) return false;

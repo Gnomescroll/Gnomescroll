@@ -45,7 +45,7 @@ void init_shrapnel()
 
 void teardown_shrapnel()
 {
-    if (shrapnel_vlist != NULL) delete shrapnel_vlist;
+    delete shrapnel_vlist;
 }
 
 /* Shrapnel */

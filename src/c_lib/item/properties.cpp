@@ -47,11 +47,11 @@ void init_properties()
 
 void teardown_properties()
 {
-    if (item_name_map          != NULL) delete item_name_map;
-    if (item_attributes        != NULL) delete item_attributes;
-    if (synthesizer_item_array != NULL) delete[] synthesizer_item_array;
-    if (crafting_recipe_array  != NULL) delete[] crafting_recipe_array;
-    if (smelting_recipe_array  != NULL) delete[] smelting_recipe_array;
+    delete item_name_map;
+    delete item_attributes;
+    delete[] synthesizer_item_array;
+    delete[] crafting_recipe_array;
+    delete[] smelting_recipe_array;
 }
 
 class ItemAttribute* get_item_attributes(ItemType item_type)

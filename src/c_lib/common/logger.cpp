@@ -12,7 +12,7 @@
 
 namespace Log
 {
-    
+
 static const int N_LOG_FILES = 15;  // update this if adding/removing a LogType
 
 static const char GENERIC_FN[] = "generic";
@@ -107,9 +107,9 @@ FILE* get_file_descriptor(LogType type, LogLevel level)
 int print(LogType type, LogLevel level, const char* file, int line, const char* function, char* fmt, ...)
 {
     if (!Options::logger) return -1;
-    
+
     GS_ASSERT(log_buffer != NULL);
-    
+
     if (log_buffer == NULL) return -1;
     FILE* f = get_file_descriptor(type, level);
     if (f == NULL) return -1;
@@ -155,14 +155,14 @@ int print(LogType type, LogLevel level, char* fmt, ...)
 {
     GS_ASSERT(fmt != NULL);
     if (fmt == NULL) return -1;
-    
+
     if (!Options::logger) return -1;
     GS_ASSERT(log_buffer != NULL);
     if (log_buffer == NULL) return -1;
 
     FILE* f = get_file_descriptor(type, level);
     if (f == NULL) return -1;
-    
+
     va_list args;
     va_start(args, fmt);
     int res = vfprintf(f, fmt, args);
@@ -216,8 +216,7 @@ void generate_filenames()
 void free_filenames()
 {
     for (int i=0; i<N_LOG_FILES; i++)
-        if (log_filenames[i] != NULL)
-            free(log_filenames[i]);
+        free(log_filenames[i]);
 }
 
 void close_files()
@@ -235,6 +234,7 @@ void init()
     create_path(LOG_DIR);
     if (!Options::logger) return;
     generate_filenames();
+    GS_ASSERT(log_buffer == NULL);
     log_buffer = (char*)malloc(sizeof(char) * LOG_MSG_MAX_LEN);
     GS_ASSERT(log_buffer != NULL);
 }
@@ -244,8 +244,7 @@ void teardown()
     if (!Options::logger) return;
     close_files();
     free_filenames();
-    if (log_buffer != NULL)
-        free(log_buffer);
+    free(log_buffer);
 }
 
 } // Log

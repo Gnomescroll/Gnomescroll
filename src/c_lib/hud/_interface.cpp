@@ -31,8 +31,8 @@ void init()
 void teardown()
 {
     error_teardown();
-    if (harvest_bar != NULL) delete harvest_bar;
-    if (hud != NULL) delete hud;
+    delete harvest_bar;
+    delete hud;
     HudMap::teardown();
     HudText::teardown();    // MUST CALL AFTER DELETE HUD
 }
@@ -40,7 +40,6 @@ void teardown()
 void draw()
 {
     // hud projected names should be underneath everything
-
     start_font_draw();
     HudFont::set_properties(16);
     HudFont::set_texture();

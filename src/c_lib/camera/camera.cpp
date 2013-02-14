@@ -33,7 +33,7 @@ void init_cameras()
     agent_camera->first_person = true;
     agent_camera->set_position(vec3_init(0,0,50.0f));
     agent_camera->set_fov(85.0f);
-    
+
     free_camera = new Camera();
     free_camera->first_person = false;
     free_camera->set_position(vec3_init(64,64,128));
@@ -46,14 +46,14 @@ void init_cameras()
     for (int i=0; i<n; i++)
     {
         class Camera* camera = cameras[i];
-        
+
         camera->theta = 0;
         camera->phi = 0;
 
         Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
         Vec3 r = vec3_init(0.0f, 1.0f, 0.0f);
         Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
-        
+
         f = vec3_euler_rotation(f, camera->theta, camera->phi, 0.0f);
         r = vec3_euler_rotation(r, camera->theta, camera->phi, 0.0f);
         u = vec3_euler_rotation(u, camera->theta, camera->phi, 0.0f);
@@ -74,10 +74,8 @@ void init_cameras()
 
 void teardown_cameras()
 {
-    if (agent_camera != NULL)
-        delete agent_camera;
-    if (free_camera != NULL)
-        delete free_camera;
+    delete agent_camera;
+    delete free_camera;
 }
 
 #define CAMERA_ZOOM_FACTOR 2.0f

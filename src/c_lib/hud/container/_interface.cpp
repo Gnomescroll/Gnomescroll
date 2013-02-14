@@ -512,18 +512,18 @@ void init()
 
 void teardown()
 {
-    if (inventory != NULL) delete inventory;
-    if (toolbelt != NULL) delete toolbelt;
-    if (synthesizer != NULL) delete synthesizer;
-    if (crafting_bench != NULL) delete crafting_bench;
-    if (storage_block != NULL) delete storage_block;
-    if (smelter != NULL) delete smelter;
-    if (energy_tanks != NULL) delete energy_tanks;
-    if (crusher != NULL) delete crusher;
-    if (cache != NULL) delete cache;
-    if (equipment != NULL) delete equipment;
-    if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
-    if (ui_elements != NULL) free(ui_elements);
+    delete inventory;
+    delete toolbelt;
+    delete synthesizer;
+    delete crafting_bench;
+    delete storage_block;
+    delete smelter;
+    delete energy_tanks;
+    delete crusher;
+    delete cache;
+    delete equipment;
+    delete grabbed_icon_stack_text;
+    free(ui_elements);
 }
 
 void draw_durability_meter(float x, float y, int slot_size, unsigned char alpha,

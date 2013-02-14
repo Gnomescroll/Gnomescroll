@@ -30,11 +30,11 @@ void init_packets()
 
     t_map::block_action_StoC::register_client_packet();
     t_map::map_metadata_StoC::register_client_packet();
-    
+
     // block damage
     t_map::request_block_damage_CtoS::register_server_packet();
     t_map::block_damage_StoC::register_client_packet();
-    
+
     t_map::container_block_chunk_reset_StoC::register_client_packet();
     t_map::container_block_create_StoC::register_client_packet();
     t_map::container_block_delete_StoC::register_client_packet();
@@ -55,18 +55,18 @@ ItemContainerID get_block_item_container(int x, int y, int z)
     class MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
     if (c == NULL) return NULL_CONTAINER;
-    return c->chunk_item_container.get(x,y,z); 
+    return c->chunk_item_container.get(x,y,z);
 }
 
 bool get_container_location(ItemContainerID container_id, int position[3])
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return false;
-    
+
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
     IF_ASSERT(container == NULL) return false;
     IF_ASSERT(container->chunk < 0) return false;
     IF_ASSERT(container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return false;
-    
+
     class MAP_CHUNK* c = main_map->chunk[container->chunk];
     IF_ASSERT(c == NULL) return false;
 
@@ -76,41 +76,39 @@ bool get_container_location(ItemContainerID container_id, int position[3])
 
 
 #if DC_CLIENT
-    class Vbo_map* vbo_map;
+class Vbo_map* vbo_map;
 
-    void init_t_vbo()
-    {
-        vbo_map = new Vbo_map(main_map);
+void init_t_vbo()
+{
+    GS_ASSERT(vbo_map == NULL);
+    vbo_map = new Vbo_map(main_map);
+    t_vbo_update_init();
+    vbo_draw_init();
+}
 
-        t_vbo_update_init();
+void teardown_t_vbo()
+{
+    delete vbo_map;
+    t_vbo_update_end();
+    vbo_draw_end();
+}
 
-        vbo_draw_init();
+void draw_map()
+{
+    vbo_map->draw_map();
+}
 
-    }
+void draw_map_compatibility()
+{
+    vbo_map->draw_map_compatibility();
+}
 
-    void teardown_t_vbo()
-    {
-        delete vbo_map;
-        t_vbo_update_end();
-        vbo_draw_end();
-    }
+void update_map()
+{
+    vbo_map->update_map();
+}
 
-    void draw_map()
-    {
-        vbo_map->draw_map();
-    }
-    
-    void draw_map_compatibility()
-    {
-        vbo_map->draw_map_compatibility();
-    }
 
-    void update_map()
-    {
-        vbo_map->update_map();
-    }
-    
-    
 static const unsigned int REQUEST_DMG_ID_MAX = 0xff;
 static unsigned int request_id = 0;
 
@@ -131,16 +129,16 @@ bool is_last_requested_block(int x, int y, int z)
 void request_block_damage(int x, int y, int z)
 {
     GS_ASSERT(request_id < REQUEST_DMG_ID_MAX);
-    
+
     // ignore if we already requested this block
     if (is_last_requested_block(x,y,z)) return;
-    
+
     // set last request id & block
     last_request_id = request_id;
     last_requested_block.x = x;
     last_requested_block.y = y;
     last_requested_block.z = z;
-    
+
     requested_cube_type = get(x,y,z);
     requested_block_health = maxDamage(requested_cube_type);
 
@@ -151,11 +149,11 @@ void request_block_damage(int x, int y, int z)
     msg.z = z;
     msg.request_id = request_id;
     msg.send();
-    
+
     // increment index
     request_id++;
     request_id %= REQUEST_DMG_ID_MAX;
-    
+
     // reset dmg request
     requested_block_damage = 0;
 }
@@ -195,7 +193,7 @@ bool create_item_container_block(int x, int y, int z, ItemContainerType containe
 
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     IF_ASSERT(c == NULL) return false;
-    
+
     return c->chunk_item_container.add(x,y,z, container_type, container_id);
 }
 
@@ -205,7 +203,7 @@ bool destroy_item_container_block(int x, int y, int z)
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    
+
     class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     IF_ASSERT(c == NULL) return false;
 
@@ -246,7 +244,7 @@ void handle_explosive_block(int x, int y, int z)
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    
+
     t_gen::create_explosion(x,y,z);
 }
 
@@ -259,10 +257,9 @@ void send_client_map_special(ClientID client_id)
 void add_control_node(int x, int y, int z)
 {
     //printf("Server adding control node at: %i %i %i \n", x,y,z);
-    main_map->control_node_list.server_add_control_node(x,y,z); 
+    main_map->control_node_list.server_add_control_node(x,y,z);
 }
 
 #endif
 
 }   // t_map
-

@@ -11,13 +11,13 @@ int* _random = NULL;
 void init_env_process()
 {
     GS_ASSERT(_random == NULL);
-    _random = (int*) malloc(RAS*sizeof(int));
+    _random = (int*)malloc(RAS*sizeof(int));
     for (int i=0; i<RAS; i++) _random[i] = rand();
 }
 
 void teardown_env_process()
 {
-    if (_random != NULL) free(_random);
+    free(_random);
 }
 
 OPTIMIZED
@@ -25,13 +25,13 @@ void environment_process_tick()
 {
     GS_ASSERT(_random != NULL);
     if (_random == NULL) return;
-    
+
     static int regolith_id = get_cube_type("regolith");
 
     static int _random_index = rand();
     _random_index = (_random_index+rand()) % RAS;
 
-    static int x=0; 
+    static int x=0;
     static int y=0;
     static int z=0;
 
@@ -45,7 +45,7 @@ void environment_process_tick()
             if(e1.palette == 0)
             {
                 struct MAP_ELEMENT e2 = get_element(x,y,z+1);
-                
+
                 if(isOccludes((CubeType)e2.block) == 0)
                 {
                     _random_index = (_random_index+1) % RAS;
@@ -59,7 +59,7 @@ void environment_process_tick()
             else if(e1.palette == 1)
             {
                 struct MAP_ELEMENT e2 = get_element(x,y,z+1);
-                
+
                 if(isOccludes((CubeType)e2.block) == 1)
                 {
                     _random_index = (_random_index+1) % RAS;
@@ -77,7 +77,7 @@ void environment_process_tick()
         {
             x=0;
             y++;
-            if(y >= 512) 
+            if(y >= 512)
             {
                 y=0;
                 z++;
@@ -109,7 +109,7 @@ void environment_process_startup()
             if(e1.palette == 0)
             {
                 struct MAP_ELEMENT e2 = get_element(x,y,z+1);
-                
+
                 if(isOccludes((CubeType)e2.block) == 0)
                 {
                     broadcast_set_block_palette(x,y,z, (CubeType)e1.block, 1); //setting regolith
@@ -119,7 +119,7 @@ void environment_process_startup()
             else if(e1.palette == 1)
             {
                 struct MAP_ELEMENT e2 = get_element(x,y,z+1);
-                
+
                 if(isOccludes((CubeType)e2.block) == 1)
                 {
                     broadcast_set_block_palette(x,y,z, (CubeType)e1.block, 0); //setting regolith

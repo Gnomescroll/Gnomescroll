@@ -41,14 +41,14 @@ void init_drop_dat()
 
 void teardown_drop_dat()
 {
-    if (drop_dat != NULL) delete drop_dat;
+    delete drop_dat;
 }
 
 void load_drop_dat()
 {
     IF_ASSERT(drop_dat == NULL) return;
     class Item::ItemDropConfig* b = drop_dat;
-    
+
     ////////////////////
     // look at t_map/config/drop_dat.cpp for more configuration examples
 
@@ -124,7 +124,7 @@ void load_drop_dat()
 void handle_drop(int x, int y, int z, int type)
 {
     IF_ASSERT(drop_dat == NULL) return;
-    
+
     for (int i=0; i < drop_dat->meta_drop_table[type].num_drop; i++)
     {
         struct Item::ItemDropTable* cidt = &drop_dat->item_drop_table[i+drop_dat->meta_drop_table[type].index];
@@ -143,8 +143,8 @@ void handle_drop(int x, int y, int z, int type)
                     x = (float)((float)x + 0.5f + randf()*0.33f);
                     y = (float)((float)y + 0.5f + randf()*0.33f);
                     z = (float)((float)z + 0.05f);
-                    ItemParticle::create_item_particle(cidt->item_type, x, y, z, 
-                        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom); 
+                    ItemParticle::create_item_particle(cidt->item_type, x, y, z,
+                        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
                 }
                 break;
             }

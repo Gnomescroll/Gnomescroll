@@ -76,7 +76,6 @@ void validate_sound_config()
 int get_soundfile_id_for_name(const char* event_name)
 {
     IF_ASSERT(soundfiles == NULL) return -1;
-
     for (int i=0; i<n_sounds; i++)
         if (strcmp(soundfiles[i].event_name, event_name) == 0)
             return i;
@@ -85,7 +84,7 @@ int get_soundfile_id_for_name(const char* event_name)
 
 void teardown_triggers()
 {
-    if (soundfiles != NULL) delete[] soundfiles;
+    delete[] soundfiles;
 }
 
 }   // Sound

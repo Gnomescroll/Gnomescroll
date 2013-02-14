@@ -401,7 +401,7 @@ void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
 
 void control_node_render_teardown()
 {
-    if (control_node_renderer != NULL) delete control_node_renderer;
+    delete control_node_renderer;
 }
 
 void control_node_render_update()

@@ -100,14 +100,13 @@ void init_config()
 {
     GS_ASSERT(animation_data == NULL);
     animation_data = new AnimationProperties;
-
     register_settings();
     validate_config();
 }
 
 void teardown_config()
 {
-    if (animation_data != NULL) delete animation_data;
+    delete animation_data;
 }
 
 class AnimationProperty* get_animation_data(AnimationType type)

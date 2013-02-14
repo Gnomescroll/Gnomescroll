@@ -375,7 +375,6 @@ void teardown()
 {
     if (map_surface != NULL)
         SDL_FreeSurface(map_surface);
-
     if (gradient_surface != NULL)
         SDL_FreeSurface(gradient_surface);
 }

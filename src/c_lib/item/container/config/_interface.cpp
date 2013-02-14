@@ -402,9 +402,8 @@ void init_config()
 
 void teardown_config()
 {
-    if (container_attributes != NULL) delete container_attributes;
-    if (container_name_map != NULL) delete container_name_map;
-
+    delete container_attributes;
+    delete container_name_map;
     #if DC_SERVER
     teardown_crusher_dat();
     #endif

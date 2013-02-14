@@ -14,23 +14,17 @@ const int CHAT_CLIENT_CHANNELS_MAX = 3; // pm, global, system
 class ChatMessage
 {
     public:
-
-    int id; // only used by object list
-
-    char* payload;
-    ClientID sender;
-    int channel;
-
-    int timestamp;
-
-    Color color;
-    char* name;
+        int id; // only used by object list
+        char* payload;
+        ClientID sender;
+        int channel;
+        int timestamp;
+        Color color;
+        char* name;
 
     void set_color();
     void set_name();
-
     explicit ChatMessage(int id);
-
     ~ChatMessage()
     {
         free(this->name);
@@ -41,9 +35,9 @@ class ChatMessage
 class ChatMessageHistoryObject
 {
     public:
-    ChatMessage* m;
-    ChatMessageHistoryObject* next;
-    ChatMessageHistoryObject* prev;
+        ChatMessage* m;
+        ChatMessageHistoryObject* next;
+        ChatMessageHistoryObject* prev;
 
     explicit ChatMessageHistoryObject(ChatMessage* m);
     ~ChatMessageHistoryObject();
@@ -59,18 +53,14 @@ typedef enum ChannelTypes
 class ChatClientChannel
 {
     public:
-
-    int id;
-    int type;
-
-    // history
-    int history_size;
-    ChatMessageHistoryObject* history;
-    ChatMessageHistoryObject* tail;
+        int id;
+        int type;
+        int history_size;
+        ChatMessageHistoryObject* history;
+        ChatMessageHistoryObject* tail;
 
     void add_message(ChatMessage* m);
     void clear_history();
-
     ChatClientChannel();
     ~ChatClientChannel();
 };
@@ -78,10 +68,9 @@ class ChatClientChannel
 class ChatInputHistoryObject
 {
     public:
-
-    char* m;
-    ChatInputHistoryObject *next;
-    ChatInputHistoryObject *prev;
+        char* m;
+        ChatInputHistoryObject *next;
+        ChatInputHistoryObject *prev;
 
     explicit ChatInputHistoryObject(const char* m);
     ~ChatInputHistoryObject();
@@ -90,15 +79,13 @@ class ChatInputHistoryObject
 class ChatInput
 {
     public:
-
-    ChatInputHistoryObject* history;
-    ChatInputHistoryObject* history_tail;
-    int history_size;
-    int history_index;
-
-    char *buffer;
-    int buffer_len;
-    int cursor;
+        ChatInputHistoryObject* history;
+        ChatInputHistoryObject* history_tail;
+        int history_size;
+        int history_index;
+        char *buffer;
+        int buffer_len;
+        int cursor;
 
     void clear_history();
     void add_to_history(const char *s);
@@ -110,9 +97,7 @@ class ChatInput
     void cursor_right();
     void history_newer();
     void history_older();
-
     bool route_command();
-
     ChatInput();
     ~ChatInput();
 };
@@ -120,8 +105,9 @@ class ChatInput
 class ChatClient
 {
     public:
-    int channel;
-    ChatClientChannel** channels;
+        int channel;
+        ChatClientChannel** channels;
+        ChatInput* input;
 
     void teardown();
     void subscribe_system_channel();
@@ -134,11 +120,8 @@ class ChatClient
 
     void use_global_channel();
 
-    ChatInput* input;
-
     ChatClient();
     ~ChatClient();
-
 };
 
 class ChatMessageList: public ObjectList<ChatMessage>
@@ -148,7 +131,11 @@ class ChatMessageList: public ObjectList<ChatMessage>
     void quicksort_timestamp_asc(int beg, int end);
     void quicksort_timestamp_desc(int beg, int end);
     void swap_object_state(ChatMessage **a, ChatMessage **b)
-        {ChatMessage* t=*a; *a=*b; *b=t;}
+    {
+        ChatMessage* t = *a;
+        *a = *b;
+        *b = t;
+    }
 
     const char* name()
     {
@@ -159,10 +146,10 @@ class ChatMessageList: public ObjectList<ChatMessage>
 
         ChatMessage** filtered_objects; // tmp array for filtering objects
         float* filtered_object_distances;
-
         unsigned int n_filtered;
-        void sort_by_most_recent();
-        void filter_none(); // copies pointers/null into filtered list, unchanged
+
+    void sort_by_most_recent();
+    void filter_none(); // copies pointers/null into filtered list, unchanged
 
     explicit ChatMessageList(size_t capacity) :
         ObjectList<ChatMessage>(capacity)
@@ -173,10 +160,8 @@ class ChatMessageList: public ObjectList<ChatMessage>
 
     ~ChatMessageList()
     {
-        if (this->filtered_objects != NULL)
-            free(this->filtered_objects);
-        if (this->filtered_object_distances != NULL)
-            free(this->filtered_object_distances);
+        free(this->filtered_objects);
+        free(this->filtered_object_distances);
     }
 };
 

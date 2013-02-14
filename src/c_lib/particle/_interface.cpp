@@ -46,15 +46,15 @@ void init_particles()
 
 void teardown_particles()
 {
-    if (grenade_list != NULL) delete grenade_list;
+    delete grenade_list;
     #if DC_CLIENT
-    if (plasmagen_spur_list != NULL) delete plasmagen_spur_list;
-    if (shrapnel_list != NULL) delete shrapnel_list;
-    if (blood_list != NULL) delete blood_list;
-    if (colored_minivox_list != NULL) delete colored_minivox_list;
-    if (textured_minivox_list != NULL) delete textured_minivox_list;
-    if (billboard_text_list != NULL) delete billboard_text_list;
-    if (billboard_text_hud_list != NULL) delete billboard_text_hud_list;
+    delete plasmagen_spur_list;
+    delete shrapnel_list;
+    delete blood_list;
+    delete colored_minivox_list;
+    delete textured_minivox_list;
+    delete billboard_text_list;
+    delete billboard_text_hud_list;
     Particle::teardown_shrapnel();
     #endif
 }

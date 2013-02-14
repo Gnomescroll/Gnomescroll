@@ -17,6 +17,16 @@ void update_character();
 void create_tool();
 void destroy_tool();
 void update_tool();
+
+...In C, where we don't have namespaces.
+
+namespace love_ai
+{
+void love_ai_character_create();
+}
+
+Is redundant and verbose
+
 */
 
 namespace t_plant

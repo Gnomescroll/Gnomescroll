@@ -54,11 +54,15 @@ class ParsedItemData
 class ParsedItemDataList: public ObjectList<class ParsedItemData, ItemID>
 {
     public:
-        const char* name() { return "ItemLoadData"; }
+    const char* name()
+    {
+        return "ItemLoadData";
+    }
 
     ParsedItemDataList(size_t capacity) :
         ObjectList<class ParsedItemData, ItemID>(capacity, NULL_ITEM)
-    { this->print(); }
+    {
+    }
 };
 
 

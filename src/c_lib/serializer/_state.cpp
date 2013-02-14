@@ -24,9 +24,9 @@ void init_state()
 
 void teardown_state()
 {
-    if (_buffer != NULL) free(_buffer);
-    if (loaded_containers != NULL) free(loaded_containers);
-    if (slot_checker != NULL) free(slot_checker);
+    free(_buffer);
+    free(loaded_containers);
+    free(slot_checker);
 }
 
 void clear_loaded_containers()

@@ -55,30 +55,24 @@ void init_voxel_particle()
 
 void teardown_voxel_particle()
 {
-    if (textured_voxel_particle_vlist != NULL) delete textured_voxel_particle_vlist;
-    if (colored_voxel_particle_vlist != NULL) delete colored_voxel_particle_vlist;
+    delete textured_voxel_particle_vlist;
+    delete colored_voxel_particle_vlist;
 }
 
 static void prep_textured_voxel_particles()
 {
-    GS_ASSERT(textured_voxel_particle_vlist != NULL);
-    if (textured_voxel_particle_vlist == NULL)
-        return;
-
+    IF_ASSERT(textured_voxel_particle_vlist == NULL) return;
     using ItemParticle::item_particle_list;
-    GS_ASSERT(item_particle_list != NULL);
-    if (item_particle_list == NULL) return;
-
+    IF_ASSERT(item_particle_list == NULL) return;
     class Particle::TexturedMinivox_list* particle_list = Particle::textured_minivox_list;
-    GS_ASSERT(particle_list != NULL);
-
-    if (item_particle_list == NULL && particle_list == NULL)
+    IF_ASSERT(particle_list == NULL)
     {
         textured_voxel_particle_vlist->vertex_number = 0;
         return;
     }
 
-    if ((item_particle_list->max <= 0 || item_particle_list->ct <= 0) && (particle_list->n_max <= 0 || particle_list->num <= 0))
+    if ((item_particle_list->max <= 0 || item_particle_list->ct <= 0) &&
+        (particle_list->n_max <= 0 || particle_list->num <= 0))
     {
         textured_voxel_particle_vlist->vertex_number = 0;
         return;

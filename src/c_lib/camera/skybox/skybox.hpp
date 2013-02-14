@@ -37,13 +37,13 @@ void draw();
 
 extern "C"
 {
-    void add_star(int type, float brightness, float size, float phi, float theta)
-    {
+void add_star(int type, float brightness, float size, float phi, float theta)
+{
 
-    }
+}
 
-    void clear_stars()
-    {
-        Skybox::star_num = 0;
-    }
+void clear_stars()
+{
+    Skybox::star_num = 0;
+}
 }

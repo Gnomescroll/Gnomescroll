@@ -114,7 +114,7 @@ void init()
 
 void teardown()
 {
-    if (badges != NULL) delete badges;
+    delete badges;
 }
 
 void init_packets()

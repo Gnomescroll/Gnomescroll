@@ -48,13 +48,13 @@ class MapShader
     int InLight;
     //int Normal;
 
-    MapShader()
-    : terrain_map_glsl(0), shader(NULL)
+    MapShader() :
+        terrain_map_glsl(0), shader(NULL)
     {}
 
     ~MapShader()
     {
-        if (shader != NULL) delete shader;
+        delete shader;
     }
 
     void init_shader()

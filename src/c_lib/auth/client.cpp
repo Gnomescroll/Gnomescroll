@@ -48,7 +48,7 @@ bool load_auth_token(const char* token)
 {
     GS_ASSERT(token != NULL);
     if (token == NULL) return false;
-    
+
     if (auth_token != NULL)
     {
         free(auth_token);
@@ -151,7 +151,7 @@ void token_was_denied()
     if (token_retries == 0)
     {
         printf("Token denied\n");
-        should_request_token = true;        
+        should_request_token = true;
     }
     token_retries++;
 }
@@ -177,16 +177,16 @@ void client_init()
 
 void client_teardown()
 {
-    if (auth_token != NULL) free(auth_token);
-    if (auth_token_hash != NULL) free(auth_token_hash);
-    if (auth_token_username != NULL) free(auth_token_username);
+    free(auth_token);
+    free(auth_token_hash);
+    free(auth_token_username);
 }
 
 void set_time_offset(time_t server_time)
 {
     time_t now = utc_now();
     offset_time = difftime(server_time, now);
-    
+
     #ifdef _WIN32
     printf("Server-client time discrepancy: %I64d\n", (long long)offset_time);
     #else

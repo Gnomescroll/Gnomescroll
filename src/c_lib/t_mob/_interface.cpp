@@ -54,8 +54,8 @@ void draw()
 
 void teardown()
 {
-    if (model_loader != NULL) delete model_loader;
-    if (body_mesh != NULL) delete body_mesh;
+    delete model_loader;
+    delete body_mesh;
 }
 
 }   // t_mob

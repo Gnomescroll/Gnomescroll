@@ -19,7 +19,7 @@ const float SKY_RADIUS = 256.0f;
 // glsl
 class Shader star_shader;
 GLuint star_TexCoord;
-GLint star_CameraPos; 
+GLint star_CameraPos;
 Animations::VertexElementList1* star_vlist = NULL;
 
 void init_shader()
@@ -53,7 +53,7 @@ void init_texture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
@@ -117,16 +117,16 @@ void generate_sky()
         s.x = SKY_RADIUS*x;
         s.y = SKY_RADIUS*y;
         s.z = SKY_RADIUS*z;
-        
+
         s.brightness = 0.2f + (0.8f)*randf();
         s.size = 1 + 3*randf();
-        
+
         s.type = rand()%16;
         s.tx_min = (float)(s.type%4) * (1.0f/4.0f);
         s.tx_max = s.tx_min + (1.0f/4.0f);
         s.ty_min = (float)(s.type/4) * (1.0f/4.0f) * 0.5f;
         s.ty_max = s.ty_min + (1.0f/4.0f) * 0.5f;
-        
+
         star_list[i] = s;
     }
 
@@ -144,22 +144,21 @@ void init()
 
 void teardown()
 {
-    if (star_vlist != NULL) delete star_vlist;
+    delete star_vlist;
 }
 
 void pack_vertex_list()
 {
-    GS_ASSERT(current_camera != NULL);
-    if (current_camera == NULL)
+    IF_ASSERT(current_camera == NULL)
     {
         star_vlist->vertex_number = 0;
         return;
     }
 
     Vec3 p = current_camera->get_position();
-    float cx = p.x; 
-    float cy = p.y; 
-    float cz = p.z; 
+    float cx = p.x;
+    float cy = p.y;
+    float cz = p.z;
 
     for(int i=0; i<star_num-1; i++)
     {
@@ -195,14 +194,14 @@ void pack_vertex_list()
         p = vec3_add(v, vec3_sub(right, up));
         star_vlist->push_vertex(p, star_list[i].tx_min,star_list[i].ty_min);
     }
-    
+
     // north star
     STAR s = star_list[star_num-1];
     Vec3 v;
     v.x = s.x + cx;
     v.y = s.y + cy;
     v.z = s.z + cz;
-    
+
     float scale = s.size / 2.0f;
 
     Vec3 up = vec3_init(
@@ -224,7 +223,7 @@ void pack_vertex_list()
     Vec3 pt2 = vec3_add(v, vec3_sub(up, right));
     Vec3 pt3 = vec3_add(v, vec3_add(up, right));
     Vec3 pt4 = vec3_add(v, vec3_sub(right, up));
-    
+
     if (
         !point_fulstrum_test_no_view_distance(pt1.x, pt1.y, pt1.z) &&
         !point_fulstrum_test_no_view_distance(pt2.x, pt2.y, pt2.z) &&
@@ -249,18 +248,18 @@ void prep_skybox()
 void draw()
 {
     if (!star_shader.shader_valid) return;
-    
+
     GS_ASSERT(current_camera != NULL);
     if (current_camera == NULL) return;
 
     GS_ASSERT(star_sheet != 0);
     if (star_sheet == 0) return;
-    
+
     GS_ASSERT(star_vlist != NULL);
     if (star_vlist == NULL) return;
 
     if (star_vlist->vertex_number <= 0) return;
-    
+
     glBindBuffer(GL_ARRAY_BUFFER, star_vlist->VBO);
 
     glColor3ub(255,255,255);
@@ -273,7 +272,7 @@ void draw()
 
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFunc(GL_ONE, GL_ONE);
-    
+
     glBindTexture(GL_TEXTURE_2D, star_sheet);
 
     glUseProgramObjectARB(star_shader.shader);

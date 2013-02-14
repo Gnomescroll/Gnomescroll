@@ -76,36 +76,33 @@ void init()
 
 void teardown()
 {
-    if (item_container_list != NULL) delete item_container_list;
-
+    delete item_container_list;
     #if DC_CLIENT
-    if (player_container_ui    != NULL) delete player_container_ui;
-    if (player_hand_ui         != NULL) delete player_hand_ui;
-    if (player_toolbelt_ui     != NULL) delete player_toolbelt_ui;
-    if (player_synthesizer_ui  != NULL) delete player_synthesizer_ui;
-    if (player_energy_tanks_ui != NULL) delete player_energy_tanks_ui;
-    if (player_equipment_ui    != NULL) delete player_equipment_ui;
-    if (crafting_bench_ui      != NULL) delete crafting_bench_ui;
-    if (premium_cache_ui       != NULL) delete premium_cache_ui;
-    if (storage_block_ui       != NULL) delete storage_block_ui;
-    if (cryofreezer_ui         != NULL) delete cryofreezer_ui;
-    if (smelter_ui             != NULL) delete smelter_ui;
-    if (crusher_ui             != NULL) delete crusher_ui;
-
-    if (container_event != NULL) free(container_event);
-    if (container_uis   != NULL) free(container_uis);
-    if (containers      != NULL) free(containers);
+    delete player_container_ui;
+    delete player_hand_ui;
+    delete player_toolbelt_ui;
+    delete player_synthesizer_ui;
+    delete player_energy_tanks_ui;
+    delete player_equipment_ui;
+    delete crafting_bench_ui;
+    delete premium_cache_ui;
+    delete storage_block_ui;
+    delete cryofreezer_ui;
+    delete smelter_ui;
+    delete crusher_ui;
+    free(container_event);
+    free(container_uis);
+    free(containers);
     #endif
-
     #if DC_SERVER
-    if (agent_inventory_list    != NULL) free(agent_inventory_list);
-    if (agent_toolbelt_list     != NULL) free(agent_toolbelt_list);
-    if (agent_synthesizer_list  != NULL) free(agent_synthesizer_list);
-    if (agent_energy_tanks_list != NULL) free(agent_energy_tanks_list);
-    if (agent_equipment_list    != NULL) free(agent_equipment_list);
-    if (premium_cache_list      != NULL) free(premium_cache_list);
-    if (agent_hand_list         != NULL) free(agent_hand_list);
-    if (opened_containers       != NULL) free(opened_containers);
+    free(agent_inventory_list);
+    free(agent_toolbelt_list);
+    free(agent_synthesizer_list);
+    free(agent_energy_tanks_list);
+    free(agent_equipment_list);
+    free(premium_cache_list);
+    free(agent_hand_list);
+    free(opened_containers);
     #endif
 }
 
@@ -366,7 +363,7 @@ bool close_container(ItemContainerID container_id)
 
     #define TEARDOWN_CONTAINER(NAME) { do { \
         NAME = NULL; \
-        if (NAME##_ui != NULL) delete NAME##_ui; \
+        delete NAME##_ui; \
         NAME##_ui = NULL; \
     } while(0); }
 

@@ -1257,25 +1257,17 @@ void init()
 
 void draw()
 {
-
     if (!ClientState::location_pointer_set)
         return;
-
     struct Vec3 p = ClientState::location_pointer;
-
     bt->draw(p.x, p.y, p.z + 3.0f);
-
     bt->draw_skeleton(p.x+0.0, p.y+0.0f, p.z + 5.0f);
-
-    return;  //DEBUG
-
-
 }
 
 
 void teardown()
 {
-    if (bt != NULL) delete bt;
+    delete bt;
 }
 
 #endif

@@ -60,18 +60,14 @@ void init_insect_mob()
 void teardown_insect_mob()
 {
     GS_ASSERT(false);
-    if (insect_mob_vlist != NULL) delete insect_mob_vlist;
+    delete insect_mob_vlist;
 }
 
 void init_insect_mob_texture()
 {
-    SDL_Surface* s = create_surface_from_file("./media/sprites/mob/AlienTex3.png");
-
-    if(s == NULL)
-    {
-        printf("init_insect_mob: texture load error\n");
-        GS_ABORT();
-    }
+    SDL_Surface* s = create_surface_from_file(MEDIA_PATH "sprites/mob/AlienTex3.png");
+    IF_ASSERT(s == NULL)
+        return;
 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &insect_mob_texture );

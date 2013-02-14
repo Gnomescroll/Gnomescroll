@@ -83,14 +83,14 @@ void Font::parse_font_file()
         CHARS,
         CHAR
     } line_mode = UNKNOWN;
-    
+
     char c;
     int i = 0;
     char line_name[10];
     int line_name_index = 0;
     bool have_line_name = false;
     bool processed_line = false;
-    
+
     while ((c = buff[i++]) != '\0')
     {
         if (!have_line_name)
@@ -167,7 +167,7 @@ void Font::parse_font_file()
                 break;
         }
     }
-    
+
     free(buff);
 }
 
@@ -202,7 +202,7 @@ void Font::update_glyphs()
             glyphs[i].xadvance = glyphs[space].xadvance * TABS_IN_SPACES;
             glyphs[i].available = true;
         }
-        
+
         if (!glyphs[i].available)
             continue;
 
@@ -393,11 +393,8 @@ void init()
 void teardown()
 {
     if (fonts == NULL) return;
-        
     for (int i=0; i<n_fonts; i++)
-        if (fonts[i] != NULL)
-            delete fonts[i];
-
+        delete fonts[i];
     free(fonts);
 }
 
@@ -425,7 +422,7 @@ void start_font_draw(GLenum blend_func)
     // cache current render state
     glGetBooleanv(GL_BLEND, &blend_restore);
     glGetBooleanv(GL_DEPTH_TEST, &depth_test_restore);
-    
+
     // all fonts must have alpha
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);

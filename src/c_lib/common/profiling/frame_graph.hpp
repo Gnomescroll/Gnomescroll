@@ -28,14 +28,14 @@ class FrameGraph
 {
     public:
 
-    class Texture_surface* ts;
+        class Texture_surface* ts;
 
-    unsigned int index;
-    unsigned int pixel_column;
+        unsigned int index;
+        unsigned int pixel_column;
 
-    long timer[128][STAGES];
+        long timer[128][STAGES];
 
-    unsigned char stage_color[STAGES][4];
+        unsigned char stage_color[STAGES][4];
 
     FrameGraph()
     {
@@ -207,4 +207,4 @@ extern FrameGraph* frame_graph;
 void init_frame_graph();
 void teardown_frame_graph();
 
-}
+} // Profiling

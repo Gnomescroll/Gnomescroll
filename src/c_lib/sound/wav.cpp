@@ -82,7 +82,7 @@ bool is_valid_wav(FILE* f)
 
     if (fread(metadata.buffer, sizeof(char), 4, f) != 4 || strcmp(metadata.buffer, "RIFF") != 0)
         return false;
-    
+
     if (fread(metadata.buffer, sizeof(char), 4, f) != 4)    // pcm chunk size, we dont care (openal does)
         return false;
 
@@ -121,12 +121,12 @@ bool read_wav_fmt_subchunk(FILE* f, WavData* data)
         return false;
     if (strcmp(metadata.buffer, "fmt ") != 0)
         return false;
-        
+
     read = (int)fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
     int chunk_size = metadata.four_bytes;
-    
+
     read = (int)fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
@@ -193,7 +193,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
 
         if (strcmp(metadata.buffer, "data") == 0)
             break;
-            
+
         // read subchunk size
         read = (int)fread(metadata.buffer, sizeof(char), 4, f);
         if (read != 4)
@@ -235,10 +235,10 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
     return true;
 }
 
- 
+
 // returns buffer id.  make sure to free *buffer after binding to an ALbuffer
 int load_wav_file(const char* filename, unsigned char** buffer)
-{    
+{
     *buffer = NULL;
     WavData* data = NULL;
     int id = get_free_wav_data(&data);
@@ -286,43 +286,30 @@ int load_wav_file(const char* filename, unsigned char** buffer)
         printf("WAV data read failure: buffer is NULL\n");
         return -1;
     }
-    
+
     data->in_use = true;
     fclose(f);
-    
+
     return id;
 }
 
 void release_wav_data(int buffer_id)
 {
-    if (buffer_id < 0 || buffer_id >= MAX_WAV_BUFFERS)
-    {
-        printf("WARNING: close_wav_file -- buffer_id %d invalid\n", buffer_id);
+    IF_ASSERT(buffer_id < 0 || buffer_id >= MAX_WAV_BUFFERS)
         return;
-    }
-
     wav_buffers[buffer_id].in_use = false;
 }
 
 WavData* get_loaded_wav_data(int buffer_id)
 {
-    if (buffer_id < 0 || buffer_id >= MAX_WAV_BUFFERS)
-    {
-        printf("WARNING: get_loaded_buffer -- buffer_id %d invalid\n", buffer_id);
+    IF_ASSERT(buffer_id < 0 || buffer_id >= MAX_WAV_BUFFERS)
         return NULL;
-    }
     return &wav_buffers[buffer_id];
 }
 
 void init_wav_buffers()
 {
-    static int inited = 0;
-    if (inited++)
-    {
-        printf("WARNING: attempt to call init_wav_buffers more than once\n");
-        return;
-    }
-
+    GS_ASSERT(wav_buffers == NULL);
     wav_buffers = (WavData*)calloc(MAX_WAV_BUFFERS, sizeof(WavData));
 }
 

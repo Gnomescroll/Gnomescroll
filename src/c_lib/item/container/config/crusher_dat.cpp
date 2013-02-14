@@ -158,7 +158,7 @@ void init_crusher_dat()
 
 void teardown_crusher_dat()
 {
-    if (drops != NULL) delete[] drops;
+    delete[] drops;
 }
 
 class Item::ItemDrop* get_crusher_drop(ItemType item_type)

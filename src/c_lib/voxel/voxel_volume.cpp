@@ -22,19 +22,19 @@ static VoxelVertex* voxel_vertex_scratch_buffer = NULL;
 
 void init_voxel_volume()
 {
+    GS_ASSERT(voxel_vertex_scratch_buffer == NULL);
     voxel_vertex_scratch_buffer = new VoxelVertex[VOXEL_VERTEX_SCRATCH_SIZE];
 }
 
 void teardown_voxel_volume()
 {
-    if (voxel_vertex_scratch_buffer != NULL)
-        delete[] voxel_vertex_scratch_buffer;
+    delete[] voxel_vertex_scratch_buffer;
 }
 
 int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
-    const static int _ssize = 0xff;
-    const static int _bsize = 0xffff;
+    const static int _ssize = 0xFF;
+    const static int _bsize = 0xFFFF;
     // normalize direction
     float len2 = sqrtf( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;

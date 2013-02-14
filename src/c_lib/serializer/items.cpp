@@ -20,7 +20,7 @@ void init_items()
 
 void teardown_items()
 {
-    if (item_load_data_list != NULL) delete item_load_data_list;
+    delete item_load_data_list;
 }
 
 // WARNING -- modifies char* str

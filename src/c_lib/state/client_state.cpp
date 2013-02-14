@@ -37,6 +37,8 @@ int agent_control_state[16];
 
 void init_lists()
 {
+    GS_ASSERT(voxel_render_list == NULL);
+    GS_ASSERT(voxel_hitscan_list == NULL);
     voxel_render_list = new Voxels::VoxelRenderListManager;
     voxel_render_list->init();
     voxel_hitscan_list = new Voxels::VoxelHitscanList;
@@ -44,10 +46,8 @@ void init_lists()
 
 void teardown_voxel_lists()
 {
-    // voxel lists
-    // must go after all voxels
-    if (voxel_render_list != NULL) delete voxel_render_list;
-    if (voxel_hitscan_list != NULL) delete voxel_hitscan_list;
+    delete voxel_render_list;
+    delete voxel_hitscan_list;
 }
 
 void set_PlayerAgent_id(AgentID id)
@@ -97,7 +97,7 @@ void send_camera_state()
 void send_ping()
 {
     int n = _GET_MS_TIME();
-    
+
     ping_CtoS msg;
     msg.ticks = n;
     msg.send();

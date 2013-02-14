@@ -23,8 +23,7 @@ void t_map_manager_setup(ClientID client_id)
 
 void t_map_manager_teardown(ClientID client_id)
 {
-    if(map_manager_list[client_id] != NULL)
-        delete map_manager_list[client_id];
+    delete map_manager_list[client_id];
     map_manager_list[client_id] = NULL;
 }
 

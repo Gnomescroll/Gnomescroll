@@ -7,7 +7,7 @@
 static int numkeys = 0;
 static Uint8* keystate = NULL;
 
-struct MouseMotionAverage 
+struct MouseMotionAverage
 {
     float x, y;
 };
@@ -104,7 +104,7 @@ int process_events()
             case SDL_MOUSEBUTTONDOWN:
                 mouse_button_down_handler(&event);
                 break;
-                
+
             case SDL_MOUSEBUTTONUP:
                 mouse_button_up_handler(&event);
                 break;
@@ -118,7 +118,7 @@ int process_events()
 }
 
 // Taken from somewhere on the internet:
-char getUnicodeValue(SDL_keysym keysym) 
+char getUnicodeValue(SDL_keysym keysym)
 {
     // magic numbers courtesy of SDL docs :)
     const int INTERNATIONAL_MASK = 0xFF80;
@@ -156,11 +156,11 @@ static inline float _mouse_weight(float t)
 }
 
 static inline float mouse_axis_average(int* buffer)
-{ 
-    float total = 0.0f; 
-    float divisor = 0.0f; 
+{
+    float total = 0.0f;
+    float divisor = 0.0f;
     float t = 0.0f;
-    int index; 
+    int index;
     float weight;
 
     for (int i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++)
@@ -169,17 +169,17 @@ static inline float mouse_axis_average(int* buffer)
         index %= MOUSE_INPUT_BUFFER_SIZE;
 
         weight = _mouse_weight(t);
-        divisor += weight; 
+        divisor += weight;
 
-        total += buffer[index] * weight; 
+        total += buffer[index] * weight;
 
         t += mouse_input_buffer_timestamps[index];
     }
 
     IF_ASSERT(divisor == 0.0f) return 1.0f;
-    total /= divisor; 
+    total /= divisor;
 
-    return total; 
+    return total;
 }
 
 static inline void calculate_mouse_state(int t) // t is time since last tick
@@ -231,7 +231,7 @@ static float vy = 0.0f;
 
 struct MouseMovement
 {
-    long time;  
+    long time;
     int dx;
     int dy;
 };
@@ -257,12 +257,13 @@ static unsigned int mouse_movement_array_index = 0;
 void init_mouse()
 {
     IF_ASSERT(mouse_movement_array != NULL) return;
-    mouse_movement_array = (struct MouseMovement*)calloc(MOUSE_MOVEMENT_ARRAY_INDEX_MAX, sizeof(struct MouseMovement));
+    mouse_movement_array = (struct MouseMovement*)
+        calloc(MOUSE_MOVEMENT_ARRAY_INDEX_MAX, sizeof(struct MouseMovement));
 }
 
 void teardown_mouse()
 {
-    if (mouse_movement_array != NULL) free(mouse_movement_array);
+    free(mouse_movement_array);
 }
 
 void apply_camera_physics()
@@ -274,12 +275,12 @@ void apply_camera_physics()
     if (current_time == last_mouse_movement_time) return;
 
     IF_ASSERT(current_time < last_mouse_movement_time) return;
-    
+
     const float cfactor = 1.0f/33.3333f;
     float _dampening = powf(dampening, cfactor); // dampening per frame
 
     unsigned int index = 0;
-   
+
     float accum_dx = 0;
     float accum_dy = 0;
 
@@ -352,7 +353,7 @@ void poll_mouse()
         mouse_movement_array_index %= MOUSE_MOVEMENT_ARRAY_INDEX_MAX;
         return;
     }
-    
+
     int current_time = _GET_MS_TIME();
 
     static int otime = _GET_MS_TIME();
