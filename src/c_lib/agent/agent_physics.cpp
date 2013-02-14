@@ -62,14 +62,15 @@ inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
     return false;
 }
 
+#define TOP_MARGIN 0.01f
+
 inline bool collision_check_current(float box_r, float box_h, float x, float y, float z)
 {
     int x_min = int(translate_point(x - box_r));
     int x_max = int(translate_point(x + box_r));
     int y_min = int(translate_point(y - box_r));
     int y_max = int(translate_point(y + box_r));
-    static const float delta = 5.0f/6.0f;
-    for (int i=z; i < int(z + box_h*delta); i++)
+    for (int i=z; i <= int(z + box_h - TOP_MARGIN*2.0f); i++)
     {
         if (t_map::isSolid(x_max, y_max, i) ||  // north, west
             t_map::isSolid(x_max, y_min, i) ||  // north, east
@@ -88,8 +89,7 @@ inline bool collision_check_xy(float box_r, float box_h, float x, float y, float
     int x_max = int(translate_point(x + box_r));
     int y_min = int(translate_point(y - box_r));
     int y_max = int(translate_point(y + box_r));
-    const float top_margin = 0.01f;
-    const int upper = int(z + box_h - top_margin);
+    const int upper = int(z + box_h - TOP_MARGIN);
     for (int i=z; i <= upper; i++)
     {
         if (t_map::isSolid(x_max, y_max, i) ||  // north, west
@@ -102,6 +102,8 @@ inline bool collision_check_xy(float box_r, float box_h, float x, float y, float
     }
     return false;
 }
+
+#undef TOP_MARGIN
 
 inline bool collision_check_z(float box_r, float box_h, float x, float y, float z, bool* top)
 {
