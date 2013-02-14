@@ -9,7 +9,7 @@ dont_include_this_file_in_server
 
 namespace Animations
 {
-    
+
 int predicted_block_damage = 0;
 bool damaging_block = false;
 
@@ -30,38 +30,34 @@ static int ticks_end_fade = 60;
 void init_block_damage()
 {
     GS_ASSERT(block_damage_texture == 0);
-    //int ret = create_texture_from_file("./media/sprites/animation/block_damage.png", &block_damage_texture, GL_NEAREST, GL_NEAREST);
-    int ret = create_texture_from_file("./media/sprites/animation/block_damage.png", &block_damage_texture, GL_LINEAR, GL_LINEAR);
-
+    int ret = create_texture_from_file(
+        MEDIA_PATH "sprites/animation/block_damage.png",
+        &block_damage_texture, GL_LINEAR, GL_LINEAR);
     GS_ASSERT(ret == 0);
 }
 
 static int get_sprite_index(int dmg, int max_dmg)
-{
-    // calculate dmg level (sprite index)
+{   // calculate dmg level (sprite index)
     if (dmg <= 0) return -1;
     if (dmg > max_dmg) dmg = max_dmg;
-    float t = ((float)dmg)/((float)max_dmg);
-    int level = (int)(t * BLOCK_DAMAGE_LEVELS);
-    if (level >= BLOCK_DAMAGE_LEVELS) level = BLOCK_DAMAGE_LEVELS - 1;
+    float t = float(dmg)/float(max_dmg);
+    int level = t * BLOCK_DAMAGE_LEVELS;
+    level = GS_MIN(level, BLOCK_DAMAGE_LEVELS - 1);
     return level;
 }
 
 static void render(int sprite_index, int x, int y, int z, float margin)
 {
-    GS_ASSERT(block_damage_texture != 0);
-    if (block_damage_texture == 0) return;
-    
+    IF_ASSERT(block_damage_texture == 0) return;
     if (sprite_index < 0) return;
-    GS_ASSERT(sprite_index < BLOCK_DAMAGE_LEVELS);
 
     Vec3 pos = vec3_init(x,y,z);
     pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 0.5f));   // center
     pos = quadrant_translate_position(current_camera_position, pos);
 
     const float size = (1.0f + margin) / 2.0f;
-    
-    const float inc = ((float)sprite_width)/((float)texture_width);
+
+    const float inc = float(sprite_width)/float(texture_width);
     float tx_min = (sprite_index % (texture_width/sprite_width)) * inc;
     float tx_max = tx_min + inc;
     float ty_min = (sprite_index / (texture_width/sprite_width)) * inc;
@@ -99,49 +95,49 @@ static void render(int sprite_index, int x, int y, int z, float margin)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glBindTexture(GL_TEXTURE_2D, block_damage_texture);
-        
+
     // draw block damage overlay
     glBegin(GL_QUADS);
     for (int i=0; i<6; i++)
     {
         glTexCoord2f(tx_min, ty_min);
         glVertex3f(veb2[4*i+0].x, veb2[4*i+0].y, veb2[4*i+0].z);
-        
+
         glTexCoord2f(tx_min, ty_max);
         glVertex3f(veb2[4*i+1].x, veb2[4*i+1].y, veb2[4*i+1].z);
-        
+
         glTexCoord2f(tx_max, ty_max);
         glVertex3f(veb2[4*i+2].x, veb2[4*i+2].y, veb2[4*i+2].z);
-        
+
         glTexCoord2f(tx_max, ty_min);
         glVertex3f(veb2[4*i+3].x, veb2[4*i+3].y, veb2[4*i+3].z);
     }
     glEnd();
-    
+
     glDisable(GL_BLEND);
 }
 
 void render_block_damage()
 {
     if (Options::animation_level <= 0) return;
-    
+
     if (damaging_block)
         tick_since_last_damage_change = 0;
     else
         tick_since_last_damage_change++;
-    
+
     damaging_block = false;
-    
+
     if (tick_since_last_damage_change > ticks_begin_fade+ticks_end_fade)
         return;
-    
+
     int x=0,y=0,z=0;
     t_map::get_requested_block_position(&x, &y, &z);
     if (x < 0 || y < 0 || z < 0) return;
     CubeType b = t_map::get(x,y,z);
     if (b <= 0) return;
     if (t_map::maxDamage(b) == INVINCIBLE_CUBE_DAMAGE) return;   // dont render damage for invincible blocks
-    
+
     Vec3 dest = vec3_add(vec3_init(x,y,z), vec3_init(0.5f, 0.5f, 0.5f));
     float dist = vec3_length(vec3_sub(dest, current_camera_position));
     float margin = 0.005f;
