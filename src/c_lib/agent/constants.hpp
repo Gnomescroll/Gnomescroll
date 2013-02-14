@@ -60,8 +60,7 @@ const float AGENT_SPEED = 1.8f;
 const float AGENT_SPEED_CROUCHED = 0.9f;
 const float AGENT_JUMP_POWER = 0.25f;
 
-//const float AGENT_BOX_RADIUS = 0.38f;
-const float AGENT_BOX_RADIUS = 0.19f;
+const float AGENT_BOX_RADIUS = 0.30f;
 
 const int HUNGER_INCREASE_RATE = ONE_MINUTE * 2;
 const int HUNGER_REGEN_THRESHOLD = 2;
