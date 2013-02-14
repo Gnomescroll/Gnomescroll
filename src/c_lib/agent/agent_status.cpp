@@ -104,8 +104,7 @@ void AgentStatus::set_spawner(int pt)
     {
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        GS_ASSERT(physics != NULL);
-        if (physics == NULL) return;
+        IF_ASSERT(physics == NULL) return;
         pos = physics->get_position();
     }
     else

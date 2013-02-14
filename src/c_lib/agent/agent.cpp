@@ -260,16 +260,14 @@ void Agent::get_spawn_point(struct Vec3* spawn)
     if (this->status.spawner == BASE_SPAWN_ID)
     {
         Entities::Entity* base = Entities::get(OBJECT_BASE, 0);
-        GS_ASSERT(base != NULL);
-        if (base == NULL)
+        IF_ASSERT(base == NULL)
         {
             *spawn = default_spawn;
             return;
         }
         using Components::AgentSpawnerComponent;
         AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)base->get_component(COMPONENT_AGENT_SPAWNER);
-        GS_ASSERT(spawner != NULL);
-        if (spawner == NULL) *spawn = default_spawn;
+        IF_ASSERT(spawner == NULL) *spawn = default_spawn;
         else *spawn = spawner->get_spawn_point(fh, this->box.box_r);
     }
     else // spawner was found
@@ -718,8 +716,7 @@ bool Agent::near_base()
     if (b == NULL) return false;
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return false;
+    IF_ASSERT(physics == NULL) return false;
     Vec3 bp = physics->get_position();
 
     float x = quadrant_translate_f(this->s.x, bp.x);
@@ -745,8 +742,7 @@ bool Agent::nearest_open_block(const float max_dist, int open_point[3])
 
 void force_update_agent_vox(Agent* a)
 {
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
     a->vox->was_updated = false;
     AgentState s = a->get_state();
     a->vox->update(s.x, s.y, s.z, s.theta, -s.phi);

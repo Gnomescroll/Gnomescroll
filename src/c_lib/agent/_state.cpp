@@ -17,7 +17,7 @@ void init_state()
 
 void teardown_state()
 {
-    if (agent_list != NULL) delete agent_list;
+    delete agent_list;
 }
-    
+
 } // Agents

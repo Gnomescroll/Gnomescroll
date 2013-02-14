@@ -6,8 +6,7 @@ namespace Agents
 class Agent* create_agent(AgentID id)
 {
     class Agent* agent = agent_list->create(id);
-    GS_ASSERT(agent != NULL);
-    if (agent == NULL) return NULL;
+    IF_ASSERT(agent == NULL) return NULL;
     agent->init_vox();
     return agent;
 }

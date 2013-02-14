@@ -617,11 +617,11 @@ void init_attributes()
 
 void teardown_attributes()
 {
-    if (agent_stats != NULL) free(agent_stats);
-    if (agent_base_stats != NULL) free(agent_base_stats);
-    if (stat_differences != NULL) free(stat_differences);
-    if (agent_modifiers != NULL) delete[] agent_modifiers;
-    if (modifier_sums != NULL) free(modifier_sums);
+    free(agent_stats);
+    free(agent_base_stats);
+    free(stat_differences);
+    delete[] agent_modifiers;
+    free(modifier_sums);
 }
 
 void reset_attributes(AgentID agent_id)

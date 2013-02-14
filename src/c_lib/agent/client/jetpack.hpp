@@ -9,7 +9,6 @@ dont_include_this_file_in_server
 namespace Agents
 {
 
-//const int JETPACK_FUEL_MAX = 1300;
 const int JETPACK_FUEL_MAX = 500;
 const int JETPACK_DRAIN_RATE = 3;
 const int JETPACK_REFILL_RATE = 2;
@@ -38,7 +37,7 @@ class JetPack
         fuel(JETPACK_FUEL_MAX)
     {}
 
-    int update(bool thrusting)
+    bool update(bool thrusting)
     {
         float gain = 0.0f;
 
@@ -50,7 +49,7 @@ class JetPack
                     this->ticks_til_loop = JETPACK_LOOP_SOUND_BUILDUP;
 
                 // calculate the linear ramp up gain
-                gain = 1.0f - ((float)this->ticks_til_loop/(float)JETPACK_LOOP_SOUND_BUILDUP);
+                gain = 1.0f - float(this->ticks_til_loop)/float(JETPACK_LOOP_SOUND_BUILDUP);
                 // in case we are starting a new thrust while the old one is cooling down,
                 // keep the gain up until we catch up (otherwise the sound pops from the sudden gain switch)
                 if (gain < this->prev_gain)
@@ -79,7 +78,7 @@ class JetPack
             this->prev_thrusting = false;
 
             // calculate the linear ramp down gain
-            gain = (float)this->ticks_til_end/(float)JETPACK_LOOP_SOUND_COOLDOWN;
+            gain = float(this->ticks_til_end)/float(JETPACK_LOOP_SOUND_COOLDOWN);
 
             // in case we are ending a thrust while the old one is ramping up,
             // keep the gain down until we catch up (otherwise the sound pops from the sudden gain switch)

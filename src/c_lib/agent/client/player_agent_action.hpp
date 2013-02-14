@@ -27,27 +27,27 @@ class PlayerAgent_action
         // compute this vector whenever a htiscan target is acquired
         Vec3 target_direction;
 
-        void hitscan_laser(ItemType weapon_type);
+    void hitscan_laser(ItemType weapon_type);
 
-        // mining laser
-        int mining_laser_sound_id;
-        void begin_mining_laser();
-        void end_mining_laser();
-        void update_mining_laser();
+    // mining laser
+    int mining_laser_sound_id;
+    void begin_mining_laser();
+    void end_mining_laser();
+    void update_mining_laser();
 
-        void fire_close_range_weapon(ItemType weapon_type);
+    void fire_close_range_weapon(ItemType weapon_type);
 
-        bool set_block(ItemID placer_id);
+    bool set_block(ItemID placer_id);
 
-        void admin_set_block();
+    void admin_set_block();
 
-        void throw_grenade();
-        void place_spawner();
-        void place_turret();
+    void throw_grenade();
+    void place_spawner();
+    void place_turret();
 
-        Vec3 get_aiming_point();
+    Vec3 get_aiming_point();
 
-        explicit PlayerAgent_action(PlayerAgent* player_agent);
+    explicit PlayerAgent_action(PlayerAgent* player_agent);
 };
 
 }   // Agents

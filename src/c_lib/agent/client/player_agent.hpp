@@ -24,13 +24,12 @@ typedef enum
 class PlayerAgent
 {
     private:
-        uint16_t sanitize_control_state(uint16_t cs);
-        uint16_t pack_control_state(
-            int f, int b, int l, int r,
-            int jet, int jump, int crouch, int boost,
-            int misc1, int misc2, int misc3);
+    uint16_t sanitize_control_state(uint16_t cs);
+    uint16_t pack_control_state(int f, int b, int l, int r,
+                                int jet, int jump, int crouch, int boost,
+                                int misc1, int misc2, int misc3);
 
-        void set_control_state(uint16_t cs, float theta, float phi);
+    void set_control_state(uint16_t cs, float theta, float phi);
 
     public:
 
@@ -71,52 +70,55 @@ class PlayerAgent
         int state_history_index;
         int last_snapshot_time;
 
-        void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
-        void handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
-
-        //state variables
-
-        AgentID agent_id;   //agent_id for player agent
-        class Agent* you();
-        void set_PlayerAgent_id(AgentID id);
-
-        //set also sends
-        void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi);
-
-        float camera_z();
-        float camera_height();
-        struct Vec3 camera_position();
-
-        struct Vec3 get_weapon_fire_animation_origin()
-        {
-            struct Vec3 origin = agent_camera->get_position();
-            origin.z -= 0.40f;
-            return origin;
-        }
-
-        void update_model();
-
+        AgentID agent_id;
         PlayerAgent_action action;
 
-        bool facing_block(int pos[3]);
-        int facing_container(); // returns container_id
+    void handle_state_snapshot(int seq, float theta, float phi,
+                               float x, float y, float z,
+                               float vx, float vy, float vz);
+    void handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
 
-        void update_sound();
+    class Agent* you();
+    void set_PlayerAgent_id(AgentID id);
 
-        bool nearest_open_block(const float max_dist, int open_point[3]);
-        int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
-        int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);    // returns side, as integer. side<0 if failure
+    //set also sends
+    void set_control_state(int f, int b, int l, int r, int jet,
+                           int jump, int crouch, int boost, int misc1,
+                           int misc2, int misc3, float theta, float phi);
 
-        void fell(float dvz);
-        void movement_event(class AgentState s0, class AgentState s1,
-                                   bool s1_on_ground, bool camera_on_ground);
+    float camera_z();
+    float camera_height();
+    struct Vec3 camera_position();
 
-        #if !PRODUCTION
-        void teleport_to(struct Vec3 p);
-        #endif
+    struct Vec3 get_weapon_fire_animation_origin()
+    {
+        struct Vec3 origin = agent_camera->get_position();
+        origin.z -= 0.40f;
+        return origin;
+    }
 
-        PlayerAgent();
-        ~PlayerAgent();
+    void update_model();
+
+    bool facing_block(int pos[3]);
+    int facing_container(); // returns container_id
+
+    void update_sound();
+
+    bool nearest_open_block(const float max_dist, int open_point[3]);
+    int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
+    // returns side, as integer. side<0 if failure:
+    int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);
+
+    void fell(float dvz);
+    void movement_event(class AgentState s0, class AgentState s1,
+                               bool s1_on_ground, bool camera_on_ground);
+
+    #if !PRODUCTION
+    void teleport_to(struct Vec3 p);
+    #endif
+
+    PlayerAgent();
+    ~PlayerAgent();
 };
 
 }   // Agents

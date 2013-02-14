@@ -37,8 +37,8 @@ void PlayerAgent::set_PlayerAgent_id(AgentID id)
 */
 void PlayerAgent::update_client_side_prediction_interpolated()
 {
-    int _t = (int)_GET_MS_TIME();
-    int last_tick = (int)_LAST_TICK();
+    int _t = int(_GET_MS_TIME());
+    int last_tick = int(_LAST_TICK());
 
     struct Vec3 vs0 = s0.get_position();
     struct Vec3 vs1 = s1.get_position();
@@ -56,10 +56,9 @@ void PlayerAgent::update_client_side_prediction_interpolated()
     float delta = 1.0f;
     if (dist < SKIP_INTERPOLATION_THRESHOLD)
     {
-        delta = ((float)(_t - last_tick)) / 33.0f;
-        if(delta > 1.0f) delta = 1.0f;
-        GS_ASSERT(delta >= 0.0f);
-        if (delta < 0.0f) delta = 0.0f;
+        delta = float(_t - last_tick) / 33.0f;
+        if (delta > 1.0f) delta = 1.0f;
+        IF_ASSERT(delta < 0.0f) delta = 0.0f;
     }
 
     vs0 = vec3_scalar_mult(vs0, 1.0f-delta);
@@ -91,7 +90,7 @@ void PlayerAgent::handle_state_snapshot(int seq, float theta, float phi, float x
 
     state_history[index] = ss;
 
-    if( (state_history_seq - seq) > 30 || seq > state_history_seq)
+    if ( (state_history_seq - seq) > 30 || seq > state_history_seq)
     {
         state_history_index = index;
         state_history_seq = seq; //set index
@@ -101,7 +100,7 @@ void PlayerAgent::handle_state_snapshot(int seq, float theta, float phi, float x
 
 void PlayerAgent::handle_net_control_state(int _seq, int _cs, float _theta, float _phi)
 {
-    int index = _seq%128;
+    int index = _seq % 128;
 
     //save cs
     cs_net[index].seq = _seq;
@@ -110,37 +109,37 @@ void PlayerAgent::handle_net_control_state(int _seq, int _cs, float _theta, floa
     cs_net[index].phi = _phi;
 
     //clear out old cs
-    for(int i=32;i<64;i++){
-        index = (_seq + i)%128;
+    for (int i=32; i<64; i++){
+        index = (_seq + i) % 128;
         cs_net[index].seq = -1;
     }
     //check for differences between client out cs and in??
 
-    if(cs_net[index].seq == -1) return;
+    if (cs_net[index].seq == -1) return;
 
-    if(cs_net[index].seq != cs_local[index].seq) printf("player agent: e1\n");
-    if(cs_net[index].cs != cs_local[index].cs) printf("player agent: server corrected control state\n");
-    if(cs_net[index].theta != cs_local[index].theta) printf("player agent: e3\n");
-    if(cs_net[index].phi != cs_local[index].phi) printf("player agent: e4\n");
+    if (cs_net[index].seq != cs_local[index].seq) printf("player agent: e1\n");
+    if (cs_net[index].cs != cs_local[index].cs) printf("player agent: server corrected control state\n");
+    if (cs_net[index].theta != cs_local[index].theta) printf("player agent: e3\n");
+    if (cs_net[index].phi != cs_local[index].phi) printf("player agent: e4\n");
 }
 
-uint16_t PlayerAgent::pack_control_state(
-    int f, int b, int l, int r,
-    int jet, int jump, int crouch, int boost,
-    int misc1, int misc2, int misc3)
+uint16_t PlayerAgent::pack_control_state(int f, int b, int l, int r,
+                                          int jet, int jump, int crouch,
+                                          int boost, int misc1, int misc2,
+                                          int misc3)
 {
     uint16_t cs = 0;
-    if(f) cs |= CS_FORWARD;
-    if(b) cs |= CS_BACKWARD;
-    if(l) cs |= CS_LEFT;
-    if(r) cs |= CS_RIGHT;
-    if(jet) cs |= CS_JETPACK;
-    if(jump) cs |= CS_JUMP;
-    if(crouch) cs |= CS_CROUCH;
-    if(boost) cs |= CS_BOOST;
-    if(misc1) cs |= CS_MISC1;
-    if(misc2) cs |= CS_MISC2;
-    if(misc3) cs |= CS_MISC3;
+    if (f) cs |= CS_FORWARD;
+    if (b) cs |= CS_BACKWARD;
+    if (l) cs |= CS_LEFT;
+    if (r) cs |= CS_RIGHT;
+    if (jet) cs |= CS_JETPACK;
+    if (jump) cs |= CS_JUMP;
+    if (crouch) cs |= CS_CROUCH;
+    if (boost) cs |= CS_BOOST;
+    if (misc1) cs |= CS_MISC1;
+    if (misc2) cs |= CS_MISC2;
+    if (misc3) cs |= CS_MISC3;
     return cs;
 }
 
@@ -150,49 +149,48 @@ uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
     if (a == NULL) return 0;
     if (a->status.dead) return 0;
 
-    int forward,backwards,left,right,jp,jump,crouch,boost,misc1,misc2,misc3;
-    //set control state variables
-    forward     = cs & CS_FORWARD ? 1 :0;
-    backwards   = cs & CS_BACKWARD ? 1 :0;
-    left        = cs & CS_LEFT ? 1 :0;
-    right       = cs & CS_RIGHT ? 1 :0;
-    jp          = cs & CS_JETPACK ? 1 :0;
-    jump        = cs & CS_JUMP ? 1 :0;
-    crouch      = cs & CS_CROUCH ? 1 :0;
-    boost       = cs & CS_BOOST ? 1 :0;
-    misc1       = cs & CS_MISC1 ? 1 :0;
-    misc2       = cs & CS_MISC2 ? 1 :0;
-    misc3       = cs & CS_MISC3 ? 1 :0;
+    int forward, backwards, left, right, jp, jump, crouch, boost,
+        misc1, misc2, misc3;
+    // set control state variables
+    forward   = cs & CS_FORWARD  ? 1 : 0;
+    backwards = cs & CS_BACKWARD ? 1 : 0;
+    left      = cs & CS_LEFT     ? 1 : 0;
+    right     = cs & CS_RIGHT    ? 1 : 0;
+    jp        = cs & CS_JETPACK  ? 1 : 0;
+    jump      = cs & CS_JUMP     ? 1 : 0;
+    crouch    = cs & CS_CROUCH   ? 1 : 0;
+    boost     = cs & CS_BOOST    ? 1 : 0;
+    misc1     = cs & CS_MISC1    ? 1 : 0;
+    misc2     = cs & CS_MISC2    ? 1 : 0;
+    misc3     = cs & CS_MISC3    ? 1 : 0;
 
-    AgentState* state;
-    state = &this->s1;
+    AgentState* state = &this->s1;
 
     // force staying crouched if cant stand up
-    if ((this->crouching && !crouch) && can_stand_up(a->box.box_r, a->box.b_height,
-                                                        state->x, state->y, state->z))
+    if ((this->crouching && !crouch) &&
+        can_stand_up(a->box.box_r, a->box.b_height,
+                     state->x, state->y, state->z))
     {
         crouch = 1;
     }
-    this->crouching = (bool)crouch;
+    this->crouching = bool(crouch);
 
     // only jump if on ground
     if (jump && !on_ground(a->box.box_r, state->x, state->y, state->z))
-    {
         jump = 0;
-    }
 
-    cs = this->pack_control_state(
-        forward, backwards, left, right,
-        jetpack.update(jp),
-        jump, crouch, boost,
-        misc1, misc2, misc3);
+    jp = jetpack.update(jp);
+    cs = this->pack_control_state(forward, backwards, left, right, jp,
+                                   jump, crouch, boost, misc1, misc2, misc3);
     return cs;
 }
 
-void PlayerAgent::set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
+void PlayerAgent::set_control_state(int f, int b, int l, int r, int jet,
+                                    int jump, int crouch, int boost, int misc1,
+                                    int misc2, int misc3, float theta, float phi)
 {
-    uint16_t cs;
-    cs = this->pack_control_state(f,b,l,r,jet,jump,crouch,boost,misc1,misc2,misc3);
+    uint16_t cs = this->pack_control_state(f, b, l, r, jet, jump, crouch,
+                                           boost, misc1, misc2, misc3);
     cs = this->sanitize_control_state(cs);
     this->set_control_state(cs, theta, phi);
 }
@@ -201,7 +199,7 @@ void PlayerAgent::set_control_state(int f, int b, int l, int r, int jet, int jum
 void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
 {
     class Agent* a = this->you();
-    if(a == NULL) return;  //player agent not set
+    if (a == NULL) return;  //player agent not set
 
     cs = this->sanitize_control_state(cs);
 
@@ -215,23 +213,21 @@ void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
     }
 
     Agent_cs_CtoS csp;
-
     csp.seq = cs_seq_local;
     csp.cs = cs;
     csp.theta = theta;
     csp.phi = phi;
-
     csp.send();
 
     //save control state
-    int index = cs_seq_local%128;
+    int index = cs_seq_local % 128;
 
     cs_local[index].seq = cs_seq_local;
     cs_local[index].cs = cs;
     cs_local[index].theta = theta;
     cs_local[index].phi = phi;
     //clear out next control state
-    cs_local[(index+1)%128].seq = -1;
+    cs_local[(index + 1) % 128].seq = -1;
     //client side tick forward
 
     struct AgentControlState acs = cs_local[index];
@@ -243,26 +239,17 @@ void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
 
     while (cs_index != stop_index)
     {
-        acs = cs_local[cs_index%128]; //check seq number
-
+        acs = cs_local[cs_index % 128]; //check seq number
         tmp = agent_tick(acs, a->box, tmp);
         tmp.seq = (tmp.seq+1) % 256;
-
         cs_index = (cs_index+1) % 256;
     }
     s0 = tmp;
     acs = cs_local[cs_seq_local % 128];
     s1 = agent_tick(acs, a->box, s0);
 
-    // tick sound motion
     bool s1_on_ground = on_ground(a->box.box_r, s1.x, s1.y, s1.z);
     bool camera_on_ground = on_ground(a->box.box_r, camera_state.x, camera_state.y, camera_state.z);
-    //if (s0.vx || s0.vy || s0.vz || s1.vx || s1.vy || s1.vz)
-    //{
-        //printf("s0 ");s0.print();
-        //printf("s1 ");s1.print();
-        //printf("--------------------------\n");
-    //}
     this->movement_event(s0, s1, s1_on_ground, camera_on_ground);
 }
 
@@ -287,9 +274,11 @@ struct Vec3 PlayerAgent::camera_position()
 
 void PlayerAgent::update_sound()
 {
-    AgentState s = camera_state;
     Vec3 p = agent_camera->forward_vector();
-    Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, p.x, p.y, p.z, 0.0f,0.0f,1.0f);
+    Sound::update_listener(
+        this->camera_state.x, this->camera_state.y, this->camera_state.z,
+        this->camera_state.vx, this->camera_state.vy, this->camera_state.vz,
+        p.x, p.y, p.z, 0.0f, 0.0f, 1.0f);
 }
 
 PlayerAgent::PlayerAgent() :
@@ -299,8 +288,8 @@ PlayerAgent::PlayerAgent() :
     agent_id(NULL_AGENT),  action(this)
 {
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
-    for(int i=0; i<128; cs_local[i++].seq = -1);
-    for(int i=0; i<128; cs_net[i++].seq = -1) ;
+    for (int i=0; i<128; cs_local[i++].seq = -1);
+    for (int i=0; i<128; cs_net[i++].seq = -1) ;
 }
 
 PlayerAgent::~PlayerAgent()
@@ -578,8 +567,7 @@ void PlayerAgent::movement_event(class AgentState s0, class AgentState s1,
         #endif
 
         size_t wrote = snprintf(footstep_sound, footstep_sound_len, "soft_step_%d", footstep_num);
-        GS_ASSERT(wrote < footstep_sound_len);
-        if (wrote >= footstep_sound_len) return;
+        IF_ASSERT(wrote >= footstep_sound_len) return;
         Sound::play_2d_sound(footstep_sound);
     }
 

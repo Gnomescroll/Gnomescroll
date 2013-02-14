@@ -19,14 +19,14 @@ const int SNAPSHOT_DRAW_ARRAY_SIZE = 32;
 
 void add_snapshot_to_history(Agents::Agent* g)
 {
-    //if(g->state_snapshot.seq != snapshot_draw_last_seq) {
+    //if (g->state_snapshot.seq != snapshot_draw_last_seq) {
         //snapshot_draw_last_seq = g->state_snapshot.seq;
         //snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
         //snapshot_draw_array_i = (snapshot_draw_array_i+1)%SNAPSHOT_DRAW_ARRAY_SIZE;
 
 
-        //if(g->state_snapshot.seq != (_last_seq + SNAPSHOT_DRAW_ARRAY_SIZE)%256) {
-            
+        //if (g->state_snapshot.seq != (_last_seq + SNAPSHOT_DRAW_ARRAY_SIZE)%256) {
+
             //printf("AgentDraw, add_snapshot_to_history !!! ERROR: seq= %i, last_seq= %i \n", g->state_snapshot.seq, _last_seq);
 
         //}
@@ -47,8 +47,8 @@ void draw_agent(Agents::Agent* g) {
 
 /*
     int i;
-    for(i=0; i < SNAPSHOT_DRAW_ARRAY_SIZE; i++) {
-        draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.0, 2.0);  
+    for (i=0; i < SNAPSHOT_DRAW_ARRAY_SIZE; i++) {
+        draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.0, 2.0);
     }
 */
     draw_agent_bounding_box(s.x, s.y, s.z, 0.4f, 1.8f, 2.5f, 0,0,255);
@@ -71,7 +71,7 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     glBegin(GL_POINTS);
 
     glDisable(GL_TEXTURE_2D);
-    
+
     //glEnable(GL_CULL_FACE);
 
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
@@ -150,7 +150,7 @@ void draw_agent_bounding_box(float x, float y, float z,
 
     glBegin(GL_LINES);
     glColor3ub(r,g,b);
-    for(i=0; i<12; i++) {
+    for (i=0; i<12; i++) {
             j = 3*vertex_index2[2*i+0];
             _x = x + v_set2[j+0]*radius;
             _y = y + v_set2[j+1]*radius;
@@ -165,7 +165,7 @@ void draw_agent_bounding_box(float x, float y, float z,
 
     glColor3ub(r,g,b);
 
-    for(i=0; i<12; i++) {
+    for (i=0; i<12; i++) {
             j = 3*vertex_index2[2*i+0];
             _x = x + v_set2[j+0]*radius;
             _y = y + v_set2[j+1]*radius;
@@ -201,7 +201,7 @@ void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b) {
 
     glBegin(GL_LINES);
     glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
-    for(i=0; i<12; i++) {
+    for (i=0; i<12; i++) {
             j = 3*vertex_index2[2*i+0];
             _x = __x + v_set2[j+0]*radius;
             _y = __y + v_set2[j+1]*radius;

@@ -67,7 +67,7 @@ inline void Agent_teleport_message::handle()
 inline void Agent_cs_StoC::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)id);
-    if(a == NULL)
+    if (a == NULL)
     {
         //printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
         return;
@@ -483,10 +483,10 @@ inline void Agent_cs_CtoS::handle()
 
     //for benchmarking
     /*
-    if(a_DEBUG)
+    if (a_DEBUG)
     {
         _total++;
-        if(_total % 1000 == 0) printf("%i messages\n", _total);
+        if (_total % 1000 == 0) printf("%i messages\n", _total);
         return;
     }
     */
@@ -747,8 +747,7 @@ inline void ThrowGrenade_CtoS::handle()
 
 inline void agent_set_block_CtoS::handle()
 {
-    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0)
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     if (z == 0) return;     // no floor
 
     Agents::Agent* a = NetServer::agents[client_id];
@@ -758,8 +757,7 @@ inline void agent_set_block_CtoS::handle()
     Item::Item* placer = Item::get_item((ItemID)placer_id);
     if (placer == NULL) return;
     Item::ItemAttribute* attr = Item::get_item_attributes(placer->type);
-    GS_ASSERT(attr != NULL);
-    if (attr == NULL) return;
+    IF_ASSERT(attr == NULL) return;
     CubeType cube_type = attr->cube_type;
 
     // do block place checks here later
@@ -806,7 +804,7 @@ inline void agent_set_block_CtoS::handle()
         TODO -- move this to t_map's handler
     */
     static int _control_node = t_map::get_cube_type("control_node");
-    if(cube_type == _control_node) t_map::add_control_node(x,y,z);
+    if (cube_type == _control_node) t_map::add_control_node(x,y,z);
 }
 
 inline void admin_set_block_CtoS::handle()
