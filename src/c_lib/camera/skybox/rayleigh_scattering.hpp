@@ -1555,7 +1555,7 @@ void init_rayleigh_scattering()
 /*
     Load cloudblur texture
 */
-    int ret= create_texture_from_file("./media/sprites/skybox/blur.png", &cloud_blur_texture, GL_LINEAR, GL_LINEAR);
+    int ret= create_texture_from_file(MEDIA_PATH "sprites/skybox/blur.png", &cloud_blur_texture, GL_LINEAR, GL_LINEAR);
     if(ret != 0)
     {
         GS_ASSERT_ABORT(false);

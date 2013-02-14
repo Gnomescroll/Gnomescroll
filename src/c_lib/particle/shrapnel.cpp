@@ -30,8 +30,8 @@ void init_shrapnel_shader()
     shrapnel_shader.set_debug(false);
 
     shrapnel_shader.load_shader( "shrapnel shader",
-        "./media/shaders/weapon/shrapnel.vsh",
-        "./media/shaders/weapon/shrapnel.fsh" );
+        MEDIA_PATH "shaders/weapon/shrapnel.vsh",
+        MEDIA_PATH "shaders/weapon/shrapnel.fsh" );
     shrapnel_TexCoord = shrapnel_shader.get_attribute("InTexCoord");
 
 }

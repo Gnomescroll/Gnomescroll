@@ -24,7 +24,7 @@ typedef unsigned int GLuint;
 
 #ifdef __MSVC__
 # include <float.h>
-# define isfinite(x) (_finite((x)) && (x) == (x))  
+# define isfinite(x) (_finite((x)) && (x) == (x))
 float cbrt(float arg) { return powf(arg, 1.0f/3.0f); }
 static int S_IRWXU = 0;
 #endif
@@ -32,7 +32,7 @@ static int S_IRWXU = 0;
   //Turn off GS_ASSERTs when production is enabled
 //*/
 //#if PRODUCTION
-    //#define NDEBUG 
+    //#define NDEBUG
 //#endif
 
 //Generic helper definitions for shared library support

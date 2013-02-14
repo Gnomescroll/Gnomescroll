@@ -155,7 +155,7 @@ void BodyMesh::draw(float x, float y, float z, float theta, float phi)
 void BodyMesh::init_texture()
 {
     GS_ASSERT(this->s == NULL);
-    this->s = create_surface_from_file("./media/mesh/body_template.png");
+    this->s = create_surface_from_file(MEDIA_PATH "mesh/body_template.png");
     IF_ASSERT(this->s == NULL) return;
     int ret = create_texture_from_surface(this->s, &this->texture, GL_LINEAR, GL_NEAREST);
     GS_ASSERT(ret == 0);

@@ -143,8 +143,8 @@ class MechListShader
         shader->set_debug(true);
 
         shader->load_shader( "mech_list_shader",
-            "./media/shaders/effect/mech_list.vsh",
-            "./media/shaders/effect/mech_list.fsh" );
+            MEDIA_PATH "shaders/effect/mech_list.vsh",
+            MEDIA_PATH "shaders/effect/mech_list.fsh" );
 
         CameraPosition =    shader->get_uniform("CameraPosition");
 
@@ -154,7 +154,7 @@ class MechListShader
 
     void init_texture()
     {
-        s = create_surface_from_file("./media/sprites/mech/mech_00.png");
+        s = create_surface_from_file(MEDIA_PATH "sprites/mech/mech_00.png");
 
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &texture1);

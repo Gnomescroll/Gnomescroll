@@ -15,7 +15,7 @@ void init()
     GS_ASSERT(model_loader == NULL);
     GS_ASSERT(body_mesh == NULL);
     size_t bsize = 0;
-    char* buffer = read_file_to_buffer("media/mesh/player.dae", &bsize);
+    char* buffer = read_file_to_buffer(MEDIA_PATH "mesh/player.dae", &bsize);
     IF_ASSERT(buffer == NULL) return;
     int aFlag = (aiProcess_Triangulate |
                  //aiProcess_GenUVCoords |

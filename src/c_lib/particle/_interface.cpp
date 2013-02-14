@@ -64,7 +64,7 @@ GLuint particle_texture = 0;
 
 void draw_init()
 {
-    create_texture_from_file("./media/sprites/animation/particles_01.png", &particle_texture);
+    create_texture_from_file(MEDIA_PATH "sprites/animation/particles_01.png", &particle_texture);
     GS_ASSERT(particle_texture != 0);
 }
 

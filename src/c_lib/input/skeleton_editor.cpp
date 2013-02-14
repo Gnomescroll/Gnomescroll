@@ -408,7 +408,7 @@ void save()
     char fn[100] = {'\0'};
     char inter[70] = {'\0'};
     long int t = time(NULL);
-    sprintf(inter, "./media/voxel/saves/%ld", t);
+    sprintf(inter, MEDIA_PATH "voxel/saves/%ld", t);
     sprintf(fn, "%s.skeleton", inter);
     vox_dat->save(fn);
 }

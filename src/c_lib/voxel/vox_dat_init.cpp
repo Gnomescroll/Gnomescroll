@@ -24,21 +24,21 @@ Voxels::VoxDat turret;
 void init()
 {
     // agent
-    read_skeleton("./media/voxel/crouch.skeleton", &agent);
-    read_skeleton("./media/voxel/crouch.skeleton", &agent_crouched);
-    
-    read_skeleton("./media/voxel/dead.skeleton", &agent_dead);
+    read_skeleton(MEDIA_PATH "voxel/crouch.skeleton", &agent);
+    read_skeleton(MEDIA_PATH "voxel/crouch.skeleton", &agent_crouched);
+
+    read_skeleton(MEDIA_PATH "voxel/dead.skeleton", &agent_dead);
 
     // monsters
-    read_skeleton("./media/voxel/bomb.skeleton", &robot_bomb);
-    read_skeleton("./media/voxel/robot_box.skeleton", &robot_box);
-    read_skeleton("./media/voxel/monster_spawner.skeleton", &monster_spawner);
+    read_skeleton(MEDIA_PATH "voxel/bomb.skeleton", &robot_bomb);
+    read_skeleton(MEDIA_PATH "voxel/robot_box.skeleton", &robot_box);
+    read_skeleton(MEDIA_PATH "voxel/monster_spawner.skeleton", &monster_spawner);
 
     // items
-    read_skeleton("./media/voxel/base.skeleton", &base);
-    read_skeleton("./media/voxel/energy_core.skeleton", &energy_core);
-    read_skeleton("./media/voxel/spawner.skeleton", &agent_spawner);
-    read_skeleton("./media/voxel/turret.skeleton", &turret);
+    read_skeleton(MEDIA_PATH "voxel/base.skeleton", &base);
+    read_skeleton(MEDIA_PATH "voxel/energy_core.skeleton", &energy_core);
+    read_skeleton(MEDIA_PATH "voxel/spawner.skeleton", &agent_spawner);
+    read_skeleton(MEDIA_PATH "voxel/turret.skeleton", &turret);
 }
 
 }   // VoxDats

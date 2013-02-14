@@ -27,15 +27,15 @@ void init_shader()
     star_shader.set_debug(false);
 
     star_shader.load_shader( "star shader",
-        "./media/shaders/skybox/stars.vsh",
-        "./media/shaders/skybox/stars.fsh" );
+        MEDIA_PATH "shaders/skybox/stars.vsh",
+        MEDIA_PATH "shaders/skybox/stars.fsh" );
     star_TexCoord = star_shader.get_attribute("InTexCoord");
     //star_CameraPos = star_shader.get_uniform("CameraPos");
 }
 
 void init_texture()
 {
-    SDL_Surface* surface = create_surface_from_file("./media/sprites/skybox/stars_and_north.png");
+    SDL_Surface* surface = create_surface_from_file(MEDIA_PATH "sprites/skybox/stars_and_north.png");
 
     GS_ASSERT(surface != NULL);
     if (surface == NULL) return;

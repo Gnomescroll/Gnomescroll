@@ -115,9 +115,9 @@ int v_num = 0;
 void load_model()
 {
     char* memory = NULL;
-    //char* model_file = (char*) "media/mesh/mob4.obj";
-    //char* model_file = (char*) "media/mesh/drone1.obj";
-    char* model_file = (char*) "media/mesh/cube_test.obj";
+    //char* model_file = (char*) MEDIA_PATH "mesh/mob4.obj";
+    //char* model_file = (char*) MEDIA_PATH "mesh/drone1.obj";
+    char* model_file = (char*) MEDIA_PATH "mesh/cube_test.obj";
 
     size_t bytes = ObjLoadFile(model_file, &memory);
 
@@ -199,8 +199,8 @@ void init_shader()
     monster_shader.set_debug(true);
 
     monster_shader.load_shader( "monster mob shader",
-        "./media/shaders/mob/monster_mob.vsh",
-        "./media/shaders/mob/monster_mob.fsh" );
+        MEDIA_PATH "shaders/mob/monster_mob.vsh",
+        MEDIA_PATH "shaders/mob/monster_mob.fsh" );
 
     monster_TexCoord = monster_shader.get_attribute("InTexCoord");
 
@@ -209,8 +209,8 @@ void init_shader()
 
 void init_texture()
 {
-    //SDL_Surface* s = create_surface_from_file((char*) "media/mesh/drone0.png");
-    SDL_Surface* s = create_surface_from_file((char*) "media/mesh/red_flat.png");
+    //SDL_Surface* s = create_surface_from_file((char*) MEDIA_PATH "mesh/drone0.png");
+    SDL_Surface* s = create_surface_from_file((char*) MEDIA_PATH "mesh/red_flat.png");
 
     if(s == NULL)
     {

@@ -33,7 +33,7 @@ typedef enum
  #define GNOMESCROLL_COOKIE_DOMAIN "127.0.0.1"
 #endif
 
-#define GNOMESCROLL_LOGIN_HTML "media/web/html/login.html"
+#define GNOMESCROLL_LOGIN_HTML MEDIA_PATH "web/html/login.html"
 
 #define GNOMESCROLL_CREATE_PATH "/create"
 #define GNOMESCROLL_LOGIN_PATH  "/login"

@@ -263,7 +263,7 @@ class ControlNodeShader
 
     void init_texture()
     {
-        s = create_surface_from_file("./media/sprites/mech/territory_00.png");
+        s = create_surface_from_file(MEDIA_PATH "sprites/mech/territory_00.png");
         IF_ASSERT(s == NULL) return;
 
         glEnable(GL_TEXTURE_2D);

@@ -93,8 +93,8 @@ void init_insect_mob_shader()
     insect_mob_shader.set_debug(false);
 
     insect_mob_shader.load_shader( "insect mob shader",
-        "./media/shaders/mob/insect_mob.vsh",
-        "./media/shaders/mob/insect_mob.fsh" );
+        MEDIA_PATH "shaders/mob/insect_mob.vsh",
+        MEDIA_PATH "shaders/mob/insect_mob.fsh" );
 
     //uniforms
     //map_ChunkPosition = glGetUniformLocation(insect_mob_shader[index], "ChunkPosition");

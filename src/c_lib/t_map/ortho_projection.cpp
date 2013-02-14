@@ -25,9 +25,9 @@ void load_ortho_shader()
     map_ortho_shader.set_debug(true);
 
     map_ortho_shader.load_shader( "t_map ortho shader",
-        "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao_ortho.vsh",
-        "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao_ortho.fsh" );
-    
+        MEDIA_PATH "shaders/terrain/terrain_map_mipmap_bilinear_ao_ortho.vsh",
+        MEDIA_PATH "shaders/terrain/terrain_map_mipmap_bilinear_ao_ortho.fsh" );
+
     map_ortho_Vertex = map_ortho_shader.get_attribute("InVertex");
     map_ortho_TexCoord = map_ortho_shader.get_attribute("InTexCoord");
     map_ortho_RGB = map_ortho_shader.get_attribute("InRGB");
@@ -68,14 +68,14 @@ void render_ortho()
 
         class Map_vbo* vbo = vbo_map->vbo_array[index];
         if(vbo == NULL) continue;
-        if(vbo->_v_num[0] == 0) continue; 
+        if(vbo->_v_num[0] == 0) continue;
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
 
         glUniform3f(map_ortho_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
         //glUniform3f(map_ChunkPosition, vbo->wxoff, vbo->wyoff, 0.0f);
 
-        glVertexAttribPointer(map_ortho_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
+        glVertexAttribPointer(map_ortho_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);
         glVertexAttribPointer(map_ortho_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
         glVertexAttribPointer(map_ortho_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
         glVertexAttribPointer(map_ortho_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
@@ -87,7 +87,7 @@ void render_ortho()
     glDisableVertexAttribArray(map_ortho_TexCoord);
     glDisableVertexAttribArray(map_ortho_RGB);
     glDisableVertexAttribArray(map_ortho_LightMatrix);
-    
+
     glUseProgramObjectARB(0);
 
     //glEnable(GL_TEXTURE_2D);
@@ -151,11 +151,11 @@ void save_map_ortho_projection(const char* filename)
 
     //-------------------------
     glViewport(0, 0, xres, yres);
- 
+
 /*
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0); 
+    glOrtho(0.0, (float) xres, 0.0, (float) yres, -1.0, 1.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 */
@@ -264,13 +264,13 @@ void save_map_ortho_projection(const char* filename)
         int h = yres;
 
         height_div_2 = (int) (yres * 0.5f);
-        for(index = 0; index < height_div_2; index++)    
+        for(index = 0; index < height_div_2; index++)
         {
             memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
             memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
             memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
         }
-        free(temp_row); 
+        free(temp_row);
     }
 
 

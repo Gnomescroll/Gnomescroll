@@ -45,7 +45,7 @@ void teardown_mining_laser()
 
 void init_mining_laser_texture()
 {
-    int ret = create_texture_from_file("./media/sprites/animation/mining_laser.png", &mining_laser_texture);
+    int ret = create_texture_from_file(MEDIA_PATH "sprites/animation/mining_laser.png", &mining_laser_texture);
     GS_ASSERT(ret == 0);
 }
 
@@ -54,8 +54,8 @@ void init_mining_laser_shader()
     mining_laser_shader.set_debug(false);
 
     mining_laser_shader.load_shader( "mining shader",
-        "./media/shaders/weapon/mining_laser.vsh",
-        "./media/shaders/weapon/mining_laser.fsh" );
+        MEDIA_PATH "shaders/weapon/mining_laser.vsh",
+        MEDIA_PATH "shaders/weapon/mining_laser.fsh" );
 
     mining_laser_TexCoord = mining_laser_shader.get_attribute("InTexCoord");
 }

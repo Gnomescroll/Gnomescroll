@@ -5,7 +5,7 @@
 namespace HudFont
 {
 
-static const char font_path[] = "./media/fonts/";
+static const char font_path[] = MEDIA_PATH "fonts/";
 static int n_fonts = 0;
 static Font** fonts = NULL;
 static Font* default_font = NULL;

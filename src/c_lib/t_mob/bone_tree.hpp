@@ -412,8 +412,8 @@ class BoneTree
     void init_texture()
     {
         GS_ASSERT(s == NULL);
-        s = create_surface_from_file("./media/mesh/body_template.png");
-        //s = create_surface_from_file("./media/mesh/test.png");
+        s = create_surface_from_file(MEDIA_PATH "mesh/body_template.png");
+        //s = create_surface_from_file(MEDIA_PATH "mesh/test.png");
 
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &texture1);
@@ -1204,7 +1204,7 @@ void init()
     */
 
     size_t bsize = 0;
-    char* buffer = read_file_to_buffer((char*) "media/mesh/player.dae", &bsize);
+    char* buffer = read_file_to_buffer((char*) MEDIA_PATH "mesh/player.dae", &bsize);
     GS_ASSERT(buffer != NULL);
     if (buffer == NULL) return;
 

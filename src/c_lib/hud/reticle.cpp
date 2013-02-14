@@ -2,7 +2,7 @@
 
 namespace HudReticle
 {
-    
+
 Reticle reticle;
 Reticle scope_reticle;
 
@@ -42,9 +42,9 @@ void Reticle::draw()
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, this->tex_data.tex );
-    
+
     glEnable(GL_BLEND);
-    
+
 
     //glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -52,8 +52,8 @@ void Reticle::draw()
     //glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //glEnable(GL_COLOR_LOGIC_OP); 
-    //glLogicOp(GL_XOR); 
+    //glEnable(GL_COLOR_LOGIC_OP);
+    //glLogicOp(GL_XOR);
 
 
     //glColor3ub(127, 127, 127);
@@ -90,8 +90,8 @@ void Reticle::draw()
 
 void init()
 {
-    reticle.init("./media/sprites/reticle/reticle_02.png"); //target.png");
-    scope_reticle.init("./media/sprites/reticle/target-zoom.png");
+    reticle.init(MEDIA_PATH "sprites/reticle/reticle_02.png"); //target.png");
+    scope_reticle.init(MEDIA_PATH "sprites/reticle/target-zoom.png");
 }
 
 

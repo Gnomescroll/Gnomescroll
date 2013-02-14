@@ -354,18 +354,18 @@ void set_map_shader_0_compatibility(int level)
 
     //if (level == 0)
     //{
-        //vs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
-        //fs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
+        //vs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
+        //fs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
     //}
     //else if (level == 1)
     //{
-        //vs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
-        //fs = textFileRead("./media/shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh");
+        //vs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
+        //fs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh");
     //}
     //else if (level == 2)
     //{
-        //vs = textFileRead("./media/shaders/terrain/terrain_map_mesa.vsh");
-        //fs = textFileRead("./media/shaders/terrain/terrain_map_mesa.fsh");
+        //vs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_mesa.vsh");
+        //fs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_mesa.fsh");
     //}
     //else
     //{
