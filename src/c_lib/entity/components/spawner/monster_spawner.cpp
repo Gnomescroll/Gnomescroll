@@ -27,13 +27,11 @@ struct Vec3 MonsterSpawnerComponent::get_spawn_point(
     spawn_point.x = sx;
     spawn_point.y = sy;
     spawn_point.z = t_map::get_highest_open_block(sx, sy, ceilf(spawned_object_height));
-
     while (object_collides_terrain(spawn_point, spawned_object_height, spawned_object_radius) &&
            spawn_point.z < t_map::map_dim.z)
     {
         spawn_point.z += 1;
     }
-    spawn_point.z = Agents::clamp_to_ground(spawned_object_radius, sx, sy, spawn_point.z);
     return spawn_point;
 }
 
