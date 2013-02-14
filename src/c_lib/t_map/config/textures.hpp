@@ -115,7 +115,7 @@ void blit_block_item_sheet()
 
         SDL_UnlockSurface(block_item_64_surface);
 
-        save_surface_to_png(block_item_64_surface, "screenshot/fbo_test_64.png");
+        save_surface_to_png(block_item_64_surface, SCREENSHOT_PATH "fbo_test_64.png");
 
         //Delete resources
         glDeleteTextures(1, &color_tex);
@@ -238,7 +238,7 @@ void blit_block_item_sheet()
 
         SDL_UnlockSurface(block_item_16_surface);
 
-        save_surface_to_png(block_item_16_surface, "screenshot/fbo_test_16.png");
+        save_surface_to_png(block_item_16_surface, SCREENSHOT_PATH "fbo_test_16.png");
 
         //Delete resources
         glDeleteTextures(1, &color_tex);
