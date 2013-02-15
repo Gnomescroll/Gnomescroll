@@ -98,7 +98,7 @@ void generate_city()
 
         printf("Starting to generate %d buildings... \n", actual_buildings);
 
-        for(int buildingnum=1; buildingnum <= actual_buildings; buildingnum++)
+        for (int buildingnum=1; buildingnum <= actual_buildings; buildingnum++)
         {
             prevx = cx;
             prevy = cy;
@@ -489,7 +489,7 @@ void create_roads(int size, CubeType steel, int x, int y, int ox, int oy, CubeTy
     int miny;
     int maxx;
     int maxy;
-    if(x < ox)
+    if (x < ox)
     {
         minx = x;
         maxx = ox;
@@ -499,7 +499,7 @@ void create_roads(int size, CubeType steel, int x, int y, int ox, int oy, CubeTy
         minx = ox;
         maxx = x;
     }
-    if(y  < oy)
+    if (y  < oy)
     {
         miny = y;
         maxy = oy;
@@ -509,21 +509,21 @@ void create_roads(int size, CubeType steel, int x, int y, int ox, int oy, CubeTy
         miny = oy;
         maxy = y;
     }
-    if(t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == rock || t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == regolith) prevheight = t_map::get_highest_open_block(minx, miny);
+    if (t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == rock || t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == regolith) prevheight = t_map::get_highest_open_block(minx, miny);
 
     //generate one part of the road, from the middle to one end
 
-    for(int i = minx; i <= minx + size; i++)
-    for(int j = miny; j <= miny + size; j++)
+    for (int i = minx; i <= minx + size; i++)
+    for (int j = miny; j <= miny + size; j++)
     {
-        if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
+        if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
         {
-            if(t_map::get_highest_open_block(i, j) > prevheight - 2 && t_map::get_highest_open_block(i, j) < prevheight + 2)
+            if (t_map::get_highest_open_block(i, j) > prevheight - 2 && t_map::get_highest_open_block(i, j) < prevheight + 2)
             {
                 t_map::set(i, j, t_map::get_highest_open_block(i, j), steel);
                 prevheight = t_map::get_highest_open_block(i, j);
             }
-            if(t_map::get_highest_open_block(i, j) <= prevheight - 2 && t_map::get_highest_open_block(i, j) >= prevheight + 2)
+            if (t_map::get_highest_open_block(i, j) <= prevheight - 2 && t_map::get_highest_open_block(i, j) >= prevheight + 2)
             {
                 t_map::set(i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16, steel);
                 prevheight = (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16;
@@ -538,17 +538,17 @@ void create_roads(int size, CubeType steel, int x, int y, int ox, int oy, CubeTy
 
     //now generate the second part of the road, between the other end and the middle
 
-    for(int j = miny + size + 1; j <= maxy; j++)
-    for(int i = minx + size + 1; i <= maxx; i++)
+    for (int j = miny + size + 1; j <= maxy; j++)
+    for (int i = minx + size + 1; i <= maxx; i++)
     {
-        if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
+        if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
         {
-            if(t_map::get_highest_open_block(i, j) > prevheight - 2 && t_map::get_highest_open_block(i, j) < prevheight + 2)
+            if (t_map::get_highest_open_block(i, j) > prevheight - 2 && t_map::get_highest_open_block(i, j) < prevheight + 2)
             {
                 t_map::set(i, j, t_map::get_highest_open_block(i, j), steel);
                 prevheight = t_map::get_highest_open_block(i, j);
             }
-            if(t_map::get_highest_open_block(i, j) <= prevheight - 2 && t_map::get_highest_open_block(i, j) >= prevheight + 2)
+            if (t_map::get_highest_open_block(i, j) <= prevheight - 2 && t_map::get_highest_open_block(i, j) >= prevheight + 2)
             {
                 t_map::set(i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16, steel);
                 prevheight = (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16;
@@ -833,13 +833,13 @@ bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith)
     for (int i = x; i <= maxx; i++)
     for (int j = y; j <= maxy; j++)
     {
-        if(t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != rock && t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != regolith)
+        if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != rock && t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != regolith)
         {
             printf("Block is neither rock nor regolith! \n");
             return 0;
         }
-        if(t_map::get_highest_open_block(i, j) > maxlevel) maxlevel = t_map::get_highest_open_block(i, j);
-        if(t_map::get_highest_open_block(i, j) < minlevel) minlevel = t_map::get_highest_open_block(i, j);
+        if (t_map::get_highest_open_block(i, j) > maxlevel) maxlevel = t_map::get_highest_open_block(i, j);
+        if (t_map::get_highest_open_block(i, j) < minlevel) minlevel = t_map::get_highest_open_block(i, j);
     }
     printf("minlevel = %d \nmaxlevel = %d \n", minlevel, maxlevel);
     if (minlevel + 40 < maxlevel) return 0;
@@ -858,7 +858,7 @@ int get_highest_area_block(int x, int y, int maxx, int maxy)
     for (int i = x; i <= maxx; i++)
     for (int j = y; j <= maxy; j++)
     {
-        if(t_map::get_highest_open_block(i, j) - 1 > maxh) maxh = t_map::get_highest_open_block(i, j) - 1;
+        if (t_map::get_highest_open_block(i, j) - 1 > maxh) maxh = t_map::get_highest_open_block(i, j) - 1;
     }
     return maxh;
 }

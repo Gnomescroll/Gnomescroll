@@ -54,7 +54,7 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
                 printf("packet sequencer: number error expected sequence %i, received %i\n",  index, np->packet_sequence_buffer[index%256].seq);
                 //printf("i=%i, seq=%i, seq256=%i\n", i, seq, seq%256);
             }
-            
+
             if (ps->ack == 0) { //dont ack same packet twice
                 //printf("Packet Acked: %i:%i t= %i ms\n", np->client_id,index, NP_time_delta1(np->packet_sequence_buffer[index%256].time));
                 ps->ack = 1;
@@ -128,8 +128,8 @@ void check_for_dropped_packets(class NetPeer* np) {
 
         ps = &np->packet_sequence_buffer[j];
 
-        if ( (ps->seq != -1) && (ps->ack == 0) ) {
-            if ( ps-> messages_n != 0 ) np->resend_packet(ps);  //retransmit on drop
+        if ((ps->seq != -1) && (ps->ack == 0) ) {
+            if (ps-> messages_n != 0 ) np->resend_packet(ps);  //retransmit on drop
             printf("***Packet Dropped: %i:%i ***\n", np->client_id, ps->seq);
             DROPPED_PACKETS++;
             //ps->ack = 0;
@@ -173,7 +173,7 @@ void check_for_dropped_packets(class NetPeer* np) {
 void init_sequence_numbers_out(class NetPeer* np) {
     int i;
     np->highest_packet_sequence_number = INIT_V_2;
-    for (i=0;i<256;i++) 
+    for (i=0;i<256;i++)
     {
         np->seqbuff[i].seq = -1;
         np->seqbuff[i].received = 0;
@@ -190,7 +190,7 @@ void set_ack_for_received_packet(class NetPeer* np, int seq) {
         //printf("new high seq: %i\n",seq);
     }
     */
-    if ( (seq > np->highest_packet_sequence_number) || ((seq < 256) && (np->highest_packet_sequence_number > 1984))) 
+    if ((seq > np->highest_packet_sequence_number) || ((seq < 256) && (np->highest_packet_sequence_number > 1984)))
     {
         np->highest_packet_sequence_number = seq;
     }

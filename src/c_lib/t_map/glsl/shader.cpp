@@ -54,7 +54,7 @@ void init_shaders()
 
 
 /*
-    if(!GLEW_EXT_multitexture)
+    if (!GLEW_EXT_multitexture)
     {
         printf("!!! Warning: GL_ARB_multitexture not supported. \n")
     }
@@ -87,7 +87,7 @@ void init_shaders()
         //true on error
         //if (shader_error_occured(map_shader.shader->shader) == true)
 
-        if(map_shader.shader->shader_valid == false)
+        if (map_shader.shader->shader_valid == false)
         {
             printf("!!! Default map shader failed. Setting backup shader \n");
             T_MAP_BACKUP_SHADER = 1;
@@ -329,13 +329,11 @@ void set_map_shader_0_compatibility(int level)
 {
 //#if 0
     //const int index = 0;    //shader index
-    //const int DEBUG1 = 1;
+    //const int debug = 1;
 
     //map_shader[index] = glCreateProgramObjectARB();
     //map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
     //map_frag_shader[index] = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-    //char *vs, *fs;
 
     //bool mesa = false;
     //if (Options::mesa_shader)
@@ -350,42 +348,50 @@ void set_map_shader_0_compatibility(int level)
     //}
     //if (mesa) level = 2;
 
-    //if (DEBUG1) printf("set_map_shader_0_compatibility: level %i \n", level);
+    //if (debug) printf("set_map_shader_0_compatibility: level %i \n", level);
 
+    //char* vs = NULL;
+    //char* fs = NULL;
     //if (level == 0)
     //{
-        //vs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh");
-        //fs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
+        //vs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh", &size);
+        //fs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh", &size);
     //}
     //else if (level == 1)
     //{
-        //vs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh");
-        //fs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh");
+        //vs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh", &size);
+        //fs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh", &size);
     //}
     //else if (level == 2)
     //{
-        //vs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_mesa.vsh");
-        //fs = textFileRead(MEDIA_PATH "shaders/terrain/terrain_map_mesa.fsh");
+        //vs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_mesa.vsh", &size);
+        //fs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_mesa.fsh", &size);
     //}
     //else
     //{
         //GS_ASSERT(false);
     //}
+    //IF_ASSERT(vs == NULL || fs == NULL)
+    //{
+        //free(vs);
+        //free(fs);
+        //return;
+    //}
 
     //glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
     //glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
     //glCompileShaderARB(map_vert_shader[index]);
-    //if (DEBUG1) printShaderInfoLog(map_vert_shader[index]);
+    //if (debug) printShaderInfoLog(map_vert_shader[index]);
 
     //glCompileShaderARB(map_frag_shader[index]);
-    //if (DEBUG1) printShaderInfoLog(map_frag_shader[index]);
+    //if (debug) printShaderInfoLog(map_frag_shader[index]);
 
     //glAttachObjectARB(map_shader[index], map_vert_shader[index]);
     //glAttachObjectARB(map_shader[index], map_frag_shader[index]);
 
     //glLinkProgramARB(map_shader[index]);
 
-    //if (DEBUG1) printProgramInfoLog(map_shader[index]);
+    //if (debug) printProgramInfoLog(map_shader[index]);
 
     ////uniforms
 

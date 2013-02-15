@@ -39,7 +39,7 @@ class MAP_CHUNK_SUBSCRIPTION
     void add_subscriber(ClientID client_id, int chunk_alias, int client_map_version)
     {
         //check that they are not already subscribed
-        for(int i=0; i < subscriber_num; i++) GS_ASSERT(subscribers[i] != client_id)
+        for (int i=0; i < subscriber_num; i++) GS_ASSERT(subscribers[i] != client_id)
 
         subscribers[subscriber_num] = (unsigned short)client_id;
         chunk_aliases[subscriber_num] = (unsigned short)chunk_alias;
@@ -70,7 +70,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.action = action;
 
         //printf("send_block_action: cube_type= %d action= %d, x,y,z= %d %d %d \n", cube_type, action, x,y,z);
-        for(int i=0; i < subscriber_num; i++)
+        for (int i=0; i < subscriber_num; i++)
         {
             msg.sendToClient((ClientID)subscribers[i]);
         }
@@ -89,7 +89,7 @@ class MAP_CHUNK_SUBSCRIPTION
 
         //printf("send_set_block: cube_type= %d, x,y,z= %d %d %d \n", cube_type, x,y,z);
 
-        for(int i=0; i < subscriber_num; i++)
+        for (int i=0; i < subscriber_num; i++)
         {
             msg.sendToClient((ClientID)subscribers[i]);
         }
@@ -107,7 +107,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.cube_type = cube_type;
         msg.palette = palette;
 
-        for(int i=0; i < subscriber_num; i++)
+        for (int i=0; i < subscriber_num; i++)
         {
             msg.sendToClient((ClientID)subscribers[i]);
         }
@@ -125,7 +125,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.container_type = container_type;
         msg.container_id = container_id;
 
-        for(int i=0; i < subscriber_num; i++)
+        for (int i=0; i < subscriber_num; i++)
         {
             msg.sendToClient((ClientID)subscribers[i]);
         }
@@ -137,7 +137,7 @@ class MAP_CHUNK_SUBSCRIPTION
         msg.chunk_index = chunk_index;
         msg.container_id = container_id;
 
-        for(int i=0; i < subscriber_num; i++)
+        for (int i=0; i < subscriber_num; i++)
         {
             msg.sendToClient((ClientID)subscribers[i]);
         }
@@ -168,8 +168,8 @@ class Terrain_map_subscription
 
         chunk = new MAP_CHUNK_SUBSCRIPTION[xchunk_dim*ychunk_dim];
 
-        for(int x=0; x < xchunk_dim; x++)
-            for(int y=0; y < ychunk_dim; y++)
+        for (int x=0; x < xchunk_dim; x++)
+            for (int y=0; y < ychunk_dim; y++)
                 chunk[y*xchunk_dim+x].chunk_index = y*xchunk_dim+x;
     }
 

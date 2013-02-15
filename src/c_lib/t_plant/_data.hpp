@@ -1,11 +1,10 @@
 #pragma once
 
-
 namespace t_plant
 {
 
-    //typedef void (*fptr)();
-    typedef void (*fptr_void)(void*);
+//typedef void (*fptr)();
+typedef void (*fptr_void)(void*);
 
 /*
     This Stores a list of function pointers by name and object type
@@ -13,24 +12,25 @@ namespace t_plant
 */
 class PlantCallbacks
 {
-    static const int MAX_CALLBACKS = 64;
+    private:
+        static const int MAX_CALLBACKS = 64;
 
-    struct PlantCallback
-    {
-        int type_id;        //type of object
-        fptr_void func_ptr; //function pointer for callback
-        char* name;     //name of callback
-    };
+        struct PlantCallback
+        {
+            int type_id;        //type of object
+            fptr_void func_ptr; //function pointer for callback
+            char* name;     //name of callback
+        };
 
-    struct PlantCallback ca[MAX_CALLBACKS];     //callback array
-    int cn;                                     //callback index
+        struct PlantCallback ca[MAX_CALLBACKS];     //callback array
+        int cn;                                     //callback index
 
     public:
 
     PlantCallbacks()
     {
         cn = 0;
-        for(int i=0;i<MAX_CALLBACKS;i++)
+        for (int i=0;i<MAX_CALLBACKS;i++)
         {
             ca[i].type_id = -1;
             ca[i].func_ptr  = NULL;
@@ -45,9 +45,9 @@ class PlantCallbacks
 
     fptr_void get_callback(int type_id, const char* callback_name)
     {
-        for(int i=0; i<cn; i++)
+        for (int i=0; i<cn; i++)
         {
-            if(ca[i].type_id == type_id
+            if (ca[i].type_id == type_id
                 && strcmp(ca[i].name, callback_name) == 0 )
             {
                 return ca[i].func_ptr;
@@ -70,27 +70,26 @@ class PlantCallbacks
 
 class PlantCallbacks plant_callbacks;
 
-
 class PlantTypeArray
 {
     public:
 
-    struct PlantTypeStruct
-    {
-        //int type_id;
-        int struct_size;
-        char* type_name;
-    };
+        struct PlantTypeStruct
+        {
+            //int type_id;
+            int struct_size;
+            char* type_name;
+        };
 
-    static const int PLANT_TYPE_MAX = 32;
-    struct PlantTypeStruct* array;
-    int index;
+        static const int PLANT_TYPE_MAX = 32;
+        struct PlantTypeStruct* array;
+        int index;
 
     PlantTypeArray()
     {
         //index = 0;
         array = new struct PlantTypeStruct[PLANT_TYPE_MAX];
-        for(int i=0; i<PLANT_TYPE_MAX; i++)
+        for (int i=0; i<PLANT_TYPE_MAX; i++)
         {
             array[i].struct_size = 0;
             array[i].type_name = NULL;
@@ -104,9 +103,9 @@ class PlantTypeArray
 
     int get_type_id(const char* type_name)
     {
-        for(int i=0; i<PLANT_TYPE_MAX; i++)
+        for (int i=0; i<PLANT_TYPE_MAX; i++)
         {
-            if(strcmp(array[i].type_name, type_name) ==0)
+            if (strcmp(array[i].type_name, type_name) ==0)
                 return i;
         }
         printf("ERROR: PlantTypeArray,  get_type_id, plant %s does not exist \n", type_name);
@@ -123,21 +122,21 @@ class PlantArray
 {
     public:
 
-    struct PlantStruct
-    {
-        int type_id;
-        void* data_ptr;
-    };
+        struct PlantStruct
+        {
+            int type_id;
+            void* data_ptr;
+        };
 
-    static const int PLANT_ARRAY_MAX = 1024;
-    struct PlantStruct* array;
-    int index;
+        static const int PLANT_ARRAY_MAX = 1024;
+        struct PlantStruct* array;
+        int index;
 
     PlantArray()
     {
         index = 0;
         array = new struct PlantStruct[PLANT_ARRAY_MAX];
-        for(int i=0; i<PLANT_ARRAY_MAX; i++)
+        for (int i=0; i<PLANT_ARRAY_MAX; i++)
         {
             array[i].type_id  = -1;
             array[i].data_ptr = NULL;
@@ -146,9 +145,9 @@ class PlantArray
 
     ~PlantArray()
     {
-        for(int i=0; i<PLANT_ARRAY_MAX; i++)
+        for (int i=0; i<PLANT_ARRAY_MAX; i++)
         {
-            if(i<index)
+            if (i<index)
             {
                 free(array[i].data_ptr);
             }
@@ -163,8 +162,7 @@ class PlantArray
 
     int element_create(int type_id)
     {
-
-        if(index >= PLANT_ARRAY_MAX)
+        if (index >= PLANT_ARRAY_MAX)
         {
             printf("Warning: PlantArray, element_creat failed, array full \n");
             return -1;
@@ -174,7 +172,7 @@ class PlantArray
         GS_ASSERT(struct_size != 0);
 
         fptr_void init_func_ptr = plant_callbacks.get_callback(type_id, "init");
-        if(init_func_ptr == NULL)
+        if (init_func_ptr == NULL)
         {
             GS_ASSERT(false);
             return -1;
@@ -199,7 +197,7 @@ class PlantArray
 
         int type_id = array[element_id].type_id;
         fptr_void teardown_func_ptr = plant_callbacks.get_callback(type_id, "teardown");
-        if(teardown_func_ptr == NULL)
+        if (teardown_func_ptr == NULL)
         {
             GS_ASSERT(false);
             return ;

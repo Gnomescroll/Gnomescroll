@@ -2,8 +2,8 @@
  *  matrix -
  *      Use 4x4 matricies to process color images.
  */
-#include "math.h"
-#include "stdio.h"
+#include <math.h>
+#include <stdio.h>
 
 #define RLUM    (0.3086)
 #define GLUM    (0.6094)

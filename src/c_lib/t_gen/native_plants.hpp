@@ -38,7 +38,7 @@ void place_native_plants()
     while(plant_num < plants_max)
     {
 
-        if(tries > 32)
+        if (tries > 32)
         {
             printf("WARNING t_gen::place_native_plants: max tries reached \n");
             break;
@@ -50,30 +50,30 @@ void place_native_plants()
         int bid;
         int pbid = 0;
 
-        for(int z=127; z>0; z--)
+        for (int z=127; z>0; z--)
         {
             bid = t_map::get(x,y,z);
 
-            if(bid == regolith)
+            if (bid == regolith)
             {
-                if(pbid != 0)
+                if (pbid != 0)
                 {
                     tries++;
                     break;
                 }
                 bool ret = false;
 
-                if(rand()%4 != 0)
+                if (rand()%4 != 0)
                 {
                     int v = rand()%4;
-                    if(v==0) ret = t_mech::create_mech(x,y,z+1, plant_1);
-                    if(v==1) ret = t_mech::create_mech(x,y,z+1, plant_1);
-                    if(v==2) ret = t_mech::create_mech(x,y,z+1, plant_2);
-                    if(v==3) ret = t_mech::create_mech(x,y,z+1, plant_3);
+                    if (v==0) ret = t_mech::create_mech(x,y,z+1, plant_1);
+                    if (v==1) ret = t_mech::create_mech(x,y,z+1, plant_1);
+                    if (v==2) ret = t_mech::create_mech(x,y,z+1, plant_2);
+                    if (v==3) ret = t_mech::create_mech(x,y,z+1, plant_3);
                 }
                 else
                 {
-                    if(rand()%4 != 0)
+                    if (rand()%4 != 0)
                     {
                         ret = t_mech::create_mech(x,y,z+1, plant_4);
                     }
@@ -83,7 +83,7 @@ void place_native_plants()
                     }
                 }
 
-                if(ret == false)
+                if (ret == false)
                 {
                     tries++;
                     break;

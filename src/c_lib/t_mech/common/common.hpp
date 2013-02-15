@@ -39,7 +39,7 @@ typedef enum
 } MechBehaviorType;
 
 //instance
-struct MECH
+struct Mech
 {
     int id; //-1 if not in use
 

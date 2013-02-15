@@ -355,7 +355,7 @@ void AgentList::objects_in_cone(float x, float y, float z, float vx, float vy, f
     this->n_filtered = num;
 }
 
-Agent* nearest_agent_in_range(const Vec3 position, const float radius)
+Agent* nearest_agent_in_range(const struct Vec3& position, const float radius)
 {
     using Agents::agent_list;
     int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
@@ -364,7 +364,7 @@ Agent* nearest_agent_in_range(const Vec3 position, const float radius)
     return agent_list->filtered_objects[0];
 }
 
-Agent* nearest_living_agent_in_range(const Vec3 position, const float radius)
+Agent* nearest_living_agent_in_range(const struct Vec3& position, const float radius)
 {
     using Agents::agent_list;
     int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
@@ -383,7 +383,7 @@ Agent* nearest_living_agent_in_range(const Vec3 position, const float radius)
     return agent;
 }
 
-Agent* nearest_living_agent_model_in_range(const Vec3 position, const float radius)
+Agent* nearest_living_agent_model_in_range(const struct Vec3& position, const float radius)
 {
     using Agents::agent_list;
     int n = agent_list->object_models_within_sphere(position.x, position.y, position.z, radius);
@@ -402,7 +402,7 @@ Agent* nearest_living_agent_model_in_range(const Vec3 position, const float radi
     return agent;
 }
 
-Agent* random_agent_in_range(const Vec3 position, const float radius)
+Agent* random_agent_in_range(const struct Vec3& position, const float radius)
 {
     using Agents::agent_list;
     // find nearby players

@@ -26,32 +26,27 @@ class VertexElementList1
 {
     public:
 
-    const static unsigned int stride = sizeof(struct vertexElement1);
+        const static unsigned int stride = sizeof(struct vertexElement1);
 
-    struct vertexElement1* vlist;
-    int vlist_index;
-    int vlist_max;
+        struct vertexElement1* vlist;
+        int vlist_index;
+        int vlist_max;
 
-    GLuint VBO;
-    unsigned int vertex_number;
+        GLuint VBO;
+        unsigned int vertex_number;
 
-    VertexElementList1()
+    VertexElementList1() :
+        vlist(NULL), vlist_index(0), vlist_max(1024), VBO(0), vertex_number(0)
     {
-        VBO = 0;
-        vertex_number = 0;
-
-        vlist_index = 0;
-        vlist_max = 1024;
-        vlist = (vertexElement1*) malloc(vlist_max*sizeof(struct vertexElement1));
+        this->vlist = (vertexElement1*)malloc(vlist_max*sizeof(struct vertexElement1));
     }
 
     ~VertexElementList1()
     {
-        if (this->vlist != NULL) free(this->vlist);
+        free(this->vlist);
     }
 
-    __attribute__((always_inline))
-    inline void push_vertex(struct Vec3 pos, float tx, float ty)
+    ALWAYS_INLINE void push_vertex(struct Vec3 pos, float tx, float ty)
      {
         vlist[vlist_index].pos = pos;
         vlist[vlist_index].tx = tx;
@@ -59,35 +54,35 @@ class VertexElementList1
 
         vlist_index++;
 
-        if(vlist_index >= vlist_max)
+        if (vlist_index >= vlist_max)
         {
             vlist_max *= 2;
-            vlist = (vertexElement1*) realloc(vlist, vlist_max*sizeof(struct vertexElement1));
+            vlist = (vertexElement1*)realloc(vlist, vlist_max*sizeof(struct vertexElement1));
         }
      }
 
     //upload data to card for drawing
     void buffer()
     {
-        if(VBO == 0) glGenBuffers(1, &VBO);
+        if (this->VBO == 0) glGenBuffers(1, &this->VBO);
 
-        if(vlist_index != 0)
+        if (vlist_index != 0)
         {
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
-            glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+            glBufferData(GL_ARRAY_BUFFER, this->vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, this->vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
         }
         else
         {
-            if(vertex_number > 0)
+            if (vertex_number > 0)
             {
-                glBindBuffer(GL_ARRAY_BUFFER, VBO);
+                glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
                 glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
             }
         }
 
-        vertex_number = vlist_index;
-        vlist_index = 0;
+        this->vertex_number = vlist_index;
+        this->vlist_index = 0;
     }
 
 };
@@ -121,12 +116,12 @@ class VertexElementList
         vlist_index(0), vlist_max(1024),
         VBO(0), vertex_number(0)
     {
-        this->vlist = (VertexElement*) malloc(this->vlist_max*sizeof(VertexElement));
+        this->vlist = (VertexElement*)malloc(this->vlist_max*sizeof(VertexElement));
     }
 
     ~VertexElementList()
     {
-        if (this->vlist != NULL) free(this->vlist);
+        free(this->vlist);
     }
 
     ALWAYS_INLINE

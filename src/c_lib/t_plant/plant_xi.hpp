@@ -3,12 +3,10 @@
 #include <t_map/_interface.hpp>
 #include <t_map/t_properties.hpp>
 #include <t_map/common/map_element.hpp>
-
 #include <t_plant/block_list.hpp>
 
 namespace t_plant
 {
-
 
 struct PlantXiStruct
 {
@@ -186,7 +184,7 @@ void plant_xi_tick(struct PlantXiStruct &m)
             {
                 if (rand()% 25 == 0)
                 {
-                    struct t_map::MAP_ELEMENT e;
+                    struct t_map::MapElement e;
                     e = t_map::get_element(x,y,z);
 
                     if (e.palette == 0)
@@ -207,7 +205,7 @@ void plant_xi_tick(struct PlantXiStruct &m)
                 if (rand()%60 != 0)
                     continue;
 
-                struct t_map::MAP_ELEMENT e;
+                struct t_map::MapElement e;
                 e = t_map::get_element(x,y,z);
 
                 if (e.palette == 0)
@@ -251,4 +249,4 @@ void plant_xi_tick(struct PlantXiStruct &m)
     }
 */
 
-}   //end t_plant
+}   // t_plant

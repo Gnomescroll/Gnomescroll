@@ -452,7 +452,7 @@ void end_smelting_recipe()
     {
         if (smelting_recipe_array[i].reagent_num != _sr.reagent_num) continue;
         int j=0;
-        for(; j<smelting_recipe_array[i].reagent_num; j++)
+        for (; j<smelting_recipe_array[i].reagent_num; j++)
             if (smelting_recipe_array[i].reagent[j] != _sr.reagent[j])
                 break;
         GS_ASSERT_ABORT(j < smelting_recipe_array[i].reagent_num);

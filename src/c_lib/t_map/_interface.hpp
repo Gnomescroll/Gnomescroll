@@ -13,14 +13,14 @@ void init_packets();
 ItemContainerID get_block_item_container(int x, int y, int z);
 bool get_container_location(ItemContainerID container_id, int position[3]); // returns false is container not found
 
-CubeType            get(int x, int y, int z);
-int                 get_block_damage(int x, int y, int z);
-struct MAP_ELEMENT  get_element(int x, int y, int z);
+CubeType get(int x, int y, int z);
+int get_block_damage(int x, int y, int z);
+struct MapElement get_element(int x, int y, int z);
 
-CubeType            set(int x, int y, int z, CubeType cube_type);
-void                set_fast(int x, int y, int z, CubeType cube_type);
-void                set_palette(int x, int y, int z, int palette);
-void                set_element(int x, int y, int z, struct MAP_ELEMENT e);
+CubeType set(int x, int y, int z, CubeType cube_type);
+void set_fast(int x, int y, int z, CubeType cube_type);
+void set_palette(int x, int y, int z, int palette);
+void set_element(int x, int y, int z, struct MapElement e);
 
 void _sunlight_update_core();   //update sunlight
 void _envlight_update_core();   //update envlight
@@ -38,12 +38,12 @@ inline int get_open_block_below(int x, int y, int z);
 inline int get_nearest_surface_block(int x, int y, int z);
 inline int get_nearest_surface_block(int x, int y, int z, int n);
 
-inline bool position_is_loaded(int x, int y) __attribute__((always_inline));
+ALWAYS_INLINE bool position_is_loaded(int x, int y);
 
 bool block_can_be_placed(int x, int y, int z, CubeType cube_type);
 
 #if DC_CLIENT
-extern class Vbo_map* vbo_map;
+extern class VBOMap* vbo_map;
 
 void init_for_draw();
 void init_shaders();
@@ -55,7 +55,7 @@ void draw_map();
 void draw_map_compatibility();
 void update_map();
 
-void control_node_render_init(class CONTROL_NODE_LIST* _cnl);   //internal method
+void control_node_render_init(class ControlNodeList* _cnl);   //internal method
 void control_node_render_teardown();    //internal method
 
 void control_node_render_update();

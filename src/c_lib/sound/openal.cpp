@@ -36,7 +36,7 @@ class GS_SoundBuffer
         this->sources[this->current_sources++] = source_id;
         return true;
     }
-    
+
     bool can_add_source(int source_id)
     {
         IF_ASSERT(source_id < 0 || source_id >= MAX_SOURCES)
@@ -44,7 +44,7 @@ class GS_SoundBuffer
             printf("can't add %d because invalid id\n", source_id);
             return false;
         }
-        
+
         for (int i=0; i<this->current_sources; i++)
         {
             if (this->sources[i] == source_id)
@@ -206,7 +206,7 @@ void init()
     buffers = (ALuint*)malloc(sizeof(ALuint) * MAX_BUFFERS);
     memset(buffers, -1, sizeof(ALuint));
     sound_buffers = (GS_SoundBuffer**)calloc(MAX_SOUNDS, sizeof(GS_SoundBuffer*));
-    
+
     Sound::init_wav_buffers();
 
     const char* default_device = enumerate_devices();
@@ -234,7 +234,7 @@ void init()
     }
 
     context = alcCreateContext(device, NULL);
-    alcMakeContextCurrent(context);  
+    alcMakeContextCurrent(context);
 
     // DONT alGetError() before call to alcMakeContextCurrent -- will return error!
     if (checkError())
@@ -245,7 +245,7 @@ void init()
         return;
     }
 
-    // Check for EAX 2.0 support 
+    // Check for EAX 2.0 support
     ALboolean g_bEAX = alIsExtensionPresent("EAX2.0");
     if (g_bEAX)
         printf("EAX is present\n");
@@ -268,7 +268,7 @@ void init()
     buffers_inited = true;
 
     // init AL sources
-    alGenSources(MAX_SOURCES, sources); 
+    alGenSources(MAX_SOURCES, sources);
     if (checkError())
     {
         close();
@@ -300,10 +300,10 @@ void init()
         enabled = false;
         return;
     }
-    
+
     // init active sources buffer
     active_sources = new GS_SoundSource[MAX_SOURCES];
-    
+
     enabled = true;
     inited = true;
 }
@@ -323,7 +323,7 @@ void close()
         checkError();
     }
 
-    alcMakeContextCurrent(NULL); 
+    alcMakeContextCurrent(NULL);
     if (context != NULL)
     {
         alcDestroyContext(context);
@@ -389,8 +389,8 @@ void load_sound(Soundfile* snd)
         }
     }
 
-    // we havent loaded this file into an OpenAL buffer yet. do it now, then create a new GS_SoundBuffer 
-        
+    // we havent loaded this file into an OpenAL buffer yet. do it now, then create a new GS_SoundBuffer
+
     if (buffer_index == MAX_BUFFERS)
     {
         printf("ERROR OpenALSound::load_sound -- no AL buffers available\n");
@@ -398,7 +398,7 @@ void load_sound(Soundfile* snd)
     }
     unsigned char* buffer = NULL;
 
-    // Load test.wav 
+    // Load test.wav
     int data_id = Sound::load_wav_file(snd->filename, &buffer);
     if (data_id < 0)
     {
@@ -423,7 +423,7 @@ void load_sound(Soundfile* snd)
     ALenum fmt = Sound::get_openal_wav_format(data);
     if (fmt == AL_FORMAT_STEREO8 || fmt == AL_FORMAT_STEREO16)  // stereo samples wont be attenuated in OpenAL
         printf("WARNING: audio file %s is in stereo format. 3D sound will not be applied for this sample.\n", snd->filename);
-        
+
     // put the PCM data into the alBuffer
     // (this will copy the buffer, so we must free our PCM buffer)
     alBufferData(buffers[buffer_index], fmt, buffer, data->size, data->sample_rate);
@@ -502,7 +502,7 @@ int set_source_properties(int source_id, const class Soundfile* snd, const class
     float gain = snd->gain;
     if (active_source != NULL)
         gain *= active_source->gain_multiplier;
-    
+
     alSourcef(sources[source_id], AL_PITCH, pitch);
     alSourcef(sources[source_id], AL_GAIN, gain);
     alSourcef(sources[source_id], AL_MAX_DISTANCE, snd->max_distance);
@@ -569,7 +569,7 @@ static bool can_add_to_sources(int soundfile_id, int source_id)
         printf("no free sources\n");
         return false;
     }
-    
+
     bool can = sound_buffers[soundfile_id]->can_add_source(source_id);
     if (!can)
     {
@@ -589,7 +589,7 @@ static int play_sound(int source_id,
 
     if (source_id >= MAX_SOURCES || source_id < 0)
         return -1;
-        
+
     // set source properties
     if (set_source_properties(source_id, sound_buffer->metadata, active_source))
         return -1;
@@ -599,7 +599,7 @@ static int play_sound(int source_id,
         return -1;
 
     // Attach buffer 0 to source
-    alSourcei(sources[source_id], AL_BUFFER, buffers[sound_buffer->buffer_id]); 
+    alSourcei(sources[source_id], AL_BUFFER, buffers[sound_buffer->buffer_id]);
     if (checkError())
         return -1;
 
@@ -607,7 +607,7 @@ static int play_sound(int source_id,
     alSourcePlay(sources[source_id]);
     if (checkError())
         return -1;
-    
+
     return source_id;
 }
 
@@ -654,11 +654,11 @@ static int play_2d_sound(class GS_SoundBuffer* sound_buffer, float gain_multipli
 int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled) return -1;
-    
+
     // lookup buffer from file
     class GS_SoundBuffer* sound_buffer = get_sound_buffer_from_event_name(event_name);
     GS_ASSERT(sound_buffers == NULL || sound_buffer != NULL);
-    
+
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
     if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
@@ -730,7 +730,7 @@ int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float ga
     if (sound_buffer == NULL) return -1;
     if (sound_buffer->buffer_id < 0) return -1;
     if (sound_buffer->current_sources >= sound_buffer->max_sources) return -1;
-        
+
     return play_3d_sound(sound_buffer, p, v, gain_multiplier, pitch_multiplier);
 }
 
@@ -755,12 +755,12 @@ int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
 void update()
 {
     if (!enabled) return;
-    
+
     IF_ASSERT(!inited) return;
     IF_ASSERT(active_sources == NULL) return;
     IF_ASSERT(sound_buffers == NULL) return;
     IF_ASSERT(sources == NULL) return;
-    
+
     // get listener state
     ALfloat x,y,z;
     ALfloat vx,vy,vz;
@@ -795,7 +795,7 @@ void update()
             if (active_source->active) sources_in_use--;
             active_source->active = false;
         }
-        
+
     }
 
     int rm_sources[MAX_SOURCES] = {-1};
@@ -814,7 +814,7 @@ void update()
             if (!active_sources[gs_source_id].active)
                 rm_sources[rm_sources_index++] = j;
         }
-        
+
         for (int i=0; i<rm_sources_index; i++)
             b->remove_source(rm_sources[i]);
 
@@ -826,7 +826,7 @@ void stop_sound(int sound_id)
 {
     IF_ASSERT(sound_id < 0) return;
     IF_ASSERT(sources == NULL) return;
-    
+
     alSourceStop(sources[sound_id]);
     checkError();
 }
@@ -839,17 +839,17 @@ int test()
     const ALsizei MAX_SOURCES = 1;
     ALuint sources[MAX_SOURCES];
 
-    alGenBuffers(MAX_BUFFERS, buffers); 
+    alGenBuffers(MAX_BUFFERS, buffers);
     if (checkError())
     {   printf("alGenBuffers:\n");
         return 1;
     }
 
-    // Generate Sources 
-    alGenSources(MAX_SOURCES, sources); 
+    // Generate Sources
+    alGenSources(MAX_SOURCES, sources);
     if (checkError())
     {   printf("alGenSources:\n");
-        alDeleteBuffers(MAX_BUFFERS, buffers); 
+        alDeleteBuffers(MAX_BUFFERS, buffers);
         return 1;
     }
 
@@ -864,7 +864,7 @@ int test()
     unsigned char* buffer = NULL;
 
     char event_name[] = MEDIA_PATH "sound/wav/plasma_grenade_explode.wav";
-    // Load test.wav 
+    // Load test.wav
     int data_id = Sound::load_wav_file(event_name, &buffer);
     if (data_id < 0)
     {
@@ -892,28 +892,31 @@ int test()
     // (this will copy the buffer, so we must free our char buffer)
     alBufferData(buffers[0], fmt, buffer, data->size, data->sample_rate);
     if (checkError())
-    {   printf("alBufferData:\n");
-        alDeleteBuffers(MAX_BUFFERS, buffers); 
+    {
+        printf("alBufferData:\n");
+        alDeleteBuffers(MAX_BUFFERS, buffers);
         free(buffer);
         return 1;
     }
 
     free(buffer);
- 
-    // Attach buffer 0 to source 
-    alSourcei(sources[0], AL_BUFFER, buffers[0]); 
+    buffer = NULL;
+
+    // Attach buffer 0 to source
+    alSourcei(sources[0], AL_BUFFER, buffers[0]);
     if (checkError())
-    {   printf("alSourcei: BUFFER\n");
-        alDeleteBuffers(MAX_BUFFERS, buffers); 
+    {
+        printf("alSourcei: BUFFER\n");
+        alDeleteBuffers(MAX_BUFFERS, buffers);
         return 1;
     }
 
     //play
     alSourcePlay(sources[0]);
     if (checkError())
-    {   printf("alSourcePlay:\n");
-        alDeleteBuffers(MAX_BUFFERS, buffers); 
-        free(buffer);
+    {
+        printf("alSourcePlay:\n");
+        alDeleteBuffers(MAX_BUFFERS, buffers);
         return 1;
     }
 

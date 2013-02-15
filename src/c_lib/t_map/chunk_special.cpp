@@ -9,22 +9,22 @@
 namespace t_map
 {
 
-bool CHUNK_ITEM_CONTAINER::remove_index(int i)
+bool ChunkItemContainer::remove_index(int i)
 {
     #if DC_SERVER
     map_history->container_block_delete(chunk_index, iba[i].container_id);
     ItemContainer::container_block_destroyed(iba[i].container_id, iba[i].x, iba[i].y, iba[i].z);
     #endif
-    
+
     return this->_remove(i);
 }
 
-bool CHUNK_ITEM_CONTAINER::remove(ItemContainerID container_id)
+bool ChunkItemContainer::remove(ItemContainerID container_id)
 {
     // find container
     int i;
-    for(i=0; i<iban; i++)
-        if(container_id == iba[i].container_id)
+    for (i=0; i<iban; i++)
+        if (container_id == iba[i].container_id)
             break;
     GS_ASSERT(i < iban);   // did not find
     if (i >= iban) return false;
@@ -32,7 +32,7 @@ bool CHUNK_ITEM_CONTAINER::remove(ItemContainerID container_id)
     return this->remove_index(i);
 }
 
-bool CHUNK_ITEM_CONTAINER::_remove(int index)
+bool ChunkItemContainer::_remove(int index)
 {
     IF_ASSERT(index >= ibam) return false;
     iban--;
@@ -44,27 +44,27 @@ bool CHUNK_ITEM_CONTAINER::_remove(int index)
     // And should not be at this layer
     // But at the time of this writing, chunk versioning only matters
     // when an item container block is added/removed from the map
-    // (for the serializer) 
+    // (for the serializer)
     main_map->chunk[this->chunk_index]->increment_version();
     #endif
     return true;
 }
 
-bool CHUNK_ITEM_CONTAINER::remove(int x, int y, int z)
+bool ChunkItemContainer::remove(int x, int y, int z)
 {
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     // find container
     int i;
-    for(i=0; i<iban; i++)
-        if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
+    for (i=0; i<iban; i++)
+        if (x == iba[i].x && y == iba[i].y && z == iba[i].z)
             break;
     IF_ASSERT(i >= iban) return false;
     return this->remove_index(i);
 }
 
-bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id)
+bool ChunkItemContainer::add(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
 
@@ -73,7 +73,7 @@ bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
 
     IF_ASSERT(container_type == NULL_CONTAINER_TYPE || container_id == NULL_CONTAINER) return false;
     IF_ASSERT(ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) return false;
-    
+
     if (iban == ibam)
     {
         int o_ibam = ibam;
@@ -83,7 +83,7 @@ bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
         IF_ASSERT(iban >= ibam) return false;
         if (o_ibam != ibam)
         {
-            struct inventory_block* new_iba = (struct inventory_block*)realloc(iba, ibam*sizeof(struct inventory_block));
+            struct InventoryBlock* new_iba = (struct InventoryBlock*)realloc(iba, ibam*sizeof(struct InventoryBlock));
             IF_ASSERT(new_iba == NULL)
             {   // error handling
                 free(iba);
@@ -108,7 +108,7 @@ bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
     // And should not be at this layer
     // But at the time of this writing, chunk versioning only matters
     // when an item container block is added/removed from the map
-    // (for the serializer) 
+    // (for the serializer)
     main_map->chunk[this->chunk_index]->increment_version();
 
     map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
@@ -123,13 +123,13 @@ bool CHUNK_ITEM_CONTAINER::add(int x, int y, int z, ItemContainerType container_
 
 
 #if DC_SERVER
-void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(ClientID client_id)
+void ChunkItemContainer::send_chunk_item_containers(ClientID client_id)
 {
     class container_block_chunk_reset_StoC reset_msg;
     reset_msg.chunk_index = chunk_index;
     reset_msg.sendToClient(client_id);
 
-    for(int i=0; i < iban; i++)
+    for (int i=0; i < iban; i++)
     {
         class container_block_create_StoC msg;
         msg.x = iba[i].x;
@@ -144,7 +144,7 @@ void CHUNK_ITEM_CONTAINER::send_chunk_item_containers(ClientID client_id)
     }
 }
 
-void CHUNK_ITEM_CONTAINER::send_reset_chunk_item_containers(ClientID client_id)
+void ChunkItemContainer::send_reset_chunk_item_containers(ClientID client_id)
 {
     class container_block_chunk_reset_StoC msg;
     msg.chunk_index = chunk_index;

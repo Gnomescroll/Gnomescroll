@@ -106,8 +106,8 @@ void CubeSelector::draw()
     glBegin(GL_QUADS);
 
     // draw sprites
-    for(int i=0; i<this->n_x; i++)
-    for(int j=0; j<this->n_y; j++)
+    for (int i=0; i<this->n_x; i++)
+    for (int j=0; j<this->n_y; j++)
     {
         CubeType cube_type = cubes[i+8*j].cube_type;
         if (cube_type == NULL_CUBE) continue;
@@ -237,7 +237,7 @@ CubeSelector::CubeSelector() :
     pos_x(0), pos_y(0)
 {
     this->cubes = (struct CubeSelectElement*)malloc(MAX_CUBES * sizeof(struct CubeSelectElement));
-    for(int i=0; i<MAX_CUBES; i++)
+    for (int i=0; i<MAX_CUBES; i++)
     {
         cubes[i].cube_type = NULL_CUBE;
         cubes[i].tex_id = NULL_SPRITE;

@@ -13,21 +13,16 @@ Font* font = NULL;
 
 void Font::load_font_png()
 {
-
-    //char path[strlen(font_path) + strlen(data.png) + 1];
     MALLOX(char, path, strlen(font_path) + strlen(data.png) + 1); //type, name, size
-
     sprintf(path, "%s%s", font_path, data.png);
-
     SDL_Surface *surface = IMG_Load(path);
-
-    if(!surface)
+    IF_ASSERT(surface == NULL)
     {
         printf("Failed to IMG_Load surface %s. Error: %s\n", path, IMG_GetError());
         return;
     }
 
-    if(surface->format->BytesPerPixel != 4)
+    IF_ASSERT(surface->format->BytesPerPixel != 4)
     {
         printf("surface Image File: image is missing alpha channel \n");
         this->alpha = 0;
@@ -51,28 +46,17 @@ void Font::load_font_png()
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
     glDisable(GL_TEXTURE_2D);
-
     SDL_FreeSurface(surface);
-
-    //printf("Loaded surface %s\n", data.png);
 }
 
 void Font::parse_font_file()
 {
     size_t size = 0;
-    //char path[strlen(font_path) + strlen(data.file) + 1];
     MALLOX(char, path, strlen(font_path) + strlen(data.file) + 1); //type, name, size
-
     sprintf(path, "%s%s", font_path, data.file);
     char* buff = read_file_to_buffer(path, &size);
-
-    if (buff == NULL)
-    {
-        printf("Error opening file %s for reading\n", path);
-        return;
-    }
+    IF_ASSERT(buff == NULL) return;
 
     enum LINE_MODE
     {
@@ -84,7 +68,7 @@ void Font::parse_font_file()
         CHAR
     } line_mode = UNKNOWN;
 
-    char c;
+    char c = '\0';
     int i = 0;
     char line_name[10];
     int line_name_index = 0;
@@ -336,6 +320,7 @@ int read_fonts_used()
     {   // no fonts were really found in the file (all blank lines & comments)
         printf("WARNING: no fonts found in fonts file %s (Lines starting with # are considered comments)\n", fn);
         free(fonts);
+        free_read_lines(font_names, lines);
         fonts = NULL;
         return 1;
     }
@@ -367,9 +352,9 @@ void set_properties(int size, int bold, int italic)
         return;
     }
     for (int i=0; i<n_fonts; i++)
-        if (fonts[i]->data.size == size
-          && fonts[i]->data.bold == bold
-          && fonts[i]->data.italic == italic)
+        if (fonts[i]->data.size == size &&
+            fonts[i]->data.bold == bold &&
+            fonts[i]->data.italic == italic)
         {
             font = fonts[i];
             return;
@@ -403,8 +388,7 @@ static Font* bound_gl_font = NULL;
 // every time you want to change the font texture, call this
 void set_texture()
 {
-    GS_ASSERT(font != NULL);
-    if (font == NULL) return;
+    IF_ASSERT(font == NULL) return;
     if (bound_gl_font == font) return; // no need to rebind
     bound_gl_font = font;
     glBindTexture(GL_TEXTURE_2D, font->texture);

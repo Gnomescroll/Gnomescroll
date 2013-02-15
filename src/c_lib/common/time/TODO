@@ -15,7 +15,7 @@ __int64 CounterStart = 0;
 void StartCounter()
 {
     LARGE_INTEGER li;
-    if(!QueryPerformanceFrequency(&li))
+    if (!QueryPerformanceFrequency(&li))
         cout << "QueryPerformanceFrequency failed!\n";
 
     PCFreq = double(li.QuadPart)/1000.0;

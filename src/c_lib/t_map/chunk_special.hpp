@@ -12,32 +12,28 @@
 namespace t_map
 {
 
-
-struct inventory_block
+struct InventoryBlock
 {
     int x,y,z;
     ItemContainerType container_type;
     ItemContainerID container_id;
 };
 
-class CHUNK_ITEM_CONTAINER
+class ChunkItemContainer
 {
     private:
     bool remove_index(int index);
 
     public:
-
         int chunk_index;
-
         int iban; //inventory_block_array_num
         int ibam; //inventory_block_array_max
-        struct inventory_block* iba; //inventory_block_array
+        struct InventoryBlock* iba; //inventory_block_array
 
-    CHUNK_ITEM_CONTAINER()
+    ChunkItemContainer() :
+        chunk_index(0), iban(0), ibam(2)
     {
-        iban = 0;
-        ibam = 2;
-        iba = (struct inventory_block*) malloc(ibam*sizeof(struct inventory_block));
+        iba = (struct InventoryBlock*) malloc(ibam*sizeof(struct InventoryBlock));
         for (int i=0; i<ibam; i++)
         {
             iba[i].container_id = NULL_CONTAINER;
@@ -45,7 +41,7 @@ class CHUNK_ITEM_CONTAINER
         }
     }
 
-    ~CHUNK_ITEM_CONTAINER()
+    ~ChunkItemContainer()
     {
         free(iba);
     }
@@ -88,8 +84,8 @@ class CHUNK_ITEM_CONTAINER
 
     ItemContainerID get(int x, int y, int z)
     {
-        for(int i=0; i<iban; i++)
-            if(x == iba[i].x && y == iba[i].y && z == iba[i].z)
+        for (int i=0; i<iban; i++)
+            if (x == iba[i].x && y == iba[i].y && z == iba[i].z)
                 return iba[i].container_id;
         return NULL_CONTAINER;
     }
@@ -100,8 +96,4 @@ class CHUNK_ITEM_CONTAINER
     #endif
 };
 
-
-
-
-
-}
+}   // t_map

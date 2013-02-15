@@ -1,22 +1,15 @@
 #include "t_vbo_draw.hpp"
 
 #include <t_map/t_vbo_class.hpp>
-
 #include <t_map/glsl/shader.hpp>
 #include <t_map/glsl/texture.hpp>
-
 #include <camera/camera.hpp>
 #include <camera/fulstrum_test.hpp>
 #include <camera/fulstrum_test2.hpp>
-
 #include <t_map/glsl/settings.hpp>
 #include <t_map/glsl/shader.hpp>
-
 #include <common/qsort.h>
-
 #include <physics/quadrant.hpp>
-
-//clut support
 #include <t_map/glsl/haldCLUT/hald_clut.hpp>
 #include <t_map/glsl/light_texture.hpp>
 
@@ -27,7 +20,6 @@ static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will pis
 
 static int draw_vbo_n;
 
-
 //int vbo_frustrum[32*32*2];  //start and end chunk index
 
 int map_vbo_draw_state[32*32];
@@ -35,9 +27,9 @@ int map_vbo_draw_state[32*32];
 int vbo_frustrum_voff[32*32][7];
 int vbo_frustrum_vnum[32*32][7];
 
-struct _VBO_DRAW_STRUCT
+struct VBODrawStruct
 {
-    class Map_vbo* map_vbo;
+    class MapVBO* map_vbo;
     float distance;
     //int vertex_start; //start vertex for drawing
     //int vertex_end; //end vertex for drawing
@@ -46,11 +38,11 @@ struct _VBO_DRAW_STRUCT
     short j;
 };
 
-static struct _VBO_DRAW_STRUCT* draw_vbo_array;
+static struct VBODrawStruct* draw_vbo_array;
 
 void vbo_draw_init()
 {
-    draw_vbo_array = (_VBO_DRAW_STRUCT*) malloc(MAX_DRAWN_VBO * sizeof(_VBO_DRAW_STRUCT));
+    draw_vbo_array = (VBODrawStruct*) malloc(MAX_DRAWN_VBO * sizeof(VBODrawStruct));
 }
 
 void vbo_draw_end()
@@ -59,7 +51,7 @@ void vbo_draw_end()
 }
 
 
-void Vbo_map::prep_frustrum_vertices()
+void VBOMap::prep_frustrum_vertices()
 {
 
     for (int i=0; i<32*32; i++)
@@ -71,7 +63,7 @@ void Vbo_map::prep_frustrum_vertices()
 
     for (int i=0;i<draw_vbo_n;i++)
     {
-        class Map_vbo* vbo = draw_vbo_array[i].map_vbo;
+        class MapVBO* vbo = draw_vbo_array[i].map_vbo;
         int xi = draw_vbo_array[i].i;
         int xj = draw_vbo_array[i].j;
 
@@ -182,7 +174,7 @@ bool chunk_distance_check(float x, float y)
     return (dx*dx + dy*dy > dist2) ? false : true;
 }
 
-void Vbo_map::prep_draw()
+void VBOMap::prep_draw()
 {
     for (int i=0; i<32*32; i++)
         map_vbo_draw_state[i] = -1;
@@ -196,9 +188,10 @@ void Vbo_map::prep_draw()
     c_drawn=0; c_pruned=0;
     draw_vbo_n = 0;
 
-    for (int i=0; i<MAP_CHUNK_XDIM; i++) {
-    for (int j=0; j<MAP_CHUNK_YDIM; j++) {
-        class Map_vbo* col = vbo_array[j*MAP_CHUNK_XDIM + i ];
+    for (int i=0; i<MAP_CHUNK_XDIM; i++)
+    for (int j=0; j<MAP_CHUNK_YDIM; j++)
+    {
+        class MapVBO* col = vbo_array[j*MAP_CHUNK_XDIM + i];
 
         if (col == NULL || col->vnum == 0) continue;
 
@@ -239,7 +232,7 @@ void Vbo_map::prep_draw()
 
             if (draw_vbo_n == MAX_DRAWN_VBO)
             {
-                printf("Vbo_map::prep_draw(), ERROR, draw_vbo == MAX_DRAWN_VBO \n");
+                printf("VBOMap::prep_draw(), ERROR, draw_vbo == MAX_DRAWN_VBO \n");
                 return;
             }
             //printf("drew %0.2f, %0.2f, \n");
@@ -248,12 +241,12 @@ void Vbo_map::prep_draw()
         {
             c_pruned++;
         }
-    }}
+    }
     //printf("drawn: %i pruned: %i \n",  c_drawn, c_pruned);
     //printf("\n");
 }
 
-void Vbo_map::sort_draw()
+void VBOMap::sort_draw()
 {
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
@@ -262,7 +255,7 @@ void Vbo_map::sort_draw()
 
     for (int i=0; i<draw_vbo_n; i++)
     {
-        class Map_vbo* v = draw_vbo_array[i].map_vbo;
+        class MapVBO* v = draw_vbo_array[i].map_vbo;
 
         float dx = (v->wxoff - cx);
         float dy = (v->wyoff - cy);
@@ -271,7 +264,7 @@ void Vbo_map::sort_draw()
     }
 
   #define _VBO_DRAW_STRUCT_lt(a,b) ((a)->distance < (b)->distance)
-  QSORT(struct  _VBO_DRAW_STRUCT, draw_vbo_array, draw_vbo_n, _VBO_DRAW_STRUCT_lt);
+  QSORT(struct VBODrawStruct, draw_vbo_array, draw_vbo_n, _VBO_DRAW_STRUCT_lt);
 
   //if (draw_vbo_n > 10) draw_vbo_n = 10;
 }
@@ -285,7 +278,7 @@ GL_MODELVIEW_MATRIX or GL_PROJECTION_MATRIX
 Compute matrix by hand and pass in uniform
 */
 
-void Vbo_map::draw_map()
+void VBOMap::draw_map()
 {
     prep_draw();
     sort_draw();
@@ -367,7 +360,7 @@ void Vbo_map::draw_map()
 
     //CHECK_GL_ERROR();
 
-    class Map_vbo* vbo;
+    class MapVBO* vbo;
 
     //float modelview[16];
     //glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
@@ -375,8 +368,8 @@ void Vbo_map::draw_map()
     //glPushMatrix();
 
     #if ADV_PRUNE
-    int v_total = 0;
-    int v_drawn = 0;
+    //int v_total = 0;
+    //int v_drawn = 0;
     //int v_pruned = 0;
     #endif
 
@@ -411,7 +404,7 @@ void Vbo_map::draw_map()
         int xj = draw_vbo_array[i].j;
         int index = 32*xj +xi;
 
-        v_total += vbo->_v_num[0];
+        //v_total += vbo->_v_num[0];
         for (int side=0; side<6; side++)
         {
             int voff = vbo_frustrum_voff[index][side];
@@ -419,7 +412,7 @@ void Vbo_map::draw_map()
 
             if (vnum == 0) continue;
 
-            v_drawn += vnum;
+            //v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
         }
         #else
@@ -506,9 +499,8 @@ void Vbo_map::draw_map()
     };
 */
 
-void Vbo_map::draw_map_compatibility()
+void VBOMap::draw_map_compatibility()
 {
-
     prep_draw();
     sort_draw();
     prep_frustrum_vertices();
@@ -536,7 +528,7 @@ void Vbo_map::draw_map_compatibility()
     glEnableVertexAttribArray(map_compatibility_shader.InLightMatrix);
     glEnableVertexAttribArray(map_compatibility_shader.InLight);
 
-    class Map_vbo* vbo;
+    class MapVBO* vbo;
 
     float modelview[16];
     glGetFloatv(GL_MODELVIEW_MATRIX, modelview);
@@ -544,8 +536,8 @@ void Vbo_map::draw_map_compatibility()
     glPushMatrix(); //save matrix
 
     #if ADV_PRUNE
-    int v_total = 0;
-    int v_drawn = 0;
+    //int v_total = 0;
+    //int v_drawn = 0;
     #endif
 
     for (int i=0;i<draw_vbo_n;i++)
@@ -576,7 +568,7 @@ void Vbo_map::draw_map_compatibility()
         int xj = draw_vbo_array[i].j;
         int index = 32*xj +xi;
 
-        v_total += vbo->_v_num[0];
+        //v_total += vbo->_v_num[0];
         for (int side=0; side<6; side++)
         {
             int voff = vbo_frustrum_voff[index][side];
@@ -584,7 +576,7 @@ void Vbo_map::draw_map_compatibility()
 
             if (vnum == 0) continue;
 
-            v_drawn += vnum;
+            //v_drawn += vnum;
             glDrawArrays(GL_QUADS, voff, vnum);
         }
         #else
@@ -613,7 +605,6 @@ void Vbo_map::draw_map_compatibility()
     CHECK_GL_ERROR();
 
 }
-
 
 
 void draw_vbo_debug(int x, int y)
@@ -687,7 +678,7 @@ void draw_vbo_debug(int x, int y)
     for (int j=0; j<MAP_CHUNK_YDIM; j++)
     {
         int index = 32*j +i;
-        class Map_vbo* col = vbo_map->vbo_array[index];
+        class MapVBO* col = vbo_map->vbo_array[index];
 
         glColor3ub(0, 255, 0); // everything find/loaded
 
@@ -721,7 +712,7 @@ void draw_vbo_debug(int x, int y)
     for (int j=0; j<MAP_CHUNK_YDIM; j++)
     {
         int index = 32*j +i;
-        //class Map_vbo* col = vbo_map->vbo_array[index];
+        //class MapVBO* col = vbo_map->vbo_array[index];
 
         glColor3ub(0, 255, 0); // everything find/loaded
 

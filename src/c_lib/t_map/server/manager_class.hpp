@@ -189,7 +189,7 @@ void Map_manager::send_compressed_chunk(int alias, int index)
         return;
     }
     stream.next_in = (unsigned char*) t->chunk[index]->e;
-    stream.avail_in = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
+    stream.avail_in = sizeof(struct MapElement)*16*16*TERRAIN_MAP_HEIGHT;
     stream.next_out = (unsigned char*) COMPRESSION_BUFFER;
     stream.avail_out = COMPRESSION_BUFFER_SIZE;
 
@@ -217,7 +217,7 @@ void Map_manager::send_uncompressed_chunk(int alias, int index)
     c.chunk_alias = alias;
     c.chunk_index = index;
 
-    int size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
+    int size = sizeof(struct MapElement)*16*16*TERRAIN_MAP_HEIGHT;
     //c.byte_size = size;
     c.sendToClient(client_id, (char*)t->chunk[index]->e, size);
 

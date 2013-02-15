@@ -160,7 +160,7 @@ bool write_mech_file(FILE* f)
     for (int i=0; i<mech_list->mlm; i++)
     {
         index = 0;
-        struct MECH* mech = &mech_list->mla[i];
+        struct Mech* mech = &mech_list->mla[i];
         if (mech->id == -1) continue;
 
         IF_ASSERT(!isValid(mech->mech_type)) continue;

@@ -7,38 +7,38 @@ class BlockList
 {
     public:
 
-    //CubeType bl[16]; //block lookup
+        //CubeType bl[16]; //block lookup
 
-    enum
-    {
-        tree_error,
-        tree_master,
-        tree_root,
-        tree_trunk_alive,
-        tree_trunk_dead,
-        tree_leave_alive,
-        tree_leave_dead,
-    } BlockType;
+        enum
+        {
+            tree_error,
+            tree_master,
+            tree_root,
+            tree_trunk_alive,
+            tree_trunk_dead,
+            tree_leave_alive,
+            tree_leave_dead,
+        } BlockType;
 
-    enum
-    {
-        tree_alive,
-        tree_dead,
-    } BlockState;
+        enum
+        {
+            tree_alive,
+            tree_dead,
+        } BlockState;
 
-    struct BlockArrayElement
-    {
-        int x,y,z;
-        int block_id;
-        int type;
-        int state;
-    };
+        struct BlockArrayElement
+        {
+            int x,y,z;
+            int block_id;
+            int type;
+            int state;
+        };
 
-    struct BlockArrayElement* ba;
-    int ban;
-    int bam;
+        struct BlockArrayElement* ba;
+        int ban;
+        int bam;
 
-    struct BlockArrayElement* c;    //current block/last added block
+        struct BlockArrayElement* c;    //current block/last added block
 
     void init()
     {
@@ -146,4 +146,4 @@ class BlockList
     }
 };
 
-} // end t_plant
+} // t_plant

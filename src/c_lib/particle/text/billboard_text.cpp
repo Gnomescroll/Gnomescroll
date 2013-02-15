@@ -66,7 +66,7 @@ void BillboardText::draw()
     if (!this->should_draw) return;
     if (HudFont::font == NULL) return;
     if (current_camera == NULL) return;
-    if(text == NULL || text[0] == '\0') return;
+    if (text == NULL || text[0] == '\0') return;
 
     Vec3 position = this->get_position();
     Vec3 p = current_camera->get_position();
@@ -189,7 +189,7 @@ void BillboardText_list::draw()
     HudFont::reset_default();
     HudFont::start_world_font_draw(); // gl calls
     HudFont::set_texture();
-    for(size_t i=0; i<this->num; i++)
+    for (size_t i=0; i<this->num; i++)
     {
         if (!a[i].should_draw) continue;
         a[i].draw();

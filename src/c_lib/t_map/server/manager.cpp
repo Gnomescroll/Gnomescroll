@@ -49,8 +49,8 @@ void t_map_manager_update_client_position(ClientID client_id, float x, float y)
 void t_map_manager_update()
 {
     //iterate through client ids
-    for(int i=0; i < HARD_MAX_CONNECTIONS; i++)
-        if(map_manager_list[i] != NULL)
+    for (int i=0; i < HARD_MAX_CONNECTIONS; i++)
+        if (map_manager_list[i] != NULL)
             map_manager_list[i]->update();
 }
 
@@ -60,7 +60,7 @@ void t_map_manager_update()
 /*
 void t_map_manager_force_update(ClientID client_id)
 {
-    if(map_manager_list[client_id] == NULL) return;
+    if (map_manager_list[client_id] == NULL) return;
     map_manager_list[client_id]->update();
     map_manager_list[client_id]->sort_que();
 }
@@ -68,17 +68,17 @@ void t_map_manager_force_update(ClientID client_id)
 
 void t_map_send_map_chunks()
 {
-    for(int i=0; i < HARD_MAX_CONNECTIONS; i++)
-        if(map_manager_list[i] != NULL)
+    for (int i=0; i < HARD_MAX_CONNECTIONS; i++)
+        if (map_manager_list[i] != NULL)
             map_manager_list[i]->dispatch_que();
 }
 
 /*
 void t_map_sort_map_chunk_ques()
 {
-    for(int i=0; i < HARD_MAX_CONNECTIONS; i++)
+    for (int i=0; i < HARD_MAX_CONNECTIONS; i++)
     {
-        if(map_manager_list[i] == NULL) continue;
+        if (map_manager_list[i] == NULL) continue;
         map_manager_list[i]->sort_que();
     }
 }

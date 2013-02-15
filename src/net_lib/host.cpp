@@ -32,7 +32,7 @@ void init_network()
     init_message_handler();
     PacketInit::RegisterMessages();
 
-    if (enet_initialize () != 0)
+    if (enet_initialize() != 0)
     {
         fprintf (stderr, "An error occurred while initializing ENet.\n");
         enet_inited = false;
@@ -140,7 +140,7 @@ static void client_disconnect(ENetEvent* event)
         Hud::set_server_disconnect_message("Client disconnected from server");
 
     event->peer->data = NULL;
-    
+
     NetClient::Server.disconnect_code = (DisconnectType)event->data;
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = NULL_CLIENT;
@@ -148,7 +148,7 @@ static void client_disconnect(ENetEvent* event)
     ClientState::on_disconnect();
 }
 
-void client_connect_to(int a, int b, int c, int d, unsigned short port) 
+void client_connect_to(int a, int b, int c, int d, unsigned short port)
 {
     ENetPeer *peer;
 
@@ -176,12 +176,12 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
         d = 1;
     }
     printf("Connecting to %d.%d.%d.%d on port %d\n", a, b, c, d, port);
-    
-    address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
+
+    address.host = htonl((a << 24 ) | (b << 16 ) | (c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
     peer = enet_host_connect (client_host, & address, 8, 0);    //channel count
-    
+
     if (peer == NULL)
     {
        fprintf(stderr, "No available peers for initiating an ENet connection.\n");
@@ -194,9 +194,9 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
 void client_dispatch_network_events()
 {
     if (client_host == NULL) return;
-    
+
     ENetEvent event;
-    
+
     /* Wait up to 5 milliseconds for an event. */
 
     unsigned int index = 0;
@@ -207,9 +207,9 @@ void client_dispatch_network_events()
     {
         int ret = enet_host_service(client_host, & event, timeout);
 
-        if( ret == 0)
+        if (ret == 0)
             break;
-        if( ret < 0)
+        if (ret < 0)
         {
             printf("client_dispatch_network_events: ERROR code %d \n", ret);
             break;
@@ -218,9 +218,9 @@ void client_dispatch_network_events()
         switch (event.type)
         {
 
-        //ENET_EVENT_TYPE_NONE       = 0,  
-        //ENET_EVENT_TYPE_CONNECT    = 1,  
-        //ENET_EVENT_TYPE_DISCONNECT = 2,  
+        //ENET_EVENT_TYPE_NONE       = 0,
+        //ENET_EVENT_TYPE_CONNECT    = 1,
+        //ENET_EVENT_TYPE_DISCONNECT = 2,
         //ENET_EVENT_TYPE_RECEIVE    = 3
 
         case ENET_EVENT_TYPE_NONE:
@@ -260,9 +260,9 @@ void client_dispatch_network_events()
                     printf("server received channel 1 message \n");
                     index = 0;
                     process_large_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength); 
+                        (char*) event.packet -> data,
+                        &index,
+                        event.packet->dataLength);
                     break;
                 case 3:
                     //printf("client received channel3 message of of size: %i \n", event.packet->dataLength);
@@ -270,9 +270,9 @@ void client_dispatch_network_events()
                     index = 0;
                     //process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n, ClientID client_id);
                     process_client_map_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength); 
+                        (char*) event.packet -> data,
+                        &index,
+                        event.packet->dataLength);
                     break;
                 default:
                     printf("server received unhandled channel %d message\n", event.channelID);
@@ -283,7 +283,7 @@ void client_dispatch_network_events()
             enet_packet_destroy (event.packet);
             break;
         }
-    }    
+    }
 }
 
 void flush_to_net()
@@ -305,7 +305,7 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data);
 
 void init_server(int a, int b, int c, int d, int port)
 {
-    
+
     /* Bind the server to the default localhost.     */
     /* A specific host address can be specified by   */
     /* enet_address_set_host (& address, "x.x.x.x"); */
@@ -313,10 +313,10 @@ void init_server(int a, int b, int c, int d, int port)
     if (a==0 && b==0 && c==0 && d== 0)
     {
         address.host = ENET_HOST_ANY;
-    } 
-    else 
+    }
+    else
     {
-        address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
+        address.host = htonl((a << 24 ) | (b << 16 ) | (c << 8 ) | d );
     }
 
 
@@ -330,9 +330,9 @@ void init_server(int a, int b, int c, int d, int port)
     {
         address.port = port;
     }
-    printf( "Starting server on %i.%i.%i.%i port %i \n", a, b, c, d, address.port);
+    printf("Starting server on %i.%i.%i.%i port %i \n", a, b, c, d, address.port);
 
-    server_host = enet_host_create (& address /* the address to bind the server host to */, 
+    server_host = enet_host_create (& address /* the address to bind the server host to */,
                                 128      /* allow up to 32 clients and/or outgoing connections */,
                                 8       /* allow up to 4 channels to be used*/,
                                 0       /* assume any amount of incoming bandwidth */,
@@ -350,9 +350,9 @@ void dispatch_network_events()
 {
     GS_ASSERT(server_host != NULL);
     if (server_host == NULL) return;
-    
+
     ENetEvent event;
-    
+
     /* Wait up to 5 milliseconds for an event. */
 
     unsigned int index = 0;
@@ -363,9 +363,9 @@ void dispatch_network_events()
     {
         int ret = enet_host_service(server_host, & event, timeout);
 
-        if( ret == 0)
+        if (ret == 0)
             break;
-        if( ret < 0)
+        if (ret < 0)
         {
             printf("NetServer dispatch_network_events: ERROR code %d \n", ret);
             break;
@@ -374,9 +374,9 @@ void dispatch_network_events()
         switch (event.type)
         {
 
-        //ENET_EVENT_TYPE_NONE       = 0,  
-        //ENET_EVENT_TYPE_CONNECT    = 1,  
-        //ENET_EVENT_TYPE_DISCONNECT = 2,  
+        //ENET_EVENT_TYPE_NONE       = 0,
+        //ENET_EVENT_TYPE_CONNECT    = 1,
+        //ENET_EVENT_TYPE_DISCONNECT = 2,
         //ENET_EVENT_TYPE_RECEIVE    = 3
 
         case ENET_EVENT_TYPE_NONE:
@@ -409,10 +409,10 @@ void dispatch_network_events()
                     if (event.peer->data != NULL)
                     {
                         pret = process_packet_messages(
-                            (char*) event.packet -> data, 
-                            &index, 
-                            event.packet->dataLength, 
-                            ((class NetPeer*)event.peer->data)->client_id 
+                            (char*) event.packet -> data,
+                            &index,
+                            event.packet->dataLength,
+                            ((class NetPeer*)event.peer->data)->client_id
                             );
                     }
                     break;
@@ -423,10 +423,10 @@ void dispatch_network_events()
                     if (event.peer->data != NULL)
                     {
                         process_large_messages(
-                            (char*) event.packet -> data, 
-                            &index, 
-                            event.packet->dataLength, 
-                            ((class NetPeer*)event.peer->data)->client_id 
+                            (char*) event.packet -> data,
+                            &index,
+                            event.packet->dataLength,
+                            ((class NetPeer*)event.peer->data)->client_id
                             );
                     }
                     break;
@@ -512,18 +512,18 @@ static void client_connect(ENetEvent* event)
         npm->init(nc->client_id);
         break;
     }
-    
+
     if (event->peer != NULL)
     {
         uint8_t address[4];
         address_from_uint32(event->peer->address.host, address);
 
-        printf("Client %d connected from %d.%d.%d.%d:%d. %d clients connected\n", 
+        printf("Client %d connected from %d.%d.%d.%d:%d. %d clients connected\n",
                npm->client_id,
                address[0], address[1], address[2], address[3],
-               event->peer->address.port, 
+               event->peer->address.port,
                NetServer::number_of_clients);
-    
+
         Session* session = begin_session(event->peer->address.host, npm->client_id);
         users->assign_session_to_user(session);
     }
@@ -537,16 +537,16 @@ static void client_connect(ENetEvent* event)
         NetServer::client_authorized(npm->client_id, (UserID)(NetServer::number_of_clients), utc_now()+3600-30, username);
         free(username);
     }
-    
+
     if (nc != NULL)
         nc->flush_to_net();
 }
 
-static void client_disconnect(ENetPeer* peer, enet_uint32 data) 
+static void client_disconnect(ENetPeer* peer, enet_uint32 data)
 {
     GS_ASSERT(peer != NULL);
     if (peer == NULL) return;
-    
+
     NetPeer* nc = (NetPeer*) peer->data;
 
     ClientID client_id = NULL_CLIENT;
@@ -560,7 +560,7 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
     {
         // no disconnect code sent by client
         // assume the server intitiated the disconnect of the client
-        // inspect peer data for disconnect reason 
+        // inspect peer data for disconnect reason
 
         if (((class NetPeer*)peer->data)->disconnect_code == DISCONNECT_TIMEOUT)
             printf("Client %d timed out\n", client_id);
@@ -603,9 +603,9 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
             printf("Client %d disconnected with unknown code %d\n", client_id, data);
         }
     }
-    
+
     peer->data = NULL;
-    
+
     NetPeerManager* npm = NULL;
     if (client_id >= 0 && client_id < HARD_MAX_CONNECTIONS)
     {
@@ -630,7 +630,7 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
         NetServer::agents[client_id] = NULL;
         NetServer::clients[client_id] = NULL;
     }
-    
+
     if (nc != NULL) delete nc;
     if (npm != NULL) delete npm;
 }
@@ -643,7 +643,7 @@ void kill_client(class NetPeer* peer, DisconnectType error_code)
     GS_ASSERT(peer->enet_peer != NULL);
     if (peer->enet_peer != NULL)
         enet_peer_disconnect(peer->enet_peer, error_code);
-    
+
     // log it
     ClientID client_id = peer->client_id;
     NetServer::users->record_client_force_disconnect(client_id);

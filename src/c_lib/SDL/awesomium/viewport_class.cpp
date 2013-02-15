@@ -281,15 +281,15 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
     key_event.modifiers = 0;
     key_event.is_system_key = false;
 
-    if(event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
+    if (event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
         key_event.modifiers |= AWE_WKM_ALT_KEY;
-    if(event->key.keysym.mod & KMOD_LCTRL || event->key.keysym.mod & KMOD_RCTRL)
+    if (event->key.keysym.mod & KMOD_LCTRL || event->key.keysym.mod & KMOD_RCTRL)
         key_event.modifiers |= AWE_WKM_CONTROL_KEY;
-    if(event->key.keysym.mod & KMOD_LMETA || event->key.keysym.mod & KMOD_RMETA)
+    if (event->key.keysym.mod & KMOD_LMETA || event->key.keysym.mod & KMOD_RMETA)
         key_event.modifiers |= AWE_WKM_META_KEY;
-    if(event->key.keysym.mod & KMOD_LSHIFT || event->key.keysym.mod & KMOD_RSHIFT)
+    if (event->key.keysym.mod & KMOD_LSHIFT || event->key.keysym.mod & KMOD_RSHIFT)
         key_event.modifiers |= AWE_WKM_SHIFT_KEY;
-    if(event->key.keysym.mod & KMOD_NUM)
+    if (event->key.keysym.mod & KMOD_NUM)
         key_event.modifiers |= AWE_WKM_IS_KEYPAD;
 
     key_event.native_key_code = event->key.keysym.scancode;

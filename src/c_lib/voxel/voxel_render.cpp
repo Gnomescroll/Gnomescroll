@@ -34,39 +34,38 @@ int InTex;
 
 void init_voxel_render_list_shader1()
 {
+    int debug = 1;
     static int init=0;
-    IF_ASSERT(init++)
-    {
-        printf("Warning: Tried to init voxel shader more than once\n");
-        return;
-    }
-
-    int DEBUG1 = 1;
-
+    IF_ASSERT(init++) return;
     voxel_shader_prog = glCreateProgramObjectARB(); //glCreateProgram();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
     voxel_shader_frag = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
-    char *vs, *fs;
-
-    vs = textFileRead(MEDIA_PATH "shaders/voxel/voxel.vsh");
-    fs = textFileRead(MEDIA_PATH "shaders/voxel/voxel.fsh");
+    size_t size = 0;
+    char* vs = read_file_to_buffer(MEDIA_PATH "shaders/voxel/voxel.vsh", &size);
+    IF_ASSERT(vs == NULL) return;
+    char* fs = read_file_to_buffer(MEDIA_PATH "shaders/voxel/voxel.fsh", &size);
+    IF_ASSERT(fs == NULL)
+    {
+        free(vs);
+        return;
+    }
 
     glShaderSourceARB(voxel_shader_vert, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);
 
     glCompileShaderARB(voxel_shader_vert);
-    if (DEBUG1) printShaderInfoLog(voxel_shader_vert);
+    if (debug) printShaderInfoLog(voxel_shader_vert);
 
     glCompileShaderARB(voxel_shader_frag);
-    if (DEBUG1) printShaderInfoLog(voxel_shader_frag);
+    if (debug) printShaderInfoLog(voxel_shader_frag);
 
     glAttachObjectARB(voxel_shader_prog, voxel_shader_vert);
     glAttachObjectARB(voxel_shader_prog, voxel_shader_frag);
 
     glLinkProgramARB(voxel_shader_prog);
 
-    if (DEBUG1) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
+    if (debug) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
 
     //uniforms
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
@@ -88,8 +87,8 @@ VoxelRenderList::VoxelRenderList() :
 {
     const int starting_size = 1024;
 
-    vbo_wrapper[0].vertex_list = (VoxelVertex*) malloc(starting_size*sizeof(VoxelVertex));
-    vbo_wrapper[1].vertex_list = (VoxelVertex*) malloc(starting_size*sizeof(VoxelVertex));
+    vbo_wrapper[0].vertex_list = (VoxelVertex*)malloc(starting_size*sizeof(VoxelVertex));
+    vbo_wrapper[1].vertex_list = (VoxelVertex*)malloc(starting_size*sizeof(VoxelVertex));
 
     vbo_wrapper[0].max_size = starting_size; //in voxel vertex
     vbo_wrapper[1].max_size = starting_size;
@@ -105,13 +104,9 @@ VoxelRenderList::VoxelRenderList() :
 
 VoxelRenderList::~VoxelRenderList()
 {
-    if (this->render_list != NULL)
-        free(this->render_list);
-
-    if (vbo_wrapper[0].vertex_list != NULL)
-        free(vbo_wrapper[0].vertex_list);
-    if (vbo_wrapper[1].vertex_list != NULL)
-        free(vbo_wrapper[1].vertex_list);
+    free(this->render_list);
+    free(vbo_wrapper[0].vertex_list);
+    free(vbo_wrapper[1].vertex_list);
 }
 
 void VoxelRenderList::register_voxel_volume(VoxelVolume* vv)
@@ -163,7 +158,7 @@ void VoxelRenderList::update_vertex_buffer_object()
         if (this->render_list[i] == NULL) continue;
 
         vv = this->render_list[i];
-        if (vv->needs_vbo_update == true)
+        if (vv->needs_vbo_update)
         {
             vv->needs_vbo_update = false;
             volumes_updated++;

@@ -2,7 +2,5 @@
 
 namespace t_map
 {
-    
 
-    
-}
+}   // t_map

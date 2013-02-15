@@ -20,32 +20,31 @@ namespace t_mech
 class MechListVertexList
 {
     public:
-    // visibility will default to private unless you specify it
-    struct Vertex
+        // visibility will default to private unless you specify it
+        struct Vertex
+        {
+            float x,y,z;
+            float tx,ty;
+            float btx,bty;  //texture cordinates for bilinear interpolation
+            unsigned char color[4];
+            unsigned char brightness[4];
+        };
+
+        static const int stride = sizeof(Vertex);
+
+        struct Vertex* va;  //vertex array
+        int vi; //vertex index
+        int vm; //vertex max
+
+        unsigned int VBO; //for drawing
+
+        struct Vertex v; //set this and then push vertex
+
+    MechListVertexList() :
+        va(NULL), vi(0), vm(32), VBO(0)
     {
-        float x,y,z;
-        float tx,ty;
-        float btx,bty;  //texture cordinates for bilinear interpolation
-        unsigned char color[4];
-        unsigned char brightness[4];
-    };
-
-    static const int stride = sizeof(Vertex);
-
-    struct Vertex* va;  //vertex array
-    int vi; //vertex index
-    int vm; //vertex max
-
-    unsigned int VBO; //for drawing
-
-    struct Vertex v; //set this and then push vertex
-
-    MechListVertexList()
-    {
-        vm = 32;
-        vi = 0;
-        va = (struct Vertex*) malloc(vm*sizeof(struct Vertex));
-        VBO = 0;
+        this->va = (struct Vertex*)malloc(vm*sizeof(struct Vertex));
+        memset(&this->v, 0, sizeof(this->v));
     }
 
     ~MechListVertexList()
@@ -467,7 +466,7 @@ class MechListRenderer
 
     void prep_vbo();
 
-    void push_crystal_vertex(const struct MECH &m);
+    void push_crystal_vertex(const struct Mech &m);
 
 };
 
@@ -486,7 +485,7 @@ struct _MECH
 };
 */
 
-void MechListRenderer::push_crystal_vertex(const struct MECH &m)
+void MechListRenderer::push_crystal_vertex(const struct Mech &m)
 {
 /*
     static const float vin[72] =
@@ -696,7 +695,7 @@ void MechListRenderer::prep_vbo()
     vertex_list.reset();
 
     const int mlm = mech_list->mlm;
-    const struct MECH* mla = mech_list->mla;
+    const struct Mech* mla = mech_list->mla;
 
     int num =0;
 

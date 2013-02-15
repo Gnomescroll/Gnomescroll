@@ -339,7 +339,7 @@ void draw()
     static unsigned int update_counter = 0;
 
     const int tick_update_rate = 3;
-    if(update_counter % tick_update_rate == 0)
+    if (update_counter % tick_update_rate == 0)
     {
         update_terrain_map(update_map_texture_index);
         draw_map_texture_index++;

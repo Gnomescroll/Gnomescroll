@@ -37,7 +37,7 @@ void PlasmagenSpur::tick()
         t_map::apply_damage_broadcast(
             data.collision_point[0],
             data.collision_point[1],
-            data.collision_point[2], 
+            data.collision_point[2],
             t_gen::PLASMAGEN_BLOCK_DAMAGE,
             TMA_PLASMAGEN);
         //this->broadcast_death();
@@ -64,7 +64,7 @@ void plasmagen_explode_StoC::handle()
         vec3_init(1, 0, 0),
         vec3_init(0, 1, 0),
         vec3_init(0, 0, 1)};
-    
+
     // create spurs to damage nearby blocks
     for (int i=0; i<3; i++)
     for (int j=0; j<2; j++)
@@ -103,7 +103,7 @@ void PlasmagenSpurList::tick()
 void PlasmagenSpurList::draw()
 {
     glColor4ub(255,255,255,255);
-    for(size_t i=0; i<this->max; i++)
+    for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != this->null_id)
             this->objects[i].draw(this->objects[i].get_position());
 }

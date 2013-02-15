@@ -6,7 +6,7 @@
 namespace Voxels
 {
 
-bool VoxelHitscanList::hitscan(const struct Vec3 pos, const struct Vec3 forward,
+bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forward,
                                  int skip_id, EntityType skip_type, // skip player agent id
                                  float collision_point[3], float *distance,
                                  class VoxelHitscanTarget* target)
@@ -22,7 +22,7 @@ bool VoxelHitscanList::hitscan(const struct Vec3 pos, const struct Vec3 forward,
     float min_dist = 1000000.0f;
     float max_dist = 256.0f;
     struct Vec3 tv = vec3_init(0);
-    for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
+    for (int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         vhe = hitscan_list[i];
         if (vhe == NULL) continue;
@@ -73,7 +73,7 @@ class VoxelHitscanTarget* VoxelHitscanList::hitscan_all(
     float max_dist = vec3_length(direction);
     normalize_vector(&direction);
     size_t n = 0;
-    for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
+    for (int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if (n >= MAX_TARGETS) break;
         class VoxelHitscanElement* vhe = hitscan_list[i];
@@ -139,7 +139,7 @@ void VoxelHitscanList::register_voxel_volume(class VoxelVolume* vv)
 
 void VoxelHitscanList::unregister_voxel_volume(class VoxelVolume* vv)
 {
-    for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
+    for (int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
         if (this->hitscan_list[i] != NULL && this->hitscan_list[i] == &(vv->vhe))
         {
             this->num_elements--;

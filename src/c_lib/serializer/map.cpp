@@ -7,7 +7,7 @@
 namespace serializer
 {
 
-static const size_t CHUNK_SIZE = CHUNK_ELEMENT_COUNT * sizeof(struct t_map::MAP_ELEMENT);
+static const size_t CHUNK_SIZE = CHUNK_ELEMENT_COUNT * sizeof(struct t_map::MapElement);
 
 static int* cube_type_map = NULL;
 
@@ -287,7 +287,7 @@ static bool load_map_restore_containers()
     for (int ci=0; ci < MAP_CHUNK_XDIM; ci++)
     for (int cj=0; cj < MAP_CHUNK_YDIM; cj++)
     {
-        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[MAP_CHUNK_XDIM*cj+ci];
+        class t_map::MapChunk* mp = t_map::main_map->chunk[MAP_CHUNK_XDIM*cj+ci];
         IF_ASSERT(mp == NULL) continue;
 
         for (int k=0; k<ZMAX; k++)
@@ -390,11 +390,11 @@ bool BlockSerializer::save(const char* filename)
     #else
     for (int i=0; i < CHUNK_COUNT; i++)
     {
-        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
+        class t_map::MapChunk* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
         this->chunks[i].xchunk = CHUNK_COUNT % 16;
         this->chunks[i].ychunk = CHUNK_COUNT / 16;
-        memcpy((void*) &this->chunks[i].data, &mp->e, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
+        memcpy((void*) &this->chunks[i].data, &mp->e, 128*16*16*sizeof(struct t_map::MapElement));
     }
     //prepare buffer for saving
 
@@ -437,7 +437,7 @@ bool BlockSerializer::save_iter(int max_ms)
     for (int j=0; j < CHUNK_COUNT; j++)
     {
         index = (index+1)%CHUNK_COUNT;
-        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[index];
+        class t_map::MapChunk* mp = t_map::main_map->chunk[index];
         GS_ASSERT(mp != NULL);
         if (mp == NULL) continue;
         if (mp->version == version_array[index]) continue;
@@ -510,14 +510,14 @@ bool BlockSerializer::load(const char* filename)
 
     for (int i=0; i<CHUNK_COUNT; i++)
     {
-        class t_map::MAP_CHUNK* mp = t_map::main_map->chunk[i];
+        class t_map::MapChunk* mp = t_map::main_map->chunk[i];
         GS_ASSERT(mp != NULL);
         if (mp == NULL) continue;
 
         memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
         GS_ASSERT(index == (prefix_length + (i+1)*(int)sizeof(struct SerializedChunk)));
-        memcpy(&mp->e, (void*) &chunk->data, 128*16*16*sizeof(struct t_map::MAP_ELEMENT));
+        memcpy(&mp->e, (void*) &chunk->data, 128*16*16*sizeof(struct t_map::MapElement));
     }
 
     int ti3 = _GET_MS_TIME();

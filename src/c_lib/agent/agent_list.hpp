@@ -10,18 +10,18 @@ namespace Agents
 class AgentList: public ObjectList<class Agent, AgentID>
 {
     private:
-        const char* name()
-        {
-            return "Agent";
-        }
-
-        // quicksort helpers
-        void quicksort_distance_asc(int beg, int end);
-        void quicksort_distance_desc(int beg, int end);
-        void swap_object_state(Agent **a, Agent **b);
-        void swap_float(float *a, float *b);
-
         int check_name_interval;
+
+    const char* name()
+    {
+        return "Agent";
+    }
+
+    // quicksort helpers
+    void quicksort_distance_asc(int beg, int end);
+    void quicksort_distance_desc(int beg, int end);
+    void swap_object_state(Agent **a, Agent **b);
+    void swap_float(float *a, float *b);
 
     public:
         Agent** filtered_objects; // tmp array for filtering objects
@@ -53,16 +53,14 @@ class AgentList: public ObjectList<class Agent, AgentID>
 
     ~AgentList()
     {
-        if (this->filtered_objects != NULL)
-            free(this->filtered_objects);
-        if (this->filtered_object_distances != NULL)
-            free(this->filtered_object_distances);
+        free(this->filtered_objects);
+        free(this->filtered_object_distances);
     }
 };
 
-Agent* nearest_agent_in_range(const Vec3 position, const float radius);
-Agent* nearest_living_agent_in_range(const Vec3 position, const float radius);
-Agent* nearest_living_agent_model_in_range(const Vec3 position, const float radius);
-Agent* random_agent_in_range(const Vec3 position, const float radius);
+Agent* nearest_agent_in_range(const struct Vec3& position, const float radius);
+Agent* nearest_living_agent_in_range(const struct Vec3& position, const float radius);
+Agent* nearest_living_agent_model_in_range(const struct Vec3& position, const float radius);
+Agent* random_agent_in_range(const struct Vec3& position, const float radius);
 
 }   // Agents

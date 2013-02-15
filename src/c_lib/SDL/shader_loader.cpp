@@ -3,43 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <common/compat_gl.h>
-
-char *textFileRead(const char *fn)
-{
-    FILE *fp;
-    char *content = NULL;
-
-    int count=0;
-
-    if (fn != NULL)
-    {
-        fp = fopen(fn,"rt");
-        if (fp == NULL)
-        {
-            printf("Error: cannot open file %s \n", fn);
-            return NULL;
-        }
-
-        if (fp != NULL)
-        {
-
-          fseek(fp, 0, SEEK_END);
-          count = (int)ftell(fp);
-          rewind(fp);
-
-            if (count > 0)
-            {
-                content = (char *)malloc(sizeof(char) * (count+1));
-                count = (int)fread(content,sizeof(char),count,fp);
-                content[count] = '\0';
-            }
-            fclose(fp);
-        }
-    }
-    return content;
-}
 
 //info log print
 void printShaderInfoLog(GLuint obj)
@@ -48,7 +12,7 @@ void printShaderInfoLog(GLuint obj)
     int charsWritten  = 0;
     char *infoLog;
 
-    glGetShaderiv(obj, GL_INFO_LOG_LENGTH,&infologLength);
+    glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
 
     if (infologLength > 0)
     {
@@ -92,8 +56,15 @@ void load_shaders(const char *vert, const char* frag, GLuint* prog)
     GLuint v = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
     GLuint f = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
-    char* vs = textFileRead(vert);
-    char* fs = textFileRead(frag);
+    size_t size = 0;
+    char* vs = read_file_to_buffer(vert, &size);
+    IF_ASSERT(vs == NULL) return;
+    char* fs = read_file_to_buffer(frag, &size);
+    IF_ASSERT(fs == NULL)
+    {
+        free(vs);
+        return;
+    }
 
     glShaderSourceARB(v, 1, (const char**)&vs, NULL);
     glShaderSourceARB(f, 1, (const char**)&fs, NULL);
@@ -104,8 +75,7 @@ void load_shaders(const char *vert, const char* frag, GLuint* prog)
     glCompileShaderARB(v); printShaderInfoLog(v); ///diag
     glCompileShaderARB(f); printShaderInfoLog(f); ///diag
 
-    GLuint p;
-    p = glCreateProgramObjectARB();
+    GLuint p = glCreateProgramObjectARB();
 
     glAttachObjectARB(p,v);
     glAttachObjectARB(p,f);
@@ -122,7 +92,7 @@ bool shader_compiler_error(int shader)
         printf("shader compiler error: shader creation failed\n");
         return true;
     }
-    
+
     GLint status = GL_FALSE;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);  // this function does not assign any value to &status if a shader was not compiled
     glGetError();   // clear error
@@ -144,7 +114,7 @@ bool shader_linking_error(int program)
     GLint status = GL_FALSE;
     glGetProgramiv(program, GL_LINK_STATUS, &status);
     glGetError();   // clear error
-    if(status == GL_FALSE)
+    if (status == GL_FALSE)
     {
         printf("shader linking error: Shader linking failed! \n");
         return true;

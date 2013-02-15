@@ -52,7 +52,7 @@ ItemContainerID get_block_item_container(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c= main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c= main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
     if (c == NULL) return NULL_CONTAINER;
     return c->chunk_item_container.get(x,y,z);
@@ -67,7 +67,7 @@ bool get_container_location(ItemContainerID container_id, int position[3])
     IF_ASSERT(container->chunk < 0) return false;
     IF_ASSERT(container->chunk >= main_map->xchunk_dim*main_map->ychunk_dim) return false;
 
-    class MAP_CHUNK* c = main_map->chunk[container->chunk];
+    class MapChunk* c = main_map->chunk[container->chunk];
     IF_ASSERT(c == NULL) return false;
 
     c->chunk_item_container.get_container_location(container_id, position);
@@ -76,12 +76,12 @@ bool get_container_location(ItemContainerID container_id, int position[3])
 
 
 #if DC_CLIENT
-class Vbo_map* vbo_map;
+class VBOMap* vbo_map;
 
 void init_t_vbo()
 {
     GS_ASSERT(vbo_map == NULL);
-    vbo_map = new Vbo_map(main_map);
+    vbo_map = new VBOMap(main_map);
     t_vbo_update_init();
     vbo_draw_init();
 }
@@ -191,7 +191,7 @@ bool create_item_container_block(int x, int y, int z, ItemContainerType containe
 
     IF_ASSERT(!isItemContainer(t_map::get(x,y,z))) return false;
 
-    class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     IF_ASSERT(c == NULL) return false;
 
     return c->chunk_item_container.add(x,y,z, container_type, container_id);
@@ -204,7 +204,7 @@ bool destroy_item_container_block(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     IF_ASSERT(c == NULL) return false;
 
     return c->chunk_item_container.remove(x,y,z);

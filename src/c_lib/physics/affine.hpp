@@ -39,7 +39,7 @@ struct Affine affine_mult(Affine a, Affine b)
 {
     struct Affine c;
 
-    for(int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         c._f[3*0+i] = a._f[3*0+i]*b._f[3*0+0] + a._f[3*1+i]*b._f[3*0+1] + a._f[3*2+i]*b._f[3*0+2];
         c._f[3*1+i] = a._f[3*0+i]*b._f[3*1+0] + a._f[3*1+i]*b._f[3*1+1] + a._f[3*2+i]*b._f[3*1+2];

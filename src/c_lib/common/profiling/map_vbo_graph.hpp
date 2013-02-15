@@ -158,7 +158,7 @@ class MapGraph
             j++;
             i++;
         }
-        while (i < 64 && i<64)
+        while (i < 64)
         {
             ts->set_pixel(index, i, 0, 0,0, 0);
             i++;

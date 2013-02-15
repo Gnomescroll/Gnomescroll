@@ -41,7 +41,7 @@ class ClassicNoise
     ClassicNoise()
     {
         perm = new int[512];
-        for(int i=0; i<512; i++) perm[i]=p[i & 255];
+        for (int i=0; i<512; i++) perm[i]=p[i & 255];
     }
 
 // This method is a *lot* faster than using (int)Math.floor(x)

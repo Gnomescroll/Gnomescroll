@@ -34,7 +34,7 @@ CubeType get(int x, int y, int z)
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return EMPTY_CUBE;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if (c == NULL) return EMPTY_CUBE;
     return (CubeType)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 }
@@ -64,17 +64,17 @@ void set_fast(int x, int y, int z, CubeType cube_type)
     main_map->set_block_fast(x,y,z, cube_type);
 }
 
-struct MAP_ELEMENT get_element(int x, int y, int z)
+struct MapElement get_element(int x, int y, int z)
 {
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return ABOVE_MAP_ELEMENT;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    class MAP_CHUNK* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if (c == NULL) return NULL_MAP_ELEMENT;
     return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 }
 
-void set_element(int x, int y, int z, struct MAP_ELEMENT e)
+void set_element(int x, int y, int z, struct MapElement e)
 {
     main_map->set_element(x,y,z,e);
     light_add_block(x,y,z);
@@ -82,7 +82,7 @@ void set_element(int x, int y, int z, struct MAP_ELEMENT e)
 
 void set_palette(int x, int y, int z, int palette)
 {
-    struct MAP_ELEMENT element = main_map->get_element(x,y,z);
+    struct MapElement element = main_map->get_element(x,y,z);
     element.palette = palette;
     main_map->set_element(x,y,z,element);
 }
@@ -208,7 +208,7 @@ void broadcast_set_block_palette(int x, int y, int z, CubeType block, int palett
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MAP_ELEMENT e = NULL_MAP_ELEMENT;
+    struct MapElement e = NULL_MAP_ELEMENT;
     e.block = block;
     e.palette = palette;
 
@@ -222,7 +222,7 @@ void broadcast_set_palette(int x, int y, int z, int palette)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MAP_ELEMENT e = get_element(x,y,z);
+    struct MapElement e = get_element(x,y,z);
     e.palette = palette;
 
     set_element(x,y,z,e);

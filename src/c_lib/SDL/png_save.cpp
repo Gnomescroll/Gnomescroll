@@ -6,7 +6,7 @@ static unsigned char _png_gamma_correction[256];
 
 void _init_png_gamma_correction()
 {
-    for(int i=0; i<256; i++)
+    for (int i=0; i<256; i++)
     {
         float intensity = ((float) i) / 255;
         intensity = powf(intensity, 1.0f/2.2f)*255;
@@ -47,13 +47,13 @@ static void _save_png(pngDataWrite writer, const char* fn, float* in, int xres, 
     int h = yres;
 
     height_div_2 = (int) (yres * 0.5f);
-    for (index = 0; index < height_div_2; index++)    
+    for (index = 0; index < height_div_2; index++)
     {
         memcpy((Uint8 *)temp_row, (Uint8 *)(pbuffer) + pitch * index, pitch);
         memcpy((Uint8 *)(pbuffer) + pitch * index, (Uint8 *)pbuffer + pitch * (h - index-1), pitch);
         memcpy((Uint8 *)(pbuffer) + pitch * (h - index-1), temp_row, pitch);
     }
-    free(temp_row); 
+    free(temp_row);
 
     size_t png_size = 0;
     char* png_image = (char*)tdefl_write_image_to_png_file_in_memory(
@@ -74,8 +74,8 @@ static void _save_png(pngDataWrite writer, const char* fn, float* in, int xres, 
 
 static void _write_png_data(char* pbuffer, float* in, int xres, int yres, bool gamma_correction)
 {
-    for(int i=0; i < xres; i++) 
-    for(int j=0; j < yres; j++)
+    for (int i=0; i < xres; i++)
+    for (int j=0; j < yres; j++)
     {
         int index = j*xres + i;
         float _v = in[j*xres+i];
@@ -92,11 +92,11 @@ static void _write_png_data(char* pbuffer, float* in, int xres, int yres, bool g
 
 static void _write_png_rgb_data(char* pbuffer, float* in, int xres, int yres, bool gamma_correction)
 {
-    for(int i=0; i < xres; i++) 
-    for(int j=0; j < yres; j++)
+    for (int i=0; i < xres; i++)
+    for (int j=0; j < yres; j++)
     {
         int index = j*xres + i;
-        for(int k=0; k<3;k++)
+        for (int k=0; k<3;k++)
         {
             float _v = in[3*(j*xres+i)+k];
 

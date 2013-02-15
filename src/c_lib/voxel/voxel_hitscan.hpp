@@ -56,7 +56,7 @@ class VoxelHitscanList
         void unregister_voxel_volume(class VoxelVolume* vv);
 
     //pass in x,y,z fire point and direction of projectile
-    bool hitscan(const struct Vec3 p, const struct Vec3 v,
+    bool hitscan(const struct Vec3& p, const struct Vec3& v,
                  int skip_id, EntityType skip_type,
                  float collision_point[3], float *distance,
                  class VoxelHitscanTarget* target);

@@ -7,12 +7,12 @@ namespace Voxels
 
 //this function will always return on a new line or null
 static void check_for_comments(const char* s, size_t* index)
-{   
+{
     while (1)
     {
         while(s[*index] == ' ' || s[*index] == '\t' || s[*index] == '\n')
             (*index)++;
-        if(s[*index] != '#' || s[*index] == '\0')
+        if (s[*index] != '#' || s[*index] == '\0')
             break;
         while(s[*index] != '\n' && s[*index] != '\0')
             (*index)++;
@@ -43,7 +43,7 @@ void read_skeleton(const char* file_name, VoxDat* vox_dat)
 
 
     // skeleton graph
-    for(int i=0; i<num_skeleton_nodes; i++)
+    for (int i=0; i<num_skeleton_nodes; i++)
     {
         int node;
         int parent_skeleton_node;
@@ -55,7 +55,7 @@ void read_skeleton(const char* file_name, VoxDat* vox_dat)
 
     // skeleton node matrixs
     check_for_comments(buffer, &index);
-    for(int i=0; i<num_skeleton_nodes; i++)
+    for (int i=0; i<num_skeleton_nodes; i++)
     {
         int node;
         float x,y,z;
@@ -67,7 +67,7 @@ void read_skeleton(const char* file_name, VoxDat* vox_dat)
     }
 
     // voxel part size, dimension, color
-    for(int i=0; i<n_parts; i++)
+    for (int i=0; i<n_parts; i++)
     {
         int part_num;
         int skeleton_parent_matrix; // not used?
@@ -99,7 +99,7 @@ void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
     //printf("Loading voxel model: %s \n", file_name);
     size_t size = 0;
     char* buffer = read_file_to_buffer(file_name, &size);
-    if(buffer == NULL)
+    if (buffer == NULL)
     {
         printf("error reading %s \n", file_name);
         return;

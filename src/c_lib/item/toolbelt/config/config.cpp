@@ -93,7 +93,7 @@ static void apply_group_settings(ItemGroup group)
             apply_type_settings((ItemType)i);
 }
 
-static void apply_click_and_hold_settings_for(bool cnh)
+static void apply_click_and_hold_settings_for (bool cnh)
 {   // begin applying settings to all items with click_and_hold == cnh
     for (int i=0; i<int(MAX_ITEM_TYPES); i++)
         if (item_is_click_and_hold((ItemType)i) == cnh)
@@ -171,10 +171,10 @@ static void register_click_and_hold_callbacks()
     #if DC_CLIENT
     c.local_trigger = &fire_close_range_weapon;
     #endif
-    apply_click_and_hold_settings_for(true);
+    apply_click_and_hold_settings_for (true);
 
     // apply any general non-click_and_hold methods here
-    //apply_click_and_hold_settings_for(false);
+    //apply_click_and_hold_settings_for (false);
 }
 
 static void register_item_group_callbacks()

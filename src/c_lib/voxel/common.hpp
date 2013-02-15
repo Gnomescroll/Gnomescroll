@@ -86,7 +86,7 @@ class VoxelVertexList
 
     ~VoxelVertexList()
     {
-        if(vertex_list != NULL)
+        if (vertex_list != NULL)
             delete[] vertex_list;
     }
 };

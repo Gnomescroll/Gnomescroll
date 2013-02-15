@@ -30,8 +30,8 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
 
 void client_ray_cast();
 
-static bool _mech_update(struct MECH &m); //call after type or subtype changes
-static bool unpack_mech(struct MECH &m, class mech_create_StoC &p);
+static bool _mech_update(struct Mech &m); //call after type or subtype changes
+static bool unpack_mech(struct Mech &m, class mech_create_StoC &p);
 #endif
 
 #if DC_SERVER
@@ -50,7 +50,7 @@ bool remove_mech(int mech_id);
 
 int count_mech(MechType mech_type);
 
-static void pack_mech(struct MECH &m, class mech_create_StoC &p);
+static void pack_mech(struct Mech &m, class mech_create_StoC &p);
 #endif
 
 }   // t_mech

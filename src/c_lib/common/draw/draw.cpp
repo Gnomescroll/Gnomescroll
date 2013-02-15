@@ -110,13 +110,13 @@ void drawColoredMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Co
 
     // fill vertex buffer
     int i,j;
-    for(i=0; i<8; i++) {
+    for (i=0; i<8; i++) {
         v_buffer[3*i+0] = v_set[3*i+0]*forward.x + v_set[3*i+1]*right.x + v_set[3*i+2]*normal.x;
         v_buffer[3*i+1] = v_set[3*i+0]*forward.y + v_set[3*i+1]*right.y + v_set[3*i+2]*normal.y;
         v_buffer[3*i+2] = v_set[3*i+0]*forward.z + v_set[3*i+1]*right.z + v_set[3*i+2]*normal.z;
     }
-    for(i=0; i<6; i++) {
-        for(j=0; j<4; j++) {
+    for (i=0; i<6; i++) {
+        for (j=0; j<4; j++) {
             s_buffer[12*i+3*j+0] = v_buffer[3*q_set[4*i+j] + 0];
             s_buffer[12*i+3*j+1] = v_buffer[3*q_set[4*i+j] + 1];
             s_buffer[12*i+3*j+2] = v_buffer[3*q_set[4*i+j] + 2];
@@ -124,7 +124,7 @@ void drawColoredMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Co
     }
 
     // draw voxel
-    for(i=0; i<6; i++) {
+    for (i=0; i<6; i++) {
         glVertex3f(x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
         glVertex3f(x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
         glVertex3f(x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
@@ -147,20 +147,20 @@ void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, f
 
     // fill vertex buffer
     int i,j;
-    for(i=0; i<8; i++) {
+    for (i=0; i<8; i++) {
         v_buffer[3*i+0] = v_set[3*i+0]*forward.x + v_set[3*i+1]*right.x + v_set[3*i+2]*normal.x;
         v_buffer[3*i+1] = v_set[3*i+0]*forward.y + v_set[3*i+1]*right.y + v_set[3*i+2]*normal.y;
         v_buffer[3*i+2] = v_set[3*i+0]*forward.z + v_set[3*i+1]*right.z + v_set[3*i+2]*normal.z;
     }
-    for(i=0; i<6; i++) {
-        for(j=0; j<4; j++) {
+    for (i=0; i<6; i++) {
+        for (j=0; j<4; j++) {
             s_buffer[12*i+3*j+0] = v_buffer[3*q_set[4*i+j] + 0];
             s_buffer[12*i+3*j+1] = v_buffer[3*q_set[4*i+j] + 1];
             s_buffer[12*i+3*j+2] = v_buffer[3*q_set[4*i+j] + 2];
         }
     }
     // draw voxel
-    for(i=0; i<6; i++) {
+    for (i=0; i<6; i++) {
         glTexCoord2f(tx_min, ty_min);
         glVertex3f(x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
         glTexCoord2f(tx_min, ty_max);

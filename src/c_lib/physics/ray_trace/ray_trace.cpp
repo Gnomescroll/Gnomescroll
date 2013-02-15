@@ -11,7 +11,7 @@
 
 static inline bool collision_check(int x, int y, int z)
 {
-    if((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     return t_map::isSolid(x,y,z);

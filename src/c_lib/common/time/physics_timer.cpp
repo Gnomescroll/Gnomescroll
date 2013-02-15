@@ -74,7 +74,7 @@ int _GET_TICK()
 
     #else
         #ifdef _POSIX_TIMERS
-            
+
             long s_sec, n_sec;
 
             struct timespec tp;
@@ -89,7 +89,7 @@ int _GET_TICK()
             //printf("_POSIX_TIMERS not defined! \n");
         #endif
     #endif
-    
+
     #ifdef _POSIX_TIMERS
         long cs_sec, cn_sec;
         cs_sec = s_sec - s_sec_start;
@@ -99,13 +99,13 @@ int _GET_TICK()
         _ti = cs_sec*1000 + cn_sec/(1000*1000);
     #else
         static const long GetTickCount_start = GetTickCount();
-        long cs_ms = GetTickCount() - GetTickCount_start;  
-        long t = cs_ms / TICK_MS;       
+        long cs_ms = GetTickCount() - GetTickCount_start;
+        long t = cs_ms / TICK_MS;
         _ti = cs_ms;
     #endif
-    
-    if(c_tick < t) {
-        if(c_tick+5 < t)
+
+    if (c_tick < t) {
+        if (c_tick+5 < t)
         {
             #if DC_SERVER || !PRODUCTION
             printf("Timer error: c_tick < t is %ld < %ld \n", c_tick,t);
@@ -116,7 +116,7 @@ int _GET_TICK()
         c_tick++;
         _last_tick = _ti;
         return 1;
-    } else 
+    } else
     {
         return 0;
     }
@@ -124,12 +124,12 @@ int _GET_TICK()
     return 0;
 }
 
-int _GET_MS_TIME() 
+int _GET_MS_TIME()
 {
     //long s_sec, n_sec;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
-        long s_sec, n_sec;   
-        
+        long s_sec, n_sec;
+
         clock_serv_t cclock;
         mach_timespec_t mts;
         host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
@@ -155,7 +155,7 @@ int _GET_MS_TIME()
             //printf("_POSIX_TIMERS not defined! \n");
         #endif
     #endif
-    
+
     #ifdef _POSIX_TIMERS
         long cs_sec, cn_sec;
         cs_sec = s_sec - s_sec_start;
@@ -163,11 +163,11 @@ int _GET_MS_TIME()
         return (int) (cs_sec*1000+ (cn_sec/ 1000000) );
     #else
         static const long GetTickCount_start = GetTickCount();
-        return GetTickCount() - GetTickCount_start;  
+        return GetTickCount() - GetTickCount_start;
     #endif
 }
 
-long _GET_MICROSECOND_TIME() 
+long _GET_MICROSECOND_TIME()
 {
     //long s_sec, n_sec;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
@@ -201,7 +201,7 @@ long _GET_MICROSECOND_TIME()
             //printf("_POSIX_TIMERS not defined! \n");
         #endif
     #endif
-    
+
     #ifdef _POSIX_TIMERS
         long cs_sec, cn_sec;
         cs_sec = s_sec - s_sec_start;
@@ -209,7 +209,7 @@ long _GET_MICROSECOND_TIME()
         return cs_sec*(1000*1000) + (cn_sec/ 1000);
     #else
         static const long GetTickCount_start = GetTickCount();
-        return 1000*(GetTickCount() - GetTickCount_start);  
+        return 1000*(GetTickCount() - GetTickCount_start);
     #endif
 }
 
@@ -234,7 +234,7 @@ void gs_millisleep(int milliseconds)
     req.tv_sec = 0; // 0 seconds
     req.tv_nsec = milliseconds*1000*1000;   // nanoseconds
     nanosleep(&req, NULL);
-    #endif 
+    #endif
 }
 
 void gs_microsleep(int microseconds)
@@ -246,5 +246,5 @@ void gs_microsleep(int microseconds)
     req.tv_sec = 0; // 0 seconds
     req.tv_nsec = microseconds*1000;   // nanoseconds
     nanosleep(&req, NULL);
-    #endif 
+    #endif
 }

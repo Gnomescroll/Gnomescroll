@@ -89,9 +89,9 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     int cy = chunk_index / MAP_CHUNK_XDIM;
 
     main_map->load_chunk(cx, cy);
-    class MAP_CHUNK* m = main_map->chunk[chunk_index];
+    class MapChunk* m = main_map->chunk[chunk_index];
 
-    int _size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
+    int _size = sizeof(struct MapElement)*16*16*TERRAIN_MAP_HEIGHT;
 
     if (size != _size) printf("map_chunk_compressed_StoC::handle, warning: invalid size!\n");
 
@@ -118,7 +118,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 
     GS_ASSERT(main_map->chunk[chunk_index] == NULL);
     main_map->load_chunk(cx, cy);
-    class MAP_CHUNK* m = main_map->chunk[chunk_index];
+    class MapChunk* m = main_map->chunk[chunk_index];
 
 /*
     This is evil, dont do this
@@ -182,7 +182,7 @@ void block_set_StoC::handle()
 
 void block_set_palette_StoC::handle()
 {
-    struct MAP_ELEMENT e = NULL_MAP_ELEMENT;
+    struct MapElement e = NULL_MAP_ELEMENT;
     e.block   = cube_type;
     e.palette = palette;
     //e.light   = fast_cube_attributes[cube_type].light_value;

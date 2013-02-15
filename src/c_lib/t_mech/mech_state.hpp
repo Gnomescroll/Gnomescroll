@@ -21,7 +21,7 @@ struct MechList
 
         //const static HARD_MAX = 0xffff-1;
 
-        struct MECH* mla; //mech array;
+        struct Mech* mla; //mech array;
 
         bool needs_update; //for drawing
 
@@ -30,8 +30,8 @@ struct MechList
         mli = 0;
         mlm = 8;
         mln = 0;
-        mla = (MECH*)malloc(8*sizeof(struct MECH));
-        for(int i=0; i<mlm; i++) mla[i].id = -1;
+        mla = (Mech*)malloc(8*sizeof(struct Mech));
+        for (int i=0; i<mlm; i++) mla[i].id = -1;
 
         needs_update = true;
     }
@@ -48,14 +48,14 @@ struct MechList
     #endif
 
     #if DC_CLIENT
-    void add_mech(int id, const struct MECH &m)
+    void add_mech(int id, const struct Mech &m)
     {
         GS_ASSERT(mln < MECH_HARD_MAX);
 
         while (id >= mlm)
         {
             //printf("add_mech: expand array id= %i mlm= %i from %i \n", id, 2*mlm, mlm);
-            mla = (struct MECH*)realloc(mla, 2*mlm*sizeof(struct MECH));
+            mla = (struct Mech*)realloc(mla, 2*mlm*sizeof(struct Mech));
             for (int i=mlm; i<2*mlm; i++) mla[i].id = -1;
             mlm *= 2;
         }
@@ -73,15 +73,15 @@ struct MechList
 
     #if DC_SERVER
     //negative 1 on failure
-    int add_mech(struct MECH &m)
+    int add_mech(struct Mech &m)
     {
         GS_ASSERT(mln >= 0 && mln < MECH_HARD_MAX);
-        if(mln >= MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
+        if (mln >= MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
 
-        if(mln >= mlm)
+        if (mln >= mlm)
         {
-            mla = (struct MECH*) realloc(mla, 2*mlm*sizeof(struct MECH));
-            for(int i=mlm; i<2*mlm; i++) mla[i].id = -1;
+            mla = (struct Mech*) realloc(mla, 2*mlm*sizeof(struct Mech));
+            for (int i=mlm; i<2*mlm; i++) mla[i].id = -1;
             mlm *= 2;
         }
 
@@ -126,7 +126,7 @@ struct MechList
 
     #if DC_SERVER
     void send_mech_list_to_client(ClientID client_id);
-    void server_add_mech(struct MECH &m);
+    void server_add_mech(struct Mech &m);
     bool server_remove_mech(int id);
     #endif
 };

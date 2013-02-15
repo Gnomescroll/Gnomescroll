@@ -29,14 +29,14 @@ static unsigned char _gamma_correction[256];
 void init_color_data()
 {
     static const float gamma_correction = 2.2f;
-    for(int i=0; i<256; i++)
+    for (int i=0; i<256; i++)
     {
         float intensity = powf(float(i)/256.0f, gamma_correction)*256.0f;
         _gamma_correction[i] = (unsigned char)intensity;
     }
 }
 
-inline Color interpolate_color(const Color a, const Color b, float t)
+inline Color interpolate_color(const Color& a, const Color& b, float t)
 {
     Color c;
     c.r = a.r + float(b.r - a.r) * t;
@@ -46,17 +46,17 @@ inline Color interpolate_color(const Color a, const Color b, float t)
     return c;
 }
 
-inline void print_color(Color color)
+inline void print_color(const Color& color)
 {
     printf("%d,%d,%d,%d\n", color.r, color.g, color.b, color.a);
 }
 
-inline bool colors_equal(Color a, Color b)
+inline bool colors_equal(const Color& a, const Color& b)
 {
     return (a.r == b.r && a.g == b.g && a.b == b.b);
 }
 
-inline bool colors_equal_alpha(Color a, Color b)
+inline bool colors_equal_alpha(const Color& a, const Color& b)
 {
     return (a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a);
 }
@@ -69,7 +69,7 @@ const Color COLOR_BLACK = Color(0,0,0,0xFF);
 
 //convert to linear scale
 
-inline Color color_linearize(Color color)
+inline Color color_linearize(const Color& color)
 {
     Color c;
     for (int i=0; i<3; i++)

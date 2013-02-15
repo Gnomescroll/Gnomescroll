@@ -12,15 +12,15 @@ void regolith_post_processing()
     CubeType regolith_id = get_cube_type("regolith");
     for (int i=0; i < MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++)
     {
-        class MAP_CHUNK* c = main_map->chunk[i];
+        class MapChunk* c = main_map->chunk[i];
         if (c == NULL) continue;
         for (int z=0; z<TERRAIN_MAP_HEIGHT-1; z++)
         {
             for (int x=0; x<16; x++)
             for (int y=0; y<16; y++)
             {
-                struct MAP_ELEMENT e1;
-                struct MAP_ELEMENT e2;
+                struct MapElement e1;
+                struct MapElement e2;
                 e1 = c->get_element(x,y,z);
                 if (e1.block == regolith_id)
                 {

@@ -3,34 +3,29 @@
 namespace t_map
 {
 
-class control_node
+class ControlNode
 {
     public:
-
-    int x;
-    int y;
-    int z;
+        int x;
+        int y;
+        int z;
 };
 
-class CONTROL_NODE_LIST
+class ControlNodeList
 {
     public:
+        int cpi; //control point index
+        int cpm; //control point max
+        class ControlNode* cpa; //control point array;
+        bool needs_update; //for drawing
 
-    int cpi; //control point index
-    int cpm; //control point max
-    class control_node* cpa; //control point array;
-
-    bool needs_update; //for drawing
-
-    CONTROL_NODE_LIST()
+    ControlNodeList() :
+        cpi(0), cpm(8), needs_update(true)
     {
-        cpi = 0;
-        cpm = 8;
-        cpa = (control_node*) malloc(8*sizeof(class control_node));
-        needs_update = true;
+        this->cpa = (ControlNode*)malloc(8*sizeof(class ControlNode));
     }
 
-    ~CONTROL_NODE_LIST()
+    ~ControlNodeList()
     {
         free(cpa);
     }
@@ -48,7 +43,7 @@ class CONTROL_NODE_LIST
         if (cpi == cpm)
         {
             cpm *= 2;
-            control_node* new_cpa = (control_node*) realloc(cpa, cpm*sizeof(class control_node));
+            ControlNode* new_cpa = (ControlNode*) realloc(cpa, cpm*sizeof(class ControlNode));
             if (new_cpa == NULL)
             {
                 free(cpa);
@@ -130,25 +125,25 @@ class CONTROL_NODE_LIST
 class ControlNodeVertexList
 {
     public:
-    // visibility will default to private unless you specify it
-    struct Vertex
-    {
-        float x,y,z;
-        float tx,ty;
-        float btx,bty;  //texture cordinates for bilinear interpolation
-        unsigned char color[4];
-        unsigned char brightness[4];
-    };
+        // visibility will default to private unless you specify it
+        struct Vertex
+        {
+            float x,y,z;
+            float tx,ty;
+            float btx,bty;  //texture cordinates for bilinear interpolation
+            unsigned char color[4];
+            unsigned char brightness[4];
+        };
 
-    static const int stride = sizeof(Vertex);
+        static const int stride = sizeof(Vertex);
 
-    struct Vertex* va;  //vertex array
-    int vi; //vertex index
-    int vm; //vertex max
+        struct Vertex* va;  //vertex array
+        int vi; //vertex index
+        int vm; //vertex max
 
-    unsigned int VBO; //for drawing
+        unsigned int VBO; //for drawing
 
-    struct Vertex v; //set this and then push vertex
+        struct Vertex v; //set this and then push vertex
 
     ControlNodeVertexList()
     {
@@ -162,7 +157,6 @@ class ControlNodeVertexList
     {
         free(va);
     }
-
 
     void vertex3f(float x, float y, float z)
     {
@@ -217,25 +211,21 @@ class ControlNodeVertexList
 
 };
 
-
-
 class ControlNodeShader
 {
     public:
-
         SDL_Surface* s;
-
-        unsigned int texture1;
+        GLuint texture1;
         class Shader* shader;
-
         //uniforms
-        unsigned int CameraPosition;
+        GLuint CameraPosition;
         //attributes
-        unsigned int TexCoord;
-        unsigned int Brightness;
+        GLuint TexCoord;
+        GLuint Brightness;
 
     ControlNodeShader() :
-        s(NULL), texture1(0), shader(NULL)
+        s(NULL), texture1(0), shader(NULL), CameraPosition(0), TexCoord(0),
+        Brightness(0)
     {
         init_texture();
         init_shader();
@@ -244,17 +234,18 @@ class ControlNodeShader
     ~ControlNodeShader()
     {
         if (s != NULL) SDL_FreeSurface(s);
-        if (shader != NULL) delete shader;
+        delete shader;
     }
 
     void init_shader()
     {
+        GS_ASSERT(this->shader == NULL);
         shader = new Shader;
         shader->set_debug(true);
 
         shader->load_shader("control_node_shader",
-            MEDIA_PATH "shaders/effect/control_node.vsh",
-            MEDIA_PATH "shaders/effect/control_node.fsh");
+            MEDIA_PATH "shaders/effect/ControlNode.vsh",
+            MEDIA_PATH "shaders/effect/ControlNode.fsh");
 
         CameraPosition = shader->get_uniform("CameraPosition");
         TexCoord = shader->get_attribute("InTexCoord");
@@ -296,9 +287,32 @@ class ControlNodeShader
 class ControlNodeRenderer
 {
     public:
+        struct ControlNodeRender
+        {
+            short x,y,z;
+            unsigned char face; //block side and edge
+            unsigned char tex;
+            unsigned char r,g,b;    //color
+        };
 
         class ControlNodeShader shader;
         class ControlNodeVertexList vertex_list;
+
+        struct ControlNodeRender* cnra; // control_node_render_list array
+        int cnri;   //index
+        int cnrm;   //max
+        class ControlNodeList* cnl; //control node list
+
+    ControlNodeRenderer(class ControlNodeList* _cnl) :
+        cnra(NULL), cnri(0), cnrm(32), cnl(_cnl)
+    {
+        this->cnra = (struct ControlNodeRender*)calloc(this->cnrm, sizeof(struct ControlNodeRender));
+    }
+
+    ~ControlNodeRenderer()
+    {
+        free(cnra);
+    }
 
     void draw()
     {
@@ -344,35 +358,6 @@ class ControlNodeRenderer
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
     }
-
-
-    struct CONTROL_NODE_RENDER
-    {
-        short x,y,z;
-        unsigned char face; //block side and edge
-        unsigned char tex;
-        unsigned char r,g,b;    //color
-    };
-
-    struct CONTROL_NODE_RENDER* cnra; // control_node_render_list array
-    int cnri;   //index
-    int cnrm;   //max
-
-    class CONTROL_NODE_LIST* cnl; //control node list
-
-    ControlNodeRenderer(class CONTROL_NODE_LIST* _cnl)
-    {
-        this->cnri = 0;
-        this->cnrm = 32;
-        this->cnl = _cnl;
-        this->cnra = (struct CONTROL_NODE_RENDER*) malloc(this->cnrm*sizeof(struct CONTROL_NODE_RENDER));
-    }
-
-    ~ControlNodeRenderer()
-    {
-        free(cnra);
-    }
-
     void update()
     {
         control_node_render_update();
@@ -383,7 +368,7 @@ class ControlNodeRenderer
     void control_node_render_update();
     //int cpi; //control point index
     //int cpm; //control point max
-    //class control_node* cpa; //control point array;
+    //class ControlNode* cpa; //control point array;
 
     void draw_intermediate();
 
@@ -393,7 +378,7 @@ class ControlNodeRenderer
 class ControlNodeRenderer* control_node_renderer = NULL;
 
 
-void control_node_render_init(class CONTROL_NODE_LIST* _cnl)
+void control_node_render_init(class ControlNodeList* _cnl)
 {
     GS_ASSERT(control_node_renderer == NULL);
     control_node_renderer = new ControlNodeRenderer(_cnl);
@@ -549,7 +534,7 @@ void ControlNodeRenderer::draw_intermediate()
 //utility
 void ControlNodeRenderer::_insert_control_node_render_element(short x, short y, short z, unsigned char face, unsigned char tex)
 {
-    struct CONTROL_NODE_RENDER cnr;
+    struct ControlNodeRender cnr;
     cnr.x = x;
     cnr.y = y;
     cnr.z = z;
@@ -562,7 +547,7 @@ void ControlNodeRenderer::_insert_control_node_render_element(short x, short y, 
     if (cnri == cnrm)
     {
         cnrm *= 2;
-        cnra = (struct CONTROL_NODE_RENDER*) realloc(cnra, cnrm*sizeof(struct CONTROL_NODE_RENDER));
+        cnra = (struct ControlNodeRender*) realloc(cnra, cnrm*sizeof(struct ControlNodeRender));
     }
 }
 

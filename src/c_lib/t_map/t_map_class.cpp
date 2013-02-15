@@ -5,30 +5,25 @@
 #include <t_map/_interface.hpp>
 #include <t_map/common/constants.hpp>
 #include <physics/quadrant.hpp>
-
 #include <t_mech/_interface.hpp>
-
-
 #include <t_map/lighting.hpp>
 
 namespace t_map
 {
-/*
-    Constructors
-*/
-MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
-{
-    GS_ASSERT((_xpos % TERRAIN_CHUNK_WIDTH) == 0 && (_ypos % TERRAIN_CHUNK_WIDTH) == 0);
-    #if DC_CLIENT
-    needs_update = false;
-    #endif
-    xpos = _xpos;
-    ypos = _ypos;
-    version = 0;
 
-    chunk_index = (ypos / TERRAIN_CHUNK_WIDTH)*(MAP_CHUNK_XDIM) + (xpos / TERRAIN_CHUNK_WIDTH);
-    chunk_item_container.chunk_index = chunk_index;
-    memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT));
+MapChunk::MapChunk(int _xpos, int _ypos) :
+    xpos(_xpos), ypos(_ypos), version(0)
+{
+    GS_ASSERT((_xpos % TERRAIN_CHUNK_WIDTH) == 0 &&
+              (_ypos % TERRAIN_CHUNK_WIDTH) == 0);
+    #if DC_CLIENT
+    this->needs_update = false;
+    #endif
+
+    this->chunk_index = (ypos / TERRAIN_CHUNK_WIDTH)*(MAP_CHUNK_XDIM) + (xpos / TERRAIN_CHUNK_WIDTH);
+    this->chunk_item_container.chunk_index = chunk_index;
+    memset(this->height_cache, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*sizeof(struct MapElement));
+    memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MapElement));
 }
 
 
@@ -37,7 +32,7 @@ Terrain_map::Terrain_map(int _xdim, int _ydim)
     this->xdim = _xdim;
     this->ydim = _xdim;
 
-    chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
+    chunk = new MapChunk*[xchunk_dim*ychunk_dim];
 
     for (int i=0; i<xchunk_dim*ychunk_dim; i++)
         chunk[i] = NULL;
@@ -60,29 +55,27 @@ Terrain_map::~Terrain_map()
     if (this->chunk != NULL)
     {
         for (int i=0; i < xchunk_dim*ychunk_dim; i++)
-            if (this->chunk[i] != NULL) delete this->chunk[i];
-        delete[] this->chunk;
+            delete this->chunk[i];
     }
+    delete[] this->chunk;
 }
 
 /*
 Height Cache
 */
 
-void MAP_CHUNK::refresh_height_cache()
+void MapChunk::refresh_height_cache()
 {
     for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
     for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
-    for (int k=ZMAX-1; k>=0; k--)
+    for (int k=map_dim.z-1; k>=0; k--)
     {
         if (isSolid((CubeType)e[(k<<8)+(j<<4)+i].block))
         {
             this->height_cache[TERRAIN_CHUNK_WIDTH*j+i] = j+1; //first block above the firs solid block
             break;
         }
-
     }
-
 }
 
 /*
@@ -90,17 +83,17 @@ Get Methods
 */
 
 
-CubeType MAP_CHUNK::get_block(int x, int y, int z)
+CubeType MapChunk::get_block(int x, int y, int z)
 {
     return (CubeType)e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 }
 
-struct MAP_ELEMENT MAP_CHUNK::get_element(int x, int y, int z)
+struct MapElement MapChunk::get_element(int x, int y, int z)
 {
     return e[ (z<<8)+((y&15)<<4)+(x&15) ];
 }
 
-struct MAP_ELEMENT Terrain_map::get_element(int x, int y, int z)
+struct MapElement Terrain_map::get_element(int x, int y, int z)
 {
     #if T_MAP_GET_OPTIMIZED
     // don't assert here -- some methods that use this will naturally pass in -1
@@ -110,7 +103,7 @@ struct MAP_ELEMENT Terrain_map::get_element(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c;
+    class MapChunk* c;
 
     c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if (c == NULL) return NULL_MAP_ELEMENT;
@@ -121,7 +114,7 @@ struct MAP_ELEMENT Terrain_map::get_element(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c;
+    class MapChunk* c;
     {
         int xchunk = (x >> 4);
         int ychunk = (y >> 4);
@@ -141,7 +134,7 @@ void Terrain_map::set_update(int x, int y)
 {
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
 
     //GS_ASSERT(c != NULL);
     if (c != NULL)
@@ -154,7 +147,7 @@ Set Methods
 */
 
 
-void MAP_CHUNK::set_element(int x, int y, int z, struct MAP_ELEMENT element)
+void MapChunk::set_element(int x, int y, int z, struct MapElement element)
 {
     e[ (z<<8)+((y&15)<<4)+(x&15) ] = element;
 
@@ -167,13 +160,13 @@ void MAP_CHUNK::set_element(int x, int y, int z, struct MAP_ELEMENT element)
 }
 
 
-void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
+void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
 {
     IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c;
+    class MapChunk* c;
 
     int xchunk = (x >> 4);
     int ychunk = (y >> 4);
@@ -206,7 +199,7 @@ int Terrain_map::get_damage(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c;
+    class MapChunk* c;
     {
         int xchunk = (x >> 4);
         int ychunk = (y >> 4);
@@ -218,7 +211,7 @@ int Terrain_map::get_damage(int x, int y, int z)
 
     int xi = x & 15; //bit mask
     int yi = y & 15; //bit mask
-    struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
+    struct MapElement* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
 
     return e->damage;
 }
@@ -232,7 +225,7 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c;
+    class MapChunk* c;
     {
         int xchunk = (x >> 4);
         int ychunk = (y >> 4);
@@ -245,7 +238,7 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
     int xi = x & 15; //bit mask
     int yi = y & 15; //bit mask
 
-    struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
+    struct MapElement* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
 
     *cube_type = (CubeType)e->block;
 
@@ -300,7 +293,7 @@ void Terrain_map::chunk_received(int cx, int cy)
     int h;
     int xoff = cx * TERRAIN_CHUNK_WIDTH;
     int yoff = cy * TERRAIN_CHUNK_WIDTH;
-    MAP_CHUNK* m = this->chunk[cx + MAP_CHUNK_XDIM*cy];
+    MapChunk* m = this->chunk[cx + MAP_CHUNK_XDIM*cy];
     int x,y;
 
     for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
@@ -420,7 +413,7 @@ CubeType Terrain_map::get_block(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     if (c == NULL) return EMPTY_CUBE;
     return (CubeType)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
 }
@@ -432,7 +425,7 @@ void Terrain_map::set_block(int x, int y, int z, CubeType cube_type)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MAP_ELEMENT element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
+    struct MapElement element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
 
     set_element(x,y,z, element);
 
@@ -448,7 +441,7 @@ void Terrain_map::set_block_fast(int x, int y, int z, CubeType cube_type)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MAP_ELEMENT element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
+    struct MapElement element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
     set_element(x,y,z, element);
 }
 
@@ -461,7 +454,7 @@ bool Terrain_map::chunk_loaded(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     return (c != NULL);
 }
 #endif
@@ -476,7 +469,7 @@ inline int Terrain_map::get_height(int x, int y)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    class MapChunk* c = chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
     IF_ASSERT(c == NULL) return 0;
 
     return c->height_cache[ ((y&(TERRAIN_CHUNK_WIDTH-1))<<4) + (x&(TERRAIN_CHUNK_WIDTH-1)) ];
@@ -488,7 +481,7 @@ void Terrain_map::load_chunk(int i, int j)
 {
     IF_ASSERT(i < 0 || i >= xchunk_dim || j < 0 || j >= ychunk_dim) return;
     GS_ASSERT(this->chunk[xchunk_dim*j + i ] == NULL);
-    this->chunk[xchunk_dim*j+i] = new MAP_CHUNK(TERRAIN_CHUNK_WIDTH*i, TERRAIN_CHUNK_WIDTH*j);
+    this->chunk[xchunk_dim*j+i] = new MapChunk(TERRAIN_CHUNK_WIDTH*i, TERRAIN_CHUNK_WIDTH*j);
 }
 
 

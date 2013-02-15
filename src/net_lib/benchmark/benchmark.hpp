@@ -25,7 +25,7 @@ class benchmarkCtoS: public FixedSizeNetPacketToServer<benchmarkCtoS>
 
         inline void handle() {
             _CtoSbenchmark_counter++;
-            if(_CtoSbenchmark_counter % 1000 == 0) printf("%i messages\n", _CtoSbenchmark_counter);
+            if (_CtoSbenchmark_counter % 1000 == 0) printf("%i messages\n", _CtoSbenchmark_counter);
             return;
         }
 };
@@ -55,7 +55,7 @@ class benchmarkReliableCtoS: public FixedSizeReliableNetPacketToServer<benchmark
 
         inline void handle() {
             _r_received++;
-            //if(_CtoSbenchmark_counter % 1000 == 0) printf("%i messages\n", _CtoSbenchmark_counter);
+            //if (_CtoSbenchmark_counter % 1000 == 0) printf("%i messages\n", _CtoSbenchmark_counter);
             printf("Received %i reliable messages\n", _r_received);
             return;
         }

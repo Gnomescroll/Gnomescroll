@@ -805,9 +805,9 @@ HUD::~HUD()
         text_list->destroy(error_subtitle->id);
     if (awesomium_message != NULL)
         text_list->destroy(awesomium_message->id);
-    if (health != NULL) delete health;
-    if (scoreboard != NULL) delete scoreboard;
-    if (chat != NULL) delete chat;
+    delete health;
+    delete scoreboard;
+    delete chat;
 }
 
 /* ChatRender */
@@ -959,7 +959,8 @@ void ChatRender::update(bool timeout, bool other_players)
 
 
 ChatRender::ChatRender() :
-    inited(false), input(NULL), paging_offset(0)
+    inited(false), input(NULL), paging_offset(0), cursor_x(0.0f),
+    cursor_y(0.0f), cursor_w(0.0f), cursor_h(0.0f)
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
 }

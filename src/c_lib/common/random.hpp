@@ -13,7 +13,7 @@ inline int randrange(int lower, int upper)
     if (lower < 0)
     {
         off = lower;
-        lower -= lower;
+        lower = 0;
         upper -= lower;
     }
     return rand() % (upper - lower + 1) + lower + off;
@@ -28,10 +28,10 @@ inline int distribute_gaussian(int lower, int upper, size_t precision)
     if (lower < 0)
     {
         off = lower;
-        lower -= lower;
+        lower = 0;
         upper -= lower;
     }
-    
+
     int retval = 0;
     for (size_t counter=0; counter<precision; counter++)
         retval += rand() % (upper - lower + 1) + lower + off;
@@ -42,12 +42,12 @@ inline int distribute_gaussian(int lower, int upper, size_t precision)
 
 inline float randf()
 {
-    return (float)rand()/(float)RAND_MAX;
+    return float(rand())/float(RAND_MAX);
 }
 
 void randstr(char* s, int n)
 {
-    for (int i=0; i<n-1; s[i++] = (char)randrange(32,126));
+    for (int i=0; i<n-1; s[i++] = char(randrange(32,126)));
     s[n-1] = '\0';
 }
 

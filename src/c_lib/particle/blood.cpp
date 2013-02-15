@@ -45,7 +45,7 @@ void Blood_list::draw()
 {
     glColor4ub(255,255,255,255);
     #if DC_CLIENT
-    for(size_t i=0; i<num; i++)
+    for (size_t i=0; i<num; i++)
         a[i].draw(a[i].get_position());
     #endif
 }

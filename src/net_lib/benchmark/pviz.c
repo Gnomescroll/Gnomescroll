@@ -54,8 +54,8 @@ void pviz_draw_grid(float z) {
     //glPointSize(1.00);
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)255);
     glBegin(GL_POINTS);
-    for(i=0; i<50;i++) {
-    for(j=0; j<50;j++) {
+    for (i=0; i<50;i++) {
+    for (j=0; j<50;j++) {
         //printf("drew");
        glVertex3f((float)i*xstep+0.5,(float)j*ystep+0.5,z);
        //glVertex2i(i*xstep, j*ystep);
@@ -69,7 +69,7 @@ void pviz_draw(float x, float y, float z) {
     pviz_packet_histrogram_draw(x,y,z);
     pviz_packet_histrogram2_draw(x,y,z);
 
-    if(x==0) {
+    if (x==0) {
         pviz_draw_grid(z);
         return;
     }
@@ -95,8 +95,8 @@ void pviz_draw(float x, float y, float z) {
     /*
     while(ac*INC_C < 800 && i < 32) {
         index = (frame_n - i) % 128;
-        if(index < 0) {index += 128;}
-        //if(frame_array[index].)
+        if (index < 0) {index += 128;}
+        //if (frame_array[index].)
         glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
         glVertex3f(x,y-ac*INC_C,z);
         glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)0);
@@ -168,9 +168,9 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
     glBegin(GL_POINTS);
 
     i = frame_n % PO_L;
-    for(k=0; k<PO_L2; k++) {
-        if(packet_out_array[i].ack_frame == -1) {
-            if(time - packet_out_array[i].send_time > 500) {
+    for (k=0; k<PO_L2; k++) {
+        if (packet_out_array[i].ack_frame == -1) {
+            if (time - packet_out_array[i].send_time > 500) {
                 glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
             } else {
                 glColor3ub((unsigned char) 153,(unsigned char)50,(unsigned char)204);
@@ -180,12 +180,12 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
             glColor3ub((unsigned char) 0,(unsigned char)0,(unsigned char)255);
             ft = packet_out_array[i].ack_frame - packet_out_array[i].send_frame;
             //printf("ft=%i i=%i ack_t=%i send_t=%i\n", ft, i,packet_out_array[i].ack_frame,packet_out_array[i].send_frame );
-            for(j=0; j<ft; j++) {
+            for (j=0; j<ft; j++) {
                 glVertex3f(_C+x+3*j,_C+y-2*ac*k,z);
             }
         }
         i--;
-        if(i<0) i = PO_L2;
+        if (i<0) i = PO_L2;
     }
     glEnd();
     glPointSize(1.0);
@@ -196,9 +196,9 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
     glPointSize(1.0);
     glBegin(GL_POINTS);
 
-    for(i=0; i<PO_L; i++) {
-        if(packet_out_array[i].ack_frame == -1) {
-            if(time - packet_out_array[i].send_time > 500) {
+    for (i=0; i<PO_L; i++) {
+        if (packet_out_array[i].ack_frame == -1) {
+            if (time - packet_out_array[i].send_time > 500) {
                 glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
             } else {
                 glColor3ub((unsigned char) 153,(unsigned char)50,(unsigned char)204);
@@ -208,7 +208,7 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
             glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)0);
             ft = packet_out_array[i].ack_frame - packet_out_array[i].send_frame;
             //printf("ft=%i i=%i ack_t=%i send_t=%i\n", ft, i,packet_out_array[i].ack_frame,packet_out_array[i].send_frame );
-            for(j=0; j<ft; j++) {
+            for (j=0; j<ft; j++) {
                 glVertex3f(_C+x+j,_C+y-ac*i,z);
             }
         }
@@ -218,9 +218,9 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
     /*
     glPointSize(2.0);
     glBegin(GL_POINTS);
-    for(i=0; i<PO_L; i++) {
-        if(packet_out_array[i].ack_frame == -1) {
-            if(time - packet_out_array[i].send_time > 500) {
+    for (i=0; i<PO_L; i++) {
+        if (packet_out_array[i].ack_frame == -1) {
+            if (time - packet_out_array[i].send_time > 500) {
                 glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
             } else {
                 glColor3ub((unsigned char) 153,(unsigned char)50,(unsigned char)204);
@@ -230,7 +230,7 @@ void pviz_packet_histrogram_draw(float x, float y, float z) {
             glColor3ub((unsigned char) 0,(unsigned char)255,(unsigned char)0);
             ft = packet_out_array[i].ack_frame - packet_out_array[i].send_frame;
             //printf("ft=%i i=%i ack_t=%i send_t=%i\n", ft, i,packet_out_array[i].ack_frame,packet_out_array[i].send_frame );
-            for(j=0; j<ft; j++) {
+            for (j=0; j<ft; j++) {
                 glVertex3f(_C+x+3*j,_C+y-2*ac*i,z);
             }
         }
@@ -246,10 +246,10 @@ int bin_size = 1;
 int bin[num_bins];
 
 void toggle_latency_unit() {
-    if(bin_size==1) bin_size =2;
-    else if(bin_size==2) bin_size =5;
-    else if(bin_size==5) bin_size =10;
-    else if(bin_size==10) bin_size =1;
+    if (bin_size==1) bin_size =2;
+    else if (bin_size==2) bin_size =5;
+    else if (bin_size==5) bin_size =10;
+    else if (bin_size==10) bin_size =1;
     printf("pviz_packet_histrogram2: latency unit = %ims\n", bin_size);
 }
 
@@ -259,15 +259,15 @@ void pviz_packet_histrogram2_draw(float x, float y, float z) {
     x -= 10;
     y += 10;
     int i,j;
-    for(i=0;i<num_bins;i++) bin[i]=0;
+    for (i=0;i<num_bins;i++) bin[i]=0;
     int ft;
-    for(i=0; i<PO_L; i++) {
-        if(packet_out_array[i].ack_frame == -1) continue;
+    for (i=0; i<PO_L; i++) {
+        if (packet_out_array[i].ack_frame == -1) continue;
         ft = packet_out_array[i].ack_time - packet_out_array[i].send_time;
         //printf("ft=%i\n", ft);
         ft = ft / bin_size;
 
-        if(ft <= 0 || ft >= num_bins) {
+        if (ft <= 0 || ft >= num_bins) {
             //printf("ft error: ft= %i\n", ft);
             continue;
         }
@@ -277,15 +277,15 @@ void pviz_packet_histrogram2_draw(float x, float y, float z) {
 
     glBegin(GL_POINTS);
     glColor3ub((unsigned char) 0,(unsigned char)0,(unsigned char)255);
-    for(i=0; i<num_bins; i++) {
+    for (i=0; i<num_bins; i++) {
         //printf("bin[%i]=%i\n", i,bin[i]);
-        for(j=0; j<bin[i]; j++) {
+        for (j=0; j<bin[i]; j++) {
             glVertex3f(_C+x+2*j,_C+y+2*i,z);
         }
     }
 
     glColor3ub((unsigned char) 00,(unsigned char)0,(unsigned char)200);
-    for(i=0; i<8; i++) {
+    for (i=0; i<8; i++) {
         glVertex3f(_C+x-2,_C+y+2*10*i,z);
         glVertex3f(_C+x-3,_C+y+2*10*i,z);
         glVertex3f(_C+x-4,_C+y+2*10*i,z);

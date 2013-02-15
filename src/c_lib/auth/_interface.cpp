@@ -2,12 +2,11 @@
 
 #include <common/common.hpp>
 #include <auth/packets.hpp>
-
 #if DC_CLIENT
-#include <auth/client.hpp>
+# include <auth/client.hpp>
 #endif
 #if DC_SERVER
-#include <auth/server.hpp>
+# include <auth/server.hpp>
 #endif
 
 namespace Auth
@@ -264,6 +263,8 @@ void run_tests()
         GS_ASSERT(strcmp(username, "getgetgetgetget") == 0);
         free(username);
         free(hash);
+        username = NULL;
+        hash = NULL;
         #if DC_SERVER
         // verification will fail because this token has expired
         GS_ASSERT(!verify_token(valid_token));

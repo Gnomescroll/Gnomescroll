@@ -57,7 +57,7 @@ void render_ortho()
     glEnableVertexAttribArray(map_ortho_RGB);
     glEnableVertexAttribArray(map_ortho_LightMatrix);
 
-    //struct Map_vbo* vbo;
+    //struct MapVBO* vbo;
 
     //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array);
 
@@ -66,7 +66,7 @@ void render_ortho()
     {
         int index = j*MAP_CHUNK_XDIM + i;
 
-        class Map_vbo* vbo = vbo_map->vbo_array[index];
+        class MapVBO* vbo = vbo_map->vbo_array[index];
         if (vbo == NULL) continue;
         if (vbo->_v_num[0] == 0) continue;
 
@@ -277,7 +277,7 @@ void save_map_ortho_projection(const char* filename)
     char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) pixel_buffer, xres, yres, 4, &png_size);
 
-    FILE * pFile;
+    FILE* pFile;
     pFile = fopen (FileName , "wb");
     if (!pFile)
     {
@@ -295,5 +295,4 @@ void save_map_ortho_projection(const char* filename)
     glViewport (0, 0, _xres, _yres);
 }
 
-
-}
+}   // t_map

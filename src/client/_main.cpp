@@ -573,7 +573,7 @@ int run()
         t_map::update_map();
         //int _then = _GET_MS_TIME();
 
-        //if(_then-_now > 2)
+        //if (_then-_now > 2)
         //    printf("time= %d \n", _then-_now);
 
         poll_mouse();

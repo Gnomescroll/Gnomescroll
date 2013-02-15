@@ -3,23 +3,19 @@
 namespace t_map
 {
 
-    //unsigned int light_texture_CLUT = 0;
-
 class LightTextureGenerator
 {
-
     public:
-
-    static const int dim = 16;
-
-    float values[3*dim*dim];
-    float values2[3*dim*dim];
-
-    unsigned int texture_array[1];
+        static const int dim = 16;
+        float values[3*dim*dim];
+        float values2[3*dim*dim];
+        GLuint texture_array[1];
 
     LightTextureGenerator()
     {
-
+        memset(this->values, 0, sizeof(this->values));
+        memset(this->values2, 0, sizeof(this->values2));
+        memset(this->texture_array, 0, sizeof(this->texture_array));
     }
 
     ~LightTextureGenerator()
@@ -29,30 +25,21 @@ class LightTextureGenerator
 
     void init()
     {
-        struct Vec3 ul;
-        struct Vec3 ur;
-        struct Vec3 br;
-        struct Vec3 bl;
+        struct Vec3 ul = vec3_init(0.0, 1.0, 0.0);  //darkness
+        struct Vec3 br = vec3_init(1.0, 0.0, 0.0);  //light
+        struct Vec3 ur = vec3_init(0.0, 0.0, 0.0);
+        struct Vec3 bl = vec3_init(0.0, 0.0, 0.0);
 
-        ul = vec3_init(0.0, 1.0, 0.0);  //darkness
-        br = vec3_init(1.0, 0.0, 0.0);  //light
-
-        ur = vec3_init(0.0, 0.0, 0.0);
-        bl = vec3_init(0.0, 0.0, 0.0);
-
-        for(int i=0; i<dim; i++)
+        for (int i=0; i<dim; i++)
         {
-            float xlerp = ((float) i) / ((float) (dim-1));
-
+            float xlerp = float(i) / float(dim-1);
             struct Vec3 t1 = vec3_lerp(ul, ur, xlerp);
             struct Vec3 t2 = vec3_lerp(bl, br, xlerp);
 
-            for(int j=0; j<dim; j++)
+            for (int j=0; j<dim; j++)
             {
-                float ylerp = 1.0 - ((float) j) / ((float) (dim-1));
-
+                float ylerp = 1.0 - float(j) / float(dim-1);
                 struct Vec3 t3 = vec3_lerp(t1, t2, ylerp);
-
                 values[3*(dim*j+i)+0] = t3.x;
                 values[3*(dim*j+i)+1] = t3.y;
                 values[3*(dim*j+i)+2] = t3.z;
@@ -94,7 +81,7 @@ class LightTextureGenerator
     static float falloff(int it, float falloff)
     {
         float t = 1.0;
-        for(int i=0; i<it; i++)
+        for (int i=0; i<it; i++)
             t *= falloff;
         return t;
     }
@@ -104,16 +91,16 @@ class LightTextureGenerator
         struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
         struct Vec3 a = vec3_init(1.6, 0.4, 0.4);   //gamma danger twist
 
-        if(i<=11)
+        if (i<=11)
             return b;
-        if(i==12)
-            return  vec3_add(vec3_scalar_mult(a, 0.4),  vec3_scalar_mult(b, 0.6));
-        if(i==13)
-            return  vec3_add(vec3_scalar_mult(a, 0.6),  vec3_scalar_mult(b, 0.4));
-        if(i==14)
-            return  vec3_add(vec3_scalar_mult(a, 0.8),  vec3_scalar_mult(b, 0.2));
-        if(i==15)
-            return  vec3_add(vec3_scalar_mult(a, 1.0),  vec3_scalar_mult(b, 0.0));
+        if (i==12)
+            return vec3_add(vec3_scalar_mult(a, 0.4),  vec3_scalar_mult(b, 0.6));
+        if (i==13)
+            return vec3_add(vec3_scalar_mult(a, 0.6),  vec3_scalar_mult(b, 0.4));
+        if (i==14)
+            return vec3_add(vec3_scalar_mult(a, 0.8),  vec3_scalar_mult(b, 0.2));
+        if (i==15)
+            return vec3_add(vec3_scalar_mult(a, 1.0),  vec3_scalar_mult(b, 0.0));
 
         return b;
     }
@@ -128,22 +115,22 @@ class LightTextureGenerator
         struct Vec3 L2[16]; //artificial light
 
 
-        for(int i=0; i<16; i++)
+        for (int i=0; i<16; i++)
         {
             float factor = falloff(15-i, 0.75);
             L1[i] = vec3_scalar_mult(get_twist(i), factor); //add in gamma twist latter
         }
 
-        for(int i=0; i<16; i++)
+        for (int i=0; i<16; i++)
         {
             float factor = falloff(15-i, 0.75);
             L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
         }
 
-        for(int i=0; i<dim; i++)
+        for (int i=0; i<dim; i++)
         {
 
-            for(int j=0; j<dim; j++)
+            for (int j=0; j<dim; j++)
             {
                 int _i = i;
                 int _j = 15-j;
@@ -173,14 +160,14 @@ class LightTextureGenerator
         ur = vec3_init(0.0, 0.0, 0.0);
         bl = vec3_init(0.0, 0.0, 0.0);
 
-        for(int i=0; i<dim; i++)
+        for (int i=0; i<dim; i++)
         {
             float xlerp = ((float) i) / ((float) (dim-1));
 
             struct Vec3 t1 = vec3_lerp(ul, ur, xlerp);
             struct Vec3 t2 = vec3_lerp(bl, br, xlerp);
 
-            for(int j=0; j<dim; j++)
+            for (int j=0; j<dim; j++)
             {
                 float ylerp = 1.0 - ((float) j) / ((float) (dim-1));
 
@@ -207,9 +194,9 @@ class LightTextureGenerator
     void gen_textures()
     {
 
-        for(int i=0; i<dim; i++)
+        for (int i=0; i<dim; i++)
         {
-            for(int j=0; j<dim; j++)
+            for (int j=0; j<dim; j++)
             {
                 values2[3*(j*dim +i)+0] = values[3*((15-j)*dim + i)+0];
                 values2[3*(j*dim +i)+1] = values[3*((15-j)*dim + i)+1];
@@ -220,7 +207,7 @@ class LightTextureGenerator
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, texture_array);
 
-        //for(int i=0; i<1; i++)
+        //for (int i=0; i<1; i++)
         //{
             glBindTexture(GL_TEXTURE_2D, texture_array[0]);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -259,5 +246,4 @@ void generate_light_texture()
     //light_texture_CLUT = LTG.texture_array[0];
 }
 
-
-}
+}   // t_map

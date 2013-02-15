@@ -21,7 +21,10 @@ class Soundfile
         float max_playable_distance;
 
     Soundfile() :
-        id(-1), event_name(NULL), filename(NULL)
+        id(-1), event_name(NULL), filename(NULL),
+        pitch(1.0f), gain(1.0f), max_distance(128.0f),
+        reference_distance(5.0f), minimum_gain(0.0f), maximum_gain(1.0f),
+        rolloff_factor(10.0f), loop(false), max_playable_distance(128.0f)
     {}
 
     ~Soundfile()

@@ -126,7 +126,7 @@ void set_max_damage(int max_damage)
 //max light value is 16
 void set_light_value(int light_value)
 {
-    if(light_value < 0 || light_value > 16)
+    if (light_value < 0 || light_value > 16)
     {
 
         printf("FATAL ERROR: BLOCK_DAT, SET_LIGHT_VALUE, light_value must be between 0 and 16, block= %s light= %d \n",

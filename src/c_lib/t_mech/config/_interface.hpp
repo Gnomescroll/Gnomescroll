@@ -143,7 +143,7 @@ void verify_mech_dat()
         class MechAttribute* a = &mech_attributes[i];
         if (!a->loaded) continue;
 
-        if(a->mech_behavior_type == MECH_BEHAVIOR_TYPE_DEFAULT)
+        if (a->mech_behavior_type == MECH_BEHAVIOR_TYPE_DEFAULT)
             GS_ASSERT_ABORT(a->growth_ttl == -1);
     }
 }

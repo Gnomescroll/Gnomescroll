@@ -182,7 +182,7 @@ void GrenadeList::tick()
     {
         if (this->objects[i].id == -1) continue;
         this->objects[i].tick();
-        if(this->objects[i].ttl >= this->objects[i].ttl_max)
+        if (this->objects[i].ttl >= this->objects[i].ttl_max)
         {
             this->objects[i].explode();
             this->destroy(this->objects[i].id);

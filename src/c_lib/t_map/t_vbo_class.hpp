@@ -3,9 +3,7 @@
 #include <t_map/glsl/structs.hpp>
 #include <t_map/glsl/settings.hpp>
 #include <t_map/common/map_element.hpp>
-
-#include "t_map_class.hpp"
-
+#include <t_map/t_map_class.hpp>
 #include <physics/quadrant.hpp>
 
 namespace t_map
@@ -24,84 +22,73 @@ namespace t_map
     Improve viewing fulstrum test
 */
 
-class Map_vbo
+class MapVBO
 {
-
-    static const int MAP_VBO_STARTING_SIZE = 128;
-
+    private:
+        static const int MAP_VBO_STARTING_SIZE = 128;
     public:
+        float xpos;
+        float ypos;
+        float xoff;
+        float yoff;
+        float wxoff;
+        float wyoff;
+        int vnum;
+        int vnum_max;
+        struct Vertex* v_list;
+        struct VertexBackup* v_list_backup; //backup list
+        int _v_num[4];
+        int _v_offset[4];
+        int vertex_num[6];
+        int vertex_offset[6];
+        //int vertex_num_array[7][16];   //for each column, every 8 z
+        int voff_array[6][8+1]; //levels
+        GLuint vbo_id;
 
-    float xpos;
-    float ypos;
-
-    float xoff;
-    float yoff;
-
-    float wxoff;
-    float wyoff;
-
-    int vnum;
-    int vnum_max;
-    struct Vertex* v_list;
-    struct VertexBackup* v_list_backup; //backup list
-
-    int _v_num[4];
-    int _v_offset[4];
-
-    int vertex_num[6];
-    int vertex_offset[6];
-
-    //int vertex_num_array[7][16];   //for each column, every 8 z
-    int voff_array[6][8+1]; //levels
-
-    GLuint vbo_id;
-
-    Map_vbo(class MAP_CHUNK* m)
+    MapVBO(class MapChunk* m) :
+        vnum(0), vnum_max(0), v_list(NULL), v_list_backup(NULL), vbo_id(0)
     {
-        xpos = m->xpos + 8.0f;
-        ypos = m->ypos + 8.0f;
-
-        xoff = m->xpos;
-        yoff = m->ypos;
-
-        v_list = NULL;
-        v_list_backup = NULL;
-        vnum_max = 0;
-
-        vnum = 0;
-        vbo_id = 0;
+        this->xpos = m->xpos + 8.0f;
+        this->ypos = m->ypos + 8.0f;
+        this->xoff = m->xpos;
+        this->yoff = m->ypos;
+        this->wxoff = 0.0f;
+        this->wyoff = 0.0f;
+        memset(this->_v_num, 0, sizeof(this->_v_num));
+        memset(this->_v_offset, 0, sizeof(this->_v_offset));
+        memset(this->vertex_num, 0, sizeof(this->vertex_num));
+        memset(this->vertex_offset, 0, sizeof(this->vertex_offset));
+        memset(this->voff_array, 0, sizeof(this->voff_array));
     }
 
-    ~Map_vbo()
+    ~MapVBO()
     {
-        if (vbo_id != 0) glDeleteBuffers(1, &vbo_id);
-        if (v_list != NULL) delete[] v_list;
-        if (v_list_backup != NULL) delete[] v_list_backup;
+        if (this->vbo_id != 0) glDeleteBuffers(1, &this->vbo_id);
+        delete[] v_list;
+        delete[] v_list_backup;
     }
-
 };
 
 const int VBO_LIST_SIZE = 1024; //max number of VBOS that can have loaded VBOs
 
 
-class Vbo_map
+class VBOMap
 {
-    const static int CHUNK_START_DISTANCE2 = (128+16)*(128+16);
-    const static int CHUNK_IGNORE_DISTANCE2 = (128+64)*(128+64);
+    private:
+        const static int CHUNK_START_DISTANCE2 = (128+16)*(128+16);
+        const static int CHUNK_IGNORE_DISTANCE2 = (128+64)*(128+64);
     public:
+        class MapVBO** vbo_array;
+        class Terrain_map* map;
 
-    class Map_vbo** vbo_array;
-    class Terrain_map* map;
-
-
-    Vbo_map(class Terrain_map* _map)
+    VBOMap(class Terrain_map* _map)
     {
-        map = _map;
-        vbo_array = new Map_vbo*[ MAP_CHUNK_XDIM*MAP_CHUNK_YDIM ];
+        this->map = _map;
+        this->vbo_array = new MapVBO*[ MAP_CHUNK_XDIM*MAP_CHUNK_YDIM ];
         for (int i=0; i<MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++) vbo_array[i] = NULL;
     }
 
-    ~Vbo_map()
+    ~VBOMap()
     {
         for (int i=0; i<MAP_CHUNK_XDIM*MAP_CHUNK_YDIM; i++) if (vbo_array[i] != NULL) delete vbo_array[i];
         delete[] vbo_array;
@@ -118,11 +105,11 @@ class Vbo_map
     void update_map()
     {
     #if MAP_VBO_CULLING
-        int cx = (int) current_camera_position.x;
-        int cy = (int) current_camera_position.y;
+        int cx = current_camera_position.x;
+        int cy = current_camera_position.y;
     #endif
 
-        class MAP_CHUNK* m;
+        class MapChunk* m;
         int min_distance2 = 0x7FFFFFF;
         int _i = -1;
         int _j = -1;
@@ -175,7 +162,7 @@ class Vbo_map
             if (m != NULL && vbo_array[index] == NULL)
             {
                 m->needs_update = true;
-                vbo_array[index] = new Map_vbo(m);
+                vbo_array[index] = new MapVBO(m);
                 //printf("Warning: map chunk is loaded and VBO does not exist, but needs_update is false\n");
             }
 
@@ -201,7 +188,7 @@ class Vbo_map
             m->needs_update = false; //reset flag
 
             GS_ASSERT(vbo_array[index] != NULL);
-            //if (vbo_array[index] == NULL) vbo_array[index] = new Map_vbo(m);
+            //if (vbo_array[index] == NULL) vbo_array[index] = new MapVBO(m);
             //printf("updating vbo: %i %i \n", i, j);
 
             if (T_MAP_BACKUP_SHADER == 0)
@@ -224,16 +211,15 @@ class Vbo_map
         for (int j=0; j<MAP_CHUNK_YDIM; j++)
         {
             const int index = j*MAP_CHUNK_XDIM + i;
-            class MAP_CHUNK* m = map->chunk[index];
+            class MapChunk* m = map->chunk[index];
             if (m == NULL) continue; //can speed up by maintain list of chunks
-            if (m->needs_update == false) continue;
+            if (!m->needs_update) continue;
             m->needs_update = false; //reset flag
-            if (vbo_array[index] == NULL) vbo_array[index] = new Map_vbo(m);
+            if (vbo_array[index] == NULL) vbo_array[index] = new MapVBO(m);
             update_vbo(i, j);
         }
 
     }
-
 
     void update_vbo(int i, int j);
     void update_vbo_compatibility(int i, int j);
@@ -247,5 +233,4 @@ class Vbo_map
     void prep_frustrum_vertices();
 };
 
-
-}
+}   // t_map

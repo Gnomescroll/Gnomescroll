@@ -33,7 +33,7 @@ class PerlinField3D
         init_genrand(seed);
 
         gradient_array = new unsigned char[ssize];
-        for(int i=0; i<ssize; i++)
+        for (int i=0; i<ssize; i++)
         {
             gradient_array[i] = genrand_int32() % 12; //gradient number
         }
@@ -72,7 +72,7 @@ inline int get_gradient(int x, int y, int z)
     y = y % 64;
     z = z % 32;
 
-    if(x + y*64 + z*64*64 >= ssize) GS_ABORT();
+    if (x + y*64 + z*64*64 >= ssize) GS_ABORT();
 
     return gradient_array[x + y*64 + z*64*64];
 }
@@ -106,15 +106,15 @@ float base(float x, float y, float z)
 
     //get interpolation ratio
 
-    //if(z >= 32 || z < 0) printf("ERROR1 z = %f \n", z);
+    //if (z >= 32 || z < 0) printf("ERROR1 z = %f \n", z);
 
     x = x - X;
     y = y - Y;
     z = z - Z;
 
-    //if(z >= 32 || z < 0) printf("ERROR2 z = %f \n", z);
-    //if(x<0 || y<0 || z<0) printf("x,y,z= %f %f %f \n", x,y,z);
-    //if(z >= 32) printf("x,y,z= %f %f %f X,Y,Z= %i %i %i \n", x+X,y+Y,z+Z,X,Y,Z);
+    //if (z >= 32 || z < 0) printf("ERROR2 z = %f \n", z);
+    //if (x<0 || y<0 || z<0) printf("x,y,z= %f %f %f \n", x,y,z);
+    //if (z >= 32) printf("x,y,z= %f %f %f X,Y,Z= %i %i %i \n", x+X,y+Y,z+Z,X,Y,Z);
     // Calculate a set of eight hashed gradient indices
 
 
@@ -231,7 +231,7 @@ class PerlinField2D
         init_genrand(rand());
 
         ga = new unsigned char[ssize];
-        for(int i=0; i<ssize; i++)
+        for (int i=0; i<ssize; i++)
         {
             ga[i] = genrand_int32() % grad_max; //gradient number
         }
@@ -246,7 +246,7 @@ class PerlinField2D
 
     void generate_gradient_vectors()
     {
-        for(int i=0; i<grad_max; i++)
+        for (int i=0; i<grad_max; i++)
         {
             float x = 2*genrand_real1() -1;
             float y = 2*genrand_real1() -1;
@@ -287,7 +287,7 @@ inline int get_gradient(int x, int y)
     x = x % xsize; //replace with bitmask
     y = y % xsize;
 
-    if(x + y*xsize >= ssize) GS_ABORT();
+    if (x + y*xsize >= ssize) GS_ABORT();
 
     return ga[x + y*xsize];
 }
@@ -333,7 +333,7 @@ float base(float x, float y)
     // Interpolate the four results along y
     float nxy = mix(nx00, nx10, v);
 
-    if(nxy < -1 || nxy > 1 ) printf("Error: noise %f \n", nxy);
+    if (nxy < -1 || nxy > 1 ) printf("Error: noise %f \n", nxy);
     return nxy;   //-1 to 1
 }
 
@@ -381,7 +381,7 @@ float order(float x, float y, float persistence, int order)
     float m = 1.0;
     int b = 1;
 
-    for(int i=0; i<=order; i++)
+    for (int i=0; i<=order; i++)
     {
         tmp += base(b*x,b*y);
         m *= persistence;
@@ -400,8 +400,8 @@ float abs(float x, float y)
 
 float MIX(float a, float x, float y)
 {
-    //if(a<0) a=0;
-    //if(a>1) a=1;
+    //if (a<0) a=0;
+    //if (a>1) a=1;
     return x+ a*(y-x);
 }
 

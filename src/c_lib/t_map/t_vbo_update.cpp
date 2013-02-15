@@ -25,20 +25,20 @@ namespace t_map
 
 void init_pallete();
 
-struct SIDE_BUFFER
+struct SideBuffer
 {
     unsigned short x;
     unsigned short y;
     unsigned short z;
     unsigned short side;
-    struct MAP_ELEMENT element;
+    struct MapElement element;
 };
 
 const int SIDE_BUFFER_ARRAY_SIZE = 7;
-//int SIDE_BUFFER_INDEX[SIDE_BUFFER_ARRAY_SIZE];   //index
-//struct SIDE_BUFFER* SIDE_BUFFER_ARRAY[SIDE_BUFFER_ARRAY_SIZE];
-int* SIDE_BUFFER_INDEX = NULL;   //index
-struct SIDE_BUFFER** SIDE_BUFFER_ARRAY = NULL;
+//int side_buffer_indices[SIDE_BUFFER_ARRAY_SIZE];   //index
+//struct SideBuffer* side_buffer_array[SIDE_BUFFER_ARRAY_SIZE];
+int* side_buffer_indices = NULL;   //index
+struct SideBuffer** side_buffer_array = NULL;
 
 struct Vertex* vlist_scratch_0 = NULL;
 struct Vertex* vlist_scratch_1 = NULL;
@@ -51,11 +51,11 @@ void t_vbo_update_init()
     vlist_scratch_0 = (struct Vertex*)calloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4, sizeof(struct Vertex));
     vlist_scratch_1 = (struct Vertex*)calloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4, sizeof(struct Vertex));
 
-    SIDE_BUFFER_ARRAY = (struct SIDE_BUFFER**)calloc(SIDE_BUFFER_ARRAY_SIZE, sizeof(struct SIDE_BUFFER*));
-    SIDE_BUFFER_INDEX = (int*)calloc(SIDE_BUFFER_ARRAY_SIZE, sizeof(int));
+    side_buffer_array = (struct SideBuffer**)calloc(SIDE_BUFFER_ARRAY_SIZE, sizeof(struct SideBuffer*));
+    side_buffer_indices = (int*)calloc(SIDE_BUFFER_ARRAY_SIZE, sizeof(int));
 
     const int b_size = (1+(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT/2));
-    for (int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_ARRAY[i] = (struct SIDE_BUFFER*) calloc(b_size, sizeof(struct SIDE_BUFFER));
+    for (int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) side_buffer_array[i] = (struct SideBuffer*) calloc(b_size, sizeof(struct SideBuffer));
 
     init_pallete();
 
@@ -78,16 +78,16 @@ void t_vbo_update_end()
     free(vlist_scratch_0);
     free(vlist_scratch_1);
 
-    if (SIDE_BUFFER_ARRAY != NULL)
+    if (side_buffer_array != NULL)
     {
         for (int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
-            if (SIDE_BUFFER_ARRAY[i] != NULL)
-                free(SIDE_BUFFER_ARRAY[i]);
-        free(SIDE_BUFFER_ARRAY);
+            if (side_buffer_array[i] != NULL)
+                free(side_buffer_array[i]);
+        free(side_buffer_array);
     }
 
-    if (SIDE_BUFFER_INDEX != NULL)
-        free(SIDE_BUFFER_INDEX);
+    if (side_buffer_indices != NULL)
+        free(side_buffer_indices);
 }
 
 //cache line optimization; minimize size
@@ -381,12 +381,12 @@ static int vertex_max = 0;
 
 #define USE_QUAD_CACHE 0
 
-//ALWAYS_INLINE static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element) __attribute((always_inline));
+//ALWAYS_INLINE static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MapElement element) __attribute((always_inline));
 
 //OPTIMIZED
 
 //ALWAYS_INLINE
-void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element)
+void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MapElement element)
 {
     int tile_id = element.block;
 #if USE_QUAD_CACHE
@@ -479,10 +479,10 @@ void generate_vertex_list(struct Vertex* vlist)
     int offset = 0;
 
     for (int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
-    for (int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
+    for (int j=0; j<side_buffer_indices[side]; j++)
     {
-        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
-        struct MAP_ELEMENT element = sb.element;
+        struct SideBuffer sb = side_buffer_array[side][j];
+        struct MapElement element = sb.element;
         push_quad1(vlist, offset, sb.x, sb.y, sb.z, side, element);
         offset += 4;
     }
@@ -493,13 +493,13 @@ void generate_quad_ao_values(struct Vertex* vlist)
     int offset = 0;
 
     for (int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
-    for (int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
+    for (int j=0; j<side_buffer_indices[side]; j++)
     {
-        //struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
+        //struct SideBuffer sb = side_buffer_array[side][j];
 
-        int x = SIDE_BUFFER_ARRAY[side][j].x;
-        int y = SIDE_BUFFER_ARRAY[side][j].y;
-        int z = SIDE_BUFFER_ARRAY[side][j].z;
+        int x = side_buffer_array[side][j].x;
+        int y = side_buffer_array[side][j].y;
+        int z = side_buffer_array[side][j].z;
 
         _set_quad_local_ambient_occlusion(vlist, offset, x, y, z, side);
 
@@ -511,34 +511,34 @@ void generate_quad_ao_values(struct Vertex* vlist)
 /*
     BUFFER
 */
-//static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)  __attribute((always_inline));
-//static inline void push_buffer2(unsigned short side , unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)  __attribute((always_inline));
+//static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MapElement element)  __attribute((always_inline));
+//static inline void push_buffer2(unsigned short side , unsigned short x, unsigned short y, unsigned short z, struct MapElement element)  __attribute((always_inline));
 
 
 //for solid blocks
 ALWAYS_INLINE OPTIMIZED
-void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
+void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MapElement element)
 {
-    struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[side][SIDE_BUFFER_INDEX[side]];
+    struct SideBuffer* sb = &side_buffer_array[side][side_buffer_indices[side]];
     sb->x = x;
     sb->y = y;
     sb->z = z;
     sb->element = element;
-    SIDE_BUFFER_INDEX[side]++;
+    side_buffer_indices[side]++;
 }
 
 
 //for transparent blocks
 ALWAYS_INLINE OPTIMIZED
-void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MAP_ELEMENT element)
+void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MapElement element)
 {
-    struct SIDE_BUFFER* sb = &SIDE_BUFFER_ARRAY[6][SIDE_BUFFER_INDEX[side]];
+    struct SideBuffer* sb = &side_buffer_array[6][side_buffer_indices[side]];
     sb->x = x;
     sb->y = y;
     sb->z = z;
     sb->side = side;
     sb->element = element;
-    SIDE_BUFFER_INDEX[6]++;
+    side_buffer_indices[6]++;
 }
 
 
@@ -553,7 +553,7 @@ void push_buffer2(unsigned short side, unsigned short x, unsigned short y, unsig
 */
 
 OPTIMIZED
-void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
+void set_vertex_buffers(class MapChunk* chunk, class MapVBO* vbo)
 {
 
     int varray[6][9];
@@ -562,7 +562,7 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
     {
 
         for (int side=0; side<6; side++)
-            varray[side][zi0] = 4*SIDE_BUFFER_INDEX[side];
+            varray[side][zi0] = 4*side_buffer_indices[side];
 
         for (int zi1 = 0; zi1 < 16; zi1++)
         {
@@ -575,7 +575,7 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                 int _x = x + chunk->xpos;
                 int _y = y + chunk->ypos;
 
-                struct MAP_ELEMENT element = chunk->get_element(_x,_y,_z); //faster
+                struct MapElement element = chunk->get_element(_x,_y,_z); //faster
                 CubeType cube_type = (CubeType)element.block;
 
                 if (!isActive(cube_type)) continue;
@@ -606,11 +606,11 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
             }}
         }
 
-        //for (int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = 4*SIDE_BUFFER_INDEX[i];
+        //for (int i=0; i<6; i++) vbo->vertex_num_array[i][zi0] = 4*side_buffer_indices[i];
     }
 
         for (int side=0; side<6; side++)
-            varray[side][8] = 4*SIDE_BUFFER_INDEX[side];
+            varray[side][8] = 4*side_buffer_indices[side];
 
 
         //set index for each side
@@ -618,7 +618,7 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
         {
             vbo->vertex_offset[side] = 0;
             for (int j=0; j<side; j++)
-                vbo->vertex_offset[side] += 4*SIDE_BUFFER_INDEX[j];
+                vbo->vertex_offset[side] += 4*side_buffer_indices[j];
         }
 
         //set voff array
@@ -629,16 +629,16 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
                 vbo->voff_array[side][j] = vbo->vertex_offset[side] + varray[side][j];
         }
         //set vertex number
-        for (int i=0; i<6; i++) vbo->vertex_num[i] = 4*SIDE_BUFFER_INDEX[i];
+        for (int i=0; i<6; i++) vbo->vertex_num[i] = 4*side_buffer_indices[i];
 
 
 /*
-    for (int i=0; i<6; i++) vbo->vertex_num[i] = 4*SIDE_BUFFER_INDEX[i];
+    for (int i=0; i<6; i++) vbo->vertex_num[i] = 4*side_buffer_indices[i];
 
     for (int i=0; i<6; i++)
     {
         vbo->vertex_offset[i] = 0;
-        for (int j=0; j<i; j++) vbo->vertex_offset[i] += 4*SIDE_BUFFER_INDEX[j];
+        for (int j=0; j<i; j++) vbo->vertex_offset[i] += 4*side_buffer_indices[j];
     }
 
 
@@ -667,26 +667,21 @@ void set_vertex_buffers(class MAP_CHUNK* chunk, class Map_vbo* vbo)
 
 }
 
-void Vbo_map::update_vbo(int i, int j)
+void VBOMap::update_vbo(int i, int j)
 {
 
     t_map::assert_skylight(i,j);
 
-    class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
-    class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
-
-    for (int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
-
-    if (chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
-    if (vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
-
+    class MapChunk* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
+    class MapVBO* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
+    for (int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) side_buffer_indices[i] = 0;
+    IF_ASSERT(chunk == NULL) return;
+    IF_ASSERT(vbo == NULL) return;
     int vertex_count[2] = {0, 0};
-
-
     set_vertex_buffers(chunk, vbo); //set the vertex
 
-    for (int i=0; i<6; i++) vertex_count[0] += 4*SIDE_BUFFER_INDEX[i];
-    vertex_count[1] = 4*SIDE_BUFFER_INDEX[6];
+    for (int i=0; i<6; i++) vertex_count[0] += 4*side_buffer_indices[i];
+    vertex_count[1] = 4*side_buffer_indices[6];
 
     int vnum = vertex_count[0] + vertex_count[1];
 
@@ -716,8 +711,7 @@ void Vbo_map::update_vbo(int i, int j)
     generate_vertex_list(vlist);
     generate_quad_ao_values(vlist);
 
-    if (vbo->v_list != NULL)
-        delete[] vbo->v_list; //free old memory
+    delete[] vbo->v_list;
     vbo->v_list = vlist;
 
     if (vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
@@ -729,7 +723,7 @@ void Vbo_map::update_vbo(int i, int j)
 
 #define USE_QUAD_CACHE_COMPATIBABILITY 0
 
-static void push_quad_compatibility(struct VertexBackup* v_list, int offset, int x, int y, int z, int side, struct MAP_ELEMENT element)
+static void push_quad_compatibility(struct VertexBackup* v_list, int offset, int x, int y, int z, int side, struct MapElement element)
 {
 
     int tile_id = element.block;
@@ -816,15 +810,15 @@ void generate_vertex_list_compatibility(struct VertexBackup* vlist)
     int offset = 0;
 
     for (int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
-    for (int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
+    for (int j=0; j<side_buffer_indices[side]; j++)
     {
-        struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
+        struct SideBuffer sb = side_buffer_array[side][j];
 
         int x = sb.x;
         int y = sb.y;
         int z = sb.z;
 
-        struct MAP_ELEMENT element = sb.element;
+        struct MapElement element = sb.element;
 
         push_quad_compatibility(vlist, offset, x,y,z, side, element);
 
@@ -838,13 +832,13 @@ void generate_quad_ao_values_compatibility(struct VertexBackup* vlist)
     int offset = 0;
 
     for (int side=0; side<SIDE_BUFFER_ARRAY_SIZE; side++)
-    for (int j=0; j<SIDE_BUFFER_INDEX[side]; j++)
+    for (int j=0; j<side_buffer_indices[side]; j++)
     {
-        //struct SIDE_BUFFER sb = SIDE_BUFFER_ARRAY[side][j];
+        //struct SideBuffer sb = side_buffer_array[side][j];
 
-        int x = SIDE_BUFFER_ARRAY[side][j].x;
-        int y = SIDE_BUFFER_ARRAY[side][j].y;
-        int z = SIDE_BUFFER_ARRAY[side][j].z;
+        int x = side_buffer_array[side][j].x;
+        int y = side_buffer_array[side][j].y;
+        int z = side_buffer_array[side][j].z;
 
         _set_quad_local_ambient_occlusion_compatibility(vlist, offset, x, y, z, side);
 
@@ -853,27 +847,27 @@ void generate_quad_ao_values_compatibility(struct VertexBackup* vlist)
 
 }
 
-void Vbo_map::update_vbo_compatibility(int i, int j)
+void VBOMap::update_vbo_compatibility(int i, int j)
 {
 
     //update_skylight(i,j); //update skylights
     //update_skylight2(i,j);
     //update_envlight(i,j);
 
-    class MAP_CHUNK* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
-    class Map_vbo* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
+    class MapChunk* chunk = map->chunk[j*MAP_CHUNK_XDIM + i];  //map chunk
+    class MapVBO* vbo = vbo_array[j*MAP_CHUNK_XDIM + i];       //vbo for storing resulting vertices
 
-    for (int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) SIDE_BUFFER_INDEX[i] = 0;
+    for (int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++) side_buffer_indices[i] = 0;
 
-    if (chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
-    if (vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
+    if (chunk == NULL) printf("Error: VBOMap::update_vbo, chunk null; impossible\n");
+    if (vbo == NULL) printf("Error: VBOMap::update_vbo, vbo null; impossible\n");
 
     int vertex_count[2] = {0, 0};
 
     set_vertex_buffers(chunk, vbo); //set the vertex
 
-    for (int i=0; i<6; i++) vertex_count[0] += 4*SIDE_BUFFER_INDEX[i];
-    vertex_count[1] = 4*SIDE_BUFFER_INDEX[6];
+    for (int i=0; i<6; i++) vertex_count[0] += 4*side_buffer_indices[i];
+    vertex_count[1] = 4*side_buffer_indices[6];
 
     int vnum = vertex_count[0] + vertex_count[1];
 
@@ -887,14 +881,14 @@ void Vbo_map::update_vbo_compatibility(int i, int j)
     if (vnum == 0)
     {
         vbo->vnum = 0;
-        if (vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id); vbo->vbo_id = 0;
+        if (vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id);
+        vbo->vbo_id = 0;
         return;
     }
     else
     {
         vbo->vnum = vnum; //total vertices, size of VBO
     }
-
 
     //struct Vertex* vlist = (struct Vertex*) malloc(vnum*sizeof(struct Vertex));
     struct VertexBackup* vlist = new VertexBackup[vnum];
@@ -912,7 +906,8 @@ void Vbo_map::update_vbo_compatibility(int i, int j)
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct VertexBackup), vbo->v_list_backup, GL_STATIC_DRAW);
 }
 
-int update_chunks() {
+int update_chunks()
+{
 #if 0
     struct vm_map* m;
     struct vm_column* c;
@@ -920,18 +915,21 @@ int update_chunks() {
     m = _get_map();
 
     _garbage_collection_counter++;
-    if (_garbage_collection_counter >= garbage_collection_frequency) {
+    if (_garbage_collection_counter >= garbage_collection_frequency)
+    {
         _garbage_collection_counter = 0;
-        for (i=0; i<vm_map_dim; i++) {
-        for (j=0; j<vm_map_dim;j++) {
+        for (i=0; i<vm_map_dim; i++)
+        for (j=0; j<vm_map_dim;j++)
+        {
             c = &m->column[j*vm_map_dim+i];
             //if VBO is farther than 10 viewing units, delete it
-            if (flag_is_true(c, VBO_loaded) && !chunk_render_check(c->x_off, c->y_off, 15)) {
+            if (flag_is_true(c, VBO_loaded) && !chunk_render_check(c->x_off, c->y_off, 15))
+            {
                 //printf("unloaded VBO: %i, %i \n", c->x_off, c->y_off);
                 delete_vbo(&c->vbo);
                 set_flag(c, VBO_loaded, 0);
             }
-        }}
+        }
     }
     //VBO construction loop
 
@@ -944,15 +942,14 @@ int update_chunks() {
         {
             if (flag_is_true(c, VBO_has_blocks) && (flag_is_true(c, VBO_needs_update) || flag_is_false(c, VBO_loaded)))
             {
-                    update_column_VBO(c);
-                    return 0;
+                update_column_VBO(c);
+                return 0;
             }
         }
     }
 #endif
     return 0;
 }
-
 
 }   // t_map
 

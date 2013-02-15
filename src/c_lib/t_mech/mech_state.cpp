@@ -2,10 +2,10 @@
 
 namespace t_mech
 {
-    
+
 bool MechList::is_occupied(int x, int y, int z)
 {
-    for(int i=0; i<mlm; i++)
+    for (int i=0; i<mlm; i++)
         if (mla[i].id >= 0 && mla[i].x == x && mla[i].y == y && mla[i].z == z)
             return true;
     return false;
@@ -36,7 +36,7 @@ void MechList::send_mech_list_to_client(ClientID client_id)
     }
 }
 
-void MechList::server_add_mech(struct MECH &m)
+void MechList::server_add_mech(struct Mech &m)
 {
     IF_ASSERT(mln >= MECH_HARD_MAX)
     {

@@ -34,6 +34,6 @@ void _gl_assert_action(const char* file, int line)
 # define GL_ASSERT(flag, truth) ;
 #else
 # define GL_ASSERT(flag, truth) \
-    if(unlikely(_gl_assert((flag)) !=  (truth))) \
+    if (unlikely(_gl_assert((flag)) !=  (truth))) \
         _gl_assert_action(__FILE__, __LINE__);
 #endif

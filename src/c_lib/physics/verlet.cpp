@@ -3,12 +3,10 @@
 namespace Verlet
 {
 
-static const struct Vec3 default_a = vec3_init(0,0,gravity);
+static const struct Vec3 default_a = vec3_init(0, 0, gravity);
 static const struct Vec3 no_gravity = vec3_init(0.0f, 0.0f, 0.0f);
 
-static inline void velocity_integrate(struct Vec3* p, struct Vec3* v, const struct Vec3 a, float dt)   __attribute__((always_inline));
-
-static inline void velocity_integrate(struct Vec3* p, struct Vec3* v, const struct Vec3 a, float dt)
+static ALWAYS_INLINE void velocity_integrate(struct Vec3* p, struct Vec3* v, const struct Vec3& a, float dt)
 {
     if (dt == 0.0f) return;
     *p = vec3_add(*p, vec3_add(vec3_scalar_mult(*v, dt), vec3_scalar_mult(a, 0.5f*dt*dt)));  // r(t) + v(t)dt + (1/2)gravity(t)dtdt
@@ -20,9 +18,7 @@ static inline void velocity_integrate(struct Vec3* p, struct Vec3* v, const stru
     *v = vec3_add(*v, vec3_scalar_mult(a, 0.5f*dt));
 }
 
-static inline void velocity_integrate(struct Vec3* p, struct Vec3* v, float dt)   __attribute__((always_inline));
-
-static inline void velocity_integrate(struct Vec3* p, struct Vec3* v, float dt)
+static ALWAYS_INLINE void velocity_integrate(struct Vec3* p, struct Vec3* v, float dt)
 {
     velocity_integrate(p, v, default_a, dt);
 }
@@ -53,7 +49,7 @@ bool VerletComponent::bounce_box(float gravity)
 {
     struct Vec3 old_position = this->position;
     struct Vec3 old_velocity = this->velocity;
-    
+
     struct Vec3 a = vec3_init(0.0f, 0.0f, gravity);
     if (t_map::isSolid(translate_point(old_position.x + this->box_radius), old_position.y, old_position.z)) a.x += gravity;
     if (t_map::isSolid(translate_point(old_position.x - this->box_radius), old_position.y, old_position.z)) a.x -= gravity;
@@ -74,7 +70,7 @@ bool VerletComponent::bounce_box(float gravity)
     }
     else
         this->position = translate_position(this->position);
-        
+
     return bounced;
 }
 
@@ -93,7 +89,7 @@ bool VerletComponent::radial(float xr, float yr)
     struct Vec3 old_position = this->position;
     struct Vec3 old_velocity = this->velocity;
 
-    static const float ac = -40.8f; // wtf is this number 
+    static const float ac = -40.8f; // wtf is this number
     struct Vec3 a = vec3_init(ac*(position.x-xr), ac*(position.y-yr), 0.0f);
 
     velocity_integrate(&this->position, &this->velocity, a, dt);
@@ -116,7 +112,7 @@ bool VerletComponent::radial(float xr, float yr)
     }
     else
         this->position = translate_position(this->position);
-        
+
     return bounced;
 }
 

@@ -73,17 +73,17 @@ void meteor_fall()
     //    printf("Incoming %s meteor at %d, %d, %d!\n", cube_name, x, y, z);
     //#endif
 
-    for(int i = x; i < x + METEOR_SIZE; i++) //generate the actual meteor
-    for(int j = y; j < y + METEOR_SIZE; j++)
-    for(int k = z; k < z + METEOR_SIZE; k++)
+    for (int i = x; i < x + METEOR_SIZE; i++) //generate the actual meteor
+    for (int j = y; j < y + METEOR_SIZE; j++)
+    for (int k = z; k < z + METEOR_SIZE; k++)
     {
         if ((k & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) continue;   // stop the assert
         if (randrange(0, 10) < 9) t_map::set(i, j, k, tile_id);
         else t_map::set(i, j, k, rock); //add impurities
     }
 
-    for(int i = x; i < x + METEOR_SIZE; i++) //degenerate the main hole in the ground
-    for(int j = y; j < y + METEOR_SIZE; j++)
+    for (int i = x; i < x + METEOR_SIZE; i++) //degenerate the main hole in the ground
+    for (int j = y; j < y + METEOR_SIZE; j++)
     {
         if (((z + METEOR_SIZE + 1) & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) continue;   // stop the assert
         degenerate_column(i, j, z + METEOR_SIZE + 1);
@@ -91,48 +91,48 @@ void meteor_fall()
 
     //generate the parts that make the meteor seem round, called them rounders, they have more impurities since their impact strength must have bee the highest
 
-    for(int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++) //generate the upper rounder of the meteor-rounders make stuff look round
-    for(int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++)
+    for (int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++) //generate the upper rounder of the meteor-rounders make stuff look round
+    for (int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++)
     {
         if (((z + METEOR_SIZE + 1) & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) continue;   // stop the assert
         if (randrange(0, 5) < 3) t_map::set(i, j, z + METEOR_SIZE + 1, tile_id);
         else t_map::set(i, j, z + METEOR_SIZE + 1, rock); //more impurities here
     }
 
-    for(int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++) //generate the lower rounder of the meteor
-    for(int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++)
+    for (int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++) //generate the lower rounder of the meteor
+    for (int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++)
     {
         if (((z - 1) & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) continue;   // stop the assert
         if (randrange(0, 5) < 2) t_map::set(i, j, z - 1, tile_id);
         else t_map::set(i, j, z - 1, rock); //even more impurities here, because the impact strength must have been epic
     }
 
-    for(int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++) //generate another rounder of the meteor
-    for(int k = z + randrange(1, 2); k < z + METEOR_SIZE - randrange(1, 2); k++)
+    for (int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++) //generate another rounder of the meteor
+    for (int k = z + randrange(1, 2); k < z + METEOR_SIZE - randrange(1, 2); k++)
     {
         if ((k & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) continue;   // stop the assert
         if (randrange(0, 5) < 2) t_map::set(i, y - 1, k, tile_id);
         else t_map::set(i, y - 1, k, rock); //more impurities here, again
     }
 
-    for(int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++) //generate another rounder of the meteor
-    for(int k = z + randrange(1, 2); k < z + METEOR_SIZE - randrange(1, 2); k++)
+    for (int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++) //generate another rounder of the meteor
+    for (int k = z + randrange(1, 2); k < z + METEOR_SIZE - randrange(1, 2); k++)
     {
         if ((k & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) continue;   // stop the assert
         if (randrange(0, 5) < 2) t_map::set(i, y + 1 + METEOR_SIZE, k, tile_id);
         else t_map::set(i, y + METEOR_SIZE + 1, k, rock); //more impurities here, too
     }
 
-    for(int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++) //generate another rounder of the meteor
-    for(int k = z + randrange(1, 2); k < z + METEOR_SIZE - randrange(1, 2); k++)
+    for (int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++) //generate another rounder of the meteor
+    for (int k = z + randrange(1, 2); k < z + METEOR_SIZE - randrange(1, 2); k++)
     {
         if ((k & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) continue;   // stop the assert
         if (randrange(0, 5) < 2) t_map::set(x - 1, j, k, tile_id);
         else t_map::set(x - 1, j, k, rock); //more impurities here, again
     }
 
-    for(int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++) //generate another rounder of the meteor
-    for(int k = z + randrange(1, 2); k < z + METEOR_SIZE - randrange(1, 2); k++)
+    for (int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++) //generate another rounder of the meteor
+    for (int k = z + randrange(1, 2); k < z + METEOR_SIZE - randrange(1, 2); k++)
     {
         if ((k & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) continue;   // stop the assert
         if (randrange(0, 5) < 2) t_map::set(x + METEOR_SIZE + 1, j, k, tile_id);
@@ -156,22 +156,22 @@ void meteor_fall()
     }
 
     //now degenerate the blocks above the side rounders(not all rounders will be uncovered, but that brings some randomness)
-    for(int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++)
+    for (int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++)
     {
         degenerate_column(i, y - 1, z + METEOR_SIZE);
     }
 
-    for(int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++)
+    for (int i = x + randrange(1, 2); i < x + METEOR_SIZE - randrange(1, 2); i++)
     {
         degenerate_column(i, y + METEOR_SIZE + 1, z + METEOR_SIZE);
     }
 
-    for(int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++)
+    for (int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++)
     {
         degenerate_column(x - 1, j, z + METEOR_SIZE);
     }
 
-    for(int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++)
+    for (int j = y + randrange(1, 2); j < y + METEOR_SIZE - randrange(1, 2); j++)
     {
         degenerate_column(x + METEOR_SIZE + 1, j, z + METEOR_SIZE);
     }
@@ -219,7 +219,7 @@ void meteor_shower()
             return;
     }
 
-    for(int count = 1; count <= AMOUNT; count++)
+    for (int count = 1; count <= AMOUNT; count++)
     {
         x = randrange(1, t_map::map_dim.x - 1);
         y = randrange(1, t_map::map_dim.y - 1);
@@ -262,7 +262,7 @@ void degenerate_column(int x, int y, int z)
 {
     x = translate_point(x);
     y = translate_point(y);
-    for(int k = z; k < t_map::map_dim.z; k++)
+    for (int k = z; k < t_map::map_dim.z; k++)
     {
         t_map::set(x, y, k, EMPTY_CUBE);
     }

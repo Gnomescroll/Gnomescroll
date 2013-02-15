@@ -67,7 +67,7 @@ void draw_transparent()
 
 //pack mech data into packet
 
-static void pack_mech(struct MECH &m, class mech_create_StoC &p)
+static void pack_mech(struct Mech &m, class mech_create_StoC &p)
 {
     p.id = m.id;
     p.mech_type = m.mech_type;
@@ -99,7 +99,7 @@ static void pack_mech(struct MECH &m, class mech_create_StoC &p)
 #if DC_CLIENT
 
 //call after type or subtype changes
-static bool _mech_update(struct MECH &m)
+static bool _mech_update(struct Mech &m)
 {
     class MechAttribute* ma = get_mech_attribute(m.mech_type);
 
@@ -138,7 +138,7 @@ static bool _mech_update(struct MECH &m)
     return true;
 }
 
-static bool unpack_mech(struct MECH &m, class mech_create_StoC &p)
+static bool unpack_mech(struct Mech &m, class mech_create_StoC &p)
 {
     IF_ASSERT(!isValid((MechType)p.mech_type)) return false;
 
@@ -168,7 +168,7 @@ void tick()
 {
 
     const int mlm = mech_list->mlm;
-    struct MECH* mla = mech_list->mla;
+    struct Mech* mla = mech_list->mla;
 
     //int num =0;
 
@@ -229,7 +229,7 @@ void tick()
 void floating_removal_tick() //removes floating t_mech
 {
     const int mlm = mech_list->mlm;
-    struct MECH* mla = mech_list->mla;
+    struct Mech* mla = mech_list->mla;
 
     //int num =0;
     int collection_count = 0;
@@ -254,7 +254,7 @@ void floating_removal_tick() //removes floating t_mech
 void force_mech_growth(int mech_id)
 {
     const int mlm = mech_list->mlm;
-    struct MECH* mla = mech_list->mla;
+    struct Mech* mla = mech_list->mla;
 
     MechType mech_type = mla[mech_id].mech_type;
     //MechBehaviorType mech_behavior_type = mech_attributes[mech_type].mech_behavior_type;
@@ -320,7 +320,7 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
         return false;
     }
 
-    struct MECH m;
+    struct Mech m;
     m.mech_type = mech_type;
     m.subtype = subtype;
     m.x = x;
@@ -376,7 +376,7 @@ void tick(int x, int y, int z)
 }
 
 #if DC_CLIENT
-void draw(const struct MECH &m)
+void draw(const struct Mech &m)
 {
     #if 0
     float vn[3*8];
@@ -404,7 +404,7 @@ void draw(const struct MECH &m)
     #endif
 }
 
-struct MECH* _selected_mech = NULL;
+struct Mech* _selected_mech = NULL;
 
 
 void draw_selected_mech_bounding_box()
@@ -412,7 +412,7 @@ void draw_selected_mech_bounding_box()
     if (_selected_mech == NULL)
         return;
 
-    struct MECH m = *_selected_mech;
+    struct Mech m = *_selected_mech;
 
     const float size = m.size/2.0f;
     //const float size2 = m.size;
@@ -445,7 +445,7 @@ void draw_selected_mech_bounding_box()
 
 }
 
-bool ray_cast_mech_render_type_0(const struct MECH &m, float x, float y, float z, float vx, float vy, float vz, float* _distance)
+bool ray_cast_mech_render_type_0(const struct Mech &m, float x, float y, float z, float vx, float vy, float vz, float* _distance)
 {
 /*
     static const int q_set[4*6]=
@@ -592,7 +592,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
     const int cutoff2 = 8*8;
 
     const int mlm = mech_list->mlm;
-    struct MECH* mla = mech_list->mla;
+    struct Mech* mla = mech_list->mla;
 
     for (int i=0; i<mlm; i++)
     {
@@ -668,7 +668,7 @@ bool remove_mech(int mech_id)   //removes mech with drop
 {
     GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
 
-    struct MECH m = mech_list->mla[mech_id];
+    struct Mech m = mech_list->mla[mech_id];
     MechType mech_type = m.mech_type;
     IF_ASSERT(!isValid(mech_type)) return false;
 

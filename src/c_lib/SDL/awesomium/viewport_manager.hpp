@@ -19,16 +19,16 @@ class ViewportManager
         int vpai; //viewport class array index
 
     ViewportManager() :
-    in_focus(false)
+        in_focus(false), vpai(0)
     {
-        for(int i=0; i<MAX_VIEWPORTS; vpa[i++] = NULL);
+        for (int i=0; i<MAX_VIEWPORTS; vpa[i++] = NULL);
     }
 
     void add_viewport(class ChromeViewport* viewport)
     {
-        for(int i=0; i < MAX_VIEWPORTS; i++)
+        for (int i=0; i < MAX_VIEWPORTS; i++)
         {
-            if(vpa[i] == NULL)
+            if (vpa[i] == NULL)
             {
                 vpa[i] = viewport;
                 printf("Attached viewport to slot %i \n", i);
@@ -44,14 +44,14 @@ class ViewportManager
 
     void handle_mouse_event(int x, int y, int button, int event_type) //up/down
     {
-        if(event_type == 0)
+        if (event_type == 0)
             printf("Mouse %i down at: %i %i \n", button,x,y);
-        if(event_type == 1)
+        if (event_type == 1)
             printf("Mouse %i down at: %i %i \n", button,x,y);
 
-        for(int i=0; i<MAX_VIEWPORTS; i++)
+        for (int i=0; i<MAX_VIEWPORTS; i++)
         {
-            if(vpa[i] == NULL) continue;
+            if (vpa[i] == NULL) continue;
 
 
             //handle window focusing
@@ -72,8 +72,8 @@ class ViewportManager
 //updates and draws
 void ViewportManager::draw_viewports()
 {
-    for(int i=0; i < MAX_VIEWPORTS; i++)
-        if(vpa[i] != NULL)
+    for (int i=0; i < MAX_VIEWPORTS; i++)
+        if (vpa[i] != NULL)
         {
             vpa[i]->update_webview();
             vpa[i]->draw_webview();

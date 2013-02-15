@@ -33,7 +33,7 @@ int get_skylight(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if (mc == NULL)
         return 0;  //so it does not try to update
 
@@ -56,7 +56,7 @@ void set_skylight(int x, int y, int z, int value)
     GS_ASSERT(x >= 0 && x < 512)
     GS_ASSERT(y >= 0 && y < 512)
 
-    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if (mc == NULL)
     {
         GS_ASSERT(false);
@@ -97,13 +97,13 @@ void _push_skylight_update(int x, int y, int z)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     //skip update of blocks in null chunks
-    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if (mc == NULL)
         return;
 
 
     //skip solid blocks
-    struct MAP_ELEMENT e = get_element(x, y, z);
+    struct MapElement e = get_element(x, y, z);
     if (fast_cube_properties[e.block].solid == true)
     {
         GS_ASSERT(false);
@@ -190,13 +190,13 @@ void _skylight_update_core(int max_iterations)
 
         sky_light_array_n++;
 
-        class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+        class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
         if (mc == NULL)
         {
             continue;
         }
 
-        struct MAP_ELEMENT e = get_element(x,y,z);
+        struct MapElement e = get_element(x,y,z);
         int li = (e.light & 0x0f);
         GS_ASSERT(li == get_skylight(x,y,z));
 
@@ -207,15 +207,15 @@ void _skylight_update_core(int max_iterations)
         }
 
         //if block is sunlight and block above is solid, then set to not-sunlight
-        struct MAP_ELEMENT te = get_element(x,y,z+1);
-        //struct MAP_ELEMENT be = get_element(x,y,z-1);
+        struct MapElement te = get_element(x,y,z+1);
+        //struct MapElement be = get_element(x,y,z-1);
 
         //if (z == 127)  GS_ASSERT((te.light & 0x0f) == 15);
         //top level must be sunlight
         //if block is not sunlight and sunlight is above block, set sunlight
 
 
-        struct MAP_ELEMENT ea[6];
+        struct MapElement ea[6];
 
         for (int i=0; i<6; i++)
             ea[i] = get_element(x+va[3*i+0], y+va[3*i+1], z+va[3*i+2]);
@@ -331,13 +331,13 @@ void update_skylight(int chunk_i, int chunk_j)
     GS_ASSERT(chunk_i >= 0 && chunk_i < 32);
     GS_ASSERT(chunk_j >= 0 && chunk_j < 32);
 
-    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+    class MapChunk* mc = main_map->chunk[32*chunk_j + chunk_i];
     GS_ASSERT(mc != NULL);
 
     for (int i=0; i<16; i++)
     for (int j=0; j<16; j++)
     {
-        struct MAP_ELEMENT e;
+        struct MapElement e;
 
         int x = i + 16*chunk_i;
         int y = j + 16*chunk_j;
@@ -558,7 +558,7 @@ void update_skylight_in(int x, int y, int z)
 
 void update_skylight_boundary(int _ci, int _cj)
 {
-    class MAP_CHUNK* mc;
+    class MapChunk* mc;
     int ci, cj;
 
     //north?
@@ -637,7 +637,7 @@ void update_skylight2(int ci, int cj)
 {
     update_skylight_boundary(ci, cj);
 
-    class MAP_CHUNK* mc = main_map->chunk[32*cj + ci];
+    class MapChunk* mc = main_map->chunk[32*cj + ci];
 
     mc->refresh_height_cache();
 
@@ -669,7 +669,7 @@ int get_envlight(int x, int y, int z)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if (mc == NULL)
         return 0;  //so it does not try to update
 
@@ -690,7 +690,7 @@ void set_envlight(int x, int y, int z, int value)
     //printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
 //#endif
 
-    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if (mc == NULL)
         return;
 
@@ -727,14 +727,14 @@ void _push_envlight_update(int x, int y, int z)
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
     //skip update of blocks in null chunks
-    class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
     if (mc == NULL)
     {
         //GS_ASSERT(false);
         return;
     }
 
-    struct MAP_ELEMENT e = get_element(x, y, z);
+    struct MapElement e = get_element(x, y, z);
     if (fast_cube_properties[e.block].solid == true)
     {
         GS_ASSERT(false);
@@ -783,14 +783,14 @@ void _envlight_update_core(int max_iterations)
         int y = env_light_array[index].y;
         int z = env_light_array[index].z;
 
-        class MAP_CHUNK* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+        class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
         if (mc == NULL)
         {
             index++;
             continue;
         }
 
-        struct MAP_ELEMENT e = get_element(x,y,z);
+        struct MapElement e = get_element(x,y,z);
 
         int li = (e.light >> 4);
         //GS_ASSERT(li == get_envlight(x,y,z));
@@ -802,7 +802,7 @@ void _envlight_update_core(int max_iterations)
 
             for (int i=0; i<6; i++)
             {
-                struct MAP_ELEMENT _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
+                struct MapElement _e = get_element(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
                 if ((_e.light >> 4) < li -1 && fast_cube_properties[_e.block].solid == false)
                     _push_envlight_update(x+va[3*i+0] ,y+va[3*i+1] , z+va[3*i+2]);
             }
@@ -830,7 +830,7 @@ void _envlight_update_core(int max_iterations)
             // 1> check to make sure light value is correct; not too high, or too low
             // 2> If light value in adjacent block is
 
-            struct MAP_ELEMENT ea[6];
+            struct MapElement ea[6];
 
             int _min = 16;
             int _max = 0;
@@ -957,7 +957,7 @@ void _push_envlight_update(int x, int y, int z);
 void light_add_block(int x, int y, int z)
 {
 
-    struct MAP_ELEMENT e = get_element(x,y,z);
+    struct MapElement e = get_element(x,y,z);
 
     if ((e.light >> 4) != fast_cube_attributes[e.block].light_value)
     {
@@ -970,7 +970,7 @@ void light_add_block(int x, int y, int z)
     {
         for (int j=0; j<6; j++)
         {
-            struct MAP_ELEMENT e = get_element(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
+            struct MapElement e = get_element(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
             if (fast_cube_properties[e.block].solid == false)
             {
                 _push_envlight_update(x+va[3*j+0] ,y+va[3*j+1] , z+va[3*j+2]);
@@ -991,7 +991,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
     //return;
     //printf("init_update_envlight: %d %d \n", chunk_i, chunk_j);
 
-    class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+    class MapChunk* mc = main_map->chunk[32*chunk_j + chunk_i];
 
     /*
         Envlight
@@ -1004,7 +1004,7 @@ void init_update_envlight(int chunk_i, int chunk_j)
             int x = 16*chunk_i + i;
             int y = 16*chunk_j + j;
 
-            struct MAP_ELEMENT e = mc->get_element(i,j,k);
+            struct MapElement e = mc->get_element(i,j,k);
 
             if (fast_cube_properties[e.block].light_source == true)
             {
@@ -1080,7 +1080,7 @@ void assert_skylight(int chunk_i, int chunk_j)
         if (li==15)
         {
 
-            struct MAP_ELEMENT e = get_element(x,y,z+1);
+            struct MapElement e = get_element(x,y,z+1);
             if (get_skylight(x,y,z+1) != 15)
             {
                 printf("ERROR: block= %d light= %d \n", e.block, get_skylight(x,y,z+1));
@@ -1103,9 +1103,9 @@ void _lighting_rolling_update(int chunk_i, int chunk_j)
 
 void init_update_sunlight(int chunk_i, int chunk_j)
 {
-    //class MAP_CHUNK* mc = main_map->chunk[32*chunk_j + chunk_i];
+    //class MapChunk* mc = main_map->chunk[32*chunk_j + chunk_i];
 
-    class MAP_CHUNK* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
+    class MapChunk* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
     if (mc == NULL)
     {
         GS_ASSERT(false);
@@ -1122,7 +1122,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         int y = j + 16*chunk_j;
         int k = map_dim.z-1;
 
-        struct MAP_ELEMENT e;
+        struct MapElement e;
         // get highest block
         for (; k>=0; k--)
         {
@@ -1150,7 +1150,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         // get highest block
         for (; k>=0; k--)
         {
-            struct MAP_ELEMENT e = mc->get_element(i,j,k);
+            struct MapElement e = mc->get_element(i,j,k);
             //e = get_element(x,y,k);
             if (e.block != 0)    //iterate until we hit top block
                 break;
@@ -1160,7 +1160,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
 
         for (; k>=0; k--)
         {
-            struct MAP_ELEMENT e = mc->get_element(i,j,k);
+            struct MapElement e = mc->get_element(i,j,k);
             //e = get_element(x,y,k);
             if (fast_cube_properties[e.block].solid == true)    //iterate until we hit top block
                 continue;
@@ -1184,7 +1184,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         int y = 16*chunk_j + j;
         int z = 127;
 
-        struct MAP_ELEMENT e = mc->get_element(i,j,z);
+        struct MapElement e = mc->get_element(i,j,z);
         if (fast_cube_properties[e.block].solid != true)
         {
             _push_skylight_update(x,y,z);

@@ -27,7 +27,7 @@ class HarvestBar
     {
         level++;
 
-        if(level >= levelm)
+        if (level >= levelm)
         {
             levelm = 0;
             return true;
@@ -43,7 +43,7 @@ class HarvestBar
 
     void draw(int x, int y)
     {
-        //if(levelm == 0)
+        //if (levelm == 0)
         //  return;
 
         level++;

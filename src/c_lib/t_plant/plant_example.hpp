@@ -9,7 +9,6 @@
 namespace t_plant
 {
 
-
 struct PlantExampleStruct
 {
     int x,y,z;  //tree master
@@ -171,7 +170,7 @@ void plant_example_tick(struct PlantExampleStruct &m)
             {
                 if (rand()% 25 == 0)
                 {
-                    struct t_map::MAP_ELEMENT e;
+                    struct t_map::MapElement e;
                     e = t_map::get_element(x,y,z);
 
                     if (e.palette == 0)
@@ -189,10 +188,10 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
             if (current_block == plant_example_leaves)
             {
-                if (rand()%60 != 0)
+                if (rand() % 60 != 0)
                     continue;
 
-                struct t_map::MAP_ELEMENT e;
+                struct t_map::MapElement e;
                 e = t_map::get_element(x,y,z);
 
                 if (e.palette == 0)
@@ -203,7 +202,7 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
             if (current_block == 0)
             {
-                if (rand()% 30 != 0)
+                if (rand() % 30 != 0)
                     continue;
                 int block_id = m.bl.ba[i].type;
                 if (block_id != plant_example_master)

@@ -42,13 +42,13 @@ class ChatRender
         Text* messages[CHAT_MESSAGE_RENDER_MAX];
         Text* input;
         int paging_offset;
+        float cursor_x, cursor_y, cursor_w, cursor_h;
 
     void init();
     void draw_messages();
     void draw_input();
     void draw_cursor();
 
-    float cursor_x, cursor_y, cursor_w, cursor_h;
     void set_cursor(const char* text, float x, float y);
     void update(bool timeout, bool other_players);
     //void page_up();

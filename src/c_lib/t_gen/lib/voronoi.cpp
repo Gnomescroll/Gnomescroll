@@ -23,9 +23,9 @@ void Voronoi::Calculate(double x, double y, double z, double da[4], double pa[12
   int zi=Floor(z);
   da[0]=da[1]=da[2]=da[3]=DBL_MAX;
   g3Vector V;
-  for(int xx=xi-1; xx<=xi+1; ++xx) {
-    for(int yy=yi-1; yy<=yi+1; ++yy) {
-      for(int zz=zi-1; zz<=zi+1; ++zz) { // Things in this inner loop will happen 27 times:
+  for (int xx=xi-1; xx<=xi+1; ++xx) {
+    for (int yy=yi-1; yy<=yi+1; ++yy) {
+      for (int zz=zi-1; zz<=zi+1; ++zz) { // Things in this inner loop will happen 27 times:
         const float*  p=GetPoint(xx, yy, zz);
         V.Set(x-(p[0]+xx), y-(p[1]+yy), z-(p[2]+zz));
         double d;
@@ -39,22 +39,22 @@ void Voronoi::Calculate(double x, double y, double z, double da[4], double pa[12
           case Minkowski4: d=V.GetMinkowski4(); break; // Minkowski(4); pow(x*x*x*x+y*y*y*y+z*z*z*z,0.25);   p=4 in: pow(pow(x.abs(), p) + pow(y.abs(), p) + pow(z.abs(), M_E), 1.0/p);
           case Minkowski5: d=V.GetMinkowski5(); break; // Same as Minkowski(0.5);
         }
-        if(d<da[0]) {
+        if (d<da[0]) {
           da[3]=da[2];   da[ 2]=da[1];   da[ 1]=da[0];  da[0]=d; // Insert at 0
           pa[9]=pa[6];   pa[10]=pa[7];   pa[11]=pa[8];
           pa[6]=pa[3];   pa[ 7]=pa[4];   pa[ 8]=pa[5];
           pa[3]=pa[0];   pa[ 4]=pa[1];   pa[ 5]=pa[2];
           pa[0]=p[0]+xx; pa[ 1]=p[1]+yy; pa[ 2]=p[2]+zz;
-        }else if(d<da[1]) {
+        }else if (d<da[1]) {
           da[3]=da[2];   da[ 2]=da[1];   da[ 1]=d;            // Insert at 1
           pa[9]=pa[6];   pa[10]=pa[7];   pa[11]=pa[8];
           pa[6]=pa[3];   pa[ 7]=pa[4];   pa[ 8]=pa[5];
           pa[3]=p[0]+xx; pa[ 4]=p[1]+yy; pa[ 5]=p[2]+zz;
-        }else if(d<da[2]) {
+        }else if (d<da[2]) {
           da[3]=da[2];   da[2]=d;                             // Insert at 2
           pa[9]=pa[6];   pa[10]=pa[7];   pa[11]=pa[8];
           pa[6]=p[0]+xx; pa[ 7]=p[1]+yy; pa[ 8]=p[2]+zz;
-        }else if(d<da[3]) {                                   // Insert at 3
+        }else if (d<da[3]) {                                   // Insert at 3
           da[3]=d;
           pa[9]=p[0]+xx;  pa[10]=p[1]+yy;  pa[11]=p[2]+zz;
   } } } }
