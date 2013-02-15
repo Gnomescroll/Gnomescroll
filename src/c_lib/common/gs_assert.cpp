@@ -62,7 +62,7 @@ void _GS_ASSERT_INTERNAL_MAIN(const char* FILE, const char* FUNC, size_t LINE, s
             _gs_assert_count[i]++;
             if (_gs_assert_count[i] >= LIMIT) return;
             //print and return;
-            print_trace(3);
+            print_trace(2);
             puts(t);
             return;
         }
@@ -76,17 +76,17 @@ void _GS_ASSERT_INTERNAL_MAIN(const char* FILE, const char* FUNC, size_t LINE, s
     strcpy(_gs_assert_array[i], t);
 
     _gs_assert_count[i]++;
-    print_trace(3);
+    print_trace(2);
     printf("%s\n", t);
 }
 
-inline int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
+ALWAYS_INLINE int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, int LINE)
 {
     _GS_ASSERT_INTERNAL_MAIN(FILE, FUNC, LINE, GS_ASSERT_DEFAULT_PRINT_LIMIT);
     return 1;
 }
 
-inline int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
+ALWAYS_INLINE int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
 {
     _GS_ASSERT_INTERNAL_MAIN(FILE, FUNC, LINE, LIMIT);
     return 1;
