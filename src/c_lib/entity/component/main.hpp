@@ -67,8 +67,8 @@ extern HealerComponentList* healer_component_list;
 
 /* ComponentList handler switches */
 
-Component* get_switch(ComponentType type);
-void release_switch(Component* component);
+Component* get_switch (ComponentType type);
+void release_switch (Component* component);
 
 void init_components();
 void teardown_components();

@@ -33,7 +33,7 @@
         printf("GS_ABORT error: %s, line %d function: %s\n", __FILE__, __LINE__, __FUNCTION__); \
         print_trace(); \
         exit(1); \
-    } while(0);
+    } while (0);
 
 // macro stringification
 #define GS_STR2(x) #x

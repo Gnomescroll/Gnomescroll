@@ -29,7 +29,7 @@ void pviz_start_frame() {
      glBegin(GL_POINTS);
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
     float l =0;
-    while(l < distance) {
+    while (l < distance) {
         l += delta;
         _x = x+dv.x*l;
         _y = y+dv.y*l;
@@ -93,7 +93,7 @@ void pviz_draw(float x, float y, float z) {
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)255);
     glVertex3f(_d+x,_d+y,z);
     /*
-    while(ac*INC_C < 800 && i < 32) {
+    while (ac*INC_C < 800 && i < 32) {
         index = (frame_n - i) % 128;
         if (index < 0) {index += 128;}
         //if (frame_array[index].)

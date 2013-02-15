@@ -325,7 +325,7 @@ void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
 // Translates an SDLKey virtual key code to an Awesomium key code
 int getWebKeyFromSDLKey(SDLKey key)
 {
-    switch(key)
+    switch (key)
     {
     MAP_KEY(BACKSPACE, BACK)
     MAP_KEY(TAB, TAB)

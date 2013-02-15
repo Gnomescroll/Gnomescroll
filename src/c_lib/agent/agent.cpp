@@ -11,12 +11,8 @@
 #if DC_SERVER
 #include <t_gen/explosives.hpp>
 #endif
-
 #if DC_CLIENT
 # include <common/compat_gl.h>
-#endif
-
-#if DC_CLIENT
 # include <agent/client/agent_draw.hpp>
 # include <agent/client/player_agent.hpp>
 #endif
@@ -99,12 +95,9 @@ void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, floa
 void Agent::tick()
 {
     int _tc =0;
-    struct AgentControlState _cs;
-
     while (cs[cs_seq].seq == cs_seq)
     {
-        _cs = cs[cs_seq];
-        s = agent_tick(_cs, box, s);
+        s = agent_tick(cs[cs_seq], box, s);
         cs_seq = (cs_seq + 1) % 256;
         _tc++;
     }

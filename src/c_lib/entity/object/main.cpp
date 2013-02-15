@@ -81,7 +81,7 @@ void harvest()
 
 /* Underlying API handlers */
 
-static Entity* create_switch(EntityType type)
+static Entity* create_switch (EntityType type)
 {
     entityCreate create = get_object_create_method(type);
     GS_ASSERT(create != NULL);
@@ -91,7 +91,7 @@ static Entity* create_switch(EntityType type)
 
 Entity* create(EntityType type)
 {
-    Entity* object = create_switch(type);
+    Entity* object = create_switch (type);
     if (object == NULL) return NULL;
     entity_list->set_object_id(object);
     return object;
@@ -100,13 +100,13 @@ Entity* create(EntityType type)
 Entity* create(EntityType type, int id)
 {
     if (entity_list->in_use(type, id)) return NULL;
-    Entity* object = create_switch(type);
+    Entity* object = create_switch (type);
     if (object == NULL) return NULL;
     entity_list->set_object_id(object, id);
     return object;
 }
 
-void ready_switch(Entity* object)
+void ready_switch (Entity* object)
 {
     GS_ASSERT(object != NULL);
     if (object == NULL) return;
@@ -116,7 +116,7 @@ void ready_switch(Entity* object)
     if (ready != NULL) ready(object);
 }
 
-void destroy_switch(Entity* object)
+void destroy_switch (Entity* object)
 {
     GS_ASSERT(object != NULL);
     if (object == NULL) return;
@@ -131,10 +131,10 @@ void destroy_switch(Entity* object)
     entity_list->destroy(type, id);
 }
 
-void destroy_switch(EntityType type, int id)
+void destroy_switch (EntityType type, int id)
 {
     Entity* object = get_object(type, id);
-    if (object != NULL) destroy_switch(object);
+    if (object != NULL) destroy_switch (object);
 }
 
 Entity* get_object(EntityType type, int id)

@@ -320,7 +320,7 @@ void generate_house(int x, int y, int z, int size, int height, int partition_pro
         generate_area(maxx - garden, y + garden, z + 1, maxx - garden, maxy - garden, maxz, green);
         generate_area(x + garden, maxy - garden, z + 1, maxz - garden, maxy - garden, maxz, green);
         generate_area(x + 1 + garden, y + 1 + garden, maxz, maxx - 1 - garden, maxy - 1 - garden, maxz, purple); //make the roof
-        while(cx < maxx - garden)
+        while (cx < maxx - garden)
         {
             partition = randrange(1, 100);
             if (partition <= partition_probability)
@@ -330,7 +330,7 @@ void generate_house(int x, int y, int z, int size, int height, int partition_pro
             }
         cx++;
         }
-        while(cy < maxy - garden)
+        while (cy < maxy - garden)
         {
             partition = randrange(1, 100);
             if (partition <= partition_probability)
@@ -350,7 +350,7 @@ void generate_house(int x, int y, int z, int size, int height, int partition_pro
         generate_area(maxx - garden, y + garden, z + 1, maxx - garden, maxy - garden, maxz, red);
         generate_area(x + garden, maxy - garden, z + 1, maxz - garden, maxy - garden, maxz, red);
         generate_area(x + 1 + garden, y + 1 + garden, maxz, maxx - 1 - garden, maxy - 1 - garden, maxz, green); //make the roof
-        while(cx < maxx - garden)
+        while (cx < maxx - garden)
         {
             partition = randrange(1, 100);
             if (partition <= partition_probability)
@@ -360,7 +360,7 @@ void generate_house(int x, int y, int z, int size, int height, int partition_pro
             }
         cx++;
         }
-        while(cy < maxy - garden)
+        while (cy < maxy - garden)
         {
             partition = randrange(1, 100);
             if (partition <= partition_probability)
@@ -380,7 +380,7 @@ void generate_house(int x, int y, int z, int size, int height, int partition_pro
         generate_area(maxx - garden, y + garden, z + 1, maxx - garden, maxy - garden, maxz, purple);
         generate_area(x + garden, maxy - garden, z + 1, maxz - garden, maxy - garden, maxz, purple);
         generate_area(x + 1 + garden, y + 1 + garden, maxz, maxx - 1 - garden, maxy - 1 - garden, maxz, red); //make the roof
-        while(cx < maxx - garden)
+        while (cx < maxx - garden)
         {
             partition = randrange(1, 100);
             if (partition <= partition_probability)
@@ -390,7 +390,7 @@ void generate_house(int x, int y, int z, int size, int height, int partition_pro
             }
         cx++;
         }
-        while(cy < maxy - garden)
+        while (cy < maxy - garden)
         {
             partition = randrange(1, 100);
             if (partition <= partition_probability)

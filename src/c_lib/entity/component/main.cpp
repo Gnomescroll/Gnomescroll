@@ -64,7 +64,7 @@ RateLimitComponentList* rate_limit_component_list = NULL;
 
 /* ComponentList handler switches */
 
-Component* get_switch(ComponentType type)
+Component* get_switch (ComponentType type)
 {
     switch (type)
     {
@@ -150,7 +150,7 @@ Component* get_switch(ComponentType type)
     return NULL;
 }
 
-void release_switch(Component* component)
+void release_switch (Component* component)
 {
     GS_ASSERT(component != NULL);
     if (component == NULL) return;

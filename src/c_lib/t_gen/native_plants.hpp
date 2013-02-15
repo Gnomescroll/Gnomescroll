@@ -35,7 +35,7 @@ void place_native_plants()
 
 
     int plant_num = 0;
-    while(plant_num < plants_max)
+    while (plant_num < plants_max)
     {
 
         if (tries > 32)

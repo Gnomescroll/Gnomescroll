@@ -12,17 +12,17 @@ Entity* get(EntityType type, int id)
 
 void ready(Entity* object)
 {
-    ready_switch(object);
+    ready_switch (object);
 }
 
 void destroy(Entity* object)
 {
-    destroy_switch(object);
+    destroy_switch (object);
 }
 
 void destroy(EntityType type, int id)
 {
-    destroy_switch(type, id);
+    destroy_switch (type, id);
 }
 
 void stress_test()
@@ -36,7 +36,7 @@ void stress_test()
         //printf("%d\n", i);
         Entity* obj = NULL;
         int n = 0;
-        while((obj = create(type)) != NULL)
+        while ((obj = create(type)) != NULL)
         {
             n++;
             ready(obj);

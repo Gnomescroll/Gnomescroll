@@ -1,7 +1,7 @@
 #pragma once
 
-#define printlog(TYPE, LEVEL, FMT, ...) do { Log::print(TYPE, LEVEL, __FILE__, __LINE__, __FUNCTION__, (char*)FMT , ##__VA_ARGS__); } while(0)
-#define log_simple(TYPE, LEVEL, FMT, ...) do { Log::print(TYPE, LEVEL, (char*)FMT , ##__VA_ARGS__); } while(0)
+#define printlog(TYPE, LEVEL, FMT, ...) do { Log::print(TYPE, LEVEL, __FILE__, __LINE__, __FUNCTION__, (char*)FMT , ##__VA_ARGS__); } while (0)
+#define log_simple(TYPE, LEVEL, FMT, ...) do { Log::print(TYPE, LEVEL, (char*)FMT , ##__VA_ARGS__); } while (0)
 
 namespace Log
 {

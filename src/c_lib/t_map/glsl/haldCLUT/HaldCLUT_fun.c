@@ -74,7 +74,7 @@ void compute_rgb(float *output, float h, float s, float v)
 
     h *= 6;
     s *= v;
-    switch((int)h)
+    switch ((int)h)
     {
         case 0 :
             output[0] = v;

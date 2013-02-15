@@ -303,7 +303,7 @@ bool open_container(ItemContainerID container_id)
         NAME##_ui->load_data(NAME->slot); \
         containers[container->type] = NAME; \
         container_uis[container->type] = NAME##_ui; \
-        } while(0); }
+        } while (0); }
 
     // setup UI widget
     if (container->type == name::crafting_bench_basic)
@@ -365,7 +365,7 @@ bool close_container(ItemContainerID container_id)
         NAME = NULL; \
         delete NAME##_ui; \
         NAME##_ui = NULL; \
-    } while(0); }
+    } while (0); }
 
     // public block types go here
     TEARDOWN_CONTAINER(crafting_bench);

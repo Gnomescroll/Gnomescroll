@@ -8,7 +8,7 @@ typedef unsigned char BYTE;
 
 double Voronoi::Get(double x, double y, double z, VoronoiType V, DistanceMethod Distance) {
   double d, da[4], pa[12];
-  switch(V) {
+  switch (V) {
     default:           Calculate(x,y,z, da, pa, Distance); d=da[V];       break;
     case Difference21: Calculate(x,y,z, da, pa, Distance); d=da[1]-da[0]; break;
     case Difference32: Calculate(x,y,z, da, pa, Distance); d=da[2]-da[1]; break;
@@ -29,7 +29,7 @@ void Voronoi::Calculate(double x, double y, double z, double da[4], double pa[12
         const float*  p=GetPoint(xx, yy, zz);
         V.Set(x-(p[0]+xx), y-(p[1]+yy), z-(p[2]+zz));
         double d;
-        switch(Distance) {
+        switch (Distance) {
           default:
           case Length    : d=V.GetLength    (); break; // Euclidean (shortest line).
           case Length2   : d=V.GetL2        (); break; // The length squared. Saves the slow Square Root for some calculations.

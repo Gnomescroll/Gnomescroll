@@ -110,7 +110,7 @@ int pow2_1(int n)
 {
     int x = 1;
     int i = 0;
-    while(x < n)
+    while (x < n)
     {
         i++;
         x <<= 1;
@@ -123,7 +123,7 @@ int pow2_2(int n)
 {
     int x = 1;
     //int i = 0;
-    while(x < n)
+    while (x < n)
     {
         //i++;
         x <<= 1;

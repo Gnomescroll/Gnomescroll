@@ -133,7 +133,7 @@ void save_map_ortho_projection(const char* filename)
     //Does the GPU support current FBO configuration?
     GLenum status;
     status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-    switch(status)
+    switch (status)
     {
         case GL_FRAMEBUFFER_COMPLETE_EXT:
         printf("FBO works\n");

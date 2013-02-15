@@ -411,7 +411,7 @@ bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from)
 { // room index
     IntVec3 to;
 
-    switch(dir)
+    switch (dir)
     {
         case DIR_NORTH:
             to.x = from.x;
@@ -450,7 +450,7 @@ void open_connection_to(direction_t d, Room& rm)
 {
     setup_room(rm, rm.room_t); // at this point we don't know if both of the desired pair of adds were allocated
 
-    switch(d)
+    switch (d)
     {
         case DIR_NORTH:
             rm.nconn.x = CONN_OFFSET;
@@ -495,7 +495,7 @@ void connect_room(IntVec3& src, direction_t d)
         IntVec3 dst;
         dst.Clone(src);  // starting point.  gets offset in direction below
 
-        switch(d)
+        switch (d)
         {
             case DIR_NORTH:
                 dst.y++;
@@ -541,7 +541,7 @@ bool empty_lat_space_around(IntVec3 iv)
 
     for (int i = 0; i < 4; i++) // consider all lateral directions
     {
-        switch((direction_t)i)
+        switch ((direction_t)i)
         {
             case DIR_NORTH: if (valid_room_idx_to_dir_from(DIR_NORTH, iv) && rooms[iv.z][iv.y + 1][iv.x].dead) choices[num_choices++] = DIR_NORTH; break;
             case DIR_SOUTH: if (valid_room_idx_to_dir_from(DIR_SOUTH, iv) && rooms[iv.z][iv.y - 1][iv.x].dead) choices[num_choices++] = DIR_SOUTH; break;

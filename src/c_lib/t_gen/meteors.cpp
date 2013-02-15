@@ -228,7 +228,7 @@ void meteor_shower()
         //printf("Creating meteor from meteor shower at %d, %d \n", x, y);
         #endif
         killed_blocks = 0;
-        while(z > 1 && killed_blocks <= 3)
+        while (z > 1 && killed_blocks <= 3)
         {
             if (t_map::get(x, y, z) != EMPTY_CUBE)
             {

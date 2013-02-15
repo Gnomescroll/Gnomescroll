@@ -44,7 +44,7 @@ void blit_block_item_sheet()
         //Does the GPU support current FBO configuration?
         GLenum status;
         status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        switch(status)
+        switch (status)
         {
             case GL_FRAMEBUFFER_COMPLETE_EXT:
             //printf("FBO works\n");
@@ -166,7 +166,7 @@ void blit_block_item_sheet()
         //Does the GPU support current FBO configuration?
         GLenum status;
         status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-        switch(status)
+        switch (status)
         {
             case GL_FRAMEBUFFER_COMPLETE_EXT:
             //printf("FBO works\n");

@@ -246,7 +246,7 @@ void client_dispatch_network_events()
                     //(event.peer -> data,
                     event.channelID);
         */
-            switch(event.channelID)
+            switch (event.channelID)
             {
                 case 0:
                     //printf("server received channel 0 message \n");
@@ -400,7 +400,7 @@ void dispatch_network_events()
                     //(event.peer -> data,
                     event.channelID);
         */
-            switch(event.channelID)
+            switch (event.channelID)
             {
                 case 0:
                     //printf("server received channel 0 message \n");

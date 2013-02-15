@@ -95,7 +95,7 @@ void handle_explosive_block(int x, int y, int z);
 /*
     Lighting
 */
-int get_skylight(int x, int y, int z); //
+int get_skylight(int x, int y, int z);
 #endif
 
 }   // t_map

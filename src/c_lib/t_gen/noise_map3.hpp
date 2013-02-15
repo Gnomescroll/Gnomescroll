@@ -587,7 +587,7 @@ void LUA_set_noisemap_param(int noise_map, float persistence, unsigned char* see
 {
     IF_ASSERT(map_generator == NULL) return;
 
-    switch(noise_map)
+    switch (noise_map)
     {
         case 0:
             map_generator->erosion3D->set_param(persistence);
@@ -616,7 +616,7 @@ float* LUA_get_noisemap_map_cache(int noise_map)
 {
     IF_ASSERT(map_generator == NULL) return NULL;
 
-    switch(noise_map)
+    switch (noise_map)
     {
         case 0:
             return map_generator->erosion3D->cache;

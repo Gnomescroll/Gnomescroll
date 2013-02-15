@@ -10,11 +10,11 @@ static void check_for_comments(const char* s, size_t* index)
 {
     while (1)
     {
-        while(s[*index] == ' ' || s[*index] == '\t' || s[*index] == '\n')
+        while (s[*index] == ' ' || s[*index] == '\t' || s[*index] == '\n')
             (*index)++;
         if (s[*index] != '#' || s[*index] == '\0')
             break;
-        while(s[*index] != '\n' && s[*index] != '\0')
+        while (s[*index] != '\n' && s[*index] != '\0')
             (*index)++;
     }
 }
@@ -148,7 +148,7 @@ void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
     int vox_num = 0;
     int x,y,z,r,g,b;
 
-    while(1)
+    while (1)
     {
         check_for_comments(buffer, &index);
         if (buffer[index] == '\0' || index == size)

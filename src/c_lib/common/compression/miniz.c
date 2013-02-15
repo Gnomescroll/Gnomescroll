@@ -1332,7 +1332,7 @@ const char *mz_error(int err)
 #define TINFL_MEMCPY(d, s, l) memcpy(d, s, l)
 #define TINFL_MEMSET(p, c, l) memset(p, c, l)
 
-#define TINFL_CR_BEGIN switch(r->m_state) { case 0:
+#define TINFL_CR_BEGIN switch (r->m_state) { case 0:
 #define TINFL_CR_RETURN(state_index, result) do { status = result; r->m_state = state_index; goto common_exit; case state_index:; } MZ_MACRO_END
 #define TINFL_CR_RETURN_FOREVER(state_index, result) do { for (; ;) { TINFL_CR_RETURN(state_index, result); } } MZ_MACRO_END
 #define TINFL_CR_FINISH }

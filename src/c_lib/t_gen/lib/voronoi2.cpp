@@ -15,7 +15,7 @@ double Vo(double x, double y, double z, int a, int b)
 
 
     enum Voronoi::VoronoiType A = Voronoi::First;
-    switch(a)
+    switch (a)
     {
         case 0:
             A = Voronoi::First;
@@ -48,7 +48,7 @@ double Vo(double x, double y, double z, int a, int b)
 
     enum Voronoi::DistanceMethod B = Voronoi::Length;
 
-    switch(b)
+    switch (b)
     {
         case 0:
             B = Voronoi::Length;break;

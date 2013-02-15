@@ -301,7 +301,7 @@ bool ChatInput::route_command()
     char c = '\0';
     int i = 1;
    // copy command to buffer and advance cursor
-    while((c = this->buffer[i]) != '\0' && !isspace(c))
+    while ((c = this->buffer[i]) != '\0' && !isspace(c))
     {
         i++;
         cmd[cmdlen++] = c;
@@ -309,7 +309,7 @@ bool ChatInput::route_command()
     cmd[cmdlen] = '\0';
 
     // advance cursor to first non-space char (start of any arguments)
-    while((c = this->buffer[i]) != '\0' && isspace(c))
+    while ((c = this->buffer[i]) != '\0' && isspace(c))
         i++;
 
     char args[CHAT_BUFFER_SIZE] = {'\0'};

@@ -49,7 +49,7 @@ class MAP_CHUNK_SUBSCRIPTION
     void remove_subscriber(ClientID client_id)
     {
         int i = 0;
-        while(i < subscriber_num && subscribers[i] != client_id) i++;
+        while (i < subscriber_num && subscribers[i] != client_id) i++;
         GS_ASSERT(i != subscriber_num)
 
         subscriber_num--;
