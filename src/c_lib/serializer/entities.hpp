@@ -59,7 +59,7 @@ class ParsedAgentSpawnerData
 
     void reset()
     {
-        if (this->users != NULL) free(this->users);
+        free(this->users);
         this->users = NULL;
         this->user_count = 0;
         this->added_users = 0;
@@ -100,7 +100,7 @@ class ParsedAgentSpawnerData
 
     ~ParsedAgentSpawnerData()
     {
-        if (this->users != NULL) free(this->users);
+        free(this->users);
     }
 };
 

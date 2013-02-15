@@ -224,8 +224,7 @@ class DatNameMap
 
     const char* get_replacement(size_t i)
     {
-        GS_ASSERT(i < this->size);
-        if (i >= this->size) return NULL;
+        IF_ASSERT(i >= this->size) return NULL;
         return &this->replacements[this->get_index(i)];
     }
 
@@ -238,8 +237,8 @@ class DatNameMap
 
     ~DatNameMap()
     {
-        if (this->originals != NULL) free(this->originals);
-        if (this->replacements != NULL) free(this->replacements);
+        free(this->originals);
+        free(this->replacements);
     }
 };
 
@@ -260,8 +259,7 @@ char* read_names(const char* filename, const size_t name_length, size_t* name_co
     bool read = read_fixed_lines(buf, name_length, &lines, name_count);
     free(buf);
 
-    GS_ASSERT(read);
-    if (!read) return NULL;
+    IF_ASSERT(!read) return NULL;
     return lines;
 }
 
@@ -379,8 +377,8 @@ bool name_changes_valid(const char* active_filename, const char* inactive_filena
         }
     }
 
-    if (active_names != NULL) free(active_names);
-    if (inactive_names != NULL) free(inactive_names);
+    free(active_names);
+    free(inactive_names);
 
     return valid;
 }

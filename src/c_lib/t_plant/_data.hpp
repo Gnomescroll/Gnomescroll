@@ -147,7 +147,7 @@ class PlantArray
     {
         for (int i=0; i<PLANT_ARRAY_MAX; i++)
         {
-            if (i<index)
+            if (i < index)
             {
                 free(array[i].data_ptr);
             }

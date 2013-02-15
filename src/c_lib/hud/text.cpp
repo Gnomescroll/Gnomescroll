@@ -156,8 +156,7 @@ char* Text::set_string(const char* text, char* this_text, size_t* this_len)
     if (len > *this_len)
     {   // string is greater size
         char* new_this_text = (char*)realloc(this_text, sizeof(char)*(len+1));
-        GS_ASSERT(new_this_text != NULL);
-        if (new_this_text == NULL)
+        IF_ASSERT(new_this_text == NULL)
         {
             free(this_text);
             this_text = NULL;
@@ -454,8 +453,8 @@ Text::Text() :
 
 Text::~Text()
 {
-    if (this->text != NULL) free(this->text);
-    if (this->format != NULL) free(this->format);
+    free(this->text);
+    free(this->format);
 }
 
 }   // HudText

@@ -66,17 +66,14 @@ void VoxColors::set(int i, int x, int y, int z, unsigned char r, unsigned char g
     this->index[j+2] = z;
 }
 
-VoxColors::VoxColors()
-:
-rgba(NULL), index(NULL), n(0)
+VoxColors::VoxColors() :
+    rgba(NULL), index(NULL), n(0)
 {}
 
 VoxColors::~VoxColors()
 {
-    if (this->rgba != NULL)
-        free(this->rgba);
-    if (this->index != NULL)
-        free(this->index);
+    free(this->rgba);
+    free(this->index);
 }
 //#endif
 
@@ -88,6 +85,7 @@ void VoxPartDimension::set(int x, int y, int z)
     this->y = y;
     this->z = z;
 }
+
 int VoxPartDimension::count()
 {
     return this->x * this->y * this->z;
@@ -95,9 +93,9 @@ int VoxPartDimension::count()
 
 VoxPartDimension::VoxPartDimension()
 {}
-VoxPartDimension::VoxPartDimension(int x, int y, int z)
-:
-x(x), y(y), z(z)
+
+VoxPartDimension::VoxPartDimension(int x, int y, int z) :
+    x(x), y(y), z(z)
 {}
 
 /* Body Part (wraps properties) */
@@ -114,26 +112,17 @@ void VoxPart::set_filename(const char *filename)
     strcpy(this->filename, filename);
 }
 
-
-VoxPart::VoxPart(
-    VoxDat* dat,
-    int part_num,
-    float vox_size,
-    int dimension_x, int dimension_y, int dimension_z,
-    const char* filename,
-    bool biaxial)
-  : dimension(dimension_x, dimension_y, dimension_z),
-    dat(dat),
-    part_num(part_num),
-    vox_size(vox_size),
-    biaxial(biaxial),
-    colorable(false)
+VoxPart::VoxPart(VoxDat* dat, int part_num, float vox_size, int dimension_x,
+                 int dimension_y, int dimension_z, const char* filename,
+                 bool biaxial) :
+    dimension(dimension_x, dimension_y, dimension_z), dat(dat),
+    part_num(part_num), vox_size(vox_size), biaxial(biaxial), colorable(false)
 {
     this->base_color.r = 1;
     this->base_color.g = 1;
     this->base_color.b = 1; // dont use 0,0,0 its reserved
     colors.init(dimension_x, dimension_y, dimension_z);
-    int len = (int)strlen(filename);
+    size_t len = strlen(filename);
     this->filename = (char*)malloc(sizeof(char) * (len + 1));
     strcpy(this->filename, filename);
 }
@@ -333,36 +322,27 @@ void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned 
     p->colors.set(i, x,y,z, r,g,b,a);
 }
 
-VoxDat::VoxDat()
-:
-voxel_volume_inited(false),
-n_parts(0),
-vox_part(NULL),
-vox_volume_local_matrix(NULL),
-vox_skeleton_local_matrix(NULL),
-vox_skeleton_local_matrix_reference(NULL)
+VoxDat::VoxDat() :
+    voxel_volume_inited(false),
+    n_parts(0),
+    vox_part(NULL),
+    vox_volume_local_matrix(NULL),
+    vox_skeleton_local_matrix(NULL),
+    vox_skeleton_local_matrix_reference(NULL)
 {}
 
 VoxDat::~VoxDat()
 {
     if (this->vox_part != NULL)
-    {
         for (int i=0; i<n_parts; i++)
-            if (this->vox_part[i] != NULL)
-                delete vox_part[i];
-        delete[] vox_part;
-    }
-    if (this->vox_skeleton_local_matrix != NULL)
-        delete[] this->vox_skeleton_local_matrix;
-    if (this->vox_volume_local_matrix != NULL)
-        delete[] this->vox_volume_local_matrix;
+            delete vox_part[i];
+    delete[] vox_part;
+    delete[] this->vox_skeleton_local_matrix;
+    delete[] this->vox_volume_local_matrix;
     if (this->vox_skeleton_local_matrix_reference != NULL)
-    {
         for (int i=0; i<this->n_skeleton_nodes; i++)
-            if (this->vox_skeleton_local_matrix_reference[i] != NULL)
-                free(this->vox_skeleton_local_matrix_reference[i]);
-        free(this->vox_skeleton_local_matrix_reference);
-    }
+            free(this->vox_skeleton_local_matrix_reference[i]);
+    free(this->vox_skeleton_local_matrix_reference);
 }
 
 void VoxDat::save(char* fn)

@@ -150,11 +150,11 @@ bool parse_auth_token(const char* token, UserID* user_id, time_t* expiration_tim
     }
 
     // check length of pieces
-    if (id_len        != AUTH_TOKEN_ID_LENGTH
-     || timestamp_len != AUTH_TOKEN_TIMESTAMP_LENGTH
-     || hash_len      != AUTH_TOKEN_HASH_LENGTH
-     || username_len   > AUTH_TOKEN_USERNAME_MAX_LENGTH
-     || username_len   < AUTH_TOKEN_USERNAME_MIN_LENGTH)
+    if (id_len        != AUTH_TOKEN_ID_LENGTH ||
+        timestamp_len != AUTH_TOKEN_TIMESTAMP_LENGTH ||
+        hash_len      != AUTH_TOKEN_HASH_LENGTH ||
+        username_len   > AUTH_TOKEN_USERNAME_MAX_LENGTH ||
+        username_len   < AUTH_TOKEN_USERNAME_MIN_LENGTH)
     {
         free(_token);
         return false;

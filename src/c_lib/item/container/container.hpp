@@ -610,7 +610,7 @@ class ItemContainerEquipment: public ItemContainerInterface
 
     virtual ~ItemContainerEquipment()
     {
-        if (this->slot_equipment_types != NULL) free(this->slot_equipment_types);
+        free(this->slot_equipment_types);
     }
 
     ItemContainerEquipment(ItemContainerType type, ItemContainerID id) :

@@ -155,17 +155,15 @@ class ChromeViewport
         if (username != NULL)
         {
             this->set_js_value(JS_OBJ_USERNAME_NAME, username);
-            free(username);
             if (password != NULL)
-            {
                 this->set_js_value(JS_OBJ_PASSWORD_NAME, password);
-                free(password);
-            }
             else
                 this->set_js_value(JS_OBJ_PASSWORD_NAME, "");
+            free(password);
         }
         else
             this->set_js_value(JS_OBJ_USERNAME_NAME, "");
+        free(username);
 
         this->set_js_value(JS_OBJ_REMEMBER_PASSWORD_NAME, get_remember_password_setting());
 
@@ -434,10 +432,8 @@ class ChromeViewport
                 if (token == NULL)
                     printf("No token found\n");
                 else
-                {
                     printf("Token: %s\n", token);
-                    free(token);
-                }
+                free(token);
             }
             else
             if (key == SDLK_EQUALS)

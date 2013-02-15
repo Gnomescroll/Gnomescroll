@@ -29,8 +29,8 @@ void _gs_push_char(char* dest, size_t& index, char c)
 const size_t GS_ASSERT_DEFAULT_PRINT_LIMIT = 20;
 const size_t GS_ASSERT_MAX = 4096;
 
-char* _GS_ASSERT_ARRAY[GS_ASSERT_MAX] = {NULL};
-size_t _GS_ASSERT_COUNT[GS_ASSERT_MAX] = {0};
+char* _gs_assert_array[GS_ASSERT_MAX] = {NULL};
+size_t _gs_assert_count[GS_ASSERT_MAX] = {0};
 
 void _GS_ASSERT_INTERNAL_MAIN(const char* FILE, const char* FUNC, size_t LINE, size_t LIMIT)
 {   // always return 1, so IF_ASSERT works correctly
@@ -55,12 +55,12 @@ void _GS_ASSERT_INTERNAL_MAIN(const char* FILE, const char* FUNC, size_t LINE, s
     t[index] = '\0';
 
     size_t i = 0;
-    while (i < GS_ASSERT_MAX && _GS_ASSERT_ARRAY[i] != NULL)
+    while (i < GS_ASSERT_MAX && _gs_assert_array[i] != NULL)
     {
-        if (strcmp(t, _GS_ASSERT_ARRAY[i]) == 0)
+        if (strcmp(t, _gs_assert_array[i]) == 0)
         {   //match
-            _GS_ASSERT_COUNT[i]++;
-            if (_GS_ASSERT_COUNT[i] >= LIMIT) return;
+            _gs_assert_count[i]++;
+            if (_gs_assert_count[i] >= LIMIT) return;
             //print and return;
             print_trace(3);
             puts(t);
@@ -72,10 +72,10 @@ void _GS_ASSERT_INTERNAL_MAIN(const char* FILE, const char* FUNC, size_t LINE, s
     if (i >= GS_ASSERT_MAX) return;
 
     //insert into array
-    _GS_ASSERT_ARRAY[i] = (char*) malloc(strlen(t)+1);
-    strcpy(_GS_ASSERT_ARRAY[i], t);
+    _gs_assert_array[i] = (char*) malloc(strlen(t)+1);
+    strcpy(_gs_assert_array[i], t);
 
-    _GS_ASSERT_COUNT[i]++;
+    _gs_assert_count[i]++;
     print_trace(3);
     printf("%s\n", t);
 }
@@ -96,10 +96,9 @@ inline int _GS_ASSERT_INTERNAL(const char* FILE, const char* FUNC, size_t LINE, 
 void _GS_ASSERT_TEARDOWN()
 {
     for (size_t i=0; i<GS_ASSERT_MAX; i++)
-        if (_GS_ASSERT_ARRAY[i] != NULL)
-            printf("%s triggered %lu times \n", _GS_ASSERT_ARRAY[i], (unsigned long)_GS_ASSERT_COUNT[i]);
+        if (_gs_assert_array[i] != NULL)
+            printf("%s triggered %lu times \n", _gs_assert_array[i], (unsigned long)_gs_assert_count[i]);
 
     for (size_t i=0; i<GS_ASSERT_MAX; i++)
-        if (_GS_ASSERT_ARRAY[i] != NULL)
-            free(_GS_ASSERT_ARRAY[i]);
+        free(_gs_assert_array[i]);
 }

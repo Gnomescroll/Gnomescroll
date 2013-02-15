@@ -9,18 +9,13 @@ namespace t_mob
 ModelLoader::~ModelLoader()
 {
     if (this->pScene != NULL) aiReleaseImport(this->pScene);
-    if (this->nl != NULL) delete[] this->nl;
+    delete[] this->nl;
     if (this->_nl != NULL)
-    {
         for (int i=0; i<this->_nlm; i++)
-        {
-            if (this->_nl[i].c != NULL)
-                free(this->_nl[i].name);
-        }
-        delete[] this->_nl;
-    }
-    if (this->_ml != NULL) delete[] this->_ml;
-    if (this->bnl != NULL) delete[] this->bnl;
+            free(this->_nl[i].name);
+    delete[] this->_nl;
+    delete[] this->_ml;
+    delete[] this->bnl;
 }
 
 void ModelLoader::init(const aiScene* pScene)

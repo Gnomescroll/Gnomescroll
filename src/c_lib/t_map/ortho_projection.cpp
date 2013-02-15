@@ -245,7 +245,7 @@ void save_map_ortho_projection(const char* filename)
     //sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) filename);
 
     {
-        unsigned char* PBUFFER = pixel_buffer;
+        unsigned char* pbuffer = pixel_buffer;
         int index;
         void* temp_row;
         int height_div_2;
@@ -262,9 +262,9 @@ void save_map_ortho_projection(const char* filename)
         height_div_2 = (int) (yres * 0.5f);
         for (index = 0; index < height_div_2; index++)
         {
-            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8 *)temp_row, (Uint8 *)(pbuffer) + pitch * index, pitch);
+            memcpy((Uint8 *)(pbuffer) + pitch * index, (Uint8 *)pbuffer + pitch * (h - index-1), pitch);
+            memcpy((Uint8 *)(pbuffer) + pitch * (h - index-1), temp_row, pitch);
         }
         free(temp_row);
     }
@@ -274,7 +274,7 @@ void save_map_ortho_projection(const char* filename)
     sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) "ortho_test");
 
     size_t png_size;
-    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
+    char* png_image = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) pixel_buffer, xres, yres, 4, &png_size);
 
     FILE* pFile;
@@ -284,10 +284,10 @@ void save_map_ortho_projection(const char* filename)
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
     }
-    fwrite (PNG_IMAGE , 1 , png_size, pFile);
+    fwrite (png_image , 1 , png_size, pFile);
     fclose (pFile);
 
-    free(PNG_IMAGE);
+    free(png_image);
     delete[] pixel_buffer;
 
     glBindFramebufferEXT(GL_FRAMEBUFFER, 0);

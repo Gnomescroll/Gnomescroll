@@ -316,12 +316,10 @@ void init_wav_buffers()
 void teardown_wav_buffers()
 {
     if (wav_buffers != NULL)
-    {
         for (int i=0; i<MAX_WAV_BUFFERS; i++)
             if (!wav_buffers[i].in_use)
                 release_wav_data(i);
-        free(wav_buffers);
-    }
+    free(wav_buffers);
     wav_buffers = NULL;
 }
 

@@ -82,6 +82,6 @@ class SubscriberList
 
     ~SubscriberList<T>()
     {
-        if (this->subscribers != NULL) free(this->subscribers);
+        free(this->subscribers);
     }
 };

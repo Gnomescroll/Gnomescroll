@@ -72,25 +72,17 @@ void EntityDataList::sanity_check()
 EntityDataList::~EntityDataList()
 {
     if (this->component_types != NULL)
-    {
         for (int i=0; i<MAX_OBJECT_TYPES; i++)
-            if (this->component_types[i] != NULL)
-                free(this->component_types[i]);
+            free(this->component_types[i]);
+    free(component_types);
 
-        free(component_types);
-    }
-    
     if (this->interface_types != NULL)
-    {
         for (int i=0; i<MAX_OBJECT_TYPES; i++)
-            if (this->interface_types[i] != NULL)
-                free(this->interface_types[i]);
+            free(this->interface_types[i]);
+    free(interface_types);
 
-        free(interface_types);
-    }
-
-    if (this->expected_component_sizes != NULL) free(this->expected_component_sizes);
-    if (this->component_sizes != NULL) free(this->component_sizes);
+    free(this->expected_component_sizes);
+    free(this->component_sizes);
 }
 
 } // Entities

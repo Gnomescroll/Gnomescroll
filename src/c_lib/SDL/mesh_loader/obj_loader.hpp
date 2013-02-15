@@ -65,7 +65,6 @@ float rayTriangleIntersection(lbVec3f& rayOrigin,lbVec3f& rayDir, lbVec3f& vertA
 namespace obj_load
 {
 
-
 struct ObjVertex
 {
    float x, y, z;
@@ -103,7 +102,7 @@ struct Vertex
 };
 
 ObjModel* ObjLoadModel(char*, size_t);
-size_t    ObjLoadFile(char*, char**);
+size_t ObjLoadFile(char*, char**);
 
 
 ObjModel* m_model = NULL;
@@ -186,12 +185,10 @@ void load_model()
 }
 
 class Shader monster_shader;
-unsigned int monster_texture;
-
-unsigned int monster_TexCoord;
-unsigned int monster_InPosition;
-
-unsigned int monster_vbo;
+GLuint monster_texture;
+GLuint monster_TexCoord;
+GLuint monster_InPosition;
+GLuint monster_vbo;
 
 void init_shader()
 {
@@ -294,12 +291,11 @@ void draw_model(float x, float y, float z)
 
 void free_model(struct ObjModel* model)
 {
-   free(model->NormalArray);
-   free(model->TexCoordArray);
-   free(model->TriangleArray);
-   free(model->VertexArray);
-   free(model);
+    free(model->NormalArray);
+    free(model->TexCoordArray);
+    free(model->TriangleArray);
+    free(model->VertexArray);
+    free(model);
 }
 
-
-}
+}   // obj_load

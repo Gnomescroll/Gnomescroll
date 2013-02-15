@@ -88,8 +88,8 @@ class GS_SoundBuffer
 
     ~GS_SoundBuffer()
     {
-        if (this->sources != NULL) free(this->sources);
-        if (this->event_name != NULL) free(this->event_name);
+        free(this->sources);
+        free(this->event_name);
     }
 };
 

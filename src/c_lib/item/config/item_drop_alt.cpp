@@ -16,16 +16,14 @@ void ItemDropConfig::save_to_file()
 
     const char fmt[] = DATA_PATH "%s_drop_dat.txt";
     char* name = this->name;
-    GS_ASSERT(name != NULL);
-    if (name == NULL) name = (char*)"";
-    unsigned int len = strlen(fmt) + strlen(this->name) - 2;
+    IF_ASSERT(name == NULL) name = (char*)"";
+    size_t len = strlen(fmt) + strlen(this->name) - 2;
     char* filename = (char*)malloc((len+1) * sizeof(char));
     sprintf(filename, fmt, name);
 
-    FILE *fp = fopen(filename, "w");
+    FILE* fp = fopen(filename, "w");
     free(filename);
-    GS_ASSERT(fp != NULL);
-    if (fp == NULL) return;
+    IF_ASSERT(fp == NULL) return;
 
     for (int i=0; i<this->max; i++)
     {

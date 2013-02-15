@@ -36,7 +36,7 @@ class AnimationProperty: public Property<AnimationType>
 
     ~AnimationProperty()
     {
-        if (this->metadata != NULL) free(this->metadata);
+        free(this->metadata);
     }
 };
 

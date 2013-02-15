@@ -463,7 +463,7 @@ class Attribute: public Property<AttributeType>
 
     ~Attribute()
     {
-        if (this->value != NULL) free(this->value);
+        free(this->value);
     }
 
     private:

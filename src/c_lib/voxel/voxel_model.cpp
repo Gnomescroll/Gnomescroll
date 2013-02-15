@@ -469,10 +469,10 @@ VoxelModel::~VoxelModel()
         delete[] this->vv;
     }
 
-    if (this->vox_skeleton_transveral_list != NULL) free(this->vox_skeleton_transveral_list);
-    if (this->vox_skeleton_local_matrix != NULL) free(this->vox_skeleton_local_matrix);
-    if (this->vox_skeleton_world_matrix != NULL) free(this->vox_skeleton_world_matrix);
-    if (this->biaxial_nodes != NULL) free(this->biaxial_nodes);
+    free(this->vox_skeleton_transveral_list);
+    free(this->vox_skeleton_local_matrix);
+    free(this->vox_skeleton_world_matrix);
+    free(this->biaxial_nodes);
 }
 
 void VoxelModel::freeze()

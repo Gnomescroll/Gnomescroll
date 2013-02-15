@@ -514,13 +514,13 @@ void save_screenshot()
     //  The caller must free() the returned heap block (which will typically be larger than *pLen_out) when it's no longer needed.
     //void *tdefl_write_image_to_png_file_in_memory(const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
 
-    char* PBUFFER = (char*) malloc(4*_xres*_yres);
+    char* pbuffer = (char*) malloc(4*_xres*_yres);
 
-    glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
+    glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) pbuffer);
 
     for (int i=0; i < _xres; i++)
     for (int j=0; j < _yres; j++)
-        PBUFFER[4*(_xres*j + i) + 3] = 255;
+        pbuffer[4*(_xres*j + i) + 3] = 255;
 
     void* temp_row = (void*)malloc(4*_xres);
     GS_ASSERT(temp_row != NULL);
@@ -532,16 +532,16 @@ void save_screenshot()
         int height_div_2 = (int) (_yresf * 0.5f);
         for (int index = 0; index < height_div_2; index++)
         {
-            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8*)temp_row, (Uint8*)(pbuffer) + pitch * index, pitch);
+            memcpy((Uint8*)(pbuffer) + pitch * index, (Uint8*)pbuffer + pitch * (h - index-1), pitch);
+            memcpy((Uint8*)(pbuffer) + pitch * (h - index-1), temp_row, pitch);
         }
         free(temp_row);
     }
 
     size_t png_size;
-    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
-        (const char*) PBUFFER, _xres, _yres, 4, &png_size);
+    char* png_image = (char*) tdefl_write_image_to_png_file_in_memory(
+        (const char*) pbuffer, _xres, _yres, 4, &png_size);
 
     const int LAST_FILENAME_LEN = 128;
     static char last_filename[LAST_FILENAME_LEN] = {'\0'};
@@ -581,12 +581,12 @@ void save_screenshot()
     GS_ASSERT(pFile != NULL);
     if (pFile != NULL)
     {
-        fwrite(PNG_IMAGE , 1 , png_size, pFile);
+        fwrite(png_image , 1 , png_size, pFile);
         fclose(pFile);
     }
 
-    free(PNG_IMAGE);
-    free(PBUFFER);
+    free(png_image);
+    free(pbuffer);
     free(filename);
 }
 

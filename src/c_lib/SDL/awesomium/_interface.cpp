@@ -270,8 +270,8 @@ void check_for_token_cookie(const awe_string* _url)
             Auth::AuthError error = Auth::update_token(token);
             IF_ASSERT(error != Auth::AUTH_ERROR_NONE)
                 printf("Auth error code: %d\n", error);
-            free(token);
         }
+        free(token);
     }
     free(url);
 }

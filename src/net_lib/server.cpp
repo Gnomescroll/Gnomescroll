@@ -86,13 +86,13 @@ void init_globals()
 
 void teardown_globals()
 {
-    if (users != NULL) delete users;
+    delete users;
     if (session_log_file != NULL) fclose(session_log_file);
     if (population_log_file != NULL) fclose(population_log_file);
-    if (pool != NULL) free(pool);
-    if (staging_pool != NULL) free(staging_pool);
-    if (clients != NULL) free(clients);
-    if (agents != NULL) free(agents);
+    free(pool);
+    free(staging_pool);
+    free(clients);
+    free(agents);
 }
 
 class Session* begin_session(uint32_t ip_addr, ClientID client_id)

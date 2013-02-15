@@ -74,14 +74,9 @@ template <class Object_interface>
 MultiObject_list<Object_interface>::~MultiObject_list()
 {
     if (a != NULL)
-    {
         for (size_t i=0; i<this->n_max; i++)
-        {
-            if (this->a[i] != NULL)
-                delete this->a[i];
-        }
-        free(this->a);
-    }
+            delete this->a[i];
+    free(this->a);
 }
 
 template <class Object_interface>

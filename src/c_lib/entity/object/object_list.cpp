@@ -19,8 +19,7 @@ int EntityList::get_free_id(EntityType type)
 void EntityList::set_object_id(Entity* object)
 {
     int id = this->get_free_id(object->type);
-    GS_ASSERT(id >= 0);
-    if (id < 0)
+    IF_ASSERT(id < 0)
     {
         printf("WARNING: no free ids\n");
         return;
@@ -31,11 +30,8 @@ void EntityList::set_object_id(Entity* object)
 void EntityList::set_object_id(Entity* object, int id)
 {
     EntityType type = object->type;
-    GS_ASSERT(this->used[type][id] == 0);
-    GS_ASSERT(id >= 0);
-    GS_ASSERT(id < this->max(type));
-    if (this->used[type][id] != 0) return;
-    if (id < 0 || id >= this->max(type)) return;
+    IF_ASSERT(this->used[type][id] != 0) return;
+    IF_ASSERT(id < 0 || id >= this->max(type)) return;
 
     // swap from staging slot
     this->staging_objects[type] = this->objects[type][id];
@@ -48,15 +44,13 @@ void EntityList::set_object_id(Entity* object, int id)
 
 inline int EntityList::count(EntityType type)
 {
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return 0;
+    IF_ASSERT(type < 0 || type >= MAX_OBJECT_TYPES) return 0;
     return this->indices[type];
 }
 
 inline int EntityList::max(EntityType type)
 {
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return 0;
+    IF_ASSERT(type < 0 || type >= MAX_OBJECT_TYPES) return 0;
     return this->maximums[type];
 }
 
@@ -72,16 +66,11 @@ inline bool EntityList::full(EntityType type)
 
 inline bool EntityList::in_use(EntityType type, int id)
 {
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    GS_ASSERT(this->used != NULL);
-    GS_ASSERT(this->used[type] != NULL);
-    GS_ASSERT(this->maximums != NULL);
-    GS_ASSERT(id >= 0 && id < this->maximums[type]);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return true;
-    if (this->used == NULL) return true;
-    if (this->used[type] == NULL) return true;
-    if (this->maximums == NULL) return true;
-    if (id < 0 || id >= this->maximums[type]) return true;
+    IF_ASSERT(type < 0 || type >= MAX_OBJECT_TYPES) return true;
+    IF_ASSERT(this->used == NULL) return true;
+    IF_ASSERT(this->used[type] == NULL) return true;
+    IF_ASSERT(this->maximums == NULL) return true;
+    IF_ASSERT(id < 0 || id >= this->maximums[type]) return true;
     return (this->used[type][id] == 1);
 }
 
@@ -95,11 +84,9 @@ void EntityList::destroy(EntityType type, int id)
 
 Entity* EntityList::get(EntityType type, int id)
 {
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
-    GS_ASSERT(id >= 0 && id < this->maximums[type]);
-    if (id < 0 || id >= this->maximums[type]) return NULL;
-    
+    IF_ASSERT(type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
+    IF_ASSERT(id < 0 || id >= this->maximums[type]) return NULL;
+
     if (this->objects[type] == NULL) return NULL;
     if (this->used[type] == NULL || this->used[type][id] == 0) return NULL;
     return this->objects[type][id];
@@ -107,8 +94,7 @@ Entity* EntityList::get(EntityType type, int id)
 
 Entity* EntityList::create(EntityType type)
 {
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
+    IF_ASSERT(type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
     if (this->full(type)) return NULL;
     return this->staging_objects[type];
 }
@@ -116,13 +102,9 @@ Entity* EntityList::create(EntityType type)
 // preemptively check against used ids
 Entity* EntityList::create(EntityType type, int id)
 {
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
-    GS_ASSERT(id >= 0 && id < this->maximums[type]);
-    if (id < 0 || id >= this->maximums[type]) return NULL;
-    GS_ASSERT(this->used[type] != NULL);
-    GS_ASSERT(this->used[type][id] == 0);
-    if (this->used[type] == NULL || this->used[type][id] == 1) return NULL;
+    IF_ASSERT(type < 0 || type >= MAX_OBJECT_TYPES) return NULL;
+    IF_ASSERT(id < 0 || id >= this->maximums[type]) return NULL;
+    IF_ASSERT(this->used[type] == NULL || this->used[type][id] == 1) return NULL;
     return this->staging_objects[type];
 }
 
@@ -146,7 +128,7 @@ void EntityList::destroy_all()
         if (this->objects[i] != NULL)
             for (int j=0; j<this->maximums[j]; j++)
                 if (this->used[j])
-                    this->destroy((EntityType)i, j); 
+                    this->destroy((EntityType)i, j);
 }
 
 void EntityList::set_object_max(EntityType type, int max)
@@ -156,8 +138,7 @@ void EntityList::set_object_max(EntityType type, int max)
     GS_ASSERT(this->maximums[type] == 0);
     GS_ASSERT(this->objects[type] == NULL);
     GS_ASSERT(this->used[type] == NULL);
-    GS_ASSERT(max >= 0);
-    if (max < 0) max = 0;
+    IF_ASSERT(max < 0) max = 0;
     this->maximums[type] = max;
     if (max > 0)
     {
@@ -263,39 +244,26 @@ void EntityList::send_to_client(EntityType type, ClientID client_id)
 EntityList::~EntityList()
 {
     if (this->objects != NULL)
-    {
         for (int i=0; i<MAX_OBJECT_TYPES; i++)
         {
-            // delete objects tracked in objects array
-            if (this->used[i] != NULL)
+            if (this->maximums != NULL)
                 for (int j=0; j<this->maximums[i]; j++)
                     delete this->objects[i][j];
-
-            // delete objects*
-            if (this->objects[i] != NULL) free(this->objects[i]);
+            free(this->objects[i]);
         }
-
-        // delete objects**
-        free(this->objects);
-    }
+    free(this->objects);
 
     if (this->staging_objects != NULL)
-    {
         for (int i=0; i<MAX_OBJECT_TYPES; i++)
-            if (this->staging_objects[i] != NULL)
-                delete this->staging_objects[i];
-        free(this->staging_objects);
-    }
-    
-    if (this->indices != NULL) free(this->indices);
-    if (this->maximums != NULL) free(this->maximums);
+            delete this->staging_objects[i];
+    free(this->staging_objects);
+
+    free(this->indices);
+    free(this->maximums);
     if (this->used != NULL)
-    {
         for (int i=0; i<MAX_OBJECT_TYPES; i++)
-            if (this->used[i] != NULL)
-                free(this->used[i]);
-        free(this->used);
-    }
+            free(this->used[i]);
+    free(this->used);
 }
 
 } // Entities

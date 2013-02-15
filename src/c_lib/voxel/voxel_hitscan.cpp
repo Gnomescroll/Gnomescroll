@@ -159,7 +159,7 @@ VoxelHitscanList::VoxelHitscanList() : num_elements(0)
 
 VoxelHitscanList::~VoxelHitscanList()
 {
-    if (this->hitscan_list != NULL) free(this->hitscan_list);
+    free(this->hitscan_list);
 }
 
 void VoxelHitscanTarget::copy_vhe(VoxelHitscanElement* vhe)

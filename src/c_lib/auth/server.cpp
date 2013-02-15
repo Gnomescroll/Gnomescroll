@@ -26,14 +26,7 @@ void load_secret_key()
 {
     size_t size = 0;
     char* buf = read_file_to_buffer(SECRET_KEY_PATH, &size);
-    GS_ASSERT(buf != NULL);
-    if (buf == NULL) return;
-    GS_ASSERT(size > 0);
-    if (size <= 0)
-    {
-        free(buf);
-        return;
-    }
+    IF_ASSERT(buf == NULL) return;
     char* _secret_key_str = strip_whitespace(buf);
     GS_ASSERT(strlen(_secret_key_str) == 128);
     unsigned char* _secret_key = hexstr_to_char(_secret_key_str);
@@ -44,8 +37,8 @@ void load_secret_key()
 
     if (_secret_key_str != NULL && _secret_key != NULL)
     {
-        if (secret_key_str != NULL) free(secret_key_str);
-        if (secret_key != NULL) free(secret_key);
+        free(secret_key_str);
+        free(secret_key);
         secret_key_str = _secret_key_str;
         secret_key = _secret_key;
 

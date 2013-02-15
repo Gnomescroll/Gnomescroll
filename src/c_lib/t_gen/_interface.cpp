@@ -73,7 +73,7 @@ void save_png(const char* filename, float* in, int xres, int yres)
 {
     char FileName[128];
     sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) filename);
-    char* PBUFFER = (char*) malloc(4*xres*yres);
+    char* pbuffer = (char*) malloc(4*xres*yres);
 
     static unsigned char gamma_correction[256];
 
@@ -96,16 +96,16 @@ void save_png(const char* filename, float* in, int xres, int yres)
         unsigned char v = ((int) 255.0f*_v);
         unsigned char v2 = gamma_correction[v];
 
-        PBUFFER[index+0] = v2;
-        PBUFFER[index+1] = v2;
-        PBUFFER[index+2] = v2;
-        PBUFFER[index+3] = 255;
+        pbuffer[index+0] = v2;
+        pbuffer[index+1] = v2;
+        pbuffer[index+2] = v2;
+        pbuffer[index+3] = 255;
     }
 
     for (int i=0; i < xres; i++)
     for (int j=0; j < yres; j++)
     {
-        PBUFFER[4*(xres*j + i) + 3] = 255;
+        pbuffer[4*(xres*j + i) + 3] = 255;
     }
 
     {
@@ -125,16 +125,16 @@ void save_png(const char* filename, float* in, int xres, int yres)
         height_div_2 = (int) (yres * .5);
         for (index = 0; index < height_div_2; index++)
         {
-            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8 *)temp_row, (Uint8 *)(pbuffer) + pitch * index, pitch);
+            memcpy((Uint8 *)(pbuffer) + pitch * index, (Uint8 *)pbuffer + pitch * (h - index-1), pitch);
+            memcpy((Uint8 *)(pbuffer) + pitch * (h - index-1), temp_row, pitch);
         }
         free(temp_row);
     }
 
     size_t png_size;
-    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
-        (const char*) PBUFFER, xres, yres, 4, &png_size);
+    char* png_image = (char*) tdefl_write_image_to_png_file_in_memory(
+        (const char*) pbuffer, xres, yres, 4, &png_size);
 
     FILE * pFile;
     pFile = fopen (FileName , "wb");
@@ -143,11 +143,11 @@ void save_png(const char* filename, float* in, int xres, int yres)
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
     }
-    fwrite (PNG_IMAGE , 1 , png_size, pFile);
+    fwrite (png_image , 1 , png_size, pFile);
     fclose (pFile);
 
-    free(PBUFFER);
-    free(PNG_IMAGE);
+    free(pbuffer);
+    free(png_image);
 }
 
 OPTIMIZED
@@ -156,7 +156,7 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
 //#if DC_CLIENT
     char FileName[128];
     sprintf(FileName,SCREENSHOT_PATH "%s.png", (char*) filename);
-    char* PBUFFER = (char*) malloc(4*xres*yres);
+    char* pbuffer = (char*) malloc(4*xres*yres);
 
     static unsigned char gamma_correction[256];
 
@@ -181,10 +181,10 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
             unsigned char v = ((int) 255.0f*_v);
             unsigned char v2 = gamma_correction[v];
 
-            PBUFFER[index+0] = 0;
-            PBUFFER[index+1] = v2;
-            PBUFFER[index+2] = 0;
-            PBUFFER[index+3] = 255;
+            pbuffer[index+0] = 0;
+            pbuffer[index+1] = v2;
+            pbuffer[index+2] = 0;
+            pbuffer[index+3] = 255;
         }
         else
         {
@@ -192,17 +192,17 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
             unsigned char v = ((int) 255.0f*_v);
             unsigned char v2 = gamma_correction[v];
 
-            PBUFFER[index+0] = 0;
-            PBUFFER[index+1] = 0;
-            PBUFFER[index+2] = v2;
-            PBUFFER[index+3] = 255;
+            pbuffer[index+0] = 0;
+            pbuffer[index+1] = 0;
+            pbuffer[index+2] = v2;
+            pbuffer[index+3] = 255;
         }
     }
 
     for (int i=0; i < xres; i++)
     for (int j=0; j < yres; j++)
     {
-        PBUFFER[4*(xres*j + i) + 3] = 255;
+        pbuffer[4*(xres*j + i) + 3] = 255;
     }
 
     {
@@ -222,16 +222,16 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
         height_div_2 = (int) (yres * .5);
         for (index = 0; index < height_div_2; index++)
         {
-            memcpy((Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
-            memcpy((Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
-            memcpy((Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+            memcpy((Uint8 *)temp_row, (Uint8 *)(pbuffer) + pitch * index, pitch);
+            memcpy((Uint8 *)(pbuffer) + pitch * index, (Uint8 *)pbuffer + pitch * (h - index-1), pitch);
+            memcpy((Uint8 *)(pbuffer) + pitch * (h - index-1), temp_row, pitch);
         }
         free(temp_row);
     }
 
     size_t png_size;
-    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
-        (const char*) PBUFFER, xres, yres, 4, &png_size);
+    char* png_image = (char*) tdefl_write_image_to_png_file_in_memory(
+        (const char*) pbuffer, xres, yres, 4, &png_size);
 
     FILE * pFile;
     pFile = fopen (FileName , "wb");
@@ -241,11 +241,11 @@ inline void save_perlin(const char* filename, float* in, int xres, int yres)
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
     }
-    fwrite (PNG_IMAGE , 1 , png_size, pFile);
+    fwrite (png_image , 1 , png_size, pFile);
     fclose (pFile);
 
-    free(PBUFFER);
-    free(PNG_IMAGE);
+    free(pbuffer);
+    free(png_image);
 }
 
 }   // t_gen

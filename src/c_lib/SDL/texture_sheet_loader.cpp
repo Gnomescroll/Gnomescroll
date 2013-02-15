@@ -42,20 +42,15 @@ TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
 TextureSheetLoader::~TextureSheetLoader()
 {
     if (this->surface_meta != NULL)
-    {
         for (size_t i=0; i<N_SURFACES; i++)
             if (this->surface_meta[i].surface != NULL)
                 SDL_FreeSurface(this->surface_meta[i].surface);
-        free(this->surface_meta);
-    }
-
-    if (this->tile_meta != NULL) free(this->tile_meta);
-
+    free(this->surface_meta);
+    free(this->tile_meta);
+    free(this->texture_stack);
+    free(this->pixels);
     if (this->surface != NULL) SDL_FreeSurface(this->surface);
     if (this->greyscale_surface != NULL) SDL_FreeSurface(this->greyscale_surface);
-    if (this->texture_stack != NULL) free(this->texture_stack);
-    if (this->pixels != NULL) free(this->pixels);
-
     if (this->texture != 0) glDeleteTextures(1, &this->texture);
     if (this->greyscale_texture != 0) glDeleteTextures(1, &this->greyscale_texture);
 }

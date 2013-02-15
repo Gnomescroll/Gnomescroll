@@ -6,16 +6,18 @@
 #define INIT_V_1 0
 #define INIT_V_2 0
 
-
-void init_sequencer(class NetPeer* np) {
+void init_sequencer(class NetPeer* np)
+{
     init_sequence_numbers(np);
     init_sequence_numbers_out(np);
 }
 
-void init_sequence_numbers(class NetPeer* np) {
+void init_sequence_numbers(class NetPeer* np)
+{
     np->packet_sequence_number = INIT_V_1;
     int i;
-    for (i=0;i<256;i++) {
+    for (i=0;i<256;i++)
+    {
         //packet_buffer[i].active = 0;
         np->packet_sequence_buffer[i].ack = 1;
         np->packet_sequence_buffer[i].seq = -1;
@@ -25,7 +27,8 @@ void init_sequence_numbers(class NetPeer* np) {
 
 #define UPDATE_MASK 2048-1
 
-void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
+void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag)
+{
     unsigned int n = 1;
     int index;
 
@@ -44,9 +47,10 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
     index = seq;
     n = 1;
     struct packet_sequence* ps;
-    for (int i=0;i<32;i++) {
-
-        if ((flag & n) != 0) {
+    for (int i=0;i<32;i++)
+    {
+        if ((flag & n) != 0)
+        {
             //DEBUG, can disable
             ps = &np->packet_sequence_buffer[index%256];
             if (ps->seq != index)
@@ -82,10 +86,10 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag) {
         index &= UPDATE_MASK;
         n*=2;
     }
-
 }
 
-uint16_t get_next_sequence_number(class NetPeer* np) {
+uint16_t get_next_sequence_number(class NetPeer* np)
+{
     np->packet_sequence_number = (np->packet_sequence_number+1)%2048;
     int index = np->packet_sequence_number%256;
     struct packet_sequence* ps = &np->packet_sequence_buffer[index];
@@ -111,76 +115,43 @@ uint16_t get_next_sequence_number(class NetPeer* np) {
 }
 
 int DROPPED_PACKETS = 0;
-int dropped_packet_count() {
+int dropped_packet_count()
+{
     return DROPPED_PACKETS;
 }
 
-void check_for_dropped_packets(class NetPeer* np) {
-
-//ttl based
-
-    int i,j;
-    j = (np->packet_sequence_number+1) % 256;
-
+void check_for_dropped_packets(class NetPeer* np)
+{
+    int j = (np->packet_sequence_number+1) % 256;
     struct packet_sequence* ps;
-    for (i=0;i<32;i++) {
+    for (int i=0; i<32 ;i++)
+    {
         //printf("i=%i, t=%i\n", j, NP_time_delta1(ps->time));
-
         ps = &np->packet_sequence_buffer[j];
-
-        if ((ps->seq != -1) && (ps->ack == 0) ) {
+        if ((ps->seq != -1) && (ps->ack == 0))
+        {
             if (ps-> messages_n != 0 ) np->resend_packet(ps);  //retransmit on drop
             printf("***Packet Dropped: %i:%i ***\n", np->client_id, ps->seq);
             DROPPED_PACKETS++;
             //ps->ack = 0;
             ps->seq = -1;
         }
-        j= (j+1) %256;
+        j = (j+1) % 256;
     }
-
-//time based
-/*
-    int i,j;
-    j = (np->packet_sequence_number+1) % 256;
-    for (i=0;i<256;i++) {
-        if ((np->packet_sequence_buffer[j].seq != -1) && (np->packet_sequence_buffer[j].ack == 0)) {
-            //NP_time_delta1(np->packet_sequence_buffer[j])
-            printf("i=%i, t=%i\n", j, NP_time_delta1(np->packet_sequence_buffer[j].time));
-            if (NP_time_delta1(np->packet_sequence_buffer[j].time > 1000)) {
-                printf("***Packet Dropped: %i:%i ***\n", np->client_id, np->packet_sequence_buffer[j].seq);
-                DROPPED_PACKETS++;
-                //np->packet_sequence_buffer[i].ack = 0;
-                np->packet_sequence_buffer[j].seq = -1;
-            }
-        }
-        j= (j+1) %256;
-    }
-*/
-    /*
-    for (i=0;i<256;i++) {
-        if (i == np->packet_sequence_number%256){
-        printf("i=%i, seq=%i,ack=%i ***",i,np->packet_sequence_buffer[i].seq,np->packet_sequence_buffer[i].ack);
-        } else {
-        printf("i=%i, seq=%i,ack=%i",i,np->packet_sequence_buffer[i].seq,np->packet_sequence_buffer[i].ack);
-        }
-        printf("\n");
-    }
-    */
 }
 
-//
-
-void init_sequence_numbers_out(class NetPeer* np) {
-    int i;
+void init_sequence_numbers_out(class NetPeer* np)
+{
     np->highest_packet_sequence_number = INIT_V_2;
-    for (i=0;i<256;i++)
+    for (int i=0;i<256;i++)
     {
         np->seqbuff[i].seq = -1;
         np->seqbuff[i].received = 0;
     }
 }
 
-void set_ack_for_received_packet(class NetPeer* np, int seq) {
+void set_ack_for_received_packet(class NetPeer* np, int seq)
+{
     int index = seq % 256;
     np->seqbuff[index].received = 1;
     np->seqbuff[index].seq = seq;
@@ -190,26 +161,27 @@ void set_ack_for_received_packet(class NetPeer* np, int seq) {
         //printf("new high seq: %i\n",seq);
     }
     */
-    if ((seq > np->highest_packet_sequence_number) || ((seq < 256) && (np->highest_packet_sequence_number > 1984)))
+    if ((seq > np->highest_packet_sequence_number) ||
+        ((seq < 256) && (np->highest_packet_sequence_number > 1984)))
     {
         np->highest_packet_sequence_number = seq;
     }
 }
 
-uint16_t get_sequence_number(class NetPeer* np) {
+uint16_t get_sequence_number(class NetPeer* np)
+{
     return np->highest_packet_sequence_number;
 }
 
-uint32_t generate_outgoing_ack_flag(class NetPeer* np) {
-
+uint32_t generate_outgoing_ack_flag(class NetPeer* np)
+{
     unsigned int n = 1;
     int i,index;
-
     uint32_t flag = 0;
     index = np->highest_packet_sequence_number;
     //index &= UPDATE_MASK;
-
-    for (i=0;i<32;i++) {
+    for (i=0; i<32; i++)
+    {
         if (np->seqbuff[index%256].seq == index) flag |= n;
         index--;
         index &= UPDATE_MASK;

@@ -222,16 +222,14 @@ bool process_entities_blob(const char* str, size_t filesize)
 bool load_entities_file(const char* fn)
 {
     printf("Loading entity file %s\n", fn);
-    
+
     size_t size = 0;
     char* buf = read_file_to_buffer(fn, &size);
-    GS_ASSERT(buf != NULL);
-    if (buf == NULL) return false;
+    IF_ASSERT(buf == NULL) return false;
 
     bool success = process_entities_blob(buf, size);
     free(buf);
-    GS_ASSERT(success);
-    if (!success)
+    IF_ASSERT(!success)
     {
         log_entity_load_error("Error processing entire file");
         Entities::destroy_all();
@@ -341,7 +339,7 @@ static bool save_energy_core(FILE* f, class Entities::Entity* entity, int id)
     if (!write_position_tag(f, physics->get_position())) return false;
 
     if (!write_entity_terminator(f)) return false;
-    
+
     return true;
 }
 
@@ -369,7 +367,7 @@ bool save_entities()
 
     int agent_spawner_ct = 0;
     int energy_core_ct = 0;
-    
+
     // collect the entities
     EntityType agent_spawner_type = Entities::get_entity_type("agent_spawner");
     GS_ASSERT(agent_spawner_type != OBJECT_NONE);

@@ -173,14 +173,7 @@ bool load_map_palette_file(const char* fn)
 
     size_t size = 0;
     char* str = read_file_to_buffer(fn, &size);
-    GS_ASSERT(str != NULL)
-    GS_ASSERT(size > 0);
-    if (str == NULL) return false;
-    if (size <= 0)
-    {
-        free(str);
-        return false;
-    }
+    IF_ASSERT(str == NULL) return false;
 
     // allocate scratch buffer long enough to hold the largest line
     static const size_t LONGEST_LINE = MAP_PALETTE_LINE_LENGTH;
@@ -334,8 +327,8 @@ BlockSerializer::BlockSerializer()
 
 BlockSerializer::~BlockSerializer()
 {
-    if (this->write_buffer != NULL) free(this->write_buffer);
-    if (this->chunk != NULL) free(this->chunk);
+    free(this->write_buffer);
+    free(this->chunk);
 }
 
 bool BlockSerializer::save(const char* filename)

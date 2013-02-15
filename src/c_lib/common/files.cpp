@@ -29,16 +29,16 @@ int GS_RENAME(const char* src, const char* dst)
     #ifdef _WIN32
     remove(dst);
     #endif
-    
+
     return rename(src, dst);
 }
 
 off_t fsize(const char *filename)
 {
-    struct stat st; 
+    struct stat st;
     if (stat(filename, &st) == 0)
         return st.st_size;
-    return -1; 
+    return -1;
 }
 
 // free the returned char* buffer after use
@@ -58,7 +58,7 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
     }
 
     /* Go to the end of the file. */
-    if (fseek(fp, 0L, SEEK_END) == 0) 
+    if (fseek(fp, 0L, SEEK_END) == 0)
     {
         /* Get the size of the file. */
         long bufsize = ftell(fp);
@@ -80,7 +80,7 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
             fclose(fp);
             return NULL;
         }
-        
+
         /* Allocate our buffer to that size. */
         source = (char*) calloc(bufsize+2, sizeof(char));
         /* Go back to the start of the file. */
@@ -91,7 +91,7 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
             printf("read_file_to_buffer: error seeking file %s\n", filename);
             return NULL;
         }
-        
+
         /* Read the entire file into memory. */
         size_t newLen = fread(source, sizeof(char), bufsize, fp);
         if (ferror(fp))
@@ -161,8 +161,7 @@ void free_read_lines(char** readlines, int lines)
 {
     if (readlines == NULL) return;
     for (int i=0; i<lines; i++)
-        if (readlines[i] != NULL)
-            free(readlines[i]);
+        free(readlines[i]);
     free(readlines);
 }
 
@@ -208,7 +207,7 @@ void create_path(const char* fn)
     strcpy(path, fn);
 
     struct stat file_stat;
-    
+
     char c;
     int i=0;
     while ((c = path[i++]) != '\0')
@@ -216,7 +215,7 @@ void create_path(const char* fn)
         if (c != SEPARATOR) continue;
         path[i-1] = '\0';
         if (stat(path, &file_stat) != 0)
-        { 
+        {
             GS_MKDIR(path, 0777);
         }
         path[i-1] = SEPARATOR;

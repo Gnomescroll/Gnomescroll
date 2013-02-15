@@ -131,7 +131,7 @@ ChatInputHistoryObject::ChatInputHistoryObject(const char* m) :
 
 ChatInputHistoryObject::~ChatInputHistoryObject()
 {
-    if (this->m != NULL) free(this->m);
+    free(this->m);
 }
 
 void ChatInput::clear_history()
@@ -592,8 +592,8 @@ void ChatSystemMessage::object_destroyed(Entities::Entity* object)
     //if (msg != NULL)
     //{
         //chat_client->send_system_message(msg);
-        //free(msg);
     //}
+    //free(msg);
 }
 
 void ChatSystemMessage::object_created(Entities::Entity* object)
@@ -612,8 +612,8 @@ void ChatSystemMessage::object_created(Entities::Entity* object)
     //if (msg != NULL)
     //{
         //chat_client->send_system_message(msg);
-        //free(msg);
     //}
+    //free(msg);
 }
 
 }   // Chat

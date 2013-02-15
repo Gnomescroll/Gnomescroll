@@ -29,12 +29,12 @@ class BodyPartMesh
 
     ~BodyPartMesh()
     {
-        if (this->mesh_name != NULL) free(this->mesh_name);
-        if (this->bvl != NULL) delete[] this->bvl;
-        if (this->tbvl != NULL) delete[] this->tbvl;
-        if (this->tvl != NULL) delete[] this->tvl;
-        if (this->vwl != NULL) delete[] this->vwl;
-        if (this->via != NULL) delete[] this->via;
+        free(this->mesh_name);
+        delete[] this->bvl;
+        delete[] this->tbvl;
+        delete[] this->tvl;
+        delete[] this->vwl;
+        delete[] this->via;
     }
 
     //assumes only one mesh per node

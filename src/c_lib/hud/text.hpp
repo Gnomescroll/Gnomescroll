@@ -112,7 +112,7 @@ void* set_and_update_array_range(unsigned int n, unsigned int* max, unsigned int
 
     if (n == 0)
     {
-        if (arr != NULL) free(arr);
+        free(arr);
         return NULL;
     }
 

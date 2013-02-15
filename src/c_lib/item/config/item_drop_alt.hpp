@@ -92,14 +92,13 @@ class ItemDropConfig
         memset(this->probability_table, 0, sizeof(this->probability_table));
         memset(this->cumulative_probability_table, 0, sizeof(this->cumulative_probability_table));
         memset(this->item_drop_num_table, 0, sizeof(this->item_drop_num_table));
-
         memset(this->item_drop_table, 0, sizeof(this->item_drop_table));
     }
 
     ~ItemDropConfig()
     {
-        if (this->name != NULL) free(this->name);
-        if (this->meta_drop_table != NULL) free(this->meta_drop_table);
+        free(this->name);
+        free(this->meta_drop_table);
     }
 };
 

@@ -32,9 +32,9 @@ void init_t_properties()
 
 void end_t_properties()
 {
-    if (cube_properties != NULL) delete cube_properties;
-    if (fast_cube_properties != NULL) free(fast_cube_properties);
-    if (cube_name_map != NULL) delete cube_name_map;
+    delete cube_properties;
+    free(fast_cube_properties);
+    delete cube_name_map;
 }
 
 class CubeProperty* get_cube_properties(CubeType type)

@@ -62,6 +62,8 @@ static void _save_png(pngDataWrite writer, const char* fn, float* in, int xres, 
     FILE* pfile = fopen(filename , "wb");
     IF_ASSERT(pfile == NULL)
     {
+        free(pbuffer);
+        free(png_image);
         printf("Error: save_png, could not save image. Check that screenshot folder exists\n");
         return;
     }

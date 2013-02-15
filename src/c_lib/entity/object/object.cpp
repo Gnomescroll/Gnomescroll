@@ -13,10 +13,8 @@ using Components::Component;
 
 void Entity::add_component(int slot, class Component* component)
 {
-    GS_ASSERT(slot >= 0);
-    if (slot < 0) return;
-    GS_ASSERT(slot < this->n_components);
-    if (slot >= this->n_components) return;
+    IF_ASSERT(slot < 0) return;
+    IF_ASSERT(slot >= this->n_components) return;
     GS_ASSERT(this->components[slot] == NULL);
     this->components[slot] = component;
 }
@@ -51,8 +49,7 @@ void Entity::init(int n_components)
 {
     GS_ASSERT(this->components == NULL);
     GS_ASSERT(this->n_components == 0);
-    GS_ASSERT(n_components >= 0);
-    if (n_components < 0) n_components = 0;
+    IF_ASSERT(n_components < 0) n_components = 0;
     this->n_components = n_components;
     if (n_components <= 0) return;
     this->components = (class Component**)calloc(n_components, sizeof(class Component*));
@@ -60,7 +57,7 @@ void Entity::init(int n_components)
 
 Entity::~Entity()
 {
-    if (this->components != NULL) free(this->components);
+    free(this->components);
 }
 
 } // Entities

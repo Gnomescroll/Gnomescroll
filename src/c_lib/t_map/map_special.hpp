@@ -44,7 +44,7 @@ class ControlNodeList
         {
             cpm *= 2;
             ControlNode* new_cpa = (ControlNode*) realloc(cpa, cpm*sizeof(class ControlNode));
-            if (new_cpa == NULL)
+            IF_ASSERT(new_cpa == NULL)
             {
                 free(cpa);
                 cpa = NULL;

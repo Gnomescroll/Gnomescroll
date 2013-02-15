@@ -186,18 +186,22 @@ void save_surface_to_png(SDL_Surface* surface, const char* filename)
     if (SDL_MUSTLOCK(surface) == 0)
     {
         png_data = (char*)tdefl_write_image_to_png_file_in_memory(
-        (const char*)surface->pixels, surface->w, surface->h, 4, &png_size);
+            (const char*)surface->pixels, surface->w, surface->h, 4, &png_size);
     }
     else
     {
         SDL_LockSurface(surface);
         png_data = (char*)tdefl_write_image_to_png_file_in_memory(
-        (const char*)surface->pixels, surface->w, surface->h, 4, &png_size);
+            (const char*)surface->pixels, surface->w, surface->h, 4, &png_size);
         SDL_UnlockSurface(surface);
     }
     IF_ASSERT(png_data == NULL) return;
     FILE* pFile = fopen(filename, "wb");
-    IF_ASSERT(pFile == NULL) return;
+    IF_ASSERT(pFile == NULL)
+    {
+        free(png_data);
+        return;
+    }
     fwrite(png_data, 1, png_size, pFile);
     fclose(pFile);
     free(png_data);

@@ -131,7 +131,7 @@ class EquipmentUI: public UIElement
 
     virtual ~EquipmentUI()
     {
-        if (this->slot_equipment_types != NULL) free(this->slot_equipment_types);
+        free(this->slot_equipment_types);
     }
 
     protected:

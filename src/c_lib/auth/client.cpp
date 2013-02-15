@@ -46,18 +46,11 @@ bool send_auth_token(const char* token)
 
 bool load_auth_token(const char* token)
 {
-    GS_ASSERT(token != NULL);
-    if (token == NULL) return false;
-
-    if (auth_token != NULL)
-    {
-        free(auth_token);
-        auth_token = NULL;
-    }
-
+    IF_ASSERT(token == NULL) return false;
+    free(auth_token);
+    auth_token = NULL;
     bool ok = parse_auth_token(token, &auth_token_user_id, &auth_token_timestamp, &auth_token_hash, &auth_token_username);
-    GS_ASSERT(ok); // should be valid if exists
-    if (!ok) return false;
+    IF_ASSERT(!ok) return false;
 
     size_t len = strlen(token);
     auth_token = (char*)malloc((len+1)*sizeof(char));

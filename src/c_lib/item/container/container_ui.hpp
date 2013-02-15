@@ -457,8 +457,7 @@ class ItemContainerEquipmentUI: public ItemContainerUIInterface
 
     virtual ~ItemContainerEquipmentUI()
     {
-        if (this->slot_equipment_types != NULL)
-            free(this->slot_equipment_types);
+        free(this->slot_equipment_types);
     }
 };
 

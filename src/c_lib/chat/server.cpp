@@ -36,7 +36,7 @@ void ChatServerChannel::broadcast(ClientID sender, char* payload)
     msg.msg[CHAT_MESSAGE_SIZE_MAX] = '\0';
     msg.channel = this->id;
     msg.sender = sender;
-    
+
     for (int i=0; i<max; i++)
         if (listeners[i] != NULL_CLIENT)
             msg.sendToClient(listeners[i]);
@@ -45,10 +45,10 @@ void ChatServerChannel::broadcast(ClientID sender, char* payload)
 bool ChatServerChannel::add_listener(ClientID id)
 {
     if (n == max) return false;
-    
+
     for (int i=0; i<max; i++)
         if (listeners[i] == id) return false;
-    
+
     for (int i=0; i<max; i++)
         if (listeners[i] == NULL_CLIENT)
         {
@@ -92,7 +92,7 @@ void ChatServer::receive_message(int channel, ClientID sender, char* payload)
 {
     GS_ASSERT(payload != NULL);
     if (payload == NULL) return;
-    
+
     GS_ASSERT(channel >= 0 && channel < CHAT_SERVER_CHANNELS_MAX);
     if (channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
 
@@ -108,8 +108,8 @@ void ChatServer::receive_message(int channel, ClientID sender, char* payload)
         global->broadcast(sender, payload);
     else if (channel >= CHANNEL_ID_AGENT_OFFSET && channel < CHANNEL_ID_AGENT_OFFSET + PLAYERS_MAX)
         pm[channel - CHANNEL_ID_AGENT_OFFSET]->broadcast(sender, payload);
-    
-    if (Options::log_chat)    
+
+    if (Options::log_chat)
         this->log_message(channel, sender, payload);    // logging
 }
 
@@ -117,7 +117,7 @@ void ChatServer::log_message(int channel, ClientID sender, char* payload)
 {
     GS_ASSERT(Options::log_chat);
     if (!Options::log_chat) return;
-    
+
     GS_ASSERT(this->logfile != NULL);
     if (logfile == NULL) return;
 
@@ -129,7 +129,7 @@ void ChatServer::log_message(int channel, ClientID sender, char* payload)
 
     GS_ASSERT(payload != NULL);
     if (payload == NULL) return;
-    
+
     GS_ASSERT(channel >= 0 && channel < CHAT_SERVER_CHANNELS_MAX);
     if (channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
 
@@ -137,7 +137,7 @@ void ChatServer::log_message(int channel, ClientID sender, char* payload)
 
     AgentID agent_id = NetServer::get_agent_id_for_client(sender);
     Agents::Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL); 
+    GS_ASSERT(a != NULL);
     if (a == NULL) return;
     char* sender_name = a->status.name;
     GS_ASSERT(sender_name != NULL);
@@ -176,7 +176,7 @@ ChatServer::ChatServer()
         pm[i]->id = CHANNEL_ID_AGENT_OFFSET + i;
         channels[channel_index++] = pm[i]->id;
     }
-    
+
     if (Options::log_chat)
     {
         this->logfile = fopen("./log/chat.log", "a");
@@ -198,7 +198,7 @@ ChatServer::~ChatServer()
     for (int i=0; i<PLAYERS_MAX; delete pm[i++]);
     free(this->pm);
 
-    if (this->log_msg_buffer != NULL) free(this->log_msg_buffer);
+    free(this->log_msg_buffer);
     if (this->logfile != NULL) fclose(this->logfile);
 }
 

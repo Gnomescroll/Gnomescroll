@@ -22,7 +22,7 @@ int client_chunk_alias_list[1024] = {0};
 mz_stream stream;
 
 const int DECOMPRESSION_BUFFER_SIZE = 1024*512;
-char* DECOMPRESSION_BUFFER = NULL;
+char* decompression_buffer = NULL;
 
 #define MAP_NET_DEBUG 0
 //unsigned short chunk_alias;
@@ -31,7 +31,7 @@ char* DECOMPRESSION_BUFFER = NULL;
 void init_client_compressors()
 {
     // Init the z_stream
-    DECOMPRESSION_BUFFER = (char*) malloc(DECOMPRESSION_BUFFER_SIZE);
+    decompression_buffer = (char*) malloc(DECOMPRESSION_BUFFER_SIZE);
 
     memset(&stream, 0, sizeof(stream));
 
@@ -47,7 +47,7 @@ void init_client_compressors()
 
 void end_client_compressors()
 {
-    free(DECOMPRESSION_BUFFER);
+    free(decompression_buffer);
 }
 
 void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
@@ -57,7 +57,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     stream.next_in = (unsigned char*) buff;
     stream.avail_in = byte_num;
 
-    stream.next_out = (unsigned char*) DECOMPRESSION_BUFFER;
+    stream.next_out = (unsigned char*) decompression_buffer;
     stream.avail_out = DECOMPRESSION_BUFFER_SIZE;
 
     int status = mz_inflate(&stream, MZ_SYNC_FLUSH);
@@ -95,7 +95,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
     if (size != _size) printf("map_chunk_compressed_StoC::handle, warning: invalid size!\n");
 
-    memcpy((char *) m->e, DECOMPRESSION_BUFFER, _size);
+    memcpy((char *) m->e, decompression_buffer, _size);
 
     m->refresh_height_cache(); //refesh height cache after memcpy
     main_map->chunk_received(cx,cy);

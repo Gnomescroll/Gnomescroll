@@ -278,17 +278,13 @@ void init_option_tables()
 void teardown_option_tables()
 {
     if (option_values != NULL)
-    {
         for (int i=0; i<MAX_OPTIONS; i++)
             if (coercion_methods[i] == &coerce_option_str)
                 free(*((char**)(option_values[i])));
-    }
     free(option_values);
     if (option_names != NULL)
-    {
         for (int i=0; i<MAX_OPTIONS; i++)
             free(option_names[i]);
-    }
     free(option_names);
     free(coercion_methods);
 }

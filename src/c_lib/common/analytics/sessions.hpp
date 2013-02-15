@@ -100,7 +100,7 @@ class Session
 
     ~Session()
     {
-        if (this->username != NULL) free(this->username);
+        free(this->username);
     }
 };
 
@@ -155,11 +155,9 @@ class User
     ~User()
     {
         if (sessions != NULL)
-        {
             for (int i=0; i<n_sessions; i++)
                 delete sessions[i];
-            free(sessions);
-        }
+        free(sessions);
     }
 };
 
@@ -270,13 +268,11 @@ class UserRecorder
     ~UserRecorder()
     {
         if (users != NULL)
-        {
             for (int i=0; i<this->n_users; i++)
             {
-                IF_ASSERT(this->users[i] == NULL) continue;
+                GS_ASSERT(this->users[i] != NULL);
                 delete this->users[i];
             }
-            free(users);
-        }
+        free(users);
     }
 };

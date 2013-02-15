@@ -96,12 +96,10 @@ class ObjectList
     virtual ~ObjectList()
     {
         if (this->objects != NULL)
-        {
             for (size_t i=0; i<this->max; i++)
                 if (this->objects[i].id != this->null_id)
                     this->objects[i].ObjectState::~ObjectState();
-            free(this->objects);
-        }
+        free(this->objects);
     }
 
     explicit ObjectList(size_t capacity) :

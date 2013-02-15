@@ -7,7 +7,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec
 {
     GS_ASSERT(list != NULL);
     if (list == NULL) return 0;
-    
+
     if (list->empty(type)) return 0;
 
     Entity** objects = list->get_objects(type);
@@ -18,7 +18,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec
     if (used == NULL) return 0;
     int max = list->max(type);
     GS_ASSERT(max >= 0);
-    
+
     const float radius_squared = radius*radius;
     int ct = 0;
     float dist;
@@ -28,7 +28,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics;
-    
+
     for (int i=0; i<max; i++)
     {
         if (!used[i]) continue;
@@ -39,7 +39,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec
         if (physics == NULL) continue;
         Vec3 p = quadrant_translate_position(position, physics->get_position());
         dist = vec3_distance_squared(position, p);
-        
+
         if (dist < radius_squared)
         {   // object is in sphere
             this->objects[ct] = object;
@@ -58,7 +58,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType* types, c
 {
     GS_ASSERT(list != NULL);
     if (list == NULL) return 0;
-    
+
     const float radius_squared = radius*radius;
     EntityType type;
     int ct = 0;
@@ -92,13 +92,13 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType* types, c
         {
             if (!used[i]) continue;
             object = objects[i];
-            
+
             physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
             GS_ASSERT(physics != NULL);
             if (physics == NULL) continue;
             Vec3 p = quadrant_translate_position(position, physics->get_position());
             dist = vec3_distance_squared(position, p);
-            
+
             if (dist < radius_squared)
             {   // object is in sphere
                 this->objects[ct] = object;
@@ -121,8 +121,8 @@ void EntityListFilter::init()
 
 EntityListFilter::~EntityListFilter()
 {
-    if (this->objects != NULL) free(this->objects);
-    if (this->distances != NULL) free(this->distances);
+    free(this->objects);
+    free(this->distances);
 }
 
 

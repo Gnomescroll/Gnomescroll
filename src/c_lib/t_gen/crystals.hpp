@@ -173,8 +173,7 @@ void populate_crystals()
         ct++;
     }
 
-    GS_ASSERT(ct > 0);
-    if (ct <= 0)
+    IF_ASSERT(ct <= 0)
     {
         free(loc);
         return;

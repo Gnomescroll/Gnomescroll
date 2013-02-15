@@ -51,7 +51,7 @@ void _save_png(const char* filename, int xres, int yres)
     }
 
     size_t png_size;
-    char* PNG_IMAGE = (char*) tdefl_write_image_to_png_file_in_memory(
+    char* png_image = (char*) tdefl_write_image_to_png_file_in_memory(
         (const char*) PBUFFER, xres, yres, 4, &png_size);
 
     FILE * pFile;
@@ -61,11 +61,11 @@ void _save_png(const char* filename, int xres, int yres)
         printf("Error: could not save image.  Check that screenshot folder exists\n");
         return;
     }
-    fwrite (PNG_IMAGE , 1 , png_size, pFile);
-    fclose (pFile);
+    fwrite(png_image, 1, png_size, pFile);
+    fclose(pFile);
 
     //free(PBUFFER);
-    free(PNG_IMAGE);
+    free(png_image);
 #endif
 }
 

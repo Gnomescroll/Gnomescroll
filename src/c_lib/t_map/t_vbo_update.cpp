@@ -79,15 +79,10 @@ void t_vbo_update_end()
     free(vlist_scratch_1);
 
     if (side_buffer_array != NULL)
-    {
         for (int i=0; i<SIDE_BUFFER_ARRAY_SIZE; i++)
-            if (side_buffer_array[i] != NULL)
-                free(side_buffer_array[i]);
-        free(side_buffer_array);
-    }
-
-    if (side_buffer_indices != NULL)
-        free(side_buffer_indices);
+            free(side_buffer_array[i]);
+    free(side_buffer_array);
+    free(side_buffer_indices);
 }
 
 //cache line optimization; minimize size
@@ -896,8 +891,7 @@ void VBOMap::update_vbo_compatibility(int i, int j)
     generate_vertex_list_compatibility(vlist);
     generate_quad_ao_values_compatibility(vlist);
 
-    if (vbo->v_list_backup != NULL)
-        delete[] vbo->v_list_backup; //free old memory
+    delete[] vbo->v_list_backup;
     vbo->v_list_backup = vlist;
 
     if (vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
