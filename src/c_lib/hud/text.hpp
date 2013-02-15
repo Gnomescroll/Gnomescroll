@@ -104,7 +104,9 @@ class Text
     ~Text();
 };
 
-void* set_and_update_array_range(unsigned int n, unsigned int* max, unsigned int* n_final, void* arr, size_t obj_size)
+void* set_and_update_array_range(unsigned int n, unsigned int* max,
+                                 unsigned int* n_final, void* arr,
+                                 size_t obj_size)
 {
     if (n == *max) return NULL;
     *max = n;
