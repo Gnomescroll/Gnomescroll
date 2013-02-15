@@ -71,7 +71,7 @@ void BillboardText::draw()
     Vec3 position = this->get_position();
     Vec3 p = current_camera->get_position();
     position = quadrant_translate_position(p,position);
-    if (point_fulstrum_test(position.x, position.y, position.z) == false)
+    if (!point_fulstrum_test(position.x, position.y, position.z))
         return;
 
     glColor4ub(color.r,color.g,color.b,color.a);

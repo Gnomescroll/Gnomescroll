@@ -100,7 +100,7 @@ void HitscanEffect::draw(float delta, Vec3 camera)
     struct Vec3 position = quadrant_translate_position(camera, this->p);
 
     // Disabled for lasers, point test too inaccurate
-    //if (point_fulstrum_test(x,y,z) == false) return;
+    //if (!point_fulstrum_test(x,y,z)) return;
 
     struct Vec3 v = vec3_normalize(this->v);
     Vec3 look = vec3_sub(position, camera);

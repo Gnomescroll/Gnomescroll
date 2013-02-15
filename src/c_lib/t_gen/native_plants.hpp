@@ -83,7 +83,7 @@ void place_native_plants()
                     }
                 }
 
-                if (ret == false)
+                if (!ret)
                 {
                     tries++;
                     break;

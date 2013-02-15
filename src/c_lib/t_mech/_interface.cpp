@@ -613,13 +613,13 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
             case MECH_RENDER_TYPE_0: //MECH_CRYSTAL:
                 //do something
                 ret = ray_cast_mech_render_type_0(mla[i], x,y,z, vx,vy,vz, &d);
-                if (ret == true)
+                if (ret)
                 {
                     printf("mech raycast hit: %i distance= %f \n", i, d);
                     //return true;
                 }
 
-                if (ret == true && d < distance)
+                if (ret && d < distance)
                 {
                     distance = d;
                     mech_id = i;

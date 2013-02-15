@@ -143,7 +143,7 @@ class Texture_surface
         glEnd();
 
 
-        if (needs_update == true) update();
+        if (needs_update) update();
 
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);

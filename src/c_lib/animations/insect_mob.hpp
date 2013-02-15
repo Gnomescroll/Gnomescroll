@@ -279,7 +279,7 @@ void InsectMobList::prep()
 {
     #if DC_CLIENT
 
-    if (needs_update == false) return;
+    if (!needs_update) return;
     insect_mob_t += 0.04f;
 
     for (size_t i=0; i<this->max; i++)

@@ -148,7 +148,7 @@ class Shader
 
     void enable_attributes()
     {
-        GS_ASSERT(shader_valid == true);
+        GS_ASSERT(shader_valid);
         glUseProgramObjectARB(this->shader);
         for (int i=0; i<attribute_index; i++)
         {
@@ -158,7 +158,7 @@ class Shader
 
     void disable_attributes()
     {
-        GS_ASSERT(shader_valid == true);
+        GS_ASSERT(shader_valid);
         for (int i=0; i<attribute_index; i++)
         {
             glDisableVertexAttribArray(attribute_array[i]);

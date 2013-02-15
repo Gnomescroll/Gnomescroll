@@ -232,7 +232,7 @@ class MechListShader
                     }
                 }
             /*
-                if (empty_column == true)
+                if (empty_column)
                 {
                     for (int _k=0; _k<32; _k++)
                     {
@@ -273,7 +273,7 @@ class MechListShader
                     }
                 }
             /*
-                if (empty_column == true)
+                if (empty_column)
                 {
                     for (int _k=0; _k<32; _k++)
                     {
@@ -314,7 +314,7 @@ class MechListShader
                     }
                 }
 
-                if (empty_row == true)
+                if (empty_row)
                 {
                     for (int _k=0; _k<16; _k++)
                     {
@@ -370,7 +370,7 @@ class MechListRenderer
         //printf("draw: %i \n", vertex_list.vi);
 
         if (vertex_list.vi == 0) return;
-        if (shader.shader->shader_valid == false) return;
+        if (!shader.shader->shader_valid) return;
 
         //printf("draw \n");
 
@@ -417,7 +417,7 @@ class MechListRenderer
     void draw_transparent()
     {
         if (vertex_list.vi == 0) return;
-        if (shader.shader->shader_valid == false) return;
+        if (!shader.shader->shader_valid) return;
 
         glColor4ub(255,255,255,255);
 
@@ -515,7 +515,7 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     /*
         Do radius render test?
     */
-    if (sphere_fulstrum_test(wx, wy, wz, 0.6f) == false)
+    if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
         return;
 
     int tex_id = mech_attributes[m.mech_type].sprite_index;

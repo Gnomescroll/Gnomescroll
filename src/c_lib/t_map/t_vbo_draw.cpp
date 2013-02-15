@@ -722,7 +722,7 @@ void draw_vbo_debug(int x, int y)
         }
         else
         {
-            if (main_map->chunk[index]->needs_update == true)
+            if (main_map->chunk[index]->needs_update)
             {
                 glColor3ub(0, 0, 255);
             }

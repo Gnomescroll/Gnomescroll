@@ -43,7 +43,7 @@ public:
 
     std::string Name;
     std::vector<cAnimationChannel> Channels;
-    bool PlayAnimationForward;// play forward == true, play backward == false
+    bool PlayAnimationForward;// play forward, play backward == false
     float mLastTime, TicksPerSecond, Duration;
     std::vector<std::tuple<unsigned int, unsigned int, unsigned int> > mLastPositions;
     std::vector<std::vector<mat4>> Transforms;//, QuatTransforms;/** Array to return transformations results inside. */

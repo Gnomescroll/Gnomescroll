@@ -16,7 +16,7 @@ void VoxelModelComponent::update(Vec3 position, float theta, float phi, bool sta
         vox->update(position.x, position.y, position.z, theta, phi);
     Vec3 center = this->get_center();
     float radius = this->get_radius();
-    if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
+    if (!sphere_fulstrum_test_translate(center.x, center.y, center.z, radius))
     {
         vox->set_draw(false);
         vox->set_hitscan(false);
@@ -49,7 +49,7 @@ void VoxelModelComponent::force_update(Vec3 position, float theta, float phi, bo
     }
     Vec3 center = this->get_center();
     float radius = this->get_radius();
-    if (sphere_fulstrum_test_translate(center.x, center.y, center.z, radius) == false)
+    if (!sphere_fulstrum_test_translate(center.x, center.y, center.z, radius))
     {
         vox->set_draw(false);
         vox->set_hitscan(false);

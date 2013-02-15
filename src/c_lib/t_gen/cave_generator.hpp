@@ -102,7 +102,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
                 if (d < size*size) t_map::set_fast(ii, jj, k, EMPTY_CUBE);
             }
 
-            if (hits_bottom == true) phi *= -1;
+            if (hits_bottom) phi *= -1;
 
             xs += length*dx;
             ys += length*dy;

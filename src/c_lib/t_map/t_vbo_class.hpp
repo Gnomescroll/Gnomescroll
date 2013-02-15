@@ -166,7 +166,7 @@ class VBOMap
                 //printf("Warning: map chunk is loaded and VBO does not exist, but needs_update is false\n");
             }
 
-            if (m->needs_update == false)
+            if (!m->needs_update)
                 continue;
 
             if (distance2 < min_distance2)

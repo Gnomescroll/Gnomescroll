@@ -81,7 +81,7 @@ void dig_worm(Vec3 st /* start */, float theta, float phi, float cave_size) {
             if (d < size*size) t_map::set(ii, jj, k, EMPTY_CUBE);
         }
 
-        if (out_of_bounds == true) phi *= -1;
+        if (out_of_bounds) phi *= -1;
 
         st.x += length*dx;
         st.y += length*dy;

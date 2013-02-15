@@ -412,7 +412,7 @@ class Skyplane
                         _max_light2 = light;
                 */
 
-                    if (sphere_line_intersection_test0(c, b, planet_radius) == true)
+                    if (sphere_line_intersection_test0(c, b, planet_radius))
                     {
                         b = vec3_add(c, vec3_scalar_mult(b, d));
                         float light = in_scatter(c, b, s);

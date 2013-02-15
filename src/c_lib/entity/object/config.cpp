@@ -44,7 +44,7 @@ static void commit_object_config()
     GS_ASSERT(c.type != OBJECT_NONE);
 
     // no duplicate types
-    GS_ASSERT(object_conf[c.type].loaded == false);
+    GS_ASSERT(!object_conf[c.type].loaded);
 
     c.loaded = true;
     object_conf[c.type] = c;

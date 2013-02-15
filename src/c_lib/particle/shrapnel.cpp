@@ -67,7 +67,7 @@ void Shrapnel::tick()
 void Shrapnel::prep()
 {
     Vec3 position = quadrant_translate_position(current_camera_position, this->verlet.position);
-    if (point_fulstrum_test(position.x, position.y, position.z) == false)
+    if (!point_fulstrum_test(position.x, position.y, position.z))
         return;
 
     Vec3 up = vec3_init(model_view_matrix[0]*this->scale,

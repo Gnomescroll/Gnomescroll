@@ -149,7 +149,7 @@ class ConfigFileLoader
     }
 
     void load_file(const char* filename, bool silent)
-    {   //silent == true for avoiding print
+    {   //silent for avoiding print
         size_t buffer_size = 0;
         char* buffer = read_file_to_buffer(filename, &buffer_size);
         IF_ASSERT(buffer == NULL) return;
