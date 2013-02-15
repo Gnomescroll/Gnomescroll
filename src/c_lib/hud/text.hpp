@@ -81,9 +81,9 @@ class Text
     // needed, because this object is tracked in a Simple_object_list
     // which does swaps on objects
     // and we hold a reference to dynamically allocated memory
-    Text operator=(Text& t)
+    void operator=(Text& t)
     {
-        if (this == &t) return *this;
+        if (this == &t) return;
         this->set_text(t.text);
         this->set_format(t.format);
         this->formatted_extra_len = t.formatted_extra_len;
@@ -97,7 +97,6 @@ class Text
         this->refy = t.refy;
         this->alignment = t.alignment;
         this->shadowed = t.shadowed;
-        return *this;
     }
 
     explicit Text(int id);
@@ -260,7 +259,7 @@ class AnimatedText: public Text
         this->reset_alignment();
     }
 
-    Text operator=(AnimatedText& t)
+    void operator=(AnimatedText& t)
     {   // copy any data
         if (this != &t) // handle self copy
         {   // copy colors
@@ -278,7 +277,7 @@ class AnimatedText: public Text
                 this->set_char_range_color(index, t.char_ranges[i].color_index);
             }
         }
-        return Text::operator=(t);
+        Text::operator=(t);
     }
 
     AnimatedText() :

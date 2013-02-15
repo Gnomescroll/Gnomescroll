@@ -244,8 +244,8 @@ class ControlNodeShader
         shader->set_debug(true);
 
         shader->load_shader("control_node_shader",
-            MEDIA_PATH "shaders/effect/ControlNode.vsh",
-            MEDIA_PATH "shaders/effect/ControlNode.fsh");
+            MEDIA_PATH "shaders/effect/control_node.vsh",
+            MEDIA_PATH "shaders/effect/control_node.fsh");
 
         CameraPosition = shader->get_uniform("CameraPosition");
         TexCoord = shader->get_attribute("InTexCoord");

@@ -388,7 +388,7 @@ int Text::get_width()
     return longest;
 }
 
-int Text:: get_height()
+int Text::get_height()
 {
     if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL) return 0;
 
@@ -455,6 +455,8 @@ Text::~Text()
 {
     free(this->text);
     free(this->format);
+    this->text = NULL;
+    this->format = NULL;
 }
 
 }   // HudText

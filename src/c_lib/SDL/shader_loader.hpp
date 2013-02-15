@@ -57,6 +57,8 @@ class Shader
 
     void load_shader(const char* _name, const char* vertex_shader_file, const char* fragment_shader_file)
     {
+        GS_ASSERT(this->vs == NULL);
+        GS_ASSERT(this->fs == NULL);
         //set shader name
         if (this->name != NULL)
         {
@@ -69,12 +71,13 @@ class Shader
         this->name[name_len] = '\0';
 
         size_t size = 0;
-        vs = read_file_to_buffer(vertex_shader_file, &size);
-        IF_ASSERT(vs == NULL) return;
-        fs = read_file_to_buffer(fragment_shader_file, &size);
-        IF_ASSERT(fs == NULL)
+        this->vs = read_file_to_buffer(vertex_shader_file, &size);
+        IF_ASSERT(this->vs == NULL) return;
+        this->fs = read_file_to_buffer(fragment_shader_file, &size);
+        IF_ASSERT(this->fs == NULL)
         {
-            free(vs);
+            free(this->vs);
+            this->vs = NULL;
             return;
         }
 

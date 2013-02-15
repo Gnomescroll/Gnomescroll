@@ -26,20 +26,20 @@ class BillboardText: public TextParticle
         bool should_draw;
         bool permanent;
 
-        void set_position(Vec3 p)
-        {
-            ParticleMotionCore::set_position(p);
-        }
+    void set_position(Vec3 p)
+    {
+        ParticleMotionCore::set_position(p);
+    }
 
-        void set_gravity(bool grav);
-        void set_draw(bool draw);
+    void set_gravity(bool grav);
+    void set_draw(bool draw);
 
-        void draw();
-        void tick();
+    void draw();
+    void tick();
 
-        inline void reset();
+    inline void reset();
 
-        BillboardText();
+    BillboardText();
 };
 
 }   // Particles
@@ -52,10 +52,13 @@ namespace Particle
 class BillboardText_list: public Simple_object_list<BillboardText, BILLBOARD_TEXT_MAX>
 {
     private:
-        const char* name() { return "BillboardText"; }
+    const char* name()
+    {
+        return "BillboardText";
+    }
     public:
-        void draw();
-        void tick();
+    void draw();
+    void tick();
 };
 
 }   // Particles
