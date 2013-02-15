@@ -81,7 +81,7 @@ void MotionTargetingComponent::choose_destination()
     Vec3 position = physics->get_position();
     position.x += x;
     position.y += y;
-    position.z = t_map::get_nearest_open_surface_block(position.x, position.y, position.z);
+    position.z = t_map::get_nearest_surface_block(position.x, position.y, position.z);
     this->destination = translate_position(position);
     this->at_destination = false;
     this->en_route = true;

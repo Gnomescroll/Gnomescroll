@@ -105,7 +105,7 @@ void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
         if ((float)genrand_real1() > p) continue;
         int ii = translate_point(i);
         int jj = translate_point(j);
-        int k = t_map::get_nearest_open_surface_block(ii,jj,z);
+        int k = t_map::get_nearest_surface_block(ii,jj,z);
         if (abs(z-k) > CRYSTAL_CLUSTER_Z_DIFF_MAX) continue;
         int id = t_map::get(ii,jj,k-1);
         if (id != rock) continue;
