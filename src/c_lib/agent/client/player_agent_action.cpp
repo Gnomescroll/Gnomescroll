@@ -199,8 +199,7 @@ void PlayerAgent_action::begin_mining_laser()
 
     you->event.mining_laser_emitter.turn_on();
 
-    GS_ASSERT(this->mining_laser_sound_id < 0);
-    if (this->mining_laser_sound_id >= 0) return;
+    IF_ASSERT(this->mining_laser_sound_id >= 0) return;
     this->mining_laser_sound_id = Sound::play_2d_sound("mining_laser");
 }
 
@@ -247,7 +246,7 @@ void PlayerAgent_action::fire_close_range_weapon(ItemType weapon_type)
     hit_block_CtoS block_msg;
     melee_object_CtoS obj_msg;
 
-    Agent* agent;
+    Agent* agent = NULL;
     //int voxel_blast_radius = 1;
 
     switch (target_type)

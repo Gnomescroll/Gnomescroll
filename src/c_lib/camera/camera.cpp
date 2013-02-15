@@ -165,8 +165,8 @@ void Camera::pan(float dx, float dy)
 
     // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
     // Camera behavior when looking straight up or down is fucked up otherwise
-    if (phi > 0.4999f) phi = 0.4999f;
-    else if (phi < -0.4999f) phi = -0.4999f;
+    if (phi > 0.49f) phi = 0.49f;
+    else if (phi < -0.49f) phi = -0.49f;
 }
 
 void Camera::move(float dx, float dy, float dz)

@@ -493,7 +493,7 @@ void PlayerAgent::fell(float dvz)
         Sound::play_2d_sound("soft_fall");
 }
 
-void PlayerAgent::movement_event(class AgentState s0, class AgentState s1)
+void PlayerAgent::movement_event(const AgentState& s0, const AgentState& s1)
 {
     // TODO: detect if player is on ground
     // TODO: detect when player goes form on-ground to ground (fall event)

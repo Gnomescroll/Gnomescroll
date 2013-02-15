@@ -6,8 +6,8 @@
 bool object_collides_terrain(Vec3 position, float height, float radius)
 {
     ASSERT_BOXED_POSITION(position);
-    return Agents::collision_check_current(
-        radius, height, position.x, position.y, position.z);
+    return Agents::collision_check_current(radius, height, position.x,
+                                           position.y, position.z);
 }
 
 namespace Agents
@@ -172,11 +172,11 @@ inline int clamp_to_ground(float box_r, float x, float y, float z)
     //float AGENT_FORCE = 2.0f;
 
 
-    //float z_gravity = -9.8f * tr2;
+    //float gravity = -9.8f * tr2;
     //#if DC_CLIENT
-    //if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
+    //if (!t_map::position_is_loaded(as.x, as.y)) gravity = 0.0f;
     //#endif
-    //const struct Vec3 gravity = vec3_init(0.0f, 0.0f, z_gravity * AGENT_MASS);
+    //const struct Vec3 gravity = vec3_init(0.0f, 0.0f, gravity * AGENT_MASS);
 
     //float fx = 0.0f;
     //float fy = 0.0f;
@@ -254,22 +254,19 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     bool misc2       = a_cs & CS_MISC2 ? 1 : 0;
     bool misc3       = a_cs & CS_MISC3 ? 1 : 0;
     */
-    static const float tr = 1.0f / 10.0f;    //tick rate
-    static const float tr2 = tr*tr;
-    float speed = AGENT_SPEED * tr;
+
     float height = box.height;
+    float speed = AGENT_SPEED * tr;
     if (crouch)
     {
         speed = AGENT_SPEED_CROUCHED * tr;
         height = box.crouch_height;
     }
 
-    float z_gravity = -3.0f * tr2;
+    float gravity = AGENT_GRAVITY;
     #if DC_CLIENT
-    if (!t_map::position_is_loaded(as.x, as.y)) z_gravity = 0.0f;
+    if (!t_map::position_is_loaded(as.x, as.y)) gravity = 0.0f;
     #endif
-
-    const float z_jetpack = -z_gravity + tr2;
 
     #if ADVANCED_JUMP
     const float JUMP_POWINITIAL = 1.0f * 0.17f;
@@ -320,6 +317,10 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     }
 
     new_z = GS_MAX(new_z, solid_z);
+    // sometimes we fell down right to the surface edge -- however
+    // this is not yet a collision. it will be a collision on the next tick,
+    // but there will be no change in z, which is required to distinguish falling
+    if (new_z == solid_z) as.vz = 0.0f;
     float dist_from_ground = new_z - solid_z;
 
     #if ADVANCED_JUMP
@@ -362,21 +363,19 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     as.vx = cs_vx;
     as.vy = cs_vy;
 
-    const float max_jetpack_height = 8.0f;
-    const float jetpack_velocity_max = z_jetpack * 5.0f;
     if (jetpack)
     {
-        if (dist_from_ground < max_jetpack_height)
+        if (dist_from_ground < JETPACK_MAX_HEIGHT)
         {   // cap jetpack velocity
-            if (as.vz <= jetpack_velocity_max)
-                as.vz += z_jetpack;
+            if (as.vz <= JETPACK_MAX_VELOCITY)
+                as.vz += JETPACK_VELOCITY;
         }
         else
-        if (dist_from_ground < max_jetpack_height + GROUND_MARGIN)
-            as.vz = -z_gravity;
+        if (dist_from_ground < JETPACK_MAX_HEIGHT + GROUND_MARGIN)
+            as.vz = -gravity;
     }
 
-    as.vz += z_gravity;
+    as.vz += gravity;
 
     #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
@@ -409,7 +408,6 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     // requires doing collision detection at interpolated intervals
     as.vz = GS_MAX(as.vz, -(height + 0.99f));
     //as.vz = GS_MIN(as.vz, height + 0.99f);
-
     return as;
 }
 

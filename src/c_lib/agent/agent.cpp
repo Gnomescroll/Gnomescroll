@@ -39,22 +39,13 @@ struct Vec3 AgentState::forward_vector()
     return f;
 }
 
-#if DC_CLIENT
-bool Agent::is_you()
-{
-    return (this->id != NULL_AGENT && this->id == ClientState::player_agent.agent_id);
-}
-#endif
-
 void Agent::teleport(float x,float y,float z)
 {
     this->set_position(x,y,z);
 
     #if DC_SERVER
     Agent_teleport_message msg;
-
     msg.id = id;
-
     msg.x = s.x;
     msg.y = s.y;
     msg.z = s.z;
@@ -92,52 +83,63 @@ void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, floa
     #endif
 }
 
+#if DC_SERVER
 void Agent::tick()
 {
-    int _tc =0;
-    while (cs[cs_seq].seq == cs_seq)
+    AgentState tmp = this->s;
+    int start_seq = this->cs_seq;
+    while (this->cs[this->cs_seq].seq == this->cs_seq)
     {
-        s = agent_tick(cs[cs_seq], box, s);
-        cs_seq = (cs_seq + 1) % 256;
-        _tc++;
+        tmp = agent_tick(this->cs[this->cs_seq], this->box, tmp);
+        this->cs_seq = (this->cs_seq + 1) % 256;
     }
-
-    #if DC_SERVER
+    if (start_seq != this->cs_seq)
+        this->movement_event(s, tmp);
+    this->s = tmp;
     const float Z_DEATH_ZONE = -200.0f;
     if (!this->status.dead && this->s.z < Z_DEATH_ZONE)
         this->status.die(this->id, OBJECT_AGENT, DEATH_BELOW_MAP);
     else
         this->status.respawn();
     this->status.tick();
-    #endif
 }
+#endif
+
+#if DC_CLIENT
+void Agent::tick()
+{
+    while (this->cs[this->cs_seq].seq == this->cs_seq)
+    {
+        this->s = agent_tick(this->cs[this->cs_seq], this->box, this->s);
+        this->cs_seq = (this->cs_seq + 1) % 256;
+    }
+}
+#endif
 
 
 void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 {
+    IF_ASSERT(seq < 0 || seq >= 256) return;
     this->cs[seq].seq = seq;
     this->cs[seq].cs = cs;
     this->cs[seq].theta = theta;
     this->cs[seq].phi = phi;
 
-    tick();
+    this->tick();
 
     #if DC_SERVER
-    if (client_id != NULL_CLIENT)
-    {
-        class PlayerAgent_Snapshot p;
-        p.id = id;
-        p.seq = cs_seq;
-        p.x = s.x;
-        p.y = s.y;
-        p.z = s.z;
-        p.vx = s.vx;
-        p.vy = s.vy;
-        p.vz = s.vz;
-        p.theta = s.theta;
-        p.phi = s.phi;
-        p.sendToClient(client_id);
-    }
+    class PlayerAgent_Snapshot p;
+    p.id = id;
+    p.seq = cs_seq;
+    p.x = s.x;
+    p.y = s.y;
+    p.z = s.z;
+    p.vx = s.vx;
+    p.vy = s.vy;
+    p.vz = s.vz;
+    p.theta = s.theta;
+    p.phi = s.phi;
+    p.sendToClient(client_id);
 
     if (seq % 32 == 0)
     {
@@ -165,6 +167,11 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 }
 
 #if DC_CLIENT
+bool Agent::is_you()
+{
+    return (this->id != NULL_AGENT && this->id == ClientState::player_agent.agent_id);
+}
+
 void Agent::handle_state_snapshot(int seq, float theta, float phi,
                                   float x, float y, float z,
                                   float vx, float vy, float vz)
@@ -217,11 +224,33 @@ void Agent::set_state_snapshot(float  x, float y, float z, float vx, float vy, f
 
 void Agent::set_angles(float theta, float phi)
 {
-    s.theta = theta;
-    s.phi = phi;
+    this->s.theta = theta;
+    this->s.phi = phi;
 }
 
 #if DC_SERVER
+void Agent::fell(float vz)
+{
+    static const float SAFE_HEIGHT = JETPACK_MAX_HEIGHT + 1;
+    static const float DEATH_HEIGHT = 48.0f;
+    static const float max_health = get_base_attribute_int("max_health");
+    static const float FALL_DAMAGE_PER_METER = max_health/(DEATH_HEIGHT-SAFE_HEIGHT);
+    static const float ig = -1.0f / (2.0f * AGENT_GRAVITY);
+    float fall_distance = (vz*vz) * ig;
+    fall_distance -= SAFE_HEIGHT;
+    float damage = roundf(FALL_DAMAGE_PER_METER * fall_distance);
+    if (damage <= 0) return;
+    this->status.apply_damage(damage, DEATH_FALL);
+}
+
+void Agent::movement_event(const AgentState& s0, const AgentState& s1)
+{
+    bool s1_on_ground = on_ground(this->box.box_r, s1.x, s1.y, s1.z);
+    float dz  = s1.z - s0.z;
+    if (dz < 0 && s1_on_ground) // was falling & hit ground
+        this->fell(s0.vz);
+}
+
 void Agent::set_camera_state(float x, float y, float z, float theta, float phi)
 {
     this->camera.x = translate_point(x);

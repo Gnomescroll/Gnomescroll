@@ -27,13 +27,16 @@ struct MechList
 
     MechList()
     {
-        mli = 0;
-        mlm = 8;
-        mln = 0;
-        mla = (Mech*)malloc(8*sizeof(struct Mech));
-        for (int i=0; i<mlm; i++) mla[i].id = -1;
-
-        needs_update = true;
+        this->mli = 0;
+        this->mlm = 8;
+        this->mln = 0;
+        this->mla = (Mech*)malloc(this->mlm*sizeof(struct Mech));
+        for (int i=0; i<mlm; i++)
+        {
+            mla[i].id = -1;
+            mla[i].mech_type = NULL_MECH_TYPE;
+        }
+        this->needs_update = true;
     }
 
     ~MechList()
@@ -56,7 +59,11 @@ struct MechList
         {
             //printf("add_mech: expand array id= %i mlm= %i from %i \n", id, 2*mlm, mlm);
             mla = (struct Mech*)realloc(mla, 2*mlm*sizeof(struct Mech));
-            for (int i=mlm; i<2*mlm; i++) mla[i].id = -1;
+            for (int i=mlm; i<2*mlm; i++)
+            {
+                mla[i].id = -1;
+                mla[i].mech_type = NULL_MECH_TYPE;
+            }
             mlm *= 2;
         }
 
@@ -75,13 +82,16 @@ struct MechList
     //negative 1 on failure
     int add_mech(struct Mech &m)
     {
-        GS_ASSERT(mln >= 0 && mln < MECH_HARD_MAX);
-        if (mln >= MECH_HARD_MAX) return -1; //test max creation limit (set to 0xffff)
+        IF_ASSERT(mln < 0 || mln >= MECH_HARD_MAX) return -1;
 
         if (mln >= mlm)
         {
             mla = (struct Mech*) realloc(mla, 2*mlm*sizeof(struct Mech));
-            for (int i=mlm; i<2*mlm; i++) mla[i].id = -1;
+            for (int i=mlm; i<2*mlm; i++)
+            {
+                mla[i].id = -1;
+                mla[i].mech_type = NULL_MECH_TYPE;
+            }
             mlm *= 2;
         }
 

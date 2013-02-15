@@ -217,7 +217,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
     bool killed = this->die();
     if (!killed) return false;
 
-    Agent* attacker;
+    Agent* attacker = NULL;
     //Turret* turret;
     switch (inflictor_type)
     {
@@ -436,7 +436,6 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
         }
     }
 
-    int health = this->apply_damage(dmg);
     AgentDeathMethod death_method = DEATH_NORMAL;
     if (inflictor_type == OBJECT_GRENADE)
         death_method = DEATH_GRENADE;
@@ -447,10 +446,25 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
     else if (part_id == AGENT_PART_HEAD)
         death_method = DEATH_HEADSHOT;
 
+    return this->apply_damage(dmg, inflictor_id, inflictor_type, death_method);
+}
+
+int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type)
+{
+    return this->apply_damage(dmg, inflictor_id, inflictor_type, NULL_AGENT_PART);
+}
+
+int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method)
+{
+    int health = this->apply_damage(dmg);
     if (this->should_die)
         this->die(inflictor_id, inflictor_type, death_method);
-
     return health;
+}
+
+int AgentStatus::apply_damage(int dmg, AgentDeathMethod death_method)
+{   // assumes self-inflicted wound
+    return this->apply_damage(dmg, this->a->id, OBJECT_AGENT, death_method);
 }
 
 int AgentStatus::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)

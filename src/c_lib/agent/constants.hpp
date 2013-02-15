@@ -19,7 +19,8 @@ typedef enum
 
 typedef enum
 {
-    DEATH_NORMAL = 0,
+    NULL_DEATH = 0,
+    DEATH_NORMAL,
     DEATH_HEADSHOT,
     DEATH_GRENADE,
     DEATH_FALL,
@@ -38,7 +39,8 @@ typedef enum
     AGENT_PART_LARM,
     AGENT_PART_RARM,
     AGENT_PART_LLEG,
-    AGENT_PART_RLEG
+    AGENT_PART_RLEG,
+    NULL_AGENT_PART,    // must come last
 }  AgentBodyParts;
 
 typedef enum

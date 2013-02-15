@@ -131,6 +131,8 @@ class Agent
 
     void spawn_state();
     void spawn_state(struct Vec3 p);
+    void movement_event(const AgentState& s0, const AgentState& s1);
+    void fell(float dvz);
     #endif
 
     #if DC_CLIENT

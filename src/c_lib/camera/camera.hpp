@@ -11,13 +11,6 @@ float CAMERA_VIEW_DISTANCE_SQUARED = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
 ////(CAMERA_VIEW_DISTANCE+sqrt(2)*8)*(CAMERA_VIEW_DISTANCE+sqrt(2)*8);
 //sqrt(2)*8 = 11.4;
 
-enum CAMERA_TYPES
-{
-    UNKNOWN_CAM,
-    AGENT_CAM,
-    CAMERA_CAM
-};
-
 class Camera
 {
     private:
@@ -27,60 +20,56 @@ class Camera
         float x_size,y_size;
         float ratio;
         float z_near, z_far;
-
         float theta, phi;
-
-        int type;
-
         bool first_person;
         bool zoomed;
         float zoom_factor;
 
-        void pan(float dx, float dy);
+    void pan(float dx, float dy);
 
-        void set_aspect(float fov, float z_near, float z_far);
-        void set_projection(float x, float y, float z, float theta, float phi);
-        void set_dimensions();  // sets x_size,y_size and ratio from window resolution
-        void set_fov(float fov);
-        void move(float dx, float dy, float dz);
-        void set_angles(float theta, float phi);
+    void set_aspect(float fov, float z_near, float z_far);
+    void set_projection(float x, float y, float z, float theta, float phi);
+    void set_dimensions();  // sets x_size,y_size and ratio from window resolution
+    void set_fov(float fov);
+    void move(float dx, float dy, float dz);
+    void set_angles(float theta, float phi);
 
-        void set_position(struct Vec3 p);
-        struct Vec3 get_position() const
-        {
-            return this->position;
-        }
+    void set_position(struct Vec3 p);
+    struct Vec3 get_position() const
+    {
+        return this->position;
+    }
 
-        struct Vec3 forward_vector();
+    struct Vec3 forward_vector();
 
-        struct Vec3 right_vector()
-        {
-            Vec3 right = vec3_init(0.0f, 1.0f, 0.0f);
-            right = vec3_euler_rotation(right, this->theta, this->phi, 0.0f);
-            normalize_vector(&right);
-            return right;
-        }
+    struct Vec3 right_vector()
+    {
+        Vec3 right = vec3_init(0.0f, 1.0f, 0.0f);
+        right = vec3_euler_rotation(right, this->theta, this->phi, 0.0f);
+        normalize_vector(&right);
+        return right;
+    }
 
-        struct Vec3 up_vector()
-        {
-            Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
-            up = vec3_euler_rotation(up, this->theta, this->phi, 0.0f);
-            normalize_vector(&up);
-            return up;
-        }
+    struct Vec3 up_vector()
+    {
+        Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
+        up = vec3_euler_rotation(up, this->theta, this->phi, 0.0f);
+        normalize_vector(&up);
+        return up;
+    }
 
-        void hud_projection();
-        void world_projection();
+    void hud_projection();
+    void world_projection();
 
-        bool is_current();
+    bool is_current();
 
-        void toggle_zoom();
-        void zoom();
-        void unzoom();
+    void toggle_zoom();
+    void zoom();
+    void unzoom();
 
-        void copy_state_from(const Camera* c);
+    void copy_state_from(const Camera* c);
 
-        Camera();
+    Camera();
 };
 
 void set_camera(Camera* cam);
