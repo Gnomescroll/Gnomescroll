@@ -3,26 +3,27 @@
 #define PRINT_TRACE_STACK_SIZE 32
 
 #ifdef _WIN32
-# include <dbghelp.h>
-# include <winbase.h>
+//# include <dbghelp.h>
+//# include <winbase.h>
 void print_trace(int frame_start)
 {
-    void* stack[PRINT_TRACE_STACK_SIZE];
-    HANDLE process = GetCurrentProcess();
-    SymInitialize(process, NULL, TRUE);
-    unsigned short frames = CaptureStackBackTrace(0, PRINT_TRACE_STACK_SIZE, stack, NULL);
-    if (size < PRINT_TRACE_STACK_SIZE && size > 2)
-        size -= 2; // ignore main and __libc_start_main
-    const size_t len = 0xFF;
-    SYMBOL_INFO* symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + len, sizeof(char));
-    symbol->MaxNameLen = len;
-    symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-    for (unsigned int i=frame_start; i<frames; i++)
-    {
-        SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
-        printf("%d: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
-    }
-    free(symbol);
+    // Mingw doesnt have CaptureStackBackTrace
+    //void* stack[PRINT_TRACE_STACK_SIZE];
+    //HANDLE process = GetCurrentProcess();
+    //SymInitialize(process, NULL, TRUE);
+    //unsigned short frames = CaptureStackBackTrace(0, PRINT_TRACE_STACK_SIZE, stack, NULL);
+    //if (size < PRINT_TRACE_STACK_SIZE && size > 2)
+        //size -= 2; // ignore main and __libc_start_main
+    //const size_t len = 0xFF;
+    //SYMBOL_INFO* symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + len, sizeof(char));
+    //symbol->MaxNameLen = len;
+    //symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+    //for (unsigned int i=frame_start; i<frames; i++)
+    //{
+        //SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
+        //printf("%d: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
+    //}
+    //free(symbol);
 }
 #else
 # include <execinfo.h>
