@@ -3,7 +3,8 @@
 #define PRINT_TRACE_STACK_SIZE 32
 
 #ifdef _WIN32
-#include <dbghelp.h>
+# include <dbghelp.h>
+# include <winbase.h>
 void print_trace(int frame_start)
 {
     void* stack[PRINT_TRACE_STACK_SIZE];
