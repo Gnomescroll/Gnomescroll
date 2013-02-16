@@ -52,8 +52,7 @@ class AgentInventoryUI : public UIElement
     }
 
     AgentInventoryUI() :
-        xdim(0), ydim(0),
-        slot_background_border_color(Color(127,127,127))
+        xdim(0), ydim(0), slot_background_border_color(Color(127,127,127))
     {}
 
     virtual ~AgentInventoryUI()

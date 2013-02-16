@@ -82,7 +82,7 @@ void register_options()
     OPT_BOOL_REGISTER(player_chat);
 
     /* Font */
-    OPT_STRING_REGISTER(font, "inc_18_b.fnt")
+    OPT_STRING_REGISTER(font, "rdn.fnt")
 
     /* Sound */
     OPT_BOOL_REGISTER(sound)

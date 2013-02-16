@@ -38,33 +38,30 @@ struct FontData
 class Font
 {
     private:
-    void add_glyph(
-        int c,
-        float x, float y,
-        float xoff, float yoff,
-        float w, float h,
-        float xadvance
-    );
+    void add_glyph(int c, float x, float y, float xoff, float yoff,
+                   float w, float h, float xadvance);
     void update_glyphs();
     void parse_font_file();
     void load_font_png();
 
     public:
 
-    struct FontData data;
+        struct FontData data;
+        GLuint texture;
+        float tex_width;
+        float tex_height;
+        bool alpha;
+        struct Glyph glyphs[128];
+        char missing_glyph;
 
-    GLuint texture;
-    float tex_width;
-    float tex_height;
-    bool alpha;
-
-    struct Glyph glyphs[128];
-    char missing_glyph;
     struct Glyph get_missing_glyph(unsigned char c);
     struct Glyph get_glyph(unsigned char c);
     void get_string_pixel_dimension(const char* str, int *length, int *height);
 
-    int size() { return data.size; }
+    int size()
+    {
+        return data.size;
+    }
 
     explicit Font(char* fn);
 };

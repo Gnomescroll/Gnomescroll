@@ -131,11 +131,11 @@ void Text::draw_centered()
 {
     center();
 
-    if (this->shadowed)
-    {
-        glColor4ub(0,0,0,color.a);
-        draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
-    }
+    //if (this->shadowed)
+    //{
+        //glColor4ub(0,0,0,color.a);
+        //draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
+    //}
 
     glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
@@ -342,11 +342,11 @@ void Text::bottom()
 void Text::draw()
 {
     if (this->text == NULL || this->text_len == 0) return;
-    if (this->shadowed)
-    {
-        glColor4ub(0,0,0, color.a);
-        draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
-    }
+    //if (this->shadowed)
+    //{
+        //glColor4ub(0,0,0, color.a);
+        //draw_string(this->text, this->x-SHADOW_MARGIN_X, this->y-SHADOW_MARGIN_Y, this->depth, this->scale);
+    //}
 
     glColor4ub(color.r,color.g,color.b,color.a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
