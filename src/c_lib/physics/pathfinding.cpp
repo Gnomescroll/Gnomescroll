@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <t_map/_interface.hpp>
+#include <common/common.hpp>
 #if DC_CLIENT
 # include <SDL/draw_functions.hpp>
 #endif
@@ -80,7 +81,14 @@ float euclidean_distance(const struct MapPos& start, const struct MapPos& end)
 {
     int x = quadrant_translate_i(end.x, start.x) - end.x;
     int y = quadrant_translate_i(end.y, start.y) - end.y;
-    return sqrtf(x*x + y*y);
+    return sqrtf(x*x + y*y) * 10;
+}
+
+float diagonal_distance(const struct MapPos& start, const struct MapPos& end)
+{
+    int x = quadrant_translate_i(end.x, start.x) - end.x;
+    int y = quadrant_translate_i(end.y, start.y) - end.y;
+    return GS_MAX(abs(x), abs(y)) * 10;
 }
 
 struct Node
@@ -123,15 +131,20 @@ struct Node
 
     void print()
     {
-        printf("ID: %d; Parent: %d; Score: g=%0.2f, h=%0.2f; ", this->id,
-               this->parent, this->score.g, this->score.h);
+        //printf("ID: %d; Parent: %d; Score: g=%d, h=%d; ", this->id,
+               //this->parent, this->score.g, this->score.h);
         print_pos(this->pos);
     }
 };
 
 static int compare_node_score(const void* a, const void* b)
 {   // we want descending order, so b comes first
-    return ((struct Node*)b)->score.f() - ((struct Node*)a)->score.f();
+    float d = ((struct Node*)b)->score.f() - ((struct Node*)a)->score.f();
+    // we do a tiebreaker here, to reduce the search space. if the point is closer,
+    // according to our heuristic h, then it wins in the tie
+    if (d == 0)
+        d = ((struct Node*)b)->score.h - ((struct Node*)a)->score.h;
+    return int(ceil_from_zero(d));
 }
 
 static ALWAYS_INLINE void sort_nodes(struct Node* nodes, size_t len)
@@ -171,6 +184,11 @@ struct MapPos* get_path(const struct MapPos& start,
     // hacks to prevent lockup until 3D is implemented
     if (start.z != end.z) return NULL;
     if (t_map::isSolid(end)) return NULL;
+
+    // TODO --
+    // 3d
+    // Global open/closed buffer, init/teardown (minimize allocations)
+    // sqrtf lookups
 
     printf("Finding path from:\n");
     printf("\t");
@@ -233,8 +251,19 @@ struct MapPos* get_path(const struct MapPos& start,
         }
     }
 
+    static CubeType mushroom = t_map::get_cube_type("mushroom_cap2");
+    for (size_t i=0; i<iopen; i++)
+    {
+        struct MapPos pos = open[i].pos;
+        pos.z = t_map::map_dim.z - 1;
+        t_map::set(pos, mushroom);
+    }
     for (size_t i=0; i<iclosed; i++)
-        GS_ASSERT(closed[i].id == int(i));
+    {
+        struct MapPos pos = closed[i].pos;
+        pos.z = t_map::map_dim.z - 1;
+        t_map::set(pos, mushroom);
+    }
 
     len = 0;
     struct MapPos* path = NULL;
@@ -254,17 +283,11 @@ struct MapPos* get_path(const struct MapPos& start,
         // add to path array
         int i = len;
         first = closed[iclosed-1].id;
-        GS_ASSERT(first == int(iclosed)-1);
         while (first >= 0)
         {
-            printf("Parent: %d\n", first);
             path[--i] = closed[first].pos;
             first = closed[first].parent;
         }
-        printf("Parent: %d\n", first);
-        //path[--i] = closed[0].pos;
-        GS_ASSERT(i == 0);
-        printf("i: %d\n", i);
     }
 
     // teardown
@@ -292,10 +315,10 @@ void draw_path(const struct MapPos* path, size_t len)
     const struct Vec3 offset = vec3_init(0.5f, 0.5f, 0.05f);
     for (size_t i=0; i<len-1; i++)
     {
-        struct Vec3 a = vec3_init(path[i]);
-        struct Vec3 b = vec3_init(path[i+1]);
-        a = vec3_add(a, offset);
-        b = vec3_add(b, offset);
+        struct Vec3 a = vec3_add(vec3_init(path[i]), offset);
+        struct Vec3 b = vec3_add(vec3_init(path[i+1]), offset);
+        a = quadrant_translate_position(current_camera_position, a);
+        b = quadrant_translate_position(current_camera_position, b);
         draw_line(color, a, b);
     }
 }
