@@ -15,10 +15,11 @@ struct Quad
 };
 
 void draw_rect(Color color, float x, float y, float w, float h);
-void draw_line(Color color, float x0, float y0, float z0, float x1, float y1, float z1);
+void draw_line(const Color& color, float x0, float y0, float z0, float x1, float y1, float z1);
 void draw_point(Color color, float x0, float y0, float z0);
 void draw_border_rect(Color color, float x, float y, float w, float h);
 
+void draw_line(const Color& color, const struct Vec3& a, const struct Vec3& b);
 
 // Draw full texture
 void draw_bound_texture(float x, float y, float w, float h, float z);

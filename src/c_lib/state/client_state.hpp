@@ -14,6 +14,9 @@ dont_include_this_file_in_server
 namespace ClientState
 {
 
+extern struct MapPos* path;
+extern size_t path_len;
+
 extern int tick_id;
 extern int frame_id;
 

@@ -19,6 +19,9 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 namespace ClientState
 {
 
+struct MapPos* path = NULL;
+size_t path_len = 0;
+
 int tick_id = 0;
 int frame_id = 0;
 
@@ -129,7 +132,7 @@ void set_location_pointer()
     location_pointer_set = false;
     Vec3 loc = player_agent.action.get_aiming_point();
     if (vec3_equal(loc, vec3_init(0,0,0))) return;
-    location_pointer = loc;
+    location_pointer = translate_position(loc);
     location_pointer_set = true;
 
     printf("Locator: %2.2f %2.2f %2.2f \n", loc.x, loc.y, loc.z);

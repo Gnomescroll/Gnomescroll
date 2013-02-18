@@ -90,25 +90,24 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_DEBUG);
     ClientState::set_location_pointer();
 
-    if (agent_camera == NULL) return;
-    struct Vec3 cam = agent_camera->get_position();
+    Agents::Agent* you = ClientState::player_agent.you();
+    if (you == NULL) return;
+    Vec3 pos = you->get_position();
     struct MapPos start;
-    start.x = cam.x;
-    start.y = cam.y;
-    start.z = cam.z;
+    start.x = pos.x;
+    start.y = pos.y;
+    start.z = pos.z;
     struct MapPos end;
     end.x = ClientState::location_pointer.x;
     end.y = ClientState::location_pointer.y;
     end.z = start.z;    // Multi-level paths not supported yet
     size_t len = 0;
     struct MapPos* path = Path::get_path(start, end, len);
-    IF_ASSERT(path == NULL)
-    {
-        printf("No path\n");
-        return;
-    }
     Path::print_path(path, len);
-    free(path);
+    if (ClientState::path != NULL)
+        free(ClientState::path);
+    ClientState::path = path;
+    ClientState::path_len = len;
 
     //Vec3 pos = agent_camera->get_position();
     //Vec3 dir = agent_camera->forward_vector();

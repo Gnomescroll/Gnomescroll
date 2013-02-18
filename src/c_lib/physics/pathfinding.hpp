@@ -9,4 +9,8 @@ struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, si
 
 void print_path(const struct MapPos* path, size_t len);
 
+#if DC_CLIENT
+void draw_path(const struct MapPos* path, size_t len);
+#endif
+
 }   // Path

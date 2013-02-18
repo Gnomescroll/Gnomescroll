@@ -14,8 +14,8 @@ inline void item_particle_create_StoC::handle()
 {
     GS_ASSERT(id != NULL_PARTICLE);
     if (id == NULL_PARTICLE) return;
-    ASSERT_BOXED_POINTf(x);
-    ASSERT_BOXED_POINTf(y);
+    ASSERT_BOXED_POINT(x);
+    ASSERT_BOXED_POINT(y);
     create_item_particle((ItemParticleID)id, (ItemType)item_type, x,y,z,mx,my,mz);
 }
 
@@ -47,8 +47,8 @@ inline void item_particle_state_StoC::handle()
 {
     ItemParticle* particle = get((ItemParticleID)id);
     if (particle == NULL) return;
-    ASSERT_BOXED_POINTf(x);
-    ASSERT_BOXED_POINTf(y);
+    ASSERT_BOXED_POINT(x);
+    ASSERT_BOXED_POINT(y);
     particle->set_state(x,y,z,mx,my,mz);
 }
 

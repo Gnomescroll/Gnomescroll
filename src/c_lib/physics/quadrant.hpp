@@ -5,10 +5,28 @@
 #include <t_map/common/constants.hpp>
 #include <physics/vec3.hpp>
 
-#define ASSERT_BOXED_POINT(p) GS_ASSERT(p >= 0 && p < 512)
-#define ASSERT_BOXED_POINTf(p) GS_ASSERT(p >= 0.0f && p < 512.0f)
-#define ASSERT_BOXED_POSITION(p) GS_ASSERT(p.x >= 0.0f && p.x < 512.0f && \
-                                           p.y >= 0.0f && p.y < 512.0f)
+#define ASSERT_BOXED_POINT(p) GS_ASSERT(is_boxed_point(p))
+#define ASSERT_BOXED_POSITION(p) GS_ASSERT(is_boxed_position(p))
+
+ALWAYS_INLINE bool is_boxed_point(float p)
+{
+    return (p >= 0.0f && p < 512.0f);
+}
+
+ALWAYS_INLINE bool is_boxed_point(int p)
+{
+    return (p >= 0 && p < 512);
+}
+
+ALWAYS_INLINE bool is_boxed_position(const struct Vec3& p)
+{
+    return (is_boxed_point(p.x) && is_boxed_point(p.y));
+}
+
+ALWAYS_INLINE bool is_boxed_position(const struct MapPos& p)
+{
+    return (is_boxed_point(p.x) && is_boxed_point(p.y));
+}
 
 ALWAYS_INLINE int min_i(int x, int y, int x1, int y1)
 {
@@ -70,8 +88,8 @@ inline float quadrant_translate_f(float cx, float px)
     GS_ASSERT(!isnan(px));
     #endif
 
-    ASSERT_BOXED_POINTf(cx);
-    ASSERT_BOXED_POINTf(px);
+    ASSERT_BOXED_POINT(cx);
+    ASSERT_BOXED_POINT(px);
 
     if (cx < QUADRANT_DIVIDEf)
     {
@@ -107,7 +125,7 @@ ALWAYS_INLINE float translate_point(float pt)
     #endif
     if (pt <  0.0f) pt += 512.0f;
     if (pt >= 512.0f) pt -= 512.0f;
-    ASSERT_BOXED_POINTf(pt);
+    ASSERT_BOXED_POINT(pt);
     return pt;
 }
 

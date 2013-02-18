@@ -402,8 +402,8 @@ void VoxelModel::update(float x, float y, float z, float theta, float phi)
     if (this->frozen) return;
     if (this->was_updated) return;
 
-    ASSERT_BOXED_POINTf(x);
-    ASSERT_BOXED_POINTf(y);
+    ASSERT_BOXED_POINT(x);
+    ASSERT_BOXED_POINT(y);
 
     this->set_skeleton_root(x,y,z, theta);
 

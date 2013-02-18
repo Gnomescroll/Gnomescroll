@@ -7,10 +7,9 @@
 #include <math.h>
 #include <common/random.hpp>
 #include <physics/common.hpp>
-
 #include <physics/constants.hpp>
-
 #include <common/macros.hpp>
+#include <t_map/common/types.hpp>
 
 #define PI 3.14159265f
 
@@ -35,8 +34,7 @@ ALWAYS_INLINE float vec3_dot(struct Vec3 v1, struct Vec3 v2);
 void normalize_vector(struct Vec3* v)
 {
     float len = sqrtf(v->x*v->x + v->y*v->y + v->z*v->z);
-    GS_ASSERT_LIMIT(len != 0.0f, 50);
-    if (len == 0.0f) return;
+    IF_ASSERT(len == 0.0f) return;
     len = 1.0f/len;
     v->x *= len;
     v->y *= len;
@@ -83,6 +81,11 @@ ALWAYS_INLINE struct Vec3 vec3_init(int n)
     return vec3_init(n, n, n);
 }
 
+ALWAYS_INLINE struct Vec3 vec3_init(struct MapPos pos)
+{
+    return vec3_init(pos.x, pos.y, pos.z);
+}
+
 ALWAYS_INLINE
 struct Vec3 vec3_copy(struct Vec3 f)
 {
@@ -96,18 +99,13 @@ struct Vec3 vec3_copy(struct Vec3 f)
 ALWAYS_INLINE
 struct Vec3 vec3_normalize(struct Vec3 v)
 {
-    float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
-
-    if (l == 0.0f)
-    {
-        GS_ASSERT_LIMIT(l != 0.0f, 1);
+    float len = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
+    IF_ASSERT(len == 0.0f)
         return v;
-    }
-
-    l = 1.0f/l;
-    v.x *= l;
-    v.y *= l;
-    v.z *= l;
+    len = 1.0f/len;
+    v.x *= len;
+    v.y *= len;
+    v.z *= len;
     return v;
 }
 

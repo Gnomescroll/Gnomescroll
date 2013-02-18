@@ -2,6 +2,9 @@
 
 #include <stdlib.h>
 #include <t_map/_interface.hpp>
+#if DC_CLIENT
+# include <SDL/draw_functions.hpp>
+#endif
 
 namespace Path
 {
@@ -146,8 +149,8 @@ static inline int add_node(struct Node& node, struct Node*& nodes,
         nodes = _nodes;
         max_len *= 2;
     }
-    nodes[len] = node;
-    node.id = len++;
+    node.id = len;
+    nodes[len++] = node;
     return len;
 }
 
@@ -163,8 +166,11 @@ static inline int get_node_pos_index(const struct MapPos& pos,
 struct MapPos* get_path(const struct MapPos& start,
                         const struct MapPos& end, size_t& len)
 {
+    IF_ASSERT(!is_boxed_position(start) || !is_boxed_position(end)) return NULL;
     len = 0;
+    // hacks to prevent lockup until 3D is implemented
     if (start.z != end.z) return NULL;
+    if (t_map::isSolid(end)) return NULL;
 
     printf("Finding path from:\n");
     printf("\t");
@@ -227,12 +233,16 @@ struct MapPos* get_path(const struct MapPos& start,
         }
     }
 
+    for (size_t i=0; i<iclosed; i++)
+        GS_ASSERT(closed[i].id == int(i));
+
     len = 0;
     struct MapPos* path = NULL;
     if (iopen != 0)
     {   // walk path backwards, from last item on closed list
         // count length of path, allocate
         len = 1;
+        closed[0].parent = -1;
         int first = closed[iclosed-1].parent;
         while (first >= 0)
         {
@@ -243,14 +253,18 @@ struct MapPos* get_path(const struct MapPos& start,
 
         // add to path array
         int i = len;
-        first = closed[iclosed-1].parent;
-        path[--i] = closed[iclosed-1].pos;
+        first = closed[iclosed-1].id;
+        GS_ASSERT(first == int(iclosed)-1);
         while (first >= 0)
         {
-            first = closed[first].parent;
+            printf("Parent: %d\n", first);
             path[--i] = closed[first].pos;
+            first = closed[first].parent;
         }
+        printf("Parent: %d\n", first);
+        //path[--i] = closed[0].pos;
         GS_ASSERT(i == 0);
+        printf("i: %d\n", i);
     }
 
     // teardown
@@ -261,11 +275,30 @@ struct MapPos* get_path(const struct MapPos& start,
 
 void print_path(const struct MapPos* path, size_t len)
 {
+    if (path == NULL) return;
     for (size_t i=0; i<len; i++)
     {
         printf("%d: ", int(i));
         print_pos(path[i]);
     }
 }
+
+#if DC_CLIENT
+void draw_path(const struct MapPos* path, size_t len)
+{
+    if (path == NULL) return;
+    if (len < 2) return;
+    const Color color = Color(0, 220, 0);
+    const struct Vec3 offset = vec3_init(0.5f, 0.5f, 0.05f);
+    for (size_t i=0; i<len-1; i++)
+    {
+        struct Vec3 a = vec3_init(path[i]);
+        struct Vec3 b = vec3_init(path[i+1]);
+        a = vec3_add(a, offset);
+        b = vec3_add(b, offset);
+        draw_line(color, a, b);
+    }
+}
+#endif
 
 }   // Path

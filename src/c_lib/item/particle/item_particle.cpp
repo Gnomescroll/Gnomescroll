@@ -153,8 +153,8 @@ void ItemParticle::init(ItemID item_id, ItemType item_type, float x, float y, fl
     this->item_id = item_id;
     this->pickup_prevention = ITEM_INITIAL_PICKUP_PREVENTION;
     #endif
-    ASSERT_BOXED_POINTf(x);
-    ASSERT_BOXED_POINTf(y);
+    ASSERT_BOXED_POINT(x);
+    ASSERT_BOXED_POINT(y);
     verlet.position = vec3_init(x,y,z);
     verlet.velocity = vec3_init(mx,my,mz);
 

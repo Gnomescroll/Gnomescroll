@@ -6,7 +6,7 @@
 #include <SDL/SDL_functions.hpp>
 
 
-void draw_line(Color color,
+void draw_line(const Color& color,
                float x0, float y0, float z0,
                float x1, float y1, float z1)
 {
@@ -15,6 +15,11 @@ void draw_line(Color color,
     glVertex3f(x0,y0,z0);  // origin of the line
     glVertex3f(x1,y1,z1);  // ending point of the line
     glEnd();
+}
+
+void draw_line(const Color& color, const struct Vec3& a, const struct Vec3& b)
+{
+    draw_line(color, a.x, a.y, a.z, b.x, b.y, b.z);
 }
 
 

@@ -290,8 +290,8 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
 
 void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube, int side)
 {
-    ASSERT_BOXED_POINTf(x);
-    ASSERT_BOXED_POINTf(y);
+    ASSERT_BOXED_POINT(x);
+    ASSERT_BOXED_POINT(y);
     GS_ASSERT(side >= 0 && side <= 6);
 
     AgentState s = this->a->get_state();

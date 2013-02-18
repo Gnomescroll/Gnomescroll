@@ -20,7 +20,7 @@
 #include <entity/objects.hpp>
 #include <common/profiling/frame_graph.hpp>
 #include <physics/quadrant.hpp>
-
+#include <physics/pathfinding.hpp>
 #include <t_mech/_interface.hpp>
 
 bool _quit = false;
@@ -282,7 +282,8 @@ void draw_tick()
     GL_ASSERT(GL_BLEND, false);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
     ClientState::voxel_render_list->draw();
-
+    if (ClientState::path != NULL)
+        Path::draw_path(ClientState::path, ClientState::path_len);
     CHECK_GL_ERROR();
 
     // quads
@@ -634,6 +635,8 @@ int run()
     }
 
     Profiling::teardown_frame_graph();
+    free(ClientState::path);
+    ClientState::path = NULL;
 
     return 0;
 }
