@@ -157,6 +157,7 @@ static inline int add_node(struct Node& node, struct Node*& nodes,
 {
     if (len >= max_len)
     {
+        len = max_len;
         struct Node* _nodes = (struct Node*)realloc(nodes, len*2*sizeof(struct Node));
         IF_ASSERT(_nodes == NULL) return -1;
         nodes = _nodes;
@@ -189,6 +190,9 @@ struct MapPos* get_path(const struct MapPos& start,
     // 3d
     // Global open/closed buffer, init/teardown (minimize allocations)
     // sqrtf lookups
+    // different sized bounding boxes
+    // handle corner blocks properly (cant cut through open diagonal, must walk around corners)
+    // prevent nasty crash/segfault when putting pointer far away (from somewhere to 0,0)
 
     printf("Finding path from:\n");
     printf("\t");
@@ -317,6 +321,8 @@ void draw_path(const struct MapPos* path, size_t len)
     {
         struct Vec3 a = vec3_add(vec3_init(path[i]), offset);
         struct Vec3 b = vec3_add(vec3_init(path[i+1]), offset);
+        a.z = 128.05f;
+        b.z = 128.05f;
         a = quadrant_translate_position(current_camera_position, a);
         b = quadrant_translate_position(current_camera_position, b);
         draw_line(color, a, b);
