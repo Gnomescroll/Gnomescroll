@@ -134,4 +134,13 @@ ALWAYS_INLINE bool isItemContainer(int x, int y, int z);
 ALWAYS_INLINE bool isExplosive(int x, int y, int z);
 ALWAYS_INLINE unsigned char maxDamage(int x, int y, int z);
 
+// Properties by struct MapPos
+
+ALWAYS_INLINE bool isSolid(const struct MapPos& pos);
+ALWAYS_INLINE bool isOccludes(const struct MapPos& pos);
+ALWAYS_INLINE bool isActive(const struct MapPos& pos);
+ALWAYS_INLINE bool isItemContainer(const struct MapPos& pos);
+ALWAYS_INLINE bool isExplosive(const struct MapPos& pos);
+ALWAYS_INLINE unsigned char maxDamage(const struct MapPos& pos);
+
 }   // t_map

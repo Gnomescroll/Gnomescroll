@@ -32,8 +32,8 @@ void init_config()
     GS_ASSERT(local_begin_triggers == NULL);
     GS_ASSERT(local_end_triggers   == NULL);
 
-    begin_triggers       = (beginItem*)         calloc(MAX_ITEM_TYPES, sizeof(beginItem));
-    end_triggers         = (endItem*)           calloc(MAX_ITEM_TYPES, sizeof(endItem));
+    begin_triggers       = (beginItem*)        calloc(MAX_ITEM_TYPES, sizeof(beginItem));
+    end_triggers         = (endItem*)          calloc(MAX_ITEM_TYPES, sizeof(endItem));
     local_ticks          = (tickLocalItem*)    calloc(MAX_ITEM_TYPES, sizeof(tickLocalItem));
     local_triggers       = (triggerLocalItem*) calloc(MAX_ITEM_TYPES, sizeof(triggerLocalItem));
     local_beta_triggers  = (triggerLocalItem*) calloc(MAX_ITEM_TYPES, sizeof(triggerLocalItem));

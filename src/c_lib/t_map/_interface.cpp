@@ -108,11 +108,10 @@ void update_map()
     vbo_map->update_map();
 }
 
-
 static const unsigned int REQUEST_DMG_ID_MAX = 0xff;
 static unsigned int request_id = 0;
 
-static struct { int x,y,z; } last_requested_block = {-1, -1, -1};
+static struct MapPos last_requested_block = {-1, -1, -1};
 static unsigned int last_request_id = 0;
 static int requested_block_health = 0;
 

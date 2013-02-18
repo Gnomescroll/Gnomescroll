@@ -1,0 +1,17 @@
+#include <physics/constants.hpp>
+#include <physics/affine.hpp>
+#include <physics/color_matrix.cpp>
+#include <physics/common.cpp>
+#include <physics/geometry.hpp>
+#include <physics/mat3.hpp>
+#include <physics/mat4.hpp>
+#include <physics/matrix.hpp>
+#include <physics/motion.cpp>
+#include <physics/pathfinding.cpp>
+#include <physics/quadrant.hpp>
+#include <physics/vec3.hpp>
+#include <physics/vec4.hpp>
+#include <physics/ray_trace/ray_trace.cpp>
+#include <physics/ray_trace/hitscan.cpp>
+#include <physics/ray_trace/handlers.cpp>
+#include <physics/verlet.cpp>

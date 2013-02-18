@@ -1,5 +1,7 @@
 #pragma once
 
+#include <t_map/t_properties.hpp>
+
 namespace t_map
 {
 
@@ -14,10 +16,12 @@ ItemContainerID get_block_item_container(int x, int y, int z);
 bool get_container_location(ItemContainerID container_id, int position[3]); // returns false is container not found
 
 CubeType get(int x, int y, int z);
+CubeType get(const struct MapPos& pos);
 int get_block_damage(int x, int y, int z);
 struct MapElement get_element(int x, int y, int z);
 
 CubeType set(int x, int y, int z, CubeType cube_type);
+CubeType set(const struct MapPos& pos, CubeType cube_type);
 void set_fast(int x, int y, int z, CubeType cube_type);
 void set_palette(int x, int y, int z, int palette);
 void set_element(int x, int y, int z, struct MapElement e);

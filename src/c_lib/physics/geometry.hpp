@@ -129,6 +129,7 @@ bool line_plane_intersection2(
     return false;
 }
 
+#if DC_CLIENT
 void visualize_line()
 {
 /*
@@ -271,6 +272,7 @@ void visualize_bounding_box()
                            1.0f, 1.0f, 1.0f,  //size
                            f,r,u);
 }
+#endif
 
 bool line_box_test(float lx, float ly, float lz,
                    float lvx, float lvy, float lvz,

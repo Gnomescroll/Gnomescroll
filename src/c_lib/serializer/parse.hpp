@@ -1,5 +1,7 @@
 #pragma once
 
+#include <t_map/common/types.hpp>
+
 namespace serializer
 {
 
@@ -103,12 +105,7 @@ size_t parse_block(bool (*process_token) (const char*, const char*, Data*), cons
     return i;
 }
 
-struct MapPosition
-{
-    int x,y,z;
-};
-
-static bool parse_map_position(const char* val, struct MapPosition* position)
+static bool parse_map_position(const char* val, struct MapPos* position)
 {
     bool err = false;
     static char buf[MAP_POSITION_LENGTH+1] = {'\0'};

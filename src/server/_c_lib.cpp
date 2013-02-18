@@ -108,23 +108,8 @@ dont_include_this_file_in_client
 /* plants */
 #include <t_plant/_include.hpp>
 
-// ray tracing
-#include <physics/ray_trace/ray_trace.cpp>
-#include <physics/ray_trace/hitscan.cpp>
-#include <physics/ray_trace/handlers.cpp>
-
-// physics
-#include <physics/verlet.cpp>
-#include <physics/motion.cpp>
-
-#include <physics/common.cpp>
-
-#include <physics/vec3.hpp>
-#include <physics/vec4.hpp>
-#include <physics/mat3.hpp>
-#include <physics/mat4.hpp>
-#include <physics/affine.hpp>
-#include <physics/quadrant.hpp>
+/* Physics */
+#include <physics/_include.hpp>
 
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>

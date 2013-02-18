@@ -35,7 +35,7 @@ class ParsedContainerData
         ItemContainerID container_id;
         char name[DAT_NAME_MAX_LENGTH+1];
         int item_count;
-        struct MapPosition position;
+        struct MapPos position;
         bool valid;
 
     void reset()

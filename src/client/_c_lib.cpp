@@ -77,7 +77,6 @@ bool c_lib_inited = false;
 #include <common/dat/modifiers.hpp>
 #include <common/dat/properties.hpp>
 
-
 /* configuration options */
 #include <options/option_macros.hpp>
 #include <options/argparse.cpp>
@@ -99,20 +98,8 @@ bool c_lib_inited = false;
 // time
 #include <common/time/physics_timer.cpp>
 
-/* Vectors, Ray Tracers, Physics */
-#include <physics/vec3.hpp>
-#include <physics/vec4.hpp>
-#include <physics/mat3.hpp>
-#include <physics/mat4.hpp>
-#include <physics/affine.hpp>
-#include <physics/geometry.hpp>
-#include <physics/ray_trace/ray_trace.cpp>
-#include <physics/ray_trace/hitscan.cpp>
-#include <physics/ray_trace/handlers.cpp>
-#include <physics/common.cpp>
-#include <physics/verlet.cpp>
-#include <physics/motion.cpp>
-#include <physics/quadrant.hpp>
+/* Physics */
+#include <physics/_include.hpp>
 
 /* SDL */
 #include <SDL/shader_loader.cpp>

@@ -178,6 +178,8 @@ ALWAYS_INLINE bool hasItemDrop(CubeType type)
     return p->item_drop;
 }
 
+// Properties by coordinate
+
 ALWAYS_INLINE bool isSolid(int x, int y, int z)
 {
     return fast_cube_properties[get(x,y,z)].solid;
@@ -206,6 +208,38 @@ ALWAYS_INLINE bool isExplosive(int x, int y, int z)
 ALWAYS_INLINE unsigned char maxDamage(int x, int y, int z)
 {
     return maxDamage(get(x,y,z));
+}
+
+// Properties my struct MapPos
+
+ALWAYS_INLINE bool isSolid(const struct MapPos& pos)
+{
+    return fast_cube_properties[get(pos)].solid;
+}
+
+ALWAYS_INLINE bool isOccludes(const struct MapPos& pos)
+{
+    return fast_cube_properties[get(pos)].occludes;
+}
+
+ALWAYS_INLINE bool isActive(const struct MapPos& pos)
+{
+    return fast_cube_properties[get(pos)].active;
+}
+
+ALWAYS_INLINE bool isItemContainer(const struct MapPos& pos)
+{
+    return fast_cube_properties[get(pos)].item_container;
+}
+
+ALWAYS_INLINE bool isExplosive(const struct MapPos& pos)
+{
+    return fast_cube_properties[get(pos)].explosive;
+}
+
+ALWAYS_INLINE unsigned char maxDamage(const struct MapPos& pos)
+{
+    return maxDamage(get(pos));
 }
 
 }   // t_map
