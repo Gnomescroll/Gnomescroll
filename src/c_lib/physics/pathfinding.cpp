@@ -34,126 +34,125 @@ static const size_t CLOSED_START_SIZE = 128;
 struct Adjacency
 {
     int x,y,z;
-    int cost;
+    float cost;
 };
 
 static const struct Adjacency adj[8+9+9] = {
     // xy
-    {  1,  0,  0, 10 },
-    { -1,  0,  0, 10 },
-    {  0,  1,  0, 10 },
-    {  0, -1,  0, 10 },
-    {  1,  1,  0, 14 },
-    {  1, -1,  0, 14 },
-    { -1,  1,  0, 14 },
-    { -1, -1,  0, 14 },
+    {  1,  0,  0, 1.0f },
+    { -1,  0,  0, 1.0f },
+    {  0,  1,  0, 1.0f },
+    {  0, -1,  0, 1.0f },
+    {  1,  1,  0, 1.4f },
+    {  1, -1,  0, 1.4f },
+    { -1,  1,  0, 1.4f },
+    { -1, -1,  0, 1.4f },
     // xy +
-    {  1,  0,  1, 14 },
-    { -1,  0,  1, 14 },
-    {  0,  1,  1, 14 },
-    {  0, -1,  1, 14 },
-    {  1,  1,  1, 18 },
-    {  1, -1,  1, 18 },
-    { -1,  1,  1, 18 },
-    { -1, -1,  1, 18 },
-    {  0,  0,  1, 10 },
+    {  1,  0,  1, 1.4f },
+    { -1,  0,  1, 1.4f },
+    {  0,  1,  1, 1.4f },
+    {  0, -1,  1, 1.4f },
+    {  1,  1,  1, 1.8f },
+    {  1, -1,  1, 1.8f },
+    { -1,  1,  1, 1.8f },
+    { -1, -1,  1, 1.8f },
+    {  0,  0,  1, 1.0f },
     // xy -z
-    {  1,  0, -1, 14 },
-    { -1,  0, -1, 14 },
-    {  0,  1, -1, 14 },
-    {  0, -1, -1, 14 },
-    {  1,  1, -1, 18 },
-    {  1, -1, -1, 18 },
-    { -1,  1, -1, 18 },
-    { -1, -1, -1, 18 },
-    {  0,  0, -1, 10 },
-};
-
-struct Score
-{
-    float g;
-    float h;
-    inline float f() const
-    {
-        return g + h;
-    }
+    {  1,  0, -1, 1.4f },
+    { -1,  0, -1, 1.4f },
+    {  0,  1, -1, 1.4f },
+    {  0, -1, -1, 1.4f },
+    {  1,  1, -1, 1.8f },
+    {  1, -1, -1, 1.8f },
+    { -1,  1, -1, 1.8f },
+    { -1, -1, -1, 1.8f },
+    {  0,  0, -1, 1.0f },
 };
 
 float euclidean_distance(const struct MapPos& start, const struct MapPos& end)
 {
-    int x = quadrant_translate_i(end.x, start.x) - end.x;
-    int y = quadrant_translate_i(end.y, start.y) - end.y;
-    return sqrtf(x*x + y*y) * 10;
+    int x = quadrant_translate(end.x, start.x) - end.x;
+    int y = quadrant_translate(end.y, start.y) - end.y;
+    return sqrtf(x*x + y*y);
 }
 
 float diagonal_distance(const struct MapPos& start, const struct MapPos& end)
 {
-    int x = quadrant_translate_i(end.x, start.x) - end.x;
-    int y = quadrant_translate_i(end.y, start.y) - end.y;
-    return GS_MAX(abs(x), abs(y)) * 10;
+    int x = quadrant_translate(end.x, start.x) - end.x;
+    int y = quadrant_translate(end.y, start.y) - end.y;
+    return GS_MAX(abs(x), abs(y));
 }
+
+struct Score
+{
+    float f;
+    float g;
+    float h;
+};
 
 struct Node
 {
-    struct MapPos pos;
-    struct Score score;
     int id;
     int parent;
-
-    void _update_score(float g, const struct MapPos& end)
-    {
-        this->score.g += g;
-        this->score.h = euclidean_distance(this->pos, end);
-    }
-
-    void first(const struct MapPos& start, const struct MapPos& end)
-    {   // init first node in the sequence
-        this->pos = start;
-        this->parent = -1;
-        this->id = 0;
-        this->_update_score(0, end);
-    }
-
-    void update(const struct Adjacency& adj, const struct MapPos& end)
-    {
-        this->pos.x = translate_point(this->pos.x + adj.x);
-        this->pos.y = translate_point(this->pos.y + adj.y);
-        this->pos.z = translate_point(this->pos.z + adj.z);
-        this->_update_score(adj.cost, end);
-    }
-
-    bool reassign(float g, int parent)
-    {   // if the new g score is better, take that parent
-        if (g >= this->score.g)
-            return false;
-        this->score.g = g;
-        this->parent = parent;
-        return true;
-    }
-
-    void print() const
-    {
-        //printf("ID: %d; Parent: %d; Score: g=%d, h=%d; ", this->id,
-               //this->parent, this->score.g, this->score.h);
-        print_pos(this->pos);
-    }
+    struct MapPos pos;
+    struct Score score;
 };
 
-static int compare_node_score(const void* a, const void* b)
+static inline void _node_update_score(struct Node& node, float g, const struct MapPos& end)
+{
+    node.score.g += g;
+    node.score.h = euclidean_distance(node.pos, end);
+    node.score.f = node.score.g + node.score.h;
+}
+
+static void node_first(struct Node& node, const struct MapPos& start, const struct MapPos& end)
+{   // init first node in the sequence
+    node.pos = start;
+    node.parent = -1;
+    node.id = 0;
+    node.score.g = 0;
+    _node_update_score(node, 0, end);
+}
+
+static void node_update(struct Node& node, const struct Adjacency& adj, const struct MapPos& end)
+{
+    node.pos.x = translate_point(node.pos.x + adj.x);
+    node.pos.y = translate_point(node.pos.y + adj.y);
+    node.pos.z = translate_point(node.pos.z + adj.z);
+    _node_update_score(node, adj.cost, end);
+}
+
+static bool node_reassign(struct Node& node, float g, int parent)
+{   // if the new g score is better, take that parent
+    if (g >= node.score.g)
+        return false;
+    node.score.g = g;
+    node.parent = parent;
+    return true;
+}
+
+static void node_print(const struct Node& node)
+{
+    //printf("ID: %d; Parent: %d; Score: g=%d, h=%d; ", this->id,
+           //this->parent, this->score.g, this->score.h);
+    print_pos(node.pos);
+}
+
+static int compare_node_score(const void* _a, const void* _b)
 {   // we want descending order, so b comes first
-    float d = ((const struct Node*)b)->score.f() - ((const struct Node*)a)->score.f();
+    const struct Node* a = static_cast<const struct Node*>(_a);
+    const struct Node* b = static_cast<const struct Node*>(_b);
+    float d = b->score.f - a->score.f;
     // we do a tiebreaker here, to reduce the search space. if the point is closer,
     // according to our heuristic h, then it wins in the tie
-    if (d == 0)
-        d = ((struct Node*)b)->score.h - ((struct Node*)a)->score.h;
-    return int(ceil_from_zero(d));
+    if (d == 0) d = b->score.h - a->score.h;
+    return (d == 0) ? 0 : ((d < 0) ? -1 : 1);
 }
 
 static ALWAYS_INLINE void sort_nodes(struct Node* nodes, size_t len)
 {
-    qsort(nodes, len, sizeof(struct Node), &compare_node_score);
-    for (size_t i=0; i<len; i++)
-        nodes[i].id = int(i);
+    qsort(nodes, len, sizeof(nodes[0]), &compare_node_score);
+    for (int i=0; i<int(len); i++) nodes[i].id = i;
 }
 
 static inline int add_node(struct Node& node, struct Node*& nodes,
@@ -161,16 +160,14 @@ static inline int add_node(struct Node& node, struct Node*& nodes,
 {
     if (len >= max_len)
     {
-        len = max_len;
-        struct Node* _nodes = (struct Node*)realloc(nodes, 2*len*sizeof(struct Node));
+        struct Node* _nodes = (struct Node*)realloc(nodes, 2*max_len*sizeof(struct Node));
         IF_ASSERT(_nodes == NULL) return -1;
-        printf("Reallocing from %d to %d\n", int(len), int(len*2));
-        nodes = _nodes;
         max_len *= 2;
+        printf("Reallocing nodelist from %d to %d\n", int(len), int(max_len));
+        nodes = _nodes;
     }
     node.id = len;
     nodes[len++] = node;
-    GS_ASSERT(nodes[len-1].id == int(len-1));
     return len;
 }
 
@@ -181,6 +178,15 @@ static inline int get_node_pos_index(const struct MapPos& pos,
         if (is_equal(pos, nodes[i].pos))
             return int(i);
     return -1;
+}
+
+static struct MapPos add_pos_adj(const struct MapPos& pos, const struct Adjacency& adj)
+{
+    struct MapPos p;
+    p.x = pos.x + adj.x;
+    p.y = pos.y + adj.y;
+    p.z = pos.z + adj.z;
+    return p;
 }
 
 struct MapPos* get_path(const struct MapPos& start,
@@ -199,7 +205,7 @@ struct MapPos* get_path(const struct MapPos& start,
     // sqrtf lookups
     // different sized bounding boxes
     // handle corner blocks properly (cant cut through open diagonal, must walk around corners)
-    // prevent nasty crash/segfault when putting pointer far away (from somewhere to 0,0)
+    // fix zig zag paths when start.x or start.y < end.x or end.y
     // hierarchical paths over 16x16 chunk nodes
 
     printf("Finding path from:\n");
@@ -215,7 +221,8 @@ struct MapPos* get_path(const struct MapPos& start,
     size_t mclosed = CLOSED_START_SIZE;
     struct Node* open = (struct Node*)malloc(mopen * sizeof(struct Node));
     struct Node* closed = (struct Node*)malloc(mclosed * sizeof(struct Node));
-    open[iopen++].first(start, end);
+    node_first(open[iopen], start, end);
+    iopen++;
     bool needs_sort = false;
 
     while (1)
@@ -240,7 +247,7 @@ struct MapPos* get_path(const struct MapPos& start,
         for (int i=0; i<8; i++)
         {   // iterate adjacent squares
             struct Node node = current;
-            node.update(adj[i], end);
+            node_update(node, adj[i], end);
 
             // if blocked or in closed list, skip
             if (t_map::isSolid(node.pos) ||
@@ -258,7 +265,7 @@ struct MapPos* get_path(const struct MapPos& start,
             }
             else
             {   // update if g is better
-                needs_sort = open[in_open].reassign(node.score.g, current.id);
+                needs_sort = node_reassign(open[in_open], node.score.g, current.id);
             }
         }
     }
@@ -297,9 +304,9 @@ struct MapPos* get_path(const struct MapPos& start,
 void print_path(const struct MapPos* path, size_t len)
 {
     if (path == NULL) return;
-    for (size_t i=0; i<len; i++)
+    for (int i=0; i<int(len); i++)
     {
-        printf("%d: ", int(i));
+        printf("%d: ", i);
         print_pos(path[i]);
     }
 }

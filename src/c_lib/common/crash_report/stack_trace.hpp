@@ -30,7 +30,7 @@ void print_trace(int frame_start)
 # include <cxxabi.h>
 void print_trace(int frame_start)
 {
-    void* array[PRINT_TRACE_STACK_SIZE];
+    void* array[PRINT_TRACE_STACK_SIZE] = { NULL };
     int size = backtrace(array, PRINT_TRACE_STACK_SIZE);
     if (frame_start >= size) return;
     char** strings = backtrace_symbols(array, size);
@@ -45,7 +45,7 @@ void print_trace(int frame_start)
         char* s = NULL;
         const char* addr = strchr(strings[i], '[');
         char* name_start = strchr(strings[i], '(');
-        if (name_start == NULL)
+        if (name_start == NULL || name_start[1] == ')')
             s = strings[i];
         else
         {

@@ -118,6 +118,16 @@ inline float quadrant_translate_f(float cx, float px)
     }
 }
 
+ALWAYS_INLINE int quadrant_translate(int cx, int px)
+{
+    return quadrant_translate_i(cx, px);
+}
+
+ALWAYS_INLINE float quadrant_translate(float cx, float px)
+{
+    return quadrant_translate_f(cx, px);
+}
+
 ALWAYS_INLINE float translate_point(float pt)
 {
     #ifdef NAN
