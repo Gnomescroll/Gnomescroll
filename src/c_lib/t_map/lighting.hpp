@@ -57,11 +57,8 @@ void set_skylight(int x, int y, int z, int value)
     GS_ASSERT(y >= 0 && y < 512)
 
     class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
-    if (mc == NULL)
-    {
-        GS_ASSERT(false);
+    IF_ASSERT(mc == NULL)
         return;
-    }
 
     int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
     light = (light & 0xf0) | (value & 0x0f);
@@ -104,12 +101,8 @@ void _push_skylight_update(int x, int y, int z)
 
     //skip solid blocks
     struct MapElement e = get_element(x, y, z);
-    if (fast_cube_properties[e.block].solid)
-    {
-        GS_ASSERT(false);
-        //printf("block error: %d %d %d \n", x,y,z);
+    IF_ASSERT(fast_cube_properties[e.block].solid)
         return;
-    }
 
 
     if (sky_light_array_index == sky_light_array_max)
@@ -200,11 +193,8 @@ void _skylight_update_core(int max_iterations)
         int li = (e.light & 0x0f);
         GS_ASSERT(li == get_skylight(x,y,z));
 
-        if (fast_cube_properties[e.block].solid)
-        {
-            GS_ASSERT(false);
+        IF_ASSERT(fast_cube_properties[e.block].solid)
             continue;
-        }
 
         //if block is sunlight and block above is solid, then set to not-sunlight
         struct MapElement te = get_element(x,y,z+1);
@@ -463,11 +453,8 @@ void update_skylight_in(int x, int y, int z)
 {
     //int li = get_skylight(x,y,z);
 
-    if (isSolid(x,y,z))
-    {
-        GS_ASSERT(false);
+    IF_ASSERT(isSolid(x,y,z))
         return;
-    }
     //technically, if top block of height map
     if (get_skylight(x,y,z+1) == 15)
     {
@@ -735,11 +722,8 @@ void _push_envlight_update(int x, int y, int z)
     }
 
     struct MapElement e = get_element(x, y, z);
-    if (fast_cube_properties[e.block].solid)
-    {
-        GS_ASSERT(false);
+    IF_ASSERT(fast_cube_properties[e.block].solid)
         return;
-    }
 
     if (env_light_array_index == env_light_array_max)
     {
@@ -1074,8 +1058,7 @@ void assert_skylight(int chunk_i, int chunk_j)
         if (isSolid(x,y,z))
             continue;
 
-        if (li==15 && isSolid(x,y,z+1))
-            GS_ASSERT(false);
+        GS_ASSERT(li != 15 || !isSolid(x,y,z+1));
 
         if (li==15)
         {
@@ -1106,11 +1089,8 @@ void init_update_sunlight(int chunk_i, int chunk_j)
     //class MapChunk* mc = main_map->chunk[32*chunk_j + chunk_i];
 
     class MapChunk* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
-    if (mc == NULL)
-    {
-        GS_ASSERT(false);
+    IF_ASSERT(mc == NULL)
         return;
-    }
 
     //_skylight_update_core(32*1024);
     _skylight_update_core(32*1024);

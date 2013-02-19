@@ -26,6 +26,8 @@ namespace Path
 // G: movement cost (10 for lateral, 14 for diagonal)
 // H: heuristic (manhattan)
 
+// max distance between 2 nodes (manhattan)
+static const int MAX_PATH_DISTANCE = 128;
 static const size_t OPEN_START_SIZE = 128;
 static const size_t CLOSED_START_SIZE = 128;
 
@@ -71,7 +73,7 @@ struct Score
 {
     float g;
     float h;
-    ALWAYS_INLINE float f()
+    inline float f() const
     {
         return g + h;
     }
@@ -129,7 +131,7 @@ struct Node
         return true;
     }
 
-    void print()
+    void print() const
     {
         //printf("ID: %d; Parent: %d; Score: g=%d, h=%d; ", this->id,
                //this->parent, this->score.g, this->score.h);
@@ -139,7 +141,7 @@ struct Node
 
 static int compare_node_score(const void* a, const void* b)
 {   // we want descending order, so b comes first
-    float d = ((struct Node*)b)->score.f() - ((struct Node*)a)->score.f();
+    float d = ((const struct Node*)b)->score.f() - ((const struct Node*)a)->score.f();
     // we do a tiebreaker here, to reduce the search space. if the point is closer,
     // according to our heuristic h, then it wins in the tie
     if (d == 0)
@@ -150,6 +152,8 @@ static int compare_node_score(const void* a, const void* b)
 static ALWAYS_INLINE void sort_nodes(struct Node* nodes, size_t len)
 {
     qsort(nodes, len, sizeof(struct Node), &compare_node_score);
+    for (size_t i=0; i<len; i++)
+        nodes[i].id = int(i);
 }
 
 static inline int add_node(struct Node& node, struct Node*& nodes,
@@ -158,13 +162,15 @@ static inline int add_node(struct Node& node, struct Node*& nodes,
     if (len >= max_len)
     {
         len = max_len;
-        struct Node* _nodes = (struct Node*)realloc(nodes, len*2*sizeof(struct Node));
+        struct Node* _nodes = (struct Node*)realloc(nodes, 2*len*sizeof(struct Node));
         IF_ASSERT(_nodes == NULL) return -1;
+        printf("Reallocing from %d to %d\n", int(len), int(len*2));
         nodes = _nodes;
         max_len *= 2;
     }
     node.id = len;
     nodes[len++] = node;
+    GS_ASSERT(nodes[len-1].id == int(len-1));
     return len;
 }
 
@@ -185,6 +191,7 @@ struct MapPos* get_path(const struct MapPos& start,
     // hacks to prevent lockup until 3D is implemented
     if (start.z != end.z) return NULL;
     if (t_map::isSolid(end)) return NULL;
+    //if (manhattan_distance(start, end) > MAX_PATH_DISTANCE) return NULL;
 
     // TODO --
     // 3d
@@ -193,6 +200,7 @@ struct MapPos* get_path(const struct MapPos& start,
     // different sized bounding boxes
     // handle corner blocks properly (cant cut through open diagonal, must walk around corners)
     // prevent nasty crash/segfault when putting pointer far away (from somewhere to 0,0)
+    // hierarchical paths over 16x16 chunk nodes
 
     printf("Finding path from:\n");
     printf("\t");
@@ -255,19 +263,19 @@ struct MapPos* get_path(const struct MapPos& start,
         }
     }
 
-    static CubeType mushroom = t_map::get_cube_type("mushroom_cap2");
-    for (size_t i=0; i<iopen; i++)
-    {
-        struct MapPos pos = open[i].pos;
-        pos.z = t_map::map_dim.z - 1;
-        t_map::set(pos, mushroom);
-    }
-    for (size_t i=0; i<iclosed; i++)
-    {
-        struct MapPos pos = closed[i].pos;
-        pos.z = t_map::map_dim.z - 1;
-        t_map::set(pos, mushroom);
-    }
+    //static CubeType mushroom = t_map::get_cube_type("mushroom_cap2");
+    //for (size_t i=0; i<iopen; i++)
+    //{
+        //struct MapPos pos = open[i].pos;
+        //pos.z = t_map::map_dim.z - 1;
+        //t_map::set(pos, mushroom);
+    //}
+    //for (size_t i=0; i<iclosed; i++)
+    //{
+        //struct MapPos pos = closed[i].pos;
+        //pos.z = t_map::map_dim.z - 1;
+        //t_map::set(pos, mushroom);
+    //}
 
     len = 0;
     struct MapPos* path = NULL;

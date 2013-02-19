@@ -166,16 +166,12 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    class MapChunk* c;
-
     int xchunk = (x >> 4);
     int ychunk = (y >> 4);
-
-    c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
+    class MapChunk* c = chunk[ MAP_CHUNK_XDIM*ychunk + xchunk ];
 
     #if DC_CLIENT
-    GS_ASSERT(c != NULL)
-    if (c == NULL) return;
+    IF_ASSERT(c == NULL) return;
     #endif
 
     int xi = x & 15; //bit mask

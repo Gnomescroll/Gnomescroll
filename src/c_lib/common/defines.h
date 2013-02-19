@@ -24,9 +24,38 @@ typedef unsigned int GLuint;
 
 #ifdef __MSVC__
 # include <float.h>
+# include <math.h>
 # define isfinite(x) (_finite((x)) && (x) == (x))
 float cbrt(float arg) { return powf(arg, 1.0f/3.0f); }
 static int S_IRWXU = 0;
+
+# define M_PI       3.14159265358979323846  /* pi */
+# define M_PI_2     1.57079632679489661923  /* pi/2 */
+# define M_PI_4     0.78539816339744830962  /* pi/4 */
+# define M_PIl      3.1415926535897932384626433832795029L  /* pi */
+# define M_PI_2l    1.5707963267948966192313216916397514L  /* pi/2 */
+# define M_PI_4l    0.7853981633974483096156608458198757L  /* pi/4 */
+
+// We must not do 'num + 0.5' or 'num - 0.5' because they can cause precision loss.
+static double round(double num)
+{
+    double integer = ceil(num);
+    if (num > 0)
+        return (integer - num > 0.5) ? (integer - 1.0) : integer;
+    return (integer - num >= 0.5) ? (integer - 1.0) : integer;
+}
+static float roundf(float num)
+{
+    float integer = ceilf(num);
+    if (num > 0)
+        return (integer - num > 0.5f) ? (integer - 1.0f) : integer;
+    return (integer - num >= 0.5f) ? (integer - 1.0f) : integer;
+}
+inline long long llround(double num) { return static_cast<long long>(round(num)); }
+inline long long llroundf(float num) { return static_cast<long long>(roundf(num)); }
+inline long lround(double num) { return static_cast<long>(round(num)); }
+inline long lroundf(float num) { return static_cast<long>(roundf(num)); }
+inline double trunc(double num) { return num > 0 ? floor(num) : ceil(num); }
 #endif
 ///*
   //Turn off GS_ASSERTs when production is enabled
