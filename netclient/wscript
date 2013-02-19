@@ -72,37 +72,22 @@ def check_clang(conf, requested=False):
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
               production=False, awesomium=False, awesomium_debug=False,
               assimp=True, use_clang=False):
+
     OS = platform.system()
     conf.env.os = OS
 
-    optflag = '-O' + str(optlevel)
-
+    optflag = '-O{0}'.format(optlevel)
     awe_stem = 'release'
     if awesomium_debug:
         awe_stem = 'debug'
-
-    prodflag = '-DPRODUCTION='
+    prodflag = '-DPRODUCTION={0}'.format(int(production))
     if production:
         awesomium = True
         assimp = True
-        prodflag += '1'
-    else:
-        prodflag += '0'
-
-    aweflag = '-DGS_AWESOMIUM='
-    if awesomium:
-        aweflag += '1'
-    else:
-        aweflag += '0'
-
-    assimpflag = '-DGS_ASSIMP='
-    if assimp:
-        assimpflag += '1'
-    else:
-        assimpflag += '0'
+    aweflag = '-DGS_AWESOMIUM={0}'.format(int(awesomium))
+    assimpflag = '-DGS_ASSIMP={0}'.format(int(assimp))
 
     use_clang = check_clang(conf, requested=use_clang)
-
     if use_clang:
         conf.check_tool('clang++')
     else:
@@ -166,6 +151,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
         aweflag,
+        assimpflag,
         prodflag,
         warning_sound_flag,
         optflag,

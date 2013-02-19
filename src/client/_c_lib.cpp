@@ -110,9 +110,7 @@ bool c_lib_inited = false;
 #include <SDL/png_save.cpp>
 //#include <SDL/mesh_loader/obj_loader.cpp>
 
-#if GS_ASSIMP
-# include <t_mob/_include.hpp>
-#endif
+#include <t_mob/_include.hpp>
 
 /* Draw utils */
 #include <common/draw/draw.cpp>

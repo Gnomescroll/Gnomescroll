@@ -263,20 +263,6 @@ struct MapPos* get_path(const struct MapPos& start,
         }
     }
 
-    //static CubeType mushroom = t_map::get_cube_type("mushroom_cap2");
-    //for (size_t i=0; i<iopen; i++)
-    //{
-        //struct MapPos pos = open[i].pos;
-        //pos.z = t_map::map_dim.z - 1;
-        //t_map::set(pos, mushroom);
-    //}
-    //for (size_t i=0; i<iclosed; i++)
-    //{
-        //struct MapPos pos = closed[i].pos;
-        //pos.z = t_map::map_dim.z - 1;
-        //t_map::set(pos, mushroom);
-    //}
-
     len = 0;
     struct MapPos* path = NULL;
     if (iopen != 0)
