@@ -46,7 +46,10 @@ void print_trace(int frame_start)
         const char* addr = strchr(strings[i], '[');
         char* name_start = strchr(strings[i], '(');
         if (name_start == NULL || name_start[1] == ')')
+        {
             s = strings[i];
+            addr = NULL;
+        }
         else
         {
             s = &name_start[1];
@@ -59,7 +62,7 @@ void print_trace(int frame_start)
             s = name;
         printf("%d: %s", i-frame_start, s);
         if (addr != NULL)
-            printf(" - %s", addr);
+            printf(" %s", addr);
         printf("\n");
     }
     free(demangled_name);

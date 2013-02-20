@@ -12,16 +12,6 @@ struct MapPos
     int x,y,z;
 };
 
-inline bool is_equal(const struct MapPos& a, const struct MapPos& b)
-{
-    return (a.x == b.x && a.y == b.y && a.z == b.z);
-}
-
-inline bool manhattan_distance(const struct MapPos& a, const struct MapPos& b)
-{
-    return (abs(a.x - b.x) + abs(a.y - b.y) + abs(a.z - b.z));
-}
-
 inline void print_pos(const struct MapPos& pos)
 {
     printf("MapPos: %d, %d, %d\n", pos.x, pos.y, pos.z);
