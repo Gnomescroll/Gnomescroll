@@ -76,6 +76,16 @@ static const struct Adjacency adj[8+9+9] = {
     {  0,  0, -1, 100 },
 };
 
+static inline struct MapPos add_pos_adj(const struct MapPos& pos, const struct Adjacency& adj)
+{
+    struct MapPos p;
+    p.x = translate_point(pos.x + adj.x);
+    p.y = translate_point(pos.y + adj.y);
+    p.z = pos.z + adj.z;
+    PATH_ASSERT(p.z >= 0 && p.z < t_map::map_dim.z);
+    return p;
+}
+
 struct Score
 {
     int f;
@@ -115,9 +125,7 @@ static inline void node_first(struct Node& node, const struct MapPos& start, con
 
 static inline void node_update(struct Node& node, const struct Adjacency& adj, const struct MapPos& end)
 {
-    node.pos.x = translate_point(node.pos.x + adj.x);
-    node.pos.y = translate_point(node.pos.y + adj.y);
-    node.pos.z = translate_point(node.pos.z + adj.z);
+    node.pos = add_pos_adj(node.pos, adj);
     _node_set_position(node, node.pos, end);
     _node_update_score(node, node.score.g + adj.cost);
 }
@@ -189,13 +197,15 @@ static inline int get_node_pos_index(const struct MapPos& pos,
     return -1;
 }
 
-static struct MapPos add_pos_adj(const struct MapPos& pos, const struct Adjacency& adj)
+static inline bool is_passable(const struct MapPos& cur, const struct Adjacency& adj)
 {
-    struct MapPos p;
-    p.x = pos.x + adj.x;
-    p.y = pos.y + adj.y;
-    p.z = pos.z + adj.z;
-    return p;
+    struct MapPos pos = add_pos_adj(cur, adj);
+    if (t_map::isSolid(pos))
+        return false;
+    if (adj.x == 0 || adj.y == 0)
+        return true;
+    return (!t_map::isSolid(pos.x, cur.y, cur.z) &&
+            !t_map::isSolid(cur.x, pos.y, cur.z));
 }
 
 struct MapPos* get_path(const struct MapPos& start,
@@ -258,14 +268,13 @@ struct MapPos* get_path(const struct MapPos& start,
         for (int i=0; i<8; i++)
         {   // iterate adjacent squares
             struct Node node = current;
-            node_update(node, adj[i], end);
-
-            // if blocked or in closed list, skip
-            if (t_map::isSolid(node.pos) ||
-                get_node_pos_index(node.pos, closed, iclosed) >= 0)
-            {
+            if (!is_passable(node.pos, adj[i]))
                 continue;
-            }
+            // update position, scores of node
+            node_update(node, adj[i], end);
+            // if in closed list, skip
+            if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
+                continue;
 
             int in_open = get_node_pos_index(node.pos, open, iopen);
             if (in_open < 0)
@@ -335,8 +344,6 @@ void draw_path(const struct MapPos* path, size_t len)
     {
         struct Vec3 a = vec3_add(vec3_init(path[i]), offset);
         struct Vec3 b = vec3_add(vec3_init(path[i+1]), offset);
-        a.z = 128.05f;
-        b.z = 128.05f;
         a = quadrant_translate_position(current_camera_position, a);
         b = quadrant_translate_position(current_camera_position, b);
         draw_line(color, a, b);
