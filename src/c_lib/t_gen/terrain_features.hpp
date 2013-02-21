@@ -319,6 +319,7 @@ void carve_angled_gorge_slice(float x_, float y_, float z_, int tiny_angle)
     }
 }
 
+int old_quant_angle = 0;
 void add_gorges(float* noise, int num_gorges, int length_)
 {
     using t_map::map_dim;
@@ -342,30 +343,47 @@ void add_gorges(float* noise, int num_gorges, int length_)
         {
             // get full res angle
             curr_angle = rand_angle + noise[rand_idx + len_remain * map_dim.x];
-            while (curr_angle < 0) // needed so this maps to an array
-                curr_angle += DOUBLE_PI;
-            while (curr_angle >= DOUBLE_PI) // needed so this maps to an array
-                curr_angle -= DOUBLE_PI;
-
-            // get tiny/quantized angle for lookup table index
-            int tiny_angle = 0;
-            while (curr_angle > 0)
-            {
-                curr_angle -= (DOUBLE_PI / NUM_LOOKUP_ANGLES);
-                tiny_angle++;
-                tiny_angle %= NUM_LOOKUP_ANGLES;
-            }
+            // keep angle in a range that maps to an array
+			while (curr_angle < 0)          curr_angle += DOUBLE_PI;
+            while (curr_angle >= DOUBLE_PI) curr_angle -= DOUBLE_PI;
 
             // get a valid z
             int z = t_map::get_highest_solid_block(ox + fx, oy + fy) - hei_from_topside;
             if (z < 6) // keep from getting close to bedrock
                 z = 6;
 
-            carve_angled_gorge_slice(ox + fx, oy + fy, z, tiny_angle);
+            // get tiny/quantized angle for lookup table index
+            int quant_angle = 0;
+            while (curr_angle > 0.0f)
+            {
+                curr_angle -= (DOUBLE_PI / NUM_LOOKUP_ANGLES);
+                quant_angle++;
+                quant_angle %= NUM_LOOKUP_ANGLES;
+            }
 
-            // move half unit forward
-            fx += sin_lookup_table[tiny_angle] / 2;
-            fy += cos_lookup_table[tiny_angle] / 2;
+			// will carve a slice for every change from previous quantized angle
+			if (quant_angle != old_quant_angle)
+			{
+				int n = quant_angle; // new/current angle
+				int o = old_quant_angle;
+				
+				while (n > o)
+				{
+		            carve_angled_gorge_slice(ox + fx, oy + fy, z, n);
+					n--;
+				}
+				while (o > n)
+				{
+		            carve_angled_gorge_slice(ox + fx, oy + fy, z, n);
+					n++;
+				}
+			}
+
+            carve_angled_gorge_slice(ox + fx, oy + fy, z, quant_angle);
+			
+			// move half unit forward
+            fx += sin_lookup_table[quant_angle] / 2;
+            fy += cos_lookup_table[quant_angle] / 2;
 
             if (len_remain < length_) // half to match the * 2 of len_remain
                 hei_from_topside--;

@@ -112,7 +112,7 @@ class SkyplaneSettings
         wavelength_factor =     1.00;
         //phase_factor =            0.75;   //deprecate
         phase_g_factor  =       0.00;
-        light_epsilon =         0.0000001;
+        light_epsilon =         0.0000001f;
 
         brightness_scale_factor =   1.0;
         brightness_sum_factor =     0.0;

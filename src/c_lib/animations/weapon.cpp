@@ -462,6 +462,7 @@ void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, ItemType 
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
     Vec3 origin, forward, right, up;
+	forward.y /= 4;
     bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
     if (!valid) return;
     int sprite_id = Item::get_sprite_index_for_type(item_type);
