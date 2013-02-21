@@ -164,9 +164,17 @@ void tick()
     static int counter = 0;
 
     //map lighting update (non-essential, can be free time stuff)
+
+    int _t0 = _GET_MS_TIME();
+
     t_map::_lighting_rolling_update();
     t_map::_skylight_update_core(); //update sun lighting
     t_map::_envlight_update_core(); //update env lighting
+
+    int _t1 = _GET_MS_TIME();
+
+    if(_t1 - _t0 > 2)
+        printf("WARNING: lighting update took %d ms\n", _t1 - _t0);
 
     t_map::t_map_send_map_chunks();  //every tick
 
@@ -205,7 +213,7 @@ void tick()
         ServerState::check_agents_at_base();
     }
 
-    if (counter % 7  == 0)
+    if (counter % 30  == 0)
     {
         t_plant::tick();
     }

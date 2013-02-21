@@ -81,11 +81,18 @@ const int sky_light_array_max      = 64*1024;
 int sky_light_array_index    = 0;
 int sky_light_array_n        = 0;
 
+int sky_light_array_start    = 0;
+int sky_light_array_num      = 0;
+
 /*
     Note: lighting is slow, and should use circular array
 */
 void _push_skylight_update(int x, int y, int z)
 {
+
+    if(sky_light_array_end == sky_light_array_start)
+        return;
+
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
 
     //printf("%d %d %d \n", x,y,z);
@@ -101,16 +108,15 @@ void _push_skylight_update(int x, int y, int z)
     if (mc == NULL)
         return;
 
-
     //skip solid blocks
     struct MapElement e = get_element(x, y, z);
     IF_ASSERT(fast_cube_properties[e.block].solid)
         return;
 
-
+/*
     if (sky_light_array_index == sky_light_array_max)
     {
-        if (sky_light_array_n != 0)
+        if (sky_light_array_n != 0 && false)
         {
             //printf("moving: index, n, max= %d %d %d \n", sky_light_array_index, sky_light_array_n, sky_light_array_max);
             //move elements towards begining of list
@@ -139,6 +145,8 @@ void _push_skylight_update(int x, int y, int z)
         #endif
         }
     }
+*/
+
 /*
     if (sky_light_array_index == 0)
     {
@@ -147,11 +155,14 @@ void _push_skylight_update(int x, int y, int z)
         printf("_push_sky_light_update: reallocing light array to: %d \n", sky_light_array_max);
     }
 */
-    sky_light_array[sky_light_array_index].x = x;
-    sky_light_array[sky_light_array_index].y = y;
-    sky_light_array[sky_light_array_index].z = z;
+    int index = (sky_light_array_start+sky_light_array_num) % sky_light_array_max;
+    sky_light_array[sky_light_array_end].x = x;
+    sky_light_array[sky_light_array_end].y = y;
+    sky_light_array[sky_light_array_end].z = z;
 
-    sky_light_array_index++;
+    sky_light_array_num++;
+    sky_light_array_end = (sky_light_array_end+1) % sky_light_array_max;
+
 }
 
 void _skylight_update_core(int max_iterations);
@@ -161,12 +172,12 @@ void _skylight_update_core()
 #if 0
     _skylight_update_core(1000*6*6);
 #else
-    _skylight_update_core(1000*6); //do 1000 iteratations maxs
-    _skylight_update_core(1000*6); //do 1000 iteratations maxs
-    _skylight_update_core(1000*6); //do 1000 iteratations maxs
-    _skylight_update_core(1000*6); //do 1000 iteratations maxs
-    _skylight_update_core(1000*6); //do 1000 iteratations maxs
-    _skylight_update_core(1000*6); //do 1000 iteratations maxs
+    _skylight_update_core(1000); //do 1000 iteratations maxs
+    _skylight_update_core(1000); //do 1000 iteratations maxs
+    _skylight_update_core(1000); //do 1000 iteratations maxs
+    _skylight_update_core(1000); //do 1000 iteratations maxs
+    _skylight_update_core(1000); //do 1000 iteratations maxs
+    _skylight_update_core(1000); //do 1000 iteratations maxs
 #endif
 }
 
