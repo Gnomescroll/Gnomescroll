@@ -748,9 +748,60 @@ void assert_skylight(int chunk_i, int chunk_j)
 
 }
 
+const int _rolling_lighting_prime = 3217; //prime number
+int* _rolling_index_array = NULL;
+
+void _init_rolling_lighting_update();
+{
+    _rolling_index_array = (int*) malloc(sizeof(int)*32*32);
+
+    for(int i=0; i<32*32; i++)
+        _rolling_index_array = rand() % _rolling_lighting_prime;
+}
+
+void _teardown_rolling_lighting_update()
+{
+    free(_rolling_index_array);
+}
+
 void _lighting_rolling_update(int chunk_i, int chunk_j)
 {
+    //too many pending updates
+    if(sky_light_array_index - sky_light_array_n > 16*1024)
+        return;
 
+    class MapChunk* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
+    if(mc == NULL)
+    {
+        GS_ASSERT(false);
+        return;
+    }
+
+    int cindex = 32*chunk_j+chunk_i;
+
+    int index = _rolling_index_array[cindex];
+
+
+    while(index < 16*16*128)
+    {
+        int x = 32*chunk_i + index % 16;
+        int y = 32*chunk_j + (index >> 4) % 16; //divide by 16
+        int z = index >> 8; //(index/256);
+
+        struct MapElement e = get_element(x,y,z);
+
+        if (!fast_cube_properties[ea[j].block].solid)
+            _push_skylight_update(x,y,z);
+
+        index += _rolling_lighting_prime;
+    }
+
+    _rolling_index_array[cindex] = ( _rolling_index_array[cindex] + 1 ) % _rolling_lighting_prime;
+    //467 prime number
+
+
+//int sky_light_array_index    = 0;
+//int sky_light_array_n        = 0;
 
 }
 
@@ -851,12 +902,16 @@ void init_lighting()
     GS_ASSERT(sky_light_array == NULL);
     env_light_array = (struct LightUpdateElement*) malloc(env_light_array_max* sizeof(struct LightUpdateElement));
     sky_light_array = (struct LightUpdateElement*) malloc(sky_light_array_max* sizeof(struct LightUpdateElement));
+
+    _init_rolling_lighting_update();
 }
 
 void teardown_lighting()
 {
     free(env_light_array);
     free(sky_light_array);
+
+    _teardown_rolling_lighting_update();
 }
 
 }   // t_map
