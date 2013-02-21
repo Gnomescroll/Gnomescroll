@@ -748,15 +748,15 @@ void assert_skylight(int chunk_i, int chunk_j)
 
 }
 
-const int _rolling_lighting_prime = 3217; //prime number
+const int _rolling_lighting_prime = 1553; //prime number
 int* _rolling_index_array = NULL;
 
-void _init_rolling_lighting_update();
+void _init_rolling_lighting_update()
 {
     _rolling_index_array = (int*) malloc(sizeof(int)*32*32);
 
     for(int i=0; i<32*32; i++)
-        _rolling_index_array = rand() % _rolling_lighting_prime;
+        _rolling_index_array[i] = rand() % _rolling_lighting_prime;
 }
 
 void _teardown_rolling_lighting_update()
@@ -764,6 +764,8 @@ void _teardown_rolling_lighting_update()
     free(_rolling_index_array);
 }
 
+//will update ~10 blocks per call with 3217 as prime
+//will take 3217 calls to converge?
 void _lighting_rolling_update(int chunk_i, int chunk_j)
 {
     //too many pending updates
@@ -790,19 +792,13 @@ void _lighting_rolling_update(int chunk_i, int chunk_j)
 
         struct MapElement e = get_element(x,y,z);
 
-        if (!fast_cube_properties[ea[j].block].solid)
+        if (!fast_cube_properties[e.block].solid)
             _push_skylight_update(x,y,z);
 
         index += _rolling_lighting_prime;
     }
 
     _rolling_index_array[cindex] = ( _rolling_index_array[cindex] + 1 ) % _rolling_lighting_prime;
-    //467 prime number
-
-
-//int sky_light_array_index    = 0;
-//int sky_light_array_n        = 0;
-
 }
 
 void init_update_sunlight(int chunk_i, int chunk_j)

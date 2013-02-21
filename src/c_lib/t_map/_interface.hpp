@@ -28,6 +28,7 @@ void set_element(int x, int y, int z, struct MapElement e);
 
 void _sunlight_update_core();   //update sunlight
 void _envlight_update_core();   //update envlight
+void _lighting_rolling_update(); //rolling update of lighting
 
 inline int get_highest_open_block(int x, int y, int vertical_gap);
 inline int get_highest_open_block(int x, int y);

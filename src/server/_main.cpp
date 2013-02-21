@@ -163,6 +163,11 @@ void tick()
 {
     static int counter = 0;
 
+    //map lighting update (non-essential, can be free time stuff)
+    t_map::_lighting_rolling_update();
+    t_map::_skylight_update_core(); //update sun lighting
+    t_map::_envlight_update_core(); //update env lighting
+
     t_map::t_map_send_map_chunks();  //every tick
 
     if (counter % 15 == 0)
