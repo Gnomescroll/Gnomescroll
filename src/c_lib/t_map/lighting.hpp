@@ -90,16 +90,10 @@ int sky_light_array_num      = 0;
 void _push_skylight_update(int x, int y, int z)
 {
 
-    if(sky_light_array_end == sky_light_array_start)
+    if(sky_light_array_num == sky_light_array_max)
         return;
 
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-
-    //printf("%d %d %d \n", x,y,z);
-
-    if (z < 0 || z > 127)
-        return;
-
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
@@ -113,77 +107,24 @@ void _push_skylight_update(int x, int y, int z)
     IF_ASSERT(fast_cube_properties[e.block].solid)
         return;
 
-/*
-    if (sky_light_array_index == sky_light_array_max)
-    {
-        if (sky_light_array_n != 0 && false)
-        {
-            //printf("moving: index, n, max= %d %d %d \n", sky_light_array_index, sky_light_array_n, sky_light_array_max);
-            //move elements towards begining of list
-            const int itr_count = sky_light_array_index - sky_light_array_n; //number of elements to move
-            for (int i=0; i<itr_count; i++)
-            {
-                //GS_ASSERT(i + sky_light_array_n < sky_light_array_max);
-                sky_light_array[i] = sky_light_array[i + sky_light_array_n];
-            }
-            sky_light_array_index -= sky_light_array_n;
-            sky_light_array_n = 0;
-
-        }
-        else
-        {
-            //add return here
-            //return; //list is full
-
-            //else increase size of list
-        #if 1
-            return;
-        #else
-            sky_light_array_max *= 2;
-            sky_light_array = (struct LightUpdateElement*) realloc(sky_light_array, sky_light_array_max* sizeof(struct LightUpdateElement));
-            printf("_push_sky_light_update: reallocing light array to: %d \n", sky_light_array_max);
-        #endif
-        }
-    }
-*/
-
-/*
-    if (sky_light_array_index == 0)
-    {
-        sky_light_array_max *= 2;
-        sky_light_array = (struct LightUpdateElement*) realloc(sky_light_array, sky_light_array_max* sizeof(struct LightUpdateElement));
-        printf("_push_sky_light_update: reallocing light array to: %d \n", sky_light_array_max);
-    }
-*/
     int index = (sky_light_array_start+sky_light_array_num) % sky_light_array_max;
-    sky_light_array[sky_light_array_end].x = x;
-    sky_light_array[sky_light_array_end].y = y;
-    sky_light_array[sky_light_array_end].z = z;
+    sky_light_array[index].x = x;
+    sky_light_array[index].y = y;
+    sky_light_array[index].z = z;
 
     sky_light_array_num++;
-    sky_light_array_end = (sky_light_array_end+1) % sky_light_array_max;
-
 }
 
 void _skylight_update_core(int max_iterations);
 
 void _skylight_update_core()
 {
-#if 0
-    _skylight_update_core(1000*6*6);
-#else
-    _skylight_update_core(1000); //do 1000 iteratations maxs
-    _skylight_update_core(1000); //do 1000 iteratations maxs
-    _skylight_update_core(1000); //do 1000 iteratations maxs
-    _skylight_update_core(1000); //do 1000 iteratations maxs
-    _skylight_update_core(1000); //do 1000 iteratations maxs
-    _skylight_update_core(1000); //do 1000 iteratations maxs
-#endif
+    _skylight_update_core(6000); //do 1000 iteratations maxs
 }
 
 void _skylight_update_core(int max_iterations)
 {
-    if (sky_light_array_index == 0)
+    if (sky_light_array_num == 0)
         return;
 
     if (max_iterations == 0)
@@ -191,15 +132,18 @@ void _skylight_update_core(int max_iterations)
 
     int itr_count = 0;
 
-    while (itr_count < max_iterations && sky_light_array_n < sky_light_array_index)
+    while (itr_count < max_iterations)
     {
         itr_count++; //loop counter
 
-        int x = sky_light_array[sky_light_array_n].x;
-        int y = sky_light_array[sky_light_array_n].y;
-        int z = sky_light_array[sky_light_array_n].z;
+        //int index = sky_light_array_start;
 
-        sky_light_array_n++;
+        int x = sky_light_array[sky_light_array_start].x;
+        int y = sky_light_array[sky_light_array_start].y;
+        int z = sky_light_array[sky_light_array_start].z;
+
+        sky_light_array_start = (sky_light_array_start+1) % sky_light_array_max;
+        sky_light_array_num--;
 
         class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
         if (mc == NULL)
