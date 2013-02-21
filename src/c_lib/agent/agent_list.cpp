@@ -119,7 +119,7 @@ void AgentList::draw_equipped_items()
             ItemType equipped_item_type = Toolbelt::get_agent_selected_item_type(this->objects[i].id);
             if (!Item::item_type_is_voxel(equipped_item_type)) continue;
 
-            float radius = this->objects[i].vox->get_part(0)->radius;
+            float radius = this->objects[i].vox->get_part(0)->radius / 3;
             Vec3 center = this->objects[i].vox->get_center();
             if (!sphere_fulstrum_test_translate(center.x, center.y, center.z, radius))
                 continue;

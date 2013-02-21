@@ -1,6 +1,7 @@
 #pragma once
 
 #include <t_map/t_properties.hpp>
+#include <t_map/common/map_pos.hpp>
 
 namespace t_map
 {

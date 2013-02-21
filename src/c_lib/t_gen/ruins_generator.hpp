@@ -248,7 +248,8 @@ void setup_room(Room& r, room_t rt)
     r.sconn.hei = CONN_HEIGHT;
     r.econn.hei = CONN_HEIGHT;
     r.wconn.hei = CONN_HEIGHT;
-    r.air.hei = randrange(5, CUBES_GOING_UP_ROOM - 2);
+    //r.air.hei = randrange(5, CUBES_GOING_UP_ROOM - 2); // vary height
+    r.air.hei = CUBES_GOING_UP_ROOM - 2; // need to hardwire it for now, until uconn smartened to change its zpos
 
     // set subspace of grid node
     if (ROOMT_HALL == r.room_t)
@@ -705,7 +706,7 @@ bool added_pair(int id)
     return false;
 }
 
-void set_pathing_data(int ox, int oy)  // origin x/y
+void set_snake_data(int ox, int oy)  // origin x/y
 {
     // setup ruinswide settings
     curr_floo = randcube(floors, NUM_FLOOR_CUBES);
@@ -716,7 +717,7 @@ void set_pathing_data(int ox, int oy)  // origin x/y
     for (int z = 0; z < ROOMS_GOING_UP; z++)
     {
         // make boss room or stairway-down
-        if (z == 0) // boos needs 2x3 joining of grid nodes
+        if (z == 0) // boss needs 2x3 joining of grid nodes
         {
             root.x = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room wid */);
             root.y = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room dep */);
@@ -749,7 +750,7 @@ void set_pathing_data(int ox, int oy)  // origin x/y
         {
             IntVec3 lower;
             lower.Clone(root);
-            root.z++;
+            root.z++; // should never get to this 'else' without having established settings for the boss room (next code block up)
             connect_room(lower, DIR_UP);
         }
 
@@ -757,8 +758,9 @@ void set_pathing_data(int ox, int oy)  // origin x/y
         finish_room(root);
 
         // snake a linear path
+		const int NUM_SNAKE_SEGMENTS = 5;
         // for each pair desired, keep trying to make a valid hall-then-room (2 car) train of Rect3D spans
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < NUM_SNAKE_SEGMENTS; i++) 
         {
             if (!added_pair(i + 1))  // must start a new snake, cuz can't build off ROOT room
             {
@@ -776,7 +778,7 @@ void set_pathing_data(int ox, int oy)  // origin x/y
             if (rooms[root.z][root.y][root.x].dead)
                 break;  // couldn't find valid room
 
-            if (!added_pair(i + 1 + 5 /* how many pairs probably made */))  // must start a new snake, cuz can't build off ROOT room
+            if (!added_pair(i + 1 + NUM_SNAKE_SEGMENTS))  // must start a new snake, cuz can't build off ROOT room
             {
                 break;  // couldn't find valid room
             }
@@ -833,7 +835,7 @@ void make_ruins(int x, int y)
     printf("__________________________________________________________________\n");
     printf("Making ruin @ %d, %d\n", x, y);
 
-    set_pathing_data(x, y);
+    set_snake_data(x, y);
 
     // generate each room's cubes
     for (int rz = 0; rz < ROOMS_GOING_UP; rz++)
@@ -894,7 +896,7 @@ void make_ruins(int x, int y)
                 set_region(rooms[rz][ry][rx].dconn, EMPTY_CUBE, ri, x, y);
         }
 
-        draw_ASCII_floorplan(rz, northernmost, southernmost);
+        //draw_ASCII_floorplan(rz, northernmost, southernmost);
     }
 }
 
