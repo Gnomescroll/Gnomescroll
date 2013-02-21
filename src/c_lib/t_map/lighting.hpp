@@ -77,10 +77,13 @@ void set_skylight(int x, int y, int z, int value)
 */
 
 struct LightUpdateElement* sky_light_array = NULL;
-int sky_light_array_max      = 64*1024;
+const int sky_light_array_max      = 64*1024;
 int sky_light_array_index    = 0;
 int sky_light_array_n        = 0;
 
+/*
+    Note: lighting is slow, and should use circular array
+*/
 void _push_skylight_update(int x, int y, int z)
 {
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
@@ -114,7 +117,7 @@ void _push_skylight_update(int x, int y, int z)
             const int itr_count = sky_light_array_index - sky_light_array_n; //number of elements to move
             for (int i=0; i<itr_count; i++)
             {
-                GS_ASSERT(i + sky_light_array_n < sky_light_array_max);
+                //GS_ASSERT(i + sky_light_array_n < sky_light_array_max);
                 sky_light_array[i] = sky_light_array[i + sky_light_array_n];
             }
             sky_light_array_index -= sky_light_array_n;
@@ -127,9 +130,13 @@ void _push_skylight_update(int x, int y, int z)
             //return; //list is full
 
             //else increase size of list
+        #if 1
+            return;
+        #else
             sky_light_array_max *= 2;
             sky_light_array = (struct LightUpdateElement*) realloc(sky_light_array, sky_light_array_max* sizeof(struct LightUpdateElement));
             printf("_push_sky_light_update: reallocing light array to: %d \n", sky_light_array_max);
+        #endif
         }
     }
 /*
