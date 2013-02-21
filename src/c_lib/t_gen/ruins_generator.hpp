@@ -896,7 +896,7 @@ void make_ruins(int x, int y)
                 set_region(rooms[rz][ry][rx].dconn, EMPTY_CUBE, ri, x, y);
         }
 
-        draw_ASCII_floorplan(rz, northernmost, southernmost);
+        //draw_ASCII_floorplan(rz, northernmost, southernmost);
     }
 }
 
