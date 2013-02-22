@@ -82,7 +82,10 @@ static inline struct MapPos add_pos_adj(const struct MapPos& pos, const struct A
     p.x = translate_point(pos.x + adj.x);
     p.y = translate_point(pos.y + adj.y);
     p.z = pos.z + adj.z;
-    PATH_ASSERT(p.z >= 0 && p.z < t_map::map_dim.z);
+    // the caller should check this. in the future, the caller should not send
+    // in value > map_dim.z either; if a path is needed above the max height,
+    // they can do straight lines
+    PATH_ASSERT(p.z > 0);
     return p;
 }
 
@@ -208,6 +211,65 @@ static inline bool is_passable(const struct MapPos& cur, const struct Adjacency&
             !t_map::isSolid(cur.x, pos.y, cur.z));
 }
 
+struct MapPos* construct_path(const struct Node* open, size_t iopen,
+                              struct Node* closed, size_t iclosed,
+                              size_t& len)
+{
+    len = 0;
+    if (iopen == 0 || iclosed == 0) return NULL;
+    // walk path backwards, from last item on closed list
+    len = 1;
+    closed[0].parent = -1;
+    int first = closed[iclosed-1].parent;
+    while (first >= 0)
+    {
+        first = closed[first].parent;
+        len++;
+    }
+    struct MapPos* path = (struct MapPos*)malloc(len * sizeof(struct MapPos));
+
+    // add to path array, starting with the last element
+    int i = len;
+    first = closed[iclosed-1].id;
+    while (first >= 0)
+    {
+        path[--i] = closed[first].pos;
+        first = closed[first].parent;
+    }
+    return path;
+}
+
+bool visit_adjacent_nodes_2d(const struct Node& current,
+                             const struct MapPos& end, struct Node* open,
+                             size_t& iopen, size_t& mopen,
+                             const struct Node* closed, size_t iclosed)
+{
+    bool changed = false;
+    for (int i=0; i<8; i++)
+    {   // iterate adjacent squares
+        struct Node node = current;
+        if (!is_passable(node.pos, adj[i]))
+            continue;
+        // update position, scores of node
+        node_update(node, adj[i], end);
+        // if in closed list, skip
+        if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
+            continue;
+
+        int in_open = get_node_pos_index(node.pos, open, iopen);
+        if (in_open < 0)
+        {   // not found; add to open list
+            node.parent = current.id;
+            add_node(node, open, mopen, iopen);
+            changed = true;
+        }
+        else  // update if g is better
+        if (node_reassign(open[in_open], node.score.g, current.id))
+            changed = true;
+    }
+    return changed;
+}
+
 struct MapPos* get_path(const struct MapPos& start,
                         const struct MapPos& end, size_t& len)
 {
@@ -265,57 +327,11 @@ struct MapPos* get_path(const struct MapPos& start,
         if (is_equal(current.pos, end))
             break;
 
-        for (int i=0; i<8; i++)
-        {   // iterate adjacent squares
-            struct Node node = current;
-            if (!is_passable(node.pos, adj[i]))
-                continue;
-            // update position, scores of node
-            node_update(node, adj[i], end);
-            // if in closed list, skip
-            if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
-                continue;
-
-            int in_open = get_node_pos_index(node.pos, open, iopen);
-            if (in_open < 0)
-            {   // not found; add to open list
-                node.parent = current.id;
-                add_node(node, open, mopen, iopen);
-                needs_sort = true;
-            }
-            else
-            {   // update if g is better
-                bool changed = node_reassign(open[in_open], node.score.g, current.id);
-                if (changed)
-                    needs_sort = true;
-            }
-        }
+        needs_sort = visit_adjacent_nodes_2d(current, end, open, iopen, mopen,
+                                             closed, iclosed);
     }
 
-    len = 0;
-    struct MapPos* path = NULL;
-    if (iopen != 0)
-    {   // walk path backwards, from last item on closed list
-        // count length of path, allocate
-        len = 1;
-        closed[0].parent = -1;
-        int first = closed[iclosed-1].parent;
-        while (first >= 0)
-        {
-            first = closed[first].parent;
-            len++;
-        }
-        path = (struct MapPos*)malloc(len * sizeof(struct MapPos));
-
-        // add to path array
-        int i = len;
-        first = closed[iclosed-1].id;
-        while (first >= 0)
-        {
-            path[--i] = closed[first].pos;
-            first = closed[first].parent;
-        }
-    }
+    struct MapPos* path = construct_path(open, iopen, closed, iclosed, len);
 
     // teardown
     free(open);
