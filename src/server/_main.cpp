@@ -140,6 +140,8 @@ void init_world()
         t_gen::generate_city();
     }
 
+    t_map::post_gen_map_lighting(); //run after map gen, right only only sets skylight
+
     srand((unsigned int)time(NULL));
 }
 

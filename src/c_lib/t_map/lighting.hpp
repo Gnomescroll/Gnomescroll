@@ -706,6 +706,9 @@ void assert_skylight(int chunk_i, int chunk_j)
 
 }
 
+/*
+    Rolling lighting update
+*/
 const int _rolling_lighting_prime = 1553; //prime number
 int* _rolling_index_array = NULL;
 
@@ -800,54 +803,9 @@ void init_update_sunlight(int chunk_i, int chunk_j)
             set_skylight(x,y,k, 0);
             _push_skylight_update(x,y,k);
         }
-
-    /*
-        // get highest block
-        for (; k>=0; k--)
-        {
-            struct MapElement e = mc->get_element(i,j,k);
-            //e = get_element(x,y,k);
-            if (e.block != 0)    //iterate until we hit top block
-                break;
-            set_skylight(x,y,k, 15);
-            _push_skylight_update(x,y,k);
-        }
-
-        for (; k>=0; k--)
-        {
-            struct MapElement e = mc->get_element(i,j,k);
-            //e = get_element(x,y,k);
-            if (fast_cube_properties[e.block].solid)    //iterate until we hit top block
-                continue;
-            set_skylight(x,y,k, 0);
-        }
-    */
     }
 
-    //_skylight_update_core(32*1024);
     _skylight_update_core(32*1024);
-    _skylight_update_core(32*1024);
-
-    assert_skylight(chunk_i, chunk_j);
-
-    //_skylight_update_core(0);
-/*
-    for (int i=0; i<16; i++)
-    for (int j=0; j<16; j++)
-    {
-        int x = 16*chunk_i + i;
-        int y = 16*chunk_j + j;
-        int z = 127;
-
-        struct MapElement e = mc->get_element(i,j,z);
-        if (fast_cube_properties[e.block].solid != true)
-        {
-            _push_skylight_update(x,y,z);
-        }
-    }
-
-    _skylight_update_core();
-*/
 }
 
 void init_lighting()
@@ -867,5 +825,25 @@ void teardown_lighting()
 
     _teardown_rolling_lighting_update();
 }
+
+/*
+
+*/
+
+void post_gen_map_lighting()
+{
+    int t0 = _MS_TIME();
+
+    for(int i=0; i<32; i++)
+    for(int j=0; j<32; j++)
+    {
+        init_update_sunlight(i,j);
+    }
+
+    int t1 = _MS_TIME();
+
+    printf("post_gen_map_lighting: %d ms\n", t1-t0);
+}  
+
 
 }   // t_map
