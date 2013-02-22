@@ -832,7 +832,7 @@ void teardown_lighting()
 
 void post_gen_map_lighting()
 {
-    int t0 = _MS_TIME();
+    int t0 = _GET_MS_TIME();
 
     for(int i=0; i<32; i++)
     for(int j=0; j<32; j++)
@@ -840,7 +840,7 @@ void post_gen_map_lighting()
         init_update_sunlight(i,j);
     }
 
-    int t1 = _MS_TIME();
+    int t1 = _GET_MS_TIME();
 
     printf("post_gen_map_lighting: %d ms\n", t1-t0);
 }  
