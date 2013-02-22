@@ -170,13 +170,19 @@ void tick()
     int _t0 = _GET_MS_TIME();
 
     t_map::lighting_rolling_update(1000);
-    t_map::_skylight_update_core(); //update sun lighting
-    t_map::_envlight_update_core(); //update env lighting
 
     int _t1 = _GET_MS_TIME();
 
-    if(_t1 - _t0 > 2)
-        printf("WARNING: lighting update took %d ms\n", _t1 - _t0);
+    t_map::_skylight_update_core(); //update sun lighting
+    
+    int _t2 = _GET_MS_TIME();
+
+    t_map::_envlight_update_core(); //update env lighting
+
+    int _t3 = _GET_MS_TIME();
+
+    if(_t3 - _t0 > 2)
+        printf("WARNING: lighting update took %d ms; roling= %d ms, skylight= %d ms, envlight= %d ms\n", _t3 - _t0, _t1-_t0, _t2-_t1, _t3-_t2);
 
     t_map::t_map_send_map_chunks();  //every tick
 

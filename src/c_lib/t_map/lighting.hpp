@@ -76,8 +76,18 @@ void set_skylight(int x, int y, int z, int value)
     Skylight Array
 */
 
+const int LightElementArrayMax = 64*1024;
+struct LightElementArray
+{
+    int num;
+    struct LightUpdateElement[LightElementArrayMax];
+    struct LightElementArray* next;
+};
+
+struct LightElementArray* LEA;
+
 struct LightUpdateElement* sky_light_array = NULL;
-const int sky_light_array_max      = 64*1024;
+const int sky_light_array_max      = 4*1024*1024;
 //int sky_light_array_index    = 0;
 //int sky_light_array_n        = 0;
 
@@ -266,6 +276,7 @@ void _skylight_update_core(int max_iterations)
     //reset
     if (sky_light_array_num == 0)
     {
+        //printf("sunlight array cleaned: \n");
         sky_light_array_start = 0;
     }
 }
@@ -716,9 +727,6 @@ int* _rolling_index_array = NULL; // 32x32
 //will take 3217 calls to converge?
 void _lighting_rolling_update(int chunk_i, int chunk_j, int itr_count_max)
 {
-    //too many pending updates
-    if(sky_light_array_num > 4*1024)
-        return;
 
     class MapChunk* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
     if(mc == NULL)
@@ -764,7 +772,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
         return;
 
     //_skylight_update_core(32*1024);
-    _skylight_update_core(32*1024);
+    //_skylight_update_core(1024);
 
     for (int i=0; i<16; i++)
     for (int j=0; j<16; j++)
@@ -782,7 +790,7 @@ void init_update_sunlight(int chunk_i, int chunk_j)
             if (e.block != 0)    //iterate until we hit top block
                 break;
             set_skylight(x,y,k, 15);
-            _push_skylight_update(x,y,k);
+            //_push_skylight_update(x,y,k);
         }
         if (k < 0) return;
         // black out everything below
@@ -794,11 +802,11 @@ void init_update_sunlight(int chunk_i, int chunk_j)
             if (e.block != 0)
                 continue;
             set_skylight(x,y,k, 0);
-            _push_skylight_update(x,y,k);
+            //_push_skylight_update(x,y,k);
         }
     }
 
-    _skylight_update_core(32*1024);
+    //_skylight_update_core(1024);
 }
 
 void init_lighting()
@@ -847,6 +855,11 @@ void post_gen_map_lighting()
 
 void lighting_rolling_update(int max_updates)
 {
+
+    //too many pending updates
+    if(sky_light_array_num > 0)
+        return;
+
     int count = 1;
 
     for (int i=0; i<32; i++)
@@ -856,14 +869,19 @@ void lighting_rolling_update(int max_updates)
             count++;
     }
 
-    max_updates = (max_updates / count) + 1;
+    int _max_updates = (max_updates / count) + 1;
 
     for (int i=0; i<32; i++)
     for (int j=0; j<32; j++)
     {
-        if (main_map->chunk[i + MAP_CHUNK_XDIM*j] != NULL)
-            _lighting_rolling_update(i,j, max_updates);
+        if (main_map->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
+            continue;
+
+        _lighting_rolling_update(i,j, _max_updates);
     }
+    _skylight_update_core(max_updates + 32*32);
+
+
 }
 
 
