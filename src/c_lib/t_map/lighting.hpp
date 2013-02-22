@@ -80,14 +80,14 @@ const int LightElementArrayMax = 64*1024;
 struct LightElementArray
 {
     int num;
-    struct LightUpdateElement[LightElementArrayMax];
+    struct LightUpdateElement arr[LightElementArrayMax];
     struct LightElementArray* next;
 };
 
 struct LightElementArray* LEA;
 
 struct LightUpdateElement* sky_light_array = NULL;
-const int sky_light_array_max      = 4*1024*1024;
+const int sky_light_array_max      = 16*1024*1024;
 //int sky_light_array_index    = 0;
 //int sky_light_array_n        = 0;
 
@@ -97,6 +97,9 @@ int sky_light_array_num      = 0;
 /*
     Note: lighting is slow, and should use circular array
 */
+
+int _skylight_update_condition(int x, int y, int z);
+
 void _push_skylight_update(int x, int y, int z)
 {
 
@@ -112,6 +115,8 @@ void _push_skylight_update(int x, int y, int z)
     if (mc == NULL)
         return;
 
+    if(_skylight_update_condition(int x, int y, int z) == 0)
+        return;
     //skip solid blocks
     struct MapElement e = get_element(x, y, z);
     IF_ASSERT(fast_cube_properties[e.block].solid)
@@ -130,6 +135,78 @@ void _skylight_update_core(int max_iterations);
 void _skylight_update_core()
 {
     _skylight_update_core(6000); //do 1000 iteratations maxs
+}
+
+int _skylight_update_condition(int x, int y, int z)
+{
+
+    class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
+    if (mc == NULL)
+        return 0;
+
+    struct MapElement e = get_element(x,y,z);
+    int li = (e.light & 0x0f);
+
+    if(fast_cube_properties[e.block].solid == true)
+        return 0;
+
+    struct MapElement ea[6];
+
+    for (int i=0; i<6; i++)
+        ea[i] = get_element(x+va[3*i+0], y+va[3*i+1], z+va[3*i+2]);
+
+    struct MapElement te = ea[4];
+
+    if ((te.light & 0x0f) == 15 && li != 15)
+    {
+        return 1; //light above block is sunlight and block is not sunlight
+    }
+
+    if (li == 15 && fast_cube_properties[te.block].solid)
+    {
+        return 2; //block above is solid and this block is sunlight, therefore this block cannot be sunlight anymore
+    }
+
+    if(li == 15 && (te.light & 0x0f) != 15)
+    {
+        return 3; //this block is sunlight, but the block above it is not
+    }
+
+    if(li == )
+
+    /*
+        Normal Light
+    */
+
+    int _min = 16;
+    int _max = 0;
+
+    for (int i=0; i<6; i++)
+    {
+        if (!fast_cube_properties[ea[i].block].solid)
+        {
+            int _li = (ea[i].light & 0x0f);
+            if (_li < _min) _min = _li;
+            if (_li > _max) _max = _li;
+        }
+    }
+
+    if (li != 0 && li != 15 && li+1 > _max)
+    {
+        return 4; //is brigther than brighest adjacant block   
+        //li = li - 1;
+        //set_skylight(x,y,z, li);
+    }
+
+
+    if (li != 15 && _max > li +1)
+    {
+        return 5;
+        //GS_ASSERT(li != _max -1);
+        //li = _max - 1;
+        //set_skylight(x,y,z, li);
+    }
+
 }
 
 void _skylight_update_core(int max_iterations)
@@ -196,7 +273,7 @@ void _skylight_update_core(int max_iterations)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
 
-            _push_skylight_update(x,y,z);
+            //_push_skylight_update(x,y,z);
 
             continue;
         }
@@ -246,7 +323,7 @@ void _skylight_update_core(int max_iterations)
                 if (!fast_cube_properties[ea[j].block].solid)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
-            _push_skylight_update(x,y,z);
+            //_push_skylight_update(x,y,z);
             continue;
         }
 
@@ -267,7 +344,7 @@ void _skylight_update_core(int max_iterations)
                 if (!fast_cube_properties[ea[j].block].solid)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
-            _push_skylight_update(x,y,z);
+            //_push_skylight_update(x,y,z);
             continue;
         }
         continue;
@@ -857,8 +934,8 @@ void lighting_rolling_update(int max_updates)
 {
 
     //too many pending updates
-    if(sky_light_array_num > 0)
-        return;
+    //if(sky_light_array_num > 0)
+    //    return;
 
     int count = 1;
 
@@ -877,10 +954,12 @@ void lighting_rolling_update(int max_updates)
         if (main_map->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
             continue;
 
-        _lighting_rolling_update(i,j, _max_updates);
-    }
-    _skylight_update_core(max_updates + 32*32);
+        if(sky_light_array_num > 1024)
+            continue;
 
+        _lighting_rolling_update(i,j, _max_updates);
+        _skylight_update_core(_max_updates);
+    }
 
 }
 
