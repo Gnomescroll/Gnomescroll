@@ -128,7 +128,7 @@ void _skylight_update_core(int max_iterations)
         return;
 
     if (max_iterations == 0)
-        max_iterations = 1000;
+        max_iterations = 1024;
 
     int itr_count = 0;
 
@@ -153,25 +153,24 @@ void _skylight_update_core(int max_iterations)
 
         struct MapElement e = get_element(x,y,z);
         int li = (e.light & 0x0f);
-        GS_ASSERT(li == get_skylight(x,y,z));
+        //GS_ASSERT(li == get_skylight(x,y,z));
 
         IF_ASSERT(fast_cube_properties[e.block].solid)
             continue;
 
         //if block is sunlight and block above is solid, then set to not-sunlight
-        struct MapElement te = get_element(x,y,z+1);
+
         //struct MapElement be = get_element(x,y,z-1);
 
         //if (z == 127)  GS_ASSERT((te.light & 0x0f) == 15);
         //top level must be sunlight
         //if block is not sunlight and sunlight is above block, set sunlight
 
-
+        struct MapElement te = get_element(x,y,z+1);
         struct MapElement ea[6];
 
         for (int i=0; i<6; i++)
             ea[i] = get_element(x+va[3*i+0], y+va[3*i+1], z+va[3*i+2]);
-
 
         if ((te.light & 0x0f) == 15 && li != 15)
         {
@@ -264,13 +263,10 @@ void _skylight_update_core(int max_iterations)
         continue;
     }
 
-    GS_ASSERT(sky_light_array_n <= sky_light_array_index);
     //reset
-    if (sky_light_array_n == sky_light_array_index)
+    if (sky_light_array_num == 0)
     {
-        //printf("skylight_array_cleared: %d elements \n", sky_light_array_index);
-        sky_light_array_n = 0;
-        sky_light_array_index = 0;
+        sky_light_array_start = 0;
     }
 }
 
