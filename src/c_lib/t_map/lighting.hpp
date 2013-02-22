@@ -100,6 +100,8 @@ int sky_light_array_num      = 0;
 
 int _skylight_update_condition(int x, int y, int z);
 
+//static int condition_arr[8];
+
 void _push_skylight_update(int x, int y, int z)
 {
 
@@ -115,7 +117,21 @@ void _push_skylight_update(int x, int y, int z)
     if (mc == NULL)
         return;
 
-    if(_skylight_update_condition(int x, int y, int z) == 0)
+    int condition = _skylight_update_condition(x,y,z);
+
+    //condition_arr[condition]++;
+
+   // static int count = 0;
+   // count++;
+
+/*
+    if(count % (1024*1024) == 0)
+    {
+        for(int i=0; i<8; i++)
+            printf("condition %d: count= %d \n", i, condition_arr[i]);
+    }
+*/
+    if(condition == 0)
         return;
     //skip solid blocks
     struct MapElement e = get_element(x, y, z);
@@ -137,6 +153,7 @@ void _skylight_update_core()
     _skylight_update_core(6000); //do 1000 iteratations maxs
 }
 
+OPTIMIZED
 int _skylight_update_condition(int x, int y, int z)
 {
 
@@ -172,8 +189,6 @@ int _skylight_update_condition(int x, int y, int z)
         return 3; //this block is sunlight, but the block above it is not
     }
 
-    if(li == )
-
     /*
         Normal Light
     */
@@ -199,16 +214,19 @@ int _skylight_update_condition(int x, int y, int z)
     }
 
 
-    if (li != 15 && _max > li +1)
+    if (li != 15 && _max > li +1)  //its always condition 5
     {
+        //printf("li= %d max= %d \n", li, _max);
         return 5;
         //GS_ASSERT(li != _max -1);
         //li = _max - 1;
         //set_skylight(x,y,z, li);
     }
 
+    return 0;
 }
 
+OPTIMIZED
 void _skylight_update_core(int max_iterations)
 {
     if (sky_light_array_num == 0)
@@ -273,7 +291,7 @@ void _skylight_update_core(int max_iterations)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
 
-            //_push_skylight_update(x,y,z);
+            _push_skylight_update(x,y,z);
 
             continue;
         }
@@ -323,7 +341,7 @@ void _skylight_update_core(int max_iterations)
                 if (!fast_cube_properties[ea[j].block].solid)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
-            //_push_skylight_update(x,y,z);
+            _push_skylight_update(x,y,z);
             continue;
         }
 
@@ -344,7 +362,7 @@ void _skylight_update_core(int max_iterations)
                 if (!fast_cube_properties[ea[j].block].solid)
                     _push_skylight_update(x+va[3*j+0], y+va[3*j+1], z+va[3*j+2]);
             }
-            //_push_skylight_update(x,y,z);
+            _push_skylight_update(x,y,z);
             continue;
         }
         continue;
@@ -802,6 +820,8 @@ int* _rolling_index_array = NULL; // 32x32
 
 //will update ~10 blocks per call with 3217 as prime
 //will take 3217 calls to converge?
+
+OPTIMIZED
 void _lighting_rolling_update(int chunk_i, int chunk_j, int itr_count_max)
 {
 
@@ -840,16 +860,11 @@ void _lighting_rolling_update(int chunk_i, int chunk_j, int itr_count_max)
     _rolling_index_array[cindex] = index;
 }
 
-void init_update_sunlight(int chunk_i, int chunk_j)
+void init_update_sunlight0(int chunk_i, int chunk_j)
 {
-    //class MapChunk* mc = main_map->chunk[32*chunk_j + chunk_i];
-
     class MapChunk* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
     IF_ASSERT(mc == NULL)
         return;
-
-    //_skylight_update_core(32*1024);
-    //_skylight_update_core(1024);
 
     for (int i=0; i<16; i++)
     for (int j=0; j<16; j++)
@@ -882,8 +897,46 @@ void init_update_sunlight(int chunk_i, int chunk_j)
             //_push_skylight_update(x,y,k);
         }
     }
+}
 
-    //_skylight_update_core(1024);
+void init_update_sunlight1(int chunk_i, int chunk_j)
+{
+
+    class MapChunk* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
+    IF_ASSERT(mc == NULL)
+        return;
+
+    for (int i=0; i<16; i++)
+    for (int j=0; j<16; j++)
+    {
+        int x = i + 16*chunk_i;
+        int y = j + 16*chunk_j;
+        int k = map_dim.z-1;
+
+        struct MapElement e;
+        // get highest block
+        for (; k>=0; k--)
+        {
+            e = mc->get_element(i,j,k);
+            //e = get_element(x,y,k);
+            if (e.block != 0)    //iterate until we hit top block
+                break;
+            //set_skylight(x,y,k, 15);
+            _push_skylight_update(x,y,k);
+        }
+        if (k < 0) return;
+        // black out everything below
+
+        for (; k>=0; k--)
+        {
+            e = mc->get_element(i,j,k);
+            //e = get_element(x,y,k);
+            if (e.block != 0)
+                continue;
+            //set_skylight(x,y,k, 0);
+            _push_skylight_update(x,y,k);
+        }
+    }
 }
 
 void init_lighting()
@@ -909,6 +962,8 @@ void teardown_lighting()
 
 */
 
+void lighting_rolling_update(int max_updates);
+
 void post_gen_map_lighting()
 {
     int t0 = _GET_MS_TIME();
@@ -916,12 +971,31 @@ void post_gen_map_lighting()
     for(int i=0; i<32; i++)
     for(int j=0; j<32; j++)
     {
-        init_update_sunlight(i,j);
+        init_update_sunlight0(i,j);
     }
 
-    int t1 = _GET_MS_TIME();
+    for(int i=0; i<32; i++)
+    for(int j=0; j<32; j++)
+    {
+        init_update_sunlight1(i,j);
 
+        while(sky_light_array_num != 0)
+            _skylight_update_core(64*1024);
+    }
+
+/*
+    for(int i=0; i<32; i++)
+    for(int j=0; j<32; j++)
+    {
+        _lighting_rolling_update(i,j, 128*16*16);
+        while(sky_light_array_num != 0)
+            _skylight_update_core(1000);
+    }
+*/
+
+    int t1 = _GET_MS_TIME();
     printf("post_gen_map_lighting: %d ms\n", t1-t0);
+
 }
 
 /*
@@ -934,7 +1008,7 @@ void lighting_rolling_update(int max_updates)
 {
 
     //too many pending updates
-    //if(sky_light_array_num > 0)
+    ////if(sky_light_array_num > 0)
     //    return;
 
     int count = 1;
@@ -942,23 +1016,23 @@ void lighting_rolling_update(int max_updates)
     for (int i=0; i<32; i++)
     for (int j=0; j<32; j++)
     {
-        if (main_map->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
+        if (main_map->chunk[i + MAP_CHUNK_XDIM*j] != NULL)
             count++;
     }
 
-    int _max_updates = (max_updates / count) + 1;
+    int _max_updates = (max_updates / count) + 1; //updates per chunk
+
+    //printf("max_updates= %d \n", _max_updates);
 
     for (int i=0; i<32; i++)
     for (int j=0; j<32; j++)
     {
         if (main_map->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
             continue;
-
-        if(sky_light_array_num > 1024)
-            continue;
-
         _lighting_rolling_update(i,j, _max_updates);
-        _skylight_update_core(_max_updates);
+
+
+
     }
 
 }

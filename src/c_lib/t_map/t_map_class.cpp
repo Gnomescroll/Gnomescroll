@@ -342,8 +342,8 @@ void Terrain_map::chunk_received(int cx, int cy)
         Init Update Lighting
     */
 
-    init_update_sunlight(cx, cy);   //init env_light values for blocks in chunk
-    init_update_envlight(cx, cy);   //init env_light values for blocks in chunk
+    //init_update_sunlight(cx, cy);   //init env_light values for blocks in chunk
+    //init_update_envlight(cx, cy);   //init env_light values for blocks in chunk
 }
 
 /*
