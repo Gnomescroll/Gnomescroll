@@ -710,24 +710,11 @@ void assert_skylight(int chunk_i, int chunk_j)
     Rolling lighting update
 */
 const int _rolling_lighting_prime = 1553; //prime number
-int* _rolling_index_array = NULL;
-
-void _init_rolling_lighting_update()
-{
-    _rolling_index_array = (int*) malloc(sizeof(int)*32*32);
-
-    for(int i=0; i<32*32; i++)
-        _rolling_index_array[i] = rand() % _rolling_lighting_prime;
-}
-
-void _teardown_rolling_lighting_update()
-{
-    free(_rolling_index_array);
-}
+int* _rolling_index_array = NULL; // 32x32
 
 //will update ~10 blocks per call with 3217 as prime
 //will take 3217 calls to converge?
-void _lighting_rolling_update(int chunk_i, int chunk_j)
+void _lighting_rolling_update(int chunk_i, int chunk_j, int itr_count_max)
 {
     //too many pending updates
     if(sky_light_array_num > 4*1024)
@@ -745,7 +732,7 @@ void _lighting_rolling_update(int chunk_i, int chunk_j)
 
     int itr_count=0
 
-    while(itr_count < 1024)
+    while(itr_count < itr_count_max)
     {
         itr_count++;
         index += _rolling_lighting_prime;
@@ -821,15 +808,16 @@ void init_lighting()
     env_light_array = (struct LightUpdateElement*) malloc(env_light_array_max* sizeof(struct LightUpdateElement));
     sky_light_array = (struct LightUpdateElement*) malloc(sky_light_array_max* sizeof(struct LightUpdateElement));
 
-    _init_rolling_lighting_update();
+    _rolling_index_array = (int*) malloc(sizeof(int)*32*32);
+    for(int i=0; i<32*32; i++)
+        _rolling_index_array[i] = rand() % _rolling_lighting_prime;
 }
 
 void teardown_lighting()
 {
     free(env_light_array);
     free(sky_light_array);
-
-    _teardown_rolling_lighting_update();
+    free(_rolling_index_array);
 }
 
 /*
