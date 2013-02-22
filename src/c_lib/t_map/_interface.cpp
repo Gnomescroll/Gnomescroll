@@ -74,11 +74,6 @@ bool get_container_location(ItemContainerID container_id, int position[3])
     return true;
 }
 
-void _lighting_rolling_update()
-{
-    main_map->lighting_rolling_update();
-}
-
 #if DC_CLIENT
 class VBOMap* vbo_map;
 

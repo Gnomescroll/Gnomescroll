@@ -837,7 +837,34 @@ void post_gen_map_lighting()
     int t1 = _GET_MS_TIME();
 
     printf("post_gen_map_lighting: %d ms\n", t1-t0);
-}  
+}
+
+/*
+    Interface.hpp
+*/
+
+void lighting_rolling_update(int max_updates)
+{
+    int count = 1;
+
+    for (int i=0; i<32; i++)
+    for (int j=0; j<32; j++)
+    {
+        if (main_map->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
+            count++;
+    }
+
+    max_updates = (max_update / count) + 1;
+
+    for (int i=0; i<32; i++)
+    for (int j=0; j<32; j++)
+    {
+        if (main_map->chunk[i + MAP_CHUNK_XDIM*j] != NULL)
+            _lighting_rolling_update(i,j, max_updates);
+    }
+
+    main_map->lighting_rolling_update(max_updates);
+}
 
 
 }   // t_map

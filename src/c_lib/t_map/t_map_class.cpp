@@ -489,19 +489,4 @@ void Terrain_map::unload_chunk(int i, int j)
     this->chunk[xchunk_dim*j + i] = NULL;
 }
 
-/*
-    Lighting
-*/
-
-void Terrain_map::lighting_rolling_update()
-{
-    for (int i=0; i<32; i++)
-    for (int j=0; j<32; j++)
-    {
-        if (this->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
-            continue;
-        _lighting_rolling_update(i,j);
-    }
-}
-
 }   // t_map
