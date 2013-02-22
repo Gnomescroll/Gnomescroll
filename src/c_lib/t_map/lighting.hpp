@@ -44,21 +44,30 @@ int get_envlight(int x,int y, int z);
 
 void set_skylight(int x, int y, int z, int value)
 {
-    int env_light =  get_envlight(x,y,z);
+    //int env_light =  get_envlight(x,y,z);
 
-    GS_ASSERT(z >= 0 && z <= 128);
-    GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
+    //GS_ASSERT(z >= 0 && z <= 128);
+    //GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
+
+#if !PRODUCTION
     GS_ASSERT(value < 16 && value >= 0);
+#endif
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    GS_ASSERT(x >= 0 && x < 512)
-    GS_ASSERT(y >= 0 && y < 512)
+    //GS_ASSERT(x >= 0 && x < 512)
+    //GS_ASSERT(y >= 0 && y < 512)
 
     class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
-    IF_ASSERT(mc == NULL)
+    
+    if(mc == NULL)
+    {
+    #if !PRODUCTION
+        GS_ASSERT(false);
+    #endif
         return;
+    }
 
     int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
     light = (light & 0xf0) | (value & 0x0f);
@@ -69,7 +78,7 @@ void set_skylight(int x, int y, int z, int value)
     main_map->set_update(x,y);
     #endif
 
-    GS_ASSERT(env_light == get_envlight(x,y,z));
+    //GS_ASSERT(env_light == get_envlight(x,y,z));
 }
 
 /*
@@ -432,7 +441,7 @@ void set_envlight(int x, int y, int z, int value)
     Lighting variables
 */
 struct LightUpdateElement* env_light_array = NULL;
-int env_light_array_max      = 8*1024;
+int env_light_array_max      = 1024*1024;
 int env_light_array_index    = 0;
 int env_light_array_n        = 0;
 
@@ -440,7 +449,7 @@ void _push_envlight_update(int x, int y, int z)
 {
 
     //DEBUGGING
-    return;
+    //return;
 
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
         return;
@@ -586,7 +595,7 @@ void _envlight_update_core(int max_iterations)
 
             //if (li >= _max -1 && li > 0)
 
-        /*
+        #if 0
             if (li != _max -1 && !(_max == 0 && li ==0))
             {
                 //printf("min/max: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
@@ -606,8 +615,7 @@ void _envlight_update_core(int max_iterations)
                 index++;
                 continue;
             }
-        */
-        #if 1
+        #else
             if (li > _max -1 && li > 0)
             {
                 //printf("env_min: x,y,z= %d %d %d max= %d min= %d li= %d \n", x,y,z, _max, _min, li);
@@ -901,7 +909,6 @@ void init_update_sunlight0(int chunk_i, int chunk_j)
 
 void init_update_sunlight1(int chunk_i, int chunk_j)
 {
-
     class MapChunk* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
     IF_ASSERT(mc == NULL)
         return;
