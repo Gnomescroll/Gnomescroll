@@ -730,7 +730,7 @@ void _lighting_rolling_update(int chunk_i, int chunk_j, int itr_count_max)
     int cindex = 32*chunk_j+chunk_i;
     int index = _rolling_index_array[cindex];
 
-    int itr_count=0
+    int itr_count = 0;
 
     while(itr_count < itr_count_max)
     {
@@ -843,6 +843,8 @@ void post_gen_map_lighting()
     Interface.hpp
 */
 
+//replaces  main_map->lighting_rolling_update(max_updates);
+
 void lighting_rolling_update(int max_updates)
 {
     int count = 1;
@@ -854,7 +856,7 @@ void lighting_rolling_update(int max_updates)
             count++;
     }
 
-    max_updates = (max_update / count) + 1;
+    max_updates = (max_updates / count) + 1;
 
     for (int i=0; i<32; i++)
     for (int j=0; j<32; j++)
@@ -862,8 +864,6 @@ void lighting_rolling_update(int max_updates)
         if (main_map->chunk[i + MAP_CHUNK_XDIM*j] != NULL)
             _lighting_rolling_update(i,j, max_updates);
     }
-
-    main_map->lighting_rolling_update(max_updates);
 }
 
 
