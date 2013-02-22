@@ -78,8 +78,8 @@ void set_skylight(int x, int y, int z, int value)
 
 struct LightUpdateElement* sky_light_array = NULL;
 const int sky_light_array_max      = 64*1024;
-int sky_light_array_index    = 0;
-int sky_light_array_n        = 0;
+//int sky_light_array_index    = 0;
+//int sky_light_array_n        = 0;
 
 int sky_light_array_start    = 0;
 int sky_light_array_num      = 0;
@@ -132,7 +132,7 @@ void _skylight_update_core(int max_iterations)
 
     int itr_count = 0;
 
-    while (itr_count < max_iterations)
+    while (itr_count < max_iterations && sky_light_array_num > 0)
     {
         itr_count++; //loop counter
 
@@ -730,7 +730,7 @@ void _teardown_rolling_lighting_update()
 void _lighting_rolling_update(int chunk_i, int chunk_j)
 {
     //too many pending updates
-    if(sky_light_array_index - sky_light_array_n > 16*1024)
+    if(sky_light_array_num > 4*1024)
         return;
 
     class MapChunk* mc = main_map->chunk[ 32*chunk_j + chunk_i ];
@@ -741,25 +741,31 @@ void _lighting_rolling_update(int chunk_i, int chunk_j)
     }
 
     int cindex = 32*chunk_j+chunk_i;
-
     int index = _rolling_index_array[cindex];
 
+    int itr_count=0
 
-    while(index < 16*16*128)
+    while(itr_count < 1024)
     {
+        itr_count++;
+        index += _rolling_lighting_prime;
+
+        if(index >= 16*16*128)
+        {
+            index = (index+1) % _rolling_lighting_prime;
+        }
+
         int x = 32*chunk_i + index % 16;
         int y = 32*chunk_j + (index >> 4) % 16; //divide by 16
-        int z = index >> 8; //(index/256);
+        int z = index >> 8;                     //(index/256);
 
         struct MapElement e = get_element(x,y,z);
 
-        if (!fast_cube_properties[e.block].solid)
+        if (fast_cube_properties[e.block].solid == false)
             _push_skylight_update(x,y,z);
-
-        index += _rolling_lighting_prime;
     }
 
-    _rolling_index_array[cindex] = ( _rolling_index_array[cindex] + 1 ) % _rolling_lighting_prime;
+    _rolling_index_array[cindex] = index;
 }
 
 void init_update_sunlight(int chunk_i, int chunk_j)
