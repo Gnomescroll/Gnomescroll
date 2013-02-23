@@ -42,46 +42,47 @@ struct Adjacency
 {
     int x,y,z;
     int cost;
+    int lateral;
 };
 
 static const struct Adjacency adj[8+9+9] = {
     // xy
-    {  1,  0,  0, 100 },
-    { -1,  0,  0, 100 },
-    {  0,  1,  0, 100 },
-    {  0, -1,  0, 100 },
-    {  1,  1,  0, 141 },
-    {  1, -1,  0, 141 },
-    { -1,  1,  0, 141 },
-    { -1, -1,  0, 141 },
+    {  1,  0,  0, 100, 1 },
+    { -1,  0,  0, 100, 1 },
+    {  0,  1,  0, 100, 1 },
+    {  0, -1,  0, 100, 1 },
+    {  1,  1,  0, 141, 0 },
+    {  1, -1,  0, 141, 0 },
+    { -1,  1,  0, 141, 0 },
+    { -1, -1,  0, 141, 0 },
     // xy +z
-    {  1,  0,  1, 141 },
-    { -1,  0,  1, 141 },
-    {  0,  1,  1, 141 },
-    {  0, -1,  1, 141 },
-    {  1,  1,  1, 173 },
-    {  1, -1,  1, 173 },
-    { -1,  1,  1, 173 },
-    { -1, -1,  1, 173 },
-    {  0,  0,  1, 100 },
+    {  0,  0,  1, 100, 1 },
+    {  1,  0,  1, 141, 0 },
+    { -1,  0,  1, 141, 0 },
+    {  0,  1,  1, 141, 0 },
+    {  0, -1,  1, 141, 0 },
+    {  1,  1,  1, 173, 0 },
+    {  1, -1,  1, 173, 0 },
+    { -1,  1,  1, 173, 0 },
+    { -1, -1,  1, 173, 0 },
     // xy -z
-    {  1,  0, -1, 141 },
-    { -1,  0, -1, 141 },
-    {  0,  1, -1, 141 },
-    {  0, -1, -1, 141 },
-    {  1,  1, -1, 173 },
-    {  1, -1, -1, 173 },
-    { -1,  1, -1, 173 },
-    { -1, -1, -1, 173 },
-    {  0,  0, -1, 100 },
+    {  0,  0, -1, 100, 1 },
+    {  1,  0, -1, 141, 0 },
+    { -1,  0, -1, 141, 0 },
+    {  0,  1, -1, 141, 0 },
+    {  0, -1, -1, 141, 0 },
+    {  1,  1, -1, 173, 0 },
+    {  1, -1, -1, 173, 0 },
+    { -1,  1, -1, 173, 0 },
+    { -1, -1, -1, 173, 0 },
 };
 
-static inline struct MapPos add_pos_adj(const struct MapPos& pos, const struct Adjacency& adj)
+static inline struct MapPos add_pos_adj(const struct MapPos& pos, int iadj)
 {
     struct MapPos p;
-    p.x = translate_point(pos.x + adj.x);
-    p.y = translate_point(pos.y + adj.y);
-    p.z = pos.z + adj.z;
+    p.x = translate_point(pos.x + adj[iadj].x);
+    p.y = translate_point(pos.y + adj[iadj].y);
+    p.z = pos.z + adj[iadj].z;
     // the caller should check this. in the future, the caller should not send
     // in value > map_dim.z either; if a path is needed above the max height,
     // they can do straight lines
@@ -114,7 +115,7 @@ static inline void _node_update_score(struct Node& node, int g)
 static inline void _node_set_position(struct Node& node, const struct MapPos& pos, const struct MapPos& end)
 {
     node.pos = pos;
-    node.score.h = euclidean_distance_2d(node.pos, end) * 100;
+    node.score.h = euclidean_distance(node.pos, end) * 100;
 }
 
 static inline void node_first(struct Node& node, const struct MapPos& start, const struct MapPos& end)
@@ -126,11 +127,11 @@ static inline void node_first(struct Node& node, const struct MapPos& start, con
     _node_update_score(node, 0);
 }
 
-static inline void node_update(struct Node& node, const struct Adjacency& adj, const struct MapPos& end)
+static inline void node_update(struct Node& node, const struct MapPos& end, int iadj)
 {
-    node.pos = add_pos_adj(node.pos, adj);
+    node.pos = add_pos_adj(node.pos, iadj);
     _node_set_position(node, node.pos, end);
-    _node_update_score(node, node.score.g + adj.cost);
+    _node_update_score(node, node.score.g + adj[iadj].cost);
 }
 
 static inline bool node_reassign(struct Node& node, int g, int parent)
@@ -144,8 +145,8 @@ static inline bool node_reassign(struct Node& node, int g, int parent)
 
 static inline void node_print(const struct Node& node)
 {
-    printf("ID: %03d; Parent: %03d; Score: f=%04d; g=%04d, h=%04d; ", node.id, node.parent,
-           node.score.f, node.score.g, node.score.h);
+    printf("ID: %03d; Parent: %03d; Score: f=%04d; g=%04d, h=%04d; ", node.id,
+           node.parent, node.score.f, node.score.g, node.score.h);
     print_pos(node.pos);
 }
 
@@ -200,13 +201,26 @@ static inline int get_node_pos_index(const struct MapPos& pos,
     return -1;
 }
 
-static inline bool is_passable(const struct MapPos& cur, const struct Adjacency& adj)
+static inline bool is_passable_2d(const struct MapPos& cur, int iadj)
 {
-    struct MapPos pos = add_pos_adj(cur, adj);
+    struct MapPos pos = add_pos_adj(cur, iadj);
     if (t_map::isSolid(pos))
         return false;
-    if (adj.x == 0 || adj.y == 0)
+    if (adj[iadj].lateral)
         return true;
+    // should not be able to zag past or between blocks
+    return (!t_map::isSolid(pos.x, cur.y, cur.z) &&
+            !t_map::isSolid(cur.x, pos.y, cur.z));
+}
+
+static inline bool is_passable_3d(const struct MapPos& cur, int iadj)
+{
+    struct MapPos pos = add_pos_adj(cur, iadj);
+    if (t_map::isSolid(pos))
+        return false;
+    if (adj[iadj].lateral)
+        return true;
+    // should not be able to zag past or between blocks
     return (!t_map::isSolid(pos.x, cur.y, cur.z) &&
             !t_map::isSolid(cur.x, pos.y, cur.z));
 }
@@ -239,46 +253,90 @@ struct MapPos* construct_path(const struct Node* open, size_t iopen,
     return path;
 }
 
-bool visit_adjacent_nodes_2d(const struct Node& current,
-                             const struct MapPos& end, struct Node* open,
-                             size_t& iopen, size_t& mopen,
-                             const struct Node* closed, size_t iclosed)
+
+struct NodeVisitor2D
 {
-    bool changed = false;
-    for (int i=0; i<8; i++)
-    {   // iterate adjacent squares
-        struct Node node = current;
-        if (!is_passable(node.pos, adj[i]))
-            continue;
-        // update position, scores of node
-        node_update(node, adj[i], end);
-        // if in closed list, skip
-        if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
-            continue;
+    bool operator()(const struct Node& current, const struct MapPos& end,
+                    struct Node* open, size_t& iopen, size_t& mopen,
+                    const struct Node* closed, size_t iclosed)
+    {
+        bool changed = false;
+        for (int i=0; i<8; i++)
+        {   // iterate adjacent squares
+            struct Node node = current;
+            if (!is_passable_2d(node.pos, i))
+                continue;
+            // update position, scores of node
+            node_update(node, end, i);
+            // if in closed list, skip
+            if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
+                continue;
 
-        int in_open = get_node_pos_index(node.pos, open, iopen);
-        if (in_open < 0)
-        {   // not found; add to open list
-            node.parent = current.id;
-            add_node(node, open, mopen, iopen);
-            changed = true;
+            int in_open = get_node_pos_index(node.pos, open, iopen);
+            if (in_open < 0)
+            {   // not found; add to open list
+                node.parent = current.id;
+                add_node(node, open, mopen, iopen);
+                changed = true;
+            }
+            else  // update if g is better
+            if (node_reassign(open[in_open], node.score.g, current.id))
+                changed = true;
         }
-        else  // update if g is better
-        if (node_reassign(open[in_open], node.score.g, current.id))
-            changed = true;
+        return changed;
     }
-    return changed;
-}
+};
 
+struct NodeVisitor3D
+{
+    bool operator()(const struct Node& current, const struct MapPos& end,
+                    struct Node* open, size_t& iopen, size_t& mopen,
+                    const struct Node* closed, size_t iclosed)
+    {
+        bool changed = false;
+        for (int i=0; i<26; i++)
+        {   // iterate adjacent squares
+            struct Node node = current;
+            if (!is_passable_3d(node.pos, i))
+                continue;
+            // update position, scores of node
+            node_update(node, end, i);
+            // if in closed list, skip
+            if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
+                continue;
+
+            int in_open = get_node_pos_index(node.pos, open, iopen);
+            if (in_open < 0)
+            {   // not found; add to open list
+                node.parent = current.id;
+                add_node(node, open, mopen, iopen);
+                changed = true;
+            }
+            else  // update if g is better
+            if (node_reassign(open[in_open], node.score.g, current.id))
+                changed = true;
+        }
+        return changed;
+    }
+};
+
+template<class Visitor>
 struct MapPos* get_path(const struct MapPos& start,
                         const struct MapPos& end, size_t& len)
 {
     IF_ASSERT(!is_boxed_position(start) || !is_boxed_position(end)) return NULL;
     len = 0;
     // hacks to prevent lockup until 3D is implemented
-    if (start.z != end.z) return NULL;
-    if (t_map::isSolid(end)) return NULL;
-    //if (manhattan_distance(start, end) > MAX_PATH_DISTANCE) return NULL;
+    if (t_map::isSolid(end))
+    {
+        printf("Not pathing; endpoint is solid (unreachable)\n");
+        return NULL;
+    }
+    if (manhattan_distance(start, end) > MAX_PATH_DISTANCE)
+    {
+        printf("Not pathing, too far away\n");
+        return NULL;
+    }
 
     // TODO --
     // 3d
@@ -306,6 +364,7 @@ struct MapPos* get_path(const struct MapPos& start,
     node_first(open[iopen], start, end);
     iopen++;
     bool needs_sort = false;
+    Visitor visitor = Visitor();
 
     while (1)
     {
@@ -327,8 +386,7 @@ struct MapPos* get_path(const struct MapPos& start,
         if (is_equal(current.pos, end))
             break;
 
-        needs_sort = visit_adjacent_nodes_2d(current, end, open, iopen, mopen,
-                                             closed, iclosed);
+        needs_sort = visitor(current, end, open, iopen, mopen, closed, iclosed);
     }
 
     struct MapPos* path = construct_path(open, iopen, closed, iclosed, len);
@@ -337,6 +395,22 @@ struct MapPos* get_path(const struct MapPos& start,
     free(open);
     free(closed);
     return path;
+}
+
+inline struct MapPos* get_path_2d(const struct MapPos& start, const struct MapPos& end, size_t& len)
+{
+    if (start.z != end.z) return NULL;
+    return get_path<NodeVisitor2D>(start, end, len);
+}
+
+inline struct MapPos* get_path_3d(const struct MapPos& start, const struct MapPos& end, size_t& len)
+{
+    return get_path<NodeVisitor3D>(start, end, len);
+}
+
+inline struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, size_t& len)
+{
+    return get_path_3d(start, end, len);
 }
 
 void print_path(const struct MapPos* path, size_t len)

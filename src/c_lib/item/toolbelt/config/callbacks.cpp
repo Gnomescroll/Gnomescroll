@@ -100,7 +100,8 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     struct MapPos end;
     end.x = ClientState::location_pointer.x;
     end.y = ClientState::location_pointer.y;
-    end.z = start.z;    // Multi-level paths not supported yet
+    end.z = ClientState::location_pointer.z;
+    //end.z = start.z;    // for 2d
     size_t len = 0;
     struct MapPos* path = Path::get_path(start, end, len);
     Path::print_path(path, len);
