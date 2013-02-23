@@ -88,7 +88,7 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
         DEBUG STUFF HERE!!!
     */
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_DEBUG);
-    ClientState::set_location_pointer();
+    ClientState::set_location_pointer_open_block();
 
     Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
@@ -115,6 +115,27 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     //float d = 0.0f;
     //int mech_id = 0;
     //t_mech::ray_cast_mech(pos.x,pos.y,pos.z, dir.x,dir.y,dir.z, &mech_id, &d);
+}
+
+void trigger_local_beta_location_pointer(ItemID item_id, ItemType item_type)
+{
+    /*
+        DEBUG STUFF HERE!!!
+    */
+
+    using ClientState::path;
+    using ClientState::path_len;
+
+    if (path == NULL) return;
+    if (path_len <= 1) return;
+    size_t len = 0;
+    struct MapPos* _path = Path::get_path(path[0], path[path_len-1], len);
+    if (_path == NULL) return;
+    if (path != NULL)
+        free(path);
+    path = _path;
+    path_len = len;
+    Path::print_path(path, len);
 }
 
 void trigger_local_admin_block_placer(ItemID item_id, ItemType item_type)

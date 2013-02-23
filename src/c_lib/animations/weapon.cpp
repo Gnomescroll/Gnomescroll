@@ -462,7 +462,7 @@ void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, ItemType 
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
     Vec3 origin, forward, right, up;
-	forward.y /= 4;
+    forward.y /= 4;
     bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
     if (!valid) return;
     int sprite_id = Item::get_sprite_index_for_type(item_type);
@@ -549,8 +549,8 @@ void draw_placement_outline(ItemType item_type)
 
     // get open block
     const int max_dist = 4.0f;
-    int b[3];
-    bool collided = ClientState::player_agent.nearest_open_block(max_dist, b);
+    struct MapPos pos;
+    bool collided = ClientState::player_agent.nearest_open_block(max_dist, pos);
     if (!collided) return;
 
     // center it
@@ -558,12 +558,12 @@ void draw_placement_outline(ItemType item_type)
     glColor4ub(255,255,255,255);
     glLineWidth(2.0f);
     glBegin(GL_LINES);
-    for (int z=0; z<cube_height; z++)
+    for (int z=0; z<cube_height; z++, pos.z++)
     {
         float size;
-        struct Vec3 p = vec3_init(b[0], b[1], b[2]+z);
+        struct Vec3 p = vec3_init(pos);
         p = quadrant_translate_position(current_camera_position, p);
-        if (t_map::get(b[0], b[1], b[2]+z) == 0)
+        if (t_map::get(pos) == 0)
         {
             size = 0.995f;
             glColor3ub(1,1,1);
@@ -574,7 +574,7 @@ void draw_placement_outline(ItemType item_type)
             glColor3ub(180,20,20);
         }
 
-        p = vec3_add(p, vec3_init(0.5f, 0.5f, 0.5f));
+        p = vec3_add(p, vec3_init(0.5f));
 
         // render
         Vec3 q;

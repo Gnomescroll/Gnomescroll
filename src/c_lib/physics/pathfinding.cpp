@@ -10,11 +10,18 @@
 namespace Path
 {
 
-#define PATHFINDING_DEBUG 1
+#if PRODUCTION
+# define PATHFINDING_DEBUG 0
+#else
+# define PATHFINDING_DEBUG 1
+#endif
+
 #if PATHFINDING_DEBUG
 # define PATH_ASSERT(x) GS_ASSERT(x)
+# define PATH_PRINT(...) printf(__VA_ARGS__)
 #else
 # define PATH_ASSERT(x)
+# define PATH_PRINT(...)
 #endif
 
 /*
@@ -54,7 +61,7 @@ struct Adjacency
 };
 
 static const struct Adjacency adj[8+9+9] = {
-    // xy
+    // 2d
     {  1,  0,  0, 100, DIR_LATERAL_PLANAR },
     { -1,  0,  0, 100, DIR_LATERAL_PLANAR },
     {  0,  1,  0, 100, DIR_LATERAL_PLANAR },
@@ -63,26 +70,28 @@ static const struct Adjacency adj[8+9+9] = {
     {  1, -1,  0, 141, DIR_DIAGONAL_PLANAR },
     { -1,  1,  0, 141, DIR_DIAGONAL_PLANAR },
     { -1, -1,  0, 141, DIR_DIAGONAL_PLANAR },
-    // xy +z
+//8
+    {  0,  0, -1, 100, DIR_LATERAL_PLANAR },
     {  0,  0,  1, 100, DIR_LATERAL_PLANAR },
+//10
     {  1,  0,  1, 141, DIR_LATERAL_NONPLANAR },
     { -1,  0,  1, 141, DIR_LATERAL_NONPLANAR },
     {  0,  1,  1, 141, DIR_LATERAL_NONPLANAR },
     {  0, -1,  1, 141, DIR_LATERAL_NONPLANAR },
-    {  1,  1,  1, 173, DIR_DIAGONAL_NONPLANAR },
-    {  1, -1,  1, 173, DIR_DIAGONAL_NONPLANAR },
-    { -1,  1,  1, 173, DIR_DIAGONAL_NONPLANAR },
-    { -1, -1,  1, 173, DIR_DIAGONAL_NONPLANAR },
-    // xy -z
-    {  0,  0, -1, 100, DIR_LATERAL_PLANAR },
     {  1,  0, -1, 141, DIR_LATERAL_NONPLANAR },
     { -1,  0, -1, 141, DIR_LATERAL_NONPLANAR },
     {  0,  1, -1, 141, DIR_LATERAL_NONPLANAR },
     {  0, -1, -1, 141, DIR_LATERAL_NONPLANAR },
+//18
+    {  1,  1,  1, 173, DIR_DIAGONAL_NONPLANAR },
+    {  1, -1,  1, 173, DIR_DIAGONAL_NONPLANAR },
+    { -1,  1,  1, 173, DIR_DIAGONAL_NONPLANAR },
+    { -1, -1,  1, 173, DIR_DIAGONAL_NONPLANAR },
     {  1,  1, -1, 173, DIR_DIAGONAL_NONPLANAR },
     {  1, -1, -1, 173, DIR_DIAGONAL_NONPLANAR },
     { -1,  1, -1, 173, DIR_DIAGONAL_NONPLANAR },
     { -1, -1, -1, 173, DIR_DIAGONAL_NONPLANAR },
+//26
 };
 
 static inline struct MapPos add_pos_adj(const struct MapPos& pos, int iadj)
@@ -174,8 +183,9 @@ static int compare_node_score(const void* _a, const void* _b)
     int d = b->score.f - a->score.f;
     // we do a tiebreaker here, to reduce the search space. if the point is closer,
     // according to our heuristic h, then it wins in the tie
-    if (d == 0) d = b->score.h - a->score.h;
-    return (d == 0) ? 0 : ((d < 0) ? -1 : 1);
+    if (d == 0)
+        d = b->score.h - a->score.h;
+    return d;
 }
 
 static ALWAYS_INLINE void sort_nodes(struct Node* nodes, size_t len)
@@ -192,14 +202,14 @@ static inline int add_node(struct Node& node, struct Node*& nodes,
     #endif
     if (len >= max_len)
     {
-        printf("Reallocing nodelist from %d to %d...", int(len), int(max_len));
+        PATH_PRINT("Reallocing nodelist from %d to %d...", int(len), int(max_len));
         struct Node* _nodes = (struct Node*)realloc(nodes, 2*max_len*sizeof(struct Node));
         IF_ASSERT(_nodes == NULL)
         {
-            printf("\n");
+            PATH_PRINT("\n");
             return -1;
         }
-        printf("done\n");
+        PATH_PRINT("done\n");
         max_len *= 2;
         nodes = _nodes;
     }
@@ -257,12 +267,13 @@ struct Passable2D
             return false;
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
             return true;
+        PATH_ASSERT(adj[iadj].dir == DIR_DIAGONAL_PLANAR);
         return (!t_map::isSolid(pos.x, cur.y, cur.z) &&
                 !t_map::isSolid(cur.x, pos.y, cur.z));
     }
 };
 
-struct Passable3D
+struct Passable3DAir
 {
     static bool is_passable(const struct MapPos& cur, int iadj)
     {
@@ -272,19 +283,49 @@ struct Passable3D
             return false;
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
             return true;
-        if ((t_map::isSolid(cur.x, cur.y, pos.z) ||
-             t_map::isSolid(pos.x, pos.y, cur.z)))
-            return false;
-        if (adj[iadj].dir == DIR_LATERAL_NONPLANAR)
-            return true;
-        if (t_map::isSolid(pos.x, cur.y, cur.z) ||
-            t_map::isSolid(cur.x, pos.y, cur.z))
-            return false;
+
+        bool lat_ok = (!t_map::isSolid(pos.x, cur.y, cur.z) &&
+                       !t_map::isSolid(cur.x, pos.y, cur.z));
         if (adj[iadj].dir == DIR_DIAGONAL_PLANAR)
+            return lat_ok;
+
+        bool zlat_ok = (!t_map::isSolid(cur.x, cur.y, pos.z) &&
+                        !t_map::isSolid(pos.x, pos.y, cur.z));
+        if (adj[iadj].dir == DIR_LATERAL_NONPLANAR)
+            return zlat_ok;
+
+        PATH_ASSERT(adj[iadj].dir == DIR_DIAGONAL_NONPLANAR);
+        return (lat_ok && zlat_ok &&
+                !t_map::isSolid(pos.x, cur.y, pos.z) &&
+                !t_map::isSolid(cur.x, pos.y, pos.z));
+    }
+};
+
+struct Passable3DSurface
+{
+    static bool is_passable(const struct MapPos& cur, int iadj)
+    {
+        struct MapPos pos = add_pos_adj(cur, iadj);
+        if (pos.z <= 0 || pos.z > t_map::map_dim.z) return false;
+        if (t_map::isSolid(pos))
+            return false;
+        if (adj[iadj].dir == DIR_LATERAL_PLANAR)
             return true;
-        return (!t_map::isSolid(pos.x, cur.y, pos.z) &&
-                !t_map::isSolid(cur.x, pos.y, pos.z) &&
-                !t_map::isSolid(pos.x, pos.y, cur.z));
+
+        bool lat_ok = (!t_map::isSolid(pos.x, cur.y, cur.z) &&
+                       !t_map::isSolid(cur.x, pos.y, cur.z));
+        if (adj[iadj].dir == DIR_DIAGONAL_PLANAR)
+            return lat_ok;
+
+        bool zlat_ok = (!t_map::isSolid(cur.x, cur.y, pos.z) &&
+                        !t_map::isSolid(pos.x, pos.y, cur.z));
+        if (adj[iadj].dir == DIR_LATERAL_NONPLANAR)
+            return zlat_ok;
+
+        PATH_ASSERT(adj[iadj].dir == DIR_DIAGONAL_NONPLANAR);
+        return (lat_ok && zlat_ok &&
+                !t_map::isSolid(pos.x, cur.y, pos.z) &&
+                !t_map::isSolid(cur.x, pos.y, pos.z));
     }
 };
 
@@ -336,12 +377,12 @@ struct MapPos* get_path(const struct MapPos& start,
     // hacks to prevent lockup until 3D is implemented
     if (t_map::isSolid(end))
     {
-        printf("Not pathing; endpoint is solid (unreachable)\n");
+        PATH_PRINT("Not pathing; endpoint is solid (unreachable)\n");
         return NULL;
     }
     if (manhattan_distance(start, end) > MAX_PATH_DISTANCE)
     {
-        printf("Not pathing, too far away\n");
+        PATH_PRINT("Not pathing, too far away\n");
         return NULL;
     }
 
@@ -355,12 +396,14 @@ struct MapPos* get_path(const struct MapPos& start,
     // hierarchical paths over 16x16 chunk nodes
     // terminating condition within loop (in case area is unreachable)
 
-    printf("Finding path from:\n");
-    printf("\t");
+    #if PATHFINDING_DEBUG
+    PATH_PRINT("Finding path from:\n");
+    PATH_PRINT("\t");
     print_pos(start);
-    printf("to\n");
-    printf("\t");
+    PATH_PRINT("to\n");
+    PATH_PRINT("\t");
     print_pos(end);
+    #endif
 
     size_t iopen = 0;
     size_t iclosed = 0;
@@ -409,19 +452,28 @@ inline struct MapPos* get_path_2d(const struct MapPos& start, const struct MapPo
     return get_path<Passable2D, 8>(start, end, len);
 }
 
-inline struct MapPos* get_path_3d(const struct MapPos& start, const struct MapPos& end, size_t& len)
+inline struct MapPos* get_path_3d_air(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {
-    return get_path<Passable3D, 26>(start, end, len);
+    return get_path<Passable3DAir, 26>(start, end, len);
+}
+
+inline struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len)
+{   // stick to surfaces
+    return get_path<Passable3DSurface, 18>(start, end, len);
 }
 
 inline struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {
-    return get_path_3d(start, end, len);
+    return get_path_3d_surface(start, end, len);
 }
 
 void print_path(const struct MapPos* path, size_t len)
 {
-    if (path == NULL) return;
+    if (path == NULL)
+    {
+        printf("Empty path\n");
+        return;
+    }
     for (int i=0; i<int(len); i++)
     {
         printf("%d: ", i);
@@ -446,5 +498,8 @@ void draw_path(const struct MapPos* path, size_t len)
     }
 }
 #endif
+
+#undef PATHFINDING_DEBUG
+#undef PATH_ASSERT
 
 }   // Path
