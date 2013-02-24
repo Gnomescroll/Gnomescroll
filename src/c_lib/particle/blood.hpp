@@ -26,7 +26,7 @@ class Blood: public ParticleMotion, public BillboardSprite
 namespace Particle
 {
 
-class Blood_list: public Simple_object_list<Blood, BLOOD_MAX>
+class Blood_list: public SimpleObjectList<Blood, BLOOD_MAX>
 {
     private:
 

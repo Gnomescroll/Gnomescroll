@@ -27,7 +27,6 @@ class RaytraceData
     // DEPRECATED
     void get_pre_collision_point(int pre_collision_point[3]);
 
-
     struct Vec3 collision_normal()
     {
         int sides[3];

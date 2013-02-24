@@ -39,7 +39,7 @@ class Shrapnel
 };
 
 const int SHRAPNEL_MAX = 4096;
-class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
+class Shrapnel_list: public SimpleObjectList<Shrapnel, SHRAPNEL_MAX>
 {
     private:
     const char* name()

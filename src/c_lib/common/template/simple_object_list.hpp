@@ -1,7 +1,7 @@
 #pragma once
 
 template <class ObjectState, size_t hard_cap>
-class Simple_object_list
+class SimpleObjectList
 {
     private:
         virtual const char* name() = 0;
@@ -19,24 +19,24 @@ class Simple_object_list
         printf("%s list instantiated at %p\n", this->name(), this);
     }
 
-    Simple_object_list(); //default constructor
-    virtual ~Simple_object_list(); //default deconstructor
+    SimpleObjectList(); //default constructor
+    virtual ~SimpleObjectList(); //default deconstructor
 };
 
 template <class ObjectState, size_t hard_cap>
-Simple_object_list<ObjectState, hard_cap>::Simple_object_list() :
+SimpleObjectList<ObjectState, hard_cap>::SimpleObjectList() :
     num(0)
 {
     for (size_t i=0; i<hard_cap; i++) this->a[i].id = i;
 }
 
 template <class ObjectState, size_t hard_cap>
-Simple_object_list<ObjectState, hard_cap>::~Simple_object_list()
+SimpleObjectList<ObjectState, hard_cap>::~SimpleObjectList()
 {
 }
 
 template <class ObjectState, size_t hard_cap>
-inline ObjectState* Simple_object_list<ObjectState, hard_cap>::create()
+inline ObjectState* SimpleObjectList<ObjectState, hard_cap>::create()
 {
     if (this->num >= hard_cap)
     {
@@ -50,7 +50,7 @@ inline ObjectState* Simple_object_list<ObjectState, hard_cap>::create()
 
 
 template <class ObjectState, size_t hard_cap>
-inline void Simple_object_list<ObjectState, hard_cap>::destroy(int index)
+inline void SimpleObjectList<ObjectState, hard_cap>::destroy(int index)
 {
     GS_ASSERT(this->num > 0);
     size_t uindex = index;

@@ -314,18 +314,18 @@ struct Passable3DSurface
 
         bool lat_ok = (!t_map::isSolid(pos.x, cur.y, cur.z) &&
                        !t_map::isSolid(cur.x, pos.y, cur.z));
-        if (adj[iadj].dir == DIR_DIAGONAL_PLANAR)
+        //if (adj[iadj].dir == DIR_DIAGONAL_PLANAR)
             return lat_ok;
 
-        bool zlat_ok = (!t_map::isSolid(cur.x, cur.y, pos.z) &&
-                        !t_map::isSolid(pos.x, pos.y, cur.z));
-        if (adj[iadj].dir == DIR_LATERAL_NONPLANAR)
-            return zlat_ok;
+        // only allow up/down in z, no diagonals for z
+        // position must always be on ground except:
+            // when going up a wall, up to 1 block past the wall height
+            // when going off a ledge
+            // this means we need to know the direction of the wall we're latched to
 
-        PATH_ASSERT(adj[iadj].dir == DIR_DIAGONAL_NONPLANAR);
-        return (lat_ok && zlat_ok &&
-                !t_map::isSolid(pos.x, cur.y, pos.z) &&
-                !t_map::isSolid(cur.x, pos.y, pos.z));
+            // QUESTION ?? Ceilings allowed?
+                // Yes - this routine would be for surface huggers
+                // Jumpers will use a different routine
     }
 };
 
@@ -459,7 +459,7 @@ inline struct MapPos* get_path_3d_air(const struct MapPos& start, const struct M
 
 inline struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {   // stick to surfaces
-    return get_path<Passable3DSurface, 18>(start, end, len);
+    return get_path<Passable3DSurface, 10>(start, end, len);
 }
 
 inline struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, size_t& len)
