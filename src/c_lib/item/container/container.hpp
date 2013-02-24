@@ -672,7 +672,7 @@ ItemContainerInterface* new_equipment(ItemContainerType type, ItemContainerID id
 
 /* ObjectList */
 
-class ItemContainerList: public MultiObject_list<ItemContainerInterface>
+class ItemContainerList: public MultiObjectList<ItemContainerInterface>
 {
     private:
 
@@ -693,12 +693,12 @@ class ItemContainerList: public MultiObject_list<ItemContainerInterface>
 
     ItemContainerInterface* create(int type, int id)
     {
-        return MultiObject_list<ItemContainerInterface>::create(type, id);
+        return MultiObjectList<ItemContainerInterface>::create(type, id);
     }
     #endif
 
     ItemContainerList(size_t capacity) :
-        MultiObject_list<ItemContainerInterface>(capacity, create_item_container_interface)
+        MultiObjectList<ItemContainerInterface>(capacity, create_item_container_interface)
     {}
 };
 

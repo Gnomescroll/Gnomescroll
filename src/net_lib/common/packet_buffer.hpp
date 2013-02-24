@@ -38,7 +38,7 @@ class NetMessageArray {
 };
 
 
-class NetMessageArray_pool: public Object_pool<NetMessageArray_pool, NetMessageArray, 64>  //set to 64, 2 for testing
+class NetMessageArray_pool: public ObjectPool<NetMessageArray_pool, NetMessageArray, 64>  //set to 64, 2 for testing
 {
     public:
         static char* name();
