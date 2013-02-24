@@ -6,6 +6,7 @@
 #include <entity/objects/fabs/constants.hpp>
 #include <physics/ray_trace/ray_trace.hpp>
 #include <t_mech/_interface.hpp>
+#include <physics/pathfinding.hpp>
 
 #if DC_CLIENT
 # include <hud/cube_selector.hpp>
