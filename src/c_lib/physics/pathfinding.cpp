@@ -462,11 +462,6 @@ struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapP
     return get_path<Passable3DSurface, 10>(start, end, len);
 }
 
-struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, size_t& len)
-{
-    return get_path_3d_surface(start, end, len);
-}
-
 void print_path(const struct MapPos* path, size_t len)
 {
     if (path == NULL)

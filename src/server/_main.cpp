@@ -174,7 +174,7 @@ void tick()
     int _t1 = _GET_MS_TIME();
 
     t_map::_skylight_update_core(); //update sun lighting
-    
+
     int _t2 = _GET_MS_TIME();
 
     t_map::_envlight_update_core(); //update env lighting
