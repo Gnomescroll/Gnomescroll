@@ -330,12 +330,12 @@ struct Passable3DSurface
 };
 
 template<class Passable, int adj_size>
-struct MapPos* get_path(const struct MapPos& start,
+MapPos* get_path(const struct MapPos& start,
                         const struct MapPos& end, size_t& len)
 {
-    IF_ASSERT(!is_boxed_position(start) || !is_boxed_position(end)) return NULL;
     len = 0;
-    // hacks to prevent lockup until 3D is implemented
+    IF_ASSERT(!is_boxed_position(start) || !is_boxed_position(end))
+        return NULL;
     if (t_map::isSolid(end))
     {
         PATH_PRINT("Not pathing; endpoint is solid (unreachable)\n");
