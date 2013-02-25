@@ -446,23 +446,23 @@ struct MapPos* get_path(const struct MapPos& start,
     return path;
 }
 
-inline struct MapPos* get_path_2d(const struct MapPos& start, const struct MapPos& end, size_t& len)
+struct MapPos* get_path_2d(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {
     if (start.z != end.z) return NULL;
     return get_path<Passable2D, 8>(start, end, len);
 }
 
-inline struct MapPos* get_path_3d_air(const struct MapPos& start, const struct MapPos& end, size_t& len)
+struct MapPos* get_path_3d_air(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {
     return get_path<Passable3DAir, 26>(start, end, len);
 }
 
-inline struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len)
+struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {   // stick to surfaces
     return get_path<Passable3DSurface, 10>(start, end, len);
 }
 
-inline struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, size_t& len)
+struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {
     return get_path_3d_surface(start, end, len);
 }
