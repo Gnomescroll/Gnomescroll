@@ -30,9 +30,6 @@ void init_world()
     using t_map::map_dim;
     srand(Options::seed);
 
-    int x, y;
-    (x, y);
-
     bool new_map = false;
     bool valgrind_map = false;
     bool corpusc_map = false;
