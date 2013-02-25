@@ -330,8 +330,8 @@ struct Passable3DSurface
 };
 
 template<class Passable, int adj_size>
-MapPos* get_path(const struct MapPos& start,
-                        const struct MapPos& end, size_t& len)
+MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
+                 size_t& len)
 {
     len = 0;
     IF_ASSERT(!is_boxed_position(start) || !is_boxed_position(end))
