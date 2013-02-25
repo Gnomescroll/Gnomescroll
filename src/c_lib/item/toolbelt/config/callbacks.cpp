@@ -7,7 +7,7 @@
 #include <physics/ray_trace/ray_trace.hpp>
 #include <t_mech/_interface.hpp>
 #include <physics/pathfinding.hpp>
-
+#include <t_map/_interface.hpp>
 #if DC_CLIENT
 # include <hud/cube_selector.hpp>
 #endif
