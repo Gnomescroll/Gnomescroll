@@ -330,45 +330,6 @@ struct Passable3DSurface
 };
 
 template<class Passable, int adj_size>
-struct NodeVisitor
-{
-    static inline bool visit(const struct Node& current, const struct MapPos& end,
-                             struct Node*& open, size_t& iopen, size_t& mopen,
-                             const struct Node* closed, size_t iclosed)
-    {
-        bool changed = false;
-        for (int i=0; i<adj_size; i++)
-        {   // iterate adjacent squares
-            struct Node node = current;
-            if (!Passable::is_passable(node.pos, i))
-                continue;
-            // update position, scores of node
-            node_update(node, end, i);
-            // if in closed list, skip
-            if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
-                continue;
-
-            int in_open = get_node_pos_index(node.pos, open, iopen);
-            if (in_open < 0)
-            {   // not found; add to open list
-                node.parent = current.id;
-                #if PATHFINDING_DEBUG
-                int ret = add_node(node, open, mopen, iopen);
-                PATH_ASSERT(ret >= 0);
-                #else
-                add_node(node, open, mopen, iopen);
-                #endif
-                changed = true;
-            }
-            else  // update if g is better
-            if (node_reassign(open[in_open], node.score.g, current.id))
-                changed = true;
-        }
-        return changed;
-    }
-};
-
-template<class Passable, int adj_size>
 struct MapPos* get_path(const struct MapPos& start,
                         const struct MapPos& end, size_t& len)
 {
@@ -435,9 +396,36 @@ struct MapPos* get_path(const struct MapPos& start,
         // if we found the target, break
         if (is_equal(current.pos, end))
             break;
-        // visit next possible nodes
-        needs_sort = NodeVisitor<Passable, adj_size>::visit(
-            current, end, open, iopen, mopen, closed, iclosed);
+
+        for (int i=0; i<adj_size; i++)
+        {
+            struct Node node = current;
+            if (!Passable::is_passable(node.pos, i))
+                continue;
+            // update position, scores of node
+            node_update(node, end, i);
+            // if in closed list, skip
+            if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
+                continue;
+
+            int in_open = get_node_pos_index(node.pos, open, iopen);
+            if (in_open < 0)
+            {   // not found; add to open list
+                node.parent = current.id;
+                #if PATHFINDING_DEBUG
+                int ret = add_node(node, open, mopen, iopen);
+                PATH_ASSERT(ret >= 0);
+                #else
+                add_node(node, open, mopen, iopen);
+                #endif
+                needs_sort = true;
+            }
+            else if (node_reassign(open[in_open], node.score.g, current.id))
+            {   // update if g is better
+                needs_sort = true;
+            }
+        }
+
     }
 
     struct MapPos* path = construct_path(open, iopen, closed, iclosed, len);
