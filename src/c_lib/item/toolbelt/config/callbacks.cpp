@@ -104,7 +104,7 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     end.z = ClientState::location_pointer.z;
     //end.z = start.z;    // for 2d
     size_t len = 0;
-    struct MapPos* path = Path::get_path(start, end, len);
+    struct MapPos* path = Path::get_path_3d_surface(start, end, len);
     Path::print_path(path, len);
     if (ClientState::path != NULL)
         free(ClientState::path);
@@ -130,7 +130,7 @@ void trigger_local_beta_location_pointer(ItemID item_id, ItemType item_type)
     if (path == NULL) return;
     if (path_len <= 1) return;
     size_t len = 0;
-    struct MapPos* _path = Path::get_path(path[0], path[path_len-1], len);
+    struct MapPos* _path = Path::get_path_3d_surface(path[0], path[path_len-1], len);
     if (_path == NULL) return;
     if (path != NULL)
         free(path);
