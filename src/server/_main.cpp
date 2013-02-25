@@ -30,6 +30,9 @@ void init_world()
     using t_map::map_dim;
     srand(Options::seed);
 
+    int x, y;
+    (x, y);
+
     bool new_map = false;
     bool valgrind_map = false;
     bool corpusc_map = false;
@@ -174,7 +177,7 @@ void tick()
     int _t1 = _GET_MS_TIME();
 
     t_map::_skylight_update_core(); //update sun lighting
-    
+
     int _t2 = _GET_MS_TIME();
 
     t_map::_envlight_update_core(); //update env lighting
