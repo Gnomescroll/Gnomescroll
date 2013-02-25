@@ -5,10 +5,10 @@
 namespace Path
 {
 
-inline struct MapPos* get_path_2d(const struct MapPos& start, const struct MapPos& end, size_t& len);
-inline struct MapPos* get_path_3d_air(const struct MapPos& start, const struct MapPos& end, size_t& len);
-inline struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len);
-inline struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, size_t& len);
+struct MapPos* get_path_2d(const struct MapPos& start, const struct MapPos& end, size_t& len);
+struct MapPos* get_path_3d_air(const struct MapPos& start, const struct MapPos& end, size_t& len);
+struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len);
+struct MapPos* get_path(const struct MapPos& start, const struct MapPos& end, size_t& len);
 
 void print_path(const struct MapPos* path, size_t len);
 

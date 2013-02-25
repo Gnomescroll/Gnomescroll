@@ -46,8 +46,6 @@ int get_envlight(int x,int y, int z);
 
 void set_skylight(int x, int y, int z, int value)
 {
-    //int env_light =  get_envlight(x,y,z);
-
     //GS_ASSERT(z >= 0 && z <= 128);
     //GS_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
 
@@ -58,6 +56,9 @@ void set_skylight(int x, int y, int z, int value)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
+
+    int env_light =  get_envlight(x,y,z);
+    
     //GS_ASSERT(x >= 0 && x < 512)
     //GS_ASSERT(y >= 0 && y < 512)
 
@@ -83,7 +84,7 @@ void set_skylight(int x, int y, int z, int value)
     main_map->set_update(x,y);
     #endif
 
-    //GS_ASSERT(env_light == get_envlight(x,y,z));
+    GS_ASSERT(env_light == get_envlight(x,y,z));
 }
 
 /*
@@ -274,8 +275,11 @@ void _skylight_update_core(int max_iterations)
         int li = (e.light & 0x0f);
         //GS_ASSERT(li == get_skylight(x,y,z));
 
-        IF_ASSERT(fast_cube_properties[e.block].solid)
+        if(fast_cube_properties[e.block].solid)
+        {
+            GS_ASSERT(false);
             continue;
+        }
 
         //if block is sunlight and block above is solid, then set to not-sunlight
 
@@ -414,12 +418,12 @@ int get_envlight(int x, int y, int z)
 void set_envlight(int x, int y, int z, int value)
 {
 
-    int sky_light =  get_skylight(x,y,z);
-
-
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+
+
+    int sky_light =  get_skylight(x,y,z);
 
 //#if DC_CLIENT
     //printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
