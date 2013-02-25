@@ -78,7 +78,7 @@ class Text
     void draw_character_rotated_centered(float theta);
 
     // assignment operator
-    // needed, because this object is tracked in a Simple_object_list
+    // needed, because this object is tracked in a SimpleObjectList
     // which does swaps on objects
     // and we hold a reference to dynamically allocated memory
     void operator=(Text& t)

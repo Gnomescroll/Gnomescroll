@@ -7,43 +7,46 @@
 static const int CHAR_BUFFER_SIZE=2048;
 
 //non-reference counted char buffer
-class Char_buffer {
-    private:
-    public:
-    //int reference_count;
-    Char_buffer* next;
-    char buffer[CHAR_BUFFER_SIZE];
-
-    OBJECT_POOL_OBJECT_MACRO
-
-    Char_buffer() {}
-};
-
-class Char_buffer_pool: public Object_pool<Char_buffer, 128>  //64, 2048 byte buffers
+class CharBuffer
 {
     public:
-    const char* name() { static const char x[] = "Generic Char_buffer_pool"; return x; }
+        //int reference_count;
+        CharBuffer* next;
+        char buffer[CHAR_BUFFER_SIZE];
+
+        OBJECT_POOL_OBJECT_MACRO
+
+    CharBuffer() {}
 };
 
-Char_buffer_pool char_buffer_pool;
+class CharBufferPool: public ObjectPool<CharBuffer, 128>  //64, 2048 byte buffers
+{
+    public:
+    const char* name()
+    {
+        return "Generic CharBufferPool";
+    }
+};
+
+CharBufferPool char_buffer_pool;
 
 /*
-Fifo_char_buffer
+FifoCharBuffer
 */
 
-class Fifo_char_buffer
+class FifoCharBuffer
 {
     public:
 
     int size;
 
-    Char_buffer* cb_read;
+    CharBuffer* cb_read;
     int read_index;
 
-    Char_buffer* cb_write;
+    CharBuffer* cb_write;
     int write_index;
 
-    Fifo_char_buffer()
+    FifoCharBuffer()
     {
         cb_read = char_buffer_pool.acquire();
         cb_read->next = NULL;
@@ -60,11 +63,11 @@ class Fifo_char_buffer
         //int _n = n; //debug
         int fb = CHAR_BUFFER_SIZE - write_index;
 
-        //printf("Fifo_char_buffer: write \n");
+        //printf("FifoCharBuffer: write \n");
 
         while (fb < n)
         {
-            //printf("Fifo_char_buffer: write %i of %i bytes and new buffer\n", fb, n);  //debug
+            //printf("FifoCharBuffer: write %i of %i bytes and new buffer\n", fb, n);  //debug
 
             memcpy(cb_write->buffer+write_index, buff, fb);
             buff += fb;
@@ -77,25 +80,25 @@ class Fifo_char_buffer
 
             fb = CHAR_BUFFER_SIZE - write_index;
         }
-        //printf("Fifo_char_buffer: write %i bytes\n", n); //debug
+        //printf("FifoCharBuffer: write %i bytes\n", n); //debug
 
         memcpy(cb_write->buffer+write_index, buff, n);
         size += n;
         write_index += n;
 
-        //printf("Fifo_char_buffer: write end, size= %i \n", size);
+        //printf("FifoCharBuffer: write end, size= %i \n", size);
     }
 
     void read(char* buff, int n)
     {
-        //printf("Fifo_char_buffer: read \n");
+        //printf("FifoCharBuffer: read \n");
         //DEBUG
         if (n > size)
         {
-          printf("Fifo_char_buffer: FATAL ERROR, n greater than size, n=%i, size=%i \n", n, size);
+          printf("FifoCharBuffer: FATAL ERROR, n greater than size, n=%i, size=%i \n", n, size);
           printf("segfault= %li \n", (long)((int*)NULL));
         } //debug
-        //if (n == size) printf("Fifo_char_buffer: full read of buffer, n=%i, size=%i \n", n, size); //debug
+        //if (n == size) printf("FifoCharBuffer: full read of buffer, n=%i, size=%i \n", n, size); //debug
 
         int rb = CHAR_BUFFER_SIZE - read_index;
 
@@ -106,7 +109,7 @@ class Fifo_char_buffer
             n -= rb;
             size -= rb;
 
-            Char_buffer* tmp = cb_read;
+            CharBuffer* tmp = cb_read;
             cb_read = cb_read->next;
             char_buffer_pool.retire(tmp);
 
@@ -119,7 +122,7 @@ class Fifo_char_buffer
         size -= n;
         read_index += n;
 
-        //printf("Fifo_char_buffer: read finished \n");
+        //printf("FifoCharBuffer: read finished \n");
     }
 };
 
@@ -143,13 +146,13 @@ class Char_buffer_ref {
     private:
     public:
     int reference_count;
-    Char_buffer* next;
+    CharBuffer* next;
     char buffer[CHAR_BUFFER_REF_SIZE];
 
-    Char_buffer() {}
+    CharBuffer() {}
 };
 
-class Char_buffer: public Object_pool<Char_buffer_ref, 32>  //64, 2048 byte buffers
+class CharBuffer: public ObjectPool<Char_buffer_ref, 32>  //64, 2048 byte buffers
 {
     public:
     char* name() { static char x[] = "Generic Char_buffer_ref_pool"; return x; }

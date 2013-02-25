@@ -15,13 +15,16 @@ class RaytraceData
         float interval; // % travelled
         int collision_point[3];
 
-    RaytraceData() : side(0), interval(0.0f)
+    RaytraceData() :
+        side(0), interval(0.0f)
     {
         memset(this->collision_point, 0, sizeof(this->collision_point));
     }
 
     inline CubeType get_cube_type();
     inline void set_collision_point(int x, int y, int z);
+    void get_pre_collision_point(struct MapPos& pos);
+    // DEPRECATED
     void get_pre_collision_point(int pre_collision_point[3]);
 
     struct Vec3 collision_normal()
@@ -40,5 +43,13 @@ class RaytraceData
 // returns true if collided with any block
 bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* data);
 bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length, class RaytraceData* data);
-bool raytrace_terrain(struct Vec3 start, struct Vec3 end) { return raytrace_terrain(start, end, NULL); }
-bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length)  { return raytrace_terrain(start, direction, length, NULL); }
+
+bool raytrace_terrain(struct Vec3 start, struct Vec3 end)
+{
+    return raytrace_terrain(start, end, NULL);
+}
+
+bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length)
+{
+    return raytrace_terrain(start, direction, length, NULL);
+}

@@ -36,8 +36,8 @@ void print_trace(int frame_start)
     char** strings = backtrace_symbols(array, size);
     if (size < PRINT_TRACE_STACK_SIZE && size > 2)
         size -= 2; // ignore main and __libc_start_main
-    size_t len = 64;
-    char* demangled_name = (char*)malloc(len * sizeof(char));
+    size_t len = 64 * sizeof(char);
+    char* demangled_name = (char*)malloc(len);
     int status = 0;
     printf("----------------------------\n");
     for (int i = frame_start; i < size; i++)
@@ -57,13 +57,19 @@ void print_trace(int frame_start)
             if (end != NULL)
                 end[0] = '\0';
         }
-        char* name = abi::__cxa_demangle(s, demangled_name, &len, &status);
+        size_t _len = len;  // the addr passed to demangle is r/w
+        char* name = abi::__cxa_demangle(s, demangled_name, &_len, &status);
         if (name != NULL)
+        {
+            demangled_name = name;
             s = name;
+        }
         printf("%d: %s", i-frame_start, s);
         if (addr != NULL)
             printf(" %s", addr);
         printf("\n");
+        if (_len > len)
+            len = _len;
     }
     free(demangled_name);
     free(strings);

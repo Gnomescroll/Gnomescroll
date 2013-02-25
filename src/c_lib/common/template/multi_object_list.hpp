@@ -3,7 +3,7 @@
 #include <common/macros.hpp>
 
 /*
- * Entities managed by MultiObject_list must support the minimum interface:
+ * Entities managed by MultiObjectList must support the minimum interface:
  *
  * void draw();
  * void client_tick();
@@ -16,7 +16,7 @@
 #define OBJECT_LIST_DEBUG 0
 
 template <class Object_interface>
-class MultiObject_list
+class MultiObjectList
 {
     private:
     virtual const char* name() = 0;
@@ -58,12 +58,12 @@ class MultiObject_list
     }
 
     // initialize with pointer to creator
-    MultiObject_list(size_t capacity, Object_interface* (*create_interface)(int, int)); //default constructor
-    virtual ~MultiObject_list(); //default deconstructor
+    MultiObjectList(size_t capacity, Object_interface* (*create_interface)(int, int)); //default constructor
+    virtual ~MultiObjectList(); //default deconstructor
 };
 
 template <class Object_interface>
-MultiObject_list<Object_interface>::MultiObject_list(size_t capacity, Object_interface* (*create_interface_fn)(int, int)) :
+MultiObjectList<Object_interface>::MultiObjectList(size_t capacity, Object_interface* (*create_interface_fn)(int, int)) :
     id_c(0), n_max(capacity), num(0), create_interface(create_interface_fn)
 {
     this->a = (Object_interface**)calloc(this->n_max, sizeof(Object_interface*));
@@ -71,7 +71,7 @@ MultiObject_list<Object_interface>::MultiObject_list(size_t capacity, Object_int
 }
 
 template <class Object_interface>
-MultiObject_list<Object_interface>::~MultiObject_list()
+MultiObjectList<Object_interface>::~MultiObjectList()
 {
     if (a != NULL)
         for (size_t i=0; i<this->n_max; i++)
@@ -80,13 +80,13 @@ MultiObject_list<Object_interface>::~MultiObject_list()
 }
 
 template <class Object_interface>
-void MultiObject_list<Object_interface>::where()
+void MultiObjectList<Object_interface>::where()
 {
     printf("%s_list pointer is %p\n", name(), this);
 }
 
 template <class Object_interface>
-Object_interface* MultiObject_list<Object_interface>::get(int id)
+Object_interface* MultiObjectList<Object_interface>::get(int id)
 {
     if (!this->id_in_range(id)) return NULL;
     if (a[id] == NULL) return NULL;
@@ -94,7 +94,7 @@ Object_interface* MultiObject_list<Object_interface>::get(int id)
 }
 
 template <class Object_interface>
-void MultiObject_list<Object_interface>::print_members()
+void MultiObjectList<Object_interface>::print_members()
 {
     printf("%s members:\n", name());
     for (int i=0; i<n_max; i++)
@@ -105,7 +105,7 @@ void MultiObject_list<Object_interface>::print_members()
 }
 
 template <class Object_interface>
-int MultiObject_list<Object_interface>::get_free_id()
+int MultiObjectList<Object_interface>::get_free_id()
 {
     size_t i = 0;
     int id = 0;
@@ -125,7 +125,7 @@ int MultiObject_list<Object_interface>::get_free_id()
 }
 
 template <class Object_interface>
-Object_interface* MultiObject_list<Object_interface>::create(int type)
+Object_interface* MultiObjectList<Object_interface>::create(int type)
 {
     size_t i = 0;
     int id = 0;
@@ -148,7 +148,7 @@ Object_interface* MultiObject_list<Object_interface>::create(int type)
 }
 
 template <class Object_interface>
-Object_interface* MultiObject_list<Object_interface>::create(int type, int id)
+Object_interface* MultiObjectList<Object_interface>::create(int type, int id)
 {
     IF_ASSERT(!this->id_in_range(id)) return NULL;
     if (a[id] == NULL)
@@ -166,14 +166,14 @@ Object_interface* MultiObject_list<Object_interface>::create(int type, int id)
 }
 
 template <class Object_interface>
-bool MultiObject_list<Object_interface>::contains(int id)
+bool MultiObjectList<Object_interface>::contains(int id)
 {
     IF_ASSERT(!this->id_in_range(id)) return false;
     return (a[id] != NULL);
 }
 
 template <class Object_interface>
-void MultiObject_list<Object_interface>::destroy(int id)
+void MultiObjectList<Object_interface>::destroy(int id)
 {
     IF_ASSERT(!this->id_in_range(id)) return;
     IF_ASSERT(a[id] == NULL)
@@ -188,7 +188,7 @@ void MultiObject_list<Object_interface>::destroy(int id)
 }
 
 template <class Object_interface>
-bool MultiObject_list<Object_interface>::full()
+bool MultiObjectList<Object_interface>::full()
 {
     GS_ASSERT(this->num <= this->n_max);
     return (this->num >= this->n_max);

@@ -143,7 +143,7 @@ namespace Animations
 
 const int MINING_LASER_MAX = 1024;
 
-class MiningLaserEffectList: public Simple_object_list<MiningLaser, MINING_LASER_MAX>
+class MiningLaserEffectList: public SimpleObjectList<MiningLaser, MINING_LASER_MAX>
 {
     private:
 

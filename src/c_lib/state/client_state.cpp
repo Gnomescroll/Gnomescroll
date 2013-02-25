@@ -135,9 +135,22 @@ void set_location_pointer()
     location_pointer = translate_position(loc);
     location_pointer_set = true;
 
-    printf("Locator: %2.2f %2.2f %2.2f \n", loc.x, loc.y, loc.z);
+    printf("Locator: ");
+    vec3_print(loc);
 
     t_mech::tick(loc.x, loc.y, loc.z+0.2);
+}
+
+void set_location_pointer_open_block()
+{
+    location_pointer_set = false;
+    struct MapPos pos;
+    float max_len = float(t_map::map_dim.x) / 2.0f;
+    location_pointer_set = player_agent.nearest_open_block(max_len, pos);
+    if (!location_pointer_set) return;
+    printf("Locator (open block): ");
+    print_pos(pos);
+    location_pointer = vec3_init(pos);
 }
 
 }   // ClientState

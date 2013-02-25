@@ -47,7 +47,7 @@ class BillboardTextHud: public TextParticle
 namespace Particle
 {
 
-class BillboardTextHud_list: public Simple_object_list<BillboardTextHud, BILLBOARD_TEXT_HUD_MAX>
+class BillboardTextHud_list: public SimpleObjectList<BillboardTextHud, BILLBOARD_TEXT_HUD_MAX>
 {
     private:
         const char* name() { return "BillboardTextHud"; }

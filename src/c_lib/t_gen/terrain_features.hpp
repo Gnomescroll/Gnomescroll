@@ -283,15 +283,13 @@ void add_shrooms(float* noise)
 void carve_ray(float x_, float y_, float z_, int tiny_angle, int distance)
 {
     GS_ASSERT(tiny_angle >= 0 && tiny_angle < NUM_LOOKUP_ANGLES);
+    
     for (int i = 0; i < distance; i++)
     {
-        //for (int x = port; x < starboard + 1; x++)
-        //{
-            t_map::set_fast(
-                (int)(x_ + (i * sin_lookup_table[tiny_angle])),
-                (int)(y_ + (i * cos_lookup_table[tiny_angle])),
-                (int)z_, EMPTY_CUBE);
-        //}
+        t_map::set_fast(
+            (int)(x_ + (i * sin_lookup_table[tiny_angle])),
+            (int)(y_ + (i * cos_lookup_table[tiny_angle])),
+            (int)z_, EMPTY_CUBE);
     }
 }
 
@@ -301,7 +299,7 @@ void carve_angled_gorge_slice(float x_, float y_, float z_, int tiny_angle)
     int max_ups_per_width = 1; // iterations upwards
     int ray_length = 0;
 
-    for (int z = z_; z<t_map::map_dim.z; z++)
+    for (int z = z_; z < t_map::map_dim.z; z++)
     {
         int ta = (tiny_angle + 8) % NUM_LOOKUP_ANGLES;
         carve_ray(x_, y_, z, ta, ray_length);
@@ -325,33 +323,72 @@ void add_gorges(float* noise, int num_gorges, int length_)
     using t_map::map_dim;
     printf("\tgorges\n");
 
+    // make a 2D map of the topsoil heights
+    int* peaks = (int*)malloc(map_dim.x * map_dim.y * sizeof(int)); 
+    for (int i=0; i < map_dim.x; i++) 
+    for (int j=0; j < map_dim.y; j++) 
+    { 
+        int k = map_dim.x * j + i; 
+        peaks[k] = t_map::get_highest_solid_block(i, j); 
+    }
+    
+    // carve all gorges
     for (int i = 0; i < num_gorges; i++)
     {
         int ox = randrange(0, map_dim.x - 1);
         int oy = randrange(0, map_dim.y - 1);
 
-        int rand_idx = randrange(0, map_dim.x - 1);
+        int steer_angle_idx = randrange(0, map_dim.x - 1);
+        int height_idx = randrange(0, map_dim.x - 1);
 
         float fx = 0;
         float fy = 0;
         float rand_angle = DOUBLE_PI / NUM_LOOKUP_ANGLES * randrange(0, NUM_LOOKUP_ANGLES - 1);
         float curr_angle;
+        float curr_perlin_hei; // height
 
-        int hei_from_topside = 1;
-        int len_remain = length_ * 2; // length remaining before we're done with this gorge
+        // find the limits of spectrum for this 1D (out of a 2D map) strip
+        float farthest_from_zero = 0;
+        for (int i = 0; i < map_dim.x; i++)
+        {
+            float curr = abs(noise[height_idx + i * map_dim.x]);
+            //printf("noise[height_idx + i * map_dim.x]: %.1f\n", noise[height_idx + i * map_dim.x]);
+            //printf("curr: %.1f\n", curr);
+            if (farthest_from_zero < curr)
+                farthest_from_zero = curr;
+        }
+
+        float tot_hei_of_poss = farthest_from_zero * 2; // total height of possibility space for random perlin strip
+
+        float tri_shaped_hei = 1; // for gradualizing endpoints easily.  maximum value in the middle, tapering to 1 at the endpoints
+        int len_remain = length_ * 2; // length remaining before we're done with this gorge (* 2 cuz we travel in half cube increments
         while (len_remain > 0)
         {
             // get full res angle
-            curr_angle = rand_angle + noise[rand_idx + len_remain * map_dim.x];
+            curr_angle = rand_angle + noise[steer_angle_idx + len_remain * map_dim.x];
             // keep angle in a range that maps to an array
 			while (curr_angle < 0)          curr_angle += DOUBLE_PI;
             while (curr_angle >= DOUBLE_PI) curr_angle -= DOUBLE_PI;
 
-            // get a valid z
-            int z = t_map::get_highest_solid_block(ox + fx, oy + fy) - hei_from_topside;
-            if (z < 6) // keep from getting close to bedrock
-                z = 6;
-
+            // get a valid possibility space
+            int x = ox + (int)fx;   x %= map_dim.x;    while (x < 0) x += map_dim.x;
+            int y = oy + (int)fy;   y %= map_dim.y;    while (y < 0) y += map_dim.y;
+            float highest = peaks[map_dim.x * y + x];
+            float lowest = highest - tri_shaped_hei;
+            //if (i == 0)     printf("_____________________________________________________\n", highest);
+            //if (i == 0)     printf("tri_shaped_hei: %.1f\n", tri_shaped_hei);
+            if (lowest < 6) // keep from getting too close to bedrock
+                lowest = 6;
+            float edge_to_center_dist = (highest - lowest) / 2; // from center of possibility space 
+            //// use perlin to map to that space
+            curr_perlin_hei = noise[height_idx + len_remain * map_dim.x];
+            if (curr_perlin_hei < 0)
+                curr_perlin_hei /= -farthest_from_zero; // turn it into a 0.0 - 1.0 range
+            else
+                curr_perlin_hei /= farthest_from_zero; // turn it into a 0.0 - 1.0 range
+            curr_perlin_hei *= edge_to_center_dist; // apply it to possibility space
+            float fz = lowest + edge_to_center_dist + curr_perlin_hei;
+            
             // get tiny/quantized angle for lookup table index
             int quant_angle = 0;
             while (curr_angle > 0.0f)
@@ -369,30 +406,39 @@ void add_gorges(float* noise, int num_gorges, int length_)
 				
 				while (n > o)
 				{
-		            carve_angled_gorge_slice(ox + fx, oy + fy, z, n);
+		            carve_angled_gorge_slice(ox + fx, oy + fy, fz, n);
 					n--;
 				}
 				while (o > n)
 				{
-		            carve_angled_gorge_slice(ox + fx, oy + fy, z, n);
+		            carve_angled_gorge_slice(ox + fx, oy + fy, fz, n);
 					n++;
 				}
 			}
 
-            carve_angled_gorge_slice(ox + fx, oy + fy, z, quant_angle);
+            carve_angled_gorge_slice(ox + fx, oy + fy, fz, quant_angle);
 			
 			// move half unit forward
             fx += sin_lookup_table[quant_angle] / 2;
             fy += cos_lookup_table[quant_angle] / 2;
 
+            carve_angled_gorge_slice(ox + fx, oy + fy, fz, quant_angle);
+			
             if (len_remain < length_) // half to match the * 2 of len_remain
-                hei_from_topside--;
+                tri_shaped_hei -= 0.45;
             else
-                hei_from_topside++;
+                tri_shaped_hei += 0.45;
+
+            //if (i == 0) printf("tri_shaped_hei: %f\n", tri_shaped_hei);
 
             len_remain--;
+            old_quant_angle = quant_angle;
         }
+
+        //old_quant_angle = ;  FIXME?  shouldn't start with an angle that was last used in previous gorge?
     }
+
+    free(peaks);
 }
 
 void add_terrain_features()
@@ -440,7 +486,7 @@ void add_terrain_features()
     IF_ASSERT(noise == NULL) return;
 
     // add the features
-    add_gorges(noise, 50, 70);
+    add_gorges(noise, 45, 170);
     add_trees(noise);
     add_shrooms(noise);
 

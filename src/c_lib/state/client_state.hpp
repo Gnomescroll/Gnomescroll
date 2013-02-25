@@ -49,5 +49,6 @@ void update_camera();
 void send_camera_state();
 
 void set_location_pointer();
+void set_location_pointer_open_block();
 
 }   // ClientState

@@ -436,15 +436,14 @@ int PlayerAgent::facing_container()
     return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
 }
 
-bool PlayerAgent::nearest_open_block(const float max_dist, int open_point[3])
+bool PlayerAgent::nearest_open_block(const float max_dist, struct MapPos& pos)
 {
     if (agent_camera == NULL) return NULL;
     struct Vec3 f = agent_camera->forward_vector();
-
     class RaytraceData data;
     bool collided = raytrace_terrain(agent_camera->get_position(), f, max_dist, &data);
     if (!collided) return false;
-    data.get_pre_collision_point(open_point);
+    data.get_pre_collision_point(pos);
     return collided;
 }
 

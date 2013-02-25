@@ -13,7 +13,7 @@
 #endif
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-class Object_pool
+class ObjectPool
 {
     private:
         int batch_num;
@@ -36,19 +36,19 @@ class Object_pool
 
     inline void retire(Entity* nmb) __attribute__((always_inline));
 
-    Object_pool();
-    ~Object_pool();
+    ObjectPool();
+    ~ObjectPool();
 };
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-Object_pool<Base, Entity, BUFFER_POOL_SIZE>::Object_pool()
+ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::ObjectPool()
 {
     //batch_num = 0;
     //first = NULL;
 }
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-Object_pool<Base, Entity, BUFFER_POOL_SIZE>::~Object_pool()
+ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::~ObjectPool()
 {
     /*
         Warning: batch_alloc() must be called at least once
@@ -59,7 +59,7 @@ Object_pool<Base, Entity, BUFFER_POOL_SIZE>::~Object_pool()
 
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
+void ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
 {
     static int inited = 0;
     if (inited == 0)
@@ -116,7 +116,7 @@ void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
 }
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-ALWAYS_INLINE Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
+ALWAYS_INLINE Entity* ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
 {
     #if OBJECT_POOL_DEBUG_BATCH
         Entity* tmp2 = (Entity*) malloc(sizeof(Entity));
@@ -144,7 +144,7 @@ ALWAYS_INLINE Entity* Object_pool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
 }
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
-ALWAYS_INLINE void Object_pool<Base, Entity, BUFFER_POOL_SIZE>::retire(Entity* nmb)
+ALWAYS_INLINE void ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::retire(Entity* nmb)
 {
     #if OBJECT_POOL_DEBUG_BATCH
         free(nmb);

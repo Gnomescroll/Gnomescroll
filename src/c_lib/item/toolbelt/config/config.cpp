@@ -257,6 +257,7 @@ static void register_item_type_callbacks()
     #if DC_CLIENT
     set_type("location_pointer");
     c.local_trigger = &trigger_local_location_pointer;
+    c.local_beta_trigger = &trigger_local_beta_location_pointer;
 
     set_type("small_charge_pack");
     c.local_trigger = &local_trigger_dummy;
