@@ -25,6 +25,8 @@ static const int va[3*6] =
     Skylight
 */
 
+int* skylight_array_debug;
+int* envlight_array_debug;
 
 int get_skylight(int x, int y, int z)
 {
@@ -73,6 +75,9 @@ void set_skylight(int x, int y, int z, int value)
     light = (light & 0xf0) | (value & 0x0f);
     mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
 
+
+
+    skylight_array_debug[128*512*z + 512*y + x] = value;
 
     #if DC_CLIENT
     main_map->set_update(x,y);
@@ -435,6 +440,9 @@ void set_envlight(int x, int y, int z, int value)
 #endif
 
     GS_ASSERT(sky_light == get_skylight(x,y,z));
+
+    envlight_array_debug[128*512*z + 512*y + x] = value;
+
 }
 
 /*
@@ -956,6 +964,17 @@ void init_lighting()
     _rolling_index_array = (int*) malloc(sizeof(int)*32*32);
     for(int i=0; i<32*32; i++)
         _rolling_index_array[i] = rand() % _rolling_lighting_prime;
+
+
+
+    skylight_array_debug = new int[512*512*128];
+    envlight_array_debug = new int[512*512*128];
+
+    for(int i=0; i<512*512*128; i++)
+    {
+        skylight_array_debug[i] = 0;
+        envlight_array_debug[i] = 0;
+    }
 }
 
 void teardown_lighting()
