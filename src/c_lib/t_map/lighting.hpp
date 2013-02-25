@@ -56,9 +56,8 @@ void set_skylight(int x, int y, int z, int value)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-
     int env_light =  get_envlight(x,y,z);
-    
+
     //GS_ASSERT(x >= 0 && x < 512)
     //GS_ASSERT(y >= 0 && y < 512)
 
@@ -72,13 +71,23 @@ void set_skylight(int x, int y, int z, int value)
         return;
     }
 
-    int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
-    light = (light & 0xf0) | (value & 0x0f);
-    mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light = light;
+    MapElement e = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ];
+    if(skylight_array_debug[128*512*z + 512*y + x]  != -1)
+    { 
+        int pvalue = skylight_array_debug[128*512*z + 512*y + x];
+        int cvalue = (e.light & 0x0f);
+        GS_ASSERT( pvalue == (e.light & cvalue) )
 
+        //printf("skylight error: %d %d %d, should be %d, is %d \n", x,y,z, pvalue, cvalue);
+    }
+
+    e.light = (e.light & 0xf0) | (value & 0x0f);    
+    mc->e[(z<<8)+((y&15)<<4)+(x&15)] = e;
+    GS_ASSERT( (e.light & 0x0f) == value);
 
 
     skylight_array_debug[128*512*z + 512*y + x] = value;
+
 
     #if DC_CLIENT
     main_map->set_update(x,y);
@@ -904,7 +913,7 @@ void init_update_sunlight0(int chunk_i, int chunk_j)
             set_skylight(x,y,k, 15);
             //_push_skylight_update(x,y,k);
         }
-        if (k < 0) return;
+        if (k < 0) continue;
         // black out everything below
 
         for (; k>=0; k--)
@@ -913,7 +922,7 @@ void init_update_sunlight0(int chunk_i, int chunk_j)
             //e = get_element(x,y,k);
             if (e.block != 0)
                 continue;
-            set_skylight(x,y,k, 0);
+            //set_skylight(x,y,k, 0);
             //_push_skylight_update(x,y,k);
         }
     }
@@ -956,36 +965,6 @@ void init_update_sunlight1(int chunk_i, int chunk_j)
             _push_skylight_update(x,y,k);
         }
     }
-}
-
-void init_lighting()
-{
-    GS_ASSERT(env_light_array == NULL);
-    GS_ASSERT(sky_light_array == NULL);
-    env_light_array = (struct LightUpdateElement*) malloc(env_light_array_max* sizeof(struct LightUpdateElement));
-    sky_light_array = (struct LightUpdateElement*) malloc(sky_light_array_max* sizeof(struct LightUpdateElement));
-
-    _rolling_index_array = (int*) malloc(sizeof(int)*32*32);
-    for(int i=0; i<32*32; i++)
-        _rolling_index_array[i] = rand() % _rolling_lighting_prime;
-
-
-
-    skylight_array_debug = new int[512*512*128];
-    envlight_array_debug = new int[512*512*128];
-
-    for(int i=0; i<512*512*128; i++)
-    {
-        skylight_array_debug[i] = 0;
-        envlight_array_debug[i] = 0;
-    }
-}
-
-void teardown_lighting()
-{
-    free(env_light_array);
-    free(sky_light_array);
-    free(_rolling_index_array);
 }
 
 /*
@@ -1060,12 +1039,42 @@ void lighting_rolling_update(int max_updates)
         if (main_map->chunk[i + MAP_CHUNK_XDIM*j] == NULL)
             continue;
         _lighting_rolling_update(i,j, _max_updates);
-
-
-
     }
-
 }
 
+
+/*
+    Init and Teardown
+*/
+
+void init_lighting()
+{
+    GS_ASSERT(env_light_array == NULL);
+    GS_ASSERT(sky_light_array == NULL);
+    env_light_array = (struct LightUpdateElement*) malloc(env_light_array_max* sizeof(struct LightUpdateElement));
+    sky_light_array = (struct LightUpdateElement*) malloc(sky_light_array_max* sizeof(struct LightUpdateElement));
+
+    _rolling_index_array = (int*) malloc(sizeof(int)*32*32);
+    for(int i=0; i<32*32; i++)
+        _rolling_index_array[i] = rand() % _rolling_lighting_prime;
+
+
+
+    skylight_array_debug = new int[512*512*128];
+    envlight_array_debug = new int[512*512*128];
+
+    for(int i=0; i<512*512*128; i++)
+    {
+        skylight_array_debug[i] = -1;
+        envlight_array_debug[i] = -1;
+    }
+}
+
+void teardown_lighting()
+{
+    free(env_light_array);
+    free(sky_light_array);
+    free(_rolling_index_array);
+}
 
 }   // t_map
