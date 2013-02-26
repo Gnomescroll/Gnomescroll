@@ -119,30 +119,27 @@ class LightTextureGenerator
         struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
         struct Vec3 a = vec3_init(1.6, 0.4, 0.4);   //gamma danger twist
 
-        if(lightv < 0.5)
+        const float twist_start = 0.5; //light level when twist starts
+        if(lightv < twist_start)
             return b;
-        lightv -= 0.5;
-        lightv /= 0.5;
+        lightv -= twist_start;
+        lightv /= (1.0 - twist_start);
 
+        if(lightv <= 0.0 - 0.001 || lightv >= 1.0 + 0.001)
+            printf("ERROR: lightv= %f \n", lightv);
 
-        if (i<=11)
+        if (i<=10)
             return b;
+        if (i==11)
+            return vec3_mix(b, vec3_mix(b,a,0.2), lightv);
         if (i==12)
-            return vec3_mix(a,b,0.4);
-            //return vec3_add(vec3_scalar_mult(a, 0.4),  vec3_scalar_mult(b, 0.6));
-
+            return vec3_mix(b, vec3_mix(b,a,0.4), lightv);
         if (i==13)
-            return vec3_mix(a,b,0.6);
-
-            //return vec3_add(vec3_scalar_mult(a, 0.6),  vec3_scalar_mult(b, 0.4));
+            return vec3_mix(b, vec3_mix(b,a,0.6), lightv);
         if (i==14)
-            return vec3_mix(a,b,0.8);
-
-            //return vec3_add(vec3_scalar_mult(a, 0.8),  vec3_scalar_mult(b, 0.2));
+            return vec3_mix(b, vec3_mix(b,a,0.8), lightv);
         if (i==15)
-            return vec3_mix(a,b,1.0);
-            //return vec3_add(vec3_scalar_mult(a, 1.0),  vec3_scalar_mult(b, 0.0));
-
+            return vec3_mix(b, vec3_mix(b,a,1.0), lightv);
         return b;
     }
 
@@ -271,7 +268,7 @@ class LightTextureGenerator
     {
 
         float lightv = calc_lightv(ttime);
-        //printf("ttime= %f lightv = %f \n", ttime, lightv);
+        printf("ttime= %f lightv = %f \n", ttime, lightv);
 
         struct Vec3 d2 = vec3_init(0.0, 1.0, 1.0);
 
@@ -284,7 +281,7 @@ class LightTextureGenerator
         {
             float factor = falloff(15-i, 0.75);
 
-            L1[i] = vec3_scalar_mult(get_twist(i), factor); //add in gamma twist latter
+            L1[i] = vec3_scalar_mult(get_twist2(i, lightv), factor); //add in gamma twist latter
         }
 
         for (int i=0; i<16; i++)
