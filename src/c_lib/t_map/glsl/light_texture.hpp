@@ -225,10 +225,10 @@ class LightTextureGenerator
         GS_ASSERT(ttime >= 0.0f && ttime <= 1.0f);
 
         //sunrise is start of day
-        const float sunrise_length = 0.15;
-        const float day_length = 0.35;
-        const float sunset_length = 0.15;
-        const float night_length = 0.35;
+        const float sunrise_length = 0.20;
+        const float day_length = 0.30;
+        const float sunset_length = 0.25;
+        const float night_length = 0.25;
 
         float lightv = 0.0f; //how much day and how much night?
 
