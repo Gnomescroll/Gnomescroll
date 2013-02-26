@@ -64,7 +64,7 @@ const float AGENT_JUMP_POWER = 0.25f;
 const float AGENT_BOX_RADIUS = 0.30f;
 
 const int HUNGER_INCREASE_RATE = ONE_SECOND * 45;   //hunger bar is length 10
-const int HUNGER_REGEN_THRESHOLD = 2;
+const int HUNGER_REGEN_THRESHOLD = 3;
 const int HUNGER_REGEN_RATE = ONE_SECOND * 4;
 const int HUNGER_REGEN_AMOUNT = 1;
 const int HUNGER_DAMAGE_THRESHOLD = 8;
