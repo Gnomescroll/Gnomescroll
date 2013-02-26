@@ -452,14 +452,14 @@ int get_envlight(int x, int y, int z)
 
 void set_envlight(int x, int y, int z, int value)
 {
-    GS_ASSERT(value < 16 && value >= 0);
+
 
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
 
-    int sky_light =  get_skylight(x,y,z);
+    //int sky_light =  get_skylight(x,y,z);
 
 //#if DC_CLIENT
     //printf("set_envlight: %d %d %d, value= %d \n", x,y,z,value);
@@ -472,12 +472,19 @@ void set_envlight(int x, int y, int z, int value)
 
     MapElement e = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
+#if !PRODUCTION
+    GS_ASSERT(value < 16 && value >= 0);
+    GS_ASSERT(fast_cube_properties[e.block].solid == false);
+#endif
 
+/*
     if(e.block != 0)
     {
         printf("setting block type !0 env lighting to: %d \n", value);
     }
+*/
 
+/*
     if(envlight_array_debug[128*512*z + 512*y + x]  != -1)
     { 
         int pvalue = envlight_array_debug[128*512*z + 512*y + x];
@@ -486,8 +493,7 @@ void set_envlight(int x, int y, int z, int value)
 
         //printf("skylight error: %d %d %d, should be %d, is %d \n", x,y,z, pvalue, cvalue);
     }
-
-    GS_ASSERT(fast_cube_properties[e.block].solid == false);
+*/
 
     //int light = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light;
     e.light = (e.light & 0x0f) | (value << 4); // clear upper nib, set upper nib
@@ -497,9 +503,8 @@ void set_envlight(int x, int y, int z, int value)
     main_map->set_update(x,y);
 #endif
 
-    GS_ASSERT(sky_light == get_skylight(x,y,z));
-
-    envlight_array_debug[128*512*z + 512*y + x] = value;
+    //GS_ASSERT(sky_light == get_skylight(x,y,z));
+    //envlight_array_debug[128*512*z + 512*y + x] = value;
 
 }
 
