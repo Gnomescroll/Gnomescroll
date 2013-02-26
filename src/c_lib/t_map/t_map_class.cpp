@@ -437,7 +437,7 @@ void Terrain_map::set_block_fast(int x, int y, int z, CubeType cube_type)
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 
-    struct MapElement element = {{{(unsigned char)cube_type, 0, fast_cube_attributes[cube_type].light_value,0}}};
+    struct MapElement element = {{{(unsigned char)cube_type, 0, (unsigned char)(fast_cube_attributes[cube_type].light_value << 4),0}}};
     set_element(x,y,z, element);
 }
 

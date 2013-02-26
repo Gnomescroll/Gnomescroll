@@ -142,8 +142,13 @@ int sky_light_array_num      = 0;
 
 int _skylight_update_condition(int x, int y, int z);
 
-static int condition_arr[8];
+#define LIGHT_CONDITION_COUNTER 0
 
+#if LIGHT_CONDITION_COUNTER
+    static int condition_arr[8];
+#endif
+
+OPTIMIZED
 void _push_skylight_update(int x, int y, int z)
 {
 
@@ -159,6 +164,7 @@ void _push_skylight_update(int x, int y, int z)
     if (mc == NULL)
         return;
 
+#if LIGHT_CONDITION_COUNTER
     int condition = _skylight_update_condition(x,y,z);
 
     condition_arr[condition]++;
@@ -166,13 +172,12 @@ void _push_skylight_update(int x, int y, int z)
     static int count = 0;
     count++;
 
-
     if(count % (1024*32) == 0)
     {
         for(int i=0; i<8; i++)
             printf("condition %d: count= %d \n", i, condition_arr[i]);
     }
-
+#endif
     //if(condition == 0)
     //    return;
     
@@ -561,6 +566,7 @@ void _envlight_update_core()
     _envlight_update_core(1000); //do 1000 iteratations maxs
 }
 
+OPTIMIZED
 void _envlight_update_core(int max_iterations)
 {
     if (env_light_array_index == 0)
@@ -935,7 +941,10 @@ void _lighting_rolling_update(int chunk_i, int chunk_j, int itr_count_max)
         struct MapElement e = get_element(x,y,z);
 
         if (fast_cube_properties[e.block].solid == false)
-            _push_skylight_update(x,y,z);
+        {
+            _push_skylight_update(x,y,z);       //use condition check first
+            _push_envlight_update(x,y,z);
+        }
     }
 
     _rolling_index_array[cindex] = index;
