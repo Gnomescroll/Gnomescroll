@@ -231,13 +231,11 @@ void Agent::set_angles(float theta, float phi)
 #if DC_SERVER
 void Agent::fell(float vz)
 {
-    static const float SAFE_HEIGHT = JETPACK_MAX_HEIGHT + 1;
-    static const float DEATH_HEIGHT = 48.0f;
     static const float max_health = get_base_attribute_int("max_health");
-    static const float FALL_DAMAGE_PER_METER = max_health/(DEATH_HEIGHT-SAFE_HEIGHT);
+    static const float FALL_DAMAGE_PER_METER = max_health/(FALL_DEATH_HEIGHT-FALL_SAFE_HEIGHT);
     static const float ig = -1.0f / (2.0f * AGENT_GRAVITY);
     float fall_distance = (vz*vz) * ig;
-    fall_distance -= SAFE_HEIGHT;
+    fall_distance -= FALL_SAFE_HEIGHT;
     float damage = roundf(FALL_DAMAGE_PER_METER * fall_distance);
     if (damage <= 0) return;
     this->status.apply_damage(damage, DEATH_FALL);

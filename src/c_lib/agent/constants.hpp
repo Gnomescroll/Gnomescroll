@@ -80,6 +80,17 @@ const int RESPAWN_TICKS = ONE_SECOND * 4;
 const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
 const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
 
+// physics constants
+const float tr = 1.0f / 10.0f;
+const float tr2 = tr*tr;
+const float AGENT_GRAVITY = -3.0f * tr2;
+const float JETPACK_VELOCITY = -AGENT_GRAVITY + tr2;
+const float JETPACK_MAX_VELOCITY = JETPACK_VELOCITY * 5.0f;
+const float JETPACK_MAX_HEIGHT = 8.0f;
+
+const float FALL_SAFE_HEIGHT = JETPACK_MAX_HEIGHT + 1;
+const float FALL_DEATH_HEIGHT = 48.0f;
+
 inline bool isValid(AgentID agent_id)
 {
     return (agent_id >= 0 && agent_id < MAX_AGENTS);

@@ -329,6 +329,16 @@ inline int get_nearest_surface_block(int x, int y, int z)
     return get_nearest_surface_block(x, y, z, 1);
 }
 
+inline int get_nearest_surface_block(const struct MapPos& pos)
+{
+    return get_nearest_surface_block(pos.x, pos.y, pos.z);
+}
+
+inline int get_nearest_surface_block(const struct MapPos& pos, int n)
+{
+    return get_nearest_surface_block(pos.x, pos.y, pos.z, n);
+}
+
 inline bool is_surface_block(int x, int y, int z)
 {   // returns true if the block is not solid and the block underneath is solid
     return (t_map::get(x, y, z) == EMPTY_CUBE &&

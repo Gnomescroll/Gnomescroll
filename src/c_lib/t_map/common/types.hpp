@@ -12,6 +12,11 @@ struct MapPos
     int x,y,z;
 };
 
+struct MapPosOffset
+{   // intended for +/- to be applied to map node
+    int x,y,z;
+};
+
 inline void print_pos(const struct MapPos& pos)
 {
     printf("MapPos: %d, %d, %d\n", pos.x, pos.y, pos.z);

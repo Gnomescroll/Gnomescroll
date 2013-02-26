@@ -8,6 +8,7 @@ namespace Path
 struct MapPos* get_path_2d(const struct MapPos& start, const struct MapPos& end, size_t& len);
 struct MapPos* get_path_3d_air(const struct MapPos& start, const struct MapPos& end, size_t& len);
 struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len);
+struct MapPos* get_path_3d_jump(const struct MapPos& start, const struct MapPos& end, size_t& len, int jump_height);
 
 void print_path(const struct MapPos* path, size_t len);
 

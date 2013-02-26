@@ -46,7 +46,9 @@ void init_packets()
 
 ItemContainerID get_block_item_container(int x, int y, int z)
 {
-    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) | (x & TERRAIN_MAP_WIDTH_BIT_MASK) | (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0);
+    GS_ASSERT(((z & TERRAIN_MAP_HEIGHT_BIT_MASK) |
+               (x & TERRAIN_MAP_WIDTH_BIT_MASK) |
+               (y & TERRAIN_MAP_WIDTH_BIT_MASK)) == 0);
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return NULL_CONTAINER;
 
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;

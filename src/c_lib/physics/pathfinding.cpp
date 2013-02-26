@@ -53,53 +53,62 @@ typedef enum
     DIR_DIAGONAL_NONPLANAR,
 } DirectionType;
 
-struct Adjacency
+struct PathAdjacency
 {
-    int x,y,z;
+    struct MapPosOffset adj;
     int cost;
     DirectionType dir;
 };
 
-static const struct Adjacency adj[8+9+9] = {
+static const struct PathAdjacency adj[8+9+9] = {
     // 2d
-    {  1,  0,  0, 100, DIR_LATERAL_PLANAR },
-    { -1,  0,  0, 100, DIR_LATERAL_PLANAR },
-    {  0,  1,  0, 100, DIR_LATERAL_PLANAR },
-    {  0, -1,  0, 100, DIR_LATERAL_PLANAR },
-    {  1,  1,  0, 141, DIR_DIAGONAL_PLANAR },
-    {  1, -1,  0, 141, DIR_DIAGONAL_PLANAR },
-    { -1,  1,  0, 141, DIR_DIAGONAL_PLANAR },
-    { -1, -1,  0, 141, DIR_DIAGONAL_PLANAR },
+    {{  1,  0,  0 }, 100, DIR_LATERAL_PLANAR },
+    {{ -1,  0,  0 }, 100, DIR_LATERAL_PLANAR },
+    {{  0,  1,  0 }, 100, DIR_LATERAL_PLANAR },
+    {{  0, -1,  0 }, 100, DIR_LATERAL_PLANAR },
+    {{  1,  1,  0 }, 141, DIR_DIAGONAL_PLANAR },
+    {{  1, -1,  0 }, 141, DIR_DIAGONAL_PLANAR },
+    {{ -1,  1,  0 }, 141, DIR_DIAGONAL_PLANAR },
+    {{ -1, -1,  0 }, 141, DIR_DIAGONAL_PLANAR },
 //8
-    {  0,  0, -1, 100, DIR_LATERAL_PLANAR },
-    {  0,  0,  1, 100, DIR_LATERAL_PLANAR },
+    {{  0,  0, -1 }, 100, DIR_LATERAL_PLANAR },
+    {{  0,  0,  1 }, 100, DIR_LATERAL_PLANAR },
 //10
-    {  1,  0,  1, 141, DIR_LATERAL_NONPLANAR },
-    { -1,  0,  1, 141, DIR_LATERAL_NONPLANAR },
-    {  0,  1,  1, 141, DIR_LATERAL_NONPLANAR },
-    {  0, -1,  1, 141, DIR_LATERAL_NONPLANAR },
-    {  1,  0, -1, 141, DIR_LATERAL_NONPLANAR },
-    { -1,  0, -1, 141, DIR_LATERAL_NONPLANAR },
-    {  0,  1, -1, 141, DIR_LATERAL_NONPLANAR },
-    {  0, -1, -1, 141, DIR_LATERAL_NONPLANAR },
+    {{  1,  0,  1 }, 141, DIR_LATERAL_NONPLANAR },
+    {{ -1,  0,  1 }, 141, DIR_LATERAL_NONPLANAR },
+    {{  0,  1,  1 }, 141, DIR_LATERAL_NONPLANAR },
+    {{  0, -1,  1 }, 141, DIR_LATERAL_NONPLANAR },
+    {{  1,  0, -1 }, 141, DIR_LATERAL_NONPLANAR },
+    {{ -1,  0, -1 }, 141, DIR_LATERAL_NONPLANAR },
+    {{  0,  1, -1 }, 141, DIR_LATERAL_NONPLANAR },
+    {{  0, -1, -1 }, 141, DIR_LATERAL_NONPLANAR },
 //18
-    {  1,  1,  1, 173, DIR_DIAGONAL_NONPLANAR },
-    {  1, -1,  1, 173, DIR_DIAGONAL_NONPLANAR },
-    { -1,  1,  1, 173, DIR_DIAGONAL_NONPLANAR },
-    { -1, -1,  1, 173, DIR_DIAGONAL_NONPLANAR },
-    {  1,  1, -1, 173, DIR_DIAGONAL_NONPLANAR },
-    {  1, -1, -1, 173, DIR_DIAGONAL_NONPLANAR },
-    { -1,  1, -1, 173, DIR_DIAGONAL_NONPLANAR },
-    { -1, -1, -1, 173, DIR_DIAGONAL_NONPLANAR },
+    {{  1,  1,  1 }, 173, DIR_DIAGONAL_NONPLANAR },
+    {{  1, -1,  1 }, 173, DIR_DIAGONAL_NONPLANAR },
+    {{ -1,  1,  1 }, 173, DIR_DIAGONAL_NONPLANAR },
+    {{ -1, -1,  1 }, 173, DIR_DIAGONAL_NONPLANAR },
+    {{  1,  1, -1 }, 173, DIR_DIAGONAL_NONPLANAR },
+    {{  1, -1, -1 }, 173, DIR_DIAGONAL_NONPLANAR },
+    {{ -1,  1, -1 }, 173, DIR_DIAGONAL_NONPLANAR },
+    {{ -1, -1, -1 }, 173, DIR_DIAGONAL_NONPLANAR },
 //26
+};
+
+static const struct MapPosOffset anchor[6] = {
+    {  0,  0, -1 },
+    {  0,  0,  1 },
+    {  1,  0,  0 },
+    { -1,  0,  0 },
+    {  0,  1,  0 },
+    {  0, -1,  0 },
 };
 
 static inline struct MapPos add_pos_adj(const struct MapPos& pos, int iadj)
 {
     struct MapPos p;
-    p.x = translate_point(pos.x + adj[iadj].x);
-    p.y = translate_point(pos.y + adj[iadj].y);
-    p.z = pos.z + adj[iadj].z;
+    p.x = translate_point(pos.x + adj[iadj].adj.x);
+    p.y = translate_point(pos.y + adj[iadj].adj.y);
+    p.z = pos.z + adj[iadj].adj.z;
     // the caller should check this. in the future, the caller should not send
     // in value > map_dim.z either; if a path is needed above the max height,
     // they can do straight lines
@@ -118,6 +127,7 @@ struct Node
 {
     int id;
     int parent;
+    int anchor;
     struct MapPos pos;
     struct Score score;
 };
@@ -140,6 +150,7 @@ static inline void node_first(struct Node& node, const struct MapPos& start, con
     node.parent = -1;
     node.id = 0;
     node.score.g = -1;
+    node.anchor = 0;
     _node_set_position(node, start, end);
     _node_update_score(node, 0);
 }
@@ -260,8 +271,9 @@ struct MapPos* construct_path(const struct Node* open, size_t iopen,
 
 struct Passable2D
 {
-    static bool is_passable(const struct MapPos& cur, int iadj)
+    static bool is_passable(const struct Node& node, int iadj)
     {
+        struct MapPos cur = node.pos;
         struct MapPos pos = add_pos_adj(cur, iadj);
         if (t_map::isSolid(pos))
             return false;
@@ -275,8 +287,9 @@ struct Passable2D
 
 struct Passable3DAir
 {
-    static bool is_passable(const struct MapPos& cur, int iadj)
+    static bool is_passable(const struct Node& node, int iadj)
     {
+        struct MapPos cur = node.pos;
         struct MapPos pos = add_pos_adj(cur, iadj);
         if (pos.z <= 0 || pos.z > t_map::map_dim.z) return false;
         if (t_map::isSolid(pos))
@@ -303,8 +316,9 @@ struct Passable3DAir
 
 struct Passable3DSurface
 {
-    static bool is_passable(const struct MapPos& cur, int iadj)
+    static bool is_passable(const struct Node& node, int iadj)
     {
+        struct MapPos cur = node.pos;
         struct MapPos pos = add_pos_adj(cur, iadj);
         if (pos.z <= 0 || pos.z > t_map::map_dim.z) return false;
         if (t_map::isSolid(pos))
@@ -317,6 +331,22 @@ struct Passable3DSurface
         //if (adj[iadj].dir == DIR_DIAGONAL_PLANAR)
             return lat_ok;
 
+        // ANCHOR WORK:
+
+        // from start position, latch to adjacent solid
+            // priority: -z, x, -x, y, -y, z
+            // if not attached, move down until we hit solid -z
+
+        // now that we have start and anchor...
+            // need to handle direction?
+        // we are either travelling on the xy plane or the z plane, so keep track of that
+        // when the plane switches, we need to get a new anchor point
+        // edge case:
+            // traveling on the inside of a box
+            // traveling on the outside of a box
+            // moving into a corner
+
+
         // only allow up/down in z, no diagonals for z
         // position must always be on ground except:
             // when going up a wall, up to 1 block past the wall height
@@ -326,6 +356,38 @@ struct Passable3DSurface
             // QUESTION ?? Ceilings allowed?
                 // Yes - this routine would be for surface huggers
                 // Jumpers will use a different routine
+    }
+};
+
+struct Passable3DJump
+{
+    static bool is_passable(const struct Node& node, int iadj)
+    {
+        struct MapPos cur = node.pos;
+        struct MapPos pos = add_pos_adj(cur, iadj);
+        if (pos.z <= 0 || pos.z > t_map::map_dim.z) return false;
+        if (t_map::isSolid(pos))
+            return false;
+        if (adj[iadj].dir == DIR_LATERAL_PLANAR)
+            return true;
+        bool lat_ok = (!t_map::isSolid(pos.x, cur.y, cur.z) &&
+                       !t_map::isSolid(cur.x, pos.y, cur.z));
+        return lat_ok;
+        // TODO
+
+        // we can't go to a node if the ground is empty underneath EXCEPT
+            // if the previous node was underneath AND
+                // we are along a wall EXCEPT
+                    // if a node after this one is over the wall column??
+                    // SHITTY -- have to lookahead
+            // alternative:
+                // if we allow LATERAL_NONPLANAR, we won't need to lookahead
+
+            // we could also choose the next nodes not by +/-1 adjacency, but looking
+            // at the nearest surface block in either direction,
+            // seeing if there is a direct path to it from the current position (simple iteration check, not A*)
+            // and adjusting the cost based on the diffence in height (and whether it goes up or down)
+
     }
 };
 
@@ -400,7 +462,8 @@ MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
         for (int i=0; i<adj_size; i++)
         {
             struct Node node = current;
-            if (!Passable::is_passable(node.pos, i))
+            node.parent = current.id;
+            if (!Passable::is_passable(node, i))
                 continue;
             // update position, scores of node
             node_update(node, end, i);
@@ -411,7 +474,6 @@ MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
             int in_open = get_node_pos_index(node.pos, open, iopen);
             if (in_open < 0)
             {   // not found; add to open list
-                node.parent = current.id;
                 #if PATHFINDING_DEBUG
                 int ret = add_node(node, open, mopen, iopen);
                 PATH_ASSERT(ret >= 0);
@@ -448,6 +510,11 @@ struct MapPos* get_path_3d_air(const struct MapPos& start, const struct MapPos& 
 struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {   // stick to surfaces
     return get_path<Passable3DSurface, 10>(start, end, len);
+}
+
+struct MapPos* get_path_3d_jump(const struct MapPos& start, const struct MapPos& end, size_t& len, int jump_height)
+{   // stick to upper surfaces, allowing jumps
+    return get_path<Passable3DJump, 10>(start, end, len);
 }
 
 void print_path(const struct MapPos* path, size_t len)
