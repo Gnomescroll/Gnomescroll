@@ -88,7 +88,10 @@ const float JETPACK_VELOCITY = -AGENT_GRAVITY + tr2;
 const float JETPACK_MAX_VELOCITY = JETPACK_VELOCITY * 5.0f;
 const float JETPACK_MAX_HEIGHT = 8.0f;
 
+// no damage should be taken falling from this height:
 const float FALL_SAFE_HEIGHT = JETPACK_MAX_HEIGHT + 1;
+// a player with default max_health and no other defense (i.e. just spawned)
+// should die if falling from this height:
 const float FALL_DEATH_HEIGHT = 48.0f;
 
 inline bool isValid(AgentID agent_id)
