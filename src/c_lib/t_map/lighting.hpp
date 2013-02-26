@@ -72,6 +72,8 @@ void set_skylight(int x, int y, int z, int value)
 
     MapElement e = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
+    GS_ASSERT(fast_cube_properties[e.block].solid == false);
+
     if(1)
     {
         int condition = _skylight_update_condition(x,y,z);
