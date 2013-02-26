@@ -127,11 +127,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
     memcpy((char *) m->e, buff, byte_num);
     m->refresh_height_cache(); //refesh height cache after memcpy
 
-
     main_map->chunk_received(cx,cy);
-
-
-
 }
 
 
@@ -183,6 +179,8 @@ void block_set_StoC::handle()
 void block_set_palette_StoC::handle()
 {
     struct MapElement e = NULL_MAP_ELEMENT;
+    //struct MapElement e = get_element(x,y,z);
+    //GS_ASSERT(e.block == cube_type);        //this assert might be wrong
     e.block   = cube_type;
     e.palette = palette;
     //e.light   = fast_cube_attributes[cube_type].light_value;
