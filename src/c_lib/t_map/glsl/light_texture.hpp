@@ -86,22 +86,60 @@ class LightTextureGenerator
         return t;
     }
 
+
+    struct Vec3 vec3_mix(struct Vec3 a, struct Vec3 b, float f)
+    {
+        return vec3_add(vec3_scalar_mult(a, 1.0 -f),  vec3_scalar_mult(b, f));
+    }
+
     struct Vec3 get_twist(int i)
     {
         struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
         struct Vec3 a = vec3_init(1.6, 0.4, 0.4);   //gamma danger twist
 
-        if (i<=11)
+        if (i<=10)
             return b;
+        if (i==11)
+            return vec3_mix(b,a,0.2);
         if (i==12)
-            return vec3_add(vec3_scalar_mult(a, 0.4),  vec3_scalar_mult(b, 0.6));
+            return vec3_mix(b,a,0.4);
         if (i==13)
-            return vec3_add(vec3_scalar_mult(a, 0.6),  vec3_scalar_mult(b, 0.4));
+            return vec3_mix(b,a,0.6);
         if (i==14)
-            return vec3_add(vec3_scalar_mult(a, 0.8),  vec3_scalar_mult(b, 0.2));
+            return vec3_mix(b,a,0.8);
         if (i==15)
-            return vec3_add(vec3_scalar_mult(a, 1.0),  vec3_scalar_mult(b, 0.0));
+            return vec3_mix(b,a,1.0);
 
+        return b;
+    }
+
+
+    struct Vec3 get_twist2(int i, float lightv)
+    {
+        struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
+        struct Vec3 a = vec3_init(1.6, 0.4, 0.4);   //gamma danger twist
+
+        const float twist_start = 0.5; //light level when twist starts
+        if(lightv < twist_start)
+            return b;
+        lightv -= twist_start;
+        lightv /= (1.0 - twist_start);
+
+        if(lightv <= 0.0 - 0.001 || lightv >= 1.0 + 0.001)
+            printf("ERROR: lightv= %f \n", lightv);
+
+        if (i<=10)
+            return b;
+        if (i==11)
+            return vec3_mix(b, vec3_mix(b,a,0.2), lightv);
+        if (i==12)
+            return vec3_mix(b, vec3_mix(b,a,0.4), lightv);
+        if (i==13)
+            return vec3_mix(b, vec3_mix(b,a,0.6), lightv);
+        if (i==14)
+            return vec3_mix(b, vec3_mix(b,a,0.8), lightv);
+        if (i==15)
+            return vec3_mix(b, vec3_mix(b,a,1.0), lightv);
         return b;
     }
 
@@ -182,6 +220,99 @@ class LightTextureGenerator
 */
     }
 
+    float calc_lightv(float ttime)
+    {
+        GS_ASSERT(ttime >= 0.0f && ttime <= 1.0f);
+
+        //sunrise is start of day
+        const float sunrise_length = 0.20;
+        const float day_length = 0.30;
+        const float sunset_length = 0.25;
+        const float night_length = 0.25;
+
+        float lightv = 0.0f; //how much day and how much night?
+
+        if(ttime < sunrise_length)
+        {
+            lightv = ttime / sunrise_length;
+            return lightv;
+        }
+
+        ttime -= sunrise_length;
+
+        if(ttime < day_length)
+        {
+            return 1.0;
+        }
+
+        ttime -= day_length;
+
+        if(ttime < sunset_length)
+        {
+            return 1.0 - ttime / sunset_length;
+        }
+
+        ttime -= sunset_length;
+
+        if(ttime <= night_length)
+        {
+            return 0.0f;
+        }
+
+        GS_ASSERT(false);
+
+        return 1.0f;
+    }
+
+    void init3(float ttime)
+    {
+
+        float lightv = calc_lightv(ttime);
+        printf("ttime= %f lightv = %f \n", ttime, lightv);
+
+        struct Vec3 d2 = vec3_init(0.0, 1.0, 1.0);
+
+        struct Vec3 L1[16]; //natural light
+        struct Vec3 L2[16]; //artificial light
+
+
+
+        for (int i=0; i<16; i++)
+        {
+            float factor = falloff(15-i, 0.75);
+
+            L1[i] = vec3_scalar_mult(get_twist2(i, lightv), factor); //add in gamma twist latter
+        }
+
+        for (int i=0; i<16; i++)
+        {
+            float factor = falloff(15-i, 0.75);
+            L2[i] = vec3_scalar_mult(d2, factor); //add in twist latter
+        }
+
+        for (int i=0; i<dim; i++)
+        {
+
+            for (int j=0; j<dim; j++)
+            {
+                int _i = i;
+                int _j = 15-j;
+
+                struct Vec3 t3;
+
+                t3.x = lightv*L1[_i].x + L2[_j].x;
+                t3.y = lightv*L1[_i].y + L2[_j].y;
+                t3.z = lightv*L1[_i].z + L2[_j].z;
+
+                values[3*(dim*j+i)+0] = t3.x;
+                values[3*(dim*j+i)+1] = t3.y;
+                values[3*(dim*j+i)+2] = t3.z;
+
+            }
+        }
+
+    }
+
     void save(const char* filename)
     {
 
@@ -232,6 +363,21 @@ class LightTextureGenerator* LTG;
 
 unsigned int generate_clut_light_texture()
 {
+    static int ttime = 0;
+
+    ttime++;
+
+    if(ttime % 15 == 0)
+    {       
+        static int ttimec = 0;
+        ttimec++;
+        float _ttime = ttimec % 400;
+        _ttime /= 400.0;
+
+        LTG->init3(_ttime);
+        LTG->gen_textures();
+    }
+
     return LTG->texture_array[0];
 }
 
