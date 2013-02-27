@@ -284,7 +284,7 @@ void add_shrooms(float* noise)
 //int highest_z = 0;
 void carve_ray(float x_, float y_, float z_, int tiny_angle, int distance)
 {
-    //if (highest_z < z_) 
+    //if (highest_z < z_)
     //{
     //    highest_z = z_;
     //    printf("highest_z is now: %d  ", highest_z);
@@ -348,14 +348,14 @@ void add_gorges(float* noise, int num_gorges, int length_)
     printf("\tgorges\n");
 
     // make a 2D map of the topsoil heights
-    int* peaks = (int*)malloc(map_dim.x * map_dim.y * sizeof(int)); 
-    for (int i=0; i < map_dim.x; i++) 
-    for (int j=0; j < map_dim.y; j++) 
-    { 
-        int k = map_dim.x * j + i; 
-        peaks[k] = t_map::get_highest_solid_block(i, j); 
+    int* peaks = (int*)malloc(map_dim.x * map_dim.y * sizeof(int));
+    for (int i=0; i < map_dim.x; i++)
+    for (int j=0; j < map_dim.y; j++)
+    {
+        int k = map_dim.x * j + i;
+        peaks[k] = t_map::get_highest_solid_block(i, j);
     }
-    
+
     // carve all gorges
     for (int i = 0; i < num_gorges; i++)
     {
@@ -382,7 +382,7 @@ void add_gorges(float* noise, int num_gorges, int length_)
                 farthest_from_zero = curr;
         }
 
-        float tot_hei_of_poss = farthest_from_zero * 2; // total height of possibility space for random perlin strip
+        //float tot_hei_of_poss = farthest_from_zero * 2; // total height of possibility space for random perlin strip
 
         float tri_shaped_hei = 1; // for gradualizing endpoints easily.  maximum value in the middle, tapering to 1 at the endpoints
         int len_remain = length_ * 2; // length remaining before we're done with this gorge (* 2 cuz we travel in half cube increments
@@ -391,7 +391,7 @@ void add_gorges(float* noise, int num_gorges, int length_)
             // get full res angle
             curr_angle = rand_angle + noise[steer_angle_idx + len_remain * map_dim.x];
             // keep angle in a range that maps to an array
-			while (curr_angle < 0)          curr_angle += DOUBLE_PI;
+            while (curr_angle < 0)          curr_angle += DOUBLE_PI;
             while (curr_angle >= DOUBLE_PI) curr_angle -= DOUBLE_PI;
 
             // get a valid possibility space
@@ -403,7 +403,7 @@ void add_gorges(float* noise, int num_gorges, int length_)
             //if (i == 0)     printf("tri_shaped_hei: %.1f\n", tri_shaped_hei);
             if (lowest < 6) // keep from getting too close to bedrock
                 lowest = 6;
-            float edge_to_center_dist = (highest - lowest) / 2; // from center of possibility space 
+            float edge_to_center_dist = (highest - lowest) / 2; // from center of possibility space
             //// use perlin to map to that space
             curr_perlin_hei = noise[height_idx + len_remain * map_dim.x];
             if (curr_perlin_hei < 0)
@@ -412,7 +412,7 @@ void add_gorges(float* noise, int num_gorges, int length_)
                 curr_perlin_hei /= farthest_from_zero; // turn it into a 0.0 - 1.0 range
             curr_perlin_hei *= edge_to_center_dist; // apply it to possibility space
             float fz = lowest + edge_to_center_dist + curr_perlin_hei;
-            
+
             // get tiny/quantized angle for lookup table index
             int quant_angle = 0;
             while (curr_angle > 0.0f)
@@ -422,32 +422,32 @@ void add_gorges(float* noise, int num_gorges, int length_)
                 quant_angle %= NUM_LOOKUP_ANGLES;
             }
 
-			// will carve a slice for every change from previous quantized angle
-			if (quant_angle != old_quant_angle)
-			{
-				int n = quant_angle; // new/current angle
-				int o = old_quant_angle;
-				
-				while (n > o)
-				{
-		            carve_angled_gorge_slice(ox + fx, oy + fy, fz, n);
-					n--;
-				}
-				while (o > n)
-				{
-		            carve_angled_gorge_slice(ox + fx, oy + fy, fz, n);
-					n++;
-				}
-			}
+            // will carve a slice for every change from previous quantized angle
+            if (quant_angle != old_quant_angle)
+            {
+                int n = quant_angle; // new/current angle
+                int o = old_quant_angle;
+
+                while (n > o)
+                {
+                    carve_angled_gorge_slice(ox + fx, oy + fy, fz, n);
+                    n--;
+                }
+                while (o > n)
+                {
+                    carve_angled_gorge_slice(ox + fx, oy + fy, fz, n);
+                    n++;
+                }
+            }
 
             carve_angled_gorge_slice(ox + fx, oy + fy, fz, quant_angle);
-			
-			// move half unit forward
+
+            // move half unit forward
             fx += sin_lookup_table[quant_angle] / 2;
             fy += cos_lookup_table[quant_angle] / 2;
 
             carve_angled_gorge_slice(ox + fx, oy + fy, fz, quant_angle);
-			
+
             if (len_remain < length_) // half to match the * 2 of len_remain
                 tri_shaped_hei -= 0.45;
             else
