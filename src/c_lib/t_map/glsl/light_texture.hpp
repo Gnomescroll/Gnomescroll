@@ -268,7 +268,7 @@ class LightTextureGenerator
     {
 
         float lightv = calc_lightv(ttime);
-        printf("ttime= %f lightv = %f \n", ttime, lightv);
+        //printf("ttime= %f lightv = %f \n", ttime, lightv);
 
         struct Vec3 d2 = vec3_init(0.0, 1.0, 1.0);
 
