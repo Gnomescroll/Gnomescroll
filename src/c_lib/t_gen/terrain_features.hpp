@@ -296,7 +296,7 @@ void carve_ray(float x_, float y_, float z_, int tiny_angle, int distance)
     {
         int x = x_ + (int)(i * sin_lookup_table[tiny_angle]);
         int y = y_ + (int)(i * cos_lookup_table[tiny_angle]);
-        int z = z_ + (int)(i * cos_lookup_table[tiny_angle]);
+        int z = z_;
 
         if(z < 1 || z > 127)
         {
