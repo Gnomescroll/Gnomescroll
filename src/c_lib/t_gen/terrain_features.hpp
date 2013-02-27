@@ -266,6 +266,7 @@ void add_shrooms(float* noise)
     printf("\tshrooms\n");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
+
     for (int x=0; x < t_map::map_dim.x; x++)
     for (int y=0; y < t_map::map_dim.y; y++)
     {
@@ -280,8 +281,15 @@ void add_shrooms(float* noise)
     }
 }
 
+//int highest_z = 0;
 void carve_ray(float x_, float y_, float z_, int tiny_angle, int distance)
 {
+    //if (highest_z < z_) 
+    //{
+    //    highest_z = z_;
+    //    printf("highest_z is now: %d  ", highest_z);
+    //}
+
     GS_ASSERT(tiny_angle >= 0 && tiny_angle < NUM_LOOKUP_ANGLES);
     
     for (int i = 0; i < distance; i++)
