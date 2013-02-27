@@ -291,11 +291,12 @@ void carve_ray(float x_, float y_, float z_, int tiny_angle, int distance)
     //}
 
     GS_ASSERT(z_ >= 0);
+    GS_ASSERT(z_ < 128);
     GS_ASSERT(tiny_angle >= 0 && tiny_angle < NUM_LOOKUP_ANGLES);
 
     if(z_ < 1 || z_ > 127)
     {
-        printf("ERROR: t_gen carve_ray, z= %d \n", z_);
+        //printf("ERROR: t_gen carve_ray, z= %d \n", z_);
         return;
     }
 
@@ -311,9 +312,16 @@ void carve_ray(float x_, float y_, float z_, int tiny_angle, int distance)
 
 void carve_angled_gorge_slice(float x_, float y_, float z_, int tiny_angle)
 {
+    GS_ASSERT(z_ >= 0);
+    GS_ASSERT(z_ < 128);
+
     int countdown_til_widening = 1;
     int max_ups_per_width = 1; // iterations upwards
     int ray_length = 0;
+
+    GS_ASSERT(z_ < t_map::map_dim.z);
+    if(z_ >= t_map::map_dim.z)
+        return;
 
     for (int z = z_; z < t_map::map_dim.z; z++)
     {
