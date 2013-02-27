@@ -315,7 +315,7 @@ void _skylight_update_core(int max_iterations)
 
         if(fast_cube_properties[e.block].solid)
         {
-            GS_ASSERT(false);
+            //GS_ASSERT(false);
             continue;
         }
 
