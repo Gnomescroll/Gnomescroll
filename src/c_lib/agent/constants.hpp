@@ -92,7 +92,7 @@ const float JETPACK_MAX_HEIGHT = 8.0f;
 const float FALL_SAFE_HEIGHT = JETPACK_MAX_HEIGHT + 1;
 // a player with default max_health and no other defense (i.e. just spawned)
 // should die if falling from this height:
-const float FALL_DEATH_HEIGHT = 48.0f;
+const float FALL_DEATH_HEIGHT = 32.0f;
 
 inline bool isValid(AgentID agent_id)
 {
