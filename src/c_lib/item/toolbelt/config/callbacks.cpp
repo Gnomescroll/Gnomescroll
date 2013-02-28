@@ -8,6 +8,7 @@
 #include <t_mech/_interface.hpp>
 #include <physics/pathfinding.hpp>
 #include <t_map/_interface.hpp>
+#include <t_map/t_map.hpp>
 #if DC_CLIENT
 # include <hud/cube_selector.hpp>
 #endif
@@ -110,6 +111,12 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
         free(ClientState::path);
     ClientState::path = path;
     ClientState::path_len = len;
+
+    using t_map::GetNearestSurfaceBlockIter;
+    GetNearestSurfaceBlockIter iter = GetNearestSurfaceBlockIter(start);
+    int xxx = GetNearestSurfaceBlockIter::END;
+    while ((xxx = iter.next()) != GetNearestSurfaceBlockIter::END)
+        printf("Iter next: %d\n", xxx);
 
     //Vec3 pos = agent_camera->get_position();
     //Vec3 dir = agent_camera->forward_vector();

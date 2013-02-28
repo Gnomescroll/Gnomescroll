@@ -17,11 +17,6 @@ struct MapPosOffset
     int x,y,z;
 };
 
-inline void print_pos(const struct MapPos& pos)
-{
-    printf("MapPos: %d, %d, %d\n", pos.x, pos.y, pos.z);
-}
-
 typedef enum
 {
     CUBE_MATERIAL_NONE = 0,

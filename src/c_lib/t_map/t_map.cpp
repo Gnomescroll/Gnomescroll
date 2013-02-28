@@ -288,55 +288,87 @@ inline int _get_next_up(int x, int y, int z)
     return z;
 }
 
-inline bool _can_fit(int x, int y, int z, int n)
+inline bool _can_fit(int x, int y, int z, int clearance)
 {
     int cursor = 0;
-    while (cursor < n && !isSolid(x, y, z + cursor))
+    while (cursor < clearance && !isSolid(x, y, z + cursor))
         cursor++;
-    return (cursor == n);
+    return (cursor == clearance);
 }
 
-inline int get_nearest_surface_block(int x, int y, int z, int n)
-{   // the block will also be a surface block, if found
-    IF_ASSERT(n < 1) return z;
-    int down = _get_next_down(x, y, z);
-    int up = z + 1;
-    if (get(x, y, z) == EMPTY_CUBE)
-        while (up <= map_dim.z && !isSolid(x, y, up))
-            up++;
-    up = _get_next_up(x, y, up);
-    while (down >= 0 || up <= map_dim.z)
-    {
-        int first = down;
-        int second = up;
-        if (down < 0 || up - z < z - down)
-        {   // the up position is closer
-            first = up;
-            second = down;
-        }
-        if (_can_fit(x, y, first, n)) return first;
-        else if (_can_fit(x, y, second, n)) return second;
-        while (up <= map_dim.z && !isSolid(x, y, up))
-            up++;
-        up = _get_next_up(x, y, up);
-        down = _get_next_down(x, y, down - 1);
-    }
-    return 0;
-}
-
-inline int get_nearest_surface_block(int x, int y, int z)
+inline void GetNearestSurfaceBlockIter::init()
 {
-    return get_nearest_surface_block(x, y, z, 1);
+    this->up_done = false;
+    this->down_done = false;
+    IF_ASSERT(clearance < 1) this->clearance = 1;
+    this->down = _get_next_down(this->pos.x, this->pos.y, this->pos.z);
+    this->up = this->pos.z + 1;
+    if (t_map::get(this->pos) == EMPTY_CUBE)
+        while (this->up <= map_dim.z &&
+               !isSolid(this->pos.x, this->pos.y, this->up))
+            this->up++;
+    this->up = _get_next_up(this->pos.x, this->pos.y, this->up);
+}
+
+int GetNearestSurfaceBlockIter::next()
+{   // the block will also be a surface block, if found
+    while ((this->down >= 0 || this->up <= map_dim.z) &&
+           (!this->up_done || !this->down_done))
+    {
+        // TODO --
+        // function keep reentering and exiting at 128 before it hits the "done" check
+        // we need to mark that case as done earlier
+        int first = this->down;
+        int second = this->up;
+        if ((this->down_done || this->down < 0) ||
+            (!this->up_done && this->up - this->pos.z < this->pos.z - down))
+        {   // the up position is closer
+            first = this->up;
+            second = this->down;
+        }
+        if (_can_fit(this->pos.x, this->pos.y, first, this->clearance))
+            return first;
+        else
+        if (_can_fit(this->pos.x, this->pos.y, second, this->clearance))
+            return second;
+        while (this->up <= map_dim.z &&
+               !isSolid(this->pos.x, this->pos.y, this->up))
+            this->up++;
+        int next_up = _get_next_up(this->pos.x, this->pos.y, this->up);
+        int next_down = _get_next_down(this->pos.x, this->pos.y,
+                                       this->down - 1);
+        printf("Next up: %d, up: %d. Next down: %d, down: %d\n", next_up, this->up, next_down, this->down);
+        this->up_done = (next_up == this->up);
+        this->down_done = (next_down == this->down);
+        this->up = next_up;
+        this->down = next_down;
+    }
+    return this->END;
+}
+
+static GetNearestSurfaceBlockIter _get_nearest_surface_block_iter;
+
+inline int get_nearest_surface_block(const struct MapPos& pos, int clearance)
+{
+    _get_nearest_surface_block_iter.init(pos, clearance);
+    return _get_nearest_surface_block_iter.next();
 }
 
 inline int get_nearest_surface_block(const struct MapPos& pos)
 {
-    return get_nearest_surface_block(pos.x, pos.y, pos.z);
+    return get_nearest_surface_block(pos, 1);
 }
 
-inline int get_nearest_surface_block(const struct MapPos& pos, int n)
+inline int get_nearest_surface_block(int x, int y, int z, int clearance)
 {
-    return get_nearest_surface_block(pos.x, pos.y, pos.z, n);
+    struct MapPos pos = map_pos_init(x, y, z);
+    return get_nearest_surface_block(pos, clearance);
+}
+
+inline int get_nearest_surface_block(int x, int y, int z)
+{
+    struct MapPos pos = map_pos_init(x, y, z);
+    return get_nearest_surface_block(pos);
 }
 
 inline bool is_surface_block(int x, int y, int z)

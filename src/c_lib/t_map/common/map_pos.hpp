@@ -53,3 +53,12 @@ int manhattan_distance(const struct MapPos& a, const struct MapPos& b)
     return (abs(x) + abs(y) + abs(z));
 }
 
+inline void print_pos(const struct MapPos& pos)
+{
+    printf("MapPos: %d, %d, %d\n", pos.x, pos.y, pos.z);
+}
+
+inline struct MapPos map_pos_init(int x, int y, int z)
+{
+    return { x, y, z };
+}
