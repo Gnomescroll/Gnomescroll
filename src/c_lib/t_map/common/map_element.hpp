@@ -19,7 +19,7 @@ struct MapElement
     };
 };
 
-const struct MapElement NULL_MAP_ELEMENT = {{{ 0,0,0,0 }}};
+const struct MapElement NULL_MAP_ELEMENT = {{{ EMPTY_CUBE, 0, 0, 0 }}};
+const struct MapElement ABOVE_MAP_ELEMENT = {{{ EMPTY_CUBE, 0, 0x0F, 0 }}};  // max sunlight
 
-const struct MapElement ABOVE_MAP_ELEMENT = {{{ 0,0,0x0f,0 }}}; //max sunlight
 }   // t_map

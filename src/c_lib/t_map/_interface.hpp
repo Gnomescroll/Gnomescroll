@@ -2,6 +2,7 @@
 
 #include <t_map/t_properties.hpp>
 #include <t_map/common/map_pos.hpp>
+#include <t_map/utils.hpp>
 
 namespace t_map
 {
@@ -31,24 +32,6 @@ void _sunlight_update_core();   //update sunlight
 void _envlight_update_core();   //update envlight
 void lighting_rolling_update(int max_updates); //rolling update of lighting
 void post_gen_map_lighting(); //run after map gen
-
-inline int get_highest_open_block(int x, int y, int vertical_gap);
-inline int get_highest_open_block(int x, int y);
-inline int get_lowest_open_block(int x, int y, int n);
-inline int get_highest_solid_block(int x, int y);
-inline int get_highest_solid_block(int x, int y, int z);
-inline int get_lowest_solid_block(int x, int y);
-inline int get_solid_block_below(int x, int y, int z);
-inline int get_open_block_below(int x, int y, int z);
-
-inline int get_nearest_surface_block(const struct MapPos& pos);
-inline int get_nearest_surface_block(const struct MapPos& pos, int n);
-inline int get_nearest_surface_block(int x, int y, int z);
-inline int get_nearest_surface_block(int x, int y, int z, int n);
-
-ALWAYS_INLINE bool position_is_loaded(int x, int y);
-
-bool block_can_be_placed(int x, int y, int z, CubeType cube_type);
 
 #if DC_CLIENT
 extern class VBOMap* vbo_map;

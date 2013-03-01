@@ -6,6 +6,7 @@
 #include <t_map/common/map_pos.hpp>
 #include <t_map/t_map_class.cpp>
 #include <t_map/t_map.cpp>
+#include <t_map/utils.cpp>
 #include <t_map/t_properties.cpp>
 #include <t_map/net/t_CtoS.cpp>
 #include <t_map/net/t_StoC.cpp>

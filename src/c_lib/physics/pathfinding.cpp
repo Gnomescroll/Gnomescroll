@@ -113,6 +113,19 @@ static inline struct MapPos add_pos_adj(const struct MapPos& pos, int iadj)
     // in value > map_dim.z either; if a path is needed above the max height,
     // they can do straight lines
     PATH_ASSERT(p.z > 0);
+
+    // TODO -- FIX THIS:
+    //0: ./run() [0x8223180]
+    //1: Path::Passable3DSurface::is_passable(Path::Node const&, int) [0x82a46b3]
+    //2: MapPos* Path::get_path<Path::Passable3DSurface, 10>(MapPos const&, MapPos const&, unsigned int&) [0x8232a7b]
+    //3: Path::get_path_3d_surface(MapPos const&, MapPos const&, unsigned int&) [0x811bb31]
+    //4: Toolbelt::trigger_local_location_pointer(ItemID, ItemType) [0x81e205f]
+    //5: Toolbelt::trigger_local_item(ItemID, ItemType) [0x81e4829]
+    //6: Toolbelt::tick() [0x81e4c3b]
+    //7: Main::physics_tick() [0x822227b]
+    //8: Main::run() [0x822250b]
+    //GS_ASSERT: /home/steve/dc_mmo/src/c_lib/physics/pathfinding.cpp:115 add_pos_adj
+
     return p;
 }
 

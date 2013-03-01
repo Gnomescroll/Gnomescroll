@@ -105,18 +105,25 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     end.z = ClientState::location_pointer.z;
     //end.z = start.z;    // for 2d
     size_t len = 0;
-    struct MapPos* path = Path::get_path_3d_surface(start, end, len);
+    struct MapPos* path = Path::get_path_3d_air(start, end, len);
     Path::print_path(path, len);
     if (ClientState::path != NULL)
         free(ClientState::path);
     ClientState::path = path;
     ClientState::path_len = len;
 
-    using t_map::GetNearestSurfaceBlockIter;
-    GetNearestSurfaceBlockIter iter = GetNearestSurfaceBlockIter(start);
-    int xxx = GetNearestSurfaceBlockIter::END;
-    while ((xxx = iter.next()) != GetNearestSurfaceBlockIter::END)
-        printf("Iter next: %d\n", xxx);
+    const size_t outlen = 2;
+    int blocks[outlen];
+    int out = t_map::get_nearest_surface_blocks(start, 1, blocks, outlen);
+    printf("Surface blocks:\n");
+    for (int i=0; i<out; i++)
+        printf("%d: %d\n", i, blocks[i]);
+
+    //using t_map::GetNearestSurfaceBlockIter;
+    //GetNearestSurfaceBlockIter iter = GetNearestSurfaceBlockIter(start);
+    //int xxx = GetNearestSurfaceBlockIter::END;
+    //while ((xxx = iter.next()) != GetNearestSurfaceBlockIter::END)
+        //printf("Iter next: %d\n", xxx);
 
     //Vec3 pos = agent_camera->get_position();
     //Vec3 dir = agent_camera->forward_vector();
@@ -137,7 +144,7 @@ void trigger_local_beta_location_pointer(ItemID item_id, ItemType item_type)
     if (path == NULL) return;
     if (path_len <= 1) return;
     size_t len = 0;
-    struct MapPos* _path = Path::get_path_3d_surface(path[0], path[path_len-1], len);
+    struct MapPos* _path = Path::get_path_3d_air(path[0], path[path_len-1], len);
     if (_path == NULL) return;
     if (path != NULL)
         free(path);
