@@ -12,9 +12,6 @@ void populate_2d_noise_array(float* _2d_noise_array, float persistence, int octa
 // NOTE: caller must free() the return value if not NULL
 float* create_2d_noise_array(const float persistence, const int octaves, const unsigned int x, const unsigned int y);
 
-void save_png(const char* filename, float* in, int xres, int yres);
-void save_perlin(const char* filename, float* in, int xres, int yres);
-
 void init();
 void teardown();
 

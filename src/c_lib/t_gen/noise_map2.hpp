@@ -347,7 +347,7 @@ class PerlinOctave2D
             }
         }
 
-        save_perlin("octave_map_01", out, xres, yres*octaves);
+        //save_perlin("octave_map_01", out, xres, yres*octaves);
 
         for (int k=0; k<octaves; k++)
         for (int i=0; i<xres; i++)
@@ -380,7 +380,7 @@ class PerlinOctave2D
 
 
         //save_png("octave_map_01", out, xres, yres*octaves);
-        save_perlin("octave_map_02", out, xres, yres*octaves);
+        //save_perlin("octave_map_02", out, xres, yres*octaves);
         //void save_png(const char* filename, float* in, int xres, int yres)
     }
 
@@ -449,7 +449,7 @@ class PerlinOctave2D
 
         }
         //save_png("octave_map_01", out, xres, yres*octaves);
-        save_perlin(filename, out, xres*degree, yres*octaves);
+        //save_perlin(filename, out, xres*degree, yres*octaves);
         //void save_png(const char* filename, float* in, int xres, int yres)
         delete[] out;
     }
