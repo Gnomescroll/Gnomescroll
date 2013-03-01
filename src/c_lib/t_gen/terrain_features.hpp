@@ -181,7 +181,7 @@ void make_tree(int x, int y, int z)
 
     int segs = randrange(2, 6);
     float rad = 2.0f; // radius of leaf layer from center voxel
-    TreeType tt = (TreeType)randrange(0, (int)TREE_MAX-1);
+    TreeType tt = (TreeType)randrange(0, int(TREE_MAX)-1);
 
     // make tree, segment by segment
     for (int seg = 0; seg < segs; seg++)
@@ -282,54 +282,38 @@ void add_shrooms(float* noise)
 }
 
 //int highest_z = 0;
-void carve_ray(float x_, float y_, float z_, int tiny_angle, int distance)
+void carve_ray(float x, float y, float z, int tiny_angle, int distance)
 {
     //if (highest_z < z_)
     //{
     //    highest_z = z_;
     //    printf("highest_z is now: %d  ", highest_z);
     //}
-
-    GS_ASSERT(z_ >= 0);
-    GS_ASSERT(z_ < 128);
-    GS_ASSERT(tiny_angle >= 0 && tiny_angle < NUM_LOOKUP_ANGLES);
-
-    if(z_ < 1 || z_ > 127)
-    {
-        //printf("ERROR: t_gen carve_ray, z= %d \n", z_);
-        return;
-    }
-
+    IF_ASSERT(z < 0 || z >= t_map::map_dim.z) return;
+    IF_ASSERT(tiny_angle < 0 || tiny_angle >= NUM_LOOKUP_ANGLES) return;
     for (int i = 0; i < distance; i++)
     {
-        int x = x_ + (int)(i * sin_lookup_table[tiny_angle]);
-        int y = y_ + (int)(i * cos_lookup_table[tiny_angle]);
-        int z = z_;
-
-        t_map::set_fast(x,y,z, EMPTY_CUBE);
+        int m = x + int(i * sin_lookup_table[tiny_angle]);
+        int n = y + int(i * cos_lookup_table[tiny_angle]);
+        t_map::set_fast(m, n, z, EMPTY_CUBE);
     }
 }
 
-void carve_angled_gorge_slice(float x_, float y_, float z_, int tiny_angle)
+void carve_angled_gorge_slice(float x, float y, float z, int tiny_angle)
 {
-    GS_ASSERT(z_ >= 0);
-    GS_ASSERT(z_ < 128);
+    IF_ASSERT(z < 0 || z >= t_map::map_dim.z) return;
 
     int countdown_til_widening = 1;
     int max_ups_per_width = 1; // iterations upwards
     int ray_length = 0;
 
-    GS_ASSERT(z_ < t_map::map_dim.z);
-    if(z_ >= t_map::map_dim.z)
-        return;
-
-    for (int z = z_; z < t_map::map_dim.z; z++)
+    for (int k = z; k < t_map::map_dim.z; k++)
     {
         int ta = (tiny_angle + 8) % NUM_LOOKUP_ANGLES;
-        carve_ray(x_, y_, z, ta, ray_length);
+        carve_ray(x, y, k, ta, ray_length);
 
-        ta = (tiny_angle + 24) % NUM_LOOKUP_ANGLES;;
-        carve_ray(x_, y_, z, ta, ray_length);
+        ta = (tiny_angle + 24) % NUM_LOOKUP_ANGLES;
+        carve_ray(x, y, k, ta, ray_length);
 
         countdown_til_widening--;
         if (countdown_til_widening == 0)
@@ -365,14 +349,14 @@ void add_gorges(float* noise, int num_gorges, int length_)
         int steer_angle_idx = randrange(0, map_dim.x - 1);
         int height_idx = randrange(0, map_dim.x - 1);
 
-        float fx = 0;
-        float fy = 0;
+        float fx = 0.0f;
+        float fy = 0.0f;
         float rand_angle = DOUBLE_PI / NUM_LOOKUP_ANGLES * randrange(0, NUM_LOOKUP_ANGLES - 1);
         float curr_angle;
         float curr_perlin_hei; // height
 
         // find the limits of spectrum for this 1D (out of a 2D map) strip
-        float farthest_from_zero = 0;
+        float farthest_from_zero = 0.0f;
         for (int i = 0; i < map_dim.x; i++)
         {
             float curr = abs(noise[height_idx + i * map_dim.x]);
@@ -381,6 +365,8 @@ void add_gorges(float* noise, int num_gorges, int length_)
             if (farthest_from_zero < curr)
                 farthest_from_zero = curr;
         }
+        if (farthest_from_zero != 0.0f)
+            farthest_from_zero = 1.0f/farthest_from_zero;
 
         //float tot_hei_of_poss = farthest_from_zero * 2; // total height of possibility space for random perlin strip
 
@@ -391,25 +377,26 @@ void add_gorges(float* noise, int num_gorges, int length_)
             // get full res angle
             curr_angle = rand_angle + noise[steer_angle_idx + len_remain * map_dim.x];
             // keep angle in a range that maps to an array
-            while (curr_angle < 0)          curr_angle += DOUBLE_PI;
-            while (curr_angle >= DOUBLE_PI) curr_angle -= DOUBLE_PI;
+            curr_angle = fmodf(curr_angle, DOUBLE_PI);
+            if (curr_angle < 0)
+                curr_angle += DOUBLE_PI;
 
             // get a valid possibility space
-            int x = ox + (int)fx;   x %= map_dim.x;    while (x < 0) x += map_dim.x;
-            int y = oy + (int)fy;   y %= map_dim.y;    while (y < 0) y += map_dim.y;
+            int x = translate_point(ox + fx);
+            int y = translate_point(oy + fy);
+
             float highest = peaks[map_dim.x * y + x];
             float lowest = highest - tri_shaped_hei;
             //if (i == 0)     printf("_____________________________________________________\n", highest);
             //if (i == 0)     printf("tri_shaped_hei: %.1f\n", tri_shaped_hei);
-            if (lowest < 6) // keep from getting too close to bedrock
-                lowest = 6;
-            float edge_to_center_dist = (highest - lowest) / 2; // from center of possibility space
+            lowest = GS_MAX(lowest, 6);  // keep from getting too close to bedrock
+            float edge_to_center_dist = (highest - lowest) / 2.0f; // from center of possibility space
             //// use perlin to map to that space
             curr_perlin_hei = noise[height_idx + len_remain * map_dim.x];
             if (curr_perlin_hei < 0)
-                curr_perlin_hei /= -farthest_from_zero; // turn it into a 0.0 - 1.0 range
+                curr_perlin_hei *= -farthest_from_zero; // turn it into a 0.0 - 1.0 range
             else
-                curr_perlin_hei /= farthest_from_zero; // turn it into a 0.0 - 1.0 range
+                curr_perlin_hei *= farthest_from_zero; // turn it into a 0.0 - 1.0 range
             curr_perlin_hei *= edge_to_center_dist; // apply it to possibility space
             float fz = lowest + edge_to_center_dist + curr_perlin_hei;
 
@@ -423,30 +410,20 @@ void add_gorges(float* noise, int num_gorges, int length_)
             }
 
             // will carve a slice for every change from previous quantized angle
-            if (quant_angle != old_quant_angle)
-            {
-                int n = quant_angle; // new/current angle
-                int o = old_quant_angle;
+            int span = abs(quant_angle - old_quant_angle);
+            for (int i=0; i<span; ++i)
+                carve_angled_gorge_slice(x, y, fz, i);
 
-                while (n > o)
-                {
-                    carve_angled_gorge_slice(ox + fx, oy + fy, fz, n);
-                    n--;
-                }
-                while (o > n)
-                {
-                    carve_angled_gorge_slice(ox + fx, oy + fy, fz, n);
-                    n++;
-                }
-            }
-
-            carve_angled_gorge_slice(ox + fx, oy + fy, fz, quant_angle);
+            carve_angled_gorge_slice(x, y, fz, quant_angle);
 
             // move half unit forward
             fx += sin_lookup_table[quant_angle] / 2;
             fy += cos_lookup_table[quant_angle] / 2;
 
-            carve_angled_gorge_slice(ox + fx, oy + fy, fz, quant_angle);
+            x = translate_point(ox + fx);
+            y = translate_point(oy + fy);
+
+            carve_angled_gorge_slice(x, y, fz, quant_angle);
 
             if (len_remain < length_) // half to match the * 2 of len_remain
                 tri_shaped_hei -= 0.45;
