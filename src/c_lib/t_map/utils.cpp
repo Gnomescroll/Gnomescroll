@@ -71,6 +71,10 @@ inline int _get_next_up(int x, int y, int z, int clearance)
 
 inline size_t get_nearest_surface_blocks(const struct MapPos& pos, int clearance, int* out, size_t outlen)
 {   // the block will also be a surface block, if found
+    // TODO -- this does not return them in strictly nearest order
+    // it returns them alternating up,down,up,down (whichever is closer of the two)
+    // until it runs out in either direction then it fills with the remaining of the other
+    // It should return it in strictly nearest order
     IF_ASSERT(outlen < 1) return 0;
     size_t i = 0;
     IF_ASSERT(clearance < 1)
@@ -81,7 +85,7 @@ inline size_t get_nearest_surface_blocks(const struct MapPos& pos, int clearance
 
     int down = _get_next_down(pos.x, pos.y, pos.z, clearance);
     int up = pos.z + 1;
-    if (get(pos) == EMPTY_CUBE)
+    if (!isSolid(pos))
         while (up <= map_dim.z && !isSolid(pos.x, pos.y, up))
             up++;
     up = _get_next_up(pos.x, pos.y, up, clearance);
@@ -144,10 +148,48 @@ inline int get_nearest_surface_block(int x, int y, int z)
     return get_nearest_surface_block(pos);
 }
 
+inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance, int max)
+{   // a return value if <0 is failure
+    int z = pos.z;
+    while (isSolid(pos.x, pos.y, z))
+        z--;
+    while (z >= -1 && !isSolid(pos.x, pos.y, z))
+        z--;
+    z++;
+    return z;
+}
+
+inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance, int max)
+{   // a return value of > map_dim.z is failure -- no surface blocks here
+    int z = pos.z + 1;
+    if (!isSolid(pos.x, pos.y, z))
+        while (z <= map_dim.z && !isSolid(pos.x, pos.y, z))
+            z++;
+    while (isSolid(pos.x, pos.y, z))
+        z++;
+    return z;
+}
+
+inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance)
+{
+    return get_nearest_surface_block_below(pos, 1);
+}
+
+inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance)
+{
+    return get_nearest_surface_block_above(pos, 1);
+}
+
+
 inline bool is_surface_block(int x, int y, int z)
 {   // returns true if the block is not solid and the block underneath is solid
     return (t_map::get(x, y, z) == EMPTY_CUBE &&
             t_map::get(x, y, z-1) != EMPTY_CUBE);
+}
+
+inline bool is_surface_block(const struct MapPos& pos)
+{
+    return is_surface_block(pos.x, pos.y, pos.z);
 }
 
 inline int get_solid_block_below(int x, int y, int z)

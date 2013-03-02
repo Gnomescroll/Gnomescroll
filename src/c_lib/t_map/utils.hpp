@@ -19,6 +19,16 @@ inline int get_nearest_surface_block(const struct MapPos& pos, int clearance);
 inline int get_nearest_surface_block(int x, int y, int z);
 inline int get_nearest_surface_block(int x, int y, int z, int clearance);
 
+// _below returns <= pos.z, _above returns > pos.z
+inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance);
+inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance, int max);
+inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance);
+inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance, int max);
+
+inline bool is_surface_block(int x, int y, int z);
+inline bool is_surface_block(const struct MapPos& pos);
+
+
 ALWAYS_INLINE bool position_is_loaded(int x, int y);
 bool block_can_be_placed(int x, int y, int z, CubeType cube_type);
 

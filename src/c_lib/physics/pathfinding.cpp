@@ -60,6 +60,10 @@ struct PathAdjacency
     DirectionType dir;
 };
 
+// per-block of distance
+static const int fall_cost = 50;
+static const int jump_cost = 100;
+
 static const struct PathAdjacency adj[8+9+9] = {
     // 2d
     {{  1,  0,  0 }, 100, DIR_LATERAL_PLANAR },
@@ -105,27 +109,11 @@ static const struct MapPosOffset anchor[6] = {
 
 static inline struct MapPos add_pos_adj(const struct MapPos& pos, int iadj)
 {
+    // NOTE: make sure to check that the final z position is in bounds
     struct MapPos p;
     p.x = translate_point(pos.x + adj[iadj].adj.x);
     p.y = translate_point(pos.y + adj[iadj].adj.y);
     p.z = pos.z + adj[iadj].adj.z;
-    // the caller should check this. in the future, the caller should not send
-    // in value > map_dim.z either; if a path is needed above the max height,
-    // they can do straight lines
-    PATH_ASSERT(p.z > 0);
-
-    // TODO -- FIX THIS:
-    //0: ./run() [0x8223180]
-    //1: Path::Passable3DSurface::is_passable(Path::Node const&, int) [0x82a46b3]
-    //2: MapPos* Path::get_path<Path::Passable3DSurface, 10>(MapPos const&, MapPos const&, unsigned int&) [0x8232a7b]
-    //3: Path::get_path_3d_surface(MapPos const&, MapPos const&, unsigned int&) [0x811bb31]
-    //4: Toolbelt::trigger_local_location_pointer(ItemID, ItemType) [0x81e205f]
-    //5: Toolbelt::trigger_local_item(ItemID, ItemType) [0x81e4829]
-    //6: Toolbelt::tick() [0x81e4c3b]
-    //7: Main::physics_tick() [0x822227b]
-    //8: Main::run() [0x822250b]
-    //GS_ASSERT: /home/steve/dc_mmo/src/c_lib/physics/pathfinding.cpp:115 add_pos_adj
-
     return p;
 }
 
@@ -168,11 +156,10 @@ static inline void node_first(struct Node& node, const struct MapPos& start, con
     _node_update_score(node, 0);
 }
 
-static inline void node_update(struct Node& node, const struct MapPos& end, int iadj)
+static inline void node_update(struct Node& node, const struct MapPos& end, int cost)
 {
-    node.pos = add_pos_adj(node.pos, iadj);
     _node_set_position(node, node.pos, end);
-    _node_update_score(node, node.score.g + adj[iadj].cost);
+    _node_update_score(node, node.score.g + cost);
 }
 
 static inline bool node_reassign(struct Node& node, int g, int parent)
@@ -284,63 +271,73 @@ struct MapPos* construct_path(const struct Node* open, size_t iopen,
 
 struct Passable2D
 {
-    static bool is_passable(const struct Node& node, int iadj)
+    static bool is_passable(const struct Node& node, int iadj,
+                            struct Node& exit, int& cost)
     {
         struct MapPos cur = node.pos;
-        struct MapPos pos = add_pos_adj(cur, iadj);
-        if (t_map::isSolid(pos))
+        struct MapPos dst = add_pos_adj(cur, iadj);
+        if (dst.z <= 0) return false;
+        if (t_map::isSolid(dst))
             return false;
+        exit.pos = dst;
+        cost = adj[iadj].cost;
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
             return true;
         PATH_ASSERT(adj[iadj].dir == DIR_DIAGONAL_PLANAR);
-        return (!t_map::isSolid(pos.x, cur.y, cur.z) &&
-                !t_map::isSolid(cur.x, pos.y, cur.z));
+        return (!t_map::isSolid(dst.x, cur.y, cur.z) &&
+                !t_map::isSolid(cur.x, dst.y, cur.z));
     }
 };
 
 struct Passable3DAir
 {
-    static bool is_passable(const struct Node& node, int iadj)
+    static bool is_passable(const struct Node& node, int iadj,
+                            struct Node& exit, int& cost)
     {
         struct MapPos cur = node.pos;
-        struct MapPos pos = add_pos_adj(cur, iadj);
-        if (pos.z <= 0 || pos.z > t_map::map_dim.z) return false;
-        if (t_map::isSolid(pos))
+        struct MapPos dst = add_pos_adj(cur, iadj);
+        if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
+        if (t_map::isSolid(dst))
             return false;
+        exit.pos = dst;
+        cost = adj[iadj].cost;
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
             return true;
 
-        bool lat_ok = (!t_map::isSolid(pos.x, cur.y, cur.z) &&
-                       !t_map::isSolid(cur.x, pos.y, cur.z));
+        bool lat_ok = (!t_map::isSolid(dst.x, cur.y, cur.z) &&
+                       !t_map::isSolid(cur.x, dst.y, cur.z));
         if (adj[iadj].dir == DIR_DIAGONAL_PLANAR)
             return lat_ok;
 
-        bool zlat_ok = (!t_map::isSolid(cur.x, cur.y, pos.z) &&
-                        !t_map::isSolid(pos.x, pos.y, cur.z));
+        bool zlat_ok = (!t_map::isSolid(cur.x, cur.y, dst.z) &&
+                        !t_map::isSolid(dst.x, dst.y, cur.z));
         if (adj[iadj].dir == DIR_LATERAL_NONPLANAR)
             return zlat_ok;
 
         PATH_ASSERT(adj[iadj].dir == DIR_DIAGONAL_NONPLANAR);
         return (lat_ok && zlat_ok &&
-                !t_map::isSolid(pos.x, cur.y, pos.z) &&
-                !t_map::isSolid(cur.x, pos.y, pos.z));
+                !t_map::isSolid(dst.x, cur.y, dst.z) &&
+                !t_map::isSolid(cur.x, dst.y, dst.z));
     }
 };
 
 struct Passable3DSurface
 {
-    static bool is_passable(const struct Node& node, int iadj)
+    static bool is_passable(const struct Node& node, int iadj,
+                            struct Node& exit, int& cost)
     {
         struct MapPos cur = node.pos;
-        struct MapPos pos = add_pos_adj(cur, iadj);
-        if (pos.z <= 0 || pos.z > t_map::map_dim.z) return false;
-        if (t_map::isSolid(pos))
+        struct MapPos dst = add_pos_adj(cur, iadj);
+        if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
+        if (t_map::isSolid(dst))
             return false;
+        exit.pos = dst;
+        cost = adj[iadj].cost;
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
             return true;
 
-        bool lat_ok = (!t_map::isSolid(pos.x, cur.y, cur.z) &&
-                       !t_map::isSolid(cur.x, pos.y, cur.z));
+        bool lat_ok = (!t_map::isSolid(dst.x, cur.y, cur.z) &&
+                       !t_map::isSolid(cur.x, dst.y, cur.z));
         //if (adj[iadj].dir == DIR_DIAGONAL_PLANAR)
             return lat_ok;
 
@@ -374,33 +371,71 @@ struct Passable3DSurface
 
 struct Passable3DJump
 {
-    static bool is_passable(const struct Node& node, int iadj)
+    static bool can_jump_to(const struct MapPos& start, const struct MapPos& end,
+                            int clearance, int jump_max)
+    {   // make sure there is vertical clearance to jump to next level (both down and up)
+        int d = end.z - start.z;
+        if (d > jump_max || d < 0) return false;
+        clearance--;    // a clearance of 1 is accounted for
+        // we start at 1 above start,
+        // because its assumed start.z has already been checked to be clear
+        for (int i=start.z+1; i<=end.z+clearance; i++)
+            if (t_map::isSolid(start.x, start.y, i))
+                return false;
+        for (int i=end.z+1; i<=end.z+clearance; i++)
+            if (t_map::isSolid(end.x, end.y, end.z+clearance))
+                return false;
+        return true;
+    }
+
+    static bool can_fall_to(const struct MapPos& start, const struct MapPos& end,
+                            int clearance, int fall_max)
+    {
+        clearance--;    // a clearance of 1 is accounted for
+        int d = start.z - end.z;
+        if (d > fall_max || d < 0) return false;
+        for (int i=start.z + clearance; i>=end.z; i--)
+            if (t_map::isSolid(end.x, end.y, i))
+                return false;
+        return true;
+    }
+
+    static bool is_passable(const struct Node& node, int iadj,
+                            struct Node& exit, int& cost)
     {
         struct MapPos cur = node.pos;
-        struct MapPos pos = add_pos_adj(cur, iadj);
-        if (pos.z <= 0 || pos.z > t_map::map_dim.z) return false;
-        if (t_map::isSolid(pos))
-            return false;
+        struct MapPos dst = add_pos_adj(cur, iadj);
+        if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
+
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
-            return true;
-        bool lat_ok = (!t_map::isSolid(pos.x, cur.y, cur.z) &&
-                       !t_map::isSolid(cur.x, pos.y, cur.z));
-        return lat_ok;
-        // TODO
+        {   // attempt a jump
+            const int clearance = 1;    // TODO -- parameterized
+            const int max_down = 9;
+            const int max_up = 3;
+            struct MapPos up = map_pos_init(dst);
+            struct MapPos down = map_pos_init(dst);
+            // Note: _below returns <= dst.z; _above returns > dst.z
+            down.z = t_map::get_nearest_surface_block_below(dst, clearance, max_down);
+            up.z = t_map::get_nearest_surface_block_above(dst, clearance, max_up);
 
-        // we can't go to a node if the ground is empty underneath EXCEPT
-            // if the previous node was underneath AND
-                // we are along a wall EXCEPT
-                    // if a node after this one is over the wall column??
-                    // SHITTY -- have to lookahead
-            // alternative:
-                // if we allow LATERAL_NONPLANAR, we won't need to lookahead
+            if (down.z >= 0 && cur.z - down.z < up.z - cur.z)
+            {
+                exit.pos = down;
+                cost = adj[iadj].cost + fall_cost * (cur.z - down.z);
+                return Passable3DJump::can_fall_to(cur, down, clearance, max_down);
+            }
 
-            // we could also choose the next nodes not by +/-1 adjacency, but looking
-            // at the nearest surface block in either direction,
-            // seeing if there is a direct path to it from the current position (simple iteration check, not A*)
-            // and adjusting the cost based on the diffence in height (and whether it goes up or down)
+            if (up.z > t_map::map_dim.z) return false;
+            exit.pos = up;
+            cost = adj[iadj].cost + jump_cost * (up.z - cur.z);
+            return Passable3DJump::can_jump_to(cur, up, clearance, max_up);
+        }
 
+        cost = adj[iadj].cost;
+        exit.pos = dst;
+        return (!t_map::isSolid(dst) &&
+                !t_map::isSolid(dst.x, cur.y, cur.z) &&
+                !t_map::isSolid(cur.x, dst.y, cur.z));
     }
 };
 
@@ -476,10 +511,11 @@ MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
         {
             struct Node node = current;
             node.parent = current.id;
-            if (!Passable::is_passable(node, i))
+            int cost = 0;
+            if (!Passable::is_passable(current, i, node, cost))
                 continue;
             // update position, scores of node
-            node_update(node, end, i);
+            node_update(node, end, cost);
             // if in closed list, skip
             if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
                 continue;
@@ -525,9 +561,11 @@ struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapP
     return get_path<Passable3DSurface, 10>(start, end, len);
 }
 
-struct MapPos* get_path_3d_jump(const struct MapPos& start, const struct MapPos& end, size_t& len, int jump_height)
+struct MapPos* get_path_3d_jump(const struct MapPos& start, const struct MapPos& end, size_t& len)
 {   // stick to upper surfaces, allowing jumps
-    return get_path<Passable3DJump, 10>(start, end, len);
+    if (!t_map::is_surface_block(start) ||
+        !t_map::is_surface_block(end)) return NULL;
+    return get_path<Passable3DJump, 8>(start, end, len);
 }
 
 void print_path(const struct MapPos* path, size_t len)
@@ -550,7 +588,7 @@ void draw_path(const struct MapPos* path, size_t len)
     if (path == NULL) return;
     if (len < 2) return;
     const Color color = Color(0, 220, 0);
-    const struct Vec3 offset = vec3_init(0.5f, 0.5f, 0.5f);
+    const struct Vec3 offset = vec3_init(0.5f);
     for (size_t i=0; i<len-1; i++)
     {
         struct Vec3 a = vec3_add(vec3_init(path[i]), offset);

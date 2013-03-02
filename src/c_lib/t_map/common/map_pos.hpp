@@ -62,3 +62,9 @@ inline struct MapPos map_pos_init(int x, int y, int z)
 {
     return { x, y, z };
 }
+
+inline struct MapPos map_pos_init(const struct MapPos& pos)
+{
+    return { pos.x, pos.y, pos.z };
+}
+
