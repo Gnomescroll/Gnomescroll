@@ -28,7 +28,6 @@ inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearan
 inline bool is_surface_block(int x, int y, int z);
 inline bool is_surface_block(const struct MapPos& pos);
 
-
 ALWAYS_INLINE bool position_is_loaded(int x, int y);
 bool block_can_be_placed(int x, int y, int z, CubeType cube_type);
 
