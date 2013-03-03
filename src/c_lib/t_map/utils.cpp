@@ -149,12 +149,15 @@ inline int get_nearest_surface_block(int x, int y, int z)
 }
 
 inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance, int max)
-{   // a return value if <0 is failure
+{   // a return value is ==0 is failure
     int z = pos.z;
-    while (isSolid(pos.x, pos.y, z))
+    int quit = z - max;
+    while (z >= quit && isSolid(pos.x, pos.y, z))
         z--;
-    while (z >= -1 && !isSolid(pos.x, pos.y, z))
+    if (z < quit) return 0;
+    while (z >= quit && z >= 0 && !isSolid(pos.x, pos.y, z))
         z--;
+    if (z < quit) return 0;
     z++;
     return z;
 }
@@ -162,20 +165,37 @@ inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearan
 inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance, int max)
 {   // a return value of > map_dim.z is failure -- no surface blocks here
     int z = pos.z + 1;
+    int quit = z + max;
     if (!isSolid(pos.x, pos.y, z))
-        while (z <= map_dim.z && !isSolid(pos.x, pos.y, z))
+    {
+        if (isSolid(pos.x, pos.y, z-1))
+            return z;
+        while (z <= quit && z <= map_dim.z && !isSolid(pos.x, pos.y, z))
             z++;
-    while (isSolid(pos.x, pos.y, z))
+        if (z > quit) return map_dim.z + 1;
+    }
+    while (z <= quit && isSolid(pos.x, pos.y, z))
         z++;
+    if (z > quit) return map_dim.z + 1;
     return z;
 }
 
 inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance)
 {
-    return get_nearest_surface_block_below(pos, 1);
+    return get_nearest_surface_block_below(pos, clearance, map_dim.z);
 }
 
 inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance)
+{
+    return get_nearest_surface_block_above(pos, clearance, map_dim.z);
+}
+
+inline int get_nearest_surface_block_below(const struct MapPos& pos)
+{
+    return get_nearest_surface_block_below(pos, 1);
+}
+
+inline int get_nearest_surface_block_above(const struct MapPos& pos)
 {
     return get_nearest_surface_block_above(pos, 1);
 }

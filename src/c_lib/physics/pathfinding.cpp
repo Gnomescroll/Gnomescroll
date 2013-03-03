@@ -403,39 +403,50 @@ struct Passable3DJump
     static bool is_passable(const struct Node& node, int iadj,
                             struct Node& exit, int& cost)
     {
+        const int clearance = 1;    // TODO -- parameterized
+        const int max_down = 9;
+        const int max_up = 3;
         struct MapPos cur = node.pos;
         struct MapPos dst = add_pos_adj(cur, iadj);
         if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
 
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
         {   // attempt a jump
-            const int clearance = 1;    // TODO -- parameterized
-            const int max_down = 9;
-            const int max_up = 3;
             struct MapPos up = map_pos_init(dst);
             struct MapPos down = map_pos_init(dst);
             // Note: _below returns <= dst.z; _above returns > dst.z
             down.z = t_map::get_nearest_surface_block_below(dst, clearance, max_down);
             up.z = t_map::get_nearest_surface_block_above(dst, clearance, max_up);
 
+            GS_ASSERT(cur.z - down.z >= 0);
+            GS_ASSERT(up.z - cur.z >= 1);
+
             if (down.z >= 0 && cur.z - down.z < up.z - cur.z)
             {
                 exit.pos = down;
-                cost = adj[iadj].cost + fall_cost * (cur.z - down.z);
+                cost = adj[iadj].cost * (cur.z - down.z + 1);// + fall_cost * (cur.z - down.z);
                 return Passable3DJump::can_fall_to(cur, down, clearance, max_down);
             }
 
             if (up.z > t_map::map_dim.z) return false;
             exit.pos = up;
-            cost = adj[iadj].cost + jump_cost * (up.z - cur.z);
+            cost = adj[iadj].cost * (up.z - cur.z + 1);// + jump_cost * (up.z - cur.z);
             return Passable3DJump::can_jump_to(cur, up, clearance, max_up);
         }
 
         cost = adj[iadj].cost;
         exit.pos = dst;
-        return (!t_map::isSolid(dst) &&
-                !t_map::isSolid(dst.x, cur.y, cur.z) &&
-                !t_map::isSolid(cur.x, dst.y, cur.z));
+        for (int i=0; i<clearance; i++)
+        {
+            if (t_map::isSolid(dst.x, dst.y, dst.z + i) ||
+                t_map::isSolid(dst.x, cur.y, cur.z + i) ||
+                t_map::isSolid(cur.x, dst.y, cur.z + i) ||
+                !t_map::isSolid(dst.x, dst.y, dst.z - i))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 };
 

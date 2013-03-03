@@ -99,10 +99,12 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     start.x = pos.x;
     start.y = pos.y;
     start.z = pos.z;
+    start.z = t_map::get_nearest_surface_block_below(start);
     struct MapPos end;
     end.x = ClientState::location_pointer.x;
     end.y = ClientState::location_pointer.y;
     end.z = ClientState::location_pointer.z;
+    end.z = t_map::get_nearest_surface_block_below(end);
     //end.z = start.z;    // for 2d
     size_t len = 0;
     struct MapPos* path = Path::get_path_3d_jump(start, end, len);
@@ -111,13 +113,6 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
         free(ClientState::path);
     ClientState::path = path;
     ClientState::path_len = len;
-
-    const size_t outlen = 10;
-    int blocks[outlen];
-    int out = t_map::get_nearest_surface_blocks(start, 1, blocks, outlen);
-    printf("Surface blocks:\n");
-    for (int i=0; i<out; i++)
-        printf("%d: %d\n", i, blocks[i]);
 
     //using t_map::GetNearestSurfaceBlockIter;
     //GetNearestSurfaceBlockIter iter = GetNearestSurfaceBlockIter(start);

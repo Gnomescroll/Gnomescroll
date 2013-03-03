@@ -20,8 +20,10 @@ inline int get_nearest_surface_block(int x, int y, int z);
 inline int get_nearest_surface_block(int x, int y, int z, int clearance);
 
 // _below returns <= pos.z, _above returns > pos.z
+inline int get_nearest_surface_block_below(const struct MapPos& pos);
 inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance);
 inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance, int max);
+inline int get_nearest_surface_block_above(const struct MapPos& pos);
 inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance);
 inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance, int max);
 
