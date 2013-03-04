@@ -60,5 +60,6 @@ inline void print_pos(const struct MapPos& pos)
 
 inline struct MapPos map_pos_init(int x, int y, int z)
 {
-    return { x, y, z };
+    struct MapPos p = { x, y, z }; 
+    return p;
 }
