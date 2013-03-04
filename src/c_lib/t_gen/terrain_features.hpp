@@ -45,6 +45,8 @@ CubeType* leaves = NULL;
 CubeType* trunks = NULL;
 CubeType* shroom_caps = NULL;
 CubeType* shroom_stems = NULL;
+CubeType terrain_features_curr = EMPTY_CUBE;
+int      terrain_features_goal = 0;
 
 typedef enum
 {
@@ -267,25 +269,29 @@ void add_shrooms()
     free(noise);
 }
 
-//int highest_z = 0;
-void carve_ray(float x, float y, float z, int tiny_angle, int distance)
+bool carve_ray(float x, float y, float z, int tiny_angle, int distance)
 {
-    //if (highest_z < z_)
-    //{
-    //    highest_z = z_;
-    //    printf("highest_z is now: %d  ", highest_z);
-    //}
-    IF_ASSERT(z < 0 || z >= t_map::map_dim.z) return;
-    IF_ASSERT(tiny_angle < 0 || tiny_angle >= NUM_LOOKUP_ANGLES) return;
+    IF_ASSERT(z < 0 || z >= t_map::map_dim.z) return false;
+    IF_ASSERT(tiny_angle < 0 || tiny_angle >= NUM_LOOKUP_ANGLES) return false;
+
+    int cubes_changed = 0;
     for (int i = 0; i < distance; i++)
     {
         int m = x + int(i * sin_lookup_table[tiny_angle]);
         int n = y + int(i * cos_lookup_table[tiny_angle]);
-        t_map::set_fast(m, n, z, EMPTY_CUBE);
+
+        if (t_map::get(m, n, z) != terrain_features_curr)
+        {
+            t_map::set_fast(m, n, z, terrain_features_curr);
+            cubes_changed++;
+        }
     }
+
+    if (cubes_changed > 0) return true;
+    else                   return false;
 }
 
-void carve_angled_gorge_slice(float x, float y, float z, int tiny_angle)
+void carve_angled_gorge_slice(float x, float y, float z, int quant_angle) // quantized angle
 {
     IF_ASSERT(z < 0 || z >= t_map::map_dim.z) return;
 
@@ -295,11 +301,12 @@ void carve_angled_gorge_slice(float x, float y, float z, int tiny_angle)
 
     for (int k = z; k < t_map::map_dim.z; k++)
     {
-        int ta = (tiny_angle + 8) % NUM_LOOKUP_ANGLES;
-        carve_ray(x, y, k, ta, ray_length);
-
-        ta = (tiny_angle + 24) % NUM_LOOKUP_ANGLES;
-        carve_ray(x, y, k, ta, ray_length);
+        int qa1 = (quant_angle + 8 ) % NUM_LOOKUP_ANGLES;
+        int qa2 = (quant_angle + 24) % NUM_LOOKUP_ANGLES;
+        //if (rays at both sides already set to desired cube)    FIXME
+        carve_ray(x, y, k, qa1, ray_length);
+        carve_ray(x, y, k, qa2, ray_length);
+            //break;
 
         countdown_til_widening--;
         if (countdown_til_widening == 0)
