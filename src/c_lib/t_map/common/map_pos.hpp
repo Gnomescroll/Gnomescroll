@@ -60,12 +60,38 @@ inline void print_pos(const struct MapPos& pos)
 
 inline struct MapPos map_pos_init(int x, int y, int z)
 {
-    struct MapPos p = { x, y, z }; 
+    struct MapPos p = { x, y, z };
     return p;
 }
 
 inline struct MapPos map_pos_init(const struct MapPos& pos)
 {
-    return { pos.x, pos.y, pos.z };
+    struct MapPos p = { pos.x, pos.y, pos.z };
+    return p;
 }
 
+inline struct MapPos map_pos_init(const struct Vec3& pos)
+{
+    struct MapPos p = { int(pos.x), int(pos.y), int(pos.z) };
+    return p;
+}
+
+inline struct MapPosOffset map_offset_init(int d)
+{
+    struct MapPosOffset m = { d, d, d };
+    return m;
+}
+
+inline struct MapPosOffset map_offset_init(int d, int e, int f)
+{
+    struct MapPosOffset m = { d, e, f };
+    return m;
+}
+
+inline struct MapPos add_offset(struct MapPos pos, const struct MapPosOffset& off)
+{
+    pos.x = translate_point(pos.x + off.x);
+    pos.y = translate_point(pos.y + off.y);
+    pos.z = GS_MAX(0, pos.z + off.z);
+    return pos;
+}

@@ -8,27 +8,27 @@
 #include <entity/components/dimension.hpp>
 #include <entity/components/voxel_model.hpp>
 #if DC_SERVER
-#include <entity/components/explosion.hpp>
+# include <entity/components/explosion.hpp>
 #endif
 
 namespace Entities
 {
-    
+
 static void bomb_state_router(class Entity*, EntityState state);
 
 void load_mob_bomb_data()
 {
     EntityType type = OBJECT_MONSTER_BOMB;
-    
+
     #if DC_SERVER
     const int n_components = 11;
     #endif
     #if DC_CLIENT
     const int n_components = 9;
     #endif
-    
+
     entity_data->set_components(type, n_components);
-    
+
     entity_data->attach_component(type, COMPONENT_POSITION_MOMENTUM_CHANGED);
     entity_data->attach_component(type, COMPONENT_DIMENSION);
     entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
@@ -81,7 +81,7 @@ static void set_mob_bomb_properties(Entity* object)
     dest->destination_choice_y = MONSTER_BOMB_WALK_RANGE;
     dest->speed = MONSTER_BOMB_WALK_SPEED;
     dest->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
-    
+
     using Components::AgentTargetingComponent;
     AgentTargetingComponent* agent = (AgentTargetingComponent*)add_component_to_object(object, COMPONENT_AGENT_TARGETING);
     agent->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
@@ -93,7 +93,7 @@ static void set_mob_bomb_properties(Entity* object)
     StateMachineComponent* state = (StateMachineComponent*)add_component_to_object(object, COMPONENT_STATE_MACHINE);
     state->state = STATE_WAITING;
     state->router = &bomb_state_router;
-    
+
     using Components::WaitingComponent;
     WaitingComponent* waiting = (WaitingComponent*)add_component_to_object(object, COMPONENT_WAITING);
     waiting->wait_time = MONSTER_BOMB_IDLE_TIME;
@@ -119,7 +119,7 @@ static void set_mob_bomb_properties(Entity* object)
     item_drop->drop.add_drop("synthesizer_coin", 1, 0.3f);
     item_drop->drop.add_drop("synthesizer_coin", 2, 0.1f);
     item_drop->drop.add_drop("synthesizer_coin", 3, 0.05f);
-    
+
     item_drop->drop.set_max_drop_amounts("plasma_grenade", 10);
     item_drop->drop.add_drop_range("plasma_grenade", 1, 10, 0.8f);
     #endif
@@ -133,7 +133,7 @@ static void set_mob_bomb_properties(Entity* object)
     anim->size = MONSTER_BOMB_ANIMATION_SIZE;
     anim->force = MONSTER_BOMB_ANIMATION_FORCE;
     #endif
-    
+
     object->tick = &tick_mob_bomb;
     object->update = &update_mob_bomb;
 
@@ -154,13 +154,13 @@ void ready_mob_bomb(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
-    
+
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
-    
+
     vox->ready(position, angles.x, angles.y);
 
     #if DC_SERVER
@@ -176,7 +176,7 @@ void die_mob_bomb(Entity* object)
     ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
     GS_ASSERT(item_drop != NULL);
     item_drop->drop_item();
-    
+
     // explosion damage
     using Components::ExplosionComponent;
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
@@ -202,27 +202,26 @@ void die_mob_bomb(Entity* object)
 static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Entity* object, class Components::DestinationTargetingComponent* dest)
 {
     if (dest == NULL)
+    {
         dest = (Components::DestinationTargetingComponent*)
             object->get_component(COMPONENT_DESTINATION_TARGETING);
+    }
 
-    GS_ASSERT(dest != NULL);
-    if (dest == NULL) return false;
+    IF_ASSERT(dest == NULL) return false;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)
         object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return false;
+    IF_ASSERT(physics == NULL) return false;
 
     msg->type = object->type;
     msg->id = object->id;
-    Vec3 destination = dest->get_destination();
-    ASSERT_BOXED_POSITION(destination);
+    struct Vec3 destination = dest->get_destination();
+    GS_ASSERT(is_boxed_position(destination));
     msg->destination = destination;
     int ticks = dest->get_ticks_to_destination(physics->get_position());
     msg->ticks_to_destination = ticks;
-    
+
     return true;
 }
 
@@ -243,15 +242,14 @@ void send_object_in_transit(ClientID client_id, class Entity* object, class Comp
 static bool pack_object_chase_agent(class object_chase_agent_StoC* msg, class Entity* object, class Components::AgentTargetingComponent* target)
 {
     if (target == NULL)
+    {
         target = (Components::AgentTargetingComponent*)
             object->get_component(COMPONENT_AGENT_TARGETING);
-
+    }
     if (target == NULL) return false;
-
     msg->type = object->type;
     msg->id = object->id;
     msg->target_id = target->target_id;
-    
     return true;
 }
 
@@ -273,7 +271,6 @@ static bool pack_object_begin_wait(class object_begin_waiting_StoC* msg, class E
 {
     msg->type = object->type;
     msg->id = object->id;
-
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     msg->waiting_point = physics->get_position();
@@ -298,7 +295,6 @@ inline void send_mob_bomb_state_machine_to_client(ClientID client_id, class Enti
 {
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
-
     if (state->state == STATE_WAITING)
         send_object_begin_wait(client_id, object);
     else
@@ -308,11 +304,9 @@ inline void send_mob_bomb_state_machine_to_client(ClientID client_id, class Enti
     if (state->state == STATE_CHASE_AGENT)
         send_object_chase_agent(client_id, object, NULL);
 }
-#endif
 
-static void waiting_to_in_transit(class Entity* object)
+static void go_to_next_destination(class Entity* object)
 {
-    #if DC_SERVER
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
@@ -321,15 +315,24 @@ static void waiting_to_in_transit(class Entity* object)
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest = (DestinationTargetingComponent*)
         object->get_component(COMPONENT_DESTINATION_TARGETING);
-        
+
     dest->choose_destination();
 
     // face the target
-    dest->orient_to_target(position);    
+    dest->orient_to_target(position);
     Vec3 angles = physics->get_angles();
     angles.x = vec3_to_theta(dest->target_direction); // only rotate in x
     physics->set_angles(angles);
+}
+#endif
 
+static void waiting_to_in_transit(class Entity* object)
+{
+    #if DC_SERVER
+    go_to_next_destination(object);
+    using Components::DestinationTargetingComponent;
+    DestinationTargetingComponent* dest = (DestinationTargetingComponent*)
+        object->get_component(COMPONENT_DESTINATION_TARGETING);
     broadcast_object_in_transit(object, dest);
     #endif
 
@@ -358,7 +361,7 @@ static void in_transit_to_waiting(class Entity* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_WAITING;
-    
+
     #if DC_SERVER
     broadcast_object_begin_wait(object);
     #endif
@@ -380,7 +383,7 @@ static void chase_agent_to_waiting(class Entity* object)
     using Components::WaitingComponent;
     WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
     wait->tick = 0;
-    
+
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_WAITING;
@@ -419,7 +422,7 @@ static void in_transit(class Entity* object)
     #if DC_CLIENT
     if (!dest_target->at_destination)
     {
-        dest_target->orient_to_target(physics->get_position());    
+        dest_target->orient_to_target(physics->get_position());
         Vec3 angles = physics->get_angles();
         angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
         physics->set_angles(angles);
@@ -428,7 +431,7 @@ static void in_transit(class Entity* object)
         dest_target->check_at_destination();
     }
     #endif
-    
+
     #if DC_SERVER
     // move towards target
     if (!dest_target->move_on_surface())
@@ -438,7 +441,12 @@ static void in_transit(class Entity* object)
     else
     {   // check at destination
         if (dest_target->check_at_destination())
-            in_transit_to_waiting(object);
+        {
+            if (dest_target->path_finished())
+                in_transit_to_waiting(object);
+            else
+                go_to_next_destination(object);
+        }
         else
             dest_target->orient_to_target(physics->get_position());
     }
@@ -454,7 +462,7 @@ static void chase_agent(class Entity* object)
 
     using Components::AgentTargetingComponent;
     AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
-    
+
     // check target
     target->check_target_alive();
     if (target->target_type == OBJECT_NONE)
@@ -464,7 +472,7 @@ static void chase_agent(class Entity* object)
     }
 
     // face the target
-    target->orient_to_target(position);    
+    target->orient_to_target(position);
     Vec3 angles = physics->get_angles();
     angles.x = vec3_to_theta(target->target_direction); // only rotate in x
     physics->set_angles(angles);
@@ -486,21 +494,21 @@ static void bomb_state_router(class Entity* object, EntityState state)
             else if (machine->state == STATE_IN_TRANSIT)
                 in_transit_to_chase_agent(object);
             break;
-        
+
         case STATE_IN_TRANSIT:
             if (machine->state == STATE_WAITING)
                 waiting_to_in_transit(object);
             else if (machine->state == STATE_CHASE_AGENT)
                 chase_agent_to_in_transit(object);
             break;
-        
+
         case STATE_WAITING:
             if (machine->state == STATE_CHASE_AGENT)
                 chase_agent_to_waiting(object);
             else if (machine->state == STATE_IN_TRANSIT)
                 in_transit_to_waiting(object);
             break;
-            
+
         case STATE_NONE:
             GS_ASSERT(false);
             break;
@@ -538,12 +546,12 @@ void tick_mob_bomb(Entity* object)
         case STATE_CHASE_AGENT:
             chase_agent(object);
             break;
-            
+
         case STATE_NONE:
             GS_ASSERT(false);
             break;
     }
-    
+
     #if DC_SERVER
     // aggro nearby agent
     if (machine->state != STATE_CHASE_AGENT)
@@ -567,7 +575,7 @@ void update_mob_bomb(Entity* object)
 {
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
-    
+
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 

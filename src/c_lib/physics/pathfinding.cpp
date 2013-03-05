@@ -12,17 +12,27 @@ namespace Path
 
 #if PRODUCTION
 # define PATHFINDING_DEBUG 0
+# define PATHFINDING_VERBOSE 0
+#elif DC_SERVER
+# define PATHFINDING_DEBUG 1
+# define PATHFINDING_VERBOSE 0
 #else
 # define PATHFINDING_DEBUG 1
+# define PATHFINDING_VERBOSE 1
 #endif
 
 #if PATHFINDING_DEBUG
 # define PATH_ASSERT(x) GS_ASSERT(x)
-# define PATH_PRINT(...) printf(__VA_ARGS__)
 #else
 # define PATH_ASSERT(x)
+#endif
+
+#if PATHFINDING_VERBOSE
+# define PATH_PRINT(...) printf(__VA_ARGS__)
+#else
 # define PATH_PRINT(...)
 #endif
+
 
 /*
  * References:
@@ -44,6 +54,8 @@ namespace Path
 static const int MAX_PATH_DISTANCE = 128;
 static const size_t OPEN_START_SIZE = 128;
 static const size_t CLOSED_START_SIZE = 128;
+static const size_t OPEN_NODES_MAX = 2048;
+static const size_t CLOSED_NODES_MAX = 2048;
 
 typedef enum
 {
@@ -213,7 +225,7 @@ static inline int add_node(struct Node& node, struct Node*& nodes,
     #endif
     if (len >= max_len)
     {
-        PATH_PRINT("Reallocing nodelist from %d to %d...", int(len), int(max_len));
+        PATH_PRINT("Reallocing nodelist from %d to %d...", int(len), int(max_len*2));
         struct Node* _nodes = (struct Node*)realloc(nodes, 2*max_len*sizeof(struct Node));
         IF_ASSERT(_nodes == NULL)
         {
@@ -265,6 +277,7 @@ struct MapPos* construct_path(const struct Node* open, size_t iopen,
     }
 
     // TODO -- condense path
+    // if ai-aj == aj-ak, remove aj
 
     return path;
 }
@@ -478,7 +491,7 @@ MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
     // hierarchical paths over 16x16 chunk nodes
     // terminating condition within loop (in case area is unreachable)
 
-    #if PATHFINDING_DEBUG
+    #if PATHFINDING_VERBOSE
     PATH_PRINT("Finding path from:\n");
     PATH_PRINT("\t");
     print_pos(start);
@@ -497,6 +510,12 @@ MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
     bool needs_sort = false;
     while (1)
     {
+        if (iopen >= OPEN_NODES_MAX || iclosed >= CLOSED_NODES_MAX)
+        {   // the path is taking too long, give up
+            iopen = 0;
+            iclosed = 0;
+            break;
+        }
         // if the open list is empty, then we failed to find a path at all
         if (iopen == 0)
             break;

@@ -10,8 +10,6 @@
 namespace Components
 {
 
-/* Targeting */
-
 void DestinationTargetingComponent::set_destination(Vec3 dest)
 {
     this->destination = translate_position(dest);
@@ -21,30 +19,42 @@ void DestinationTargetingComponent::set_destination(Vec3 dest)
 
 void DestinationTargetingComponent::choose_destination()
 {
-    using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
+    struct Vec3 position = physics->get_position();
 
-    float x,y;
-    const float r2 = this->stop_proximity * this->stop_proximity;
-    do
+    if (this->path_finished())
     {
-        x = 2*(randf()-0.5f) * this->destination_choice_x;
-        y = 2*(randf()-0.5f) * this->destination_choice_y;
-    } while ((x*x + y*y) < r2);
+        this->ipath = 0;
+        this->mpath = 0;
+        free(this->path);
+        this->path = NULL;
+        struct MapPos current = map_pos_init(position);
+        const float r2 = this->stop_proximity * this->stop_proximity;
+        const int max_tries = 4;
+        for (int i=0; i<max_tries && this->path == NULL; i++)
+        {
+            struct MapPosOffset delta = map_offset_init(0);
+            do
+            {
+                //delta.x = 2*(randf()-0.5f) * this->destination_choice_x;
+                //delta.y = 2*(randf()-0.5f) * this->destination_choice_y;
+                delta.x = randrange(this->destination_choice_x/2, this->destination_choice_x);
+                delta.y = randrange(this->destination_choice_y/2, this->destination_choice_y);
+            } while ((delta.x*delta.x + delta.y*delta.y) < r2);
+            struct MapPos end = add_offset(current, delta);
+            this->path = Path::get_path_3d_jump(current, end, this->mpath);
+        }
+        int height = 1;
+        DimensionComponent* dims = (DimensionComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+        if (dims != NULL)
+            height = dims->get_integer_height();
+    }
 
-    int height = 1;
-    DimensionComponent* dims = (DimensionComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-    if (dims != NULL)
-        height = dims->get_integer_height();
+    if (!this->path_finished())
+        position = vec3_init(this->path[this->ipath++]);
 
-    Vec3 position = physics->get_position();
-    position.x += x;
-    position.y += y;
-    position.z = t_map::get_highest_open_block(position.x, position.y, height);
-        
     this->set_destination(position);
-
     this->ticks_to_destination = this->get_ticks_to_destination(physics->get_position());
 }
 
@@ -107,7 +117,7 @@ bool DestinationTargetingComponent::move_on_surface()
 bool DestinationTargetingComponent::check_at_destination()
 {
     if (this->at_destination) return true;
-    
+
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL)

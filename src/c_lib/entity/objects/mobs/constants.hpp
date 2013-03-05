@@ -27,16 +27,19 @@ const int MONSTER_BOMB_BLOCK_DAMAGE = 16;
 
 // targeting
 const float MONSTER_BOMB_MOTION_PROXIMITY_RADIUS = 15.0f;
-const int MONSTER_BOMB_MAX_TARGET_LOCK_TICKS = 30 * 10; // will lose target after 10 seconds
+const int MONSTER_BOMB_MAX_TARGET_LOCK_TICKS = ONE_SECOND * 10; // will lose target after 10 seconds
 
 // motion
 const float MONSTER_BOMB_WALK_SPEED = 0.125f;
+//const float MONSTER_BOMB_WALK_SPEED = 1.0f;
 const float MONSTER_BOMB_CHASE_SPEED = 0.25f;
 const int MONSTER_BOMB_MOTION_MAX_Z_DIFF = 5;
-const int MONSTER_BOMB_WALK_RANGE = 10;
+//const int MONSTER_BOMB_WALK_RANGE = 10;
+const int MONSTER_BOMB_WALK_RANGE = 20;
 
 // waiting
-const unsigned int MONSTER_BOMB_IDLE_TIME = 30 * 6;
+//const unsigned int MONSTER_BOMB_IDLE_TIME = ONE_SECOND * 6;
+const unsigned int MONSTER_BOMB_IDLE_TIME = ONE_SECOND * 3;
 
 // animations
 const Color MONSTER_BOMB_ANIMATION_COLOR = Color(31,223,223);
@@ -46,7 +49,8 @@ const float MONSTER_BOMB_ANIMATION_SIZE = 0.7f;
 const float MONSTER_BOMB_ANIMATION_FORCE = 20.0f;
 
 // state broadcast rate
-const int MONSTER_BOMB_BROADCAST_RATE = 30 * 4;
+//const int MONSTER_BOMB_BROADCAST_RATE = ONE_SECOND * 4;
+const int MONSTER_BOMB_BROADCAST_RATE = 10;
 
 /* MONSTER_BOX */
 
@@ -90,7 +94,7 @@ const int MONSTER_BOX_WALK_RANGE = 30;
 const int MONSTER_BOX_MOTION_MAX_Z_DIFF = 3;
 
 // state broadcast rate
-const int MONSTER_BOX_BROADCAST_RATE = 30; // once every 30 ticks
+const int MONSTER_BOX_BROADCAST_RATE = ONE_SECOND; // once every 30 ticks
 
 /* Monster spawners */
 
