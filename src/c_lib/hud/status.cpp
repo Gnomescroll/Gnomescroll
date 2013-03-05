@@ -6,7 +6,8 @@
 namespace HudStatus
 {
 
-struct SpriteIndex {
+struct SpriteIndex
+{
     int x, y;
 };
 
@@ -131,6 +132,16 @@ void draw_hunger()
     float full_sy = hunger_full.y * ICON_HEIGHT;
     float empty_sx = hunger_empty.x * ICON_WIDTH;
     float empty_sy = hunger_empty.y * ICON_HEIGHT;
+
+    if (hunger >= HUNGER_DAMAGE_THRESHOLD)
+    {
+        static int t = 0;
+        if (((++t)/ONE_SECOND) % 2 == 0)
+        {
+            full_sx += 2*ICON_WIDTH;
+            empty_sx += 2*ICON_WIDTH;
+        }
+    }
 
     for (int i=1; i<=max_hunger; i++)
     {
