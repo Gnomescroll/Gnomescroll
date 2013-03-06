@@ -267,14 +267,14 @@ inline void RaytraceData::set_collision_point(int x, int y, int z)
 // DEPRECATED
 void RaytraceData::get_pre_collision_point(int pre_collision_point[3])
 {
-    struct MapPos pos;
+    struct Vec3i pos;
     this->get_pre_collision_point(pos);
     pre_collision_point[0] = pos.x;
     pre_collision_point[1] = pos.y;
     pre_collision_point[2] = pos.z;
 }
 
-void RaytraceData::get_pre_collision_point(struct MapPos& pos)
+void RaytraceData::get_pre_collision_point(struct Vec3i& pos)
 {
     int sides[3];
     this->get_side_array(sides);

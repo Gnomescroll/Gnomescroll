@@ -95,19 +95,19 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     Vec3 pos = you->get_position();
-    struct MapPos start;
+    struct Vec3i start;
     start.x = pos.x;
     start.y = pos.y;
     start.z = pos.z;
     start.z = t_map::get_nearest_surface_block_below(start);
-    struct MapPos end;
+    struct Vec3i end;
     end.x = ClientState::location_pointer.x;
     end.y = ClientState::location_pointer.y;
     end.z = ClientState::location_pointer.z;
     end.z = t_map::get_nearest_surface_block_below(end);
     //end.z = start.z;    // for 2d
     size_t len = 0;
-    struct MapPos* path = Path::get_path_3d_jump(start, end, len);
+    struct Vec3i* path = Path::get_path_3d_jump(start, end, len);
     Path::print_path(path, len);
     if (ClientState::path != NULL)
         free(ClientState::path);
@@ -139,7 +139,7 @@ void trigger_local_beta_location_pointer(ItemID item_id, ItemType item_type)
     if (path == NULL) return;
     if (path_len <= 1) return;
     size_t len = 0;
-    struct MapPos* _path = Path::get_path_3d_jump(path[0], path[path_len-1], len);
+    struct Vec3i* _path = Path::get_path_3d_jump(path[0], path[path_len-1], len);
     if (_path == NULL) return;
     if (path != NULL)
         free(path);

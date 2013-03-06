@@ -549,7 +549,7 @@ void draw_placement_outline(ItemType item_type)
 
     // get open block
     const int max_dist = 4.0f;
-    struct MapPos pos;
+    struct Vec3i pos;
     bool collided = ClientState::player_agent.nearest_open_block(max_dist, pos);
     if (!collided) return;
 

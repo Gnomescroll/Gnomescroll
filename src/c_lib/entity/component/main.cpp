@@ -23,10 +23,6 @@ PositionChangedPhysicsComponentList* position_changed_physics_component_list = N
 PositionMomentumChangedPhysicsComponentList* position_momentum_changed_physics_component_list = NULL;
 VerletPhysicsComponentList* verlet_physics_component_list = NULL;
 
-StackableComponentList* stackable_component_list = NULL;
-
-PickupComponentList* pickup_component_list = NULL;
-
 TTLHealthComponentList* ttl_health_component_list = NULL;
 HitPointsHealthComponentList* hit_points_health_component_list = NULL;
 
@@ -78,12 +74,6 @@ Component* get_switch (ComponentType type)
             return position_momentum_changed_physics_component_list->subscribe();
         case COMPONENT_VERLET:
             return verlet_physics_component_list->subscribe();
-
-        case COMPONENT_STACKABLE:
-            return stackable_component_list->subscribe();
-
-        case COMPONENT_PICKUP:
-            return pickup_component_list->subscribe();
 
         case COMPONENT_TTL:
             return ttl_health_component_list->subscribe();
@@ -170,14 +160,6 @@ void release_switch (Component* component)
             break;
         case COMPONENT_VERLET:
             verlet_physics_component_list->unsubscribe((VerletPhysicsComponent*)component);
-            break;
-
-        case COMPONENT_STACKABLE:
-            stackable_component_list->unsubscribe((StackableComponent*)component);
-            break;
-
-        case COMPONENT_PICKUP:
-            pickup_component_list->unsubscribe((PickupComponent*)component);
             break;
 
         case COMPONENT_TTL:
@@ -271,10 +253,6 @@ void init_components()
     position_momentum_changed_physics_component_list = new PositionMomentumChangedPhysicsComponentList;
     verlet_physics_component_list = new VerletPhysicsComponentList;
 
-    stackable_component_list = new StackableComponentList;
-
-    pickup_component_list = new PickupComponentList;
-
     ttl_health_component_list = new TTLHealthComponentList;
     hit_points_health_component_list = new HitPointsHealthComponentList;
 
@@ -318,8 +296,6 @@ void teardown_components()
     delete position_changed_physics_component_list;
     delete position_momentum_changed_physics_component_list;
     delete verlet_physics_component_list;
-    delete stackable_component_list;
-    delete pickup_component_list;
     delete ttl_health_component_list;
     delete hit_points_health_component_list;
     delete owner_component_list;

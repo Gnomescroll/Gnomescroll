@@ -105,7 +105,7 @@ size_t parse_block(bool (*process_token) (const char*, const char*, Data*), cons
     return i;
 }
 
-static bool parse_map_position(const char* val, struct MapPos* position)
+static bool parse_map_position(const char* val, struct Vec3i* position)
 {
     bool err = false;
     static char buf[MAP_POSITION_LENGTH+1] = {'\0'};

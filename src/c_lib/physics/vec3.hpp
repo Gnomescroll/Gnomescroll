@@ -81,10 +81,7 @@ ALWAYS_INLINE struct Vec3 vec3_init(int n)
     return vec3_init(n, n, n);
 }
 
-ALWAYS_INLINE struct Vec3 vec3_init(struct MapPos pos)
-{
-    return vec3_init(pos.x, pos.y, pos.z);
-}
+ALWAYS_INLINE struct Vec3 vec3_init(struct Vec3i pos);
 
 ALWAYS_INLINE
 struct Vec3 vec3_copy(struct Vec3 f)

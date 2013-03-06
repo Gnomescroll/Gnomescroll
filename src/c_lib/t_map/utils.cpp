@@ -69,7 +69,7 @@ inline int _get_next_up(int x, int y, int z, int clearance)
     return z;
 }
 
-inline size_t get_nearest_surface_blocks(const struct MapPos& pos, int clearance, int* out, size_t outlen)
+inline size_t get_nearest_surface_blocks(const struct Vec3i& pos, int clearance, int* out, size_t outlen)
 {   // the block will also be a surface block, if found
     // TODO -- this does not return them in strictly nearest order
     // it returns them alternating up,down,up,down (whichever is closer of the two)
@@ -124,31 +124,31 @@ inline size_t get_nearest_surface_blocks(const struct MapPos& pos, int clearance
     return i;
 }
 
-inline int get_nearest_surface_block(const struct MapPos& pos, int clearance)
+inline int get_nearest_surface_block(const struct Vec3i& pos, int clearance)
 {
     int out[1] = {0};
     get_nearest_surface_blocks(pos, clearance, out, 1);
     return out[0];
 }
 
-inline int get_nearest_surface_block(const struct MapPos& pos)
+inline int get_nearest_surface_block(const struct Vec3i& pos)
 {
     return get_nearest_surface_block(pos, 1);
 }
 
 inline int get_nearest_surface_block(int x, int y, int z, int clearance)
 {
-    struct MapPos pos = map_pos_init(x, y, z);
+    struct Vec3i pos = vec3i_init(x, y, z);
     return get_nearest_surface_block(pos, clearance);
 }
 
 inline int get_nearest_surface_block(int x, int y, int z)
 {
-    struct MapPos pos = map_pos_init(x, y, z);
+    struct Vec3i pos = vec3i_init(x, y, z);
     return get_nearest_surface_block(pos);
 }
 
-inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance, int max)
+inline int get_nearest_surface_block_below(const struct Vec3i& pos, int clearance, int max)
 {   // a return value is ==0 is failure
     int z = pos.z;
     int quit = z - max;
@@ -162,7 +162,7 @@ inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearan
     return z;
 }
 
-inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance, int max)
+inline int get_nearest_surface_block_above(const struct Vec3i& pos, int clearance, int max)
 {   // a return value of > map_dim.z is failure -- no surface blocks here
     int z = pos.z + 1;
     int quit = z + max;
@@ -180,22 +180,22 @@ inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearan
     return z;
 }
 
-inline int get_nearest_surface_block_below(const struct MapPos& pos, int clearance)
+inline int get_nearest_surface_block_below(const struct Vec3i& pos, int clearance)
 {
     return get_nearest_surface_block_below(pos, clearance, map_dim.z);
 }
 
-inline int get_nearest_surface_block_above(const struct MapPos& pos, int clearance)
+inline int get_nearest_surface_block_above(const struct Vec3i& pos, int clearance)
 {
     return get_nearest_surface_block_above(pos, clearance, map_dim.z);
 }
 
-inline int get_nearest_surface_block_below(const struct MapPos& pos)
+inline int get_nearest_surface_block_below(const struct Vec3i& pos)
 {
     return get_nearest_surface_block_below(pos, 1);
 }
 
-inline int get_nearest_surface_block_above(const struct MapPos& pos)
+inline int get_nearest_surface_block_above(const struct Vec3i& pos)
 {
     return get_nearest_surface_block_above(pos, 1);
 }
@@ -207,7 +207,7 @@ inline bool is_surface_block(int x, int y, int z)
             t_map::get(x, y, z-1) != EMPTY_CUBE);
 }
 
-inline bool is_surface_block(const struct MapPos& pos)
+inline bool is_surface_block(const struct Vec3i& pos)
 {
     return is_surface_block(pos.x, pos.y, pos.z);
 }

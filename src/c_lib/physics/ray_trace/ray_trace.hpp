@@ -23,7 +23,7 @@ class RaytraceData
 
     inline CubeType get_cube_type();
     inline void set_collision_point(int x, int y, int z);
-    void get_pre_collision_point(struct MapPos& pos);
+    void get_pre_collision_point(struct Vec3i& pos);
     // DEPRECATED
     void get_pre_collision_point(int pre_collision_point[3]);
 

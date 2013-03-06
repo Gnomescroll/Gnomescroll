@@ -436,7 +436,7 @@ int PlayerAgent::facing_container()
     return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
 }
 
-bool PlayerAgent::nearest_open_block(const float max_dist, struct MapPos& pos)
+bool PlayerAgent::nearest_open_block(const float max_dist, struct Vec3i& pos)
 {
     if (agent_camera == NULL) return NULL;
     struct Vec3 f = agent_camera->forward_vector();

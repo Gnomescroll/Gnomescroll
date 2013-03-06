@@ -65,12 +65,12 @@ CubeType set(int x, int y, int z, CubeType cube_type)
     return cube_type;
 }
 
-CubeType get(const struct MapPos& pos)
+CubeType get(const struct Vec3i& pos)
 {
     return get(pos.x, pos.y, pos.z);
 }
 
-CubeType set(const struct MapPos& pos, CubeType cube_type)
+CubeType set(const struct Vec3i& pos, CubeType cube_type)
 {
     return set(pos.x, pos.y, pos.z, cube_type);
 }

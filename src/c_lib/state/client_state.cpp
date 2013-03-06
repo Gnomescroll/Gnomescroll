@@ -19,7 +19,7 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 namespace ClientState
 {
 
-struct MapPos* path = NULL;
+struct Vec3i* path = NULL;
 size_t path_len = 0;
 
 int tick_id = 0;
@@ -144,12 +144,12 @@ void set_location_pointer()
 void set_location_pointer_open_block()
 {
     location_pointer_set = false;
-    struct MapPos pos;
+    struct Vec3i pos;
     float max_len = float(t_map::map_dim.x) / 2.0f;
     location_pointer_set = player_agent.nearest_open_block(max_len, pos);
     if (!location_pointer_set) return;
     printf("Locator (open block): ");
-    print_pos(pos);
+    vec3i_print(pos);
     location_pointer = vec3_init(pos);
 }
 

@@ -185,14 +185,6 @@ inline void object_destroy_StoC::handle()
 
 /* Actions */
 
-inline void object_picked_up_StoC::handle()
-{
-    using ClientState::player_agent;
-    class Agents::Agent* you = player_agent.you();
-    if (you != NULL && you->id == agent_id) Sound::play_2d_sound("pickup_item");
-    Entities::destroy((EntityType)type, id);
-}
-
 /* Hitscan */
 
 inline void object_shot_object_StoC::handle()
@@ -519,7 +511,6 @@ inline void object_create_momentum_StoC::handle() {}
 inline void object_create_momentum_angles_StoC::handle() {}
 inline void object_create_momentum_angles_health_StoC::handle() {}
 inline void object_destroy_StoC::handle() {}
-inline void object_picked_up_StoC::handle() {}
 inline void object_state_StoC::handle() {}
 inline void object_state_momentum_StoC::handle() {}
 inline void object_state_momentum_angles_StoC::handle() {}

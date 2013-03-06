@@ -104,7 +104,7 @@ class PlayerAgent
 
     void update_sound();
 
-    bool nearest_open_block(const float max_dist, struct MapPos& pos);
+    bool nearest_open_block(const float max_dist, struct Vec3i& pos);
     int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
     // returns side, as integer. side<0 if failure:
     int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);

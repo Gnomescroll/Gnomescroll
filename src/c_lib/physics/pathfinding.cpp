@@ -67,7 +67,7 @@ typedef enum
 
 struct PathAdjacency
 {
-    struct MapPosOffset adj;
+    struct Vec3i adj;
     int cost;
     DirectionType dir;
 };
@@ -78,50 +78,50 @@ static const int jump_cost = 100;
 
 static const struct PathAdjacency adj[8+9+9] = {
     // 2d
-    {{  1,  0,  0 }, 100, DIR_LATERAL_PLANAR },
-    {{ -1,  0,  0 }, 100, DIR_LATERAL_PLANAR },
-    {{  0,  1,  0 }, 100, DIR_LATERAL_PLANAR },
-    {{  0, -1,  0 }, 100, DIR_LATERAL_PLANAR },
-    {{  1,  1,  0 }, 141, DIR_DIAGONAL_PLANAR },
-    {{  1, -1,  0 }, 141, DIR_DIAGONAL_PLANAR },
-    {{ -1,  1,  0 }, 141, DIR_DIAGONAL_PLANAR },
-    {{ -1, -1,  0 }, 141, DIR_DIAGONAL_PLANAR },
-//8
-    {{  0,  0, -1 }, 100, DIR_LATERAL_PLANAR },
-    {{  0,  0,  1 }, 100, DIR_LATERAL_PLANAR },
-//10
-    {{  1,  0,  1 }, 141, DIR_LATERAL_NONPLANAR },
-    {{ -1,  0,  1 }, 141, DIR_LATERAL_NONPLANAR },
-    {{  0,  1,  1 }, 141, DIR_LATERAL_NONPLANAR },
-    {{  0, -1,  1 }, 141, DIR_LATERAL_NONPLANAR },
-    {{  1,  0, -1 }, 141, DIR_LATERAL_NONPLANAR },
-    {{ -1,  0, -1 }, 141, DIR_LATERAL_NONPLANAR },
-    {{  0,  1, -1 }, 141, DIR_LATERAL_NONPLANAR },
-    {{  0, -1, -1 }, 141, DIR_LATERAL_NONPLANAR },
-//18
-    {{  1,  1,  1 }, 173, DIR_DIAGONAL_NONPLANAR },
-    {{  1, -1,  1 }, 173, DIR_DIAGONAL_NONPLANAR },
-    {{ -1,  1,  1 }, 173, DIR_DIAGONAL_NONPLANAR },
-    {{ -1, -1,  1 }, 173, DIR_DIAGONAL_NONPLANAR },
-    {{  1,  1, -1 }, 173, DIR_DIAGONAL_NONPLANAR },
-    {{  1, -1, -1 }, 173, DIR_DIAGONAL_NONPLANAR },
-    {{ -1,  1, -1 }, 173, DIR_DIAGONAL_NONPLANAR },
-    {{ -1, -1, -1 }, 173, DIR_DIAGONAL_NONPLANAR },
+    {{{{  1,  0,  0 }}}, 100, DIR_LATERAL_PLANAR },
+    {{{{ -1,  0,  0 }}}, 100, DIR_LATERAL_PLANAR },
+    {{{{  0,  1,  0 }}}, 100, DIR_LATERAL_PLANAR },
+    {{{{  0, -1,  0 }}}, 100, DIR_LATERAL_PLANAR },
+    {{{{  1,  1,  0 }}}, 141, DIR_DIAGONAL_PLANAR },
+    {{{{  1, -1,  0 }}}, 141, DIR_DIAGONAL_PLANAR },
+    {{{{ -1,  1,  0 }}}, 141, DIR_DIAGONAL_PLANAR },
+    {{{{ -1, -1,  0 }}}, 141, DIR_DIAGONAL_PLANAR },
+//8   {{            }}
+    {{{{  0,  0, -1 }}}, 100, DIR_LATERAL_PLANAR },
+    {{{{  0,  0,  1 }}}, 100, DIR_LATERAL_PLANAR },
+//10  {{            }}
+    {{{{  1,  0,  1 }}}, 141, DIR_LATERAL_NONPLANAR },
+    {{{{ -1,  0,  1 }}}, 141, DIR_LATERAL_NONPLANAR },
+    {{{{  0,  1,  1 }}}, 141, DIR_LATERAL_NONPLANAR },
+    {{{{  0, -1,  1 }}}, 141, DIR_LATERAL_NONPLANAR },
+    {{{{  1,  0, -1 }}}, 141, DIR_LATERAL_NONPLANAR },
+    {{{{ -1,  0, -1 }}}, 141, DIR_LATERAL_NONPLANAR },
+    {{{{  0,  1, -1 }}}, 141, DIR_LATERAL_NONPLANAR },
+    {{{{  0, -1, -1 }}}, 141, DIR_LATERAL_NONPLANAR },
+//18  {{            }}
+    {{{{  1,  1,  1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
+    {{{{  1, -1,  1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
+    {{{{ -1,  1,  1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
+    {{{{ -1, -1,  1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
+    {{{{  1,  1, -1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
+    {{{{  1, -1, -1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
+    {{{{ -1,  1, -1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
+    {{{{ -1, -1, -1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
 //26
 };
 
-static const struct MapPosOffset anchor[6] = {
-    {  0,  0, -1 },
-    {  0,  0,  1 },
-    {  1,  0,  0 },
-    { -1,  0,  0 },
-    {  0,  1,  0 },
-    {  0, -1,  0 },
+static const struct Vec3i anchor[6] = {
+    {{{  0,  0, -1 }}},
+    {{{  0,  0,  1 }}},
+    {{{  1,  0,  0 }}},
+    {{{ -1,  0,  0 }}},
+    {{{  0,  1,  0 }}},
+    {{{  0, -1,  0 }}},
 };
 
-static inline struct MapPos add_pos_adj(const struct MapPos& pos, int iadj)
+static inline struct Vec3i add_pos_adj(const struct Vec3i& pos, int iadj)
 {   // NOTE: make sure to check that the final z position is in bounds
-    return add_offset(pos, adj[iadj].adj);
+    return vec3i_add(pos, adj[iadj].adj);
 }
 
 struct Score
@@ -136,7 +136,7 @@ struct Node
     int id;
     int parent;
     int anchor;
-    struct MapPos pos;
+    struct Vec3i pos;
     struct Score score;
 };
 
@@ -147,13 +147,13 @@ static inline void _node_update_score(struct Node& node, int g)
     node.score.f = node.score.g + node.score.h;
 }
 
-static inline void _node_set_position(struct Node& node, const struct MapPos& pos, const struct MapPos& end)
+static inline void _node_set_position(struct Node& node, const struct Vec3i& pos, const struct Vec3i& end)
 {
     node.pos = pos;
     node.score.h = euclidean_distance(node.pos, end) * 100;
 }
 
-static inline void node_first(struct Node& node, const struct MapPos& start, const struct MapPos& end)
+static inline void node_first(struct Node& node, const struct Vec3i& start, const struct Vec3i& end)
 {   // init first node in the sequence
     node.parent = -1;
     node.id = 0;
@@ -163,7 +163,7 @@ static inline void node_first(struct Node& node, const struct MapPos& start, con
     _node_update_score(node, 0);
 }
 
-static inline void node_update(struct Node& node, const struct MapPos& end, int cost)
+static inline void node_update(struct Node& node, const struct Vec3i& end, int cost)
 {
     _node_set_position(node, node.pos, end);
     _node_update_score(node, node.score.g + cost);
@@ -182,7 +182,7 @@ static inline void node_print(const struct Node& node)
 {
     printf("ID: %03d; Parent: %03d; Score: f=%04d; g=%04d, h=%04d; ", node.id,
            node.parent, node.score.f, node.score.g, node.score.h);
-    print_pos(node.pos);
+    vec3i_print(node.pos);
 }
 
 static inline void nodes_print(const struct Node* nodes, size_t len)
@@ -236,7 +236,7 @@ static inline int add_node(struct Node& node, struct Node*& nodes,
     return len-1;
 }
 
-static inline int get_node_pos_index(const struct MapPos& pos,
+static inline int get_node_pos_index(const struct Vec3i& pos,
                                      const Node* nodes, size_t len)
 {
     for (size_t i=0; i<len; i++)
@@ -245,7 +245,7 @@ static inline int get_node_pos_index(const struct MapPos& pos,
     return -1;
 }
 
-struct MapPos* construct_path(const struct Node* open, size_t iopen,
+struct Vec3i* construct_path(const struct Node* open, size_t iopen,
                               struct Node* closed, size_t iclosed,
                               size_t& len)
 {
@@ -260,7 +260,7 @@ struct MapPos* construct_path(const struct Node* open, size_t iopen,
         first = closed[first].parent;
         len++;
     }
-    struct MapPos* path = (struct MapPos*)malloc(len * sizeof(struct MapPos));
+    struct Vec3i* path = (struct Vec3i*)malloc(len * sizeof(struct Vec3i));
 
     // add to path array, starting with the last element
     int i = len;
@@ -282,8 +282,8 @@ struct Passable2D
     static bool is_passable(const struct Node& node, int iadj,
                             struct Node& exit, int& cost)
     {
-        struct MapPos cur = node.pos;
-        struct MapPos dst = add_pos_adj(cur, iadj);
+        struct Vec3i cur = node.pos;
+        struct Vec3i dst = add_pos_adj(cur, iadj);
         if (dst.z <= 0) return false;
         if (t_map::isSolid(dst))
             return false;
@@ -302,8 +302,8 @@ struct Passable3DAir
     static bool is_passable(const struct Node& node, int iadj,
                             struct Node& exit, int& cost)
     {
-        struct MapPos cur = node.pos;
-        struct MapPos dst = add_pos_adj(cur, iadj);
+        struct Vec3i cur = node.pos;
+        struct Vec3i dst = add_pos_adj(cur, iadj);
         if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
         if (t_map::isSolid(dst))
             return false;
@@ -334,8 +334,8 @@ struct Passable3DSurface
     static bool is_passable(const struct Node& node, int iadj,
                             struct Node& exit, int& cost)
     {
-        struct MapPos cur = node.pos;
-        struct MapPos dst = add_pos_adj(cur, iadj);
+        struct Vec3i cur = node.pos;
+        struct Vec3i dst = add_pos_adj(cur, iadj);
         if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
         if (t_map::isSolid(dst))
             return false;
@@ -379,7 +379,7 @@ struct Passable3DSurface
 
 struct Passable3DJump
 {
-    static bool can_jump_to(const struct MapPos& start, const struct MapPos& end,
+    static bool can_jump_to(const struct Vec3i& start, const struct Vec3i& end,
                             int clearance, int jump_max)
     {   // make sure there is vertical clearance to jump to next level (both down and up)
         int d = end.z - start.z;
@@ -396,7 +396,7 @@ struct Passable3DJump
         return true;
     }
 
-    static bool can_fall_to(const struct MapPos& start, const struct MapPos& end,
+    static bool can_fall_to(const struct Vec3i& start, const struct Vec3i& end,
                             int clearance, int fall_max)
     {
         clearance--;    // a clearance of 1 is accounted for
@@ -414,14 +414,14 @@ struct Passable3DJump
         const int clearance = 1;    // TODO -- parameterized
         const int max_down = 9;
         const int max_up = 3;
-        struct MapPos cur = node.pos;
-        struct MapPos dst = add_pos_adj(cur, iadj);
+        struct Vec3i cur = node.pos;
+        struct Vec3i dst = add_pos_adj(cur, iadj);
         if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
 
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
         {   // attempt a jump
-            struct MapPos up = map_pos_init(dst);
-            struct MapPos down = map_pos_init(dst);
+            struct Vec3i up = vec3i_init(dst);
+            struct Vec3i down = vec3i_init(dst);
             // Note: _below returns <= dst.z; _above returns > dst.z
             down.z = t_map::get_nearest_surface_block_below(dst, clearance, max_down);
             up.z = t_map::get_nearest_surface_block_above(dst, clearance, max_up);
@@ -460,7 +460,7 @@ struct Passable3DJump
 };
 
 template<class Passable, int adj_size>
-MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
+Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
                  size_t& len)
 {
     len = 0;
@@ -490,10 +490,10 @@ MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
     #if PATHFINDING_VERBOSE
     PATH_PRINT("Finding path from:\n");
     PATH_PRINT("\t");
-    print_pos(start);
+    vec3i_print(start);
     PATH_PRINT("to\n");
     PATH_PRINT("\t");
-    print_pos(end);
+    vec3i_print(end);
     #endif
 
     size_t iopen = 0;
@@ -565,36 +565,36 @@ MapPos* get_path(const struct MapPos& start, const struct MapPos& end,
 
     }
 
-    struct MapPos* path = construct_path(open, iopen, closed, iclosed, len);
+    struct Vec3i* path = construct_path(open, iopen, closed, iclosed, len);
     free(open);
     free(closed);
     return path;
 }
 
-struct MapPos* get_path_2d(const struct MapPos& start, const struct MapPos& end, size_t& len)
+struct Vec3i* get_path_2d(const struct Vec3i& start, const struct Vec3i& end, size_t& len)
 {
     if (start.z != end.z) return NULL;
     return get_path<Passable2D, 8>(start, end, len);
 }
 
-struct MapPos* get_path_3d_air(const struct MapPos& start, const struct MapPos& end, size_t& len)
+struct Vec3i* get_path_3d_air(const struct Vec3i& start, const struct Vec3i& end, size_t& len)
 {
     return get_path<Passable3DAir, 26>(start, end, len);
 }
 
-struct MapPos* get_path_3d_surface(const struct MapPos& start, const struct MapPos& end, size_t& len)
+struct Vec3i* get_path_3d_surface(const struct Vec3i& start, const struct Vec3i& end, size_t& len)
 {   // stick to surfaces
     return get_path<Passable3DSurface, 10>(start, end, len);
 }
 
-struct MapPos* get_path_3d_jump(const struct MapPos& start, const struct MapPos& end, size_t& len)
+struct Vec3i* get_path_3d_jump(const struct Vec3i& start, const struct Vec3i& end, size_t& len)
 {   // stick to upper surfaces, allowing jumps
     if (!t_map::is_surface_block(start) ||
         !t_map::is_surface_block(end)) return NULL;
     return get_path<Passable3DJump, 8>(start, end, len);
 }
 
-void print_path(const struct MapPos* path, size_t len)
+void print_path(const struct Vec3i* path, size_t len)
 {
     if (path == NULL)
     {
@@ -604,12 +604,12 @@ void print_path(const struct MapPos* path, size_t len)
     for (int i=0; i<int(len); i++)
     {
         printf("%d: ", i);
-        print_pos(path[i]);
+        vec3i_print(path[i]);
     }
 }
 
 #if DC_CLIENT
-void draw_path(const struct MapPos* path, size_t len)
+void draw_path(const struct Vec3i* path, size_t len)
 {
     if (path == NULL) return;
     if (len < 2) return;

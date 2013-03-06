@@ -80,7 +80,6 @@ class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToCli
         float mx,my,mz;
         float theta, phi;
 
-
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
@@ -97,7 +96,6 @@ class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToCli
     inline void handle();
 };
 
-// NOTE: only packs theta/phi for now
 class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPacketToClient<object_create_momentum_angles_health_StoC>
 {
     public:
@@ -107,7 +105,6 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
         float mx,my,mz;
         float theta, phi;
         uint16_t max_health;
-
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
@@ -134,12 +131,12 @@ class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_dest
         uint8_t type;
         uint16_t id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u16(&id, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 /* State */
@@ -151,15 +148,15 @@ class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_
         uint8_t type;
         float x,y,z;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<object_state_momentum_StoC>
@@ -170,18 +167,18 @@ class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<obje
         float x,y,z;
         float mx,my,mz;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-            pack_float(&mx, buff, buff_n, pack);
-            pack_float(&my, buff, buff_n, pack);
-            pack_float(&mz, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+        pack_float(&mx, buff, buff_n, pack);
+        pack_float(&my, buff, buff_n, pack);
+        pack_float(&mz, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 // NOTE: only packs theta/phi for now
@@ -194,20 +191,20 @@ class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClie
         float mx,my,mz;
         float theta, phi;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-            pack_float(&mx, buff, buff_n, pack);
-            pack_float(&my, buff, buff_n, pack);
-            pack_float(&mz, buff, buff_n, pack);
-            pack_float(&theta, buff, buff_n, pack);
-            pack_float(&phi, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+        pack_float(&mx, buff, buff_n, pack);
+        pack_float(&my, buff, buff_n, pack);
+        pack_float(&mz, buff, buff_n, pack);
+        pack_float(&theta, buff, buff_n, pack);
+        pack_float(&phi, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 class object_state_health_StoC: public FixedSizeReliableNetPacketToClient<object_state_health_StoC>
@@ -217,34 +214,16 @@ class object_state_health_StoC: public FixedSizeReliableNetPacketToClient<object
         uint8_t type;
         uint16_t health;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u16(&health, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&health, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 /* Actions */
-
-/* Pickup */
-
-class object_picked_up_StoC: public FixedSizeReliableNetPacketToClient<object_picked_up_StoC>
-{
-    public:
-        uint8_t type;
-        uint16_t id;
-        uint8_t agent_id;
-
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&agent_id, buff, buff_n, pack);
-        }
-        inline void handle();
-};
 
 /* Shooting */
 
@@ -260,17 +239,17 @@ class object_shot_object_StoC: public FixedSizeReliableNetPacketToClient<object_
         uint8_t voxel_y;
         uint8_t voxel_z;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u16(&target_id, buff, buff_n, pack);
-            pack_u8(&target_type, buff, buff_n, pack);
-            pack_u8(&target_part, buff, buff_n, pack);
-            pack_u8(&voxel_x, buff, buff_n, pack);
-            pack_u8(&voxel_y, buff, buff_n, pack);
-            pack_u8(&voxel_z, buff, buff_n, pack);
-        }
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&target_id, buff, buff_n, pack);
+        pack_u8(&target_type, buff, buff_n, pack);
+        pack_u8(&target_part, buff, buff_n, pack);
+        pack_u8(&voxel_x, buff, buff_n, pack);
+        pack_u8(&voxel_y, buff, buff_n, pack);
+        pack_u8(&voxel_z, buff, buff_n, pack);
+    }
     inline void handle();
 };
 
@@ -456,4 +435,3 @@ class object_chase_agent_StoC: public FixedSizeReliableNetPacketToClient<object_
     }
     inline void handle();
 };
-

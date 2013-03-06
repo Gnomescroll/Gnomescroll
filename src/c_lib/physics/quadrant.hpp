@@ -4,6 +4,7 @@
 
 #include <t_map/common/constants.hpp>
 #include <physics/vec3.hpp>
+#include <physics/vec3i.hpp>
 
 #define ASSERT_BOXED_POINT(p) GS_ASSERT(is_boxed_point(p))
 #define ASSERT_BOXED_POSITION(p) GS_ASSERT(is_boxed_position(p))
@@ -23,7 +24,7 @@ ALWAYS_INLINE bool is_boxed_position(const struct Vec3& p)
     return (is_boxed_point(p.x) && is_boxed_point(p.y));
 }
 
-ALWAYS_INLINE bool is_boxed_position(const struct MapPos& p)
+ALWAYS_INLINE bool is_boxed_position(const struct Vec3i& p)
 {
     return (is_boxed_point(p.x) && is_boxed_point(p.y));
 }
@@ -162,5 +163,21 @@ inline struct Vec3 quadrant_translate_position(struct Vec3 pos1, struct Vec3 pos
     pos2.x = quadrant_translate_f(pos1.x, pos2.x);
     pos2.y = quadrant_translate_f(pos1.y, pos2.y);
 
+    return pos2;
+}
+
+ALWAYS_INLINE struct Vec3i translate_position(struct Vec3i pos)
+{
+    pos.x = translate_point(pos.x);
+    pos.y = translate_point(pos.y);
+    return pos;
+}
+
+inline struct Vec3i quadrant_translate_position(struct Vec3i pos1, struct Vec3i pos2)
+{
+    ASSERT_BOXED_POSITION(pos1);
+    ASSERT_BOXED_POSITION(pos2);
+    pos2.x = quadrant_translate_i(pos1.x, pos2.x);
+    pos2.y = quadrant_translate_i(pos1.y, pos2.y);
     return pos2;
 }

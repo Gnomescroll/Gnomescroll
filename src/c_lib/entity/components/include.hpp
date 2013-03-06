@@ -1,15 +1,11 @@
 #pragma once
 
-#include <entity/components/stackable.hpp>
-
 #include <entity/components/physics.hpp>
 #include <entity/components/physics/position.hpp>
 #include <entity/components/physics/position_momentum.hpp>
 #include <entity/components/physics/position_changed.hpp>
 #include <entity/components/physics/position_momentum_changed.hpp>
 #include <entity/components/physics/verlet.hpp>
-
-#include <entity/components/pickup.hpp>
 
 #include <entity/components/health.hpp>
 #include <entity/components/health/hit_points.hpp>

@@ -2,16 +2,12 @@
 
 #include "include.hpp"
 
-#include <entity/components/stackable.cpp>
-
 #include <entity/components/physics.cpp>
 #include <entity/components/physics/position.cpp>
 #include <entity/components/physics/position_momentum.cpp>
 #include <entity/components/physics/position_changed.cpp>
 #include <entity/components/physics/position_momentum_changed.cpp>
 #include <entity/components/physics/verlet.cpp>
-
-#include <entity/components/pickup.cpp>
 
 #include <entity/components/health.cpp>
 #include <entity/components/health/hit_points.cpp>

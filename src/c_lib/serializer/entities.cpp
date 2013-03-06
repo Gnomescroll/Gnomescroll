@@ -166,7 +166,7 @@ bool process_entities_blob(const char* str, size_t filesize)
         if (entity == NULL) return false;
 
         bool err = false;
-        struct MapPos* position = NULL;
+        struct Vec3i* position = NULL;
         if (entity_type == OBJECT_ENERGY_CORE)
         {
             position = &energy_core_data.position;

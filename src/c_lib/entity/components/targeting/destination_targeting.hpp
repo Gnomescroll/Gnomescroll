@@ -10,7 +10,7 @@ class DestinationTargetingComponent: public TargetingComponent
     private:
         struct Vec3 destination;
     public:
-        struct MapPos* path;
+        struct Vec3i* path;
         size_t mpath;
         size_t ipath;
         float stop_proximity;

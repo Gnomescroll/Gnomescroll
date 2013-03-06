@@ -1,6 +1,6 @@
 #pragma once
 
-// deprecate in favor of MapDimension map_dim
+// deprecate in favor of Vec3i map_dim
 const int XMAX = 512;
 const int YMAX = 512;
 const int ZMAX = 128;

@@ -7,23 +7,17 @@ static ComponentInterfaceType* component_interface_map = NULL;
 
 ComponentInterfaceType get_interface_for_component(ComponentType component)
 {
-    GS_ASSERT(component_interface_map != NULL);
-    GS_ASSERT(component >= 0);
-    GS_ASSERT(component < MAX_COMPONENT_TYPES);
-    if (component_interface_map == NULL) return COMPONENT_INTERFACE_NONE;
-    if (component < 0) return COMPONENT_INTERFACE_NONE;
-    if (component >= MAX_COMPONENT_TYPES) return COMPONENT_INTERFACE_NONE;
+    IF_ASSERT(component_interface_map == NULL) return COMPONENT_INTERFACE_NONE;
+    IF_ASSERT(component < 0) return COMPONENT_INTERFACE_NONE;
+    IF_ASSERT(component >= MAX_COMPONENT_TYPES) return COMPONENT_INTERFACE_NONE;
     return component_interface_map[component];
 }
 
 static void set_interface_for_component(ComponentType component, ComponentInterfaceType interface)
 {
-    GS_ASSERT(component_interface_map != NULL);
-    GS_ASSERT(component >= 0);
-    GS_ASSERT(component < MAX_COMPONENT_TYPES);
-    if (component_interface_map == NULL) return;
-    if (component < 0) return;
-    if (component >= MAX_COMPONENT_TYPES) return;
+    IF_ASSERT(component_interface_map == NULL) return;
+    IF_ASSERT(component < 0) return;
+    IF_ASSERT(component >= MAX_COMPONENT_TYPES) return;
     component_interface_map[component] = interface;
 }
 
@@ -38,10 +32,6 @@ void init()
     set_interface_for_component(COMPONENT_POSITION_CHANGED, COMPONENT_INTERFACE_PHYSICS);
     set_interface_for_component(COMPONENT_POSITION_MOMENTUM_CHANGED, COMPONENT_INTERFACE_PHYSICS);
     set_interface_for_component(COMPONENT_VERLET, COMPONENT_INTERFACE_PHYSICS);
-
-    set_interface_for_component(COMPONENT_STACKABLE, COMPONENT_INTERFACE_STACKABLE);
-
-    set_interface_for_component(COMPONENT_PICKUP, COMPONENT_INTERFACE_PICKUP);
 
     set_interface_for_component(COMPONENT_TTL, COMPONENT_INTERFACE_HEALTH);
     set_interface_for_component(COMPONENT_HIT_POINTS, COMPONENT_INTERFACE_HEALTH);

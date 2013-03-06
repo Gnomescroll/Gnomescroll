@@ -2,21 +2,6 @@
 
 #include <t_map/common/constants.hpp>
 
-struct MapDimension
-{
-    int x,y,z;
-};
-
-struct MapPos
-{
-    int x,y,z;
-};
-
-struct MapPosOffset
-{   // intended for +/- to be applied to map node
-    int x,y,z;
-};
-
 typedef enum
 {
     CUBE_MATERIAL_NONE = 0,

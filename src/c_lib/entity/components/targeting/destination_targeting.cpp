@@ -29,18 +29,18 @@ void DestinationTargetingComponent::choose_destination()
         this->mpath = 0;
         free(this->path);
         this->path = NULL;
-        struct MapPos current = map_pos_init(position);
+        struct Vec3i current = vec3i_init(position);
         const float r2 = this->stop_proximity * this->stop_proximity;
         const int max_tries = 4;
         for (int i=0; i<max_tries && this->path == NULL; i++)
         {
-            struct MapPosOffset delta = map_offset_init(0);
+            struct Vec3i delta = vec3i_init(0);
             do
             {
                 delta.x = randrange(this->destination_choice_x/2, this->destination_choice_x);
                 delta.y = randrange(this->destination_choice_y/2, this->destination_choice_y);
             } while ((delta.x*delta.x + delta.y*delta.y) < r2);
-            struct MapPos end = add_offset(current, delta);
+            struct Vec3i end = vec3i_add(current, delta);
             delta.z = t_map::get_nearest_surface_block(delta.x, delta.y, current.z);
             this->path = Path::get_path_3d_jump(current, end, this->mpath);
         }

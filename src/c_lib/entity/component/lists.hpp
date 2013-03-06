@@ -23,16 +23,6 @@ typedef ComponentList<PositionMomentumChangedPhysicsComponent, COMPONENT_POSITIO
 typedef ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
     VerletPhysicsComponentList;
 
-/* Stackables */
-const int MAX_STACKABLE_COMPONENTS = 4096;
-typedef ComponentList<StackableComponent, COMPONENT_STACKABLE, MAX_STACKABLE_COMPONENTS>
-    StackableComponentList;
-
-/* Pickup */
-const int MAX_PICKUP_COMPONENTS = 2048;
-typedef ComponentList<PickupComponent, COMPONENT_PICKUP, MAX_PICKUP_COMPONENTS>
-    PickupComponentList;
-
 /* Health */
 const int MAX_HEALTH_COMPONENTS = 4096;
 typedef ComponentList<TTLHealthComponent, COMPONENT_TTL, MAX_HEALTH_COMPONENTS>

@@ -120,9 +120,6 @@ void RegisterMessages()
     object_state_momentum_angles_StoC::register_client_packet();
     object_state_health_StoC::register_client_packet();
 
-    // object actions
-    object_picked_up_StoC::register_client_packet();
-
     // object fired
     object_shot_object_StoC::register_client_packet();
     object_shot_terrain_StoC::register_client_packet();

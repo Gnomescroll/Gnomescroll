@@ -1,20 +1,19 @@
 #include "_interface.hpp"
 
-#if DC_CLIENT
-#include <t_map/t_vbo_class.hpp>
-#include <t_map/t_vbo_update.hpp>
-#include <t_map/t_vbo_draw.hpp>
-#endif
-
+#include <physics/vec3i.hpp>
 #include <t_map/common/constants.hpp>
-
 #include <item/common/constants.hpp>
 #include <item/common/enum.hpp>
+#if DC_CLIENT
+# include <t_map/t_vbo_class.hpp>
+# include <t_map/t_vbo_update.hpp>
+# include <t_map/t_vbo_draw.hpp>
+#endif
 
 namespace t_map
 {
 
-struct MapDimension map_dim = { XMAX, YMAX, ZMAX };
+struct Vec3i map_dim = vec3i_init(XMAX, YMAX, ZMAX);
 
 void init_packets()
 {
@@ -109,10 +108,10 @@ void update_map()
     vbo_map->update_map();
 }
 
-static const unsigned int REQUEST_DMG_ID_MAX = 0xff;
+static const unsigned int REQUEST_DMG_ID_MAX = 0xFF;
 static unsigned int request_id = 0;
 
-static struct MapPos last_requested_block = {-1, -1, -1};
+static struct Vec3i last_requested_block = vec3i_init(-1, -1, -1);
 static unsigned int last_request_id = 0;
 static int requested_block_health = 0;
 
@@ -121,9 +120,9 @@ unsigned int requested_block_damage = 0;
 
 bool is_last_requested_block(int x, int y, int z)
 {
-    return (last_requested_block.x == x
-          && last_requested_block.y == y
-          && last_requested_block.z == z);
+    return (last_requested_block.x == x &&
+            last_requested_block.y == y &&
+            last_requested_block.z == z);
 }
 
 void request_block_damage(int x, int y, int z)

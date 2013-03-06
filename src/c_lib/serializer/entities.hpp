@@ -51,7 +51,7 @@ class ParsedAgentSpawnerData
 {
     public:
 
-        struct MapPos position;
+        struct Vec3i position;
         size_t user_count;
         size_t added_users;
         UserID* users;
@@ -108,7 +108,7 @@ class ParsedEnergyCoreData
 {
     public:
 
-        struct MapPos position;
+        struct Vec3i position;
         bool valid;
 
     void reset()

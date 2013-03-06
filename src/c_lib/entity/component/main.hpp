@@ -26,10 +26,6 @@ extern PositionChangedPhysicsComponentList* position_changed_physics_component_l
 extern PositionMomentumChangedPhysicsComponentList* position_momentum_changed_physics_component_list;
 extern VerletPhysicsComponentList* verlet_physics_component_list;
 
-extern StackableComponentList* stackable_component_list;
-
-extern PickupComponentList* pickup_component_list;
-
 extern TTLHealthComponentList* ttl_health_component_list;
 extern HitPointsHealthComponentList* hit_points_health_component_list;
 
