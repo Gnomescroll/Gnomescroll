@@ -147,7 +147,7 @@ void Camera::set_dimensions()
 void Camera::set_position(struct Vec3 p)
 {
     this->position = translate_position(p);
-    ASSERT_BOXED_POSITION(this->position);
+    GS_ASSERT(is_boxed_position(this->position));
     if (this->is_current()) current_camera_position = this->position;
     if (this->is_current())
     {

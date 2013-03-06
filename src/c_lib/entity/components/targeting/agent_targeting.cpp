@@ -26,7 +26,7 @@ void AgentTargetingComponent::set_target(AgentID agent_id)
     Vec3 dest = a->get_position();
     this->target_direction = quadrant_translate_position(position, dest);
     normalize_vector(&this->target_direction);
-    
+
     this->target_type = OBJECT_AGENT;
     this->target_id = agent_id;
     this->locked_on_target = true;
@@ -77,7 +77,7 @@ void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
     }
 
     Vec3 target_position = target->get_position();
-    ASSERT_BOXED_POSITION(target_position);
+    GS_ASSERT(is_boxed_position(target_position));
     target_position = quadrant_translate_position(camera_position, target_position);
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);

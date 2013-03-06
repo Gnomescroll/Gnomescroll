@@ -29,7 +29,7 @@ class HitscanEffect
 
     void set_state(struct Vec3 p, struct Vec3 v)
     {
-        ASSERT_BOXED_POSITION(p);
+        GS_ASSERT(is_boxed_position(p));
         struct Vec3 scaled = vec3_scalar_mult(vec3_abs(v), 1.0f/30.0f);
         GS_ASSERT(scaled.x < 128.0f);
         GS_ASSERT(scaled.y < 128.0f);

@@ -162,7 +162,7 @@ void MotionTargetingComponent::broadcast_destination()
     msg.x = this->destination.x;
     msg.y = this->destination.y;
     msg.z = this->destination.z;
-    ASSERT_BOXED_POSITION(this->destination);
+    GS_ASSERT(is_boxed_position(this->destination));
     msg.id = this->object->id;
     msg.type = this->object->type;
     msg.ticks_to_destination = this->ticks_to_destination;

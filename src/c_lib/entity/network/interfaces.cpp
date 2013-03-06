@@ -5,33 +5,33 @@
 
 namespace Entities
 {
-    
+
 /* Create */
 
 void CreatePacket::message(Entity* object, object_create_StoC* msg)
 {
     using Components::PhysicsComponent;
-    
+
     msg->id = object->id;
     msg->type = object->type;
-    
+
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
     msg->x = position.x;
     msg->y = position.y;
     msg->z = position.z;
 
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
 }
 
 void CreatePacketOwner::message(Entity* object, object_create_owner_StoC* msg)
 {
     using Components::PhysicsComponent;
     using Components::OwnerComponent;
-    
+
     msg->id = object->id;
     msg->type = object->type;
-    
+
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
     msg->x = position.x;
@@ -44,16 +44,16 @@ void CreatePacketOwner::message(Entity* object, object_create_owner_StoC* msg)
         msg->owner = owner->get_owner();
     else msg->owner = NULL_AGENT;
 
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
 }
 
 void CreatePacketMomentum::message(Entity* object, object_create_momentum_StoC* msg)
 {
     using Components::PhysicsComponent;
-    
+
     msg->id = object->id;
     msg->type = object->type;
-    
+
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
     msg->x = position.x;
@@ -65,16 +65,16 @@ void CreatePacketMomentum::message(Entity* object, object_create_momentum_StoC* 
     msg->my = momentum.y;
     msg->mz = momentum.z;
 
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
 }
 
 void CreatePacketMomentumAngles::message(Entity* object, object_create_momentum_angles_StoC* msg)
 {
     using Components::PhysicsComponent;
-    
+
     msg->id = object->id;
     msg->type = object->type;
-    
+
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
     msg->x = position.x;
@@ -89,18 +89,18 @@ void CreatePacketMomentumAngles::message(Entity* object, object_create_momentum_
     Vec3 angles = physics->get_angles();
     msg->theta = angles.x;
     msg->phi = angles.y;
-    
-    ASSERT_BOXED_POSITION(position);
+
+    GS_ASSERT(is_boxed_position(position));
 }
 
 void CreatePacketMomentumAnglesHealth::message(Entity* object, object_create_momentum_angles_health_StoC* msg)
 {
     using Components::PhysicsComponent;
     using Components::HitPointsHealthComponent;
-    
+
     msg->id = object->id;
     msg->type = object->type;
-    
+
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return;
@@ -124,7 +124,7 @@ void CreatePacketMomentumAnglesHealth::message(Entity* object, object_create_mom
     GS_ASSERT(health->max_health >= 0); // should be dead
     msg->max_health = health->max_health;
 
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
 }
 
 void CreatePacketMomentumAnglesHealth::health_message(Entity* object, object_state_health_StoC* msg)
@@ -149,26 +149,26 @@ void CreatePacketMomentumAnglesHealth::health_message(Entity* object, object_sta
 void StatePacket::message(Entity* object, object_state_StoC* msg)
 {
     using Components::PhysicsComponent;
-    
+
     msg->id = object->id;
     msg->type = object->type;
-    
+
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
     msg->x = position.x;
     msg->y = position.y;
     msg->z = position.z;
 
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
 }
 
 void StatePacketMomentum::message(Entity* object, object_state_momentum_StoC* msg)
 {
     using Components::PhysicsComponent;
-    
+
     msg->id = object->id;
     msg->type = object->type;
-    
+
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
     msg->x = position.x;
@@ -180,16 +180,16 @@ void StatePacketMomentum::message(Entity* object, object_state_momentum_StoC* ms
     msg->my = momentum.y;
     msg->mz = momentum.z;
 
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
 }
 
 void StatePacketMomentumAngles::message(Entity* object, object_state_momentum_angles_StoC* msg)
 {
     using Components::PhysicsComponent;
-    
+
     msg->id = object->id;
     msg->type = object->type;
-    
+
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
     msg->x = position.x;
@@ -205,7 +205,7 @@ void StatePacketMomentumAngles::message(Entity* object, object_state_momentum_an
     msg->theta = angles.x;
     msg->phi = angles.y;
 
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
 }
 
 

@@ -181,8 +181,8 @@ void VBOMap::prep_draw()
 
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
-    ASSERT_BOXED_POINT(cx);
-    ASSERT_BOXED_POINT(cy);
+    GS_ASSERT(is_boxed_point(cx));
+    GS_ASSERT(is_boxed_point(cy));
 
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
@@ -250,8 +250,8 @@ void VBOMap::sort_draw()
 {
     const float cx = current_camera_position.x;
     const float cy = current_camera_position.y;
-    ASSERT_BOXED_POINT(cx);
-    ASSERT_BOXED_POINT(cy);
+    GS_ASSERT(is_boxed_point(cx));
+    GS_ASSERT(is_boxed_point(cy));
 
     for (int i=0; i<draw_vbo_n; i++)
     {

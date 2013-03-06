@@ -2,7 +2,6 @@
 
 #include <item/particle/net/StoC.hpp>
 #include <item/_interface.hpp>
-
 #include <item/common/constants.hpp>
 
 namespace ItemParticle
@@ -14,26 +13,20 @@ void ItemParticle::draw()
 {
     const float scale = ITEM_PARTICLE_SPRITE_RENDER_SCALE;
     const float h = 0.35f;
-
     Vec3 position = quadrant_translate_position(current_camera_position, verlet.position);
     if (!sphere_fulstrum_test(position.x, position.y, position.z+h, scale*2)) return;
-
-    Vec3 up = vec3_init(
-        model_view_matrix[0]*scale,
-        model_view_matrix[4]*scale,
-        model_view_matrix[8]*scale
-   );
-    Vec3 right = vec3_init(
-        model_view_matrix[1]*scale,
-        model_view_matrix[5]*scale,
-        model_view_matrix[9]*scale
-   );
-
+    Vec3 up = vec3_init(model_view_matrix[0]*scale,
+                        model_view_matrix[4]*scale,
+                        model_view_matrix[8]*scale);
+    Vec3 right = vec3_init(model_view_matrix[1]*scale,
+                           model_view_matrix[5]*scale,
+                           model_view_matrix[9]*scale);
     float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(this->sprite_index%16)* (1.0f/16.0f);
-    tx_max = tx_min + (1.0f/16.0f);
-    ty_min = (float)(this->sprite_index/16)* (1.0f/16.0f);
-    ty_max = ty_min + (1.0f/16.0f);
+    static const float step = 1.0f/16.0f;
+    tx_min = float(this->sprite_index%16) * step;
+    tx_max = tx_min + step;
+    ty_min = float(this->sprite_index/16) * step;
+    ty_max = ty_min + step;
 
     Vec3 p = vec3_sub(position, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);
@@ -90,7 +83,7 @@ void ItemParticle::tick()
 
             // die if very close
             if (vec3_distance_squared(p, this->verlet.position) <
-              ITEM_PARTICLE_PICKUP_END_DISTANCE*ITEM_PARTICLE_PICKUP_END_DISTANCE)
+                ITEM_PARTICLE_PICKUP_END_DISTANCE*ITEM_PARTICLE_PICKUP_END_DISTANCE)
             {
                 #if DC_SERVER
                 this->get_picked_up = true;
@@ -153,8 +146,8 @@ void ItemParticle::init(ItemID item_id, ItemType item_type, float x, float y, fl
     this->item_id = item_id;
     this->pickup_prevention = ITEM_INITIAL_PICKUP_PREVENTION;
     #endif
-    ASSERT_BOXED_POINT(x);
-    ASSERT_BOXED_POINT(y);
+    GS_ASSERT(is_boxed_point(x));
+    GS_ASSERT(is_boxed_point(y));
     verlet.position = vec3_init(x,y,z);
     verlet.velocity = vec3_init(mx,my,mz);
 

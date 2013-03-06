@@ -142,7 +142,7 @@ void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float leng
 #if DC_SERVER
 void send_play_animation(const char* name, ClientID client_id, struct Vec3 position)
 {
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
     AnimationType animation_type = get_animation_type(name);
     IF_ASSERT(!isValid(animation_type)) return;
     play_animation_StoC msg;
@@ -153,7 +153,7 @@ void send_play_animation(const char* name, ClientID client_id, struct Vec3 posit
 
 void broadcast_play_animation(const char* name, struct Vec3 position)
 {
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
     AnimationType animation_type = get_animation_type(name);
     IF_ASSERT(!isValid(animation_type)) return;
     play_animation_StoC msg;

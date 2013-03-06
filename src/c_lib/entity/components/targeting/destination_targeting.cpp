@@ -59,8 +59,8 @@ void DestinationTargetingComponent::choose_destination()
 
 void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
 {
-    ASSERT_BOXED_POSITION(camera_position);
-    ASSERT_BOXED_POSITION(this->destination);
+    GS_ASSERT(is_boxed_position(camera_position));
+    GS_ASSERT(is_boxed_position(this->destination));
     Vec3 target_position = quadrant_translate_position(camera_position, this->destination);
     this->target_direction = vec3_sub(target_position, camera_position);
     this->target_direction.z = 0.0f;

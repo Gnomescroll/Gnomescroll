@@ -5,7 +5,7 @@
 
 bool object_collides_terrain(Vec3 position, float height, float radius)
 {
-    ASSERT_BOXED_POSITION(position);
+    GS_ASSERT(is_boxed_position(position));
     return Agents::collision_check_current(radius, height, position.x,
                                            position.y, position.z);
 }

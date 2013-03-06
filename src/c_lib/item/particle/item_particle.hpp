@@ -1,11 +1,10 @@
 #pragma once
 
-#if DC_CLIENT
-#include <common/gl_assert.hpp>
-#include <common/draw/textured_voxel.hpp>
-#endif
-
 #include <physics/verlet.hpp>
+#if DC_CLIENT
+# include <common/gl_assert.hpp>
+# include <common/draw/textured_voxel.hpp>
+#endif
 
 /*
  *
@@ -61,33 +60,33 @@ class ItemParticle
         int pickup_prevention;    // timer lock against auto pickup
         bool get_picked_up;
 
-        bool can_be_picked_up()
-        {
-            return (this->pickup_prevention <= 0
-                 && this->target_agent == NULL_AGENT);
-        }
-        void lock_pickup()
-        {
-            this->pickup_prevention = ITEM_PICKUP_PREVENTION_DELAY;
-        }
-        #endif
+    bool can_be_picked_up()
+    {
+        return (this->pickup_prevention <= 0
+             && this->target_agent == NULL_AGENT);
+    }
+    void lock_pickup()
+    {
+        this->pickup_prevention = ITEM_PICKUP_PREVENTION_DELAY;
+    }
+    #endif
 
-        void picked_up(AgentID agent_id);
-        void pickup_cancelled();
+    void picked_up(AgentID agent_id);
+    void pickup_cancelled();
 
-        void tick();
+    void tick();
 
-        void set_state(float x, float y, float z, float mx, float my, float mz)
-        {
-            ASSERT_BOXED_POINT(x);
-            ASSERT_BOXED_POINT(y);
-            this->verlet.position = vec3_init(x,y,z);
-            this->verlet.velocity = vec3_init(mx,my,mz);
-            GS_ASSERT(vec3_is_valid(this->verlet.position));
-            GS_ASSERT(vec3_is_valid(this->verlet.velocity));
-        }
+    void set_state(float x, float y, float z, float mx, float my, float mz)
+    {
+        GS_ASSERT(is_boxed_point(x));
+        GS_ASSERT(is_boxed_point(y));
+        this->verlet.position = vec3_init(x,y,z);
+        this->verlet.velocity = vec3_init(mx,my,mz);
+        GS_ASSERT(vec3_is_valid(this->verlet.position));
+        GS_ASSERT(vec3_is_valid(this->verlet.velocity));
+    }
 
-        void die();
+    void die();
 
     explicit ItemParticle(ItemParticleID id);
 
@@ -113,17 +112,17 @@ namespace ItemParticle
 class ItemParticle_list: public ObjectList<ItemParticle, ItemParticleID>
 {
     private:
-        const char* name() { return "ItemParticle"; }
+    const char* name() { return "ItemParticle"; }
+
     public:
-        ItemParticle_list(size_t capacity) :
-            ObjectList<ItemParticle, ItemParticleID>(capacity, NULL_PARTICLE)
-        {
-        }
+    void draw();
+    void tick();
+    void check_item_pickups();
 
-        void draw();
-        void tick();
-
-        void check_item_pickups();
+    ItemParticle_list(size_t capacity) :
+        ObjectList<ItemParticle, ItemParticleID>(capacity, NULL_PARTICLE)
+    {
+    }
 };
 
 void ItemParticle_list::draw()

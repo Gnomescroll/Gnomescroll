@@ -171,7 +171,7 @@ void PlayerAgent_action::update_mining_laser()
     if (agent_camera == NULL) return;
 
     Vec3 origin = this->p->get_weapon_fire_animation_origin();
-    ASSERT_BOXED_POSITION(origin);
+    GS_ASSERT(is_boxed_position(origin));
 
     struct Vec3 focal_point = vec3_add(agent_camera->get_position(), vec3_scalar_mult(agent_camera->forward_vector(), 50.0f));
     struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));

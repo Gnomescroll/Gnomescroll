@@ -1,17 +1,13 @@
 #include "packets.hpp"
 
 #if DC_CLIENT
-
 #include <sound/sound.hpp>
 #include <animations/_interface.hpp>
 #include <animations/animations.hpp>
-
 #include <agent/client/player_agent.hpp>
-
 #include <physics/vec3.hpp>
 #include <entity/constants.hpp>
 #include <entity/objects.hpp>
-
 #include <particle/_interface.hpp>
 #include <particle/text/billboard_text.hpp>
 #include <particle/constants.hpp>
@@ -22,11 +18,8 @@ inline void object_create_StoC::handle()
 {
     using Entities::Entity;
     using Components::PhysicsComponent;
-
-    GS_ASSERT(type < MAX_OBJECT_TYPES);
-    GS_ASSERT(id < GAME_OBJECTS_MAX);
-    if (type >= MAX_OBJECT_TYPES) return;
-    if (id >= GAME_OBJECTS_MAX) return;
+    IF_ASSERT(type >= MAX_OBJECT_TYPES) return;
+    IF_ASSERT(id >= GAME_OBJECTS_MAX) return;
 
     Entity* obj = Entities::create((EntityType)type, id);
     if (obj == NULL) return;
@@ -41,11 +34,8 @@ inline void object_create_owner_StoC::handle()
     using Entities::Entity;
     using Components::PhysicsComponent;
     using Components::OwnerComponent;
-
-    GS_ASSERT(type < MAX_OBJECT_TYPES);
-    GS_ASSERT(id < GAME_OBJECTS_MAX);
-    if (type >= MAX_OBJECT_TYPES) return;
-    if (id >= GAME_OBJECTS_MAX) return;
+    IF_ASSERT(type >= MAX_OBJECT_TYPES) return;
+    IF_ASSERT(id >= GAME_OBJECTS_MAX) return;
 
     Entity* obj = Entities::create((EntityType)type, id);
     if (obj == NULL) return;
@@ -129,8 +119,8 @@ inline void object_state_StoC::handle()
     Entity* obj = Entities::get((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
+    IF_ASSERT(physics == NULL) return;
+    physics->set_position(vec3_init(x,y,z));
 }
 
 inline void object_state_momentum_StoC::handle()
@@ -141,12 +131,9 @@ inline void object_state_momentum_StoC::handle()
     Entity* obj = Entities::get((EntityType)type, id);
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics != NULL)
-    {
-        physics->set_position(vec3_init(x,y,z));
-        physics->set_momentum(vec3_init(mx,my,mz));
-    }
+    IF_ASSERT(physics == NULL) return;
+    physics->set_position(vec3_init(x,y,z));
+    physics->set_momentum(vec3_init(mx,my,mz));
 }
 
 inline void object_state_momentum_angles_StoC::handle()
@@ -172,8 +159,8 @@ inline void object_state_health_StoC::handle()
     Entity* obj = Entities::get((EntityType)type, id);
     if (obj == NULL) return;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
-    GS_ASSERT(health != NULL);
-    if (health != NULL) health->health = this->health;
+    IF_ASSERT(health == NULL) return;
+    health->health = this->health;
 }
 
 /* Destruction */
@@ -325,11 +312,11 @@ inline void object_choose_destination_StoC::handle()
 
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
-    if (motion == NULL) return;
+    IF_ASSERT(motion == NULL) return;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (physics == NULL) return;
+    IF_ASSERT(physics == NULL) return;
     Vec3 position = physics->get_position();
 
     motion->destination = vec3_init(this->x, this->y, this->z);
@@ -450,7 +437,7 @@ inline void object_in_transit_StoC::handle()
     dest_target->set_destination(destination);
     dest_target->orient_to_target(pos);
 
-    ASSERT_BOXED_POSITION(destination);
+    GS_ASSERT(is_boxed_position(destination));
 
     if (this->ticks_to_destination)
     {
