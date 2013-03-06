@@ -3,6 +3,8 @@
 #include <t_map/common/types.hpp>
 #include <physics/quadrant.hpp>
 
+// TODO -- replace all with a generic Vec3i
+
 inline bool is_equal(const struct MapPos& a, const struct MapPos& b)
 {
     return (a.x == b.x && a.y == b.y && a.z == b.z);
@@ -92,6 +94,6 @@ inline struct MapPos add_offset(struct MapPos pos, const struct MapPosOffset& of
 {
     pos.x = translate_point(pos.x + off.x);
     pos.y = translate_point(pos.y + off.y);
-    pos.z = GS_MAX(0, pos.z + off.z);
+    pos.z = pos.z + off.z;
     return pos;
 }

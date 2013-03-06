@@ -120,13 +120,8 @@ static const struct MapPosOffset anchor[6] = {
 };
 
 static inline struct MapPos add_pos_adj(const struct MapPos& pos, int iadj)
-{
-    // NOTE: make sure to check that the final z position is in bounds
-    struct MapPos p;
-    p.x = translate_point(pos.x + adj[iadj].adj.x);
-    p.y = translate_point(pos.y + adj[iadj].adj.y);
-    p.z = pos.z + adj[iadj].adj.z;
-    return p;
+{   // NOTE: make sure to check that the final z position is in bounds
+    return add_offset(pos, adj[iadj].adj);
 }
 
 struct Score
@@ -211,7 +206,7 @@ static int compare_node_score(const void* _a, const void* _b)
     return d;
 }
 
-static ALWAYS_INLINE void sort_nodes(struct Node* nodes, size_t len)
+static inline void sort_nodes(struct Node* nodes, size_t len)
 {
     qsort(nodes, len, sizeof(nodes[0]), &compare_node_score);
     for (int i=0; i<int(len); i++) nodes[i].id = i;
@@ -431,8 +426,8 @@ struct Passable3DJump
             down.z = t_map::get_nearest_surface_block_below(dst, clearance, max_down);
             up.z = t_map::get_nearest_surface_block_above(dst, clearance, max_up);
 
-            GS_ASSERT(cur.z - down.z >= 0);
-            GS_ASSERT(up.z - cur.z >= 1);
+            PATH_ASSERT(cur.z - down.z >= 0);
+            PATH_ASSERT(up.z - cur.z >= 1);
 
             if (down.z >= 0 && cur.z - down.z < up.z - cur.z)
             {
@@ -449,12 +444,13 @@ struct Passable3DJump
 
         cost = adj[iadj].cost;
         exit.pos = dst;
+        if (!t_map::isSolid(dst.x, dst.y, dst.z - 1))
+            return false;
         for (int i=0; i<clearance; i++)
         {
             if (t_map::isSolid(dst.x, dst.y, dst.z + i) ||
                 t_map::isSolid(dst.x, cur.y, cur.z + i) ||
-                t_map::isSolid(cur.x, dst.y, cur.z + i) ||
-                !t_map::isSolid(dst.x, dst.y, dst.z - i))
+                t_map::isSolid(cur.x, dst.y, cur.z + i))
             {
                 return false;
             }

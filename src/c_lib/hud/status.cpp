@@ -134,7 +134,7 @@ void draw_hunger()
     float empty_sy = hunger_empty.y * ICON_HEIGHT;
 
     if (hunger >= HUNGER_DAMAGE_THRESHOLD)
-    {
+    {   // make it blink
         static int t = 0;
         if (((++t)/ONE_SECOND) % 2 == 0)
         {

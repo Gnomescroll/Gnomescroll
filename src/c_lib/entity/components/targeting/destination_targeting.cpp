@@ -37,12 +37,11 @@ void DestinationTargetingComponent::choose_destination()
             struct MapPosOffset delta = map_offset_init(0);
             do
             {
-                //delta.x = 2*(randf()-0.5f) * this->destination_choice_x;
-                //delta.y = 2*(randf()-0.5f) * this->destination_choice_y;
                 delta.x = randrange(this->destination_choice_x/2, this->destination_choice_x);
                 delta.y = randrange(this->destination_choice_y/2, this->destination_choice_y);
             } while ((delta.x*delta.x + delta.y*delta.y) < r2);
             struct MapPos end = add_offset(current, delta);
+            delta.z = t_map::get_nearest_surface_block(delta.x, delta.y, current.z);
             this->path = Path::get_path_3d_jump(current, end, this->mpath);
         }
         int height = 1;
