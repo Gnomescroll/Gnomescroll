@@ -76,6 +76,7 @@ bool c_lib_inited = false;
 #include <common/dat/attributes.cpp>
 #include <common/dat/modifiers.hpp>
 #include <common/dat/properties.hpp>
+#include <common/settings_export.hpp>
 
 /* configuration options */
 #include <options/option_macros.hpp>
