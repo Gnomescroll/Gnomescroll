@@ -310,13 +310,13 @@ class LightTextureGenerator
 
             }
         }
-
     }
 
     //no light
     void init_debug()
     {
-        struct Vec3 d2 = vec3_init(0.0, 1.0, 1.0);
+        //dropping blue looks cool
+        struct Vec3 d2 = vec3_init(1.0, 1.0, 1.0);
 
         for (int i=0; i<dim; i++)
         {
@@ -331,8 +331,6 @@ class LightTextureGenerator
 
     void save(const char* filename)
     {
-
-
         //save_png_RGB(const char* filename, float* in, int xres, int yres)
         save_png_RGB("light_texture0", values, dim, dim, false);
         save_png_RGB("light_texture1", values, dim, dim, true);
@@ -412,6 +410,8 @@ void generate_light_texture()
     LTG = new LightTextureGenerator;
     LTG->init2();
     LTG->save("light_texture");
+    LTG->gen_textures();
+    LTG->save("light_texture_debug");
     LTG->gen_textures();
 
     //light_texture_CLUT = LTG.texture_array[0];
