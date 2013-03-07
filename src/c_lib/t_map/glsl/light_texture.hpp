@@ -313,6 +313,22 @@ class LightTextureGenerator
 
     }
 
+    //no light
+    void init_debug()
+    {
+        struct Vec3 d2 = vec3_init(0.0, 1.0, 1.0);
+
+        for (int i=0; i<dim; i++)
+        {
+            for (int j=0; j<dim; j++)
+            {
+                values[3*(dim*j+i)+0] = d2.x;
+                values[3*(dim*j+i)+1] = d2.y;
+                values[3*(dim*j+i)+2] = d2.z;
+            }
+        }
+    }
+
     void save(const char* filename)
     {
 
@@ -361,8 +377,17 @@ class LightTextureGenerator
 
 class LightTextureGenerator* LTG;
 
+#define LIGHTING_DISABLED 1
+
 unsigned int generate_clut_light_texture()
 {
+
+#if LIGHTING_DISABLED
+    LTG->init_debug();
+    LTG->gen_textures();
+    return LTG->texture_array[0];
+#endif
+
     static int ttime = 0;
 
     ttime++;
