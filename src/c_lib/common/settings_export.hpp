@@ -13,6 +13,7 @@ class SettingsExport
             SETTING_TYPE_FLOAT,
             SETTING_TYPE_INT,
             SETTING_TYPE_COLOR,
+            SETTING_TYPE_STRING,
         } ConfigType;
 
         struct ConfigValue
@@ -28,7 +29,7 @@ class SettingsExport
 
     public:
 
-    ConfigFileLoader() :
+    SettingsExport() :
         cvn(0)
     {
         for (int i=0; i<this->cvm; i++)
@@ -39,13 +40,60 @@ class SettingsExport
         }
     }
 
-    ~ConfigFileLoader()
+    ~SettingsExport()
     {
         for (int i=0; i<this->cvn; i++)
             if (this->cva[i].name != NULL)
                 delete[] this->cva[i].name;
     }
 
+    char* export_json()
+    {
+        int max_buff = 16*1024;
+        char* buff = new char[max_buff];
+        int offset = 0;
+        int _ad;
+        _ad = sprintf(buff+offset, "[");
+        offset += _ad
+
+        const char display_element = "test_element"
+        for (int i=0; i<this->cvm; i++)
+        {
+            if(this->cva[i].type == SETTING_TYPE_NONE);
+                continue;
+            switch (cva[i].type)
+            {
+                case SETTING_TYPE_FLOAT:
+                    _ad = sprintf(buff+offset, "['%s', '%s', '%s', %f],", cva[i].name, "TYPE_FLOAT", display_element, 0.0f);
+                    break;
+
+                case SETTING_TYPE_INT:
+                    _ad = sprintf(buff+offset, "['%s', '%s', '%s', %d],", cva[i].name, "TYPE_INT", display_element, 0);
+                    break;
+
+                case SETTING_TYPE_COLOR:
+                    _ad = sprintf(buff+offset, "['%s', '%s', '%s', [%d, %d, %d],", cva[i].name, "TYPE_COLOR", display_element, 255, 255, 255);
+                    break;
+                case SETTING_TYPE_STRING:
+                    _ad = sprintf(buff+offset, "['%s', '%s', '%s', [%d, %d, %d],", cva[i].name, "TYPE_STRING", display_element, 255, 255, 255);
+                    GS_ASSERT(false);
+                    break;
+                case SETTING_TYPE_NONE:
+                default:
+                    printf("SettingsExport ERROR: var_type= SETTING_TYPE_NONE \n");
+                    GS_ASSERT(false);
+                    break;
+            }
+
+            //_ad = sprintf(buff+offset, "['%s', '%s', '%s'],", );
+            offset += _ad
+
+
+        }
+
+        delete[] buff;
+
+    }
 /*
     void process_line(const char* input_line, bool silent)
     {
@@ -59,7 +107,7 @@ class SettingsExport
         int ret = sscanf(input_line, "%s = %s", var_name, rest);
         if (ret == -1)
         {
-            printf("ConfigFileLoader, process_line error: scanf fail: ret= %d \n", ret);
+            printf("SettingsExport, process_line error: scanf fail: ret= %d \n", ret);
             delete[] var_name;
             delete[] rest;
             return;
@@ -75,7 +123,7 @@ class SettingsExport
         }
         if (index == -1)
         {
-            printf("ConfigFileLoader, process_line error: '%s' does not match any defined key \n", var_name);
+            printf("SettingsExport, process_line error: '%s' does not match any defined key \n", var_name);
             delete[] var_name;
             delete[] rest;
             return;
@@ -86,8 +134,8 @@ class SettingsExport
                 ret = sscanf(input_line, "%s = %f", var_name, &value_float);
                 if (ret != 2)
                 {
-                    printf("ConfigFileLoader SETTING_TYPE_FLOAT input_line error: %s \n", input_line);
-                    printf("ConfigFileLoader SETTING_TYPE_FLOAT proces_line: var_name= %s ret= %i value= %f \n",
+                    printf("SettingsExport SETTING_TYPE_FLOAT input_line error: %s \n", input_line);
+                    printf("SettingsExport SETTING_TYPE_FLOAT proces_line: var_name= %s ret= %i value= %f \n",
                            var_name, ret, value_float);
                     break;
                 }
@@ -103,8 +151,8 @@ class SettingsExport
                 ret = sscanf(input_line, "%s = %d", var_name, &value_int);
                 if (ret != 2)
                 {
-                    printf("ConfigFileLoader SETTING_TYPE_INT input_line error: %s \n", input_line);
-                    printf("ConfigFileLoader SETTING_TYPE_INT proces_line: var_name= %s ret= %d value= %d \n",
+                    printf("SettingsExport SETTING_TYPE_INT input_line error: %s \n", input_line);
+                    printf("SettingsExport SETTING_TYPE_INT proces_line: var_name= %s ret= %d value= %d \n",
                            var_name, ret, value_int);
                     break;
                 }
@@ -120,8 +168,8 @@ class SettingsExport
                 ret = sscanf(input_line, "%s = %d %d %d %d", var_name, &value_r, &value_g,&value_b,&value_a);
                 if (ret != 5)
                 {
-                    printf("ConfigFileLoader SETTING_TYPE_COLOR input_line error: %s \n", input_line);
-                    printf("ConfigFileLoader SETTING_TYPE_COLOR proces_line: var_name= %s ret= %d value= %d %d %d %d \n",
+                    printf("SettingsExport SETTING_TYPE_COLOR input_line error: %s \n", input_line);
+                    printf("SettingsExport SETTING_TYPE_COLOR proces_line: var_name= %s ret= %d value= %d %d %d %d \n",
                            var_name, ret,
                            value_r,value_g,value_b,value_a);
                     break;
@@ -141,7 +189,7 @@ class SettingsExport
 
             case SETTING_TYPE_NONE:
             default:
-                printf("ConfigFileLoader ERROR: var_type= SETTING_TYPE_NONE \n");
+                printf("SettingsExport ERROR: var_type= SETTING_TYPE_NONE \n");
                 GS_ASSERT(false);
                 break;
         }
@@ -186,16 +234,17 @@ class SettingsExport
         this->load_file(filename, false);
     }
 */
-    
+
     void name_creation_check(const char* var_name)
     {
         for (int i=0; i<this->cvn; i++)
         {
             IF_ASSERT(strcmp(this->cva[i].name, var_name) == 0)
-                printf("ERROR: ConfigFileLoader, set_float key= '%s' already exists \n", var_name);
+                printf("ERROR: SettingsExport, set_float key= '%s' already exists \n", var_name);
         }
     }
 
+    /* SET */
     void set_float(const char* var_name, float* var_loc)
     {
         this->name_creation_check(var_name);
@@ -228,4 +277,31 @@ class SettingsExport
         this->cva[this->cvn].type = SETTING_TYPE_COLOR;
         this->cvn++;
     }
+
+    void set_string(const char* var_name, char** var_loc) 
+    {
+
+    }
+
+    /* GET */
+    float get_float(struct ConfigValue cv)
+    {   
+        return *((float*)cv.ptr);
+    }
+
+    int get_int(struct ConfigValue cv)
+    {
+        return *((int*)cv.ptr);
+    }
+
+    void get_color(struct ConfigValue cv)
+    {
+
+    }
+    
+    char* get_string(struct ConfigValue cv)
+    {
+        return ((char*)cv.ptr);
+    }
+
 };
