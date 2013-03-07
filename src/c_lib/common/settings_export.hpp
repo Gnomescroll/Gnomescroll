@@ -26,7 +26,7 @@ class SettingsExport
         static const int cvm = 128;
         struct ConfigValue cva[cvm];
         int cvn;
-        char** display_element_array[cvm];
+        char* display_element_array[cvm];
 
     public:
 
