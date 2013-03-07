@@ -43,7 +43,7 @@ class ConfigFileLoader
     {
         for (int i=0; i<this->cvn; i++)
             if (this->cva[i].name != NULL)
-                delete[] this->cva[i].name;
+                free(this->cva[i].name);
     }
 
     void process_line(const char* input_line, bool silent)
@@ -193,9 +193,10 @@ class ConfigFileLoader
     void set_float(const char* var_name, float* var_loc)
     {
         this->name_creation_check(var_name);
-        this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        strcpy(this->cva[this->cvn].name, var_name);
-        this->cva[this->cvn].name[strlen(var_name)] = '\0';
+        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
+        //strcpy(this->cva[this->cvn].name, var_name);
+        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
+        cva[this->cvn].name = cva[this->cvn].name = strdup(var_name);
         this->cva[this->cvn].ptr = var_loc;
         this->cva[this->cvn].type = CONFIG_TYPE_FLOAT;
         this->cvn++;
@@ -204,9 +205,10 @@ class ConfigFileLoader
     void set_int(const char* var_name, int* var_loc)
     {
         this->name_creation_check(var_name);
-        this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        strcpy(this->cva[this->cvn].name, var_name);
-        this->cva[this->cvn].name[strlen(var_name)] = '\0';
+        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
+        //strcpy(this->cva[this->cvn].name, var_name);
+        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
+        cva[this->cvn].name = cva[this->cvn].name = strdup(var_name);
         this->cva[this->cvn].ptr = var_loc;
         this->cva[this->cvn].type = CONFIG_TYPE_INT;
         this->cvn++;
@@ -215,9 +217,10 @@ class ConfigFileLoader
     void set_color(const char* var_name, char* var_loc)
     {
         this->name_creation_check(var_name);
-        this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        strcpy(this->cva[this->cvn].name, var_name);
-        this->cva[this->cvn].name[strlen(var_name)] = '\0';
+        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
+        //strcpy(this->cva[this->cvn].name, var_name);
+        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
+        cva[this->cvn].name = cva[this->cvn].name = strdup(var_name);
         this->cva[this->cvn].ptr = var_loc;
         this->cva[this->cvn].type = CONFIG_TYPE_COLOR;
         this->cvn++;
