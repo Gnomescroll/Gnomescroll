@@ -79,7 +79,7 @@ class SettingsExport
                     _ad = sprintf(buff+offset, "['%s', '%s', '%s', '%s'],", cva[i].name, "TYPE_STRING", display_element, get_string(cva[i]));
                     GS_ASSERT(false);
                     break;
-                    
+
                 case CONFIG_TYPE_NONE:
                 default:
                     printf("SettingsExport ERROR: var_type= CONFIG_TYPE_NONE \n");
@@ -288,7 +288,7 @@ class SettingsExport
         this->cvn++;
     }
 
-    void register_float(const char* var_name, char** var_loc) 
+    void register_string(const char* var_name, char** var_loc) 
     {
 
     }
