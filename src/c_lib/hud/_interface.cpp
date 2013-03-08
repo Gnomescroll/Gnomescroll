@@ -8,7 +8,7 @@
 
 namespace Hud
 {
-
+class HudRadiationMeter = radiation_meter = NULL;
 class HarvestBar* harvest_bar = NULL;
 class HUD* hud = NULL;
 
@@ -20,9 +20,11 @@ void init()
 
     GS_ASSERT(harvest_bar == NULL);
     harvest_bar = new HarvestBar;
+    radiation_meter = new HudRadiationMeter;
 
     error_init();
     HudReticle::init();
+    radiation_meter->init();
     init_hud_draw_settings();
 
     HudStatus::init();
@@ -32,6 +34,7 @@ void teardown()
 {
     error_teardown();
     delete harvest_bar;
+    delete radiation_meter;
     delete hud;
     HudMap::teardown();
     HudText::teardown();    // MUST CALL AFTER DELETE HUD
@@ -49,6 +52,9 @@ void draw()
     CHECK_GL_ERROR();
 
     glColor4ub(255,255,255,255);
+    
+    radiation_meter->draw(128, 128);
+
 
     // badges
     glDisable(GL_BLEND);
