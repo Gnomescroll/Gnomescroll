@@ -762,6 +762,8 @@ class RadiationBlockList
 
     void add(int x, int y, int z)
     {
+        GS_ASSERT(x >= 0 && x < 512 && y >= 0 && y < 512 && z >= 0 && z < 128);
+
         int cx = x >> 4;
         int cy = y >> 4;
         int cz = z >> 4;
