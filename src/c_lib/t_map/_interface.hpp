@@ -64,7 +64,6 @@ extern CubeType requested_cube_type;
 
 #if DC_SERVER
 bool create_item_container_block(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id);
-bool destroy_item_container_block(int x, int y, int z);
 
 void smelter_on(ItemContainerID container_id);
 void smelter_off(ItemContainerID container_id);

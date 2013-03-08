@@ -177,7 +177,9 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
     int xi = x & 15; //bit mask
     int yi = y & 15; //bit mask
 
-    c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
+    const int index = TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi;
+    stuct MapElement old_element = c->e[index]
+    c->e[index] = element;
 
     #if DC_CLIENT
     c->needs_update = true;
@@ -187,6 +189,40 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
     if ((y & 15) == 0)  set_update(x,y-1);
     if ((y & 15) == 15) set_update(x,y+1);
     #endif
+
+    //handle special for removed block
+    if(fast_cube_properties[old_element.block].special == true)
+    {
+        if(fast_cube_properties[old_element.block].radioactive = true)
+        {
+            main_map->radiation_block_list.remove(x,y,z);
+        }
+    #if DC_SERVER
+        //item container
+        else if (fast_cube_properties[old_element.block].item_container == true)
+        {
+            //destroy_item_container_block(x,y,z);
+            c->chunk_item_container.remove(x,y,z);
+        }
+    #endif
+    }
+
+    //handle special for added block
+    if(fast_cube_properties[element.block].special == true)
+    {
+        if(fast_cube_properties[element.block].radioactive = true)
+        {
+            main_map->radiation_block_list.add(x,y,z);
+        }
+    #if DC_SERVER
+        //item container
+        else if (fast_cube_properties[element.block].item_container == true)
+        {
+            destroy_item_container_block(x,y,z);
+        }
+    #endif
+    }
+
 }
 
 int Terrain_map::get_damage(int x, int y, int z)

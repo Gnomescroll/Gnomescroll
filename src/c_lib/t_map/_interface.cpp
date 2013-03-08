@@ -196,19 +196,6 @@ bool create_item_container_block(int x, int y, int z, ItemContainerType containe
     return c->chunk_item_container.add(x,y,z, container_type, container_id);
 }
 
-bool destroy_item_container_block(int x, int y, int z)
-{
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
-
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    class MapChunk* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-    IF_ASSERT(c == NULL) return false;
-
-    return c->chunk_item_container.remove(x,y,z);
-}
-
 void smelter_on(ItemContainerID container_id)
 {
     int p[3] = {0};

@@ -48,41 +48,8 @@ CubeType get(int x, int y, int z)
 
 CubeType set(int x, int y, int z, CubeType cube_type)
 {
-    #if DC_SERVER
-    CubeType existing_cube_type = t_map::get(x,y,z);
-    // dont overwrite existing cubes with new ones
-    //IF_ASSERT(cube_type != EMPTY_CUBE && existing_cube_type != EMPTY_CUBE) return existing_cube_type;
-
-    // TODO -- make a single handler for this item container check,
-    // and the explosives checks (any special destruction required blocks)
-    // and call it here (along with the apply_damage location)
-
-    if(fast_cube_properties[existing_cube_type].special == true)
-    {
-        if(fast_cube_properties[existing_cube_type].radioactive = true)
-        {
-            main_map->radiation_block_list.remove(x,y,z);
-        }
-        else if (isItemContainer(existing_cube_type))
-        {
-            destroy_item_container_block(x,y,z);
-        }
-    }
-    #endif
-    //main_map->radiation_block_list.create(x,y,z);
-
     main_map->set_block(x,y,z, cube_type);
     light_add_block(x,y,z);
-
-#if DC_SERVER
-    if(fast_cube_properties[cube_type].special == true)
-    {
-        if(fast_cube_properties[cube_type].radioactive = true)
-        {
-            main_map->radiation_block_list.add(x,y,z);
-        }
-    }
-#endif
 
     return cube_type;
 }
