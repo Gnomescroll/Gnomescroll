@@ -845,7 +845,8 @@ class RadiationBlockList
         }
         
         bl->bln--;
-        bl->bla[index] = bl->bla[bla->bln];
+        bl->bla[index] = bl->bla[bl->bln];
+        GS_ASSERT(bl->bln >= 0);
     }
 
     int get_distance(int x, int y, int z)
