@@ -62,6 +62,7 @@ class Terrain_map
         class MapChunk** chunk;
 
         class ControlNodeList control_node_list; //special
+        class RadiationBlockList radiation_block_list; //special
 
     #if DC_CLIENT
         bool height_changed;

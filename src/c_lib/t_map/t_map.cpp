@@ -56,6 +56,10 @@ CubeType set(int x, int y, int z, CubeType cube_type)
     // TODO -- make a single handler for this item container check,
     // and the explosives checks (any special destruction required blocks)
     // and call it here (along with the apply_damage location)
+    
+    //main_map->radiation_block_list.create(x,y,z);
+
+
     if (isItemContainer(existing_cube_type))
         destroy_item_container_block(x,y,z);
     #endif

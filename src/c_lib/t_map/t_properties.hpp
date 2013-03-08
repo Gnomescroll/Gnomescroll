@@ -51,7 +51,6 @@ class CubeProperty: public Property<CubeType>
         bool transparent;     //
         bool item_drop;       // does block drop items
         bool special;
-        bool radioactive;
 
         CubeMaterial material;
         ItemContainerType container_type;  // inventory and crafting bench blocks
@@ -59,6 +58,9 @@ class CubeProperty: public Property<CubeType>
 
         bool light_source;
         int light_value;
+
+        bool radioactive;
+        int rad_value;
 
         unsigned char max_damage;
 
@@ -132,6 +134,9 @@ ALWAYS_INLINE bool isOccludes(CubeType id);
 ALWAYS_INLINE bool isActive(CubeType id);
 ALWAYS_INLINE bool isTransparent(CubeType id);
 ALWAYS_INLINE bool isItemContainer(CubeType id);
+ALWAYS_INLINE bool isSpecial(CubeType id);
+ALWAYS_INLINE bool isRadioactive(CubeType id);
+
 ALWAYS_INLINE bool isExplosive(CubeType id);
 ALWAYS_INLINE unsigned char maxDamage(CubeType id);
 ALWAYS_INLINE bool hasItemDrop(CubeType type);

@@ -159,6 +159,16 @@ ALWAYS_INLINE bool isItemContainer(CubeType type)
     return fast_cube_properties[type].item_container;
 }
 
+ALWAYS_INLINE bool isSpecial(CubeType id)
+{
+    return fast_cube_properties[get(pos)].special;
+}
+
+ALWAYS_INLINE bool isRadioactive(CubeType id)
+{
+    return fast_cube_properties[get(pos)].radioactive;
+}
+
 ALWAYS_INLINE bool isExplosive(CubeType type)
 {
     return fast_cube_properties[type].explosive;
@@ -200,6 +210,17 @@ ALWAYS_INLINE bool isItemContainer(int x, int y, int z)
     return fast_cube_properties[get(x,y,z)].item_container;
 }
 
+ALWAYS_INLINE bool isSpecial(int x, int y, int z)
+{
+    return fast_cube_properties[get(pos)].special;
+}
+
+ALWAYS_INLINE bool isRadioactive(int x, int y, int z)
+{
+    return fast_cube_properties[get(pos)].radioactive;
+}
+
+
 ALWAYS_INLINE bool isExplosive(int x, int y, int z)
 {
     return fast_cube_properties[get(x,y,z)].explosive;
@@ -231,6 +252,7 @@ ALWAYS_INLINE bool isItemContainer(const struct Vec3i& pos)
 {
     return fast_cube_properties[get(pos)].item_container;
 }
+
 
 ALWAYS_INLINE bool isExplosive(const struct Vec3i& pos)
 {
