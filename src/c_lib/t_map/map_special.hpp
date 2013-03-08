@@ -775,21 +775,24 @@ class RadiationBlockList
 
     void add(int x, int y, int z)
     {
+
+        printf("Added radiation block at: %d %d %d \n", x,y,z);
+
         GS_ASSERT(x >= 0 && x < 512 && y >= 0 && y < 512 && z >= 0 && z < 128);
 
         struct BlockList* bl = _get_list(x,y,z);
 
         if(bl->bla == NULL)
         {
-            bla->bla = (struct RadiationBlock*) malloc(4* sizeof(struct RadiationBlock));
-            bla->bln = 0;
-            bla->blm = 4;
+            bl->bla = (struct RadiationBlock*) malloc(4* sizeof(struct RadiationBlock));
+            bl->bln = 0;
+            bl->blm = 4;
         }
 
         if(bl->bln == bl->blm)
         {
             bla->blm *= 2;
-            bla->bla = (struct RadiationBlock*) realloc(bla->bla, bla->blm* sizeof(struct RadiationBlock));
+            bl->bla = (struct RadiationBlock*) realloc(bl->bla, bl->blm* sizeof(struct RadiationBlock));
         }
 
         struct RadiationBlock rb;
@@ -799,13 +802,19 @@ class RadiationBlockList
         rb.z = z;
         rb.rad_strength = 15;
 
-        bla->bla[bla->bln] = rb;
-        bla->bln++;
+        bl->bla[bla->bln] = rb;
+        bl->bln++;
 
+        //struct BlockList* bl = _get_list(x,y,z);
+
+        printf("%d %d \n", bl->bln, _get_list(x,y,z)->bln);
     }
 
     void remove(int x, int y, int z)
     {
+
+        printf("removed radiation block at: %d %d %d \n", x,y,z);
+
         GS_ASSERT(x >= 0 && x < 512 && y >= 0 && y < 512 && z >= 0 && z < 128);
 
         struct BlockList* bl = _get_list(x,y,z);
@@ -825,10 +834,17 @@ class RadiationBlockList
         if(index == -1)
         {
             GS_ASSERT(false);
+            printf("bl->bln= %d \n", bl->bln);
+
+            for(int i=0; i<bl->bln; i++)
+            {
+                printf("%d: %d %d %d \n", i, bl->bla[i].x, bl->bla[i].y, bl->bla[i].z);
+            }
+
             return;
         }
         
-        bla->bln--;
+        bl->bln--;
         bl->bla[index] = bl->bla[bla->bln];
     }
 

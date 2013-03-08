@@ -181,31 +181,37 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
     struct MapElement old_element = c->e[index];
     c->e[index] = element;
 
-    //handle special for removed block
-    if(fast_cube_properties[old_element.block].special == true)
+    if(old_element.block != element.block) //remove this check to annoy everyone
     {
-        if(fast_cube_properties[old_element.block].radioactive == true)
-        {
-            main_map->radiation_block_list.remove(x,y,z);
-        }
-    #if DC_SERVER
-        //item container
-        else if (fast_cube_properties[old_element.block].item_container == true)
-        {
-            c->chunk_item_container.remove(x,y,z);
-        }
-    #endif
-    }
+    /*
+        Handle Special for Removed Blocks
+    */
 
-    //handle special for added block
-    if(fast_cube_properties[element.block].special == true)
-    {
-        if(fast_cube_properties[element.block].radioactive == true)
+        if(fast_cube_properties[old_element.block].special == true)
         {
-            main_map->radiation_block_list.add(x,y,z);
+            if(fast_cube_properties[old_element.block].radioactive == true)
+            {
+                main_map->radiation_block_list.remove(x,y,z);
+            }
+        #if DC_SERVER
+            //item container
+            else if (fast_cube_properties[old_element.block].item_container == true)
+            {
+                c->chunk_item_container.remove(x,y,z);
+            }
+        #endif
+        }
+    /*
+        Handle special for Added Blocks
+    */
+        if(fast_cube_properties[element.block].special == true)
+        {
+            if(fast_cube_properties[element.block].radioactive == true)
+            {
+                main_map->radiation_block_list.add(x,y,z);
+            }
         }
     }
-
     //map updates
     #if DC_CLIENT
     c->needs_update = true;
