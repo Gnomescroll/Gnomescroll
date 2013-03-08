@@ -736,12 +736,11 @@ class RadiationBlockList
         struct RadiationBlock* bla; //
     };
 
-    blam = 32*32*8;
-    BlockList bla[32*32*8] // 16x16
+    static const int blam = 32*32*8;
+    BlockList bla[blam]; // 16x16
 
-    RadiationBlockList() :
+    RadiationBlockList()
     {
-        iba = (struct RadiationBlock*) malloc(ibam*sizeof(struct RadiationBlock));
         for (int i=0; i<blam; i++)
         {
             bla[i].bln = 0;
@@ -782,15 +781,15 @@ class RadiationBlockList
 
         if(bl->bla == NULL)
         {
-            bla->bla = (struct RadiationBlock) malloc(4* sizeof(struct RadiationBlock));
-            bla->bn = 0;
-            bla->bm = 4;
+            bla->bla = (struct RadiationBlock*) malloc(4* sizeof(struct RadiationBlock));
+            bla->bln = 0;
+            bla->blm = 4;
         }
 
         if(bl->bln == bl->blm)
         {
             bla->blm *= 2;
-            bla->bla = (struct RadiationBlock) realloc(bla->blm* sizeof(struct RadiationBlock));
+            bla->bla = (struct RadiationBlock*) realloc(bla->bla, bla->blm* sizeof(struct RadiationBlock));
         }
 
         struct RadiationBlock rb;
@@ -798,7 +797,7 @@ class RadiationBlockList
         rb.x = x;
         rb.y = y;
         rb.z = z;
-        rb.rad_strength = rb;
+        rb.rad_strength = 15;
 
         bla->bla[bla->bln] = rb;
         bla->bln++;
