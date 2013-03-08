@@ -218,7 +218,7 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
         //item container
         else if (fast_cube_properties[element.block].item_container == true)
         {
-            destroy_item_container_block(x,y,z);
+            //destroy_item_container_block(x,y,z);
         }
     #endif
     }
@@ -280,33 +280,6 @@ int Terrain_map::apply_damage(int x, int y, int z, int dmg, CubeType* cube_type)
     if (e->damage + dmg >= maxdmg)
     {
         e->damage = maxdmg;
-
-        //moved to set function
-/*
-        // destroy block
-        *e = NULL_MAP_ELEMENT;
-        _push_envlight_update2(x,y,z); //light update
-
-        #if DC_SERVER
-        if (isItemContainer(*cube_type))
-            destroy_item_container_block(x,y,z);
-        if (isExplosive(*cube_type))
-            handle_explosive_block(x,y,z);
-        #endif
-
-        #if DC_CLIENT
-        c->needs_update = true;
-
-        if ((x & 15) == 0)  set_update(x-1,y);
-        if ((x & 15) == 15) set_update(x+1,y);
-        if ((y & 15) == 0)  set_update(x,y-1);
-        if ((y & 15) == 15) set_update(x,y+1);
-        #endif
-
-        #if DC_SERVER
-        t_mech::handle_block_removal(x,y,z);
-        #endif
-*/
         return 0;   //tells it to set to 0
     }
     else
