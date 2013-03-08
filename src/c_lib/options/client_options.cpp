@@ -4,10 +4,10 @@
 dont_include_this_file_in_server
 #endif
 
+#include <stdlib.h>
+
 #include <options/argparse.hpp>
 #include <common/lua/lua.hpp>
-
-#include <stdlib.h>
 
 namespace Options
 {
