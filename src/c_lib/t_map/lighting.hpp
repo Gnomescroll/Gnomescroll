@@ -42,7 +42,7 @@ int get_skylight(int x, int y, int z)
     return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
 
-int get_envlight(int x,int y, int z);
+int get_envlight(int x, int y, int z);
 int _skylight_update_condition(int x, int y, int z);
 
 void set_skylight(int x, int y, int z, int value)
