@@ -178,22 +178,13 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
     int yi = y & 15; //bit mask
 
     const int index = TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi;
-    stuct MapElement old_element = c->e[index]
+    struct MapElement old_element = c->e[index];
     c->e[index] = element;
-
-    #if DC_CLIENT
-    c->needs_update = true;
-
-    if ((x & 15) == 0)  set_update(x-1,y);
-    if ((x & 15) == 15) set_update(x+1,y);
-    if ((y & 15) == 0)  set_update(x,y-1);
-    if ((y & 15) == 15) set_update(x,y+1);
-    #endif
 
     //handle special for removed block
     if(fast_cube_properties[old_element.block].special == true)
     {
-        if(fast_cube_properties[old_element.block].radioactive = true)
+        if(fast_cube_properties[old_element.block].radioactive == true)
         {
             main_map->radiation_block_list.remove(x,y,z);
         }
@@ -210,7 +201,7 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
     //handle special for added block
     if(fast_cube_properties[element.block].special == true)
     {
-        if(fast_cube_properties[element.block].radioactive = true)
+        if(fast_cube_properties[element.block].radioactive == true)
         {
             main_map->radiation_block_list.add(x,y,z);
         }
@@ -222,6 +213,17 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
         }
     #endif
     }
+
+    //map updates
+    #if DC_CLIENT
+    c->needs_update = true;
+
+    if ((x & 15) == 0)  set_update(x-1,y);
+    if ((x & 15) == 15) set_update(x+1,y);
+    if ((y & 15) == 0)  set_update(x,y-1);
+    if ((y & 15) == 15) set_update(x,y+1);
+    #endif
+
 
 }
 
