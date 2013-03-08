@@ -441,6 +441,8 @@ float _testfloat2;
 
 void setting_export_test()
 {
+    printf("common/settings_export.hpp: \n");
+    
     class SettingsExport* SE = new SettingsExport;
     SE->register_float("test_float0", &_testfloat0);
     SE->register_int("test_int1", &_testint1);
@@ -452,5 +454,5 @@ void setting_export_test()
     printf("%s\n", SE->export_json_varlist());
     printf("%s\n", SE->export_json_display_element());
 
-    abort();
+    //abort();
 }
