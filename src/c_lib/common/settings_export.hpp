@@ -31,7 +31,7 @@ class SettingsExport
     public:
 
     SettingsExport() :
-        cvn(0),
+        cvn(0)
     {
         for (int i=0; i<cvm; i++)
         {
@@ -319,29 +319,43 @@ class SettingsExport
 
 
     /* SET */
-    void set_float(const char* var_name, float* var_loc)
+    void set_float(const char* var_name, float var_value)
     {
         int index = get_name_index(var_name);
+        struct ConfigValue cv = cva[index];
+        GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
 
-
+        *((float*)cv.ptr) = var_value
     }
 
-    void set_int(const char* var_name, int* var_loc)
+    void set_int(const char* var_name, int* var_value)
     {
         int index = get_name_index(var_name);
+        struct ConfigValue cv = cva[index];
+        GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
 
+        *((int*)cv.ptr) = var_value
     }
 
-    void set_color(const char* var_name, char* var_loc)
+    void set_color(const char* var_name, int* var_value)
     {
         int index = get_name_index(var_name);
-
-
+        struct ConfigValue cv = cva[index];
+        GS_ASSERT(cv.type == CONFIG_TYPE_COLOR && cv.ptr != NULL);
+    
+        GS_ASSERT(false);
+        return;
     }
 
-    void set_string(const char* var_name, char** var_loc) 
+    void set_string(const char* var_name, const char* var_value) 
     {
         int index = get_name_index(var_name);
+        struct ConfigValue cv = cva[index];
+        GS_ASSERT(cv.type == CONFIG_TYPE_STRING && cv.ptr != NULL);
+
+        if(cv.ptr != NULL)
+            free(cv.ptr);
+        cv.ptr = strdup(var_value);
     }
 
 
@@ -367,6 +381,8 @@ class SettingsExport
     void get_color(struct ConfigValue cv)
     {
         GS_ASSERT(cv.type == CONFIG_TYPE_COLOR && cv.ptr != NULL);
+        GS_ASSERT(false);
+        return;
     }
     
     char* get_string(struct ConfigValue cv)
