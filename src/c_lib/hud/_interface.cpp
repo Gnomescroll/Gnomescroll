@@ -8,7 +8,7 @@
 
 namespace Hud
 {
-class HudRadiationMeter = radiation_meter = NULL;
+class HudRadiationMeter* radiation_meter = NULL;
 class HarvestBar* harvest_bar = NULL;
 class HUD* hud = NULL;
 
@@ -52,9 +52,8 @@ void draw()
     CHECK_GL_ERROR();
 
     glColor4ub(255,255,255,255);
-    
-    radiation_meter->draw(128, 128);
 
+    radiation_meter->draw(256+256, 128);
 
     // badges
     glDisable(GL_BLEND);
