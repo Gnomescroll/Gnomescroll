@@ -714,5 +714,99 @@ void ControlNodeRenderer::control_node_render_update()
 
 #endif
 
+/*
+    Radiation block list
+*/
+
+class RadiationBlockList
+{
+
+    public:
+
+    struct RadiationBlock
+    {
+        int x,y,z;
+        int rad_strength;
+    };
+
+    struct BlockList
+    {
+        int bln; //blocklist
+        int blm; //
+        struct RadiationBlock* bla; //
+    };
+
+    blam = 32*32*8;
+    BlockList bla[32*32*8] // 16x16
+
+    RadiationBlockList() :
+    {
+        iba = (struct RadiationBlock*) malloc(ibam*sizeof(struct RadiationBlock));
+        for (int i=0; i<blam; i++)
+        {
+            bla[i].bln = 0;
+            bla[i].blm = 0;
+            bla[i].bla = NULL;
+        }
+    }
+
+    ~RadiationBlockList()
+    {
+        for (int i=0; i<blam; i++)
+        {
+            if(bla[i].bla != NULL)
+                free(bla[i].bla);
+        }
+    }
+
+
+    void add(int x, int y, int z)
+    {
+        int cx = x >> 4;
+        int cy = y >> 4;
+        int cz = z >> 4;
+
+        int index = cz*32*32 + 32*cy + cx;
+
+        GS_ASSERT(index < blam);
+
+        struct BlockList* bl = &bla[index];
+
+
+        if(bl->bla == NULL)
+        {
+            bla->bla = (struct RadiationBlock) malloc(4* sizeof(struct RadiationBlock));
+            bla->bn = 0;
+            bla->bm = 4;
+        }
+
+        if(bl->bln == bl->blm)
+        {
+            bla->blm *= 2;
+            bla->bla = (struct RadiationBlock) realloc(bla->blm* sizeof(struct RadiationBlock));
+        }
+
+        struct RadiationBlock rb;
+
+        rb.x = x;
+        rb.y = y;
+        rb.z = z;
+        rb.rad_strength = rb;
+
+        bla->bla[bla->bln] = rb;
+        bla->bln++;
+
+    }
+
+    void remove(int x, int y, int z)
+    {
+
+    }
+
+
+};
+
+
+
 }   // t_map
 
