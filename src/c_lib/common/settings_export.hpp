@@ -391,13 +391,13 @@ class SettingsExport
         cv.ptr = strdup(var_value);
     }
 
-
 /*
             CONFIG_TYPE_FLOAT,
             CONFIG_TYPE_INT,
             CONFIG_TYPE_COLOR,
             CONFIG_TYPE_STRING,
 */
+
     /* GET */
     float get_float(struct ConfigValue cv)
     {   
