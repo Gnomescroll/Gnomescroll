@@ -425,7 +425,7 @@ class SettingsExport
     }
 
 
-    void set_display_element(char* var_name, const char* display_type)
+    void set_display_element(const char* var_name, const char* display_type)
     {
         int index = get_name_index(var_name);
         if(index == -1)
@@ -442,7 +442,7 @@ float _testfloat2;
 void setting_export_test()
 {
     printf("common/settings_export.hpp: \n");
-    
+
     class SettingsExport* SE = new SettingsExport;
     SE->register_float("test_float0", &_testfloat0);
     SE->register_int("test_int1", &_testint1);
@@ -452,7 +452,7 @@ void setting_export_test()
     SE->set_display_element("test_int1", "slider");
 
     printf("%s\n", SE->export_json_varlist());
-    printf("%s\n", SE->export_json_display_element());
+    printf("%s\n", SE->export_json_display_element());  //this if for programmatically generating elements
 
     //abort();
 }
