@@ -424,9 +424,11 @@ void add_gorges(int num_gorges, int length)
     IF_ASSERT(noise == NULL) return;
 
     int* peaks = (int*)malloc(map_dim.x * map_dim.y * sizeof(int));
+    IF_ASSERT(peaks == NULL) return;
+
     for (int i=0; i < map_dim.x; i++)
     for (int j=0; j < map_dim.y; j++)
-    {   // built height cache
+    {   // build height cache
         int k = map_dim.x * j + i;
         peaks[k] = t_map::get_highest_solid_block(i, j);
     }
@@ -445,6 +447,7 @@ void add_terrain_features()
 
     GS_ASSERT(sin_lookup_table == NULL);
     GS_ASSERT(cos_lookup_table == NULL);
+
     sin_lookup_table = new float[NUM_LOOKUP_ANGLES];
     for (int i = 0; i < NUM_LOOKUP_ANGLES; i++)
         sin_lookup_table[i] = sinf((DOUBLE_PI / NUM_LOOKUP_ANGLES) * i);
