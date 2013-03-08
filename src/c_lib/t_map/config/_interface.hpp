@@ -141,6 +141,21 @@ void set_light_value(int light_value)
     fast_cube_attributes[p->type].light_value = light_value;
 }
 
+void set_rad_value(int value)
+{
+    if (value < 1 || value > 16)
+    {
+        printf("FATAL ERROR: BLOCK_DAT, set_rad_value, rad must be between 1 and 16, block= %s light= %d \n",
+            p->name, value);
+        GS_ASSERT_ABORT(false);
+    }
+
+    p->radioactive = true;
+    p->rad_value = value;
+
+    fast_cube_attributes[p->type].rad_value = value;
+}
+
 #if DC_SERVER
 void hud_def(int yhud, int xhud, SpriteSheet sheet_id, int ypos, int xpos) {}
 void hud_def(SpriteSheet sheet_id, int ypos, int xpos) {}

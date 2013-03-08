@@ -26,14 +26,17 @@ struct FastCubeProperties
     bool transparent;
     bool item_drop;
     bool item_container;
-    bool explosive;
+    bool special; //requires action on creation/deletion
+    bool radioactive;
     bool light_source; //is light source
+    bool explosive;
 };
 
 
 struct FastCubeAttributes
 {
     unsigned char light_value; //how much light cube emits
+    unsigned char rad_value; //how much light cube emits
 };
 
 
@@ -47,6 +50,8 @@ class CubeProperty: public Property<CubeType>
         bool active;  // Brandon's special flag
         bool transparent;     //
         bool item_drop;       // does block drop items
+        bool special;
+        bool radioactive;
 
         CubeMaterial material;
         ItemContainerType container_type;  // inventory and crafting bench blocks
@@ -68,12 +73,18 @@ class CubeProperty: public Property<CubeType>
         this->transparent = false;
         this->item_drop = false;
 
+        this->special = false;
+
+
         this->material = CUBE_MATERIAL_NONE;
         this->container_type = NULL_CONTAINER_TYPE;
         this->explosive = false;
 
         this->light_source = false;
         this->light_value  = 0;
+
+        this->radioactive = false;
+        this->rad_value = 0;
 
         this->max_damage = 32;
     }

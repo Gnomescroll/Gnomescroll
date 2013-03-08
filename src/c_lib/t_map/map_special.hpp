@@ -856,12 +856,13 @@ class RadiationBlockList
             for(int c=0; c<bl->bln; c++)
             {
                 struct RadiationBlock rb = bl->bla[c];
-                int _d = abs(x-rb.x) + abs(y-rb.y) + ab(z-rb.z);
+                int _d = abs(x-rb.x) + abs(y-rb.y) + abs(z-rb.z);
                 if(_d < distance)
-                    dsitance = _d;
+                    distance = _d;
             }
-
         }
+
+        return distance;
     }
 
 };
