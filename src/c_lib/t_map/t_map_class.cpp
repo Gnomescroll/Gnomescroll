@@ -192,7 +192,6 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
         //item container
         else if (fast_cube_properties[old_element.block].item_container == true)
         {
-            //destroy_item_container_block(x,y,z);
             c->chunk_item_container.remove(x,y,z);
         }
     #endif
@@ -205,13 +204,6 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
         {
             main_map->radiation_block_list.add(x,y,z);
         }
-    #if DC_SERVER
-        //item container
-        else if (fast_cube_properties[element.block].item_container == true)
-        {
-            //destroy_item_container_block(x,y,z);
-        }
-    #endif
     }
 
     //map updates
