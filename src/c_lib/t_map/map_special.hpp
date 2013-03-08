@@ -806,8 +806,7 @@ class RadiationBlockList
         bl->bln++;
 
         //struct BlockList* bl = _get_list(x,y,z);
-
-        printf("%d %d \n", bl->bln, _get_list(x,y,z)->bln);
+        //printf("%d %d \n", bl->bln, _get_list(x,y,z)->bln);
     }
 
     void remove(int x, int y, int z)
