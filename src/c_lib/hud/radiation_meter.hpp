@@ -67,13 +67,55 @@ class HudRadiationMeter
 	    glDisable(GL_TEXTURE_1D);
 	}
 
+
+	static const int h = 96;
+
+	void draw_circle(int x, int y, int degree)
+	{
+		const float radius = h/2;
+
+		int max = 32;
+	    const float z = -0.1f;
+
+		//float _max = 1.0 / ((float) max);
+		if(degree > max)
+			degree = max;
+
+	    glColor3ub(255,0,0);
+
+		glBegin(GL_QUADS);
+
+		float _px = x + h/2 + radius*sinf(0.0);
+		float _py = y + h/2 + radius*cosf(0.0);
+
+		for(int i=1; i<degree; i++)
+		{
+			float frac = ((float)i)/((float)degree);
+			float _x = radius*sinf(2*3.141519*frac); 
+			float _y = radius*cosf(2*3.141519*frac);
+
+
+			_x = x + h/2 + _x;
+			_y = y + h/2 + _y;
+
+			glVertex3f(_x, _y, z);
+			glVertex3f(_px, _py, z);
+
+			_px = _x;
+			_py = _y;
+		}
+
+		glEnd();
+	}
+
 	void draw(int x, int y)
 	{
 
 		static int c = 0;
 		c++;
 
-		int h = 96;
+
+		draw_circle(x,y, (c/15) % 32);
 
 		float x0 = x;
 		float x1 = x + h;
