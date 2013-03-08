@@ -73,8 +73,9 @@ class HudRadiationMeter
 	void draw_circle(int x, int y, int degree)
 	{
 		const float radius = h/2;
+		const float fiddle_factor = -6.0;
 
-		int max = 32;
+		int max = 16;
 	    const float z = -0.1f;
 
 		//float _max = 1.0 / ((float) max);
@@ -83,26 +84,29 @@ class HudRadiationMeter
 
 	    glColor3ub(255,0,0);
 
-		glBegin(GL_QUADS);
+		glBegin(GL_TRIANGLES);
 
-		float _px = x + h/2 + radius*sinf(0.0);
-		float _py = y + h/2 + radius*cosf(0.0);
+		float xf = x + h/2;
+		float yf = y + h/2;
 
-		for(int i=1; i<degree; i++)
+		for(int i=0; i<degree; i++)
 		{
-			float frac = ((float)i)/((float)degree);
-			float _x = radius*sinf(2*3.141519*frac); 
-			float _y = radius*cosf(2*3.141519*frac);
+			float frac1 = ((float)i)/((float)max);
+			float _x1 = xf +radius*sinf(2*3.141519*frac1); 
+			float _y1 = yf +radius*cosf(2*3.141519*frac1);
 
+			float frac2 = (((float)i)+0.5)/((float)max);
+			float _x2 = xf + (fiddle_factor+radius)*sinf(2*3.141519*frac2); 
+			float _y2 = yf + (fiddle_factor+radius)*cosf(2*3.141519*frac2);
 
-			_x = x + h/2 + _x;
-			_y = y + h/2 + _y;
+			float frac3 = (((float)i)+1.0)/((float)max);
+			float _x3 = xf + radius*sinf(2*3.141519*frac3); 
+			float _y3 = yf + radius*cosf(2*3.141519*frac3);
 
-			glVertex3f(_x, _y, z);
-			glVertex3f(_px, _py, z);
+			glVertex3f(_x1, _y1, z);
+			glVertex3f(_x2, _y2, z);
+			glVertex3f(_x3, _y3, z);
 
-			_px = _x;
-			_py = _y;
 		}
 
 		glEnd();
@@ -115,7 +119,7 @@ class HudRadiationMeter
 		c++;
 
 
-		draw_circle(x,y, (c/15) % 32);
+		//draw_circle(x,y, (c/15) % 32);
 
 		float x0 = x;
 		float x1 = x + h;
