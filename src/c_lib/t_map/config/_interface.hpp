@@ -42,6 +42,7 @@ static void _cube_def(CubeType type, CubeGroup group, const char* name, CubeMate
             p->solid = true;
             p->occludes = true;
             p->active = true;
+            p->special = true;
             break;
 
         case EmptyCube:
@@ -98,6 +99,8 @@ static void copy_cube_properties(class CubeProperty* a, struct FastCubePropertie
     b->transparent = a->transparent;
     b->item_drop = a->item_drop;
     b->item_container = (a->group == ItemContainerCube);
+    b->special = a->special;
+    b->radioactive = a->radioactive;
     b->explosive = a->explosive;
     b->light_source = a->light_source;
 }
@@ -150,6 +153,7 @@ void set_rad_value(int value)
         GS_ASSERT_ABORT(false);
     }
 
+    p->special = true;
     p->radioactive = true;
     p->rad_value = value;
 
