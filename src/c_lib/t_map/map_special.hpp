@@ -760,10 +760,9 @@ class RadiationBlockList
     }
 
 
-    void add(int x, int y, int z)
-    {
-        GS_ASSERT(x >= 0 && x < 512 && y >= 0 && y < 512 && z >= 0 && z < 128);
 
+    struct BlockList* _get_list(int x, int y, int z)
+    {
         int cx = x >> 4;
         int cy = y >> 4;
         int cz = z >> 4;
@@ -772,8 +771,12 @@ class RadiationBlockList
 
         GS_ASSERT(index < blam);
 
-        struct BlockList* bl = &bla[index];
+        return &bla[index];
+    }
 
+    void add(int x, int y, int z)
+    {
+        struct BlockList* bl = _get_list(x,y,z);
 
         if(bl->bla == NULL)
         {
