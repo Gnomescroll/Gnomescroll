@@ -65,6 +65,7 @@ static struct HudDrawSettings
     bool prompt;
     bool diagnostics;
     bool vbo_debug;
+    bool admin_controls;
 }   hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
@@ -109,6 +110,7 @@ void update_hud_draw_settings()
     hud_draw_settings.player_chat = Options::player_chat;
     hud_draw_settings.chat_input = input_state.chat;
     hud_draw_settings.full_chat = input_state.full_chat;
+    hud_draw_settings.admin_controls = input_state.admin_controls;
 
     hud_draw_settings.scoreboard = input_state.scoreboard;
 
@@ -220,147 +222,6 @@ void set_color_from_ratio(float ratio, unsigned char alpha, bool invert_color_fo
         dyn = interpolate_color(empty, yellow, small_to_big);
 
     glColor4ub(dyn.r, dyn.g, dyn.b, alpha);
-}
-
-bool FAILED_merge_of_cntainr_draws(
-    int slot_size,
-    ItemContainerID container_id,
-    GLubyte alpha_bord, // border
-    float alpha_bkgd, // background
-    const int xdim,
-    const int ydim,
-    float xoff,
-    float yoff,
-    const float inc1,  // spacing between slot icons
-    const float inc2,  // border around a slot icon
-    const float border,
-    int hover_slot)
-{
-    // abort if slots aren't copasetic
-    struct ItemContainer::SlotMetadata* slot_metadata =
-        ItemContainer::get_container_ui_slot_metadata(container_id);
-    if (slot_metadata == NULL) return false;
-
-    const float w = slot_size;
-
-    glDisable(GL_DEPTH_TEST); // move render somewhere
-    glDisable(GL_TEXTURE_2D);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
-
-    // draw larger rects for borders
-    int intensity = 80-16;
-    glBegin(GL_QUADS);
-    glColor4ub(intensity, intensity, intensity, alpha_bord); // old alpha == 128+64
-    for (int i=0; i<xdim; i++)
-    for (int j=0; j<ydim; j++)
-    {
-        float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-
-        glVertex2f(x-inc2,y+w+inc2);
-        glVertex2f(x+w+inc2, y+w+inc2);
-        glVertex2f(x+w+inc2, y-inc2);
-        glVertex2f(x-inc2, y-inc2);
-    }
-    glEnd();
-
-    // render slot backgrounds
-    for (int i=0; i<xdim; i++)
-    for (int j=0; j<ydim; j++)
-    {
-        // always draw grey background
-        int slot = j*xdim + i;
-        float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-        glColor4ub(80, 80, 80, alpha_bkgd);    // grey
-        float ratio = 1.0f;
-        Hud::meter_graphic.draw(x, y, w, w, ratio);
-
-        // maybe draw a dura meter on it
-        int durability = slot_metadata[slot].durability;
-        if (durability != NULL_DURABILITY)
-        {
-            int max_durability = Item::get_max_durability(slot_metadata[slot].type);
-            ratio = float(durability)/float(max_durability);
-            Hud::set_color_from_ratio(ratio, alpha_bkgd);
-            Hud::meter_graphic.draw(x, y, w, w, ratio);
-        }
-    }
-
-    // draw hover highlight background
-    glBegin(GL_QUADS);
-    glColor4ub(160, 160, 160, 128);
-    if (hover_slot != NULL_SLOT)
-    {
-        int i = hover_slot % xdim;
-        int j = hover_slot / xdim;
-
-        float x = xoff + border + i*(inc1+slot_size);
-        // VV container_hud version VV
-        //float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-        // VV toolbelt_hud version VV
-        float y = _yresf - (yoff - border + (j+1)*(inc1+slot_size));
-
-        glVertex2f(x,y+w);
-        glVertex2f(x+w, y+w);
-        glVertex2f(x+w, y);
-        glVertex2f(x, y);
-    }
-    glEnd();
-
-
-    // draw icons
-    glColor4ub(255, 255, 255, 255);
-    glEnable(GL_TEXTURE_2D);
-    GS_ASSERT(TextureSheetLoader::item_texture_sheet_loader->texture != 0);
-    glBindTexture(GL_TEXTURE_2D, TextureSheetLoader::item_texture_sheet_loader->texture);
-    glBegin(GL_QUADS);
-
-    for (int i=0; i<xdim; i++)
-    for (int j=0; j<ydim; j++)
-    {
-        int slot = j * xdim + i;
-        if (slot_metadata[slot].type == NULL_ITEM_TYPE) continue;
-        int tex_id = Item::get_sprite_index_for_type(slot_metadata[slot].type);
-        const float x = xoff + border + i*(inc1+slot_size);
-        const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-
-        //const float iw = 8.0f; // icon_width
-        //const int iiw = 8; // integer icon width
-        const float iw = 16.0f; // icon_width
-        const int iiw = 16; // integer icon width
-
-        const float tx_min = (1.0f/iw)*(tex_id % iiw);
-        const float ty_min = (1.0f/iw)*(tex_id / iiw);
-        const float tx_max = tx_min + 1.0f/iw;
-        const float ty_max = ty_min + 1.0f/iw;
-
-        glTexCoord2f(tx_min, ty_min);
-        glVertex2f(x,y+w);
-
-        glTexCoord2f(tx_max, ty_min);
-        glVertex2f(x+w, y+w);
-
-        glTexCoord2f(tx_max, ty_max);
-        glVertex2f(x+w, y);
-
-        glTexCoord2f(tx_min, ty_max);
-        glVertex2f(x, y);
-    }
-
-    glEnd();
-
-    glDisable(GL_TEXTURE_2D);
-    glColor4ub(255, 255, 255, 255);
-
-    // container_hud didn't have these next 2:
-    glEnable(GL_DEPTH_TEST); // move render somewhere
-    glDisable(GL_BLEND);
-
-    return true; // success
 }
 
 /* Display logic */
@@ -515,6 +376,18 @@ void draw_hud_text()
         }
     }
 
+    if (input_state.admin_controls)
+    {
+        const char* camera = "Free";
+        if (agent_camera->is_current())
+            camera = "Agent";
+        const char* controls = "Camera";
+        if (input_state.input_mode == INPUT_STATE_AGENT)
+            controls = "Agent";
+        hud->admin_controls->update_formatted_string(2, controls, camera);
+        hud->admin_controls->draw();
+    }
+
     if (hud_draw_settings.diagnostics)
     {
         float fps_val = 0.0f;
@@ -537,8 +410,7 @@ void draw_hud_text()
             hud->look->set_position(hud->look->x, _yresf - hud->location->get_height() - HudFont::font->data.line_height);
             hud->look->draw();
         }
-
-    }   // if (input_state.diagnostics)
+    }
 
     if (!has_error())
     {
@@ -550,7 +422,7 @@ void draw_hud_text()
                 int max_health = Agents::get_attribute_int(a->id, "max_health");
                 int health = Agents::get_attribute_int(a->id, "health");
                 hud->health->update_formatted_string(1, health);
-                int len = (int)strlen(health_color_string);
+                int len = int(strlen(health_color_string));
                 int n = 0;
                 if (health >= max_health)
                     n = len;
@@ -655,43 +527,51 @@ void HUD::init()
     dead = text_list->create();
     IF_ASSERT(dead == NULL) return;
     dead->set_text(dead_text);
-    dead->set_color(Color(Color(200,4,3,255)));
+    dead->set_color(Color(Color(200,4,2)));
     dead->set_position(_xresf/2, _yresf/2);
 
     fps = text_list->create();
     IF_ASSERT(fps == NULL) return;
     fps->set_format(fps_format);
     fps->set_format_extra_length(6 - 5);
-    fps->set_color(Color(200,4,3,255));
+    fps->set_color(Color(200,4,2));
     fps->set_position(3, line_height+3);
 
     ping = text_list->create();
     IF_ASSERT(ping == NULL) return;
     ping->set_format(ping_format);
     ping->set_format_extra_length(3 - 2);
-    ping->set_color(Color(200,4,3,255));
+    ping->set_color(Color(200,4,2));
     ping->set_position(3, (line_height*2)+3);
 
     reliable_ping = text_list->create();
     IF_ASSERT(reliable_ping == NULL) return;
     reliable_ping->set_format(ping_format);
     reliable_ping->set_format_extra_length(3 - 2);
-    reliable_ping->set_color(Color(200,4,3,255));
+    reliable_ping->set_color(Color(200,4,2));
     reliable_ping->set_position(3, (line_height*3)+3);
 
     location = text_list->create();
     IF_ASSERT(location == NULL) return;
     location->set_format(location_format);
     location->set_format_extra_length((40 + 20 + 1 - 2) * 3);
-    location->set_color(Color(200,4,3,255));
+    location->set_color(Color(200,4,2));
     location->set_position(3, _yresf-3);
 
     look = text_list->create();
     IF_ASSERT(look == NULL) return;
     look->set_format(location_format);
     look->set_format_extra_length((40 + 20 + 1 - 2) * 3);
-    look->set_color(Color(200,4,3,255));
+    look->set_color(Color(200,4,2));
     look->set_position(3, _yresf-3);
+
+    admin_controls = text_list->create();
+    IF_ASSERT(admin_controls == NULL) return;
+    admin_controls->set_format("Debug Mode\n%s controls\n%s camera");
+    admin_controls->set_format_extra_length(strlen("Camera") + strlen("Agent"));
+    admin_controls->update_formatted_string(2, "Camera", "Agent");
+    admin_controls->set_color(Color(200,4,3));
+    admin_controls->set_position(_xresf - 4 - admin_controls->get_width(), _yresf - 3);
 
     health = new AnimatedText;
 
@@ -720,7 +600,7 @@ void HUD::init()
     confirm_quit = text_list->create();
     IF_ASSERT(confirm_quit == NULL) return;
     confirm_quit->set_text(confirm_quit_text);
-    confirm_quit->set_color(Color(200,4,3,255));
+    confirm_quit->set_color(Color(200,4,2));
     confirm_quit->set_position(_xresf/2, (3*_yresf)/4);
 
     prompt = text_list->create();
@@ -735,18 +615,18 @@ void HUD::init()
 
     error = text_list->create();
     IF_ASSERT(error == NULL) return;
-    error->set_color(Color(200,4,3,255));
+    error->set_color(Color(200,4,2));
     error->set_position(_xresf/2, _yresf/2);
 
     error_subtitle = text_list->create();
     IF_ASSERT(error_subtitle == NULL) return;
-    error_subtitle->set_color(Color(200,4,3,255));
+    error_subtitle->set_color(Color(200,4,2));
     error_subtitle->set_position(_xresf/2, error->y - error->get_height());
     error_subtitle->set_text(error_subtitle_text);
 
     awesomium_message = text_list->create();
     IF_ASSERT(awesomium_message == NULL) return;
-    awesomium_message->set_color(Color(200,4,3,255));
+    awesomium_message->set_color(Color(200,4,2));
     awesomium_message->set_position(_xresf/2, _yresf - 2);
     awesomium_message->set_text("");
 
@@ -774,6 +654,7 @@ HUD::HUD() :
     error(NULL),
     error_subtitle(NULL),
     awesomium_message(NULL),
+    admin_controls(NULL),
     scoreboard(NULL),
     chat(NULL)
 {}
@@ -805,6 +686,8 @@ HUD::~HUD()
         text_list->destroy(error_subtitle->id);
     if (awesomium_message != NULL)
         text_list->destroy(awesomium_message->id);
+    if (admin_controls != NULL)
+        text_list->destroy(admin_controls->id);
     delete health;
     delete scoreboard;
     delete chat;
