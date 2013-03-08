@@ -791,8 +791,8 @@ class RadiationBlockList
 
         if(bl->bln == bl->blm)
         {
-            bla->blm *= 2;
-            bl->bla = (struct RadiationBlock*) realloc(bl->bla, bl->blm* sizeof(struct RadiationBlock));
+            bl->blm *= 2;
+            bl->bla = (struct RadiationBlock*) realloc(bl->bla, bl->blm * sizeof(struct RadiationBlock));
         }
 
         struct RadiationBlock rb;
@@ -802,7 +802,7 @@ class RadiationBlockList
         rb.z = z;
         rb.rad_strength = 15;
 
-        bl->bla[bla->bln] = rb;
+        bl->bla[bl->bln] = rb;
         bl->bln++;
 
         //struct BlockList* bl = _get_list(x,y,z);
