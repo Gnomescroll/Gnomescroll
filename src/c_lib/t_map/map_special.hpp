@@ -832,6 +832,37 @@ class RadiationBlockList
         bl->bla[index] = bl->bla[bla->bln];
     }
 
+    int get_distance(int x, int y, int z)
+    {
+
+        int cx = x >> 4;
+        int cy = y >> 4;
+        int cz = z >> 4;
+
+        int distance = 1024;
+        for(int i=-1; i<=1; i++)
+        for(int j=-1; j<=1; j++)
+        for(int k=-1; k<=1; k++)
+        {
+            int _cx = (cx + i + 32) % 32;
+            int _cy = (cy + j + 32) % 32;
+            int _cz = cz + k;
+            if(_cz < 0 || _cz >= 8)
+                continue;
+
+            GS_ASSERT(_cz*32*32 + 32*_cy + _cx < blam);
+            struct BlockList* bl = &bla[_cz*32*32 + 32*_cy + _cx];
+
+            for(int c=0; c<bl->bln; c++)
+            {
+                struct RadiationBlock rb = bl->bla[c];
+                int _d = abs(x-rb.x) + abs(y-rb.y) + ab(z-rb.z);
+                if(_d < distance)
+                    dsitance = _d;
+            }
+
+        }
+    }
 
 };
 
