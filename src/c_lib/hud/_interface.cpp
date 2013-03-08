@@ -53,7 +53,8 @@ void draw()
 
     glColor4ub(255,255,255,255);
 
-    radiation_meter->draw(256+256, 128);
+    radiation_meter->draw(_xresf - radiation_meter->width - 1,
+                          _yresf - radiation_meter->width);
 
     // badges
     glDisable(GL_BLEND);

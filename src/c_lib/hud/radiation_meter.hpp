@@ -7,183 +7,183 @@ namespace Hud
 
 class HudRadiationMeter
 {
-	public:
-	struct SDL_Surface* rad_tex_surface; //_load_image(const char *file);
-	struct SDL_Surface* grad_tex_surface; //_load_image(const char *file);
+    public:
+        struct SDL_Surface* surface;
+        struct SDL_Surface* border_surface;
+        struct SDL_Surface* gradient_surface;
 
-	unsigned int rad_tex;
-	unsigned int rad_gradient_tex;
+        GLuint tex;
+        GLuint border_tex;
+        GLuint gradient_tex;
 
-	HudRadiationMeter()
-	{
-/*
+        static const int width = 64;
 
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures(2, map_textures);
-    for (int i=0; i<2; i++)
+    HudRadiationMeter() :
+        surface(NULL), border_surface(NULL), gradient_surface(NULL),
+        tex(0), border_tex(0), gradient_tex(0)
     {
-        GS_ASSERT(map_textures[i] != 0);
-        if (map_textures[i] == 0) continue;
-        glBindTexture(GL_TEXTURE_2D, map_textures[i]);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //GL_BGRA
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels);
     }
-    glDisable(GL_TEXTURE_2D);
-    CHECK_GL_ERROR();
-*/
 
-	}
+    ~HudRadiationMeter()
+    {
+        if (this->surface != NULL)
+            SDL_FreeSurface(this->surface);
+        if (this->border_surface != NULL)
+            SDL_FreeSurface(this->border_surface);
+        if (this->gradient_surface != NULL)
+            SDL_FreeSurface(this->gradient_surface);
+    }
 
-	~HudRadiationMeter()
-	{
+    void init()
+    {
+        GS_ASSERT(surface == NULL);
+        GS_ASSERT(border_surface == NULL);
+        GS_ASSERT(gradient_surface == NULL);
 
-	}
+        surface = create_surface_from_file(MEDIA_PATH "sprites/icons/radiation_hud.png");
+        border_surface = create_surface_from_file(MEDIA_PATH "sprites/icons/radiation_border.png");
+        gradient_surface = create_surface_from_file(MEDIA_PATH "sprites/gradient/heightmap_gradient_01.png");
+        IF_ASSERT(surface == NULL ||
+                  border_surface == NULL ||
+                  gradient_surface == NULL) return;
 
-	void init()
-	{
-    	const GLenum tex_format = GL_BGRA;
+        GLenum tex_format = GL_BGRA;
+        if (surface->format->Rmask == 0x000000FF)
+            tex_format = GL_RGBA;
+        glEnable(GL_TEXTURE_2D);
+        glGenTextures(1, &tex);
+        glBindTexture(GL_TEXTURE_2D, tex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, tex_format, GL_UNSIGNED_BYTE, surface->pixels);
+        glDisable(GL_TEXTURE_2D);
 
-		rad_tex_surface  = create_surface_from_file(MEDIA_PATH "sprites/icons/radiation_hud.png");
-		grad_tex_surface = create_surface_from_file(MEDIA_PATH "sprites/gradient/heightmap_gradient_01.png");
+        tex_format = GL_BGRA;
+        if (border_surface->format->Rmask == 0x000000FF)
+            tex_format = GL_RGBA;
+        glEnable(GL_TEXTURE_2D);
+        glGenTextures(1, &border_tex);
+        glBindTexture(GL_TEXTURE_2D, border_tex);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, border_surface->w, border_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, border_surface->pixels);
+        glDisable(GL_TEXTURE_2D);
 
-	    glEnable(GL_TEXTURE_2D);
-	    glGenTextures(1, &rad_tex);
-	    glBindTexture(GL_TEXTURE_2D, rad_tex);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, rad_tex_surface->w, rad_tex_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, rad_tex_surface->pixels);
-	    glDisable(GL_TEXTURE_2D);
+        tex_format = GL_BGRA;
+        if (gradient_surface->format->Rmask == 0x000000FF)
+            tex_format = GL_RGBA;
+        glDisable(GL_TEXTURE_1D);
+        glGenTextures(1, &gradient_tex);
+        glBindTexture(GL_TEXTURE_1D, gradient_tex);
+        glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, gradient_surface->w, 0, tex_format, GL_UNSIGNED_BYTE, gradient_surface->pixels);
 
-	    //GL_BGRA
-	    glDisable(GL_TEXTURE_1D);
-	    glGenTextures(1, &rad_gradient_tex);
-	    glBindTexture(GL_TEXTURE_1D, rad_gradient_tex);
-	    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	    glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	    glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, grad_tex_surface->w, 0, tex_format, GL_UNSIGNED_BYTE, grad_tex_surface->pixels);
+        glDisable(GL_TEXTURE_1D);
+    }
 
-	    glDisable(GL_TEXTURE_1D);
-	}
+    void draw_circle(int x, int y, int degree)
+    {
+        const float radius = this->width/2.0f;
+        const float fiddle_factor = -6.0f;
 
+        int max = 16;
+        const float z = -0.1f;
 
-	static const int h = 96;
+        //float _max = 1.0 / ((float) max);
+        degree = GS_MIN(degree, max);
 
-	void draw_circle(int x, int y, int degree)
-	{
-		const float radius = h/2;
-		const float fiddle_factor = -6.0;
+        glColor4ub(255, 0, 0, 255);
 
-		int max = 16;
-	    const float z = -0.1f;
+        glBegin(GL_TRIANGLES);
 
-		//float _max = 1.0 / ((float) max);
-		if(degree > max)
-			degree = max;
+        float xf = x + width/2.0f;
+        float yf = y + width/2.0f;
 
-	    glColor3ub(255,0,0);
+        for(int i=0; i<degree; i++)
+        {
+            float frac1 = i / float(max);
+            float x1 = xf +radius*sinf(2*PI*frac1);
+            float y1 = yf +radius*cosf(2*PI*frac1);
 
-		glBegin(GL_TRIANGLES);
+            float frac2 = (i + 0.5f) / float(max);
+            float x2 = xf + (fiddle_factor+radius)*sinf(2*PI*frac2);
+            float y2 = yf + (fiddle_factor+radius)*cosf(2*PI*frac2);
 
-		float xf = x + h/2;
-		float yf = y + h/2;
+            float frac3 = (i + 1.0f) / float(max);
+            float x3 = xf + radius*sinf(2*PI*frac3);
+            float y3 = yf + radius*cosf(2*PI*frac3);
 
-		for(int i=0; i<degree; i++)
-		{
-			float frac1 = ((float)i)/((float)max);
-			float _x1 = xf +radius*sinf(2*3.141519*frac1); 
-			float _y1 = yf +radius*cosf(2*3.141519*frac1);
+            glVertex3f(x1, y1, z);
+            glVertex3f(x2, y2, z);
+            glVertex3f(x3, y3, z);
+        }
 
-			float frac2 = (((float)i)+0.5)/((float)max);
-			float _x2 = xf + (fiddle_factor+radius)*sinf(2*3.141519*frac2); 
-			float _y2 = yf + (fiddle_factor+radius)*cosf(2*3.141519*frac2);
+        glEnd();
+    }
 
-			float frac3 = (((float)i)+1.0)/((float)max);
-			float _x3 = xf + radius*sinf(2*3.141519*frac3); 
-			float _y3 = yf + radius*cosf(2*3.141519*frac3);
+    void draw(float x, float y)
+    {
+        IF_ASSERT(gradient_surface == NULL || gradient_surface->w == 0) return;
+        static int c = 0;
+        int i = (c++) % gradient_surface->w;
+        int r = ((unsigned char*)gradient_surface->pixels)[4*i + 0];
+        int g = ((unsigned char*)gradient_surface->pixels)[4*i + 1];
+        int b = ((unsigned char*)gradient_surface->pixels)[4*i + 2];
 
-			glVertex3f(_x1, _y1, z);
-			glVertex3f(_x2, _y2, z);
-			glVertex3f(_x3, _y3, z);
+        float x0 = x;
+        float x1 = x + width;
+        float y0 = y;
+        float y1 = y + width;
+        const float z = -0.1f;
+        const float blur = 1.0f;
 
-		}
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_TEXTURE_2D);
 
-		glEnd();
-	}
+        glColor4ub(r, g, b, 0x80);
 
-	void draw(int x, int y)
-	{
+        // draw border
+        glBindTexture(GL_TEXTURE_2D, border_tex);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(x0, y0, z);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(x1, y0, z);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(x1, y1, z);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(x0, y1, z);
+        glEnd();
 
-		static int c = 0;
-		c++;
+        // draw inner area
+        glBindTexture(GL_TEXTURE_2D, tex);
+        glColor4ub(r, g, b, 0x60);
+        glBegin(GL_QUADS);
+        for (int i=0; i<4; i++)
+        {
+            int j = i % 2;
+            int k = (i + 1) % 2;
+            float dx = j * blur;
+            float dy = k * blur;
+            dx *= (j == 0) ? -1 : 1;
+            dy *= (k == 0) ? -1 : 1;
 
+            glTexCoord2f(0.0f, 0.0f);
+            glVertex3f(x0+dx, y0+dy, z);
+            glTexCoord2f(1.0f, 0.0f);
+            glVertex3f(x1+dx, y0+dy, z);
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex3f(x1+dx, y1+dy, z);
+            glTexCoord2f(0.0f, 1.0f);
+            glVertex3f(x0+dx, y1+dy, z);
+        }
+        glEnd();
 
-		//draw_circle(x,y, (c/15) % 32);
-
-		float x0 = x;
-		float x1 = x + h;
-		float y0 = y;
-		float y1 = y + h;
-
-	    const float z = -0.1f;
-
-	    glEnable(GL_TEXTURE_2D);
-	    glBindTexture(GL_TEXTURE_2D, rad_tex);
-	    //glEnable(GL_BLEND);
-	    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	    
-	    int i = (c /15) % grad_tex_surface->w;
-	    int _r = ((unsigned char*)grad_tex_surface->pixels)[4*i + 0];
-	    int _g = ((unsigned char*)grad_tex_surface->pixels)[4*i + 1];
-	    int _b = ((unsigned char*)grad_tex_surface->pixels)[4*i + 2];
-
-	    glColor3ub(_r,_g,_b);
-
-
-	    glBegin(GL_QUADS);
-	    glTexCoord2i(0, 0);
-	    glVertex3f(x0, y0, z);
-	    glTexCoord2i(1, 0);
-	    glVertex3f(x1, y0, z);
-	    glTexCoord2i(1, 1);
-	    glVertex3f(x1, y1, z);
-	    glTexCoord2i(0, 1);
-	    glVertex3f(x0, y1, z);
-	    glEnd();
-
-	    glDisable(GL_TEXTURE_2D);
-	    glColor3ub(255, 255, 255);
-	}
+        glColor4ub(255, 255, 255, 255);
+        glDisable(GL_TEXTURE_2D);
+    }
 };
 
-
-}
-/*
-void Reticle::draw()
-{
-    IF_ASSERT(!this->inited) return;
-    IF_ASSERT(this->tex_data.tex == 0) return;
-
-    const float z = -0.1f;
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, this->tex_data.tex);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glColor3ub(255, 0, 185);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0, 0);
-    glVertex3f(x0, y0, z);
-    glTexCoord2i(1, 0);
-    glVertex3f(x1, y0, z);
-    glTexCoord2i(1, 1);
-    glVertex3f(x1, y1, z);
-    glTexCoord2i(0, 1);
-    glVertex3f(x0, y1, z);
-    glEnd();
-    glDisable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
-    glColor3ub(255, 255, 255);
-}
-*/
+}   // Hud
