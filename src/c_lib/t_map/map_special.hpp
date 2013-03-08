@@ -776,6 +776,8 @@ class RadiationBlockList
 
     void add(int x, int y, int z)
     {
+        GS_ASSERT(x >= 0 && x < 512 && y >= 0 && y < 512 && z >= 0 && z < 128);
+
         struct BlockList* bl = _get_list(x,y,z);
 
         if(bl->bla == NULL)
@@ -805,7 +807,30 @@ class RadiationBlockList
 
     void remove(int x, int y, int z)
     {
+        GS_ASSERT(x >= 0 && x < 512 && y >= 0 && y < 512 && z >= 0 && z < 128);
 
+        struct BlockList* bl = _get_list(x,y,z);
+
+        int index = -1;
+        for(int i=0; i<bl->bln; i++)
+        {
+            if(bl->bla[i].x == x 
+                && bl->bla[i].y == y 
+                && bl->bla[i].z == z)
+            {
+                index = i; 
+                break;
+            }
+        }
+
+        if(index == -1)
+        {
+            GS_ASSERT(false);
+            return;
+        }
+        
+        bla->bln--;
+        bl->bla[index] = bl->bla[bla->bln];
     }
 
 
