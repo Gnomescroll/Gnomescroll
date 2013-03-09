@@ -1,7 +1,6 @@
 #pragma once
 
 #include <common/defines.h>
-
 #include <state/client_state.hpp>
 #include <SDL/SDL_functions.hpp>
 #include <sound/sound.hpp>
@@ -51,7 +50,7 @@ void init(int argc, char* argv[])
     ClientState::send_version();
 
     // start authorization. waits for a valid-looking game token to be received
-    #if GS_AWESOMIUM
+    #if GS_AUTH
     Auth::begin_auth();
     wait_for_login();
     #endif

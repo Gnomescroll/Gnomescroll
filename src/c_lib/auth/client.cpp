@@ -35,8 +35,7 @@ bool send_auth_token()
 
 bool send_auth_token(const char* token)
 {
-    GS_ASSERT(token != NULL);
-    if (token == NULL) return false;
+    IF_ASSERT(token == NULL) return false;
     auth_token_CtoS msg;
     strncpy(msg.token, token, AUTH_TOKEN_LENGTH);
     msg.token[AUTH_TOKEN_LENGTH] = '\0';
@@ -104,13 +103,12 @@ void check_expiring_token()
 void begin_auth()
 {
     GS_ASSERT(auth_token == NULL);
-    enable_awesomium();
+    enable_login_window();
 }
 
 AuthError update_token(const char* token)
 {
-    GS_ASSERT(token != NULL);
-    if (token == NULL) return AUTH_ERROR_TOKEN_MISSING;
+    IF_ASSERT(token == NULL) return AUTH_ERROR_TOKEN_MISSING;
 
     if (!load_auth_token(token))
         return AUTH_ERROR_TOKEN_MALFORMED;
@@ -133,7 +131,7 @@ void token_was_accepted()
     Hud::unset_error_status(GS_ERROR_NEEDS_LOGIN);
     Hud::unset_error_status(GS_ERROR_AUTH_FAILED);
     Hud::unset_error_status(GS_ERROR_REAUTHORIZING);
-    disable_awesomium();
+    disable_login_window();
     printf("Token accepted\n");
 }
 

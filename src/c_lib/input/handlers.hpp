@@ -63,6 +63,9 @@ struct InputState
 
     // login mode is when we are waiting for login
     bool login_mode;
+
+    bool login_window;
+    bool settings_window;
 };
 
 extern InputState input_state;
@@ -107,8 +110,15 @@ void disable_agent_inventory();
 void enable_container_block(ItemContainerID container_id);
 void disable_container_block();
 
-void disable_awesomium();
-void enable_awesomium();
+void disable_login_window();
+void enable_login_window();
+
+void toggle_settings_window();
+void enable_settings_window();
+void disable_settings_window();
+
+void update_awesomium_window_state();
+void disable_awesomium_windows();
 
 void close_all_containers();
 
@@ -133,7 +143,7 @@ void begin_login_mode()
     //printf("Begin login mode 1. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);
 
     input_state.login_mode = true;
-    enable_awesomium();
+    enable_login_window();
 
     //printf("Begin login mode 2. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);
 }
@@ -142,7 +152,7 @@ void end_login_mode()
 {
     //printf("End login mode 1. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);
 
-    disable_awesomium();
+    disable_login_window();
     input_state.login_mode = false;
 
     //printf("End login mode 2. mouse_bound: %d; rebind_mouse: %d\n", input_state.mouse_bound, input_state.rebind_mouse);

@@ -111,12 +111,8 @@ void resource_response_cb(awe_webview* webView, const awe_string* _url,
 
 void web_view_crashed_cb(awe_webview* webView)
 {
-    if (cv != NULL)
-    {
-        cv->crashed = true;
-        cv->webView = NULL;
-    }
     printf("Webview crashed\n");
+    viewport_manager->webview_crash(webView);
 }
 
 void js_set_message_callback(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
@@ -168,7 +164,7 @@ void js_login_required_callback(awe_webview* webView, const awe_string* _obj_nam
     //Chat::send_system_message("There was a server reset. You will need to again soon to continue playing.");
     //Chat::send_system_message(Hud::open_login_text);
     if (!Auth::has_authorized_once)
-        enable_awesomium();
+        enable_login_window();
     //else
         //Hud::set_prompt(Hud::open_login_text);
 }
@@ -269,61 +265,12 @@ void ChromeViewport::set_callbacks()
     //awe_webview_set_callback_change_cursor(this->webView, &change_cursor_cb);
 }
 
-void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event)
-{
-    if (event->type != SDL_KEYDOWN && event->type != SDL_KEYUP)
-        return;
-
-    awe_webkeyboardevent key_event;
-    key_event.type = event->type == SDL_KEYDOWN ? AWE_WKT_KEYDOWN : AWE_WKT_KEYUP;
-
-    key_event.virtual_key_code = getWebKeyFromSDLKey(event->key.keysym.sym);
-    key_event.modifiers = 0;
-    key_event.is_system_key = false;
-
-    if (event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
-        key_event.modifiers |= AWE_WKM_ALT_KEY;
-    if (event->key.keysym.mod & KMOD_LCTRL || event->key.keysym.mod & KMOD_RCTRL)
-        key_event.modifiers |= AWE_WKM_CONTROL_KEY;
-    if (event->key.keysym.mod & KMOD_LMETA || event->key.keysym.mod & KMOD_RMETA)
-        key_event.modifiers |= AWE_WKM_META_KEY;
-    if (event->key.keysym.mod & KMOD_LSHIFT || event->key.keysym.mod & KMOD_RSHIFT)
-        key_event.modifiers |= AWE_WKM_SHIFT_KEY;
-    if (event->key.keysym.mod & KMOD_NUM)
-        key_event.modifiers |= AWE_WKM_IS_KEYPAD;
-
-    key_event.native_key_code = event->key.keysym.scancode;
-
-    if (event->type == SDL_KEYUP)
-        awe_webview_inject_keyboard_event(webView, key_event);
-    else if (event->type == SDL_KEYDOWN)
-    {
-        unsigned int chr = event->key.keysym.unicode;
-        if ((event->key.keysym.unicode & 0xFF80) == 0)
-            chr = event->key.keysym.unicode & 0x7F;
-
-        memset(key_event.text, '\0', sizeof(key_event.text));
-        memset(key_event.unmodified_text, '\0', sizeof(key_event.unmodified_text));
-        key_event.text[0] = chr;
-        key_event.unmodified_text[0] = chr;
-
-        awe_webview_inject_keyboard_event(webView, key_event);
-        if (chr)
-        {
-            key_event.type = AWE_WKT_CHAR;
-            key_event.virtual_key_code = chr;
-            key_event.native_key_code = chr;
-            awe_webview_inject_keyboard_event(webView, key_event);
-        }
-    }
-}
-
-// A helper macro, used in 'getWebKeyFromSDLKey'
+// A helper macro, used in 'get_web_key_from_SDL_key'
 //#define MAP_KEY(a, b) case SDLK_##a: return Awesomium::KeyCodes::AK_##b;
 #define MAP_KEY(a, b) case SDLK_##a: return AK_##b;
 
 // Translates an SDLKey virtual key code to an Awesomium key code
-int getWebKeyFromSDLKey(SDLKey key)
+int get_web_key_from_SDL_key(SDLKey key)
 {
     switch (key)
     {
@@ -487,21 +434,56 @@ static awe_mousebutton get_awe_mouse_button_from_SDL(Uint8 button)
     return AWE_MB_LEFT;
 }
 
-bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy)
+void ChromeViewport::inject_SDL_key_event(const SDL_Event* event)
 {
-    IF_ASSERT(cv == NULL) return false;
+    if (event->type != SDL_KEYDOWN && event->type != SDL_KEYUP)
+        return;
 
-    // subtract top left of webview window
-    int left = cv->xoff;
-    int top = _yres - (cv->yoff + cv->height);
+    awe_webkeyboardevent key_event;
+    key_event.type = event->type == SDL_KEYDOWN ? AWE_WKT_KEYDOWN : AWE_WKT_KEYUP;
 
-    *sx = x - left;
-    *sy = y - top;
+    key_event.virtual_key_code = get_web_key_from_SDL_key(event->key.keysym.sym);
+    key_event.modifiers = 0;
+    key_event.is_system_key = false;
 
-    return ((*sx) >= 0 && (*sx) < cv->width && (*sy) >= 0 && (*sy) < cv->height);
+    if (event->key.keysym.mod & KMOD_LALT || event->key.keysym.mod & KMOD_RALT)
+        key_event.modifiers |= AWE_WKM_ALT_KEY;
+    if (event->key.keysym.mod & KMOD_LCTRL || event->key.keysym.mod & KMOD_RCTRL)
+        key_event.modifiers |= AWE_WKM_CONTROL_KEY;
+    if (event->key.keysym.mod & KMOD_LMETA || event->key.keysym.mod & KMOD_RMETA)
+        key_event.modifiers |= AWE_WKM_META_KEY;
+    if (event->key.keysym.mod & KMOD_LSHIFT || event->key.keysym.mod & KMOD_RSHIFT)
+        key_event.modifiers |= AWE_WKM_SHIFT_KEY;
+    if (event->key.keysym.mod & KMOD_NUM)
+        key_event.modifiers |= AWE_WKM_IS_KEYPAD;
+
+    key_event.native_key_code = event->key.keysym.scancode;
+
+    if (event->type == SDL_KEYUP)
+        awe_webview_inject_keyboard_event(this->webView, key_event);
+    else if (event->type == SDL_KEYDOWN)
+    {
+        unsigned int chr = event->key.keysym.unicode;
+        if ((event->key.keysym.unicode & 0xFF80) == 0)
+            chr = event->key.keysym.unicode & 0x7F;
+
+        memset(key_event.text, '\0', sizeof(key_event.text));
+        memset(key_event.unmodified_text, '\0', sizeof(key_event.unmodified_text));
+        key_event.text[0] = chr;
+        key_event.unmodified_text[0] = chr;
+
+        awe_webview_inject_keyboard_event(this->webView, key_event);
+        if (chr)
+        {
+            key_event.type = AWE_WKT_CHAR;
+            key_event.virtual_key_code = chr;
+            key_event.native_key_code = chr;
+            awe_webview_inject_keyboard_event(this->webView, key_event);
+        }
+    }
 }
 
-void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
+void ChromeViewport::inject_SDL_mouse_event(const SDL_Event* event)
 {
     if (event->button.button == SDL_BUTTON_WHEELDOWN || event->button.button == SDL_BUTTON_WHEELUP)
     {
@@ -509,20 +491,65 @@ void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event)
         int vert_scroll_amt = 28;
         if (event->button.button == SDL_BUTTON_WHEELDOWN)
             vert_scroll_amt *= -1;
-        awe_webview_inject_mouse_wheel(webView, vert_scroll_amt, horiz_scroll_amt);
+        awe_webview_inject_mouse_wheel(this->webView, vert_scroll_amt, horiz_scroll_amt);
     }
     else if (event->type == SDL_MOUSEBUTTONDOWN)
-        awe_webview_inject_mouse_down(webView, get_awe_mouse_button_from_SDL(event->button.button));
+        awe_webview_inject_mouse_down(this->webView, get_awe_mouse_button_from_SDL(event->button.button));
     else if (event->type == SDL_MOUSEBUTTONUP)
-        awe_webview_inject_mouse_up(webView, get_awe_mouse_button_from_SDL(event->button.button));
+        awe_webview_inject_mouse_up(this->webView, get_awe_mouse_button_from_SDL(event->button.button));
     else if (event->type == SDL_MOUSEMOTION)
     {
         int x,y,sx,sy;
         SDL_GetMouseState(&x, &y);
-        if (get_webview_coordinates(cv, x,y, &sx, &sy))
-            awe_webview_inject_mouse_move(webView, sx,sy);
+        if (this->position_in_window(x, y, &sx, &sy))
+            awe_webview_inject_mouse_move(this->webView, sx, sy);
     }
 }
+
+void ChromeViewport::process_key_event(const SDL_Event* event)
+{
+    IF_ASSERT(this->webView == NULL) return;
+
+    if (!this->in_focus)
+    {
+        printf("Error? ChromeViewport::process_key_event, possible error. ChromeViewport received keyboard event but is not in focus\n");
+        return;
+    }
+
+    this->inject_SDL_key_event(event);
+
+    SDLKey key = event->key.keysym.sym;
+
+    // Separate handling for history navigation -- awesomium does not do this by default
+    if (event->type == SDL_KEYDOWN)
+    {
+        if (event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
+        {
+            if (key == SDLK_LEFT)
+                awe_webview_go_to_history_offset(this->webView, -1);
+            if (key == SDLK_RIGHT)
+                awe_webview_go_to_history_offset(this->webView, 1);
+        }
+
+        //#if !PRODUCTION
+        if (key == SDLK_MINUS)
+        {
+            char* token = get_auth_token();
+            if (token == NULL)
+                printf("No token found\n");
+            else
+                printf("Token: %s\n", token);
+            free(token);
+        }
+        else
+        if (key == SDLK_EQUALS)
+        {
+            open_token_page();
+        }
+        //#endif
+    }
+}
+
 
 }   // Awesomium
 

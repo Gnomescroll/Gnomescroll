@@ -8,6 +8,14 @@
 # define GS_AWESOMIUM 0
 #endif
 
+#ifndef GS_AUTH
+# define GS_AUTH 0
+#endif
+
+#if GS_AUTH && !GS_AWESOMIUM
+ERROR_auth_enable_but_awesomium_is_not
+#endif
+
 #ifndef GS_ASSIMP
 # define GS_ASSIMP 1
 #endif

@@ -10,10 +10,9 @@ namespace Awesomium
 {
 
 // Translates an SDLKey virtual key code to an Awesomium key code
-int getWebKeyFromSDLKey(SDLKey key);
-void injectSDLKeyEvent(awe_webview* webView, const SDL_Event* event);
-bool get_webview_coordinates(class ChromeViewport* cv, int x, int y, int* sx, int* sy);
-void injectSDLMouseEvent(awe_webview* webView, const SDL_Event* event);
+int get_web_key_from_SDL_key(SDLKey key);
+void inject_SDL_key_event(awe_webview* webView, const SDL_Event* event);
+void inject_SDL_mouse_event(awe_webview* webView, const SDL_Event* event);
 
 const char JS_OBJ_NAME[] = "Gnomescroll";
 const char JS_OBJ_CREATE_URL_NAME[] = "create_url";
@@ -61,22 +60,21 @@ void js_set_token_callback(awe_webview* webView, const awe_string* _obj_name, co
 class ChromeViewport
 {
     public:
+        int id;
         int xoff;
         int yoff;
         int width;
         int height;
-
         bool in_focus;
-
         awe_webview* webView;
         awe_string* js_obj_name;
-
-        unsigned int tex;
-
+        GLuint tex;
         bool crashed;
+        int priority;
 
     ChromeViewport() :
-        in_focus(false), js_obj_name(NULL), tex(0), crashed(false)
+        id(-1), in_focus(false), js_obj_name(NULL), tex(0), crashed(false),
+        priority(0)
     {
         this->xoff = int(_xresf * 0.125f);
         this->yoff = int(_yresf * 0.0625);    // from bottom
@@ -89,8 +87,6 @@ class ChromeViewport
         this->set_callbacks();
         this->setup_whitelist();
         this->setup_javascript();
-
-        this->load_first_page();
     }
 
     ~ChromeViewport()
@@ -98,6 +94,16 @@ class ChromeViewport
         if (this->js_obj_name != NULL) awe_string_destroy(this->js_obj_name);
         if (this->webView != NULL) awe_webview_destroy(this->webView);
     }
+
+    bool position_in_window(int x, int y, int* sx, int* sy)
+    {   // subtract top left of webview window
+        int left = this->xoff;
+        int top = _yres - (this->yoff + this->height);
+        *sx = x - left;
+        *sy = y - top;
+        return ((*sx) >= 0 && (*sx) < this->width && (*sy) >= 0 && (*sy) < this->height);
+    }
+
 
     void set_callbacks();
 
@@ -247,11 +253,6 @@ class ChromeViewport
         awe_jsvalue_destroy(value);
     }
 
-    void load_first_page()
-    {
-        this->load_file(GNOMESCROLL_LOGIN_HTML);
-    }
-
     void load_url(const char* _url)
     {
         IF_ASSERT(this->webView == NULL) return;
@@ -305,14 +306,16 @@ class ChromeViewport
         //awe_renderbuffer_get_height(renderBuffer),
         //awe_renderbuffer_get_rowspan(renderBuffer)
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer));
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA,
+                     GL_UNSIGNED_BYTE,
+                     (void*)awe_renderbuffer_get_buffer(renderBuffer));
 
         glDisable(GL_TEXTURE_2D);
 
         CHECK_GL_ERROR();
     }
 
-    void update_webview()
+    void update()
     {
         if (!awe_webview_is_dirty(this->webView) || awe_webview_is_loading_page(this->webView)) return;
         //awe_rect rect = awe_webview_get_dirty_bounds(webView);
@@ -328,43 +331,40 @@ class ChromeViewport
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, tex);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, (void*) awe_renderbuffer_get_buffer(renderBuffer));
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA,
+                     GL_UNSIGNED_BYTE,
+                     (void*) awe_renderbuffer_get_buffer(renderBuffer));
         glDisable(GL_TEXTURE_2D);
     }
 
-    void draw_webview()
+    void draw()
     {
         if (this->tex == 0) return;
 
         glColor4ub(255,255,255,255);
 
         GL_ASSERT(GL_DEPTH_TEST, false);
-        GL_ASSERT(GL_BLEND, true);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, this->tex);
 
-        static const float z = -0.5f;
-
+        const float z = -0.5f;
         float x0 = xoff;
         float y0 = yoff;
         float x1 = xoff + width;
         float y1 = yoff + height;
 
         glBegin(GL_QUADS);
-
-        glTexCoord2f(0.0f, 1.0f);
+        glTexCoord2i(0, 1);
         glVertex3f(x0, y0, z);
-
-        glTexCoord2f(1.0f, 1.0f);
+        glTexCoord2i(1, 1);
         glVertex3f(x1, y0, z);
-
-        glTexCoord2f(1.0f, 0.0f);
+        glTexCoord2i(1, 0);
         glVertex3f(x1, y1, z);
-
-        glTexCoord2f(0.0f, 0.0f);
+        glTexCoord2i(0, 0);
         glVertex3f(x0, y1, z);
-
         glEnd();
 
         glDisable(GL_TEXTURE_2D);
@@ -384,6 +384,11 @@ class ChromeViewport
         this->in_focus = false;
     }
 
+    void crash()
+    {
+        this->crashed = true;
+        this->webView = NULL;
+    }
 
     void set_html(char* html)
     {
@@ -399,50 +404,16 @@ class ChromeViewport
         awe_string_destroy(url_str);
     }
 
+    void process_key_event(const SDL_Event* event);
 
-    void processKeyEvent(const SDL_Event* event)
+    void process_mouse_event(const SDL_Event* event)
     {
-        IF_ASSERT(this->webView == NULL) return;
-
-        if (!this->in_focus)
-        {
-            printf("Error? ChromeViewport::processKeyEvent, possible error. ChromeViewport received keyboard event but is not in focus\n");
-            return;
-        }
-
-        injectSDLKeyEvent(this->webView, event);
-
-        SDLKey key = event->key.keysym.sym;
-
-        // Separate handling for history navigation -- awesomium does not do this by default
-        if (event->type == SDL_KEYDOWN)
-        {
-            if (event->key.keysym.mod & (KMOD_LALT|KMOD_RALT))
-            {
-                if (key == SDLK_LEFT)
-                    awe_webview_go_to_history_offset(cv->webView, -1);
-                if (key == SDLK_RIGHT)
-                    awe_webview_go_to_history_offset(cv->webView, 1);
-            }
-
-            //#if !PRODUCTION
-            if (key == SDLK_MINUS)
-            {
-                char* token = get_auth_token();
-                if (token == NULL)
-                    printf("No token found\n");
-                else
-                    printf("Token: %s\n", token);
-                free(token);
-            }
-            else
-            if (key == SDLK_EQUALS)
-            {
-                open_token_page();
-            }
-            //#endif
-        }
+        this->inject_SDL_mouse_event(event);
     }
+
+    private:
+    void inject_SDL_key_event(const SDL_Event* event);
+    void inject_SDL_mouse_event(const SDL_Event* event);
 };
 
 }   // Awesomium
