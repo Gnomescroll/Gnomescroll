@@ -114,6 +114,7 @@ class LightTextureGenerator
     }
 
 
+    //need light values for mourning and dusk
     struct Vec3 get_twist2(int i, float lightv)
     {
         struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
