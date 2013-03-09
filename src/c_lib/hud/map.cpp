@@ -18,8 +18,8 @@ static Color highlight = Color(247, 247, 10);
 // for texture init
 static const int width = 512;
 static const int height = 512;
-static const int screen_x_offset = 0;  // from left
-//static const int screen_y_offset = 0;   // from top
+static const int screen_x_offset = 0;  // from right
+static const int screen_y_offset = 90;   // from bottom
 
 static SDL_Surface* map_surface = NULL;
 static GLuint map_textures[2] = {0};
@@ -358,7 +358,7 @@ void draw()
 
     glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
 
-    draw_bound_texture(_xresf-screen_x_offset-width, _yresf-height, width, height, z);
+    draw_bound_texture(_xresf-screen_x_offset-width, screen_y_offset, width, height, z);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
