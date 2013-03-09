@@ -37,20 +37,23 @@ class SettingsExport
         {
             this->cva[i].type = CONFIG_TYPE_NONE;
             this->cva[i].name = NULL;
-            this->cva[i].ptr  = NULL;
+            this->cva[i].ptr = NULL;
         }
-
         for (int i=0; i<cvm; i++)
-        {
-            display_element_array[i]  = NULL;
-        }
-
+            display_element_array[i] = NULL;
     }
 
     ~SettingsExport()
     {
         for (int i=0; i<cvm; i++)
+        {
             free(this->cva[i].name);
+            if (this->cva[i].type == CONFIG_TYPE_STRING &&
+                this->cva[i].ptr != NULL)
+            {
+                free(*((char**)this->cva[i].ptr));
+            }
+        }
         for (int i=0; i<cvm; i++)
             free(display_element_array[i]);
     }
@@ -77,11 +80,11 @@ class SettingsExport
             switch (cva[i].type)
             {
                 case CONFIG_TYPE_FLOAT:
-                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", %f]", cva[i].name, "TYPE_FLOAT", display_element, get_float(cva[i]))
+                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", %f]", cva[i].name, "TYPE_FLOAT", display_element, get_float(i))
                     break;
 
                 case CONFIG_TYPE_INT:
-                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", %d]", cva[i].name, "TYPE_INT", display_element, get_int(cva[i]))
+                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", %d]", cva[i].name, "TYPE_INT", display_element, get_int(i))
                     break;
 
                 case CONFIG_TYPE_COLOR:
@@ -89,7 +92,7 @@ class SettingsExport
                     break;
 
                 case CONFIG_TYPE_STRING:
-                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", \"%s\"]", cva[i].name, "TYPE_STRING", display_element, get_string(cva[i]))
+                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", \"%s\"]", cva[i].name, "TYPE_STRING", display_element, get_string(i))
                     break;
 
                 case CONFIG_TYPE_NONE:
@@ -102,10 +105,8 @@ class SettingsExport
                 WRITE_TO_BUFFER(", ")
         }
         WRITE_TO_BUFFER("]");
-        buff[offset] = 0x00;
         return buff;
     }
-
 
     char* export_json_display_element()
     {
@@ -128,7 +129,6 @@ class SettingsExport
                 WRITE_TO_BUFFER(", ")
         }
         WRITE_TO_BUFFER("]")
-        buff[offset] = 0x00;
         return buff;
     }
 
@@ -256,9 +256,9 @@ class SettingsExport
                 continue;
             }
             for (int i=0; i<1024; i++)
-                tmp_str[i] = 0x00;
+                tmp_str[i] = '\0';
             memcpy(tmp_str, buffer+offset, marker - offset);
-            tmp_str[marker - offset] = 0x00;
+            tmp_str[marker - offset] = '\0';
             process_line(tmp_str, silent);
             marker++;
             offset = marker;
@@ -275,13 +275,17 @@ class SettingsExport
     }
 */
 
-    void name_creation_check(const char* var_name)
+    bool name_in_use(const char* var_name)
     {
         for (int i=0; i<this->cvn; i++)
         {
             IF_ASSERT(strcmp(this->cva[i].name, var_name) == 0)
+            {
                 printf("ERROR: SettingsExport, set_float key= '%s' already exists\n", var_name);
+                return true;
+            }
         }
+        return false;
     }
 
     int get_name_index(const char* var_name)
@@ -297,11 +301,8 @@ class SettingsExport
     /* REGISTER */
     void register_float(const char* var_name, float* var_loc)
     {
-        this->name_creation_check(var_name);
-        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        //strcpy(this->cva[this->cvn].name, var_name);
-        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
-        cva[this->cvn].name = strdup(var_name);
+        if (this->name_in_use(var_name)) return;
+        this->cva[this->cvn].name = strdup(var_name);
         this->cva[this->cvn].ptr = var_loc;
         this->cva[this->cvn].type = CONFIG_TYPE_FLOAT;
         this->cvn++;
@@ -309,11 +310,8 @@ class SettingsExport
 
     void register_int(const char* var_name, int* var_loc)
     {
-        this->name_creation_check(var_name);
-        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        //strcpy(this->cva[this->cvn].name, var_name);
-        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
-        cva[this->cvn].name = strdup(var_name);
+        if (this->name_in_use(var_name)) return;
+        this->cva[this->cvn].name = strdup(var_name);
         this->cva[this->cvn].ptr = var_loc;
         this->cva[this->cvn].type = CONFIG_TYPE_INT;
         this->cvn++;
@@ -321,12 +319,8 @@ class SettingsExport
 
     void register_float(const char* var_name, char* var_loc)
     {
-        this->name_creation_check(var_name);
-        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        //strcpy(this->cva[this->cvn].name, var_name);
-        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
-        cva[this->cvn].name = strdup(var_name);
-
+        if (this->name_in_use(var_name)) return;
+        this->cva[this->cvn].name = strdup(var_name);
         this->cva[this->cvn].ptr = var_loc;
         this->cva[this->cvn].type = CONFIG_TYPE_COLOR;
         this->cvn++;
@@ -334,7 +328,11 @@ class SettingsExport
 
     void register_string(const char* var_name, char** var_loc)
     {
-
+        if (this->name_in_use(var_name)) return;
+        this->cva[this->cvn].name = strdup(var_name);
+        this->cva[this->cvn].ptr = var_loc;
+        this->cva[this->cvn].type = CONFIG_TYPE_STRING;
+        this->cvn++;
     }
 
     /* SET */
@@ -373,36 +371,72 @@ class SettingsExport
         GS_ASSERT(cv.type == CONFIG_TYPE_STRING && cv.ptr != NULL);
 
         if (cv.ptr != NULL)
-            free(cv.ptr);
-        cv.ptr = strdup(var_value);
+            free(*((char**)cv.ptr));
+        *((char**)cv.ptr) = strdup(var_value);
     }
 
     /* GET */
-    float get_float(struct ConfigValue cv)
+    float get_float(int i)
     {
-        GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
-        return *((float*)cv.ptr);
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_FLOAT ||
+                  this->cva[i].ptr == NULL) return 0.0f;
+        return *((float*)this->cva[i].ptr);
     }
 
-    int get_int(struct ConfigValue cv)
+    int get_int(int i)
     {
-        GS_ASSERT(cv.type == CONFIG_TYPE_INT && cv.ptr != NULL);
-        return *((int*)cv.ptr);
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_INT ||
+                  this->cva[i].ptr == NULL) return 0;
+        return *((int*)this->cva[i].ptr);
     }
 
-    void get_color(struct ConfigValue cv)
+    Color get_color(int i)
     {
-        GS_ASSERT(cv.type == CONFIG_TYPE_COLOR && cv.ptr != NULL);
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_COLOR ||
+                  this->cva[i].ptr == NULL) return Color(0, 0, 0);
         GS_ASSERT(false);
-        return;
+        return Color(255, 255, 255);
     }
 
-    char* get_string(struct ConfigValue cv)
+    const char* get_string(int i)
     {
-        GS_ASSERT(cv.type == CONFIG_TYPE_STRING && cv.ptr != NULL);
-        return ((char*)cv.ptr);
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_STRING ||
+                  this->cva[i].ptr == NULL) return NULL;
+        return (*(char**)this->cva[i].ptr);
     }
 
+    float get_float(const char* name)
+    {
+        float i = this->get_name_index(name);
+        return this->get_float(i);
+    }
+
+    int get_int(const char* name)
+    {
+        int i = this->get_name_index(name);
+        return this->get_int(i);
+    }
+
+    Color get_color(const char* name)
+    {
+        int i = this->get_name_index(name);
+        return this->get_color(i);
+    }
+
+    const char* get_string(const char* name)
+    {
+        int i = this->get_name_index(name);
+        return this->get_string(i);
+    }
+
+    bool is_valid_index(int i)
+    {
+        return (i >= 0 && i < cvm);
+    }
 
     void set_display_element(const char* var_name, const char* display_type)
     {
@@ -417,6 +451,7 @@ class SettingsExport
 float _testfloat0;
 int _testint1;
 float _testfloat2;
+char* _test_string1;
 
 void setting_export_test()
 {
@@ -426,6 +461,10 @@ void setting_export_test()
     se->register_float("test_float0", &_testfloat0);
     se->register_int("test_int1", &_testint1);
     se->register_float("test_float2", &_testfloat2);
+    se->register_string("test_string1", &_test_string1);
+    se->set_string("test_string1", "dog");
+    printf("_test_string1: %s\n", _test_string1);
+    printf("get::_test_string1: %s\n", se->get_string("test_string1"));
 
     se->set_display_element("test_int1", "binary_button");
     se->set_display_element("test_int1", "slider");
