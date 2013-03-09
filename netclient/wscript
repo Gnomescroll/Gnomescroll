@@ -70,7 +70,7 @@ def check_clang(conf, requested=False):
 
 
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
-              production=False, awesomium=False, awesomium_debug=False,
+              production=False, awesomium=True, awesomium_debug=False,
               assimp=True, use_clang=False, auth=False):
     OS = platform.system()
     conf.env.os = OS
@@ -729,6 +729,15 @@ class awesomium_dbg_ctx(ConfigurationContext):
 
 def awedbg(ctx):
     configure(ctx, awesomium=True, awesomium_debug=True)
+
+
+class noawe_ctx(ConfigurationContext):
+    cmd = 'noawe'
+    fun = 'noawe'
+
+
+def noawe(ctx):
+    configure(ctx, awesomium=False, auth=False)
 
 
 class auth_ctx(ConfigurationContext):
