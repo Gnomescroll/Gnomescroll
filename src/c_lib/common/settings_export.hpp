@@ -340,7 +340,7 @@ class SettingsExport
     {
         int index = get_name_index(var_name);
         struct ConfigValue cv = cva[index];
-        GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
+        IF_ASSERT(cv.type != CONFIG_TYPE_FLOAT || cv.ptr == NULL) return;
 
         *((float*)cv.ptr) = var_value;
     }
@@ -349,26 +349,23 @@ class SettingsExport
     {
         int index = get_name_index(var_name);
         struct ConfigValue cv = cva[index];
-        GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
-
-        *((int*) cv.ptr) = var_value;
+        IF_ASSERT(cv.type != CONFIG_TYPE_FLOAT || cv.ptr == NULL) return;
+        *((int*)cv.ptr) = var_value;
     }
 
     void set_color(const char* var_name, int* var_value)
     {
         int index = get_name_index(var_name);
         struct ConfigValue cv = cva[index];
-        GS_ASSERT(cv.type == CONFIG_TYPE_COLOR && cv.ptr != NULL);
-
+        IF_ASSERT(cv.type != CONFIG_TYPE_COLOR || cv.ptr == NULL) return;
         GS_ASSERT(false);
-        return;
     }
 
     void set_string(const char* var_name, const char* var_value)
     {
         int index = get_name_index(var_name);
         struct ConfigValue cv = cva[index];
-        GS_ASSERT(cv.type == CONFIG_TYPE_STRING && cv.ptr != NULL);
+        IF_ASSERT(cv.type != CONFIG_TYPE_STRING || cv.ptr == NULL) return;
 
         if (cv.ptr != NULL)
             free(*((char**)cv.ptr));
@@ -463,6 +460,9 @@ void setting_export_test()
     se->register_float("test_float2", &_testfloat2);
     se->register_string("test_string1", &_test_string1);
     se->set_string("test_string1", "dog");
+    printf("_test_string1: %s\n", _test_string1);
+    printf("get::_test_string1: %s\n", se->get_string("test_string1"));
+    se->set_string("test_string1", "bug");
     printf("_test_string1: %s\n", _test_string1);
     printf("get::_test_string1: %s\n", se->get_string("test_string1"));
 
