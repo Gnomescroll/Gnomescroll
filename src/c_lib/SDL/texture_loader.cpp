@@ -6,6 +6,13 @@
 
 // Note: Don't load surfaces via arguments, you must return SDL_Surface*
 
+GLenum get_texture_format(SDL_Surface* surface)
+{
+    if (surface->format->Rmask == 0x000000FF)
+        return  GL_RGBA;
+    return GL_BGRA;
+}
+
 int init_image_loader()
 {
     IMG_Init(IMG_INIT_PNG); // IMG_INIT_JPG|IMG_INIT_PNG
@@ -74,12 +81,7 @@ int create_texture_from_surface(SDL_Surface *surface, GLuint *tex, GLuint min_fi
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    GLenum texture_format;
-    if (surface->format->Rmask == 0x000000ff)
-        texture_format = GL_RGBA;
-    else
-        texture_format = GL_BGRA;
-
+    GLenum texture_format = get_texture_format(surface);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels);
 
     glDisable(GL_TEXTURE_2D);

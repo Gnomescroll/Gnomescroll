@@ -11,6 +11,8 @@ struct Texture
 
 int init_image_loader();
 
+GLenum get_texture_format(SDL_Surface* surface);
+
 SDL_Surface* _load_image(const char *file);
 void _load_image_create_texture(const char *file, struct Texture* tex);
 

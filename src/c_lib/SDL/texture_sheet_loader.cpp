@@ -32,11 +32,7 @@ TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
 
     this->pixels = (Color*)calloc(this->width*this->height, sizeof(Color));
 
-    GLenum format = GL_BGRA;
-    if (this->surface->format->Rmask == 0x000000ff)
-        format = GL_RGBA;
-
-    this->format = format;
+    this->format = get_texture_format(surface);
 }
 
 TextureSheetLoader::~TextureSheetLoader()

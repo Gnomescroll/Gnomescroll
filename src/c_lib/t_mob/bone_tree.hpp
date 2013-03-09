@@ -428,11 +428,7 @@ class BoneTree
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-        GLenum texture_format;
-        if (s->format->Rmask == 0x000000ff)
-            texture_format = GL_RGBA;
-        else
-            texture_format = GL_BGRA;
+        GLenum texture_format = get_texture_format(surface);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
 

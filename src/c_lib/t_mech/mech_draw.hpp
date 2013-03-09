@@ -158,24 +158,12 @@ class MechListShader
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &texture1);
         glBindTexture(GL_TEXTURE_2D, texture1);
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-        GLenum texture_format;
-        if (s->format->Rmask == 0x000000ff)
-            texture_format = GL_RGBA;
-        else
-            texture_format = GL_BGRA;
-
+        GLenum texture_format = get_texture_format(s);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-
         glDisable(GL_TEXTURE_2D);
 
         init_sprite_meta();
