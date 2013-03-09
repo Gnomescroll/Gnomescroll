@@ -5,9 +5,12 @@ dont_include_this_file_in_server
 #endif
 
 #include <options/option_macros.hpp>
+#include <common/settings_export.hpp>
 
 namespace Options
 {
+
+extern class SettingsExport* settings;
 
 /* Network */
 OPT_STRING_HEADER(server)

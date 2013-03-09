@@ -1,22 +1,20 @@
 #pragma once
 
-/*
-    This class
-*/
+#include <SDL/awesomium/_interface.hpp>
+
+typedef enum
+{
+    CONFIG_TYPE_NONE = 0,
+    CONFIG_TYPE_FLOAT,
+    CONFIG_TYPE_INT,
+    CONFIG_TYPE_COLOR,
+    CONFIG_TYPE_STRING,
+    CONFIG_TYPE_BOOL,
+} ConfigType;
 
 class SettingsExport
 {
     private:
-        typedef enum
-        {
-            CONFIG_TYPE_NONE = 0,
-            CONFIG_TYPE_FLOAT,
-            CONFIG_TYPE_INT,
-            CONFIG_TYPE_COLOR,
-            CONFIG_TYPE_STRING,
-            CONFIG_TYPE_BOOL,
-        } ConfigType;
-
         struct ConfigValue
         {
             ConfigType type;
@@ -64,7 +62,8 @@ class SettingsExport
         IF_ASSERT(ad >= max_buff) { free(buff); return NULL; } \
         offset += ad; }
 
-    #define ITEM_FMT(ITEM) "[\"%s\", \"%s\", \"%s\"," ITEM "]"
+    #define ITEM_FMT(ITEM) "[\"%s\", \"%s\", \"%s\", " ITEM "]"
+    #define DISPLAY_ELEMENT_FMT "[\"%s\", \"%s\"]"
 
     char* export_json_varlist()
     {
@@ -84,18 +83,18 @@ class SettingsExport
             switch (cva[i].type)
             {
                 case CONFIG_TYPE_FLOAT:
-                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", %f]", cva[i].name,
+                    WRITE_TO_BUFFER(ITEM_FMT("%f"), cva[i].name,
                                     "TYPE_FLOAT", display_element, get_float(i))
                     break;
 
                 case CONFIG_TYPE_INT:
-                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", %d]", cva[i].name,
+                    WRITE_TO_BUFFER(ITEM_FMT("%d"), cva[i].name,
                                     "TYPE_INT", display_element, get_int(i))
                     break;
 
                 case CONFIG_TYPE_COLOR:
                     color = get_color(i);
-                    WRITE_TO_BUFFER("[\"%s\", \"%s\", \"%s\", [%d, %d, %d]]",
+                    WRITE_TO_BUFFER(ITEM_FMT("[%d, %d, %d]"),
                                     cva[i].name, "TYPE_COLOR", display_element,
                                     color.r, color.g, color.b)
                     break;
@@ -135,11 +134,10 @@ class SettingsExport
         {
             if (this->cva[i].type == CONFIG_TYPE_NONE)
                 continue;
-            ad = 0;
             if (display_element_array[i] == NULL)
-                WRITE_TO_BUFFER("['%s', '%s']", cva[i].name, "None")
+                WRITE_TO_BUFFER(DISPLAY_ELEMENT_FMT, cva[i].name, "None")
             else
-                WRITE_TO_BUFFER("['%s', '%s']", cva[i].name, display_element_array[i])
+                WRITE_TO_BUFFER(DISPLAY_ELEMENT_FMT, cva[i].name, display_element_array[i])
             if (++j != this->cvn)
                 WRITE_TO_BUFFER(", ")
         }
@@ -325,7 +323,7 @@ class SettingsExport
     }
 
     /* REGISTER */
-    int _register_setting(const char* name, void* loc, ConfigType type)
+    int _track(const char* name, void* loc, ConfigType type)
     {
         IF_ASSERT(this->full()) return -1;
         this->cva[this->cvn].name = strdup(name);
@@ -334,38 +332,38 @@ class SettingsExport
         return this->cvn++;
     }
 
-    int register_float(const char* name, float* loc)
+    int track(const char* name, float* loc)
     {
         if (this->name_in_use(name)) return -1;
-        return this->_register_setting(name, loc, CONFIG_TYPE_FLOAT);
+        return this->_track(name, loc, CONFIG_TYPE_FLOAT);
     }
 
-    int register_int(const char* name, int* loc)
+    int track(const char* name, int* loc)
     {
         if (this->name_in_use(name)) return -1;
-        return this->_register_setting(name, loc, CONFIG_TYPE_INT);
+        return this->_track(name, loc, CONFIG_TYPE_INT);
     }
 
-    int register_color(const char* name, Color* loc)
+    int track(const char* name, Color* loc)
     {
         if (this->name_in_use(name)) return -1;
-        return this->_register_setting(name, loc, CONFIG_TYPE_COLOR);
+        return this->_track(name, loc, CONFIG_TYPE_COLOR);
     }
 
-    int register_string(const char* name, char** loc)
+    int track(const char* name, char** loc)
     {
         if (this->name_in_use(name)) return -1;
-        return this->_register_setting(name, loc, CONFIG_TYPE_STRING);
+        return this->_track(name, loc, CONFIG_TYPE_STRING);
     }
 
-    int register_bool(const char* name, bool* loc)
+    int track(const char* name, bool* loc)
     {
         if (this->name_in_use(name)) return -1;
-        return this->_register_setting(name, loc, CONFIG_TYPE_BOOL);
+        return this->_track(name, loc, CONFIG_TYPE_BOOL);
     }
 
     /* SET */
-    void set_float(const char* name, float val)
+    void set(const char* name, float val)
     {
         int index = get_name_index(name);
         IF_ASSERT(!this->is_valid_index(index)) return;
@@ -374,7 +372,7 @@ class SettingsExport
         *((float*)cv.ptr) = val;
     }
 
-    void set_int(const char* name, int val)
+    void set(const char* name, int val)
     {
         int index = get_name_index(name);
         IF_ASSERT(!this->is_valid_index(index)) return;
@@ -383,7 +381,7 @@ class SettingsExport
         *((int*)cv.ptr) = val;
     }
 
-    void set_color(const char* name, const Color& val)
+    void set(const char* name, const Color& val)
     {
         int index = get_name_index(name);
         IF_ASSERT(!this->is_valid_index(index)) return;
@@ -392,7 +390,7 @@ class SettingsExport
         (*(Color*)cv.ptr) = val;
     }
 
-    void set_string(const char* name, const char* val)
+    void set(const char* name, const char* val)
     {
         int index = get_name_index(name);
         IF_ASSERT(!this->is_valid_index(index)) return;
@@ -403,7 +401,7 @@ class SettingsExport
         *((char**)cv.ptr) = strdup(val);
     }
 
-    void set_bool(const char* name, bool val)
+    void set(const char* name, bool val)
     {
         int index = get_name_index(name);
         IF_ASSERT(!this->is_valid_index(index)) return;
@@ -490,6 +488,13 @@ class SettingsExport
         display_element_array[index] = strdup(display_type); //copy string with malloc
     }
 
+    ConfigType get_config_type(const char* name)
+    {
+        int index = this->get_name_index(name);
+        if (!this->is_valid_index(index)) return CONFIG_TYPE_NONE;
+        return this->cva[index].type;
+    }
+
 };
 
 float _testfloat0 = 3.335f;
@@ -504,16 +509,16 @@ void setting_export_test()
     printf("%s:\n", __FILE__);
 
     class SettingsExport* se = new SettingsExport;
-    se->register_float("test_float0", &_testfloat0);
-    se->register_int("test_int1", &_testint1);
-    se->register_float("test_float2", &_testfloat2);
-    se->register_string("test_string1", &_test_string1);
-    se->register_bool("test_bool1", &_test_bool1);
-    se->register_color("test_color1", &_test_color);
-    se->set_string("test_string1", "dog");
+    se->track("test_float0", &_testfloat0);
+    se->track("test_int1", &_testint1);
+    se->track("test_float2", &_testfloat2);
+    se->track("test_string1", &_test_string1);
+    se->track("test_bool1", &_test_bool1);
+    se->track("test_color1", &_test_color);
+    se->set("test_string1", "dog");
     printf("_test_string1: %s\n", _test_string1);
     printf("get::_test_string1: %s\n", se->get_string("test_string1"));
-    se->set_string("test_string1", "bug");
+    se->set("test_string1", "bug");
     printf("_test_string1: %s\n", _test_string1);
     printf("get::_test_string1: %s\n", se->get_string("test_string1"));
 
@@ -524,6 +529,7 @@ void setting_export_test()
     char* display_list = se->export_json_display_element();
     printf("%s\n", var_list);
     printf("%s\n", display_list);  //this if for programmatically generating elements
+    Awesomium::send_json_settings(var_list, display_list);
     free(var_list);
     free(display_list);
 }

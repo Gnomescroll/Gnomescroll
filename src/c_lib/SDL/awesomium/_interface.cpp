@@ -164,6 +164,30 @@ void open_token_page()
     awe_jsarray_destroy(js_args);
 }
 
+void send_json_settings(const char* _settings, const char* _display_elements)
+{
+    IF_ASSERT(viewport_manager == NULL) return;
+    class ChromeViewport* cv = viewport_manager->get_settings_window();
+    IF_ASSERT(cv == NULL || cv->webView == NULL) return;
+    awe_string* fn = get_awe_string(JS_CB_SEND_JSON_SETTINGS);
+    awe_string* settings = get_awe_string(_settings);
+    awe_string* display_elements = get_awe_string(_display_elements);
+    const int nargs = 2;
+    int i = 0;
+    awe_jsvalue* values[nargs];
+    values[i++] = awe_jsvalue_create_string_value(settings);
+    values[i++] = awe_jsvalue_create_string_value(display_elements);
+    GS_ASSERT(i == nargs);
+    awe_jsarray* args = awe_jsarray_create((const awe_jsvalue**)values, nargs);
+    awe_webview_call_javascript_function(cv->webView, awe_string_empty(), fn, args, awe_string_empty());
+    awe_string_destroy(fn);
+    awe_jsarray_destroy(args);
+    awe_string_destroy(settings);
+    awe_string_destroy(display_elements);
+    for (int i=0; i<nargs; i++)
+        awe_jsvalue_destroy(values[i]);
+}
+
 void SDL_keyboard_event(const SDL_Event* event)
 {
     IF_ASSERT(viewport_manager == NULL) return;

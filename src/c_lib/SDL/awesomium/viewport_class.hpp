@@ -36,9 +36,11 @@ const char JS_CB_LOGIN_REQUIRED_NAME[] = "login_required";
 const char JS_CB_SAVE_USERNAME_NAME[] = "save_username";
 const char JS_CB_SAVE_PASSWORD_NAME[] = "save_password";
 const char JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME[] = "save_remember_password_setting";
+const char JS_CB_CHANGE_SETTING_VALUE[] = "change_setting";
 
 // C -> js callbacks (not registered, but defined in the js)
 const char JS_CB_OPEN_TOKEN_PAGE_NAME[] = "gs_get_token";
+const char JS_CB_SEND_JSON_SETTINGS[] = "gs_load_json_settings";
 
 void begin_navigation_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name);
 void begin_loading_cb(awe_webview* webView, const awe_string* _url, const awe_string* _frame_name, int status_code, const awe_string* _mime_type);
@@ -188,6 +190,7 @@ class ChromeViewport
         this->register_js_callback(JS_CB_SAVE_USERNAME_NAME);
         this->register_js_callback(JS_CB_SAVE_PASSWORD_NAME);
         this->register_js_callback(JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME);
+        this->register_js_callback(JS_CB_CHANGE_SETTING_VALUE);
 
         // callbacks for error handling
         awe_webview_set_callback_js_callback(this->webView, &js_callback_handler);

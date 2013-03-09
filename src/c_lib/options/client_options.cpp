@@ -12,6 +12,8 @@ dont_include_this_file_in_server
 namespace Options
 {
 
+class SettingsExport* settings;
+
 /* Network */
 OPT_STRING(server)
 OPT_INT(port, 4096)
@@ -56,8 +58,14 @@ OPT_BOOL(logger, false)
 /* Help */
 OPT_BOOL(show_tips, true);
 
+char* _test_string;
+
 void register_options()
 {
+    GS_ASSERT(settings == NULL);
+    settings = new SettingsExport;
+    settings->track("test_string", &_test_string);
+
     /* Network */
     OPT_STRING_REGISTER(server, "127.0.0.1")
     OPT_INT_REGISTER(port)

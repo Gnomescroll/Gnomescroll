@@ -210,6 +210,94 @@ void js_save_remember_password_settings_callback(awe_webview* webView, const awe
     save_remember_password_setting(remember);
 }
 
+void js_change_setting_value(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
+{
+    using Options::settings;
+    const awe_jsvalue* vname = awe_jsarray_get_element(_args, 0);
+    IF_ASSERT(vname == NULL) return;
+    awe_string* _name = awe_jsvalue_to_string(vname);
+    char* name = get_str_from_awe(_name);
+    awe_string_destroy(_name);
+
+    const awe_jsvalue* vval = awe_jsarray_get_element(_args, 1);
+    awe_jsvalue_type vtype = awe_jsvalue_get_type(vval);
+    ConfigType type = settings->get_config_type(name);
+    IF_ASSERT(vtype == JSVALUE_TYPE_NULL || vtype == JSVALUE_TYPE_ARRAY ||
+              vtype == JSVALUE_TYPE_OBJECT)
+        goto cleanup;
+    IF_ASSERT(type == CONFIG_TYPE_NONE)
+        goto cleanup;
+    IF_ASSERT(type == CONFIG_TYPE_BOOL && vtype != JSVALUE_TYPE_BOOLEAN)
+        goto cleanup;
+    IF_ASSERT(type == CONFIG_TYPE_STRING && vtype != JSVALUE_TYPE_STRING)
+        goto cleanup;
+    IF_ASSERT((type == CONFIG_TYPE_FLOAT || type == CONFIG_TYPE_INT) &&
+              (vtype != JSVALUE_TYPE_INTEGER && vtype != JSVALUE_TYPE_DOUBLE))
+        goto cleanup;
+
+    printf("Setting %s to new value\n", name);
+
+    if (vtype == JSVALUE_TYPE_BOOLEAN)
+    {
+        bool val = awe_jsvalue_to_boolean(vval);
+        settings->set(name, val);
+    }
+    else
+    if (vtype == JSVALUE_TYPE_STRING)
+    {
+        awe_string* _val = awe_jsvalue_to_string(vval);
+        char* val = get_str_from_awe(_val);
+        awe_string_destroy(_val);
+        settings->set(name, val);
+        free(val);
+    }
+    else
+    if (vtype == JSVALUE_TYPE_INTEGER)
+    {
+        int val = awe_jsvalue_to_integer(vval);
+        settings->set(name, val);
+    }
+    else
+    if (vtype == JSVALUE_TYPE_DOUBLE)
+    {
+        float val = awe_jsvalue_to_double(vval);
+        settings->set(name, val);
+    }
+    else
+    if (vtype == JSVALUE_TYPE_ARRAY)
+    {
+        Color color = Color(0);
+        const awe_jsarray* arr = awe_jsvalue_get_array(vval);
+        size_t len = awe_jsarray_get_size(arr);
+        GS_ASSERT(len == 3);
+        if (len == 3)
+        {
+            bool ok = true;
+            for (size_t i=0; i<3; i++)
+            {
+                const awe_jsvalue* _c = awe_jsarray_get_element(arr, i);
+                IF_ASSERT(awe_jsvalue_get_type(_c) != JSVALUE_TYPE_INTEGER)
+                {
+                    ok = false;
+                    break;
+                }
+                int c = awe_jsvalue_to_integer(_c);
+                IF_ASSERT(c < 0 || c > 0xFF)
+                {
+                    ok = false;
+                    break;
+                }
+                color.c[i] = c;
+            }
+            if (ok)
+                settings->set(name, color);
+        }
+    }
+
+    cleanup:
+        free(name);
+}
+
 void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, const awe_string* _cb_name, const awe_jsarray* _args)
 {
     char* cb = get_str_from_awe(_cb_name);
@@ -236,6 +324,8 @@ void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, cons
     else
     if (strcmp(cb, JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME) == 0)
         js_save_remember_password_settings_callback(webView, _obj_name, _cb_name, _args);
+    if (strcmp(cb, JS_CB_CHANGE_SETTING_VALUE) == 0)
+        js_change_setting_value(webView, _obj_name, _cb_name, _args);
     else
         printf("Unhandled javascript callback triggered: %s\n", cb);
     free(cb);

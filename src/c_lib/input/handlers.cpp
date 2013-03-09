@@ -1096,6 +1096,13 @@ void key_down_handler(SDL_Event* event)
     // these should occur for all of Chat, Agents::Agent and Camera
     switch (event->key.keysym.sym)
     {
+        #if !PRODUCTION
+        case SDLK_n:
+            setting_export_test();
+            printf("%s\n", Options::settings->get_string("test_string"));
+            break;
+        #endif
+
         case SDLK_HOME:
             save_screenshot();
             break;

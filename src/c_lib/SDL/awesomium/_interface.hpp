@@ -25,6 +25,7 @@ void SDL_keyboard_event(const SDL_Event* event);
 void SDL_mouse_event(const SDL_Event* event);
 
 void open_token_page();
+void send_json_settings(const char* settings, const char* display_elements);
 
 awe_string* get_awe_string(const char* _str);
 char* get_str_from_awe(const awe_string* str);
@@ -57,28 +58,29 @@ namespace Awesomium
 
 bool login_page_loaded() { return false; }
 
-void init(){}
-void teardown(){}
-void update(){}
-void draw(){}
+void init() {}
+void teardown() {}
+void update() {}
+void draw() {}
 
 // F1 toggles awesomium window
-void enable(){}
-void disable(){}
+void enable() {}
+void disable() {}
 
-void SDL_keyboard_event(const SDL_Event* event){}
-void SDL_mouse_event(const SDL_Event* event){}
+void SDL_keyboard_event(const SDL_Event* event) {}
+void SDL_mouse_event(const SDL_Event* event) {}
 
-void open_token_page(){}
+void open_token_page() {}
+void send_json_settings(const char* settings, const char* display_elements) {}
 
-char* get_cookies(){ return NULL; }
-char* get_auth_token(){ return NULL; }
+char* get_cookies() { return NULL; }
+char* get_auth_token() { return NULL; }
 
-void delete_cookie(const char* name){}
-void delete_auth_token_cookie(){}
-void delete_all_cookies(){}
+void delete_cookie(const char* name) {}
+void delete_auth_token_cookie() {}
+void delete_all_cookies() {}
 
-void set_game_token_cookie(const char* _token, time_t expiration_time){}
+void set_game_token_cookie(const char* _token, time_t expiration_time) {}
 
 }
 #endif
