@@ -66,11 +66,11 @@ class SettingsExport
         char* buff = (char*) malloc(max_buff);
         int offset = 0;
         int _ad;
-        _ad = sprintf(buff+offset, "[\n");
+        _ad = sprintf(buff+offset, "[");
         offset += _ad;
 
         const char* display_element = "test_element";
-        for (int i=0; i<this->cvm; i++)
+        for (int i=0, j=0; i<this->cvm; i++)
         {
             if(this->cva[i].type == CONFIG_TYPE_NONE)
                 continue;
@@ -78,19 +78,19 @@ class SettingsExport
             switch (cva[i].type)
             {
                 case CONFIG_TYPE_FLOAT:
-                    _ad = sprintf(buff+offset, "\t['%s', '%s', '%s', %f],\n", cva[i].name, "TYPE_FLOAT", display_element, get_float(cva[i]) );
+                    _ad = sprintf(buff+offset, "[\"%s\", \"%s\", \"%s\", %f]", cva[i].name, "TYPE_FLOAT", display_element, get_float(cva[i]) );
                     break;
 
                 case CONFIG_TYPE_INT:
-                    _ad = sprintf(buff+offset, "\t['%s', '%s', '%s', %d],\n", cva[i].name, "TYPE_INT", display_element, get_int(cva[i]));
+                    _ad = sprintf(buff+offset, "[\"%s\", \"%s\", \"%s\", %d]", cva[i].name, "TYPE_INT", display_element, get_int(cva[i]));
                     break;
 
                 case CONFIG_TYPE_COLOR:
-                    _ad = sprintf(buff+offset, "\t['%s', '%s', '%s', [%d, %d, %d]],\n", cva[i].name, "TYPE_COLOR", display_element, 255, 255, 255);
+                    _ad = sprintf(buff+offset, "[\"%s\", \"%s\", \"%s\", [%d, %d, %d]]", cva[i].name, "TYPE_COLOR", display_element, 255, 255, 255);
                     break;
 
                 case CONFIG_TYPE_STRING:
-                    _ad = sprintf(buff+offset, "\t['%s', '%s', '%s', '%s'],\n", cva[i].name, "TYPE_STRING", display_element, get_string(cva[i]));
+                    _ad = sprintf(buff+offset, "[\"%s\", \"%s\", \"%s\", \"%s\"]", cva[i].name, "TYPE_STRING", display_element, get_string(cva[i]));
                     GS_ASSERT(false);
                     break;
 
@@ -102,11 +102,17 @@ class SettingsExport
             }
             GS_ASSERT(_ad > 0);
             offset += _ad;
+            if (++j != this->cvn)
+            {
+                static const char* delim = ", ";
+                static size_t delim_len = strlen(delim);
+                sprintf(buff+offset, delim);
+                offset += delim_len;
+            }
         }
-        _ad = sprintf(buff+offset, "]\n");
+        _ad = sprintf(buff+offset, "]");
         offset += _ad;
-        buff[offset] = 0x00;        
-
+        buff[offset] = 0x00;
         return buff;
     }
 
@@ -117,31 +123,37 @@ class SettingsExport
         char* buff = (char*) malloc(max_buff);
         int offset = 0;
         int _ad;
-        _ad = sprintf(buff+offset, "[\n");
+        _ad = sprintf(buff+offset, "[");
         offset += _ad;
 
-        for (int i=0; i<this->cvm; i++)
+        for (int i=0, j=0; i<this->cvm; i++)
         {
-            if(this->cva[i].type == CONFIG_TYPE_NONE)
+            if (this->cva[i].type == CONFIG_TYPE_NONE)
                 continue;
             _ad = 0;
             if( display_element_array[i] == NULL)
             {
-                _ad = sprintf(buff+offset, "\t['%s', '%s'],\n", cva[i].name, "None"); //default element
+                _ad = sprintf(buff+offset, "['%s', '%s']", cva[i].name, "None"); //default element
                 offset  += _ad;
             }
             else
             {
-                _ad = sprintf(buff+offset, "\t['%s', '%s'],\n", cva[i].name, display_element_array[i]);
+                _ad = sprintf(buff+offset, "['%s', '%s']", cva[i].name, display_element_array[i]);
                 offset  += _ad;
             }
-
+            if (++j != this->cvn)
+            {
+                static const char* delim = ", ";
+                static size_t delim_len = strlen(delim);
+                sprintf(buff+offset, delim);
+                offset += delim_len;
+            }
         }
-        _ad = sprintf(buff+offset, "]\n");
+        _ad = sprintf(buff+offset, "]");
         offset += _ad;
-        buff[offset] = 0x00;        
+        buff[offset] = 0x00;
 
-        return buff; 
+        return buff;
     }
 /*
     void process_line(const char* input_line, bool silent)
@@ -343,7 +355,7 @@ class SettingsExport
         this->cvn++;
     }
 
-    void register_string(const char* var_name, char** var_loc) 
+    void register_string(const char* var_name, char** var_loc)
     {
 
     }
@@ -375,12 +387,12 @@ class SettingsExport
         int index = get_name_index(var_name);
         struct ConfigValue cv = cva[index];
         GS_ASSERT(cv.type == CONFIG_TYPE_COLOR && cv.ptr != NULL);
-    
+
         GS_ASSERT(false);
         return;
     }
 
-    void set_string(const char* var_name, const char* var_value) 
+    void set_string(const char* var_name, const char* var_value)
     {
         int index = get_name_index(var_name);
         struct ConfigValue cv = cva[index];
@@ -400,7 +412,7 @@ class SettingsExport
 
     /* GET */
     float get_float(struct ConfigValue cv)
-    {   
+    {
         GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
         return *((float*)cv.ptr);
     }
@@ -417,7 +429,7 @@ class SettingsExport
         GS_ASSERT(false);
         return;
     }
-    
+
     char* get_string(struct ConfigValue cv)
     {
         GS_ASSERT(cv.type == CONFIG_TYPE_STRING && cv.ptr != NULL);
@@ -441,18 +453,18 @@ float _testfloat2;
 
 void setting_export_test()
 {
-    printf("common/settings_export.hpp: \n");
+    printf("%s:\n", __FILE__);
 
-    class SettingsExport* SE = new SettingsExport;
-    SE->register_float("test_float0", &_testfloat0);
-    SE->register_int("test_int1", &_testint1);
-    SE->register_float("test_float2", &_testfloat2);
+    class SettingsExport* se = new SettingsExport;
+    se->register_float("test_float0", &_testfloat0);
+    se->register_int("test_int1", &_testint1);
+    se->register_float("test_float2", &_testfloat2);
 
-    SE->set_display_element("test_int1", "binary_button");
-    SE->set_display_element("test_int1", "slider");
+    se->set_display_element("test_int1", "binary_button");
+    se->set_display_element("test_int1", "slider");
 
-    printf("%s\n", SE->export_json_varlist());
-    printf("%s\n", SE->export_json_display_element());  //this if for programmatically generating elements
+    printf("%s\n", se->export_json_varlist());
+    printf("%s\n", se->export_json_display_element());  //this if for programmatically generating elements
 
     //abort();
 }
