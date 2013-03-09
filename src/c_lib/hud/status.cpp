@@ -133,14 +133,28 @@ void draw_hunger()
     float empty_sx = hunger_empty.x * ICON_WIDTH;
     float empty_sy = hunger_empty.y * ICON_HEIGHT;
 
+    static const Color red = Color(198, 57, 57);
+
+    const int tick_rate = (ONE_SECOND/2) / (GS_MAX(0, hunger - HUNGER_DAMAGE_THRESHOLD ) + 1);
+    static int dir = 1;
+    static int rate = 0;
+    if (rate <= 0)
+    {
+        rate = GS_MAX(-1, rate);
+        dir = 1;
+    }
+    else if (rate >= tick_rate)
+    {
+        rate = tick_rate;
+        dir = -1;
+    }
+    rate += dir;
+
     if (hunger >= HUNGER_DAMAGE_THRESHOLD)
     {   // make it blink
-        static int t = 0;
-        if (((++t)/ONE_SECOND) % 2 == 0)
-        {
-            full_sx += 2*ICON_WIDTH;
-            empty_sx += 2*ICON_WIDTH;
-        }
+        float f = float(rate) / float(tick_rate);
+        Color c = interpolate_color(COLOR_WHITE, red, f);
+        glColor4ub(c.r, c.g, c.b, 255);
     }
 
     for (int i=1; i<=max_hunger; i++)
@@ -161,6 +175,8 @@ void draw_hunger()
                                   ICON_WIDTH, ICON_HEIGHT);
         x += ICON_SIZE;
     }
+
+    glColor4ub(255, 255, 255, 255);
 }
 
 void draw()

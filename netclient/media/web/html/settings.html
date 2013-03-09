@@ -120,8 +120,11 @@ var Widgets = (function()
         return name.toLowerCase().replace(' ', '-');
     }
 
-    function Selection(name, choices)
+    function Selection(args)
     {
+        var name = args.name;
+        var choices = args.choices;
+        var value = (args.value === undefined) ? 0 : args.value;
         function bind_callbacks()
         {
             var that = this;
@@ -155,7 +158,7 @@ var Widgets = (function()
                             .attr('data-toggle', 'dropdown')
                             .attr('href', '#');
             var label = $('<span>').attr('id', this.tag_name + '-label')
-                                   .text(this.choices[0]);
+                                   .text(this.choices[value]);
             var caret = $('<span>').attr('class', 'caret');
             this.button_label = label;
             a.append(label).append(caret);
@@ -220,10 +223,11 @@ var Widgets = (function()
         };
     }
 
-    function ColorPicker(name, _color)
+    function ColorPicker(args)
     {
-        _color = _color || [200, 20, 20];
-        color = Color(_color);
+        var name = args.name;
+        var value = args.value || [200, 20, 20];
+        var color = Color(value);
 
         function make_button()
         {
@@ -265,8 +269,10 @@ var Widgets = (function()
         return obj;
     }
 
-    function StringInput(name, current_value)
+    function StringInput(args)
     {
+        var name = args.name;
+        var current_value = args.value;
         function make_input()
         {
             var input = $('<input>').attr('type', 'text')
@@ -296,11 +302,12 @@ var Widgets = (function()
         return obj;
     }
 
-    function ToggleButton(name, on, off)
+    function ToggleButton(args)
     {
-        on = (on === undefined) ? 'On' : on;
-        off = (off === undefined) ? 'Off' : off;
-
+        var name = args.name;
+        var on = (args.on === undefined) ? 'On' : args.on;
+        var off = (args.off === undefined) ? 'Off' : args.off;
+        var value = (args.value === undefined) ? true : args.value;;
         function make_button()
         {
             var outer = $('<div>').attr('class', 'switch')
@@ -308,6 +315,8 @@ var Widgets = (function()
                                   .attr('data-on-label', on)
                                   .attr('data-off-label', off);
             var input = $('<input>').attr('type', 'checkbox');
+            if (value)
+                input.attr('checked', '');
             outer.append(input);
             outer.bootstrapSwitch();
             return outer;
@@ -334,9 +343,11 @@ var Widgets = (function()
         return obj;
     }
 
-    function Slider(name, slider_opts)
+    function Slider(args)
     {
-        slider_opts = slider_opts || {};
+        var name = args.name;
+        var slider_opts = args.slider_opts || {};
+        slider_opts.value = (args.value === undefined) ? 0 : args.value;
         function load_widget(opts)
         {
             opts = opts || slider_opts;
@@ -388,23 +399,22 @@ var main = $('#main');
 
 // TODO -- all args should be a single {} with keyword names, for ease of configuration via C
 
-main.append(Widgets.string_input('Server', '127.0.0.1').container);
+main.append(Widgets.string_input({ name: 'Server', value: '127.0.0.1' }).container);
 
-main.append(Widgets.toggle('Fullscreen').container);
+main.append(Widgets.toggle({ name: 'Fullscreen', value: false }).container);
 
-var slider = Widgets.slider('Volume', {
+var slider = Widgets.slider({ name: 'Volume', value: 20, slider_opts: {
     min: 0,
     max: 100,
     step: 1,
-    value: 50
-});
+}});
 main.append(slider.container);
 slider.load_widget();
 
-main.append(Widgets.color_picker('Player Color', [20, 255, 200]).container);
+main.append(Widgets.color_picker({ name: 'Player Color', value: [20, 255, 200] }).container);
 
 var choices = ['Default (PulseAudio)', 'Alsa Mixer'];
-main.append(Widgets.choices('Sound Devices', choices).container);
+main.append(Widgets.choices({ name: 'Sound Devices', choices: choices }).container);
 
 });
 
@@ -417,16 +427,19 @@ main.append(Widgets.choices('Sound Devices', choices).container);
 
 function add_string_input_widget(args)
 {
+    if (!args.name) console.log("ERROR: String input widget missing name");
     $('#main').append(Widgets.string_input(args).container);
 }
 
 function add_toggle_button_widget(args)
 {
+    if (!args.name) console.log("ERROR: Toggle button missing name");
     $('#main').append(Widgets.toggle(args).container);
 }
 
 function add_slider_widget(args)
 {
+    if (!args.name) console.log("ERROR: Slider missing name");
     var slider = Widgets.slider(args);
     $('#main').append(slider.container);
     // we have to load the slider itself after appending to the dom because
@@ -436,11 +449,13 @@ function add_slider_widget(args)
 
 function add_color_picker_widget(args)
 {
+    if (!args.name) console.log("ERROR: Color picker missing name");
     $('#main').append(Widgets.color_picker(args).container);
 }
 
 function add_choice_widget(args)
 {
+    if (!args.name) console.log("ERROR: Choice widget missing name");
     $('#main').append(Widgets.choices(args).container);
 }
 

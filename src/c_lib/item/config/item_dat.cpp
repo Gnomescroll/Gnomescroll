@@ -385,12 +385,12 @@ void load_item_dat()
     s->max_stack_size = 16;
 
     item_def(IG_MECH_PLACER, "acadia_seed");
-    sprite_def(p0, 1,1);
+    sprite_def(p0, 1,2);
     s->mech_type = t_mech::get_mech_type("acadia_flower_stage_0");
     s->max_stack_size = 16;
 
     item_def(IG_CONSUMABLE, "acadia_fruit");
-    sprite_def(p0, 1,2);
+    sprite_def(p0, 1,1);
     s->max_stack_size = 16;
     set_modifier_amount("hunger", -2);
     set_modifier_instant();
