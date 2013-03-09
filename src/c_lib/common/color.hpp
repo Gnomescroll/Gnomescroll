@@ -16,6 +16,10 @@ class Color
         r(0), g(0), b(0), a(0xFF)
     {}
 
+    Color(unsigned char c) :
+        r(c), g(c), b(c), a(0xFF)
+    {}
+
     Color(unsigned char r, unsigned char g, unsigned char b) :
         r(r), g(g), b(b), a(0xFF)
     {}
