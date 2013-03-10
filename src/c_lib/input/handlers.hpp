@@ -3,7 +3,7 @@
 const int SDL_EVENT_USER_NONE = 0;
 const int SDL_EVENT_USER_TRIGGER = 1;
 
-typedef enum InputStateMode
+typedef enum
 {
     INPUT_STATE_AGENT,
     INPUT_STATE_CAMERA

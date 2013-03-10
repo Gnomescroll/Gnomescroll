@@ -34,6 +34,7 @@ typedef enum
 #endif
 
 #define GNOMESCROLL_LOGIN_HTML MEDIA_PATH "web/html/login.html"
+#define GNOMESCROLL_SETTINGS_HTML MEDIA_PATH "web/html/settings.html"
 
 #define GNOMESCROLL_CREATE_PATH "/create"
 #define GNOMESCROLL_LOGIN_PATH  "/login"

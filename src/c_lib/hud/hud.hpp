@@ -77,6 +77,7 @@ class HUD
         Text* error;
         Text* error_subtitle;
         Text* awesomium_message;
+        Text* admin_controls;
 
         // scoreboard needs rewritten logic
         class Scoreboard* scoreboard;
@@ -96,16 +97,6 @@ void set_color_from_ratio(float ratio, unsigned char alpha)
 {
     set_color_from_ratio(ratio, alpha, false);
 }
-bool FAILED_merge_of_cntainr_draws(
-    int slot_size,
-    ItemContainerID container_id,
-    GLubyte alpha_bord, // border
-    float alpha_bkgd,   // background
-    const int xdim, const int ydim, float xoff, float yoff,
-    const float inc1,  // spacing between slot icons
-    const float inc2,  // border around a slot icon
-    const float border,
-    int hover_slot);
 
 void set_prompt(const char* msg);
 void clear_prompt(const char* msg);

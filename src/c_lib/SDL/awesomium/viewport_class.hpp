@@ -78,10 +78,10 @@ class ChromeViewport
     ChromeViewport() :
         in_focus(false), js_obj_name(NULL), tex(0), crashed(false)
     {
-        this->xoff = (int) (_xresf * 0.125f);
-        this->yoff = (int) (_yresf * 0.0625);    // from bottom
-        this->width = (int) (_xresf * 0.75f);
-        this->height = (int) (_yresf * 0.875f);
+        this->xoff = int(_xresf * 0.125f);
+        this->yoff = int(_yresf * 0.0625);    // from bottom
+        this->width = int(_xresf * 0.75f);
+        this->height = int(_yresf * 0.875f);
 
         this->init_webview();
         this->init_render_surface();
