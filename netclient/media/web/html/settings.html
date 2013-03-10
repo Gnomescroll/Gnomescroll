@@ -131,7 +131,7 @@ var Widgets = (function()
             this.dropdown.children('li').click(function() {
                 that.button_label.text($(this).text());
                 if (typeof Gnomescroll != "undefined")
-                    Gnomescroll.change_setting("test_string", $(this).text());
+                    Gnomescroll.change_setting(args.setting, $(this).text());
             });
         }
 
@@ -249,7 +249,7 @@ var Widgets = (function()
                 {
                     var rgb = ev.color.toRGB();
                     rgb = [rgb.r, rgb.g, rgb.b];
-                    Gnomescroll.change_setting("test_color", rgb);
+                    Gnomescroll.change_setting(args.setting, rgb);
                 }
             });
         }
@@ -288,7 +288,7 @@ var Widgets = (function()
                 input.val(current_value);
             input.keyup(function(e) {
                 if (typeof Gnomescroll != "undefined")
-                    Gnomescroll.change_setting("test_string", $(this).val());
+                    Gnomescroll.change_setting(args.setting, $(this).val());
             });
             return input;
         }
@@ -334,7 +334,7 @@ var Widgets = (function()
             outer.bootstrapSwitch();
             outer.on('switch-change', function (e, data) {
                 if (typeof Gnomescroll != "undefined")
-                    Gnomescroll.change_setting("test_bool", data.value);
+                    Gnomescroll.change_setting(args.setting, data.value);
             });
             return outer;
         }
@@ -373,7 +373,7 @@ var Widgets = (function()
             this.slider.slider(slider_opts);
             this.slider.on('slideStop', function(ev) {
                 if (typeof Gnomescroll != "undefined")
-                    Gnomescroll.change_setting("test_int", ev.value);
+                    Gnomescroll.change_setting(args.setting, ev.value);
             });
         }
 
@@ -453,18 +453,18 @@ function add_choice_widget(args)
 
 $(function() {
 
-add_string_input_widget({ name: 'Server', value: '127.0.0.1' });
-add_toggle_button_widget({ name: 'Fullscreen', value: false });
+add_string_input_widget({ setting: "test_string", name: 'Server', value: '127.0.0.1' });
+add_toggle_button_widget({ setting: "test_bool", name: 'Fullscreen', value: false });
 
-add_slider_widget({ name: 'Volume', value: 20, slider_opts: {
+add_slider_widget({ setting: "test_int", name: 'Volume', value: 20, slider_opts: {
     min: 0,
     max: 100,
     step: 1,
 }});
 
-add_color_picker_widget({ name: 'Player Color', value: [20, 255, 200] });
+add_color_picker_widget({ setting: "test_color", name: 'Player Color', value: [20, 255, 200] });
 
-add_choice_widget({ name: 'Sound Devices', choices: ['Default (PulseAudio)', 'Alsa Mixer'] });
+add_choice_widget({ setting: "test_string", name: 'Sound Devices', choices: ['Default (PulseAudio)', 'Alsa Mixer'] });
 
 });
 
