@@ -356,20 +356,23 @@ function add_choice_widget(args)
     $('#main').append(Widgets.choices(args).container);
 }
 
-$(function() {
+function add_widget_from_json(item)
+{
+    var setting = item[0];
+    var type = item[1];
+    var ui_element = item[2];
+    var value = item[3];
+    var args = { setting: setting, name: setting, value: value };
 
-add_string_input_widget({ setting: "test_string", name: 'Server', value: '127.0.0.1' });
-add_toggle_button_widget({ setting: "test_bool", name: 'Fullscreen', value: false });
-
-add_slider_widget({ setting: "test_int", name: 'Volume', value: 20, slider_opts: {
-    min: 0,
-    max: 100,
-    step: 1,
-}});
-
-add_color_picker_widget({ setting: "test_color", name: 'Player Color', value: [20, 255, 200] });
-
-add_choice_widget({ setting: "test_string", name: 'Sound Devices', choices: ['Default (PulseAudio)', 'Alsa Mixer'] });
-
-});
-
+    if (type == 'TYPE_STRING')
+        add_string_input_widget(args);
+    else
+    if (type == 'TYPE_FLOAT' || type == 'TYPE_INT')
+        add_slider_widget(args)
+    else
+    if (type == 'TYPE_BOOL')
+        add_toggle_button_widget(args);
+    else
+    if (type == 'TYPE_COLOR')
+        add_color_picker_widget(args)
+}

@@ -60,4 +60,7 @@ void register_options();
 
 void validate();
 
+void teardown();
+
+
 }   // Options

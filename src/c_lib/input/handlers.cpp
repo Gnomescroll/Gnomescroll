@@ -1098,8 +1098,7 @@ void key_down_handler(SDL_Event* event)
     {
         #if !PRODUCTION
         case SDLK_n:
-            setting_export_test();
-            printf("%s\n", Options::settings->get_string("test_string"));
+            Awesomium::send_json_settings(Options::settings);
             break;
         #endif
 

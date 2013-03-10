@@ -547,7 +547,7 @@ void close_c_lib()
     Log::teardown();
 
     if (TEARDOWN_DEBUG) printf("Options teardown\n");
-    Options::teardown_option_tables();
+    Options::teardown();
 
     if (TEARDOWN_DEBUG) printf("Assertion teardown\n");
     _GS_ASSERT_TEARDOWN();

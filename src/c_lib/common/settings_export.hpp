@@ -1,7 +1,5 @@
 #pragma once
 
-#include <SDL/awesomium/_interface.hpp>
-
 typedef enum
 {
     CONFIG_TYPE_NONE = 0,
@@ -485,7 +483,7 @@ class SettingsExport
     {
         int index = get_name_index(name);
         if (!this->is_valid_index(index)) return;
-        display_element_array[index] = strdup(display_type); //copy string with malloc
+        display_element_array[index] = strdup(display_type);
     }
 
     ConfigType get_config_type(const char* name)
@@ -494,7 +492,6 @@ class SettingsExport
         if (!this->is_valid_index(index)) return CONFIG_TYPE_NONE;
         return this->cva[index].type;
     }
-
 };
 
 float _testfloat0 = 3.335f;
@@ -524,12 +521,5 @@ void setting_export_test()
 
     se->set_display_element("test_int1", "binary_button");
     se->set_display_element("test_int1", "slider");
-
-    char* var_list = se->export_json_varlist();
-    char* display_list = se->export_json_display_element();
-    printf("%s\n", var_list);
-    printf("%s\n", display_list);  //this if for programmatically generating elements
-    Awesomium::send_json_settings(var_list, display_list);
-    free(var_list);
-    free(display_list);
+    delete se;
 }

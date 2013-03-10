@@ -164,11 +164,13 @@ void open_token_page()
     awe_jsarray_destroy(js_args);
 }
 
-void send_json_settings(const char* _settings, const char* _display_elements)
+void send_json_settings(class SettingsExport* exporter)
 {
     IF_ASSERT(viewport_manager == NULL) return;
     class ChromeViewport* cv = viewport_manager->get_settings_window();
     IF_ASSERT(cv == NULL || cv->webView == NULL) return;
+    char* _settings = exporter->export_json_varlist();
+    char* _display_elements = exporter->export_json_display_element();
     awe_string* fn = get_awe_string(JS_CB_SEND_JSON_SETTINGS);
     awe_string* settings = get_awe_string(_settings);
     awe_string* display_elements = get_awe_string(_display_elements);
@@ -186,6 +188,8 @@ void send_json_settings(const char* _settings, const char* _display_elements)
     awe_string_destroy(display_elements);
     for (int i=0; i<nargs; i++)
         awe_jsvalue_destroy(values[i]);
+    free(_settings);
+    free(_display_elements);
 }
 
 void SDL_keyboard_event(const SDL_Event* event)

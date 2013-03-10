@@ -143,8 +143,10 @@ function gs_extract_and_set_token(resp)
 
 function gs_load_json_settings(settings, display_elements)
 {
+    settings = $.parseJSON(settings);
     console.log(settings);
-    console.log($.parseJSON(settings));
-    console.log(display_elements);
-    console.log($.parseJSON(display_elements));
+    display_elements = $.parseJSON(display_elements);
+    var len = settings.length;
+    for (var i=0; i<len; i++)
+        add_widget_from_json(settings[i]);
 }

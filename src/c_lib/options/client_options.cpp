@@ -60,6 +60,7 @@ OPT_BOOL(show_tips, true);
 
 char* _test_string;
 int _test_int;
+float _test_float;
 bool _test_bool;
 Color _test_color;
 
@@ -69,8 +70,15 @@ void register_options()
     settings = new SettingsExport;
     settings->track("test_string", &_test_string);
     settings->track("test_int", &_test_int);
+    settings->track("test_float", &_test_float);
     settings->track("test_bool", &_test_bool);
     settings->track("test_color", &_test_color);
+
+    settings->set("test_string", "testing");
+    settings->set("test_int", 7);
+    settings->set("test_float", 33.0f);
+    settings->set("test_bool", true);
+    settings->set("test_color", Color(66, 22, 100));
 
     /* Network */
     OPT_STRING_REGISTER(server, "127.0.0.1")
@@ -126,6 +134,12 @@ void validate()
     #else
     ping_update_interval = GS_MAX(1, ping_update_interval);
     #endif
+}
+
+void teardown()
+{
+    teardown_option_tables();
+    delete settings;
 }
 
 }   // Options
