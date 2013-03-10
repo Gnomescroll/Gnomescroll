@@ -59,12 +59,18 @@ OPT_BOOL(logger, false)
 OPT_BOOL(show_tips, true);
 
 char* _test_string;
+int _test_int;
+bool _test_bool;
+Color _test_color;
 
 void register_options()
 {
     GS_ASSERT(settings == NULL);
     settings = new SettingsExport;
     settings->track("test_string", &_test_string);
+    settings->track("test_int", &_test_int);
+    settings->track("test_bool", &_test_bool);
+    settings->track("test_color", &_test_color);
 
     /* Network */
     OPT_STRING_REGISTER(server, "127.0.0.1")
