@@ -222,8 +222,7 @@ void js_change_setting_value(awe_webview* webView, const awe_string* _obj_name, 
     const awe_jsvalue* vval = awe_jsarray_get_element(_args, 1);
     awe_jsvalue_type vtype = awe_jsvalue_get_type(vval);
     ConfigType type = settings->get_config_type(name);
-    IF_ASSERT(vtype == JSVALUE_TYPE_NULL || vtype == JSVALUE_TYPE_ARRAY ||
-              vtype == JSVALUE_TYPE_OBJECT)
+    IF_ASSERT(vtype == JSVALUE_TYPE_NULL || vtype == JSVALUE_TYPE_OBJECT)
         goto cleanup;
     IF_ASSERT(type == CONFIG_TYPE_NONE)
         goto cleanup;
@@ -255,13 +254,19 @@ void js_change_setting_value(awe_webview* webView, const awe_string* _obj_name, 
     if (vtype == JSVALUE_TYPE_INTEGER)
     {
         int val = awe_jsvalue_to_integer(vval);
-        settings->set(name, val);
+        if (type == CONFIG_TYPE_INT)
+            settings->set(name, val);
+        else
+            settings->set(name, float(val));
     }
     else
     if (vtype == JSVALUE_TYPE_DOUBLE)
     {
         float val = awe_jsvalue_to_double(vval);
-        settings->set(name, val);
+        if (type == CONFIG_TYPE_FLOAT)
+            settings->set(name, val);
+        else
+            settings->set(name, int(val));
     }
     else
     if (vtype == JSVALUE_TYPE_ARRAY)

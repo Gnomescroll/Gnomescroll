@@ -377,7 +377,7 @@ class SettingsExport
         int index = get_name_index(name);
         IF_ASSERT(!this->is_valid_index(index)) return;
         struct ConfigValue cv = cva[index];
-        IF_ASSERT(cv.type != CONFIG_TYPE_FLOAT || cv.ptr == NULL) return;
+        IF_ASSERT(cv.type != CONFIG_TYPE_INT || cv.ptr == NULL) return;
         *((int*)cv.ptr) = val;
     }
 

@@ -120,7 +120,7 @@ var Widgets = (function()
         return name.toLowerCase().replace(' ', '-');
     }
 
-    function Selection(args)
+    function Choices(args)
     {
         var name = args.name;
         var choices = args.choices;
@@ -130,6 +130,8 @@ var Widgets = (function()
             var that = this;
             this.dropdown.children('li').click(function() {
                 that.button_label.text($(this).text());
+                if (typeof Gnomescroll != "undefined")
+                    Gnomescroll.change_setting("test_string", $(this).text());
             });
         }
 
@@ -243,6 +245,12 @@ var Widgets = (function()
         {
             this.button.colorpicker().on('changeColor', function(ev) {
                 $(this).css('background-color', ev.color.toHex());
+                if (typeof Gnomescroll != "undefined")
+                {
+                    var rgb = ev.color.toRGB();
+                    rgb = [rgb.r, rgb.g, rgb.b];
+                    Gnomescroll.change_setting("test_color", rgb);
+                }
             });
         }
 
@@ -278,6 +286,10 @@ var Widgets = (function()
             var input = $('<input>').attr('type', 'text')
             if (current_value)
                 input.val(current_value);
+            input.keyup(function(e) {
+                if (typeof Gnomescroll != "undefined")
+                    Gnomescroll.change_setting("test_string", $(this).val());
+            });
             return input;
         }
 
@@ -307,7 +319,8 @@ var Widgets = (function()
         var name = args.name;
         var on = (args.on === undefined) ? 'On' : args.on;
         var off = (args.off === undefined) ? 'Off' : args.off;
-        var value = (args.value === undefined) ? true : args.value;;
+        var value = (args.value === undefined) ? true : args.value;
+
         function make_button()
         {
             var outer = $('<div>').attr('class', 'switch')
@@ -319,6 +332,10 @@ var Widgets = (function()
                 input.attr('checked', '');
             outer.append(input);
             outer.bootstrapSwitch();
+            outer.on('switch-change', function (e, data) {
+                if (typeof Gnomescroll != "undefined")
+                    Gnomescroll.change_setting("test_bool", data.value);
+            });
             return outer;
         }
 
@@ -348,11 +365,16 @@ var Widgets = (function()
         var name = args.name;
         var slider_opts = args.slider_opts || {};
         slider_opts.value = (args.value === undefined) ? 0 : args.value;
+
         function load_widget(opts)
         {
             opts = opts || slider_opts;
             slider_opts.handle = slider_opts.handle || 'square';
             this.slider.slider(slider_opts);
+            this.slider.on('slideStop', function(ev) {
+                if (typeof Gnomescroll != "undefined")
+                    Gnomescroll.change_setting("test_int", ev.value);
+            });
         }
 
         function make_slider()
@@ -384,7 +406,7 @@ var Widgets = (function()
     }
 
     return {
-        choices: Selection,
+        choices: Choices,
         slider: Slider,
         string_input: StringInput,
         color_picker: ColorPicker,
@@ -398,16 +420,13 @@ function add_string_input_widget(args)
     if (!args.name) console.log("ERROR: String input widget missing name");
     var widget = Widgets.string_input(args);
     $('#main').append(widget.container);
-    widget.input.keyup(function(e) {
-        if (typeof Gnomescroll != "undefined")
-            Gnomescroll.change_setting("test_string", $(this).val());
-    });
 }
 
 function add_toggle_button_widget(args)
 {
     if (!args.name) console.log("ERROR: Toggle button missing name");
-    $('#main').append(Widgets.toggle(args).container);
+    var widget = Widgets.toggle(args);
+    $('#main').append(widget.container);
 }
 
 function add_slider_widget(args)
@@ -434,27 +453,18 @@ function add_choice_widget(args)
 
 $(function() {
 
-var main = $('#main');
-
-// TODO -- all args should be a single {} with keyword names, for ease of configuration via C
-
-//main.append(Widgets.string_input({ name: 'Server', value: '127.0.0.1' }).container);
 add_string_input_widget({ name: 'Server', value: '127.0.0.1' });
+add_toggle_button_widget({ name: 'Fullscreen', value: false });
 
-main.append(Widgets.toggle({ name: 'Fullscreen', value: false }).container);
-
-var slider = Widgets.slider({ name: 'Volume', value: 20, slider_opts: {
+add_slider_widget({ name: 'Volume', value: 20, slider_opts: {
     min: 0,
     max: 100,
     step: 1,
 }});
-main.append(slider.container);
-slider.load_widget();
 
-main.append(Widgets.color_picker({ name: 'Player Color', value: [20, 255, 200] }).container);
+add_color_picker_widget({ name: 'Player Color', value: [20, 255, 200] });
 
-var choices = ['Default (PulseAudio)', 'Alsa Mixer'];
-main.append(Widgets.choices({ name: 'Sound Devices', choices: choices }).container);
+add_choice_widget({ name: 'Sound Devices', choices: ['Default (PulseAudio)', 'Alsa Mixer'] });
 
 });
 
@@ -465,53 +475,8 @@ main.append(Widgets.choices({ name: 'Sound Devices', choices: choices }).contain
 
 <body>
 
-<div id="main" class="container">
-
-<!--
-  <div class="row">
-    <h3>String input</h3>
-    <input type="text" class="" placeholder="whatever" >
+  <div id="main" class="container">
   </div>
-
-  <div class="row">
-    <h3>Toggle button</h3>
-    <div class="switch" data-on="primary" data-off="primary" data-on-label="Fullscreen" data-off-label="Windowed">
-      <input type="checkbox" checked />
-    </div>
-  </div>
--->
-
-<!--
-  <div class="row">
-    <h3>Slider</h3>
-    <input type="text" class="span2 slider" value="4">
-  </div>
--->
-
-<!--
-  <div class="row">
-    <h3>Color picker</h3>
-    <button type="submit" class="btn-blank colorpicker" data-color="rgb(255, 146, 180)">Player Color</button>
-  </div>
--->
-
-<!--
-  <div class="row">
-    <h3>Choices</h3>
-    <div class="input-append btn-group">
-      <a class="btn btn-primary dropdown-toggle p" data-toggle="dropdown" href="#">
-          <span id="sound-devices-label">Default (Pulseaudio)</span>
-          <span class="caret"></span>
-      </a>
-      <ul id="sound-devices" class="dropdown-menu">
-        <li><a href="#">Default (Pulseaudio)</a></li>
-        <li><a href="#">Alsa Mixer</a></li>
-      </ul>
-    </div>
-  </div>
--->
-
-</div>
 
 </body>
 </html>
