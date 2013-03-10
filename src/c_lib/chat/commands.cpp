@@ -122,11 +122,11 @@ void cmd_color(const char* cmd, size_t cmdlen, char* args, size_t argslen)
 }
 
 
-void cmd_url(const char* cmd, size_t cmdlen, char* args, size_t argslen)
-{
-    if (!argslen) printf("Usage: /url <url to navigate to>");
-    else Awesomium::open_url(args);
-}
+//void cmd_url(const char* cmd, size_t cmdlen, char* args, size_t argslen)
+//{
+    //if (!argslen) printf("Usage: /url <url to navigate to>");
+    //else Awesomium::open_url(args);
+//}
 
 void cmd_home(const char* cmd, size_t cmdlen, char* args, size_t argslen)
 {
@@ -235,7 +235,7 @@ void register_chat_commands()
     add_command("die", cmd_die);
     add_command("color", cmd_color);
     add_command("colour", cmd_color);
-    add_command("url", cmd_url);
+    //add_command("url", cmd_url);
     add_command("home", cmd_home);
     add_command("item", cmd_item);
 

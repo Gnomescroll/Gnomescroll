@@ -36,24 +36,15 @@ void init_shader()
 void init_texture()
 {
     SDL_Surface* surface = create_surface_from_file(MEDIA_PATH "sprites/skybox/stars_and_north.png");
+    IF_ASSERT(surface == NULL) return;
 
-    GS_ASSERT(surface != NULL);
-    if (surface == NULL) return;
-
-    GLenum tex_format = GL_BGRA;
-    if (surface->format->Rmask == 0x000000ff)
-        tex_format = GL_RGBA;
-
+    GLenum tex_format = get_texture_format(surface);
     glEnable(GL_TEXTURE_2D);
-
     glGenTextures(1, &star_sheet);
     glBindTexture(GL_TEXTURE_2D, star_sheet);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 

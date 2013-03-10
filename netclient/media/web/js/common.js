@@ -140,3 +140,13 @@ function gs_extract_and_set_token(resp)
     else // error if token evaluates to false
         Gnomescroll.set_message("Authentication server failure.");
 }
+
+function gs_load_json_settings(settings, display_elements)
+{
+    settings = $.parseJSON(settings);
+    console.log(settings);
+    display_elements = $.parseJSON(display_elements);
+    var len = settings.length;
+    for (var i=0; i<len; i++)
+        add_widget_from_json(settings[i]);
+}

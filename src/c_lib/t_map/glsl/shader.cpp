@@ -208,10 +208,7 @@ void MapShader::init_texture()
     GS_ASSERT(TextureSheetLoader::cube_texture_sheet_loader->surface != NULL);
     if (TextureSheetLoader::cube_texture_sheet_loader->surface == NULL) return;
 
-    GLenum format = GL_BGRA;
-    if (TextureSheetLoader::cube_texture_sheet_loader->surface->format->Rmask == 0x000000ff)
-        format = GL_RGBA;
-
+    GLenum format = get_texture_format(TextureSheetLoader::cube_texture_sheet_loader->surface);
     GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
     //GLuint internalFormat = GL_SRGB8_ALPHA8; //GL_RGBA;
 
@@ -252,23 +249,14 @@ void MapCompatibilityShader::init_texture()
 
     GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
 
-    //if (s->format->Rmask == 0x000000ff) format = GL_RGBA;
-    //if (s->format->Rmask != 0x000000ff) format = GL_BGRA;
-
     // Edit the texture object's image data using the information SDL_Surface gives us
     //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels); //2nd parameter is level
 
     if (ANISOTROPIC_FILTERING)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
 
-    GLenum texture_format;
-    if (s->format->Rmask == 0x000000ff)
-        texture_format = GL_RGBA;
-    else
-        texture_format = GL_BGRA;
-
+    GLenum texture_format = get_texture_format(s);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-
     glDisable(GL_TEXTURE_2D);
 }
 
@@ -469,41 +457,23 @@ void init_map_3d_texture_compatibility()
 
 void init_block_texture_normal()
 {
-
     SDL_Surface* s = TextureSheetLoader::cube_texture_sheet_loader->surface;
-
-    if (s == NULL)
-    {
-        printf("init_block_texture_normal() error \n");
-    }
+    IF_ASSERT(s == NULL) return;
 
     glEnable(GL_TEXTURE_2D);
-
     if (block_textures_normal == 0)
-    {
         glGenTextures(1, &block_textures_normal);
-    }
 
     glBindTexture(GL_TEXTURE_2D, block_textures_normal);
-
     // Set the texture's stretching properties
-
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    GLenum texture_format;
-    if (s->format->Rmask == 0x000000ff)
-        texture_format = GL_RGBA;
-    else
-        texture_format = GL_BGRA;
-
+    GLenum texture_format = get_texture_format(s);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-
     glDisable(GL_TEXTURE_2D);
-
 }
 
 }   // t_map

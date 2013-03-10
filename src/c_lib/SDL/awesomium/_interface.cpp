@@ -22,7 +22,6 @@ Embedders can now also specify a “localePath” for the location of en-US.dll 
 namespace Awesomium
 {
 
-class ChromeViewport* cv = NULL;
 class ViewportManager* viewport_manager = NULL;
 
 static bool _login_page_loaded = false;
@@ -31,27 +30,16 @@ bool login_page_loaded()
     return _login_page_loaded;
 }
 
-void handle_mouse_event(int x, int y, int button, int event_type)
-{
-    viewport_manager->handle_mouse_event(x,y,button,event_type);
-}
-
-void handle_keyboard_event(union SDL_Event* key_event)
-{
-    viewport_manager->handle_keyboard_event(key_event);
-}
-
 void update()
 {
-    IF_ASSERT(cv == NULL) return;
     awe_webcore_update();
 }
 
 void draw()
 {
-    IF_ASSERT(cv == NULL) return;
-    cv->update_webview();
-    cv->draw_webview();
+    IF_ASSERT(viewport_manager == NULL) return;
+    viewport_manager->update();
+    viewport_manager->draw();
 }
 
 awe_string* get_awe_string(const char* _str)
@@ -130,17 +118,12 @@ void init()
     awe_webcore_set_base_directory(curdir);
     awe_string_destroy(curdir);
 
-    GS_ASSERT(cv == NULL);
     GS_ASSERT(viewport_manager == NULL);
-
-    cv = new ChromeViewport;
     viewport_manager = new ViewportManager;
-    viewport_manager->add_viewport(cv);
 }
 
 void teardown()
 {
-    delete cv;
     delete viewport_manager;
     awe_webcore_shutdown();
 }
@@ -169,20 +152,10 @@ void delete_auth_token_cookie()
     delete_cookie(Auth::AUTH_TOKEN_LOCAL_COOKIE_NAME);
 }
 
-void open_url(const char* url)
-{
-    IF_ASSERT(cv == NULL) return;
-    cv->load_url(url);
-}
-
-void open_file(const char* file)
-{
-    IF_ASSERT(cv == NULL) return;
-    cv->load_file(file);
-}
-
 void open_token_page()
 {   // call js function that makes request for token against server
+    IF_ASSERT(viewport_manager == NULL) return;
+    class ChromeViewport* cv = viewport_manager->get_login_window();
     IF_ASSERT(cv == NULL || cv->webView == NULL) return;
     awe_string* get_token_fn = get_awe_string(JS_CB_OPEN_TOKEN_PAGE_NAME);
     awe_jsarray* js_args = awe_jsarray_create(NULL, 0);
@@ -191,33 +164,56 @@ void open_token_page()
     awe_jsarray_destroy(js_args);
 }
 
-void open_login_page()
+void send_json_settings(class SettingsExport* exporter)
 {
-    open_file(GNOMESCROLL_LOGIN_HTML);
+    IF_ASSERT(viewport_manager == NULL) return;
+    class ChromeViewport* cv = viewport_manager->get_settings_window();
+    IF_ASSERT(cv == NULL || cv->webView == NULL) return;
+    char* _settings = exporter->export_json_varlist();
+    char* _display_elements = exporter->export_json_display_element();
+    awe_string* fn = get_awe_string(JS_CB_SEND_JSON_SETTINGS);
+    awe_string* settings = get_awe_string(_settings);
+    awe_string* display_elements = get_awe_string(_display_elements);
+    const int nargs = 2;
+    int i = 0;
+    awe_jsvalue* values[nargs];
+    values[i++] = awe_jsvalue_create_string_value(settings);
+    values[i++] = awe_jsvalue_create_string_value(display_elements);
+    GS_ASSERT(i == nargs);
+    awe_jsarray* args = awe_jsarray_create((const awe_jsvalue**)values, nargs);
+    awe_webview_call_javascript_function(cv->webView, awe_string_empty(), fn, args, awe_string_empty());
+    awe_string_destroy(fn);
+    awe_jsarray_destroy(args);
+    awe_string_destroy(settings);
+    awe_string_destroy(display_elements);
+    for (int i=0; i<nargs; i++)
+        awe_jsvalue_destroy(values[i]);
+    free(_settings);
+    free(_display_elements);
 }
 
 void SDL_keyboard_event(const SDL_Event* event)
 {
-    IF_ASSERT(cv == NULL) return;
-    cv->processKeyEvent(event);
+    IF_ASSERT(viewport_manager == NULL) return;
+    viewport_manager->handle_keyboard_event(event);
 }
 
 void SDL_mouse_event(const SDL_Event* event)
 {
-    IF_ASSERT(cv == NULL) return;
-    injectSDLMouseEvent(cv->webView, event);
+    IF_ASSERT(viewport_manager == NULL) return;
+    viewport_manager->handle_mouse_event(event);
 }
 
 void enable()
 {
-    IF_ASSERT(cv == NULL) return;
-    cv->focus();
+    IF_ASSERT(viewport_manager == NULL) return;
+    viewport_manager->enable();
 }
 
 void disable()
 {
-    IF_ASSERT(cv == NULL) return;
-    cv->unfocus();
+    IF_ASSERT(viewport_manager == NULL) return;
+    viewport_manager->disable();
 }
 
 char* get_cookies(const char* _url)

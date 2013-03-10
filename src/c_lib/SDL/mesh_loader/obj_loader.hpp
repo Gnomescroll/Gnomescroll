@@ -223,9 +223,7 @@ void init_texture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     GLenum internalFormat = 4; //GL_RGBA;
-    GLenum format = GL_BGRA;
-    if (s->format->Rmask == 0x000000ff)
-        format = GL_RGBA;
+    GLenum format = get_texture_format(s);
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels);
     glDisable(GL_TEXTURE_2D);

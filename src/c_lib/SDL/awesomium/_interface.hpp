@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/settings_export.hpp>
+
 #if GS_AWESOMIUM
 
 #include <Awesomium/awesomium_capi.h>
@@ -11,7 +13,6 @@ namespace Awesomium
 const char BASE_USER_AGENT[] = _BASE_USER_AGENT;
 const char USER_AGENT[] = _BASE_USER_AGENT " Gnomescroll/" GS_STR(GS_VERSION);
 
-extern class ChromeViewport* cv;
 extern class ViewportManager* viewport_manager;
 
 void init();
@@ -19,20 +20,14 @@ void teardown();
 void update();
 void draw();
 
-// F1 toggles awesomium window
 void enable();
 void disable();
-
-void handle_mouse_event(int x, int y, int button, int event_type);
-void handle_keyboard_event(union SDL_Event* key_event);
 
 void SDL_keyboard_event(const SDL_Event* event);
 void SDL_mouse_event(const SDL_Event* event);
 
-void open_url(const char* url);
-void open_file(const char* file);
 void open_token_page();
-void open_login_page();
+void send_json_settings(class SettingsExport* exporter);
 
 awe_string* get_awe_string(const char* _str);
 char* get_str_from_awe(const awe_string* str);
@@ -65,34 +60,29 @@ namespace Awesomium
 
 bool login_page_loaded() { return false; }
 
-void init(){}
-void teardown(){}
-void update(){}
-void draw(){}
+void init() {}
+void teardown() {}
+void update() {}
+void draw() {}
 
 // F1 toggles awesomium window
-void enable(){}
-void disable(){}
+void enable() {}
+void disable() {}
 
-void handle_mouse_event(int x, int y, int button, int event_type){}
-void handle_keyboard_event(union SDL_Event* key_event){}
+void SDL_keyboard_event(const SDL_Event* event) {}
+void SDL_mouse_event(const SDL_Event* event) {}
 
-void SDL_keyboard_event(const SDL_Event* event){}
-void SDL_mouse_event(const SDL_Event* event){}
+void open_token_page() {}
+void send_json_settings(class SettingsExport* exporter) {}
 
-void open_url(const char* url){}
-void open_file(const char* file){}
-void open_token_page(){}
-void open_login_page(){}
+char* get_cookies() { return NULL; }
+char* get_auth_token() { return NULL; }
 
-char* get_cookies(){ return NULL; }
-char* get_auth_token(){ return NULL; }
+void delete_cookie(const char* name) {}
+void delete_auth_token_cookie() {}
+void delete_all_cookies() {}
 
-void delete_cookie(const char* name){}
-void delete_auth_token_cookie(){}
-void delete_all_cookies(){}
-
-void set_game_token_cookie(const char* _token, time_t expiration_time){}
+void set_game_token_cookie(const char* _token, time_t expiration_time) {}
 
 }
 #endif

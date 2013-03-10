@@ -260,22 +260,11 @@ class ControlNodeShader
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &texture1);
         glBindTexture(GL_TEXTURE_2D, texture1);
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        GLenum texture_format;
-        if (s->format->Rmask == 0x000000ff)
-            texture_format = GL_RGBA;
-        else
-            texture_format = GL_BGRA;
-
+        GLenum texture_format = get_texture_format(s);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
 
         glDisable(GL_TEXTURE_2D);
@@ -821,11 +810,11 @@ class RadiationBlockList
         int index = -1;
         for(int i=0; i<bl->bln; i++)
         {
-            if(bl->bla[i].x == x 
-                && bl->bla[i].y == y 
+            if(bl->bla[i].x == x
+                && bl->bla[i].y == y
                 && bl->bla[i].z == z)
             {
-                index = i; 
+                index = i;
                 break;
             }
         }
@@ -842,7 +831,7 @@ class RadiationBlockList
 
             return;
         }
-        
+
         bl->bln--;
         bl->bla[index] = bl->bla[bl->bln];
         GS_ASSERT(bl->bln >= 0);

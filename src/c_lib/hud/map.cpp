@@ -18,8 +18,8 @@ static Color highlight = Color(247, 247, 10);
 // for texture init
 static const int width = 512;
 static const int height = 512;
-static const int screen_x_offset = 0;  // from left
-//static const int screen_y_offset = 0;   // from top
+static const int screen_x_offset = 0;  // from right
+static const int screen_y_offset = 90;   // from bottom
 
 static SDL_Surface* map_surface = NULL;
 static GLuint map_textures[2] = {0};
@@ -119,17 +119,13 @@ void init_surface()
     sprintf(grad_str, grad_fmt, grad_num);
 
     gradient_surface = create_surface_from_file(grad_str);
-    GS_ASSERT(gradient_surface != NULL);
-    if (gradient_surface == NULL) return;
+    IF_ASSERT(gradient_surface == NULL) return;
 
     /* Init blank map surface */
     map_surface = create_surface_from_nothing(width, height);
-    GS_ASSERT(map_surface != NULL);
-    if (map_surface == NULL) return;
+    IF_ASSERT(map_surface == NULL) return;
 
-    GLenum tex_format = GL_BGRA;
-    if (map_surface->format->Rmask == 0x000000ff)
-        tex_format = GL_RGBA;
+    GLenum tex_format = get_texture_format(map_surface);
 
     // set surface pixels to 0,0,0,255;
     for (int i=0; i<map_surface->w; i++)
@@ -141,8 +137,7 @@ void init_surface()
     glGenTextures(2, map_textures);
     for (int i=0; i<2; i++)
     {
-        GS_ASSERT(map_textures[i] != 0);
-        if (map_textures[i] == 0) continue;
+        IF_ASSERT(map_textures[i] == 0) continue;
         glBindTexture(GL_TEXTURE_2D, map_textures[i]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -363,7 +358,7 @@ void draw()
 
     glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
 
-    draw_bound_texture(_xresf-screen_x_offset-width, _yresf-height, width, height, z);
+    draw_bound_texture(_xresf-screen_x_offset-width, screen_y_offset, width, height, z);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);

@@ -109,13 +109,12 @@ void excavate() {
     const float cave_size = 2.0f;
     const int try_limit = 10000;
     CubeType worm_brush = EMPTY_CUBE; //t_map::get_cube_type("rock"); /**/
-    
     const int MAX_WORMS = 300;
     Vec3* worms = new Vec3[MAX_WORMS];
     IF_ASSERT(worms == NULL) return;
     worms[0].x = randrange(0, t_map::map_dim.x - 1);
     worms[0].y = randrange(0, t_map::map_dim.y - 1);
-    worms[0].z = randrange(6, t_map::map_dim.z - 1);  // 6 considers bedrock
+    worms[0].z = randrange(26, t_map::map_dim.z - 1);  // 6 considers bedrock
     int curr_num_worms = 1;
 
     init_genrand(rand());
@@ -130,8 +129,7 @@ void excavate() {
             st.x = float(genrand_real1()) * float(t_map::map_dim.x);
             st.y = float(genrand_real1()) * float(t_map::map_dim.y);
             st.z = float(genrand_real1()) * float(t_map::map_dim.z);
-        } 
-        while (t_map::get(st.x, st.y, st.z) == worm_brush && tries++ < try_limit);
+        } while (t_map::get(st.x, st.y, st.z) == worm_brush && tries++ < try_limit);
 
         if (tries >= try_limit) return;
 

@@ -1,21 +1,18 @@
 #pragma once
 
-/*
-    This class
-*/
+typedef enum
+{
+    CONFIG_TYPE_NONE = 0,
+    CONFIG_TYPE_FLOAT,
+    CONFIG_TYPE_INT,
+    CONFIG_TYPE_COLOR,
+    CONFIG_TYPE_STRING,
+    CONFIG_TYPE_BOOL,
+} ConfigType;
 
 class SettingsExport
 {
     private:
-        typedef enum
-        {
-            CONFIG_TYPE_NONE = 0,
-            CONFIG_TYPE_FLOAT,
-            CONFIG_TYPE_INT,
-            CONFIG_TYPE_COLOR,
-            CONFIG_TYPE_STRING,
-        } ConfigType;
-
         struct ConfigValue
         {
             ConfigType type;
@@ -37,134 +34,140 @@ class SettingsExport
         {
             this->cva[i].type = CONFIG_TYPE_NONE;
             this->cva[i].name = NULL;
-            this->cva[i].ptr  = NULL;
+            this->cva[i].ptr = NULL;
         }
-
         for (int i=0; i<cvm; i++)
-        {
-            display_element_array[i]  = NULL;
-        }
-
+            display_element_array[i] = NULL;
     }
 
     ~SettingsExport()
     {
         for (int i=0; i<cvm; i++)
-            if (this->cva[i].name != NULL)
-                free(this->cva[i].name);
-
-        for(int i=0; i<cvm; i++)
         {
-            if(display_element_array[i] != NULL)
-                free(display_element_array[i]);
+            free(this->cva[i].name);
+            if (this->cva[i].type == CONFIG_TYPE_STRING &&
+                this->cva[i].ptr != NULL)
+            {
+                free(*((char**)this->cva[i].ptr));
+            }
         }
+        for (int i=0; i<cvm; i++)
+            free(display_element_array[i]);
     }
+
+    #define WRITE_TO_BUFFER(...) { \
+        ad = snprintf(buff+offset, max_buff, __VA_ARGS__); \
+        IF_ASSERT(ad >= max_buff) { free(buff); return NULL; } \
+        offset += ad; }
+
+    #define ITEM_FMT(ITEM) "[\"%s\", \"%s\", \"%s\", " ITEM "]"
+    #define DISPLAY_ELEMENT_FMT "[\"%s\", \"%s\"]"
 
     char* export_json_varlist()
     {
         const int max_buff = 16*1024;
         char* buff = (char*) malloc(max_buff);
-        int offset = 0;
-        int _ad;
-        _ad = sprintf(buff+offset, "[\n");
-        offset += _ad;
+        size_t offset = 0;
+        size_t ad = 0;
+        WRITE_TO_BUFFER("[")
 
         const char* display_element = "test_element";
-        for (int i=0; i<this->cvm; i++)
+        Color color = Color(0);
+        for (int i=0, j=0; i<this->cvm; i++)
         {
-            if(this->cva[i].type == CONFIG_TYPE_NONE)
+            if (this->cva[i].type == CONFIG_TYPE_NONE)
                 continue;
-            _ad = 0;
+            ad = 0;
             switch (cva[i].type)
             {
                 case CONFIG_TYPE_FLOAT:
-                    _ad = sprintf(buff+offset, "\t['%s', '%s', '%s', %f],\n", cva[i].name, "TYPE_FLOAT", display_element, get_float(cva[i]) );
+                    WRITE_TO_BUFFER(ITEM_FMT("%f"), cva[i].name,
+                                    "TYPE_FLOAT", display_element, get_float(i))
                     break;
 
                 case CONFIG_TYPE_INT:
-                    _ad = sprintf(buff+offset, "\t['%s', '%s', '%s', %d],\n", cva[i].name, "TYPE_INT", display_element, get_int(cva[i]));
+                    WRITE_TO_BUFFER(ITEM_FMT("%d"), cva[i].name,
+                                    "TYPE_INT", display_element, get_int(i))
                     break;
 
                 case CONFIG_TYPE_COLOR:
-                    _ad = sprintf(buff+offset, "\t['%s', '%s', '%s', [%d, %d, %d]],\n", cva[i].name, "TYPE_COLOR", display_element, 255, 255, 255);
+                    color = get_color(i);
+                    WRITE_TO_BUFFER(ITEM_FMT("[%d, %d, %d]"),
+                                    cva[i].name, "TYPE_COLOR", display_element,
+                                    color.r, color.g, color.b)
                     break;
 
                 case CONFIG_TYPE_STRING:
-                    _ad = sprintf(buff+offset, "\t['%s', '%s', '%s', '%s'],\n", cva[i].name, "TYPE_STRING", display_element, get_string(cva[i]));
-                    GS_ASSERT(false);
+                    WRITE_TO_BUFFER(ITEM_FMT("\"%s\""), cva[i].name,
+                                    "TYPE_STRING", display_element, get_string(i))
+                    break;
+
+                case CONFIG_TYPE_BOOL:
+                    WRITE_TO_BUFFER(ITEM_FMT("%s"), cva[i].name, "TYPE_BOOL",
+                                    display_element, get_bool(i) ? "true" : "false");
                     break;
 
                 case CONFIG_TYPE_NONE:
                 default:
-                    printf("SettingsExport ERROR: var_type= CONFIG_TYPE_NONE \n");
+                    printf("SettingsExport ERROR: var_type= CONFIG_TYPE_NONE\n");
                     GS_ASSERT(false);
                     break;
             }
-            GS_ASSERT(_ad > 0);
-            offset += _ad;
+            if (++j != this->cvn)
+                WRITE_TO_BUFFER(", ")
         }
-        _ad = sprintf(buff+offset, "]\n");
-        offset += _ad;
-        buff[offset] = 0x00;        
-
+        WRITE_TO_BUFFER("]");
         return buff;
     }
-
 
     char* export_json_display_element()
     {
         const int max_buff = 16*1024;
         char* buff = (char*) malloc(max_buff);
-        int offset = 0;
-        int _ad;
-        _ad = sprintf(buff+offset, "[\n");
-        offset += _ad;
+        size_t offset = 0;
+        size_t ad = 0;
+        WRITE_TO_BUFFER("[")
 
-        for (int i=0; i<this->cvm; i++)
+        for (int i=0, j=0; i<this->cvm; i++)
         {
-            if(this->cva[i].type == CONFIG_TYPE_NONE)
+            if (this->cva[i].type == CONFIG_TYPE_NONE)
                 continue;
-            _ad = 0;
-            if( display_element_array[i] == NULL)
-            {
-                _ad = sprintf(buff+offset, "\t['%s', '%s'],\n", cva[i].name, "None"); //default element
-                offset  += _ad;
-            }
+            if (display_element_array[i] == NULL)
+                WRITE_TO_BUFFER(DISPLAY_ELEMENT_FMT, cva[i].name, "None")
             else
-            {
-                _ad = sprintf(buff+offset, "\t['%s', '%s'],\n", cva[i].name, display_element_array[i]);
-                offset  += _ad;
-            }
-
+                WRITE_TO_BUFFER(DISPLAY_ELEMENT_FMT, cva[i].name, display_element_array[i])
+            if (++j != this->cvn)
+                WRITE_TO_BUFFER(", ")
         }
-        _ad = sprintf(buff+offset, "]\n");
-        offset += _ad;
-        buff[offset] = 0x00;        
-
-        return buff; 
+        WRITE_TO_BUFFER("]")
+        return buff;
     }
+
+    #undef ITEM_PREFIX
+    #undef WRITE_TO_BUFFER
+
 /*
     void process_line(const char* input_line, bool silent)
     {
         if (strlen(input_line) <= 3) return;
         if (input_line[0] == '#') return;
-        char* var_name = new char[256];
+        char* name = new char[256];
         char* rest = new char[256];
         float value_float = 0.0f;
         int value_int = 0;
         int value_r,value_g,value_b,value_a;
-        int ret = sscanf(input_line, "%s = %s", var_name, rest);
+        int ret = sscanf(input_line, "%s = %s", name, rest);
         if (ret == -1)
         {
-            printf("SettingsExport, process_line error: scanf fail: ret= %d \n", ret);
-            delete[] var_name;
+            printf("SettingsExport, process_line error: scanf fail: ret= %d\n", ret);
+            delete[] name;
             delete[] rest;
             return;
         }
         int index = -1;
         for (int i=0; i<cvn; i++)
         {
-            if (strcmp(cva[i].name, var_name) == 0)
+            if (strcmp(cva[i].name, name) == 0)
             {
                 index = i;
                 break;
@@ -172,54 +175,54 @@ class SettingsExport
         }
         if (index == -1)
         {
-            printf("SettingsExport, process_line error: '%s' does not match any defined key \n", var_name);
-            delete[] var_name;
+            printf("SettingsExport, process_line error: '%s' does not match any defined key\n", name);
+            delete[] name;
             delete[] rest;
             return;
         }
         switch (cva[index].type)
         {
             case CONFIG_TYPE_FLOAT:
-                ret = sscanf(input_line, "%s = %f", var_name, &value_float);
+                ret = sscanf(input_line, "%s = %f", name, &value_float);
                 if (ret != 2)
                 {
-                    printf("SettingsExport CONFIG_TYPE_FLOAT input_line error: %s \n", input_line);
-                    printf("SettingsExport CONFIG_TYPE_FLOAT proces_line: var_name= %s ret= %i value= %f \n",
-                           var_name, ret, value_float);
+                    printf("SettingsExport CONFIG_TYPE_FLOAT input_line error: %s\n", input_line);
+                    printf("SettingsExport CONFIG_TYPE_FLOAT proces_line: name= %s ret= %i value= %f\n",
+                           name, ret, value_float);
                     break;
                 }
                 if (*((float*)cva[index].ptr) != value_float)
                 {
                     *((float*)cva[index].ptr) = value_float;
                     if (!silent)
-                        printf("Set float: %s to %f \n", var_name, value_float);
+                        printf("Set float: %s to %f\n", name, value_float);
                 }
                 break;
 
             case CONFIG_TYPE_INT:
-                ret = sscanf(input_line, "%s = %d", var_name, &value_int);
+                ret = sscanf(input_line, "%s = %d", name, &value_int);
                 if (ret != 2)
                 {
-                    printf("SettingsExport CONFIG_TYPE_INT input_line error: %s \n", input_line);
-                    printf("SettingsExport CONFIG_TYPE_INT proces_line: var_name= %s ret= %d value= %d \n",
-                           var_name, ret, value_int);
+                    printf("SettingsExport CONFIG_TYPE_INT input_line error: %s\n", input_line);
+                    printf("SettingsExport CONFIG_TYPE_INT proces_line: name= %s ret= %d value= %d\n",
+                           name, ret, value_int);
                     break;
                 }
                 if (*((int*)cva[index].ptr) != value_int)
                 {
                     *((int*)cva[index].ptr) = value_int;
                     if (!silent)
-                        printf("Set int: %s to %d \n", var_name, value_int);
+                        printf("Set int: %s to %d\n", name, value_int);
                 }
                 break;
 
             case CONFIG_TYPE_COLOR:
-                ret = sscanf(input_line, "%s = %d %d %d %d", var_name, &value_r, &value_g,&value_b,&value_a);
+                ret = sscanf(input_line, "%s = %d %d %d %d", name, &value_r, &value_g,&value_b,&value_a);
                 if (ret != 5)
                 {
-                    printf("SettingsExport CONFIG_TYPE_COLOR input_line error: %s \n", input_line);
-                    printf("SettingsExport CONFIG_TYPE_COLOR proces_line: var_name= %s ret= %d value= %d %d %d %d \n",
-                           var_name, ret,
+                    printf("SettingsExport CONFIG_TYPE_COLOR input_line error: %s\n", input_line);
+                    printf("SettingsExport CONFIG_TYPE_COLOR proces_line: name= %s ret= %d value= %d %d %d %d\n",
+                           name, ret,
                            value_r,value_g,value_b,value_a);
                     break;
                 }
@@ -231,18 +234,18 @@ class SettingsExport
                 {
                     *((int*)cva[index].ptr) = value_int;
                     if (!silent)
-                        printf("Set color: %s to %d %d %d %d \n", var_name,
+                        printf("Set color: %s to %d %d %d %d\n", name,
                                value_r, value_g, value_b, value_a);
                 }
                 break;
 
             case CONFIG_TYPE_NONE:
             default:
-                printf("SettingsExport ERROR: var_type= CONFIG_TYPE_NONE \n");
+                printf("SettingsExport ERROR: var_type= CONFIG_TYPE_NONE\n");
                 GS_ASSERT(false);
                 break;
         }
-        delete[] var_name;
+        delete[] name;
         delete[] rest;
     }
 */
@@ -265,9 +268,9 @@ class SettingsExport
                 continue;
             }
             for (int i=0; i<1024; i++)
-                tmp_str[i] = 0x00;
+                tmp_str[i] = '\0';
             memcpy(tmp_str, buffer+offset, marker - offset);
-            tmp_str[marker - offset] = 0x00;
+            tmp_str[marker - offset] = '\0';
             process_line(tmp_str, silent);
             marker++;
             offset = marker;
@@ -284,175 +287,239 @@ class SettingsExport
     }
 */
 
-    void name_creation_check(const char* var_name)
+    bool name_in_use(const char* name)
     {
         for (int i=0; i<this->cvn; i++)
         {
-            IF_ASSERT(strcmp(this->cva[i].name, var_name) == 0)
-                printf("ERROR: SettingsExport, set_float key= '%s' already exists \n", var_name);
+            IF_ASSERT(strcmp(this->cva[i].name, name) == 0)
+            {
+                printf("ERROR: SettingsExport, set_float key= '%s' already exists\n", name);
+                return true;
+            }
         }
+        return false;
     }
 
-    int get_name_index(const char* var_name)
+    int get_name_index(const char* name)
     {
         for (int i=0; i<this->cvn; i++)
-        {
-            if(strcmp(this->cva[i].name, var_name) == 0)
+            if (strcmp(this->cva[i].name, name) == 0)
                 return i;
-        }
-        printf("ERROR: SettingsExport, key= '%s' does not exists \n", var_name);
+        printf("ERROR: SettingsExport, key= '%s' does not exist\n", name);
         GS_ASSERT(false);
         return -1;
     }
 
+    bool is_valid_index(int i)
+    {
+        return (i >= 0 && i < cvm);
+    }
+
+    bool full()
+    {
+        return (this->cvn >= this->cvm);
+    }
+
     /* REGISTER */
-    void register_float(const char* var_name, float* var_loc)
+    int _track(const char* name, void* loc, ConfigType type)
     {
-        this->name_creation_check(var_name);
-        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        //strcpy(this->cva[this->cvn].name, var_name);
-        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
-        cva[this->cvn].name = strdup(var_name);
-        this->cva[this->cvn].ptr = var_loc;
-        this->cva[this->cvn].type = CONFIG_TYPE_FLOAT;
-        this->cvn++;
+        IF_ASSERT(this->full()) return -1;
+        this->cva[this->cvn].name = strdup(name);
+        this->cva[this->cvn].ptr = loc;
+        this->cva[this->cvn].type = type;
+        return this->cvn++;
     }
 
-    void register_int(const char* var_name, int* var_loc)
+    int track(const char* name, float* loc)
     {
-        this->name_creation_check(var_name);
-        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        //strcpy(this->cva[this->cvn].name, var_name);
-        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
-        cva[this->cvn].name = strdup(var_name);
-        this->cva[this->cvn].ptr = var_loc;
-        this->cva[this->cvn].type = CONFIG_TYPE_INT;
-        this->cvn++;
+        if (this->name_in_use(name)) return -1;
+        return this->_track(name, loc, CONFIG_TYPE_FLOAT);
     }
 
-    void register_float(const char* var_name, char* var_loc)
+    int track(const char* name, int* loc)
     {
-        this->name_creation_check(var_name);
-        //this->cva[this->cvn].name = new char[strlen(var_name)+1];
-        //strcpy(this->cva[this->cvn].name, var_name);
-        //this->cva[this->cvn].name[strlen(var_name)] = '\0';
-        cva[this->cvn].name = strdup(var_name);
-
-        this->cva[this->cvn].ptr = var_loc;
-        this->cva[this->cvn].type = CONFIG_TYPE_COLOR;
-        this->cvn++;
+        if (this->name_in_use(name)) return -1;
+        return this->_track(name, loc, CONFIG_TYPE_INT);
     }
 
-    void register_string(const char* var_name, char** var_loc) 
+    int track(const char* name, Color* loc)
     {
-
+        if (this->name_in_use(name)) return -1;
+        return this->_track(name, loc, CONFIG_TYPE_COLOR);
     }
 
+    int track(const char* name, char** loc)
+    {
+        if (this->name_in_use(name)) return -1;
+        return this->_track(name, loc, CONFIG_TYPE_STRING);
+    }
 
-
+    int track(const char* name, bool* loc)
+    {
+        if (this->name_in_use(name)) return -1;
+        return this->_track(name, loc, CONFIG_TYPE_BOOL);
+    }
 
     /* SET */
-    void set_float(const char* var_name, float var_value)
+    void set(const char* name, float val)
     {
-        int index = get_name_index(var_name);
+        int index = get_name_index(name);
+        IF_ASSERT(!this->is_valid_index(index)) return;
         struct ConfigValue cv = cva[index];
-        GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
-
-        *((float*)cv.ptr) = var_value;
+        IF_ASSERT(cv.type != CONFIG_TYPE_FLOAT || cv.ptr == NULL) return;
+        *((float*)cv.ptr) = val;
     }
 
-    void set_int(const char* var_name, int var_value)
+    void set(const char* name, int val)
     {
-        int index = get_name_index(var_name);
+        int index = get_name_index(name);
+        IF_ASSERT(!this->is_valid_index(index)) return;
         struct ConfigValue cv = cva[index];
-        GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
-
-        *((int*) cv.ptr) = var_value;
+        IF_ASSERT(cv.type != CONFIG_TYPE_INT || cv.ptr == NULL) return;
+        *((int*)cv.ptr) = val;
     }
 
-    void set_color(const char* var_name, int* var_value)
+    void set(const char* name, const Color& val)
     {
-        int index = get_name_index(var_name);
+        int index = get_name_index(name);
+        IF_ASSERT(!this->is_valid_index(index)) return;
         struct ConfigValue cv = cva[index];
-        GS_ASSERT(cv.type == CONFIG_TYPE_COLOR && cv.ptr != NULL);
-    
-        GS_ASSERT(false);
-        return;
+        IF_ASSERT(cv.type != CONFIG_TYPE_COLOR || cv.ptr == NULL) return;
+        (*(Color*)cv.ptr) = val;
     }
 
-    void set_string(const char* var_name, const char* var_value) 
+    void set(const char* name, const char* val)
     {
-        int index = get_name_index(var_name);
+        int index = get_name_index(name);
+        IF_ASSERT(!this->is_valid_index(index)) return;
         struct ConfigValue cv = cva[index];
-        GS_ASSERT(cv.type == CONFIG_TYPE_STRING && cv.ptr != NULL);
-
-        if(cv.ptr != NULL)
-            free(cv.ptr);
-        cv.ptr = strdup(var_value);
+        IF_ASSERT(cv.type != CONFIG_TYPE_STRING || cv.ptr == NULL) return;
+        if (cv.ptr != NULL)
+            free(*((char**)cv.ptr));
+        *((char**)cv.ptr) = strdup(val);
     }
 
-/*
-            CONFIG_TYPE_FLOAT,
-            CONFIG_TYPE_INT,
-            CONFIG_TYPE_COLOR,
-            CONFIG_TYPE_STRING,
-*/
+    void set(const char* name, bool val)
+    {
+        int index = get_name_index(name);
+        IF_ASSERT(!this->is_valid_index(index)) return;
+        struct ConfigValue cv = cva[index];
+        IF_ASSERT(cv.type != CONFIG_TYPE_BOOL || cv.ptr == NULL) return;
+        *((bool*)cv.ptr) = val;
+    }
 
     /* GET */
-    float get_float(struct ConfigValue cv)
-    {   
-        GS_ASSERT(cv.type == CONFIG_TYPE_FLOAT && cv.ptr != NULL);
-        return *((float*)cv.ptr);
-    }
-
-    int get_int(struct ConfigValue cv)
+    float get_float(int i)
     {
-        GS_ASSERT(cv.type == CONFIG_TYPE_INT && cv.ptr != NULL);
-        return *((int*)cv.ptr);
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_FLOAT ||
+                  this->cva[i].ptr == NULL) return 0.0f;
+        return *((float*)this->cva[i].ptr);
     }
 
-    void get_color(struct ConfigValue cv)
+    int get_int(int i)
     {
-        GS_ASSERT(cv.type == CONFIG_TYPE_COLOR && cv.ptr != NULL);
-        GS_ASSERT(false);
-        return;
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_INT ||
+                  this->cva[i].ptr == NULL) return 0;
+        return *((int*)this->cva[i].ptr);
     }
-    
-    char* get_string(struct ConfigValue cv)
+
+    Color get_color(int i)
     {
-        GS_ASSERT(cv.type == CONFIG_TYPE_STRING && cv.ptr != NULL);
-        return ((char*)cv.ptr);
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_COLOR ||
+                  this->cva[i].ptr == NULL) return Color(0, 0, 0);
+        return *((Color*)this->cva[i].ptr);
     }
 
-
-    void set_display_element(const char* var_name, const char* display_type)
+    const char* get_string(int i)
     {
-        int index = get_name_index(var_name);
-        if(index == -1)
-            return;
-        display_element_array[index] = strdup(display_type); //copy string with malloc
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_STRING ||
+                  this->cva[i].ptr == NULL) return NULL;
+        return (*(char**)this->cva[i].ptr);
     }
 
+    bool get_bool(int i)
+    {
+        IF_ASSERT(!this->is_valid_index(i) ||
+                  this->cva[i].type != CONFIG_TYPE_BOOL ||
+                  this->cva[i].ptr == NULL) return NULL;
+        return (*(bool*)this->cva[i].ptr);
+    }
+
+    float get_float(const char* name)
+    {
+        float i = this->get_name_index(name);
+        return this->get_float(i);
+    }
+
+    int get_int(const char* name)
+    {
+        int i = this->get_name_index(name);
+        return this->get_int(i);
+    }
+
+    Color get_color(const char* name)
+    {
+        int i = this->get_name_index(name);
+        return this->get_color(i);
+    }
+
+    const char* get_string(const char* name)
+    {
+        int i = this->get_name_index(name);
+        return this->get_string(i);
+    }
+
+    bool get_bool(const char* name)
+    {
+        int i = this->get_name_index(name);
+        return this->get_string(i);
+    }
+
+    void set_display_element(const char* name, const char* display_type)
+    {
+        int index = get_name_index(name);
+        if (!this->is_valid_index(index)) return;
+        display_element_array[index] = strdup(display_type);
+    }
+
+    ConfigType get_config_type(const char* name)
+    {
+        int index = this->get_name_index(name);
+        if (!this->is_valid_index(index)) return CONFIG_TYPE_NONE;
+        return this->cva[index].type;
+    }
 };
 
-float _testfloat0;
-int _testint1;
-float _testfloat2;
+float _testfloat0 = 3.335f;
+int _testint1 = 2;
+float _testfloat2 = 1.0f;
+char* _test_string1 = NULL;
+bool _test_bool1 = true;
+Color _test_color = Color(66, 77, 99);
 
 void setting_export_test()
 {
-    printf("common/settings_export.hpp: \n");
+    printf("%s:\n", __FILE__);
 
-    class SettingsExport* SE = new SettingsExport;
-    SE->register_float("test_float0", &_testfloat0);
-    SE->register_int("test_int1", &_testint1);
-    SE->register_float("test_float2", &_testfloat2);
+    class SettingsExport* se = new SettingsExport;
+    se->track("test_float0", &_testfloat0);
+    se->track("test_int1", &_testint1);
+    se->track("test_float2", &_testfloat2);
+    se->track("test_string1", &_test_string1);
+    se->track("test_bool1", &_test_bool1);
+    se->track("test_color1", &_test_color);
+    se->set("test_string1", "dog");
+    printf("_test_string1: %s\n", _test_string1);
+    printf("get::_test_string1: %s\n", se->get_string("test_string1"));
+    se->set("test_string1", "bug");
+    printf("_test_string1: %s\n", _test_string1);
+    printf("get::_test_string1: %s\n", se->get_string("test_string1"));
 
-    SE->set_display_element("test_int1", "binary_button");
-    SE->set_display_element("test_int1", "slider");
-
-    printf("%s\n", SE->export_json_varlist());
-    printf("%s\n", SE->export_json_display_element());  //this if for programmatically generating elements
-
-    //abort();
+    se->set_display_element("test_int1", "binary_button");
+    se->set_display_element("test_int1", "slider");
+    delete se;
 }

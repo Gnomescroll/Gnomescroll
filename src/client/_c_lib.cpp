@@ -8,6 +8,14 @@
 # define GS_AWESOMIUM 0
 #endif
 
+#ifndef GS_AUTH
+# define GS_AUTH 0
+#endif
+
+#if GS_AUTH && !GS_AWESOMIUM
+ERROR_auth_enable_but_awesomium_is_not
+#endif
+
 #ifndef GS_ASSIMP
 # define GS_ASSIMP 1
 #endif
@@ -539,7 +547,7 @@ void close_c_lib()
     Log::teardown();
 
     if (TEARDOWN_DEBUG) printf("Options teardown\n");
-    Options::teardown_option_tables();
+    Options::teardown();
 
     if (TEARDOWN_DEBUG) printf("Assertion teardown\n");
     _GS_ASSERT_TEARDOWN();

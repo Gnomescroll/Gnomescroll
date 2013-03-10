@@ -62,8 +62,9 @@ void disable_agent_inventory()
     input_state.agent_inventory = false;
     // poll mouse button state
     // if left or right is unpressed, trigger an up event
-    int x,y;
-    Uint8 btns = SDL_GetMouseState(&x,&y);
+    int x = 0;
+    int y = 0;
+    Uint8 btns = SDL_GetMouseState(&x, &y);
     if (!(btns & SDL_BUTTON_LEFT)) Toolbelt::left_trigger_up_event();
     if (!(btns & SDL_BUTTON_RIGHT)) Toolbelt::right_trigger_up_event();
 
@@ -167,31 +168,22 @@ void toggle_admin_controls()
     input_state.admin_controls = (!input_state.admin_controls);
 }
 
-void enable_awesomium()
+void enable_login_window()
 {
-    #if GS_AWESOMIUM
-    if (input_state.awesomium) return;
-
-    if (!mouse_unlocked_for_ui_element())
-    {   // dont manipulate the mouse state if we opened on top of containers
-        set_mouse_rebind(input_state.mouse_bound);
-        set_mouse_bind(false);
-    }
-
-    input_state.awesomium = true;
-
-    Awesomium::enable();
+    #if GS_AUTH
+    if (input_state.login_window) return;
+    input_state.login_window = true;
+    update_awesomium_window_state();
     Hud::clear_prompt(Hud::open_login_text);
-
     #endif
 }
 
-void disable_awesomium()
+void disable_login_window()
 {
-    #if GS_AWESOMIUM
-    if (!input_state.awesomium) return;
-    input_state.awesomium = false;
-    Awesomium::disable();
+    #if GS_AUTH
+    if (!input_state.login_window) return;
+    input_state.login_window = false;
+    update_awesomium_window_state();
 
     if (!mouse_unlocked_for_ui_element())
     {   // dont manipulate the mouse state if we opened on top of containers
@@ -202,14 +194,75 @@ void disable_awesomium()
     #endif
 }
 
-void toggle_awesomium()
+void toggle_login_window()
+{
+    #if GS_AUTH
+    if (input_state.login_window)
+        disable_login_window();
+    else
+        enable_login_window();
+    #endif
+}
+
+void toggle_settings_window()
 {
     #if GS_AWESOMIUM
-    if (input_state.awesomium)
-        disable_awesomium();
+    if (input_state.settings_window)
+        disable_settings_window();
     else
-        enable_awesomium();
+        enable_settings_window();
     #endif
+}
+
+void disable_settings_window()
+{
+    #if GS_AWESOMIUM
+    input_state.settings_window = false;
+    update_awesomium_window_state();
+    #endif
+}
+
+void enable_settings_window()
+{
+    #if GS_AWESOMIUM
+    input_state.settings_window = true;
+    update_awesomium_window_state();
+    #endif
+}
+
+void update_awesomium_window_state()
+{
+    #if GS_AWESOMIUM
+    bool on = (input_state.settings_window || input_state.login_window);
+    if ((on && input_state.awesomium) || (!on && !input_state.awesomium))
+        return;
+    input_state.awesomium = on;
+    if (on)
+    {
+        if (!mouse_unlocked_for_ui_element())
+        {   // dont manipulate the mouse state if we opened on top of containers
+            set_mouse_rebind(input_state.mouse_bound);
+            set_mouse_bind(false);
+        }
+        Awesomium::enable();
+    }
+    else
+    {
+        if (!mouse_unlocked_for_ui_element())
+        {   // dont manipulate the mouse state if we opened on top of containers
+            if (input_state.input_focus)    // dont change mouse state if we're not in focus. it grabs the window
+                set_mouse_bind(input_state.rebind_mouse);
+            input_state.ignore_mouse_motion = true;
+        }
+        Awesomium::disable();
+    }
+    #endif
+}
+
+void disable_awesomium_windows()
+{
+    disable_login_window();
+    disable_settings_window();
 }
 
 void enable_jump()
@@ -335,6 +388,8 @@ void init_input_state()
 
     // awesomium
     input_state.awesomium = false;
+    input_state.login_window = false;
+    input_state.settings_window = false;
 
     input_state.error_message = Hud::has_error();
 
@@ -380,15 +435,15 @@ typedef enum {
     kRIGHT_ARROW,
     kUP_ARROW,
     kDOWN_ARROW
-} held_down_key;
+} HeldDownKey;
 
 typedef struct {
     bool pressed;
     int t;
-} key_rate_limit;
+} KeyRateLimit;
 
 const int KEYS_HELD_DOWN = 5;
-static key_rate_limit keys_held_down[KEYS_HELD_DOWN];
+static KeyRateLimit keys_held_down[KEYS_HELD_DOWN];
 static const SDLKey keys_held_down_map[KEYS_HELD_DOWN] = {
     SDLK_BACKSPACE,
     SDLK_LEFT,
@@ -906,10 +961,13 @@ void key_down_handler(SDL_Event* event)
         switch (event->key.keysym.sym)
         {
             case SDLK_ESCAPE:
+                if (input_state.settings_window)
+                    disable_settings_window();
+                else
                 if (input_state.login_mode)
                     enable_quit();  // quit automatically if we are in login mode
                 else
-                    toggle_awesomium();
+                    disable_awesomium_windows();
                 break;
 
             default:
@@ -1038,13 +1096,18 @@ void key_down_handler(SDL_Event* event)
     // these should occur for all of Chat, Agents::Agent and Camera
     switch (event->key.keysym.sym)
     {
+        #if !PRODUCTION
+        case SDLK_n:
+            Awesomium::send_json_settings(Options::settings);
+            break;
+        #endif
+
         case SDLK_HOME:
             save_screenshot();
             break;
 
         case SDLK_F1:
-            if (!input_state.login_mode)
-                toggle_awesomium();
+            toggle_settings_window();
             break;
 
         case SDLK_F2:

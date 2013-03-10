@@ -47,9 +47,7 @@ class HudRadiationMeter
                   border_surface == NULL ||
                   gradient_surface == NULL) return;
 
-        GLenum tex_format = GL_BGRA;
-        if (surface->format->Rmask == 0x000000FF)
-            tex_format = GL_RGBA;
+        GLenum tex_format = get_texture_format(surface);
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &tex);
         glBindTexture(GL_TEXTURE_2D, tex);
@@ -58,9 +56,7 @@ class HudRadiationMeter
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, tex_format, GL_UNSIGNED_BYTE, surface->pixels);
         glDisable(GL_TEXTURE_2D);
 
-        tex_format = GL_BGRA;
-        if (border_surface->format->Rmask == 0x000000FF)
-            tex_format = GL_RGBA;
+        tex_format = get_texture_format(border_surface);
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &border_tex);
         glBindTexture(GL_TEXTURE_2D, border_tex);
@@ -69,9 +65,7 @@ class HudRadiationMeter
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, border_surface->w, border_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, border_surface->pixels);
         glDisable(GL_TEXTURE_2D);
 
-        tex_format = GL_BGRA;
-        if (gradient_surface->format->Rmask == 0x000000FF)
-            tex_format = GL_RGBA;
+        tex_format = get_texture_format(gradient_surface);
         glDisable(GL_TEXTURE_1D);
         glGenTextures(1, &gradient_tex);
         glBindTexture(GL_TEXTURE_1D, gradient_tex);
