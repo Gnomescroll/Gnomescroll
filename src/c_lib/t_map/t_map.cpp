@@ -236,4 +236,10 @@ void broadcast_set_palette(int x, int y, int z, int palette)
 }
 #endif
 
+
+int get_rad_level(int x, int y, int z)
+{
+    return main_map->radiation_block_list.get_rad_level(x,y,z);
+}
+
 }   // t_map

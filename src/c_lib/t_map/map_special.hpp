@@ -837,7 +837,7 @@ class RadiationBlockList
         GS_ASSERT(bl->bln >= 0);
     }
 
-    int get_distance(int x, int y, int z)
+    int get_rad_level(int x, int y, int z)
     {
 
         int cx = x >> 4;
@@ -867,7 +867,12 @@ class RadiationBlockList
             }
         }
 
-        return distance;
+        int ret = 16- distance;
+        if( ret < 0)
+            return 0;
+        return ret;
+
+        //return distance;
     }
 
 };
