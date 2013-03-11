@@ -294,7 +294,7 @@ bool ChatInput::route_command()
 {   // return false if the buffer doesn't start with command syntax; else return true (whether the command is valid/recognized or not)
     if (this->buffer_len <= 1) return false;
     if (this->buffer[0] != '/') return false;
-    if (!isalnum(this->buffer[1]) && !ispunct(this->buffer[1])) return false;
+    if (isspace(this->buffer[1])) return false;
 
     char cmd[CHAT_BUFFER_SIZE] = {'\0'};
     size_t cmdlen = 0;
@@ -315,13 +315,16 @@ bool ChatInput::route_command()
     char args[CHAT_BUFFER_SIZE] = {'\0'};
     IF_ASSERT(this->buffer_len < i) return true;
 
-    for (size_t cmd_id=0; cmd_id<n_commands; cmd_id++)
+    size_t cmd_id = 0;
+    for (; cmd_id<n_commands; cmd_id++)
         if (!strcmp(cmd, commands[cmd_id].name))
         {
             strcpy(args, &buffer[i]);
             commands[cmd_id].action(cmd, cmdlen, args, this->buffer_len-i);
             break;
         }
+    if (cmd_id == n_commands)
+        chat_client->send_system_messagef("/%s is not a recognized command", cmd);
 
     return true;
 }
