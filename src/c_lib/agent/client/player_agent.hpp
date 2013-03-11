@@ -73,6 +73,8 @@ class PlayerAgent
         AgentID agent_id;
         PlayerAgent_action action;
 
+        bool play_geiger;   // DEBUG toggle
+
     void handle_state_snapshot(int seq, float theta, float phi,
                                float x, float y, float z,
                                float vx, float vy, float vz);
@@ -115,6 +117,15 @@ class PlayerAgent
     #if !PRODUCTION
     void teleport_to(struct Vec3 p);
     #endif
+
+    void play_radiation_warning();
+
+    void toggle_play_geiger()
+    {   // TODO -- remove/quarantine from production
+        this->play_geiger = (!this->play_geiger);
+    }
+
+
 
     PlayerAgent();
     ~PlayerAgent();

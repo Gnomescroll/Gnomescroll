@@ -270,20 +270,63 @@ struct Vec3 PlayerAgent::camera_position()
     return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
 }
 
+void PlayerAgent::play_radiation_warning()
+{
+    const int change = ONE_SECOND * 4;
+    static int ic = 0;
+    ic++;
+
+    static int rate = 1;
+    static int step = 1;
+    if ((ic % change) == 0)
+    {
+        if (rate == 1)
+            step = 1;
+        else if (rate == 10)
+            step = -1;
+        rate += step;
+        printf("Geiger sound rate: %d\n", rate);
+    }
+
+    static int i=0;
+    static int skip = 0;
+    i++;
+    skip = GS_MAX(0, skip-1);
+    if (!skip)
+    {
+        if ((i + randrange(-1,1)) % rate == 0)
+        {
+            int snd_id = Sound::play_2d_sound("geiger");
+            if (snd_id >= 0)
+            {
+                float pmult = float(randrange(-7,7)) / 1000.0f;
+                float gmult = float(randrange(-2,2)) / 1000.0f;
+                Sound::set_pitch_multiplier(snd_id, pmult + 1.0f);
+                Sound::set_gain_multiplier(snd_id, gmult + 1.0f);
+            }
+            skip = randrange(1, 2);
+        }
+    }
+}
+
 void PlayerAgent::update_sound()
 {
-    Vec3 p = agent_camera->forward_vector();
-    Sound::update_listener(
-        this->camera_state.x, this->camera_state.y, this->camera_state.z,
-        this->camera_state.vx, this->camera_state.vy, this->camera_state.vz,
-        p.x, p.y, p.z, 0.0f, 0.0f, 1.0f);
+    Sound::update_listener(this->camera_state.get_position(),
+                           this->camera_state.get_velocity(),
+                           agent_camera->forward_vector(),
+                           vec3_init(0, 0, 1));
+
+    // TODO -- move
+    if (this->play_geiger)
+        this->play_radiation_warning();
 }
 
 PlayerAgent::PlayerAgent() :
     crouching(false), camera_mode(CAMERA_STATE_CLIENT_SIDE_PREDICTION_INTERPOLATED),
     cs_seq_local(255), cs_seq_net(-1),
     state_history_seq(0), state_history_index(0),
-    agent_id(NULL_AGENT),  action(this)
+    agent_id(NULL_AGENT),  action(this),
+    play_geiger(false)
 {
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
     for (int i=0; i<128; cs_local[i++].seq = -1);
@@ -292,8 +335,7 @@ PlayerAgent::PlayerAgent() :
 
 PlayerAgent::~PlayerAgent()
 {
-    if (this->state_history != NULL)
-        delete[] this->state_history;
+    delete[] this->state_history;
 }
 
 void PlayerAgent::toggle_camera_mode()

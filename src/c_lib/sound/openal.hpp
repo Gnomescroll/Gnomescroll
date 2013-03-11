@@ -27,7 +27,8 @@ int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
 
 void stop_sound(int sound_id);
 
-void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz);
+void update_listener(const struct Vec3& p, const struct Vec3& v,
+                     const struct Vec3& f, const struct Vec3& u);
 void update();
 
 int test();

@@ -23,7 +23,7 @@ void init()
     #if DC_CLIENT
     OpenALSound::init();
     #endif
-    
+
     parse_sound_triggers(MEDIA_PATH "sound/sounds.csv");
     validate_sound_config();
 }
@@ -54,11 +54,12 @@ void set_volume(float vol)
 
 /* Listener (player) */
 
-void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
+void update_listener(const struct Vec3& p, const struct Vec3& v,
+                     const struct Vec3& f, const struct Vec3& u)
 {
     if (!Options::sound) return;
-    listener_position = vec3_init(x,y,z);
-    return OpenALSound::update_listener(x,y,z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
+    listener_position = p;
+    return OpenALSound::update_listener(p, v, f, u);
 }
 
 // Public

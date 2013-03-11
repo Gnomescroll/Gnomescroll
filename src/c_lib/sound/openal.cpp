@@ -175,19 +175,20 @@ void set_volume(float vol)
     checkError();
 }
 
-void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
+void update_listener(const struct Vec3& p, const struct Vec3& v,
+                     const struct Vec3& f, const struct Vec3& u)
 {
     // flip y and z to map to openal's coordinate space
     if (!enabled) return;
-    alListener3f(AL_POSITION, x,z,y);
-    alListener3f(AL_VELOCITY, vx,vz,vy);
+    alListener3f(AL_POSITION, p.x, p.z, p.y);
+    alListener3f(AL_VELOCITY, v.x, v.z, v.y);
     float o[6];
-    o[0] = fx;
-    o[1] = fz;
-    o[2] = fy;
-    o[3] = ux;
-    o[4] = uz;
-    o[5] = uy;
+    o[0] = f.x;
+    o[1] = f.z;
+    o[2] = f.y;
+    o[3] = u.x;
+    o[4] = u.z;
+    o[5] = u.y;
     for (int i=0; i<3; i++)
         o[i] *= -1; // reverse forward vector
     alListenerfv(AL_ORIENTATION, o);
@@ -292,8 +293,8 @@ void init()
     //alDistanceModel(AL_INVERSE_DISTANCE); // defaults to AL_INVERSE_DISTANCE_CLAMPED
 
     // init listener state
-    set_volume(((float)Options::sfx) / 100.0f);
-    update_listener(0,0,0, 0,0,0, 0,-1,0, 0,0,1);
+    set_volume(float(Options::sfx) / 100.0f);
+    update_listener(vec3_init(0), vec3_init(0), vec3_init(0,-1,0), vec3_init(0,0,1));
     if (checkError())
     {
         close();
@@ -474,12 +475,14 @@ GS_SoundBuffer* get_sound_buffer_from_soundfile_id(int soundfile_id)
 void set_pitch_multiplier(int sound_id, float pitch)
 {
     IF_ASSERT(sound_id < 0 || sound_id >= MAX_SOURCES) return;
+    IF_ASSERT(pitch < 0.0f) pitch = 0.0f;
     active_sources[sound_id].pitch_multiplier = pitch;
 }
 
 void set_gain_multiplier(int sound_id, float gain)
 {
     IF_ASSERT(sound_id < 0 || sound_id >= MAX_SOURCES) return;
+    IF_ASSERT(gain < 0.0f) gain = 0.0f;
     active_sources[sound_id].gain_multiplier = gain;
 }
 

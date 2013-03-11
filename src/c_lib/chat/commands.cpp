@@ -189,6 +189,11 @@ void cmd_item(const char* cmd, size_t cmdlen, char* args, size_t arglen)
     #endif
 }
 
+void cmd_geiger(const char* cmd, size_t cmdlen, char* args, size_t arglen)
+{
+    ClientState::player_agent.toggle_play_geiger();
+}
+
 /****************************
  ******* REGISTRATION *******
  ****************************/
@@ -238,6 +243,10 @@ void register_chat_commands()
     //add_command("url", cmd_url);
     add_command("home", cmd_home);
     add_command("item", cmd_item);
+
+    #if !PRODUCTION
+    add_command("geiger", cmd_geiger);
+    #endif
 
     verify_command_conf();
 }
