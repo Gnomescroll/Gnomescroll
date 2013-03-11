@@ -80,7 +80,7 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
             fclose(fp);
             return NULL;
         }
-        if (bufsize > (unsigned long)(size_t)-1)
+        if ( ((unsigned long) bufsize) > ((size_t)-1) ) 
         {
             printf("%s:%d - file size is larger than size_t max! %s\n", __FUNCTION__, __LINE__, filename);
             fclose(fp);
