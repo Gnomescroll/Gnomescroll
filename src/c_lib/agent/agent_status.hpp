@@ -100,6 +100,7 @@ class AgentStatus
     void broadcast_badges();
 
     void tick_hunger();
+    void tick_rad();
     #endif
 
     explicit AgentStatus(class Agent* a);

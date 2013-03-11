@@ -70,6 +70,7 @@ void AgentList::tick_hunger()
         if (this->objects[i].id == this->null_id) continue;
         Agent* agent = &this->objects[i];
         agent->status.tick_hunger();
+        agent->status.tick_rad();
     }
 }
 #endif

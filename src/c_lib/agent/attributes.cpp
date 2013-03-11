@@ -49,6 +49,9 @@ static void _register_attributes()
 
     attribute_def("hunger", 0);
     set_limits(0, "max_hunger");
+
+    attribute_def("rad_exposure", 0);
+    set_limits(0, 800); //400 is max bar
 }
 
 /*******************

@@ -80,7 +80,12 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
             fclose(fp);
             return NULL;
         }
-
+        if ( ((unsigned long) bufsize) > ((size_t)-1) ) 
+        {
+            printf("%s:%d - file size is larger than size_t max! %s\n", __FUNCTION__, __LINE__, filename);
+            fclose(fp);
+            return NULL;
+        }
         /* Allocate our buffer to that size. */
         source = (char*) calloc(bufsize+2, sizeof(char));
         /* Go back to the start of the file. */

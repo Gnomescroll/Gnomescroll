@@ -375,6 +375,11 @@ int AgentStatus::hurt(unsigned int amt)
     return get_attribute_int(this->a->id, "health");
 }
 
+void AgentStatus::tick_rad()
+{
+
+}
+
 void AgentStatus::tick_hunger()
 {
     if (this->dead || this->should_die) return;
