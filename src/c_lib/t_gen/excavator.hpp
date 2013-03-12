@@ -54,11 +54,11 @@ Vec3 dig_worm(Vec3 pos /* posart */, float theta, float phi, float cave_size, Cu
         float ym = abs(dy) + size;
         float zm = abs(dz) + size;
 
-        int xmin = pos.x - xm;   
+        int xmin = pos.x - xm;
         int xmax = pos.x + xm;
-        int ymin = pos.y - ym;   
+        int ymin = pos.y - ym;
         int ymax = pos.y + ym;
-        int zmin = pos.z - zm;   
+        int zmin = pos.z - zm;
         int zmax = pos.z + zm;
 
 
@@ -119,12 +119,12 @@ void excavate() {
 
     init_genrand(rand());
 
-    for (int i=0; i<MAX_WORMS; i++) 
+    for (int i=0; i<MAX_WORMS; i++)
     {
         Vec3 st;  // start point
         int tries = 0;
 
-        do 
+        do
         {
             st.x = float(genrand_real1()) * float(t_map::map_dim.x);
             st.y = float(genrand_real1()) * float(t_map::map_dim.y);
@@ -133,8 +133,8 @@ void excavate() {
 
         if (tries >= try_limit) return;
 
-        const float MIN_ASCENT = PI / 2;
-        const float MAX_ASCENT = MIN_ASCENT - PI / 16;
+        //const float MIN_ASCENT = PI / 2;
+        //const float MAX_ASCENT = MIN_ASCENT - PI / 16;
         float phi   = PI; // 0 goes straight up
         float theta = float(genrand_real1() * 2*PI); // is any angle
 
@@ -142,7 +142,7 @@ void excavate() {
         {
             Vec3 the_last = dig_worm(st, theta, phi, cave_size, worm_brush);
             worms[curr_num_worms++] = the_last;
-            
+
             if (curr_num_worms < MAX_WORMS) worms[curr_num_worms++] = the_last;
             if (curr_num_worms < MAX_WORMS) worms[curr_num_worms++] = the_last;
         }

@@ -94,7 +94,7 @@ void init_world()
 
     if (corpusc_map)
     {
-        int height = 27;
+        //int height = 27;
         map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
         t_gen::set_region(0,0,1, map_dim.x, map_dim.y, map_dim.z - 2 /*height*/, t_map::get_cube_type("rock"));
         t_gen::excavate();
