@@ -63,31 +63,26 @@ void init_text_icons()
     if (HudText::text_list == NULL) return;
 
     you_star = HudText::text_list->create();
-    GS_ASSERT(you_star != NULL);
-    if (you_star == NULL) return;
+    IF_ASSERT(you_star == NULL) return;
     you_star->set_text(you_star_symbol);
 
     you_A = HudText::text_list->create();
-    GS_ASSERT(you_A != NULL);
-    if (you_A == NULL) return;
+    IF_ASSERT(you_A == NULL) return;
     you_A->set_text(you_A_symbol);
 
     base = HudText::text_list->create();
-    GS_ASSERT(base != NULL);
-    if (base == NULL) return;
+    IF_ASSERT(base == NULL) return;
     base->set_text(base_symbol);
 
     for (int i=0; i<(int)MAX_AGENTS; i++)
     {
         ally[i] = HudText::text_list->create();
-        GS_ASSERT(ally[i] != NULL);
-        if (ally[i] == NULL) return;
+        IF_ASSERT(ally[i] == NULL) return;
         ally[i]->set_text(ally_symbol);
     }
 
     camera = HudText::text_list->create();
-    GS_ASSERT(camera != NULL);
-    if (camera == NULL) return;
+    IF_ASSERT(camera == NULL) return;
     camera->set_text(camera_symbol);
 
     text_icons_inited = true;
@@ -194,13 +189,9 @@ void update_map_surface()
 
 void update_texture(GLuint texture, SDL_Surface* surface)
 {
-    GS_ASSERT(texture != 0);
-    if (texture == 0) return;
-    GS_ASSERT(surface != NULL);
-    if (surface == NULL) return;
-
-    GS_ASSERT(t_map::map_dim.x != 0 && t_map::map_dim.y != 0);
-    if (t_map::map_dim.x == 0 || t_map::map_dim.y == 0) return;
+    IF_ASSERT(texture == 0) return;
+    IF_ASSERT(surface == NULL) return;
+    IF_ASSERT(t_map::map_dim.x == 0 || t_map::map_dim.y == 0) return;
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -232,12 +223,12 @@ void update_terrain_map(int tex_id)
 
 void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
 {
-    float x_scale = ((float)width)/((float)t_map::map_dim.x);
-    float y_scale = ((float)height)/((float)t_map::map_dim.y);
+    float x_scale = float(width)/float(t_map::map_dim.x);
+    float y_scale = float(height)/float(t_map::map_dim.y);
     *sx = x * x_scale;
     *sy = y * y_scale;
     *sx += _xresf-screen_x_offset-width;
-    *sy += _yresf-height;
+    *sy += _yresf-height-screen_y_offset;
 }
 
 void draw_text_icons(float z)
@@ -296,8 +287,7 @@ void draw_text_icons(float z)
     if (player_agent.you() == NULL) return;
     world_to_map_screen_coordinates(
         player_agent.camera_state.x, player_agent.camera_state.y,
-        &x, &y
-    );
+        &x, &y);
     you_star->set_position(x,y);
     you_star->set_depth(z);
     you_star->draw_character_rotated_centered(player_agent.camera_state.theta - 0.5f);
@@ -327,12 +317,9 @@ void draw_text()
 
 void draw()
 {   //  double buffered texture swap indices
-
     static int draw_map_texture_index = 0;
     static int update_map_texture_index = 1;
-
     static unsigned int update_counter = 0;
-
     const int tick_update_rate = 3;
     if (update_counter % tick_update_rate == 0)
     {
@@ -345,8 +332,7 @@ void draw()
 
     update_counter++;
 
-    GS_ASSERT(map_textures[draw_map_texture_index] != 0);
-    if (map_textures[draw_map_texture_index] == 0) return;
+    IF_ASSERT(map_textures[draw_map_texture_index] == 0) return;
 
     static const float z = -0.03f;
 
