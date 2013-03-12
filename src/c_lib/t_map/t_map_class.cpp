@@ -45,7 +45,7 @@ Terrain_map::Terrain_map(int _xdim, int _ydim)
 
     #if DC_CLIENT
     this->height_changed = false;
-    for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; i++) column_heights[i] = 0;
+    for (int i=0; i<map_dim.x*map_dim.y; i++) column_heights[i] = 0;
     for (int i=0; i<MAP_CHUNK_YDIM*MAP_CHUNK_XDIM; i++) chunk_heights_status[i] = CHUNK_HEIGHT_UNSET;
     #endif
 }
@@ -312,7 +312,7 @@ void Terrain_map::chunk_received(int cx, int cy)
             h += 1;
 
             if (h > highest) highest = h;
-            this->column_heights[x + y*MAP_WIDTH] = h;
+            this->column_heights[x + y*map_dim.x] = h;
         }
 
     this->chunk_heights_status[cx + cy*MAP_CHUNK_XDIM] = CHUNK_HEIGHT_CHANGED;
@@ -375,7 +375,7 @@ inline unsigned char Terrain_map::get_cached_height(int x, int y)
 {
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    return this->column_heights[x + y*MAP_WIDTH];
+    return this->column_heights[x + y*map_dim.x];
 }
 
 /*
@@ -385,7 +385,7 @@ void Terrain_map::update_heights(int x, int y, int z, CubeType cube_type)
 {
     z += 1; // heights are not 0 indexed;
     int new_h = -1;
-    int h = this->column_heights[x + y*MAP_WIDTH];
+    int h = this->column_heights[x + y*map_dim.x];
     if (cube_type != EMPTY_CUBE)
     {   // setting higher block
         if (z > h)
@@ -399,7 +399,7 @@ void Terrain_map::update_heights(int x, int y, int z, CubeType cube_type)
 
     if (new_h == -1) return; // no change in height
 
-    this->column_heights[x + y*MAP_WIDTH] = new_h;
+    this->column_heights[x + y*map_dim.x] = new_h;
 
     int cx = x / TERRAIN_CHUNK_WIDTH;   // truncate
     int cy = y / TERRAIN_CHUNK_WIDTH;

@@ -42,7 +42,7 @@ class HudRadiationMeter
 
         surface = create_surface_from_file(MEDIA_PATH "sprites/icons/radiation_hud.png");
         border_surface = create_surface_from_file(MEDIA_PATH "sprites/icons/radiation_border.png");
-        gradient_surface = create_surface_from_file(MEDIA_PATH "sprites/gradient/heightmap_gradient_01.png");
+        gradient_surface = create_surface_from_file(MEDIA_PATH "sprites/gradient/radiation.png");
         IF_ASSERT(surface == NULL ||
                   border_surface == NULL ||
                   gradient_surface == NULL) return;
@@ -69,8 +69,8 @@ class HudRadiationMeter
         glDisable(GL_TEXTURE_1D);
         glGenTextures(1, &gradient_tex);
         glBindTexture(GL_TEXTURE_1D, gradient_tex);
-        glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA, gradient_surface->w, 0, tex_format, GL_UNSIGNED_BYTE, gradient_surface->pixels);
 
         glDisable(GL_TEXTURE_1D);
@@ -119,8 +119,12 @@ class HudRadiationMeter
     void draw(float x, float y)
     {
         IF_ASSERT(gradient_surface == NULL || gradient_surface->w == 0) return;
-        static int c = 0;
-        int i = (c++) % gradient_surface->w;
+
+        AgentID agent_id = ClientState::player_agent.agent_id;
+        if (!isValid(agent_id)) return;
+        int rad_level = Agents::get_attribute_int(agent_id, "rad_level");
+        int i = GS_MIN(gradient_surface->w-1, GS_MAX(rad_level, 0));
+
         int r = ((unsigned char*)gradient_surface->pixels)[4*i + 0];
         int g = ((unsigned char*)gradient_surface->pixels)[4*i + 1];
         int b = ((unsigned char*)gradient_surface->pixels)[4*i + 2];

@@ -164,7 +164,7 @@ void make_tree(int x, int y, int z)
     {   // height of current trunk segment
         int height = randrange(6, 11);
         if (seg == 0) height = randrange(12, 21); // ensure trunk goes up aways
-        if (height+z+2 >= t_map::map_dim.z) break;
+        if (height+z+2 >= map_dim.z) break;
 
         // make segment
         for (int j = 0; j < height; j++)
@@ -217,7 +217,6 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num)
 
 void add_trees()
 {
-    using t_map::map_dim;
     printf("\ttrees\n");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
@@ -243,7 +242,6 @@ void add_trees()
 
 void add_shrooms()
 {
-    using t_map::map_dim;
     printf("\tshrooms\n");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
@@ -251,10 +249,10 @@ void add_shrooms()
     float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
-    for (int x=0; x < t_map::map_dim.x; x++)
-    for (int y=0; y < t_map::map_dim.y; y++)
+    for (int x=0; x < map_dim.x; x++)
+    for (int y=0; y < map_dim.y; y++)
     {
-        if (noise[x + y * t_map::map_dim.x] > shroom_zone_threshold &&
+        if (noise[x + y * map_dim.x] > shroom_zone_threshold &&
             genrand_real1() > shroom_threshold)
         {
             int z = t_map::get_highest_solid_block(x,y);
@@ -271,7 +269,7 @@ void add_shrooms()
 
 bool carve_ray(float x, float y, float z, int tiny_angle, int distance)
 {
-    IF_ASSERT(z < 0 || z >= t_map::map_dim.z) return false;
+    IF_ASSERT(z < 0 || z >= map_dim.z) return false;
     IF_ASSERT(tiny_angle < 0 || tiny_angle >= NUM_LOOKUP_ANGLES) return false;
 
     int cubes_changed = 0;
@@ -293,13 +291,13 @@ bool carve_ray(float x, float y, float z, int tiny_angle, int distance)
 
 void carve_angled_gorge_slice(float x, float y, float z, int quant_angle) // quantized angle
 {
-    IF_ASSERT(z < 0 || z >= t_map::map_dim.z) return;
+    IF_ASSERT(z < 0 || z >= map_dim.z) return;
 
     int countdown_til_widening = 1;
     int max_ups_per_width = 1; // iterations upwards
     int ray_length = 0;
 
-    for (int k = z; k < t_map::map_dim.z; k++)
+    for (int k = z; k < map_dim.z; k++)
     {
         int qa1 = (quant_angle + 8 ) % NUM_LOOKUP_ANGLES;
         int qa2 = (quant_angle + 24) % NUM_LOOKUP_ANGLES;
@@ -320,7 +318,6 @@ void carve_angled_gorge_slice(float x, float y, float z, int quant_angle) // qua
 
 void add_gorge(int length, int* peaks, float* noise)
 {
-    using t_map::map_dim;
     int ox = randrange(0, map_dim.x - 1);
     int oy = randrange(0, map_dim.y - 1);
     int x = ox;
@@ -417,9 +414,7 @@ void add_gorge(int length, int* peaks, float* noise)
 
 void add_gorges(int num_gorges, int length)
 {
-    using t_map::map_dim;
     printf("\tgorges\n");
-
     float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
@@ -442,7 +437,6 @@ void add_gorges(int num_gorges, int length)
 
 void add_terrain_features()
 {
-    using t_map::map_dim;
     printf("Adding terrain features\n");
 
     GS_ASSERT(sin_lookup_table == NULL);

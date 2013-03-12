@@ -22,7 +22,7 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
     if (unlikely(ox == 0.0f && oy == 0.0f && oz == 0.0f))
     {
         for (int i=0; i<3; i++) pos[i] = 0;
-        float d = t_map::map_dim.x * 4;
+        float d = map_dim.x * 4;
         *_rad2 = d*d;
         return d;
     }
@@ -242,7 +242,7 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
         {
             z += z_inc;
             if (z < 0 && z_inc <= 0) break;
-            if (z >= t_map::map_dim.z && z_inc >= 0) break;
+            if (z >= map_dim.z && z_inc >= 0) break;
             side[2] = -z_inc;
             t = t_next_z;
             t_next_z += dt_dz;

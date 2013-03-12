@@ -1333,7 +1333,7 @@ class PerlinClouds
         float size_mult = 12.0+32.0;
         float size_add  = -0.5;
 
-        float _z = t_map::map_dim.z + 5.0f;
+        float _z = map_dim.z + 5.0f;
 
 
         const float ca[2*4] =

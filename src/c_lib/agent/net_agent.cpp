@@ -523,7 +523,7 @@ inline void hit_block_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
 
-    if (z <= 0 || z >= t_map::map_dim.z) return;
+    if (z <= 0 || z >= map_dim.z) return;
 
     x = translate_point(x);
     y = translate_point(y);
@@ -622,12 +622,12 @@ inline void hitscan_block_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
 
-    if (z <= 0 || z >= t_map::map_dim.z) return;
+    if (z <= 0 || z >= map_dim.z) return;
 
     // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
     // send to clients
 
-    const float max_len = t_map::map_dim.x * 0.95f;
+    const float max_len = map_dim.x * 0.95f;
     class RaytraceData data;
 
     Vec3 f = a->forward_vector();
@@ -810,11 +810,11 @@ inline void agent_set_block_CtoS::handle()
 inline void admin_set_block_CtoS::handle()
 {
     // comparisons not needed due to value range of data type
-    //if (z < 0 || z >= t_map::map_dim.z) return;
+    //if (z < 0 || z >= map_dim.z) return;
 
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
-    if (z <= 0 || z >= t_map::map_dim.z) return;
+    if (z <= 0 || z >= map_dim.z) return;
 
     CubeType cube_type = (CubeType)this->val;
 
@@ -888,7 +888,7 @@ inline void place_spawner_CtoS::handle()
     EntityType type = OBJECT_AGENT_SPAWNER;
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
-    if (z <= 0 || z >= t_map::map_dim.z) return;
+    if (z <= 0 || z >= map_dim.z) return;
     Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
     Entities::ready(obj);
@@ -899,7 +899,7 @@ inline void place_turret_CtoS::handle()
     EntityType type = OBJECT_TURRET;
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
-    if (z <= 0 || z >= t_map::map_dim.z) return;
+    if (z <= 0 || z >= map_dim.z) return;
     Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
     if (obj == NULL) return;
     Entities::ready(obj);

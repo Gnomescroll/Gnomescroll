@@ -304,7 +304,7 @@ struct Passable3DAir
     {
         struct Vec3i cur = node.pos;
         struct Vec3i dst = add_pos_adj(cur, iadj);
-        if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
+        if (dst.z <= 0 || dst.z > map_dim.z) return false;
         if (t_map::isSolid(dst))
             return false;
         exit.pos = dst;
@@ -336,7 +336,7 @@ struct Passable3DSurface
     {
         struct Vec3i cur = node.pos;
         struct Vec3i dst = add_pos_adj(cur, iadj);
-        if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
+        if (dst.z <= 0 || dst.z > map_dim.z) return false;
         if (t_map::isSolid(dst))
             return false;
         exit.pos = dst;
@@ -416,7 +416,7 @@ struct Passable3DJump
         const int max_up = 3;
         struct Vec3i cur = node.pos;
         struct Vec3i dst = add_pos_adj(cur, iadj);
-        if (dst.z <= 0 || dst.z > t_map::map_dim.z) return false;
+        if (dst.z <= 0 || dst.z > map_dim.z) return false;
 
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
         {   // attempt a jump
@@ -436,7 +436,7 @@ struct Passable3DJump
                 return Passable3DJump::can_fall_to(cur, down, clearance, max_down);
             }
 
-            if (up.z > t_map::map_dim.z) return false;
+            if (up.z > map_dim.z) return false;
             exit.pos = up;
             cost = adj[iadj].cost * (up.z - cur.z + 1);// + jump_cost * (up.z - cur.z);
             return Passable3DJump::can_jump_to(cur, up, clearance, max_up);

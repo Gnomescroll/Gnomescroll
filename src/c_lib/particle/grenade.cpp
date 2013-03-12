@@ -160,7 +160,7 @@ void Grenade::damage_blocks(int multiplier)
     for (int j=my-ir; j<my+ir; j++)
     for (int k=mz-ir; k<mz+ir; k++)
     {
-        if (k <= 0 || k >= t_map::map_dim.z) continue;
+        if (k <= 0 || k >= map_dim.z) continue;
 
         int x = translate_point(i);
         int y = translate_point(j);

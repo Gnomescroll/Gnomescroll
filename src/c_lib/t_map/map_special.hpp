@@ -308,7 +308,7 @@ class ControlNodeRenderer
     void draw()
     {
 
-        //printf("draw: %i \n", vertex_list.vi);
+        //printf("draw: %d \n", vertex_list.vi);
 
         if (vertex_list.vi == 0) return;
         if (!shader.shader->shader_valid) return;
@@ -832,16 +832,16 @@ class RadiationBlockList
         int cy = pos.y >> 4;
         int cz = pos.z >> 4;
 
-        int distance = t_map::map_dim.x * 8;
+        int distance = map_dim.x * 8;
         for (int i=-1; i<=1; i++)
         for (int j=-1; j<=1; j++)
         for (int k=-1; k<=1; k++)
         {
-            int _cx = (cx + i + BIN_WIDTH) % BIN_WIDTH;
-            int _cy = (cy + j + BIN_WIDTH) % BIN_WIDTH;
             int _cz = cz + k;
             if (_cz < 0 || _cz >= BIN_DEPTH)
                 continue;
+            int _cx = (cx + i + BIN_WIDTH) % BIN_WIDTH;
+            int _cy = (cy + j + BIN_WIDTH) % BIN_WIDTH;
 
             int index = this->_get_bin(_cx, _cy, _cz);
             IF_ASSERT(index < 0 || index >= blam) continue;
@@ -850,9 +850,8 @@ class RadiationBlockList
             for (int c=0; c<bl->rbln; c++)
             {
                 const struct Vec3i& p = bl->rbla[c].pos;
-                int d = manhattan_distance(pos, p);
-                if (d < distance)
-                    distance = d;
+                int d = manhattan_distance(quadrant_translate_position(pos, p), pos);
+                distance = GS_MIN(d, distance);
             }
         }
 

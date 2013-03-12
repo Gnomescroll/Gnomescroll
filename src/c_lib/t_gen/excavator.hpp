@@ -67,7 +67,7 @@ Vec3 dig_worm(Vec3 pos /* posart */, float theta, float phi, float cave_size, Cu
         for (int i=xmin; i<=xmax; i++)
         for (int j=ymin; j<=ymax; j++)
         for (int k=zmin; k<=zmax; k++) {
-            if (k < 0 || k >= t_map::map_dim.z)  {
+            if (k < 0 || k >= map_dim.z)  {
                 out_of_bounds = true;
                 continue;
             }
@@ -76,8 +76,8 @@ Vec3 dig_worm(Vec3 pos /* posart */, float theta, float phi, float cave_size, Cu
             float y = ((float)j) + 0.5f;
             float z = ((float)k) + 0.5f;
 
-            int ii = i % t_map::map_dim.x;
-            int jj = j % t_map::map_dim.y;
+            int ii = i % map_dim.x;
+            int jj = j % map_dim.y;
 
             float d = cc_point_line_distance2(pos.x,pos.y,pos.z, dx,dy,dz, x,y,z);
             if (d < size*size) t_map::set(ii, jj, k, ct);
@@ -112,9 +112,9 @@ void excavate() {
     const int MAX_WORMS = 300;
     Vec3* worms = new Vec3[MAX_WORMS];
     IF_ASSERT(worms == NULL) return;
-    worms[0].x = randrange(0, t_map::map_dim.x - 1);
-    worms[0].y = randrange(0, t_map::map_dim.y - 1);
-    worms[0].z = randrange(26, t_map::map_dim.z - 1);  // 6 considers bedrock
+    worms[0].x = randrange(0, map_dim.x - 1);
+    worms[0].y = randrange(0, map_dim.y - 1);
+    worms[0].z = randrange(26, map_dim.z - 1);  // 6 considers bedrock
     int curr_num_worms = 1;
 
     init_genrand(rand());
@@ -126,9 +126,9 @@ void excavate() {
 
         do
         {
-            st.x = float(genrand_real1()) * float(t_map::map_dim.x);
-            st.y = float(genrand_real1()) * float(t_map::map_dim.y);
-            st.z = float(genrand_real1()) * float(t_map::map_dim.z);
+            st.x = float(genrand_real1()) * float(map_dim.x);
+            st.y = float(genrand_real1()) * float(map_dim.y);
+            st.z = float(genrand_real1()) * float(map_dim.z);
         } while (t_map::get(st.x, st.y, st.z) == worm_brush && tries++ < try_limit);
 
         if (tries >= try_limit) return;

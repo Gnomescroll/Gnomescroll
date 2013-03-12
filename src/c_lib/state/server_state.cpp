@@ -42,8 +42,8 @@ struct Vec3 get_base_spawn_position()
     DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
     GS_ASSERT(dims != NULL);
     if (dims != NULL) h = dims->get_integer_height();
-    float x = randrange(0, t_map::map_dim.x-1);
-    float y = randrange(0, t_map::map_dim.y-1);
+    float x = randrange(0, map_dim.x-1);
+    float y = randrange(0, map_dim.y-1);
     float z = t_map::get_highest_open_block(x, y, h);
     struct Vec3 p = vec3_init(x+0.5f, y+0.5f, z);
     return p;
@@ -139,8 +139,8 @@ void damage_objects_within_sphere(struct Vec3 p, float radius,
 void spawn_items(int n)
 {
     ItemType type = (ItemType)randrange(1,8);
-    float x = randf() * t_map::map_dim.x;
-    float y = randf() * t_map::map_dim.y;
+    float x = randf() * map_dim.x;
+    float y = randf() * map_dim.y;
     float z = 128.0f;
     ItemParticle::create_item_particle(type, x,y,z, 0,0,-3);
 }
@@ -161,9 +161,9 @@ void spawn_monsters(EntityType type, int n)
         if (dims != NULL) h = dims->get_integer_height();
 
         Vec3 position;
-        position.x = randrange(0, t_map::map_dim.x-1);
-        position.y = randrange(0, t_map::map_dim.y-1);
-        int z = randrange(0, t_map::map_dim.z-1);
+        position.x = randrange(0, map_dim.x-1);
+        position.y = randrange(0, map_dim.y-1);
+        int z = randrange(0, map_dim.z-1);
         position.z = t_map::get_nearest_surface_block(position.x,
             position.y, z, h);
 

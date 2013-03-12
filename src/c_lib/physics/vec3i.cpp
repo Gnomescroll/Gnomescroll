@@ -55,3 +55,9 @@ inline struct Vec3i vec3i_add(struct Vec3i pos, const struct Vec3i& off)
     pos.z = pos.z + off.z;
     return translate_position(pos);
 }
+
+inline struct Vec3i vec3i_init(const struct Vec3& pos)
+{
+    struct Vec3i p = {{{ int(pos.x), int(pos.y), int(pos.z) }}};
+    return p;
+}

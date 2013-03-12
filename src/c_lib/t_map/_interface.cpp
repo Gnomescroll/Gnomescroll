@@ -13,8 +13,6 @@
 namespace t_map
 {
 
-struct Vec3i map_dim = vec3i_init(XMAX, YMAX, ZMAX);
-
 void init_packets()
 {
     t_map::map_chunk_compressed_StoC::register_client_packet();
@@ -242,7 +240,7 @@ void send_client_map_special(ClientID client_id)
 
 void add_control_node(int x, int y, int z)
 {
-    //printf("Server adding control node at: %i %i %i \n", x,y,z);
+    //printf("Server adding control node at: %d %d %d \n", x,y,z);
     main_map->control_node_list.server_add_control_node(x,y,z);
 }
 

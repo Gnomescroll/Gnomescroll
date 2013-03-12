@@ -67,7 +67,7 @@ class Terrain_map
     #if DC_CLIENT
         bool height_changed;
         char chunk_heights_status[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];   // status of column height (set, unchanged, changed)
-        unsigned char column_heights[MAP_WIDTH * MAP_HEIGHT];               // 1x1 columns
+        unsigned char column_heights[XMAX * YMAX];               // 1x1 columns
 
     void reset_heights_read();
     void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler

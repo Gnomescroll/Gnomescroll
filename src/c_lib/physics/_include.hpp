@@ -8,7 +8,7 @@
 #include <physics/matrix.hpp>
 #include <physics/motion.cpp>
 #include <physics/pathfinding.cpp>
-#include <physics/quadrant.hpp>
+#include <physics/quadrant.cpp>
 #include <physics/vec3i.cpp>
 #include <physics/vec3.cpp>
 #include <physics/vec4.hpp>

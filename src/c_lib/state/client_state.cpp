@@ -145,7 +145,7 @@ void set_location_pointer_open_block()
 {
     location_pointer_set = false;
     struct Vec3i pos;
-    float max_len = float(t_map::map_dim.x) / 2.0f;
+    float max_len = float(map_dim.x) / 2.0f;
     location_pointer_set = player_agent.nearest_open_block(max_len, pos);
     if (!location_pointer_set) return;
     printf("Locator (open block): ");

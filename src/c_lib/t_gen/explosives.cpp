@@ -66,9 +66,9 @@ void create_explosion(const int x, const int y, const int z)
 {   // WARNING: make sure this function is called after destroying the explosive block
     // check upper bounds
     // we should not be calling this function out of bounds, so assert
-    IF_ASSERT(x < 0 || x >= t_map::map_dim.x) return; //stop IF_ASSERTthe location of the explosive is not valid
-    IF_ASSERT(y < 0 || y >= t_map::map_dim.y) return;
-    IF_ASSERT(z <= 0 || z >= t_map::map_dim.z) return;    // also check the floor
+    IF_ASSERT(x < 0 || x >= map_dim.x) return; //stop IF_ASSERTthe location of the explosive is not valid
+    IF_ASSERT(y < 0 || y >= map_dim.y) return;
+    IF_ASSERT(z <= 0 || z >= map_dim.z) return;    // also check the floor
 
     // constant for helping walk the axes
     static const int dir[2] = { -1, 1 };

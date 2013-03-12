@@ -23,8 +23,8 @@ void meteor_fall()
     const int METEOR_SIZE = 3; //one side of the meteor, which is a cube - will make it have a random shape later
     const int displacement = 40; //the amount of additional blocks of the ore to place around the crater
 
-    int x = randrange(65, t_map::map_dim.x - METEOR_SIZE - 65);
-    int y = randrange(65, t_map::map_dim.y - METEOR_SIZE - 65);
+    int x = randrange(65, map_dim.x - METEOR_SIZE - 65);
+    int y = randrange(65, map_dim.y - METEOR_SIZE - 65);
     x = translate_point(x);
     y = translate_point(y);
 
@@ -221,9 +221,9 @@ void meteor_shower()
 
     for (int count = 1; count <= AMOUNT; count++)
     {
-        x = randrange(1, t_map::map_dim.x - 1);
-        y = randrange(1, t_map::map_dim.y - 1);
-        z = t_map::map_dim.z - 1;
+        x = randrange(1, map_dim.x - 1);
+        y = randrange(1, map_dim.y - 1);
+        z = map_dim.z - 1;
         #if !PRODUCTION
         //printf("Creating meteor from meteor shower at %d, %d \n", x, y);
         #endif
@@ -246,7 +246,7 @@ void meteor_shower()
                 }
                 else if (killed_blocks > 3)
                 {
-                    if (z < t_map::map_dim.z - 1)
+                    if (z < map_dim.z - 1)
                     {
                         t_map::set(x, y, z + 1, material);
                     }
@@ -262,7 +262,7 @@ void degenerate_column(int x, int y, int z)
 {
     x = translate_point(x);
     y = translate_point(y);
-    for (int k = z; k < t_map::map_dim.z; k++)
+    for (int k = z; k < map_dim.z; k++)
     {
         t_map::set(x, y, k, EMPTY_CUBE);
     }

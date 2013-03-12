@@ -10,9 +10,9 @@ void fill(const char* cube_name)
     CubeType cube = t_map::get_cube_type(cube_name);
     IF_ASSERT(!isValid(cube)) return;
 
-    for (int i=0; i<t_map::map_dim.x; i++)
-    for (int j=0; j<t_map::map_dim.y; j++)
-    for (int k=0; k<t_map::map_dim.z; k++)
+    for (int i=0; i<map_dim.x; i++)
+    for (int j=0; j<map_dim.y; j++)
+    for (int k=0; k<map_dim.z; k++)
         t_map::set_fast(i,j,k, cube);
 }
 
@@ -38,7 +38,7 @@ void rough_floor(int x, int y, int z_start, int height, CubeType tile)
 {
     GS_ASSERT(height > 0);
     if (height <= 0) return;
-    GS_ASSERT(z_start >= 0 && z_start + height < t_map::map_dim.z);
+    GS_ASSERT(z_start >= 0 && z_start + height < map_dim.z);
     for (int i=0; i<x; i++)
     for (int j=0; j<y; j++)
     {

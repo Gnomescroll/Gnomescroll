@@ -22,12 +22,11 @@ void default_map_gen()
     t_gen::add_terrain_features();  // gorges, trees, shrooms
     t_gen::place_native_plants();
 
-    map_gen::rough_floor(t_map::map_dim.x,t_map::map_dim.y,0,3, t_map::get_cube_type("bedrock"));
+    map_gen::rough_floor(map_dim.x,map_dim.y,0,3, t_map::get_cube_type("bedrock"));
 }
 
 void init_world()
 {
-    using t_map::map_dim;
     srand(Options::seed);
 
     bool new_map = false;

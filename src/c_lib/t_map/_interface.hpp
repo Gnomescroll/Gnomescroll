@@ -7,8 +7,6 @@
 namespace t_map
 {
 
-extern struct Vec3i map_dim;
-
 void init_t_map();
 void end_t_map();
 

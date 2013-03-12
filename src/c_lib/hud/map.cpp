@@ -175,9 +175,9 @@ void update_map_surface()
             for (int n=0; n<TERRAIN_CHUNK_WIDTH; n++)
             {
                 cy = j*TERRAIN_CHUNK_WIDTH + n;
-                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + MAP_WIDTH*cy]];
+                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + XMAX*cy]];
                 SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-                ((Uint32*)map_surface->pixels)[cx + MAP_WIDTH*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+                ((Uint32*)map_surface->pixels)[cx + XMAX*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
             }
         }
     }
@@ -191,11 +191,11 @@ void update_texture(GLuint texture, SDL_Surface* surface)
 {
     IF_ASSERT(texture == 0) return;
     IF_ASSERT(surface == NULL) return;
-    IF_ASSERT(t_map::map_dim.x == 0 || t_map::map_dim.y == 0) return;
+    IF_ASSERT(map_dim.x == 0 || map_dim.y == 0) return;
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_map::map_dim.x, t_map::map_dim.y, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, map_dim.x, map_dim.y, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
     glDisable(GL_TEXTURE_2D);
 
     CHECK_GL_ERROR();
@@ -209,7 +209,7 @@ void draw_2x2_pixel(SDL_Surface* surface, Uint32 pix, int x, int y)
         if (i==2) j = 1;
         if (i==3) k = 1;
         if (x+j >= 0 && x+j < width && y+k >= 0 && y+k < height)    // only draw in surface bounds (or could segfault)
-            ((Uint32*)surface->pixels)[x+j + t_map::map_dim.x*(y+k)] = pix;
+            ((Uint32*)surface->pixels)[x+j + map_dim.x*(y+k)] = pix;
     }
 }
 
@@ -223,8 +223,8 @@ void update_terrain_map(int tex_id)
 
 void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
 {
-    float x_scale = float(width)/float(t_map::map_dim.x);
-    float y_scale = float(height)/float(t_map::map_dim.y);
+    float x_scale = float(width)/float(map_dim.x);
+    float y_scale = float(height)/float(map_dim.y);
     *sx = x * x_scale;
     *sy = y * y_scale;
     *sx += _xresf-screen_x_offset-width;

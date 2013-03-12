@@ -758,9 +758,9 @@ void set_snake_data(int ox, int oy)  // origin x/y
         finish_room(root);
 
         // snake a linear path
-		const int NUM_SNAKE_SEGMENTS = 5;
+        const int NUM_SNAKE_SEGMENTS = 5;
         // for each pair desired, keep trying to make a valid hall-then-room (2 car) train of Rect3D spans
-        for (int i = 0; i < NUM_SNAKE_SEGMENTS; i++) 
+        for (int i = 0; i < NUM_SNAKE_SEGMENTS; i++)
         {
             if (!added_pair(i + 1))  // must start a new snake, cuz can't build off ROOT room
             {
@@ -978,8 +978,8 @@ void make_ruins(int x, int y)
         // generate all ruins
         for (int i = 0; i < 3; i++)
         {
-            make_ruins(randrange(0, t_map::map_dim.x - 1),
-                       randrange(0, t_map::map_dim.y - 1));
+            make_ruins(randrange(0, map_dim.x - 1),
+                       randrange(0, map_dim.y - 1));
             reset_to_dead_and_closed();
         }
     }

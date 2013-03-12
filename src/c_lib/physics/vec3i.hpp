@@ -1,5 +1,6 @@
 #pragma once
 
+#include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 
 struct Vec3i
@@ -49,10 +50,5 @@ inline struct Vec3i vec3i_init(const struct Vec3i& pos)
     return p;
 }
 
-inline struct Vec3i vec3i_init(const struct Vec3& pos)
-{
-    struct Vec3i p = {{{ int(pos.x), int(pos.y), int(pos.z) }}};
-    return p;
-}
-
+inline struct Vec3i vec3i_init(const struct Vec3& pos);
 inline struct Vec3i vec3i_add(struct Vec3i pos, const struct Vec3i& off);

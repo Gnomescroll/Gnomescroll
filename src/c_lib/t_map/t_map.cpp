@@ -106,7 +106,7 @@ class Terrain_map* get_map()
 void init_t_map()
 {
     GS_ASSERT(main_map == NULL);
-    main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
+    main_map = new Terrain_map(map_dim.x, map_dim.y);
 
     init_textures();
 
@@ -119,7 +119,7 @@ void init_t_map()
 
     #if DC_SERVER
     GS_ASSERT(map_history == NULL);
-    map_history = new Terrain_map_subscription(MAP_WIDTH, MAP_HEIGHT);
+    map_history = new Terrain_map_subscription(map_dim.x, map_dim.y);
     init_env_process();
     #endif
 }

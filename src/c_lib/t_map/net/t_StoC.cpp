@@ -64,14 +64,14 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
     if (status != MZ_OK)
     {
-        printf("inflate() failed with status %i!\n", status);
+        printf("inflate() failed with status %d!\n", status);
         return;
     }
 
 
     int size = DECOMPRESSION_BUFFER_SIZE - stream.avail_out;
 
-    //printf("compressed chunk: %i bytes decompressed to %i bytes \n", byte_num, size);
+    //printf("compressed chunk: %d bytes decompressed to %d bytes \n", byte_num, size);
 
     /*
         Handle
@@ -79,7 +79,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
-    //printf("received chunk: index = %i compressed \n", chunk_index);
+    //printf("received chunk: index = %d compressed \n", chunk_index);
 
 
     GS_ASSERT(main_map->chunk[chunk_index] == NULL);
@@ -103,15 +103,13 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
 void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 {
-    //printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM);
-    //printf("byte_size= %i \n", byte_size);
+    //printf("map_chunk: alias= %d for %d %d \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM);
+    //printf("byte_size= %d \n", byte_size);
 #if MAP_NET_DEBUG
-    printf("map chunk is %i bytes \n", byte_size);
+    printf("map chunk is %d bytes \n", byte_size);
 #endif
     GS_ASSERT(client_chunk_alias_list[chunk_alias] == -1);
     client_chunk_alias_list[chunk_alias] = chunk_index;
-
-
 
     int cx = chunk_index % MAP_CHUNK_XDIM;
     int cy = chunk_index / MAP_CHUNK_XDIM;
@@ -139,7 +137,7 @@ void clear_alias_StoC::handle()
 #if 0
     int _x = client_chunk_alias_list[chunk_alias]%32;
     int _y = client_chunk_alias_list[chunk_alias]/32;
-    printf("cleared chunk alias: %i %i \n", _x,_y);
+    printf("cleared chunk alias: %d %d \n", _x,_y);
 #endif
 
     GS_ASSERT(main_map->chunk[chunk_index] != NULL);
@@ -160,7 +158,7 @@ void clear_alias_StoC::handle()
 void set_map_alias_StoC::handle()
 {
     client_chunk_alias_list[chunk_alias] = chunk_index;
-    printf("Alias %i set to %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM);
+    printf("Alias %d set to %d %d \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM);
 }
 
 void map_element_update::handle()
@@ -229,7 +227,7 @@ void container_block_create_StoC::handle()
     if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    int chunk_index = (y/16)*(MAP_WIDTH/16) + (x/16);
+    int chunk_index = (y/16)*(map_dim.x/16) + (x/16);
     GS_ASSERT(main_map->chunk[chunk_index] != NULL);
     if (main_map->chunk[chunk_index] == NULL) return;
     main_map->chunk[chunk_index]->chunk_item_container.add(x,y,z, (ItemContainerType)container_type, (ItemContainerID)container_id);
@@ -251,7 +249,7 @@ void container_block_delete_StoC::handle()
 //    uint16_t x,y,z;
 void control_node_create_StoC::handle()
 {
-    printf("client adding control node at: %i %i %i \n", x,y,z);
+    printf("client adding control node at: %d %d %d \n", x,y,z);
     main_map->control_node_list.add_control_node(x,y,z);
     main_map->control_node_list.needs_update = true;
 };
@@ -259,7 +257,7 @@ void control_node_create_StoC::handle()
 //    uint16_t x,y,z;
 void control_node_delete_StoC::handle()
 {
-    printf("client removing control node at: %i %i %i \n", x,y,z);
+    printf("client removing control node at: %d %d %d \n", x,y,z);
     main_map->control_node_list.remove_control_node(x,y,z);
     main_map->control_node_list.needs_update = true;
 };
