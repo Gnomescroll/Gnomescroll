@@ -25,18 +25,15 @@ struct MechList
 
         bool needs_update; //for drawing
 
-    MechList()
+    MechList() :
+        mli(0), mlm(1024), mln(0), needs_update(true)
     {
-        this->mli = 0;
-        this->mlm = 8;
-        this->mln = 0;
         this->mla = (Mech*)malloc(this->mlm*sizeof(struct Mech));
         for (int i=0; i<mlm; i++)
         {
             mla[i].id = -1;
-            mla[i].mech_type = NULL_MECH_TYPE;
+            mla[i].type = NULL_MECH_TYPE;
         }
-        this->needs_update = true;
     }
 
     ~MechList()
@@ -62,7 +59,7 @@ struct MechList
             for (int i=mlm; i<2*mlm; i++)
             {
                 mla[i].id = -1;
-                mla[i].mech_type = NULL_MECH_TYPE;
+                mla[i].type = NULL_MECH_TYPE;
             }
             mlm *= 2;
         }
@@ -74,7 +71,7 @@ struct MechList
         mla[id].id = id;
         mln++;
 
-        //printf("create mech %i type %d at: %i %i %i \n", m.id, m.mech_type, m.x,m.y,m.z);
+        //printf("create mech %i type %d at: %i %i %i \n", m.id, m.type, m.x,m.y,m.z);
     }
     #endif
 
@@ -90,7 +87,7 @@ struct MechList
             for (int i=mlm; i<2*mlm; i++)
             {
                 mla[i].id = -1;
-                mla[i].mech_type = NULL_MECH_TYPE;
+                mla[i].type = NULL_MECH_TYPE;
             }
             mlm *= 2;
         }
@@ -102,8 +99,7 @@ struct MechList
             _mli = (i+mli)%mlm;
             if (mla[_mli].id == -1) break;
         }
-        GS_ASSERT(i != mlm);
-        if (i == mlm) return -1;
+        IF_ASSERT(i == mlm) return -1;
         mli = _mli;
 
         m.id = mli;   //set id
@@ -125,11 +121,11 @@ struct MechList
         return true;
     }
 
-    int count(MechType mech_type)
+    int count(MechType type)
     {
         int count = 0;
         for (int i=0; i<this->mlm; i++)
-            if (this->mla[i].mech_type == mech_type)
+            if (this->mla[i].type == type)
                 count++;
         return count;
     }

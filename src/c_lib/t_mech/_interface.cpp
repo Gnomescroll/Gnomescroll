@@ -70,15 +70,15 @@ void draw_transparent()
 static void pack_mech(struct Mech &m, class mech_create_StoC &p)
 {
     p.id = m.id;
-    p.mech_type = m.mech_type;
+    p.type = m.type;
     p.subtype = m.subtype;
     p.x = m.x;
     p.y = m.y;
     p.z = m.z;
 
-    GS_ASSERT(mech_attributes[m.mech_type].mech_type != -1);
+    GS_ASSERT(mech_attributes[m.type].type != -1);
 
-    switch (mech_attributes[m.mech_type].mech_type_class)
+    switch (mech_attributes[m.type].class_type)
     {
         case MECH_CRYSTAL:
             break;
@@ -101,9 +101,9 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
 //call after type or subtype changes
 static bool _mech_update(struct Mech &m)
 {
-    class MechAttribute* ma = get_mech_attribute(m.mech_type);
+    class MechAttribute* ma = get_mech_attribute(m.type);
 
-    switch (ma->mech_type_class)
+    switch (ma->class_type)
     {
         case MECH_CRYSTAL:
             //do something
@@ -140,10 +140,10 @@ static bool _mech_update(struct Mech &m)
 
 static bool unpack_mech(struct Mech &m, class mech_create_StoC &p)
 {
-    IF_ASSERT(!isValid((MechType)p.mech_type)) return false;
+    IF_ASSERT(!isValid((MechType)p.type)) return false;
 
     m.id = p.id;
-    m.mech_type = (MechType)p.mech_type;
+    m.type = (MechType)p.type;
     m.subtype = p.subtype;
     m.x = p.x;
     m.y = p.y;
@@ -166,37 +166,23 @@ void client_ray_cast()
 //called 6 times per second
 void tick()
 {
-
     const int mlm = mech_list->mlm;
     struct Mech* mla = mech_list->mla;
-
-    //int num =0;
 
     for (int i=0; i<mlm; i++)
     {
         if (mla[i].id == -1) continue;
 
-        MechType mech_type = mla[i].mech_type;
-        MechBehaviorType mech_behavior_type = mech_attributes[mech_type].mech_behavior_type;
+        MechType type = mla[i].type;
+        MechBehaviorType behavior_type = mech_attributes[type].behavior_type;
 
-/*
-    typedef enum
-    {
-        MECH_BEHAVIOR_TYPE_DEFAULT = 0,
-        MECH_BEHAVIOR_TYPE_PLANT,
-    } MechBehaviorType;
-*/
-        int light_value;
-
-        switch (mech_behavior_type)
+        int light_value = 0;
+        switch (behavior_type)
         {
-            case MECH_BEHAVIOR_TYPE_DEFAULT:
-                continue;
-                break;
             case MECH_BEHAVIOR_TYPE_PLANT:
                 if (rand() % 6 != 0)
                     continue;
-                GS_ASSERT(mla[i].growth_ttl >= 0);
+                GS_ASSERT(mla[i].growth_ttl > 0);
                 mla[i].growth_ttl--;
                 if (mla[i].growth_ttl == 0)
                     force_mech_growth(i);
@@ -209,15 +195,15 @@ void tick()
                 {
                     if (rand() % 6 != 0)
                         continue;
-                    GS_ASSERT(mla[i].growth_ttl >= 0);
+                    GS_ASSERT(mla[i].growth_ttl > 0);
                     mla[i].growth_ttl--;
                     if (mla[i].growth_ttl == 0)
                         force_mech_growth(i);
                 }
-
                 break;
 
-
+            case MECH_BEHAVIOR_TYPE_DEFAULT:
+                break;
             default:
                 GS_ASSERT(false);
                 break;
@@ -231,7 +217,6 @@ void floating_removal_tick() //removes floating t_mech
     const int mlm = mech_list->mlm;
     struct Mech* mla = mech_list->mla;
 
-    //int num =0;
     int collection_count = 0;
     for (int i=0; i<mlm; i++)
     {
@@ -256,43 +241,36 @@ void force_mech_growth(int mech_id)
     const int mlm = mech_list->mlm;
     struct Mech* mla = mech_list->mla;
 
-    MechType mech_type = mla[mech_id].mech_type;
-    //MechBehaviorType mech_behavior_type = mech_attributes[mech_type].mech_behavior_type;
+    MechType type = mla[mech_id].type;
+    //MechBehaviorType behavior_type = mech_attributes[type].behavior_type;
 
-    MechType growth_stage = mech_attributes[mech_type].growth_stage;  //next growth stage
+    MechType growth_stage = mech_attributes[type].growth_stage;  //next growth stage
 
     GS_ASSERT(isValid(growth_stage));
     GS_ASSERT(mla[mech_id].id != -1);
     GS_ASSERT(mech_id >= 0 && mech_id < mlm);
 
-    mla[mech_id].mech_type =  growth_stage;
-    //mla[mech_id].subtype =  rand % 255;
-
-    //mla[mech_id].mech_class =  mech_attributes[growth_stage].mech_class;
+    mla[mech_id].type =  growth_stage;
     mla[mech_id].growth_ttl = mech_attributes[growth_stage].growth_ttl;
-
 
     class mech_type_change_StoC p;
     p.id = mech_id;
-    p.mech_type = growth_stage;
-    //p.subtype =  mla[mech_id].subtype;
+    p.type = growth_stage;
     p.broadcast();
-
-    //printf("m")
 }
 
-bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
+bool create_mech(int x, int y, int z, MechType type, int subtype)
 {
-    IF_ASSERT(!isValid(mech_type))
+    IF_ASSERT(!isValid(type))
     {
-        printf("Mech type %d invalid\n", mech_type);
+        printf("Mech type %d invalid\n", type);
         return false;
     }
 
     // TODO -- check valid mech type properly
-    IF_ASSERT(!mech_attributes[mech_type].loaded)
+    IF_ASSERT(!mech_attributes[type].loaded)
     {
-        printf("Mech type %d not in use\n", mech_type);
+        printf("Mech type %d not in use\n", type);
         return false;
     }
 
@@ -300,50 +278,48 @@ bool create_mech(int x, int y, int z, MechType mech_type, int subtype)
     {
         if (t_map::isSolid(x,y,z))
         {
-            printf("Can't place mech: reason 1 at %d,%d,%d\n", x,y,z);
+            printf("Can't place mech: point is solid (%d,%d,%d)\n", x,y,z);
             return false;
         }
 
         if (!t_map::isSolid(x,y,z-1))
         {
-            printf("Can't place mech: reason 2 at %d,%d,%d\n", x,y,z);
+            printf("Can't place mech: no solid block below (%d,%d,%d)\n", x,y,z);
             return false;
         }
 
         if (mech_list->is_occupied(x,y,z))
         {
-            printf("Can't place mech: reason 3 at %d,%d,%d\n", x,y,z);
+            printf("Can't place mech: mech already here (%d,%d,%d)\n", x,y,z);
             return false;
         }
 
-        printf("Can't place mech: reason other at %d,%d,%d\n", x,y,z); //means out of bounds in z
+        printf("Can't place mech: invalid position (%d,%d,%d)\n", x,y,z);
         return false;
     }
 
     struct Mech m;
-    m.mech_type = mech_type;
+    m.type = type;
     m.subtype = subtype;
     m.x = x;
     m.y = y;
     m.z = z;
-
-    m.growth_ttl = mech_attributes[mech_type].growth_ttl;
-
+    m.growth_ttl = mech_attributes[type].growth_ttl;
     mech_list->server_add_mech(m);
 
     return true;
 }
 
-bool create_mech(int x, int y, int z, MechType mech_type)
+bool create_mech(int x, int y, int z, MechType type)
 {
-    return create_mech(x,y,z,mech_type,0);
+    return create_mech(x,y,z,type,0);
 }
 
-bool create_crystal(int x, int y, int z, MechType mech_type)
+bool create_crystal(int x, int y, int z, MechType type)
 {
-    MechClass mech_class = get_mech_class(mech_type);
+    MechClassType mech_class = get_mech_class(type);
     IF_ASSERT(mech_class != MECH_CRYSTAL) return false;
-    return create_mech(x,y,z, mech_type);
+    return create_mech(x,y,z, type);
 }
 #endif
 
@@ -428,10 +404,10 @@ void draw_selected_mech_bounding_box()
     struct Vec3 r = vec3_init(sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f);
     struct Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
 
-    int tex_id = mech_attributes[m.mech_type].sprite_index;
+    int tex_id = mech_attributes[m.type].sprite;
 
-    GS_ASSERT(mech_sprite_width[mech_attributes[m.mech_type].sprite_index] != -1)
-    GS_ASSERT(mech_sprite_height[mech_attributes[m.mech_type].sprite_index] != -1)
+    GS_ASSERT(mech_sprite_width[mech_attributes[m.type].sprite] != -1)
+    GS_ASSERT(mech_sprite_height[mech_attributes[m.type].sprite] != -1)
 
     float size_w = size*mech_sprite_width_f[tex_id];
     float size_h = 2.0f*size*mech_sprite_height_f[tex_id];
@@ -655,13 +631,13 @@ void send_client_mech_list(ClientID client_id)
 
 void handle_block_removal(int x, int y, int z)
 {
-    MechType mech_type = mech_list->handle_block_removal(x,y,z);
-    if (mech_type == NULL_MECH_TYPE) return;
-    IF_ASSERT(!isValid(mech_type)) return;
+    MechType type = mech_list->handle_block_removal(x,y,z);
+    if (type == NULL_MECH_TYPE) return;
+    IF_ASSERT(!isValid(type)) return;
 
     // drop item from mech
-    if (mech_attributes[mech_type].item_drop)
-        handle_drop(x,y,z, mech_type);
+    if (mech_attributes[type].item_drop)
+        handle_drop(x,y,z, type);
 }
 
 bool remove_mech(int mech_id)   //removes mech with drop
@@ -669,21 +645,21 @@ bool remove_mech(int mech_id)   //removes mech with drop
     GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
 
     struct Mech m = mech_list->mla[mech_id];
-    MechType mech_type = m.mech_type;
-    IF_ASSERT(!isValid(mech_type)) return false;
+    MechType type = m.type;
+    IF_ASSERT(!isValid(type)) return false;
 
     bool ret = mech_list->server_remove_mech(mech_id);
     GS_ASSERT(ret);
 
-    if (mech_attributes[mech_type].item_drop)
-        handle_drop(m.x,m.y,m.z, mech_type);
+    if (mech_attributes[type].item_drop)
+        handle_drop(m.x,m.y,m.z, type);
 
     return ret;
 }
 
-int count_mech(MechType mech_type)
+int count_mech(MechType type)
 {
-    return mech_list->count(mech_type);
+    return mech_list->count(type);
 }
 
 

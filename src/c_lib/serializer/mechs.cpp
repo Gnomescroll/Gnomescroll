@@ -122,7 +122,7 @@ bool save_mech_palette_file()
 
     for (int i=0; i<MAX_MECHS; i++)
     {
-        if (!t_mech::get_mech_type_in_use((MechType)i)) continue;
+        if (!t_mech::type_in_use((MechType)i)) continue;
         const char* mech_name = t_mech::get_mech_name((MechType)i);
         if (mech_name == NULL) continue;
         int len = snprintf(buf, MECH_PALETTE_LINE_LENGTH+1, MECH_PALETTE_FMT, mech_name, i);
@@ -163,13 +163,13 @@ bool write_mech_file(FILE* f)
         struct Mech* mech = &mech_list->mla[i];
         if (mech->id == -1) continue;
 
-        IF_ASSERT(!isValid(mech->mech_type)) continue;
+        IF_ASSERT(!isValid(mech->type)) continue;
         IF_ASSERT(mech->subtype < 0 || (unsigned int)mech->subtype > UINT8_MAX) continue;
         IF_ASSERT(mech->x < 0 || mech->x >= XMAX) continue;
         IF_ASSERT(mech->y < 0 || mech->y >= YMAX) continue;
         IF_ASSERT(mech->z < 0 || mech->z >= ZMAX) continue;
 
-        write_bytes<uint8_t>(buf, index, mech->mech_type);
+        write_bytes<uint8_t>(buf, index, mech->type);
         write_bytes<uint8_t>(buf, index, mech->subtype);
         write_bytes<uint16_t>(buf, index, mech->x);
         write_bytes<uint16_t>(buf, index, mech->y);

@@ -40,15 +40,15 @@ void floating_removal_tick(); //removes floating t_mech
 
 void force_mech_growth(int mech_id); //forces growth cycle
 
-bool create_crystal(int x, int y, int z, MechType mech_type);
-bool create_mech(int x, int y, int z, MechType mech_type);
-bool create_mech(int x, int y, int z, MechType mech_type, int subtype);
+bool create_crystal(int x, int y, int z, MechType type);
+bool create_mech(int x, int y, int z, MechType type);
+bool create_mech(int x, int y, int z, MechType type, int subtype);
 
 void send_client_mech_list(ClientID client_id);
 void handle_block_removal(int x, int y, int z); //react to block destruction
 bool remove_mech(int mech_id);
 
-int count_mech(MechType mech_type);
+int count_mech(MechType type);
 
 static void pack_mech(struct Mech &m, class mech_create_StoC &p);
 #endif
