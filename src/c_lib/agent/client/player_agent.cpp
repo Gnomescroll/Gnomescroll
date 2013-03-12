@@ -270,42 +270,38 @@ struct Vec3 PlayerAgent::camera_position()
     return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
 }
 
-void PlayerAgent::play_radiation_warning()
+void PlayerAgent::play_geiger()
 {
-    const int change = ONE_SECOND;
-    static int ic = 0;
-    ic++;
-
-    static int rate = 1;
-    static int step = 1;
-    if ((ic % change) == 0)
-    {
-        if (rate == 1)
-            step = 1;
-        else if (rate == 30)
-            step = -1;
-        rate += step;
-        printf("Geiger sound rate: %d\n", rate);
-    }
-
-    static int i=0;
-    static int skip = 0;
+    static int i = 0;
     i++;
+    static int skip = 0;
+
+    Agent* a = this->you();
+    if (a == NULL) return;
+    int rad_level = get_attribute_int(a->id, "rad_level");
+    if (!rad_level) return;
+    int max_rad_level = get_attribute_int(a->id, "max_rad_level");
+
+    const int slowest_rate = ONE_SECOND;
+    int rate = (float(slowest_rate) / float(max_rad_level)) * (max_rad_level - rad_level + 1);
+    rate = GS_MAX(rate, 1);
+
     skip = GS_MAX(0, skip-1);
-    if (!skip)
+    if (skip) return;
+    if (i % rate == 0)
     {
-        if ((i + randrange(-1,1)) % rate == 0)
+        int snd_id = Sound::play_2d_sound("geiger");
+        if (snd_id >= 0)
         {
-            int snd_id = Sound::play_2d_sound("geiger");
-            if (snd_id >= 0)
-            {
-                float pmult = float(randrange(-7,7)) / 1000.0f;
-                float gmult = float(randrange(-2,2)) / 1000.0f;
-                Sound::set_pitch_multiplier(snd_id, pmult + 1.0f);
-                Sound::set_gain_multiplier(snd_id, gmult + 1.0f);
-            }
-            skip = randrange(1, 2);
+            float pmult = float(randrange(-7,7)) / 1000.0f;
+            float gmult = float(randrange(-2,2)) / 1000.0f;
+            Sound::set_pitch_multiplier(snd_id, pmult + 1.0f);
+            Sound::set_gain_multiplier(snd_id, gmult + 1.0f);
         }
+        // prevent sounds from playing too close
+        skip = randrange(1, 2);
+        int variance = rate/2;
+        i += rate + randrange(-variance, variance/2);
     }
 }
 
@@ -316,17 +312,14 @@ void PlayerAgent::update_sound()
                            agent_camera->forward_vector(),
                            vec3_init(0, 0, 1));
 
-    // TODO -- move
-    if (this->play_geiger)
-        this->play_radiation_warning();
+    this->play_geiger();
 }
 
 PlayerAgent::PlayerAgent() :
     crouching(false), camera_mode(CAMERA_STATE_CLIENT_SIDE_PREDICTION_INTERPOLATED),
     cs_seq_local(255), cs_seq_net(-1),
     state_history_seq(0), state_history_index(0),
-    agent_id(NULL_AGENT), action(this),
-    play_geiger(false)
+    agent_id(NULL_AGENT), action(this)
 {
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
     for (int i=0; i<128; cs_local[i++].seq = -1);

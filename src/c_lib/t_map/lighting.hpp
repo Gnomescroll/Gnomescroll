@@ -59,7 +59,7 @@ void set_skylight(int x, int y, int z, int value)
     //GS_ASSERT(y >= 0 && y < 512)
 
     class MapChunk* mc = main_map->chunk[ 32*(y >> 4) + (x >> 4) ];
-    
+
     if(mc == NULL)
     {
     #if !PRODUCTION
@@ -72,36 +72,33 @@ void set_skylight(int x, int y, int z, int value)
 
 #if !PRODUCTION
     GS_ASSERT(value < 16 && value >= 0);
-    GS_ASSERT(fast_cube_properties[e.block].solid == false);
-    GS_ASSERT( (e.light & 0x0f) != value);
+    GS_ASSERT(!fast_cube_properties[e.block].solid);
+    GS_ASSERT((e.light & 0x0f) != value);
 #endif
 
 #if 0
-    if(0)
-    {
-        int condition = _skylight_update_condition(x,y,z);
-        int pvalue = (e.light & 0x0f);
-        int cvalue = value;
-        printf("set_skylight: %d %d %d, pvalue= %d cvalue= %d, condition= %d \n", x,y,z, pvalue,cvalue, condition);
-    }
+    int condition = _skylight_update_condition(x,y,z);
+    int pvalue = (e.light & 0x0f);
+    int cvalue = value;
+    printf("set_skylight: %d %d %d, pvalue= %d cvalue= %d, condition= %d \n", x,y,z, pvalue,cvalue, condition);
 #endif
 
 #if 0
     if(skylight_array_debug[128*512*z + 512*y + x]  != -1)
-    { 
+    {
         int pvalue = skylight_array_debug[128*512*z + 512*y + x];
         int cvalue = (e.light & 0x0f);
-        GS_ASSERT( pvalue == cvalue )
+        GS_ASSERT(pvalue == cvalue)
 
         //printf("skylight error: %d %d %d, should be %d, is %d \n", x,y,z, pvalue, cvalue);
     }
 #endif
 
-    e.light = (e.light & 0xf0) | (value & 0x0f);    
+    e.light = (e.light & 0xf0) | (value & 0x0f);
     mc->e[(z<<8)+((y&15)<<4)+(x&15)] = e;
 
 #if !PRODUCTION
-    GS_ASSERT( (e.light & 0x0f) == value);
+    GS_ASSERT((e.light & 0x0f) == value);
 #endif
 
     //skylight_array_debug[128*512*z + 512*y + x] = value;
@@ -180,7 +177,7 @@ void _push_skylight_update(int x, int y, int z)
 #endif
     //if(condition == 0)
     //    return;
-    
+
     //skip solid blocks
     struct MapElement e = get_element(x, y, z);
     IF_ASSERT(fast_cube_properties[e.block].solid)
@@ -215,7 +212,7 @@ int _skylight_update_condition(int x, int y, int z)
     struct MapElement e = get_element(x,y,z);
     int li = (e.light & 0x0f);
 
-    if(fast_cube_properties[e.block].solid == true)
+    if(fast_cube_properties[e.block].solid)
         return 0;
 
     struct MapElement ea[6];
@@ -230,7 +227,7 @@ int _skylight_update_condition(int x, int y, int z)
         return 1; //light above block is sunlight and block is not sunlight
     }
 
-    if (li == 15 && fast_cube_properties[te.block].solid == true)
+    if (li == 15 && fast_cube_properties[te.block].solid)
     {
         return 2; //block above is solid and this block is sunlight, therefore this block cannot be sunlight anymore
     }
@@ -259,7 +256,7 @@ int _skylight_update_condition(int x, int y, int z)
 
     if (li != 0 && li != 15 && li+1 > _max)
     {
-        return 4; //is brigther than brighest adjacant block   
+        return 4; //is brigther than brighest adjacant block
         //li = li - 1;
         //set_skylight(x,y,z, li);
     }
@@ -341,7 +338,7 @@ void _skylight_update_core(int max_iterations)
             //if (!isSolid(x,y,z-1))
             //    _push_skylight_update(x,y,z-1);
 
-            GS_ASSERT(fast_cube_properties[te.block].solid == false); //top block is light value 15
+            GS_ASSERT(!fast_cube_properties[te.block].solid); //top block is light value 15
 
             for (int j=0; j<6; j++)
             {
@@ -356,7 +353,7 @@ void _skylight_update_core(int max_iterations)
 
         //if li=15 and block on top is solid, set to 14
         //if li=15 and block on top is not 15, set to 14
-        if (li == 15 && fast_cube_properties[te.block].solid == true)
+        if (li == 15 && fast_cube_properties[te.block].solid)
         {
             li = 14; //maybe zero?
             set_skylight(x,y,z, li);
@@ -479,7 +476,7 @@ void set_envlight(int x, int y, int z, int value)
 
 #if !PRODUCTION
     GS_ASSERT(value < 16 && value >= 0);
-    GS_ASSERT(fast_cube_properties[e.block].solid == false);
+    GS_ASSERT(!fast_cube_properties[e.block].solid);
 #endif
 
 /*
@@ -491,10 +488,10 @@ void set_envlight(int x, int y, int z, int value)
 
 /*
     if(envlight_array_debug[128*512*z + 512*y + x]  != -1)
-    { 
+    {
         int pvalue = envlight_array_debug[128*512*z + 512*y + x];
         int cvalue = (e.light >> 4);
-        GS_ASSERT( pvalue == cvalue )
+        GS_ASSERT(pvalue == cvalue)
 
         //printf("skylight error: %d %d %d, should be %d, is %d \n", x,y,z, pvalue, cvalue);
     }
@@ -767,8 +764,8 @@ void light_add_block(int x, int y, int z)
         set_envlight(x,y,z, fast_cube_attributes[e.block].light_value);
     }
     GS_ASSERT(get_skylight(x,y,z) == 0);
-    GS_ASSERT( (e.light & 0x0f) == 0);
-    GS_ASSERT( (e.light & 0x0f) == get_skylight(x,y,z) );
+    GS_ASSERT((e.light & 0x0f) == 0);
+    GS_ASSERT((e.light & 0x0f) == get_skylight(x,y,z));
 
     //placed solid block
     if (fast_cube_properties[e.block].solid)
@@ -940,7 +937,7 @@ void _lighting_rolling_update(int chunk_i, int chunk_j, int itr_count_max)
 
         struct MapElement e = get_element(x,y,z);
 
-        if (fast_cube_properties[e.block].solid == false)
+        if (!fast_cube_properties[e.block].solid)
         {
             _push_skylight_update(x,y,z);       //use condition check first
             _push_envlight_update(x,y,z);

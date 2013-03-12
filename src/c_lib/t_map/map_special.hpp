@@ -1,5 +1,7 @@
 #pragma once
 
+#include <agent/attributes.hpp>
+
 namespace t_map
 {
 
@@ -703,181 +705,160 @@ void ControlNodeRenderer::control_node_render_update()
 
 #endif
 
-/*
-    Radiation block list
-*/
-
 class RadiationBlockList
 {
-
     public:
+        struct RadiationBlock
+        {
+            struct Vec3i pos;
+            int rad_strength;
+        };
 
-    struct RadiationBlock
-    {
-        int x,y,z;
-        int rad_strength;
-    };
+        struct BlockList
+        {
+            int rbln;
+            int rblm;
+            RadiationBlock* rbla;
+        };
 
-    struct BlockList
-    {
-        int bln; //blocklist
-        int blm; //
-        struct RadiationBlock* bla; //
-    };
-
-    static const int blam = 32*32*8;
-    BlockList bla[blam]; // 16x16
+        static const int BIN_WIDTH = 32;
+        static const int BIN_DEPTH = 8;
+        static const int blam = BIN_WIDTH*BIN_WIDTH*BIN_DEPTH;
+        BlockList bla[blam];
 
     RadiationBlockList()
     {
         for (int i=0; i<blam; i++)
         {
-            bla[i].bln = 0;
-            bla[i].blm = 0;
-            bla[i].bla = NULL;
+            bla[i].rbln = 0;
+            bla[i].rblm = 0;
+            bla[i].rbla = NULL;
         }
     }
 
     ~RadiationBlockList()
     {
         for (int i=0; i<blam; i++)
-        {
-            if(bla[i].bla != NULL)
-                free(bla[i].bla);
-        }
+            free(bla[i].rbla);
     }
 
-
-
-    struct BlockList* _get_list(int x, int y, int z)
+    inline int _get_bin(int cx, int cy, int cz)
     {
-        int cx = x >> 4;
-        int cy = y >> 4;
-        int cz = z >> 4;
+        return cz*BIN_WIDTH*BIN_WIDTH + BIN_WIDTH*cy + cx;
+    }
 
-        int index = cz*32*32 + 32*cy + cx;
-
-        GS_ASSERT(index < blam);
-
+    struct BlockList* _get_list(const struct Vec3i& pos)
+    {
+        IF_ASSERT(!is_boxed_position(pos)) return NULL;
+        int cx = pos.x >> 4;
+        int cy = pos.y >> 4;
+        int cz = pos.z >> 4;
+        int index = this->_get_bin(cx, cy, cz);
+        IF_ASSERT(index < 0 || index >= blam) return NULL;
         return &bla[index];
     }
 
-    void add(int x, int y, int z)
+    void add(const struct Vec3i& pos)
     {
-
-        printf("Added radiation block at: %d %d %d \n", x,y,z);
-
-        GS_ASSERT(x >= 0 && x < 512 && y >= 0 && y < 512 && z >= 0 && z < 128);
-
-        struct BlockList* bl = _get_list(x,y,z);
-
-        if(bl->bla == NULL)
+        struct BlockList* bl = this->_get_list(pos);
+        IF_ASSERT(bl == NULL) return;
+        if (bl->rbla == NULL)
         {
-            bl->bla = (struct RadiationBlock*) malloc(4* sizeof(struct RadiationBlock));
-            bl->bln = 0;
-            bl->blm = 4;
+            const size_t start_size = 4;
+            bl->rbla = (RadiationBlock*) malloc(start_size * sizeof(RadiationBlock));
+            bl->rbln = 0;
+            bl->rblm = start_size;
+        }
+        if (bl->rbln >= bl->rblm)
+        {
+            size_t new_size = bl->rblm * 2 * sizeof(RadiationBlock);
+            RadiationBlock* bla = (RadiationBlock*)realloc(bl->rbla, new_size);
+            IF_ASSERT(bla == NULL) return;
+            bl->rbla = bla;
+            bl->rblm *= 2;
         }
 
-        if(bl->bln == bl->blm)
-        {
-            bl->blm *= 2;
-            bl->bla = (struct RadiationBlock*) realloc(bl->bla, bl->blm * sizeof(struct RadiationBlock));
-        }
-
-        struct RadiationBlock rb;
-
-        rb.x = x;
-        rb.y = y;
-        rb.z = z;
+        RadiationBlock rb;
+        rb.pos = pos;
         rb.rad_strength = 15;
+        bl->rbla[bl->rbln] = rb;
+        bl->rbln++;
 
-        bl->bla[bl->bln] = rb;
-        bl->bln++;
-
-        //struct BlockList* bl = _get_list(x,y,z);
-        //printf("%d %d \n", bl->bln, _get_list(x,y,z)->bln);
+        #if !PRODUCTION
+        printf("Adding radiation block at: ");
+        vec3i_print(pos);
+        #endif
     }
 
-    void remove(int x, int y, int z)
+    void remove(const struct Vec3i& pos)
     {
-
-        printf("removed radiation block at: %d %d %d \n", x,y,z);
-
-        GS_ASSERT(x >= 0 && x < 512 && y >= 0 && y < 512 && z >= 0 && z < 128);
-
-        struct BlockList* bl = _get_list(x,y,z);
-
+        struct BlockList* bl = this->_get_list(pos);
+        IF_ASSERT(bl == NULL) return;
         int index = -1;
-        for(int i=0; i<bl->bln; i++)
+        for (int i=0; i<bl->rbln; i++)
         {
-            if(bl->bla[i].x == x
-                && bl->bla[i].y == y
-                && bl->bla[i].z == z)
+            if (is_equal(bl->rbla[i].pos, pos))
             {
                 index = i;
                 break;
             }
         }
 
-        if(index == -1)
+        IF_ASSERT(index < 0)
         {
-            GS_ASSERT(false);
-            printf("bl->bln= %d \n", bl->bln);
-
-            for(int i=0; i<bl->bln; i++)
+            printf("bl->rbln= %d \n", bl->rbln);
+            for (int i=0; i<bl->rbln; i++)
             {
-                printf("%d: %d %d %d \n", i, bl->bla[i].x, bl->bla[i].y, bl->bla[i].z);
+                printf("%d: \n", i);
+                vec3i_print(bl->rbla[i].pos);
             }
-
             return;
         }
 
-        bl->bln--;
-        bl->bla[index] = bl->bla[bl->bln];
-        GS_ASSERT(bl->bln >= 0);
+        bl->rbln--;
+        bl->rbla[index] = bl->rbla[bl->rbln];
+        GS_ASSERT(bl->rbln >= 0);
+        #if !PRODUCTION
+        printf("removing radiation block at: ");
+        vec3i_print(pos);
+        #endif
     }
 
-    int get_rad_level(int x, int y, int z)
+    int get_rad_level(const struct Vec3i& pos)
     {
+        static int max_rad_level = Agents::get_base_attribute_int("max_rad_level");
+        IF_ASSERT(!is_boxed_position(pos)) return 0;
+        int cx = pos.x >> 4;
+        int cy = pos.y >> 4;
+        int cz = pos.z >> 4;
 
-        int cx = x >> 4;
-        int cy = y >> 4;
-        int cz = z >> 4;
-
-        int distance = 1024;
-        for(int i=-1; i<=1; i++)
-        for(int j=-1; j<=1; j++)
-        for(int k=-1; k<=1; k++)
+        int distance = t_map::map_dim.x * 8;
+        for (int i=-1; i<=1; i++)
+        for (int j=-1; j<=1; j++)
+        for (int k=-1; k<=1; k++)
         {
-            int _cx = (cx + i + 32) % 32;
-            int _cy = (cy + j + 32) % 32;
+            int _cx = (cx + i + BIN_WIDTH) % BIN_WIDTH;
+            int _cy = (cy + j + BIN_WIDTH) % BIN_WIDTH;
             int _cz = cz + k;
-            if(_cz < 0 || _cz >= 8)
+            if (_cz < 0 || _cz >= BIN_DEPTH)
                 continue;
 
-            GS_ASSERT(_cz*32*32 + 32*_cy + _cx < blam);
-            struct BlockList* bl = &bla[_cz*32*32 + 32*_cy + _cx];
+            int index = this->_get_bin(_cx, _cy, _cz);
+            IF_ASSERT(index < 0 || index >= blam) continue;
+            struct BlockList* bl = &bla[index];
 
-            for(int c=0; c<bl->bln; c++)
+            for (int c=0; c<bl->rbln; c++)
             {
-                struct RadiationBlock rb = bl->bla[c];
-                int _d = abs(x-rb.x) + abs(y-rb.y) + abs(z-rb.z);
-                if(_d < distance)
-                    distance = _d;
+                const struct Vec3i& p = bl->rbla[c].pos;
+                int d = manhattan_distance(pos, p);
+                if (d < distance)
+                    distance = d;
             }
         }
 
-        int ret = 16- distance;
-        if( ret < 0)
-            return 0;
-        return ret;
-
-        //return distance;
+        return GS_MAX(0, max_rad_level - distance);
     }
-
 };
-
-
 
 }   // t_map
 

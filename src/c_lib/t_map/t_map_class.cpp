@@ -187,15 +187,15 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
         Handle Special for Removed Blocks
     */
 
-        if(fast_cube_properties[old_element.block].special == true)
+        if(fast_cube_properties[old_element.block].special)
         {
-            if(fast_cube_properties[old_element.block].radioactive == true)
+            if(fast_cube_properties[old_element.block].radioactive)
             {
-                main_map->radiation_block_list.remove(x,y,z);
+                main_map->radiation_block_list.remove(vec3i_init(x,y,z));
             }
         #if DC_SERVER
             //item container
-            else if (fast_cube_properties[old_element.block].item_container == true)
+            else if (fast_cube_properties[old_element.block].item_container)
             {
                 c->chunk_item_container.remove(x,y,z);
             }
@@ -204,11 +204,11 @@ void Terrain_map::set_element(int x, int y, int z, struct MapElement element)
     /*
         Handle special for Added Blocks
     */
-        if(fast_cube_properties[element.block].special == true)
+        if(fast_cube_properties[element.block].special)
         {
-            if(fast_cube_properties[element.block].radioactive == true)
+            if(fast_cube_properties[element.block].radioactive)
             {
-                main_map->radiation_block_list.add(x,y,z);
+                main_map->radiation_block_list.add(vec3i_init(x,y,z));
             }
         }
     }

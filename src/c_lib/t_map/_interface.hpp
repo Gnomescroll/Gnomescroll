@@ -84,7 +84,7 @@ void broadcast_set_palette(int x, int y, int z, int palette);
 
 void handle_explosive_block(int x, int y, int z);
 
-int get_rad_level(int x, int y, int z);
+int get_rad_level(const struct Vec3i& pos);
 
 /*
     Lighting

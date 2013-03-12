@@ -53,8 +53,11 @@ static void _register_attributes()
     attribute_def("rad_exposure", 0);
     set_limits(0, 800); //400 is max bar
 
+    attribute_def("max_rad_level", 0xF);
+    set_limits(0xF, 0xF);
+
     attribute_def("rad_level", 0);
-    set_limits(0, 16); //400 is max bar
+    set_limits(0, "max_rad_level");
 }
 
 /*******************

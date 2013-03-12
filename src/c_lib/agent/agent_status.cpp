@@ -378,15 +378,8 @@ int AgentStatus::hurt(unsigned int amt)
 void AgentStatus::tick_rad()
 {
     struct Vec3 p = a->get_position();
-    int x = p.x + 0.5;
-    int y = p.y + 0.5;
-    int z = p.z + 0.5;
-
-    int rad_level = t_map::get_rad_level(x,y,z);
-
-    //if(rad_level != 0)
-    //    printf("rad_level = %d \n", rad_level);
-
+    p = vec3_add(p, vec3_init(0.5f));
+    int rad_level = t_map::get_rad_level(vec3i_init(p));
     set_attribute(this->a->id, "rad_level", rad_level);
 }
 
