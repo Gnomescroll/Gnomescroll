@@ -28,14 +28,20 @@ void mech_type_change_StoC::handle()
     IF_ASSERT(id < 0 || id >= mech_list->mlm) return;
 
     GS_ASSERT(mech_list->mla[id].id != -1);
-    mech_list->mla[id].mech_type = (MechType) mech_type;
-    _mech_update(mech_list->mla[id]);
+    struct Mech& m = mech_list->mla[id];
 
-    //printf("mech %i grow \n", id);
+    if (is_plant(m.type))
+    {
+        int snd_id = Sound::play_3d_sound("cropgrow", vec3_init(m.x, m.y, m.z));
+        float pmult = float(randrange(-5,5)) / 1000.0f;
+        if (snd_id >= 0)
+            Sound::set_pitch_multiplier(snd_id, pmult+1.0f);
+    }
 
+    m.type = (MechType)type;
+    _mech_update(m);
 };
 
-//    uint16_t x,y,z;
 void mech_delete_StoC::handle()
 {
     //printf("client removing mech %i \n", id);

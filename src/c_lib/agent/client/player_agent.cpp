@@ -272,7 +272,7 @@ struct Vec3 PlayerAgent::camera_position()
 
 void PlayerAgent::play_radiation_warning()
 {
-    const int change = ONE_SECOND * 4;
+    const int change = ONE_SECOND;
     static int ic = 0;
     ic++;
 
@@ -282,7 +282,7 @@ void PlayerAgent::play_radiation_warning()
     {
         if (rate == 1)
             step = 1;
-        else if (rate == 10)
+        else if (rate == 30)
             step = -1;
         rate += step;
         printf("Geiger sound rate: %d\n", rate);
@@ -325,7 +325,7 @@ PlayerAgent::PlayerAgent() :
     crouching(false), camera_mode(CAMERA_STATE_CLIENT_SIDE_PREDICTION_INTERPOLATED),
     cs_seq_local(255), cs_seq_net(-1),
     state_history_seq(0), state_history_index(0),
-    agent_id(NULL_AGENT),  action(this),
+    agent_id(NULL_AGENT), action(this),
     play_geiger(false)
 {
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];

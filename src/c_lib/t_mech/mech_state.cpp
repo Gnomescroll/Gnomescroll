@@ -14,15 +14,15 @@ bool MechList::is_occupied(int x, int y, int z)
 #if DC_SERVER
 MechType MechList::handle_block_removal(int x, int y, int z)
 {
-    MechType mech_type = NULL_MECH_TYPE;
+    MechType type = NULL_MECH_TYPE;
     for (int i=0; i<mlm; i++)
         if (mla[i].id != -1 && mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
         {
-            mech_type = mla[i].mech_type;
+            type = mla[i].type;
             bool removed = server_remove_mech(i);
             GS_ASSERT(removed);
         }
-    return mech_type;
+    return type;
 }
 
 void MechList::send_mech_list_to_client(ClientID client_id)

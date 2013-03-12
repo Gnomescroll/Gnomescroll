@@ -29,7 +29,7 @@ void load_mech()
     _current_mech_index++;
 }
 
-void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_render_type, MechBehaviorType mech_behavior_type)
+void mech_def(MechClassType class_type, const char* name, MechRenderType mech_render_type, MechBehaviorType behavior_type)
 {
     if (s != NULL) load_mech();
 
@@ -42,28 +42,28 @@ void mech_def(MechClass mech_type_class, const char* name, MechRenderType mech_r
             return;
         }
 
-    MechType mech_type = (MechType)_current_mech_index;
+    MechType type = (MechType)_current_mech_index;
 
-    IF_ASSERT(!isValid(mech_type)) return;
-    IF_ASSERT(mech_attributes[mech_type].loaded) return;
+    IF_ASSERT(!isValid(type)) return;
+    IF_ASSERT(mech_attributes[type].loaded) return;
 
-    s = &mech_attributes[mech_type];
+    s = &mech_attributes[type];
 
-    s->mech_type = mech_type;
-    s->mech_type_class = mech_type_class;
+    s->type = type;
+    s->class_type = class_type;
     strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
     s->name[DAT_NAME_MAX_LENGTH] = '\0';
 
     s->render_type = mech_render_type;
-    s->mech_behavior_type = mech_behavior_type;
+    s->behavior_type = behavior_type;
 
 }
 
-void set_sprite_index(int sprite_index)
+void set_sprite_index(int sprite)
 {
     IF_ASSERT(s == NULL) return;
-    GS_ASSERT(s->sprite_index == NULL_MECH_SPRITE);
-    s->sprite_index = (MechSpriteIndex)sprite_index;
+    GS_ASSERT(s->sprite == NULL_MECH_SPRITE);
+    s->sprite = (MechSpriteIndex)sprite;
 }
 
 // Use this to remove or rename a mech
@@ -86,12 +86,12 @@ void verify_mech_dat()
     {
         class MechAttribute* a = &mech_attributes[i];
         if (!a->loaded) continue;
-        GS_ASSERT_ABORT(a->sprite_index != NULL_MECH_SPRITE);
+        GS_ASSERT_ABORT(a->sprite != NULL_MECH_SPRITE);
         GS_ASSERT_ABORT(a->render_type != MECH_RENDER_TYPE_NONE);
-        GS_ASSERT_ABORT(a->mech_type != NULL_MECH_TYPE);
-        GS_ASSERT_ABORT(a->mech_type_class != NULL_MECH_CLASS);
+        GS_ASSERT_ABORT(a->type != NULL_MECH_TYPE);
+        GS_ASSERT_ABORT(a->class_type != NULL_MECH_CLASS);
         GS_ASSERT_ABORT(is_valid_mech_name(a->name));
-        GS_ASSERT_ABORT(i == a->mech_type);
+        GS_ASSERT_ABORT(i == a->type);
     }
 
     for (int i=0; i<MAX_MECHS-1; i++)
@@ -101,7 +101,7 @@ void verify_mech_dat()
         class MechAttribute* b = &mech_attributes[j];
         if (!a->loaded || !b->loaded) continue;
         GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
-        GS_ASSERT_ABORT(a->mech_type != b->mech_type);
+        GS_ASSERT_ABORT(a->type != b->type);
     }
 
     GS_ASSERT_ABORT(mech_name_map->condensed);
@@ -143,7 +143,7 @@ void verify_mech_dat()
         class MechAttribute* a = &mech_attributes[i];
         if (!a->loaded) continue;
 
-        if (a->mech_behavior_type == MECH_BEHAVIOR_TYPE_DEFAULT)
+        if (a->behavior_type == MECH_BEHAVIOR_TYPE_DEFAULT)
             GS_ASSERT_ABORT(a->growth_ttl == -1);
     }
 }
