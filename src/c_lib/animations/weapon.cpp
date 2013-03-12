@@ -22,8 +22,12 @@ static bool equipped_item_continuous_animation = false;
 static class EquippedItemConfig sprite_config;
 static class EquippedItemConfig voxel_config;
 class EquippedItemConfig voxelized_sprite_config;
+static class EquippedItemConfig sprite_config_other;
+static class EquippedItemConfig voxel_config_other;
+static class EquippedItemConfig voxelized_sprite_config_other;
 
 static class EquippedItemConfig* current_config;
+static class EquippedItemConfig* current_config_other;
 
 static class EquippedItemAlignment animation_state;
 
@@ -32,12 +36,8 @@ void EquippedItemConfig::parse()
     size_t size = 0;
     char* buffer = read_file_to_buffer(this->filename, &size);
     IF_ASSERT(buffer == NULL) return;
-    IF_ASSERT(size <= 0) return;
-
     size_t index = 0;
     int read = 0;
-
-    // scanf for alignment config
     sscanf(&buffer[index], "scale: %f %n", &this->scale, &read);
     index += read;
     sscanf(&buffer[index], "focal.dz: %f %n", &this->alignment.focal.dz, &read);
@@ -52,10 +52,7 @@ void EquippedItemConfig::parse()
     index += read;
     sscanf(&buffer[index], "origin.depth: %f %n", &this->alignment.origin.depth, &read);
     index += read;
-
     GS_ASSERT(index <= size);
-
-    // free file contents
     free(buffer);
 }
 
@@ -64,12 +61,19 @@ void init_weapon_sprite()
     sprite_config.set_filename("equipped_sprite_alignment.cfg");
     voxel_config.set_filename("equipped_voxel_alignment.cfg");
     voxelized_sprite_config.set_filename("equipped_voxelized_sprite_alignment.cfg");
+    sprite_config_other.set_filename("equipped_sprite_alignment_other.cfg");
+    voxel_config_other.set_filename("equipped_voxel_alignment_other.cfg");
+    voxelized_sprite_config_other.set_filename("equipped_voxelized_sprite_alignment_other.cfg");
 
     sprite_config.parse();
     voxel_config.parse();
     voxelized_sprite_config.parse();
+    sprite_config_other.parse();
+    voxel_config_other.parse();
+    voxelized_sprite_config_other.parse();
 
     current_config = &voxelized_sprite_config;
+    current_config_other = &voxelized_sprite_config_other;
 }
 
 void move_focal_vertical(float delta)
@@ -148,9 +152,8 @@ void print_sprite_alignment_config()
     voxelized_sprite_config.print();
 }
 
-static Vec3 compute_point_offset(
-    Vec3 position, Vec3 forward, Vec3 right, Vec3 up,
-    float dxy, float dz, float depth)
+static Vec3 compute_point_offset(Vec3 position, Vec3 forward, Vec3 right, Vec3 up,
+                                 float dxy, float dz, float depth)
 {
     // move horizontal
     right = vec3_scalar_mult(right, dxy);
@@ -295,29 +298,44 @@ static void draw_voxel(ItemType item_type, Vec3 origin, Vec3 forward, Vec3 right
         tx, ty, sprite_width);
 }
 
-void draw_equipped_item(ItemType item_type)
-{    // draw item in hud
-    if (item_type == NULL_ITEM_TYPE)
-        item_type = Item::get_item_type("fist");
-    if (equipped_item_animating && rendered_item != item_type)
-    {
-        const char* old_name = Item::get_item_name(rendered_item);
-        const char* new_name = Item::get_item_name(item_type);
-        GS_ASSERT(old_name != NULL);
-        GS_ASSERT(new_name != NULL);
-        GS_ASSERT(strcmp(old_name, new_name) != 0);
-        //if (old_name != NULL && new_name != NULL)
-            //printf("Equipped item animating but weapon switched from %s to %s\n",
-                //old_name, new_name);
-    }
-    rendered_item = item_type;
-    IF_ASSERT(agent_camera == NULL) return;
+static void select_current_config(ItemType item_type)
+{
     if (Item::item_type_is_voxel(item_type))
         current_config = &voxel_config;
     else if (Options::animation_level <= 1)
             current_config = &sprite_config;
     else
         current_config = &voxelized_sprite_config;
+}
+
+static void select_current_config_other(ItemType item_type)
+{
+    if (Item::item_type_is_voxel(item_type))
+        current_config_other = &voxel_config_other;
+    else if (Options::animation_level <= 1)
+            current_config_other = &sprite_config_other;
+    else
+        current_config_other = &voxelized_sprite_config_other;
+}
+
+void draw_equipped_item(ItemType item_type)
+{    // draw item in hud
+    if (item_type == NULL_ITEM_TYPE)
+        item_type = Item::get_item_type("fist");
+    if (equipped_item_animating && rendered_item != item_type)
+    {
+        //const char* old_name = Item::get_item_name(rendered_item);
+        //const char* new_name = Item::get_item_name(item_type);
+        //GS_ASSERT(old_name != NULL);
+        //GS_ASSERT(new_name != NULL);
+        //GS_ASSERT(strcmp(old_name, new_name) != 0);
+        //if (old_name != NULL && new_name != NULL)
+            //printf("Equipped item animating but weapon switched from %s to %s\n",
+                //old_name, new_name);
+    }
+    rendered_item = item_type;
+    IF_ASSERT(agent_camera == NULL) return;
+    select_current_config(item_type);
 
     // camera state
     struct Vec3 position = agent_camera->get_position();
@@ -416,16 +434,18 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
     IF_ASSERT(vv == NULL) return false;
 
     // HACKED UP MODEL DEPENDENT CRAP
+    struct Vec3 up = a->arm_forward();
+    struct Vec3 forward = a->arm_right();
     struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);
-    float offset = (((vv->zdim)/2) * vv->scale) + (current_config->scale / 2.0f);
+    float offset = (((vv->zdim)/2) * vv->scale);// + (current_config->scale / 2.0f);
     struct Vec3 origin = vec3_add(a->arm_center(), vec3_scalar_mult(right, offset));
+    origin = vec3_add(origin, vec3_scalar_mult(right, -0.2f));
+    origin = vec3_add(origin, vec3_scalar_mult(forward, 0.02f));
+    origin = vec3_add(origin, vec3_scalar_mult(up, -0.17f));
     origin = translate_position(origin);
 
     if (!sphere_fulstrum_test_translate(origin.x, origin.y, origin.z, current_config->scale))
         return false;
-
-    struct Vec3 up = a->arm_forward();
-    struct Vec3 forward = a->arm_right();
 
     // scale to size
     *pUp = vec3_scalar_mult(up, current_config->scale);
@@ -439,6 +459,7 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
 
 void draw_equipped_voxel_item_other_agent(AgentID agent_id, ItemType item_type)
 {
+    current_config = &voxel_config_other;
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
     Vec3 origin, forward, right, up;
@@ -449,6 +470,7 @@ void draw_equipped_voxel_item_other_agent(AgentID agent_id, ItemType item_type)
 
 void draw_equipped_sprite_item_other_agent(AgentID agent_id, ItemType item_type)
 {
+    current_config = &sprite_config_other;
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
     Vec3 origin, forward, right, up;
@@ -459,10 +481,10 @@ void draw_equipped_sprite_item_other_agent(AgentID agent_id, ItemType item_type)
 
 void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, ItemType item_type)
 {
+    current_config = &voxelized_sprite_config_other;
     static int fist = Item::get_item_type("fist");
     if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
     Vec3 origin, forward, right, up;
-    forward.y /= 4;
     bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
     if (!valid) return;
     int sprite_id = Item::get_sprite_index_for_type(item_type);

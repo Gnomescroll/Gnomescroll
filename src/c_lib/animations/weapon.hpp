@@ -47,22 +47,22 @@ class EquippedItemAlignment
 
 class EquippedItemConfig
 {
-    private:
-        const static int fnsiz = 0xFF;
     public:
-        char filename[fnsiz+1];
+        char filename[GS_FN_MAX+1];
         float scale;
         class EquippedItemAlignment alignment;
 
-    EquippedItemConfig() : scale(1) {}
+    EquippedItemConfig() :
+        scale(1)
+    {}
 
     void parse();
 
     void set_filename(const char* filename)
     {
-        int wrote = snprintf(this->filename, this->fnsiz, MEDIA_PATH "config/%s", filename);
-        this->filename[this->fnsiz] = '\0';
-        GS_ASSERT(wrote < this->fnsiz);
+        size_t wrote = snprintf(this->filename, GS_FN_MAX+1, MEDIA_PATH "config/%s", filename);
+        this->filename[GS_FN_MAX] = '\0';
+        GS_ASSERT(wrote < GS_FN_MAX);
         GS_ASSERT(file_exists(this->filename));
     }
 
