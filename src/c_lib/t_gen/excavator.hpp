@@ -37,8 +37,7 @@ inline float cc_point_line_distance2(float vx, float vy, float vz, float wx, flo
 
 OPTIMIZED
 Vec3 dig_worm(Vec3 pos /* posart */, float theta, float phi, float cave_size, CubeType ct) {
-    //while (genrand_real1() < 0.999f)
-    while (genrand_real1() < 0.9f)
+    while (mrandf() < 0.999f) 
     {
         const static float length = 2.0f;
         const float _theta = theta*2*PI;
@@ -50,7 +49,7 @@ Vec3 dig_worm(Vec3 pos /* posart */, float theta, float phi, float cave_size, Cu
         float dz = cosf(0.95f*_phi);
         dz *= dz;
 
-        float size = cave_size * ((float)genrand_real1() * 1.25f + 0.5f);  // variable diameter
+        float size = cave_size * (mrandf() * 1.25f + 0.5f);  // variable diameter
 
         float xm = abs(dx) + size;
         float ym = abs(dy) + size;
@@ -94,8 +93,8 @@ Vec3 dig_worm(Vec3 pos /* posart */, float theta, float phi, float cave_size, Cu
         static const float theta_adj = 0.15f;
         static const float phi_adj = 0.10f;
 
-        theta += theta_adj * ((float)(2.0*genrand_real1() - 1.0));
-        phi   += phi_adj   * ((float)(2.0*genrand_real1() - 1.0)) / 18;
+        theta += theta_adj * ((float)(2.0*mrandf() - 1.0));
+        phi   += phi_adj   * ((float)(2.0*mrandf() - 1.0)) / 18;
 
         //if (phi < 0)  phi += 1; // this prevents changes that are more than %33 percent or so
         //if (phi >= 1) phi -= 1;
@@ -119,7 +118,7 @@ void excavate() {
     worms[0].z = randrange(26, map_dim.z - 1);  // 6 considers bedrock
     int curr_num_worms = 1;
 
-    init_genrand(rand());
+    seed_twister(rand());
 
     for (int i=0; i<MAX_WORMS; i++)
     {
@@ -128,9 +127,9 @@ void excavate() {
 
         do
         {
-            st.x = float(genrand_real1()) * float(map_dim.x);
-            st.y = float(genrand_real1()) * float(map_dim.y);
-            st.z = float(genrand_real1()) * float(map_dim.z);
+            st.x = float(mrandf()) * float(map_dim.x);
+            st.y = float(mrandf()) * float(map_dim.y);
+            st.z = float(mrandf()) * float(map_dim.z);
         } while (t_map::get(st.x, st.y, st.z) == worm_brush && tries++ < try_limit);
 
         if (tries >= try_limit) return;
@@ -138,7 +137,7 @@ void excavate() {
         //const float MIN_ASCENT = PI / 2;
         //const float MAX_ASCENT = MIN_ASCENT - PI / 16;
         float phi   = PI; // 0 goes straight up
-        float theta = float(genrand_real1() * 2*PI); // is any angle
+        float theta = float(mrandf() * 2*PI); // is any angle
 
         if (curr_num_worms < MAX_WORMS)
         {

@@ -133,8 +133,8 @@ class PerlinField2D
         #else
         for (int i=0; i<grad_max; i++)
         {
-            float x = 2*genrand_real1() -1.0;
-            float y = 2*genrand_real1() -1.0;
+            float x = 2*mrandf() -1.0;
+            float y = 2*mrandf() -1.0;
 
             float len = sqrt(x*x+y*y);
             x /= len;
@@ -226,7 +226,7 @@ class PerlinOctave2D
 
         octaves = _octaves;
 
-        init_genrand(rand());
+        seed_twister(rand());
         this->octave_array = new PerlinField2D[octaves];
 
         this->cache = new float[(512/4)*(512/4)];
@@ -255,7 +255,7 @@ class PerlinOctave2D
         {
             update = true;
             cache_seed = rand();
-            init_genrand(this->cache_seed);
+            seed_twister(this->cache_seed);
             for (int i=0; i<octaves; i++)
                 octave_array[i].generate_gradient_array();
         }
