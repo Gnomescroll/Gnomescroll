@@ -116,6 +116,11 @@ double genrand_real1(void)
     /* divided by 2^32-1 */
 }
 
+float genrand_realf()
+{
+    return genrand_int32() * (1.0f/4294967295.0f);
+}
+
 /* generates a random number on [0,1)-real-interval */
 double genrand_real2(void)
 {
@@ -157,5 +162,27 @@ int main(void)
     return 0;
 }
 */
+
+/* Wrappers with better names */
+
+inline float mrandd()
+{
+    return genrand_real1();
+}
+
+inline float mrandf()
+{
+    return genrand_realf();
+}
+
+inline int mrand()
+{
+    return genrand_int32();
+}
+
+inline void seed_twister(unsigned long s)
+{
+    init_genrand(s);
+}
 
 }   // t_gen

@@ -30,7 +30,7 @@ class PerlinField3D
 
     PerlinField3D(int seed)
     {
-        init_genrand(seed);
+        seed_twister(seed);
 
         gradient_array = new unsigned char[ssize];
         for (int i=0; i<ssize; i++)
@@ -227,8 +227,8 @@ class PerlinField2D
         grad_max = _grad_max;
         xscale = 1.0 / ((float) xs);
 
-        //init_genrand(seed);
-        init_genrand(rand());
+        //seed_twister(seed);
+        seed_twister(rand());
 
         ga = new unsigned char[ssize];
         for (int i=0; i<ssize; i++)
@@ -248,8 +248,8 @@ class PerlinField2D
     {
         for (int i=0; i<grad_max; i++)
         {
-            float x = 2*genrand_real1() -1;
-            float y = 2*genrand_real1() -1;
+            float x = 2*mrandf() -1;
+            float y = 2*mrandf() -1;
 
             float len = sqrt(x*x+y*y);
             x /= len;

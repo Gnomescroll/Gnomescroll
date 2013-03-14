@@ -226,7 +226,7 @@ void add_trees()
     for (int y=0; y < map_dim.y; y++)
     {
         if (noise[x + y * map_dim.x] > tree_zone_threshold &&
-            genrand_real1() > tree_threshold)
+            mrandf() > tree_threshold)
         {
             int z = t_map::get_highest_solid_block(x,y);
             if (z >= 1 && t_map::get(x,y,z) == regolith &&
@@ -253,7 +253,7 @@ void add_shrooms()
     for (int y=0; y < map_dim.y; y++)
     {
         if (noise[x + y * map_dim.x] > shroom_zone_threshold &&
-            genrand_real1() > shroom_threshold)
+            mrandf() > shroom_threshold)
         {
             int z = t_map::get_highest_solid_block(x,y);
             if (z >= 1 && t_map::get(x,y,z) == regolith &&
