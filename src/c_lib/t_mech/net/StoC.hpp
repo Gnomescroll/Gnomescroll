@@ -1,6 +1,7 @@
 #pragma once
 
 #include <t_map/net/t_net.hpp>
+#include <t_mech/common/common.hpp>
 
 namespace t_mech
 {
