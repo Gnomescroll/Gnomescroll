@@ -217,7 +217,7 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num)
 
 void add_trees()
 {
-    printf("\ttrees\n");
+    printf("\ttrees......");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
     float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
@@ -242,7 +242,7 @@ void add_trees()
 
 void add_shrooms()
 {
-    printf("\tshrooms\n");
+    printf("\tshrooms......");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
 
@@ -273,10 +273,10 @@ bool carve_ray(float x, float y, float z, int tiny_angle, int distance)
     IF_ASSERT(tiny_angle < 0 || tiny_angle >= NUM_LOOKUP_ANGLES) return false;
 
     int cubes_changed = 0;
-    for (int i = 0; i < distance; i++)
+    for (float f = 0; f <= distance; f += 0.33f)
     {
-        int m = x + int(i * sin_lookup_table[tiny_angle]);
-        int n = y + int(i * cos_lookup_table[tiny_angle]);
+        int m = x + int(f * sin_lookup_table[tiny_angle]);
+        int n = y + int(f * cos_lookup_table[tiny_angle]);
 
         if (t_map::get(m, n, z) != terrain_features_curr)
         {
@@ -414,7 +414,7 @@ void add_gorge(int length, int* peaks, float* noise)
 
 void add_gorges(int num_gorges, int length)
 {
-    printf("\tgorges\n");
+    printf("\tgorges......");
     float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
@@ -476,9 +476,17 @@ void add_terrain_features()
     if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS)) return;
 
     // add the features
+    int t = _GET_MS_TIME();
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
+    printf(" (%i ms)\n", _GET_MS_TIME() - t);
+    
+    t = _GET_MS_TIME();
     add_shrooms();
+    printf(" (%i ms)\n", _GET_MS_TIME() - t);
+    
+    t = _GET_MS_TIME();
     add_trees();
+    printf(" (%i ms)\n", _GET_MS_TIME() - t);
 
     delete[] sin_lookup_table;
     delete[] cos_lookup_table;
