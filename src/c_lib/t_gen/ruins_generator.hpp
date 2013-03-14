@@ -826,9 +826,9 @@ bool contains_1_or_more_cubes(Rect3D r)
     return false;
 }
 
-void make_ruins(int x, int y)
+void make_a_ruin(int x, int y)
 {
-    printf("__________________________________________________________________\n");
+    //printf("__________________________________________________________________\n");
     printf("Making ruin @ %d, %d\n", x, y);
 
     set_snake_data(x, y);
@@ -892,7 +892,7 @@ void make_ruins(int x, int y)
                 set_region(rooms[rz][ry][rx].dconn, EMPTY_CUBE, ri, x, y);
         }
 
-        draw_ASCII_floorplan(rz, northernmost, southernmost);
+        //draw_ASCII_floorplan(rz, northernmost, southernmost);
     }
 }
 
@@ -903,7 +903,7 @@ void make_ruins(int x, int y)
 
             if (!t_map::isValidCube(trims[i]))
             {
-                printf("** cube id %d invalid ***", trims[i]); return;
+                printf("*** cube id %d invalid ***", trims[i]); return;
             }
         }
     }
@@ -974,7 +974,7 @@ void make_ruins(int x, int y)
         // generate all ruins
         for (int i = 0; i < 3; i++)
         {
-            make_ruins(randrange(0, map_dim.x - 1),
+            make_a_ruin(randrange(0, map_dim.x - 1),
                        randrange(0, map_dim.y - 1));
             reset_to_dead_and_closed();
         }
