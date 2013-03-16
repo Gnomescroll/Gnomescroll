@@ -19,7 +19,7 @@ void default_map_gen()
     //t_gen::excavate();
     t_gen::populate_ore();
     t_gen::populate_crystals();
-    t_gen::generate_ruins();
+    //t_gen::generate_ruins();
     t_gen::add_terrain_features();  // gorges, trees, shrooms
     t_gen::place_native_plants();
 
@@ -96,9 +96,9 @@ void init_world()
     {
         //int height = 27;
         map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
-        t_gen::set_region(0,0,1, map_dim.x, map_dim.y, map_dim.z - 2 /*height*/, t_map::get_cube_type("rock"));
+        t_gen::set_region(0,0,1, map_dim.x, map_dim.y, map_dim.z - 10 /*height*/, t_map::get_cube_type("regolith"));
         t_gen::excavate();
-        //t_gen::add_terrain_features();  // this needs like about 27+ heighth to the ground or *CRASH*
+        t_gen::add_terrain_features();  // this needs like about 27+ heighth to the ground or *CRASH*
         t_gen::generate_ruins();
         //t_gen::make_art_gallery(height);
     }

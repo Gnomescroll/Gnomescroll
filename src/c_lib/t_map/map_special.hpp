@@ -782,10 +782,10 @@ class RadiationBlockList
         rb.pos = pos;
         rb.rad_strength = 15;
 
-        #if !PRODUCTION
-        printf("Adding radiation block at: ");
-        vec3i_print(pos);
-        #endif
+        //#if !PRODUCTION
+        //printf("Adding radiation block at: ");
+        //vec3i_print(pos);
+        //#endif
     }
 
     void remove(const struct Vec3i& pos)

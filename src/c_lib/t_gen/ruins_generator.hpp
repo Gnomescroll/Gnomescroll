@@ -162,7 +162,7 @@ struct Room
         wall = floo = ceil = trim = EMPTY_CUBE;
     }
 
-    void setup_room(RoomType rt) // FIXME   this should be part of the Room class
+    void setup_room(RoomType rt)
     {
         room_t = rt;
 
@@ -187,16 +187,19 @@ struct Room
         air.hei = CUBES_GOING_UP_ROOM - 2; // need to hardwire it for now, until uconn smartened to change its zpos
 
         // set subspace of grid node
-        if (ROOMT_HALL == room_t)
+        if (room_t == ROOMT_HALL)
         {
             air.x = air.y = CONN_OFFSET;
             air.wid = air.dep = CONN_SPAN;
             air.hei = CONN_HEIGHT;
+            printf("hall");
         }
         else // just 1 cube span inwards (of the room possibility space)
         {
             air.x = air.y = 1;
             air.wid = air.dep = CUBES_ACROSS_ROOM - 2;
+            //printf("air.x: %d, air.y: %d", air.x, air.y);
+            //printf("air.wid: %d, air.dep: %d", air.wid, air.dep);
         }
     }
 };
@@ -461,7 +464,7 @@ void open_connection_to(direction_t d, Room& rm)
             rm.sconn.x = CONN_OFFSET;
             rm.sconn.y = 0;
             rm.sconn.wid = CONN_SPAN;
-            rm.sconn.dep = CONN_OFFSET;  // rm.air.y; // hmmmm, _NORTH doesn't use CONN_OFFSET... is that the key to FIXME?
+            rm.sconn.dep = CONN_OFFSET;  // rm.air.y; // hmmmm, _NORTH doesn't use CONN_OFFSET... FIXME cuz inconsistent
             break;
         case DIR_EAST:
             rm.econn.x =  rm.air.x + rm.air.wid;
@@ -489,7 +492,7 @@ void open_connection_to(direction_t d, Room& rm)
     }
 }
 
-void connect_room(IntVec3& src, direction_t d)
+void bi_connect_to_neighbor(IntVec3 src, direction_t d)
 {
         IntVec3 dst;
         dst.Clone(src);  // starting point.  gets offset in direction below
@@ -562,7 +565,7 @@ bool empty_lat_space_around(IntVec3 iv)
     {
         rooms[root.z][root.y][root.x].setup_room(rooms[root.z][root.y][root.x].room_t);  // fixme?   room_t might not be deliberately set yet?
         rooms[hall.z][hall.y][hall.x].setup_room(ROOMT_HALL);
-        connect_room(root, dir);
+        bi_connect_to_neighbor(root, dir);
         return true;
     }
     else
@@ -570,7 +573,7 @@ bool empty_lat_space_around(IntVec3 iv)
     {
         rooms[hall.z][hall.y][hall.x].setup_room(ROOMT_HALL);
         rooms[room.z][room.y][room.x].setup_room(ROOMT_NORMAL);
-        connect_room(hall, dir);
+        bi_connect_to_neighbor(hall, dir);
         return true;
     }
     else
@@ -715,7 +718,7 @@ void set_snake_data(int ox, int oy)  // origin x/y
     for (int z = 0; z < ROOMS_GOING_UP; z++)
     {
         if (z == 0)  // if we need boss room
-        {  // boss room should be a 2x3 joining of grid nodes, said Brandon
+        {  // boss room should be a 2x3 joining of grid nodes, sayeth the Brandon
             // randomly place 1st room
             root.x = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room wid */);
             root.y = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room dep */);
@@ -747,7 +750,7 @@ void set_snake_data(int ox, int oy)  // origin x/y
             IntVec3 lower;
             lower.Clone(root);
             root.z++; // should never get to this 'else' without having established settings for the boss room (next code block up)
-            connect_room(lower, DIR_UP);
+            bi_connect_to_neighbor(lower, DIR_UP);
         }
 
         make_alive_and_setup(rooms[root.z][root.y][root.x], ROOMT_NORMAL);
@@ -853,14 +856,15 @@ void make_a_ruin(int x, int y)
             {
                 if (rx != 0 && rooms[rz][ry][rx - 1].room_t == ROOMT_BOSS)
                 {
-                    connect_room(ri, DIR_WEST);
+                    bi_connect_to_neighbor(ri, DIR_WEST);
                 }
                 if (ry != 0 && rooms[rz][ry - 1][rx].room_t == ROOMT_BOSS)
                 {
-                    connect_room(ri, DIR_SOUTH);
+                    bi_connect_to_neighbor(ri, DIR_SOUTH);
                 }
             }
 
+            // for limiting vertical text space (to just the area that has rooms) when drawing ASCII floorplans
             if (northernmost < ry)
                 northernmost = ry;
             if (southernmost > ry)
@@ -868,6 +872,8 @@ void make_a_ruin(int x, int y)
 
             // make floor crust
             CubeType fl = (randrange(0,7) == 0) ? t_map::get_cube_type("rock") : rooms[rz][ry][rx].floo;
+            //if (rooms[rz][ry][rx].floo == NULL_CUBE) // tempoRARY!
+                rooms[rz][ry][rx].floo = t_map::get_cube_type("regolith");
             t_gen::set_region(
                 rx * CUBES_ACROSS_ROOM + x,
                 ry * CUBES_ACROSS_ROOM + y,
