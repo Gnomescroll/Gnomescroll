@@ -386,10 +386,33 @@ void AgentStatus::tick_rad()
 
     int rad_exposure = get_attribute_int(this->a->id, "rad_exposure");
 
-    if(rad_exposure > 0)
+    int _rad_level = 0; //tiers of rad exposure
+    if( rad_exposure != 0)
+    {
+        if(rad_exposure < 4)
+        {
+            _rad_level = 1;
+            rad_exposure += RAD_EXPOSURE_LEVEL1;
+        } 
+        else if (rad_exposure < 8)
+        {
+            _rad_level = 2;
+            rad_exposure += RAD_EXPOSURE_LEVEL2;
+        }
+        else if (rad_exposure < 12)
+        {
+            _rad_level = 3;
+            rad_exposure += RAD_EXPOSURE_LEVEL3;
+        }
+        else
+        {
+            _rad_level = 4;
+            rad_exposure += RAD_EXPOSURE_LEVEL4;
+        }
+    }
+
+    if(_rad_level == 0)
         rad_exposure -= RAD_LEACH_RATE;
-    
-    rad_exposure += rad_level;
 
     set_attribute(this->a->id, "rad_exposure", rad_exposure);
 

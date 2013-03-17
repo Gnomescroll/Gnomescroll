@@ -71,9 +71,13 @@ const int HUNGER_DAMAGE_THRESHOLD = 8;
 const int HUNGER_DAMAGE_RATE = ONE_SECOND*8;
 const int HUNGER_DAMAGE_AMOUNT = 1;             //on fourth of a heart every 8 seconds
 
-const int RAD_EXPOSURE_MAX = 1024;
+const int RAD_EXPOSURE_MAX = 512;
 const int RAD_LEACH_RATE = 1; //4x per second
 
+const int RAD_EXPOSURE_LEVEL1 = 2; //4x per second
+const int RAD_EXPOSURE_LEVEL2 = 3; //4x per second
+const int RAD_EXPOSURE_LEVEL3 = 5; //4x per second
+const int RAD_EXPOSURE_LEVEL4 = 7; //4x per second
 
 const size_t MAX_AGENT_MODIFIERS = 0xFF;
 
