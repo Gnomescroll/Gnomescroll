@@ -44,11 +44,11 @@ static void _register_attributes()
     set_limits(0, "max_health");    //use health_max instead of max_health
     add_set_callback(&health_changed);
 
-    attribute_def("max_hunger", 10);  //use hunger_max instead of max_hunger
+    attribute_def("hunger_max", 10);  //use hunger_max instead of hunger_max
     set_limits(10, 10);
 
     attribute_def("hunger", 0);
-    set_limits(0, "max_hunger");
+    set_limits(0, "hunger_max");
 
     attribute_def("rad_exposure_max", RAD_EXPOSURE_MAX);
     set_limits(RAD_EXPOSURE_MAX, RAD_EXPOSURE_MAX);

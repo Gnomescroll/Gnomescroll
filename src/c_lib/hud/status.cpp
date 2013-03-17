@@ -121,10 +121,10 @@ void draw_hunger()
     if (!isValid(agent_id)) return;
 
     int hunger = Agents::get_attribute_int(agent_id, "hunger");
-    int max_hunger = Agents::get_attribute_int(agent_id, "max_hunger");
-    int fullness = max_hunger - hunger;
+    int hunger_max = Agents::get_attribute_int(agent_id, "hunger_max");
+    int fullness = hunger_max - hunger;
 
-    int width = ICON_SIZE * max_hunger;
+    int width = ICON_SIZE * hunger_max;
     float x = toolbelt->xoff + toolbelt->width() - width - 4;
     float y = _yresf - (toolbelt->yoff - toolbelt_margin);
 
@@ -157,7 +157,7 @@ void draw_hunger()
         glColor4ub(c.r, c.g, c.b, 255);
     }
 
-    for (int i=1; i<=max_hunger; i++)
+    for (int i=1; i<=hunger_max; i++)
     {
         float sx = 0.0f;
         float sy = 0.0f;
