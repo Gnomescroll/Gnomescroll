@@ -106,12 +106,13 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
 static bool _mech_update(struct Mech &m)
 {
     class MechAttribute* ma = get_mech_attribute(m.type);
+    m.render_type = ma->render_type;
 
     switch (ma->class_type)
     {
         case MECH_CRYSTAL:
             //do something
-            m.render_type = ma->render_type;
+            //m.render_type = ma->render_type;
 
             m.size = 0.80f;  //diameter
             m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
@@ -395,7 +396,7 @@ bool can_place_mech(int x, int y, int z, int side)
 int can_place_mech(int x, int y, int z, MechType mech_type, int side)
 {
     if (z <= 0 || z > 128) return 1;
-    if (side != 0) return false;
+    if (side != 0) return 1;
 
     if (t_map::isSolid(x,y,z)) return 2;
 
