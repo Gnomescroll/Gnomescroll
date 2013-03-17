@@ -392,6 +392,13 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
 
     Sound::send_play_2d_sound("boon_crank", a->client_id);
     Sound::broadcast_exclude_play_3d_sound("boon_crank", a->get_center(), a->client_id);
+
+
+    mech_type t_mech::get_mech_type("terminal_basic");
+    t_mech::create_mech(position.x, position.y, position.z, mech_type);
+
+    //"terminal_basic"
+
 }
 
 // IG_PLAMT_PLACER

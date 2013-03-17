@@ -455,6 +455,7 @@ class MechListRenderer
     void prep_vbo();
 
     void push_crystal_vertex(const struct Mech &m);
+    void push_render_type_3(const struct Mech &m);
 
 };
 
@@ -655,6 +656,131 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
 
 }
 
+void MechListRenderer::push_render_type_3(const struct Mech &m)
+{
+/*
+    static const float vin[72] =
+    {
+        1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
+        0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
+        1,0,1, 1,0,0, 1,1,0, 1,1,1, //north
+        0,1,1, 0,1,0, 0,0,0, 0,0,1, //south
+        1,1,1, 1,1,0, 0,1,0, 0,1,1, //west
+        0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
+    };
+*/
+
+    float wx = (float) (m.x) + 0.5f + m.offset_x;
+    float wy = (float) (m.y) + 0.5f + m.offset_y;
+    float wz = (float) m.z;
+    //int face = m.face;
+
+    //fulstrum test
+
+    const float cx = current_camera_position.x;
+    const float cy = current_camera_position.y;
+
+    wx = quadrant_translate_f(cx, wx);
+    wy = quadrant_translate_f(cy, wy);
+
+    /*
+        Do radius render test?
+    */
+    if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
+        return;
+
+    int tex_id = mech_attributes[m.type].sprite;
+
+    GS_ASSERT(mech_attributes[m.type].type != -1);
+
+    const float txmargin = 0.0f;
+    float tx_min, ty_min, tx_max, ty_max;
+
+    int ti = tex_id % 16;
+    int tj = tex_id / 16;
+
+    const float h = 0.0625f;
+
+    tx_min = ti*h + txmargin;
+    ty_min = tj*h + txmargin;
+    tx_max = ti*h + h - txmargin;
+    ty_max = tj*h + h - txmargin;
+
+    float vn[3*4];
+    const float size = m.size/2.0f;
+    const float size2 = m.size;
+
+    //orientation
+
+    //for each direction need up and x,y,z
+
+
+    //up
+    static const struct Vec3 vou[6] =
+    {
+        {{{0,0,1}}}, //top
+        {{{0,0,1}}}, //bottom
+        {{{0,0,1}}}, //north
+        {{{0,0,1}}}, //south
+        {{{0,0,1}}}, //west
+        {{{0,0,1}}}, //east
+    };
+
+    //normal
+    static const struct  Vec3 vof[6] =
+    {
+        {{{0,0,0}}}, //top
+        {{{0,0,0}}}, //bottom
+        {{{1,0,0}}}, //north
+        {{{-1,0,0}}}, //south
+        {{{0,1,0}}}, //west
+        {{{0,-1,0}}}, //east
+    };
+
+    float _for = 0.9/2.0;
+
+    int side = m.side;
+    side = 3;
+
+    struct Vec3 vf = vof[side];
+    struct Vec3 vu = vou[side];
+    struct Vec3 vr = vec3_cross(vou[side], vof[side]);
+
+    vn[3*0+0] = wx - size*(-vr.x + vu.x) + _for*vu.x;
+    vn[3*0+1] = wy - size*(-vr.y + vu.y) + _for*vu.y;
+    vn[3*0+2] = wz + size*(-vr.z + vu.z) + _for*vu.z;
+
+    vn[3*1+0] = wx - size*(-vr.x + vu.x) + _for*vu.x;
+    vn[3*1+1] = wy - size*(-vr.y + vu.y) + _for*vu.y;
+    vn[3*1+2] = wz + size*(-vr.z + vu.z) + _for*vu.z;
+
+    vn[3*2+0] = wx - size*(-vr.x + vu.x) + _for*vu.x;
+    vn[3*2+1] = wy - size*(-vr.y + vu.y) + _for*vu.y;
+    vn[3*2+2] = wz + size*(-vr.z + vu.z) + _for*vu.z;
+
+    vn[3*3+0] = wx - size*(-vr.x + vu.x) + _for*vu.x;
+    vn[3*3+1] = wy - size*(-vr.y + vu.y) + _for*vu.y;
+    vn[3*3+2] = wz + size*(-vr.z + vu.z) + _for*vu.z;
+
+
+    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
+    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
+    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
+    vertex_list.tex2f(tx_max,ty_max);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
+    vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.push_vertex();
+
+}
+
 /*
 
 enum MECH_TYPE
@@ -699,6 +825,9 @@ void MechListRenderer::prep_vbo()
             case MECH_RENDER_TYPE_1:
                 break;
             case MECH_RENDER_TYPE_2:
+                break;
+            case MECH_RENDER_TYPE_3:
+                push_render_type_3(mla[i]);
                 break;
             case MECH_RENDER_TYPE_NONE:
                 GS_ASSERT(false);

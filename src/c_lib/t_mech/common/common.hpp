@@ -61,6 +61,8 @@ struct Mech
     int offset;
     float rotation;
 
+    int side;   //for placement on side of block
+
     float offset_x;
     float offset_y;
 

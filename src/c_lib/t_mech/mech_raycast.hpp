@@ -1,7 +1,10 @@
 #pragma once
 
+
+#if DC_CLIENT
 #include <t_mech/_interface.hpp>
 #include <t_mech/mech_draw.hpp>
+#endif
 
 namespace t_mech
 {
