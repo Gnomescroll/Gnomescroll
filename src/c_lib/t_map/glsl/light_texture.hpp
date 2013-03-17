@@ -376,7 +376,7 @@ class LightTextureGenerator
 
 class LightTextureGenerator* LTG;
 
-#define LIGHTING_DISABLED 1
+#define LIGHTING_DISABLED 0
 
 unsigned int generate_clut_light_texture()
 {

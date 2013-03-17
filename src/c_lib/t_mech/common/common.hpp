@@ -19,7 +19,8 @@ typedef enum
     MECH_CROP,
     MECH_MYCELIUM,
     MECH_WIRE,
-    MECH_SWITCH
+    MECH_SWITCH,
+    MECH_SIGN
 } MechClassType;
 
 typedef enum
@@ -28,6 +29,7 @@ typedef enum
     MECH_RENDER_TYPE_0, //X shaped/crystal/
     MECH_RENDER_TYPE_1, //crop/wheat type
     MECH_RENDER_TYPE_2, //mycelium/ladder type
+    MECH_RENDER_TYPE_3, //oriented on side of block
 } MechRenderType;
 
 typedef enum

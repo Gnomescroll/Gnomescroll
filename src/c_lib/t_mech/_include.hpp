@@ -5,6 +5,7 @@
 #include <t_mech/net/CtoS.cpp>
 #include <t_mech/net/StoC.cpp>
 
+#include <t_mech/mech_raycast.hpp>
 #include <t_mech/mech_state.cpp>
 #include <t_mech/config/_interface.hpp>
 #include <t_mech/config/mech_dat.hpp>

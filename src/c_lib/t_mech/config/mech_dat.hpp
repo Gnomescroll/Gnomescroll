@@ -91,6 +91,10 @@ void load_mech_dat()
     s->growth_stage = get_mech_type_dat("cryptid_larvae_stage_1");
 
 
+    mech_def(MECH_CRYSTAL, "terminal_basic", MECH_RENDER_TYPE_3, MECH_BEHAVIOR_TYPE_DEFAULT);
+    set_sprite_index(16*9 + 0);
+
+
     end_mech_dat();     // finalize
 
     apply_mech_dat_changes();   // handle renaming/removals

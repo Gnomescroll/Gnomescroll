@@ -50,8 +50,12 @@ static void _register_attributes()
     attribute_def("hunger", 0);
     set_limits(0, "max_hunger");
 
+    attribute_def("max_rad_exposure", 4096);
+    set_limits(4096, 4096);
+
     attribute_def("rad_exposure", 0);
-    set_limits(0, 800); //400 is max bar
+    set_limits(0, "max_rad_exposure"); //400 is max bar
+
 
     attribute_def("max_rad_level", 0xF);
     set_limits(0xF, 0xF);
