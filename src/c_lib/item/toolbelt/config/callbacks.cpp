@@ -394,10 +394,14 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
     Sound::broadcast_exclude_play_3d_sound("boon_crank", a->get_center(), a->client_id);
 
 
-    
+
+    const int max_dist = 4.0f;
+    int b[3];
+    a->nearest_open_block(max_dist, b);
+
     MechType mech_type = t_mech::get_mech_type("terminal_basic");
-    t_mech::create_mech(position.x, position.y, position.z, mech_type);
-    
+    t_mech::create_mech(b[0],b[1],b[2], mech_type, 0);
+
     //"terminal_basic"
 
 }

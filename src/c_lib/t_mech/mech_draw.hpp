@@ -731,16 +731,20 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     {
         {{{0,0,0}}}, //top
         {{{0,0,0}}}, //bottom
-        {{{1,0,0}}}, //north
-        {{{-1,0,0}}}, //south
-        {{{0,1,0}}}, //west
-        {{{0,-1,0}}}, //east
+        {{{-1,0,0}}}, //north
+        {{{1,0,0}}}, //south
+        {{{0,-1,0}}}, //west
+        {{{0,1,0}}}, //east
     };
 
     float _for = 0.9/2.0;
 
     int side = m.side;
-    side = 3;
+    side =2 ;
+    IF_ASSERT(side >= 2 && side <= 5)
+    {
+        printf("%d side \n", side);
+    }
 
     struct Vec3 vf = vof[side];
     struct Vec3 vu = vou[side];

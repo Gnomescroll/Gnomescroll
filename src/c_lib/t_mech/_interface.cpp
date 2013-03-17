@@ -72,12 +72,13 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
     p.id = m.id;
     p.type = m.type;
     p.subtype = m.subtype;
+    p.side = m.side;
     p.x = m.x;
     p.y = m.y;
     p.z = m.z;
-    p.side = m.side;
 
     GS_ASSERT(mech_attributes[m.type].type != -1);
+    GS_ASSERT((m.side >=0 && m.side <= 5) || m.side == 255);
 
     switch (mech_attributes[m.type].class_type)
     {
@@ -149,6 +150,7 @@ static bool unpack_mech(struct Mech &m, class mech_create_StoC &p)
     m.id = p.id;
     m.type = (MechType)p.type;
     m.subtype = p.subtype;
+    m.side = p.side;
     m.x = p.x;
     m.y = p.y;
     m.z = p.z;
@@ -295,27 +297,28 @@ bool create_mech(int x, int y, int z, MechType type, int subtype)
         return false;
     }
 
-    if (!can_place_mech(x,y,z, 0, type))
+    int ret = can_place_mech(x,y,z, type, 0);
+    if (ret != 0)
     {
         if (t_map::isSolid(x,y,z))
         {
-            printf("Can't place mech: point is solid (%d,%d,%d)\n", x,y,z);
+            printf("Can't place mech: point is solid (%d,%d,%d), ret_code= %d \n", x,y,z,ret);
             return false;
         }
 
         if (!t_map::isSolid(x,y,z-1))
         {
-            printf("Can't place mech: no solid block below (%d,%d,%d)\n", x,y,z);
+            printf("Can't place mech: no solid block below (%d,%d,%d), ret_code= %d \n", x,y,z,ret);
             return false;
         }
 
         if (mech_list->is_occupied(x,y,z))
         {
-            printf("Can't place mech: mech already here (%d,%d,%d)\n", x,y,z);
+            printf("Can't place mech: mech already here (%d,%d,%d), ret_code= %d \n", x,y,z,ret);
             return false;
         }
 
-        printf("Can't place mech: invalid position (%d,%d,%d)\n", x,y,z);
+        printf("Can't place mech: invalid position (%d,%d,%d), ret_code= %d \n", x,y,z,ret);
         return false;
     }
 
@@ -326,6 +329,41 @@ bool create_mech(int x, int y, int z, MechType type, int subtype)
     m.y = y;
     m.z = z;
     m.growth_ttl = mech_attributes[type].growth_ttl;
+
+    m.side = 255;
+    class MechAttribute* ma = get_mech_attribute(type);
+    switch (ma->class_type)
+    {
+        case MECH_CRYSTAL:
+        case MECH_CROP:
+        case MECH_MYCELIUM:
+            break;
+        case MECH_SIGN:
+            if(t_map::isSolid(x-1,y,z))
+            {
+                m.side = 2;
+            }
+            else if(t_map::isSolid(x+1,y,z))
+            {
+                m.side = 3;
+            } 
+            else if(t_map::isSolid(x,y+1,z))
+            {
+                m.side = 4;
+            }
+            else if(t_map::isSolid(x,y-1,z))
+            {
+                m.side = 5;
+            }
+            break;
+        case MECH_WIRE:
+        case MECH_SWITCH:
+        case NULL_MECH_CLASS:
+            GS_ASSERT(false);
+            return false;
+    }
+
+
     mech_list->server_add_mech(m);
 
     return true;
@@ -353,12 +391,13 @@ bool can_place_mech(int x, int y, int z, int side)
     return true;
 }
 
-bool can_place_mech(int x, int y, int z, int side, MechType mech_type)
+//returns 0 if true
+int can_place_mech(int x, int y, int z, MechType mech_type, int side)
 {
-    if (z <= 0 || z > 128) return false;
+    if (z <= 0 || z > 128) return 1;
     //if (side != 0) return false;
 
-    if (t_map::isSolid(x,y,z)) return false;
+    if (t_map::isSolid(x,y,z)) return 2;
 
     class MechAttribute* ma = get_mech_attribute(mech_type);
     switch (ma->class_type)
@@ -366,20 +405,28 @@ bool can_place_mech(int x, int y, int z, int side, MechType mech_type)
         case MECH_CRYSTAL:
         case MECH_CROP:
         case MECH_MYCELIUM:
-            if (!t_map::isSolid(x,y,z-1)) return false;
-            if (mech_list->is_occupied(x,y,z)) return false;
+            if (!t_map::isSolid(x,y,z-1)) return 3;
+            if (mech_list->is_occupied(x,y,z)) return 4;
             break;
         case MECH_SIGN:
-            if (mech_list->is_occupied(x,y,z)) return false;
+            if (mech_list->is_occupied(x,y,z)) return 5;
+
+            if( !t_map::isSolid(x-1,y,z) &&
+                !t_map::isSolid(x+1,y,z) &&
+                !t_map::isSolid(x,y+1,z) &&
+                !t_map::isSolid(x,y-1,z) )
+            {
+                //return 6;
+            }
             break;
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
             GS_ASSERT(false);
-            return false;
+            return 6;
     }
 
-    return true;
+    return 0;
 }
 
 void place_vine(int x, int y, int z, int side)
