@@ -491,7 +491,7 @@ void add_foliage()
 
 void add_terrain_features()
 {
-    printf("Adding terrain features\n");
+    printf("add_terrain_features: \n");
 
     GS_ASSERT(sin_lookup_table == NULL);
     GS_ASSERT(cos_lookup_table == NULL);
@@ -530,23 +530,21 @@ void add_terrain_features()
     if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS)) return;
 
     // add the features
-#if PRODUCTION
     int t = _GET_MS_TIME();
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
-    printf(" (%i ms)\n", _GET_MS_TIME() - t);
-#endif
+    printf("\tgorges: %i ms\n", _GET_MS_TIME() - t);
     
     t = _GET_MS_TIME();
     add_shrooms();
-    printf(" (%i ms)\n", _GET_MS_TIME() - t);
+    printf("\tschrooms: %i ms\n", _GET_MS_TIME() - t);
     
     t = _GET_MS_TIME();
     add_trees();
-    printf(" (%i ms)\n", _GET_MS_TIME() - t);
+    printf("\ttrees: %i ms\n", _GET_MS_TIME() - t);
 
     t = _GET_MS_TIME();
     add_foliage();
-    printf(" (%i ms)\n", _GET_MS_TIME() - t);
+    printf("\troliage: %i ms\n", _GET_MS_TIME() - t);
 
     delete[] sin_lookup_table;
     delete[] cos_lookup_table;
