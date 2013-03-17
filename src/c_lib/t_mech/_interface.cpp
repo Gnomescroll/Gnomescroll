@@ -344,15 +344,31 @@ bool create_crystal(int x, int y, int z, MechType type)
 }
 #endif
 
-bool can_place_mech(int x, int y, int z, int side)
+bool can_place_mech(int x, int y, int z, int side, MechType mech_type)
 {
     if (z <= 0 || z > 128) return false;
     if (side != 0) return false;
 
     if (t_map::isSolid(x,y,z)) return false;
-    if (!t_map::isSolid(x,y,z-1)) return false;
 
-    if (mech_list->is_occupied(x,y,z)) return false;
+    class MechAttribute* ma = get_mech_attribute(mech_type);
+    switch (ma->class_type)
+    {
+        case MECH_CRYSTAL:
+        case MECH_CROP:
+        case MECH_MYCELIUM:
+            if (!t_map::isSolid(x,y,z-1)) return false;
+            if (mech_list->is_occupied(x,y,z)) return false;
+            break;
+        case MECH_SIGN:
+            if (mech_list->is_occupied(x,y,z)) return false;
+            break;
+        case MECH_WIRE:
+        case MECH_SWITCH:
+        case NULL_MECH_CLASS:
+            GS_ASSERT(false);
+            return false;
+    }
 
     return true;
 }
