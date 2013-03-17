@@ -729,8 +729,8 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     //normal
     static const struct  Vec3 vof[6] =
     {
-        {{{0,0,0}}}, //top
-        {{{0,0,0}}}, //bottom
+        {{{0,0,1}}}, //top
+        {{{0,0,1}}}, //bottom
         {{{-1,0,0}}}, //north
         {{{1,0,0}}}, //south
         {{{0,-1,0}}}, //west
@@ -740,30 +740,29 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     float _for = 0.9/2.0;
 
     int side = m.side;
-    side =2 ;
-    IF_ASSERT(side >= 2 && side <= 5)
-    {
-        printf("%d side \n", side);
-    }
+    side =3  ;
+    GS_ASSERT(side >= 2 && side <= 5);
 
     struct Vec3 vf = vof[side];
     struct Vec3 vu = vou[side];
     struct Vec3 vr = vec3_cross(vou[side], vof[side]);
 
-    vn[3*0+0] = wx - size*(-vr.x + vu.x) + _for*vf.x;
-    vn[3*0+1] = wy - size*(-vr.y + vu.y) + _for*vf.y;
+    GS_ASSERT(vr.x*vr.x + vr.y*vr.y + vr.z*vr.z > 0.1);
+
+    vn[3*0+0] = wx + size*(-vr.x + vu.x) + _for*vf.x;
+    vn[3*0+1] = wy + size*(-vr.y + vu.y) + _for*vf.y;
     vn[3*0+2] = wz + size*(-vr.z + vu.z) + _for*vf.z;
 
-    vn[3*1+0] = wx - size*(-vr.x - vu.x) + _for*vf.x;
-    vn[3*1+1] = wy - size*(-vr.y - vu.y) + _for*vf.y;
+    vn[3*1+0] = wx + size*(-vr.x - vu.x) + _for*vf.x;
+    vn[3*1+1] = wy + size*(-vr.y - vu.y) + _for*vf.y;
     vn[3*1+2] = wz + size*(-vr.z - vu.z) + _for*vf.z;
 
-    vn[3*2+0] = wx - size*(vr.x - vu.x) + _for*vf.x;
-    vn[3*2+1] = wy - size*(vr.y - vu.y) + _for*vf.y;
+    vn[3*2+0] = wx + size*(vr.x - vu.x) + _for*vf.x;
+    vn[3*2+1] = wy + size*(vr.y - vu.y) + _for*vf.y;
     vn[3*2+2] = wz + size*(vr.z - vu.z) + _for*vf.z;
 
-    vn[3*3+0] = wx - size*(vr.x + vu.x) + _for*vf.x;
-    vn[3*3+1] = wy - size*(vr.y + vu.y) + _for*vf.y;
+    vn[3*3+0] = wx + size*(vr.x + vu.x) + _for*vf.x;
+    vn[3*3+1] = wy + size*(vr.y + vu.y) + _for*vf.y;
     vn[3*3+2] = wz + size*(vr.z + vu.z) + _for*vf.z;
 
 

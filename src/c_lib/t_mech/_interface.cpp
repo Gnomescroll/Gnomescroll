@@ -395,7 +395,7 @@ bool can_place_mech(int x, int y, int z, int side)
 int can_place_mech(int x, int y, int z, MechType mech_type, int side)
 {
     if (z <= 0 || z > 128) return 1;
-    //if (side != 0) return false;
+    if (side != 0) return false;
 
     if (t_map::isSolid(x,y,z)) return 2;
 

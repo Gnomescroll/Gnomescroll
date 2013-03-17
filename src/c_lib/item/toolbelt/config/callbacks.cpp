@@ -350,11 +350,25 @@ void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
 
 void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
+    
+
+    //
+
     Item::Item* item = Item::get_item(item_id);
     if (item->charges <= 0) return;
 
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
+
+
+// debug
+    const int max_dist = 4.0f;
+    int b[3];
+    a->nearest_open_block(max_dist, b);
+
+    MechType mech_type = t_mech::get_mech_type("terminal_basic");
+    t_mech::create_mech(b[0],b[1],b[2], mech_type, 0);
+
 
     // find an item type. it should not be the same item or an abstract item
     ItemType random_type = NULL_ITEM_TYPE;
@@ -392,18 +406,6 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
 
     Sound::send_play_2d_sound("boon_crank", a->client_id);
     Sound::broadcast_exclude_play_3d_sound("boon_crank", a->get_center(), a->client_id);
-
-
-
-    const int max_dist = 4.0f;
-    int b[3];
-    a->nearest_open_block(max_dist, b);
-
-    MechType mech_type = t_mech::get_mech_type("terminal_basic");
-    t_mech::create_mech(b[0],b[1],b[2], mech_type, 0);
-
-    //"terminal_basic"
-
 }
 
 // IG_PLAMT_PLACER
