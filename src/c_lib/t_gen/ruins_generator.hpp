@@ -1,4 +1,3 @@
-// fixme: look for all " = "
 #pragma once
 
 #if DC_CLIENT
@@ -19,7 +18,7 @@ CubeType ceils [NUM_CEIL_CUBES];
 const size_t    NUM_TRIM_CUBES = 4;
 CubeType trims [NUM_TRIM_CUBES];
 
-const int ROOMS_GOING_ACROSS = 32; // across ruins
+const int ROOMS_GOING_ACROSS = 32; // across a ruin
 const int ROOMS_GOING_UP = 3; // levels/floors
 const int CUBES_ACROSS_ROOM = 10;
 const int CUBES_GOING_UP_ROOM = 8;
@@ -45,7 +44,7 @@ enum direction_t
     DIR_MAX // use only as a max value when iterating thru directions
 };
 
-enum room_t
+enum RoomType
 {
     ROOMT_NORMAL,
     ROOMT_HALL,
@@ -141,7 +140,7 @@ struct Room
 {
     int id; // just used to label the order the rooms were generated
     bool dead;
-    enum room_t room_t;
+    enum RoomType room_t;
     CubeType wall;
     CubeType floo;
     CubeType ceil;
@@ -161,6 +160,47 @@ struct Room
         dead = true;
         room_t = ROOMT_NORMAL;
         wall = floo = ceil = trim = EMPTY_CUBE;
+    }
+
+    void setup_room(RoomType rt)
+    {
+        room_t = rt;
+
+        //// for now we're randomizing each room for maximum debug patchwork quilting
+        //floo = randcube(floors, NUM_FLOOR_CUBES);//floo;
+        //wall = randcube(walls, NUM_WALL_CUBES);//wall;
+        //ceil = randcube(ceils, NUM_CEIL_CUBES);//ceil;
+        //trim = randcube(trims, NUM_TRIM_CUBES);//trim;
+
+        // one up from omnipresent floor
+        nconn.z = 1;
+        sconn.z = 1;
+        econn.z = 1;
+        wconn.z = 1;
+        air.z   = 1;
+
+        nconn.hei = CONN_HEIGHT;
+        sconn.hei = CONN_HEIGHT;
+        econn.hei = CONN_HEIGHT;
+        wconn.hei = CONN_HEIGHT;
+        //air.hei = randrange(5, CUBES_GOING_UP_ROOM - 2); // vary height
+        air.hei = CUBES_GOING_UP_ROOM - 2; // need to hardwire it for now, until uconn smartened to change its zpos
+
+        // set subspace of grid node
+        if (room_t == ROOMT_HALL)
+        {
+            air.x = air.y = CONN_OFFSET;
+            air.wid = air.dep = CONN_SPAN;
+            air.hei = CONN_HEIGHT;
+            printf("hall");
+        }
+        else // just 1 cube span inwards (of the room possibility space)
+        {
+            air.x = air.y = 1;
+            air.wid = air.dep = CUBES_ACROSS_ROOM - 2;
+            //printf("air.x: %d, air.y: %d", air.x, air.y);
+            //printf("air.wid: %d, air.dep: %d", air.wid, air.dep);
+        }
     }
 };
 
@@ -227,48 +267,10 @@ bool rect_plus_margin_contains(Rect3D r, int mar, int x, int y, int z)
     return false;
 }
 
-void setup_room(Room& r, room_t rt)
+void make_alive_and_setup(Room& r, RoomType room_t)
 {
-    r.room_t = rt;
-
-    //// for now we're randomizing each room for maximum debug patchwork quilting
-    //r.floo = randcube(floors, NUM_FLOOR_CUBES);//floo;
-    //r.wall = randcube(walls, NUM_WALL_CUBES);//wall;
-    //r.ceil = randcube(ceils, NUM_CEIL_CUBES);//ceil;
-    //r.trim = randcube(trims, NUM_TRIM_CUBES);//trim;
-
-    // one up from omnipresent floor
-    r.nconn.z = 1;
-    r.sconn.z = 1;
-    r.econn.z = 1;
-    r.wconn.z = 1;
-    r.air.z = 1;
-
-    r.nconn.hei = CONN_HEIGHT;
-    r.sconn.hei = CONN_HEIGHT;
-    r.econn.hei = CONN_HEIGHT;
-    r.wconn.hei = CONN_HEIGHT;
-    //r.air.hei = randrange(5, CUBES_GOING_UP_ROOM - 2); // vary height
-    r.air.hei = CUBES_GOING_UP_ROOM - 2; // need to hardwire it for now, until uconn smartened to change its zpos
-
-    // set subspace of grid node
-    if (ROOMT_HALL == r.room_t)
-    {
-        r.air.x = r.air.y = CONN_OFFSET;
-        r.air.wid = r.air.dep = CONN_SPAN;
-        r.air.hei = CONN_HEIGHT;
-    }
-    else // just 1 cube span inwards (of the room possibility space)
-    {
-        r.air.x = r.air.y = 1;
-        r.air.wid = r.air.dep = CUBES_ACROSS_ROOM - 2;
-    }
-}
-
-void make_alive_and_setup(Room& r, room_t room_t)
-{
+    r.setup_room(room_t);
     r.dead = false;
-    setup_room(r, room_t);
 }
 
 void make_chest(int x, int y, int z)
@@ -400,7 +402,6 @@ void make_stairs(IntVec3 iv, int ox, int oy)
 
 
 Room setup_stairspace_for (direction_t d, Room r) {
-    //r.dir_types[d] = DIRTYPE_STAIRS;
     r.air.x = fixed_stair.x - 2;
     r.air.y = fixed_stair.y - 2;
     r.air.wid = fixed_stair.wid + 4;
@@ -449,7 +450,7 @@ bool valid_room_idx_to_dir_from(direction_t dir, IntVec3 from)
 
 void open_connection_to(direction_t d, Room& rm)
 {
-    setup_room(rm, rm.room_t); // at this point we don't know if both of the desired pair of adds were allocated
+    rm.setup_room(rm.room_t); // at this point we don't know if both of the desired pair of adds were allocated
 
     switch (d)
     {
@@ -463,7 +464,7 @@ void open_connection_to(direction_t d, Room& rm)
             rm.sconn.x = CONN_OFFSET;
             rm.sconn.y = 0;
             rm.sconn.wid = CONN_SPAN;
-            rm.sconn.dep = CONN_OFFSET;  // rm.air.y;
+            rm.sconn.dep = CONN_OFFSET;  // rm.air.y; // hmmmm, _NORTH doesn't use CONN_OFFSET... FIXME cuz inconsistent
             break;
         case DIR_EAST:
             rm.econn.x =  rm.air.x + rm.air.wid;
@@ -477,7 +478,7 @@ void open_connection_to(direction_t d, Room& rm)
             rm.wconn.wid = CONN_OFFSET;  // rm.air.x;
             rm.wconn.dep = CONN_SPAN;
             break;
-        case DIR_UP:// FIXME  must close down these connections btween each dungeon
+        case DIR_UP:
             rm.uconn.Clone(fixed_stair);
             rm.uconn.z =  CUBES_GOING_UP_ROOM - 1;
             break;
@@ -491,7 +492,7 @@ void open_connection_to(direction_t d, Room& rm)
     }
 }
 
-void connect_room(IntVec3& src, direction_t d)
+void bi_connect_to_neighbor(IntVec3 src, direction_t d)
 {
         IntVec3 dst;
         dst.Clone(src);  // starting point.  gets offset in direction below
@@ -562,22 +563,22 @@ bool empty_lat_space_around(IntVec3 iv)
 
     if (iv.Equals(root))
     {
-        setup_room(rooms[root.z][root.y][root.x], rooms[root.z][root.y][root.x].room_t);  // fixme?   room_t might not be deliberately set yet?
-        setup_room(rooms[hall.z][hall.y][hall.x], ROOMT_HALL);
-        connect_room(root, dir);
+        rooms[root.z][root.y][root.x].setup_room(rooms[root.z][root.y][root.x].room_t);  // fixme?   room_t might not be deliberately set yet?
+        rooms[hall.z][hall.y][hall.x].setup_room(ROOMT_HALL);
+        bi_connect_to_neighbor(root, dir);
         return true;
     }
     else
     if (iv.Equals(hall))
     {
-        setup_room(rooms[hall.z][hall.y][hall.x], ROOMT_HALL);
-        setup_room(rooms[room.z][room.y][room.x], ROOMT_NORMAL);
-        connect_room(hall, dir);
+        rooms[hall.z][hall.y][hall.x].setup_room(ROOMT_HALL);
+        rooms[room.z][room.y][room.x].setup_room(ROOMT_NORMAL);
+        bi_connect_to_neighbor(hall, dir);
         return true;
     }
     else
     {
-        printf("Ruins generator: neither root or hall was passed into: bool empty_lat_space_around(iv)\n");
+        printf("Ruins generator: neither root or hall was passed into: empty_lat_space_around()\n");
         GS_ASSERT(false);
         return false;
     }
@@ -590,7 +591,7 @@ void UNUSED_make_a_simple_room()
     IntVec3 mal_span; // malleable/dynamic space span
     mal_span.x = CUBES_ACROSS_ROOM - 2 /* shell of 2 walls */ - MIN_LIP * 2;
     mal_span.y = CUBES_ACROSS_ROOM - 2 /* shell of 2 walls */ - MIN_LIP * 2;
-    mal_span.z = CUBES_GOING_UP_ROOM    - 2 /* shell of 2 walls */ - MIN_LIP; // floors of the same height are fine, altho ceiling should be lipped
+    mal_span.z = CUBES_GOING_UP_ROOM - 2 /* shell of 2 walls */ - MIN_LIP; // floors of the same height are fine, altho ceiling should be lipped
 
     // fixme    to provide stairs ONLY in rooms, and choose one AFTER a whole floor is generated
     //int stairway_up_x = randrange(0, ROOMS_GOING_ACROSS - 1);
@@ -716,34 +717,32 @@ void set_snake_data(int ox, int oy)  // origin x/y
 
     for (int z = 0; z < ROOMS_GOING_UP; z++)
     {
-        // make boss room or stairway-down
-        if (z == 0) // boss needs 2x3 joining of grid nodes
-        {
+        if (z == 0)  // if we need boss room
+        {  // boss room should be a 2x3 joining of grid nodes, sayeth the Brandon
+            // randomly place 1st room
             root.x = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room wid */);
             root.y = randrange(0, ROOMS_GOING_ACROSS - 1 - 3 /* potential boss room dep */);
             root.z = z;
 
-            // make extra rooms to be joined together as boss room
-            make_alive_and_setup(rooms[root.z][root.y + 1][root.x + 1], ROOMT_BOSS);
-            finish_room(        rooms[root.z][root.y + 1][root.x + 1]);
-            make_alive_and_setup(rooms[root.z][root.y + 1][root.x],     ROOMT_BOSS);
-            finish_room(        rooms[root.z][root.y + 1][root.x]);
-            make_alive_and_setup(rooms[root.z][root.y]    [root.x + 1], ROOMT_BOSS);
-            finish_room(        rooms[root.z][root.y]    [root.x + 1]);
-
+            int boss_w;  // width of boss room
+            int boss_h;  // height of boss room
             if (randrange(0, 1) == 0)
-            { // 2x3
-                make_alive_and_setup(rooms[root.z][root.y + 2][root.x],     ROOMT_BOSS);
-                finish_room(        rooms[root.z][root.y + 2][root.x]);
-                make_alive_and_setup(rooms[root.z][root.y + 2][root.x + 1], ROOMT_BOSS);
-                finish_room(        rooms[root.z][root.y + 2][root.x + 1]);
+            { 
+                boss_w = 2;
+                boss_h = 3;
             }
             else
-            { // 3x2
-                make_alive_and_setup(rooms[root.z][root.y]    [root.x + 2], ROOMT_BOSS);
-                finish_room(        rooms[root.z][root.y]    [root.x + 2]);
-                make_alive_and_setup(rooms[root.z][root.y + 1][root.x + 2], ROOMT_BOSS);
-                finish_room(        rooms[root.z][root.y + 1][root.x + 2]);
+            {
+                boss_w = 3;
+                boss_h = 2;
+            }
+        
+            // boss room subgrid iteration
+            for (int x = 0; x < boss_w; x++)
+            for (int y = 0; y < boss_h; y++)
+            {
+                make_alive_and_setup(rooms[root.z][root.y + y][root.x + x], ROOMT_BOSS);
+                finish_room         (rooms[root.z][root.y + y][root.x + x]);
             }
         }
         else  // need stairs
@@ -751,7 +750,7 @@ void set_snake_data(int ox, int oy)  // origin x/y
             IntVec3 lower;
             lower.Clone(root);
             root.z++; // should never get to this 'else' without having established settings for the boss room (next code block up)
-            connect_room(lower, DIR_UP);
+            bi_connect_to_neighbor(lower, DIR_UP);
         }
 
         make_alive_and_setup(rooms[root.z][root.y][root.x], ROOMT_NORMAL);
@@ -830,9 +829,9 @@ bool contains_1_or_more_cubes(Rect3D r)
     return false;
 }
 
-void make_ruins(int x, int y)
+void make_a_ruin(int x, int y)
 {
-    printf("__________________________________________________________________\n");
+    //printf("__________________________________________________________________\n");
     printf("Making ruin @ %d, %d\n", x, y);
 
     set_snake_data(x, y);
@@ -840,7 +839,7 @@ void make_ruins(int x, int y)
     // generate each room's cubes
     for (int rz = 0; rz < ROOMS_GOING_UP; rz++)
     {
-        int northernmost = 0;
+        int northernmost = 0; // initialize at opposite ends
         int southernmost = ROOMS_GOING_ACROSS;
         for (int rx = 0; rx < ROOMS_GOING_ACROSS; rx++)
         for (int ry = 0; ry < ROOMS_GOING_ACROSS; ry++)
@@ -857,14 +856,15 @@ void make_ruins(int x, int y)
             {
                 if (rx != 0 && rooms[rz][ry][rx - 1].room_t == ROOMT_BOSS)
                 {
-                    connect_room(ri, DIR_WEST);
+                    bi_connect_to_neighbor(ri, DIR_WEST);
                 }
                 if (ry != 0 && rooms[rz][ry - 1][rx].room_t == ROOMT_BOSS)
                 {
-                    connect_room(ri, DIR_SOUTH);
+                    bi_connect_to_neighbor(ri, DIR_SOUTH);
                 }
             }
 
+            // for limiting vertical text space (to just the area that has rooms) when drawing ASCII floorplans
             if (northernmost < ry)
                 northernmost = ry;
             if (southernmost > ry)
@@ -872,6 +872,8 @@ void make_ruins(int x, int y)
 
             // make floor crust
             CubeType fl = (randrange(0,7) == 0) ? t_map::get_cube_type("rock") : rooms[rz][ry][rx].floo;
+            //if (rooms[rz][ry][rx].floo == NULL_CUBE) // tempoRARY!
+                rooms[rz][ry][rx].floo = t_map::get_cube_type("regolith");
             t_gen::set_region(
                 rx * CUBES_ACROSS_ROOM + x,
                 ry * CUBES_ACROSS_ROOM + y,
@@ -907,7 +909,7 @@ void make_ruins(int x, int y)
 
             if (!t_map::isValidCube(trims[i]))
             {
-                printf("** cube id %d invalid ***", trims[i]); return;
+                printf("*** cube id %d invalid ***", trims[i]); return;
             }
         }
     }
@@ -928,7 +930,7 @@ void make_ruins(int x, int y)
             rooms[rz][ry][rx].wall =
             rooms[rz][ry][rx].floo =
             rooms[rz][ry][rx].ceil =
-            rooms[rz][ry][rx].trim = EMPTY_CUBE;
+            rooms[rz][ry][rx].trim = NULL_CUBE;
 
         }
     }
@@ -978,7 +980,7 @@ void make_ruins(int x, int y)
         // generate all ruins
         for (int i = 0; i < 3; i++)
         {
-            make_ruins(randrange(0, map_dim.x - 1),
+            make_a_ruin(randrange(0, map_dim.x - 1),
                        randrange(0, map_dim.y - 1));
             reset_to_dead_and_closed();
         }

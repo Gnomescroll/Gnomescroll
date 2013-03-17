@@ -102,7 +102,7 @@ void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
         int dist = abs(i-x) + abs(j-y); // manhattan
         float p = falloffs[dist];
 
-        if ((float)genrand_real1() > p) continue;
+        if (mrandf() > p) continue;
         int ii = translate_point(i);
         int jj = translate_point(j);
         int k = t_map::get_nearest_surface_block(ii,jj,z);
@@ -120,8 +120,7 @@ void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
 
 MechType get_crystal_type(float percent_complete)
 {
-    int i=0;
-    for (; i<n_crystals; i++)
+    for (int i=0; i<n_crystals; i++)
         if (percent_complete >= crystal_strata[2*i+0] && percent_complete < crystal_strata[2*i+1])
             return crystals[i];
     GS_ASSERT(false);
@@ -134,7 +133,7 @@ void populate_crystals()
     init_crystals();
 
     /* Heuristic:
-     *      If block == "rock" and block.z+1 == 0 and genrand_real1() < p
+     *      If block == "rock" and block.z+1 == 0 and mrandf() < p
      *          place crystal cluster
      */
 
@@ -145,11 +144,11 @@ void populate_crystals()
     int ct_max = 1000;
     int* loc = (int*)malloc(3 * ct_max * sizeof(int));
 
-    for (int k=127; k>=0; k--)
-    for (int i=0; i<512; i++)
-    for (int j=0; j<512; j++)
+    for (int k=map_dim.z-1; k>=0; k--)
+    for (int i=0; i<map_dim.x; i++)
+    for (int j=0; j<map_dim.y; j++)
     {
-        if ((float)genrand_real1() > CRYSTAL_CLUSTER_PROBABILITY) continue;   // probability test
+        if (mrandf() > CRYSTAL_CLUSTER_PROBABILITY) continue;   // probability test
         int id = t_map::get(i,j,k); // get cube
         if (id != rock) continue;
         if (t_map::get(i,j,k+1) != 0) continue; // check block above is open
@@ -182,7 +181,7 @@ void populate_crystals()
     cluster_size = (int*)calloc(ct, sizeof(int));
 
     float pct = 0.0f;
-    float inc = 1.0f/(float)ct;
+    float inc = 1.0f/ct;
     for (int i=0; i<ct; i++)
     {
         MechType crystal_id = get_crystal_type(pct);

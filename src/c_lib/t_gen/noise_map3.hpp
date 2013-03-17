@@ -214,7 +214,7 @@ class PerlinOctave3D
         {
             update = true;
             this->cache_seed = rand();
-            init_genrand(this->cache_seed);
+            seed_twister(this->cache_seed);
             for (int i=0; i<octaves; i++)
                 octave_array[i].generate_gradient_array();
         }
@@ -301,7 +301,7 @@ class MapGenerator1
     */
     MapGenerator1()
     {
-        init_genrand(rand());
+        seed_twister(rand());
 
         this->cache = new float[this->xmax * this->ymax * this->zmax];
         this->erosion3D = new PerlinOctave3D(4);

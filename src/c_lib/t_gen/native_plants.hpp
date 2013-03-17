@@ -28,29 +28,30 @@ void place_native_plants()
     MechType plant_4 = t_mech::get_mech_type_dat("cryptid_larvae_stage_0");
     MechType plant_5 = t_mech::get_mech_type_dat("cryptid_larvae_stage_3");
 
-    int plants_max = 128;
+    const int PLANTS_MAX = 128;
+    const int TRIES_MAX  =  32;
     int tries = 0;
 
     int regolith = t_map::get_cube_type("regolith");
 
 
     int plant_num = 0;
-    while (plant_num < plants_max)
+    while (plant_num < PLANTS_MAX)
     {
 
-        if (tries > 32)
+        if (tries >= TRIES_MAX)
         {
             printf("WARNING t_gen::place_native_plants: max tries reached \n");
             break;
         }
 
-        int x = rand() % 512;
-        int y = rand() % 512;
+        int x = rand() % map_dim.x;
+        int y = rand() % map_dim.y;
 
         int bid;
         int pbid = 0;
 
-        for (int z=127; z>0; z--)
+        for (int z=map_dim.z-1; z>=0; z--)
         {
             bid = t_map::get(x,y,z);
 

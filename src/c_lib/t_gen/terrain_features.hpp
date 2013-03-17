@@ -30,12 +30,12 @@ const size_t NUM_SHROOMCAPS = 3;
 const size_t NUM_SHROOMSTEMS = 2;
 
 // perlin noise
-const float persistence = 0.5f; // tweak
-const size_t octaves = 6;  // tweak
-const float tree_zone_threshold = 0.3f;  // move to a config file maybe
-const float tree_threshold = 0.997f;
-const float shroom_zone_threshold = 0.3f;  // move to a config file maybe
-const float shroom_threshold = 0.997f;
+const float PERSISTENCE = 0.5f; // tweak
+const size_t OCTAVES = 6;  // tweak
+const float TREE_ZONE_THRESHOLD = 0.3f;  // move to a config file maybe
+const float TREE_THRESHOLD = 0.997f;
+const float SHROOM_ZONE_THRESHOLD = 0.3f;  // move to a config file maybe
+const float SHROOM_THRESHOLD = 0.997f;
 
 const int NUM_LOOKUP_ANGLES = 32;
 float* sin_lookup_table = NULL;
@@ -207,7 +207,7 @@ void make_tree(int x, int y, int z)
     }
 }
 
-bool strip_of_solid_blocks_underneath(int x, int y, int z, int num)
+bool vertical_strip_of_solids_underneath(int num, int x, int y, int z)
 {
     for (int i = 1; i <= num; i++)
         if (z-i < 0 || t_map::get(x, y, z-i) == EMPTY_CUBE)
@@ -217,47 +217,48 @@ bool strip_of_solid_blocks_underneath(int x, int y, int z, int num)
 
 void add_trees()
 {
-    printf("\ttrees\n");
+    printf("\ttrees......");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
-    float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
+    float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
+    
     for (int x=0; x < map_dim.x; x++)
     for (int y=0; y < map_dim.y; y++)
     {
-        if (noise[x + y * map_dim.x] > tree_zone_threshold &&
-            genrand_real1() > tree_threshold)
+        if (noise[x + y * map_dim.x] > TREE_ZONE_THRESHOLD &&
+            mrandf() > TREE_THRESHOLD)
         {
             int z = t_map::get_highest_solid_block(x,y);
             if (z >= 1 && t_map::get(x,y,z) == regolith &&
-                strip_of_solid_blocks_underneath(x,y,z, 6))
+                vertical_strip_of_solids_underneath(6, x,y,z))
                 {
                     make_tree(x,y,z);
                     continue;
                 }
         }
     }
+
     free(noise);
 }
 
 void add_shrooms()
 {
-    printf("\tshrooms\n");
+    printf("\tshrooms......");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
-
-    float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
+    float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
     for (int x=0; x < map_dim.x; x++)
     for (int y=0; y < map_dim.y; y++)
     {
-        if (noise[x + y * map_dim.x] > shroom_zone_threshold &&
-            genrand_real1() > shroom_threshold)
+        if (noise[x + y * map_dim.x] > SHROOM_ZONE_THRESHOLD &&
+            mrandf() > SHROOM_THRESHOLD)
         {
             int z = t_map::get_highest_solid_block(x,y);
             if (z >= 1 && t_map::get(x,y,z) == regolith &&
-                strip_of_solid_blocks_underneath(x,y,z, 6))
+                vertical_strip_of_solids_underneath(6, x,y,z))
             {
                 make_shroom(x,y,z);
             }
@@ -273,10 +274,10 @@ bool carve_ray(float x, float y, float z, int tiny_angle, int distance)
     IF_ASSERT(tiny_angle < 0 || tiny_angle >= NUM_LOOKUP_ANGLES) return false;
 
     int cubes_changed = 0;
-    for (int i = 0; i < distance; i++)
+    for (float f = 0; f <= distance; f += 0.33f)
     {
-        int m = x + int(i * sin_lookup_table[tiny_angle]);
-        int n = y + int(i * cos_lookup_table[tiny_angle]);
+        int m = x + int(f * sin_lookup_table[tiny_angle]);
+        int n = y + int(f * cos_lookup_table[tiny_angle]);
 
         if (t_map::get(m, n, z) != terrain_features_curr)
         {
@@ -332,7 +333,7 @@ void add_gorge(int length, int* peaks, float* noise)
     float curr_angle = 0.0f;
     float curr_perlin_hei = 0.0f; // height
 
-    // find the limits of spectrum for this 1D (out of a 2D map) strip
+    // find the limits of spectrum for this 1D strip (out of a 2D map)
     float farthest_from_zero = 0.0f;
     for (int i = 0; i < map_dim.x; i++)
     {
@@ -340,7 +341,7 @@ void add_gorge(int length, int* peaks, float* noise)
         farthest_from_zero = GS_MAX(farthest_from_zero, curr);
     }
     if (farthest_from_zero != 0.0f)
-        farthest_from_zero = 1.0f/farthest_from_zero;
+        farthest_from_zero = 1.0f / farthest_from_zero;
 
     //float tot_hei_of_poss = farthest_from_zero * 2; // total height of possibility space for random perlin strip
 
@@ -371,7 +372,7 @@ void add_gorge(int length, int* peaks, float* noise)
         if (curr_perlin_hei < 0)
             curr_perlin_hei *= -farthest_from_zero; // turn it into a 0.0 - 1.0 range
         else
-            curr_perlin_hei *= farthest_from_zero; // turn it into a 0.0 - 1.0 range
+            curr_perlin_hei *=  farthest_from_zero; // turn it into a 0.0 - 1.0 range
         curr_perlin_hei *= edge_to_center_dist; // apply it to possibility space
         float fz = lowest + edge_to_center_dist + curr_perlin_hei;
 
@@ -401,9 +402,9 @@ void add_gorge(int length, int* peaks, float* noise)
         carve_angled_gorge_slice(x, y, fz, quant_angle);
 
         if (len_remain < length) // half to match the * 2 of len_remain
-            tri_shaped_hei -= 0.45;
+            tri_shaped_hei -= 0.45f;
         else
-            tri_shaped_hei += 0.45;
+            tri_shaped_hei += 0.45f;
 
         //if (i == 0) printf("tri_shaped_hei: %f\n", tri_shaped_hei);
 
@@ -414,8 +415,8 @@ void add_gorge(int length, int* peaks, float* noise)
 
 void add_gorges(int num_gorges, int length)
 {
-    printf("\tgorges\n");
-    float* noise = t_gen::create_2d_noise_array(persistence, octaves, map_dim.x, map_dim.y);
+    printf("\tgorges......");
+    float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
 
     int* peaks = (int*)malloc(map_dim.x * map_dim.y * sizeof(int));
@@ -432,6 +433,59 @@ void add_gorges(int num_gorges, int length)
         add_gorge(length, peaks, noise);
 
     free(peaks);
+    free(noise);
+}
+
+void add_foliage()
+{
+    printf("\tfoliage......");
+    const float FOLIAGE_ZONE_THRESHOLD = 0.3f;
+    const float FOLIAGE_THRESHOLD = 0.9f;
+    const CubeType reg   = t_map ::get_cube_type("regolith");
+    const MechType gr1 = t_mech::get_mech_type_dat("grass1");
+    const MechType gr2 = t_mech::get_mech_type_dat("grass2");
+    const MechType gr3 = t_mech::get_mech_type_dat("grass3");
+    const int GRASS_MAX = 3;
+    
+    float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);
+    IF_ASSERT(noise == NULL) return;
+    float farthest_from_zero = 0.0f;
+    // find the limits of the perlin values (atm, it isn't -1.0f to 1.0f)
+    for (int x = 0; x < map_dim.x; x++)
+    for (int y = 0; y < map_dim.y; y++)
+    {
+        float curr = abs(noise[x + y*map_dim.x]);
+        farthest_from_zero = GS_MAX(farthest_from_zero, curr);
+    }
+
+    const float GRASS_BAND_SPAN = (farthest_from_zero-FOLIAGE_ZONE_THRESHOLD) / (GRASS_MAX + 1); // + 1 cuz those most extreme numbers are too rare
+
+    // visit every cube column
+    for (int x=0; x < map_dim.x; x++)
+    for (int y=0; y < map_dim.y; y++)
+    {
+        float curr_per = noise[x + y*map_dim.x];  // current perlin
+
+        if (curr_per > FOLIAGE_ZONE_THRESHOLD &&
+            mrandf() > FOLIAGE_THRESHOLD)
+        {
+            int z = t_map::get_highest_solid_block(x, y);
+
+            if (z>=1 && 
+                t_map::get(x, y, z  ) == reg &&
+                t_map::get(x, y, z+1) == EMPTY_CUBE)
+            {
+                MechType mt;
+                float curr_thresh = FOLIAGE_ZONE_THRESHOLD;
+
+                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) t_mech::create_mech(x, y, z+1, gr1);
+                else
+                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) t_mech::create_mech(x, y, z+1, gr2);
+                else
+                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) t_mech::create_mech(x, y, z+1, gr3);
+            }
+        }
+    }
     free(noise);
 }
 
@@ -476,9 +530,23 @@ void add_terrain_features()
     if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS)) return;
 
     // add the features
+#if PRODUCTION
+    int t = _GET_MS_TIME();
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
+    printf(" (%i ms)\n", _GET_MS_TIME() - t);
+#endif
+    
+    t = _GET_MS_TIME();
     add_shrooms();
+    printf(" (%i ms)\n", _GET_MS_TIME() - t);
+    
+    t = _GET_MS_TIME();
     add_trees();
+    printf(" (%i ms)\n", _GET_MS_TIME() - t);
+
+    t = _GET_MS_TIME();
+    add_foliage();
+    printf(" (%i ms)\n", _GET_MS_TIME() - t);
 
     delete[] sin_lookup_table;
     delete[] cos_lookup_table;

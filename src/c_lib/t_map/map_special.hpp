@@ -778,16 +778,14 @@ class RadiationBlockList
             bl->rblm *= 2;
         }
 
-        RadiationBlock rb;
+        RadiationBlock& rb = bl->rbla[bl->rbln++];
         rb.pos = pos;
         rb.rad_strength = 15;
-        bl->rbla[bl->rbln] = rb;
-        bl->rbln++;
 
-        #if !PRODUCTION
-        printf("Adding radiation block at: ");
-        vec3i_print(pos);
-        #endif
+        //#if !PRODUCTION
+        //printf("Adding radiation block at: ");
+        //vec3i_print(pos);
+        //#endif
     }
 
     void remove(const struct Vec3i& pos)
@@ -849,8 +847,8 @@ class RadiationBlockList
 
             for (int c=0; c<bl->rbln; c++)
             {
-                const struct Vec3i& p = bl->rbla[c].pos;
-                int d = manhattan_distance(quadrant_translate_position(pos, p), pos);
+                const struct Vec3i& p = quadrant_translate_position(pos, bl->rbla[c].pos);
+                int d = manhattan_distance(pos, p);
                 distance = GS_MIN(d, distance);
             }
         }

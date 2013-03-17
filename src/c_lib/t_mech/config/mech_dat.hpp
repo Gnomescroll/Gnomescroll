@@ -17,6 +17,15 @@ void apply_mech_dat_changes()
 
 void load_mech_dat()
 {
+    mech_def(MECH_CRYSTAL, "grass1", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_DEFAULT);
+    set_sprite_index(16*0 + 0);
+
+    mech_def(MECH_CRYSTAL, "grass2", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_DEFAULT);
+    set_sprite_index(16*0 + 1);
+
+    mech_def(MECH_CRYSTAL, "grass3", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_DEFAULT);
+    set_sprite_index(16*0 + 3);
+
     mech_def(MECH_CRYSTAL, "blue_crystal", MECH_RENDER_TYPE_0, MECH_BEHAVIOR_TYPE_DEFAULT);
     set_sprite_index(16*4 + 5);
     //s->render_type = MECH_RENDER_TYPE_0;
