@@ -15,6 +15,7 @@ void teardown();
 void init_packets();
 
 bool can_place_mech(int x, int y, int z, int side);
+bool can_place_mech(int x, int y, int z, int side, MechType mech_type);
 
 void place_vine(int x, int y, int z, int side);
 

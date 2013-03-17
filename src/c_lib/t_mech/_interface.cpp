@@ -295,7 +295,7 @@ bool create_mech(int x, int y, int z, MechType type, int subtype)
         return false;
     }
 
-    if (!can_place_mech(x,y,z, 0))
+    if (!can_place_mech(x,y,z, 0, type))
     {
         if (t_map::isSolid(x,y,z))
         {
@@ -344,10 +344,19 @@ bool create_crystal(int x, int y, int z, MechType type)
 }
 #endif
 
+bool can_place_mech(int x, int y, int z, int side)
+{
+    if (z <= 0 || z > 128) return false;
+    if (t_map::isSolid(x,y,z)) return false;
+    if (mech_list->is_occupied(x,y,z)) return false;
+
+    return true;
+}
+
 bool can_place_mech(int x, int y, int z, int side, MechType mech_type)
 {
     if (z <= 0 || z > 128) return false;
-    if (side != 0) return false;
+    //if (side != 0) return false;
 
     if (t_map::isSolid(x,y,z)) return false;
 
