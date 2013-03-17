@@ -670,9 +670,9 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     };
 */
 
-    float wx = (float) (m.x) + 0.5f + m.offset_x;
-    float wy = (float) (m.y) + 0.5f + m.offset_y;
-    float wz = (float) m.z;
+    float wx = (float) (m.x) + 0.5f;
+    float wy = (float) (m.y) + 0.5f;
+    float wz = (float) m.z + 0.0f;
     //int face = m.face;
 
     //fulstrum test
@@ -708,7 +708,7 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
 
     float vn[3*4];
     const float size = m.size/2.0f;
-    const float size2 = m.size;
+    //const float size2 = m.size;
 
     //orientation
 
