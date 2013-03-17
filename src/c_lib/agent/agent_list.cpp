@@ -70,9 +70,31 @@ void AgentList::tick_hunger()
         if (this->objects[i].id == this->null_id) continue;
         Agent* agent = &this->objects[i];
         agent->status.tick_hunger();
-        agent->status.tick_rad();
     }
 }
+
+void AgentList::tick_attributes()
+{
+    static int ac = 0;
+    ac++;
+
+    int t0 = _GET_MS_TIME();
+
+    for (size_t i=0; i<this->max; i++)
+    {
+        if (this->objects[i].id == this->null_id) continue;
+        Agent* agent = &this->objects[i];
+
+        if(ac % 8 == 0) //4 times a second
+            agent->status.tick_rad();
+    }
+
+    int t1 = _GET_MS_TIME();
+
+    if(t1-t0 > 2)
+        printf("WARNING: AgentList::tick_attributes took %d ms\n", t1-t0);
+}
+
 #endif
 
 #if DC_CLIENT

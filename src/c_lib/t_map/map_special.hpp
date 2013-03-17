@@ -782,10 +782,9 @@ class RadiationBlockList
         rb.pos = pos;
         rb.rad_strength = 15;
 
-        //#if !PRODUCTION
-        //printf("Adding radiation block at: ");
-        //vec3i_print(pos);
-        //#endif
+        #if !PRODUCTION
+        printf("Adding radiation block at: %d %d %d \n", pos.x,pos.y,pos.z);
+        #endif
     }
 
     void remove(const struct Vec3i& pos)
@@ -817,8 +816,7 @@ class RadiationBlockList
         bl->rbla[index] = bl->rbla[bl->rbln];
         GS_ASSERT(bl->rbln >= 0);
         #if !PRODUCTION
-        printf("removing radiation block at: ");
-        vec3i_print(pos);
+        printf("removing radiation block at: %d %d %d \n", pos.x,pos.y,pos.z);
         #endif
     }
 

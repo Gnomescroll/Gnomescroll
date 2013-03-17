@@ -133,6 +133,7 @@ static bool _mech_update(struct Mech &m)
         case MECH_MYCELIUM:
             break;
         case MECH_SIGN:
+            m.size = 1.0f;  //diameter
             break;
         case MECH_WIRE:
         case MECH_SWITCH:
@@ -417,7 +418,7 @@ int can_place_mech(int x, int y, int z, MechType mech_type, int side)
                 !t_map::isSolid(x,y+1,z) &&
                 !t_map::isSolid(x,y-1,z) )
             {
-                //return 6;
+                return 6;
             }
             break;
         case MECH_WIRE:

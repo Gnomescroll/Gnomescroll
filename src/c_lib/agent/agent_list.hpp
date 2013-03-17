@@ -47,6 +47,8 @@ class AgentList: public ObjectList<class Agent, AgentID>
     void update_map_manager_positions();
     void send_to_client(ClientID client_id);
     void tick_hunger();
+    void tick_attributes();
+
     #endif
 
     explicit AgentList(size_t capacity);
