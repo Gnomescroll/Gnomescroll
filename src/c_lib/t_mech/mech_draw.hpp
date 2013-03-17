@@ -672,7 +672,7 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
 
     float wx = (float) (m.x) + 0.5f;
     float wy = (float) (m.y) + 0.5f;
-    float wz = (float) m.z + 0.0f;
+    float wz = (float) m.z + 0.5f;
     //int face = m.face;
 
     //fulstrum test
@@ -777,6 +777,23 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
 
     vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
     vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.push_vertex();
+
+
+    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
+    vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
+    vertex_list.tex2f(tx_max,ty_max);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
+    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.push_vertex();
+
+    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
+    vertex_list.tex2f(tx_min,ty_min);
     vertex_list.push_vertex();
 
 }

@@ -101,7 +101,7 @@ void load_mech_dat()
 
 
     mech_def(MECH_CRYSTAL, "terminal_basic", MECH_RENDER_TYPE_3, MECH_BEHAVIOR_TYPE_DEFAULT);
-    set_sprite_index(16*9 + 0);
+    set_sprite_index(16*5 + 0);
 
 
     end_mech_dat();     // finalize

@@ -76,7 +76,7 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
     p.y = m.y;
     p.z = m.z;
     p.side = m.side;
-    
+
     GS_ASSERT(mech_attributes[m.type].type != -1);
 
     switch (mech_attributes[m.type].class_type)
@@ -130,7 +130,8 @@ static bool _mech_update(struct Mech &m)
             break;
         case MECH_MYCELIUM:
             break;
-
+        case MECH_SIGN:
+            break;
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
@@ -225,13 +226,30 @@ void floating_removal_tick() //removes floating t_mech
     {
         if (mla[i].id == -1) continue;
 
+
+        MechType type = mla[i].type;
+        MechBehaviorType behavior_type = mech_attributes[type].behavior_type;
+
         int x = mla[i].x;
         int y = mla[i].y;
         int z = mla[i].z;
-        if (!t_map::isSolid(x,y,z-1))
+
+        switch (behavior_type)
         {
-            remove_mech(i);
-            collection_count++;
+            case MECH_BEHAVIOR_TYPE_PLANT:
+            case MECH_BEHAVIOR_TYPE_LIGHT_PLANT:
+            case MECH_BEHAVIOR_TYPE_DARK_PLANT:
+                if (!t_map::isSolid(x,y,z-1))
+                {
+                    remove_mech(i);
+                    collection_count++;
+                }
+                break;
+            case MECH_BEHAVIOR_TYPE_DEFAULT:
+                break;
+            default:
+                GS_ASSERT(false);
+                break;
         }
     }
 
