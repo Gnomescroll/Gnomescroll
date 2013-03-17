@@ -280,10 +280,10 @@ void PlayerAgent::play_geiger()
     if (a == NULL) return;
     int rad_level = get_attribute_int(a->id, "rad_level");
     if (!rad_level) return;
-    int max_rad_level = get_attribute_int(a->id, "max_rad_level");
+    int rad_level_max = get_attribute_int(a->id, "rad_level_max");
 
     const int slowest_rate = ONE_SECOND;
-    int rate = (float(slowest_rate) / float(max_rad_level)) * (max_rad_level - rad_level + 1);
+    int rate = (float(slowest_rate) / float(rad_level_max)) * (rad_level_max - rad_level + 1);
     rate = GS_MAX(rate, 1);
 
     skip = GS_MAX(0, skip-1);

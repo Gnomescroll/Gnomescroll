@@ -822,7 +822,7 @@ class RadiationBlockList
 
     int get_rad_level(const struct Vec3i& pos)
     {
-        static int max_rad_level = Agents::get_base_attribute_int("max_rad_level");
+        static int rad_level_max = Agents::get_base_attribute_int("rad_level_max");
         IF_ASSERT(!is_boxed_position(pos)) return 0;
         int cx = pos.x >> 4;
         int cy = pos.y >> 4;
@@ -851,7 +851,7 @@ class RadiationBlockList
             }
         }
 
-        return GS_MAX(0, max_rad_level - distance);
+        return GS_MAX(0, rad_level_max - distance);
     }
 };
 
