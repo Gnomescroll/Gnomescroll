@@ -37,7 +37,7 @@ class EntityAttributes
 
         //// health
         //int initial_health;
-        //int max_health;
+        //int health_max;
 
         //// agent spawner
         //float agent_spawn_radius;

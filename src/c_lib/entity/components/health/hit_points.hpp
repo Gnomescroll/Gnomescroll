@@ -13,7 +13,7 @@ class HitPointsHealthComponent: public HealthComponent
 
     public:
         int health;
-        int max_health;
+        int health_max;
 
         void take_damage(int dmg);
 
@@ -37,7 +37,7 @@ class HitPointsHealthComponent: public HealthComponent
 
     HitPointsHealthComponent()
     : HealthComponent(COMPONENT_HIT_POINTS),
-    died(false), health(100), max_health(100)
+    died(false), health(100), health_max(100)
     {}
 };
 

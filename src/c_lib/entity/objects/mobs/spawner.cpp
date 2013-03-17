@@ -55,7 +55,7 @@ static void set_mob_spawner_properties(Entity* object)
     using Components::HitPointsHealthComponent;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
     health->health = MONSTER_SPAWNER_MAX_HEALTH;
-    health->max_health = MONSTER_SPAWNER_MAX_HEALTH;
+    health->health_max = MONSTER_SPAWNER_MAX_HEALTH;
 
     using Components::MonsterSpawnerComponent;
     MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)add_component_to_object(object, COMPONENT_MONSTER_SPAWNER);

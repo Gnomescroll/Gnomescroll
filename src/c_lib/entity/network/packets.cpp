@@ -103,8 +103,8 @@ inline void object_create_momentum_angles_health_StoC::handle()
     GS_ASSERT(health != NULL);
     if (health != NULL)
     {
-        health->max_health = this->max_health;
-        health->health = this->max_health;
+        health->health_max = this->health_max;
+        health->health = this->health_max;
     }
     Entities::ready(obj);
 }

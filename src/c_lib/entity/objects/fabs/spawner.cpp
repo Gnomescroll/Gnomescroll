@@ -58,7 +58,7 @@ static void set_agent_spawner_properties(Entity* object)
     using Components::HitPointsHealthComponent;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
     health->health = AGENT_SPAWNER_MAX_HEALTH;
-    health->max_health = AGENT_SPAWNER_MAX_HEALTH;
+    health->health_max = AGENT_SPAWNER_MAX_HEALTH;
 
     #if DC_SERVER
     using Components::AgentSpawnerComponent;

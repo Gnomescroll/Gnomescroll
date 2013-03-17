@@ -104,7 +104,7 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
         float x,y,z;
         float mx,my,mz;
         float theta, phi;
-        uint16_t max_health;
+        uint16_t health_max;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
@@ -118,7 +118,7 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
         pack_float(&mz, buff, buff_n, pack);
         pack_float(&theta, buff, buff_n, pack);
         pack_float(&phi, buff, buff_n, pack);
-        pack_u16(&max_health, buff, buff_n, pack);
+        pack_u16(&health_max, buff, buff_n, pack);
     }
     inline void handle();
 };

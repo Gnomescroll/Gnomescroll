@@ -243,9 +243,9 @@ void draw_hud_textures()
     //if (a != NULL)
     //{
         //const unsigned char alpha = 175;
-        //int max_health = Agents::get_attribute_int(a->id, "max_health");
+        //int health_max = Agents::get_attribute_int(a->id, "health_max");
         //int health = Agents::get_attribute_int(a->id, "health");
-        //float ratio = float(max_health - health) / float(max_health);
+        //float ratio = float(health_max - health) / float(health_max);
         //set_color_from_ratio(ratio, alpha, true);
         //meter_graphic.draw(0, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_LEFT, true);
         //meter_graphic.draw(_xresf/2, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_RIGHT, false);
@@ -419,15 +419,15 @@ void draw_hud_text()
             Agents::Agent* a = ClientState::player_agent.you();
             if (a != NULL)
             {
-                int max_health = Agents::get_attribute_int(a->id, "max_health");
+                int health_max = Agents::get_attribute_int(a->id, "health_max");
                 int health = Agents::get_attribute_int(a->id, "health");
                 hud->health->update_formatted_string(1, health);
                 int len = int(strlen(health_color_string));
                 int n = 0;
-                if (health >= max_health)
+                if (health >= health_max)
                     n = len;
                 else if (health > 0)    // force to 0 in case of float point error
-                    n = (float(health)/float(max_health))*float(len);
+                    n = (float(health)/float(health_max))*float(len);
                 if (health > 0 && n == 0) n = 1;
 
                 // update green portion of health text
@@ -575,10 +575,10 @@ void HUD::init()
 
     health = new AnimatedText;
 
-    int max_health = Agents::get_base_attribute_int("max_health");
+    int health_max = Agents::get_base_attribute_int("health_max");
     health->set_format(health_format);
     health->set_format_extra_length(11);
-    health->update_formatted_string(1, max_health);
+    health->update_formatted_string(1, health_max);
     IF_ASSERT(HudContainer::energy_tanks == NULL) return;
     float health_x = HudContainer::energy_tanks->xoff + HudContainer::energy_tanks->width() + 1;
     health->set_position(health_x, _yresf - HudContainer::energy_tanks->yoff - health->get_height());

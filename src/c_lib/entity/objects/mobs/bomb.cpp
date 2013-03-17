@@ -71,7 +71,7 @@ static void set_mob_bomb_properties(Entity* object)
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
     int health_amt = randrange(MONSTER_BOMB_HEALTH_MIN, MONSTER_BOMB_HEALTH_MAX);
     health->health = health_amt;
-    health->max_health = health_amt;
+    health->health_max = health_amt;
     #endif
 
     using Components::DestinationTargetingComponent;

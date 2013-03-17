@@ -46,8 +46,8 @@ void draw_health()
     if (!isValid(agent_id)) return;
 
     int health = Agents::get_attribute_int(agent_id, "health");
-    int max_health = Agents::get_attribute_int(agent_id, "max_health");
-    int last_max_health = max_health % 4;
+    int health_max = Agents::get_attribute_int(agent_id, "health_max");
+    int last_health_max = health_max % 4;
     int last_health = health % 4;
 
     float x = toolbelt->xoff;
@@ -75,9 +75,9 @@ void draw_health()
         i += 1;
         float sx = (4 - last_health) * ICON_WIDTH;
         float sy = 0.0f;
-        if (last_max_health && 4 > max_health - health)
+        if (last_health_max && 4 > health_max - health)
         {   // partial, and partially filled
-            sy = (4 - last_max_health) * ICON_HEIGHT;
+            sy = (4 - last_health_max) * ICON_HEIGHT;
         }
         draw_bound_texture_sprite(x, y, ICON_SIZE, ICON_SIZE, -1.0f, sx, sy,
                                   ICON_WIDTH, ICON_HEIGHT);
@@ -90,7 +90,7 @@ void draw_health()
         pos++;
     }
 
-    for (; i<max_health/4; i++, pos++)
+    for (; i<health_max/4; i++, pos++)
     {   // draw empties
         float sx = 4 * ICON_WIDTH;
         float sy = 0.0f;
@@ -104,10 +104,10 @@ void draw_health()
         }
     }
 
-    if (last_max_health && last_max_health < max_health - health)
+    if (last_health_max && last_health_max < health_max - health)
     {   // draw last empty partial icon
         float sx = 4 * ICON_WIDTH;
-        float sy = (4 - last_max_health) * ICON_HEIGHT;
+        float sy = (4 - last_health_max) * ICON_HEIGHT;
         draw_bound_texture_sprite(x, y, ICON_SIZE, ICON_SIZE, -1.0f, sx, sy,
                                   ICON_WIDTH, ICON_HEIGHT);
     }

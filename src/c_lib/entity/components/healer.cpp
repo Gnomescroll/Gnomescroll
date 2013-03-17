@@ -42,8 +42,8 @@ void HealerComponent::heal_agents_in_range()
         if (a->id == agent_list->null_id) continue;
         if (a->status.dead) continue;
         int health = Agents::get_attribute_int(a->id, "health");
-        int max_health = Agents::get_attribute_int(a->id, "max_health");
-        if (health >= max_health) continue;
+        int health_max = Agents::get_attribute_int(a->id, "health_max");
+        if (health >= health_max) continue;
         if (vec3_distance_squared(a->get_position(), pos) > rad2) continue;
         a->status.restore_health();
     }

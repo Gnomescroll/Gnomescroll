@@ -41,8 +41,8 @@ void AgentEvent::update_hud_name()
 
     // calculate interpolated color from health ratio and color control health_color_points
     int health = get_attribute_int(this->a->id, "health");
-    int max_health = get_attribute_int(this->a->id, "max_health");
-    float h = float(health) / float(max_health);
+    int health_max = get_attribute_int(this->a->id, "health_max");
+    float h = float(health) / float(health_max);
     if (h >= health_color_points[0])
         color = health_colors[0];    // degenerate case, out of range
     else

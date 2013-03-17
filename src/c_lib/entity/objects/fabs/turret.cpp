@@ -63,7 +63,7 @@ static void set_turret_properties(Entity* object)
     using Components::HitPointsHealthComponent;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
     health->health = TURRET_MAX_HEALTH;
-    health->max_health = TURRET_MAX_HEALTH;
+    health->health_max = TURRET_MAX_HEALTH;
     
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);

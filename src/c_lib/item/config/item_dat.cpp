@@ -352,22 +352,22 @@ void load_item_dat()
     item_def(IG_EQUIPMENT, "copper_helmet");
     sprite_def(i1, 5,5);
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
-    set_modifier_amount("max_health", 5);
+    set_modifier_amount("health_max", 5);
 
     item_def(IG_EQUIPMENT, "iron_helmet");
     sprite_def(i1, 5,3);
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
-    set_modifier_amount("max_health", 10);
+    set_modifier_amount("health_max", 10);
 
     item_def(IG_EQUIPMENT, "gallium_helmet");
     sprite_def(i1, 5,4);
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
-    set_modifier_amount("max_health", 15);
+    set_modifier_amount("health_max", 15);
 
     item_def(IG_EQUIPMENT, "iridium_helmet");
     sprite_def(i1, 5,6);
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
-    set_modifier_amount("max_health", 20);
+    set_modifier_amount("health_max", 20);
 
     item_def(IG_RESOURCE, "blue_crystal");
     sprite_def(i1, 3,4);

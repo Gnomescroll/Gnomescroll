@@ -121,8 +121,8 @@ void CreatePacketMomentumAnglesHealth::message(Entity* object, object_create_mom
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)object->get_component(COMPONENT_HIT_POINTS);
     GS_ASSERT(health != NULL);
     if (health == NULL) return;
-    GS_ASSERT(health->max_health >= 0); // should be dead
-    msg->max_health = health->max_health;
+    GS_ASSERT(health->health_max >= 0); // should be dead
+    msg->health_max = health->health_max;
 
     GS_ASSERT(is_boxed_position(position));
 }

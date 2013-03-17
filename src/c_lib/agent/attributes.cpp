@@ -37,11 +37,11 @@ static void add_get_callback(getString);
 
 static void _register_attributes()
 {
-    attribute_def("max_health", 40);
+    attribute_def("health_max", 40);
     set_lower_limit(0);
 
     attribute_def("health", 40);
-    set_limits(0, "max_health");    //use health_max instead of max_health
+    set_limits(0, "health_max");    //use health_max instead of health_max
     add_set_callback(&health_changed);
 
     attribute_def("hunger_max", 10);  //use hunger_max instead of hunger_max
@@ -236,10 +236,10 @@ static void add_get_callback(getString cb)
 
 static void test_registration()
 {
-    int val = get_base_attribute_int("max_health");
-    set_base_attribute("max_health", 75);
-    GS_ASSERT(75 == get_base_attribute_int("max_health"));
-    set_base_attribute("max_health", val);
+    int val = get_base_attribute_int("health_max");
+    set_base_attribute("health_max", 75);
+    GS_ASSERT(75 == get_base_attribute_int("health_max"));
+    set_base_attribute("health_max", val);
 
     const AgentID agent_id = (AgentID)(MAX_AGENTS/2);
     val = get_attribute_int(agent_id, "health");

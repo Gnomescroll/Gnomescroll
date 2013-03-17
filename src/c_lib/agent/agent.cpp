@@ -231,8 +231,8 @@ void Agent::set_angles(float theta, float phi)
 #if DC_SERVER
 void Agent::fell(float vz)
 {
-    static const float max_health = get_base_attribute_int("max_health");
-    static const float FALL_DAMAGE_PER_METER = max_health/(FALL_DEATH_HEIGHT-FALL_SAFE_HEIGHT);
+    static const float health_max = get_base_attribute_int("health_max");
+    static const float FALL_DAMAGE_PER_METER = health_max/(FALL_DEATH_HEIGHT-FALL_SAFE_HEIGHT);
     static const float ig = -1.0f / (2.0f * AGENT_GRAVITY);
     float fall_distance = (vz*vz) * ig;
     fall_distance -= FALL_SAFE_HEIGHT;

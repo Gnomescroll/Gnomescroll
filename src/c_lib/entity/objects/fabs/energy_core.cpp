@@ -62,7 +62,7 @@ static void set_energy_core_properties(Entity* object)
     using Components::HitPointsHealthComponent;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
     health->health = ENERGY_CORE_MAX_HEALTH;
-    health->max_health = ENERGY_CORE_MAX_HEALTH;
+    health->health_max = ENERGY_CORE_MAX_HEALTH;
 
     #if DC_SERVER
     using Components::HealerComponent;
