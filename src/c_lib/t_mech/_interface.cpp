@@ -75,7 +75,8 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
     p.x = m.x;
     p.y = m.y;
     p.z = m.z;
-
+    p.side = m.side;
+    
     GS_ASSERT(mech_attributes[m.type].type != -1);
 
     switch (mech_attributes[m.type].class_type)
