@@ -86,6 +86,8 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
             break;
         case MECH_MYCELIUM:
             break;
+        case MECH_SIGN:
+            break;
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
