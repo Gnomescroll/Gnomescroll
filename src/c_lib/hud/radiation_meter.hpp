@@ -42,7 +42,7 @@ class HudRadiationMeter
 
         surface = create_surface_from_file(MEDIA_PATH "sprites/icons/radiation_hud.png");
         border_surface = create_surface_from_file(MEDIA_PATH "sprites/icons/radiation_border.png");
-        gradient_surface = create_surface_from_file(MEDIA_PATH "sprites/gradient/radiation.png");
+        gradient_surface = create_surface_from_file(MEDIA_PATH "sprites/gradient/radiation64.png");
         IF_ASSERT(surface == NULL ||
                   border_surface == NULL ||
                   gradient_surface == NULL) return;
@@ -122,9 +122,10 @@ class HudRadiationMeter
 
         AgentID agent_id = ClientState::player_agent.agent_id;
         if (!isValid(agent_id)) return;
-        int rad_level = Agents::get_attribute_int(agent_id, "rad_level");
-        int i = GS_MIN(gradient_surface->w-1, GS_MAX(rad_level, 0));
-
+        int rad_exposure = Agents::get_attribute_int(agent_id, "rad_exposure");
+        int max_rad_exposure = Agents::get_attribute_int(agent_id, "rad_exposure_max");
+        int i = roundf((float(rad_exposure) / float(max_rad_exposure)) * gradient_surface->w);
+        i = GS_MIN(gradient_surface->w-1, GS_MAX(i, 0));
         int r = ((unsigned char*)gradient_surface->pixels)[4*i + 0];
         int g = ((unsigned char*)gradient_surface->pixels)[4*i + 1];
         int b = ((unsigned char*)gradient_surface->pixels)[4*i + 2];

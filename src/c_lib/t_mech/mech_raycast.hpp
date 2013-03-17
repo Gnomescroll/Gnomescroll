@@ -13,28 +13,21 @@ namespace t_mech
 void draw(const struct Mech &m)
 {
     #if 0
-    float vn[3*8];
+    //float vn[3*8];
 
-    float dx1 = sin(m.rotation * PI);
-    float dy1 = cos(m.rotation * PI);
+    //float dx1 = sin(m.rotation * PI);
+    //float dy1 = cos(m.rotation * PI);
 
-    float dx2 = sin((m.rotation+0.5) * PI);
-    float dy2 = cos((m.rotation+0.5) * PI);
-
-    //dx = sin((m.rotation+0.5) * PI);
-    //dy = cos((m.rotation+0.5) * PI);
+    //float dx2 = sin((m.rotation+0.5) * PI);
+    //float dy2 = cos((m.rotation+0.5) * PI);
 
     float _x[4];
-    _x[0] = sin(m.rotation * 0.00f*PI);
-    _x[1] = sin(m.rotation * 0.50f*PI);
-    _x[2] = sin(m.rotation * 1.00f*PI);
-    _x[3] = sin(m.rotation * 1.50f*PI);
+    for (int i=0; i<4; i++)
+        _x[i] = cosf(m.rotation * 0.5f * PI * i);
 
     float _y[4];
-    _y[0] = cos(m.rotation * 0.00f*PI);
-    _y[1] = cos(m.rotation * 0.50f*PI);
-    _y[2] = cos(m.rotation * 1.00f*PI);
-    _y[3] = cos(m.rotation * 1.50f*PI);
+    for (int i=0; i<4; i++)
+        _y[i] = cosf(m.rotation * 0.5f * PI * i);
     #endif
 }
 
@@ -70,13 +63,10 @@ void draw_selected_mech_bounding_box()
     float size_w = size*mech_sprite_width_f[tex_id];
     float size_h = 2.0f*size*mech_sprite_height_f[tex_id];
 
-            //mech_sprite_width_f[i]  = 1.0;
-            //mech_sprite_height_f[i] = 1.0;
+    //mech_sprite_width_f[i]  = 1.0;
+    //mech_sprite_height_f[i] = 1.0;
 
-    visualize_bounding_box(wx,wy,wz + 0.01f,
-                           size_w,size_w, size_h,
-                           f,r,u);
-
+    visualize_bounding_box(wx,wy,wz + 0.01f, size_w,size_w, size_h, f,r,u);
 }
 
 bool ray_cast_mech_render_type_0(const struct Mech &m, float x, float y, float z, float vx, float vy, float vz, float* _distance)
@@ -95,9 +85,9 @@ bool ray_cast_mech_render_type_0(const struct Mech &m, float x, float y, float z
     const float size = m.size/2.0f;
     //const float size2 = m.size;
 
-    float wx = (float) (m.x) + 0.5f + m.offset_x;
-    float wy = (float) (m.y) + 0.5f + m.offset_y;
-    float wz = (float) m.z + size;
+    float wx = m.x + 0.5f + m.offset_x;
+    float wy = m.y + 0.5f + m.offset_y;
+    float wz = m.z + size;
 
     wx = quadrant_translate_f(current_camera_position.x, wx);
     wy = quadrant_translate_f(current_camera_position.y, wy);
@@ -264,6 +254,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
 
             case MECH_RENDER_TYPE_1:
             case MECH_RENDER_TYPE_2:
+            case MECH_RENDER_TYPE_3:
             case MECH_RENDER_TYPE_NONE:
                 printf("pack_mech error: unhandled mech type\n");
         }
