@@ -41,20 +41,20 @@ static void _register_attributes()
     set_lower_limit(0);
 
     attribute_def("health", 40);
-    set_limits(0, "max_health");
+    set_limits(0, "max_health");    //use health_max instead of max_health
     add_set_callback(&health_changed);
 
-    attribute_def("max_hunger", 10);
+    attribute_def("max_hunger", 10);  //use hunger_max instead of max_hunger
     set_limits(10, 10);
 
     attribute_def("hunger", 0);
     set_limits(0, "max_hunger");
 
-    attribute_def("max_rad_exposure", 4096);
-    set_limits(4096, 4096);
+    attribute_def("rad_exposure_max", RAD_EXPOSURE_MAX);
+    set_limits(RAD_EXPOSURE_MAX, RAD_EXPOSURE_MAX);
 
     attribute_def("rad_exposure", 0);
-    set_limits(0, "max_rad_exposure"); //400 is max bar
+    set_limits(0, "rad_exposure_max"); //400 is max bar
 
 
     attribute_def("max_rad_level", 0xF);

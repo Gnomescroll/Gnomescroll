@@ -71,6 +71,10 @@ const int HUNGER_DAMAGE_THRESHOLD = 8;
 const int HUNGER_DAMAGE_RATE = ONE_SECOND*8;
 const int HUNGER_DAMAGE_AMOUNT = 1;             //on fourth of a heart every 8 seconds
 
+const int RAD_EXPOSURE_MAX = 1024;
+const int RAD_LEACH_RATE = 1; //4x per second
+
+
 const size_t MAX_AGENT_MODIFIERS = 0xFF;
 
 const Color AGENT_DEFAULT_COLOR = Color(64,192,64);

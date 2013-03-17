@@ -386,6 +386,9 @@ void AgentStatus::tick_rad()
 
     int rad_exposure = get_attribute_int(this->a->id, "rad_exposure");
 
+    if(rad_exposure > 0)
+        rad_exposure -= RAD_LEACH_RATE;
+    
     rad_exposure += rad_level;
 
     set_attribute(this->a->id, "rad_exposure", rad_exposure);
