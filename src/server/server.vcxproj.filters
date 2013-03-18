@@ -57,9 +57,6 @@
     <ClInclude Include="..\c_lib\agent\client\jetpack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\c_lib\hud\jetpack_meter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\c_lib\t_gen\excavator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -68,6 +65,15 @@
     </ClInclude>
     <ClInclude Include="..\c_lib\hud\meter.hpp">
       <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\jetpack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\excavator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\terrain_features.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\c_lib\agent\client\jetpack.hpp">
       <Filter>Header Files</Filter>

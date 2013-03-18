@@ -436,11 +436,11 @@ void add_gorges(int num_gorges, int length)
     free(noise);
 }
 
-void add_foliage()
+void add_flora()
 {
-    printf("\tfoliage......");
-    const float FOLIAGE_ZONE_THRESHOLD = 0.3f;
-    const float FOLIAGE_THRESHOLD = 0.9f;
+    printf("\tflora......");
+    const float FLORA_ZONE_THRESHOLD = 0.3f;
+    const float FLORA_THRESHOLD = 0.9f;
     const CubeType reg   = t_map ::get_cube_type("regolith");
     const MechType gr1 = t_mech::get_mech_type_dat("grass1");
     const MechType gr2 = t_mech::get_mech_type_dat("grass2");
@@ -458,7 +458,7 @@ void add_foliage()
         farthest_from_zero = GS_MAX(farthest_from_zero, curr);
     }
 
-    const float GRASS_BAND_SPAN = (farthest_from_zero-FOLIAGE_ZONE_THRESHOLD) / (GRASS_MAX + 1); // + 1 cuz those most extreme numbers are too rare
+    const float GRASS_BAND_SPAN = (farthest_from_zero-FLORA_ZONE_THRESHOLD) / (GRASS_MAX + 1); // + 1 cuz those most extreme numbers are too rare
 
     // visit every cube column
     for (int x=0; x < map_dim.x; x++)
@@ -466,8 +466,8 @@ void add_foliage()
     {
         float curr_per = noise[x + y*map_dim.x];  // current perlin
 
-        if (curr_per > FOLIAGE_ZONE_THRESHOLD &&
-            mrandf() > FOLIAGE_THRESHOLD)
+        if (curr_per > FLORA_ZONE_THRESHOLD &&
+            mrandf() > FLORA_THRESHOLD)
         {
             int z = t_map::get_highest_solid_block(x, y);
 
@@ -476,13 +476,14 @@ void add_foliage()
                 t_map::get(x, y, z+1) == EMPTY_CUBE)
             {
                 MechType mt;
-                float curr_thresh = FOLIAGE_ZONE_THRESHOLD;
+                float curr_thresh = FLORA_ZONE_THRESHOLD;
 
-                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) t_mech::create_mech(x, y, z+1, gr1);
+                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) mt = gr1;
                 else
-                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) t_mech::create_mech(x, y, z+1, gr2);
-                else
-                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) t_mech::create_mech(x, y, z+1, gr3);
+                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) mt = gr1;
+                else                                             mt = gr3;
+
+                t_mech::create_mech(x, y, z+1, mt);
             }
         }
     }
@@ -531,20 +532,23 @@ void add_terrain_features()
 
     // add the features
     int t = _GET_MS_TIME();
+#if PRODUCTION
+    t = _GET_MS_TIME();
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
     printf("\tgorges: %i ms\n", _GET_MS_TIME() - t);
+#endif
     
     t = _GET_MS_TIME();
     add_shrooms();
-    printf("\tschrooms: %i ms\n", _GET_MS_TIME() - t);
+    printf(" %i ms\n", _GET_MS_TIME() - t);
     
     t = _GET_MS_TIME();
     add_trees();
-    printf("\ttrees: %i ms\n", _GET_MS_TIME() - t);
+    printf(" %i ms\n", _GET_MS_TIME() - t);
 
     t = _GET_MS_TIME();
-    add_foliage();
-    printf("\troliage: %i ms\n", _GET_MS_TIME() - t);
+    add_flora();
+    printf(" %i ms\n", _GET_MS_TIME() - t);
 
     delete[] sin_lookup_table;
     delete[] cos_lookup_table;

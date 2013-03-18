@@ -737,7 +737,7 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
         {{{0,1,0}}}, //east
     };
 
-    float _for = 0.9/2.0;
+    float _for = 0.9f / 2.0f;
 
     int side = m.side;
     side = 3;
