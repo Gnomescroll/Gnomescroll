@@ -14,6 +14,8 @@ void load_item_dat()
     using TextureSheetLoader::item_texture_alias;
     SpriteSheet i0 = item_texture_alias(MEDIA_PATH "sprites/item/i00.png");
     SpriteSheet i1 = item_texture_alias(MEDIA_PATH "sprites/item/i01.png");
+    SpriteSheet rdn = item_texture_alias(MEDIA_PATH "sprites/item/rdn.png");
+    //SpriteSheet iceflame = item_texture_alias(MEDIA_PATH "sprites/item/iceflame.png");
     SpriteSheet p0 = item_texture_alias(MEDIA_PATH "sprites/item/p00.png");
     //int i2 = item_texture_alias(MEDIA_PATH "sprites/item/i02.png");
 
@@ -26,12 +28,12 @@ void load_item_dat()
     // special purpose
     item_def(IG_ERROR, "error_item");
     set_pretty_name("Error");
-    sprite_def(i0, 4,1);
+    sprite_def(rdn, 1,1);
     s->boonable = false;
 
     // special purpose
     item_def(IG_UNKNOWN, "unknown");
-    sprite_def(i0, 5,1);
+    sprite_def(rdn, 2,1);
     s->boonable = false;
 
     // containers
@@ -134,11 +136,11 @@ void load_item_dat()
     s->max_stack_size = 100;
 
     item_def(IG_DEBUG, "location_pointer");
-    sprite_def(i0, 4,2);
+    sprite_def(rdn, 1,2);
     s->boonable = false;
 
     item_def(IG_DEBUG, "block_placer");
-    sprite_def(i0, 4,5);
+    sprite_def(rdn, 1,5);
     s->cube_height = 1;
     s->boonable = false;
 
@@ -167,7 +169,7 @@ void load_item_dat()
     s->object_damage_max = 25;
 
     item_def(IG_RESOURCE, "iron_ore_piece");
-    sprite_def(i0, 5,5);
+    sprite_def(i0, 5,7);
     set_pretty_name("Iron Ore");
     s->max_stack_size = 64;
 
@@ -239,29 +241,58 @@ void load_item_dat()
     s->object_damage_max = 40;
 
     item_def(IG_RESOURCE, "silicon_ore_piece");
-    sprite_def(i1, 13,2);
+    sprite_def(rdn, 3,2);
     set_pretty_name("Silicon Ore");
     s->max_stack_size = 64;
 
     item_def(IG_RESOURCE, "silicon_crystal");
-    sprite_def(i1, 13,1);
+    sprite_def(rdn, 3,1);
+    set_pretty_name("Refined Silicon");
     s->max_stack_size = 64;
 
     item_def(IG_SHOVEL, "silicon_dagger");
-    sprite_def(i1, 13,3);
+    sprite_def(rdn, 3,3);
     set_pretty_name("Crystal Dagger");
     s->melee_fire_cooldown = 500;
     s->melee_damage = 60;
-    s->max_durability = 10;
+    s->max_durability = 100;
     s->max_stack_size = 1;
     s->firing_range = 3.0f;
     s->firing_rate = 6;
-    block_damage_def(3);
-    block_damage_def(CUBE_MATERIAL_DIRT, 7);
-    block_damage_def(CUBE_MATERIAL_STONE, 1);
-    block_damage_def(CUBE_MATERIAL_DECORATION, 8);
+    block_damage_def(4);
+    block_damage_def(CUBE_MATERIAL_STONE, 0);
     s->object_damage_min = 50;
     s->object_damage_max = 75;
+
+    item_def(IG_RESOURCE, "silicon_powder");
+    sprite_def(rdn, 3,4);
+    s->max_stack_size = 64;
+
+    item_def(IG_RESOURCE, "glass_piece");
+    set_pretty_name("Piece Of Glass");
+    sprite_def(i1, 1,5);
+    s->max_stack_size = 16;
+
+    item_def(IG_RESOURCE, "glass_lens");
+    sprite_def(i1, 3,5);
+    s->max_stack_size = 8;
+
+    item_def(IG_TOOL, "glass_scope");
+    sprite_def(rdn, 4,1);
+    s->max_stack_size = 1;
+
+    item_def(IG_HITSCAN_WEAPON, "scoped_laser_rifle");
+    sprite_def(i1, 6,8);
+    s->hitscan_fire_cooldown = 30;
+    s->hitscan_damage = 5;
+    s->hitscan_bullet_effect_enum = 0;
+    s->max_durability = 100;
+    s->max_stack_size = 1;
+    s->object_damage_min = 15;
+    s->object_damage_max = 25;
+    block_damage_def(2);
+    block_damage_def(CUBE_MATERIAL_DIRT, 4);
+    block_damage_def(CUBE_MATERIAL_STONE, 0);
 
     item_def(IG_FIST, "fist");
     sprite_def(i1, 6, 2);
@@ -275,7 +306,7 @@ void load_item_dat()
     s->boonable = false;
 
     item_def(IG_RESOURCE, "coal_nugget");
-    sprite_def(i0, 5,2);
+    sprite_def(i1, 1,3);
     set_pretty_name("Coal");
     s->max_stack_size = 64;
     s->fuel = true;
@@ -324,12 +355,12 @@ void load_item_dat()
     s->max_stack_size = 8;
 
     item_def(IG_RESOURCE, "powdered_regolith");
-    sprite_def(i0, 4,6);
+    sprite_def(rdn, 2,2);
     set_pretty_name("Fine Regolith");
     s->max_stack_size = 64;
 
     item_def(IG_RESOURCE, "crushed_rock");
-    sprite_def(i0, 5,6);
+    sprite_def(rdn, 2,4);
     set_pretty_name("Crushed Stone");
     s->max_stack_size = 64;
 
@@ -406,7 +437,7 @@ void load_item_dat()
     s->max_stack_size = 16;
 
     item_def(IG_RESOURCE, "blackpowder");
-    sprite_def(i0, 5,3);
+    sprite_def(rdn, 2,3);
     s->max_stack_size = 64;
 
     item_block_def("plasmagen");
@@ -414,7 +445,7 @@ void load_item_dat()
     item_block_def("regolith_landmine");
 
     item_def(IG_SPECIAL, "boon_crank");
-    sprite_def(i0, 5,4);
+    sprite_def(rdn, 2,5);
     s->max_charges = 3;
     s->boonable = false;
     #if PRODUCTION
@@ -548,7 +579,11 @@ void verify_item_dat()
         class ItemAttribute* b = &item_attributes->properties[j];
         if (!a->loaded || !b->loaded) continue;
         GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
-        GS_ASSERT_ABORT(a->sprite == ERROR_SPRITE || a->sprite != b->sprite);
+        IF_ASSERT(a->sprite != ERROR_SPRITE && a->sprite == b->sprite)
+        {
+            printf("%s and %s have the same sprite (%d == %d)\n", a->name, b->name, a->sprite, b->sprite);
+            exit(1);
+        }
         GS_ASSERT_ABORT(a->type != b->type);
         GS_ASSERT_ABORT(a->cube_type == NULL_CUBE || a->cube_type != b->cube_type);
     }

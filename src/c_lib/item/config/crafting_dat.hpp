@@ -63,7 +63,7 @@ void load_crafting_dat()
     def_crafting_recipe("steel_block_3", 4);
     set_crafting_reagent("iron_bar", 1);
 
-   def_crafting_recipe("storage_block_small");
+    def_crafting_recipe("storage_block_small");
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
@@ -220,9 +220,16 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 1);
     set_crafting_reagent("green_crystal", 1);
 
-    // plants
-    def_crafting_recipe("acadia_seed");
-    set_crafting_reagent("acadia_fruit", 2);
+    def_crafting_recipe("glass_lens");
+    set_crafting_reagent("glass_piece", 2);
+
+    def_crafting_recipe("glass_scope");
+    set_crafting_reagent("glass_lens", 1);
+    set_crafting_reagent("iron_bar", 2);
+
+    def_crafting_recipe("scoped_laser_rifle");
+    set_crafting_reagent("glass_scope", 1);
+    set_crafting_reagent("laser_rifle", 1);
 
     end_crafting_recipe(); // finalize
 }

@@ -85,6 +85,7 @@ typedef enum
     IG_ENERGY_CORE,
     IG_SPECIAL,
     IG_EQUIPMENT,
+    IG_TOOL,
 } ItemGroup;
 
 typedef enum

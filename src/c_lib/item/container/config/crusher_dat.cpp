@@ -107,26 +107,6 @@ static void register_crusher_settings()
         d->set_max_drop_amounts("iron_bar", 1);
         d->add_drop("iron_bar", 1, 1.0f);
 
-    crusher_def("copper_helmet");
-        d->set_max_drop_types(1);
-        d->set_max_drop_amounts("copper_bar", 1);
-        d->add_drop("copper_bar", 1, 1.0f);
-
-    crusher_def("iron_helmet");
-        d->set_max_drop_types(1);
-        d->set_max_drop_amounts("iron_bar", 1);
-        d->add_drop("iron_bar", 1, 1.0f);
-
-    crusher_def("gallium_helmet");
-        d->set_max_drop_types(1);
-        d->set_max_drop_amounts("gallium_bar", 1);
-        d->add_drop("gallium_bar", 1, 1.0f);
-
-    crusher_def("iridium_helmet");
-        d->set_max_drop_types(1);
-        d->set_max_drop_amounts("iridium_bar", 1);
-        d->add_drop("iridium_bar", 1, 1.0f);
-
     crusher_def("coal_nugget");
         d->set_max_drop_types(1);
         d->set_max_drop_amounts("blackpowder", 5);
@@ -135,6 +115,14 @@ static void register_crusher_settings()
         d->add_drop("blackpowder", 5, 0.40f);
         d->add_drop("blackpowder", 7, 0.20f);
         d->add_drop("blackpowder", 9, 0.10f);
+
+    crusher_def("silicon_crystal");
+        d->set_max_drop_types(1);
+        d->set_max_drop_amounts("silicon_powder", 4);
+        d->add_drop("silicon_powder", 1, 0.900f);
+        d->add_drop("silicon_powder", 2, 0.085f);
+        d->add_drop("silicon_powder", 3, 0.010f);
+        d->add_drop("silicon_powder", 4, 0.005f);
 }
 
 void validate_crusher_settings()

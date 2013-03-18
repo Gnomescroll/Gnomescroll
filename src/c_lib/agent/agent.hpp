@@ -166,29 +166,29 @@ class Agent
 
     bool nearest_open_block(const float max_dist, int open_point[3]);
 
-    Vec3 forward_vector()
+    struct Vec3 forward_vector()
     {
         return this->s.forward_vector();
     }
 
-    Vec3 get_position()
+    struct Vec3 get_position()
     {
         return this->s.get_position();
     }
 
-    Vec3 get_velocity()
+    struct Vec3 get_velocity()
     {
         return this->s.get_velocity();
     }
 
-    Vec3 get_camera_position()
+    struct Vec3 get_camera_position()
     {
         struct Vec3 p = this->get_position();
         p.z += this->camera_height();
         return p;
     }
 
-    Vec3 get_center()
+    struct Vec3 get_center()
     {
         if (this->vox == NULL || !this->vox->was_updated)
         {   // use approximate center of model
