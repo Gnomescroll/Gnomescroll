@@ -79,6 +79,10 @@ const int RAD_EXPOSURE_LEVEL2 = 8; //4x per second
 const int RAD_EXPOSURE_LEVEL3 = 16; //4x per second
 const int RAD_EXPOSURE_LEVEL4 = 32; //4x per second
 
+const int RAD_DAMAGE_RATE_LEVEL1 = 6*4;     //6 seconds
+const int RAD_DAMAGE_RATE_LEVEL2 = 4*4 + 2; //4.5 seconds
+const int RAD_DAMAGE_RATE_LEVEL3 = 3*4 + 2; //2.2 seconds
+
 const size_t MAX_AGENT_MODIFIERS = 0xFF;
 
 const Color AGENT_DEFAULT_COLOR = Color(64,192,64);

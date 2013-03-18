@@ -378,6 +378,7 @@ int AgentStatus::hurt(unsigned int amt)
 void AgentStatus::tick_rad()
 {
     //printf("tick rad\n");
+    this->rad_damage_tick++;
 
     struct Vec3 p = a->get_position();
     p = translate_position(vec3_add(p, vec3_init(0.0f, 0.0f, 0.5f)));
@@ -416,6 +417,34 @@ void AgentStatus::tick_rad()
 
     set_attribute(this->a->id, "rad_exposure", rad_exposure);
 
+    //calculate damage
+    if(rad_exposure < 1) 
+        rad_exposure = 1;
+
+    int rad_exposure_level = ((4*rad_exposure)-1) / RAD_EXPOSURE_MAX;
+
+    GS_ASSERT(rad_exposure_level >= 0 && rad_exposure_level <= 3);
+
+    switch(rad_exposure_level)
+    {
+        case 0:
+            break;
+        case 1:
+            if(this->rad_damage_tick % RAD_DAMAGE_RATE_LEVEL1 == 0)
+                this->hurt(1);
+            break;
+        case 2:
+            if(this->rad_damage_tick % RAD_DAMAGE_RATE_LEVEL2 == 0)
+                this->hurt(1);
+            break;
+        case 3:
+            if(this->rad_damage_tick % RAD_DAMAGE_RATE_LEVEL3 == 0)
+                this->hurt(1);
+            break;
+        default:
+            GS_ASSERT(false);
+            break;
+    }
 }
 
 void AgentStatus::tick_hunger()
@@ -566,7 +595,7 @@ void AgentStatus::set_fresh_state()
     this->hunger_damage_tick = 0;
     this->hunger_regen_tick = 0;
     this->hunger_tick = 0;
-
+    this->rad_damage_tick = 0;
     // TODO -- attributes should be labelled as stateful or not
         // Stateful etc attributes are restored to default on birth;
     int health_max = get_attribute_int(this->a->id, "health_max");

@@ -21,6 +21,7 @@ class AgentStatus
         int hunger_tick;
         int hunger_regen_tick;
         int hunger_damage_tick;
+        int rad_damage_tick;
 
     public:
 
