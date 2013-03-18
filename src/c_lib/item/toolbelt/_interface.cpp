@@ -300,11 +300,21 @@ void update_selected_item_type()
         toolbelt = ItemContainer::get_container(toolbelt_id);
     if (toolbelt != NULL)
         item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
+    set_agent_selected_item_type(agent_id, item_type);
+}
+
+void set_agent_selected_item_type(AgentID agent_id, ItemType item_type)
+{
+    IF_ASSERT(!isValid(agent_id)) return;
     if (agent_selected_type[agent_id] == item_type)
         return;
     turn_fire_off(agent_id);
     agent_selected_type[agent_id] = item_type;
-    Animations::stop_equipped_item_animation();
+    if (agent_id == ClientState::player_agent.agent_id)
+    {
+        agent_camera->unzoom();
+        Animations::stop_equipped_item_animation();
+    }
 }
 
 void assign_toolbelt(ItemContainerID container_id)
@@ -329,9 +339,6 @@ void toolbelt_item_selected_event(ItemContainerID container_id, int slot)
     selected_slot = slot;
     send_set_slot_packet(slot);
     update_selected_item_type();
-
-    // stop any animations
-    Animations::stop_equipped_item_animation();
 }
 
 void left_trigger_down_event()

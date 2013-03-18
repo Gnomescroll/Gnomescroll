@@ -185,6 +185,13 @@ void select_facing_block(ItemID item_id, ItemType item_type)
     HudCubeSelector::cube_selector.set_block_type(cube_type);
 }
 
+void toggle_scope(ItemID item_id, ItemType item_type)
+{
+    if (agent_camera != NULL)
+        agent_camera->toggle_zoom();
+}
+
+
 #endif
 
 #if DC_SERVER
@@ -350,7 +357,7 @@ void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
 
 void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
-    
+
 
     //
 
@@ -408,7 +415,7 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
     Sound::broadcast_exclude_play_3d_sound("boon_crank", a->get_center(), a->client_id);
 }
 
-// IG_PLAMT_PLACER
+// IG_PLANT_PLACER
 
 void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
@@ -442,7 +449,6 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
         decrement_stack(agent_id, item_id, item_type);
 */
 }
-
 
 #endif
 

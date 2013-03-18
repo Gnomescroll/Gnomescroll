@@ -218,6 +218,10 @@ static void register_item_group_callbacks()
     set_group(IG_PLANT_PLACER);
     c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
+
+    set_group(IG_TOOL);
+    c.local_trigger = &fire_close_range_weapon;
+    c.local_beta_trigger = &local_trigger_dummy;
     #endif
 
     #if DC_SERVER
@@ -249,11 +253,14 @@ static void register_item_group_callbacks()
     c.beta_trigger = &plant_placer_action;
     #endif
 
-    apply_group_settings(active_group); // finalize
+    apply_group_settings(active_group);
 }
 
 static void register_item_type_callbacks()
 {   // callbacks specific to an item
+    // NOTE -- if you override one, you override them all, for that item,
+    // so you may have to redefine some callbacks even if it was specified
+    // for that item's group
     #if DC_CLIENT
     set_type("location_pointer");
     c.local_trigger = &trigger_local_location_pointer;
@@ -266,6 +273,14 @@ static void register_item_type_callbacks()
     set_type("block_placer");
     c.local_trigger = &trigger_local_admin_block_placer;
     c.local_beta_trigger = &select_facing_block;
+
+    set_type("scoped_laser_rifle");
+    c.local_trigger = &trigger_local_hitscan_laser;
+    c.local_beta_trigger = &toggle_scope;
+
+    set_type("glass_scope");
+    c.local_trigger = &fire_close_range_weapon;
+    c.local_beta_trigger = &toggle_scope;
     #endif
 
     #if DC_SERVER
@@ -277,7 +292,7 @@ static void register_item_type_callbacks()
     c.beta_trigger = &use_boon_crank;
     #endif
 
-    apply_type_settings(active_type); // finalize
+    apply_type_settings(active_type);
 }
 
 void register_callbacks()

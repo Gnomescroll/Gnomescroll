@@ -23,6 +23,7 @@ void trigger_local_hitscan_laser(ItemID item_id, ItemType item_type);
 void fire_close_range_weapon(ItemID item_id, ItemType item_type);
 
 void select_facing_block(ItemID item_id, ItemType item_type);
+void toggle_scope(ItemID item_id, ItemType item_type);
 #endif
 
 #if DC_SERVER

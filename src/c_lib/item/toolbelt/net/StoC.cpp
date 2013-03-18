@@ -11,11 +11,12 @@ namespace Toolbelt
 #if DC_CLIENT
 inline void toolbelt_set_active_item_StoC::handle()
 {
-    IF_ASSERT(!isValid((AgentID)this->agent_id)) return;
+    AgentID agent_id = (AgentID)this->agent_id;
+    ItemType item_type = (ItemType)this->item_type;
+    IF_ASSERT(!isValid(agent_id)) return;
     IF_ASSERT(agent_selected_type == NULL) return;
-    if ((ItemType)item_type == agent_selected_type[this->agent_id]) return;
-    turn_fire_off((AgentID)this->agent_id);
-    agent_selected_type[agent_id] = (ItemType)item_type;
+    if (item_type == agent_selected_type[this->agent_id]) return;
+    set_agent_selected_item_type(agent_id, item_type);
 }
 
 inline void toolbelt_item_begin_alpha_action_StoC::handle()

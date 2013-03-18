@@ -169,7 +169,6 @@ static void _item_destruction_event(Item* item)
     static const ItemType scoped_laser_rifle = get_item_type("scoped_laser_rifle");
     static const ItemType glass_scope = get_item_type("glass_scope");
     IF_ASSERT(!isValid(scoped_laser_rifle) || !isValid(glass_scope)) return;
-
     if (item->type != scoped_laser_rifle) return;   // must be scoped_laser_rifle
     if (item->durability > 0) return;               // must be destroyed via lack of durability
     if (item->location != IL_CONTAINER) return;     // must be in container (toolbelt)
@@ -177,13 +176,15 @@ static void _item_destruction_event(Item* item)
     Agents::Agent* agent = Agents::get_agent(owner);
     IF_ASSERT(agent == NULL) return;
     struct Vec3 pos = agent->get_center();
-    ItemParticle::create_item_particle(scoped_laser_rifle, pos, vec3_init(0));
+    ItemParticle::create_item_particle(glass_scope, pos, vec3_init(0));
 }
 
 void destroy_item(ItemID id)
 {
     Item* item = get_item(id);
     IF_ASSERT(item == NULL) return;
+
+    _item_destruction_event(item);
 
     if (item->location == IL_CONTAINER)
     {
@@ -214,8 +215,6 @@ void destroy_item(ItemID id)
     }
     else if (item->location == IL_PARTICLE)
         ItemParticle::destroy((ItemParticleID)item->location_id);
-
-    _item_destruction_event(item);
 
     send_item_destroy(id);
     item_list->destroy(id);
@@ -316,18 +315,15 @@ int consume_durability(ItemID item_id, int amount, bool auto_destroy)
 {
     IF_ASSERT(item_id == NULL_ITEM) return 0;
 
-    int durability = get_item_durability(item_id);
-    GS_ASSERT(durability >= amount);
-    if (auto_destroy && durability <= amount)
+    Item* item = get_item(item_id);
+    IF_ASSERT(item == NULL) return 0;
+    item->durability -= amount;
+    item->durability = GS_MAX(0, item->durability);
+    if (auto_destroy && item->durability <= 0)
     {
         destroy_item(item_id);
         return 0;
     }
-
-    Item* item = get_item(item_id);
-    IF_ASSERT(item == NULL) return 0;
-    item->durability -= amount;
-    IF_ASSERT(item->durability < 0) item->durability = 0;
     return item->durability;
 }
 

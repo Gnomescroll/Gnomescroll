@@ -39,6 +39,8 @@ void left_trigger_down_event();
 void left_trigger_up_event();
 void right_trigger_down_event();
 void right_trigger_up_event();
+
+void set_agent_selected_item_type(AgentID agent_id, ItemType item_type);
 #endif
 
 #if DC_SERVER

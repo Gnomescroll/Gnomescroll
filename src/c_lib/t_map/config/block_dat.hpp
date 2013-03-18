@@ -283,41 +283,49 @@ void load_block_dat()
     cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
     iso_texture(c3, 2,3); // maroon
     push_texture();
+    set_max_damage(12);
 
     cube_def(SolidCube, "leaves2", CUBE_MATERIAL_DECORATION);
     //iso_texture(c3, 5,4); // dull blue
     //iso_texture(c2, 4,1); // my blue recolor
     iso_texture(c3, 5,2); // blue terrain top
     push_texture();
+    set_max_damage(12);
 
     cube_def(SolidCube, "leaves3", CUBE_MATERIAL_DECORATION);
     iso_texture(c2, 1,2); // purple
     //iso_texture(c3, 7,4); // redbrown
     push_texture();
+    set_max_damage(12);
 
     cube_def(SolidCube, "mushroom_stem1", CUBE_MATERIAL_DECORATION);
     iso_texture(c1, 1,1);
     push_texture();
     hud_def    (c1, 1,1);
+    set_max_damage(20);
 
     cube_def(SolidCube, "mushroom_stem2", CUBE_MATERIAL_DECORATION);
     iso_texture(c1, 2,2);
     push_texture();
     hud_def    (c1, 2,2);
+    set_max_damage(20);
 
     cube_def(SolidCube, "mushroom_cap1", CUBE_MATERIAL_DECORATION);
 //  iso_texture(t8, 8,9);
     iso_texture(cc, 1,2);
     push_texture();
+    set_max_damage(20);
 
     cube_def(SolidCube, "mushroom_cap2", CUBE_MATERIAL_DECORATION);
 //  iso_texture(t8, 8,9);
     iso_texture(cc, 1,4);
     push_texture();
+    set_max_damage(20);
 
     cube_def(SolidCube, "mushroom_cap3", CUBE_MATERIAL_DECORATION);
     iso_texture(cc, 1,5);
     push_texture();
+    set_max_damage(20);
 
     // ruins
 
