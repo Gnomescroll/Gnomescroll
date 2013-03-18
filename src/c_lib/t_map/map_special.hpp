@@ -782,9 +782,13 @@ class RadiationBlockList
         rb.pos = pos;
         rb.rad_strength = 15;
 
-        #if !PRODUCTION
-        printf("Adding radiation block at: %d %d %d \n", pos.x,pos.y,pos.z);
-        #endif
+        // corpusc here....
+        // this text spam below severely affects the startup time.
+        // is there a good solution so that you guys can see it and i don't?
+        //
+        //#if !PRODUCTION
+        //printf("Adding radiation block at: %d %d %d \n", pos.x,pos.y,pos.z);
+        //#endif
     }
 
     void remove(const struct Vec3i& pos)

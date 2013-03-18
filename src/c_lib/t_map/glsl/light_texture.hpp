@@ -95,20 +95,20 @@ class LightTextureGenerator
     struct Vec3 get_twist(int i)
     {
         struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
-        struct Vec3 a = vec3_init(1.6, 0.4, 0.4);   //gamma danger twist
+        struct Vec3 a = vec3_init(1.6f, 0.4f, 0.4f);   //gamma danger twist
 
         if (i<=10)
             return b;
         if (i==11)
-            return vec3_mix(b,a,0.2);
+            return vec3_mix(b,a,0.2f);
         if (i==12)
-            return vec3_mix(b,a,0.4);
+            return vec3_mix(b,a,0.4f);
         if (i==13)
-            return vec3_mix(b,a,0.6);
+            return vec3_mix(b,a,0.6f);
         if (i==14)
-            return vec3_mix(b,a,0.8);
+            return vec3_mix(b,a,0.8f);
         if (i==15)
-            return vec3_mix(b,a,1.0);
+            return vec3_mix(b,a,1.0f);
 
         return b;
     }
@@ -117,8 +117,8 @@ class LightTextureGenerator
     //need light values for mourning and dusk
     struct Vec3 get_twist2(int i, float lightv)
     {
-        struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
-        struct Vec3 a = vec3_init(1.6, 0.4, 0.4);   //gamma danger twist
+        struct Vec3 b = vec3_init(1.0f, 1.0f, 1.0f);   //white light
+        struct Vec3 a = vec3_init(1.6f, 0.4f, 0.4f);   //gamma danger twist
 
         const float twist_start = 0.5; //light level when twist starts
         if(lightv < twist_start)
@@ -132,15 +132,15 @@ class LightTextureGenerator
         if (i<=10)
             return b;
         if (i==11)
-            return vec3_mix(b, vec3_mix(b,a,0.2), lightv);
+            return vec3_mix(b, vec3_mix(b,a,0.2f), lightv);
         if (i==12)
-            return vec3_mix(b, vec3_mix(b,a,0.4), lightv);
+            return vec3_mix(b, vec3_mix(b,a,0.4f), lightv);
         if (i==13)
-            return vec3_mix(b, vec3_mix(b,a,0.6), lightv);
+            return vec3_mix(b, vec3_mix(b,a,0.6f), lightv);
         if (i==14)
-            return vec3_mix(b, vec3_mix(b,a,0.8), lightv);
+            return vec3_mix(b, vec3_mix(b,a,0.8f), lightv);
         if (i==15)
-            return vec3_mix(b, vec3_mix(b,a,1.0), lightv);
+            return vec3_mix(b, vec3_mix(b,a,1.0f), lightv);
         return b;
     }
 
@@ -226,10 +226,10 @@ class LightTextureGenerator
         GS_ASSERT(ttime >= 0.0f && ttime <= 1.0f);
 
         //sunrise is start of day
-        const float sunrise_length = 0.20;
-        const float day_length = 0.30;
-        const float sunset_length = 0.25;
-        const float night_length = 0.25;
+        const float sunrise_length = 0.20f;
+        const float day_length = 0.30f;
+        const float sunset_length = 0.25f;
+        const float night_length = 0.25f;
 
         float lightv = 0.0f; //how much day and how much night?
 

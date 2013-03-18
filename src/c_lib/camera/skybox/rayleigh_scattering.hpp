@@ -483,7 +483,7 @@ class Skyplane
 
     int sphere_wedge_test(struct Vec3 v, float inner_radius, float outer_radius)
     {
-        const float _epsilon = 0.1;
+        const float _epsilon = 0.1f;
 
         float r = vec3_length(v);
 
@@ -526,7 +526,7 @@ class Skyplane
     OPTIMIZED
     float out_scatter(const struct Vec3 &v1, const struct Vec3 &v2)
     {
-        const float _epsilon = 0.1;
+        const float _epsilon = 0.1f;
 
         const float _f = 1.0f / ((float) samples);
         const float _d = _f * vec3_distance(v1, v2);
@@ -573,7 +573,7 @@ class Skyplane
     {
         struct Vec3 c = a;
 
-        const float _epsilon = 0.1;
+        const float _epsilon = 0.1f;
 
     /*
         if (sphere_wedge_test(a, planet_radius, planet_radius + atmosphere_depth) != 0)
@@ -1275,8 +1275,8 @@ class PerlinClouds
         pf3d.init(xsize, zsize);
 
 
-        float xscale = 1.0/7.0;
-        const float of = 0.33;
+        float xscale = 1.0f / 7.0f;
+        const float of = 0.33f;
 
         for (int i=0; i<xsize; i++)
         {

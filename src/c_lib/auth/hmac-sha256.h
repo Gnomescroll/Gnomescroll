@@ -1,6 +1,8 @@
 #pragma once
 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
 
 /*
  * Copyright 2006 Apple Computer, Inc.  All rights reserved.
