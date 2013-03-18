@@ -21,7 +21,7 @@ void default_map_gen()
     t_gen::populate_crystals();
     //t_gen::generate_ruins();
     t_gen::add_terrain_features();  // gorges, trees, shrooms
-    t_gen::place_native_plants();
+    t_gen::place_native_plants(2048);
 
     map_gen::rough_floor(map_dim.x,map_dim.y,0,3, t_map::get_cube_type("bedrock"));
 }
@@ -221,28 +221,21 @@ void tick()
         ServerState::check_agents_at_base();
     }
 
-    if (counter % 30  == 0)
+    if (counter % ONE_SECOND == 0)
     {
         t_plant::tick();
     }
 
     //every half hour, respawn plants if food is low
-    if (counter % (30*1800) == 0)
+    if (counter % (ONE_MINUTE * 30) == 0)
     {
-        //t_plant::tick();
+        const int min_plants = 1024;
         int count = 0;
         count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_0"));
         count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_1"));
         count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_2"));
-
-        if (count < 256 + 128)
-        {
-            printf("plants low: respawning native plants\n");
-            t_gen::place_native_plants();
-        }
-
-
-        //printf("count= %d \n", count);
+        if (count < min_plants)
+            t_gen::place_native_plants(64);
     }
 
 

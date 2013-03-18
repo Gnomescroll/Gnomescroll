@@ -120,52 +120,52 @@ namespace Item
 class ItemList: public ObjectList<Item, ItemID>
 {
     private:
-        const char* name() { return "Item"; }
-
-    public:
-        ItemList(size_t capacity) :
-            ObjectList<Item, ItemID>(capacity, NULL_ITEM),
-            gas_tick(0)
-        {}
-
-        #if DC_CLIENT && !PRODUCTION
-        Item* create()
-        {
-            GS_ASSERT(false);
-            printf("Must create item with id\n");
-            return NULL;
-        }
-        #endif
-
-        #if DC_CLIENT
-        Item* create_type(ItemType item_type, ItemID item_id)
-        {
-            Item* item = ObjectList<Item, ItemID>::create(item_id);
-            if (item == NULL) return NULL;
-            item->init(item_type);
-            return item;
-        }
-        #endif
-
-        #if DC_SERVER
-        Item* create_type(ItemType item_type)
-        {
-            Item* item = this->create();
-            IF_ASSERT(item == NULL) return NULL;
-            item->init(item_type);
-            return item;
-        }
-        #endif
-
-    private:
         unsigned int gas_tick;
         static const int GAS_TICK_INTERVAL = 10;
+
+    const char* name()
+    {
+        return "Item";
+    }
+
     public:
-        #if DC_SERVER
-        void decay_gas();
-        void recharge_items();
-        void verify_items();
-        #endif
+    ItemList(size_t capacity) :
+        ObjectList<Item, ItemID>(capacity, NULL_ITEM),
+        gas_tick(0)
+    {}
+
+    #if DC_CLIENT && !PRODUCTION
+    Item* create()
+    {
+        GS_ASSERT(false);
+        printf("Must create item with id\n");
+        return NULL;
+    }
+    #endif
+
+    #if DC_CLIENT
+    Item* create_type(ItemType item_type, ItemID item_id)
+    {
+        Item* item = ObjectList<Item, ItemID>::create(item_id);
+        if (item == NULL) return NULL;
+        item->init(item_type);
+        return item;
+    }
+    #endif
+
+    #if DC_SERVER
+    Item* create_type(ItemType item_type)
+    {
+        Item* item = this->create();
+        IF_ASSERT(item == NULL) return NULL;
+        item->init(item_type);
+        return item;
+    }
+
+    void decay_gas();
+    void recharge_items();
+    void verify_items();
+    #endif
 };
 
 }   // Item

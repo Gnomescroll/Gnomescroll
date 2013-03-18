@@ -17,6 +17,7 @@
 #define GS_MIN(a,b) (((a) < (b)) ? (a) : (b))
 
 #ifdef __MSVC__
+#define strdup _strdup
 # define fmin(x,y) ((x) < (y)) ? (x) : (y)
 # define fmax(x,y) ((x) > (y)) ? (x) : (y)
 #endif

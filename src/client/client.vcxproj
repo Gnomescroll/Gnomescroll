@@ -64,6 +64,7 @@
       <AdditionalDependencies>ws2_32.lib;lua51.lib;winmm.lib;glew32.lib;SDL.lib;SDLmain.lib;SDL_image.lib;opengl32.lib;glu32.lib;OpenAL32.lib;assimp.lib;Awesomium_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../lib/win32/lib;../../lib/win32/dll;../../lib/win32/awesomium/bin/debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrt;</IgnoreSpecificDefaultLibraries>
+      <AdditionalOptions>/ignore:4355 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>

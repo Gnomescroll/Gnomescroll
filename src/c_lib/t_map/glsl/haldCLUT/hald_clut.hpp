@@ -197,7 +197,7 @@ int generate_clut_texture()
 
     for (int i = 0; i < level * level * level * level * level * level; i++)
     {
-        correction_end_twist(&data[i * 3], 0.3);
+        correction_end_twist(&data[i * 3], 0.3f);
     //  correction_mono_edge(&data[i * 3], 1);
     //  correction_desaturate_darks(&data[i * 3]);
     //  correction_dark_color(&data[i * 3], 0.6, 0.3, 1);

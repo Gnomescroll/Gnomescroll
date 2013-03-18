@@ -163,6 +163,23 @@ bool request_item_create(const char* name, int stack_size)
 namespace Item
 {
 
+static void _item_destruction_event(Item* item)
+{
+    IF_ASSERT(item == NULL) return;
+    static const ItemType scoped_laser_rifle = get_item_type("scoped_laser_rifle");
+    static const ItemType glass_scope = get_item_type("glass_scope");
+    IF_ASSERT(!isValid(scoped_laser_rifle) || !isValid(glass_scope)) return;
+
+    if (item->type != scoped_laser_rifle) return;   // must be scoped_laser_rifle
+    if (item->durability > 0) return;               // must be destroyed via lack of durability
+    if (item->location != IL_CONTAINER) return;     // must be in container (toolbelt)
+    AgentID owner = ItemContainer::get_container_owner((ItemContainerID)item->location_id);
+    Agents::Agent* agent = Agents::get_agent(owner);
+    IF_ASSERT(agent == NULL) return;
+    struct Vec3 pos = agent->get_center();
+    ItemParticle::create_item_particle(scoped_laser_rifle, pos, vec3_init(0));
+}
+
 void destroy_item(ItemID id)
 {
     Item* item = get_item(id);
@@ -198,8 +215,7 @@ void destroy_item(ItemID id)
     else if (item->location == IL_PARTICLE)
         ItemParticle::destroy((ItemParticleID)item->location_id);
 
-    //for (size_t i=0; i<item->subscribers.n; i++)
-        //printf("Unsubscribed %d from %d\n", item->subscribers.subscribers[i], id);
+    _item_destruction_event(item);
 
     send_item_destroy(id);
     item_list->destroy(id);
