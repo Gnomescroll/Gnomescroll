@@ -98,7 +98,7 @@ class Properties
         IF_ASSERT(this->properties[type].loaded) return NULL;
         this->current_property = &this->properties[type];
         this->current_property->set_type(type);
-        if (type > this->index)
+        if ((size_t)type > this->index)
             this->index = type;
         return this->current_property;
     }
