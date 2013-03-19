@@ -142,26 +142,37 @@ void CubeSelector::draw()
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
-    // draw selected cube outline
-    int i = this->pos_x;
-    int j = this->pos_y;
+    // update blinking
+    if (125 < _GET_MS_TIME() - prev_blink)
+    {
+        prev_blink = _GET_MS_TIME();
+        blink_status_visible = !blink_status_visible;
+    }
+    
+    if (blink_status_visible) 
+    {
+        // draw selected cube outline
+        int i = this->pos_x;
+        int j = this->pos_y;
 
-    float x0 = x + i*(_ssize+sborder) + sborder/2;
-    float x1 = x0 + _ssize - sborder;
-    float y0 = y - j*(_ssize+sborder) + sborder/2;
-    float y1 = y0 - _ssize + sborder;
+        float x0 = x + i*(_ssize+sborder) + sborder/2;
+        float x1 = x0 + _ssize - sborder;
+        float y0 = y - j*(_ssize+sborder) + sborder/2;
+        float y1 = y0 - _ssize + sborder;
 
-    glLineWidth(1.0f);
-    glColor4ub(0,0,255,255);  // blue
-    glBegin(GL_LINE_STRIP);
+        glLineWidth(1.0f);
+        glColor4ub(255,0,255,255);  // purple
+        glBegin(GL_LINE_STRIP);
 
-    glVertex3f(x0, y0, z_);  // Top left
-    glVertex3f(x1,y0, z_);  // Top right
-    glVertex3f(x1,y1, z_);  // Bottom right
-    glVertex3f(x0,y1, z_);  // Bottom left
-    glVertex3f(x0, y0, z_); // tie up the last line
+        glVertex3f(x0, y0, z_);  // Top left
+        glVertex3f(x1, y0, z_);  // Top right
+        glVertex3f(x1, y1, z_);  // Bottom right
+        glVertex3f(x0, y1, z_);  // Bottom left
+        glVertex3f(x0, y0, z_);  // tie up the last line
 
-    glEnd();
+        glEnd();
+    }
+
     glLineWidth(1.0f);
     glColor4ub(255,255,255,255);
 }
@@ -170,19 +181,30 @@ void CubeSelector::draw()
 void CubeSelector::up()
 {
     this->vertical(true);
+    reset_blink();
 }
 void CubeSelector::down()
 {
     this->vertical(false);
+    reset_blink();
 }
 void CubeSelector::left()
 {
     this->horizontal(true);
+    reset_blink();
 }
 void CubeSelector::right()
 {
     this->horizontal(false);
+    reset_blink();
 }
+
+void CubeSelector::reset_blink()
+{
+    prev_blink = _GET_MS_TIME();
+    blink_status_visible = true;
+}
+
 
 void CubeSelector::horizontal(bool left)
 {
@@ -236,7 +258,10 @@ CubeSelector::CubeSelector() :
     pos(0),
     pos_x(0), pos_y(0)
 {
+    prev_blink =_GET_MS_TIME();
+    blink_status_visible = true;
     this->cubes = (struct CubeSelectElement*)malloc(MAX_CUBES * sizeof(struct CubeSelectElement));
+    
     for (int i=0; i<MAX_CUBES; i++)
     {
         cubes[i].cube_type = NULL_CUBE;

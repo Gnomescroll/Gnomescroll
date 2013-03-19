@@ -8,6 +8,8 @@ namespace HudCubeSelector
 class CubeSelector
 {
     private:
+        int prev_blink;
+        bool blink_status_visible;
         void horizontal(bool left);
         void vertical(bool up);
 
@@ -39,6 +41,7 @@ class CubeSelector
         void down();
         void left();
         void right();
+        void reset_blink();
 
         bool set_block_type(CubeType cube_type);
 

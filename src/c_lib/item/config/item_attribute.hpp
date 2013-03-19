@@ -20,7 +20,7 @@ class ItemAttribute: public Property<ItemType>
         int sprite;
 
         //IG_PLACER
-        CubeType cube_type;   //id of block type that it creates
+        CubeType cube_type;   // id of block type that it creates
 
         //IG_MECH_PLACER_PLAYER
         MechType mech_type;
@@ -39,7 +39,7 @@ class ItemAttribute: public Property<ItemType>
         int firing_rate;
         int block_damage[MAX_CUBES];
 
-        int object_damage;       // if this is nonzero it will be used, otherwise randrange will be used
+        int object_damage;      // if this is nonzero it will be used, otherwise randrange will be used
         int object_damage_min;  // for randrange(min,max);
         int object_damage_max;
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -32,2346 +32,2291 @@
     <ClCompile Include="_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\c_lib\chat\terminal_input.cpp">
+      <Filter>c_lib\chat</Filter>
+    </ClCompile>
   </ItemGroup>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-
-
-	
-
-
-
-
-	
-
-
-
-
-	
-
-
-
-
-	
-
-
-
-
-	
-
-
-
-
-	
-
-
-
-
-	
-
-
-
-
-	
-
-
-
-
-	<ItemGroup>
-		<Filter Include="c_lib\agent">
-		</Filter>
-		<Filter Include="c_lib">
-		</Filter>
-		<Filter Include="c_lib\agent\client">
-		</Filter>
-		<Filter Include="c_lib\animations">
-		</Filter>
-		<Filter Include="c_lib\animations\config">
-		</Filter>
-		<Filter Include="c_lib\auth">
-		</Filter>
-		<Filter Include="c_lib\camera">
-		</Filter>
-		<Filter Include="c_lib\camera\skybox">
-		</Filter>
-		<Filter Include="c_lib\chat">
-		</Filter>
-		<Filter Include="c_lib\common">
-		</Filter>
-		<Filter Include="c_lib\common\analytics">
-		</Filter>
-		<Filter Include="c_lib\common\compression">
-		</Filter>
-		<Filter Include="c_lib\common\draw">
-		</Filter>
-		<Filter Include="c_lib\common\lua">
-		</Filter>
-		<Filter Include="c_lib\common\profiling">
-		</Filter>
-		<Filter Include="c_lib\common\time">
-		</Filter>
-		<Filter Include="c_lib\entity">
-		</Filter>
-		<Filter Include="c_lib\entity\component">
-		</Filter>
-		<Filter Include="c_lib\entity\component\lists">
-		</Filter>
-		<Filter Include="c_lib\entity\components">
-		</Filter>
-		<Filter Include="c_lib\entity\components\health">
-		</Filter>
-		<Filter Include="c_lib\entity\components\physics">
-		</Filter>
-		<Filter Include="c_lib\entity\components\spawner">
-		</Filter>
-		<Filter Include="c_lib\entity\components\targeting">
-		</Filter>
-		<Filter Include="c_lib\entity\network">
-		</Filter>
-		<Filter Include="c_lib\entity\object">
-		</Filter>
-		<Filter Include="c_lib\entity\objects">
-		</Filter>
-		<Filter Include="c_lib\entity\objects\fabs">
-		</Filter>
-		<Filter Include="c_lib\entity\objects\mobs">
-		</Filter>
-		<Filter Include="c_lib\hud">
-		</Filter>
-		<Filter Include="c_lib\hud\container">
-		</Filter>
-		<Filter Include="c_lib\input">
-		</Filter>
-		<Filter Include="c_lib\item">
-		</Filter>
-		<Filter Include="c_lib\item\config">
-		</Filter>
-		<Filter Include="c_lib\item\container">
-		</Filter>
-		<Filter Include="c_lib\item\container\config">
-		</Filter>
-		<Filter Include="c_lib\item\container\net">
-		</Filter>
-		<Filter Include="c_lib\item\net">
-		</Filter>
-		<Filter Include="c_lib\item\particle">
-		</Filter>
-		<Filter Include="c_lib\item\particle\net">
-		</Filter>
-		<Filter Include="c_lib\item\toolbelt">
-		</Filter>
-		<Filter Include="c_lib\item\toolbelt\config">
-		</Filter>
-		<Filter Include="c_lib\item\toolbelt\net">
-		</Filter>
-		<Filter Include="c_lib\options">
-		</Filter>
-		<Filter Include="c_lib\particle">
-		</Filter>
-		<Filter Include="c_lib\particle\text">
-		</Filter>
-		<Filter Include="c_lib\physics">
-		</Filter>
-		<Filter Include="c_lib\physics\ray_trace">
-		</Filter>
-		<Filter Include="c_lib\SDL">
-		</Filter>
-		<Filter Include="c_lib\SDL\awesomium">
-		</Filter>
-		<Filter Include="c_lib\SDL\mesh_loader">
-		</Filter>
-		<Filter Include="c_lib\SDL\unused">
-		</Filter>
-		<Filter Include="c_lib\serializer">
-		</Filter>
-		<Filter Include="c_lib\sound">
-		</Filter>
-		<Filter Include="c_lib\state">
-		</Filter>
-		<Filter Include="c_lib\t_gen">
-		</Filter>
-		<Filter Include="c_lib\t_gen\lib">
-		</Filter>
-		<Filter Include="c_lib\t_map">
-		</Filter>
-		<Filter Include="c_lib\t_map\config">
-		</Filter>
-		<Filter Include="c_lib\t_map\glsl">
-		</Filter>
-		<Filter Include="c_lib\t_map\net">
-		</Filter>
-		<Filter Include="c_lib\t_map\server">
-		</Filter>
-		<Filter Include="c_lib\t_mech">
-		</Filter>
-		<Filter Include="c_lib\t_mech\config">
-		</Filter>
-		<Filter Include="c_lib\t_mech\net">
-		</Filter>
-		<Filter Include="c_lib\t_mob">
-		</Filter>
-		<Filter Include="c_lib\voxel">
-		</Filter>
-		<Filter Include="net_lib">
-		</Filter>
-		<Filter Include="net_lib\benchmark">
-		</Filter>
-		<Filter Include="net_lib\common">
-		</Filter>
-		<Filter Include="net_lib\enet">
-		</Filter>
-		<Filter Include="c_lib\common\crash_report">
-		</Filter>
-		<Filter Include="c_lib\common\dat">
-		</Filter>
-		<Filter Include="c_lib\common\template">
-		</Filter>
-		<Filter Include="c_lib\item\common">
-		</Filter>
-		<Filter Include="c_lib\item\toolbelt\common">
-		</Filter>
-		<Filter Include="c_lib\physics\reference">
-		</Filter>
-		<Filter Include="c_lib\t_map\common">
-		</Filter>
-		<Filter Include="c_lib\t_mech\common">
-		</Filter>
-	</ItemGroup>
-
-<ItemGroup>
-	<ClInclude Include="..\c_lib\agent\agent.cpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\agent_list.cpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\agent_physics.cpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\agent_status.cpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\net_agent.cpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\_interface.cpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\_state.cpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\agent_draw.cpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\agent_event.cpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\agent_sound_handler.cpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\player_agent.cpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\player_agent_action.cpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\animations.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\block_damage.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\colored_voxel_particle.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\emitter.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\hitscan.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\insect_mob.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\mining_laser.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\packets.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\voxel_particle.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\weapon.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\_interface.cpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\config\_interface.cpp">
-		<Filter>c_lib\animations\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\config\_state.cpp">
-		<Filter>c_lib\animations\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\client.cpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\packets.cpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\server.cpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\_interface.cpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\camera\camera.cpp">
-		<Filter>c_lib\camera</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\camera\fulstrum_test.cpp">
-		<Filter>c_lib\camera</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\camera\fulstrum_test2.cpp">
-		<Filter>c_lib\camera</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\camera\skybox\skybox.cpp">
-		<Filter>c_lib\camera\skybox</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\client.cpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\packets.cpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\server.cpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\_interface.cpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\common.cpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\files.cpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\logger.cpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\qsort.c">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\analytics\sessions.cpp">
-		<Filter>c_lib\common\analytics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compression\example1.c">
-		<Filter>c_lib\common\compression</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compression\example2.c">
-		<Filter>c_lib\common\compression</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compression\example3.c">
-		<Filter>c_lib\common\compression</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compression\example4.c">
-		<Filter>c_lib\common\compression</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compression\miniz.c">
-		<Filter>c_lib\common\compression</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compression\test.cpp">
-		<Filter>c_lib\common\compression</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compression\tinfl.c">
-		<Filter>c_lib\common\compression</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\draw\colored_voxel.cpp">
-		<Filter>c_lib\common\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\draw\draw.cpp">
-		<Filter>c_lib\common\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\draw\textured_voxel.cpp">
-		<Filter>c_lib\common\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\draw\voxel.cpp">
-		<Filter>c_lib\common\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\lua\lua.cpp">
-		<Filter>c_lib\common\lua</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\profiling\frame_graph.cpp">
-		<Filter>c_lib\common\profiling</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\profiling\map_vbo_graph.cpp">
-		<Filter>c_lib\common\profiling</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\profiling\texture_surface.cpp">
-		<Filter>c_lib\common\profiling</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\time\physics_timer.cpp">
-		<Filter>c_lib\common\time</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components.cpp">
-		<Filter>c_lib\entity</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\include.cpp">
-		<Filter>c_lib\entity</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects.cpp">
-		<Filter>c_lib\entity</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\component.cpp">
-		<Filter>c_lib\entity\component</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\component_list.cpp">
-		<Filter>c_lib\entity\component</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\lists.cpp">
-		<Filter>c_lib\entity\component</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\main.cpp">
-		<Filter>c_lib\entity\component</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\lists\agent_spawner_list.cpp">
-		<Filter>c_lib\entity\component\lists</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\lists\owner_list.cpp">
-		<Filter>c_lib\entity\component\lists</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\animation.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\dimension.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\explosion.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\healer.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\health.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\include.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\item_drop.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\owner.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\pickup.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\rate_limit.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\spawner.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\spawn_child.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\stackable.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\state_machine.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\voxel_model.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\waiting.cpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\health\hit_points.cpp">
-		<Filter>c_lib\entity\components\health</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\health\ttl.cpp">
-		<Filter>c_lib\entity\components\health</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\position.cpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\position_changed.cpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\position_momentum.cpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\position_momentum_changed.cpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\verlet.cpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\spawner\agent_spawner.cpp">
-		<Filter>c_lib\entity\components\spawner</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\spawner\monster_spawner.cpp">
-		<Filter>c_lib\entity\components\spawner</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting\agent_targeting.cpp">
-		<Filter>c_lib\entity\components\targeting</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting\destination_targeting.cpp">
-		<Filter>c_lib\entity\components\targeting</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting\motion_targeting.cpp">
-		<Filter>c_lib\entity\components\targeting</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting\weapon_targeting.cpp">
-		<Filter>c_lib\entity\components\targeting</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\network\interfaces.cpp">
-		<Filter>c_lib\entity\network</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\network\main.cpp">
-		<Filter>c_lib\entity\network</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\network\packets.cpp">
-		<Filter>c_lib\entity\network</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\config.cpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\filter.cpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\helpers.cpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\main.cpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\object.cpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\object_data_list.cpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\object_list.cpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\dat.cpp">
-		<Filter>c_lib\entity\objects</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\example.cpp">
-		<Filter>c_lib\entity\objects</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\include.cpp">
-		<Filter>c_lib\entity\objects</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\base.cpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\energy_core.cpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\spawner.cpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\turret.cpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\mobs\bomb.cpp">
-		<Filter>c_lib\entity\objects\mobs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\mobs\box.cpp">
-		<Filter>c_lib\entity\objects\mobs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\mobs\spawner.cpp">
-		<Filter>c_lib\entity\objects\mobs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\cube_selector.cpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\font.cpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\hud.cpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\map.cpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\reticle.cpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\text.cpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\_interface.cpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\container_hud.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\crafting_hud.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\crusher.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\energy_tanks.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\smelter.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\storage_block.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\synthesizer_hud.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\texture.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\toolbelt_hud.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\ui_element.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\_interface.cpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\input\equipped_sprite_adjuster.cpp">
-		<Filter>c_lib\input</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\input\handlers.cpp">
-		<Filter>c_lib\input</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\input\input.cpp">
-		<Filter>c_lib\input</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\input\skeleton_editor.cpp">
-		<Filter>c_lib\input</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\client.cpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\item.cpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\properties.cpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\server.cpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\_interface.cpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\_state.cpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\item_drop.cpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\item_drop_alt.cpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\client.cpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\container.cpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\container_ui.cpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\controller.cpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\server.cpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\_interface.cpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\_state.cpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\config\crusher_dat.cpp">
-		<Filter>c_lib\item\container\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\config\_interface.cpp">
-		<Filter>c_lib\item\container\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\config\_state.cpp">
-		<Filter>c_lib\item\container\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\net\CtoS.cpp">
-		<Filter>c_lib\item\container\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\net\StoC.cpp">
-		<Filter>c_lib\item\container\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\net\CtoS.cpp">
-		<Filter>c_lib\item\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\net\StoC.cpp">
-		<Filter>c_lib\item\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\item_particle.cpp">
-		<Filter>c_lib\item\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\_interface.cpp">
-		<Filter>c_lib\item\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\net\CtoS.cpp">
-		<Filter>c_lib\item\particle\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\net\StoC.cpp">
-		<Filter>c_lib\item\particle\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\client.cpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\server.cpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\_interface.cpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\_state.cpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\config\callbacks.cpp">
-		<Filter>c_lib\item\toolbelt\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\config\config.cpp">
-		<Filter>c_lib\item\toolbelt\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\config\_interface.cpp">
-		<Filter>c_lib\item\toolbelt\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\config\_state.cpp">
-		<Filter>c_lib\item\toolbelt\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\net\CtoS.cpp">
-		<Filter>c_lib\item\toolbelt\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\net\StoC.cpp">
-		<Filter>c_lib\item\toolbelt\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\options\argparse.cpp">
-		<Filter>c_lib\options</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\options\client_options.cpp">
-		<Filter>c_lib\options</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\options\server_options.cpp">
-		<Filter>c_lib\options</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\billboard_sprite.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\blood.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\grenade.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\minivox_colored.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\minivox_textured.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\particles.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\shrapnel.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\_interface.cpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\text\billboard_text.cpp">
-		<Filter>c_lib\particle\text</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\text\billboard_text_hud.cpp">
-		<Filter>c_lib\particle\text</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\text\text_particle.cpp">
-		<Filter>c_lib\particle\text</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\color_matrix.cpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\common.cpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\motion.cpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\quadrant.cpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\verlet.cpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\ray_trace\handlers.cpp">
-		<Filter>c_lib\physics\ray_trace</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\ray_trace\hitscan.cpp">
-		<Filter>c_lib\physics\ray_trace</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\ray_trace\ray_trace.cpp">
-		<Filter>c_lib\physics\ray_trace</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\draw_functions.cpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\particle_functions.c">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\SDL_functions.cpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\shader_loader.cpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\texture_loader.cpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\texture_sheet_loader.cpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\voronoi.cpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\awesomium\viewport_class.cpp">
-		<Filter>c_lib\SDL\awesomium</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\awesomium\_interface.cpp">
-		<Filter>c_lib\SDL\awesomium</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\mesh_loader\obj_loader.cpp">
-		<Filter>c_lib\SDL\mesh_loader</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\unused\IMG_savepng.c">
-		<Filter>c_lib\SDL\unused</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\unused\pngfuncs.c">
-		<Filter>c_lib\SDL\unused</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\unused\v.cpp">
-		<Filter>c_lib\SDL\unused</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\constants.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\containers.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\entities.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\items.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\logger.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\map.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\mechs.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\players.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\redis.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\uuid.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\_interface.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\_state.cpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\csv_parser.cpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\openal.cpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\packets.cpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\sound.cpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\triggers.cpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\wav.cpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\state\client_state.cpp">
-		<Filter>c_lib\state</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\state\packet_init.cpp">
-		<Filter>c_lib\state</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\state\server_state.cpp">
-		<Filter>c_lib\state</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\explosives.cpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\features.cpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\noise_map.cpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\_interface.cpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\lib\gaussian.cpp">
-		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\lib\voronoi.cpp">
-		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\lib\voronoi2.cpp">
-		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\chunk_special.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\map_special.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\ortho_projection.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_map.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_map_class.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_properties.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_vbo_class.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_vbo_draw.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_vbo_update.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\_interface.cpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\config\drop_dat.cpp">
-		<Filter>c_lib\t_map\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\cache.cpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\shader.cpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\texture.cpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\_interface.cpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\net\t_CtoS.cpp">
-		<Filter>c_lib\t_map\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\net\t_StoC.cpp">
-		<Filter>c_lib\t_map\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\server\env_process.cpp">
-		<Filter>c_lib\t_map\server</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\server\manager.cpp">
-		<Filter>c_lib\t_map\server</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\properties.cpp">
-		<Filter>c_lib\t_mech</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\_interface.cpp">
-		<Filter>c_lib\t_mech</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\config\drop_dat.cpp">
-		<Filter>c_lib\t_mech\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\net\CtoS.cpp">
-		<Filter>c_lib\t_mech\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\net\StoC.cpp">
-		<Filter>c_lib\t_mech\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\cAnimationController.cpp">
-		<Filter>c_lib\t_mob</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\_interface.cpp">
-		<Filter>c_lib\t_mob</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_dat.cpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_hitscan.cpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_loader.cpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_model.cpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_render.cpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_volume.cpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\vox_dat_init.cpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\client.cpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\global.cpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\host.cpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\server.cpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\benchmark\pviz.c">
-		<Filter>net_lib\benchmark</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\message_handler.c">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\net_peer.cpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\net_peer_manager.cpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\net_time.c">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\packet_buffer.cpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\packet_id_counter.cpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\sequencer.c">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\callbacks.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\compress.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\host.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\list.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\packet.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\peer.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\protocol.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\unix.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\win32.c">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\agent.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\agent_list.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\agent_physics.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\agent_status.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\constants.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\net_agent.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\_include.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\_interface.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\_state.hpp">
-		<Filter>c_lib\agent</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\agent_draw.hpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\agent_event.hpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\agent_sound_handler.hpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\jetpack.hpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\player_agent.hpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\agent\client\player_agent_action.hpp">
-		<Filter>c_lib\agent\client</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\animations.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\block_damage.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\colored_voxel_particle.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\common.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\emitter.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\hitscan.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\insect_mob.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\mining_laser.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\packets.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\voxel_particle.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\weapon.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\_include.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\_interface.hpp">
-		<Filter>c_lib\animations</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\config\_interface.hpp">
-		<Filter>c_lib\animations\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\animations\config\_state.hpp">
-		<Filter>c_lib\animations\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\client.hpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\constants.hpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\packets.hpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\server.hpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\_include.hpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\_interface.hpp">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\camera\camera.hpp">
-		<Filter>c_lib\camera</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\camera\fulstrum_test.hpp">
-		<Filter>c_lib\camera</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\camera\fulstrum_test2.hpp">
-		<Filter>c_lib\camera</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\camera\skybox\skybox.hpp">
-		<Filter>c_lib\camera\skybox</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\client.hpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\globals.hpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\packets.hpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\server.hpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\_include.hpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\chat\_interface.hpp">
-		<Filter>c_lib\chat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\color.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\common.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\files.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\gl_assert.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\gs_assert.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\logger.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\macros.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\mallox.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\osx.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\random.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\subscriber_list.hpp">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\analytics\sessions.hpp">
-		<Filter>c_lib\common\analytics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\crash_report\stack_trace.hpp">
-		<Filter>c_lib\common\crash_report</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\dat\name_map.hpp">
-		<Filter>c_lib\common\dat</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\draw\colored_voxel.hpp">
-		<Filter>c_lib\common\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\draw\draw.hpp">
-		<Filter>c_lib\common\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\draw\textured_voxel.hpp">
-		<Filter>c_lib\common\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\draw\voxel.hpp">
-		<Filter>c_lib\common\draw</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\lua\lua.hpp">
-		<Filter>c_lib\common\lua</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\profiling\frame_graph.hpp">
-		<Filter>c_lib\common\profiling</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\profiling\map_vbo_graph.hpp">
-		<Filter>c_lib\common\profiling</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\profiling\texture_surface.hpp">
-		<Filter>c_lib\common\profiling</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\template\char_buffer.hpp">
-		<Filter>c_lib\common\template</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\template\multi_object_list.hpp">
-		<Filter>c_lib\common\template</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\template\object_list.hpp">
-		<Filter>c_lib\common\template</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\template\object_pool.hpp">
-		<Filter>c_lib\common\template</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\template\simple_object_list.hpp">
-		<Filter>c_lib\common\template</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\time\physics_timer.hpp">
-		<Filter>c_lib\common\time</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components.hpp">
-		<Filter>c_lib\entity</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\constants.hpp">
-		<Filter>c_lib\entity</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\include.hpp">
-		<Filter>c_lib\entity</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects.hpp">
-		<Filter>c_lib\entity</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\component.hpp">
-		<Filter>c_lib\entity\component</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\component_list.hpp">
-		<Filter>c_lib\entity\component</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\lists.hpp">
-		<Filter>c_lib\entity\component</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\main.hpp">
-		<Filter>c_lib\entity\component</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\lists\agent_spawner_list.hpp">
-		<Filter>c_lib\entity\component\lists</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\component\lists\owner_list.hpp">
-		<Filter>c_lib\entity\component\lists</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\animation.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\dimension.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\explosion.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\healer.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\health.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\include.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\item_drop.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\owner.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\pickup.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\rate_limit.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\spawner.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\spawn_child.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\stackable.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\state_machine.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\voxel_model.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\waiting.hpp">
-		<Filter>c_lib\entity\components</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\health\hit_points.hpp">
-		<Filter>c_lib\entity\components\health</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\health\ttl.hpp">
-		<Filter>c_lib\entity\components\health</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\position.hpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\position_changed.hpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\position_momentum.hpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\position_momentum_changed.hpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\physics\verlet.hpp">
-		<Filter>c_lib\entity\components\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\spawner\agent_spawner.hpp">
-		<Filter>c_lib\entity\components\spawner</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\spawner\monster_spawner.hpp">
-		<Filter>c_lib\entity\components\spawner</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting\agent_targeting.hpp">
-		<Filter>c_lib\entity\components\targeting</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting\destination_targeting.hpp">
-		<Filter>c_lib\entity\components\targeting</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting\motion_targeting.hpp">
-		<Filter>c_lib\entity\components\targeting</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\components\targeting\weapon_targeting.hpp">
-		<Filter>c_lib\entity\components\targeting</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\network\interfaces.hpp">
-		<Filter>c_lib\entity\network</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\network\main.hpp">
-		<Filter>c_lib\entity\network</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\network\packets.hpp">
-		<Filter>c_lib\entity\network</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\config.hpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\filter.hpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\helpers.hpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\main.hpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\object.hpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\object_data_list.hpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\object_list.hpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\object\types.hpp">
-		<Filter>c_lib\entity\object</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\dat.hpp">
-		<Filter>c_lib\entity\objects</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\example.hpp">
-		<Filter>c_lib\entity\objects</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\include.hpp">
-		<Filter>c_lib\entity\objects</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\base.hpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\constants.hpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\energy_core.hpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\spawner.hpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\fabs\turret.hpp">
-		<Filter>c_lib\entity\objects\fabs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\mobs\bomb.hpp">
-		<Filter>c_lib\entity\objects\mobs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\mobs\box.hpp">
-		<Filter>c_lib\entity\objects\mobs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\mobs\constants.hpp">
-		<Filter>c_lib\entity\objects\mobs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\entity\objects\mobs\spawner.hpp">
-		<Filter>c_lib\entity\objects\mobs</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\cube_selector.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\error.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\font.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\harvest_bar.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\hud.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\jetpack_meter.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\map.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\reticle.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\text.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\_include.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\_interface.hpp">
-		<Filter>c_lib\hud</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\common.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\constants.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\container_hud.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\crafting_hud.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\crusher.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\energy_tanks.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\smelter.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\storage_block.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\synthesizer_hud.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\texture.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\toolbelt_hud.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\ui_element.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\_include.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\hud\container\_interface.hpp">
-		<Filter>c_lib\hud\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\input\equipped_sprite_adjuster.hpp">
-		<Filter>c_lib\input</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\input\handlers.hpp">
-		<Filter>c_lib\input</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\input\input.hpp">
-		<Filter>c_lib\input</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\input\skeleton_editor.hpp">
-		<Filter>c_lib\input</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\client.hpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\item.hpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\properties.hpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\server.hpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\_include.hpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\_interface.hpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\_state.hpp">
-		<Filter>c_lib\item</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\common\constants.hpp">
-		<Filter>c_lib\item\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\common\enum.hpp">
-		<Filter>c_lib\item\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\common\struct.hpp">
-		<Filter>c_lib\item\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\crafting_dat.hpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\item_attribute.hpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\item_dat.hpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\item_drop.hpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\item_drop_alt.hpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\smelting_dat.hpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\synthesizer_dat.hpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\config\_interface.hpp">
-		<Filter>c_lib\item\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\client.hpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\container.hpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\container_ui.hpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\controller.hpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\server.hpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\_include.hpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\_interface.hpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\_state.hpp">
-		<Filter>c_lib\item\container</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\config\crusher_dat.hpp">
-		<Filter>c_lib\item\container\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\config\types.hpp">
-		<Filter>c_lib\item\container\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\config\_interface.hpp">
-		<Filter>c_lib\item\container\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\config\_state.hpp">
-		<Filter>c_lib\item\container\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\net\CtoS.hpp">
-		<Filter>c_lib\item\container\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\container\net\StoC.hpp">
-		<Filter>c_lib\item\container\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\net\CtoS.hpp">
-		<Filter>c_lib\item\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\net\StoC.hpp">
-		<Filter>c_lib\item\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\item_particle.hpp">
-		<Filter>c_lib\item\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\_include.hpp">
-		<Filter>c_lib\item\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\_interface.hpp">
-		<Filter>c_lib\item\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\net\CtoS.hpp">
-		<Filter>c_lib\item\particle\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\particle\net\StoC.hpp">
-		<Filter>c_lib\item\particle\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\client.hpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\server.hpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\_include.hpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\_interface.hpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\_state.hpp">
-		<Filter>c_lib\item\toolbelt</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\common\constants.hpp">
-		<Filter>c_lib\item\toolbelt\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\common\types.hpp">
-		<Filter>c_lib\item\toolbelt\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\config\callbacks.hpp">
-		<Filter>c_lib\item\toolbelt\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\config\config.hpp">
-		<Filter>c_lib\item\toolbelt\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\config\_interface.hpp">
-		<Filter>c_lib\item\toolbelt\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\config\_state.hpp">
-		<Filter>c_lib\item\toolbelt\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\net\CtoS.hpp">
-		<Filter>c_lib\item\toolbelt\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\item\toolbelt\net\StoC.hpp">
-		<Filter>c_lib\item\toolbelt\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\options\argparse.hpp">
-		<Filter>c_lib\options</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\options\client_options.hpp">
-		<Filter>c_lib\options</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\options\options.hpp">
-		<Filter>c_lib\options</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\options\option_macros.hpp">
-		<Filter>c_lib\options</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\options\server_options.hpp">
-		<Filter>c_lib\options</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\billboard_sprite.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\blood.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\constants.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\grenade.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\minivox_colored.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\minivox_textured.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\particles.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\shrapnel.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\_include.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\_interface.hpp">
-		<Filter>c_lib\particle</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\text\billboard_text.hpp">
-		<Filter>c_lib\particle\text</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\text\billboard_text_hud.hpp">
-		<Filter>c_lib\particle\text</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\particle\text\text_particle.hpp">
-		<Filter>c_lib\particle\text</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\affine.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\color_matrix.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\common.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\constants.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\geometry.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\mat3.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\mat4.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\matrix.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\motion.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\quadrant.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\vec3.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\vec4.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\verlet.hpp">
-		<Filter>c_lib\physics</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\ray_trace\handlers.hpp">
-		<Filter>c_lib\physics\ray_trace</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\ray_trace\hitscan.hpp">
-		<Filter>c_lib\physics\ray_trace</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\ray_trace\ray_trace.hpp">
-		<Filter>c_lib\physics\ray_trace</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\physics\reference\matrix.hpp">
-		<Filter>c_lib\physics\reference</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\constants.hpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\draw_functions.hpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\SDL_functions.hpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\shader_loader.hpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\texture_loader.hpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\texture_sheet_loader.hpp">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\awesomium\viewport_class.hpp">
-		<Filter>c_lib\SDL\awesomium</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\awesomium\viewport_manager.hpp">
-		<Filter>c_lib\SDL\awesomium</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\awesomium\_include.hpp">
-		<Filter>c_lib\SDL\awesomium</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\awesomium\_interface.hpp">
-		<Filter>c_lib\SDL\awesomium</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\mesh_loader\obj_loader.hpp">
-		<Filter>c_lib\SDL\mesh_loader</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\unused\v.hpp">
-		<Filter>c_lib\SDL\unused</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\constants.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\containers.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\entities.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\items.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\logger.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\map.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\mechs.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\parse.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\players.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\redis.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\uuid.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\_include.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\_interface.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\serializer\_state.hpp">
-		<Filter>c_lib\serializer</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\csv_parser.hpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\openal.hpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\packets.hpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\sound.hpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\triggers.hpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\wav.hpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\sound\_include.hpp">
-		<Filter>c_lib\sound</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\state\client_state.hpp">
-		<Filter>c_lib\state</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\state\packet_init.hpp">
-		<Filter>c_lib\state</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\state\server_state.hpp">
-		<Filter>c_lib\state</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\cave_generator.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\crystals.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\excavator.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\explosives.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\features.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\meteors.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\noise_map.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\noise_map2.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\noise_map3.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\ore_cluster.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\perlin.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\perlin_extra.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\rock_layer.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\ruins_generator.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\terrain_features.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\tile_generator.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\twister.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\_include.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\_interface.hpp">
-		<Filter>c_lib\t_gen</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\lib\gaussian.hpp">
-		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\lib\global.hpp">
-		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\lib\twister.hpp">
-		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\lib\voronoi.hpp">
-		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_gen\lib\voronoi2.hpp">
-		<Filter>c_lib\t_gen\lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\chunk_special.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\lighting.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\map_special.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\ortho_projection.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_map.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_map_class.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_properties.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_vbo_class.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_vbo_draw.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\t_vbo_update.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\_include.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\_interface.hpp">
-		<Filter>c_lib\t_map</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\common\constants.hpp">
-		<Filter>c_lib\t_map\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\common\map_element.hpp">
-		<Filter>c_lib\t_map\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\common\types.hpp">
-		<Filter>c_lib\t_map\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\config\block_dat.hpp">
-		<Filter>c_lib\t_map\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\config\drop_dat.hpp">
-		<Filter>c_lib\t_map\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\config\textures.hpp">
-		<Filter>c_lib\t_map\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\config\_interface.hpp">
-		<Filter>c_lib\t_map\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\cache.hpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\hash_functions.hpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\palette.hpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\settings.hpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\shader.hpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\structs.hpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\texture.hpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\glsl\_interface.hpp">
-		<Filter>c_lib\t_map\glsl</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\net\t_CtoS.hpp">
-		<Filter>c_lib\t_map\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\net\t_net.hpp">
-		<Filter>c_lib\t_map\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\net\t_StoC.hpp">
-		<Filter>c_lib\t_map\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\server\env_process.hpp">
-		<Filter>c_lib\t_map\server</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\server\manager.hpp">
-		<Filter>c_lib\t_map\server</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\server\manager_class.hpp">
-		<Filter>c_lib\t_map\server</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_map\server\subscription_list.hpp">
-		<Filter>c_lib\t_map\server</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\mech_draw.hpp">
-		<Filter>c_lib\t_mech</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\mech_state.hpp">
-		<Filter>c_lib\t_mech</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\properties.hpp">
-		<Filter>c_lib\t_mech</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\_include.hpp">
-		<Filter>c_lib\t_mech</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\_interface.hpp">
-		<Filter>c_lib\t_mech</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\common\common.hpp">
-		<Filter>c_lib\t_mech\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\config\drop_dat.hpp">
-		<Filter>c_lib\t_mech\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\config\mech_dat.hpp">
-		<Filter>c_lib\t_mech\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\config\_interface.hpp">
-		<Filter>c_lib\t_mech\config</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\net\CtoS.hpp">
-		<Filter>c_lib\t_mech\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mech\net\StoC.hpp">
-		<Filter>c_lib\t_mech\net</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\cAnimationController.hpp">
-		<Filter>c_lib\t_mob</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\cleanup.hpp">
-		<Filter>c_lib\t_mob</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\model_class.hpp">
-		<Filter>c_lib\t_mob</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\model_loader.hpp">
-		<Filter>c_lib\t_mob</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\_include.hpp">
-		<Filter>c_lib\t_mob</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\t_mob\_interface.hpp">
-		<Filter>c_lib\t_mob</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\common.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\constants.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_dat.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_hitscan.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_loader.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_model.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_render.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\voxel_volume.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\vox_dat_init.hpp">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\client.hpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\global.hpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\host.hpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\net_CtoS.hpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\net_StoC.hpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\server.hpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\_include.hpp">
-		<Filter>net_lib</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\benchmark\benchmark.hpp">
-		<Filter>net_lib\benchmark</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\net_peer.hpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\net_peer_manager.hpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\packet_buffer.hpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\packet_id_counter.hpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\types.hpp">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\auth\hmac-sha256.h">
-		<Filter>c_lib\auth</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compat_al.h">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\compat_gl.h">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\defines.h">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\dirent.h">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\qsort.h">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\version.h">
-		<Filter>c_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\common\time\TODO">
-		<Filter>c_lib\common\time</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\particle_functions.h">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\voronoi.h">
-		<Filter>c_lib\SDL</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\unused\IMG_savepng.h">
-		<Filter>c_lib\SDL\unused</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\SDL\unused\pngfuncs.h">
-		<Filter>c_lib\SDL\unused</Filter>
-	</ClInclude>
-	<ClInclude Include="..\c_lib\voxel\common_data.h">
-		<Filter>c_lib\voxel</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\benchmark\pviz.h">
-		<Filter>net_lib\benchmark</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\message_handler.h">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\net_time.h">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\sequencer.h">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\common\type_pack.h">
-		<Filter>net_lib\common</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\callbacks.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\enet.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\list.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\protocol.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\time.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\types.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\unix.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\utility.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-	<ClInclude Include="..\net_lib\enet\win32.h">
-		<Filter>net_lib\enet</Filter>
-	</ClInclude>
-</ItemGroup>
-
-
+  <ItemGroup>
+    <Filter Include="c_lib\agent">
+    </Filter>
+    <Filter Include="c_lib">
+    </Filter>
+    <Filter Include="c_lib\agent\client">
+    </Filter>
+    <Filter Include="c_lib\animations">
+    </Filter>
+    <Filter Include="c_lib\animations\config">
+    </Filter>
+    <Filter Include="c_lib\auth">
+    </Filter>
+    <Filter Include="c_lib\camera">
+    </Filter>
+    <Filter Include="c_lib\camera\skybox">
+    </Filter>
+    <Filter Include="c_lib\chat">
+    </Filter>
+    <Filter Include="c_lib\common">
+    </Filter>
+    <Filter Include="c_lib\common\analytics">
+    </Filter>
+    <Filter Include="c_lib\common\compression">
+    </Filter>
+    <Filter Include="c_lib\common\draw">
+    </Filter>
+    <Filter Include="c_lib\common\lua">
+    </Filter>
+    <Filter Include="c_lib\common\profiling">
+    </Filter>
+    <Filter Include="c_lib\common\time">
+    </Filter>
+    <Filter Include="c_lib\entity">
+    </Filter>
+    <Filter Include="c_lib\entity\component">
+    </Filter>
+    <Filter Include="c_lib\entity\component\lists">
+    </Filter>
+    <Filter Include="c_lib\entity\components">
+    </Filter>
+    <Filter Include="c_lib\entity\components\health">
+    </Filter>
+    <Filter Include="c_lib\entity\components\physics">
+    </Filter>
+    <Filter Include="c_lib\entity\components\spawner">
+    </Filter>
+    <Filter Include="c_lib\entity\components\targeting">
+    </Filter>
+    <Filter Include="c_lib\entity\network">
+    </Filter>
+    <Filter Include="c_lib\entity\object">
+    </Filter>
+    <Filter Include="c_lib\entity\objects">
+    </Filter>
+    <Filter Include="c_lib\entity\objects\fabs">
+    </Filter>
+    <Filter Include="c_lib\entity\objects\mobs">
+    </Filter>
+    <Filter Include="c_lib\hud">
+    </Filter>
+    <Filter Include="c_lib\hud\container">
+    </Filter>
+    <Filter Include="c_lib\input">
+    </Filter>
+    <Filter Include="c_lib\item">
+    </Filter>
+    <Filter Include="c_lib\item\config">
+    </Filter>
+    <Filter Include="c_lib\item\container">
+    </Filter>
+    <Filter Include="c_lib\item\container\config">
+    </Filter>
+    <Filter Include="c_lib\item\container\net">
+    </Filter>
+    <Filter Include="c_lib\item\net">
+    </Filter>
+    <Filter Include="c_lib\item\particle">
+    </Filter>
+    <Filter Include="c_lib\item\particle\net">
+    </Filter>
+    <Filter Include="c_lib\item\toolbelt">
+    </Filter>
+    <Filter Include="c_lib\item\toolbelt\config">
+    </Filter>
+    <Filter Include="c_lib\item\toolbelt\net">
+    </Filter>
+    <Filter Include="c_lib\options">
+    </Filter>
+    <Filter Include="c_lib\particle">
+    </Filter>
+    <Filter Include="c_lib\particle\text">
+    </Filter>
+    <Filter Include="c_lib\physics">
+    </Filter>
+    <Filter Include="c_lib\physics\ray_trace">
+    </Filter>
+    <Filter Include="c_lib\SDL">
+    </Filter>
+    <Filter Include="c_lib\SDL\awesomium">
+    </Filter>
+    <Filter Include="c_lib\SDL\mesh_loader">
+    </Filter>
+    <Filter Include="c_lib\SDL\unused">
+    </Filter>
+    <Filter Include="c_lib\serializer">
+    </Filter>
+    <Filter Include="c_lib\sound">
+    </Filter>
+    <Filter Include="c_lib\state">
+    </Filter>
+    <Filter Include="c_lib\t_gen">
+    </Filter>
+    <Filter Include="c_lib\t_gen\lib">
+    </Filter>
+    <Filter Include="c_lib\t_map">
+    </Filter>
+    <Filter Include="c_lib\t_map\config">
+    </Filter>
+    <Filter Include="c_lib\t_map\glsl">
+    </Filter>
+    <Filter Include="c_lib\t_map\net">
+    </Filter>
+    <Filter Include="c_lib\t_map\server">
+    </Filter>
+    <Filter Include="c_lib\t_mech">
+    </Filter>
+    <Filter Include="c_lib\t_mech\config">
+    </Filter>
+    <Filter Include="c_lib\t_mech\net">
+    </Filter>
+    <Filter Include="c_lib\t_mob">
+    </Filter>
+    <Filter Include="c_lib\voxel">
+    </Filter>
+    <Filter Include="net_lib">
+    </Filter>
+    <Filter Include="net_lib\benchmark">
+    </Filter>
+    <Filter Include="net_lib\common">
+    </Filter>
+    <Filter Include="net_lib\enet">
+    </Filter>
+    <Filter Include="c_lib\common\crash_report">
+    </Filter>
+    <Filter Include="c_lib\common\dat">
+    </Filter>
+    <Filter Include="c_lib\common\template">
+    </Filter>
+    <Filter Include="c_lib\item\common">
+    </Filter>
+    <Filter Include="c_lib\item\toolbelt\common">
+    </Filter>
+    <Filter Include="c_lib\physics\reference">
+    </Filter>
+    <Filter Include="c_lib\t_map\common">
+    </Filter>
+    <Filter Include="c_lib\t_mech\common">
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\c_lib\agent\agent.cpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\agent_list.cpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\agent_physics.cpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\agent_status.cpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\net_agent.cpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\_interface.cpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\_state.cpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\agent_draw.cpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\agent_event.cpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\agent_sound_handler.cpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\player_agent.cpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\player_agent_action.cpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\animations.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\block_damage.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\colored_voxel_particle.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\emitter.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\hitscan.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\insect_mob.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\mining_laser.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\packets.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\voxel_particle.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\weapon.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\_interface.cpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\config\_interface.cpp">
+      <Filter>c_lib\animations\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\config\_state.cpp">
+      <Filter>c_lib\animations\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\client.cpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\packets.cpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\server.cpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\_interface.cpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\camera\camera.cpp">
+      <Filter>c_lib\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\camera\fulstrum_test.cpp">
+      <Filter>c_lib\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\camera\fulstrum_test2.cpp">
+      <Filter>c_lib\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\camera\skybox\skybox.cpp">
+      <Filter>c_lib\camera\skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\client.cpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\packets.cpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\server.cpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\_interface.cpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\common.cpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\files.cpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\logger.cpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\qsort.c">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\analytics\sessions.cpp">
+      <Filter>c_lib\common\analytics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compression\example1.c">
+      <Filter>c_lib\common\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compression\example2.c">
+      <Filter>c_lib\common\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compression\example3.c">
+      <Filter>c_lib\common\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compression\example4.c">
+      <Filter>c_lib\common\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compression\miniz.c">
+      <Filter>c_lib\common\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compression\test.cpp">
+      <Filter>c_lib\common\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compression\tinfl.c">
+      <Filter>c_lib\common\compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\draw\colored_voxel.cpp">
+      <Filter>c_lib\common\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\draw\draw.cpp">
+      <Filter>c_lib\common\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\draw\textured_voxel.cpp">
+      <Filter>c_lib\common\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\draw\voxel.cpp">
+      <Filter>c_lib\common\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\lua\lua.cpp">
+      <Filter>c_lib\common\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\profiling\frame_graph.cpp">
+      <Filter>c_lib\common\profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\profiling\map_vbo_graph.cpp">
+      <Filter>c_lib\common\profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\profiling\texture_surface.cpp">
+      <Filter>c_lib\common\profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\time\physics_timer.cpp">
+      <Filter>c_lib\common\time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components.cpp">
+      <Filter>c_lib\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\include.cpp">
+      <Filter>c_lib\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects.cpp">
+      <Filter>c_lib\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\component.cpp">
+      <Filter>c_lib\entity\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\component_list.cpp">
+      <Filter>c_lib\entity\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\lists.cpp">
+      <Filter>c_lib\entity\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\main.cpp">
+      <Filter>c_lib\entity\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\lists\agent_spawner_list.cpp">
+      <Filter>c_lib\entity\component\lists</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\lists\owner_list.cpp">
+      <Filter>c_lib\entity\component\lists</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\animation.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\dimension.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\explosion.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\healer.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\health.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\include.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\item_drop.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\owner.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\pickup.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\rate_limit.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\spawner.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\spawn_child.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\stackable.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\state_machine.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\voxel_model.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\waiting.cpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\health\hit_points.cpp">
+      <Filter>c_lib\entity\components\health</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\health\ttl.cpp">
+      <Filter>c_lib\entity\components\health</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\position.cpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\position_changed.cpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\position_momentum.cpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\position_momentum_changed.cpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\verlet.cpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\spawner\agent_spawner.cpp">
+      <Filter>c_lib\entity\components\spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\spawner\monster_spawner.cpp">
+      <Filter>c_lib\entity\components\spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting\agent_targeting.cpp">
+      <Filter>c_lib\entity\components\targeting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting\destination_targeting.cpp">
+      <Filter>c_lib\entity\components\targeting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting\motion_targeting.cpp">
+      <Filter>c_lib\entity\components\targeting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting\weapon_targeting.cpp">
+      <Filter>c_lib\entity\components\targeting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\network\interfaces.cpp">
+      <Filter>c_lib\entity\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\network\main.cpp">
+      <Filter>c_lib\entity\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\network\packets.cpp">
+      <Filter>c_lib\entity\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\config.cpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\filter.cpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\helpers.cpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\main.cpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\object.cpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\object_data_list.cpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\object_list.cpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\dat.cpp">
+      <Filter>c_lib\entity\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\example.cpp">
+      <Filter>c_lib\entity\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\include.cpp">
+      <Filter>c_lib\entity\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\base.cpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\energy_core.cpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\spawner.cpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\turret.cpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\mobs\bomb.cpp">
+      <Filter>c_lib\entity\objects\mobs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\mobs\box.cpp">
+      <Filter>c_lib\entity\objects\mobs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\mobs\spawner.cpp">
+      <Filter>c_lib\entity\objects\mobs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\cube_selector.cpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\font.cpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\hud.cpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\map.cpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\reticle.cpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\text.cpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\_interface.cpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\container_hud.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\crafting_hud.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\crusher.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\energy_tanks.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\smelter.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\storage_block.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\synthesizer_hud.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\texture.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\toolbelt_hud.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\ui_element.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\_interface.cpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\input\equipped_sprite_adjuster.cpp">
+      <Filter>c_lib\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\input\handlers.cpp">
+      <Filter>c_lib\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\input\input.cpp">
+      <Filter>c_lib\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\input\skeleton_editor.cpp">
+      <Filter>c_lib\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\client.cpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\item.cpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\properties.cpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\server.cpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\_interface.cpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\_state.cpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\item_drop.cpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\item_drop_alt.cpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\client.cpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\container.cpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\container_ui.cpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\controller.cpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\server.cpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\_interface.cpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\_state.cpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\config\crusher_dat.cpp">
+      <Filter>c_lib\item\container\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\config\_interface.cpp">
+      <Filter>c_lib\item\container\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\config\_state.cpp">
+      <Filter>c_lib\item\container\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\net\CtoS.cpp">
+      <Filter>c_lib\item\container\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\net\StoC.cpp">
+      <Filter>c_lib\item\container\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\net\CtoS.cpp">
+      <Filter>c_lib\item\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\net\StoC.cpp">
+      <Filter>c_lib\item\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\item_particle.cpp">
+      <Filter>c_lib\item\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\_interface.cpp">
+      <Filter>c_lib\item\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\net\CtoS.cpp">
+      <Filter>c_lib\item\particle\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\net\StoC.cpp">
+      <Filter>c_lib\item\particle\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\client.cpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\server.cpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\_interface.cpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\_state.cpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\config\callbacks.cpp">
+      <Filter>c_lib\item\toolbelt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\config\config.cpp">
+      <Filter>c_lib\item\toolbelt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\config\_interface.cpp">
+      <Filter>c_lib\item\toolbelt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\config\_state.cpp">
+      <Filter>c_lib\item\toolbelt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\net\CtoS.cpp">
+      <Filter>c_lib\item\toolbelt\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\net\StoC.cpp">
+      <Filter>c_lib\item\toolbelt\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\options\argparse.cpp">
+      <Filter>c_lib\options</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\options\client_options.cpp">
+      <Filter>c_lib\options</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\options\server_options.cpp">
+      <Filter>c_lib\options</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\billboard_sprite.cpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\blood.cpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\grenade.cpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\minivox_colored.cpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\minivox_textured.cpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\particles.cpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\shrapnel.cpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\_interface.cpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\text\billboard_text.cpp">
+      <Filter>c_lib\particle\text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\text\billboard_text_hud.cpp">
+      <Filter>c_lib\particle\text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\text\text_particle.cpp">
+      <Filter>c_lib\particle\text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\color_matrix.cpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\common.cpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\motion.cpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\quadrant.cpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\verlet.cpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\ray_trace\handlers.cpp">
+      <Filter>c_lib\physics\ray_trace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\ray_trace\hitscan.cpp">
+      <Filter>c_lib\physics\ray_trace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\ray_trace\ray_trace.cpp">
+      <Filter>c_lib\physics\ray_trace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\draw_functions.cpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\particle_functions.c">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\SDL_functions.cpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\shader_loader.cpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\texture_loader.cpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\texture_sheet_loader.cpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\voronoi.cpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\awesomium\viewport_class.cpp">
+      <Filter>c_lib\SDL\awesomium</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\awesomium\_interface.cpp">
+      <Filter>c_lib\SDL\awesomium</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\mesh_loader\obj_loader.cpp">
+      <Filter>c_lib\SDL\mesh_loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\unused\IMG_savepng.c">
+      <Filter>c_lib\SDL\unused</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\unused\pngfuncs.c">
+      <Filter>c_lib\SDL\unused</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\unused\v.cpp">
+      <Filter>c_lib\SDL\unused</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\constants.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\containers.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\entities.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\items.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\logger.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\map.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\mechs.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\players.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\redis.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\uuid.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\_interface.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\_state.cpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\csv_parser.cpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\openal.cpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\packets.cpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\sound.cpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\triggers.cpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\wav.cpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\state\client_state.cpp">
+      <Filter>c_lib\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\state\packet_init.cpp">
+      <Filter>c_lib\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\state\server_state.cpp">
+      <Filter>c_lib\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\explosives.cpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\features.cpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\noise_map.cpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\_interface.cpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\lib\gaussian.cpp">
+      <Filter>c_lib\t_gen\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\lib\voronoi.cpp">
+      <Filter>c_lib\t_gen\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\lib\voronoi2.cpp">
+      <Filter>c_lib\t_gen\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\chunk_special.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\map_special.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\ortho_projection.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_map.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_map_class.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_properties.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_vbo_class.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_vbo_draw.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_vbo_update.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\_interface.cpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\config\drop_dat.cpp">
+      <Filter>c_lib\t_map\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\cache.cpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\shader.cpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\texture.cpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\_interface.cpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\net\t_CtoS.cpp">
+      <Filter>c_lib\t_map\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\net\t_StoC.cpp">
+      <Filter>c_lib\t_map\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\server\env_process.cpp">
+      <Filter>c_lib\t_map\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\server\manager.cpp">
+      <Filter>c_lib\t_map\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\properties.cpp">
+      <Filter>c_lib\t_mech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\_interface.cpp">
+      <Filter>c_lib\t_mech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\config\drop_dat.cpp">
+      <Filter>c_lib\t_mech\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\net\CtoS.cpp">
+      <Filter>c_lib\t_mech\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\net\StoC.cpp">
+      <Filter>c_lib\t_mech\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mob\cAnimationController.cpp">
+      <Filter>c_lib\t_mob</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mob\_interface.cpp">
+      <Filter>c_lib\t_mob</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_dat.cpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_hitscan.cpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_loader.cpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_model.cpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_render.cpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_volume.cpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\vox_dat_init.cpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\client.cpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\global.cpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\host.cpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\server.cpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\benchmark\pviz.c">
+      <Filter>net_lib\benchmark</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\message_handler.c">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\net_peer.cpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\net_peer_manager.cpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\net_time.c">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\packet_buffer.cpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\packet_id_counter.cpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\sequencer.c">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\callbacks.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\compress.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\host.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\list.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\packet.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\peer.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\protocol.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\unix.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\win32.c">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\agent.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\agent_list.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\agent_physics.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\agent_status.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\constants.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\net_agent.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\_include.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\_interface.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\_state.hpp">
+      <Filter>c_lib\agent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\agent_draw.hpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\agent_event.hpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\agent_sound_handler.hpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\jetpack.hpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\player_agent.hpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\agent\client\player_agent_action.hpp">
+      <Filter>c_lib\agent\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\animations.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\block_damage.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\colored_voxel_particle.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\common.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\emitter.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\hitscan.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\insect_mob.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\mining_laser.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\packets.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\voxel_particle.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\weapon.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\_include.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\_interface.hpp">
+      <Filter>c_lib\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\config\_interface.hpp">
+      <Filter>c_lib\animations\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\animations\config\_state.hpp">
+      <Filter>c_lib\animations\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\client.hpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\constants.hpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\packets.hpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\server.hpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\_include.hpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\_interface.hpp">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\camera\camera.hpp">
+      <Filter>c_lib\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\camera\fulstrum_test.hpp">
+      <Filter>c_lib\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\camera\fulstrum_test2.hpp">
+      <Filter>c_lib\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\camera\skybox\skybox.hpp">
+      <Filter>c_lib\camera\skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\client.hpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\globals.hpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\packets.hpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\server.hpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\_include.hpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\chat\_interface.hpp">
+      <Filter>c_lib\chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\color.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\common.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\files.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\gl_assert.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\gs_assert.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\logger.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\macros.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\mallox.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\osx.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\random.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\subscriber_list.hpp">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\analytics\sessions.hpp">
+      <Filter>c_lib\common\analytics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\crash_report\stack_trace.hpp">
+      <Filter>c_lib\common\crash_report</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\dat\name_map.hpp">
+      <Filter>c_lib\common\dat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\draw\colored_voxel.hpp">
+      <Filter>c_lib\common\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\draw\draw.hpp">
+      <Filter>c_lib\common\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\draw\textured_voxel.hpp">
+      <Filter>c_lib\common\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\draw\voxel.hpp">
+      <Filter>c_lib\common\draw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\lua\lua.hpp">
+      <Filter>c_lib\common\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\profiling\frame_graph.hpp">
+      <Filter>c_lib\common\profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\profiling\map_vbo_graph.hpp">
+      <Filter>c_lib\common\profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\profiling\texture_surface.hpp">
+      <Filter>c_lib\common\profiling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\template\char_buffer.hpp">
+      <Filter>c_lib\common\template</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\template\multi_object_list.hpp">
+      <Filter>c_lib\common\template</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\template\object_list.hpp">
+      <Filter>c_lib\common\template</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\template\object_pool.hpp">
+      <Filter>c_lib\common\template</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\template\simple_object_list.hpp">
+      <Filter>c_lib\common\template</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\time\physics_timer.hpp">
+      <Filter>c_lib\common\time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components.hpp">
+      <Filter>c_lib\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\constants.hpp">
+      <Filter>c_lib\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\include.hpp">
+      <Filter>c_lib\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects.hpp">
+      <Filter>c_lib\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\component.hpp">
+      <Filter>c_lib\entity\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\component_list.hpp">
+      <Filter>c_lib\entity\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\lists.hpp">
+      <Filter>c_lib\entity\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\main.hpp">
+      <Filter>c_lib\entity\component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\lists\agent_spawner_list.hpp">
+      <Filter>c_lib\entity\component\lists</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\component\lists\owner_list.hpp">
+      <Filter>c_lib\entity\component\lists</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\animation.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\dimension.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\explosion.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\healer.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\health.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\include.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\item_drop.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\owner.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\pickup.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\rate_limit.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\spawner.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\spawn_child.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\stackable.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\state_machine.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\voxel_model.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\waiting.hpp">
+      <Filter>c_lib\entity\components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\health\hit_points.hpp">
+      <Filter>c_lib\entity\components\health</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\health\ttl.hpp">
+      <Filter>c_lib\entity\components\health</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\position.hpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\position_changed.hpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\position_momentum.hpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\position_momentum_changed.hpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\physics\verlet.hpp">
+      <Filter>c_lib\entity\components\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\spawner\agent_spawner.hpp">
+      <Filter>c_lib\entity\components\spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\spawner\monster_spawner.hpp">
+      <Filter>c_lib\entity\components\spawner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting\agent_targeting.hpp">
+      <Filter>c_lib\entity\components\targeting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting\destination_targeting.hpp">
+      <Filter>c_lib\entity\components\targeting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting\motion_targeting.hpp">
+      <Filter>c_lib\entity\components\targeting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\components\targeting\weapon_targeting.hpp">
+      <Filter>c_lib\entity\components\targeting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\network\interfaces.hpp">
+      <Filter>c_lib\entity\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\network\main.hpp">
+      <Filter>c_lib\entity\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\network\packets.hpp">
+      <Filter>c_lib\entity\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\config.hpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\filter.hpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\helpers.hpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\main.hpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\object.hpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\object_data_list.hpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\object_list.hpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\object\types.hpp">
+      <Filter>c_lib\entity\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\dat.hpp">
+      <Filter>c_lib\entity\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\example.hpp">
+      <Filter>c_lib\entity\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\include.hpp">
+      <Filter>c_lib\entity\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\base.hpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\constants.hpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\energy_core.hpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\spawner.hpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\fabs\turret.hpp">
+      <Filter>c_lib\entity\objects\fabs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\mobs\bomb.hpp">
+      <Filter>c_lib\entity\objects\mobs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\mobs\box.hpp">
+      <Filter>c_lib\entity\objects\mobs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\mobs\constants.hpp">
+      <Filter>c_lib\entity\objects\mobs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\entity\objects\mobs\spawner.hpp">
+      <Filter>c_lib\entity\objects\mobs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\cube_selector.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\error.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\font.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\harvest_bar.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\hud.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\jetpack_meter.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\map.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\reticle.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\text.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\_include.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\_interface.hpp">
+      <Filter>c_lib\hud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\common.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\constants.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\container_hud.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\crafting_hud.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\crusher.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\energy_tanks.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\smelter.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\storage_block.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\synthesizer_hud.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\texture.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\toolbelt_hud.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\ui_element.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\_include.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\hud\container\_interface.hpp">
+      <Filter>c_lib\hud\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\input\equipped_sprite_adjuster.hpp">
+      <Filter>c_lib\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\input\handlers.hpp">
+      <Filter>c_lib\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\input\input.hpp">
+      <Filter>c_lib\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\input\skeleton_editor.hpp">
+      <Filter>c_lib\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\client.hpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\item.hpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\properties.hpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\server.hpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\_include.hpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\_interface.hpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\_state.hpp">
+      <Filter>c_lib\item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\common\constants.hpp">
+      <Filter>c_lib\item\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\common\enum.hpp">
+      <Filter>c_lib\item\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\common\struct.hpp">
+      <Filter>c_lib\item\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\crafting_dat.hpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\item_attribute.hpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\item_dat.hpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\item_drop.hpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\item_drop_alt.hpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\smelting_dat.hpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\synthesizer_dat.hpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\config\_interface.hpp">
+      <Filter>c_lib\item\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\client.hpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\container.hpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\container_ui.hpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\controller.hpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\server.hpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\_include.hpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\_interface.hpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\_state.hpp">
+      <Filter>c_lib\item\container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\config\crusher_dat.hpp">
+      <Filter>c_lib\item\container\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\config\types.hpp">
+      <Filter>c_lib\item\container\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\config\_interface.hpp">
+      <Filter>c_lib\item\container\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\config\_state.hpp">
+      <Filter>c_lib\item\container\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\net\CtoS.hpp">
+      <Filter>c_lib\item\container\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\container\net\StoC.hpp">
+      <Filter>c_lib\item\container\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\net\CtoS.hpp">
+      <Filter>c_lib\item\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\net\StoC.hpp">
+      <Filter>c_lib\item\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\item_particle.hpp">
+      <Filter>c_lib\item\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\_include.hpp">
+      <Filter>c_lib\item\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\_interface.hpp">
+      <Filter>c_lib\item\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\net\CtoS.hpp">
+      <Filter>c_lib\item\particle\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\particle\net\StoC.hpp">
+      <Filter>c_lib\item\particle\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\client.hpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\server.hpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\_include.hpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\_interface.hpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\_state.hpp">
+      <Filter>c_lib\item\toolbelt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\common\constants.hpp">
+      <Filter>c_lib\item\toolbelt\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\common\types.hpp">
+      <Filter>c_lib\item\toolbelt\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\config\callbacks.hpp">
+      <Filter>c_lib\item\toolbelt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\config\config.hpp">
+      <Filter>c_lib\item\toolbelt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\config\_interface.hpp">
+      <Filter>c_lib\item\toolbelt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\config\_state.hpp">
+      <Filter>c_lib\item\toolbelt\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\net\CtoS.hpp">
+      <Filter>c_lib\item\toolbelt\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\item\toolbelt\net\StoC.hpp">
+      <Filter>c_lib\item\toolbelt\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\options\argparse.hpp">
+      <Filter>c_lib\options</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\options\client_options.hpp">
+      <Filter>c_lib\options</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\options\options.hpp">
+      <Filter>c_lib\options</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\options\option_macros.hpp">
+      <Filter>c_lib\options</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\options\server_options.hpp">
+      <Filter>c_lib\options</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\billboard_sprite.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\blood.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\constants.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\grenade.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\minivox_colored.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\minivox_textured.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\particles.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\shrapnel.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\_include.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\_interface.hpp">
+      <Filter>c_lib\particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\text\billboard_text.hpp">
+      <Filter>c_lib\particle\text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\text\billboard_text_hud.hpp">
+      <Filter>c_lib\particle\text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\particle\text\text_particle.hpp">
+      <Filter>c_lib\particle\text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\affine.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\color_matrix.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\common.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\constants.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\geometry.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\mat3.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\mat4.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\matrix.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\motion.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\quadrant.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\vec3.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\vec4.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\verlet.hpp">
+      <Filter>c_lib\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\ray_trace\handlers.hpp">
+      <Filter>c_lib\physics\ray_trace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\ray_trace\hitscan.hpp">
+      <Filter>c_lib\physics\ray_trace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\ray_trace\ray_trace.hpp">
+      <Filter>c_lib\physics\ray_trace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\physics\reference\matrix.hpp">
+      <Filter>c_lib\physics\reference</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\constants.hpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\draw_functions.hpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\SDL_functions.hpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\shader_loader.hpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\texture_loader.hpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\texture_sheet_loader.hpp">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\awesomium\viewport_class.hpp">
+      <Filter>c_lib\SDL\awesomium</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\awesomium\viewport_manager.hpp">
+      <Filter>c_lib\SDL\awesomium</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\awesomium\_include.hpp">
+      <Filter>c_lib\SDL\awesomium</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\awesomium\_interface.hpp">
+      <Filter>c_lib\SDL\awesomium</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\mesh_loader\obj_loader.hpp">
+      <Filter>c_lib\SDL\mesh_loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\unused\v.hpp">
+      <Filter>c_lib\SDL\unused</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\constants.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\containers.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\entities.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\items.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\logger.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\map.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\mechs.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\parse.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\players.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\redis.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\uuid.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\_include.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\_interface.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\serializer\_state.hpp">
+      <Filter>c_lib\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\csv_parser.hpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\openal.hpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\packets.hpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\sound.hpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\triggers.hpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\wav.hpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\sound\_include.hpp">
+      <Filter>c_lib\sound</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\state\client_state.hpp">
+      <Filter>c_lib\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\state\packet_init.hpp">
+      <Filter>c_lib\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\state\server_state.hpp">
+      <Filter>c_lib\state</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\cave_generator.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\crystals.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\excavator.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\explosives.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\features.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\meteors.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\noise_map.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\noise_map2.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\noise_map3.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\ore_cluster.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\perlin.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\perlin_extra.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\rock_layer.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\ruins_generator.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\terrain_features.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\tile_generator.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\twister.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\_include.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\_interface.hpp">
+      <Filter>c_lib\t_gen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\lib\gaussian.hpp">
+      <Filter>c_lib\t_gen\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\lib\global.hpp">
+      <Filter>c_lib\t_gen\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\lib\twister.hpp">
+      <Filter>c_lib\t_gen\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\lib\voronoi.hpp">
+      <Filter>c_lib\t_gen\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_gen\lib\voronoi2.hpp">
+      <Filter>c_lib\t_gen\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\chunk_special.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\lighting.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\map_special.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\ortho_projection.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_map.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_map_class.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_properties.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_vbo_class.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_vbo_draw.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\t_vbo_update.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\_include.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\_interface.hpp">
+      <Filter>c_lib\t_map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\common\constants.hpp">
+      <Filter>c_lib\t_map\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\common\map_element.hpp">
+      <Filter>c_lib\t_map\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\common\types.hpp">
+      <Filter>c_lib\t_map\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\config\block_dat.hpp">
+      <Filter>c_lib\t_map\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\config\drop_dat.hpp">
+      <Filter>c_lib\t_map\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\config\textures.hpp">
+      <Filter>c_lib\t_map\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\config\_interface.hpp">
+      <Filter>c_lib\t_map\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\cache.hpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\hash_functions.hpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\palette.hpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\settings.hpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\shader.hpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\structs.hpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\texture.hpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\glsl\_interface.hpp">
+      <Filter>c_lib\t_map\glsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\net\t_CtoS.hpp">
+      <Filter>c_lib\t_map\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\net\t_net.hpp">
+      <Filter>c_lib\t_map\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\net\t_StoC.hpp">
+      <Filter>c_lib\t_map\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\server\env_process.hpp">
+      <Filter>c_lib\t_map\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\server\manager.hpp">
+      <Filter>c_lib\t_map\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\server\manager_class.hpp">
+      <Filter>c_lib\t_map\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_map\server\subscription_list.hpp">
+      <Filter>c_lib\t_map\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\mech_draw.hpp">
+      <Filter>c_lib\t_mech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\mech_state.hpp">
+      <Filter>c_lib\t_mech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\properties.hpp">
+      <Filter>c_lib\t_mech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\_include.hpp">
+      <Filter>c_lib\t_mech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\_interface.hpp">
+      <Filter>c_lib\t_mech</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\common\common.hpp">
+      <Filter>c_lib\t_mech\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\config\drop_dat.hpp">
+      <Filter>c_lib\t_mech\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\config\mech_dat.hpp">
+      <Filter>c_lib\t_mech\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\config\_interface.hpp">
+      <Filter>c_lib\t_mech\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\net\CtoS.hpp">
+      <Filter>c_lib\t_mech\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mech\net\StoC.hpp">
+      <Filter>c_lib\t_mech\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mob\cAnimationController.hpp">
+      <Filter>c_lib\t_mob</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mob\cleanup.hpp">
+      <Filter>c_lib\t_mob</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mob\model_class.hpp">
+      <Filter>c_lib\t_mob</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mob\model_loader.hpp">
+      <Filter>c_lib\t_mob</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mob\_include.hpp">
+      <Filter>c_lib\t_mob</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\t_mob\_interface.hpp">
+      <Filter>c_lib\t_mob</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\common.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\constants.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_dat.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_hitscan.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_loader.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_model.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_render.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\voxel_volume.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\vox_dat_init.hpp">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\client.hpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\global.hpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\host.hpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\net_CtoS.hpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\net_StoC.hpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\server.hpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\_include.hpp">
+      <Filter>net_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\benchmark\benchmark.hpp">
+      <Filter>net_lib\benchmark</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\net_peer.hpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\net_peer_manager.hpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\packet_buffer.hpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\packet_id_counter.hpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\types.hpp">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\auth\hmac-sha256.h">
+      <Filter>c_lib\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compat_al.h">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\compat_gl.h">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\defines.h">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\dirent.h">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\qsort.h">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\version.h">
+      <Filter>c_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\common\time\TODO">
+      <Filter>c_lib\common\time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\particle_functions.h">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\voronoi.h">
+      <Filter>c_lib\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\unused\IMG_savepng.h">
+      <Filter>c_lib\SDL\unused</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\SDL\unused\pngfuncs.h">
+      <Filter>c_lib\SDL\unused</Filter>
+    </ClInclude>
+    <ClInclude Include="..\c_lib\voxel\common_data.h">
+      <Filter>c_lib\voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\benchmark\pviz.h">
+      <Filter>net_lib\benchmark</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\message_handler.h">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\net_time.h">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\sequencer.h">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\common\type_pack.h">
+      <Filter>net_lib\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\callbacks.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\enet.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\list.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\protocol.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\time.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\types.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\unix.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\utility.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\net_lib\enet\win32.h">
+      <Filter>net_lib\enet</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

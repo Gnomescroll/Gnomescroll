@@ -51,7 +51,7 @@ int      terrain_features_goal = 0;
 typedef enum
 {
     TREE_RANDOM,    // Dr. Suess style!
-    TREE_INVERSIVE, // opposite of earth leaf layers being broadest at base
+    TREE_INVERSIVE, // opposite of earthling trees' leaf layers being broadest at base
     TREE_MAX        // for iteration
 } TreeType;
 
@@ -90,7 +90,7 @@ void make_circle(int x, int y, int z, float dist, CubeType ct, CubeType overwrit
     {
         fx = sinf(angle) * dist;
         fy = cosf(angle) * dist;
-        set_if_empty_or_type(x + fx, y + fy, z, ct, overwrite);
+        set_if_empty_or_type(x+fx, y+fy, z, ct, overwrite);
         angle += PI / 32.0f;
     }
 }
@@ -101,7 +101,7 @@ bool corner_origin_make_circle(int x, int y, int z, float dist, CubeType new_blo
     const int precision = 256;
     for (int i=0; i<=precision; i++)
     {
-        float angle = 2 * PI * (float(i)/float(precision));
+        float angle = 2 * PI * (float(i) / float(precision));
         float fx = sinf(angle) * dist;
         float fy = cosf(angle) * dist;
         int fi_x = translate_point(int(x + 0.5f + fx));
@@ -115,6 +115,10 @@ bool corner_origin_make_circle(int x, int y, int z, float dist, CubeType new_blo
             while (t_map::get(fi_x, fi_y, z_extender) == EMPTY_CUBE &&
                    z_extender >= 0)
             {
+                IF_ASSERT(x < 0 || x >= map_dim.x) return false;
+                IF_ASSERT(y < 0 || y >= map_dim.y) return false;
+                IF_ASSERT(z < 1 || z >= map_dim.z) return false;  // gonna want bedrock always at least 1 layer high?
+
                 t_map::set_fast(fi_x, fi_y, z_extender, new_block);
                 z_extender--;
             }
@@ -133,7 +137,7 @@ void make_shroom(int x, int y, int z)
     int h = 0;
     float stem_rad = randrange(16, 40) / 10.0f; // stem radius
     float cap_rad = stem_rad * 4;
-    int cap_width = 1;
+    int torus_span = 1;
 
     corner_origin_make_circle(x, y, z, stem_rad, shroom_cap, true);
     while (cap_rad >= 0)
@@ -142,9 +146,9 @@ void make_shroom(int x, int y, int z)
             corner_origin_make_circle(x, y, z+h, stem_rad, shroom_cap, false);
         if (h > cap_height)
         {
-            for (int i=0; i<cap_width; i++, cap_rad--)
+            for (int i=0; i<torus_span; i++, cap_rad--)
                 corner_origin_make_circle(x, y, z+h, cap_rad, shroom_cap, false);
-            cap_width++;
+            torus_span++;
         }
         h++;
     }
@@ -217,6 +221,7 @@ bool vertical_strip_of_solids_underneath(int num, int x, int y, int z)
 
 void add_trees()
 {
+    int t = _GET_MS_TIME();
     printf("\ttrees......");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
@@ -240,10 +245,12 @@ void add_trees()
     }
 
     free(noise);
+    printf(" %i ms\n", _GET_MS_TIME() - t);
 }
 
 void add_shrooms()
 {
+    int t = _GET_MS_TIME();
     printf("\tshrooms......");
     static CubeType regolith = t_map::get_cube_type("regolith");
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
@@ -266,6 +273,7 @@ void add_shrooms()
     }
 
     free(noise);
+    printf(" %i ms\n", _GET_MS_TIME() - t);
 }
 
 bool carve_ray(float x, float y, float z, int tiny_angle, int distance)
@@ -415,6 +423,7 @@ void add_gorge(int length, int* peaks, float* noise)
 
 void add_gorges(int num_gorges, int length)
 {
+    int t = _GET_MS_TIME();
     printf("\tgorges......");
     float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
@@ -434,14 +443,16 @@ void add_gorges(int num_gorges, int length)
 
     free(peaks);
     free(noise);
+    printf(" %i ms\n", _GET_MS_TIME() - t);
 }
 
 void add_flora()
 {
+    int t = _GET_MS_TIME();
     printf("\tflora......");
     const float FLORA_ZONE_THRESHOLD = 0.3f;
     const float FLORA_THRESHOLD = 0.9f;
-    const CubeType reg   = t_map ::get_cube_type("regolith");
+    const CubeType reg = t_map::get_cube_type("regolith");
     const MechType gr1 = t_mech::get_mech_type_dat("grass1");
     const MechType gr2 = t_mech::get_mech_type_dat("grass2");
     const MechType gr3 = t_mech::get_mech_type_dat("grass3");
@@ -458,7 +469,14 @@ void add_flora()
         farthest_from_zero = GS_MAX(farthest_from_zero, curr);
     }
 
-    const float FLORA_REGION_SPAN = (farthest_from_zero-FLORA_ZONE_THRESHOLD) / (FLORA_TYPE_MAX + 1); // + 1 cuz those most extreme numbers are too rare
+    const float FLORA_SUBREGION_SPAN = (farthest_from_zero - FLORA_ZONE_THRESHOLD) / (FLORA_TYPE_MAX + 1); // + 1 cuz those most extreme numbers are too rare
+
+    int lowest_x = 0;
+    int highest_x = 0;
+    int lowest_y = 0;
+    int highest_y = 0;
+    int lowest_z = 0;
+    int highest_z = 0;
 
     // visit every cube column
     for (int x=0; x < map_dim.x; x++)
@@ -470,24 +488,37 @@ void add_flora()
             mrandf() > FLORA_THRESHOLD)
         {
             int z = t_map::get_highest_solid_block(x, y);
+            IF_ASSERT(x < 0 || x >= map_dim.x) return;
+            IF_ASSERT(y < 0 || y >= map_dim.y) return;
+            IF_ASSERT(z < 1 || z >= map_dim.z) return;  // gonna want bedrock always at least 1 layer high?
 
-            if (z>=1 &&
-                t_map::get(x, y, z) == reg &&
+            if (t_map::get(x, y, z) == reg &&
                 t_map::get(x, y, z+1) == EMPTY_CUBE)
             {
                 MechType mt;
                 float curr_thresh = FLORA_ZONE_THRESHOLD;
 
-                if (curr_per < (curr_thresh += FLORA_REGION_SPAN)) mt = gr1;
+                if (curr_per < (curr_thresh += FLORA_SUBREGION_SPAN)) mt = gr1;
                 else
-                if (curr_per < (curr_thresh += FLORA_REGION_SPAN)) mt = gr2;
-                else                                               mt = gr3;
+                if (curr_per < (curr_thresh += FLORA_SUBREGION_SPAN)) mt = gr2;
+                else                                                  mt = gr3;
 
                 t_mech::create_mech(x, y, z+1, mt);
+
+                lowest_x = GS_MIN(x, lowest_x);
+                highest_x = GS_MAX(x, highest_x);
+                lowest_y = GS_MIN(y, lowest_y);
+                highest_y = GS_MAX(y, highest_y);
+                lowest_z = GS_MIN(z + 1, lowest_z);
+                highest_z = GS_MAX(z + 1, highest_z);
             }
         }
     }
     free(noise);
+    printf(" %i ms\n", _GET_MS_TIME() - t);
+    printf("FLORA lowest_x: %d  highest_x: %d \n", lowest_x, highest_x);
+    printf("FLORA lowest_y: %d  highest_y: %d \n", lowest_y, highest_y);
+    printf("FLORA lowest_z: %d  highest_z: %d \n", lowest_z, highest_z);
 }
 
 void add_terrain_features()
@@ -531,24 +562,14 @@ void add_terrain_features()
     if (blocks_are_invalid(shroom_stems, NUM_SHROOMSTEMS)) return;
 
     // add the features
-    int t = _GET_MS_TIME();
 #if PRODUCTION
-    t = _GET_MS_TIME();
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
-    printf("\tgorges: %i ms\n", _GET_MS_TIME() - t);
 #endif
 
-    t = _GET_MS_TIME();
     add_shrooms();
-    printf(" %i ms\n", _GET_MS_TIME() - t);
 
-    t = _GET_MS_TIME();
     add_trees();
-    printf(" %i ms\n", _GET_MS_TIME() - t);
-
-    t = _GET_MS_TIME();
     add_flora();
-    printf(" %i ms\n", _GET_MS_TIME() - t);
 
     delete[] sin_lookup_table;
     delete[] cos_lookup_table;

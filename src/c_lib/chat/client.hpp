@@ -76,6 +76,25 @@ class ChatInputHistoryObject
     ~ChatInputHistoryObject();
 };
 
+class TerminalInput
+{ // copied from class ChatInput originally
+    public:
+        char *buffer;
+        int buffer_len;
+        int cursor_x;
+        int cursor_y;
+
+    void submit(int channel);
+    void clear_buffer();
+    void add(char x);
+    void remove();
+    void cursor_left();
+    void cursor_right();
+    bool route_command();
+    TerminalInput();
+    ~TerminalInput();
+};
+
 class ChatInput
 {
     public:
