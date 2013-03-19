@@ -31,11 +31,11 @@ void place_native_plants(int max)
     {
         int x = randrange(0, map_dim.x-1);
         int y = randrange(0, map_dim.y-1);
-        int z = t_map::get_highest_open_block(x, y);
+        int z = t_map::get_highest_solid_block(x, y);
         CubeType top = t_map::get(x, y, z);
         if (top != regolith) continue;
         MechType plant = plants[randrange(0, n_plants-1)];
-        if (!t_mech::create_mech(x, y, z, plant)) break;
+        if (!t_mech::create_mech(x, y, z+1, plant)) break;
         ct++;
     }
 
