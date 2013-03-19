@@ -445,7 +445,7 @@ void add_flora()
     const MechType gr1 = t_mech::get_mech_type_dat("grass1");
     const MechType gr2 = t_mech::get_mech_type_dat("grass2");
     const MechType gr3 = t_mech::get_mech_type_dat("grass3");
-    const int GRASS_MAX = 3;
+    const int FLORA_TYPE_MAX = 3;
 
     float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
@@ -458,7 +458,7 @@ void add_flora()
         farthest_from_zero = GS_MAX(farthest_from_zero, curr);
     }
 
-    const float GRASS_BAND_SPAN = (farthest_from_zero-FLORA_ZONE_THRESHOLD) / (GRASS_MAX + 1); // + 1 cuz those most extreme numbers are too rare
+    const float FLORA_REGION_SPAN = (farthest_from_zero-FLORA_ZONE_THRESHOLD) / (FLORA_TYPE_MAX + 1); // + 1 cuz those most extreme numbers are too rare
 
     // visit every cube column
     for (int x=0; x < map_dim.x; x++)
@@ -478,10 +478,10 @@ void add_flora()
                 MechType mt;
                 float curr_thresh = FLORA_ZONE_THRESHOLD;
 
-                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) mt = gr1;
+                if (curr_per < (curr_thresh += FLORA_REGION_SPAN)) mt = gr1;
                 else
-                if (curr_per < (curr_thresh += GRASS_BAND_SPAN)) mt = gr1;
-                else                                             mt = gr3;
+                if (curr_per < (curr_thresh += FLORA_REGION_SPAN)) mt = gr2;
+                else                                               mt = gr3;
 
                 t_mech::create_mech(x, y, z+1, mt);
             }
