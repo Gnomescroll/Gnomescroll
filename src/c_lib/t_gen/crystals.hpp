@@ -109,7 +109,7 @@ void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
         if (abs(z-k) > CRYSTAL_CLUSTER_Z_DIFF_MAX) continue;
         int id = t_map::get(ii,jj,k-1);
         if (id != rock) continue;
-        if (!t_mech::can_place_mech(ii,jj,k, 0))
+        if (!t_mech::can_place_mech(ii,jj,k, crystal_id))
             continue;
         t_mech::create_crystal(ii,jj,k,crystal_id);
         cluster_size[cluster_id]++;

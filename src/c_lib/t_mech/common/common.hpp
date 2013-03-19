@@ -42,8 +42,25 @@ typedef enum
 
 typedef enum
 {
+    MCF_OK = 0,
+    MCF_BAD_TYPE,
+    MCF_NOT_USED,
+    MCF_BAD_Z,
+    MCF_BAD_SIDE,
+    MCF_SOLID_BLOCK,
+    MCF_ON_AIR,
+    MCF_OCCUPIED,
+    MCF_UNHANDLED,
+    MCF_NO_WALL,
+    MCF_OTHER,      // use for any error too specific to warrant a new label
+}   MechCreateFailureCode;
+
+typedef enum
+{
     NULL_MECH_SPRITE = 0xFF
 }   MechSpriteIndex;
+
+int NULL_MECH_SIDE = 0xFF;
 
 struct Mech
 {

@@ -78,7 +78,7 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
     p.z = m.z;
 
     GS_ASSERT(mech_attributes[m.type].type != -1);
-    GS_ASSERT((m.side >=0 && m.side <= 5) || m.side == 255);
+    GS_ASSERT((m.side >=0 && m.side <= 5) || m.side == NULL_MECH_SIDE);
 
     switch (mech_attributes[m.type].class_type)
     {
@@ -115,7 +115,7 @@ static bool _mech_update(struct Mech &m)
             //m.render_type = ma->render_type;
 
             m.size = 0.80f;  //diameter
-            m.rotation = 0.25*(rand()%4) + 0.25f*randf()/3;
+            m.rotation = 0.25f*(rand()%4) + 0.25f*randf()/3;
 
             //m.rotation = 0.0f;
             m.offset = rand()%255;
@@ -230,7 +230,6 @@ void floating_removal_tick() //removes floating t_mech
     {
         if (mla[i].id == -1) continue;
 
-
         MechType type = mla[i].type;
         MechBehaviorType behavior_type = mech_attributes[type].behavior_type;
 
@@ -284,44 +283,57 @@ void force_mech_growth(int mech_id)
     p.broadcast();
 }
 
-bool create_mech(int x, int y, int z, MechType type, int subtype)
+void print_mech_create_failure_code(MechCreateFailureCode code)
 {
-    IF_ASSERT(!isValid(type))
+    if (code == MCF_OK) return;
+    printf("Failed to create mech. Reason: ");
+    switch (code)
     {
-        printf("Mech type %d invalid\n", type);
-        return false;
+        case MCF_BAD_TYPE:
+            printf("Bad mech type");
+            break;
+        case MCF_NOT_USED:
+            printf("Mech type not in use");
+            break;
+        case MCF_BAD_Z:
+            printf("Z out of range");
+            break;
+        case MCF_BAD_SIDE:
+            printf("Invalid side");
+            break;
+        case MCF_SOLID_BLOCK:
+            printf("Destination point was a solid block");
+            break;
+        case MCF_ON_AIR:
+            printf("Destination point was not above a solid block");
+            break;
+        case MCF_OCCUPIED:
+            printf("A mech was already here");
+            break;
+        case MCF_UNHANDLED:
+            printf("Mech type is currently unhandled for creation");
+            break;
+        case MCF_NO_WALL:
+            printf("There is no wall for the mech to attach to");
+            break;
+        case MCF_OTHER:
+            printf("Unspecified");
+        case MCF_OK:
+            printf("God");
+            break;
     }
+    printf("\n");
+}
 
-    // TODO -- check valid mech type properly
-    IF_ASSERT(!mech_attributes[type].loaded)
+MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int subtype)
+{
+    MechCreateFailureCode ret = can_place_mech(x,y,z, type, 0);
+    if (ret != MCF_OK)
     {
-        printf("Mech type %d not in use\n", type);
-        return false;
-    }
-
-    int ret = can_place_mech(x,y,z, type, 0);
-    if (ret != 0)
-    {
-        if (t_map::isSolid(x,y,z))
-        {
-            printf("Can't place mech: point is solid (%d,%d,%d), ret_code= %d \n", x,y,z,ret);
-            return false;
-        }
-
-        if (!t_map::isSolid(x,y,z-1))
-        {
-            printf("Can't place mech: no solid block below (%d,%d,%d), ret_code= %d \n", x,y,z,ret);
-            return false;
-        }
-
-        if (mech_list->is_occupied(x,y,z))
-        {
-            printf("Can't place mech: mech already here (%d,%d,%d), ret_code= %d \n", x,y,z,ret);
-            return false;
-        }
-
-        printf("Can't place mech: invalid position (%d,%d,%d), ret_code= %d \n", x,y,z,ret);
-        return false;
+        #if !PRODUCTION
+        print_mech_create_failure_code(ret);
+        #endif
+        return ret;
     }
 
     struct Mech m;
@@ -331,9 +343,10 @@ bool create_mech(int x, int y, int z, MechType type, int subtype)
     m.y = y;
     m.z = z;
     m.growth_ttl = mech_attributes[type].growth_ttl;
+    m.side = NULL_MECH_SIDE;
 
-    m.side = 255;
     class MechAttribute* ma = get_mech_attribute(type);
+    if (ma == NULL) return MCF_NOT_USED;
     switch (ma->class_type)
     {
         case MECH_CRYSTAL:
@@ -348,7 +361,7 @@ bool create_mech(int x, int y, int z, MechType type, int subtype)
             else if(t_map::isSolid(x+1,y,z))
             {
                 m.side = 3;
-            } 
+            }
             else if(t_map::isSolid(x,y+1,z))
             {
                 m.side = 4;
@@ -362,74 +375,67 @@ bool create_mech(int x, int y, int z, MechType type, int subtype)
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
             GS_ASSERT(false);
-            return false;
+            return MCF_UNHANDLED;
     }
-
-
     mech_list->server_add_mech(m);
-
-    return true;
+    return MCF_OK;
 }
 
-bool create_mech(int x, int y, int z, MechType type)
+MechCreateFailureCode create_mech(int x, int y, int z, MechType type)
 {
-    return create_mech(x,y,z,type,0);
+    return create_mech(x, y, z, type, 0);
 }
 
-bool create_crystal(int x, int y, int z, MechType type)
+MechCreateFailureCode create_crystal(int x, int y, int z, MechType type)
 {
     MechClassType mech_class = get_mech_class(type);
-    IF_ASSERT(mech_class != MECH_CRYSTAL) return false;
-    return create_mech(x,y,z, type);
+    IF_ASSERT(mech_class != MECH_CRYSTAL) return MCF_OTHER;
+    return create_mech(x, y, z, type);
 }
 #endif
 
-bool can_place_mech(int x, int y, int z, int side)
+
+MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type, int side)
 {
-    if (z <= 0 || z > 128) return false;
-    if (t_map::isSolid(x,y,z)) return false;
-    if (mech_list->is_occupied(x,y,z)) return false;
-
-    return true;
-}
-
-//returns 0 if true
-int can_place_mech(int x, int y, int z, MechType mech_type, int side)
-{
-    if (z <= 0 || z > 128) return 1;
-    if (side != 0) return 1;
-
-    if (t_map::isSolid(x,y,z)) return 2;
-
+    if (z <= 0 || z > map_dim.z) return MCF_BAD_Z;
+    if (side != 0) return MCF_BAD_SIDE;
+    if (t_map::isSolid(x,y,z)) return MCF_SOLID_BLOCK;
     class MechAttribute* ma = get_mech_attribute(mech_type);
+    if (ma == NULL)
+        return MCF_NOT_USED;
     switch (ma->class_type)
     {
         case MECH_CRYSTAL:
         case MECH_CROP:
         case MECH_MYCELIUM:
-            if (!t_map::isSolid(x,y,z-1)) return 3;
-            if (mech_list->is_occupied(x,y,z)) return 4;
+            if (!t_map::isSolid(x,y,z-1)) return MCF_ON_AIR;
+            if (mech_list->is_occupied(x,y,z)) return MCF_OCCUPIED;
             break;
         case MECH_SIGN:
-            if (mech_list->is_occupied(x,y,z)) return 5;
+            if (mech_list->is_occupied(x,y,z)) return MCF_OCCUPIED;
 
             if( !t_map::isSolid(x-1,y,z) &&
                 !t_map::isSolid(x+1,y,z) &&
                 !t_map::isSolid(x,y+1,z) &&
                 !t_map::isSolid(x,y-1,z) )
             {
-                return 6;
+                return MCF_NO_WALL;
             }
             break;
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
             GS_ASSERT(false);
-            return 6;
+            return MCF_UNHANDLED;
     }
-
-    return 0;
+    return MCF_OK;
 }
+
+MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type)
+{
+    return can_place_mech(x, y, z, mech_type, 0);
+}
+
 
 void place_vine(int x, int y, int z, int side)
 {
@@ -458,7 +464,6 @@ void handle_block_removal(int x, int y, int z)
     MechType type = mech_list->handle_block_removal(x,y,z);
     if (type == NULL_MECH_TYPE) return;
     IF_ASSERT(!isValid(type)) return;
-
     // drop item from mech
     if (mech_attributes[type].item_drop)
         handle_drop(x,y,z, type);

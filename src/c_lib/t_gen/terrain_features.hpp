@@ -222,7 +222,7 @@ void add_trees()
     IF_ASSERT(!t_map::isValidCube(regolith)) return;
     float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
-    
+
     for (int x=0; x < map_dim.x; x++)
     for (int y=0; y < map_dim.y; y++)
     {
@@ -446,7 +446,7 @@ void add_flora()
     const MechType gr2 = t_mech::get_mech_type_dat("grass2");
     const MechType gr3 = t_mech::get_mech_type_dat("grass3");
     const int GRASS_MAX = 3;
-    
+
     float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);
     IF_ASSERT(noise == NULL) return;
     float farthest_from_zero = 0.0f;
@@ -471,8 +471,8 @@ void add_flora()
         {
             int z = t_map::get_highest_solid_block(x, y);
 
-            if (z>=1 && 
-                t_map::get(x, y, z  ) == reg &&
+            if (z>=1 &&
+                t_map::get(x, y, z) == reg &&
                 t_map::get(x, y, z+1) == EMPTY_CUBE)
             {
                 MechType mt;
@@ -537,11 +537,11 @@ void add_terrain_features()
     add_gorges(GORGE_COUNT, GORGE_LENGTH);
     printf("\tgorges: %i ms\n", _GET_MS_TIME() - t);
 #endif
-    
+
     t = _GET_MS_TIME();
     add_shrooms();
     printf(" %i ms\n", _GET_MS_TIME() - t);
-    
+
     t = _GET_MS_TIME();
     add_trees();
     printf(" %i ms\n", _GET_MS_TIME() - t);

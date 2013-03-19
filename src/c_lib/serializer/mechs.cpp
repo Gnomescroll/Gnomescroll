@@ -245,7 +245,8 @@ bool load_mech_file(const char* fn)
             goto error;
         }
 
-        success = t_mech::create_mech(x,y,z, mech_type, subtype);
+        MechCreateFailureCode ret = t_mech::create_mech(x,y,z, mech_type, subtype);
+        success = (ret == MCF_OK);
         IF_ASSERT(!success)
             log_mech_load_error("Failed to create mech", x,y,z, mech_type, subtype);
     }

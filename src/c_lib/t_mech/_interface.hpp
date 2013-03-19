@@ -11,15 +11,13 @@ extern struct MechList* mech_list;
 
 void init();
 void teardown();
-
 void init_packets();
 
-bool can_place_mech(int x, int y, int z, int side);
-int can_place_mech(int x, int y, int z, MechType mech_type, int side);
-
-void place_vine(int x, int y, int z, int side);
-
 void tick(int x, int y, int z);
+void place_vine(int x, int y, int z, int side);
+MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type);
+MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type, int side);
+void print_mech_create_failure_code(MechCreateFailureCode code);
 
 #if DC_CLIENT
 void prep();
@@ -41,9 +39,9 @@ void floating_removal_tick(); //removes floating t_mech
 
 void force_mech_growth(int mech_id); //forces growth cycle
 
-bool create_crystal(int x, int y, int z, MechType type);
-bool create_mech(int x, int y, int z, MechType type);
-bool create_mech(int x, int y, int z, MechType type, int subtype);
+MechCreateFailureCode create_crystal(int x, int y, int z, MechType type);
+MechCreateFailureCode create_mech(int x, int y, int z, MechType type);
+MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int subtype);
 
 void send_client_mech_list(ClientID client_id);
 void handle_block_removal(int x, int y, int z); //react to block destruction

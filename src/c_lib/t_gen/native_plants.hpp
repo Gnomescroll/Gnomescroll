@@ -24,7 +24,7 @@ void place_native_plants(int max)
     static const MechType plants[n_plants] = { plant_1, plant_2, plant_3,
                                                 plant_4, plant_5 };
     static const CubeType regolith = t_map::get_cube_type("regolith");
-    GS_ASSERT(isValid(regolith));
+    IF_ASSERT(!isValid(regolith)) return;
 
     int ct = 0;
     for (int tries=0; ct < max && tries < max*2; tries++)
@@ -35,7 +35,8 @@ void place_native_plants(int max)
         CubeType top = t_map::get(x, y, z);
         if (top != regolith) continue;
         MechType plant = plants[randrange(0, n_plants-1)];
-        if (!t_mech::create_mech(x, y, z+1, plant)) break;
+        MechCreateFailureCode ret = t_mech::create_mech(x, y, z+1, plant);
+        if (ret != MCF_OK && ret != MCF_OCCUPIED) break;
         ct++;
     }
 
