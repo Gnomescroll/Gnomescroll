@@ -18,6 +18,7 @@
 
 #ifdef __MSVC__
 #define strdup _strdup
+#pragma warning( disable : 4355 4065 )
 # define fmin(x,y) ((x) < (y)) ? (x) : (y)
 # define fmax(x,y) ((x) > (y)) ? (x) : (y)
 #endif
