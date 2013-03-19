@@ -18,23 +18,23 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
         float vx,vy,vz;
         float theta, phi;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
-            pack_u8(&seq, buff, buff_n, pack);
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
+        pack_u8(&seq, buff, buff_n, pack);
 
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-            pack_float(&vx, buff, buff_n, pack);
-            pack_float(&vy, buff, buff_n, pack);
-            pack_float(&vz, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+        pack_float(&vx, buff, buff_n, pack);
+        pack_float(&vy, buff, buff_n, pack);
+        pack_float(&vz, buff, buff_n, pack);
 
-            pack_float(&theta, buff, buff_n, pack);
-            pack_float(&phi, buff, buff_n, pack);
-        }
+        pack_float(&theta, buff, buff_n, pack);
+        pack_float(&phi, buff, buff_n, pack);
+    }
 
-        inline void handle();
+    inline void handle();
 };
 
 /*
@@ -46,11 +46,11 @@ class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_
     public:
         uint8_t client_id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u8(&client_id, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    {
+        pack_u8(&client_id, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 //send at fixed interval, absolute position
