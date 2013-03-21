@@ -107,10 +107,11 @@ static void set_mob_bomb_properties(Entity* object)
     explode->block_destruction_radius = MONSTER_BOMB_BLOCK_DESTRUCTION_RADIUS;
     explode->block_damage = MONSTER_BOMB_BLOCK_DAMAGE;
     explode->terrain_modification_action = TMA_MONSTER_BOMB;
+    explode->delay = MOB_BROADCAST_RATE;
 
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
-    limiter->limit = MONSTER_BOMB_BROADCAST_RATE;
+    limiter->limit = MOB_BROADCAST_RATE;
 
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
@@ -171,6 +172,7 @@ void ready_mob_bomb(Entity* object)
 void die_mob_bomb(Entity* object)
 {
     #if DC_SERVER
+    GS_ASSERT(false);
     // drop item
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
@@ -413,27 +415,27 @@ static void waiting(class Entity* object)
 
 static void in_transit(class Entity* object)
 {
+    //#if DC_CLIENT
+    //if (!dest_target->at_destination)
+    //{
+        //dest_target->orient_to_target(physics->get_position());
+        //Vec3 angles = physics->get_angles();
+        //angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
+        //physics->set_angles(angles);
+
+        //dest_target->move_on_surface();
+        //dest_target->check_at_destination();
+    //}
+    //#endif
+
+    #if DC_SERVER
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)object->get_component(COMPONENT_DESTINATION_TARGETING);
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
-    #if DC_CLIENT
-    if (!dest_target->at_destination)
-    {
-        dest_target->orient_to_target(physics->get_position());
-        Vec3 angles = physics->get_angles();
-        angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
-        physics->set_angles(angles);
-
-        dest_target->move_on_surface();
-        dest_target->check_at_destination();
-    }
-    #endif
-
-    #if DC_SERVER
-    // move towards target
+   // move towards target
     if (!dest_target->move_on_surface())
     {
         in_transit_to_waiting(object);  // failed to move
@@ -455,11 +457,6 @@ static void in_transit(class Entity* object)
 
 static void chase_agent(class Entity* object)
 {
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)
-        object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    Vec3 position = physics->get_position();
-
     using Components::AgentTargetingComponent;
     AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
 
@@ -471,6 +468,11 @@ static void chase_agent(class Entity* object)
         return;
     }
 
+    #if DC_SERVER
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)
+        object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    Vec3 position = physics->get_position();
     // face the target
     target->orient_to_target(position);
     Vec3 angles = physics->get_angles();
@@ -479,6 +481,7 @@ static void chase_agent(class Entity* object)
 
     // move towards target
     target->move_on_surface();
+    #endif
 }
 
 static void bomb_state_router(class Entity* object, EntityState state)
@@ -525,8 +528,7 @@ void tick_mob_bomb(Entity* object)
 
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
-    if (limiter->allowed())
-        object->broadcastState();
+    if (limiter->allowed()) object->broadcastState();
     #endif
 
     using Components::StateMachineComponent;

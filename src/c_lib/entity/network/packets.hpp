@@ -9,15 +9,13 @@ class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_creat
     public:
         uint8_t type;
         uint16_t id;
-        float x,y,z;
+        Vec3 position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -29,15 +27,13 @@ class object_create_owner_StoC: public FixedSizeReliableNetPacketToClient<object
         uint8_t type;
         uint16_t id;
         uint8_t owner;
-        float x,y,z;
+        Vec3 position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
         pack_u8(&owner, buff, buff_n, pack);
     }
     inline void handle();
@@ -50,19 +46,15 @@ class object_create_momentum_StoC: public FixedSizeReliableNetPacketToClient<obj
     public:
         uint8_t type;
         uint16_t id;
-        float x,y,z;
-        float mx,my,mz;
+        Vec3 position;
+        Vec3 momentum;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
-        pack_float(&mx, buff, buff_n, pack);
-        pack_float(&my, buff, buff_n, pack);
-        pack_float(&mz, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
+        pack_vec3(&momentum, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -76,20 +68,16 @@ class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToCli
     public:
         uint8_t type;
         uint16_t id;
-        float x,y,z;
-        float mx,my,mz;
+        Vec3 position;
+        Vec3 momentum;
         float theta, phi;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
-        pack_float(&mx, buff, buff_n, pack);
-        pack_float(&my, buff, buff_n, pack);
-        pack_float(&mz, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
+        pack_vec3(&momentum, buff, buff_n, pack);
         pack_float(&theta, buff, buff_n, pack);
         pack_float(&phi, buff, buff_n, pack);
     }
@@ -101,8 +89,8 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
     public:
         uint8_t type;
         uint16_t id;
-        float x,y,z;
-        float mx,my,mz;
+        Vec3 position;
+        Vec3 momentum;
         float theta, phi;
         uint16_t health_max;
 
@@ -110,12 +98,8 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
-        pack_float(&mx, buff, buff_n, pack);
-        pack_float(&my, buff, buff_n, pack);
-        pack_float(&mz, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
+        pack_vec3(&momentum, buff, buff_n, pack);
         pack_float(&theta, buff, buff_n, pack);
         pack_float(&phi, buff, buff_n, pack);
         pack_u16(&health_max, buff, buff_n, pack);
@@ -146,15 +130,13 @@ class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_
     public:
         uint16_t id;
         uint8_t type;
-        float x,y,z;
+        Vec3 position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -164,19 +146,15 @@ class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<obje
     public:
         uint16_t id;
         uint8_t type;
-        float x,y,z;
-        float mx,my,mz;
+        Vec3 position;
+        Vec3 momentum;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
-        pack_float(&mx, buff, buff_n, pack);
-        pack_float(&my, buff, buff_n, pack);
-        pack_float(&mz, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
+        pack_vec3(&momentum, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -187,20 +165,16 @@ class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClie
     public:
         uint16_t id;
         uint8_t type;
-        float x,y,z;
-        float mx,my,mz;
+        Vec3 position;
+        Vec3 momentum;
         float theta, phi;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
-        pack_float(&mx, buff, buff_n, pack);
-        pack_float(&my, buff, buff_n, pack);
-        pack_float(&mz, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
+        pack_vec3(&momentum, buff, buff_n, pack);
         pack_float(&theta, buff, buff_n, pack);
         pack_float(&phi, buff, buff_n, pack);
     }
@@ -260,7 +234,7 @@ class object_shot_terrain_StoC: public FixedSizeReliableNetPacketToClient<object
         uint8_t type;
         uint8_t cube;
         uint8_t side;
-        float x,y,z;
+        Vec3 destination;
 
     inline void packet(char* buffer, unsigned int* buff_n, bool pack)
     {
@@ -268,9 +242,7 @@ class object_shot_terrain_StoC: public FixedSizeReliableNetPacketToClient<object
         pack_u8(&type, buffer, buff_n, pack);
         pack_u8(&cube, buffer, buff_n, pack);
         pack_u8(&side, buffer, buff_n, pack);
-        pack_float(&x, buffer, buff_n, pack);
-        pack_float(&y, buffer, buff_n, pack);
-        pack_float(&z, buffer, buff_n, pack);
+        pack_vec3(&destination, buffer, buff_n, pack);
     }
     inline void handle();
 };
@@ -280,15 +252,13 @@ class object_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<object
     public:
         uint16_t id;
         uint8_t type;
-        float x,y,z;
+        Vec3 direction;
 
     inline void packet(char* buffer, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buffer, buff_n, pack);
         pack_u8(&type, buffer, buff_n, pack);
-        pack_float(&x, buffer, buff_n, pack);
-        pack_float(&y, buffer, buff_n, pack);
-        pack_float(&z, buffer, buff_n, pack);
+        pack_vec3(&direction, buffer, buff_n, pack);
     }
     inline void handle();
 };
@@ -352,16 +322,14 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
         uint16_t id;
         uint8_t type;
         uint16_t ticks_to_destination;
-        float x,y,z;
+        Vec3 destination;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&ticks_to_destination, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
+        pack_vec3(&destination, buff, buff_n, pack);
     }
     inline void handle();
 };

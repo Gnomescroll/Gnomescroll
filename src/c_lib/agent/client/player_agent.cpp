@@ -42,10 +42,8 @@ void PlayerAgent::update_client_side_prediction_interpolated()
 
     struct Vec3 vs0 = s0.get_position();
     struct Vec3 vs1 = s1.get_position();
-
     vs0 = quadrant_translate_position(current_camera_position, vs0);
     vs1 = quadrant_translate_position(current_camera_position, vs1);
-
     float dist = vec3_distance(vs0, vs1);
 
     // calculate interpolation delta
@@ -76,20 +74,23 @@ void PlayerAgent::update_client_side_prediction_interpolated()
     }
 }
 
-void PlayerAgent::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz)
+void PlayerAgent::handle_state_snapshot(int seq, float theta, float phi,
+                                        float x, float y, float z,
+                                        float vx, float vy, float vz)
 {
     class AgentState ss;
-
     ss.seq = seq;
     ss.theta = theta;
     ss.phi = phi;
-    ss.x=x;ss.y=y;ss.z=z;
-    ss.vx=vx;ss.vy=vy;ss.vz=vz;
+    ss.x = x;
+    ss.y = y;
+    ss.z = z;
+    ss.vx = vx;
+    ss.vy = vy;
+    ss.vz = vz;
 
     int index = seq % AGENT_STATE_HISTORY_SIZE;
-
     state_history[index] = ss;
-
     if ((state_history_seq - seq) > 30 || seq > state_history_seq)
     {
         state_history_index = index;
@@ -101,45 +102,36 @@ void PlayerAgent::handle_state_snapshot(int seq, float theta, float phi, float x
 void PlayerAgent::handle_net_control_state(int _seq, int _cs, float _theta, float _phi)
 {
     int index = _seq % 128;
-
     //save cs
     cs_net[index].seq = _seq;
     cs_net[index].cs = _cs;
     cs_net[index].theta = _theta;
     cs_net[index].phi = _phi;
-
     //clear out old cs
-    for (int i=32; i<64; i++){
+    for (int i=32; i<64; i++)
+    {
         index = (_seq + i) % 128;
         cs_net[index].seq = -1;
     }
-    //check for differences between client out cs and in??
-
-    if (cs_net[index].seq == -1) return;
-
-    if (cs_net[index].seq != cs_local[index].seq) printf("player agent: e1\n");
-    if (cs_net[index].cs != cs_local[index].cs) printf("player agent: server corrected control state\n");
-    if (cs_net[index].theta != cs_local[index].theta) printf("player agent: e3\n");
-    if (cs_net[index].phi != cs_local[index].phi) printf("player agent: e4\n");
 }
 
 uint16_t PlayerAgent::pack_control_state(int f, int b, int l, int r,
-                                          int jet, int jump, int crouch,
-                                          int boost, int misc1, int misc2,
-                                          int misc3)
+                                         int jet, int jump, int crouch,
+                                         int boost, int misc1, int misc2,
+                                         int misc3)
 {
     uint16_t cs = 0;
-    if (f) cs |= CS_FORWARD;
-    if (b) cs |= CS_BACKWARD;
-    if (l) cs |= CS_LEFT;
-    if (r) cs |= CS_RIGHT;
-    if (jet) cs |= CS_JETPACK;
-    if (jump) cs |= CS_JUMP;
+    if (f)      cs |= CS_FORWARD;
+    if (b)      cs |= CS_BACKWARD;
+    if (l)      cs |= CS_LEFT;
+    if (r)      cs |= CS_RIGHT;
+    if (jet)    cs |= CS_JETPACK;
+    if (jump)   cs |= CS_JUMP;
     if (crouch) cs |= CS_CROUCH;
-    if (boost) cs |= CS_BOOST;
-    if (misc1) cs |= CS_MISC1;
-    if (misc2) cs |= CS_MISC2;
-    if (misc3) cs |= CS_MISC3;
+    if (boost)  cs |= CS_BOOST;
+    if (misc1)  cs |= CS_MISC1;
+    if (misc2)  cs |= CS_MISC2;
+    if (misc3)  cs |= CS_MISC3;
     return cs;
 }
 
@@ -148,24 +140,20 @@ uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
     class Agent* a = this->you();
     if (a == NULL) return 0;
     if (a->status.dead) return 0;
-
-    int forward, backwards, left, right, jp, jump, crouch, boost,
-        misc1, misc2, misc3;
     // set control state variables
-    forward   = cs & CS_FORWARD  ? 1 : 0;
-    backwards = cs & CS_BACKWARD ? 1 : 0;
-    left      = cs & CS_LEFT     ? 1 : 0;
-    right     = cs & CS_RIGHT    ? 1 : 0;
-    jp        = cs & CS_JETPACK  ? 1 : 0;
-    jump      = cs & CS_JUMP     ? 1 : 0;
-    crouch    = cs & CS_CROUCH   ? 1 : 0;
-    boost     = cs & CS_BOOST    ? 1 : 0;
-    misc1     = cs & CS_MISC1    ? 1 : 0;
-    misc2     = cs & CS_MISC2    ? 1 : 0;
-    misc3     = cs & CS_MISC3    ? 1 : 0;
+    int forward   = cs & CS_FORWARD  ? 1 : 0;
+    int backwards = cs & CS_BACKWARD ? 1 : 0;
+    int left      = cs & CS_LEFT     ? 1 : 0;
+    int right     = cs & CS_RIGHT    ? 1 : 0;
+    int jp        = cs & CS_JETPACK  ? 1 : 0;
+    int jump      = cs & CS_JUMP     ? 1 : 0;
+    int crouch    = cs & CS_CROUCH   ? 1 : 0;
+    int boost     = cs & CS_BOOST    ? 1 : 0;
+    int misc1     = cs & CS_MISC1    ? 1 : 0;
+    int misc2     = cs & CS_MISC2    ? 1 : 0;
+    int misc3     = cs & CS_MISC3    ? 1 : 0;
 
     AgentState* state = &this->s1;
-
     // force staying crouched if cant stand up
     if ((this->crouching && !crouch) &&
         can_stand_up(a->box.box_r, a->box.height,
@@ -181,7 +169,7 @@ uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
 
     jp = jetpack.update(jp);
     cs = this->pack_control_state(forward, backwards, left, right, jp,
-                                   jump, crouch, boost, misc1, misc2, misc3);
+                                  jump, crouch, boost, misc1, misc2, misc3);
     return cs;
 }
 
@@ -311,7 +299,6 @@ void PlayerAgent::update_sound()
                            this->camera_state.get_velocity(),
                            agent_camera->forward_vector(),
                            vec3_init(0, 0, 1));
-
     this->play_geiger();
 }
 

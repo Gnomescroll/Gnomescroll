@@ -16,7 +16,7 @@ void load_mob_spawner_data()
     EntityType type = OBJECT_MONSTER_SPAWNER;
 
     #if DC_SERVER
-    const int n_components = 6;
+    const int n_components = 7;
     #endif
     #if DC_CLIENT
     const int n_components = 6;
@@ -32,6 +32,7 @@ void load_mob_spawner_data()
 
     #if DC_SERVER
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     #endif
     #if DC_CLIENT
     entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
@@ -78,6 +79,10 @@ static void set_mob_spawner_properties(Entity* object)
     item_drop->drop.add_drop("small_charge_pack", 2, 0.25f);
     item_drop->drop.add_drop("small_charge_pack", 3, 0.15f);
     item_drop->drop.add_drop("small_charge_pack", 4, 0.05f);
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    limiter->limit = MOB_BROADCAST_RATE;
     #endif
 
     #if DC_CLIENT
@@ -162,8 +167,11 @@ void tick_mob_spawner(Entity* object)
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
-    bool changed = physics->set_position(position);
-    if (changed) object->broadcastState();
+    physics->set_position(position);
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed()) object->broadcastState();
     #endif
 }
 

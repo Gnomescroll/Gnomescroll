@@ -13,11 +13,11 @@ namespace Components
 
 int ExplosionComponent::get_block_damage(float distance)
 {
-    float max_distance = this->block_destruction_radius*3;
+    float max_distance = this->block_destruction_radius * 3.0f;
     if (distance >= max_distance) return 0;
     float ratio = (max_distance - distance) / max_distance;
-    float dmg = ratio * (float)(this->block_damage);
-    return (int)dmg;
+    float dmg = ratio * float(this->block_damage);
+    return dmg;
 }
 
 void ExplosionComponent::damage_blocks()
@@ -26,21 +26,21 @@ void ExplosionComponent::damage_blocks()
     Vec3 position;
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    if (vox != NULL) position = vox->get_center();
+    if (vox != NULL)
+        position = vox->get_center();
     else
     {
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        GS_ASSERT(physics != NULL);
-        if (physics == NULL) return;
+        IF_ASSERT(physics == NULL) return;
         position = physics->get_position();
     }
 
     using t_map::apply_damage_broadcast;
 
-    int mx = (int)position.x;
-    int my = (int)position.y;
-    int mz = (int)position.z;
+    int mx = position.x;
+    int my = position.y;
+    int mz = position.z;
 
     int ir = this->block_destruction_radius;
     int bx,by,bz;
@@ -79,7 +79,6 @@ void ExplosionComponent::damage_blocks()
     }
 }
 
-
 void ExplosionComponent::explode()
 {
     using Components::PhysicsComponent;
@@ -93,8 +92,7 @@ void ExplosionComponent::explode()
 
     ServerState::damage_objects_within_sphere(
         position, this->radius, this->damage, owner_id,
-        this->object->type, this->object->id, this->harms_owner
-    );
+        this->object->type, this->object->id, this->harms_owner);
 }
 
 // returns true if within proximity explosion range
@@ -109,8 +107,7 @@ bool ExplosionComponent::proximity_check()
     {
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        GS_ASSERT(physics != NULL);
-        if (physics == NULL) return false;
+        IF_ASSERT(physics == NULL) return false;
         position = physics->get_position();
     }
 
@@ -124,7 +121,6 @@ bool ExplosionComponent::proximity_check()
     }
     return false;
 }
-
 
 } // Components
 

@@ -473,7 +473,7 @@ int physics_tick()
         poll_mouse();
         Entities::tick();    // update physics state
 
-        if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
+        if (ClientState::tick_id % (ONE_SECOND/2) == 0) ClientState::send_camera_state();
 
         poll_mouse();
         ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
@@ -483,6 +483,9 @@ int physics_tick()
 
         poll_mouse();
         Skybox::tick_rayleigh_scattering(); //update skybox time and update physics
+
+        Components::position_physics_component_list->call();
+        Components::position_momentum_physics_component_list->call();
 
         poll_mouse();
         _SET_LAST_TICK();
@@ -609,13 +612,13 @@ int run()
         int fps_current_tick = _GET_MS_TIME();
         run_state.fps_average[run_state.fps_average_index++] = fps_current_tick - run_state.fps_last_tick;
         run_state.fps_last_tick = fps_current_tick;
-        if (run_state.fps_average_index > 30)
+        if (run_state.fps_average_index > ONE_SECOND)
         {
             int sum = 0;
             for (int i=0; i<run_state.fps_average_index; i++)
                 sum += run_state.fps_average[i];
 
-            run_state.fps_value = ((float)sum) / ((float)run_state.fps_average_index);
+            run_state.fps_value = float(sum) / float(run_state.fps_average_index);
             run_state.fps_average_index = 0;
         }
 
@@ -630,9 +633,7 @@ int run()
             }
         }
 
-        // update mouse
         poll_mouse();
-
         ClientState::frame_id += 1;
     }
 
@@ -643,4 +644,4 @@ int run()
     return 0;
 }
 
-}
+}   // Main

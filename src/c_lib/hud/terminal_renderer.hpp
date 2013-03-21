@@ -1,26 +1,32 @@
 #pragma once
 
+#include <common/input_buffer.hpp>
 #include <hud/font.hpp>
 //#include <t_map/common/types.hpp>
 
 namespace Hud
 {
 
-class TerminalRenderer 
-{ 
-    public: 
-        HudText::Text text; 
-        int cursor_pos;
+const size_t TERMINAL_CHAR_WIDTH = 8;
+const size_t TERMINAL_CHAR_HEIGHT = 8;
+const size_t TERMINAL_BUFFER_SIZE = TERMINAL_CHAR_WIDTH * TERMINAL_CHAR_HEIGHT;
 
-    TerminalRenderer() 
+class TerminalRenderer
+{
+    public:
+        HudText::Text text;
+        InputBuffer buffer;
+
+    TerminalRenderer() :
+        buffer(TERMINAL_BUFFER_SIZE)
     {
-        text.text = "Boom shaka laka";
+        text.set_text("Boom shaka laka");
         text.center();
     }
 
     void draw()
     {
-        text.draw();        
+        text.draw();
         //if (drawn_width >= this->render_width) y += line_height;
         //if (drawn_width >= this->render_width) { y += line_height; x = 0; }
     }

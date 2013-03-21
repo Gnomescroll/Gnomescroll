@@ -181,9 +181,7 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
         case HITSCAN_TARGET_BLOCK:
             terrain_msg.id = id;
             terrain_msg.type = type;
-            terrain_msg.x = t.voxel[0];
-            terrain_msg.y = t.voxel[1];
-            terrain_msg.z = t.voxel[2];
+            terrain_msg.destination = vec3_init(t.voxel);
             terrain_msg.cube = t.cube;
             terrain_msg.side = t.side;
             terrain_msg.broadcast();
@@ -192,9 +190,7 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
         case HITSCAN_TARGET_NONE:
             none_msg.id = id;
             none_msg.type = type;
-            none_msg.x = t.collision_point.x;
-            none_msg.y = t.collision_point.y;
-            none_msg.z = t.collision_point.z;
+            none_msg.direction = t.collision_point;
             none_msg.broadcast();
             break;
     }

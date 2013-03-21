@@ -1,12 +1,13 @@
 #pragma once
 
+#include <common/input_buffer.hpp>
 #include <chat/globals.hpp>
 #include <chat/packets.hpp>
 
 namespace Chat
 {
 
-const int CHAT_BUFFER_SIZE = CHAT_MESSAGE_SIZE_MAX;
+const size_t CHAT_BUFFER_SIZE = CHAT_MESSAGE_SIZE_MAX;
 const int CHAT_CLIENT_INPUT_HISTORY_MAX = 20;
 const int CHAT_CLIENT_MESSAGE_HISTORY_MAX = 50;
 const int CHAT_CLIENT_CHANNELS_MAX = 3; // pm, global, system
@@ -76,49 +77,23 @@ class ChatInputHistoryObject
     ~ChatInputHistoryObject();
 };
 
-class TerminalInput
-{ // copied from class ChatInput originally
-    public:
-        char *buffer;
-        int buffer_len;
-        int cursor_x;
-        int cursor_y;
-
-    void submit(int channel);
-    void clear_buffer();
-    void add(char x);
-    void remove();
-    void cursor_left();
-    void cursor_right();
-    bool route_command();
-    TerminalInput();
-    ~TerminalInput();
-};
-
-class ChatInput
+class ChatInput: public InputBuffer
 {
     public:
         ChatInputHistoryObject* history;
         ChatInputHistoryObject* history_tail;
         int history_size;
         int history_index;
-        char *buffer;
-        int buffer_len;
-        int cursor;
 
+    virtual void clear_buffer();
     void clear_history();
     void add_to_history(const char *s);
     void submit(int channel);
-    void clear_buffer();
-    void add(char x);
-    void remove();
-    void cursor_left();
-    void cursor_right();
     void history_newer();
     void history_older();
     bool route_command();
     ChatInput();
-    ~ChatInput();
+    virtual ~ChatInput();
 };
 
 class ChatClient

@@ -20,6 +20,5 @@ void HitPointsHealthComponent::take_damage(int dmg)
     #endif
 }
 
-
-}
+}   // Components
 

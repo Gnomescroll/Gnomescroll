@@ -25,7 +25,7 @@ inline void object_create_StoC::handle()
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
-    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
+    if (physics != NULL) physics->set_position(this->position);
     Entities::ready(obj);
 }
 
@@ -41,7 +41,7 @@ inline void object_create_owner_StoC::handle()
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
-    if (physics != NULL) physics->set_position(vec3_init(x,y,z));
+    if (physics != NULL) physics->set_position(this->position);
     OwnerComponent* owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
     GS_ASSERT(owner != NULL);
     if (owner != NULL) owner->set_owner((AgentID)this->owner);
@@ -59,8 +59,8 @@ inline void object_create_momentum_StoC::handle()
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
-        physics->set_position(vec3_init(x,y,z));
-        physics->set_momentum(vec3_init(mx,my,mz));
+        physics->set_position(this->position);
+        physics->set_momentum(this->momentum);
     }
     Entities::ready(obj);
 }
@@ -76,8 +76,8 @@ inline void object_create_momentum_angles_StoC::handle()
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
-        physics->set_position(vec3_init(x,y,z));
-        physics->set_momentum(vec3_init(mx,my,mz));
+        physics->set_position(this->position);
+        physics->set_momentum(this->momentum);
         physics->set_angles(vec3_init(theta, phi, 0));
     }
     Entities::ready(obj);
@@ -95,8 +95,8 @@ inline void object_create_momentum_angles_health_StoC::handle()
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
-        physics->set_position(vec3_init(x,y,z));
-        physics->set_momentum(vec3_init(mx,my,mz));
+        physics->set_position(this->position);
+        physics->set_momentum(this->momentum);
         physics->set_angles(vec3_init(theta, phi, 0));
     }
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
@@ -120,7 +120,7 @@ inline void object_state_StoC::handle()
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
-    physics->set_position(vec3_init(x,y,z));
+    physics->set_position(this->position);
 }
 
 inline void object_state_momentum_StoC::handle()
@@ -132,8 +132,8 @@ inline void object_state_momentum_StoC::handle()
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
-    physics->set_position(vec3_init(x,y,z));
-    physics->set_momentum(vec3_init(mx,my,mz));
+    physics->set_position(this->position);
+    physics->set_momentum(this->momentum);
 }
 
 inline void object_state_momentum_angles_StoC::handle()
@@ -146,9 +146,8 @@ inline void object_state_momentum_angles_StoC::handle()
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
 
-    struct Vec3 pos = vec3_init(x,y,z);
-    physics->set_position(pos);
-    physics->set_momentum(vec3_init(mx,my,mz));
+    physics->set_position(this->position);
+    physics->set_momentum(this->momentum);
     physics->set_angles(vec3_init(theta, phi, 0));
 }
 
@@ -225,15 +224,14 @@ inline void object_shot_terrain_StoC::handle()
     DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
     if (dims != NULL) position.z += dims->get_camera_height();
 
-    Vec3 dest = vec3_init(this->x, this->y, this->z);
-    dest = quadrant_translate_position(position, dest);
+    Vec3 dest = quadrant_translate_position(position, this->destination);
     Vec3 v = vec3_sub(dest, position);
     v = vec3_normalize(v);
     const float hitscan_effect_speed = 200.0f;
     v = vec3_scalar_mult(v, hitscan_effect_speed);
     Animations::create_hitscan_effect(position, v);
     Animations::block_damage(dest, position,
-                              (CubeType)this->cube, this->side);
+                             (CubeType)this->cube, this->side);
     Animations::terrain_sparks(dest);
     //Sound::play_3d_sound("laser_hit_block", dest);
     Sound::play_3d_sound("turret_shoot", position);
@@ -254,8 +252,7 @@ inline void object_shot_nothing_StoC::handle()
     DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
     if (dims != NULL) position.z += dims->get_camera_height();
 
-    Vec3 v = vec3_init(this->x, this->y, this->z);
-    normalize_vector(&v);
+    struct Vec3 v = vec3_normalize(this->direction);
     const float hitscan_effect_speed = 200.0f;
     v = vec3_scalar_mult(v, hitscan_effect_speed);
     Animations::create_hitscan_effect(position, v);
@@ -319,7 +316,7 @@ inline void object_choose_destination_StoC::handle()
     IF_ASSERT(physics == NULL) return;
     Vec3 position = physics->get_position();
 
-    motion->destination = vec3_init(this->x, this->y, this->z);
+    motion->destination = this->destination;
     Vec3 destination = quadrant_translate_position(position, motion->destination);
     motion->ticks_to_destination = this->ticks_to_destination;
 
@@ -386,10 +383,12 @@ inline void object_took_damage_StoC::handle()
     b->set_state(position.x + (radius * (2*randf() - 1)),
                  position.y + (radius * (2*randf() - 1)),
                  position.z,
-                 0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
+                 0.0f, 0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
     b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
-    char txt[10+1];
-    sprintf(txt, "%d", this->damage);
+    const size_t txtlen = 11;
+    char txt[txtlen + 1];
+    snprintf(txt, txtlen + 1, "%d", this->damage);
+    txt[txtlen] = '\0';
     b->set_text(txt);
     b->set_scale(1.0f);
     b->set_ttl(245);

@@ -71,8 +71,8 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
 
 void MotionTargetingComponent::choose_destination()
 {
-    float x = (randf()-0.5f)*2 * this->destination_choice_x;
-    float y = (randf()-0.5f)*2 * this->destination_choice_y;
+    float x = 2*(randf()-0.5f) * this->destination_choice_x;
+    float y = 2*(randf()-0.5f) * this->destination_choice_y;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -90,7 +90,7 @@ void MotionTargetingComponent::choose_destination()
 void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
 {
     if (this->target_type == OBJECT_NONE) return;
-    if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
+    if (this->target_type != OBJECT_AGENT) return;  //  TODO -- target all types
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL) return;
     Vec3 target_position = target->get_position();
@@ -158,11 +158,9 @@ void MotionTargetingComponent::broadcast_remove_target()
 
 void MotionTargetingComponent::broadcast_destination()
 {
-    object_choose_destination_StoC msg;
-    msg.x = this->destination.x;
-    msg.y = this->destination.y;
-    msg.z = this->destination.z;
     GS_ASSERT(is_boxed_position(this->destination));
+    object_choose_destination_StoC msg;
+    msg.destination = this->destination;
     msg.id = this->object->id;
     msg.type = this->object->type;
     msg.ticks_to_destination = this->ticks_to_destination;

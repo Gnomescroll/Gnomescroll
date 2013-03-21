@@ -178,7 +178,7 @@ void ChatInput::add_to_history(const char *s)
 
 void ChatInput::submit(int channel)
 {
-    if (!buffer_len) return;
+    if (!buflen) return;
 
     bool was_cmd = route_command();
     bool valid = is_valid_chat_message(this->buffer);
@@ -200,68 +200,12 @@ void ChatInput::submit(int channel)
     this->clear_buffer();
 }
 
-void ChatInput::clear_buffer()
-{
-    buffer[0] = '\0';
-    buffer_len = 0;
-    cursor = 0;
-    history_index = -1;
-}
-
-void ChatInput::add(char x)
-{
-    int n_chars = 1;
-    if (x == '\t')
-    {
-        n_chars = 4;
-        x = ' ';
-    }
-
-    for (int i=0; i<n_chars; i++)
-    {
-        if (cursor >= CHAT_BUFFER_SIZE) break;
-        if (buffer_len >= CHAT_BUFFER_SIZE) break;
-
-       for (int j=buffer_len; j>=cursor; j--)
-            buffer[j+1] = buffer[j];
-
-        buffer[cursor++] = x;
-        buffer[++buffer_len] = '\0';
-    }
-    buffer[buffer_len] = '\0';
-}
-
-void ChatInput::remove()
-{
-    if (!buffer_len || !cursor) return;
-
-    int i=cursor;
-    char c;
-    while ((c = buffer[i++]) != '\0')
-        buffer[i-2] = c;
-
-    buffer[--buffer_len] = '\0';
-    cursor--;
-}
-
-void ChatInput::cursor_left()
-{
-    cursor--;
-    cursor = (cursor < 0) ? 0 : cursor;
-}
-
-void ChatInput::cursor_right()
-{
-    cursor++;
-    cursor = (cursor > buffer_len) ? buffer_len : cursor;
-}
-
 void ChatInput::history_newer()
 {
     if (history < 0 || history_index < 0) return;
 
     history_index--;
-    history_index = (history_index < -1) ? -1 : history_index;
+    history_index = GS_MAX(history_index, -1);
     if (history_index < 0)
     {
         clear_buffer();
@@ -271,8 +215,8 @@ void ChatInput::history_newer()
     ChatInputHistoryObject* o = history;
     for (int i=0; i<history_index; i++) o = o->prev;
     strcpy(buffer, o->m);
-    buffer_len = (int)strlen(buffer);
-    cursor = buffer_len;
+    buflen = strlen(buffer);
+    cursor = int(buflen);
 }
 
 void ChatInput::history_older()
@@ -281,18 +225,18 @@ void ChatInput::history_older()
     if (!history_size) return;
 
     history_index++;
-    history_index = (history_index > history_size-1) ? history_size-1 : history_index;
+    history_index = GS_MIN(history_index, history_size - 1);
 
     ChatInputHistoryObject* o = history;
     for (int i=0; i<history_index; i++) o = o->prev;
     strcpy(buffer, o->m);
-    buffer_len = (int)strlen(buffer);
-    cursor = buffer_len;
+    buflen = strlen(buffer);
+    cursor = int(buflen);
 }
 
 bool ChatInput::route_command()
 {   // return false if the buffer doesn't start with command syntax; else return true (whether the command is valid/recognized or not)
-    if (this->buffer_len <= 1) return false;
+    if (this->buflen <= 1) return false;
     if (this->buffer[0] != '/') return false;
     if (isspace(this->buffer[1])) return false;
 
@@ -313,14 +257,14 @@ bool ChatInput::route_command()
         i++;
 
     char args[CHAT_BUFFER_SIZE] = {'\0'};
-    IF_ASSERT(this->buffer_len < i) return true;
+    IF_ASSERT(int(this->buflen) < i) return true;
 
     size_t cmd_id = 0;
     for (; cmd_id<n_commands; cmd_id++)
         if (!strcmp(cmd, commands[cmd_id].name))
         {
             strcpy(args, &buffer[i]);
-            commands[cmd_id].action(cmd, cmdlen, args, this->buffer_len-i);
+            commands[cmd_id].action(cmd, cmdlen, args, this->buflen-i);
             break;
         }
     if (cmd_id == n_commands)
@@ -329,23 +273,21 @@ bool ChatInput::route_command()
     return true;
 }
 
-ChatInput::ChatInput() :
-    history(NULL),
-    history_tail(NULL),
-    history_size(0),
-    history_index(-1),
-    buffer_len(0),
-    cursor(0)
+void ChatInput::clear_buffer()
 {
-    this->buffer = (char*)calloc(CHAT_BUFFER_SIZE+1, sizeof(char));
-    this->buffer[CHAT_BUFFER_SIZE] = '\0';
-    this->buffer[0] = '\0';
+    InputBuffer::clear_buffer();
+    this->history_index = -1;
+}
+
+ChatInput::ChatInput() :
+    InputBuffer(CHAT_BUFFER_SIZE),
+    history(NULL), history_tail(NULL), history_size(0), history_index(-1)
+{
 }
 
 ChatInput::~ChatInput()
 {
     this->clear_history();
-    free(this->buffer);
 }
 
 

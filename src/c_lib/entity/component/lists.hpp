@@ -12,9 +12,9 @@ namespace Components
 
 /* Physics */
 const int MAX_PHYSICS_COMPONENTS = 4096;
-typedef ComponentList<PositionPhysicsComponent, COMPONENT_POSITION, MAX_PHYSICS_COMPONENTS>
+typedef CallableComponentList<PositionPhysicsComponent, COMPONENT_POSITION, MAX_PHYSICS_COMPONENTS>
     PositionPhysicsComponentList;
-typedef ComponentList<PositionMomentumPhysicsComponent, COMPONENT_POSITION_MOMENTUM, MAX_PHYSICS_COMPONENTS>
+typedef CallableComponentList<PositionMomentumPhysicsComponent, COMPONENT_POSITION_MOMENTUM, MAX_PHYSICS_COMPONENTS>
     PositionMomentumPhysicsComponentList;
 typedef ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
     VerletPhysicsComponentList;
