@@ -413,5 +413,4 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
 
 #undef GROUND_MARGIN
 
-
 }   // Agents

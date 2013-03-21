@@ -87,5 +87,4 @@ class PositionPhysicsComponent: public PhysicsComponent
     }
 };
 
-
 } // Components
