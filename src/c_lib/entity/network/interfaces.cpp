@@ -39,10 +39,10 @@ void CreatePacketOwner::message(Entity* object, object_create_owner_StoC* msg)
     msg->z = position.z;
 
     OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
-    GS_ASSERT(owner != NULL);
-    if (owner != NULL)
+    IF_ASSERT(owner == NULL)
+        msg->owner = NULL_AGENT;
+    else
         msg->owner = owner->get_owner();
-    else msg->owner = NULL_AGENT;
 
     GS_ASSERT(is_boxed_position(position));
 }
@@ -102,8 +102,7 @@ void CreatePacketMomentumAnglesHealth::message(Entity* object, object_create_mom
     msg->type = object->type;
 
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return;
+    IF_ASSERT(physics == NULL) return;
     Vec3 position = physics->get_position();
     msg->x = position.x;
     msg->y = position.y;
@@ -119,28 +118,25 @@ void CreatePacketMomentumAnglesHealth::message(Entity* object, object_create_mom
     msg->phi = angles.y;
 
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)object->get_component(COMPONENT_HIT_POINTS);
-    GS_ASSERT(health != NULL);
-    if (health == NULL) return;
-    GS_ASSERT(health->health_max >= 0); // should be dead
-    msg->health_max = health->health_max;
+    IF_ASSERT(health == NULL || health->health_max < 0)
+        msg->health_max = 0; // should be dead
+    else
+        msg->health_max = health->health_max;
 
     GS_ASSERT(is_boxed_position(position));
 }
 
 void CreatePacketMomentumAnglesHealth::health_message(Entity* object, object_state_health_StoC* msg)
 {
-    GS_ASSERT(msg != NULL);
-
-    using Components::HitPointsHealthComponent;
-
+    IF_ASSERT(msg == NULL) return;
     msg->id = object->id;
     msg->type = object->type;
-
+    using Components::HitPointsHealthComponent;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)object->get_component(COMPONENT_HIT_POINTS);
-    GS_ASSERT(health != NULL);
-    if (health == NULL) return;
-    GS_ASSERT(health->health >= 0);
-    msg->health = health->health;
+    IF_ASSERT(health == NULL || health->health < 0)
+        msg->health = 0;
+    else
+        msg->health = health->health;
 }
 
 
@@ -207,7 +203,5 @@ void StatePacketMomentumAngles::message(Entity* object, object_state_momentum_an
 
     GS_ASSERT(is_boxed_position(position));
 }
-
-
 
 } // Entities

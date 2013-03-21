@@ -10,9 +10,22 @@ namespace Components
 
 class PositionPhysicsComponent: public PhysicsComponent
 {
-    public:
+    protected:
         Vec3 position;
         Vec3 angles;
+        bool changed;
+
+    public:
+
+    void set_changed(bool changed)
+    {
+        this->changed = changed;
+    }
+
+    bool get_changed()
+    {
+        return this->changed;
+    }
 
     Vec3 get_position()
     {
@@ -21,8 +34,12 @@ class PositionPhysicsComponent: public PhysicsComponent
 
     bool set_position(Vec3 position)
     {
-        this->position = translate_position(position);
-        return true;
+        position = translate_position(position);
+        if (vec3_equal(this->position, position))
+            return false;
+        this->position = position;
+        this->changed = true;
+        return this->changed;
     }
 
     Vec3 get_momentum()
@@ -42,14 +59,32 @@ class PositionPhysicsComponent: public PhysicsComponent
 
     bool set_angles(Vec3 angles)
     {
+        if (vec3_equal(this->angles, angles))
+            return false;
         this->angles = angles;
-        return true;
+        this->changed = true;
+        return this->changed;
     }
 
     PositionPhysicsComponent() :
-        PhysicsComponent(COMPONENT_POSITION),
-        position(NULL_POSITION), angles(NULL_ANGLES)
-    {}
+        PhysicsComponent(COMPONENT_POSITION)
+    {
+        this->_init();
+    }
+
+    explicit PositionPhysicsComponent(ComponentType type) :
+        PhysicsComponent(type)
+    {
+        this->_init();
+    }
+
+    private:
+    void _init()
+    {
+        this->position = NULL_POSITION;
+        this->angles = NULL_ANGLES;
+        this->changed = true;
+    }
 };
 
 

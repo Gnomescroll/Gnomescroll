@@ -13,17 +13,17 @@ class Entity;
 class CreatePacketDelegate
 {
     public:
-        virtual void sendToClient(Entity* object, ClientID client_id) = 0;
-        virtual void broadcast(Entity* object) = 0;
-        virtual ~CreatePacketDelegate(){}
+    virtual void sendToClient(Entity* object, ClientID client_id) = 0;
+    virtual void broadcast(Entity* object) = 0;
+    virtual ~CreatePacketDelegate(){}
 };
 
 class StatePacketDelegate
 {
     public:
-        virtual void sendToClient(Entity* object, ClientID client_id) = 0;
-        virtual void broadcast(Entity* object) = 0;
-        virtual ~StatePacketDelegate(){}
+    virtual void sendToClient(Entity* object, ClientID client_id) = 0;
+    virtual void broadcast(Entity* object) = 0;
+    virtual ~StatePacketDelegate(){}
 };
 
 
@@ -33,15 +33,15 @@ class StatePacketDelegate
 class CreatePacketNone: public CreatePacketDelegate
 {
     public:
-        void sendToClient(Entity* object, ClientID client_id) {}
-        void broadcast(Entity* object) {}
+    void sendToClient(Entity* object, ClientID client_id) {}
+    void broadcast(Entity* object) {}
 };
 
 class StatePacketNone: public StatePacketDelegate
 {
     public:
-        void sendToClient(Entity* object, ClientID client_id) {}
-        void broadcast(Entity* object) {}
+    void sendToClient(Entity* object, ClientID client_id) {}
+    void broadcast(Entity* object) {}
 };
 
 /* Concrete Delegates */
@@ -49,43 +49,43 @@ class StatePacketNone: public StatePacketDelegate
 class CreatePacket: public CreatePacketDelegate
 {
     private:
-        void message(Entity* object, object_create_StoC* msg);
+    void message(Entity* object, object_create_StoC* msg);
 
     public:
-        void sendToClient(Entity* object, ClientID client_id)
-        {
-            object_create_StoC msg;
-            this->message(object, &msg);
-            msg.sendToClient(client_id);
-        }
+    void sendToClient(Entity* object, ClientID client_id)
+    {
+        object_create_StoC msg;
+        this->message(object, &msg);
+        msg.sendToClient(client_id);
+    }
 
-        void broadcast(Entity* object)
-        {
-            object_create_StoC msg;
-            this->message(object, &msg);
-            msg.broadcast();
-        }
+    void broadcast(Entity* object)
+    {
+        object_create_StoC msg;
+        this->message(object, &msg);
+        msg.broadcast();
+    }
 };
 
 class CreatePacketOwner: public CreatePacketDelegate
 {
     private:
-        void message(Entity* object, object_create_owner_StoC* msg);
+    void message(Entity* object, object_create_owner_StoC* msg);
 
     public:
-        void sendToClient(Entity* object, ClientID client_id)
-        {
-            object_create_owner_StoC msg;
-            this->message(object, &msg);
-            msg.sendToClient(client_id);
-        }
+    void sendToClient(Entity* object, ClientID client_id)
+    {
+        object_create_owner_StoC msg;
+        this->message(object, &msg);
+        msg.sendToClient(client_id);
+    }
 
-        void broadcast(Entity* object)
-        {
-            object_create_owner_StoC msg;
-            this->message(object, &msg);
-            msg.broadcast();
-        }
+    void broadcast(Entity* object)
+    {
+        object_create_owner_StoC msg;
+        this->message(object, &msg);
+        msg.broadcast();
+    }
 };
 
 class CreatePacketMomentum: public CreatePacketDelegate

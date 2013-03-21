@@ -29,7 +29,7 @@ void load_mob_bomb_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION_MOMENTUM_CHANGED);
+    entity_data->attach_component(type, COMPONENT_POSITION_MOMENTUM);
     entity_data->attach_component(type, COMPONENT_DIMENSION);
     entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     entity_data->attach_component(type, COMPONENT_HIT_POINTS);
@@ -51,7 +51,7 @@ void load_mob_bomb_data()
 
 static void set_mob_bomb_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
+    add_component_to_object(object, COMPONENT_POSITION_MOMENTUM);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
@@ -573,15 +573,15 @@ void tick_mob_bomb(Entity* object)
 
 void update_mob_bomb(Entity* object)
 {
-    typedef Components::PositionMomentumChangedPhysicsComponent PCP;
+    typedef Components::PositionMomentumPhysicsComponent PCP;
     using Components::VoxelModelComponent;
 
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();
-    vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
-    physics->changed = false;    // reset changed state
+    vox->update(physics->get_position(), angles.x, angles.y, physics->get_changed());
+    physics->set_changed(false);  // reset changed state
 }
 
 } // Entities

@@ -14,17 +14,17 @@ namespace Entities
 void load_mob_spawner_data()
 {
     EntityType type = OBJECT_MONSTER_SPAWNER;
-    
+
     #if DC_SERVER
     const int n_components = 6;
     #endif
     #if DC_CLIENT
     const int n_components = 6;
     #endif
-    
+
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);
+    entity_data->attach_component(type, COMPONENT_POSITION);
     entity_data->attach_component(type, COMPONENT_DIMENSION);
     entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     entity_data->attach_component(type, COMPONENT_HIT_POINTS);
@@ -40,12 +40,12 @@ void load_mob_spawner_data()
 
 static void set_mob_spawner_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION_CHANGED);
+    add_component_to_object(object, COMPONENT_POSITION);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
     dims->height = MONSTER_SPAWNER_HEIGHT;
-    
+
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
     vox->vox_dat = &VoxDats::monster_spawner;
@@ -72,7 +72,7 @@ static void set_mob_spawner_properties(Entity* object)
     item_drop->drop.add_drop("synthesizer_coin", 4, 0.5f);
     item_drop->drop.add_drop("synthesizer_coin", 6, 0.35f);
     item_drop->drop.add_drop("synthesizer_coin", 8, 0.15f);
-    
+
     item_drop->drop.set_max_drop_amounts("small_charge_pack", 4);
     item_drop->drop.add_drop("small_charge_pack", 1, 0.50f);
     item_drop->drop.add_drop("small_charge_pack", 2, 0.25f);
@@ -110,13 +110,13 @@ void ready_mob_spawner(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
-    
+
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
-    
+
     vox->ready(position, angles.x, angles.y);
     vox->freeze();
 
@@ -158,32 +158,28 @@ void die_mob_spawner(Entity* object)
 void tick_mob_spawner(Entity* object)
 {
     #if DC_SERVER
-    typedef Components::PositionChangedPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
-
+    typedef Components::PositionPhysicsComponent PCP;
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     bool changed = physics->set_position(position);
-    physics->changed = changed;
-
     if (changed) object->broadcastState();
     #endif
 }
 
 void update_mob_spawner(Entity* object)
 {
-    typedef Components::PositionChangedPhysicsComponent PCP;
+    typedef Components::PositionPhysicsComponent PCP;
     using Components::VoxelModelComponent;
-    
+
     PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+        (PCP*)object->get_component(COMPONENT_POSITION);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();
-    vox->force_update(physics->get_position(), angles.x, angles.y, physics->changed);
-    physics->changed = false;    // reset changed state
+    vox->force_update(physics->get_position(), angles.x, angles.y, physics->get_changed());
+    physics->set_changed(false);  // reset changed state
 }
-
 
 } // Entities
 

@@ -5,12 +5,11 @@
 #include <entity/object/helpers.hpp>
 #include <entity/constants.hpp>
 #include <entity/objects/fabs/constants.hpp>
-#include <entity/components/physics/position_changed.hpp>
+#include <entity/components/physics/position.hpp>
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
-
 #if DC_SERVER
-#include <entity/components/healer.hpp>
+# include <entity/components/healer.hpp>
 #endif
 
 namespace Entities
@@ -29,16 +28,16 @@ void load_energy_core_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
+    entity_data->attach_component(type, COMPONENT_POSITION);
     entity_data->attach_component(type, COMPONENT_DIMENSION);
     entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     entity_data->attach_component(type, COMPONENT_HIT_POINTS);
-    
+
     #if DC_SERVER
     entity_data->attach_component(type, COMPONENT_HEALER);
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
     #endif
-    
+
     #if DC_CLIENT
     entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
     #endif
@@ -46,13 +45,13 @@ void load_energy_core_data()
 
 static void set_energy_core_properties(Entity* object)
 {
-    void* ret = (void*)add_component_to_object(object, COMPONENT_POSITION_CHANGED);
+    void* ret = (void*)add_component_to_object(object, COMPONENT_POSITION);
     GS_ASSERT(ret != NULL);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
     dims->height = ENERGY_CORE_HEIGHT;
-    
+
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
     vox->vox_dat = &VoxDats::energy_core;
@@ -68,7 +67,7 @@ static void set_energy_core_properties(Entity* object)
     using Components::HealerComponent;
     HealerComponent* healer = (HealerComponent*)add_component_to_object(object, COMPONENT_HEALER);
     healer->radius = ENERGY_CORE_HEALING_RADIUS;
-    
+
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
     item_drop->drop.set_max_drop_types(2);
@@ -80,7 +79,7 @@ static void set_energy_core_properties(Entity* object)
     item_drop->drop.add_drop("small_charge_pack", 5, 0.3f);
     item_drop->drop.add_drop("small_charge_pack", 6, 0.2f);
     #endif
-    
+
     #if DC_CLIENT
     using Components::AnimationComponent;
     AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
@@ -112,7 +111,7 @@ void ready_energy_core(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
-    
+
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(vox != NULL);
@@ -120,7 +119,7 @@ void ready_energy_core(Entity* object)
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
-    
+
     vox->ready(position, angles.x, angles.y);
     vox->freeze();
 
@@ -137,10 +136,10 @@ void die_energy_core(Entity* object)
         object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
     GS_ASSERT(item_drop != NULL);
     item_drop->drop_item();
-    
+
     object->broadcastDeath();
     #endif
-    
+
     #if DC_CLIENT
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
@@ -159,32 +158,30 @@ void die_energy_core(Entity* object)
 void tick_energy_core(Entity* object)
 {
     #if DC_SERVER
-    typedef Components::PositionChangedPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    typedef Components::PositionPhysicsComponent PCP;
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return;
 
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     bool changed = physics->set_position(position);
-    physics->changed = changed;
-
     if (changed) object->broadcastState();
     #endif
 }
 
 void update_energy_core(Entity* object)
 {
-    typedef Components::PositionChangedPhysicsComponent PCP;
+    typedef Components::PositionPhysicsComponent PCP;
     using Components::VoxelModelComponent;
-    
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();
     Vec3 pos = physics->get_position();
-    vox->force_update(pos, angles.x, angles.y, physics->changed);
-    physics->changed = false;    // reset changed state
+    vox->force_update(pos, angles.x, angles.y, physics->get_changed());
+    physics->set_changed(false);  // reset changed state
 }
 
 } // Entities

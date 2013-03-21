@@ -5,7 +5,7 @@
 #include <entity/object/helpers.hpp>
 #include <entity/constants.hpp>
 #include <entity/objects/fabs/constants.hpp>
-#include <entity/components/physics/position_changed.hpp>
+#include <entity/components/physics/position.hpp>
 #include <entity/components/voxel_model.hpp>
 #include <voxel/vox_dat_init.hpp>
 #include <agent/_interface.hpp>
@@ -26,7 +26,7 @@ void load_agent_spawner_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION_CHANGED);
+    entity_data->attach_component(type, COMPONENT_POSITION);
     entity_data->attach_component(type, COMPONENT_DIMENSION);
     entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     entity_data->attach_component(type, COMPONENT_HIT_POINTS);
@@ -43,7 +43,7 @@ void load_agent_spawner_data()
 
 static void set_agent_spawner_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION_CHANGED);
+    add_component_to_object(object, COMPONENT_POSITION);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
@@ -155,30 +155,27 @@ void die_agent_spawner(Entity* object)
 void tick_agent_spawner(Entity* object)
 {
     #if DC_SERVER
-    typedef Components::PositionChangedPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
-
+    typedef Components::PositionPhysicsComponent PCP;
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     bool changed = physics->set_position(position);
-    physics->changed = changed;
-
     if (changed) object->broadcastState();
     #endif
 }
 
 void update_agent_spawner(Entity* object)
 {
-    typedef Components::PositionChangedPhysicsComponent PCP;
+    typedef Components::PositionPhysicsComponent PCP;
     using Components::VoxelModelComponent;
 
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();
     Vec3 pos = physics->get_position();
-    vox->force_update(pos, angles.x, angles.y, physics->changed);
-    physics->changed = false;    // reset changed state
+    vox->force_update(pos, angles.x, angles.y, physics->get_changed());
+    physics->set_changed(false);  // reset changed state
 }
 
 } // Entities

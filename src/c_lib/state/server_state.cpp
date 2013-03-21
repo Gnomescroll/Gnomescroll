@@ -67,18 +67,19 @@ void move_base()
     if (base == NULL) return;
     tick++;
     if (tick % Options::base_move_rate != 0) return;
-    typedef Components::PositionChangedPhysicsComponent PCP;
-    PCP* physics = (PCP*)base->get_component(COMPONENT_POSITION_CHANGED);
+    typedef Components::PositionPhysicsComponent PCP;
+    PCP* physics = (PCP*)base->get_component(COMPONENT_POSITION);
     IF_ASSERT(physics == NULL) return;
 
     int tries = 0;
     static const int MAX_TRIES = 100;
+    bool changed = false;
     do
     {
         tries++;
         struct Vec3 new_pos = get_base_spawn_position();
-        physics->set_position(new_pos);
-    } while (!physics->changed && tries < MAX_TRIES);
+        changed = physics->set_position(new_pos);
+    } while (!changed && tries < MAX_TRIES);
     base->broadcastState();
 }
 
@@ -116,7 +117,7 @@ void damage_objects_within_sphere(struct Vec3 p, float radius,
 {
     using Agents::agent_list;
     agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
-    const float blast_mean = 0;
+    const float blast_mean = 0.0f;
     const float blast_stddev = 1.0f;
     for (size_t i=0; i<agent_list->n_filtered; i++)
     {

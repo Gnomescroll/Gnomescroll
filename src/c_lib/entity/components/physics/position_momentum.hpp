@@ -8,23 +8,12 @@
 namespace Components
 {
 
-class PositionMomentumPhysicsComponent: public PhysicsComponent
+class PositionMomentumPhysicsComponent: public PositionPhysicsComponent
 {
-    public:
-        Vec3 position;
+    protected:
         Vec3 momentum;
-        Vec3 angles;
 
-    Vec3 get_position()
-    {
-        return this->position;
-    }
-
-    bool set_position(Vec3 position)
-    {
-        this->position = translate_position(position);
-        return true;
-    }
+    public:
 
     Vec3 get_momentum()
     {
@@ -33,27 +22,20 @@ class PositionMomentumPhysicsComponent: public PhysicsComponent
 
     bool set_momentum(Vec3 momentum)
     {
+        IF_ASSERT(!vec3_is_valid(momentum))
+            return false;
+        if (vec3_equal(this->momentum, momentum))
+            return false;
         this->momentum = momentum;
-        return true;
-    }
-
-    Vec3 get_angles()
-    {
-        return this->angles;
-    }
-
-    bool set_angles(Vec3 angles)
-    {
-        this->angles = angles;
-        return true;
+        this->changed = true;
+        return this->changed;
     }
 
     PositionMomentumPhysicsComponent() :
-        PhysicsComponent(COMPONENT_POSITION_MOMENTUM),
-        position(NULL_POSITION), momentum(NULL_MOMENTUM), angles(NULL_ANGLES)
+        PositionPhysicsComponent(COMPONENT_POSITION_MOMENTUM),
+        momentum(NULL_MOMENTUM)
     {}
+
 };
-
-
 
 } // Components

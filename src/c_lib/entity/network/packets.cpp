@@ -422,14 +422,12 @@ inline void object_in_transit_StoC::handle()
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)
         obj->get_component(COMPONENT_DESTINATION_TARGETING);
-    GS_ASSERT(dest_target != NULL);
-    if (dest_target == NULL) return;
+    IF_ASSERT(dest_target == NULL) return;
 
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)
         obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    GS_ASSERT(physics != NULL);
-    if (physics == NULL) return;
+    IF_ASSERT(physics == NULL) return;
     struct Vec3 pos = physics->get_position();
 
     dest_target->ticks_to_destination = this->ticks_to_destination;

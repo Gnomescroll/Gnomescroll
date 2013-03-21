@@ -13,6 +13,15 @@ class VerletPhysicsComponent: public PhysicsComponent
     public:
         Verlet::VerletComponent verlet;
 
+    bool get_changed()
+    {
+        return true;
+    }
+
+    void set_changed(bool changed)
+    {
+    }
+
     Vec3 get_position()
     {
         return this->verlet.get_position();

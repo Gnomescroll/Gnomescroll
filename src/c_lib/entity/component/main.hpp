@@ -22,8 +22,6 @@ namespace Components
 
 extern PositionPhysicsComponentList* position_physics_component_list;
 extern PositionMomentumPhysicsComponentList* position_momentum_physics_component_list;
-extern PositionChangedPhysicsComponentList* position_changed_physics_component_list;
-extern PositionMomentumChangedPhysicsComponentList* position_momentum_changed_physics_component_list;
 extern VerletPhysicsComponentList* verlet_physics_component_list;
 
 extern TTLHealthComponentList* ttl_health_component_list;
