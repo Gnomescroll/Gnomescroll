@@ -18,9 +18,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\c_lib\hud\terminal_grid.hpp">
-      <Filter>c_lib\hud</Filter>
-    </ClInclude>
     <ClInclude Include="..\c_lib\hud\terminal_renderer.hpp">
       <Filter>c_lib\hud</Filter>
     </ClInclude>
@@ -40,9 +37,6 @@
     </ClCompile>
     <ClCompile Include="..\c_lib\chat\terminal_input.cpp">
       <Filter>c_lib\chat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\c_lib\hud\terminal_grid.cpp">
-      <Filter>c_lib\hud</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
