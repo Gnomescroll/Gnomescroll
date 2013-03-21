@@ -6,10 +6,6 @@
 dont_include_this_file_in_client
 #endif
 
-/*
-Add native plants
-*/
-
 namespace t_gen
 {
 
