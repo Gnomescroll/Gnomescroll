@@ -91,7 +91,7 @@ class HUD
     ~HUD();
 };
 
-TerminalRenderer terminal_renderer;
+//TerminalRenderer terminal_renderer;
 
 // meter
 MeterGraphic meter_graphic;
