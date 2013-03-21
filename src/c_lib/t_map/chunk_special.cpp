@@ -54,10 +54,9 @@ bool ChunkItemContainer::remove(int x, int y, int z)
 {
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
     // find container
-    int i;
-    for (i=0; i<iban; i++)
+    int i=0;
+    for (; i<iban; i++)
         if (x == iba[i].x && y == iba[i].y && z == iba[i].z)
             break;
     IF_ASSERT(i >= iban) return false;

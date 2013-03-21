@@ -606,24 +606,26 @@ void create_container_block_CtoS::handle()
     if (!t_map::block_can_be_placed(x,y,z,cube_type)) return;
 
     bool collides = false;
-    t_map::set_fast(x,y,z, cube_type); // set temporarily to test against
-    if (agent_collides_terrain(a))
-        collides = true;  // test against our agent, most likely to collide
-    else
+    if (t_map::isSolid(cube_type))
     {
-        for (size_t i=0; i<Agents::agent_list->max; i++)
+        t_map::set_fast(x,y,z, ERROR_CUBE); // set temporarily to test against
+        if (agent_collides_terrain(a))
+            collides = true;  // test against our agent, most likely to collide
+        else
         {
-            class Agents::Agent* agent = &Agents::agent_list->objects[i];
-            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
-            if (agent_collides_terrain(agent))
+            for (size_t i=0; i<Agents::agent_list->max; i++)
             {
-                collides = true;
-                break;
+                class Agents::Agent* agent = &Agents::agent_list->objects[i];
+                if (agent->id == Agents::agent_list->null_id || agent == a) continue;
+                if (agent_collides_terrain(agent))
+                {
+                    collides = true;
+                    break;
+                }
             }
         }
+        t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
     }
-
-    t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
 
     if (collides) return;
 
@@ -667,22 +669,26 @@ void admin_create_container_block_CtoS::handle()
     if (!t_map::block_can_be_placed(x,y,z,cube_type)) return;
 
     bool collides = false;
-    t_map::set_fast(x,y,z, cube_type); // set temporarily to test against
-    if (agent_collides_terrain(a)) collides = true; // test against our agent, most likely to collide
-    else
+    if (t_map::isSolid(cube_type))
     {
-        for (size_t i=0; i<Agents::agent_list->max; i++)
+        t_map::set_fast(x,y,z, ERROR_CUBE); // set temporarily to test against
+        if (agent_collides_terrain(a))
+            collides = true; // test against our agent, most likely to collide
+        else
         {
-            Agents::Agent* agent = &Agents::agent_list->objects[i];
-            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
-            if (agent_collides_terrain(agent))
+            for (size_t i=0; i<Agents::agent_list->max; i++)
             {
-                collides = true;
-                break;
+                Agents::Agent* agent = &Agents::agent_list->objects[i];
+                if (agent->id == Agents::agent_list->null_id || agent == a) continue;
+                if (agent_collides_terrain(agent))
+                {
+                    collides = true;
+                    break;
+                }
             }
         }
+        t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
     }
-    t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
 
     if (collides) return;
 
