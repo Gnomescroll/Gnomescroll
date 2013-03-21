@@ -167,7 +167,7 @@ int get_block_damage(int x, int y, int z)
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
     IF_ASSERT(dmg <= 0) return;
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
+    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
 

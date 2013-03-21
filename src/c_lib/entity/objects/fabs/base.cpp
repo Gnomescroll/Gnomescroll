@@ -17,7 +17,7 @@ void load_base_data()
     EntityType type = OBJECT_BASE;
 
     #if DC_SERVER
-    int n_components = 4;
+    int n_components = 5;
     #endif
     #if DC_CLIENT
     int n_components = 3;
@@ -31,6 +31,7 @@ void load_base_data()
 
     #if DC_SERVER
     entity_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
+    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     #endif
 }
 
@@ -53,6 +54,10 @@ static void set_base_properties(Entity* object)
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
     spawner->radius = BASE_SPAWN_RADIUS;
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    limiter->limit = MOB_BROADCAST_RATE;
     #endif
 
     object->tick = &tick_base;
@@ -101,11 +106,12 @@ void tick_base(Entity* object)
     typedef Components::PositionPhysicsComponent PCP;
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
     IF_ASSERT(physics == NULL) return;
-
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
-    bool changed = physics->set_position(position);
-    if (changed) object->broadcastState();
+    physics->set_position(position);
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed()) object->broadcastState();
     #endif
 }
 

@@ -202,6 +202,12 @@ static Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
 }
 
 ALWAYS_INLINE
+static Vec3 vec3_interpolate(struct Vec3 a, struct Vec3 b, float d)
+{
+    return vec3_add(a, vec3_scalar_mult(vec3_sub(b, a), d));
+}
+
+ALWAYS_INLINE
 struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
 {
     x *= PI;

@@ -48,10 +48,6 @@ const int MONSTER_BOMB_ANIMATION_COUNT_MAX = 100;
 const float MONSTER_BOMB_ANIMATION_SIZE = 0.7f;
 const float MONSTER_BOMB_ANIMATION_FORCE = 20.0f;
 
-// state broadcast rate
-//const int MONSTER_BOMB_BROADCAST_RATE = ONE_SECOND * 4;
-const int MONSTER_BOMB_BROADCAST_RATE = 10;
-
 /* MONSTER_BOX */
 
 // health
@@ -92,9 +88,6 @@ const float MONSTER_BOX_MOTION_SIGHT_RANGE = 50.0f;
 const float MONSTER_BOX_SPEED = 0.2f;
 const int MONSTER_BOX_WALK_RANGE = 30;
 const int MONSTER_BOX_MOTION_MAX_Z_DIFF = 3;
-
-// state broadcast rate
-const int MONSTER_BOX_BROADCAST_RATE = ONE_SECOND; // once every 30 ticks
 
 /* Monster spawners */
 

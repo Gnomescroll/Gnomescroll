@@ -99,7 +99,7 @@ static void set_mob_robot_box_properties(Entity* object)
 
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
-    limiter->limit = MONSTER_BOX_BROADCAST_RATE;
+    limiter->limit = MOB_BROADCAST_RATE;
 
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
@@ -345,26 +345,26 @@ void client_tick_mob_robot_box(Entity* object)
 
     if (weapon->locked_on_target)
     {   // target locked
-        if (weapon->target_type != OBJECT_AGENT) return;    // TODO -- more objects
+        //if (weapon->target_type != OBJECT_AGENT) return;    // TODO -- more objects
 
-        using Components::VoxelModelComponent;
-        VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component(COMPONENT_VOXEL_MODEL);
-        Vec3 position = vox->get_center();
+        //using Components::VoxelModelComponent;
+        //VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component(COMPONENT_VOXEL_MODEL);
+        //Vec3 position = vox->get_center();
 
-        Agents::Agent* agent = Agents::get_agent((AgentID)weapon->target_id);
-        if (agent == NULL) return;
-        Vec3 agent_position = quadrant_translate_position(position, agent->get_center());
+        //Agents::Agent* agent = Agents::get_agent((AgentID)weapon->target_id);
+        //if (agent == NULL) return;
+        //Vec3 agent_position = quadrant_translate_position(position, agent->get_center());
 
-        // face target
-        Vec3 direction = vec3_sub(agent_position, position);
-        if (vec3_length_squared(direction))
-        {
-            float theta,phi;
-            normalize_vector(&direction);
-            weapon->target_direction = direction;
-            vec3_to_angles(direction, &theta, &phi);
-            physics->set_angles(vec3_init(theta, phi, 0));
-        }
+        //// face target
+        //Vec3 direction = vec3_sub(agent_position, position);
+        //if (vec3_length_squared(direction))
+        //{
+            //float theta,phi;
+            //normalize_vector(&direction);
+            //weapon->target_direction = direction;
+            //vec3_to_angles(direction, &theta, &phi);
+            //physics->set_angles(vec3_init(theta, phi, 0));
+        //}
         return; // do nothing else
     }
 
@@ -383,11 +383,11 @@ void client_tick_mob_robot_box(Entity* object)
 
     if (motion->en_route)
     {   // move towards destination
-        motion->move_on_surface();
+        //motion->move_on_surface();
         // face in direction of movement
-        float theta, phi;
-        vec3_to_angles(motion->target_direction, &theta, &phi);
-        physics->set_angles(vec3_init(theta, phi, 0));
+        //float theta, phi;
+        //vec3_to_angles(motion->target_direction, &theta, &phi);
+        //physics->set_angles(vec3_init(theta, phi, 0));
     }
 
 }
