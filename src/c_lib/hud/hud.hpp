@@ -4,6 +4,7 @@
 #include <hud/text.hpp>
 #include <hud/meter.hpp>
 #include <hud/scoreboard.hpp>
+#include <hud/terminal_renderer.hpp>
 
 namespace Hud
 {
@@ -89,6 +90,8 @@ class HUD
     HUD();
     ~HUD();
 };
+
+TerminalRenderer terminal_renderer;
 
 // meter
 MeterGraphic meter_graphic;

@@ -231,7 +231,6 @@ void draw_hud_textures()
     // meters
     int w = _xresf/4;
     int h = _yresf/128;
-    //const int slowest_blink_delay = 15;
 
     // jetpack
     glColor4ub(255,255,255,115); // white, more than half translucent
@@ -276,6 +275,8 @@ void draw_hud_textures()
     if (hud_draw_settings.chat_input      //not actually a texture
      && hud->inited && hud->chat != NULL && hud->chat->inited)
         hud->chat->draw_cursor();
+
+    //terminal_renderer.draw();
 
     if (hud_draw_settings.diagnostics)
     {
