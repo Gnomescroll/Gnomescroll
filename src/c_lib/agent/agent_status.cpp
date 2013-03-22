@@ -394,7 +394,7 @@ void AgentStatus::tick_rad()
         {
             _rad_level = 1;
             rad_exposure += RAD_EXPOSURE_LEVEL1;
-        } 
+        }
         else if (rad_level < 8)
         {
             _rad_level = 2;
@@ -418,13 +418,9 @@ void AgentStatus::tick_rad()
     set_attribute(this->a->id, "rad_exposure", rad_exposure);
 
     //calculate damage
-    if(rad_exposure < 1) 
-        rad_exposure = 1;
-
+    rad_exposure = GS_MAX(1, rad_exposure);
     int rad_exposure_level = ((4*rad_exposure)-1) / RAD_EXPOSURE_MAX;
-
     GS_ASSERT(rad_exposure_level >= 0 && rad_exposure_level <= 3);
-
     switch(rad_exposure_level)
     {
         case 0:

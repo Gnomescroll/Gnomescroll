@@ -93,6 +93,7 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
+        default:
             printf("pack_mech error: unhandled mech type\n");
     }
 }
@@ -148,7 +149,6 @@ static bool _mech_update(struct Mech &m)
 static bool unpack_mech(struct Mech &m, class mech_create_StoC &p)
 {
     IF_ASSERT(!isValid((MechType)p.type)) return false;
-
     m.id = p.id;
     m.type = (MechType)p.type;
     m.subtype = p.subtype;
@@ -156,7 +156,6 @@ static bool unpack_mech(struct Mech &m, class mech_create_StoC &p)
     m.x = p.x;
     m.y = p.y;
     m.z = p.z;
-
     return _mech_update(m);
 }
 
@@ -328,13 +327,7 @@ void print_mech_create_failure_code(MechCreateFailureCode code)
 MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int subtype)
 {
     MechCreateFailureCode ret = can_place_mech(x,y,z, type, 0);
-    if (ret != MCF_OK)
-    {
-        #if !PRODUCTION
-        print_mech_create_failure_code(ret);
-        #endif
-        return ret;
-    }
+    if (ret != MCF_OK) return ret;
 
     struct Mech m;
     m.type = type;

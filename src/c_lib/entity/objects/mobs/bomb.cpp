@@ -216,7 +216,7 @@ static void go_to_next_destination(class Entity* object)
     // face the target
     dest->orient_to_target(position);
     Vec3 angles = physics->get_angles();
-    angles.x = vec3_to_theta(dest->target_direction); // only rotate in x
+    angles.x = vec3_to_theta(dest->target_direction);  // only rotate in x
     physics->set_angles(angles);
 }
 #endif
