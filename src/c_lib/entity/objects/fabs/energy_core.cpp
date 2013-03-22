@@ -20,7 +20,7 @@ void load_energy_core_data()
     EntityType type = OBJECT_ENERGY_CORE;
 
     #if DC_SERVER
-    int n_components = 6;
+    int n_components = 7;
     #endif
     #if DC_CLIENT
     int n_components = 5;
@@ -36,6 +36,7 @@ void load_energy_core_data()
     #if DC_SERVER
     entity_data->attach_component(type, COMPONENT_HEALER);
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     #endif
 
     #if DC_CLIENT
@@ -67,6 +68,10 @@ static void set_energy_core_properties(Entity* object)
     using Components::HealerComponent;
     HealerComponent* healer = (HealerComponent*)add_component_to_object(object, COMPONENT_HEALER);
     healer->radius = ENERGY_CORE_HEALING_RADIUS;
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    limiter->limit = MOB_BROADCAST_RATE;
 
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
@@ -165,8 +170,10 @@ void tick_energy_core(Entity* object)
 
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
-    bool changed = physics->set_position(position);
-    if (changed) object->broadcastState();
+    physics->set_position(position);
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed()) object->broadcastState();
     #endif
 }
 

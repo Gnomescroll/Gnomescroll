@@ -172,7 +172,6 @@ void ready_mob_bomb(Entity* object)
 void die_mob_bomb(Entity* object)
 {
     #if DC_SERVER
-    GS_ASSERT(false);
     // drop item
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);

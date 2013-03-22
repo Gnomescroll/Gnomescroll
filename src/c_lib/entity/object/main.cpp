@@ -84,8 +84,7 @@ void harvest()
 static Entity* create_switch (EntityType type)
 {
     entityCreate create = get_object_create_method(type);
-    GS_ASSERT(create != NULL);
-    if (create == NULL) return NULL;
+    IF_ASSERT(create == NULL) return NULL;
     return create();
 }
 
@@ -108,8 +107,7 @@ Entity* create(EntityType type, int id)
 
 void ready_switch (Entity* object)
 {
-    GS_ASSERT(object != NULL);
-    if (object == NULL) return;
+    IF_ASSERT(object == NULL) return;
 
     entityReady ready = get_object_ready_method(object->type);
     GS_ASSERT(ready != NULL);
@@ -118,8 +116,7 @@ void ready_switch (Entity* object)
 
 void destroy_switch (Entity* object)
 {
-    GS_ASSERT(object != NULL);
-    if (object == NULL) return;
+    IF_ASSERT(object == NULL) return;
     EntityType type = object->type;
 
     entityDie die = get_object_die_method(type);
@@ -194,7 +191,7 @@ bool point_occupied_by_type(EntityType type, int x, int y, int z)
         obj = objects[i];
 
         physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        GS_ASSERT(physics != NULL);
+        IF_ASSERT(physics == NULL) continue;
         Vec3 position = physics->get_position();
         px = (int)position.x;
         py = (int)position.y;
@@ -242,17 +239,16 @@ void spawn_mobs()
         if (!used[i]) continue;
         obj = objects[i];
         spawner = (MonsterSpawnerComponent*)obj->get_component(COMPONENT_MONSTER_SPAWNER);
-        GS_ASSERT(spawner != NULL);
+        IF_ASSERT(spawner == NULL) continue;
         child = spawner->spawn_child();
         if (child != NULL) ready(child);
     }
 }
 
 #if DC_SERVER
-void send_object_state_machines(const EntityType type, const ClientID client_id)
+void send_object_state_machines(EntityType type, ClientID client_id)
 {
-    GS_ASSERT(type == OBJECT_MONSTER_BOMB);
-    if (type != OBJECT_MONSTER_BOMB) return;    // TODO
+    IF_ASSERT(type != OBJECT_MONSTER_BOMB) return;    // TODO
 
     if (entity_list->empty(type)) return;
 

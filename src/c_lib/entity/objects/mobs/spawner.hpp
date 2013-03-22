@@ -3,8 +3,7 @@
 namespace Entities
 {
 
-// forward decl
-class Entity;
+class Entity;  // forward decl
 
 void load_mob_spawner_data();
 Entity* create_mob_spawner();

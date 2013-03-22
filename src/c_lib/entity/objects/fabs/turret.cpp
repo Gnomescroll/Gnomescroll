@@ -20,7 +20,7 @@ void load_turret_data()
     EntityType type = OBJECT_TURRET;
 
     #if DC_SERVER
-    int n_components = 7;
+    int n_components = 8;
     #endif
     #if DC_CLIENT
     int n_components = 7;
@@ -37,6 +37,7 @@ void load_turret_data()
 
     #if DC_SERVER
     entity_data->attach_component(type, COMPONENT_EXPLOSION);
+    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     #endif
 
     #if DC_CLIENT
@@ -88,7 +89,12 @@ static void set_turret_properties(Entity* object)
     explode->radius = TURRET_EXPLOSION_RADIUS;
     explode->damage = TURRET_EXPLOSION_DAMAGE;
     explode->harms_owner = TURRET_EXPLOSION_HARMS_OWNER;
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    limiter->limit = MOB_BROADCAST_RATE;
     #endif
+
 
     #if DC_CLIENT
     using Components::AnimationComponent;
@@ -179,7 +185,7 @@ void tick_turret(Entity* object)
     // adjust to terrain changes
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
-    bool changed = physics->set_position(position);
+    physics->set_position(position);
     DimensionComponent* dimension = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
     position.z += dimension->get_camera_height();
 
@@ -188,7 +194,9 @@ void tick_turret(Entity* object)
     targeting->lock_target(position);
     if (targeting->can_fire()) targeting->fire_on_target(position);
 
-    if (changed) object->broadcastState();
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed()) object->broadcastState();
     #endif
 }
 

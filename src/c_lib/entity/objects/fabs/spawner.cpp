@@ -18,7 +18,7 @@ void load_agent_spawner_data()
     EntityType type = OBJECT_AGENT_SPAWNER;
 
     #if DC_SERVER
-    int n_components = 6;
+    int n_components = 7;
     #endif
     #if DC_CLIENT
     int n_components = 5;
@@ -34,6 +34,7 @@ void load_agent_spawner_data()
     #if DC_SERVER
     entity_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     #endif
 
     #if DC_CLIENT
@@ -64,6 +65,10 @@ static void set_agent_spawner_properties(Entity* object)
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
     spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    limiter->limit = MOB_BROADCAST_RATE;
 
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
@@ -159,8 +164,10 @@ void tick_agent_spawner(Entity* object)
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
-    bool changed = physics->set_position(position);
-    if (changed) object->broadcastState();
+    physics->set_position(position);
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed()) object->broadcastState();
     #endif
 }
 
