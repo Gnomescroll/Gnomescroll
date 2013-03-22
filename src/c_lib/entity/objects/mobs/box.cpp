@@ -211,11 +211,6 @@ void server_tick_mob_robot_box(Entity* object)
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
 
-    // save current target state, will use weapon to decide if need to send packet
-    bool was_on_target = weapon->locked_on_target;
-    int old_target_id = weapon->target_id;
-    int old_target_type = weapon->target_type;
-
     Agents::Agent* agent = NULL;
     if (weapon->locked_on_target)
     {   // target locked
@@ -240,10 +235,6 @@ void server_tick_mob_robot_box(Entity* object)
         // lock target
         weapon->locked_on_target = true;
         motion->en_route = false;
-
-        // send target packet
-        if (!was_on_target || old_target_id != weapon->target_id || old_target_type != weapon->target_type)
-            weapon->broadcast_target_choice();
     }
 
     if (weapon->locked_on_target)
@@ -301,7 +292,6 @@ void server_tick_mob_robot_box(Entity* object)
                 normalize_vector(&direction);
             motion->target_direction = direction;
         }
-        motion->broadcast_destination();
     }
 
     if (!motion->at_destination)

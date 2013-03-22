@@ -42,8 +42,6 @@ void spawn_mobs();
 
 #if DC_SERVER
 void send_to_client(ClientID client_id);
-// TODO -- generalize/remove
-void send_object_state_machines(const EntityType type, const ClientID client_id);
 #endif
 
 } // Entities

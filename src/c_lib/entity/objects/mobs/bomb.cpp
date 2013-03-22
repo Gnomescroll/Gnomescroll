@@ -200,112 +200,6 @@ void die_mob_bomb(Entity* object)
 }
 
 #if DC_SERVER
-static bool pack_object_in_transit(class object_in_transit_StoC* msg, class Entity* object, class Components::DestinationTargetingComponent* dest)
-{
-    if (dest == NULL)
-    {
-        dest = (Components::DestinationTargetingComponent*)
-            object->get_component(COMPONENT_DESTINATION_TARGETING);
-    }
-
-    IF_ASSERT(dest == NULL) return false;
-
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)
-        object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    IF_ASSERT(physics == NULL) return false;
-
-    msg->type = object->type;
-    msg->id = object->id;
-    struct Vec3 destination = dest->get_destination();
-    GS_ASSERT(is_boxed_position(destination));
-    msg->destination = destination;
-    int ticks = dest->get_ticks_to_destination(physics->get_position());
-    msg->ticks_to_destination = ticks;
-
-    return true;
-}
-
-void broadcast_object_in_transit(class Entity* object, class Components::DestinationTargetingComponent* dest)
-{
-    object_in_transit_StoC msg;
-    if (!pack_object_in_transit(&msg, object, dest)) return;
-    msg.broadcast();
-}
-
-void send_object_in_transit(ClientID client_id, class Entity* object, class Components::DestinationTargetingComponent* dest)
-{
-    object_in_transit_StoC msg;
-    if (!pack_object_in_transit(&msg, object, dest)) return;
-    msg.sendToClient(client_id);
-}
-
-static bool pack_object_chase_agent(class object_chase_agent_StoC* msg, class Entity* object, class Components::AgentTargetingComponent* target)
-{
-    if (target == NULL)
-    {
-        target = (Components::AgentTargetingComponent*)
-            object->get_component(COMPONENT_AGENT_TARGETING);
-    }
-    if (target == NULL) return false;
-    msg->type = object->type;
-    msg->id = object->id;
-    msg->target_id = target->target_id;
-    return true;
-}
-
-void broadcast_object_chase_agent(class Entity* object, class Components::AgentTargetingComponent* target)
-{
-    object_chase_agent_StoC msg;
-    if (!pack_object_chase_agent(&msg, object, target)) return;
-    msg.broadcast();
-}
-
-void send_object_chase_agent(ClientID client_id, class Entity* object, class Components::AgentTargetingComponent* target)
-{
-    object_chase_agent_StoC msg;
-    if (!pack_object_chase_agent(&msg, object, target)) return;
-    msg.sendToClient(client_id);
-}
-
-static bool pack_object_begin_wait(class object_begin_waiting_StoC* msg, class Entity* object)
-{
-    msg->type = object->type;
-    msg->id = object->id;
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    msg->waiting_point = physics->get_position();
-    return true;
-}
-
-void broadcast_object_begin_wait(class Entity* object)
-{
-    object_begin_waiting_StoC msg;
-    if (!pack_object_begin_wait(&msg, object)) return;
-    msg.broadcast();
-}
-
-void send_object_begin_wait(ClientID client_id, class Entity* object)
-{
-    object_begin_waiting_StoC msg;
-    if (!pack_object_begin_wait(&msg, object)) return;
-    msg.sendToClient(client_id);
-}
-
-inline void send_mob_bomb_state_machine_to_client(ClientID client_id, class Entity* object)
-{
-    using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
-    if (state->state == STATE_WAITING)
-        send_object_begin_wait(client_id, object);
-    else
-    if (state->state == STATE_IN_TRANSIT)
-        send_object_in_transit(client_id, object, NULL);
-    else
-    if (state->state == STATE_CHASE_AGENT)
-        send_object_chase_agent(client_id, object, NULL);
-}
-
 static void go_to_next_destination(class Entity* object)
 {
     using Components::PhysicsComponent;
@@ -331,10 +225,6 @@ static void waiting_to_in_transit(class Entity* object)
 {
     #if DC_SERVER
     go_to_next_destination(object);
-    using Components::DestinationTargetingComponent;
-    DestinationTargetingComponent* dest = (DestinationTargetingComponent*)
-        object->get_component(COMPONENT_DESTINATION_TARGETING);
-    broadcast_object_in_transit(object, dest);
     #endif
 
     using Components::StateMachineComponent;
@@ -347,10 +237,6 @@ static void waiting_to_chase_agent(class Entity* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_CHASE_AGENT;
-
-    #if DC_SERVER
-    broadcast_object_chase_agent(object, NULL);
-    #endif
 }
 
 static void in_transit_to_waiting(class Entity* object)
@@ -362,10 +248,6 @@ static void in_transit_to_waiting(class Entity* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_WAITING;
-
-    #if DC_SERVER
-    broadcast_object_begin_wait(object);
-    #endif
 }
 
 static void in_transit_to_chase_agent(class Entity* object)
@@ -373,10 +255,6 @@ static void in_transit_to_chase_agent(class Entity* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_CHASE_AGENT;
-
-    #if DC_SERVER
-    broadcast_object_chase_agent(object, NULL);
-    #endif
 }
 
 static void chase_agent_to_waiting(class Entity* object)
@@ -388,10 +266,6 @@ static void chase_agent_to_waiting(class Entity* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_WAITING;
-
-    #if DC_SERVER
-    broadcast_object_begin_wait(object);
-    #endif
 }
 
 static void chase_agent_to_in_transit(class Entity* object)

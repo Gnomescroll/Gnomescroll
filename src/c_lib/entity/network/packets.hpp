@@ -263,77 +263,6 @@ class object_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<object
     inline void handle();
 };
 
-/* Targeting */
-
-class object_choose_weapon_target_StoC: public FixedSizeReliableNetPacketToClient<object_choose_weapon_target_StoC>
-{
-    public:
-        uint16_t id;
-        uint8_t type;
-        uint16_t target_id;
-        uint8_t target_type;
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&id, buff, buff_n, pack);
-        pack_u8(&type, buff, buff_n, pack);
-        pack_u16(&target_id, buff, buff_n, pack);
-        pack_u8(&target_type, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-class object_choose_motion_target_StoC: public FixedSizeReliableNetPacketToClient<object_choose_motion_target_StoC>
-{
-    public:
-        uint16_t id;
-        uint8_t type;
-        uint16_t target_id;
-        uint8_t target_type;
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&id, buff, buff_n, pack);
-        pack_u8(&type, buff, buff_n, pack);
-        pack_u16(&target_id, buff, buff_n, pack);
-        pack_u8(&target_type, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-class object_remove_motion_target_StoC: public FixedSizeReliableNetPacketToClient<object_remove_motion_target_StoC>
-{
-    public:
-        uint16_t id;
-        uint8_t type;
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&id, buff, buff_n, pack);
-        pack_u8(&type, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-
-class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<object_choose_destination_StoC>
-{
-    public:
-        uint16_t id;
-        uint8_t type;
-        uint16_t ticks_to_destination;
-        Vec3 destination;
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&id, buff, buff_n, pack);
-        pack_u8(&type, buff, buff_n, pack);
-        pack_u16(&ticks_to_destination, buff, buff_n, pack);
-        pack_vec3(&destination, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
 // redundant? health state overrides?
 // leave it separate for now, in case the packets are no longer 1:1 (may want to batch send health etc)
 class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_took_damage_StoC>
@@ -348,58 +277,6 @@ class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&damage, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-/* State machine */
-
-class object_begin_waiting_StoC: public FixedSizeReliableNetPacketToClient<object_begin_waiting_StoC>
-{
-    public:
-        uint16_t id;
-        uint8_t type;
-        struct Vec3 waiting_point;
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&id, buff, buff_n, pack);
-        pack_u8(&type, buff, buff_n, pack);
-        pack_vec3(&waiting_point, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-class object_in_transit_StoC: public FixedSizeReliableNetPacketToClient<object_in_transit_StoC>
-{
-    public:
-        uint16_t id;
-        uint8_t type;
-        uint16_t ticks_to_destination;
-        struct Vec3 destination;
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&id, buff, buff_n, pack);
-        pack_u8(&type, buff, buff_n, pack);
-        pack_u16(&ticks_to_destination, buff, buff_n, pack);
-        pack_vec3(&destination, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-class object_chase_agent_StoC: public FixedSizeReliableNetPacketToClient<object_chase_agent_StoC>
-{
-    public:
-        uint16_t id;
-        uint8_t type;
-        uint8_t target_id;
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&id, buff, buff_n, pack);
-        pack_u8(&type, buff, buff_n, pack);
-        pack_u8(&target_id, buff, buff_n, pack);
     }
     inline void handle();
 };

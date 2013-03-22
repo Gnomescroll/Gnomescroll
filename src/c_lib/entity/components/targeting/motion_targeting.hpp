@@ -23,25 +23,12 @@ class MotionTargetingComponent: public TargetingComponent
         int ticks_locked;
 
     void check_target_alive();
-
     // explicitly set the target
     void set_target(EntityType target_type, int target_id);
-
-    // lock to agent
     void lock_target(Vec3 camera_position);
-
     void choose_destination();
-
     void orient_to_target(Vec3 camera_position);
-
     bool move_on_surface();
-
-    #if DC_SERVER
-    void broadcast_target_choice();
-    void broadcast_destination();
-    void broadcast_remove_target();
-    #endif
-
     void call();
 
     virtual ~MotionTargetingComponent() {}

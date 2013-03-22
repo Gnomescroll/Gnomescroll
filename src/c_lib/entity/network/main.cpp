@@ -45,4 +45,22 @@ void teardown_net_interfaces()
     delete state_packet_momentum_angles;
 }
 
+void init_packets()
+{
+    object_create_StoC::register_client_packet();
+    object_create_owner_StoC::register_client_packet();
+    object_create_momentum_StoC::register_client_packet();
+    object_create_momentum_angles_StoC::register_client_packet();
+    object_create_momentum_angles_health_StoC::register_client_packet();
+    object_destroy_StoC::register_client_packet();
+    object_state_StoC::register_client_packet();
+    object_state_momentum_StoC::register_client_packet();
+    object_state_momentum_angles_StoC::register_client_packet();
+    object_state_health_StoC::register_client_packet();
+    object_shot_object_StoC::register_client_packet();
+    object_shot_terrain_StoC::register_client_packet();
+    object_shot_nothing_StoC::register_client_packet();
+    object_took_damage_StoC::register_client_packet();
+}
+
 } // Entities

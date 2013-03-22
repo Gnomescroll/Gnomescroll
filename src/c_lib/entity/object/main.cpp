@@ -246,35 +246,13 @@ void spawn_mobs()
 }
 
 #if DC_SERVER
-void send_object_state_machines(EntityType type, ClientID client_id)
-{
-    IF_ASSERT(type != OBJECT_MONSTER_BOMB) return;    // TODO
-
-    if (entity_list->empty(type)) return;
-
-    Entity** objects = entity_list->get_objects(type);
-    GS_ASSERT(objects != NULL);
-    char* used = entity_list->get_used(type);
-    GS_ASSERT(used != NULL);
-    int max = entity_list->max(type);
-    GS_ASSERT(max > 0);
-
-    for (int i=0; i<max; i++)
-        if (used[i])
-            send_mob_bomb_state_machine_to_client(client_id, objects[i]);
-}
-
 void send_to_client(ClientID client_id)
-{
-    // TODO -- make these one function call
+{   // TODO -- make these one function call
     send_to_client(OBJECT_BASE, client_id);
     send_to_client(OBJECT_TURRET, client_id);
     send_to_client(OBJECT_AGENT_SPAWNER, client_id);
     send_to_client(OBJECT_ENERGY_CORE, client_id);
     send_to_client(OBJECT_MONSTER_BOMB, client_id);
-
-    // DOESNT WORK RIGHT:
-    send_object_state_machines(OBJECT_MONSTER_BOMB, client_id);
     send_to_client(OBJECT_MONSTER_BOX, client_id);
     send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
 }

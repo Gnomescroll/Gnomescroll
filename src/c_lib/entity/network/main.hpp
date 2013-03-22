@@ -20,4 +20,6 @@ extern StatePacketMomentumAngles* state_packet_momentum_angles;
 void init_net_interfaces();
 void teardown_net_interfaces();
 
+void init_packets();
+
 } // Entities

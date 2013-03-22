@@ -33,10 +33,6 @@ void MotionTargetingComponent::set_target(EntityType target_type, int target_id)
     this->target_type = target_type;
     this->target_id = target_id;
     this->locked_on_target = true;
-
-    #if DC_SERVER
-    this->broadcast_target_choice();
-    #endif
 }
 
 void MotionTargetingComponent::check_target_alive()
@@ -47,9 +43,6 @@ void MotionTargetingComponent::check_target_alive()
     {
         this->target_id = NULL_AGENT;
         this->target_type = OBJECT_NONE;
-        #if DC_SERVER
-        this->broadcast_remove_target();
-        #endif
     }
 }
 
@@ -64,9 +57,6 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
-    #if DC_SERVER
-    this->broadcast_target_choice();
-    #endif
 }
 
 void MotionTargetingComponent::choose_destination()
@@ -135,39 +125,6 @@ bool MotionTargetingComponent::move_on_surface()
     return moved;
 }
 
-#if DC_SERVER
-void MotionTargetingComponent::broadcast_target_choice()
-{
-    IF_ASSERT(this->object == NULL) return;
-    object_choose_motion_target_StoC msg;
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.target_id = this->target_id;
-    msg.target_type = this->target_type;
-    msg.broadcast();
-}
-
-void MotionTargetingComponent::broadcast_remove_target()
-{
-    IF_ASSERT(this->object == NULL) return;
-    object_remove_motion_target_StoC msg;
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.broadcast();
-}
-
-void MotionTargetingComponent::broadcast_destination()
-{
-    GS_ASSERT(is_boxed_position(this->destination));
-    object_choose_destination_StoC msg;
-    msg.destination = this->destination;
-    msg.id = this->object->id;
-    msg.type = this->object->type;
-    msg.ticks_to_destination = this->ticks_to_destination;
-    msg.broadcast();
-}
-#endif
-
 void MotionTargetingComponent::call()
 {
     if (this->target_type == OBJECT_NONE)
@@ -181,9 +138,6 @@ void MotionTargetingComponent::call()
         this->target_type = OBJECT_NONE;
         this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
-        #if DC_SERVER
-        this->broadcast_remove_target();
-        #endif
     }
 }
 
