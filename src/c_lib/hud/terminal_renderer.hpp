@@ -19,9 +19,9 @@ class TerminalRenderer
         int prev_blink;
         bool blink_status_visible;
         HudText::Text* grid;
-        HudText::Text input_text;
         InputBuffer input_buffer;
 
+    // construct
     TerminalRenderer() :
         input_buffer(TERMINAL_BUFFER_SIZE)
     {
@@ -29,9 +29,9 @@ class TerminalRenderer
         cursor_y = 0;        
         prev_blink =_GET_MS_TIME();
         blink_status_visible = true;
-
         grid = new HudText::Text[TERMINAL_BUFFER_SIZE];
-        //grid = NULL;
+        //IF_ASSERT(grid == NULL) return;           ???????maybe???????
+
         for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++) 
         {
             int x = i % TERMINAL_CHAR_WIDTH;
@@ -39,16 +39,24 @@ class TerminalRenderer
             int span = 20;
                         
             grid[i].set_text("#");
-            //grid[i].set_scale(0.7f);
+            grid[i].set_scale(1.3f);
             grid[i].set_position(255 + x*span, 255 + y*span);        
             grid[i].shadowed = true;        
-            //grid[i].center();
         }
     }
 
+    // destruct
     ~TerminalRenderer()
     {
         delete[] grid;
+    }
+
+    void add(char c)
+    {
+        input_buffer.add(c);
+        int i = cursor_x + cursor_y*TERMINAL_CHAR_WIDTH;
+        grid[i].text[0] = c;
+        right();
     }
 
     void left()
@@ -63,10 +71,6 @@ class TerminalRenderer
             if (cursor_y >= TERMINAL_CHAR_WIDTH)
                 cursor_y = 0;
         }
-        else
-        {
-            cursor_x = GS_MAX(cursor_x, 0);
-        }
     }
 
     void right()
@@ -80,10 +84,6 @@ class TerminalRenderer
 
             if (cursor_y < 0)
                 cursor_y = TERMINAL_CHAR_WIDTH - 1;
-        }
-        else
-        {
-            cursor_x = GS_MIN(cursor_x, TERMINAL_CHAR_WIDTH - 1);
         }
     }
 
@@ -133,16 +133,11 @@ class TerminalRenderer
             grid[i].draw();
         }
 
-        // show whatever text thats been input
-        input_text.set_position(600, 600);
-        input_text.set_text(input_buffer.buffer);
-        input_text.draw();
-        //if (drawn_width >= this->render_width) y += line_height;
         //if (drawn_width >= this->render_width) { y += line_height; x = 0; }
     }
 };
 
-//<rdn> know that you Text will handle almost everything. you only might have to add a new draw method and fixed width to wrap on, if its not there
+//<rdn> you might have to add a new draw method and fixed width to wrap on, if its not there
 //<rdn> the other thing you have to know is that input needs to be routed appropriately
 //<rdn> input/handlers.cpp
 //<rdn> you can model the input routing off of cube selector

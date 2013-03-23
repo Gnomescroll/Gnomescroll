@@ -38,6 +38,10 @@ const size_t CHAT_NAME_SEPARATOR_LENGTH_MAX = strlen(CHAT_NAME_DEFAULT_SEPARATOR
 
 class ChatRender
 {
+    private:
+        int curr_cursor_w;
+        int curr_cursor_h;
+
     public:
         bool inited;
         Text* messages[CHAT_MESSAGE_RENDER_MAX];

@@ -75,6 +75,12 @@ void draw()
     draw_hud_text();
     CHECK_GL_ERROR();
 
+    // draw animated chat cursor on TOP of chat text
+    if (hud_draw_settings.chat_input  // not actually a texture
+     && hud->inited && hud->chat != NULL && hud->chat->inited)
+        hud->chat->draw_cursor();
+    CHECK_GL_ERROR();
+
     glColor4ub(255,255,255,255);
 }
 

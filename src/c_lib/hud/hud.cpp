@@ -272,10 +272,6 @@ void draw_hud_textures()
     if (hud_draw_settings.map)
         HudMap::draw();
 
-    if (hud_draw_settings.chat_input      //not actually a texture
-     && hud->inited && hud->chat != NULL && hud->chat->inited)
-        hud->chat->draw_cursor();
-
     if (hud_draw_settings.diagnostics)
     {
         using Profiling::frame_graph;
@@ -736,7 +732,6 @@ void ChatRender::set_cursor(const char* text, float x, float y)
 
     int len = 0;
     int h = 0;
-    const int w = 8;
 
     int s_len = (int)strlen(text);
     char* tmp_text = (char*)malloc(sizeof(char) * (s_len + 1));
@@ -751,17 +746,37 @@ void ChatRender::set_cursor(const char* text, float x, float y)
     if (s_len && Chat::chat_client->input->cursor == s_len)
         cursor_x += 4;  // margin at the end
     cursor_y = y - h;
-    cursor_w = w;
+    cursor_w = 8;
     cursor_h = h;
 }
 
 void ChatRender::draw_cursor()
 {
-    Color color = AGENT_DEFAULT_COLOR;
-    using ClientState::player_agent;
-    class Agents::Agent* you = player_agent.you();
-    if (you != NULL) color = you->status.color;
-    draw_rect(color, cursor_x, cursor_y, cursor_w, cursor_h);
+    curr_cursor_w++;
+    if (curr_cursor_w > cursor_w)
+        curr_cursor_w = 0;
+    curr_cursor_h++;
+    if (curr_cursor_h > cursor_h)
+        curr_cursor_h = 0;
+
+    // ******** old player-color based color ********
+    //Color color = AGENT_DEFAULT_COLOR;
+    //using ClientState::player_agent;
+    //class Agents::Agent* you = player_agent.you();
+    //if (you != NULL) color = you->status.color;
+
+    // draw twice for an outline
+    int mar = 1;  // margin
+    draw_rect(COLOR_BLACK,
+        cursor_x + (cursor_w - curr_cursor_w) / 2 - mar, 
+        cursor_y + (cursor_h - curr_cursor_h) / 2 - mar, 
+        curr_cursor_w + mar * 2, 
+        curr_cursor_h + mar * 2);
+    draw_rect(COLOR_WHITE,  // probably a contrasting color
+        cursor_x + (cursor_w - curr_cursor_w) / 2, 
+        cursor_y + (cursor_h - curr_cursor_h) / 2, 
+        curr_cursor_w, 
+        curr_cursor_h);
 }
 
 void ChatRender::draw_messages()
@@ -846,8 +861,15 @@ void ChatRender::update(bool timeout, bool other_players)
 
 
 ChatRender::ChatRender() :
-    inited(false), input(NULL), paging_offset(0), cursor_x(0.0f),
-    cursor_y(0.0f), cursor_w(0.0f), cursor_h(0.0f)
+    inited(false),
+    input(NULL),
+    paging_offset(0), 
+    cursor_x(0.0f),
+    cursor_y(0.0f),
+    cursor_w(0.0f),
+    cursor_h(0.0f),
+    curr_cursor_w(0),
+    curr_cursor_h(0)
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
 }

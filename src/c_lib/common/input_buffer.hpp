@@ -29,7 +29,7 @@ class InputBuffer
             if (cursor >= int(bufsiz)) break;
             if (buflen >= bufsiz) break;
 
-           for (int j=int(buflen); j>=cursor; j--)
+            for (int j=int(buflen); j>=cursor; j--)
                 buffer[j+1] = buffer[j];
 
             buffer[cursor++] = x;

@@ -531,7 +531,9 @@ void chat_key_down_handler(SDL_Event* event)
 
     if (t < 0 || t > 127)
         return;
+
     chat_client->input->add((char)t);
+    Hud::terminal_renderer.add((char)t);
 }
 
 void chat_key_up_handler(SDL_Event* event){}
