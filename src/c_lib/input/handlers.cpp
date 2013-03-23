@@ -837,7 +837,7 @@ void agent_key_state_handler(Uint8 *keystate, int numkeys,
         *r = 1;
     if (keystate[SDLK_LSHIFT])  // LSHIFT
         *jet = 1;
-    if (keystate[SDLK_SPACE] || keystate[SDLK_PAGEDOWN])  // 2nd "bind" for CorpusC's keyboard
+    if (keystate[SDLK_SPACE] || keystate[SDLK_PAGEDOWN])  // 2nd "bind" for CorpusC's funky keyboard
         *jump = 1;
     if (keystate[SDLK_LCTRL])  // LCTRL
         *crouch = 1;

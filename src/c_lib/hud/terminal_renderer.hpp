@@ -53,12 +53,15 @@ class TerminalRenderer
 
     void left()
     { // don't just wrap, do like a text editor
-        cursor_x -= 1;
+        cursor_x--;
+
         if (cursor_x < 0)
         {
             cursor_x = TERMINAL_CHAR_WIDTH - 1;
             cursor_y++;
-            cursor_y = GS_MIN(cursor_y, TERMINAL_CHAR_HEIGHT - 1);
+
+            if (cursor_y >= TERMINAL_CHAR_WIDTH)
+                cursor_y = 0;
         }
         else
         {
@@ -68,12 +71,15 @@ class TerminalRenderer
 
     void right()
     { // don't just wrap, do like a text editor
-        cursor_x += 1;
+        cursor_x++;
+
         if (cursor_x >= TERMINAL_CHAR_WIDTH)
         {
             cursor_x = 0;
             cursor_y--;
-            cursor_y = GS_MAX(cursor_y, 0);
+
+            if (cursor_y < 0)
+                cursor_y = TERMINAL_CHAR_WIDTH - 1;
         }
         else
         {
@@ -83,14 +89,16 @@ class TerminalRenderer
 
     void up()
     {
-        cursor_y += 1;
-        cursor_y = GS_MIN(cursor_y, TERMINAL_CHAR_HEIGHT - 1);
+        cursor_y++;
+        if (cursor_y >= TERMINAL_CHAR_WIDTH)
+            cursor_y = 0;
     }
 
     void down()
     {
-        cursor_y -= 1;
-        cursor_y = GS_MAX(cursor_y, 0);
+        cursor_y--;
+        if (cursor_y < 0)
+            cursor_y = TERMINAL_CHAR_WIDTH - 1;
     }
 
     void reset_blink()
