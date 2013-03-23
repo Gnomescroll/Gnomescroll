@@ -66,6 +66,7 @@ static struct HudDrawSettings
     bool diagnostics;
     bool vbo_debug;
     bool admin_controls;
+    bool terminal_is_opened;
 }   hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
@@ -109,6 +110,7 @@ void update_hud_draw_settings()
     hud_draw_settings.chat = true;
     hud_draw_settings.player_chat = Options::player_chat;
     hud_draw_settings.chat_input = input_state.chat;
+    hud_draw_settings.terminal_is_opened = input_state.terminal_is_opened;
     hud_draw_settings.full_chat = input_state.full_chat;
     hud_draw_settings.admin_controls = input_state.admin_controls;
 
@@ -266,6 +268,14 @@ void draw_hud_textures()
 
     HudReticle::reticle.draw();
 
+    // draw terminal background
+    if (hud_draw_settings.terminal_is_opened)// && hud->inited && hud->chat != NULL && hud->chat->inited)
+        terminal_renderer.draw_background();
+    
+    // draw terminal cursor
+    if (hud_draw_settings.terminal_is_opened)
+        terminal_renderer.draw_cursor();
+
     if (hud_draw_settings.cube_selector)
         HudCubeSelector::cube_selector.draw();
 
@@ -325,11 +335,8 @@ void draw_hud_text()
         HudFont::reset_default();
         set_texture();
 
-
-        
-        terminal_renderer.draw();
-
-
+        if (hud_draw_settings.terminal_is_opened)
+            terminal_renderer.draw_text();
 
         if (hud_draw_settings.help)
             hud->help->draw();

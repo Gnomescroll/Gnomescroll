@@ -366,6 +366,7 @@ void init_input_state()
     input_state.full_chat = false;
     //input_state.hud = true;
     input_state.skeleton_editor = false;
+    input_state.terminal_is_opened = true;
 
     input_state.can_jump = true;
     input_state.quit = false;
@@ -1141,6 +1142,10 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_F12:
             toggle_admin_controls();
+            break;
+
+        case SDLK_0:
+            input_state.terminal_is_opened = !input_state.terminal_is_opened;
             break;
 
         case SDLK_BACKQUOTE:

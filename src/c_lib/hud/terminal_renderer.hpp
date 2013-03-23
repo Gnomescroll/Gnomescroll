@@ -13,11 +13,18 @@ const size_t TERMINAL_BUFFER_SIZE = TERMINAL_CHAR_WIDTH * TERMINAL_CHAR_HEIGHT;
 
 class TerminalRenderer
 {
+    private:
+        static const size_t CELL_SPAN = 20;
+        static const int DIST_FROM_BOTT_EDGE = 255;
+        int curr_cursor_w;
+        int curr_cursor_h;
+        // blinking text
+        int prev_blink;
+        bool blink_status_visible;
+
     public:
         int cursor_x;
         int cursor_y;        
-        int prev_blink;
-        bool blink_status_visible;
         HudText::Text* grid;
         InputBuffer input_buffer;
 
@@ -26,7 +33,10 @@ class TerminalRenderer
         input_buffer(TERMINAL_BUFFER_SIZE)
     {
         cursor_x = 0;
-        cursor_y = 0;        
+        cursor_y = 0; 
+        curr_cursor_w = 0;
+        curr_cursor_h = 0;
+
         prev_blink =_GET_MS_TIME();
         blink_status_visible = true;
         grid = new HudText::Text[TERMINAL_BUFFER_SIZE];
@@ -36,12 +46,33 @@ class TerminalRenderer
         {
             int x = i % TERMINAL_CHAR_WIDTH;
             int y = i / TERMINAL_CHAR_WIDTH;
-            int span = 20;
-                        
-            grid[i].set_text("#");
+            grid[i].set_text(" ");
+
+            char c;
+            switch(i)
+            { // despite printing in the wrong human order, it still makes sense ("To hide press 0")
+                case 0: c = 'p'; break;
+                case 1: c = 'r'; break;
+                case 2: c = 'e'; break;
+                case 3: c = 's'; break;
+                case 4: c = 's'; break;
+                case 5: c = ' '; break;
+                case 6: c = '0'; break;
+                case 7: c = ' '; break;
+                case 8: c = 't'; break;
+                case 9: c = 'o'; break;
+                case 10: c = ' '; break;
+                case 11: c = 'h'; break;
+                case 12: c = 'i'; break;
+                case 13: c = 'd'; break;
+                case 14: c = 'e'; break;
+                default: c = ' '; break;
+            }
+
+            grid[i].text[0] = c;
             grid[i].set_scale(1.3f);
-            grid[i].set_position(255 + x*span, 255 + y*span);        
-            grid[i].shadowed = true;        
+            grid[i].set_position(x*CELL_SPAN, DIST_FROM_BOTT_EDGE + y*CELL_SPAN);        
+            //grid[i].shadowed = true;
         }
     }
 
@@ -110,7 +141,41 @@ class TerminalRenderer
         blink_status_visible = true;
     }
 
-    void draw()
+    void draw_cursor()
+    {
+        curr_cursor_w++;
+        if (curr_cursor_w > CELL_SPAN)
+            curr_cursor_w = 0;
+        curr_cursor_h++;
+        if (curr_cursor_h > CELL_SPAN)
+            curr_cursor_h = 0;
+
+        // draw twice for an outline
+        int mar = 1;  // margin
+        draw_rect(COLOR_BLACK,
+            cursor_x*CELL_SPAN + (CELL_SPAN - curr_cursor_w) / 2 - mar, 
+            cursor_y*CELL_SPAN + (CELL_SPAN - curr_cursor_h) / 2 - mar + DIST_FROM_BOTT_EDGE - CELL_SPAN, 
+            curr_cursor_w + mar * 2, 
+            curr_cursor_h + mar * 2);
+        draw_rect(COLOR_WHITE,
+            cursor_x*CELL_SPAN + (CELL_SPAN - curr_cursor_w) / 2, 
+            cursor_y*CELL_SPAN + (CELL_SPAN - curr_cursor_h) / 2 + DIST_FROM_BOTT_EDGE - CELL_SPAN, 
+            curr_cursor_w, 
+            curr_cursor_h);
+    }
+
+    void draw_background()
+    {
+        // render the grid
+        for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++) 
+        {
+            int x = i % TERMINAL_CHAR_WIDTH;
+            int y = i / TERMINAL_CHAR_WIDTH;
+            draw_rect(Color(17,17,17), grid[i].x, grid[i].y - CELL_SPAN, CELL_SPAN, CELL_SPAN);
+        }
+    }
+
+    void draw_text()
     {
         // update blinking
         if (125 < _GET_MS_TIME() - prev_blink)
@@ -125,17 +190,18 @@ class TerminalRenderer
             int x = i % TERMINAL_CHAR_WIDTH;
             int y = i / TERMINAL_CHAR_WIDTH;
 
-            if (blink_status_visible && /* selected */ x == cursor_x && y == cursor_y)
+            if (blink_status_visible && /* selected --> */ x == cursor_x && y == cursor_y)
                 grid[i].set_color(COLOR_GREEN);
             else
                 grid[i].set_color(Color(128-x*12, 0, 128+y*12));
 
             grid[i].draw();
         }
-
-        //if (drawn_width >= this->render_width) { y += line_height; x = 0; }
     }
 };
+
+
+//if (drawn_width >= this->render_width) { y += line_height; x = 0; }
 
 //<rdn> you might have to add a new draw method and fixed width to wrap on, if its not there
 //<rdn> the other thing you have to know is that input needs to be routed appropriately
