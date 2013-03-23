@@ -201,6 +201,9 @@ void CubeSelector::right()
 
 void CubeSelector::reset_blink()
 {
+    // the whole point of blinking is drawing your eye to the focal/selection point with some activity.
+    // but while you're cursoring around, you have MOVEment activity, and want to make sure every position
+    // visited, gets a period of visibility
     prev_blink = _GET_MS_TIME();
     blink_status_visible = true;
 }

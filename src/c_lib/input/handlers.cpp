@@ -689,15 +689,19 @@ void agent_key_down_handler(SDL_Event* event)
 
         case SDLK_LEFT:
             HudCubeSelector::cube_selector.left();
+            Hud::terminal_renderer.left();
             break;
         case SDLK_RIGHT:
             HudCubeSelector::cube_selector.right();
+            Hud::terminal_renderer.right();
             break;
         case SDLK_UP:
             HudCubeSelector::cube_selector.up();
+            Hud::terminal_renderer.up();
             break;
         case SDLK_DOWN:
             HudCubeSelector::cube_selector.down();
+            Hud::terminal_renderer.down();
             break;
 
         case SDLK_1:

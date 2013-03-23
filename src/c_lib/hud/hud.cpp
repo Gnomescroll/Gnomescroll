@@ -276,8 +276,6 @@ void draw_hud_textures()
      && hud->inited && hud->chat != NULL && hud->chat->inited)
         hud->chat->draw_cursor();
 
-    terminal_renderer.draw();
-
     if (hud_draw_settings.diagnostics)
     {
         using Profiling::frame_graph;
@@ -331,6 +329,12 @@ void draw_hud_text()
         HudFont::reset_default();
         set_texture();
 
+
+        
+        terminal_renderer.draw();
+
+
+
         if (hud_draw_settings.help)
             hud->help->draw();
 
@@ -339,13 +343,12 @@ void draw_hud_text()
             static unsigned int press_help_tick = 0;
             const int press_help_anim_len = 60;
             const Color white = Color(255,255,255);
-            const Color blue = Color(10,10,255);
             float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
             t -= 1.0f;
             if (t < 0.0f)
-                hud->prompt->set_color(interpolate_color(blue, white, 1.0f+t));
+                hud->prompt->set_color(interpolate_color(COLOR_BLUE, white, 1.0f+t));
             else
-                hud->prompt->set_color(interpolate_color(white, blue, t));
+                hud->prompt->set_color(interpolate_color(white, COLOR_BLUE, t));
             hud->prompt->draw();
             press_help_tick++;
         }
