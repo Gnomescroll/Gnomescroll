@@ -276,7 +276,7 @@ void draw_hud_textures()
      && hud->inited && hud->chat != NULL && hud->chat->inited)
         hud->chat->draw_cursor();
 
-    //terminal_renderer.draw();
+    terminal_renderer.draw();
 
     if (hud_draw_settings.diagnostics)
     {
