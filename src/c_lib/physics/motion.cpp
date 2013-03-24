@@ -72,7 +72,7 @@ static bool advance_move(struct Vec3 position, struct Vec3 move_to,
                           int z, float speed,
                           struct Vec3* new_position, struct Vec3* new_momentum)
 {
-    Vec3 new_direction = vec3_init(0,0,0);
+    Vec3 new_direction = vec3_init(0);
     if (vec3_equal(position, move_to) || speed == 0.0f)
     {
         *new_momentum = new_direction;
@@ -98,17 +98,17 @@ static bool advance_move(struct Vec3 position, struct Vec3 move_to,
     return true;
 }
 
-static bool move_z_diff(struct Vec3 position, struct Vec3 move_to, int z,
-                         float speed, float max_z_diff,
+static bool move_z_diff(struct Vec3 position, struct Vec3 move_to,
+                         int z, float speed, float max_z_diff,
                          struct Vec3* new_position, struct Vec3* new_momentum)
 {
-    float z_diff = position.z - float(z);
-    if (fabsf(z_diff) > max_z_diff)
-    {   // cant move
-        *new_position = position;
-        *new_momentum = vec3_init(0,0,0);
-        return false;
-    }
+    //float z_diff = position.z - float(z);
+    //if (fabsf(z_diff) > max_z_diff)
+    //{   // cant move
+        //*new_position = position;
+        //*new_momentum = vec3_init(0);
+        //return false;
+    //}
     move_to.z = z;
 
     return advance_move(position, move_to, z, speed, new_position, new_momentum);
@@ -206,9 +206,9 @@ bool move_along_terrain_surface(struct Vec3 position, struct Vec3 direction,
 
 // These will move between blocks if it makes sense to
 
-bool move_within_terrain_surface(
-    struct Vec3 position, struct Vec3 direction, float speed,
-    float max_z_diff, struct Vec3* new_position, struct Vec3* new_momentum)
+bool move_within_terrain_surface(struct Vec3 position, struct Vec3 direction,
+                                 float speed, float max_z_diff,
+                                 struct Vec3* new_position, struct Vec3* new_momentum)
 {
     // attempt to move to location defined by direction * speed
     // if z_level diff too high, set momentum 0, copy position, return
@@ -228,10 +228,10 @@ bool move_within_terrain_surface(
     return move_z_diff(position, move_to, z, speed, max_z_diff, new_position, new_momentum);
 }
 
-bool move_within_terrain_surface(
-    struct Vec3 position, struct Vec3 direction, float speed,
-    float max_z_diff, struct Vec3* new_position, struct Vec3* new_momentum,
-    int object_height)
+bool move_within_terrain_surface(struct Vec3 position, struct Vec3 direction,
+                                 float speed, float max_z_diff,
+                                 struct Vec3* new_position, struct Vec3* new_momentum,
+                                 int object_height)
 {
     // attempt to move to location defined by direction * speed
     // if z_level diff too high, set momentum 0, copy position, return

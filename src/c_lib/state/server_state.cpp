@@ -34,8 +34,8 @@ void teardown_voxel_lists()
 struct Vec3 get_base_spawn_position()
 {
     // always start the base at the map center in fast map mode
-    if (strcmp(Options::map, "art") == 0) return vec3_init(0,0,0);
-    IF_ASSERT(base == NULL) return vec3_init(0,0,0);
+    if (strcmp(Options::map, "art") == 0) return vec3_init(0);
+    IF_ASSERT(base == NULL) return vec3_init(0);
 
     int h = 1;
     using Components::DimensionComponent;
@@ -160,19 +160,21 @@ void spawn_monsters(EntityType type, int n)
         DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
         GS_ASSERT(dims != NULL);
         if (dims != NULL) h = dims->get_integer_height();
-
-        Vec3 position;
-        position.x = randrange(0, map_dim.x-1);
-        position.y = randrange(0, map_dim.y-1);
-        int z = randrange(0, map_dim.z-1);
-        position.z = t_map::get_nearest_surface_block(position.x,
-            position.y, z, h);
-
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        IF_ASSERT(physics == NULL)
+        Vec3 position;
+        int tries = 0;
+        const int MAX_TRIES = 100;
+        do
         {
-            Entities::ready(obj);    // sets id
+            position.x = randrange(0, map_dim.x-1);
+            position.y = randrange(0, map_dim.y-1);
+            int z = randrange(0, map_dim.z-1);
+            position.z = t_map::get_nearest_surface_block(position.x, position.y, z, h);
+        } while (position.z <= 0 && tries < MAX_TRIES);
+        if (tries == MAX_TRIES || physics == NULL)
+        {
+            Entities::ready(obj);
             Entities::destroy(obj);
             break;
         }

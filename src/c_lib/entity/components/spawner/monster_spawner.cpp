@@ -11,16 +11,14 @@ namespace Components
 struct Vec3 MonsterSpawnerComponent::get_spawn_point(
     float spawned_object_height, float spawned_object_radius)
 {
-    Vec3 spawn_point = vec3_init(0,0,0);
+    Vec3 spawn_point = vec3_init(0);
 
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (physics == NULL) return spawn_point;
 
     Vec3 position = physics->get_position();
-
     float sx = position.x + ((randf() * this->radius * 2) - this->radius);
     sx = translate_point(sx);
-
     float sy = position.y + ((randf() * this->radius * 2) - this->radius);
     sy = translate_point(sy);
 

@@ -238,7 +238,6 @@ void tick()
             t_gen::place_native_plants(64);
     }
 
-
     // Meteors
     const int meteor_fall_rate = ONE_HOUR * 24;
     const int meteor_shower_rate = ONE_HOUR * 24;
@@ -263,7 +262,6 @@ void tick()
 
     //ServerState::spawn_items(2);
     ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
-    //ServerState::spawn_monsters(OBJECT_MONSTER_BOMB, 1);
     ServerState::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);
 
     ItemContainer::update_smelters();
