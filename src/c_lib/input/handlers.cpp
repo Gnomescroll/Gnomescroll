@@ -366,7 +366,7 @@ void init_input_state()
     input_state.full_chat = false;
     //input_state.hud = true;
     input_state.skeleton_editor = false;
-    input_state.terminal_is_opened = true;
+    input_state.terminal_is_open = true;
 
     input_state.can_jump = true;
     input_state.quit = false;
@@ -491,7 +491,7 @@ void terminal_key_down_handler(SDL_Event* event)
     switch (event->key.keysym.sym)
     {
         case SDLK_ESCAPE:
-            input_state.terminal_is_opened = false;
+            input_state.terminal_is_open = false;
             return;
         case SDLK_BACKSPACE:
             Hud::terminal_renderer.left();
@@ -1017,7 +1017,7 @@ void key_down_handler(SDL_Event* event)
                 break;
         }
     }
-    else if (input_state.terminal_is_opened)
+    else if (input_state.terminal_is_open)
         terminal_key_down_handler(event);
     else if (input_state.chat)
         chat_key_down_handler(event);
@@ -1182,7 +1182,7 @@ void key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_INSERT:
-            input_state.terminal_is_opened = !input_state.terminal_is_opened;
+            input_state.terminal_is_open = !input_state.terminal_is_open;
             break;
 
         case SDLK_BACKQUOTE:

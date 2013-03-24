@@ -20,7 +20,7 @@ struct InputState
     bool full_chat;
     bool skeleton_editor;
     bool equipped_sprite_adjuster;
-    bool terminal_is_opened;
+    bool terminal_is_open;
 
     bool can_jump;
     bool confirm_quit;
