@@ -40,11 +40,8 @@ class DestinationTargetingComponent: public TargetingComponent
 
     int get_ticks_to_destination(Vec3 position)
     {
-        if (vec3_equal(this->destination, position) ||
-            this->speed == 0.0f)
-        {
+        if (vec3_equal(this->destination, position) || this->speed == 0.0f)
             return 0;
-        }
         float len = vec3_length(vec3_sub(this->destination, position));
         int ttd = ceilf(len / this->speed);
         return ttd;
@@ -52,8 +49,7 @@ class DestinationTargetingComponent: public TargetingComponent
 
     void adjust_speed(struct Vec3 pos)
     {
-        if (this->ticks_to_destination <= 0 ||
-            vec3_equal(this->destination, pos))
+        if (this->ticks_to_destination <= 0 || vec3_equal(this->destination, pos))
         {
             this->speed = 0.0f;
             return;
@@ -70,10 +66,10 @@ class DestinationTargetingComponent: public TargetingComponent
 
     DestinationTargetingComponent() :
         TargetingComponent(COMPONENT_DESTINATION_TARGETING),
-        destination(vec3_init(0,0,0)),
+        destination(vec3_init(0)),
         path(NULL), mpath(0), ipath(0),
         stop_proximity(0.1f),
-        speed(1.0f), max_z_diff(128),
+        speed(1.0f), max_z_diff(64),
         destination_choice_x(1.0f), destination_choice_y(1.0f),
         at_destination(false),
         ticks_to_destination(1)

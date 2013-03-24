@@ -275,7 +275,7 @@ void server_tick_mob_robot_box(Entity* object)
         destination = vec3_add(position, vec3_init(float(dx)+randf(), float(dy)+randf(),0));
         // clamp
         destination.z = t_map::get_nearest_surface_block(destination.x, destination.y, destination.z);
-        if (destination.z < 0) destination.z = 0;
+        destination.z = GS_MAX(0, destination.z);
 
         Vec3 direction = vec3_sub(destination, position);
         float len = vec3_length(direction);

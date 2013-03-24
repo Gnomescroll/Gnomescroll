@@ -30,18 +30,14 @@ void DestinationTargetingComponent::choose_destination()
         free(this->path);
         this->path = NULL;
         struct Vec3i current = vec3i_init(position);
-        const float r2 = this->stop_proximity * this->stop_proximity;
         const int max_tries = 4;
         for (int i=0; i<max_tries && this->path == NULL; i++)
         {
             struct Vec3i delta = vec3i_init(0);
-            do
-            {
-                delta.x = randrange(this->destination_choice_x/2, this->destination_choice_x);
-                delta.y = randrange(this->destination_choice_y/2, this->destination_choice_y);
-            } while ((delta.x*delta.x + delta.y*delta.y) < r2);
+            delta.x = randrange(-this->destination_choice_x, this->destination_choice_x);
+            delta.y = randrange(-this->destination_choice_y, this->destination_choice_y);
             struct Vec3i end = vec3i_add(current, delta);
-            delta.z = t_map::get_nearest_surface_block(delta.x, delta.y, current.z);
+            end.z = t_map::get_nearest_surface_block(end.x, end.y, current.z);
             this->path = Path::get_path_3d_jump(current, end, this->mpath);
         }
         int height = 1;
@@ -73,37 +69,34 @@ void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
     normalize_vector(&this->target_direction);
 }
 
-// adjusts position & momentum by moving over the terrain surface
 bool DestinationTargetingComponent::move_on_surface()
-{
-    // get physics data
+{   // adjusts position & momentum by moving over the terrain surface
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return false;
 
     IF_ASSERT(this->speed == 0.0f)
     {
-        physics->set_momentum(vec3_init(0,0,0));
+        physics->set_momentum(vec3_init(0));
         return false;
     }
 
     // adjust position/momentum by moving along terrain surface
-    Vec3 new_position;
-    Vec3 new_momentum;
-
     Vec3 motion_direction = this->target_direction;
     motion_direction.z = 0.0f;
 
     IF_ASSERT(vec3_length_squared(motion_direction) == 0.0f)
     {
-        physics->set_momentum(vec3_init(0,0,0));
+        physics->set_momentum(vec3_init(0));
         return false;
     }
     normalize_vector(&motion_direction);
 
+    Vec3 new_position;
+    Vec3 new_momentum;
     bool moved = move_within_terrain_surface(physics->get_position(), motion_direction,
-                                            this->speed, this->max_z_diff,
-                                            &new_position, &new_momentum);
+                                             this->speed, this->max_z_diff,
+                                             &new_position, &new_momentum);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
@@ -128,7 +121,8 @@ bool DestinationTargetingComponent::check_at_destination()
     Vec3 dest = quadrant_translate_position(pos, this->destination);
     pos.z = 0;
     dest.z = 0;
-    this->at_destination = (vec3_distance_squared(pos, dest) <= this->stop_proximity*this->stop_proximity);
+    this->at_destination = (vec3_distance_squared(pos, dest) <=
+                            this->stop_proximity*this->stop_proximity);
     return this->at_destination;
 }
 
