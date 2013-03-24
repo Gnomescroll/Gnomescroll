@@ -486,6 +486,46 @@ void trigger_keys_held_down()
 
 /* Chat buffer */
 
+void terminal_key_down_handler(SDL_Event* event)
+{
+    switch (event->key.keysym.sym)
+    {
+        case SDLK_ESCAPE:
+            input_state.terminal_is_opened = false;
+            return;
+        case SDLK_BACKSPACE:
+            Hud::terminal_renderer.left();
+            Hud::terminal_renderer.add(' ');
+            Hud::terminal_renderer.left();
+            return;
+        case SDLK_RETURN:
+            Hud::terminal_renderer.down();
+            Hud::terminal_renderer.set_cursor_x(0);
+            return;
+        case SDLK_LEFT:
+            Hud::terminal_renderer.left();
+            return;
+        case SDLK_RIGHT:
+            Hud::terminal_renderer.right();
+            return;
+        case SDLK_UP:
+            Hud::terminal_renderer.up();
+            return;
+        case SDLK_DOWN:
+            Hud::terminal_renderer.down();
+            return;
+        default: break;
+    }
+
+    int t = getUnicodeValue(event->key.keysym);
+    t = (t) ? t : event->key.keysym.sym;
+
+    if (t < 0 || t > 127)
+        return;
+
+    Hud::terminal_renderer.add((char)t);
+}
+
 void chat_key_down_handler(SDL_Event* event)
 {
     using Chat::chat_client;
@@ -534,7 +574,6 @@ void chat_key_down_handler(SDL_Event* event)
         return;
 
     chat_client->input->add((char)t);
-    Hud::terminal_renderer.add((char)t);
 }
 
 void chat_key_up_handler(SDL_Event* event){}
@@ -692,19 +731,15 @@ void agent_key_down_handler(SDL_Event* event)
 
         case SDLK_LEFT:
             HudCubeSelector::cube_selector.left();
-            Hud::terminal_renderer.left();
             break;
         case SDLK_RIGHT:
             HudCubeSelector::cube_selector.right();
-            Hud::terminal_renderer.right();
             break;
         case SDLK_UP:
             HudCubeSelector::cube_selector.up();
-            Hud::terminal_renderer.up();
             break;
         case SDLK_DOWN:
             HudCubeSelector::cube_selector.down();
-            Hud::terminal_renderer.down();
             break;
 
         case SDLK_1:
@@ -982,6 +1017,8 @@ void key_down_handler(SDL_Event* event)
                 break;
         }
     }
+    else if (input_state.terminal_is_opened)
+        terminal_key_down_handler(event);
     else if (input_state.chat)
         chat_key_down_handler(event);
     else if (input_state.agent_inventory || input_state.container_block)
@@ -1144,7 +1181,7 @@ void key_down_handler(SDL_Event* event)
             toggle_admin_controls();
             break;
 
-        case SDLK_0:
+        case SDLK_INSERT:
             input_state.terminal_is_opened = !input_state.terminal_is_opened;
             break;
 

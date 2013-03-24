@@ -450,10 +450,10 @@ int physics_tick()
 
         // input
         poll_mouse();
-        // Make names clealer
-        process_events();           //RENAME THIS
-        get_key_state();            //RENAME THIS
-        trigger_keys_held_down();   //RENAME THIS
+        // Make names clearer
+        process_events();           // FIXME: RENAME THIS
+        get_key_state();            // FIXME: RENAME THIS
+        trigger_keys_held_down();   // FIXME: RENAME THIS
 
         poll_mouse();
         Toolbelt::tick();
