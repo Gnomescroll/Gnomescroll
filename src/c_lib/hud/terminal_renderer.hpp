@@ -16,6 +16,7 @@ class TerminalRenderer
     private:
         static const int CELL_SPAN = 20;
         static const int DIST_FROM_BOTT_EDGE = 257;
+        static const int MIN_CURSOR_SPAN = 4;
         int cursor_x;
         int cursor_y;        
         int curr_cursor_w;
@@ -33,8 +34,8 @@ class TerminalRenderer
     {
         cursor_x = 0;
         cursor_y = TERMINAL_MAX_CHARS_HIGH - 1; 
-        curr_cursor_w = 0;
-        curr_cursor_h = 0;
+        curr_cursor_w = MIN_CURSOR_SPAN;
+        curr_cursor_h = MIN_CURSOR_SPAN;
 
         prev_blink =_GET_MS_TIME();
         blink_status_visible = true;
@@ -161,21 +162,19 @@ class TerminalRenderer
     {
         curr_cursor_w++;
         if (curr_cursor_w > CELL_SPAN)
-            curr_cursor_w = 0;
+            curr_cursor_w = MIN_CURSOR_SPAN;
         curr_cursor_h++;
         if (curr_cursor_h > CELL_SPAN)
-            curr_cursor_h = 0;
+            curr_cursor_h = MIN_CURSOR_SPAN;
 
         // draw twice for an outline
         int mar = 1;  // margin
-        draw_rect(
-            COLOR_BLACK,
+        draw_rect(COLOR_BLACK,
             cursor_x*CELL_SPAN + (CELL_SPAN - curr_cursor_w) / 2 - mar,
             cursor_y*CELL_SPAN + (CELL_SPAN - curr_cursor_h) / 2 - mar + DIST_FROM_BOTT_EDGE - CELL_SPAN,
             curr_cursor_w + mar * 2,
             curr_cursor_h + mar * 2);
-        draw_rect(
-            COLOR_WHITE,
+        draw_rect(COLOR_WHITE,
             cursor_x*CELL_SPAN + (CELL_SPAN - curr_cursor_w) / 2,
             cursor_y*CELL_SPAN + (CELL_SPAN - curr_cursor_h) / 2 + DIST_FROM_BOTT_EDGE - CELL_SPAN,
             curr_cursor_w,
@@ -208,9 +207,9 @@ class TerminalRenderer
             int x = i % TERMINAL_MAX_CHARS_WIDE;
             int y = i / TERMINAL_MAX_CHARS_WIDE;
 
-            //if (blink_status_visible && /* selected --> */ x == cursor_x && y == cursor_y)
-            //    grid[i].set_color(COLOR_GREEN);
-            //else
+            if (x == cursor_x && y == cursor_y) // if selected
+                grid[i].set_color(Color(128-x*12, 0, 128+y*12, 205));
+            else
                 grid[i].set_color(Color(128-x*12, 0, 128+y*12));
 
             grid[i].draw();
