@@ -67,8 +67,6 @@ class HUD
 {
     public:
         bool inited;
-
-        // text objects
         Text* help;
         Text* dead;
         Text* fps;
@@ -83,10 +81,8 @@ class HUD
         Text* error_subtitle;
         Text* awesomium_message;
         Text* admin_controls;
-
         // scoreboard needs rewritten logic
         class Scoreboard* scoreboard;
-
         // chat queue
         class ChatRender* chat;    // contains text objects
 

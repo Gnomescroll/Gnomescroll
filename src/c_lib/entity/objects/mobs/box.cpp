@@ -301,7 +301,7 @@ void server_tick_mob_robot_box(Entity* object)
         {
             motion->en_route = false;
             motion->at_destination = true;
-            physics->set_momentum(vec3_init(0,0,0));
+            physics->set_momentum(vec3_init(0));
         }
     }
 
@@ -324,68 +324,11 @@ void server_tick_mob_robot_box(Entity* object)
 #if DC_CLIENT
 void client_tick_mob_robot_box(Entity* object)
 {
-    using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
-
-    using Components::MotionTargetingComponent;
-    MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
-
-    typedef Components::PositionMomentumPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM);
-
-    if (weapon->locked_on_target)
-    {   // target locked
-        //if (weapon->target_type != OBJECT_AGENT) return;    // TODO -- more objects
-
-        //using Components::VoxelModelComponent;
-        //VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component(COMPONENT_VOXEL_MODEL);
-        //Vec3 position = vox->get_center();
-
-        //Agents::Agent* agent = Agents::get_agent((AgentID)weapon->target_id);
-        //if (agent == NULL) return;
-        //Vec3 agent_position = quadrant_translate_position(position, agent->get_center());
-
-        //// face target
-        //Vec3 direction = vec3_sub(agent_position, position);
-        //if (vec3_length_squared(direction))
-        //{
-            //float theta,phi;
-            //normalize_vector(&direction);
-            //weapon->target_direction = direction;
-            //vec3_to_angles(direction, &theta, &phi);
-            //physics->set_angles(vec3_init(theta, phi, 0));
-        //}
-        return; // do nothing else
-    }
-
-    if (!motion->at_destination)
-    {   // check if at destination
-        Vec3 position = physics->get_position();
-        Vec3 dest = quadrant_translate_position(position, motion->destination);
-        float dist = vec3_distance_squared(position, dest);
-        if (dist < 1.0f)    // TODO Margin
-        {   // at destination, stop
-            motion->en_route = false;
-            motion->at_destination = true;
-            physics->set_momentum(vec3_init(0,0,0));
-        }
-    }
-
-    if (motion->en_route)
-    {   // move towards destination
-        //motion->move_on_surface();
-        // face in direction of movement
-        //float theta, phi;
-        //vec3_to_angles(motion->target_direction, &theta, &phi);
-        //physics->set_angles(vec3_init(theta, phi, 0));
-    }
-
 }
 #endif
 
 void tick_mob_robot_box(Entity* object)
 {
-    //return;
     #if DC_SERVER
     server_tick_mob_robot_box(object);
     #endif

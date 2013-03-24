@@ -271,7 +271,7 @@ void draw_hud_textures()
     // draw terminal background
     if (hud_draw_settings.terminal_is_opened)// && hud->inited && hud->chat != NULL && hud->chat->inited)
         terminal_renderer.draw_background();
-    
+
     // draw terminal cursor
     if (hud_draw_settings.terminal_is_opened)
         terminal_renderer.draw_cursor();
@@ -775,14 +775,14 @@ void ChatRender::draw_cursor()
     // draw twice for an outline
     int mar = 1;  // margin
     draw_rect(COLOR_BLACK,
-        cursor_x + (cursor_w - curr_cursor_w) / 2 - mar, 
-        cursor_y + (cursor_h - curr_cursor_h) / 2 - mar, 
-        curr_cursor_w + mar * 2, 
+        cursor_x + (cursor_w - curr_cursor_w) / 2 - mar,
+        cursor_y + (cursor_h - curr_cursor_h) / 2 - mar,
+        curr_cursor_w + mar * 2,
         curr_cursor_h + mar * 2);
     draw_rect(COLOR_WHITE,  // probably a contrasting color
-        cursor_x + (cursor_w - curr_cursor_w) / 2, 
-        cursor_y + (cursor_h - curr_cursor_h) / 2, 
-        curr_cursor_w, 
+        cursor_x + (cursor_w - curr_cursor_w) / 2,
+        cursor_y + (cursor_h - curr_cursor_h) / 2,
+        curr_cursor_w,
         curr_cursor_h);
 }
 
@@ -868,15 +868,15 @@ void ChatRender::update(bool timeout, bool other_players)
 
 
 ChatRender::ChatRender() :
+    curr_cursor_w(0),
+    curr_cursor_h(0),
     inited(false),
     input(NULL),
-    paging_offset(0), 
+    paging_offset(0),
     cursor_x(0.0f),
     cursor_y(0.0f),
     cursor_w(0.0f),
-    cursor_h(0.0f),
-    curr_cursor_w(0),
-    curr_cursor_h(0)
+    cursor_h(0.0f)
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
 }

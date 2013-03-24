@@ -7,14 +7,14 @@
 namespace Hud
 {
 
-const size_t TERMINAL_CHAR_WIDTH = 8;
-const size_t TERMINAL_CHAR_HEIGHT = 8;
-const size_t TERMINAL_BUFFER_SIZE = TERMINAL_CHAR_WIDTH * TERMINAL_CHAR_HEIGHT;
+const int TERMINAL_CHAR_WIDTH = 8;
+const int TERMINAL_CHAR_HEIGHT = 8;
+const int TERMINAL_BUFFER_SIZE = TERMINAL_CHAR_WIDTH * TERMINAL_CHAR_HEIGHT;
 
 class TerminalRenderer
 {
     private:
-        static const size_t CELL_SPAN = 20;
+        static const int CELL_SPAN = 20;
         static const int DIST_FROM_BOTT_EDGE = 255;
         int curr_cursor_w;
         int curr_cursor_h;
@@ -24,16 +24,16 @@ class TerminalRenderer
 
     public:
         int cursor_x;
-        int cursor_y;        
+        int cursor_y;
         HudText::Text* grid;
         InputBuffer input_buffer;
 
     // construct
     TerminalRenderer() :
-        input_buffer(TERMINAL_BUFFER_SIZE)
+        input_buffer((size_t)TERMINAL_BUFFER_SIZE)
     {
         cursor_x = 0;
-        cursor_y = 0; 
+        cursor_y = 0;
         curr_cursor_w = 0;
         curr_cursor_h = 0;
 
@@ -42,7 +42,7 @@ class TerminalRenderer
         grid = new HudText::Text[TERMINAL_BUFFER_SIZE];
         //IF_ASSERT(grid == NULL) return;           ???????maybe???????
 
-        for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++) 
+        for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++)
         {
             int x = i % TERMINAL_CHAR_WIDTH;
             int y = i / TERMINAL_CHAR_WIDTH;
@@ -71,7 +71,7 @@ class TerminalRenderer
 
             grid[i].text[0] = c;
             grid[i].set_scale(1.3f);
-            grid[i].set_position(x*CELL_SPAN, DIST_FROM_BOTT_EDGE + y*CELL_SPAN);        
+            grid[i].set_position(x*CELL_SPAN, DIST_FROM_BOTT_EDGE + y*CELL_SPAN);
             //grid[i].shadowed = true;
         }
     }
@@ -152,25 +152,27 @@ class TerminalRenderer
 
         // draw twice for an outline
         int mar = 1;  // margin
-        draw_rect(COLOR_BLACK,
-            cursor_x*CELL_SPAN + (CELL_SPAN - curr_cursor_w) / 2 - mar, 
-            cursor_y*CELL_SPAN + (CELL_SPAN - curr_cursor_h) / 2 - mar + DIST_FROM_BOTT_EDGE - CELL_SPAN, 
-            curr_cursor_w + mar * 2, 
+        draw_rect(
+            COLOR_BLACK,
+            cursor_x*CELL_SPAN + (CELL_SPAN - curr_cursor_w) / 2 - mar,
+            cursor_y*CELL_SPAN + (CELL_SPAN - curr_cursor_h) / 2 - mar + DIST_FROM_BOTT_EDGE - CELL_SPAN,
+            curr_cursor_w + mar * 2,
             curr_cursor_h + mar * 2);
-        draw_rect(COLOR_WHITE,
-            cursor_x*CELL_SPAN + (CELL_SPAN - curr_cursor_w) / 2, 
-            cursor_y*CELL_SPAN + (CELL_SPAN - curr_cursor_h) / 2 + DIST_FROM_BOTT_EDGE - CELL_SPAN, 
-            curr_cursor_w, 
+        draw_rect(
+            COLOR_WHITE,
+            cursor_x*CELL_SPAN + (CELL_SPAN - curr_cursor_w) / 2,
+            cursor_y*CELL_SPAN + (CELL_SPAN - curr_cursor_h) / 2 + DIST_FROM_BOTT_EDGE - CELL_SPAN,
+            curr_cursor_w,
             curr_cursor_h);
     }
 
     void draw_background()
     {
         // render the grid
-        for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++) 
+        for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++)
         {
-            int x = i % TERMINAL_CHAR_WIDTH;
-            int y = i / TERMINAL_CHAR_WIDTH;
+            //int x = i % TERMINAL_CHAR_WIDTH;
+            //int y = i / TERMINAL_CHAR_WIDTH;
             draw_rect(Color(17,17,17), grid[i].x, grid[i].y - CELL_SPAN, CELL_SPAN, CELL_SPAN);
         }
     }
@@ -183,9 +185,9 @@ class TerminalRenderer
             prev_blink = _GET_MS_TIME();
             blink_status_visible = !blink_status_visible;
         }
-    
+
         // render the grid
-        for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++) 
+        for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++)
         {
             int x = i % TERMINAL_CHAR_WIDTH;
             int y = i / TERMINAL_CHAR_WIDTH;

@@ -24,7 +24,7 @@ void load_mob_bomb_data()
     const int n_components = 11;
     #endif
     #if DC_CLIENT
-    const int n_components = 9;
+    const int n_components = 8;
     #endif
 
     entity_data->set_components(type, n_components);
@@ -33,12 +33,12 @@ void load_mob_bomb_data()
     entity_data->attach_component(type, COMPONENT_DIMENSION);
     entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
     entity_data->attach_component(type, COMPONENT_HIT_POINTS);
-    entity_data->attach_component(type, COMPONENT_STATE_MACHINE);
     entity_data->attach_component(type, COMPONENT_WAITING);
     entity_data->attach_component(type, COMPONENT_DESTINATION_TARGETING);
     entity_data->attach_component(type, COMPONENT_AGENT_TARGETING);
 
     #if DC_SERVER
+    entity_data->attach_component(type, COMPONENT_STATE_MACHINE);
     entity_data->attach_component(type, COMPONENT_EXPLOSION);
     entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
@@ -89,11 +89,6 @@ static void set_mob_bomb_properties(Entity* object)
     agent->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
     agent->max_lock_ticks = MONSTER_BOMB_MAX_TARGET_LOCK_TICKS;
 
-    using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)add_component_to_object(object, COMPONENT_STATE_MACHINE);
-    state->state = STATE_WAITING;
-    state->router = &bomb_state_router;
-
     using Components::WaitingComponent;
     WaitingComponent* waiting = (WaitingComponent*)add_component_to_object(object, COMPONENT_WAITING);
     waiting->wait_time = MONSTER_BOMB_IDLE_TIME;
@@ -123,6 +118,11 @@ static void set_mob_bomb_properties(Entity* object)
 
     item_drop->drop.set_max_drop_amounts("plasma_grenade", 10);
     item_drop->drop.add_drop_range("plasma_grenade", 1, 10, 0.8f);
+
+    using Components::StateMachineComponent;
+    StateMachineComponent* state = (StateMachineComponent*)add_component_to_object(object, COMPONENT_STATE_MACHINE);
+    state->state = STATE_WAITING;
+    state->router = &bomb_state_router;
     #endif
 
     #if DC_CLIENT
@@ -219,14 +219,10 @@ static void go_to_next_destination(class Entity* object)
     angles.x = vec3_to_theta(dest->target_direction);  // only rotate in x
     physics->set_angles(angles);
 }
-#endif
 
 static void waiting_to_in_transit(class Entity* object)
 {
-    #if DC_SERVER
     go_to_next_destination(object);
-    #endif
-
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_IN_TRANSIT;
@@ -273,35 +269,17 @@ static void chase_agent_to_in_transit(class Entity* object)
     GS_ASSERT(false);
 }
 
-// ticks to do while in a state
-
 static void waiting(class Entity* object)
 {
-    #if DC_SERVER
     using Components::WaitingComponent;
     WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
     wait->tick++;
     if (wait->ready())
         waiting_to_in_transit(object);
-    #endif
 }
 
 static void in_transit(class Entity* object)
 {
-    //#if DC_CLIENT
-    //if (!dest_target->at_destination)
-    //{
-        //dest_target->orient_to_target(physics->get_position());
-        //Vec3 angles = physics->get_angles();
-        //angles.x = vec3_to_theta(dest_target->target_direction); // only rotate in x
-        //physics->set_angles(angles);
-
-        //dest_target->move_on_surface();
-        //dest_target->check_at_destination();
-    //}
-    //#endif
-
-    #if DC_SERVER
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)object->get_component(COMPONENT_DESTINATION_TARGETING);
 
@@ -325,7 +303,6 @@ static void in_transit(class Entity* object)
         else
             dest_target->orient_to_target(physics->get_position());
     }
-    #endif
 }
 
 static void chase_agent(class Entity* object)
@@ -341,7 +318,6 @@ static void chase_agent(class Entity* object)
         return;
     }
 
-    #if DC_SERVER
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)
         object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -354,7 +330,6 @@ static void chase_agent(class Entity* object)
 
     // move towards target
     target->move_on_surface();
-    #endif
 }
 
 static void bomb_state_router(class Entity* object, EntityState state)
@@ -390,6 +365,7 @@ static void bomb_state_router(class Entity* object, EntityState state)
             break;
     }
 }
+#endif
 
 void tick_mob_bomb(Entity* object)
 {
@@ -402,12 +378,10 @@ void tick_mob_bomb(Entity* object)
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
     if (limiter->allowed()) object->broadcastState();
-    #endif
 
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
 
-    // increment state
     switch (machine->state)
     {
         case STATE_WAITING:
@@ -427,10 +401,8 @@ void tick_mob_bomb(Entity* object)
             break;
     }
 
-    #if DC_SERVER
-    // aggro nearby agent
     if (machine->state != STATE_CHASE_AGENT)
-    {
+    {   // aggro nearby agent
         using Components::PhysicsComponent;
         PhysicsComponent* physics = (PhysicsComponent*)
             object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
