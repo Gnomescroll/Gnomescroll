@@ -89,7 +89,8 @@ class PositionPhysicsComponent: public PhysicsComponent
     void call()
     {
         float delta = float(this->tick - this->previous_tick) / float(MOB_BROADCAST_RATE);
-        Vec3 new_position = vec3_interpolate(this->previous_position, this->position, delta);
+        Vec3 end = quadrant_translate_position(this->previous_position, this->position);
+        Vec3 new_position = vec3_interpolate(this->previous_position, end, delta);
         new_position = translate_position(new_position);
         if (vec3_equal(new_position, this->computed_position))
         {
