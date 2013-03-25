@@ -39,8 +39,11 @@ const size_t CHAT_NAME_SEPARATOR_LENGTH_MAX = strlen(CHAT_NAME_DEFAULT_SEPARATOR
 class ChatRender
 {
     private:
+        static const int MIN_CURSOR_SPAN = 0;
         int curr_cursor_w;
         int curr_cursor_h;
+        bool cursor_w_is_growing;
+        bool cursor_h_is_growing;
 
     public:
         bool inited;

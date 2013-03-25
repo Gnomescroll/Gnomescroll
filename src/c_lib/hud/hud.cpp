@@ -759,12 +759,43 @@ void ChatRender::set_cursor(const char* text, float x, float y)
 
 void ChatRender::draw_cursor()
 {
-    curr_cursor_w++;
-    if (curr_cursor_w > cursor_w)
-        curr_cursor_w = 0;
-    curr_cursor_h++;
-    if (curr_cursor_h > cursor_h)
-        curr_cursor_h = 0;
+    if (cursor_w_is_growing) 
+    {
+        curr_cursor_w++;
+        if (curr_cursor_w > cursor_w)
+        {
+            curr_cursor_w = cursor_w - 1;
+            cursor_w_is_growing = false;
+        }
+    }
+    else
+    {
+        curr_cursor_w--;
+        if (curr_cursor_w < MIN_CURSOR_SPAN)
+        {
+            curr_cursor_w = MIN_CURSOR_SPAN + 1;
+            cursor_w_is_growing = true;
+        }
+    }
+
+    if (cursor_h_is_growing) 
+    {
+        curr_cursor_h++;
+        if (curr_cursor_h > cursor_h)
+        {
+            curr_cursor_h = cursor_h - 1;
+            cursor_h_is_growing = false;
+        }
+    }
+    else
+    {
+        curr_cursor_h--;
+        if (curr_cursor_h < MIN_CURSOR_SPAN)
+        {
+            curr_cursor_h = MIN_CURSOR_SPAN + 1;
+            cursor_h_is_growing = true;
+        }
+    }
 
     // ******** old player-color based color ********
     //Color color = AGENT_DEFAULT_COLOR;
@@ -773,17 +804,21 @@ void ChatRender::draw_cursor()
     //if (you != NULL) color = you->status.color;
 
     // draw twice for an outline
-    int mar = 1;  // margin
+    int w_mar = 1;  // width margin (how far out from original profile we go)
+    int h_mar = 4;  // height
     draw_rect(COLOR_BLACK,
-        cursor_x + (cursor_w - curr_cursor_w) / 2 - mar,
-        cursor_y + (cursor_h - curr_cursor_h) / 2 - mar,
-        curr_cursor_w + mar * 2,
-        curr_cursor_h + mar * 2);
-    draw_rect(COLOR_WHITE,  // probably a contrasting color
-        cursor_x + (cursor_w - curr_cursor_w) / 2,
-        cursor_y + (cursor_h - curr_cursor_h) / 2,
-        curr_cursor_w,
-        curr_cursor_h);
+        cursor_x + (cursor_w - curr_cursor_w) / 2 - w_mar,
+        cursor_y + (cursor_h - curr_cursor_h) / 2 - h_mar,
+        curr_cursor_w + w_mar * 2,
+        curr_cursor_h + h_mar * 2);
+    
+    w_mar = 0;
+    h_mar = 3;
+    draw_rect(Color(255,255,255,128),  // probably a contrasting color
+        cursor_x + (cursor_w - curr_cursor_w) / 2 - w_mar,
+        cursor_y + (cursor_h - curr_cursor_h) / 2 - h_mar,
+        curr_cursor_w + w_mar * 2,
+        curr_cursor_h + h_mar * 2);
 }
 
 void ChatRender::draw_messages()
@@ -875,8 +910,10 @@ ChatRender::ChatRender() :
     paging_offset(0),
     cursor_x(0.0f),
     cursor_y(0.0f),
-    cursor_w(0.0f),
-    cursor_h(0.0f)
+    cursor_w(MIN_CURSOR_SPAN),
+    cursor_h(MIN_CURSOR_SPAN),
+    cursor_w_is_growing(true),
+    cursor_h_is_growing(true)
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
 }
