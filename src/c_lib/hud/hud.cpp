@@ -762,6 +762,7 @@ void ChatRender::draw_cursor()
     if (cursor_w_is_growing) 
     {
         curr_cursor_w++;
+
         if (curr_cursor_w > cursor_w)
         {
             curr_cursor_w = cursor_w - 1;
@@ -769,8 +770,9 @@ void ChatRender::draw_cursor()
         }
     }
     else
-    {
+    {  // shrink
         curr_cursor_w--;
+
         if (curr_cursor_w < MIN_CURSOR_SPAN)
         {
             curr_cursor_w = MIN_CURSOR_SPAN + 1;
@@ -781,6 +783,7 @@ void ChatRender::draw_cursor()
     if (cursor_h_is_growing) 
     {
         curr_cursor_h++;
+
         if (curr_cursor_h > cursor_h)
         {
             curr_cursor_h = cursor_h - 1;
@@ -788,8 +791,9 @@ void ChatRender::draw_cursor()
         }
     }
     else
-    {
+    {  // shrink
         curr_cursor_h--;
+
         if (curr_cursor_h < MIN_CURSOR_SPAN)
         {
             curr_cursor_h = MIN_CURSOR_SPAN + 1;
@@ -797,7 +801,7 @@ void ChatRender::draw_cursor()
         }
     }
 
-    // ******** old player-color based color ********
+    // ******** old way (based on player color) ********
     //Color color = AGENT_DEFAULT_COLOR;
     //using ClientState::player_agent;
     //class Agents::Agent* you = player_agent.you();
@@ -814,7 +818,7 @@ void ChatRender::draw_cursor()
     
     w_mar = 0;
     h_mar = 3;
-    draw_rect(Color(255,255,255,128),  // probably a contrasting color
+    draw_rect(Color(255,255,255,128),  // white is probably a contrasting color
         cursor_x + (cursor_w - curr_cursor_w) / 2 - w_mar,
         cursor_y + (cursor_h - curr_cursor_h) / 2 - h_mar,
         curr_cursor_w + w_mar * 2,

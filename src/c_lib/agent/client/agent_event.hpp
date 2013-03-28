@@ -58,6 +58,8 @@ class AgentEvent
     void fired_weapon_at_object(int id, EntityType type, int part);
     void fired_weapon_at_block(float x, float y, float z, CubeType cube, int side);
     void fired_weapon_at_nothing();
+    bool fired_weapon_common_stuff(Vec3 arm_center);
+    bool fired_weapon_common_stuff(Vec3 arm_center, Vec3 f);
     void melee_attack_object(int id, EntityType type, int part);
     void melee_attack_nothing();
     void fire_empty_weapon(int weapon_type);

@@ -260,11 +260,8 @@ void AgentEvent::end_mining_laser()
 
 void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
 {
-    Sound::play_3d_sound("fire_laser",
-        this->a->get_camera_position(), this->a->get_velocity());
-
     Vec3 f = this->a->forward_vector();
-
+    // handle any AGENT HIT feedback effects
     if (type == OBJECT_AGENT)
     {
         Agent* agent = Agents::get_agent((AgentID)id);
@@ -275,17 +272,12 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
             {
                 Vec3 c = vv->get_center();
                 Animations::blood_spray(c, f);
-                //Sound::play_3d_sound("pick_hit_agent",c, vec3_init(0,0,0));
+                //-----------------------------------------Sound::play_3d_sound("pick_hit_agent",c, vec3_init(0,0,0));
             }
         }
     }
 
-    if (this->a->vox == NULL) return;
-    // play laser anim out of arm
-    const float hitscan_speed = 200.0f;
-    Vec3 arm_center = this->a->arm_center();
-    f = vec3_scalar_mult(f, hitscan_speed);
-    Animations::create_hitscan_effect(arm_center, f);
+    if (!fired_weapon_common_stuff(this->a->arm_center())) return;
 }
 
 void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube, int side)
@@ -294,21 +286,10 @@ void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube,
     GS_ASSERT(is_boxed_point(y));
     GS_ASSERT(side >= 0 && side <= 6);
 
-    AgentState s = this->a->get_state();
-    s.z = this->a->camera_z();
-
-    Sound::play_3d_sound("fire_laser", s.x, s.y, s.z, s.vx, s.vy, s.vz);
-
-    if (this->a->vox == NULL) return;
-
-    // animate laser to target
-
-    // play laser anim out of arm
-    const float hitscan_speed = 200.0f;
-    //Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    // find starting point
     Vec3 arm_center = this->a->vox->get_node(5)->c;
     GS_ASSERT(is_boxed_position(arm_center));
-
+    
     // vector from camera to collision point
     Vec3 p = vec3_init(x,y,z);
     p = quadrant_translate_position(this->a->get_camera_position(), p);
@@ -316,31 +297,46 @@ void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube,
     Vec3 f = vec3_sub(p, arm_center);
     f = vec3_normalize(f);
 
-    f = vec3_scalar_mult(f, hitscan_speed);
-    Animations::create_hitscan_effect(arm_center, f);
+    if (!fired_weapon_common_stuff(arm_center, f)) return;
 
     // play block surface crumble
     Animations::block_damage(p, f, cube, side);
     Animations::terrain_sparks(p);
-    //Sound::play_3d_sound("laser_hit_block", x,y,z, 0,0,0);
+    //----------------------------------------------------------Sound::play_3d_sound("laser_hit_block", x,y,z, 0,0,0);
 }
 
 void AgentEvent::fired_weapon_at_nothing()
 {
-    AgentState s = this->a->get_state();
-    s.z = this->a->camera_z();
+    if (!fired_weapon_common_stuff(
+        this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c)) return;
+}
 
-    Sound::play_3d_sound("fire_laser", s.x, s.y, s.z, s.vx, s.vy, s.vz);
-
-    if (this->a->vox == NULL) return;
-
+bool AgentEvent::fired_weapon_common_stuff(Vec3 arm_center)
+{
     Vec3 f = this->a->forward_vector();
+    return fired_weapon_common_stuff(arm_center, f);
+}
+bool AgentEvent::fired_weapon_common_stuff(Vec3 arm_center, Vec3 f)
+{
+    if (this->a->vox == NULL) return false; // ASK ABOUT: in the at_block() case, this gets checked further down than it used to be
+    // used to be just after the 3 GS_ASSERTs that were at the top
 
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
     f = vec3_scalar_mult(f, hitscan_speed);
-    Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     Animations::create_hitscan_effect(arm_center, f);
+    //Animations::create_hitscan_effect(arm_center, f); // ASK ABOUT: in the other cases (this was from at_block), does f need to be normalized?
+
+    // sound
+    AgentState s = this->a->get_state();
+    // ASK ABOUT: *at_block() and *at_nothing() were using the line below (changing JUST z, but leaving x and y
+    //s.z = this->a->camera_z();
+
+    Sound::play_3d_sound("fire_laser", s.x, s.y, s.z, s.vx, s.vy, s.vz);
+    // ASK ABOUT: *at_object() was using the line below (bypassing "AgentState s")
+    // Sound::play_3d_sound("fire_laser", this->a->get_camera_position(), this->a->get_velocity());
+    
+    return true;
 }
 
 void AgentEvent::threw_grenade()
