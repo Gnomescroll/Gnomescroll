@@ -169,7 +169,7 @@ void spawn_monsters(EntityType type, int n)
         {
             position.x = randrange(0, map_dim.x-1);
             position.y = randrange(0, map_dim.y-1);
-            int z = randrange(0, map_dim.z-1);
+            int z = randrange(1, map_dim.z-1);
             position.z = t_map::get_nearest_surface_block(position.x, position.y, z, h);
         } while (position.z <= 0 && tries < MAX_TRIES);
         if (tries == MAX_TRIES || physics == NULL)

@@ -62,7 +62,7 @@ static void set_mob_spawner_properties(Entity* object)
     MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)add_component_to_object(object, COMPONENT_MONSTER_SPAWNER);
     spawner->radius = MONSTER_SPAWNER_SPAWN_RADIUS;
     spawner->set_max_children(MONSTER_SPAWNER_MAX_CHILDREN);
-    spawner->spawn_type = OBJECT_MONSTER_BOX; // allows any
+    spawner->spawn_type = OBJECT_MONSTER_BOX;
 
     #if DC_SERVER
     using Components::ItemDropComponent;

@@ -575,10 +575,10 @@ void Agent::update_legs()
     static float direction = -1;
 
     AgentControlState cs = this->get_current_control_state();
-    bool forward = (cs.cs & CS_FORWARD) !=0;
-    bool backward = (cs.cs & CS_BACKWARD) !=0;
-    bool left = (cs.cs & CS_LEFT) !=0;
-    bool right = (cs.cs & CS_RIGHT) !=0;
+    bool forward = (cs.cs & CS_FORWARD) != 0;
+    bool backward = (cs.cs & CS_BACKWARD) != 0;
+    bool left = (cs.cs & CS_LEFT) != 0;
+    bool right = (cs.cs & CS_RIGHT) != 0;
 
     static bool was_forward = false;
 

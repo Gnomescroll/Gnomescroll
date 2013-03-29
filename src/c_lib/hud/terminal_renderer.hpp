@@ -17,7 +17,7 @@ class TerminalRenderer
         static const int DIST_FROM_BOTT_EDGE = 257;
         static const int MIN_CURSOR_SPAN = 4;
         int cursor_x;
-        int cursor_y;        
+        int cursor_y;
         int curr_cursor_w;
         int curr_cursor_h;
         HudText::Text* grid;
@@ -32,7 +32,7 @@ class TerminalRenderer
         input_buffer((size_t)TERMINAL_BUFFER_SIZE)
     {
         cursor_x = 0;
-        cursor_y = TERMINAL_MAX_CHARS_HIGH - 1; 
+        cursor_y = TERMINAL_MAX_CHARS_HIGH - 1;
         curr_cursor_w = MIN_CURSOR_SPAN;
         curr_cursor_h = MIN_CURSOR_SPAN;
 
@@ -56,7 +56,7 @@ class TerminalRenderer
                 case 3: c = 'g'; break;
                 case 4: c = 'l'; break;
                 case 5: c = 'e'; break;
-                
+
                 case 8: c = 'I'; break;
                 case 9: c = 'N'; break;
                 case 10: c = 'S'; break;
@@ -65,7 +65,7 @@ class TerminalRenderer
                 case 13: c = 'T'; break;
                 case 14: c = ' '; break;
                 case 15: c = '='; break;
-                
+
                 case 24: c = 'T'; break;
                 case 25: c = 'E'; break;
                 case 26: c = 'R'; break;
@@ -80,9 +80,9 @@ class TerminalRenderer
             grid[i].text[0] = c;
             grid[i].set_scale(1.3f);
 
-            int offs = CELL_SPAN - grid[i].get_width() / 2; // offset for centering text
+            //int offs = CELL_SPAN - grid[i].get_width() / 2; // offset for centering text
             // get_width() seems to return zero... i guess maybe cuz not using set_text()?
-            grid[i].set_position(x*CELL_SPAN + 4, DIST_FROM_BOTT_EDGE + y*CELL_SPAN);        
+            grid[i].set_position(x*CELL_SPAN + 4, DIST_FROM_BOTT_EDGE + y*CELL_SPAN);
             //grid[i].shadowed = true;
         }
     }

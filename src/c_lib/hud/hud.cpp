@@ -759,7 +759,7 @@ void ChatRender::set_cursor(const char* text, float x, float y)
 
 void ChatRender::draw_cursor()
 {
-    if (cursor_w_is_growing) 
+    if (cursor_w_is_growing)
     {
         curr_cursor_w++;
 
@@ -780,7 +780,7 @@ void ChatRender::draw_cursor()
         }
     }
 
-    if (cursor_h_is_growing) 
+    if (cursor_h_is_growing)
     {
         curr_cursor_h++;
 
@@ -815,7 +815,7 @@ void ChatRender::draw_cursor()
         cursor_y + (cursor_h - curr_cursor_h) / 2 - h_mar,
         curr_cursor_w + w_mar * 2,
         curr_cursor_h + h_mar * 2);
-    
+
     w_mar = 0;
     h_mar = 3;
     draw_rect(Color(255,255,255,128),  // white is probably a contrasting color
@@ -909,15 +909,15 @@ void ChatRender::update(bool timeout, bool other_players)
 ChatRender::ChatRender() :
     curr_cursor_w(0),
     curr_cursor_h(0),
+    cursor_w_is_growing(true),
+    cursor_h_is_growing(true),
     inited(false),
     input(NULL),
     paging_offset(0),
     cursor_x(0.0f),
     cursor_y(0.0f),
     cursor_w(MIN_CURSOR_SPAN),
-    cursor_h(MIN_CURSOR_SPAN),
-    cursor_w_is_growing(true),
-    cursor_h_is_growing(true)
+    cursor_h(MIN_CURSOR_SPAN)
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
 }
