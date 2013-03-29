@@ -41,41 +41,16 @@ class TerminalRenderer
         grid = new HudText::Text[TERMINAL_BUFFER_SIZE];
         //IF_ASSERT(grid == NULL) return;           ???????maybe???????
 
+        const char default_message[] = "toggle  INSERT =        TERMINAL";
+
         for (int i = 0; i < TERMINAL_BUFFER_SIZE; i++)
         {
             int x = i % TERMINAL_MAX_CHARS_WIDE;
             int y = i / TERMINAL_MAX_CHARS_WIDE;
             grid[i].set_text(" ");
-
-            char c;
-            switch(i)
-            {
-                case 0: c = 't'; break;
-                case 1: c = 'o'; break;
-                case 2: c = 'g'; break;
-                case 3: c = 'g'; break;
-                case 4: c = 'l'; break;
-                case 5: c = 'e'; break;
-
-                case 8: c = 'I'; break;
-                case 9: c = 'N'; break;
-                case 10: c = 'S'; break;
-                case 11: c = 'E'; break;
-                case 12: c = 'R'; break;
-                case 13: c = 'T'; break;
-                case 14: c = ' '; break;
-                case 15: c = '='; break;
-
-                case 24: c = 'T'; break;
-                case 25: c = 'E'; break;
-                case 26: c = 'R'; break;
-                case 27: c = 'M'; break;
-                case 28: c = 'I'; break;
-                case 29: c = 'N'; break;
-                case 30: c = 'A'; break;
-                case 31: c = 'L'; break;
-                default: c = ' '; break;
-            }
+            char c = ' ';
+            if (i >= 0 && (size_t)i < strlen(default_message))
+                c = default_message[i];
 
             grid[i].text[0] = c;
             grid[i].set_scale(1.3f);
