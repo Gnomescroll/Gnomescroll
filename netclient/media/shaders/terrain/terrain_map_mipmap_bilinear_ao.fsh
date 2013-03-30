@@ -58,12 +58,16 @@ void main()
 
     //color = color* clut_light_texture
     
-    color = color*(texture2DArray(base_texture, texCoord.xyz).rgb);      
-    color = color*texture2D(clut_light_texture, Light).rgb;
+    vec4 tex = texture2DArray(base_texture, texCoord.xyz);
+
+    if(tex.a < 0.4) //alpha test
+    {
+        discard;
+    }
+ 
+    color = color*tex.rgb*texture2D(clut_light_texture, Light).rgb;
 
     //color = color * skyLight;
-
-
     //float color_power = color.length();
 
 /*

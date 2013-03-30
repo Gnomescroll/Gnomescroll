@@ -82,7 +82,7 @@ void load_block_dat()
     SpriteSheet c0 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_00.png");
     SpriteSheet c1 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_01.png");
     //SpriteSheet c2 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_02.png");
-    SpriteSheet c3 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_03.png");
+    //SpriteSheet c3 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_03.png");
     //SpriteSheet c4 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_04.png");
     //SpriteSheet c5 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_05.png");
     SpriteSheet iceflame = cube_texture_alias(MEDIA_PATH "sprites/terrain/iceflame_06.png");
@@ -287,7 +287,7 @@ void load_block_dat()
     set_max_damage(12);
 
     cube_def(SolidCube, "leaves2", CUBE_MATERIAL_DECORATION);
-    iso_texture(c3, 1,2); // blue terrain top
+    iso_texture(tree_00, 1,2); // blue
     push_texture();
     set_max_damage(12);
 
