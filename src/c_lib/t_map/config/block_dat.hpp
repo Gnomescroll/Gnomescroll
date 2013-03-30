@@ -81,7 +81,7 @@ void load_block_dat()
     using TextureSheetLoader::cube_texture_alias;
     SpriteSheet c0 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_00.png");
     SpriteSheet c1 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_01.png");
-    SpriteSheet c2 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_02.png");
+    //SpriteSheet c2 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_02.png");
     SpriteSheet c3 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_03.png");
     //SpriteSheet c4 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_04.png");
     //SpriteSheet c5 = cube_texture_alias(MEDIA_PATH "sprites/terrain/cell_05.png");
@@ -92,6 +92,7 @@ void load_block_dat()
 
     //trees
     SpriteSheet tree_00 = cube_texture_alias(MEDIA_PATH "sprites/terrain/tree_00.png", 16);
+    SpriteSheet tree_01 = cube_texture_alias(MEDIA_PATH "sprites/terrain/tree_01.png", 16);
 
     // Cell: this is an example of loading a 16x16 cube sheet into the 32x32 loader
     // just put 16 as a second argument and it will work
@@ -281,20 +282,17 @@ void load_block_dat()
     hud_def    (cc, 8,6);
 
     cube_def(SolidCube, "leaves1", CUBE_MATERIAL_DECORATION);
-    iso_texture(c3, 2,3); // maroon
+    iso_texture(tree_00, 1,1); // maroon
     push_texture();
     set_max_damage(12);
 
     cube_def(SolidCube, "leaves2", CUBE_MATERIAL_DECORATION);
-    //iso_texture(c3, 5,4); // dull blue
-    //iso_texture(c2, 4,1); // my blue recolor
-    iso_texture(c3, 5,2); // blue terrain top
+    iso_texture(c3, 1,2); // blue terrain top
     push_texture();
     set_max_damage(12);
 
     cube_def(SolidCube, "leaves3", CUBE_MATERIAL_DECORATION);
-    iso_texture(c2, 1,2); // purple
-    //iso_texture(c3, 7,4); // redbrown
+    iso_texture(tree_00, 1,3); // purple
     push_texture();
     set_max_damage(12);
 
@@ -440,46 +438,46 @@ void load_block_dat()
     cube_def(SolidCube, "plant_example_master", CUBE_MATERIAL_STONE);
     set_max_damage(128);
 
-    iso_texture(    tree_00, 1, 1);
-    side_texture(T, tree_00, 2, 2);
-    side_texture(B, tree_00, 2, 2);
+    iso_texture(    tree_01, 1, 1);
+    side_texture(T, tree_01, 2, 2);
+    side_texture(B, tree_01, 2, 2);
     push_texture();
 
-    iso_texture(    tree_00, 2, 1);
-    side_texture(T, tree_00, 2, 2);
-    side_texture(B, tree_00, 2, 2);
+    iso_texture(    tree_01, 2, 1);
+    side_texture(T, tree_01, 2, 2);
+    side_texture(B, tree_01, 2, 2);
     push_texture();
 
-    iso_texture(    tree_00, 3, 1);
-    side_texture(T, tree_00, 3, 2);
-    side_texture(B, tree_00, 3, 2);
+    iso_texture(    tree_01, 3, 1);
+    side_texture(T, tree_01, 3, 2);
+    side_texture(B, tree_01, 3, 2);
     push_texture();
 
-    iso_texture(    tree_00, 4, 1);
-    side_texture(T, tree_00, 4, 2);
-    side_texture(B, tree_00, 4, 2);
+    iso_texture(    tree_01, 4, 1);
+    side_texture(T, tree_01, 4, 2);
+    side_texture(B, tree_01, 4, 2);
     push_texture();
 
     cube_def(SolidCube, "plant_example_root", CUBE_MATERIAL_STONE);
-    iso_texture(    tree_00, 1, 2);
+    iso_texture(    tree_01, 1, 2);
     push_texture();
 
     cube_def(SolidCube, "plant_example_trunk", CUBE_MATERIAL_STONE);
-    iso_texture(    tree_00, 1, 3);
+    iso_texture(    tree_01, 1, 3);
     push_texture();
 
     cube_def(SolidCube, "plant_example_trunk_dead", CUBE_MATERIAL_STONE);
-    iso_texture(    tree_00, 2, 3);
+    iso_texture(    tree_01, 2, 3);
     push_texture();
 
     cube_def(SolidCube, "plant_example_leaves", CUBE_MATERIAL_STONE);
-    iso_texture(    tree_00, 1, 4);
+    iso_texture(    tree_01, 1, 4);
     push_texture();
-    iso_texture(    tree_00, 2, 4);
+    iso_texture(    tree_01, 2, 4);
     push_texture();
 
     cube_def(SolidCube, "plant_example_leaves_dead", CUBE_MATERIAL_STONE);
-    iso_texture(    tree_00, 3, 4);
+    iso_texture(    tree_01, 3, 4);
     push_texture();
 
 
