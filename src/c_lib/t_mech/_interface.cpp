@@ -510,8 +510,15 @@ char* mech_text_get(int mech_id)
 }
 
 #if DC_CLIENT
+//updates text on 
 void mech_text_update(int mech_id, int pos, int key)
 {
+    GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
+    GS_ASSERT(mech_list->mla[mech_id].id != -1);
+    GS_ASSERT(get_mech_attribute(mech_list->mla[mech_id].type).class_type == MECH_SIGN);
+    IF_ASSERT(mech_list->mla[mech_id].text != NULL) return;
+    IF_ASSERT(pos < MECH_TEXT_SIZE_MAX) return;
+    //send packet
 
 }
 #endif
