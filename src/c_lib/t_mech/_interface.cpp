@@ -156,6 +156,7 @@ static bool unpack_mech(struct Mech &m, class mech_create_StoC &p)
     m.x = p.x;
     m.y = p.y;
     m.z = p.z;
+    m.text = NULL;
     return _mech_update(m);
 }
 
@@ -337,6 +338,7 @@ MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int side)
     m.z = z;
     m.growth_ttl = mech_attributes[type].growth_ttl;
     m.side = side;
+    m.text = NULL;
 
     class MechAttribute* ma = get_mech_attribute(type);
     if (ma == NULL) return MCF_NOT_USED;
@@ -359,7 +361,6 @@ MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int side)
                 GS_ASSERT(t_map::isSolid(x,y-1,z))
             if(m.side == 5)
                 GS_ASSERT(t_map::isSolid(x,y+1,z))
-
             break;
         case MECH_WIRE:
         case MECH_SWITCH:

@@ -51,6 +51,8 @@ struct MechList
     void add_mech(int id, const struct Mech &m)
     {
         GS_ASSERT(mln < MECH_HARD_MAX);
+        
+        GS_ASSERT(m.text == NULL);
 
         while (id >= mlm)
         {
@@ -114,6 +116,9 @@ struct MechList
     {
         IF_ASSERT(id < 0 || id >= this->mlm) return false;
         IF_ASSERT(mla[id].id == -1) return false;
+
+        if(mla[id].text != NULL)
+            free(mla[id].text);
 
         mla[id].id = -1;
         mln--;

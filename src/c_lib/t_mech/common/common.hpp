@@ -61,6 +61,7 @@ typedef enum
 }   MechSpriteIndex;
 
 int NULL_MECH_SIDE = 0xFF;
+const int MECH_TEXT_SIZE_MAX = 8*8;
 
 struct Mech
 {
@@ -84,6 +85,8 @@ struct Mech
     float offset_y;
 
     int growth_ttl;
+
+    void* text; //stuff
 };
 
 class MechAttribute

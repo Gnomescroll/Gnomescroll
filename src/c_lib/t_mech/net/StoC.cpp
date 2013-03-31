@@ -48,6 +48,65 @@ void mech_delete_StoC::handle()
     mech_list->remove_mech(id);
     //mech_list->needs_update = true;
 };
+
+
+//signs
+
+
+//uint16_t id;
+//char msg[MECH_TEXT_SIZE_MAX+1];
+void mech_text_StoC::handle()
+{
+    for (int i=0; i<MECH_TEXT_SIZE_MAX; i++)
+    {   // convert tabs to a space
+        //if (this->msg[i] == '\t')
+        //    this->msg[i] = ' ';
+    }
+
+    msg[MECH_TEXT_SIZE_MAX] = '\0';
+
+    IF_ASSERT(id < 0 || id >= mech_list->mlm) return;
+    GS_ASSERT(mech_list->mla[id].id != -1);
+    struct Mech& m = mech_list->mla[id];
+
+    GS_ASSERT(m.text == NULL);
+
+    m.text = (void*) calloc(1, MECH_TEXT_SIZE_MAX+1);
+    memcpy(m.text, msg, MECH_TEXT_SIZE_MAX+1);
+};
+
+/*
+    for (int i=0; i<CHAT_MESSAGE_SIZE_MAX; i++)
+    {   // convert tabs to a space
+        if (this->msg[i] == '\t')
+            this->msg[i] = ' ';
+    }
+
+    msg[CHAT_MESSAGE_SIZE_MAX] = '\0';
+*/
+
+void mech_text_update_StoC::handle()
+{
+/*
+    for (int i=0; i<MECH_TEXT_SIZE_MAX; i++)
+    {   // convert tabs to a space
+        //if (this->msg[i] == '\t')
+        //    this->msg[i] = ' ';
+    }
+
+    msg[MECH_TEXT_SIZE_MAX] = '\0';
+
+    IF_ASSERT(id < 0 || id >= mech_list->mlm) return;
+    GS_ASSERT(mech_list->mla[id].id != -1);
+    struct Mech& m = mech_list->mla[id];
+
+    GS_ASSERT(m.text == NULL);
+
+    m.text = (void*) calloc(1, MECH_TEXT_SIZE_MAX+1);
+    memcpy(m.text, msg, MECH_TEXT_SIZE_MAX+1);
+*/
+};
+
 #endif
 
 
