@@ -6,8 +6,9 @@
 
 //uniform sampler2D base_texture;
 
-uniform sampler3D clut_texture;
 uniform sampler2D base_texture;
+uniform sampler3D clut_texture;
+
 
 varying vec2 texCoord;
 
