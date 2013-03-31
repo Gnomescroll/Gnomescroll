@@ -59,8 +59,8 @@ void mech_text_StoC::handle()
 {
     for (int i=0; i<MECH_TEXT_SIZE_MAX; i++)
     {   // convert tabs to a space
-        //if (this->msg[i] == '\t')
-        //    this->msg[i] = ' ';
+        if (this->msg[i] == 0x00)
+            this->msg[i] = ' ';
     }
 
     msg[MECH_TEXT_SIZE_MAX] = '\0';
@@ -73,6 +73,8 @@ void mech_text_StoC::handle()
 
     m.text = (void*) calloc(1, MECH_TEXT_SIZE_MAX+1);
     memcpy(m.text, msg, MECH_TEXT_SIZE_MAX);
+
+    printf("mech_text: id= %d, text= %s \n", id, m.text);
 };
 
 /*

@@ -364,6 +364,15 @@ MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int side)
                 GS_ASSERT(t_map::isSolid(x,y-1,z))
             if(m.side == 5)
                 GS_ASSERT(t_map::isSolid(x,y+1,z))
+
+            m.text = calloc(MECH_TEXT_SIZE_MAX+1, 1);
+            char inc = '0'
+            for(int i=0; i < MECH_TEXT_SIZE_MAX, i++)
+            {
+                ((char*)m.text)[i] = inc;
+                inc++;
+            }
+
             break;
         case MECH_WIRE:
         case MECH_SWITCH:
