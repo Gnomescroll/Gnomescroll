@@ -52,4 +52,9 @@ int count_mech(MechType type);
 static void pack_mech(struct Mech &m, class mech_create_StoC &p);
 #endif
 
+//text
+char* mech_text_get(int mech_id);
+#if DC_CLIENT
+void mech_text_update(int mech_id, int pos, int key);
+#endif
 }   // t_mech

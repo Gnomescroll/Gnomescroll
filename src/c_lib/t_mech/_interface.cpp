@@ -503,6 +503,19 @@ int count_mech(MechType type)
     return mech_list->count(type);
 }
 
+char* mech_text_get(int mech_id)
+{
+    GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
+    return (char*) mech_list->mla[mech_id].text;
+}
+
+#if DC_CLIENT
+void mech_text_update(int mech_id, int pos, int key)
+{
+
+}
+#endif
+
 
 #endif
 
