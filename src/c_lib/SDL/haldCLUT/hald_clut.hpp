@@ -247,3 +247,71 @@ int generate_clut_texture()
     return _texture_id;
 }
 
+
+
+int generate_clut_texture2()
+{
+
+    static unsigned int _texture_id = 0;
+    if (_texture_id != 0)
+        return _texture_id;
+
+    //char *file_name = "custom_hald_clut.tga";
+    //int i;
+    int level = 8;
+    float *data;
+
+    data = generate_identity(level);
+    IF_ASSERT(data == NULL) return 0;
+
+    for (int i = 0; i < level * level * level * level * level * level; i++)
+    {
+    //    correction_end_twist(&data[i * 3], 0.3f);
+    //  correction_mono_edge(&data[i * 3], 1);
+    //  correction_desaturate_darks(&data[i * 3]);
+    //  correction_dark_color(&data[i * 3], 0.6, 0.3, 1);
+      correction_deep_dark_color(&data[i * 3], 0.6, 0.3, 1);
+    }
+    for (int i = 0; i < 3 * level * level * level * level * level * level; i++)
+    {
+        if (data[i] > 1)
+            data[i] = 1;
+        if (data[i] < 0)
+            data[i] = 0;
+    }
+
+
+
+    int w = level*level;
+    int h = level*level;
+    int d = level*level;
+
+    glGenTextures(1, &_texture_id);
+
+    glEnable(GL_TEXTURE_3D);
+
+    glBindTexture(GL_TEXTURE_3D, _texture_id);
+    glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    //GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
+    //GLuint internalFormat = GL_SRGB8_ALPHA8; //GL_RGBA;
+    GLuint internalFormat = GL_RGB;
+    GLuint format = GL_RGB;
+    //glTexImage3D(GL_TEXTURE_3D, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, data); //
+    glTexImage3D(GL_TEXTURE_3D, 0, internalFormat, w, h, d, 0, format, GL_FLOAT, data); //
+
+    //p_glTexImage3DEXT(GL_TEXTURE_3D, 0, GL_RGB, x, y, z, 0, GL_RGB, GL_FLOAT, data);
+
+    glDisable(GL_TEXTURE_3D);
+
+    CHECK_GL_ERROR();
+    GS_ASSERT(_texture_id != 0);
+
+    free(data);
+
+    return _texture_id;
+}

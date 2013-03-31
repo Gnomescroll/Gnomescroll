@@ -15,6 +15,8 @@
 
 uniform float CameraPosition;
 
+varying float fogFragDepth;
+
 attribute vec2 InTexCoord;
 attribute vec4 InBrightness;
 
@@ -25,4 +27,5 @@ void main(void)
 {                      
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     texCoord = InTexCoord;
+    fogFragDepth = distance(gl_Vertex.xy, gl_ModelViewMatrixInverse[3].xy);
 }

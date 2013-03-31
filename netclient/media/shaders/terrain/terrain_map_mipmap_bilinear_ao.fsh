@@ -49,15 +49,9 @@ void main()
 */
     vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
     vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
-
     float tmp = dot(vx, lightMatrix * vy);
 
     vec3 color = tmp*inColor;
-
-    //color = color*texture2D(clut_light_texture, vec2(0.05, 0.5)).rgb;
-
-    //color = color* clut_light_texture
-    
     vec4 tex = texture2DArray(base_texture, texCoord.xyz);
 
     if(tex.a < 0.4) //alpha test
@@ -76,16 +70,16 @@ void main()
     const float desat = 0.50;
     color = mix(color, cp, desat);
 */
+
 /*
     const float saturation = 0.50;
     color = color + saturation*color*texture2D(clut_light_texture, Light).rgb;
 */
 
     color = pow(color, gamma_factor3);
-
     //color = color*texture2D(clut_light_texture, Light).rgb;
-
     //color = texture2D(clut_light_texture, Light).rgb;
+
     const float clut_start = 64;
     const float _clut_depth = 1.0/32.0;
 
