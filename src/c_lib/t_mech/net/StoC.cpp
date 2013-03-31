@@ -87,24 +87,21 @@ void mech_text_StoC::handle()
 
 void mech_text_update_StoC::handle()
 {
-/*
-    for (int i=0; i<MECH_TEXT_SIZE_MAX; i++)
-    {   // convert tabs to a space
-        //if (this->msg[i] == '\t')
-        //    this->msg[i] = ' ';
-    }
-
-    msg[MECH_TEXT_SIZE_MAX] = '\0';
-
     IF_ASSERT(id < 0 || id >= mech_list->mlm) return;
     GS_ASSERT(mech_list->mla[id].id != -1);
     struct Mech& m = mech_list->mla[id];
 
-    GS_ASSERT(m.text == NULL);
+    GS_ASSERT(m.text != NULL);
+    if(m.text == NULL)
+        return;
 
-    m.text = (void*) calloc(1, MECH_TEXT_SIZE_MAX+1);
-    memcpy(m.text, msg, MECH_TEXT_SIZE_MAX+1);
-*/
+    GS_ASSERT(pos < MECH_TEXT_SIZE_MAX);
+    if(pos >= MECH_TEXT_SIZE_MAX)
+        return;
+
+    ((char*)m.text)[pos] = key;
+
+    printf("set_text: mech %d, pos %d set to letter %d \n", id, pos, key);
 };
 
 #endif
