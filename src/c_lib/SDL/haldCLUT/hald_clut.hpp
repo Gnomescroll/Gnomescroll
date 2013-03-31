@@ -266,11 +266,11 @@ int generate_clut_texture2()
 
     for (int i = 0; i < level * level * level * level * level * level; i++)
     {
-    //    correction_end_twist(&data[i * 3], 0.3f);
+        correction_end_twist(&data[i * 3], 0.3f);
     //  correction_mono_edge(&data[i * 3], 1);
     //  correction_desaturate_darks(&data[i * 3]);
     //  correction_dark_color(&data[i * 3], 0.6, 0.3, 1);
-      correction_deep_dark_color(&data[i * 3], 0.6, 0.3, 1);
+    //  correction_deep_dark_color(&data[i * 3], 0.6, 0.3, 1);
     }
     for (int i = 0; i < 3 * level * level * level * level * level * level; i++)
     {
