@@ -386,7 +386,7 @@ class MechListRenderer
 
         GLint base_texture = glGetUniformLocation(shader.shader->shader, "base_texture");
         GLint clut_texture = glGetUniformLocation(shader.shader->shader, "clut_texture");
-        //GLint clut_light_texture = glGetUniformLocation(shader.shader->shader, "clut_light_texture");
+        GLint clut_light_texture = glGetUniformLocation(shader.shader->shader, "clut_light_texture");
 
         GS_ASSERT(clut_texture != 0);
         GS_ASSERT(base_texture != 0);
@@ -396,7 +396,7 @@ class MechListRenderer
 
         glUniform1i(base_texture, 1); //Texture unit 0 is for base_texture
         glUniform1i(clut_texture, 2); //Texture unit 1 is for clut_texture
-        //glUniform1i(clut_light_texture, 3); //Texture unit 2 is for base_texture
+        glUniform1i(clut_light_texture, 3); //Texture unit 2 is for base_texture
 
 
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -417,8 +417,8 @@ class MechListRenderer
         glBindTexture(GL_TEXTURE_3D, 0);
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-        //glActiveTexture(GL_TEXTURE3);
-        //glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
         glActiveTexture(GL_TEXTURE0);
 
         //glBindTexture(GL_TEXTURE_2D, 0);

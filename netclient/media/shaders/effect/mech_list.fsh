@@ -4,12 +4,17 @@
 #extension GL_EXT_gpu_shader4 : enable
 #endif
 
-//uniform sampler2D base_texture;
+#ifdef GL_EXT_gpu_shader4
+    flat varying vec2 Light;
+#else
+    varying vec2 Light;
+#endif
 
 varying float fogFragDepth;
 
 uniform sampler2D base_texture;
 uniform sampler3D clut_texture;
+uniform sampler2D clut_light_texture;
 
 
 varying vec2 texCoord;
@@ -21,6 +26,7 @@ void main()
 {
 	vec4 tex = texture2D(base_texture, texCoord.xy);
 	vec3 color = tex.rgb;
+	color = color*texture2D(clut_light_texture, Light);
 
     vec3 color_clut = texture3D(clut_texture, color); //clut correction
 

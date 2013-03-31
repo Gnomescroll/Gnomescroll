@@ -45,7 +45,6 @@ varying vec3 texCoord;
 varying vec3 inColor;
 varying float fogFragDepth;
 
-
 void main(void) 
 {
     vec4 v = vec4(InVertex);
