@@ -85,10 +85,9 @@ void handle_explosive_block(int x, int y, int z);
 
 int get_rad_level(const struct Vec3i& pos);
 
-/*
-    Lighting
-*/
-int get_skylight(int x, int y, int z);
 #endif
+
+int get_envlight(int x, int y, int z);
+int get_skylight(int x, int y, int z);
 
 }   // t_map
