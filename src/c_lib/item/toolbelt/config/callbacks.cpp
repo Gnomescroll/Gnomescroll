@@ -410,6 +410,36 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
+    //const int max_dist = 4.0f;
+    //int b[3];
+    
+
+
+    int sp[3];
+    int op[3];
+    //int s[3];
+    float distance = 0;
+
+    int side = a->get_facing_side(sp, op, &distance);
+
+    //bool collided = a->nearest_open_block(max_dist, b);
+    if (side < 0) return;
+
+    printf("%d %d %d: side %d \n", op[0],op[1],op[2], side);
+
+    MechType mech_type = t_mech::get_mech_type_dat("terminal_basic");
+    MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
+    t_mech::print_mech_create_failure_code(code);
+
+    //int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
+
+
+#if 0
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_PLANT_PLACER);
+
+    Agents::Agent* a = Agents::get_agent(agent_id);
+    IF_ASSERT(a == NULL) return;
+
     const int max_dist = 4.0f;
     int b[3];
     bool collided = a->nearest_open_block(max_dist, b);
@@ -422,8 +452,8 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
     //printf("plant_placer: %d %d %d \n", b[0],b[1],b[2]);
 
     t_plant::create_plant(b[0],b[1],b[2], 0);   //make plant type variable in future
+#endif
 }
 
 #endif
-
 }    // Toolbelt

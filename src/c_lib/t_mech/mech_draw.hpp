@@ -772,7 +772,7 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     float _for = 0.9f / 2.0f;
 
     int side = m.side;
-    side = 3;
+    //side = 3;
 
     struct Vec3 vf = vof[side];
     struct Vec3 vu = vou[side];

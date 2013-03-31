@@ -324,19 +324,19 @@ void print_mech_create_failure_code(MechCreateFailureCode code)
     printf("\n");
 }
 
-MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int subtype)
+MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int side)
 {
     MechCreateFailureCode ret = can_place_mech(x,y,z, type, 0);
     if (ret != MCF_OK) return ret;
 
     struct Mech m;
     m.type = type;
-    m.subtype = subtype;
+    m.subtype = 0;
     m.x = x;
     m.y = y;
     m.z = z;
     m.growth_ttl = mech_attributes[type].growth_ttl;
-    m.side = NULL_MECH_SIDE;
+    m.side = side;
 
     class MechAttribute* ma = get_mech_attribute(type);
     if (ma == NULL) return MCF_NOT_USED;
@@ -347,22 +347,19 @@ MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int subtyp
         case MECH_MYCELIUM:
             break;
         case MECH_SIGN:
-            if(t_map::isSolid(x-1,y,z))
-            {
-                m.side = 2;
-            }
-            else if(t_map::isSolid(x+1,y,z))
-            {
-                m.side = 3;
-            }
-            else if(t_map::isSolid(x,y+1,z))
-            {
-                m.side = 4;
-            }
-            else if(t_map::isSolid(x,y-1,z))
-            {
-                m.side = 5;
-            }
+            if(m.side == 0)
+                GS_ASSERT(t_map::isSolid(x,y,z-1))
+            if(m.side == 1)
+                GS_ASSERT(t_map::isSolid(x,y,z+1))
+            if(m.side == 2)
+                GS_ASSERT(t_map::isSolid(x-1,y,z))
+            if(m.side == 3)
+                GS_ASSERT(t_map::isSolid(x+1,y,z))
+            if(m.side == 4)
+                GS_ASSERT(t_map::isSolid(x,y-1,z))
+            if(m.side == 5)
+                GS_ASSERT(t_map::isSolid(x,y+1,z))
+
             break;
         case MECH_WIRE:
         case MECH_SWITCH:
@@ -376,7 +373,7 @@ MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int subtyp
 
 MechCreateFailureCode create_mech(int x, int y, int z, MechType type)
 {
-    return create_mech(x, y, z, type, 0);
+    return create_mech(x, y, z, type, NULL_MECH_SIDE);
 }
 
 MechCreateFailureCode create_crystal(int x, int y, int z, MechType type)

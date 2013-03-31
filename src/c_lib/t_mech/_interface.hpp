@@ -41,7 +41,7 @@ void force_mech_growth(int mech_id); //forces growth cycle
 
 MechCreateFailureCode create_crystal(int x, int y, int z, MechType type);
 MechCreateFailureCode create_mech(int x, int y, int z, MechType type);
-MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int subtype);
+MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int side);
 
 void send_client_mech_list(ClientID client_id);
 void handle_block_removal(int x, int y, int z); //react to block destruction
