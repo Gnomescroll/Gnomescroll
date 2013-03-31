@@ -380,7 +380,7 @@ class MechListRenderer
         glBindTexture(GL_TEXTURE_2D, shader.texture1);
 
         glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_3D, t_map::generate_clut_texture());
+        glBindTexture(GL_TEXTURE_3D, generate_clut_texture());
 
         //glBindTexture(GL_TEXTURE_2D, shader.texture1);
 

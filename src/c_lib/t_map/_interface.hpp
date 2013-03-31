@@ -58,6 +58,7 @@ void get_requested_block_position(int* x, int* y, int* z);
 bool is_last_requested_block(int x, int y, int z);
 extern unsigned int requested_block_damage;
 extern CubeType requested_cube_type;
+
 #endif
 
 #if DC_SERVER
