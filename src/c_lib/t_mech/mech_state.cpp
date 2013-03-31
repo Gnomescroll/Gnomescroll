@@ -33,15 +33,15 @@ void MechList::send_mech_list_to_client(ClientID client_id)
         class mech_create_StoC p;
         pack_mech(mla[i], p);
         p.sendToClient(client_id);
+
+        if(mla[i].text != NULL)
+        {
+            class mech_text_StoC p;
+            memcpy(p.msg, mla[i].text, MECH_TEXT_SIZE_MAX);
+            p.sendToClient(client_id);
+        }
     }
 
-    for (int i=0; i<mlm; i++)
-    {
-        if (mla[i].id == -1 || mla[i].text == NULL) continue;
-        class mech_text_StoC p;
-        //pack text
-        p.sendToClient(client_id);
-    }
 }
 
 void MechList::server_add_mech(struct Mech &m)
