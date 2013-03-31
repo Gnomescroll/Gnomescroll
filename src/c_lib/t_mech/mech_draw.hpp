@@ -384,6 +384,9 @@ class MechListRenderer
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_3D, generate_clut_texture2());
 
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_3D, generate_clut_texture2());
+
         GLint base_texture = glGetUniformLocation(shader.shader->shader, "base_texture");
         GLint clut_texture = glGetUniformLocation(shader.shader->shader, "clut_texture");
         GLint clut_light_texture = glGetUniformLocation(shader.shader->shader, "clut_light_texture");

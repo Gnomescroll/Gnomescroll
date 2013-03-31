@@ -117,6 +117,10 @@ bool c_lib_inited = false;
 #include <SDL/draw_functions.cpp>
 #include <SDL/SDL_functions.cpp>
 #include <SDL/png_save.cpp>
+
+#include <SDL/haldCLUT/hald_clut.hpp> //should be .cpp
+#include <SDL/light/light_texture.hpp>
+
 //#include <SDL/mesh_loader/obj_loader.cpp>
 
 #include <t_mob/_include.hpp>
