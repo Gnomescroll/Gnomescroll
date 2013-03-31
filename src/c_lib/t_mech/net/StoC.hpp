@@ -96,7 +96,9 @@ class mech_text_update_StoC: public MapMessagePacketToClient<mech_text_update_St
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_string(msg, MECH_TEXT_SIZE_MAX+1, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&pos, buff, buff_n, pack);
+        pack_u8(&key, buff, buff_n, pack);
     }
 
     void handle();

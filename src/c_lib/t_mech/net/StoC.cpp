@@ -114,6 +114,10 @@ void mech_text_update_StoC::handle()
 void mech_create_StoC::handle() {}
 void mech_type_change_StoC::handle() {}
 void mech_delete_StoC::handle() {}
+
+void mech_text_StoC::handle() {}
+void mech_text_update_StoC::handle() {}
+
 #endif
 
 }   // t_mech
