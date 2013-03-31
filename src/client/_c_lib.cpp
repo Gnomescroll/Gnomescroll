@@ -395,7 +395,7 @@ int init_c_lib(int argc, char* argv[])
     HudCubeSelector::init();
 
     t_map::init_t_map();
-    t_map::generate_light_texture();
+    generate_light_texture();
 
     init_configs();
 

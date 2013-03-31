@@ -23,11 +23,13 @@ class MechListVertexList
         // visibility will default to private unless you specify it
         struct Vertex
         {
-            float x,y,z;
-            float tx,ty;
-            float btx,bty;  //texture cordinates for bilinear interpolation
-            unsigned char color[4];
-            unsigned char brightness[4];
+            float x,y,z; //0
+            float tx,ty; //12
+            float btx,bty; //20  //texture cordinates for bilinear interpolation
+            unsigned char color[4]; //28
+            unsigned char brightness[4]; //32
+            unsigned char light[4]; //36
+
         };
 
         static const int stride = sizeof(Vertex);
@@ -64,6 +66,12 @@ class MechListVertexList
     {
         v.tx = tx;
         v.ty = ty;
+    }
+
+    void light(int l0, int l1)
+    {
+        v.light[0] = 8 + l0*16;
+        v.light[1] = 8 + l1*16;
     }
 
     void push_vertex()
@@ -122,6 +130,7 @@ class MechListShader
     //attributes
     int TexCoord;
     int Brightness;
+    int InLight;
 
     MechListShader()
     : s(NULL), shader(NULL)
@@ -149,6 +158,7 @@ class MechListShader
 
         TexCoord    =       shader->get_attribute("InTexCoord");
         Brightness  =       shader->get_attribute("InBrightness");
+        InLight     =       shader->get_attribute("InLight");
     }
 
     void init_texture()
@@ -190,10 +200,6 @@ class MechListShader
             int w = i % 16;
             int h = i / 16;
 
-            //left to right
-
-
-            //bool empty_column = false;
             int j;
 
             for (j=0; j<16; j++) //column
@@ -219,22 +225,7 @@ class MechListShader
                         break;
                     }
                 }
-            /*
-                if (empty_column)
-                {
-                    for (int _k=0; _k<32; _k++)
-                    {
-                        int index2 = offset + _k*512;
-                        pixels[4*index2 + 3] = 255;
-                        pixels[4*index2 + 0] = 255;
-                    }
-
-                    break;
-                }
-            */
             }
-
-            //empty_column = false;
 
             for (j=0; j<16; j++) //column
             {
@@ -260,19 +251,6 @@ class MechListShader
                         break;
                     }
                 }
-            /*
-                if (empty_column)
-                {
-                    for (int _k=0; _k<32; _k++)
-                    {
-                        int index2 = offset + (31-_k)*512;
-                        pixels[4*index2 + 3] = 255;
-                        pixels[4*index2 + 0] = 255;
-                    }
-
-                    break;
-                }
-            */
             }
 
             if (mech_sprite_width[i] == -1)
@@ -297,7 +275,6 @@ class MechListShader
 
                         mech_sprite_height[i] = height;
                         //printf("sprite3: %i %i height: %i k: %i \n", h,w, height, k);
-
                         break;
                     }
                 }
@@ -321,9 +298,6 @@ class MechListShader
 
         SDL_UnlockSurface(s);
 
-        //save_surface_to_png(s, SCREENSHOT_PATH "mech_surface.png");
-
-        //floating point modifier
         for (int i=0; i<256; i++)
         {
             mech_sprite_width_f[i]  = 1.0;
@@ -336,9 +310,6 @@ class MechListShader
                 mech_sprite_width_f[i] = ((float) mech_sprite_width[i]) / 16.0f;
             if (mech_sprite_height[i] != -1)
                 mech_sprite_height_f[i] = ((float) mech_sprite_height[i]) / 16.0f;
-
-            //if (mech_sprite_height[i] != -1)
-            //   printf("mech %i: %i \n", i, mech_sprite_height[i]);
         }
 
     }
@@ -385,7 +356,7 @@ class MechListRenderer
         glBindTexture(GL_TEXTURE_3D, generate_clut_texture2());
 
         glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_3D, generate_clut_texture2());
+        glBindTexture(GL_TEXTURE_2D, generate_clut_light_texture());
 
         GLint base_texture = glGetUniformLocation(shader.shader->shader, "base_texture");
         GLint clut_texture = glGetUniformLocation(shader.shader->shader, "clut_texture");
@@ -393,9 +364,9 @@ class MechListRenderer
 
         GS_ASSERT(clut_texture != 0);
         GS_ASSERT(base_texture != 0);
+        GS_ASSERT(clut_light_texture != 0);
 
         shader.shader->enable_attributes();
-
 
         glUniform1i(base_texture, 1); //Texture unit 0 is for base_texture
         glUniform1i(clut_texture, 2); //Texture unit 1 is for clut_texture
@@ -406,6 +377,8 @@ class MechListRenderer
 
         glVertexPointer(3, GL_FLOAT, vertex_list.stride, (GLvoid*)0);
         glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)12);
+        glVertexAttribPointer(shader.InLight, 2, GL_UNSIGNED_BYTE, GL_TRUE, vertex_list.stride, (GLvoid*)36);
+
 
         //glUniform4f(InTranslation, (GLfloat*) p.f);
         //glUniform3fv(InTranslation, 1, (GLfloat*) p.f);
@@ -417,11 +390,11 @@ class MechListRenderer
         shader.shader->disable_attributes();
 
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_3D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        glBindTexture(GL_TEXTURE_3D, 0);
         glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         glActiveTexture(GL_TEXTURE0);
 
         //glBindTexture(GL_TEXTURE_2D, 0);
@@ -473,7 +446,7 @@ class MechListRenderer
         glEnableClientState(GL_VERTEX_ARRAY);
 
         glVertexPointer(3, GL_FLOAT, vertex_list.stride, (GLvoid*)0);
-        glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)12);
+        glVertexAttribPointer(shader.TexCoord, 2, GL_FLOAT, GL_FALSE, vertex_list.stride, (GLvoid*)32);
 
         //glUniform4f(InTranslation, (GLfloat*) p.f);
         //glUniform3fv(InTranslation, 1, (GLfloat*) p.f);
@@ -623,6 +596,8 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     vn[3*3+0] = wx + size*dx;
     vn[3*3+1] = wy + size*dy;
     vn[3*3+2] = wz + size2;
+
+    vertex_list.light(15,0);
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min,ty_min);
@@ -818,6 +793,8 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     vn[3*3+2] = wz + size*(vr.z + vu.z) + _for*vf.z;
 
 
+    vertex_list.light(15,0);
+    
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min,ty_min);
     vertex_list.push_vertex();

@@ -25,8 +25,9 @@ const float _clut_depth = 1.0/16.0;
 void main() 
 {
 	vec4 tex = texture2D(base_texture, texCoord.xy);
+	tex.rgb = tex.rgb*texture2D(clut_light_texture, Light).rgb;
+
 	vec3 color = tex.rgb;
-	color = color*texture2D(clut_light_texture, Light);
 
     vec3 color_clut = texture3D(clut_texture, color); //clut correction
 

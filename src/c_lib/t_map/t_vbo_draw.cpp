@@ -10,9 +10,9 @@
 #include <t_map/glsl/shader.hpp>
 #include <common/qsort.h>
 #include <physics/quadrant.hpp>
-#include <t_map/glsl/light_texture.hpp>
 
-#include <SDL/haldCLUT/hald_clut.hpp>
+//#include <t_map/glsl/light_texture.hpp>
+//#include <SDL/haldCLUT/hald_clut.hpp>
 
 namespace t_map
 {
