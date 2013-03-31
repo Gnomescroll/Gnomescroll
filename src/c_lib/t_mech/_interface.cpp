@@ -376,7 +376,7 @@ MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int side)
     {
         m.text = calloc(MECH_TEXT_SIZE_MAX+1, 1);
         char inc = '0';
-        for(int i=0; i < MECH_TEXT_SIZE_MAX, i++)
+        for(int i=0; i < MECH_TEXT_SIZE_MAX; i++)
         {
             ((char*)m.text)[i] = inc;
             inc++;

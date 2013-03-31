@@ -37,6 +37,7 @@ void MechList::send_mech_list_to_client(ClientID client_id)
         if(mla[i].text != NULL)
         {
             class mech_text_StoC p;
+            p.id = mla[i].id;
             memcpy(p.msg, mla[i].text, MECH_TEXT_SIZE_MAX);
             p.sendToClient(client_id);
         }
@@ -57,6 +58,14 @@ void MechList::server_add_mech(struct Mech &m)
     class mech_create_StoC p;
     pack_mech(m, p);
     p.broadcast();
+
+    if(m.text != NULL)
+    {
+        class mech_text_StoC p;
+        p.id = m.id;
+        memcpy(p.msg, m.text, MECH_TEXT_SIZE_MAX);
+        p.broadcast();
+    }
 }
 
 bool MechList::server_remove_mech(int id)

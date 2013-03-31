@@ -81,6 +81,7 @@ class mech_text_StoC: public MapMessagePacketToClient<mech_text_StoC>
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
+        pack_u16(&id, buff, buff_n, pack);
         pack_string(msg, MECH_TEXT_SIZE_MAX+1, buff, buff_n, pack);
     }
 
