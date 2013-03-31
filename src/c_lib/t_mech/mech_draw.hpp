@@ -375,9 +375,31 @@ class MechListRenderer
 
         glBindBuffer(GL_ARRAY_BUFFER, vertex_list.VBO);
 
+
+        glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, shader.texture1);
 
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_3D, t_map::generate_clut_texture());
+
+        //glBindTexture(GL_TEXTURE_2D, shader.texture1);
+
+        //GLint clut_light_texture = glGetUniformLocation(shader.shader->shader, "clut_light_texture");
+        GLint clut_texture = glGetUniformLocation(shader.shader->shader, "clut_texture");
+        GLint base_texture = glGetUniformLocation(shader.shader->shader, "base_texture");
+
+        GS_ASSERT(clut_texture != 0);
+        GS_ASSERT(base_texture != 0);
+
         shader.shader->enable_attributes();
+
+
+
+
+        //glUniform1i(clut_light_texture, 1); //Texture unit 0 is for clut_light_texture
+        glUniform1i(clut_texture, 2); //Texture unit 1 is for clut_texture
+        glUniform1i(base_texture, 3); //Texture unit 2 is for base_texture
+
 
         glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -393,7 +415,18 @@ class MechListRenderer
 
         shader.shader->disable_attributes();
 
-        glBindTexture(GL_TEXTURE_2D, 0);
+        //glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_3D, 0);
+
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+
+        //glBindTexture(GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDisable(GL_TEXTURE_2D);

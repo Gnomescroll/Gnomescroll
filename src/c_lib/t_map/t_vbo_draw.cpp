@@ -291,8 +291,8 @@ void VBOMap::draw_map()
 
     glEnable(GL_CULL_FACE);
 
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GEQUAL, 0.5); 
+    //glEnable(GL_ALPHA_TEST);
+    //glAlphaFunc(GL_GEQUAL, 0.5); 
 
     glDisable(GL_TEXTURE_2D);
 
@@ -448,7 +448,7 @@ void VBOMap::draw_map()
 
     //;
     glDisable(GL_CULL_FACE);
-    glDisable(GL_ALPHA_TEST);
+    //glDisable(GL_ALPHA_TEST);
 
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_3D, 0);
