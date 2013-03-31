@@ -25,6 +25,9 @@ void init_packets()
     mech_create_StoC::register_client_packet();
     mech_type_change_StoC::register_client_packet();
     mech_delete_StoC::register_client_packet();
+
+    mech_text_StoC::register_client_packet();
+    mech_text_update_StoC::register_client_packet();
 }
 
 void init()

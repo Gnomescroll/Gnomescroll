@@ -72,7 +72,7 @@ void mech_text_StoC::handle()
     GS_ASSERT(m.text == NULL);
 
     m.text = (void*) calloc(1, MECH_TEXT_SIZE_MAX+1);
-    memcpy(m.text, msg, MECH_TEXT_SIZE_MAX+1);
+    memcpy(m.text, msg, MECH_TEXT_SIZE_MAX);
 };
 
 /*
