@@ -1,8 +1,5 @@
 #pragma once
 
-namespace t_map
-{
-
 class LightTextureGenerator
 {
     public:
@@ -417,5 +414,3 @@ void generate_light_texture()
 
     //light_texture_CLUT = LTG.texture_array[0];
 }
-
-}   // t_map
