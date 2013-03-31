@@ -599,7 +599,7 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
 
     int env_light = t_map::get_envlight(m.x,m.y,m.z);
     int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
-    vertex_list.light(env_light, sky_light);
+    vertex_list.light(sky_light, env_light);
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min,ty_min);
@@ -797,7 +797,7 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
 
     int env_light = t_map::get_envlight(m.x,m.y,m.z);
     int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
-    vertex_list.light(env_light, sky_light);
+    vertex_list.light(sky_light, env_light);
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min,ty_min);
