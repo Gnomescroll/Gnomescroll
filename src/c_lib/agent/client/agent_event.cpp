@@ -285,15 +285,15 @@ void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube,
     IF_ASSERT(side < 0 || side >= 6) return;
 
     Vec3 c = this->a->arm_center();
-    Vec3 p = vec3_init(x,y,z);
-    p = quadrant_translate_position(this->a->get_camera_position(), p);
-    if (vec3_equal(p, c)) return;
-    Vec3 f = vec3_sub(p, c);
+    Vec3 impact = vec3_init(x,y,z);
+    impact = quadrant_translate_position(this->a->get_camera_position(), impact);
+    if (vec3_equal(impact, c)) return;
+    Vec3 f = vec3_sub(impact, c);
     f = vec3_normalize(f);
 
     this->play_laser_rifle_fire_event(c, f);
-    Animations::block_damage(p, f, cube, side);
-    Animations::terrain_sparks(p);
+    Animations::block_damage(impact, f, cube, side);
+    Animations::terrain_sparks(impact);
 }
 
 void AgentEvent::fired_weapon_at_nothing()
@@ -307,10 +307,7 @@ void AgentEvent::play_laser_rifle_fire_event(const struct Vec3& c, const struct 
     const float hitscan_speed = 200.0f;
     Vec3 f = vec3_scalar_mult(forward, hitscan_speed);
     Animations::create_hitscan_effect(c, f);
-    //Animations::create_hitscan_effect(c, f); // ASK ABOUT: in the other cases (this was from at_block), does f need to be normalized?
-
     Sound::play_3d_sound("fire_laser", c);
-    // Sound::play_3d_sound("fire_laser", this->a->get_camera_position(), this->a->get_velocity());
 }
 
 void AgentEvent::threw_grenade()

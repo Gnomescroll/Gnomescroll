@@ -5,6 +5,7 @@ namespace Animations
 
 #if DC_CLIENT
 extern class HitscanEffectList* hitscan_effect_list;
+extern class RailrayEffectList* rail_ray_effect_list;
 extern class MiningLaserEffectList* mining_laser_effect_list;
 extern class InsectMobList* insect_mob_list;
 
@@ -15,9 +16,11 @@ void draw_insect_mob();
 void spawn_insect_mob(float x, float y, float z);
 
 void draw_hitscan_effect();
+void draw_rail_ray_effect();
 void draw_mining_laser_effect();
 
 void create_hitscan_effect(struct Vec3 start, struct Vec3 velocity);
+void create_rail_ray_effect(struct Vec3 start, struct Vec3 end);
 void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation, const float speed);
 
 void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float length);

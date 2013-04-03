@@ -17,6 +17,7 @@ namespace Animations
 #if DC_CLIENT
 class InsectMobList* insect_mob_list = NULL;
 class HitscanEffectList* hitscan_effect_list = NULL;
+class RailRayEffectList* rail_ray_effect_list = NULL;
 class MiningLaserEffectList* mining_laser_effect_list = NULL;
 #endif
 
@@ -24,6 +25,7 @@ class MiningLaserEffectList* mining_laser_effect_list = NULL;
 void animations_tick()
 {
     hitscan_effect_list->tick();
+    rail_ray_effect_list->tick();
     mining_laser_effect_list->tick();
 
     //insect_mob_list->tick();
@@ -44,6 +46,11 @@ void draw_insect_mob()
 void draw_hitscan_effect()
 {
     hitscan_effect_list->draw();
+}
+
+void draw_rail_ray_effect()
+{
+    rail_ray_effect_list->draw();
 }
 
 void mining_laser_effect_tick()
@@ -112,13 +119,22 @@ void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation,
     effect->set_state(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z, speed, length);
 }
 
-void create_hitscan_effect(struct Vec3 start, struct Vec3 end)
+void create_hitscan_effect(struct Vec3 pos, struct Vec3 fwd)
 {
     HitscanEffect* he = hitscan_effect_list->create();
     if (he == NULL) return;
 
-    //start = translate_position(start);  // doesn't this just magnify(hah!  magnitude!), or make it pos * 2?  WHY SHOULD IT CHANGE FROM WHATS GIVEN?!
-    he->set_state(start, end);
+    //start = translate_position(start);  // ASK ABOUT: doesn't this just magnify(hah!  magnitude!), or make it pos * 2?  WHY SHOULD IT CHANGE FROM WHATS GIVEN?!
+    he->set_state(pos, fwd);
+}
+
+void create_rail_ray_effect(struct Vec3 start, struct Vec3 end)
+{
+    RailRayEffect* rre = rail_ray_effect_list->create();
+    if (rre == NULL) return;
+
+    //start = translate_position(start);  // ASK ABOUT: doesn't this just magnify(hah!  magnitude!), or make it pos * 2?  WHY SHOULD IT CHANGE FROM WHATS GIVEN?!
+    rre->set_state(start, end);
 }
 
 void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float length)
@@ -170,9 +186,11 @@ void init()
 {
     #if DC_CLIENT
     GS_ASSERT(hitscan_effect_list == NULL);
+    GS_ASSERT(rail_ray_effect_list == NULL);
     GS_ASSERT(mining_laser_effect_list == NULL);
 
     hitscan_effect_list = new HitscanEffectList;
+    rail_ray_effect_list = new RailRayEffectList;
     mining_laser_effect_list = new MiningLaserEffectList;
 
     //insect_mob_list = new InsectMobList(INSECT_MOB_MAX);
@@ -198,6 +216,7 @@ void teardown()
 {
     #if DC_CLIENT
     delete hitscan_effect_list;
+    delete rail_ray_effect_list;
     delete mining_laser_effect_list;
     Animations::teardown_hitscan();
     Animations::teardown_sprite_voxelizer();

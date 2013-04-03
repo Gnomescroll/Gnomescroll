@@ -85,7 +85,7 @@ void HitscanEffect::add_plane_bias()
 
 void HitscanEffect::tick()
 {
-    const float tick_rate = 1.0f/30.0f;
+    const float tick_rate = 1.0f / 30.0f;
     this->p = vec3_add(this->p, vec3_scalar_mult(this->v, tick_rate));
     this->p = translate_position(this->p);
 }
@@ -183,6 +183,89 @@ void HitscanEffectList::tick()
     #endif
     #undef _HE_DEBUG
 
+    for (size_t i=0; i<this->num; i++)
+    {
+        a[i].tick();
+        a[i].ttl--;
+        if (a[i].ttl <= 0)
+            destroy(i);
+    }
+}
+
+inline void RailRayEffect::reset()
+{
+    this->ttl = HITSCAN_TTL;
+}
+
+void RailRayEffect::tick()
+{
+    const float tick_rate = 1.0f / 30.0f;
+    this->start = vec3_add(this->start, vec3_scalar_mult(this->end, tick_rate));
+    this->start = translate_position(this->start);
+
+    // spin particles
+}
+
+void RailRayEffect::draw(Vec3 camera)
+{
+    const float w = 0.50f;
+    const float h = 0.25f;
+
+    struct Vec3 position = quadrant_translate_position(camera, this->start);
+
+    static const float tx_min = 0.0f;
+    static const float tx_max = 1.0f;
+    static const float ty_min = 0.0f;
+    static const float ty_max = 1.0f;
+
+    for (float fl=0.0f; fl<1.0001f; fl+=0.05f) 
+    {
+        Vec3 curr = vec3_interpolate(this->start, this->end, fl);
+        float r = 0.75f; // quadratic? radius
+
+        glTexCoord2f(tx_max, ty_max);
+        glVertex3f(curr.x-r, curr.y, curr.z-r);  // Bottom left
+        glTexCoord2f(tx_min, ty_max);
+        glVertex3f(curr.x-r, curr.y, curr.z+r);  // Top left
+        glTexCoord2f(tx_min,ty_min);
+        glVertex3f(curr.x+r, curr.y, curr.z+r);  // Top right
+        glTexCoord2f(tx_max,ty_min);
+        glVertex3f(curr.x+r, curr.y, curr.z-r);  // Bottom right
+    }
+}
+
+void RailRayEffectList::draw()
+{
+    IF_ASSERT(current_camera == NULL) return;
+    if (this->num == 0) return;
+
+    //_LAST_TICK();
+    //_GET_MS_TIME();
+
+    Vec3 camera = current_camera->get_position();
+
+    glColor3ub(255,255,255);
+
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+    GL_ASSERT(GL_BLEND, true);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, hitscan_texture_id);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+
+    glBegin(GL_QUADS);
+
+    for (size_t i=0; i<this->num; i++)
+        a[i].draw(camera);
+
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+}
+
+void RailRayEffectList::tick()
+{
     for (size_t i=0; i<this->num; i++)
     {
         a[i].tick();

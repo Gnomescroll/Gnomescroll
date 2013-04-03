@@ -61,4 +61,45 @@ class HitscanEffectList: public SimpleObjectList<HitscanEffect, 1024>
     }
 };
 
+class RailRayEffect
+{
+    public:
+        int id;
+        struct Vec3 start;
+        struct Vec3 end;
+        int ttl;
+
+    inline void draw(Vec3 camera) __attribute((always_inline));
+    inline void tick();
+
+    void set_state(struct Vec3 start, struct Vec3 end)
+    {
+        GS_ASSERT(is_boxed_position(start));
+        this->start = start;
+        this->end = end;
+    }
+
+    void reset();
+
+    RailRayEffect()
+    {
+        this->reset();
+    }
+};
+
+class RailRayEffectList: public SimpleObjectList<RailRayEffect, 1024>
+{
+    private:
+        const char* name()
+        {
+            return "RailRayEffect";
+        }
+    public:
+        void draw();
+        void tick();
+        RailRayEffectList()
+        {
+        }
+};
+
 }   // Animations
