@@ -5,7 +5,7 @@ namespace Animations
 
 #if DC_CLIENT
 extern class HitscanEffectList* hitscan_effect_list;
-extern class RailrayEffectList* rail_ray_effect_list;
+extern class RailRayEffectList* rail_ray_effect_list;
 extern class MiningLaserEffectList* mining_laser_effect_list;
 extern class InsectMobList* insect_mob_list;
 

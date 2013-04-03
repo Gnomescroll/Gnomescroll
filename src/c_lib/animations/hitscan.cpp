@@ -199,20 +199,15 @@ inline void RailRayEffect::reset()
 
 void RailRayEffect::tick()
 {
-    const float tick_rate = 1.0f / 30.0f;
-    this->start = vec3_add(this->start, vec3_scalar_mult(this->end, tick_rate));
-    this->start = translate_position(this->start);
+    //const float tick_rate = 1.0f / 30.0f;
+    //this->start = vec3_add(this->start, vec3_scalar_mult(this->end, tick_rate));
+    //this->start = translate_position(this->start);
 
     // spin particles
 }
 
 void RailRayEffect::draw(Vec3 camera)
 {
-    const float w = 0.50f;
-    const float h = 0.25f;
-
-    struct Vec3 position = quadrant_translate_position(camera, this->start);
-
     static const float tx_min = 0.0f;
     static const float tx_max = 1.0f;
     static const float ty_min = 0.0f;
@@ -222,6 +217,7 @@ void RailRayEffect::draw(Vec3 camera)
     {
         Vec3 curr = vec3_interpolate(this->start, this->end, fl);
         float r = 0.75f; // quadratic? radius
+        printf("curr.x: %d \n", curr.x);
 
         glTexCoord2f(tx_max, ty_max);
         glVertex3f(curr.x-r, curr.y, curr.z-r);  // Bottom left
@@ -242,8 +238,6 @@ void RailRayEffectList::draw()
     //_LAST_TICK();
     //_GET_MS_TIME();
 
-    Vec3 camera = current_camera->get_position();
-
     glColor3ub(255,255,255);
 
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -257,7 +251,7 @@ void RailRayEffectList::draw()
     glBegin(GL_QUADS);
 
     for (size_t i=0; i<this->num; i++)
-        a[i].draw(camera);
+        a[i].draw(current_camera->get_position());
 
     glEnd();
     glDisable(GL_TEXTURE_2D);
