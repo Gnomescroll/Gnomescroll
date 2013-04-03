@@ -124,7 +124,7 @@ void create_hitscan_effect(struct Vec3 pos, struct Vec3 fwd)
     HitscanEffect* he = hitscan_effect_list->create();
     if (he == NULL) return;
 
-    pos = translate_position(start);
+    pos = translate_position(pos);
     he->set_state(pos, fwd);
 }
 

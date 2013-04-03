@@ -232,6 +232,7 @@ void RailRayEffect::draw(Vec3 camera)
 
 void RailRayEffectList::draw()
 {
+    printf("RailRayEffectList::draw()");
     IF_ASSERT(current_camera == NULL) return;
     if (this->num == 0) return;
 
