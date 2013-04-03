@@ -212,22 +212,25 @@ void RailRayEffect::draw(Vec3 camera)
     static const float tx_max = 1.0f;
     static const float ty_min = 0.0f;
     static const float ty_max = 1.0f;
+    static const float span = 0.02f; // space between particles
+    float dist = vec3_distance(this->end, this->start);
+    float step = span / dist;
 
-    for (float fl=0.0f; fl<=1.0f; fl+=0.005f) 
+    for (float fl=0.0f; fl<=1.0f; fl+=step) 
     {
         Vec3 curr = vec3_interpolate(this->start, this->end, fl);
-        float r = 0.75f; // quadratic? radius
-        //printf("curr.x: %d \n", curr.x);
+        float r = 0.25f; // quadratic? radius
 
+        //Vec3 bl =
         //Animations::terrain_sparks(curr);
         glTexCoord2f(tx_max, ty_max);
-        glVertex3f(curr.x-r, curr.y, curr.z-r);  // Bottom left
+        glVertex3f(curr.x-r, curr.y, curr.z-r/3);  // Bottom left
         glTexCoord2f(tx_min, ty_max);
-        glVertex3f(curr.x-r, curr.y, curr.z+r);  // Top left
+        glVertex3f(curr.x-r, curr.y, curr.z+r/3);  // Top left
         glTexCoord2f(tx_min,ty_min);
-        glVertex3f(curr.x+r, curr.y, curr.z+r);  // Top right
+        glVertex3f(curr.x+r, curr.y, curr.z+r/3);  // Top right
         glTexCoord2f(tx_max,ty_min);
-        glVertex3f(curr.x+r, curr.y, curr.z-r);  // Bottom right
+        glVertex3f(curr.x+r, curr.y, curr.z-r/3);  // Bottom right
     }
 }
 

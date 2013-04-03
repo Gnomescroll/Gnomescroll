@@ -28,6 +28,7 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
     class Agent* you = p->you();
     if (you == NULL) return;
     if (you->status.dead) return;
+    printf("you->forward_vector(): %4.2f,%4.2f,%4.2f \n", you->forward_vector().x, you->forward_vector().y, you->forward_vector().z);
 
     Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
@@ -148,6 +149,8 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
             break;
 
         case HITSCAN_TARGET_NONE:
+            collision_point = vec3_scalar_mult(you->forward_vector(), 512.0f);  // not really a collision, but need stopping point
+            collision_point = vec3_add(you->get_position(), collision_point);
             // for no target, leave translated animation origin
             none_msg.send();    // server will know to forward a fire weapon packet
             break;
@@ -157,13 +160,10 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
 
     Sound::play_2d_sound("fire_laser");
     // play laser anim (client viewport)
-    const float hitscan_speed = 200.0f;
-    look = vec3_scalar_mult(look, hitscan_speed);
-    //Animations::create_hitscan_effect(origin, look);
-    
-    look = quadrant_translate_position(origin, look);
-    //look = vec3_normalize(look);
-    Animations::create_rail_ray_effect(origin, look);
+    Animations::create_rail_ray_effect(origin, collision_point);
+    //////////const float hitscan_speed = 200.0f;
+    //////////look = vec3_scalar_mult(look, hitscan_speed);
+    //////////Animations::create_hitscan_effect(origin, look);
 }
 
 void PlayerAgent_action::update_mining_laser()
