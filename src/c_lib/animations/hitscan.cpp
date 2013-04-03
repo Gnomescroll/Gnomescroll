@@ -213,12 +213,13 @@ void RailRayEffect::draw(Vec3 camera)
     static const float ty_min = 0.0f;
     static const float ty_max = 1.0f;
 
-    for (float fl=0.0f; fl<=1.0f; fl+=0.05f) 
+    for (float fl=0.0f; fl<=1.0f; fl+=0.005f) 
     {
         Vec3 curr = vec3_interpolate(this->start, this->end, fl);
         float r = 0.75f; // quadratic? radius
-        printf("curr.x: %d \n", curr.x);
+        //printf("curr.x: %d \n", curr.x);
 
+        //Animations::terrain_sparks(curr);
         glTexCoord2f(tx_max, ty_max);
         glVertex3f(curr.x-r, curr.y, curr.z-r);  // Bottom left
         glTexCoord2f(tx_min, ty_max);
@@ -232,7 +233,6 @@ void RailRayEffect::draw(Vec3 camera)
 
 void RailRayEffectList::draw()
 {
-    printf("RailRayEffectList::draw()");
     IF_ASSERT(current_camera == NULL) return;
     if (this->num == 0) return;
 
