@@ -159,8 +159,8 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
     // play laser anim (client viewport)
     const float hitscan_speed = 200.0f;
     look = vec3_scalar_mult(look, hitscan_speed);
-    Animations::create_hitscan_effect(origin, look);
-    //Animations::create_rail_ray_effect(origin, look);
+    //Animations::create_hitscan_effect(origin, look);
+    Animations::create_rail_ray_effect(origin, look);
 }
 
 void PlayerAgent_action::update_mining_laser()

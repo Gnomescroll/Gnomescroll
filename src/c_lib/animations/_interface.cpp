@@ -124,7 +124,7 @@ void create_hitscan_effect(struct Vec3 pos, struct Vec3 fwd)
     HitscanEffect* he = hitscan_effect_list->create();
     if (he == NULL) return;
 
-    //start = translate_position(start);  // ASK ABOUT: doesn't this just magnify(hah!  magnitude!), or make it pos * 2?  WHY SHOULD IT CHANGE FROM WHATS GIVEN?!
+    pos = translate_position(start);
     he->set_state(pos, fwd);
 }
 
@@ -133,7 +133,6 @@ void create_rail_ray_effect(struct Vec3 start, struct Vec3 end)
     RailRayEffect* rre = rail_ray_effect_list->create();
     if (rre == NULL) return;
 
-    //start = translate_position(start);  // ASK ABOUT: doesn't this just magnify(hah!  magnitude!), or make it pos * 2?  WHY SHOULD IT CHANGE FROM WHATS GIVEN?!
     rre->set_state(start, end);
 }
 

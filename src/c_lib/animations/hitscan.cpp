@@ -213,7 +213,7 @@ void RailRayEffect::draw(Vec3 camera)
     static const float ty_min = 0.0f;
     static const float ty_max = 1.0f;
 
-    for (float fl=0.0f; fl<1.0001f; fl+=0.05f) 
+    for (float fl=0.0f; fl<=1.0f; fl+=0.05f) 
     {
         Vec3 curr = vec3_interpolate(this->start, this->end, fl);
         float r = 0.75f; // quadratic? radius
