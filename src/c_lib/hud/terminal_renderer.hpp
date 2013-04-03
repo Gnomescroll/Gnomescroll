@@ -55,10 +55,9 @@ class TerminalRenderer
             grid[i].text[0] = c;
             grid[i].set_scale(1.3f);
 
-            //int offs = CELL_SPAN - grid[i].get_width() / 2; // offset for centering text
+            int offs = 4; // CELL_SPAN - grid[i].get_width() / 2;      // offset for centering text
             // get_width() seems to return zero... i guess maybe cuz not using set_text()?
-            grid[i].set_position(x*CELL_SPAN + 4, DIST_FROM_BOTT_EDGE + y*CELL_SPAN);
-            //grid[i].shadowed = true;
+            grid[i].set_position(x*CELL_SPAN + offs, DIST_FROM_BOTT_EDGE + y*CELL_SPAN);
         }
     }
 

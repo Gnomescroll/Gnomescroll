@@ -20,6 +20,7 @@
 #include <hud/hud.hpp>
 
 InputState input_state;
+bool used_freecam_yet = false;
 
 bool mouse_unlocked_for_ui_element()
 {   // if mouse was unlocked to allow control of a ui element
@@ -326,9 +327,13 @@ void toggle_camera_mode()
     switch (input_state.camera_mode)
     {
         case INPUT_STATE_AGENT:
+            if (!used_freecam_yet)
+            { // put cam right over avatars head (usually we'll go back to wherever cam was last)
+                used_freecam_yet = true;
+                free_camera->copy_state_from(agent_camera);
+                free_camera->move(0, 0, 7);
+            }
             input_state.camera_mode = INPUT_STATE_CAMERA;
-            free_camera->copy_state_from(agent_camera);
-            free_camera->move(0, 0, 3);
             break;
         case INPUT_STATE_CAMERA:
             if (ClientState::player_agent.you() != NULL)
@@ -366,7 +371,7 @@ void init_input_state()
     input_state.full_chat = false;
     //input_state.hud = true;
     input_state.skeleton_editor = false;
-    input_state.terminal_is_open = true;
+    input_state.terminal_is_open = false;
 
     input_state.can_jump = true;
     input_state.quit = false;

@@ -818,7 +818,7 @@ void ChatRender::draw_cursor()
 
     w_mar = 0;
     h_mar = 3;
-    draw_rect(Color(255,255,255,128),  // white is probably a contrasting color
+    draw_rect(Color(255,255,255),  // white is probably a contrasting color
         cursor_x + (cursor_w - curr_cursor_w) / 2 - w_mar,
         cursor_y + (cursor_h - curr_cursor_h) / 2 - h_mar,
         curr_cursor_w + w_mar * 2,

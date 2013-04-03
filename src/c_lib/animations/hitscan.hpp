@@ -24,7 +24,7 @@ class HitscanEffect
         struct Vec3 v;
         int ttl;
 
-    inline void draw(float delta, Vec3 camera) __attribute((always_inline));
+    inline void draw(Vec3 camera) __attribute((always_inline));
     inline void tick();
 
     void set_state(struct Vec3 p, struct Vec3 v)

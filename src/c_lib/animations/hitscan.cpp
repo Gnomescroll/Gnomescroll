@@ -88,14 +88,12 @@ void HitscanEffect::tick()
     const float tick_rate = 1.0f/30.0f;
     this->p = vec3_add(this->p, vec3_scalar_mult(this->v, tick_rate));
     this->p = translate_position(this->p);
-    //check for collision with terrain/players
-    //play animations for terrain/player collision
 }
 
-void HitscanEffect::draw(float delta, Vec3 camera)
+void HitscanEffect::draw(Vec3 camera)
 {
     const float width = 0.50f;
-    const float height = 1.0f/4.0f;   //length per velocity
+    const float height = 0.25f;  // length per velocity
 
     struct Vec3 position = quadrant_translate_position(camera, this->p);
 
@@ -133,13 +131,6 @@ void HitscanEffect::draw(float delta, Vec3 camera)
 
     glTexCoord2f(tx_max,ty_min);
     glVertex3f(x2.x - u2.x, x2.y - u2.y, x2.z - u2.z);  // Bottom right
-
-     ////LOOKS BETTER -
-    //glTexCoord2f(tx_min,ty_min);
-    //glVertex3f(position.x, position.y, position.z);  // Top right
-
-    //glTexCoord2f(tx_max,ty_min);
-    //glVertex3f(x2.x, x2.y, x2.z);  // Bottom right
 }
 
 void HitscanEffectList::draw()
@@ -147,13 +138,8 @@ void HitscanEffectList::draw()
     IF_ASSERT(current_camera == NULL) return;
     if (this->num == 0) return;
 
-    const float tick_rate = 1.0f/30.0f;
-
-    int last_tick = (int)_LAST_TICK();
-    int _t = _GET_MS_TIME();
-    float delta = ((float)(_t - last_tick)) / (100.0f*tick_rate);
-    if (delta > 1.0f) delta = 1.0f;
-    delta *= tick_rate;
+    //_LAST_TICK();
+    //_GET_MS_TIME();
 
     Vec3 camera = current_camera->get_position();
 
@@ -170,7 +156,7 @@ void HitscanEffectList::draw()
     glBegin(GL_QUADS);
 
     for (size_t i=0; i<this->num; i++)
-        a[i].draw(delta, camera);
+        a[i].draw(camera);
 
     glEnd();
     glDisable(GL_TEXTURE_2D);
@@ -207,4 +193,3 @@ void HitscanEffectList::tick()
 }
 
 }   // Animations
-

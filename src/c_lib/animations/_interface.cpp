@@ -112,12 +112,13 @@ void create_mining_laser_particle(struct Vec3 position, struct Vec3 orientation,
     effect->set_state(position.x, position.y, position.z, orientation.x, orientation.y, orientation.z, speed, length);
 }
 
-void create_hitscan_effect(struct Vec3 center, struct Vec3 velocity)
+void create_hitscan_effect(struct Vec3 start, struct Vec3 end)
 {
     HitscanEffect* he = hitscan_effect_list->create();
     if (he == NULL) return;
-    center = translate_position(center);
-    he->set_state(center, velocity);
+
+    //start = translate_position(start);  // doesn't this just magnify(hah!  magnitude!), or make it pos * 2?  WHY SHOULD IT CHANGE FROM WHATS GIVEN?!
+    he->set_state(start, end);
 }
 
 void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float length)
