@@ -54,8 +54,7 @@ void generate_city()
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
                 if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS, rock, regolith))
                 {
-                    generate_lab(cx, cy, get_highest_area_block(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS), LAB_SIZE, LAB_HEIGHT, LAB_FLOORS, LAB_RANDOMNESS, LAB_DOOR_PROBABILITY, computer, steelA, steelB, steelC, battery, smelter, cryofreezer, bench, crusher, storage);
-                    generate_column(cx, cy, get_highest_area_block(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS) - 1, LAB_SIZE + LAB_RANDOMNESS, rock);
+                    generate_lab(cx, cy);
                 }
                 if (building_randomizer == 2 && isGood(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, rock, regolith))
                 {
@@ -104,59 +103,41 @@ void generate_city()
     }
 }
 
-void generate_lab(int x, int y, int z, int size, int height, int floors, int randomness, int door_probability, CubeType computer, CubeType steelA, CubeType steelB, CubeType steelC, CubeType battery, CubeType smelter, CubeType cryofreezer, CubeType bench, CubeType crusher, CubeType storage)
+void generate_lab(int x, int y);
 {
+    int z = t_map::get_highest_area_block(x, y);
     printf("Generating a lab at %d, %d, %d \n", x, y, z);
-    int maxx = x + randrange(randomness * -1, randomness) + size;
-    int maxy = y + randrange(randomness * -1, randomness) + size;
-    int maxz = z + height + randrange(randomness * -1, randomness);
-    int cx = x + 1;
-    int cy = y + 1;
-    int door;
-    int floorcount = 1;
-    generate_area(x, y, z, maxx, maxy, z, steelA); //generate the floor
-    generate_area(x, y, z + 1, maxx, y, maxz, steelB); //generate a wall
-    generate_area(x, y, z + 1, x, maxy, maxz, steelB);
-    generate_area(maxx, y, z + 1, maxx, maxy, maxz, steelB);
-    generate_area(x, maxy, z + 1, maxx, maxy, maxz, steelB);
-    generate_area(x + 1, y + 1, maxz, maxx - 1, maxy - 1, maxz, steelC); //generate the roof
-    while (cx < maxx)
+    CubeType LabBlock[]={steelA, steelB, steelC};
+    int CurrentSizeX;
+    int CurrentSizeY;
+    int PrevX = x;
+    int PrevY = y;
+    int PrevZ = z;
+    for(int RoomsMade = 0; RoomsMade < LAB_ROOMS; RoomsMade++)
     {
-        door = randrange(1, 100);
-        if (door <= door_probability)
+        CurrentSizeX = randrange(LAB_ROOM_SIZE - LAB_RANDOMNESS, LAB_ROOM_SIZE + LAB_RANDOMNESS);
+        CurrentSizeY = randrange(LAB_ROOM_SIZE - LAB_RANDOMNESS, LAB_ROOM_SIZE + LAB_RANDOMNESS);
+        switch (randrange(1, 3)) //only up, right and forward, so that rooms don't overlap & I don't have to use lots of variables for direction, future direction etc. It looks nearly exactly the same as in 6 dirs, with the difference that it's easier to put a column or something under it.
         {
-            generate_area(cx, y + 1, z + 1, cx, maxy - 1, maxz - 1, steelA);
-            degenerate_area(cx, y + 1, z + 1, cx, y + (maxy - y) / 2, maxz - 1);
+            case 1:
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            PrevX = x;
+            x += CurrentSizeX;
+            x = translate_point(x);
+            break;
+            case 2:
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            PrevY = y;
+            y += CurrentSizeY;
+            y = translate_point(y);
+            break;
+            case 3:
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            PrevZ = z;
+            z += LAB_ROOM_HEIGHT;
+            break;
         }
-        cx++;
     }
-    while (cy < maxy)
-    {
-        door = randrange(1, 100);
-        if (door <= door_probability)
-        {
-            generate_area(x + 1, cy, z + 1, x, cy, maxz - 1, steelA);
-            degenerate_area(x + 1, cy, z + 1, x + (maxx - x) / 2, cy, maxz - 1);
-        }
-        cy++;
-    }
-    cx = x + 1;
-    cy = y + 1;
-    while (floorcount <= floors - 1)
-    {
-    generate_area(x + 1, y + 1, (z + (maxz - z) / (floors - 1)) * floorcount, maxx - 1, maxy - 1, z + (maxz - z) / (floors - 1) * floorcount, steelB); //generate the floors above ground
-    degenerate_area(x + 1, y + 1, (z + (maxz - z) / (floors - 1)) * floorcount, x + randomness, y + randomness, z + (maxz - z) / (floors - 1) * floorcount);
-    floorcount++;
-    }
-    generate_area(x + randrange(1, 2), y + 1, z + 1, maxx - randrange(1, 2), y + 1, z + randrange(1, 3), computer);
-    generate_area(x + 1, y + randrange(1, 2), z + 1, x + 1, maxy - randrange(1, 2), z + randrange(1, 3), bench);
-    generate_area(x + randrange(1, 2), y + 1, maxz - randrange (1, 3), maxx - randrange(1, 3), y + 1, maxz - 1, smelter);
-    generate_area(x + 1, y + randrange(1, 2), maxz - randrange (1, 3), x + 1, maxy - randrange(1, 2), maxz - 1, cryofreezer);
-    generate_area(maxx - 1, y + randrange(1, 2), maxz - randrange (1, 3), maxx - 1, maxy - randrange(1, 2), maxz - 1, crusher);
-    generate_area(x + randrange(1, 2), maxy - 1, maxz - randrange (1, 3), maxx - randrange(1, 3), maxy - 1, maxz - 1, storage);
-    generate_area((x + maxx) / 2 + randrange (randomness * -1, randomness), (y + maxy) / 2 + randrange (randomness * -1, randomness), z + 1, (x + maxx) / 2 + randomness, (y + maxy) / 2 + randomness, z + 3, battery); //create a Van Der Graaf generator near the middle
-    degenerate_area(x + 1, y, z + 1, maxx - 1, y, z + 3); //generate 2 doors outside
-    degenerate_area(x, y + 1, z + 1, x, maxy - 1, z + 3);
 }
 
 void generate_skyscraper(int x, int y, int z, int size, int height, int floors, int randomness, int partitions, CubeType computer, CubeType purple, CubeType green, CubeType red, CubeType cryofreezer, CubeType battery)
