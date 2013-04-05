@@ -7,28 +7,88 @@ dont_include_this_file_in_client
 namespace t_gen
 {
 
+    const int CITY_RANDOMNESS = 64; //the maximal amount of buildings by which to change buildings_in_city, also used for other stuff
+    const int CITY_AMOUNT = 1;
+    const int BUILDINGS_IN_CITY = 64;
+    const int LAB_ROOM_SIZE = 10;
+    const int LAB_ROOMS=5; //the probability of a partition wall generating, in percent
+    const int LAB_ROOM_HEIGHT = 12;
+    const int LAB_RANDOMNESS = 4;
+    const int SKYSCRAPER_ROOM_HEIGHT = 6;
+    const int SKYSCRAPER_RANDOMNESS = 1;
+    const int SUBWAY_STATION_SIZE = 8;
+    const int SUBWAY_STATION_HEIGHT = 6;
+    const int SUBWAY_TUNNEL_SIZE = 5;
+    const int BUNKER_ROOM_SIZE = 6;
+    const int BUNKER_ROOM_HEIGHT = 4;
+    const int BUNKER_ROOM_AMOUNT = 8;
+    const int BUNKER_RANDOMNESS = 4;
+    const int BUNKER_SPHERE_RADIUS = BUNKER_ROOM_SIZE * BUNKER_ROOM_AMOUNT / 2;
+    const int TEMPLE_SIZE = 32;
+    const int HOUSE_ROOM_SIZE = 8;
+    const int HOUSE_RANDOMNESS = 3;
+    const int HOUSE_ROOMS = 6;
+    const int HOUSE_ROOM_HEIGHT = 12;
+    const int HOUSE_GARDEN = 6;
+    const int HOUSE_GARAGE_SIZE = 4;
+    const int SHOP_SIZE = 8;
+    const int SHOP_HEIGHT = 5;
+    const int TRANSMISSION_TOWER_HEIGHT = 64;
+    const int ROAD_SIZE = 4;
+    const int BUILDING_AMOUNT = 9;
+    const int MAXIMAL_HEIGHT = t_map::map_dim.z - 1 - BUNKER_SPHERE_RADIUS; //for isGood
+    const int MINIMAL_HEIGHT = BUNKER_SPHERE_RADIUS;
+    const int MAXIMAL_HEIGHT_DIFFERENCE = 64;
+
+
+        int prevsubwayx = 256;
+        int prevsubwayy = 256;
+        int prevsubwayz = 32;
+
+
+    CubeType processor = t_map::get_cube_type("control_node");
+    CubeType green = t_map::get_cube_type("ruins_ceiling1");
+    CubeType red = t_map::get_cube_type("ruins_ceiling2");
+    CubeType purple = t_map::get_cube_type("ruins_ceiling3");
+    CubeType gray = t_map::get_cube_type("ruins_ceiling4");
+    CubeType storage = t_map::get_cube_type("storage_block_small");
+    CubeType cryofreezer = t_map::get_cube_type("cryofreezer_small");
+    CubeType smelter = t_map::get_cube_type("smelter_basic");
+    CubeType bench = t_map::get_cube_type("crafting_bench_basic");
+    CubeType crusher = t_map::get_cube_type("crusher");
+    CubeType steelA = t_map::get_cube_type("steel_block_1");
+    CubeType steelB = t_map::get_cube_type("steel_block_2");
+    CubeType steelC = t_map::get_cube_type("steel_block_3");
+    CubeType glowgreen = t_map::get_cube_type("green_glow");
+    CubeType glowblue = t_map::get_cube_type("blue_glow");
+    CubeType battery = t_map::get_cube_type("battery2");
+    CubeType rock = t_map::get_cube_type("rock");
+    CubeType regolith = t_map::get_cube_type("regolith");
+
 void generate_city();
-void generate_lab(int x, int y, int z, int size, int height, int floors, int randomness, int door_probability, CubeType computer, CubeType steelA, CubeType steelB, CubeType steelC, CubeType battery, CubeType smelter, CubeType cryofreezer, CubeType bench, CubeType crusher, CubeType storage);
-void generate_skyscraper(int x, int y, int z, int size, int height, int floors, int randomness, int partitions, CubeType computer, CubeType purple, CubeType green, CubeType red, CubeType cryofreezer, CubeType battery);
-void generate_subway_station(int x, int y, int z, int prevsubwayx, int prevsubwayy, int firstsubwayx, int firstsubwayy, bool laststation, int size, int height, int tunnel_size, CubeType gray, CubeType steelA, CubeType steelB, CubeType steelC, CubeType battery, CubeType rock);
-void generate_house(int x, int y, int z, int size, int height, int partition_probability, int randomness, int garden, int garage, CubeType computer, CubeType green, CubeType red, CubeType purple, CubeType storage, CubeType cryofreezer, CubeType smelter, CubeType bench, CubeType crusher, CubeType regolith, CubeType steelA);
-void generate_shop(int x, int y, int z, int size, int height, int goods, CubeType steelA, CubeType steelB, CubeType steelC, CubeType computer, CubeType storage, CubeType cryofreezer);
-void generate_transmission_tower(int x, int y, int z, int height, CubeType steelA, CubeType steelB, CubeType steelC, CubeType gray, CubeType battery, CubeType computer);
+void generate_lab(int x, int y);
+void generate_skyscraper(int x, int y);
+void generate_subway_station(int x, int y);
+void generate_house(int x, int y);
+void generate_shop(int x, int y);
+void generate_transmission_tower(int x, int y);
 void degenerate_space(int x, int y, int z, int size);
-void create_floor(int x, int y, int z, int size, CubeType gray);
-void create_roads(int size, CubeType steel, int x, int y, int ox, int oy, CubeType rock, CubeType regolith);
-void generate_temple(int x, int y, int z, int size, CubeType glowgreen, CubeType glowblue, CubeType rock);
-void generate_bunker(int x, int y, int maxz, int size, int depth, int floors, int partition_probability, int randomness, CubeType gray, CubeType computer, CubeType storage, CubeType cryofreezer);
+void create_road(int x, int y, int z, int ox, int oy, int oz);
+void generate_temple(int x, int y);
+void generate_bunker(int x, int y);
 void generate_column(int x, int y, int z, int size, CubeType rock);
 void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeType material);
 void degenerate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz);
-void generate_tunnel(int x, int y, int z, int otherx, int othery, int size, CubeType steelA, CubeType steelB, CubeType battery, CubeType rock);
+void generate_tunnel(int x, int y, int z, int otherx, int othery, int otherz);
 void create_cryofreezer(int x, int y, int z);
 void create_storage(int x, int y, int z);
 void create_smelter(int x, int y, int z);
 void create_bench(int x, int y, int z);
 void create_crusher(int x, int y, int z);
-bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith);
+bool isGood(int x, int y, int maxx, int maxy);
 int get_highest_area_block(int x, int y, int maxx, int maxy);
+void generate_sphere(int x, int y, int z, int radius, int material);
+void generate_room(CubeType material, int minx, int miny, int minz, int maxx, int maxy, int maxz, int minentrancex, int minentrancey, int minentrancez, int maxentrancex, int maxentrancey, int maxentracez, int minexitx, int minexity, int minexitz, int maxexitx, int maxexity, int maxexitz, bool windows, bool electric, bool crafting, bool furnace, bool computer, bool fridge, bool recycler, bool chest);
+void generate_line(int startx, int starty, int startz, int endx, int endy, int endz, CubeType material);
 
 }   // t_gen

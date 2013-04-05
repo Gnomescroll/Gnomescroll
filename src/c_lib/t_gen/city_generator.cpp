@@ -18,80 +18,21 @@ namespace t_gen
 void generate_city()
 {
 
-    const int CITY_RANDOMNESS = 64; //the maximal amount of buildings by which to change buildings_in_city, also used for other stuff
-    const int CITY_AMOUNT = 1;
-    const int BUILDINGS_IN_CITY = 64;
-    const int LAB_SIZE = 16;
-    const int LAB_DOOR_PROBABILITY = 10; //the probability of a partition wall generating, in percent
-    const int LAB_HEIGHT = 12;
-    const int LAB_RANDOMNESS = 4;
-    const int LAB_FLOORS = 2;
-    const int SKYSCRAPER_SIZE = 16;
-    const int SKYSCRAPER_FLOORS = 10;
-    const int SKYSCRAPER_PARTITIONS = 3;
-    const int SKYSCRAPER_RANDOMNESS = 4;
-    const int SUBWAY_STATION_SIZE = 8;
-    const int SUBWAY_STATION_HEIGHT = 6;
-    const int SUBWAY_TUNNEL_SIZE = 5;
-    const int SUBWAY_LOOP_STATIONS = 8;
-    const int BUNKER_SIZE = 16;
-    const int BUNKER_DEPTH = 8;
-    const int BUNKER_FLOORS = 3;
-    const int BUNKER_RANDOMNESS = 4;
-    const int BUNKER_PARTITION_PROBABILITY = 15;
-    const int TEMPLE_SIZE = 32;
-    const int HOUSE_SIZE = 16;
-    const int HOUSE_RANDOMNESS = 8;
-    const int HOUSE_PARTITION_PROBABILITY = 8;
-    const int HOUSE_HEIGHT = 12;
-    const int HOUSE_GARDEN = 6;
-    const int HOUSE_GARAGE_SIZE = 4;
-    const int SHOP_SIZE = 8;
-    const int SHOP_GOODS_AMOUNT = 3;
-    const int SHOP_HEIGHT = 5;
-    const int TRANSMISSION_TOWER_HEIGHT = 64;
-    const int ROAD_SIZE = 4;
-    const int BUILDING_AMOUNT = 9;
-
-    CubeType computer = t_map::get_cube_type("control_node");
-    CubeType green = t_map::get_cube_type("ruins_ceiling1");
-    CubeType red = t_map::get_cube_type("ruins_ceiling2");
-    CubeType purple = t_map::get_cube_type("ruins_ceiling3");
-    CubeType gray = t_map::get_cube_type("ruins_ceiling4");
-    CubeType storage = t_map::get_cube_type("storage_block_small");
-    CubeType cryofreezer = t_map::get_cube_type("cryofreezer_small");
-    CubeType smelter = t_map::get_cube_type("smelter_basic");
-    CubeType bench = t_map::get_cube_type("crafting_bench_basic");
-    CubeType crusher = t_map::get_cube_type("crusher");
-    CubeType steelA = t_map::get_cube_type("steel_block_1");
-    CubeType steelB = t_map::get_cube_type("steel_block_2");
-    CubeType steelC = t_map::get_cube_type("steel_block_3");
-    CubeType glowgreen = t_map::get_cube_type("green_glow");
-    CubeType glowblue = t_map::get_cube_type("blue_glow");
-    CubeType battery = t_map::get_cube_type("battery2");
-    CubeType rock = t_map::get_cube_type("rock");
-    CubeType regolith = t_map::get_cube_type("regolith");
-
         int actual_buildings = 0;
-        bool laststation = false;
         int building_randomizer = 0;
-        int prevsubwayx = 0;
-        int prevsubwayy = 0;
-        int firstsubwayx = 0;
-        int firstsubwayy = 0;
-        int subwaycounter;
         int x;
         int y;
         int cx;
         int cy;
         int prevx;
         int prevy;
+
     for (int count=1; count <= CITY_AMOUNT; count++)
     {
         subwaycounter = 1;
 
-        prevx = cx = x = distribute_gaussian(0, map_dim.x - 1, 3);
-        prevy = cy = y = distribute_gaussian(0, map_dim.y - 1, 3);
+        prevx = cx = x = distribute_gaussian(0, t_map::map_dim.x - 1, 3);
+        prevy = cy = y = distribute_gaussian(0, t_map::map_dim.y - 1, 3);
         printf("Generating alien city at %d, %d, %d \n", x, y, t_map::get_highest_open_block(x, y) - 1);
 
         actual_buildings = BUILDINGS_IN_CITY + randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
@@ -104,10 +45,10 @@ void generate_city()
             prevy = cy;
             cx += randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
             cy += randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
-            if (cx >= map_dim.x) cx = 32;
-            if (cy >= map_dim.y) cy = 32;
-            if (cx < 0) cx = map_dim.x - 64;
-            if (cy < 0) cy = map_dim.y - 64;
+            if (cx >= t_map::map_dim.x) cx = 32;
+            if (cy >= t_map::map_dim.y) cy = 32;
+            if (cx < 0) cx = t_map::map_dim.x - 64;
+            if (cy < 0) cy = t_map::map_dim.y - 64;
 
                 create_roads(ROAD_SIZE, steelC, prevx + 38, prevy + 38, cx - 6, cy - 6, rock, regolith);
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
@@ -118,25 +59,14 @@ void generate_city()
                 }
                 if (building_randomizer == 2 && isGood(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, rock, regolith))
                 {
-                    generate_skyscraper(cx, cy, get_highest_area_block(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS), SKYSCRAPER_SIZE, map_dim.z - t_map::get_highest_open_block(cx, cy) - 1, SKYSCRAPER_FLOORS, SKYSCRAPER_RANDOMNESS, SKYSCRAPER_PARTITIONS, computer, purple, green, red, cryofreezer, battery);
+                    generate_skyscraper(cx, cy, get_highest_area_block(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS), SKYSCRAPER_SIZE, t_map::map_dim.z - t_map::get_highest_open_block(cx, cy) - 1, SKYSCRAPER_FLOORS, SKYSCRAPER_RANDOMNESS, SKYSCRAPER_PARTITIONS, computer, purple, green, red, cryofreezer, battery);
                     generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS) - 1, SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, rock);
                 }
                 if (building_randomizer == 3 && isGood(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE, rock, regolith))
                 {
-                    if (subwaycounter == 1)
-                    {
-                        firstsubwayx = cx;
-                        firstsubwayy = cy;
-                    }
-                    if (subwaycounter == SUBWAY_LOOP_STATIONS)
-                    {
-                        laststation = 1;
-                        subwaycounter = 1;
-                    }
                     else laststation = 0;
                     generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE) - SUBWAY_STATION_HEIGHT - 1, SUBWAY_STATION_SIZE, rock);
                     generate_subway_station(cx, cy, get_highest_area_block(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE), prevsubwayx, prevsubwayy, firstsubwayx, firstsubwayy, laststation, SUBWAY_STATION_SIZE, SUBWAY_STATION_HEIGHT, SUBWAY_TUNNEL_SIZE, gray, steelA, steelB, steelC, battery, rock);
-                    subwaycounter++;
                     prevsubwayx = cx;
                     prevsubwayy = cy;
                 }
@@ -235,7 +165,7 @@ void generate_skyscraper(int x, int y, int z, int size, int height, int floors, 
     int maxx = x + randrange(randomness * -1, randomness) + size;
     int maxy = y + randrange(randomness * -1, randomness) + size;
     int maxz = z + height + randrange(randomness * -1, randomness);
-    maxz = GS_MIN(maxz, map_dim.z-1);
+    maxz = GS_MIN(maxz, t_map::map_dim.z-1);
 
     generate_area(x, y, z, maxx, maxy, z, red); //generate the floor
     generate_area(x, y, z + 1, maxx, y, maxz - 1, purple); //make walls
@@ -266,7 +196,7 @@ void generate_skyscraper(int x, int y, int z, int size, int height, int floors, 
     for (int count=1; count<floors; count++)
     {
         int cz = (z + (maxz - z) / (floors - 1)) * count + 1;
-        cz = GS_MIN(maxz, map_dim.z-2);
+        cz = GS_MIN(maxz, t_map::map_dim.z-2);
         t_map::set(x + 2, y + 2, cz, red); //generate computer desks on each floor
         t_map::set(x + 2, y + 2, cz+1, computer); //generate computers on the desks
     }
@@ -274,7 +204,7 @@ void generate_skyscraper(int x, int y, int z, int size, int height, int floors, 
     for (int count=1; count<floors; count++)
     {
         int cz = (z + (maxz - z) / (floors - 1)) * count + 1;
-        cz = GS_MIN(maxz, map_dim.z-2);
+        cz = GS_MIN(maxz, t_map::map_dim.z-2);
         t_map::set(x + 8, y + 8, cz, battery); //generate a battery for "powering" the fridge above
         generate_area(x + 8, y + 8, cz+1, x + 8, y + 8, cz+1, cryofreezer); //generate the "fridge"-a cryofreezer
     }
@@ -439,45 +369,6 @@ void generate_transmission_tower(int x, int y, int z, int height, CubeType steel
     generate_area(x, y + 1, z + 1, x, y + 1, z + height / 4, steelB);
     t_map::set(x, y, z + height / 2, computer);
     t_map::set(x, y, z + height, gray);
-}
-
-void degenerate_space(int x, int y, int z, int size)
-{
-    printf ("Making room for the city at %d, %d, %d \n", x, y, z);
-    for (int i = x; i <= x + size; i++)
-    for (int j = y; j <= y + size; j++)
-    for (int k = z; k < map_dim.z; k++)
-    {
-        t_map::set(i, j, k, EMPTY_CUBE);
-        if (k > map_dim.z || k <= 0) printf ("degenerate_space error \n");
-    }
-}
-
-void create_floor(int x, int y, int z, int size, CubeType gray)
-{
-    printf ("Generating city floor at %d, %d, %d \n", x, y, z);
-    int cx = x;
-    int cy = y;
-    while (1)
-    {
-        t_map::set(cx, cy, z, gray);
-        if (cx <= x + size)
-        {
-            cx++;
-        }
-        if (cx > x + size)
-        {
-            cx = x;
-            if (cy <= y + size)
-            {
-                cy++;
-            }
-            if (cy > y + size)
-            {
-                break;
-            }
-        }
-    }
 }
 
 void create_roads(int size, CubeType steel, int x, int y, int ox, int oy, CubeType rock, CubeType regolith)
@@ -647,9 +538,9 @@ void generate_column(int x, int y, int z, int size, CubeType rock)
 
 void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeType material)
 {
-    if (maxz >= map_dim.z) return;
-    if (maxx >= map_dim.x) return;
-    if (maxy >= map_dim.y) return;
+    if (maxz >= t_map::map_dim.z) return;
+    if (maxx >= t_map::map_dim.x) return;
+    if (maxy >= t_map::map_dim.y) return;
     int special = 0;
     if (material == t_map::get_cube_type("cryofreezer_small"))
     {
@@ -720,9 +611,9 @@ void degenerate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz)
     if (minz < 0) return;
     if (minx < 0) return;
     if (miny < 0) return;
-    if (maxz >= map_dim.z) return;
-    if (maxx >= map_dim.x) return;
-    if (maxy >= map_dim.y) return;
+    if (maxz >= t_map::map_dim.z) return;
+    if (maxx >= t_map::map_dim.x) return;
+    if (maxy >= t_map::map_dim.y) return;
     for (int i = minx; i <= maxx; i++)
     for (int j = miny; j <= maxy; j++)
     for (int k = minz; k <= maxz; k++)
@@ -827,9 +718,9 @@ bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith)
     printf("Testing if position %d, %d to %d, %d is good for a building... \n", x, y, maxx, maxy);
     GS_ASSERT(x < maxx);
     GS_ASSERT(y < maxy);
-    if (maxx >= map_dim.x || maxy >= map_dim.y || x < 0 || y < 0) return 0;
+    if (maxx >= t_map::map_dim.x || maxy >= t_map::map_dim.y || x < 0 || y < 0) return 0;
     int maxlevel=0;
-    int minlevel=map_dim.z - 1;
+    int minlevel=t_map::map_dim.z - 1;
     for (int i = x; i <= maxx; i++)
     for (int j = y; j <= maxy; j++)
     {
@@ -849,10 +740,10 @@ bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith)
 int get_highest_area_block(int x, int y, int maxx, int maxy)
 {
     int maxh=0;
-    GS_ASSERT(x >= 0 && x < map_dim.x);
-    GS_ASSERT(y >= 0 && y < map_dim.y);
-    GS_ASSERT(maxx >= 0 && maxx < map_dim.x);
-    GS_ASSERT(maxy >= 0 && maxy < map_dim.y);
+    GS_ASSERT(x >= 0 && x < t_map::map_dim.x);
+    GS_ASSERT(y >= 0 && y < t_map::map_dim.y);
+    GS_ASSERT(maxx >= 0 && maxx < t_map::map_dim.x);
+    GS_ASSERT(maxy >= 0 && maxy < t_map::map_dim.y);
     GS_ASSERT(maxx >= x);
     GS_ASSERT(maxy >= y);
     for (int i = x; i <= maxx; i++)
@@ -862,5 +753,26 @@ int get_highest_area_block(int x, int y, int maxx, int maxy)
     }
     return maxh;
 }
+
+void generate_room(CubeType material, int minx, int miny, int minz, int maxx, int maxy, int maxz, int minentrancex, int minentrancey, int minentrancez, int maxentrancex, int maxentrancey, int maxentracez, int minexitx, int minexity, int minexitz, int maxexitx, int maxexity, int maxexitz, bool windows, bool electric, bool crafting, bool furnace, bool computer, bool fridge, bool recycler, bool chest)
+{
+    generate_area(minx, miny, minz, maxx, maxy, maxz, material);
+    degenerate_area(minx + 1, miny + 1, minz + 1, maxx - 1, maxy - 1, maxz - 1);
+    degenerate_area(minentrancex, minentrancey, minentrancez, maxentrancex, maxentrancey, maxentracez);
+    degenerate_area(minexitx, minexity, minexitz, maxexitx, maxexity, maxexitz);
+    if(windows) //just holes in the walls every 3 blocks
+    {
+        for(int cx = minx + 1; cx < maxx; cx += 3) degenerate_area(cx, miny, minz + 2, cx, maxy, minz + 2);
+        for(int cy = miny + 1; cy < maxy; cy += 3) degenerate_area(minx, cy, minz + 2, maxx, cy, minz + 2);
+    }
+    if(electric) generate_area((minx + maxx) / 2 - 1, (miny + maxy) / 2 - 1, minz + 1, (minx + maxx) / 2 + 1, (miny + maxy) / 2 + 1, minz + 3, battery);//make a battery pile in the middle of the room, for labs
+    if(crafting) create_bench(minx + 1, miny + 1, minz + 1);
+    if(furnace) create_smelter(minx + 1, maxy - 1, minz + 1);
+    if(computer) t_map::set(maxx - 1, miny + 1, minz + 1, processor);
+    if(fridge) create_cryofreezer(maxx - 1, maxy - 1, minz + 1);
+    if(recycler) create_crusher(maxx - 2, maxy + 1, minz + 1);
+    if(chest) generate_area(minx + randrange(2, 3), miny + 1, minz + 1, maxx - randrange(2, 3), miny + 1, maxz - randrange(1, 3), storage); //used mainly for shops, so large amounts needed
+}
+
 
 }   // t_gen

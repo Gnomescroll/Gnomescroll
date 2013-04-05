@@ -18,6 +18,12 @@ inline int randrange(int lower, int upper)
     return rand() % (upper - lower + 1) + lower + offset;
 }
 
+bool random_bool()
+{
+    if(rand % 2==0) return 1;
+    else return 0;
+}
+
 inline int distribute_gaussian(int lower, int upper, size_t precision)
 {
     IF_ASSERT(lower > upper) return lower;
