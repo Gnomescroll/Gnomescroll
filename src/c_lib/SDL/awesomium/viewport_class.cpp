@@ -329,7 +329,7 @@ void js_callback_handler(awe_webview* webView, const awe_string* _obj_name, cons
     else
     if (strcmp(cb, JS_CB_SAVE_REMEMBER_PASSWORD_SETTING_NAME) == 0)
         js_save_remember_password_settings_callback(webView, _obj_name, _cb_name, _args);
-    if (strcmp(cb, JS_CB_CHANGE_SETTING_VALUE) == 0)
+    else if (strcmp(cb, JS_CB_CHANGE_SETTING_VALUE) == 0)
         js_change_setting_value(webView, _obj_name, _cb_name, _args);
     else
         printf("Unhandled javascript callback triggered: %s\n", cb);
