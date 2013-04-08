@@ -432,16 +432,14 @@ void vec3_print(struct Vec3 v)
     printf("Vec3: %0.2f %0.2f %0.2f\n", v.x, v.y, v.z);
 }
 
-void vec3_print_length(struct Vec3 v)
-{
-    float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
-    printf("Vec3_length= %fs \n", l);
-}
-
-
-//diagnostic
 void vec3_print_dot(struct Vec3 v1, struct Vec3 v2)
 {
     float d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
     printf("dot= %f \n", d);
+}
+
+void vec3_print_length(struct Vec3 v)
+{
+    float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
+    printf("Vec3_length= %fs \n", l);
 }

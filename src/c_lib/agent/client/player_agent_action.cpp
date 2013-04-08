@@ -144,7 +144,7 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
             look = vec3_sub(look, origin);
             look = vec3_normalize(look);
             Animations::block_damage(collision_point, look, tile, side);
-            Animations::terrain_sparks(collision_point);
+            Animations::particle_explode(collision_point);
             //Sound::play_3d_sound("laser_hit_block", collision_point);
             break;
 

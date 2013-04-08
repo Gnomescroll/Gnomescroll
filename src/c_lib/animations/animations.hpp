@@ -19,7 +19,8 @@ void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int
 void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int cube_side);
 // actual method called by convenience methods
 void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int side[3], int cube_side);
-void terrain_sparks(struct Vec3 pos);
+void particle_explode(struct Vec3 pos, int min, int max, float vel, float scale);
+void particle_explode(struct Vec3 pos);
 void grenade_explode(struct Vec3 pos);
 void agent_bleed(struct Vec3 pos);
 void blood_spray(struct Vec3 pos, struct Vec3 incident);  // pos, incident vector

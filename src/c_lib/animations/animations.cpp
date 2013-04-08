@@ -175,13 +175,12 @@ void grenade_explode(struct Vec3 pos)
     }
 }
 
-void terrain_sparks(struct Vec3 pos)
+void particle_explode(struct Vec3 pos, int min, int max, float vel, float scale)
 {
     if (Options::animation_level <= 0) return;
-    int n = randrange(15,20);
-    float scale = float(Options::animation_level)/3.0f;
-    n = scale*float(n);
-    const float vel = 3.5f;
+    int n = randrange(min,max);
+    float anim_scale = float(Options::animation_level)/3.0f;
+    n = anim_scale*float(n);
     const float displacement = 1.0f/20.0f;
     struct Vec3 c;
     struct Vec3 cv;
@@ -194,9 +193,14 @@ void terrain_sparks(struct Vec3 pos)
         s = Particle::create_shrapnel(c, cv);
         if (s==NULL) return;
         s->ttl = randrange(8,15);
-        s->scale = 0.05f;
+        s->scale = scale;
         s->texture_index = 54;
     }
+}
+
+void particle_explode(struct Vec3 pos)
+{
+    particle_explode(pos, 15, 20, 3.5f, 0.05f);
 }
 
 void voxel_explode(Vec3 position, int count, float size, float force, Color color)

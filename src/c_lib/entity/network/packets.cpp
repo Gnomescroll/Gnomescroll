@@ -232,7 +232,7 @@ inline void object_shot_terrain_StoC::handle()
     Animations::create_hitscan_effect(position, v);
     Animations::block_damage(dest, position,
                              (CubeType)this->cube, this->side);
-    Animations::terrain_sparks(dest);
+    Animations::particle_explode(dest);
     //Sound::play_3d_sound("laser_hit_block", dest);
     Sound::play_3d_sound("turret_shoot", position);
 }

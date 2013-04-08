@@ -293,7 +293,7 @@ void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube,
 
     this->play_laser_rifle_fire_event(c, f);
     Animations::block_damage(impact, f, cube, side);
-    Animations::terrain_sparks(impact);
+    Animations::particle_explode(impact);
 }
 
 void AgentEvent::fired_weapon_at_nothing()
