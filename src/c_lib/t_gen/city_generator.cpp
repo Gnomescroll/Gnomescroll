@@ -50,7 +50,7 @@ void generate_city()
             if (cx < 0) cx = t_map::map_dim.x - 64;
             if (cy < 0) cy = t_map::map_dim.y - 64;
 
-                create_roads(ROAD_SIZE, steelC, prevx + 38, prevy + 38, cx - 6, cy - 6, rock, regolith);
+                create_road(cx, cy, t_map::get_highest_open_block(cx, cy), prevx, prevy, t_map::get_highest_open_block(prevx, prevy));
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
                 if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS, rock, regolith))
                 {
@@ -117,24 +117,59 @@ void generate_lab(int x, int y);
     {
         CurrentSizeX = randrange(LAB_ROOM_SIZE - LAB_RANDOMNESS, LAB_ROOM_SIZE + LAB_RANDOMNESS);
         CurrentSizeY = randrange(LAB_ROOM_SIZE - LAB_RANDOMNESS, LAB_ROOM_SIZE + LAB_RANDOMNESS);
-        switch (randrange(1, 3)) //only up, right and forward, so that rooms don't overlap & I don't have to use lots of variables for direction, future direction etc. It looks nearly exactly the same as in 6 dirs, with the difference that it's easier to put a column or something under it.
+        switch (randrange(1, 6))
         {
             case 1:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
             generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            else
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
             PrevX = x;
             x += CurrentSizeX;
             x = translate_point(x);
             break;
             case 2:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
             generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            else
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
             PrevY = y;
             y += CurrentSizeY;
             y = translate_point(y);
             break;
             case 3:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
             generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            else
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
             PrevZ = z;
             z += LAB_ROOM_HEIGHT;
+            break;
+            case 4:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            else
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            PrevX = x;
+            x -= CurrentSizeX;
+            x = translate_point(x);
+            break;
+            case 5:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            else
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            PrevY = y;
+            y -= CurrentSizeY;
+            y = translate_point(y);
+            break;
+            case 6:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            else
+            generate_room(LabBlock[randrange(0, sizeof(LabBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + LAB_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, random_bool, random_bool, random_bool, 1, random_bool, random_bool, random_bool);
+            PrevZ = z;
+            z -= LAB_ROOM_HEIGHT;
             break;
         }
     }
@@ -352,85 +387,14 @@ void generate_transmission_tower(int x, int y, int z, int height, CubeType steel
     t_map::set(x, y, z + height, gray);
 }
 
-void create_roads(int size, CubeType steel, int x, int y, int ox, int oy, CubeType rock, CubeType regolith)
+void create_road(int x, int y, int z, int ox, int oy, int oz);
 {
-    int prevheight=60;
-    printf ("Generating roads from %d, %d to %d, %d\n", x, y, ox, oy);
-    //set miny and minx, maxy and maxx, generate like subway tunnels, only on surface, at prevheight if gorge or treeshroom
-    int minx;
-    int miny;
-    int maxx;
-    int maxy;
-    if (x < ox)
+    CubeType RoadBlock[] = {steelA, steelB, steelC, rock, green, red, purple, gray};
+    for(int LinesMade = 0; LinesMade < ROAD_SIZE; LinesMade++)
     {
-        minx = x;
-        maxx = ox;
-    }
-    else
-    {
-        minx = ox;
-        maxx = x;
-    }
-    if (y  < oy)
-    {
-        miny = y;
-        maxy = oy;
-    }
-    else
-    {
-        miny = oy;
-        maxy = y;
-    }
-    if (t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == rock || t_map::get(minx, miny, t_map::get_highest_open_block(minx, miny) - 1) == regolith) prevheight = t_map::get_highest_open_block(minx, miny);
-
-    //generate one part of the road, from the middle to one end
-
-    for (int i = minx; i <= minx + size; i++)
-    for (int j = miny; j <= miny + size; j++)
-    {
-        if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
-        {
-            if (t_map::get_highest_open_block(i, j) > prevheight - 2 && t_map::get_highest_open_block(i, j) < prevheight + 2)
-            {
-                t_map::set(i, j, t_map::get_highest_open_block(i, j), steel);
-                prevheight = t_map::get_highest_open_block(i, j);
-            }
-            if (t_map::get_highest_open_block(i, j) <= prevheight - 2 && t_map::get_highest_open_block(i, j) >= prevheight + 2)
-            {
-                t_map::set(i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16, steel);
-                prevheight = (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16;
-            }
-        }
-        else if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != steel)
-        {
-            t_map::set(i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16, steel);
-            degenerate_area(i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16 + 1, i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16 + size);
-        }
-    }
-
-    //now generate the second part of the road, between the other end and the middle
-
-    for (int j = miny + size + 1; j <= maxy; j++)
-    for (int i = minx + size + 1; i <= maxx; i++)
-    {
-        if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == rock || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == regolith)
-        {
-            if (t_map::get_highest_open_block(i, j) > prevheight - 2 && t_map::get_highest_open_block(i, j) < prevheight + 2)
-            {
-                t_map::set(i, j, t_map::get_highest_open_block(i, j), steel);
-                prevheight = t_map::get_highest_open_block(i, j);
-            }
-            if (t_map::get_highest_open_block(i, j) <= prevheight - 2 && t_map::get_highest_open_block(i, j) >= prevheight + 2)
-            {
-                t_map::set(i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16, steel);
-                prevheight = (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16;
-            }
-        }
-        else if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != steel)
-        {
-            t_map::set(i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16, steel);
-            degenerate_area(i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16 + 1, i, j, (prevheight * 15 + t_map::get_highest_open_block(i, j)) / 16 + size);
-        }
+        generate_line(x + LinesMade, y, z, ox + LinesMade, oy, oz, RoadBlock[randrange(0, sizeof(RoadBlock) / 4 - 1)]);
+        generate_line(x + LinesMade, y, z + 1, ox + LinesMade, oy, oz + 1, EMPTY_CUBE);
+        generate_line(x + LinesMade, y, z + 2, ox + LinesMade, oy, oz + 2, EMPTY_CUBE);
     }
 }
 
@@ -510,11 +474,10 @@ void generate_bunker(int x, int y, int maxz, int size, int depth, int floors, in
     generate_area(x + randrange(1, 2), maxy - 1, maxz - randrange (1, 3), maxx - randrange(1, 3), maxy - 1, maxz - 1, storage);
 }
 
-void generate_column(int x, int y, int z, int size, CubeType rock)
+void generate_column(int x, int y, int z, int sizeX, int SizeY)
 {
     printf ("Generating a column at %d, %d, %d \n", x, y, z);
-    generate_area(x, y, 1, x + size, y + size, z - 1, rock);
-    generate_area(x - 1, y - 1, z, x + size + 1, y + size + 1, z, rock);
+    generate_area(x, y, 1, x + sizeX, y + sizeY, z, rock);
 }
 
 void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeType material)
@@ -694,7 +657,7 @@ void create_crusher(int x, int y, int z)
     ItemContainer::create_container_block(ItemContainer::name::crusher, x, y, z);
 }
 
-bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith)
+bool isGood(int x, int y, int maxx, int maxy)
 {
     printf("Testing if position %d, %d to %d, %d is good for a building... \n", x, y, maxx, maxy);
     GS_ASSERT(x < maxx);
@@ -705,9 +668,9 @@ bool isGood(int x, int y, int maxx, int maxy, CubeType rock, CubeType regolith)
     for (int i = x; i <= maxx; i++)
     for (int j = y; j <= maxy; j++)
     {
-        if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != rock && t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) != regolith)
+        if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == steelA || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == steelB || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == steelC || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == gray || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == purple || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == green || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == red || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == glowgreen)
         {
-            printf("Block is neither rock nor regolith! \n");
+            printf("Block is artificial! \n");
             return 0;
         }
         if (t_map::get_highest_open_block(i, j) > maxlevel) maxlevel = t_map::get_highest_open_block(i, j);
@@ -755,5 +718,51 @@ void generate_room(CubeType material, int minx, int miny, int minz, int maxx, in
     if(chest) generate_area(minx + randrange(2, 3), miny + 1, minz + 1, maxx - randrange(2, 3), miny + 1, maxz - randrange(1, 3), storage); //used mainly for shops, so large amounts needed
 }
 
+void generate_line(int startx, int starty, int startz, int endx, int endy, int endz, CubeType material)
+{
+    const int distance = sqrtf(powf(startx - endx, 2) + powf(starty - endy, 2) + powf(startz - endz, 2));
+    int minx;
+    int maxx;
+    int miny;
+    int maxy;
+    int minz;
+    int maxz;
+    if(startx < endx)
+    {
+        minx = startx;
+        maxx = endx;
+    }
+    else
+    {
+        minx = endx;
+        maxx = startx;
+    }
+    if(starty < endy)
+    {
+        miny = starty;
+        maxy = endy;
+    }
+    else
+    {
+        miny = endy;
+        maxy = starty;
+    }
+    if(startz < endz)
+    {
+        minz = startz;
+        maxz = endz;
+    }
+    else
+    {
+        minz = endz;
+        maxz = startz;
+    }
+    for(int x = minx; x <= maxx; x++)
+    for(int y = miny; y <= maxy; y++)
+    for(int z = minz; z <= maxz; z++)
+    {
+        if(sqrtf(powf(startx - x, 2) + powf(starty - y, 2) + powf(startz - z, 2)) + sqrtf(powf(endx - x, 2) + powf(endy - y, 2) + powf(endz - z, 2)) <= distance + 1) t_map::set(x, y, z, material);
+    }
+}
 
 }   // t_gen
