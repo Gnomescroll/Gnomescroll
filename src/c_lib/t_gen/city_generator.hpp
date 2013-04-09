@@ -30,7 +30,6 @@ namespace t_gen
     const int HOUSE_ROOMS = 6;
     const int HOUSE_ROOM_HEIGHT = 12;
     const int HOUSE_GARDEN = 6;
-    const int HOUSE_GARAGE_SIZE = 4;
     const int SHOP_SIZE = 8;
     const int SHOP_HEIGHT = 5;
     const int TRANSMISSION_TOWER_HEIGHT = 64;

@@ -52,34 +52,32 @@ void generate_city()
 
                 create_road(cx, cy, t_map::get_highest_open_block(cx, cy), prevx, prevy, t_map::get_highest_open_block(prevx, prevy));
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
-                if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS, rock, regolith))
+                if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS))
                 {
                     generate_lab(cx, cy);
                 }
-                if (building_randomizer == 2 && isGood(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, rock, regolith))
+                if (building_randomizer == 2 && isGood(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS))
                 {
                     generate_skyscraper(cx, cy, get_highest_area_block(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS), SKYSCRAPER_SIZE, t_map::map_dim.z - t_map::get_highest_open_block(cx, cy) - 1, SKYSCRAPER_FLOORS, SKYSCRAPER_RANDOMNESS, SKYSCRAPER_PARTITIONS, computer, purple, green, red, cryofreezer, battery);
                     generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS) - 1, SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, rock);
                 }
-                if (building_randomizer == 3 && isGood(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE, rock, regolith))
+                if (building_randomizer == 3 && isGood(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE))
                 {
-                    else laststation = 0;
-                    generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE) - SUBWAY_STATION_HEIGHT - 1, SUBWAY_STATION_SIZE, rock);
+                    generate_column(cx, cy, t_map::get_highest_open_block(cx,cy) - SUBWAY_STATION_HEIGHT / 2, SUBWAY_STATION_SIZE, SUBWAY_STATION_SIZE);
                     generate_subway_station(cx, cy, get_highest_area_block(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE), prevsubwayx, prevsubwayy, firstsubwayx, firstsubwayy, laststation, SUBWAY_STATION_SIZE, SUBWAY_STATION_HEIGHT, SUBWAY_TUNNEL_SIZE, gray, steelA, steelB, steelC, battery, rock);
                     prevsubwayx = cx;
                     prevsubwayy = cy;
                 }
-            if (building_randomizer == 4 && isGood(cx, cy, cx + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, rock, regolith))
+            if (building_randomizer == 4 && isGood(cx, cy, cx + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS))
             {
-                generate_house(cx, cy, get_highest_area_block(cx, cy, cx + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS), HOUSE_SIZE, HOUSE_HEIGHT, HOUSE_PARTITION_PROBABILITY, HOUSE_RANDOMNESS, HOUSE_GARDEN, HOUSE_GARAGE_SIZE, computer, green, red, purple, storage, cryofreezer, smelter, bench, crusher, regolith, steelA);
-                generate_column(cx, cy, get_highest_area_block(cx, cy, cx + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS) - 1, HOUSE_SIZE + HOUSE_RANDOMNESS, rock);
+                generate_house(cx, cy);
             }
-            if (building_randomizer == 5 && isGood(cx, cy, cx + SHOP_SIZE, cy + SHOP_SIZE, rock, regolith))
+            if (building_randomizer == 5 && isGood(cx, cy, cx + SHOP_SIZE, cy + SHOP_SIZE))
             {
                 generate_shop(cx, cy, get_highest_area_block(cx, cy, cx + SHOP_SIZE, cy + SHOP_SIZE), SHOP_SIZE, SHOP_HEIGHT, SHOP_GOODS_AMOUNT, steelA, steelB, steelC, computer, storage, cryofreezer);
                 generate_column(cx, cy, get_highest_area_block(cx, cy, cx + SHOP_SIZE, cy + SHOP_SIZE) - 1, SHOP_SIZE, rock);
             }
-            if (building_randomizer == 6 && isGood(cx, cy, cx + 2, cy + 2, rock, regolith))
+            if (building_randomizer == 6 && isGood(cx, cy, cx + 2, cy + 2))
             {
                 generate_transmission_tower(cx, cy, get_highest_area_block(cx, cy, cx + 2, cy + 2), TRANSMISSION_TOWER_HEIGHT, steelA, steelB, steelC, gray, battery, computer);
             }
@@ -89,15 +87,15 @@ void generate_city()
                 cx = cx + randrange(CITY_RANDOMNESS / 2, CITY_RANDOMNESS);
                 cy = cy + randrange(CITY_RANDOMNESS / 2, CITY_RANDOMNESS);
             }
-            if (building_randomizer == 8 && isGood(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS, rock, regolith))
+            if (building_randomizer == 8 && isGood(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS))
             {
                 generate_column(cx, cy, get_highest_area_block(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS), BUNKER_SIZE, rock);
                 generate_bunker(cx, cy, get_highest_area_block(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS), BUNKER_SIZE, BUNKER_DEPTH, BUNKER_FLOORS, BUNKER_PARTITION_PROBABILITY, BUNKER_RANDOMNESS, gray, computer, storage, cryofreezer);
             }
-            if (building_randomizer == 9 && isGood(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE, rock, regolith))
+            if (building_randomizer == 9 && isGood(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE))
             {
-                generate_column(cx, cy, get_highest_area_block(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE) - 1, TEMPLE_SIZE, rock);
-                generate_temple(cx, cy, get_highest_area_block(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE), TEMPLE_SIZE, glowgreen, glowblue, rock);
+                generate_column(cx, cy, get_highest_area_block(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE) - 1, TEMPLE_SIZE, TEMPLE_SIZE);
+                generate_temple(cx, cy);
             }
         }
     }
@@ -247,119 +245,77 @@ void generate_subway_station(int x, int y, int z, int prevsubwayx, int prevsubwa
     degenerate_area(x + 2, y, z + 1, maxx - 2, y, z + 3); //make the actual entrance
 }
 
-void generate_house(int x, int y, int z, int size, int height, int partition_probability, int randomness, int garden, int garage, CubeType computer, CubeType green, CubeType red, CubeType purple, CubeType storage, CubeType cryofreezer, CubeType smelter, CubeType bench, CubeType crusher, CubeType regolith, CubeType steelA)
-{
-    printf ("Generating a house at %d, %d, %d \n", x, y, z);
-    const int maxx = x + size + garden * 2 + randrange(randomness * -1, randomness);
-    const int maxy = y + size + garden * 2 + randrange(randomness * -1, randomness);
-    const int maxz = z + height + randrange(randomness / 4 * -1, randomness / 4);
-    int partition;
-    int cx = x + 1 + garden;
-    int cy = y + 1 + garden;
-    int colors = randrange(1, 3); //determines which part of a house is colored in one way
-    generate_area(x, y, z, maxx, maxy, z, regolith); //make the garden floor
-    if (colors == 1)
+void generate_house(int x, int y)
+ int z = t_map::get_highest_area_block(x, y);
+    printf("Generating a house at %d, %d, %d \n", x, y, z);
+    CubeType HouseBlock[]={red, green, purple, gray};
+    int CurrentSizeX;
+    int CurrentSizeY;
+    int PrevX = x;
+    int PrevY = y;
+    int PrevZ = z;
+    for(int RoomsMade = 0; RoomsMade < HOUSE_ROOMS; RoomsMade++)
     {
-        generate_area(x + garden, y + garden, z + 1, maxx - garden, maxy - garden, z, red); //generate the normal floor
-        generate_area(x + garden, y + garden, z + 1, maxx - garden, y + garden, maxz, green); //generate a wall
-        generate_area(x + garden, y + garden, z + 1, x + garden, maxy - garden, maxz, green);
-        generate_area(maxx - garden, y + garden, z + 1, maxx - garden, maxy - garden, maxz, green);
-        generate_area(x + garden, maxy - garden, z + 1, maxz - garden, maxy - garden, maxz, green);
-        generate_area(x + 1 + garden, y + 1 + garden, maxz, maxx - 1 - garden, maxy - 1 - garden, maxz, purple); //make the roof
-        while (cx < maxx - garden)
+        CurrentSizeX = randrange(HOUSE_ROOM_SIZE - HOUSE_RANDOMNESS, HOUSE_ROOM_SIZE + HOUSE_RANDOMNESS);
+        CurrentSizeY = randrange(HOUSE_ROOM_SIZE - HOUSE_RANDOMNESS, HOUSE_ROOM_SIZE + HOUSE_RANDOMNESS);
+        switch (randrange(1, 6))
         {
-            partition = randrange(1, 100);
-            if (partition <= partition_probability)
-            {
-            generate_area(cx, y + 1 + garden, z + 1, cx, maxy - 1 - garden, maxz - 1, green);
-            degenerate_area(cx, y + 1 + garden, z + 1, cx, y + garden + (maxy - y) / 2, maxz - 1);
-            }
-        cx++;
-        }
-        while (cy < maxy - garden)
-        {
-            partition = randrange(1, 100);
-            if (partition <= partition_probability)
-            {
-            generate_area(x + 1 + garden, cy, z + 1, maxx - 1 - garden, cy, maxz - 1, green);
-            generate_area(x + 4 + garden, cy, z + 1, maxx - 4 - garden, cy, maxz - 1, storage);
-            degenerate_area(x + 1 + garden, cy, z + 1, x + garden + (maxx - x) / 2, cy, maxz - 1);
-            }
-        cy++;
+            case 1:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            else
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            PrevX = x;
+            x += CurrentSizeX;
+            x = translate_point(x);
+            break;
+            case 2:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            else
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            PrevY = y;
+            y += CurrentSizeY;
+            y = translate_point(y);
+            break;
+            case 3:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            else
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            PrevZ = z;
+            z += HOUSE_ROOM_HEIGHT;
+            break;
+            case 4:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            else
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            PrevX = x;
+            x -= CurrentSizeX;
+            x = translate_point(x);
+            break;
+            case 5:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            else
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            PrevY = y;
+            y -= CurrentSizeY;
+            y = translate_point(y);
+            break;
+            case 6:
+            if(PrevX <= x && PrevY <= y && PrevZ <= z)
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            else
+            generate_room(HouseBlock[randrange(0, sizeof(HouseBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + HOUSE_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool, 0, random_bool, random_bool, random_bool, random_bool, random_bool, random_bool);
+            PrevZ = z;
+            z -= HOUSE_ROOM_HEIGHT;
+            break;
         }
     }
-    if (colors == 2)
-    {
-        generate_area(x + garden, y + garden, z + 1, maxx - garden, maxy - garden, z, purple); //generate the normal floor
-        generate_area(x + garden, y + garden, z + 1, maxx - garden, y + garden, maxz, red); //generate a wall
-        generate_area(x + garden, y + garden, z + 1, x + garden, maxy - garden, maxz, red);
-        generate_area(maxx - garden, y + garden, z + 1, maxx - garden, maxy - garden, maxz, red);
-        generate_area(x + garden, maxy - garden, z + 1, maxz - garden, maxy - garden, maxz, red);
-        generate_area(x + 1 + garden, y + 1 + garden, maxz, maxx - 1 - garden, maxy - 1 - garden, maxz, green); //make the roof
-        while (cx < maxx - garden)
-        {
-            partition = randrange(1, 100);
-            if (partition <= partition_probability)
-            {
-            generate_area(cx, y + 1 + garden, z + 1, cx, maxy - 1 - garden, maxz - 1, red);
-            degenerate_area(cx, y + 1 + garden, z + 1, cx, y + garden + (maxy - y) / 2, maxz - 1);
-            }
-        cx++;
-        }
-        while (cy < maxy - garden)
-        {
-            partition = randrange(1, 100);
-            if (partition <= partition_probability)
-            {
-            generate_area(x + 1 + garden, cy, z + 1, maxx - 1 - garden, cy, maxz - 1, red);
-            generate_area(x + 4 + garden, cy, z + 1, maxx - 4 - garden, cy, maxz - 1, storage);
-            degenerate_area(x + 1 + garden, cy, z + 1, x + garden + (maxx - x) / 2, cy, maxz - 1);
-            }
-        cy++;
-        }
-    }
-    if (colors == 3)
-    {
-        generate_area(x + garden, y + garden, z + 1, maxx - garden, maxy - garden, z, green); //generate the normal floor
-        generate_area(x + garden, y + garden, z + 1, maxx - garden, y + garden, maxz, purple); //generate a wall
-        generate_area(x + garden, y + garden, z + 1, x + garden, maxy - garden, maxz, purple);
-        generate_area(maxx - garden, y + garden, z + 1, maxx - garden, maxy - garden, maxz, purple);
-        generate_area(x + garden, maxy - garden, z + 1, maxz - garden, maxy - garden, maxz, purple);
-        generate_area(x + 1 + garden, y + 1 + garden, maxz, maxx - 1 - garden, maxy - 1 - garden, maxz, red); //make the roof
-        while (cx < maxx - garden)
-        {
-            partition = randrange(1, 100);
-            if (partition <= partition_probability)
-            {
-            generate_area(cx, y + 1 + garden, z + 1, cx, maxy - 1 - garden, maxz - 1, purple);
-            degenerate_area(cx, y + 1 + garden, z + 1, cx, y + garden + (maxy - y) / 2, maxz - 1);
-            }
-        cx++;
-        }
-        while (cy < maxy - garden)
-        {
-            partition = randrange(1, 100);
-            if (partition <= partition_probability)
-            {
-            generate_area(x + 1 + garden, cy, z + 1, maxx - 1 - garden, cy, maxz - 1, purple);
-            generate_area(x + 4 + garden, cy, z + 1, maxx - 4 - garden, cy, maxz - 1, storage);
-            degenerate_area(x + 1 + garden, cy, z + 1, x + garden + (maxx - x) / 2, cy, maxz - 1);
-            }
-        cy++;
-        }
-    }
-    generate_area(x + garden + 1, y + garden + 1, z + 1, x + garden + 1, y + garden + 1, z + 1, cryofreezer);
-    generate_area(x + garden + 1, y + garden + 1, z + 2, x + garden + 1, y + garden + 1, z + 2, cryofreezer);
-    generate_area(maxx - garden - 1, y + garden + 1, z + 1, maxx - garden - 1, y + garden + 1, z + 1, smelter);
-    generate_area(maxx - garden - 1, maxy - garden - 1, z + 1, maxx - garden - 1, maxy - garden - 1, z + 1, bench);
-    generate_area(maxx - garden - 1, maxy - garden - 2, z + 1, maxx - garden - 1, maxy - garden - 2, z + 1, crusher);
-    t_map::set(x + (maxx - x) / 2, y + (maxy - y) / 2, z + 1, computer);
-    generate_area(maxx - garage, maxy - garage, z, maxx, maxy, z, steelA); //start garage generation by generating the floor
-    generate_area(maxx - garage + 2, maxy - garage + 2, z + 1, maxx, maxy - garage + 2, z + garage, steelA); //make one garage wall with an opening pointing towards the house
-    generate_area(maxx - garage + 2, maxy - garage + 2, z + 1, maxx - garage - 2, maxy, z + garage, steelA);
-    generate_area(maxx, maxy - garage, z + 1, maxx, maxy, z + garage, steelA);
-    generate_area(maxx - garage, maxy - garage, z + garage, maxx, maxy, z + garage, steelA); //generate the roof for the garage
 }
+
 
 void generate_shop(int x, int y, int z, int size, int height, int goods, CubeType steelA, CubeType steelB, CubeType steelC, CubeType computer, CubeType storage, CubeType cryofreezer)
 {
@@ -398,30 +354,20 @@ void create_road(int x, int y, int z, int ox, int oy, int oz);
     }
 }
 
-void generate_temple(int x, int y, int z, int size, CubeType glowgreen, CubeType glowblue, CubeType rock)
+void generate_temple(int x, int y)
 {
+    int z = t_map::get_highest_area_block(x, y, x + TEMPLE_SIZE, y + TEMPLE_SIZE);
     printf ("Generating a temple at %d, %d, %d \n", x, y, z);
-    generate_area(x, y, z, x + size, y + size, z, glowblue); //make the floor
-    int count = 1;
-    while (count <= size / 3.2) //make the walls
+    CubeType TempleBlock[2] = {glowgreen, glowblue};
+    CubeType WallBlock = TempleBlock[randrange(0, 1)];
+    generate_area(x, y, z, x + TEMPLE_SIZE, y + TEMPLE_SIZE, z, TempleBlock[randrange(0, 1)]);
+    for(int StepsMade=1; StepsMade <= TEMPLE_SIZE; StepsMade++)
     {
-        generate_area(x + count, y + count, z + count, x + size - count, y + count, z + count, glowgreen);
-        generate_area(x + count, y + count, z + count, x + count, y + size - count, z + count, glowgreen);
-        generate_area(x + count, y + size - count, z + count, x + size - count, y + size - count, z + count, glowgreen);
-        generate_area(x + count, y + size - count, z + count, x + size - count, y + size - count, z + count, glowgreen);
-        count++;
+        generate_area(x + StepsMade, y + StepsMade, z + StepsMade, x + StepsMade, y + TEMPLE_SIZE - StepsMade, z + StepsMade, WallBlock);
+        generate_area(x + StepsMade, y + StepsMade, z + StepsMade, x + TEMPLE_SIZE - StepsMade, y + StepsMade, z + StepsMade, WallBlock);
+        generate_area(x + TEMPLE_SIZE - StepsMade, y + StepsMade, z + StepsMade, x + TEMPLE_SIZE - StepsMade, y + TEMPLE_SIZE - StepsMade, z + StepsMade, WallBlock);
+        generate_area(x + StepsMade, y + TEMPLE_SIZE - StepsMade, z + StepsMade, x + TEMPLE_SIZE - StepsMade, y + TEMPLE_SIZE - StepsMade, z + StepsMade, WallBlock);
     }
-    count = 8;
-    while (count <= size / 3.2 + 6) //make the staircase hover in the air above the altar
-    {
-        generate_area(x + count, y + count, z + count - 5, x + size - count, y + count, z + count - 5, glowblue);
-        generate_area(x + count, y + count, z + count - 5, x + count, y + size - count, z + count - 5, glowblue);
-        generate_area(x + count, y + size - count, z + count - 5, x + size - count, y + size - count, z + count - 5, glowblue);
-        generate_area(x + count, y + size - count, z + count - 5, x + size - count, y + size - count, z + count - 5, glowblue);
-        count++;
-    }
-    generate_area(x + size / 2, y + size / 2, z + 1, x + size / 2 + 1, y + size / 2 + 1, z + 2, rock); //generate the altar
-    degenerate_area(x + size / 2, y + size / 2, 1, x + size / 2 + 1, y + size / 2 + 1, z - 1); //generate a "well" under the altar, inside the column
 }
 
 void generate_bunker(int x, int y, int maxz, int size, int depth, int floors, int partition_probability, int randomness, CubeType gray, CubeType computer, CubeType storage, CubeType cryofreezer)
