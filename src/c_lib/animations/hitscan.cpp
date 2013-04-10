@@ -246,19 +246,31 @@ void RailRayEffect::draw(Vec3 camera)
         );
 
         spiral = vec3_euler_rotation(spiral, phi*PI, theta*PI, 0);
+        spiral2 = vec3_euler_rotation(spiral2, phi*PI, theta*PI, 0);
         spiral = vec3_add(curr, spiral);
+        spiral2 = vec3_add(curr, spiral2);
         
 
 
         //float anim_scale = float(Options::animation_level)/3.0f;
         //n = anim_scale*float(n);
         Particle::Shrapnel *s;
+
         s = Particle::create_shrapnel(spiral, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
         if (s==NULL) return;
 
         s->ttl = randrange(8,15);
         s->scale = 0.15f;
         s->texture_index = 54;
+
+        s = Particle::create_shrapnel(spiral2, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
+        if (s==NULL) return;
+
+        s->ttl = randrange(8,15);
+        s->scale = 0.15f;
+        s->texture_index = 54;
+
+
 
         curr_spin += spin_span;
         if (curr_spin >= PI*2)
