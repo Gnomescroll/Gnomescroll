@@ -216,32 +216,40 @@ void RailRayEffect::draw(Vec3 camera)
     static const float ty_max = 1.0f;
     static const float span = 0.9f; // space between particles
     static const float spin_span = PI / 8;
+
     float dist = vec3_distance(this->end, this->start);
     float step = span / dist;
+    Vec3 fwd = vec3_sub(this->end, this->start);
 
 
     // RIGHT SETTINGS WOULD LOOK GOOD ON MOB IMPACTS ---> voxel_explode(this->end, /*min*/ 4, /*max*/ 14, /*size*/ 0.2f, /*force*/ 0.1f, COLOR_GREEN);
-    grenade_explode(this->end);
+
+    float theta, phi;
+    vec3_to_angles(fwd, &theta, &phi);
+    printf("fwd   theta: %9.3f  phi: %9.3f \n", theta, phi);
 
     float curr_spin = 0.0f;
     for (float fl=0.0f; fl<=1.0f; fl+=step) 
     {
         Vec3 curr = vec3_interpolate(this->start, this->end, fl);
         float r = 0.45f; // quadratic? radius
-        Vec3 spiral = vec3_add(
-            curr, 
-            vec3_init(
-                r * cosf(curr_spin),
-                0,
-                r * sinf(curr_spin)
-            )
+        
+        Vec3 spiral = vec3_init(
+            r * cosf(curr_spin),
+            0,
+            r * sinf(curr_spin)
         );
+        Vec3 spiral2 = vec3_init(
+            r * cosf(curr_spin + PI),
+            0,
+            r * sinf(curr_spin + PI)
+        );
+
+        spiral = vec3_euler_rotation(spiral, phi*PI, theta*PI, 0);
+        spiral = vec3_add(curr, spiral);
         
 
 
-        float theta, phi;
-        vec3_to_angles(this->end, &theta, &phi);
-        printf("theta: %9.3f  phi: %9.3f \n", theta, phi);
         //float anim_scale = float(Options::animation_level)/3.0f;
         //n = anim_scale*float(n);
         Particle::Shrapnel *s;
@@ -253,17 +261,19 @@ void RailRayEffect::draw(Vec3 camera)
         s->texture_index = 54;
 
         curr_spin += spin_span;
+        if (curr_spin >= PI*2)
+            curr_spin = 0.0f;
 
 
 
-        //glTexCoord2f(tx_max, ty_max);
-        //glVertex3f(curr.x-r, curr.y, curr.z-r/3);  // Bottom left
-        //glTexCoord2f(tx_min, ty_max);
-        //glVertex3f(curr.x-r, curr.y, curr.z+r/3);  // Top left
-        //glTexCoord2f(tx_min,ty_min);
-        //glVertex3f(curr.x+r, curr.y, curr.z+r/3);  // Top right
-        //glTexCoord2f(tx_max,ty_min);
-        //glVertex3f(curr.x+r, curr.y, curr.z-r/3);  // Bottom right
+        glTexCoord2f(tx_max, ty_max);
+        glVertex3f(curr.x-r, curr.y, curr.z-r/3);  // Bottom left
+        glTexCoord2f(tx_min, ty_max);
+        glVertex3f(curr.x-r, curr.y, curr.z+r/3);  // Top left
+        glTexCoord2f(tx_min,ty_min);
+        glVertex3f(curr.x+r, curr.y, curr.z+r/3);  // Top right
+        glTexCoord2f(tx_max,ty_min);
+        glVertex3f(curr.x+r, curr.y, curr.z-r/3);  // Bottom right
     }
 }
 
