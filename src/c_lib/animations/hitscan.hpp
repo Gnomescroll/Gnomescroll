@@ -69,6 +69,7 @@ class RailRayEffect
         struct Vec3 end;
         int ttl;
 
+    void south_facing_quad(Vec3 p, float r);
     inline void draw(Vec3 camera) __attribute((always_inline));
     inline void tick();
 

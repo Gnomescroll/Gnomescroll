@@ -210,11 +210,7 @@ void RailRayEffect::draw(Vec3 camera)
 {
     if (Options::animation_level <= 0) return;
 
-    static const float tx_min = 0.0f;
-    static const float tx_max = 1.0f;
-    static const float ty_min = 0.0f;
-    static const float ty_max = 1.0f;
-    static const float span = 0.9f; // space between particles
+    static const float span = 0.9f; // space between particle layers
     static const float spin_span = PI / 8;
 
     float dist = vec3_distance(this->end, this->start);
@@ -232,7 +228,7 @@ void RailRayEffect::draw(Vec3 camera)
     for (float fl=0.0f; fl<=1.0f; fl+=step) 
     {
         Vec3 curr = vec3_interpolate(this->start, this->end, fl);
-        float r = 0.45f; // quadratic? radius
+        float r = 0.25f; // quadratic radius
         
         Vec3 spiral = vec3_init(
             r * cosf(curr_spin),
@@ -245,8 +241,8 @@ void RailRayEffect::draw(Vec3 camera)
             r * sinf(curr_spin + PI)
         );
 
-        spiral = vec3_euler_rotation(spiral, phi*PI, theta*PI, 0);
-        spiral2 = vec3_euler_rotation(spiral2, phi*PI, theta*PI, 0);
+        spiral = vec3_euler_rotation(spiral, 0, 0, theta-0.5f);
+        spiral2 = vec3_euler_rotation(spiral2, 0, 0, theta-0.5f);
         spiral = vec3_add(curr, spiral);
         spiral2 = vec3_add(curr, spiral2);
         
@@ -260,33 +256,51 @@ void RailRayEffect::draw(Vec3 camera)
         if (s==NULL) return;
 
         s->ttl = randrange(8,15);
-        s->scale = 0.15f;
+        s->scale = 0.1f;
         s->texture_index = 54;
 
         s = Particle::create_shrapnel(spiral2, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
         if (s==NULL) return;
 
         s->ttl = randrange(8,15);
-        s->scale = 0.15f;
+        s->scale = 0.1f;
         s->texture_index = 54;
 
 
 
+        south_facing_quad(curr, r);
+
         curr_spin += spin_span;
         if (curr_spin >= PI*2)
             curr_spin = 0.0f;
-
-
-
-        glTexCoord2f(tx_max, ty_max);
-        glVertex3f(curr.x-r, curr.y, curr.z-r/3);  // Bottom left
-        glTexCoord2f(tx_min, ty_max);
-        glVertex3f(curr.x-r, curr.y, curr.z+r/3);  // Top left
-        glTexCoord2f(tx_min,ty_min);
-        glVertex3f(curr.x+r, curr.y, curr.z+r/3);  // Top right
-        glTexCoord2f(tx_max,ty_min);
-        glVertex3f(curr.x+r, curr.y, curr.z-r/3);  // Bottom right
     }
+}
+
+void RailRayEffect::south_facing_quad(Vec3 p, float r) // quadratic radius
+{
+    static const float tx_min = 0.0f;
+    static const float tx_max = 1.0f;
+    static const float ty_min = 0.0f;
+    static const float ty_max = 1.0f;
+
+    Vec3 bl = vec3_init(-r, 0, -r/3);  // Bottom left
+    Vec3 tl = vec3_init(-r, 0, +r/3);  // Top left
+    Vec3 tr = vec3_init(+r, 0, +r/3);  // Top right
+    Vec3 br = vec3_init(+r, 0, -r/3);  // Bottom right
+    //bl = vec3_euler_rotation(bl, phi, 0, theta);
+    bl = vec3_add(bl, p);
+    tl = vec3_add(tl, p);
+    tr = vec3_add(tr, p);
+    br = vec3_add(br, p);
+
+    glTexCoord2f(tx_max, ty_max);
+    glVertex3f(bl.x, bl.y, bl.z);  // Bottom left
+    glTexCoord2f(tx_min, ty_max);
+    glVertex3f(tl.x, tl.y, tl.z);  // Top left
+    glTexCoord2f(tx_min,ty_min);
+    glVertex3f(tr.x, tr.y, tr.z);  // Top right
+    glTexCoord2f(tx_max,ty_min);
+    glVertex3f(br.x, br.y, br.z);  // Bottom right
 }
 
 void RailRayEffectList::draw()
