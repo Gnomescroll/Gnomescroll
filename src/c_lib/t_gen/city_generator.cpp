@@ -381,44 +381,44 @@ void generate_bunker(int x, int y)
         {
             case 1:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevX = x;
             x += CurrentSizeX;
             x = translate_point(x);
             break;
             case 2:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevY = y;
             y += CurrentSizeY;
             y = translate_point(y);
             break;
             case 3:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevZ = z;
             z -= BUNKER_ROOM_HEIGHT;
             break;
             case 4:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevX = x;
             x -= CurrentSizeX;
             x = translate_point(x);
             break;
             case 5:
             if(PrevX <= x && PrevY <= y && PrevZ <= z)
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, PrevX + 5, PrevY + 5, PrevZ + 1, x + 5, y + 5, z + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             else
-            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
+            generate_room(BunkerBlock[randrange(0, sizeof(BunkerBlock) / 4 - 1)], x, y, z, x + CurrentSizeX, y + CurrentSizeY, z + BUNKER_ROOM_HEIGHT, x + 5, y + 5, z + 1, PrevX + 5, PrevY + 5, PrevZ + 2, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, random_bool(), random_bool(), random_bool(), random_bool(), random_bool(), random_bool());
             PrevY = y;
             y -= CurrentSizeY;
             y = translate_point(y);
