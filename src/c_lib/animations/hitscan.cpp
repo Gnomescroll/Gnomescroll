@@ -294,43 +294,38 @@ void RailRayEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quadra
     //Vec3 br = vec3_init( r, -r/3, 0);  // Bottom right
 
 
-    // MOVE SHIT LIKE THIS TO BE CALC'ED ONLY ONCE then applied to all the interpolated points
+    // FIXME: MOVE SHIT LIKE THIS TO BE CALC'ED ONLY ONCE then applied to all the interpolated points
     // rotate the y & z (pitch) .... prob need to reverse/mirror the y
     float radian = phi*PI;
 
-    // bottom
+    // first setup up facing quad with correct PITCH
+    // bottom edge
     bl.y = br.y = -r*sinf(radian);
     bl.z = br.z = r*cosf(radian);
-    printf("bl.y: %8.2f  bl.z: %8.2f \n", bl.y, bl.z);
-    //printf("radian: %8.2f \n", radian);
+    //printf("bl.y: %8.2f  bl.z: %8.2f \n", bl.y, bl.z);
     
-    // top
+    // top edge
     tl.y = tr.y = r*sinf(radian);
     tl.z = tr.z = -r*cosf(radian);
-    printf("tl.y: %8.2f  tl.z: %8.2f \n", tl.y, tl.z);
-
-    GS_ASSERT(bl.y == br.y);
-    GS_ASSERT(bl.z == br.z);
-    GS_ASSERT(tl.y == tr.y);
-    GS_ASSERT(tl.z == tr.z);
-    
-    //bl.y = br.y = -r;//*sinf(radian);
-    //bl.z = br.z = 0;//*cosf(radian);
-    //
-    //tl.y = tr.y = r;//*sinf(radian);
-    //tl.z = tr.z = 0;//*cosf(radian);
-    
+    //printf("tl.y: %8.2f  tl.z: %8.2f \n", tl.y, tl.z);
+  
+    // sides
     bl.x = tl.x = -r;
     br.x = tr.x = r;
-    //bl = vec3_euler_rotation(bl, theta, 0, 0);
-    //tl = vec3_euler_rotation(tl, theta, 0, 0);
-    //tr = vec3_euler_rotation(tr, theta, 0, 0);
-    //br = vec3_euler_rotation(br, theta, 0, 0);
+
+    // do YAW
+    bl = vec3_euler_rotation(bl, theta-0.5f, 0, 0);
+    tl = vec3_euler_rotation(tl, theta-0.5f, 0, 0);
+    tr = vec3_euler_rotation(tr, theta-0.5f, 0, 0);
+    br = vec3_euler_rotation(br, theta-0.5f, 0, 0);
+
+    // translate to world space
     bl = vec3_add(p, bl);
     tl = vec3_add(p, tl);
     tr = vec3_add(p, tr);
     br = vec3_add(p, br);
 
+    // draw
     glTexCoord2f(tx_max, ty_max);
     glVertex3f(bl.x, bl.y, bl.z);  // Bottom left
     glTexCoord2f(tx_min, ty_max);
