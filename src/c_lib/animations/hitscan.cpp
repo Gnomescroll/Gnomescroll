@@ -248,27 +248,27 @@ void RailRayEffect::draw(Vec3 camera)
         
 
 
-        //float anim_scale = float(Options::animation_level)/3.0f;
-        //n = anim_scale*float(n);
-        Particle::Shrapnel *s;
+        ////float anim_scale = float(Options::animation_level)/3.0f;
+        ////n = anim_scale*float(n);
+        //Particle::Shrapnel *s;
 
-        s = Particle::create_shrapnel(spiral, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
-        if (s==NULL) return;
+        //s = Particle::create_shrapnel(spiral, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
+        //if (s==NULL) return;
 
-        s->ttl = randrange(8,15);
-        s->scale = 0.1f;
-        s->texture_index = 54;
+        //s->ttl = randrange(8,15);
+        //s->scale = 0.1f;
+        //s->texture_index = 54;
 
-        s = Particle::create_shrapnel(spiral2, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
-        if (s==NULL) return;
+        //s = Particle::create_shrapnel(spiral2, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
+        //if (s==NULL) return;
 
-        s->ttl = randrange(8,15);
-        s->scale = 0.1f;
-        s->texture_index = 54;
+        //s->ttl = randrange(8,15);
+        //s->scale = 0.1f;
+        //s->texture_index = 54;
 
 
 
-        south_facing_quad(curr, r);
+        draw_quad(curr, r, theta, phi);
 
         curr_spin += spin_span;
         if (curr_spin >= PI*2)
@@ -276,31 +276,67 @@ void RailRayEffect::draw(Vec3 camera)
     }
 }
 
-void RailRayEffect::south_facing_quad(Vec3 p, float r) // quadratic radius
-{
+void RailRayEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quadratic radius
+{ // with no rotation modifications, it faces upwards
     static const float tx_min = 0.0f;
     static const float tx_max = 1.0f;
     static const float ty_min = 0.0f;
     static const float ty_max = 1.0f;
 
-    Vec3 bl = vec3_init(-r, 0, -r/3);  // Bottom left
-    Vec3 tl = vec3_init(-r, 0, +r/3);  // Top left
-    Vec3 tr = vec3_init(+r, 0, +r/3);  // Top right
-    Vec3 br = vec3_init(+r, 0, -r/3);  // Bottom right
-    //bl = vec3_euler_rotation(bl, phi, 0, theta);
-    bl = vec3_add(bl, p);
-    tl = vec3_add(tl, p);
-    tr = vec3_add(tr, p);
-    br = vec3_add(br, p);
+    r *= 5.0f;
+
+    Vec3 bl, tl, tr, br;  // Bottom right
+
+    //Vec3 bl = vec3_init(-r, -r/3, 0);  // Bottom left
+    //Vec3 tl = vec3_init(-r,  r/3, 0);  // Top left
+    //Vec3 tr = vec3_init( r,  r/3, 0);  // Top right
+    //Vec3 br = vec3_init( r, -r/3, 0);  // Bottom right
+
+
+    // MOVE SHIT LIKE THIS TO BE CALC'ED ONLY ONCE then applied to all the interpolated points
+    // rotate the y & z (pitch) .... prob need to reverse/mirror the y
+    float radian = phi*PI;
+
+    bl.y = br.y = r*sinf(radian);
+    bl.z = br.z = r*cosf(radian);
+    
+    tl.y = tr.y = r*sinf(radian);
+    tl.z = tr.z = r*cosf(radian);
+    
+    //bl.y = br.y = -r;//*sinf(radian);
+    //bl.z = br.z = 0;//*cosf(radian);
+    //
+    //tl.y = tr.y = r;//*sinf(radian);
+    //tl.z = tr.z = 0;//*cosf(radian);
+    
+    bl.x = tl.x = -r;
+    br.x = tr.x = r;
+    //bl = vec3_euler_rotation(bl, theta, 0, 0);
+    //tl = vec3_euler_rotation(tl, theta, 0, 0);
+    //tr = vec3_euler_rotation(tr, theta, 0, 0);
+    //br = vec3_euler_rotation(br, theta, 0, 0);
+    bl = vec3_add(p, bl);
+    tl = vec3_add(p, tl);
+    tr = vec3_add(p, tr);
+    br = vec3_add(p, br);
 
     glTexCoord2f(tx_max, ty_max);
     glVertex3f(bl.x, bl.y, bl.z);  // Bottom left
     glTexCoord2f(tx_min, ty_max);
     glVertex3f(tl.x, tl.y, tl.z);  // Top left
-    glTexCoord2f(tx_min,ty_min);
+    glTexCoord2f(tx_min, ty_min);
     glVertex3f(tr.x, tr.y, tr.z);  // Top right
-    glTexCoord2f(tx_max,ty_min);
+    glTexCoord2f(tx_max, ty_min);
     glVertex3f(br.x, br.y, br.z);  // Bottom right
+
+    //glTexCoord2f(tx_max, ty_max);
+    //glVertex3f(p.x-r, p.y, p.z-r/3);  // Bottom left
+    //glTexCoord2f(tx_min, ty_max);
+    //glVertex3f(p.x-r, p.y, p.z+r/3);  // Top left
+    //glTexCoord2f(tx_min, ty_min);
+    //glVertex3f(p.x+r, p.y, p.z+r/3);  // Top right
+    //glTexCoord2f(tx_max, ty_min);
+    //glVertex3f(p.x+r, p.y, p.z-r/3);  // Bottom right
 }
 
 void RailRayEffectList::draw()
