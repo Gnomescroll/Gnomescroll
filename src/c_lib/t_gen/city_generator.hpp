@@ -7,15 +7,14 @@ dont_include_this_file_in_client
 namespace t_gen
 {
 
-    const int CITY_RANDOMNESS = 64; //the maximal amount of buildings by which to change buildings_in_city, also used for other stuff
+    const int CITY_RANDOMNESS = 32; //the maximal amount of buildings by which to change buildings_in_city, also used for other stuff
     const int CITY_AMOUNT = 1;
     const int BUILDINGS_IN_CITY = 64;
     const int LAB_ROOM_SIZE = 10;
-    const int LAB_ROOMS=5; //the probability of a partition wall generating, in percent
+    const int LAB_ROOMS=5;
     const int LAB_ROOM_HEIGHT = 12;
     const int LAB_RANDOMNESS = 4;
-    const int SKYSCRAPER_ROOM_HEIGHT = 6;
-    const int SKYSCRAPER_RANDOMNESS = 1;
+    const int SKYSCRAPER_ROOM_HEIGHT = 6; //size is calculated based on avaliable height, so that skyscrapers are as high as can be & keep proportions
     const int SUBWAY_STATION_SIZE = 8;
     const int SUBWAY_STATION_HEIGHT = 6;
     const int SUBWAY_TUNNEL_SIZE = 5;
