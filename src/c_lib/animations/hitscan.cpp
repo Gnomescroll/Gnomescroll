@@ -285,7 +285,8 @@ void RailRayEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quadra
 
     r *= 5.0f;
 
-    Vec3 bl, tl, tr, br;  // Bottom right
+    Vec3 bl, tl, tr, br;
+    bl = tl = tr = br = vec3_init(0.0f);
 
     //Vec3 bl = vec3_init(-r, -r/3, 0);  // Bottom left
     //Vec3 tl = vec3_init(-r,  r/3, 0);  // Top left
@@ -297,11 +298,21 @@ void RailRayEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quadra
     // rotate the y & z (pitch) .... prob need to reverse/mirror the y
     float radian = phi*PI;
 
-    bl.y = br.y = r*sinf(radian);
+    // bottom
+    bl.y = br.y = -r*sinf(radian);
     bl.z = br.z = r*cosf(radian);
+    printf("bl.y: %8.2f  bl.z: %8.2f \n", bl.y, bl.z);
+    //printf("radian: %8.2f \n", radian);
     
+    // top
     tl.y = tr.y = r*sinf(radian);
-    tl.z = tr.z = r*cosf(radian);
+    tl.z = tr.z = -r*cosf(radian);
+    printf("tl.y: %8.2f  tl.z: %8.2f \n", tl.y, tl.z);
+
+    GS_ASSERT(bl.y == br.y);
+    GS_ASSERT(bl.z == br.z);
+    GS_ASSERT(tl.y == tr.y);
+    GS_ASSERT(tl.z == tr.z);
     
     //bl.y = br.y = -r;//*sinf(radian);
     //bl.z = br.z = 0;//*cosf(radian);
