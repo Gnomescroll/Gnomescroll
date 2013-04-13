@@ -12,6 +12,8 @@ dont_include_this_file_in_client
 #include <t_map/_interface.hpp>
 #include <t_map/config/block_dat.hpp>
 
+using namespace t_gen;
+
 namespace t_gen
 {
 
@@ -55,7 +57,7 @@ void generate_city()
                 {
                     generate_lab(cx, cy);
                 }
-                if (building_randomizer == 2 && isGood(cx, cy, cx + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS, cy + SKYSCRAPER_SIZE + SKYSCRAPER_RANDOMNESS))
+                if (building_randomizer == 2 && isGood(cx, cy, cx + 6, cy + 6))
                 {
                     generate_skyscraper(cx, cy);
                     generate_column(cx, cy, t_map::get_highest_open_block(cx, cy), floors, floors);
@@ -75,7 +77,7 @@ void generate_city()
             }
             if (building_randomizer == 6 && isGood(cx, cy, cx + 2, cy + 2))
             {
-                generate_transmission_tower(cx, cy, get_highest_area_block(cx, cy, cx + 2, cy + 2), TRANSMISSION_TOWER_HEIGHT, steelA, steelB, steelC, gray, battery, computer);
+                generate_transmission_tower(cx, cy);
             }
             if (building_randomizer == 7)
             {
@@ -85,7 +87,7 @@ void generate_city()
             }
             if (building_randomizer == 8 && isGood(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS))
             {
-                generate_bunker(cx, cy, get_highest_area_block(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS), BUNKER_SIZE, BUNKER_DEPTH, BUNKER_FLOORS, BUNKER_PARTITION_PROBABILITY, BUNKER_RANDOMNESS, gray, computer, storage, cryofreezer);
+                generate_bunker(cx, cy);
             }
             if (building_randomizer == 9 && isGood(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE))
             {
@@ -174,7 +176,7 @@ void generate_skyscraper(int x, int y)
     printf ("Generating a skyscraper at %d, %d, %d \n", x, y, z);
     int floors = (t_map::map_dim.z - z) / SKYSCRAPER_ROOM_HEIGHT - 1;
     CubeType SkyscraperBlock[] = {steelA, steelB, steelC, red, purple, green, gray};
-    CubeType ActualBlock = SkyscraperBlock[randrange(0, sizeof(SkyscraperBlock) - 1)];
+    CubeType ActualBlock = SkyscraperBlock[randrange(0, sizeof(SkyscraperBlock) / 4 - 1)];
     CubeType GlowBlock[2] = {glowblue, glowgreen};
     if(floors < 4) return;
     generate_room(ActualBlock, x, y, z, x + floors, y + floors, z + SKYSCRAPER_ROOM_HEIGHT, x, y + floors / 2 - 1, z, x + 1, y + floors / 2 + 1, z + 4, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, random_bool(), 0, 0, 0, random_bool(), 0, 0, 0);
