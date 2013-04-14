@@ -46,20 +46,19 @@ void generate_city()
 
                 create_road(cx, cy, t_map::get_highest_open_block(cx, cy), prevx, prevy, t_map::get_highest_open_block(prevx, prevy));
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
-                if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_SIZE + LAB_RANDOMNESS, cy + LAB_SIZE + LAB_RANDOMNESS))
+                if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_ROOM_SIZE + LAB_RANDOMNESS, cy + LAB_ROOM_SIZE + LAB_RANDOMNESS))
                 {
                     generate_lab(cx, cy);
                 }
                 if (building_randomizer == 2 && isGood(cx, cy, cx + 6, cy + 6))
                 {
                     generate_skyscraper(cx, cy);
-                    generate_column(cx, cy, t_map::get_highest_open_block(cx, cy), floors, floors);
                 }
                 if (building_randomizer == 3 && isGood(cx, cy, cx + SUBWAY_STATION_SIZE, cy + SUBWAY_STATION_SIZE))
                 {
                     generate_subway_station(cx, cy);
                 }
-            if (building_randomizer == 4 && isGood(cx, cy, cx + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS))
+            if (building_randomizer == 4 && isGood(cx, cy, cx + HOUSE_ROOM_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS, cy + HOUSE_ROOM_SIZE + HOUSE_GARDEN * 2 + HOUSE_RANDOMNESS))
             {
                 generate_house(cx, cy);
             }
@@ -78,7 +77,7 @@ void generate_city()
                 cx = cx + randrange(CITY_RANDOMNESS / 2, CITY_RANDOMNESS);
                 cy = cy + randrange(CITY_RANDOMNESS / 2, CITY_RANDOMNESS);
             }
-            if (building_randomizer == 8 && isGood(cx, cy, cx + BUNKER_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_SIZE + BUNKER_RANDOMNESS))
+            if (building_randomizer == 8 && isGood(cx, cy, cx + BUNKER_ROOM_SIZE + BUNKER_RANDOMNESS, cy + BUNKER_ROOM_SIZE + BUNKER_RANDOMNESS))
             {
                 generate_bunker(cx, cy);
             }
