@@ -286,7 +286,7 @@ void generate_transmission_tower(int x, int y)
 
 void create_road(int x, int y, int z, int ox, int oy, int oz)
 {
-    CubeType RoadBlock[] = {steelA, steelB, steelC, rock, green, red, purple, gray};
+    CubeType RoadBlock[] = {steelA, steelB, steelC, stone, green, red, purple, gray};
     for(int LinesMade = 0; LinesMade < ROAD_SIZE; LinesMade++)
     {
         generate_line(x + LinesMade, y, z, ox + LinesMade, oy, oz, RoadBlock[randrange(0, sizeof(RoadBlock) / 4 - 1)]);
@@ -321,7 +321,7 @@ void generate_bunker(int x, int y)
     int PrevX = x;
     int PrevY = y;
     int PrevZ = z;
-    generate_sphere(x + BUNKER_SPHERE_RADIUS / 2, y + BUNKER_SPHERE_RADIUS / 2, z, BUNKER_SPHERE_RADIUS, rock);
+    generate_sphere(x + BUNKER_SPHERE_RADIUS / 2, y + BUNKER_SPHERE_RADIUS / 2, z, BUNKER_SPHERE_RADIUS, stone);
     for(int RoomsMade = 0; RoomsMade < BUNKER_ROOM_AMOUNT; RoomsMade++)
     {
         CurrentSizeX = randrange(BUNKER_ROOM_SIZE - BUNKER_RANDOMNESS, BUNKER_ROOM_SIZE + BUNKER_RANDOMNESS);
@@ -379,7 +379,7 @@ void generate_bunker(int x, int y)
 void generate_column(int x, int y, int z, int SizeX, int SizeY)
 {
     printf ("Generating a column at %d, %d, %d \n", x, y, z);
-    generate_area(x, y, 1, x + SizeX, y + SizeY, z, rock);
+    generate_area(x, y, 1, x + SizeX, y + SizeY, z, stone);
 }
 
 void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeType material)

@@ -67,7 +67,7 @@ namespace t_gen
     CubeType glowgreen = t_map::get_cube_type("green_glow");
     CubeType glowblue = t_map::get_cube_type("blue_glow");
     CubeType battery = t_map::get_cube_type("battery2");
-    CubeType rock = t_map::get_cube_type("rock");
+    CubeType stone = t_map::get_cube_type("rock");
     CubeType regolith = t_map::get_cube_type("regolith");
 
 void generate_city();
@@ -92,7 +92,7 @@ void create_bench(int x, int y, int z);
 void create_crusher(int x, int y, int z);
 bool isGood(int x, int y, int maxx, int maxy);
 int get_highest_area_block(int x, int y, int maxx, int maxy);
-void generate_sphere(int x, int y, int z, int radius, int material);
+void generate_sphere(int x, int y, int z, int radius, CubeType material);
 void generate_room(CubeType material, int minx, int miny, int minz, int maxx, int maxy, int maxz, int minentrancex, int minentrancey, int minentrancez, int maxentrancex, int maxentrancey, int maxentracez, int minexitx, int minexity, int minexitz, int maxexitx, int maxexity, int maxexitz, bool windows, bool electric, bool crafting, bool furnace, bool computer, bool fridge, bool recycler, bool chest);
 void generate_line(int startx, int starty, int startz, int endx, int endy, int endz, CubeType material);
 
