@@ -90,9 +90,9 @@ void generate_city()
     }
 }
 
-void generate_lab(int x, int y);
+void generate_lab(int x, int y)
 {
-    int z = t_map::get_highest_area_block(x, y);
+    int z = t_map::get_highest_open_block(x, y) - 1;
     printf("Generating a lab at %d, %d, %d \n", x, y, z);
     CubeType LabBlock[]={steelA, steelB, steelC};
     int CurrentSizeX;
@@ -187,14 +187,15 @@ void generate_subway_station(int x, int y)
     CubeType SubBlock[] = {steelA, steelB, steelC, red, green, gray, purple};
     generate_room(SubBlock[randrange(0, sizeof(SubBlock) / 4 - 1)], x, y, z + SUBWAY_STATION_HEIGHT, x + SUBWAY_STATION_SIZE, y + SUBWAY_STATION_SIZE, z + SUBWAY_STATION_HEIGHT * 2, x, y + SUBWAY_STATION_SIZE / 2, z + 1 + SUBWAY_STATION_HEIGHT, x, y + SUBWAY_STATION_SIZE / 2 + 1, z + SUBWAY_STATION_HEIGHT * 2 - 1, x + SUBWAY_STATION_SIZE / 2, y, z + 1 + SUBWAY_STATION_HEIGHT, x + SUBWAY_STATION_SIZE / 2, y, z + 2 + SUBWAY_STATION_HEIGHT, 1, 0, 0, 0, 1, 0, 0, 0);
     generate_room(SubBlock[randrange(0, sizeof(SubBlock) / 4 - 1)], x, y, z, x + SUBWAY_STATION_SIZE, y + SUBWAY_STATION_SIZE, z + SUBWAY_STATION_HEIGHT, x + SUBWAY_STATION_SIZE / 2, y + SUBWAY_STATION_SIZE / 2, z + 1, x + SUBWAY_STATION_SIZE / 2, y + SUBWAY_STATION_SIZE / 2, z + 1 + SUBWAY_STATION_HEIGHT, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, 0, 0, 0, 0, 0, 0);
-    generate_tunnel(x, y, z prevsubwayx, prevsubwayy, prevsubwayz);
+    generate_tunnel(x, y, z, prevsubwayx, prevsubwayy, prevsubwayz);
     prevsubwayx = x;
     prevsubwayy = y;
     prevsubwayz = z;
 }
 
 void generate_house(int x, int y)
- int z = t_map::get_highest_area_block(x, y);
+{
+ int z = t_map::get_highest_open_block(x, y) - 1;
     printf("Generating a house at %d, %d, %d \n", x, y, z);
     CubeType HouseBlock[]={red, green, purple, gray};
     int CurrentSizeX;
@@ -283,7 +284,7 @@ void generate_transmission_tower(int x, int y)
     t_map::ste(x + 1, y + 1, t_map::map_dim.z, processor);
 }
 
-void create_road(int x, int y, int z, int ox, int oy, int oz);
+void create_road(int x, int y, int z, int ox, int oy, int oz)
 {
     CubeType RoadBlock[] = {steelA, steelB, steelC, rock, green, red, purple, gray};
     for(int LinesMade = 0; LinesMade < ROAD_SIZE; LinesMade++)
@@ -296,7 +297,7 @@ void create_road(int x, int y, int z, int ox, int oy, int oz);
 
 void generate_temple(int x, int y)
 {
-    int z = t_map::get_highest_area_block(x, y, x + TEMPLE_SIZE, y + TEMPLE_SIZE);
+    int z = get_highest_area_block(x, y, x + TEMPLE_SIZE, y + TEMPLE_SIZE);
     printf ("Generating a temple at %d, %d, %d \n", x, y, z);
     CubeType TempleBlock[2] = {glowgreen, glowblue};
     CubeType WallBlock = TempleBlock[randrange(0, 1)];
@@ -320,7 +321,7 @@ void generate_bunker(int x, int y)
     int PrevX = x;
     int PrevY = y;
     int PrevZ = z;
-    generate_sphere(x + BUNKER_SPHERE_RADIUS / 2, y + BUNKER_SPHERE_RADIUS / 2, z, BUNKER_SPHERE_RADIUS, material);
+    generate_sphere(x + BUNKER_SPHERE_RADIUS / 2, y + BUNKER_SPHERE_RADIUS / 2, z, BUNKER_SPHERE_RADIUS, rock);
     for(int RoomsMade = 0; RoomsMade < BUNKER_ROOM_AMOUNT; RoomsMade++)
     {
         CurrentSizeX = randrange(BUNKER_ROOM_SIZE - BUNKER_RANDOMNESS, BUNKER_ROOM_SIZE + BUNKER_RANDOMNESS);
@@ -375,10 +376,10 @@ void generate_bunker(int x, int y)
     }
 }
 
-void generate_column(int x, int y, int z, int sizeX, int SizeY)
+void generate_column(int x, int y, int z, int SizeX, int SizeY)
 {
     printf ("Generating a column at %d, %d, %d \n", x, y, z);
-    generate_area(x, y, 1, x + sizeX, y + sizeY, z, rock);
+    generate_area(x, y, 1, x + SizeX, y + SizeY, z, rock);
 }
 
 void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeType material)
@@ -637,11 +638,11 @@ void generate_line(int startx, int starty, int startz, int endx, int endy, int e
     }
 }
 
-void generate_sphere(int x, int y, int z, int radius, int material)
+void generate_sphere(int x, int y, int z, int radius, CubeType material)
 {
-    for(int cx = x - radius; cx <= x + radius, cx++)
-    for(int cy = y - radius; cy <= y + radius, cy++)
-    for(int cz = z - radius; cz <= z + radius, cz++)
+    for(int cx = x - radius; cx <= x + radius; cx++)
+    for(int cy = y - radius; cy <= y + radius; cy++)
+    for(int cz = z - radius; cz <= z + radius; cz++)
     if(sqrtf(powf(cx - x, 2) + powf(cy - y, 2) + powf(cz - z, 2)) <= radius) t_map::set(translate_point(x), translate_point(y), z, material);
 }
 

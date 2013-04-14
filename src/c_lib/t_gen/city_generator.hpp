@@ -81,7 +81,7 @@ void degenerate_space(int x, int y, int z, int size);
 void create_road(int x, int y, int z, int ox, int oy, int oz);
 void generate_temple(int x, int y);
 void generate_bunker(int x, int y);
-void generate_column(int x, int y, int z, int sizeX, int SizeY);
+void generate_column(int x, int y, int z, int SizeX, int SizeY);
 void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeType material);
 void degenerate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz);
 void generate_tunnel(int x, int y, int z, int otherx, int othery, int otherz);
