@@ -20,7 +20,7 @@ inline int randrange(int lower, int upper)
 
 bool random_bool()
 {
-    if(rand % 2==0) return 1;
+    if(rand() % 2==0) return 1;
     else return 0;
 }
 

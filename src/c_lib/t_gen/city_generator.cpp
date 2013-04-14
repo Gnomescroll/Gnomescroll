@@ -5,13 +5,6 @@
 dont_include_this_file_in_client
 #endif
 
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.hpp>
-#include <common/random.hpp>
-#include <item/container/_interface.hpp>
-#include <t_map/_interface.hpp>
-#include <t_map/config/block_dat.hpp>
-
 using namespace t_gen;
 
 namespace t_gen
