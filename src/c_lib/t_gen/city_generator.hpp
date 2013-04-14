@@ -41,7 +41,7 @@ namespace t_gen
     const int TRANSMISSION_TOWER_HEIGHT = 64;
     const int ROAD_SIZE = 4;
     const int BUILDING_AMOUNT = 9;
-    const int MAXIMAL_HEIGHT = t_map::map_dim.z - 1 - BUNKER_SPHERE_RADIUS; //for isGood
+    const int MAXIMAL_HEIGHT = map_dim.z - 1 - BUNKER_SPHERE_RADIUS; //for isGood
     const int MINIMAL_HEIGHT = BUNKER_SPHERE_RADIUS;
     const int MAXIMAL_HEIGHT_DIFFERENCE = 64;
 

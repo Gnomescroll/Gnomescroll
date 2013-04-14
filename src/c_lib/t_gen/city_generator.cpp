@@ -25,8 +25,8 @@ void generate_city()
     for (int count=1; count <= CITY_AMOUNT; count++)
     {
 
-        prevx = cx = x = distribute_gaussian(0, t_map::map_dim.x - 1, 3);
-        prevy = cy = y = distribute_gaussian(0, t_map::map_dim.y - 1, 3);
+        prevx = cx = x = distribute_gaussian(0, map_dim.x - 1, 3);
+        prevy = cy = y = distribute_gaussian(0, map_dim.y - 1, 3);
         printf("Generating alien city at %d, %d, %d \n", x, y, t_map::get_highest_open_block(x, y) - 1);
 
         actual_buildings = BUILDINGS_IN_CITY + randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
@@ -39,10 +39,10 @@ void generate_city()
             prevy = cy;
             cx += randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
             cy += randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
-            if (cx >= t_map::map_dim.x) cx = 32;
-            if (cy >= t_map::map_dim.y) cy = 32;
-            if (cx < 0) cx = t_map::map_dim.x - 64;
-            if (cy < 0) cy = t_map::map_dim.y - 64;
+            if (cx >= map_dim.x) cx = 32;
+            if (cy >= map_dim.y) cy = 32;
+            if (cx < 0) cx = map_dim.x - 64;
+            if (cy < 0) cy = map_dim.y - 64;
 
                 create_road(cx, cy, t_map::get_highest_open_block(cx, cy), prevx, prevy, t_map::get_highest_open_block(prevx, prevy));
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
@@ -166,7 +166,7 @@ void generate_skyscraper(int x, int y)
 {
     int z = t_map::get_highest_open_block(x, y);
     printf ("Generating a skyscraper at %d, %d, %d \n", x, y, z);
-    int floors = (t_map::map_dim.z - z) / SKYSCRAPER_ROOM_HEIGHT - 1;
+    int floors = (map_dim.z - z) / SKYSCRAPER_ROOM_HEIGHT - 1;
     CubeType SkyscraperBlock[] = {steelA, steelB, steelC, red, purple, green, gray};
     CubeType ActualBlock = SkyscraperBlock[randrange(0, sizeof(SkyscraperBlock) / 4 - 1)];
     CubeType GlowBlock[2] = {glowblue, glowgreen};
@@ -279,9 +279,9 @@ void generate_transmission_tower(int x, int y)
     int z = t_map::get_highest_open_block(x, y);
     printf ("Generating a transmission tower at %d, %d, %d \n", x, y, z);
     CubeType TowerBlock[] = {steelA, steelB, steelC, gray};
-    generate_area(x, y, z, x + 2, y + 2, t_map::map_dim.z - 1, TowerBlock[randrange(0, sizeof(TowerBlock) / 4 - 1)]);
-    generate_area(x + 1, y + 1, z, x + 1, y + 1, t_map::map_dim.z - 1, battery);
-    t_map::ste(x + 1, y + 1, t_map::map_dim.z, processor);
+    generate_area(x, y, z, x + 2, y + 2, map_dim.z - 1, TowerBlock[randrange(0, sizeof(TowerBlock) / 4 - 1)]);
+    generate_area(x + 1, y + 1, z, x + 1, y + 1, map_dim.z - 1, battery);
+    t_map::set(x + 1, y + 1, map_dim.z, processor);
 }
 
 void create_road(int x, int y, int z, int ox, int oy, int oz)
@@ -384,9 +384,9 @@ void generate_column(int x, int y, int z, int SizeX, int SizeY)
 
 void generate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz, CubeType material)
 {
-    if (maxz >= t_map::map_dim.z) return;
-    if (maxx >= t_map::map_dim.x) return;
-    if (maxy >= t_map::map_dim.y) return;
+    if (maxz >= map_dim.z) return;
+    if (maxx >= map_dim.x) return;
+    if (maxy >= map_dim.y) return;
     int special = 0;
     if (material == t_map::get_cube_type("cryofreezer_small"))
     {
@@ -457,9 +457,9 @@ void degenerate_area(int minx, int miny, int minz, int maxx, int maxy, int maxz)
     if (minz < 0) return;
     if (minx < 0) return;
     if (miny < 0) return;
-    if (maxz >= t_map::map_dim.z) return;
-    if (maxx >= t_map::map_dim.x) return;
-    if (maxy >= t_map::map_dim.y) return;
+    if (maxz >= map_dim.z) return;
+    if (maxx >= map_dim.x) return;
+    if (maxy >= map_dim.y) return;
     for (int i = minx; i <= maxx; i++)
     for (int j = miny; j <= maxy; j++)
     for (int k = minz; k <= maxz; k++)
@@ -535,9 +535,9 @@ bool isGood(int x, int y, int maxx, int maxy)
     printf("Testing if position %d, %d to %d, %d is good for a building... \n", x, y, maxx, maxy);
     GS_ASSERT(x < maxx);
     GS_ASSERT(y < maxy);
-    if (maxx >= t_map::map_dim.x || maxy >= t_map::map_dim.y || x < 0 || y < 0) return 0;
+    if (maxx >= map_dim.x || maxy >= map_dim.y || x < 0 || y < 0) return 0;
     int maxlevel=0;
-    int minlevel=t_map::map_dim.z - 1;
+    int minlevel=map_dim.z - 1;
     for (int i = x; i <= maxx; i++)
     for (int j = y; j <= maxy; j++)
     {
@@ -550,17 +550,18 @@ bool isGood(int x, int y, int maxx, int maxy)
         if (t_map::get_highest_open_block(i, j) < minlevel) minlevel = t_map::get_highest_open_block(i, j);
     }
     printf("minlevel = %d \nmaxlevel = %d \n", minlevel, maxlevel);
-    if (minlevel + 40 < maxlevel) return 0;
-    else return 1;
+    if (minlevel + MAXIMAL_HEIGHT_DIFFERENCE < maxlevel) return 0;
+    if (maxlevel > MAXIMAL_HEIGHT) return 0;
+    return 1;
 }
 
 int get_highest_area_block(int x, int y, int maxx, int maxy)
 {
     int maxh=0;
-    GS_ASSERT(x >= 0 && x < t_map::map_dim.x);
-    GS_ASSERT(y >= 0 && y < t_map::map_dim.y);
-    GS_ASSERT(maxx >= 0 && maxx < t_map::map_dim.x);
-    GS_ASSERT(maxy >= 0 && maxy < t_map::map_dim.y);
+    GS_ASSERT(x >= 0 && x < map_dim.x);
+    GS_ASSERT(y >= 0 && y < map_dim.y);
+    GS_ASSERT(maxx >= 0 && maxx < map_dim.x);
+    GS_ASSERT(maxy >= 0 && maxy < map_dim.y);
     GS_ASSERT(maxx >= x);
     GS_ASSERT(maxy >= y);
     for (int i = x; i <= maxx; i++)
