@@ -6,6 +6,7 @@ dont_include_this_file_in_client
 
 #include <t_gen/noise_map2.hpp>
 #include <t_gen/explosives.hpp>
+#include <t_gen/city_generator.hpp>
 
 typedef unsigned char Uint8;
 
@@ -15,6 +16,7 @@ namespace t_gen
 void init()
 {
     init_explosives();
+    init_cities();
 }
 
 void teardown()

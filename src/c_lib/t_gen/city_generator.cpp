@@ -10,6 +10,28 @@ using namespace t_gen;
 namespace t_gen
 {
 
+void init_cities()
+{
+    processor = t_map::get_cube_type("control_node");
+    green = t_map::get_cube_type("ruins_ceiling1");
+    red = t_map::get_cube_type("ruins_ceiling2");
+    purple = t_map::get_cube_type("ruins_ceiling3");
+    gray = t_map::get_cube_type("ruins_ceiling4");
+    storage = t_map::get_cube_type("storage_block_small");
+    cryofreezer = t_map::get_cube_type("cryofreezer_small");
+    smelter = t_map::get_cube_type("smelter_basic");
+    bench = t_map::get_cube_type("crafting_bench_basic");
+    crusher = t_map::get_cube_type("crusher");
+    steelA = t_map::get_cube_type("steel_block_1");
+    steelB = t_map::get_cube_type("steel_block_2");
+    steelC = t_map::get_cube_type("steel_block_3");
+    glowgreen = t_map::get_cube_type("green_glow");
+    glowblue = t_map::get_cube_type("blue_glow");
+    battery = t_map::get_cube_type("battery2");
+    stone = t_map::get_cube_type("rock");
+    regolith = t_map::get_cube_type("regolith");
+}
+
 void generate_city()
 {
 

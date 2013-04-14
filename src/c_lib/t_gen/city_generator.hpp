@@ -51,24 +51,24 @@ namespace t_gen
         int prevsubwayz = 32;
 
 
-    CubeType processor = t_map::get_cube_type("control_node");
-    CubeType green = t_map::get_cube_type("ruins_ceiling1");
-    CubeType red = t_map::get_cube_type("ruins_ceiling2");
-    CubeType purple = t_map::get_cube_type("ruins_ceiling3");
-    CubeType gray = t_map::get_cube_type("ruins_ceiling4");
-    CubeType storage = t_map::get_cube_type("storage_block_small");
-    CubeType cryofreezer = t_map::get_cube_type("cryofreezer_small");
-    CubeType smelter = t_map::get_cube_type("smelter_basic");
-    CubeType bench = t_map::get_cube_type("crafting_bench_basic");
-    CubeType crusher = t_map::get_cube_type("crusher");
-    CubeType steelA = t_map::get_cube_type("steel_block_1");
-    CubeType steelB = t_map::get_cube_type("steel_block_2");
-    CubeType steelC = t_map::get_cube_type("steel_block_3");
-    CubeType glowgreen = t_map::get_cube_type("green_glow");
-    CubeType glowblue = t_map::get_cube_type("blue_glow");
-    CubeType battery = t_map::get_cube_type("battery2");
-    CubeType stone = t_map::get_cube_type("rock");
-    CubeType regolith = t_map::get_cube_type("regolith");
+    CubeType processor;
+    CubeType green;
+    CubeType red;
+    CubeType purple;
+    CubeType gray;
+    CubeType storage;
+    CubeType cryofreezer;
+    CubeType smelter;
+    CubeType bench;
+    CubeType crusher;
+    CubeType steelA;
+    CubeType steelB;
+    CubeType steelC;
+    CubeType glowgreen;
+    CubeType glowblue;
+    CubeType battery;
+    CubeType stone;
+    CubeType regolith;
 
 void generate_city();
 void generate_lab(int x, int y);
@@ -95,5 +95,6 @@ int get_highest_area_block(int x, int y, int maxx, int maxy);
 void generate_sphere(int x, int y, int z, int radius, CubeType material);
 void generate_room(CubeType material, int minx, int miny, int minz, int maxx, int maxy, int maxz, int minentrancex, int minentrancey, int minentrancez, int maxentrancex, int maxentrancey, int maxentracez, int minexitx, int minexity, int minexitz, int maxexitx, int maxexity, int maxexitz, bool windows, bool electric, bool crafting, bool furnace, bool computer, bool fridge, bool recycler, bool chest);
 void generate_line(int startx, int starty, int startz, int endx, int endy, int endz, CubeType material);
+void init_cities(void);
 
 }   // t_gen
