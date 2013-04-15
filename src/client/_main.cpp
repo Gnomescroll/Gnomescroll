@@ -363,7 +363,7 @@ void draw_tick()
     poll_mouse();
     GL_ASSERT(GL_BLEND, true);
     Animations::draw_hitscan_effect();
-    Animations::draw_rail_ray_effect();
+    Animations::draw_railtrail_effect();
 
     poll_mouse();
     GL_ASSERT(GL_BLEND, true);

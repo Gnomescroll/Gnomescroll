@@ -17,7 +17,7 @@ namespace Animations
 #if DC_CLIENT
 class InsectMobList* insect_mob_list = NULL;
 class HitscanEffectList* hitscan_effect_list = NULL;
-class RailRayEffectList* rail_ray_effect_list = NULL;
+class RailTrailEffectList* railtrail_effect_list = NULL;
 class MiningLaserEffectList* mining_laser_effect_list = NULL;
 #endif
 
@@ -25,7 +25,7 @@ class MiningLaserEffectList* mining_laser_effect_list = NULL;
 void animations_tick()
 {
     hitscan_effect_list->tick();
-    rail_ray_effect_list->tick();
+    railtrail_effect_list->tick();
     mining_laser_effect_list->tick();
 
     //insect_mob_list->tick();
@@ -48,9 +48,9 @@ void draw_hitscan_effect()
     hitscan_effect_list->draw();
 }
 
-void draw_rail_ray_effect()
+void draw_railtrail_effect()
 {
-    rail_ray_effect_list->draw();
+    railtrail_effect_list->draw();
 }
 
 void mining_laser_effect_tick()
@@ -128,9 +128,9 @@ void create_hitscan_effect(struct Vec3 pos, struct Vec3 fwd)
     he->set_state(pos, fwd);
 }
 
-void create_rail_ray_effect(struct Vec3 start, struct Vec3 end)
+void create_railtrail_effect(struct Vec3 start, struct Vec3 end)
 {
-    RailRayEffect* rre = rail_ray_effect_list->create();
+    RailTrailEffect* rre = railtrail_effect_list->create();
     if (rre == NULL) return;
 
     rre->set_state(start, end);
@@ -185,11 +185,11 @@ void init()
 {
     #if DC_CLIENT
     GS_ASSERT(hitscan_effect_list == NULL);
-    GS_ASSERT(rail_ray_effect_list == NULL);
+    GS_ASSERT(railtrail_effect_list == NULL);
     GS_ASSERT(mining_laser_effect_list == NULL);
 
     hitscan_effect_list = new HitscanEffectList;
-    rail_ray_effect_list = new RailRayEffectList;
+    railtrail_effect_list = new RailTrailEffectList;
     mining_laser_effect_list = new MiningLaserEffectList;
 
     //insect_mob_list = new InsectMobList(INSECT_MOB_MAX);
@@ -215,7 +215,7 @@ void teardown()
 {
     #if DC_CLIENT
     delete hitscan_effect_list;
-    delete rail_ray_effect_list;
+    delete railtrail_effect_list;
     delete mining_laser_effect_list;
     Animations::teardown_hitscan();
     Animations::teardown_sprite_voxelizer();

@@ -192,12 +192,12 @@ void HitscanEffectList::tick()
     }
 }
 
-inline void RailRayEffect::reset()
+inline void RailTrailEffect::reset()
 {
     this->ttl = HITSCAN_TTL;
 }
 
-void RailRayEffect::tick()
+void RailTrailEffect::tick()
 {
     //const float tick_rate = 1.0f / 30.0f;
     //this->start = vec3_add(this->start, vec3_scalar_mult(this->end, tick_rate));
@@ -206,7 +206,7 @@ void RailRayEffect::tick()
     // spin particles
 }
 
-void RailRayEffect::draw(Vec3 camera)
+void RailTrailEffect::draw(Vec3 camera)
 {
     if (Options::animation_level <= 0) return;
 
@@ -276,7 +276,7 @@ void RailRayEffect::draw(Vec3 camera)
     }
 }
 
-void RailRayEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quadratic radius
+void RailTrailEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quadratic radius
 { // with no rotation modifications, it faces upwards
     static const float tx_min = 0.0f;
     static const float tx_max = 1.0f;
@@ -334,7 +334,7 @@ void RailRayEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quadra
     glVertex3f(br.x, br.y, br.z);  // Bottom right
 }
 
-void RailRayEffectList::draw()
+void RailTrailEffectList::draw()
 {
     IF_ASSERT(current_camera == NULL) return;
     if (this->num == 0) return;
@@ -362,7 +362,7 @@ void RailRayEffectList::draw()
 
 }
 
-void RailRayEffectList::tick()
+void RailTrailEffectList::tick()
 {
     for (size_t i=0; i<this->num; i++)
     {

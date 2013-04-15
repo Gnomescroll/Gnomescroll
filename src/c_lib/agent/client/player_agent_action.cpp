@@ -160,7 +160,7 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
 
     Sound::play_2d_sound("fire_laser");
     // play laser anim (client viewport)
-    Animations::create_rail_ray_effect(origin, collision_point);
+    Animations::create_railtrail_effect(origin, collision_point);
     //////////const float hitscan_speed = 200.0f;
     //////////look = vec3_scalar_mult(look, hitscan_speed);
     //////////Animations::create_hitscan_effect(origin, look);

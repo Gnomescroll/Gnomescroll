@@ -61,7 +61,7 @@ class HitscanEffectList: public SimpleObjectList<HitscanEffect, 1024>
     }
 };
 
-class RailRayEffect
+class RailTrailEffect
 {
     public:
         int id;
@@ -82,23 +82,23 @@ class RailRayEffect
 
     void reset();
 
-    RailRayEffect()
+    RailTrailEffect()
     {
         this->reset();
     }
 };
 
-class RailRayEffectList: public SimpleObjectList<RailRayEffect, 1024>
+class RailTrailEffectList: public SimpleObjectList<RailTrailEffect, 1024>
 {
     private:
         const char* name()
         {
-            return "RailRayEffect";
+            return "RailTrailEffect";
         }
     public:
         void draw();
         void tick();
-        RailRayEffectList()
+        RailTrailEffectList()
         {
         }
 };
