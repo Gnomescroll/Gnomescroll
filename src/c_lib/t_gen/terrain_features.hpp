@@ -451,7 +451,7 @@ void add_flora()
     int t = _GET_MS_TIME();
     printf("\tflora......");
     const float FLORA_ZONE_THRESHOLD = 0.3f;
-    const float FLORA_THRESHOLD = 0.9f;
+    const float FLORA_THRESHOLD = 0.8f;
     const CubeType reg = t_map::get_cube_type("regolith");
     const MechType gr1 = t_mech::get_mech_type_dat("grass1");
     const MechType gr2 = t_mech::get_mech_type_dat("grass2");
