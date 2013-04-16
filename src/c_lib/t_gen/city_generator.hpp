@@ -45,10 +45,8 @@ namespace t_gen
     const int MINIMAL_HEIGHT = BUNKER_SPHERE_RADIUS;
     const int MAXIMAL_HEIGHT_DIFFERENCE = 64;
 
-
-        int prevsubwayx = 256;
-        int prevsubwayy = 256;
-        int prevsubwayz = 32;
+        struct previous{int x; int y; int z;}
+        prevsubway;
 
 
     CubeType processor;

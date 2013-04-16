@@ -30,6 +30,10 @@ void init_cities()
     battery = t_map::get_cube_type("battery2");
     stone = t_map::get_cube_type("rock");
     regolith = t_map::get_cube_type("regolith");
+
+    prevsubway.x = 256;
+    prevsubway.y = 256;
+    prevsubway.z = 32;
 }
 
 void generate_city()
@@ -66,7 +70,6 @@ void generate_city()
             if (cx < 0) cx = map_dim.x - 64;
             if (cy < 0) cy = map_dim.y - 64;
 
-                create_road(cx, cy, t_map::get_highest_open_block(cx, cy), prevx, prevy, t_map::get_highest_open_block(prevx, prevy));
                 building_randomizer = randrange(1, BUILDING_AMOUNT); //1 is lab, 2 is skyscraper, 3 is subway station, 4 is house, 5 is shop, 6 is transmission tower, 7 is a square, 8 is bunker, 9 is temple
                 if (building_randomizer == 1 && isGood(cx, cy, cx + LAB_ROOM_SIZE + LAB_RANDOMNESS, cy + LAB_ROOM_SIZE + LAB_RANDOMNESS))
                 {
@@ -108,6 +111,7 @@ void generate_city()
                 generate_column(cx, cy, get_highest_area_block(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE) - 1, TEMPLE_SIZE, TEMPLE_SIZE);
                 generate_temple(cx, cy);
             }
+                create_road(cx, cy, t_map::get_highest_open_block(cx, cy), prevx, prevy, t_map::get_highest_open_block(prevx, prevy));
         }
     }
 }
@@ -209,10 +213,10 @@ void generate_subway_station(int x, int y)
     CubeType SubBlock[] = {steelA, steelB, steelC, red, green, gray, purple};
     generate_room(SubBlock[randrange(0, sizeof(SubBlock) / 4 - 1)], x, y, z + SUBWAY_STATION_HEIGHT, x + SUBWAY_STATION_SIZE, y + SUBWAY_STATION_SIZE, z + SUBWAY_STATION_HEIGHT * 2, x, y + SUBWAY_STATION_SIZE / 2, z + 1 + SUBWAY_STATION_HEIGHT, x, y + SUBWAY_STATION_SIZE / 2 + 1, z + SUBWAY_STATION_HEIGHT * 2 - 1, x + SUBWAY_STATION_SIZE / 2, y, z + 1 + SUBWAY_STATION_HEIGHT, x + SUBWAY_STATION_SIZE / 2, y, z + 2 + SUBWAY_STATION_HEIGHT, 1, 0, 0, 0, 1, 0, 0, 0);
     generate_room(SubBlock[randrange(0, sizeof(SubBlock) / 4 - 1)], x, y, z, x + SUBWAY_STATION_SIZE, y + SUBWAY_STATION_SIZE, z + SUBWAY_STATION_HEIGHT, x + SUBWAY_STATION_SIZE / 2, y + SUBWAY_STATION_SIZE / 2, z + 1, x + SUBWAY_STATION_SIZE / 2, y + SUBWAY_STATION_SIZE / 2, z + 1 + SUBWAY_STATION_HEIGHT, x + 1, y + 1, z + 1, x + 1, y + 1, z + 1, 0, 0, 0, 0, 0, 0, 0, 0);
-    generate_tunnel(x, y, z, prevsubwayx, prevsubwayy, prevsubwayz);
-    prevsubwayx = x;
-    prevsubwayy = y;
-    prevsubwayz = z;
+    generate_tunnel(x, y, z, prevsubway.x, prevsubway.y, prevsubway.z);
+    prevsubway.x = x;
+    prevsubway.y = y;
+    prevsubway.z = z;
 }
 
 void generate_house(int x, int y)
