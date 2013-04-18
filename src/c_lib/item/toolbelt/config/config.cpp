@@ -249,6 +249,9 @@ static void register_item_group_callbacks()
     set_group(IG_MECH_PLACER);
     c.beta_trigger = &place_mech;
 
+    set_group(IG_MECH_PLACER_ORIENTED);
+    c.beta_trigger = &place_mech_oriented;
+
     set_group(IG_PLANT_PLACER);
     c.beta_trigger = &plant_placer_action;
     #endif

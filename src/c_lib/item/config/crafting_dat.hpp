@@ -231,6 +231,9 @@ void load_crafting_dat()
     set_crafting_reagent("glass_scope", 1);
     set_crafting_reagent("laser_rifle", 1);
 
+    def_crafting_recipe("copper_ladder",4);
+    set_crafting_reagent("copper_bar", 1);
+
     end_crafting_recipe(); // finalize
 }
 
