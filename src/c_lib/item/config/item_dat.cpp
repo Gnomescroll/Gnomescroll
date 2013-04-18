@@ -381,6 +381,11 @@ void load_item_dat()
     sprite_def(i1, 1,6);
     s->max_stack_size = 1;
 
+    item_def(IG_MECH_PLACER, "copper_ladder");
+    sprite_def(i0, 5,2);
+    s->mech_type = t_mech::get_mech_type("copper_ladder");
+    s->max_stack_size = 16;
+
     item_def(IG_EQUIPMENT, "copper_helmet");
     sprite_def(i1, 5,5);
     s->equipment_type = EQUIPMENT_TYPE_HEAD;
