@@ -353,6 +353,38 @@ void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
         decrement_stack(agent_id, item_id, item_type);
 }
 
+//IG_MECH_PLACER_ORIENTED
+void place_mech_oriented(AgentID agent_id, ItemID item_id, ItemType item_type)
+{
+    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER_ORIENTED);
+
+    Agents::Agent* a = Agents::get_agent(agent_id);
+    IF_ASSERT(a == NULL) return;
+    MechType mech_type = Item::get_mech_type(item_type);
+    IF_ASSERT(!isValid(mech_type)) return;
+
+    int sp[3];
+    int op[3];
+    float distance = 0;
+
+    int side = a->get_facing_side(sp, op, &distance);
+    if (side < 0) return;
+
+    printf("%d %d %d: side %d \n", op[0],op[1],op[2], side);
+
+    MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
+    MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
+
+    //failed
+    if(code == 0)
+    {
+        t_mech::print_mech_create_failure_code(code);
+        return;
+    }
+    if(code)
+        decrement_stack(agent_id, item_id, item_type);
+
+}
 // magic stick
 
 void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
