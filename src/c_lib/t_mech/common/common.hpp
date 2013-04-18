@@ -30,6 +30,7 @@ typedef enum
     MECH_RENDER_TYPE_1, //crop/wheat type
     MECH_RENDER_TYPE_2, //mycelium/ladder type
     MECH_RENDER_TYPE_3, //oriented on side of block
+    MECH_RENDER_TYPE_4, //torch crystal
 } MechRenderType;
 
 typedef enum
