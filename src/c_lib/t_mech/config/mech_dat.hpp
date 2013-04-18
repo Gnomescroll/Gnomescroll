@@ -107,6 +107,10 @@ void load_mech_dat()
     //set_sprite_index(16*5 + 0);
     set_sprite_index(16*11 + 0);
 
+    mech_def(MECH_WALL_OBJECT, "copper_ladder", MECH_RENDER_TYPE_3, MECH_BEHAVIOR_TYPE_DEFAULT);
+    set_sprite_index(16*11 + 0);
+
+
     end_mech_dat();     // finalize
 
     apply_mech_dat_changes();   // handle renaming/removals
