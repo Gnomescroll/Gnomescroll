@@ -370,9 +370,8 @@ void place_mech_oriented(AgentID agent_id, ItemID item_id, ItemType item_type)
     int side = a->get_facing_side(sp, op, &distance);
     if (side < 0) return;
 
-    printf("%d %d %d: side %d \n", op[0],op[1],op[2], side);
-
-    MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
+    //printf("%d %d %d: side %d \n", op[0],op[1],op[2], side);
+    //MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
     MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
 
     //failed

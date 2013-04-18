@@ -34,6 +34,7 @@ void apply_charge_pack_to_teammates(AgentID agent_id, ItemID item_id, ItemType i
 void place_spawner(AgentID agent_id, ItemID item_id, ItemType item_type);
 void place_energy_core(AgentID agent_id, ItemID item_id, ItemType item_type);
 void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type);
+void place_mech_oriented(AgentID agent_id, ItemID item_id, ItemType item_type);
 void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type);
 void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type);
 #endif

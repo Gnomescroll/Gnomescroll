@@ -70,6 +70,7 @@ typedef enum
     IG_RESOURCE,    //does nothing, resources, stackable
     IG_PLACER,      //consumed to create block
     IG_MECH_PLACER, //consued to create mech
+    IG_MECH_PLACER_ORIENTED, //places oriented mechs (ex signs)
     IG_PLANT_PLACER, //places plant objects
     IG_HITSCAN_WEAPON,
     IG_MELEE_WEAPON,
