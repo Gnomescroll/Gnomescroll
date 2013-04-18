@@ -255,6 +255,7 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
             case MECH_RENDER_TYPE_1:
             case MECH_RENDER_TYPE_2:
             case MECH_RENDER_TYPE_3:
+            case MECH_RENDER_TYPE_4:
             case MECH_RENDER_TYPE_NONE:
                 printf("pack_mech error: unhandled mech type\n");
         }

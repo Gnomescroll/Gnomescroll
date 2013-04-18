@@ -20,7 +20,8 @@ typedef enum
     MECH_MYCELIUM,
     MECH_WIRE,
     MECH_SWITCH,
-    MECH_SIGN
+    MECH_SIGN,
+    MECH_WALL_OBJECT //can be placed on wall, does not need block under it
 } MechClassType;
 
 typedef enum

@@ -141,7 +141,9 @@ static bool _mech_update(struct Mech &m)
             break;
         case MECH_WIRE:
         case MECH_SWITCH:
+        case MECH_WALL_OBJECT:
         case NULL_MECH_CLASS:
+
             GS_ASSERT(false);
             return false;
     }
@@ -350,20 +352,8 @@ MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int side)
         case MECH_CRYSTAL:
         case MECH_CROP:
         case MECH_MYCELIUM:
-            break;
         case MECH_SIGN:
-            if(m.side == 0)
-                GS_ASSERT(t_map::isSolid(x,y,z-1))
-            if(m.side == 1)
-                GS_ASSERT(t_map::isSolid(x,y,z+1))
-            if(m.side == 2)
-                GS_ASSERT(t_map::isSolid(x-1,y,z))
-            if(m.side == 3)
-                GS_ASSERT(t_map::isSolid(x+1,y,z))
-            if(m.side == 4)
-                GS_ASSERT(t_map::isSolid(x,y-1,z))
-            if(m.side == 5)
-                GS_ASSERT(t_map::isSolid(x,y+1,z))
+        case MECH_WALL_OBJECT:
             break;
         case MECH_WIRE:
         case MECH_SWITCH:
@@ -434,7 +424,22 @@ MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type, in
                 return MCF_NO_WALL;
 
             break;
+        case MECH_WALL_OBJECT:
+            if (mech_list->is_occupied(x,y,z)) return MCF_OCCUPIED;
+            if(side == 0 && !t_map::isSolid(x,y,z-1))
+                return MCF_NO_WALL;
+            if(side == 1 && !t_map::isSolid(x,y,z+1))
+                return MCF_NO_WALL;
+            if(side == 2 && !t_map::isSolid(x-1,y,z))
+                return MCF_NO_WALL;
+            if(side == 3 && !t_map::isSolid(x+1,y,z))
+                return MCF_NO_WALL;
+            if(side == 4 && !t_map::isSolid(x,y-1,z))
+                return MCF_NO_WALL;
+            if(side == 5 && !t_map::isSolid(x,y+1,z))
+                return MCF_NO_WALL;
         case MECH_WIRE:
+            break;
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
             GS_ASSERT(false);

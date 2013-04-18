@@ -484,6 +484,7 @@ class MechListRenderer
 
     void push_crystal_vertex(const struct Mech &m);
     void push_render_type_3(const struct Mech &m);
+    void push_render_type_4(const struct Mech &m);
 
 };
 
@@ -888,7 +889,7 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
     ty_max = tj*h + h - txmargin;
 
     float vn[3*4];
-    const float size = m.size/2.0f;
+    const float size = 0.5f;
     //const float size2 = m.size;
 
     //orientation
@@ -920,6 +921,9 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
 
     float _for = 0.9f / 2.0f;
 
+    /*
+    Corpus: this is "side", etc west, east, on top of block or bottom
+    */
     int side = m.side;
     //side = 3;
 

@@ -103,8 +103,9 @@ void load_mech_dat()
     mech_def(MECH_SIGN, "terminal_basic", MECH_RENDER_TYPE_3, MECH_BEHAVIOR_TYPE_DEFAULT);
     set_sprite_index(16*5 + 0);
 
-    mech_def(MECH_SIGN, "light_crystal", MECH_RENDER_TYPE_4, MECH_BEHAVIOR_TYPE_DEFAULT);
-    set_sprite_index(16*12 + 0);
+    mech_def(MECH_WALL_OBJECT, "light_crystal", MECH_RENDER_TYPE_4, MECH_BEHAVIOR_TYPE_DEFAULT);
+    //set_sprite_index(16*5 + 0);
+    set_sprite_index(16*11 + 0);
 
     end_mech_dat();     // finalize
 

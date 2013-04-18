@@ -427,7 +427,13 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
 
     printf("%d %d %d: side %d \n", op[0],op[1],op[2], side);
 
+/*
     MechType mech_type = t_mech::get_mech_type_dat("terminal_basic");
+    MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
+    t_mech::print_mech_create_failure_code(code);
+*/
+
+    MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
     MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
     t_mech::print_mech_create_failure_code(code);
 
