@@ -19,7 +19,7 @@ const int SHRAPNEL_TEXTURE_ID = 5;
 const float SHRAPNEL_TEXTURE_SCALE = 0.15f;
 
 class Shader shrapnel_shader;
-unsigned int shrapnel_TexCoord;
+GLuint shrapnel_TexCoord;
 
 /* Shrapnel vlist */
 
@@ -28,12 +28,10 @@ VertexElementList1* shrapnel_vlist = NULL;
 void init_shrapnel_shader()
 {
     shrapnel_shader.set_debug(false);
-
     shrapnel_shader.load_shader("shrapnel shader",
         MEDIA_PATH "shaders/weapon/shrapnel.vsh",
         MEDIA_PATH "shaders/weapon/shrapnel.fsh");
     shrapnel_TexCoord = shrapnel_shader.get_attribute("InTexCoord");
-
 }
 
 void init_shrapnel()
@@ -60,13 +58,15 @@ inline void Shrapnel::reset()
 
 void Shrapnel::tick()
 {
-    this->verlet.bounce();
-    ttl--;
+    //this->verlet.bounce();
+    this->verlet.bounce_no_gravity();
+    this->ttl--;
 }
 
 void Shrapnel::prep()
 {
-    Vec3 position = quadrant_translate_position(current_camera_position, this->verlet.position);
+    Vec3 position = quadrant_translate_position(current_camera_position,
+                                                this->verlet.position);
     if (!point_fulstrum_test(position.x, position.y, position.z))
         return;
 
@@ -78,9 +78,9 @@ void Shrapnel::prep()
                            model_view_matrix[9]*this->scale);
 
     float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(this->texture_index%16)* (1.0f/16.0f);
+    tx_min = float(this->texture_index%16) * (1.0f/16.0f);
     tx_max = tx_min + (1.0f/16.0f);
-    ty_min = (float)(this->texture_index/16)* (1.0f/16.0f);
+    ty_min = float(this->texture_index/16) * (1.0f/16.0f);
     ty_max = ty_min + (1.0f/16.0f);
 
     position.z += this->scale / 2.0f;
@@ -119,13 +119,9 @@ void Shrapnel_list::prep()
 void Shrapnel_list::draw()
 {
     if (!shrapnel_shader.shader_valid) return;
-
     if (shrapnel_vlist->vertex_number == 0) return;
-
-    GS_ASSERT(particle_texture != 0);
-    if (particle_texture == 0) return;
-    GS_ASSERT(shrapnel_vlist->VBO != 0);
-    if (shrapnel_vlist->VBO == 0) return;
+    IF_ASSERT(particle_texture == 0) return;
+    IF_ASSERT(shrapnel_vlist->VBO == 0) return;
 
     const unsigned int stride = shrapnel_vlist->stride;
 

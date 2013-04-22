@@ -12,6 +12,7 @@
 # include <animations/voxel_particle.cpp>
 # include <animations/block_damage.cpp>
 # include <animations/emitter.cpp>
+# include <animations/railtrail.cpp>
 #endif
 
 #include <animations/_interface.cpp>

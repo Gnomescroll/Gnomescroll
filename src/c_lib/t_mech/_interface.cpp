@@ -96,6 +96,7 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
+        case MECH_WALL_OBJECT:
         default:
             printf("pack_mech error: unhandled mech type\n");
     }
@@ -515,7 +516,7 @@ char* mech_text_get(int mech_id)
 }
 
 #if DC_CLIENT
-//updates text on 
+//updates text on
 void mech_text_update(int mech_id, int pos, int key)
 {
     GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);

@@ -75,7 +75,6 @@ inline int quadrant_translate_i(int cx, int px)
     }
 }
 
-
 inline float quadrant_translate_f(float cx, float px)
 {   //camera x and position x
     #ifdef NAN

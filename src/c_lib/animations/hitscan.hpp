@@ -24,16 +24,16 @@ class HitscanEffect
         struct Vec3 v;
         int ttl;
 
-    inline void draw(Vec3 camera) __attribute((always_inline));
+    inline void draw(Vec3 camera);
     inline void tick();
 
     void set_state(struct Vec3 p, struct Vec3 v)
     {
         GS_ASSERT(is_boxed_position(p));
         struct Vec3 scaled = vec3_scalar_mult(vec3_abs(v), 1.0f/30.0f);
-        GS_ASSERT(scaled.x < 128.0f);
-        GS_ASSERT(scaled.y < 128.0f);
-        GS_ASSERT(scaled.z < 128.0f);
+        GS_ASSERT(scaled.x < map_dim.x);
+        GS_ASSERT(scaled.y < map_dim.y);
+        GS_ASSERT(scaled.z < map_dim.z);
         this->p = p;
         this->v = v;
     }
@@ -59,48 +59,6 @@ class HitscanEffectList: public SimpleObjectList<HitscanEffect, 1024>
     HitscanEffectList()
     {
     }
-};
-
-class RailTrailEffect
-{
-    public:
-        int id;
-        struct Vec3 start;
-        struct Vec3 end;
-        int ttl;
-
-    void draw_quad(Vec3 p, float r, float theta, float phi);
-    inline void draw(Vec3 camera) __attribute((always_inline));
-    inline void tick();
-
-    void set_state(struct Vec3 start, struct Vec3 end)
-    {
-        GS_ASSERT(is_boxed_position(start));
-        this->start = start;
-        this->end = end;
-    }
-
-    void reset();
-
-    RailTrailEffect()
-    {
-        this->reset();
-    }
-};
-
-class RailTrailEffectList: public SimpleObjectList<RailTrailEffect, 1024>
-{
-    private:
-        const char* name()
-        {
-            return "RailTrailEffect";
-        }
-    public:
-        void draw();
-        void tick();
-        RailTrailEffectList()
-        {
-        }
 };
 
 }   // Animations

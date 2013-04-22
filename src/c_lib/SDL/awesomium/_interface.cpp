@@ -75,7 +75,7 @@ void init()
     const awe_string* locale_path = awe_string_empty();
     #endif
 
-    awe_string* data_path = get_awe_string("./screenshot");
+    awe_string* log_path = get_awe_string("./screenshot");
     awe_string* user_agent = get_awe_string(USER_AGENT);
 
     awe_webcore_initialize(
@@ -85,9 +85,9 @@ void init()
         package_path,   //package path
         locale_path,    //local path
         //awe_string_empty(), //user data path
-        data_path, //user data path
+        awe_string_empty(), //user data path
         awe_string_empty(), //plugin path
-        data_path, // log path
+        log_path, // log path
         AWE_LL_VERBOSE, //log level
         false, //force single process
         awe_string_empty(), //child process Path,
@@ -110,7 +110,7 @@ void init()
     awe_string_destroy(locale_path);
     #endif
 
-    awe_string_destroy(data_path);
+    awe_string_destroy(log_path);
     awe_string_destroy(user_agent);
 
     const char _curdir[] = ".";

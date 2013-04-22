@@ -5,8 +5,6 @@
 dont_include_this_file_in_client
 #endif
 
-using namespace t_gen;
-
 namespace t_gen
 {
 

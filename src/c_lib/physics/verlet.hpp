@@ -85,6 +85,7 @@ class VerletComponent
         }
 
         bool bounce();
+        bool bounce_no_gravity();
         bool bounce_box(float gravity);
         bool bounce_box();
         bool bounce_box_no_gravity();

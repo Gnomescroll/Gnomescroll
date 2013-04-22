@@ -28,7 +28,6 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
     class Agent* you = p->you();
     if (you == NULL) return;
     if (you->status.dead) return;
-    printf("you->forward_vector(): %4.2f,%4.2f,%4.2f \n", you->forward_vector().x, you->forward_vector().y, you->forward_vector().z);
 
     Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();

@@ -45,6 +45,28 @@ bool VerletComponent::bounce()
     return bounced;
 }
 
+bool VerletComponent::bounce_no_gravity()
+{
+    struct Vec3 old_position = this->position;
+    struct Vec3 old_velocity = this->velocity;
+    velocity_integrate(&this->position, &this->velocity, vec3_init(0), dt);
+
+    class RaytraceData data;
+    bool bounced = raytrace_terrain(old_position, this->position, &data);
+
+    if (bounced)
+    {   // collision
+        velocity_integrate(&old_position, &old_velocity, dt*data.interval);
+        this->position = translate_position(old_position);
+        this->velocity = vec3_reflect(old_velocity, data.collision_normal());
+        this->velocity = vec3_scalar_mult(this->velocity, dampening);
+    }
+    else
+        this->position = translate_position(this->position);
+
+    return bounced;
+}
+
 bool VerletComponent::bounce_box(float gravity)
 {
     struct Vec3 old_position = this->position;

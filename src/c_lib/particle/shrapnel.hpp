@@ -38,7 +38,7 @@ class Shrapnel
     }
 };
 
-const int SHRAPNEL_MAX = 4096;
+const int SHRAPNEL_MAX = 8192;
 class Shrapnel_list: public SimpleObjectList<Shrapnel, SHRAPNEL_MAX>
 {
     private:
