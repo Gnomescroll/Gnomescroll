@@ -12,6 +12,7 @@
 
 #ifdef DC_CLIENT
 # include <t_mech/mech_draw.hpp>
+# include <t_mech/mesh_loader.cpp>
 #endif
 
 #if DC_SERVER

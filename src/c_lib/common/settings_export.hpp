@@ -57,7 +57,7 @@ class SettingsExport
 
     #define WRITE_TO_BUFFER(...) { \
         ad = snprintf(buff+offset, max_buff, __VA_ARGS__); \
-        IF_ASSERT(ad >= max_buff) { free(buff); return NULL; } \
+        IF_ASSERT(ad >= (size_t) max_buff) { free(buff); return NULL; } \
         offset += ad; }
 
     #define ITEM_FMT(ITEM) "[\"%s\", \"%s\", \"%s\", " ITEM "]"

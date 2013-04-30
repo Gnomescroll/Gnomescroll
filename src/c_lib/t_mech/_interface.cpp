@@ -93,6 +93,8 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
             break;
         case MECH_SIGN:
             break;
+        case MECH_WALL_OBJECT:
+            break;
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
@@ -140,9 +142,10 @@ static bool _mech_update(struct Mech &m)
         case MECH_SIGN:
             m.size = 1.0f;  //diameter
             break;
+        case MECH_WALL_OBJECT:
+            break;
         case MECH_WIRE:
         case MECH_SWITCH:
-        case MECH_WALL_OBJECT:
         case NULL_MECH_CLASS:
 
             GS_ASSERT(false);
