@@ -850,6 +850,15 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
     };
 */
 
+    static class MeshInstance* MI; // load_mesh(const char* filename)
+    static class t_mech::MeshLoader* ML = NULL;
+    if(ML == NULL)
+    {
+        printf("loading mesh: \n");
+        ML new t_mech::MeshLoader;
+        MI = ML.load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
+    }
+
     float wx = (float) (m.x) + 0.5f;
     float wy = (float) (m.y) + 0.5f;
     float wz = (float) (m.z) + 0.5f;
@@ -952,38 +961,14 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
     int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
     vertex_list.light(sky_light, env_light);
 
-    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_min,ty_min);
-    vertex_list.push_vertex();
+    const imax = MI.van;
+    for(int i=0; i<imax; i++)
+    {
+        vertex_list.vertex3f(MI.va[i].x, MI.va[i].y, MI.va[i].z);
+        vertex_list.tex2f(MI.va[i].tx, MI.va[i].y);
+        vertex_list.push_vertex();
+    }
 
-    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_min,ty_max);
-    vertex_list.push_vertex();
-
-    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_max,ty_max);
-    vertex_list.push_vertex();
-
-    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_max,ty_min);
-    vertex_list.push_vertex();
-
-
-    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_max,ty_min);
-    vertex_list.push_vertex();
-
-    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_max,ty_max);
-    vertex_list.push_vertex();
-
-    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_min,ty_max);
-    vertex_list.push_vertex();
-
-    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_min,ty_min);
-    vertex_list.push_vertex();
 }
 
 /*
