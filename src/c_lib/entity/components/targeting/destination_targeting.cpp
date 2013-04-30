@@ -40,10 +40,10 @@ void DestinationTargetingComponent::choose_destination()
             end.z = t_map::get_nearest_surface_block(end.x, end.y, current.z);
             this->path = Path::get_path_3d_jump(current, end, this->mpath);
         }
-        int height = 1;
-        DimensionComponent* dims = (DimensionComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-        if (dims != NULL)
-            height = dims->get_integer_height();
+        //int height = 1;
+        //DimensionComponent* dims = (DimensionComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+        //if (dims != NULL)
+        //    height = dims->get_integer_height();
     }
 
     if (!this->path_finished())
