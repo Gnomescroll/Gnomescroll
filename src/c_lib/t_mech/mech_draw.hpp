@@ -5,6 +5,7 @@
 #include <t_mech/_interface.hpp>
 
 #include <t_mech/config/_interface.hpp>
+#include <t_mech/mesh_loader.hpp>
 
 namespace t_mech
 {
@@ -851,12 +852,12 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
 */
 
     static class MeshInstance* MI; // load_mesh(const char* filename)
-    static class t_mech::MeshLoader* ML = NULL;
+    static class MeshLoader* ML = NULL;
     if(ML == NULL)
     {
         printf("loading mesh: \n");
-        ML new t_mech::MeshLoader;
-        MI = ML.load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
+        ML = new MeshLoader;
+        MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
     }
 
     float wx = (float) (m.x) + 0.5f;
@@ -873,99 +874,22 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
     if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
         return;
 
-    /*
-        Corpus; this is sprite position on sheet
-    */
-
-    int tex_id = mech_attributes[m.type].sprite;
-
+    //int tex_id = mech_attributes[m.type].sprite;
     GS_ASSERT(mech_attributes[m.type].type != -1);
 
-    const float txmargin = 0.0f;
-    float tx_min, ty_min, tx_max, ty_max;
-
-    int ti = tex_id % 16;
-    int tj = tex_id / 16;
-
-    const float h = 0.0625f;
-
-    /*
-        Corpus; this is texture stuff
-    */
-    tx_min = ti*h + txmargin;
-    ty_min = tj*h + txmargin;
-    tx_max = ti*h + h - txmargin;
-    ty_max = tj*h + h - txmargin;
-
-    float vn[3*4];
-    const float size = 0.5f;
-    //const float size2 = m.size;
-
-    //orientation
-
-    //for each direction need up and x,y,z
-
-
-    //up
-    static const struct Vec3 vou[6] =
-    {
-        {{{0,0,1}}}, //top
-        {{{0,0,1}}}, //bottom
-        {{{0,0,1}}}, //north
-        {{{0,0,1}}}, //south
-        {{{0,0,1}}}, //west
-        {{{0,0,1}}}, //east
-    };
-
-    //normal
-    static const struct  Vec3 vof[6] =
-    {
-        {{{0,0,0}}}, //top
-        {{{0,0,0}}}, //bottom
-        {{{-1,0,0}}}, //north
-        {{{1,0,0}}}, //south
-        {{{0,-1,0}}}, //west
-        {{{0,1,0}}}, //east
-    };
-
-    float _for = 0.9f / 2.0f;
-
-    /*
-    Corpus: this is "side", etc west, east, on top of block or bottom
-    */
     int side = m.side;
-    //side = 3;
-
-    struct Vec3 vf = vof[side];
-    struct Vec3 vu = vou[side];
-    struct Vec3 vr = vec3_cross(vou[side], vof[side]);
-
-    vn[3*0+0] = wx + size*(-vr.x + vu.x) + _for*vf.x;
-    vn[3*0+1] = wy + size*(-vr.y + vu.y) + _for*vf.y;
-    vn[3*0+2] = wz + size*(-vr.z + vu.z) + _for*vf.z;
-
-    vn[3*1+0] = wx + size*(-vr.x - vu.x) + _for*vf.x;
-    vn[3*1+1] = wy + size*(-vr.y - vu.y) + _for*vf.y;
-    vn[3*1+2] = wz + size*(-vr.z - vu.z) + _for*vf.z;
-
-    vn[3*2+0] = wx + size*(vr.x - vu.x) + _for*vf.x;
-    vn[3*2+1] = wy + size*(vr.y - vu.y) + _for*vf.y;
-    vn[3*2+2] = wz + size*(vr.z - vu.z) + _for*vf.z;
-
-    vn[3*3+0] = wx + size*(vr.x + vu.x) + _for*vf.x;
-    vn[3*3+1] = wy + size*(vr.y + vu.y) + _for*vf.y;
-    vn[3*3+2] = wz + size*(vr.z + vu.z) + _for*vf.z;
 
 
     int env_light = t_map::get_envlight(m.x,m.y,m.z);
     int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
     vertex_list.light(sky_light, env_light);
 
-    const imax = MI.van;
+    const int imax = MI.van;
+    const MeshInstance::Vertex* va = MI->va;
     for(int i=0; i<imax; i++)
     {
-        vertex_list.vertex3f(MI.va[i].x, MI.va[i].y, MI.va[i].z);
-        vertex_list.tex2f(MI.va[i].tx, MI.va[i].y);
+        //vertex_list.vertex3f(MI->va[i].x, MI.va[i].y, MI.va[i].z);
+        //vertex_list.tex2f(MI.va[i].tx, MI.va[i].y);
         vertex_list.push_vertex();
     }
 
