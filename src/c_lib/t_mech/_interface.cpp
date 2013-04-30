@@ -98,7 +98,6 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
-        case MECH_WALL_OBJECT:
         default:
             printf("pack_mech error: unhandled mech type\n");
     }
