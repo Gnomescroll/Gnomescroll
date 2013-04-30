@@ -40,6 +40,11 @@ void wait_for_login();  // forward decl
 
 void init(int argc, char* argv[])
 {
+
+    //class t_mech::MeshLoader ML;
+    //ML.load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
+    //exit(0);
+
     GS_MKDIR(SCREENSHOT_PATH, S_IRWXU);
 
     init_c_lib(argc, argv);

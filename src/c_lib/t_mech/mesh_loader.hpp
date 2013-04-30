@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <common/data/string_map.hpp>
 
 namespace t_mech
 {
@@ -13,7 +14,8 @@ namespace t_mech
 */
 
 class MeshInstance
-{
+{	
+	public:
 	struct Vertex
 	{
 	    float x,y,z; //0
@@ -45,10 +47,15 @@ class MeshInstance
 		va[van].ty = ty;
 		van++;
 	}
+
 };
 
 class MeshLoader
 {
+	public:
+
+	class data::StringMap map; //maps from string to mesh
+
 	MeshLoader()
 	{
 
@@ -57,12 +64,13 @@ class MeshLoader
 	~MeshLoader()
 	{
 
-
 	}
 
-    void process_line(const char* input_line, bool silent)
+    void process_line(class MeshInstance* MI, const char* input_line, bool silent)
     {
-		char* var_name = new char[256];
+    	if(is_whitespace(input_line) == true) return;
+
+		//char* var_name = new char[256];
 		int ret;
 
 		int txoff;
@@ -70,28 +78,35 @@ class MeshLoader
 		float x,y,z;
 		float tx, ty;
 
-        ret = sscanf(input_line, "%f, %f, %f; %d %d %f %f", &x,&y,&z, &txoff, &tyoff, &tx, &ty);
+		//printf("line \n");
+        ret = sscanf(input_line, "%f %f %f; %d %d %f %f", &x,&y,&z, &txoff, &tyoff, &tx, &ty);
         if (ret != 7)
         {
-        	assert(false);
+        	GS_ASSERT(false);
+        	printf("ret= %d, line= %s \n", ret, input_line);
         }
 
         printf("%0.2f %0.2f %0.f, %d %d %0.2f %0.2f \n", x,y,z, txoff, tyoff, tx,ty);
+        MI->append_vertex(x,y,z,tx+ 0.0625*txoff, ty+0.0625*tyoff);
+
     }
 
-	bool is_whitespace(char* line)
+	bool is_whitespace(const char* line)
 	{
 		int i=0;
 		while(line[i] != 0x00)
 		{
 			if(isspace(line[i])  != 0) //returns non-zero for whitespace characters
 				return false;
+			i++;
 		}
 		return true;
 	}
 
 	MeshInstance* load_mesh(const char* filename)
 	{
+		class MeshInstance* MI = new MeshInstance;
+
 		bool silent = false;
 
         size_t buffer_size = 0;
@@ -112,15 +127,18 @@ class MeshLoader
                 tmp_str[i] = 0x00;
             memcpy(tmp_str, buffer+offset, marker - offset);
             tmp_str[marker - offset] = 0x00;
-            process_line(tmp_str, silent);
+            process_line(MI, tmp_str, silent);
             marker++;
             offset = marker;
         }
         free(buffer);
         delete[] tmp_str;
 
+        //map.insert("filename", (void*) MI);
+        //return MI;
         return NULL;
 	}
+
 
 };
 
