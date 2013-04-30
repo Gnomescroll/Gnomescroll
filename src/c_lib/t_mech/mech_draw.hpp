@@ -860,9 +860,19 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
         MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
     }
 
-    float wx = (float) (m.x) + 0.5f;
-    float wy = (float) (m.y) + 0.5f;
-    float wz = (float) (m.z) + 0.5f;
+    static int _counter = 0;
+    _counter++;
+
+    if(_counter % 60 == 1)
+    {
+        delete MI;
+        MI = NULL;
+        MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
+    }
+
+    float wx = (float) (m.x) + 0.001f;
+    float wy = (float) (m.y) + 0.001;
+    float wz = (float) (m.z) + 0.0f;
 
     //fulstrum test
     const float cx = current_camera_position.x;
@@ -884,12 +894,12 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
     int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
     vertex_list.light(sky_light, env_light);
 
-    const int imax = MI.van;
+    const int imax = MI->van;
     const MeshInstance::Vertex* va = MI->va;
     for(int i=0; i<imax; i++)
     {
-        //vertex_list.vertex3f(MI->va[i].x, MI.va[i].y, MI.va[i].z);
-        //vertex_list.tex2f(MI.va[i].tx, MI.va[i].y);
+        vertex_list.vertex3f(wx+va[i].x, wy+va[i].y, wz+va[i].z);
+        vertex_list.tex2f(va[i].tx, va[i].ty);
         vertex_list.push_vertex();
     }
 

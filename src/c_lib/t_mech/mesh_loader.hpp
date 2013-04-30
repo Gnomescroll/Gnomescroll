@@ -73,26 +73,32 @@ class MeshLoader
 		//char* var_name = new char[256];
 		int ret;
 
-		int txoff;
-		int tyoff;
+		float txoff, tyoff;
 		float x,y,z;
 		float tx, ty;
 
 		//printf("line \n");
-        ret = sscanf(input_line, "%f %f %f; %d %d %f %f", &x,&y,&z, &txoff, &tyoff, &tx, &ty);
+        ret = sscanf(input_line, "%f %f %f; %f %f %f %f", &x,&y,&z, &txoff, &tyoff, &tx, &ty);
         if (ret != 7)
         {
         	GS_ASSERT(false);
         	printf("ret= %d, line= %s \n", ret, input_line);
         }
 
-        printf("%0.2f %0.2f %0.f, %d %d %0.2f %0.2f \n", x,y,z, txoff, tyoff, tx,ty);
-        MI->append_vertex(x,y,z,tx+ 0.0625*txoff, ty+0.0625*tyoff);
+        const float c0 = 0.0625;		//16th
+        const float c1 = 0.0625*0.0625;	//256th
+
+
+        MI->append_vertex(c0*x,c0*y,c0*z, c1*tx+c0*txoff, c1*ty+c0*tyoff );
+        //printf("%0.2f %0.2f %0.f, %d %d %0.2f %0.2f \n", x,y,z, txoff, tyoff, tx,ty);
+        //printf("tx, ty= %f %f \n", c1*tx+c0*txoff, c1*ty+c0*tyoff );
 
     }
 
 	bool is_whitespace(const char* line)
 	{
+		if(line[0] == '#')
+			return true;
 		int i=0;
 		while(line[i] != 0x00)
 		{
@@ -136,7 +142,7 @@ class MeshLoader
 
         //map.insert("filename", (void*) MI);
         //return MI;
-        return NULL;
+        return MI;
 	}
 
 
