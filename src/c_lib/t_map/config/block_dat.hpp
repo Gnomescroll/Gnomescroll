@@ -431,9 +431,17 @@ void load_block_dat()
     set_max_damage(2);
 
 /*
-    plant_example
+
 */
 
+    cube_def(SolidCube, "light_gem", CUBE_MATERIAL_DECORATION);
+    iso_texture(c1, 9,4);
+    push_texture();
+    hud_def    (c1, 9,4);
+    set_light_value(15);
+/*
+    plant_example
+*/
 
     cube_def(SolidCube, "plant_example_master", CUBE_MATERIAL_STONE);
     set_max_damage(128);

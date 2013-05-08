@@ -1,5 +1,39 @@
 #pragma once
 
+
+class DayCycleController
+{
+    public:
+
+    //start of day is sun up
+    //then red fade in
+    //then red fade out
+    //then sunset
+
+    float blue_tint;  //blue tint (twilight)
+    float red_tint;   //red tint  (radiation)
+    float brightness; //total brightness
+
+    DayCycleController()
+    {
+
+    }
+
+    void advance()
+    {
+        const int cycle_lenth = 1000; //1000 seconds per day
+
+        const float sunrise_length = 0.15f;
+        const float day_length = 0.40f;
+        const float sunset_length = 0.15f;
+        const float night_length = 0.30f;
+
+        //blue tint
+        //red tint
+        //brightness (total)
+    }
+};
+
 class LightTextureGenerator
 {
     public:
