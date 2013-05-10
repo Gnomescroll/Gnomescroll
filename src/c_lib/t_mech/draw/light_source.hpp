@@ -79,26 +79,25 @@ class MechLightEffect
     }
 
 
+    unsigned int counter;
+
     inline void push_light(const struct Mech &m)
     {
 
-        const float scale = 1.0f; // CONSTANT
+        const float scale = 0.5f; // CONSTANT
 
-        float wx = (float) (m.x) + 0.5f + m.offset_x;
-        float wy = (float) (m.y) + 0.5f + m.offset_y;
-        float wz = (float) m.z;
+        float wx = (float) (m.x) + 0.5f;// + m.offset_x;
+        float wy = (float) (m.y) + 0.5f;// + m.offset_y;
+        float wz = (float) m.z + 0.5f;;
         //fulstrum test
 
-        const float cx = current_camera_position.x;
-        const float cy = current_camera_position.y;
-
-        wx = quadrant_translate_f(cx, wx);
-        wy = quadrant_translate_f(cy, wy);
+        wx = quadrant_translate_f(current_camera_position.x, wx);
+        wy = quadrant_translate_f(current_camera_position.y, wy);
 
         if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
             return;
 
-        const int tex_id = rand()%16;
+        const int tex_id = counter%16;
         //GS_ASSERT(mech_attributes[m.type].type != -1);
 
         const float txmargin = 0.0f;
@@ -115,13 +114,6 @@ class MechLightEffect
         ty_max = tj*h + h - txmargin;
 
 
-        struct Vec3 v = vec3_init(wx,wy,wz);
-
-        v = quadrant_translate_position(current_camera_position, v);
-        if (!point_fulstrum_test(v.x, v.y, v.z))
-            return;
-
-
         Vec3 up = vec3_init(model_view_matrix[0]*scale,
                             model_view_matrix[4]*scale,
                             model_view_matrix[8]*scale);
@@ -129,6 +121,10 @@ class MechLightEffect
                                model_view_matrix[5]*scale,
                                model_view_matrix[9]*scale);
 
+
+        struct Vec3 v = vec3_init(wx,wy,wz);
+        //v = vec3_sub(v,  vec3_scalar_mult(right, scale/2.0));
+        //v = vec3_sub(v,  vec3_scalar_mult(up, scale/2.0));
 
         Vec3 v1 = vec3_sub(v, vec3_add(right, up));
         //glTexCoord2f(tx_min,ty_max);
@@ -191,6 +187,8 @@ class MechLightEffect
     {
         //prep_light0();
 
+        counter++; 
+
         const MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
 
         const int mlm = mech_list->mlm;
@@ -207,7 +205,7 @@ class MechLightEffect
         vlist->buffer();
     }
 
-    void draw()
+    void draw_transparent()
     {
 
         if (vlist->vertex_number == 0) return;
@@ -216,6 +214,11 @@ class MechLightEffect
         if (vlist->VBO == 0) return;
 
         glColor3ub(255,255,255);
+
+        GL_ASSERT(GL_DEPTH_TEST, true);
+        GL_ASSERT(GL_DEPTH_WRITEMASK, false);
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture);

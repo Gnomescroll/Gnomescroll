@@ -344,9 +344,10 @@ void draw_tick()
 
     poll_mouse();
     Particle::billboard_text_list->draw();  //enables and disables GL_BLEND
+    
     glEnable(GL_BLEND);
 
-    //t_mech::draw_transparent();
+    t_mech::draw_transparent();
 
     // draw animations
 

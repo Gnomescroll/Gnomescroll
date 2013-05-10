@@ -62,14 +62,12 @@ void prep()
 void draw()
 {
     mech_list_renderer->draw();
-    mech_light_effect_renderer->draw();
-
 }
 
 void draw_transparent()
 {
     mech_list_renderer->draw_transparent();
-    //mech_light_effect_renderer->draw();
+    mech_light_effect_renderer->draw_transparent();
 }
 #endif
 
