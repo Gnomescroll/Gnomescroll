@@ -30,12 +30,12 @@ class MechLightEffect
     class Shader shader;
     unsigned int shader_TexCoord;
 
-    VertexElementListTexture* insect_mob_vlist;
+    VertexElementListTexture* vlist;
 
     void init()
     {
-        insect_mob_vlist = NULL;
-        insect_mob_vlist = new VertexElementListTexture;
+        vlist = NULL;
+        vlist = new VertexElementListTexture;
 
         init_texture();
         init_shader();
@@ -48,7 +48,7 @@ class MechLightEffect
 
     ~MechLightEffect()
     {
-        delete insect_mob_vlist;
+        delete vlist;
     }
 
     void init_texture()
@@ -85,8 +85,39 @@ class MechLightEffect
     }
 
 
-    inline void prep_light0()
+    inline void push_light(const struct Mech &m)
     {
+
+        float wx = (float) (m.x) + 0.5f + m.offset_x;
+        float wy = (float) (m.y) + 0.5f + m.offset_y;
+        float wz = (float) m.z;
+        //fulstrum test
+
+        const float cx = current_camera_position.x;
+        const float cy = current_camera_position.y;
+
+        wx = quadrant_translate_f(cx, wx);
+        wy = quadrant_translate_f(cy, wy);
+
+        if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
+            return;
+
+        const int tex_id = rand()%16;
+        //GS_ASSERT(mech_attributes[m.type].type != -1);
+
+        const float txmargin = 0.0f;
+        float tx_min, ty_min, tx_max, ty_max;
+
+        int ti = tex_id % 16;
+        int tj = tex_id / 16;
+
+        const float h = 0.0625f;
+
+        tx_min = ti*h + txmargin;
+        ty_min = tj*h + txmargin;
+        tx_max = ti*h + h - txmargin;
+        ty_max = tj*h + h - txmargin;
+
 
     /*
         float x = quadrant_translate_f(current_camera_position.x, this->x);
@@ -98,17 +129,18 @@ class MechLightEffect
         v2 = vec3_init(x+tw*sinf(f1*i), y+th*cosf(f1*i), z0+z);
         v3 = vec3_init(x+tw*sinf(f1*(i+1)), y+th*cosf(f1*(i+1)), z0+z);
 
-        insect_mob_vlist->push_vertex(v1, 0.5f, 0.5f);
-        insect_mob_vlist->push_vertex(v2, sinf(f1*i)/2 + 0.5f,  cosf(f1*i)/2 + 0.5f);
-        insect_mob_vlist->push_vertex(v3, sinf(f1*(i+1))/2 + 0.5f,  cosf(f1*(i+1))/2 + 0.5f);
+        vlist->push_vertex(v1, 0.5f, 0.5f);
+        vlist->push_vertex(v2, sinf(f1*i)/2 + 0.5f,  cosf(f1*i)/2 + 0.5f);
+        vlist->push_vertex(v3, sinf(f1*(i+1))/2 + 0.5f,  cosf(f1*(i+1))/2 + 0.5f);
     */
     }
 
 
     void prep()
     {
-        prep_light0();
+        //prep_light0();
 
+        const MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
 
         const int mlm = mech_list->mlm;
         const struct Mech* mla = mech_list->mla;
@@ -116,49 +148,28 @@ class MechLightEffect
 
         for (int i=0; i<mlm; i++)
         {
-        /*
             if (mla[i].id == -1) continue;
-
-            switch (mla[i].render_type)
-            {
-                case MECH_RENDER_TYPE_0:
-                    push_crystal_vertex(mla[i]);
-                    break;
-                case MECH_RENDER_TYPE_1:
-                    break;
-                case MECH_RENDER_TYPE_2:
-                    break;
-                case MECH_RENDER_TYPE_3:
-                    push_render_type_3(mla[i]);
-                    break;
-                case MECH_RENDER_TYPE_4: //torch
-                    push_render_type_4(mla[i]);
-                    break;
-                case MECH_RENDER_TYPE_NONE:
-                    GS_ASSERT(false);
-                    break;
-            }
-        */
-
+            if(mla[i].id == mech_type)
+                push_light(mla[i]);
         }
 
-        insect_mob_vlist->buffer();
+        vlist->buffer();
     }
 
     void draw()
     {
 
-        if (insect_mob_vlist->vertex_number == 0) return;
+        if (vlist->vertex_number == 0) return;
 
-        GS_ASSERT(insect_mob_vlist->VBO != 0);
-        if (insect_mob_vlist->VBO == 0) return;
+        GS_ASSERT(vlist->VBO != 0);
+        if (vlist->VBO == 0) return;
 
         glColor3ub(255,255,255);
 
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture);
 
-        glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vlist->VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, vlist->VBO);
 
         glUseProgramObjectARB(shader.shader);
 
@@ -166,11 +177,11 @@ class MechLightEffect
         glEnableVertexAttribArray(shader_TexCoord);
 
         int offset = 0;
-        glVertexPointer(3, GL_FLOAT, insect_mob_vlist->stride, (GLvoid*)offset);
+        glVertexPointer(3, GL_FLOAT, vlist->stride, (GLvoid*)offset);
         offset += 3 * sizeof(GL_FLOAT);
-        glVertexAttribPointer(shader_TexCoord, 2, GL_FLOAT, GL_FALSE, insect_mob_vlist->stride, (GLvoid*)offset);
+        glVertexAttribPointer(shader_TexCoord, 2, GL_FLOAT, GL_FALSE, vlist->stride, (GLvoid*)offset);
 
-        glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist->vertex_number);
+        glDrawArrays(GL_TRIANGLES,0, vlist->vertex_number);
 
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableVertexAttribArray(shader_TexCoord);
