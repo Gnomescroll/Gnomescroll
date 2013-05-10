@@ -18,6 +18,8 @@ struct MechList* mech_list;
 
 #if DC_CLIENT
 class MechListRenderer* mech_list_renderer = NULL;
+class MechLightEffect* mech_light_effect_renderer = NULL;
+
 #endif
 
 void init_packets()
@@ -37,6 +39,7 @@ void init()
     #if DC_CLIENT
     GS_ASSERT(mech_list_renderer == NULL);
     mech_list_renderer = new MechListRenderer;
+    mech_light_effect_renderer = new MechLightEffect;
     #endif
 }
 
@@ -45,6 +48,7 @@ void teardown()
     delete mech_list;
     #if DC_CLIENT
     delete mech_list_renderer;
+    delete mech_light_effect_renderer;
     #endif
 }
 
@@ -52,16 +56,20 @@ void teardown()
 void prep()
 {
     mech_list_renderer->prep_vbo();
+    mech_light_effect_renderer->prep();
 }
 
 void draw()
 {
     mech_list_renderer->draw();
+    mech_light_effect_renderer->draw();
+
 }
 
 void draw_transparent()
 {
     mech_list_renderer->draw_transparent();
+    //mech_light_effect_renderer->draw();
 }
 #endif
 

@@ -32,18 +32,12 @@ class MechLightEffect
 
     VertexElementListTexture* vlist;
 
-    void init()
+    MechLightEffect()
     {
-        vlist = NULL;
         vlist = new VertexElementListTexture;
 
         init_texture();
         init_shader();
-    }
-
-
-    MechLightEffect()
-    {
     }
 
     ~MechLightEffect()
@@ -88,6 +82,7 @@ class MechLightEffect
     inline void push_light(const struct Mech &m)
     {
 
+        const float scale = 1.0f; // CONSTANT
 
         float wx = (float) (m.x) + 0.5f + m.offset_x;
         float wy = (float) (m.y) + 0.5f + m.offset_y;
@@ -121,39 +116,35 @@ class MechLightEffect
 
 
         struct Vec3 v = vec3_init(wx,wy,wz);
-        
+
         v = quadrant_translate_position(current_camera_position, v);
         if (!point_fulstrum_test(v.x, v.y, v.z))
             return;
 
-        Vec3 up = vec3_init(model_view_matrix[0]*this->scale,
-                            model_view_matrix[4]*this->scale,
-                            model_view_matrix[8]*this->scale);
-        Vec3 right = vec3_init(model_view_matrix[1]*this->scale,
-                               model_view_matrix[5]*this->scale,
-                               model_view_matrix[9]*this->scale);
 
-        float tx_min, tx_max, ty_min, ty_max;
-        tx_min = (float)(this->texture_index%16)* (1.0f/16.0f);
-        tx_max = tx_min + (1.0f/16.0f);
-        ty_min = (float)(this->texture_index/16)* (1.0f/16.0f);
-        ty_max = ty_min + (1.0f/16.0f);
+        Vec3 up = vec3_init(model_view_matrix[0]*scale,
+                            model_view_matrix[4]*scale,
+                            model_view_matrix[8]*scale);
+        Vec3 right = vec3_init(model_view_matrix[1]*scale,
+                               model_view_matrix[5]*scale,
+                               model_view_matrix[9]*scale);
 
-        Vec3 p = vec3_sub(v, vec3_add(right, up));
-        glTexCoord2f(tx_min,ty_max);
-        glVertex3f(p.x, p.y, p.z);
 
-        p = vec3_add(v, vec3_sub(up, right));
-        glTexCoord2f(tx_max,ty_max);
-        glVertex3f(p.x, p.y, p.z);
+        Vec3 v1 = vec3_sub(v, vec3_add(right, up));
+        //glTexCoord2f(tx_min,ty_max);
+        //glVertex3f(p.x, p.y, p.z);
 
-        p = vec3_add(v, vec3_add(up, right));
-        glTexCoord2f(tx_max,ty_min);
-        glVertex3f(p.x, p.y, p.z);
+        Vec3 v2 = vec3_add(v, vec3_sub(up, right));
+        //glTexCoord2f(tx_max,ty_max);
+        //glVertex3f(p.x, p.y, p.z);
 
-        p = vec3_add(v, vec3_sub(right, up));
-        glTexCoord2f(tx_min,ty_min);
-        glVertex3f(p.x, p.y, p.z);
+        Vec3 v3 = vec3_add(v, vec3_add(up, right));
+        //glTexCoord2f(tx_max,ty_min);
+        //glVertex3f(p.x, p.y, p.z);
+
+        Vec3 v4 = vec3_add(v, vec3_sub(right, up));
+        //glTexCoord2f(tx_min,ty_min);
+        //glVertex3f(p.x, p.y, p.z);
 
 
         vlist->push_vertex(v1, tx_min,ty_min);
@@ -209,7 +200,7 @@ class MechLightEffect
         for (int i=0; i<mlm; i++)
         {
             if (mla[i].id == -1) continue;
-            if(mla[i].id == mech_type)
+            if(mla[i].type == mech_type)
                 push_light(mla[i]);
         }
 
@@ -241,7 +232,7 @@ class MechLightEffect
         offset += 3 * sizeof(GL_FLOAT);
         glVertexAttribPointer(shader_TexCoord, 2, GL_FLOAT, GL_FALSE, vlist->stride, (GLvoid*)offset);
 
-        glDrawArrays(GL_TRIANGLES,0, vlist->vertex_number);
+        glDrawArrays(GL_QUADS,0, vlist->vertex_number);
 
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableVertexAttribArray(shader_TexCoord);

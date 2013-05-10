@@ -839,6 +839,8 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
 //torch
 void MechListRenderer::push_render_type_4(const struct Mech &m)
 {
+
+    return;
 /*
     static const float vin[72] =
     {
