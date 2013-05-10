@@ -88,6 +88,7 @@ class MechLightEffect
     inline void push_light(const struct Mech &m)
     {
 
+
         float wx = (float) (m.x) + 0.5f + m.offset_x;
         float wy = (float) (m.y) + 0.5f + m.offset_y;
         float wz = (float) m.z;
@@ -118,6 +119,65 @@ class MechLightEffect
         tx_max = ti*h + h - txmargin;
         ty_max = tj*h + h - txmargin;
 
+
+        struct Vec3 v = vec3_init(wx,wy,wz);
+        
+        v = quadrant_translate_position(current_camera_position, v);
+        if (!point_fulstrum_test(v.x, v.y, v.z))
+            return;
+
+        Vec3 up = vec3_init(model_view_matrix[0]*this->scale,
+                            model_view_matrix[4]*this->scale,
+                            model_view_matrix[8]*this->scale);
+        Vec3 right = vec3_init(model_view_matrix[1]*this->scale,
+                               model_view_matrix[5]*this->scale,
+                               model_view_matrix[9]*this->scale);
+
+        float tx_min, tx_max, ty_min, ty_max;
+        tx_min = (float)(this->texture_index%16)* (1.0f/16.0f);
+        tx_max = tx_min + (1.0f/16.0f);
+        ty_min = (float)(this->texture_index/16)* (1.0f/16.0f);
+        ty_max = ty_min + (1.0f/16.0f);
+
+        Vec3 p = vec3_sub(v, vec3_add(right, up));
+        glTexCoord2f(tx_min,ty_max);
+        glVertex3f(p.x, p.y, p.z);
+
+        p = vec3_add(v, vec3_sub(up, right));
+        glTexCoord2f(tx_max,ty_max);
+        glVertex3f(p.x, p.y, p.z);
+
+        p = vec3_add(v, vec3_add(up, right));
+        glTexCoord2f(tx_max,ty_min);
+        glVertex3f(p.x, p.y, p.z);
+
+        p = vec3_add(v, vec3_sub(right, up));
+        glTexCoord2f(tx_min,ty_min);
+        glVertex3f(p.x, p.y, p.z);
+
+
+        vlist->push_vertex(v1, tx_min,ty_min);
+        vlist->push_vertex(v2, tx_min,ty_max);
+        vlist->push_vertex(v3, tx_max,ty_max);
+        vlist->push_vertex(v4, tx_max,ty_min);
+
+/*
+        vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
+        vertex_list.tex2f(tx_min,ty_min);
+        vertex_list.push_vertex();
+
+        vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
+        vertex_list.tex2f(tx_min,ty_max);
+        vertex_list.push_vertex();
+
+        vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
+        vertex_list.tex2f(tx_max,ty_max);
+        vertex_list.push_vertex();
+
+        vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
+        vertex_list.tex2f(tx_max,ty_min);
+        vertex_list.push_vertex();
+*/
 
     /*
         float x = quadrant_translate_f(current_camera_position.x, this->x);
