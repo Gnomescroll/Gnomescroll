@@ -42,6 +42,10 @@ void load_smelting_dat()
     set_smelting_reagent("silicon_powder", 1);
     set_smelting_creation_time(30 * 8);
 
+    def_smelting_recipe("cooked_cryptid_larvae");
+    set_smelting_reagent("cryptid_larvae", 1);
+    set_smelting_creation_time(30 * 8);
+
     end_smelting_recipe();  // finalize
 }
 

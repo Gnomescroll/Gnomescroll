@@ -889,7 +889,7 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
     //int tex_id = mech_attributes[m.type].sprite;
     GS_ASSERT(mech_attributes[m.type].type != -1);
 
-    int side = m.side;
+    //int side = m.side;
 
 
     int env_light = t_map::get_envlight(m.x,m.y,m.z);

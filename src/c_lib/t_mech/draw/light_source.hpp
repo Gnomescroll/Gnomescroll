@@ -84,7 +84,7 @@ class MechLightEffect
     inline void push_light(const struct Mech &m)
     {
 
-        const float scale = 0.5f; // CONSTANT
+        const float scale = 0.25f; // CONSTANT
 
         float wx = (float) (m.x) + 0.5f;// + m.offset_x;
         float wy = (float) (m.y) + 0.5f;// + m.offset_y;
@@ -97,7 +97,7 @@ class MechLightEffect
         if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
             return;
 
-        const int tex_id = counter%16;
+        const int tex_id = 32+ (m.id +counter) %8;
         //GS_ASSERT(mech_attributes[m.type].type != -1);
 
         const float txmargin = 0.0f;
@@ -187,7 +187,10 @@ class MechLightEffect
     {
         //prep_light0();
 
-        counter++; 
+        static int c = 0;
+        c++;
+        if(c%6 == 0)
+            counter++; 
 
         const MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
 

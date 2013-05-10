@@ -14,6 +14,7 @@
 # include <t_mech/mech_draw.hpp>
 # include <t_mech/mesh_loader.cpp>
 # include <t_mech/draw/light_source.hpp>
+# include <t_mech/draw/mesh_type.hpp>
 #endif
 
 #if DC_SERVER

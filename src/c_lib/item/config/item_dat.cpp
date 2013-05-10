@@ -442,6 +442,12 @@ void load_item_dat()
     s->mech_type = t_mech::get_mech_type("cryptid_larvae_stage_0");
     s->max_stack_size = 16;
 
+    item_def(IG_CONSUMABLE, "cooked_cryptid_larvae");
+    sprite_def(i1, 8,1);
+    s->max_stack_size = 16;
+    set_modifier_amount("hunger", -4);
+    set_modifier_instant();
+
     item_def(IG_RESOURCE, "blackpowder");
     sprite_def(rdn, 2,3);
     s->max_stack_size = 64;
