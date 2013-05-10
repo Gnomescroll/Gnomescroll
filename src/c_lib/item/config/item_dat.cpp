@@ -443,9 +443,9 @@ void load_item_dat()
     s->max_stack_size = 16;
 
     item_def(IG_CONSUMABLE, "cooked_cryptid_larvae");
-    sprite_def(i1, 8,1);
+    sprite_def(i1, 9,2);
     s->max_stack_size = 16;
-    set_modifier_amount("hunger", -4);
+    set_modifier_amount("hunger", -3);
     set_modifier_instant();
 
     item_def(IG_RESOURCE, "blackpowder");

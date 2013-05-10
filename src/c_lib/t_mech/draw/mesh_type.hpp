@@ -379,7 +379,7 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
     {
         printf("loading mesh: \n");
         ML = new MeshLoader;
-        MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
+        MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/light_rod.mesh");
     }
 
     static int _counter = 0;
@@ -389,7 +389,7 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
     {
         delete MI;
         MI = NULL;
-        MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
+        MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/light_rod.mesh");
     }
 
     float wx = (float) (m.x) + 0.001f;
