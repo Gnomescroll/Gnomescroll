@@ -90,7 +90,8 @@ class MechLightEffect
         float wy = (float) (m.y) + 0.5f;// + m.offset_y;
         float wz = (float) m.z + 0.5f;;
         //fulstrum test
-
+        wz += scale / 2.0f;
+        
         wx = quadrant_translate_f(current_camera_position.x, wx);
         wy = quadrant_translate_f(current_camera_position.y, wy);
 

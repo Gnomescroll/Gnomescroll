@@ -382,6 +382,7 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
         MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/light_rod.mesh");
     }
 
+#if !PRODUCTION
     static int _counter = 0;
     _counter++;
 
@@ -391,6 +392,7 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
         MI = NULL;
         MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/light_rod.mesh");
     }
+#endif
 
     float wx = (float) (m.x) + 0.001f;
     float wy = (float) (m.y) + 0.001;
