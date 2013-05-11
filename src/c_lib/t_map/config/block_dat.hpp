@@ -121,12 +121,10 @@ void load_block_dat()
     side_texture(E, error_block);
     push_texture();
 
-#if 0
-    cube_def_empty("mech_light_empty"); //empty block which is light source
+    cube_def(EmptyCube, "mech_light_empty"); //empty block which is light source
     iso_texture(error_block);
     push_texture();
     set_light_value(15);
-#endif
 
     cube_def_container("storage_block_small");
     iso_texture(    c1, 13,4);
@@ -270,7 +268,7 @@ void load_block_dat()
     cube_def(SolidCube, "control_node", CUBE_MATERIAL_DECORATION);
     iso_texture(c1, 9,4);
     push_texture();
-    hud_def    (c1, 9,4);
+    //hud_def    (c1, 9,4);
 
     // terrain features
     cube_def(SolidCube, "space_tree_trunk1", CUBE_MATERIAL_DECORATION);
