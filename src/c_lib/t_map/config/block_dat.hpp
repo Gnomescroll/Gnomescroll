@@ -121,12 +121,13 @@ void load_block_dat()
     side_texture(E, error_block);
     push_texture();
 
-
+#if 0
     cube_def_empty("mech_light_empty"); //empty block which is light source
     iso_texture(error_block);
     push_texture();
     set_light_value(15);
-    
+#endif
+
     cube_def_container("storage_block_small");
     iso_texture(    c1, 13,4);
     side_texture(T, c1, 1,3);
