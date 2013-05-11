@@ -373,7 +373,8 @@ void verify_config()
 
         GS_ASSERT_ABORT(p->type != EMPTY_CUBE || p->group == EmptyCube);
         GS_ASSERT_ABORT(p->type != ERROR_CUBE || p->group == ErrorCube);
-        GS_ASSERT_ABORT(p->type == EMPTY_CUBE || p->group != EmptyCube);
+        // EmptyCube is now allowed for others
+        //GS_ASSERT_ABORT(p->type == EMPTY_CUBE || p->group != EmptyCube);
         GS_ASSERT_ABORT(p->type == ERROR_CUBE || p->group != ErrorCube);
 
         GS_ASSERT_ABORT(p->max_damage <= MAX_CUBE_DAMAGE);

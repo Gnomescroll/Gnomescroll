@@ -24,8 +24,10 @@ void CubeSelector::set_block_selector(int pos, CubeType cube_type, int tex_id)
     cubes[pos].cube_type = cube_type;
 
     for (int i=0; i<ct; i++)
-        if (cubes[i].tex_id != NULL_SPRITE)
-            GS_ASSERT(cubes[i].tex_id != tex_id);
+    {
+        IF_ASSERT(cubes[i].tex_id != NULL_SPRITE && cubes[i].tex_id == tex_id)
+            printf("WARNING: duplicate cube_selector sprite added.\n");
+    }
 
     cubes[pos].tex_id = tex_id;
 }
@@ -33,10 +35,10 @@ void CubeSelector::set_block_selector(int pos, CubeType cube_type, int tex_id)
 void CubeSelector::set_block_selector(CubeType cube_type, int tex_id)
 {
     int pos = 0;
-    for (; pos<this->n_x*this->n_y; pos++)
+    for (; pos < this->n_x * this->n_y; pos++)
         if (cubes[pos].tex_id == NULL_SPRITE)
             break;
-    if (pos >= this->n_x*this->n_y)
+    IF_ASSERT(pos >= this->n_x * this->n_y)
     {
         printf("WARNING: Hud cube selector is full\n");
         return;
@@ -148,8 +150,8 @@ void CubeSelector::draw()
         prev_blink = _GET_MS_TIME();
         blink_status_visible = !blink_status_visible;
     }
-    
-    if (blink_status_visible) 
+
+    if (blink_status_visible)
     {
         // draw selected cube outline
         int i = this->pos_x;
@@ -264,7 +266,7 @@ CubeSelector::CubeSelector() :
     prev_blink =_GET_MS_TIME();
     blink_status_visible = true;
     this->cubes = (struct CubeSelectElement*)malloc(MAX_CUBES * sizeof(struct CubeSelectElement));
-    
+
     for (int i=0; i<MAX_CUBES; i++)
     {
         cubes[i].cube_type = NULL_CUBE;
