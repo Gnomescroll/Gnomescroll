@@ -63,13 +63,13 @@ static struct Node* open;
 static struct Node* closed;
 
 // max distance between 2 nodes (manhattan)
-static const int MAX_PATH_DISTANCE = 80;
-static const size_t OPEN_START_SIZE = 128;
-static const size_t CLOSED_START_SIZE = 128;
+static const int MAX_PATH_DISTANCE = 48;
+//static const size_t OPEN_START_SIZE = 128;
+//static const size_t CLOSED_START_SIZE = 128;
 //static const size_t OPEN_NODES_MAX = 2048;
 //static const size_t CLOSED_NODES_MAX = 2048;
-static const size_t OPEN_NODES_MAX = 1024;
-static const size_t CLOSED_NODES_MAX = 1024;
+static const size_t OPEN_NODES_MAX = 256;
+static const size_t CLOSED_NODES_MAX = 256;
 
 typedef enum
 {
