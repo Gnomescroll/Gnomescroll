@@ -434,6 +434,8 @@ int init_c_lib(int argc, char* argv[])
 
     t_mob::init();
 
+    Path::init();
+
     CHECK_GL_ERROR();
 
     c_lib_inited = true;
@@ -546,6 +548,9 @@ void close_c_lib()
     Agents::teardown_attributes();
     World::teardown_attributes();
     Attributes::teardown();
+
+    if (TEARDOWN_DEBUG) printf("Pathfinding teardown\n");
+    Path::teardown();
 
     if (TEARDOWN_DEBUG) printf("logger teardown\n");
     Log::teardown();

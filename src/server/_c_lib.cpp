@@ -357,6 +357,8 @@ int init_c_lib(int argc, char* argv[])
     t_gen::init();
     t_gen::init_map_generator();
 
+    Path::init();
+
     return 0;
 }
 
@@ -412,6 +414,8 @@ void close_c_lib()
     Agents::teardown_attributes();
     World::teardown_attributes();
     Attributes::teardown();
+
+    Path::teardown();
 
     printf("Server closed\n");
     Log::teardown();

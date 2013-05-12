@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <t_map/_interface.hpp>
 #include <common/common.hpp>
+#include <t_map/node_hashmap.hpp>
+
 #if DC_CLIENT
 # include <SDL/draw_functions.hpp>
 #endif
@@ -50,6 +52,22 @@ namespace Path
 // G: movement cost (10 for lateral, 14 for diagonal)
 // H: heuristic (manhattan)
 
+HashMap* open_map;
+HashMap* closed_map;
+
+void init()
+{
+    open_map = new HashMap;
+    closed_map = new HashMap;
+}
+
+void teardown()
+{
+    delete open_map;
+    delete closed_map;
+}
+
+
 // max distance between 2 nodes (manhattan)
 static const int MAX_PATH_DISTANCE = 128;
 static const size_t OPEN_START_SIZE = 128;
@@ -86,10 +104,10 @@ static const struct PathAdjacency adj[8+9+9] = {
     {{{{  1, -1,  0 }}}, 141, DIR_DIAGONAL_PLANAR },
     {{{{ -1,  1,  0 }}}, 141, DIR_DIAGONAL_PLANAR },
     {{{{ -1, -1,  0 }}}, 141, DIR_DIAGONAL_PLANAR },
-//8   {{            }}
+//8
     {{{{  0,  0, -1 }}}, 100, DIR_LATERAL_PLANAR },
     {{{{  0,  0,  1 }}}, 100, DIR_LATERAL_PLANAR },
-//10  {{            }}
+//10
     {{{{  1,  0,  1 }}}, 141, DIR_LATERAL_NONPLANAR },
     {{{{ -1,  0,  1 }}}, 141, DIR_LATERAL_NONPLANAR },
     {{{{  0,  1,  1 }}}, 141, DIR_LATERAL_NONPLANAR },
@@ -98,7 +116,7 @@ static const struct PathAdjacency adj[8+9+9] = {
     {{{{ -1,  0, -1 }}}, 141, DIR_LATERAL_NONPLANAR },
     {{{{  0,  1, -1 }}}, 141, DIR_LATERAL_NONPLANAR },
     {{{{  0, -1, -1 }}}, 141, DIR_LATERAL_NONPLANAR },
-//18  {{            }}
+//18
     {{{{  1,  1,  1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
     {{{{  1, -1,  1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
     {{{{ -1,  1,  1 }}}, 173, DIR_DIAGONAL_NONPLANAR },
@@ -153,7 +171,7 @@ static inline void _node_set_position(struct Node& node, const struct Vec3i& pos
     node.score.h = euclidean_distance(node.pos, end) * 100;
 }
 
-static inline void node_first(struct Node& node, const struct Vec3i& start, const struct Vec3i& end)
+static inline void node_first(HashMap* map, struct Node& node, const struct Vec3i& start, const struct Vec3i& end)
 {   // init first node in the sequence
     node.parent = -1;
     node.id = 0;
@@ -161,6 +179,7 @@ static inline void node_first(struct Node& node, const struct Vec3i& start, cons
     node.anchor = 0;
     _node_set_position(node, start, end);
     _node_update_score(node, 0);
+    map->set(node.pos, node.id);
 }
 
 static inline void node_update(struct Node& node, const struct Vec3i& end, int cost)
@@ -169,11 +188,11 @@ static inline void node_update(struct Node& node, const struct Vec3i& end, int c
     _node_update_score(node, node.score.g + cost);
 }
 
-static inline bool node_reassign(struct Node& node, int g, int parent)
+static inline bool node_reassign(struct Node& node, int new_g, int parent)
 {   // if the new g score is better, take that parent
-    if (g >= node.score.g)
+    if (node.score.g >= new_g)
         return false;
-    _node_update_score(node, g);
+    _node_update_score(node, new_g);
     node.parent = parent;
     return true;
 }
@@ -206,14 +225,22 @@ static int compare_node_score(const void* _a, const void* _b)
     return d;
 }
 
-static inline void sort_nodes(struct Node* nodes, size_t len)
+static inline void sort_nodes(HashMap* map, struct Node* nodes, size_t len)
 {
     qsort(nodes, len, sizeof(nodes[0]), &compare_node_score);
-    for (int i=0; i<int(len); i++) nodes[i].id = i;
+    for (int i=0; i<int(len); i++)
+    {
+        // We have to update the hashmap for the changed values
+        if (nodes[i].id != i)
+            map->set(nodes[i].pos, i);
+        // Update the ids of the nodes:
+        //  (we need to do this with or without the hashmap)
+        nodes[i].id = i;
+    }
 }
 
-static inline int add_node(struct Node& node, struct Node*& nodes,
-                            size_t& max_len, size_t& len)
+static inline int add_node(HashMap* map, struct Node& node,
+                           struct Node*& nodes, size_t& max_len, size_t& len)
 {
     #if !PATHFINDING_DEBUG
     IF_ASSERT(max_len == 0) return -1;
@@ -232,18 +259,38 @@ static inline int add_node(struct Node& node, struct Node*& nodes,
         nodes = _nodes;
     }
     node.id = len;
-    nodes[len++] = node;
+    nodes[len] = node;
+    map->set(node.pos, node.id);
+    len++;
     return len-1;
 }
 
-static inline int get_node_pos_index(const struct Vec3i& pos,
-                                     const Node* nodes, size_t len)
+static inline struct Node get_lowest_cost_node(HashMap* open_map,
+                                               const struct Node* open,
+                                               size_t& iopen)
 {
-    for (size_t i=0; i<len; i++)
-        if (is_equal(pos, nodes[i].pos))
-            return int(i);
-    return -1;
+    PATH_ASSERT(iopen > 0);
+    struct Node node = open[--iopen];
+    #if PATHFINDING_DEBUG
+    int ret =
+    #endif
+    open_map->pop(node.pos);
+    #if PATHFINDING_DEBUG
+    PATH_ASSERT(ret == node.id);
+    if (ret != node.id)
+        printf("popped position doesn't match: %d != %d\n", ret, node.id);
+    #endif
+    return node;
 }
+
+//static inline int get_node_pos_index(const struct Vec3i& pos,
+                                     //const Node* nodes, size_t len)
+//{
+    //for (size_t i=0; i<len; i++)
+        //if (is_equal(pos, nodes[i].pos))
+            //return int(i);
+    //return -1;
+//}
 
 struct Vec3i* construct_path(const struct Node* open, size_t iopen,
                               struct Node* closed, size_t iclosed,
@@ -416,7 +463,8 @@ struct Passable3DJump
         const int max_up = 3;
         struct Vec3i cur = node.pos;
         struct Vec3i dst = add_pos_adj(cur, iadj);
-        if (dst.z <= 0 || dst.z > map_dim.z) return false;
+        if (dst.z <= 0 || dst.z > map_dim.z)
+            return false;
 
         if (adj[iadj].dir == DIR_LATERAL_PLANAR)
         {   // attempt a jump
@@ -502,7 +550,10 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
     size_t mclosed = CLOSED_START_SIZE;
     struct Node* open = (struct Node*)malloc(mopen * sizeof(struct Node));
     struct Node* closed = (struct Node*)malloc(mclosed * sizeof(struct Node));
-    node_first(open[iopen++], start, end);
+
+    // setup the start node
+    node_first(open_map, open[iopen++], start, end);
+
     bool needs_sort = false;
     while (1)
     {
@@ -517,17 +568,19 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
             break;
         if (needs_sort)
         {
-            sort_nodes(open, iopen);
+            sort_nodes(open_map, open, iopen);
             needs_sort = false;
         }
         // get lowest cost node
-        struct Node current = open[--iopen];
+        struct Node current = get_lowest_cost_node(open_map, open, iopen);
+
         // move to closed list
         #if PATHFINDING_DEBUG
-        int ret = add_node(current, closed, mclosed, iclosed);
+        int ret =
+        #endif
+        add_node(closed_map, current, closed, mclosed, iclosed);
+        #if PATHFINDING_DEBUG
         PATH_ASSERT(ret >= 0);
-        #else
-        add_node(current, closed, mclosed, iclosed);
         #endif
         // if we found the target, break
         if (is_equal(current.pos, end))
@@ -543,17 +596,22 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
             // update position, scores of node
             node_update(node, end, cost);
             // if in closed list, skip
-            if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
+            if (closed_map->contains(node.pos))
                 continue;
+            //if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
+                //continue;
 
-            int in_open = get_node_pos_index(node.pos, open, iopen);
+            //int in_open = get_node_pos_index(node.pos, open, iopen);
+            //if (in_open < 0)
+            int in_open = open_map->get(node.pos);
             if (in_open < 0)
             {   // not found; add to open list
                 #if PATHFINDING_DEBUG
-                int ret = add_node(node, open, mopen, iopen);
+                int ret =
+                #endif
+                add_node(open_map, node, open, mopen, iopen);
+                #if PATHFINDING_DEBUG
                 PATH_ASSERT(ret >= 0);
-                #else
-                add_node(node, open, mopen, iopen);
                 #endif
                 needs_sort = true;
             }
@@ -561,6 +619,11 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
             {   // update if g is better
                 needs_sort = true;
             }
+            #if PATHFINDING_DEBUG
+            PATH_ASSERT(in_open < int(iopen));
+            //if (in_open >= int(iopen))
+                //printf("in_open out of bounds: %d >= %d\n", in_open, int(iopen));
+            #endif
         }
 
     }
@@ -568,6 +631,8 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
     struct Vec3i* path = construct_path(open, iopen, closed, iclosed, len);
     free(open);
     free(closed);
+    closed_map->erase();
+    open_map->erase();
     return path;
 }
 
@@ -628,5 +693,4 @@ void draw_path(const struct Vec3i* path, size_t len)
 
 #undef PATHFINDING_DEBUG
 #undef PATH_ASSERT
-
 }   // Path

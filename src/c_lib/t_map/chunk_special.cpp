@@ -26,9 +26,8 @@ bool ChunkItemContainer::remove(ItemContainerID container_id)
     for (i=0; i<iban; i++)
         if (container_id == iba[i].container_id)
             break;
-    GS_ASSERT(i < iban);   // did not find
-    if (i >= iban) return false;
-
+    IF_ASSERT(i >= iban)
+        return false;
     return this->remove_index(i);
 }
 

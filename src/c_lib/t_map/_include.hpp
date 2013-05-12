@@ -3,7 +3,6 @@
 #include <t_map/common/constants.hpp>
 #include <t_map/common/types.hpp>
 #include <t_map/common/map_element.hpp>
-#include <t_map/common/map_pos.hpp>
 #include <t_map/t_map_class.cpp>
 #include <t_map/t_map.cpp>
 #include <t_map/utils.cpp>

@@ -108,7 +108,7 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     //end.z = start.z;    // for 2d
     size_t len = 0;
     struct Vec3i* path = Path::get_path_3d_jump(start, end, len);
-    Path::print_path(path, len);
+    //Path::print_path(path, len);
     if (ClientState::path != NULL)
         free(ClientState::path);
     ClientState::path = path;
@@ -443,7 +443,7 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
 
     //const int max_dist = 4.0f;
     //int b[3];
-    
+
 
 
     int sp[3];
