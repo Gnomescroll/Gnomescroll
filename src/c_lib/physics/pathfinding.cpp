@@ -12,6 +12,11 @@
 namespace Path
 {
 
+// Use a hash map for the open list?
+// (in addition to the sorted list it must maintain)
+#define PATHFINDING_OPEN_HASH_MAP 0
+#define PATHFINDING_CLOSED_HASH_MAP 0
+
 #if PRODUCTION
 # define PATHFINDING_DEBUG 0
 # define PATHFINDING_VERBOSE 0
@@ -52,28 +57,19 @@ namespace Path
 // G: movement cost (10 for lateral, 14 for diagonal)
 // H: heuristic (manhattan)
 
-HashMap* open_map;
-HashMap* closed_map;
-
-void init()
-{
-    open_map = new HashMap;
-    closed_map = new HashMap;
-}
-
-void teardown()
-{
-    delete open_map;
-    delete closed_map;
-}
-
+static HashMap* open_map;
+static HashMap* closed_map;
+static struct Node* open;
+static struct Node* closed;
 
 // max distance between 2 nodes (manhattan)
-static const int MAX_PATH_DISTANCE = 128;
+static const int MAX_PATH_DISTANCE = 80;
 static const size_t OPEN_START_SIZE = 128;
 static const size_t CLOSED_START_SIZE = 128;
-static const size_t OPEN_NODES_MAX = 2048;
-static const size_t CLOSED_NODES_MAX = 2048;
+//static const size_t OPEN_NODES_MAX = 2048;
+//static const size_t CLOSED_NODES_MAX = 2048;
+static const size_t OPEN_NODES_MAX = 1024;
+static const size_t CLOSED_NODES_MAX = 1024;
 
 typedef enum
 {
@@ -158,6 +154,33 @@ struct Node
     struct Score score;
 };
 
+static void _print_config_status(const char* query, int value)
+{
+    printf("PATHFINDING: ");
+    printf(query);
+    if (value) printf(" yes\n");
+    else printf(" no\n");
+}
+
+void init()
+{
+    _print_config_status("Debug enabled?", PATHFINDING_DEBUG);
+    //_print_config_status("Using hash map for open list?", PATHFINDING_OPEN_HASH_MAP);
+    //_print_config_status("Using hash map for closed list?", PATHFINDING_OPEN_HASH_MAP);
+    open_map = new HashMap;
+    closed_map = new HashMap;
+    open = (struct Node*)malloc(OPEN_NODES_MAX * sizeof(*open));
+    closed = (struct Node*)malloc(CLOSED_NODES_MAX * sizeof(*closed));
+}
+
+void teardown()
+{
+    delete open_map;
+    delete closed_map;
+    free(open);
+    free(closed);
+}
+
 static inline void _node_update_score(struct Node& node, int g)
 {
     PATH_ASSERT(g != node.score.g);
@@ -179,7 +202,9 @@ static inline void node_first(HashMap* map, struct Node& node, const struct Vec3
     node.anchor = 0;
     _node_set_position(node, start, end);
     _node_update_score(node, 0);
+    #if PATHFINDING_OPEN_HASH_MAP
     map->set(node.pos, node.id);
+    #endif
 }
 
 static inline void node_update(struct Node& node, const struct Vec3i& end, int cost)
@@ -230,9 +255,11 @@ static inline void sort_nodes(HashMap* map, struct Node* nodes, size_t len)
     qsort(nodes, len, sizeof(nodes[0]), &compare_node_score);
     for (int i=0; i<int(len); i++)
     {
+        #if PATHFINDING_OPEN_HASH_MAP
         // We have to update the hashmap for the changed values
         if (nodes[i].id != i)
             map->set(nodes[i].pos, i);
+        #endif
         // Update the ids of the nodes:
         //  (we need to do this with or without the hashmap)
         nodes[i].id = i;
@@ -260,7 +287,12 @@ static inline int add_node(HashMap* map, struct Node& node,
     }
     node.id = len;
     nodes[len] = node;
-    map->set(node.pos, node.id);
+    #if PATHFINDING_OPEN_HASH_MAP || PATHFINDING_CLOSED_HASH_MAP
+    # if (PATHFINDING_OPEN_HASH_MAP ^ PATHFINDING_CLOSED_HASH_MAP)
+    if (map != NULL)
+    # endif
+        map->set(node.pos, node.id);
+    #endif
     len++;
     return len-1;
 }
@@ -271,26 +303,28 @@ static inline struct Node get_lowest_cost_node(HashMap* open_map,
 {
     PATH_ASSERT(iopen > 0);
     struct Node node = open[--iopen];
-    #if PATHFINDING_DEBUG
+    #if PATHFINDING_OPEN_HASH_MAP
+    # if PATHFINDING_DEBUG
     int ret =
-    #endif
+    # endif
     open_map->pop(node.pos);
-    #if PATHFINDING_DEBUG
+    # if PATHFINDING_DEBUG
     PATH_ASSERT(ret == node.id);
     if (ret != node.id)
         printf("popped position doesn't match: %d != %d\n", ret, node.id);
+    # endif
     #endif
     return node;
 }
 
-//static inline int get_node_pos_index(const struct Vec3i& pos,
-                                     //const Node* nodes, size_t len)
-//{
-    //for (size_t i=0; i<len; i++)
-        //if (is_equal(pos, nodes[i].pos))
-            //return int(i);
-    //return -1;
-//}
+static inline int get_node_pos_index(const struct Vec3i& pos,
+                                     const Node* nodes, size_t len)
+{
+    for (size_t i=0; i<len; i++)
+        if (is_equal(pos, nodes[i].pos))
+            return int(i);
+    return -1;
+}
 
 struct Vec3i* construct_path(const struct Node* open, size_t iopen,
                               struct Node* closed, size_t iclosed,
@@ -519,7 +553,8 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
         PATH_PRINT("Not pathing; endpoint is solid (unreachable)\n");
         return NULL;
     }
-    if (manhattan_distance(start, end) > MAX_PATH_DISTANCE)
+    int dist = manhattan_distance(start, end);
+    if (dist > MAX_PATH_DISTANCE)
     {
         PATH_PRINT("Not pathing, too far away\n");
         return NULL;
@@ -542,14 +577,18 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
     PATH_PRINT("to\n");
     PATH_PRINT("\t");
     vec3i_print(end);
+    PATH_PRINT("\t");
+    PATH_PRINT("Distance: %d\n", dist);
     #endif
 
     size_t iopen = 0;
     size_t iclosed = 0;
-    size_t mopen = OPEN_START_SIZE;
-    size_t mclosed = CLOSED_START_SIZE;
-    struct Node* open = (struct Node*)malloc(mopen * sizeof(struct Node));
-    struct Node* closed = (struct Node*)malloc(mclosed * sizeof(struct Node));
+    //size_t mopen = OPEN_START_SIZE;
+    //size_t mclosed = CLOSED_START_SIZE;
+    //struct Node* open = (struct Node*)malloc(OPEN_START_SIZE * sizeof(struct Node));
+    //struct Node* closed = (struct Node*)malloc(CLOSED_START_SIZE * sizeof(struct Node));
+    size_t mopen = OPEN_NODES_MAX;
+    size_t mclosed = CLOSED_NODES_MAX;
 
     // setup the start node
     node_first(open_map, open[iopen++], start, end);
@@ -578,7 +617,11 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
         #if PATHFINDING_DEBUG
         int ret =
         #endif
+        #if PATHFINDING_CLOSED_HASH_MAP
         add_node(closed_map, current, closed, mclosed, iclosed);
+        #else
+        add_node(NULL, current, closed, mclosed, iclosed);
+        #endif
         #if PATHFINDING_DEBUG
         PATH_ASSERT(ret >= 0);
         #endif
@@ -596,20 +639,29 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
             // update position, scores of node
             node_update(node, end, cost);
             // if in closed list, skip
+            #if PATHFINDING_CLOSED_HASH_MAP
             if (closed_map->contains(node.pos))
                 continue;
-            //if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
-                //continue;
+            #else
+            if (get_node_pos_index(node.pos, closed, iclosed) >= 0)
+                continue;
+            #endif
 
-            //int in_open = get_node_pos_index(node.pos, open, iopen);
-            //if (in_open < 0)
+            #if PATHFINDING_OPEN_HASH_MAP
             int in_open = open_map->get(node.pos);
+            #else
+            int in_open = get_node_pos_index(node.pos, open, iopen);
+            #endif
             if (in_open < 0)
             {   // not found; add to open list
                 #if PATHFINDING_DEBUG
                 int ret =
                 #endif
+                #if PATHFINDING_OPEN_HASH_MAP
                 add_node(open_map, node, open, mopen, iopen);
+                #else
+                add_node(NULL, node, open, mopen, iopen);
+                #endif
                 #if PATHFINDING_DEBUG
                 PATH_ASSERT(ret >= 0);
                 #endif
@@ -629,10 +681,14 @@ Vec3i* get_path(const struct Vec3i& start, const struct Vec3i& end,
     }
 
     struct Vec3i* path = construct_path(open, iopen, closed, iclosed, len);
-    free(open);
-    free(closed);
+    //free(open);
+    //free(closed);
+    #if PATHFINDING_CLOSED_HASH_MAP
     closed_map->erase();
+    #endif
+    #if PATHFINDING_OPEN_HASH_MAP
     open_map->erase();
+    #endif
     return path;
 }
 

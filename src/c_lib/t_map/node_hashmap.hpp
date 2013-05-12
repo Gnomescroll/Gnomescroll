@@ -10,8 +10,11 @@
  *  Supports add, remove and contains
  */
 
-#pragma once
-
+#if PRODUCTION
+#define HASHMAP_DEBUG 0
+#else
+#define HASHMAP_DEBUG 1
+#endif
 
 class Bucket
 {
@@ -89,6 +92,10 @@ class Bucket
 
     bool _grow()
     {   // returns true if grew, else false on failure
+        #if HASHMAP_DEBUG
+        printf("Hash bucket growing from %lu to %lu\n",
+               (long unsigned)this->max, (long unsigned)(this->max * 2));
+        #endif
         struct Vec3i* _points = (struct Vec3i*)realloc(this->points, 2 * this->max * sizeof(*this->points));
         IF_ASSERT(_points == NULL) return false;
         this->points = _points;

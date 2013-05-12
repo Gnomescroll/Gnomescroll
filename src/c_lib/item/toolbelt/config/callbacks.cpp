@@ -1,5 +1,6 @@
 #include "callbacks.hpp"
 
+#include <common/time/physics_timer.hpp>
 #include <agent/_interface.hpp>
 #include <item/toolbelt/common/types.hpp>
 #include <entity/object/main.hpp>
@@ -107,7 +108,10 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     end.z = t_map::get_nearest_surface_block_below(end);
     //end.z = start.z;    // for 2d
     size_t len = 0;
+    long t0 = _GET_MICROSECOND_TIME();
     struct Vec3i* path = Path::get_path_3d_jump(start, end, len);
+    int t1 = _GET_MICROSECOND_TIME();
+    printf("Pathing took %0.2fms\n", (float(t1-t0)/1000.0f));
     //Path::print_path(path, len);
     if (ClientState::path != NULL)
         free(ClientState::path);
