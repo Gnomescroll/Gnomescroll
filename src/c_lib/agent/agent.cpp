@@ -44,7 +44,7 @@ void Agent::teleport(float x,float y,float z)
     this->set_position(x,y,z);
 
     #if DC_SERVER
-    Agent_teleport_message msg;
+    agent_teleport_StoC msg;
     msg.id = id;
     msg.x = s.x;
     msg.y = s.y;
@@ -67,7 +67,7 @@ void Agent::teleport(float x,float y,float z, float vx, float vy, float vz, floa
     s.phi = phi;
 
     #if DC_SERVER
-    Agent_teleport_message msg;
+    agent_teleport_StoC msg;
     msg.id = id;
     msg.x = s.x;
     msg.y = s.y;
@@ -128,7 +128,7 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
     this->tick();
 
     #if DC_SERVER
-    class PlayerAgent_Snapshot p;
+    class player_agent_snapshot_StoC p;
     p.id = id;
     p.seq = cs_seq;
     p.x = s.x;
@@ -143,7 +143,7 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 
     if (seq % 32 == 0)
     {
-        class Agent_state_message a;
+        class agent_state_StoC a;
         a.seq = cs_seq;
         a.x = s.x;
         a.y = s.y;

@@ -28,7 +28,7 @@ void send_version_to_client(ClientID client_id);
 
 void send_player_agent_id_to_client(ClientID client_id)
 {
-    PlayerAgent_id_StoC msg;
+    player_agent_id_StoC msg;
     msg.id = client_id;
     msg.sendToClient(client_id);
 }
@@ -54,7 +54,7 @@ void NetPeerManager::init(ClientID client_id)
 
     send_version_to_client(client_id);
 
-    SendClientId_StoC client_id_msg;
+    send_client_id_StoC client_id_msg;
     client_id_msg.client_id = client_id;
     client_id_msg.sendToClient(client_id);
 

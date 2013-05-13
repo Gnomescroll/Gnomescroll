@@ -195,7 +195,7 @@ bool AgentStatus::die()
     this->deaths++;
 
     #if DC_SERVER
-    AgentDeaths_StoC deaths_msg;
+    agent_deaths_StoC deaths_msg;
     deaths_msg.id = this->a->id;
     deaths_msg.deaths = this->deaths;
     deaths_msg.broadcast();
@@ -301,7 +301,7 @@ void AgentStatus::kill(int victim_id)
     if (victim_id == this->a->id)
     {
         suicides++;
-        AgentSuicides_StoC as;
+        agent_suicides_StoC as;
         as.id = this->a->id;
         as.suicides = suicides;
         as.broadcast();
@@ -309,7 +309,7 @@ void AgentStatus::kill(int victim_id)
     else
     {
         kills++;
-        AgentKills_StoC ak;
+        agent_kills_StoC ak;
         ak.id = this->a->id;
         ak.kills = kills;
         ak.broadcast();
@@ -632,17 +632,17 @@ void AgentStatus::at_base()
 
 void AgentStatus::send_scores(ClientID client_id)
 {
-    AgentKills_StoC ak;
+    agent_kills_StoC ak;
     ak.id = a->id;
     ak.kills = kills;
     ak.sendToClient(client_id);
 
-    AgentDeaths_StoC ad;
+    agent_deaths_StoC ad;
     ad.id = a->id;
     ad.deaths = deaths;
     ad.sendToClient(client_id);
 
-    AgentSuicides_StoC as;
+    agent_suicides_StoC as;
     as.id = a->id;
     as.suicides = suicides;
     as.sendToClient(client_id);
@@ -650,17 +650,17 @@ void AgentStatus::send_scores(ClientID client_id)
 
 void AgentStatus::send_scores()
 {
-    AgentKills_StoC ak;
+    agent_kills_StoC ak;
     ak.id = a->id;
     ak.kills = kills;
     ak.broadcast();
 
-    AgentDeaths_StoC ad;
+    agent_deaths_StoC ad;
     ad.id = a->id;
     ad.deaths = deaths;
     ad.broadcast();
 
-    AgentSuicides_StoC as;
+    agent_suicides_StoC as;
     as.id = a->id;
     as.suicides = suicides;
     as.broadcast();

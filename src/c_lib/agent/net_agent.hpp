@@ -8,7 +8,7 @@
  *  Player Agents::Agent Packets
 */
 
-class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapshot>
+class player_agent_snapshot_StoC: public FixedSizeNetPacketToClient<player_agent_snapshot_StoC>
 {
     public:
         uint8_t id;
@@ -41,7 +41,7 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
  *  Server -> Client packets
  */
 
-class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_StoC>
+class send_client_id_StoC: public FixedSizeReliableNetPacketToClient<send_client_id_StoC>
 {
     public:
         uint8_t client_id;
@@ -54,7 +54,7 @@ class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_
 };
 
 //send at fixed interval, absolute position
-class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
+class agent_state_StoC: public FixedSizeNetPacketToClient<agent_state_StoC>
 {
     public:
         uint8_t id;
@@ -100,7 +100,7 @@ class agent_camera_state_CtoS: public FixedSizeReliableNetPacketToServer<agent_c
     inline void handle();
 };
 
-class Agent_teleport_message: public FixedSizeReliableNetPacketToClient<Agent_teleport_message>
+class agent_teleport_StoC: public FixedSizeReliableNetPacketToClient<agent_teleport_StoC>
 {
     public:
         uint8_t id;
@@ -127,7 +127,7 @@ class Agent_teleport_message: public FixedSizeReliableNetPacketToClient<Agent_te
 };
 
 //Agents::Agent control state, server to client
-class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
+class agent_control_state_StoC: public FixedSizeNetPacketToClient<agent_control_state_StoC>
 {
     public:
         uint8_t id;
@@ -295,7 +295,7 @@ class agent_placed_block_StoC: public FixedSizeReliableNetPacketToClient<agent_p
  */
 
 //agent control state, client to server
-class Agent_cs_CtoS: public FixedSizeReliableNetPacketToServer<Agent_cs_CtoS>
+class agent_control_state_CtoS: public FixedSizeReliableNetPacketToServer<agent_control_state_CtoS>
 {
     public:
         uint8_t seq;
@@ -456,7 +456,7 @@ class agent_destroy_StoC: public FixedSizeReliableNetPacketToClient<agent_destro
     inline void handle();
 };
 
-class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent_id_StoC>
+class player_agent_id_StoC: public FixedSizeReliableNetPacketToClient<player_agent_id_StoC>
 {
     public:
         uint8_t id;
@@ -468,7 +468,7 @@ class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent
     inline void handle();
 };
 
-class ThrowGrenade_CtoS: public FixedSizeReliableNetPacketToServer<ThrowGrenade_CtoS>
+class throw_grenade_CtoS: public FixedSizeReliableNetPacketToServer<throw_grenade_CtoS>
 {
     public:
         float x,y,z;
@@ -486,7 +486,7 @@ class ThrowGrenade_CtoS: public FixedSizeReliableNetPacketToServer<ThrowGrenade_
     inline void handle();
 };
 
-class AgentKills_StoC: public FixedSizeReliableNetPacketToClient<AgentKills_StoC>
+class agent_kills_StoC: public FixedSizeReliableNetPacketToClient<agent_kills_StoC>
 {
     public:
         uint8_t id;
@@ -500,7 +500,7 @@ class AgentKills_StoC: public FixedSizeReliableNetPacketToClient<AgentKills_StoC
     inline void handle();
 };
 
-class AgentDeaths_StoC: public FixedSizeReliableNetPacketToClient<AgentDeaths_StoC>
+class agent_deaths_StoC: public FixedSizeReliableNetPacketToClient<agent_deaths_StoC>
 {
     public:
         uint8_t id;
@@ -514,7 +514,7 @@ class AgentDeaths_StoC: public FixedSizeReliableNetPacketToClient<AgentDeaths_St
     inline void handle();
 };
 
-class AgentSuicides_StoC: public FixedSizeReliableNetPacketToClient<AgentSuicides_StoC>
+class agent_suicides_StoC: public FixedSizeReliableNetPacketToClient<agent_suicides_StoC>
 {
     public:
         uint8_t id;

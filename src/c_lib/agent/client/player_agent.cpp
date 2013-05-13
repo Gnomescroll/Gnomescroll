@@ -200,7 +200,7 @@ void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
         phi = s.phi;
     }
 
-    Agent_cs_CtoS csp;
+    agent_control_state_CtoS csp;
     csp.seq = cs_seq_local;
     csp.cs = cs;
     csp.theta = theta;

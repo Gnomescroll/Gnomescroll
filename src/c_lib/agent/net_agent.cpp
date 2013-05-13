@@ -23,7 +23,7 @@
  *  Player Agents::Agent Packets
  */
 
-inline void PlayerAgent_Snapshot::handle()
+inline void player_agent_snapshot_StoC::handle()
 {
     #if DC_CLIENT
     ClientState::player_agent.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
@@ -33,19 +33,19 @@ inline void PlayerAgent_Snapshot::handle()
 // Server -> Client handlers
 #if DC_CLIENT
 
-inline void SendClientId_StoC::handle()
+inline void send_client_id_StoC::handle()
 {
     NetClient::Server.client_id = (ClientID)this->client_id;
 }
 
-inline void Agent_state_message::handle()
+inline void agent_state_StoC::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)id);
     if (a == NULL) return;
     a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 
-inline void Agent_teleport_message::handle()
+inline void agent_teleport_StoC::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)id);
     IF_ASSERT(a == NULL) return;
@@ -64,7 +64,7 @@ inline void Agent_teleport_message::handle()
 }
 
 //Agents::Agent control state, server to client
-inline void Agent_cs_StoC::handle()
+inline void agent_control_state_StoC::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)id);
     if (a == NULL)
@@ -164,26 +164,26 @@ inline void agent_destroy_StoC::handle()
     Agents::destroy_agent((AgentID)id);
 }
 
-inline void PlayerAgent_id_StoC::handle()
+inline void player_agent_id_StoC::handle()
 {
     ClientState::set_PlayerAgent_id((AgentID)this->id);
 }
 
-inline void AgentKills_StoC::handle()
+inline void agent_kills_StoC::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     IF_ASSERT(a == NULL) return;
     a->status.kills = kills;
 }
 
-inline void AgentDeaths_StoC::handle()
+inline void agent_deaths_StoC::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     IF_ASSERT(a == NULL) return;
     a->status.deaths = deaths;
 }
 
-inline void AgentSuicides_StoC::handle()
+inline void agent_suicides_StoC::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     IF_ASSERT(a == NULL) return;
@@ -400,12 +400,12 @@ inline void agent_color_StoC::handle()
     }
 }
 
-inline void Agent_cs_CtoS::handle() {}
+inline void agent_control_state_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
-inline void ThrowGrenade_CtoS::handle(){}
+inline void throw_grenade_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
 inline void admin_set_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
@@ -426,13 +426,13 @@ inline void gohome_CtoS::handle() {}
 // Client -> Server handlers
 #if DC_SERVER
 
-inline void SendClientId_StoC::handle() {}
-inline void AgentKills_StoC::handle() {}
-inline void AgentDeaths_StoC::handle() {}
-inline void AgentSuicides_StoC::handle() {}
-inline void Agent_state_message::handle() {}
-inline void Agent_teleport_message::handle() {}
-inline void Agent_cs_StoC::handle() {}
+inline void send_client_id_StoC::handle() {}
+inline void agent_kills_StoC::handle() {}
+inline void agent_deaths_StoC::handle() {}
+inline void agent_suicides_StoC::handle() {}
+inline void agent_state_StoC::handle() {}
+inline void agent_teleport_StoC::handle() {}
+inline void agent_control_state_StoC::handle() {}
 inline void agent_shot_object_StoC::handle(){}
 inline void agent_shot_block_StoC::handle(){}
 inline void agent_shot_nothing_StoC::handle(){}
@@ -444,7 +444,7 @@ inline void agent_placed_block_StoC::handle(){}
 inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
 inline void agent_destroy_StoC::handle() {}
-inline void PlayerAgent_id_StoC::handle() {}
+inline void player_agent_id_StoC::handle() {}
 inline void ping_StoC::handle(){}
 inline void ping_reliable_StoC::handle(){}
 inline void agent_conflict_notification_StoC::handle(){}
@@ -477,7 +477,7 @@ inline void killme_CtoS::handle()
     a->status.die(a->id, a->type, DEATH_KILLME);
 }
 
-inline void Agent_cs_CtoS::handle()
+inline void agent_control_state_CtoS::handle()
 {
     //printf("cs_CtoS: seq= %i \n", seq);
 
@@ -499,7 +499,7 @@ inline void Agent_cs_CtoS::handle()
         Client should send last 2 control states each packet, must handle redundant control state properly
     */
 
-    class Agent_cs_StoC m;
+    class agent_control_state_StoC m;
     m.id = a->id;
     m.seq = seq;
     m.cs = cs;
@@ -725,7 +725,7 @@ inline void melee_none_CtoS::handle()
     msg.broadcast();
 }
 
-inline void ThrowGrenade_CtoS::handle()
+inline void throw_grenade_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;

@@ -26,15 +26,15 @@ void RegisterMessages()
     benchmarkReliableCtoS::register_server_packet();
     */
 
-    Agent_state_message::register_client_packet();
-    Agent_teleport_message::register_client_packet();
+    agent_state_StoC::register_client_packet();
+    agent_teleport_StoC::register_client_packet();
 
     agent_camera_state_CtoS::register_server_packet();
 
-    SendClientId_StoC::register_client_packet();
+    send_client_id_StoC::register_client_packet();
 
-    Agent_cs_CtoS::register_server_packet();
-    Agent_cs_StoC::register_client_packet();
+    agent_control_state_CtoS::register_server_packet();
+    agent_control_state_StoC::register_client_packet();
 
     // agent took damage indicator
     agent_dead_StoC::register_client_packet();
@@ -53,7 +53,7 @@ void RegisterMessages()
     hit_block_CtoS::register_server_packet();
 
     //player agent
-    PlayerAgent_Snapshot::register_client_packet();
+    player_agent_snapshot_StoC::register_client_packet();
 
     // hitscans
     hitscan_object_CtoS::register_server_packet();
@@ -81,13 +81,13 @@ void RegisterMessages()
     set_spawner_StoC::register_client_packet();
     place_turret_CtoS::register_server_packet();
 
-    PlayerAgent_id_StoC::register_client_packet();
+    player_agent_id_StoC::register_client_packet();
 
-    ThrowGrenade_CtoS::register_server_packet();
+    throw_grenade_CtoS::register_server_packet();
 
-    AgentKills_StoC::register_client_packet();
-    AgentDeaths_StoC::register_client_packet();
-    AgentSuicides_StoC::register_client_packet();
+    agent_kills_StoC::register_client_packet();
+    agent_deaths_StoC::register_client_packet();
+    agent_suicides_StoC::register_client_packet();
 
     // chat
     Chat::init_packets();

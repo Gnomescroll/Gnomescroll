@@ -464,7 +464,7 @@ void PlayerAgent_action::throw_grenade()
 
     // message to server
     Vec3 pos = you->get_camera_position();
-    ThrowGrenade_CtoS msg;
+    throw_grenade_CtoS msg;
     msg.x = pos.x;
     msg.y = pos.y;
     msg.z = pos.z;
@@ -474,7 +474,7 @@ void PlayerAgent_action::throw_grenade()
     msg.vz = f.z;
     msg.send();
 
-    // local play (copied from ThrowGrenade_CtoS)
+    // local play (copied from throw_grenade_CtoS)
     static const float PLAYER_ARM_FORCE = 15.0f; // make agent property
     //create grenade
     f = vec3_scalar_mult(f, PLAYER_ARM_FORCE);
