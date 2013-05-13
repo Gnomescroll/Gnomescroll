@@ -68,32 +68,42 @@ void orient_to_point(Vec3 dest, struct Vec3 origin, float* theta, float* phi)
  */
 
 #define FLOAT_ERROR_MARGIN 0.005f
-static bool advance_move(struct Vec3 position, struct Vec3 move_to,
-                          int z, float speed,
+static bool advance_move(struct Vec3 position, struct Vec3 move_to, float speed,
                           struct Vec3* new_position, struct Vec3* new_momentum)
-{
+{   // TODO -- fix this function for falling.
+    const float GRAVITY = -0.15f;
+    const float CLIMB = 0.05f;
     Vec3 new_direction = vec3_init(0);
+    if (position.z > move_to.z)
+    {
+        *new_momentum.z = GRAVITY;
+        position.z += GRAVITY;
+        position.z = GS_MAX(position.z, move_to.z);
+    }
+    else if (position.z < move_to.z)
+    {
+        *new_momentum.z = CLIMB;
+        position.z += CLIMB;
+        position.z = GS_MIN(position.z, move_to.z);
+    }
+
+    float position_z = position.z;
+    float move_to_z = move_to.z;
+    move_to.z = 0;
+    position.z = 0;
     if (vec3_equal(position, move_to) || speed == 0.0f)
     {
         *new_momentum = new_direction;
-        if (position.z != float(z))
-        {
-            position.z = z;
-            *new_position = translate_position(position);
-            return true;
-        }
         *new_position = translate_position(position);
-        return false;
+        return (position_z != move_to_z);
     }
 
     new_direction = vec3_sub(move_to, position);
-    normalize_vector(&new_direction);
+    new_direction = vec3_normalize(new_direction);
     Vec3 m = vec3_scalar_mult(new_direction, speed);
     position = vec3_add(position, m);
+    position.z = position_z;
     *new_momentum = m;
-    new_direction.z = 0;
-    float xy_len = vec3_length_squared(new_direction);
-    if (xy_len < (speed*speed)/2) position.z = z;
     *new_position = translate_position(position);
     return true;
 }
@@ -102,15 +112,15 @@ static bool move_z_diff(struct Vec3 position, struct Vec3 move_to,
                          int z, float speed, float max_z_diff,
                          struct Vec3* new_position, struct Vec3* new_momentum)
 {
-    //float z_diff = position.z - float(z);
+    float z_diff = float(z) - position.z;
     //if (fabsf(z_diff) > max_z_diff)
-    //{   // cant move
-        //*new_position = position;
-        //*new_momentum = vec3_init(0);
-        //return false;
-    //}
+    if (z_diff > max_z_diff)
+    {   // cant move up
+        *new_position = position;
+        *new_momentum = vec3_init(0);
+        return false;
+    }
     move_to.z = z;
-
     return advance_move(position, move_to, z, speed, new_position, new_momentum);
 }
 
