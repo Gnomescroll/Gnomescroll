@@ -741,13 +741,13 @@ inline void throw_grenade_CtoS::handle()
     msg.id = a->id;
     msg.broadcast();
 
-    Vec3 n = vec3_init(vx,vy,vz);
-    normalize_vector(&n);
+    Vec3 n = vec3_init(vx, vy, vz);
+    n = vec3_normalize(n);
     static const float PLAYER_ARM_FORCE = 15.0f; // load from dat later
     //create grenade
     n = vec3_scalar_mult(n, PLAYER_ARM_FORCE);
     Particle::Grenade* g = Particle::grenade_list->create();
-    if (g==NULL) return;
+    if (g == NULL) return;
     g->set_state(x,y,z, n.x, n.y, n.z);
     g->owner = a->id;
     g->broadcast();

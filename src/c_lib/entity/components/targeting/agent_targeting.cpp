@@ -25,7 +25,7 @@ void AgentTargetingComponent::set_target(AgentID agent_id)
 
     Vec3 dest = a->get_position();
     this->target_direction = quadrant_translate_position(position, dest);
-    normalize_vector(&this->target_direction);
+    this->target_direction = vec3_normalize(this->target_direction);
 
     this->target_type = OBJECT_AGENT;
     this->target_id = agent_id;
@@ -80,16 +80,16 @@ void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
     GS_ASSERT(is_boxed_position(target_position));
     target_position = quadrant_translate_position(camera_position, target_position);
     this->target_direction = vec3_sub(target_position, camera_position);
-    normalize_vector(&this->target_direction);
+    this->target_direction = vec3_normalize(this->target_direction);
 }
 
 // adjusts position & momentum by moving over the terrain surface
-bool AgentTargetingComponent::move_on_surface()
+void AgentTargetingComponent::move_on_surface()
 {
     // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    IF_ASSERT(physics == NULL) return false;
+    IF_ASSERT(physics == NULL) return;
 
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
@@ -100,24 +100,22 @@ bool AgentTargetingComponent::move_on_surface()
     if (vec3_length_squared(motion_direction) == 0.0f)
     {
         physics->set_momentum(vec3_init(0,0,0));
-        return false;
+        return;
     }
-    normalize_vector(&motion_direction);
+    motion_direction = vec3_normalize(motion_direction);
 
-    bool moved = move_within_terrain_surface(physics->get_position(), motion_direction,
-                                            this->speed, this->max_z_diff,
-                                            &new_position, &new_momentum);
+    move_within_terrain_surface(physics->get_position(), motion_direction,
+                                this->speed, this->max_z_diff,
+                                &new_position, &new_momentum);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
     new_momentum.z = 0;
     if (vec3_length_squared(new_momentum))
     {   // update target direction
-        normalize_vector(&new_momentum);
+        new_momentum = vec3_normalize(new_momentum);
         this->target_direction = new_momentum;
     }
-
-    return moved;
 }
 
 void AgentTargetingComponent::call()

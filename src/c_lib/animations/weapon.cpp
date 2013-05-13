@@ -374,10 +374,10 @@ void draw_equipped_item(ItemType item_type)
     GS_ASSERT(!vec3_equal(focal, origin));
     if (!vec3_equal(focal, origin))
         right = vec3_sub(focal, origin);
-    normalize_vector(&right);
+    right = vec3_normalize(right);
 
     forward = vec3_cross(right, up);
-    normalize_vector(&forward);
+    forward = vec3_normalize(forward);
 
     origin = translate_position(origin);
 

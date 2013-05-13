@@ -13,7 +13,8 @@ class PositionPhysicsComponent: public PhysicsComponent
     protected:
         Vec3 position;
         Vec3 angles;
-        bool changed;
+        bool position_changed;
+        bool angles_changed;
 
         #if DC_CLIENT
         // interpolation
@@ -25,14 +26,33 @@ class PositionPhysicsComponent: public PhysicsComponent
 
     public:
 
-    void set_changed(bool changed)
+    virtual bool get_position_changed()
     {
-        this->changed = changed;
+        return this->position_changed;
     }
 
-    bool get_changed()
+    virtual void set_position_changed(bool changed)
     {
-        return this->changed;
+        this->position_changed = changed;
+    }
+
+    virtual bool get_angles_changed()
+    {
+        return this->angles_changed;
+    }
+
+    virtual void set_angles_changed(bool changed)
+    {
+        this->angles_changed = changed;
+    }
+
+    virtual bool get_momentum_changed()
+    {
+        return false;
+    }
+
+    virtual void set_momentum_changed(bool changed)
+    {
     }
 
     Vec3 get_position()
@@ -52,11 +72,11 @@ class PositionPhysicsComponent: public PhysicsComponent
         this->previous_position = this->position;
         this->previous_tick = this->tick;
         #endif
-        if (vec3_equal(this->position, position))
+        if (vec3_equal_approximate(this->position, position))
             return false;
         this->position = position;
         #if DC_SERVER
-        this->changed = true;
+        this->position_changed = true;
         #endif
         return true;
     }
@@ -78,10 +98,10 @@ class PositionPhysicsComponent: public PhysicsComponent
 
     bool set_angles(Vec3 angles)
     {
-        if (vec3_equal(this->angles, angles))
+        if (vec3_equal_approximate(this->angles, angles))
             return false;
         this->angles = angles;
-        this->changed = true;
+        this->angles_changed = true;
         return true;
     }
 
@@ -92,13 +112,13 @@ class PositionPhysicsComponent: public PhysicsComponent
         Vec3 end = quadrant_translate_position(this->previous_position, this->position);
         Vec3 new_position = vec3_interpolate(this->previous_position, end, delta);
         new_position = translate_position(new_position);
-        if (vec3_equal(new_position, this->computed_position))
+        if (vec3_equal_approximate(new_position, this->computed_position))
         {
             this->tick++;
             return;
         }
         this->computed_position = new_position;
-        this->changed = true;
+        this->position_changed = true;
         GS_ASSERT(vec3_is_valid(this->computed_position));
         GS_ASSERT(is_boxed_position(this->computed_position));
         this->tick++;
@@ -122,7 +142,8 @@ class PositionPhysicsComponent: public PhysicsComponent
     {
         this->position = NULL_POSITION;
         this->angles = NULL_ANGLES;
-        this->changed = true;
+        this->position_changed = true;
+        this->angles_changed = true;
 
         #if DC_CLIENT
         this->tick = 0;

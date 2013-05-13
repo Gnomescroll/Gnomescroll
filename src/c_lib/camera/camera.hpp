@@ -44,18 +44,12 @@ class Camera
 
     struct Vec3 right_vector()
     {
-        Vec3 right = vec3_init(0.0f, 1.0f, 0.0f);
-        right = vec3_euler_rotation(right, this->theta, this->phi, 0.0f);
-        normalize_vector(&right);
-        return right;
+        return vec3_euler_rotation(vec3_init(0, 1, 0), this->theta, this->phi, 0.0f);
     }
 
     struct Vec3 up_vector()
     {
-        Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
-        up = vec3_euler_rotation(up, this->theta, this->phi, 0.0f);
-        normalize_vector(&up);
-        return up;
+        return vec3_euler_rotation(vec3_init(0, 0, 1), this->theta, this->phi, 0.0f);
     }
 
     void hud_projection();

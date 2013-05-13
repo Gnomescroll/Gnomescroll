@@ -203,7 +203,7 @@ inline void object_shot_object_StoC::handle()
     // laser animation
     const float hitscan_effect_speed = 200.0f;
     Vec3 v = vec3_sub(dest, position);
-    normalize_vector(&v);
+    v = vec3_normalize(v);
     v = vec3_scalar_mult(v, hitscan_effect_speed);
     Animations::create_hitscan_effect(position, v);
     Sound::play_3d_sound("turret_shoot", position);

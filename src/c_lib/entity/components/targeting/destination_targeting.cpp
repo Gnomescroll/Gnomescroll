@@ -66,19 +66,19 @@ void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
         this->target_direction = vec3_init(1,0,0);
         return;
     }
-    normalize_vector(&this->target_direction);
+    this->target_direction = vec3_normalize(this->target_direction);
 }
 
-bool DestinationTargetingComponent::move_on_surface()
+void DestinationTargetingComponent::move_on_surface()
 {   // adjusts position & momentum by moving over the terrain surface
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    IF_ASSERT(physics == NULL) return false;
+    IF_ASSERT(physics == NULL) return;
 
     IF_ASSERT(this->speed == 0.0f)
     {
         physics->set_momentum(vec3_init(0));
-        return false;
+        return;
     }
 
     // adjust position/momentum by moving along terrain surface
@@ -88,22 +88,20 @@ bool DestinationTargetingComponent::move_on_surface()
     IF_ASSERT(vec3_length_squared(motion_direction) == 0.0f)
     {
         physics->set_momentum(vec3_init(0));
-        return false;
+        return;
     }
-    normalize_vector(&motion_direction);
+    motion_direction = vec3_normalize(motion_direction);
 
     Vec3 new_position;
     Vec3 new_momentum;
-    bool moved = move_within_terrain_surface(physics->get_position(), motion_direction,
-                                             this->speed, this->max_z_diff,
-                                             &new_position, &new_momentum);
+    move_within_terrain_surface(physics->get_position(), motion_direction,
+                                this->speed, this->max_z_diff,
+                                &new_position, &new_momentum);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
-    if (moved && this->ticks_to_destination > 0)
+    if (physics->get_changed() && this->ticks_to_destination > 0)
         this->ticks_to_destination--;
-
-    return moved;
 }
 
 bool DestinationTargetingComponent::check_at_destination()

@@ -282,7 +282,6 @@ void blood_spray(struct Vec3 pos, struct Vec3 incident)  // pos, incident vector
         phi = randf() * PI * 2;
         gamma = randf() * PI * 2;
         v = vec3_euler_rotation(incident, theta*arc, phi*arc, gamma*arc);
-        normalize_vector(&v);
         speed = (randf() + 0.5f) * randrange(1,2);
         speed *= base_speed;
         v = vec3_scalar_mult(v, speed);

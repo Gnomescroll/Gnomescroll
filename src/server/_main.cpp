@@ -62,6 +62,8 @@ void init_world()
     if (strcmp(Options::map, "") == 0)
     {
         loaded_map = serializer::load_data();
+        if (loaded_map) printf("Loaded map\n");
+        else printf("Failed to load a map\n");
         new_map = (!loaded_map);  // create a new map if we failed to load one
     }
     else

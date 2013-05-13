@@ -32,11 +32,7 @@ struct Vec3 AgentState::forward_vector()
     IF_ASSERT(phi < -0.4999f)
         phi = -0.4999f;
 
-    Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
-    f = vec3_euler_rotation(f, theta, phi, 0.0f);
-    normalize_vector(&f);
-
-    return f;
+    return vec3_euler_rotation(vec3_init(1, 0, 0), theta, phi, 0.0f);
 }
 
 void Agent::teleport(float x,float y,float z)

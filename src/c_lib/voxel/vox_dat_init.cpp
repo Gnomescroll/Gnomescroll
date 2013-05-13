@@ -14,6 +14,7 @@ Voxels::VoxDat agent_dead;
 Voxels::VoxDat robot_bomb;
 Voxels::VoxDat robot_box;
 Voxels::VoxDat monster_spawner;
+Voxels::VoxDat slime;
 
 // items
 Voxels::VoxDat base;
@@ -33,6 +34,7 @@ void init()
     read_skeleton(MEDIA_PATH "voxel/bomb.skeleton", &robot_bomb);
     read_skeleton(MEDIA_PATH "voxel/robot_box.skeleton", &robot_box);
     read_skeleton(MEDIA_PATH "voxel/monster_spawner.skeleton", &monster_spawner);
+    read_skeleton(MEDIA_PATH "voxel/slime.skeleton", &slime);
 
     // items
     read_skeleton(MEDIA_PATH "voxel/base.skeleton", &base);

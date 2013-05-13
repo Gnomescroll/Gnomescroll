@@ -23,6 +23,9 @@ class KnockbackComponent: public Component
         IF_ASSERT(physics == NULL) return;  // how are you getting knocked back if you dont have physics
         Vec3 p = physics->get_position();
         p = vec3_add(p, vec3_scalar_mult(incident, FORCE / this->weight));
+        // TODO -- raytrace the bounding box of the mob to the end point,
+        // so that it doesn't pass through terrain.
+        // Also, add gravity to the server side physics, so it can fall properly
         physics->set_position(p);
     }
 

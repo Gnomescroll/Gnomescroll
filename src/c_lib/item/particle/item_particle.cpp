@@ -96,7 +96,7 @@ void ItemParticle::tick()
                 if (!vec3_equal(p, pos))
                 {
                     Vec3 direction = vec3_sub(p, pos);
-                    normalize_vector(&direction);
+                    direction = vec3_normalize(direction);
                     direction = vec3_scalar_mult(direction, ITEM_PARTICLE_PICKUP_MOMENTUM);
                     this->verlet.velocity = direction;
                 }

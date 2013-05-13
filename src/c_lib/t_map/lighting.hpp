@@ -625,7 +625,7 @@ void _envlight_update_core(int max_iterations)
             {
                 //GS_ASSERT(false);
                 //if (index != 0)
-                //    printf("ERROR: env_light called on solid block on index %d of %d \n", index, env_light_array_index);
+                    //printf("ERROR: env_light called on solid block on index %d of %d \n", index, env_light_array_index);
                 index++;
                 continue;
             }

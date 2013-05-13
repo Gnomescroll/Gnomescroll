@@ -10,6 +10,7 @@
 #include <physics/constants.hpp>
 #include <common/macros.hpp>
 #include <t_map/common/types.hpp>
+#include <common/common.hpp>
 
 #define PI 3.14159265f
 
@@ -29,17 +30,7 @@ struct Vec3
     Vec3 operations
 */
 
-ALWAYS_INLINE float vec3_dot(struct Vec3 v1, struct Vec3 v2);
-
-void normalize_vector(struct Vec3* v)
-{
-    float len = sqrtf(v->x*v->x + v->y*v->y + v->z*v->z);
-    IF_ASSERT(len == 0.0f) return;
-    len = 1.0f/len;
-    v->x *= len;
-    v->y *= len;
-    v->z *= len;
-}
+ALWAYS_INLINE float vec3_dot(struct Vec3 a, struct Vec3 b);
 
 ALWAYS_INLINE
 struct Vec3 vec3_init(float x, float y, float z)
@@ -116,32 +107,32 @@ struct Vec3 vec3_abs(struct Vec3 v)
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2)
+struct Vec3 vec3_cross(struct Vec3 a, struct Vec3 b)
 {
     struct Vec3 v;
-    v.x = v1.y*v2.z - v1.z*v2.y;
-    v.y = v1.z*v2.x - v1.x*v2.z;
-    v.z = v1.x*v2.y - v1.y*v2.x;
+    v.x = a.y*b.z - a.z*b.y;
+    v.y = a.z*b.x - a.x*b.z;
+    v.z = a.x*b.y - a.y*b.x;
     return v;
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_mult(struct Vec3 v1, struct Vec3 v2)
+struct Vec3 vec3_mult(struct Vec3 a, struct Vec3 b)
 {
     struct Vec3 v;
-    v.x = v1.x * v2.x;
-    v.y = v1.y * v2.y;
-    v.z = v1.z * v2.z;
+    v.x = a.x * b.x;
+    v.y = a.y * b.y;
+    v.z = a.z * b.z;
     return v;
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2)
+struct Vec3 vec3_sub(struct Vec3 a, struct Vec3 b)
 {
-    v1.x -= v2.x;
-    v1.y -= v2.y;
-    v1.z -= v2.z;
-    return v1;
+    a.x -= b.x;
+    a.y -= b.y;
+    a.z -= b.z;
+    return a;
 }
 
 ALWAYS_INLINE
@@ -163,42 +154,38 @@ struct Vec3 vec3_scalar_add(struct Vec3 v, float scalar)
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2)
+struct Vec3 vec3_add(struct Vec3 a, struct Vec3 b)
 {
-    v1.x += v2.x;
-    v1.y += v2.y;
-    v1.z += v2.z;
-    return v1;
+    a.x += b.x;
+    a.y += b.y;
+    a.z += b.z;
+    return a;
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_add3(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3)
+struct Vec3 vec3_add3(struct Vec3 a, struct Vec3 b, struct Vec3 c)
 {
     struct Vec3 v;
-    v.x = v1.x + v2.x + v3.x;
-    v.y = v1.y + v2.y + v3.y;
-    v.z = v1.z + v2.z + v3.z;
+    v.x = a.x + b.x + c.x;
+    v.y = a.y + b.y + c.y;
+    v.z = a.z + b.z + c.z;
     return v;
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4)
+struct Vec3 vec3_add4(struct Vec3 a, struct Vec3 b, struct Vec3 c, struct Vec3 d)
 {
     struct Vec3 v;
-    v.x = v1.x + v2.x + v3.x + v4.x;
-    v.y = v1.y + v2.y + v3.y + v4.y;
-    v.z = v1.z + v2.z + v3.z + v4.z;
+    v.x = a.x + b.x + c.x + d.x;
+    v.y = a.y + b.y + c.y + d.y;
+    v.z = a.z + b.z + c.z + d.z;
     return v;
 }
 
 ALWAYS_INLINE
 static Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
 {
-    struct Vec3 v;
-    //v = vec3_add(i, vec3_scalar_mult(vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)), -1));
-    v = vec3_sub(i, vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)));
-    //v = inc - 2*(nor.inc)*nor   <<< pseudocode
-    return v;
+    return vec3_sub(i, vec3_scalar_mult(n, 2.0f*vec3_dot(n, i)));
 }
 
 ALWAYS_INLINE
@@ -209,7 +196,7 @@ static Vec3 vec3_interpolate(struct Vec3 a, struct Vec3 b, float d)
 
 ALWAYS_INLINE
 struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
-{ 
+{
     // x is actually yaw (a rotation around the Z axis)
     // y is actually roll (a rotation around the Y axis)
     // z is actually pitch (a rotation around the X axis)
@@ -217,37 +204,35 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
     y *= PI;
     z *= PI;
 
-    double cx = cos(x);
-    double sx = sin(x);
-    double cy = cos(y);
-    double sy = sin(y);
-    double cz = cos(z);
-    double sz = sin(z);
+    float cx = cosf(x);
+    float sx = sinf(x);
+    float cy = cosf(y);
+    float sy = sinf(y);
+    float cz = cosf(z);
+    float sz = sinf(z);
 
     struct Vec3 m[3];
 
-    m[0].x = (float)(cy*cx);
-    m[0].y = (float)(cy*sx);
-    m[0].z = (float)(-sy);
+    m[0].x = cy*cx;
+    m[0].y = cy*sx;
+    m[0].z = -sy;
 
-    double szsy = sz*sy;
-    double czsy = cz*sy;
+    float szsy = sz*sy;
+    float czsy = cz*sy;
 
-    m[1].x = (float)(szsy*cx-cz*sx);
-    m[1].y = (float)(szsy*sx+cz*cx);
-    m[1].z = (float)(sz*cy);
+    m[1].x = szsy*cx-cz*sx;
+    m[1].y = szsy*sx+cz*cx;
+    m[1].z = sz*cy;
 
-    m[2].x = (float)(czsy*cx+sz*sx);
-    m[2].y = (float)(czsy*sx-sz*cx);
-    m[2].z = (float)(cz*cy);
-
+    m[2].x = czsy*cx+sz*sx;
+    m[2].y = czsy*sx-sz*cx;
+    m[2].z = cz*cy;
 
     //printf("m[0]: %f %f %f \n", m[0].x,m[0].y, m[0].z);
     //printf("m[1]: %f %f %f \n", m[2].x,m[1].y, m[1].z);
     //printf("m[2]: %f %f %f \n", m[2].x,m[2].y, m[2].z);
 
     struct Vec3 u;
-
     u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x,
     u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y,
     u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
@@ -260,8 +245,7 @@ struct Vec3 vec3_init_from_angles(float theta, float phi, float rho)
 {
     Vec3 unit = vec3_init(1,0,0);
     unit = vec3_euler_rotation(unit, theta, phi, rho);
-    normalize_vector(&unit);
-    return unit;
+    return vec3_normalize(unit);
 }
 
 ALWAYS_INLINE
@@ -287,15 +271,9 @@ struct Vec3 vec3_bias(struct Vec3 v, const float bias)
 */
 
 ALWAYS_INLINE
-float vec3_dot(struct Vec3 v1, struct Vec3 v2)
+float vec3_dot(struct Vec3 a, struct Vec3 b)
 {
-    return v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
-}
-
-ALWAYS_INLINE
-float vec3_length(struct Vec3 v)
-{
-    return sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
+    return a.x*b.x + a.y*b.y + a.z*b.z;
 }
 
 ALWAYS_INLINE
@@ -305,22 +283,28 @@ float vec3_length_squared(struct Vec3 v)
 }
 
 ALWAYS_INLINE
-float vec3_cos2(struct Vec3 v1, struct Vec3 v2)
+float vec3_length(struct Vec3 v)
 {
-    float dot =  (v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z);
-    return (dot*dot) / ((v1.x*v1.x + v1.y*v1.y + v1.z*v1.z)*(v2.x*v2.x + v2.y*v2.y + v2.z*v2.z));
+    return sqrtf(vec3_length_squared(v));
 }
 
 ALWAYS_INLINE
-float vec3_distance(struct Vec3 v1, struct Vec3 v2)
+float vec3_cos2(struct Vec3 a, struct Vec3 b)
 {
-    return sqrtf((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
+    float dot =  vec3_dot(a, b);
+    return (dot*dot) / (vec3_dot(a, a) * vec3_dot(b, b));
 }
 
 ALWAYS_INLINE
-float vec3_distance_squared(struct Vec3 v1, struct Vec3 v2)
+float vec3_distance_squared(struct Vec3 a, struct Vec3 b)
 {
-    return (v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z);
+    return (b.x-a.x)*(b.x-a.x) + (b.y-a.y)*(b.y-a.y) + (b.z-a.z)*(b.z-a.z);
+}
+
+ALWAYS_INLINE
+float vec3_distance(struct Vec3 a, struct Vec3 b)
+{
+    return sqrtf(vec3_distance_squared(a, b));
 }
 
 // Angle from look vector vx,vy,vz to point x,y,z
@@ -328,11 +312,9 @@ ALWAYS_INLINE
 float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)
 {
     look = vec3_normalize(look);
-    pt2 = vec3_sub(pt2, pt);
-    normalize_vector(&pt2);
+    pt2 = vec3_normalize(vec3_sub(pt2, pt));
     float x = vec3_dot(look, pt2);
-    x = acosf(x);
-    return x;
+    return acosf(x);
 }
 
 ALWAYS_INLINE
@@ -340,7 +322,7 @@ float vec3_to_theta(Vec3 direction)
 {
     direction.z = 0;
     if (vec3_length_squared(direction) == 0.0f) return 0.0f;
-    normalize_vector(&direction);
+    direction = vec3_normalize(direction);
     float t = acosf(direction.x) / PI;
     if (direction.y < 0) t = -t;
     return t;
@@ -350,7 +332,7 @@ float vec3_to_theta(Vec3 direction)
 ALWAYS_INLINE
 void vec3_to_angles(Vec3 direction, float* theta, float* phi)
 {
-    normalize_vector(&direction);
+    direction = vec3_normalize(direction);
     float z = direction.z;
     direction.z = 0;
     if (vec3_length_squared(direction) == 0.0f)
@@ -359,7 +341,7 @@ void vec3_to_angles(Vec3 direction, float* theta, float* phi)
         *phi = 0.0f;
         return;
     }
-    normalize_vector(&direction);
+    direction = vec3_normalize(direction);
 
     float t = acosf(direction.x) / PI;
     if (direction.y < 0) t = -t;
@@ -385,17 +367,23 @@ struct Vec3 vec3_rand_center()
 }
 
 ALWAYS_INLINE
-bool vec3_equal(Vec3 v1, Vec3 v2)
+bool vec3_equal(Vec3 a, Vec3 b)
 {
-    if (v1.x == v2.x && v1.y == v2.y && v1.z == v2.z) return true;
-    return false;
+    return (a.x == b.x && a.y == b.y && a.z == b.z);
+}
+
+ALWAYS_INLINE
+bool vec3_equal_approximate(Vec3 a, Vec3 b)
+{   // NOTE: This doesn't account for accuracy variation with large
+    // or very small values.
+    return (is_equal(a.x, b.x) && is_equal(a.y, b.y) && is_equal(a.z, b.z));
 }
 
 ALWAYS_INLINE
 bool vec3_isnan(Vec3 v)
 {
     #ifdef NAN
-    if (isnan(v.x) || isnan(v.y) || isnan(v.z)) return true;
+    return (isnan(v.x) || isnan(v.y) || isnan(v.z));
     #endif
     return false;
 }
@@ -403,8 +391,7 @@ bool vec3_isnan(Vec3 v)
 ALWAYS_INLINE
 bool vec3_isfinite(Vec3 v)
 {
-    if (isfinite(v.x) || isfinite(v.y) || isfinite(v.z)) return true;
-    return false;
+    return (isfinite(v.x) || isfinite(v.y) || isfinite(v.z));
 }
 
 ALWAYS_INLINE
@@ -417,32 +404,32 @@ ALWAYS_INLINE
 struct Vec3 vec3_lerp(struct Vec3 a, struct Vec3 b, float f)
 {
     struct Vec3 v;
-    const float _f = 1.0 - f;
-    v.x = _f*a.x + f*b.x;
-    v.y = _f*a.y + f*b.y;
-    v.z = _f*a.z + f*b.z;
+    const float g = 1.0 - f;
+    v.x = g*a.x + f*b.x;
+    v.y = g*a.y + f*b.y;
+    v.z = g*a.z + f*b.z;
     return v;
 }
 
 /*
     diagnostic
 */
-void vec3_print_dot(struct Vec3 v1, struct Vec3 v2);
+void vec3_print_dot(struct Vec3 a, struct Vec3 b);
 void vec3_print_length(struct Vec3 v);
 
 void vec3_print(struct Vec3 v)
 {
-    printf("Vec3: %0.2f %0.2f %0.2f\n", v.x, v.y, v.z);
+    printf("vec3: %0.2f %0.2f %0.2f\n", v.x, v.y, v.z);
 }
 
-void vec3_print_dot(struct Vec3 v1, struct Vec3 v2)
+void vec3_print_dot(struct Vec3 a, struct Vec3 b)
 {
-    float d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
-    printf("dot= %f \n", d);
+    float d = a.x*b.x + a.y*b.y + a.z*+b.z;
+    printf("vec3 dot: %f\n", d);
 }
 
 void vec3_print_length(struct Vec3 v)
 {
     float l = sqrtf(v.x*v.x + v.y*v.y + v.z*v.z);
-    printf("Vec3_length= %fs \n", l);
+    printf("vec3 length: %f\n", l);
 }
