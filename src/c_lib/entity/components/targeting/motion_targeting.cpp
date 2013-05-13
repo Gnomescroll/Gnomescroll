@@ -28,7 +28,7 @@ void MotionTargetingComponent::set_target(EntityType target_type, int target_id)
 
     Vec3 dest = a->get_position();
     this->target_direction = quadrant_translate_position(position, dest);
-    normalize_vector(&this->target_direction);
+    this->target_direction = vec3_normalize(this->target_direction);
 
     this->target_type = target_type;
     this->target_id = target_id;
@@ -86,16 +86,16 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
     Vec3 target_position = target->get_position();
     target_position = quadrant_translate_position(camera_position, target_position);
     this->target_direction = vec3_sub(target_position, camera_position);
-    normalize_vector(&this->target_direction);
+    this->target_direction = vec3_normalize(this->target_direction);
 }
 
 // adjusts position & momentum by moving over the terrain surface
-bool MotionTargetingComponent::move_on_surface()
+void MotionTargetingComponent::move_on_surface()
 {
     // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    IF_ASSERT(physics == NULL) return false;
+    IF_ASSERT(physics == NULL) return;
 
     int h = 1;
     using Components::DimensionComponent;
@@ -106,23 +106,21 @@ bool MotionTargetingComponent::move_on_surface()
     Vec3 new_position;
     Vec3 new_momentum;
     Vec3 motion_direction = vec3_init(this->target_direction.x, this->target_direction.y, 0);
-    bool moved = move_within_terrain_surface(physics->get_position(), motion_direction,
-                                             this->speed, this->max_z_diff,
-                                             &new_position, &new_momentum, h);
+    move_within_terrain_surface(physics->get_position(), motion_direction,
+                                this->speed, this->max_z_diff,
+                                &new_position, &new_momentum, h);
     physics->set_position(new_position);
     physics->set_momentum(new_momentum);
 
     new_momentum.z = 0;
     if (vec3_length_squared(new_momentum))
     {   // update target direction
-        normalize_vector(&new_momentum);
+        new_momentum = vec3_normalize(new_momentum);
         this->target_direction = new_momentum;
     }
 
     // set en_route if we are in motion
-    this->en_route = moved;
-
-    return moved;
+    this->en_route = physics->get_position_changed();
 }
 
 void MotionTargetingComponent::call()

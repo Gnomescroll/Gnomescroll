@@ -24,8 +24,7 @@ void read_skeleton(const char* file_name, VoxDat* vox_dat)
     //printf("Loading skeleton: %s \n", file_name);
     size_t size = 0;
     char* buffer = read_file_to_buffer(file_name, &size);
-    GS_ASSERT(buffer != NULL);
-    if (buffer == NULL) return;
+    IF_ASSERT(buffer == NULL) return;
 
     char* str_tmp = new char[512];
     int n_parts;
@@ -99,11 +98,7 @@ void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
     //printf("Loading voxel model: %s \n", file_name);
     size_t size = 0;
     char* buffer = read_file_to_buffer(file_name, &size);
-    if (buffer == NULL)
-    {
-        printf("error reading %s \n", file_name);
-        return;
-    }
+    IF_ASSERT(buffer == NULL) return;
 
     size_t index = 0;
     int read;
@@ -157,7 +152,7 @@ void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
         if (index > size)
             printf("voxel_volume_read: buffer overflow, index= %lu, size= %lu \n", (unsigned long)index, (unsigned long)size);
 
-        ret = sscanf (buffer+index, "%d %d %d  %d %d %d  %n", &x,&y,&z,&r,&g,&b, &read);
+        ret = sscanf(buffer+index, "%d %d %d  %d %d %d  %n", &x,&y,&z,&r,&g,&b, &read);
 
         if (ret == 0)
         {

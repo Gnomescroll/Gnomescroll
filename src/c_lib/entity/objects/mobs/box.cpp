@@ -294,7 +294,7 @@ void server_tick_mob_robot_box(Entity* object)
         {
             direction.z = 0;
             if (vec3_length_squared(direction))
-                normalize_vector(&direction);
+                direction = vec3_normalize(direction);
             motion->target_direction = direction;
         }
     }

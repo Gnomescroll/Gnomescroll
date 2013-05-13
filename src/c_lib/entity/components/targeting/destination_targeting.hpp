@@ -25,7 +25,7 @@ class DestinationTargetingComponent: public TargetingComponent
     bool check_at_destination();
     void choose_destination();
     void orient_to_target(struct Vec3 camera_position);
-    bool move_on_surface();
+    void move_on_surface();
     void set_destination(struct Vec3 dest);
 
     struct Vec3 get_destination()
@@ -40,7 +40,7 @@ class DestinationTargetingComponent: public TargetingComponent
 
     int get_ticks_to_destination(Vec3 position)
     {
-        if (vec3_equal(this->destination, position) || this->speed == 0.0f)
+        if (vec3_equal_approximate(this->destination, position) || this->speed == 0.0f)
             return 0;
         float len = vec3_length(vec3_sub(this->destination, position));
         int ttd = ceilf(len / this->speed);
@@ -49,7 +49,8 @@ class DestinationTargetingComponent: public TargetingComponent
 
     void adjust_speed(struct Vec3 pos)
     {
-        if (this->ticks_to_destination <= 0 || vec3_equal(this->destination, pos))
+        if (this->ticks_to_destination <= 0 ||
+            vec3_equal_approximate(this->destination, pos))
         {
             this->speed = 0.0f;
             return;

@@ -28,7 +28,7 @@ class MotionTargetingComponent: public TargetingComponent
     void lock_target(Vec3 camera_position);
     void choose_destination();
     void orient_to_target(Vec3 camera_position);
-    bool move_on_surface();
+    void move_on_surface();
     void call();
 
     virtual ~MotionTargetingComponent() {}

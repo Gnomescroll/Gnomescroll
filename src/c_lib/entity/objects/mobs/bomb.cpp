@@ -292,9 +292,10 @@ static void in_transit(class Entity* object)
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
    // move towards target
-    if (!dest_target->move_on_surface())
-    {
-        in_transit_to_waiting(object);  // failed to move
+    dest_target->move_on_surface();
+    if (!physics->get_changed())
+    {   // failed to move
+        in_transit_to_waiting(object);
     }
     else
     {   // check at destination

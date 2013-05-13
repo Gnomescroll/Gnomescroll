@@ -12,6 +12,7 @@ extern Voxels::VoxDat agent_dead;
 extern Voxels::VoxDat robot_bomb;
 extern Voxels::VoxDat robot_box;
 extern Voxels::VoxDat monster_spawner;
+extern Voxels::VoxDat slime;
 
 // items
 extern Voxels::VoxDat base;

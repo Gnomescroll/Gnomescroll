@@ -614,7 +614,7 @@ void throw_agent_item(AgentID agent_id, ItemID item_id)
     Vec3 force = a->forward_vector();
     force.z = 0;
     if (vec3_length_squared(force) == 0.0f) force.x = 1.0f;
-    normalize_vector(&force);
+    force = vec3_normalize(force);
     force = vec3_scalar_mult(force, mom);
     force = vec3_bias(force, (randf()-0.5f) * 30);
 
@@ -631,7 +631,7 @@ void dump_container_item(ItemID item_id, float x, float y, float z)
     const float mom = 2.0f;
     Vec3 force = vec3_init(randf()-0.5f, randf()-0.5f, randf()-0.5f);
     if (vec3_length_squared(force) == 0.0f) force.x = 0.2f;
-    normalize_vector(&force);
+    force = vec3_normalize(force);
     force = vec3_scalar_mult(force, mom);
 
     throw_item(item_id, position, force);

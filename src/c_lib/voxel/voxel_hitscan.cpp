@@ -71,7 +71,7 @@ class VoxelHitscanTarget* VoxelHitscanList::hitscan_all(
 
     struct Vec3 direction = vec3_sub(end, start);
     float max_dist = vec3_length(direction);
-    normalize_vector(&direction);
+    direction = vec3_normalize(direction);
     size_t n = 0;
     for (int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {

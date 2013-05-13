@@ -13,12 +13,30 @@ class VerletPhysicsComponent: public PhysicsComponent
     public:
         Verlet::VerletComponent verlet;
 
-    bool get_changed()
+    bool get_position_changed()
     {
         return true;
     }
 
-    void set_changed(bool changed)
+    void set_position_changed(bool changed)
+    {
+    }
+
+    bool get_angles_changed()
+    {
+        return true;
+    }
+
+    void set_angles_changed(bool changed)
+    {
+    }
+
+    bool get_momentum_changed()
+    {
+        return true;
+    }
+
+    void set_momentum_changed(bool changed)
     {
     }
 

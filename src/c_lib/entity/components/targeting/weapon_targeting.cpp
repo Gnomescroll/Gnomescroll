@@ -26,7 +26,7 @@ void WeaponTargetingComponent::lock_target(Vec3 camera_position)
     this->target_type = target->type;
     this->target_id = target->id;
     this->locked_on_target = true;
-    normalize_vector(&this->target_direction);
+    this->target_direction = vec3_normalize(this->target_direction);
 }
 
 void WeaponTargetingComponent::lock_target_part(Vec3 camera_position)
@@ -105,7 +105,7 @@ void WeaponTargetingComponent::orient_to_random_target_part(Vec3 camera_position
     Vec3 target_position = target->vox->get_center(part);
     target_position = quadrant_translate_position(camera_position, target_position);
     this->target_direction = vec3_sub(target_position, camera_position);
-    normalize_vector(&this->target_direction);
+    this->target_direction = vec3_normalize(this->target_direction);
 }
 
 } // Entities

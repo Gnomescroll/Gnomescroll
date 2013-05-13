@@ -255,10 +255,7 @@ void Camera::hud_projection()
 
 Vec3 Camera::forward_vector()
 {
-    Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
-    f = vec3_euler_rotation(f, this->theta, this->phi, 0.0f);
-    normalize_vector(&f);
-    return f;
+    return vec3_euler_rotation(vec3_init(1, 0, 0), this->theta, this->phi, 0.0f);
 }
 
 void Camera::copy_state_from(const Camera* c)

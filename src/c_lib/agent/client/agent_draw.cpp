@@ -26,7 +26,7 @@ void draw_agent_aiming_direction(float x, float y, float z, float theta, float p
     float dy = sinf(theta * PI) * cosf(phi * PI);
     float dz = sinf(phi);
     Vec3 dv = vec3_init(dx, dy, dz);
-    normalize_vector(&dv);
+    dv = vec3_normalize(dv);
 
     GL_ASSERT(GL_TEXTURE_2D, false);
     glBegin(GL_POINTS);

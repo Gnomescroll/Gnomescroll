@@ -12,8 +12,19 @@ class PositionMomentumPhysicsComponent: public PositionPhysicsComponent
 {
     protected:
         Vec3 momentum;
+        bool momentum_changed;
 
     public:
+
+    virtual bool get_momentum_changed()
+    {
+        return this->momentum_changed;
+    }
+
+    virtual void set_momentum_changed(bool changed)
+    {
+        this->momentum_changed = true;
+    }
 
     Vec3 get_momentum()
     {
@@ -24,11 +35,11 @@ class PositionMomentumPhysicsComponent: public PositionPhysicsComponent
     {
         IF_ASSERT(!vec3_is_valid(momentum))
             return false;
-        if (vec3_equal(this->momentum, momentum))
+        if (vec3_equal_approximate(this->momentum, momentum))
             return false;
         this->momentum = momentum;
-        this->changed = true;
-        return this->changed;
+        this->momentum_changed = true;
+        return true;
     }
 
     PositionMomentumPhysicsComponent() :

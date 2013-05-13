@@ -1,0 +1,13 @@
+#dimension x,y,z
+1 1 1
+#vox_size
+1.0
+#biaxial
+0
+#team
+0
+#team base color (r,g,b)
+0 0 0
+#voxels x,y,z r,g,b
+0 0 0 31 223 31
+
