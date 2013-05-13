@@ -10,6 +10,7 @@
 #include <physics/constants.hpp>
 #include <common/macros.hpp>
 #include <t_map/common/types.hpp>
+#include <common/common.hpp>
 
 #define PI 3.14159265f
 
@@ -373,13 +374,9 @@ bool vec3_equal(Vec3 a, Vec3 b)
 
 ALWAYS_INLINE
 bool vec3_equal_approximate(Vec3 a, Vec3 b)
-{
-    static const float epsilon = 0.00005f;
-    // NOTE: This doesn't account for accuracy variation with large
+{   // NOTE: This doesn't account for accuracy variation with large
     // or very small values.
-    return (fabsf(a.x - b.x) < epsilon &&
-            fabsf(a.y - b.y) < epsilon &&
-            fabsf(a.z - b.z) < epsilon);
+    return (is_equal(a.x, b.x) && is_equal(a.y, b.y) && is_equal(a.z, b.z));
 }
 
 ALWAYS_INLINE

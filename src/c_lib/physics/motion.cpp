@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <t_map/_interface.hpp>
+#include <common/common.hpp>
 
 int stick_to_terrain_surface(Vec3 position)
 {   // fall/climb with terrain
@@ -67,27 +68,36 @@ void orient_to_point(Vec3 dest, struct Vec3 origin, float* theta, float* phi)
  * returns false if position was left unchanged
  */
 
-#define FLOAT_ERROR_MARGIN 0.005f
 static void advance_move(struct Vec3 position, struct Vec3 move_to, float speed,
-                          struct Vec3* new_position, struct Vec3* new_momentum)
-{   // TODO -- fix this function for falling.
-    const float GRAVITY = 10.0f/30.0f;
-    const float CLIMB = 0.1f/30.0f;
+                         struct Vec3* new_position, struct Vec3* new_momentum)
+{   // TODO -- it will keep moving forward into blocks even if it can't
+    // climb fast enough.
+    const float GRAVITY = -10.0f/30.0f;
+    const float CLIMB = 2.0f/30.0f;
     float dz = 0.0f;
-    Vec3 new_direction = vec3_init(0);
-    if (position.z > move_to.z)
-        dz = GS_MIN(GRAVITY, move_to.z - position.z);
-    else if (position.z < move_to.z)
-        dz = GS_MAX(CLIMB, move_to.z - position.z);
+    // Fall if we need to
+    if (!is_equal(position.z, move_to.z))
+        if (position.z > move_to.z)
+            dz = GS_MAX(GRAVITY, move_to.z - position.z);
 
-    new_direction = vec3_sub(vec3_init(move_to.x, move_to.y, 0),
-                             vec3_init(position.x, position.y, 0));
+    //if (dz < 0) printf("Falling %0.4f\n", dz);
+    //else if (dz > 0) printf("Climbing %0.4f\n", dz);
+
+    Vec3 new_direction = vec3_sub(move_to, position);
+    new_direction.z = 0;
     new_direction = vec3_normalize(new_direction);
     Vec3 m = vec3_scalar_mult(new_direction, speed);
     m.z = dz;
-    position = vec3_add(position, m);
+    Vec3 tmp_position = vec3_add(position, m);
+    if (t_map::isSolid(vec3i_init(tmp_position)))
+    {   // We couldn't move forward, so we have to climb
+        tmp_position.x = position.x;
+        tmp_position.y = position.y;
+        m.z = CLIMB;
+        tmp_position.z += CLIMB;
+    }
     *new_momentum = m;
-    *new_position = translate_position(position);
+    *new_position = translate_position(tmp_position);
 }
 
 static void move_z_diff(struct Vec3 position, struct Vec3 move_to,
@@ -239,5 +249,3 @@ void move_within_terrain_surface(struct Vec3 position, struct Vec3 direction,
                                              move_to.z, object_height);
     move_z_diff(position, move_to, z, speed, max_z_diff, new_position, new_momentum);
 }
-
-#undef FLOAT_ERROR_MARGIN

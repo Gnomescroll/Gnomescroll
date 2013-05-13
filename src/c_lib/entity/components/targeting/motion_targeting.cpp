@@ -92,7 +92,6 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
 // adjusts position & momentum by moving over the terrain surface
 void MotionTargetingComponent::move_on_surface()
 {
-    // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;

@@ -5,6 +5,8 @@
 #include <ctype.h>
 #include <time.h>
 
+#include <common/mallox.hpp>
+
 #ifndef UINT8_MAX
 # define UINT8_MAX  (255U)
 #endif
@@ -208,4 +210,10 @@ float ceil_from_zero(float f)
 template <typename T> int sgn(T val)
 {
     return (T(0) < val) - (val < T(0));
+}
+
+inline bool is_equal(float a, float b)
+{   // NOTE: epsilon isnt scaled to the values in question
+    static const float epsilon = 0.0005f;
+    return (fabsf(a - b) < epsilon);
 }
