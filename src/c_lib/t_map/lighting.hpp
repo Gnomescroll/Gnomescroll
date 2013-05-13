@@ -70,10 +70,13 @@ void set_skylight(int x, int y, int z, int value)
 
     MapElement e = mc->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
+    if((e.light & 0x0f) == value)
+        return;
+
 #if !PRODUCTION
     GS_ASSERT(value < 16 && value >= 0);
     GS_ASSERT(!fast_cube_properties[e.block].solid);
-    //GS_ASSERT((e.light & 0x0f) != value); // NOTE: disable due to triggering when loading map with precomputed light values
+    //GS_ASSERT((e.light & 0x0f) != value);
 #endif
 
 #if 0
