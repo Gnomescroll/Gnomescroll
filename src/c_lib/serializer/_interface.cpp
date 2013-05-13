@@ -61,8 +61,8 @@ static bool set_save_folder(int version, time_t timestamp)
     sprintf(save_path, "%s%s/", WORLD_DATA_PATH, save_folder);
     create_path(save_path);
     free(save_path);
-    
-    return true;    
+
+    return true;
 }
 
 static void set_data_paths(const char* save_folder)
@@ -128,7 +128,7 @@ static void set_data_paths(const char* save_folder)
     wrote = snprintf(player_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     player_folder[NAME_MAX] = '\0';
-    
+
     wrote = snprintf(player_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     player_path[NAME_MAX] = '\0';
@@ -153,7 +153,7 @@ static void set_data_paths(const char* save_folder)
     wrote = snprintf(container_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_BACKUP);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
     container_path_bak[NAME_MAX] = '\0';
-    
+
     // entities
     wrote = snprintf(entity_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH);
     GS_ASSERT_ABORT(wrote <= NAME_MAX);
@@ -179,7 +179,7 @@ static void create_data_paths()
     create_path(player_folder);
     create_path(entity_folder);
     create_path(container_folder);
-} 
+}
 
 bool begin_new_world_version()
 {
@@ -193,10 +193,10 @@ bool begin_new_world_version()
 bool load_data()
 {
     if (!world_found) return false;
-    
+
     if (!load_map()) return false;
     if (!load_mechs()) return false;
-    
+
     if (!Options::serializer) return true;
 
     #if GS_SERIALIZER
@@ -204,8 +204,8 @@ bool load_data()
     if (!load_entities()) return false;
     //if (!load_players()) return false;
     #endif
-    
-    return true;    
+
+    return true;
 }
 
 bool save_palettes()
@@ -263,7 +263,7 @@ bool save_data()
 {
     printf("Saving data to %s\n", save_folder);
     Chat::broadcast_server_message("Saving the world...");
-    
+
     static int paths_created = 0;
     if (!(paths_created++))
         create_data_paths();
@@ -274,7 +274,7 @@ bool save_data()
     {
         palettes_saved = save_palettes();
         if (!palettes_saved) return false;
-        save_tmp_file(map_palette_path, map_palette_path_tmp, map_palette_path_bak); 
+        save_tmp_file(map_palette_path, map_palette_path_tmp, map_palette_path_bak);
         save_tmp_file(mech_palette_path, mech_palette_path_tmp, mech_palette_path_bak);
     }
 
@@ -298,7 +298,7 @@ WorldSaveState update_save_state(int max_ms)
     #if !GS_SERIALIZER
     return WORLD_SAVE_IDLE;
     #else
-    
+
     if (!map_save_memcpy_in_progress) return WORLD_SAVE_IDLE;
     if (!save_map_iter(max_ms)) return WORLD_SAVE_UNFINISHED;
     save_remaining_data();
@@ -353,7 +353,7 @@ static bool parse_world_dirname(const char* dir, int& version, time_t& timestamp
         }
     }
     if (lookback) return false;
-    
+
     if (pts != WORLD_DATA_FOLDER_PARTS) return false;
 
     // check the prefix
@@ -387,7 +387,7 @@ static bool find_existing_world(char filename[NAME_MAX], int& version, time_t& t
 
     time_t most_recent = 0;
     int highest_version = 0;
-    
+
     while ((ep = readdir(dp)) != NULL)
     {
         #ifndef __MINGW32__
@@ -429,7 +429,7 @@ void init()
         set_save_folder(version, timestamp);
         set_data_paths(save_folder);
     }
-    
+
     init_map_serializer();
     init_state();
     init_mechs();
@@ -461,18 +461,18 @@ void teardown()
     // final save
     if (should_save_world) save_data();
     wait_for_save_complete();
-    
+
     // wait for replies/threads
     wait_for_threads();
     update_completed_map_save();
     wait_for_redis_replies();
 
     // tear it all down
-    
+
     teardown_map_serializer();
     teardown_mechs();
 
-    #if GS_SERIALIZER    
+    #if GS_SERIALIZER
     // ORDER DEPENDENT
     teardown_redis();
     teardown_players();

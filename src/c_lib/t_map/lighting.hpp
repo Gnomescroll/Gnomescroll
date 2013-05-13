@@ -73,7 +73,7 @@ void set_skylight(int x, int y, int z, int value)
 #if !PRODUCTION
     GS_ASSERT(value < 16 && value >= 0);
     GS_ASSERT(!fast_cube_properties[e.block].solid);
-    GS_ASSERT((e.light & 0x0f) != value);
+    //GS_ASSERT((e.light & 0x0f) != value); // NOTE: disable due to triggering when loading map with precomputed light values
 #endif
 
 #if 0

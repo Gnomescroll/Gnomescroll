@@ -36,6 +36,7 @@ void init_world()
     bool art_map = false;
     bool explosive_map = false;
     bool iceflame_map = false;
+    bool loaded_map = false;
 
     if (strcmp(Options::map, "valgrind") == 0)
         valgrind_map = true;
@@ -60,17 +61,8 @@ void init_world()
     else
     if (strcmp(Options::map, "") == 0)
     {
-        if (serializer::load_data())
-        {
-            if (Options::serializer)
-            {   // only resave the data if we're in serializer mode
-                bool saved = serializer::save_data();    // re-save immediately after loading, so that palette changes are up to date
-                GS_ASSERT_ABORT(saved);
-                serializer::wait_for_save_complete();
-            }
-        }
-        else
-            new_map = true;
+        loaded_map = serializer::load_data();
+        new_map = (!loaded_map);  // create a new map if we failed to load one
     }
     else
     {
@@ -84,12 +76,6 @@ void init_world()
         serializer::begin_new_world_version();
         default_map_gen();
         t_map::environment_process_startup();
-        if (Options::serializer)
-        {
-            bool saved = serializer::save_data();
-            GS_ASSERT_ABORT(saved);
-            serializer::wait_for_save_complete();
-        }
     }
 
     if (corpusc_map)
@@ -140,7 +126,15 @@ void init_world()
         t_gen::generate_city();
     }
 
-    t_map::post_gen_map_lighting(); //run after map gen, right only only sets skylight
+    if (!loaded_map)
+        t_map::post_gen_map_lighting(); //run after map gen, right only only sets skylight
+
+    if (Options::serializer)
+    {   // make sure the map gets saved, so all palettes are updated
+        bool saved = serializer::save_data();
+        GS_ASSERT_ABORT(saved);
+        serializer::wait_for_save_complete();
+    }
 
     srand((unsigned int)time(NULL));
 }
