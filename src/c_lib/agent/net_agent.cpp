@@ -703,6 +703,14 @@ inline void melee_object_CtoS::handle()
             obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
         if (health != NULL)
             health->take_damage(obj_dmg);
+
+        // knockback
+        using Components::KnockbackComponent;
+        KnockbackComponent* knockback = (KnockbackComponent*)
+            obj->get_component_interface(COMPONENT_INTERFACE_KNOCKBACK);
+        if (knockback != NULL)
+            knockback->get_hit(a->forward_vector(),
+                               Toolbelt::get_agent_selected_item_type(a->id));
     }
 
     agent_melee_object_StoC msg;

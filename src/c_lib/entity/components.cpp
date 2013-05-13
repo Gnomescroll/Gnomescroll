@@ -65,6 +65,7 @@ void init()
     #if DC_SERVER
     set_interface_for_component(COMPONENT_EXPLOSION, COMPONENT_INTERFACE_EXPLOSION);
     set_interface_for_component(COMPONENT_ITEM_DROP, COMPONENT_INTERFACE_ITEM_DROP);
+    set_interface_for_component(COMPONENT_KNOCKBACK, COMPONENT_INTERFACE_KNOCKBACK);
     #endif
 
     init_components();

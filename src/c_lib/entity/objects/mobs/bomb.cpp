@@ -21,7 +21,7 @@ void load_mob_bomb_data()
     EntityType type = OBJECT_MONSTER_BOMB;
 
     #if DC_SERVER
-    const int n_components = 11;
+    const int n_components = 12;
     #endif
     #if DC_CLIENT
     const int n_components = 8;
@@ -42,6 +42,7 @@ void load_mob_bomb_data()
     entity_data->attach_component(type, COMPONENT_EXPLOSION);
     entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_KNOCKBACK);
     #endif
 
     #if DC_CLIENT
@@ -123,6 +124,10 @@ static void set_mob_bomb_properties(Entity* object)
     StateMachineComponent* state = (StateMachineComponent*)add_component_to_object(object, COMPONENT_STATE_MACHINE);
     state->state = STATE_WAITING;
     state->router = &bomb_state_router;
+
+    using Components::KnockbackComponent;
+    KnockbackComponent* knockback = (KnockbackComponent*)add_component_to_object(object, COMPONENT_KNOCKBACK);
+    knockback->weight = 1.0f;
     #endif
 
     #if DC_CLIENT

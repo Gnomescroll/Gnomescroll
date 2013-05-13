@@ -9,6 +9,7 @@ typedef void (*tickObject)(class Entities::Entity*);      // for physics
 typedef void (*updateObject)(class Entities::Entity*);    // for draw prep
 
 int MAX_OBJECT_TYPES = 0xFF;
+
 typedef enum
 {
     OBJECT_NONE = 0,    // null
@@ -81,11 +82,13 @@ typedef enum
     #if DC_SERVER
     COMPONENT_EXPLOSION,
     COMPONENT_ITEM_DROP,
+    COMPONENT_KNOCKBACK,
     #endif
 
 } ComponentType;
 
 int MAX_COMPONENT_INTERFACE_TYPES = 0xFF;
+
 typedef enum
 {
     COMPONENT_INTERFACE_NONE = 0,
@@ -112,6 +115,7 @@ typedef enum
     #endif
 
     #if DC_SERVER
+    COMPONENT_INTERFACE_KNOCKBACK,
     COMPONENT_INTERFACE_EXPLOSION,
     COMPONENT_INTERFACE_ITEM_DROP,
     #endif

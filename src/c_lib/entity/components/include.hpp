@@ -29,4 +29,5 @@
 # include <entity/components/item_drop.hpp>
 # include <entity/components/spawner/agent_spawner.hpp>
 # include <entity/components/healer.hpp>
+# include <entity/components/knockback.hpp>
 #endif

@@ -20,7 +20,7 @@ void load_mob_robot_box_data()
     EntityType type = OBJECT_MONSTER_BOX;
 
     #if DC_SERVER
-    const int n_components = 9;
+    const int n_components = 10;
     #endif
     #if DC_CLIENT
     const int n_components = 7;
@@ -39,6 +39,7 @@ void load_mob_robot_box_data()
     entity_data->attach_component(type, COMPONENT_SPAWN_CHILD);
     entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
+    entity_data->attach_component(type, COMPONENT_KNOCKBACK);
     #endif
     #if DC_CLIENT
     entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
@@ -111,6 +112,10 @@ static void set_mob_robot_box_properties(Entity* object)
 
     item_drop->drop.set_max_drop_amounts("small_charge_pack", 1);
     item_drop->drop.add_drop("small_charge_pack", 1, 0.02f);
+
+    using Components::KnockbackComponent;
+    KnockbackComponent* knockback = (KnockbackComponent*)add_component_to_object(object, COMPONENT_KNOCKBACK);
+    knockback->weight = 1.5f;
     #endif
 
     #if DC_CLIENT

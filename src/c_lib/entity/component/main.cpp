@@ -1,6 +1,8 @@
-#include "main.hpp"
+#define COMPONENT_MAIN_INCLUDE 1
+# include "main.hpp"
+#undef COMPONENT_MAIN_INCLUDE
 
-#include <entity/component/lists.hpp>
+//#include <entity/component/lists.hpp>
 
 namespace Components
 {
@@ -15,50 +17,56 @@ namespace Components
  *
  */
 
-/* ComponentList declarations */
+//#define COMPONENT_LIST(NAME, LNAME) \
+    //NAME##List* LNAME##_list = NULL;
 
-PositionPhysicsComponentList* position_physics_component_list = NULL;
-PositionMomentumPhysicsComponentList* position_momentum_physics_component_list = NULL;
-VerletPhysicsComponentList* verlet_physics_component_list = NULL;
+///* ComponentList declarations */
 
-TTLHealthComponentList* ttl_health_component_list = NULL;
-HitPointsHealthComponentList* hit_points_health_component_list = NULL;
+//PositionPhysicsComponentList* position_physics_component_list = NULL;
+//PositionMomentumPhysicsComponentList* position_momentum_physics_component_list = NULL;
+//VerletPhysicsComponentList* verlet_physics_component_list = NULL;
 
-OwnerComponentList* owner_component_list = NULL;
+//TTLHealthComponentList* ttl_health_component_list = NULL;
+//HitPointsHealthComponentList* hit_points_health_component_list = NULL;
 
-VoxelModelComponentList* voxel_model_component_list = NULL;
+//OwnerComponentList* owner_component_list = NULL;
 
-MonsterSpawnerComponentList* monster_spawner_component_list = NULL;
+//VoxelModelComponentList* voxel_model_component_list = NULL;
 
-SpawnChildComponentList* spawn_child_component_list = NULL;
+//MonsterSpawnerComponentList* monster_spawner_component_list = NULL;
 
-DimensionComponentList* dimension_component_list = NULL;
+//SpawnChildComponentList* spawn_child_component_list = NULL;
 
-WeaponTargetingComponentList* weapon_targeting_component_list = NULL;
-MotionTargetingComponentList* motion_targeting_component_list = NULL;
-DestinationTargetingComponentList* destination_targeting_component_list = NULL;
-AgentTargetingComponentList* agent_targeting_component_list = NULL;
+//DimensionComponentList* dimension_component_list = NULL;
 
-StateMachineComponentList* state_machine_component_list = NULL;
+//WeaponTargetingComponentList* weapon_targeting_component_list = NULL;
+//MotionTargetingComponentList* motion_targeting_component_list = NULL;
+//DestinationTargetingComponentList* destination_targeting_component_list = NULL;
+//AgentTargetingComponentList* agent_targeting_component_list = NULL;
 
-WaitingComponentList* waiting_component_list = NULL;
+//StateMachineComponentList* state_machine_component_list = NULL;
 
-#if DC_CLIENT
-AnimationComponentList* animation_component_list = NULL;
-#endif
+//WaitingComponentList* waiting_component_list = NULL;
 
-#if DC_SERVER
-AgentSpawnerComponentList* agent_spawner_component_list = NULL;
-ExplosionComponentList* explosion_component_list = NULL;
-ItemDropComponentList* item_drop_component_list = NULL;
-HealerComponentList* healer_component_list;
-#endif
+//#if DC_CLIENT
+//AnimationComponentList* animation_component_list = NULL;
+//#endif
 
-RateLimitComponentList* rate_limit_component_list = NULL;
+//#if DC_SERVER
+//AgentSpawnerComponentList* agent_spawner_component_list = NULL;
+//ExplosionComponentList* explosion_component_list = NULL;
+//ItemDropComponentList* item_drop_component_list = NULL;
+//HealerComponentList* healer_component_list;
+//COMPONENT_LIST(KnockbackComponent,
+//#endif
+
+//RateLimitComponentList* rate_limit_component_list = NULL;
+
+//#undef COMPONENT_LIST
 
 /* ComponentList handler switches */
 
-Component* get_switch (ComponentType type)
+Component* get_switch(ComponentType type)
 {
     switch (type)
     {
@@ -121,6 +129,8 @@ Component* get_switch (ComponentType type)
             return item_drop_component_list->subscribe();
         case COMPONENT_HEALER:
             return healer_component_list->subscribe();
+        case COMPONENT_KNOCKBACK:
+            return knockback_component_list->subscribe();
         #endif
 
         #if DC_CLIENT
@@ -134,10 +144,9 @@ Component* get_switch (ComponentType type)
     return NULL;
 }
 
-void release_switch (Component* component)
+void release_switch(Component* component)
 {
-    GS_ASSERT(component != NULL);
-    if (component == NULL) return;
+    IF_ASSERT(component == NULL) return;
     switch (component->type)
     {
         case COMPONENT_POSITION:
@@ -221,6 +230,9 @@ void release_switch (Component* component)
         case COMPONENT_HEALER:
             healer_component_list->unsubscribe((HealerComponent*)component);
             break;
+        case COMPONENT_KNOCKBACK:
+            knockback_component_list->unsubscribe((KnockbackComponent*)component);
+            break;
         #endif
 
         #if DC_CLIENT
@@ -272,6 +284,7 @@ void init_components()
     explosion_component_list = new ExplosionComponentList;
     item_drop_component_list = new ItemDropComponentList;
     healer_component_list = new HealerComponentList;
+    knockback_component_list = new KnockbackComponentList;
     #endif
 }
 
@@ -302,6 +315,7 @@ void teardown_components()
     delete explosion_component_list;
     delete item_drop_component_list;
     delete healer_component_list;
+    delete knockback_component_list;
     #endif
 }
 
