@@ -30,3 +30,26 @@ struct BoundingBox
     float radius;
     float height;
 };
+
+struct ControlState
+{
+    int seq;
+    float theta;
+    float phi;
+    uint32_t cs;
+};
+
+typedef enum
+{
+    CS_FORWARD = 1,
+    CS_BACKWARD = 2,
+    CS_LEFT = 4,
+    CS_RIGHT = 8,
+    CS_JETPACK = 16,
+    CS_JUMP = 32,
+    CS_CROUCH = 64,
+    CS_BOOST = 128,
+    CS_MISC1 = 256,
+    CS_MISC2 = 512,
+    CS_MISC3 = 1024
+} CSKeys;

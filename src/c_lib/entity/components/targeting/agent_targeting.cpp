@@ -149,36 +149,44 @@ void AgentTargetingComponent::move_on_surface()
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
 
-    float force = 1.0f;
-    if (this->get_target_distance(physics->get_position()) <
-        this->proximity_radius * this->proximity_radius) force = 0.9f;
-
     // adjust position/momentum by moving along terrain surface
-    Vec3 motion_direction = this->target_direction;
-    motion_direction.z = 0.0f;
+    Vec3 position = physics->get_position();
+    Vec3 momentum = physics->get_momentum();
+    float ground_distance;
 
-    if (vec3_length_squared(motion_direction) == 0.0f)
+    float speed = this->speed / PHYSICS_TICK_RATE;
+    if (this->get_target_distance(physics->get_position()) <
+        this->proximity_radius * this->proximity_radius)
     {
-        physics->set_momentum(vec3_init(0));
-        return;
+            speed = 0.0f;
     }
-    motion_direction = vec3_normalize(motion_direction);
 
-    Vec3 new_position;
-    Vec3 new_momentum;
-    //move(motion_direction, 1.0f, 1.0f, new_position, new_momentum);
+    // TODO -- get box dimension from dimensions component
+    BoundingBox box;
+    box.height = 0.8f;
+    box.radius = 0.4f;
+    bool passed_through = move_with_collision(box, position, momentum, ground_distance);
+    if (passed_through)
+    {
+        ControlState cs;
+        cs.seq = 0; // doesn't matter, but initialise it
+        vec3_to_angles(this->target_direction, &cs.theta, &cs.phi);
+        cs.cs = 0;
+        cs.cs |= CS_FORWARD;
+        apply_control_state(cs, speed, position, momentum, ground_distance);
+    }
 
-    move_within_terrain_surface(physics->get_position(), motion_direction,
-                                this->speed, this->max_z_diff,
-                                &new_position, &new_momentum);
-    physics->set_position(new_position);
-    physics->set_momentum(new_momentum);
+    //move_within_terrain_surface(physics->get_position(), motion_direction,
+                                //this->speed, this->max_z_diff,
+                                //&position, &momentum);
+    physics->set_position(position);
+    physics->set_momentum(momentum);
 
-    new_momentum.z = 0;
-    if (vec3_length_squared(new_momentum))
+    momentum.z = 0;
+    if (vec3_length_squared(momentum))
     {   // update target direction
-        new_momentum = vec3_normalize(new_momentum);
-        this->target_direction = new_momentum;
+        momentum = vec3_normalize(momentum);
+        this->target_direction = momentum;
     }
 }
 

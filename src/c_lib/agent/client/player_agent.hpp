@@ -58,8 +58,8 @@ class PlayerAgent
         int cs_seq_local;   // client side cs
         int cs_seq_net;     // snapshot cs sequence
 
-        struct AgentControlState cs_local[128];
-        struct AgentControlState cs_net[128];
+        struct ControlState cs_local[128];
+        struct ControlState cs_net[128];
 
         class AgentState snapshot_local[128];
 

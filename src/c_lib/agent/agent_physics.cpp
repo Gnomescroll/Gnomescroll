@@ -3,61 +3,6 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
-bool object_collides_terrain(Vec3 position, float height, float radius)
-{
-    GS_ASSERT(is_boxed_position(position));
-    return Agents::collision_check_current(radius, height, position.x,
-                                           position.y, position.z);
-}
-
-namespace Agents
-{
-
-bool agent_collides_terrain(Agent* a)
-{
-    float h = a->current_height();
-    Vec3 p = a->get_position();
-    return collision_check_current(a->get_bounding_box().radius, h, p.x, p.y, p.z);
-}
-
-#define GROUND_MARGIN 0.003f
-// checks the (agent bottom - margin) at 4 corners of the agent
-inline bool on_ground(float radius, float x, float y, float z)
-{
-    int x_min = int(translate_point(x - radius));
-    int x_max = int(translate_point(x + radius));
-    int y_min = int(translate_point(y - radius));
-    int y_max = int(translate_point(y + radius));
-    int zz = z - GROUND_MARGIN;
-    return (t_map::isSolid(x_max, y_max, zz) ||  // north, west
-            t_map::isSolid(x_max, y_min, zz) ||  // north, east
-            t_map::isSolid(x_min, y_min, zz) ||  // south, east
-            t_map::isSolid(x_min, y_max, zz));    // south, west
-}
-
-inline bool can_stand_up(float radius, float box_h, float x, float y, float z)
-{
-    int x_min = int(translate_point(x - radius));
-    int x_max = int(translate_point(x + radius));
-    int y_min = int(translate_point(y - radius));
-    int y_max = int(translate_point(y + radius));
-    int n_z = ceilf(box_h);
-    for (int i=0; i<n_z; i++)
-    {
-        int zz = int(z) + i;
-        if (i == n_z-1)
-            zz = z + box_h;
-        if (t_map::isSolid(x_max, y_max, zz) ||  // north, west
-            t_map::isSolid(x_max, y_min, zz) ||  // north, east
-            t_map::isSolid(x_min, y_max, zz) ||  // south, east
-            t_map::isSolid(x_min, y_min, zz))    // south, west
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 #define TOP_MARGIN 0.01f
 
 inline bool collision_check_current(float radius, float box_h, float x, float y, float z)
@@ -77,6 +22,13 @@ inline bool collision_check_current(float radius, float box_h, float x, float y,
         }
     }
     return false;
+}
+
+bool object_collides_terrain(Vec3 position, float height, float radius)
+{
+    GS_ASSERT(is_boxed_position(position));
+    return collision_check_current(radius, height, position.x,
+                                           position.y, position.z);
 }
 
 inline bool collision_check_xy(float radius, float box_h, float x, float y, float z)
@@ -136,99 +88,6 @@ inline int clamp_to_ground(float radius, float x, float y, float z)
     return GS_MAX(GS_MAX(z0, z1), GS_MAX(z2, z3)) + 1;
 }
 
-#define ADVANCED_JUMP 0
-
-//class AgentState agent_tick(const struct AgentControlState& _cs,
-//                            const struct BoundingBox& box,
-//                            const class AgentState& as)
-//{
-    //int a_cs = _cs.cs;
-    ////set control state variables
-    //bool forward     = a_cs & CS_FORWARD ? 1 :0;
-    //bool backwards   = a_cs & CS_BACKWARD ? 1 :0;
-    //bool left        = a_cs & CS_LEFT ? 1 :0;
-    //bool right       = a_cs & CS_RIGHT ? 1 :0;
-    //bool jetpack     = a_cs & CS_JETPACK ? 1 :0;
-    //bool jump        = a_cs & CS_JUMP ? 1 :0;
-    //bool crouch      = a_cs & CS_CROUCH ? 1 :0;
-    ////implemented, but unused
-    ///*
-    //bool boost       = a_cs & CS_BOOST ? 1 :0;
-    //bool misc1       = a_cs & CS_MISC1 ? 1 :0;
-    //bool misc2       = a_cs & CS_MISC2 ? 1 :0;
-    //bool misc3       = a_cs & CS_MISC3 ? 1 :0;
-    //*/
-
-    //const float pi = 3.14159265f;
-    //const float tr = 1.0f / 10.0f;    //tick rate
-    //const float tr2 = tr*tr;
-    //const float AGENT_MASS = 1.0f; //the agents mass, will become a variable dependent on the amount of stuff a player carries
-    //float imass = 1.0f/AGENT_MASS;   // inverse mass
-    //const float FRICTION = 0.9f;    // coefficient of friction. will be variable based on the surface
-    //float AGENT_FORCE = 2.0f;
-
-
-    //float gravity = -9.8f * tr2;
-    //#if DC_CLIENT
-    //if (!t_map::position_is_loaded(as.x, as.y)) gravity = 0.0f;
-    //#endif
-    //const struct Vec3 gravity = vec3_init(0.0f, 0.0f, gravity * AGENT_MASS);
-
-    //float fx = 0.0f;
-    //float fy = 0.0f;
-    //if (forward)
-    //{
-        //fx += cosf(_cs.theta * pi);
-        //fy += sinf(_cs.theta * pi);
-    //}
-    //if (backwards)
-    //{
-        //fx += -cosf(_cs.theta * pi);
-        //fy += -sinf(_cs.theta * pi);
-    //}
-    //if (left)
-    //{
-        //fx += cosf(_cs.theta * pi + pi/2);
-        //fy += sinf(_cs.theta * pi + pi/2);
-    //}
-    //if (right)
-    //{
-        //fx += -cosf(_cs.theta * pi + pi/2);
-        //fy += -sinf(_cs.theta * pi + pi/2);
-    //}
-
-    //const float precision = 0.000001f;
-    //// normalize diagonal motion
-    //if (fx < -precision || fx > precision || fy < -precision || fy > precision)
-    //{
-        //float len = 1.0f/sqrtf(fx*fx + fy*fy);
-        //fx *= len;
-        //fy *= len;
-    //}
-
-
-    ////const struct Vec3 f = as.forward_vector();
-    ////const struct Vec3 f = vec3_init_from_angles(_cs.theta, _cs.phi, 0.0f);
-    //const struct Vec3 p = as.get_position();
-    //const struct Vec3 v = as.get_velocity();
-
-    //struct Vec3 traction = vec3_scalar_mult(vec3_init(fx, fy, 0.0f), AGENT_FORCE);
-    ////struct Vec3 traction = vec3_scalar_mult(f, AGENT_FORCE);
-    //struct Vec3 friction = vec3_scalar_mult(v, -FRICTION);
-    //struct Vec3 force = vec3_add(gravity, vec3_add(traction, friction));
-
-    //struct Vec3 accel = vec3_scalar_mult(force, imass);
-
-    //struct Vec3 velo = vec3_add(v, vec3_scalar_mult(accel, tr));
-    //struct Vec3 pos = vec3_add(p, vec3_scalar_mult(velo, tr));
-
-    //class AgentState _as;
-    //_as.set_position(pos);
-    //_as.set_velocity(velo);
-
-    //return _as;
-//}
-
 bool move_with_collision(const BoundingBox& box, Vec3& position,
                           Vec3& velocity, float& ground_distance)
 {   // returns false if it collided before moving
@@ -281,7 +140,45 @@ bool move_with_collision(const BoundingBox& box, Vec3& position,
     return true;
 }
 
-void apply_control_state(const AgentControlState& cs, Vec3& position,
+#define GROUND_MARGIN 0.003f
+// checks the (agent bottom - margin) at 4 corners of the agent
+inline bool on_ground(float radius, float x, float y, float z)
+{
+    int x_min = int(translate_point(x - radius));
+    int x_max = int(translate_point(x + radius));
+    int y_min = int(translate_point(y - radius));
+    int y_max = int(translate_point(y + radius));
+    int zz = z - GROUND_MARGIN;
+    return (t_map::isSolid(x_max, y_max, zz) ||  // north, west
+            t_map::isSolid(x_max, y_min, zz) ||  // north, east
+            t_map::isSolid(x_min, y_min, zz) ||  // south, east
+            t_map::isSolid(x_min, y_max, zz));    // south, west
+}
+
+inline bool can_stand_up(float radius, float box_h, float x, float y, float z)
+{
+    int x_min = int(translate_point(x - radius));
+    int x_max = int(translate_point(x + radius));
+    int y_min = int(translate_point(y - radius));
+    int y_max = int(translate_point(y + radius));
+    int n_z = ceilf(box_h);
+    for (int i=0; i<n_z; i++)
+    {
+        int zz = int(z) + i;
+        if (i == n_z-1)
+            zz = z + box_h;
+        if (t_map::isSolid(x_max, y_max, zz) ||  // north, west
+            t_map::isSolid(x_max, y_min, zz) ||  // north, east
+            t_map::isSolid(x_min, y_max, zz) ||  // south, east
+            t_map::isSolid(x_min, y_min, zz))    // south, west
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void apply_control_state(const ControlState& cs, float speed, Vec3& position,
                          Vec3& velocity, float ground_distance)
 {
     // unpack control state variables
@@ -291,7 +188,7 @@ void apply_control_state(const AgentControlState& cs, Vec3& position,
     bool right     = cs.cs & CS_RIGHT;
     bool jetpack   = cs.cs & CS_JETPACK;
     bool jump      = cs.cs & CS_JUMP;
-    bool crouch    = cs.cs & CS_CROUCH;
+    //bool crouch    = cs.cs & CS_CROUCH;
     /* available, but unused
     bool boost     = cs.cs & CS_BOOST;
     bool misc1     = cs.cs & CS_MISC1;
@@ -311,11 +208,9 @@ void apply_control_state(const AgentControlState& cs, Vec3& position,
     const float JUMP_POW = AGENT_JUMP_POWER;
     #endif
     //const float z_bounce = 0.10f;
-    //const float z_bounce_v_threshold = 1.5f * tr;
+    //const float z_bounce_v_threshold = 1.5f * PHYSICS_TICK_RATE;
 
-    float speed = AGENT_SPEED * tr;
-    if (crouch)
-        speed = AGENT_SPEED_CROUCHED * tr;
+    speed *= PHYSICS_TICK_RATE;
 
     const float pi = 3.14159265f;
     float cs_vx = 0.0f;
@@ -389,8 +284,111 @@ void apply_control_state(const AgentControlState& cs, Vec3& position,
     #endif
 }
 
+namespace Agents
+{
+
+bool agent_collides_terrain(Agent* a)
+{
+    float h = a->current_height();
+    Vec3 p = a->get_position();
+    return collision_check_current(a->get_bounding_box().radius, h, p.x, p.y, p.z);
+}
+
+#define ADVANCED_JUMP 0
+
+//class AgentState agent_tick(const struct ControlState& _cs,
+//                            const struct BoundingBox& box,
+//                            const class AgentState& as)
+//{
+    //int a_cs = _cs.cs;
+    ////set control state variables
+    //bool forward     = a_cs & CS_FORWARD ? 1 :0;
+    //bool backwards   = a_cs & CS_BACKWARD ? 1 :0;
+    //bool left        = a_cs & CS_LEFT ? 1 :0;
+    //bool right       = a_cs & CS_RIGHT ? 1 :0;
+    //bool jetpack     = a_cs & CS_JETPACK ? 1 :0;
+    //bool jump        = a_cs & CS_JUMP ? 1 :0;
+    //bool crouch      = a_cs & CS_CROUCH ? 1 :0;
+    ////implemented, but unused
+    ///*
+    //bool boost       = a_cs & CS_BOOST ? 1 :0;
+    //bool misc1       = a_cs & CS_MISC1 ? 1 :0;
+    //bool misc2       = a_cs & CS_MISC2 ? 1 :0;
+    //bool misc3       = a_cs & CS_MISC3 ? 1 :0;
+    //*/
+
+    //const float pi = 3.14159265f;
+    //const float PHYSICS_TICK_RATE = 1.0f / 10.0f;    //tick rate
+    //const float PHYSICS_TICK_RATE_SQ = PHYSICS_TICK_RATE*PHYSICS_TICK_RATE;
+    //const float AGENT_MASS = 1.0f; //the agents mass, will become a variable dependent on the amount of stuff a player carries
+    //float imass = 1.0f/AGENT_MASS;   // inverse mass
+    //const float FRICTION = 0.9f;    // coefficient of friction. will be variable based on the surface
+    //float AGENT_FORCE = 2.0f;
+
+
+    //float gravity = -9.8f * PHYSICS_TICK_RATE_SQ;
+    //#if DC_CLIENT
+    //if (!t_map::position_is_loaded(as.x, as.y)) gravity = 0.0f;
+    //#endif
+    //const struct Vec3 gravity = vec3_init(0.0f, 0.0f, gravity * AGENT_MASS);
+
+    //float fx = 0.0f;
+    //float fy = 0.0f;
+    //if (forward)
+    //{
+        //fx += cosf(_cs.theta * pi);
+        //fy += sinf(_cs.theta * pi);
+    //}
+    //if (backwards)
+    //{
+        //fx += -cosf(_cs.theta * pi);
+        //fy += -sinf(_cs.theta * pi);
+    //}
+    //if (left)
+    //{
+        //fx += cosf(_cs.theta * pi + pi/2);
+        //fy += sinf(_cs.theta * pi + pi/2);
+    //}
+    //if (right)
+    //{
+        //fx += -cosf(_cs.theta * pi + pi/2);
+        //fy += -sinf(_cs.theta * pi + pi/2);
+    //}
+
+    //const float precision = 0.000001f;
+    //// normalize diagonal motion
+    //if (fx < -precision || fx > precision || fy < -precision || fy > precision)
+    //{
+        //float len = 1.0f/sqrtf(fx*fx + fy*fy);
+        //fx *= len;
+        //fy *= len;
+    //}
+
+
+    ////const struct Vec3 f = as.forward_vector();
+    ////const struct Vec3 f = vec3_init_from_angles(_cs.theta, _cs.phi, 0.0f);
+    //const struct Vec3 p = as.get_position();
+    //const struct Vec3 v = as.get_velocity();
+
+    //struct Vec3 traction = vec3_scalar_mult(vec3_init(fx, fy, 0.0f), AGENT_FORCE);
+    ////struct Vec3 traction = vec3_scalar_mult(f, AGENT_FORCE);
+    //struct Vec3 friction = vec3_scalar_mult(v, -FRICTION);
+    //struct Vec3 force = vec3_add(gravity, vec3_add(traction, friction));
+
+    //struct Vec3 accel = vec3_scalar_mult(force, imass);
+
+    //struct Vec3 velo = vec3_add(v, vec3_scalar_mult(accel, PHYSICS_TICK_RATE));
+    //struct Vec3 pos = vec3_add(p, vec3_scalar_mult(velo, PHYSICS_TICK_RATE));
+
+    //class AgentState _as;
+    //_as.set_position(pos);
+    //_as.set_velocity(velo);
+
+    //return _as;
+//}
+
 //takes an agent state and control state and returns new agent state
-class AgentState agent_tick(const struct AgentControlState& cs,
+class AgentState agent_tick(const struct ControlState& cs,
                             const BoundingBox& box, class AgentState as)
 {
     Vec3 position = as.get_position();
@@ -408,7 +406,11 @@ class AgentState agent_tick(const struct AgentControlState& cs,
     as.jump_pow = new_jump_pow;
     #endif
 
-    apply_control_state(cs, position, velocity, ground_distance);
+    float speed = AGENT_SPEED;
+    if (cs.cs & CS_CROUCH)
+        speed = AGENT_SPEED_CROUCHED;
+
+    apply_control_state(cs, speed, position, velocity, ground_distance);
 
     as.theta = cs.theta;
     as.phi = cs.phi;

@@ -218,7 +218,7 @@ void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
     cs_local[(index + 1) % 128].seq = -1;
     //client side tick forward
 
-    struct AgentControlState acs = cs_local[index];
+    struct ControlState acs = cs_local[index];
 
     int cs_index = (state_history_seq) % 256;
     class AgentState tmp = state_history[state_history_index];

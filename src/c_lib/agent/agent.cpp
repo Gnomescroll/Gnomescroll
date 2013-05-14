@@ -86,7 +86,7 @@ void Agent::tick()
     int start_seq = this->cs_seq;
     while (this->cs[this->cs_seq].seq == this->cs_seq)
     {
-        AgentControlState cs = this->cs[this->cs_seq];
+        ControlState cs = this->cs[this->cs_seq];
         tmp = agent_tick(cs, this->get_bounding_box(cs), tmp);
         this->cs_seq = (this->cs_seq + 1) % 256;
     }
@@ -107,7 +107,7 @@ void Agent::tick()
 {
     while (this->cs[this->cs_seq].seq == this->cs_seq)
     {
-        AgentControlState cs = this->cs[this->cs_seq];
+        ControlState cs = this->cs[this->cs_seq];
         this->s = agent_tick(cs, this->get_bounding_box(cs), this->s);
         this->cs_seq = (this->cs_seq + 1) % 256;
     }
@@ -387,7 +387,7 @@ void Agent::print_cs()
     printf("misc123= %d%d%d\n", misc1, misc2, misc3);
 }
 
-AgentControlState Agent::get_current_control_state()
+ControlState Agent::get_current_control_state()
 {
     return this->cs[(this->cs_seq - 1 + 256) % 256];
 }
@@ -397,7 +397,7 @@ bool Agent::crouched()
     return this->crouched(this->get_current_control_state());
 }
 
-bool Agent::crouched(const struct AgentControlState& cs)
+bool Agent::crouched(const struct ControlState& cs)
 {
     return (cs.cs & CS_CROUCH);
 }
@@ -578,7 +578,7 @@ void Agent::update_legs()
     static int legtick = 0;
     static float direction = -1;
 
-    AgentControlState cs = this->get_current_control_state();
+    ControlState cs = this->get_current_control_state();
     bool forward = (cs.cs & CS_FORWARD) != 0;
     bool backward = (cs.cs & CS_BACKWARD) != 0;
     bool left = (cs.cs & CS_LEFT) != 0;

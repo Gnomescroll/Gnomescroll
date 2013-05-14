@@ -65,22 +65,13 @@ class AgentState
     }
 };
 
-
-struct AgentControlState
-{
-    int seq;
-    float theta;
-    float phi;
-    uint32_t cs;
-};
-
 class Agent
 {
     private:
         void print_cs();
-        AgentControlState get_current_control_state();
+        ControlState get_current_control_state();
         class AgentState state_rollback;
-        struct AgentControlState cs[256];
+        struct ControlState cs[256];
         int snapshot_seq;
         int cs_seq; // <--current counter
 
@@ -110,7 +101,7 @@ class Agent
         #endif
 
     bool crouched();
-    bool crouched(const struct AgentControlState& cs);
+    bool crouched(const struct ControlState& cs);
     void tick();
 
     BoundingBox get_bounding_box()
@@ -120,7 +111,7 @@ class Agent
         return this->standing_box;
     }
 
-    BoundingBox get_bounding_box(const struct AgentControlState& cs)
+    BoundingBox get_bounding_box(const struct ControlState& cs)
     {
         if (this->crouched(cs))
             return this->crouching_box;

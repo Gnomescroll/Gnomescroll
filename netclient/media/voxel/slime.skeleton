@@ -7,4 +7,4 @@
 #part number, node number, voxel format filename
 0 0 media/voxel/slime.dcvox
 #voxel: anchor x,y,z rotatation x,y,z
-0 0.500000 0.500000 0.400000  0.000000 0.000000 0.000000
+0 0.000000 0.000000 0.400000  0.000000 0.000000 0.000000

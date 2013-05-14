@@ -4,21 +4,6 @@
 
 typedef enum
 {
-    CS_FORWARD = 1,
-    CS_BACKWARD = 2,
-    CS_LEFT = 4,
-    CS_RIGHT = 8,
-    CS_JETPACK = 16,
-    CS_JUMP = 32,
-    CS_CROUCH = 64,
-    CS_BOOST = 128,
-    CS_MISC1 = 256,
-    CS_MISC2 = 512,
-    CS_MISC3 = 1024
-} CSKeys;
-
-typedef enum
-{
     NULL_DEATH = 0,
     DEATH_NORMAL,
     DEATH_HEADSHOT,
@@ -93,10 +78,8 @@ const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
 const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
 
 // physics constants
-const float tr = 1.0f / 10.0f;
-const float tr2 = tr*tr;
-const float AGENT_GRAVITY = -3.0f * tr2;
-const float JETPACK_VELOCITY = -AGENT_GRAVITY + tr2;
+const float AGENT_GRAVITY = -3.0f * PHYSICS_TICK_RATE_SQ;
+const float JETPACK_VELOCITY = -AGENT_GRAVITY + PHYSICS_TICK_RATE_SQ;
 const float JETPACK_MAX_VELOCITY = JETPACK_VELOCITY * 5.0f;
 const float JETPACK_MAX_HEIGHT = 8.0f;
 
