@@ -53,8 +53,10 @@ const float MONSTER_BOMB_ANIMATION_FORCE = 20.0f;
 /* Common/Defaults */
 
 // health
-const int MONSTER_SLIME_HEALTH_MIN = 65;
-const int MONSTER_SLIME_HEALTH_MAX = 85;
+//const int MONSTER_SLIME_HEALTH_MIN = 65;
+//const int MONSTER_SLIME_HEALTH_MAX = 85;
+const int MONSTER_SLIME_HEALTH_MIN = 1000;
+const int MONSTER_SLIME_HEALTH_MAX = 1000;
 
 // vox
 const bool MONSTER_SLIME_INIT_WITH_HITSCAN = true;
