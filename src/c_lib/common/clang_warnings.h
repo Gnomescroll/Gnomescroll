@@ -1,6 +1,9 @@
 #pragma once
 
+
 #ifdef __clang__
+
+//#pragma clang diagnostic ignored "-Wunknown-pragmas"
 
 #pragma clang diagnostic warning "-Wabi"
 #pragma clang diagnostic warning "-Waddress-of-temporary"
@@ -138,7 +141,7 @@
 #pragma clang diagnostic warning "-Wtype-limits"
 #pragma clang diagnostic warning "-Wundeclared-selector"
 #pragma clang diagnostic warning "-Wuninitialized"
-#pragma clang diagnostic warning "-Wunknown-pragmas"
+//#pragma clang diagnostic warning "-Wunknown-pragmas"
 #pragma clang diagnostic warning "-Wunnamed-type-template-args"
 #pragma clang diagnostic warning "-Wunneeded-internal-declaration"
 #pragma clang diagnostic warning "-Wunneeded-member-function"
@@ -163,7 +166,7 @@
 # pragma clang diagnostic warning "-Wc++0x-narrowing"
 # pragma clang diagnostic warning "-Wc++11-compat"
 //# pragma clang diagnostic warning "-Wc++11-extensions"
-# pragma clang diagnostic warning "-Wc++11-extra-semi"
+//# pragma clang diagnostic warning "-Wc++11-extra-semi"
 # pragma clang diagnostic warning "-Wc++11-narrowing"
 # pragma clang diagnostic warning "-Wc++98-compat-pedantic"
 # pragma clang diagnostic warning "-Wmalformed-warning-check"
@@ -173,8 +176,13 @@
 # pragma clang diagnostic warning "-Wunused-comparison"
 # pragma clang diagnostic warning "-Wunused-result"
 # pragma clang diagnostic warning "-Wuser-defined-literals"
+
+#if __clang_major__ > 3
+# pragma clang diagnostic warning "-Wc++11-extra-semi"
 # pragma clang diagnostic ignored "-Wunused-private-field"
 # pragma clang diagnostic ignored "-Wtautological-constant-out-of-range-compare"
+#endif
+
 # endif
 
 // Turn these off

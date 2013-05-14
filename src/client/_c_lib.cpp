@@ -119,7 +119,6 @@ bool c_lib_inited = false;
 #include <SDL/png_save.cpp>
 
 #include <SDL/haldCLUT/hald_clut.hpp> //should be .cpp
-#include <SDL/light/light_texture.hpp>
 
 //#include <SDL/mesh_loader/obj_loader.cpp>
 
@@ -395,7 +394,7 @@ int init_c_lib(int argc, char* argv[])
     HudCubeSelector::init();
 
     t_map::init_t_map();
-    generate_light_texture();
+    t_map::generate_light_texture();
 
     init_configs();
 

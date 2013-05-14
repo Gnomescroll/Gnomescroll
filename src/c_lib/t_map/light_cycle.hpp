@@ -1,6 +1,10 @@
+
 #pragma once
 
+namespace t_map
+{
 
+//what does this do
 class DayCycleController
 {
     public:
@@ -21,18 +25,22 @@ class DayCycleController
 
     void advance()
     {
-        //const int cycle_lenth = 1000; //1000 seconds per day
+        const int cycle_lenth = 1000; //1000 seconds per day
 
-        //const float sunrise_length = 0.15f;
-        //const float day_length = 0.40f;
-        //const float sunset_length = 0.15f;
-        //const float night_length = 0.30f;
+        const float sunrise_length = 0.15f;
+        const float day_length = 0.40f;
+        const float sunset_length = 0.15f;
+        const float night_length = 0.30f;
 
         //blue tint
         //red tint
         //brightness (total)
+
+
     }
 };
+
+#if DC_CLIENT
 
 class LightTextureGenerator
 {
@@ -423,7 +431,7 @@ unsigned int generate_clut_light_texture()
     ttime++;
 
     if(ttime % 15 == 0)
-    {
+    {       
         static int ttimec = 0;
         ttimec++;
         float _ttime = ttimec % 400;
@@ -447,4 +455,9 @@ void generate_light_texture()
     LTG->gen_textures();
 
     //light_texture_CLUT = LTG.texture_array[0];
+}
+
+
+#endif
+
 }
