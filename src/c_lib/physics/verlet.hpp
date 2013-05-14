@@ -9,6 +9,9 @@ namespace Verlet
 const float dt = 1/30.0f;
 const float gravity = -9.8f;
 
+inline void velocity_integrate(struct Vec3& p, struct Vec3& v, const struct Vec3& a, float dt);
+inline void velocity_integrate(struct Vec3& p, struct Vec3& v, float dt);
+
 class VerletComponent
 {
     public:
@@ -58,10 +61,19 @@ class VerletComponent
         }
 
         float get_height()
-        { return NULL_HEIGHT; }
-        struct Vec3 get_angles() { return NULL_ANGLES; }
+        {
+            return NULL_HEIGHT;
+        }
+
+        struct Vec3 get_angles()
+        {
+            return NULL_ANGLES;
+        }
+
         bool set_angles(float theta, float phi, float rho)
-        { return false; }
+        {
+            return false;
+        }
 
         /* Addition specialization */
 
@@ -95,11 +107,11 @@ class VerletComponent
             // *data is required; float* dist is distance travelled;
         void move_no_gravity();
 
-    VerletComponent()
-    : position(NULL_POSITION), velocity(NULL_MOMENTUM),
-    dampening(1.0f), mass(1.0f), box_radius(1.0f)
+    VerletComponent() :
+        position(NULL_POSITION), velocity(NULL_MOMENTUM),
+        dampening(1.0f), mass(1.0f), box_radius(1.0f)
     {}
 };
 
-}
+}   // Verlet
 

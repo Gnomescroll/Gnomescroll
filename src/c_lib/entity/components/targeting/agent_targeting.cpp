@@ -2,6 +2,7 @@
 
 #include <physics/vec3.hpp>
 #include <physics/motion.hpp>
+#include <physics/verlet.hpp>
 #include <physics/ray_trace/hitscan.hpp>
 #include <physics/ray_trace/handlers.hpp>
 #include <entity/network/packets.hpp>
@@ -83,29 +84,89 @@ void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
     this->target_direction = vec3_normalize(this->target_direction);
 }
 
-// adjusts position & momentum by moving over the terrain surface
+
+//void move(Vec3& position, Vec3& velocity, const BoundingBox& box)
+//{   // position, momentum are both inputs and outputs
+    //// NOTE: assumes orientation in normalized
+    ////Vec3 forward = vec3_init(0);
+    ////if (on_ground(())   // TODO -- in_air/on_ground check
+
+    ////bool current_collision = collision_check_current(box.radius, box.height, position);
+    ////if (current_collision)
+    ////{
+        ////position.z += 0.02f;    // nudge up
+        ////velocity.x = vec3_init(0, 0, GS_MAX(velocity.z, 0));
+        ////return;
+    ////}
+
+    ////Vec3 new_pos = translate_position(vec3_add(position, velocity));
+    ////bool cx = collision_check_xy(box.radius, box.height, new_pos.x, position.y, position.z);
+    ////if (cx) new_pos.x = position.x;
+    ////bool cy = collision_check_xy(box.radius, box.height, position.x, new_pos.y, position.z);
+    ////if (cy) new_pos.y = position.y;
+
+    ////float solid_z = clamp_to_ground(box.radius, new_pos.x, new_pos.y, position.z);
+    ////bool top = false;
+    ////bool cz = collision_check_z(box.radius, height, new_pos.x, new_pos.y, new_pos.z, &top);
+    ////if (cz)
+    ////{
+        ////if (top && velocity.z > 0)
+            ////new_pos.z = floorf(position.z) + ceilf(box.height) - box.height;
+        ////else
+            ////new_pos.z = solid_z;
+        ////velocity.z = 0.0f;
+    ////}
+
+    ////new_pos.z = GS_MAX(new_pos.z, solid_z);
+    ////if (new_pos.z == solid_z) velocity.z = 0.0f;
+    ////float ground_distance = new_z - solid_z;
+
+    ////Vec3i new_vel = vec3_init(0);
+    ////if (forward)
+//}
+
+
+//Vec3 jump(const Vec3& momentum, float force, float weight)
+//{
+    //IF_ASSERT(weight <= 0.0f) return momentum;
+    //return vec3_add(momentum, vec3_init(0, 0, force / weight));
+//}
+
+//Vec3 knockback(const Vec3& momentum, const Vec3& incident,
+               //ItemType item, float weight)
+//{   // TODO -- lookup force for item
+    //// Note: assumes incident is normalized
+    //IF_ASSERT(weight <= 0.0f) return momentum;
+    //static const float ITEM_FORCE = 4.0f;
+    //float force = ITEM_FORCE / weight;
+    //Vec3 force_vector = vec3_scalar_mult(incident, force);
+    //return vec3_add(momentum, force_vector);
+//}
+
 void AgentTargetingComponent::move_on_surface()
-{
+{   // adjusts position & momentum by moving over the terrain surface
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
 
-    // stop moving if we're close enough to the target
+    float force = 1.0f;
     if (this->get_target_distance(physics->get_position()) <
-        this->proximity_radius * this->proximity_radius) return;
+        this->proximity_radius * this->proximity_radius) force = 0.9f;
 
     // adjust position/momentum by moving along terrain surface
-    Vec3 new_position;
-    Vec3 new_momentum;
     Vec3 motion_direction = this->target_direction;
     motion_direction.z = 0.0f;
 
     if (vec3_length_squared(motion_direction) == 0.0f)
     {
-        physics->set_momentum(vec3_init(0,0,0));
+        physics->set_momentum(vec3_init(0));
         return;
     }
     motion_direction = vec3_normalize(motion_direction);
+
+    Vec3 new_position;
+    Vec3 new_momentum;
+    //move(motion_direction, 1.0f, 1.0f, new_position, new_momentum);
 
     move_within_terrain_surface(physics->get_position(), motion_direction,
                                 this->speed, this->max_z_diff,
@@ -120,6 +181,32 @@ void AgentTargetingComponent::move_on_surface()
         this->target_direction = new_momentum;
     }
 }
+
+
+/*
+ * Physics:
+ *
+ *  move():
+ *      Inputs: position, momentum, orientation, speed
+ *          -- assumes forward movement (so no fblr)
+ *      Outputs: position, momentum
+ *
+ *  jump():
+ *      Inputs: momentum, force, weight
+ *      Outputs: momentum
+ *
+ *  knockback():
+ *      Inputs: momentum, incident, knockback_item, object_weight
+ *      Outputs: momentum
+ *
+ *  jump, knockback just update the momentum vector
+ *
+ *  move() uses the momentum vector to calculate position.
+ *  it also does collision detection
+ *  friction force will converge the momentum vector to the speed vector
+ *  if in air, can't move forward on its own (but can be knocked back)
+ *
+ */
 
 void AgentTargetingComponent::call()
 {

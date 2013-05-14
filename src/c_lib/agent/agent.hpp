@@ -6,6 +6,7 @@
 #include <voxel/voxel_model.hpp>
 #include <agent/constants.hpp>
 #include <agent/agent_status.hpp>
+#include <physics/common.hpp>
 
 #if DC_CLIENT
 # include <agent/client/agent_event.hpp>
@@ -73,13 +74,6 @@ struct AgentControlState
     uint32_t cs;
 };
 
-struct AgentCollisionBox
-{
-    float height; //standing height
-    float crouch_height; //crouch height
-    float box_r;
-};
-
 class Agent
 {
     private:
@@ -97,6 +91,9 @@ class Agent
         void get_spawn_point(struct Vec3* spawn);
         #endif
 
+        struct BoundingBox standing_box;
+        struct BoundingBox crouching_box;
+
     public:
 
         AgentID id;
@@ -104,7 +101,6 @@ class Agent
         UserID user_id;
         EntityType type;
 
-        struct AgentCollisionBox box;
         class AgentStatus status;
         class Voxels::VoxelModel* vox;
 
@@ -114,7 +110,22 @@ class Agent
         #endif
 
     bool crouched();
+    bool crouched(const struct AgentControlState& cs);
     void tick();
+
+    BoundingBox get_bounding_box()
+    {
+        if (this->crouched())
+            return this->crouching_box;
+        return this->standing_box;
+    }
+
+    BoundingBox get_bounding_box(const struct AgentControlState& cs)
+    {
+        if (this->crouched(cs))
+            return this->crouching_box;
+        return this->standing_box;
+    }
 
     bool in_sight_of(struct Vec3 source, struct Vec3 *sink);
     bool in_sight_of(struct Vec3 source, struct Vec3 *sink, float failure_rate);
@@ -193,7 +204,7 @@ class Agent
         if (this->vox == NULL || !this->vox->was_updated)
         {   // use approximate center of model
             struct Vec3 p = this->get_position();
-            p.z += this->box.height/2.0f;
+            p.z += this->current_height()/2.0f;
             return p;
         }
         return this->vox->get_part(AGENT_PART_TORSO)->get_center();

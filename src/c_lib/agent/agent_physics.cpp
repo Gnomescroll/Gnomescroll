@@ -17,34 +17,30 @@ bool agent_collides_terrain(Agent* a)
 {
     float h = a->current_height();
     Vec3 p = a->get_position();
-    return collision_check_current(a->box.box_r, h, p.x, p.y, p.z);
+    return collision_check_current(a->get_bounding_box().radius, h, p.x, p.y, p.z);
 }
 
 #define GROUND_MARGIN 0.003f
 // checks the (agent bottom - margin) at 4 corners of the agent
-inline bool on_ground(float box_r, float x, float y, float z)
+inline bool on_ground(float radius, float x, float y, float z)
 {
-    int x_min = int(translate_point(x - box_r));
-    int x_max = int(translate_point(x + box_r));
-    int y_min = int(translate_point(y - box_r));
-    int y_max = int(translate_point(y + box_r));
+    int x_min = int(translate_point(x - radius));
+    int x_max = int(translate_point(x + radius));
+    int y_min = int(translate_point(y - radius));
+    int y_max = int(translate_point(y + radius));
     int zz = z - GROUND_MARGIN;
-    if (t_map::isSolid(x_max, y_max, zz) ||  // north, west
-        t_map::isSolid(x_max, y_min, zz) ||  // north, east
-        t_map::isSolid(x_min, y_min, zz) ||  // south, east
-        t_map::isSolid(x_min, y_max, zz))    // south, west
-    {
-        return true;
-    }
-    return false;
+    return (t_map::isSolid(x_max, y_max, zz) ||  // north, west
+            t_map::isSolid(x_max, y_min, zz) ||  // north, east
+            t_map::isSolid(x_min, y_min, zz) ||  // south, east
+            t_map::isSolid(x_min, y_max, zz));    // south, west
 }
 
-inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
+inline bool can_stand_up(float radius, float box_h, float x, float y, float z)
 {
-    int x_min = int(translate_point(x - box_r));
-    int x_max = int(translate_point(x + box_r));
-    int y_min = int(translate_point(y - box_r));
-    int y_max = int(translate_point(y + box_r));
+    int x_min = int(translate_point(x - radius));
+    int x_max = int(translate_point(x + radius));
+    int y_min = int(translate_point(y - radius));
+    int y_max = int(translate_point(y + radius));
     int n_z = ceilf(box_h);
     for (int i=0; i<n_z; i++)
     {
@@ -64,12 +60,12 @@ inline bool can_stand_up(float box_r, float box_h, float x, float y, float z)
 
 #define TOP_MARGIN 0.01f
 
-inline bool collision_check_current(float box_r, float box_h, float x, float y, float z)
+inline bool collision_check_current(float radius, float box_h, float x, float y, float z)
 {
-    int x_min = int(translate_point(x - box_r));
-    int x_max = int(translate_point(x + box_r));
-    int y_min = int(translate_point(y - box_r));
-    int y_max = int(translate_point(y + box_r));
+    int x_min = int(translate_point(x - radius));
+    int x_max = int(translate_point(x + radius));
+    int y_min = int(translate_point(y - radius));
+    int y_max = int(translate_point(y + radius));
     for (int i=z; i <= int(z + box_h - TOP_MARGIN*2.0f); i++)
     {
         if (t_map::isSolid(x_max, y_max, i) ||  // north, west
@@ -83,12 +79,12 @@ inline bool collision_check_current(float box_r, float box_h, float x, float y, 
     return false;
 }
 
-inline bool collision_check_xy(float box_r, float box_h, float x, float y, float z)
+inline bool collision_check_xy(float radius, float box_h, float x, float y, float z)
 {
-    int x_min = int(translate_point(x - box_r));
-    int x_max = int(translate_point(x + box_r));
-    int y_min = int(translate_point(y - box_r));
-    int y_max = int(translate_point(y + box_r));
+    int x_min = int(translate_point(x - radius));
+    int x_max = int(translate_point(x + radius));
+    int y_min = int(translate_point(y - radius));
+    int y_max = int(translate_point(y + radius));
     const int upper = int(z + box_h - TOP_MARGIN);
     for (int i=z; i <= upper; i++)
     {
@@ -105,12 +101,12 @@ inline bool collision_check_xy(float box_r, float box_h, float x, float y, float
 
 #undef TOP_MARGIN
 
-inline bool collision_check_z(float box_r, float box_h, float x, float y, float z, bool* top)
+inline bool collision_check_z(float radius, float box_h, float x, float y, float z, bool* top)
 {
-    int x_min = int(translate_point(x - box_r));
-    int x_max = int(translate_point(x + box_r));
-    int y_min = int(translate_point(y - box_r));
-    int y_max = int(translate_point(y + box_r));
+    int x_min = int(translate_point(x - radius));
+    int x_max = int(translate_point(x + radius));
+    int y_min = int(translate_point(y - radius));
+    int y_max = int(translate_point(y + radius));
     *top = false;
     const int upper = int(z + box_h);
     for (int i=z, j=0; i <= upper; i++, j++)
@@ -127,12 +123,12 @@ inline bool collision_check_z(float box_r, float box_h, float x, float y, float 
     return false;
 }
 
-inline int clamp_to_ground(float box_r, float x, float y, float z)
+inline int clamp_to_ground(float radius, float x, float y, float z)
 {
-    int x_min = int(translate_point(x - box_r));
-    int x_max = int(translate_point(x + box_r));
-    int y_min = int(translate_point(y - box_r));
-    int y_max = int(translate_point(y + box_r));
+    int x_min = int(translate_point(x - radius));
+    int x_max = int(translate_point(x + radius));
+    int y_min = int(translate_point(y - radius));
+    int y_max = int(translate_point(y + radius));
     int z0 = t_map::get_solid_block_below(x_min, y_min, int(z));
     int z1 = t_map::get_solid_block_below(x_min, y_max, int(z));
     int z2 = t_map::get_solid_block_below(x_max, y_min, int(z));
@@ -143,7 +139,7 @@ inline int clamp_to_ground(float box_r, float x, float y, float z)
 #define ADVANCED_JUMP 0
 
 //class AgentState agent_tick(const struct AgentControlState& _cs,
-//                            const struct AgentCollisionBox& box,
+//                            const struct BoundingBox& box,
 //                            const class AgentState& as)
 //{
     //int a_cs = _cs.cs;
@@ -233,41 +229,81 @@ inline int clamp_to_ground(float box_r, float x, float y, float z)
     //return _as;
 //}
 
-//takes an agent state and control state and returns new agent state
-class AgentState agent_tick(const struct AgentControlState& _cs,
-                             const struct AgentCollisionBox& box,
-                             class AgentState as)
-{
-    int a_cs = _cs.cs;
-    //set control state variables
-    bool forward   = a_cs & CS_FORWARD  ? 1 : 0;
-    bool backwards = a_cs & CS_BACKWARD ? 1 : 0;
-    bool left      = a_cs & CS_LEFT     ? 1 : 0;
-    bool right     = a_cs & CS_RIGHT    ? 1 : 0;
-    bool jetpack   = a_cs & CS_JETPACK  ? 1 : 0;
-    bool jump      = a_cs & CS_JUMP     ? 1 : 0;
-    bool crouch    = a_cs & CS_CROUCH   ? 1 : 0;
-    //implemented, but unused
-    /*
-    bool boost       = a_cs & CS_BOOST ? 1 : 0;
-    bool misc1       = a_cs & CS_MISC1 ? 1 : 0;
-    bool misc2       = a_cs & CS_MISC2 ? 1 : 0;
-    bool misc3       = a_cs & CS_MISC3 ? 1 : 0;
-    */
-
-    float height = box.height;
-    float speed = AGENT_SPEED * tr;
-    if (crouch)
+bool move_with_collision(const BoundingBox& box, Vec3& position,
+                          Vec3& velocity, float& ground_distance)
+{   // returns false if it collided before moving
+    // Note: ground_distance is the difference between the surface z point below
+    // the old position and the new position's z point. its weird but its
+    // needed to do the jump/jetpack stuff without bugs
+    bool current_collision = collision_check_current(box.radius, box.height,
+                                                     position.x, position.y, position.z);
+    if (current_collision)
     {
-        speed = AGENT_SPEED_CROUCHED * tr;
-        height = box.crouch_height;
+        position.z += 0.02f; //nudge factor
+        velocity.x = 0.0f;
+        velocity.y = 0.0f;
+        velocity.z = GS_MAX(velocity.z, 0.0f);
+        return false;
     }
+
+    Vec3 p = translate_position(vec3_add(position, velocity));
+
+    bool collision_x = collision_check_xy(box.radius, box.height, p.x, position.y, position.z);
+    if (collision_x) p.x = position.x;
+
+    bool collision_y = collision_check_xy(box.radius, box.height, p.x, p.y, position.z);
+    if (collision_y) p.y = position.y;
+
+    float solid_z = clamp_to_ground(box.radius, p.x, p.y, position.z);
+
+    bool top = false;
+    bool collision_z = collision_check_z(box.radius, box.height, p.x, p.y, p.z, &top);
+    if (collision_z)
+    {   // the "velocity.z > 0" check catches erroneous top collisions that occur when
+        // falling too fast on top of certain topologies. "top" is really meant to
+        // catch upward collisions. NOTE: if vertical velocity ever gets high for
+        // some reason (maybe we have a launcher block...), then we probably need
+        // to check velocity.z < 0 in the else, or something like that.
+        if (top && velocity.z > 0)
+            p.z = floorf(position.z) + ceilf(box.height) - box.height;
+        else
+            p.z = solid_z;
+        velocity.z = 0.0f;
+    }
+
+    p.z = GS_MAX(p.z, solid_z);
+    // sometimes we fell down right to the surface edge -- however
+    // this is not yet a collision. it will be a collision on the next tick,
+    // but there will be no change in z, which is required to distinguish falling
+    if (p.z == solid_z) velocity.z = 0.0f;
+    position = translate_position(p);
+    ground_distance = position.z - solid_z;
+    return true;
+}
+
+void apply_control_state(const AgentControlState& cs, Vec3& position,
+                         Vec3& velocity, float ground_distance)
+{
+    // unpack control state variables
+    bool forward   = cs.cs & CS_FORWARD;
+    bool backwards = cs.cs & CS_BACKWARD;
+    bool left      = cs.cs & CS_LEFT;
+    bool right     = cs.cs & CS_RIGHT;
+    bool jetpack   = cs.cs & CS_JETPACK;
+    bool jump      = cs.cs & CS_JUMP;
+    bool crouch    = cs.cs & CS_CROUCH;
+    /* available, but unused
+    bool boost     = cs.cs & CS_BOOST;
+    bool misc1     = cs.cs & CS_MISC1;
+    bool misc2     = cs.cs & CS_MISC2;
+    bool misc3     = cs.cs & CS_MISC3;
+    */
 
     float gravity = AGENT_GRAVITY;
     #if DC_CLIENT
-    if (!t_map::position_is_loaded(as.x, as.y)) gravity = 0.0f;
+    if (!t_map::position_is_loaded(position.x, position.y))
+        gravity = 0.0f;
     #endif
-
     #if ADVANCED_JUMP
     const float JUMP_POWINITIAL = 1.0f * 0.17f;
     const float JUMP_POWDEC = 0.2f * 0.24f;
@@ -277,78 +313,33 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
     //const float z_bounce = 0.10f;
     //const float z_bounce_v_threshold = 1.5f * tr;
 
+    float speed = AGENT_SPEED * tr;
+    if (crouch)
+        speed = AGENT_SPEED_CROUCHED * tr;
+
     const float pi = 3.14159265f;
-    bool current_collision = collision_check_current(box.box_r, height,
-                                                     as.x, as.y, as.z);
-    if (current_collision)
-    {
-        as.z += 0.02f; //nudge factor
-        as.vx = 0.0f;
-        as.vy = 0.0f;
-        as.vz = GS_MAX(as.vz, 0.0f);
-        return as;
-    }
-
-    float new_x = translate_point(as.x + as.vx);
-    float new_y = translate_point(as.y + as.vy);
-    float new_z = as.z + as.vz;
-
-    bool collision_x = collision_check_xy(box.box_r, height, new_x, as.y, as.z);
-    if (collision_x) new_x = as.x;
-
-    bool collision_y = collision_check_xy(box.box_r, height, new_x, new_y, as.z);
-    if (collision_y) new_y = as.y;
-
-    float solid_z = clamp_to_ground(box.box_r, new_x, new_y, as.z);
-
-    bool top = false;
-    bool collision_z = collision_check_z(box.box_r, height, new_x, new_y, new_z, &top);
-    if (collision_z)
-    {   // the "as.vz > 0" check catches erroneous top collisions that occur when
-        // falling too fast on top of certain topologies. "top" is really meant to
-        // catch upward collisions. NOTE: if vertical velocity ever gets high for
-        // some reason (maybe we have a launcher block...), then we probably need
-        // to check as.vz < 0 in the else, or something like that.
-        if (top && as.vz > 0)
-            new_z = floorf(as.z) + ceilf(height) - height;
-        else
-            new_z = solid_z;
-        as.vz = 0.0f;
-    }
-
-    new_z = GS_MAX(new_z, solid_z);
-    // sometimes we fell down right to the surface edge -- however
-    // this is not yet a collision. it will be a collision on the next tick,
-    // but there will be no change in z, which is required to distinguish falling
-    if (new_z == solid_z) as.vz = 0.0f;
-    float dist_from_ground = new_z - solid_z;
-
-    #if ADVANCED_JUMP
-    as.jump_pow = new_jump_pow;
-    #endif
-
     float cs_vx = 0.0f;
     float cs_vy = 0.0f;
 
     if (forward)
     {
-        cs_vx += speed*cosf(_cs.theta * pi);
-        cs_vy += speed*sinf(_cs.theta * pi);
+        cs_vx += speed*cosf(cs.theta * pi);
+        cs_vy += speed*sinf(cs.theta * pi);
     }
     if (backwards)
     {
-        cs_vx += -speed*cosf(_cs.theta * pi);
-        cs_vy += -speed*sinf(_cs.theta * pi);
+        cs_vx += -speed*cosf(cs.theta * pi);
+        cs_vy += -speed*sinf(cs.theta * pi);
     }
     if (left)
     {
-        cs_vx += speed*cosf(pi * (_cs.theta + 0.5f));
-        cs_vy += speed*sinf(pi * (_cs.theta + 0.5f));
+        cs_vx += speed*cosf(pi * (cs.theta + 0.5f));
+        cs_vy += speed*sinf(pi * (cs.theta + 0.5f));
     }
     if (right)
     {
-        cs_vx += -speed*cosf(pi * (_cs.theta + 0.5f));
-        cs_vy += -speed*sinf(pi * (_cs.theta + 0.5f));
+        cs_vx += -speed*cosf(pi * (cs.theta + 0.5f));
+        cs_vy += -speed*sinf(pi * (cs.theta + 0.5f));
     }
 
     const float precision = 0.000001f;
@@ -360,54 +351,75 @@ class AgentState agent_tick(const struct AgentControlState& _cs,
         cs_vy *= speed*len;
     }
 
-    as.vx = cs_vx;
-    as.vy = cs_vy;
+    velocity.x = cs_vx;
+    velocity.y = cs_vy;
 
     if (jetpack)
     {
-        if (dist_from_ground < JETPACK_MAX_HEIGHT)
+        if (ground_distance < JETPACK_MAX_HEIGHT)
         {   // cap jetpack velocity
-            if (as.vz <= JETPACK_MAX_VELOCITY)
-                as.vz += JETPACK_VELOCITY;
+            if (velocity.z <= JETPACK_MAX_VELOCITY)
+                velocity.z += JETPACK_VELOCITY;
         }
         else
-        if (dist_from_ground < JETPACK_MAX_HEIGHT + GROUND_MARGIN)
-            as.vz = -gravity;
+        if (ground_distance < JETPACK_MAX_HEIGHT + GROUND_MARGIN)
+            velocity.z = -gravity;
     }
 
-    as.vz += gravity;
+    velocity.z += gravity;
 
     #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
     if (jump)
     {
-        as.vz = 0.0f;
+        velocity.z = 0.0f;
         new_jump_pow = JUMP_POWINITIAL;
     }
     if (new_jump_pow >= 0)
     {
-        as.vz += new_jump_pow;
+        velocity.z += new_jump_pow;
         new_jump_pow -= JUMP_POWDEC;
     }
     #else
     if (jump)
     {
-        as.vz = 0.0f;
-        as.vz += JUMP_POW;
+        velocity.z = 0.0f;
+        velocity.z += JUMP_POW;
     }
     #endif
+}
 
-    as.x = translate_point(new_x);
-    as.y = translate_point(new_y);
-    as.z = new_z;
-    as.theta = _cs.theta;
-    as.phi = _cs.phi;
+//takes an agent state and control state and returns new agent state
+class AgentState agent_tick(const struct AgentControlState& cs,
+                            const BoundingBox& box, class AgentState as)
+{
+    Vec3 position = as.get_position();
+    Vec3 velocity = as.get_velocity();
+    float ground_distance = 0.0f;
+    bool passed_through = move_with_collision(box, position, velocity, ground_distance);
+    if (!passed_through)
+    {
+        as.set_position(position);
+        as.set_velocity(velocity);
+        return as;
+    }
+
+    #if ADVANCED_JUMP
+    as.jump_pow = new_jump_pow;
+    #endif
+
+    apply_control_state(cs, position, velocity, ground_distance);
+
+    as.theta = cs.theta;
+    as.phi = cs.phi;
     // cap the fall rate so as not to be able to move so fast as to blip through terrain
     // if we have high lateral or upward velocities we will need to cap those similarly
-    // lateral velocities would have to be capped to 2*box_r.  The alternative
+    // lateral velocities would have to be capped to 2*radius.  The alternative
     // requires doing collision detection at interpolated intervals
-    as.vz = GS_MAX(as.vz, -(height + 0.99f));
+    velocity.z = GS_MAX(velocity.z, -(box.height + 0.99f));
     //as.vz = GS_MIN(as.vz, height + 0.99f);
+    as.set_position(position);
+    as.set_velocity(velocity);
     return as;
 }
 

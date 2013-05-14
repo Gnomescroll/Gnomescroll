@@ -212,19 +212,29 @@ inline bool is_surface_block(const struct Vec3i& pos)
     return is_surface_block(pos.x, pos.y, pos.z);
 }
 
-inline int get_solid_block_below(int x, int y, int z)
+inline int get_solid_block_below(const struct Vec3i& p)
 {
-    for (int i=z-1; i>=0; i--)
-        if (isSolid(x, y, i))
+    for (int i=p.z-1; i>=0; i--)
+        if (isSolid(p.x, p.y, i))
             return i;
     return -1;
 }
 
-inline int get_open_block_below(int x, int y, int z)
+inline int get_solid_block_below(int x, int y, int z)
 {
-    z = get_solid_block_below(x, y, z);
+    return get_solid_block_below(vec3i_init(x, y, z));
+}
+
+inline int get_open_block_below(const struct Vec3i& p)
+{
+    int z = get_solid_block_below(p);
     if (z < 0) return -1;
     return z;
+}
+
+inline int get_open_block_below(int x, int y, int z)
+{
+    return get_open_block_below(vec3i_init(x, y, z));
 }
 
 inline int get_highest_solid_block(int x, int y)

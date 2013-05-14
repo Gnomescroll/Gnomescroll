@@ -407,12 +407,12 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
     // place item in front of player, near the head, but at a distance away
     const float distance_from_player = 1.3f;
     // incase first attempt is inside a block
-    const float backup_distance_from_player = a->box.box_r * 0.5f;
+    const float backup_distance_from_player = a->get_bounding_box().radius * 0.5f;
 
     // calculate position
     struct Vec3 forward = a->forward_vector();
     struct Vec3 start_position = a->get_position();
-    start_position.z += a->box.height * 0.95f;    // near head
+    start_position.z += a->current_height() * 0.95f;    // near head
     struct Vec3 position = vec3_add(start_position, vec3_scalar_mult(forward, distance_from_player));
     if (t_map::get(position.x, position.y, position.z) != EMPTY_CUBE)
     {

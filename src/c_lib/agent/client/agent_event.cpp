@@ -97,10 +97,11 @@ void AgentEvent::took_damage(int amount)
     IF_ASSERT(b == NULL) return;
     b->reset();
 
+    BoundingBox box = a->get_bounding_box();
     Vec3 p = this->a->get_position();
     b->set_state(
-        p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
-        p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
+        p.x + (randf()*(box.radius*2) - box.radius),
+        p.y + (randf()*(box.radius*2) - box.radius),
         p.z + a->current_height(),
         0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
     b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
@@ -137,8 +138,9 @@ void AgentEvent::healed(int amount)
     b->reset();
 
     Vec3 p = this->a->get_position();
-    b->set_state(p.x + (randf()*(a->box.box_r*2) - a->box.box_r),
-                 p.y + (randf()*(a->box.box_r*2) - a->box.box_r),
+    BoundingBox box = this->a->get_bounding_box();
+    b->set_state(p.x + (randf()*(box.radius*2) - box.radius),
+                 p.y + (randf()*(box.radius*2) - box.radius),
                  p.z + a->current_height(),
                  0.0f, 0.0f, Particle::BB_PARTICLE_HEAL_VELOCITY_Z);
     b->set_color(Particle::BB_PARTICLE_HEAL_COLOR);   // red

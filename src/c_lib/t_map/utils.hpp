@@ -12,6 +12,9 @@ inline int get_lowest_solid_block(int x, int y);
 inline int get_solid_block_below(int x, int y, int z);
 inline int get_open_block_below(int x, int y, int z);
 
+inline int get_solid_block_below(const struct Vec3i& p);
+inline int get_open_block_below(const struct Vec3i& p);
+
 inline size_t get_nearest_surface_blocks(const struct Vec3i& pos, int clearance,
                                         int* out, size_t outlen);
 inline int get_nearest_surface_block(const struct Vec3i& pos);

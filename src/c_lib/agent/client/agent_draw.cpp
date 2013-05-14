@@ -13,8 +13,9 @@ namespace AgentDraw
 void draw_agent(Agents::Agent* g)
 {
     Agents::AgentState s = g->get_state();
-    draw_agent_bounding_box(s.x, s.y, s.z, g->box.box_r, CAMERA_HEIGHT,
-                            g->box.height, Color(0, 0, 255));
+    BoundingBox box = g->get_bounding_box();
+    draw_agent_bounding_box(s.x, s.y, s.z, box.radius, CAMERA_HEIGHT,
+                            box.height, Color(0, 0, 255));
 }
 
 void draw_agent_aiming_direction(float x, float y, float z, float theta, float phi)

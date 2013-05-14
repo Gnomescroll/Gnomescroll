@@ -86,7 +86,8 @@ void Agent::tick()
     int start_seq = this->cs_seq;
     while (this->cs[this->cs_seq].seq == this->cs_seq)
     {
-        tmp = agent_tick(this->cs[this->cs_seq], this->box, tmp);
+        AgentControlState cs = this->cs[this->cs_seq];
+        tmp = agent_tick(cs, this->get_bounding_box(cs), tmp);
         this->cs_seq = (this->cs_seq + 1) % 256;
     }
     if (start_seq != this->cs_seq)
@@ -106,7 +107,8 @@ void Agent::tick()
 {
     while (this->cs[this->cs_seq].seq == this->cs_seq)
     {
-        this->s = agent_tick(this->cs[this->cs_seq], this->box, this->s);
+        AgentControlState cs = this->cs[this->cs_seq];
+        this->s = agent_tick(cs, this->get_bounding_box(cs), this->s);
         this->cs_seq = (this->cs_seq + 1) % 256;
     }
 }
@@ -239,7 +241,7 @@ void Agent::fell(float vz)
 
 void Agent::movement_event(const AgentState& s0, const AgentState& s1)
 {
-    bool s1_on_ground = on_ground(this->box.box_r, s1.x, s1.y, s1.z);
+    bool s1_on_ground = on_ground(this->get_bounding_box().radius, s1.x, s1.y, s1.z);
     float dz  = s1.z - s0.z;
     if (dz < 0 && s1_on_ground) // was falling & hit ground
         this->fell(s0.vz);
@@ -256,6 +258,7 @@ void Agent::set_camera_state(float x, float y, float z, float theta, float phi)
 
 void Agent::get_spawn_point(struct Vec3* spawn)
 {
+    BoundingBox box = this->get_bounding_box();
     struct Vec3 default_spawn = vec3_init(map_dim.x/2, map_dim.y/2, map_dim.z-1);
     float fh = this->current_height();
     if (this->status.spawner == BASE_SPAWN_ID)
@@ -269,7 +272,7 @@ void Agent::get_spawn_point(struct Vec3* spawn)
         using Components::AgentSpawnerComponent;
         AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)base->get_component(COMPONENT_AGENT_SPAWNER);
         IF_ASSERT(spawner == NULL) *spawn = default_spawn;
-        else *spawn = spawner->get_spawn_point(fh, this->box.box_r);
+        else *spawn = spawner->get_spawn_point(fh, box.radius);
     }
     else
     {   // spawner was found
@@ -283,7 +286,7 @@ void Agent::get_spawn_point(struct Vec3* spawn)
             IF_ASSERT(spawner_comp == NULL)
                 *spawn = default_spawn;
             else
-                *spawn = spawner_comp->get_spawn_point(fh, this->box.box_r);
+                *spawn = spawner_comp->get_spawn_point(fh, box.radius);
         }
     }
 }
@@ -320,9 +323,10 @@ Agent::Agent(AgentID id) :
     , camera_ready(false)
     #endif
 {
-    box.height = AGENT_HEIGHT;
-    box.crouch_height = AGENT_HEIGHT_CROUCHED;
-    box.box_r = AGENT_BOX_RADIUS;
+    standing_box.height = AGENT_HEIGHT;
+    crouching_box.height = AGENT_HEIGHT_CROUCHED;
+    standing_box.radius = AGENT_BOX_RADIUS;
+    crouching_box.radius = AGENT_BOX_RADIUS;
 
     cs_seq = 0;
 
@@ -390,7 +394,12 @@ AgentControlState Agent::get_current_control_state()
 
 bool Agent::crouched()
 {
-    return (this->get_current_control_state().cs & CS_CROUCH);
+    return this->crouched(this->get_current_control_state());
+}
+
+bool Agent::crouched(const struct AgentControlState& cs)
+{
+    return (cs.cs & CS_CROUCH);
 }
 
 float Agent::camera_height()
@@ -404,10 +413,7 @@ float Agent::camera_height()
 
 float Agent::current_height()
 {
-    if (this->crouched())
-        return this->box.crouch_height;
-    else
-        return this->box.height;
+    return this->get_bounding_box().height;
 }
 
 int Agent::current_height_int()
@@ -492,6 +498,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
     const int samples_per_height = 8;
     float step = this->current_height() / samples_per_height;
 
+    BoundingBox box = this->get_bounding_box();
+
     // check the center column
     struct Vec3 start = vec3_init(x,y,z);
     struct Vec3 end = this->s.get_position();
@@ -504,8 +512,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
     }
 
     // check the 4 corner columns
-    end.x = this->s.x + this->box.box_r;
-    end.y = this->s.y + this->box.box_r;
+    end.x = this->s.x + box.radius;
+    end.y = this->s.y + box.radius;
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;
@@ -514,8 +522,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
             return true;
     }
 
-    end.x = this->s.x + this->box.box_r;
-    end.y = this->s.y - this->box.box_r;
+    end.x = this->s.x + box.radius;
+    end.y = this->s.y - box.radius;
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;
@@ -524,8 +532,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
             return true;
     }
 
-    end.x = this->s.x - this->box.box_r;
-    end.y = this->s.y + this->box.box_r;
+    end.x = this->s.x - box.radius;
+    end.y = this->s.y + box.radius;
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;
@@ -534,8 +542,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
             return true;
     }
 
-    end.x = this->s.x - this->box.box_r;
-    end.y = this->s.y - this->box.box_r;
+    end.x = this->s.x - box.radius;
+    end.y = this->s.y - box.radius;
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;

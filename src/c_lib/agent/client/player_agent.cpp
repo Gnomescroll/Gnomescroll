@@ -154,17 +154,17 @@ uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
     int misc3     = cs & CS_MISC3    ? 1 : 0;
 
     AgentState* state = &this->s1;
+    BoundingBox box = a->get_bounding_box();
     // force staying crouched if cant stand up
     if ((this->crouching && !crouch) &&
-        can_stand_up(a->box.box_r, a->box.height,
-                     state->x, state->y, state->z))
+        can_stand_up(box.radius, box.height, state->x, state->y, state->z))
     {
         crouch = 1;
     }
     this->crouching = bool(crouch);
 
     // only jump if on ground
-    if (jump && !on_ground(a->box.box_r, state->x, state->y, state->z))
+    if (jump && !on_ground(box.radius, state->x, state->y, state->z))
         jump = 0;
 
     jp = jetpack.update(jp);
@@ -228,13 +228,13 @@ void PlayerAgent::set_control_state(uint16_t cs, float theta, float phi)
     while (cs_index != stop_index)
     {
         acs = cs_local[cs_index % 128]; //check seq number
-        tmp = agent_tick(acs, a->box, tmp);
+        tmp = agent_tick(acs, a->get_bounding_box(acs), tmp);
         tmp.seq = (tmp.seq + 1) % 256;
         cs_index = (cs_index + 1) % 256;
     }
     s0 = tmp;
     acs = cs_local[cs_seq_local % 128];
-    s1 = agent_tick(acs, a->box, s0);
+    s1 = agent_tick(acs, a->get_bounding_box(acs), s0);
 
     this->movement_event(s0, s1);
 }
@@ -524,8 +524,9 @@ void PlayerAgent::movement_event(const AgentState& s0, const AgentState& s1)
     if (a == NULL) return;
     static const float distance_per_step = 1.5f;
     static float total_distance = 0.0f;
-    bool s1_on_ground = on_ground(a->box.box_r, s1.x, s1.y, s1.z);
-    bool camera_on_ground = on_ground(a->box.box_r, this->camera_state.x,
+    BoundingBox box = a->get_bounding_box();
+    bool s1_on_ground = on_ground(box.radius, s1.x, s1.y, s1.z);
+    bool camera_on_ground = on_ground(box.radius, this->camera_state.x,
                                       this->camera_state.y, this->camera_state.z);
     float dx = s1.x - quadrant_translate_f(s1.x, s0.x);
     float dy = s1.y - quadrant_translate_f(s1.y, s0.y);
