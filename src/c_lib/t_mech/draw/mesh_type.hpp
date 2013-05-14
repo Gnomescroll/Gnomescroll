@@ -151,7 +151,7 @@ class MechListMeshShader
         shader = new Shader;
         shader->set_debug(true);
 
-        shader->load_shader("mech_list_shader",
+        shader->load_shader("mech_mesh_shader",
             MEDIA_PATH "shaders/effect/mech_list.vsh",
             MEDIA_PATH "shaders/effect/mech_list.fsh");
 
