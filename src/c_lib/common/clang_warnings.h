@@ -1,6 +1,8 @@
 #pragma once
 
+
 #ifdef __clang__
+#pragma warning (disable : 4068 ) /* disable unknown pragma warnings */
 
 #pragma clang diagnostic warning "-Wabi"
 #pragma clang diagnostic warning "-Waddress-of-temporary"
@@ -138,7 +140,7 @@
 #pragma clang diagnostic warning "-Wtype-limits"
 #pragma clang diagnostic warning "-Wundeclared-selector"
 #pragma clang diagnostic warning "-Wuninitialized"
-#pragma clang diagnostic warning "-Wunknown-pragmas"
+//#pragma clang diagnostic warning "-Wunknown-pragmas"
 #pragma clang diagnostic warning "-Wunnamed-type-template-args"
 #pragma clang diagnostic warning "-Wunneeded-internal-declaration"
 #pragma clang diagnostic warning "-Wunneeded-member-function"
