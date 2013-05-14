@@ -45,16 +45,14 @@ void init_errors()
 
 void set_error_status(GSError err)
 {
-    GS_ASSERT(err >= 0 && err < N_GSERRORS);
-    if (err < 0 || err >= N_GSERRORS) return;
+    IF_ASSERT(err < 0 || (unsigned)err >= N_GSERRORS) return;
 
     errors[err] = true;
 }
 
 void unset_error_status(GSError err)
 {
-    GS_ASSERT(err >= 0 && err < N_GSERRORS);
-    if (err < 0 || err >= N_GSERRORS) return;
+    IF_ASSERT(err < 0 || (unsigned)err >= N_GSERRORS) return;
 
     errors[err] = false;
 }

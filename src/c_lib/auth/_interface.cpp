@@ -257,7 +257,7 @@ void run_tests()
     GS_ASSERT(ok);
     if (ok)
     {
-        GS_ASSERT(user_id == 1);
+        GS_ASSERT(user_id == UserID(1));
         GS_ASSERT(expiration_time == 1347071435);
         GS_ASSERT(strcmp(hash, "7da756f7e8f76f4244439aefda651b15eb8d35776e02c26f622abc0533077fb2") == 0);
         GS_ASSERT(strcmp(username, "getgetgetgetget") == 0);

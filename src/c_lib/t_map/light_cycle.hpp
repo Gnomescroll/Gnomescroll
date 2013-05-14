@@ -25,12 +25,12 @@ class DayCycleController
 
     void advance()
     {
-        const int cycle_lenth = 1000; //1000 seconds per day
+        //const int cycle_lenth = 1000; //1000 seconds per day
 
-        const float sunrise_length = 0.15f;
-        const float day_length = 0.40f;
-        const float sunset_length = 0.15f;
-        const float night_length = 0.30f;
+        //const float sunrise_length = 0.15f;
+        //const float day_length = 0.40f;
+        //const float sunset_length = 0.15f;
+        //const float night_length = 0.30f;
 
         //blue tint
         //red tint
@@ -431,7 +431,7 @@ unsigned int generate_clut_light_texture()
     ttime++;
 
     if(ttime % 15 == 0)
-    {       
+    {
         static int ttimec = 0;
         ttimec++;
         float _ttime = ttimec % 400;

@@ -10,7 +10,6 @@ namespace Agents
 class AgentList: public ObjectList<class Agent, AgentID>
 {
     private:
-        int check_name_interval;
 
     const char* name()
     {

@@ -451,8 +451,7 @@ Agent* random_agent_in_range(const struct Vec3& position, const float radius)
 }
 
 AgentList::AgentList(size_t capacity) :
-    ObjectList<Agent, AgentID>(capacity, NULL_AGENT),
-    check_name_interval(0)
+    ObjectList<Agent, AgentID>(capacity, NULL_AGENT)
 {
     this->filtered_objects = (Agent**)calloc(this->max, sizeof(Agent*));
     this->filtered_object_distances = (float*)calloc(this->max, sizeof(float));

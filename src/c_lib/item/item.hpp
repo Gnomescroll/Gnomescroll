@@ -120,8 +120,10 @@ namespace Item
 class ItemList: public ObjectList<Item, ItemID>
 {
     private:
+        #if DC_SERVER
         unsigned int gas_tick;
         static const int GAS_TICK_INTERVAL = 10;
+        #endif
 
     const char* name()
     {
@@ -130,8 +132,10 @@ class ItemList: public ObjectList<Item, ItemID>
 
     public:
     ItemList(size_t capacity) :
-        ObjectList<Item, ItemID>(capacity, NULL_ITEM),
-        gas_tick(0)
+        ObjectList<Item, ItemID>(capacity, NULL_ITEM)
+        #if DC_SERVER
+        , gas_tick(0)
+        #endif
     {}
 
     #if DC_CLIENT && !PRODUCTION

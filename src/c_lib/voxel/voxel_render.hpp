@@ -29,13 +29,6 @@ struct VBOmeta
     //int size_max; //increase size if it goes over this
 };
 
-class VoxelVolumeToken
-{
-    int index;
-    int vnum;   //number of vertices
-    int voff;   //offset of vertices
-};
-
 void init_voxel_render_list_shader1();
 
 class VoxelRenderList

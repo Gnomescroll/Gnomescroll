@@ -110,7 +110,7 @@ inline bool isValid(ItemContainerID container_id)
 
 inline bool isValid(ItemContainerType container_type)
 {
-    return (container_type >= 0 && container_type < MAX_CONTAINER_TYPES);
+    return (container_type >= 0 && size_t(container_type) < MAX_CONTAINER_TYPES);
 }
 
 inline bool isValid(ItemParticleID particle_id)
