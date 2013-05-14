@@ -123,9 +123,17 @@ void init_world()
 
     if (iceflame_map)
     {
+        printf("Creating a new map with IceFlame's features(cities)\n");
+        serializer::begin_new_world_version();
         default_map_gen();
-        t_map::environment_process_startup();
         t_gen::generate_city();
+        t_map::environment_process_startup();
+        if (Options::serializer)
+        {
+            bool saved = serializer::save_data();
+            GS_ASSERT_ABORT(saved);
+            serializer::wait_for_save_complete();
+        }
     }
 
     if (!loaded_map)
