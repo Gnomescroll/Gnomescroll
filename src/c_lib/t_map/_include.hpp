@@ -16,6 +16,7 @@
 #include <t_map/config/_interface.hpp>
 #include <t_map/config/block_dat.hpp>
 #include <t_map/config/drop_dat.cpp>
+#include <t_map/light_cycle.hpp>
 
 #if DC_CLIENT
 # include <t_map/config/textures.hpp>
