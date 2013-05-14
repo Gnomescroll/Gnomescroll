@@ -29,7 +29,7 @@ void main()
 
 	vec3 color = tex.rgb;
 
-    vec3 color_clut = texture3D(clut_texture, color); //clut correction
+    vec3 color_clut = texture3D(clut_texture, color).rgb; //clut correction
 
     if(fogFragDepth > clut_start)
     {
