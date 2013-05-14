@@ -17,6 +17,14 @@ void DestinationTargetingComponent::set_destination(Vec3 dest)
     this->target_type = OBJECT_DESTINATION;
 }
 
+Vec3 DestinationTargetingComponent::get_next_path_point()
+{
+    static const Vec3 half = vec3_init(0.5f, 0.5f, 0.0f);
+    IF_ASSERT(this->path == NULL || this->ipath >= this->mpath)
+        return vec3_init(0, 0, 0);
+    return vec3_add(vec3_init(this->path[this->ipath++]), half);
+}
+
 void DestinationTargetingComponent::choose_destination()
 {
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -47,7 +55,7 @@ void DestinationTargetingComponent::choose_destination()
     }
 
     if (!this->path_finished())
-        position = vec3_init(this->path[this->ipath++]);
+        position = this->get_next_path_point();
 
     this->set_destination(position);
     this->ticks_to_destination = this->get_ticks_to_destination(physics->get_position());

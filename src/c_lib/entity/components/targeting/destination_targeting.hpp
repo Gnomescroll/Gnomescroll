@@ -41,6 +41,8 @@ class DestinationTargetingComponent: public TargetingComponent
         return (this->path == NULL || this->ipath >= this->mpath);
     }
 
+    Vec3 get_next_path_point();
+
     int get_ticks_to_destination(Vec3 position)
     {
         if (vec3_equal_approximate(this->destination, position) || this->speed == 0.0f)
