@@ -156,8 +156,7 @@ struct Node
 
 static void _print_config_status(const char* query, int value)
 {
-    printf("PATHFINDING: ");
-    printf(query);
+    printf("PATHFINDING: %s", query);
     if (value) printf(" yes\n");
     else printf(" no\n");
 }

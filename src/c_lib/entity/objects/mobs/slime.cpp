@@ -1,4 +1,4 @@
-#include "bomb.hpp"
+#include "slime.hpp"
 
 #include <entity/object/object.hpp>
 #include <entity/object/helpers.hpp>
@@ -8,21 +8,20 @@
 #include <entity/components/dimension.hpp>
 #include <entity/components/voxel_model.hpp>
 #if DC_SERVER
-# include <entity/components/explosion.hpp>
 # include <entity/objects/mobs/state_machines.hpp>
 #endif
 
 namespace Entities
 {
 
-static void bomb_state_router(class Entity*, EntityState state);
+static void slime_state_router(class Entity*, EntityState state);
 
-void load_mob_bomb_data()
+void load_mob_slime_data()
 {
-    EntityType type = OBJECT_MONSTER_BOMB;
+    EntityType type = OBJECT_MONSTER_SLIME;
 
     #if DC_SERVER
-    const int n_components = 12;
+    const int n_components = 11;
     #endif
     #if DC_CLIENT
     const int n_components = 8;
@@ -40,7 +39,6 @@ void load_mob_bomb_data()
 
     #if DC_SERVER
     entity_data->attach_component(type, COMPONENT_STATE_MACHINE);
-    entity_data->attach_component(type, COMPONENT_EXPLOSION);
     entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
     entity_data->attach_component(type, COMPONENT_ITEM_DROP);
     entity_data->attach_component(type, COMPONENT_KNOCKBACK);
@@ -51,19 +49,19 @@ void load_mob_bomb_data()
     #endif
 }
 
-static void set_mob_bomb_properties(Entity* object)
+static void set_mob_slime_properties(Entity* object)
 {
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM);
 
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
-    dims->height = MONSTER_BOMB_HEIGHT;
+    dims->height = MONSTER_SLIME_HEIGHT;
 
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
-    vox->vox_dat = &VoxDats::robot_bomb;
-    vox->init_hitscan = MONSTER_BOMB_INIT_WITH_HITSCAN;
-    vox->init_draw = MONSTER_BOMB_INIT_WITH_DRAW;
+    vox->vox_dat = &VoxDats::slime;
+    vox->init_hitscan = MONSTER_SLIME_INIT_WITH_HITSCAN;
+    vox->init_draw = MONSTER_SLIME_INIT_WITH_DRAW;
 
     using Components::HitPointsHealthComponent;
     #if DC_CLIENT
@@ -71,41 +69,32 @@ static void set_mob_bomb_properties(Entity* object)
     #endif
     #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
-    int health_amt = randrange(MONSTER_BOMB_HEALTH_MIN, MONSTER_BOMB_HEALTH_MAX);
+    int health_amt = randrange(MONSTER_SLIME_HEALTH_MIN, MONSTER_SLIME_HEALTH_MAX);
     health->health = health_amt;
     health->health_max = health_amt;
     #endif
 
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest = (DestinationTargetingComponent*)add_component_to_object(object, COMPONENT_DESTINATION_TARGETING);
-    dest->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
-    dest->destination_choice_x = MONSTER_BOMB_WALK_RANGE;
-    dest->destination_choice_y = MONSTER_BOMB_WALK_RANGE;
-    dest->speed = MONSTER_BOMB_WALK_SPEED;
-    dest->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
+    dest->sight_range = MONSTER_SLIME_MOTION_PROXIMITY_RADIUS;
+    dest->destination_choice_x = MONSTER_SLIME_WALK_RANGE;
+    dest->destination_choice_y = MONSTER_SLIME_WALK_RANGE;
+    dest->speed = MONSTER_SLIME_WALK_SPEED;
+    dest->max_z_diff = MONSTER_SLIME_MOTION_MAX_Z_DIFF;
 
     using Components::AgentTargetingComponent;
     AgentTargetingComponent* agent = (AgentTargetingComponent*)add_component_to_object(object, COMPONENT_AGENT_TARGETING);
-    agent->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
-    agent->speed = MONSTER_BOMB_CHASE_SPEED;
-    agent->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
-    agent->max_lock_ticks = MONSTER_BOMB_MAX_TARGET_LOCK_TICKS;
+    agent->sight_range = MONSTER_SLIME_MOTION_PROXIMITY_RADIUS;
+    agent->speed = MONSTER_SLIME_CHASE_SPEED;
+    agent->max_z_diff = MONSTER_SLIME_MOTION_MAX_Z_DIFF;
+    agent->max_lock_ticks = MONSTER_SLIME_MAX_TARGET_LOCK_TICKS;
+    agent->proximity_radius = 2.0f;
 
     using Components::WaitingComponent;
     WaitingComponent* waiting = (WaitingComponent*)add_component_to_object(object, COMPONENT_WAITING);
-    waiting->wait_time = MONSTER_BOMB_IDLE_TIME;
+    waiting->wait_time = MONSTER_SLIME_IDLE_TIME;
 
     #if DC_SERVER
-    using Components::ExplosionComponent;
-    ExplosionComponent* explode = (ExplosionComponent*)add_component_to_object(object, COMPONENT_EXPLOSION);
-    explode->radius = MONSTER_BOMB_EXPLOSION_RADIUS;
-    explode->proximity_radius = MONSTER_BOMB_EXPLOSION_PROXIMITY_RADIUS;
-    explode->damage = MONSTER_BOMB_EXPLOSION_DAMAGE;
-    explode->block_destruction_radius = MONSTER_BOMB_BLOCK_DESTRUCTION_RADIUS;
-    explode->block_damage = MONSTER_BOMB_BLOCK_DAMAGE;
-    explode->terrain_modification_action = TMA_MONSTER_BOMB;
-    explode->delay = MOB_BROADCAST_RATE;
-
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
     limiter->limit = MOB_BROADCAST_RATE;
@@ -124,7 +113,7 @@ static void set_mob_bomb_properties(Entity* object)
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)add_component_to_object(object, COMPONENT_STATE_MACHINE);
     state->state = STATE_WAITING;
-    state->router = &bomb_state_router;
+    state->router = &slime_state_router;
 
     using Components::KnockbackComponent;
     KnockbackComponent* knockback = (KnockbackComponent*)add_component_to_object(object, COMPONENT_KNOCKBACK);
@@ -134,30 +123,30 @@ static void set_mob_bomb_properties(Entity* object)
     #if DC_CLIENT
     using Components::AnimationComponent;
     AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
-    anim->color = MONSTER_BOMB_ANIMATION_COLOR;
-    anim->count = MONSTER_BOMB_ANIMATION_COUNT;
-    anim->count_max = MONSTER_BOMB_ANIMATION_COUNT_MAX;
-    anim->size = MONSTER_BOMB_ANIMATION_SIZE;
-    anim->force = MONSTER_BOMB_ANIMATION_FORCE;
+    anim->color = MONSTER_SLIME_ANIMATION_COLOR;
+    anim->count = MONSTER_SLIME_ANIMATION_COUNT;
+    anim->count_max = MONSTER_SLIME_ANIMATION_COUNT_MAX;
+    anim->size = MONSTER_SLIME_ANIMATION_SIZE;
+    anim->force = MONSTER_SLIME_ANIMATION_FORCE;
     #endif
 
-    object->tick = &tick_mob_bomb;
-    object->update = &update_mob_bomb;
+    object->tick = &tick_mob_slime;
+    object->update = &update_mob_slime;
 
     object->create = create_packet_momentum_angles_health;
     object->state = state_packet_momentum_angles;
 }
 
-Entity* create_mob_bomb()
+Entity* create_mob_slime()
 {
-    EntityType type = OBJECT_MONSTER_BOMB;
+    EntityType type = OBJECT_MONSTER_SLIME;
     Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
-    set_mob_bomb_properties(obj);
+    set_mob_slime_properties(obj);
     return obj;
 }
 
-void ready_mob_bomb(Entity* object)
+void ready_mob_slime(Entity* object)
 {
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
@@ -175,20 +164,14 @@ void ready_mob_bomb(Entity* object)
     #endif
 }
 
-void die_mob_bomb(Entity* object)
+void die_mob_slime(Entity* object)
 {
     #if DC_SERVER
     // drop item
     using Components::ItemDropComponent;
     ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
-    GS_ASSERT(item_drop != NULL);
+    IF_ASSERT(item_drop == NULL) return;
     item_drop->drop_item();
-
-    // explosion damage
-    using Components::ExplosionComponent;
-    ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
-    explode->explode();
-    explode->damage_blocks();
 
     // notify clients
     object->broadcastDeath();
@@ -198,17 +181,15 @@ void die_mob_bomb(Entity* object)
     // explosion animation
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    if (vox->vox != NULL)
-    {
-        using Components::AnimationComponent;
-        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
-        anim->explode_random(vox->get_center());
-    }
+    IF_ASSERT(vox->vox == NULL) return;
+    using Components::AnimationComponent;
+    AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+    anim->explode_random(vox->get_center());
     #endif
 }
 
 #if DC_SERVER
-static void bomb_state_router(class Entity* object, EntityState state)
+static void slime_state_router(class Entity* object, EntityState state)
 {
     using Components::StateMachineComponent;
     StateMachineComponent* machine = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
@@ -243,13 +224,10 @@ static void bomb_state_router(class Entity* object, EntityState state)
 }
 #endif
 
-void tick_mob_bomb(Entity* object)
+void tick_mob_slime(Entity* object)
 {
     #if DC_SERVER
-     //die if near agent
-    using Components::ExplosionComponent;
-    ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
-    explode->proximity_check();
+    // TODO -- jump if near player
 
     using Components::RateLimitComponent;
     RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
@@ -294,7 +272,7 @@ void tick_mob_bomb(Entity* object)
     #endif
 }
 
-void update_mob_bomb(Entity* object)
+void update_mob_slime(Entity* object)
 {
     typedef Components::PositionMomentumPhysicsComponent PCP;
     using Components::VoxelModelComponent;

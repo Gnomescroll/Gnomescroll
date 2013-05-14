@@ -107,13 +107,20 @@ static void register_settings()
     c.create = &create_mob_robot_box;
     c.ready = &ready_mob_robot_box;
     c.die = &die_mob_robot_box;
-    c.max = 1024;
+    c.max = 512;
 
     set_object(OBJECT_MONSTER_BOMB);
     c.loader = &load_mob_bomb_data;
     c.create = &create_mob_bomb;
     c.ready = &ready_mob_bomb;
     c.die = &die_mob_bomb;
+    c.max = 256;
+
+    set_object(OBJECT_MONSTER_SLIME);
+    c.loader = &load_mob_slime_data;
+    c.create = &create_mob_slime;
+    c.ready = &ready_mob_slime;
+    c.die = &die_mob_slime;
     c.max = 512;
 
     commit_object_config(); // finalize

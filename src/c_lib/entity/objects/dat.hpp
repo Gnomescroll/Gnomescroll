@@ -155,6 +155,7 @@ void load_entity_dat()
     entity_def("energy_core", OBJECT_ENERGY_CORE);
     entity_def("blue_bomb", OBJECT_MONSTER_BOMB);
     entity_def("red_fish", OBJECT_MONSTER_BOX);
+    entity_def("slime", OBJECT_MONSTER_SLIME);
     entity_def("monster_spawner", OBJECT_MONSTER_SPAWNER);
 
     finish_def();

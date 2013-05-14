@@ -31,104 +31,99 @@ void teardown_voxel_volume()
     delete[] voxel_vertex_scratch_buffer;
 }
 
-int VoxelVolume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
+int VoxelVolume::voxel_ray_cast(float x0, float y0, float z0, float _dfx, float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
+    *distance = 100000.0f;
     const static int _ssize = 0xFF;
     const static int _bsize = 0xFFFF;
     // normalize direction
-    float len2 = sqrtf(_dfx*_dfx+_dfy*_dfy+_dfz*_dfz);
-    _dfx /= len2;
-    _dfy /= len2;
-    _dfz /= len2;
+    float len2 = 1.0f/sqrtf(_dfx*_dfx+_dfy*_dfy+_dfz*_dfz);
+    _dfx *= len2;
+    _dfy *= len2;
+    _dfz *= len2;
 
     // calculate endpoint
-    float x1,y1,z1;
-    x1 = x0 + _dfx*max_l;
-    y1 = y0 + _dfy*max_l;
-    z1 = z0 + _dfz*max_l;
+    float x1 = x0 + _dfx*max_l;
+    float y1 = y0 + _dfy*max_l;
+    float z1 = z0 + _dfz*max_l;
 
     const float len = max_l;
 
-    int x,y,z;
-    x = x0; //truncating conversion
-    y = y0;
-    z = z0;
+    int x = x0; //truncating conversion
+    int y = y0;
+    int z = z0;
 
+    int _dx = ((x1-x0)/len) *_ssize;
+    int _dy = ((y1-y0)/len) *_ssize;
+    int _dz = ((z1-z0)/len) *_ssize;
 
-    int _dx,_dy,_dz;
-    _dx = ((x1-x0)/len) *_ssize;
-    _dy = ((y1-y0)/len) *_ssize;
-    _dz = ((z1-z0)/len) *_ssize;
+    int cdx = _dx >= 0 ? 1 : -1;
+    int cdy = _dy >= 0 ? 1 : -1;
+    int cdz = _dz >= 0 ? 1 : -1;
 
-    int cdx, cdy, cdz;
-    cdx = _dx >= 0 ? 1 : -1;
-    cdy = _dy >= 0 ? 1 : -1;
-    cdz = _dz >= 0 ? 1 : -1;
+    unsigned int dx = _dx*cdx;
+    unsigned int dy = _dy*cdy;
+    unsigned int dz = _dz*cdz;
 
-    unsigned int dx,dy,dz;
-    dx = _dx*cdx;
-    dy = _dy*cdy;
-    dz = _dz*cdz;
-
-    int cx,cy,cz;
     float dummy;
-    cx = cdx >=0 ? modff(x0, &dummy)*_bsize : _bsize - modff(x0, &dummy)*_bsize; //convert fractional part
-    cy = cdy >=0 ? modff(y0, &dummy)*_bsize : _bsize - modff(y0, &dummy)*_bsize;
-    cz = cdz >=0 ? modff(z0, &dummy)*_bsize : _bsize - modff(z0, &dummy)*_bsize;
+    int cx = cdx >= 0 ? modff(x0, &dummy)*_bsize : _bsize - modff(x0, &dummy)*_bsize; //convert fractional part
+    int cy = cdy >= 0 ? modff(y0, &dummy)*_bsize : _bsize - modff(y0, &dummy)*_bsize;
+    int cz = cdz >= 0 ? modff(z0, &dummy)*_bsize : _bsize - modff(z0, &dummy)*_bsize;
 
     int i;
     int max_i = (_bsize / _ssize)*len + 1; //over project
 
-    int col=0;
+    bool col = false;
 
-    for (i =0; i < max_i; i++) {
+    for (i = 0; i < max_i; i++)
+    {
         cx += dx;
         cy += dy;
         cz += dz;
-        if (cx >= _bsize || cy >= _bsize || cz >= _bsize) {
-            if (cx >= _bsize) {
+        if (cx >= _bsize || cy >= _bsize || cz >= _bsize)
+        {
+            if (cx >= _bsize)
+            {
                 cx -= _bsize;
-                //_x = x;
                 x += cdx;
-                if (_test_occludes_safe(x,y,z) != 0)
+                if (_test_occludes_safe(x,y,z))
                 {
-                    col =1;
+                    col = true;
                     break;
                 }
             }
-            if (cy >= _bsize) {
+            if (cy >= _bsize)
+            {
                 cy -= _bsize;
-                //_y = y;
                 y += cdy;
-                if (_test_occludes_safe(x,y,z) != 0)
+                if (_test_occludes_safe(x,y,z))
                 {
-                    col=1;
+                    col = true;
                     break;
                 }
             }
-            if (cz >= _bsize) {
+            if (cz >= _bsize)
+            {
                 cz -= _bsize;
-                //_z = z;
                 z += cdz;
-                if (_test_occludes_safe(x,y,z) != 0)
+                if (_test_occludes_safe(x,y,z))
                 {
-                    col=1;
+                    col = true;
                     break;
                 }
             }
         }
     }
-    if (col == 1)
-    {
-        *distance = len * (((float)i) / ((float)max_i));
-        collision[0]=x; collision[1]=y; collision[2]=z;
-        return 1;
-    } else
-    {
-        //*distance = 0;
-        return 0; //no collision
-    }
 
+    if (col)
+    {
+        *distance = len * (float(i) / float(max_i));
+        collision[0] = x;
+        collision[1] = y;
+        collision[2] = z;
+        return 1;
+    }
+    return 0; //no collision
 }
 
 // WARNING: HITSCAN_TEST_FAST 0 does not compile
@@ -156,30 +151,29 @@ int VoxelVolume::hitscan_test(struct Vec3 p, struct Vec3 f, float r2, int voxel[
 
 #if HITSCAN_TEST_FAST
     const float s = this->radius - sqrtf(r2); // Sagitta
-    const float l = 0.01f + sqrtf(s*(this->radius*2.0f - s));
+    const float l = 0.01f + sqrtf(s * (2.0f * this->radius - s));
 
-    v.x = ((v.x - l*u.x) / scale) + xdim/2;
-    v.y = ((v.y - l*u.y) / scale) + ydim/2;
-    v.z = ((v.z - l*u.z) / scale) + zdim/2;
+    v.x = ((v.x - l*u.x) / scale) + xdim/2.0f;
+    v.y = ((v.y - l*u.y) / scale) + ydim/2.0f;
+    v.z = ((v.z - l*u.z) / scale) + zdim/2.0f;
 
     //printf("radius= %f, l= %f \n", radius, l);
 #else
-    v.x = ((v.x - radius*u.x) / scale) + xdim/2;
-    v.y = ((v.y - radius*u.y) / scale) + ydim/2;
-    v.z = ((v.z - radius*u.z) / scale) + zdim/2;
+    v.x = ((v.x - radius*u.x) / scale) + xdim/2.0f;
+    v.y = ((v.y - radius*u.y) / scale) + ydim/2.0f;
+    v.z = ((v.z - radius*u.z) / scale) + zdim/2.0f;
 #endif
 
     float distance;
     //int collision[3];
 
 #if HITSCAN_TEST_FAST
-    if (voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, voxel))
+    if (voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*(radius/scale), &distance, voxel))
 #else
-    if (voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*l/scale, &distance, voxel))
+    if (voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*(l/scale), &distance, voxel))
 #endif
     {
         distance *= scale;
-        needs_vbo_update = true;
         return 1;
     }
     return 0;
@@ -245,14 +239,13 @@ void VoxelVolume::set_parameters(unsigned int xdim, unsigned int ydim, unsigned 
 
 void VoxelVolume::init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
 {
-    GS_ASSERT(this->voxel == NULL);
-    if (this->voxel != NULL) return;
+    IF_ASSERT(this->voxel != NULL) return;
 
     this->set_parameters(xdim, ydim, zdim, scale);
 
-    this->hdx = ((float) xdim) / 2;
-    this->hdy = ((float) ydim) / 2;
-    this->hdz = ((float) zdim) / 2;
+    this->hdx = xdim / 2.0f;
+    this->hdy = ydim / 2.0f;
+    this->hdz = zdim / 2.0f;
 
     int powx = pow2_2(xdim);
     int powy = pow2_2(ydim);

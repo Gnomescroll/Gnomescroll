@@ -7,19 +7,22 @@ namespace Components
 
 class DestinationTargetingComponent: public TargetingComponent
 {
-    private:
+    protected:
         struct Vec3 destination;
-    public:
         struct Vec3i* path;
         size_t mpath;
         size_t ipath;
+    public:
+        // config
         float stop_proximity;
         float speed;
         int max_z_diff;
         float destination_choice_x;
         float destination_choice_y;
-        bool at_destination;
+
+        // state
         int ticks_to_destination;
+        bool at_destination;
 
     void check_target_alive();
     bool check_at_destination();
@@ -72,8 +75,7 @@ class DestinationTargetingComponent: public TargetingComponent
         stop_proximity(0.1f),
         speed(1.0f), max_z_diff(64),
         destination_choice_x(1.0f), destination_choice_y(1.0f),
-        at_destination(false),
-        ticks_to_destination(1)
+        ticks_to_destination(1), at_destination(false)
     {}
 };
 

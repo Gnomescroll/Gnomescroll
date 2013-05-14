@@ -105,7 +105,7 @@ Entity* create(EntityType type, int id)
     return object;
 }
 
-void ready_switch (Entity* object)
+void ready_switch(Entity* object)
 {
     IF_ASSERT(object == NULL) return;
 
@@ -114,7 +114,7 @@ void ready_switch (Entity* object)
     if (ready != NULL) ready(object);
 }
 
-void destroy_switch (Entity* object)
+void destroy_switch(Entity* object)
 {
     IF_ASSERT(object == NULL) return;
     EntityType type = object->type;
@@ -128,10 +128,10 @@ void destroy_switch (Entity* object)
     entity_list->destroy(type, id);
 }
 
-void destroy_switch (EntityType type, int id)
+void destroy_switch(EntityType type, int id)
 {
     Entity* object = get_object(type, id);
-    if (object != NULL) destroy_switch (object);
+    if (object != NULL) destroy_switch(object);
 }
 
 Entity* get_object(EntityType type, int id)
@@ -255,6 +255,7 @@ void send_to_client(ClientID client_id)
     send_to_client(OBJECT_MONSTER_BOMB, client_id);
     send_to_client(OBJECT_MONSTER_BOX, client_id);
     send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
+    send_to_client(OBJECT_MONSTER_SLIME, client_id);
 }
 #endif
 

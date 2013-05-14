@@ -227,10 +227,6 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
             if (attacker != NULL)
                 attacker->status.kill(this->a->id);
             break;
-        //case OBJECT_MONSTER_BOMB:
-            //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
-            //if (slime != NULL) {}
-            //break;
         //case OBJECT_TURRET:
             //turret = (Turret*)STATE::entity_list->get(inflictor_type, inflictor_id);
             //if (turret == NULL) break;
@@ -241,6 +237,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
         case OBJECT_CANNONBALL:
         case OBJECT_PLASMAGEN:
         case OBJECT_MONSTER_SPAWNER:
+        case OBJECT_MONSTER_SLIME:
         case OBJECT_MONSTER_BOX:
         case OBJECT_MONSTER_BOMB:
         case OBJECT_ENERGY_CORE:
@@ -281,6 +278,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
         case OBJECT_CANNONBALL:
         case OBJECT_PLASMAGEN:
         case OBJECT_MONSTER_SPAWNER:
+        case OBJECT_MONSTER_SLIME:
         case OBJECT_MONSTER_BOX:
         case OBJECT_MONSTER_BOMB:
         case OBJECT_ENERGY_CORE:

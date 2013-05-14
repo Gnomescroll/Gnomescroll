@@ -48,6 +48,44 @@ const int MONSTER_BOMB_ANIMATION_COUNT_MAX = 100;
 const float MONSTER_BOMB_ANIMATION_SIZE = 0.7f;
 const float MONSTER_BOMB_ANIMATION_FORCE = 20.0f;
 
+/* Slime */
+
+/* Common/Defaults */
+
+// health
+const int MONSTER_SLIME_HEALTH_MIN = 65;
+const int MONSTER_SLIME_HEALTH_MAX = 85;
+
+// vox
+const bool MONSTER_SLIME_INIT_WITH_HITSCAN = true;
+const bool MONSTER_SLIME_INIT_WITH_DRAW = true;
+
+// dims
+const float MONSTER_SLIME_HEIGHT = 1.0f;
+
+// targeting
+const float MONSTER_SLIME_MOTION_PROXIMITY_RADIUS = 15.0f;
+const int MONSTER_SLIME_MAX_TARGET_LOCK_TICKS = ONE_SECOND * 10; // will lose target after 10 seconds
+
+// motion
+const float MONSTER_SLIME_WALK_SPEED = 0.125f;
+//const float MONSTER_SLIME_WALK_SPEED = 1.0f;
+const float MONSTER_SLIME_CHASE_SPEED = 0.125f;
+const int MONSTER_SLIME_MOTION_MAX_Z_DIFF = 3;
+//const int MONSTER_SLIME_WALK_RANGE = 10;
+const int MONSTER_SLIME_WALK_RANGE = 20;
+
+// waiting
+//const unsigned int MONSTER_SLIME_IDLE_TIME = ONE_SECOND * 6;
+const unsigned int MONSTER_SLIME_IDLE_TIME = ONE_SECOND * 3;
+
+// animations
+const Color MONSTER_SLIME_ANIMATION_COLOR = Color(31,223,31);
+const int MONSTER_SLIME_ANIMATION_COUNT = 25;
+const int MONSTER_SLIME_ANIMATION_COUNT_MAX = 40;
+const float MONSTER_SLIME_ANIMATION_SIZE = 0.2f;
+const float MONSTER_SLIME_ANIMATION_FORCE = 1.0f;
+
 /* MONSTER_BOX */
 
 // health

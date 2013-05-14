@@ -7,20 +7,21 @@ namespace Components
 
 class MotionTargetingComponent: public TargetingComponent
 {
+    protected:
+        int ticks_locked;
     public:
+        // config
         float speed;
         int max_z_diff;
-
+        int max_lock_ticks;
         float destination_choice_x;
         float destination_choice_y;
 
+        // state
         Vec3 destination;
         bool at_destination;
         bool en_route;
         int ticks_to_destination;
-
-        int max_lock_ticks;
-        int ticks_locked;
 
     void check_target_alive();
     // explicitly set the target
@@ -35,11 +36,11 @@ class MotionTargetingComponent: public TargetingComponent
 
     MotionTargetingComponent() :
         TargetingComponent(COMPONENT_MOTION_TARGETING),
-        speed(1.0f), max_z_diff(128),
+        ticks_locked(0),
+        speed(1.0f), max_z_diff(128), max_lock_ticks(0),
         destination_choice_x(1.0f), destination_choice_y(1.0f),
-        destination(vec3_init(0,0,0)), at_destination(false), en_route(false),
-        ticks_to_destination(1),
-        max_lock_ticks(0), ticks_locked(0)
+        destination(vec3_init(0)), at_destination(false), en_route(false),
+        ticks_to_destination(1)
     {}
 };
 

@@ -5,6 +5,7 @@
 #include <physics/affine.hpp>
 #include <physics/quadrant.hpp>
 #include <voxel/voxel_hitscan.hpp>
+#include <voxel/vox_dat_init.hpp>
 
 #if DC_CLIENT
 # include <voxel/voxel_render.hpp>

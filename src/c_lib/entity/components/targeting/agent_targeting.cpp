@@ -86,10 +86,13 @@ void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
 // adjusts position & momentum by moving over the terrain surface
 void AgentTargetingComponent::move_on_surface()
 {
-    // get physics data
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
+
+    // stop moving if we're close enough to the target
+    if (this->get_target_distance(physics->get_position()) <
+        this->proximity_radius * this->proximity_radius) return;
 
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;

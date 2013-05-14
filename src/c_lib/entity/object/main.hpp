@@ -23,9 +23,9 @@ void release_object_components(Entity* object);
 
 class Entity* create(EntityType type);
 class Entity* create(EntityType type, int id);
-void ready_switch (class Entity* object);
-void destroy_switch (class Entity* object);
-void destroy_switch (EntityType type, int id);
+void ready_switch(class Entity* object);
+void destroy_switch(class Entity* object);
+void destroy_switch(EntityType type, int id);
 
 class Entity* get_object(EntityType type, int id);
 int count(EntityType type);

@@ -2,8 +2,6 @@
 # include "main.hpp"
 #undef COMPONENT_MAIN_INCLUDE
 
-//#include <entity/component/lists.hpp>
-
 namespace Components
 {
 
@@ -16,53 +14,6 @@ namespace Components
  * Add subscribe/unsubscribe to switches
  *
  */
-
-//#define COMPONENT_LIST(NAME, LNAME) \
-    //NAME##List* LNAME##_list = NULL;
-
-///* ComponentList declarations */
-
-//PositionPhysicsComponentList* position_physics_component_list = NULL;
-//PositionMomentumPhysicsComponentList* position_momentum_physics_component_list = NULL;
-//VerletPhysicsComponentList* verlet_physics_component_list = NULL;
-
-//TTLHealthComponentList* ttl_health_component_list = NULL;
-//HitPointsHealthComponentList* hit_points_health_component_list = NULL;
-
-//OwnerComponentList* owner_component_list = NULL;
-
-//VoxelModelComponentList* voxel_model_component_list = NULL;
-
-//MonsterSpawnerComponentList* monster_spawner_component_list = NULL;
-
-//SpawnChildComponentList* spawn_child_component_list = NULL;
-
-//DimensionComponentList* dimension_component_list = NULL;
-
-//WeaponTargetingComponentList* weapon_targeting_component_list = NULL;
-//MotionTargetingComponentList* motion_targeting_component_list = NULL;
-//DestinationTargetingComponentList* destination_targeting_component_list = NULL;
-//AgentTargetingComponentList* agent_targeting_component_list = NULL;
-
-//StateMachineComponentList* state_machine_component_list = NULL;
-
-//WaitingComponentList* waiting_component_list = NULL;
-
-//#if DC_CLIENT
-//AnimationComponentList* animation_component_list = NULL;
-//#endif
-
-//#if DC_SERVER
-//AgentSpawnerComponentList* agent_spawner_component_list = NULL;
-//ExplosionComponentList* explosion_component_list = NULL;
-//ItemDropComponentList* item_drop_component_list = NULL;
-//HealerComponentList* healer_component_list;
-//COMPONENT_LIST(KnockbackComponent,
-//#endif
-
-//RateLimitComponentList* rate_limit_component_list = NULL;
-
-//#undef COMPONENT_LIST
 
 /* ComponentList handler switches */
 

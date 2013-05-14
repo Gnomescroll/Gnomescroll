@@ -1,5 +1,6 @@
 #pragma once
 
+#include <agent/agent.hpp>
 #include <entity/component/component.hpp>
 
 namespace Components
@@ -7,14 +8,29 @@ namespace Components
 
 class AgentTargetingComponent: public TargetingComponent
 {
+    protected:
+
+    Agents::Agent* get_agent()
+    {
+        if (this->target_id == NULL_AGENT) return NULL;
+        return Agents::get_agent((AgentID)this->target_id);
+    }
+
+    float get_target_distance(Vec3 position)
+    {
+        Agents::Agent* agent = this->get_agent();
+        if (agent == NULL) return 0.0f;
+        return vec3_distance_squared(agent->get_position(), position);
+    }
+
     public:
+        // config
         float speed;
+        float proximity_radius;
         int max_z_diff;
-
-        Vec3 destination;
-        bool at_destination;
-
         int max_lock_ticks;
+
+        // state
         int ticks_locked;
 
     void check_target_alive();
@@ -35,8 +51,7 @@ class AgentTargetingComponent: public TargetingComponent
 
     AgentTargetingComponent() :
         TargetingComponent(COMPONENT_AGENT_TARGETING),
-        speed(1.0f), max_z_diff(128),
-        destination(vec3_init(0,0,0)), at_destination(false),
+        speed(1.0f), proximity_radius(0.25f), max_z_diff(128),
         max_lock_ticks(0), ticks_locked(0)
     {
         this->target_id = NULL_AGENT;

@@ -82,6 +82,7 @@ int get_grenade_damage(EntityType type)
             return GRENADE_TURRET_DAMAGE();
 
         case OBJECT_MONSTER_BOMB:
+        case OBJECT_MONSTER_SLIME:
             return GRENADE_MONSTER_BOMB_DAMAGE();
 
         case OBJECT_MONSTER_BOX:
