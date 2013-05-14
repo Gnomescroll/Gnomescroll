@@ -44,7 +44,7 @@ const float CAMERA_HEIGHT_DEAD = 0.3f;
 const float AGENT_SPEED = 1.8f;
 //const float AGENT_SPEED = 28.0f; // uncomment for testing high speed
 const float AGENT_SPEED_CROUCHED = 0.9f;
-const float AGENT_JUMP_POWER = 0.25f;
+const float AGENT_JUMP_POWER = 0.38f;
 
 const float AGENT_BOX_RADIUS = 0.30f;
 
@@ -78,7 +78,7 @@ const unsigned int PLAYER_NAME_MIN_LENGTH = 3;
 const unsigned int PLAYER_NAME_MAX_LENGTH = 15;
 
 // physics constants
-const float AGENT_GRAVITY = -3.0f * PHYSICS_TICK_RATE_SQ;
+const float AGENT_GRAVITY = -5.0f * PHYSICS_TICK_RATE_SQ;
 const float JETPACK_VELOCITY = -AGENT_GRAVITY + PHYSICS_TICK_RATE_SQ;
 const float JETPACK_MAX_VELOCITY = JETPACK_VELOCITY * 5.0f;
 const float JETPACK_MAX_HEIGHT = 8.0f;

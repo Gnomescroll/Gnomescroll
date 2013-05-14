@@ -241,7 +241,7 @@ void Agent::fell(float vz)
 
 void Agent::movement_event(const AgentState& s0, const AgentState& s1)
 {
-    bool s1_on_ground = on_ground(this->get_bounding_box().radius, s1.x, s1.y, s1.z);
+    bool s1_on_ground = on_ground(this->get_bounding_box().radius, s1.get_position());
     float dz  = s1.z - s0.z;
     if (dz < 0 && s1_on_ground) // was falling & hit ground
         this->fell(s0.vz);

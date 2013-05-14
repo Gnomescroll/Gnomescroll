@@ -41,6 +41,7 @@ struct ControlState
 
 typedef enum
 {
+    CS_NULL = 0,
     CS_FORWARD = 1,
     CS_BACKWARD = 2,
     CS_LEFT = 4,
@@ -52,4 +53,4 @@ typedef enum
     CS_MISC1 = 256,
     CS_MISC2 = 512,
     CS_MISC3 = 1024
-} CSKeys;
+} CSKey;

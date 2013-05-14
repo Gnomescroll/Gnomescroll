@@ -35,12 +35,12 @@ class AgentState
 
     struct Vec3 forward_vector();
 
-    struct Vec3 get_position()
+    struct Vec3 get_position() const
     {
         return vec3_init(x, y, z);
     }
 
-    struct Vec3 get_velocity()
+    struct Vec3 get_velocity() const
     {
         return vec3_init(vx, vy, vz);
     }

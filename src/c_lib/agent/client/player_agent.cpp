@@ -164,7 +164,7 @@ uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
     this->crouching = bool(crouch);
 
     // only jump if on ground
-    if (jump && !on_ground(box.radius, state->x, state->y, state->z))
+    if (jump && !on_ground(box.radius, state->get_position()))
         jump = 0;
 
     jp = jetpack.update(jp);
@@ -525,9 +525,8 @@ void PlayerAgent::movement_event(const AgentState& s0, const AgentState& s1)
     static const float distance_per_step = 1.5f;
     static float total_distance = 0.0f;
     BoundingBox box = a->get_bounding_box();
-    bool s1_on_ground = on_ground(box.radius, s1.x, s1.y, s1.z);
-    bool camera_on_ground = on_ground(box.radius, this->camera_state.x,
-                                      this->camera_state.y, this->camera_state.z);
+    bool s1_on_ground = on_ground(box.radius, s1.get_position());
+    bool camera_on_ground = on_ground(box.radius, this->camera_state.get_position());
     float dx = s1.x - quadrant_translate_f(s1.x, s0.x);
     float dy = s1.y - quadrant_translate_f(s1.y, s0.y);
     float d = sqrtf(dx*dx + dy*dy);

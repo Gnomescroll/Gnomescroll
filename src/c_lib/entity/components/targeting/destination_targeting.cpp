@@ -21,7 +21,7 @@ Vec3 DestinationTargetingComponent::get_next_path_point()
 {
     static const Vec3 half = vec3_init(0.5f, 0.5f, 0.0f);
     IF_ASSERT(this->path == NULL || this->ipath >= this->mpath)
-        return vec3_init(0, 0, 0);
+        return vec3_init(0);
     return vec3_add(vec3_init(this->path[this->ipath++]), half);
 }
 

@@ -142,13 +142,13 @@ bool move_with_collision(const BoundingBox& box, Vec3& position,
 
 #define GROUND_MARGIN 0.003f
 // checks the (agent bottom - margin) at 4 corners of the agent
-inline bool on_ground(float radius, float x, float y, float z)
+inline bool on_ground(float radius, const struct Vec3& p)
 {
-    int x_min = int(translate_point(x - radius));
-    int x_max = int(translate_point(x + radius));
-    int y_min = int(translate_point(y - radius));
-    int y_max = int(translate_point(y + radius));
-    int zz = z - GROUND_MARGIN;
+    int x_min = int(translate_point(p.x - radius));
+    int x_max = int(translate_point(p.x + radius));
+    int y_min = int(translate_point(p.y - radius));
+    int y_max = int(translate_point(p.y + radius));
+    int zz = p.z - GROUND_MARGIN;
     return (t_map::isSolid(x_max, y_max, zz) ||  // north, west
             t_map::isSolid(x_max, y_min, zz) ||  // north, east
             t_map::isSolid(x_min, y_min, zz) ||  // south, east
@@ -178,8 +178,8 @@ inline bool can_stand_up(float radius, float box_h, float x, float y, float z)
     return false;
 }
 
-void apply_control_state(const ControlState& cs, float speed, Vec3& position,
-                         Vec3& velocity, float ground_distance)
+void apply_control_state(const ControlState& cs, float speed, float jump_force,
+                         Vec3& position, Vec3& velocity, float ground_distance)
 {
     // unpack control state variables
     bool forward   = cs.cs & CS_FORWARD;
@@ -204,11 +204,7 @@ void apply_control_state(const ControlState& cs, float speed, Vec3& position,
     #if ADVANCED_JUMP
     const float JUMP_POWINITIAL = 1.0f * 0.17f;
     const float JUMP_POWDEC = 0.2f * 0.24f;
-    #else
-    const float JUMP_POW = AGENT_JUMP_POWER;
     #endif
-    //const float z_bounce = 0.10f;
-    //const float z_bounce_v_threshold = 1.5f * PHYSICS_TICK_RATE;
 
     speed *= PHYSICS_TICK_RATE;
 
@@ -279,7 +275,7 @@ void apply_control_state(const ControlState& cs, float speed, Vec3& position,
     if (jump)
     {
         velocity.z = 0.0f;
-        velocity.z += JUMP_POW;
+        velocity.z += jump_force;
     }
     #endif
 }
@@ -394,7 +390,8 @@ class AgentState agent_tick(const struct ControlState& cs,
     Vec3 position = as.get_position();
     Vec3 velocity = as.get_velocity();
     float ground_distance = 0.0f;
-    bool passed_through = move_with_collision(box, position, velocity, ground_distance);
+    bool passed_through = move_with_collision(box, position, velocity,
+                                              ground_distance);
     if (!passed_through)
     {
         as.set_position(position);
@@ -410,7 +407,8 @@ class AgentState agent_tick(const struct ControlState& cs,
     if (cs.cs & CS_CROUCH)
         speed = AGENT_SPEED_CROUCHED;
 
-    apply_control_state(cs, speed, position, velocity, ground_distance);
+    apply_control_state(cs, speed, AGENT_JUMP_POWER, position, velocity,
+                        ground_distance);
 
     as.theta = cs.theta;
     as.phi = cs.phi;

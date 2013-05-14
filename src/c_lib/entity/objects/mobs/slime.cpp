@@ -88,7 +88,10 @@ static void set_mob_slime_properties(Entity* object)
     agent->speed = MONSTER_SLIME_CHASE_SPEED;
     agent->max_z_diff = MONSTER_SLIME_MOTION_MAX_Z_DIFF;
     agent->max_lock_ticks = MONSTER_SLIME_MAX_TARGET_LOCK_TICKS;
-    agent->proximity_radius = 2.0f;
+    agent->proximity_radius = MONSTER_SLIME_AGENT_STOP_PROXIMITY_RADIUS;
+    agent->jump_force = MONSTER_SLIME_JUMP_FORCE;
+    agent->set_jump_cooldowns(MONSTER_SLIME_JUMP_COOLDOWN_EN_ROUTE,
+                              MONSTER_SLIME_JUMP_COOLDOWN_NEARBY);
 
     using Components::WaitingComponent;
     WaitingComponent* waiting = (WaitingComponent*)add_component_to_object(object, COMPONENT_WAITING);
@@ -106,7 +109,6 @@ static void set_mob_slime_properties(Entity* object)
     item_drop->drop.add_drop("synthesizer_coin", 1, 0.3f);
     item_drop->drop.add_drop("synthesizer_coin", 2, 0.1f);
     item_drop->drop.add_drop("synthesizer_coin", 3, 0.05f);
-
     item_drop->drop.set_max_drop_amounts("plasma_grenade", 10);
     item_drop->drop.add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
