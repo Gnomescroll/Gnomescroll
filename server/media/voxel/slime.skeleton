@@ -1,10 +1,12 @@
 #skeleton nodes, voxel volumes
-1 1
+2 1
 #connection matrix
 0 0
+1 0
 #skeleton_node: anchor x,y,z rotatation x,y,z
 0 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
+1 0.000000 0.000000 0.400000  0.000000 0.000000 0.000000
 #part number, node number, voxel format filename
-0 0 media/voxel/slime.dcvox
+0 1 media/voxel/slime.dcvox
 #voxel: anchor x,y,z rotatation x,y,z
-0 0.500000 0.500000 0.400000  0.000000 0.000000 0.000000
+0 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000

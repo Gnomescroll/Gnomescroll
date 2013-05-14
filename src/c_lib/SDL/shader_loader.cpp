@@ -85,11 +85,11 @@ void load_shaders(const char *vert, const char* frag, GLuint* prog)
     *prog = p;
 }
 
-bool shader_compiler_error(int shader)
+bool shader_compiler_error(int shader, const char* name)
 {
     if (shader == 0)
     {
-        printf("shader compiler error: shader creation failed\n");
+        printf("shader compiler error: shader creation failed [%s]\n", name);
         return true;
     }
 
@@ -98,17 +98,17 @@ bool shader_compiler_error(int shader)
     glGetError();   // clear error
     if (status == GL_FALSE)
     {
-        printf("shader compiler error: Shader compilation failed! \n");
+        printf("shader compiler error: Shader compilation failed! [%s]\n", name);
         return true;
     }
     return false;
 }
 
-bool shader_linking_error(int program)
+bool shader_linking_error(int program, const char* name)
 {
     if (program <= 0)
     {
-        printf("shader linking error: program creation failed\n");
+        printf("shader linking error: program creation failed [%s]\n", name);
         return true;
     }
     GLint status = GL_FALSE;
@@ -116,7 +116,7 @@ bool shader_linking_error(int program)
     glGetError();   // clear error
     if (status == GL_FALSE)
     {
-        printf("shader linking error: Shader linking failed! \n");
+        printf("shader linking error: Shader linking failed! [%s]\n", name);
         return true;
     }
     return false;

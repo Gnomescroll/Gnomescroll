@@ -9,8 +9,8 @@ void printProgramInfoLog(GLuint obj);
 void load_shaders(const char *vert, const char* frag, GLuint* prog);
 
 //returns true on error
-bool shader_linking_error(int shader);
-bool shader_compiler_error(int shader);
+bool shader_linking_error(int shader, const char* name);
+bool shader_compiler_error(int shader, const char* name);
 
 class Shader
 {
@@ -90,12 +90,12 @@ class Shader
 
         glCompileShaderARB(vert_shader);
         if (debug) printShaderInfoLog(vert_shader);
-        if (shader_compiler_error(vert_shader)) this->shader_valid = false;
+        if (shader_compiler_error(vert_shader, this->name)) this->shader_valid = false;
         else this->shader_valid = true;
 
         glCompileShaderARB(frag_shader);
         if (debug) printShaderInfoLog(frag_shader);
-        if (shader_compiler_error(frag_shader)) this->shader_valid = false;
+        if (shader_compiler_error(frag_shader, this->name)) this->shader_valid = false;
         else this->shader_valid = true;
 
         glAttachObjectARB(shader, vert_shader);
@@ -104,7 +104,7 @@ class Shader
         glLinkProgramARB(shader);
         if (debug) printShaderInfoLog(shader);
 
-        if (shader_linking_error(shader)) this->shader_valid = false;
+        if (shader_linking_error(shader, this->name)) this->shader_valid = false;
         else this->shader_valid = true;
 
         CHECK_GL_ERROR();
