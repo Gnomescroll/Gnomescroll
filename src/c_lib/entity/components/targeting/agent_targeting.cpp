@@ -46,8 +46,8 @@ void AgentTargetingComponent::check_target_alive()
 
 void AgentTargetingComponent::lock_target(Vec3 camera_position)
 {
-    class Agents::Agent* target = Hitscan::lock_agent_target
-        (camera_position, &this->target_direction, this->sight_range);
+    class Agents::Agent* target = Hitscan::lock_agent_target(
+        camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
         this->target_type = OBJECT_NONE;
@@ -98,7 +98,7 @@ void AgentTargetingComponent::move_on_surface()
     // adjust position/momentum by moving along terrain surface
     Vec3 position = physics->get_position();
     Vec3 momentum = physics->get_momentum();
-    float ground_distance;
+    float ground_distance = 0.0f;
 
     float speed = this->speed / PHYSICS_TICK_RATE;
     if (this->get_target_distance(physics->get_position()) <
@@ -114,11 +114,12 @@ void AgentTargetingComponent::move_on_surface()
     if (jump_cooldown_tick <= 0 && on_ground(box.radius, position))
     {
         jump = CS_JUMP;
+        speed = this->speed / PHYSICS_TICK_RATE;
         this->jump_cooldown_tick = this->jump_cooldown_max;
     }
 
-
-    bool passed_through = move_with_collision(box, position, momentum, ground_distance);
+    bool passed_through = move_with_terrain_collision(box, position, momentum,
+                                                      ground_distance, true);
     if (passed_through)
     {
         ControlState cs;
@@ -136,13 +137,6 @@ void AgentTargetingComponent::move_on_surface()
                                 //&position, &momentum);
     physics->set_position(position);
     physics->set_momentum(momentum);
-
-    momentum.z = 0;
-    if (vec3_length_squared(momentum))
-    {   // update target direction
-        momentum = vec3_normalize(momentum);
-        this->target_direction = momentum;
-    }
 }
 
 void AgentTargetingComponent::call()

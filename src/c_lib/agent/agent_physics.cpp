@@ -5,7 +5,7 @@
 
 #define TOP_MARGIN 0.01f
 
-inline bool collision_check_current(float radius, float box_h, float x, float y, float z)
+inline bool collides_with_terrain(float radius, float box_h, float x, float y, float z)
 {
     int x_min = int(translate_point(x - radius));
     int x_max = int(translate_point(x + radius));
@@ -27,11 +27,10 @@ inline bool collision_check_current(float radius, float box_h, float x, float y,
 bool object_collides_terrain(Vec3 position, float height, float radius)
 {
     GS_ASSERT(is_boxed_position(position));
-    return collision_check_current(radius, height, position.x,
-                                           position.y, position.z);
+    return collides_with_terrain(radius, height, position.x, position.y, position.z);
 }
 
-inline bool collision_check_xy(float radius, float box_h, float x, float y, float z)
+inline bool collides_with_terrain_xy(float radius, float box_h, float x, float y, float z)
 {
     int x_min = int(translate_point(x - radius));
     int x_max = int(translate_point(x + radius));
@@ -88,14 +87,32 @@ inline int clamp_to_ground(float radius, float x, float y, float z)
     return GS_MAX(GS_MAX(z0, z1), GS_MAX(z2, z3)) + 1;
 }
 
-bool move_with_collision(const BoundingBox& box, Vec3& position,
-                          Vec3& velocity, float& ground_distance)
+bool collides_with_agents(const BoundingBox& box, const Vec3& position, Agents::Agent*& agent)
+{
+    using Agents::agent_list;
+    using Agents::Agent;
+    for (size_t i=0; i<agent_list->max; i++)
+    {
+        Agent* a = &agent_list->objects[i];
+        if (a->id == agent_list->null_id) continue;
+        Vec3 p = quadrant_translate_position(position, a->get_center());
+        if (bounding_box_intersects(p, a->get_bounding_box(), position, box))
+        {
+            agent = a;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
+                          Vec3& velocity, float& ground_distance, bool agents)
 {   // returns false if it collided before moving
     // Note: ground_distance is the difference between the surface z point below
     // the old position and the new position's z point. its weird but its
     // needed to do the jump/jetpack stuff without bugs
-    bool current_collision = collision_check_current(box.radius, box.height,
-                                                     position.x, position.y, position.z);
+    bool current_collision = collides_with_terrain(box.radius, box.height,
+                                                   position.x, position.y, position.z);
     if (current_collision)
     {
         position.z += 0.02f; //nudge factor
@@ -107,11 +124,29 @@ bool move_with_collision(const BoundingBox& box, Vec3& position,
 
     Vec3 p = translate_position(vec3_add(position, velocity));
 
-    bool collision_x = collision_check_xy(box.radius, box.height, p.x, position.y, position.z);
+    Agents::Agent* agent = NULL;
+
+    bool collision_x = collides_with_terrain_xy(box.radius, box.height, p.x, position.y, position.z);
+    if (!collision_x && agents)
+        collides_with_agents(box, vec3_init(p.x, position.y, position.z), agent);
     if (collision_x) p.x = position.x;
 
-    bool collision_y = collision_check_xy(box.radius, box.height, p.x, p.y, position.z);
+    bool collision_y = collides_with_terrain_xy(box.radius, box.height, p.x, p.y, position.z);
+    if (!collision_y && agents)
+        collides_with_agents(box, vec3_init(p.x, p.y, position.z), agent);
     if (collision_y) p.y = position.y;
+
+    if (agent != NULL)
+    {   // push away from the agent
+        Vec3 push = vec3_sub(p, agent->get_position());
+        push.z = 0.0f;
+        if (vec3_length_squared(push) == 0.0f)
+            push = vec3_init(randf(), randf(), 0);
+        push = vec3_normalize(push);
+        const float NUDGE = 0.13f;
+        push = vec3_scalar_mult(push, NUDGE);
+        velocity = push;
+    }
 
     float solid_z = clamp_to_ground(box.radius, p.x, p.y, position.z);
 
@@ -233,17 +268,25 @@ void apply_control_state(const ControlState& cs, float speed, float jump_force,
         cs_vy += -speed*sinf(pi * (cs.theta + 0.5f));
     }
 
-    const float precision = 0.000001f;
-    if (cs_vx < -precision || cs_vx > precision ||
-        cs_vy < -precision || cs_vy > precision)
+    const float precision = 0.00005f;
+    if (fabsf(cs_vx) < precision)
+        cs_vx = 0.0f;
+    if (fabsf(cs_vy) < precision)
+        cs_vy = 0.0f;
+
+    //if (cs_vx < -precision || cs_vx > precision ||
+        //cs_vy < -precision || cs_vy > precision)
+    if (cs_vx || cs_vy)
     {   // normalize diagonal motion
         float len = 1.0f/sqrtf(cs_vx*cs_vx + cs_vy*cs_vy);
-        cs_vx *= speed*len;
-        cs_vy *= speed*len;
+        cs_vx *= speed * len;
+        cs_vy *= speed * len;
     }
 
-    velocity.x = cs_vx;
-    velocity.y = cs_vy;
+    //velocity.x = cs_vx;
+    //velocity.y = cs_vy;
+    velocity.x = interpolate(velocity.x, cs_vx, 0.225f);
+    velocity.y = interpolate(velocity.y, cs_vy, 0.225f);
 
     if (jetpack)
     {
@@ -287,7 +330,7 @@ bool agent_collides_terrain(Agent* a)
 {
     float h = a->current_height();
     Vec3 p = a->get_position();
-    return collision_check_current(a->get_bounding_box().radius, h, p.x, p.y, p.z);
+    return collides_with_terrain(a->get_bounding_box().radius, h, p.x, p.y, p.z);
 }
 
 #define ADVANCED_JUMP 0
@@ -390,7 +433,7 @@ class AgentState agent_tick(const struct ControlState& cs,
     Vec3 position = as.get_position();
     Vec3 velocity = as.get_velocity();
     float ground_distance = 0.0f;
-    bool passed_through = move_with_collision(box, position, velocity,
+    bool passed_through = move_with_terrain_collision(box, position, velocity,
                                               ground_distance);
     if (!passed_through)
     {

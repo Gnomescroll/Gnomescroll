@@ -95,7 +95,7 @@ static void in_transit(class Entity* object)
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
-   // move towards target
+    // move towards target
     dest_target->move_on_surface();
     if (!physics->get_changed())
     {   // failed to move

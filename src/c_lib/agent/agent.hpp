@@ -195,7 +195,7 @@ class Agent
         if (this->vox == NULL || !this->vox->was_updated)
         {   // use approximate center of model
             struct Vec3 p = this->get_position();
-            p.z += this->current_height()/2.0f;
+            p.z += this->current_height() / 2.0f;
             return p;
         }
         return this->vox->get_part(AGENT_PART_TORSO)->get_center();

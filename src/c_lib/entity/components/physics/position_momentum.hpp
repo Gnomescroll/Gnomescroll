@@ -35,7 +35,9 @@ class PositionMomentumPhysicsComponent: public PositionPhysicsComponent
     {
         IF_ASSERT(!vec3_is_valid(momentum))
             return false;
-        if (vec3_equal_approximate(this->momentum, momentum))
+        // don't do approximate check here, without a tiny epsilon
+        // because the physics momentum deltas are very small
+        if (vec3_equal(this->momentum, momentum))
             return false;
         this->momentum = momentum;
         this->momentum_changed = true;

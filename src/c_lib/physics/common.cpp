@@ -24,6 +24,22 @@ bool rect_intersects(
     return true;
 }
 
+bool bounding_box_intersects(Vec3 posa, const BoundingBox& boxa,
+                             Vec3 posb, const BoundingBox& boxb)
+{
+    posa.x -= boxa.radius;
+    posa.y -= boxa.radius;
+    posb.x -= boxb.radius;
+    posb.y -= boxb.radius;
+    float wa = boxa.radius * 2;
+    float wb = boxb.radius * 2;
+    float ha = boxa.height;
+    float hb = boxb.height;
+    return ((posa.x < posb.x + wb) && (posb.x < posa.x + wa) &&
+            (posa.y < posb.y + wb) && (posb.y < posa.y + wa) &&
+            (posa.z < posb.z + hb) && (posb.z < posa.z + ha));
+}
+
 bool point_in_rect(float px, float py, float rx, float ry, float w, float h)
 {
     if (px > rx && px < rx+w && py > ry && py < ry+h)
@@ -78,6 +94,6 @@ int axis_orientation(Vec3 a, Vec3 b)
     if (a.y >= 0 && ay >= ax) return 1; // -y
     if (a.x >= 0 && ax >= ay) return 2; // -x
     if (a.y <= 0 && ay >= ax) return 3; // +y
-    
+
     return 0;
 }
