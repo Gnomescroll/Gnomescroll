@@ -78,7 +78,7 @@ void BillboardTextHud::draw()
 namespace Particle
 {
 
-void BillboardTextHud_list::tick()
+void BillboardTextHudList::tick()
 {
     for (size_t i=0; i<this->num; i++)
     {
@@ -88,7 +88,7 @@ void BillboardTextHud_list::tick()
     }
 }
 
-void BillboardTextHud_list::draw()
+void BillboardTextHudList::draw()
 {
     if (num == 0) return;
     for (size_t i=0; i<this->num; i++)

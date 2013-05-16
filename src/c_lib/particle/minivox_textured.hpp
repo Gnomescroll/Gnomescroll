@@ -26,14 +26,16 @@ class TexturedMinivox: public ParticleMotion
 namespace Particle
 {
 
-class TexturedMinivox_list: public SimpleObjectList<TexturedMinivox, MINIVOX_MAX>
+class TexturedMinivoxList: public SimpleObjectList<TexturedMinivox, MINIVOX_MAX>
 {
-    private:
-        const char* name() { return "TexturedMinivox"; }
     public:
-        void tick();
+    void tick();
 
-        TexturedMinivox_list() {}
+    private:
+    const char* name()
+    {
+        return "TexturedMinivox";
+    }
 };
 
 }   // Particle

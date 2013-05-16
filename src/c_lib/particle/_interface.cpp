@@ -21,12 +21,12 @@ class GrenadeList* grenade_list = NULL;
 
 #if DC_CLIENT
 class PlasmagenSpurList* plasmagen_spur_list = NULL;
-class Shrapnel_list* shrapnel_list = NULL;
-class Blood_list* blood_list = NULL;
-class ColoredMinivox_list* colored_minivox_list = NULL;
-class TexturedMinivox_list* textured_minivox_list = NULL;
-class BillboardText_list* billboard_text_list = NULL;
-class BillboardTextHud_list* billboard_text_hud_list = NULL;
+class ShrapnelList* shrapnel_list = NULL;
+class BloodList* blood_list = NULL;
+class ColoredMinivoxList* colored_minivox_list = NULL;
+class TexturedMinivoxList* textured_minivox_list = NULL;
+class BillboardTextList* billboard_text_list = NULL;
+class BillboardTextHudList* billboard_text_hud_list = NULL;
 #endif
 
 void init_particles()
@@ -34,12 +34,12 @@ void init_particles()
     grenade_list = new GrenadeList(MAX_GRENADES);
     #if DC_CLIENT
     plasmagen_spur_list = new PlasmagenSpurList(PLASMAGEN_SPUR_MAX);
-    shrapnel_list = new Shrapnel_list;
-    blood_list = new Blood_list;
-    colored_minivox_list = new ColoredMinivox_list;
-    textured_minivox_list = new TexturedMinivox_list;
-    billboard_text_list = new BillboardText_list;
-    billboard_text_hud_list = new BillboardTextHud_list;
+    shrapnel_list = new ShrapnelList;
+    blood_list = new BloodList;
+    colored_minivox_list = new ColoredMinivoxList;
+    textured_minivox_list = new TexturedMinivoxList;
+    billboard_text_list = new BillboardTextList;
+    billboard_text_hud_list = new BillboardTextHudList;
     Particle::init_shrapnel();
     #endif
 }

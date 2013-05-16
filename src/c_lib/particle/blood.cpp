@@ -32,7 +32,7 @@ void Blood::tick()
 
 /* Blood list */
 
-void Blood_list::tick()
+void BloodList::tick()
 {
     for (size_t i=0; i<num; i++)
     {
@@ -41,7 +41,7 @@ void Blood_list::tick()
     }
 }
 
-void Blood_list::draw()
+void BloodList::draw()
 {
     glColor4ub(255,255,255,255);
     #if DC_CLIENT

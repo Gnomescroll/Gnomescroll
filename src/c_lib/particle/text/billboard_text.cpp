@@ -171,7 +171,7 @@ void BillboardText::draw()
 namespace Particle
 {
 
-void BillboardText_list::tick()
+void BillboardTextList::tick()
 {
     for (size_t i=0; i<this->num; i++)
     {
@@ -180,7 +180,7 @@ void BillboardText_list::tick()
     }
 }
 
-void BillboardText_list::draw()
+void BillboardTextList::draw()
 {
     if (num == 0) return;
     if (current_camera == NULL) return;

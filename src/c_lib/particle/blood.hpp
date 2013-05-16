@@ -14,9 +14,9 @@ const float BLOOD_TEXTURE_SCALE = 0.1f;
 class Blood: public ParticleMotion, public BillboardSprite
 {
     public:
-        inline void reset();
-        void tick();
-        Blood();
+    inline void reset();
+    void tick();
+    Blood();
 };
 
 }
@@ -26,7 +26,7 @@ class Blood: public ParticleMotion, public BillboardSprite
 namespace Particle
 {
 
-class Blood_list: public SimpleObjectList<Blood, BLOOD_MAX>
+class BloodList: public SimpleObjectList<Blood, BLOOD_MAX>
 {
     private:
 

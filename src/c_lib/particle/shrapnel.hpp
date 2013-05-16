@@ -39,7 +39,7 @@ class Shrapnel
 };
 
 const int SHRAPNEL_MAX = 8192;
-class Shrapnel_list: public SimpleObjectList<Shrapnel, SHRAPNEL_MAX>
+class ShrapnelList: public SimpleObjectList<Shrapnel, SHRAPNEL_MAX>
 {
     private:
     const char* name()
@@ -50,7 +50,7 @@ class Shrapnel_list: public SimpleObjectList<Shrapnel, SHRAPNEL_MAX>
     void prep();
     void draw();
     void tick();
-    Shrapnel_list() {}
+    ShrapnelList() {}
 };
 
 }   // Particle

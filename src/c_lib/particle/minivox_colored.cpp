@@ -56,7 +56,7 @@ void ColoredMinivox::tick()
 
 /* ColoredMinivox list */
 
-void ColoredMinivox_list::tick()
+void ColoredMinivoxList::tick()
 {
     for (size_t i=0; i<num; i++)
     {

@@ -40,14 +40,16 @@ class ColoredMinivox: public ParticleMotion
     ColoredMinivox();
 };
 
-class ColoredMinivox_list: public SimpleObjectList<ColoredMinivox, MINIVOX_MAX>
+class ColoredMinivoxList: public SimpleObjectList<ColoredMinivox, MINIVOX_MAX>
 {
-    private:
-        const char* name() { return "ColoredMinivox"; }
     public:
-        void tick();
+    void tick();
 
-        ColoredMinivox_list() {}
+    private:
+    const char* name()
+    {
+        return "ColoredMinivox";
+    }
 };
 
 }   // Particle

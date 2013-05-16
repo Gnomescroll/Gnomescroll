@@ -78,7 +78,8 @@ void RailTrailEffect::tick()
         //s->ttl = randrange(8, 15);
         //s->scale = 0.1f;
         //s->texture_index = 54;
-        s->ttl = randrange(5, 8);
+        s->ttl = randrange(2, 4);
+        //s->ttl = 2;
         s->scale = 0.06f;
         s->texture_index = 22;
 
@@ -88,7 +89,8 @@ void RailTrailEffect::tick()
         //s->ttl = randrange(8, 15);
         //s->scale = 0.1f;
         s->texture_index = 54;
-        s->ttl = randrange(5, 8);
+        s->ttl = randrange(2, 4);
+        //s->ttl = 2;
         s->scale = 0.06f;
         s->texture_index = 22;
 

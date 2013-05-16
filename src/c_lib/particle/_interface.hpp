@@ -11,12 +11,12 @@ extern class GrenadeList* grenade_list;
 
 #if DC_CLIENT
 extern class PlasmagenSpurList* plasmagen_spur_list;
-extern class Shrapnel_list* shrapnel_list;
-extern class Blood_list* blood_list;
-extern class ColoredMinivox_list* colored_minivox_list;
-extern class TexturedMinivox_list* textured_minivox_list;
-extern class BillboardText_list* billboard_text_list;
-extern class BillboardTextHud_list* billboard_text_hud_list;
+extern class ShrapnelList* shrapnel_list;
+extern class BloodList* blood_list;
+extern class ColoredMinivoxList* colored_minivox_list;
+extern class TexturedMinivoxList* textured_minivox_list;
+extern class BillboardTextList* billboard_text_list;
+extern class BillboardTextHudList* billboard_text_hud_list;
 #endif
 
 void destroy(int particle_id);

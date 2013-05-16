@@ -64,7 +64,7 @@ static void prep_textured_voxel_particles()
     IF_ASSERT(textured_voxel_particle_vlist == NULL) return;
     using ItemParticle::item_particle_list;
     IF_ASSERT(item_particle_list == NULL) return;
-    class Particle::TexturedMinivox_list* particle_list = Particle::textured_minivox_list;
+    class Particle::TexturedMinivoxList* particle_list = Particle::textured_minivox_list;
     IF_ASSERT(particle_list == NULL)
     {
         textured_voxel_particle_vlist->vertex_number = 0;
@@ -222,7 +222,7 @@ static void prep_colored_voxel_particles()
     if (colored_voxel_particle_vlist == NULL)
         return;
 
-    class Particle::ColoredMinivox_list* list = Particle::colored_minivox_list;
+    class Particle::ColoredMinivoxList* list = Particle::colored_minivox_list;
     GS_ASSERT(list != NULL);
     if (list == NULL)
     {

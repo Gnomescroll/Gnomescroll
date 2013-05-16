@@ -49,7 +49,7 @@ class BillboardText: public TextParticle
 namespace Particle
 {
 
-class BillboardText_list: public SimpleObjectList<BillboardText, BILLBOARD_TEXT_MAX>
+class BillboardTextList: public SimpleObjectList<BillboardText, BILLBOARD_TEXT_MAX>
 {
     private:
     const char* name()

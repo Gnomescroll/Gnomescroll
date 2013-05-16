@@ -100,7 +100,7 @@ void Shrapnel::prep()
 
 /* Shrapnel list */
 
-void Shrapnel_list::tick()
+void ShrapnelList::tick()
 {
     for (size_t i=0; i<this->num; i++)
     {
@@ -109,14 +109,14 @@ void Shrapnel_list::tick()
     }
 }
 
-void Shrapnel_list::prep()
+void ShrapnelList::prep()
 {
     for (size_t i=0; i<this->num; a[i++].prep());
     shrapnel_vlist->buffer();
 }
 
 
-void Shrapnel_list::draw()
+void ShrapnelList::draw()
 {
     if (!shrapnel_shader.shader_valid) return;
     if (shrapnel_vlist->vertex_number == 0) return;
