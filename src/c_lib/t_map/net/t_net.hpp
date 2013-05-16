@@ -186,7 +186,8 @@ class MapMessagePacketToClient
             x.handle();
         }
 
-        static void register_client_packet() {
+        static void register_client_packet()
+        {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
             Derived::size = x._size();

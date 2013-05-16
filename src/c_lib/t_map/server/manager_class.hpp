@@ -12,10 +12,10 @@
 namespace t_map
 {
 
-char* COMPRESSION_BUFFER = NULL;
+char* compression_buffer = NULL;
 
 const int COMPRESSION_BUFFER_SIZE = 1024*512;
-extern char* COMPRESSION_BUFFER;
+extern char* compression_buffer;
 
 const int DEFAULT_SUB_RADIUS = 128 + 32;
 const int DEFAULT_UNSUB_RADIUS = 128 + 64; //128 +32; //why so low?
@@ -190,7 +190,7 @@ void Map_manager::send_compressed_chunk(int alias, int index)
     }
     stream.next_in = (unsigned char*) t->chunk[index]->e;
     stream.avail_in = sizeof(struct MapElement)*16*16*TERRAIN_MAP_HEIGHT;
-    stream.next_out = (unsigned char*) COMPRESSION_BUFFER;
+    stream.next_out = (unsigned char*) compression_buffer;
     stream.avail_out = COMPRESSION_BUFFER_SIZE;
 
     int status = mz_deflate(&stream, MZ_SYNC_FLUSH); //Z_FINISH
@@ -205,7 +205,7 @@ void Map_manager::send_compressed_chunk(int alias, int index)
     map_chunk_compressed_StoC c;
     c.chunk_alias = alias;
     c.chunk_index = index;
-    c.sendToClient(client_id, COMPRESSION_BUFFER, size);
+    c.sendToClient(client_id, compression_buffer, size);
 }
 
 void Map_manager::send_uncompressed_chunk(int alias, int index)

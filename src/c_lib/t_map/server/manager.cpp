@@ -16,7 +16,7 @@ class Terrain_map_subscription* map_history = NULL;
 
 void t_map_manager_setup(ClientID client_id)
 {
-    if (COMPRESSION_BUFFER == NULL) COMPRESSION_BUFFER = (char*) malloc(COMPRESSION_BUFFER_SIZE);
+    if (compression_buffer == NULL) compression_buffer = (char*) malloc(COMPRESSION_BUFFER_SIZE);
     GS_ASSERT(map_manager_list[client_id] == NULL);
     map_manager_list[client_id] = new Map_manager(client_id);
 }
@@ -33,12 +33,10 @@ void t_map_manager_teardown(ClientID client_id)
 void t_map_manager_update_client_position(ClientID client_id, float x, float y)
 {
     IF_ASSERT(!isValid(client_id)) return;
+    IF_ASSERT(map_manager_list[client_id] == NULL) return;
 
-    GS_ASSERT(map_manager_list[client_id] != NULL);
-    if (map_manager_list[client_id] == NULL) return;
-
-
-    GS_ASSERT(x >= 0 && x <= 512 && y >= 0 && y <= 512);
+    GS_ASSERT(is_boxed_point(x));
+    GS_ASSERT(is_boxed_point(y));
     x = translate_point(x); //box the position
     y = translate_point(y);
 
