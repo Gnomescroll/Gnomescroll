@@ -43,9 +43,7 @@ static int set_option_from_str(char* name, char* val)
 
 static void set_option_float(int key, float opt)
 {
-    float* dest = (float*)malloc(sizeof(float));
-    *dest = opt;
-    *((float**)(option_values[key])) = dest;
+    *((float*)(option_values[key])) = opt;
 }
 
 static void set_option_uint(int key, unsigned int opt)
@@ -75,10 +73,11 @@ static void set_option_bool(int key, bool opt)
 static void coerce_option_float(int key, char* val)
 {
     errno = 0;
-    char* end = (char*)"";
+    char* end = NULL;
     float opt = (float)strtod(val, &end);
     GS_ASSERT(errno == 0);
-    GS_ASSERT(val[0] != '\0' && end[0] == '\0'); // valid string test
+    GS_ASSERT(val[0] != '\0'); // valid string test
+    GS_ASSERT(end != val);
     set_option_float(key, opt);
 }
 
@@ -229,7 +228,7 @@ int parse_args(int argc, char* argv[])
 
         if (c != '=')
         {
-            if (!strcmp(argname, (char*)"help"))
+            if (!strcmp(argname, "help"))
                 printf("\n\nUsage: ./run [lua settings file] --key=value\n\n\n");
             else
                 printf("Invalid argument style: %s\n", str);

@@ -16,7 +16,6 @@ class Camera
     private:
         struct Vec3 position;
     public:
-        float fov;
         float x_size,y_size;
         float ratio;
         float z_near, z_far;
@@ -27,10 +26,10 @@ class Camera
 
     void pan(float dx, float dy);
 
-    void set_aspect(float fov, float z_near, float z_far);
+    float get_fov();
+    void set_aspect(float z_near, float z_far);
     void set_projection(float x, float y, float z, float theta, float phi);
     void set_dimensions();  // sets x_size,y_size and ratio from window resolution
-    void set_fov(float fov);
     void move(float dx, float dy, float dz);
     void set_angles(float theta, float phi);
 

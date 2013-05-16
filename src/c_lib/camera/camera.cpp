@@ -32,12 +32,10 @@ void init_cameras()
     agent_camera = new Camera();
     agent_camera->first_person = true;
     agent_camera->set_position(vec3_init(0, 0, 50.0f));
-    agent_camera->set_fov(85.0f);
 
     free_camera = new Camera();
     free_camera->first_person = false;
     free_camera->set_position(vec3_init(64, 64, 128));
-    free_camera->set_fov(85.0f);
 
     current_camera = free_camera;
 
@@ -59,8 +57,9 @@ void init_cameras()
         u = vec3_euler_rotation(u, camera->theta, camera->phi, 0.0f);
 
         Vec3 p = camera->get_position();
-        setup_fulstrum(camera->fov, camera->ratio, camera->z_far, p,f,r,u);
-        setup_fulstrum2(camera->fov, camera->ratio, camera->z_near,camera->z_far, p,f,r,u);
+        float fov = camera->get_fov();
+        setup_fulstrum(fov, camera->ratio, camera->z_far, p,f,r,u);
+        setup_fulstrum2(fov, camera->ratio, camera->z_near,camera->z_far, p,f,r,u);
     }
 
     // custom fog shaders use EXP4
@@ -82,11 +81,9 @@ void teardown_cameras()
 Camera::Camera() :
     zoomed(false), zoom_factor(CAMERA_ZOOM_FACTOR)
 {
-    //const float FOV = 70.0f;
-    const float FOV = 65.0f;
     const float Z_NEAR = 0.1f;
     const float Z_FAR = 320.0f;
-    set_aspect(FOV, Z_NEAR, Z_FAR);
+    set_aspect(Z_NEAR, Z_FAR);
     set_dimensions();
     set_projection(256.0f, 256.0f, 256.0f, 0.0f, 0.0f);
 }
@@ -100,18 +97,23 @@ void Camera::toggle_zoom()
         this->zoom();
 }
 
+float Camera::get_fov()
+{
+    if (this->zoomed)
+        return Options::fov / this->zoom_factor;
+    return Options::fov;
+}
+
 void Camera::zoom()
 {
     if (this->zoomed) return;
     this->zoomed = true;
-    this->fov /= this->zoom_factor;
 }
 
 void Camera::unzoom()
 {
     if (!this->zoomed) return;
     this->zoomed = false;
-    this->fov *= this->zoom_factor;
 }
 
 bool Camera::is_current()
@@ -119,16 +121,10 @@ bool Camera::is_current()
     return (this == current_camera);
 }
 
-void Camera::set_aspect(float fov, float z_near, float z_far)
+void Camera::set_aspect(float z_near, float z_far)
 {
-    this->fov = fov;
     this->z_near = z_near;
     this->z_far = z_far;
-}
-
-void Camera::set_fov(float fov)
-{
-    this->fov = fov;
 }
 
 void Camera::set_projection(float x, float y, float z, float theta, float phi)
@@ -189,6 +185,7 @@ void Camera::world_projection()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
+    float fov = this->get_fov();
     gluPerspective(fov, ratio, z_near, z_far);
 
     glMatrixMode(GL_MODELVIEW);
