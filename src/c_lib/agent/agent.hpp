@@ -45,14 +45,14 @@ class AgentState
         return vec3_init(vx, vy, vz);
     }
 
-    void set_position(struct Vec3 p)
+    void set_position(const struct Vec3& p)
     {
         this->x = translate_point(p.x);
         this->y = translate_point(p.y);
         this->z = p.z;
     }
 
-    void set_velocity(struct Vec3 v)
+    void set_velocity(const struct Vec3& v)
     {
         this->vx = v.x;
         this->vy = v.y;

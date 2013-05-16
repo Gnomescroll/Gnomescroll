@@ -286,8 +286,7 @@ void load_item_dat()
     s->hitscan_fire_cooldown = 30;
     s->hitscan_damage = 5;
     s->hitscan_bullet_effect_enum = 0;
-    //s->max_durability = 100;
-    s->max_durability = 10;
+    s->max_durability = 100;
     s->max_stack_size = 1;
     s->object_damage_min = 15;
     s->object_damage_max = 25;

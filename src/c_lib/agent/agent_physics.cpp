@@ -108,7 +108,8 @@ bool collides_with_agents(const BoundingBox& box, const Vec3& position, Agents::
 }
 
 bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
-                          Vec3& velocity, float& ground_distance, bool agents)
+                                 Vec3& velocity, float& ground_distance,
+                                 bool collide_agents)
 {   // returns false if it collided before moving
     // Note: ground_distance is the difference between the surface z point below
     // the old position and the new position's z point. its weird but its
@@ -129,12 +130,12 @@ bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
     Agents::Agent* agent = NULL;
 
     bool collision_x = collides_with_terrain_xy(box.radius, box.height, p.x, position.y, position.z);
-    if (!collision_x && agents)
+    if (!collision_x && collide_agents)
         collides_with_agents(box, vec3_init(p.x, position.y, position.z), agent);
     if (collision_x) p.x = position.x;
 
     bool collision_y = collides_with_terrain_xy(box.radius, box.height, p.x, p.y, position.z);
-    if (!collision_y && agents)
+    if (!collision_y && collide_agents)
         collides_with_agents(box, vec3_init(p.x, p.y, position.z), agent);
     if (collision_y) p.y = position.y;
 

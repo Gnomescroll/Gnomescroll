@@ -14,7 +14,7 @@ void apply_control_state(const ControlState& cs, float speed, float jump_force,
                          Vec3& position, Vec3& velocity, float ground_distance);
 
 bool move_with_terrain_collision(const BoundingBox& box, Vec3& position, Vec3& velocity,
-                         float& ground_distance, bool agents=false);
+                         float& ground_distance, bool collide_agents=false);
 
 bool collides_with_agents(const BoundingBox& box, const Vec3& position, Agents::Agent*& agent);
 
