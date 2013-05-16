@@ -71,8 +71,7 @@ void register_options()
 
 void validate()
 {
-    GS_ASSERT(redis_database < 16);
-    if (redis_database >= 16) GS_ABORT();
+    IF_ASSERT(redis_database >= 16) GS_ABORT();
 }
 
 }   // Options
