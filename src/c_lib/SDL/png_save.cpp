@@ -8,8 +8,8 @@ void _init_png_gamma_correction()
 {
     for (int i=0; i<256; i++)
     {
-        float intensity = ((float) i) / 255;
-        intensity = powf(intensity, 1.0f/2.2f)*255;
+        float intensity = float(i) / 0xFF;
+        intensity = powf(intensity, 1.0f/2.2f)*0xFF;
         _png_gamma_correction[i] = (unsigned char)((int)intensity);
     }
 }
@@ -17,7 +17,7 @@ void _init_png_gamma_correction()
 const char* _png_write_full_filename(const char* fn)
 {
     static char filename[GS_FN_MAX+1];
-    size_t wrote = snprintf(filename, GS_FN_MAX+1, SCREENSHOT_PATH "%ss.png", fn);
+    size_t wrote = snprintf(filename, GS_FN_MAX+1, SCREENSHOT_PATH "%s.png", fn);
     filename[GS_FN_MAX] = '\0';
     IF_ASSERT(wrote >= GS_FN_MAX+1)
         printf("Warning: truncating png filename to %s", filename);
@@ -37,7 +37,7 @@ static void _save_png(pngDataWrite writer, const char* fn, float* in, int xres, 
     void* temp_row;
     int height_div_2;
 
-    temp_row = (void *)calloc(4*xres, sizeof(char));
+    temp_row = (void*)calloc(4*xres, sizeof(char));
     IF_ASSERT(temp_row == NULL)
     {
         printf("Error: Not enough memory for surface inversion\n");
@@ -81,14 +81,13 @@ static void _write_png_data(char* pbuffer, float* in, int xres, int yres, bool g
     {
         int index = j*xres + i;
         float _v = in[j*xres+i];
-
-        if (_v < 0.0) _v = 0.0f;
-        if (_v > 1.0) _v = 1.0f;
+        _v = GS_MAX(_v, 0);
+        _v = GS_MIN(_v, 1);
         unsigned char v = (int)(255.0f*_v);
 
         for (int k=0; k<3; k++)
             pbuffer[4*index+k] = _png_gamma_correction[v];
-        pbuffer[4*index+3] = 255;
+        pbuffer[4*index+3] = 0xFF;
     }
 }
 
@@ -101,17 +100,16 @@ static void _write_png_rgb_data(char* pbuffer, float* in, int xres, int yres, bo
         for (int k=0; k<3;k++)
         {
             float _v = in[3*(j*xres+i)+k];
-
-            if (_v < 0.0) _v = 0.0f;
-            if (_v > 1.0) _v = 1.0f;
-            unsigned char v = ((int)255.0f*_v);
+            _v = GS_MAX(_v, 0);
+            _v = GS_MIN(_v, 1);
+            unsigned char v = (int)(255.0f*_v);
 
             if (gamma_correction)
                 pbuffer[4*index+k] = _png_gamma_correction[v];
             else
                 pbuffer[4*index+k] = v;
         }
-        pbuffer[4*index+3] = 255;
+        pbuffer[4*index+3] = 0xFF;
     }
 }
 
