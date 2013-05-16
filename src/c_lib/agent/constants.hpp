@@ -41,9 +41,11 @@ const float CAMERA_HEIGHT = 1.5f;
 const float AGENT_HEIGHT_CROUCHED = 1.8f;
 const float CAMERA_HEIGHT_CROUCHED = 1.5f;
 const float CAMERA_HEIGHT_DEAD = 0.3f;
-const float AGENT_SPEED = 1.8f;
+//const float AGENT_SPEED = 1.8f;
+const float AGENT_SPEED = 1.2f;
 //const float AGENT_SPEED = 28.0f; // uncomment for testing high speed
-const float AGENT_SPEED_CROUCHED = 0.9f;
+//const float AGENT_SPEED_CROUCHED = 0.9f;
+const float AGENT_SPEED_CROUCHED = 0.6f;
 const float AGENT_JUMP_POWER = 0.38f;
 
 const float AGENT_BOX_RADIUS = 0.30f;

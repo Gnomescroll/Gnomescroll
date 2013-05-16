@@ -522,7 +522,7 @@ void PlayerAgent::movement_event(const AgentState& s0, const AgentState& s1)
     // TODO: random plus-minue variation in footstep
     Agent* a = this->you();
     if (a == NULL) return;
-    static const float distance_per_step = 1.5f;
+    const float distance_per_step = AGENT_SPEED * 0.825f;
     static float total_distance = 0.0f;
     BoundingBox box = a->get_bounding_box();
     bool s1_on_ground = on_ground(box.radius, s1.get_position());

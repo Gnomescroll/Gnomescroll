@@ -23,7 +23,7 @@ dont_include_this_file_in_server
 namespace Agents
 {
 
-void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
+void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -165,7 +165,7 @@ void PlayerAgent_action::hitscan_laser(ItemType weapon_type)
     //////////Animations::create_hitscan_effect(origin, look);
 }
 
-void PlayerAgent_action::update_mining_laser()
+void PlayerAgentAction::update_mining_laser()
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -187,7 +187,7 @@ void PlayerAgent_action::update_mining_laser()
     you->event.mining_laser_emitter.prep_draw();
 }
 
-void PlayerAgent_action::begin_mining_laser()
+void PlayerAgentAction::begin_mining_laser()
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -206,7 +206,7 @@ void PlayerAgent_action::begin_mining_laser()
     this->mining_laser_sound_id = Sound::play_2d_sound("mining_laser");
 }
 
-void PlayerAgent_action::end_mining_laser()
+void PlayerAgentAction::end_mining_laser()
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -218,7 +218,7 @@ void PlayerAgent_action::end_mining_laser()
     this->mining_laser_sound_id = -1;
 }
 
-void PlayerAgent_action::fire_close_range_weapon(ItemType weapon_type)
+void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -361,7 +361,7 @@ void PlayerAgent_action::fire_close_range_weapon(ItemType weapon_type)
     this->target_direction = look;
 }
 
-bool PlayerAgent_action::set_block(ItemID placer_id)
+bool PlayerAgentAction::set_block(ItemID placer_id)
 {
     class Agent* you = this->p->you();
     if (you == NULL || you->status.dead) return false;
@@ -410,7 +410,7 @@ bool PlayerAgent_action::set_block(ItemID placer_id)
     return true;
 }
 
-void PlayerAgent_action::admin_set_block()
+void PlayerAgentAction::admin_set_block()
 {
     class Agent* you = this->p->you();
     if (you == NULL) return;
@@ -456,7 +456,7 @@ void PlayerAgent_action::admin_set_block()
     }
 }
 
-void PlayerAgent_action::throw_grenade()
+void PlayerAgentAction::throw_grenade()
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -485,7 +485,7 @@ void PlayerAgent_action::throw_grenade()
     g->owner = this->p->agent_id;
 }
 
-void PlayerAgent_action::place_spawner()
+void PlayerAgentAction::place_spawner()
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -507,7 +507,7 @@ void PlayerAgent_action::place_spawner()
     msg.send();
 }
 
-void PlayerAgent_action::place_turret()
+void PlayerAgentAction::place_turret()
 {
     class Agent* you = p->you();
     if (you == NULL) return;
@@ -529,7 +529,7 @@ void PlayerAgent_action::place_turret()
     msg.send();
 }
 
-Vec3 PlayerAgent_action::get_aiming_point()
+Vec3 PlayerAgentAction::get_aiming_point()
 {
     class Agent* you = p->you();
     if (you == NULL) return vec3_init(0,0,0);
@@ -557,7 +557,7 @@ Vec3 PlayerAgent_action::get_aiming_point()
     else return vec3_init(0,0,0);
 }
 
-PlayerAgent_action::PlayerAgent_action(PlayerAgent* player_agent) :
+PlayerAgentAction::PlayerAgentAction(PlayerAgent* player_agent) :
     p(player_agent), mining_laser_sound_id(-1)
 {}
 

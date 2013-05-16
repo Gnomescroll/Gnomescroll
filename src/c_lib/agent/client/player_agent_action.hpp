@@ -13,7 +13,7 @@ namespace Agents
 
 class PlayerAgent;// forward declare
 
-class PlayerAgent_action
+class PlayerAgentAction
 {
     private:
         PlayerAgent* p;
@@ -47,7 +47,7 @@ class PlayerAgent_action
 
     Vec3 get_aiming_point();
 
-    explicit PlayerAgent_action(PlayerAgent* player_agent);
+    explicit PlayerAgentAction(PlayerAgent* player_agent);
 };
 
 }   // Agents

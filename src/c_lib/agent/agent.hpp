@@ -118,6 +118,13 @@ class Agent
         return this->standing_box;
     }
 
+    float get_current_speed()
+    {
+        if (this->crouched())
+            return AGENT_SPEED_CROUCHED;
+        return AGENT_SPEED;
+    }
+
     bool in_sight_of(struct Vec3 source, struct Vec3 *sink);
     bool in_sight_of(struct Vec3 source, struct Vec3 *sink, float failure_rate);
 

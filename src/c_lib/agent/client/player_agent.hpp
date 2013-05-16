@@ -71,7 +71,7 @@ class PlayerAgent
         int last_snapshot_time;
 
         AgentID agent_id;
-        PlayerAgent_action action;
+        PlayerAgentAction action;
 
     void handle_state_snapshot(int seq, float theta, float phi,
                                float x, float y, float z,

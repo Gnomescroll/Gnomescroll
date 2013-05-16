@@ -5,6 +5,8 @@
 
 #define TOP_MARGIN 0.01f
 
+const float XY_VELOCITY_INTERPOLATION = 0.275f;
+
 inline bool collides_with_terrain(float radius, float box_h, float x, float y, float z)
 {
     int x_min = int(translate_point(x - radius));
@@ -285,8 +287,8 @@ void apply_control_state(const ControlState& cs, float speed, float jump_force,
 
     //velocity.x = cs_vx;
     //velocity.y = cs_vy;
-    velocity.x = interpolate(velocity.x, cs_vx, 0.225f);
-    velocity.y = interpolate(velocity.y, cs_vy, 0.225f);
+    velocity.x = interpolate(velocity.x, cs_vx, XY_VELOCITY_INTERPOLATION);
+    velocity.y = interpolate(velocity.y, cs_vy, XY_VELOCITY_INTERPOLATION);
 
     if (jetpack)
     {

@@ -31,12 +31,12 @@ void init_cameras()
 {
     agent_camera = new Camera();
     agent_camera->first_person = true;
-    agent_camera->set_position(vec3_init(0,0,50.0f));
+    agent_camera->set_position(vec3_init(0, 0, 50.0f));
     agent_camera->set_fov(85.0f);
 
     free_camera = new Camera();
     free_camera->first_person = false;
-    free_camera->set_position(vec3_init(64,64,128));
+    free_camera->set_position(vec3_init(64, 64, 128));
     free_camera->set_fov(85.0f);
 
     current_camera = free_camera;
@@ -50,9 +50,9 @@ void init_cameras()
         camera->theta = 0;
         camera->phi = 0;
 
-        Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
-        Vec3 r = vec3_init(0.0f, 1.0f, 0.0f);
-        Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
+        Vec3 f = vec3_init(1, 0, 0);
+        Vec3 r = vec3_init(0, 1, 0);
+        Vec3 u = vec3_init(0, 0, 1);
 
         f = vec3_euler_rotation(f, camera->theta, camera->phi, 0.0f);
         r = vec3_euler_rotation(r, camera->theta, camera->phi, 0.0f);
@@ -82,7 +82,8 @@ void teardown_cameras()
 Camera::Camera() :
     zoomed(false), zoom_factor(CAMERA_ZOOM_FACTOR)
 {
-    const float FOV = 70.0f;
+    //const float FOV = 70.0f;
+    const float FOV = 65.0f;
     const float Z_NEAR = 0.1f;
     const float Z_FAR = 320.0f;
     set_aspect(FOV, Z_NEAR, Z_FAR);
