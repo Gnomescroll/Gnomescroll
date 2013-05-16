@@ -20,14 +20,11 @@ const static int BILLBOARD_TEXT_HUD_MAX_LETTERS = 12;
 
 class BillboardTextHud: public TextParticle
 {
-    private:
-        inline void init_properties();
-
     public:
         bool should_draw;
         bool permanent;
 
-    void set_draw(bool draw);
+    inline void set_draw(bool draw);
     void set_position(float x, float y)
     {
         HudText::Text::set_position(x,y);
@@ -38,9 +35,12 @@ class BillboardTextHud: public TextParticle
     inline void reset();
 
     BillboardTextHud();
+
+    private:
+    inline void init_properties();
 };
 
-}
+}   // Particle
 
 #include <common/template/object_list.hpp>
 
@@ -49,11 +49,15 @@ namespace Particle
 
 class BillboardTextHudList: public SimpleObjectList<BillboardTextHud, BILLBOARD_TEXT_HUD_MAX>
 {
-    private:
-        const char* name() { return "BillboardTextHud"; }
     public:
-        void draw();
-        void tick();
+    void draw();
+    void tick();
+
+    private:
+    const char* name()
+    {
+        return "BillboardTextHud";
+    }
 };
 
-}
+}   // Particle

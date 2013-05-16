@@ -37,10 +37,11 @@ BillboardTextHud::BillboardTextHud()
 
 void BillboardTextHud::tick()
 {
+    this->verlet.move_no_gravity();
     if (!this->permanent) this->ttl--;
 }
 
-void BillboardTextHud::set_draw(bool draw)
+inline void BillboardTextHud::set_draw(bool draw)
 {
     this->should_draw = draw;
 }
@@ -58,7 +59,7 @@ void BillboardTextHud::draw()
     GLint res = gluProject(position.x, position.y, position.z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
     if (res == GLU_FALSE) return;
 
-    this->set_position((float)sx, (float)sy);
+    this->set_position(sx, sy);
     this->center();
     int w = this->get_width();
     int h = this->get_height();

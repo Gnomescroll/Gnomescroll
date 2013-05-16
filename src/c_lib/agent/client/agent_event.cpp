@@ -95,7 +95,6 @@ void AgentEvent::took_damage(int amount)
     IF_ASSERT(amount <= 0) return;
     Particle::BillboardText* b = Particle::billboard_text_list->create();
     IF_ASSERT(b == NULL) return;
-    b->reset();
 
     BoundingBox box = a->get_bounding_box();
     Vec3 p = this->a->get_position();
@@ -103,7 +102,7 @@ void AgentEvent::took_damage(int amount)
         p.x + (randf()*(box.radius*2) - box.radius),
         p.y + (randf()*(box.radius*2) - box.radius),
         p.z + a->current_height(),
-        0.0f,0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
+        0.0f, 0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
     b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
     char txt[11+1];
     sprintf(txt, "%d", amount);

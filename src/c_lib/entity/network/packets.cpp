@@ -282,20 +282,23 @@ inline void object_took_damage_StoC::handle()
     if (vox != NULL) radius = vox->get_radius();
 
     // create billboard text at position
-    Particle::BillboardText* b = Particle::billboard_text_list->create();
+    //Particle::BillboardText* b = Particle::billboard_text_list->create();
+    Particle::BillboardTextHud* b = Particle::billboard_text_hud_list->create();
     if (b == NULL) return;
-    b->set_state(position.x + (radius * (2*randf() - 1)),
-                 position.y + (radius * (2*randf() - 1)),
+    b->set_state(position.x + (0.3f * radius * (2*randf() - 1)),
+                 position.y + (0.3f * radius * (2*randf() - 1)),
                  position.z,
-                 0.0f, 0.0f, Particle::BB_PARTICLE_DMG_VELOCITY_Z);
-    b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
+                 (2*randf()-1)/6.0f,
+                 (2*randf()-1)/6.0f,
+                 (2*randf()-1)/6.0f);
+    b->set_color(Particle::BB_PARTICLE_DMG_COLOR);
     const size_t txtlen = 11;
     char txt[txtlen + 1];
     snprintf(txt, txtlen + 1, "%d", this->damage);
     txt[txtlen] = '\0';
     b->set_text(txt);
     b->set_scale(1.0f);
-    b->set_ttl(245);
+    b->set_ttl(randrange(35,45));
 }
 
 #endif

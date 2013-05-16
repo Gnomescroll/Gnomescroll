@@ -44,7 +44,7 @@ void draw()
 {
     // hud projected names should be underneath everything
     start_font_draw();
-    HudFont::set_properties(16);
+    //HudFont::set_properties(16);
     HudFont::set_texture();
     Particle::billboard_text_hud_list->draw();
     Agents::agent_list->draw_names();
