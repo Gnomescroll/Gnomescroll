@@ -18,6 +18,7 @@ OPT_INT_HEADER(port)
 
 /* Map */
 OPT_STRING_HEADER(map)
+OPT_BOOL_HEADER(compress_map)
 OPT_UINT_HEADER(seed)
 
 /* Logging */

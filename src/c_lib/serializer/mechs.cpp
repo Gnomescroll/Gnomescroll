@@ -277,13 +277,13 @@ bool save_mechs()
 
 bool load_mechs()
 {
-    if (file_exists(mech_path) && fsize(mech_path) > 0)
+    if (file_exists(mech_path) && get_filesize(mech_path) > 0)
     {
         if (!load_mech_palette_file(mech_palette_path)) return false;
         return load_mech_file(mech_path);
     }
     else
-    if (file_exists(mech_path_bak) && fsize(mech_path_bak) > 0)
+    if (file_exists(mech_path_bak) && get_filesize(mech_path_bak) > 0)
     {
         if (!load_mech_palette_file(mech_palette_path_bak)) return false;
         return load_mech_file(mech_path_bak);

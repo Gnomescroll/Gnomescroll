@@ -22,6 +22,7 @@ OPT_INT(port, 4096)
 /* Map */
 OPT_STRING(map)
 OPT_UINT(seed, 8007513)
+OPT_BOOL(compress_map, false)
 
 /* Logging */
 OPT_BOOL(logger, true)
@@ -50,6 +51,7 @@ void register_options()
     /* Map */
     OPT_STRING_REGISTER(map, "")
     OPT_UINT_REGISTER(seed)
+    OPT_BOOL_REGISTER(compress_map)
 
     /* Logging */
     OPT_BOOL_REGISTER(logger)

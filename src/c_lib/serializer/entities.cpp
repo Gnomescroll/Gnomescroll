@@ -442,10 +442,10 @@ bool save_entities()
 
 bool load_entities()
 {
-    if (file_exists(entity_path) && fsize(entity_path) > 0)
+    if (file_exists(entity_path) && get_filesize(entity_path) > 0)
         return load_entities_file(entity_path);
     else
-    if (file_exists(entity_path_bak) && fsize(entity_path_bak) > 0)
+    if (file_exists(entity_path_bak) && get_filesize(entity_path_bak) > 0)
         return load_entities_file(entity_path_bak);
     else
         printf("WARNING: No entities file found\n");

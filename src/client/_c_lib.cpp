@@ -76,6 +76,7 @@ bool c_lib_inited = false;
 #include <common/mallox.hpp>
 #include <common/clang_warnings.h>
 #include <common/compression/miniz.c>
+#include <common/compression/files.cpp>
 #include <common/template/object_list.hpp>
 #include <common/template/multi_object_list.hpp>
 #include <common/template/simple_object_list.hpp>

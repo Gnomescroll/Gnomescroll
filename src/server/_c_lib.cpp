@@ -61,6 +61,7 @@ dont_include_this_file_in_client
 #include <common/version.h>
 #include <common/defines.h>
 #include <common/compression/miniz.c>
+#include <common/compression/files.cpp>
 #include <common/macros.hpp>
 #include <common/clang_warnings.h>
 #include <common/crash_report/stack_trace.hpp>

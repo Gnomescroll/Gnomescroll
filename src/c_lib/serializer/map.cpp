@@ -1,6 +1,7 @@
 #include "map.hpp"
 
 #include <common/files.hpp>
+#include <common/compression/files.hpp>
 #include <serializer/_interface.hpp>
 #include <serializer/_state.hpp>
 
@@ -15,6 +16,7 @@ bool should_save_world = false;
 BlockSerializer* block_serializer = NULL;
 
 static bool map_save_completed = false;
+static bool map_save_failed = false;
 bool map_save_memcpy_in_progress = false;
 
 void init_map_serializer()
@@ -40,7 +42,7 @@ struct ThreadedWriteData
 {
     char filename[NAME_MAX+1];
     char* buffer;
-    int buffer_size;
+    size_t buffer_size;
 };
 
 static bool _threaded_write_running = false;
@@ -48,40 +50,61 @@ static struct ThreadedWriteData threaded_write_data;
 static pthread_t map_save_thread = 0;
 
 void* _threaded_write(void* vptr)
-{
-    int ti1 = _GET_MS_TIME();
+{   // WARNING: do not use ASSERT here (not thread safe)
+    int ta = _GET_MS_TIME();
 
     char filename[NAME_MAX+1] = {'\0'};
     strcpy(filename, threaded_write_data.filename);
     char* buffer = threaded_write_data.buffer;
-    int buffer_size = threaded_write_data.buffer_size;
-
+    size_t buffer_size = threaded_write_data.buffer_size;
 
     if (buffer == NULL)
     {
-        printf("ERROR _threaded_write: t->buffer is NULL!\n");
-        return NULL;
+        printf("ERROR in %s: t->buffer is NULL\n", __FUNCTION__);
+        map_save_failed = true;
     }
-
-    FILE *file;
-    file = fopen(filename, "wb+");
-
-    if (file == 0)
+    else
     {
-        printf("THREAD WRITE ERROR: cannot open map file %s \n", filename);
-        return NULL;
+        if (Options::compress_map)
+        {
+            // compress buffer to file
+            int ret = compress_buffer_to_file(filename, buffer, buffer_size);
+            if (ret)
+            {
+                printf("ERROR in %s: Map compression failed.\n", __FUNCTION__);
+                map_save_failed = true;
+            }
+        }
+        else
+        {   // write directly, no compression
+            FILE* file = fopen(filename, "wb+");
+            if (file == NULL)
+            {
+                printf("ERROR in %s: cannot open map file \"%s\"\n", __FUNCTION__, filename);
+                map_save_failed = true;
+            }
+            else
+            {
+                size_t ret = fwrite(buffer, sizeof(char), buffer_size, file);
+                if (ret != buffer_size)
+                {
+                    printf("ERROR in %s: fwrite returned wrong size\n", __FUNCTION__);
+                    map_save_failed = true;
+                }
+                int closed = fclose(file);
+                if (closed != 0)
+                {
+                    map_save_failed = true;
+                    printf("ERROR in %s: fclose returned nonzero status\n", __FUNCTION__);
+                }
+            }
+            free(buffer);
+        }
     }
 
-    int ret = fwrite(buffer, sizeof(char), buffer_size, file);
-    GS_ASSERT(ret == buffer_size);
-    ret = fclose(file); /*done!*/
-    GS_ASSERT(ret == 0);
-
-    free(buffer);
-
-    int ti2 = _GET_MS_TIME();
-
-    printf("_threaded_write: map saved to %s in %i ms \n", filename, ti2-ti1);
+    int tb = _GET_MS_TIME();
+    if (!map_save_failed)
+        printf("%s: map saved to %s in %i ms \n", __FUNCTION__, filename, tb-ta);
 
     map_save_completed = true;
     _threaded_write_running = false;
@@ -93,7 +116,7 @@ void* _threaded_write(void* vptr)
     return NULL;
 }
 
-static void threaded_write(const char* filename, char* buffer, int buffer_len)
+static void threaded_write(const char* filename, char* buffer, size_t buffer_len)
 {
     if (_threaded_write_running != 0)
     {
@@ -374,7 +397,7 @@ bool BlockSerializer::save(const char* filename)
     int index = 0;
     push_int(this->write_buffer, index, version);
 
-    int ti1 = _GET_MS_TIME();
+    int ta = _GET_MS_TIME();
 
     //serialize
     #if PTHREADS_ENABLED
@@ -401,10 +424,10 @@ bool BlockSerializer::save(const char* filename)
     map_save_memcpy_in_progress = false;
     #endif
 
-    int ti2 = _GET_MS_TIME();
+    int tb = _GET_MS_TIME();
 
-    //int ti3 = _GET_MS_TIME();
-    printf("BlockSerializer save: memcpy buffer for %s  took %i ms \n", filename, ti2-ti1);
+    //int tc = _GET_MS_TIME();
+    printf("BlockSerializer save: memcpy buffer for %s  took %i ms \n", filename, tb-ta);
 
     return true;
 }
@@ -467,19 +490,24 @@ bool BlockSerializer::save_iter(int max_ms)
 bool BlockSerializer::load(const char* filename)
 {
     printf("Loading map: %s\n", filename);
+    IF_ASSERT(t_map::main_map == NULL) return false;
+    IF_ASSERT(filename == NULL) return false;
 
-    GS_ASSERT(t_map::main_map != NULL);
+    // guess whether the file is compressed or not
+    const off_t COMPRESSED_FILESIZE_GUESS_MAX = 1024 * 1024 * 20;   // 20MB
+    off_t fsize = get_filesize(filename);
+    bool is_compressed = (fsize < COMPRESSED_FILESIZE_GUESS_MAX);
 
-    GS_ASSERT(filename != NULL);
-    if (filename == NULL) return false;
-
-    int ti1 = _GET_MS_TIME();
+    int ta = _GET_MS_TIME();
     size_t filesize = 0;
-    char* buffer = read_binary_file_to_buffer(filename, &filesize);
-    GS_ASSERT(buffer != NULL);
-    if (buffer == NULL) return false;
+    char* buffer = NULL;
+    if (is_compressed)
+        buffer = decompress_file_to_buffer(filename, filesize);
+    else
+        buffer = read_binary_file_to_buffer(filename, &filesize);
+    IF_ASSERT(buffer == NULL) return false;
 
-    int ti2 = _GET_MS_TIME();
+    int tb = _GET_MS_TIME();
 
     int _version = 0;
     int index = 0;
@@ -504,19 +532,20 @@ bool BlockSerializer::load(const char* filename)
     for (int i=0; i<CHUNK_COUNT; i++)
     {
         class t_map::MapChunk* mp = t_map::main_map->chunk[i];
-        GS_ASSERT(mp != NULL);
-        if (mp == NULL) continue;
+        IF_ASSERT(mp == NULL) continue;
 
         memcpy((char*) chunk, buffer+index, sizeof(struct SerializedChunk));
         index += sizeof(struct SerializedChunk);
         GS_ASSERT(index == (prefix_length + (i+1)*(int)sizeof(struct SerializedChunk)));
-        memcpy(&mp->e, (void*) &chunk->data, 128*16*16*sizeof(struct t_map::MapElement));
+        memcpy(&mp->e, (void*)&chunk->data,
+               //map_dim.z*TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*sizeof(struct t_map::MapElement));
+               128*16*16*sizeof(struct t_map::MapElement));
     }
 
-    int ti3 = _GET_MS_TIME();
+    int tc = _GET_MS_TIME();
 
-    printf("BlockSerializer load: reading map file %s took %i ms \n", filename, ti2-ti1);
-    printf("BlockSerializer load: loading map file %i ms \n", ti3-ti2);
+    printf("BlockSerializer load: reading map file %s took %i ms \n", filename, tb-ta);
+    printf("BlockSerializer load: loading map file %i ms \n", tc-tb);
 
     free(buffer);
 
@@ -525,28 +554,25 @@ bool BlockSerializer::load(const char* filename)
 
 bool save_map()
 {
-    GS_ASSERT(!map_save_memcpy_in_progress);
-    if (map_save_memcpy_in_progress) return false;
+    IF_ASSERT(map_save_memcpy_in_progress) return false;
     #if PTHREADS_ENABLED
-    GS_ASSERT(!_threaded_write_running);
-    if (_threaded_write_running) return false;
+    IF_ASSERT(_threaded_write_running) return false;
     #endif
 
-    GS_ASSERT(block_serializer != NULL);
-    if (block_serializer == NULL) return false;
+    IF_ASSERT(block_serializer == NULL) return false;
     create_path_to_file(map_path_tmp);
     return block_serializer->save(map_path_tmp);
 }
 
 bool load_map()
 {
-    if (file_exists(map_path) && fsize(map_path) > 0)
+    if (file_exists(map_path) && get_filesize(map_path) > 0)
     {
         if (!load_map_palette_file(map_palette_path)) return false;
         return block_serializer->load(map_path);
     }
     else
-    if (file_exists(map_path_bak) && fsize(map_path_bak) > 0)
+    if (file_exists(map_path_bak) && get_filesize(map_path_bak) > 0)
     {
         if (!load_map_palette_file(map_palette_path_bak)) return false;
         return block_serializer->load(map_path_bak);
@@ -557,23 +583,25 @@ bool load_map()
 void update_completed_map_save()
 {
     if (!map_save_completed) return;
-    bool saved = save_tmp_file(map_path, map_path_tmp, map_path_bak);
-    GS_ASSERT(saved);
-    map_save_completed = false; // reset
+    if (!map_save_failed)
+    {
+        bool saved = save_tmp_file(map_path, map_path_tmp, map_path_bak);
+        GS_ASSERT(saved);
+    }
+    // reset flags
+    map_save_completed = false;
+    map_save_failed = false;
     GS_ASSERT(!map_save_memcpy_in_progress);
 
     #if PTHREADS_ENABLED
-    GS_ASSERT(!_threaded_write_running);
+    IF_ASSERT(_threaded_write_running) return;
 
-    if (!_threaded_write_running)
+    if (map_save_thread != 0)
     {
-        if (map_save_thread != 0)
-        {
-            pthread_detach(map_save_thread);
-            printf("Thread detached\n");
-        }
-        map_save_thread = 0;
+        pthread_detach(map_save_thread);
+        printf("Thread detached\n");
     }
+    map_save_thread = 0;
     #endif
 }
 

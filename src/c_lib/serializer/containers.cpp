@@ -368,10 +368,10 @@ bool save_containers()
 
 bool load_containers()
 {
-    if (file_exists(container_path) && fsize(container_path) > 0)
+    if (file_exists(container_path) && get_filesize(container_path) > 0)
         return load_container_file(container_path);
     else
-    if (file_exists(container_path_bak) && fsize(container_path_bak) > 0)
+    if (file_exists(container_path_bak) && get_filesize(container_path_bak) > 0)
         return load_container_file(container_path_bak);
     else
         printf("WARNING: No container file found\n");

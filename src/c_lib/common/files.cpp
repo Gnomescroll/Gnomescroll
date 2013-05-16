@@ -33,7 +33,7 @@ int GS_RENAME(const char* src, const char* dst)
     return rename(src, dst);
 }
 
-off_t fsize(const char *filename)
+off_t get_filesize(const char *filename)
 {
     struct stat st;
     if (stat(filename, &st) == 0)
@@ -48,7 +48,7 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
     if (strstr(mode, "r") == NULL) return NULL;
 
     *size = 0;
-    off_t expected_size = fsize(filename);
+    off_t expected_size = get_filesize(filename);
     char *source = NULL;
     FILE *fp = fopen(filename, mode);
     if (fp == NULL)
@@ -80,7 +80,7 @@ static char* read_file_to_buffer(const char* filename, size_t* size, const char*
             fclose(fp);
             return NULL;
         }
-        if ( ((unsigned long) bufsize) > ((size_t)-1) ) 
+        if ( ((unsigned long) bufsize) > ((size_t)-1) )
         {
             printf("%s:%d - file size is larger than size_t max! %s\n", __FUNCTION__, __LINE__, filename);
             fclose(fp);
