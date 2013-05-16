@@ -95,7 +95,7 @@ CUSTOM_COMPONENT_LIST(AgentSpawnerComponent, agent_spawner_component);
 COMPONENT_LIST(ExplosionComponent, explosion_component, COMPONENT_EXPLOSION, MOBS_MAX / 2);
 COMPONENT_LIST(ItemDropComponent, item_drop_component, COMPONENT_ITEM_DROP, MOBS_MAX);
 CALLABLE_COMPONENT_LIST(HealerComponent, healer_component, COMPONENT_HEALER, MOBS_MAX / 4);
-COMPONENT_LIST(KnockbackComponent, knockback_component, COMPONENT_KNOCKBACK, MOBS_MAX);
+CALLABLE_COMPONENT_LIST(KnockbackComponent, knockback_component, COMPONENT_KNOCKBACK, MOBS_MAX);
 #endif
 
 #undef COMPONENT_LIST

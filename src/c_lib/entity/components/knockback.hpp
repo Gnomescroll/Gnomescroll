@@ -12,12 +12,19 @@ class KnockbackComponent: public Component
 {
     private:
     public:
-
+        // config
         float weight;
+        int knockback_cooldown;
+
+        // state
+        int knockback_tick;
 
     void get_hit(Vec3 incident, ItemType item)
     {
-        const float FORCE = 2.0f;   // TODO -- get this from item type.
+        IF_ASSERT(this->weight <= 0.0f) return;
+        if (this->knockback_tick > 0) return;
+        this->knockback_tick = this->knockback_cooldown;
+        const float FORCE = 1.0f;   // TODO -- get this from item type.
                                     // WARNING -- physics code doesn't like
                                     // high values of this (4.0 is too high)
         PhysicsComponent* physics = (PhysicsComponent*)
@@ -31,9 +38,14 @@ class KnockbackComponent: public Component
         physics->set_momentum(v);
     }
 
+    void call()
+    {
+        this->knockback_tick = GS_MAX(this->knockback_tick - 1, 0);
+    }
+
     KnockbackComponent() :
         Component(COMPONENT_KNOCKBACK, COMPONENT_INTERFACE_KNOCKBACK),
-        weight(1.0f)
+        weight(1.0f), knockback_cooldown(ONE_SECOND), knockback_tick(0)
     {}
 };
 
