@@ -121,29 +121,30 @@ class MechListMeshShader
 {
     public:
 
-    SDL_Surface* s;
+        SDL_Surface* s;
 
-    unsigned int texture1;
-    class Shader* shader;
+        unsigned int texture1;
+        class Shader* shader;
 
-    //uniforms
-    int CameraPosition;
-    //attributes
-    int TexCoord;
-    int Brightness;
-    int InLight;
+        //uniforms
+        GLint CameraPosition;
+        //attributes
+        GLint TexCoord;
+        GLint Brightness;
+        GLint InLight;
 
-    MechListMeshShader()
-    : s(NULL), shader(NULL)
+    MechListMeshShader() :
+        s(NULL), shader(NULL), CameraPosition(-1), TexCoord(-1),
+        Brightness(-1), InLight(-1)
     {
-        init_texture();
-        init_shader();
+        this->init_texture();
+        this->init_shader();
     }
 
     ~MechListMeshShader()
     {
         if (s != NULL) SDL_FreeSurface(s);
-        if (shader != NULL) delete shader;
+        delete shader;
     }
 
     void init_shader()
@@ -151,15 +152,15 @@ class MechListMeshShader
         shader = new Shader;
         shader->set_debug(true);
 
-        shader->load_shader("mech_mesh_shader",
+        shader->load_shader("mech_list_shader (mesh)",
             MEDIA_PATH "shaders/effect/mech_list.vsh",
             MEDIA_PATH "shaders/effect/mech_list.fsh");
 
-        CameraPosition =    shader->get_uniform("CameraPosition");
+        //CameraPosition = shader->get_uniform("CameraPosition");
 
-        TexCoord    =       shader->get_attribute("InTexCoord");
-        Brightness  =       shader->get_attribute("InBrightness");
-        InLight     =       shader->get_attribute("InLight");
+        TexCoord = shader->get_attribute("InTexCoord");
+        //Brightness = shader->get_attribute("InBrightness");
+        InLight = shader->get_attribute("InLight");
     }
 
     void init_texture()
@@ -222,9 +223,9 @@ class MechListMeshRenderer
         GLint clut_texture = glGetUniformLocation(shader.shader->shader, "clut_texture");
         GLint clut_light_texture = glGetUniformLocation(shader.shader->shader, "clut_light_texture");
 
-        GS_ASSERT(clut_texture != 0);
-        GS_ASSERT(base_texture != 0);
-        GS_ASSERT(clut_light_texture != 0);
+        GS_ASSERT(clut_texture >= 0);
+        GS_ASSERT(base_texture >= 0);
+        GS_ASSERT(clut_light_texture >= 0);
 
         shader.shader->enable_attributes();
 
@@ -294,8 +295,8 @@ class MechListMeshRenderer
         GLint clut_texture = glGetUniformLocation(shader.shader->shader, "clut_texture");
         //GLint clut_light_texture = glGetUniformLocation(shader.shader->shader, "clut_light_texture");
 
-        GS_ASSERT(clut_texture != 0);
-        GS_ASSERT(base_texture != 0);
+        GS_ASSERT(clut_texture >= 0);
+        GS_ASSERT(base_texture >= 0);
 
         shader.shader->enable_attributes();
 
@@ -325,7 +326,7 @@ class MechListMeshRenderer
 
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_CULL_FACE);
-        
+
         CHECK_GL_ERROR();
 
     }
@@ -415,7 +416,7 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
 
 
     int env_light = t_map::get_envlight(m.x,m.y,m.z);
-    int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
+    int sky_light = t_map::get_skylight(m.x,m.y,m.z);
     vertex_list.light(sky_light, env_light);
 
     const int imax = MI->van;

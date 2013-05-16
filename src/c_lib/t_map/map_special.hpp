@@ -5,12 +5,11 @@
 namespace t_map
 {
 
-class ControlNode
+struct ControlNode
 {
-    public:
-        int x;
-        int y;
-        int z;
+    int x;
+    int y;
+    int z;
 };
 
 class ControlNodeList
@@ -18,13 +17,13 @@ class ControlNodeList
     public:
         int cpi; //control point index
         int cpm; //control point max
-        class ControlNode* cpa; //control point array;
+        ControlNode* cpa; //control point array;
         bool needs_update; //for drawing
 
     ControlNodeList() :
         cpi(0), cpm(8), needs_update(true)
     {
-        this->cpa = (ControlNode*)malloc(8*sizeof(class ControlNode));
+        this->cpa = (ControlNode*)malloc(8*sizeof(ControlNode));
     }
 
     ~ControlNodeList()
@@ -45,7 +44,7 @@ class ControlNodeList
         if (cpi == cpm)
         {
             cpm *= 2;
-            ControlNode* new_cpa = (ControlNode*) realloc(cpa, cpm*sizeof(class ControlNode));
+            ControlNode* new_cpa = (ControlNode*) realloc(cpa, cpm*sizeof(ControlNode));
             IF_ASSERT(new_cpa == NULL)
             {
                 free(cpa);
@@ -229,8 +228,8 @@ class ControlNodeShader
         s(NULL), texture1(0), shader(NULL), CameraPosition(0), TexCoord(0),
         Brightness(0)
     {
-        init_texture();
-        init_shader();
+        this->init_texture();
+        this->init_shader();
     }
 
     ~ControlNodeShader()
@@ -349,6 +348,7 @@ class ControlNodeRenderer
         glDisable(GL_BLEND);
         glDisable(GL_TEXTURE_2D);
     }
+
     void update()
     {
         control_node_render_update();
@@ -359,7 +359,7 @@ class ControlNodeRenderer
     void control_node_render_update();
     //int cpi; //control point index
     //int cpm; //control point max
-    //class ControlNode* cpa; //control point array;
+    //ControlNode* cpa; //control point array;
 
     void draw_intermediate();
 
@@ -382,11 +382,13 @@ void control_node_render_teardown()
 
 void control_node_render_update()
 {
+    if (control_node_renderer == NULL) return;
     control_node_renderer->update();
 }
 
 void control_node_render_draw()
 {
+    if (control_node_renderer == NULL) return;
     control_node_renderer->draw_intermediate();
     control_node_renderer->draw();
 }
@@ -421,9 +423,9 @@ void ControlNodeRenderer::draw_intermediate()
     glBegin(GL_QUADS);
     for (int i=0; i<cnri; i++)
     {
-        float x = (float) cnra[i].x;
-        float y = (float) cnra[i].y;
-        float z = (float) cnra[i].z;
+        float x = cnra[i].x;
+        float y = cnra[i].y;
+        float z = cnra[i].z;
         int face = cnra[i].face;
 
         int tex_id = 0;
@@ -478,9 +480,9 @@ void ControlNodeRenderer::draw_intermediate()
     for (int i=0; i<cnri; i++)
     {
 
-        float x = (float) cnra[i].x;
-        float y = (float) cnra[i].y;
-        float z = (float) cnra[i].z;
+        float x = cnra[i].x;
+        float y = cnra[i].y;
+        float z = cnra[i].z;
         int face = cnra[i].face;
 
         int tex_id = cnra[i].tex;

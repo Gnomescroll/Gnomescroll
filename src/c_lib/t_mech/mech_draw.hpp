@@ -46,7 +46,7 @@ class MechListVertexList
     MechListVertexList() :
         va(NULL), vi(0), vm(32), VBO(0)
     {
-        this->va = (struct Vertex*)malloc(vm*sizeof(struct Vertex));
+        this->va = (struct Vertex*)malloc(vm*sizeof(*this->va));
         memset(&this->v, 0, sizeof(this->v));
     }
 
@@ -69,10 +69,10 @@ class MechListVertexList
         v.ty = ty;
     }
 
-    void light(int l0, int l1)
+    void light(int a, int b)
     {
-        v.light[0] = 8 + l0*16;
-        v.light[1] = 8 + l1*16;
+        v.light[0] = 8 + a*16;
+        v.light[1] = 8 + b*16;
     }
 
     void push_vertex()
@@ -82,7 +82,7 @@ class MechListVertexList
         if (vi == vm)
         {
             vm *= 2;
-            va = (struct Vertex*) realloc(va, vm*sizeof(struct Vertex));
+            va = (struct Vertex*) realloc(va, vm*sizeof(*this->va));
         }
     }
 
@@ -121,29 +121,30 @@ class MechListShader
 {
     public:
 
-    SDL_Surface* s;
+        SDL_Surface* s;
 
-    unsigned int texture1;
-    class Shader* shader;
+        unsigned int texture1;
+        class Shader* shader;
 
-    //uniforms
-    int CameraPosition;
-    //attributes
-    int TexCoord;
-    int Brightness;
-    int InLight;
+        //uniforms
+        GLint CameraPosition;
+        //attributes
+        GLint TexCoord;
+        GLint Brightness;
+        GLint InLight;
 
-    MechListShader()
-    : s(NULL), shader(NULL)
+    MechListShader() :
+        s(NULL), shader(NULL), CameraPosition(-1), TexCoord(-1),
+        Brightness(-1), InLight(-1)
     {
-        init_texture();
-        init_shader();
+        this->init_texture();
+        this->init_shader();
     }
 
     ~MechListShader()
     {
         if (s != NULL) SDL_FreeSurface(s);
-        if (shader != NULL) delete shader;
+        delete shader;
     }
 
     void init_shader()
@@ -155,11 +156,10 @@ class MechListShader
             MEDIA_PATH "shaders/effect/mech_list.vsh",
             MEDIA_PATH "shaders/effect/mech_list.fsh");
 
-        CameraPosition =    shader->get_uniform("CameraPosition");
-
-        TexCoord    =       shader->get_attribute("InTexCoord");
-        Brightness  =       shader->get_attribute("InBrightness");
-        InLight     =       shader->get_attribute("InLight");
+        //CameraPosition = shader->get_uniform("CameraPosition");
+        TexCoord = shader->get_attribute("InTexCoord");
+        //Brightness = shader->get_attribute("InBrightness");
+        InLight = shader->get_attribute("InLight");
     }
 
     void init_texture()
@@ -308,9 +308,9 @@ class MechListShader
         for (int i=0; i<256; i++)
         {
             if (mech_sprite_width[i] != -1)
-                mech_sprite_width_f[i] = ((float) mech_sprite_width[i]) / 16.0f;
+                mech_sprite_width_f[i] = float(mech_sprite_width[i]) / 16.0f;
             if (mech_sprite_height[i] != -1)
-                mech_sprite_height_f[i] = ((float) mech_sprite_height[i]) / 16.0f;
+                mech_sprite_height_f[i] = float(mech_sprite_height[i]) / 16.0f;
         }
 
     }
@@ -363,9 +363,9 @@ class MechListRenderer
         GLint clut_texture = glGetUniformLocation(shader.shader->shader, "clut_texture");
         GLint clut_light_texture = glGetUniformLocation(shader.shader->shader, "clut_light_texture");
 
-        GS_ASSERT(clut_texture != 0);
-        GS_ASSERT(base_texture != 0);
-        GS_ASSERT(clut_light_texture != 0);
+        GS_ASSERT(clut_texture >= 0);
+        GS_ASSERT(base_texture >= 0);
+        GS_ASSERT(clut_light_texture >= 0);
 
         shader.shader->enable_attributes();
 
@@ -439,8 +439,8 @@ class MechListRenderer
         GLint clut_texture = glGetUniformLocation(shader.shader->shader, "clut_texture");
         //GLint clut_light_texture = glGetUniformLocation(shader.shader->shader, "clut_light_texture");
 
-        GS_ASSERT(clut_texture != 0);
-        GS_ASSERT(base_texture != 0);
+        GS_ASSERT(clut_texture >= 0);
+        GS_ASSERT(base_texture >= 0);
 
         shader.shader->enable_attributes();
 
@@ -470,7 +470,7 @@ class MechListRenderer
 
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_CULL_FACE);
-        
+
         CHECK_GL_ERROR();
 
     }
@@ -600,7 +600,7 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     vn[3*3+2] = wz + size2;
 
     int env_light = t_map::get_envlight(m.x,m.y,m.z);
-    int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
+    int sky_light = t_map::get_skylight(m.x,m.y,m.z);
     vertex_list.light(sky_light, env_light);
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
@@ -798,7 +798,7 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
 
 
     int env_light = t_map::get_envlight(m.x,m.y,m.z);
-    int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
+    int sky_light = t_map::get_skylight(m.x,m.y,m.z);
     vertex_list.light(sky_light, env_light);
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
@@ -893,7 +893,7 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
 
 
     int env_light = t_map::get_envlight(m.x,m.y,m.z);
-    int sky_light = t_map::get_skylight(m.x,m.y,m.z); 
+    int sky_light = t_map::get_skylight(m.x,m.y,m.z);
     vertex_list.light(sky_light, env_light);
 
     const int imax = MI->van;

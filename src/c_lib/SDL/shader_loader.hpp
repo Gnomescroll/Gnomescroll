@@ -3,41 +3,36 @@
 #include <SDL/SDL_functions.hpp>
 
 //info log print
-void printShaderInfoLog(GLuint obj);
-void printProgramInfoLog(GLuint obj);
+void print_shader_info_log(GLhandleARB obj);
+void print_program_info_log(GLhandleARB obj);
 
-void load_shaders(const char *vert, const char* frag, GLuint* prog);
+void load_shaders(const char *vert, const char* frag, GLhandleARB* prog);
 
 //returns true on error
-bool shader_linking_error(int shader, const char* name);
-bool shader_compiler_error(int shader, const char* name);
+bool shader_linking_error(GLhandleARB shader, const char* name);
+bool shader_compiler_error(GLhandleARB shader, const char* name);
 
 class Shader
 {
     public:
-    unsigned int shader;
-    unsigned int frag_shader;
-    unsigned int vert_shader;
+        GLhandleARB shader;
+        GLhandleARB frag_shader;
+        GLhandleARB vert_shader;
+        GLint attribute_array[16]; //atribute list
+        int attribute_index;
+        GLint uniform_array[16]; //uniform list
+        int uniform_index;
 
-    bool debug;
-
-    char* name; //shader name
-
-    int attribute_array[16]; //atribute list
-    int attribute_index;
-
-    int uniform_array[16]; //uniform list
-    int uniform_index;
-
-    bool shader_valid; //is shader valid?
-
-    char* vs;
-    char* fs;
+        char* name; //shader name
+        char* vs;
+        char* fs;
+        bool debug;
+        bool shader_valid;
 
     Shader() :
-        shader(0), frag_shader(0), vert_shader(0), debug(true), name(NULL),
-        attribute_index(0), uniform_index(0), shader_valid(false),
-        vs(NULL), fs(NULL)
+        shader(0), frag_shader(0), vert_shader(0),
+        attribute_index(0), uniform_index(0), name(NULL), vs(NULL), fs(NULL),
+        debug(true), shader_valid(false)
     {
         memset(this->attribute_array, 0, sizeof(this->attribute_array));
         memset(this->uniform_array, 0, sizeof(this->uniform_array));
@@ -55,7 +50,8 @@ class Shader
         this->debug = value;
     }
 
-    void load_shader(const char* _name, const char* vertex_shader_file, const char* fragment_shader_file)
+    void load_shader(const char* _name, const char* vertex_shader_file,
+                     const char* fragment_shader_file)
     {
         GS_ASSERT(this->vs == NULL);
         GS_ASSERT(this->fs == NULL);
@@ -89,37 +85,38 @@ class Shader
         glShaderSourceARB(frag_shader, 1, (const GLcharARB**)&fs, NULL);
 
         glCompileShaderARB(vert_shader);
-        if (debug) printShaderInfoLog(vert_shader);
-        if (shader_compiler_error(vert_shader, this->name)) this->shader_valid = false;
-        else this->shader_valid = true;
+        if (debug)
+            print_shader_info_log(vert_shader);
+        this->shader_valid = (!shader_compiler_error(vert_shader, this->name));
 
         glCompileShaderARB(frag_shader);
-        if (debug) printShaderInfoLog(frag_shader);
-        if (shader_compiler_error(frag_shader, this->name)) this->shader_valid = false;
-        else this->shader_valid = true;
+        if (debug)
+            print_shader_info_log(frag_shader);
+        this->shader_valid = (!shader_compiler_error(frag_shader, this->name));
 
         glAttachObjectARB(shader, vert_shader);
         glAttachObjectARB(shader, frag_shader);
 
         glLinkProgramARB(shader);
-        if (debug) printShaderInfoLog(shader);
+        if (debug)
+            print_shader_info_log(shader);
 
-        if (shader_linking_error(shader, this->name)) this->shader_valid = false;
-        else this->shader_valid = true;
+        this->shader_valid = (!shader_linking_error(shader, this->name));
 
         CHECK_GL_ERROR();
     }
 
-    int get_attribute(const char* attribute_name)
+    GLint get_attribute(const char* attribute_name)
     {
         if (!this->shader_valid) return -1;
         GS_ASSERT(attribute_index < 16);
         if (attribute_index >= 16) return -1;
 
-        int attribute = glGetAttribLocation(shader, attribute_name);
+        GLint attribute = glGetAttribLocation(shader, attribute_name);
         if (attribute == -1)
         {
-            printf("Shader: get_attribute failed. shader= %s attribute= %s \n", name, attribute_name);
+            printf("Shader: get_attribute failed. shader: %s attribute: %s\n",
+                   name, attribute_name);
             return -1;
         }
         CHECK_GL_ERROR();
@@ -129,16 +126,16 @@ class Shader
         return attribute;
     }
 
-    int get_uniform(const char* uniform_name)
+    GLint get_uniform(const char* uniform_name)
     {
         if (!this->shader_valid) return -1;
-        GS_ASSERT(uniform_index < 16);
-        if (uniform_index >= 16) return -1;
-        int uniform = glGetUniformLocation(shader, uniform_name);
+        IF_ASSERT(uniform_index >= 16) return -1;
+        GLint uniform = glGetUniformLocation(shader, uniform_name);
 
-        if (uniform == -1)
+        IF_ASSERT(uniform == -1)
         {
-            printf("Shader: get_uniform failed. shader= %s uniform= %s \n", name, uniform_name);
+            printf("Shader: get_uniform failed. shader: %s uniform: %s\n",
+                   name, uniform_name);
             return -1;
         }
         CHECK_GL_ERROR();

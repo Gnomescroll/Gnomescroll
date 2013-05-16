@@ -369,17 +369,17 @@ void set_map_shader_0_compatibility(int level)
     //glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
     //glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
     //glCompileShaderARB(map_vert_shader[index]);
-    //if (debug) printShaderInfoLog(map_vert_shader[index]);
+    //if (debug) print_shader_info_log(map_vert_shader[index]);
 
     //glCompileShaderARB(map_frag_shader[index]);
-    //if (debug) printShaderInfoLog(map_frag_shader[index]);
+    //if (debug) print_shader_info_log(map_frag_shader[index]);
 
     //glAttachObjectARB(map_shader[index], map_vert_shader[index]);
     //glAttachObjectARB(map_shader[index], map_frag_shader[index]);
 
     //glLinkProgramARB(map_shader[index]);
 
-    //if (debug) printProgramInfoLog(map_shader[index]);
+    //if (debug) print_program_info_log(map_shader[index]);
 
     ////uniforms
 

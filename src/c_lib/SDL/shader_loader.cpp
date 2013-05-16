@@ -6,7 +6,7 @@
 #include <common/compat_gl.h>
 
 //info log print
-void printShaderInfoLog(GLuint obj)
+void print_shader_info_log(GLhandleARB obj)
 {
     int infologLength = 0;
     int charsWritten  = 0;
@@ -28,7 +28,7 @@ void printShaderInfoLog(GLuint obj)
     }
 }
 
-void printProgramInfoLog(GLuint obj)
+void print_program_info_log(GLhandleARB obj)
 {
     int infologLength = 0;
     int charsWritten  = 0;
@@ -50,11 +50,11 @@ void printProgramInfoLog(GLuint obj)
     }
 }
 
-// loads a vertex and fragment shader into a program
-void load_shaders(const char *vert, const char* frag, GLuint* prog)
+// loads a vertex and fragment shader into a shader
+void load_shaders(const char *vert, const char* frag, GLhandleARB* prog)
 {
-    GLuint v = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    GLuint f = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+    GLhandleARB v = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    GLhandleARB f = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
     size_t size = 0;
     char* vs = read_file_to_buffer(vert, &size);
@@ -72,20 +72,20 @@ void load_shaders(const char *vert, const char* frag, GLuint* prog)
     free(vs);
     free(fs);
 
-    glCompileShaderARB(v); printShaderInfoLog(v); ///diag
-    glCompileShaderARB(f); printShaderInfoLog(f); ///diag
+    glCompileShaderARB(v); print_shader_info_log(v); ///diag
+    glCompileShaderARB(f); print_shader_info_log(f); ///diag
 
-    GLuint p = glCreateProgramObjectARB();
+    GLhandleARB p = glCreateProgramObjectARB();
 
     glAttachObjectARB(p,v);
     glAttachObjectARB(p,f);
 
     glLinkProgramARB(p);
-    printProgramInfoLog(p); // print diagonostic information
+    print_program_info_log(p); // print diagonostic information
     *prog = p;
 }
 
-bool shader_compiler_error(int shader, const char* name)
+bool shader_compiler_error(GLhandleARB shader, const char* name)
 {
     if (shader == 0)
     {
@@ -104,15 +104,15 @@ bool shader_compiler_error(int shader, const char* name)
     return false;
 }
 
-bool shader_linking_error(int program, const char* name)
+bool shader_linking_error(GLhandleARB shader, const char* name)
 {
-    if (program <= 0)
+    if (shader <= 0)
     {
-        printf("shader linking error: program creation failed [%s]\n", name);
+        printf("shader linking error: shader creation failed [%s]\n", name);
         return true;
     }
     GLint status = GL_FALSE;
-    glGetProgramiv(program, GL_LINK_STATUS, &status);
+    glGetProgramiv(shader, GL_LINK_STATUS, &status);
     glGetError();   // clear error
     if (status == GL_FALSE)
     {

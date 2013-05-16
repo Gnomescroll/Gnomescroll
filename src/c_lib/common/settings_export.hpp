@@ -501,8 +501,11 @@ char* _test_string1 = NULL;
 bool _test_bool1 = true;
 Color _test_color = Color(66, 77, 99);
 
+#define SETTINGS_EXPORT_TEST 0
+
 void setting_export_test()
 {
+    #if SETTINGS_EXPORT_TEST
     printf("%s:\n", __FILE__);
 
     class SettingsExport* se = new SettingsExport;
@@ -522,4 +525,7 @@ void setting_export_test()
     se->set_display_element("test_int1", "binary_button");
     se->set_display_element("test_int1", "slider");
     delete se;
+    #endif
 }
+
+#undef SETTINGS_EXPORT_TEST

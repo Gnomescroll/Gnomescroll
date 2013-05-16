@@ -128,7 +128,7 @@ void init_t_map()
 void init_for_draw()
 {
     init_cache();
-    control_node_render_init(&main_map->control_node_list);
+    //control_node_render_init(&main_map->control_node_list);
     init_shaders();
 }
 #endif
