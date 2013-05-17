@@ -53,16 +53,16 @@ class DayCycleController
     
     void update()
     {
-        const float cycle_lenth = 1000; //1000 seconds per day
+        const int cycle_length = 1000; //1000 seconds per day
 
         const float sunrise_length = 0.15f;
         const float day_length = 0.40f;
         const float sunset_length = 0.15f;
         const float night_length = 0.30f;
 
-        float ct = dtime % cycle_lenth; //current time
+        float ct = dtime % cycle_length; //current time
 
-        ct = ct / cycle_lenth;
+        ct = ct / cycle_length;
 
         GS_ASSERT(ct <= 1.0f);
         GS_ASSERT(ct >= 0.0f);
@@ -105,7 +105,7 @@ class DayCycleController
         {
             red_tint = 0.0f;
             blue_tint = 0.2f;
-            brightness = 0.2
+            brightness = 0.2;
             return;
         }
         ct -= night_length;
@@ -260,7 +260,7 @@ class LightTextureGenerator2
             for (int j=0; j<dim; j++)
             {
                 values[3*(dim*(15-j)+i)+0] = d2.x;
-                values[3*(dim*(15-j)+i+1] = d2.y;
+                values[3*(dim*(15-j)+i)+1] = d2.y;
                 values[3*(dim*(15-j)+i)+2] = d2.z;
             }
         }
