@@ -35,11 +35,14 @@ class DayCycleController
         static int inc = 0;
 
         inc += current - last; //ms since last update
-
+        last = current;
+        
         if(inc > UPDATE_INTERVAL)
         {
             dtime += UPDATE_INTERVAL /1000;
             inc -= UPDATE_INTERVAL;
+
+            printf("time= %d \n", dtime);
         }
 
         if(inc > UPDATE_INTERVAL + 1000)
@@ -326,7 +329,9 @@ class LightTextureGenerator2
 
     }
 };
+#endif
 
+#if DC_CLIENT
 
 class LightTextureGenerator
 {
@@ -698,9 +703,9 @@ class LightTextureGenerator
 
     }
 };
+#endif
 
 class DayCycleController* DCC = NULL;
-class LightTextureGenerator2* LTG;
 
 #define LIGHTING_DISABLED 0
 
@@ -716,6 +721,10 @@ void update_day_cycle()
 }
 #endif
 
+
+#if DC_CLIENT
+
+class LightTextureGenerator2* LTG;
 
 unsigned int generate_clut_light_texture()
 {
@@ -757,7 +766,6 @@ void generate_light_texture()
 
     //light_texture_CLUT = LTG.texture_array[0];
 }
-
 
 #endif
 
