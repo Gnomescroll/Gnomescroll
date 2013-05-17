@@ -130,7 +130,7 @@ class DayCycleController
 
 #if DC_CLIENT
 
-class LightTextureGenerator
+class LightTextureGenerator2
 {
     public:
         static const int dim = 16;
@@ -138,21 +138,21 @@ class LightTextureGenerator
         //float values2[3*dim*dim];
         GLuint texture_array[1];
 
-    LightTextureGenerator()
+    LightTextureGenerator2()
     {
         memset(this->values, 0, sizeof(this->values));
         //memset(this->values2, 0, sizeof(this->values2));
         memset(this->texture_array, 0, sizeof(this->texture_array));
     }
 
-    ~LightTextureGenerator()
+    ~LightTextureGenerator2()
     {
 
     }
 
     void init()
     {
-
+        init_debug2();
     }
 
     static float falloff(int it, float falloff)
@@ -168,7 +168,7 @@ class LightTextureGenerator
     {
         return vec3_add(vec3_scalar_mult(a, 1.0 -f),  vec3_scalar_mult(b, f));
     }
-
+/*
     struct Vec3 get_twist(int i)
     {
         struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
@@ -189,7 +189,7 @@ class LightTextureGenerator
 
         return b;
     }
-
+*/
 
     //need light values for mourning and dusk
     struct Vec3 get_twist2(int i, float lightv)
@@ -273,7 +273,7 @@ class LightTextureGenerator
         return 1.0;
 
     }
-    
+
     void init3(float ttime)
     {
 
