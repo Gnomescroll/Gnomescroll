@@ -305,7 +305,7 @@ void force_mech_growth(int mech_id)
 
 void print_mech_create_failure_code(MechCreateFailureCode code)
 {
-    if (code == MCF_OK) return;
+    //if (code == MCF_OK) return;
     printf("Failed to create mech. Reason: ");
     switch (code)
     {
@@ -339,7 +339,10 @@ void print_mech_create_failure_code(MechCreateFailureCode code)
         case MCF_OTHER:
             printf("Unspecified");
         case MCF_OK:
-            printf("God");
+            printf("No Failure");
+            break;
+        default:
+            printf("UNKNOWN FAILURE CODE\n");
             break;
     }
     printf("\n");

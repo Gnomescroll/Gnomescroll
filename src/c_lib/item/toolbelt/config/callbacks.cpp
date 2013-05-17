@@ -332,6 +332,8 @@ void place_energy_core(AgentID agent_id, ItemID item_id, ItemType item_type)
 
 void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
+    //printf("place mech\n");
+
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
 
     Agents::Agent* a = Agents::get_agent(agent_id);
@@ -349,7 +351,13 @@ void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
     MechType mech_type = Item::get_mech_type(item_type);
     IF_ASSERT(!isValid(mech_type)) return;
 
-    if (!t_mech::can_place_mech(b[0],b[1],b[2], mech_type)) return;
+    //if(t_mech::can_place_mech(b[0],b[1],b[2], mech_type))
+    //    printf("can place\n");
+
+   //MechCreateFailureCode code = t_mech::can_place_mech(b[0],b[1],b[2], mech_type);
+   //t_mech::print_mech_create_failure_code(code);
+
+    if (t_mech::can_place_mech(b[0],b[1],b[2], mech_type) != 0) return; // MFC_OK == 0
 
     //printf("place mech %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
     bool ret = t_mech::create_mech(b[0],b[1],b[2], mech_type);
