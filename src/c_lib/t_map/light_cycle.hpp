@@ -30,7 +30,7 @@ class DayCycleController
     {
         const int UPDATE_INTERVAL = 1000; //ms between update
 
-        static int  last = _MS_TIME();
+        static int  last = _GET_MS_TIME();
         int current = _GET_MS_TIME();
 
         static int inc = 0;
@@ -171,8 +171,8 @@ class LightTextureGenerator2
     //need light values for mourning and dusk
     struct Vec3 get_twist2(int i, float lightv)
     {
-        struct Vec3 b = vec3_init(1.0f, 1.0f, 1.0f);   //white light
-        struct Vec3 a = vec3_init(1.6f, 0.4f, 0.4f);   //gamma danger twist
+        const struct Vec3 b = vec3_init(1.0f, 1.0f, 1.0f);   //white light
+        const struct Vec3 a = vec3_init(1.6f, 0.4f, 0.4f);   //gamma danger twist
 
         const float twist_start = 0.5; //light level when twist starts
         if(lightv < twist_start)
@@ -700,7 +700,7 @@ class LightTextureGenerator
     }
 };
 
-class LightTextureGenerator* LTG;
+class LightTextureGenerator2* LTG;
 
 #define LIGHTING_DISABLED 0
 
@@ -734,12 +734,13 @@ unsigned int generate_clut_light_texture()
 void generate_light_texture()
 {
 
-    LTG = new LightTextureGenerator;
-    LTG->init2();
-    LTG->save("light_texture");
-    LTG->gen_textures();
-    LTG->save("light_texture_debug");
-    LTG->gen_textures();
+    LTG = new LightTextureGenerator2;
+    LTG->init_debug2();
+    LTG->save("light_texture", true);
+
+    //LTG->gen_textures();
+    //LTG->save("light_texture_debug", true);
+    //LTG->gen_textures();
 
     //light_texture_CLUT = LTG.texture_array[0];
 }
