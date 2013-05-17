@@ -29,20 +29,24 @@ class DayCycleController
     {
         const int UPDATE_INTERVAL = 1000; //ms between update
 
-        static int  last = _GET_MS_TIME();
+        //static int t_start = _GET_MS_TIME();
+
+        static int last = _GET_MS_TIME();
         int current = _GET_MS_TIME();
 
         static int inc = 0;
 
         inc += current - last; //ms since last update
         last = current;
-        
+
+        if(inc <= UPDATE_INTERVAL)
+            return;
+
         if(inc > UPDATE_INTERVAL)
         {
             dtime += UPDATE_INTERVAL /1000;
             inc -= UPDATE_INTERVAL;
-
-            printf("time= %d \n", dtime);
+            //printf("time= %d, ms= %d \n", dtime, last - t_start);
         }
 
         if(inc > UPDATE_INTERVAL + 1000)
