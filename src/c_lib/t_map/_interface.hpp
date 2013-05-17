@@ -89,11 +89,11 @@ int get_rad_level(const struct Vec3i& pos);
 int get_envlight(int x, int y, int z);
 int get_skylight(int x, int y, int z);
 
-#if DC_SERVER
 //light_cycle.hpp
+#if DC_CLIENT
 unsigned int generate_clut_light_texture();
 void generate_light_texture();
-
 #endif
+void update_day_cycle();
 
 }   // t_map

@@ -6,6 +6,8 @@
 #include <net_lib/server.hpp>
 #include <common/dat/attributes.hpp>
 
+#include <t_map/_interface.hpp>
+
 namespace Main
 {
 
@@ -195,6 +197,7 @@ void tick()
         Agents::agent_list->update_map_manager_positions();
         t_map::t_map_manager_update();
         //t_map::t_map_sort_map_chunk_ques();
+        t_map::update_day_cycle(); //update day/night time
     }
 
     Toolbelt::update_toolbelt_items();

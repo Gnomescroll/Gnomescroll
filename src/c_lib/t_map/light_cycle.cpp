@@ -1,4 +1,3 @@
-
 #pragma once
 
 namespace t_map
@@ -700,9 +699,23 @@ class LightTextureGenerator
     }
 };
 
+class DayCycleController* DCC = NULL;
 class LightTextureGenerator2* LTG;
 
 #define LIGHTING_DISABLED 0
+
+#if DC_SERVER
+//advance the day cycle on server
+void update_day_cycle()
+{
+    if(DCC == NULL)
+        DCC = new DayCycleController;
+
+    DCC->advance();
+
+}
+#endif
+
 
 unsigned int generate_clut_light_texture()
 {
