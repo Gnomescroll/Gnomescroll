@@ -139,11 +139,11 @@ Entity* get_object(EntityType type, int id)
     return entity_list->get(type, id);
 }
 
-int get_all(const EntityType type, class Entity**& entities, char*& used)
+class Entity** get_all(EntityType type, char*& used, int& count)
 {
+    count = entity_list->max(type);
     used = entity_list->get_used(type);
-    entities = entity_list->get_objects(type);
-    return entity_list->max(type);
+    return entity_list->get_objects(type);
 }
 
 void destroy_all()

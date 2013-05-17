@@ -7,7 +7,7 @@ namespace Entities
 
 Entity* get(EntityType type, int id)
 {
-    return get_object(type,id);
+    return get_object(type, id);
 }
 
 void ready(Entity* object)

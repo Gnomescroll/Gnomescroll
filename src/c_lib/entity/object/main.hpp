@@ -32,7 +32,7 @@ int count(EntityType type);
 bool full(EntityType type);
 void send_to_client(EntityType type, ClientID client_id);
 
-int get_all(const EntityType type, class Entity**& entities, char*& used);
+class Entity** get_all(EntityType type, char*& used, int& count);
 void destroy_all();
 
 // misc interators. move to another file later

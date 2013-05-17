@@ -373,30 +373,29 @@ bool save_entities()
     GS_ASSERT(agent_spawner_type != OBJECT_NONE);
     if (agent_spawner_type == OBJECT_NONE) return false;
 
-    class Entities::Entity** agent_spawners = NULL;
     char* used_agent_spawners = NULL;
-    int agent_spawners_max = Entities::get_all(agent_spawner_type, agent_spawners, used_agent_spawners);
-    GS_ASSERT(agent_spawners != NULL && used_agent_spawners != NULL);
-    if (agent_spawners == NULL || used_agent_spawners == NULL) return false;
+    int agent_spawners_max = 0;
+    Entities::Entity** agent_spawners = Entities::get_all(agent_spawner_type,
+                                                          used_agent_spawners,
+                                                          agent_spawners_max);
+    IF_ASSERT(agent_spawners == NULL || used_agent_spawners == NULL) return false;
 
     EntityType energy_core_type = Entities::get_entity_type("energy_core");
-    GS_ASSERT(energy_core_type != OBJECT_NONE);
-    if (energy_core_type == OBJECT_NONE) return false;
+    IF_ASSERT(energy_core_type == OBJECT_NONE) return false;
 
-    class Entities::Entity** energy_cores = NULL;
     char* used_energy_cores = NULL;
-    int energy_cores_max = Entities::get_all(energy_core_type, energy_cores, used_energy_cores);
-    GS_ASSERT(energy_cores != NULL && used_energy_cores != NULL);
-    if (energy_cores == NULL || used_energy_cores == NULL) return false;
+    int energy_cores_max = 0;
+    Entities::Entity** energy_cores = Entities::get_all(energy_core_type,
+                                                        used_energy_cores,
+                                                        energy_cores_max);
+    IF_ASSERT(energy_cores == NULL || used_energy_cores == NULL) return false;
 
     FILE* f = fopen(entity_path_tmp, "w");
-    GS_ASSERT(f != NULL);
-    if (f == NULL) return false;
+    IF_ASSERT(f == NULL) return false;
 
     // write a temporary file header.   the actual count will be to be written later
     err = (!write_entity_file_header(f, agent_spawners_max + energy_cores_max));
-    GS_ASSERT(!err);
-    if (err) goto Error;
+    IF_ASSERT(err) goto Error;
 
     // save the entities
     for (int i=0; i<agent_spawners_max; i++)
@@ -428,13 +427,11 @@ bool save_entities()
     // rewrite the header with the actual amounts
     rewind(f);
     err = (!write_entity_file_header(f, ct));
-    GS_ASSERT(!err);
-    if (err) goto Error;
+    IF_ASSERT(err) goto Error;
 
     Error:  // GOTO LABEL
         int ferr = fclose(f);
-        GS_ASSERT(!ferr);
-        if (ferr)
+        IF_ASSERT(ferr)
             log_entity_save_error("Failed to close entity save file");
 
     return (!err && !ferr);

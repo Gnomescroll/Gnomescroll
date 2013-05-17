@@ -226,6 +226,46 @@ static void slime_state_router(class Entity* object, EntityState state)
 }
 #endif
 
+#if DC_SERVER
+void relax_slimes(Entity* object)
+{   // TODO -- this is inefficient -- we need to unpack all the physics
+    // components into one array and work over that.
+    const float relax_distance = 0.85f;
+    const float relax_distance_sq = relax_distance * relax_distance;
+    const float relax_force = 0.1f;
+    int slime_count = 0;
+    char* slimes_used = NULL;
+    class Entity** slimes = get_all(OBJECT_MONSTER_SLIME, slimes_used, slime_count);
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    Vec3 position = physics->get_position();
+    Vec3 momentum = physics->get_momentum();
+    for (int i=0; i<slime_count; i++)
+    {
+        if (!slimes_used[i]) continue;
+        Entity* slime = slimes[i];
+        if (slime->id == object->id) continue;
+        PhysicsComponent* slime_physics = (PhysicsComponent*)slime->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        Vec3 p = slime_physics->get_position();
+        float dist_sq = vec3_distance_squared(position, p);
+        if (dist_sq > relax_distance_sq)
+            continue;
+        if (dist_sq == 0)
+        {
+            Vec3 push = vec3_init((2*randf()-1), (2*randf()-1), 0.0f);
+            push = vec3_scalar_mult(push, relax_force);
+            momentum = vec3_add(momentum, push);
+            continue;
+        }
+        Vec3 push = vec3_sub(position, p);
+        push = vec3_normalize(push);
+        push = vec3_scalar_mult(push, relax_force);
+        momentum = vec3_add(momentum, push);
+    }
+    physics->set_momentum(momentum);
+}
+#endif
+
 void tick_mob_slime(Entity* object)
 {
     #if DC_SERVER
@@ -271,6 +311,10 @@ void tick_mob_slime(Entity* object)
         if (target->target_type == OBJECT_AGENT)
             machine->router(object, STATE_CHASE_AGENT);
     }
+
+    // TODO -- call this rate limited
+    relax_slimes(object);
+
     #endif
 }
 
