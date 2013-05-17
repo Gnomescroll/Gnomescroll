@@ -163,33 +163,10 @@ class LightTextureGenerator2
         return t;
     }
 
-
-    struct Vec3 vec3_mix(struct Vec3 a, struct Vec3 b, float f)
+    static inline struct Vec3 vec3_mix(struct Vec3 a, struct Vec3 b, float f)
     {
-        return vec3_add(vec3_scalar_mult(a, 1.0 -f),  vec3_scalar_mult(b, f));
+        return vec3_add(vec3_scalar_mult(a, 1.0-f),  vec3_scalar_mult(b, f));
     }
-/*
-    struct Vec3 get_twist(int i)
-    {
-        struct Vec3 b = vec3_init(1.0, 1.0, 1.0);   //white light
-        struct Vec3 a = vec3_init(1.6f, 0.4f, 0.4f);   //gamma danger twist
-
-        if (i<=10)
-            return b;
-        if (i==11)
-            return vec3_mix(b,a,0.2f);
-        if (i==12)
-            return vec3_mix(b,a,0.4f);
-        if (i==13)
-            return vec3_mix(b,a,0.6f);
-        if (i==14)
-            return vec3_mix(b,a,0.8f);
-        if (i==15)
-            return vec3_mix(b,a,1.0f);
-
-        return b;
-    }
-*/
 
     //need light values for mourning and dusk
     struct Vec3 get_twist2(int i, float lightv)
@@ -222,52 +199,6 @@ class LightTextureGenerator2
     }
 
     //replaced by the controller
-/*
-    float calc_lightv(float ttime)
-    {
-        GS_ASSERT(ttime >= 0.0f && ttime <= 1.0f);
-
-        //sunrise is start of day
-        const float sunrise_length = 0.20f;
-        const float day_length = 0.30f;
-        const float sunset_length = 0.25f;
-        const float night_length = 0.25f;
-
-        float lightv = 0.0f; //how much day and how much night?
-
-        if(ttime < sunrise_length)
-        {
-            lightv = ttime / sunrise_length;
-            return lightv;
-        }
-
-        ttime -= sunrise_length;
-
-        if(ttime < day_length)
-        {
-            return 1.0;
-        }
-
-        ttime -= day_length;
-
-        if(ttime < sunset_length)
-        {
-            return 1.0 - ttime / sunset_length;
-        }
-
-        ttime -= sunset_length;
-
-        if(ttime <= night_length)
-        {
-            return 0.0f;
-        }
-
-        GS_ASSERT(false);
-
-        return 1.0f;
-    }
-*/
-
     float calc_lightv(float ttime)
     {
         return 1.0;
