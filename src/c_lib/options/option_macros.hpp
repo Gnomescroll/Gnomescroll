@@ -63,5 +63,6 @@ LUA::register_string_option(#NAME, &NAME);
 
 /* Value restrictions */
 
-#define OPT_INT_RANGE_VALID(NAME, a,b)\
+#define OPT_RANGE_VALID(NAME, a, b) \
 if (NAME > (b)) { NAME = (b); } else if (NAME < (a)) { NAME = (a); }
+

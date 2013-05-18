@@ -127,10 +127,8 @@ void register_options()
 
 void validate()
 {
-    OPT_INT_RANGE_VALID(animation_level, 0, 3);
-
-    printf("FOV: %f\n", fov);
-    GS_ASSERT(fov > 0 && fov <= 360);
+    OPT_RANGE_VALID(animation_level, 0, 3);
+    OPT_RANGE_VALID(fov, 5.0f, 180.0f);
 
     #if PRODUCTION
     ping_update_interval = 250;

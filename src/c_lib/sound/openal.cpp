@@ -869,19 +869,19 @@ int test()
     char event_name[] = MEDIA_PATH "sound/wav/plasma_grenade_explode.wav";
     // Load test.wav
     int data_id = Sound::load_wav_file(event_name, &buffer);
-    if (data_id < 0)
+    IF_ASSERT(data_id < 0)
     {
         printf("OpenALSound::test -- wav data_id %d invalid\n", data_id);
         return 1;
     }
-    if (buffer == NULL)
+    IF_ASSERT(buffer == NULL)
     {
         printf("OpenALSound::test -- buffer data is NULL\n");
         return 1;
     }
 
     Sound::WavData *data = Sound::get_loaded_wav_data(data_id);
-    if (data == NULL)
+    IF_ASSERT(data == NULL)
     {
         printf("OpenALSound::test -- wav metadata is NULL\n");
         return 1;
@@ -894,7 +894,7 @@ int test()
     // put the PCM data into the alBuffer
     // (this will copy the buffer, so we must free our char buffer)
     alBufferData(buffers[0], fmt, buffer, data->size, data->sample_rate);
-    if (checkError())
+    IF_ASSERT(checkError())
     {
         printf("alBufferData:\n");
         alDeleteBuffers(MAX_BUFFERS, buffers);
@@ -907,7 +907,7 @@ int test()
 
     // Attach buffer 0 to source
     alSourcei(sources[0], AL_BUFFER, buffers[0]);
-    if (checkError())
+    IF_ASSERT(checkError())
     {
         printf("alSourcei: BUFFER\n");
         alDeleteBuffers(MAX_BUFFERS, buffers);
@@ -916,7 +916,7 @@ int test()
 
     //play
     alSourcePlay(sources[0]);
-    if (checkError())
+    IF_ASSERT(checkError())
     {
         printf("alSourcePlay:\n");
         alDeleteBuffers(MAX_BUFFERS, buffers);
