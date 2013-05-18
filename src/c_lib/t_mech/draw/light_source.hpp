@@ -8,7 +8,7 @@
 #include <t_mech/mesh_loader.hpp>
 
 #if DC_SERVER
-dont_include_this_file_in_server
+# error Don't include this file in the server
 #endif
 
 #include <physics/vec3.hpp>
@@ -91,7 +91,7 @@ class MechLightEffect
         float wz = (float) m.z + 0.5f;;
         //fulstrum test
         wz += scale / 2.0f;
-        
+
         wx = quadrant_translate_f(current_camera_position.x, wx);
         wy = quadrant_translate_f(current_camera_position.y, wy);
 
@@ -191,7 +191,7 @@ class MechLightEffect
         static int c = 0;
         c++;
         if(c%6 == 0)
-            counter++; 
+            counter++;
 
         const MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
 

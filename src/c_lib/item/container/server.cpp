@@ -1,7 +1,7 @@
 #include "server.hpp"
 
 #if DC_CLIENT
-dont_include_this_file_in_client
+# error Don't include this file in the client
 #endif
 
 #include <agent/_interface.hpp>
@@ -64,10 +64,10 @@ void transfer_item_between_containers(ItemID item_id, ItemContainerID container_
     GS_ASSERT(slot_a != NULL_SLOT);
     GS_ASSERT(container_id_b != NULL_CONTAINER);
     GS_ASSERT(slot_b != NULL_SLOT);
-    
+
     ItemContainerInterface* container_a = get_container(container_id_a);
     IF_ASSERT(container_a == NULL) return;
-    
+
     ItemContainerInterface* container_b = get_container(container_id_b);
     IF_ASSERT(container_b == NULL) return;
     IF_ASSERT(container_a->get_item(slot_a) != item_id) return;
@@ -78,14 +78,14 @@ void transfer_item_between_containers(ItemID item_id, ItemContainerID container_
         owner_a = Agents::get_agent(container_a->owner);
         GS_ASSERT(owner_a != NULL);
     }
-    
+
     Agents::Agent* owner_b = NULL;
     if (container_b->owner != NULL_AGENT)
     {
         owner_b = Agents::get_agent(container_b->owner);
         GS_ASSERT(owner_b != NULL);
     }
-    
+
     // remove item from container a
     container_a->remove_item(slot_a);
     // send container remove
@@ -101,7 +101,7 @@ void transfer_item_between_containers(ItemID item_id, ItemContainerID container_
     // if container owners match, nothing
     // if container owners don't match,
     // unsubscribe owner a from item
-    // (replace with containers' subscription list complement intersection 
+    // (replace with containers' subscription list complement intersection
     if (owner_a != owner_b && owner_a != NULL)
         Item::unsubscribe_agent_from_item(owner_a->id, item_id);
 }
@@ -126,7 +126,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, ItemContainerID contai
         owner = Agents::get_agent(container->owner);
         GS_ASSERT(owner != NULL);
     }
-    
+
     // remove item from container
     container->remove_item(slot);
     // send container remove
@@ -145,7 +145,7 @@ void transfer_item_from_container_to_hand(ItemID item_id, ItemContainerID contai
     // if container owners match, nothing
     // if container owners don't match,
     // unsubscribe container owner from item
-    // (replace with containers' subscription list complement intersection 
+    // (replace with containers' subscription list complement intersection
     if (owner != hand_owner && owner != NULL)
         Item::unsubscribe_agent_from_item(owner->id, item_id);
 }
@@ -162,7 +162,7 @@ void transfer_item_from_hand_to_container(ItemID item_id, ItemContainerID contai
 
     ItemContainerInterface* container = get_container(container_id);
     IF_ASSERT(container == NULL) return;
-    
+
     IF_ASSERT(container->get_item(slot) != NULL_ITEM) return;
 
     Agents::Agent* hand_owner = Agents::get_agent(agent_id);
@@ -186,11 +186,11 @@ void transfer_item_from_hand_to_container(ItemID item_id, ItemContainerID contai
     // send container insert
     if (owner != NULL)
         send_container_insert(owner->client_id, item_id, container->id, slot);
-    
+
     // if container owners match, nothing
     // if container owners don't match,
     // unsubscribe owner from item
-    // (replace with containers' subscription list complement intersection 
+    // (replace with containers' subscription list complement intersection
     if (owner != hand_owner && hand_owner != NULL)
         Item::unsubscribe_agent_from_item(hand_owner->id, item_id);
 }
@@ -227,13 +227,13 @@ bool swap_item_between_hand_and_container(AgentID agent_id, ItemContainerID cont
     Item::Item* hand_item = Item::get_item(hand_item_id);
     GS_ASSERT(hand_item != NULL);
     if (hand_item == NULL) return false;
-    
+
     GS_ASSERT(container_item_id != hand_item_id);
     if (container_item_id == hand_item_id) return false;
-    
+
     container->remove_item(slot);
     if (container_owner != NULL)
-        send_container_remove(container_owner->client_id, container->id, slot); 
+        send_container_remove(container_owner->client_id, container->id, slot);
 
     remove_item_from_hand(agent_id);
     if (hand_owner != NULL)
@@ -242,7 +242,7 @@ bool swap_item_between_hand_and_container(AgentID agent_id, ItemContainerID cont
     container->insert_item(slot, hand_item->id);
     if (container_owner != NULL)
         send_container_insert(container_owner->client_id, hand_item->id, container->id, slot);
-        
+
     insert_item_in_hand(agent_id, container_item->id);
     if (hand_owner != NULL)
         send_hand_insert(hand_owner->client_id, container_item->id);
@@ -370,7 +370,7 @@ bool transfer_particle_to_container(ItemID item_id, ItemParticleID particle_id, 
     }
     if (owner != NULL)
         send_container_insert(owner->client_id, item->id, container->id, slot);
-        
+
     return true;
 }
 
@@ -415,7 +415,7 @@ void transfer_hand_to_particle(AgentID agent_id)
     Agents::Agent* agent = Agents::get_agent(agent_id);
     GS_ASSERT(agent != NULL);
     if (agent != NULL) send_hand_remove(agent->client_id);
-    
+
     Item::unsubscribe_agent_from_item(agent_id, hand_item);
 
     ItemParticle::throw_agent_item(agent_id, hand_item);
@@ -490,7 +490,7 @@ static bool pack_container_lock(ItemContainerID container_id, lock_container_Sto
     if (container == NULL) return false;
     IF_ASSERT(!isValid(container->owner)) return false;
     if (container->owner == NULL_AGENT) return false;
-    
+
     msg->container_id = container->id;
     msg->agent_id = container->owner;
     return true;
@@ -549,7 +549,7 @@ void send_container_close(AgentID agent_id, ItemContainerID container_id)
 
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
-    
+
     close_container_StoC msg;
     msg.container_id = container_id;
     msg.sendToClient(a->client_id);
@@ -561,7 +561,7 @@ void send_container_open(AgentID agent_id, ItemContainerID container_id)
 
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
-    
+
     open_container_StoC msg;
     msg.container_id = container_id;
     msg.sendToClient(a->client_id);
@@ -655,7 +655,7 @@ bool agent_open_container(AgentID agent_id, ItemContainerID container_id)
     opened_containers[agent_id] = container->id;
     // send new lock to players
     broadcast_container_lock(container->id);
-    
+
     // send container contents to player
     send_container_contents(a->id, a->client_id, container_id);
 
@@ -664,7 +664,7 @@ bool agent_open_container(AgentID agent_id, ItemContainerID container_id)
         send_smelter_fuel(container->id);
         send_smelter_progress(container->id);
     }
-    
+
     return true;
 }
 
@@ -708,14 +708,14 @@ void agent_close_container_silent(AgentID agent_id, ItemContainerID container_id
     // normally the client should handle this, but the handling in client is there
     // with did_close_container_block, but the race condition is still present and
     // i dont have an alternative solution
-    agent_close_container(agent_id, container_id, false); 
+    agent_close_container(agent_id, container_id, false);
 }
 
 void unsubscribe_agent_from_container_contents(AgentID agent_id, ItemContainerID container_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
     IF_ASSERT(container_id == NULL_CONTAINER) return;
-    
+
     ItemContainerInterface* container = get_container(container_id);
     IF_ASSERT(container == NULL) return;
 

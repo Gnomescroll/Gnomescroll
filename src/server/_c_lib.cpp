@@ -7,7 +7,7 @@
 #define ENABLE_WARNING_SOUND 0
 
 #ifdef DC_CLIENT
-dont_include_this_file_in_client
+# error Don't include this file in the client
 #endif
 
 #include <stdio.h>
@@ -44,7 +44,6 @@ dont_include_this_file_in_client
 #else
 # define GS_SERIALIZER 0
 #endif
-
 
 // threads
 #ifdef linux

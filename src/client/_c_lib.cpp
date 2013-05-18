@@ -13,7 +13,7 @@
 #endif
 
 #if GS_AUTH && !GS_AWESOMIUM
-ERROR_auth_enable_but_awesomium_is_not
+# error GS_AUTH is enabled by GS_AWESOMIUM is not
 #endif
 
 #ifndef GS_ASSIMP
@@ -33,11 +33,11 @@ ERROR_auth_enable_but_awesomium_is_not
 #endif
 
 #ifdef GS_SERIALIZER
-dont_define_gs_serializer_in_client
+# error Don't define GS_SERIALIZER in the client
 #endif
 
 #ifdef DC_SERVER
-dont_include_this_file_in_server
+# error Don't include this file in the server
 #endif
 
 #include <stdio.h>

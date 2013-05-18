@@ -1,7 +1,7 @@
 #pragma once
 
 #if DC_CLIENT
-dont_include_this_file_in_client
+# error Don't include this file in the client
 #endif
 
 #include <t_gen/twister.hpp>
@@ -727,7 +727,7 @@ void set_snake_data(int ox, int oy)  // origin x/y
             int boss_w;  // width of boss room
             int boss_h;  // height of boss room
             if (randrange(0, 1) == 0)
-            { 
+            {
                 boss_w = 2;
                 boss_h = 3;
             }
@@ -736,7 +736,7 @@ void set_snake_data(int ox, int oy)  // origin x/y
                 boss_w = 3;
                 boss_h = 2;
             }
-        
+
             // boss room subgrid iteration
             for (int x = 0; x < boss_w; x++)
             for (int y = 0; y < boss_h; y++)

@@ -1,7 +1,7 @@
 #include "server_state.hpp"
 
 #if DC_CLIENT
-dont_include_this_file_in_client
+# error Don't include this file in the client
 #endif
 
 #include <physics/vec3.hpp>

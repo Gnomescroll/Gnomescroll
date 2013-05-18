@@ -1,7 +1,7 @@
 #include "server.hpp"
 
 #if DC_CLIENT
-dont_include_this_file_in_client
+# error Don't include this file in the client
 #endif
 
 #include <agent/_interface.hpp>
@@ -18,7 +18,7 @@ void subscribe_agent_to_item(AgentID agent_id, ItemID item_id)
 {
     IF_ASSERT(item_id == NULL_ITEM) return;
     GS_ASSERT(isValid(agent_id));
-    
+
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
@@ -73,7 +73,7 @@ static bool pack_item_create(Item* item, item_create_StoC* msg)
     IF_ASSERT(item->id == NULL_ITEM) return false;
     IF_ASSERT(item->type == NULL_ITEM_TYPE) return false;
     IF_ASSERT(item->stack_size <= 0) return false;
-    
+
     msg->id = item->id;
     msg->type = item->type;
     msg->durability = item->durability;
@@ -133,7 +133,7 @@ void send_item_state(ItemID item_id)
 static void send_item_destroy(ClientID client_id, ItemID item_id)
 {
     GS_ASSERT(get_item(item_id) != NULL);
-    
+
     item_destroy_StoC msg;
     msg.id = item_id;
     msg.sendToClient(client_id);
@@ -145,7 +145,7 @@ void send_item_destroy(ItemID item_id)
     IF_ASSERT(item == NULL) return;
     if (item->subscribers.count <= 0) return;
     GS_ASSERT(item->subscribers.count == 1);
-    
+
     item_destroy_StoC msg;
     msg.id = item_id;
     msg.sendToClients(item->subscribers.subscribers, item->subscribers.count);

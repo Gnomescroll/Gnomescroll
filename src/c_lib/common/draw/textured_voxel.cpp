@@ -1,7 +1,7 @@
 #include "textured_voxel.hpp"
 
 #if DC_SERVER
-dont_include_this_file_in_server
+# error Don't include this file in the server
 #endif
 
 #include <camera/camera.hpp>

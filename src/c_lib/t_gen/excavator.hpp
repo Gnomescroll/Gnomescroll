@@ -1,7 +1,7 @@
 #pragma once
 
 #if DC_CLIENT
-dont_include_this_file_in_client
+# error Don't include this file in the client
 #endif
 
 #include <t_gen/noise_map2.hpp>
@@ -37,7 +37,7 @@ inline float cc_point_line_distance2(float vx, float vy, float vz, float wx, flo
 
 OPTIMIZED
 Vec3 dig_worm(Vec3 pos /* posart */, float theta, float phi, float cave_size, CubeType ct) {
-    while (mrandf() < 0.999f) 
+    while (mrandf() < 0.999f)
     {
         const static float length = 2.0f;
         const float _theta = theta*2*PI;
@@ -148,7 +148,7 @@ void excavate() {
             else
                 the_last = dig_worm(worms[i], theta, phi, cave_size, worm_brush);  // start from end of a previously dug worm
 
-            
+
             // setup 3 worms to branch off of its endpoint
             worms[curr_num_worms++] = the_last;
             if (curr_num_worms < MAX_WORMS) worms[curr_num_worms++] = the_last;
