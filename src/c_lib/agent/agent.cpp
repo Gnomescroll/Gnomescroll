@@ -20,19 +20,30 @@
 namespace Agents
 {
 
+
+void AgentState::_constrain_angles()
+{
+    IF_ASSERT(this->theta > 1.0f)
+        this->theta -= 2.0f;
+    IF_ASSERT(this->theta < -1.0f)
+        this->theta += 2.0f;
+
+    IF_ASSERT(this->phi > 0.4999f)
+        this->phi = 0.4999f;
+    IF_ASSERT(this->phi < -0.4999f)
+        this->phi = -0.4999f;
+}
+
 struct Vec3 AgentState::forward_vector()
 {
-    IF_ASSERT(theta > 1.0f)
-        theta -= 2.0f;
-    IF_ASSERT(theta < -1.0f)
-        theta += 2.0f;
-
-    IF_ASSERT(phi > 0.4999f)
-        phi = 0.4999f;
-    IF_ASSERT(phi < -0.4999f)
-        phi = -0.4999f;
-
+    this->_constrain_angles();
     return vec3_euler_rotation(vec3_init(1, 0, 0), theta, phi, 0.0f);
+}
+
+struct Vec3 AgentState::lateral_vector()
+{   // horizontal plane vector, "around"
+    this->_constrain_angles();
+    return vec3_euler_rotation(vec3_init(1, 0, 0), theta, 0.0f, 0.0f);
 }
 
 void Agent::teleport(float x,float y,float z)

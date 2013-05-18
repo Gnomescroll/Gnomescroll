@@ -19,16 +19,15 @@ void load_sound(Soundfile* snd);
 int play_2d_sound(const char* event_name);
 int play_2d_sound(const char* event_name, float gain_multiplier, float pitch_multiplier);
 
-int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v);
-int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier);
+int play_3d_sound(const char* event_name, const Vec3& p, const Vec3& v);
+int play_3d_sound(const char* event_name, const Vec3& p, const Vec3& v, float gain_multiplier, float pitch_multiplier);
 
 int play_2d_sound(int soundfile_id);
-int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v);
+int play_3d_sound(int soundfile_id, const Vec3& p, const Vec3& v);
 
 void stop_sound(int sound_id);
 
-void update_listener(const struct Vec3& p, const struct Vec3& v,
-                     const struct Vec3& f, const struct Vec3& u);
+void update_listener(const Vec3& p, const Vec3& v, const Vec3& f, const Vec3& u);
 void update();
 
 int test();

@@ -175,8 +175,7 @@ void set_volume(float vol)
     checkError();
 }
 
-void update_listener(const struct Vec3& p, const struct Vec3& v,
-                     const struct Vec3& f, const struct Vec3& u)
+void update_listener(const Vec3& p, const Vec3& v, const Vec3& f, const Vec3& u)
 {
     // flip y and z to map to openal's coordinate space
     if (!enabled) return;
@@ -486,7 +485,7 @@ void set_gain_multiplier(int sound_id, float gain)
     active_sources[sound_id].gain_multiplier = gain;
 }
 
-int set_source_properties(int source_id, const class Soundfile* snd, const class GS_SoundSource* active_source)
+static int set_source_properties(int source_id, const class Soundfile* snd, const class GS_SoundSource* active_source)
 {
     if (source_id < 0 || source_id >= MAX_SOURCES)
     {
@@ -518,21 +517,27 @@ int set_source_properties(int source_id, const class Soundfile* snd, const class
     return (checkError());
 }
 
-int update_source_state(int id, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+static int update_source_state(int id, const Vec3& position, const Vec3& velocity,
+                        const Vec3& orientation)
 {
-    alSource3f(id, AL_POSITION, x, z, y);
-    alSource3f(id, AL_VELOCITY, vx, vz, vy);
-    alSource3f(id, AL_DIRECTION, ox, oz, oy);
+    alSource3f(id, AL_POSITION, position.x, position.z, position.y);
+    alSource3f(id, AL_VELOCITY, velocity.x, velocity.z, velocity.y);
+    alSource3f(id, AL_DIRECTION, orientation.x, orientation.z, orientation.y);
     if (checkError())
         return -1;
     return 0;
 }
 
-void get_listener_state(float *x, float *y, float *z, float *vx, float *vy, float *vz, float orientation[6])
+static void get_listener_state(Vec3& position, Vec3& velocity, Vec3& at, Vec3& up)
 {
-    alGetListener3f(AL_POSITION, x, y, z);
-    alGetListener3f(AL_VELOCITY, vx, vy, vz);
-    alGetListenerfv(AL_ORIENTATION, orientation);
+    alGetListener3f(AL_POSITION, &position.x, &position.z, &position.y);
+    alGetListener3f(AL_VELOCITY, &velocity.x, &velocity.z, &velocity.y);
+    ALfloat o[6];
+    alGetListenerfv(AL_ORIENTATION, o);
+    for (int i=0; i<3; i++)
+        at.f[i] = o[i];
+    for (int i=3; i<6; i++)
+        up.f[i] = o[i];
 }
 
 static bool add_to_sources(int sound_buffer_id, int source_id, bool two_dimensional)
@@ -583,9 +588,10 @@ static bool can_add_to_sources(int soundfile_id, int source_id)
     return true;
 }
 
-static int play_sound(int source_id,
-    const class GS_SoundBuffer* sound_buffer, const class GS_SoundSource* active_source,
-    float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+static int play_sound(int source_id, const class GS_SoundBuffer* sound_buffer,
+                      const class GS_SoundSource* active_source,
+                      const Vec3& position, const Vec3& velocity,
+                      const Vec3& orientation)
 {
     if (!enabled)
         return -1;
@@ -598,7 +604,7 @@ static int play_sound(int source_id,
         return -1;
 
     // set source state
-    if (update_source_state(sources[source_id], x,y,z, vx,vy,vz, ox,oy,oz))
+    if (update_source_state(sources[source_id], position, velocity, orientation))
         return -1;
 
     // Attach buffer 0 to source
@@ -620,11 +626,11 @@ static int play_2d_sound(class GS_SoundBuffer* sound_buffer, float gain_multipli
         return -1;
 
     // get listener state
-    ALfloat x,y,z;
-    ALfloat vx,vy,vz;
-    ALfloat o[6];
-    get_listener_state(&x, &y, &z, &vx, &vy, &vz, o);
-    // play at listener state
+    Vec3 position;
+    Vec3 velocity;
+    Vec3 at;
+    Vec3 up;
+    get_listener_state(position, velocity, at, up);
 
     // get free source
     int source_id = get_free_source();
@@ -643,7 +649,7 @@ static int play_2d_sound(class GS_SoundBuffer* sound_buffer, float gain_multipli
     active_source->gain_multiplier = gain_multiplier;
     active_source->pitch_multiplier = pitch_multiplier;
 
-    int ret_source_id = play_sound(source_id, sound_buffer, active_source, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+    int ret_source_id = play_sound(source_id, sound_buffer, active_source, position, velocity, at);
     GS_ASSERT(source_id == ret_source_id);
     if (ret_source_id < 0)
     {   // play sound failed, back out
@@ -679,23 +685,27 @@ int play_2d_sound(int soundfile_id)
     if (!enabled) return -1;
 
     GS_SoundBuffer* sound_buffer = get_sound_buffer_from_soundfile_id(soundfile_id);
-    if (sound_buffer == NULL
-     || sound_buffer->buffer_id < 0
-     || sound_buffer->current_sources >= sound_buffer->max_sources)
+    if (sound_buffer == NULL ||
+        sound_buffer->buffer_id < 0 ||
+        sound_buffer->current_sources >= sound_buffer->max_sources)
+    {
         return -1;
+    }
 
     return play_2d_sound(sound_buffer, 1.0f, 1.0f);
 }
 
-static int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
+static int play_3d_sound(class GS_SoundBuffer* sound_buffer, const Vec3& p, const Vec3& v, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled) return -1;
 
     // TODO -- move this to the sound module
     // Need better organization of Soundfile metadata vs GS_SoundBuffer
-    if (vec3_distance(Sound::listener_position, p) > sound_buffer->metadata->max_playable_distance) return -1;
+    if (vec3_distance(Sound::listener_position, p) >
+            sound_buffer->metadata->max_playable_distance)
+        return -1;
 
-    static const struct Vec3 o = vec3_init(0,0,-1);
+    static const Vec3 o = vec3_init(0, 0, 1);
 
     // get free source
     int source_id = get_free_source();
@@ -712,7 +722,7 @@ static int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, stru
     active_source->gain_multiplier = gain_multiplier;
     active_source->pitch_multiplier = pitch_multiplier;
 
-    int ret_source_id = play_sound(source_id, sound_buffer, active_source, p.x, p.y, p.z, v.x, v.y, v.z, o.x, o.y, o.z);
+    int ret_source_id = play_sound(source_id, sound_buffer, active_source, p, v, o);
     if (ret_source_id < 0)
     {   // error, back out
         remove_from_sources(source_id);
@@ -722,7 +732,7 @@ static int play_3d_sound(class GS_SoundBuffer* sound_buffer, struct Vec3 p, stru
     return source_id;
 }
 
-int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
+int play_3d_sound(const char* event_name, const Vec3& p, const Vec3& v, float gain_multiplier, float pitch_multiplier)
 {
     if (!enabled) return -1;
 
@@ -737,20 +747,22 @@ int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float ga
     return play_3d_sound(sound_buffer, p, v, gain_multiplier, pitch_multiplier);
 }
 
-int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v)
+int play_3d_sound(const char* event_name, const Vec3& p, const Vec3& v)
 {
     return play_3d_sound(event_name, p, v, 1.0f, 1.0f);
 }
 
-int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
+int play_3d_sound(int soundfile_id, const Vec3& p, const Vec3& v)
 {
     if (!enabled) return -1;
 
     GS_SoundBuffer* sound_buffer = get_sound_buffer_from_soundfile_id(soundfile_id);
-    if (sound_buffer == NULL
-     || sound_buffer->buffer_id < 0
-     || sound_buffer->current_sources >= sound_buffer->max_sources)
+    if (sound_buffer == NULL ||
+        sound_buffer->buffer_id < 0 ||
+        sound_buffer->current_sources >= sound_buffer->max_sources)
+    {
         return -1;
+    }
 
     return play_3d_sound(sound_buffer, p, v, 1.0f, 1.0f);
 }
@@ -765,10 +777,11 @@ void update()
     IF_ASSERT(sources == NULL) return;
 
     // get listener state
-    ALfloat x,y,z;
-    ALfloat vx,vy,vz;
-    ALfloat o[6];
-    get_listener_state(&x, &y, &z, &vx, &vy, &vz, o);
+    Vec3 position;
+    Vec3 velocity;
+    Vec3 at;
+    Vec3 up;
+    get_listener_state(position, velocity, at, up);
 
     ALint source_state;
 
@@ -782,7 +795,7 @@ void update()
             GS_ASSERT(active_source->active);    // should already be active
             active_source->active = true;
             if (active_source->two_dimensional)    // update 2d listeners
-                update_source_state(sources[i], x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+                update_source_state(sources[i], position, velocity, at);
 
             GS_ASSERT(active_source->sound_buffer_id >= 0 && active_source->sound_buffer_id < MAX_SOUNDS);
             if (active_source->sound_buffer_id >= 0 && active_source->sound_buffer_id < MAX_SOUNDS)

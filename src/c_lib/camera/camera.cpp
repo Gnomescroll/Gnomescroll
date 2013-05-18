@@ -256,6 +256,11 @@ Vec3 Camera::forward_vector()
     return vec3_euler_rotation(vec3_init(1, 0, 0), this->theta, this->phi, 0.0f);
 }
 
+Vec3 Camera::lateral_vector()
+{
+    return vec3_euler_rotation(vec3_init(1, 0, 0), this->theta, 0.0f, 0.0f);
+}
+
 void Camera::copy_state_from(const Camera* c)
 {
     IF_ASSERT(c == NULL) return;

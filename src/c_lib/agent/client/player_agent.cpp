@@ -40,8 +40,8 @@ void PlayerAgent::update_client_side_prediction_interpolated()
     int _t = int(_GET_MS_TIME());
     int last_tick = int(_LAST_TICK());
 
-    struct Vec3 vs0 = s0.get_position();
-    struct Vec3 vs1 = s1.get_position();
+    Vec3 vs0 = s0.get_position();
+    Vec3 vs1 = s1.get_position();
     vs0 = quadrant_translate_position(current_camera_position, vs0);
     vs1 = quadrant_translate_position(current_camera_position, vs1);
     float dist = vec3_distance(vs0, vs1);
@@ -61,7 +61,7 @@ void PlayerAgent::update_client_side_prediction_interpolated()
 
     vs0 = vec3_scalar_mult(vs0, 1.0f-delta);
     vs1 = vec3_scalar_mult(vs1, delta);
-    struct Vec3 v = vec3_add(vs0, vs1);
+    Vec3 v = vec3_add(vs0, vs1);
     v = translate_position(v);
     c.set_position(v);
 
@@ -252,7 +252,7 @@ float PlayerAgent::camera_z()
     return this->camera_state.z + this->camera_height();
 }
 
-struct Vec3 PlayerAgent::camera_position()
+Vec3 PlayerAgent::camera_position()
 {
     if (this->you() == NULL) return vec3_init(0,0,0);
     return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
@@ -297,7 +297,7 @@ void PlayerAgent::update_sound()
 {
     Sound::update_listener(this->camera_state.get_position(),
                            this->camera_state.get_velocity(),
-                           agent_camera->forward_vector(),
+                           agent_camera->lateral_vector(),
                            vec3_init(0, 0, 1));
     this->play_geiger();
 }
@@ -310,7 +310,7 @@ PlayerAgent::PlayerAgent() :
 {
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
     for (int i=0; i<128; cs_local[i++].seq = -1);
-    for (int i=0; i<128; cs_net[i++].seq = -1) ;
+    for (int i=0; i<128; cs_net[i++].seq = -1);
 }
 
 PlayerAgent::~PlayerAgent()
@@ -461,7 +461,7 @@ int PlayerAgent::facing_container()
 bool PlayerAgent::nearest_open_block(const float max_dist, struct Vec3i& pos)
 {
     if (agent_camera == NULL) return NULL;
-    struct Vec3 f = agent_camera->forward_vector();
+    Vec3 f = agent_camera->forward_vector();
     class RaytraceData data;
     bool collided = raytrace_terrain(agent_camera->get_position(), f, max_dist, &data);
     if (!collided) return false;
@@ -472,8 +472,8 @@ bool PlayerAgent::nearest_open_block(const float max_dist, struct Vec3i& pos)
 int PlayerAgent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
 {
     if (agent_camera == NULL) return 0;
-    struct Vec3 p = agent_camera->get_position();
-    struct Vec3 v = agent_camera->forward_vector();
+    Vec3 p = agent_camera->get_position();
+    Vec3 v = agent_camera->forward_vector();
 
     const float max_dist = 128.0f;
     class RaytraceData data;
@@ -599,7 +599,7 @@ void PlayerAgent::movement_event(const AgentState& s0, const AgentState& s1)
 
 
 #if !PRODUCTION
-void PlayerAgent::teleport_to(struct Vec3 p)
+void PlayerAgent::teleport_to(Vec3 p)
 {
     teleport_me_CtoS msg;
     msg.position = p;

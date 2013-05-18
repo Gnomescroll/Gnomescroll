@@ -125,7 +125,7 @@ void AgentEvent::healed(int amount)
                                                    this->a->get_center(),
                                                    amount);
         //Vec3 p = this->a->get_position();
-        //Sound::play_3d_sound("restore_health", p, vec3_init(0,0,0));
+        //Sound::play_3d_sound("restore_health", p);
     }
 }
 
@@ -142,7 +142,7 @@ void AgentEvent::died()
         //else
         //{
             //Vec3 p = this->a->get_position();
-            //Sound::play_3d_sound("died", p, vec3_init(0,0,0));
+            //Sound::play_3d_sound("died", p);
         //}
         this->a->vox->set_vox_dat(&VoxDats::agent_dead);
         this->a->vox->reset_skeleton();
@@ -156,7 +156,7 @@ void AgentEvent::born()
     //if (a->is_you())
         //Sound::play_2d_sound("respawned");
     //else
-        //Sound::play_3d_sound("respawned", this->a->get_position(), vec3_init(0,0,0));
+        //Sound::play_3d_sound("respawned", this->a->get_position());
     this->a->status.dead = false;
 
     // reset skeleton
@@ -206,7 +206,7 @@ void AgentEvent::set_agent_vox_status(AgentVoxStatus status)
 void AgentEvent::reload_weapon(int type)
 {
     //Vec3 p = this->a->get_position();
-    //Sound::play_3d_sound("reload", p.x, p.y, p.z, 0,0,0);
+    //Sound::play_3d_sound("reload", p);
     // play reload animation/sound for the weapon
 }
 
@@ -306,10 +306,10 @@ void AgentEvent::hit_block()
     // play pick swing
     // play block damage animation
     //Vec3 p = this->a->get_camera_position();
-    //Sound::play_3d_sound("pick_swung", p.x, p.y, p.z, 0,0,0);
+    //Sound::play_3d_sound("pick_swung", p);
 
     // TODO -- need collision point
-    //Sound::play_3d_sound("block_took_damage", collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+    //Sound::play_3d_sound("block_took_damage", vec3_init(collision_point));
 }
 
 void AgentEvent::melee_attack_object(int id, EntityType type, int part)
@@ -320,21 +320,21 @@ void AgentEvent::melee_attack_object(int id, EntityType type, int part)
     // play object's hurt sound
 
     //Vec3 p = this->a->get_camera_position();
-    //Sound::play_3d_sound("pick_swung", p.x,p.y,p.z, 0,0,0);
-    //Sound::play_3d_sound("pick_hit_agent", p.x, p.y, p.z, 0,0,0);
+    //Sound::play_3d_sound("pick_swung", p);
+    //Sound::play_3d_sound("pick_hit_agent", p);
 }
 
 void AgentEvent::melee_attack_nothing()
 {
     // play pick swing animation
     //Vec3 p = this->a->get_camera_position();
-    //Sound::play_3d_sound("pick_swung", p.x, p.y, p.z, 0,0,0);
+    //Sound::play_3d_sound("pick_swung", p);
 }
 
 void AgentEvent::fire_empty_weapon(int weapon_type)
 {
     Vec3 p = this->a->get_camera_position();
-    Sound::play_3d_sound("out_of_ammo", p.x, p.y, p.z, 0,0,0);
+    Sound::play_3d_sound("out_of_ammo", p);
 }
 
 AgentEvent::~AgentEvent()
@@ -351,7 +351,7 @@ AgentEvent::AgentEvent(Agent* owner) :
     this->bb.permanent = true;
     if (this->a->status.name != NULL)
         this->bb.set_text(this->a->status.name);
-    this->bb.set_color(Color(200,4,3,255));
+    this->bb.set_color(Color(200, 4, 3));
     this->bb.set_scale(AgentHudName::SIZE);
 }
 

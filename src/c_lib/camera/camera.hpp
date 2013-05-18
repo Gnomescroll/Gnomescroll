@@ -40,6 +40,7 @@ class Camera
     }
 
     struct Vec3 forward_vector();
+    struct Vec3 lateral_vector();
 
     struct Vec3 right_vector()
     {

@@ -35,6 +35,7 @@ class AgentState
     {}
 
     struct Vec3 forward_vector();
+    struct Vec3 lateral_vector();   // xy-aligned rotation
 
     struct Vec3 get_position() const
     {
@@ -64,6 +65,10 @@ class AgentState
     {
         printf("p: %0.2f, %0.2f, %0.2f; v: %0.2f, %0.2f, %0.2f;\n", x,y,z,vx,vy,vz);
     }
+
+    private:
+
+    void _constrain_angles();
 };
 
 class Agent
@@ -190,6 +195,11 @@ class Agent
     struct Vec3 forward_vector()
     {
         return this->s.forward_vector();
+    }
+
+    struct Vec3 lateral_vector()
+    {
+        return this->s.lateral_vector();
     }
 
     struct Vec3 get_position()

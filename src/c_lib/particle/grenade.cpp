@@ -79,7 +79,7 @@ Grenade::~Grenade()
 {
     #if DC_CLIENT
     Vec3 position = this->get_position();
-    Sound::play_3d_sound("plasma_grenade_explode", position.x, position.y, position.z, 0,0,0);
+    Sound::play_3d_sound("plasma_grenade_explode", position);
     #endif
 }
 
@@ -105,7 +105,7 @@ void Grenade::tick()
         this->bounce_count++;
         #if DC_CLIENT
         //Vec3 position = this->get_position();
-        // Sound::play_3d_sound("grenade_bounce", position.x, position.y, position.z, 0,0,0);
+        // Sound::play_3d_sound("grenade_bounce", position);
         #endif
     }
     if (this->bounce_count >= GRENADE_BOUNCE_EXPLODE_LIMIT)
@@ -140,9 +140,8 @@ inline int Grenade::block_damage(int dist)
     int max_dist = GRENADE_BLOCK_DESTROY_RADIUS*3;
     if (dist >= max_dist) return 0;
     float ratio = float(max_dist - dist) / float(max_dist);
-    float dmg = ratio * float(GRENADE_BLOCK_DAMAGE);
-    int idmg = (int)(dmg);
-    return idmg;
+    int dmg = int(ratio * float(GRENADE_BLOCK_DAMAGE));
+    return dmg;
 }
 
 void Grenade::damage_blocks(int multiplier)

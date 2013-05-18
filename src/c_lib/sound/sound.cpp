@@ -39,7 +39,7 @@ void close()
 
 #if DC_CLIENT
 const float GS_SOUND_DISTANCE_CUTOFF = 128.0f;
-struct Vec3 listener_position;
+Vec3 listener_position;
 
 void update()
 {
@@ -54,8 +54,8 @@ void set_volume(float vol)
 
 /* Listener (player) */
 
-void update_listener(const struct Vec3& p, const struct Vec3& v,
-                     const struct Vec3& f, const struct Vec3& u)
+void update_listener(const Vec3& p, const Vec3& v,
+                     const Vec3& f, const Vec3& u)
 {
     if (!Options::sound) return;
     listener_position = p;
@@ -90,16 +90,24 @@ int play_2d_sound(int soundfile_id)
 
 //Public
 
-// deprecated, use Vec3
-int play_3d_sound(const char* event_name, float x, float y, float z, float vx, float vy, float vz)
+inline int play_3d_sound(const char* event_name, const Vec3& p,
+                         float gain_multiplier, float pitch_multiplier)
 {
-    if (!Options::sound) return -1;
-    return play_3d_sound(event_name, vec3_init(x,y,z), vec3_init(vx,vy,vz));
+    return play_3d_sound(event_name, p, vec3_init(0), gain_multiplier, pitch_multiplier);
 }
 
-int play_3d_sound(const char* event_name, struct Vec3 p) { return play_3d_sound(event_name, p, vec3_init(0,0,0)); }
+inline int play_3d_sound(const char* event_name, const Vec3& p)
+{
+    return play_3d_sound(event_name, p, vec3_init(0));
+}
 
-int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float gain_multiplier, float pitch_multiplier)
+inline int play_3d_sound(const char* event_name, const Vec3& p, const Vec3& v)
+{
+    return play_3d_sound(event_name, p, v, 1.0f, 1.0f);
+}
+
+int play_3d_sound(const char* event_name, Vec3 p, Vec3 v,
+                  float gain_multiplier, float pitch_multiplier)
 {
     if (!Options::sound) return -1;
 
@@ -113,12 +121,7 @@ int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v, float ga
     return OpenALSound::play_3d_sound(event_name, p, v, gain_multiplier, pitch_multiplier);
 }
 
-int play_3d_sound(const char* event_name, struct Vec3 p, struct Vec3 v)
-{
-    return play_3d_sound(event_name, p, v, 1.0f, 1.0f);
-}
-
-int play_3d_sound(int soundfile_id, struct Vec3 p, struct Vec3 v)
+int play_3d_sound(int soundfile_id, Vec3 p, Vec3 v)
 {
     if (!Options::sound) return -1;
 
@@ -181,7 +184,7 @@ void broadcast_play_2d_sound(const char* name)
     msg.broadcast();
 }
 
-void send_play_3d_sound(const char* name, ClientID client_id, struct Vec3 p)
+void send_play_3d_sound(const char* name, ClientID client_id, const Vec3& p)
 {
     int sound_id = get_soundfile_id_for_name(name);
     IF_ASSERT(sound_id < 0) return;
@@ -191,7 +194,7 @@ void send_play_3d_sound(const char* name, ClientID client_id, struct Vec3 p)
     msg.sendToClient(client_id);
 }
 
-void broadcast_play_3d_sound(const char* name, struct Vec3 p)
+void broadcast_play_3d_sound(const char* name, const Vec3& p)
 {
     int sound_id = get_soundfile_id_for_name(name);
     IF_ASSERT(sound_id < 0) return;
@@ -201,7 +204,7 @@ void broadcast_play_3d_sound(const char* name, struct Vec3 p)
     msg.broadcast();
 }
 
-void broadcast_exclude_play_3d_sound(const char* name, struct Vec3 p, int ignore_client_id)
+void broadcast_exclude_play_3d_sound(const char* name, const Vec3& p, int ignore_client_id)
 {
     int sound_id = get_soundfile_id_for_name(name);
     IF_ASSERT(sound_id < 0) return;
