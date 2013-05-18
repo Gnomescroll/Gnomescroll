@@ -109,7 +109,7 @@ bool collides_with_agents(const BoundingBox& box, const Vec3& position, Agents::
 
 bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
                                  Vec3& velocity, float& ground_distance,
-                                 bool collide_agents)
+                                 Agents::Agent** collided_agent)
 {   // returns false if it collided before moving
     // Note: ground_distance is the difference between the surface z point below
     // the old position and the new position's z point. its weird but its
@@ -127,18 +127,21 @@ bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
 
     Vec3 p = translate_position(vec3_add(position, velocity));
 
-    Agents::Agent* agent = NULL;
+    bool agent_collision = false;
 
     bool collision_x = collides_with_terrain_xy(box.radius, box.height, p.x, position.y, position.z);
-    if (!collision_x && collide_agents)
-        collides_with_agents(box, vec3_init(p.x, position.y, position.z), agent);
+    if (!collision_x && collided_agent != NULL)
+        agent_collision = collides_with_agents(box, vec3_init(p.x, position.y, position.z), *collided_agent);
     if (collision_x) p.x = position.x;
 
     bool collision_y = collides_with_terrain_xy(box.radius, box.height, p.x, p.y, position.z);
-    if (!collision_y && collide_agents)
-        collides_with_agents(box, vec3_init(p.x, p.y, position.z), agent);
+    if (!collision_y && collided_agent != NULL && !agent_collision)
+        collides_with_agents(box, vec3_init(p.x, p.y, position.z), *collided_agent);
     if (collision_y) p.y = position.y;
 
+    Agents::Agent* agent = NULL;
+    if (collided_agent != NULL)
+        agent = *collided_agent;
     if (agent != NULL)
     {   // push away from the agent
         Vec3 push = vec3_sub(p, agent->get_position());
@@ -176,6 +179,13 @@ bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
     position = translate_position(p);
     ground_distance = position.z - solid_z;
     return true;
+}
+
+bool move_with_terrain_collision(const BoundingBox& box, Vec3& position,
+                                 Vec3& velocity, float& ground_distance)
+{
+    return move_with_terrain_collision(box, position, velocity,
+                                       ground_distance, NULL);
 }
 
 #define GROUND_MARGIN 0.003f

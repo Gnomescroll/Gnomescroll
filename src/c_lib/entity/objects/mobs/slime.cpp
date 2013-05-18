@@ -92,6 +92,8 @@ static void set_mob_slime_properties(Entity* object)
     agent->jump_force = MONSTER_SLIME_JUMP_FORCE;
     agent->set_jump_cooldowns(MONSTER_SLIME_JUMP_COOLDOWN_EN_ROUTE,
                               MONSTER_SLIME_JUMP_COOLDOWN_NEARBY);
+    agent->attack_rate = (3 * MONSTER_SLIME_JUMP_COOLDOWN_NEARBY) / 4;
+    agent->attack_damage = 2;
 
     using Components::WaitingComponent;
     WaitingComponent* waiting = (WaitingComponent*)add_component_to_object(object, COMPONENT_WAITING);

@@ -13,7 +13,8 @@ class AgentTargetingComponent: public TargetingComponent
         int jump_cooldown_tick;
         int jump_cooldown_max;
         int jump_cooldown_en_route;  // when moving to agent, but not near it
-        int jump_cooldown_nearby;   // when near an agent
+        int jump_cooldown_nearby;    // when near an agent
+        int attack_tick;
 
     Agents::Agent* get_agent()
     {
@@ -35,6 +36,8 @@ class AgentTargetingComponent: public TargetingComponent
         int max_z_diff;
         int max_lock_ticks;
         float jump_force;
+        int attack_rate;
+        int attack_damage;
 
         // state
         int ticks_locked;
@@ -66,9 +69,9 @@ class AgentTargetingComponent: public TargetingComponent
         TargetingComponent(COMPONENT_AGENT_TARGETING),
         jump_cooldown_tick(0), jump_cooldown_max(ONE_SECOND),
         jump_cooldown_en_route(ONE_SECOND), jump_cooldown_nearby(ONE_SECOND),
-        speed(1.0f), proximity_radius(0.25f), max_z_diff(128),
-        max_lock_ticks(0), jump_force(0.25f),
-        ticks_locked(0)
+        attack_tick(0), speed(1.0f), proximity_radius(0.25f), max_z_diff(128),
+        max_lock_ticks(0), jump_force(0.25f), attack_rate(ONE_SECOND),
+        attack_damage(10), ticks_locked(0)
     {
         this->target_id = NULL_AGENT;
     }

@@ -515,6 +515,11 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
     return this->apply_damage(dmg, inflictor_id, inflictor_type, death_method);
 }
 
+int AgentStatus::apply_damage(int dmg, EntityType inflictor_type)
+{
+    return this->apply_damage(dmg, NULL_AGENT, inflictor_type);
+}
+
 int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type)
 {
     return this->apply_damage(dmg, inflictor_id, inflictor_type, NULL_AGENT_PART);

@@ -101,6 +101,7 @@ void AgentTargetingComponent::move_on_surface()
     float ground_distance = 0.0f;
 
     float speed = this->speed / PHYSICS_TICK_RATE;
+    float base_speed = speed;
     if (this->get_target_distance(physics->get_position()) <
         this->proximity_radius * this->proximity_radius)
     {
@@ -111,15 +112,24 @@ void AgentTargetingComponent::move_on_surface()
         this->jump_cooldown_max = this->jump_cooldown_en_route;
 
     CSKey jump = CS_NULL;
-    if (jump_cooldown_tick <= 0 && on_ground(box.radius, position))
+    if (on_ground(box.radius, position))
     {
-        jump = CS_JUMP;
-        speed = this->speed / PHYSICS_TICK_RATE;
-        this->jump_cooldown_tick = this->jump_cooldown_max;
+        if (jump_cooldown_tick <= 0)
+        {
+            jump = CS_JUMP;
+            speed = base_speed;
+            this->jump_cooldown_tick = this->jump_cooldown_max;
+        }
+    }
+    else
+    {
+        speed = base_speed;
     }
 
+    Agents::Agent* collided_agent = NULL;
     bool passed_through = move_with_terrain_collision(box, position, momentum,
-                                                      ground_distance, true);
+                                                      ground_distance,
+                                                      &collided_agent);
     if (passed_through)
     {
         ControlState cs;
@@ -132,9 +142,14 @@ void AgentTargetingComponent::move_on_surface()
                             ground_distance);
     }
 
-    //move_within_terrain_surface(physics->get_position(), motion_direction,
-                                //this->speed, this->max_z_diff,
-                                //&position, &momentum);
+    #if DC_SERVER
+    if (collided_agent != NULL && attack_tick <= 0)
+    {
+        collided_agent->status.apply_damage(this->attack_damage, this->object->type);
+        this->attack_tick = this->attack_rate;
+    }
+    #endif
+
     physics->set_position(position);
     physics->set_momentum(momentum);
 }
@@ -160,6 +175,7 @@ void AgentTargetingComponent::call()
             state_machine->router(this->object, STATE_WAITING);
     }
     this->jump_cooldown_tick = GS_MAX(this->jump_cooldown_tick - 1, 0);
+    this->attack_tick = GS_MAX(this->attack_tick - 1, 0);
 }
 
 } // Entities

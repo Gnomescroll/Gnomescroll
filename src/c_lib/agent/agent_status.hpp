@@ -23,6 +23,8 @@ class AgentStatus
         int hunger_damage_tick;
         int rad_damage_tick;
 
+    int apply_damage(int dmg);
+
     public:
 
         bool should_die;
@@ -77,10 +79,10 @@ class AgentStatus
     int hurt(unsigned int amt);
 
     // use apply_damage for when getting attacked (energy shields will be accounted for)
-    int apply_damage(int dmg);
     int apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, int part_id);
     int apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type);
     int apply_damage(int dmg, AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method);
+    int apply_damage(int dmg, EntityType inflictor_type);
     int apply_damage(int dmg, AgentDeathMethod death_method);   // assumes self-inflicted wound
 
     int apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
