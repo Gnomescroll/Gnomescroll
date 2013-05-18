@@ -4,6 +4,7 @@
 #include <entity/constants.hpp>
 #include <common/defines.h>
 #include <voxel/voxel_model.hpp>
+#include <voxel/vox_dat_init.hpp>
 #include <agent/constants.hpp>
 #include <agent/agent_status.hpp>
 #include <physics/common.hpp>
@@ -108,21 +109,32 @@ class Agent
     {
         if (this->crouched())
             return this->crouching_box;
-        return this->standing_box;
+        else
+            return this->standing_box;
     }
 
     BoundingBox get_bounding_box(const struct ControlState& cs)
     {
         if (this->crouched(cs))
             return this->crouching_box;
-        return this->standing_box;
+        else
+            return this->standing_box;
     }
 
     float get_current_speed()
     {
         if (this->crouched())
             return AGENT_SPEED_CROUCHED;
-        return AGENT_SPEED;
+        else
+            return AGENT_SPEED;
+    }
+
+    Voxels::VoxDat* get_vox_dat()
+    {
+        if (this->crouched())
+            return &VoxDats::agent_crouched;
+        else
+            return &VoxDats::agent;
     }
 
     bool in_sight_of(struct Vec3 source, struct Vec3 *sink);

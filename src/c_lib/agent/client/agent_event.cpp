@@ -32,7 +32,7 @@ void AgentEvent::update_hud_name()
     Vec3 p = this->a->get_position();
     this->bb.set_state(p.x, p.y, p.z + a->current_height() + z_margin, 0.0f, 0.0f, 0.0f);
     using namespace AgentHudName;
-    Color color = HEALTH_TEXT_DEAD_COLOR;    // default, dead color
+    Color color = HEALTH_TEXT_DEAD_COLOR;
     if (this->a->status.dead)
     {
         this->bb.set_color(color);
@@ -74,7 +74,7 @@ void AgentEvent::draw_badges()
 
     // keep it centered with the line
     float x = this->bb.x;
-    float y = this->bb.y - h - (h - HudFont::font->data.line_height)/2;
+    float y = this->bb.y - h - (h - HudFont::font->data.line_height) / 2.0f;
 
     for (size_t i=0; i<this->a->status.n_badges; i++)
     {
@@ -96,23 +96,7 @@ void AgentEvent::took_damage(int amount)
     // We need the play damage grunts always,
     // and we need to show damage indicators when we did the damage
     IF_ASSERT(amount <= 0) return;
-    Particle::BillboardTextHud* b = Particle::billboard_text_hud_list->create();
-    IF_ASSERT(b == NULL) return;
-
-    BoundingBox box = a->get_bounding_box();
-    Vec3 p = this->a->get_center();
-    b->set_state(
-        p.x + (randf()*(box.radius*2) - box.radius),
-        p.y + (randf()*(box.radius*2) - box.radius),
-        p.z + a->current_height(),
-        (2*randf()-1)*0.2f, (2*randf()-1)*0.2f, (2*randf()-1)*0.2f);
-    b->set_color(Particle::BB_PARTICLE_DMG_COLOR);   // red
-    char txt[11+1];
-    snprintf(txt, 11+1, "%d", amount);
-    txt[11] = '\0';
-    b->set_text(txt);
-    b->set_ttl(randrange(35, 45));
-
+    Vec3 position = this->a->get_center();
     const char sound_fmt[] = "agent_took_damage_%d";
     static char sound_str[sizeof(sound_fmt)] = {'\0'};
     snprintf(sound_str, sizeof(sound_fmt), sound_fmt, randrange(1, 3));
@@ -120,7 +104,11 @@ void AgentEvent::took_damage(int amount)
     if (a->is_you())
         Sound::play_2d_sound(sound_str);
     else
-        Sound::play_3d_sound(sound_fmt, p);
+    {
+        Animations::create_health_change_indicator(this->a->get_bounding_box(),
+                                                   position, -amount);
+        Sound::play_3d_sound(sound_fmt, position);
+    }
 }
 
 void AgentEvent::healed(int amount)
@@ -133,27 +121,12 @@ void AgentEvent::healed(int amount)
     }
     else
     {
+        Animations::create_health_change_indicator(this->a->get_bounding_box(),
+                                                   this->a->get_center(),
+                                                   amount);
         //Vec3 p = this->a->get_position();
         //Sound::play_3d_sound("restore_health", p, vec3_init(0,0,0));
     }
-
-    // show billboard text particle
-    Particle::BillboardText* b = Particle::billboard_text_list->create();
-    IF_ASSERT(b == NULL) return;
-    b->reset();
-
-    Vec3 p = this->a->get_position();
-    BoundingBox box = this->a->get_bounding_box();
-    b->set_state(p.x + (randf()*(box.radius*2) - box.radius),
-                 p.y + (randf()*(box.radius*2) - box.radius),
-                 p.z + a->current_height(),
-                 0.0f, 0.0f, Particle::BB_PARTICLE_HEAL_VELOCITY_Z);
-    b->set_color(Particle::BB_PARTICLE_HEAL_COLOR);   // red
-    char txt[10+1];
-    sprintf(txt, "%d", amount);
-    b->set_text(txt);
-    b->set_scale(1.0f);
-    b->set_ttl(245);
 }
 
 void AgentEvent::died()
@@ -187,7 +160,7 @@ void AgentEvent::born()
     this->a->status.dead = false;
 
     // reset skeleton
-    Voxels::VoxDat* vd = (this->a->crouched()) ? &VoxDats::agent_crouched : &VoxDats::agent;
+    Voxels::VoxDat* vd = this->a->get_vox_dat();
     this->a->vox->set_vox_dat(vd);
     this->a->vox->reset_skeleton();
 }

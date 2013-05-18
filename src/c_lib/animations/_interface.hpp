@@ -27,6 +27,8 @@ void mining_laser_beam(struct Vec3 position, struct Vec3 orientation, float leng
 
 void play_animation(const char* name, struct Vec3 position);
 void play_animation(AnimationType animation_type, struct Vec3 position);
+
+void create_health_change_indicator(const BoundingBox& box, const Vec3& position, int amount);
 #endif
 
 #if DC_SERVER

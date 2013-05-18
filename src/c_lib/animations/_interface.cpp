@@ -77,7 +77,7 @@ void play_animation(AnimationType animation_type, struct Vec3 position)
 
         case AnimDataSimple:
             ((class AnimationStateMetadata*)data->metadata)->position = position;
-            ((class AnimationStateMetadata*)data->metadata)->velocity = vec3_scalar_mult(vec3_init(1,1,1), data->momentum);
+            ((class AnimationStateMetadata*)data->metadata)->velocity = vec3_scalar_mult(vec3_init(1), data->momentum);
             break;
 
         default:
@@ -92,6 +92,36 @@ void play_animation(const char* name, struct Vec3 position)
 {
     AnimationType animation_type = get_animation_type(name);
     play_animation(animation_type, position);
+}
+
+void create_health_change_indicator(const BoundingBox& box, const Vec3& position, int amount)
+{
+    const float STRAY_SPEED = 1.0f/6.0f;
+    const float RADIUS_FACTOR = 0.3f;
+    const float TEXT_SCALE = 0.95f;
+    int ttl = randrange(35, 45);
+
+    Particle::BillboardTextHud* b = Particle::billboard_text_hud_list->create();
+    IF_ASSERT(b == NULL) return;
+    b->set_state(
+        position.x + (RADIUS_FACTOR * box.radius * (2*randf() - 1)),
+        position.y + (RADIUS_FACTOR * box.radius * (2*randf() - 1)),
+        position.z + (RADIUS_FACTOR * box.radius * (2*randf() - 1) * 0.5f),
+        (2*randf()-1)*STRAY_SPEED,
+        (2*randf()-1)*STRAY_SPEED,
+        (2*randf()-1)*STRAY_SPEED);
+    Color color = COLOR_WHITE;
+    if (amount > 0)
+        color = Particle::BB_PARTICLE_HEAL_COLOR;
+    else if (amount < 0)
+        color = Particle::BB_PARTICLE_DMG_COLOR;
+    b->set_color(Particle::BB_PARTICLE_DMG_COLOR);
+    char txt[11+1];
+    snprintf(txt, 11+1, "%d", abs(amount));
+    txt[11] = '\0';
+    b->set_text(txt);
+    b->set_scale(TEXT_SCALE);
+    b->set_ttl(ttl);
 }
 
 float x13 = 0.0f;

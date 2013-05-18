@@ -259,46 +259,41 @@ inline void object_shot_nothing_StoC::handle()
     Sound::play_3d_sound("turret_shoot", position);
 }
 
+//#define GET_COMPONENT_INTERFACE(type, object) \
+    //(type##Component*)object->get_component_interface(COMPONENT_INTERFACE_##type);
+
+//#define GET_COMPONENT(type, object) \
+    //(type##Component*)object->get_component(COMPONENT_##type);
+
+
 inline void object_took_damage_StoC::handle()
 {
     Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
     if (obj == NULL) return;
 
-    // get object position
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
 
-    // put position at top of object
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-    if (dims != NULL) position.z += dims->get_height();
+    float height = 1.0f;
+    if (dims != NULL)
+    {
+        height = dims->get_height();
+        position.z += height / 2.0f;
+    }
 
-    // get radial range to place damage particle within
     float radius = 0.0f;
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     if (vox != NULL) radius = vox->get_radius();
 
-    // create billboard text at position
-    //Particle::BillboardText* b = Particle::billboard_text_list->create();
-    Particle::BillboardTextHud* b = Particle::billboard_text_hud_list->create();
-    if (b == NULL) return;
-    b->set_state(position.x + (0.3f * radius * (2*randf() - 1)),
-                 position.y + (0.3f * radius * (2*randf() - 1)),
-                 position.z,
-                 (2*randf()-1)/6.0f,
-                 (2*randf()-1)/6.0f,
-                 (2*randf()-1)/6.0f);
-    b->set_color(Particle::BB_PARTICLE_DMG_COLOR);
-    const size_t txtlen = 11;
-    char txt[txtlen + 1];
-    snprintf(txt, txtlen + 1, "%d", this->damage);
-    txt[txtlen] = '\0';
-    b->set_text(txt);
-    b->set_scale(1.0f);
-    b->set_ttl(randrange(35,45));
+    BoundingBox box;
+    box.radius = radius;
+    box.height = height;
+    Animations::create_health_change_indicator(box, position, -int(damage));
 }
 
 #endif
