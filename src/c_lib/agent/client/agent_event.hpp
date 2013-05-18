@@ -25,6 +25,7 @@ class AgentEvent
         Agent* a;
         AgentVoxStatus vox_status;
         bool model_was_changed;
+        SoundID last_hurt_sound;
     public:
         bool color_changed;
         class Animations::MiningLaserEmitter mining_laser_emitter;

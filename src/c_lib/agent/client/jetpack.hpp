@@ -20,7 +20,7 @@ class JetPack
 {
     private:
         // sound
-        int loop_sound_id;
+        SoundID loop_sound_id;
         int ticks_til_loop;
         int ticks_til_end;
         float prev_gain;
@@ -32,7 +32,7 @@ class JetPack
         int fuel;
 
     JetPack() :
-        loop_sound_id(-1), ticks_til_loop(0), ticks_til_end(0),
+        loop_sound_id(NULL_SOUND_ID), ticks_til_loop(0), ticks_til_end(0),
         prev_gain(0.0f), prev_thrusting(false), underfueled_thrusting(false),
         fuel(JETPACK_FUEL_MAX)
     {}
@@ -106,13 +106,13 @@ class JetPack
         }
 
         // Start sound, applying current gain
-        if (gain > 0.0f && this->loop_sound_id < 0)
+        if (gain > 0.0f && this->loop_sound_id == NULL_SOUND_ID)
         {   // turn on
             this->loop_sound_id = Sound::play_2d_sound("jetpack_loop", gain, 1.0f);
         }
 
         // update sound properties, or stop it
-        if (this->loop_sound_id >= 0)
+        if (this->loop_sound_id != NULL_SOUND_ID)
         {
             if (gain > 0.0f)
             {   // apply gain
@@ -121,7 +121,7 @@ class JetPack
             else
             {   // turn off
                 Sound::stop_sound(this->loop_sound_id);
-                this->loop_sound_id = -1;
+                this->loop_sound_id = NULL_SOUND_ID;
             }
         }
 

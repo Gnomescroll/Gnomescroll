@@ -8,12 +8,12 @@ namespace Sound
 #if DC_CLIENT
 inline void play_2d_sound_StoC::handle()
 {
-    play_2d_sound(sound_id);
+    play_2d_sound(soundfile_id);
 }
 
 inline void play_3d_sound_StoC::handle()
 {
-    play_3d_sound(sound_id, position, vec3_init(0,0,0));
+    play_3d_sound(soundfile_id, position);
 }
 #endif
 

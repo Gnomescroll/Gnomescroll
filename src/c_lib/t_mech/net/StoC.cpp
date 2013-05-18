@@ -32,9 +32,9 @@ void mech_type_change_StoC::handle()
 
     if (is_plant(m.type))
     {
-        int snd_id = Sound::play_3d_sound("cropgrow", vec3_init(m.x, m.y, m.z));
+        SoundID snd_id = Sound::play_3d_sound("cropgrow", vec3_init(m.x, m.y, m.z));
         float pmult = float(randrange(-5,5)) / 1000.0f;
-        if (snd_id >= 0)
+        if (snd_id != NULL_SOUND_ID)
             Sound::set_pitch_multiplier(snd_id, pmult+1.0f);
     }
 
@@ -106,7 +106,7 @@ void mech_text_update_StoC::handle()
 
     class MechAttribute* ma = get_mech_attribute(m.type);
     GS_ASSERT(ma->class_type == MECH_SIGN);
-    
+
     ((char*)m.text)[pos] = key;
 
     printf("set_text: mech %d, pos %d set to letter %d \n", id, pos, key);

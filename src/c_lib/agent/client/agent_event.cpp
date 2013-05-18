@@ -102,12 +102,16 @@ void AgentEvent::took_damage(int amount)
     snprintf(sound_str, sizeof(sound_fmt), sound_fmt, randrange(1, 3));
     sound_str[sizeof(sound_fmt)-1] = '\0';
     if (a->is_you())
-        Sound::play_2d_sound(sound_str);
+    {
+        if (!Sound::is_active(this->last_hurt_sound))
+            this->last_hurt_sound = Sound::play_2d_sound(sound_str);
+    }
     else
     {
         Animations::create_health_change_indicator(this->a->get_bounding_box(),
                                                    position, -amount);
-        Sound::play_3d_sound(sound_fmt, position);
+        if (!Sound::is_active(this->last_hurt_sound))
+            this->last_hurt_sound = Sound::play_3d_sound(sound_fmt, position);
     }
 }
 
@@ -345,6 +349,7 @@ AgentEvent::AgentEvent(Agent* owner) :
     a(owner),
     vox_status(AGENT_VOX_IS_STANDING),
     model_was_changed(true),
+    last_hurt_sound(NULL_SOUND_ID),
     color_changed(false)
 {
     this->bb.reset();

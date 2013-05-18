@@ -202,7 +202,7 @@ void PlayerAgentAction::begin_mining_laser()
 
     you->event.mining_laser_emitter.turn_on();
 
-    IF_ASSERT(this->mining_laser_sound_id >= 0) return;
+    IF_ASSERT(this->mining_laser_sound_id != NULL_SOUND_ID) return;
     this->mining_laser_sound_id = Sound::play_2d_sound("mining_laser");
 }
 
@@ -213,9 +213,9 @@ void PlayerAgentAction::end_mining_laser()
 
     you->event.mining_laser_emitter.turn_off();
 
-    if (this->mining_laser_sound_id < 0) return;
+    if (this->mining_laser_sound_id == NULL_SOUND_ID) return;
     Sound::stop_sound(this->mining_laser_sound_id);
-    this->mining_laser_sound_id = -1;
+    this->mining_laser_sound_id = NULL_SOUND_ID;
 }
 
 void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
@@ -558,7 +558,9 @@ Vec3 PlayerAgentAction::get_aiming_point()
 }
 
 PlayerAgentAction::PlayerAgentAction(PlayerAgent* player_agent) :
-    p(player_agent), mining_laser_sound_id(-1)
-{}
+    p(player_agent), mining_laser_sound_id(NULL_SOUND_ID),
+    target_direction(vec3_init(1,0,0))
+{
+}
 
 }   // Agents

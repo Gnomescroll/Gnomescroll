@@ -278,8 +278,8 @@ void PlayerAgent::play_geiger()
     if (skip) return;
     if (i % rate == 0)
     {
-        int snd_id = Sound::play_2d_sound("geiger");
-        if (snd_id >= 0)
+        SoundID snd_id = Sound::play_2d_sound("geiger");
+        if (snd_id != NULL_SOUND_ID)
         {
             float pmult = float(randrange(-7,7)) / 1000.0f;
             float gmult = float(randrange(-2,2)) / 1000.0f;

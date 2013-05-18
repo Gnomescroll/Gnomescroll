@@ -17,6 +17,7 @@ class PlayerAgentAction
 {
     private:
         PlayerAgent* p;
+        SoundID mining_laser_sound_id;
 
     public:
 
@@ -30,7 +31,6 @@ class PlayerAgentAction
     void hitscan_laser(ItemType weapon_type);
 
     // mining laser
-    int mining_laser_sound_id;
     void begin_mining_laser();
     void end_mining_laser();
     void update_mining_laser();
