@@ -202,7 +202,7 @@ void Camera::world_projection()
     float y = this->position.y;
     float z = this->position.z;
 
-
+/*
 //    const double zshake = 0.0*randf(); //how much to shake up/down
     Vec3 _f = vec3_euler_rotation(look, theta, phi, 0.0f);
     Vec3 _r = vec3_euler_rotation(right, theta, phi, 0.0f);
@@ -222,6 +222,7 @@ void Camera::world_projection()
     x += _s.x; //add in shake
     y += _s.y;
     z += _s.z;
+*/
 
     gluLookAt(
         x,y,z,
