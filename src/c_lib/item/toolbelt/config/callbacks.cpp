@@ -387,7 +387,7 @@ void place_mech_oriented(AgentID agent_id, ItemID item_id, ItemType item_type)
     MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
 
     //failed
-    if(code == 0)
+    if(code != 0)
     {
         t_mech::print_mech_create_failure_code(code);
         return;
@@ -476,9 +476,16 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
     t_mech::print_mech_create_failure_code(code);
 */
 
-    MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
+    MechType mech_type1 = t_mech::get_mech_type_dat("iridium_solar_cell");
+    MechType mech_type2 = t_mech::get_mech_type_dat("iridium_power_converter");
+
+
+    MechType mech_type = rand()%2 ==0 ? mech_type1 : mech_type2;
+
     MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
-    t_mech::print_mech_create_failure_code(code);
+    
+    if(code != 0)
+        t_mech::print_mech_create_failure_code(code);
 
     //int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
 
