@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 #ifndef DC_SERVER
 # define DC_SERVER 1
@@ -7,7 +7,7 @@
 #define ENABLE_WARNING_SOUND 0
 
 #ifdef DC_CLIENT
-# error Don't include this file in the client
+# error Do not include this file in the client
 #endif
 
 #include <stdio.h>

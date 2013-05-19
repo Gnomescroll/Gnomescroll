@@ -305,7 +305,7 @@ int mz_deflateReset(mz_streamp pStream);
 //   flush may be MZ_NO_FLUSH, MZ_PARTIAL_FLUSH/MZ_SYNC_FLUSH, MZ_FULL_FLUSH, or MZ_FINISH.
 // Return values:
 //   MZ_OK on success (when flushing, or if more input is needed but not available, and/or there's more output to be written but the output buffer is full).
-//   MZ_STREAM_END if all input has been consumed and all output bytes have been written. Don't call mz_deflate() on the stream anymore.
+//   MZ_STREAM_END if all input has been consumed and all output bytes have been written. Do not call mz_deflate() on the stream anymore.
 //   MZ_STREAM_ERROR if the stream is bogus.
 //   MZ_PARAM_ERROR if one of the parameters is invalid.
 //   MZ_BUF_ERROR if no forward progress is possible because the input and/or output buffers are empty. (Fill up the input buffer or free up some output space and try again.)
