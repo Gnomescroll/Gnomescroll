@@ -202,20 +202,41 @@ void Camera::world_projection()
     float y = this->position.y;
     float z = this->position.z;
 
+
+//    const double zshake = 0.0*randf(); //how much to shake up/down
+    Vec3 _f = vec3_euler_rotation(look, theta, phi, 0.0f);
+    Vec3 _r = vec3_euler_rotation(right, theta, phi, 0.0f);
+    Vec3 _u = vec3_euler_rotation(up, theta, phi, 0.0f);
+
+    static double yshake = 0.0;
+    yshake += .01*randf(); //how much to shake left/right
+
+    Vec3 _s = vec3_scalar_mult(_r, yshake); //shake vector
+
     // DEPRECATE GLU
+    gluLookAt(
+        x+_s.x,y+_s.y,z+_s.z,
+        x + look.x, y + look.y, z + look.z,
+        up.x, up.y, up.z
+    );
+    
+/*
     gluLookAt(
         x,y,z,
         x + look.x, y + look.y, z + look.z,
         up.x, up.y, up.z
     );
+*/
+
     // DEPRECATE GLU
 
     //glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
 
+/*
     glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
 
     //ZSHAKE
-    const double zshake = 0.1*randf(); //how much to shake up/down
+    const double zshake = 0.0*randf(); //how much to shake up/down
 
     double uxd = zshake*model_view_matrix_dbl[4*2+0];
     double uyd = zshake*model_view_matrix_dbl[4*2+1];
@@ -226,7 +247,9 @@ void Camera::world_projection()
     model_view_matrix_dbl[4*3+2] += uzd;
 
     //YSHAKE
-    const double yshake = 0.1*randf(); //how much to shake left/right
+    static double yshake = 0.0;
+
+    yshake += .01*randf(); //how much to shake left/right
 
     double rxd = yshake*model_view_matrix_dbl[4*1+0];
     double ryd = yshake*model_view_matrix_dbl[4*1+1];
@@ -236,9 +259,10 @@ void Camera::world_projection()
     model_view_matrix_dbl[4*3+1] += ryd;
     model_view_matrix_dbl[4*3+2] += rzd;
 
+
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixd(model_view_matrix_dbl);
-
+*/
 
     //glSetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
 
