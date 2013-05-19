@@ -208,25 +208,27 @@ void Camera::world_projection()
     Vec3 _r = vec3_euler_rotation(right, theta, phi, 0.0f);
     Vec3 _u = vec3_euler_rotation(up, theta, phi, 0.0f);
 
-    static double yshake = 0.0;
-    yshake += .01*randf(); //how much to shake left/right
+    //static double yshake = 0.0;
+    float xshake = .1*randf(); //how much to shake left/right
+    float yshake = .1*randf(); //how much to shake left/right
+    float zshake = .1*randf(); //how much to shake left/right
 
-    Vec3 _s = vec3_scalar_mult(_r, yshake); //shake vector
+    Vec3 _s = vec3_init(0.0f,0.0f,0.0f);
+    _s = vec3_add(_s, vec3_scalar_mult(_f, xshake)); //shake vector
+    _s = vec3_add(_s, vec3_scalar_mult(_r, yshake)); //shake vector
+    _s = vec3_add(_s, vec3_scalar_mult(_u, zshake));
 
-    // DEPRECATE GLU
-    gluLookAt(
-        x+_s.x,y+_s.y,z+_s.z,
-        x + look.x, y + look.y, z + look.z,
-        up.x, up.y, up.z
-    );
-    
-/*
+
+    x += _s.x; //add in shake
+    y += _s.y;
+    z += _s.z;
+
     gluLookAt(
         x,y,z,
         x + look.x, y + look.y, z + look.z,
         up.x, up.y, up.z
     );
-*/
+
 
     // DEPRECATE GLU
 
