@@ -424,7 +424,7 @@ static const int sq_normals[6][3] =
     {0,0,-1}
 };
 
-inline void crusher_crush_item_CtoS::handle()
+void crusher_crush_item_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;

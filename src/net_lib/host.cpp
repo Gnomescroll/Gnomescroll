@@ -199,7 +199,7 @@ void client_dispatch_network_events()
 
     /* Wait up to 5 milliseconds for an event. */
 
-    unsigned int index = 0;
+    size_t index = 0;
 
     int timeout = 1;
 
@@ -268,7 +268,7 @@ void client_dispatch_network_events()
                     //printf("client received channel3 message of of size: %i \n", event.packet->dataLength);
 
                     index = 0;
-                    //process_client_map_messages(char* buff, unsigned int* n, unsigned int max_n, ClientID client_id);
+                    //process_client_map_messages(char* buff, size_t* n, size_t max_n, ClientID client_id);
                     process_client_map_messages(
                         (char*) event.packet -> data,
                         &index,
@@ -355,7 +355,7 @@ void dispatch_network_events()
 
     /* Wait up to 5 milliseconds for an event. */
 
-    unsigned int index = 0;
+    size_t index = 0;
     int timeout = 1;
     int pret = 0;
 

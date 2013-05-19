@@ -17,8 +17,8 @@ class Agent;
 namespace NetServer
 {
 
-extern unsigned int number_of_clients;
-extern unsigned int session_count;
+extern size_t number_of_clients;
+extern size_t session_count;
 
 extern class NetPeer** pool;
 extern class NetPeer** staging_pool;

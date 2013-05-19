@@ -12,7 +12,7 @@ class play_animation_StoC: public FixedSizeReliableNetPacketToClient<play_animat
         uint8_t animation_type;
         struct Vec3 position;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&animation_type, buff, buff_n, pack);
         pack_vec3(&position, buff, buff_n, pack);

@@ -1,10 +1,9 @@
 #pragma once
 
 #include <stdio.h>
+#include <common/template/object_pool.hpp>
 
-#include "object_pool.hpp"
-
-static const int CHAR_BUFFER_SIZE=2048;
+static const int CHAR_BUFFER_SIZE = 2048;
 
 //non-reference counted char buffer
 class CharBuffer
@@ -38,13 +37,13 @@ class FifoCharBuffer
 {
     public:
 
-    int size;
+        int size;
 
-    CharBuffer* cb_read;
-    int read_index;
+        CharBuffer* cb_read;
+        int read_index;
 
-    CharBuffer* cb_write;
-    int write_index;
+        CharBuffer* cb_write;
+        int write_index;
 
     FifoCharBuffer()
     {

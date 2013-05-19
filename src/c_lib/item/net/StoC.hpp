@@ -11,7 +11,7 @@ class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_St
         uint16_t durability;
         uint16_t stack_size;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
@@ -26,7 +26,7 @@ class item_destroy_StoC: public FixedSizeReliableNetPacketToClient<item_destroy_
     public:
         uint16_t id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
         }
@@ -40,7 +40,7 @@ class item_state_StoC: public FixedSizeReliableNetPacketToClient<item_state_StoC
         uint16_t durability;
         uint16_t stack_size;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u16(&durability, buff, buff_n, pack);
@@ -55,7 +55,7 @@ class item_charges_StoC: public FixedSizeReliableNetPacketToClient<item_charges_
         uint16_t id;
         uint8_t charges;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&charges, buff, buff_n, pack);

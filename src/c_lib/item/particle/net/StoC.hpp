@@ -13,7 +13,7 @@ class item_particle_create_StoC: public FixedSizeReliableNetPacketToClient<item_
         Vec3 position;
         Vec3 velocity;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&item_type, buff, buff_n, pack);
@@ -28,7 +28,7 @@ class item_particle_destroy_StoC: public FixedSizeReliableNetPacketToClient<item
     public:
         uint16_t id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
         }
@@ -42,7 +42,7 @@ class item_particle_state_StoC: public FixedSizeReliableNetPacketToClient<item_p
         Vec3 position;
         Vec3 velocity;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_vec3(&position, buff, buff_n, pack);
@@ -57,7 +57,7 @@ class item_particle_picked_up_StoC: public FixedSizeReliableNetPacketToClient<it
         uint16_t id;
         uint8_t agent_id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&agent_id, buff, buff_n, pack);
@@ -70,7 +70,7 @@ class item_particle_pickup_cancelled_StoC: public FixedSizeReliableNetPacketToCl
     public:
         uint16_t id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
         }

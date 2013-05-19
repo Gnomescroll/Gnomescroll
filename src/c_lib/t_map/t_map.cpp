@@ -32,7 +32,7 @@
 namespace t_map
 {
 
-class Terrain_map* main_map = NULL;
+class TerrainMap* main_map = NULL;
 
 CubeType get(const Vec3i& position)
 {
@@ -114,7 +114,7 @@ int get_palette(const Vec3i& position)
     return main_map->get_element(position).palette;
 }
 
-class Terrain_map* get_map()
+class TerrainMap* get_map()
 {
     return main_map;
 }
@@ -122,7 +122,7 @@ class Terrain_map* get_map()
 void init_t_map()
 {
     GS_ASSERT(main_map == NULL);
-    main_map = new Terrain_map(map_dim.x, map_dim.y);
+    main_map = new TerrainMap(map_dim.x, map_dim.y);
 
     init_textures();
 
@@ -135,7 +135,7 @@ void init_t_map()
 
     #if DC_SERVER
     GS_ASSERT(map_history == NULL);
-    map_history = new Terrain_map_subscription(map_dim.x, map_dim.y);
+    map_history = new TerrainMapSubscription(map_dim.x, map_dim.y);
     init_env_process();
     #endif
 }

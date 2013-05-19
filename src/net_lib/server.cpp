@@ -9,8 +9,8 @@
 namespace NetServer
 {
 
-unsigned int number_of_clients = 0;
-unsigned int session_count = 0;
+size_t number_of_clients = 0;
+size_t session_count = 0;
 
 NetPeer** pool = NULL;
 NetPeer** staging_pool = NULL;
@@ -45,8 +45,7 @@ bool client_is_connected(ClientID client_id)
 AgentID get_agent_id_for_client(ClientID client_id)
 {
     NetPeerManager* npm = get_client(client_id);
-    GS_ASSERT(npm != NULL);
-    if (npm == NULL) return NULL_AGENT;
+    IF_ASSERT(npm == NULL) return NULL_AGENT;
     return npm->agent_id;
 }
 
@@ -120,8 +119,7 @@ class Session* begin_session(uint32_t ip_addr, ClientID client_id)
 
 void end_session(class Session* session)
 {
-    GS_ASSERT(session != NULL);
-    if (session == NULL) return;
+    IF_ASSERT(session == NULL) return;
     session->logout();
     GS_ASSERT(session_log_file != NULL);
     if (session_log_file != NULL)
@@ -155,8 +153,7 @@ void client_authorized(ClientID client_id, UserID user_id, time_t expiration_tim
     IF_ASSERT(!isValid(client_id)) return;
 
     NetPeerManager* pm = clients[client_id];
-    GS_ASSERT(pm != NULL);
-    if (pm == NULL) return;
+    IF_ASSERT(pm == NULL) return;
 
     // check if client is already authorized on another account
     // if so, kill that client
@@ -203,9 +200,7 @@ void kill_client(ClientID client_id, DisconnectType error_code)
 
 void check_client_authorizations()
 {
-    GS_ASSERT(pool != NULL);
-    GS_ASSERT(staging_pool != NULL);
-    if (pool == NULL || staging_pool == NULL) return;
+    IF_ASSERT(pool == NULL || staging_pool == NULL) return;
 
     //time_t now = utc_now();
     for (int i=0; i<HARD_MAX_CONNECTIONS; i++)

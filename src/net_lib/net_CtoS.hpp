@@ -31,20 +31,20 @@
 #if DC_CLIENT
 void send_bullshit_data()
 {
-    unsigned int size = 0;
+    size_t size = 0;
     do
     {
         size = rand()&0xff;
     } while (size == 0);
 
-    class Net_message* nm = arbitrary_acquire(size);
+    class NetMessage* nm = arbitrary_acquire(size);
     GS_ASSERT(nm != NULL);
     if (nm == NULL) return;
 
-    unsigned int buff_n = 0;
-    unsigned int message_id = rand()&0xff;
+    size_t buff_n = 0;
+    size_t message_id = rand()&0xff;
     pack_message_id(message_id, nm->buff, &buff_n);
-    for (unsigned int i=buff_n; i<size; i++)
+    for (size_t i=buff_n; i<size; i++)
         nm->buff[i] = rand()&0xff;
     NetClient::Server.push_unreliable_message(nm);
 }
@@ -54,10 +54,10 @@ template <class Derived>
 class FixedSizeNetPacketToServer
 {
     private:
-        virtual void packet(char* buff, unsigned int* buff_n, bool pack) = 0;
+        virtual void packet(char* buff, size_t* buff_n, bool pack) = 0;
     public:
         static uint8_t message_id;
-        static unsigned int size;
+        static size_t size;
         ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
 
@@ -66,16 +66,16 @@ class FixedSizeNetPacketToServer
 
         //flatten this
         ALWAYS_INLINE
-        void serialize(char* buff, unsigned int* buff_n)
+        void serialize(char* buff, size_t* buff_n)
         {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
         }
 
         ALWAYS_INLINE
-        void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
+        void unserialize(char* buff, size_t* buff_n, size_t* size)
         {
-            unsigned int _buff_n = *buff_n;
+            size_t _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
@@ -83,8 +83,8 @@ class FixedSizeNetPacketToServer
         void send()
         {
             #if DC_CLIENT
-            Net_message* nm = Net_message::acquire(Derived::size);
-            unsigned int buff_n = 0;
+            NetMessage* nm = NetMessage::acquire(Derived::size);
+            size_t buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_unreliable_message(nm);
             #else
@@ -93,11 +93,11 @@ class FixedSizeNetPacketToServer
         }
 
         //will overflow if more than 128 bytes
-        unsigned int _size()
+        size_t _size()
         {
             char buff[128] = {0};
-            unsigned int buff_n = 0;
-            unsigned int size = 0;
+            size_t buff_n = 0;
+            size_t size = 0;
             unserialize(buff, &buff_n, &size);
             size++; // add a byte for the message id
             GS_ASSERT(size > 0 && size < 128);
@@ -105,7 +105,7 @@ class FixedSizeNetPacketToServer
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, ClientID client_id)
+        static void handler(char* buff, size_t buff_n, size_t* bytes_read, ClientID client_id)
         {
             #if DC_SERVER
             Derived x;  //allocated on stack
@@ -131,7 +131,7 @@ class FixedSizeNetPacketToServer
 
 //template <typename T> int Base<T>::staticVar(0);
 template <class Derived> uint8_t FixedSizeNetPacketToServer<Derived>::message_id(255);
-template <class Derived> unsigned int FixedSizeNetPacketToServer<Derived>::size(0);
+template <class Derived> size_t FixedSizeNetPacketToServer<Derived>::size(0);
 
 
 
@@ -139,11 +139,11 @@ template <class Derived>
 class FixedSizeReliableNetPacketToServer
 {
     private:
-        virtual void packet(char* buff, unsigned int* buff_n, bool pack) = 0;
-        //virtual ALWAYS_INLINE void packet(char* buff, unsigned int* buff_n, bool pack) { GS_ASSERT(false); }
+        virtual void packet(char* buff, size_t* buff_n, bool pack) = 0;
+        //virtual ALWAYS_INLINE void packet(char* buff, size_t* buff_n, bool pack) { GS_ASSERT(false); }
     public:
         static uint8_t message_id;
-        static unsigned int size;
+        static size_t size;
         ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
 
@@ -151,7 +151,7 @@ class FixedSizeReliableNetPacketToServer
         virtual ~FixedSizeReliableNetPacketToServer() {}
 
         ALWAYS_INLINE
-        void serialize(char* buff, unsigned int* buff_n)
+        void serialize(char* buff, size_t* buff_n)
         {
             //GS_ASSERT(Derived::message_id != 255);
             pack_message_id(Derived::message_id, buff, buff_n);
@@ -159,9 +159,9 @@ class FixedSizeReliableNetPacketToServer
         }
 
         ALWAYS_INLINE
-        void unserialize(char* buff, unsigned int* buff_n, unsigned int* size)
+        void unserialize(char* buff, size_t* buff_n, size_t* size)
         {
-            unsigned int _buff_n = *buff_n;
+            size_t _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
@@ -169,10 +169,10 @@ class FixedSizeReliableNetPacketToServer
         void send()
         {
             #if DC_CLIENT
-            Net_message* nm = Net_message::acquire(Derived::size);
+            NetMessage* nm = NetMessage::acquire(Derived::size);
             GS_ASSERT(nm != NULL);
             if (nm == NULL) return;
-            unsigned int buff_n = 0;
+            size_t buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_reliable_message(nm);
             #else
@@ -181,11 +181,11 @@ class FixedSizeReliableNetPacketToServer
         }
 
         //will overflow if more than 128 bytes
-        unsigned int _size()
+        size_t _size()
         {
             char buff[128] = {0};
-            unsigned int buff_n = 0;
-            unsigned int size = 0;
+            size_t buff_n = 0;
+            size_t size = 0;
             unserialize(buff, &buff_n, &size);
             size++; // add a byte for the message id
             GS_ASSERT(size > 0 && size < 128);
@@ -193,7 +193,7 @@ class FixedSizeReliableNetPacketToServer
             return size;
         }
 
-        static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, ClientID client_id)
+        static void handler(char* buff, size_t buff_n, size_t* bytes_read, ClientID client_id)
         {
             #if DC_SERVER
             Derived x;  //allocated on stack
@@ -221,5 +221,5 @@ class FixedSizeReliableNetPacketToServer
 
 //template <typename T> int Base<T>::staticVar(0);
 template <class Derived> uint8_t FixedSizeReliableNetPacketToServer<Derived>::message_id(255);
-template <class Derived> unsigned int FixedSizeReliableNetPacketToServer<Derived>::size(0);
+template <class Derived> size_t FixedSizeReliableNetPacketToServer<Derived>::size(0);
 

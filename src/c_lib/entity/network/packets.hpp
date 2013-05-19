@@ -11,7 +11,7 @@ class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_creat
         uint16_t id;
         Vec3 position;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
@@ -29,7 +29,7 @@ class object_create_owner_StoC: public FixedSizeReliableNetPacketToClient<object
         uint8_t owner;
         Vec3 position;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
@@ -49,7 +49,7 @@ class object_create_momentum_StoC: public FixedSizeReliableNetPacketToClient<obj
         Vec3 position;
         Vec3 momentum;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
@@ -72,7 +72,7 @@ class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToCli
         Vec3 momentum;
         float theta, phi;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
@@ -94,7 +94,7 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
         float theta, phi;
         uint16_t health_max;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
@@ -115,7 +115,7 @@ class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_dest
         uint8_t type;
         uint16_t id;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
@@ -132,7 +132,7 @@ class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_
         uint8_t type;
         Vec3 position;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
@@ -149,7 +149,7 @@ class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<obje
         Vec3 position;
         Vec3 momentum;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
@@ -169,7 +169,7 @@ class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClie
         Vec3 momentum;
         float theta, phi;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
@@ -188,7 +188,7 @@ class object_state_health_StoC: public FixedSizeReliableNetPacketToClient<object
         uint8_t type;
         uint16_t health;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
@@ -211,7 +211,7 @@ class object_shot_object_StoC: public FixedSizeReliableNetPacketToClient<object_
         uint8_t target_part;
         Vec3i voxel;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
@@ -232,7 +232,7 @@ class object_shot_terrain_StoC: public FixedSizeReliableNetPacketToClient<object
         uint8_t side;
         Vec3 destination;
 
-    inline void packet(char* buffer, unsigned int* buff_n, bool pack)
+    inline void packet(char* buffer, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buffer, buff_n, pack);
         pack_u8(&type, buffer, buff_n, pack);
@@ -250,7 +250,7 @@ class object_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<object
         uint8_t type;
         Vec3 direction;
 
-    inline void packet(char* buffer, unsigned int* buff_n, bool pack)
+    inline void packet(char* buffer, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buffer, buff_n, pack);
         pack_u8(&type, buffer, buff_n, pack);
@@ -268,7 +268,7 @@ class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_
         uint8_t type;
         uint16_t damage;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);

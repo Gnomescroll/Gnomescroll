@@ -1,7 +1,7 @@
 #pragma once
 
-static inline int hash_function2(int x,int y,int z) __attribute((always_inline));
-static inline int hash_function3(int x,int y,int z) __attribute((always_inline));
+static ALWAYS_INLINE int hash_function2(int x,int y,int z);
+static ALWAYS_INLINE int hash_function3(int x,int y,int z);
 
 static inline int hash_function2(int x,int y,int z)
  {

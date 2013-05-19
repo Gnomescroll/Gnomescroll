@@ -14,7 +14,7 @@
 
 class NetMessageArray; //forward declaration
 
-struct packet_sequence
+struct PacketSequence
 {
     class NetMessageArray* nma;   //pointer to buffer
     short read_index;  //starting index in buffer
@@ -27,7 +27,7 @@ struct packet_sequence
     //int retry_attempts; //can only use for reliable, ordered packet sequences
 };
 
-struct packet_sequence2
+struct PacketSequence2
 {
     short seq;
     short received;
@@ -64,14 +64,14 @@ class NetPeer
     //class NetMessageManager python_message_manager;
 
 /*
-    void push_unreliable_message(class Net_message* nm) __attribute__((always_inline));
-    void push_reliable_message(class Net_message* nm) __attribute__((always_inline));
-    void push_python_message(class Net_message* nm) __attribute__((always_inline));
+    void push_unreliable_message(class NetMessage* nm) __attribute__((always_inline));
+    void push_reliable_message(class NetMessage* nm) __attribute__((always_inline));
+    void push_python_message(class NetMessage* nm) __attribute__((always_inline));
 */
 
-    void push_unreliable_message(class Net_message* nm);
-    void push_reliable_message(class Net_message* nm);
-    //void push_python_message(class Net_message* nm);
+    void push_unreliable_message(class NetMessage* nm);
+    void push_reliable_message(class NetMessage* nm);
+    //void push_python_message(class NetMessage* nm);
 
     bool version_match()
     {   // will return true if version has not been set yet
@@ -94,20 +94,20 @@ class NetPeer
     }
 
     void flush_map_messages();
-    void resize_map_message_buffer(unsigned int size_min);
+    void resize_map_message_buffer(size_t size_min);
 
     char* map_message_buffer;
-    unsigned int map_message_buffer_index;
-    unsigned int map_message_buffer_max;
+    size_t map_message_buffer_index;
+    size_t map_message_buffer_max;
     /*
         packet sequencer
     */
 
     //x to y: x state
-    struct packet_sequence packet_sequence_buffer[256];
+    struct PacketSequence packet_sequence_buffer[256];
     int packet_sequence_number;
     //x to y: y state
-    struct packet_sequence2 seqbuff[256];
+    struct PacketSequence2 seqbuff[256];
     int highest_packet_sequence_number;
 
     void init() {}

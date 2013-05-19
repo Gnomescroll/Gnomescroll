@@ -11,7 +11,7 @@ class play_2d_sound_StoC: public FixedSizeReliableNetPacketToClient<play_2d_soun
     public:
         uint8_t soundfile_id;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&soundfile_id, buff, buff_n, pack);
     }
@@ -24,7 +24,7 @@ class play_3d_sound_StoC: public FixedSizeReliableNetPacketToClient<play_3d_soun
         uint8_t soundfile_id;
         struct Vec3 position;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&soundfile_id, buff, buff_n, pack);
         pack_vec3(&position, buff, buff_n, pack);

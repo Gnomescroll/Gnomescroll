@@ -17,7 +17,7 @@ class map_chunk_compressed_StoC: public MapMessageArrayPacketToClient<map_chunk_
         uint32_t chunk_index;
         //int byte_size;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&chunk_alias, buff, buff_n, pack);
         pack_u32(&chunk_index, buff, buff_n, pack);
@@ -33,7 +33,7 @@ class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chun
         uint32_t chunk_index;
         //int byte_size;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&chunk_alias, buff, buff_n, pack);
         pack_u32(&chunk_index, buff, buff_n, pack);
@@ -47,7 +47,7 @@ class clear_alias_StoC: public MapMessagePacketToClient<clear_alias_StoC>
     public:
         uint16_t chunk_alias;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&chunk_alias, buff, buff_n, pack);
     }
@@ -61,7 +61,7 @@ class set_map_alias_StoC: public MapMessagePacketToClient<set_map_alias_StoC>
         uint16_t chunk_alias;
         uint32_t chunk_index;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&chunk_alias, buff, buff_n, pack);
         pack_u32(&chunk_index, buff, buff_n, pack);
@@ -77,7 +77,7 @@ class map_element_update: public MapMessagePacketToClient<map_element_update>
         uint8_t block_id;
         uint8_t pallete;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&chunk_alias, buff, buff_n, pack);
         pack_u8(&block_id, buff, buff_n, pack);
@@ -98,7 +98,7 @@ class block_set_StoC: public MapMessagePacketToClient<block_set_StoC>
         Vec3i position;
         uint8_t cube_type;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&cube_type, buff, buff_n, pack);
@@ -114,7 +114,7 @@ class block_set_palette_StoC: public MapMessagePacketToClient<block_set_palette_
         uint8_t cube_type;
         uint8_t palette;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&cube_type, buff, buff_n, pack);
@@ -132,7 +132,7 @@ class block_action_StoC: public MapMessagePacketToClient<block_action_StoC>
         uint8_t cube_type;
         uint8_t action;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&cube_type, buff, buff_n, pack);
@@ -147,7 +147,7 @@ class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
     public:
         Vec3i dimensions;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&dimensions, buff, buff_n, pack);
     }
@@ -161,7 +161,7 @@ class container_block_chunk_reset_StoC: public MapMessagePacketToClient<containe
     public:
         uint32_t chunk_index;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u32(&chunk_index, buff, buff_n, pack);
     }
@@ -181,7 +181,7 @@ class container_block_create_StoC: public MapMessagePacketToClient<container_blo
         uint8_t container_type;
         uint16_t container_id;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&container_type, buff, buff_n, pack);
@@ -197,7 +197,7 @@ class container_block_delete_StoC: public MapMessagePacketToClient<container_blo
         uint32_t chunk_index;
         uint16_t container_id;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u32(&chunk_index, buff, buff_n, pack);
         pack_u16(&container_id, buff, buff_n, pack);
@@ -215,7 +215,7 @@ class control_node_create_StoC: public MapMessagePacketToClient<control_node_cre
     public:
         Vec3i position;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
     }
@@ -228,7 +228,7 @@ class control_node_delete_StoC: public MapMessagePacketToClient<control_node_cre
     public:
         Vec3i position;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
     }
@@ -244,7 +244,7 @@ class block_damage_StoC: public MapMessagePacketToClient<block_damage_StoC>
         uint8_t request_id;
         uint8_t dmg;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&request_id, buff, buff_n, pack);
         pack_u8(&dmg, buff, buff_n, pack);

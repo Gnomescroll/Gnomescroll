@@ -42,7 +42,7 @@ class add_badge_StoC: public FixedSizeReliableNetPacketToClient<add_badge_StoC>
         uint8_t badge_type;
         uint8_t agent_id;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&badge_type, buff, buff_n, pack);
         pack_u8(&agent_id, buff, buff_n, pack);

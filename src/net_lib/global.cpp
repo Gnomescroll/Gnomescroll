@@ -2,4 +2,4 @@
 
 #include <net_lib/common/packet_buffer.hpp>
 
-class NetMessageArray_pool net_message_array_pool;
+class NetMessageArrayPool net_message_array_pool;

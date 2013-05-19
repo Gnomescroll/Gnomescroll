@@ -140,7 +140,7 @@ class set_attribute_int_StoC:
         uint8_t attribute_type;
         int32_t value;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&attribute_group, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);
@@ -158,7 +158,7 @@ class set_attribute_float_StoC:
         uint8_t attribute_type;
         float value;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&attribute_group, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);
@@ -176,7 +176,7 @@ class set_attribute_string_StoC:
         uint8_t attribute_type;
         char value[STRING_ATTRIBUTE_MAX_LENGTH+1];
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&attribute_group, buff, buff_n, pack);
         pack_u8(&attribute_type, buff, buff_n, pack);

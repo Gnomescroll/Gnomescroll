@@ -66,7 +66,6 @@ void create_explosion(const Vec3i& position)
 {   // WARNING: make sure this function is called after destroying the explosive block
     // check upper bounds
     // we should not be calling this function out of bounds, so assert
-    printf("Creating explosion at "); vec3i_print(position);
     IF_ASSERT(!is_boxed_position(position)) return;
 
     // constant for helping walk the axes

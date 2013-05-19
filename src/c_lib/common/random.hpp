@@ -35,7 +35,7 @@ inline int distribute_gaussian(int lower, int upper, size_t precision)
     return retval;
 }
 
-inline float randf()
+ALWAYS_INLINE float randf()
 {
     return float(rand())/float(RAND_MAX);
 }

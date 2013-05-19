@@ -376,7 +376,7 @@ static int vertex_max = 0;
 
 #define USE_QUAD_CACHE 0
 
-//ALWAYS_INLINE static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MapElement element) __attribute((always_inline));
+//ALWAYS_INLINE static void push_quad1(struct Vertex* v_list, int offset, int x, int y, int z, int side, struct MapElement element);
 
 //OPTIMIZED
 
@@ -506,8 +506,8 @@ void generate_quad_ao_values(struct Vertex* vlist)
 /*
     BUFFER
 */
-//static inline void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MapElement element)  __attribute((always_inline));
-//static inline void push_buffer2(unsigned short side , unsigned short x, unsigned short y, unsigned short z, struct MapElement element)  __attribute((always_inline));
+//static ALWAYS_INLINE void push_buffer1(unsigned short side, unsigned short x, unsigned short y, unsigned short z, struct MapElement element);
+//static ALWAYS_INLINE void push_buffer2(unsigned short side , unsigned short x, unsigned short y, unsigned short z, struct MapElement element);
 
 
 //for solid blocks

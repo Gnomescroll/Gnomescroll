@@ -70,7 +70,7 @@ class MapChunk
     }
 };
 
-class Terrain_map
+class TerrainMap
 {
     public:
 
@@ -98,8 +98,8 @@ class Terrain_map
     bool chunk_loaded(const Vec3i& position); //checks if chunk is non null
     #endif
 
-    Terrain_map(int _xdim, int _ydim);
-    ~Terrain_map();
+    TerrainMap(int _xdim, int _ydim);
+    ~TerrainMap();
 
     void load_chunk(int i, int j);      //only entry point for loading
     void unload_chunk(int i, int j);    //only entry point for unloading

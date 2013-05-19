@@ -79,9 +79,9 @@ class VBOMap
         const static int CHUNK_IGNORE_DISTANCE2 = (128+64)*(128+64);
     public:
         class MapVBO** vbo_array;
-        class Terrain_map* map;
+        class TerrainMap* map;
 
-    VBOMap(class Terrain_map* _map)
+    VBOMap(class TerrainMap* _map)
     {
         this->map = _map;
         this->vbo_array = new MapVBO*[ MAP_CHUNK_XDIM*MAP_CHUNK_YDIM ];

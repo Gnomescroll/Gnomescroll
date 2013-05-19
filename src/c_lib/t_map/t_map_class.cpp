@@ -27,7 +27,7 @@ MapChunk::MapChunk(int _xpos, int _ypos) :
 }
 
 
-Terrain_map::Terrain_map(int _xdim, int _ydim)
+TerrainMap::TerrainMap(int _xdim, int _ydim)
 {
     this->xdim = _xdim;
     this->ydim = _xdim;
@@ -51,7 +51,7 @@ Terrain_map::Terrain_map(int _xdim, int _ydim)
     #endif
 }
 
-Terrain_map::~Terrain_map()
+TerrainMap::~TerrainMap()
 {
     if (this->chunk != NULL)
     {
@@ -107,7 +107,7 @@ ALWAYS_INLINE struct MapElement MapChunk::get_element(int x, int y, int z)
     return e[this->get_element_index(x, y, z)];
 }
 
-struct MapElement Terrain_map::get_element(const Vec3i& position)
+struct MapElement TerrainMap::get_element(const Vec3i& position)
 {
     if (!is_valid_z(position)) return NULL_MAP_ELEMENT; // don't assert
     Vec3i p = translate_position(position);
@@ -131,14 +131,14 @@ struct MapElement Terrain_map::get_element(const Vec3i& position)
     #endif
 }
 
-inline struct MapElement Terrain_map::get_element(int x, int y, int z)
+inline struct MapElement TerrainMap::get_element(int x, int y, int z)
 {
     return this->get_element(vec3i_init(x, y, z));
 }
 
 
 #if DC_CLIENT
-void Terrain_map::set_update(int x, int y)
+void TerrainMap::set_update(int x, int y)
 {
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -155,7 +155,7 @@ Set Methods
 */
 
 
-void Terrain_map::set_element(const Vec3i& position, struct MapElement element)
+void TerrainMap::set_element(const Vec3i& position, struct MapElement element)
 {
     IF_ASSERT(!is_valid_z(position)) return;
     Vec3i p = translate_position(position);
@@ -219,7 +219,7 @@ void Terrain_map::set_element(const Vec3i& position, struct MapElement element)
 
 }
 
-int Terrain_map::get_damage(const Vec3i& position)
+int TerrainMap::get_damage(const Vec3i& position)
 {
     IF_ASSERT(!is_valid_z(position)) return -2;
     Vec3i p = translate_position(position);
@@ -242,7 +242,7 @@ int Terrain_map::get_damage(const Vec3i& position)
 }
 
 // return negative on error, 0 on destruction of underlying block, or total damage so far on block
-int Terrain_map::apply_damage(const Vec3i& position, int dmg, CubeType* cube_type)
+int TerrainMap::apply_damage(const Vec3i& position, int dmg, CubeType* cube_type)
 {
     if (dmg <= 0) return -4;
     IF_ASSERT(!is_valid_z(position)) return -2;
@@ -279,7 +279,7 @@ int Terrain_map::apply_damage(const Vec3i& position, int dmg, CubeType* cube_typ
 
 #if DC_CLIENT
 
-void Terrain_map::chunk_received(int cx, int cy)
+void TerrainMap::chunk_received(int cx, int cy)
 {   // update chunk/column heights based on this chunk
     int highest = -1;
     int h;
@@ -346,7 +346,7 @@ void Terrain_map::chunk_received(int cx, int cy)
 DEPRECATE
 */
 
-void Terrain_map::reset_heights_read()
+void TerrainMap::reset_heights_read()
 {   // call when heights are done being read
     this->height_changed = false;
     // only toggle CHANGED chunks, we dont want to switch UNSET->UNCHANGED
@@ -358,7 +358,7 @@ void Terrain_map::reset_heights_read()
 /*
 DEPRECATE
 */
-inline unsigned char Terrain_map::get_cached_height(int x, int y)
+inline unsigned char TerrainMap::get_cached_height(int x, int y)
 {
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -368,7 +368,7 @@ inline unsigned char Terrain_map::get_cached_height(int x, int y)
 /*
 DEPRECATE
 */
-void Terrain_map::update_heights(const Vec3i& position, CubeType cube_type)
+void TerrainMap::update_heights(const Vec3i& position, CubeType cube_type)
 {
     Vec3i p = translate_position(position);
     p.z += 1; // heights are not 0 indexed;
@@ -399,7 +399,7 @@ void Terrain_map::update_heights(const Vec3i& position, CubeType cube_type)
 /*
 Block Methodss
 */
-CubeType Terrain_map::get_block(const Vec3i& position)
+CubeType TerrainMap::get_block(const Vec3i& position)
 {
     IF_ASSERT(!is_valid_z(position)) return EMPTY_CUBE;
     Vec3i p = translate_position(position);
@@ -410,7 +410,7 @@ CubeType Terrain_map::get_block(const Vec3i& position)
     return (CubeType)c->get_element(p).block;
 }
 
-void Terrain_map::set_block(const Vec3i& position, CubeType cube_type)
+void TerrainMap::set_block(const Vec3i& position, CubeType cube_type)
 {
     IF_ASSERT(!is_valid_z(position)) return;
     Vec3i p = translate_position(position);
@@ -426,7 +426,7 @@ void Terrain_map::set_block(const Vec3i& position, CubeType cube_type)
     #endif
 }
 
-void Terrain_map::set_block_fast(const Vec3i& position, CubeType cube_type)
+void TerrainMap::set_block_fast(const Vec3i& position, CubeType cube_type)
 {
     IF_ASSERT(!is_valid_z(position)) return;
     struct MapElement element = {{{
@@ -439,7 +439,7 @@ void Terrain_map::set_block_fast(const Vec3i& position, CubeType cube_type)
 }
 
 #if DC_CLIENT
-bool Terrain_map::chunk_loaded(const Vec3i& position)
+bool TerrainMap::chunk_loaded(const Vec3i& position)
 {
     IF_ASSERT(!is_valid_z(position)) return false;
     return (this->get_chunk(translate_position(position)) != NULL);
@@ -451,7 +451,7 @@ bool Terrain_map::chunk_loaded(const Vec3i& position)
 Height Map
 */
 
-inline int Terrain_map::get_height(int x, int y)
+inline int TerrainMap::get_height(int x, int y)
 {
     x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
@@ -464,7 +464,7 @@ inline int Terrain_map::get_height(int x, int y)
 
 
 //only entry point for loading chunks
-void Terrain_map::load_chunk(int i, int j)
+void TerrainMap::load_chunk(int i, int j)
 {
     IF_ASSERT(i < 0 || i >= xchunk_dim || j < 0 || j >= ychunk_dim) return;
     GS_ASSERT(this->chunk[xchunk_dim*j + i ] == NULL);
@@ -473,7 +473,7 @@ void Terrain_map::load_chunk(int i, int j)
 
 
 //only entry point for unloading chunks
-void Terrain_map::unload_chunk(int i, int j)
+void TerrainMap::unload_chunk(int i, int j)
 {
     IF_ASSERT(this->chunk[ xchunk_dim*j + i ] == NULL) return;
     delete this->chunk[xchunk_dim*j + i];

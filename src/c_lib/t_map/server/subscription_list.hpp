@@ -11,7 +11,7 @@ namespace t_map
 
 const int SMC_MAX_SUBSCRIBERS = HARD_MAX_CONNECTIONS * 2;
 
-class MAP_CHUNK_SUBSCRIPTION
+class MapChunkSubscription
 {
     public:
 
@@ -24,12 +24,12 @@ class MAP_CHUNK_SUBSCRIPTION
 
         int subscriber_num;
 
-    MAP_CHUNK_SUBSCRIPTION() :
+    MapChunkSubscription() :
         version(1), subscriber_num(0)
     {
     }
 
-    ~MAP_CHUNK_SUBSCRIPTION()
+    ~MapChunkSubscription()
     {
     }
 
@@ -125,7 +125,7 @@ class MAP_CHUNK_SUBSCRIPTION
 };
 
 
-class Terrain_map_subscription
+class TerrainMapSubscription
 {
     public:
 
@@ -135,9 +135,9 @@ class Terrain_map_subscription
         int xchunk_dim;
         int ychunk_dim;
 
-        class MAP_CHUNK_SUBSCRIPTION* chunk;
+        class MapChunkSubscription* chunk;
 
-    Terrain_map_subscription(int _xdim, int _ydim)
+    TerrainMapSubscription(int _xdim, int _ydim)
     {
         xdim = (_xdim/16)*16;
         ydim = (_ydim/16)*16;
@@ -146,14 +146,14 @@ class Terrain_map_subscription
         xchunk_dim = _xdim/16;
         ychunk_dim = _ydim/16;
 
-        chunk = new MAP_CHUNK_SUBSCRIPTION[xchunk_dim*ychunk_dim];
+        chunk = new MapChunkSubscription[xchunk_dim*ychunk_dim];
 
         for (int x=0; x < xchunk_dim; x++)
             for (int y=0; y < ychunk_dim; y++)
                 chunk[y*xchunk_dim+x].chunk_index = y*xchunk_dim+x;
     }
 
-    ~Terrain_map_subscription()
+    ~TerrainMapSubscription()
     {
         delete[] chunk;
     }

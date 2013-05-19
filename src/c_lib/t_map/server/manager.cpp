@@ -10,15 +10,15 @@
 namespace t_map
 {
 
-static class Map_manager* map_manager_list[HARD_MAX_CONNECTIONS];
+static class MapManager* map_manager_list[HARD_MAX_CONNECTIONS];
 
-class Terrain_map_subscription* map_history = NULL;
+class TerrainMapSubscription* map_history = NULL;
 
 void t_map_manager_setup(ClientID client_id)
 {
     if (compression_buffer == NULL) compression_buffer = (char*) malloc(COMPRESSION_BUFFER_SIZE);
     GS_ASSERT(map_manager_list[client_id] == NULL);
-    map_manager_list[client_id] = new Map_manager(client_id);
+    map_manager_list[client_id] = new MapManager(client_id);
 }
 
 void t_map_manager_teardown(ClientID client_id)

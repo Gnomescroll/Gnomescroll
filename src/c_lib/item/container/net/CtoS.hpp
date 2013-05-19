@@ -21,7 +21,7 @@ class container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<con
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -56,7 +56,7 @@ class container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<cont
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -91,7 +91,7 @@ class synthesizer_container_action_alpha_CtoS: public FixedSizeReliableNetPacket
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -126,7 +126,7 @@ class synthesizer_container_action_beta_CtoS: public FixedSizeReliableNetPacketT
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -151,7 +151,7 @@ class purchase_item_from_synthesizer_action_CtoS: public FixedSizeReliableNetPac
         uint16_t container_id;
         uint8_t slot;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
 
@@ -179,7 +179,7 @@ class craft_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServ
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -214,7 +214,7 @@ class craft_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServe
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -240,7 +240,7 @@ class craft_item_from_bench_action_CtoS: public FixedSizeReliableNetPacketToServ
         uint16_t container_id;
         uint8_t slot;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
 
@@ -260,7 +260,7 @@ class no_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToServer<
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -281,7 +281,7 @@ class no_container_action_beta_CtoS: public FixedSizeReliableNetPacketToServer<n
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -310,7 +310,7 @@ class smelter_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToSe
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -345,7 +345,7 @@ class smelter_container_action_beta_CtoS: public FixedSizeReliableNetPacketToSer
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -380,7 +380,7 @@ class crusher_container_action_alpha_CtoS: public FixedSizeReliableNetPacketToSe
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -415,7 +415,7 @@ class crusher_container_action_beta_CtoS: public FixedSizeReliableNetPacketToSer
         uint8_t hand_stack;
         uint8_t hand_type;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u8(&action, buff, buff_n, pack);
@@ -439,13 +439,13 @@ class crusher_crush_item_CtoS: public FixedSizeReliableNetPacketToServer<crusher
         uint16_t event_id;
         uint16_t container_id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
+        inline void packet(char* buff, size_t* buff_n, bool pack)
         {
             pack_u16(&event_id, buff, buff_n, pack);
             pack_u16(&container_id, buff, buff_n, pack);
         }
 
-    inline void handle();
+    void handle();
 };
 
 class open_container_CtoS: public FixedSizeReliableNetPacketToServer<open_container_CtoS>
@@ -454,12 +454,12 @@ class open_container_CtoS: public FixedSizeReliableNetPacketToServer<open_contai
         uint16_t event_id;
         uint16_t container_id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u16(&event_id, buff, buff_n, pack);
-            pack_u16(&container_id, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, size_t* buff_n, bool pack)
+    {
+        pack_u16(&event_id, buff, buff_n, pack);
+        pack_u16(&container_id, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 class close_container_CtoS: public FixedSizeReliableNetPacketToServer<close_container_CtoS>
@@ -467,11 +467,11 @@ class close_container_CtoS: public FixedSizeReliableNetPacketToServer<close_cont
     public:
         uint16_t container_id;
 
-        inline void packet(char* buff, unsigned int* buff_n, bool pack)
-        {
-            pack_u16(&container_id, buff, buff_n, pack);
-        }
-        inline void handle();
+    inline void packet(char* buff, size_t* buff_n, bool pack)
+    {
+        pack_u16(&container_id, buff, buff_n, pack);
+    }
+    inline void handle();
 };
 
 class create_container_block_CtoS: public FixedSizeReliableNetPacketToServer<create_container_block_CtoS>
@@ -481,7 +481,7 @@ class create_container_block_CtoS: public FixedSizeReliableNetPacketToServer<cre
         uint16_t placer_id;
         uint8_t orientation;    // 0123 +x,-y,-x,+y
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
         pack_u16(&placer_id, buff, buff_n, pack);

@@ -11,7 +11,7 @@ class request_block_damage_CtoS: public MapMessagePacketToServer<request_block_d
         Vec3i position;
         uint8_t request_id;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&request_id, buff, buff_n, pack);

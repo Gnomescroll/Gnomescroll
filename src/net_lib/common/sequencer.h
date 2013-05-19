@@ -14,14 +14,14 @@ class NetPeer;
 
 //outgoing
 /*
-struct packet_sequence {
+struct PacketSequence {
     int seq;
     int ack;
     //int active;
     //int tick; //better than sequence for determining dropped packets
 };
 
-struct packet_sequence2 {
+struct PacketSequence2 {
     int seq;
     int received;
 };
@@ -47,17 +47,17 @@ uint32_t generate_outgoing_ack_flag(class NetPeer* np);
 /*
  *
 struct Pseq {
-    struct packet_sequence packet_sequence_buffer[64];
+    struct PacketSequence packet_sequence_buffer[64];
     int packet_sequence_number;
 };
 *
-struct packet_sequence2 {
+struct PacketSequence2 {
     int seq;
     int received;
 };
 
 struct Pseq2 {
-    struct packet_sequence2 seqbuff[64];
+    struct PacketSequence2 seqbuff[64];
     int highest_packet_sequence_number;
 };
 

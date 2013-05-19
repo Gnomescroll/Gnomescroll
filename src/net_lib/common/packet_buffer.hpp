@@ -14,14 +14,14 @@ static const int NET_MESSAGE_ARRAY_SIZE = 256; //use 256
 #define PACKET_BUFFER_DEBUG 1
 
 //used by net_peer
-class NetMessageArray {
-    private:
+class NetMessageArray
+{
     public:
-    int reference_count;
-    class NetMessageArray* next;
-    class Net_message* net_message_array[NET_MESSAGE_ARRAY_SIZE];
+        int reference_count;
+        class NetMessageArray* next;
+        class NetMessage* net_message_array[NET_MESSAGE_ARRAY_SIZE];
 
-    OBJECT_POOL_OBJECT_MACRO
+        OBJECT_POOL_OBJECT_MACRO
 
     NetMessageArray()
     {
@@ -32,46 +32,45 @@ class NetMessageArray {
         next = NULL;
     }
 
-    inline void retire() __attribute__((always_inline));
+    ALWAYS_INLINE void retire();
 
-    inline static NetMessageArray* acquire() __attribute__((always_inline));
+    ALWAYS_INLINE static NetMessageArray* acquire();
 };
 
 
-class NetMessageArray_pool: public ObjectPool<NetMessageArray_pool, NetMessageArray, 64>  //set to 64, 2 for testing
+class NetMessageArrayPool: public ObjectPool<NetMessageArrayPool, NetMessageArray, 64>  //set to 64, 2 for testing
 {
     public:
-        static char* name();
+    static const char* name()
+    {
+        return "NetMessageArrayPool";
+    }
 };
 
-char* NetMessageArray_pool::name() {
-    static char* x = (char*) "NetMessageArray_pool"; return x;
-}
 
 
-class Net_message {
-    private:
+class NetMessage
+{
     public:
-        class Net_message_buffer* b;
+        class NetMessageBuffer* b;
         char* buff;
     #if PACKET_BUFFER_DEBUG
-        unsigned int len;
+        size_t len;
         int reference_count;
     #else
         unsigned short len;
         short reference_count;
     #endif
-        Net_message* next;
+        NetMessage* next;
 
         OBJECT_POOL_OBJECT_MACRO
 
-    static class Net_message* acquire(unsigned int length);
-    // __attribute((always_inline));    // wont compile gcc4.4.3 (ubuntu10.04)
+    static class NetMessage* acquire(size_t length);
 
     void inline decrement();
 
-    Net_message()
-    : len(0), reference_count(0)
+    NetMessage() :
+        len(0), reference_count(0)
     {
         reference_count = 0;
         //increment reference on pushing onto packet buffer
@@ -84,20 +83,20 @@ class NetMessageManager
 {
     public:
 
-    int pending_messages;
-    unsigned int pending_bytes_out;
+        int pending_messages;
+        size_t pending_bytes_out;
 
-    class NetMessageArray* nma_insert; //array for inserting
-    int nma_insert_index;              //index for insertions
+        class NetMessageArray* nma_insert; //array for inserting
+        int nma_insert_index;              //index for insertions
 
-    class NetMessageArray* nma_read;   //array for reading
-    int nma_read_index;                //index for reads
+        class NetMessageArray* nma_read;   //array for reading
+        int nma_read_index;                //index for reads
 
     NetMessageManager();
 
-    void push_message(Net_message* nm);
-    void serialize_messages(char* buff_, unsigned int index);
+    void push_message(NetMessage* nm);
+    void serialize_messages(char* buff_, size_t index);
 
 };
 
-class Net_message* arbitrary_acquire(unsigned int size);
+class NetMessage* arbitrary_acquire(size_t size);

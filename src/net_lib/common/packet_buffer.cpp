@@ -4,7 +4,7 @@
 
 #define NET_MESSAGE_ARRAY_MALLOC_DEBUG 0
 
-//static NetMessageArray_pool net_message_array_pool;
+//static NetMessageArrayPool net_message_array_pool;
 
 void NetMessageArray::retire()
 {
@@ -32,28 +32,33 @@ class NetMessageArray* NetMessageArray::acquire()
 Net message buffer
 */
 
-class Net_message_buffer {
-    private:
-    public:
-    int reference_count;
-    char buffer[NET_MESSAGE_BUFFER_SIZE];
-    Net_message_buffer* next;
-
-    OBJECT_POOL_OBJECT_MACRO
-
-    Net_message_buffer() { reference_count = 0; }
-};
-
-class Net_message_buffer_pool: public ObjectPool<Net_message_buffer_pool, Net_message_buffer, 128>
+class NetMessageBuffer
 {
     public:
-    static char* name() { static char* x = (char*) "Net_message_buffer_pool"; return x; }
+        int reference_count;
+        char buffer[NET_MESSAGE_BUFFER_SIZE];
+        NetMessageBuffer* next;
+        OBJECT_POOL_OBJECT_MACRO
 
-    Net_message_buffer* current;
+    NetMessageBuffer() :
+        reference_count(0)
+    {
+    }
+};
+
+class NetMessageBufferPool: public ObjectPool<NetMessageBufferPool, NetMessageBuffer, 128>
+{
+    public:
+    static const char* name()
+    {
+        return "NetMessageBufferPool";
+    }
+
+    NetMessageBuffer* current;
     int remaining;
     char* offset;
 
-    Net_message_buffer_pool()
+    NetMessageBufferPool()
     {
         //printf("=== init ====\n");
         current = this->acquire();
@@ -62,7 +67,7 @@ class Net_message_buffer_pool: public ObjectPool<Net_message_buffer_pool, Net_me
         current->reference_count = 1;
     }
 
-    inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb)
+    inline void get_char_buffer(int length, char** b, NetMessageBuffer** nmb)
     {
         if (remaining < length)
         {
@@ -82,25 +87,25 @@ class Net_message_buffer_pool: public ObjectPool<Net_message_buffer_pool, Net_me
     }
 };
 
-static Net_message_buffer_pool net_message_buffer_pool;
+static NetMessageBufferPool net_message_buffer_pool;
 
 
 
 
-class Net_message_pool: public ObjectPool<Net_message_pool, Net_message, 4096> // {}; //use 4096
+class NetMessagePool: public ObjectPool<NetMessagePool, NetMessage, 4096> // {}; //use 4096
 {
-public:
-    static char* name()
+    public:
+    static const char* name()
     {
-        static char* x = (char*) "Net_message_pool";
-        return x;
+        return "NetMessagePool";
     }
 };
-static Net_message_pool net_message_pool;
+
+static NetMessagePool net_message_pool;
 
 //Net_message_n++; printf("Created: %i netmessages\n", Net_message_n);
 
-void inline Net_message::decrement()
+void inline NetMessage::decrement()
 {
 
 #if PACKET_BUFFER_MALLOC_DEBUG
@@ -135,17 +140,17 @@ void inline Net_message::decrement()
 #endif
 }
 
-class Net_message* Net_message::acquire(unsigned int length)
+class NetMessage* NetMessage::acquire(size_t length)
 {
     if (length <= 0) return NULL;
 #if PACKET_BUFFER_MALLOC_DEBUG
-    Net_message* t = new Net_message;
+    NetMessage* t = new NetMessage;
     t->len = length;
     t->buff = new char[length];
     t->reference_count = 0;
     return t;
 #else
-    Net_message* t = net_message_pool.acquire();
+    NetMessage* t = net_message_pool.acquire();
     t->len = length;
     net_message_buffer_pool.get_char_buffer(length, &t->buff, &t->b); //set buffer and set char pool
     t->reference_count = 0;
@@ -153,10 +158,10 @@ class Net_message* Net_message::acquire(unsigned int length)
 #endif
 }
 
-class Net_message* arbitrary_acquire(unsigned int size)
+class NetMessage* arbitrary_acquire(size_t size)
 {
     if (size == 0) return NULL;
-    class Net_message* nm = net_message_pool.acquire();
+    class NetMessage* nm = net_message_pool.acquire();
     nm->len = size;
     net_message_buffer_pool.get_char_buffer(size, &nm->buff, &nm->b); //set buffer and set char pool
     nm->reference_count = 0;
@@ -178,7 +183,7 @@ NetMessageManager::NetMessageManager()
 }
 
 
-void NetMessageManager::push_message(Net_message* nm)
+void NetMessageManager::push_message(NetMessage* nm)
 {
     //if (nm->len == 0) {printf("NETMESSAGEERROR!!!!\n");}
 
@@ -203,9 +208,9 @@ void NetMessageManager::push_message(Net_message* nm)
     }
 }
 
-void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
+void NetMessageManager::serialize_messages(char* buff_, size_t index)
 {
-    unsigned int max = pending_bytes_out;
+    size_t max = pending_bytes_out;
     //printf("Starting serialization at address %i \n", buff_);
 /*
     if (pending_messages == 0)
@@ -218,7 +223,7 @@ void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
         Create packet and serialize to it
     */
 
-    class Net_message* nm;
+    class NetMessage* nm;
 
     for (int i=0; i < pending_messages; i++)
     {
@@ -248,7 +253,7 @@ void NetMessageManager::serialize_messages(char* buff_, unsigned int index)
 
     if (max != index)
     {
-        printf("NetMessageManager, ERROR, index exceeds bytes to be wrrite: index= %i, max= %i \n", index, max);
+        printf("NetMessageManager, ERROR, index exceeds bytes to be write: index= %i, max= %i \n", index, max);
     }
     //reset to virgin state
     nma_insert_index = 0;

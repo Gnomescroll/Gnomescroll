@@ -46,7 +46,7 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag)
     */
     index = seq;
     n = 1;
-    struct packet_sequence* ps;
+    struct PacketSequence* ps;
     for (int i=0;i<32;i++)
     {
         if ((flag & n) != 0)
@@ -60,7 +60,7 @@ void process_acks(class NetPeer* np, unsigned short seq, unsigned int flag)
             }
 
             if (ps->ack == 0) { //dont ack same packet twice
-                //printf("Packet Acked: %i:%i t= %i ms\n", np->client_id,index, NP_time_delta1(np->packet_sequence_buffer[index%256].time));
+                //printf("Packet Acked: %i:%i t= %i ms\n", np->client_id,index, netpeer_time_delta(np->packet_sequence_buffer[index%256].time));
                 ps->ack = 1;
             /*
                 printf("ack \n");
@@ -92,7 +92,7 @@ uint16_t get_next_sequence_number(class NetPeer* np)
 {
     np->packet_sequence_number = (np->packet_sequence_number+1)%2048;
     int index = np->packet_sequence_number%256;
-    struct packet_sequence* ps = &np->packet_sequence_buffer[index];
+    struct PacketSequence* ps = &np->packet_sequence_buffer[index];
     //np->packet_sequence_buffer[index].active = 1; //may set timer?
     ps->seq = np->packet_sequence_number;
     ps->ack = 0;
@@ -123,10 +123,10 @@ int dropped_packet_count()
 void check_for_dropped_packets(class NetPeer* np)
 {
     int j = (np->packet_sequence_number+1) % 256;
-    struct packet_sequence* ps;
+    struct PacketSequence* ps;
     for (int i=0; i<32 ;i++)
     {
-        //printf("i=%i, t=%i\n", j, NP_time_delta1(ps->time));
+        //printf("i=%i, t=%i\n", j, netpeer_time_delta(ps->time));
         ps = &np->packet_sequence_buffer[j];
         if ((ps->seq != -1) && (ps->ack == 0))
         {

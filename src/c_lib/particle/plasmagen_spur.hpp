@@ -34,7 +34,7 @@ class plasmagen_explode_StoC: public FixedSizeReliableNetPacketToClient<plasmage
     public:
         struct Vec3 position;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_vec3(&position, buff, buff_n, pack);
     }

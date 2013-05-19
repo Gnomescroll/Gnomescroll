@@ -19,7 +19,7 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
     //    id(0), type(NULL_MECH_TYPE), subtype(0), x(0), y(0), z(0)
     //{}
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
@@ -41,7 +41,7 @@ class mech_type_change_StoC: public MapMessagePacketToClient<mech_type_change_St
     //    id(0), type(NULL_MECH_TYPE)
     //{}
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
@@ -60,7 +60,7 @@ class mech_delete_StoC: public MapMessagePacketToClient<mech_delete_StoC>
     //    id(0)
     //{}
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
     }
@@ -76,7 +76,7 @@ class mech_text_StoC: public MapMessagePacketToClient<mech_text_StoC>
         uint16_t id;
         char msg[MECH_TEXT_SIZE_MAX+1];
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_string(msg, MECH_TEXT_SIZE_MAX+1, buff, buff_n, pack);
@@ -92,7 +92,7 @@ class mech_text_update_StoC: public MapMessagePacketToClient<mech_text_update_St
         uint8_t  pos;
         uint8_t  key;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&pos, buff, buff_n, pack);

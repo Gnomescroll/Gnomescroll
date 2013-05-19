@@ -32,7 +32,7 @@ class grenade_StoC: public FixedSizeReliableNetPacketToClient<grenade_StoC>
         uint16_t ttl_max;
         uint8_t type;
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_vec3(&p, buff, buff_n, pack);
         pack_vec3(&m, buff, buff_n, pack);

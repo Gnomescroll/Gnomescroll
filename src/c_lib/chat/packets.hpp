@@ -11,7 +11,7 @@ class ChatMessage_CtoS: public FixedSizeReliableNetPacketToServer<ChatMessage_Ct
         uint8_t channel;
         char msg[CHAT_MESSAGE_SIZE_MAX+1];
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&channel, buff, buff_n, pack);
         pack_string(msg, CHAT_MESSAGE_SIZE_MAX+1, buff, buff_n, pack);
@@ -26,7 +26,7 @@ class ChatMessage_StoC: public FixedSizeReliableNetPacketToClient<ChatMessage_St
         uint8_t sender;
         char msg[CHAT_MESSAGE_SIZE_MAX+1];
 
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
+    inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&channel, buff, buff_n, pack);
         pack_u8(&sender, buff, buff_n, pack);

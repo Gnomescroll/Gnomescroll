@@ -31,18 +31,18 @@ NetPeer::~NetPeer()
 //class NetMessageManager python_message_manager;
 
 
-void NetPeer::push_reliable_message(class Net_message* nm)
+void NetPeer::push_reliable_message(class NetMessage* nm)
 {
     reliable_message_manager.push_message(nm);
 }
 
-void NetPeer::push_unreliable_message(Net_message* nm)
+void NetPeer::push_unreliable_message(NetMessage* nm)
 {
     unreliable_message_manager.push_message(nm);
 }
 
 /*
-void NetPeer::push_python_message(class Net_message* nm)
+void NetPeer::push_python_message(class NetMessage* nm)
 {
     python_message_manager.push_message(nm);
 }
@@ -61,11 +61,11 @@ void NetPeer::flush_map_messages()
 }
 
 
-void NetPeer::resize_map_message_buffer(unsigned int size_min)
+void NetPeer::resize_map_message_buffer(size_t size_min)
 {
     flush_map_messages();
 
-    unsigned int size = 4096*((size_min / 4096) + 1); //round up to next 4096 bytes
+    size_t size = 4096*((size_min / 4096) + 1); //round up to next 4096 bytes
     //printf("resize_ map message buffer from %i to %i \n", map_message_buffer_max, size);
     map_message_buffer_max = size;
     delete[] map_message_buffer;
