@@ -32,6 +32,9 @@ void init_cities()
     prevsubway.x = 256;
     prevsubway.y = 256;
     prevsubway.z = 32;
+
+    BestRoad.x = 0;
+    BestRoad.y = 0;
 }
 
 void generate_city()
@@ -59,8 +62,8 @@ void generate_city()
 
         for (int buildingnum=1; buildingnum <= actual_buildings; buildingnum++)
         {
-            prevx = cx;
-            prevy = cy;
+            prevx = BestRoad.x;
+            prevy = BestRoad.y;
             cx += randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
             cy += randrange(CITY_RANDOMNESS * -1, CITY_RANDOMNESS);
             if (cx >= map_dim.x) cx = 32;
@@ -109,7 +112,8 @@ void generate_city()
                 generate_column(cx, cy, get_highest_area_block(cx, cy, cx + TEMPLE_SIZE, cy + TEMPLE_SIZE) - 1, TEMPLE_SIZE, TEMPLE_SIZE);
                 generate_temple(cx, cy);
             }
-                create_road(cx, cy, t_map::get_highest_open_block(cx, cy) - 1, prevx, prevy, t_map::get_highest_open_block(prevx, prevy) - 1);
+                find_closest_road_spot(cx, cy);
+                create_road(BestRoad.x, BestRoad.y, t_map::get_highest_open_block(BestRoad.x, BestRoad.y) - 1, prevx, prevy, t_map::get_highest_open_block(prevx, prevy) - 1);
         }
     }
 }
@@ -564,7 +568,7 @@ bool isGood(int x, int y, int maxx, int maxy)
     for (int i = x; i <= maxx; i++)
     for (int j = y; j <= maxy; j++)
     {
-        if (t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == steelA || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == steelB || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == steelC || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == gray || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == purple || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == green || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == red || t_map::get(i, j, t_map::get_highest_open_block(i, j) - 1) == glowgreen)
+        if (isArtificial(i, j))
         {
             printf("Block is artificial! \n");
             return 0;
@@ -670,4 +674,25 @@ void generate_sphere(int x, int y, int z, int radius, CubeType material)
     if(sqrtf(powf(cx - x, 2) + powf(cy - y, 2) + powf(cz - z, 2)) <= radius) t_map::set(translate_point(x), translate_point(y), z, material);
 }
 
+void find_closest_road_spot(int x, int y)
+{
+    for(int i = x - CITY_RANDOMNESS; i < x + CITY_RANDOMNESS; i++)
+    for(int j = y - CITY_RANDOMNESS; j < y + CITY_RANDOMNESS; j++)
+    {
+        if(isArtificial(i, j) == false && sqrtf(powf(i - x, 2) + powf(j - y, 2) + powf(t_map::get_highest_open_block(i, j) - t_map::get_highest_open_block(x, y), 2)) < sqrtf(powf(BestRoad.x - x, 2) + powf(BestRoad.y - y, 2) + powf(t_map::get_highest_open_block(BestRoad.x, BestRoad.y) - t_map::get_highest_open_block(x, y), 2)))
+        {
+            BestRoad.x = i;
+            BestRoad.y = j;
+        }
+    }
+    BestRoad.x = translate_point(BestRoad.x);
+    BestRoad.y = translate_point(BestRoad.y);
+}
+
+bool isArtificial(int x, int y)
+{
+    if (t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == steelA || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == steelB || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == steelC || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == gray || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == purple || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == green || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == red || t_map::get(x, y, t_map::get_highest_open_block(x, y) - 1) == glowgreen)
+    return true;
+    else return false;
+}
 }   // t_gen

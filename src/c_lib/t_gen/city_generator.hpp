@@ -48,6 +48,9 @@ namespace t_gen
         struct previous{int x; int y; int z;}
         prevsubway;
 
+        struct best{int x; int y;}
+        BestRoad;
+
 
     CubeType processor;
     CubeType green;
@@ -94,5 +97,7 @@ void generate_sphere(int x, int y, int z, int radius, CubeType material);
 void generate_room(CubeType material, int minx, int miny, int minz, int maxx, int maxy, int maxz, int minentrancex, int minentrancey, int minentrancez, int maxentrancex, int maxentrancey, int maxentracez, int minexitx, int minexity, int minexitz, int maxexitx, int maxexity, int maxexitz, bool windows, bool electric, bool crafting, bool furnace, bool computer, bool fridge, bool recycler, bool chest);
 void generate_line(int startx, int starty, int startz, int endx, int endy, int endz, CubeType material);
 void init_cities(void);
+void find_closest_road_spot(int x, int y);
+bool isArtificial(int x, int y);
 
 }   // t_gen

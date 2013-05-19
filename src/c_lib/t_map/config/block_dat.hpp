@@ -174,7 +174,7 @@ void load_block_dat()
     set_max_damage(64);
     hud_def    (c1, 1,3);
     //set_light_value(15);
-    set_rad_value(15);
+    //set_rad_value(15);
 
     cube_def(SolidCube, "steel_block_2");
     iso_texture(c1, 1,5);
