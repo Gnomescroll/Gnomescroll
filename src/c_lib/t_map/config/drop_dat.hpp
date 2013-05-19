@@ -17,7 +17,7 @@ typedef enum
 #if DC_SERVER
 extern class Item::ItemDropConfig* block_drop_dat;
 
-void handle_block_drop(int x, int y, int z, CubeType cube_type);
+void handle_block_drop(const Vec3i& position, CubeType cube_type);
 #endif
 
 void init_block_drop_dat();

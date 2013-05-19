@@ -57,7 +57,7 @@ void generate_rock_layer()
                 struct t_map::MapElement e1;
                 //struct MapElement e2;
 
-                e1 = c->get_element(x,y,z);
+                e1 = c->get_element(x, y, z);
 
                 if (e1.block != 0)
                 {

@@ -15,7 +15,7 @@ inline void request_block_damage_CtoS::handle() {}
 inline void request_block_damage_CtoS::handle()
 {
     block_damage_StoC msg;
-    int dmg = t_map::get_block_damage(x,y,z);
+    int dmg = t_map::get_block_damage(this->position);
     if (dmg <= 0) return;
     msg.request_id = this->request_id;
     msg.dmg = dmg;

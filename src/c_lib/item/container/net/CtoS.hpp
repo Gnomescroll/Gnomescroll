@@ -477,34 +477,14 @@ class close_container_CtoS: public FixedSizeReliableNetPacketToServer<close_cont
 class create_container_block_CtoS: public FixedSizeReliableNetPacketToServer<create_container_block_CtoS>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
         uint16_t placer_id;
         uint8_t orientation;    // 0123 +x,-y,-x,+y
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
         pack_u16(&placer_id, buff, buff_n, pack);
-        pack_u8(&orientation, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-class admin_create_container_block_CtoS: public FixedSizeReliableNetPacketToServer<admin_create_container_block_CtoS>
-{
-    public:
-        uint16_t x,y,z;
-        uint8_t val;
-        uint8_t orientation;    // 0123 +x,-y,-x,+y
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
-        pack_u8(&val, buff, buff_n, pack);
         pack_u8(&orientation, buff, buff_n, pack);
     }
     inline void handle();

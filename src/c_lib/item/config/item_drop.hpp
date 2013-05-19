@@ -61,7 +61,7 @@ class ItemDropEntry
         GS_ASSERT(false);
     }
 
-    void drop_item(struct Vec3 position, float vx,  float vy, float vz, randFloat vx_func, randFloat vy_func, randFloat vz_func);
+    void drop_item(struct Vec3 position, const Vec3& velocity, randFloat vx_func, randFloat vy_func, randFloat vz_func);
     class Item* drop_item();
 
     ItemDropEntry() :
@@ -136,7 +136,7 @@ class ItemDrop
         randFloat vx_func;
         randFloat vy_func;
         randFloat vz_func;
-        float vx,vy,vz;
+        Vec3 velocity;
 
     // config
     void set_max_drop_types(int n)
@@ -193,7 +193,7 @@ class ItemDrop
         n_drops(0), max_drops(0), drop(NULL),
         dropped_items(NULL), n_dropped_items(0),
         vx_func(NULL), vy_func(NULL), vz_func(NULL),
-        vx(0.0f), vy(0.0f), vz(0.0f)
+        velocity(vec3_init(0))
     {}
 
     ~ItemDrop()

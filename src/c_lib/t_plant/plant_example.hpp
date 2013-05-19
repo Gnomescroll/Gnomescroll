@@ -11,8 +11,7 @@ namespace t_plant
 
 struct PlantExampleStruct
 {
-    int x,y,z;  //tree master
-
+    Vec3i position;
     class BlockList bl;
     //bool alive;
     int counter;
@@ -24,21 +23,20 @@ void plant_example_init(struct PlantExampleStruct &m)
     m.counter = 0;
     m.bl.init();
 
-    m.x = plant_placement_data.x;
-    m.y = plant_placement_data.y;
-    m.z = plant_placement_data.z;
+    m.position = plant_placement_data.position;
 
     //m.alive = true;
 
-    printf("plant_example_init: %d %d %d \n", m.x,m.y,m.z);
+    printf("plant_example_init: ");
+    vec3i_print(m.position);
 
     CubeType cube_id = t_map::get_cube_type("plant_example_master");
 
     //t_map::broadcast_set_block_palette(
-    //t_map::set_palette(int x, int y, int z, int palette);
+    //t_map::set_palette(const Vec3i& position, int palette);
 
-    t_map::set(m.x,m.y,m.z, cube_id);
-    t_map::broadcast_set_block(m.x,m.y,m.z, cube_id);
+    t_map::set(m.position, cube_id);
+    t_map::broadcast_set_block(m.position, cube_id);
 
     //t_map::set(m.x,m.y,m.z+1s, cube_id);
     //t_map::broadcast_set_block(m.x,m.y,m.z+1, cube_id);
@@ -55,38 +53,39 @@ void plant_example_init(struct PlantExampleStruct &m)
     CubeType plant_example_leaves       = t_map::get_cube_type("plant_example_leaves");
     //CubeType plant_example_leaves_dead    = t_map::get_cube_type("plant_example_leaves_dead");
 
-    m.bl.add(m.x, m.y, m.z, plant_example_master, 0);
+    m.bl.add(m.position, plant_example_master, 0);
 
     //roots
     for (int i=1;i<3; i++)
     {
-        m.bl.add(m.x-1, m.y, m.z+i, plant_example_root, 0);
-        m.bl.add(m.x+1, m.y, m.z+i, plant_example_root, 0);
-        m.bl.add(m.x, m.y-1, m.z+i, plant_example_root, 0);
-        m.bl.add(m.x, m.y+1, m.z+i, plant_example_root, 0);
+        m.bl.add(m.position.x-1, m.position.y, m.position.z+i, plant_example_root, 0);
+        m.bl.add(m.position.x+1, m.position.y, m.position.z+i, plant_example_root, 0);
+        m.bl.add(m.position.x, m.position.y-1, m.position.z+i, plant_example_root, 0);
+        m.bl.add(m.position.x, m.position.y+1, m.position.z+i, plant_example_root, 0);
     }
-        m.bl.add(m.x, m.y, m.z-1, plant_example_root, 0);
-        m.bl.add(m.x, m.y, m.z-2, plant_example_root, 0);
+    m.bl.add(m.position.x, m.position.y, m.position.z-1, plant_example_root, 0);
+    m.bl.add(m.position.x, m.position.y, m.position.z-2, plant_example_root, 0);
 
     //trunk
 
     int height = 4+rand()%6;
 
-    for (int i=1;i<=height; i++)
+    for (int i=1; i<=height; i++)
     {
-        m.bl.add(m.x, m.y, m.z+i, plant_example_trunk, 0);
+        m.bl.add(m.position.x, m.position.y, m.position.z+i, plant_example_trunk, 0);
     }
 
     int width = 1 + rand()%4;
 
-    for (int i= -1*width;i<=width;i++)
-    for (int j= -1*width;j<=width;j++)
+    for (int i = -1*width; i<=width; i++)
+    for (int j = -1*width; j<=width; j++)
     {
         if (i==0 && j== 0)
             continue;
         if (abs(i) + abs(j) <= width)
             continue;
-        m.bl.add(m.x+i, m.y+j, m.z+height, plant_example_leaves, 0);
+        m.bl.add(m.position.x + i, m.position.y + j, m.position.z + height,
+                 plant_example_leaves, 0);
     }
 }
 
@@ -161,28 +160,26 @@ void plant_example_tick(struct PlantExampleStruct &m)
 
         for (int i=0; i<m.bl.ban; i++)
         {
-            int x = m.bl.ba[i].x;
-            int y = m.bl.ba[i].y;
-            int z = m.bl.ba[i].z;
+            Vec3i p = m.bl.ba[i].position;
 
-            CubeType current_block = t_map::get(x,y,z);
+            CubeType current_block = t_map::get(p);
             if (current_block == plant_example_master)
             {
                 if (rand()% 25 == 0)
                 {
                     struct t_map::MapElement e;
-                    e = t_map::get_element(x,y,z);
+                    e = t_map::get_element(p);
 
                     if (e.palette == 0)
-                        t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 1);
+                        t_map::broadcast_set_block_palette(p, plant_example_master , 1);
                     if (e.palette == 1)
-                        t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 0);
+                        t_map::broadcast_set_block_palette(p, plant_example_master , 0);
                     if (e.palette == 2)
-                        t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 3);
+                        t_map::broadcast_set_block_palette(p, plant_example_master , 3);
                     if (e.palette == 3)
-                        t_map::broadcast_set_block_palette(x,y,z,plant_example_master , 2);
+                        t_map::broadcast_set_block_palette(p, plant_example_master , 2);
 
-                    //t_map::broadcast_set_block_palette(x,y,z,plant_example_master , (e.pallete + 1)%3;
+                    //t_map::broadcast_set_block_palette(p, plant_example_master , (e.pallete + 1)%3;
                 }
             }
 
@@ -192,12 +189,12 @@ void plant_example_tick(struct PlantExampleStruct &m)
                     continue;
 
                 struct t_map::MapElement e;
-                e = t_map::get_element(x,y,z);
+                e = t_map::get_element(p);
 
                 if (e.palette == 0)
-                    t_map::broadcast_set_block_palette(x,y,z,plant_example_leaves , 1);
+                    t_map::broadcast_set_block_palette(p, plant_example_leaves , 1);
                 if (e.palette == 1)
-                    t_map::broadcast_set_block_palette(x,y,z,plant_example_leaves , 0);
+                    t_map::broadcast_set_block_palette(p, plant_example_leaves , 0);
             }
 
             if (current_block == 0)
@@ -206,29 +203,10 @@ void plant_example_tick(struct PlantExampleStruct &m)
                     continue;
                 int block_id = m.bl.ba[i].type;
                 if (block_id != plant_example_master)
-                    t_map::broadcast_set_block(x,y,z, (CubeType) block_id);
+                    t_map::broadcast_set_block(p, (CubeType) block_id);
             }
         }
     }
-/*
-    int adj[6];  //adjacent blocks
-    int adjn =0; //adjacent block array
-
-    for (int i=0; i<m.bl.ban; i++)
-    {
-        int x = m.bl.ba[i].x;
-        int y = m.bl.ba[i].y;
-        int z = m.bl.ba[i].z;
-
-        //etc does block exist
-        if (t_map::get(x,y,z) == 0)
-        {
-
-        }
-
-        m.bl.adjacent_blocks(i, adj, &adjn);
-    }
-*/
 }
 
 }   // t_plant

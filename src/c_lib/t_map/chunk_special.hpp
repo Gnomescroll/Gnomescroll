@@ -14,7 +14,7 @@ namespace t_map
 
 struct InventoryBlock
 {
-    int x,y,z;
+    Vec3i position;
     ItemContainerType container_type;
     ItemContainerID container_id;
 };
@@ -62,17 +62,15 @@ class ChunkItemContainer
 
     bool _remove(int index);
 
-    bool remove(int x, int y, int z);
+    bool remove(const Vec3i& position);
     bool remove(ItemContainerID container_id);
 
-    void get_container_location(ItemContainerID container_id, int position[3])
+    void get_container_location(ItemContainerID container_id, Vec3i& position)
     {
         for (int i=0; i<iban; i++)
             if (iba[i].container_id == container_id)
             {
-                position[0] = iba[i].x;
-                position[1] = iba[i].y;
-                position[2] = iba[i].z;
+                position = iba[i].position;
                 return;
             }
 
@@ -80,12 +78,12 @@ class ChunkItemContainer
         GS_ASSERT(false);
     }
 
-    bool add(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id);
+    bool add(const Vec3i& position, ItemContainerType container_type, ItemContainerID container_id);
 
-    ItemContainerID get(int x, int y, int z)
+    ItemContainerID get(const Vec3i& position)
     {
         for (int i=0; i<iban; i++)
-            if (x == iba[i].x && y == iba[i].y && z == iba[i].z)
+            if (is_equal(iba[i].position, position))
                 return iba[i].container_id;
         return NULL_CONTAINER;
     }

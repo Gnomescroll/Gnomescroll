@@ -118,8 +118,7 @@ static bool process_container_blob(const char* str, size_t filesize)
         GS_ASSERT(container_data.container_id == m+1);  // not fatal, but indicates a problem with container serializer
 
         // get container by map position
-        ItemContainerID container_id = t_map::get_block_item_container(container_data.position.x,
-            container_data.position.y, container_data.position.z);
+        ItemContainerID container_id = t_map::get_block_item_container(container_data.position);
         IF_ASSERT(container_id == NULL_CONTAINER) return false;
 
         ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
@@ -232,13 +231,10 @@ const char* write_container_string(const class ItemContainer::ItemContainerInter
         return NULL;
     }
 
-    int b[3];
+    Vec3i b;
     bool found = t_map::get_container_location(container->id, b);
     IF_ASSERT(!found) return NULL;
-    bool fits = (b[0] >= 0 && b[0] < XMAX
-               && b[1] >= 0 && b[1] < YMAX
-               && b[2] >= 0 && b[2] < ZMAX);
-    IF_ASSERT(!fits)
+    IF_ASSERT(!is_boxed_position(b))
     {
         log_container_save_error("Container dimensions outside map boundaries");
         return NULL;
@@ -246,7 +242,7 @@ const char* write_container_string(const class ItemContainer::ItemContainerInter
 
     // write header
     int could_write = snprintf(&_buffer[ibuf], BUF_SIZE - ibuf, CONTAINER_HEADER_FMT,
-        container_name, container->slot_count, b[0], b[1], b[2], container_entry);
+        container_name, container->slot_count, b.x, b.y, b.z, container_entry);
     IF_ASSERT(could_write <= 0 || (size_t)could_write >= BUF_SIZE - ibuf)
     {
         log_container_save_error("Buffer overrun in writing container entry header");

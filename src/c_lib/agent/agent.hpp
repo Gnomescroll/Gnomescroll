@@ -152,7 +152,7 @@ class Agent
     {
         return this->camera;
     }
-    //Vec3 get_camera_state_position() { return vec3_init(this->camera.x, this->camera.y, this->camera.z); }
+
     void set_camera_state(float x, float y, float z, float theta, float phi);
 
     void spawn_state();
@@ -170,12 +170,14 @@ class Agent
     {
         return this->s;
     }
+
     void set_position(float x, float y, float z);
     void set_state(float x, float y, float z, float vx, float vy, float vz);
     AgentState get_state_snapshot()
     {
         return this->state_snapshot;
     }
+
     void set_state_snapshot(float  x, float y, float z, float vx, float vy, float vz);
     void set_angles(float theta, float phi);
     void teleport(float x,float y,float z); //should only be used on server
@@ -186,11 +188,11 @@ class Agent
     }
 
     // returns side, as integer. side<0 if failure
-    int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
-    int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);
-    int get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance);
+    int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, Vec3i& side, float* distance);
+    int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, float* distance);
+    int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, const float max_distance);
 
-    bool nearest_open_block(const float max_dist, int open_point[3]);
+    bool nearest_open_block(const float max_dist, Vec3i& open_point);
 
     struct Vec3 forward_vector()
     {

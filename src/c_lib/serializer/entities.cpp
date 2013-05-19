@@ -206,14 +206,15 @@ bool process_entities_blob(const char* str, size_t filesize)
         if (position != NULL && physics != NULL)
             physics->set_position(vec3_init(position->x, position->y, position->z));
 
-        GS_ASSERT(!err);
-        if (err)    // cancel entity
-        {
+        IF_ASSERT(err)
+        {   // cancel entity
             Entities::destroy(entity);
             return false;
         }
-        else // ready entity
+        else
+        {   // ready entity
             Entities::ready(entity);
+        }
     }
 
     return true;

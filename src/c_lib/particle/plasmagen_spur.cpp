@@ -34,12 +34,9 @@ void PlasmagenSpur::tick()
     if (this->verlet.collide_no_gravity(&data, &dist))
     {
         #if DC_SERVER
-        t_map::apply_damage_broadcast(
-            data.collision_point[0],
-            data.collision_point[1],
-            data.collision_point[2],
-            t_gen::PLASMAGEN_BLOCK_DAMAGE,
-            TMA_PLASMAGEN);
+        t_map::apply_damage_broadcast(data.collision_point,
+                                      t_gen::PLASMAGEN_BLOCK_DAMAGE,
+                                      TMA_PLASMAGEN);
         //this->broadcast_death();
         #endif
         this->travelled = t_gen::PLASMAGEN_BLAST_RADIUS;

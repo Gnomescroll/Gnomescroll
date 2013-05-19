@@ -97,9 +97,9 @@ void environment_process_startup()
     int regolith_id = get_cube_type("regolith");
     int s_time = _GET_MS_TIME();
 
-    for (int z=0; z<ZMAX; z++)
-    for (int x=0; x<XMAX; x++)
-    for (int y=0; y<YMAX; y++)
+    for (int z=0; z<map_dim.z; z++)
+    for (int x=0; x<map_dim.x; x++)
+    for (int y=0; y<map_dim.y; y++)
     {
         struct MapElement e1 = get_element(x,y,z);
 

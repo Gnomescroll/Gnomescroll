@@ -18,7 +18,7 @@ ItemContainerType get_container_type(ItemContainerID container_id);
 AgentID get_container_owner(ItemContainerID container_id);
 void destroy_container(ItemContainerID container_id);
 
-bool container_block_in_range_of(struct Vec3 pos, int block[3]);
+bool container_block_in_range_of(const Vec3& pos, const Vec3i& block);
 
 }   // ItemContainer
 
@@ -103,6 +103,7 @@ ItemID auto_add_item_to_container(const char* item_name, ItemContainerID contain
 // Create a container at a map location and returns the container ID
 // Remember to broadcast_container_create(id) if you are calling this
 // outside of the init phase (when players may be playing)
+ItemContainerID create_container_block(ItemContainerType container_type, const Vec3i& position);
 ItemContainerID create_container_block(ItemContainerType container_type, int x, int y, int z);
 
 // definition in server.hpp
@@ -115,7 +116,7 @@ void update_smelters();
 bool load_item_into_container(ItemID item_id, ItemContainerID container_id, int container_slot);
 bool load_item_into_hand(ItemID item_id, AgentID agent_id);
 
-void container_block_destroyed(ItemContainerID container_id, int x, int y, int z);
+void container_block_destroyed(ItemContainerID container_id, const Vec3i& position);
 
 // tests
 void test_container_list_capacity();

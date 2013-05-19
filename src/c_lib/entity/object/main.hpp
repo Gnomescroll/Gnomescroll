@@ -36,7 +36,7 @@ class Entity** get_all(EntityType type, char*& used, int& count);
 void destroy_all();
 
 // misc interators. move to another file later
-bool point_occupied_by_type(EntityType type, int x, int y, int z);
+bool point_occupied_by_type(EntityType type, const Vec3i& position);
 void damage_objects_within_sphere(const EntityType* types, int n_types, Vec3 position, float radius, int damage);
 void spawn_mobs();
 

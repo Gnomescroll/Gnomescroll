@@ -18,6 +18,6 @@ void draw_agent_bounding_box(float x, float y, float z, float radius,
                              float head_height, float height);
 void draw_agent_bounding_box(float x, float y, float z, float radius,
                              float head_height, float height, Color color);
-void draw_agent_cube_selection(int x, int y, int z, Color color);
+void draw_agent_cube_selection(const Vec3i& position, Color color);
 
 }   // AgentDraw

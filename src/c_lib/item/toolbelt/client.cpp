@@ -144,9 +144,9 @@ static bool beta_scan_world()
 
     class Voxels::VoxelHitscanTarget target;
     float vox_distance;
-    float collision_point[3];
-    int block_pos[3];
-    int side[3];
+    Vec3 collision_point;
+    Vec3i block_pos;
+    Vec3i side;
     CubeType tile = EMPTY_CUBE;
     float block_distance;
 
@@ -171,8 +171,9 @@ static bool beta_scan_world()
             return false;
 
         case HITSCAN_TARGET_BLOCK:
-            if (!ItemContainer::container_block_in_range_of(pos, block_pos)) return false;
-            container_id = t_map::get_block_item_container(block_pos[0], block_pos[1], block_pos[2]);
+            if (!ItemContainer::container_block_in_range_of(pos, block_pos))
+                return false;
+            container_id = t_map::get_block_item_container(block_pos);
             if (container_id != NULL_CONTAINER)
             {
                 bool opened = ItemContainer::open_container(container_id);

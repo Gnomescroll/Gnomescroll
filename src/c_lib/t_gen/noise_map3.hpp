@@ -233,21 +233,21 @@ class PerlinOctave3D
     {
         //if (cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
 
-        const int XMAX = 512/4;
-        const int YMAX = 512/4;
-        const int ZMAX = 128/4;
+        const int max_x = 512/4;
+        const int max_y = 512/4;
+        const int max_z = 128/4;
 
         float x,y,z;
 
-        for (int k=0; k<ZMAX; k++)
-        for (int i=0; i<XMAX; i++)
-        for (int j=0; j<YMAX; j++)
+        for (int k=0; k<max_z; k++)
+        for (int i=0; i<max_x; i++)
+        for (int j=0; j<max_y; j++)
         {
             x = i*(4.0f/512.0f);
             y = j*(4.0f/512.0f);
             z = k*(4.0f/512.0f);
 
-            cache[k*XMAX*YMAX + j*XMAX + i] = sample(x,y,z, persistence);
+            cache[k*max_x*max_y + j*max_x + i] = sample(x,y,z, persistence);
         }
     }
 

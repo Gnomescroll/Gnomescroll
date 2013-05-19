@@ -34,68 +34,84 @@ namespace t_map
 
 class Terrain_map* main_map = NULL;
 
-CubeType get(int x, int y, int z)
+CubeType get(const Vec3i& position)
 {
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0)
+    if (!is_valid_z(position))
         return (CubeType)ABOVE_MAP_ELEMENT.block;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    class MapChunk* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
+    Vec3i p = translate_position(position);
+    class MapChunk* c = main_map->get_chunk(p);
     if (c == NULL)
         return (CubeType)NULL_MAP_ELEMENT.block;
-    return (CubeType)c->e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+    else
+        return c->get_block(p);
+}
+
+CubeType set(const Vec3i& position, CubeType cube_type)
+{
+    main_map->set_block(position, cube_type);
+    light_add_block(position);
+    return cube_type;
+}
+
+CubeType get(int x, int y, int z)
+{
+    return get(vec3i_init(x, y, z));
 }
 
 CubeType set(int x, int y, int z, CubeType cube_type)
 {
-    main_map->set_block(x,y,z, cube_type);
-    light_add_block(x,y,z);
-
-    return cube_type;
+    return set(vec3i_init(x, y, z), cube_type);
 }
 
-CubeType get(const struct Vec3i& pos)
+OPTIMIZED ALWAYS_INLINE
+void set_fast(const Vec3i& position, CubeType cube_type)
 {
-    return get(pos.x, pos.y, pos.z);
-}
-
-CubeType set(const struct Vec3i& pos, CubeType cube_type)
-{
-    return set(pos.x, pos.y, pos.z, cube_type);
+    main_map->set_block_fast(position, cube_type);
 }
 
 OPTIMIZED ALWAYS_INLINE
 void set_fast(int x, int y, int z, CubeType cube_type)
 {
-    main_map->set_block_fast(x,y,z, cube_type);
+    return set_fast(vec3i_init(x, y, z), cube_type);
 }
 
-struct MapElement get_element(int x, int y, int z)
+struct MapElement get_element(const Vec3i& position)
 {
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return ABOVE_MAP_ELEMENT;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    class MapChunk* c = main_map->chunk[ MAP_CHUNK_XDIM*(y >> 4) + (x >> 4) ];
-    if (c == NULL) return NULL_MAP_ELEMENT;
-    return c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
+    if (!is_valid_z(position)) return ABOVE_MAP_ELEMENT;
+    Vec3i p = translate_position(position);
+    class MapChunk* c = main_map->get_chunk(p);
+    if (c == NULL)
+        return NULL_MAP_ELEMENT;
+    else
+        return c->get_element(p);
 }
 
-void set_element(int x, int y, int z, struct MapElement e)
+inline struct MapElement get_element(int x, int y, int z)
 {
-    main_map->set_element(x,y,z,e);
-    light_add_block(x,y,z);
+    return get_element(vec3i_init(x, y, z));
 }
 
-void set_palette(int x, int y, int z, int palette)
+inline void set_element(const Vec3i& position, struct MapElement e)
 {
-    struct MapElement element = main_map->get_element(x,y,z);
+    main_map->set_element(position, e);
+    light_add_block(position);
+}
+
+inline void set_element(int x, int y, int z, struct MapElement e)
+{
+    set_element(vec3i_init(x, y, z), e);
+}
+
+void set_palette(const Vec3i& position, int palette)
+{
+    struct MapElement element = main_map->get_element(position);
     element.palette = palette;
-    main_map->set_element(x,y,z,element);
+    main_map->set_element(position, element);
 }
 
-int get_palette(int x, int y, int z)
+int get_palette(const Vec3i& position)
 {
-    return main_map->get_element(x,y,z).palette;
+    return main_map->get_element(position).palette;
 }
 
 class Terrain_map* get_map()
@@ -152,87 +168,89 @@ void end_t_map()
     teardown_lighting();
 }
 
-int get_block_damage(int x, int y, int z)
+int get_block_damage(const Vec3i& position)
 {
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return 0;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    return main_map->get_damage(x,y,z);
+    IF_ASSERT(!is_valid_z(position)) return 0;
+    return main_map->get_damage(translate_position(position));
 }
 
 #if DC_SERVER
 
 // apply block damage & broadcast the update to client
-void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
+void apply_damage_broadcast(const Vec3i& position, int dmg, TerrainModificationAction action)
 {
     IF_ASSERT(dmg <= 0) return;
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    IF_ASSERT(!is_valid_z(position)) return;
+    if (position.z == 0) return;    // no floor
+    Vec3i p = translate_position(position);
 
     CubeType cube_type = ERROR_CUBE;
-    int ret = t_map::main_map->apply_damage(x,y,z, dmg, &cube_type);
+    int ret = t_map::main_map->apply_damage(p, dmg, &cube_type);
     if (ret != 0) return;
 
-    set(x,y,z, EMPTY_CUBE);  //clear block
-    t_mech::handle_block_removal(x,y,z);    //block removal
+    set(p, EMPTY_CUBE);  //clear block
+    t_mech::handle_block_removal(p);    //block removal
 
     // always explode explosives with force
     if (isExplosive(cube_type)) action = TMA_PLASMAGEN;
 
     // block_action packet expects final value of cube, not initial value
-    map_history->send_block_action(x,y,z, EMPTY_CUBE, action);
+    map_history->send_block_action(p, EMPTY_CUBE, action);
 
     if (hasItemDrop(cube_type))
-        handle_block_drop(x,y,z, cube_type);
+        handle_block_drop(p, cube_type);
 }
 
-void broadcast_set_block_action(int x, int y, int z, CubeType cube_type, int action)
+void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    map_history->send_block_action(x,y,z, cube_type, action);
+    return apply_damage_broadcast(vec3i_init(x, y, z), dmg, action);
 }
 
-bool broadcast_set_block(int x, int y, int z, CubeType cube_type)
+void broadcast_set_block_action(const Vec3i& position, CubeType cube_type, int action)
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    IF_ASSERT(!is_valid_z(position)) return;
+    Vec3i p = translate_position(position);
+    map_history->send_block_action(p, cube_type, action);
+}
 
-    set(x,y,z, cube_type);
-    map_history->send_set_block(x,y,z, cube_type);
+bool broadcast_set_block(const Vec3i& position, CubeType cube_type)
+{
+    IF_ASSERT(!is_valid_z(position)) return false;
+    Vec3i p = translate_position(position);
+
+    set(p, cube_type);
+    map_history->send_set_block(p, cube_type);
     return true;
 }
 
-void broadcast_set_block_palette(int x, int y, int z, CubeType block, int palette)
+void broadcast_set_block_palette(const Vec3i& position, CubeType block, int palette)
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    IF_ASSERT(!is_valid_z(position)) return;
+    Vec3i p = translate_position(position);
 
     struct MapElement e = NULL_MAP_ELEMENT;
     e.block = block;
     e.palette = palette;
 
-    set_element(x,y,z,e);
-    map_history->send_set_block_palette(x,y,z, block,palette);
+    set_element(p,e);
+    map_history->send_set_block_palette(p, block,palette);
 }
 
-void broadcast_set_palette(int x, int y, int z, int palette)
+void broadcast_set_block_palette(int x, int y, int z, CubeType block, int palette)
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    broadcast_set_block_palette(vec3i_init(x, y, z), block, palette);
+}
 
-    struct MapElement e = get_element(x,y,z);
+void broadcast_set_palette(const Vec3i& position, int palette)
+{
+    IF_ASSERT(!is_valid_z(position)) return;
+    Vec3i p = translate_position(position);
+
+    struct MapElement e = get_element(p);
     e.palette = palette;
 
-    set_element(x,y,z,e);
-    map_history->send_set_block_palette(x,y,z, (CubeType)e.block, e.palette);
+    set_element(p,e);
+    map_history->send_set_block_palette(p, (CubeType)e.block, e.palette);
 }
 #endif
 

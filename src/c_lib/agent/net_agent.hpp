@@ -167,7 +167,7 @@ class agent_shot_object_StoC: public FixedSizeReliableNetPacketToClient<agent_sh
         uint16_t target_id;
         uint8_t target_type;
         uint8_t target_part;
-        uint8_t vx,vy,vz;   //voxel
+        Vec3i voxel;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
@@ -175,9 +175,7 @@ class agent_shot_object_StoC: public FixedSizeReliableNetPacketToClient<agent_sh
         pack_u16(&target_id, buff, buff_n, pack);
         pack_u8(&target_type, buff, buff_n, pack);
         pack_u8(&target_part, buff, buff_n, pack);
-        pack_u8(&vx, buff, buff_n, pack);
-        pack_u8(&vy, buff, buff_n, pack);
-        pack_u8(&vz, buff, buff_n, pack);
+        pack_vec3i_u8(&voxel, buff, buff_n, pack);
 
     }
     inline void handle();
@@ -190,16 +188,14 @@ class agent_shot_block_StoC: public FixedSizeReliableNetPacketToClient<agent_sho
         uint8_t id;
         uint8_t cube;   // might not need this (infer from x,y,z)
         uint8_t side;
-        float x,y,z;    // send the actual collision point
+        Vec3 position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&id, buff, buff_n, pack);
         pack_u8(&cube, buff, buff_n, pack);
         pack_u8(&side, buff, buff_n, pack);
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -209,14 +205,12 @@ class agent_hit_block_StoC: public FixedSizeReliableNetPacketToClient<agent_hit_
 {
     public:
         uint8_t id;
-        uint16_t x,y,z;
+        Vec3i position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&id, buff, buff_n, pack);
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -242,26 +236,15 @@ class agent_melee_object_StoC: public FixedSizeReliableNetPacketToClient<agent_m
         uint16_t target_id;
         uint8_t target_type;
         uint8_t target_part;
-        uint8_t vx,vy,vz;
-        //float x,y,z;    // need this, because the target can be destroyed by the hitscan action
-        // and the destroy packet might (read: DOES ALMOST ALWAYS) reach before this packet
-        // and then player cannot animate
-        // OR
-        // animate from aiming direction
-        // can also make a second array in each *list, that holds decayed state info
-        // i.e. when destroy object, cache its last x,y,z,vx,vy,vz
+        Vec3i voxel;
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&id, buff, buff_n, pack);
         pack_u16(&target_id, buff, buff_n, pack);
         pack_u8(&target_type, buff, buff_n, pack);
         pack_u8(&target_part, buff, buff_n, pack);
-        //pack_float(&x, buff, buff_n, pack);
-        //pack_float(&y, buff, buff_n, pack);
-        //pack_float(&z, buff, buff_n, pack);
-        pack_u8(&vx, buff, buff_n, pack);
-        pack_u8(&vy, buff, buff_n, pack);
-        pack_u8(&vz, buff, buff_n, pack);
+        pack_vec3i_u8(&voxel, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -270,6 +253,7 @@ class agent_threw_grenade_StoC: public FixedSizeReliableNetPacketToClient<agent_
 {
     public:
         uint8_t id;
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&id, buff, buff_n, pack);
@@ -281,6 +265,7 @@ class agent_placed_block_StoC: public FixedSizeReliableNetPacketToClient<agent_p
 {
     public:
         uint8_t id;
+
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u8(&id, buff, buff_n, pack);
@@ -316,14 +301,12 @@ class agent_control_state_CtoS: public FixedSizeReliableNetPacketToServer<agent_
 class hit_block_CtoS: public FixedSizeReliableNetPacketToServer<hit_block_CtoS>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
         uint16_t weapon_type;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
         pack_u16(&weapon_type, buff, buff_n, pack);
     }
 
@@ -336,16 +319,14 @@ class hitscan_object_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_obj
         uint16_t id;
         uint8_t type;
         uint8_t part;
-        uint8_t vx,vy,vz;   // voxel
+        Vec3i voxel;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
         pack_u8(&part, buff, buff_n, pack);
-        pack_u8(&vx, buff, buff_n, pack);
-        pack_u8(&vy, buff, buff_n, pack);
-        pack_u8(&vz, buff, buff_n, pack);
+        pack_vec3i_u8(&voxel, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -354,13 +335,11 @@ class hitscan_object_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_obj
 class hitscan_block_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_block_CtoS>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
     }
 
     inline void handle();
@@ -382,7 +361,7 @@ class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_
         uint16_t id;
         uint8_t type;
         uint8_t part;
-        uint8_t vx,vy,vz;
+        Vec3i voxel;
         uint16_t weapon_type;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
@@ -390,9 +369,7 @@ class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
         pack_u8(&part, buff, buff_n, pack);
-        pack_u8(&vx, buff, buff_n, pack);
-        pack_u8(&vy, buff, buff_n, pack);
-        pack_u8(&vz, buff, buff_n, pack);
+        pack_vec3i_u8(&voxel, buff, buff_n, pack);
         pack_u16(&weapon_type, buff, buff_n, pack);
     }
     inline void handle();
@@ -469,17 +446,13 @@ class player_agent_id_StoC: public FixedSizeReliableNetPacketToClient<player_age
 class throw_grenade_CtoS: public FixedSizeReliableNetPacketToServer<throw_grenade_CtoS>
 {
     public:
-        float x,y,z;
-        float vx,vy,vz;    // direction
+        Vec3 position;
+        Vec3 velocity;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_float(&x, buff, buff_n, pack);
-        pack_float(&y, buff, buff_n, pack);
-        pack_float(&z, buff, buff_n, pack);
-        pack_float(&vx, buff, buff_n, pack);
-        pack_float(&vy, buff, buff_n, pack);
-        pack_float(&vz, buff, buff_n, pack);
+        pack_vec3(&position, buff, buff_n, pack);
+        pack_vec3(&velocity, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -529,47 +502,25 @@ class agent_suicides_StoC: public FixedSizeReliableNetPacketToClient<agent_suici
 class agent_set_block_CtoS: public FixedSizeReliableNetPacketToServer<agent_set_block_CtoS>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
         uint16_t placer_id;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
         pack_u16(&placer_id, buff, buff_n, pack);
     }
     inline void handle();
 };
 
-class admin_set_block_CtoS: public FixedSizeReliableNetPacketToServer<admin_set_block_CtoS>
-{
-    public:
-        uint16_t x,y,z;
-        uint16_t val;
-
-    inline void packet(char* buff, unsigned int* buff_n, bool pack)
-    {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
-        pack_u16(&val, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-/****************/
-
 class place_turret_CtoS: public FixedSizeReliableNetPacketToServer<place_turret_CtoS>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -577,13 +528,11 @@ class place_turret_CtoS: public FixedSizeReliableNetPacketToServer<place_turret_
 class place_spawner_CtoS: public FixedSizeReliableNetPacketToServer<place_spawner_CtoS>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
     }
     inline void handle();
 };

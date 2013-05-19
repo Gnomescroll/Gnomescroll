@@ -119,10 +119,10 @@ void ItemParticle::tick()
 }
 
 #if DC_CLIENT
-void ItemParticle::init(ItemType item_type, float x, float y, float z, float mx, float my, float mz)
+void ItemParticle::init(ItemType item_type, const Vec3& position, const Vec3& velocity)
 #endif
 #if DC_SERVER
-void ItemParticle::init(ItemID item_id, ItemType item_type, float x, float y, float z, float mx, float my, float mz)
+void ItemParticle::init(ItemID item_id, ItemType item_type, const Vec3& position, const Vec3& velocity)
 #endif
 {
     this->verlet.box_radius = ITEM_PARTICLE_RADIUS;
@@ -146,10 +146,9 @@ void ItemParticle::init(ItemID item_id, ItemType item_type, float x, float y, fl
     this->item_id = item_id;
     this->pickup_prevention = ITEM_INITIAL_PICKUP_PREVENTION;
     #endif
-    GS_ASSERT(is_boxed_point(x));
-    GS_ASSERT(is_boxed_point(y));
-    verlet.position = vec3_init(x,y,z);
-    verlet.velocity = vec3_init(mx,my,mz);
+    GS_ASSERT(is_boxed_position(position));
+    verlet.position = position;
+    verlet.velocity = velocity;
 
     GS_ASSERT(vec3_is_valid(verlet.position));
     GS_ASSERT(vec3_is_valid(verlet.velocity));
@@ -171,7 +170,7 @@ void ItemParticle::pickup_cancelled()
 {
     GS_ASSERT(this->target_agent != NULL_AGENT);
     this->target_agent = NULL_AGENT;
-    this->verlet.velocity = vec3_init(0.0f,0.0f,0.0f);
+    this->verlet.velocity = vec3_init(0.0f);
     #if DC_SERVER
     this->ttl = ITEM_PARTICLE_TTL;
     this->get_picked_up = false;

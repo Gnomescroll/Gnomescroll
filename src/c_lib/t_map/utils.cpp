@@ -7,6 +7,15 @@
 namespace t_map
 {
 
+Vec3i random_surface_block()
+{
+    Vec3i p;
+    p.x = randrange(0, map_dim.x - 1);
+    p.y = randrange(0, map_dim.y - 1);
+    p.z = t_map::get_highest_solid_block(p.x, p.y);
+    return p;
+}
+
 inline int get_highest_open_block(int x, int y, int n)
 {
     IF_ASSERT(n < 1) return -1;
@@ -31,9 +40,19 @@ inline int get_highest_open_block(int x, int y, int n)
     return -1;
 }
 
+inline int get_highest_open_block(const Vec3i& position, int clearance)
+{
+    return get_highest_open_block(position.x, position.y, clearance);
+}
+
 inline int get_highest_open_block(int x, int y)
 {
     return get_highest_solid_block(x, y) + 1;
+}
+
+inline int get_highest_open_block(const Vec3i& position)
+{
+    return get_highest_open_block(position.x, position.y);
 }
 
 inline bool _can_fit(int x, int y, int z, int clearance)
@@ -44,6 +63,12 @@ inline bool _can_fit(int x, int y, int z, int clearance)
     return (cursor == clearance);
 }
 
+inline int _can_fit(const Vec3i& position, int clearance)
+{
+    return _can_fit(position.x, position.y, position.z, clearance);
+}
+
+
 inline int _get_next_down(int x, int y, int z, int clearance)
 {
     if (z <= 0) return -1;
@@ -53,6 +78,11 @@ inline int _get_next_down(int x, int y, int z, int clearance)
         while (z >= 0 && !isSolid(x, y, z)) z--;
     } while (z >= 0 && !_can_fit(x, y, z+1, clearance));
     return z+1;
+}
+
+inline int _get_next_down(const Vec3i& position, int clearance)
+{
+    return _get_next_down(position.x, position.y, position.z, clearance);
 }
 
 inline int _get_next_up(int x, int y, int z, int clearance)
@@ -67,6 +97,11 @@ inline int _get_next_up(int x, int y, int z, int clearance)
         while (isSolid(x, y, z)) z++;
     }
     return z;
+}
+
+inline int _get_next_up(const Vec3i& position, int clearance)
+{
+    return _get_next_up(position.x, position.y, position.z, clearance);
 }
 
 inline size_t get_nearest_surface_blocks(const struct Vec3i& pos, int clearance, int* out, size_t outlen)
@@ -138,14 +173,12 @@ inline int get_nearest_surface_block(const struct Vec3i& pos)
 
 inline int get_nearest_surface_block(int x, int y, int z, int clearance)
 {
-    struct Vec3i pos = vec3i_init(x, y, z);
-    return get_nearest_surface_block(pos, clearance);
+    return get_nearest_surface_block(vec3i_init(x, y, z), clearance);
 }
 
 inline int get_nearest_surface_block(int x, int y, int z)
 {
-    struct Vec3i pos = vec3i_init(x, y, z);
-    return get_nearest_surface_block(pos);
+    return get_nearest_surface_block(vec3i_init(x, y, z));
 }
 
 inline int get_nearest_surface_block_below(const struct Vec3i& pos, int clearance, int max)
@@ -201,15 +234,15 @@ inline int get_nearest_surface_block_above(const struct Vec3i& pos)
 }
 
 
-inline bool is_surface_block(int x, int y, int z)
+inline bool is_surface_block(const Vec3i& position)
 {   // returns true if the block is not solid and the block underneath is solid
-    return (t_map::get(x, y, z) == EMPTY_CUBE &&
-            t_map::get(x, y, z-1) != EMPTY_CUBE);
+    return (t_map::get(position) == EMPTY_CUBE &&
+            t_map::get(position.x, position.y, position.z - 1) != EMPTY_CUBE);
 }
 
-inline bool is_surface_block(const struct Vec3i& pos)
+inline bool is_surface_block(int x, int y, int z)
 {
-    return is_surface_block(pos.x, pos.y, pos.z);
+    return is_surface_block(vec3i_init(x, y, z));
 }
 
 inline int get_solid_block_below(const struct Vec3i& p)
@@ -237,18 +270,18 @@ inline int get_open_block_below(int x, int y, int z)
     return get_open_block_below(vec3i_init(x, y, z));
 }
 
-inline int get_highest_solid_block(int x, int y)
-{
-    return get_highest_solid_block(x,y, map_dim.z);
-}
-
-inline int get_highest_solid_block(int x, int y, int z)
+inline int get_highest_solid_block(const Vec3i& position)
 {
     // TODO -- use heightmap cache
-    int i = z - 1;
+    int i = position.z - 1;
     for (; i>=0; i--)
-        if (isSolid(x,y,i)) break;
+        if (isSolid(position.x, position.y, i)) break;
     return i;
+}
+
+inline int get_highest_solid_block(int x, int y)
+{
+    return get_highest_solid_block(vec3i_init(x, y, map_dim.z));
 }
 
 inline int get_lowest_open_block(int x, int y, int n)
@@ -293,19 +326,18 @@ inline bool position_is_loaded(int x, int y)
     #endif
 }
 
-bool block_can_be_placed(int x, int y, int z, CubeType cube_type)
+bool block_can_be_placed(const Vec3i& position, CubeType cube_type)
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    IF_ASSERT(!is_valid_z(position)) return false;
+    Vec3i p = translate_position(position);
 
     IF_ASSERT(!isValidCube(cube_type)) return false;
 
-    if (get(x,y,z) != EMPTY_CUBE) return false;
+    if (get(p) != EMPTY_CUBE) return false;
     // check against all spawners
-    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x,y,z))
+    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, p))
         return false;
-    if (Entities::point_occupied_by_type(OBJECT_ENERGY_CORE, x,y,z))
+    if (Entities::point_occupied_by_type(OBJECT_ENERGY_CORE, p))
         return false;
     return true;
 }

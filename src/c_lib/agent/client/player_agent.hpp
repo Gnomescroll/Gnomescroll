@@ -99,15 +99,15 @@ class PlayerAgent
 
     void update_model();
 
-    bool facing_block(int pos[3]);
+    bool facing_block(Vec3i& pos);
     int facing_container(); // returns container_id
 
     void update_sound();
 
     bool nearest_open_block(const float max_dist, struct Vec3i& pos);
-    int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
+    int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, Vec3i& side, float* distance);
     // returns side, as integer. side<0 if failure:
-    int get_facing_side(int solid_pos[3], int open_pos[3], float* distance);
+    int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, float* distance);
 
     void fell(float dvz);
     void movement_event(const AgentState& s0, const AgentState& s1);

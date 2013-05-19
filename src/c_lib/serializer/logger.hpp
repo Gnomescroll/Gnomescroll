@@ -12,7 +12,7 @@ void log_map_load_error(const char* msg);
 
 void log_mech_save_error(const char* msg);
 void log_mech_load_error(const char* msg);
-void log_mech_load_error(const char* msg, int x, int y, int z, MechType mech_type, int subtype);
+void log_mech_load_error(const char* msg, const Vec3i& position, MechType mech_type, int subtype);
 
 #if GS_SERIALIZER
 void log_container_save_error(const char* msg);

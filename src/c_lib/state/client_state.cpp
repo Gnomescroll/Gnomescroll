@@ -137,8 +137,6 @@ void set_location_pointer()
 
     printf("Locator: ");
     vec3_print(loc);
-
-    t_mech::tick(loc.x, loc.y, loc.z+0.2);
 }
 
 void set_location_pointer_open_block()

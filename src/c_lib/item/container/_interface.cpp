@@ -157,7 +157,6 @@ void init_packets()
 
     // container blocks
     create_container_block_CtoS::register_server_packet();
-    admin_create_container_block_CtoS::register_server_packet();
 
     // smelter
     smelter_fuel_StoC::register_client_packet();
@@ -217,15 +216,14 @@ AgentID get_container_owner(ItemContainerID container_id)
     return container->owner;
 }
 
-bool container_block_in_range_of(Vec3 pos, int block[3])
+bool container_block_in_range_of(const Vec3& pos, const Vec3i& block)
 {
-    Vec3 container_position = vec3_init(block[0], block[1], block[2]);
-    container_position = vec3_add(container_position, vec3_init(0.5f, 0.5f, 0.5f));
+    Vec3 container_position = vec3_init(block);
+    container_position = vec3_add(container_position, vec3_init(0.5f));
     container_position = translate_position(container_position);
     container_position = quadrant_translate_position(pos, container_position);
-    if (vec3_distance_squared(pos, container_position) <=
-        AGENT_CONTAINER_REACH*AGENT_CONTAINER_REACH) return true;
-    return false;
+    return (vec3_distance_squared(pos, container_position) <=
+            AGENT_CONTAINER_REACH*AGENT_CONTAINER_REACH);
 }
 
 }   // ItemContainer
@@ -1290,11 +1288,9 @@ bool agent_in_container_range(AgentID agent_id, ItemContainerID container_id)
     if (container == NULL) return false;
     IF_ASSERT(!container_type_is_block(container->type)) return false;
 
-    int block[3];
-    if (!t_map::get_container_location(container->id, block))
-    {
-        IF_ASSERT(true) return false;
-    }
+    Vec3i block;
+    IF_ASSERT(!t_map::get_container_location(container->id, block))
+        return false;
     return container_block_in_range_of(agent_position, block);
 }
 
@@ -1417,7 +1413,7 @@ ItemID auto_add_item_to_container(const char* item_name, ItemContainerID contain
     return item->id;
 }
 
-ItemContainerID create_container_block(ItemContainerType container_type, int x, int y, int z)
+ItemContainerID create_container_block(ItemContainerType container_type, const Vec3i& position)
 {
     IF_ASSERT(!isValid(container_type)) return NULL_CONTAINER;
 
@@ -1427,15 +1423,20 @@ ItemContainerID create_container_block(ItemContainerType container_type, int x, 
     ItemContainerInterface* container = create_container(container_type);
     IF_ASSERT(container == NULL) return NULL_CONTAINER;
 
-    t_map::broadcast_set_block(x,y,z, cube_type);
+    t_map::broadcast_set_block(position, cube_type);
 
-    bool added = t_map::create_item_container_block(x,y,z, container->type, container->id);
+    bool added = t_map::create_item_container_block(position, container->type, container->id);
     IF_ASSERT(!added)
     {
         destroy_container(container->id);
         return NULL_CONTAINER;
     }
     return container->id;
+}
+
+ItemContainerID create_container_block(ItemContainerType container_type, int x, int y, int z)
+{
+    return create_container_block(container_type, vec3i_init(x, y, z));
 }
 
 void update_smelters()
@@ -1518,13 +1519,12 @@ void update_smelters()
                     GS_ASSERT(is_here);
                     if (is_here)
                     {   // throw it out
-                        int p[3];
+                        Vec3i p;
                         if (t_map::get_container_location(smelter->id, p))
                         {
-                            Vec3 pos = vec3_init(p[0], p[1], p[2]);
+                            Vec3 pos = vec3_init(p);
                             pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 1.05f));
-                            ItemParticle::dump_container_item(
-                                fuel_item, pos.x, pos.y, pos.z);
+                            ItemParticle::dump_container_item(fuel_item, pos);
                         }
                         else
                         {
@@ -1669,7 +1669,7 @@ void test_container_list_capacity()
         item_container_list->create(name::inventory);
 }
 
-void container_block_destroyed(ItemContainerID container_id, int x, int y, int z)
+void container_block_destroyed(ItemContainerID container_id, const Vec3i& position)
 {
     IF_ASSERT(container_id == NULL_CONTAINER) return;
     ItemContainerInterface* container = get_container(container_id);
@@ -1690,7 +1690,7 @@ void container_block_destroyed(ItemContainerID container_id, int x, int y, int z
         if (container->slot[i] == NULL_ITEM) continue;
         ItemID item_id = container->slot[i];
         container->remove_item(i);
-        ItemParticle::dump_container_item(item_id, x,y,z);
+        ItemParticle::dump_container_item(item_id, vec3_init(position));
         // no need to send container removal packet
     }
 

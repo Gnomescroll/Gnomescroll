@@ -26,7 +26,6 @@ inline void open_container_CtoS::handle() {}
 inline void close_container_CtoS::handle() {}
 
 inline void create_container_block_CtoS::handle() {}
-inline void admin_create_container_block_CtoS::handle() {}
 
 } // ItemContainer
 #endif
@@ -445,10 +444,10 @@ inline void crusher_crush_item_CtoS::handle()
     ItemType type = Item::get_item_type(item_id);
     IF_ASSERT(type == NULL_ITEM_TYPE) return;
 
-    int b[3];
+    Vec3i b;
     bool found = t_map::get_container_location(crusher->id, b);
     IF_ASSERT(!found) return;
-    Vec3 p = vec3_add(vec3_init(b[0], b[1], b[2]), vec3_init(0.5f, 0.5f, 0.5f));
+    Vec3 p = vec3_add(vec3_init(b), vec3_init(0.5f));
 
     int plasma_grenade_type = Item::get_item_type("plasma_grenade");
     GS_ASSERT(plasma_grenade_type != NULL_ITEM_TYPE);
@@ -464,7 +463,7 @@ inline void crusher_crush_item_CtoS::handle()
         g->explode(stack_size);
 
         Sound::broadcast_play_3d_sound("plasma_grenade_explode", p);
-        if (t_map::get(b[0], b[1], b[2]) == 0)  // only play anim if block got destroyed
+        if (t_map::get(b) == 0)  // only play anim if block got destroyed
             Animations::broadcast_play_animation("plasma_grenade_explode", p);
 
         Particle::grenade_list->destroy(g->id);
@@ -476,42 +475,44 @@ inline void crusher_crush_item_CtoS::handle()
     if (drop == NULL) return;   // TOOD -- send "failed" packet
 
     // unset any velocity state
-    drop->vx = 0.0f;
-    drop->vy = 0.0f;
-    drop->vz = 0.0f;
+    drop->velocity = vec3_init(0);
 
-    if (t_map::get(b[0], b[1], b[2]+1) == 0)
+    if (t_map::get(b.x, b.y, b.z + 1) == 0)
     {   // pop out of the top
         p.x += randf() - 0.5f;
         p.y += randf() - 0.5f;
         p.z += 0.51f;
-        drop->vz = crusher_item_jump_out_velocity();
+        drop->velocity.z = crusher_item_jump_out_velocity();
     }
     else
     {   // calculate face nearest agent
         class RaytraceData data;
-        bool collided = raytrace_terrain(a->get_camera_position(), a->forward_vector(), AGENT_CONTAINER_REACH, &data);
-        int c[3];
-        data.get_pre_collision_point(c);
-        int side[3];
-        data.get_side_array(side);
+        bool collided = raytrace_terrain(a->get_camera_position(),
+                                         a->forward_vector(),
+                                         AGENT_CONTAINER_REACH, &data);
+        Vec3i c = data.get_pre_collision_point();
+        Vec3i side = data.get_sides();
+        Vec3 vside = vec3_init(side);
+        Vec3 avside = vec3_abs(vside);
+        Vec3 cside = vec3_add(avside, vec3_init(-1));
+        Vec3 offset = vec3_scalar_mult(vside, 0.51f);
 
-        if (!collided
-         || (c[0] != b[0] || c[1] != b[1] || c[2] != b[2])
-         || t_map::get(b[0]+side[0], b[1]+side[1], b[2]+side[2]) != 0)
+        if (!collided || !is_equal(b, c) ||
+            t_map::get(vec3i_add(b, side)) != EMPTY_CUBE)
         {   // use any open face
             int i=0;
             for (; i<6; i++)
             {
-                if (t_map::get(b[0] + sq_normals[i][0], b[1] + sq_normals[i][1], b[2] + sq_normals[i][2]) == 0)
+                Vec3i x;
+                for (int k=0; k<3; k++)
+                    x.i[k] = b.i[k] + sq_normals[i][k];
+                if (t_map::get(x) == EMPTY_CUBE)
                 {   // velocity in this direction
                     float v = crusher_item_jump_out_velocity();
-                    drop->vx = v * side[0];
-                    drop->vy = v * side[1];
-                    drop->vz = v * side[2];
-                    p.x += 0.51f * side[0] + (abs(side[0])-1) * (randf()-0.5f);
-                    p.y += 0.51f * side[1] + (abs(side[1])-1) * (randf()-0.5f);
-                    p.z += 0.51f * side[2] + (abs(side[2])-1) * (randf()-0.5f);
+                    drop->velocity = vec3_scalar_mult(vside, v);
+                    Vec3 jitter = vec3_mult(cside, vec3_rand_center());
+                    jitter = vec3_add(jitter, offset);
+                    p = vec3_add(p, jitter);
                     break;
                 }
             }
@@ -524,18 +525,17 @@ inline void crusher_crush_item_CtoS::handle()
         else
         {   // use the side
             float v = crusher_item_jump_out_velocity();
-            drop->vx = v * side[0];
-            drop->vy = v * side[1];
-            drop->vz = v * side[2];
-            p.x += 0.51f * side[0] + (abs(side[0])-1) * (randf()-0.5f);
-            p.y += 0.51f * side[1] + (abs(side[1])-1) * (randf()-0.5f);
-            p.z += 0.51f * side[2] + (abs(side[2])-1) * (randf()-0.5f);
+            drop->velocity = vec3_scalar_mult(vside, v);
+            Vec3 jitter = vec3_mult(cside, vec3_rand_center());
+            jitter = vec3_add(jitter, offset);
+            p = vec3_add(p, jitter);
         }
     }
 
     int stack = Item::get_stack_size(item_id);
     int remaining_stack = Item::consume_stack_item(item_id);
-    if (stack > 0 && stack != remaining_stack) Item::send_item_state(item_id);
+    if (stack > 0 && stack != remaining_stack)
+        Item::send_item_state(item_id);
 
     p = translate_position(p);
     drop->drop_item(p);
@@ -583,8 +583,8 @@ inline void close_container_CtoS::handle()
 
 void create_container_block_CtoS::handle()
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-    if (z == 0) return;     // no floor
+    IF_ASSERT(!is_valid_z(this->position)) return;
+    if (this->position.z == 0) return;  // no floor
 
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL || a->status.dead) return;
@@ -599,16 +599,15 @@ void create_container_block_CtoS::handle()
     IF_ASSERT(container_type == NULL_CONTAINER_TYPE) return;
     IF_ASSERT(orientation < 0 || orientation > 3) orientation = 0;
 
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    Vec3i position = translate_position(this->position);
 
     // dont set on existing block
-    if (!t_map::block_can_be_placed(x,y,z,cube_type)) return;
+    if (!t_map::block_can_be_placed(position, cube_type)) return;
 
     bool collides = false;
     if (t_map::isSolid(cube_type))
     {
-        t_map::set_fast(x,y,z, ERROR_CUBE); // set temporarily to test against
+        t_map::set_fast(position, ERROR_CUBE); // set temporarily to test against
         if (agent_collides_terrain(a))
             collides = true;  // test against our agent, most likely to collide
         else
@@ -624,7 +623,7 @@ void create_container_block_CtoS::handle()
                 }
             }
         }
-        t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
+        t_map::set_fast(position, EMPTY_CUBE);  // unset
     }
 
     if (collides) return;
@@ -634,71 +633,10 @@ void create_container_block_CtoS::handle()
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
 
-    t_map::broadcast_set_block_action(x,y,z, cube_type, TMA_PLACE_BLOCK);
-    t_map::broadcast_set_block_palette(x,y,z, cube_type, orientation);
+    t_map::broadcast_set_block_action(position, cube_type, TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_palette(position, cube_type, orientation);
 
-    t_map::create_item_container_block(x,y,z, container->type, container->id);
-    broadcast_container_create(container->id);
-
-    agent_placed_block_StoC msg;
-    msg.id = a->id;
-    msg.broadcast();
-}
-
-void admin_create_container_block_CtoS::handle()
-{
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-    if (z == 0) return;     // no floor
-
-    Agents::Agent* a = NetServer::agents[client_id];
-    if (a == NULL) return;
-    if (a->status.dead) return;
-
-    CubeType cube_type = (CubeType)this->val;
-
-    ItemContainerType container_type = t_map::get_container_type_for_cube(cube_type);
-    IF_ASSERT(container_type == NULL_CONTAINER_TYPE) return;
-
-    IF_ASSERT(orientation < 0 || orientation > 3) orientation = 0;
-
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    // TODO -- when this is a /real/ admin tool, remove this check
-    // since we're giving it to players, do this check
-    if (!t_map::block_can_be_placed(x,y,z,cube_type)) return;
-
-    bool collides = false;
-    if (t_map::isSolid(cube_type))
-    {
-        t_map::set_fast(x,y,z, ERROR_CUBE); // set temporarily to test against
-        if (agent_collides_terrain(a))
-            collides = true; // test against our agent, most likely to collide
-        else
-        {
-            for (size_t i=0; i<Agents::agent_list->max; i++)
-            {
-                Agents::Agent* agent = &Agents::agent_list->objects[i];
-                if (agent->id == Agents::agent_list->null_id || agent == a) continue;
-                if (agent_collides_terrain(agent))
-                {
-                    collides = true;
-                    break;
-                }
-            }
-        }
-        t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
-    }
-
-    if (collides) return;
-
-    ItemContainerInterface* container = create_container(container_type);
-    IF_ASSERT(container == NULL) return;
-
-    t_map::broadcast_set_block_action(x,y,z, cube_type, TMA_PLACE_BLOCK);
-    t_map::broadcast_set_block_palette(x,y,z,cube_type,orientation);
-
-    t_map::create_item_container_block(x,y,z, container->type, container->id);
+    t_map::create_item_container_block(position, container->type, container->id);
     broadcast_container_create(container->id);
 
     agent_placed_block_StoC msg;

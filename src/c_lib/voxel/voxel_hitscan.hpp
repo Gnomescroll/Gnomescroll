@@ -30,17 +30,17 @@ class VoxelHitscanElement
 class VoxelHitscanTarget: public VoxelHitscanElement
 {
     public:
-        unsigned int voxel[3];
+        Vec3i voxel;
 
         void copy_vhe(VoxelHitscanElement* vhe);
-        void copy_voxel(int voxel[3]);
         void print()
         {
             printf("Target:\n");
-            printf("id   %d\n", entity_id);
-            printf("type %d\n", entity_type);
-            printf("part %d\n", part_id);
-            printf("voxel: %d,%d,%d\n", voxel[0], voxel[1], voxel[2]);
+            printf("id   %d\n", this->entity_id);
+            printf("type %d\n", this->entity_type);
+            printf("part %d\n", this->part_id);
+            printf("voxel: ");
+            vec3i_print(this->voxel);
         }
 };
 
@@ -56,14 +56,14 @@ class VoxelHitscanList
         void unregister_voxel_volume(class VoxelVolume* vv);
 
     //pass in x,y,z fire point and direction of projectile
-    bool hitscan(const struct Vec3& p, const struct Vec3& v,
+    bool hitscan(const Vec3& p, const Vec3& v,
                  int skip_id, EntityType skip_type,
-                 float collision_point[3], float *distance,
+                 Vec3& collision_point, float *distance,
                  class VoxelHitscanTarget* target);
 
-    class VoxelHitscanTarget* hitscan_all(struct Vec3 start, struct Vec3 end, size_t* n_targets);
+    class VoxelHitscanTarget* hitscan_all(const Vec3& start, const Vec3& end, size_t* n_targets);
 
-    bool point_collision(struct Vec3 position, class VoxelHitscanTarget* target);
+    bool point_collision(const Vec3& position, class VoxelHitscanTarget* target);
 
     VoxelHitscanList();
     ~VoxelHitscanList();

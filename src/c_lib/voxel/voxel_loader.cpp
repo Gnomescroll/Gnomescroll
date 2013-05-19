@@ -104,9 +104,9 @@ void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
     int read;
 
     // dimension
-    int xdim,ydim,zdim;
+    int xdim, ydim, zdim;
     check_for_comments(buffer, &index);
-    sscanf (buffer+index, "%d %d %d %n", &xdim,&ydim,&zdim, &read);
+    sscanf (buffer+index, "%d %d %d %n", &xdim, &ydim, &zdim, &read);
     index += read;
 
     //voxel size
@@ -121,7 +121,8 @@ void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
     sscanf (buffer+index, "%d %n", &biaxial, &read);
     index += read;
 
-    vox_dat->set_part_properties(part_num, vox_size, xdim, ydim, zdim, file_name, (bool)biaxial);
+    vox_dat->set_part_properties(part_num, vox_size, vec3i_init(xdim, ydim, zdim),
+                                 file_name, (bool)biaxial);
 
     // colorable
     int colorable;
@@ -141,7 +142,7 @@ void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
 
     int ret;
     int vox_num = 0;
-    int x,y,z,r,g,b;
+    int x, y, z, r, g, b;
 
     while (1)
     {
@@ -161,7 +162,7 @@ void read_voxel_volume(const char* file_name, int part_num, VoxDat* vox_dat)
         }
         index += read;
 
-        vox_dat->set_color(part_num, x,y,z, r,g,b, 255);
+        vox_dat->set_color(part_num, vec3i_init(x, y, z), r,g,b, 255);
         vox_num++;
     }
 

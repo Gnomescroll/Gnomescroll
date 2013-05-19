@@ -10,11 +10,11 @@ const int LANDMINE_DAMAGE = 180;
 const int LANDMINE_EXPLOSION_RADIUS = 6;
 
 #if DC_SERVER
-void create_explosion(const int x, const int y, const int z);
+void create_explosion(const Vec3i& position);
 void init_explosives();
-void explode_landmine_damage_players(float x, float y, float z);
+void explode_landmine_damage_players(const Vec3& position);
 #endif
 
-bool isLandmine(int x, int y, int z);
+//bool is_landmine(const Vec3i& position);
 
 }   // t_gen

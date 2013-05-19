@@ -248,11 +248,10 @@ void ItemContainerSmelter::begin_smelting(int recipe_id)
 
     if (!this->on)
     {
-        int b[3];
+        Vec3i b;
         bool found = t_map::get_container_location(this->id, b);
         IF_ASSERT(!found) return;
-        struct Vec3 p = vec3_init(b[0], b[1], b[2]);
-        p = vec3_add(p, vec3_init(0.5f, 0.5f, 0.5f));
+        Vec3 p = vec3_add(vec3_init(b), vec3_init(0.5f));
         Sound::broadcast_play_3d_sound("smelter_on", p);
 
         t_map::smelter_on(this->id);

@@ -265,15 +265,14 @@ void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
     this->play_laser_rifle_fire_event(this->a->arm_center(), f);
 }
 
-void AgentEvent::fired_weapon_at_block(float x, float y, float z, CubeType cube, int side)
+void AgentEvent::fired_weapon_at_block(const Vec3& position, CubeType cube, int side)
 {
-    IF_ASSERT(!is_boxed_point(x) || !is_boxed_point(y)) return;
+    IF_ASSERT(!is_boxed_position(position)) return;
     IF_ASSERT(side < 0 || side >= 6) return;
 
     Vec3 c = this->a->arm_center();
-    Vec3 impact = vec3_init(x,y,z);
-    impact = quadrant_translate_position(this->a->get_camera_position(), impact);
-    if (vec3_equal(impact, c)) return;
+    Vec3 impact = quadrant_translate_position(this->a->get_camera_position(), position);
+    if (vec3_equal(position, c)) return;
     Vec3 f = vec3_sub(impact, c);
     f = vec3_normalize(f);
 

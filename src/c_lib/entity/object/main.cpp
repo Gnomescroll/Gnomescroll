@@ -166,7 +166,7 @@ void send_to_client(EntityType type, ClientID client_id)
     entity_list->send_to_client(type, client_id);
 }
 
-bool point_occupied_by_type(EntityType type, int x, int y, int z)
+bool point_occupied_by_type(EntityType type, const Vec3i& position)
 {
     if (entity_list->empty(type)) return false;
 
@@ -181,7 +181,8 @@ bool point_occupied_by_type(EntityType type, int x, int y, int z)
     using Components::DimensionComponent;
 
     Entity *obj;
-    int px,py,pz,height;
+    Vec3i p = vec3i_init(0);
+    int height = 1;
     PhysicsComponent* physics;
     DimensionComponent* dims;
 
@@ -192,18 +193,15 @@ bool point_occupied_by_type(EntityType type, int x, int y, int z)
 
         physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
         IF_ASSERT(physics == NULL) continue;
-        Vec3 position = physics->get_position();
-        px = (int)position.x;
-        py = (int)position.y;
-        if (px != x || py != y) continue;
-        pz = (int)position.z;
-
+        p = vec3i_init(physics->get_position());
+        if (p.x != position.x || p.y != position.y) continue;
         dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
         if (dims != NULL) height = dims->get_integer_height();
         else height = 1;
 
         for (int j=0; j<height; j++)
-            if (pz + j == z) return true;
+            if (p.z + j == position.z)
+                return true;
     }
     return false;
 }

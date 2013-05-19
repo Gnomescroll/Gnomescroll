@@ -154,8 +154,7 @@ void trigger_local_beta_location_pointer(ItemID item_id, ItemType item_type)
 
 void trigger_local_admin_block_placer(ItemID item_id, ItemType item_type)
 {
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_DEBUG);
-    ClientState::player_agent.action.admin_set_block();
+    printf("Block Placer is deprecated.\n");
 }
 
 // IG_GRENADE_LAUNCHER
@@ -182,10 +181,10 @@ void select_facing_block(ItemID item_id, ItemType item_type)
     GS_ASSERT(block_placer_type != NULL_ITEM_TYPE);
     GS_ASSERT(item_type == block_placer_type);
 
-    int b[3];
+    Vec3i b;
     bool collided = ClientState::player_agent.facing_block(b);
     if (!collided) return;
-    CubeType cube_type = t_map::get(b[0], b[1], b[2]);
+    CubeType cube_type = t_map::get(b);
     HudCubeSelector::cube_selector.set_block_type(cube_type);
 }
 
@@ -259,25 +258,25 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, It
     IF_ASSERT(a == NULL) return NULL;
 
     const int max_dist = 4.0f;
-    int b[3];
+    Vec3i b;
     bool collided = a->nearest_open_block(max_dist, b);
     if (!collided) return NULL;
 
     // must be placed on solid block
-    if (b[2] <= 0) return NULL;  // can't place on nothing
-    if (!t_map::isSolid(b[0], b[1], b[2]-1)) return NULL;
+    if (b.z <= 0) return NULL;  // can't place on nothing
+    if (!t_map::isSolid(b.x, b.y, b.z - 1)) return NULL;
 
     // make sure will fit height
-    int h = (int)ceil(object_height);
+    int h = ceilf(object_height);
     IF_ASSERT(h <= 0) h = 1;
     for (int i=0; i<h; i++)
-        if (t_map::get(b[0], b[1], b[2] + i) != 0)
+        if (t_map::get(b.x, b.y, b.z + i) != 0)
             return NULL;
 
     // check against all known spawners & energy cores
-    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b[0], b[1], b[2]))
+    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b))
         return NULL;
-    if (Entities::point_occupied_by_type(OBJECT_ENERGY_CORE, b[0], b[1], b[2]))
+    if (Entities::point_occupied_by_type(OBJECT_ENERGY_CORE, b))
         return NULL;
 
     class Entities::Entity* obj = Entities::create(object_type);
@@ -287,7 +286,7 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, It
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
-        Vec3 pos = vec3_init(b[0] + 0.5f, b[1] + 0.5f, b[2]);
+        Vec3 pos = vec3_add(vec3_init(b), vec3_init(0.5f, 0.5f, 0.0f));
         physics->set_position(pos);
     }
 
@@ -332,35 +331,26 @@ void place_energy_core(AgentID agent_id, ItemID item_id, ItemType item_type)
 
 void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
-    //printf("place mech\n");
-
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MECH_PLACER);
-
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
     const int max_dist = 4.0f;
-    int b[3];
+    Vec3i b;
     bool collided = a->nearest_open_block(max_dist, b);
     if (!collided) return;
 
     // must be placed on solid block
-    if (b[2] <= 0) return;  // can't place on nothing. it CAN be placed on top of the map for now
-    if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
+    if (b.z <= 0) return;  // can't place on nothing. it CAN be placed on top of the map for now
+    if (!t_map::isSolid(b.x, b.y, b.z - 1)) return;
 
     MechType mech_type = Item::get_mech_type(item_type);
     IF_ASSERT(!isValid(mech_type)) return;
 
-    //if(t_mech::can_place_mech(b[0],b[1],b[2], mech_type))
-    //    printf("can place\n");
+    if (t_mech::can_place_mech(b, mech_type) != 0)
+        return;
 
-   //MechCreateFailureCode code = t_mech::can_place_mech(b[0],b[1],b[2], mech_type);
-   //t_mech::print_mech_create_failure_code(code);
-
-    if (t_mech::can_place_mech(b[0],b[1],b[2], mech_type) != 0) return; // MFC_OK == 0
-
-    //printf("place mech %d: at %d %d %d\n", mech_type, b[0],b[1],b[2]);
-    bool ret = t_mech::create_mech(b[0],b[1],b[2], mech_type);
+    bool ret = t_mech::create_mech(b, mech_type);
     if (ret)
         decrement_stack(agent_id, item_id, item_type);
 }
@@ -375,26 +365,23 @@ void place_mech_oriented(AgentID agent_id, ItemID item_id, ItemType item_type)
     MechType mech_type = Item::get_mech_type(item_type);
     IF_ASSERT(!isValid(mech_type)) return;
 
-    int sp[3];
-    int op[3];
+    Vec3i sp;
+    Vec3i op;
     float distance = 0;
 
     int side = a->get_facing_side(sp, op, &distance);
     if (side < 0) return;
 
-    //printf("%d %d %d: side %d \n", op[0],op[1],op[2], side);
-    //MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
-    MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
+    MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
 
     //failed
-    if(code != 0)
+    if (code != MCF_OK)
     {
         t_mech::print_mech_create_failure_code(code);
         return;
     }
-    if(code)
-        decrement_stack(agent_id, item_id, item_type);
 
+    decrement_stack(agent_id, item_id, item_type);
 }
 // magic stick
 
@@ -429,7 +416,7 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
     }
 
     // create item particle, no velocity
-    Item::Item* new_item = ItemParticle::create_item_particle(random_type, position, vec3_init(0,0,0));
+    Item::Item* new_item = ItemParticle::create_item_particle(random_type, position, vec3_init(0));
     IF_ASSERT(new_item == NULL) return;
 
     // give it a random stack size
@@ -453,62 +440,21 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
-    //const int max_dist = 4.0f;
-    //int b[3];
-
-
-
-    int sp[3];
-    int op[3];
-    //int s[3];
+    Vec3i sp;
+    Vec3i op;
     float distance = 0;
-
     int side = a->get_facing_side(sp, op, &distance);
-
-    //bool collided = a->nearest_open_block(max_dist, b);
     if (side < 0) return;
-
-    printf("%d %d %d: side %d \n", op[0],op[1],op[2], side);
-
-/*
-    MechType mech_type = t_mech::get_mech_type_dat("terminal_basic");
-    MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
-    t_mech::print_mech_create_failure_code(code);
-*/
 
     MechType mech_type1 = t_mech::get_mech_type_dat("iridium_solar_cell");
     MechType mech_type2 = t_mech::get_mech_type_dat("iridium_power_converter");
 
+    MechType mech_type = (rand() % 2) ? mech_type1 : mech_type2;
 
-    MechType mech_type = rand()%2 ==0 ? mech_type1 : mech_type2;
+    MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
 
-    MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
-    
-    if(code != 0)
+    if (code != MCF_OK)
         t_mech::print_mech_create_failure_code(code);
-
-    //int get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance);
-
-
-#if 0
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_PLANT_PLACER);
-
-    Agents::Agent* a = Agents::get_agent(agent_id);
-    IF_ASSERT(a == NULL) return;
-
-    const int max_dist = 4.0f;
-    int b[3];
-    bool collided = a->nearest_open_block(max_dist, b);
-    if (!collided) return;
-
-    // must be placed on solid block
-    if (b[2] <= 0) return;  // can't place on nothing. it CAN be placed on top of the map for now
-    if (!t_map::isSolid(b[0], b[1], b[2]-1)) return;
-
-    //printf("plant_placer: %d %d %d \n", b[0],b[1],b[2]);
-
-    t_plant::create_plant(b[0],b[1],b[2], 0);   //make plant type variable in future
-#endif
 }
 
 #endif

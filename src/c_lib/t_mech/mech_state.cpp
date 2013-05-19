@@ -3,20 +3,21 @@
 namespace t_mech
 {
 
-bool MechList::is_occupied(int x, int y, int z)
+bool MechList::is_occupied(const Vec3i& position)
 {
     for (int i=0; i<mlm; i++)
-        if (mla[i].id >= 0 && mla[i].x == x && mla[i].y == y && mla[i].z == z)
+        if (mla[i].id >= 0 && is_equal(mla[i].position, position))
             return true;
     return false;
 }
 
 #if DC_SERVER
-MechType MechList::handle_block_removal(int x, int y, int z)
+MechType MechList::handle_block_removal(Vec3i position)
 {
+    position.z += 1;    // we're comparing against mechs one z level above
     MechType type = NULL_MECH_TYPE;
     for (int i=0; i<mlm; i++)
-        if (mla[i].id != -1 && mla[i].x == x && mla[i].y == y && mla[i].z == z+1)
+        if (mla[i].id != -1 && is_equal(mla[i].position, position))
         {
             type = mla[i].type;
             bool removed = server_remove_mech(i);

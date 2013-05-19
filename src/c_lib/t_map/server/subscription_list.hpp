@@ -54,34 +54,25 @@ class MAP_CHUNK_SUBSCRIPTION
         chunk_aliases[i] = chunk_aliases[subscriber_num];
     }
 
-    void send_block_action(int x, int y, int z, CubeType cube_type, int action)
+    void send_block_action(const Vec3i& position, CubeType cube_type, int action)
     {
-        IF_ASSERT(!is_boxed_point(x)) return;
-        IF_ASSERT(!is_boxed_point(y)) return;
+        IF_ASSERT(!is_boxed_position(position)) return;
 
         block_action_StoC msg;
-        msg.x = x;
-        msg.y = y;
-        msg.z = z;
+        msg.position = position;
         msg.cube_type = cube_type;
         msg.action = action;
 
-        //printf("send_block_action: cube_type= %d action= %d, x,y,z= %d %d %d \n", cube_type, action, x,y,z);
         for (int i=0; i < subscriber_num; i++)
-        {
             msg.sendToClient((ClientID)subscribers[i]);
-        }
     }
 
-    void send_set_block(int x, int y, int z, CubeType cube_type)
+    void send_set_block(const Vec3i& position, CubeType cube_type)
     {
-        IF_ASSERT(!is_boxed_point(x)) return;
-        IF_ASSERT(!is_boxed_point(y)) return;
+        IF_ASSERT(!is_boxed_position(position)) return;
 
         block_set_StoC msg;
-        msg.x = x;
-        msg.y = y;
-        msg.z = z;
+        msg.position = position;
         msg.cube_type = cube_type;
 
         //printf("send_set_block: cube_type= %d, x,y,z= %d %d %d \n", cube_type, x,y,z);
@@ -92,15 +83,11 @@ class MAP_CHUNK_SUBSCRIPTION
         }
     }
 
-    void send_set_block_palette(int x, int y, int z, CubeType cube_type, int palette)
+    void send_set_block_palette(const Vec3i& position, CubeType cube_type, int palette)
     {
-        IF_ASSERT(!is_boxed_point(x)) return;
-        IF_ASSERT(!is_boxed_point(y)) return;
-
+        IF_ASSERT(!is_boxed_position(position)) return;
         block_set_palette_StoC msg;
-        msg.x = x;
-        msg.y = y;
-        msg.z = z;
+        msg.position = position;
         msg.cube_type = cube_type;
         msg.palette = palette;
 
@@ -110,15 +97,11 @@ class MAP_CHUNK_SUBSCRIPTION
         }
     }
 
-    void container_block_create(int x, int y, int z, int container_type, ItemContainerID container_id)
+    void container_block_create(const Vec3i& position, int container_type, ItemContainerID container_id)
     {
-        IF_ASSERT(!is_boxed_point(x)) return;
-        IF_ASSERT(!is_boxed_point(y)) return;
-
+        IF_ASSERT(!is_boxed_position(position)) return;
         class container_block_create_StoC msg;
-        msg.x = x;
-        msg.y = y;
-        msg.z = z;
+        msg.position = position;
         msg.container_type = container_type;
         msg.container_id = container_id;
 
@@ -175,42 +158,33 @@ class Terrain_map_subscription
         delete[] chunk;
     }
 
-    void send_block_action(int x, int y, int z, CubeType value, int action)
+    void send_block_action(const Vec3i& position, CubeType value, int action)
     {
-        IF_ASSERT(!is_boxed_point(x)) return;
-        IF_ASSERT(!is_boxed_point(y)) return;
-
-        int _x = x/16;
-        int _y = y/16;
-
-        chunk[xchunk_dim*_y + _x].send_block_action(x,y,z,value,action);
+        IF_ASSERT(!is_boxed_position(position)) return;
+        int cx = position.x/16;
+        int cy = position.y/16;
+        chunk[xchunk_dim*cy + cx].send_block_action(position, value, action);
     }
 
-    void send_set_block(int x, int y, int z, CubeType cube_type)
+    void send_set_block(const Vec3i& position, CubeType cube_type)
     {
-        IF_ASSERT(!is_boxed_point(x)) return;
-        IF_ASSERT(!is_boxed_point(y)) return;
-
-        int _x = x/16;
-        int _y = y/16;
-
-        chunk[xchunk_dim*_y + _x].send_set_block(x,y,z,cube_type);
+        IF_ASSERT(!is_boxed_position(position)) return;
+        int x = position.x / 16;
+        int y = position.y / 16;
+        chunk[xchunk_dim*y + x].send_set_block(position, cube_type);
     }
 
-    void send_set_block_palette(int x, int y, int z, CubeType cube_type, int palette)
+    void send_set_block_palette(const Vec3i& position, CubeType cube_type, int palette)
     {
-        IF_ASSERT(!is_boxed_point(x)) return;
-        IF_ASSERT(!is_boxed_point(y)) return;
-
-        int _x = x/16;
-        int _y = y/16;
-
-        chunk[xchunk_dim*_y + _x].send_set_block_palette(x,y,z,cube_type,palette);
+        IF_ASSERT(!is_boxed_position(position)) return;
+        int x = position.x / 16;
+        int y = position.y / 16;
+        chunk[xchunk_dim*y + x].send_set_block_palette(position, cube_type, palette);
     }
 
-    void container_block_create(int chunk_index, int x, int y, int z, int container_type, ItemContainerID container_id)
+    void container_block_create(int chunk_index, const Vec3i& position, int container_type, ItemContainerID container_id)
     {
-        chunk[chunk_index].container_block_create(x,y,z,container_type,container_id);
+        chunk[chunk_index].container_block_create(position, container_type, container_id);
     }
 
     void container_block_delete(int chunk_index, ItemContainerID container_id)

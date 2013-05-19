@@ -7,6 +7,8 @@ ALWAYS_INLINE bool is_boxed_point(float p);
 ALWAYS_INLINE bool is_boxed_point(int p);
 ALWAYS_INLINE bool is_boxed_position(const struct Vec3& p);
 ALWAYS_INLINE bool is_boxed_position(const struct Vec3i& p);
+ALWAYS_INLINE bool is_valid_z(const struct Vec3i& p);
+ALWAYS_INLINE bool is_valid_z(int z);
 inline int quadrant_translate_i(int cx, int px);
 inline float quadrant_translate_f(float cx, float px);
 ALWAYS_INLINE int quadrant_translate(int cx, int px);

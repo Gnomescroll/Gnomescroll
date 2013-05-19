@@ -7,9 +7,7 @@ namespace t_map
 
 struct ControlNode
 {
-    int x;
-    int y;
-    int z;
+    Vec3i position;
 };
 
 class ControlNodeList
@@ -31,14 +29,11 @@ class ControlNodeList
         free(cpa);
     }
 
-    void add_control_node(int x, int y, int z)
+    void add_control_node(const Vec3i& position)
     {
         //needs_update = true;
 
-        cpa[cpi].x = x;
-        cpa[cpi].y = y;
-        cpa[cpi].z = z;
-
+        cpa[cpi].position = position;
         cpi++;
 
         if (cpi == cpm)
@@ -51,15 +46,18 @@ class ControlNodeList
                 cpa = NULL;
                 cpm = 0;
             }
-            else cpa = new_cpa;
+            else
+            {
+                cpa = new_cpa;
+            }
         }
     }
 
-    void remove_control_node(int x, int y, int z)
+    void remove_control_node(const Vec3i& position)
     {
         //needs_update = true;
         for (int i=0; i<cpi; i++)
-            if (x==cpa[i].x && y==cpa[i].y && z==cpa[i].z)
+            if (is_equal(cpa[i].position, position))
             {
                 cpa[i] = cpa[cpi-1];
                 cpi--;
@@ -69,11 +67,14 @@ class ControlNodeList
     }
 
 
-    bool control_node_in_range_check(int x, int y, int z)
+    bool control_node_in_range_check(const Vec3i& position)
     {
         for (int i=0; i<cpi; i++)
-            if (abs(x-cpa[i].x) <= 6 && abs(y-cpa[i].y) <= 6 && abs(z-cpa[i].z) <= 6)
+        {
+            Vec3i p = vec3i_abs(vec3i_sub(position, cpa[i].position));
+            if (p.x <= 6 && p.y <= 6 && p.z <= 6)
                 return true;
+        }
         return false;
     }
 
@@ -83,14 +84,12 @@ class ControlNodeList
         for (int i=0; i<cpi; i++)
         {
             control_node_create_StoC p;
-            p.x = cpa[i].x;
-            p.y = cpa[i].y;
-            p.z = cpa[i].z;
+            p.position = cpa[i].position;
             p.sendToClient(client_id);
         }
     }
 
-    void server_add_control_node(int x, int y, int z)
+    void server_add_control_node(const Vec3i& position)
     {
         return;
         //this->add_control_node(x,y,z);
@@ -102,14 +101,12 @@ class ControlNodeList
         //p.broadcast();
     }
 
-    void server_remove_control_node(int x, int y, int z)
+    void server_remove_control_node(const Vec3i& position)
     {
-        remove_control_node(x,y,z);
+        remove_control_node(position);
 
         control_node_delete_StoC p;
-        p.x = x;
-        p.y = y;
-        p.z = z;
+        p.position = position;
         p.broadcast();
     }
     #endif
@@ -603,9 +600,9 @@ void ControlNodeRenderer::control_node_render_update()
 
     for (int _i=0; _i<cnl->cpi; _i++)
     {
-        int _x = cnl->cpa[_i].x;
-        int _y = cnl->cpa[_i].y;
-        int _z = cnl->cpa[_i].z;
+        int _x = cnl->cpa[_i].position.x;
+        int _y = cnl->cpa[_i].position.y;
+        int _z = cnl->cpa[_i].position.z;
 
         for (int i=-size; i<=size; i++)
         for (int j=-size; j<=size; j++)

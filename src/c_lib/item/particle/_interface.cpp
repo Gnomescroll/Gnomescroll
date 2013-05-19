@@ -76,20 +76,18 @@ void draw()
 }
 
 ItemParticle* create_item_particle(ItemParticleID particle_id, ItemType item_type,
-                                    float x, float y, float z,
-                                    float vx, float vy, float vz)
+                                   const Vec3& position, const Vec3& velocity)
 {
     ItemParticle* particle = item_particle_list->create(particle_id);
     if (particle == NULL) return NULL;
-    particle->init(item_type, x,y,z,vx,vy,vz);
+    particle->init(item_type, position, velocity);
     return particle;
 }
 #endif
 
 #if DC_SERVER
 ItemParticle* create_item_particle(ItemID item_id, ItemType item_type,
-                                    float x, float y, float z,
-                                    float vx, float vy, float vz)
+                                   const Vec3& position, const Vec3& velocity)
 {
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return NULL;
@@ -111,7 +109,7 @@ ItemParticle* create_item_particle(ItemID item_id, ItemType item_type,
 
     ItemParticle* particle = item_particle_list->create();
     if (particle == NULL) return NULL;
-    particle->init(item_id, item_type, x,y,z,vx,vy,vz);
+    particle->init(item_id, item_type, position, velocity);
     GS_ASSERT(item->location == IL_NOWHERE);
     item->location = IL_PARTICLE;
     item->location_id = particle->id;
@@ -119,24 +117,18 @@ ItemParticle* create_item_particle(ItemID item_id, ItemType item_type,
 }
 
 // create Item and ItemParticle
-class Item::Item* create_item_particle(ItemType item_type,
-                                        float x, float y, float z,
-                                        float vx, float vy, float vz)
+class Item::Item* create_item_particle(ItemType item_type, const Vec3& position,
+                                       const Vec3& velocity)
 {
     Item::Item* item = Item::create_item(item_type);
     if (item == NULL) return NULL;
     // no subscribers
-    ItemParticle* particle = create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
+    ItemParticle* particle = create_item_particle(item->id, item->type, position, velocity);
     IF_ASSERT(particle == NULL) return item;
     GS_ASSERT(item->location == IL_PARTICLE);
     // location stuff was already set
     broadcast_particle_item_create(particle->id);
     return item;
-}
-
-class Item::Item* create_item_particle(ItemType item_type, Vec3 position, Vec3 momentum)
-{
-    return create_item_particle(item_type, position.x, position.y, position.z, momentum.x, momentum.y, momentum.z);
 }
 
 static bool pack_particle_item_create(ItemParticleID particle_id, item_particle_create_StoC* msg)
@@ -146,12 +138,8 @@ static bool pack_particle_item_create(ItemParticleID particle_id, item_particle_
 
     msg->id = particle->id;
     msg->item_type = particle->item_type;
-    msg->x = particle->verlet.position.x;
-    msg->y = particle->verlet.position.y;
-    msg->z = particle->verlet.position.z;
-    msg->mx = particle->verlet.velocity.x;
-    msg->my = particle->verlet.velocity.y;
-    msg->mz = particle->verlet.velocity.z;
+    msg->position = particle->verlet.position;
+    msg->velocity = particle->verlet.velocity;
     return true;
 }
 
@@ -187,12 +175,8 @@ void broadcast_particle_item_state(ItemParticleID particle_id)
     if (particle == NULL) return;
     item_particle_state_StoC msg;
     msg.id = particle->id;
-    msg.x = particle->verlet.position.x;
-    msg.y = particle->verlet.position.y;
-    msg.z = particle->verlet.position.z;
-    msg.mx = particle->verlet.velocity.x;
-    msg.my = particle->verlet.velocity.y;
-    msg.mz = particle->verlet.velocity.z;
+    msg.position = particle->verlet.position;
+    msg.velocity = particle->verlet.velocity;
     msg.broadcast();
 }
 
@@ -586,10 +570,7 @@ static void throw_item(ItemID item_id, Vec3 position, Vec3 velocity)
     position = translate_position(position);
 
     // create particle
-    ItemParticle* particle = create_item_particle(
-        item->id, item->type,
-        position.x, position.y, position.z,
-        velocity.x, velocity.y, velocity.z);
+    ItemParticle* particle = create_item_particle(item->id, item->type, position, velocity);
     if (particle == NULL) return;
     GS_ASSERT(item->location == IL_PARTICLE);
     broadcast_particle_item_create(particle->id);
@@ -621,20 +602,17 @@ void throw_agent_item(AgentID agent_id, ItemID item_id)
     throw_item(item_id, position, force);
 }
 
-void dump_container_item(ItemID item_id, float x, float y, float z)
+void dump_container_item(ItemID item_id, const Vec3& position)
 {
     IF_ASSERT(item_id == NULL_ITEM) return;
-
-    Vec3 position = vec3_init(x,y,z);
-    position = vec3_add(position, vec3_init(randf(), randf(), randf())); // random point inside box
-
+    Vec3 p = vec3_add(position, vec3_rand()); // random point inside box
     const float mom = 2.0f;
-    Vec3 force = vec3_init(randf()-0.5f, randf()-0.5f, randf()-0.5f);
-    if (vec3_length_squared(force) == 0.0f) force.x = 0.2f;
+    Vec3 force = vec3_rand_center();
+    if (vec3_length_squared(force) == 0.0f)
+        force.x = 0.2f;
     force = vec3_normalize(force);
     force = vec3_scalar_mult(force, mom);
-
-    throw_item(item_id, position, force);
+    throw_item(item_id, p, force);
 }
 
 #endif

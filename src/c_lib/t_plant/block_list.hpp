@@ -28,7 +28,7 @@ class BlockList
 
         struct BlockArrayElement
         {
-            int x,y,z;
+            Vec3i position;
             int block_id;
             int type;
             int state;
@@ -52,7 +52,7 @@ class BlockList
 
     void teardown() {}
 
-    void add(int x, int y, int z, int type, int state)
+    void add(const Vec3i& position, int type, int state)
     {
         if (ban == bam)
         {
@@ -60,9 +60,7 @@ class BlockList
             return;
         }
 
-        ba[ban].x = x;
-        ba[ban].y = y;
-        ba[ban].z = z;
+        ba[ban].position = position;
         ba[ban].type  = type;
         ba[ban].state = state;
 
@@ -70,12 +68,17 @@ class BlockList
         ban++;
     }
 
-    void remove(int x, int y, int z)
+    void add(int x, int y, int z, int type, int state)
+    {
+        this->add(vec3i_init(x, y, z), type, state);
+    }
+
+    void remove(const Vec3i& position)
     {
 
         for (int i=0;i<ban;i++)
         {
-            if (ba[i].x == x && ba[i].y == y && ba[i].z == z)
+            if (is_equal(ba[i].position, position))
             {
                 GS_ASSERT(ban > 0);
                 ban--;
@@ -88,46 +91,33 @@ class BlockList
 
     void check_blocks()
     {
-        for (int i=0; i<bam; i++)
-        {
-            // do something?
-        }
+        //for (int i=0; i<bam; i++)
+        //{
+            //// do something?
+        //}
     }
 
-    static inline bool _adj(int x, int y, int z, int _x,int _y,int _z)
+    static inline bool _adj(const Vec3i& a, const Vec3i& b)
     {
-        const int bit = 512-1;
-
-        if (y == _y && z == _z && (((x == ((_x-1) & bit)) || (x == ((_x+1) & bit)))))
-        {
-            return true;
-        }
-
-        if (x == _x && z == _z && ((y == ((_y-1) & bit)) || (y == ((_y+1) & bit))))
-        {
-            return true;
-        }
-
-        if (x == _x && y == _y && ((z == ((_z-1) & bit)) || (z == ((_z+1) & bit))))
-        {
-            return true;
-        }
-
-        return false;
+        const int bit = 512 - 1;
+        return ((a.y == b.y && a.z == b.z && ((a.x == ((b.x - 1) & bit)) ||
+                                              (a.x == ((b.x + 1) & bit)))) ||
+                (a.x == b.x && a.z == b.z && ((a.y == ((b.y - 1) & bit)) ||
+                                              (a.y == ((b.y + 1) & bit)))) ||
+                (a.x == b.x && a.y == b.y && ((a.z == ((b.z - 1) & bit)) ||
+                                              (a.z == ((b.z + 1) & bit)))));
     }
     //returns list indices of blocks adjccent to current block
     void adjacent_blocks(int index, int* b_array, int* num_results)
     {
         int num=0;
 
-        int x = ba[index].x;
-        int y = ba[index].y;
-        int z = ba[index].z;
+        Vec3i p = ba[index].position;
 
         for (int i=0; i<ban; i++)
         {
 
-            if (!_adj(x,y,z, ba[i].x,ba[i].y,ba[i].z))
+            if (!_adj(p, ba[i].position))
                 continue;
             b_array[num] = i;
             num++;

@@ -8,7 +8,7 @@ namespace Voxels
 
 bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forward,
                                int skip_id, EntityType skip_type, // skip player agent id
-                               float collision_point[3], float *distance,
+                               Vec3& collision_point, float *distance,
                                class VoxelHitscanTarget* target)
 {
     float r2 = 100000.0f;
@@ -17,7 +17,7 @@ bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forwar
     class VoxelHitscanElement* vhe;
     class VoxelHitscanElement* target_hit;
     target_hit = NULL;
-    int voxel[3];
+    Vec3i voxel;
     float dist;
     float min_dist = 1000000.0f;
     float max_dist = 256.0f;
@@ -50,18 +50,16 @@ bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forwar
     if (target_hit != NULL)
     {
         *distance = min_dist;
-        collision_point[0] = dest.x;
-        collision_point[1] = dest.y;
-        collision_point[2] = dest.z;
+        collision_point = dest;
         target->copy_vhe(target_hit);
-        target->copy_voxel(voxel);
+        target->voxel = voxel;
         return true;
     }
     return false;
 }
 
 class VoxelHitscanTarget* VoxelHitscanList::hitscan_all(
-    struct Vec3 start, struct Vec3 end, size_t* n_targets)
+    const Vec3& start, const Vec3& end, size_t* n_targets)
 {
     *n_targets = 0;
     if (vec3_equal(start, end)) return NULL;
@@ -91,12 +89,12 @@ class VoxelHitscanTarget* VoxelHitscanList::hitscan_all(
         {
             tpos = translate_position(tpos);
             // test for voxel hit
-            int voxel[3] = {0, 0, 0};
+            Vec3i voxel = vec3i_init(0);
             if (!vhe->vv->hitscan_test(tpos, direction, r2, voxel))
                 continue;
             class VoxelHitscanTarget* target = &targets[n++];
             target->copy_vhe(vhe);
-            target->copy_voxel(voxel);
+            target->voxel = voxel;
         }
     }
 
@@ -106,7 +104,7 @@ class VoxelHitscanTarget* VoxelHitscanList::hitscan_all(
 }
 
 
-bool VoxelHitscanList::point_collision(struct Vec3 position, class VoxelHitscanTarget* target)
+bool VoxelHitscanList::point_collision(const Vec3& position, class VoxelHitscanTarget* target)
 {
     for (int i=0; i<VOXEL_HITSCAN_LIST_SIZE; i++)
     {
@@ -172,11 +170,6 @@ void VoxelHitscanTarget::copy_vhe(VoxelHitscanElement* vhe)
     this->entity_type = vhe->entity_type;
     this->part_id = vhe->part_id;
     this->vv = vhe->vv;
-}
-
-void VoxelHitscanTarget::copy_voxel(int voxel[3])
-{
-    for (int i=0; i<3; i++) voxel[i] = this->voxel[i];
 }
 
 }   // Voxels

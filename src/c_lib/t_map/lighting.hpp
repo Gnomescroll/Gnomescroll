@@ -42,6 +42,11 @@ int get_skylight(int x, int y, int z)
     return mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light & 0x0f;  //bottom half
 }
 
+inline int get_skylight(const Vec3i& position)
+{
+    return get_skylight(position.x, position.y, position.z);
+}
+
 int get_envlight(int x, int y, int z);
 int _skylight_update_condition(int x, int y, int z);
 
@@ -455,6 +460,12 @@ int get_envlight(int x, int y, int z)
     return (mc->e[ (z<<8)+((y&15)<<4)+(x&15) ].light >> 4);  //upper half
 }
 
+inline int get_envlight(const Vec3i& position)
+{
+    return get_envlight(position.x, position.y, position.z);
+}
+
+
 void set_envlight(int x, int y, int z, int value)
 {
 
@@ -788,6 +799,11 @@ void light_add_block(int x, int y, int z)
         _push_envlight_update(x,y,z);
         _push_skylight_update(x,y,z);
     }
+}
+
+inline void light_add_block(const Vec3i& position)
+{
+    light_add_block(position.x, position.y, position.z);
 }
 
 //call on chunk init

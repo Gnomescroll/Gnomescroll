@@ -9,7 +9,7 @@
 #include <item/common/constants.hpp>
 #include <physics/quadrant.hpp>
 #if DC_SERVER
-#include <t_gen/explosives.hpp>
+# include <t_gen/explosives.hpp>
 #endif
 #if DC_CLIENT
 # include <common/compat_gl.h>
@@ -746,14 +746,14 @@ bool Agent::near_base()
     return false;
 }
 
-bool Agent::nearest_open_block(const float max_dist, int open_point[3])
+bool Agent::nearest_open_block(const float max_dist, Vec3i& open_point)
 {
     Vec3 p = this->get_camera_position();
     Vec3 f = this->forward_vector();
     class RaytraceData data;
     bool collided = raytrace_terrain(p, f, max_dist, &data);
     if (!collided) return false;
-    data.get_pre_collision_point(open_point);
+    open_point = data.get_pre_collision_point();
     return collided;
 }
 
@@ -766,7 +766,7 @@ void force_update_agent_vox(Agent* a)
 }
 
 // returns block type
-int Agent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
+int Agent::get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, Vec3i& side, float* distance)
 {
     Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();
@@ -776,26 +776,25 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float
     bool collided = raytrace_terrain(p, v, max_dist, &data);
     if (!collided) return 0;
 
-    for (int i=0; i<3; i++) solid_pos[i] = data.collision_point[i];
-    data.get_pre_collision_point(open_pos);
-    data.get_side_array(side);
+    solid_pos = data.collision_point;
+    open_pos = data.get_pre_collision_point();
+    side = data.get_sides();
     *distance = data.interval * max_dist;
-
-    GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
+    GS_ASSERT(open_pos.z >= 0); // agent should never be shooting from underground
     return data.get_cube_type();
 }
 
 // returns side as int
-int Agent::get_facing_side(int solid_pos[3], int open_pos[3], float* distance)
+int Agent::get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, float* distance)
 {
-    int s[3];
-    int block = this->get_facing_side(solid_pos, open_pos, s, distance);
+    Vec3i side;
+    int block = this->get_facing_side(solid_pos, open_pos, side, distance);
     if (block <= 0) return -1;
-    return get_cube_side_from_side_array(s);
+    return get_cube_side_from_sides(side);
 }
 
 // returns side as int
-int Agent::get_facing_side(int solid_pos[3], int open_pos[3], const float max_distance)
+int Agent::get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, const float max_distance)
 {
     Vec3 p = this->get_camera_position();
     Vec3 v = this->forward_vector();
@@ -804,13 +803,10 @@ int Agent::get_facing_side(int solid_pos[3], int open_pos[3], const float max_di
     bool collided = raytrace_terrain(p, v, max_distance, &data);
     if (!collided) return -1;
 
-    data.get_pre_collision_point(open_pos);
-    for (int i=0; i<3; i++)
-        solid_pos[i] = data.collision_point[i];
-
-    GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
-    GS_ASSERT(solid_pos[2] >= 0); // agent should never be shooting from underground
-
+    open_pos = data.get_pre_collision_point();
+    solid_pos = data.collision_point;
+    GS_ASSERT(open_pos.z >= 0); // agent should never be shooting from underground
+    GS_ASSERT(solid_pos.z >= 0); // agent should never be shooting from underground
     return data.side;
 }
 

@@ -10,19 +10,15 @@ class item_particle_create_StoC: public FixedSizeReliableNetPacketToClient<item_
     public:
         uint16_t id;
         uint8_t item_type;
-        float x,y,z;
-        float mx,my,mz;
+        Vec3 position;
+        Vec3 velocity;
 
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&item_type, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-            pack_float(&mx, buff, buff_n, pack);
-            pack_float(&my, buff, buff_n, pack);
-            pack_float(&mz, buff, buff_n, pack);
+            pack_vec3(&position, buff, buff_n, pack);
+            pack_vec3(&velocity, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -43,18 +39,14 @@ class item_particle_state_StoC: public FixedSizeReliableNetPacketToClient<item_p
 {
     public:
         uint16_t id;
-        float x,y,z;
-        float mx,my,mz;
+        Vec3 position;
+        Vec3 velocity;
 
         inline void packet(char* buff, unsigned int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-            pack_float(&mx, buff, buff_n, pack);
-            pack_float(&my, buff, buff_n, pack);
-            pack_float(&mz, buff, buff_n, pack);
+            pack_vec3(&position, buff, buff_n, pack);
+            pack_vec3(&velocity, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -85,4 +77,4 @@ class item_particle_pickup_cancelled_StoC: public FixedSizeReliableNetPacketToCl
         inline void handle();
 };
 
-}	// ItemParticle
+}   // ItemParticle
