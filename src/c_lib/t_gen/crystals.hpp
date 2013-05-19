@@ -93,25 +93,25 @@ int get_crystal_index(int crystal_id)
     return 0;
 }
 
-void place_crystal_cluster(int x, int y, int z, MechType crystal_id)
+void place_crystal_cluster(const Vec3i& position, MechType crystal_id)
 {
-
-    for (int i=x-CRYSTAL_CLUSTER_RADIUS; i<x+CRYSTAL_CLUSTER_RADIUS; i++)
-    for (int j=y-CRYSTAL_CLUSTER_RADIUS; j<y+CRYSTAL_CLUSTER_RADIUS; j++)
+    const float r = CRYSTAL_CLUSTER_RADIUS;
+    for (int i=position.x - r; i<position.x + r; i++)
+    for (int j=position.y - r; j<position.y + r; j++)
     {
-        int dist = abs(i-x) + abs(j-y); // manhattan
+        int dist = abs(i - position.x) + abs(j - position.y); // manhattan
         float p = falloffs[dist];
 
         if (mrandf() > p) continue;
-        int ii = translate_point(i);
-        int jj = translate_point(j);
-        int k = t_map::get_nearest_surface_block(ii,jj,z);
-        if (abs(z-k) > CRYSTAL_CLUSTER_Z_DIFF_MAX) continue;
-        int id = t_map::get(ii,jj,k-1);
+        Vec3i pos = vec3i_init(i, j, position.z);
+        pos = translate_position(pos);
+        pos.z = t_map::get_nearest_surface_block(pos);
+        if (abs(position.z - pos.z) > CRYSTAL_CLUSTER_Z_DIFF_MAX) continue;
+        int id = t_map::get(pos.x, pos.y, pos.z - 1);
         if (id != rock) continue;
-        if (!t_mech::can_place_mech(ii,jj,k, crystal_id))
+        if (!t_mech::can_place_mech(pos, crystal_id))
             continue;
-        t_mech::create_crystal(ii,jj,k,crystal_id);
+        t_mech::create_crystal(pos, crystal_id);
         cluster_size[cluster_id]++;
         crystal_type_count[get_crystal_index(crystal_id)]++;
     }
@@ -188,7 +188,7 @@ void populate_crystals()
         int x = loc[3*i+0];
         int y = loc[3*i+1];
         int z = loc[3*i+2];
-        place_crystal_cluster(x,y,z, crystal_id);
+        place_crystal_cluster(vec3i_init(x, y, z), crystal_id);
         pct += inc;
     }
 

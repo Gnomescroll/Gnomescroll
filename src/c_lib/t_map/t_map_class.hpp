@@ -37,9 +37,30 @@ class MapChunk
 
     MapChunk(int _xpos, int _ypos);
 
-    ALWAYS_INLINE CubeType get_block(int x, int y, int z); //for VBO generator
-    ALWAYS_INLINE struct MapElement get_element(int x, int y, int z); //for VBO generator
-    ALWAYS_INLINE void set_element(int x, int y, int z, struct MapElement e); //for VBO generator
+    ALWAYS_INLINE CubeType get_block(const Vec3i& position);
+    ALWAYS_INLINE CubeType get_block(int x, int y, int z);
+    ALWAYS_INLINE struct MapElement get_element(const Vec3i& position);
+    ALWAYS_INLINE struct MapElement get_element(int x, int y, int z);
+
+    ALWAYS_INLINE void set_element(const Vec3i& position, struct MapElement element)
+    {
+        return this->set_element(position.x, position.y, position.z, element);
+    }
+
+    ALWAYS_INLINE void set_element(int x, int y, int z, struct MapElement element)
+    {
+        e[this->get_element_index(x, y, z)] = element;
+    }
+
+    ALWAYS_INLINE int get_element_index(const struct Vec3i& position)
+    {
+        return this->get_element_index(position.x, position.y, position.z);
+    }
+
+    ALWAYS_INLINE int get_element_index(int x, int y, int z)
+    {
+        return (z << 8) + ((y & 15) << 4) + (x & 15);
+    }
 
     void refresh_height_cache();
 
@@ -67,14 +88,14 @@ class Terrain_map
     #if DC_CLIENT
         bool height_changed;
         char chunk_heights_status[MAP_CHUNK_XDIM*MAP_CHUNK_YDIM];   // status of column height (set, unchanged, changed)
-        unsigned char column_heights[XMAX * YMAX];               // 1x1 columns
+        unsigned char* column_heights;                              // 1x1 columns
 
     void reset_heights_read();
     void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler
     inline unsigned char get_cached_height(int x, int y);
-    void update_heights(int x, int y, int z, CubeType cube_type);
+    void update_heights(const Vec3i& position, CubeType cube_type);
     void set_update(int x, int y);
-    bool chunk_loaded(int x, int y, int z); //checks if chunk is non null
+    bool chunk_loaded(const Vec3i& position); //checks if chunk is non null
     #endif
 
     Terrain_map(int _xdim, int _ydim);
@@ -88,16 +109,27 @@ class Terrain_map
     #else
     # define T_MAP_INLINE
     #endif
+    T_MAP_INLINE struct MapElement get_element(const Vec3i& position);
     T_MAP_INLINE struct MapElement get_element(int x, int y, int z);
-    T_MAP_INLINE void set_element(int x, int y, int z, struct MapElement element);
-    T_MAP_INLINE CubeType get_block(int x, int y, int z);
-    T_MAP_INLINE void set_block(int x, int y, int z, CubeType cube_type);
+    T_MAP_INLINE void set_element(const Vec3i& position, struct MapElement element);
+    T_MAP_INLINE CubeType get_block(const Vec3i& position);
+    T_MAP_INLINE void set_block(const Vec3i& position, CubeType cube_type);
     #undef T_MAP_INLINE
 
-    ALWAYS_INLINE void set_block_fast(int x, int y, int z, CubeType cube_type);
+    ALWAYS_INLINE void set_block_fast(const Vec3i& position, CubeType cube_type);
 
-    int get_damage(int x, int y, int z);
-    int apply_damage(int x, int y, int z, int dmg, CubeType* cube_type);
+    ALWAYS_INLINE int get_chunk_index(const Vec3i& position)
+    {
+        return (MAP_CHUNK_XDIM * (position.y >> 4)) + (position.x >> 4);
+    }
+
+    ALWAYS_INLINE MapChunk* get_chunk(const Vec3i& position)
+    {
+        return this->chunk[this->get_chunk_index(position)];
+    }
+
+    int get_damage(const Vec3i& position);
+    int apply_damage(const Vec3i& position, int dmg, CubeType* cube_type);
     inline int get_height(int x, int y);
 };
 

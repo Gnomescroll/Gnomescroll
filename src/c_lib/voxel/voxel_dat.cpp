@@ -10,15 +10,14 @@ namespace Voxels
 /* Color */
 
 //#if DC_CLIENT
-void VoxColors::init(int dx, int dy, int dz)
+void VoxColors::init(const Vec3i& dimension)
 {
-    GS_ASSERT(this->rgba == NULL);
-    if (this->rgba != NULL) return;
+    IF_ASSERT(this->rgba != NULL) return;
 
-    this->n = dx*dy*dz;
+    this->n = vec3i_volume(dimension);
     this->rgba = (unsigned char*)malloc(sizeof(unsigned char)*this->n*4);
     this->index = (int*)malloc(sizeof(int)*this->n*3);
-    int x=0,y=0,z=0;
+    Vec3i p = vec3i_init(0);
     for (int i=0; i<n; i++)
     {
         int rgba_index = i*4;
@@ -28,42 +27,39 @@ void VoxColors::init(int dx, int dy, int dz)
         this->rgba[rgba_index+3] = 0;
 
         int index_index = i * 3;
-        this->index[index_index+0] = x;
-        this->index[index_index+1] = y;
-        this->index[index_index+2] = z;
+        this->index[index_index+0] = p.x;
+        this->index[index_index+1] = p.y;
+        this->index[index_index+2] = p.z;
 
-        x++;
-        if (x == dx)
+        p.x++;
+        if (p.x == dimension.x)
         {
-            y++;
-            if (y == dy)
-                z++;
+            p.y++;
+            if (p.y == dimension.y)
+                p.z++;
         }
-        x %= dx;
-        y %= dy;
-        z %= dz;
+        p.x %= dimension.x;
+        p.y %= dimension.y;
+        p.z %= dimension.z;
     }
 }
 
-void VoxColors::set(int i, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+void VoxColors::set(int i, const Vec3i& position, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-    GS_ASSERT(i < this->n);
-    if (i >= this->n) return;
-    GS_ASSERT(this->rgba != NULL);
-    if (this->rgba == NULL) return;
-    GS_ASSERT(this->index != NULL);
-    if (this->index == NULL) return;
+    IF_ASSERT(i >= this->n) return;
+    IF_ASSERT(this->rgba == NULL) return;
+    IF_ASSERT(this->index == NULL) return;
 
-    int j = i*4;
+    int j = i * 4;
     this->rgba[j+0] = r;
     this->rgba[j+1] = g;
     this->rgba[j+2] = b;
     this->rgba[j+3] = a;
 
     j = i * 3;
-    this->index[j+0] = x;
-    this->index[j+1] = y;
-    this->index[j+2] = z;
+    this->index[j+0] = position.x;
+    this->index[j+1] = position.y;
+    this->index[j+2] = position.z;
 }
 
 VoxColors::VoxColors() :
@@ -79,49 +75,30 @@ VoxColors::~VoxColors()
 
 /* Dimensions */
 
-void VoxPartDimension::set(int x, int y, int z)
-{
-    this->x = x;
-    this->y = y;
-    this->z = z;
-}
-
-int VoxPartDimension::count()
-{
-    return this->x * this->y * this->z;
-}
-
-VoxPartDimension::VoxPartDimension()
-{}
-
-VoxPartDimension::VoxPartDimension(int x, int y, int z) :
-    x(x), y(y), z(z)
-{}
-
 /* Body Part (wraps properties) */
 
-void VoxPart::set_dimension(int x, int y, int z)
+void VoxPart::set_dimension(const Vec3i& dimension)
 {
-    dimension.set(x,y,z);
+    this->dimension = dimension;
 }
 
 void VoxPart::set_filename(const char *filename)
 {
-    int len = (int)strlen(filename);
+    size_t len = strlen(filename);
     this->filename = (char*)realloc(this->filename, sizeof(char) * (len+1));
     strcpy(this->filename, filename);
 }
 
-VoxPart::VoxPart(VoxDat* dat, int part_num, float vox_size, int dimension_x,
-                 int dimension_y, int dimension_z, const char* filename,
+VoxPart::VoxPart(VoxDat* dat, int part_num, float vox_size,
+                 const Vec3i& dimension, const char* filename,
                  bool biaxial) :
-    dimension(dimension_x, dimension_y, dimension_z), dat(dat),
-    part_num(part_num), vox_size(vox_size), biaxial(biaxial), colorable(false)
+    dimension(dimension), dat(dat), part_num(part_num), vox_size(vox_size),
+    biaxial(biaxial), colorable(false)
 {
     this->base_color.r = 1;
     this->base_color.g = 1;
     this->base_color.b = 1; // dont use 0,0,0 its reserved
-    colors.init(dimension_x, dimension_y, dimension_z);
+    colors.init(dimension);
     size_t len = strlen(filename);
     this->filename = (char*)malloc(sizeof(char) * (len + 1));
     strcpy(this->filename, filename);
@@ -146,8 +123,7 @@ void VoxPart::set_local_matrix()
 
 void VoxDat::init_skeleton(int n_skeleton)
 {
-    GS_ASSERT(!this->voxel_skeleton_inited)
-    if (this->voxel_skeleton_inited) return;
+    IF_ASSERT(this->voxel_skeleton_inited) return;
     voxel_skeleton_inited = true;
 
     this->n_skeleton_nodes = n_skeleton;
@@ -160,11 +136,8 @@ void VoxDat::init_skeleton(int n_skeleton)
 
 void VoxDat::reset_skeleton_local_matrix(int node)
 {
-    GS_ASSERT(this->voxel_skeleton_inited)
-    if (!this->voxel_skeleton_inited) return;
-
-    GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
-    if (node < 0 || node >= this->n_skeleton_nodes) return;
+    IF_ASSERT(!this->voxel_skeleton_inited) return;
+    IF_ASSERT(node < 0 || node >= this->n_skeleton_nodes) return;
 
     float x,y,z,rx,ry,rz;
     x = vox_skeleton_local_matrix_reference[node][0];
@@ -178,11 +151,8 @@ void VoxDat::reset_skeleton_local_matrix(int node)
 
 void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
 {
-    GS_ASSERT(this->voxel_skeleton_inited)
-    if (!this->voxel_skeleton_inited) return;
-
-    GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
-    if (node < 0 || node >= this->n_skeleton_nodes) return;
+    IF_ASSERT(!this->voxel_skeleton_inited) return;
+    IF_ASSERT(node < 0 || node >= this->n_skeleton_nodes) return;
 
     vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx,ry,rz);
     vox_skeleton_local_matrix_reference[node][0] = x;
@@ -195,11 +165,8 @@ void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, floa
 
 void VoxDat::set_skeleton_node_parent(int node, int parent)
 {
-    GS_ASSERT(this->voxel_skeleton_inited)
-    if (!this->voxel_skeleton_inited) return;
-
-    GS_ASSERT(node >= 0 && node < this->n_skeleton_nodes);
-    if (node < 0 || node >= this->n_skeleton_nodes) return;
+    IF_ASSERT(!this->voxel_skeleton_inited) return;
+    IF_ASSERT(node < 0 || node >= this->n_skeleton_nodes) return;
 
     vox_skeleton_transveral_list[node] = parent;
 }
@@ -223,23 +190,15 @@ void VoxDat::init_parts(int n_parts)
     for (int i=0; i<n_parts; vox_part[i++] = NULL);
 }
 
-void VoxDat::set_part_properties(
-    int part_num,
-    float vox_size,
-    int dimension_x, int dimension_y, int dimension_z,
-    const char* filename,
-    bool biaxial)
+void VoxDat::set_part_properties(int part_num, float vox_size,
+                                 const Vec3i& dimension, const char* filename,
+                                 bool biaxial)
 {
     if (!voxel_volume_inited) printf("ERROR WARNING: VoxDat not inited\n");
     VoxPart* p = vox_part[part_num];
     if (p == NULL)
     {
-        p = new VoxPart(this,
-                        part_num,
-                        vox_size,
-                        dimension_x, dimension_y, dimension_z,
-                        filename,
-                        biaxial);
+        p = new VoxPart(this, part_num, vox_size, dimension, filename, biaxial);
         vox_part[part_num] = p;
     }
     else
@@ -247,8 +206,8 @@ void VoxDat::set_part_properties(
         p->dat = this;
         p->part_num = part_num;
         p->vox_size = vox_size;
-        p->set_dimension(dimension_x, dimension_y, dimension_z);
-        p->colors.init(dimension_x, dimension_y, dimension_z);
+        p->set_dimension(dimension);
+        p->colors.init(dimension);
         p->biaxial = biaxial;
         p->set_filename(filename);
     }
@@ -276,23 +235,19 @@ void VoxDat::set_part_local_matrix(int part_num, float x, float y, float z, floa
 
 void VoxDat::set_colorable(int part, bool colorable)
 {
-    GS_ASSERT(part >= 0 && part < this->n_parts);
-    if (part < 0 || part >= this->n_parts) return;
+    IF_ASSERT(part < 0 || part >= this->n_parts) return;
     VoxPart* p = vox_part[part];
-    GS_ASSERT(p != NULL);
-    if (p == NULL) return;
+    IF_ASSERT(p == NULL) return;
     p->colorable = colorable;
     GS_ASSERT(!p->colorable || // dont use base color 0,0,0 and say its colorable. undesired effect
-        (p->base_color.r || p->base_color.g || p->base_color.b));
+              (p->base_color.r || p->base_color.g || p->base_color.b));
 }
 
 void VoxDat::set_base_color(int part, unsigned char r, unsigned char g, unsigned char b)
 {
-    GS_ASSERT(part >= 0 && part < this->n_parts);
-    if (part < 0 || part >= this->n_parts) return;
+    IF_ASSERT(part < 0 || part >= this->n_parts) return;
     VoxPart* p = vox_part[part];
-    GS_ASSERT(p != NULL);
-    if (p == NULL) return;
+    IF_ASSERT(p == NULL) return;
     p->base_color.r = r;
     p->base_color.g = g;
     p->base_color.b = b;
@@ -310,16 +265,17 @@ void VoxDat::set_skeleton_parent_matrix(int part, int parent)
     vp->skeleton_parent_matrix = parent;
 }
 
-void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+void VoxDat::set_color(int part, const Vec3i& position, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     VoxPart* p = vox_part[part];
-    if (p==NULL)
+    IF_ASSERT(p == NULL)
     {
         printf("WARNING VoxDat::set_color -- part %d is NULL\n", part);
         return;
     }
-    int i = x + y*p->dimension.x + z*p->dimension.y*p->dimension.x;
-    p->colors.set(i, x,y,z, r,g,b,a);
+    int i = (position.x + position.y * p->dimension.x +
+             position.z * p->dimension.y * p->dimension.x);
+    p->colors.set(i, position, r,g,b,a);
 }
 
 VoxDat::VoxDat() :
@@ -347,12 +303,10 @@ VoxDat::~VoxDat()
 
 void VoxDat::save(char* fn)
 {
-    GS_ASSERT(fn != NULL);
-    if (fn == NULL) return;
+    IF_ASSERT(fn == NULL) return;
 
     FILE* f = fopen(fn, "w");
-    GS_ASSERT(f != NULL);
-    if (f == NULL) return;
+    IF_ASSERT(f == NULL) return;
 
     fprintf(f, "#skeleton nodes, voxel volumes\n");
     fprintf(f, "%d %d\n", this->n_skeleton_nodes, this->n_parts);

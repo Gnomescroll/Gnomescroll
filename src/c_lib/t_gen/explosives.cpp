@@ -49,26 +49,25 @@ void init_explosives()
     GS_ASSERT(t_map::isValidCube(regolith_landmine));
 }
 
-bool isLandmine(int x, int y, int z)
-{   // TODO -- make property in CubeAttributes
-    CubeType place = t_map::get(x, y, z);
-    return (place == rock_landmine || place == regolith_landmine);
-}
+//bool is_landmine(const Vec3i& position)
+//{   // TODO -- make property in CubeAttributes
+    //CubeType place = t_map::get(position);
+    //return (place == rock_landmine || place == regolith_landmine);
+//}
 
-void explode_landmine_damage_players(float x, float y, float z)
+void explode_landmine_damage_players(const Vec3i& position)
 {
-    const struct Vec3 position = vec3_init(x, y, z);
-    const struct Vec3 direction = vec3_init(x, y, z + 2);
-    Hitscan::against_agents(position, direction, 2);
+    printf("Landmine damaging players at "); vec3i_print(position);
+    Vec3 p = vec3_add(vec3_init(position), vec3_init(0.5f));
+    Hitscan::against_agents(p, vec3_init(0, 0, 1), 2);
 }
 
-void create_explosion(const int x, const int y, const int z)
+void create_explosion(const Vec3i& position)
 {   // WARNING: make sure this function is called after destroying the explosive block
     // check upper bounds
     // we should not be calling this function out of bounds, so assert
-    IF_ASSERT(x < 0 || x >= map_dim.x) return; //stop IF_ASSERTthe location of the explosive is not valid
-    IF_ASSERT(y < 0 || y >= map_dim.y) return;
-    IF_ASSERT(z <= 0 || z >= map_dim.z) return;    // also check the floor
+    printf("Creating explosion at "); vec3i_print(position);
+    IF_ASSERT(!is_boxed_position(position)) return;
 
     // constant for helping walk the axes
     static const int dir[2] = { -1, 1 };
@@ -81,15 +80,14 @@ void create_explosion(const int x, const int y, const int z)
         vec3_init(0, 1, 0),
         vec3_init(0, 0, 1)};
 
-    const struct Vec3 position = vec3_init(x+0.5f, y+0.5f, z+0.5f);
+    const struct Vec3 fp = vec3_add(vec3_init(position), vec3_init(0.5f));
 
     // notify clients
     Particle::plasmagen_explode_StoC msg;
-    msg.position = position;
+    msg.position = fp;
     msg.broadcast();
 
     // boundaries for the explosion, which can be contained by iron and bedrock
-    const int pos[3] = { x,y,z };
     int bounds[3][2];
     CubeType cubes[3][2];
     for (int i=0; i<3; i++)
@@ -107,15 +105,14 @@ void create_explosion(const int x, const int y, const int z)
     for (int j=1; j<PLASMAGEN_BLAST_RADIUS; j++)
     for (int k=0; k<2; k++)
     {
-        int p[3];
+        Vec3i p;
         for (int m=0; m<3; m++)
-            p[m] = pos[m] + j*sides[i][m]*dir[k];
-        for (int m=0; m<2; m++)
-            p[m] = translate_point(p[m]);
+            p.i[m] = position.i[m] + j*sides[i][m]*dir[k];
+        p = translate_position(p);
 
         if (bounds[i][k] >= j)
         {
-            CubeType cube_type = t_map::get(p[0], p[1], p[2]);
+            CubeType cube_type = t_map::get(p);
             if (cube_type != EMPTY_CUBE)
             {
                 bounds[i][k] = j;
@@ -134,27 +131,19 @@ void create_explosion(const int x, const int y, const int z)
     for (int j=0; j<2; j++)
         if (!in_array(cubes[i][j], immune_cubes, immune_cubes_ct))
         {
-            int p[3];
+            Vec3i p;
             for (int k=0; k<3; k++)
-                p[k] = pos[k] + sides[i][k]*bounds[i][j];
-            for (int k=0; k<2; k++)
-                p[k] = translate_point(p[k]);
+                p.i[k] = position.i[k] + sides[i][k]*bounds[i][j];
+            p = translate_position(p);
 
-            t_map::apply_damage_broadcast(
-                p[0], p[1], p[2],
-                PLASMAGEN_BLOCK_DAMAGE,
-                TMA_PLASMAGEN);
+            t_map::apply_damage_broadcast(p, PLASMAGEN_BLOCK_DAMAGE, TMA_PLASMAGEN);
 
             // block behind this one
             for (int k=0; k<3; k++)
-                p[k] += sides[i][k]*dir[j];
-            for (int k=0; k<2; k++)
-                p[k] = translate_point(p[k]);
-            if (!in_array(t_map::get(p[0], p[1], p[2]), immune_cubes, immune_cubes_ct))
-                t_map::apply_damage_broadcast(
-                    p[0], p[1], p[2],
-                    PLASMAGEN_BLOCK_DAMAGE,
-                    TMA_PLASMAGEN);
+                p.i[k] += sides[i][k]*dir[j];
+            p = translate_position(p);
+            if (!in_array(t_map::get(p), immune_cubes, immune_cubes_ct))
+                t_map::apply_damage_broadcast(p, PLASMAGEN_BLOCK_DAMAGE, TMA_PLASMAGEN);
         }
 
     // hitscan all objects in paths
@@ -162,8 +151,8 @@ void create_explosion(const int x, const int y, const int z)
     for (int j=0; j<2; j++)
     {
         size_t n_hit = 0;
-        struct Vec3 end = vec3_add(position, vec3_scalar_mult(vsides[i], bounds[i][j]+0.5f));
-        class Voxels::VoxelHitscanTarget* targets = ServerState::voxel_hitscan_list->hitscan_all(position, end, &n_hit);
+        struct Vec3 end = vec3_add(fp, vec3_scalar_mult(vsides[i], bounds[i][j]+0.5f));
+        class Voxels::VoxelHitscanTarget* targets = ServerState::voxel_hitscan_list->hitscan_all(fp, end, &n_hit);
         if (targets == NULL) continue;
         for (size_t k=0; k<n_hit; k++)
             Hitscan::damage_target(&targets[k], OBJECT_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);

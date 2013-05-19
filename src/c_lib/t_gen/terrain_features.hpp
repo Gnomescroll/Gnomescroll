@@ -471,12 +471,8 @@ void add_flora()
 
     const float FLORA_SUBREGION_SPAN = (farthest_from_zero - FLORA_ZONE_THRESHOLD) / (FLORA_TYPE_MAX + 1); // + 1 cuz those most extreme numbers are too rare
 
-    int lowest_x = 0;
-    int highest_x = 0;
-    int lowest_y = 0;
-    int highest_y = 0;
-    int lowest_z = 0;
-    int highest_z = 0;
+    Vec3i lowest = vec3i_init(0);
+    Vec3i highest = vec3i_init(0);
 
     // visit every cube column
     for (int x=0; x < map_dim.x; x++)
@@ -488,37 +484,38 @@ void add_flora()
             mrandf() > FLORA_THRESHOLD)
         {
             int z = t_map::get_highest_solid_block(x, y);
-            IF_ASSERT(x < 0 || x >= map_dim.x) return;
-            IF_ASSERT(y < 0 || y >= map_dim.y) return;
-            IF_ASSERT(z < 1 || z >= map_dim.z) return;  // gonna want bedrock always at least 1 layer high?
+            if (z == 0) continue;   // no floor
+            Vec3i p = vec3i_init(x, y, z);
+            Vec3i q = vec3i_init(x, y, z + 1);
 
-            if (t_map::get(x, y, z) == reg &&
-                t_map::get(x, y, z+1) == EMPTY_CUBE)
+            if (t_map::get(p) == reg && t_map::get(q) == EMPTY_CUBE)
             {
                 MechType mt;
                 float curr_thresh = FLORA_ZONE_THRESHOLD;
 
-                if (curr_per < (curr_thresh += FLORA_SUBREGION_SPAN)) mt = gr1;
+                if (curr_per < (curr_thresh += FLORA_SUBREGION_SPAN))
+                    mt = gr1;
+                else if (curr_per < (curr_thresh += FLORA_SUBREGION_SPAN))
+                    mt = gr2;
                 else
-                if (curr_per < (curr_thresh += FLORA_SUBREGION_SPAN)) mt = gr2;
-                else                                                  mt = gr3;
+                    mt = gr3;
 
-                t_mech::create_mech(x, y, z+1, mt);
+                t_mech::create_mech(q, mt);
 
-                lowest_x = GS_MIN(x, lowest_x);
-                highest_x = GS_MAX(x, highest_x);
-                lowest_y = GS_MIN(y, lowest_y);
-                highest_y = GS_MAX(y, highest_y);
-                lowest_z = GS_MIN(z + 1, lowest_z);
-                highest_z = GS_MAX(z + 1, highest_z);
+                lowest.x = GS_MIN(q.x, lowest.x);
+                highest.x = GS_MAX(q.x, highest.x);
+                lowest.y = GS_MIN(q.y, lowest.y);
+                highest.y = GS_MAX(q.y, highest.y);
+                lowest.z = GS_MIN(q.z, lowest.z);
+                highest.z = GS_MAX(q.z, highest.z);
             }
         }
     }
     free(noise);
     printf(" %i ms\n", _GET_MS_TIME() - t);
-    printf("FLORA lowest_x: %d  highest_x: %d \n", lowest_x, highest_x);
-    printf("FLORA lowest_y: %d  highest_y: %d \n", lowest_y, highest_y);
-    printf("FLORA lowest_z: %d  highest_z: %d \n", lowest_z, highest_z);
+    printf("FLORA lowest.x: %d  highest.x: %d \n", lowest.x, highest.x);
+    printf("FLORA lowest.y: %d  highest.y: %d \n", lowest.y, highest.y);
+    printf("FLORA lowest.z: %d  highest.z: %d \n", lowest.z, highest.z);
 }
 
 void add_terrain_features()

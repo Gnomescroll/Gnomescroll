@@ -85,27 +85,25 @@ void draw_agent_bounding_box(float x, float y, float z, float radius,
     draw_agent_bounding_box(x, y, z, radius, head_height, height, Color(255, 0, 0));
 }
 
-void draw_agent_cube_selection(int x, int y, int z, Color color)
+void draw_agent_cube_selection(const Vec3i& position, Color color)
 {
     const float radius = 0.49f;
-    x += 0.5f;
-    y += 0.5f;
-    z += 0.5f;
+    Vec3 p = vec3_add(vec3_init(position), vec3_init(0.5f));
 
     glColor4ub(color.r, color.g, color.b, color.a);
     glBegin(GL_LINES);
     for (int i=0; i<12; i++)
     {
         int j = 3*vertex_index2[2*i+0];
-        float _x = x + v_set2[j+0]*radius;
-        float _y = y + v_set2[j+1]*radius;
-        float _z = z + v_set2[j+2]*radius;
-        glVertex3f(_x,_y,_z);
+        Vec3 q;
+        for (int k=0; k<3; k++)
+            q.f[k] = p.f[i] + v_set2[j+k]*radius;
+        glVertex3f(q.x, q.y, q.z);
+
         j = 3*vertex_index2[2*i+1];
-        _x = x + v_set2[j+0]*radius;
-        _y = y + v_set2[j+1]*radius;
-        _z = z + v_set2[j+2]*radius;
-        glVertex3f(_x,_y,_z);
+        for (int k=0; k<3; k++)
+            q.f[k] = p.f[i] + v_set2[j+k]*radius;
+        glVertex3f(q.x, q.y, q.z);
     }
     glEnd();
     glColor4ub(255, 255, 255, 255);

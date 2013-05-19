@@ -306,7 +306,7 @@ static bool load_map_restore_containers()
         class t_map::MapChunk* mp = t_map::main_map->chunk[MAP_CHUNK_XDIM*cj+ci];
         IF_ASSERT(mp == NULL) continue;
 
-        for (int k=0; k<ZMAX; k++)
+        for (int k=0; k<map_dim.z; k++)
         for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
         for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
         {
@@ -328,7 +328,8 @@ static bool load_map_restore_containers()
                 return false;
             }
 
-            t_map::create_item_container_block(ci*TERRAIN_CHUNK_WIDTH+i, cj*TERRAIN_CHUNK_WIDTH+j, k, container->type, container->id);
+            Vec3i p = vec3i_init(ci*TERRAIN_CHUNK_WIDTH + i, cj*TERRAIN_CHUNK_WIDTH + j, k);
+            t_map::create_item_container_block(p, container->type, container->id);
             loaded_containers[container->id] = CONTAINER_LOAD_MAP;
         }
     }

@@ -10,6 +10,9 @@ ALWAYS_INLINE void unpack_message_id(uint8_t* message_id, char* buff, unsigned i
 ALWAYS_INLINE void pack_float(float* x, char* buff, unsigned int* buff_n, bool pack);
 
 ALWAYS_INLINE void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, bool pack);
+ALWAYS_INLINE void pack_vec3i_u8(struct Vec3i* x, char* buff, unsigned int* buff_n, bool pack);
+ALWAYS_INLINE void pack_vec3i_u16(struct Vec3i* x, char* buff, unsigned int* buff_n, bool pack);
+ALWAYS_INLINE void pack_map_position(struct Vec3i* x, char* buff, unsigned int* buff_n, bool pack);
 ALWAYS_INLINE void pack_color(Color* x, char* buff, unsigned int* buff_n, bool pack);
 
 ALWAYS_INLINE void pack_64(int64_t* x, char* buff, unsigned int* buff_n, bool pack);
@@ -52,6 +55,45 @@ ALWAYS_INLINE void pack_vec3(struct Vec3* x, char* buff, unsigned int* buff_n, b
     pack_float(&(x->x), buff, buff_n, pack);
     pack_float(&(x->y), buff, buff_n, pack);
     pack_float(&(x->z), buff, buff_n, pack);
+}
+
+ALWAYS_INLINE void pack_vec3i_u8(struct Vec3i* x, char* buff, unsigned int* buff_n, bool pack)
+{
+    if (!pack)
+    {
+        x->x = 0;
+        x->y = 0;
+        x->z = 0;
+    }
+    pack_u8(reinterpret_cast<uint8_t*>(&x->x), buff, buff_n, pack);
+    pack_u8(reinterpret_cast<uint8_t*>(&x->y), buff, buff_n, pack);
+    pack_u8(reinterpret_cast<uint8_t*>(&x->z), buff, buff_n, pack);
+}
+
+ALWAYS_INLINE void pack_vec3i_u16(struct Vec3i* x, char* buff, unsigned int* buff_n, bool pack)
+{
+    if (!pack)
+    {
+        x->x = 0;
+        x->y = 0;
+        x->z = 0;
+    }
+    pack_u16(reinterpret_cast<uint16_t*>(&x->x), buff, buff_n, pack);
+    pack_u16(reinterpret_cast<uint16_t*>(&x->y), buff, buff_n, pack);
+    pack_u16(reinterpret_cast<uint16_t*>(&x->z), buff, buff_n, pack);
+}
+
+ALWAYS_INLINE void pack_map_position(struct Vec3i* x, char* buff, unsigned int* buff_n, bool pack)
+{
+    if (!pack)
+    {
+        x->x = 0;
+        x->y = 0;
+        x->z = 0;
+    }
+    pack_u16(reinterpret_cast<uint16_t*>(&x->x), buff, buff_n, pack);
+    pack_u16(reinterpret_cast<uint16_t*>(&x->y), buff, buff_n, pack);
+    pack_u8(reinterpret_cast<uint8_t*>(&x->z), buff, buff_n, pack);
 }
 
 ALWAYS_INLINE void pack_color(Color* x, char* buff, unsigned int* buff_n, bool pack)

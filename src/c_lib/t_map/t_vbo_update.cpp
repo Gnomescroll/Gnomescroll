@@ -119,20 +119,20 @@ const static int_fast8_t s_array[18] = {
 
 //this is doing a get, but can use within chunk lookup
 ALWAYS_INLINE
-int _is_occluded(int x,int y,int z, int side_num)
+int _is_occluded(int x, int y, int z, int side_num)
 {
     int i = 3*side_num;
     return isOccludes(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]);
 }
 
 ALWAYS_INLINE
-int get_lighting(int x,int y,int z, int side)
+int get_lighting(int x, int y, int z, int side)
 {
     int i = 3*side;
     return main_map->get_element(x+s_array[i+0],y+s_array[i+1],z+s_array[i+2]).light;
 }
 
-inline int _is_occluded_transparent(int x,int y,int z, int side_num, CubeType _cube_type)
+inline int _is_occluded_transparent(int x, int y, int z, int side_num, CubeType _cube_type)
 {
     int i = 3*side_num;
     x += s_array[i+0];

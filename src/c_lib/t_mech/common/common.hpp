@@ -69,9 +69,7 @@ struct Mech
 {
     int id; //-1 if not in use
 
-    int x;
-    int y;
-    int z;
+    Vec3i position;
 
     MechType type;       //mech type
     int subtype;        //sprite

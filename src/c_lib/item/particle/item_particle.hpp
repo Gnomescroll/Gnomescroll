@@ -76,12 +76,11 @@ class ItemParticle
 
     void tick();
 
-    void set_state(float x, float y, float z, float mx, float my, float mz)
+    void set_state(const Vec3& position, const Vec3& velocity)
     {
-        GS_ASSERT(is_boxed_point(x));
-        GS_ASSERT(is_boxed_point(y));
-        this->verlet.position = vec3_init(x,y,z);
-        this->verlet.velocity = vec3_init(mx,my,mz);
+        GS_ASSERT(is_boxed_position(position));
+        this->verlet.position = position;
+        this->verlet.velocity = velocity;
         GS_ASSERT(vec3_is_valid(this->verlet.position));
         GS_ASSERT(vec3_is_valid(this->verlet.velocity));
     }
@@ -91,10 +90,10 @@ class ItemParticle
     explicit ItemParticle(ItemParticleID id);
 
     #if DC_CLIENT
-    void init(ItemType item_type, float x, float y, float z, float mx, float my, float mz);
+    void init(ItemType item_type, const Vec3& position, const Vec3& velocity);
     #endif
     #if DC_SERVER
-    void init(ItemID item_id, ItemType item_type, float x, float y, float z, float mx, float my, float mz);
+    void init(ItemID item_id, ItemType item_type, const Vec3& position, const Vec3& velocity);
     #endif
 };
 

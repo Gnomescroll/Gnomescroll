@@ -86,9 +86,9 @@ class MechLightEffect
 
         const float scale = 0.25f; // CONSTANT
 
-        float wx = (float) (m.x) + 0.5f;// + m.offset_x;
-        float wy = (float) (m.y) + 0.5f;// + m.offset_y;
-        float wz = (float) m.z + 0.5f;;
+        float wx = m.position.x + 0.5f;// + m.offset_x;
+        float wy = m.position.y + 0.5f;// + m.offset_y;
+        float wz = m.position.z + 0.5f;;
         //fulstrum test
         wz += scale / 2.0f;
 

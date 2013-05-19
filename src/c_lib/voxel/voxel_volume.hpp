@@ -11,7 +11,7 @@
 namespace Voxels
 {
 
-inline int get_ao_weight(int side_1, int side_2, int corner) __attribute((always_inline));
+ALWAYS_INLINE int get_ao_weight(int side_1, int side_2, int corner);
 // Sets AO strength values
 
 class VoxelVolume
@@ -35,11 +35,11 @@ class VoxelVolume
     //bounding sphere
     float radius;   //update when changing scale
 
-    unsigned int xdim,ydim,zdim;
+    Vec3i dimensions;
     Voxel* voxel;
-    unsigned int index1;
-    unsigned int index12;
-    unsigned int index_max;
+    int index1;
+    int index12;
+    int index_max;
 
     float hdx,hdy,hdz;  //half of width, height, depth as floats
 
@@ -57,51 +57,53 @@ class VoxelVolume
     void update_vertex_list();
     #endif
 
-    int hitscan_test(struct Vec3 p, struct Vec3 f, float r2,  int voxel[3]);
+    int hitscan_test(const Vec3& p, const Vec3& f, float r2, Vec3i& voxel);
 
-    //inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision) __attribute((always_inline));
-    //inline struct Vec3 get_center() __attribute((always_inline));
-
-    inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision);
+    inline int voxel_ray_cast(const Vec3& position, const Vec3& direction,
+                              float max_len, float* distance, Vec3i& collision);
 
     inline struct Vec3 get_center()
     {
         return world_matrix.c;
     }
 
-    void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-    void set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4]);
+    void set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set_color(int x, int y, int z, unsigned char rgba[4]);
 
-    void set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-    void set(unsigned int x, unsigned int y, unsigned int z, Voxel* v);
+    void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set(int x, int y, int z, Voxel* v);
 
-    void set_parameters(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
+    void set_parameters(const Vec3i& dimensions, float scale);
 
     void draw_bounding_box();
-    int point_collision_test(Vec3 p, unsigned int vxl[3]);
+    int point_collision_test(const Vec3& p, Vec3i& voxel);
 
-    void init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
+    void init(const Vec3i& dimensions, float scale);
     void set_hitscan_properties(short entity_id, short entity_type, short part_id);
 
-    VoxelVolume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale);
+    VoxelVolume(const Vec3i& dimensions, float scale);
     VoxelVolume();
 
     ~VoxelVolume();
 
     private:
     #if DC_CLIENT
-    inline void push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
+    ALWAYS_INLINE void push_voxel_quad(VoxelVertex* scratch, int* index,
+                                       int x, int y,
+                                       int z, int side, float* vset,
+                                       float ox, float oy, float oz);
     #endif
 
-    inline Voxel* get(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
+    ALWAYS_INLINE Voxel* get(int x, int y, int z);
 
-    inline unsigned int get_as_int(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
+    ALWAYS_INLINE int get_as_int(int x, int y, int z);
 
     // Tests whether a voxel is occupied, for AO
-    inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
-    inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3]) __attribute((always_inline));
-    inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline));
-    inline void _set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline));
+    ALWAYS_INLINE bool _test_occludes_safe(int x, int y, int z);
+    ALWAYS_INLINE void _set(int x, int y, int z, Voxel* v);
+    ALWAYS_INLINE void _set(int x, int y, int z,
+                            unsigned char r, unsigned char g, unsigned char b,
+                            unsigned char a);
 
 };
 

@@ -434,7 +434,7 @@ void PlayerAgent::update_model()
     }
 }
 
-bool PlayerAgent::facing_block(int pos[3])
+bool PlayerAgent::facing_block(Vec3i& pos)
 {
     if (this->you() == NULL) return NULL;
     if (current_camera == NULL) return NULL;
@@ -443,33 +443,30 @@ bool PlayerAgent::facing_block(int pos[3])
 
     class RaytraceData data;
     bool collided = raytrace_terrain(current_camera_position, current_camera->forward_vector(), max_distance, &data);
-    if (!collided) return false;
-    for (int i=0; i<3; i++)
-        pos[i] = data.collision_point[i];
+    pos = data.collision_point;
     return collided;
 }
 
 int PlayerAgent::facing_container()
 {
-    int pos[3];
+    Vec3i pos;
     bool facing = this->facing_block(pos);
     if (!facing) return NULL_CONTAINER;
-
-    return t_map::get_block_item_container(pos[0], pos[1], pos[2]);
+    return t_map::get_block_item_container(pos);
 }
 
-bool PlayerAgent::nearest_open_block(const float max_dist, struct Vec3i& pos)
+bool PlayerAgent::nearest_open_block(const float max_dist, Vec3i& pos)
 {
     if (agent_camera == NULL) return NULL;
     Vec3 f = agent_camera->forward_vector();
     class RaytraceData data;
     bool collided = raytrace_terrain(agent_camera->get_position(), f, max_dist, &data);
     if (!collided) return false;
-    data.get_pre_collision_point(pos);
+    pos = data.get_pre_collision_point();
     return collided;
 }
 
-int PlayerAgent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3], float* distance)
+int PlayerAgent::get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, Vec3i& side, float* distance)
 {
     if (agent_camera == NULL) return 0;
     Vec3 p = agent_camera->get_position();
@@ -480,22 +477,21 @@ int PlayerAgent::get_facing_side(int solid_pos[3], int open_pos[3], int side[3],
     bool collided = raytrace_terrain(p, v, max_dist, &data);
     if (!collided) return 0;
 
-    for (int i=0; i<3; i++) solid_pos[i] = data.collision_point[i];
-    data.get_pre_collision_point(open_pos);
-    data.get_side_array(side);
+    solid_pos = data.collision_point;
+    open_pos = data.get_pre_collision_point();
+    side = data.get_sides();
     *distance = data.interval * max_dist;
-
-    GS_ASSERT(open_pos[2] >= 0); // agent should never be shooting from underground
+    GS_ASSERT(open_pos.z >= 0); // agent should never be shooting from underground
     return data.get_cube_type();
 }
 
-int PlayerAgent::get_facing_side(int solid_pos[3], int open_pos[3], float* distance)
+int PlayerAgent::get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, float* distance)
 {
-    int s[3];
+    Vec3i s;
     int block = this->get_facing_side(solid_pos, open_pos, s, distance);
     if (block <= 0)
         return -1;
-    return get_cube_side_from_side_array(s);
+    return get_cube_side_from_sides(s);
 }
 
 void PlayerAgent::fell(float dvz)

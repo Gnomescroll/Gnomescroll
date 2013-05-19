@@ -37,7 +37,7 @@ void populate_2d_noise_array(float* _2d_noise_array, float persistence, int octa
         float _y = j*(1.0f/float(map_dim.y)); // + (0.5/512.0);
 
         float tmp = p2d->sample(_x,_y,persistence);
-        _2d_noise_array[XMAX*j + i] = tmp;
+        _2d_noise_array[map_dim.x*j + i] = tmp;
         sum += tmp;
     }
 

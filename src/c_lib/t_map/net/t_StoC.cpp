@@ -169,9 +169,8 @@ void map_element_update::handle()
 
 void block_set_StoC::handle()
 {
-    GS_ASSERT(x < map_dim.x && y < map_dim.y && z < map_dim.z);
-    if (x >= map_dim.x || y >= map_dim.y || z >= map_dim.z) return;
-    set(x,y,z, (CubeType)cube_type);
+    IF_ASSERT(!is_boxed_position(this->position)) return;
+    set(this->position, (CubeType)cube_type);
 }
 
 void block_set_palette_StoC::handle()
@@ -179,34 +178,33 @@ void block_set_palette_StoC::handle()
     struct MapElement e = NULL_MAP_ELEMENT;
     //struct MapElement e = get_element(x,y,z);
     //GS_ASSERT(e.block == cube_type);        //this assert might be wrong
-    e.block   = cube_type;
+    e.block = cube_type;
     e.palette = palette;
     //e.light   = fast_cube_attributes[cube_type].light_value;
 
-    set_element(x,y,z, e);
+    set_element(this->position, e);
 }
 
 void block_action_StoC::handle()
 {
-    struct Vec3 p = vec3_scalar_add(vec3_init(x, y, z), 0.5f);
+    struct Vec3 p = vec3_scalar_add(vec3_init(this->position), 0.5f);
     if ((CubeType)this->cube_type == EMPTY_CUBE)
     {
-        CubeType old_cube_type = get(x,y,z);
-        Animations::block_crumble(p, randrange(10,30), old_cube_type, (TerrainModificationAction)action);
+        CubeType old_cube_type = get(this->position);
+        Animations::block_crumble(p, randrange(10, 30), old_cube_type,
+                                  (TerrainModificationAction)action);
         Sound::play_3d_sound("block_destroyed", p);
     }
     else
     {
         Sound::play_3d_sound("block_set", p);
     }
-    set(x,y,z, (CubeType)this->cube_type);
+    set(this->position, (CubeType)this->cube_type);
 }
 
 void map_metadata_StoC::handle()
 {
-    map_dim.x = x;
-    map_dim.y = y;
-    map_dim.z = z;
+    map_dim = this->dimensions;
 }
 
 /*
@@ -216,28 +214,25 @@ void map_metadata_StoC::handle()
 void container_block_chunk_reset_StoC::handle()
 {
     if (chunk_index >= (unsigned int)(main_map->xchunk_dim*main_map->ychunk_dim)) return;
-    GS_ASSERT(main_map->chunk[chunk_index] != NULL);
-    if (main_map->chunk[chunk_index] == NULL) return;
+    IF_ASSERT(main_map->chunk[chunk_index] == NULL) return;
     main_map->chunk[chunk_index]->chunk_item_container._reset();
 };
 
 
 void container_block_create_StoC::handle()
 {
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    int chunk_index = (y/16)*(map_dim.x/16) + (x/16);
-    GS_ASSERT(main_map->chunk[chunk_index] != NULL);
-    if (main_map->chunk[chunk_index] == NULL) return;
-    main_map->chunk[chunk_index]->chunk_item_container.add(x,y,z, (ItemContainerType)container_type, (ItemContainerID)container_id);
+    if (!is_valid_z(this->position)) return;
+    Vec3i p = translate_position(this->position);
+    int chunk_index = (p.y / 16) * (map_dim.x / 16) + (p.x / 16);
+    IF_ASSERT(main_map->chunk[chunk_index] == NULL) return;
+    main_map->chunk[chunk_index]->chunk_item_container.add(
+        p, (ItemContainerType)container_type, (ItemContainerID)container_id);
 }
 
 void container_block_delete_StoC::handle()
 {
     if (chunk_index >= (unsigned int)(main_map->xchunk_dim*main_map->ychunk_dim)) return;
-    GS_ASSERT(main_map->chunk[chunk_index] != NULL);
-    if (main_map->chunk[chunk_index] == NULL) return;
+    IF_ASSERT(main_map->chunk[chunk_index] == NULL) return;
     main_map->chunk[chunk_index]->chunk_item_container.remove((ItemContainerID)container_id);
 }
 
@@ -249,16 +244,14 @@ void container_block_delete_StoC::handle()
 //    uint16_t x,y,z;
 void control_node_create_StoC::handle()
 {
-    printf("client adding control node at: %d %d %d \n", x,y,z);
-    main_map->control_node_list.add_control_node(x,y,z);
+    main_map->control_node_list.add_control_node(this->position);
     main_map->control_node_list.needs_update = true;
 };
 
 //    uint16_t x,y,z;
 void control_node_delete_StoC::handle()
 {
-    printf("client removing control node at: %d %d %d \n", x,y,z);
-    main_map->control_node_list.remove_control_node(x,y,z);
+    main_map->control_node_list.remove_control_node(this->position);
     main_map->control_node_list.needs_update = true;
 };
 

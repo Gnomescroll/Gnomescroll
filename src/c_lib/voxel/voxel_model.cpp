@@ -249,13 +249,9 @@ void VoxelModel::init_parts(int id, EntityType type)
     for (int i=0; i<this->n_parts; i++)
     {
         VoxPart* vp = vox_dat->vox_part[i];
-        int x = vp->dimension.x;
-        int y = vp->dimension.y;
-        int z = vp->dimension.z;
-
         VoxelVolume* vv = &(this->vv[i]);
 
-        vv->init(x,y,z, vp->vox_size);
+        vv->init(vp->dimension, vp->vox_size);
         vv->set_hitscan_properties(id, type, i);
 
         this->set_part_color(i);

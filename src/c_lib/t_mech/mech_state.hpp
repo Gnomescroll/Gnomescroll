@@ -41,17 +41,17 @@ struct MechList
         free(mla);
     }
 
-    bool is_occupied(int x, int y, int z); //check if there is a t_mech on the square already
+    bool is_occupied(const Vec3i& position); //check if there is a t_mech on the square already
 
     #if DC_SERVER
-    MechType handle_block_removal(int x, int y, int z);
+    MechType handle_block_removal(Vec3i position);
     #endif
 
     #if DC_CLIENT
     void add_mech(int id, const struct Mech &m)
     {
         GS_ASSERT(mln < MECH_HARD_MAX);
-        
+
         GS_ASSERT(m.text == NULL);
 
         while (id >= mlm)

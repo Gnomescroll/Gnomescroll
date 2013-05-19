@@ -136,14 +136,14 @@ static bool parse_map_position(const char* val, struct Vec3i* position)
 
     int base_offset = MAP_POSITION_COMPONENT_LENGTH + MAP_POSITION_COMPONENT_DELIMITER_LENGTH;
     long long x = parse_int(&buf[0 * base_offset], err);
-    GS_ASSERT(!err && x >= 0 && x < XMAX);
-    if (err || x < 0 || x >= XMAX) return false;
+    GS_ASSERT(!err && x >= 0 && x < map_dim.x);
+    if (err || x < 0 || x >= map_dim.x) return false;
     long long y = parse_int(&buf[1 * base_offset], err);
-    GS_ASSERT(!err && y >= 0 && y < YMAX);
-    if (err || y < 0 || y >= YMAX) return false;
+    GS_ASSERT(!err && y >= 0 && y < map_dim.y);
+    if (err || y < 0 || y >= map_dim.y) return false;
     long long z = parse_int(&buf[2 * base_offset], err);
-    GS_ASSERT(!err && z >= 0 && z < ZMAX);
-    if (err || z < 0 || z >= ZMAX) return false;
+    GS_ASSERT(!err && z >= 0 && z < map_dim.z);
+    if (err || z < 0 || z >= map_dim.z) return false;
 
     position->x = x;
     position->y = y;

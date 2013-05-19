@@ -36,7 +36,8 @@ Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,
             agent = agent_list->filtered_objects[chosen[i]];
         else
             agent = agent_list->filtered_objects[i];
-        if (agent->id == agent_list->null_id || agent->status.dead) continue;
+        if (agent->id == agent_list->null_id || agent->status.dead)
+            continue;
         if (agent->in_sight_of(firing_position, &sink, failure_rate))
         {
             *firing_direction = vec3_sub(sink, firing_position);
@@ -72,16 +73,14 @@ HitscanTarget shoot_at_agent(Vec3 source, Vec3 firing_direction,
 { // hitscan vector against world
     class Voxels::VoxelHitscanTarget target;
     float vox_distance;
-    float collision_point[3];
-    int block_pos[3];
-    int side[3];
+    Vec3 collision_point;
+    Vec3i block_pos;
+    Vec3i side;
     CubeType tile = EMPTY_CUBE;
     float block_distance;
-    HitscanTargetTypes
-    target_type = hitscan_against_world(source, firing_direction,
-                                        id, type,
-                                        &target, &vox_distance, collision_point,
-                                        block_pos, side, &tile, &block_distance);
+    HitscanTargetTypes target_type = hitscan_against_world(
+        source, firing_direction, id, type, &target, &vox_distance,
+        collision_point, block_pos, side, &tile, &block_distance);
 
     // process target information
     HitscanTarget target_information;
@@ -96,8 +95,7 @@ HitscanTarget shoot_at_agent(Vec3 source, Vec3 firing_direction,
             target_information.id = target.entity_id;
             target_information.type = (EntityType)target.entity_type;
             target_information.part = target.part_id;
-            for (int i=0; i<3; i++)
-                target_information.voxel[i] = target.voxel[i];
+            target_information.voxel = target.voxel;
             break;
 
         case HITSCAN_TARGET_BLOCK:
@@ -106,13 +104,12 @@ HitscanTarget shoot_at_agent(Vec3 source, Vec3 firing_direction,
                 target_type = HITSCAN_TARGET_NONE;
                 break;
             }
-            target_information.collision_point = vec3_add(source,
-                        vec3_scalar_mult(firing_direction, block_distance));
+            target_information.collision_point = vec3_add(
+                source, vec3_scalar_mult(firing_direction, block_distance));
             target_information.collision_point = translate_position(target_information.collision_point);
-            for (int i=0; i<3; i++)
-                target_information.voxel[i] = block_pos[i];
+            target_information.voxel = block_pos;
             target_information.cube = tile;
-            target_information.side = get_cube_side_from_side_array(side);
+            target_information.side = get_cube_side_from_sides(side);
             break;
 
         case HITSCAN_TARGET_NONE:
@@ -136,9 +133,8 @@ void handle_hitscan_target(const HitscanTarget& t,
     {
         case HITSCAN_TARGET_BLOCK:
             if (t.collision_point.z > 0)    // dont damage floor
-                t_map::apply_damage_broadcast(
-                    t.voxel[0], t.voxel[1], t.voxel[2],
-                    p.block_damage, p.terrain_modification_action);
+                t_map::apply_damage_broadcast(t.voxel, p.block_damage,
+                                              p.terrain_modification_action);
             break;
         case HITSCAN_TARGET_VOXEL:
             if (t.type == OBJECT_AGENT)
@@ -172,9 +168,7 @@ void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
             obj_msg.target_id = t.id;
             obj_msg.target_type = t.type;
             obj_msg.target_part = t.part;
-            obj_msg.voxel_x = t.voxel[0];
-            obj_msg.voxel_y = t.voxel[1];
-            obj_msg.voxel_z = t.voxel[2];
+            obj_msg.voxel = t.voxel;
             obj_msg.broadcast();
             break;
 

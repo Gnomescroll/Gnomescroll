@@ -10,7 +10,7 @@ class Entity;
 
 int count(EntityType type);
 bool full(EntityType type);
-bool point_occupied_by_type(EntityType type, int x, int y, int z);
+bool point_occupied_by_type(EntityType type, const Vec3i& position);
 void spawn_mobs();
 
 /* API */

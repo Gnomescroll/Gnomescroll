@@ -437,7 +437,7 @@ static bool get_other_agent_render_params(AgentID agent_id, Vec3* pOrigin, Vec3*
     struct Vec3 up = a->arm_forward();
     struct Vec3 forward = a->arm_right();
     struct Vec3 right = vec3_scalar_mult(a->arm_up(), -1);
-    float offset = (((vv->zdim)/2) * vv->scale);// + (current_config->scale / 2.0f);
+    float offset = (((vv->dimensions.z)/2) * vv->scale);// + (current_config->scale / 2.0f);
     struct Vec3 origin = vec3_add(a->arm_center(), vec3_scalar_mult(right, offset));
     origin = vec3_add(origin, vec3_scalar_mult(right, -0.2f));
     origin = vec3_add(origin, vec3_scalar_mult(forward, 0.02f));

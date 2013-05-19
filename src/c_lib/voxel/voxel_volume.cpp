@@ -31,8 +31,16 @@ void teardown_voxel_volume()
     delete[] voxel_vertex_scratch_buffer;
 }
 
-int VoxelVolume::voxel_ray_cast(float x0, float y0, float z0, float _dfx, float _dfy,float _dfz, float max_l, float* distance, int* collision)
+int VoxelVolume::voxel_ray_cast(const Vec3& position, const Vec3& direction,
+                                float max_len, float* distance, Vec3i& collision)
 {
+    float x0 = position.x;
+    float y0 = position.y;
+    float z0 = position.z;
+    float _dfx = direction.x;
+    float _dfy = direction.y;
+    float _dfz = direction.z;
+
     *distance = 100000.0f;
     const static int _ssize = 0xFF;
     const static int _bsize = 0xFFFF;
@@ -43,11 +51,11 @@ int VoxelVolume::voxel_ray_cast(float x0, float y0, float z0, float _dfx, float 
     _dfz *= len2;
 
     // calculate endpoint
-    float x1 = x0 + _dfx*max_l;
-    float y1 = y0 + _dfy*max_l;
-    float z1 = z0 + _dfz*max_l;
+    float x1 = x0 + _dfx*max_len;
+    float y1 = y0 + _dfy*max_len;
+    float z1 = z0 + _dfz*max_len;
 
-    const float len = max_l;
+    const float len = max_len;
 
     int x = x0; //truncating conversion
     int y = y0;
@@ -61,9 +69,9 @@ int VoxelVolume::voxel_ray_cast(float x0, float y0, float z0, float _dfx, float 
     int cdy = _dy >= 0 ? 1 : -1;
     int cdz = _dz >= 0 ? 1 : -1;
 
-    unsigned int dx = _dx*cdx;
-    unsigned int dy = _dy*cdy;
-    unsigned int dz = _dz*cdz;
+    int dx = _dx*cdx;
+    int dy = _dy*cdy;
+    int dz = _dz*cdz;
 
     float dummy;
     int cx = cdx >= 0 ? modff(x0, &dummy)*_bsize : _bsize - modff(x0, &dummy)*_bsize; //convert fractional part
@@ -118,9 +126,9 @@ int VoxelVolume::voxel_ray_cast(float x0, float y0, float z0, float _dfx, float 
     if (col)
     {
         *distance = len * (float(i) / float(max_i));
-        collision[0] = x;
-        collision[1] = y;
-        collision[2] = z;
+        collision.x = x;
+        collision.y = y;
+        collision.z = z;
         return 1;
     }
     return 0; //no collision
@@ -132,11 +140,11 @@ int VoxelVolume::voxel_ray_cast(float x0, float y0, float z0, float _dfx, float 
     Enables using faster, Sagitta ray cast
 
 */
-int VoxelVolume::hitscan_test(struct Vec3 p, struct Vec3 f, float r2, int voxel[3])
+int VoxelVolume::hitscan_test(const Vec3& position, const Vec3& forward,
+                              float r2, Vec3i& voxel)
 {
-    p.x -= world_matrix.v[3].x;
-    p.y -= world_matrix.v[3].y;
-    p.z -= world_matrix.v[3].z;
+    Vec3 p = vec3_sub(position, world_matrix.v[3]);
+    Vec3 f = forward;
 
     struct Vec3 u;
     u.x = f.x*world_matrix.v[0].x + f.y*world_matrix.v[0].y + f.z*world_matrix.v[0].z,
@@ -153,24 +161,24 @@ int VoxelVolume::hitscan_test(struct Vec3 p, struct Vec3 f, float r2, int voxel[
     const float s = this->radius - sqrtf(r2); // Sagitta
     const float l = 0.01f + sqrtf(s * (2.0f * this->radius - s));
 
-    v.x = ((v.x - l*u.x) / scale) + xdim/2.0f;
-    v.y = ((v.y - l*u.y) / scale) + ydim/2.0f;
-    v.z = ((v.z - l*u.z) / scale) + zdim/2.0f;
+    v.x = ((v.x - l*u.x) / scale) + this->dimensions.x/2.0f;
+    v.y = ((v.y - l*u.y) / scale) + this->dimensions.y/2.0f;
+    v.z = ((v.z - l*u.z) / scale) + this->dimensions.z/2.0f;
 
     //printf("radius= %f, l= %f \n", radius, l);
 #else
-    v.x = ((v.x - radius*u.x) / scale) + xdim/2.0f;
-    v.y = ((v.y - radius*u.y) / scale) + ydim/2.0f;
-    v.z = ((v.z - radius*u.z) / scale) + zdim/2.0f;
+    v.x = ((v.x - radius*u.x) / scale) + this->dimensions.x/2.0f;
+    v.y = ((v.y - radius*u.y) / scale) + this->dimensions.y/2.0f;
+    v.z = ((v.z - radius*u.z) / scale) + this->dimensions.z/2.0f;
 #endif
 
     float distance;
     //int collision[3];
 
 #if HITSCAN_TEST_FAST
-    if (voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*(radius/scale), &distance, voxel))
+    if (voxel_ray_cast(v, u, 2*(radius/scale), &distance, voxel))
 #else
-    if (voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*(l/scale), &distance, voxel))
+    if (voxel_ray_cast(v, u, 2*(l/scale), &distance, voxel))
 #endif
     {
         distance *= scale;
@@ -180,79 +188,66 @@ int VoxelVolume::hitscan_test(struct Vec3 p, struct Vec3 f, float r2, int voxel[
 }
 
 #define DEBUG_POINT_COLLISION_TEST 1
-int VoxelVolume::point_collision_test(Vec3 p, unsigned int vxl[3])
+int VoxelVolume::point_collision_test(const Vec3& p, Vec3i& voxel)
 {
-#if DEBUG_POINT_COLLISION_TEST
-        float x = p.x;
-        float y = p.y;
-        float z = p.z;
+    #if DEBUG_POINT_COLLISION_TEST
+    float x = p.x;
+    float y = p.y;
+    float z = p.z;
 
-        x -= world_matrix.v[3].x;
-        y -= world_matrix.v[3].y;
-        z -= world_matrix.v[3].z;
+    x -= world_matrix.v[3].x;
+    y -= world_matrix.v[3].y;
+    z -= world_matrix.v[3].z;
 
-        struct Vec3 v;
+    struct Vec3 v;
 
-        v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z;
-        v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z;
-        v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
+    v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z;
+    v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z;
+    v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
 
-        v.x = (v.x / scale) + xdim/2;
-        v.y = (v.y / scale) + ydim/2;
-        v.z = (v.z / scale) + zdim/2;
+    v.x = (v.x / scale) + this->dimensions.x/2;
+    v.y = (v.y / scale) + this->dimensions.y/2;
+    v.z = (v.z / scale) + this->dimensions.z/2;
+    #else
 
-        return _test_occludes_safe(v.x,v.y,v.z, vxl);
-#else
-        p = vec3_sub(p, world_matrix_v[3]);
+    p = vec3_sub(p, world_matrix_v[3]);
+    struct Vec3 v;
 
-        struct Vec3 v;
+    v.x = vec3_dot(p,world_matrix_v[0]);
+    v.x = vec3_dot(p,world_matrix_v[1]);
+    v.x = vec3_dot(p,world_matrix_v[2]);
 
-        v.x = vec3_dot(p,world_matrix_v[0]);
-        v.x = vec3_dot(p,world_matrix_v[1]);
-        v.x = vec3_dot(p,world_matrix_v[2]);
+    v.x = (v.x / scale) + this->dimensions.x/2;
+    v.y = (v.y / scale) + this->dimensions.y/2;
+    v.z = (v.z / scale) + this->dimensions.z/2;
+    #endif
 
-        v.x = (v.x / scale) + xdim/2;
-        v.y = (v.y / scale) + ydim/2;
-        v.z = (v.z / scale) + zdim/2;
-
-        return _test_occludes_safe(v.x,v.y,v.z, vxl);
-#endif
+    voxel = vec3i_init(v);
+    return _test_occludes_safe(v.x, v.y, v.z);
 }
 
-//int VoxelVolume::point_collision_test(Vec3 p, float voxel[3])
-//{
-    //struct Vec3 v;
-    //p = vec3_sub(p, world_matrix.v[3]);
-    //v.x = p.x*world_matrix.v[0].x + p.y*world_matrix.v[0].y + p.z*world_matrix.v[0].z,
-    //v.y = p.x*world_matrix.v[1].x + p.y*world_matrix.v[1].y + p.z*world_matrix.v[1].z,
-    //v.z = p.x*world_matrix.v[2].x + p.y*world_matrix.v[2].y + p.z*world_matrix.v[2].z;
-    //return _test_occludes_safe(v.x,v.y,v.z, voxel);
-//}
-
-void VoxelVolume::set_parameters(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
+void VoxelVolume::set_parameters(const Vec3i& dimensions, float scale)
 {
-    this->xdim = xdim;
-    this->ydim = ydim;
-    this->zdim = zdim;
+    this->dimensions = dimensions;
     this->scale = scale;
 }
 
-void VoxelVolume::init(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale)
+void VoxelVolume::init(const Vec3i& dimensions, float scale)
 {
     IF_ASSERT(this->voxel != NULL) return;
 
-    this->set_parameters(xdim, ydim, zdim, scale);
+    this->set_parameters(dimensions, scale);
 
-    this->hdx = xdim / 2.0f;
-    this->hdy = ydim / 2.0f;
-    this->hdz = zdim / 2.0f;
+    this->hdx = this->dimensions.x / 2.0f;
+    this->hdy = this->dimensions.y / 2.0f;
+    this->hdz = this->dimensions.z / 2.0f;
 
-    int powx = pow2_2(xdim);
-    int powy = pow2_2(ydim);
-    int powz = pow2_2(zdim);
+    int powx = pow2_2(this->dimensions.x);
+    int powy = pow2_2(this->dimensions.y);
+    int powz = pow2_2(this->dimensions.z);
 
-    this->index1 = pow2_1(xdim);
-    this->index12 = pow2_1(xdim) + pow2_1(ydim);
+    this->index1 = pow2_1(this->dimensions.x);
+    this->index12 = pow2_1(this->dimensions.x) + pow2_1(this->dimensions.y);
     this->index_max = powx*powy*powz;
 
     //update radius if changing scale
@@ -269,7 +264,7 @@ VoxelVolume::VoxelVolume() :
     hitscan(true),
     scale(1.0f),
     radius(0),
-    xdim(1),ydim(1),zdim(1),
+    dimensions(vec3i_init(1)),
     voxel(NULL),
     index1(0), index12(0),
     index_max(0),
@@ -287,7 +282,7 @@ VoxelVolume::VoxelVolume() :
     this->vhe.vv = this;
 }
 
-VoxelVolume::VoxelVolume(unsigned int xdim, unsigned int ydim, unsigned int zdim, float scale) :
+VoxelVolume::VoxelVolume(const Vec3i& dimensions, float scale) :
     parent_world_matrix(NULL),
     render_id(-1),
     draw(true),
@@ -308,7 +303,7 @@ VoxelVolume::VoxelVolume(unsigned int xdim, unsigned int ydim, unsigned int zdim
 {
     memset(&this->world_matrix, 0, sizeof(struct Affine));
     memset(&this->local_matrix, 0, sizeof(struct Affine));
-    this->init(xdim, ydim, zdim, scale);
+    this->init(dimensions, scale);
     this->vhe.vv = this;
 }
 
@@ -323,17 +318,17 @@ VoxelVolume::~VoxelVolume()
 }
 
 //external methods
-void VoxelVolume::set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
+void VoxelVolume::set(int x, int y, int z, Voxel* v)
 {
-    if (x >= xdim || y >= ydim || z >= zdim) return;
+    if (x >= this->dimensions.x || y >= this->dimensions.y || z >= this->dimensions.z) return;
     _set(x,y,z,v);
     needs_vbo_update = true;
     damaged = true;
 }
 
-inline void VoxelVolume::set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+inline void VoxelVolume::set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-    if (x >= xdim || y >= ydim || z >= zdim) return;
+    if (x >= this->dimensions.x || y >= this->dimensions.y || z >= this->dimensions.z) return;
     _set(x,y,z,r,g,b,a);
     needs_vbo_update = true;
     damaged = true;
@@ -378,7 +373,7 @@ inline int get_ao_weight(int side_1, int side_2, int corner)
         ty = 0.0
 */
 
-void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, unsigned int x, unsigned int y, unsigned int z, int side, float* vset, float ox,float oy,float oz)
+void VoxelVolume::push_voxel_quad(VoxelVertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz)
 {
     //struct voxTexElement
 
@@ -513,9 +508,9 @@ void VoxelVolume::update_vertex_list()
 
     int index = 0;
 
-    for (unsigned int x=0; x < xdim; x++)
-    for (unsigned int y=0; y < ydim; y++)
-    for (unsigned int z=0; z < zdim; z++)
+    for (int x=0; x < this->dimensions.x; x++)
+    for (int y=0; y < this->dimensions.y; y++)
+    for (int z=0; z < this->dimensions.z; z++)
     {
         if (get_as_int(x,y,z) == 0) continue;
 
@@ -527,12 +522,18 @@ void VoxelVolume::update_vertex_list()
         push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
         push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #else
-        if (z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
-        if (z == 0 || get_as_int(x,y,z-1) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
-        if (x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
-        if (x == 0 || get_as_int(x-1,y,z) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
-        if (y+1 ==ydim || get_as_int(x,y+1,z) == 0)  push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
-        if (y == 0 || get_as_int(x,y-1,z) == 0)      push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
+        if (z+1 == this->dimensions.z || get_as_int(x,y,z+1) == 0)
+            push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
+        if (z == 0 || get_as_int(x,y,z-1) == 0)
+            push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
+        if (x+1 == this->dimensions.x || get_as_int(x+1,y,z) == 0)
+            push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
+        if (x == 0 || get_as_int(x-1,y,z) == 0)
+            push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
+        if (y+1 ==this->dimensions.y || get_as_int(x,y+1,z) == 0)
+            push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
+        if (y == 0 || get_as_int(x,y-1,z) == 0)
+            push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #endif
     }
 
@@ -549,10 +550,8 @@ void VoxelVolume::update_vertex_list()
         return;
     }
 
-    GS_ASSERT(index < VOXEL_VERTEX_SCRATCH_SIZE);
-    GS_ASSERT(index >= 0);
-    if (index >= VOXEL_VERTEX_SCRATCH_SIZE) return;
-    if (index < 0) return;
+    IF_ASSERT(index >= VOXEL_VERTEX_SCRATCH_SIZE) return;
+    IF_ASSERT(index < 0) return;
 
     vvl.vertex_list = new VoxelVertex[index];
     memcpy(vvl.vertex_list, voxel_vertex_scratch_buffer, index*sizeof(VoxelVertex));
@@ -561,13 +560,13 @@ void VoxelVolume::update_vertex_list()
 }
 #endif
 
-void VoxelVolume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+void VoxelVolume::set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     _set(x,y,z, r,g,b,a);
     needs_vbo_update = true;
 }
 
-void VoxelVolume::set_color(unsigned int x, unsigned int y, unsigned int z, unsigned char rgba[4])
+void VoxelVolume::set_color(int x, int y, int z, unsigned char rgba[4])
 {
     _set(x,y,z, rgba[0], rgba[1], rgba[2], rgba[3]);
     needs_vbo_update = true;
@@ -639,35 +638,40 @@ void VoxelVolume::draw_bounding_box()
     #endif
 }
 
-inline Voxel* VoxelVolume::get(unsigned int x, unsigned int y, unsigned int z)
-{   return &voxel[x+(y << index1)+(z << index12)]; }
+inline Voxel* VoxelVolume::get(int x, int y, int z)
+{
+    return &voxel[x+(y << index1)+(z << index12)];
+}
 
-inline unsigned int VoxelVolume::get_as_int(unsigned int x, unsigned int y, unsigned int z)
-{ return voxel[x+(y << index1)+(z << index12)].color; }
+inline int VoxelVolume::get_as_int(int x, int y, int z)
+{
+    return voxel[x+(y << index1)+(z << index12)].color;
+}
 
 /*
 Tests whether a voxel is occupied, for AO
 */
-inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z)
+inline bool VoxelVolume::_test_occludes_safe(int x, int y, int z)
 {
-    if (x >= xdim || y >= ydim || z >= zdim) return 0;
-    unsigned int index= x+(y << index1)+(z << index12);
-    if (voxel[index].color == 0) return 0;
-    return 1;
+    if (x < 0 || x >= this->dimensions.x || y < 0 || y >= this->dimensions.y ||
+        z < 0 || z >= this->dimensions.z) return false;
+    int index = x+(y << index1)+(z << index12);
+    return (voxel[index].color != 0);
 }
-// fills voxel[3] with the voxel location
-inline unsigned int VoxelVolume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z, unsigned int vxl[3])
+
+inline void VoxelVolume::_set(int x, int y, int z, Voxel* v)
 {
-    if (x >= xdim || y >= ydim || z >= zdim) return 0;
-    unsigned int index= x+(y << index1)+(z << index12);
-    if (index >= index_max) printf("VoxelVolume::_test_occludes_safe IMPOSSIBLE \n");
-    vxl[0] = x; vxl[1] = y; vxl[2] = z;
-    if (voxel[index].color == 0) return 0;
-    return 1;
+    voxel[x+(y << index1)+(z << index12)] = *v;
 }
-inline void VoxelVolume::_set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
-{ voxel[x+(y << index1)+(z << index12)] = *v; }
-inline void VoxelVolume::_set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-{ Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
+
+inline void VoxelVolume::_set(int x, int y, int z, unsigned char r,
+                              unsigned char g, unsigned char b, unsigned char a)
+{
+    Voxel* v = &voxel[x+(y << index1)+(z << index12)];
+    v->r = r;
+    v->g = g;
+    v->b = b;
+    v->a = a;
+}
 
 }   // Voxels

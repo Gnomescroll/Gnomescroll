@@ -209,9 +209,7 @@ class object_shot_object_StoC: public FixedSizeReliableNetPacketToClient<object_
         uint16_t target_id;
         uint8_t target_type;
         uint8_t target_part;
-        uint8_t voxel_x;
-        uint8_t voxel_y;
-        uint8_t voxel_z;
+        Vec3i voxel;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
@@ -220,9 +218,7 @@ class object_shot_object_StoC: public FixedSizeReliableNetPacketToClient<object_
         pack_u16(&target_id, buff, buff_n, pack);
         pack_u8(&target_type, buff, buff_n, pack);
         pack_u8(&target_part, buff, buff_n, pack);
-        pack_u8(&voxel_x, buff, buff_n, pack);
-        pack_u8(&voxel_y, buff, buff_n, pack);
-        pack_u8(&voxel_z, buff, buff_n, pack);
+        pack_vec3i_u8(&voxel, buff, buff_n, pack);
     }
     inline void handle();
 };

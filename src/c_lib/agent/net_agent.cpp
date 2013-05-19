@@ -90,7 +90,7 @@ inline void agent_shot_block_StoC::handle()
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     IF_ASSERT(a == NULL) return;
-    a->event.fired_weapon_at_block(x,y,z, (CubeType)cube, side);
+    a->event.fired_weapon_at_block(this->position, (CubeType)cube, side);
 }
 
 inline void agent_shot_nothing_StoC::handle()
@@ -407,7 +407,6 @@ inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
 inline void throw_grenade_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
-inline void admin_set_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
@@ -522,28 +521,23 @@ inline void hit_block_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
+    if (!is_valid_z(this->position)) return;
 
-    if (z <= 0 || z >= map_dim.z) return;
-
-    x = translate_point(x);
-    y = translate_point(y);
-
+    Vec3i p = translate_position(this->position);
     agent_hit_block_StoC msg;
     msg.id = a->id;
-    msg.x = x;
-    msg.y = y;
-    msg.z = z;
+    msg.position = p;
     msg.broadcast();
 
     // TODO -- load this from dat
     //TerrainModificationAction tma = Item::get_item_terrain_modification_enum((ItemType)weapon_type);
 
-    if (z <= 0) return; // dont damage floor
-    CubeType block = t_map::get(x,y,z);
+    if (p.z <= 0) return; // dont damage floor
+    CubeType block = t_map::get(p);
     if (block == EMPTY_CUBE) return;
     int block_damage = Item::get_item_block_damage((ItemType)weapon_type, block);
     if (block_damage <= 0) return;
-    t_map::apply_damage_broadcast(x,y,z, block_damage, TMA_PICK);
+    t_map::apply_damage_broadcast(p, block_damage, TMA_PICK);
 }
 
 inline void hitscan_object_CtoS::handle()
@@ -569,7 +563,7 @@ inline void hitscan_object_CtoS::handle()
         if (obj == NULL) return;
 
         // apply damage
-        const int obj_dmg = randrange(10,25);   // TODO -- weapon based
+        const int obj_dmg = randrange(10, 25);   // TODO -- weapon based
 
         using Components::HealthComponent;
         HealthComponent* health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
@@ -610,9 +604,7 @@ inline void hitscan_object_CtoS::handle()
     msg.target_id = this->id;
     msg.target_type = this->type;
     msg.target_part = this->part;
-    msg.vx = vx;
-    msg.vy = vy;
-    msg.vz = vz;
+    msg.voxel = this->voxel;
     msg.broadcast();
 }
 
@@ -622,7 +614,8 @@ inline void hitscan_block_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
 
-    if (z <= 0 || z >= map_dim.z) return;
+    if (!is_valid_z(this->position)) return;
+    Vec3i position = translate_position(this->position);
 
     // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
     // send to clients
@@ -648,9 +641,7 @@ inline void hitscan_block_CtoS::handle()
 
     agent_shot_block_StoC msg;
     msg.id = a->id;
-    msg.x = p.x;
-    msg.y = p.y;
-    msg.z = p.z;
+    msg.position = p;
     msg.cube = cube_type;
     msg.side = data.side;
     msg.broadcast();
@@ -667,7 +658,7 @@ inline void hitscan_block_CtoS::handle()
     int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, cube_type);
     if (weapon_block_damage <= 0) return;
 
-    t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, TMA_LASER);
+    t_map::apply_damage_broadcast(position, weapon_block_damage, TMA_LASER);
 }
 
 inline void hitscan_none_CtoS::handle()
@@ -718,9 +709,7 @@ inline void melee_object_CtoS::handle()
     msg.target_id = this->id;
     msg.target_type = this->type;
     msg.target_part = this->part;
-    msg.vx = vx;
-    msg.vy = vy;
-    msg.vz = vz;
+    msg.voxel = this->voxel;
     msg.broadcast();
 }
 
@@ -741,22 +730,21 @@ inline void throw_grenade_CtoS::handle()
     msg.id = a->id;
     msg.broadcast();
 
-    Vec3 n = vec3_init(vx, vy, vz);
-    n = vec3_normalize(n);
+    Vec3 n = vec3_normalize(this->velocity);
     static const float PLAYER_ARM_FORCE = 15.0f; // load from dat later
     //create grenade
     n = vec3_scalar_mult(n, PLAYER_ARM_FORCE);
     Particle::Grenade* g = Particle::grenade_list->create();
     if (g == NULL) return;
-    g->set_state(x,y,z, n.x, n.y, n.z);
+    g->set_state(this->position, n);
     g->owner = a->id;
     g->broadcast();
 }
 
 inline void agent_set_block_CtoS::handle()
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return;
-    if (z == 0) return;     // no floor
+    IF_ASSERT(!is_valid_z(this->position)) return;
+    if (this->position.z == 0) return;
 
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL || a->status.dead) return;
@@ -771,15 +759,14 @@ inline void agent_set_block_CtoS::handle()
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
 
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    Vec3i position = translate_position(this->position);
 
     // dont set on existing block
-    if (!t_map::block_can_be_placed(x,y,z,cube_type)) return;
+    if (!t_map::block_can_be_placed(position, cube_type)) return;
 
     // check this player first, most likely to be colliding
     bool collides = false;
-    t_map::set_fast(x,y,z, cube_type); // set temporarily to test against
+    t_map::set_fast(position, cube_type); // set temporarily to test against
     if (agent_collides_terrain(a))
         collides = true;
     else
@@ -795,94 +782,67 @@ inline void agent_set_block_CtoS::handle()
             }
         }
     }
-    t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
+    t_map::set_fast(position, EMPTY_CUBE);  // unset
 
     if (collides) return;
 
     Toolbelt::use_block_placer(a->id, (ItemID)placer_id);
-    t_map::broadcast_set_block(x,y,z, cube_type);
+    t_map::broadcast_set_block(position, cube_type);
     agent_placed_block_StoC msg;
     msg.id = a->id;
     msg.broadcast();
 
-    t_map::broadcast_set_block_action(x,y,z, cube_type, TMA_PLACE_BLOCK);
+    t_map::broadcast_set_block_action(position, cube_type, TMA_PLACE_BLOCK);
 
     /*
         Handle Special Block Placement
         TODO -- move this to t_map's handler
     */
     static int _control_node = t_map::get_cube_type("control_node");
-    if (cube_type == _control_node) t_map::add_control_node(x,y,z);
+    if (cube_type == _control_node)
+        t_map::add_control_node(position);
 }
 
-inline void admin_set_block_CtoS::handle()
+static Entities::Entity* place_object_handler(EntityType type, Vec3i position, AgentID owner_id)
 {
-    // comparisons not needed due to value range of data type
-    //if (z < 0 || z >= map_dim.z) return;
-
-    Agents::Agent* a = NetServer::agents[client_id];
-    IF_ASSERT(a == NULL) return;
-    if (z <= 0 || z >= map_dim.z) return;
-
-    CubeType cube_type = (CubeType)this->val;
-
-    if (!t_map::isValidCube((CubeType)cube_type)) return;
-
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-
-    // TODO -- when this is a /real/ admin tool, remove this check
-    // since we're giving it to players, do this check
-    if (!t_map::block_can_be_placed(x,y,z,cube_type)) return;
-
-    // check this player first, most likely to be colliding
-    t_map::set_fast(x,y,z, cube_type); // set temporarily to test against
-    bool collides = agent_collides_terrain(a);
-    if (!collides)
-    {   // check the rest of the players
-        for (size_t i=0; i<Agents::agent_list->max; i++)
-        {
-            Agents::Agent* agent = &Agents::agent_list->objects[i];
-            if (agent->id == Agents::agent_list->null_id || agent == a) continue;
-            if (agent_collides_terrain(agent))
-            {
-                collides = true;
-                break;
-            }
-        }
-    }
-    t_map::set_fast(x,y,z, EMPTY_CUBE);  // unset
-
-    if (collides) return;
-
-    t_map::broadcast_set_block(x,y,z, cube_type);
-    agent_placed_block_StoC msg;
-    msg.id = a->id;
-    msg.broadcast();
-
-    t_map::broadcast_set_block_action(x,y,z, cube_type, TMA_PLACE_BLOCK);
-}
-
-static Entities::Entity* place_object_handler(EntityType type, int x, int y, int z, AgentID owner_id)
-{
-    if (Entities::point_occupied_by_type(OBJECT_TURRET, x, y, z)) return NULL;
-    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, z)) return NULL;
+    if (Entities::point_occupied_by_type(OBJECT_TURRET, position)) return NULL;
+    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, position)) return NULL;
 
     // zip down
     static const int ITEM_PLACEMENT_Z_DIFF_LIMIT = 3;
-
-    int new_z = t_map::get_highest_open_block(x,y);
-    if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return NULL;
-    if (Entities::point_occupied_by_type(OBJECT_TURRET, x, y, new_z)) return NULL;
-    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, new_z)) return NULL;
 
     using Entities::Entity;
     Entity* object = Entities::create(type);
     if (object == NULL) return NULL;
 
+    int height = 1;
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    if (dims != NULL)
+        height = dims->get_integer_height();
+
+    int z = t_map::get_highest_open_block(position, height);
+    if (position.z - z > ITEM_PLACEMENT_Z_DIFF_LIMIT || position.z - z < 0)
+    {
+        Entities::destroy(object);
+        return NULL;
+    }
+
+    position.z = z;
+    if (Entities::point_occupied_by_type(OBJECT_TURRET, position) ||
+        Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, position))
+    {
+        Entities::destroy(object);
+        return NULL;
+    }
+
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (physics != NULL) physics->set_position(vec3_init(x+0.5f,y+0.5f,new_z));
+    if (physics != NULL)
+    {
+        Vec3 p = vec3_add(vec3_init(position), vec3_init(0.5, 0.5f, 0.0f));
+        physics->set_position(p);
+    }
 
     using Components::OwnerComponent;
     OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
@@ -896,8 +856,9 @@ inline void place_spawner_CtoS::handle()
     EntityType type = OBJECT_AGENT_SPAWNER;
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
-    if (z <= 0 || z >= map_dim.z) return;
-    Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
+    IF_ASSERT(!is_valid_z(this->position)) return;
+    if (this->position.z == 0) return;
+    Entities::Entity* obj = place_object_handler(type, position, a->id);
     if (obj == NULL) return;
     Entities::ready(obj);
 }
@@ -907,8 +868,9 @@ inline void place_turret_CtoS::handle()
     EntityType type = OBJECT_TURRET;
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
-    if (z <= 0 || z >= map_dim.z) return;
-    Entities::Entity* obj = place_object_handler(type, x,y,z, a->id);
+    IF_ASSERT(!is_valid_z(this->position)) return;
+    if (this->position.z == 0) return;
+    Entities::Entity* obj = place_object_handler(type, position, a->id);
     if (obj == NULL) return;
     Entities::ready(obj);
 }

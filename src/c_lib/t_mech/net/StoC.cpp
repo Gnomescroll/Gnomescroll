@@ -32,7 +32,8 @@ void mech_type_change_StoC::handle()
 
     if (is_plant(m.type))
     {
-        SoundID snd_id = Sound::play_3d_sound("cropgrow", vec3_init(m.x, m.y, m.z));
+        Vec3 p = vec3_add(vec3_init(m.position), vec3_init(0.5f));
+        SoundID snd_id = Sound::play_3d_sound("cropgrow", p);
         float pmult = float(randrange(-5,5)) / 1000.0f;
         if (snd_id != NULL_SOUND_ID)
             Sound::set_pitch_multiplier(snd_id, pmult+1.0f);

@@ -141,10 +141,8 @@ void damage_objects_within_sphere(struct Vec3 p, float radius,
 void spawn_items(int n)
 {
     ItemType type = (ItemType)randrange(1,8);
-    float x = randf() * map_dim.x;
-    float y = randf() * map_dim.y;
-    float z = 128.0f;
-    ItemParticle::create_item_particle(type, x,y,z, 0,0,-3);
+    Vec3 p = vec3_mult(vec3_init(map_dim), vec3_init(randf(), randf(), 0));
+    ItemParticle::create_item_particle(type, p, vec3_init(0, 0, -3));
 }
 
 // TODO -- move this
@@ -168,8 +166,8 @@ void spawn_monsters(EntityType type, int n)
         const int MAX_TRIES = 100;
         do
         {
-            position.x = randrange(0, map_dim.x-1);
-            position.y = randrange(0, map_dim.y-1);
+            position.x = randrange(0, map_dim.x - 1);
+            position.y = randrange(0, map_dim.y - 1);
             int z = randrange(1, map_dim.z-1);
             position.z = t_map::get_nearest_surface_block(position.x, position.y, z, h);
         } while (position.z <= 0 && tries < MAX_TRIES);

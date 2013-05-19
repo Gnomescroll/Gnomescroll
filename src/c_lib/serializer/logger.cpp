@@ -27,12 +27,12 @@ static FILE* mech_log = NULL;
 static FILE* entity_log = NULL;
 
 void init_logger()
-{    
+{
     GS_ASSERT(player_log == NULL);
     GS_ASSERT(container_log == NULL);
     GS_ASSERT(map_log == NULL);
-    GS_ASSERT(mech_log == NULL);    
-    GS_ASSERT(entity_log == NULL);    
+    GS_ASSERT(mech_log == NULL);
+    GS_ASSERT(entity_log == NULL);
 }
 
 void teardown_logger()
@@ -100,12 +100,12 @@ void log_mech_load_error(const char* msg)
     fprintf(mech_log, LOG_LINE_SEPARATOR);
 }
 
-void log_mech_load_error(const char* msg, int x, int y, int z, MechType mech_type, int subtype)
+void log_mech_load_error(const char* msg, const Vec3i& position, MechType mech_type, int subtype)
 {
     GS_ASSERT(mech_log != NULL);
     if (mech_log == NULL) return;
     fprintf(mech_log, "LoadError: %s\n", msg);
-    fprintf(mech_log, "Position: %d, %d, %d\n", x,y,z);
+    fprintf(mech_log, "Position: %d, %d, %d\n", position.x, position.y, position.z);
     fprintf(mech_log, "Mech type: %d\n", mech_type);
     fprintf(mech_log, "Mech subtype: %d\n", subtype);
     fprintf(mech_log, LOG_LINE_SEPARATOR);
@@ -145,13 +145,13 @@ void log_container_load_error(const char* msg, const char* data_str,
     {
         char uuid[UUID_STRING_LENGTH+1] = {'\0'};
         write_uuid(uuid, UUID_STRING_LENGTH+1, item_data->uuid);
-        uuid[UUID_STRING_LENGTH] = '\0'; 
+        uuid[UUID_STRING_LENGTH] = '\0';
         fprintf(player_log, "ParsedItemData: ID %d, uuid %s, name %s, durability %u, stack_size %u, location_name %s, location_id %u, container_slot %u, item_type %d, item_location %d, item_container_type %d\n",
             item_data->id, uuid, item_data->name, item_data->durability, item_data->stack_size,
             item_data->location_name, item_data->location_id, item_data->container_slot,
             item_data->item_type, item_data->item_location, item_data->item_container_type);
     }
-    
+
     fprintf(container_log, LOG_LINE_SEPARATOR);
 }
 
@@ -170,7 +170,7 @@ void log_player_save_error(const char* msg,
     GS_ASSERT(player_log != NULL);
     if (player_log == NULL) return;
     fprintf(player_log, "SaveError: %s\n", msg);
-    
+
     if (user_id != NULL_USER_ID)
         fprintf(player_log, "UserID: %d\n", user_id);
 
@@ -220,13 +220,13 @@ void log_player_load_error(const char* msg, const char* data_str,
     {
         char uuid[UUID_STRING_LENGTH+1] = {'\0'};
         write_uuid(uuid, UUID_STRING_LENGTH+1, item_data->uuid);
-        uuid[UUID_STRING_LENGTH] = '\0'; 
+        uuid[UUID_STRING_LENGTH] = '\0';
         fprintf(player_log, "ParsedItemData: ID %d, uuid %s, name %s, durability %u, stack_size %u, location_name %s, location_id %u, container_slot %u, item_type %d, item_location %d, item_container_type %d\n",
             item_data->id, uuid, item_data->name, item_data->durability, item_data->stack_size,
             item_data->location_name, item_data->location_id, item_data->container_slot,
             item_data->item_type, item_data->item_location, item_data->item_container_type);
     }
-    
+
     fprintf(player_log, LOG_LINE_SEPARATOR);
 }
 

@@ -15,6 +15,6 @@ void init_drop_dat();
 void teardown_drop_dat();
 void load_drop_dat();
 
-void handle_drop(int x, int y, int z, int type);
+void handle_drop(const Vec3i& position, int type);
 
 }   // t_mech

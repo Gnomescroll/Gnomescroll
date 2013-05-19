@@ -121,13 +121,17 @@ void load_drop_dat()
     b->save_to_file();
 }
 
-void handle_drop(int x, int y, int z, int type)
+void handle_drop(const Vec3i& position, int type)
 {
     IF_ASSERT(drop_dat == NULL) return;
 
+    const float MOMENTUM_FORCE = 2.0f;
+    Vec3 pos = vec3_add(vec3_init(position), vec3_init(0.5f, 0.5f, 0.05f));
+
     for (int i=0; i < drop_dat->meta_drop_table[type].num_drop; i++)
     {
-        struct Item::ItemDropTable* cidt = &drop_dat->item_drop_table[i+drop_dat->meta_drop_table[type].index];
+        int index = i + drop_dat->meta_drop_table[type].index;
+        struct Item::ItemDropTable* cidt = &drop_dat->item_drop_table[index];
         float p = randf();
 
         if (p <= cidt->drop_cumulative_probabilities[0]) continue;
@@ -139,12 +143,12 @@ void handle_drop(int x, int y, int z, int type)
             {
                 for (int k=0; k<cidt->item_drop_num[j]; k++)
                 {
-                    const float mom = 2.0f;
-                    x = (float)((float)x + 0.5f + randf()*0.33f);
-                    y = (float)((float)y + 0.5f + randf()*0.33f);
-                    z = (float)((float)z + 0.05f);
-                    ItemParticle::create_item_particle(cidt->item_type, x, y, z,
-                        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+                    Vec3 mom = vec3_scalar_mult(vec3_rand_center(), MOMENTUM_FORCE);
+                    mom.z = MOMENTUM_FORCE;
+                    Vec3 perturb = vec3_scalar_mult(vec3_rand(), 0.33f);
+                    perturb.z = 0.0f;
+                    Vec3 q = vec3_add(pos, perturb);
+                    ItemParticle::create_item_particle(cidt->item_type, q, mom);
                 }
                 break;
             }

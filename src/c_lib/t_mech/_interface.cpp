@@ -79,18 +79,13 @@ void draw_transparent()
 
 
 #if DC_SERVER
-
-//pack mech data into packet
-
-static void pack_mech(struct Mech &m, class mech_create_StoC &p)
+void pack_mech(const struct Mech &m, class mech_create_StoC &p)
 {
     p.id = m.id;
     p.type = m.type;
     p.subtype = m.subtype;
     p.side = m.side;
-    p.x = m.x;
-    p.y = m.y;
-    p.z = m.z;
+    p.position = m.position;
 
     GS_ASSERT(mech_attributes[m.type].type != -1);
     GS_ASSERT((m.side >=0 && m.side <= 5) || m.side == NULL_MECH_SIDE);
@@ -117,9 +112,7 @@ static void pack_mech(struct Mech &m, class mech_create_StoC &p)
 #endif
 
 
-//handles unpacking
 #if DC_CLIENT
-
 //call after type or subtype changes
 static bool _mech_update(struct Mech &m)
 {
@@ -170,16 +163,14 @@ static bool _mech_update(struct Mech &m)
     return true;
 }
 
-static bool unpack_mech(struct Mech &m, class mech_create_StoC &p)
+static bool unpack_mech(struct Mech &m, const mech_create_StoC &p)
 {
     IF_ASSERT(!isValid((MechType)p.type)) return false;
     m.id = p.id;
     m.type = (MechType)p.type;
     m.subtype = p.subtype;
     m.side = p.side;
-    m.x = p.x;
-    m.y = p.y;
-    m.z = p.z;
+    m.position = p.position;
     m.text = NULL;
     return _mech_update(m);
 }
@@ -222,7 +213,7 @@ void tick()
                 break;
 
             case MECH_BEHAVIOR_TYPE_DARK_PLANT:
-                light_value = t_map::get_skylight(mla[i].x, mla[i].y, mla[i].z);
+                light_value = t_map::get_skylight(mla[i].position);
                 if (light_value < 10)
                 {
                     if (rand() % 6 != 0)
@@ -257,9 +248,9 @@ void floating_removal_tick() //removes floating t_mech
         MechType type = mla[i].type;
         MechBehaviorType behavior_type = mech_attributes[type].behavior_type;
 
-        int x = mla[i].x;
-        int y = mla[i].y;
-        int z = mla[i].z;
+        int x = mla[i].position.x;
+        int y = mla[i].position.y;
+        int z = mla[i].position.z;
 
         switch (behavior_type)
         {
@@ -352,73 +343,20 @@ void print_mech_create_failure_code(MechCreateFailureCode code)
     printf("\n");
 }
 
-MechCreateFailureCode create_mech(int x, int y, int z, MechType type, int side)
+MechCreateFailureCode create_mech(const Vec3i& position, MechType type, int side)
 {
-    MechCreateFailureCode ret = can_place_mech(x,y,z, type, side);
+    MechCreateFailureCode ret = can_place_mech(position, type, side);
     if (ret != MCF_OK) return ret;
 
     struct Mech m;
     m.type = type;
     m.subtype = 0;
-    m.x = x;
-    m.y = y;
-    m.z = z;
+    m.position = position;
     m.growth_ttl = mech_attributes[type].growth_ttl;
     m.side = side;
     m.text = NULL;
 
     class MechAttribute* ma = get_mech_attribute(type);
-    if (ma == NULL) return MCF_NOT_USED;
-    switch (ma->class_type)
-    {
-        case MECH_CRYSTAL:
-        case MECH_CROP:
-        case MECH_MYCELIUM:
-        case MECH_SIGN:
-        case MECH_WALL_OBJECT:
-            break;
-        case MECH_WIRE:
-        case MECH_SWITCH:
-        case NULL_MECH_CLASS:
-            GS_ASSERT(false);
-            return MCF_UNHANDLED;
-    }
-
-    if(ma->class_type == MECH_SIGN)
-    {
-        m.text = calloc(MECH_TEXT_SIZE_MAX+1, 1);
-        char inc = '0';
-        for(int i=0; i < MECH_TEXT_SIZE_MAX; i++)
-        {
-            ((char*)m.text)[i] = inc;
-            inc++;
-        }
-    }
-
-    mech_list->server_add_mech(m);
-    return MCF_OK;
-}
-
-MechCreateFailureCode create_mech(int x, int y, int z, MechType type)
-{
-    return create_mech(x, y, z, type, NULL_MECH_SIDE);
-}
-
-MechCreateFailureCode create_crystal(int x, int y, int z, MechType type)
-{
-    MechClassType mech_class = get_mech_class(type);
-    IF_ASSERT(mech_class != MECH_CRYSTAL) return MCF_OTHER;
-    return create_mech(x, y, z, type);
-}
-#endif
-
-
-MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type, int side)
-{
-    if (z <= 0 || z > map_dim.z) return MCF_BAD_Z;
-    //if (side != 0) return MCF_BAD_SIDE;
-    if (t_map::isSolid(x,y,z)) return MCF_SOLID_BLOCK;
-    class MechAttribute* ma = get_mech_attribute(mech_type);
     if (ma == NULL)
         return MCF_NOT_USED;
     switch (ma->class_type)
@@ -426,39 +364,93 @@ MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type, in
         case MECH_CRYSTAL:
         case MECH_CROP:
         case MECH_MYCELIUM:
-            if (!t_map::isSolid(x,y,z-1)) return MCF_ON_AIR;
-            if (mech_list->is_occupied(x,y,z)) return MCF_OCCUPIED;
+        case MECH_SIGN:
+        case MECH_WALL_OBJECT:
+            break;
+        case MECH_WIRE:
+        case MECH_SWITCH:
+        case NULL_MECH_CLASS:
+            GS_ASSERT(false);
+            return MCF_UNHANDLED;
+    }
+
+    if (ma->class_type == MECH_SIGN)
+    {
+        m.text = calloc(MECH_TEXT_SIZE_MAX+1, 1);
+        char inc = '0';
+        for (int i=0; i < MECH_TEXT_SIZE_MAX; i++, inc++)
+            ((char*)m.text)[i] = inc;
+    }
+
+    mech_list->server_add_mech(m);
+    return MCF_OK;
+}
+
+MechCreateFailureCode create_mech(const Vec3i& position, MechType type)
+{
+    return create_mech(position, type, NULL_MECH_SIDE);
+}
+
+MechCreateFailureCode create_crystal(const Vec3i& position, MechType type)
+{
+    MechClassType mech_class = get_mech_class(type);
+    IF_ASSERT(mech_class != MECH_CRYSTAL) return MCF_OTHER;
+    return create_mech(position, type);
+}
+#endif
+
+
+MechCreateFailureCode can_place_mech(const Vec3i& position, MechType mech_type, int side)
+{
+    if (is_valid_z(position) || position.z == 0) return MCF_BAD_Z;
+    if (t_map::isSolid(position)) return MCF_SOLID_BLOCK;
+    class MechAttribute* ma = get_mech_attribute(mech_type);
+    if (ma == NULL)
+        return MCF_NOT_USED;
+    int x = position.x;
+    int y = position.y;
+    int z = position.z;
+    switch (ma->class_type)
+    {
+        case MECH_CRYSTAL:
+        case MECH_CROP:
+        case MECH_MYCELIUM:
+            if (!t_map::isSolid(x,y,z-1))
+                return MCF_ON_AIR;
+            if (mech_list->is_occupied(position))
+                return MCF_OCCUPIED;
             break;
         case MECH_SIGN:
-            if (mech_list->is_occupied(x,y,z)) return MCF_OCCUPIED;
-
-            if(side == 0 && !t_map::isSolid(x,y,z-1))
+            if (mech_list->is_occupied(position))
+                return MCF_OCCUPIED;
+            if (side == 0 && !t_map::isSolid(x,y,z-1))
                 return MCF_NO_WALL;
-            if(side == 1 && !t_map::isSolid(x,y,z+1))
+            if (side == 1 && !t_map::isSolid(x,y,z+1))
                 return MCF_NO_WALL;
-            if(side == 2 && !t_map::isSolid(x-1,y,z))
+            if (side == 2 && !t_map::isSolid(x-1,y,z))
                 return MCF_NO_WALL;
-            if(side == 3 && !t_map::isSolid(x+1,y,z))
+            if (side == 3 && !t_map::isSolid(x+1,y,z))
                 return MCF_NO_WALL;
-            if(side == 4 && !t_map::isSolid(x,y-1,z))
+            if (side == 4 && !t_map::isSolid(x,y-1,z))
                 return MCF_NO_WALL;
-            if(side == 5 && !t_map::isSolid(x,y+1,z))
+            if (side == 5 && !t_map::isSolid(x,y+1,z))
                 return MCF_NO_WALL;
 
             break;
         case MECH_WALL_OBJECT:
-            if (mech_list->is_occupied(x,y,z)) return MCF_OCCUPIED;
-            if(side == 0 && !t_map::isSolid(x,y,z-1))
+            if (mech_list->is_occupied(position))
+                return MCF_OCCUPIED;
+            if (side == 0 && !t_map::isSolid(x,y,z-1))
                 return MCF_NO_WALL;
-            if(side == 1 && !t_map::isSolid(x,y,z+1))
+            if (side == 1 && !t_map::isSolid(x,y,z+1))
                 return MCF_NO_WALL;
-            if(side == 2 && !t_map::isSolid(x-1,y,z))
+            if (side == 2 && !t_map::isSolid(x-1,y,z))
                 return MCF_NO_WALL;
-            if(side == 3 && !t_map::isSolid(x+1,y,z))
+            if (side == 3 && !t_map::isSolid(x+1,y,z))
                 return MCF_NO_WALL;
-            if(side == 4 && !t_map::isSolid(x,y-1,z))
+            if (side == 4 && !t_map::isSolid(x,y-1,z))
                 return MCF_NO_WALL;
-            if(side == 5 && !t_map::isSolid(x,y+1,z))
+            if (side == 5 && !t_map::isSolid(x,y+1,z))
                 return MCF_NO_WALL;
         case MECH_WIRE:
             break;
@@ -470,25 +462,16 @@ MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type, in
     return MCF_OK;
 }
 
-MechCreateFailureCode can_place_mech(int x, int y, int z, MechType mech_type)
+MechCreateFailureCode can_place_mech(const Vec3i& position, MechType mech_type)
 {
-    return can_place_mech(x, y, z, mech_type, 0);
+    return can_place_mech(position, mech_type, 0);
 }
 
 
-void place_vine(int x, int y, int z, int side)
+void place_vine(const Vec3i& position, int side)
 {
 
 
-}
-
-
-void tick(int x, int y, int z)
-{
-    #ifdef DC_CLIENT
-    //printf("create crystal: %d %d %d \n", x,y,z);
-    //create_crystal(x,y,z);
-    #endif
 }
 
 #if DC_SERVER
@@ -498,20 +481,19 @@ void send_client_mech_list(ClientID client_id)
     mech_list->send_mech_list_to_client(client_id);
 }
 
-void handle_block_removal(int x, int y, int z)
+void handle_block_removal(const Vec3i& position)
 {
-    MechType type = mech_list->handle_block_removal(x,y,z);
+    MechType type = mech_list->handle_block_removal(position);
     if (type == NULL_MECH_TYPE) return;
     IF_ASSERT(!isValid(type)) return;
     // drop item from mech
     if (mech_attributes[type].item_drop)
-        handle_drop(x,y,z, type);
+        handle_drop(position, type);
 }
 
 bool remove_mech(int mech_id)   //removes mech with drop
 {
-    GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
-
+    IF_ASSERT(mech_id < 0 || mech_id >= mech_list->mlm) return false;
     struct Mech m = mech_list->mla[mech_id];
     MechType type = m.type;
     IF_ASSERT(!isValid(type)) return false;
@@ -520,7 +502,7 @@ bool remove_mech(int mech_id)   //removes mech with drop
     GS_ASSERT(ret);
 
     if (mech_attributes[type].item_drop)
-        handle_drop(m.x,m.y,m.z, type);
+        handle_drop(m.position, type);
 
     return ret;
 }

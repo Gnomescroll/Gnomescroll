@@ -28,7 +28,7 @@ inline void request_item_create_CtoS::handle()
         stack_size = max_stack_size;
 
     struct Vec3 position = agent->get_center();
-    Item* item = ItemParticle::create_item_particle((ItemType)this->type, position, vec3_init(0,0,0));
+    Item* item = ItemParticle::create_item_particle((ItemType)this->type, position, vec3_init(0));
     IF_ASSERT(item == NULL) return;
     item->stack_size = stack_size;
     #endif

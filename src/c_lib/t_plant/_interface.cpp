@@ -30,8 +30,6 @@ void tick()
     int type_max = plant_type_array.PLANT_TYPE_MAX;
     for (int type_id=0; type_id<type_max; type_id++ )
     {
-        GS_ASSERT(plant_type_array.array[0].struct_size != 0);
-
         if (plant_type_array.array[type_id].struct_size == 0)
             continue;
 
@@ -52,14 +50,10 @@ void tick()
 
 
 
-void create_plant(int x, int y, int z, int type_id)
+void create_plant(const Vec3i& position, int type_id)
 {
     GS_ASSERT(type_id == 0);
-
-    plant_placement_data.x = x;
-    plant_placement_data.y = y;
-    plant_placement_data.z = z;
-
+    plant_placement_data.position = position;
     plant_array.element_create(type_id);
 }
 

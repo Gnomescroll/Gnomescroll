@@ -395,9 +395,9 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
     }
 #endif
 
-    float wx = (float) (m.x) + 0.001f;
-    float wy = (float) (m.y) + 0.001;
-    float wz = (float) (m.z) + 0.0f;
+    float wx = m.position.x + 0.001f;
+    float wy = m.position.y + 0.001;
+    float wz = m.position.z + 0.0f;
 
     //fulstrum test
     const float cx = current_camera_position.x;
@@ -415,8 +415,8 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
     //int side = m.side;
 
 
-    int env_light = t_map::get_envlight(m.x,m.y,m.z);
-    int sky_light = t_map::get_skylight(m.x,m.y,m.z);
+    int env_light = t_map::get_envlight(m.position);
+    int sky_light = t_map::get_skylight(m.position);
     vertex_list.light(sky_light, env_light);
 
     const int imax = MI->van;

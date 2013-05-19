@@ -2,6 +2,7 @@
 
 #include <common/color.hpp>
 #include <physics/affine.hpp>
+#include <physics/vec3i.hpp>
 
 namespace Voxels
 {
@@ -17,28 +18,16 @@ class VoxColors
         int *index;
         int n;
 
-        void init(int dx, int dy, int dz);
-        void set(int i, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+        void init(const struct Vec3i& dimension);
+        void set(int i, const Vec3i& position, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         VoxColors();
         ~VoxColors();
-};
-
-class VoxPartDimension
-{
-    public:
-        int x,y,z;
-
-        void set(int x, int y, int z);
-        int count();
-
-        VoxPartDimension();
-        VoxPartDimension(int x, int y, int z);
 };
 
 class VoxPart
 {
     public:
-        VoxPartDimension dimension;
+        Vec3i dimension;
         VoxColors colors;
         VoxDat* dat;    // parent
 
@@ -56,14 +45,19 @@ class VoxPart
         Color base_color;
 
         void set_local_matrix();   // uses cached x,y,z,rx,ry,rz values
-        void set_dimension(int x, int y, int z);
+        void set_dimension(const Vec3i& dimension);
+
+        int volume()
+        {
+            return vec3i_volume(this->dimension);
+        }
 
         void set_filename(const char* filename);
         VoxPart(
             VoxDat* dat,
             int part_num,
             float vox_size,
-            int dimension_x, int dimension_y, int dimension_z,
+            const Vec3i& dimension,
             const char* filename,
             bool biaxial=false
         );
@@ -71,7 +65,8 @@ class VoxPart
         ~VoxPart();
 };
 
-class VoxDat {
+class VoxDat
+{
     public:
         //voxel volume
         bool voxel_volume_inited;
@@ -94,12 +89,9 @@ class VoxDat {
 
         void init_parts(int n_parts);
 
-        void set_part_properties(
-            int part_num,
-            float vox_size,
-            int dimension_x, int dimension_y, int dimension_z,
-            const char* filename,
-            bool biaxial=false);
+        void set_part_properties(int part_num, float vox_size,
+                                 const Vec3i& dimension, const char* filename,
+                                 bool biaxial=false);
 
         //anchor x,y,z then rotation x,y,z
         void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
@@ -107,7 +99,7 @@ class VoxDat {
         void set_colorable(int part, bool colorable);
         void set_base_color(int part, unsigned char r, unsigned char g, unsigned char b);
 
-        void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+        void set_color(int part, const Vec3i& position, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
         void save(char *fn);
 

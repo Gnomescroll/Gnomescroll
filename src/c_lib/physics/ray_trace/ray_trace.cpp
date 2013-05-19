@@ -9,12 +9,16 @@
 #include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 
+static inline bool collision_check(Vec3i position)
+{
+    if (!is_valid_z(position)) return false;
+    position = translate_position(position);
+    return t_map::isSolid(position);
+}
+
 static inline bool collision_check(int x, int y, int z)
 {
-    if ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    return t_map::isSolid(x,y,z);
+    return collision_check(vec3i_init(x, y, z));
 }
 
 inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float pos[3], float* _rad2)
@@ -38,7 +42,7 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
     float x = t*ox - tx;
     float y = t*oy - ty;
     float z = t*oz - tz;
-    *_rad2 = x*x+y*y+z*z; // minimum distance squared between target and line
+    *_rad2 = x*x + y*y + z*z; // minimum distance squared between target and line
 
     //x,y,z is closest point
     x = t*ox + px;
@@ -57,64 +61,65 @@ inline float sphere_line_distance(struct Vec3 p, struct Vec3 o, struct Vec3 t, s
     return sphere_line_distance(p.x, p.y, p.z, o.x, o.y, o.z, t.x, t.y, t.z, out->f, _rad2);
 }
 
-int get_cube_side_from_side_array(int side[3])
+int get_cube_side_from_sides(const Vec3i& side)
 {
-    if (side[0] ==  1) return 2;
-    if (side[0] == -1) return 3;
-    if (side[1] ==  1) return 4;
-    if (side[1] == -1) return 5;
-    if (side[2] ==  1) return 0;
-    if (side[2] == -1) return 1;
+    if (side.i[0] ==  1) return 2;
+    if (side.i[0] == -1) return 3;
+    if (side.i[1] ==  1) return 4;
+    if (side.i[1] == -1) return 5;
+    if (side.i[2] ==  1) return 0;
+    if (side.i[2] == -1) return 1;
 
     GS_ASSERT(false);
     return 0;
 }
 
-void get_side_array_from_cube_side(int side_id, int side[3])
+Vec3i get_sides_from_cube_side(int side_id)
 {
-    for (int i=0; i<3; i++) side[i] = 0;
+    Vec3i side = vec3i_init(0);
     switch (side_id)
     {
         case 2:
-            side[0] = 1;
+            side.x = 1;
             break;
         case 3:
-            side[0] = -1;
+            side.x = -1;
             break;
         case 4:
-            side[1] = 1;
+            side.y = 1;
             break;
         case 5:
-            side[1] = -1;
+            side.y = -1;
             break;
         case 0:
-            side[2] = 1;
+            side.z = 1;
             break;
         case 1:
-            side[2] = -1;
+            side.z = -1;
             break;
         default:
-            side[2] = 1;
+            side.z = 1;
             GS_ASSERT(false);
-            return;
+            return side;
     }
+    return side;
 }
 
 
-bool raytrace_terrain(struct Vec3 start, struct Vec3 direction, float length, class RaytraceData* data)
+bool raytrace_terrain(const Vec3& start, const Vec3& direction, float length, class RaytraceData* data)
 {   // direction must be normalized
     struct Vec3 end = vec3_add(start, vec3_scalar_mult(direction, length));
     return raytrace_terrain(start, end, data);
 }
 
 /* Borrowed from: http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html */
-bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* data)
+bool raytrace_terrain(const Vec3& start, const Vec3& end, class RaytraceData* data)
 {
     if (vec3_equal(start, end))
     {
-        if (collision_check(start.x, start.y, start.z))
+        if (collision_check(vec3i_init(start)))
         {
-            data->set_collision_point(start.x, start.y, start.z);
+            data->set_collision_point(vec3i_init(end));
             return true;
         }
         return false;
@@ -212,9 +217,9 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
         {
             if (data != NULL)
             {
-                data->side = get_cube_side_from_side_array(side);
+                data->side = get_cube_side_from_sides(vec3i_init(side));
                 data->interval = GS_MIN(t, 1.0f);
-                data->set_collision_point(x,y,z);
+                data->set_collision_point(vec3i_init(x, y, z));
             }
             return true;
         }
@@ -254,31 +259,16 @@ bool raytrace_terrain(struct Vec3 start, struct Vec3 end, class RaytraceData* da
 
 inline CubeType RaytraceData::get_cube_type()
 {
-    return t_map::get(this->collision_point[0], this->collision_point[1], this->collision_point[2]);
+    return t_map::get(this->collision_point);
 }
 
-inline void RaytraceData::set_collision_point(int x, int y, int z)
+inline void RaytraceData::set_collision_point(const Vec3i& position)
 {
-    this->collision_point[0] = translate_point(x);
-    this->collision_point[1] = translate_point(y);
-    this->collision_point[2] = z;
+    this->collision_point = translate_position(position);
 }
 
-// DEPRECATED
-void RaytraceData::get_pre_collision_point(int pre_collision_point[3])
+Vec3i RaytraceData::get_pre_collision_point()
 {
-    struct Vec3i pos;
-    this->get_pre_collision_point(pos);
-    pre_collision_point[0] = pos.x;
-    pre_collision_point[1] = pos.y;
-    pre_collision_point[2] = pos.z;
-}
-
-void RaytraceData::get_pre_collision_point(struct Vec3i& pos)
-{
-    int sides[3];
-    this->get_side_array(sides);
-    pos.x = translate_point(collision_point[0] + sides[0]);
-    pos.y = translate_point(collision_point[1] + sides[1]);
-    pos.z = collision_point[2] + sides[2];
+    Vec3i sides = this->get_sides();
+    return translate_position(vec3i_add(this->collision_point, sides));
 }

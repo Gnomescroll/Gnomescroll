@@ -175,9 +175,9 @@ void update_map_surface()
             for (int n=0; n<TERRAIN_CHUNK_WIDTH; n++)
             {
                 cy = j*TERRAIN_CHUNK_WIDTH + n;
-                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + XMAX*cy]];
+                pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + map_dim.x*cy]];
                 SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-                ((Uint32*)map_surface->pixels)[cx + XMAX*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+                ((Uint32*)map_surface->pixels)[cx + map_dim.x*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
             }
         }
     }

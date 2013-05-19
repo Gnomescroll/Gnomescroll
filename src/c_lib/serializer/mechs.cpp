@@ -165,15 +165,13 @@ bool write_mech_file(FILE* f)
 
         IF_ASSERT(!isValid(mech->type)) continue;
         IF_ASSERT(mech->subtype < 0 || (unsigned int)mech->subtype > UINT8_MAX) continue;
-        IF_ASSERT(mech->x < 0 || mech->x >= XMAX) continue;
-        IF_ASSERT(mech->y < 0 || mech->y >= YMAX) continue;
-        IF_ASSERT(mech->z < 0 || mech->z >= ZMAX) continue;
+        IF_ASSERT(!is_boxed_position(mech->position)) continue;
 
         write_bytes<uint8_t>(buf, index, mech->type);
         write_bytes<uint8_t>(buf, index, mech->subtype);
-        write_bytes<uint16_t>(buf, index, mech->x);
-        write_bytes<uint16_t>(buf, index, mech->y);
-        write_bytes<uint16_t>(buf, index, mech->z);
+        write_bytes<uint16_t>(buf, index, mech->position.x);
+        write_bytes<uint16_t>(buf, index, mech->position.y);
+        write_bytes<uint16_t>(buf, index, mech->position.z);
 
         #if !PRODUCTION
         IF_ASSERT(index > buflen) return false;   // this is a programming error
@@ -226,12 +224,11 @@ bool load_mech_file(const char* fn)
         int z = read_bytes<uint16_t>(buf, ibuf);
 
         #define LOG_GOTO_ERROR { \
-            log_mech_load_error("Mech values invalid", x,y,z, (MechType)type, subtype); \
+            log_mech_load_error("Mech values invalid", p, (MechType)type, subtype); \
             goto error;}
 
-        IF_ASSERT(x < 0 || x >= XMAX) LOG_GOTO_ERROR
-        IF_ASSERT(y < 0 || y >= YMAX) LOG_GOTO_ERROR
-        IF_ASSERT(z < 0 || z >= ZMAX) LOG_GOTO_ERROR
+        Vec3i p = vec3i_init(x, y, z);
+        IF_ASSERT(!is_boxed_position(p)) LOG_GOTO_ERROR;
         IF_ASSERT(!isValid((MechType)type)) LOG_GOTO_ERROR
         IF_ASSERT(subtype < 0) LOG_GOTO_ERROR
 
@@ -241,14 +238,17 @@ bool load_mech_file(const char* fn)
         MechType mech_type = mech_type_map[type];
         IF_ASSERT(!isValid(mech_type))
         {
-            log_mech_load_error("Mech type not valid", x,y,z, mech_type, subtype);
+            log_mech_load_error("Mech type not valid", p, mech_type, subtype);
             goto error;
         }
 
-        MechCreateFailureCode ret = t_mech::create_mech(x,y,z, mech_type, subtype);
+        MechCreateFailureCode ret = t_mech::create_mech(p, mech_type, subtype);
         success = (ret == MCF_OK);
         IF_ASSERT(!success)
-            log_mech_load_error("Failed to create mech", x,y,z, mech_type, subtype);
+        {
+            t_mech::print_mech_create_failure_code(ret);
+            log_mech_load_error("Failed to create mech", p, mech_type, subtype);
+        }
     }
 
     success = true;

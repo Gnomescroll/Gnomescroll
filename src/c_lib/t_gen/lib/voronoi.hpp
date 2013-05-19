@@ -2,7 +2,7 @@
 
 // The speed of this depends on the DistanceMethod which is called 27 times per call to Get
 
-struct Voronoi 
+struct Voronoi
 {
   enum VoronoiType {First, Second, Third, Fourth, Difference21, Difference32, Crackle};
   enum DistanceMethod {Length, Length2, Manhattan, Chebychev, Quadratic, Minkowski4, Minkowski5};

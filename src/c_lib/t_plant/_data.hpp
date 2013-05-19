@@ -105,7 +105,7 @@ class PlantTypeArray
     {
         for (int i=0; i<PLANT_TYPE_MAX; i++)
         {
-            if (strcmp(array[i].type_name, type_name) ==0)
+            if (strcmp(array[i].type_name, type_name) == 0)
                 return i;
         }
         printf("ERROR: PlantTypeArray,  get_type_id, plant %s does not exist \n", type_name);
@@ -246,7 +246,7 @@ void teardown_data()
 */
 struct PlantPlacementData
 {
-    int x,y,z;
+    Vec3i position;
 };
 
 struct PlantPlacementData plant_placement_data;

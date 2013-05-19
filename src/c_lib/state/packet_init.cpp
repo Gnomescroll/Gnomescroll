@@ -43,7 +43,6 @@ void RegisterMessages()
     client_disconnected_StoC::register_client_packet();
 
     agent_set_block_CtoS::register_server_packet();
-    admin_set_block_CtoS::register_server_packet();
 
     // particle system messages
     Particle::grenade_StoC::register_client_packet();

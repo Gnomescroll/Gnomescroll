@@ -19,7 +19,7 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentI
 {
     float vox_distance = 1000000.0f;
     class Voxels::VoxelHitscanTarget target;
-    float collision_point[3];
+    Vec3 collision_point;
 
     // TODO -- keep agents in their own hitscan list
     bool hit = STATE::voxel_hitscan_list->hitscan(position, direction,
@@ -38,9 +38,9 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 }
 
 HitscanTargetTypes hitscan_against_world(
-    struct Vec3 p, struct Vec3 v, int ignore_id, EntityType ignore_type,        // inputs
-    class Voxels::VoxelHitscanTarget* target, float* vox_distance, float collision_point[3],
-    int block_pos[3], int side[3], CubeType* cube_type, float* block_distance)  // outputs
+    const Vec3& p, const Vec3& v, int ignore_id, EntityType ignore_type,        // inputs
+    class Voxels::VoxelHitscanTarget* target, float* vox_distance, Vec3& collision_point,
+    Vec3i& block_pos, Vec3i& side, CubeType* cube_type, float* block_distance)  // outputs
 {
     *vox_distance = 10000000.0f;
     bool voxel_hit = STATE::voxel_hitscan_list->hitscan(p, v, ignore_id, ignore_type,
@@ -53,15 +53,15 @@ HitscanTargetTypes hitscan_against_world(
     {
         *block_distance = terrain_data.interval * max_dist;
         *cube_type = terrain_data.get_cube_type();
-        terrain_data.get_side_array(side);
-        for (int i=0; i<3; i++) block_pos[i] = terrain_data.collision_point[i];
+        side = terrain_data.get_sides();
+        block_pos = terrain_data.collision_point;
     }
     else
     {
         *block_distance = 10000000.0f;
         *cube_type = NULL_CUBE;
-        side[2] = 1;
-        for (int i=0; i<3; i++) block_pos[i] = -1;
+        side.z = 1;
+        block_pos = vec3i_init(-1);
     }
 
     // TODO -- add mech hitscan

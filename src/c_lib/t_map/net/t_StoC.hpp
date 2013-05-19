@@ -23,7 +23,7 @@ class map_chunk_compressed_StoC: public MapMessageArrayPacketToClient<map_chunk_
         pack_u32(&chunk_index, buff, buff_n, pack);
     }
 
-    inline void handle(char* buff, int byte_num) __attribute((always_inline));
+    ALWAYS_INLINE void handle(char* buff, int byte_num);
 };
 
 class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chunk_uncompressed_StoC>
@@ -39,7 +39,7 @@ class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chun
         pack_u32(&chunk_index, buff, buff_n, pack);
     }
 
-    inline void handle(char* buff, int byte_num) __attribute((always_inline));
+    ALWAYS_INLINE void handle(char* buff, int byte_num);
 };
 
 class clear_alias_StoC: public MapMessagePacketToClient<clear_alias_StoC>
@@ -52,7 +52,7 @@ class clear_alias_StoC: public MapMessagePacketToClient<clear_alias_StoC>
         pack_u16(&chunk_alias, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 class set_map_alias_StoC: public MapMessagePacketToClient<set_map_alias_StoC>
@@ -67,7 +67,7 @@ class set_map_alias_StoC: public MapMessagePacketToClient<set_map_alias_StoC>
         pack_u32(&chunk_index, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 class map_element_update: public MapMessagePacketToClient<map_element_update>
@@ -84,7 +84,7 @@ class map_element_update: public MapMessagePacketToClient<map_element_update>
         pack_u8(&pallete, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 
@@ -95,75 +95,64 @@ class map_element_update: public MapMessagePacketToClient<map_element_update>
 class block_set_StoC: public MapMessagePacketToClient<block_set_StoC>
 {
     public:
-
-        uint16_t x,y,z;
+        Vec3i position;
         uint8_t cube_type;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&cube_type, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 class block_set_palette_StoC: public MapMessagePacketToClient<block_set_palette_StoC>
 {
     public:
-
-        uint16_t x,y,z;
+        Vec3i position;
         uint8_t cube_type;
         uint8_t palette;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&cube_type, buff, buff_n, pack);
         pack_u8(&palette, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 // sets a cube_type, but also provides information on how the cube_type was set
 class block_action_StoC: public MapMessagePacketToClient<block_action_StoC>
 {
     public:
-
-        uint16_t x,y,z;
+        Vec3i position;
         uint8_t cube_type;
         uint8_t action;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&cube_type, buff, buff_n, pack);
         pack_u8(&action, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
 {
     public:
-        uint16_t x,y,z;  // dimensions
+        Vec3i dimensions;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&dimensions, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 
@@ -177,7 +166,7 @@ class container_block_chunk_reset_StoC: public MapMessagePacketToClient<containe
         pack_u32(&chunk_index, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 
@@ -188,20 +177,18 @@ class container_block_chunk_reset_StoC: public MapMessagePacketToClient<containe
 class container_block_create_StoC: public MapMessagePacketToClient<container_block_create_StoC>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
         uint8_t container_type;
         uint16_t container_id;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
         pack_u8(&container_type, buff, buff_n, pack);
         pack_u16(&container_id, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 class container_block_delete_StoC: public MapMessagePacketToClient<container_block_delete_StoC>
@@ -216,7 +203,7 @@ class container_block_delete_StoC: public MapMessagePacketToClient<container_blo
         pack_u16(&container_id, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE  void handle();
 };
 
 /*
@@ -226,31 +213,27 @@ class container_block_delete_StoC: public MapMessagePacketToClient<container_blo
 class control_node_create_StoC: public MapMessagePacketToClient<control_node_create_StoC>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 class control_node_delete_StoC: public MapMessagePacketToClient<control_node_create_StoC>
 {
     public:
-        uint16_t x,y,z;
+        Vec3i position;
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 /* block damage */
@@ -267,7 +250,7 @@ class block_damage_StoC: public MapMessagePacketToClient<block_damage_StoC>
         pack_u8(&dmg, buff, buff_n, pack);
     }
 
-    inline void handle() __attribute__((always_inline));
+    ALWAYS_INLINE void handle();
 };
 
 }

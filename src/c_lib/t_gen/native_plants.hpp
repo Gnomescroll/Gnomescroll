@@ -25,13 +25,11 @@ void place_native_plants(int max)
     int ct = 0;
     for (int tries=0; ct < max && tries < max*2; tries++)
     {
-        int x = randrange(0, map_dim.x-1);
-        int y = randrange(0, map_dim.y-1);
-        int z = t_map::get_highest_solid_block(x, y);
-        CubeType top = t_map::get(x, y, z);
+        Vec3i position = t_map::random_surface_block();
+        CubeType top = t_map::get(position);
         if (top != regolith) continue;
         MechType plant = plants[randrange(0, n_plants-1)];
-        MechCreateFailureCode ret = t_mech::create_mech(x, y, z+1, plant);
+        MechCreateFailureCode ret = t_mech::create_mech(position, plant);
         if (ret != MCF_OK && ret != MCF_OCCUPIED) break;
         ct++;
     }

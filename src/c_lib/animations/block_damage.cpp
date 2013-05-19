@@ -46,13 +46,13 @@ static int get_sprite_index(int dmg, int max_dmg)
     return level;
 }
 
-static void render(int sprite_index, int x, int y, int z, float margin)
+static void render(int sprite_index, const Vec3i& position, float margin)
 {
     IF_ASSERT(block_damage_texture == 0) return;
     if (sprite_index < 0) return;
 
-    Vec3 pos = vec3_init(x,y,z);
-    pos = vec3_add(pos, vec3_init(0.5f, 0.5f, 0.5f));   // center
+    Vec3 pos = vec3_init(position);
+    pos = vec3_add(pos, vec3_init(0.5f));   // center
     pos = quadrant_translate_position(current_camera_position, pos);
 
     const float size = (1.0f + margin) / 2.0f;
@@ -131,14 +131,13 @@ void render_block_damage()
     if (tick_since_last_damage_change > ticks_begin_fade+ticks_end_fade)
         return;
 
-    int x=0,y=0,z=0;
-    t_map::get_requested_block_position(&x, &y, &z);
-    if (x < 0 || y < 0 || z < 0) return;
-    CubeType b = t_map::get(x,y,z);
+    Vec3i p = t_map::get_requested_block_position();
+    if (!is_boxed_position(p)) return;
+    CubeType b = t_map::get(p);
     if (b <= 0) return;
     if (t_map::maxDamage(b) == INVINCIBLE_CUBE_DAMAGE) return;   // dont render damage for invincible blocks
 
-    Vec3 dest = vec3_add(vec3_init(x,y,z), vec3_init(0.5f, 0.5f, 0.5f));
+    Vec3 dest = vec3_scalar_add(vec3_init(p), 0.5f);
     float dist = vec3_length(vec3_sub(dest, current_camera_position));
     float margin = 0.005f;
     if (dist > 4.0f) margin *= 2;
@@ -154,7 +153,7 @@ void render_block_damage()
 
     int sprite_index = get_sprite_index(dmg, max_dmg);
 
-    render(sprite_index, x,y,z, margin);
+    render(sprite_index, p, margin);
 }
 
 }   // Animations

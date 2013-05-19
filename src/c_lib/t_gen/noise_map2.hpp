@@ -280,8 +280,8 @@ class PerlinOctave2D
         for (int i=0; i<xmax; i++)
         for (int j=0; j<ymax; j++)
         {
-            x = i*(4.0f/(float)XMAX);
-            y = j*(4.0f/(float)YMAX);
+            x = i*(4.0f/(float)map_dim.x);
+            y = j*(4.0f/(float)map_dim.y);
 
             cache[j*xmax + i] = sample(x,y, persistence);
         }

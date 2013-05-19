@@ -230,12 +230,14 @@ void teardown_block_drop_dat()
 }
 
 #if DC_SERVER
-void handle_block_drop(int x, int y, int z, CubeType cube_type)
+void handle_block_drop(const Vec3i& position, CubeType cube_type)
 {
-    GS_ASSERT(block_drop_dat != NULL);
-    if (block_drop_dat == NULL) return;
-
+    IF_ASSERT(block_drop_dat == NULL) return;
     IF_ASSERT(!isValid(cube_type)) return;
+
+    const float MOMENTUM_SCALE = 2.0f;
+    static const Vec3 perturb = vec3_init(0.33f, 0.33f, 0.0f);
+    Vec3 pos = vec3_add(vec3_init(position), vec3_init(0.5f, 0.5f, 0.05f));
 
     for (int i=0; i < block_drop_dat->meta_drop_table[cube_type].num_drop; i++)
     {
@@ -251,12 +253,10 @@ void handle_block_drop(int x, int y, int z, CubeType cube_type)
             {
                 for (int k=0; k<cidt->item_drop_num[j]; k++)
                 {
-                    const float mom = 2.0f;
-                    x = (float)((float)x + 0.5f + randf()*0.33f);
-                    y = (float)((float)y + 0.5f + randf()*0.33f);
-                    z = (float)((float)z + 0.05f);
-                    ItemParticle::create_item_particle(cidt->item_type, x, y, z,
-                        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+                    Vec3 mom = vec3_scalar_mult(vec3_rand_center(), MOMENTUM_SCALE);
+                    mom.z = MOMENTUM_SCALE;
+                    Vec3 q = vec3_add(pos, vec3_mult(vec3_rand(), perturb));
+                    ItemParticle::create_item_particle(cidt->item_type, q, mom);
                 }
                 break;
             }

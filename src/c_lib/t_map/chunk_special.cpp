@@ -13,7 +13,7 @@ bool ChunkItemContainer::remove_index(int i)
 {
     #if DC_SERVER
     map_history->container_block_delete(chunk_index, iba[i].container_id);
-    ItemContainer::container_block_destroyed(iba[i].container_id, iba[i].x, iba[i].y, iba[i].z);
+    ItemContainer::container_block_destroyed(iba[i].container_id, iba[i].position);
     #endif
 
     return this->_remove(i);
@@ -49,25 +49,21 @@ bool ChunkItemContainer::_remove(int index)
     return true;
 }
 
-bool ChunkItemContainer::remove(int x, int y, int z)
+bool ChunkItemContainer::remove(const Vec3i& position)
 {
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    // find container
+    Vec3i p = translate_position(position);
     int i=0;
     for (; i<iban; i++)
-        if (x == iba[i].x && y == iba[i].y && z == iba[i].z)
+        if (is_equal(iba[i].position, p))
             break;
     IF_ASSERT(i >= iban) return false;
     return this->remove_index(i);
 }
 
-bool ChunkItemContainer::add(int x, int y, int z, ItemContainerType container_type, ItemContainerID container_id)
+bool ChunkItemContainer::add(const Vec3i& position, ItemContainerType container_type, ItemContainerID container_id)
 {
-    IF_ASSERT((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) return false;
-
-    x &= TERRAIN_MAP_WIDTH_BIT_MASK2;
-    y &= TERRAIN_MAP_WIDTH_BIT_MASK2;
+    IF_ASSERT(!is_valid_z(position)) return false;
+    Vec3i p = translate_position(position);
 
     IF_ASSERT(container_type == NULL_CONTAINER_TYPE || container_id == NULL_CONTAINER) return false;
     IF_ASSERT(ibam >= MAP_CHUNK_XDIM*MAP_CHUNK_YDIM) return false;
@@ -93,9 +89,7 @@ bool ChunkItemContainer::add(int x, int y, int z, ItemContainerType container_ty
         IF_ASSERT(iba == NULL) return false;
     }
 
-    iba[iban].x = x;
-    iba[iban].y = y;
-    iba[iban].z = z;
+    iba[iban].position = p;
     iba[iban].container_type = container_type;
     iba[iban].container_id = container_id;
     iban++;
@@ -109,7 +103,7 @@ bool ChunkItemContainer::add(int x, int y, int z, ItemContainerType container_ty
     // (for the serializer)
     main_map->chunk[this->chunk_index]->increment_version();
 
-    map_history->container_block_create(chunk_index, x, y, z, container_type, container_id);
+    map_history->container_block_create(chunk_index, p, container_type, container_id);
 
     GS_ASSERT(container_id != NULL_CONTAINER);
     ItemContainer::ItemContainerInterface* container = ItemContainer::get_container(container_id);
@@ -130,9 +124,7 @@ void ChunkItemContainer::send_chunk_item_containers(ClientID client_id)
     for (int i=0; i < iban; i++)
     {
         class container_block_create_StoC msg;
-        msg.x = iba[i].x;
-        msg.y = iba[i].y;
-        msg.z = iba[i].z;
+        msg.position = iba[i].position;
         msg.container_type = iba[i].container_type;
         msg.container_id = iba[i].container_id;
         msg.sendToClient(client_id);

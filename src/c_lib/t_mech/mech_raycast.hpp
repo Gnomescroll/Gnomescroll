@@ -44,9 +44,9 @@ void draw_selected_mech_bounding_box()
     const float size = m.size/2.0f;
     //const float size2 = m.size;
 
-    float wx = (float) (m.x) + 0.5f + m.offset_x;
-    float wy = (float) (m.y) + 0.5f + m.offset_y;
-    float wz = (float) m.z; // + size;
+    float wx = m.position.x + 0.5f + m.offset_x;
+    float wy = m.position.y + 0.5f + m.offset_y;
+    float wz = m.position.z; // + size;
 
     wx = quadrant_translate_f(current_camera_position.x, wx);
     wy = quadrant_translate_f(current_camera_position.y, wy);
@@ -85,9 +85,9 @@ bool ray_cast_mech_render_type_0(const struct Mech &m, float x, float y, float z
     const float size = m.size/2.0f;
     //const float size2 = m.size;
 
-    float wx = m.x + 0.5f + m.offset_x;
-    float wy = m.y + 0.5f + m.offset_y;
-    float wz = m.z + size;
+    float wx = m.position.x + 0.5f + m.offset_x;
+    float wy = m.position.y + 0.5f + m.offset_y;
+    float wz = m.position.z + size;
 
     wx = quadrant_translate_f(current_camera_position.x, wx);
     wy = quadrant_translate_f(current_camera_position.y, wy);
@@ -225,9 +225,9 @@ bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int*
         float d;
         bool ret;
 
-        int xd = xi - mla[i].x;
-        int yd = yi - mla[i].y;
-        int zd = zi - mla[i].z;
+        int xd = xi - mla[i].position.x;
+        int yd = yi - mla[i].position.y;
+        int zd = zi - mla[i].position.z;
 
         if (xd*xd + yd*yd + zd*zd > cutoff2)
             continue;

@@ -112,7 +112,7 @@ void raycast_to_part()
 
     // hitscan against voxels
     float vox_distance = 10000000.0f;
-    float collision_point[3];
+    Vec3 collision_point;
     Voxels::VoxelHitscanTarget target;
     bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
         p, vec, -1, (EntityType)-1, collision_point, &vox_distance, &target);

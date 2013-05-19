@@ -26,6 +26,16 @@ ALWAYS_INLINE bool is_boxed_position(const struct Vec3i& p)
     return (is_boxed_point(p.x) && is_boxed_point(p.y));
 }
 
+ALWAYS_INLINE bool is_valid_z(int z)
+{
+    return ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0);
+}
+
+ALWAYS_INLINE bool is_valid_z(const struct Vec3i& p)
+{
+    return is_valid_z(p.z);
+}
+
 ALWAYS_INLINE static int min_i(int x, int y, int x1, int y1)
 {
     return abs(x) < abs(y) ? x1 : y1;
@@ -134,9 +144,7 @@ ALWAYS_INLINE float translate_point(float pt)
 
 ALWAYS_INLINE int translate_point(int pt)
 {
-    if (pt < 0) pt += map_dim.x;
-    if (pt >= map_dim.x) pt -= map_dim.x;
-    GS_ASSERT(is_boxed_point(pt));
+    pt &= TERRAIN_MAP_WIDTH_BIT_MASK2;
     return pt;
 }
 

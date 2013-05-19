@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 #include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 
@@ -50,5 +51,32 @@ inline struct Vec3i vec3i_init(const struct Vec3i& pos)
     return p;
 }
 
+inline struct Vec3i vec3i_init(const int pos[3])
+{
+    struct Vec3i p = {{{ pos[0], pos[1], pos[2] }}};
+    return p;
+}
+
 inline struct Vec3i vec3i_init(const struct Vec3& pos);
 inline struct Vec3i vec3i_add(struct Vec3i pos, const struct Vec3i& off);
+
+inline struct Vec3i vec3i_sub(struct Vec3i a, struct Vec3i b)
+{
+    Vec3i c;
+    for (int i=0; i<3; i++)
+        c.i[i] = a.i[i] - b.i[i];
+    return c;
+}
+
+inline struct Vec3i vec3i_abs(struct Vec3i a)
+{
+    Vec3i b = a;
+    for (int i=0; i<3; i++)
+        b.i[i] = abs(a.i[i]);
+    return b;
+}
+
+inline int vec3i_volume(const struct Vec3i& p)
+{
+    return abs(p.x * p.y * p.z);
+}

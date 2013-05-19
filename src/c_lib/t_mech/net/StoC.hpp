@@ -13,7 +13,7 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
         uint8_t type;
         uint8_t subtype;
         uint8_t side;
-        uint16_t x,y,z;
+        Vec3i position;
 
     //mech_create_StoC() :
     //    id(0), type(NULL_MECH_TYPE), subtype(0), x(0), y(0), z(0)
@@ -25,10 +25,7 @@ class mech_create_StoC: public MapMessagePacketToClient<mech_create_StoC>
         pack_u8(&type, buff, buff_n, pack);
         pack_u8(&subtype, buff, buff_n, pack);
         pack_u8(&side, buff, buff_n, pack);
-
-        pack_u16(&x, buff, buff_n, pack);
-        pack_u16(&y, buff, buff_n, pack);
-        pack_u16(&z, buff, buff_n, pack);
+        pack_map_position(&position, buff, buff_n, pack);
     }
 
     void handle();

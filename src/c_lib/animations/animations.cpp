@@ -19,7 +19,7 @@
 namespace Animations
 {
 
-void block_crumble(struct Vec3 pos, int n, CubeType cube_type, float momentum)
+void block_crumble(const Vec3& pos, int n, CubeType cube_type, float momentum)
 {
     if (Options::animation_level <= 0) return;
     const float crumble_size = 0.17f;
@@ -55,7 +55,7 @@ void block_crumble(struct Vec3 pos, int n, CubeType cube_type, float momentum)
     }
 }
 
-void block_crumble(struct Vec3 pos, int n, CubeType cube_type, TerrainModificationAction action)
+void block_crumble(const Vec3& pos, int n, CubeType cube_type, TerrainModificationAction action)
 {
     float momentum = 5.0f;
     switch (action)
@@ -90,22 +90,21 @@ void block_crumble(struct Vec3 pos, int n, CubeType cube_type, TerrainModificati
 // surface block dmg
 // takes encoded side int and translates to side[3];
 // collision point, incident vector, cube_type, side
-void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int cube_side)
+void block_damage(const Vec3& pos, const Vec3& incident, CubeType cube_type, int cube_side)
 {
-    int side[3];
-    get_side_array_from_cube_side(cube_side, side);
-    block_damage(pos, incident, cube_type, side, cube_side);
+    Vec3i sides = get_sides_from_cube_side(cube_side);
+    block_damage(pos, incident, cube_type, sides, cube_side);
 }
 
 // surface block dmg
 // collision point, incident vector, cube_type, side
-void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int side[3])
+void block_damage(const Vec3& pos, const Vec3& incident, CubeType cube_type, const Vec3i& sides)
 {
-    int cube_side = get_cube_side_from_side_array(side);
-    block_damage(pos, incident, cube_type, side, cube_side);
+    int cube_side = get_cube_side_from_sides(sides);
+    block_damage(pos, incident, cube_type, cube_side);
 }
 
-void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int _side[3], int cube_side)
+void block_damage(const Vec3& pos, const Vec3& incident, CubeType cube_type, const Vec3i& iside, int cube_side)
 {
     if (Options::animation_level <= 0) return;
     int n = randrange(10,15);
@@ -114,17 +113,17 @@ void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int
     int tex_id = t_map::get_cube_side_texture(cube_type, cube_side);
     float theta, phi;
     // reflection bias
-    Vec3 nor = vec3_init(_side);
+    Vec3 nor = vec3_init(iside);
     Vec3 ref = vec3_reflect(incident, nor);
     ref = vec3_normalize(ref);
     // compute initial base velocities
     const float momentum = 0.2f;
     // "invert" the normal for perturbing the initial positions along the plane
     // this flips the 0 vectors to 1, which will be centered to be 1,-1 in the perturbation
-    _side[0] = (_side[0]) ? 0 : 1;
-    _side[1] = (_side[1]) ? 0 : 1;
-    _side[2] = (_side[2]) ? 0 : 1;
-    struct Vec3 side = vec3_init(_side);
+    Vec3 side;
+    side.x = (iside.x) ? 0 : 1;
+    side.y = (iside.y) ? 0 : 1;
+    side.z = (iside.z) ? 0 : 1;
     class Particle::TexturedMinivox* minivox;
     struct Vec3 next;
     struct Vec3 forward;
@@ -141,7 +140,7 @@ void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int
         phi = randf() * PI * 2;
         minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
-        ttl = randrange(75,85);
+        ttl = randrange(75, 85);
         minivox->set_ttl(ttl);
         minivox->voxel.texture_index = tex_id;
         minivox->voxel.pixel_width = 2;
@@ -153,7 +152,7 @@ void block_damage(struct Vec3 pos, struct Vec3 incident, CubeType cube_type, int
     }
 }
 
-void grenade_explode(struct Vec3 pos)
+void grenade_explode(const Vec3& pos)
 {
     if (Options::animation_level <= 0) return;
     int n = randrange(25,35);
@@ -175,7 +174,7 @@ void grenade_explode(struct Vec3 pos)
     }
 }
 
-void particle_explode(struct Vec3 pos, int min, int max, float vel, float scale)
+void particle_explode(const Vec3& pos, int min, int max, float vel, float scale)
 {
     if (Options::animation_level <= 0) return;
     int n = randrange(min,max);
@@ -198,7 +197,7 @@ void particle_explode(struct Vec3 pos, int min, int max, float vel, float scale)
     }
 }
 
-void particle_explode(struct Vec3 pos)
+void particle_explode(const Vec3& pos)
 {
     particle_explode(pos, 15, 20, 3.5f, 0.05f);
 }
@@ -243,7 +242,7 @@ void voxel_explode(Vec3 position, int count_min, int count_max, float size, floa
     voxel_explode(position, count, size, force, color);
 }
 
-void agent_bleed(struct Vec3 pos)
+void agent_bleed(const Vec3& pos)
 {
     if (Options::animation_level <= 0) return;
     const float scale = float(Options::animation_level)/3.0f;
@@ -262,13 +261,13 @@ void agent_bleed(struct Vec3 pos)
     }
 }
 
-void blood_spray(struct Vec3 pos, struct Vec3 incident)  // pos, incident vector
+void blood_spray(const Vec3& pos, const Vec3& incident)  // pos, incident vector
 {
     if (Options::animation_level <= 0) return;
     int n = randrange(140,170);
     float scale = float(Options::animation_level)/3.0f;
     n = scale*float(n);
-    incident = vec3_normalize(incident);
+    Vec3 inc = vec3_normalize(incident);
     float theta, phi, gamma;
     struct Vec3 v;
     const float base_speed = 1.0f;
@@ -281,7 +280,7 @@ void blood_spray(struct Vec3 pos, struct Vec3 incident)  // pos, incident vector
         theta = randf() * PI * 2;
         phi = randf() * PI * 2;
         gamma = randf() * PI * 2;
-        v = vec3_euler_rotation(incident, theta*arc, phi*arc, gamma*arc);
+        v = vec3_euler_rotation(inc, theta*arc, phi*arc, gamma*arc);
         speed = (randf() + 0.5f) * randrange(1,2);
         speed *= base_speed;
         v = vec3_scalar_mult(v, speed);

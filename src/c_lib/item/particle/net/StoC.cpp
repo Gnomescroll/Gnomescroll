@@ -13,9 +13,8 @@ namespace ItemParticle
 inline void item_particle_create_StoC::handle()
 {
     IF_ASSERT(id == NULL_PARTICLE) return;
-    GS_ASSERT(is_boxed_point(x));
-    GS_ASSERT(is_boxed_point(y));
-    create_item_particle((ItemParticleID)id, (ItemType)item_type, x,y,z,mx,my,mz);
+    create_item_particle((ItemParticleID)id, (ItemType)item_type,
+                         this->position, this->velocity);
 }
 
 inline void item_particle_destroy_StoC::handle()
@@ -43,9 +42,8 @@ inline void item_particle_state_StoC::handle()
 {
     ItemParticle* particle = get((ItemParticleID)id);
     if (particle == NULL) return;
-    GS_ASSERT(is_boxed_point(x));
-    GS_ASSERT(is_boxed_point(y));
-    particle->set_state(x,y,z,mx,my,mz);
+    GS_ASSERT(is_boxed_position(this->position));
+    particle->set_state(this->position, this->velocity);
 }
 
 inline void item_particle_picked_up_StoC::handle()

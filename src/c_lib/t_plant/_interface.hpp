@@ -35,7 +35,7 @@ namespace t_plant
 void init();
 void teardown();
 void tick();
-void create_plant(int x, int y, int z, int type);
+void create_plant(const Vec3i& position, int type);
 
 }   // t_plant
 

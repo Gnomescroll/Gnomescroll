@@ -10,7 +10,7 @@
 namespace climate
 {
 
-int get_temperature(int x, int y, int z)
+int get_temperature(const Vec3i& position)
 {
     GS_ASSERT(x < map_dim.x);
     GS_ASSERT(x >= 0);
@@ -24,7 +24,7 @@ int get_temperature(int x, int y, int z)
         return (y - x % 16 - x % 21) / 4 - z / 32;
 }
 
-int get_oxygen(int x, int y, int z)
+int get_oxygen(const Vec3i& position)
 {
     GS_ASSERT(x < map_dim.x);
     GS_ASSERT(x >= 0);
@@ -38,7 +38,7 @@ int get_oxygen(int x, int y, int z)
         return y + y % x + x % y - z / 8;
 }
 
-int get_nitrogen(int x, int y, int z)
+int get_nitrogen(const Vec3i& position)
 {
     GS_ASSERT(x < map_dim.x);
     GS_ASSERT(x >= 0);
@@ -52,7 +52,7 @@ int get_nitrogen(int x, int y, int z)
         return y + 32 - x % 32 - z / 16;
 }
 
-int get_methane(int x, int y, int z)
+int get_methane(const Vec3i& position)
 {
     GS_ASSERT(x < map_dim.x);
     GS_ASSERT(x >= 0);
