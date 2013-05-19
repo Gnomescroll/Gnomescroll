@@ -31,9 +31,9 @@ class AgentList: public ObjectList<class Agent, AgentID>
 
     void filter_none(); // copies pointers/null into filtered list, unchanged
     void sort_filtered_objects_by_distance(bool ascending=true);
-    int objects_within_sphere(float x, float y, float z, float radius);
-    int object_models_within_sphere(float x, float y, float z, float radius);
-    void objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta);   // origin, direction, cone threshold
+    int objects_within_sphere(const Vec3& position, float radius);
+    int object_models_within_sphere(const Vec3& position, float radius);
+    void objects_in_cone(const Vec3& position, const Vec3& direction, float theta);   // origin, direction, cone threshold
 
     #if DC_CLIENT
     void draw_names();
@@ -59,9 +59,9 @@ class AgentList: public ObjectList<class Agent, AgentID>
     }
 };
 
-Agent* nearest_agent_in_range(const struct Vec3& position, const float radius);
-Agent* nearest_living_agent_in_range(const struct Vec3& position, const float radius);
-Agent* nearest_living_agent_model_in_range(const struct Vec3& position, const float radius);
-Agent* random_agent_in_range(const struct Vec3& position, const float radius);
+Agent* nearest_agent_in_range(const Vec3& position, float radius);
+Agent* nearest_living_agent_in_range(const Vec3& position, float radius);
+Agent* nearest_living_agent_model_in_range(const Vec3& position, float radius);
+Agent* random_agent_in_range(const Vec3& position, float radius);
 
 }   // Agents

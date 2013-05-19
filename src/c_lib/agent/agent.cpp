@@ -499,7 +499,7 @@ int Agent::get_facing_block_type()
     return data.get_cube_type();
 }
 
-bool Agent::point_can_cast(float x, float y, float z, float max_dist)
+bool Agent::point_can_cast(const Vec3& point, float max_dist)
 {
     // checks if a point can raycast to some area of the agent box,
     // or if the terrain prevents it
@@ -511,14 +511,13 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
     BoundingBox box = this->get_bounding_box();
 
     // check the center column
-    struct Vec3 start = vec3_init(x,y,z);
+    struct Vec3 start = point;;
     struct Vec3 end = this->s.get_position();
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;
-        if (vec3_distance(start, end) < max_dist
-         && raytrace_terrain(start, end))
-            return true;
+        if (vec3_distance(start, end) < max_dist &&
+            !raytrace_terrain(start, end)) return true;
     }
 
     // check the 4 corner columns
@@ -527,9 +526,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;
-        if (vec3_distance(start, end) < max_dist
-         && !raytrace_terrain(start, end))
-            return true;
+        if (vec3_distance(start, end) < max_dist &&
+            !raytrace_terrain(start, end)) return true;
     }
 
     end.x = this->s.x + box.radius;
@@ -537,9 +535,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;
-        if (vec3_distance(start, end) < max_dist
-         && !raytrace_terrain(start, end))
-            return true;
+        if (vec3_distance(start, end) < max_dist &&
+            !raytrace_terrain(start, end)) return true;
     }
 
     end.x = this->s.x - box.radius;
@@ -547,9 +544,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;
-        if (vec3_distance(start, end) < max_dist
-         && !raytrace_terrain(start, end))
-            return true;
+        if (vec3_distance(start, end) < max_dist &&
+            !raytrace_terrain(start, end)) return true;
     }
 
     end.x = this->s.x - box.radius;
@@ -557,9 +553,8 @@ bool Agent::point_can_cast(float x, float y, float z, float max_dist)
     for (int i=0; i<samples_per_height; i++)
     {
         end.z = this->s.z + i*step;
-        if (vec3_distance(start, end) < max_dist
-         && !raytrace_terrain(start, end))
-            return true;
+        if (vec3_distance(start, end) < max_dist &&
+            !raytrace_terrain(start, end)) return true;
     }
 
     return false;
@@ -582,7 +577,7 @@ void Agent::update_legs()
     const float arc = 25.0f;    // degree
     const int peak = 37;
     const int rest = (peak-1)/2;
-    const float m = (arc/180)/((float)rest);
+    const float m = (arc/180)/float(rest);
 
     static int idle = 0;
     static int legtick = 0;

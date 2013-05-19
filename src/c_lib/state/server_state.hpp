@@ -27,7 +27,7 @@ struct Vec3 get_base_spawn_position();
 void init_base();
 void check_agents_at_base();
 
-void damage_objects_within_sphere(struct Vec3 position, float radius,
+void damage_objects_within_sphere(const Vec3& position, float radius,
                                   int damage, AgentID owner,
                                   EntityType inflictor_type, int inflictor_id,
                                   bool suicidal=true);

@@ -39,7 +39,7 @@ void PlasmagenSpur::tick()
                                       TMA_PLASMAGEN);
         //this->broadcast_death();
         #endif
-        this->travelled = t_gen::PLASMAGEN_BLAST_RADIUS;
+        this->travelled = t_gen::PLASMAGEN_BLOCK_BLAST_RADIUS;
     }
     this->travelled += dist;
 }
@@ -74,7 +74,7 @@ void plasmagen_explode_StoC::handle()
         spur->set_state(this->position, momentum);
     }
 
-    Sound::play_3d_sound("plasmagen_explode", this->position, vec3_init(0,0,0));
+    Sound::play_3d_sound("plasmagen_explode", this->position, vec3_init(0));
     #endif
 }
 
@@ -88,7 +88,7 @@ void PlasmagenSpurList::tick()
         if (this->objects[i].id == this->null_id)
             continue;
         this->objects[i].tick();
-        if (this->objects[i].travelled >= t_gen::PLASMAGEN_BLAST_RADIUS)
+        if (this->objects[i].travelled >= t_gen::PLASMAGEN_BLOCK_BLAST_RADIUS)
         {
             this->objects[i].die();
             this->destroy(i);
@@ -99,7 +99,7 @@ void PlasmagenSpurList::tick()
 #if DC_CLIENT
 void PlasmagenSpurList::draw()
 {
-    glColor4ub(255,255,255,255);
+    glColor4ub(255, 255, 255, 255);
     for (size_t i=0; i<this->max; i++)
         if (this->objects[i].id != this->null_id)
             this->objects[i].draw(this->objects[i].get_position());

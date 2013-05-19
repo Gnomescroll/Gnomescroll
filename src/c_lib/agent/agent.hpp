@@ -246,7 +246,7 @@ class Agent
     void update_model();
     void update_legs();
 
-    bool point_can_cast(float x, float y, float z, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it
+    bool point_can_cast(const Vec3& point, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it
 
     float camera_height();
     float current_height();

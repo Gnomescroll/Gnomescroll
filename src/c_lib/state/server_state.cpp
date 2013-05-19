@@ -101,7 +101,7 @@ void check_agents_at_base()
     GS_ASSERT(vox != NULL);
     if (vox != NULL) r = vox->get_radius();
 
-    agent_list->objects_within_sphere(p.x, p.y, p.z, r);
+    agent_list->objects_within_sphere(p, r);
     for (size_t i=0; i<agent_list->n_filtered; i++)
     {
         Agents::Agent* a = agent_list->filtered_objects[i];
@@ -110,13 +110,13 @@ void check_agents_at_base()
     }
 }
 
-void damage_objects_within_sphere(struct Vec3 p, float radius,
+void damage_objects_within_sphere(const Vec3& p, float radius,
                                   int damage, AgentID owner,
                                   EntityType inflictor_type, int inflictor_id,
                                   bool suicidal)   // defaults to true; if not suicidal, agent's with id==owner will be skipped
 {
     using Agents::agent_list;
-    agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
+    agent_list->objects_within_sphere(p, radius);
     const float blast_mean = 0.0f;
     const float blast_stddev = 1.0f;
     for (size_t i=0; i<agent_list->n_filtered; i++)
@@ -124,7 +124,7 @@ void damage_objects_within_sphere(struct Vec3 p, float radius,
         Agents::Agent* a = agent_list->filtered_objects[i];
         if (a->id == agent_list->null_id) continue;
         if (!suicidal && a->id == owner) continue;
-        if (!a->point_can_cast(p.x, p.y, p.z, radius)) continue;  // cheap terrain cover check
+        if (!a->point_can_cast(p, radius)) continue;  // cheap terrain cover check
         int dmg = float(damage)*gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
         a->status.apply_damage(dmg, owner, inflictor_type);
     }

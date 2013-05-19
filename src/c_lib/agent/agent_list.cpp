@@ -26,7 +26,7 @@ void AgentList::update_map_manager_positions()
     for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
-        struct Vec3 p = this->objects[i].camera.get_position();
+        Vec3 p = this->objects[i].camera.get_position();
         if (!this->objects[i].camera_ready)
             p = this->objects[i].get_position();
         t_map::t_map_manager_update_client_position(this->objects[i].client_id, p.x, p.y);
@@ -270,8 +270,10 @@ void AgentList::quicksort_distance_desc(int beg, int end)
 
 void AgentList::sort_filtered_objects_by_distance(bool ascending)
 {
-    if (ascending) this->quicksort_distance_asc(0, this->n_filtered);
-    else this->quicksort_distance_desc(0, this->n_filtered);
+    if (ascending)
+        this->quicksort_distance_asc(0, this->n_filtered);
+    else
+        this->quicksort_distance_desc(0, this->n_filtered);
 }
 
 void AgentList::filter_none()
@@ -286,20 +288,17 @@ void AgentList::filter_none()
 }
 
 // have to override these because of Agent->s.x,y,z
-int AgentList::objects_within_sphere(float x, float y, float z, float radius)
+int AgentList::objects_within_sphere(const Vec3& position, float radius)
 {
-    x = translate_point(x);
-    y = translate_point(y);
+    const Vec3 p = translate_position(position);
     unsigned int num = 0;
-    float dist;
-    const float radius_squared = radius*radius;
+    const float radius_squared = radius * radius;
     for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id) continue;
-        Vec3 p = this->objects[i].get_position();
-        p.x = quadrant_translate_f(x, p.x);
-        p.y = quadrant_translate_f(y, p.y);
-        dist = distancef_squared(x,y,z, p.x, p.y, p.z);
+        Vec3 q = this->objects[i].get_position();
+        q = quadrant_translate_position(p, q);
+        float dist = vec3_distance_squared(p, q);
         if (dist < radius_squared)
         {   // agent in sphere
             this->filtered_objects[num] = &this->objects[i];
@@ -312,20 +311,17 @@ int AgentList::objects_within_sphere(float x, float y, float z, float radius)
 }
 
 // have to override these because of Agent->s.x,y,z
-int AgentList::object_models_within_sphere(float x, float y, float z, float radius)
+int AgentList::object_models_within_sphere(const Vec3& position, float radius)
 {
-    x = translate_point(x);
-    y = translate_point(y);
+    const Vec3 p = translate_position(position);
     unsigned int num = 0;
-    float dist;
     const float radius_squared = radius*radius;
     for (size_t i=0; i<this->max; i++)
     {
         if (this->objects[i].id == this->null_id || this->objects[i].vox == NULL) continue;
-        Vec3 p = this->objects[i].vox->get_center();
-        p.x = quadrant_translate_f(x, p.x);
-        p.y = quadrant_translate_f(y, p.y);
-        dist = distancef_squared(x,y,z, p.x, p.y, p.z);
+        Vec3 q = this->objects[i].vox->get_center();
+        q = quadrant_translate_position(p, q);
+        float dist = vec3_distance_squared(p, q);
         if (dist < radius_squared)
         {   // agent in sphere
             this->filtered_objects[num] = &this->objects[i];
@@ -338,59 +334,39 @@ int AgentList::object_models_within_sphere(float x, float y, float z, float radi
 }
 
 // origin, direction, cone threshold
-void AgentList::objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta)
+void AgentList::objects_in_cone(const Vec3& position, const Vec3& direction, float theta)
 {
-    x = translate_point(x);
-    y = translate_point(y);
+    Vec3 p = translate_position(position);
+    Vec3 v = vec3_normalize(direction);
     unsigned int num = 0;
-    float ax,ay,az;
-    float ip;
-    float arc;
-
-    float len = sqrtf(vx*vx + vy*vy + vz*vz);
-    vx /= len;
-    vy /= len;
-    vz /= len;
     for (size_t i=0; i<this->max; i++)
     {
         Agent* a = &this->objects[i];
-        if (a == NULL) continue;
+        if (a->id == this->null_id) continue;
 
-        Vec3 p = a->get_position();
-        p.x = quadrant_translate_f(x, p.x);
-        p.y = quadrant_translate_f(y, p.y);
-        ax = p.x - x;
-        ay = p.y - y;
-        az = p.z - z;
-
-        len = sqrtf(ax*ax + ay*ay + az*az);
-        ax /= len;
-        ay /= len;
-        az /= len;
-
-        ip = ax*vx + ay*vy + az*vz;
-        arc = abs(acosf(ip));
-
+        Vec3 q = quadrant_translate_position(p, a->get_position());
+        Vec3 at = vec3_normalize(vec3_sub(q, p));
+        float ip = vec3_dot(at, v);
+        float arc = abs(acosf(ip));
         if (arc < theta)
             filtered_objects[num++] = a;
     }
-
     this->n_filtered = num;
 }
 
-Agent* nearest_agent_in_range(const struct Vec3& position, const float radius)
+Agent* nearest_agent_in_range(const Vec3& position, float radius)
 {
     using Agents::agent_list;
-    int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    int n = agent_list->objects_within_sphere(position, radius);
     if (n <= 0) return NULL;
     agent_list->sort_filtered_objects_by_distance();
     return agent_list->filtered_objects[0];
 }
 
-Agent* nearest_living_agent_in_range(const struct Vec3& position, const float radius)
+Agent* nearest_living_agent_in_range(const Vec3& position, float radius)
 {
     using Agents::agent_list;
-    int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    int n = agent_list->objects_within_sphere(position, radius);
     if (n <= 0) return NULL;
     agent_list->sort_filtered_objects_by_distance();
     Agent* agent = NULL;
@@ -406,10 +382,10 @@ Agent* nearest_living_agent_in_range(const struct Vec3& position, const float ra
     return agent;
 }
 
-Agent* nearest_living_agent_model_in_range(const struct Vec3& position, const float radius)
+Agent* nearest_living_agent_model_in_range(const Vec3& position, float radius)
 {
     using Agents::agent_list;
-    int n = agent_list->object_models_within_sphere(position.x, position.y, position.z, radius);
+    int n = agent_list->object_models_within_sphere(position, radius);
     if (n <= 0) return NULL;
     agent_list->sort_filtered_objects_by_distance();
     Agent* agent = NULL;
@@ -425,11 +401,11 @@ Agent* nearest_living_agent_model_in_range(const struct Vec3& position, const fl
     return agent;
 }
 
-Agent* random_agent_in_range(const struct Vec3& position, const float radius)
+Agent* random_agent_in_range(const Vec3& position, float radius)
 {
     using Agents::agent_list;
     // find nearby players
-    int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    int n = agent_list->objects_within_sphere(position, radius);
     if (n == 0) return NULL;
 
     // target random nearby player

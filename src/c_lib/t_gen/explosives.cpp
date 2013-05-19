@@ -75,10 +75,10 @@ void create_explosion(const Vec3i& position)
         { 1, 0, 0 },
         { 0, 1, 0 },
         { 0, 0, 1 }};
-    static const struct Vec3 vsides[3] = {
-        vec3_init(1, 0, 0),
-        vec3_init(0, 1, 0),
-        vec3_init(0, 0, 1)};
+    //static const struct Vec3 vsides[3] = {
+        //vec3_init(1, 0, 0),
+        //vec3_init(0, 1, 0),
+        //vec3_init(0, 0, 1)};
 
     const struct Vec3 fp = vec3_add(vec3_init(position), vec3_init(0.5f));
 
@@ -93,7 +93,7 @@ void create_explosion(const Vec3i& position)
     for (int i=0; i<3; i++)
     for (int j=0; j<2; j++)
     {
-        bounds[i][j] = PLASMAGEN_BLAST_RADIUS;
+        bounds[i][j] = PLASMAGEN_BLOCK_BLAST_RADIUS;
         cubes[i][j] = EMPTY_CUBE;
     }
 
@@ -102,7 +102,7 @@ void create_explosion(const Vec3i& position)
     // for each axis. if the cube is solid, mark it and stop.
     // otherwish, damage objects within a sphere that fits inside the empty cube
     for (int i=0; i<3; i++)
-    for (int j=1; j<PLASMAGEN_BLAST_RADIUS; j++)
+    for (int j=1; j<PLASMAGEN_BLOCK_BLAST_RADIUS; j++)
     for (int k=0; k<2; k++)
     {
         Vec3i p;
@@ -146,17 +146,22 @@ void create_explosion(const Vec3i& position)
                 t_map::apply_damage_broadcast(p, PLASMAGEN_BLOCK_DAMAGE, TMA_PLASMAGEN);
         }
 
-    // hitscan all objects in paths
-    for (int i=0; i<3; i++)
-    for (int j=0; j<2; j++)
-    {
-        size_t n_hit = 0;
-        struct Vec3 end = vec3_add(fp, vec3_scalar_mult(vsides[i], bounds[i][j]+0.5f));
-        class Voxels::VoxelHitscanTarget* targets = ServerState::voxel_hitscan_list->hitscan_all(fp, end, &n_hit);
-        if (targets == NULL) continue;
-        for (size_t k=0; k<n_hit; k++)
-            Hitscan::damage_target(&targets[k], OBJECT_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);
-    }
+    // do radial damage to all things nearby
+    ServerState::damage_objects_within_sphere(
+        fp, PLASMAGEN_OBJECT_BLAST_RADIUS, PLASMAGEN_ENTITY_DAMAGE, NULL_AGENT,
+        OBJECT_PLASMAGEN, -1);
+
+    //// hitscan all objects in paths
+    //for (int i=0; i<3; i++)
+    //for (int j=0; j<2; j++)
+    //{
+        //size_t n_hit = 0;
+        //struct Vec3 end = vec3_add(fp, vec3_scalar_mult(vsides[i], bounds[i][j]+0.5f));
+        //class Voxels::VoxelHitscanTarget* targets = ServerState::voxel_hitscan_list->hitscan_all(fp, end, &n_hit);
+        //if (targets == NULL) continue;
+        //for (size_t k=0; k<n_hit; k++)
+            //Hitscan::damage_target(&targets[k], OBJECT_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);
+    //}
 }
 
 }   // t_gen

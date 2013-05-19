@@ -15,7 +15,7 @@ Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,
 {
     // find agents in range
     using Agents::agent_list;
-    agent_list->objects_within_sphere(firing_position.x, firing_position.y, firing_position.z, range);
+    agent_list->objects_within_sphere(firing_position, range);
     if (!agent_list->n_filtered) return NULL;
 
     MALLOX(unsigned int, chosen, agent_list->n_filtered); //type, name, size
@@ -52,7 +52,7 @@ Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,
                                  const float range)
 { // find agents in range
     using Agents::agent_list;
-    agent_list->objects_within_sphere(firing_position.x, firing_position.y, firing_position.z, range);
+    agent_list->objects_within_sphere(firing_position, range);
     if (!agent_list->n_filtered) return NULL;
     Agents::Agent* agent = NULL;
     size_t i=0;

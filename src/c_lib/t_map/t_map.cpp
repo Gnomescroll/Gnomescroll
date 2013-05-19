@@ -192,7 +192,11 @@ void apply_damage_broadcast(const Vec3i& position, int dmg, TerrainModificationA
     t_mech::handle_block_removal(p);    //block removal
 
     // always explode explosives with force
-    if (isExplosive(cube_type)) action = TMA_PLASMAGEN;
+    if (isExplosive(cube_type))
+    {
+        handle_explosive_block(p);
+        action = TMA_PLASMAGEN;
+    }
 
     // block_action packet expects final value of cube, not initial value
     map_history->send_block_action(p, EMPTY_CUBE, action);

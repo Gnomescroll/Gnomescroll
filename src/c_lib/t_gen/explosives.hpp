@@ -3,7 +3,8 @@
 namespace t_gen
 {
 
-const int PLASMAGEN_BLAST_RADIUS = 12;
+const int PLASMAGEN_BLOCK_BLAST_RADIUS = 12;
+const float PLASMAGEN_OBJECT_BLAST_RADIUS = 6.0f;
 const int PLASMAGEN_BLOCK_DAMAGE = 220; // max dmg on block is 254
 const int PLASMAGEN_ENTITY_DAMAGE = 150;
 const int LANDMINE_DAMAGE = 180;
