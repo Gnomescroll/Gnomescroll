@@ -126,6 +126,8 @@ static bool _mech_update(struct Mech &m)
     class MechAttribute* ma = get_mech_attribute(m.type);
     m.render_type = ma->render_type;
 
+    m.size = 1.0f;  //diameter
+
     switch (ma->class_type)
     {
         case MECH_CRYSTAL:
@@ -154,6 +156,8 @@ static bool _mech_update(struct Mech &m)
             m.size = 1.0f;  //diameter
             break;
         case MECH_WALL_OBJECT:
+            m.size = 1.0f;  //diameter
+
             break;
         case MECH_WIRE:
         case MECH_SWITCH:

@@ -210,7 +210,31 @@ void Camera::world_projection()
     );
     // DEPRECATE GLU
 
+    //glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
+
+    glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
+
+    double uxd, uyd, uzd;
+
+    double offset = 0.1*randf();
+
+    uxd = offset*model_view_matrix_dbl[4*2+0];
+    uyd = offset*model_view_matrix_dbl[4*2+1];
+    uzd = offset*model_view_matrix_dbl[4*2+2];
+
+    model_view_matrix_dbl[4*3+0] += uxd;
+    model_view_matrix_dbl[4*3+1] += uyd;
+    model_view_matrix_dbl[4*3+2] += uzd;
+
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixd(model_view_matrix_dbl);
+
+
+    //glSetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
+
     update_camera_matrices();
+
 
     //right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
     //up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );

@@ -692,6 +692,7 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
 
 void MechListRenderer::push_render_type_3(const struct Mech &m)
 {
+    //printf("WTF\n");
 /*
     static const float vin[72] =
     {
