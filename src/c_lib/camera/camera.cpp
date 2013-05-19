@@ -214,18 +214,27 @@ void Camera::world_projection()
 
     glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
 
-    double uxd, uyd, uzd;
+    //ZSHAKE
+    const double zshake = 0.1*randf(); //how much to shake up/down
 
-    double offset = 0.1*randf();
-
-    uxd = offset*model_view_matrix_dbl[4*2+0];
-    uyd = offset*model_view_matrix_dbl[4*2+1];
-    uzd = offset*model_view_matrix_dbl[4*2+2];
+    double uxd = zshake*model_view_matrix_dbl[4*2+0];
+    double uyd = zshake*model_view_matrix_dbl[4*2+1];
+    double uzd = zshake*model_view_matrix_dbl[4*2+2];
 
     model_view_matrix_dbl[4*3+0] += uxd;
     model_view_matrix_dbl[4*3+1] += uyd;
     model_view_matrix_dbl[4*3+2] += uzd;
 
+    //YSHAKE
+    const double yshake = 0.1*randf(); //how much to shake left/right
+
+    double rxd = yshake*model_view_matrix_dbl[4*1+0];
+    double ryd = yshake*model_view_matrix_dbl[4*1+1];
+    double rzd = yshake*model_view_matrix_dbl[4*1+2];
+
+    model_view_matrix_dbl[4*3+0] += rxd;
+    model_view_matrix_dbl[4*3+1] += ryd;
+    model_view_matrix_dbl[4*3+2] += rzd;
 
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixd(model_view_matrix_dbl);
