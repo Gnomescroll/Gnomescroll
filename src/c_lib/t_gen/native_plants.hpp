@@ -3,7 +3,7 @@
 #include <t_mech/_interface.hpp>
 
 #if DC_CLIENT
-# error Don't include this file in the client
+# error Do not include this file in the client
 #endif
 
 namespace t_gen

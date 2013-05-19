@@ -1,7 +1,7 @@
 #include "drop_dat.hpp"
 
 #if DC_CLIENT
-# error Don't include this file in the client
+# error Do not include this file in the client
 #endif
 
 #include <item/properties.hpp>

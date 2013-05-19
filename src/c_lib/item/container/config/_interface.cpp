@@ -44,7 +44,7 @@ static class ContainerAttribute* c = NULL;
 
 
 static void container_def(const char* name)
-{   // Don't call this directly
+{   // Do not call this directly
     c = container_attributes->get_next();
     GS_ASSERT_ABORT(c != NULL);
     IF_ASSERT(c == NULL) return;

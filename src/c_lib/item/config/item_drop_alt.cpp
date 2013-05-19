@@ -1,7 +1,7 @@
 #include "item_drop_alt.hpp"
 
 #if DC_CLIENT
-# error Don't include this file in the client
+# error Do not include this file in the client
 #endif
 
 #include <item/item.hpp>

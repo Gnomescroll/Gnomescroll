@@ -33,11 +33,11 @@
 #endif
 
 #ifdef GS_SERIALIZER
-# error Don't define GS_SERIALIZER in the client
+# error Do not define GS_SERIALIZER in the client
 #endif
 
 #ifdef DC_SERVER
-# error Don't include this file in the server
+# error Do not include this file in the server
 #endif
 
 #include <stdio.h>

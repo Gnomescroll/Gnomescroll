@@ -4,7 +4,7 @@
 #include <common/compat_gl.h>
 #include <SDL/shader_loader.hpp>
 
-// Note: Don't load surfaces via arguments, you must return SDL_Surface*
+// Note: Do not load surfaces via arguments, you must return SDL_Surface*
 
 GLenum get_texture_format(SDL_Surface* surface)
 {

@@ -130,7 +130,7 @@ static long long int parse_int(const char* str, bool& err)
 }
 
 bool is_valid_name_char(char c)
-{   // For string names used in configs. Don't fuck with this
+{   // For string names used in configs. Do not fuck with this
     return (isalnum(c) || c == '_' || c == '-');
 }
 

@@ -1,7 +1,7 @@
 #include "shrapnel.hpp"
 
 #if DC_SERVER
-# error Don't include this file in the server
+# error Do not include this file in the server
 #endif
 
 #include <physics/vec3.hpp>

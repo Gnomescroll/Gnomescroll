@@ -11,7 +11,6 @@
 class player_agent_snapshot_StoC: public FixedSizeNetPacketToClient<player_agent_snapshot_StoC>
 {
     public:
-        uint8_t id;
         uint8_t seq;
 
         float x,y,z;
@@ -20,7 +19,6 @@ class player_agent_snapshot_StoC: public FixedSizeNetPacketToClient<player_agent
 
     inline void packet(char* buff, unsigned int* buff_n, bool pack)
     {
-        pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
         pack_u8(&seq, buff, buff_n, pack);
 
         pack_float(&x, buff, buff_n, pack);

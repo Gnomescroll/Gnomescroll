@@ -138,7 +138,6 @@ void Agent::handle_control_state(int seq, int cs, float theta, float phi)
 
     #if DC_SERVER
     class player_agent_snapshot_StoC p;
-    p.id = id;
     p.seq = cs_seq;
     p.x = s.x;
     p.y = s.y;
