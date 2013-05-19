@@ -46,7 +46,7 @@ struct Vec3 AgentState::lateral_vector()
     return vec3_euler_rotation(vec3_init(1, 0, 0), theta, 0.0f, 0.0f);
 }
 
-void Agent::teleport(float x,float y,float z)
+void Agent::teleport(float x, float y, float z)
 {
     this->set_position(x,y,z);
 
