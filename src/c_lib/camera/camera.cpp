@@ -79,6 +79,7 @@ void teardown_cameras()
 
 #define CAMERA_ZOOM_FACTOR 2.0f
 Camera::Camera() :
+    shake_force(0.0f), shake_cooldown_rate(0.01f),
     zoomed(false), zoom_factor(CAMERA_ZOOM_FACTOR)
 {
     const float Z_NEAR = 0.1f;
@@ -136,18 +137,18 @@ void Camera::set_projection(float x, float y, float z, float theta, float phi)
 
 void Camera::set_dimensions()
 {
-    x_size = _xresf;
-    y_size = _yresf;
-    ratio = x_size / y_size;
+    this->x_size = _xresf;
+    this->y_size = _yresf;
+    this->ratio = x_size / y_size;
 }
 
 void Camera::set_position(struct Vec3 p)
 {
     this->position = translate_position(p);
     GS_ASSERT(is_boxed_position(this->position));
-    if (this->is_current()) current_camera_position = this->position;
     if (this->is_current())
     {
+        current_camera_position = this->position;
         GS_ASSERT(vec3_equal(this->position, current_camera_position));
     }
 }
@@ -160,7 +161,7 @@ void Camera::pan(float dx, float dy)
     if (theta > 1.0f) theta -= 2.0f;
     else if (theta < -1.0f) theta += 2.0f;
 
-    // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
+    // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.49f
     // Camera behavior when looking straight up or down is fucked up otherwise
     if (phi > 0.49f) phi = 0.49f;
     else if (phi < -0.49f) phi = -0.49f;
@@ -179,6 +180,33 @@ void Camera::move(float dx, float dy, float dz)
     this->set_position(vec3_init(x,y,z));
 }
 
+void Camera::shake(float force)
+{
+    this->shake_force = force;
+    const int SHAKE_COOLDOWN_RATE = ONE_SECOND / 2;
+    this->shake_cooldown_rate = force * (1.0f/SHAKE_COOLDOWN_RATE);
+}
+
+void Camera::tick()
+{   // decrease shake force
+    this->shake_force -= this->shake_cooldown_rate;
+    this->shake_force = GS_MAX(this->shake_force, 0.0f);
+}
+
+Vec3 Camera::apply_shake(const Vec3& look, const Vec3& right, const Vec3& up)
+{
+    if (this->shake_force <= 0) return this->position;
+    float xshake = this->shake_force*(2*randf()-1); //how much to shake left/right
+    float yshake = this->shake_force*(2*randf()-1); //how much to shake forward/back
+    float zshake = this->shake_force*(2*randf()-1); //how much to shake up/down
+
+    Vec3 s = vec3_init(0);
+    s = vec3_add(s, vec3_scalar_mult(look, xshake)); //shake vector
+    s = vec3_add(s, vec3_scalar_mult(right, yshake)); //shake vector
+    s = vec3_add(s, vec3_scalar_mult(up, zshake));
+    return vec3_add(this->position, s);
+}
+
 void Camera::world_projection()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -191,104 +219,20 @@ void Camera::world_projection()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    Vec3 look = vec3_init(1.0f, 0.0f, 0.0f);
-    Vec3 right = vec3_init(0.0f, 1.0f, 0.0f);
-    Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
+    Vec3 look = this->forward_vector();
+    Vec3 right = this->right_vector();
+    Vec3 up = this->up_vector();
 
-    //look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
-    look = vec3_euler_rotation(look, theta, phi, 0.0f);
-
-    float x = this->position.x;
-    float y = this->position.y;
-    float z = this->position.z;
-
-
-//    const double zshake = 0.0*randf(); //how much to shake up/down
-    Vec3 _f = vec3_euler_rotation(look, theta, phi, 0.0f);
-    Vec3 _r = vec3_euler_rotation(right, theta, phi, 0.0f);
-    Vec3 _u = vec3_euler_rotation(up, theta, phi, 0.0f);
-
-    //static double yshake = 0.0;
-    float xshake = .1*randf(); //how much to shake left/right
-    float yshake = .1*randf(); //how much to shake left/right
-    float zshake = .1*randf(); //how much to shake left/right
-
-    Vec3 _s = vec3_init(0.0f,0.0f,0.0f);
-    _s = vec3_add(_s, vec3_scalar_mult(_f, xshake)); //shake vector
-    _s = vec3_add(_s, vec3_scalar_mult(_r, yshake)); //shake vector
-    _s = vec3_add(_s, vec3_scalar_mult(_u, zshake));
-
-
-    x += _s.x; //add in shake
-    y += _s.y;
-    z += _s.z;
-
-    gluLookAt(
-        x,y,z,
-        x + look.x, y + look.y, z + look.z,
-        up.x, up.y, up.z
-    );
-
-
-    // DEPRECATE GLU
-
-    //glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
-
-/*
-    glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
-
-    //ZSHAKE
-    const double zshake = 0.0*randf(); //how much to shake up/down
-
-    double uxd = zshake*model_view_matrix_dbl[4*2+0];
-    double uyd = zshake*model_view_matrix_dbl[4*2+1];
-    double uzd = zshake*model_view_matrix_dbl[4*2+2];
-
-    model_view_matrix_dbl[4*3+0] += uxd;
-    model_view_matrix_dbl[4*3+1] += uyd;
-    model_view_matrix_dbl[4*3+2] += uzd;
-
-    //YSHAKE
-    static double yshake = 0.0;
-
-    yshake += .01*randf(); //how much to shake left/right
-
-    double rxd = yshake*model_view_matrix_dbl[4*1+0];
-    double ryd = yshake*model_view_matrix_dbl[4*1+1];
-    double rzd = yshake*model_view_matrix_dbl[4*1+2];
-
-    model_view_matrix_dbl[4*3+0] += rxd;
-    model_view_matrix_dbl[4*3+1] += ryd;
-    model_view_matrix_dbl[4*3+2] += rzd;
-
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixd(model_view_matrix_dbl);
-*/
-
-    //glSetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
+    Vec3 p = this->apply_shake(look, right, up);
+    Vec3 glu_look = vec3_add(p, look);
+    gluLookAt(p.x, p.y, p.z, glu_look.x, glu_look.y, glu_look.z, 0, 0, 1);
 
     update_camera_matrices();
 
-
-    //right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
-    //up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
-
-    right = vec3_euler_rotation(right, theta, phi, 0.0f);
-    up = vec3_euler_rotation(up, theta, phi, 0.0f);
-
-    //printf("V: theta= %f phi= %f \n", theta, phi);
-    //vec3_print(look);
-    //vec3_print(right);
-    //vec3_print(up);
-
     setup_fulstrum(fov, ratio, z_far, this->position, look, right, up);
+    setup_fulstrum2(fov, ratio, z_near,z_far, this->position, look, right, up);
 
-    setup_fulstrum2(
-        fov, ratio, z_near,z_far,
-        this->position, look, right, up);
-
-    glColor3ub(255, 255, 255);
+    glColor4ub(255, 255, 255, 255);
 }
 
 void Camera::set_angles(float theta, float phi)
@@ -386,4 +330,10 @@ void update_camera_settings(float view_distance)
     CAMERA_VIEW_DISTANCE = view_distance;
     CAMERA_VIEW_DISTANCE_SQUARED = view_distance*view_distance;
     printf("Camera view distance : %0.2f\n", view_distance);
+}
+
+void tick_cameras()
+{
+    agent_camera->tick();
+    free_camera->tick();
 }

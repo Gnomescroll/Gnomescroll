@@ -344,7 +344,7 @@ void draw_tick()
 
     poll_mouse();
     Particle::billboard_text_list->draw();  //enables and disables GL_BLEND
-    
+
     glEnable(GL_BLEND);
 
     t_mech::draw_transparent();
@@ -493,6 +493,8 @@ int physics_tick()
 
         Components::position_physics_component_list->call();
         Components::position_momentum_physics_component_list->call();
+
+        tick_cameras();
 
         poll_mouse();
         _SET_LAST_TICK();

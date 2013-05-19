@@ -105,6 +105,7 @@ void AgentEvent::took_damage(int amount)
     {
         if (!Sound::is_active(this->last_hurt_sound))
             this->last_hurt_sound = Sound::play_2d_sound(sound_str);
+        agent_camera->shake(0.01f * amount);
     }
     else
     {
@@ -142,6 +143,7 @@ void AgentEvent::died()
         {
             close_all_containers();
             //Sound::play_2d_sound("died");
+            agent_camera->shake(0.0f);
         }
         //else
         //{

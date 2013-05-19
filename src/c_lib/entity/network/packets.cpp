@@ -258,10 +258,10 @@ inline void object_shot_nothing_StoC::handle()
     Sound::play_3d_sound("turret_shoot", position);
 }
 
-//#define GET_COMPONENT_INTERFACE(type, object) \
+//#define GET_COMPONENT_INTERFACE(type, object)
     //(type##Component*)object->get_component_interface(COMPONENT_INTERFACE_##type);
 
-//#define GET_COMPONENT(type, object) \
+//#define GET_COMPONENT(type, object)
     //(type##Component*)object->get_component(COMPONENT_##type);
 
 

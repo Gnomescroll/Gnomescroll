@@ -15,6 +15,11 @@ class Camera
 {
     private:
         struct Vec3 position;
+        float shake_force;
+        float shake_cooldown_rate;
+
+    Vec3 apply_shake(const Vec3& f, const Vec3& r, const Vec3& u);
+
     public:
         float x_size,y_size;
         float ratio;
@@ -32,6 +37,9 @@ class Camera
     void set_dimensions();  // sets x_size,y_size and ratio from window resolution
     void move(float dx, float dy, float dz);
     void set_angles(float theta, float phi);
+
+    void shake(float force);
+    void tick();
 
     void set_position(struct Vec3 p);
     struct Vec3 get_position() const
@@ -90,3 +98,5 @@ void use_free_camera();
 void update_agent_camera();
 void world_projection();
 void hud_projection();
+
+void tick_cameras();
