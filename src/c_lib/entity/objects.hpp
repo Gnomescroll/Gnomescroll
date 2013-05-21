@@ -27,4 +27,7 @@ void stress_test();
 
 void send_to_client(ClientID client_id);
 
+void spawn_monsters(EntityType type, int n);
+void spawn_slimes(int n);
+
 } // Entities

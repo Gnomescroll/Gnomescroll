@@ -51,4 +51,67 @@ void stress_test()
     printf("Stress test done. Created and destroyed %d objects of type %d\n", iters*ttl, type);
 }
 
+static Vec3 get_default_spawn_position(Entity* object)
+{
+    int h = 1;
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    if (dims != NULL) h = dims->get_integer_height();
+    Vec3i position = vec3i_init(0);
+    int tries = 0;
+    const int MAX_TRIES = 10;
+    do
+    {
+        position.x = randrange(0, map_dim.x - 1);
+        position.y = randrange(0, map_dim.y - 1);
+        int z = randrange(1, map_dim.z-1);
+        position.z = t_map::get_nearest_surface_block(position.x, position.y, z, h);
+    } while (position.z <= 0 && tries < MAX_TRIES);
+    if (tries == MAX_TRIES)
+        position.z = t_map::get_highest_open_block(0, 0);
+    return vec3_add(vec3_init(position), vec3_init(0.5f, 0.5f, 0.0f));
+}
+
+static Vec3 get_slime_spawn_position(Entity* slime)
+{   // spawn the slime underground
+    Vec3 position = get_default_spawn_position(slime);
+    int z = position.z - 1;
+    while (z >= 0 && !t_map::isSolid(position.x, position.y, z))
+        z--;
+    if (z < 0)
+        return vec3_init(0);
+    position.z = z;
+    return position;
+}
+
+static void spawn_monsters(EntityType type, int n, Vec3 (*get_spawn_position)(Entity* object))
+{
+    int count = Entities::count(type);
+    for (int i=0; i<n-count; i++)
+    {
+        Entities::Entity* obj = Entities::create(type);
+        if (obj == NULL) break;
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        IF_ASSERT(physics == NULL)
+        {
+            Entities::destroy(obj);
+            break;
+        }
+        Vec3 position = get_spawn_position(obj);
+        physics->set_position(position);
+        Entities::ready(obj);
+    }
+}
+
+void spawn_monsters(EntityType type, int n)
+{
+    spawn_monsters(type, n, &get_default_spawn_position);
+}
+
+void spawn_slimes(int n)
+{
+    spawn_monsters(OBJECT_MONSTER_SLIME, n, &get_slime_spawn_position);
+}
+
 } // Entities

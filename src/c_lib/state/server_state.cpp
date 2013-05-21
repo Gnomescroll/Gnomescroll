@@ -145,42 +145,5 @@ void spawn_items(int n)
     ItemParticle::create_item_particle(type, p, vec3_init(0, 0, -3));
 }
 
-// TODO -- move this
-void spawn_monsters(EntityType type, int n)
-{
-    int count = Entities::count(type);
-    for (int i=0; i<n-count; i++)
-    {
-        Entities::Entity* obj = Entities::create(type);
-        if (obj == NULL) break;
-
-        int h = 1;
-        using Components::DimensionComponent;
-        DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-        GS_ASSERT(dims != NULL);
-        if (dims != NULL) h = dims->get_integer_height();
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        Vec3 position;
-        int tries = 0;
-        const int MAX_TRIES = 100;
-        do
-        {
-            position.x = randrange(0, map_dim.x - 1);
-            position.y = randrange(0, map_dim.y - 1);
-            int z = randrange(1, map_dim.z-1);
-            position.z = t_map::get_nearest_surface_block(position.x, position.y, z, h);
-        } while (position.z <= 0 && tries < MAX_TRIES);
-        if (tries == MAX_TRIES || physics == NULL)
-        {
-            Entities::ready(obj);
-            Entities::destroy(obj);
-            break;
-        }
-        physics->set_position(position);
-        Entities::ready(obj);
-    }
-}
-
 }   // ServerState
 

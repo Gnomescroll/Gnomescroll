@@ -9,7 +9,7 @@
 namespace Entities
 {
 
-static void go_to_next_destination(class Entity* object)
+static void go_to_next_destination(Entity* object)
 {
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -29,7 +29,7 @@ static void go_to_next_destination(class Entity* object)
     physics->set_angles(angles);
 }
 
-static void waiting_to_in_transit(class Entity* object)
+static void waiting_to_in_transit(Entity* object)
 {
     go_to_next_destination(object);
     using Components::StateMachineComponent;
@@ -37,14 +37,14 @@ static void waiting_to_in_transit(class Entity* object)
     state->state = STATE_IN_TRANSIT;
 }
 
-static void waiting_to_chase_agent(class Entity* object)
+static void waiting_to_chase_agent(Entity* object)
 {   // assumes target already locked
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_CHASE_AGENT;
 }
 
-static void in_transit_to_waiting(class Entity* object)
+static void in_transit_to_waiting(Entity* object)
 {
     using Components::WaitingComponent;
     WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
@@ -55,14 +55,14 @@ static void in_transit_to_waiting(class Entity* object)
     state->state = STATE_WAITING;
 }
 
-static void in_transit_to_chase_agent(class Entity* object)
+static void in_transit_to_chase_agent(Entity* object)
 {   // assumes target already locked
     using Components::StateMachineComponent;
     StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
     state->state = STATE_CHASE_AGENT;
 }
 
-static void chase_agent_to_waiting(class Entity* object)
+static void chase_agent_to_waiting(Entity* object)
 {
     using Components::WaitingComponent;
     WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
@@ -73,12 +73,12 @@ static void chase_agent_to_waiting(class Entity* object)
     state->state = STATE_WAITING;
 }
 
-static void chase_agent_to_in_transit(class Entity* object)
+static void chase_agent_to_in_transit(Entity* object)
 {   // unused
     GS_ASSERT(false);
 }
 
-static void waiting(class Entity* object)
+static void waiting(Entity* object)
 {
     using Components::WaitingComponent;
     WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
@@ -87,7 +87,7 @@ static void waiting(class Entity* object)
         waiting_to_in_transit(object);
 }
 
-static void in_transit(class Entity* object)
+static void in_transit(Entity* object)
 {
     using Components::DestinationTargetingComponent;
     DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)object->get_component(COMPONENT_DESTINATION_TARGETING);
@@ -115,8 +115,9 @@ static void in_transit(class Entity* object)
     }
 }
 
-static void chase_agent(class Entity* object)
-{
+static void chase_agent(Entity* object)
+{   // TODO -- write a method that switches to STATE_WAITING under certain conditions
+    // for slimes, this would be if we travelled too far from our original spawn location
     using Components::AgentTargetingComponent;
     AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
 
