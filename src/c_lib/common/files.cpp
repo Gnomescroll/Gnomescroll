@@ -330,9 +330,6 @@ void get_home_directory(char*& home)
 
     #ifdef __WIN32__
     // Window appdata / user home directory
-    # if (sizeof(LPCTSTR) == sizeof(wchar_t))
-    #  error unicode must be disabled
-    # endif
     home = (char*)calloc(MAX_PATH+1, sizeof(*home));
     HRESULT result = SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL,
                                      SHGFP_TYPE_CURRENT, home);
