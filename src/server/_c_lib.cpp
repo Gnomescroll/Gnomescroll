@@ -33,9 +33,7 @@
 #endif
 
 #ifdef __WIN32__
-# if UNICODE
-#  error unicode must be disabled
-# endif
+# define UNICODE 0
 //# define NTDDI_VERSION NTDDI_WINXP
 //# define WINVER _WIN32_WINNT_WINXP
 //# define _WIN32_WINNT _WIN32_WINNT_WINXP
