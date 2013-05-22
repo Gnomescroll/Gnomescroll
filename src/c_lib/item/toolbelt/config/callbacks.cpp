@@ -446,6 +446,7 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
     int side = a->get_facing_side(sp, op, &distance);
     if (side < 0) return;
 
+#if 0
     MechType mech_type1 = t_mech::get_mech_type_dat("iridium_solar_cell");
     MechType mech_type2 = t_mech::get_mech_type_dat("iridium_power_converter");
 
@@ -454,6 +455,12 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
     MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
 
     if (code != MCF_OK)
+    if(code != 0)
+        t_mech::print_mech_create_failure_code(code);
+#endif
+
+    MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
+    MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
         t_mech::print_mech_create_failure_code(code);
 }
 
