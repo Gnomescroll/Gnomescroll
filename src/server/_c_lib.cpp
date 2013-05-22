@@ -14,12 +14,25 @@
 //# define NTDDI_VERSION NTDDI_WINXP
 //# define WINVER _WIN32_WINNT_WINXP
 //# define _WIN32_WINNT _WIN32_WINNT_WINXP
-# undef _WIN32_IE
+# ifndef _WIN32_IE
+#  define _WIN32_IE _WIN32_IE_IE50
+# endif
 # define _WIN32_IE _WIN32_IE_IE50
 # undef UNICODE
 # ifdef UNICODE
 #  error UNICODE must be disabled
 # endif
+#endif
+
+
+#ifdef __MSVC__
+# include "stdafx.h"
+# include <direct.h>
+# define getcwd _getcwd
+# define chdir _chdir
+# include <windows.h>
+# include <winbase.h> // usleep function
+# include <tchar.h>
 #endif
 
 #include <stdio.h>
@@ -287,7 +300,7 @@ void init_configs()
     Attributes::verify();
 }
 
-int init_c_lib(int argc, char* argv[])
+int init_c_lib(int argc, const char* argv[])
 {
     static int inited = 0;
     GS_ASSERT_ABORT(!(inited++));

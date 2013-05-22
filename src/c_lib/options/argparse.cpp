@@ -182,7 +182,7 @@ void register_string_option(const char* key, char** addr, const char* val)
 
 /* Public Interface */
 
-int parse_args(int argc, char* argv[])
+int parse_args(int argc, const char* argv[])
 {
     if (argc < 2) return 0;
 
@@ -196,9 +196,8 @@ int parse_args(int argc, char* argv[])
     int n=0;
     for (int i=start; i<argc; i++)
     {
-        char* str = argv[i];
-        GS_ASSERT(str[0] != '\0');
-        if (str[0] == '\0') continue;
+        const char* str = argv[i];
+        IF_ASSERT(str[0] == '\0') continue;
         if (str[0] != '-')
         {
             printf("Invalid argument style: %s\n", str);

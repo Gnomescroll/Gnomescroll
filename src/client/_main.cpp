@@ -38,7 +38,7 @@ void time_since(int n)
 
 void wait_for_login();  // forward decl
 
-void init(int argc, char* argv[])
+void init(int argc, const char* argv[])
 {
 
     //class t_mech::MeshLoader ML;

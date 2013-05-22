@@ -44,12 +44,17 @@
 //# define NTDDI_VERSION NTDDI_WINXP
 //# define WINVER _WIN32_WINNT_WINXP
 //# define _WIN32_WINNT _WIN32_WINNT_WINXP
-# undef _WIN32_IE
-# define _WIN32_IE _WIN32_IE_IE50
+# ifndef _WIN32_IE
+#  define _WIN32_IE _WIN32_IE_IE50
+# endif
 # undef UNICODE
 # ifdef UNICODE
 #  error UNICODE must be disabled
 # endif
+#endif
+
+#if __MSVC__
+# include "stdafx.h"
 #endif
 
 #include <stdio.h>
@@ -362,7 +367,7 @@ void init_configs()
     Attributes::verify();
 }
 
-int init_c_lib(int argc, char* argv[])
+int init_c_lib(int argc, const char* argv[])
 {
     /*
         Time startup functions to determine delay/slow down

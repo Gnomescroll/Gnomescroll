@@ -151,7 +151,7 @@ void init_world()
     srand((unsigned int)time(NULL));
 }
 
-void init(int argc, char* argv[])
+void init(int argc, const char* argv[])
 {
     init_c_lib(argc, argv);
 

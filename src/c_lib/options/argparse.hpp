@@ -20,6 +20,6 @@ void register_string_option(const char* key, char* val);
 
 /* Entrance */
 
-int parse_args(int argc, char* argv[]);
+int parse_args(int argc, const char* argv[]);
 
 }   // Options
