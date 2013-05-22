@@ -20,6 +20,7 @@ int get_block_damage(const Vec3i& position);
 struct MapElement get_element(const Vec3i& position);
 inline struct MapElement get_element(int x, int y, int z);
 
+CubeType set(const Vec3i& position, const char* cube);
 CubeType set(const Vec3i& position, CubeType cube_type);
 CubeType set(int x, int y, int z, CubeType cube_type);
 void set_fast(const Vec3i& position, CubeType cube_type);
@@ -81,6 +82,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 
 void broadcast_set_block_action(const Vec3i& position, CubeType cube_type, int action);
 bool broadcast_set_block(const Vec3i& position, CubeType cube_type);
+bool broadcast_set_block(const Vec3i& position, const char* cube);
 void broadcast_set_block_palette(const Vec3i& position, CubeType cube_type, int palette);
 void broadcast_set_block_palette(int x, int y, int z, CubeType block, int palette);
 void broadcast_set_palette(const Vec3i& position, int palette);

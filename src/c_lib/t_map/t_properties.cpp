@@ -4,7 +4,7 @@
 
 ALWAYS_INLINE bool isValid(CubeType cube_type)
 {
-    return (cube_type >= 0 && cube_type < MAX_CUBES);
+    return (cube_type >= 0 && cube_type < MAX_CUBES && cube_type != NULL_CUBE);
 }
 
 namespace t_map

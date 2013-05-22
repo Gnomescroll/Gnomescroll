@@ -453,9 +453,9 @@ void add_flora()
     const float FLORA_ZONE_THRESHOLD = 0.3f;
     const float FLORA_THRESHOLD = 0.8f;
     const CubeType reg = t_map::get_cube_type("regolith");
-    const MechType gr1 = t_mech::get_mech_type_dat("grass1");
-    const MechType gr2 = t_mech::get_mech_type_dat("grass2");
-    const MechType gr3 = t_mech::get_mech_type_dat("grass3");
+    const MechType gr1 = t_mech::get_mech_type("grass1");
+    const MechType gr2 = t_mech::get_mech_type("grass2");
+    const MechType gr3 = t_mech::get_mech_type("grass3");
     const int FLORA_TYPE_MAX = 3;
 
     float* noise = t_gen::create_2d_noise_array(PERSISTENCE, OCTAVES, map_dim.x, map_dim.y);

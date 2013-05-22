@@ -239,9 +239,9 @@ void tick()
     {
         const int min_plants = 1024;
         int count = 0;
-        count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_0"));
-        count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_1"));
-        count += t_mech::count_mech(t_mech::get_mech_type_dat("acadia_flower_stage_2"));
+        count += t_mech::count_mech(t_mech::get_mech_type("acadia_flower_stage_0"));
+        count += t_mech::count_mech(t_mech::get_mech_type("acadia_flower_stage_1"));
+        count += t_mech::count_mech(t_mech::get_mech_type("acadia_flower_stage_2"));
         if (count < min_plants)
             t_gen::place_native_plants(64);
     }

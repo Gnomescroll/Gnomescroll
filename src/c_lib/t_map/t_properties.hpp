@@ -116,7 +116,7 @@ CubeMaterial get_cube_material(CubeType cube_type);
 
 const char* get_cube_name(CubeType id);
 CubeType get_cube_type(const char* name);
-CubeType get_cube_type(CubeType id);
+CubeGroup get_cube_group(CubeType id);
 
 const char* get_cube_name_for_container(ItemContainerType container_type);
 CubeType get_cube_type_for_container(ItemContainerType container_type);

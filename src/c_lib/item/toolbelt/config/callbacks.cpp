@@ -442,25 +442,25 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
 
     Vec3i sp;
     Vec3i op;
-    float distance = 0;
+    float distance = 0.0f;
     int side = a->get_facing_side(sp, op, &distance);
     if (side < 0) return;
 
-#if 0
-    MechType mech_type1 = t_mech::get_mech_type_dat("iridium_solar_cell");
-    MechType mech_type2 = t_mech::get_mech_type_dat("iridium_power_converter");
+    //MechType mech_type1 = t_mech::get_mech_type("iridium_solar_cell");
+    //MechType mech_type2 = t_mech::get_mech_type("iridium_power_converter");
 
-    MechType mech_type = (rand() % 2) ? mech_type1 : mech_type2;
+    //MechType mech_type = (rand() % 2) ? mech_type1 : mech_type2;
 
+    //MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
+
+    //if (code != MCF_OK)
+        //t_mech::print_mech_create_failure_code(code);
+
+    MechType mech_type = t_mech::get_mech_type("light_crystal");
     MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
-
     if (code != MCF_OK)
         t_mech::print_mech_create_failure_code(code);
-#endif
 
-    MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
-    MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
-        t_mech::print_mech_create_failure_code(code);
 }
 
 #endif

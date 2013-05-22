@@ -193,7 +193,7 @@ class MechLightEffect
         if(c%6 == 0)
             counter++;
 
-        const MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
+        const MechType mech_type = t_mech::get_mech_type("light_crystal");
 
         const int mlm = mech_list->mlm;
         const struct Mech* mla = mech_list->mla;

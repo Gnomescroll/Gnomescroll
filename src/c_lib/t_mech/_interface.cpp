@@ -300,7 +300,7 @@ void force_mech_growth(int mech_id)
 
 void print_mech_create_failure_code(MechCreateFailureCode code)
 {
-    //if (code == MCF_OK) return;
+    if (code == MCF_OK) return;
     printf("Failed to create mech. Reason: ");
     switch (code)
     {
@@ -334,7 +334,7 @@ void print_mech_create_failure_code(MechCreateFailureCode code)
         case MCF_OTHER:
             printf("Unspecified");
         case MCF_OK:
-            printf("No Failure");
+            printf("Nevermind, no failure.");
             break;
         default:
             printf("UNKNOWN FAILURE CODE\n");
@@ -382,6 +382,10 @@ MechCreateFailureCode create_mech(const Vec3i& position, MechType type, int side
             ((char*)m.text)[i] = inc;
     }
 
+    static const MechType light_crystal = t_mech::get_mech_type("light_crystal");
+    if (isValid(light_crystal) && type == light_crystal)
+        t_map::broadcast_set_block(position, "mech_light_empty");
+
     mech_list->server_add_mech(m);
     return MCF_OK;
 }
@@ -402,7 +406,7 @@ MechCreateFailureCode create_crystal(const Vec3i& position, MechType type)
 
 MechCreateFailureCode can_place_mech(const Vec3i& position, MechType mech_type, int side)
 {
-    if (is_valid_z(position) || position.z == 0) return MCF_BAD_Z;
+    if (!is_valid_z(position) || position.z == 0) return MCF_BAD_Z;
     if (t_map::isSolid(position)) return MCF_SOLID_BLOCK;
     class MechAttribute* ma = get_mech_attribute(mech_type);
     if (ma == NULL)

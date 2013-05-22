@@ -53,6 +53,13 @@ CubeType set(const Vec3i& position, CubeType cube_type)
     return cube_type;
 }
 
+CubeType set(const Vec3i& position, const char* cube)
+{
+    CubeType cube_type = get_cube_type(cube);
+    IF_ASSERT(!isValid(cube_type)) return cube_type;
+    return set(position, cube_type);
+}
+
 CubeType get(int x, int y, int z)
 {
     return get(vec3i_init(x, y, z));
@@ -225,6 +232,13 @@ bool broadcast_set_block(const Vec3i& position, CubeType cube_type)
     set(p, cube_type);
     map_history->send_set_block(p, cube_type);
     return true;
+}
+
+bool broadcast_set_block(const Vec3i& position, const char* cube)
+{
+    CubeType cube_type = get_cube_type(cube);
+    IF_ASSERT(!isValid(cube_type)) return cube_type;
+    return broadcast_set_block(position, cube_type);
 }
 
 void broadcast_set_block_palette(const Vec3i& position, CubeType block, int palette)

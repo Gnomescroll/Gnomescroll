@@ -12,11 +12,11 @@ namespace t_gen
 void place_native_plants(int max)
 {
     const size_t n_plants = 5;
-    static const MechType plant_1 = t_mech::get_mech_type_dat("acadia_flower_stage_0");
-    static const MechType plant_2 = t_mech::get_mech_type_dat("acadia_flower_stage_1");
-    static const MechType plant_3 = t_mech::get_mech_type_dat("acadia_flower_stage_2");
-    static const MechType plant_4 = t_mech::get_mech_type_dat("cryptid_larvae_stage_0");
-    static const MechType plant_5 = t_mech::get_mech_type_dat("cryptid_larvae_stage_3");
+    static const MechType plant_1 = t_mech::get_mech_type("acadia_flower_stage_0");
+    static const MechType plant_2 = t_mech::get_mech_type("acadia_flower_stage_1");
+    static const MechType plant_3 = t_mech::get_mech_type("acadia_flower_stage_2");
+    static const MechType plant_4 = t_mech::get_mech_type("cryptid_larvae_stage_0");
+    static const MechType plant_5 = t_mech::get_mech_type("cryptid_larvae_stage_3");
     static const MechType plants[n_plants] = { plant_1, plant_2, plant_3,
                                                 plant_4, plant_5 };
     static const CubeType regolith = t_map::get_cube_type("regolith");
