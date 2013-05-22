@@ -8,9 +8,7 @@
 namespace Entities
 {
 
-using Components::Component;
-
-void Entity::add_component(int slot, class Component* component)
+void Entity::add_component(int slot, class Components::Component* component)
 {
     IF_ASSERT(slot < 0) return;
     IF_ASSERT(slot >= this->n_components) return;
@@ -20,7 +18,7 @@ void Entity::add_component(int slot, class Component* component)
 
 // returns component of type if available
 // must cast to desired component manually
-class Component* Entity::get_component(ComponentType type)
+class Components::Component* Entity::get_component(ComponentType type)
 {
     int slot = entity_data->get_component_slot(this->type, type);
     if (slot < 0) return NULL;
@@ -28,7 +26,7 @@ class Component* Entity::get_component(ComponentType type)
     return this->components[slot];
 }
 
-class Component* Entity::get_component_interface(ComponentInterfaceType interface)
+class Components::Component* Entity::get_component_interface(ComponentInterfaceType interface)
 {
     int slot = entity_data->get_component_interface_slot(this->type, interface);
     if (slot < 0) return NULL;
@@ -51,7 +49,7 @@ void Entity::init(int n_components)
     IF_ASSERT(n_components < 0) n_components = 0;
     this->n_components = n_components;
     if (n_components <= 0) return;
-    this->components = (class Component**)calloc(n_components, sizeof(class Component*));
+    this->components = (class Components::Component**)calloc(n_components, sizeof(*this->components));
 }
 
 Entity::~Entity()

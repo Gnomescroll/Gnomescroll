@@ -9,13 +9,11 @@ namespace Components { class Component; }   // forward decl
 namespace Entities
 {
 
-using Components::Component;
-
 class Entity
 {
     public:
         int n_components;
-        class Component** components;
+        class Components::Component** components;
 
         int id;
         EntityType type;
@@ -26,31 +24,31 @@ class Entity
         CreatePacketDelegate* create;
         StatePacketDelegate* state;
 
-        // network
-        void sendToClientCreate(ClientID client_id)
-        {
-            if (this->create != NULL) this->create->sendToClient(this, client_id);
-        }
-        void broadcastCreate()
-        {
-            if (this->create != NULL) this->create->broadcast(this);
-        }
-        void sendToClientState(ClientID client_id)
-        {
-            if (this->state != NULL) this->state->sendToClient(this, client_id);
-        }
-        void broadcastState()
-        {
-            if (this->state != NULL) this->state->broadcast(this);
-        }
-        void broadcastDeath();
+    // network
+    void sendToClientCreate(ClientID client_id)
+    {
+        if (this->create != NULL) this->create->sendToClient(this, client_id);
+    }
+    void broadcastCreate()
+    {
+        if (this->create != NULL) this->create->broadcast(this);
+    }
+    void sendToClientState(ClientID client_id)
+    {
+        if (this->state != NULL) this->state->sendToClient(this, client_id);
+    }
+    void broadcastState()
+    {
+        if (this->state != NULL) this->state->broadcast(this);
+    }
+    void broadcastDeath();
 
-        // components
-        void add_component(int slot, Component* component);
-        Component* get_component(ComponentType type);
-        Component* get_component_interface(ComponentInterfaceType interface);
+    // components
+    void add_component(int slot, class Components::Component* component);
+    class Components::Component* get_component(ComponentType type);
+    class Components::Component* get_component_interface(ComponentInterfaceType interface);
 
-        void init(int n_components);
+    void init(int n_components);
 
     ~Entity();
 

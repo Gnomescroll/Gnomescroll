@@ -7,6 +7,8 @@
 namespace Entities
 {
 
+using Components::Component;
+
 extern class EntityList* entity_list;
 extern class EntityDataList* entity_data;
 extern class EntityListFilter* filter;
