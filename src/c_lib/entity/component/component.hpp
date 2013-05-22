@@ -16,7 +16,7 @@ class Component
         int id;
         ComponentType type;
         ComponentInterfaceType interface;
-        Entity* object;
+        class Entity* object;
 
     Component(ComponentType type, ComponentInterfaceType interface)
     : id(-1), type(type), interface(interface), object(NULL)
