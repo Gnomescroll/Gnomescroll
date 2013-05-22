@@ -10,6 +10,7 @@
 #endif
 
 #include <common/macros.hpp>
+#include <common/dirent.h>
 
 int GS_MKDIR(const char* dir, int permissions)
 {
