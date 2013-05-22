@@ -2,14 +2,14 @@
 
 #include <sys/stat.h>
 #include <limits.h>
-
-#include <common/macros.hpp>
-
 #ifdef __WIN32__
+# include <shlobj.h>
 # ifdef __GNUC__
 #  include <io.h>
 # endif
 #endif
+
+#include <common/macros.hpp>
 
 int GS_MKDIR(const char* dir, int permissions)
 {
@@ -334,7 +334,7 @@ void get_home_directory(char*& home)
     #  error unicode must be disabled
     # endif
     home = (char*)calloc(MAX_PATH+1, sizeof(*home));
-    HRESULT result = SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL,
+    HRESULT result = SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL,
                                      SHGFP_TYPE_CURRENT, home);
     if (!SUCCEEDED(result))
     {
