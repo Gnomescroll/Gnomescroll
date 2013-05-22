@@ -16,8 +16,8 @@ class Component
         ComponentInterfaceType interface;
         class Entities::Entity* object;
 
-    Component(ComponentType type, ComponentInterfaceType interface)
-    : id(-1), type(type), interface(interface), object(NULL)
+    Component(ComponentType type, ComponentInterfaceType interface) :
+        id(-1), type(type), interface(interface), object(NULL)
     {}
 };
 

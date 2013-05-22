@@ -78,6 +78,7 @@
 # include "windows.h"
 # undef interface
 # undef rad2
+# undef Entity
 #endif
 
 #ifdef __APPLE__
