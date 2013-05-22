@@ -4,8 +4,6 @@
 #include <entity/component/component.hpp>
 #include <entity/network/interfaces.hpp>
 
-//#include <windows.h>
-
 namespace Entities
 {
 
@@ -15,13 +13,13 @@ class Entity
 {
     public:
         int n_components;
-        Component** components;
+        class Component** components;
 
         int id;
         EntityType type;
 
-        void (*tick)(Entity*);      // for physics
-        void (*update)(Entity*);    // for draw prep
+        void (*tick)(class Entity*);      // for physics
+        void (*update)(class Entity*);    // for draw prep
 
         CreatePacketDelegate* create;
         StatePacketDelegate* state;
@@ -54,13 +52,12 @@ class Entity
 
     ~Entity();
 
-    explicit Entity(int id)
-    :   n_components(0), components(NULL),
+    explicit Entity(int id) :
+        n_components(0), components(NULL),
         id(id), type(OBJECT_NONE),
         tick(NULL), update(NULL),
         create(NULL), state(NULL)
     {}
 };
-
 
 } // Entities
