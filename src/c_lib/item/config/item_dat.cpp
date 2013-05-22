@@ -366,7 +366,7 @@ void load_item_dat()
 
     item_def(IG_RESOURCE, "iron_rod");
     sprite_def(i1, 1,7);
-    s->max_stack_size = 1;
+    s->max_stack_size = 64;
 
     item_def(IG_RESOURCE, "iron_star");
     sprite_def(i1, 4,7);
@@ -469,6 +469,12 @@ void load_item_dat()
     sprite_def(i1, 7,6);
     set_pretty_name("placer plant example");
     s->max_stack_size = 16;
+
+    item_def(IG_MECH_PLACER_ORIENTED, "led_torch");
+    sprite_def(rdn, 4, 2);
+    set_pretty_name("LED");
+    s->max_stack_size = 64;
+    s->mech_type = t_mech::get_mech_type("light_crystal");
 
     item_attributes->done_loading();
 }

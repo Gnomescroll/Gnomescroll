@@ -59,8 +59,11 @@ void load_crafting_dat()
 
     def_crafting_recipe("steel_block_2", 4);
     set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
 
     def_crafting_recipe("steel_block_3", 4);
+    set_crafting_reagent("iron_bar", 1);
+    set_crafting_reagent("iron_bar", 1);
     set_crafting_reagent("iron_bar", 1);
 
     def_crafting_recipe("storage_block_small");
@@ -136,8 +139,7 @@ void load_crafting_dat()
     set_crafting_reagent("iridium_bar", 4);
     set_crafting_reagent("copper_bar", 4);
 
-    def_crafting_recipe("iron_rod", 2);
-    set_crafting_reagent("iron_bar", 1);
+    def_crafting_recipe("iron_rod", 4);
     set_crafting_reagent("iron_bar", 1);
 
     def_crafting_recipe("iron_star");
@@ -233,6 +235,10 @@ void load_crafting_dat()
 
     def_crafting_recipe("copper_ladder",4);
     set_crafting_reagent("copper_bar", 1);
+
+    def_crafting_recipe("led_torch", 4);
+    set_crafting_reagent("iron_rod", 1);
+    set_crafting_reagent("plasma_grenade", 1);
 
     end_crafting_recipe(); // finalize
 }

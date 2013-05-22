@@ -215,6 +215,9 @@ static void register_item_group_callbacks()
     set_group(IG_MECH_PLACER);
     c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
+    set_group(IG_MECH_PLACER_ORIENTED);
+    c.local_trigger = &fire_close_range_weapon;
+    c.local_beta_trigger = &local_trigger_dummy;
     set_group(IG_PLANT_PLACER);
     c.local_trigger = &fire_close_range_weapon;
     c.local_beta_trigger = &local_trigger_dummy;

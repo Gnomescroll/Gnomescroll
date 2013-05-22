@@ -335,7 +335,7 @@ void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
-    const int max_dist = 4.0f;
+    const float max_dist = 5.0f;
     Vec3i b;
     bool collided = a->nearest_open_block(max_dist, b);
     if (!collided) return;
@@ -350,8 +350,8 @@ void place_mech(AgentID agent_id, ItemID item_id, ItemType item_type)
     if (t_mech::can_place_mech(b, mech_type) != 0)
         return;
 
-    bool ret = t_mech::create_mech(b, mech_type);
-    if (ret)
+    MechCreateFailureCode code = t_mech::create_mech(b, mech_type);
+    if (code == MCF_OK)
         decrement_stack(agent_id, item_id, item_type);
 }
 
@@ -365,25 +365,18 @@ void place_mech_oriented(AgentID agent_id, ItemID item_id, ItemType item_type)
     MechType mech_type = Item::get_mech_type(item_type);
     IF_ASSERT(!isValid(mech_type)) return;
 
+    const float max_dist = 5.0f;
     Vec3i sp;
     Vec3i op;
     float distance = 0;
-
     int side = a->get_facing_side(sp, op, &distance);
     if (side < 0) return;
+    if (distance > max_dist) return;
 
     MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
-
-    //failed
-    if (code != MCF_OK)
-    {
-        t_mech::print_mech_create_failure_code(code);
-        return;
-    }
-
-    decrement_stack(agent_id, item_id, item_type);
+    if (code == MCF_OK)
+        decrement_stack(agent_id, item_id, item_type);
 }
-// magic stick
 
 void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
@@ -436,7 +429,6 @@ void use_boon_crank(AgentID agent_id, ItemID item_id, ItemType item_type)
 void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_PLANT_PLACER);
-
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
@@ -446,22 +438,13 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
     int side = a->get_facing_side(sp, op, &distance);
     if (side < 0) return;
 
-    //MechType mech_type1 = t_mech::get_mech_type("iridium_solar_cell");
-    //MechType mech_type2 = t_mech::get_mech_type("iridium_power_converter");
-
-    //MechType mech_type = (rand() % 2) ? mech_type1 : mech_type2;
-
-    //MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
-
-    //if (code != MCF_OK)
-        //t_mech::print_mech_create_failure_code(code);
-
-    MechType mech_type = t_mech::get_mech_type("light_crystal");
+    MechType mech_type1 = t_mech::get_mech_type("iridium_solar_cell");
+    MechType mech_type2 = t_mech::get_mech_type("iridium_power_converter");
+    MechType mech_type = (rand() % 2) ? mech_type1 : mech_type2;
     MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
     if (code != MCF_OK)
         t_mech::print_mech_create_failure_code(code);
 
 }
-
 #endif
 }    // Toolbelt

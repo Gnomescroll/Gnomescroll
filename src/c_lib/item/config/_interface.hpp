@@ -312,6 +312,12 @@ void end_crafting_recipe()
     for (int i=0; i<_cr.reagent_num; i++)
         GS_ASSERT_ABORT(_cr.reagent[i] != NULL_ITEM_TYPE);
 
+    IF_ASSERT(_cr.output_stack > get_max_stack_size(_cr.output))
+    {
+        printf("Recipe output item \"%s\"'s stack size is greater than its defined max stack size\n", get_item_name(_cr.output));
+        GS_ABORT();
+    }
+
     // check that adding this recipe will not increase the total outputs
     // per recipe above limit
     int matching_recipes = 0;
@@ -324,9 +330,9 @@ void end_crafting_recipe()
         if (j == crafting_recipe_array[i].reagent_num)
             matching_recipes++;
     }
-    GS_ASSERT_ABORT(matching_recipes < CRAFT_BENCH_OUTPUTS_MAX);
     if (matching_recipes >= CRAFT_BENCH_OUTPUTS_MAX)
-        printf("ERROR: number of resultant crafting recipes exceeds CRAFT_BENCH_OUTPUTS_MAX for %s \n", get_item_name(_cr.output) );
+        printf("ERROR: number of resultant crafting recipes exceeds CRAFT_BENCH_OUTPUTS_MAX for %s\n", get_item_name(_cr.output));
+    GS_ASSERT_ABORT(matching_recipes < CRAFT_BENCH_OUTPUTS_MAX);
 
     // check that this recipe's type signature (input+output)
     // has not already been defined
