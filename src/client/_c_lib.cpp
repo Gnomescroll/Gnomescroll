@@ -58,11 +58,13 @@
 #endif
 
 #ifdef __WIN32__
-# define UNICODE 0
 //# define NTDDI_VERSION NTDDI_WINXP
 //# define WINVER _WIN32_WINNT_WINXP
 //# define _WIN32_WINNT _WIN32_WINNT_WINXP
+# undef _WIN32_IE
 # define _WIN32_IE _WIN32_IE_IE50
+# undef UNICODE
+# define UNICODE 0
 # include "windows.h"
 # undef interface
 # undef rad2
