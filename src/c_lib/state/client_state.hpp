@@ -14,6 +14,8 @@
 namespace ClientState
 {
 
+extern char* active_system_data_path;
+
 extern struct Vec3i* path;
 extern size_t path_len;
 
@@ -34,7 +36,7 @@ extern int last_reliable_ping_time;
 
 extern class Entities::Entity* base;
 
-void set_PlayerAgent_id(AgentID id);
+void set_player_agent_id(AgentID id);
 
 void init_lists();
 void teardown_voxel_lists();
@@ -50,5 +52,7 @@ void send_camera_state();
 
 void set_location_pointer();
 void set_location_pointer_open_block();
+
+void teardown();
 
 }   // ClientState

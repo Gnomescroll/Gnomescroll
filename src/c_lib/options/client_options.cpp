@@ -58,6 +58,9 @@ OPT_BOOL(logger, false)
 /* Help */
 OPT_BOOL(show_tips, true);
 
+/* Data directory */
+OPT_STRING(data_directory);
+
 char* _test_string;
 int _test_int;
 float _test_float;
@@ -123,6 +126,9 @@ void register_options()
 
     /* Help */
     OPT_BOOL_REGISTER(show_tips);
+
+    /* Data directory */
+    OPT_STRING_REGISTER(data_directory, "");
 }
 
 void validate()

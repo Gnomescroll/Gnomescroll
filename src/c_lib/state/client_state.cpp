@@ -19,6 +19,8 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 namespace ClientState
 {
 
+char* active_system_data_path = NULL;
+
 struct Vec3i* path = NULL;
 size_t path_len = 0;
 
@@ -53,9 +55,9 @@ void teardown_voxel_lists()
     delete voxel_hitscan_list;
 }
 
-void set_PlayerAgent_id(AgentID id)
+void set_player_agent_id(AgentID id)
 {
-    player_agent.set_PlayerAgent_id(id);
+    player_agent.set_player_agent_id(id);
 }
 
 void tick()
@@ -149,6 +151,11 @@ void set_location_pointer_open_block()
     printf("Locator (open block): ");
     vec3i_print(pos);
     location_pointer = vec3_init(pos);
+}
+
+void teardown()
+{
+    free(active_system_data_path);
 }
 
 }   // ClientState

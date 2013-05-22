@@ -30,6 +30,7 @@ bool save_tmp_file(const char* fn, const char* fn_tmp, const char* fn_bak);
 // return false on error (e.g., a line is wider than width)
 bool read_fixed_lines(const char* buf, const size_t width, char** lines, size_t* count);
 
+void get_home_directory(char*& home);
 
 /*
     Line Reader Class

@@ -56,6 +56,9 @@ OPT_BOOL_HEADER(logger)
 /* Help */
 OPT_BOOL_HEADER(show_tips);
 
+/* Data Directory */
+OPT_STRING_HEADER(data_directory);
+
 void register_options();
 
 void validate();

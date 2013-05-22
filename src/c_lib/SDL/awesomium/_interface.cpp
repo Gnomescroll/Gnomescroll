@@ -42,10 +42,10 @@ void draw()
     viewport_manager->draw();
 }
 
-awe_string* get_awe_string(const char* _str)
+awe_string* get_awe_string(const char* str)
 {
-    size_t length = strlen(_str);
-    return awe_string_create_from_ascii(_str, length);
+    size_t length = strlen(str);
+    return awe_string_create_from_ascii(str, length);
 }
 
 char* get_str_from_awe(const awe_string* str)
@@ -75,6 +75,18 @@ void init()
     const awe_string* locale_path = awe_string_empty();
     #endif
 
+    awe_string* _data_path = NULL;
+    const awe_string* data_path = NULL;
+    if (ClientState::active_system_data_path != NULL)
+    {
+        _data_path = get_awe_string(ClientState::active_system_data_path);
+        data_path = _data_path;
+    }
+    else
+    {
+        data_path = awe_string_empty();
+    }
+
     awe_string* log_path = get_awe_string("./screenshot");
     awe_string* user_agent = get_awe_string(USER_AGENT);
 
@@ -83,9 +95,8 @@ void init()
         true, //javascript
         false,  //databases
         package_path,   //package path
-        locale_path,    //local path
-        //awe_string_empty(), //user data path
-        awe_string_empty(), //user data path
+        locale_path,    //locale path
+        data_path, //user data path
         awe_string_empty(), //plugin path
         log_path, // log path
         AWE_LL_VERBOSE, //log level
@@ -110,6 +121,8 @@ void init()
     awe_string_destroy(locale_path);
     #endif
 
+    if (_data_path != NULL)
+        awe_string_destroy(_data_path);
     awe_string_destroy(log_path);
     awe_string_destroy(user_agent);
 

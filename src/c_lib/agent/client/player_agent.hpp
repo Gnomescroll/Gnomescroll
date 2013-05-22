@@ -79,7 +79,7 @@ class PlayerAgent
     void handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
 
     class Agent* you();
-    void set_PlayerAgent_id(AgentID id);
+    void set_player_agent_id(AgentID id);
 
     //set also sends
     void set_control_state(int f, int b, int l, int r, int jet,

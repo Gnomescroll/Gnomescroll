@@ -45,6 +45,11 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef __WIN32__
+# include <sys/types.h>
+# include <unistd.h>
+#endif
+
 #include <string.h>
 #include <math.h>
 
@@ -219,7 +224,6 @@ bool c_lib_inited = false;
 bool signal_exit = false;
 
 #ifdef linux
-# include <unistd.h>
 # include <signal.h>
 
 void signal_terminate_handler(int sig)
@@ -246,6 +250,34 @@ void print_working_directory()
     else
         printf("Working directory is: %s\n", wd);
     free(wd);
+    #endif
+}
+
+void create_system_data_dir()
+{
+    #if 1
+    char* home = NULL;
+    get_home_directory(home);
+    if (home == NULL)
+    {
+        const char _home[] = ".";
+        home = (char*)calloc(sizeof(_home), sizeof(*home));
+        strcpy(home, _home);
+    }
+    #else
+    const char home[] = ".";
+    #endif
+    char* data_path = (char*)calloc(NAME_MAX+1, sizeof(char));
+    size_t ret = snprintf(data_path, NAME_MAX+1, "%s/%s", home, SYSTEM_DATA_FOLDER);
+    GS_ASSERT(ret < NAME_MAX + 1);
+    data_path[NAME_MAX] = '\0';
+    ClientState::active_system_data_path = data_path;
+    if (!file_exists(data_path))
+        create_path(data_path);
+    printf("Active system data path set to: %s\n", ClientState::active_system_data_path);
+
+    #if PRODUCTION
+    free(home);
     #endif
 }
 
@@ -336,6 +368,8 @@ int init_c_lib(int argc, char* argv[])
     // this path is for build/debug data
     create_path(DATA_PATH);
     #endif
+
+    create_system_data_dir();
 
     Log::init();
     printf("init c_lib\n");
@@ -551,6 +585,9 @@ void close_c_lib()
 
     if (TEARDOWN_DEBUG) printf("Pathfinding teardown\n");
     Path::teardown();
+
+    if (TEARDOWN_DEBUG) printf("client state teardown\n");
+    ClientState::teardown();
 
     if (TEARDOWN_DEBUG) printf("logger teardown\n");
     Log::teardown();

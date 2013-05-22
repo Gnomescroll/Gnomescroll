@@ -6,7 +6,7 @@ options.port = 0
 ---options.port = 4096
 
 
--- display options -- 
+-- display options --
 options.fullscreen = false
 options.width = 1280
 options.height = 720
@@ -41,3 +41,6 @@ options.mesa_shader = true;    -- use mesa shader if main shader does not work a
 
 -- help --
 options.show_tips = true;
+
+-- app data directory --
+data_directory = ""     -- default to $HOME. If you have a unicode in your $HOME path you may need to alter this to one without it.

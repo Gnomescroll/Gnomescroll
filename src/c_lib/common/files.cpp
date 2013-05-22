@@ -316,3 +316,44 @@ bool read_fixed_lines(const char* buf, const size_t width, char** lines, size_t*
 
     return true;
 }
+
+void get_home_directory(char*& home)
+{
+    #if DC_CLIENT
+    if (Options::data_directory != NULL && Options::data_directory[0] != '\0')
+    {
+        home = (char*)malloc((strlen(Options::data_directory) + 1) * sizeof(*home));
+        strcpy(home, Options::data_directory);
+        return;
+    }
+    #endif
+
+    #ifdef __WIN32__
+    // Window appdata / user home directory
+    # if sizeof(LPCTSTR) == sizeof(wchar_t)
+    #  error unicode must be disabled
+    # endif
+    home = (char*)calloc(MAX_PATH+1, sizeof(*home));
+    HRESULT result = SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL,
+                                     SHGFP_TYPE_CURRENT, home);
+    if (!SUCCEEDED(result))
+    {
+        free(home);
+        home = NULL;
+    }
+
+    #else
+    // Linux/OSX home directory
+    const char* _home = getenv("HOME");
+    if (_home == NULL)
+    {
+        const struct passwd* p = getpwuid(getuid());
+        if (p != NULL)
+            _home = p->pw_dir;
+    }
+    size_t len = strlen(_home) + 1;
+    home = (char*)malloc(len * sizeof(*home));
+    strncpy(home, _home, len);
+    home[len-1] = '\0';
+    #endif
+}

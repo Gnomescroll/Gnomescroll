@@ -22,7 +22,7 @@ class Agent* PlayerAgent::you()
     return Agents::agent_list->get(this->agent_id);
 }
 
-void PlayerAgent::set_PlayerAgent_id(AgentID id)
+void PlayerAgent::set_player_agent_id(AgentID id)
 {
     GS_ASSERT(id != NULL_AGENT);
     this->agent_id = id;

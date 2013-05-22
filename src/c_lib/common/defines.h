@@ -119,6 +119,7 @@ const int PLAYERS_MAX = 32;
 #define DATA_PATH "./data/"
 #define SCREENSHOT_PATH "./screenshot/"
 #define MEDIA_PATH "./media/"
+#define SYSTEM_DATA_FOLDER ".gnomescroll/"
 
 // filename max length (no reliable system macro available)
 #define GS_FN_MAX 0xFF

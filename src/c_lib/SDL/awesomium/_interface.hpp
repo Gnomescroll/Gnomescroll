@@ -29,7 +29,7 @@ void SDL_mouse_event(const SDL_Event* event);
 void open_token_page();
 void send_json_settings(class SettingsExport* exporter);
 
-awe_string* get_awe_string(const char* _str);
+awe_string* get_awe_string(const char* str);
 char* get_str_from_awe(const awe_string* str);
 
 char* get_cookies();    // use GNOMESCROLL_URL

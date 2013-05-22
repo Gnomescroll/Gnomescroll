@@ -166,7 +166,7 @@ inline void agent_destroy_StoC::handle()
 
 inline void player_agent_id_StoC::handle()
 {
-    ClientState::set_PlayerAgent_id((AgentID)this->id);
+    ClientState::set_player_agent_id((AgentID)this->id);
 }
 
 inline void agent_kills_StoC::handle()
