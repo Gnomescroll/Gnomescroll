@@ -52,7 +52,7 @@ class DayCycleController
 
     }
     #endif
-    
+
     void update()
     {
         const int cycle_length = 1000; //1000 seconds per day
@@ -79,7 +79,7 @@ class DayCycleController
             return;
         }
         ct -= sunrise_length;
-        
+
         //day
         if(ct < day_length)
         {
@@ -90,7 +90,7 @@ class DayCycleController
             return;
         }
         ct -= day_length;
-        
+
         //sunset length
         if(ct < sunset_length)
         {
@@ -101,13 +101,13 @@ class DayCycleController
         }
 
         ct -= sunset_length;
-        
+
         //night
         if(ct < night_length)
         {
             red_tint = 0.0f;
             blue_tint = 0.2f;
-            brightness = 0.2;
+            brightness = 0.2f;
             return;
         }
         ct -= night_length;

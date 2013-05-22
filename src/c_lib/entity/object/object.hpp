@@ -20,8 +20,8 @@ class Entity
         int id;
         EntityType type;
 
-        void (*tick)(class Entity*);      // for physics
-        void (*update)(class Entity*);    // for draw prep
+        tickObject tick;        // for physics
+        updateObject update;      // for draw prep
 
         CreatePacketDelegate* create;
         StatePacketDelegate* state;
