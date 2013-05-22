@@ -17,7 +17,6 @@
 # ifndef _WIN32_IE
 #  define _WIN32_IE _WIN32_IE_IE50
 # endif
-# define _WIN32_IE _WIN32_IE_IE50
 # undef UNICODE
 # ifdef UNICODE
 #  error UNICODE must be disabled
