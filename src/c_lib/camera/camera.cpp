@@ -226,7 +226,6 @@ void Camera::world_projection()
     Vec3 p = this->apply_shake(look, right, up);
     Vec3 glu_look = vec3_add(p, look);
     gluLookAt(p.x, p.y, p.z, glu_look.x, glu_look.y, glu_look.z, 0, 0, 1);
-*/
 
     update_camera_matrices();
 

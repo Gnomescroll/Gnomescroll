@@ -455,12 +455,11 @@ void plant_placer_action(AgentID agent_id, ItemID item_id, ItemType item_type)
     MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
 
     if (code != MCF_OK)
-    if(code != 0)
         t_mech::print_mech_create_failure_code(code);
 #endif
 
     MechType mech_type = t_mech::get_mech_type_dat("light_crystal");
-    MechCreateFailureCode code = t_mech::create_mech(op[0],op[1],op[2], mech_type, side);
+    MechCreateFailureCode code = t_mech::create_mech(op, mech_type, side);
         t_mech::print_mech_create_failure_code(code);
 }
 
