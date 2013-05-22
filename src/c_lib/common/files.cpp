@@ -330,7 +330,7 @@ void get_home_directory(char*& home)
 
     #ifdef __WIN32__
     // Window appdata / user home directory
-    # if sizeof(LPCTSTR) == sizeof(wchar_t)
+    # if (sizeof(LPCTSTR) == sizeof(wchar_t))
     #  error unicode must be disabled
     # endif
     home = (char*)calloc(MAX_PATH+1, sizeof(*home));
