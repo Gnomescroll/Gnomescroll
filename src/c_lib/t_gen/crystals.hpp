@@ -57,7 +57,7 @@ void init_crystals()
     crystal_strata[i++] = 0.3f;
     crystal_strata[i++] = 0.5f;
     crystal_strata[i++] = 0.5f;
-    crystal_strata[i++] = 0.6f;
+    crystal_strata[i++] = 1.0f;
 
     for (int i=0; i<CRYSTAL_CLUSTER_RADIUS*2+1; i++)
         falloffs[i] = powf(CRYSTAL_CLUSTER_FALLOFF, i);
@@ -105,7 +105,9 @@ MechType get_crystal_type(float percent_complete)
         if (percent_complete >= crystal_strata[2*i+0] && percent_complete < crystal_strata[2*i+1])
             return crystals[i];
     GS_ASSERT(false);
-    printf("pct error: %f\n", percent_complete);
+    printf("%s Error: No crystal could be placed. "
+           "Check that crystal_strata is continuous over [0,1]."
+           "Threshold: %f\n", __FUNCTION__, percent_complete);
     return crystals[n_crystals-1];
 }
 

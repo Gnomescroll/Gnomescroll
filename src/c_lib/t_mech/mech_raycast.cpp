@@ -70,12 +70,12 @@ void draw_selected_mech_bounding_box()
 static bool ray_cast_mech_render_type_0(const struct Mech &m, const Vec3& position, const Vec3& direction, float& distance)
 {
     const float size = m.size * 0.5f;
-    Vec3 w = vec3_add(vec3_init(m.position), vec3_init(0.5f, 0.5f, size));
-    w = vec3_add(w, vec3_init(m.offset_x, m.offset_y, 0.0f));
+    Vec3 w = vec3_add(vec3_init(m.position),
+                      vec3_init(0.5f + m.offset_x, 0.5f + m.offset_y, size));
     w = quadrant_translate_position(position, w);
     float d = 0.0f;
-    struct Vec3 f = vec3_init(sin(m.rotation * PI), cos(m.rotation * PI), 0.0f);
-    struct Vec3 r = vec3_init(sin((m.rotation+0.5)*PI), cos((m.rotation+0.5)*PI), 0.0f);
+    struct Vec3 f = vec3_init(sinf(m.rotation * PI), cosf(m.rotation * PI), 0.0f);
+    struct Vec3 r = vec3_init(sinf((m.rotation+0.5)*PI), cosf((m.rotation+0.5)*PI), 0.0f);
     struct Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
 
     bool ret = line_box_test(position, direction, w, vec3_init(size), f, r, u, d);
