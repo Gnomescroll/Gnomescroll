@@ -16,6 +16,9 @@
 # ifndef NTDDI_VERSION
 #  define NTDDI_VERSION NTDDI_WIN2K
 # endif
+# ifndef _WIN32_IE_IE50
+#  define _WIN32_IE_IE50 0x0500
+# endif
 # ifndef _WIN32_IE
 #  define _WIN32_IE _WIN32_IE_IE50
 # endif
