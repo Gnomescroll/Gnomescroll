@@ -54,6 +54,10 @@
 # endif
 #endif
 
+#ifdef __MSVC__
+# include "stdafx.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -68,10 +72,6 @@
 
 #ifdef __MINGW32__
 # include <malloc.h> //alloca function
-#endif
-
-#ifdef __MSVC__
-# include "stdafx.h"
 #endif
 
 #ifdef _WIN32
