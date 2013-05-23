@@ -17,10 +17,6 @@
 # ifndef _WIN32_IE
 #  define _WIN32_IE _WIN32_IE_IE50
 # endif
-# undef UNICODE
-# ifdef UNICODE
-#  error UNICODE must be disabled
-# endif
 #endif
 
 
@@ -60,7 +56,6 @@
 # include "windows.h"
 # undef interface
 # undef rad2
-# undef Entity
 #endif
 
 // serialization
