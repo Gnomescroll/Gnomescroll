@@ -331,16 +331,18 @@ void get_home_directory(char*& home)
     LPTSTR _home = (LPTSTR)calloc(MAX_PATH+1, sizeof(*_home));
     HRESULT result = SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL,
                                      SHGFP_TYPE_CURRENT, _home);
-    const bool is_wide = (sizeof(**_home) > sizeof(char));
     if (!SUCCEEDED(result))
     {
         size_t len = _tcslen(_home);
-        if (is_wide) len *= 2;
+        #ifdef UNICODE
+        len *= 2;
+        #endif
         home = (char*)calloc((len + 1), sizeof(*home));
-        if (is_wide)
-            wcstombs(home, _home, len + 1);
-        else
-            strncpy(home, _home, len + 1);
+        #ifdef UNICODE
+        wcstombs(home, _home, len + 1);
+        #else
+        strncpy(home, _home, len + 1);
+        #endif
         home[len] = '\0';
     }
     else
