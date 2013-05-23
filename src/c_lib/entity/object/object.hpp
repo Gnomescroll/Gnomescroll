@@ -1,7 +1,6 @@
 #pragma once
 
 #include <entity/constants.hpp>
-#include <entity/component/component.hpp>
 #include <entity/network/interfaces.hpp>
 
 namespace Components { class Component; }   // forward decl

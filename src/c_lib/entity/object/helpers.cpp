@@ -1,6 +1,5 @@
 #include "helpers.hpp"
 
-#include <entity/component/component.hpp>
 #include <entity/component/main.hpp>
 #include <entity/object/object_data_list.hpp>
 #include <entity/object/main.hpp>

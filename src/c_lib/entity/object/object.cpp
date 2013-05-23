@@ -1,7 +1,6 @@
 #include "object.hpp"
 
 #include <entity/constants.hpp>
-#include <entity/component/component.hpp>
 #include <entity/network/packets.hpp>
 #include <entity/components/health/ttl.hpp>
 
