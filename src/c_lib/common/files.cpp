@@ -331,14 +331,26 @@ void get_home_directory(char*& home)
 
     #ifdef __WIN32__
     // Window appdata / user home directory
-    home = (char*)calloc(MAX_PATH+1, sizeof(*home));
+    LPTSTR _home = (LPTSTR*)calloc(MAX_PATH+1, sizeof(*_home));
     HRESULT result = SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL,
-                                     SHGFP_TYPE_CURRENT, home);
+                                     SHGFP_TYPE_CURRENT, _home);
+    const bool is_wide = (sizeof(*_home) > sizeof(char));
     if (!SUCCEEDED(result))
     {
-        free(home);
+        size_t len = _tcslen(_home);
+        if (is_wide) len *= 2;
+        home = (char*)calloc((len + 1) * sizeof(*home));
+        if (is_wide)
+            wcstombs(home, _home, len + 1);
+        else
+            strncpy(home, _home, len + 1);
+        home[len] = '\0';
+    }
+    else
+    {
         home = NULL;
     }
+    free(_home);
 
     #else
     // Linux/OSX home directory
