@@ -339,7 +339,7 @@ void get_home_directory(char*& home)
     {
         size_t len = _tcslen(_home);
         if (is_wide) len *= 2;
-        home = (char*)calloc((len + 1) * sizeof(*home));
+        home = (char*)calloc((len + 1), sizeof(*home));
         if (is_wide)
             wcstombs(home, _home, len + 1);
         else

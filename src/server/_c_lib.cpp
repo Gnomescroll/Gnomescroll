@@ -27,7 +27,6 @@
 # define chdir _chdir
 # include <windows.h>
 # include <winbase.h> // usleep function
-# include <tchar.h>
 #endif
 
 #include <stdio.h>
@@ -53,6 +52,7 @@
 #endif
 
 #ifdef __WIN32__
+# include <tchar.h>
 # include "windows.h"
 # undef interface
 # undef rad2
