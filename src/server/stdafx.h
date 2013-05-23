@@ -13,7 +13,7 @@
 #define __MSVC__
 
 #define S_ITERATOR_DEBUGGING 0
-#define _SECURE_SCL 0	//secure iterators, slow
+#define _SECURE_SCL 0   //secure iterators, slow
 
 #pragma warning(disable: 4244) // possible loss of data
 #pragma warning(disable: 4309) // truncation of constant value
@@ -22,8 +22,8 @@
 
 #define __MSVC__
 
-#define __attribute__(x) 
-#define __attribute(x) 
+#define __attribute__(x)
+#define __attribute(x)
 
 #define _CRT_SECURE_NO_DEPRECATE
 #define _CRT_SECURE_NO_WARNINGS
@@ -31,16 +31,18 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 
-#include <windows.h> 
+#include <windows.h>
 #include <winbase.h> // usleep function
 #include <tchar.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
- 
+
 #include <string.h>
 #include <math.h>
+
+#include <shlobj.h>
 
 extern "C"
 {
@@ -54,12 +56,12 @@ extern "C"
 #include <common/macros.hpp>
 
 #ifdef __MSVC__
-    #include <direct.h>
-    #define getcwd _getcwd
-    #define chdir _chdir
-	#define mkdir(x) _mkdir(x)
-
-	#define snprintf _snprintf
+# include <direct.h>
+# define getcwd _getcwd
+# define chdir _chdir
+# define mkdir(x) _mkdir(x)
+# define snprintf _snprintf
 #endif
 
-
+#undef rad2
+#undef interface
