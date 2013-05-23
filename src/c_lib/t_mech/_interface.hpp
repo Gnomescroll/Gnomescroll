@@ -24,11 +24,11 @@ void draw();
 void draw_transparent();
 
 void draw_selected_mech_bounding_box();
-bool ray_cast_mech(float x, float y, float z, float vx, float vy, float vz, int* _mech_id, float* _distance);
+bool ray_cast_mech(const Vec3& position, const Vec3& direction, int& mech_id, float& distance);
 
 void client_ray_cast();
 
-static bool _mech_update(struct Mech &m); //call after type or subtype changes
+static bool update_mech(struct Mech &m); //call after type or subtype changes
 static bool unpack_mech(struct Mech &m, const class mech_create_StoC &p);
 #endif
 

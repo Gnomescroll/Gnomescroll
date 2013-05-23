@@ -2,6 +2,8 @@
 
 const int MAX_MECHS = 0xFF;
 
+const int NULL_MECH_ID = -1;
+
 typedef enum
 {
     NULL_MECH_TYPE = MAX_MECHS,

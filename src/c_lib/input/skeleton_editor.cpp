@@ -115,7 +115,7 @@ void raycast_to_part()
     Vec3 collision_point;
     Voxels::VoxelHitscanTarget target;
     bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
-        p, vec, -1, (EntityType)-1, collision_point, &vox_distance, &target);
+        p, vec, -1, (EntityType)-1, collision_point, vox_distance, target);
     if (!voxel_hit)
         return;
 
@@ -129,8 +129,7 @@ void raycast_to_part()
         case OBJECT_AGENT:
             vox_dat = &VoxDats::agent;
             obj = Agents::get_agent((AgentID)id);
-            GS_ASSERT(obj != NULL);
-            if (obj == NULL) return;
+            IF_ASSERT(obj == NULL) return;
             vox = ((Agents::Agent*)obj)->vox;
             break;
 

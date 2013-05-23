@@ -920,7 +920,7 @@ void print_mob_id()
     float vox_distance = 0.0f;
     Vec3 collision_point = vec3_init(0);
     bool voxel_hit = STATE::voxel_hitscan_list->hitscan(
-        p, v, ignore_id, ignore_type, collision_point, &vox_distance, &target);
+        p, v, ignore_id, ignore_type, collision_point, vox_distance, target);
     if (!voxel_hit) return;
     printf("mob id: %d\n", target.entity_id);
 }

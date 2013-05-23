@@ -54,7 +54,7 @@
 # endif
 #endif
 
-#if __MSVC__
+#ifdef __MSVC__
 # include "stdafx.h"
 #endif
 

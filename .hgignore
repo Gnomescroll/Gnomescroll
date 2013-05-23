@@ -214,4 +214,5 @@ _ReSharper*/
 [Bb]uild[Ll]og.*
 *.[Pp]ublish.xml
 *.resharper
->>>>>>> other
+
+*.i

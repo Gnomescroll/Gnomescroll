@@ -28,6 +28,11 @@ float euclidean_distance(const struct Vec3i& a, const struct Vec3i& b);
 int diagonal_distance(const struct Vec3i& a, const struct Vec3i& b);
 int manhattan_distance(const struct Vec3i& a, const struct Vec3i& b);
 
+int vec3i_length_squared(const struct Vec3i& a)
+{
+    return a.x * a.x + a.y * a.y + a.z * a.z;
+}
+
 inline void vec3i_print(const struct Vec3i& pos)
 {
     printf("Vec3i: %d, %d, %d\n", pos.x, pos.y, pos.z);

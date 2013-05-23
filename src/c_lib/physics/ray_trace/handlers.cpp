@@ -9,7 +9,7 @@
 namespace Hitscan
 {
 
-Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,
+Agents::Agent* lock_agent_target(const Vec3& firing_position, Vec3* firing_direction,
                                  const float range, const float failure_rate,
                                  const bool random)
 {
@@ -48,7 +48,7 @@ Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,
     return agent;
 }
 
-Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,
+Agents::Agent* lock_agent_target(const Vec3& firing_position, Vec3* firing_direction,
                                  const float range)
 { // find agents in range
     using Agents::agent_list;
@@ -67,60 +67,39 @@ Agents::Agent* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,
     return agent;
 }
 
-HitscanTarget shoot_at_agent(Vec3 source, Vec3 firing_direction,
-                              int id, EntityType type,
-                              Agents::Agent* agent, const float range)
-{ // hitscan vector against world
-    class Voxels::VoxelHitscanTarget target;
-    float vox_distance;
-    Vec3 collision_point;
-    Vec3i block_pos;
-    Vec3i side;
-    CubeType tile = EMPTY_CUBE;
-    float block_distance;
-    HitscanTargetTypes target_type = hitscan_against_world(
-        source, firing_direction, id, type, &target, &vox_distance,
-        collision_point, block_pos, side, &tile, &block_distance);
+HitscanTarget shoot_at_agent(const Vec3& source, const Vec3& firing_direction,
+                             int id, EntityType type,
+                             Agents::Agent* agent, const float range)
+{   // hitscan vector against world
+    Hitscan::WorldHitscanResult hitscan = hitscan_against_world(
+        source, firing_direction, range, id, type);
 
     // process target information
     HitscanTarget target_information;
-    switch (target_type)
+    switch (hitscan.type)
     {
         case HITSCAN_TARGET_VOXEL:
-            if (vox_distance > range)
-            {
-                target_type = HITSCAN_TARGET_NONE;
-                break;
-            }
-            target_information.id = target.entity_id;
-            target_information.type = (EntityType)target.entity_type;
-            target_information.part = target.part_id;
-            target_information.voxel = target.voxel;
+            target_information.id = hitscan.voxel_target.entity_id;
+            target_information.type = (EntityType)hitscan.voxel_target.entity_type;
+            target_information.part = hitscan.voxel_target.part_id;
+            target_information.voxel = hitscan.voxel_target.voxel;
             break;
 
         case HITSCAN_TARGET_BLOCK:
-            if (block_distance > range)
-            {
-                target_type = HITSCAN_TARGET_NONE;
-                break;
-            }
             target_information.collision_point = vec3_add(
-                source, vec3_scalar_mult(firing_direction, block_distance));
+                source, vec3_scalar_mult(firing_direction, hitscan.block_distance));
             target_information.collision_point = translate_position(target_information.collision_point);
-            target_information.voxel = block_pos;
-            target_information.cube = tile;
-            target_information.side = get_cube_side_from_sides(side);
+            target_information.voxel = hitscan.block_position;
+            target_information.cube = hitscan.cube_type;
+            target_information.side = get_cube_side_from_sides(hitscan.block_side);
             break;
 
         case HITSCAN_TARGET_NONE:
-            target_type = HITSCAN_TARGET_NONE;
+            target_information.collision_point = vec3_copy(firing_direction);
             break;
     }
 
-    if (target_type == HITSCAN_TARGET_NONE)
-        target_information.collision_point = vec3_copy(firing_direction);
-
-    target_information.hitscan = target_type;
+    target_information.hitscan = hitscan.type;
     return target_information;
 }
 
@@ -128,7 +107,6 @@ void handle_hitscan_target(const HitscanTarget& t,
                            const struct AttackerProperties& p)
 {
     #if DC_SERVER
-    Agents::Agent* agent;
     switch (t.hitscan)
     {
         case HITSCAN_TARGET_BLOCK:
@@ -139,7 +117,7 @@ void handle_hitscan_target(const HitscanTarget& t,
         case HITSCAN_TARGET_VOXEL:
             if (t.type == OBJECT_AGENT)
             {
-                agent = Agents::get_agent((AgentID)t.id);
+                Agents::Agent* agent = Agents::get_agent((AgentID)t.id);
                 if (agent == NULL) break;
                 if (agent->status.lifetime > p.agent_protection_duration &&
                     !agent->near_base())

@@ -9,11 +9,10 @@
 #include <physics/vec3.hpp>
 #include <physics/quadrant.hpp>
 
-static inline bool collision_check(Vec3i position)
+static inline bool collision_check(const Vec3i& position)
 {
     if (!is_valid_z(position)) return false;
-    position = translate_position(position);
-    return t_map::isSolid(position);
+    return t_map::isSolid(translate_position(position));
 }
 
 static inline bool collision_check(int x, int y, int z)
@@ -56,7 +55,7 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
     return d;
 }
 
-inline float sphere_line_distance(struct Vec3 p, struct Vec3 o, struct Vec3 t, struct Vec3* out, float* _rad2)
+inline float sphere_line_distance(const Vec3& p, const Vec3& o, const Vec3& t, Vec3* out, float* _rad2)
 {
     return sphere_line_distance(p.x, p.y, p.z, o.x, o.y, o.z, t.x, t.y, t.z, out->f, _rad2);
 }
@@ -257,7 +256,7 @@ bool raytrace_terrain(const Vec3& start, const Vec3& end, class RaytraceData* da
     return false;
 }
 
-inline CubeType RaytraceData::get_cube_type()
+inline CubeType RaytraceData::get_cube_type() const
 {
     return t_map::get(this->collision_point);
 }
@@ -267,7 +266,7 @@ inline void RaytraceData::set_collision_point(const Vec3i& position)
     this->collision_point = translate_position(position);
 }
 
-Vec3i RaytraceData::get_pre_collision_point()
+Vec3i RaytraceData::get_pre_collision_point() const
 {
     Vec3i sides = this->get_sides();
     return translate_position(vec3i_add(this->collision_point, sides));

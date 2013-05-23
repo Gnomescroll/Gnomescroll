@@ -90,11 +90,8 @@ void ChatServer::player_quit(ClientID id)
 
 void ChatServer::receive_message(int channel, ClientID sender, char* payload)
 {
-    GS_ASSERT(payload != NULL);
-    if (payload == NULL) return;
-
-    GS_ASSERT(channel >= 0 && channel < CHAT_SERVER_CHANNELS_MAX);
-    if (channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
+    IF_ASSERT(payload == NULL) return;
+    IF_ASSERT(channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
 
     if (!is_valid_chat_message(payload)) return;
 
@@ -115,33 +112,20 @@ void ChatServer::receive_message(int channel, ClientID sender, char* payload)
 
 void ChatServer::log_message(int channel, ClientID sender, char* payload)
 {
-    GS_ASSERT(Options::log_chat);
-    if (!Options::log_chat) return;
-
-    GS_ASSERT(this->logfile != NULL);
-    if (logfile == NULL) return;
-
-    GS_ASSERT(this->log_msg_buffer != NULL);
-    if (this->log_msg_buffer == NULL) return;
-
-    GS_ASSERT(this->log_msg_buffer_len > 0);
-    if (this->log_msg_buffer_len <= 0) return;
-
-    GS_ASSERT(payload != NULL);
-    if (payload == NULL) return;
-
-    GS_ASSERT(channel >= 0 && channel < CHAT_SERVER_CHANNELS_MAX);
-    if (channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
+    IF_ASSERT(!Options::log_chat) return;
+    IF_ASSERT(logfile == NULL) return;
+    IF_ASSERT(this->log_msg_buffer == NULL) return;
+    IF_ASSERT(this->log_msg_buffer_len <= 0) return;
+    IF_ASSERT(payload == NULL) return;
+    IF_ASSERT(channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
 
     if (!is_valid_chat_message(payload)) return;
 
     AgentID agent_id = NetServer::get_agent_id_for_client(sender);
     Agents::Agent* a = Agents::get_agent(agent_id);
-    GS_ASSERT(a != NULL);
-    if (a == NULL) return;
+    IF_ASSERT(a == NULL) return;
     char* sender_name = a->status.name;
-    GS_ASSERT(sender_name != NULL);
-    if (sender_name == NULL) return;
+    IF_ASSERT(sender_name == NULL) return;
     GS_ASSERT(sender_name[0] != '\0');
 
     // logfile timestamp
@@ -157,8 +141,8 @@ void ChatServer::log_message(int channel, ClientID sender, char* payload)
     fwrite(this->log_msg_buffer, sizeof(char), msg_len, this->logfile);
 }
 
-ChatServer::ChatServer()
-: logfile(NULL), log_msg_buffer_len(0), log_msg_buffer(NULL)
+ChatServer::ChatServer() :
+    logfile(NULL), log_msg_buffer_len(0), log_msg_buffer(NULL)
 {
     int channel_index = 0;
     system = new ChatServerChannel(PLAYERS_MAX);
@@ -185,7 +169,7 @@ ChatServer::ChatServer()
             setvbuf(this->logfile, NULL, _IOLBF, 256);
 
         this->log_msg_buffer_len = count_digits(HARD_MAX_CONNECTIONS)
-        + strlen(CHAT_LOG_MSG_FORMAT) + CHAT_MESSAGE_SIZE_MAX + PLAYER_NAME_MAX_LENGTH + 1;
+            + strlen(CHAT_LOG_MSG_FORMAT) + CHAT_MESSAGE_SIZE_MAX + PLAYER_NAME_MAX_LENGTH + 1;
         this->log_msg_buffer = (char*)malloc(this->log_msg_buffer_len * sizeof(char));
     }
 }

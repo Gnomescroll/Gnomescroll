@@ -321,8 +321,8 @@ class MechListRenderer
 {
     public:
 
-    class MechListShader shader;
-    class MechListVertexList vertex_list;
+        class MechListShader shader;
+        class MechListVertexList vertex_list;
 
     void draw()
     {
@@ -687,7 +687,6 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_max,ty_min);
     vertex_list.push_vertex();
-
 }
 
 void MechListRenderer::push_render_type_3(const struct Mech &m)
@@ -725,8 +724,6 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
         return;
 
     int tex_id = mech_attributes[m.type].sprite;
-
-    GS_ASSERT(mech_attributes[m.type].type != -1);
 
     const float txmargin = 0.0f;
     float tx_min, ty_min, tx_max, ty_max;
@@ -856,7 +853,7 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
 
     static class MeshInstance* MI; // load_mesh(const char* filename)
     static class MeshLoader* ML = NULL;
-    if(ML == NULL)
+    if (ML == NULL)
     {
         printf("loading mesh: \n");
         ML = new MeshLoader;
@@ -866,7 +863,7 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
     static int _counter = 0;
     _counter++;
 
-    if(_counter % 60 == 1)
+    if (_counter % 60 == 1)
     {
         delete MI;
         MI = NULL;
@@ -899,7 +896,7 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
 
     const int imax = MI->van;
     const MeshInstance::Vertex* va = MI->va;
-    for(int i=0; i<imax; i++)
+    for (int i=0; i<imax; i++)
     {
         vertex_list.vertex3f(wx+va[i].x, wy+va[i].y, wz+va[i].z);
         vertex_list.tex2f(va[i].tx, va[i].ty);
@@ -938,11 +935,9 @@ void MechListRenderer::prep_vbo()
     const int mlm = mech_list->mlm;
     const struct Mech* mla = mech_list->mla;
 
-    int num =0;
-
     for (int i=0; i<mlm; i++)
     {
-        if (mla[i].id == -1) continue;
+        if (mla[i].id == NULL_MECH_ID) continue;
 
         switch (mla[i].render_type)
         {
@@ -963,13 +958,6 @@ void MechListRenderer::prep_vbo()
                 GS_ASSERT(false);
                 break;
         }
-
-        num++;
-    }
-
-    if (num != mech_list->mln)
-    {
-        printf("num= %i mln= %i \n", num, mech_list->mln);
     }
     vertex_list.buffer();
 

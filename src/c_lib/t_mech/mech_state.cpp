@@ -35,7 +35,7 @@ void MechList::send_mech_list_to_client(ClientID client_id)
         pack_mech(mla[i], p);
         p.sendToClient(client_id);
 
-        if(mla[i].text != NULL)
+        if (mla[i].text != NULL)
         {
             class mech_text_StoC p;
             p.id = mla[i].id;
@@ -60,7 +60,7 @@ void MechList::server_add_mech(struct Mech &m)
     pack_mech(m, p);
     p.broadcast();
 
-    if(m.text != NULL)
+    if (m.text != NULL)
     {
         class mech_text_StoC p;
         p.id = m.id;

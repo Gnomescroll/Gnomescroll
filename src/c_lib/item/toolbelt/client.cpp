@@ -142,38 +142,26 @@ static bool beta_scan_world()
     Vec3 pos = player_agent.camera_position();
     Vec3 look = agent_camera->forward_vector();
 
-    class Voxels::VoxelHitscanTarget target;
-    float vox_distance;
-    Vec3 collision_point;
-    Vec3i block_pos;
-    Vec3i side;
-    CubeType tile = EMPTY_CUBE;
-    float block_distance;
-
-    HitscanTargetTypes target_type = Hitscan::hitscan_against_world(
-        pos, look,
-        player_agent.agent_id, OBJECT_AGENT,
-        &target, &vox_distance, collision_point,
-        block_pos, side, &tile, &block_distance);
+    Hitscan::WorldHitscanResult hitscan = Hitscan::hitscan_against_world(
+        pos, look, range, player_agent.agent_id, OBJECT_AGENT);
 
     ItemContainerID container_id = NULL_CONTAINER;
-    switch (target_type)
+    switch (hitscan.type)
     {
         case HITSCAN_TARGET_VOXEL:
-            if (vox_distance > range) return false;
-            if (target.entity_type == OBJECT_AGENT_SPAWNER)
+            if (hitscan.voxel_target.entity_type == OBJECT_AGENT_SPAWNER)
             {
                 choose_spawner_CtoS msg;
-                msg.spawner_id = target.entity_id;
+                msg.spawner_id = hitscan.voxel_target.entity_id;
                 msg.send();
                 return true;
             }
             return false;
 
         case HITSCAN_TARGET_BLOCK:
-            if (!ItemContainer::container_block_in_range_of(pos, block_pos))
+            if (!ItemContainer::container_block_in_range_of(pos, hitscan.block_position))
                 return false;
-            container_id = t_map::get_block_item_container(block_pos);
+            container_id = t_map::get_block_item_container(hitscan.block_position);
             if (container_id != NULL_CONTAINER)
             {
                 bool opened = ItemContainer::open_container(container_id);

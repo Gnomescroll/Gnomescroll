@@ -14,6 +14,8 @@
 namespace ClientState
 {
 
+
+
 extern char* active_system_data_path;
 
 extern struct Vec3i* path;

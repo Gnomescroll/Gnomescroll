@@ -8,8 +8,8 @@ namespace Voxels
 
 bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forward,
                                int skip_id, EntityType skip_type, // skip player agent id
-                               Vec3& collision_point, float *distance,
-                               class VoxelHitscanTarget* target)
+                               Vec3& collision_point, float& distance,
+                               class VoxelHitscanTarget& target)
 {
     float r2 = 100000.0f;
     struct Vec3 dest;
@@ -49,10 +49,10 @@ bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forwar
 
     if (target_hit != NULL)
     {
-        *distance = min_dist;
+        distance = min_dist;
         collision_point = dest;
-        target->copy_vhe(target_hit);
-        target->voxel = voxel;
+        target.copy_vhe(target_hit);
+        target.voxel = voxel;
         return true;
     }
     return false;
@@ -160,7 +160,7 @@ VoxelHitscanList::~VoxelHitscanList()
     free(this->hitscan_list);
 }
 
-void VoxelHitscanTarget::copy_vhe(VoxelHitscanElement* vhe)
+void VoxelHitscanTarget::copy_vhe(const VoxelHitscanElement* vhe)
 {
     GS_ASSERT(vhe->entity_id >= 0);
     GS_ASSERT(vhe->entity_type >= 0);

@@ -3,6 +3,7 @@
 #include <t_mech/common/common.hpp>
 #include <t_mech/_interface.hpp>
 #include <t_mech/mech_state.hpp>
+#include <chat/globals.hpp>
 
 // fuck msvc
 namespace t_mech
@@ -36,11 +37,11 @@ void mech_type_change_StoC::handle()
         SoundID snd_id = Sound::play_3d_sound("cropgrow", p);
         float pmult = float(randrange(-5,5)) / 1000.0f;
         if (snd_id != NULL_SOUND_ID)
-            Sound::set_pitch_multiplier(snd_id, pmult+1.0f);
+            Sound::set_pitch_multiplier(snd_id, pmult + 1.0f);
     }
 
     m.type = (MechType)type;
-    _mech_update(m);
+    update_mech(m);
 };
 
 void mech_delete_StoC::handle()
@@ -58,9 +59,10 @@ void mech_delete_StoC::handle()
 //char msg[MECH_TEXT_SIZE_MAX+1];
 void mech_text_StoC::handle()
 {
+    if (!Chat::is_valid_chat_message(this->msg)) return;
     for (int i=0; i<MECH_TEXT_SIZE_MAX; i++)
     {   // convert tabs to a space
-        if (this->msg[i] == 0x00)
+        if (this->msg[i] == '\t')
             this->msg[i] = ' ';
     }
 
@@ -72,13 +74,11 @@ void mech_text_StoC::handle()
 
     class MechAttribute* ma = get_mech_attribute(m.type);
     GS_ASSERT(ma->class_type == MECH_SIGN);
-
     GS_ASSERT(m.text == NULL);
-
-    m.text = (void*) calloc(1, MECH_TEXT_SIZE_MAX+1);
+    m.text = calloc(1, MECH_TEXT_SIZE_MAX+1);
     memcpy(m.text, msg, MECH_TEXT_SIZE_MAX);
 
-    printf("mech_text: id= %d, text= %s \n", id, (char*) m.text);
+    printf("%s: id= %d, text= %s \n", __FUNCTION__, id, (char*)m.text);
 };
 
 /*
@@ -93,16 +93,14 @@ void mech_text_StoC::handle()
 
 void mech_text_update_StoC::handle()
 {
+    if (!Chat::is_valid_chat_character(this->key)) return;
     IF_ASSERT(id < 0 || id >= mech_list->mlm) return;
     GS_ASSERT(mech_list->mla[id].id != -1);
     struct Mech& m = mech_list->mla[id];
 
-    GS_ASSERT(m.text != NULL);
-    if(m.text == NULL)
+    IF_ASSERT(m.text == NULL)
         return;
-
-    GS_ASSERT(pos < MECH_TEXT_SIZE_MAX);
-    if(pos >= MECH_TEXT_SIZE_MAX)
+    IF_ASSERT(pos >= MECH_TEXT_SIZE_MAX)
         return;
 
     class MechAttribute* ma = get_mech_attribute(m.type);
@@ -110,7 +108,7 @@ void mech_text_update_StoC::handle()
 
     ((char*)m.text)[pos] = key;
 
-    printf("set_text: mech %d, pos %d set to letter %d \n", id, pos, key);
+    printf("%s: mech %d, pos %d set to letter %d\n", __FUNCTION__, id, pos, key);
 };
 
 #endif

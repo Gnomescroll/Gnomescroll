@@ -3,7 +3,7 @@
 #include <t_map/common/types.hpp>
 
 inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float pos[3], float* _rad2);
-inline float sphere_line_distance(struct Vec3 p, struct Vec3 o, struct Vec3 t, struct Vec3* out, float* _rad2);
+inline float sphere_line_distance(const Vec3& p, const Vec3& o, const Vec3& t, Vec3* out, float* _rad2);
 
 int get_cube_side_from_sides(const Vec3i& sides);
 Vec3i get_sides_from_cube_side(int side_id);
@@ -20,16 +20,16 @@ class RaytraceData
     {
     }
 
-    inline CubeType get_cube_type();
+    inline CubeType get_cube_type() const;
     inline void set_collision_point(const Vec3i& position);
-    Vec3i get_pre_collision_point();
+    Vec3i get_pre_collision_point() const;
 
-    struct Vec3 collision_normal()
+    Vec3 collision_normal() const
     {
         return vec3_init(this->get_sides());
     }
 
-    Vec3i get_sides()
+    Vec3i get_sides() const
     {
         return get_sides_from_cube_side(this->side);
     }

@@ -32,28 +32,18 @@ int* cluster_size = NULL;
 int cluster_id = 0;
 int crystal_type_count[n_crystals] = {0};
 
-// TODO: move
-int get_highest_block_of_type(CubeType cube_type)
-{
-    for (int k=127; k>=0; k--)
-    for (int i=0; i<512; i++)
-    for (int j=0; j<512; j++)
-        if (t_map::get(i,j,k) == cube_type)
-            return k;
-    return -1;
-}
-
 void init_crystals()
 {
     static int inited = 0;
-    if (inited++) return;
+    IF_ASSERT(inited++) return;
 
     // load crystal types
     int i=0;
     crystals[i++] = t_mech::get_mech_type("blue_crystal");
     crystals[i++] = t_mech::get_mech_type("red_crystal");
     crystals[i++] = t_mech::get_mech_type("green_crystal");
-    // TODO -- check that all crystals are not ERROR_MECH
+    for (int j=0; j<i; i++)
+        GS_ASSERT(isValid(crystals[j]));
 
     bedrock = t_map::get_cube_type("bedrock");
     IF_ASSERT(!isValid(bedrock)) return;
@@ -61,24 +51,13 @@ void init_crystals()
     rock = t_map::get_cube_type("rock");
     IF_ASSERT(!isValid(rock)) return;
 
-    //int top = get_highest_block_of_type(rock) + 1;
-
-    //int step = (int)ceil(((1.0f/3.0f) * ((float)top)));
-
-    //// calculate stratification for crystal distribution
-    //for (int i=0; i<n_crystals; i++)
-    //{
-        //crystal_strata[2*i+0] = step * (3-i-0);
-        //crystal_strata[2*i+1] = step * (3-i-1);
-    //}
-
     i = 0;
     crystal_strata[i++] = 0.0f;
-    crystal_strata[i++] = 0.425f;
-    crystal_strata[i++] = 0.425f;
-    crystal_strata[i++] = 0.75f;
-    crystal_strata[i++] = 0.75f;
-    crystal_strata[i++] = 1.0f;
+    crystal_strata[i++] = 0.3f;
+    crystal_strata[i++] = 0.3f;
+    crystal_strata[i++] = 0.5f;
+    crystal_strata[i++] = 0.5f;
+    crystal_strata[i++] = 0.6f;
 
     for (int i=0; i<CRYSTAL_CLUSTER_RADIUS*2+1; i++)
         falloffs[i] = powf(CRYSTAL_CLUSTER_FALLOFF, i);
@@ -96,8 +75,8 @@ int get_crystal_index(int crystal_id)
 void place_crystal_cluster(const Vec3i& position, MechType crystal_id)
 {
     const float r = CRYSTAL_CLUSTER_RADIUS;
-    for (int i=position.x - r; i<position.x + r; i++)
-    for (int j=position.y - r; j<position.y + r; j++)
+    for (int i = position.x - r; i < position.x + r; i++)
+    for (int j = position.y - r; j < position.y + r; j++)
     {
         int dist = abs(i - position.x) + abs(j - position.y); // manhattan
         float p = falloffs[dist];
@@ -106,10 +85,12 @@ void place_crystal_cluster(const Vec3i& position, MechType crystal_id)
         Vec3i pos = vec3i_init(i, j, position.z);
         pos = translate_position(pos);
         pos.z = t_map::get_nearest_surface_block(pos);
-        if (abs(position.z - pos.z) > CRYSTAL_CLUSTER_Z_DIFF_MAX) continue;
-        int id = t_map::get(pos.x, pos.y, pos.z - 1);
-        if (id != rock) continue;
-        if (!t_mech::can_place_mech(pos, crystal_id))
+        if (pos.z <= 0 || abs(position.z - pos.z) > CRYSTAL_CLUSTER_Z_DIFF_MAX)
+            continue;
+        CubeType cube = t_map::get(pos.x, pos.y, pos.z - 1);
+        if (cube != rock) continue;
+        MechCreateFailureCode code = t_mech::can_place_mech(pos, crystal_id);
+        if (code != MCF_OK)
             continue;
         t_mech::create_crystal(pos, crystal_id);
         cluster_size[cluster_id]++;
@@ -142,7 +123,7 @@ void populate_crystals()
 
     int ct = 0;
     int ct_max = 1000;
-    int* loc = (int*)malloc(3 * ct_max * sizeof(int));
+    Vec3i* loc = (Vec3i*)malloc(ct_max * sizeof(*loc));
 
     for (int k=map_dim.z-1; k>=0; k--)
     for (int i=0; i<map_dim.x; i++)
@@ -155,21 +136,13 @@ void populate_crystals()
 
         if (ct >= ct_max)
         {
-            ct_max *= 2;
-            int* tmp = (int*)realloc(loc, 3*ct_max*sizeof(int));
-            GS_ASSERT(tmp != NULL);
-            if (tmp == NULL)
-            {
-                ct_max /= 2;
+            Vec3i* tmp = (Vec3i*)realloc(loc, 2*ct_max*sizeof(*tmp));
+            IF_ASSERT(tmp == NULL)
                 break;
-            }
             loc = tmp;
+            ct_max *= 2;
         }
-
-        loc[3*ct+0] = i;
-        loc[3*ct+1] = j;
-        loc[3*ct+2] = k+1;
-        ct++;
+        loc[ct++] = vec3i_init(i, j, k+1);
     }
 
     IF_ASSERT(ct <= 0)
@@ -185,10 +158,7 @@ void populate_crystals()
     for (int i=0; i<ct; i++)
     {
         MechType crystal_id = get_crystal_type(pct);
-        int x = loc[3*i+0];
-        int y = loc[3*i+1];
-        int z = loc[3*i+2];
-        place_crystal_cluster(vec3i_init(x, y, z), crystal_id);
+        place_crystal_cluster(loc[i], crystal_id);
         pct += inc;
     }
 

@@ -32,7 +32,7 @@ class VoxelHitscanTarget: public VoxelHitscanElement
     public:
         Vec3i voxel;
 
-        void copy_vhe(VoxelHitscanElement* vhe);
+        void copy_vhe(const VoxelHitscanElement* vhe);
         void print()
         {
             printf("Target:\n");
@@ -58,8 +58,8 @@ class VoxelHitscanList
     //pass in x,y,z fire point and direction of projectile
     bool hitscan(const Vec3& p, const Vec3& v,
                  int skip_id, EntityType skip_type,
-                 Vec3& collision_point, float *distance,
-                 class VoxelHitscanTarget* target);
+                 Vec3& collision_point, float& distance,
+                 class VoxelHitscanTarget& target);
 
     class VoxelHitscanTarget* hitscan_all(const Vec3& start, const Vec3& end, size_t* n_targets);
 

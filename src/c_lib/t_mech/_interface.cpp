@@ -114,7 +114,7 @@ void pack_mech(const struct Mech &m, class mech_create_StoC &p)
 
 #if DC_CLIENT
 //call after type or subtype changes
-static bool _mech_update(struct Mech &m)
+static bool update_mech(struct Mech &m)
 {
     class MechAttribute* ma = get_mech_attribute(m.type);
     m.render_type = ma->render_type;
@@ -172,7 +172,7 @@ static bool unpack_mech(struct Mech &m, const mech_create_StoC &p)
     m.side = p.side;
     m.position = p.position;
     m.text = NULL;
-    return _mech_update(m);
+    return update_mech(m);
 }
 
 //ray cast and draw outlines
