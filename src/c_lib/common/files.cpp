@@ -45,8 +45,7 @@ off_t get_filesize(const char *filename)
 // free the returned char* buffer after use
 static char* read_file_to_buffer(const char* filename, size_t* size, const char* mode)
 {
-    GS_ASSERT(strstr(mode, "r") != NULL);
-    if (strstr(mode, "r") == NULL) return NULL;
+    IF_ASSERT(strstr(mode, "r") == NULL) return NULL;
 
     *size = 0;
     off_t expected_size = get_filesize(filename);
@@ -206,9 +205,8 @@ static const char SEPARATOR = '/';
 #endif
 
 void create_path(const char* fn)
-{
-    // walk down the path, create folders as needed
-    int len = strlen(fn);
+{   // walk down the path, create folders as needed
+    size_t len = strlen(fn);
     char* path = (char*)malloc((len+1) * sizeof(char));
     strcpy(path, fn);
 
@@ -261,8 +259,7 @@ bool save_tmp_file(const char* fn, const char* fn_tmp, const char* fn_bak)
     if (file_exists(fn))
     {
         int ret = GS_RENAME(fn, fn_bak);
-        GS_ASSERT(ret == 0);
-        if (ret != 0) return false;
+        IF_ASSERT(ret != 0) return false;
     }
     int ret = GS_RENAME(fn_tmp, fn);
     GS_ASSERT(ret == 0);
@@ -334,7 +331,7 @@ void get_home_directory(char*& home)
     LPTSTR _home = (LPTSTR)calloc(MAX_PATH+1, sizeof(*_home));
     HRESULT result = SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL,
                                      SHGFP_TYPE_CURRENT, _home);
-    const bool is_wide = (sizeof(*_home) > sizeof(char));
+    const bool is_wide = (sizeof(**_home) > sizeof(char));
     if (!SUCCEEDED(result))
     {
         size_t len = _tcslen(_home);
