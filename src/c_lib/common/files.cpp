@@ -3,7 +3,6 @@
 #include <sys/stat.h>
 #include <limits.h>
 #ifdef __WIN32__
-# include <shlobj.h>
 # ifdef __GNUC__
 #  include <io.h>
 # endif

@@ -78,6 +78,7 @@
 #ifdef __WIN32__
 # include <tchar.h>
 # include "windows.h"
+# include <shlobj.h>
 # undef interface
 # undef rad2
 # undef interface
