@@ -287,17 +287,6 @@ def install_bin(target, srcdir, outdir, dest_target=None):
                     src_dll = os.path.join(dll_path, dll)
                     dst_dll = os.path.join('./', dll)
                     shutil.copy2(src_dll, dst_dll)
-                awe_dll_path = '../lib/win32/awesomium/bin/{0}/'
-                awe_dll_path = awe_dll_path.format(ctx.env.awe_stem)
-                for f in os.listdir(awe_dll_path):
-                    if f == 'locales':
-                        _path = os.path.join(awe_dll_path, f)
-                        for loc in os.listdir(_path):
-                            shutil.copy2(os.path.join(_path, loc),
-                                         os.path.join('./{0}'.format(f), loc))
-                    else:
-                        shutil.copy2(os.path.join(awe_dll_path, f),
-                                     os.path.join('./', f))
                 print 'Copied dlls to current directory'
         except Exception as e:
             msg = ('Error copying dlls from {0} to current directory. '
