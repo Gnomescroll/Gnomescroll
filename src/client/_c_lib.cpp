@@ -80,6 +80,7 @@
 # include "windows.h"
 # undef interface
 # undef rad2
+# undef interface
 #endif
 
 #ifdef __APPLE__
