@@ -2,7 +2,7 @@
 
 #include <sys/stat.h>
 #include <limits.h>
-#ifdef __WIN32__
+#ifdef _WIN32
 # ifdef __GNUC__
 #  include <io.h>
 # endif
@@ -325,7 +325,7 @@ void get_home_directory(char*& home)
     }
     #endif
 
-    #ifdef __WIN32__
+    #ifdef _WIN32
     // Window appdata / user home directory
     LPTSTR _home = (LPTSTR)calloc(MAX_PATH+1, sizeof(*_home));
     HRESULT result = SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL,

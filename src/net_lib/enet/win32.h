@@ -5,7 +5,7 @@
 #ifndef __ENET_WIN32_H__
 #define __ENET_WIN32_H__
 
-#ifdef __WIN32__
+#ifdef _WIN32
     #ifdef ENET_BUILDING_LIB
     //#pragma warning (disable: 4996) // 'strncpy' was declared deprecated
     //#pragma warning (disable: 4267) // size_t to int conversion

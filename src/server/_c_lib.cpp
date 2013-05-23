@@ -10,7 +10,7 @@
 # error Do not include this file in the client
 #endif
 
-#ifdef __WIN32__
+#ifdef _WIN32
 //# define WINVER _WIN32_WINNT_WINXP
 //# define _WIN32_WINNT _WIN32_WINNT_WINXP
 # ifndef NTDDI_VERSION
@@ -56,7 +56,7 @@
 # include <malloc.h> //alloca function
 #endif
 
-#ifdef __WIN32__
+#ifdef _WIN32
 # include <tchar.h>
 # include "windows.h"
 # undef interface

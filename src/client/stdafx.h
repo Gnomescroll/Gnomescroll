@@ -12,7 +12,7 @@
 #define __MSVC__
 
 #define S_ITERATOR_DEBUGGING 0
-#define _SECURE_SCL 0	//secure iterators, slow
+#define _SECURE_SCL 0   //secure iterators, slow
 
 #pragma warning(disable: 4244) // possible loss of data
 #pragma warning(disable: 4309) // truncation of constant value
@@ -25,14 +25,14 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #define _CRT_SECURE_NO_WARNINGS
 
-#include <windows.h> 
+#include <windows.h>
 #include <winbase.h> // usleep function
 #include <tchar.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
- 
+
 #include <string.h>
 #include <math.h>
 
@@ -53,8 +53,8 @@ extern "C"
     #include <direct.h>
     #define getcwd _getcwd
     #define chdir _chdir
-	#define mkdir(x) _mkdir(x)
+    #define mkdir(x) _mkdir(x)
 
-	#define snprintf _snprintf
+    #define snprintf _snprintf
 #endif
 

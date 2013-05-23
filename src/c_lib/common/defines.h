@@ -2,7 +2,7 @@
 
 typedef unsigned int GLuint;
 
-#ifdef __WIN32__
+#ifdef _WIN32
 # ifndef uint
 #  define uint unsigned int
 # endif
@@ -120,7 +120,7 @@ const int PLAYERS_MAX = 32;
 #define SCREENSHOT_PATH "./screenshot/"
 #define MEDIA_PATH "./media/"
 
-#ifdef __WIN32__
+#ifdef _WIN32
 # define SYSTEM_DATA_FOLDER "Gnomescroll/"
 #else
 # define SYSTEM_DATA_FOLDER ".gnomescroll/"

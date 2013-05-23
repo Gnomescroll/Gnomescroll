@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <time.h>
 
-#ifndef __WIN32__
+#ifndef _WIN32
 # include <sys/types.h>
 # include <pwd.h>
 #endif

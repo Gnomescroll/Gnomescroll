@@ -2,10 +2,10 @@
 
 #ifdef __GNUC__
 
-#ifdef __WIN32__
-	#include <malloc.h>	//alloca for mingw gcc
+#ifdef __MINGW32__
+# include <malloc.h> //alloca for mingw gcc
 #else
-	#include <alloca.h>	//normal alloca
+# include <alloca.h> //normal alloca
 #endif
 
 #define MALLOX(type, array_name, count) type* array_name = (type*) alloca(count * sizeof(type));

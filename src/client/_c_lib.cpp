@@ -40,7 +40,7 @@
 # error Do not include this file in the server
 #endif
 
-#ifdef __WIN32__
+#ifdef _WIN32
 //# define WINVER _WIN32_WINNT_WINXP
 //# define _WIN32_WINNT _WIN32_WINNT_WINXP
 # ifndef NTDDI_VERSION
@@ -54,32 +54,30 @@
 # endif
 #endif
 
-#ifdef __MSVC__
-# include "stdafx.h"
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
+#include <math.h>
 
-#ifndef __WIN32__
+#ifndef _WIN32
 # include <sys/types.h>
 # include <unistd.h>
 #endif
-
-#include <string.h>
-#include <math.h>
 
 #ifdef __MINGW32__
 # include <malloc.h> //alloca function
 #endif
 
-#ifdef __WIN32__
+#ifdef __MSVC__
+# include "stdafx.h"
+#endif
+
+#ifdef _WIN32
 # include <tchar.h>
 # include "windows.h"
 # include <shlobj.h>
-# undef interface
 # undef rad2
 # undef interface
 #endif
