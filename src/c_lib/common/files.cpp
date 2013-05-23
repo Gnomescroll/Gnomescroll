@@ -331,7 +331,7 @@ void get_home_directory(char*& home)
 
     #ifdef __WIN32__
     // Window appdata / user home directory
-    LPTSTR _home = (LPTSTR*)calloc(MAX_PATH+1, sizeof(*_home));
+    LPTSTR _home = (LPTSTR)calloc(MAX_PATH+1, sizeof(*_home));
     HRESULT result = SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL,
                                      SHGFP_TYPE_CURRENT, _home);
     const bool is_wide = (sizeof(*_home) > sizeof(char));
