@@ -235,17 +235,17 @@ bool line_box_test(const Vec3& position,
                    float& a)
 {   // there are 6 planes, do intersection on each of them
     Vec3 s = size;
-    if (line_plane_intersection(position, direction, center, s, u, f, r, a))
+    if (line_plane_intersection(position, direction, center, s, f, r, u, a))
         return true;
     s.x *= -1;
-    if (line_plane_intersection(position, direction, center, s, u, f, r, a))
+    if (line_plane_intersection(position, direction, center, s, f, r, u, a))
         return true;
 
     s = vec3_init(size.y, size.z, size.x);
-    if (line_plane_intersection(position, direction, center, s, u, f, r, a))
+    if (line_plane_intersection(position, direction, center, s, r, u, f, a))
         return true;
     s.x *= -1;
-    if (line_plane_intersection(position, direction, center, s, u, f, r, a))
+    if (line_plane_intersection(position, direction, center, s, r, u, f, a))
         return true;
 
     // top
