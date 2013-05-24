@@ -2,6 +2,7 @@
 
 #include <common/macros.hpp>
 #include <t_mech/config/_interface.hpp>
+#include <physics/ray_trace/ray_trace.hpp>
 
 namespace t_mech
 {
