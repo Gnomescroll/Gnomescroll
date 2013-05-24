@@ -117,9 +117,21 @@ Vec3 get_mech_box_dimensions(const struct Mech& mech)
 
 Vec3 get_mech_center(const struct Mech& mech)
 {
-    Vec3 offset = vec3_init(0.5f + mech.offset_x, 0.5f + mech.offset_y, 0.0f);
-    Vec3 p = vec3_add(vec3_init(mech.position), offset);
-    return translate_position(p);
+    if (mech.render_type == MECH_RENDER_TYPE_3)
+    {   // wall
+        Vec3 offset = vec3_init(0.5f, 0.5f, 0.5f * (1.0f - mech.size));
+        Vec3 center = vec3_add(vec3_init(mech.position), offset);
+        Vec3 side = vec3_init(get_sides_from_cube_side(mech.side));
+        side = vec3_scalar_mult(side, -0.5f);
+        center = vec3_add(center, side);
+        return translate_position(center);
+    }
+    else
+    {   // ground
+        Vec3 offset = vec3_init(0.5f + mech.offset_x, 0.5f + mech.offset_y, 0.0f);
+        Vec3 p = vec3_add(vec3_init(mech.position), offset);
+        return translate_position(p);
+    }
 }
 
 

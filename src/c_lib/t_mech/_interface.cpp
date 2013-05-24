@@ -107,6 +107,7 @@ void pack_mech(const struct Mech &m, class mech_create_StoC &p)
         case NULL_MECH_CLASS:
         default:
             printf("pack_mech error: unhandled mech type\n");
+            break;
     }
 }
 #endif
@@ -139,25 +140,26 @@ static bool update_mech(struct Mech &m)
             m.offset_y = 0.0f;
             m.size = 1.0f;
             break;
+
         case MECH_CROP:
-            break;
         case MECH_MYCELIUM:
             break;
+
         case MECH_SIGN:
             m.size = 1.0f;  //diameter
             break;
+
         case MECH_WALL_OBJECT:
             m.rotation = 0.0f;
             m.offset = 0;
             m.offset_x = 0.0f;
             m.offset_y = 0.0f;
             m.size = 0.5f;  //diameter
-
             break;
+
         case MECH_WIRE:
         case MECH_SWITCH:
         case NULL_MECH_CLASS:
-
             GS_ASSERT(false);
             return false;
     }
