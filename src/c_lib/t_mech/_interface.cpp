@@ -87,7 +87,7 @@ void pack_mech(const struct Mech &m, class mech_create_StoC &p)
     p.side = m.side;
     p.position = m.position;
 
-    GS_ASSERT(mech_attributes[m.type].type != -1);
+    GS_ASSERT(mech_attributes[m.type].type != NULL_MECH_TYPE);
     GS_ASSERT((m.side >=0 && m.side <= 5) || m.side == NULL_MECH_SIDE);
 
     switch (mech_attributes[m.type].class_type)

@@ -562,8 +562,8 @@ static void get_listener_state(Vec3& position, Vec3& velocity, Vec3& at, Vec3& u
     alGetListenerfv(AL_ORIENTATION, o);
     for (int i=0; i<3; i++)
         at.f[i] = o[i];
-    for (int i=3; i<6; i++)
-        up.f[i] = o[i];
+    for (int i=0; i<3; i++)
+        up.f[i] = o[i+3];
 }
 
 static bool add_to_sources(int buffer_id, int source_id, bool two_dimensional)
@@ -879,6 +879,8 @@ void update()
                 rm_sources[rm_sources_index++] = j;
         }
 
+        GS_ASSERT(rm_sources_index <= MAX_SOURCES);
+
         for (int i=0; i<rm_sources_index; i++)
             b->remove_source(rm_sources[i]);
 
@@ -892,6 +894,7 @@ void stop_sound(SoundID sound_id)
     IF_ASSERT(sources == NULL) return;
     GSSoundSource* source = get_source_from_sound_id(sound_id);
     if (source == NULL) return;
+    IF_ASSERT(source->id < 0 || source->id >= MAX_SOURCES) return;
     alSourceStop(sources[source->id]);
     checkError();
 }

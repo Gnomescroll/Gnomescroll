@@ -99,7 +99,6 @@ class MechLightEffect
             return;
 
         const int tex_id = 32+ (m.id +counter) %8;
-        //GS_ASSERT(mech_attributes[m.type].type != -1);
 
         const float txmargin = 0.0f;
         float tx_min, ty_min, tx_max, ty_max;
