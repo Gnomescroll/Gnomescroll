@@ -108,12 +108,12 @@ void RailTrailEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quad
     static const float ty_min = 0.0f;
     static const float ty_max = 1.0f;
 
-    Vec3 bl, tl, PHYSICS_TICK_RATE, br;
-    bl = tl = PHYSICS_TICK_RATE = br = vec3_init(0.0f);
+    Vec3 bl, tl, tr, br;
+    bl = tl = tr = br = vec3_init(0.0f);
 
     //Vec3 bl = vec3_init(-r, -r/3, 0);  // Bottom left
     //Vec3 tl = vec3_init(-r,  r/3, 0);  // Top left
-    //Vec3 PHYSICS_TICK_RATE = vec3_init( r,  r/3, 0);  // Top right
+    //Vec3 tr = vec3_init( r,  r/3, 0);  // Top right
     //Vec3 br = vec3_init( r, -r/3, 0);  // Bottom right
 
 
@@ -128,24 +128,24 @@ void RailTrailEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quad
     //printf("bl.y: %8.2f  bl.z: %8.2f \n", bl.y, bl.z);
 
     // top edge
-    tl.y = PHYSICS_TICK_RATE.y = r*sinf(radian);
-    tl.z = PHYSICS_TICK_RATE.z = -r*cosf(radian);
+    tl.y = tr.y = r*sinf(radian);
+    tl.z = tr.z = -r*cosf(radian);
     //printf("tl.y: %8.2f  tl.z: %8.2f \n", tl.y, tl.z);
 
     // sides
     bl.x = tl.x = -r;
-    br.x = PHYSICS_TICK_RATE.x = r;
+    br.x = tr.x = r;
 
     // do YAW
     bl = vec3_euler_rotation(bl, theta-0.5f, 0, 0);
     tl = vec3_euler_rotation(tl, theta-0.5f, 0, 0);
-    PHYSICS_TICK_RATE = vec3_euler_rotation(PHYSICS_TICK_RATE, theta-0.5f, 0, 0);
+    tr = vec3_euler_rotation(tr, theta-0.5f, 0, 0);
     br = vec3_euler_rotation(br, theta-0.5f, 0, 0);
 
     // translate to world space
     bl = vec3_add(p, bl);
     tl = vec3_add(p, tl);
-    PHYSICS_TICK_RATE = vec3_add(p, PHYSICS_TICK_RATE);
+    tr = vec3_add(p, tr);
     br = vec3_add(p, br);
 
     // draw
@@ -154,7 +154,7 @@ void RailTrailEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quad
     glTexCoord2f(tx_min, ty_max);
     glVertex3f(tl.x, tl.y, tl.z);  // Top left
     glTexCoord2f(tx_min, ty_min);
-    glVertex3f(PHYSICS_TICK_RATE.x, PHYSICS_TICK_RATE.y, PHYSICS_TICK_RATE.z);  // Top right
+    glVertex3f(tr.x, tr.y, tr.z);  // Top right
     glTexCoord2f(tx_max, ty_min);
     glVertex3f(br.x, br.y, br.z);  // Bottom right
 }
