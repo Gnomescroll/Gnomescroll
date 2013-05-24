@@ -104,9 +104,10 @@ inline bool is_plant(MechType type)
 
 Vec3 get_mech_box_dimensions(const struct Mech& mech)
 {
-    IF_ASSERT(!isValid(mech.type)) return vec3_init(1);
     float size = mech.size * 0.5f;
+    IF_ASSERT(!isValid(mech.type)) return vec3_init(size);
     int tex_id = mech_attributes[mech.type].sprite;
+    if (tex_id < 0 || tex_id >= MAX_MECHS) return vec3_init(mech.size);
     GS_ASSERT(mech_sprite_width[mech_attributes[mech.type].sprite] != -1)
     GS_ASSERT(mech_sprite_height[mech_attributes[mech.type].sprite] != -1)
     float size_w = size*mech_sprite_width_f[tex_id];

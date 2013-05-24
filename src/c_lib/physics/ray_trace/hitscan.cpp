@@ -49,7 +49,7 @@ WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
     if (raytrace_terrain(p, v, range, &terrain_data))
     {
         hitscan.set_block_collision(terrain_data, range);
-        range = hitscan.block_distance; // cap the range for future calls
+        //range = hitscan.block_distance; // cap the range for future calls
     }
 
     Vec3 voxel_collision_point;
@@ -59,7 +59,7 @@ WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
                                            range, voxel_collision_point,
                                            voxel_distance, voxel_target))
     {
-        range = voxel_distance;
+        //range = voxel_distance;
         hitscan.set_voxel_collision(voxel_target, voxel_collision_point,
                                     voxel_distance);
     }

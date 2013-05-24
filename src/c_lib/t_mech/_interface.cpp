@@ -126,8 +126,6 @@ static bool update_mech(struct Mech &m)
         case MECH_CRYSTAL:
             //do something
             //m.render_type = ma->render_type;
-
-            m.size = 0.80f;  //diameter
             m.rotation = 0.25f*(rand()%4) + 0.25f*randf()/3;
 
             //m.rotation = 0.0f;
@@ -139,7 +137,7 @@ static bool update_mech(struct Mech &m)
 
             m.offset_x = 0.0f;
             m.offset_y = 0.0f;
-            m.size = 1.00;
+            m.size = 1.0f;
             break;
         case MECH_CROP:
             break;
@@ -149,7 +147,11 @@ static bool update_mech(struct Mech &m)
             m.size = 1.0f;  //diameter
             break;
         case MECH_WALL_OBJECT:
-            m.size = 1.0f;  //diameter
+            m.rotation = 0.0f;
+            m.offset = 0;
+            m.offset_x = 0.0f;
+            m.offset_y = 0.0f;
+            m.size = 0.5f;  //diameter
 
             break;
         case MECH_WIRE:
@@ -471,12 +473,6 @@ MechCreateFailureCode can_place_mech(const Vec3i& position, MechType mech_type)
     return can_place_mech(position, mech_type, 0);
 }
 
-
-void place_vine(const Vec3i& position, int side)
-{
-
-
-}
 
 #if DC_SERVER
 
