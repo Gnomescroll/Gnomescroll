@@ -35,9 +35,6 @@
     <ClCompile Include="_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\c_lib\chat\terminal_input.cpp">
-      <Filter>c_lib\chat</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="c_lib\agent">

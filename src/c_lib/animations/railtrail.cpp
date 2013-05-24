@@ -43,7 +43,7 @@ void RailTrailEffect::tick()
 
     float curr_spin = 0.0f;
     //float curr_spin = (PI/16) * this->ttl;
-    for (float fl=0.0f; fl <= 1.0f; fl += step)
+    for (float fl=0.0f; fl<=1.0f; fl+=step)
     {
         Vec3 curr = vec3_interpolate(this->start, this->end, fl);
         //float r = 0.17f; // quadratic radius
@@ -72,7 +72,7 @@ void RailTrailEffect::tick()
         //n = anim_scale*float(n);
         Particle::Shrapnel *s;
 
-        s = Particle::create_shrapnel(spiral, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
+        s = Particle::create_shrapnel(spiral, /*vel*/ vec3_init(0,0,0));
         if (s == NULL) return;
 
         //s->ttl = randrange(8, 15);
@@ -83,7 +83,7 @@ void RailTrailEffect::tick()
         s->scale = 0.06f;
         s->texture_index = 22;
 
-        s = Particle::create_shrapnel(spiral2, /*vel*/ vec3_init(0,0,0)/*vec3_rand_center()*/);
+        s = Particle::create_shrapnel(spiral2, /*vel*/ vec3_init(0,0,0));
         if (s == NULL) return;
 
         //s->ttl = randrange(8, 15);
@@ -111,17 +111,11 @@ void RailTrailEffect::draw_quad(Vec3 p, float r, float theta, float phi) // quad
     Vec3 bl, tl, tr, br;
     bl = tl = tr = br = vec3_init(0.0f);
 
-    //Vec3 bl = vec3_init(-r, -r/3, 0);  // Bottom left
-    //Vec3 tl = vec3_init(-r,  r/3, 0);  // Top left
-    //Vec3 tr = vec3_init( r,  r/3, 0);  // Top right
-    //Vec3 br = vec3_init( r, -r/3, 0);  // Bottom right
-
-
     // FIXME: MOVE SHIT LIKE THIS TO BE CALC'ED ONLY ONCE then applied to all the interpolated points
     // rotate the y & z (pitch) .... prob need to reverse/mirror the y
     float radian = phi*PI;
 
-    // first setup up facing quad with correct PITCH
+    // first setup up-facing quad with correct PITCH
     // bottom edge
     bl.y = br.y = -r*sinf(radian);
     bl.z = br.z = r*cosf(radian);
@@ -193,6 +187,7 @@ void RailTrailEffectList::tick()
     {
         a[i].tick();
         a[i].ttl--;
+
         if (a[i].ttl <= 0)
             destroy(i);
     }

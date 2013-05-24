@@ -416,7 +416,7 @@ void load_block_dat()
 
     // explosives
     cube_def(SolidCube, "plasmagen");
-    iso_texture(iceflame, 1, 2);
+    iso_texture(cc, 8, 1);
     push_texture();
     p->explosive = true;
     set_max_damage(4);
