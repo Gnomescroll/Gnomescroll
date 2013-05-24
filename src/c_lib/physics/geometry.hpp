@@ -245,7 +245,8 @@ bool line_box_test(const Vec3& position,
     }
 
     s.x *= -1;
-    if (line_plane_intersection(position, direction, center, s, f, r, u, d))
+    if (line_plane_intersection(position, direction, center, s,
+                                f, r, u, d))
     {
         hit = true;
         if (d < closest_d)
@@ -261,7 +262,8 @@ bool line_box_test(const Vec3& position,
     }
 
     s.x *= -1;
-    if (line_plane_intersection(position, direction, center, s, r, u, f, d))
+    if (line_plane_intersection(position, direction, center, s,
+                                r, u, f, d))
     {
         hit = true;
         if (d < closest_d)
@@ -279,7 +281,8 @@ bool line_box_test(const Vec3& position,
 
     // bottom
     s.x *= -1;
-    if (line_plane_intersection(position, direction, center, s, u, f, r, d))
+    if (line_plane_intersection(position, direction, center, s,
+                                u, f, r, d))
     {
         hit = true;
         if (d < closest_d)

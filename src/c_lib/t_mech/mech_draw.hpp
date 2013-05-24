@@ -182,10 +182,10 @@ class MechListShader
 
     void init_sprite_meta()
     {
-        //int mech_sprite_width[256];  //centered
-        //int mech_sprite_height[256]; //from bottom
+        //int mech_sprite_width[MAX_MECHS];  //centered
+        //int mech_sprite_height[MAX_MECHS]; //from bottom
 
-        for (int i=0; i<256; i++)
+        for (int i=0; i<MAX_MECHS; i++)
         {
             mech_sprite_width[i]  = -1;
             mech_sprite_height[i] = -1;
@@ -193,10 +193,10 @@ class MechListShader
 
         SDL_LockSurface(s);
 
-        unsigned char *pixels = (unsigned char *)s->pixels;
+        unsigned char* pixels = (unsigned char*)s->pixels;
         GS_ASSERT(s->w == 16*16 && s->h == 16*16);
 
-        for (int i=0; i<256; i++)
+        for (int i=0; i<MAX_MECHS; i++)
         {
             int w = i % 16;
             int h = i / 16;
@@ -285,8 +285,8 @@ class MechListShader
                     for (int _k=0; _k<16; _k++)
                     {
                         int index2 = offset + _k;
-                        pixels[4*index2 + 3] = 255;
-                        pixels[4*index2 + 2] = 255;
+                        pixels[4*index2 + 3] = 0xFF;
+                        pixels[4*index2 + 2] = 0xFF;
                     }
 
                     break;
@@ -299,13 +299,13 @@ class MechListShader
 
         SDL_UnlockSurface(s);
 
-        for (int i=0; i<256; i++)
+        for (int i=0; i<MAX_MECHS; i++)
         {
-            mech_sprite_width_f[i]  = 1.0;
-            mech_sprite_height_f[i] = 1.0;
+            mech_sprite_width_f[i]  = 1.0f;
+            mech_sprite_height_f[i] = 1.0f;
         }
 
-        for (int i=0; i<256; i++)
+        for (int i=0; i<MAX_MECHS; i++)
         {
             if (mech_sprite_width[i] != -1)
                 mech_sprite_width_f[i] = float(mech_sprite_width[i]) / 16.0f;

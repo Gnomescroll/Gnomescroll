@@ -13,7 +13,6 @@ void init();
 void teardown();
 void init_packets();
 
-void place_vine(const Vec3i& position, int side);
 MechCreateFailureCode can_place_mech(const Vec3i& position, MechType mech_type);
 MechCreateFailureCode can_place_mech(const Vec3i& position, MechType mech_type, int side);
 void print_mech_create_failure_code(MechCreateFailureCode code);
