@@ -55,11 +55,21 @@ class VoxelHitscanList
         void register_voxel_volume(class VoxelVolume* vv);
         void unregister_voxel_volume(class VoxelVolume* vv);
 
-    //pass in x,y,z fire point and direction of projectile
+    bool hitscan(const Vec3& p, const Vec3& v,
+                 int skip_id, EntityType skip_type, float range,
+                 Vec3& collision_point, float& distance,
+                 class VoxelHitscanTarget& target);
+
+    // Temporary wrapper with range defaulted
     bool hitscan(const Vec3& p, const Vec3& v,
                  int skip_id, EntityType skip_type,
                  Vec3& collision_point, float& distance,
-                 class VoxelHitscanTarget& target);
+                 class VoxelHitscanTarget& target)
+    {
+        const float range = 128.0f;
+        return this->hitscan(p, v, skip_id, skip_type, range, collision_point,
+                             distance, target);
+    }
 
     class VoxelHitscanTarget* hitscan_all(const Vec3& start, const Vec3& end, size_t* n_targets);
 

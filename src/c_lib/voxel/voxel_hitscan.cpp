@@ -8,6 +8,7 @@ namespace Voxels
 
 bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forward,
                                int skip_id, EntityType skip_type, // skip player agent id
+                               float range,
                                Vec3& collision_point, float& distance,
                                class VoxelHitscanTarget& target)
 {
@@ -18,9 +19,8 @@ bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forwar
     class VoxelHitscanElement* target_hit;
     target_hit = NULL;
     Vec3i voxel;
-    float dist;
     float min_dist = 1000000.0f;
-    float max_dist = 256.0f;
+    float max_dist = range;
     struct Vec3 tv = vec3_init(0);
     for (int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
@@ -32,7 +32,7 @@ bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forwar
 
         Vec3 p = quadrant_translate_position(pos, vhe->vv->world_matrix.c);
         radius = vhe->vv->radius;
-        dist = sphere_line_distance(pos, forward, p, &tv, &r2);
+        float dist = sphere_line_distance(pos, forward, p, &tv, &r2);
 
         if (dist < 0.0f || dist > max_dist) continue;
         if (r2 < radius*radius)
@@ -171,5 +171,4 @@ void VoxelHitscanTarget::copy_vhe(const VoxelHitscanElement* vhe)
     this->part_id = vhe->part_id;
     this->vv = vhe->vv;
 }
-
 }   // Voxels

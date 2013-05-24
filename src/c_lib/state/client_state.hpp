@@ -10,11 +10,12 @@
 #include <agent/client/player_agent.hpp>
 #include <voxel/voxel_hitscan.hpp>
 #include <voxel/voxel_render.hpp>
+#include <physics/ray_trace/hitscan.hpp>
 
 namespace ClientState
 {
 
-
+extern class Hitscan::WorldHitscanResult hitscan;
 
 extern char* active_system_data_path;
 
@@ -56,5 +57,8 @@ void set_location_pointer();
 void set_location_pointer_open_block();
 
 void teardown();
+
+void update_global_hitscan();
+
 
 }   // ClientState

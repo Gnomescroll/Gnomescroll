@@ -22,7 +22,8 @@ class WorldHitscanResult
 
         static const int FAR_AWAY = INT_MAX;
 
-        HitscanTargetType type;
+        HitscanTargetType type;     // type of nearest object
+        float distance;             // distance of nearest object
 
         // block
         bool block_hit;
@@ -60,13 +61,17 @@ class WorldHitscanResult
         this->voxel_collision_point = collision_point;
     }
 
-    void set_mech_collision(int mech_id, int mech_distance)
+    void set_mech_collision(int mech_id, float mech_distance)
     {
         this->mech_hit = true;
+        this->mech_id = mech_id;
+        this->mech_distance = mech_distance;
     }
 
-    void update_collision_type()
+    void finish()
     {   // call this when done gathering hitscan data
+        this->type = HITSCAN_TARGET_NONE;
+        this->distance = FAR_AWAY;
         const int types = 3;
         float d[types] = { this->block_distance, this->voxel_distance,
                            this->mech_distance };
@@ -83,6 +88,7 @@ class WorldHitscanResult
         if (closest == -1)
             return;
         GS_ASSERT(hits[closest]);
+        this->distance = closest_d;
         switch (closest)
         {
             case 0:
@@ -96,8 +102,7 @@ class WorldHitscanResult
                 break;
             default:
                 GS_ASSERT(false);
-                this->type = HITSCAN_TARGET_NONE;
-                break;
+                return;
         }
     }
 

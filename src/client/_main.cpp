@@ -493,10 +493,14 @@ int physics_tick()
 
         Components::position_physics_component_list->call();
         Components::position_momentum_physics_component_list->call();
+        poll_mouse();
+
+        ClientState::update_global_hitscan();
+        poll_mouse();
 
         tick_cameras();
-
         poll_mouse();
+
         _SET_LAST_TICK();
     }
 

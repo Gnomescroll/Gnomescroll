@@ -43,31 +43,33 @@ WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
                                          EntityType ignore_type)
 {
     WorldHitscanResult hitscan;
+
+    // terrain first
+    class RaytraceData terrain_data;
+    if (raytrace_terrain(p, v, range, &terrain_data))
+    {
+        hitscan.set_block_collision(terrain_data, range);
+        range = hitscan.block_distance; // cap the range for future calls
+    }
+
     Vec3 voxel_collision_point;
     Voxels::VoxelHitscanTarget voxel_target;
     float voxel_distance;
     if (STATE::voxel_hitscan_list->hitscan(p, v, ignore_id, ignore_type,
-                                           voxel_collision_point,
-                                           voxel_distance, voxel_target) &&
-        voxel_distance < range)
+                                           range, voxel_collision_point,
+                                           voxel_distance, voxel_target))
     {
+        range = voxel_distance;
         hitscan.set_voxel_collision(voxel_target, voxel_collision_point,
-                                   voxel_distance);
+                                    voxel_distance);
     }
-
-    class RaytraceData terrain_data;
-    if (raytrace_terrain(p, v, range, &terrain_data))
-        hitscan.set_block_collision(terrain_data, range);
 
     int mech_id;
     float mech_distance;
-    if (t_mech::ray_cast_mech(p, v, mech_id, mech_distance) &&
-        mech_distance < range)
-    {
+    if (t_mech::ray_cast_mech(p, v, range, mech_id, mech_distance))
         hitscan.set_mech_collision(mech_id, mech_distance);
-    }
 
-    hitscan.update_collision_type();
+    hitscan.finish();
     return hitscan;
 }
 

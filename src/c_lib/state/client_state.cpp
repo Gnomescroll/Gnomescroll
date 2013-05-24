@@ -19,6 +19,8 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 namespace ClientState
 {
 
+class Hitscan::WorldHitscanResult hitscan;
+
 char* active_system_data_path = NULL;
 
 struct Vec3i* path = NULL;
@@ -156,6 +158,19 @@ void set_location_pointer_open_block()
 void teardown()
 {
     free(active_system_data_path);
+}
+
+void update_global_hitscan()
+{
+    if (agent_camera == NULL) return;
+    if (player_agent.agent_id == NULL_AGENT) return;
+    const float range = 128.0f;
+    Vec3 pos = agent_camera->get_position();
+    Vec3 look = agent_camera->forward_vector();
+    hitscan = Hitscan::hitscan_against_world(pos, look, range,
+                                             player_agent.agent_id,
+                                             OBJECT_AGENT);
+    //printf("Looking at: %d, %0.2f meters away\n", hitscan.type, hitscan.distance);
 }
 
 }   // ClientState

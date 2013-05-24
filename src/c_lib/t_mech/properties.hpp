@@ -25,6 +25,14 @@ MechClassType get_mech_class(MechType type);
 MechRenderType get_mech_render_type(MechType type);
 MechBehaviorType get_mech_behavior_type(MechType type);
 
+// TODO --
+// We have to pass the mech struct in for now, because mech size is not in
+// the dat loader, but assigned when unpacked.
+Vec3 get_mech_box_dimensions(const struct Mech& mech);
+
+// requires state
+Vec3 get_mech_center(const struct Mech& mech);
+
 inline bool type_in_use(MechType type);
 inline bool is_plant(MechType type);
 

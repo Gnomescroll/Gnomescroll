@@ -1,6 +1,7 @@
 #include "properties.hpp"
 
 #include <common/macros.hpp>
+#include <t_mech/config/_interface.hpp>
 
 namespace t_mech
 {
@@ -100,5 +101,25 @@ inline bool is_plant(MechType type)
     IF_ASSERT(attr == NULL) return false;
     return attr->plant;
 }
+
+Vec3 get_mech_box_dimensions(const struct Mech& mech)
+{
+    IF_ASSERT(!isValid(mech.type)) return vec3_init(1);
+    float size = mech.size * 0.5f;
+    int tex_id = mech_attributes[mech.type].sprite;
+    GS_ASSERT(mech_sprite_width[mech_attributes[mech.type].sprite] != -1)
+    GS_ASSERT(mech_sprite_height[mech_attributes[mech.type].sprite] != -1)
+    float size_w = size*mech_sprite_width_f[tex_id];
+    float size_h = 2.0f*size*mech_sprite_height_f[tex_id];
+    return vec3_init(size_w, size_w, size_h);
+}
+
+Vec3 get_mech_center(const struct Mech& mech)
+{
+    Vec3 offset = vec3_init(0.5f + mech.offset_x, 0.5f + mech.offset_y, 0.0f);
+    Vec3 p = vec3_add(vec3_init(mech.position), offset);
+    return translate_position(p);
+}
+
 
 }   // t_mech
