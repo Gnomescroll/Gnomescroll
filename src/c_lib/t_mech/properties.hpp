@@ -32,6 +32,7 @@ Vec3 get_mech_box_dimensions(const struct Mech& mech);
 
 // requires state
 Vec3 get_mech_center(const struct Mech& mech);
+float get_mech_radius(const struct Mech& mech);
 
 inline bool type_in_use(MechType type);
 inline bool is_plant(MechType type);

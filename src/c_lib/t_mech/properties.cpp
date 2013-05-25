@@ -135,5 +135,15 @@ Vec3 get_mech_center(const struct Mech& mech)
     }
 }
 
+float get_mech_radius(const struct Mech& mech)
+{   // returns the largest dimension * 0.5
+    Vec3 size = get_mech_box_dimensions(mech);
+    float biggest = 0.0f;
+    for (int i=0; i<3; i++)
+        if (size.f[i] > biggest)
+            biggest = size.f[i];
+    return biggest * 0.5f;
+}
+
 
 }   // t_mech

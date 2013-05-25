@@ -25,7 +25,7 @@ class MechListVertexList
         struct Vertex
         {
             float x,y,z; //0
-            float tx,ty; //12
+            float tx, ty; //12
             float btx,bty; //20  //texture cordinates for bilinear interpolation
             unsigned char color[4]; //28
             unsigned char brightness[4]; //32
@@ -61,6 +61,13 @@ class MechListVertexList
         v.x = x;
         v.y = y;
         v.z = z;
+    }
+
+    void vertex3f(const Vec3& p)
+    {
+        this->v.x = p.x;
+        this->v.y = p.y;
+        this->v.z = p.z;
     }
 
     void tex2f(float tx, float ty)
@@ -601,36 +608,36 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     vertex_list.light(sky_light, env_light);
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.tex2f(tx_min, ty_min);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.tex2f(tx_min, ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_max,ty_max);
+    vertex_list.tex2f(tx_max, ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.tex2f(tx_max, ty_min);
     vertex_list.push_vertex();
 
 
     vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.tex2f(tx_min, ty_min);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.tex2f(tx_min, ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_max,ty_max);
+    vertex_list.tex2f(tx_max, ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.tex2f(tx_max, ty_min);
     vertex_list.push_vertex();
 
     dx = sin((m.rotation+0.5) * PI);
@@ -653,102 +660,69 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     vn[3*3+2] = wz + size2;
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.tex2f(tx_min, ty_min);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.tex2f(tx_min, ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_max,ty_max);
+    vertex_list.tex2f(tx_max, ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.tex2f(tx_max, ty_min);
     vertex_list.push_vertex();
 
 
     vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.tex2f(tx_min, ty_min);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.tex2f(tx_min, ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_max,ty_max);
+    vertex_list.tex2f(tx_max, ty_max);
     vertex_list.push_vertex();
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.tex2f(tx_max, ty_min);
     vertex_list.push_vertex();
 }
 
 void MechListRenderer::push_render_type_3(const struct Mech &m)
 {
-    //printf("WTF\n");
-/*
-    static const float vin[72] =
-    {
-        1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
-        0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
-        1,0,1, 1,0,0, 1,1,0, 1,1,1, //north
-        0,1,1, 0,1,0, 0,0,0, 0,0,1, //south
-        1,1,1, 1,1,0, 0,1,0, 0,1,1, //west
-        0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
-    };
-*/
-
-    float wx = m.position.x + 0.5f;
-    float wy = m.position.y + 0.5f;
-    float wz = m.position.z + 0.5f;
-    //int face = m.face;
-
-    //fulstrum test
-
-    const float cx = current_camera_position.x;
-    const float cy = current_camera_position.y;
-
-    wx = quadrant_translate_f(cx, wx);
-    wy = quadrant_translate_f(cy, wy);
-
-    /*
-        Do radius render test?
-    */
-    if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
+    Vec3 w = vec3_scalar_add(vec3_init(m.position), 0.5f);
+    w = quadrant_translate_position(current_camera_position, w);
+    if (!sphere_fulstrum_test(w, 0.6f))
         return;
 
     int tex_id = mech_attributes[m.type].sprite;
-
+    IF_ASSERT(tex_id < 0) return;
     const float txmargin = 0.0f;
-    float tx_min, ty_min, tx_max, ty_max;
 
     int ti = tex_id % 16;
     int tj = tex_id / 16;
 
     const float h = 0.0625f;
 
-    tx_min = ti*h + txmargin;
-    ty_min = tj*h + txmargin;
-    tx_max = ti*h + h - txmargin;
-    ty_max = tj*h + h - txmargin;
+    float tx_min = ti*h + txmargin;
+    float ty_min = tj*h + txmargin;
+    float tx_max = ti*h + h - txmargin;
+    float ty_max = tj*h + h - txmargin;
 
-    float vn[3*4];
-    const float size = m.size/2.0f;
-    //const float size2 = m.size;
+    const float size = m.size * 0.5f;
 
     //orientation
-
     //for each direction need up and x,y,z
-
-
     //up
     static const struct Vec3 vou[6] =
     {
-        {{{0,0,1}}}, //top
-        {{{0,0,1}}}, //bottom
+        {{{0,1,0}}}, //top
+        {{{0,1,0}}}, //bottom
         {{{0,0,1}}}, //north
         {{{0,0,1}}}, //south
         {{{0,0,1}}}, //west
@@ -756,10 +730,10 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     };
 
     //normal
-    static const struct  Vec3 vof[6] =
+    static const struct Vec3 vof[6] =
     {
-        {{{0,0,0}}}, //top
-        {{{0,0,0}}}, //bottom
+        {{{0,0,-1}}}, //top
+        {{{0,0,1}}}, //bottom
         {{{-1,0,0}}}, //north
         {{{1,0,0}}}, //south
         {{{0,-1,0}}}, //west
@@ -769,64 +743,56 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     float _for = 0.9f / 2.0f;
 
     int side = m.side;
-    //side = 3;
+    IF_ASSERT(side < 0 || side >= 6) return;
 
-    struct Vec3 vf = vof[side];
-    struct Vec3 vu = vou[side];
-    struct Vec3 vr = vec3_cross(vou[side], vof[side]);
+    Vec3 vf = vof[side];
+    Vec3 vu = vou[side];
+    Vec3 vr = vec3_cross(vou[side], vof[side]);
+    Vec3 nvu = vec3_scalar_mult(vu, -1);
+    Vec3 nvr = vec3_scalar_mult(vr, -1);
 
-    vn[3*0+0] = wx + size*(-vr.x + vu.x) + _for*vf.x;
-    vn[3*0+1] = wy + size*(-vr.y + vu.y) + _for*vf.y;
-    vn[3*0+2] = wz + size*(-vr.z + vu.z) + _for*vf.z;
+    Vec3 vfw = vec3_add(w, vec3_scalar_mult(vf, _for));
 
-    vn[3*1+0] = wx + size*(-vr.x - vu.x) + _for*vf.x;
-    vn[3*1+1] = wy + size*(-vr.y - vu.y) + _for*vf.y;
-    vn[3*1+2] = wz + size*(-vr.z - vu.z) + _for*vf.z;
-
-    vn[3*2+0] = wx + size*(vr.x - vu.x) + _for*vf.x;
-    vn[3*2+1] = wy + size*(vr.y - vu.y) + _for*vf.y;
-    vn[3*2+2] = wz + size*(vr.z - vu.z) + _for*vf.z;
-
-    vn[3*3+0] = wx + size*(vr.x + vu.x) + _for*vf.x;
-    vn[3*3+1] = wy + size*(vr.y + vu.y) + _for*vf.y;
-    vn[3*3+2] = wz + size*(vr.z + vu.z) + _for*vf.z;
-
+    Vec3 vn[4];
+    vn[0] = vec3_add(vfw, vec3_scalar_mult(vec3_add(nvr, vu), size));
+    vn[1] = vec3_add(vfw, vec3_scalar_mult(vec3_add(nvr, nvu), size));
+    vn[2] = vec3_add(vfw, vec3_scalar_mult(vec3_add(vr, nvu), size));
+    vn[3] = vec3_add(vfw, vec3_scalar_mult(vec3_add(vr, vu), size));
 
     int env_light = t_map::get_envlight(m.position);
     int sky_light = t_map::get_skylight(m.position);
     vertex_list.light(sky_light, env_light);
 
-    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.vertex3f(vn[0]);
+    vertex_list.tex2f(tx_min, ty_min);
     vertex_list.push_vertex();
 
-    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.vertex3f(vn[1]);
+    vertex_list.tex2f(tx_min, ty_max);
     vertex_list.push_vertex();
 
-    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_max,ty_max);
+    vertex_list.vertex3f(vn[2]);
+    vertex_list.tex2f(tx_max, ty_max);
     vertex_list.push_vertex();
 
-    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.vertex3f(vn[3]);
+    vertex_list.tex2f(tx_max, ty_min);
     vertex_list.push_vertex();
 
-
-    vertex_list.vertex3f(vn[3*3+0], vn[3*3+1], vn[3*3+2]);
-    vertex_list.tex2f(tx_max,ty_min);
+    vertex_list.vertex3f(vn[3]);
+    vertex_list.tex2f(tx_max, ty_min);
     vertex_list.push_vertex();
 
-    vertex_list.vertex3f(vn[3*2+0], vn[3*2+1], vn[3*2+2]);
-    vertex_list.tex2f(tx_max,ty_max);
+    vertex_list.vertex3f(vn[2]);
+    vertex_list.tex2f(tx_max, ty_max);
     vertex_list.push_vertex();
 
-    vertex_list.vertex3f(vn[3*1+0], vn[3*1+1], vn[3*1+2]);
-    vertex_list.tex2f(tx_min,ty_max);
+    vertex_list.vertex3f(vn[1]);
+    vertex_list.tex2f(tx_min, ty_max);
     vertex_list.push_vertex();
 
-    vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
-    vertex_list.tex2f(tx_min,ty_min);
+    vertex_list.vertex3f(vn[0]);
+    vertex_list.tex2f(tx_min, ty_min);
     vertex_list.push_vertex();
 }
 

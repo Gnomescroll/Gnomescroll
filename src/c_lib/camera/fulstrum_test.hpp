@@ -10,6 +10,11 @@ ALWAYS_INLINE bool point_fulstrum_test_translate(float x, float y, float  z);
 
 // use for coordinates that are already translated into camera space
 ALWAYS_INLINE bool sphere_fulstrum_test(float x, float y, float  z, float r);
+ALWAYS_INLINE bool sphere_fulstrum_test(const Vec3& p, float r)
+{
+    return sphere_fulstrum_test(p.x, p.y, p.z, r);
+}
+
 ALWAYS_INLINE bool point_fulstrum_test(float x, float y, float  z);
 
 //distance check with camera

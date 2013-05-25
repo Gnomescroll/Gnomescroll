@@ -91,7 +91,9 @@ bool ray_cast_mech(const Vec3& position, const Vec3& direction, float range,
         if (mla[i].id == NULL_MECH_ID) continue;
         Vec3 center = get_mech_center(mla[i]);
         center = quadrant_translate_position(position, center);
-        if (vec3_length_squared(vec3_sub(center, position)) > range_squared)
+        float rad_sq = get_mech_radius(mla[i]);
+        rad_sq *= rad_sq;
+        if (vec3_length_squared(vec3_sub(center, position)) > range_squared - rad_sq)
             continue;
 
         float d = 1000000.0f;
