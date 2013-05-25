@@ -48,6 +48,8 @@ bool remove_mech(int mech_id);
 int count_mech(MechType type);
 
 void pack_mech(const struct Mech& m, class mech_create_StoC& p);
+
+void hit_mech(int mech_id);
 #endif
 
 //text

@@ -1,8 +1,10 @@
 #include "explosion.hpp"
 
-#if DC_SERVER
+#if DC_CLIENT
+# error Do not include this file in client
+#endif
 
-#include <state/server_state.hpp>
+#include <state/state.hpp>
 #include <agent/agent.hpp>
 #include <agent/agent_list.hpp>
 #include <entity/components/physics.hpp>
@@ -123,5 +125,3 @@ bool ExplosionComponent::proximity_check()
 }
 
 } // Components
-
-#endif

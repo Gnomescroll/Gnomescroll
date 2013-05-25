@@ -61,22 +61,21 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL) return false;
 
-    Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
-        camera_position, this->firing_direction, this->object->id, this->object->type,
-        target, this->sight_range);
+    Hitscan::WorldHitscanResult result = Hitscan::hitscan_against_world(
+        camera_position, this->firing_direction, this->sight_range,
+        this->object->id, this->object->type);
 
     // let handle target hit based on attacker properties
-    Hitscan::handle_hitscan_target(t, this->attacker_properties);
+    Hitscan::handle_hitscan_result(result, this->attacker_properties);
 
     // send firing packet
-    Hitscan::broadcast_object_fired(this->object->id, this->object->type, t);
+    Hitscan::broadcast_object_fired(this->object->id, this->object->type, result);
 
     // apply custom handling
     // play sounds
     // play animations
 
-    if (t.hitscan == HITSCAN_TARGET_VOXEL) return true;
-    return false;
+    return (result.type == HITSCAN_TARGET_VOXEL);
 }
 
 bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)

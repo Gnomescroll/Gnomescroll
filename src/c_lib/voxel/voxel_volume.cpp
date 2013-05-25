@@ -1,14 +1,10 @@
 #include "voxel_volume.hpp"
 
 #if DC_CLIENT
-# include <state/client_state.hpp>
 # include <voxel/voxel_render.hpp>
 #endif
 
-#if DC_SERVER
-# include <state/server_state.hpp>
-#endif
-
+#include <state/state.hpp>
 #include <voxel/constants.hpp>
 #include <entity/object/object.hpp>
 #include <entity/objects.hpp>

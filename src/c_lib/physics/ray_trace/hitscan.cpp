@@ -4,19 +4,15 @@
 #include <physics/ray_trace/ray_trace.hpp>
 #include <physics/quadrant.hpp>
 #include <t_mech/mech_raycast.hpp>
-#if DC_SERVER
-# include <state/server_state.hpp>
-#endif
-#if DC_CLIENT
-# include <state/client_state.hpp>
-#endif
+#include <state/state.hpp>
 
 namespace Hitscan
 {
 
 // returns agent id of first agent found in hitscan path
 // returns NULL_AGENT if none found
-AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentID firing_agent_id)
+AgentID against_agents(Vec3 position, Vec3 direction, float max_distance,
+                       AgentID firing_agent_id)
 {
     float vox_distance = 1000000.0f;
     class Voxels::VoxelHitscanTarget target;
@@ -43,13 +39,15 @@ WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
                                          EntityType ignore_type)
 {
     WorldHitscanResult hitscan;
+    hitscan.start_position = p;
+    hitscan.direction = v;
 
     // terrain first
     class RaytraceData terrain_data;
     if (raytrace_terrain(p, v, range, &terrain_data))
     {
         hitscan.set_block_collision(terrain_data, range);
-        //range = hitscan.block_distance; // cap the range for future calls
+        range = hitscan.block_distance * 1.05f; // cap the range for future calls
     }
 
     Vec3 voxel_collision_point;
@@ -59,7 +57,7 @@ WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
                                            range, voxel_collision_point,
                                            voxel_distance, voxel_target))
     {
-        //range = voxel_distance;
+        range = voxel_distance * 1.05f;
         hitscan.set_voxel_collision(voxel_target, voxel_collision_point,
                                     voxel_distance);
     }

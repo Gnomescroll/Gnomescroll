@@ -6,14 +6,10 @@
 #include <physics/quadrant.hpp>
 #include <voxel/voxel_hitscan.hpp>
 #include <voxel/vox_dat_init.hpp>
+#include <state/state.hpp>
 
 #if DC_CLIENT
 # include <voxel/voxel_render.hpp>
-# include <state/client_state.hpp>
-#endif
-
-#if DC_SERVER
-# include <state/server_state.hpp>
 #endif
 
 namespace Voxels

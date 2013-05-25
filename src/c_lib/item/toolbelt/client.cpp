@@ -171,6 +171,11 @@ static bool beta_scan_world()
             }
             return false;
 
+        case HITSCAN_TARGET_MECH:
+            // TODO -- configure mechs with beta-actions, and look up that
+            // callback
+            return false;
+
         case HITSCAN_TARGET_NONE:
             return false;
     }

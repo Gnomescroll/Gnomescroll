@@ -25,6 +25,9 @@ class WorldHitscanResult
         HitscanTargetType type;     // type of nearest object
         float distance;             // distance of nearest object
 
+        Vec3 start_position;
+        Vec3 direction;
+
         // block
         bool block_hit;
         Vec3i block_position;
@@ -107,11 +110,13 @@ class WorldHitscanResult
     }
 
     WorldHitscanResult() :
-        type(HITSCAN_TARGET_NONE), block_hit(false),
-        block_position(vec3i_init(0)), block_side(vec3i_init(0, 0, 1)),
-        cube_type(ERROR_CUBE), block_distance(FAR_AWAY), voxel_hit(false),
-        voxel_distance(FAR_AWAY), voxel_collision_point(vec3_init(0)),
-        mech_hit(false), mech_id(NULL_MECH_ID), mech_distance(FAR_AWAY)
+        type(HITSCAN_TARGET_NONE), distance(FAR_AWAY),
+        start_position(vec3_init(0)), direction(vec3_init(0, 0, 1)),
+        block_hit(false), block_position(vec3i_init(0)),
+        block_side(vec3i_init(0, 0, 1)), cube_type(ERROR_CUBE),
+        block_distance(FAR_AWAY), voxel_hit(false), voxel_distance(FAR_AWAY),
+        voxel_collision_point(vec3_init(0)), mech_hit(false),
+        mech_id(NULL_MECH_ID), mech_distance(FAR_AWAY)
     {}
 };
 

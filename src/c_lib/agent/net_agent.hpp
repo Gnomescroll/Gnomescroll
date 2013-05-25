@@ -345,6 +345,20 @@ class hitscan_block_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_bloc
     inline void handle();
 };
 
+// hitscan: target = mech
+class hitscan_mech_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_mech_CtoS>
+{
+    public:
+        uint16_t mech_id;
+
+    inline void packet(char* buff, size_t* buff_n, bool pack)
+    {
+        pack_u16(&mech_id, buff, buff_n, pack);
+    }
+
+    inline void handle();
+};
+
 // hitscan: target = none
 // server will convert this to a fire packet for clients
 class hitscan_none_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_none_CtoS>
@@ -371,6 +385,19 @@ class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_
         pack_u8(&part, buff, buff_n, pack);
         pack_vec3i_u8(&voxel, buff, buff_n, pack);
         pack_u16(&weapon_type, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+// melee: target = mech
+class melee_mech_CtoS: public FixedSizeReliableNetPacketToServer<melee_mech_CtoS>
+{
+    public:
+        uint16_t mech_id;
+
+    inline void packet(char* buff, size_t* buff_n, bool pack)
+    {
+        pack_u16(&mech_id, buff, buff_n, pack);
     }
     inline void handle();
 };

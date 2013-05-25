@@ -30,7 +30,7 @@ Agents::Agent* lock_agent_target(const Vec3& firing_position, Vec3* firing_direc
     Agents::Agent* agent = NULL;
     Vec3 sink;
     size_t i=0;
-    for (i=0; i<agent_list->n_filtered; i++)
+    for (; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         if (random)
             agent = agent_list->filtered_objects[chosen[i]];
@@ -56,7 +56,7 @@ Agents::Agent* lock_agent_target(const Vec3& firing_position, Vec3* firing_direc
     if (!agent_list->n_filtered) return NULL;
     Agents::Agent* agent = NULL;
     size_t i=0;
-    for (i=0; i<agent_list->n_filtered; i++)
+    for (; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         agent = agent_list->filtered_objects[i];
         if (agent->id == agent_list->null_id) continue;
@@ -67,65 +67,33 @@ Agents::Agent* lock_agent_target(const Vec3& firing_position, Vec3* firing_direc
     return agent;
 }
 
-HitscanTarget shoot_at_agent(const Vec3& source, const Vec3& firing_direction,
-                             int id, EntityType type,
-                             Agents::Agent* agent, const float range)
-{   // hitscan vector against world
-    Hitscan::WorldHitscanResult hitscan = hitscan_against_world(
-        source, firing_direction, range, id, type);
-
-    // process target information
-    HitscanTarget target_information;
-    switch (hitscan.type)
-    {
-        case HITSCAN_TARGET_VOXEL:
-            target_information.id = hitscan.voxel_target.entity_id;
-            target_information.type = (EntityType)hitscan.voxel_target.entity_type;
-            target_information.part = hitscan.voxel_target.part_id;
-            target_information.voxel = hitscan.voxel_target.voxel;
-            break;
-
-        case HITSCAN_TARGET_BLOCK:
-            target_information.collision_point = vec3_add(
-                source, vec3_scalar_mult(firing_direction, hitscan.block_distance));
-            target_information.collision_point = translate_position(target_information.collision_point);
-            target_information.voxel = hitscan.block_position;
-            target_information.cube = hitscan.cube_type;
-            target_information.side = get_cube_side_from_sides(hitscan.block_side);
-            break;
-
-        case HITSCAN_TARGET_NONE:
-            target_information.collision_point = vec3_copy(firing_direction);
-            break;
-    }
-
-    target_information.hitscan = hitscan.type;
-    return target_information;
-}
-
-void handle_hitscan_target(const HitscanTarget& t,
+void handle_hitscan_result(const WorldHitscanResult& result,
                            const struct AttackerProperties& p)
 {
     #if DC_SERVER
-    switch (t.hitscan)
+    switch (result.type)
     {
         case HITSCAN_TARGET_BLOCK:
-            if (t.collision_point.z > 0)    // dont damage floor
-                t_map::apply_damage_broadcast(t.voxel, p.block_damage,
+            if (result.block_position.z > 0)    // dont damage floor
+                t_map::apply_damage_broadcast(result.block_position,
+                                              p.block_damage,
                                               p.terrain_modification_action);
             break;
         case HITSCAN_TARGET_VOXEL:
-            if (t.type == OBJECT_AGENT)
+            if (EntityType(result.voxel_target.entity_type) == OBJECT_AGENT)
             {
-                Agents::Agent* agent = Agents::get_agent((AgentID)t.id);
-                if (agent == NULL) break;
-                if (agent->status.lifetime > p.agent_protection_duration &&
+                Agents::Agent* agent = Agents::get_agent((AgentID)result.voxel_target.entity_id);
+                if (agent != NULL &&
+                    agent->status.lifetime > p.agent_protection_duration &&
                     !agent->near_base())
                 {
                     int dmg = randrange(p.agent_damage_min, p.agent_damage_max);
-                    agent->status.apply_damage(dmg, (AgentID)p.id, p.type, t.part);
+                    agent->status.apply_damage(dmg, (AgentID)p.id, p.type, result.voxel_target.part_id);
                 }
             }
+            break;
+        case HITSCAN_TARGET_MECH:
+            t_mech::hit_mech(result.mech_id);
             break;
         case HITSCAN_TARGET_NONE:
             break;
@@ -133,36 +101,36 @@ void handle_hitscan_target(const HitscanTarget& t,
     #endif
 }
 
-void broadcast_object_fired(int id, EntityType type, HitscanTarget t)
+void broadcast_object_fired(int id, EntityType type, const WorldHitscanResult& result)
 {
     object_shot_object_StoC obj_msg;
     object_shot_terrain_StoC terrain_msg;
     object_shot_nothing_StoC none_msg;
-    switch (t.hitscan)
+    switch (result.type)
     {
         case HITSCAN_TARGET_VOXEL:
             obj_msg.id = id;
             obj_msg.type = type;
-            obj_msg.target_id = t.id;
-            obj_msg.target_type = t.type;
-            obj_msg.target_part = t.part;
-            obj_msg.voxel = t.voxel;
+            obj_msg.target_id = result.voxel_target.entity_id;
+            obj_msg.target_type = result.voxel_target.entity_type;
+            obj_msg.target_part = result.voxel_target.part_id;
             obj_msg.broadcast();
             break;
 
         case HITSCAN_TARGET_BLOCK:
             terrain_msg.id = id;
             terrain_msg.type = type;
-            terrain_msg.destination = vec3_init(t.voxel);
-            terrain_msg.cube = t.cube;
-            terrain_msg.side = t.side;
+            terrain_msg.destination = vec3_init(result.block_position);
+            terrain_msg.cube = result.cube_type;
+            terrain_msg.side = get_cube_side_from_sides(result.block_side);
             terrain_msg.broadcast();
             break;
 
+        case HITSCAN_TARGET_MECH:
         case HITSCAN_TARGET_NONE:
             none_msg.id = id;
             none_msg.type = type;
-            none_msg.direction = t.collision_point;
+            none_msg.direction = result.direction;
             none_msg.broadcast();
             break;
     }

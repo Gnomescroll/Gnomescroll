@@ -3,9 +3,9 @@
 #include <agent/_state.hpp>
 #include <agent/agent.hpp>
 #include <common/defines.h>
+#include <state/state.hpp>
 
 #if DC_CLIENT
-# include <state/client_state.hpp>
 # include <common/time/physics_timer.hpp>
 # include <chat/_interface.hpp>
 # include <entity/objects/fabs/constants.hpp>
@@ -13,7 +13,6 @@
 #endif
 
 #if DC_SERVER
-# include <state/server_state.hpp>
 # include <t_map/t_map.hpp>
 # include <physics/ray_trace/ray_trace.hpp>
 #endif
@@ -404,12 +403,14 @@ inline void agent_control_state_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
+inline void hitscan_mech_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
 inline void throw_grenade_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
+inline void melee_mech_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
 inline void ping_CtoS::handle(){}
 inline void ping_reliable_CtoS::handle(){}
@@ -661,6 +662,19 @@ inline void hitscan_block_CtoS::handle()
     t_map::apply_damage_broadcast(position, weapon_block_damage, TMA_LASER);
 }
 
+inline void hitscan_mech_CtoS::handle()
+{
+    Agents::Agent* a = NetServer::agents[client_id];
+    IF_ASSERT(a == NULL) return;
+
+    // send generic shoot packet
+    agent_shot_nothing_StoC msg;
+    msg.id = a->id;
+    msg.broadcast();
+
+    t_mech::hit_mech(mech_id);
+}
+
 inline void hitscan_none_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[client_id];
@@ -711,6 +725,19 @@ inline void melee_object_CtoS::handle()
     msg.target_part = this->part;
     msg.voxel = this->voxel;
     msg.broadcast();
+}
+
+inline void melee_mech_CtoS::handle()
+{
+    Agents::Agent* a = NetServer::agents[client_id];
+    IF_ASSERT(a == NULL) return;
+
+    // send generic anim packet
+    agent_melee_nothing_StoC msg;
+    msg.id = a->id;
+    msg.broadcast();
+
+    t_mech::hit_mech(this->mech_id);
 }
 
 inline void melee_none_CtoS::handle()

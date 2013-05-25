@@ -57,10 +57,12 @@ void RegisterMessages()
     // hitscans
     hitscan_object_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();
+    hitscan_mech_CtoS::register_server_packet();
     hitscan_none_CtoS::register_server_packet();
 
     // melees
     melee_object_CtoS::register_server_packet();
+    melee_mech_CtoS::register_server_packet();
     melee_none_CtoS::register_server_packet();
 
     // hitscan StoC action (for animations etc)

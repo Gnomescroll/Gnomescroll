@@ -514,6 +514,11 @@ int count_mech(MechType type)
     return mech_list->count(type);
 }
 
+void hit_mech(int mech_id)
+{   // TODO -- custom handling for mech getting hit
+    remove_mech(mech_id);
+}
+
 char* mech_text_get(int mech_id)
 {
     GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);

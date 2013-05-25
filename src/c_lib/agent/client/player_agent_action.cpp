@@ -118,7 +118,7 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
             look = vec3_add(look, pos);
             // copy this to collision_point, for block damage animation
             look = translate_position(look);
-            collision_point = quadrant_translate_position(current_camera_position, look);
+            collision_point = quadrant_translate_position(pos, look);
             // subtract translated animation origin from collision point (vec) to get new vector
             look = vec3_sub(look, origin);
             look = vec3_normalize(look);
@@ -127,10 +127,19 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
             //Sound::play_3d_sound("laser_hit_block", collision_point);
             break;
 
+        case HITSCAN_TARGET_MECH:
+            collision_point = vec3_add(pos, vec3_scalar_mult(look, hitscan.mech_distance));
+            collision_point = quadrant_translate_position(pos, translate_position(collision_point));
+            {
+                hitscan_mech_CtoS msg;
+                msg.mech_id = hitscan.mech_id;
+                msg.send();
+            }
+            break;
+
         case HITSCAN_TARGET_NONE:
-            collision_point = vec3_scalar_mult(you->forward_vector(), 512.0f);  // not really a collision, but need stopping point
-            collision_point = vec3_add(you->get_position(), collision_point);
-            // for no target, leave translated animation origin
+            collision_point = vec3_scalar_mult(look, map_dim.x * 0.5f);
+            collision_point = vec3_add(pos, collision_point);
             none_msg.send();    // server will know to forward a fire weapon packet
             break;
         default:
@@ -281,6 +290,14 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
             //Sound::play_3d_sound("pick_hit_block", collision_point);
             if (weapon_group != IG_MINING_LASER)
                 Sound::play_3d_sound("block_took_damage", collision_point);
+            break;
+
+        case HITSCAN_TARGET_MECH:
+            {
+                melee_mech_CtoS msg;
+                msg.mech_id = hitscan.mech_id;
+                msg.send();
+            }
             break;
 
         case HITSCAN_TARGET_NONE:

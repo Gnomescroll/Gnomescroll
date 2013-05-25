@@ -2,15 +2,14 @@
 
 #include <physics/common.hpp>
 #include <agent/_state.hpp>
+#include <state/state.hpp>
 
 #if DC_CLIENT
-# include <state/client_state.hpp>
 # include <animations/weapon.hpp>
 # include <item/properties.hpp>
 # include <animations/emitter.hpp>
 #endif
 #if DC_SERVER
-# include <state/server_state.hpp>
 # include <t_map/server/manager.hpp>
 # include <social/badges.hpp>
 #endif
