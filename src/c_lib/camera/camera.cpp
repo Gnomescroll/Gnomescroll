@@ -79,8 +79,8 @@ void teardown_cameras()
 
 #define CAMERA_ZOOM_FACTOR 2.0f
 Camera::Camera() :
-    shake_force(0.0f), shake_cooldown_rate(0.01f),
-    zoomed(false), zoom_factor(CAMERA_ZOOM_FACTOR)
+    shake_force(0.0f), shake_cooldown_rate(0.01f), zoomed(false),
+    zoom_factor(CAMERA_ZOOM_FACTOR), third_person(false)
 {
     const float Z_NEAR = 0.1f;
     const float Z_FAR = 320.0f;
@@ -145,16 +145,14 @@ void Camera::set_dimensions()
 void Camera::set_position(struct Vec3 p)
 {
     this->position = translate_position(p);
-    GS_ASSERT(is_boxed_position(this->position));
+    GS_ASSERT(is_boxed_position(position));
     if (this->is_current())
-    {
-        current_camera_position = this->position;
-        GS_ASSERT(vec3_equal(this->position, current_camera_position));
-    }
+        current_camera_position = this->get_position();
 }
 
 void Camera::pan(float dx, float dy)
 {   // args are deltas
+    if (this->third_person) return;
     theta += dx;
     phi += dy;
 
@@ -195,7 +193,7 @@ void Camera::tick()
 
 Vec3 Camera::apply_shake(const Vec3& look, const Vec3& right, const Vec3& up)
 {
-    if (this->shake_force <= 0) return this->position;
+    if (this->shake_force <= 0) return this->get_position();
     float xshake = this->shake_force*(2*randf()-1); //how much to shake left/right
     float yshake = this->shake_force*(2*randf()-1); //how much to shake forward/back
     float zshake = this->shake_force*(2*randf()-1); //how much to shake up/down
@@ -204,7 +202,17 @@ Vec3 Camera::apply_shake(const Vec3& look, const Vec3& right, const Vec3& up)
     s = vec3_add(s, vec3_scalar_mult(look, xshake)); //shake vector
     s = vec3_add(s, vec3_scalar_mult(right, yshake)); //shake vector
     s = vec3_add(s, vec3_scalar_mult(up, zshake));
-    return vec3_add(this->position, s);
+    return vec3_add(this->get_position(), s);
+}
+
+Vec3 Camera::get_position() const
+{
+    if (!this->third_person) return this->position;
+    const float THIRD_PERSON_BACKUP = 2.5f;
+    const float THIRD_PERSON_PHI = PI * 0.5f;
+    Vec3 v = vec3_euler_rotation(this->lateral_vector(), 0.0f, 0.0f, THIRD_PERSON_PHI);
+    Vec3 p = vec3_add(this->position, vec3_scalar_mult(v, -THIRD_PERSON_BACKUP));
+    return translate_position(p);
 }
 
 void Camera::world_projection()
@@ -254,12 +262,12 @@ void Camera::hud_projection()
     glLoadIdentity();
 }
 
-Vec3 Camera::forward_vector()
+Vec3 Camera::forward_vector() const
 {
     return vec3_euler_rotation(vec3_init(1, 0, 0), this->theta, this->phi, 0.0f);
 }
 
-Vec3 Camera::lateral_vector()
+Vec3 Camera::lateral_vector() const
 {
     return vec3_euler_rotation(vec3_init(1, 0, 0), this->theta, 0.0f, 0.0f);
 }

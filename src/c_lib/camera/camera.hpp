@@ -21,13 +21,14 @@ class Camera
     Vec3 apply_shake(const Vec3& f, const Vec3& r, const Vec3& u);
 
     public:
-        float x_size,y_size;
+        float x_size, y_size;
         float ratio;
         float z_near, z_far;
         float theta, phi;
         bool first_person;
         bool zoomed;
         float zoom_factor;
+        bool third_person;
 
     void pan(float dx, float dy);
 
@@ -42,20 +43,17 @@ class Camera
     void tick();
 
     void set_position(struct Vec3 p);
-    struct Vec3 get_position() const
-    {
-        return this->position;
-    }
+    struct Vec3 get_position() const;
 
-    struct Vec3 forward_vector();
-    struct Vec3 lateral_vector();
+    struct Vec3 forward_vector() const;
+    struct Vec3 lateral_vector() const;
 
-    struct Vec3 right_vector()
+    struct Vec3 right_vector() const
     {
         return vec3_euler_rotation(vec3_init(0, 1, 0), this->theta, this->phi, 0.0f);
     }
 
-    struct Vec3 up_vector()
+    struct Vec3 up_vector() const
     {
         return vec3_euler_rotation(vec3_init(0, 0, 1), this->theta, this->phi, 0.0f);
     }
@@ -70,6 +68,12 @@ class Camera
     void unzoom();
 
     void copy_state_from(const Camera* c);
+
+    void toggle_third_person()
+    {
+        this->third_person = (!this->third_person);
+        this->first_person = (!this->first_person);
+    }
 
     Camera();
 };

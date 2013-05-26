@@ -9,15 +9,12 @@
 #include <chat/_interface.hpp>
 #include <input/skeleton_editor.hpp>
 #include <input/equipped_sprite_adjuster.hpp>
-
-//#include <hud/hud.hpp>
 #include <hud/_interface.hpp>
+#include <hud/container/_interface.hpp>
+#include <hud/hud.hpp>
 
 //toggling graphics settings
 #include <t_map/glsl/shader.hpp>
-
-#include <hud/container/_interface.hpp>
-#include <hud/hud.hpp>
 
 InputState input_state;
 bool used_freecam_yet = false;
@@ -798,6 +795,11 @@ void agent_key_up_handler(SDL_Event* event)
     {
         case SDLK_SPACE:
             enable_jump();
+            break;
+
+        case SDLK_p:
+            if (agent_camera != NULL)
+                agent_camera->toggle_third_person();
             break;
 
         default: break;

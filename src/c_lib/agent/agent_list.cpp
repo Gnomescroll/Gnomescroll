@@ -84,7 +84,7 @@ void AgentList::tick_attributes()
         if (this->objects[i].id == this->null_id) continue;
         Agent* agent = &this->objects[i];
 
-        if(ac % 8 == 0) //4 times a second
+        if (ac % 8 == 0)  // 4 times a second
             agent->status.tick_rad();
     }
 
@@ -104,8 +104,8 @@ void AgentList::draw_names()
     {
         if (this->objects[i].id == this->null_id) continue;
         Agent* a = &this->objects[i];
-        if (a->id == agent_id && current_camera == agent_camera)
-            continue;
+        if (a->id == agent_id && current_camera == agent_camera &&
+            !current_camera->third_person) continue;
         a->event.update_hud_name();
         a->event.bb.draw();
     }
@@ -118,8 +118,8 @@ void AgentList::draw_badges()
     {
         if (this->objects[i].id == this->null_id) continue;
         Agent* a = &this->objects[i];
-        if (a->id == agent_id && current_camera == agent_camera)
-            continue;
+        if (a->id == agent_id && current_camera == agent_camera &&
+            !current_camera->third_person) continue;
         a->event.draw_badges();
     }
 }
@@ -136,7 +136,7 @@ void AgentList::draw_equipped_items()
         for (size_t i=0; i<this->max; i++)
         {
             if (this->objects[i].id == this->null_id) continue;
-            if (this->objects[i].id == agent_id) continue; // skip you
+            if (this->objects[i].id == agent_id && !agent_camera->third_person) continue; // skip you
             if (this->objects[i].vox == NULL) continue;
             ItemType equipped_item_type = Toolbelt::get_agent_selected_item_type(this->objects[i].id);
             if (!Item::item_type_is_voxel(equipped_item_type)) continue;
@@ -165,7 +165,7 @@ void AgentList::draw_equipped_items()
         for (size_t i=0; i<this->max; i++)
         {
             if (this->objects[i].id == this->null_id) continue;
-            if (this->objects[i].id == agent_id) continue; // skip you
+            if (this->objects[i].id == agent_id && !agent_camera->third_person) continue; // skip you
             if (this->objects[i].vox == NULL) continue;
             ItemType equipped_item_type = Toolbelt::get_agent_selected_item_type(this->objects[i].id);
             if (Item::item_type_is_voxel(equipped_item_type)) continue;
@@ -190,8 +190,12 @@ void AgentList::draw_equipped_items()
 void AgentList::update_mining_lasers()
 {
     for (size_t i=0; i<this->max; i++)
-        if (this->objects[i].id != this->null_id && i != ClientState::player_agent.agent_id)
+        if (this->objects[i].id != this->null_id &&
+            (i != ClientState::player_agent.agent_id ||
+             agent_camera->third_person))
+        {
             this->objects[i].event.update_mining_laser();
+        }
 }
 #endif
 

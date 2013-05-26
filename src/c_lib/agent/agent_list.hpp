@@ -19,8 +19,8 @@ class AgentList: public ObjectList<class Agent, AgentID>
     // quicksort helpers
     void quicksort_distance_asc(int beg, int end);
     void quicksort_distance_desc(int beg, int end);
-    void swap_object_state(Agent **a, Agent **b);
-    void swap_float(float *a, float *b);
+    void swap_object_state(Agent** a, Agent** b);
+    void swap_float(float* a, float* b);
 
     public:
         Agent** filtered_objects; // tmp array for filtering objects

@@ -195,7 +195,7 @@ static Vec3 vec3_interpolate(struct Vec3 a, struct Vec3 b, float d)
 }
 
 ALWAYS_INLINE
-struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
+struct Vec3 vec3_euler_rotation(const Vec3& v, float x, float y, float z)
 {
     // x is actually yaw (a rotation around the Z axis)
     // y is actually roll (a rotation around the Y axis)

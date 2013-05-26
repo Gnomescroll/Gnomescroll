@@ -122,7 +122,7 @@ bool tick_harvest_bar()
 
 void draw_harvest_bar(int x, int y)
 {
-    harvest_bar->draw(x,y);
+    harvest_bar->draw(x, y);
 }
 
 }   // Hud

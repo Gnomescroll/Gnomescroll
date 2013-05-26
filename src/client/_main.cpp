@@ -137,7 +137,7 @@ void draw_hud()
     hud_projection();
     glDisable(GL_DEPTH_TEST);
 
-    if (agent_camera->is_current())
+    if (agent_camera->is_current() && !agent_camera->third_person)
     {
         glDisable(GL_BLEND);
         poll_mouse();
@@ -414,20 +414,18 @@ void draw_tick()
     if (input_state.draw_hud)
     {
         poll_mouse();
-        //glDisable(GL_DEPTH_TEST);
-        if (agent_camera->is_current())
+        if (agent_camera->is_current() && !agent_camera->third_person)
+        {
             Animations::use_voxelized_sprite_fbo();
-        poll_mouse();
-        Animations::draw_equipped_item(equipped_item_type);
-        poll_mouse();
-        if (agent_camera->is_current())
+            poll_mouse();
+            Animations::draw_equipped_item(equipped_item_type);
+            poll_mouse();
             Animations::unuse_voxelized_sprite_fbo();
-        //glEnable(GL_DEPTH_TEST);
+        }
     }
 
     if (Options::placement_outline)
-    {
-        // draw outline of facing block
+    {   // draw outline of facing block
         poll_mouse();
         Animations::draw_placement_outline(equipped_item_type);
     }
