@@ -15,6 +15,7 @@ void turn_fire_off(AgentID agent_id);
 // only applies to local agents
 bool toolbelt_item_begin_alpha_action();
 bool toolbelt_item_end_alpha_action();
+bool toolbelt_item_alpha_action();
 bool toolbelt_item_beta_action();
 
 // calls event handlers that trigger animations/sounds

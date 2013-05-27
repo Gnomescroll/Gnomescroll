@@ -12,30 +12,30 @@ namespace Toolbelt
 void turn_fire_on(AgentID agent_id)
 {
     IF_ASSERT(agent_fire_on == NULL) return;
-    IF_ASSERT(agent_fire_tick == NULL) return;
-
+    IF_ASSERT(agent_fire_cooldown == NULL) return;
     IF_ASSERT(!isValid(agent_id)) return;
 
-    agent_fire_tick[agent_id] = 0;
     if (agent_fire_on[agent_id]) return;
-    agent_fire_on[agent_id] = true;
 
     ItemID item_id = get_agent_selected_item(agent_id);
     ItemType item_type = Item::get_item_type(item_id);
+    if (item_type == NULL_ITEM_TYPE)
+        item_type = fist_item_type;
+
+    agent_fire_on[agent_id] = true;
+    agent_fire_cooldown[agent_id] = Item::get_item_fire_rate(item_type);
     broadcast_agent_toolbelt_begin_alpha_action_packet(agent_id, item_type);
 }
 
 void turn_fire_off(AgentID agent_id)
 {
     IF_ASSERT(agent_fire_on == NULL) return;
-    IF_ASSERT(agent_fire_tick == NULL) return;
-
+    IF_ASSERT(agent_fire_cooldown == NULL) return;
     IF_ASSERT(!isValid(agent_id)) return;
 
-    agent_fire_tick[agent_id] = 0;
     if (!agent_fire_on[agent_id]) return;
-    agent_fire_on[agent_id] = false;
 
+    agent_fire_on[agent_id] = false;
     broadcast_agent_toolbelt_end_alpha_action_packet(agent_id);
 }
 

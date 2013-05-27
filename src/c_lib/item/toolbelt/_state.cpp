@@ -5,9 +5,9 @@ namespace Toolbelt
 
 //Common
 bool* agent_fire_on = NULL;
-int* agent_fire_tick = NULL;
 ItemType* agent_selected_type = NULL;
 ItemType fist_item_type = NULL_ITEM_TYPE;
+int* agent_fire_cooldown = NULL;
 
 //Client
 #if DC_CLIENT
@@ -29,14 +29,14 @@ void init_state()
     fist_item_type = Item::get_item_type("fist");
     GS_ASSERT(fist_item_type != NULL_ITEM_TYPE);
 
+    GS_ASSERT(agent_fire_cooldown == NULL);
     GS_ASSERT(agent_selected_type == NULL);
-    GS_ASSERT(agent_fire_tick     == NULL);
     GS_ASSERT(agent_fire_on       == NULL);
 
     agent_selected_type = (ItemType*)malloc(MAX_AGENTS * sizeof(ItemType));
     for (int i=0; i<MAX_AGENTS; agent_selected_type[i++] = NULL_ITEM_TYPE);
-    agent_fire_tick = (int*)calloc(MAX_AGENTS, sizeof(int));
-    agent_fire_on   = (bool*)calloc(MAX_AGENTS, sizeof(bool));
+    agent_fire_cooldown = (int*)calloc(MAX_AGENTS, sizeof(int));
+    agent_fire_on = (bool*)calloc(MAX_AGENTS, sizeof(bool));
 
     #if DC_SERVER
     GS_ASSERT(agent_selected_slot == NULL);
@@ -50,11 +50,11 @@ void init_state()
 void teardown_state()
 {
     free(agent_selected_type);
-    free(agent_fire_tick);
     free(agent_fire_on);
+    free(agent_fire_cooldown);
     agent_selected_type = NULL;
-    agent_fire_tick = NULL;
     agent_fire_on = NULL;
+    agent_fire_cooldown = NULL;
 
     #if DC_SERVER
     free(agent_selected_slot);
