@@ -522,7 +522,7 @@ void hit_mech(int mech_id)
 char* mech_text_get(int mech_id)
 {
     GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
-    return (char*) mech_list->mla[mech_id].text;
+    return reinterpret_cast<char*>(mech_list->mla[mech_id].text);
 }
 
 #if DC_CLIENT

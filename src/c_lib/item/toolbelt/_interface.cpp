@@ -100,7 +100,6 @@ void tick_item(AgentID agent_id, ItemID item_id, ItemType item_type)
 
 void trigger_item(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
-    printf("Triggering item %d\n", item_id);
     triggerItem trigger = get_trigger_item_fn(item_type);
     if (trigger == NULL) return;
     trigger(agent_id, item_id, item_type);
@@ -149,14 +148,12 @@ void trigger_item_beta(AgentID agent_id, ItemType item_type)
     trigger(agent_id, item_type);
 }
 
-void trigger_local_item(ItemID item_id, ItemType item_type)
+bool trigger_local_item(ItemID item_id, ItemType item_type)
 {
     triggerLocalItem trigger = get_trigger_local_item_fn(item_type);
-    if (trigger == NULL) return;
+    if (trigger == NULL) return false;
     trigger(item_id, item_type);
-
-    if (!item_is_click_and_hold(item_type))
-        turn_fire_off(ClientState::player_agent.agent_id);
+    return true;
 }
 
 bool trigger_local_item_beta(ItemID item_id, ItemType item_type)
@@ -203,8 +200,8 @@ void tick()
     IF_ASSERT(agent_selected_item == NULL) return;
     #endif
 
+    IF_ASSERT(agent_fire_cooldown == NULL) return;
     IF_ASSERT(agent_selected_type == NULL) return;
-    IF_ASSERT(agent_fire_tick == NULL) return;
     IF_ASSERT(agent_fire_on == NULL) return;
 
     #if DC_CLIENT
@@ -220,6 +217,7 @@ void tick()
     // increment fire ticks if weapon down
     for (int i=0; i<MAX_AGENTS; i++)
     {
+        agent_fire_cooldown[i] = GS_MAX(agent_fire_cooldown[i] - 1, 0);
         if (!agent_fire_on[i]) continue;
 
         #if DC_SERVER
@@ -228,21 +226,14 @@ void tick()
         GS_ASSERT(agent_selected_type[i] == Item::get_item_type(item_id));
         #endif
 
-        GS_ASSERT(Agents::agent_list->objects[i].id != Agents::agent_list->null_id); // agent should exist, if fire is on
+        // agent should exist, if fire is on
+        GS_ASSERT(Agents::agent_list->objects[i].id != Agents::agent_list->null_id);
+
         ItemType item_type = agent_selected_type[i];
-        if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
+        if (item_type == NULL_ITEM_TYPE)
+            item_type = fist_item_type;
 
-        int fire_rate = Item::get_item_fire_rate(item_type);
-        IF_ASSERT(fire_rate < 1) fire_rate = 1;
-
-        // TODO -- somewhere in here...
-        // We handle the click-and-hold status
-        // And we decrement cooldowns
-        // We need to not only check item_is_click_and_hold but whether it is
-        // in click_and_hold mode (e.g. shovels are click and hold as long as
-        // they are looking at terrain, otherwise nothing happens)
-
-        if ((agent_fire_tick[i] % fire_rate) == 0)
+        if (agent_fire_cooldown[i] == 0)
         {
             #if DC_CLIENT
             if (local_agent_id == i)
@@ -252,6 +243,10 @@ void tick()
             #if DC_SERVER
             trigger_item((AgentID)i, item_id, item_type);
             #endif
+
+            int fire_rate = Item::get_item_fire_rate(item_type);
+            IF_ASSERT(fire_rate < 1) fire_rate = 1;
+            agent_fire_cooldown[i] = fire_rate;
         }
 
         #if DC_CLIENT
@@ -264,10 +259,6 @@ void tick()
         #if DC_SERVER
         tick_item((AgentID)i, item_id, item_type);
         #endif
-
-        agent_fire_tick[i]++;
-        // TODO -- cooldown
-        //agent_fire_cooldown[i] = GS_MAX(agent_fire_cooldown[i] - 1, 0);
     }
 
     #if DC_CLIENT
@@ -289,6 +280,7 @@ void tick()
         }
     }
     single_trigger = false;
+    agent_fire_cooldown[local_agent_id] = GS_MAX(agent_fire_cooldown[local_agent_id] - 1, 0);
     #endif
 }
 
@@ -371,12 +363,14 @@ void left_trigger_down_event()
         item_type = fist_item_type;
     single_trigger = (!item_is_click_and_hold(item_type) ||
                       !ClientState::player_agent.pointing_at_terrain(item_type));
-    bool something_happened = toolbelt_item_begin_alpha_action();
-    if (something_happened)
+    if (single_trigger)
     {
-        if (single_trigger)
+        if (toolbelt_item_alpha_action())
             send_alpha_action_packet();
-        else
+    }
+    else
+    {
+        if (toolbelt_item_begin_alpha_action())
             send_begin_alpha_action_packet();
     }
 }

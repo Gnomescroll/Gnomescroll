@@ -5,7 +5,7 @@ namespace Toolbelt
 
 // Common
 extern bool* agent_fire_on;
-extern int* agent_fire_tick;
+extern int* agent_fire_cooldown;
 extern ItemType* agent_selected_type;
 extern ItemType fist_item_type;    // cached item type lookup
 

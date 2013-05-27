@@ -29,6 +29,7 @@ void end_item(AgentID agent_id, ItemType item_type);
 
 // triggers
 bool trigger_local_item_beta(ItemID item_id, ItemType item_type);
+bool trigger_local_item(ItemID item_id, ItemType item_type);
 
 // network events
 void assign_toolbelt(ItemContainerID container_id);
