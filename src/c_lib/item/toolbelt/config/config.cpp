@@ -94,7 +94,7 @@ static void apply_group_settings(ItemGroup group)
 }
 
 static void apply_click_and_hold_settings_for(ClickAndHoldBehaviour cnh)
-{   // begin applying settings to all items with click_and_hold == cnh
+{
     for (int i=0; i<int(MAX_ITEM_TYPES); i++)
         if (get_item_click_and_hold_behaviour((ItemType)i) == cnh)
             apply_type_settings((ItemType)i);

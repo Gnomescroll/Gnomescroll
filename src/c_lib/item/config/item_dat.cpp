@@ -87,10 +87,10 @@ void load_item_dat()
     item_def(IG_MINING_LASER, "blue_mining_laser");
     sprite_def(i0, 3,5);
     set_pretty_name("Mining Laser");
-    s->max_durability = 1200;
     s->max_stack_size = 1;
     s->firing_range = MELEE_FIRING_RANGE;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
+    s->max_durability = (ONE_MINUTE * 10) / s->firing_rate; // 10 minutes of continuous use
     block_damage_def(6);
     block_damage_def(CUBE_MATERIAL_DIRT, 5);
     block_damage_def(CUBE_MATERIAL_STONE, 6);
@@ -102,10 +102,10 @@ void load_item_dat()
     item_def(IG_MINING_LASER, "red_mining_laser");
     sprite_def(i0, 3,7);
     set_pretty_name("Mining Laser");
-    s->max_durability = 1200;
     s->max_stack_size = 1;
     s->firing_range = MELEE_FIRING_RANGE;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
+    s->max_durability = (ONE_MINUTE * 10) / s->firing_rate; // 10 minutes of continuous use
     block_damage_def(6);
     block_damage_def(CUBE_MATERIAL_DIRT, 6);
     block_damage_def(CUBE_MATERIAL_STONE, 8);
@@ -117,10 +117,10 @@ void load_item_dat()
     item_def(IG_MINING_LASER, "green_mining_laser");
     sprite_def(i0, 4,7);
     set_pretty_name("Mining Laser");
-    s->max_durability = 1200;
     s->max_stack_size = 1;
     s->firing_range = MELEE_FIRING_RANGE;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
+    s->max_durability = (ONE_MINUTE * 10) / s->firing_rate; // 10 minutes of continuous use
     block_damage_def(6);
     block_damage_def(CUBE_MATERIAL_DIRT, 7);
     block_damage_def(CUBE_MATERIAL_STONE, 10);
@@ -163,7 +163,7 @@ void load_item_dat()
     s->max_durability = 400;
     s->max_stack_size = 1;
     s->firing_range = MELEE_FIRING_RANGE;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
     block_damage_def(1);
     block_damage_def(CUBE_MATERIAL_DIRT, 5);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
@@ -187,7 +187,7 @@ void load_item_dat()
     s->max_durability = 400;
     s->max_stack_size = 1;
     s->firing_range = MELEE_FIRING_RANGE;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
     block_damage_def(2);
     block_damage_def(CUBE_MATERIAL_DIRT, 6);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
@@ -211,7 +211,7 @@ void load_item_dat()
     s->max_durability = 400;
     s->max_stack_size = 1;
     s->firing_range = MELEE_FIRING_RANGE;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
     block_damage_def(3);
     block_damage_def(CUBE_MATERIAL_DIRT, 7);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
@@ -235,7 +235,7 @@ void load_item_dat()
     s->max_durability = 400;
     s->max_stack_size = 1;
     s->firing_range = MELEE_FIRING_RANGE;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
     block_damage_def(3);
     block_damage_def(CUBE_MATERIAL_DIRT, 8);
     block_damage_def(CUBE_MATERIAL_STONE, 2);
@@ -261,7 +261,7 @@ void load_item_dat()
     s->max_durability = 100;
     s->max_stack_size = 1;
     s->firing_range = 3.0f;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
     block_damage_def(4);
     block_damage_def(CUBE_MATERIAL_STONE, 0);
     s->object_damage_min = 50;
@@ -300,7 +300,7 @@ void load_item_dat()
     item_def(IG_FIST, "fist");
     sprite_def(i1, 6, 2);
     s->firing_range = MELEE_FIRING_RANGE;
-    s->firing_rate = ONE_SECOND / 2;
+    s->firing_rate = ONE_SECOND / 3;
     block_damage_def(1);
     block_damage_def(CUBE_MATERIAL_DIRT, 2);
     block_damage_def(CUBE_MATERIAL_DECORATION, 4);

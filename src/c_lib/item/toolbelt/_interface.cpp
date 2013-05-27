@@ -271,7 +271,6 @@ void tick()
         }
     }
     single_trigger = false;
-    agent_fire_cooldown[local_agent_id] = GS_MAX(agent_fire_cooldown[local_agent_id] - 1, 0);
     #endif
 }
 
