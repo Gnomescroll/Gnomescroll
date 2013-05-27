@@ -13,6 +13,7 @@ namespace Toolbelt
 inline void toolbelt_set_slot_CtoS::handle() {}
 inline void toolbelt_begin_alpha_action_CtoS::handle() {}
 inline void toolbelt_end_alpha_action_CtoS::handle() {}
+inline void toolbelt_alpha_action_CtoS::handle() {}
 inline void toolbelt_beta_action_CtoS::handle() {}
 #endif
 
@@ -34,7 +35,6 @@ inline void toolbelt_begin_alpha_action_CtoS::handle()
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-
     turn_fire_on(a->id);
 }
 
@@ -43,8 +43,19 @@ inline void toolbelt_end_alpha_action_CtoS::handle()
     class Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL) return;
     if (a->status.dead) return;
-
     turn_fire_off(a->id);
+}
+
+inline void toolbelt_alpha_action_CtoS::handle()
+{
+    class Agents::Agent* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->status.dead) return;
+
+    ItemID item_id = get_agent_selected_item(a->id);
+    ItemType item_type = Item::get_item_type(item_id);
+    trigger_item(a->id, item_id, item_type);
+    broadcast_agent_toolbelt_alpha_action_packet(a->id, item_type);
 }
 
 inline void toolbelt_beta_action_CtoS::handle()

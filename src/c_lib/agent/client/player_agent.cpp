@@ -254,7 +254,7 @@ float PlayerAgent::camera_z()
 
 Vec3 PlayerAgent::camera_position()
 {
-    if (this->you() == NULL) return vec3_init(0,0,0);
+    if (this->you() == NULL) return vec3_init(0);
     return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
 }
 
@@ -602,5 +602,12 @@ void PlayerAgent::teleport_to(Vec3 p)
     msg.send();
 }
 #endif
+
+bool PlayerAgent::pointing_at_terrain(ItemType weapon_type)
+{
+    if (ClientState::hitscan.type != HITSCAN_TARGET_BLOCK) return false;
+    const float range = Item::get_weapon_range(weapon_type);
+    return (ClientState::hitscan.distance < range);
+}
 
 }   // Agents

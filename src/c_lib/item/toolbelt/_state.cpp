@@ -11,6 +11,8 @@ ItemType fist_item_type = NULL_ITEM_TYPE;
 
 //Client
 #if DC_CLIENT
+bool holding = false;
+bool single_trigger = false;
 int selected_slot = 0;
 ItemContainerID toolbelt_id = NULL_CONTAINER;
 #endif

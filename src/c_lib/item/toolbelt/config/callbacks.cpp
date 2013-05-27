@@ -96,15 +96,10 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type)
     Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL) return;
     Vec3 pos = you->get_position();
-    struct Vec3i start;
-    start.x = pos.x;
-    start.y = pos.y;
-    start.z = pos.z;
+    Vec3i start = vec3i_init(pos);
     start.z = t_map::get_nearest_surface_block_below(start);
     struct Vec3i end;
-    end.x = ClientState::location_pointer.x;
-    end.y = ClientState::location_pointer.y;
-    end.z = ClientState::location_pointer.z;
+    end = vec3i_init(ClientState::location_pointer);
     end.z = t_map::get_nearest_surface_block_below(end);
     //end.z = start.z;    // for 2d
     size_t len = 0;

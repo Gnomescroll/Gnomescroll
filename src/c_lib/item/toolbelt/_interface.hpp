@@ -40,10 +40,14 @@ void left_trigger_up_event();
 void right_trigger_down_event();
 void right_trigger_up_event();
 
+void trigger_item(AgentID agent_id, ItemType item_type);
+void trigger_item_beta(AgentID agent_id, ItemType item_type);
+
 void set_agent_selected_item_type(AgentID agent_id, ItemType item_type);
 #endif
 
 #if DC_SERVER
+void trigger_item(AgentID agent_id, ItemID item_id, ItemType item_type);
 void trigger_item_beta(AgentID agent_id, ItemID item_id, ItemType item_type);
 
 void update_toolbelt_items();

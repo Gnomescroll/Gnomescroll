@@ -525,7 +525,7 @@ void tick_equipped_item_animation()
 
     equipped_item_animation_tick += equipped_item_animation_tick_nudge;
 
-    const int duration = 10; // ticks
+    const int duration = ONE_SECOND / 3; // ticks
     if (equipped_item_animation_tick > duration)
     {
         if (equipped_item_continuous_animation)
@@ -546,12 +546,13 @@ void tick_equipped_item_animation()
     const float delta = 0.05f;
     animation_state.origin.depth = current_config->alignment.origin.depth;
     if (equipped_item_animation_tick < duration/2)
-        animation_state.origin.depth += delta * (float)equipped_item_animation_tick;
+        animation_state.origin.depth += delta * float(equipped_item_animation_tick);
     else
-        animation_state.origin.depth += delta * (float)(duration - equipped_item_animation_tick);
+        animation_state.origin.depth += delta * float(duration - equipped_item_animation_tick);
 
     // clamp
-    if (animation_state.origin.depth < current_config->alignment.origin.depth) animation_state.origin.depth = current_config->alignment.origin.depth;
+    if (animation_state.origin.depth < current_config->alignment.origin.depth)
+        animation_state.origin.depth = current_config->alignment.origin.depth;
 }
 
 void stop_equipped_item_animation()
@@ -585,7 +586,7 @@ void draw_placement_outline(ItemType item_type)
         float size;
         struct Vec3 p = vec3_init(pos);
         p = quadrant_translate_position(current_camera_position, p);
-        if (t_map::get(pos) == 0)
+        if (t_map::get(pos) == EMPTY_CUBE)
         {
             size = 0.995f;
             glColor3ub(1,1,1);

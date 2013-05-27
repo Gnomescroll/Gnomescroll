@@ -65,6 +65,15 @@ void broadcast_agent_toolbelt_end_alpha_action_packet(AgentID agent_id)
     msg.broadcast();
 }
 
+void broadcast_agent_toolbelt_alpha_action_packet(AgentID agent_id, ItemType item_type)
+{
+    IF_ASSERT(!isValid(agent_id)) return;
+    toolbelt_item_alpha_action_StoC msg;
+    msg.agent_id = agent_id;
+    msg.item_type = item_type;
+    msg.broadcast();
+}
+
 void broadcast_agent_toolbelt_beta_action_packet(AgentID agent_id, ItemType item_type)
 {
     IF_ASSERT(!isValid(agent_id)) return;

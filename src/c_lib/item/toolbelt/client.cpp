@@ -52,40 +52,40 @@ void turn_fire_off(AgentID agent_id)
         return;
     }
 
-    if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
-    if (item_is_click_and_hold(item_type))
+    if (item_type == NULL_ITEM_TYPE)
+        item_type = fist_item_type;
+    if (item_is_click_and_hold(item_type) && !single_trigger)
         Animations::stop_equipped_item_animation();
 }
 
 // returns true if an event was or should be triggered
 bool toolbelt_item_begin_alpha_action()
 {
-    GS_ASSERT(click_and_hold != NULL);
-    if (click_and_hold == NULL) return false;
-    GS_ASSERT(agent_fire_on != NULL);
-    if (agent_fire_on == NULL) return false;
+    IF_ASSERT(click_and_hold == NULL) return false;
+    IF_ASSERT(agent_fire_on == NULL) return false;
 
     AgentID agent_id = ClientState::player_agent.agent_id;
     IF_ASSERT(!isValid(agent_id)) return false;
 
     if (agent_fire_on[agent_id]) return false;
 
+    // TODO -- insert cooldown checks here
+
     turn_fire_on(agent_id);
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     ItemType item_type = Item::get_item_type(item_id);
 
-    Animations::begin_equipped_item_animation(item_type, item_is_click_and_hold(item_type));
+    bool continuous = (item_is_click_and_hold(item_type) && !single_trigger);
+    Animations::begin_equipped_item_animation(item_type, continuous);
     return true;
 }
 
 // returns true if an event was or should be triggered
 bool toolbelt_item_end_alpha_action()
 {
-    GS_ASSERT(agent_fire_on != NULL);
-    if (agent_fire_on == NULL) return false;
-    GS_ASSERT(click_and_hold != NULL);
-    if (click_and_hold == NULL) return false;
+    IF_ASSERT(agent_fire_on == NULL) return false;
+    IF_ASSERT(click_and_hold == NULL) return false;
 
     AgentID agent_id = ClientState::player_agent.agent_id;
     IF_ASSERT(!isValid(agent_id)) return false;
@@ -96,7 +96,7 @@ bool toolbelt_item_end_alpha_action()
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     ItemType item_type = Item::get_item_type(item_id);
 
-    if (item_is_click_and_hold(item_type))
+    if (item_is_click_and_hold(item_type) && !single_trigger)
     {
         Animations::stop_equipped_item_animation();
         return true;
@@ -185,10 +185,8 @@ static bool beta_scan_world()
 // returns true if an event was or should be triggered
 bool toolbelt_item_beta_action()
 {
-    GS_ASSERT(agent_fire_on != NULL);
-    if (agent_fire_on == NULL) return false;
-    GS_ASSERT(agent_selected_type != NULL)
-    if (agent_selected_type == NULL) return false;
+    IF_ASSERT(agent_fire_on == NULL) return false;
+    IF_ASSERT(agent_selected_type == NULL) return false;
 
     AgentID agent_id = ClientState::player_agent.agent_id;
     IF_ASSERT(!isValid(agent_id)) return false;
@@ -197,10 +195,11 @@ bool toolbelt_item_beta_action()
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     ItemType item_type = NULL_ITEM_TYPE;
-    if (item_id == NULL_ITEM) item_type = fist_item_type;
-    else item_type = Item::get_item_type(item_id);
-    GS_ASSERT(item_type != NULL_ITEM_TYPE)
-    if (item_type < 0 || item_type >= MAX_ITEM_TYPES) return false;
+    if (item_id == NULL_ITEM)
+        item_type = fist_item_type;
+    else
+        item_type = Item::get_item_type(item_id);
+    IF_ASSERT(!isValid(item_type)) return false;
 
     bool triggered = trigger_local_item_beta(item_id, item_type);
     if (triggered) return true;
@@ -230,6 +229,12 @@ void send_begin_alpha_action_packet()
 void send_end_alpha_action_packet()
 {
     toolbelt_end_alpha_action_CtoS msg;
+    msg.send();
+}
+
+void send_alpha_action_packet()
+{
+    toolbelt_alpha_action_CtoS msg;
     msg.send();
 }
 

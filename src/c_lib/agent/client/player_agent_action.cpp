@@ -210,8 +210,7 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
     if (you == NULL) return;
     if (you->status.dead) return;
 
-    GS_ASSERT(weapon_type != NULL_ITEM_TYPE);
-    if (weapon_type == NULL_ITEM_TYPE) return;
+    IF_ASSERT(weapon_type == NULL_ITEM_TYPE) return;
     ItemGroup weapon_group = Item::get_item_group_for_type(weapon_type);
 
     float range = Item::get_weapon_range(weapon_type);

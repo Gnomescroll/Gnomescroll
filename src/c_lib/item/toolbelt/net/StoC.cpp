@@ -36,10 +36,17 @@ inline void toolbelt_item_end_alpha_action_StoC::handle()
     turn_fire_off((AgentID)this->agent_id);
 }
 
+inline void toolbelt_item_alpha_action_StoC::handle()
+{
+    if (agent_id == ClientState::player_agent.agent_id) return;
+    trigger_item((AgentID)this->agent_id, (ItemType)this->item_type);
+}
+
 inline void toolbelt_item_beta_action_StoC::handle()
 {
     if (agent_id == ClientState::player_agent.agent_id) return;
     // play sound/anim
+    trigger_item_beta((AgentID)this->agent_id, (ItemType)this->item_type);
 }
 #endif
 
@@ -47,6 +54,7 @@ inline void toolbelt_item_beta_action_StoC::handle()
 inline void toolbelt_set_active_item_StoC::handle() {}
 inline void toolbelt_item_begin_alpha_action_StoC::handle() {}
 inline void toolbelt_item_end_alpha_action_StoC::handle() {}
+inline void toolbelt_item_alpha_action_StoC::handle() {}
 inline void toolbelt_item_beta_action_StoC::handle() {}
 #endif
 

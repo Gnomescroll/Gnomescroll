@@ -33,6 +33,15 @@ class toolbelt_end_alpha_action_CtoS: public FixedSizeReliableNetPacketToServer<
     inline void handle();
 };
 
+class toolbelt_alpha_action_CtoS: public FixedSizeReliableNetPacketToServer<toolbelt_alpha_action_CtoS>
+{
+    public:
+    inline void packet(char* buff, size_t* buff_n, bool pack)
+    {
+    }
+    inline void handle();
+};
+
 class toolbelt_beta_action_CtoS: public FixedSizeReliableNetPacketToServer<toolbelt_beta_action_CtoS>
 {
     public:

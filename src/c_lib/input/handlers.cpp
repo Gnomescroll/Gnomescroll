@@ -797,10 +797,12 @@ void agent_key_up_handler(SDL_Event* event)
             enable_jump();
             break;
 
+        #if !PRODUCTION
         case SDLK_p:
             if (agent_camera != NULL)
                 agent_camera->toggle_third_person();
             break;
+        #endif
 
         default: break;
     }

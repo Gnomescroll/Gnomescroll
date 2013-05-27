@@ -118,6 +118,8 @@ class PlayerAgent
 
     void play_geiger();
 
+    bool pointing_at_terrain(ItemType weapon_type);
+
     PlayerAgent();
     ~PlayerAgent();
 };

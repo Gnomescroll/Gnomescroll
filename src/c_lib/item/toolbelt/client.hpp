@@ -30,6 +30,7 @@ void toolbelt_item_end_alpha_action_event_handler(AgentID agent_id, ItemType ite
 void send_set_slot_packet(int slot);
 void send_begin_alpha_action_packet();
 void send_end_alpha_action_packet();
+void send_alpha_action_packet();
 void send_beta_action_packet();
 
 } // Toolbelt

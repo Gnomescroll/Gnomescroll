@@ -30,11 +30,13 @@ void init_packets()
     Toolbelt::toolbelt_set_slot_CtoS::register_server_packet();
     Toolbelt::toolbelt_begin_alpha_action_CtoS::register_server_packet();
     Toolbelt::toolbelt_end_alpha_action_CtoS::register_server_packet();
+    Toolbelt::toolbelt_alpha_action_CtoS::register_server_packet();
     Toolbelt::toolbelt_beta_action_CtoS::register_server_packet();
 
     // toolbelt actions (to client)
     Toolbelt::toolbelt_set_active_item_StoC::register_client_packet();
     Toolbelt::toolbelt_item_beta_action_StoC::register_client_packet();
+    Toolbelt::toolbelt_item_alpha_action_StoC::register_client_packet();
     Toolbelt::toolbelt_item_begin_alpha_action_StoC::register_client_packet();
     Toolbelt::toolbelt_item_end_alpha_action_StoC::register_client_packet();
 }
@@ -64,7 +66,6 @@ void remove_agent(AgentID agent_id)
 void agent_died(AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return;
-
     turn_fire_off(agent_id);
 }
 
@@ -72,7 +73,6 @@ ItemType get_agent_selected_item_type(AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return NULL_ITEM_TYPE;
     IF_ASSERT(agent_selected_type == NULL) return NULL_ITEM_TYPE;
-
     return agent_selected_type[agent_id];
 }
 
@@ -85,7 +85,6 @@ void agent_quit(AgentID agent_id)
 {   // It might be the same as agent_died, but they should not be mixed
     // Death has penalties; leaving the server should not
     IF_ASSERT(!isValid(agent_id)) return;
-
     turn_fire_off(agent_id);
 }
 
@@ -101,6 +100,7 @@ void tick_item(AgentID agent_id, ItemID item_id, ItemType item_type)
 
 void trigger_item(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
+    printf("Triggering item %d\n", item_id);
     triggerItem trigger = get_trigger_item_fn(item_type);
     if (trigger == NULL) return;
     trigger(agent_id, item_id, item_type);
@@ -200,29 +200,22 @@ void end_item(AgentID agent_id, ItemType item_type)
 void tick()
 {
     #if DC_SERVER
-    GS_ASSERT(agent_selected_item != NULL);
-    if (agent_selected_item == NULL) return;
+    IF_ASSERT(agent_selected_item == NULL) return;
     #endif
 
-    GS_ASSERT(agent_selected_type != NULL);
-    GS_ASSERT(agent_fire_tick     != NULL);
-    GS_ASSERT(agent_fire_on       != NULL);
-    if (agent_selected_type == NULL) return;
-    if (agent_fire_tick == NULL) return;
-    if (agent_fire_on == NULL) return;
+    IF_ASSERT(agent_selected_type == NULL) return;
+    IF_ASSERT(agent_fire_tick == NULL) return;
+    IF_ASSERT(agent_fire_on == NULL) return;
 
     #if DC_CLIENT
     update_selected_item_type();
-    int local_agent_id = ClientState::player_agent.agent_id;
     ItemID local_item_id = ItemContainer::get_toolbelt_item(selected_slot);
+    ItemType local_item_type = Item::get_item_type(local_item_id);
+    if (local_item_type == NULL_ITEM_TYPE)
+        local_item_type = fist_item_type;
+    AgentID local_agent_id = ClientState::player_agent.agent_id;
+    if (!isValid(local_agent_id)) return;
     #endif
-
-    // here's where i want to add x jetpack particles per frame i think.... sounds probably based on events
-    for (int i=0; i<MAX_AGENTS; i++)
-    {
-        //Agents::agent_list[i].state
-
-    }
 
     // increment fire ticks if weapon down
     for (int i=0; i<MAX_AGENTS; i++)
@@ -240,15 +233,20 @@ void tick()
         if (item_type == NULL_ITEM_TYPE) item_type = fist_item_type;
 
         int fire_rate = Item::get_item_fire_rate(item_type);
-        GS_ASSERT(fire_rate >= 1);
-        if (fire_rate < 1) fire_rate = 1;
+        IF_ASSERT(fire_rate < 1) fire_rate = 1;
 
-        if (agent_fire_tick[i] % fire_rate == 0)
+        // TODO -- somewhere in here...
+        // We handle the click-and-hold status
+        // And we decrement cooldowns
+        // We need to not only check item_is_click_and_hold but whether it is
+        // in click_and_hold mode (e.g. shovels are click and hold as long as
+        // they are looking at terrain, otherwise nothing happens)
+
+        if ((agent_fire_tick[i] % fire_rate) == 0)
         {
             #if DC_CLIENT
             if (local_agent_id == i)
                 trigger_local_item(local_item_id, item_type);
-            else trigger_item((AgentID)i, item_type);
             #endif
 
             #if DC_SERVER
@@ -268,7 +266,30 @@ void tick()
         #endif
 
         agent_fire_tick[i]++;
+        // TODO -- cooldown
+        //agent_fire_cooldown[i] = GS_MAX(agent_fire_cooldown[i] - 1, 0);
     }
+
+    #if DC_CLIENT
+    // If we're currently click-and-hold firing on terrain, shut it off if
+    // we are no longer looking at terrain
+    if (item_is_click_and_hold(local_item_type))
+    {
+        if (agent_fire_on[local_agent_id])
+        {
+            if (!ClientState::player_agent.pointing_at_terrain(local_item_type))
+                if (toolbelt_item_end_alpha_action())
+                    send_end_alpha_action_packet();
+        }
+        else if (holding)
+        {
+            if (ClientState::player_agent.pointing_at_terrain(local_item_type))
+                if (toolbelt_item_begin_alpha_action())
+                    send_begin_alpha_action_packet();
+        }
+    }
+    single_trigger = false;
+    #endif
 }
 
 } // Toolbelt
@@ -279,8 +300,7 @@ namespace Toolbelt
 
 ItemType get_selected_item_type()
 {
-    GS_ASSERT(agent_selected_type != NULL);
-    if (agent_selected_type == NULL) return NULL_ITEM_TYPE;
+    IF_ASSERT(agent_selected_type == NULL) return NULL_ITEM_TYPE;
     AgentID agent_id = ClientState::player_agent.agent_id;
     if (!isValid(agent_id)) return NULL_ITEM_TYPE;
     return agent_selected_type[agent_id];
@@ -345,16 +365,33 @@ void left_trigger_down_event()
 {
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
+    holding = true;
+    ItemType item_type = get_selected_item_type();
+    if (item_type == NULL_ITEM_TYPE)
+        item_type = fist_item_type;
+    single_trigger = (!item_is_click_and_hold(item_type) ||
+                      !ClientState::player_agent.pointing_at_terrain(item_type));
     bool something_happened = toolbelt_item_begin_alpha_action();
-    if (something_happened) send_begin_alpha_action_packet();
+    if (something_happened)
+    {
+        if (single_trigger)
+            send_alpha_action_packet();
+        else
+            send_begin_alpha_action_packet();
+    }
 }
 
 void left_trigger_up_event()
 {
+    holding = false;
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
     bool something_happened = toolbelt_item_end_alpha_action();
-    if (something_happened) send_end_alpha_action_packet();
+    if (something_happened)
+    {
+        if (item_is_click_and_hold(get_selected_item_type()))
+            send_end_alpha_action_packet();
+    }
 }
 
 void right_trigger_down_event()
@@ -380,12 +417,9 @@ namespace Toolbelt
 
 void update_toolbelt_items()
 {
-    GS_ASSERT(agent_selected_type != NULL);
-    GS_ASSERT(agent_selected_item != NULL);
-    GS_ASSERT(agent_selected_slot != NULL);
-    if (agent_selected_type == NULL) return;
-    if (agent_selected_item == NULL) return;
-    if (agent_selected_slot == NULL) return;
+    IF_ASSERT(agent_selected_type == NULL) return;
+    IF_ASSERT(agent_selected_item == NULL) return;
+    IF_ASSERT(agent_selected_slot == NULL) return;
     // make sure agent_selected_item is current
     // if any discrepancies exist, send a set_selected_item packet
     for (int i=0; i<MAX_AGENTS; i++)
