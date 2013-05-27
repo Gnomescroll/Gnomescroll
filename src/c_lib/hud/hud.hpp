@@ -80,6 +80,7 @@ class HUD
         AnimatedText* health;
         Text* confirm_quit;
         Text* prompt;
+        Text* target; // what crosshair is aiming at
         Text* error;
         Text* error_subtitle;
         Text* awesomium_message;

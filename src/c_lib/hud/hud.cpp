@@ -355,6 +355,32 @@ void draw_hud_text()
             hud->prompt->draw();
             press_help_tick++;
         }
+        
+        // draw text of targeted object
+//        switch (ClientState::hitscan.type)
+//        {
+//            case HITSCAN_TARGET_NONE: hud->target->set_text(""); break;
+//            case HITSCAN_TARGET_VOXEL: hud->target->set_text("VOXEL"); hud->target->set_position(x,y); break;
+//            case HITSCAN_TARGET_BLOCK: hud->target->set_text("BLOCK"); break;
+//            case HITSCAN_TARGET_MECH:
+//                //hud->target->set_text(text); 
+//                //hud->target->text = 
+//                const char* text = t_mech::mech_text_get(ClientState::hitscan.mech_id); 
+//                //hud->target->set_text("..."); 
+//                break;
+//
+//        }
+//       //MechType type = t_mech::get_mech_type(ClientState::hitscan.mech_id);
+//       //if (type == get_mech_type("terminal"))
+//       //    Input::open_terminal();
+//// > char* mech_text_get(int mech_id);
+////  void mech_text_update(int mech_id, int pos, int key);
+////  in interface .hpp
+////  that gets the text
+////  on the block
+////  on the mech, by id
+////  but check if its sign type block
+//        hud->target->draw();
     }
     else
     {
@@ -620,6 +646,14 @@ void HUD::init()
     prompt->set_position((_xresf - prompt->get_width()) / 2.0f, prompt->get_height() + HudContainer::toolbelt->height() );
     prompt->shadowed = true;
 
+    target = text_list->create();
+    IF_ASSERT(target == NULL) return;
+    target->set_text("not looking at anything");
+    target->set_color(Color(255,0,255,255));
+    target->set_position((_xresf - target->get_width()) / 2.0f, 
+        _yresf/4);
+    target->shadowed = true;
+
     error = text_list->create();
     IF_ASSERT(error == NULL) return;
     error->set_color(Color(200,4,2));
@@ -658,6 +692,7 @@ HUD::HUD() :
     health(NULL),
     confirm_quit(NULL),
     prompt(NULL),
+    target(NULL),
     error(NULL),
     error_subtitle(NULL),
     awesomium_message(NULL),
@@ -687,6 +722,8 @@ HUD::~HUD()
         text_list->destroy(confirm_quit->id);
     if (prompt != NULL)
         text_list->destroy(prompt->id);
+    if (target != NULL)
+        text_list->destroy(target->id);
     if (error != NULL)
         text_list->destroy(error->id);
     if (error_subtitle != NULL)

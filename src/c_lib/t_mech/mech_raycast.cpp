@@ -39,7 +39,7 @@ void draw_selected_mech_bounding_box()
     struct Mech m = *_selected_mech;
     Vec3 w = get_mech_center(m);
     w = quadrant_translate_position(current_camera_position, w);
-    w.z += 0.01;
+    w.z += 0.01f;
 
     struct Vec3 f = vec3_init(sinf(m.rotation * PI), cosf(m.rotation * PI), 0.0f);
     struct Vec3 r = vec3_init(sinf((m.rotation+0.5)*PI), cosf((m.rotation+0.5)*PI), 0.0f);

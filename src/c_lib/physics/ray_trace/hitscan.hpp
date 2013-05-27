@@ -74,7 +74,7 @@ class WorldHitscanResult
     void finish()
     {   // call this when done gathering hitscan data
         this->type = HITSCAN_TARGET_NONE;
-        this->distance = FAR_AWAY;
+        this->distance = (float)FAR_AWAY;
         const int types = 3;
         float d[types] = { this->block_distance, this->voxel_distance,
                            this->mech_distance };
