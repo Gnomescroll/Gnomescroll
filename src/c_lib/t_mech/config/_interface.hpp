@@ -57,6 +57,8 @@ void mech_def(MechClassType class_type, const char* name, MechRenderType mech_re
     s->render_type = mech_render_type;
     s->behavior_type = behavior_type;
 
+    if (class_type == MECH_WALL_OBJECT)
+        s->size = 0.5f;
 }
 
 void set_sprite_index(int sprite)

@@ -89,8 +89,8 @@ class mech_text_update_StoC: public MapMessagePacketToClient<mech_text_update_St
 {
     public:
         uint16_t id;
-        uint8_t  pos;
-        uint8_t  key;
+        uint8_t pos;
+        uint8_t key;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {

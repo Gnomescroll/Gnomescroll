@@ -61,7 +61,7 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL) return false;
 
-    Hitscan::WorldHitscanResult result = Hitscan::hitscan_against_world(
+    Hitscan::WorldHitscanResult result = Hitscan::hitscan_against_terrain_and_mobs(
         camera_position, this->firing_direction, this->sight_range,
         this->object->id, this->object->type);
 

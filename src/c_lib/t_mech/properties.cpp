@@ -103,24 +103,19 @@ inline bool is_plant(MechType type)
     return attr->plant;
 }
 
-Vec3 get_mech_box_dimensions(const struct Mech& mech)
+Vec3 get_mech_box_dimensions(MechType type)
 {
-    float size = mech.size * 0.5f;
-    IF_ASSERT(!isValid(mech.type)) return vec3_init(size);
-    int tex_id = mech_attributes[mech.type].sprite;
-    if (tex_id < 0 || tex_id >= MAX_MECHS) return vec3_init(mech.size);
-    GS_ASSERT(mech_sprite_width[mech_attributes[mech.type].sprite] != -1)
-    GS_ASSERT(mech_sprite_height[mech_attributes[mech.type].sprite] != -1)
-    float size_w = size*mech_sprite_width_f[tex_id];
-    float size_h = 2.0f*size*mech_sprite_height_f[tex_id];
-    return vec3_init(size_w, size_w, size_h);
+    class MechAttribute* attr = get_mech_attribute(type);
+    IF_ASSERT(attr == NULL) return vec3_init(1);
+    return attr->dimensions;
 }
 
 Vec3 get_mech_center(const struct Mech& mech)
 {
     if (mech.render_type == MECH_RENDER_TYPE_3)
     {   // wall
-        Vec3 offset = vec3_init(0.5f, 0.5f, 0.5f * (1.0f - mech.size));
+        Vec3 offset = vec3_init(0.5f);
+        offset.z *= 1.0f - get_mech_size(mech.type);
         Vec3 center = vec3_add(vec3_init(mech.position), offset);
         Vec3 side = vec3_init(get_sides_from_cube_side(mech.side));
         side = vec3_scalar_mult(side, -0.5f);
@@ -135,15 +130,39 @@ Vec3 get_mech_center(const struct Mech& mech)
     }
 }
 
-float get_mech_radius(const struct Mech& mech)
-{   // returns the largest dimension * 0.5
-    Vec3 size = get_mech_box_dimensions(mech);
-    float biggest = 0.0f;
-    for (int i=0; i<3; i++)
-        if (size.f[i] > biggest)
-            biggest = size.f[i];
-    return biggest * 0.5f;
+float get_mech_radius(MechType type)
+{
+    class MechAttribute* attr = get_mech_attribute(type);
+    IF_ASSERT(attr == NULL) return 0.5f;
+    return attr->radius;
 }
 
+float get_mech_size(MechType type)
+{
+    class MechAttribute* attr = get_mech_attribute(type);
+    IF_ASSERT(attr == NULL) return 1.0f;
+    return attr->size;
+}
+
+void update_dimensions()
+{
+    for (int i=0; i<MAX_MECHS; i++)
+    {
+        if (!mech_attributes[i].loaded) continue;
+        float size = mech_attributes[i].size;
+        float size_w = size * 0.5f;
+        float size_h = size;
+        int tex_id = mech_attributes[i].sprite;
+        if (tex_id >= 0 && tex_id < MAX_MECHS)
+        {
+            GS_ASSERT(mech_sprite_width[tex_id] != -1)
+            GS_ASSERT(mech_sprite_height[tex_id] != -1)
+            size_w = 0.5f*size*mech_sprite_width_f[tex_id];
+            size_h = size*mech_sprite_height_f[tex_id];
+        }
+        mech_attributes[i].dimensions = vec3_init(size_w, size_w, size_h);
+        mech_attributes[i].radius = GS_MAX(size_w, size_h) * 0.5f;
+    }
+}
 
 }   // t_mech

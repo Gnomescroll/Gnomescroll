@@ -170,7 +170,6 @@ void update_global_hitscan()
     hitscan = Hitscan::hitscan_against_world(pos, look, range,
                                              player_agent.agent_id,
                                              OBJECT_AGENT);
-    //printf("Looking at: %d, %0.2f meters away\n", hitscan.type, hitscan.distance);
 }
 
 }   // ClientState

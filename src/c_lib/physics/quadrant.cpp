@@ -58,8 +58,8 @@ ALWAYS_INLINE static float min_2f(float x, float y)
 
 inline int quadrant_translate_i(int cx, int px)
 {   //camera x and position x
-    GS_ASSERT(is_boxed_point(cx));
-    GS_ASSERT(is_boxed_point(px));
+    //GS_ASSERT(is_boxed_point(cx));
+    //GS_ASSERT(is_boxed_point(px));
 
     if (cx < QUADRANT_DIVIDEi)
     {   //camera in first half
@@ -87,13 +87,13 @@ inline int quadrant_translate_i(int cx, int px)
 
 inline float quadrant_translate_f(float cx, float px)
 {   //camera x and position x
-    #ifdef NAN
-    GS_ASSERT(!isnan(cx));
-    GS_ASSERT(!isnan(px));
-    #endif
+    //#ifdef NAN
+    //GS_ASSERT(!isnan(cx));
+    //GS_ASSERT(!isnan(px));
+    //#endif
 
-    GS_ASSERT(is_boxed_point(cx));
-    GS_ASSERT(is_boxed_point(px));
+    //GS_ASSERT(is_boxed_point(cx));
+    //GS_ASSERT(is_boxed_point(px));
 
     const float dx = float(map_dim.x);
 
@@ -148,36 +148,30 @@ ALWAYS_INLINE int translate_point(int pt)
     return pt;
 }
 
-ALWAYS_INLINE struct Vec3 translate_position(struct Vec3 pos)
+ALWAYS_INLINE struct Vec3 translate_position(const struct Vec3& pos)
 {
-    pos.x = translate_point(pos.x);
-    pos.y = translate_point(pos.y);
-    return pos;
+    return {{{ translate_point(pos.x), translate_point(pos.y), pos.z }}};
 }
 
-inline struct Vec3 quadrant_translate_position(struct Vec3 pos1, struct Vec3 pos2)
+inline struct Vec3 quadrant_translate_position(const struct Vec3& pos1, const struct Vec3& pos2)
 {
-    GS_ASSERT(is_boxed_position(pos1));
-    GS_ASSERT(is_boxed_position(pos2));
-
-    pos2.x = quadrant_translate_f(pos1.x, pos2.x);
-    pos2.y = quadrant_translate_f(pos1.y, pos2.y);
-
-    return pos2;
+    //GS_ASSERT(is_boxed_position(pos1));
+    //GS_ASSERT(is_boxed_position(pos2));
+    return {{{ quadrant_translate_f(pos1.x, pos2.x),
+               quadrant_translate_f(pos1.y, pos2.y),
+               pos2.z }}};
 }
 
-ALWAYS_INLINE struct Vec3i translate_position(struct Vec3i pos)
+ALWAYS_INLINE struct Vec3i translate_position(const struct Vec3i& pos)
 {
-    pos.x = translate_point(pos.x);
-    pos.y = translate_point(pos.y);
-    return pos;
+    return {{{ translate_point(pos.x), translate_point(pos.y), pos.z }}};
 }
 
-inline struct Vec3i quadrant_translate_position(struct Vec3i pos1, struct Vec3i pos2)
+inline struct Vec3i quadrant_translate_position(const struct Vec3i& pos1, const struct Vec3i& pos2)
 {
-    GS_ASSERT(is_boxed_position(pos1));
-    GS_ASSERT(is_boxed_position(pos2));
-    pos2.x = quadrant_translate_i(pos1.x, pos2.x);
-    pos2.y = quadrant_translate_i(pos1.y, pos2.y);
-    return pos2;
+    //GS_ASSERT(is_boxed_position(pos1));
+    //GS_ASSERT(is_boxed_position(pos2));
+    return {{{ quadrant_translate_i(pos1.x, pos2.x),
+               quadrant_translate_i(pos1.y, pos2.y),
+               pos2.z }}};
 }

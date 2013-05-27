@@ -150,17 +150,15 @@ void toolbelt_item_end_alpha_action_event_handler(AgentID agent_id, ItemType ite
 
 static bool beta_scan_world()
 {   // check for things in world that respond to beta action
-    using ClientState::player_agent;
     if (agent_camera == NULL) return false;
 
     float range = BETA_WORLD_EFFECT_RANGE - 0.2f;   // reduce margin to correct for discrepancy btwn client and server camera position
     //float range = BETA_WORLD_EFFECT_RANGE;   // reduce margin to correct for discrepancy btwn client and server camera position
 
-    Vec3 pos = player_agent.camera_position();
-    Vec3 look = agent_camera->forward_vector();
+    Vec3 pos = agent_camera->get_position();
 
-    Hitscan::WorldHitscanResult hitscan = Hitscan::hitscan_against_world(
-        pos, look, range, player_agent.agent_id, OBJECT_AGENT);
+    using ClientState::hitscan;
+    if (hitscan.distance > range) return false;
 
     ItemContainerID container_id = NULL_CONTAINER;
     switch (hitscan.type)

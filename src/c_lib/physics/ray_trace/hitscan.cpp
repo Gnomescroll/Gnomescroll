@@ -34,9 +34,12 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
     return against_agents(position, direction, max_distance, NULL_AGENT);
 }
 
-WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
-                                         float range, int ignore_id,
-                                         EntityType ignore_type)
+#define HITSCAN_PROFILING 0
+
+
+static WorldHitscanResult _hitscan_against_terrain_and_mobs(const Vec3& p, const Vec3& v,
+                                                            float range, int ignore_id,
+                                                            EntityType ignore_type)
 {
     WorldHitscanResult hitscan;
     hitscan.start_position = p;
@@ -62,13 +65,52 @@ WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
                                     voxel_distance);
     }
 
+    return hitscan;
+}
+
+WorldHitscanResult hitscan_against_terrain_and_mobs(const Vec3& p, const Vec3& v,
+                                                    float range, int ignore_id,
+                                                    EntityType ignore_type)
+{
+    WorldHitscanResult hitscan = _hitscan_against_terrain_and_mobs(p, v, range,
+                                                                   ignore_id,
+                                                                   ignore_type);
+    hitscan.finish();
+    return hitscan;
+}
+
+#if DC_CLIENT
+WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
+                                         float range, int ignore_id,
+                                         EntityType ignore_type)
+{
+    #if HITSCAN_PROFILING
+    long ta = _GET_MICROSECOND_TIME();
+    #endif
+
+    WorldHitscanResult hitscan = _hitscan_against_terrain_and_mobs(p, v, range,
+                                                                   ignore_id,
+                                                                   ignore_type);
+
+    #if HITSCAN_PROFILING
+    long tb = _GET_MICROSECOND_TIME();
+    #endif
+
     int mech_id;
     float mech_distance;
     if (t_mech::ray_cast_mech(p, v, range, mech_id, mech_distance))
         hitscan.set_mech_collision(mech_id, mech_distance);
 
+    #if HITSCAN_PROFILING
+    long tc = _GET_MICROSECOND_TIME();
+    printf("\tTerrain and model trace: %0.3fms\n", double(tb-ta)/1000.0);
+    printf("\tMech trace:              %0.3fms\n", double(tc-tb)/1000.0);
+    printf("Total trace time: %0.3fms\n", double(tc-ta)/1000.0f);
+    #endif
+
     hitscan.finish();
     return hitscan;
 }
+#endif
 
 }   // Hitscan

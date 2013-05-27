@@ -130,15 +130,15 @@ void visualize_bounding_box(const Vec3& center,    //center
     glLineWidth(1.0f);
 }
 
-void visualize_bounding_box()
-{
-    static const struct Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
-    static const struct Vec3 r = vec3_init(0.0f, 1.0f, 0.0f);
-    static const struct Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
-    visualize_bounding_box(_i,               //center
-                           vec3_init(1.0f),  //size
-                           f, r, u);
-}
+//void visualize_bounding_box()
+//{
+    //static const struct Vec3 f = vec3_init(1.0f, 0.0f, 0.0f);
+    //static const struct Vec3 r = vec3_init(0.0f, 1.0f, 0.0f);
+    //static const struct Vec3 u = vec3_init(0.0f, 0.0f, 1.0f);
+    //visualize_bounding_box(_i,               //center
+                           //vec3_init(1.0f),  //size
+                           //f, r, u);
+//}
 #endif
 
 static bool _line_plane_intersection(const Vec3& position,

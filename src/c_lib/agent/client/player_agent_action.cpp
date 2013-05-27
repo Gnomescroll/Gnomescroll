@@ -32,11 +32,6 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
     Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
-    // TODO -- get range from weapon type
-    const float range = 128.0f;
-    Hitscan::WorldHitscanResult hitscan = Hitscan::hitscan_against_world(
-        pos, look, range, this->p->agent_id, OBJECT_AGENT);
-
     // for hitscan animation:
     // readjust the vector so that the translated position points to target
     // get the right vector for translating the hitscan laser anim
@@ -65,9 +60,14 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
 
     // This collision point will be overwritten if the hitscan did not hit a
     // voxel model:
+    using ClientState::hitscan;
     Vec3 collision_point = hitscan.voxel_collision_point;
 
-    switch (hitscan.type)
+    float range = Item::get_weapon_range(weapon_type);
+    HitscanTargetType type = hitscan.type;
+    if (hitscan.distance > range)
+        type = HITSCAN_TARGET_NONE;
+    switch (type)
     {
         case HITSCAN_TARGET_VOXEL:
             obj_msg.id = hitscan.voxel_target.entity_id;
@@ -218,8 +218,7 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
     Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
-    Hitscan::WorldHitscanResult hitscan = Hitscan::hitscan_against_world(
-        pos, look, range, this->p->agent_id, OBJECT_AGENT);
+    using ClientState::hitscan;
 
     look = vec3_normalize(look);    // already normalized?
     // send packet
@@ -229,7 +228,9 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
     Agent* agent = NULL;
     Vec3 collision_point = hitscan.voxel_collision_point;
 
-    switch (hitscan.type)
+    HitscanTargetType type = hitscan.type;
+    if (hitscan.distance > range) type = HITSCAN_TARGET_NONE;
+    switch (type)
     {
         case HITSCAN_TARGET_VOXEL:
             obj_msg.id = hitscan.voxel_target.entity_id;
@@ -419,9 +420,7 @@ Vec3 PlayerAgentAction::get_aiming_point()
     Vec3 pos = agent_camera->get_position();
     Vec3 look = agent_camera->forward_vector();
 
-    const float range = 128.0f;
-    Hitscan::WorldHitscanResult hitscan = Hitscan::hitscan_against_world(
-            pos, look, range, this->p->agent_id, OBJECT_AGENT);
+    using ClientState::hitscan;
     if (hitscan.type == HITSCAN_TARGET_VOXEL)
         return hitscan.voxel_collision_point;
     else if (hitscan.type == HITSCAN_TARGET_BLOCK)

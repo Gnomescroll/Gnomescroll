@@ -11,6 +11,8 @@ extern class MechAttribute* mech_attributes;   //index from type to attributes
 void init_properties();
 void teardown_properties();
 
+void update_dimensions();
+
 class MechAttribute* get_mech_attribute(MechType type);
 
 const char* get_mech_name(MechType type);
@@ -25,14 +27,12 @@ MechClassType get_mech_class(MechType type);
 MechRenderType get_mech_render_type(MechType type);
 MechBehaviorType get_mech_behavior_type(MechType type);
 
-// TODO --
-// We have to pass the mech struct in for now, because mech size is not in
-// the dat loader, but assigned when unpacked.
-Vec3 get_mech_box_dimensions(const struct Mech& mech);
+Vec3 get_mech_box_dimensions(MechType type);
+float get_mech_radius(MechType type);
+float get_mech_size(MechType type);
 
 // requires state
 Vec3 get_mech_center(const struct Mech& mech);
-float get_mech_radius(const struct Mech& mech);
 
 inline bool type_in_use(MechType type);
 inline bool is_plant(MechType type);

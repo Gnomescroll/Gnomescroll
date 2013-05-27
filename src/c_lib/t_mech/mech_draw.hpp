@@ -577,8 +577,8 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     tx[2*3+1] = ty_min;
 */
 
-    const float size = m.size/2.0f;
-    const float size2 = m.size;
+    const float size2 = get_mech_size(m.type);
+    const float size = size2 * 0.5f;
 
     float dx,dy;
 
@@ -714,7 +714,7 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     float tx_max = ti*h + h - txmargin;
     float ty_max = tj*h + h - txmargin;
 
-    const float size = m.size * 0.5f;
+    const float size = get_mech_size(m.type) * 0.5f;
 
     //orientation
     //for each direction need up and x,y,z

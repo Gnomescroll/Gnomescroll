@@ -125,7 +125,16 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentI
 // for mobs hitscanning strictly agents:
 AgentID against_agents(Vec3 position, Vec3 direction, float max_distance);
 
+
+#if DC_CLIENT
+// Hits terrain, voxel models and mechs
 WorldHitscanResult hitscan_against_world(
+    const Vec3& p, const Vec3& v, float range, int ignore_id,
+    EntityType ignore_type);
+#endif
+
+// Hits terrain and voxel models (mechs are slow)
+WorldHitscanResult hitscan_against_terrain_and_mobs(
     const Vec3& p, const Vec3& v, float range, int ignore_id,
     EntityType ignore_type);
 

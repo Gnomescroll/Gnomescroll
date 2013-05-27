@@ -323,10 +323,11 @@ void draw_tick()
 
 
     poll_mouse();
-    visualize_line(); //debug
+    //visualize_line(); //debug
     //visualize_bounding_box();
-    poll_mouse();
-    t_mech::draw_selected_mech_bounding_box();
+    //poll_mouse();
+    if (ClientState::hitscan.type == HITSCAN_TARGET_MECH)
+        t_mech::draw_selected_mech_bounding_box();
 
     GL_ASSERT(GL_BLEND, false);
 

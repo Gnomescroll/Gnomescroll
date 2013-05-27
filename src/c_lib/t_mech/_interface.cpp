@@ -43,6 +43,9 @@ void init()
     mech_list_renderer = new MechListRenderer;
     mech_list_mesh_renderer = new MechListMeshRenderer;
     mech_light_effect_renderer = new MechLightEffect;
+    // update the mech attribute dimensions after we determine sprite dimensions
+    // TODO -- handle this on server too?
+    update_dimensions();
     #endif
 }
 
@@ -88,7 +91,7 @@ void pack_mech(const struct Mech &m, class mech_create_StoC &p)
     p.position = m.position;
 
     GS_ASSERT(mech_attributes[m.type].type != NULL_MECH_TYPE);
-    GS_ASSERT((m.side >=0 && m.side <= 5) || m.side == NULL_MECH_SIDE);
+    GS_ASSERT(m.side >= 0 && m.side <= 5);
 
     switch (mech_attributes[m.type].class_type)
     {
@@ -120,7 +123,7 @@ static bool update_mech(struct Mech &m)
     class MechAttribute* ma = get_mech_attribute(m.type);
     m.render_type = ma->render_type;
 
-    m.size = 1.0f;  //diameter
+    float size = get_mech_size(m.type);
 
     switch (ma->class_type)
     {
@@ -133,12 +136,11 @@ static bool update_mech(struct Mech &m)
             m.offset = rand()%255;
             //m.subtype = rand()%6;
 
-            m.offset_x = (randf()-0.5f)* (1.0f-m.size);
-            m.offset_y = (randf()-0.5f)* (1.0f-m.size);
+            m.offset_x = (randf()-0.5f)* (1.0f-size);
+            m.offset_y = (randf()-0.5f)* (1.0f-size);
 
             m.offset_x = 0.0f;
             m.offset_y = 0.0f;
-            m.size = 1.0f;
             break;
 
         case MECH_CROP:
@@ -146,7 +148,6 @@ static bool update_mech(struct Mech &m)
             break;
 
         case MECH_SIGN:
-            m.size = 1.0f;  //diameter
             break;
 
         case MECH_WALL_OBJECT:
@@ -154,7 +155,6 @@ static bool update_mech(struct Mech &m)
             m.offset = 0;
             m.offset_x = 0.0f;
             m.offset_y = 0.0f;
-            m.size = 0.5f;  //diameter
             break;
 
         case MECH_WIRE:
@@ -163,6 +163,8 @@ static bool update_mech(struct Mech &m)
             GS_ASSERT(false);
             return false;
     }
+
+    m.center = get_mech_center(m);
 
     return true;
 }
@@ -175,6 +177,7 @@ static bool unpack_mech(struct Mech &m, const mech_create_StoC &p)
     m.subtype = p.subtype;
     m.side = p.side;
     m.position = p.position;
+    m.center = get_mech_center(m);
     m.text = NULL;
     return update_mech(m);
 }
@@ -359,6 +362,7 @@ MechCreateFailureCode create_mech(const Vec3i& position, MechType type, int side
     m.growth_ttl = mech_attributes[type].growth_ttl;
     m.side = side;
     m.text = NULL;
+    m.center = get_mech_center(m);
 
     class MechAttribute* ma = get_mech_attribute(type);
     if (ma == NULL)

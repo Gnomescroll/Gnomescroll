@@ -64,7 +64,7 @@ typedef enum
     NULL_MECH_SPRITE = 0xFF
 }   MechSpriteIndex;
 
-int NULL_MECH_SIDE = 0xFF;
+int NULL_MECH_SIDE = 0;
 const int MECH_TEXT_SIZE_MAX = 8*8;
 
 struct Mech
@@ -72,12 +72,12 @@ struct Mech
     int id; //-1 if not in use
 
     Vec3i position;
+    Vec3 center;
 
     MechType type;       //mech type
     int subtype;        //sprite
     MechRenderType render_type;
 
-    float size;
     int offset;
     float rotation;
 
@@ -109,6 +109,10 @@ class MechAttribute
         bool item_drop; // indicates whether has an item drop set
         char name[DAT_NAME_MAX_LENGTH+1];
 
+        float size;     // configure this in dat loader
+        float radius;   // compute this from the sprites
+        Vec3 dimensions;
+
     MechAttribute() :
         loaded(false),
         type(NULL_MECH_TYPE),
@@ -117,7 +121,7 @@ class MechAttribute
         behavior_type(MECH_BEHAVIOR_TYPE_DEFAULT),
         plant(false), growth_ttl(-1), growth_stage(NULL_MECH_TYPE),
         sprite(NULL_MECH_SPRITE),
-        item_drop(false)
+        item_drop(false), size(1.0f), radius(0.5f), dimensions(vec3_init(1))
     {
         memset(this->name, 0, sizeof(this->name));
     }
