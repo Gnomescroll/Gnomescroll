@@ -516,8 +516,8 @@ int count_mech(MechType type)
 
 #endif
 
-    remove_mech(mech_id);
-}
+//    remove_mech(mech_id);
+//}
 
 char* mech_text_get(int mech_id)
 {
