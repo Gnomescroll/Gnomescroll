@@ -8,7 +8,7 @@ void teardown_config();
 
 /* Getters */
 
-bool item_is_click_and_hold(ItemType item_type);
+ClickAndHoldBehaviour get_item_click_and_hold_behaviour(ItemType item_type);
 
 /* Callback getters */
 

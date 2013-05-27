@@ -2,12 +2,21 @@
 
 #include <item/toolbelt/common/types.hpp>
 
+typedef enum
+{
+    CLICK_HOLD_NEVER,
+    CLICK_HOLD_SOMETIMES,
+    CLICK_HOLD_ALWAYS,
+} ClickAndHoldBehaviour;
+
+const ClickAndHoldBehaviour CLICK_HOLD_DEFAULT = CLICK_HOLD_SOMETIMES;
+
 namespace Toolbelt
 {
 
 /* Config data store */
 
-extern bool* click_and_hold;
+extern ClickAndHoldBehaviour* click_and_hold;
 
 /* Trigger function pointer tables */
 

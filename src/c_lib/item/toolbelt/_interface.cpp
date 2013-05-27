@@ -90,9 +90,6 @@ void agent_quit(AgentID agent_id)
 
 void tick_item(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
-    if (!item_is_click_and_hold(item_type))
-        turn_fire_off(agent_id);
-
     tickItem tick = get_tick_item_fn(item_type);
     if (tick == NULL) return;
     tick(agent_id, item_id, item_type);
@@ -116,9 +113,6 @@ void trigger_item_beta(AgentID agent_id, ItemID item_id, ItemType item_type)
 #if DC_CLIENT
 void tick_item(AgentID agent_id, ItemType item_type)
 {
-    if (!item_is_click_and_hold(item_type))
-        turn_fire_off(agent_id);
-
     tickItem tick = get_tick_item_fn(item_type);
     if (tick == NULL) return;
     tick(agent_id, item_type);
@@ -126,9 +120,6 @@ void tick_item(AgentID agent_id, ItemType item_type)
 
 void tick_local_item(ItemID item_id, ItemType item_type)
 {
-    if (!item_is_click_and_hold(item_type))
-        turn_fire_off(ClientState::player_agent.agent_id);
-
     tickLocalItem tick = get_tick_local_item_fn(item_type);
     if (tick == NULL) return;
     tick(item_id, item_type);
@@ -264,7 +255,7 @@ void tick()
     #if DC_CLIENT
     // If we're currently click-and-hold firing on terrain, shut it off if
     // we are no longer looking at terrain
-    if (item_is_click_and_hold(local_item_type))
+    if (get_item_click_and_hold_behaviour(local_item_type) == CLICK_HOLD_SOMETIMES)
     {
         if (agent_fire_on[local_agent_id])
         {
@@ -361,8 +352,10 @@ void left_trigger_down_event()
     ItemType item_type = get_selected_item_type();
     if (item_type == NULL_ITEM_TYPE)
         item_type = fist_item_type;
-    single_trigger = (!item_is_click_and_hold(item_type) ||
-                      !ClientState::player_agent.pointing_at_terrain(item_type));
+    ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
+    single_trigger = (cnh == CLICK_HOLD_NEVER ||
+                      (cnh == CLICK_HOLD_SOMETIMES &&
+                       !ClientState::player_agent.pointing_at_terrain(item_type)));
     if (single_trigger)
     {
         if (toolbelt_item_alpha_action())
@@ -383,7 +376,11 @@ void left_trigger_up_event()
     bool something_happened = toolbelt_item_end_alpha_action();
     if (something_happened)
     {
-        if (item_is_click_and_hold(get_selected_item_type()))
+        ItemType item_type = get_selected_item_type();
+        if (item_type == NULL_ITEM_TYPE)
+            item_type = fist_item_type;
+        ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
+        if (cnh != CLICK_HOLD_NEVER)
             send_end_alpha_action_packet();
     }
 }

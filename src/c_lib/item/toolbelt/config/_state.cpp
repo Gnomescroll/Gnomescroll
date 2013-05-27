@@ -4,10 +4,10 @@
 
 namespace Toolbelt
 {
-    
+
 /* Config data store */
 
-bool* click_and_hold = NULL;
+ClickAndHoldBehaviour* click_and_hold = NULL;
 
 /* Trigger function pointer tables */
 

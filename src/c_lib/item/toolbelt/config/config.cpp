@@ -93,10 +93,10 @@ static void apply_group_settings(ItemGroup group)
             apply_type_settings((ItemType)i);
 }
 
-static void apply_click_and_hold_settings_for (bool cnh)
+static void apply_click_and_hold_settings_for(ClickAndHoldBehaviour cnh)
 {   // begin applying settings to all items with click_and_hold == cnh
     for (int i=0; i<int(MAX_ITEM_TYPES); i++)
-        if (item_is_click_and_hold((ItemType)i) == cnh)
+        if (get_item_click_and_hold_behaviour((ItemType)i) == cnh)
             apply_type_settings((ItemType)i);
 }
 
@@ -132,7 +132,7 @@ static void set_type(const char* name)
 // Setters for click_and_hold specifically
 // We keep it separate, because click_and_hold is common to server and client
 // Whereas the callbacks have nothing shared between the two
-static void click_and_hold_group(ItemGroup group, bool cnh)
+static void click_and_hold_group(ItemGroup group, ClickAndHoldBehaviour cnh)
 {
     GS_ASSERT(group != IG_ERROR);
     for (int i=0; i<int(MAX_ITEM_TYPES); i++)
@@ -140,13 +140,13 @@ static void click_and_hold_group(ItemGroup group, bool cnh)
             click_and_hold[i] = cnh;
 }
 
-static void click_and_hold_type(ItemType type, bool cnh)
+static void click_and_hold_type(ItemType type, ClickAndHoldBehaviour cnh)
 {
     IF_ASSERT(!isValid(type)) return;
     click_and_hold[type] = cnh;
 }
 
-static void click_and_hold_type(const char* name, bool cnh)
+static void click_and_hold_type(const char* name, ClickAndHoldBehaviour cnh)
 {
     ItemType type = Item::get_item_type(name);
     click_and_hold_type(type, cnh);
@@ -157,10 +157,12 @@ static void click_and_hold_type(const char* name, bool cnh)
 static void register_click_and_hold()
 {   // set click and hold properties
     // default is true, so we only need false setters
-    click_and_hold_group(IG_HITSCAN_WEAPON, false);
-    click_and_hold_group(IG_GRENADE_LAUNCHER, false);
-    click_and_hold_group(IG_DEBUG, false);
-    click_and_hold_type("small_charge_pack", false);
+    click_and_hold_group(IG_HITSCAN_WEAPON, CLICK_HOLD_NEVER);
+    click_and_hold_group(IG_GRENADE_LAUNCHER, CLICK_HOLD_NEVER);
+    click_and_hold_group(IG_DEBUG, CLICK_HOLD_NEVER);
+    click_and_hold_type("small_charge_pack", CLICK_HOLD_NEVER);
+
+    click_and_hold_group(IG_MINING_LASER, CLICK_HOLD_ALWAYS);
     // override per-type here
     //click_and_hold_type("example");
 }
@@ -171,10 +173,11 @@ static void register_click_and_hold_callbacks()
     #if DC_CLIENT
     c.local_trigger = &fire_close_range_weapon;
     #endif
-    apply_click_and_hold_settings_for (true);
+    apply_click_and_hold_settings_for(CLICK_HOLD_ALWAYS);
+    apply_click_and_hold_settings_for(CLICK_HOLD_SOMETIMES);
 
-    // apply any general non-click_and_hold methods here
-    //apply_click_and_hold_settings_for (false);
+    // apply any other general ClickAndHoldBehaviour methods here
+    //apply_click_and_hold_settings_for(CLICK_HOLD_NEVER);
 }
 
 static void register_item_group_callbacks()
@@ -345,13 +348,13 @@ void validate_callbacks()
 
     for (int i=0; i<int(MAX_ITEM_TYPES); i++)
     {
-        GS_ASSERT(click_and_hold[i] || !ticks[i]);
+        GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !ticks[i]);
         #if DC_CLIENT
-        GS_ASSERT(click_and_hold[i] || !local_ticks[i]);
-        GS_ASSERT(click_and_hold[i] || !begin_triggers[i]); // no begin triggers should be defined if not click and hold
-        GS_ASSERT(click_and_hold[i] || !local_begin_triggers[i]); // no begin triggers should be defined if not click and hold
-        GS_ASSERT(click_and_hold[i] || !end_triggers[i]); // no end triggers should be defined if not click and hold
-        GS_ASSERT(click_and_hold[i] || !local_end_triggers[i]); // no end triggers should be defined if not click and hold
+        GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !local_ticks[i]);
+        GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !begin_triggers[i]); // no begin triggers should be defined if not click and hold
+        GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !local_begin_triggers[i]); // no begin triggers should be defined if not click and hold
+        GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !end_triggers[i]); // no end triggers should be defined if not click and hold
+        GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !local_end_triggers[i]); // no end triggers should be defined if not click and hold
         #endif
     }
 }

@@ -53,7 +53,7 @@ void turn_fire_off(AgentID agent_id)
 
     if (item_type == NULL_ITEM_TYPE)
         item_type = fist_item_type;
-    GS_ASSERT(item_is_click_and_hold(item_type));
+    GS_ASSERT(get_item_click_and_hold_behaviour(item_type) != CLICK_HOLD_NEVER);
     Animations::stop_equipped_item_animation();
 
     agent_fire_on[agent_id] = false;
@@ -75,7 +75,7 @@ bool toolbelt_item_begin_alpha_action()
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     ItemType item_type = Item::get_item_type(item_id);
-    GS_ASSERT(item_is_click_and_hold(item_type));
+    GS_ASSERT(get_item_click_and_hold_behaviour(item_type) != CLICK_HOLD_NEVER);
 
     Animations::begin_equipped_item_animation(item_type, true);
     return true;
@@ -95,15 +95,10 @@ bool toolbelt_item_end_alpha_action()
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     ItemType item_type = Item::get_item_type(item_id);
-    GS_ASSERT(item_is_click_and_hold(item_type));
+    GS_ASSERT(get_item_click_and_hold_behaviour(item_type) != CLICK_HOLD_NEVER);
 
-    if (item_is_click_and_hold(item_type))
-    {
-        Animations::stop_equipped_item_animation();
-        return true;
-    }
-
-    return false;
+    Animations::stop_equipped_item_animation();
+    return true;
 }
 
 bool toolbelt_item_alpha_action()
