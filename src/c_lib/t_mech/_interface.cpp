@@ -514,6 +514,11 @@ int count_mech(MechType type)
     return mech_list->count(type);
 }
 
+void hit_mech(int mech_id)
+{   // TODO -- custom handling for mech getting hit
+    remove_mech(mech_id);
+}
+
 #endif
 
 //    remove_mech(mech_id);
