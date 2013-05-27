@@ -69,6 +69,8 @@ static struct HudDrawSettings
     bool terminal_is_open;
 }   hud_draw_settings;
 
+MeterGraphic meter_graphic;
+
 void set_hud_fps_display(float fps_val)
 {   // sanitize
     fps_val = (fps_val >= 1000.0f) ? 999.99f : fps_val;
@@ -228,16 +230,37 @@ void set_color_from_ratio(float ratio, unsigned char alpha, bool invert_color_fo
 
 /* Display logic */
 
+static void draw_weapon_cooldown_meter()
+{
+    AgentID agent_id = ClientState::player_agent.agent_id;
+    if (!isValid(agent_id)) return;
+    ItemType item_type = Toolbelt::get_selected_item_type();
+    if (item_type == NULL_ITEM_TYPE)
+        item_type = Toolbelt::fist_item_type;
+    int cooldown = Toolbelt::agent_fire_cooldown[agent_id];
+    int cooldown_max = Item::get_item_fire_rate(item_type);
+    float cooldown_ratio = float(cooldown) / float(cooldown_max);
+    int w = _xres / 8;
+    int h = _yres / 128;
+    glColor4ub(200, 20, 150, 115);
+    meter_graphic.draw(0, h, w, h, cooldown_ratio, MeterGraphic::METANCH_LEFT);
+    glColor4ub(255, 255, 255, 255);
+}
+
 void draw_hud_textures()
 {
     // meters
-    int w = _xresf/4;
-    int h = _yresf/128;
+    int w = _xres / 4;
+    int h = _yres / 128;
 
     // jetpack
     glColor4ub(255,255,255,115); // white, more than half translucent
     float ratio = float(ClientState::player_agent.jetpack.fuel) / float(Agents::JETPACK_FUEL_MAX);
-    meter_graphic.draw(0,0, w,h, ratio, MeterGraphic::METANCH_RIGHT);
+    meter_graphic.draw(0,0, w,h, ratio, MeterGraphic::METANCH_LEFT);
+
+    #if !PRODUCTION
+    draw_weapon_cooldown_meter();
+    #endif
 
     // health/energy
     //Agents::Agent* a = ClientState::player_agent.you();
@@ -355,7 +378,7 @@ void draw_hud_text()
             hud->prompt->draw();
             press_help_tick++;
         }
-        
+
         // draw text of targeted object
 //        switch (ClientState::hitscan.type)
 //        {
@@ -363,10 +386,10 @@ void draw_hud_text()
 //            case HITSCAN_TARGET_VOXEL: hud->target->set_text("VOXEL"); hud->target->set_position(x,y); break;
 //            case HITSCAN_TARGET_BLOCK: hud->target->set_text("BLOCK"); break;
 //            case HITSCAN_TARGET_MECH:
-//                //hud->target->set_text(text); 
-//                //hud->target->text = 
-//                const char* text = t_mech::mech_text_get(ClientState::hitscan.mech_id); 
-//                //hud->target->set_text("..."); 
+//                //hud->target->set_text(text);
+//                //hud->target->text =
+//                const char* text = t_mech::mech_text_get(ClientState::hitscan.mech_id);
+//                //hud->target->set_text("...");
 //                break;
 //
 //        }
@@ -650,7 +673,7 @@ void HUD::init()
     IF_ASSERT(target == NULL) return;
     target->set_text("not looking at anything");
     target->set_color(Color(255,0,255,255));
-    target->set_position((_xresf - target->get_width()) / 2.0f, 
+    target->set_position((_xresf - target->get_width()) / 2.0f,
         _yresf/4);
     target->shadowed = true;
 

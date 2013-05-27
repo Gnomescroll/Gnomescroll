@@ -98,7 +98,8 @@ class HUD
 TerminalRenderer terminal_renderer;
 
 // meter
-MeterGraphic meter_graphic;
+extern MeterGraphic meter_graphic;
+
 void set_color_from_ratio(float ratio, unsigned char alpha, bool invert_color_for_damage);
 void set_color_from_ratio(float ratio, unsigned char alpha)
 {
