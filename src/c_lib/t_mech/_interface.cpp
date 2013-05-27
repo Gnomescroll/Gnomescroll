@@ -516,6 +516,8 @@ int count_mech(MechType type)
     return mech_list->count(type);
 }
 
+#endif
+
 char* mech_text_get(int mech_id)
 {
     GS_ASSERT(mech_id >= 0 && mech_id < mech_list->mlm);
@@ -534,9 +536,6 @@ void mech_text_update(int mech_id, int pos, int key)
     //send packet
 
 }
-#endif
-
-
 #endif
 
 }   // t_mech
