@@ -88,7 +88,7 @@ class ItemAttribute: public Property<ItemType>
         this->particle_voxel = false;
         this->particle_voxel_texture = 0;
         this->firing_range = DEFAULT_FIRING_RANGE;
-        this->firing_rate = 6;
+        this->firing_rate = 15;
         // match defaults with fist
         for (int i=0; i<MAX_CUBES; i++)
         {

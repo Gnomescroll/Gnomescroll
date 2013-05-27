@@ -88,7 +88,7 @@ void load_item_dat()
     s->max_durability = 1200;
     s->max_stack_size = 1;
     s->firing_range = 4.0f;
-    s->firing_rate = 6;
+    s->firing_rate = ONE_SECOND / 2;
     block_damage_def(6);
     block_damage_def(CUBE_MATERIAL_DIRT, 5);
     block_damage_def(CUBE_MATERIAL_STONE, 6);
@@ -103,7 +103,7 @@ void load_item_dat()
     s->max_durability = 1200;
     s->max_stack_size = 1;
     s->firing_range = 4.0f;
-    s->firing_rate = 6;
+    s->firing_rate = ONE_SECOND / 2;
     block_damage_def(6);
     block_damage_def(CUBE_MATERIAL_DIRT, 6);
     block_damage_def(CUBE_MATERIAL_STONE, 8);
@@ -118,7 +118,7 @@ void load_item_dat()
     s->max_durability = 1200;
     s->max_stack_size = 1;
     s->firing_range = 4.0f;
-    s->firing_rate = 6;
+    s->firing_rate = ONE_SECOND / 2;
     block_damage_def(6);
     block_damage_def(CUBE_MATERIAL_DIRT, 7);
     block_damage_def(CUBE_MATERIAL_STONE, 10);
@@ -185,7 +185,7 @@ void load_item_dat()
     s->max_durability = 400;
     s->max_stack_size = 1;
     s->firing_range = 4.0f;
-    s->firing_rate = 6;
+    s->firing_rate = ONE_SECOND / 2;
     block_damage_def(2);
     block_damage_def(CUBE_MATERIAL_DIRT, 6);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
@@ -209,7 +209,7 @@ void load_item_dat()
     s->max_durability = 400;
     s->max_stack_size = 1;
     s->firing_range = 4.0f;
-    s->firing_rate = 6;
+    s->firing_rate = ONE_SECOND / 2;
     block_damage_def(3);
     block_damage_def(CUBE_MATERIAL_DIRT, 7);
     block_damage_def(CUBE_MATERIAL_STONE, 1);
@@ -233,7 +233,7 @@ void load_item_dat()
     s->max_durability = 400;
     s->max_stack_size = 1;
     s->firing_range = 4.0f;
-    s->firing_rate = 6;
+    s->firing_rate = ONE_SECOND / 2;
     block_damage_def(3);
     block_damage_def(CUBE_MATERIAL_DIRT, 8);
     block_damage_def(CUBE_MATERIAL_STONE, 2);
@@ -259,7 +259,7 @@ void load_item_dat()
     s->max_durability = 100;
     s->max_stack_size = 1;
     s->firing_range = 3.0f;
-    s->firing_rate = 6;
+    s->firing_rate = ONE_SECOND / 2;
     block_damage_def(4);
     block_damage_def(CUBE_MATERIAL_STONE, 0);
     s->object_damage_min = 50;
@@ -298,7 +298,7 @@ void load_item_dat()
     item_def(IG_FIST, "fist");
     sprite_def(i1, 6, 2);
     s->firing_range = 4.0f;
-    s->firing_rate = 6;
+    s->firing_rate = ONE_SECOND / 2;
     block_damage_def(1);
     block_damage_def(CUBE_MATERIAL_DIRT, 2);
     block_damage_def(CUBE_MATERIAL_DECORATION, 4);
