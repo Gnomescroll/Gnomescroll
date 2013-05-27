@@ -36,7 +36,6 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
 
 #define HITSCAN_PROFILING 0
 
-
 static WorldHitscanResult _hitscan_against_terrain_and_mobs(const Vec3& p, const Vec3& v,
                                                             float range, int ignore_id,
                                                             EntityType ignore_type)
