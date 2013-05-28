@@ -513,9 +513,9 @@ void add_flora()
     }
     free(noise);
     printf(" %i ms\n", _GET_MS_TIME() - t);
-    printf("FLORA lowest.x: %d  highest.x: %d \n", lowest.x, highest.x);
-    printf("FLORA lowest.y: %d  highest.y: %d \n", lowest.y, highest.y);
-    printf("FLORA lowest.z: %d  highest.z: %d \n", lowest.z, highest.z);
+    //printf("FLORA lowest.x: %d  highest.x: %d \n", lowest.x, highest.x);
+    //printf("FLORA lowest.y: %d  highest.y: %d \n", lowest.y, highest.y);
+    //printf("FLORA lowest.z: %d  highest.z: %d \n", lowest.z, highest.z);
 }
 
 void add_terrain_features()

@@ -326,6 +326,15 @@ void draw_awesomium_message()
     HudFont::reset_default();
 }
 
+void adjust_text(const char* s)
+{
+    hud->target->set_text(s);
+    int w = hud->target->get_width();
+    float x = (_xresf/2.0f) - w/2;
+    float y = (_yresf/4.0f*3.0f) - w/2;
+    hud->target->set_position(x,y);
+}
+
 void draw_hud_text()
 {
     if (!hud->inited) return;
@@ -380,22 +389,24 @@ void draw_hud_text()
         }
 
         // draw text of targeted object
-//        switch (ClientState::hitscan.type)
-//        {
-//            case HITSCAN_TARGET_NONE: hud->target->set_text(""); break;
-//            case HITSCAN_TARGET_VOXEL: hud->target->set_text("VOXEL"); hud->target->set_position(x,y); break;
-//            case HITSCAN_TARGET_BLOCK: hud->target->set_text("BLOCK"); break;
-//            case HITSCAN_TARGET_MECH:
-//                //hud->target->set_text(text);
-//                //hud->target->text =
-//                const char* text = t_mech::mech_text_get(ClientState::hitscan.mech_id);
-//                //hud->target->set_text("...");
-//                break;
-//
-//        }
+        switch (ClientState::hitscan.type)
+        {
+            case HITSCAN_TARGET_NONE: adjust_text(""); break;
+            case HITSCAN_TARGET_VOXEL: adjust_text("VOXEL"); break;
+            case HITSCAN_TARGET_BLOCK: adjust_text(""); break;
+            case HITSCAN_TARGET_MECH:
+                const char* text = t_mech::mech_text_get(ClientState::hitscan.mech_id); 
+                adjust_text(text); 
+                break;
+
+        }
+// rdn quotes:
 //       //MechType type = t_mech::get_mech_type(ClientState::hitscan.mech_id);
 //       //if (type == get_mech_type("terminal"))
 //       //    Input::open_terminal();
+
+        
+////HaltingSate quotes:
 //// > char* mech_text_get(int mech_id);
 ////  void mech_text_update(int mech_id, int pos, int key);
 ////  in interface .hpp
@@ -403,7 +414,9 @@ void draw_hud_text()
 ////  on the block
 ////  on the mech, by id
 ////  but check if its sign type block
-//        hud->target->draw();
+
+
+        hud->target->draw();
     }
     else
     {

@@ -22,10 +22,51 @@ void default_map_gen()
     t_gen::populate_ore();
     t_gen::populate_crystals();
     //t_gen::generate_ruins();
-    t_gen::add_terrain_features();  // gorges, trees, shrooms
+    t_gen::add_terrain_features();  // gorges (only in PRODUCTION), trees, shrooms
     t_gen::place_native_plants(2048);
 
     map_gen::rough_floor(map_dim.x,map_dim.y,0,3, t_map::get_cube_type("bedrock"));
+}
+
+void print_preceding_spaces(int start)
+{
+    for (int i = 0; i < start; i++) 
+        printf(" ");
+}
+
+void print_highlighted(const char* s, char c = '|', int num_chars = 1)
+{
+    const int MAX_WID = 79;
+    int len = strlen(s); // length of just the original string
+    int len_whole = len + 2 /*margins*/ + num_chars*2; // length of whole
+    int start = (MAX_WID - len_whole) / 2;
+
+    // top line
+    print_preceding_spaces(start);
+    for (int i = 0; i < len_whole; i++) printf("%c", (c=='|') ? '_' : c);
+    printf("\n");
+
+
+    // middle line
+    print_preceding_spaces(start);
+
+    for (int i = 0; i < num_chars; i++) 
+        printf("%c", c); // surrounding (left/right) chars
+
+    printf(" "); // margin
+    printf("%s", s);
+    printf(" "); // margin
+
+    for (int i = 0; i < num_chars; i++) 
+        printf("%c", c); // surrounding (left/right) chars
+    
+    printf("\n");
+
+
+    // bottom line
+    print_preceding_spaces(start);
+    for (int i = 0; i < len_whole; i++) printf("%c", (c=='|') ? '^' : c);
+    printf("\n");
 }
 
 void init_world()
@@ -84,6 +125,7 @@ void init_world()
 
     if (corpusc_map)
     {
+        print_highlighted("using CorpusC's setup");
         //int height = 27;
         map_gen::floor(map_dim.x, map_dim.y, 0, 1, t_map::get_cube_type("bedrock"));
         t_gen::set_region(0,0,1, map_dim.x, map_dim.y, map_dim.z - 10 /*height*/, t_map::get_cube_type("regolith"));
@@ -164,7 +206,10 @@ void init(int argc, const char* argv[])
     ServerState::init_base();
 
     ServerState:: main_inited = true;
-    printf("Game started\n");
+    
+    printf("\n");
+    print_highlighted("Game started");
+    printf("\n");
 }
 
 void tick()

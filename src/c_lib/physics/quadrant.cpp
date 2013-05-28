@@ -150,28 +150,32 @@ ALWAYS_INLINE int translate_point(int pt)
 
 ALWAYS_INLINE struct Vec3 translate_position(const struct Vec3& pos)
 {
-    return {{{ translate_point(pos.x), translate_point(pos.y), pos.z }}};
+    Vec3 v = {{{ translate_point(pos.x), translate_point(pos.y), pos.z }}};
+    return v;
 }
 
 inline struct Vec3 quadrant_translate_position(const struct Vec3& pos1, const struct Vec3& pos2)
 {
     //GS_ASSERT(is_boxed_position(pos1));
     //GS_ASSERT(is_boxed_position(pos2));
-    return {{{ quadrant_translate_f(pos1.x, pos2.x),
+    Vec3 v = {{{ quadrant_translate_f(pos1.x, pos2.x),
                quadrant_translate_f(pos1.y, pos2.y),
                pos2.z }}};
+    return v;
 }
 
 ALWAYS_INLINE struct Vec3i translate_position(const struct Vec3i& pos)
 {
-    return {{{ translate_point(pos.x), translate_point(pos.y), pos.z }}};
+    Vec3i v = {{{ translate_point(pos.x), translate_point(pos.y), pos.z }}};
+    return v;
 }
 
 inline struct Vec3i quadrant_translate_position(const struct Vec3i& pos1, const struct Vec3i& pos2)
 {
     //GS_ASSERT(is_boxed_position(pos1));
     //GS_ASSERT(is_boxed_position(pos2));
-    return {{{ quadrant_translate_i(pos1.x, pos2.x),
+    Vec3i v = {{{ quadrant_translate_i(pos1.x, pos2.x),
                quadrant_translate_i(pos1.y, pos2.y),
                pos2.z }}};
+    return v;
 }
