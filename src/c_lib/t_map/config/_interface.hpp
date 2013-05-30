@@ -112,6 +112,8 @@ void end_cube_def()
         if (cube_properties->properties[i].loaded)
             copy_cube_properties(&cube_properties->properties[i], &fast_cube_properties[i]);
 
+    cube_properties->set_pretty_names();
+
     #if DC_CLIENT
     TextureSheetLoader::save_cube_texture();
     #endif
@@ -126,16 +128,22 @@ void set_max_damage(int max_damage)
     p->max_damage = max_damage;
 }
 
+void set_pretty_name(const char* pretty_name)
+{
+    GS_ASSERT_ABORT(p != NULL);
+    IF_ASSERT(p == NULL) return;
+    cube_properties->set_pretty_name(p->type, pretty_name);
+}
+
 //max light value is 16
 void set_light_value(int light_value)
 {
-    if (light_value < 0 || light_value > 16)
+    GS_ASSERT_ABORT(p != NULL);
+    IF_ASSERT(p == NULL) return;
+    IF_ASSERT(light_value < 0 || light_value > 16)
     {
-
-        printf("FATAL ERROR: BLOCK_DAT, SET_LIGHT_VALUE, light_value must be between 0 and 16, block= %s light= %d \n",
-            p->name, light_value);
+        printf("ERROR: light_value must be between 0 and 16 (block: %s)\n", p->name);
         GS_ASSERT_ABORT(false);
-
     }
 
     p->light_source = true;

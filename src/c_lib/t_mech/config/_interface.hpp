@@ -1,7 +1,6 @@
 #pragma once
 
 #include <t_mech/common/common.hpp>
-#include <t_mech/config/_interface.hpp>
 #include <t_mech/properties.hpp>
 
 namespace t_mech
@@ -31,28 +30,19 @@ void load_mech()
 
 void mech_def(MechClassType class_type, const char* name, MechRenderType mech_render_type, MechBehaviorType behavior_type)
 {
-    if (s != NULL) load_mech();
-
     // check names
     IF_ASSERT(!is_valid_mech_name(name)) return;
     for (int i=0; i<_current_mech_index; i++)
-        if (strcmp(name, mech_attributes[i].name) == 0)
+        if (strcmp(name, mech_attributes->properties[i].name) == 0)
         {
             GS_ASSERT(false);
             return;
         }
 
-    MechType type = (MechType)_current_mech_index;
+    s = mech_attributes->get_next();
 
-    IF_ASSERT(!isValid(type)) return;
-    IF_ASSERT(mech_attributes[type].loaded) return;
-
-    s = &mech_attributes[type];
-
-    s->type = type;
     s->class_type = class_type;
-    strncpy(s->name, name, DAT_NAME_MAX_LENGTH);
-    s->name[DAT_NAME_MAX_LENGTH] = '\0';
+    s->set_name(name);
 
     s->render_type = mech_render_type;
     s->behavior_type = behavior_type;
@@ -68,6 +58,12 @@ void set_sprite_index(int sprite)
     s->sprite = (MechSpriteIndex)sprite;
 }
 
+void set_pretty_name(const char* name)
+{
+    IF_ASSERT(s == NULL) return;
+    mech_attributes->set_pretty_name(s->type, name);
+}
+
 // Use this to remove or rename a mech
 void change_mech(const char* original, const char* replacement)
 {
@@ -77,16 +73,11 @@ void change_mech(const char* original, const char* replacement)
     GS_ASSERT_ABORT(mapped);
 }
 
-void end_mech_dat()
-{
-    if (s != NULL) load_mech();
-}
-
 void verify_mech_dat()
 {
-    for (int i=0; i<MAX_MECHS; i++)
+    for (size_t i=0; i<mech_attributes->max; i++)
     {
-        class MechAttribute* a = &mech_attributes[i];
+        class MechAttribute* a = &mech_attributes->properties[i];
         if (!a->loaded) continue;
         GS_ASSERT_ABORT(a->sprite != NULL_MECH_SPRITE);
         GS_ASSERT_ABORT(a->render_type != MECH_RENDER_TYPE_NONE);
@@ -96,11 +87,11 @@ void verify_mech_dat()
         GS_ASSERT_ABORT(i == a->type);
     }
 
-    for (int i=0; i<MAX_MECHS-1; i++)
-    for (int j=i+1; j<MAX_MECHS; j++)
+    for (size_t i=0; i<mech_attributes->max-1; i++)
+    for (size_t j=i+1; j<mech_attributes->max; j++)
     {
-        class MechAttribute* a = &mech_attributes[i];
-        class MechAttribute* b = &mech_attributes[j];
+        class MechAttribute* a = &mech_attributes->properties[i];
+        class MechAttribute* b = &mech_attributes->properties[j];
         if (!a->loaded || !b->loaded) continue;
         GS_ASSERT_ABORT(strcmp(a->name, b->name) != 0);
         GS_ASSERT_ABORT(a->type != b->type);
@@ -109,10 +100,10 @@ void verify_mech_dat()
     GS_ASSERT_ABORT(mech_name_map->condensed);
 
     // check inactive names against active
-    for (int i=0; i<MAX_MECHS; i++)
-        if (mech_attributes[i].loaded)
+    for (size_t i=0; i<mech_attributes->max; i++)
+        if (mech_attributes->properties[i].loaded)
         {
-            GS_ASSERT_ABORT(mech_name_map->get_mapped_name(mech_attributes[i].name) == NULL);
+            GS_ASSERT_ABORT(mech_name_map->get_mapped_name(mech_attributes->properties[i].name) == NULL);
         }
 
     // check inactive name destinations against active
@@ -132,19 +123,15 @@ void verify_mech_dat()
     {   // check that all names declared a valid with respect to past name definitions
         // but only if the files are present
         GS_ASSERT_ABORT(name_changes_valid(DATA_PATH MECH_NAME_FILE_ACTIVE, DATA_PATH MECH_NAME_FILE_INACTIVE,
-            DAT_NAME_MAX_LENGTH, mech_attributes, MAX_MECHS, mech_name_map));
+            DAT_NAME_MAX_LENGTH, mech_attributes->properties, MAX_MECHS, mech_name_map));
     }
     #endif
 
-
-    /*
-        Growth timer just in case
-    */
-    for (int i=0; i<MAX_MECHS; i++)
+    // Growth timer just in case
+    for (size_t i=0; i<mech_attributes->max; i++)
     {
-        class MechAttribute* a = &mech_attributes[i];
+        class MechAttribute* a = &mech_attributes->properties[i];
         if (!a->loaded) continue;
-
         if (a->behavior_type == MECH_BEHAVIOR_TYPE_DEFAULT)
             GS_ASSERT_ABORT(a->growth_ttl == -1);
     }
@@ -153,12 +140,13 @@ void verify_mech_dat()
 void save_mech_names()
 {
     #if DC_SERVER || !PRODUCTION
-    bool saved = save_active_names(mech_attributes, MAX_MECHS, DAT_NAME_MAX_LENGTH, DATA_PATH MECH_NAME_FILE_ACTIVE);
+    bool saved = save_active_names(mech_attributes->properties, MAX_MECHS, DAT_NAME_MAX_LENGTH, DATA_PATH MECH_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = mech_name_map->save(DATA_PATH MECH_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);
     #endif
 }
 
+void end_mech_dat();
 
 }   // t_mech

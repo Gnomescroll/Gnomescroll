@@ -3,8 +3,6 @@
 #include <agent/constants.hpp>
 #include <item/common/enum.hpp>
 
-const size_t ITEM_PRETTY_NAME_MAX_LENGTH = 64;
-
 const int MAX_ITEMS = NULL_ITEM;
 
 const size_t MAX_ITEM_TYPES = NULL_ITEM_TYPE;
@@ -26,8 +24,6 @@ const int NULL_LOCATION = -1;   // this represents a "not set" value, helpful fo
 // and you should use the appropriate functions defined in properties.hpp
 const int MAX_STACK_SIZE = 0xFFFF;
 const int MAX_DURABILITY = 0xFFFF;
-
-const size_t CONTAINER_PRETTY_NAME_MAX_LENGTH = 63;
 
 const unsigned int MAX_CONTAINER_SIZE = NULL_SLOT;
 

@@ -8,6 +8,7 @@ class Property
     public:
         Type type;
         char name[DAT_NAME_MAX_LENGTH+1];
+        char pretty_name[PRETTY_NAME_MAX_LENGTH+1];
         unsigned int hash;
         bool loaded;
 
@@ -37,6 +38,7 @@ class Property
         type(null_type), hash(0), loaded(false)
     {
         memset(this->name, 0, sizeof(this->name));
+        memset(this->pretty_name, 0, sizeof(this->pretty_name));
     }
 };
 
@@ -129,24 +131,23 @@ class Properties
 
     /* Additional helpers that will only work on specialized Propertys */
 
-    void set_pretty_name(Type type, const char* pretty_name, size_t max_len)
+    void set_pretty_name(Type type, const char* pretty_name)
     {
         Property* p = this->_get_any(type);
         IF_ASSERT(p == NULL) return;
-        GS_ASSERT(strlen(pretty_name) <= max_len);
-        strncpy(p->pretty_name, pretty_name, max_len);
-        p->pretty_name[max_len] = '\0';
+        GS_ASSERT(strlen(pretty_name) <= PRETTY_NAME_MAX_LENGTH);
+        strncpy(p->pretty_name, pretty_name, PRETTY_NAME_MAX_LENGTH+1);
+        p->pretty_name[PRETTY_NAME_MAX_LENGTH] = '\0';
     }
 
-    void set_pretty_names(size_t max_len)
+    void set_pretty_names()
     {   // automatically set "pretty" names for items
-        const size_t len = GS_MIN(DAT_NAME_MAX_LENGTH, max_len);
         for (size_t i=0; i<this->max; i++)
         {
             Property* a = &this->properties[i];
             if (!a->loaded) continue;
             if (a->pretty_name[0] == '\0')
-                make_pretty_name(a->name, a->pretty_name, len);
+                make_pretty_name(a->name, a->pretty_name);
         }
     }
 

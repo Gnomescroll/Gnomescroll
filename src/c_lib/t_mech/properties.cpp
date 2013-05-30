@@ -8,7 +8,7 @@ namespace t_mech
 {
 
 class DatNameMap* mech_name_map = NULL;
-class MechAttribute* mech_attributes = NULL;  //index from type to attributes
+class MechAttributes* mech_attributes = NULL;  //index from type to attributes
 
 void init_properties()
 {
@@ -16,20 +16,27 @@ void init_properties()
     mech_name_map = new class DatNameMap(256, DAT_NAME_MAX_LENGTH);
 
     GS_ASSERT(mech_attributes == NULL);
-    mech_attributes = new class MechAttribute[MAX_MECHS];
+    mech_attributes = new class MechAttributes;
 }
 
 void teardown_properties()
 {
     delete mech_name_map;
-    delete[] mech_attributes;
+    delete mech_attributes;
 }
 
 const char* get_mech_name(MechType type)
 {
-    class MechAttribute* attr = get_mech_attribute(type);
+    class MechAttribute* attr = get_mech_attributes(type);
     IF_ASSERT(attr == NULL) return NULL;
     return attr->name;
+}
+
+const char* get_mech_pretty_name(MechType type)
+{
+    class MechAttribute* attr = get_mech_attributes(type);
+    IF_ASSERT(attr == NULL) return NULL;
+    return attr->pretty_name;
 }
 
 MechType get_mech_type(const char* name)
@@ -45,37 +52,35 @@ MechType get_mech_type(const char* name)
     return NULL_MECH_TYPE;
 }
 
-class MechAttribute* get_mech_attribute(MechType type)
+inline class MechAttribute* get_mech_attributes(MechType type)
 {
-    IF_ASSERT(!isValid(type)) return NULL;
-    if (!mech_attributes[type].loaded) return NULL;
-    return &mech_attributes[type];
+    return mech_attributes->get(type);
 }
 
 MechClassType get_mech_class(MechType type)
 {
-    class MechAttribute* attr = get_mech_attribute(type);
+    class MechAttribute* attr = get_mech_attributes(type);
     IF_ASSERT(attr == NULL) return NULL_MECH_CLASS;
     return attr->class_type;
 }
 
 MechRenderType get_mech_render_type(MechType type)
 {
-    class MechAttribute* attr = get_mech_attribute(type);
+    class MechAttribute* attr = get_mech_attributes(type);
     IF_ASSERT(attr == NULL) return MECH_RENDER_TYPE_NONE;
     return attr->render_type;
 }
 
 MechBehaviorType get_mech_behavior_type(MechType type)
 {
-    class MechAttribute* attr = get_mech_attribute(type);
+    class MechAttribute* attr = get_mech_attributes(type);
     IF_ASSERT(attr == NULL) return MECH_BEHAVIOR_TYPE_DEFAULT;
     return attr->behavior_type;
 }
 
 inline bool type_in_use(MechType type)
 {
-    return (get_mech_attribute(type) != NULL);
+    return (get_mech_attributes(type) != NULL);
 }
 
 bool is_valid_mech_name(const char* name)
@@ -98,14 +103,42 @@ const char* get_compatible_mech_name(const char* name)
 
 inline bool is_plant(MechType type)
 {
-    class MechAttribute* attr = get_mech_attribute(type);
+    class MechAttribute* attr = get_mech_attributes(type);
     IF_ASSERT(attr == NULL) return false;
     return attr->plant;
 }
 
+inline bool has_item_drop(MechType type)
+{
+    class MechAttribute* attr = get_mech_attributes(type);
+    IF_ASSERT(attr == NULL) return false;
+    return attr->item_drop;
+}
+
+inline int get_mech_growth_ttl(MechType type)
+{
+    class MechAttribute* attr = get_mech_attributes(type);
+    IF_ASSERT(attr == NULL) return -1;
+    return attr->growth_ttl;
+}
+
+inline MechType get_mech_growth_stage(MechType type)
+{
+    class MechAttribute* attr = get_mech_attributes(type);
+    IF_ASSERT(attr == NULL) return NULL_MECH_TYPE;
+    return attr->growth_stage;
+}
+
+inline MechSpriteIndex get_mech_sprite(MechType type)
+{
+    class MechAttribute* attr = get_mech_attributes(type);
+    IF_ASSERT(attr == NULL) return NULL_MECH_SPRITE;
+    return attr->sprite;
+}
+
 Vec3 get_mech_box_dimensions(MechType type)
 {
-    class MechAttribute* attr = get_mech_attribute(type);
+    class MechAttribute* attr = get_mech_attributes(type);
     IF_ASSERT(attr == NULL) return vec3_init(1);
     return attr->dimensions;
 }
@@ -132,27 +165,28 @@ Vec3 get_mech_center(const struct Mech& mech)
 
 float get_mech_radius(MechType type)
 {
-    class MechAttribute* attr = get_mech_attribute(type);
+    class MechAttribute* attr = get_mech_attributes(type);
     IF_ASSERT(attr == NULL) return 0.5f;
     return attr->radius;
 }
 
 float get_mech_size(MechType type)
 {
-    class MechAttribute* attr = get_mech_attribute(type);
+    class MechAttribute* attr = get_mech_attributes(type);
     IF_ASSERT(attr == NULL) return 1.0f;
     return attr->size;
 }
 
 void update_dimensions()
 {
-    for (int i=0; i<MAX_MECHS; i++)
+    for (size_t i=0; i<mech_attributes->max; i++)
     {
-        if (!mech_attributes[i].loaded) continue;
-        float size = mech_attributes[i].size;
+        class MechAttribute* a = &mech_attributes->properties[i];
+        if (!a->loaded) continue;
+        float size = a->size;
         float size_w = size * 0.5f;
         float size_h = size;
-        int tex_id = mech_attributes[i].sprite;
+        int tex_id = a->sprite;
         if (tex_id >= 0 && tex_id < MAX_MECHS)
         {
             GS_ASSERT(mech_sprite_width[tex_id] != -1)
@@ -160,8 +194,8 @@ void update_dimensions()
             size_w = 0.5f*size*mech_sprite_width_f[tex_id];
             size_h = size*mech_sprite_height_f[tex_id];
         }
-        mech_attributes[i].dimensions = vec3_init(size_w, size_w, size_h);
-        mech_attributes[i].radius = GS_MAX(size_w, size_h) * 0.5f;
+        a->dimensions = vec3_init(size_w, size_w, size_h);
+        a->radius = GS_MAX(size_w, size_h) * 0.5f;
     }
 }
 

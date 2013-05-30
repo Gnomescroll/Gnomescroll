@@ -710,14 +710,13 @@ void apply_item_dat_changes()
     change_item("mushroom1", "mushroom_stem1");
     change_item("mushroom2", "mushroom_stem2");
 
-
     item_name_map->condense();  // finalize
 }
 
 void end_item_dat()
 {
     item_attributes->done_loading();
-    item_attributes->set_pretty_names(ITEM_PRETTY_NAME_MAX_LENGTH);
+    item_attributes->set_pretty_names();
     apply_item_dat_changes();
     verify_item_dat();
     save_item_names();

@@ -544,7 +544,7 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
         return;
 
-    int tex_id = mech_attributes[m.type].sprite;
+    int tex_id = get_mech_sprite(m.type);
     const float txmargin = 0.0f;
     float tx_min, ty_min, tx_max, ty_max;
 
@@ -700,7 +700,7 @@ void MechListRenderer::push_render_type_3(const struct Mech &m)
     if (!sphere_fulstrum_test(w, 0.6f))
         return;
 
-    int tex_id = mech_attributes[m.type].sprite;
+    int tex_id = get_mech_sprite(m.type);
     IF_ASSERT(tex_id < 0) return;
     const float txmargin = 0.0f;
 

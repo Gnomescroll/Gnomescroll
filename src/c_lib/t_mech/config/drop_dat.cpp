@@ -14,7 +14,7 @@ static void add_drop_callback(int id)
 {
     IF_ASSERT(!isValid((MechType)id)) return;
     IF_ASSERT(mech_attributes == NULL) return;
-    mech_attributes[id].item_drop = true;
+    mech_attributes->properties[id].item_drop = true;
 }
 
 class Item::ItemDropConfig* drop_dat = NULL;

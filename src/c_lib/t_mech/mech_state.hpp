@@ -41,6 +41,15 @@ struct MechList
         free(mla);
     }
 
+    struct Mech* get(int mech_id)
+    {
+        if (mech_id < 0 || mech_id >= this->mlm)
+            return NULL;
+        if (this->mla[mech_id].id == -1)
+            return NULL;
+        return &this->mla[mech_id];
+    }
+
     bool is_occupied(const Vec3i& position); //check if there is a t_mech on the square already
 
     #if DC_SERVER

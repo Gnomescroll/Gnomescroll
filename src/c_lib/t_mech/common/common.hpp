@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/dat/properties.hpp>
+
 const int MAX_MECHS = 0xFF;
 
 const int NULL_MECH_ID = -1;
@@ -91,12 +93,9 @@ struct Mech
     void* text; //stuff
 };
 
-class MechAttribute
+class MechAttribute: public Property<MechType>
 {
     public:
-        bool loaded;
-
-        MechType type;
         MechClassType class_type;
         MechRenderType render_type;
 
@@ -107,22 +106,29 @@ class MechAttribute
 
         MechSpriteIndex sprite;
         bool item_drop; // indicates whether has an item drop set
-        char name[DAT_NAME_MAX_LENGTH+1];
 
         float size;     // configure this in dat loader
         float radius;   // compute this from the sprites
         Vec3 dimensions;
 
     MechAttribute() :
-        loaded(false),
-        type(NULL_MECH_TYPE),
+        Property<MechType>(NULL_MECH_TYPE),
         class_type(NULL_MECH_CLASS),
         render_type(MECH_RENDER_TYPE_NONE),
         behavior_type(MECH_BEHAVIOR_TYPE_DEFAULT),
         plant(false), growth_ttl(-1), growth_stage(NULL_MECH_TYPE),
         sprite(NULL_MECH_SPRITE),
-        item_drop(false), size(1.0f), radius(0.5f), dimensions(vec3_init(1))
+        item_drop(false),
+        size(1.0f), radius(0.5f), dimensions(vec3_init(1))
     {
-        memset(this->name, 0, sizeof(this->name));
     }
+};
+
+class MechAttributes: public Properties<MechAttribute, MechType>
+{
+    public:
+
+    MechAttributes():
+        Properties<MechAttribute, MechType>(MAX_MECHS)
+    {}
 };

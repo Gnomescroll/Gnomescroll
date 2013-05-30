@@ -54,6 +54,13 @@ const char* get_cube_name(CubeType type)
     return p->name;
 }
 
+const char* get_cube_pretty_name(CubeType type)
+{
+    class CubeProperty* p = get_cube_properties(type);
+    IF_ASSERT(p == NULL) return NULL;
+    return p->pretty_name;
+}
+
 const char* get_compatible_cube_name(const char* name)
 {
     const char* mapname = cube_name_map->get_mapped_name(name);

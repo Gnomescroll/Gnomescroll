@@ -17,6 +17,8 @@ MechCreateFailureCode can_place_mech(const Vec3i& position, MechType mech_type);
 MechCreateFailureCode can_place_mech(const Vec3i& position, MechType mech_type, int side);
 void print_mech_create_failure_code(MechCreateFailureCode code);
 
+MechType get_mech_type(int mech_id);
+
 #if DC_CLIENT
 void prep();
 void draw();
@@ -53,7 +55,7 @@ void hit_mech(int mech_id);
 #endif
 
 //text
-char* mech_text_get(int mech_id);
+char* get_mech_text(int mech_id);
 #if DC_CLIENT
 void mech_text_update(int mech_id, int pos, int key);
 #endif

@@ -72,7 +72,7 @@ void mech_text_StoC::handle()
     GS_ASSERT(mech_list->mla[id].id != -1);
     struct Mech& m = mech_list->mla[id];
 
-    class MechAttribute* ma = get_mech_attribute(m.type);
+    class MechAttribute* ma = get_mech_attributes(m.type);
     GS_ASSERT(ma->class_type == MECH_SIGN);
     GS_ASSERT(m.text == NULL);
     m.text = calloc(1, MECH_TEXT_SIZE_MAX+1);
@@ -103,7 +103,7 @@ void mech_text_update_StoC::handle()
     IF_ASSERT(pos >= MECH_TEXT_SIZE_MAX)
         return;
 
-    class MechAttribute* ma = get_mech_attribute(m.type);
+    class MechAttribute* ma = get_mech_attributes(m.type);
     GS_ASSERT(ma->class_type == MECH_SIGN);
 
     ((char*)m.text)[pos] = key;

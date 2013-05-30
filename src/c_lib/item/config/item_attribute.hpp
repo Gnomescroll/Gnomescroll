@@ -12,7 +12,6 @@ class ItemAttribute: public Property<ItemType>
 {
     public:
         ItemGroup group;
-        char pretty_name[ITEM_PRETTY_NAME_MAX_LENGTH+1];
 
         // All items
         int max_durability;
@@ -78,7 +77,6 @@ class ItemAttribute: public Property<ItemType>
         modifiers(MAX_ITEM_MODIFIERS)
     {
         this->group = IG_NONE;
-        memset(this->pretty_name, 0, sizeof(this->pretty_name));
         this->cube_type = NULL_CUBE;
         this->mech_type = NULL_MECH_TYPE;
 

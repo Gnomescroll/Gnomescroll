@@ -189,8 +189,10 @@ size_t title_string(const char* str, char* out, size_t size)
     return i;
 }
 
-void make_pretty_name(const char* src, char* dest, const size_t len)
-{   // capitalize string
+void make_pretty_name(const char* src, char* dest)
+{   // WARNING: make sure dest is at least as long as src
+    // capitalize string
+    size_t len = strlen(src);
     MALLOX(char, title, len+1);
     size_t wrote = title_string(src, title, len);
     title[wrote] = '\0';

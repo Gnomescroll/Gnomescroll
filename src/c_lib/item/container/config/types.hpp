@@ -23,8 +23,6 @@ bool is_valid_container_name(const char* name);
 class ContainerAttribute: public Property<ItemContainerType>
 {
     public:
-        char pretty_name[CONTAINER_PRETTY_NAME_MAX_LENGTH+1];
-
         int xdim, ydim;
         int alt_xdim, alt_ydim;
         bool attached_to_agent;
@@ -55,7 +53,6 @@ class ContainerAttribute: public Property<ItemContainerType>
     ContainerAttribute() :
         Property<ItemContainerType>(NULL_CONTAINER_TYPE)
     {
-        memset(this->pretty_name, 0, sizeof(this->pretty_name));
         this->xdim = 0;
         this->ydim = 0;
         this->alt_xdim = 0;

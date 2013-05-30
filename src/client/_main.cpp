@@ -327,7 +327,12 @@ void draw_tick()
     //visualize_bounding_box();
     //poll_mouse();
     if (ClientState::hitscan.type == HITSCAN_TARGET_MECH)
-        t_mech::draw_selected_mech_bounding_box();
+    {
+        ItemType equipped = Toolbelt::get_selected_item_type();
+        float range = Item::get_weapon_range(equipped);
+        if (ClientState::hitscan.distance < range)
+            t_mech::draw_selected_mech_bounding_box();
+    }
 
     GL_ASSERT(GL_BLEND, false);
 

@@ -152,9 +152,11 @@ const char* get_item_pretty_name(ItemType item_type)
     ItemAttribute* attr = get_item_attributes(item_type);
     IF_ASSERT(attr == NULL) return NULL;
     const char* name = NULL;
-    IF_ASSERT(attr->pretty_name == NULL) name = get_item_name(item_type); // use item name is no pretty name defined
+    IF_ASSERT(attr->pretty_name == NULL)
+        name = get_item_name(item_type); // use item name is no pretty name defined
     else name = attr->pretty_name;
-    GS_ASSERT(name != NULL);
+    IF_ASSERT(name == NULL)
+        name = "NULL";
     return name;
 }
 

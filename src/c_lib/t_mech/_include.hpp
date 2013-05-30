@@ -7,7 +7,7 @@
 
 #include <t_mech/mech_raycast.cpp>
 #include <t_mech/mech_state.cpp>
-#include <t_mech/config/_interface.hpp>
+#include <t_mech/config/_interface.cpp>
 #include <t_mech/config/mech_dat.hpp>
 
 #ifdef DC_CLIENT

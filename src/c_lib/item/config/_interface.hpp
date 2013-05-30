@@ -66,8 +66,7 @@ bool item_block_def(const char* block_name)
     s->particle_voxel_texture = t_map::get_cube_primary_texture_index(block_name);
     s->cube_height = 1;
 
-    const size_t len = GS_MIN(DAT_NAME_MAX_LENGTH, ITEM_PRETTY_NAME_MAX_LENGTH);
-    make_pretty_name(block_name, s->pretty_name, len);
+    make_pretty_name(block_name, s->pretty_name);
 
     return true;
 }
@@ -121,8 +120,7 @@ void set_pretty_name(const char* pretty_name)
 {
     GS_ASSERT_ABORT(s != NULL);
     IF_ASSERT(s == NULL) return;
-    item_attributes->set_pretty_name(s->type, pretty_name,
-        ITEM_PRETTY_NAME_MAX_LENGTH);
+    item_attributes->set_pretty_name(s->type, pretty_name);
 }
 
 #if DC_CLIENT

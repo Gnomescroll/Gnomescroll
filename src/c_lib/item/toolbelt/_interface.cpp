@@ -73,7 +73,10 @@ ItemType get_agent_selected_item_type(AgentID agent_id)
 {
     IF_ASSERT(!isValid(agent_id)) return NULL_ITEM_TYPE;
     IF_ASSERT(agent_selected_type == NULL) return NULL_ITEM_TYPE;
-    return agent_selected_type[agent_id];
+    ItemType type = agent_selected_type[agent_id];
+    if (type == NULL_ITEM_TYPE)
+        type = fist_item_type;
+    return type;
 }
 
 /* Trigger entry points */
@@ -282,10 +285,13 @@ namespace Toolbelt
 
 ItemType get_selected_item_type()
 {
-    IF_ASSERT(agent_selected_type == NULL) return NULL_ITEM_TYPE;
+    IF_ASSERT(agent_selected_type == NULL) return fist_item_type;
     AgentID agent_id = ClientState::player_agent.agent_id;
-    if (!isValid(agent_id)) return NULL_ITEM_TYPE;
-    return agent_selected_type[agent_id];
+    if (!isValid(agent_id)) return fist_item_type;
+    ItemType type = agent_selected_type[agent_id];
+    if (type == NULL_ITEM_TYPE)
+        type = fist_item_type;
+    return type;
 }
 
 // there are edge cases where the server sets the item without client consent
@@ -349,8 +355,6 @@ void left_trigger_down_event()
     if (you == NULL || you->status.dead) return;
     holding = true;
     ItemType item_type = get_selected_item_type();
-    if (item_type == NULL_ITEM_TYPE)
-        item_type = fist_item_type;
     ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
     single_trigger = (cnh == CLICK_HOLD_NEVER ||
                       (cnh == CLICK_HOLD_SOMETIMES &&
@@ -376,8 +380,6 @@ void left_trigger_up_event()
     if (something_happened)
     {
         ItemType item_type = get_selected_item_type();
-        if (item_type == NULL_ITEM_TYPE)
-            item_type = fist_item_type;
         ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
         if (cnh != CLICK_HOLD_NEVER)
             send_end_alpha_action_packet();

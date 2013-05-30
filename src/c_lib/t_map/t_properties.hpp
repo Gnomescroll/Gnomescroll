@@ -115,6 +115,7 @@ class CubeProperty* get_cube_properties(CubeType id);
 CubeMaterial get_cube_material(CubeType cube_type);
 
 const char* get_cube_name(CubeType id);
+const char* get_cube_pretty_name(CubeType id);
 CubeType get_cube_type(const char* name);
 CubeGroup get_cube_group(CubeType id);
 

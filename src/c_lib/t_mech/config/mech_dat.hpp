@@ -1,7 +1,5 @@
 #pragma once
 
-#include <t_mech/config/mech_dat.hpp>
-
 namespace t_mech
 {
 
@@ -118,12 +116,6 @@ void load_mech_dat()
     set_sprite_index(16*15 + 1);
 
     end_mech_dat();     // finalize
-
-    apply_mech_dat_changes();   // handle renaming/removals
-
-    verify_mech_dat();  // validate
-
-    save_mech_names();  // safe to save names now
 }
 
 }   // t_mech

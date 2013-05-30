@@ -92,8 +92,7 @@ static void set_pretty_name(const char* pretty_name)
 {
     GS_ASSERT_ABORT(c != NULL);
     IF_ASSERT(c == NULL) return;
-    container_attributes->set_pretty_name(c->type, pretty_name,
-        CONTAINER_PRETTY_NAME_MAX_LENGTH);
+    container_attributes->set_pretty_name(c->type, pretty_name);
 }
 
 static void register_settings()
@@ -418,7 +417,7 @@ void load_config()
 void end_config()
 {
     container_attributes->done_loading();
-    container_attributes->set_pretty_names(CONTAINER_PRETTY_NAME_MAX_LENGTH);
+    container_attributes->set_pretty_names();
     apply_container_dat_changes();
     validate_settings();
     save_container_names();

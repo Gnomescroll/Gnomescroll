@@ -235,8 +235,6 @@ static void draw_weapon_cooldown_meter()
     AgentID agent_id = ClientState::player_agent.agent_id;
     if (!isValid(agent_id)) return;
     ItemType item_type = Toolbelt::get_selected_item_type();
-    if (item_type == NULL_ITEM_TYPE)
-        item_type = Toolbelt::fist_item_type;
     int cooldown = Toolbelt::agent_fire_cooldown[agent_id];
     int cooldown_max = Item::get_item_fire_rate(item_type);
     float cooldown_ratio = float(cooldown) / float(cooldown_max);
@@ -329,10 +327,10 @@ void draw_awesomium_message()
 void adjust_text(const char* s)
 {
     hud->target->set_text(s);
-    int w = hud->target->get_width();
-    float x = (_xresf/2.0f) - w/2;
-    float y = (_yresf/4.0f*3.0f) - w/2;
-    hud->target->set_position(x,y);
+    float w = hud->target->get_width();
+    float x = ((_xresf - w) * 0.5f);
+    float y = (_yresf * 0.75f);
+    hud->target->set_position(x, y);
 }
 
 void draw_hud_text()
@@ -378,7 +376,7 @@ void draw_hud_text()
             static unsigned int press_help_tick = 0;
             const int press_help_anim_len = 60;
             const Color white = Color(255,255,255);
-            float t = (float)(press_help_tick%(2*press_help_anim_len)) / (float)(press_help_anim_len);
+            float t = float(press_help_tick % (2*press_help_anim_len)) / float(press_help_anim_len);
             t -= 1.0f;
             if (t < 0.0f)
                 hud->prompt->set_color(interpolate_color(COLOR_BLUE, white, 1.0f+t));
@@ -389,22 +387,46 @@ void draw_hud_text()
         }
 
         // draw text of targeted object
-        switch (ClientState::hitscan.type)
+        using ClientState::hitscan;
+        ItemType equipped_type = Toolbelt::get_selected_item_type();
+        float range = Item::get_weapon_range(equipped_type);
+        if (hitscan.distance < range)
         {
-            case HITSCAN_TARGET_NONE:
-                adjust_text("");
-                break;
-            case HITSCAN_TARGET_VOXEL:
-                adjust_text("VOXEL");
-                break;
-            case HITSCAN_TARGET_BLOCK:
-                adjust_text(t_map::get_cube_name(ClientState::hitscan.cube_type));
-                break;
-            case HITSCAN_TARGET_MECH:
-                const char* text = t_mech::mech_text_get(ClientState::hitscan.mech_id);
-                adjust_text(text);
-                break;
+            switch (hitscan.type)
+            {
+                case HITSCAN_TARGET_NONE:
+                    adjust_text("");
+                    break;
+                case HITSCAN_TARGET_VOXEL:
+                    if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
+                        adjust_text("FRIEND");
+                    else
+                        adjust_text("ENEMY");
+                    break;
+                case HITSCAN_TARGET_BLOCK:
+                    adjust_text(t_map::get_cube_pretty_name(hitscan.cube_type));
+                    break;
+                case HITSCAN_TARGET_MECH:
+                    {
+                        MechType mtype = t_mech::get_mech_type(hitscan.mech_id);
+                        if (isValid(mtype))
+                        {
+                            const char* name = t_mech::get_mech_name(mtype);
+                            if (name != NULL && strcmp(name, "terminal") == 0)
+                            {
+                                const char* text = t_mech::get_mech_text(hitscan.mech_id);
+                                if (text == NULL)
+                                    text = "";
+                                adjust_text(text);
+                            }
+                            else
+                                adjust_text(t_mech::get_mech_pretty_name(mtype));
+                        }
+                    }
+                    break;
+            }
         }
+
 // rdn quotes:
 //       //MechType type = t_mech::get_mech_type(ClientState::hitscan.mech_id);
 //       //if (type == get_mech_type("terminal"))
@@ -412,7 +434,7 @@ void draw_hud_text()
 
 
 ////HaltingSate quotes:
-//// > char* mech_text_get(int mech_id);
+//// > char* get_mech_text(int mech_id);
 ////  void mech_text_update(int mech_id, int pos, int key);
 ////  in interface .hpp
 ////  that gets the text
