@@ -366,8 +366,6 @@ static void draw_targeted_text()
                     if (mtype == t_mech::get_mech_type("terminal_basic"))
                     {
                         const char* text = t_mech::get_mech_text(hitscan.mech_id);
-                        if (text == NULL)
-                            text = "";
                         update_targeted_text(text);
                     }
                     else
