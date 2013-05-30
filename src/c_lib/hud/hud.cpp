@@ -324,13 +324,79 @@ void draw_awesomium_message()
     HudFont::reset_default();
 }
 
-void adjust_text(const char* s)
+static void update_targeted_text(const char* s)
 {
+    IF_ASSERT(hud == NULL || hud->target == NULL) return;
     hud->target->set_text(s);
     float w = hud->target->get_width();
     float x = ((_xresf - w) * 0.5f);
     float y = (_yresf * 0.75f);
     hud->target->set_position(x, y);
+}
+
+static void draw_targeted_text()
+{
+    using ClientState::hitscan;
+    ItemType equipped_type = Toolbelt::get_selected_item_type();
+    float range = Item::get_weapon_range(equipped_type);
+    if (hitscan.distance > range || hitscan.type == HITSCAN_TARGET_NONE)
+    {
+        update_targeted_text("");
+        return;
+    }
+
+    switch (hitscan.type)
+    {
+        case HITSCAN_TARGET_VOXEL:
+            if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
+                update_targeted_text("FRIEND");
+            else
+                update_targeted_text("ENEMY");
+            break;
+
+        case HITSCAN_TARGET_BLOCK:
+            update_targeted_text(t_map::get_cube_pretty_name(hitscan.cube_type));
+            break;
+
+        case HITSCAN_TARGET_MECH:
+            {
+                MechType mtype = t_mech::get_mech_type(hitscan.mech_id);
+                if (isValid(mtype))
+                {
+                    if (mtype == t_mech::get_mech_type("terminal_basic"))
+                    {
+                        const char* text = t_mech::get_mech_text(hitscan.mech_id);
+                        if (text == NULL)
+                            text = "";
+                        update_targeted_text(text);
+                    }
+                    else
+                        update_targeted_text(t_mech::get_mech_pretty_name(mtype));
+                }
+            }
+            break;
+
+        case HITSCAN_TARGET_NONE:
+            break;
+    }
+
+    hud->target->draw();
+
+    // rdn quotes:
+    //       //MechType type = t_mech::get_mech_type(ClientState::hitscan.mech_id);
+    //       //if (type == get_mech_type("terminal"))
+    //       //    Input::open_terminal();
+
+
+    ////HaltingSate quotes:
+    //// > char* get_mech_text(int mech_id);
+    ////  void mech_text_update(int mech_id, int pos, int key);
+    ////  in interface .hpp
+    ////  that gets the text
+    ////  on the block
+    ////  on the mech, by id
+    ////  but check if its sign type block
+
 }
 
 void draw_hud_text()
@@ -386,64 +452,7 @@ void draw_hud_text()
             press_help_tick++;
         }
 
-        // draw text of targeted object
-        using ClientState::hitscan;
-        ItemType equipped_type = Toolbelt::get_selected_item_type();
-        float range = Item::get_weapon_range(equipped_type);
-        if (hitscan.distance < range)
-        {
-            switch (hitscan.type)
-            {
-                case HITSCAN_TARGET_NONE:
-                    adjust_text("");
-                    break;
-                case HITSCAN_TARGET_VOXEL:
-                    if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
-                        adjust_text("FRIEND");
-                    else
-                        adjust_text("ENEMY");
-                    break;
-                case HITSCAN_TARGET_BLOCK:
-                    adjust_text(t_map::get_cube_pretty_name(hitscan.cube_type));
-                    break;
-                case HITSCAN_TARGET_MECH:
-                    {
-                        MechType mtype = t_mech::get_mech_type(hitscan.mech_id);
-                        if (isValid(mtype))
-                        {
-                            const char* name = t_mech::get_mech_name(mtype);
-                            if (name != NULL && strcmp(name, "terminal") == 0)
-                            {
-                                const char* text = t_mech::get_mech_text(hitscan.mech_id);
-                                if (text == NULL)
-                                    text = "";
-                                adjust_text(text);
-                            }
-                            else
-                                adjust_text(t_mech::get_mech_pretty_name(mtype));
-                        }
-                    }
-                    break;
-            }
-        }
-
-// rdn quotes:
-//       //MechType type = t_mech::get_mech_type(ClientState::hitscan.mech_id);
-//       //if (type == get_mech_type("terminal"))
-//       //    Input::open_terminal();
-
-
-////HaltingSate quotes:
-//// > char* get_mech_text(int mech_id);
-////  void mech_text_update(int mech_id, int pos, int key);
-////  in interface .hpp
-////  that gets the text
-////  on the block
-////  on the mech, by id
-////  but check if its sign type block
-
-
-        hud->target->draw();
+        draw_targeted_text();
     }
     else
     {
