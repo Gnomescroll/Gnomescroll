@@ -243,8 +243,8 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
             {
                 agent = Agents::get_agent((AgentID)hitscan.voxel_target.entity_id);
                 Animations::blood_spray(collision_point, look);
-                //Sound::play_3d_sound("pick_hit_agent", collision_point);
             }
+            Sound::play_3d_sound("pick_hit_agent", collision_point);
             break;
 
         case HITSCAN_TARGET_BLOCK:
@@ -298,6 +298,7 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
                 msg.mech_id = hitscan.mech_id;
                 msg.send();
             }
+            Sound::play_2d_sound("pick_swung");
             break;
 
         case HITSCAN_TARGET_NONE:
@@ -305,6 +306,7 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
                 melee_none_CtoS none_msg;
                 none_msg.send();
             }
+            Sound::play_2d_sound("pick_swung");
             break;
     }
 

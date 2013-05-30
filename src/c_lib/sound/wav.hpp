@@ -18,7 +18,7 @@ typedef struct WavFile
     int byte_rate;
     short bits_per_sample;
     float duration;
-    int size;
+    size_t size;
     bool in_use;
 } WavData;
 

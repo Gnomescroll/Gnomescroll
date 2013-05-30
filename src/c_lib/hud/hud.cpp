@@ -391,21 +391,26 @@ void draw_hud_text()
         // draw text of targeted object
         switch (ClientState::hitscan.type)
         {
-            case HITSCAN_TARGET_NONE: adjust_text(""); break;
-            case HITSCAN_TARGET_VOXEL: adjust_text("VOXEL"); break;
-            case HITSCAN_TARGET_BLOCK: adjust_text(""); break;
-            case HITSCAN_TARGET_MECH:
-                const char* text = t_mech::mech_text_get(ClientState::hitscan.mech_id); 
-                adjust_text(text); 
+            case HITSCAN_TARGET_NONE:
+                adjust_text("");
                 break;
-
+            case HITSCAN_TARGET_VOXEL:
+                adjust_text("VOXEL");
+                break;
+            case HITSCAN_TARGET_BLOCK:
+                adjust_text(t_map::get_cube_name(ClientState::hitscan.cube_type));
+                break;
+            case HITSCAN_TARGET_MECH:
+                const char* text = t_mech::mech_text_get(ClientState::hitscan.mech_id);
+                adjust_text(text);
+                break;
         }
 // rdn quotes:
 //       //MechType type = t_mech::get_mech_type(ClientState::hitscan.mech_id);
 //       //if (type == get_mech_type("terminal"))
 //       //    Input::open_terminal();
 
-        
+
 ////HaltingSate quotes:
 //// > char* mech_text_get(int mech_id);
 ////  void mech_text_update(int mech_id, int pos, int key);
