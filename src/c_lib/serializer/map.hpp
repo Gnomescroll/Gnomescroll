@@ -62,7 +62,7 @@ class BlockSerializer
         static const int version = GS_VERSION;
         static const int CHUNK_COUNT = MAP_CHUNK_XDIM*MAP_CHUNK_YDIM;
 
-        char filename[NAME_MAX+1];
+        char filename[GS_FN_MAX+1];
         size_t file_size;
 
         char* write_buffer;

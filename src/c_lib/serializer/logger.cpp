@@ -12,13 +12,13 @@
 namespace serializer
 {
 
-static char log_folder[NAME_MAX+1];
+static char log_folder[GS_FN_MAX+1];
 
-static char player_log_path[NAME_MAX+1];
-static char container_log_path[NAME_MAX+1];
-static char map_log_path[NAME_MAX+1];
-static char mech_log_path[NAME_MAX+1];
-static char entity_log_path[NAME_MAX+1];
+static char player_log_path[GS_FN_MAX+1];
+static char container_log_path[GS_FN_MAX+1];
+static char map_log_path[GS_FN_MAX+1];
+static char mech_log_path[GS_FN_MAX+1];
+static char entity_log_path[GS_FN_MAX+1];
 
 static FILE* player_log = NULL;
 static FILE* container_log = NULL;
@@ -48,26 +48,26 @@ void set_log_paths(const char* save_folder)
 {
     int wrote = 0;
 
-    wrote = snprintf(log_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
-    log_folder[NAME_MAX] = '\0';
+    wrote = snprintf(log_folder, GS_FN_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX+1);
+    log_folder[GS_FN_MAX] = '\0';
     create_path(log_folder);
 
-    wrote = snprintf(player_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, PLAYER_LOG_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
-    player_log_path[NAME_MAX] = '\0';
-    wrote = snprintf(container_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, CONTAINER_LOG_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
-    container_log_path[NAME_MAX] = '\0';
-    wrote = snprintf(map_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, MAP_LOG_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
-    map_log_path[NAME_MAX] = '\0';
-    wrote = snprintf(mech_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, MECH_LOG_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
-    mech_log_path[NAME_MAX] = '\0';
-    wrote = snprintf(entity_log_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, ENTITY_LOG_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX+1);
-    entity_log_path[NAME_MAX] = '\0';
+    wrote = snprintf(player_log_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, PLAYER_LOG_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX+1);
+    player_log_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(container_log_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, CONTAINER_LOG_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX+1);
+    container_log_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(map_log_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, MAP_LOG_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX+1);
+    map_log_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(mech_log_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, MECH_LOG_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX+1);
+    mech_log_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(entity_log_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, LOG_FOLDER, ENTITY_LOG_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX+1);
+    entity_log_path[GS_FN_MAX] = '\0';
 
     player_log = fopen(player_log_path, "a");
     container_log = fopen(container_log_path, "a");

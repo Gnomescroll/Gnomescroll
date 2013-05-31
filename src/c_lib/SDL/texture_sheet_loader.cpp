@@ -13,15 +13,13 @@
 namespace TextureSheetLoader
 {
 
-const size_t N_SURFACES = 32;
-
 TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
     tile_size(tile_size), tiles_wide(16), tiles_high(16),
     surface_num(0), tile_num(0), format(GL_BGRA),
     texture(0), greyscale_texture(0), mag_filter(GL_NEAREST)
 {
     this->tile_meta = (struct TileMeta*)calloc(this->tiles_wide*this->tiles_high, sizeof(struct TileMeta));
-    this->surface_meta = (struct SurfaceMeta*)calloc(N_SURFACES, sizeof(struct SurfaceMeta));
+    this->surface_meta = (struct SurfaceMeta*)calloc(MAX_SURFACES, sizeof(struct SurfaceMeta));
 
     this->width = this->tiles_wide*this->tile_size;
     this->height = this->tiles_high*this->tile_size;
@@ -38,7 +36,7 @@ TextureSheetLoader::TextureSheetLoader(size_t tile_size) :
 TextureSheetLoader::~TextureSheetLoader()
 {
     if (this->surface_meta != NULL)
-        for (size_t i=0; i<N_SURFACES; i++)
+        for (size_t i=0; i<MAX_SURFACES; i++)
             if (this->surface_meta[i].surface != NULL)
                 SDL_FreeSurface(this->surface_meta[i].surface);
     free(this->surface_meta);
@@ -82,7 +80,7 @@ SpriteSheet TextureSheetLoader::load_texture_from_surface(struct SDL_Surface* su
 {
     IF_ASSERT(surface == NULL) return NULL_SPRITE_SHEET;
     IF_ASSERT(sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE_SHEET;
-    IF_ASSERT(sheet_id >= (SpriteSheet)N_SURFACES) return NULL_SPRITE_SHEET;
+    IF_ASSERT(sheet_id >= (SpriteSheet)MAX_SURFACES) return NULL_SPRITE_SHEET;
 
     this->surface_meta[sheet_id].surface = surface;
     return sheet_id;

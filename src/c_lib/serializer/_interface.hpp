@@ -25,33 +25,33 @@ WorldSaveState update_save_state(int max_ms);
 
 void wait_for_save_complete();
 
-extern char map_folder[NAME_MAX+1];
-extern char mech_folder[NAME_MAX+1];
-extern char player_folder[NAME_MAX+1];
-extern char container_folder[NAME_MAX+1];
-extern char entity_folder[NAME_MAX+1];
+extern char map_folder[GS_FN_MAX+1];
+extern char mech_folder[GS_FN_MAX+1];
+extern char player_folder[GS_FN_MAX+1];
+extern char container_folder[GS_FN_MAX+1];
+extern char entity_folder[GS_FN_MAX+1];
 
-extern char map_path[NAME_MAX+1];
-extern char map_path_tmp[NAME_MAX+1];
-extern char map_path_bak[NAME_MAX+1];
-extern char map_palette_path[NAME_MAX+1];
-extern char map_palette_path_tmp[NAME_MAX+1];
-extern char map_palette_path_bak[NAME_MAX+1];
-extern char mech_path[NAME_MAX+1];
-extern char mech_path_tmp[NAME_MAX+1];
-extern char mech_path_bak[NAME_MAX+1];
-extern char mech_palette_path[NAME_MAX+1];
-extern char mech_palette_path_tmp[NAME_MAX+1];
-extern char mech_palette_path_bak[NAME_MAX+1];
-extern char player_path[NAME_MAX+1];
-extern char player_path_tmp[NAME_MAX+1];
-extern char player_path_bak[NAME_MAX+1];
-extern char container_path[NAME_MAX+1];
-extern char container_path_tmp[NAME_MAX+1];
-extern char container_path_bak[NAME_MAX+1];
-extern char entity_path[NAME_MAX+1];
-extern char entity_path_tmp[NAME_MAX+1];
-extern char entity_path_bak[NAME_MAX+1];
+extern char map_path[GS_FN_MAX+1];
+extern char map_path_tmp[GS_FN_MAX+1];
+extern char map_path_bak[GS_FN_MAX+1];
+extern char map_palette_path[GS_FN_MAX+1];
+extern char map_palette_path_tmp[GS_FN_MAX+1];
+extern char map_palette_path_bak[GS_FN_MAX+1];
+extern char mech_path[GS_FN_MAX+1];
+extern char mech_path_tmp[GS_FN_MAX+1];
+extern char mech_path_bak[GS_FN_MAX+1];
+extern char mech_palette_path[GS_FN_MAX+1];
+extern char mech_palette_path_tmp[GS_FN_MAX+1];
+extern char mech_palette_path_bak[GS_FN_MAX+1];
+extern char player_path[GS_FN_MAX+1];
+extern char player_path_tmp[GS_FN_MAX+1];
+extern char player_path_bak[GS_FN_MAX+1];
+extern char container_path[GS_FN_MAX+1];
+extern char container_path_tmp[GS_FN_MAX+1];
+extern char container_path_bak[GS_FN_MAX+1];
+extern char entity_path[GS_FN_MAX+1];
+extern char entity_path_tmp[GS_FN_MAX+1];
+extern char entity_path_bak[GS_FN_MAX+1];
 
 }   // serializer
 

@@ -40,7 +40,7 @@ void teardown_map_serializer()
 
 struct ThreadedWriteData
 {
-    char filename[NAME_MAX+1];
+    char filename[GS_FN_MAX+1];
     char* buffer;
     size_t buffer_size;
 };
@@ -53,7 +53,7 @@ void* _threaded_write(void* vptr)
 {   // WARNING: do not use ASSERT here (not thread safe)
     int ta = _GET_MS_TIME();
 
-    char filename[NAME_MAX+1] = {'\0'};
+    char filename[GS_FN_MAX+1] = {'\0'};
     strcpy(filename, threaded_write_data.filename);
     char* buffer = threaded_write_data.buffer;
     size_t buffer_size = threaded_write_data.buffer_size;

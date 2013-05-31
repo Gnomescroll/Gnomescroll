@@ -15,6 +15,8 @@ class TextureSheetLoader
 
     public:
 
+        static const size_t MAX_SURFACES = 32;
+
         struct TileMeta
         {
             SpriteSheet sheet_id;

@@ -22,33 +22,33 @@ static bool world_found = false;
 
 static char save_folder[SAVE_FOLDER_LEN+1];
 
-char map_folder[NAME_MAX+1];
-char mech_folder[NAME_MAX+1];
-char player_folder[NAME_MAX+1];
-char container_folder[NAME_MAX+1];
-char entity_folder[NAME_MAX+1];
+char map_folder[GS_FN_MAX+1];
+char mech_folder[GS_FN_MAX+1];
+char player_folder[GS_FN_MAX+1];
+char container_folder[GS_FN_MAX+1];
+char entity_folder[GS_FN_MAX+1];
 
-char map_path[NAME_MAX+1];
-char map_path_tmp[NAME_MAX+1];
-char map_path_bak[NAME_MAX+1];
-char map_palette_path[NAME_MAX+1];
-char map_palette_path_tmp[NAME_MAX+1];
-char map_palette_path_bak[NAME_MAX+1];
-char mech_path[NAME_MAX+1];
-char mech_path_tmp[NAME_MAX+1];
-char mech_path_bak[NAME_MAX+1];
-char mech_palette_path[NAME_MAX+1];
-char mech_palette_path_tmp[NAME_MAX+1];
-char mech_palette_path_bak[NAME_MAX+1];
-char player_path[NAME_MAX+1];
-char player_path_tmp[NAME_MAX+1];
-char player_path_bak[NAME_MAX+1];
-char container_path[NAME_MAX+1];
-char container_path_tmp[NAME_MAX+1];
-char container_path_bak[NAME_MAX+1];
-char entity_path[NAME_MAX+1];
-char entity_path_tmp[NAME_MAX+1];
-char entity_path_bak[NAME_MAX+1];
+char map_path[GS_FN_MAX+1];
+char map_path_tmp[GS_FN_MAX+1];
+char map_path_bak[GS_FN_MAX+1];
+char map_palette_path[GS_FN_MAX+1];
+char map_palette_path_tmp[GS_FN_MAX+1];
+char map_palette_path_bak[GS_FN_MAX+1];
+char mech_path[GS_FN_MAX+1];
+char mech_path_tmp[GS_FN_MAX+1];
+char mech_path_bak[GS_FN_MAX+1];
+char mech_palette_path[GS_FN_MAX+1];
+char mech_palette_path_tmp[GS_FN_MAX+1];
+char mech_palette_path_bak[GS_FN_MAX+1];
+char player_path[GS_FN_MAX+1];
+char player_path_tmp[GS_FN_MAX+1];
+char player_path_bak[GS_FN_MAX+1];
+char container_path[GS_FN_MAX+1];
+char container_path_tmp[GS_FN_MAX+1];
+char container_path_bak[GS_FN_MAX+1];
+char entity_path[GS_FN_MAX+1];
+char entity_path_tmp[GS_FN_MAX+1];
+char entity_path_bak[GS_FN_MAX+1];
 
 static bool set_save_folder(int version, time_t timestamp)
 {
@@ -74,100 +74,100 @@ static void set_data_paths(const char* save_folder)
 
     // map
     // set & create folder
-    wrote = snprintf(map_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    map_folder[NAME_MAX] = '\0';
+    wrote = snprintf(map_folder, GS_FN_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    map_folder[GS_FN_MAX] = '\0';
 
     // set full paths for filenames
-    wrote = snprintf(map_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    map_path[NAME_MAX] = '\0';
-    wrote = snprintf(map_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME_TMP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    map_path_tmp[NAME_MAX] = '\0';
-    wrote = snprintf(map_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME_BACKUP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    map_path_bak[NAME_MAX] = '\0';
+    wrote = snprintf(map_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    map_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(map_path_tmp, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    map_path_tmp[GS_FN_MAX] = '\0';
+    wrote = snprintf(map_path_bak, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    map_path_bak[GS_FN_MAX] = '\0';
 
-    wrote = snprintf(map_palette_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    map_palette_path[NAME_MAX] = '\0';
-    wrote = snprintf(map_palette_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME_TMP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    map_palette_path_tmp[NAME_MAX] = '\0';
-    wrote = snprintf(map_palette_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME_BACKUP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    map_palette_path_bak[NAME_MAX] = '\0';
+    wrote = snprintf(map_palette_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    map_palette_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(map_palette_path_tmp, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    map_palette_path_tmp[GS_FN_MAX] = '\0';
+    wrote = snprintf(map_palette_path_bak, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MAP_DATA_PATH, MAP_PALETTE_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    map_palette_path_bak[GS_FN_MAX] = '\0';
 
     // mechs
-    wrote = snprintf(mech_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    mech_folder[NAME_MAX] = '\0';
+    wrote = snprintf(mech_folder, GS_FN_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    mech_folder[GS_FN_MAX] = '\0';
 
-    wrote = snprintf(mech_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    mech_path[NAME_MAX] = '\0';
-    wrote = snprintf(mech_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME_TMP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    mech_path_tmp[NAME_MAX] = '\0';
-    wrote = snprintf(mech_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME_BACKUP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    mech_path_bak[NAME_MAX] = '\0';
+    wrote = snprintf(mech_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    mech_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(mech_path_tmp, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    mech_path_tmp[GS_FN_MAX] = '\0';
+    wrote = snprintf(mech_path_bak, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    mech_path_bak[GS_FN_MAX] = '\0';
 
-    wrote = snprintf(mech_palette_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    mech_palette_path[NAME_MAX] = '\0';
-    wrote = snprintf(mech_palette_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME_TMP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    mech_palette_path_tmp[NAME_MAX] = '\0';
-    wrote = snprintf(mech_palette_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME_BACKUP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    mech_palette_path_bak[NAME_MAX] = '\0';
+    wrote = snprintf(mech_palette_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    mech_palette_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(mech_palette_path_tmp, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    mech_palette_path_tmp[GS_FN_MAX] = '\0';
+    wrote = snprintf(mech_palette_path_bak, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, MECH_DATA_PATH, MECH_PALETTE_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    mech_palette_path_bak[GS_FN_MAX] = '\0';
 
     // players
-    wrote = snprintf(player_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    player_folder[NAME_MAX] = '\0';
+    wrote = snprintf(player_folder, GS_FN_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    player_folder[GS_FN_MAX] = '\0';
 
-    wrote = snprintf(player_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    player_path[NAME_MAX] = '\0';
-    wrote = snprintf(player_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME_TMP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    player_path_tmp[NAME_MAX] = '\0';
-    wrote = snprintf(player_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME_BACKUP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    player_path_bak[NAME_MAX] = '\0';
+    wrote = snprintf(player_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    player_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(player_path_tmp, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    player_path_tmp[GS_FN_MAX] = '\0';
+    wrote = snprintf(player_path_bak, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, PLAYER_DATA_PATH, PLAYER_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    player_path_bak[GS_FN_MAX] = '\0';
 
     // containers
-    wrote = snprintf(container_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    container_folder[NAME_MAX] = '\0';
+    wrote = snprintf(container_folder, GS_FN_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    container_folder[GS_FN_MAX] = '\0';
 
-    wrote = snprintf(container_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    container_path[NAME_MAX] = '\0';
-    wrote = snprintf(container_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_TMP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    container_path_tmp[NAME_MAX] = '\0';
-    wrote = snprintf(container_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_BACKUP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    container_path_bak[NAME_MAX] = '\0';
+    wrote = snprintf(container_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    container_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(container_path_tmp, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    container_path_tmp[GS_FN_MAX] = '\0';
+    wrote = snprintf(container_path_bak, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, CONTAINER_DATA_PATH, CONTAINER_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    container_path_bak[GS_FN_MAX] = '\0';
 
     // entities
-    wrote = snprintf(entity_folder, NAME_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    entity_folder[NAME_MAX] = '\0';
+    wrote = snprintf(entity_folder, GS_FN_MAX+1, "%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    entity_folder[GS_FN_MAX] = '\0';
 
-    wrote = snprintf(entity_path, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    entity_path[NAME_MAX] = '\0';
-    wrote = snprintf(entity_path_tmp, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME_TMP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    entity_path_tmp[NAME_MAX] = '\0';
-    wrote = snprintf(entity_path_bak, NAME_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME_BACKUP);
-    GS_ASSERT_ABORT(wrote <= NAME_MAX);
-    entity_path_bak[NAME_MAX] = '\0';
+    wrote = snprintf(entity_path, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    entity_path[GS_FN_MAX] = '\0';
+    wrote = snprintf(entity_path_tmp, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME_TMP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    entity_path_tmp[GS_FN_MAX] = '\0';
+    wrote = snprintf(entity_path_bak, GS_FN_MAX+1, "%s%s%s%s", WORLD_DATA_PATH, save_folder, ENTITY_DATA_PATH, ENTITY_FILENAME_BACKUP);
+    GS_ASSERT_ABORT(wrote <= GS_FN_MAX);
+    entity_path_bak[GS_FN_MAX] = '\0';
 
     set_log_paths(save_folder);
 }
@@ -329,9 +329,9 @@ static bool parse_world_dirname(const char* dir, int& version, time_t& timestamp
     timestamp = 0;
 
     // copy name over
-    char _buf[NAME_MAX+1];
-    strncpy(_buf, dir, NAME_MAX+1);
-    _buf[NAME_MAX] = '\0';
+    char _buf[GS_FN_MAX+1];
+    strncpy(_buf, dir, GS_FN_MAX+1);
+    _buf[GS_FN_MAX] = '\0';
 
     char* buf = &_buf[0];
 
@@ -377,7 +377,7 @@ static bool parse_world_dirname(const char* dir, int& version, time_t& timestamp
     return true;
 }
 
-static bool find_existing_world(char filename[NAME_MAX], int& version, time_t& timestamp)
+static bool find_existing_world(char filename[GS_FN_MAX+1], int& version, time_t& timestamp)
 {
     DIR* dp;
     struct dirent* ep;
@@ -399,7 +399,9 @@ static bool find_existing_world(char filename[NAME_MAX], int& version, time_t& t
             GS_ASSERT(version >= highest_version);
             highest_version = version;
             most_recent = timestamp;
-            strcpy(filename, ep->d_name);
+            strncpy(filename, ep->d_name, GS_FN_MAX+1);
+            GS_ASSERT(filename[GS_FN_MAX] == '\0')
+            filename[GS_FN_MAX] = '\0';
         }
     }
     int ret = closedir(dp);
@@ -420,7 +422,7 @@ void init()
     // find the most up to date world data, if present
     int version = 0;
     time_t timestamp = 0;
-    char filename[NAME_MAX] = {'\0'};
+    char filename[GS_FN_MAX+1] = {'\0'};
     world_found = find_existing_world(filename, version, timestamp);
     if (world_found)
     {   // save the folder name
