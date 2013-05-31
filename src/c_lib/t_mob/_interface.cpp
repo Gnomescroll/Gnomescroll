@@ -1,4 +1,18 @@
 #include "_interface.hpp"
 
-#include <t_mob/models/_interface.cpp>
-#include <t_mob/sprites/_interface.cpp>
+namespace t_mob
+{
+
+void init()
+{
+    init_sprites();
+    init_models();
+}
+
+void teardown()
+{
+    teardown_sprites();
+    teardown_models();
+}
+
+}   // t_mob

@@ -1,6 +1,6 @@
 #include "model_loader.hpp"
 
-#include <t_mob/assimp_includes.hpp>
+#include <t_mob/models/assimp_includes.hpp>
 #include <physics/mat4.hpp>
 
 namespace t_mob

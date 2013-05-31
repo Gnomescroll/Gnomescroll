@@ -8,10 +8,9 @@
 # include <t_mob/models/body_part_mesh.cpp>
 # include <t_mob/models/body_mesh.cpp>
 # include <t_mob/models/_interface.cpp>
-# include <t_mob/sprites/common.hpp>
-# include <t_mob/sprites/_interface.cpp>
-# include <t_mob/sprites/textures.cpp>
-#else
-# include <t_mob/_interface.hpp>
 #endif
 
+#include <t_mob/sprites/common.hpp>
+#include <t_mob/sprites/_interface.cpp>
+#include <t_mob/sprites/textures.cpp>
+#include <t_mob/_interface.cpp>

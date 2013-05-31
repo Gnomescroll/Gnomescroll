@@ -1,8 +1,8 @@
 #include "_interface.hpp"
 
-#include <t_mob/assimp_includes.hpp>
-#include <t_mob/model_loader.hpp>
-#include <t_mob/body_mesh.hpp>
+#include <t_mob/models/assimp_includes.hpp>
+#include <t_mob/models/model_loader.hpp>
+#include <t_mob/models/body_mesh.hpp>
 
 namespace t_mob
 {
@@ -10,7 +10,7 @@ namespace t_mob
 static class ModelLoader* model_loader;
 static class BodyMesh* body_mesh;
 
-void init()
+void init_models()
 {
     GS_ASSERT(model_loader == NULL);
     GS_ASSERT(body_mesh == NULL);
@@ -43,7 +43,7 @@ void init()
     body_mesh->draw_prep();
 }
 
-void draw()
+void draw_models()
 {
     struct Vec3 p = ClientState::location_pointer;
     if (!ClientState::location_pointer_set) p = vec3_init(128.0f);
@@ -52,7 +52,7 @@ void draw()
     //bt->draw_skeleton(p.x+0.0, p.y+0.0f, p.z + 5.0f);
 }
 
-void teardown()
+void teardown_models()
 {
     delete model_loader;
     delete body_mesh;

@@ -57,46 +57,46 @@ class TextureSheetLoader
 
         Color* pixels;
 
-        SpriteSheet load_texture(const char* filename);
-        SpriteSheet load_texture(const char* filename, size_t tile_size);
-        SpriteSheet load_texture_from_surface(struct SDL_Surface* surface);
-        SpriteSheet load_texture_from_surface(struct SDL_Surface* surface, SpriteSheet sheet_id);
+    SpriteSheet load_texture(const char* filename);
+    SpriteSheet load_texture(const char* filename, size_t tile_size);
+    SpriteSheet load_texture_from_surface(struct SDL_Surface* surface);
+    SpriteSheet load_texture_from_surface(struct SDL_Surface* surface, SpriteSheet sheet_id);
 
-        // blit to sheet and return texture id
-        int blit(SpriteSheet sheet_id, size_t source_x, size_t source_y);
+    // blit to sheet and return texture id
+    int blit(SpriteSheet sheet_id, size_t source_x, size_t source_y);
 
-        void generate_greyscale();
+    void generate_greyscale();
 
-        void reload();
-        void generate_texture();
+    void reload();
+    void generate_texture();
 
-        void save_texture(const char* filename);
+    void save_texture(const char* filename);
 
-        const Color* get_sprite_pixels(int sprite_id) const;
+    const Color* get_sprite_pixels(int sprite_id) const;
 
-        float sprite_width()
-        {   // width for rendering to texture; i.e. %width
-            return float(this->tile_size) / float(this->width);
-        }
+    float sprite_width()
+    {   // width for rendering to texture; i.e. %width
+        return float(this->tile_size) / float(this->width);
+    }
 
-        float sprite_height()
+    float sprite_height()
+    {
+        return float(this->tile_size) / float(this->height);
+    }
+
+    void get_sprite_coordinates(int sprite_id, float* sx, float* sy)
+    {
+        IF_ASSERT(sprite_id == NULL_SPRITE)
         {
-            return float(this->tile_size) / float(this->height);
+            *sx = 0.0f;
+            *sy = 0.0f;
+            return;
         }
-
-        void get_sprite_coordinates(int sprite_id, float* sx, float* sy)
-        {
-            IF_ASSERT(sprite_id == NULL_SPRITE)
-            {
-                *sx = 0.0f;
-                *sy = 0.0f;
-                return;
-            }
-            int x = sprite_id % this->tiles_wide;
-            int y = sprite_id / this->tiles_wide;
-            *sx = float(x) / float(this->tiles_wide);
-            *sy = float(y) / float(this->tiles_high);
-        }
+        int x = sprite_id % this->tiles_wide;
+        int y = sprite_id / this->tiles_wide;
+        *sx = float(x) / float(this->tiles_wide);
+        *sy = float(y) / float(this->tiles_high);
+    }
 
     explicit TextureSheetLoader(size_t tile_size);
     ~TextureSheetLoader();

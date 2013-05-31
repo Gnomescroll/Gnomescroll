@@ -263,7 +263,7 @@ void draw_tick()
 
     poll_mouse();
     #if !PRODUCTION
-    //t_mob::draw();
+    //t_mob::draw_models();
     #endif
 
     poll_mouse();

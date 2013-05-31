@@ -4,13 +4,13 @@ namespace t_mob
 {
 
 #if GS_ASSIMP
-void init();
-void draw();
-void teardown();
+void init_models();
+void draw_models();
+void teardown_models();
 #else
-void init() {}
-void draw() {}
-void teardown() {}
+void init_models() {}
+void draw_models() {}
+void teardown_models() {}
 #endif
 
 }   // t_mob

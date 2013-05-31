@@ -1,6 +1,6 @@
 #include "body_part_mesh.hpp"
 
-#include <t_mob/common.hpp>
+#include <t_mob/models/common.hpp>
 
 namespace t_mob
 {

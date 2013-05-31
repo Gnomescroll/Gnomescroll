@@ -1,6 +1,6 @@
 #include "body_animation.hpp"
 
-#include <t_mob/assimp_includes.hpp>
+#include <t_mob/models/assimp_includes.hpp>
 
 namespace t_mob
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <physics/mat4.hpp>
-#include <t_mob/body_part_mesh.hpp>
+#include <t_mob/models/body_part_mesh.hpp>
 
 namespace t_mob
 {
