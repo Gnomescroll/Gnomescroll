@@ -104,7 +104,7 @@ class SpriteAnimationRepo
 
     void sort_by_sheet_id()
     {
-        qsort(this->groups, ANIMATION_GROUPS_MAX, sizeof(*this->groups),
+        qsort(this->groups, this->count, sizeof(*this->groups),
               &SpriteAnimationRepo::_cmp_group);
     }
 
