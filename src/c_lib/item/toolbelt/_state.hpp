@@ -13,8 +13,11 @@ extern ItemType fist_item_type;    // cached item type lookup
 #if DC_CLIENT
 extern int selected_slot;
 extern ItemContainerID toolbelt_id;
-extern bool holding;        // is holding button down
-extern bool single_trigger; // last event was a single trigger event
+
+const int HOLDING_DELAY = 4;  // how long to wait before considering it 'holding'
+extern int holding_tick;      // how long we've been holding down
+extern bool holding;          // is holding button down
+extern bool single_trigger;   // last event was a single trigger event
 #endif
 
 // Server

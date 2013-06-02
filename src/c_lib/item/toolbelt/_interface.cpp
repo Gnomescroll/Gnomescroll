@@ -258,6 +258,11 @@ void tick()
     #if DC_CLIENT
     // If we're currently click-and-hold firing on terrain, shut it off if
     // we are no longer looking at terrain
+    if (holding)
+        holding_tick++;
+    else
+        holding_tick = 0;
+
     if (get_item_click_and_hold_behaviour(local_item_type) == CLICK_HOLD_SOMETIMES)
     {
         if (agent_fire_on[local_agent_id])
@@ -266,7 +271,7 @@ void tick()
                 if (toolbelt_item_end_alpha_action())
                     send_end_alpha_action_packet();
         }
-        else if (holding)
+        else if (holding && holding_tick == HOLDING_DELAY)
         {
             if (ClientState::player_agent.pointing_at_terrain(local_item_type))
                 if (toolbelt_item_begin_alpha_action())
@@ -353,7 +358,6 @@ void left_trigger_down_event()
 {
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
-    holding = true;
     ItemType item_type = get_selected_item_type();
     ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
     single_trigger = (cnh == CLICK_HOLD_NEVER ||
@@ -364,25 +368,45 @@ void left_trigger_down_event()
         if (toolbelt_item_alpha_action())
             send_alpha_action_packet();
     }
-    else
+    else if (cnh == CLICK_HOLD_ALWAYS)
     {
         if (toolbelt_item_begin_alpha_action())
             send_begin_alpha_action_packet();
+    }
+    else
+    {
+        holding = true;
+        holding_tick = 0;
     }
 }
 
 void left_trigger_up_event()
 {
+    bool was_holding = holding;
+    int was_holding_tick = holding_tick;
     holding = false;
+    holding_tick = 0;
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
-    bool something_happened = toolbelt_item_end_alpha_action();
-    if (something_happened)
+    bool turn_off = true;
+
+    if (was_holding && was_holding_tick <= HOLDING_DELAY)
     {
-        ItemType item_type = get_selected_item_type();
-        ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
-        if (cnh != CLICK_HOLD_NEVER)
-            send_end_alpha_action_packet();
+        if (toolbelt_item_alpha_action())
+            send_alpha_action_packet();
+        turn_off = false;
+    }
+
+    if (turn_off)
+    {
+        bool something_happened = toolbelt_item_end_alpha_action();
+        if (something_happened)
+        {
+            ItemType item_type = get_selected_item_type();
+            ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
+            if (cnh != CLICK_HOLD_NEVER)
+                send_end_alpha_action_packet();
+        }
     }
 }
 

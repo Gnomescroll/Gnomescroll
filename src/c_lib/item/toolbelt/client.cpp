@@ -27,7 +27,7 @@ void turn_fire_on(AgentID agent_id)
     else
         toolbelt_item_begin_alpha_action_event_handler(agent_id, item_type);
 
-    agent_fire_cooldown[agent_id] = Item::get_item_fire_rate(item_type);
+    agent_fire_cooldown[agent_id] = 0;
     agent_fire_on[agent_id] = true;
 }
 
@@ -55,9 +55,8 @@ void turn_fire_off(AgentID agent_id)
     agent_fire_on[agent_id] = false;
 }
 
-// returns true if an event was or should be triggered
 bool toolbelt_item_begin_alpha_action()
-{
+{   // returns true if an event was or should be triggered
     IF_ASSERT(click_and_hold == NULL) return false;
     IF_ASSERT(agent_fire_on == NULL) return false;
 
@@ -77,9 +76,8 @@ bool toolbelt_item_begin_alpha_action()
     return true;
 }
 
-// returns true if an event was or should be triggered
 bool toolbelt_item_end_alpha_action()
-{
+{   // returns true if an event was or should be triggered
     IF_ASSERT(agent_fire_on == NULL) return false;
     IF_ASSERT(click_and_hold == NULL) return false;
 

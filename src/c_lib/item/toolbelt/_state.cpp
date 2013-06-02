@@ -12,6 +12,7 @@ int* agent_fire_cooldown = NULL;
 //Client
 #if DC_CLIENT
 bool holding = false;
+int holding_tick = 0;
 bool single_trigger = false;
 int selected_slot = 0;
 ItemContainerID toolbelt_id = NULL_CONTAINER;
