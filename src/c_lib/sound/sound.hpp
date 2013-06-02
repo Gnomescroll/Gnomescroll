@@ -17,6 +17,8 @@ void close();
 
 void init_packets();
 
+const char* get_random_name(const char* fmt, int lower, int upper);
+
 #if DC_CLIENT
 
 extern Vec3 listener_position;

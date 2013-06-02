@@ -12,6 +12,9 @@
 namespace Sound
 {
 
+static const size_t _random_sound_name_len = 0xFF;
+static char _random_sound_name[_random_sound_name_len + 1];
+
 void init_packets()
 {
     play_2d_sound_StoC::register_client_packet();
@@ -36,6 +39,16 @@ void close()
     #endif
 }
 
+const char* get_random_name(const char* fmt, int lower, int upper)
+{
+    size_t wrote = snprintf(_random_sound_name, _random_sound_name_len, fmt,
+                            randrange(lower, upper));
+    IF_ASSERT(wrote >= _random_sound_name_len)
+        printf("WARNING: failed to create randomized sound name using format "
+               "%s, bounds %d -> %d\n", fmt, lower, upper);
+    _random_sound_name[_random_sound_name_len] = '\0';
+    return _random_sound_name;
+}
 
 #if DC_CLIENT
 const float GS_SOUND_DISTANCE_CUTOFF = 128.0f;
