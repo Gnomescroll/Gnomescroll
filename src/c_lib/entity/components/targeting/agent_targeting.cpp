@@ -138,6 +138,20 @@ void AgentTargetingComponent::move_on_surface()
         cs.cs = 0;
         cs.cs |= CS_FORWARD;
         cs.cs |= jump;
+        #if DC_SERVER
+        if (jump)
+        {
+            const char base_label[] = "slime_jump_";
+            const size_t n_slime_sounds = 3;
+            const size_t len = sizeof(base_label) + 1;
+            char slime_name[len] = {'\0'};
+            size_t wrote = snprintf(slime_name, len, "%s%d", base_label,
+                                    randrange(1, n_slime_sounds));
+            GS_ASSERT(wrote < len);
+            slime_name[len-1] = '\0';
+            Sound::broadcast_play_3d_sound(slime_name, position);
+        }
+        #endif
         apply_control_state(cs, speed, this->jump_force, position, momentum,
                             ground_distance);
     }

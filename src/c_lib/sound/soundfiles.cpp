@@ -79,6 +79,7 @@ int get_soundfile_id_for_name(const char* event_name)
     for (int i=0; i<n_sounds; i++)
         if (strcmp(soundfiles[i].event_name, event_name) == 0)
             return i;
+    printf("WARNING: No soundfile found for event_name %s\n", event_name);
     return -1;
 }
 
