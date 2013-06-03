@@ -276,7 +276,8 @@ void tick()
 
     charging = false;
     if (holding && single_trigger &&
-        get_item_charge_behaviour(local_item_type) != CHARGE_NEVER)
+        get_item_charge_behaviour(local_item_type) != CHARGE_NEVER &&
+        agent_fire_cooldown[local_agent_id] == 0)
     {
         holding_tick++;
         if (holding_tick >= CHARGE_THRESHOLD)
