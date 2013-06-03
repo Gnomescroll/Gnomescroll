@@ -100,6 +100,13 @@ static void apply_click_and_hold_settings_for(ClickAndHoldBehaviour cnh)
             apply_type_settings((ItemType)i);
 }
 
+static void apply_charge_settings_for(ChargeBehaviour c)
+{
+    for (int i=0; i<int(MAX_ITEM_TYPES); i++)
+        if (get_item_charge_behaviour((ItemType)i) == c)
+            apply_type_settings((ItemType)i);
+}
+
 static void set_group(ItemGroup group)
 {
     GS_ASSERT(group != IG_ERROR);
@@ -132,24 +139,61 @@ static void set_type(const char* name)
 // Setters for click_and_hold specifically
 // We keep it separate, because click_and_hold is common to server and client
 // Whereas the callbacks have nothing shared between the two
+
+static void _coerce_charge_behaviour(ItemType type, ClickAndHoldBehaviour cnh)
+{
+    IF_ASSERT(!isValid(type)) return;
+    if (cnh == CLICK_HOLD_ALWAYS)
+        charge[type] = CHARGE_NEVER;
+    else if (cnh == CLICK_HOLD_SOMETIMES)
+        charge[type] = CHARGE_ALWAYS;
+}
+
+
 static void click_and_hold_group(ItemGroup group, ClickAndHoldBehaviour cnh)
 {
     GS_ASSERT(group != IG_ERROR);
     for (int i=0; i<int(MAX_ITEM_TYPES); i++)
         if (Item::type_used((ItemType)i) && Item::get_item_group_for_type((ItemType)i) == group)
+        {
             click_and_hold[i] = cnh;
+            _coerce_charge_behaviour(ItemType(i), cnh);
+        }
 }
 
 static void click_and_hold_type(ItemType type, ClickAndHoldBehaviour cnh)
 {
     IF_ASSERT(!isValid(type)) return;
     click_and_hold[type] = cnh;
+    _coerce_charge_behaviour(type, cnh);
 }
 
 static void click_and_hold_type(const char* name, ClickAndHoldBehaviour cnh)
 {
     ItemType type = Item::get_item_type(name);
     click_and_hold_type(type, cnh);
+}
+
+static void charge_type(ItemType type, ChargeBehaviour c)
+{
+    IF_ASSERT(!isValid(type)) return;
+    charge[type] = c;
+}
+
+static void charge_type(const char* name, ChargeBehaviour c)
+{
+    ItemType type = Item::get_item_type(name);
+    charge_type(type, c);
+}
+
+static void charge_group(ItemGroup group, ChargeBehaviour c)
+{
+    for (int i=0; i<int(MAX_ITEM_TYPES); i++)
+        if (Item::type_used(ItemType(i)) &&
+            Item::get_item_group_for_type(ItemType(i)) == group)
+        {
+            charge[i] = c;
+        }
 }
 
 /* Config */
@@ -165,6 +209,14 @@ static void register_click_and_hold()
     click_and_hold_group(IG_MINING_LASER, CLICK_HOLD_ALWAYS);
     // override per-type here
     //click_and_hold_type("example");
+}
+
+static void register_charge()
+{
+    charge_group(IG_HITSCAN_WEAPON, CHARGE_NEVER);
+    charge_group(IG_GRENADE_LAUNCHER, CHARGE_NEVER);
+    charge_group(IG_DEBUG, CHARGE_NEVER);
+    charge_type("small_charge_pack", CHARGE_NEVER);
 }
 
 static void register_click_and_hold_callbacks()
@@ -310,6 +362,8 @@ void register_callbacks()
     register_click_and_hold();
     // bind click and hold callbacks
     register_click_and_hold_callbacks();
+    // set charge behaviours
+    register_charge();
     // apply groups, broadly
     register_item_group_callbacks();
     // overwrite with type-specific callbacks
@@ -318,32 +372,19 @@ void register_callbacks()
 
 void validate_callbacks()
 {
-    GS_ASSERT(click_and_hold != NULL);
-    GS_ASSERT(ticks          != NULL);
-    GS_ASSERT(triggers       != NULL);
-    GS_ASSERT(beta_triggers  != NULL);
+    IF_ASSERT(click_and_hold == NULL) return;
+    IF_ASSERT(charge         == NULL) return;
+    IF_ASSERT(ticks          == NULL) return;
+    IF_ASSERT(triggers       == NULL) return;
+    IF_ASSERT(beta_triggers  == NULL) return;
     #if DC_CLIENT
-    GS_ASSERT(begin_triggers       != NULL);
-    GS_ASSERT(end_triggers         != NULL);
-    GS_ASSERT(local_ticks          != NULL);
-    GS_ASSERT(local_triggers       != NULL);
-    GS_ASSERT(local_beta_triggers  != NULL);
-    GS_ASSERT(local_begin_triggers != NULL);
-    GS_ASSERT(local_end_triggers   != NULL);
-    #endif
-
-    if (click_and_hold == NULL) return;
-    if (ticks          == NULL) return;
-    if (triggers       == NULL) return;
-    if (beta_triggers  == NULL) return;
-    #if DC_CLIENT
-    if (begin_triggers       == NULL) return;
-    if (end_triggers         == NULL) return;
-    if (local_ticks          == NULL) return;
-    if (local_triggers       == NULL) return;
-    if (local_beta_triggers  == NULL) return;
-    if (local_begin_triggers == NULL) return;
-    if (local_end_triggers   == NULL) return;
+    IF_ASSERT(begin_triggers       == NULL) return;
+    IF_ASSERT(end_triggers         == NULL) return;
+    IF_ASSERT(local_ticks          == NULL) return;
+    IF_ASSERT(local_triggers       == NULL) return;
+    IF_ASSERT(local_beta_triggers  == NULL) return;
+    IF_ASSERT(local_begin_triggers == NULL) return;
+    IF_ASSERT(local_end_triggers   == NULL) return;
     #endif
 
     for (int i=0; i<int(MAX_ITEM_TYPES); i++)
@@ -355,6 +396,8 @@ void validate_callbacks()
         GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !local_begin_triggers[i]); // no begin triggers should be defined if not click and hold
         GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !end_triggers[i]); // no end triggers should be defined if not click and hold
         GS_ASSERT(click_and_hold[i] != CLICK_HOLD_NEVER || !local_end_triggers[i]); // no end triggers should be defined if not click and hold
+        GS_ASSERT(click_and_hold[i] != CLICK_HOLD_ALWAYS || charge[i] == CHARGE_NEVER);
+        GS_ASSERT(click_and_hold[i] != CLICK_HOLD_SOMETIMES || charge[i] == CHARGE_ALWAYS);
         #endif
     }
 }

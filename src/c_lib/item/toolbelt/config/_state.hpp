@@ -4,12 +4,26 @@
 
 typedef enum
 {
-    CLICK_HOLD_NEVER,
-    CLICK_HOLD_SOMETIMES,
-    CLICK_HOLD_ALWAYS,
+    CLICK_HOLD_NEVER,       // e.g. most rifles (aka non automatic)
+    CLICK_HOLD_SOMETIMES,   // only when looking at terrain. e.g. shovels
+    CLICK_HOLD_ALWAYS,      // no matter what. e.g. mining lasers
 } ClickAndHoldBehaviour;
 
+typedef enum
+{
+    CHARGE_NEVER,           // e.g. most rifles (aka not some weird charge gun)
+    CHARGE_ALWAYS           // e.g. all melee weapons. if CLICK_HOLD_SOMETIMES,
+                            // charging will only take place if not aiming at
+                            // terrain when the holding began. it will not
+                            // switch to auto swing mode when pointing at
+                            // terrain if currently charging.  If you are
+                            // pointing at terrain to start, it will auto swing
+                            // and if you look away it will NOT start charging
+} ChargeBehaviour;
+
+
 const ClickAndHoldBehaviour CLICK_HOLD_DEFAULT = CLICK_HOLD_SOMETIMES;
+const ChargeBehaviour CHARGE_DEFAULT = CHARGE_ALWAYS;
 
 namespace Toolbelt
 {
@@ -17,6 +31,7 @@ namespace Toolbelt
 /* Config data store */
 
 extern ClickAndHoldBehaviour* click_and_hold;
+extern ChargeBehaviour* charge;
 
 /* Trigger function pointer tables */
 

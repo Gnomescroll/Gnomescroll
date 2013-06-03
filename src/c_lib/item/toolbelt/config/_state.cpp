@@ -8,6 +8,7 @@ namespace Toolbelt
 /* Config data store */
 
 ClickAndHoldBehaviour* click_and_hold = NULL;
+ChargeBehaviour* charge = NULL;
 
 /* Trigger function pointer tables */
 

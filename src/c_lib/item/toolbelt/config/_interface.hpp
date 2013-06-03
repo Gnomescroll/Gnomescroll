@@ -9,6 +9,7 @@ void teardown_config();
 /* Getters */
 
 ClickAndHoldBehaviour get_item_click_and_hold_behaviour(ItemType item_type);
+ChargeBehaviour get_item_charge_behaviour(ItemType item_type);
 
 /* Callback getters */
 

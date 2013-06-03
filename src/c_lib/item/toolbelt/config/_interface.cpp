@@ -12,7 +12,11 @@ void init_config()
 {
     GS_ASSERT(click_and_hold == NULL);
     click_and_hold = (ClickAndHoldBehaviour*)malloc(MAX_ITEM_TYPES * sizeof(*click_and_hold));
-    for (int i=0; i<(int)MAX_ITEM_TYPES; click_and_hold[i++] = CLICK_HOLD_DEFAULT);
+    for (int i=0; i<int(MAX_ITEM_TYPES); click_and_hold[i++] = CLICK_HOLD_DEFAULT);
+
+    GS_ASSERT(charge == NULL);
+    charge = (ChargeBehaviour*)malloc(MAX_ITEM_TYPES * sizeof(*charge));
+    for (int i=0; i<int(MAX_ITEM_TYPES); charge[i++] = CHARGE_DEFAULT);
 
     GS_ASSERT(ticks         == NULL);
     GS_ASSERT(triggers      == NULL);
@@ -47,6 +51,7 @@ void init_config()
 void teardown_config()
 {
     free(click_and_hold);
+    free(charge);
     free(ticks);
     free(triggers);
     free(beta_triggers);
@@ -93,6 +98,12 @@ ClickAndHoldBehaviour get_item_click_and_hold_behaviour(ItemType item_type)
 {
     VALIDATE_ITEM_TYPE_RET(item_type, CLICK_HOLD_DEFAULT);
     return click_and_hold[item_type];
+}
+
+ChargeBehaviour get_item_charge_behaviour(ItemType item_type)
+{
+    VALIDATE_ITEM_TYPE_RET(item_type, CHARGE_DEFAULT);
+    return charge[item_type];
 }
 
 /* Callback getters */
