@@ -16,6 +16,10 @@ extern ItemContainerID toolbelt_id;
 extern bool single_trigger; // last event was a single trigger event
 extern bool holding;        // is holding button down
 extern int holding_tick;    // how long we've been holding down
+extern bool charging;       // player is charging their weapon. it is different
+                            // from holding in that the player is only considered
+                            // charging if the weapon supports charging and
+                            // they've been holding longer than some threshold
 #endif
 
 // Server

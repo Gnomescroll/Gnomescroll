@@ -252,7 +252,10 @@ static void draw_weapon_charge_meter()
     float charge_ratio = Toolbelt::get_charge_progress();
     int w = _xres / 4;
     int h = _yres / 128;
-    glColor4ub(20, 200, 150, 115);
+    unsigned char alpha = 115;
+    if (charge_ratio >= 1.0f)
+        alpha *= 2;
+    glColor4ub(20, 200, 150, alpha);
     meter_graphic.draw(0, h*2, w, h, charge_ratio, MeterGraphic::METANCH_LEFT);
     glColor4ub(255, 255, 255, 255);
 }

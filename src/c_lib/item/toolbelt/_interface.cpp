@@ -273,8 +273,15 @@ void tick()
                     send_begin_alpha_action_packet();
         }
     }
-    if (holding && single_trigger && get_item_charge_behaviour(local_item_type) != CHARGE_NEVER)
+
+    charging = false;
+    if (holding && single_trigger &&
+        get_item_charge_behaviour(local_item_type) != CHARGE_NEVER)
+    {
         holding_tick++;
+        if (holding_tick >= CHARGE_THRESHOLD)
+            charging = true;
+    }
     else
         holding_tick = 0;
     #endif

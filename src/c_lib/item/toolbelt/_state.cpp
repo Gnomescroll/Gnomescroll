@@ -15,6 +15,7 @@ bool holding = false;
 int holding_tick = 0;
 bool single_trigger = false;
 int selected_slot = 0;
+bool charging = false;
 ItemContainerID toolbelt_id = NULL_CONTAINER;
 #endif
 
