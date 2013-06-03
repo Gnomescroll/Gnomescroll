@@ -29,7 +29,7 @@ typedef enum
     CS_JUMP = 32,
     CS_CROUCH = 64,
     CS_BOOST = 128,
-    CS_MISC1 = 256,
+    CS_CHARGE = 256,
     CS_MISC2 = 512,
     CS_MISC3 = 1024
 } CSKey;

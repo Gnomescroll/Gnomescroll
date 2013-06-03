@@ -236,10 +236,10 @@ void apply_control_state(const ControlState& cs, float speed, float jump_force,
     bool right     = cs.cs & CS_RIGHT;
     bool jetpack   = cs.cs & CS_JETPACK;
     bool jump      = cs.cs & CS_JUMP;
+    bool charge    = cs.cs & CS_CHARGE;
     //bool crouch    = cs.cs & CS_CROUCH;
     /* available, but unused
     bool boost     = cs.cs & CS_BOOST;
-    bool misc1     = cs.cs & CS_MISC1;
     bool misc2     = cs.cs & CS_MISC2;
     bool misc3     = cs.cs & CS_MISC3;
     */
@@ -253,6 +253,9 @@ void apply_control_state(const ControlState& cs, float speed, float jump_force,
     const float JUMP_POWINITIAL = 1.0f * 0.17f;
     const float JUMP_POWDEC = 0.2f * 0.24f;
     #endif
+
+    if (charge)
+        speed *= 0.5f;
 
     speed *= PHYSICS_TICK_RATE;
 
@@ -364,7 +367,7 @@ bool agent_collides_terrain(Agent* a)
     ////implemented, but unused
     ///*
     //bool boost       = a_cs & CS_BOOST ? 1 :0;
-    //bool misc1       = a_cs & CS_MISC1 ? 1 :0;
+    //bool charge      = a_cs & CS_CHARGE ? 1 :0;
     //bool misc2       = a_cs & CS_MISC2 ? 1 :0;
     //bool misc3       = a_cs & CS_MISC3 ? 1 :0;
     //*/

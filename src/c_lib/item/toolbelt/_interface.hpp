@@ -1,6 +1,7 @@
 #pragma once
 
 #include <item/common/enum.hpp>
+#include <item/toolbelt/_state.hpp>
 
 // Common
 namespace Toolbelt

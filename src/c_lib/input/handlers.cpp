@@ -872,7 +872,7 @@ void agent_mouse_motion_handler(SDL_Event* event)
 void agent_key_state_handler(Uint8 *keystate, int numkeys,
     char *f, char *b, char *l, char *r,
     char *jet, char *jump, char *crouch, char *boost,
-    char *m1, char *m2, char *m3)
+    char *charge, char *misc2, char *misc3)
 {
     if (keystate[SDLK_w])
         *f = 1;
@@ -1372,21 +1372,30 @@ void key_state_handler(Uint8 *keystate, int numkeys)
         return;
     }
 
-    char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
-    f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
+    char f = 0;
+    char b = 0;
+    char l = 0;
+    char r = 0;
+    char jet = 0;
+    char jump = 0;
+    char crouch = 0;
+    char boost = 0;
+    char charge = 0;
+    char misc2 = 0;
+    char misc3 = 0;
 
     if (!input_state.chat && !input_state.awesomium)
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
             agent_key_state_handler(keystate, numkeys, &f, &b, &l, &r, &jet,
-                                    &jump, &crouch, &boost, &m1, &m2, &m3);
+                                    &jump, &crouch, &boost, &charge, &misc2,
+                                    &misc3);
         else
             camera_key_state_handler(keystate, numkeys);
     }
 
-    // always set control state
     ClientState::player_agent.set_control_state(f, b, l, r, jet, jump, crouch,
-                                                boost, m1, m2, m3,
+                                                boost, charge, misc2, misc3,
                                                 agent_camera->theta,
                                                 agent_camera->phi);
 }

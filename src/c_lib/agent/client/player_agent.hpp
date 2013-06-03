@@ -27,7 +27,7 @@ class PlayerAgent
     uint16_t sanitize_control_state(uint16_t cs);
     uint16_t pack_control_state(int f, int b, int l, int r,
                                 int jet, int jump, int crouch, int boost,
-                                int misc1, int misc2, int misc3);
+                                int charge, int misc2, int misc3);
 
     void set_control_state(uint16_t cs, float theta, float phi);
 
@@ -83,7 +83,7 @@ class PlayerAgent
 
     //set also sends
     void set_control_state(int f, int b, int l, int r, int jet,
-                           int jump, int crouch, int boost, int misc1,
+                           int jump, int crouch, int boost, int charge,
                            int misc2, int misc3, float theta, float phi);
 
     float camera_z();

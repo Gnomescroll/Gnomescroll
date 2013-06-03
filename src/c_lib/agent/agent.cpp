@@ -385,16 +385,17 @@ void Agent::print_cs()
     int jump      = cs & CS_JUMP     ? 1 : 0;
     int crouch    = cs & CS_CROUCH   ? 1 : 0;
     int boost     = cs & CS_BOOST    ? 1 : 0;
-    int misc1     = cs & CS_MISC1    ? 1 : 0;
+    int charge    = cs & CS_CHARGE   ? 1 : 0;
     int misc2     = cs & CS_MISC2    ? 1 : 0;
     int misc3     = cs & CS_MISC3    ? 1 : 0;
 
-    printf("f,b,l,r = %d%d%d%d\n", forward, backwards, left, right);
-    printf("jet=%d\n", jetpack);
-    printf("jump=%d\n", jump);
-    printf("crouch=%d\n", crouch);
-    printf("boost=%d\n", boost);
-    printf("misc123= %d%d%d\n", misc1, misc2, misc3);
+    printf("f, b, l, r: %d, %d, %d, %d\n", forward, backwards, left, right);
+    printf("jet: %d\n", jetpack);
+    printf("jump: %d\n", jump);
+    printf("crouch: %d\n", crouch);
+    printf("boost: %d\n", boost);
+    printf("charge: %d\n", charge);
+    printf("misc2,3: %d, %d\n", misc2, misc3);
 }
 
 ControlState Agent::get_current_control_state()

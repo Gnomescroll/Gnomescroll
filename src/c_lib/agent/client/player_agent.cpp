@@ -117,7 +117,7 @@ void PlayerAgent::handle_net_control_state(int _seq, int _cs, float _theta, floa
 
 uint16_t PlayerAgent::pack_control_state(int f, int b, int l, int r,
                                          int jet, int jump, int crouch,
-                                         int boost, int misc1, int misc2,
+                                         int boost, int charge, int misc2,
                                          int misc3)
 {
     uint16_t cs = 0;
@@ -129,7 +129,7 @@ uint16_t PlayerAgent::pack_control_state(int f, int b, int l, int r,
     if (jump)   cs |= CS_JUMP;
     if (crouch) cs |= CS_CROUCH;
     if (boost)  cs |= CS_BOOST;
-    if (misc1)  cs |= CS_MISC1;
+    if (charge) cs |= CS_CHARGE;
     if (misc2)  cs |= CS_MISC2;
     if (misc3)  cs |= CS_MISC3;
     return cs;
@@ -149,7 +149,7 @@ uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
     int jump      = cs & CS_JUMP     ? 1 : 0;
     int crouch    = cs & CS_CROUCH   ? 1 : 0;
     int boost     = cs & CS_BOOST    ? 1 : 0;
-    int misc1     = cs & CS_MISC1    ? 1 : 0;
+    int charge    = cs & CS_CHARGE   ? 1 : 0;
     int misc2     = cs & CS_MISC2    ? 1 : 0;
     int misc3     = cs & CS_MISC3    ? 1 : 0;
 
@@ -168,17 +168,20 @@ uint16_t PlayerAgent::sanitize_control_state(uint16_t cs)
         jump = 0;
 
     jp = jetpack.update(jp);
+
+    charge = Toolbelt::charging;
+
     cs = this->pack_control_state(forward, backwards, left, right, jp,
-                                  jump, crouch, boost, misc1, misc2, misc3);
+                                  jump, crouch, boost, charge, misc2, misc3);
     return cs;
 }
 
 void PlayerAgent::set_control_state(int f, int b, int l, int r, int jet,
-                                    int jump, int crouch, int boost, int misc1,
+                                    int jump, int crouch, int boost, int charge,
                                     int misc2, int misc3, float theta, float phi)
 {
     uint16_t cs = this->pack_control_state(f, b, l, r, jet, jump, crouch,
-                                           boost, misc1, misc2, misc3);
+                                           boost, charge, misc2, misc3);
     cs = this->sanitize_control_state(cs);
     this->set_control_state(cs, theta, phi);
 }
