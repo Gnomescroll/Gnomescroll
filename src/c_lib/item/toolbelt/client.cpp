@@ -27,7 +27,7 @@ void turn_fire_on(AgentID agent_id)
     else
         toolbelt_item_begin_alpha_action_event_handler(agent_id, item_type);
 
-    agent_fire_cooldown[agent_id] = Item::get_item_fire_rate(item_type);
+    agent_fire_cooldown[agent_id] = 0;
     agent_fire_on[agent_id] = true;
 }
 

@@ -359,6 +359,7 @@ void left_trigger_down_event()
     single_trigger = (cnh == CLICK_HOLD_NEVER ||
                       (cnh == CLICK_HOLD_SOMETIMES &&
                        !ClientState::player_agent.pointing_at_terrain(item_type)));
+
     if (single_trigger)
     {
         if (toolbelt_item_alpha_action())

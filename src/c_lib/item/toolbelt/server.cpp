@@ -23,7 +23,7 @@ void turn_fire_on(AgentID agent_id)
         item_type = fist_item_type;
 
     agent_fire_on[agent_id] = true;
-    agent_fire_cooldown[agent_id] = Item::get_item_fire_rate(item_type);
+    agent_fire_cooldown[agent_id] = 0;
     broadcast_agent_toolbelt_begin_alpha_action_packet(agent_id, item_type);
 }
 
