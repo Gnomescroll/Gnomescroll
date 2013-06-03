@@ -273,7 +273,7 @@ void tick()
                     send_begin_alpha_action_packet();
         }
     }
-    if (holding && single_trigger)
+    if (holding && single_trigger && get_item_charge_behaviour(local_item_type) != CHARGE_NEVER)
         holding_tick++;
     else
         holding_tick = 0;
@@ -354,13 +354,12 @@ void toolbelt_item_selected_event(ItemContainerID container_id, int slot)
 
 void left_trigger_down_event()
 {
-    left_down = true;
+    holding = true;
+    holding_tick = 0;
 
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
 
-    holding = true;
-    holding_tick = 0;
 
     ItemType item_type = get_selected_item_type();
     ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
@@ -383,8 +382,8 @@ void left_trigger_down_event()
 
 void left_trigger_up_event()
 {
-    if (!left_down) return;
-    left_down = false;
+    if (!holding) return;
+    holding = false;
 
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
@@ -397,9 +396,7 @@ void left_trigger_up_event()
     // If it's a CHARGE_ALWAYS and we had a single_trigger event, emit charged attack proportional to charging
     if (cb == CHARGE_ALWAYS && single_trigger)
     {   // unleash a charged attack (if holding_tick is past threshold)
-        float charge_multiplier = 1.0f;
-        if (holding_tick > CHARGE_THRESHOLD)
-            charge_multiplier += get_charge_progress();
+        float charge_multiplier = 1.0f + get_charge_progress();
 
         if (toolbelt_item_alpha_action())
         {
@@ -415,7 +412,6 @@ void left_trigger_up_event()
             send_end_alpha_action_packet();
     }
 
-    holding = false;
     single_trigger = false;
     holding_tick = 0;
 }

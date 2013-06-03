@@ -11,7 +11,6 @@ int* agent_fire_cooldown = NULL;
 
 //Client
 #if DC_CLIENT
-bool left_down = false;
 bool holding = false;
 int holding_tick = 0;
 bool single_trigger = false;
