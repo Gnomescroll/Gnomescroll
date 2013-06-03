@@ -12,10 +12,10 @@
 #include <item/toolbelt/net/StoC.cpp>
 
 #if DC_CLIENT
-#include <item/toolbelt/client.cpp>
+# include <item/toolbelt/client.cpp>
 #endif
 #if DC_SERVER
-#include <item/toolbelt/server.cpp>
+# include <item/toolbelt/server.cpp>
 #endif
 
 #include <item/toolbelt/_state.cpp>

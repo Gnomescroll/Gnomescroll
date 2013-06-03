@@ -18,8 +18,9 @@ ItemType get_agent_selected_item_type(AgentID agent_id);
 
 #if DC_CLIENT
 ItemType get_selected_item_type();
-
 void update_selected_item_type();
+
+float get_charge_progress();
 
 // animation begin/ends for click-and-hold
 void begin_local_item(ItemType item_type);

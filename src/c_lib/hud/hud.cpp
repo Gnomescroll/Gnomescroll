@@ -238,10 +238,22 @@ static void draw_weapon_cooldown_meter()
     int cooldown = Toolbelt::agent_fire_cooldown[agent_id];
     int cooldown_max = Item::get_item_fire_rate(item_type);
     float cooldown_ratio = float(cooldown) / float(cooldown_max);
-    int w = _xres / 8;
+    int w = _xres / 4;
     int h = _yres / 128;
     glColor4ub(200, 20, 150, 115);
     meter_graphic.draw(0, h, w, h, cooldown_ratio, MeterGraphic::METANCH_LEFT);
+    glColor4ub(255, 255, 255, 255);
+}
+
+static void draw_weapon_charge_meter()
+{
+    AgentID agent_id = ClientState::player_agent.agent_id;
+    if (!isValid(agent_id)) return;
+    float charge_ratio = Toolbelt::get_charge_progress();
+    int w = _xres / 4;
+    int h = _yres / 128;
+    glColor4ub(20, 200, 150, 115);
+    meter_graphic.draw(0, h*2, w, h, charge_ratio, MeterGraphic::METANCH_LEFT);
     glColor4ub(255, 255, 255, 255);
 }
 
@@ -258,6 +270,7 @@ void draw_hud_textures()
 
     #if !PRODUCTION
     draw_weapon_cooldown_meter();
+    draw_weapon_charge_meter();
     #endif
 
     // health/energy

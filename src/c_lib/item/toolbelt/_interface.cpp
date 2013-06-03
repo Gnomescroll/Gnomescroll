@@ -258,7 +258,7 @@ void tick()
     #if DC_CLIENT
     // If we're currently click-and-hold firing on terrain, shut it off if
     // we are no longer looking at terrain
-    if (get_item_click_and_hold_behaviour(local_item_type) == CLICK_HOLD_SOMETIMES)
+    if (!single_trigger && get_item_click_and_hold_behaviour(local_item_type) == CLICK_HOLD_SOMETIMES)
     {
         if (agent_fire_on[local_agent_id])
         {
@@ -273,7 +273,10 @@ void tick()
                     send_begin_alpha_action_packet();
         }
     }
-    single_trigger = false;
+    if (holding && single_trigger)
+        holding_tick++;
+    else
+        holding_tick = 0;
     #endif
 }
 
@@ -351,54 +354,89 @@ void toolbelt_item_selected_event(ItemContainerID container_id, int slot)
 
 void left_trigger_down_event()
 {
+    left_down = true;
+
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
+
     holding = true;
+    holding_tick = 0;
+
     ItemType item_type = get_selected_item_type();
     ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
+    ChargeBehaviour cb = get_item_charge_behaviour(item_type);
     single_trigger = (cnh == CLICK_HOLD_NEVER ||
                       (cnh == CLICK_HOLD_SOMETIMES &&
                        !ClientState::player_agent.pointing_at_terrain(item_type)));
 
-    if (single_trigger)
-    {
-        if (toolbelt_item_alpha_action())
-            send_alpha_action_packet();
-    }
-    else
+    if (!single_trigger)
     {
         if (toolbelt_item_begin_alpha_action())
             send_begin_alpha_action_packet();
+    }
+    else if (cb == CHARGE_NEVER)
+    {
+        if (toolbelt_item_alpha_action())
+            send_alpha_action_packet();
     }
 }
 
 void left_trigger_up_event()
 {
-    holding = false;
+    if (!left_down) return;
+    left_down = false;
+
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
-    bool something_happened = toolbelt_item_end_alpha_action();
-    if (something_happened)
+
+    ItemType item_type = get_selected_item_type();
+    ChargeBehaviour cb = get_item_charge_behaviour(item_type);
+
+    bool turn_off = !single_trigger;
+
+    // If it's a CHARGE_ALWAYS and we had a single_trigger event, emit charged attack proportional to charging
+    if (cb == CHARGE_ALWAYS && single_trigger)
+    {   // unleash a charged attack (if holding_tick is past threshold)
+        float charge_multiplier = 1.0f;
+        if (holding_tick > CHARGE_THRESHOLD)
+            charge_multiplier += get_charge_progress();
+
+        if (toolbelt_item_alpha_action())
+        {
+            printf("Charged attack. Multiplier: %0.2f\n", charge_multiplier);
+            send_alpha_action_packet();
+            turn_off = false;
+        }
+    }
+
+    if (turn_off)
     {
-        ItemType item_type = get_selected_item_type();
-        ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
-        if (cnh != CLICK_HOLD_NEVER)
+        if (toolbelt_item_end_alpha_action())
             send_end_alpha_action_packet();
     }
+
+    holding = false;
+    single_trigger = false;
+    holding_tick = 0;
 }
 
 void right_trigger_down_event()
 {
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
-    bool something_happened = toolbelt_item_beta_action();
-    if (something_happened) send_beta_action_packet();
+    if (toolbelt_item_beta_action())
+        send_beta_action_packet();
 }
 
 void right_trigger_up_event()
 {
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
+}
+
+float get_charge_progress()
+{
+    return GS_MIN(holding_tick - CHARGE_THRESHOLD, CHARGE_MAX) / float(CHARGE_MAX);
 }
 
 } // Toolbelt
