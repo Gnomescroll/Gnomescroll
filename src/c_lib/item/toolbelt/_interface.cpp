@@ -271,7 +271,7 @@ void tick()
                 if (toolbelt_item_end_alpha_action())
                     send_end_alpha_action_packet();
         }
-        else if (holding && holding_tick == HOLDING_DELAY)
+        else if (holding && holding_tick >= HOLDING_DELAY)
         {
             if (ClientState::player_agent.pointing_at_terrain(local_item_type))
                 if (toolbelt_item_begin_alpha_action())
@@ -373,7 +373,8 @@ void left_trigger_down_event()
         if (toolbelt_item_begin_alpha_action())
             send_begin_alpha_action_packet();
     }
-    else
+
+    if (cnh == CLICK_HOLD_SOMETIMES)
     {
         holding = true;
         holding_tick = 0;
@@ -388,7 +389,11 @@ void left_trigger_up_event()
     holding_tick = 0;
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
-    bool turn_off = true;
+
+    ItemType item_type = get_selected_item_type();
+    ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
+
+    bool turn_off = (cnh != CLICK_HOLD_NEVER);
 
     if (was_holding && was_holding_tick <= HOLDING_DELAY)
     {
@@ -399,14 +404,8 @@ void left_trigger_up_event()
 
     if (turn_off)
     {
-        bool something_happened = toolbelt_item_end_alpha_action();
-        if (something_happened)
-        {
-            ItemType item_type = get_selected_item_type();
-            ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
-            if (cnh != CLICK_HOLD_NEVER)
-                send_end_alpha_action_packet();
-        }
+        if (toolbelt_item_end_alpha_action())
+            send_end_alpha_action_packet();
     }
 }
 
