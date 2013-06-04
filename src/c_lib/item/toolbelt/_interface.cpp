@@ -368,7 +368,6 @@ void left_trigger_down_event()
     class Agents::Agent* you = ClientState::player_agent.you();
     if (you == NULL || you->status.dead) return;
 
-
     ItemType item_type = get_selected_item_type();
     ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
     ChargeBehaviour cb = get_item_charge_behaviour(item_type);
@@ -385,6 +384,10 @@ void left_trigger_down_event()
     {
         if (toolbelt_item_alpha_action())
             send_alpha_action_packet();
+    }
+    else
+    {   // TODO -- move
+        Animations::begin_equipped_item_animation(item_type, false);
     }
 }
 
@@ -405,7 +408,6 @@ void left_trigger_up_event()
     if (cb == CHARGE_ALWAYS && single_trigger)
     {   // unleash a charged attack (if holding_tick is past threshold)
         float charge_multiplier = 1.0f + get_charge_progress();
-
         if (toolbelt_item_alpha_action())
         {
             printf("Charged attack. Multiplier: %0.2f\n", charge_multiplier);

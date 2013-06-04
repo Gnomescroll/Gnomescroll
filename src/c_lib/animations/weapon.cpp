@@ -303,7 +303,7 @@ static void select_current_config(ItemType item_type)
     if (Item::item_type_is_voxel(item_type))
         current_config = &voxel_config;
     else if (Options::animation_level <= 1)
-            current_config = &sprite_config;
+        current_config = &sprite_config;
     else
         current_config = &voxelized_sprite_config;
 }
@@ -313,7 +313,7 @@ static void select_current_config_other(ItemType item_type)
     if (Item::item_type_is_voxel(item_type))
         current_config_other = &voxel_config_other;
     else if (Options::animation_level <= 1)
-            current_config_other = &sprite_config_other;
+        current_config_other = &sprite_config_other;
     else
         current_config_other = &voxelized_sprite_config_other;
 }
@@ -322,17 +322,7 @@ void draw_equipped_item(ItemType item_type)
 {    // draw item in hud
     if (item_type == NULL_ITEM_TYPE)
         item_type = Item::get_item_type("fist");
-    if (equipped_item_animating && rendered_item != item_type)
-    {
-        //const char* old_name = Item::get_item_name(rendered_item);
-        //const char* new_name = Item::get_item_name(item_type);
-        //GS_ASSERT(old_name != NULL);
-        //GS_ASSERT(new_name != NULL);
-        //GS_ASSERT(strcmp(old_name, new_name) != 0);
-        //if (old_name != NULL && new_name != NULL)
-            //printf("Equipped item animating but weapon switched from %s to %s\n",
-                //old_name, new_name);
-    }
+
     rendered_item = item_type;
     IF_ASSERT(agent_camera == NULL) return;
     select_current_config(item_type);
@@ -385,6 +375,14 @@ void draw_equipped_item(ItemType item_type)
     up = vec3_scalar_mult(up, current_config->scale);
     right = vec3_scalar_mult(right, current_config->scale);
     forward = vec3_scalar_mult(forward, current_config->scale);
+
+    if (Toolbelt::get_charge_progress() >= 1.0f)
+    {
+        const float shake = 0.06f;
+        origin = vec3_add(origin, vec3_scalar_mult(up, (randf() - 0.5f) * shake));
+        origin = vec3_add(origin, vec3_scalar_mult(right, (randf() - 0.5f) * shake));
+        origin = vec3_add(origin, vec3_scalar_mult(forward, (randf() - 0.5f) * shake));
+    }
 
     if (Item::item_type_is_voxel(item_type))
     {
@@ -523,7 +521,8 @@ void tick_equipped_item_animation()
 {
     if (!equipped_item_animating) return;
 
-    equipped_item_animation_tick += equipped_item_animation_tick_nudge;
+    if (!Toolbelt::charging)
+        equipped_item_animation_tick += equipped_item_animation_tick_nudge;
 
     const int duration = ONE_SECOND / 3; // ticks
     if (equipped_item_animation_tick > duration)
@@ -543,16 +542,29 @@ void tick_equipped_item_animation()
     }
 
     // calculate offsets based on tick value
-    const float delta = 0.05f;
     animation_state.origin.depth = current_config->alignment.origin.depth;
-    if (equipped_item_animation_tick < duration/2)
-        animation_state.origin.depth += delta * float(equipped_item_animation_tick);
-    else
-        animation_state.origin.depth += delta * float(duration - equipped_item_animation_tick);
 
-    // clamp
-    if (animation_state.origin.depth < current_config->alignment.origin.depth)
-        animation_state.origin.depth = current_config->alignment.origin.depth;
+    if (Toolbelt::holding && Toolbelt::single_trigger)
+    {
+        ItemType item_type = Toolbelt::get_selected_item_type();
+        float pullback_dist = 0.4f;
+        if (Item::item_type_is_voxel(item_type))
+            pullback_dist = 0.2f;
+        if (Toolbelt::charging)
+            animation_state.origin.depth -= pullback_dist * Toolbelt::get_charge_progress();
+    }
+    else
+    {
+        const float delta = 0.05f;
+        if (equipped_item_animation_tick < duration/2)
+            animation_state.origin.depth += delta * float(equipped_item_animation_tick);
+        else
+            animation_state.origin.depth += delta * float(duration - equipped_item_animation_tick);
+        // clamp
+        if (animation_state.origin.depth < current_config->alignment.origin.depth)
+            animation_state.origin.depth = current_config->alignment.origin.depth;
+    }
+
 }
 
 void stop_equipped_item_animation()
