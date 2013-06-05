@@ -75,6 +75,10 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     OS = platform.system()
     conf.env.os = OS
 
+    arch = platform.architecture()[0]
+    i386 = (arch == '32bit')
+    x86_64 = (arch == '64bit')
+
     optflag = '-O{0}'.format(optlevel)
     awe_stem = 'release'
     if awesomium_debug:
@@ -84,11 +88,17 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         awesomium = True
         assimp = True
         auth = True
+        # Force 32-bit compilation in production
+        i386 = True
+        x86_64 = False
     if auth:
         awesomium = True
     aweflag = '-DGS_AWESOMIUM={0}'.format(int(awesomium))
     assimpflag = '-DGS_ASSIMP={0}'.format(int(assimp))
     authflag = '-DGS_AUTH={0}'.format(int(auth))
+
+    conf.env.i386 = i386
+    conf.env.x86_64 = x86_64
 
     use_clang = check_clang(conf, requested=use_clang)
     if use_clang:
@@ -125,6 +135,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         # _COM_interface' in windows header basetyps.h
     else:
         cxxflags = ['-ggdb', '-fPIC']  # '-lefence'
+        if i386:
+            cxxflags.append('-m32')
+            link_flags.append('-m32')
 
     # -fPIC may hurt optimization
     # '-Wl', '--export-dynamic'  to export symbols from exe to shared libaries
@@ -210,10 +223,16 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'],
                    uselib_store='GL')
 
-    if OS != 'Windows':
-        conf.check_cfg(path='sdl-config', args='--cflags --libs',
-                       package='', uselib_store='SDL')
-    if OS == 'Windows':
+    if OS == 'Linux':
+        arch_label = '32'
+        if x86_64:
+            arch_label = '64'
+        sdl_flags = ('-I../../lib/lin/include/SDL -D_GNU_SOURCE=1 -lSDL '
+                     '-I../../lib/lin/include/SDL_image '
+                     '-L../../../lib/lin{0}').format(arch_label)
+        conf.check_cfg(path='echo', args=sdl_flags, package='',
+                       uselib_store='SDL')
+    elif OS == 'Windows':
         sdl_config_path = os.path.join(libpath, 'SDL/bin/sdl-config')
         sdl_inc_path = libpath
         sdl_lib_path = libpath
@@ -223,6 +242,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         # subprocess.call('bash.exe ' + sdl_config_cmd, shell=True)
         conf.check_cfg(path='bash.exe',
                        args=sdl_config_cmd,
+                       package='', uselib_store='SDL')
+    else:
+        conf.check_cfg(path='sdl-config', args='--cflags --libs',
                        package='', uselib_store='SDL')
 
     conf.env.INCLUDES = []

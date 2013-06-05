@@ -180,6 +180,7 @@ class TaskBase(evil):
 
 	def __repr__(self):
 		"for debugging purposes"
+		return 'dog'
 		return '\n\t{task %r: %s %s}' % (self.__class__.__name__, id(self), str(getattr(self, 'fun', '')))
 
 	def __str__(self):

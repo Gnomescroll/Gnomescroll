@@ -84,9 +84,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
 
     cxxflags = []
     if OS == 'Windows':
-        cxxflags += ['-g', '-fpermissive', '-static-libgcc']
+        cxxflags += ['-g', '-fpermissive', '-static-libgcc', '-DNOMINMAX']
     else:
-        cxxflags += ['-ggdb', '-fPIC']
+        cxxflags += ['-ggdb', '-fPIC', '-m32']
 
     if OS == 'Darwin':
         cxxflags += ['-s']
@@ -117,7 +117,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     cxxflags += [c for c in add_flags if c not in cxxflags]
     cxxflags = [c for c in cxxflags if c not in rm_flags]
 
+    conf.env.append_value('CFLAGS', cxxflags)
     conf.env.append_value('CXXFLAGS', cxxflags)
+    conf.env.append_value('CPPFLAGS', cxxflags)
 
     #'-Wl', '--export-dynamic'  to export symbols from exe to shared libaries
     if OS == 'Windows':
@@ -125,7 +127,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.append_value('LINKFLAGS', '-lwsock32')
         conf.env.append_value('LINKFLAGS', '-lws2_32')
         conf.env.append_value('LINKFLAGS', '-lwinmm')
-        conf.env.append_value('CXXFLAGS', '-DNOMINMAX')
 
     if OS == 'Linux':
         conf.env.append_value('LINKFLAGS', '-lrt')  # 64 bit support
@@ -140,6 +141,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.append_value(
             'CXXFLAGS', '-Xlinker -image_base -Xlinker 100000000')
 
+    link_flags.append('-m32')
+
     conf.env.append_value('LINKFLAGS', ' '.join(link_flags))
 
     if OS == 'Windows':
@@ -150,7 +153,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         lua_lib_path = [os.path.join(libpath, 'lib')]
     else:
         lua_lib_path = ['/usr/local/lib']
-        lua_inc_path = '/usr/include/luajit-2.0'
+        lua_inc_path = ['/usr/include/luajit-2.0',
+                        '/usr/local/include/luajit-2.0']
 
         redis_lib_path = ['../lib/server/hiredis/lib32/',
                           '../lib/server/hiredis/lib64/']
@@ -164,17 +168,18 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
 
     if OS == 'Windows':
         conf.check(header_name='lua.hpp',
-                   lib='lua51',  # 'lua5.1',
-                   use='lua51',  # 'lua5.1',
+                   lib='lua51',
+                   use='lua51',
                    libpath=lua_lib_path,
                    includes=lua_inc_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
-                   mandatory=True)
+                   mandatory=True,
+                   env=env)
     else:
         conf.check(header_name='lua.h',
-                   lib='luajit-5.1',  # 'lua5.1',
-                   use='luajit-5.1',  # 'lua5.1',
+                   lib='luajit-5.1',
+                   use='luajit-5.1',
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    libpath=lua_lib_path,
