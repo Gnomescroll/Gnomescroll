@@ -24,9 +24,11 @@ void teardown()
 
 }
 
-void populate_2d_noise_array(float* _2d_noise_array, float persistence, int octaves)
+void populate_2d_noise_array(float* _2d_noise_array, float persistence,
+                             int octaves, bool change_seed)
 {
-    seed_twister(rand());
+    if (change_seed)
+        seed_twister(rand());
     class PerlinOctave2D* p2d = new class PerlinOctave2D(octaves);
 
     float sum = 0.0f;
@@ -45,7 +47,8 @@ void populate_2d_noise_array(float* _2d_noise_array, float persistence, int octa
 }
 
 // NOTE: caller must free() the return value if not NULL
-float* create_2d_noise_array(const float persistence, const int octaves, const unsigned int x, const unsigned int y)
+float* create_2d_noise_array(float persistence, int octaves, size_t x, size_t y,
+                             bool change_seed)
 {
     int size = x*y;
     IF_ASSERT(size <= 0) return NULL;
@@ -53,15 +56,16 @@ float* create_2d_noise_array(const float persistence, const int octaves, const u
     float* noise = (float*)malloc(size * sizeof(float));
     IF_ASSERT(noise == NULL) return NULL;
 
-    seed_twister(rand());
+    if (change_seed)
+        seed_twister(rand());
 
     const float xscale = 1.0f/float(x);
     const float yscale = 1.0f/float(y);
 
     class PerlinOctave2D* pgen = new class PerlinOctave2D(octaves);
 
-    for (unsigned int i=0; i<x; i++)
-    for (unsigned int j=0; j<y; j++)
+    for (size_t i=0; i<x; i++)
+    for (size_t j=0; j<y; j++)
         noise[i + x*j] = pgen->sample(i * xscale, j * yscale, persistence);
 
     delete pgen;
