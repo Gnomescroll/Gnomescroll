@@ -1,4 +1,4 @@
-/**
+/** 
  @file  protocol.h
  @brief ENet protocol
 */
@@ -9,15 +9,16 @@
 
 enum
 {
-   ENET_PROTOCOL_MINIMUM_MTU             = 576,  //from 576 
-   ENET_PROTOCOL_MAXIMUM_MTU             = 1450,
+   ENET_PROTOCOL_MINIMUM_MTU             = 576,
+   ENET_PROTOCOL_MAXIMUM_MTU             = 4096,
    ENET_PROTOCOL_MAXIMUM_PACKET_COMMANDS = 32,
-
-   ENET_PROTOCOL_MINIMUM_WINDOW_SIZE     = 32768,   //4096
-   ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE     = 65536,  //32768
+   ENET_PROTOCOL_MINIMUM_WINDOW_SIZE     = 4096,
+   ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE     = 32768,
    ENET_PROTOCOL_MINIMUM_CHANNEL_COUNT   = 1,
-   ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT   = 8,
-   ENET_PROTOCOL_MAXIMUM_PEER_ID         = 0xFF //0xFFF
+   ENET_PROTOCOL_MAXIMUM_CHANNEL_COUNT   = 255,
+   ENET_PROTOCOL_MAXIMUM_PEER_ID         = 0xFFF,
+   ENET_PROTOCOL_MAXIMUM_PACKET_SIZE     = 1024 * 1024 * 1024,
+   ENET_PROTOCOL_MAXIMUM_FRAGMENT_COUNT  = 1024 * 1024
 };
 
 typedef enum _ENetProtocolCommand
@@ -56,7 +57,7 @@ typedef enum _ENetProtocolFlag
 #ifdef _MSC_VER_
 #pragma pack(push, 1)
 #define ENET_PACKED
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__clang__)
 #define ENET_PACKED __attribute__ ((packed))
 #else
 #define ENET_PACKED
