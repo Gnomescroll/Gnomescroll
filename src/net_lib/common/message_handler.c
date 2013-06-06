@@ -14,7 +14,7 @@ void default_handler_function(char* buff, int n, size_t* read_bytes)
 {
     //printf("ERROR!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id\n");
-    *read_bytes = -1;
+    *read_bytes = 0;
 }
 
 void register_server_message_handler(int message_id, size_t size, pt2handler_server fptr)
@@ -39,7 +39,7 @@ void register_server_message_handler(int message_id, size_t size, pt2handler_ser
 
 void register_client_message_handler(int message_id, size_t size, pt2handler_client fptr)
 {
-    if (message_id >= 256 || message_id < 0)
+    if (message_id > 0xFF || message_id < 0)
     {
         printf("register_client_message_handler: message ID invalid\n");
         return;
@@ -89,8 +89,8 @@ int process_packet_messages(char* buff, size_t* n, size_t max_n)
 
     //printf("*n= %i, max_n= %i\n", *n, max_n);
 
-    size_t size;
-    uint8_t message_id;
+    size_t size = 0;
+    uint8_t message_id = 0xFF;
 
     size_t read_bytes = 0;
 
@@ -107,11 +107,11 @@ int process_packet_messages(char* buff, size_t* n, size_t max_n)
         //printf("0 n= %i, max_n= %i\n", *n, max_n);
 
         #if DC_SERVER
-        size  = h_server_packet_size[message_id];
+        size = h_server_packet_size[message_id];
         #endif
 
         #if DC_CLIENT
-        size  = h_client_packet_size[message_id];
+        size = h_client_packet_size[message_id];
         #endif
 
         //printf("%d Receiving packet %d,%d\n", _in++, message_id, size);
@@ -181,8 +181,8 @@ int process_client_map_messages(char* buff, size_t* n, size_t max_n)
     printf("process_client_map_messages Error: this should never be called on server\n");
     #endif
     //printf("*n= %i, max_n= %i\n", *n, max_n);
-    uint8_t message_id;
-    size_t read_bytes;
+    uint8_t message_id = 0xFF;
+    size_t read_bytes = 0;
 
     do
     {

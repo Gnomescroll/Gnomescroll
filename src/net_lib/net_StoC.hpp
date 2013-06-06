@@ -91,13 +91,9 @@ class FixedSizeNetPacketToClient
     void sendToClients(ClientID* client_ids, size_t n_clients)
     {
         #if DC_SERVER
-        GS_ASSERT(client_ids != NULL);
-        if (client_ids == NULL) return;
-        GS_ASSERT(n_clients > 0);
-        if (n_clients <= 0) return;
-
-        GS_ASSERT(n_clients <= NetServer::number_of_clients);
-        if (n_clients > NetServer::number_of_clients) return;
+        IF_ASSERT(client_ids == NULL) return;
+        IF_ASSERT(n_clients <= 0) return;
+        IF_ASSERT(n_clients > NetServer::number_of_clients) return;
 
         NetMessage* nm = NetMessage::acquire(Derived::size);
         size_t buff_n = 0;
@@ -111,8 +107,7 @@ class FixedSizeNetPacketToClient
             GS_ASSERT(client_id >= 0 && client_id < HARD_MAX_CONNECTIONS);
             if (client_id < 0 || client_id >= HARD_MAX_CONNECTIONS) continue;
             np = NetServer::pool[client_id];
-            GS_ASSERT(np != NULL);
-            if (np == NULL) continue;
+            IF_ASSERT(np == NULL) continue;
             np->push_unreliable_message(nm);
         }
         #else

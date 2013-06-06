@@ -50,7 +50,7 @@ void end_client_compressors()
     free(decompression_buffer);
 }
 
-void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
+void map_chunk_compressed_StoC::handle(char* buff, size_t byte_num)
 {
     GS_ASSERT(client_chunk_alias_list[chunk_alias] == -1);
 
@@ -101,7 +101,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     main_map->chunk_received(cx,cy);
 }
 
-void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
+void map_chunk_uncompressed_StoC::handle(char* buff, size_t byte_num)
 {
     //printf("map_chunk: alias= %d for %d %d \n", chunk_alias, chunk_index%MAP_CHUNK_XDIM, chunk_index /MAP_CHUNK_XDIM);
     //printf("byte_size= %d \n", byte_size);
@@ -267,8 +267,8 @@ void block_damage_StoC::handle()
 
 #if DC_SERVER
 
-void map_chunk_compressed_StoC::handle(char* buff, int byte_num) {}
-void map_chunk_uncompressed_StoC::handle(char* buff, int byte_size) {}
+void map_chunk_compressed_StoC::handle(char* buff, size_t byte_num) {}
+void map_chunk_uncompressed_StoC::handle(char* buff, size_t byte_size) {}
 
 void clear_alias_StoC::handle() {}
 void set_map_alias_StoC::handle() {}

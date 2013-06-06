@@ -295,7 +295,7 @@ class MapMessageArrayPacketToClient
         //printf("2 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
     }
 
-    virtual void handle(char* buff, int byte_num) = 0;
+    virtual void handle(char* buff, size_t byte_num) = 0;
 
     ALWAYS_INLINE void _handle(char* buff, size_t buff_n, size_t* bytes_read)
     {

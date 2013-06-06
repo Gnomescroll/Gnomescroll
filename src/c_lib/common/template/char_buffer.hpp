@@ -233,7 +233,7 @@ class Char_buffer2 {
 };
 
 
-inline void get_char_buffer(int length, char** b, Net_message_buffer** nmb)
+inline void get_char_buffer(size_t length, char** b, Net_message_buffer** nmb)
 {
     static Net_message_buffer* current = NULL;
     static int remaining = 0;

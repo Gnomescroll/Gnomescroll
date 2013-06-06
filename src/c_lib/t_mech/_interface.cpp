@@ -355,12 +355,15 @@ MechCreateFailureCode create_mech(const Vec3i& position, MechType type, int side
     if (ret != MCF_OK) return ret;
 
     struct Mech m;
+    m.render_type = MECH_RENDER_TYPE_NONE;
     m.type = type;
     m.subtype = 0;
     m.position = position;
     m.growth_ttl = get_mech_growth_ttl(type);
     m.side = side;
     m.text = NULL;
+    m.offset_x = 0.0f;
+    m.offset_y = 0.0f;
     m.center = get_mech_center(m);
 
     MechClassType class_type = get_mech_class(m.type);

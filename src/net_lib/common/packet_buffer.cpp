@@ -35,39 +35,34 @@ Net message buffer
 class NetMessageBuffer
 {
     public:
-        int reference_count;
+        ssize_t reference_count;
         char buffer[NET_MESSAGE_BUFFER_SIZE];
         NetMessageBuffer* next;
         OBJECT_POOL_OBJECT_MACRO
 
     NetMessageBuffer() :
-        reference_count(0)
+        reference_count(0), next(NULL)
     {
+        memset(this->buffer, 0, sizeof(this->buffer));
     }
 };
 
 class NetMessageBufferPool: public ObjectPool<NetMessageBufferPool, NetMessageBuffer, 128>
 {
     public:
-    static const char* name()
-    {
-        return "NetMessageBufferPool";
-    }
-
-    NetMessageBuffer* current;
-    int remaining;
-    char* offset;
+        NetMessageBuffer* current;
+        size_t remaining;
+        char* offset;
 
     NetMessageBufferPool()
     {
-        //printf("=== init ====\n");
         current = this->acquire();
-        remaining = NET_MESSAGE_BUFFER_SIZE;;
+        remaining = NET_MESSAGE_BUFFER_SIZE;
         offset = current->buffer;
         current->reference_count = 1;
     }
 
-    inline void get_char_buffer(int length, char** b, NetMessageBuffer** nmb)
+    inline void get_char_buffer(size_t length, char** b, NetMessageBuffer** nmb)
     {
         if (remaining < length)
         {
@@ -79,11 +74,17 @@ class NetMessageBufferPool: public ObjectPool<NetMessageBufferPool, NetMessageBu
             remaining = NET_MESSAGE_BUFFER_SIZE;
             offset = current->buffer;
         }
+        GS_ASSERT(length <= remaining);
         *b = offset;
         *nmb = current;
-        remaining -= length;
+        remaining -= GS_MIN(length, remaining);
         offset += length;
         current->reference_count++;
+    }
+
+    static const char* name()
+    {
+        return "NetMessageBufferPool";
     }
 };
 
@@ -225,7 +226,7 @@ void NetMessageManager::serialize_messages(char* buff_, size_t index)
 
     class NetMessage* nm;
 
-    for (int i=0; i < pending_messages; i++)
+    for (size_t i=0; i < pending_messages; i++)
     {
         nm = nma_read->net_message_array[nma_read_index];
 
@@ -247,7 +248,7 @@ void NetMessageManager::serialize_messages(char* buff_, size_t index)
             NetMessageArray* tmp = nma_read;
             nma_read = nma_read->next;
             tmp->retire();
-            nma_read_index=0;
+            nma_read_index = 0;
         }
     }
 

@@ -1,13 +1,15 @@
 #include "packet_id_counter.hpp"
 
-static int _server_packet_id = 0;
-int next_server_packet_id()
-{ 
-     return _server_packet_id++; 
+static uint8_t _server_packet_id = 0;
+uint8_t next_server_packet_id()
+{
+    GS_ASSERT(_server_packet_id < 0xFF);
+     return _server_packet_id++;
 }
 
-static int _client_packet_id = 0;
-int next_client_packet_id() 
+static uint8_t _client_packet_id = 0;
+uint8_t next_client_packet_id()
 {
+    GS_ASSERT(_client_packet_id < 0xFF);
     return _client_packet_id++;
 }

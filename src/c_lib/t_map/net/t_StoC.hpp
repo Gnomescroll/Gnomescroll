@@ -15,7 +15,7 @@ class map_chunk_compressed_StoC: public MapMessageArrayPacketToClient<map_chunk_
     public:
         uint16_t chunk_alias;
         uint32_t chunk_index;
-        //int byte_size;
+        //size_t byte_size;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
@@ -23,7 +23,7 @@ class map_chunk_compressed_StoC: public MapMessageArrayPacketToClient<map_chunk_
         pack_u32(&chunk_index, buff, buff_n, pack);
     }
 
-    ALWAYS_INLINE void handle(char* buff, int byte_num);
+    ALWAYS_INLINE void handle(char* buff, size_t byte_num);
 };
 
 class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chunk_uncompressed_StoC>
@@ -31,7 +31,7 @@ class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chun
     public:
         uint16_t chunk_alias;
         uint32_t chunk_index;
-        //int byte_size;
+        //size_t byte_size;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
@@ -39,7 +39,7 @@ class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chun
         pack_u32(&chunk_index, buff, buff_n, pack);
     }
 
-    ALWAYS_INLINE void handle(char* buff, int byte_num);
+    ALWAYS_INLINE void handle(char* buff, size_t byte_num);
 };
 
 class clear_alias_StoC: public MapMessagePacketToClient<clear_alias_StoC>

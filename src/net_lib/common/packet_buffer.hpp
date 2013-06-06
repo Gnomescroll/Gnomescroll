@@ -8,8 +8,8 @@
 NetMessage Array
 */
 
-static const int NET_MESSAGE_BUFFER_SIZE = 4096; // 69,000 per second, 74-78k per second
-static const int NET_MESSAGE_ARRAY_SIZE = 256; //use 256
+static const size_t NET_MESSAGE_BUFFER_SIZE = 4096; // 69,000 per second, 74-78k per second
+static const size_t NET_MESSAGE_ARRAY_SIZE = 256; //use 256
 
 #define PACKET_BUFFER_DEBUG 1
 
@@ -17,7 +17,7 @@ static const int NET_MESSAGE_ARRAY_SIZE = 256; //use 256
 class NetMessageArray
 {
     public:
-        int reference_count;
+        ssize_t reference_count;
         class NetMessageArray* next;
         class NetMessage* net_message_array[NET_MESSAGE_ARRAY_SIZE];
 
@@ -26,7 +26,7 @@ class NetMessageArray
     NetMessageArray()
     {
         #if PACKET_BUFFER_DEBUG
-            for (int i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
+        for (size_t i=0; i < NET_MESSAGE_ARRAY_SIZE; i++) net_message_array[i] = NULL;
         #endif
         reference_count = 0;
         next = NULL;
@@ -56,7 +56,7 @@ class NetMessage
         char* buff;
     #if PACKET_BUFFER_DEBUG
         size_t len;
-        int reference_count;
+        ssize_t reference_count;
     #else
         unsigned short len;
         short reference_count;
@@ -83,14 +83,14 @@ class NetMessageManager
 {
     public:
 
-        int pending_messages;
+        size_t pending_messages;
         size_t pending_bytes_out;
 
         class NetMessageArray* nma_insert; //array for inserting
-        int nma_insert_index;              //index for insertions
+        size_t nma_insert_index;              //index for insertions
 
         class NetMessageArray* nma_read;   //array for reading
-        int nma_read_index;                //index for reads
+        size_t nma_read_index;                //index for reads
 
     NetMessageManager();
 
