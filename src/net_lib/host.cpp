@@ -518,11 +518,11 @@ static void client_connect(ENetEvent* event)
         uint8_t address[4];
         address_from_uint32(event->peer->address.host, address);
 
-        printf("Client %d connected from %d.%d.%d.%d:%d. %d clients connected\n",
+        printf("Client %d connected from %d.%d.%d.%d:%d. %llu clients connected\n",
                npm->client_id,
                address[0], address[1], address[2], address[3],
                event->peer->address.port,
-               NetServer::number_of_clients);
+               (long long unsigned)NetServer::number_of_clients);
 
         Session* session = begin_session(event->peer->address.host, npm->client_id);
         users->assign_session_to_user(session);
@@ -600,7 +600,7 @@ static void client_disconnect(ENetPeer* peer, enet_uint32 data)
         else
         {
             GS_ASSERT(false);
-            printf("Client %d disconnected with unknown code %d\n", client_id, data);
+            printf("Client %d disconnected with unknown code %llu\n", client_id, (long long unsigned)data);
         }
     }
 

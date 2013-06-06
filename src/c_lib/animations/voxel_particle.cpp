@@ -311,14 +311,9 @@ void draw_textured_voxel_particles()
 {
     if (!textured_voxel_particle_shader.shader_valid) return;
 
-    GS_ASSERT(current_camera != NULL);
-    if (current_camera == NULL) return;
-
-    GS_ASSERT(t_map::block_textures_normal != 0);
-    if (t_map::block_textures_normal == 0) return;
-
-    GS_ASSERT(textured_voxel_particle_vlist != NULL);
-    if (textured_voxel_particle_vlist == NULL) return;
+    IF_ASSERT(current_camera == NULL) return;
+    IF_ASSERT(t_map::block_textures_normal == 0) return;
+    IF_ASSERT(textured_voxel_particle_vlist == NULL) return;
 
     if (textured_voxel_particle_vlist->vertex_number == 0) return;
 
@@ -343,7 +338,7 @@ void draw_textured_voxel_particles()
     //Vec3 pos = current_camera->get_position();
     //glUniform3f(textured_voxel_particle_CameraPos, pos.x, pos.y, pos.z);
 
-    int offset = 0;
+    size_t offset = 0;
     glVertexPointer(3, GL_FLOAT, textured_voxel_particle_vlist->stride, (GLvoid*)offset);
     offset += 3 * sizeof(GL_FLOAT);
     glVertexAttribPointer(textured_voxel_particle_Normal, 3, GL_FLOAT, GL_FALSE, textured_voxel_particle_vlist->stride, (GLvoid*)offset);
@@ -365,14 +360,9 @@ void draw_textured_voxel_particles()
 
 void draw_colored_voxel_particles()
 {
-    GS_ASSERT_LIMIT(colored_voxel_particle_shader.shader_valid, 1);
-    if (!colored_voxel_particle_shader.shader_valid) return;
-
-    GS_ASSERT(current_camera != NULL);
-    if (current_camera == NULL) return;
-
-    GS_ASSERT(colored_voxel_particle_vlist != NULL);
-    if (colored_voxel_particle_vlist == NULL) return;
+    IF_ASSERT(!colored_voxel_particle_shader.shader_valid) return;
+    IF_ASSERT(current_camera == NULL) return;
+    IF_ASSERT(colored_voxel_particle_vlist == NULL) return;
 
     if (colored_voxel_particle_vlist->vertex_number == 0) return;
 
@@ -395,7 +385,7 @@ void draw_colored_voxel_particles()
     //struct Vec3 pos = current_camera->get_position();
     //glUniform3f(colored_voxel_particle_CameraPos, pos.x, pos.y, pos.z);
 
-    int offset = 0;
+    size_t offset = 0;
     glVertexPointer(3, GL_FLOAT, colored_voxel_particle_vlist->stride, (GLvoid*)offset);
     offset += sizeof(struct Vec3);
     glVertexAttribPointer(colored_voxel_particle_Normal, 3, GL_FLOAT, GL_FALSE, colored_voxel_particle_vlist->stride, (GLvoid*)offset);

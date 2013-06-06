@@ -35,10 +35,10 @@ void print_wav_data(WavData* data)
         "byte rate: %d\n"
         "bits per sample: %hd\n"
         "duration (seconds): %0.2f\n"
-        "size (bytes):  %lu\n"
+        "size (bytes):  %llu\n"
         "in use: %d\n",
         data->format, data->channels, data->sample_rate, data->byte_rate,
-        data->bits_per_sample, data->duration, (unsigned long)data->size,
+        data->bits_per_sample, data->duration, (long long unsigned)data->size,
         data->in_use);
 }
 
@@ -245,7 +245,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
         return false;
     }
     data->size = metadata.four_bytes;
-    data->duration = ((float)data->size) / data->byte_rate;
+    data->duration = float(double(data->size) / data->byte_rate);
 
     if (data->size == 0)
     {
@@ -258,7 +258,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
     read = fread(*buffer, sizeof(char), data->size, f);
     if (read != data->size)
     {
-        printf("Failed to read PCM data of size %d\n", data->size);
+        printf("Failed to read PCM data of size %llu\n", (long long unsigned)data->size);
         return false;
     }
 

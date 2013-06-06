@@ -23,7 +23,7 @@ class MapMessagePacketToServer
         virtual void packet(char* buff, size_t* buff_n, bool pack) = 0;
     public:
         static uint8_t message_id;
-        static unsigned int size;
+        static size_t size;
         ClientID client_id; //id of the UDP client who sent message
         static const bool auth_required = true; // override in Derived class to disable
 
@@ -35,9 +35,9 @@ class MapMessagePacketToServer
         pack_message_id(Derived::message_id, buff, buff_n);
         packet(buff, buff_n, true);
     }
-    ALWAYS_INLINE  void unserialize(char* buff, size_t* buff_n, unsigned int* size)
+    ALWAYS_INLINE  void unserialize(char* buff, size_t* buff_n, size_t* size)
     {
-        unsigned int _buff_n = *buff_n;
+        size_t _buff_n = *buff_n;
         packet(buff, buff_n, false);
         *size = *buff_n - _buff_n;
     }
@@ -46,7 +46,7 @@ class MapMessagePacketToServer
     {
         #if DC_CLIENT
         NetMessage* nm = NetMessage::acquire(Derived::size);
-        unsigned int buff_n = 0;
+        size_t buff_n = 0;
         serialize(nm->buff, &buff_n);
         NetClient::Server.push_reliable_message(nm);
         #else
@@ -55,11 +55,11 @@ class MapMessagePacketToServer
     }
 
     //will overflow if more than 128 bytes
-    unsigned int _size()
+    size_t _size()
     {
         char buff[128] = {0};
-        unsigned int buff_n = 0;
-        unsigned int size = 0;
+        size_t buff_n = 0;
+        size_t size = 0;
         unserialize(buff, &buff_n, &size);
         size++; // add a byte for the message id
         GS_ASSERT(size > 0 && size < 128);
@@ -67,7 +67,7 @@ class MapMessagePacketToServer
         return size;
     }
 
-    static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read, ClientID client_id)
+    static void handler(char* buff, size_t buff_n, size_t* bytes_read, ClientID client_id)
     {
         #if DC_SERVER
         Derived x;  //allocated on stack
@@ -93,7 +93,7 @@ class MapMessagePacketToServer
 
 //template <typename T> int Base<T>::staticVar(0);
 template <class Derived> uint8_t MapMessagePacketToServer<Derived>::message_id(255);
-template <class Derived> unsigned int MapMessagePacketToServer<Derived>::size(0);
+template <class Derived> size_t MapMessagePacketToServer<Derived>::size(0);
 
 
 
@@ -107,7 +107,7 @@ class MapMessagePacketToClient
         virtual void packet(char* buff, size_t* buff_n, bool pack) = 0;
     public:
         static uint8_t message_id;
-        static unsigned int size;
+        static size_t size;
 
     MapMessagePacketToClient() {}
     virtual ~MapMessagePacketToClient() {}
@@ -118,9 +118,9 @@ class MapMessagePacketToClient
         packet(buff, buff_n, true);
     }
 
-    ALWAYS_INLINE void unserialize(char* buff, size_t* buff_n, unsigned int* size)
+    ALWAYS_INLINE void unserialize(char* buff, size_t* buff_n, size_t* size)
     {
-        unsigned int _buff_n = *buff_n;
+        size_t _buff_n = *buff_n;
         packet(buff, buff_n, false);
         *size = *buff_n - _buff_n;
     }
@@ -133,7 +133,7 @@ class MapMessagePacketToClient
         if (NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
         NetMessage* nm = NetMessage::acquire(Derived::size);
-        unsigned int buff_n = 0;
+        size_t buff_n = 0;
         serialize(nm->buff, &buff_n);
 
         class NetPeer* np;
@@ -166,11 +166,11 @@ class MapMessagePacketToClient
     }
 
     //will overflow if more than 128 bytes
-    unsigned int _size()
+    size_t _size()
     {
         char buff[128] = {0};
-        unsigned int buff_n = 0;
-        unsigned int size = 0;
+        size_t buff_n = 0;
+        size_t size = 0;
         unserialize(buff, &buff_n, &size);
         size++; // add a byte for the message id
         GS_ASSERT(size > 0 && size < 128);
@@ -178,7 +178,7 @@ class MapMessagePacketToClient
         return size;
     }
 
-    static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read)
+    static void handler(char* buff, size_t buff_n, size_t* bytes_read)
     {
         Derived x;
         x.unserialize(buff, &buff_n, bytes_read);
@@ -195,7 +195,7 @@ class MapMessagePacketToClient
 };
 
 template <class Derived> uint8_t MapMessagePacketToClient<Derived>::message_id(255);
-template <class Derived> unsigned int MapMessagePacketToClient<Derived>::size(0);
+template <class Derived> size_t MapMessagePacketToClient<Derived>::size(0);
 
 /*
     For sending Arrays of Messages
@@ -214,7 +214,7 @@ class MapMessageArrayPacketToClient
     virtual void packet(char* buff, size_t* buff_n, bool pack) = 0;
     public:
         static uint8_t message_id;
-        static unsigned int size;
+        static size_t size;
 
         uint32_t byte_size;
 
@@ -228,9 +228,9 @@ class MapMessageArrayPacketToClient
         packet(buff, buff_n, true);
     }
 
-    ALWAYS_INLINE void unserialize(char* buff, size_t* buff_n, unsigned int* size)
+    ALWAYS_INLINE void unserialize(char* buff, size_t* buff_n, size_t* size)
     {
-        unsigned int _buff_n = *buff_n;
+        size_t _buff_n = *buff_n;
         pack_u32(&byte_size, buff, buff_n, false);
         packet(buff, buff_n, false);
         *size = *buff_n - _buff_n;
@@ -274,11 +274,11 @@ class MapMessageArrayPacketToClient
     }
 
     //will overflow if more than 128 bytes
-    unsigned int _size()
+    size_t _size()
     {
         char buff[128] = {0};
-        unsigned int buff_n = 0;
-        unsigned int size = 0;
+        size_t buff_n = 0;
+        size_t size = 0;
         unserialize(buff, &buff_n, &size);
         size++; // add a byte for the message id
         GS_ASSERT(size > 0 && size < 128);
@@ -286,7 +286,7 @@ class MapMessageArrayPacketToClient
         return size;
     }
 
-    static void handler(char* buff, unsigned int buff_n, unsigned int* bytes_read)
+    static void handler(char* buff, size_t buff_n, size_t* bytes_read)
     {
         Derived x;
 
@@ -297,7 +297,7 @@ class MapMessageArrayPacketToClient
 
     virtual void handle(char* buff, int byte_num) = 0;
 
-    ALWAYS_INLINE void _handle(char* buff, unsigned int buff_n, unsigned int* bytes_read)
+    ALWAYS_INLINE void _handle(char* buff, size_t buff_n, size_t* bytes_read)
     {
         unserialize(buff, &buff_n, bytes_read);
         handle(buff+buff_n, byte_size);
@@ -314,4 +314,4 @@ class MapMessageArrayPacketToClient
 };
 
 template <class Derived> uint8_t MapMessageArrayPacketToClient<Derived>::message_id(255);
-template <class Derived> unsigned int MapMessageArrayPacketToClient<Derived>::size(0);
+template <class Derived> size_t MapMessageArrayPacketToClient<Derived>::size(0);

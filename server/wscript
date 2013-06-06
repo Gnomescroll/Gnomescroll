@@ -69,6 +69,14 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     OS = platform.system()
     conf.env.os = OS
 
+    arch = platform.architecture()[0]
+    i386 = (arch == '32bit')
+    x86_64 = (arch == '64bit')
+    conf.env.i386 = i386
+    conf.env.x86_64 = x86_64
+
+    assert i386 != x86_64
+
     prodflag = '-DPRODUCTION='
     if production:
         prodflag += '1'
@@ -86,7 +94,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     if OS == 'Windows':
         cxxflags += ['-g', '-fpermissive', '-static-libgcc', '-DNOMINMAX']
     else:
-        cxxflags += ['-ggdb', '-fPIC', '-m32']
+        cxxflags += ['-ggdb', '-fPIC']
+        if i386:
+            cxxflags.append('-m32')
 
     if OS == 'Darwin':
         cxxflags += ['-s']
@@ -141,7 +151,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.env.append_value(
             'CXXFLAGS', '-Xlinker -image_base -Xlinker 100000000')
 
-    link_flags.append('-m32')
+    if i386:
+        link_flags.append('-m32')
 
     conf.env.append_value('LINKFLAGS', ' '.join(link_flags))
 
@@ -152,7 +163,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         lua_inc_path = os.path.join(libpath, 'LuaJIT-2.0.0-beta10')
         lua_lib_path = [os.path.join(libpath, 'lib')]
     else:
-        lua_lib_path = ['/usr/local/lib']
+        lua_lib_path = ['/usr/local/lib', '/usr/local/lib32']
         lua_inc_path = ['/usr/include/luajit-2.0',
                         '/usr/local/include/luajit-2.0']
 

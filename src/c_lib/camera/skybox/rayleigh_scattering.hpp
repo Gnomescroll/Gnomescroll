@@ -345,14 +345,14 @@ class Skyplane
 
         if (vec3_length(c) > planet_radius + atmosphere_depth + _epsilon)
         {
-            printf("WTF: camera outside of sphere\n");
-            GS_ASSERT_ABORT(false);
+            printf("ERROR: camera outside of sphere\n");
+            return;
         }
 
         if (vec3_length(c) < planet_radius - _epsilon)
         {
-            printf("WTF: camera inside of sphere\n");
-            GS_ASSERT_ABORT(false);
+            printf("ERROR: camera inside of sphere\n");
+            return;
         }
 
         float _max_light2 = 0.00;
@@ -1156,8 +1156,7 @@ class _PerlinField3D
 
     void init(int _xsize, int _zsize)
     {
-        if (_xsize < 1) GS_ABORT();
-        if (_zsize < 1) GS_ABORT();
+        IF_ASSERT(_xsize < 1 || _zsize < 1) return;
 
         xsize = _xsize;
         xsize2 = xsize*xsize;
@@ -1171,13 +1170,14 @@ class _PerlinField3D
 
     ~_PerlinField3D()
     {
-        if (this->ga != NULL) delete[] this->ga;
+        delete[] this->ga;
     }
 
     //OPTIMIZED
     void generate_gradient_array()
     {
-        for (int i=0; i<this->ssize; i++) ga[i] = rand() % grad_max; //gradient number
+        for (int i=0; i<this->ssize; i++)
+            ga[i] = rand() % grad_max;  // gradient number
     }
 
     OPTIMIZED
@@ -1555,12 +1555,8 @@ void init_rayleigh_scattering()
 /*
     Load cloudblur texture
 */
-    int ret= create_texture_from_file(MEDIA_PATH "sprites/skybox/blur.png", &cloud_blur_texture, GL_LINEAR, GL_LINEAR);
-    if (ret != 0)
-    {
-        GS_ASSERT_ABORT(false);
-    }
-
+    int ret = create_texture_from_file(MEDIA_PATH "sprites/skybox/blur.png", &cloud_blur_texture, GL_LINEAR, GL_LINEAR);
+    GS_ASSERT(!ret);
 }
 
 void tick_rayleigh_scattering()
@@ -1570,13 +1566,9 @@ void tick_rayleigh_scattering()
 
     //reload every 4 seconds unless skybox_debug == 1 or production is true
     if (!PRODUCTION || skybox_debug == 1 || update_count % 120 == 0)
-    {
         CFL.load_file(MEDIA_PATH "config/skybox.cfg"); //reload file during debug
-    }
 
     SR->increment_time();
-
-
 
     int _skybox_update_rate = skybox_update_rate < 5 ? 5 : skybox_update_rate;
     int v = update_count % _skybox_update_rate;
@@ -1598,11 +1590,8 @@ void tick_rayleigh_scattering()
 
 void draw_rayleigh_scattering()
 {
-
     SR->draw(current_camera_position.x, current_camera_position.y, current_camera_position.z);
     PC->draw(current_camera_position.x, current_camera_position.y, current_camera_position.z);
 }
 
-
-
-}
+}   // Skybox

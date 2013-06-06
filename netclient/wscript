@@ -79,6 +79,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     i386 = (arch == '32bit')
     x86_64 = (arch == '64bit')
 
+    # Disable awesomium until it is completely removed
+    awesomium = False
+
     optflag = '-O{0}'.format(optlevel)
     awe_stem = 'release'
     if awesomium_debug:
@@ -97,8 +100,13 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     assimpflag = '-DGS_ASSIMP={0}'.format(int(assimp))
     authflag = '-DGS_AUTH={0}'.format(int(auth))
 
+    assert i386 != x86_64
     conf.env.i386 = i386
     conf.env.x86_64 = x86_64
+
+    arch_label = '32'
+    if x86_64:
+        arch_label = '64'
 
     use_clang = check_clang(conf, requested=use_clang)
     if use_clang:
@@ -204,10 +212,17 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     glew_inc_path = ['../../../lib/win32/glew']
     conf.check(header_name='GL/glew.h', mandatory=True, includes=glew_inc_path)
 
+    libpath = os.path.abspath('../lib/')
     if OS == 'Windows':
         print 'Current directory:', os.path.abspath(os.curdir)
-        path = os.path.abspath('..')
-        libpath = os.path.join(path, 'lib/win32')
+        libpath = os.path.join(libpath, 'win32')
+    else:
+        if i386:
+            libpath = os.path.join(libpath, 'lin32')
+        elif x86_64:
+            libpath = os.path.join(libpath, 'lin64')
+        else:
+            assert False  # should be either of the previous two
 
     if OS == 'Windows':
         # glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
@@ -216,17 +231,14 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.check(lib=['glu32'], uselib_store='GL')
         conf.check(lib=['glew32'], libpath=glew_lib_path, uselib_store='GL')
     elif OS == 'Linux':
-        conf.check(lib=['GL', ], uselib_store='GL')
-        conf.check(lib=['GLU'], uselib_store='GL')
-        conf.check(lib=['GLEW'], uselib_store='GL')
+        conf.check(lib=['GL'], libpath=libpath, uselib_store='GL')
+        conf.check(lib=['GLU'], libpath=libpath, uselib_store='GL')
+        conf.check(lib=['GLEW'], libpath=libpath, uselib_store='GL')
     elif OS == 'Darwin':
         conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'],
                    uselib_store='GL')
 
     if OS == 'Linux':
-        arch_label = '32'
-        if x86_64:
-            arch_label = '64'
         sdl_flags = ('-I../../lib/lin/include/SDL -D_GNU_SOURCE=1 -lSDL '
                      '-I../../lib/lin/include/SDL_image '
                      '-L../../../lib/lin{0}').format(arch_label)
@@ -286,30 +298,37 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    mandatory=True)
 
     if OS == 'Windows':
+        lua_inc_path = os.path.join(libpath, 'LuaJIT-2.0.0-beta10')
+        lua_lib_path = [os.path.join(libpath, 'lib')]
+    else:
+        lua_lib_path = ['/usr/local/lib', '/usr/local/lib32']
+        lua_inc_path = ['/usr/include/luajit-2.0',
+                        '/usr/local/include/luajit-2.0']
+
+    if OS == 'Windows':
         conf.check(header_name='lua.hpp',
-                   lib='lua51',  # 'lua5.1',
-                   use='lua51',  # 'lua5.1',
-                   libpath=[os.path.join(libpath, 'lib'), ],
-                   includes=[os.path.join(libpath, 'LuaJIT-2.0.0-beta10'), ],
+                   lib='lua51',
+                   use='lua51',
+                   libpath=lua_inc_path,
+                   includes=lua_lib_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
     elif OS == 'Linux':
         conf.check(header_name='lua.h',
-                   lib='luajit-5.1',  # 'lua5.1',
-                   use='luajit-5.1',  # 'lua5.1',
-                   libpath=[],
-                   includes='/usr/include/luajit-2.0',
+                   lib='luajit-5.1',
+                   use='luajit-5.1',
+                   libpath=lua_lib_path,
+                   includes=lua_inc_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
     elif OS == 'Darwin':
-        lua_include_path = '/usr/include/luajit-2.0'
         conf.check(header_name='lua.h',
-                   lib='luajit-5.1',  # 'lua5.1',
-                   use='luajit-5.1',  # 'lua5.1',
-                   includes=lua_include_path,
-                   libpath=lua_include_path,
+                   lib='luajit-5.1',
+                   use='luajit-5.1',
+                   libpath=lua_lib_path,
+                   includes=lua_inc_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
@@ -338,8 +357,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     if assimp:
         if OS == 'Linux':
             assimp_lib = 'assimp'
-            assimp_lib_path = ['../lib/lin32/assimp/lib/']
-            assimp_inc_path = ['../lib/lin32/assimp/include/']
+            assimp_lib_path = [libpath]
+            assimp_inc_path = ['../lib/lin/include/assimp/']
         elif OS == 'Windows':
             assimp_lib = 'Assimp32'
             assimp_lib_path = ['../lib/win32/lib/', '../lib/win32/dll/']
@@ -373,15 +392,11 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
             conf.env.RPATH += [rpath]
 
     if OS == 'Linux':
-        if '-DPRODUCTION=1' in conf.env.CXXFLAGS:
-            lib_base_path = '$ORIGIN/./lib/lin32/'
-            conf.env.RPATH += [lib_base_path]
-            # the libs in the root of dc_mmo/lib are copied from steve's
-            # computer. they should not be on the rpath in development
+        if production:
+            lib_base_path = '$ORIGIN/./lib/lin{0}/'
         else:
-            lib_base_path = '$ORIGIN/../lib/lin32/'
-        if assimp:
-            conf.env.RPATH += [os.path.join(lib_base_path, 'assimp/lib')]
+            lib_base_path = '$ORIGIN/../lib/lin{0}/'
+        conf.env.RPATH += [lib_base_path.format(arch_label)]
         if awesomium:
             conf.env.RPATH += [os.path.join(lib_base_path,
                                             'awesomium/release')]
@@ -428,6 +443,8 @@ def build(bld):
         libs = ['lib', 'dll', 'awesomium/lib/{0}'.format(bld.env.awe_stem),
                 'awesomium/bin/{0}'.format(bld.env.awe_stem)]
         libs = map(lambda x: os.path.join(libpath, x), libs)
+    elif OS == 'Linux':
+        includes.append(os.path.abspath('../lib/lin/include'))
 
     # bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols
     # for libc_lib

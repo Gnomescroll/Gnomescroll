@@ -101,12 +101,14 @@ class Session* begin_session(uint32_t ip_addr, ClientID client_id)
     session_count++;
     session->id = session_count;
     session->login();
-    printf("Client %03d connected. %02d clients connected\n", client_id, number_of_clients);
+    printf("Client %03d connected. %02llu clients connected\n", client_id,
+           (long long unsigned)number_of_clients);
     GS_ASSERT(population_log_file != NULL);
     if (population_log_file != NULL)
     {
         const char* time_str = get_time_str();
-        fprintf(population_log_file, "%s : Client %03d connected. %02d clients connected\n", time_str, client_id, number_of_clients);
+        fprintf(population_log_file, "%s : Client %03d connected. %02llu clients connected\n",
+                time_str, client_id, (long long unsigned)number_of_clients);
         if (feof(population_log_file))
         {
             GS_ASSERT(false);
@@ -133,12 +135,14 @@ void end_session(class Session* session)
         }
     }
     session->print(NULL);   // print to stdout
-    printf("Client %d disconnected. %d clients connected\n", session->client_id, number_of_clients);
+    printf("Client %d disconnected. %llu clients connected\n", session->client_id,
+           (long long unsigned)number_of_clients);
     GS_ASSERT(population_log_file != NULL);
     if (population_log_file != NULL)
     {
         const char* time_str = get_time_str();
-        fprintf(population_log_file, "%s : Client %03d disconnected. %02d clients connected\n", time_str, session->client_id, number_of_clients);
+        fprintf(population_log_file, "%s : Client %03d disconnected. %02llu clients connected\n",
+                time_str, session->client_id, (long long unsigned)number_of_clients);
         if (feof(population_log_file))
         {
             GS_ASSERT(false);

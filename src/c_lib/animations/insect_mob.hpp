@@ -295,8 +295,7 @@ void InsectMobList::draw()
 
     if (insect_mob_vlist->vertex_number == 0) return;
 
-    GS_ASSERT(insect_mob_vlist->VBO != 0);
-    if (insect_mob_vlist->VBO == 0) return;
+    IF_ASSERT(insect_mob_vlist->VBO == 0) return;
 
     glColor3ub(255,255,255);
 
@@ -310,7 +309,7 @@ void InsectMobList::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(insect_mob_TexCoord);
 
-    int offset = 0;
+    size_t offset = 0;
     glVertexPointer(3, GL_FLOAT, insect_mob_vlist->stride, (GLvoid*)offset);
     offset += 3 * sizeof(GL_FLOAT);
     glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, insect_mob_vlist->stride, (GLvoid*)offset);

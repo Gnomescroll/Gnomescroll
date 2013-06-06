@@ -1,26 +1,21 @@
 #pragma once
 
-#include <t_mech/_interface.hpp>
-#include <t_mech/mech_state.hpp>
-#include <t_mech/_interface.hpp>
-
-#include <t_mech/config/_interface.hpp>
-#include <t_mech/mesh_loader.hpp>
-
 #if DC_SERVER
 # error Do not include this file in the server
 #endif
 
 #include <physics/vec3.hpp>
 #include <animations/common.hpp>
-
-
-using Animations::VertexElementListTexture;
+#include <t_mech/_interface.hpp>
+#include <t_mech/mech_state.hpp>
+#include <t_mech/_interface.hpp>
+#include <t_mech/config/_interface.hpp>
+#include <t_mech/mesh_loader.hpp>
 
 namespace t_mech
 {
 
-
+using Animations::VertexElementListTexture;
 
 class MechLightEffect
 {
@@ -189,7 +184,7 @@ class MechLightEffect
 
         static int c = 0;
         c++;
-        if(c%6 == 0)
+        if(c % 6 == 0)
             counter++;
 
         const MechType mech_type = t_mech::get_mech_type("light_crystal");
@@ -213,8 +208,7 @@ class MechLightEffect
 
         if (vlist->vertex_number == 0) return;
 
-        GS_ASSERT(vlist->VBO != 0);
-        if (vlist->VBO == 0) return;
+        IF_ASSERT(vlist->VBO == 0) return;
 
         glColor3ub(255,255,255);
 
@@ -233,7 +227,7 @@ class MechLightEffect
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableVertexAttribArray(shader_TexCoord);
 
-        int offset = 0;
+        size_t offset = 0;
         glVertexPointer(3, GL_FLOAT, vlist->stride, (GLvoid*)offset);
         offset += 3 * sizeof(GL_FLOAT);
         glVertexAttribPointer(shader_TexCoord, 2, GL_FLOAT, GL_FALSE, vlist->stride, (GLvoid*)offset);

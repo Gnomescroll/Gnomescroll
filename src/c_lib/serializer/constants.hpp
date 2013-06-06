@@ -316,7 +316,7 @@ const char USER_ID_FMT[] =
 
 const char USER_COUNT_FMT[] =
     USER_COUNT_TAG TAG_DELIMITER
-        "%0" GS_STR(USER_COUNT_LENGTH) "d";
+        "%0" GS_STR(USER_COUNT_LENGTH) "llu";
 
 #define PLAYER_REDIS_KEY_PREFIX "player:"
 
