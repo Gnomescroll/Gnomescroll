@@ -217,11 +217,6 @@ void client_dispatch_network_events()
         switch (event.type)
         {
 
-        //ENET_EVENT_TYPE_NONE       = 0,
-        //ENET_EVENT_TYPE_CONNECT    = 1,
-        //ENET_EVENT_TYPE_DISCONNECT = 2,
-        //ENET_EVENT_TYPE_RECEIVE    = 3
-
         case ENET_EVENT_TYPE_NONE:
             printf("ENET_EVENT_TYPE_NONE: Nothing happened \n");
             break;
@@ -365,11 +360,6 @@ void dispatch_network_events()
         switch (event.type)
         {
 
-        //ENET_EVENT_TYPE_NONE       = 0,
-        //ENET_EVENT_TYPE_CONNECT    = 1,
-        //ENET_EVENT_TYPE_DISCONNECT = 2,
-        //ENET_EVENT_TYPE_RECEIVE    = 3
-
         case ENET_EVENT_TYPE_NONE:
             printf("ENET_EVENT_TYPE_NONE: Nothing happened \n");
             break;
@@ -395,7 +385,6 @@ void dispatch_network_events()
             switch (event.channelID)
             {
                 case 0:
-                    printf("server received channel 0 message \n");
                     index = 0;
                     GS_ASSERT(event.peer->data != NULL);
                     if (event.peer->data != NULL)
@@ -408,8 +397,7 @@ void dispatch_network_events()
                     }
                     break;
                 case 1:
-                    printf("server received channel 1 message \n");
-                    index= 0;
+                    index = 0;
                     GS_ASSERT(event.peer->data != NULL);
                     if (event.peer->data != NULL)
                     {
