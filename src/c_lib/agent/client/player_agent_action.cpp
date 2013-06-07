@@ -133,7 +133,7 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
             break;
 
         case HITSCAN_TARGET_NONE:
-            collision_point = vec3_scalar_mult(look, map_dim.x * 0.5f);
+            collision_point = vec3_scalar_mult(look, range);
             collision_point = vec3_add(pos, collision_point);
             none_msg.send();    // server will know to forward a fire weapon packet
             break;

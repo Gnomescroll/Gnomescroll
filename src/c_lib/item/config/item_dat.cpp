@@ -26,6 +26,7 @@ void load_item_dat()
     // replacing _ with space and capitalizing all first letters
 
     const float MELEE_FIRING_RANGE = 4.0f;
+    const float RIFLE_FIRING_RANGE = 24.0f;
 
     // special purpose
     item_def(IG_ERROR, "error_item");
@@ -80,7 +81,7 @@ void load_item_dat()
     s->object_damage_min = 15;
     s->object_damage_max = 25;
     s->firing_rate = (5 * ONE_SECOND) / 6;
-    s->firing_range = 128.0f;
+    s->firing_range = RIFLE_FIRING_RANGE;
     block_damage_def(2);
     block_damage_def(CUBE_MATERIAL_DIRT, 4);
     block_damage_def(CUBE_MATERIAL_STONE, 0);
@@ -295,7 +296,7 @@ void load_item_dat()
     s->object_damage_min = 15;
     s->object_damage_max = 25;
     s->firing_rate = (5 * ONE_SECOND) / 6;
-    s->firing_range = 128.0f;
+    s->firing_range = RIFLE_FIRING_RANGE;
     block_damage_def(2);
     block_damage_def(CUBE_MATERIAL_DIRT, 4);
     block_damage_def(CUBE_MATERIAL_STONE, 0);
