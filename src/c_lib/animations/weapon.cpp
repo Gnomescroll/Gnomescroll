@@ -480,8 +480,8 @@ void draw_equipped_sprite_item_other_agent(AgentID agent_id, ItemType item_type)
 void draw_equipped_voxelized_sprite_item_other_agent(AgentID agent_id, ItemType item_type)
 {
     current_config = &voxelized_sprite_config_other;
-    static int fist = Item::get_item_type("fist");
-    if (item_type == NULL_ITEM_TYPE || item_type == fist) return;    // dont draw a fist
+    if (item_type == NULL_ITEM_TYPE || item_type == Toolbelt::fist_item_type)
+        return;    // dont draw a fist for others
     Vec3 origin, forward, right, up;
     bool valid = get_other_agent_render_params(agent_id, &origin, &forward, &right, &up);
     if (!valid) return;
@@ -496,10 +496,7 @@ void begin_equipped_item_animation(ItemType item_type, bool continuous)
     stop_equipped_item_animation();
 
     if (item_type == NULL_ITEM_TYPE)
-    {
-        static ItemType fist = Item::get_item_type("fist");
-        item_type = fist;
-    }
+        item_type = Toolbelt::fist_item_type;
 
     // begin action animation for item type
     equipped_item_animating = true;

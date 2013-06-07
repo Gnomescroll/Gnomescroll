@@ -13,6 +13,7 @@ int* agent_fire_cooldown = NULL;
 #if DC_CLIENT
 bool holding = false;
 int holding_tick = 0;
+bool left_down = false;
 bool single_trigger = false;
 int selected_slot = 0;
 bool charging = false;
