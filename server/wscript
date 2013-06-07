@@ -64,8 +64,7 @@ def check_clang(conf, use_clang=None):
 
 
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
-              production=False, use_clang=None, force32=False, force64=False):
-    assert not force32 or not force64
+              production=False, use_clang=None):
     optflag = '-O' + str(optlevel)
     OS = platform.system()
     conf.env.os = OS
@@ -73,13 +72,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     arch = platform.architecture()[0]
     i386 = (arch == '32bit')
     x86_64 = (arch == '64bit')
-    x64_64_native = x86_64
-    if force64:
-        x86_64 = True
-        i386 = False
-    elif force32:
-        x86_64 = False
-        i386 = True
     conf.env.i386 = i386
     conf.env.x86_64 = x86_64
 
@@ -92,7 +84,6 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         prodflag += '0'
 
     use_clang = check_clang(conf, use_clang=use_clang)
-
     if use_clang:
         conf.check_tool('clang++')
     else:
@@ -240,15 +231,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     conf.env.INCLUDES = ['../src/c_lib', '../src/net_lib', '../src',
                          '/usr/local/include', '/usr/include']
     conf.env.RPATH = ['.', '..', '$ORIGIN/../lib', '/lib', '/usr/lib',
-                      '/usr/local/lib', '/usr/local/lib32']
+                      '/usr/local/lib']
     if OS == 'Linux':
-        if use_clang:
-            # Some should-be-default include paths are not so in clang
-            if x64_64_native:
-                if x86_64:
-                    conf.env.INCLUDES.append('/usr/include/x86_64-linux-gnu/c++/4.7')
-                else:
-                    conf.env.INCLUDES.append('/usr/include/x86_64-linux-gnu/c++/4.7/32')
         conf.env.INCLUDES.append('../lib/server/hiredis/include')
         conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib32')
         conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib64')
@@ -480,15 +464,6 @@ def gcc(ctx):
     configure(ctx, use_clang=False)
 
 
-class i386_ctx(ConfigurationContext):
-    cmd = '32'
-    fun = 'i386'
-
-
-def i386(ctx):
-    configure(ctx, force32=True)
-
-
 class address_sanitizer_ctx(ConfigurationContext):
     cmd = 'asan'
     fun = 'asan'
@@ -497,7 +472,7 @@ class address_sanitizer_ctx(ConfigurationContext):
 def asan(ctx, add=[], rm=[]):
     asan_path = os.environ.get('ASAN_PATH')
     if not asan_path:
-        raise UserWarning('ASAN_PATH not defined in your environment')
+        raise ValueError('ASAN_PATH not defined in your environment')
     flags = ['-fsanitize=address', '-fno-omit-frame-pointer', '-fno-common']
     link_flags = ['-fsanitize=address']
     os.environ['PATH'] = '{0}:{1}'.format(asan_path, os.environ['PATH'])

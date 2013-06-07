@@ -56,8 +56,6 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
     hitscan_none_CtoS none_msg;
     hitscan_object_CtoS obj_msg;
 
-    Agent* agent = NULL;
-
     // This collision point will be overwritten if the hitscan did not hit a
     // voxel model:
     using ClientState::hitscan;
@@ -81,10 +79,7 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
             look = vec3_normalize(look);
 
             if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
-            {
                 Animations::blood_spray(hitscan.voxel_collision_point, look);
-                agent = Agents::get_agent((AgentID)hitscan.voxel_target.entity_id);
-            }
             break;
 
         case HITSCAN_TARGET_BLOCK:
@@ -225,7 +220,6 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
     hit_block_CtoS block_msg;
     melee_object_CtoS obj_msg;
 
-    Agent* agent = NULL;
     Vec3 collision_point = hitscan.voxel_collision_point;
 
     HitscanTargetType type = hitscan.type;
@@ -240,10 +234,7 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
             obj_msg.weapon_type = weapon_type;
             obj_msg.send();
             if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
-            {
-                agent = Agents::get_agent((AgentID)hitscan.voxel_target.entity_id);
                 Animations::blood_spray(collision_point, look);
-            }
             Sound::play_3d_sound("pick_hit_agent", collision_point);
             break;
 
