@@ -71,9 +71,12 @@ bool toolbelt_item_begin_alpha_action()
 
     ItemID item_id = ItemContainer::get_toolbelt_item(selected_slot);
     ItemType item_type = Item::get_item_type(item_id);
-    GS_ASSERT(get_item_click_and_hold_behaviour(item_type) != CLICK_HOLD_NEVER);
-
-    Animations::begin_equipped_item_animation(item_type, true);
+    ClickAndHoldBehaviour cnh = get_item_click_and_hold_behaviour(item_type);
+    GS_ASSERT(cnh != CLICK_HOLD_NEVER);
+    // For now, the only CLICK_HOLD_ALWAYS weapons have their own animation
+    // i.e. the mining lasers.
+    if (cnh == CLICK_HOLD_SOMETIMES)
+        Animations::begin_equipped_item_animation(item_type, true);
     return true;
 }
 

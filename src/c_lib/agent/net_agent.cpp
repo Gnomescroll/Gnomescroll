@@ -689,11 +689,15 @@ inline void melee_object_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
+    // TODO - allow us to force disconnect the client based on bad values
+    // at this level. Possible already? Use it
+    IF_ASSERT(this->charge_progress < 0 || this->charge_progress > 1)
+        return;
 
     if (type == OBJECT_AGENT)
     {
         class Agents::Agent* agent = Agents::get_agent((AgentID)this->id);
-        if (agent==NULL) return;
+        if (agent == NULL) return;
         agent->status.apply_mining_laser_damage_to_part(part, a->id, a->type);
     }
     else
@@ -702,7 +706,8 @@ inline void melee_object_CtoS::handle()
         if (obj == NULL) return;
 
         // apply damage
-        const int obj_dmg = Item::get_item_object_damage((ItemType)weapon_type);
+        int obj_dmg = Item::get_item_object_damage((ItemType)weapon_type);
+        obj_dmg = obj_dmg + roundf(float(obj_dmg) * this->charge_progress);
         using Components::HealthComponent;
         HealthComponent* health = (HealthComponent*)
             obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
@@ -715,7 +720,8 @@ inline void melee_object_CtoS::handle()
             obj->get_component_interface(COMPONENT_INTERFACE_KNOCKBACK);
         if (knockback != NULL)
             knockback->get_hit(a->forward_vector(),
-                               Toolbelt::get_agent_selected_item_type(a->id));
+                               Toolbelt::get_agent_selected_item_type(a->id),
+                               this->charge_progress + 1.0f);
     }
 
     agent_melee_object_StoC msg;

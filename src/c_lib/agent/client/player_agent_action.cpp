@@ -222,6 +222,8 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
 
     Vec3 collision_point = hitscan.voxel_collision_point;
 
+    SoundID sound_id = NULL_SOUND_ID;
+
     HitscanTargetType type = hitscan.type;
     if (hitscan.distance > range) type = HITSCAN_TARGET_NONE;
     switch (type)
@@ -232,10 +234,11 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
             obj_msg.part = hitscan.voxel_target.part_id;
             obj_msg.voxel = hitscan.voxel_target.voxel;
             obj_msg.weapon_type = weapon_type;
+            obj_msg.charge_progress = Toolbelt::get_charge_progress();
             obj_msg.send();
             if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
                 Animations::blood_spray(collision_point, look);
-            Sound::play_3d_sound("pick_hit_agent", collision_point);
+            sound_id = Sound::play_3d_sound("pick_hit_agent", collision_point);
             break;
 
         case HITSCAN_TARGET_BLOCK:
@@ -280,7 +283,7 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
             Animations::block_damage(collision_point, look, hitscan.cube_type, hitscan.block_side);
             //Sound::play_3d_sound("pick_hit_block", collision_point);
             if (weapon_group != IG_MINING_LASER)
-                Sound::play_3d_sound("block_took_damage", collision_point);
+                sound_id = Sound::play_3d_sound("block_took_damage", collision_point);
             break;
 
         case HITSCAN_TARGET_MECH:
@@ -289,7 +292,8 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
                 msg.mech_id = hitscan.mech_id;
                 msg.send();
             }
-            Sound::play_2d_sound("pick_swung");
+            if (weapon_group != IG_MINING_LASER)
+                sound_id = Sound::play_2d_sound("pick_swung");
             break;
 
         case HITSCAN_TARGET_NONE:
@@ -297,9 +301,13 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
                 melee_none_CtoS none_msg;
                 none_msg.send();
             }
-            Sound::play_2d_sound("pick_swung");
+            if (weapon_group != IG_MINING_LASER)
+                sound_id = Sound::play_2d_sound("pick_swung");
             break;
     }
+
+    float sound_gain_mult = 1.0f + (Toolbelt::get_charge_progress());
+    Sound::set_gain_multiplier(sound_id, sound_gain_mult);
 
     this->target_direction = look;
 }

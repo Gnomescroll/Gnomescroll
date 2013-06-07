@@ -377,6 +377,7 @@ class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_
         uint8_t part;
         Vec3i voxel;
         uint16_t weapon_type;
+        float charge_progress;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
@@ -385,6 +386,7 @@ class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_
         pack_u8(&part, buff, buff_n, pack);
         pack_vec3i_u8(&voxel, buff, buff_n, pack);
         pack_u16(&weapon_type, buff, buff_n, pack);
+        pack_float(&charge_progress, buff, buff_n, pack);
     }
     inline void handle();
 };
