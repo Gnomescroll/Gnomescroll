@@ -28,6 +28,7 @@
 		0D74E66615C0663E003855AF /* media in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D74E66515C0663E003855AF /* media */; };
 		0D74E66B15C070C4003855AF /* libcurl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D74E66A15C070C4003855AF /* libcurl.dylib */; };
 		0D74E66C15C07131003855AF /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D74E66A15C070C4003855AF /* libcurl.dylib */; };
+		0D7526161763189F00302B28 /* localhost.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D7526151763189F00302B28 /* localhost.lua */; };
 		0D78B65615A29FAD0097E8CB /* lua_library.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D78B65515A29FAD0097E8CB /* lua_library.lua */; };
 		0D8459E215B25E1D0019F9D1 /* production.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D8459E115B25E1C0019F9D1 /* production.lua */; };
 		0D8459E415B25F1B0019F9D1 /* production.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D8459E315B25F1B0019F9D1 /* production.lua */; };
@@ -165,6 +166,7 @@
 			dstPath = ./settings;
 			dstSubfolderSpec = 7;
 			files = (
+				0D7526161763189F00302B28 /* localhost.lua in CopyFiles */,
 				0DCCF00F164E1D7A00DABD33 /* load_options.lua in CopyFiles */,
 				0D8459E415B25F1B0019F9D1 /* production.lua in CopyFiles */,
 				0DCF86DA15AA22E7000639BC /* lua_library.lua in CopyFiles */,
@@ -193,6 +195,7 @@
 		0D74E66515C0663E003855AF /* media */ = {isa = PBXFileReference; lastKnownFileType = folder; name = media; path = ../../dc_mmo/tools/autoupdate/media; sourceTree = "<group>"; };
 		0D74E66A15C070C4003855AF /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = "../../libcurl-7.26.0/lib/Release/libcurl.dylib"; sourceTree = "<group>"; };
 		0D74E66F15C0820E003855AF /* Gnomescroll.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Gnomescroll.app; path = ../../dc_mmo/tools/autoupdate/Gnomescroll.app; sourceTree = "<group>"; };
+		0D7526151763189F00302B28 /* localhost.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = localhost.lua; path = ../server/settings/localhost.lua; sourceTree = "<group>"; };
 		0D78B65515A29FAD0097E8CB /* lua_library.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = lua_library.lua; path = ../../dc_mmo/netclient/settings/lua_library.lua; sourceTree = "<group>"; };
 		0D8459E115B25E1C0019F9D1 /* production.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = production.lua; path = ../../dc_mmo/netclient/settings/production.lua; sourceTree = "<group>"; };
 		0D8459E315B25F1B0019F9D1 /* production.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = production.lua; path = ../../dc_mmo/server/settings/production.lua; sourceTree = "<group>"; };
@@ -266,6 +269,7 @@
 		0DD6B7F715709CAE0003D792 = {
 			isa = PBXGroup;
 			children = (
+				0D7526151763189F00302B28 /* localhost.lua */,
 				0DCCF00E164E1D7A00DABD33 /* load_options.lua */,
 				0D3066BC1605D76800AF7759 /* data */,
 				0D3066BA1605D74E00AF7759 /* data */,
@@ -428,7 +432,7 @@
 		0DD6B7F915709CAE0003D792 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = 0DD6B7FC15709CAE0003D792 /* Build configuration list for PBXProject "Gnomescroll" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -573,6 +577,7 @@
 		0D74E65315C05FCF003855AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks/SDL_image.framework,
 					/Library/Frameworks/SDL.framework,
@@ -607,6 +612,7 @@
 		0D74E65415C05FCF003855AF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks/SDL_image.framework,
 					/Library/Frameworks/SDL.framework,
@@ -642,13 +648,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				DC_SERVER = 1;
 				DEPLOYMENT_LOCATION = NO;
 				EXPORTED_SYMBOLS_FILE = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks/SDL_image.framework,
-					/Library/Frameworks/SDL.framework,
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -681,13 +685,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				DC_SERVER = 1;
 				DEPLOYMENT_LOCATION = NO;
 				EXPORTED_SYMBOLS_FILE = "";
-				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks/SDL_image.framework,
-					/Library/Frameworks/SDL.framework,
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -721,7 +723,7 @@
 		0DD6B81E15709CB10003D792 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
@@ -729,6 +731,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXPORTED_SYMBOLS_FILE = "";
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -751,7 +754,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PROFILING_CODE = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				KEEP_PRIVATE_EXTERNS = NO;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
@@ -776,7 +781,7 @@
 		0DD6B81F15709CB10003D792 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = NO;
@@ -784,6 +789,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXPORTED_SYMBOLS_FILE = "";
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
@@ -804,7 +810,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_PROFILING_CODE = NO;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				KEEP_PRIVATE_EXTERNS = NO;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -828,11 +836,13 @@
 		0DD6B82115709CB10003D792 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DC_CLIENT = 1;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks/SDL_image.framework,
 					/Library/Frameworks/SDL.framework,
 					/Library/Frameworks/Awesomium.framework,
+					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Gnomescroll/Gnomescroll-Prefix.pch";
@@ -851,6 +861,7 @@
 					"/Users/maslow/src/glew-1.7.0/include",
 					/Library/Frameworks/Awesomium.framework/Headers,
 					"/Users/maslow/src/assimp--3.0.1270-source-only/include",
+					/usr/local/include,
 				);
 				INFOPLIST_FILE = "Gnomescroll/Gnomescroll-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@rpath";
@@ -861,7 +872,7 @@
 					"/Users/maslow/src/assimp--3.0.1270-source-only/lib/RelWithDebInfo",
 				);
 				PRODUCT_NAME = Gnomescroll;
-				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/maslow/src/glew-1.7.0/lib /Users/maslow/src/assimp--3.0.1270-source-only/lib/Release /Users/maslow/Library/Developer/Xcode/DerivedData/Assimp-dvlsedlqlcupuochpdespfautxqd/ArchiveIntermediates/assimp/InstallationBuildProductsLocation/Users/maslow/src/assimp--3.0.1270-source-only/lib/Release";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/maslow/src/glew-1.7.0/lib /Users/maslow/src/assimp--3.0.1270-source-only/lib/Release /Users/maslow/Library/Developer/Xcode/DerivedData/Assimp-dvlsedlqlcupuochpdespfautxqd/ArchiveIntermediates/assimp/InstallationBuildProductsLocation/Users/maslow/src/assimp--3.0.1270-source-only/lib/Release /Users/maslow/dc_mmo/lib/lin32/awesomium/include";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -869,11 +880,13 @@
 		0DD6B82215709CB10003D792 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				DC_CLIENT = 1;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks/SDL_image.framework,
 					/Library/Frameworks/SDL.framework,
 					/Library/Frameworks/Awesomium.framework,
+					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Gnomescroll/Gnomescroll-Prefix.pch";
@@ -893,6 +906,7 @@
 					"/Users/maslow/src/glew-1.7.0/include",
 					/Library/Frameworks/Awesomium.framework/Headers,
 					"/Users/maslow/src/assimp--3.0.1270-source-only/include",
+					/usr/local/include,
 				);
 				INFOPLIST_FILE = "Gnomescroll/Gnomescroll-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "@rpath";
@@ -903,7 +917,7 @@
 					"/Users/maslow/src/assimp--3.0.1270-source-only/lib/RelWithDebInfo",
 				);
 				PRODUCT_NAME = Gnomescroll;
-				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/maslow/src/glew-1.7.0/lib /Users/maslow/src/assimp--3.0.1270-source-only/lib/Release /Users/maslow/Library/Developer/Xcode/DerivedData/Assimp-dvlsedlqlcupuochpdespfautxqd/ArchiveIntermediates/assimp/InstallationBuildProductsLocation/Users/maslow/src/assimp--3.0.1270-source-only/lib/Release";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) /Users/maslow/src/glew-1.7.0/lib /Users/maslow/src/assimp--3.0.1270-source-only/lib/Release /Users/maslow/Library/Developer/Xcode/DerivedData/Assimp-dvlsedlqlcupuochpdespfautxqd/ArchiveIntermediates/assimp/InstallationBuildProductsLocation/Users/maslow/src/assimp--3.0.1270-source-only/lib/Release /Users/maslow/dc_mmo/lib/lin32/awesomium/include";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
