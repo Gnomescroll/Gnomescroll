@@ -72,13 +72,15 @@ def check_clang(conf, use_clang=None):
 
 def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
               production=False, awesomium=True, awesomium_debug=False,
-              assimp=True, use_clang=None, auth=False):
+              assimp=True, use_clang=None, auth=False, windows=False,
+              i386=None):
     OS = platform.system()
     conf.env.os = OS
 
     arch = platform.architecture()[0]
-    i386 = (arch == '32bit')
-    x86_64 = (arch == '64bit')
+    if i386 is None:
+        i386 = (arch == '32bit')
+    x86_64 = not i386
 
     # Disable awesomium until it is completely removed
     awesomium = False
@@ -92,7 +94,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         awesomium = True
         assimp = True
         auth = True
-        # Force 32-bit compilation in production
+        # Force 32-bit compilation in production, until awesomium is removed
         i386 = True
         x86_64 = False
     if auth:
@@ -101,19 +103,28 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     assimpflag = '-DGS_ASSIMP={0}'.format(int(assimp))
     authflag = '-DGS_AUTH={0}'.format(int(auth))
 
-    assert i386 != x86_64
-    conf.env.i386 = i386
-    conf.env.x86_64 = x86_64
-
     arch_label = '32'
     if x86_64:
         arch_label = '64'
 
-    use_clang = check_clang(conf, use_clang=use_clang)
-    if use_clang:
-        conf.check_tool('clang++')
+    if windows:
+        if i386:
+            conf.find_program('i686-w64-mingw32-gcc', var='CC')
+            conf.find_program('i686-w64-mingw32-g++', var='CXX')
+            conf.find_program('i686-w64-mingw32-ar', var='AR')
+        else:
+            conf.find_program('x86_64-w64-mingw32-gcc', var='CC')
+            conf.find_program('x86_64-w64-mingw32-g++', var='CXX')
+            conf.find_program('x86_64-w64-mingw32-ar', var='AR')
+        conf.load('compiler_cxx')
+        if i386:
+            conf.gcc_modifier_win32()
     else:
-        conf.check_tool('g++')
+        use_clang = check_clang(conf, use_clang=use_clang)
+        if use_clang:
+            conf.check_tool('clang++')
+        else:
+            conf.check_tool('g++')
 
     '''
     add to linker for faster linking --incremental
@@ -150,18 +161,19 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
 
     # -fPIC may hurt optimization
     # '-Wl', '--export-dynamic'  to export symbols from exe to shared libaries
-    if OS == 'Windows':
+    if OS == 'Windows' or windows:
         conf.env.append_value('LINKFLAGS', '-lmingw32')
         conf.env.append_value('LINKFLAGS', '-lwsock32')
         conf.env.append_value('LINKFLAGS', '-lws2_32')
         conf.env.append_value('LINKFLAGS', '-lwinmm')
 
-    if OS == 'Linux':
-        conf.env.append_value('LINKFLAGS', '-lrt')  # 64 bit support
-        # conf.env.append_value('LINKFLAGS', '-static') # static lib
-        # conf.env.SHLIB_MARKER = '-Wl,-Bstatic'  # static lib
-    if OS != 'Windows':
-        conf.env.append_value('LINKFLAGS', '-rdynamic')  # 64 bit support
+    if not windows:
+        if OS == 'Linux':
+            conf.env.append_value('LINKFLAGS', '-lrt')  # 64 bit support
+            # conf.env.append_value('LINKFLAGS', '-static') # static lib
+            # conf.env.SHLIB_MARKER = '-Wl,-Bstatic'  # static lib
+        if OS != 'Windows':
+            conf.env.append_value('LINKFLAGS', '-rdynamic')  # 64 bit support
 
     warning_sound_flag = '-DENABLE_WARNING_SOUND=1'
     if production or OS != 'Windows':
@@ -184,6 +196,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]
+
+    if windows:
+        extra_options.append('-DLINUX2WINDOWS')
 
     if use_clang:
         extra_options.append('-ferror-limit=0')
@@ -214,7 +229,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     conf.check(header_name='GL/glew.h', mandatory=True, includes=glew_inc_path)
 
     libpath = os.path.abspath('../lib/')
-    if OS == 'Windows':
+    if OS == 'Windows' or windows:
         print 'Current directory:', os.path.abspath(os.curdir)
         libpath = os.path.join(libpath, 'win32')
     else:
@@ -225,7 +240,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         else:
             assert False  # should be either of the previous two
 
-    if OS == 'Windows':
+    if OS == 'Windows' or windows:
         # glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
         glew_lib_path = [os.path.join(libpath, 'lib')]
         conf.check(lib=['opengl32'], uselib_store='GL')
@@ -239,23 +254,25 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'],
                    uselib_store='GL')
 
-    if OS == 'Linux':
-        sdl_flags = ('-I../../lib/lin/include/SDL -D_GNU_SOURCE=1 -lSDL '
-                     '-I../../lib/lin/include/SDL_image '
-                     '-L../../../lib/lin{0}').format(arch_label)
-        conf.check_cfg(path='echo', args=sdl_flags, package='',
-                       uselib_store='SDL')
-    elif OS == 'Windows':
+    if OS == 'Windows' or windows:
         sdl_config_path = os.path.join(libpath, 'SDL/bin/sdl-config')
         sdl_inc_path = libpath
         sdl_lib_path = libpath
         sdl_config_cmd = '{0} --prefix={1} --exec-prefix={2} --cflags --libs'
         sdl_config_cmd = sdl_config_cmd.format(sdl_config_path, sdl_inc_path,
                                                sdl_lib_path)
-        # subprocess.call('bash.exe ' + sdl_config_cmd, shell=True)
-        conf.check_cfg(path='bash.exe',
+        bash = 'bash.exe'
+        if OS != 'Windows':
+            bash = 'bash'
+        conf.check_cfg(path=bash,
                        args=sdl_config_cmd,
                        package='', uselib_store='SDL')
+    elif OS == 'Linux':
+        sdl_flags = ('-I../../lib/lin/include/SDL -D_GNU_SOURCE=1 -lSDL '
+                     '-I../../lib/lin/include/SDL_image '
+                     '-L../../../lib/lin{0}').format(arch_label)
+        conf.check_cfg(path='echo', args=sdl_flags, package='',
+                       uselib_store='SDL')
     else:
         conf.check_cfg(path='sdl-config', args='--cflags --libs',
                        package='', uselib_store='SDL')
@@ -274,12 +291,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                fragment='#include <SDL_image.h>' + MAIN_TEST_CODE,
                mandatory=True)
 
-    if OS == 'Darwin':
-        conf.check(lib=[],
-                   framework=['OpenAL'],
-                   uselib_store='openal',
-                   mandatory=True)
-    elif OS == 'Windows':
+    if OS == 'Windows' or windows:
         conf.check(header_name='AL/al.h',
                    lib='OpenAL32',
                    use='openal',
@@ -288,6 +300,11 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    libpath=[os.path.join(libpath, 'lib'), ],
                    fragment='#include <AL/al.h>\n#include <AL/alc.h>' +
                        MAIN_TEST_CODE,
+                   mandatory=True)
+    elif OS == 'Darwin':
+        conf.check(lib=[],
+                   framework=['OpenAL'],
+                   uselib_store='openal',
                    mandatory=True)
     else:
         conf.check(header_name='AL/al.h',
@@ -298,7 +315,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                        MAIN_TEST_CODE,
                    mandatory=True)
 
-    if OS == 'Windows':
+    if OS == 'Windows' or windows:
         lua_inc_path = os.path.join(libpath, 'LuaJIT-2.0.0-beta10')
         lua_lib_path = [os.path.join(libpath, 'lib')]
     else:
@@ -306,12 +323,12 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         lua_inc_path = ['/usr/include/luajit-2.0',
                         '/usr/local/include/luajit-2.0']
 
-    if OS == 'Windows':
+    if OS == 'Windows' or windows:
         conf.check(header_name='lua.hpp',
                    lib='lua51',
                    use='lua51',
-                   libpath=lua_inc_path,
-                   includes=lua_lib_path,
+                   libpath=lua_lib_path,
+                   includes=lua_inc_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
@@ -356,14 +373,14 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    uselib_store='AWESOMIUM')
 
     if assimp:
-        if OS == 'Linux':
-            assimp_lib = 'assimp'
-            assimp_lib_path = [libpath]
-            assimp_inc_path = ['../lib/lin/include/assimp/']
-        elif OS == 'Windows':
+        if OS == 'Windows':
             assimp_lib = 'Assimp32'
             assimp_lib_path = ['../lib/win32/lib/', '../lib/win32/dll/']
             assimp_inc_path = ['../lib/win32/assimp/']
+        elif OS == 'Linux':
+            assimp_lib = 'assimp'
+            assimp_lib_path = [libpath]
+            assimp_inc_path = ['../lib/lin/include/assimp/']
         else:
             assert False
 
@@ -373,26 +390,35 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
                    includes=map(os.path.abspath, assimp_inc_path),
                    uselib_store='ASSIMP')
 
-    conf.env.INCLUDES += ['../src/c_lib', '../src', '../src/net_lib',
-                          '/usr/include']
+    conf.env.INCLUDES += ['../src/c_lib', '../src', '../src/net_lib']
+
+    if OS == 'Windows' or windows:
+        conf.env.INCLUDES += ['../lib/win32/glew', '../lib/win32/openal']
+    else:
+        conf.env.INCLUDES += ['/usr/include']
+
     if awesomium:
-        if OS == 'Linux':
-            conf.env.INCLUDES += ['../lib/lin32/awesomium/include/']
-        elif OS == 'Windows':
+        if OS == 'Windows' or windows:
             conf.env.INCLUDES += ['../lib/win32/awesomium/include/']
+        elif OS == 'Linux':
+            conf.env.INCLUDES += ['../lib/lin32/awesomium/include/']
         else:
             assert False
 
-    conf.env.RPATH = ['.', '..', '/lib', '/usr/lib', '/usr/local/lib']
-    if OS == 'Windows':
+    conf.env.RPATH = ['.', '..']
+    if OS == 'Windows' or windows:
         conf.env.INCLUDES.append('../lib/win32/')
-        conf.env.RPATH.append('$ORIGIN/./lib')
-        conf.env.RPATH.append('./lib')
+        conf.env.RPATH += ['$ORIGIN/./lib', './lib',
+                           '$ORIGIN/../lib/win32/lib',
+                           '$ORIGIN/../lib/win32/dll',
+                           '$ORIGIN/../lib/win32']
         if awesomium:
             rpath = '$ORIGIN/./lib/win32/awesomium/lib/{0}'.format(awe_stem)
             conf.env.RPATH += [rpath]
+    else:
+        conf.env.RPATH += ['/lib', '/usr/lib', '/usr/local/lib']
 
-    if OS == 'Linux':
+    if OS == 'Linux' and not windows:
         if production:
             lib_base_path = '$ORIGIN/./lib/lin{0}/'
         else:
@@ -407,6 +433,10 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     conf.env.awe_stem = awe_stem
     conf.env.production = production
     conf.env.build_modules = False
+    conf.env.i386 = i386
+    conf.env.x86_64 = x86_64
+    conf.env.windows = windows
+    assert i386 != x86_64
 
 
 def build(bld):
@@ -427,7 +457,7 @@ def build(bld):
 
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
 
-    if OS == 'Windows':
+    if OS == 'Windows' or bld.env.windows:
         sound_libraries = ['OpenAL32']
     else:
         sound_libraries = ['openal']
@@ -469,7 +499,7 @@ def build(bld):
     )
     # bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
-    bld.add_post_fun(install_bin(target, 'build', '.'))
+    bld.add_post_fun(install_bin(bld.env, target, 'build', '.'))
 
     # if ('-DPRODUCTION=1' in bld.env.CXXFLAGS and
     #     '-DNOSTRIPSYMBOLS' not in bld.env.CXXFLAGS):
@@ -494,7 +524,7 @@ def build_modules(bld):
     )
 
     target = 'lib{0}.so'.format(target)
-    bld.add_post_fun(install_bin(target, 'build', '.plugins'))
+    bld.add_post_fun(install_bin(bld.env, target, 'build', '.plugins'))
 
 
 def copy_awesomium_dlls(ctx):
@@ -511,11 +541,11 @@ def copy_awesomium_dlls(ctx):
                          os.path.join('./', f))
 
 
-def install_bin(target, srcdir, outdir, dest_target=None):
+def install_bin(env, target, srcdir, outdir, dest_target=None):
     OS = platform.system()
     if dest_target is None:
         dest_target = target
-    if OS == 'Windows':
+    if OS == 'Windows' or env.windows:
         target += '.exe'
         dest_target += '.exe'
 
@@ -818,6 +848,16 @@ class gcc_ctx(ConfigurationContext):
 
 def gcc(ctx):
     configure(ctx, use_clang=False)
+
+
+class windows_ctx(ConfigurationContext):
+    cmd = 'windows'
+    fun = 'windows'
+
+
+def windows(ctx):
+    configure(ctx, use_clang=False, windows=True, i386=True, assimp=False,
+              awesomium=False)
 
 
 class address_sanitizer_ctx(ConfigurationContext):

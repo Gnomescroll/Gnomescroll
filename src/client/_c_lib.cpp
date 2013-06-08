@@ -40,17 +40,19 @@
 # error Do not include this file in the server
 #endif
 
-#ifdef _WIN32
-//# define WINVER _WIN32_WINNT_WINXP
-//# define _WIN32_WINNT _WIN32_WINNT_WINXP
-# ifndef NTDDI_VERSION
-#  define NTDDI_VERSION NTDDI_WIN2K
-# endif
-# ifndef _WIN32_IE_IE50
-#  define _WIN32_IE_IE50 0x0500
-# endif
-# ifndef _WIN32_IE
-#  define _WIN32_IE _WIN32_IE_IE50
+#ifndef LINUX2WINDOWS
+# ifdef _WIN32
+//#  define WINVER _WIN32_WINNT_WINXP
+//#  define _WIN32_WINNT _WIN32_WINNT_WINXP
+#  ifndef NTDDI_VERSION
+#   define NTDDI_VERSION NTDDI_WIN2K
+#  endif
+#  ifndef _WIN32_IE_IE50
+#   define _WIN32_IE_IE50 0x0500
+#  endif
+#  ifndef _WIN32_IE
+#   define _WIN32_IE _WIN32_IE_IE50
+#  endif
 # endif
 #endif
 

@@ -4,6 +4,8 @@
 # error Do not include this file in the server
 #endif
 
+#include <string.h>
+
 /*
  *  References:
  *  http://enigma-dev.org/forums/index.php?topic=730.0
@@ -174,16 +176,10 @@ bool read_wav_fmt_subchunk(FILE* f, WavData* data)
 
 static void print_read_error(FILE* f)
 {
-    const size_t bufsiz = 0xFF;
-    static char buf[bufsiz+1];
     if (feof(f))
         printf("Reached the end of the file\n");
     if (ferror(f))
-    {
-        strerror_r(errno, buf, bufsiz+1);
-        buf[bufsiz] = '\0';
-        printf("File had error: %s\n", buf);
-    }
+        printf("File had error: %s\n", strerror(errno));
 }
 
 bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
