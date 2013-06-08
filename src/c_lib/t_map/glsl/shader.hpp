@@ -122,7 +122,7 @@ class MapCompatibilityShader
         this->shader = new Shader;
             this->shader->set_debug(true);
 
-        static bool tried_mesa = false;
+        static bool tried_mesa = true;
         if (!tried_mesa && level == 0)
         {
             bool mesa = false;
@@ -145,7 +145,7 @@ class MapCompatibilityShader
                 MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh",
                 MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh");
         }
-        else if (level ==1)
+        else if (level == 1)
         {
             shader->load_shader("map_compatibility_shader level 1",
                 MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh",

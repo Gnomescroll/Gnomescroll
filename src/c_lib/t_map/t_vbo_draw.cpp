@@ -471,7 +471,7 @@ void VBOMap::draw_map()
 
 void VBOMap::draw_map_compatibility()
 {
-    IF_ASSERT(map_shader.shader == NULL) return;
+    IF_ASSERT(map_compatibility_shader.shader == NULL) return;
 
     prep_draw();
     sort_draw();

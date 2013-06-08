@@ -105,9 +105,8 @@ void init_shaders()
 
         if (!map_compatibility_shader.shader->shader_valid)
         {
-            map_compatibility_shader.init_shader(1);
-
             printf("!!! shader level 0 failed.  Using backup shader level 1 \n");
+            map_compatibility_shader.init_shader(1);
         }
     }
 
