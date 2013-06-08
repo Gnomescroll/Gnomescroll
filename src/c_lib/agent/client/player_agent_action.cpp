@@ -373,9 +373,9 @@ void PlayerAgentAction::throw_grenade()
     msg.send();
 
     // local play (copied from launch_projectile_CtoS)
-    static const float PLAYER_ARM_FORCE = 15.0f; // make agent property
+    static const float PLAYER_ARM_FORCE = 8.0f; // make agent property
     //create grenade
-    f = vec3_scalar_mult(f, PLAYER_ARM_FORCE + (1.0f + charge_progress));
+    f = vec3_scalar_mult(f, PLAYER_ARM_FORCE * (1.0f + charge_progress));
     Particle::Grenade* g = Particle::grenade_list->create();
     IF_ASSERT(g == NULL) return;
     g->set_state(pos, f);

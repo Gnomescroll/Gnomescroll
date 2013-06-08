@@ -772,9 +772,10 @@ inline void launch_projectile_CtoS::handle()
     // TODO load from dat later, and modify by charged status
     //float force = Item::get_projectile_force(item_type);
     //force *= 1.0f + this->charge_progress;
-    static const float PLAYER_ARM_FORCE = 15.0f;
+    static const float PLAYER_ARM_FORCE = 8.0f;
+    float force = PLAYER_ARM_FORCE * (1.0f + this->charge_progress);
     Vec3 n = vec3_normalize(this->velocity);
-    n = vec3_scalar_mult(n, PLAYER_ARM_FORCE * (1.0f + this->charge_progress));
+    n = vec3_scalar_mult(n, force);
 
     // TODO -- use some kind of configuration to pick this up
     // Needs to support a physics interface, owner property, and networking

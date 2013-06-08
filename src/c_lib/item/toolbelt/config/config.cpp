@@ -214,7 +214,7 @@ static void register_click_and_hold()
 static void register_charge()
 {
     charge_group(IG_HITSCAN_WEAPON, CHARGE_NEVER);
-    charge_group(IG_GRENADE_LAUNCHER, CHARGE_NEVER);
+    charge_group(IG_GRENADE_LAUNCHER, CHARGE_ALWAYS);
     charge_group(IG_DEBUG, CHARGE_NEVER);
     charge_type("small_charge_pack", CHARGE_NEVER);
 }
