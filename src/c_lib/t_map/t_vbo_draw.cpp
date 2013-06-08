@@ -281,11 +281,11 @@ Compute matrix by hand and pass in uniform
 
 void VBOMap::draw_map()
 {
+    IF_ASSERT(map_shader.shader == NULL) return;
+
     prep_draw();
     sort_draw();
     prep_frustrum_vertices();
-
-
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_DEPTH_WRITEMASK, true);
@@ -293,7 +293,7 @@ void VBOMap::draw_map()
     glEnable(GL_CULL_FACE);
 
     //glEnable(GL_ALPHA_TEST);
-    //glAlphaFunc(GL_GEQUAL, 0.5); 
+    //glAlphaFunc(GL_GEQUAL, 0.5);
 
     glDisable(GL_TEXTURE_2D);
 
@@ -469,43 +469,10 @@ void VBOMap::draw_map()
     CHECK_GL_ERROR();
 }
 
-/*
-    struct VertexBackup
-    {
-        float x,y,z;        //0
-        float tx0,ty0;      //12
-
-        union               //20
-        {
-            struct
-            {
-                unsigned char tx,ty;
-            };
-            unsigned int tex;
-        };
-
-        union               //24
-        {
-            struct
-            {
-                unsigned char r,g,b,a;
-            };
-            unsigned int color;
-        };
-
-        union               //28
-        {
-            unsigned char ao[4];
-            unsigned int AO;
-        };
-
-        float lighting[2];  //32  //sun and manmade
-
-    };
-*/
-
 void VBOMap::draw_map_compatibility()
 {
+    IF_ASSERT(map_shader.shader == NULL) return;
+
     prep_draw();
     sort_draw();
     prep_frustrum_vertices();

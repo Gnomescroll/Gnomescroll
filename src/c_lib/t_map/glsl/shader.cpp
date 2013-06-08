@@ -75,7 +75,7 @@ void init_shaders()
         }
     }
 
-    //T_MAP_BACKUP_SHADER = 1;
+    T_MAP_BACKUP_SHADER = 0;
 
     if (T_MAP_BACKUP_SHADER == 0)
     {
@@ -297,162 +297,6 @@ void toggle_3d_texture_settings()
             T_MAP_MAG_FILTER  = 0;
     }
     printf("TEXTURE_SETTING: T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = %i T_MAP_MAG_FILTER = %i \n", T_MAP_TEXTURE_2D_ARRAY_MIPMAPS,T_MAP_MAG_FILTER);
-    init_map_3d_texture();
-}
-
-//warning: random segfault on start in graphics driver
-void init_map_3d_texture()
-{
-    //printf("init_map_3d_texture: 0 \n");
-
-}
-
-void teardown_shader()
-{
-    //delete map_shader;
-    //delete map_compatibility_shader;
-}
-
-void set_map_shader_0_compatibility(int level)
-{
-//#if 0
-    //const int index = 0;    //shader index
-    //const int debug = 1;
-
-    //map_shader[index] = glCreateProgramObjectARB();
-    //map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    //map_frag_shader[index] = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-    //bool mesa = false;
-    //if (Options::mesa_shader)
-    //{
-        //printf("OPTIONS MESA Shader\n");
-        //const char* gl_v = (const char*)glGetString(GL_VERSION);
-        //if (strstr(gl_v, "Mesa") != NULL)
-        //{
-            //printf("%s: using Mesa driver shader\n", __FUNCTION__);
-            //mesa = true;
-        //}
-    //}
-    //if (mesa) level = 2;
-
-    //if (debug) printf("set_map_shader_0_compatibility: level %i \n", level);
-
-    //char* vs = NULL;
-    //char* fs = NULL;
-    //if (level == 0)
-    //{
-        //vs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.vsh", &size);
-        //fs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility.fsh", &size);
-    //}
-    //else if (level == 1)
-    //{
-        //vs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.vsh", &size);
-        //fs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_bilinear_ao_compatibility_backup.fsh", &size);
-    //}
-    //else if (level == 2)
-    //{
-        //vs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_mesa.vsh", &size);
-        //fs = read_file_to_buffer(MEDIA_PATH "shaders/terrain/terrain_map_mesa.fsh", &size);
-    //}
-    //else
-    //{
-        //GS_ASSERT(false);
-    //}
-    //IF_ASSERT(vs == NULL || fs == NULL)
-    //{
-        //free(vs);
-        //free(fs);
-        //return;
-    //}
-
-    //glShaderSourceARB(map_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
-    //glShaderSourceARB(map_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
-    //glCompileShaderARB(map_vert_shader[index]);
-    //if (debug) print_shader_info_log(map_vert_shader[index]);
-
-    //glCompileShaderARB(map_frag_shader[index]);
-    //if (debug) print_shader_info_log(map_frag_shader[index]);
-
-    //glAttachObjectARB(map_shader[index], map_vert_shader[index]);
-    //glAttachObjectARB(map_shader[index], map_frag_shader[index]);
-
-    //glLinkProgramARB(map_shader[index]);
-
-    //if (debug) print_program_info_log(map_shader[index]);
-
-    ////uniforms
-
-    //map_ChunkPosition = glGetUniformLocation(map_shader[index], "ChunkPosition");
-    //map_NormalArray = glGetUniformLocation(map_shader[index], "NormalArray");
-
-    ////attributes
-    //map_Vertex = glGetAttribLocation(map_shader[index], "InVertex");
-    //map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
-    //map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
-    //map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
-
-    //map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix");
-    //map_Light = glGetAttribLocation(map_shader[index], "InLight");
-
-    //free(vs);
-    //free(fs);
-
-    //CHECK_GL_ERROR();
-//#endif
-}
-
-void init_map_3d_texture_compatibility()
-{
-//#if 0
-    //SDL_Surface* s = TextureSheetLoader::cube_texture_sheet_loader->surface;
-
-    //if (s == NULL)
-    //{
-        //printf("init_map_3d_texture_compatibility() error \n");
-        //return;
-    //}
-
-
-    //glEnable(GL_TEXTURE_2D);
-
-    //if (block_textures_compatibility == 0)
-    //{
-        //glGenTextures(1, &block_textures_compatibility);
-    //}
-
-    //glBindTexture(GL_TEXTURE_2D, block_textures_compatibility);
-
-    //// Set the texture's stretching properties
-
-    ////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    ////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    //GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
-
-    ////if (s->format->Rmask == 0x000000ff) format = GL_RGBA;
-    ////if (s->format->Rmask != 0x000000ff) format = GL_BGRA;
-
-    //// Edit the texture object's image data using the information SDL_Surface gives us
-    ////glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels); //2nd parameter is level
-
-    //if (ANISOTROPIC_FILTERING)
-    //{
-        //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
-    //}
-
-    //GLenum texture_format;
-    //if (s->format->Rmask == 0x000000ff)
-        //texture_format = GL_RGBA;
-    //else
-        //texture_format = GL_BGRA;
-
-    //glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
-
-    //glDisable(GL_TEXTURE_2D);
-//#endif
 }
 
 void init_block_texture_normal()
@@ -474,6 +318,10 @@ void init_block_texture_normal()
     GLenum texture_format = get_texture_format(s);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, texture_format, GL_UNSIGNED_BYTE, s->pixels); //2nd parameter is level
     glDisable(GL_TEXTURE_2D);
+}
+
+void teardown_shader()
+{
 }
 
 }   // t_map

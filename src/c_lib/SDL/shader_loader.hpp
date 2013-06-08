@@ -53,6 +53,9 @@ class Shader
     void load_shader(const char* _name, const char* vertex_shader_file,
                      const char* fragment_shader_file)
     {
+        if (this->debug)
+            printf("Attempting to load shader \"%s\". \n\tVertex file: %s\n\tFrag file: %s\n",
+                   _name, vertex_shader_file, fragment_shader_file);
         GS_ASSERT(this->vs == NULL);
         GS_ASSERT(this->fs == NULL);
         //set shader name

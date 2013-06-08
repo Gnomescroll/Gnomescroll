@@ -7,10 +7,7 @@ namespace t_map
 void init_shaders();
 void reload_textures();
 
-void set_map_shader_0();
-
 void toggle_3d_texture_settings();
-void init_map_3d_texture();
 
 void set_map_shader_0_compatibility(int level);
 void init_map_3d_texture_compatibility();
@@ -28,7 +25,7 @@ extern GLuint terrain_map_texture;
 
 extern GLuint block_textures_compatibility; //use for intel mode
 
-void teardown_shader(); // frees surface
+void teardown_shader();
 
 
 class MapShader
@@ -60,7 +57,7 @@ class MapShader
     void init_shader()
     {
         GS_ASSERT(this->shader == NULL);
-        if (this->shader != NULL) delete this->shader;
+        delete this->shader;
         this->shader = new Shader;
         this->shader->set_debug(true);
 
@@ -108,15 +105,15 @@ class MapCompatibilityShader
         int InLight;
         //int Normal;
 
-    MapCompatibilityShader()
-    : terrain_map_surface(NULL), terrain_map_texture(0), terrain_map_glsl(0), shader(NULL)
+    MapCompatibilityShader() :
+        terrain_map_surface(NULL), terrain_map_texture(0), terrain_map_glsl(0), shader(NULL)
     {
 
     }
 
     ~MapCompatibilityShader()
     {
-        if (shader != NULL) delete shader;
+        delete shader;
     }
 
     void init_shader(int level)
@@ -161,14 +158,13 @@ class MapCompatibilityShader
                 MEDIA_PATH "shaders/terrain/terrain_map_mesa.fsh");
         }
 
-
-        InVertex =     shader->get_attribute("InVertex");
-        InTexCoord =   shader->get_attribute("InTexCoord");
-        InTexCoord2 =  shader->get_attribute("InTexCoord2");
-        InRGB =        shader->get_attribute("InRGB");
-        InLightMatrix= shader->get_attribute("InLightMatrix");
-        InLight=       shader->get_attribute("InLight");
-        //int Normal=      shader->get_attribute("InTexCoord");
+        InVertex = shader->get_attribute("InVertex");
+        InTexCoord = shader->get_attribute("InTexCoord");
+        InTexCoord2 = shader->get_attribute("InTexCoord2");
+        InRGB = shader->get_attribute("InRGB");
+        InLightMatrix = shader->get_attribute("InLightMatrix");
+        InLight = shader->get_attribute("InLight");
+        //int Normal = shader->get_attribute("InTexCoord");
     }
 
     void init_texture();
