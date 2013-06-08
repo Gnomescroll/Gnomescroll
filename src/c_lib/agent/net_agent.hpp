@@ -249,14 +249,16 @@ class agent_melee_object_StoC: public FixedSizeReliableNetPacketToClient<agent_m
     inline void handle();
 };
 
-class agent_threw_grenade_StoC: public FixedSizeReliableNetPacketToClient<agent_threw_grenade_StoC>
+class agent_launched_projectile_StoC: public FixedSizeReliableNetPacketToClient<agent_launched_projectile_StoC>
 {
     public:
         uint8_t id;
+        uint8_t item_type;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&id, buff, buff_n, pack);
+        pack_u8(&item_type, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -472,16 +474,20 @@ class player_agent_id_StoC: public FixedSizeReliableNetPacketToClient<player_age
     inline void handle();
 };
 
-class throw_grenade_CtoS: public FixedSizeReliableNetPacketToServer<throw_grenade_CtoS>
+class launch_projectile_CtoS: public FixedSizeReliableNetPacketToServer<launch_projectile_CtoS>
 {
     public:
         Vec3 position;
         Vec3 velocity;
+        uint8_t item_type;
+        float charge_progress;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_vec3(&position, buff, buff_n, pack);
         pack_vec3(&velocity, buff, buff_n, pack);
+        pack_u8(&item_type, buff, buff_n, pack);
+        pack_float(&charge_progress, buff, buff_n, pack);
     }
     inline void handle();
 };

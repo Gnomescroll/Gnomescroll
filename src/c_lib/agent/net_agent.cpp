@@ -124,12 +124,14 @@ inline void agent_hit_block_StoC::handle()
     a->event.hit_block();
 }
 
-inline void agent_threw_grenade_StoC::handle()
+inline void agent_launched_projectile_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     IF_ASSERT(a == NULL) return;
-    a->event.threw_grenade();
+    if (strcmp(Item::get_item_name(ItemType(this->item_type)),
+               "plasma_grenade") == 0)
+        a->event.threw_grenade();
 }
 
 inline void agent_placed_block_StoC::handle()
@@ -405,7 +407,7 @@ inline void hitscan_object_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_mech_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
-inline void throw_grenade_CtoS::handle(){}
+inline void launch_projectile_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
@@ -439,7 +441,7 @@ inline void agent_shot_nothing_StoC::handle(){}
 inline void agent_melee_object_StoC::handle(){}
 inline void agent_melee_nothing_StoC::handle(){}
 inline void agent_hit_block_StoC::handle(){}
-inline void agent_threw_grenade_StoC::handle(){}
+inline void agent_launched_projectile_StoC::handle(){}
 inline void agent_placed_block_StoC::handle(){}
 inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
@@ -755,23 +757,39 @@ inline void melee_none_CtoS::handle()
     msg.broadcast();
 }
 
-inline void throw_grenade_CtoS::handle()
+inline void launch_projectile_CtoS::handle()
 {
+    IF_ASSERT(charge_progress < 0 || charge_progress > 1) return;
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
-    agent_threw_grenade_StoC msg;
+    agent_launched_projectile_StoC msg;
     msg.id = a->id;
+    msg.item_type = this->item_type;
     msg.broadcast();
 
+    ItemType item_type = ItemType(this->item_type);
+
+    // TODO load from dat later, and modify by charged status
+    //float force = Item::get_projectile_force(item_type);
+    //force *= 1.0f + this->charge_progress;
+    static const float PLAYER_ARM_FORCE = 15.0f;
     Vec3 n = vec3_normalize(this->velocity);
-    static const float PLAYER_ARM_FORCE = 15.0f; // load from dat later
-    //create grenade
-    n = vec3_scalar_mult(n, PLAYER_ARM_FORCE);
-    Particle::Grenade* g = Particle::grenade_list->create();
-    if (g == NULL) return;
-    g->set_state(this->position, n);
-    g->owner = a->id;
-    g->broadcast();
+    n = vec3_scalar_mult(n, PLAYER_ARM_FORCE * (1.0f + this->charge_progress));
+
+    // TODO -- use some kind of configuration to pick this up
+    // Needs to support a physics interface, owner property, and networking
+    if (strcmp(Item::get_item_name(item_type), "plasma_grenade") == 0)
+    {
+        Particle::Grenade* g = Particle::grenade_list->create();
+        if (g == NULL) return;
+        g->set_state(this->position, n);
+        g->owner = a->id;
+        g->broadcast();
+    }
+    else
+    {
+        printf("Warning: unhandled projectile type %d\n", item_type);
+    }
 }
 
 inline void agent_set_block_CtoS::handle()

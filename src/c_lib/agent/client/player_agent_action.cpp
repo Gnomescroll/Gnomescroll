@@ -360,21 +360,25 @@ void PlayerAgentAction::throw_grenade()
     if (you == NULL) return;
     if (you->status.dead) return;
 
+    float charge_progress = Toolbelt::get_charge_progress();
+
     // message to server
     Vec3 pos = you->get_camera_position();
     Vec3 f = you->forward_vector();    // use network state
-    throw_grenade_CtoS msg;
+    launch_projectile_CtoS msg;
     msg.position = pos;
     msg.velocity = f;
+    msg.item_type = Toolbelt::get_selected_item_type();
+    msg.charge_progress = charge_progress;
     msg.send();
 
-    // local play (copied from throw_grenade_CtoS)
+    // local play (copied from launch_projectile_CtoS)
     static const float PLAYER_ARM_FORCE = 15.0f; // make agent property
     //create grenade
-    f = vec3_scalar_mult(f, PLAYER_ARM_FORCE);
+    f = vec3_scalar_mult(f, PLAYER_ARM_FORCE + (1.0f + charge_progress));
     Particle::Grenade* g = Particle::grenade_list->create();
     IF_ASSERT(g == NULL) return;
-    g->set_state(pos.x, pos.y, pos.z, f.x, f.y, f.z);
+    g->set_state(pos, f);
     g->owner = this->p->agent_id;
 }
 
@@ -384,6 +388,7 @@ void PlayerAgentAction::place_spawner()
     if (you == NULL) return;
     if (you->status.dead) return;
 
+    // TODO -- get from config
     const float max_dist = 4.0f;
 
     class RaytraceData data;
@@ -401,6 +406,7 @@ void PlayerAgentAction::place_turret()
     if (you == NULL) return;
     if (you->status.dead) return;
 
+    // TODO -- get from config
     const float max_dist = 4.0f;
 
     class RaytraceData data;

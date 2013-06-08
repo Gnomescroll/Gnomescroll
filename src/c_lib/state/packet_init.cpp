@@ -73,7 +73,7 @@ void RegisterMessages()
     agent_melee_nothing_StoC::register_client_packet();
 
     agent_hit_block_StoC::register_client_packet();
-    agent_threw_grenade_StoC::register_client_packet();
+    agent_launched_projectile_StoC::register_client_packet();
     agent_placed_block_StoC::register_client_packet();
 
     // agent item actions
@@ -84,7 +84,7 @@ void RegisterMessages()
 
     player_agent_id_StoC::register_client_packet();
 
-    throw_grenade_CtoS::register_server_packet();
+    launch_projectile_CtoS::register_server_packet();
 
     agent_kills_StoC::register_client_packet();
     agent_deaths_StoC::register_client_packet();
