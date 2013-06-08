@@ -327,9 +327,9 @@ void VBOMap::draw_map()
     GLint clut_texture = glGetUniformLocation(map_shader.shader->shader, "clut_texture");
     GLint base_texture = glGetUniformLocation(map_shader.shader->shader, "base_texture");
 
-    GS_ASSERT(clut_light_texture != 0);
-    GS_ASSERT(clut_texture != 0);
-    GS_ASSERT(base_texture != 0);
+    GS_ASSERT(clut_light_texture >= 0);
+    GS_ASSERT(clut_texture >= 0);
+    GS_ASSERT(base_texture >= 0);
 
     glUseProgramObjectARB(map_shader.shader->shader);
 
