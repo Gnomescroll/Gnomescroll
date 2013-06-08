@@ -29,8 +29,9 @@
 		0D74E66B15C070C4003855AF /* libcurl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D74E66A15C070C4003855AF /* libcurl.dylib */; };
 		0D74E66C15C07131003855AF /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D74E66A15C070C4003855AF /* libcurl.dylib */; };
 		0D7526161763189F00302B28 /* localhost.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D7526151763189F00302B28 /* localhost.lua */; };
+		0D75261B17631B6A00302B28 /* dev.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D75261A17631B6A00302B28 /* dev.lua */; };
+		0D75261C17631B9600302B28 /* production.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D75261817631B5400302B28 /* production.lua */; };
 		0D78B65615A29FAD0097E8CB /* lua_library.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D78B65515A29FAD0097E8CB /* lua_library.lua */; };
-		0D8459E215B25E1D0019F9D1 /* production.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D8459E115B25E1C0019F9D1 /* production.lua */; };
 		0D8459E415B25F1B0019F9D1 /* production.lua in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D8459E315B25F1B0019F9D1 /* production.lua */; };
 		0D89921515BCAC6D0044FAB9 /* Awesomium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D89921415BCAC6D0044FAB9 /* Awesomium.framework */; };
 		0D89921615BCAC8A0044FAB9 /* Awesomium.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0D89921415BCAC6D0044FAB9 /* Awesomium.framework */; };
@@ -89,8 +90,9 @@
 			dstPath = ./settings;
 			dstSubfolderSpec = 7;
 			files = (
+				0D75261C17631B9600302B28 /* production.lua in CopyFiles */,
+				0D75261B17631B6A00302B28 /* dev.lua in CopyFiles */,
 				0DCCF010164E1EBF00DABD33 /* load_options.lua in CopyFiles */,
-				0D8459E215B25E1D0019F9D1 /* production.lua in CopyFiles */,
 				0D78B65615A29FAD0097E8CB /* lua_library.lua in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,6 +137,15 @@
 			dstSubfolderSpec = 7;
 			files = (
 				0D74E66615C0663E003855AF /* media in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0D75261717631B2B00302B28 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = ./settings;
+			dstSubfolderSpec = 7;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,6 +207,8 @@
 		0D74E66A15C070C4003855AF /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = "../../libcurl-7.26.0/lib/Release/libcurl.dylib"; sourceTree = "<group>"; };
 		0D74E66F15C0820E003855AF /* Gnomescroll.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Gnomescroll.app; path = ../../dc_mmo/tools/autoupdate/Gnomescroll.app; sourceTree = "<group>"; };
 		0D7526151763189F00302B28 /* localhost.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = localhost.lua; path = ../server/settings/localhost.lua; sourceTree = "<group>"; };
+		0D75261817631B5400302B28 /* production.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = production.lua; path = ../netclient/settings/production.lua; sourceTree = "<group>"; };
+		0D75261A17631B6A00302B28 /* dev.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = dev.lua; path = ../netclient/settings/dev.lua; sourceTree = "<group>"; };
 		0D78B65515A29FAD0097E8CB /* lua_library.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = lua_library.lua; path = ../../dc_mmo/netclient/settings/lua_library.lua; sourceTree = "<group>"; };
 		0D8459E115B25E1C0019F9D1 /* production.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = production.lua; path = ../../dc_mmo/netclient/settings/production.lua; sourceTree = "<group>"; };
 		0D8459E315B25F1B0019F9D1 /* production.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = production.lua; path = ../../dc_mmo/server/settings/production.lua; sourceTree = "<group>"; };
@@ -269,6 +282,8 @@
 		0DD6B7F715709CAE0003D792 = {
 			isa = PBXGroup;
 			children = (
+				0D75261A17631B6A00302B28 /* dev.lua */,
+				0D75261817631B5400302B28 /* production.lua */,
 				0D7526151763189F00302B28 /* localhost.lua */,
 				0DCCF00E164E1D7A00DABD33 /* load_options.lua */,
 				0D3066BC1605D76800AF7759 /* data */,
@@ -415,6 +430,7 @@
 				0D3D98EA15710B0F00674A3C /* CopyFiles */,
 				0D3D98C71570C9C200674A3C /* CopyFiles */,
 				0D3D98D91571036100674A3C /* CopyFiles */,
+				0D75261717631B2B00302B28 /* CopyFiles */,
 				0DE552F815ABE1B300320AC0 /* ShellScript */,
 			);
 			buildRules = (
