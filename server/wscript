@@ -501,6 +501,15 @@ def windows(ctx):
     configure(ctx, use_clang=False, windows=True, i386=True)
 
 
+class i386_ctx(ConfigurationContext):
+    cmd = '32'
+    fun = 'i386'
+
+
+def i386(ctx):
+    configure(ctx, i386=True)
+
+
 class address_sanitizer_ctx(ConfigurationContext):
     cmd = 'asan'
     fun = 'asan'

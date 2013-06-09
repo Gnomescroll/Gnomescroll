@@ -255,7 +255,7 @@ void NetMessageManager::serialize_messages(char* buff_, size_t index)
     if (max != index)
     {
         printf("NetMessageManager, ERROR, index exceeds bytes to be write: "
-               "index= %llu, max= %llu\n", (long long unsigned)index, (long long unsigned)max);
+               "index= %lu, max= %lu\n", (long unsigned)index, (long unsigned)max);
     }
     //reset to virgin state
     nma_insert_index = 0;

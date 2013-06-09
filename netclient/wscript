@@ -144,7 +144,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
 
     #-ftime-report
 
-    if OS == 'Windows':
+    if OS == 'Windows' or windows:
         cxxflags = ['-fpermissive']  # '-g',
         # '-static', '-static-libgcc', '-static-libstdc++',
         cxxflags += ['-DNOMINMAX']  # disable min/max macros

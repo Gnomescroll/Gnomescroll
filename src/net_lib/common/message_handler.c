@@ -120,9 +120,9 @@ int process_packet_messages(char* buff, size_t* n, size_t max_n)
         { // > or >= ?
             printf("ERROR! message processor would read past end of packet\n");
 
-            printf("n= %llu, max_n= %llu, message_id= %i message_size= %llu\n",
-                   (long long unsigned)*n, (long long unsigned)max_n,
-                   message_id, (long long unsigned)size);
+            printf("n= %lu, max_n= %lu, message_id= %i message_size= %lu\n",
+                   (long unsigned)*n, (long unsigned)max_n,
+                   message_id, (long unsigned)size);
             return -3;
         }
 
@@ -149,8 +149,8 @@ int process_packet_messages(char* buff, size_t* n, size_t max_n)
 
         if (read_bytes+1 != size)
         {
-            printf("ERROR!: message_id= %i, bytes expected= %llu, bytes read= %llu\n",
-                   message_id, (long long unsigned)size, (long long unsigned)read_bytes);
+            printf("ERROR!: message_id= %i, bytes expected= %lu, bytes read= %lu\n",
+                   message_id, (long unsigned)size, (long unsigned)read_bytes);
             return -2;
         }
 

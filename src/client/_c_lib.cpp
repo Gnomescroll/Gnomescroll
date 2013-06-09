@@ -56,6 +56,11 @@
 # endif
 #endif
 
+#ifdef _WIN32
+// include this here, so that winsock2.h is included before windows.h
+# include <net_lib/enet/win32.h>
+#endif
+
 #ifdef __MSVC__
 # include "stdafx.h"
 #endif

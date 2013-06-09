@@ -4,13 +4,6 @@
 #include <common/compat_gl.h>
 #include <input/handlers.hpp>
 
-//#ifdef _WIN32
-//    #include "windows.h"
-//#endif
-
-//#ifdef linux
-//    #include <SDL/IMG_savepng.h>
-//#endif
 /*
     Example code from
     http://www.opengl.org/wiki/Tutorial2:_VAOs,_VBOs,_Vertex_and_Fragment_Shaders_(C_/_SDL)
