@@ -3,6 +3,19 @@
 #include <t_mob/sprites/common.hpp>
 #include <SDL/texture_sheet_loader.hpp>
 
+/* Example use:
+
+SpriteSheet sheet = animations->load_texture("rdn");
+SpriteAnimationGroup* g = animations->create(sheet);
+IF_ASSERT(g == NULL) return;
+SpriteAnimation* a = g->create("walk");
+IF_ASSERT(a == NULL) return;
+a->add_frame(0, 0);
+a->add_frame(1, 0);
+a->add_frame_strip(0, 2);
+
+*/
+
 namespace t_mob
 {
 
@@ -11,8 +24,11 @@ void teardown_animation_repo();
 
 class SpriteAnimation
 {
-    public:
+    private:
 
+    void _add_frame_strip(size_t x, size_t y, size_t n, bool horizontal);
+
+    public:
         static const size_t MAX_FRAMES = 8;
         static const size_t ANIMATION_NAME_MAX = 31;
 
@@ -25,6 +41,13 @@ class SpriteAnimation
         int frames[MAX_FRAMES];
 
     void add_frame(size_t x, size_t y);
+    void add_vertical_frame_strip(size_t x, size_t y, size_t n);
+    void add_horizontal_frame_strip(size_t x, size_t y, size_t n);
+
+    void add_frame_strip(size_t x, size_t y, size_t n)
+    {
+        this->add_horizontal_frame_strip(x, y, n);
+    }
 
     void set_name(const char* name)
     {
@@ -109,11 +132,24 @@ class SpriteAnimationRepo
     }
 
     public:
-        static const size_t ANIMATION_GROUPS_MAX = 0xFF - 1;
+        static const size_t ANIMATION_GROUPS_MAX = NULL_SPRITE_ANIMATION_GROUP - 1;
 
         TextureSheetLoader::TextureSheetLoader texture_loader;
         SpriteAnimationGroup groups[ANIMATION_GROUPS_MAX];
         size_t count;
+
+    SpriteSheet load_texture(const char* name)
+    {
+        const char fmt[] = MEDIA_PATH "sprites/mob/%s.png";
+        const size_t len = sizeof(fmt) + strlen(name);
+        char* filename = (char*)malloc(len);
+        size_t could = snprintf(filename, len, fmt, name);
+        GS_ASSERT(could < len);
+        filename[len-1] = '\0';
+        SpriteSheet sheet = this->texture_loader.load_texture(filename);
+        free(filename);
+        return sheet;
+    }
 
     SpriteAnimationGroup* create(SpriteSheet sheet)
     {
@@ -124,6 +160,18 @@ class SpriteAnimationRepo
         g->sheet = sheet;
         this->count++;
         return g;
+    }
+
+    SpriteAnimationGroup* create(const char* sheet_name)
+    {
+        return this->create(this->load_texture(sheet_name));
+    }
+
+    SpriteAnimationGroup* get(SpriteAnimationGroupID id)
+    {
+        IF_ASSERT(id < 0 || id > ANIMATION_GROUPS_MAX) return NULL;
+        IF_ASSERT(this->groups[id].id != id) return NULL;
+        return &this->groups[id];
     }
 
     void verify()
@@ -147,15 +195,4 @@ class SpriteAnimationRepo
 
 extern class SpriteAnimationRepo* animations;
 
-/* Example use:
-
-SpriteSheet sheet = animations->texture_loader->load_texture(MEDIA_PATH "sprites/mobs/rdn.png");
-SpriteAnimationGroup* g = animations->create(sheet);
-IF_ASSERT(g == NULL) return;
-SpriteAnimation* a = g->create("walk");
-IF_ASSERT(a == NULL) return;
-a->add_frame(0, 0);
-a->add_frame(1, 0);
-
-*/
 }   // t_mob

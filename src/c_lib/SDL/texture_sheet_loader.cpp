@@ -59,7 +59,8 @@ SpriteSheet TextureSheetLoader::load_texture(const char* filename, size_t tile_s
     IF_ASSERT(!tile_size || this->tile_size % tile_size) return NULL_SPRITE_SHEET;
 
     for (size_t i=0; i<this->surface_num; i++)
-        GS_ASSERT(strcmp(this->surface_meta[i].filename, filename) != 0);
+        if (strcmp(this->surface_meta[i].filename, filename) == 0)
+            return SpriteSheet(i);
 
     SDL_Surface* s = create_surface_from_file(filename);
     IF_ASSERT(s == NULL) return NULL_SPRITE_SHEET;
