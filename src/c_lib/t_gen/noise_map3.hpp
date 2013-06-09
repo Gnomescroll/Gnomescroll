@@ -165,7 +165,7 @@ class PerlinOctave3D
         //for (int i=0; i<octaves; i++) octave_array[i].init(2*(i+1)+1, 4);
         //for (int i=0; i<octaves; i++) octave_array[i].init((i*(i+1))+1, 4);
 
-        cache = new float[(512/4)*(512/4)*(128/4)];
+        cache = new float[(map_dim.x/4)*(map_dim.y/4)*(map_dim.z/4)];
 
         for (int i=0; i<octaves; i++) octave_array[i].init(
             primes[i+1], primes[i+1]);
@@ -207,14 +207,17 @@ class PerlinOctave3D
 
     }
 
-    void set_param(int persistence)
+    void set_param(float persistence, bool change_seed=true)
     {
         bool update = false;
         if (runs == 0)
         {
             update = true;
-            this->cache_seed = rand();
-            seed_twister(this->cache_seed);
+            if (change_seed)
+            {
+                this->cache_seed = rand();
+                seed_twister(this->cache_seed);
+            }
             for (int i=0; i<octaves; i++)
                 octave_array[i].generate_gradient_array();
         }
@@ -231,11 +234,11 @@ class PerlinOctave3D
     OPTIMIZED
     void populate_cache(float persistence)
     {
-        //if (cache == NULL) cache = new float[(512/4)*(512/4)*(128/8)];
+        //if (cache == NULL) cache = new float[(map_dim.x/4)*(map_dim.y/4)*(map_dim.z/8)];
 
-        const int max_x = 512/4;
-        const int max_y = 512/4;
-        const int max_z = 128/4;
+        const int max_x = map_dim.x/4;
+        const int max_y = map_dim.y/4;
+        const int max_z = map_dim.z/4;
 
         float x,y,z;
 
@@ -243,9 +246,10 @@ class PerlinOctave3D
         for (int i=0; i<max_x; i++)
         for (int j=0; j<max_y; j++)
         {
-            x = i*(4.0f/512.0f);
-            y = j*(4.0f/512.0f);
-            z = k*(4.0f/512.0f);
+            x = i*(4.0f/map_dim.x);
+            y = j*(4.0f/map_dim.y);
+            z = k*(4.0f/map_dim.z); // NOTE -- this used to be 4.0/512.0f
+                                    // There are no overhangs with that level
 
             cache[k*max_x*max_y + j*max_x + i] = sample(x,y,z, persistence);
         }
@@ -286,10 +290,10 @@ class MapGenerator1
 
         PerlinOctave2D* roughness2D;
 
-        static const int xmax = 512/4;
-        static const int ymax = 512/4;
-        static const int zmax = 128/4;
-        static const int xymax = xmax*ymax;
+        const int xmax;
+        const int ymax;
+        const int zmax;
+        const int xymax;
 
         /*
             Multiply by 3, subtract 2 and then clamp to -1 to 1
@@ -299,7 +303,9 @@ class MapGenerator1
     /*
         Octaves
     */
-    MapGenerator1()
+    MapGenerator1() :
+        xmax(map_dim.x/4), ymax(map_dim.y/4), zmax(map_dim.z/4),
+        xymax(xmax*ymax)
     {
         seed_twister(rand());
 
@@ -313,12 +319,12 @@ class MapGenerator1
 
     ~MapGenerator1()
     {
-        if (this->cache != NULL) delete[] this->cache;
-        if (this->erosion3D != NULL) delete this->erosion3D;
-        if (this->erosion2D != NULL) delete this->erosion2D;
-        if (this->height2D != NULL) delete this->height2D;
-        if (this->ridge2D != NULL) delete this->ridge2D;
-        if (this->roughness2D != NULL) delete this->roughness2D;
+        delete[] this->cache;
+        delete this->erosion3D;
+        delete this->erosion2D;
+        delete this->height2D;
+        delete this->ridge2D;
+        delete this->roughness2D;
     }
 
     void set_persistence(float p1, float p2, float p3, float p4, float p5)

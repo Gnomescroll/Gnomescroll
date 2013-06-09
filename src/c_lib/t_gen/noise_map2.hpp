@@ -210,6 +210,28 @@ class PerlinField2D
 
 class PerlinOctave2D
 {
+    private:
+
+    void _init(int _octaves, bool change_seed=true)
+    {
+        this->runs = 0;
+        cache = NULL;
+        cache_persistence = 0.0f;
+        cache_seed = 0;
+
+        this->octaves = _octaves;
+
+        if (change_seed)
+            seed_twister(rand());
+
+        this->octave_array = new PerlinField2D[octaves];
+
+        this->cache = new float[(map_dim.x/4)*(map_dim.y/4)];
+
+        for (int i=0; i<octaves; i++)
+            this->octave_array[i].init(primes[i+1], 16);
+    }
+
     public:
         int octaves;
         class PerlinField2D* octave_array;
@@ -218,21 +240,14 @@ class PerlinOctave2D
         float cache_persistence;
         unsigned long cache_seed;
 
-    explicit PerlinOctave2D(int _octaves) : runs(0)
+    explicit PerlinOctave2D(int octaves)
     {
-        cache = NULL;
-        cache_persistence = 0.0f;
-        cache_seed = 0;
+        this->_init(octaves);
+    }
 
-        octaves = _octaves;
-
-        seed_twister(rand());
-        this->octave_array = new PerlinField2D[octaves];
-
-        this->cache = new float[(512/4)*(512/4)];
-
-        for (int i=0; i<octaves; i++)
-            this->octave_array[i].init(primes[i+1], 16);
+    PerlinOctave2D(int octaves, bool change_seed)
+    {
+        this->_init(octaves, change_seed);
     }
 
     ~PerlinOctave2D()
@@ -248,14 +263,17 @@ class PerlinOctave2D
         populate_cache(persistence);
     }
 
-    void set_param(int persistence)
+    void set_param(float persistence, bool change_seed=true)
     {
         bool update = false;
         if (!this->runs)
         {
             update = true;
-            cache_seed = rand();
-            seed_twister(this->cache_seed);
+            if (change_seed)
+            {
+                cache_seed = rand();
+                seed_twister(this->cache_seed);
+            }
             for (int i=0; i<octaves; i++)
                 octave_array[i].generate_gradient_array();
         }
@@ -272,16 +290,16 @@ class PerlinOctave2D
     OPTIMIZED
     void populate_cache(float persistence)
     {
-        const int xmax = 512/4;
-        const int ymax = 512/4;
+        const int xmax = map_dim.x/4;
+        const int ymax = map_dim.y/4;
 
         float x,y;
 
         for (int i=0; i<xmax; i++)
         for (int j=0; j<ymax; j++)
         {
-            x = i*(4.0f/(float)map_dim.x);
-            y = j*(4.0f/(float)map_dim.y);
+            x = i*(4.0f/float(map_dim.x));
+            y = j*(4.0f/float(map_dim.y));
 
             cache[j*xmax + i] = sample(x,y, persistence);
         }
@@ -324,8 +342,8 @@ class PerlinOctave2D
     void save_octaves()
     {
 
-        const int xres = 512;
-        const int yres = 512;
+        const int xres = map_dim.x;
+        const int yres = map_dim.y;
 
         const float xresf = 1.0f / ((float) xres);
         const float yresf = 1.0f / ((float) yres);
@@ -469,19 +487,19 @@ void test_octave_2d_map_gen(CubeType tile)
     class PerlinOctave2D* m1 = new class PerlinOctave2D(6);
     class PerlinOctave2D* m2 = new class PerlinOctave2D(6);
 
-    const int xres = 512;
-    const int yres = 512;
+    const int xres = map_dim.x;
+    const int yres = map_dim.y;
 
     const float xresf = 1.0f / ((float) xres);
     const float yresf = 1.0f / ((float) yres);
 
-    float* values = (float*)malloc(512*512*sizeof(float));
+    float* values = (float*)malloc(map_dim.x*map_dim.y*sizeof(float));
 
     float min_value_generated = 100000;
     float max_value_generated = -100000;
 
-    for (int i=0; i<512; i++)
-    for (int j=0; j<512; j++)
+    for (int i=0; i<map_dim.x; i++)
+    for (int j=0; j<map_dim.y; j++)
     {
 
         float x = i*xresf;
@@ -495,7 +513,7 @@ void test_octave_2d_map_gen(CubeType tile)
         float value = 32 + 32.0f*roughness*m1->sample(x,y, 0.125f);
         if (value < min_value_generated) min_value_generated = value;
         if (value > max_value_generated) max_value_generated = value;
-        values[i+512*j] = value;
+        values[i+map_dim.x*j] = value;
 
         //value += 32*oct_0.sample(x, y, 32.5, persistence);
 
@@ -519,14 +537,14 @@ void test_octave_2d_map_gen(CubeType tile)
     float max_scale = 1.0f;
     if (max_value_generated > max_height) max_scale = max_height / max_value_generated;
     GS_ASSERT(max_scale >= 0.0f);
-    for (int i=0; i<512; i++)
-    for (int j=0; j<512; j++)
+    for (int i=0; i<map_dim.x; i++)
+    for (int j=0; j<map_dim.y; j++)
     {
-        float v = values[i+512*j];
+        float v = values[i+map_dim.x*j];
         if (v > 0) v *= max_scale;
         if (v < 0) v *= min_scale;
         if (v < min_value_found) min_value_found = v;
-        values[i+512*j] = v;
+        values[i+map_dim.x*j] = v;
     }
 
     GS_ASSERT(min_value_found >= max_depth);
@@ -534,10 +552,10 @@ void test_octave_2d_map_gen(CubeType tile)
     const int floor_height = 32;
     int baseline = floor_height - min_value_found;
 
-    for (int i=0; i<512; i++)
-    for (int j=0; j<512; j++)
+    for (int i=0; i<map_dim.x; i++)
+    for (int j=0; j<map_dim.y; j++)
     {
-        for (int k=0; k<baseline+values[i+512*j]; k++)
+        for (int k=0; k<baseline+values[i+map_dim.x*j]; k++)
             t_map::set_fast(i,j,k,tile);
     }
 

@@ -222,13 +222,12 @@ class PerlinField2D
     PerlinField2D(int seed, int _xs, int _grad_max)
     {
         xs = _xs;
-        xsize = 512 / xs;
+        xsize = map_dim.x / xs;
         ssize = xsize*xsize;
         grad_max = _grad_max;
         xscale = 1.0 / ((float) xs);
 
-        //seed_twister(seed);
-        seed_twister(rand());
+        seed_twister(seed);
 
         ga = new unsigned char[ssize];
         for (int i=0; i<ssize; i++)

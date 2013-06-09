@@ -67,7 +67,7 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
             for (int j=ymin; j<=ymax; j++)
             for (int k=zmin; k<=zmax; k++)
             {
-                if (k < baseline || k >= 128)
+                if (k < baseline || k >= map_dim.z)
                 {
                     hits_bottom = true;
                     continue;
@@ -77,8 +77,8 @@ void generate_node(float xs, float ys, float zs, float theta, float phi, float c
                 float y = j + 0.5f;
                 float z = k + 0.5f;
 
-                int ii = i % 512;
-                int jj = j % 512;
+                int ii = i % map_dim.x;
+                int jj = j % map_dim.y;
 
                 float d = point_line_distance2(xs,ys,zs, dx,dy,dz, x,y,z);
                 if (d < size*size)
