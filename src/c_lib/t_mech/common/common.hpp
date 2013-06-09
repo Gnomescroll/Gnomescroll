@@ -74,7 +74,8 @@ struct Mech
     int id; //-1 if not in use
 
     Vec3i position;
-    Vec3 center;
+    Vec3 center;            // the center of the bounding box,
+    Vec3 relative_center;   // and translated relative to the current_camera
 
     MechType type;       //mech type
     int subtype;        //sprite
