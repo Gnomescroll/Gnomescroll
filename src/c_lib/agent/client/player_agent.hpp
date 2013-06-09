@@ -104,7 +104,8 @@ class PlayerAgent
 
     void update_sound();
 
-    bool nearest_open_block(const float max_dist, struct Vec3i& pos);
+    bool nearest_open_block(float max_dist, struct Vec3i& pos);
+    bool nearest_solid_block(float max_dist, struct Vec3i& pos);
     int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, Vec3i& side, float* distance);
     // returns side, as integer. side<0 if failure:
     int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, float* distance);
@@ -113,7 +114,7 @@ class PlayerAgent
     void movement_event(const AgentState& s0, const AgentState& s1);
 
     #if !PRODUCTION
-    void teleport_to(struct Vec3 p);
+    void teleport_to(const struct Vec3& p);
     #endif
 
     void play_geiger();

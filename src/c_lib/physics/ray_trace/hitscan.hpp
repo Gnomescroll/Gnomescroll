@@ -31,6 +31,7 @@ class WorldHitscanResult
         // block
         bool block_hit;
         Vec3i block_position;
+        Vec3i block_open_position;
         Vec3i block_side;
         CubeType cube_type;
         float block_distance;
@@ -53,6 +54,7 @@ class WorldHitscanResult
         this->cube_type = data.get_cube_type();
         this->block_side = data.get_sides();
         this->block_position = data.collision_point;
+        this->block_open_position = data.get_pre_collision_point();
     }
 
     void set_voxel_collision(const Voxels::VoxelHitscanTarget& target,
@@ -113,6 +115,7 @@ class WorldHitscanResult
         type(HITSCAN_TARGET_NONE), distance(FAR_AWAY),
         start_position(vec3_init(0)), direction(vec3_init(0, 0, 1)),
         block_hit(false), block_position(vec3i_init(0)),
+        block_open_position(vec3i_init(0)),
         block_side(vec3i_init(0, 0, 1)), cube_type(ERROR_CUBE),
         block_distance(FAR_AWAY), voxel_hit(false), voxel_distance(FAR_AWAY),
         voxel_collision_point(vec3_init(0)), mech_hit(false),

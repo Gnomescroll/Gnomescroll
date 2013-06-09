@@ -21,12 +21,21 @@
 #endif
 
 template<typename T>
-bool in_array(const T elem, const T* arr, const size_t len)
+bool in_array(const T elem, const T* arr, size_t len)
 {
     for (size_t i=0; i<len; i++)
         if (arr[i] == elem)
             return true;
     return false;
+}
+
+template<typename T>
+size_t get_array_len(const T* arr, const T terminator)
+{   // determines the length of a terminator-terminated array
+    size_t len = 0;
+    while (arr[len] != terminator)
+        len++;
+    return len;
 }
 
 int count_digits(int n)

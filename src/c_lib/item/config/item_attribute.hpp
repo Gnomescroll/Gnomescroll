@@ -69,6 +69,9 @@ class ItemAttribute: public Property<ItemType>
         // boon crank
         bool boonable;
 
+        // can be placed (this will be automatically detected from the item group
+        bool placeable;
+
         // agent stat modifiers
         ModifierList modifiers;
 
@@ -126,6 +129,7 @@ class ItemAttribute: public Property<ItemType>
 
         this->equipment_type = NULL_EQUIPMENT_TYPE;
         this->boonable = true;
+        this->placeable = false;
     }
 };
 

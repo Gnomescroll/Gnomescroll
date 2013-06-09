@@ -714,8 +714,29 @@ void apply_item_dat_changes()
     item_name_map->condense();  // finalize
 }
 
+void apply_automatic_properties()
+{   // set values on the item dat that are determined from other properties
+    static const ItemGroup placeable_groups[] = {
+        IG_PLACER,
+        IG_MECH_PLACER,
+        IG_MECH_PLACER_ORIENTED,
+        IG_PLANT_PLACER,
+        IG_AGENT_SPAWNER,
+        IG_ENERGY_CORE,
+        IG_NONE          // terminator
+    };
+    const size_t n_placeable_groups = get_array_len(placeable_groups, IG_NONE);
+    for (size_t i=0; i<item_attributes->max; i++)
+    {
+        ItemAttribute* a = &item_attributes->properties[i];
+        if (!a->loaded) continue;
+        a->placeable = in_array(a->group, placeable_groups, n_placeable_groups);
+    }
+}
+
 void end_item_dat()
 {
+    apply_automatic_properties();
     item_attributes->done_loading();
     item_attributes->set_pretty_names();
     apply_item_dat_changes();

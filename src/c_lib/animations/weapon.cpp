@@ -577,17 +577,36 @@ void draw_placement_outline(ItemType item_type)
     GL_ASSERT(GL_TEXTURE_2D, false);
 
     int cube_height = Item::get_item_cube_height(item_type);
-    if (cube_height <= 0) return;
+    cube_height = GS_MAX(1, cube_height);
 
-    // get open block
-    const int max_dist = 4.0f;
+    bool placeable = Item::can_be_placed(item_type);
+    const int max_dist = Item::get_weapon_range(item_type);
     struct Vec3i pos;
-    bool collided = ClientState::player_agent.nearest_open_block(max_dist, pos);
-    if (!collided) return;
+    if (placeable)
+    {
+        if (!ClientState::player_agent.nearest_open_block(max_dist, pos))
+            return;
+    }
+    else
+    {
+        if (!ClientState::player_agent.nearest_solid_block(max_dist, pos))
+            return;
+    }
+
+    bool ok = true;
+    if (placeable)
+    {   // draw the outline as red if its placeable but some position is blocking it
+        for (int z=pos.z; z<pos.z + cube_height; z++)
+            if (t_map::get(pos.x, pos.y, z) != EMPTY_CUBE)
+                ok = false;
+    }
+
+    if (ok)
+        glColor4ub(1, 1, 1, 0x80);
+    else
+        glColor4ub(180, 20, 20, 0x80);
 
     // center it
-
-    glColor4ub(255,255,255,255);
     glLineWidth(2.0f);
     glBegin(GL_LINES);
     for (int z=0; z<cube_height; z++, pos.z++)
@@ -596,32 +615,24 @@ void draw_placement_outline(ItemType item_type)
         struct Vec3 p = vec3_init(pos);
         p = quadrant_translate_position(current_camera_position, p);
         if (t_map::get(pos) == EMPTY_CUBE)
-        {
             size = 0.995f;
-            glColor3ub(1,1,1);
-        }
         else
-        {
             size = 1.005f;
-            glColor3ub(180,20,20);
-        }
+        size *= 0.5f;
 
-        p = vec3_add(p, vec3_init(0.5f));
+        p = vec3_scalar_add(p, 0.5f);
 
-        // render
-        Vec3 q;
-        int k;
         for (int i=0; i<12; i++)
         for (int j=0; j<2; j++)
         {
-            k = 3 * vertex_index2[2*i+j];
-            q.x = p.x + v_set2[k+0]*size*0.5f;
-            q.y = p.y + v_set2[k+1]*size*0.5f;
-            q.z = p.z + v_set2[k+2]*size*0.5f;
+            int k = 3 * vertex_index2[2*i+j];
+            Vec3 r = vec3_init(vec3i_init(&v_set2[k]));
+            Vec3 q = vec3_add(p, vec3_scalar_mult(r, size));
             glVertex3f(q.x, q.y, q.z);
         }
     }
     glEnd();
+    glColor4ub(255, 255, 255, 255);
     CHECK_GL_ERROR();
 }
 

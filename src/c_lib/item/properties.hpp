@@ -78,6 +78,7 @@ bool is_smelter(ItemContainerType type);
 AnimationType get_animation_type(ItemType item_type);
 
 bool can_be_booned(ItemType item_type);
+bool can_be_placed(ItemType item_type);
 
 int get_fuel_burn_rate(ItemType item_type);
 int get_smelting_recipe_creation_time(int recipe_id);

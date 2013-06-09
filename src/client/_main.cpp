@@ -417,6 +417,12 @@ void draw_tick()
     // with depth test disable
     ItemType equipped_item_type = Toolbelt::get_selected_item_type();
 
+    if (Options::placement_outline)
+    {   // draw outline of facing block
+        poll_mouse();
+        Animations::draw_placement_outline(equipped_item_type);
+    }
+
     if (input_state.draw_hud)
     {
         poll_mouse();
@@ -428,12 +434,6 @@ void draw_tick()
             poll_mouse();
             Animations::unuse_voxelized_sprite_fbo();
         }
-    }
-
-    if (Options::placement_outline)
-    {   // draw outline of facing block
-        poll_mouse();
-        Animations::draw_placement_outline(equipped_item_type);
     }
 
     CHECK_GL_ERROR();   //check error before hud

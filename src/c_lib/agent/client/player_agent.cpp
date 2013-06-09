@@ -458,15 +458,18 @@ int PlayerAgent::facing_container()
     return t_map::get_block_item_container(pos);
 }
 
-bool PlayerAgent::nearest_open_block(const float max_dist, Vec3i& pos)
+bool PlayerAgent::nearest_open_block(float max_dist, Vec3i& pos)
 {
-    if (agent_camera == NULL) return NULL;
-    Vec3 f = agent_camera->forward_vector();
-    class RaytraceData data;
-    bool collided = raytrace_terrain(agent_camera->get_position(), f, max_dist, &data);
-    if (!collided) return false;
-    pos = data.get_pre_collision_point();
-    return collided;
+    using ClientState::hitscan;
+    pos = hitscan.block_open_position;
+    return (hitscan.type == HITSCAN_TARGET_BLOCK && hitscan.distance < max_dist);
+}
+
+bool PlayerAgent::nearest_solid_block(float max_dist, Vec3i& pos)
+{
+    using ClientState::hitscan;
+    pos = hitscan.block_position;
+    return (hitscan.type == HITSCAN_TARGET_BLOCK && hitscan.distance < max_dist);
 }
 
 int PlayerAgent::get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, Vec3i& side, float* distance)
@@ -598,7 +601,7 @@ void PlayerAgent::movement_event(const AgentState& s0, const AgentState& s1)
 
 
 #if !PRODUCTION
-void PlayerAgent::teleport_to(Vec3 p)
+void PlayerAgent::teleport_to(const Vec3& p)
 {
     teleport_me_CtoS msg;
     msg.position = p;
