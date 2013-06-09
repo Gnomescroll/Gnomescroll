@@ -203,7 +203,9 @@ class PerlinField2D
         float nx10 = mix(n01, n11, u);
         float nxy  = mix(nx00, nx10, v);
 
-        return nxy;   //-1 to 1
+        //return nxy;   //-1 to 1
+        static const float sq2 = sqrt(2.0f);
+        return nxy * sq2;   //-1 to 1
     }
 
 };

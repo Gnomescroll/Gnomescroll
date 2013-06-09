@@ -13,10 +13,33 @@ typedef unsigned char Uint8;
 namespace t_gen
 {
 
+static void measure_noise_range(size_t size)
+{
+    float highest = -100000.0f;
+    float lowest = 100000.0f;
+    float* noise = create_2d_noise_array(1.0f, 1, size, size, true);
+    for (size_t i=0; i<size; i++)
+    for (size_t j=0; j<size; j++)
+    {
+        float n = noise[i + size*j];
+        if (n > highest)
+            highest = n;
+        if (n < lowest)
+            lowest = n;
+    }
+    printf("Lowest: %0.2f\n", lowest);
+    printf("Highest: %0.2f\n", highest);
+    free(noise);
+}
+
 void init()
 {
     init_explosives();
     init_cities();
+
+    //int tries = 10;
+    //for (int i=0; i<tries; i++)
+        //measure_noise_range(4096);
 }
 
 void teardown()
