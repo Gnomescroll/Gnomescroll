@@ -24,7 +24,7 @@ class MechListVertexList
         // visibility will default to private unless you specify it
         struct Vertex
         {
-            Vec3 p;
+            float x,y,z; //0
             float tx, ty; //12
             float btx,bty; //20  //texture cordinates for bilinear interpolation
             unsigned char color[4]; //28
@@ -58,14 +58,16 @@ class MechListVertexList
 
     void vertex3f(float x, float y, float z)
     {
-        v.p.x = x;
-        v.p.y = y;
-        v.p.z = z;
+        v.x = x;
+        v.y = y;
+        v.z = z;
     }
 
     void vertex3f(const Vec3& p)
     {
-        this->v.p = p;
+        this->v.x = p.x;
+        this->v.y = p.y;
+        this->v.z = p.z;
     }
 
     void tex2f(float tx, float ty)
@@ -523,12 +525,23 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     };
 */
 
-    Vec3 center = m.relative_center;
+    float wx = m.position.x + 0.5f + m.offset_x;
+    float wy = m.position.y + 0.5f + m.offset_y;
+    float wz = m.position.z;
+    //int face = m.face;
+
+    //fulstrum test
+
+    const float cx = current_camera_position.x;
+    const float cy = current_camera_position.y;
+
+    wx = quadrant_translate_f(cx, wx);
+    wy = quadrant_translate_f(cy, wy);
 
     /*
         Do radius render test?
     */
-    if (!sphere_fulstrum_test(center, get_mech_radius(m.type)))
+    if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
         return;
 
     int tex_id = get_mech_sprite(m.type);
@@ -574,21 +587,21 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     dx = sin(m.rotation * PI);
     dy = cos(m.rotation * PI);
 
-    vn[3*0+0] = center.x - size*dx;
-    vn[3*0+1] = center.y - size*dy;
-    vn[3*0+2] = center.z + size2;
+    vn[3*0+0] = wx - size*dx;
+    vn[3*0+1] = wy - size*dy;
+    vn[3*0+2] = wz + size2;
 
-    vn[3*1+0] = center.x - size*dx;
-    vn[3*1+1] = center.y - size*dy;
-    vn[3*1+2] = center.z;
+    vn[3*1+0] = wx - size*dx;
+    vn[3*1+1] = wy - size*dy;
+    vn[3*1+2] = wz;
 
-    vn[3*2+0] = center.x + size*dx;
-    vn[3*2+1] = center.y + size*dy;
-    vn[3*2+2] = center.z;
+    vn[3*2+0] = wx + size*dx;
+    vn[3*2+1] = wy + size*dy;
+    vn[3*2+2] = wz;
 
-    vn[3*3+0] = center.x + size*dx;
-    vn[3*3+1] = center.y + size*dy;
-    vn[3*3+2] = center.z + size2;
+    vn[3*3+0] = wx + size*dx;
+    vn[3*3+1] = wy + size*dy;
+    vn[3*3+2] = wz + size2;
 
     int env_light = t_map::get_envlight(m.position);
     int sky_light = t_map::get_skylight(m.position);
@@ -630,21 +643,21 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
     dx = sin((m.rotation+0.5) * PI);
     dy = cos((m.rotation+0.5) * PI);
 
-    vn[3*0+0] = center.x - size*dx;
-    vn[3*0+1] = center.y - size*dy;
-    vn[3*0+2] = center.z + size2;
+    vn[3*0+0] = wx - size*dx;
+    vn[3*0+1] = wy - size*dy;
+    vn[3*0+2] = wz + size2;
 
-    vn[3*1+0] = center.x - size*dx;
-    vn[3*1+1] = center.y - size*dy;
-    vn[3*1+2] = center.z;
+    vn[3*1+0] = wx - size*dx;
+    vn[3*1+1] = wy - size*dy;
+    vn[3*1+2] = wz;
 
-    vn[3*2+0] = center.x + size*dx;
-    vn[3*2+1] = center.y + size*dy;
-    vn[3*2+2] = center.z;
+    vn[3*2+0] = wx + size*dx;
+    vn[3*2+1] = wy + size*dy;
+    vn[3*2+2] = wz;
 
-    vn[3*3+0] = center.x + size*dx;
-    vn[3*3+1] = center.y + size*dy;
-    vn[3*3+2] = center.z + size2;
+    vn[3*3+0] = wx + size*dx;
+    vn[3*3+1] = wy + size*dy;
+    vn[3*3+2] = wz + size2;
 
     vertex_list.vertex3f(vn[3*0+0], vn[3*0+1], vn[3*0+2]);
     vertex_list.tex2f(tx_min, ty_min);
@@ -682,8 +695,9 @@ void MechListRenderer::push_crystal_vertex(const struct Mech &m)
 
 void MechListRenderer::push_render_type_3(const struct Mech &m)
 {
-    Vec3 w = m.relative_center;
-    if (!sphere_fulstrum_test(w, get_mech_radius(m.type)))
+    Vec3 w = vec3_scalar_add(vec3_init(m.position), 0.5f);
+    w = quadrant_translate_position(current_camera_position, w);
+    if (!sphere_fulstrum_test(w, 0.6f))
         return;
 
     int tex_id = get_mech_sprite(m.type);
@@ -819,8 +833,18 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
         MI = ML->load_mesh(MEDIA_PATH "sprites/mech/mesh/test.mesh");
     }
 
-    Vec3 w = vec3_add(vec3_init(m.position), vec3_init(0.001f, 0.001f, 0.0f));
-    if (!sphere_fulstrum_test(w, get_mech_radius(m.type)))
+    float wx = m.position.x + 0.001f;
+    float wy = m.position.y + 0.001;
+    float wz = m.position.z + 0.0f;
+
+    //fulstrum test
+    const float cx = current_camera_position.x;
+    const float cy = current_camera_position.y;
+
+    wx = quadrant_translate_f(cx, wx);
+    wy = quadrant_translate_f(cy, wy);
+
+    if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
         return;
 
     int env_light = t_map::get_envlight(m.position);
@@ -831,7 +855,7 @@ void MechListRenderer::push_render_type_4(const struct Mech &m)
     const MeshInstance::Vertex* va = MI->va;
     for (int i=0; i<imax; i++)
     {
-        vertex_list.vertex3f(vec3_add(w, va[i].p));
+        vertex_list.vertex3f(wx+va[i].x, wy+va[i].y, wz+va[i].z);
         vertex_list.tex2f(va[i].tx, va[i].ty);
         vertex_list.push_vertex();
     }
@@ -866,14 +890,12 @@ void MechListRenderer::prep_vbo()
     vertex_list.reset();
 
     const int mlm = mech_list->mlm;
-    struct Mech* mla = mech_list->mla;
+    const struct Mech* mla = mech_list->mla;
 
     for (int i=0; i<mlm; i++)
     {
         if (mla[i].id == NULL_MECH_ID) continue;
 
-        mla[i].relative_center = quadrant_translate_position(current_camera_position,
-                                                             mla[i].center);
         switch (mla[i].render_type)
         {
             case MECH_RENDER_TYPE_0:

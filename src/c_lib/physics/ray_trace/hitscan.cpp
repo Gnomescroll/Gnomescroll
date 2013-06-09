@@ -34,7 +34,7 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
     return against_agents(position, direction, max_distance, NULL_AGENT);
 }
 
-#define HITSCAN_PROFILING 1
+#define HITSCAN_PROFILING 0
 
 static WorldHitscanResult _hitscan_against_terrain_and_mobs(const Vec3& p, const Vec3& v,
                                                             float range, int ignore_id,

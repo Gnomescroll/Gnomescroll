@@ -164,7 +164,6 @@ static bool update_mech(struct Mech &m)
     }
 
     m.center = get_mech_center(m);
-    m.relative_center = quadrant_translate_position(current_camera_position, m.center);
 
     return true;
 }
@@ -178,7 +177,6 @@ static bool unpack_mech(struct Mech &m, const mech_create_StoC &p)
     m.side = p.side;
     m.position = p.position;
     m.center = get_mech_center(m);
-    m.relative_center = quadrant_translate_position(current_camera_position, m.center);
     m.text = NULL;
     return update_mech(m);
 }
@@ -367,7 +365,6 @@ MechCreateFailureCode create_mech(const Vec3i& position, MechType type, int side
     m.offset_x = 0.0f;
     m.offset_y = 0.0f;
     m.center = get_mech_center(m);
-    m.relative_center = quadrant_translate_position(current_camera_position, m.center);
 
     MechClassType class_type = get_mech_class(m.type);
     switch (class_type)

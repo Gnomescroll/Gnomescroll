@@ -24,7 +24,7 @@ class MechListMeshMeshRenderer
         // visibility will default to private unless you specify it
         struct Vertex
         {
-            Vec3 p;
+            float x,y,z; //0
             float tx,ty; //12
             float btx,bty; //20  //get rid of this
             unsigned char color[4]; //28
@@ -58,14 +58,9 @@ class MechListMeshMeshRenderer
 
     void vertex3f(float x, float y, float z)
     {
-        v.p.x = x;
-        v.p.y = y;
-        v.p.z = z;
-    }
-
-    void vertex3f(const struct Vec3& p)
-    {
-        v.p = p;
+        v.x = x;
+        v.y = y;
+        v.z = z;
     }
 
     void tex2f(float tx, float ty)
@@ -400,8 +395,18 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
     }
 #endif
 
-    Vec3 w = vec3_add(vec3_init(m.position), vec3_init(0.001f, 0.001f, 0.0f));
-    if (!sphere_fulstrum_test(w, get_mech_radius(m.type)))
+    float wx = m.position.x + 0.001f;
+    float wy = m.position.y + 0.001;
+    float wz = m.position.z + 0.0f;
+
+    //fulstrum test
+    const float cx = current_camera_position.x;
+    const float cy = current_camera_position.y;
+
+    wx = quadrant_translate_f(cx, wx);
+    wy = quadrant_translate_f(cy, wy);
+
+    if (!sphere_fulstrum_test(wx, wy, wz, 0.6f))
         return;
 
     int env_light = t_map::get_envlight(m.position);
@@ -412,7 +417,7 @@ void MechListMeshRenderer::push_render_mesh(const struct Mech &m)
     const MeshInstance::Vertex* va = MI->va;
     for(int i=0; i<imax; i++)
     {
-        vertex_list.vertex3f(vec3_add(w, va[i].p));
+        vertex_list.vertex3f(wx+va[i].x, wy+va[i].y, wz+va[i].z);
         vertex_list.tex2f(va[i].tx, va[i].ty);
         vertex_list.push_vertex();
     }

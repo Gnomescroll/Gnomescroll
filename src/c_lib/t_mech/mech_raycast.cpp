@@ -92,8 +92,7 @@ bool ray_cast_mech(const Vec3& position, const Vec3& direction, float range,
         // TODO -- radius should be precalculated on init, for the mech type
         // center should be computed and stored on create/update for the mech
         // would save ~1ms or so per frame
-        //Vec3 center = quadrant_translate_position(position, mla[i].center);
-        Vec3 center = mla[i].relative_center;
+        Vec3 center = quadrant_translate_position(position, mla[i].center);
         //printf("Position: "); vec3i_print(mla[i].position);
         //printf("Center: "); vec3_print(mla[i].center);
         float rad = get_mech_radius(mla[i].type);
