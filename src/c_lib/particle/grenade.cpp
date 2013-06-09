@@ -14,18 +14,17 @@
 namespace Particle
 {
 
-const int GRENADE_TTL = 100;
-const float GRENADE_DAMP = 0.5f;
+const int GRENADE_TTL = ONE_SECOND * 7;
+const float GRENADE_DAMP = 0.75f;
 const int GRENADE_TYPE = 1;
 const int GRENADE_TEXTURE_ID = 5;
 const float GRENADE_TEXTURE_SCALE = 1.0f;
 const int GRENADE_BOUNCE_EXPLODE_LIMIT = 2;
-const float GRENADE_MASS = 0.5f;
+const float GRENADE_MASS = 1.75f;
 
 class grenade_StoC: public FixedSizeReliableNetPacketToClient<grenade_StoC>
 {
     public:
-
         struct Vec3 p;
         struct Vec3 m;
         uint8_t owner;
@@ -50,9 +49,9 @@ inline void grenade_StoC::handle()
     Grenade* g = Particle::grenade_list->create();
     if (g == NULL) return;
     g->set_state(p, m);
-    g->owner = (AgentID)this->owner;
-    g->ttl_max = (int)ttl_max;
-    g->type = (int)type;
+    g->owner = AgentID(this->owner);
+    g->ttl_max = int(ttl_max);
+    g->type = int(type);
     #endif
 }
 
