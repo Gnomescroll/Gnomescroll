@@ -1,7 +1,8 @@
 #include "properties.hpp"
 
-#include <t_mob/sprites/common.hpp>
 #include <common/dat/properties.hpp>
+#include <t_mob/sprites/common.hpp>
+#include <t_mob/sprites/textures.hpp>
 
 namespace t_mob
 {
@@ -17,18 +18,25 @@ void teardown_sprite_mob_properties()
     delete sprite_mob_properties;
 }
 
-float get_mob_radius(SpriteMobType type)
-{
-    SpriteMobProperty* p = sprite_mob_properties->get(type);
-    IF_ASSERT(p == NULL) return 0.5f;
-    return p->radius;
-}
+#define GET_MOB_PROPERTY(return_type, name, default_value) \
+    return_type get_mob_##name(SpriteMobType type) \
+    { \
+        SpriteMobProperty* p = sprite_mob_properties->get(type); \
+        IF_ASSERT(p == NULL) return default_value; \
+        return p->name; \
+    }
 
-float get_mob_height(SpriteMobType type)
+GET_MOB_PROPERTY(SpriteAnimationGroupID, animation_group_id, NULL_SPRITE_ANIMATION_GROUP);
+GET_MOB_PROPERTY(float, radius, 0.5f);
+GET_MOB_PROPERTY(float, height, 1.0f);
+GET_MOB_PROPERTY(float, width, 1.0f);
+GET_MOB_PROPERTY(float, size, 1.0f);
+
+const SpriteAnimationGroup* get_mob_animation_group(SpriteMobType type)
 {
-    SpriteMobProperty* p = sprite_mob_properties->get(type);
-    IF_ASSERT(p == NULL) return 1.0f;
-    return p->height;
+    SpriteAnimationGroupID id = get_mob_animation_group_id(type);
+    if (!isValid(id)) return NULL;
+    return animations->get(id);
 }
 
 SpriteMobType get_mob_type(const char* name)
@@ -37,5 +45,7 @@ SpriteMobType get_mob_type(const char* name)
     IF_ASSERT(p == NULL) return NULL_SPRITE_MOB_TYPE;
     return p->type;
 }
+
+#undef GET_MOB_PROPERTY
 
 }   // t_mob

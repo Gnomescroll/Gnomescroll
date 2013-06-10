@@ -21,6 +21,7 @@
 #include <physics/quadrant.hpp>
 #include <physics/pathfinding.hpp>
 #include <t_mech/_interface.hpp>
+#include <t_mob/sprites/_interface.hpp>
 
 bool _quit = false;
 
@@ -406,6 +407,10 @@ void draw_tick()
     GL_ASSERT(GL_BLEND, true);
 
     glDisable(GL_BLEND);
+
+    poll_mouse();
+    t_mob::draw_sprite_mobs();
+
     glDisable(GL_TEXTURE_2D);
     glDepthMask(GL_TRUE);   //END
 

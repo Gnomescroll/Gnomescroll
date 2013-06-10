@@ -242,6 +242,7 @@ GLint cull_face_mode = GL_BACK;
 
 bool draw_voxel_gl_begin(GLint cull_mode)
 {
+    CHECK_GL_ERROR();
     IF_ASSERT(t_map::block_textures_normal == 0) return false;
 
     glColor4ub(255,255,255,255);

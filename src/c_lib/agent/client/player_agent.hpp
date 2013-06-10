@@ -90,6 +90,9 @@ class PlayerAgent
     float camera_height();
     struct Vec3 camera_position();
 
+    Vec3 get_position();
+    Vec3 forward_vector();
+
     struct Vec3 get_weapon_fire_animation_origin()
     {
         struct Vec3 origin = agent_camera->get_position();

@@ -19,6 +19,8 @@ a->add_frame_strip(0, 2);
 namespace t_mob
 {
 
+extern class SpriteAnimationRepo* animations;
+
 void init_animation_repo();
 void teardown_animation_repo();
 
@@ -56,6 +58,26 @@ class SpriteAnimation
         this->name[ANIMATION_NAME_MAX] = '\0';
     }
 
+    int get_frame(int frame) const
+    {
+        if (frame < 0 || frame >= int(this->count))
+            return NULL_SPRITE;
+        return this->frames[frame];
+    }
+
+    void verify()
+    {
+        GS_ASSERT(this->count > 0);
+        GS_ASSERT(this->sheet != NULL_SPRITE_SHEET);
+        for (size_t i=0; i<this->count; i++)
+        {
+            GS_ASSERT(this->frames[i] != NULL_SPRITE);
+        }
+        GS_ASSERT(this->name[0] != '\0');
+        GS_ASSERT(this->id != NULL_SPRITE_ANIMATION);
+        GS_ASSERT(this->group != NULL);
+    }
+
     SpriteAnimation() :
         group(NULL), id(NULL_SPRITE_ANIMATION), sheet(NULL_SPRITE_SHEET),
         count(0)
@@ -89,9 +111,29 @@ class SpriteAnimationGroup
         return a;
     }
 
+    const SpriteAnimation* get(const char* name) const
+    {
+        IF_ASSERT(name == NULL) return NULL;
+        for (size_t i=0; i<this->count; i++)
+            if (strcmp(name, this->animations[i].name) == 0)
+                return &this->animations[i];
+        return NULL;
+    }
+
+    const SpriteAnimation* get(SpriteAnimationID id) const
+    {
+        IF_ASSERT(id < 0 || id >= SpriteAnimationID(this->count))
+            return NULL;
+        return &this->animations[id];
+    }
+
     void verify()
     {
         if (!this->count) return;
+
+        for (size_t i=0; i<this->count; i++)
+            this->animations[i].verify();
+
         for (size_t i=0; i<this->count-1; i++)
         for (size_t j=i+1; i<this->count; i++)
         {
@@ -110,27 +152,6 @@ class SpriteAnimationGroup
 
 class SpriteAnimationRepo
 {
-    private:
-
-    static int _cmp_group(const void* a, const void* b)
-    {
-        const SpriteAnimationGroup* ga = reinterpret_cast<const SpriteAnimationGroup*>(a);
-        const SpriteAnimationGroup* gb = reinterpret_cast<const SpriteAnimationGroup*>(b);
-        if (ga->sheet == gb->sheet) return 0;
-        if (ga->sheet == NULL_SPRITE_SHEET) return 1;
-        if (gb->sheet == NULL_SPRITE_SHEET) return -1;
-        if (int(ga->sheet) < int(gb->sheet))
-            return -1;
-        else
-            return 1;
-    }
-
-    void sort_by_sheet_id()
-    {
-        qsort(this->groups, this->count, sizeof(*this->groups),
-              &SpriteAnimationRepo::_cmp_group);
-    }
-
     public:
         static const size_t ANIMATION_GROUPS_MAX = NULL_SPRITE_ANIMATION_GROUP - 1;
 
@@ -148,6 +169,7 @@ class SpriteAnimationRepo
         filename[len-1] = '\0';
         SpriteSheet sheet = this->texture_loader.load_texture(filename);
         free(filename);
+        GS_ASSERT(sheet != NULL_SPRITE_SHEET);
         return sheet;
     }
 
@@ -167,7 +189,7 @@ class SpriteAnimationRepo
         return this->create(this->load_texture(sheet_name));
     }
 
-    SpriteAnimationGroup* get(SpriteAnimationGroupID id)
+    const SpriteAnimationGroup* get(SpriteAnimationGroupID id) const
     {
         IF_ASSERT(id < 0 || id > ANIMATION_GROUPS_MAX) return NULL;
         IF_ASSERT(this->groups[id].id != id) return NULL;
@@ -180,19 +202,11 @@ class SpriteAnimationRepo
             this->groups[i].verify();
     }
 
-    void finish()
-    {
-        this->sort_by_sheet_id();
-        this->verify();
-    }
-
     SpriteAnimationRepo() :
         texture_loader(16), count(0)
     {
         GS_ASSERT(ANIMATION_GROUPS_MAX < size_t(NULL_SPRITE_ANIMATION_GROUP));
     }
 };
-
-extern class SpriteAnimationRepo* animations;
 
 }   // t_mob

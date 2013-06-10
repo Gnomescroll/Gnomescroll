@@ -9,20 +9,17 @@ dont_include_this_file_on_server
 namespace Draw
 {
 
-void drawAxialBillboardSprite(
-    struct Vec3 position,
-    int texture_index, float texture_scale);
+void drawAxialBillboardSprite(const Vec3& position, int texture_index,
+                              float texture_scale, int sprites_wide=16);
 
-void drawBillboardSprite(
-    struct Vec3 position,
-    int texture_index, float texture_scale);
+void drawBillboardSprite(const Vec3& position, int texture_index,
+                         float texture_scale);
 
-void drawColoredMinivox(
-    struct Vec3 position, struct Vec3 forward, struct Vec3 right, struct Vec3 normal,
-    Color color);
+void drawColoredMinivox(const Vec3& position, const Vec3& forward,
+                        const Vec3& right, const Vec3& normal, Color color);
 
-void drawTexturedMinivox(
-    struct Vec3 position, struct Vec3 forward, struct Vec3 right, struct Vec3 normal,
-    float tx, float ty, float sprite_width);
+void drawTexturedMinivox(const Vec3& position, const Vec3& forward,
+                         const Vec3& right, const Vec3& normal,
+                         float tx, float ty, float sprite_width);
 
 }   // Draw

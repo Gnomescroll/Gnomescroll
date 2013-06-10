@@ -9,26 +9,33 @@ namespace t_mob
 
 class SpriteMob
 {
+    private:
+    const SpriteAnimationGroup* _begin_animation();
+
     public:
-
-    // hitscan
-    // animation config
-    // rendering
-
         SpriteMobID id;
         SpriteMobType type;
 
         Vec3 position;
         Vec3 orientation;
 
+        int animation_tick;
+        const SpriteAnimation* current_animation;
+        int current_animation_frame;
+
     inline Vec3 get_center();
     inline float get_radius();
 
     void set_type(const char* name);
 
+    void begin_animation(const char* name);
+    void begin_animation(SpriteAnimationID id);
+    void begin_default_animation();
+    void stop_animation();
+    void update();
     void draw();
 
-    SpriteMob();
+    explicit SpriteMob(SpriteMobType type);
     ~SpriteMob();
 };
 

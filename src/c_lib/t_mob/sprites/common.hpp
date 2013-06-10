@@ -1,5 +1,6 @@
 #pragma once
 
+const int ANIMATION_SPEED = ONE_SECOND * 2;
 
 const size_t MAX_SPRITE_MOBS = 1024;
 const size_t MAX_SPRITE_MOB_TYPES = 0xFF;

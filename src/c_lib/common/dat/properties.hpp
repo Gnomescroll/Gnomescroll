@@ -64,7 +64,6 @@ class Properties
                 this->properties[i].hash == hash)
                     return &this->properties[i];
         GS_ASSERT(false);
-        printf("No property found for name: %s\n", name);
         return NULL;
     }
 
@@ -80,14 +79,16 @@ class Properties
 
     Property* get_next()
     {
-        if (this->current_property != NULL) this->done_loading();
-        IF_ASSERT(this->current >= this->max) return NULL;
+        if (this->current_property != NULL)
+            this->done_loading();
+        IF_ASSERT(this->current >= this->max)
+            return NULL;
         do
         {
             this->current_property = &this->properties[this->current++];
         } while (this->current_property->loaded &&
                  this->current <= this->max);
-        this->current_property->set_type((Type)(this->current-1));
+        this->current_property->set_type(Type(this->current-1));
         if (this->current > this->index)
             this->index = this->current;
         return this->current_property;

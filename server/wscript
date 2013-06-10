@@ -255,6 +255,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     else:
         conf.env.RPATH += ['/usr/lib', '/usr/local/lib', '/lib']
 
+    if x86_64:
+        conf.env.INCLUDES.append('/usr/include/x86_64-linux-gnu/c++/4.7/')
+
     if OS == 'Linux':
         conf.env.INCLUDES.append('../lib/server/hiredis/include')
         conf.env.RPATH.append('$ORIGIN/../lib/server/hiredis/lib32')

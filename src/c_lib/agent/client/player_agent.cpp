@@ -261,6 +261,16 @@ Vec3 PlayerAgent::camera_position()
     return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
 }
 
+Vec3 PlayerAgent::get_position()
+{
+    return this->camera_state.get_position();
+}
+
+Vec3 PlayerAgent::forward_vector()
+{
+    return this->camera_state.forward_vector();
+}
+
 void PlayerAgent::play_geiger()
 {
     static int i = 0;

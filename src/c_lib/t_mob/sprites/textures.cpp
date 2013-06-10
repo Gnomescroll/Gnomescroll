@@ -32,9 +32,9 @@ void SpriteAnimation::_add_frame_strip(size_t x, size_t y, size_t n, bool horizo
     for (size_t i=0; i<n; i++)
     {
         if (horizontal)
-            this->add_frame(x + n, y);
+            this->add_frame(x + i, y);
         else
-            this->add_frame(x, y + n);
+            this->add_frame(x, y + i);
     }
 }
 

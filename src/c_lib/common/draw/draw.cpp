@@ -15,13 +15,15 @@ namespace Draw
 static float v_buffer[3*8];
 static float s_buffer[6*(4*3)];
 
-void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_scale)
+void drawAxialBillboardSprite(const Vec3& position, int texture_index,
+                              float texture_scale, int sprites_wide)
 {
-    position = quadrant_translate_position(current_camera_position, position);
-    position.z += texture_scale;
+    IF_ASSERT(sprites_wide <= 0) return;
+    Vec3 pos = quadrant_translate_position(current_camera_position, position);
+    pos.z += texture_scale;
 
-    if (!point_fulstrum_test(position.x, position.y, position.z))
-        return; // fulstrum check
+    if (!point_fulstrum_test(pos))
+        return;
 
     Vec3 up = vec3_init(model_view_matrix[0]*texture_scale,
                         model_view_matrix[4]*texture_scale,
@@ -30,33 +32,35 @@ void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_sc
                            model_view_matrix[5]*texture_scale,
                            model_view_matrix[9]*texture_scale);
 
-    float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(texture_index%16)* (1.0f/16.0f);
-    tx_max = tx_min + (1.0f/16.0f);
-    ty_min = (float)(texture_index/16)* (1.0f/16.0f);
-    ty_max = ty_min + (1.0f/16.0f);
+    float factor = 1.0f / sprites_wide;
+    float tx_min = float(texture_index % sprites_wide) * factor;
+    float tx_max = tx_min + factor;
+    float ty_min = float(texture_index / sprites_wide) * factor;
+    float ty_max = ty_min + factor;
 
-    Vec3 p = vec3_sub(position, vec3_add(right, up));
-    glTexCoord2f(tx_min,ty_max);
+    Vec3 p = vec3_sub(pos, vec3_add(right, up));
+    glTexCoord2f(tx_min, ty_max);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(position, vec3_sub(up, right));
-    glTexCoord2f(tx_max,ty_max);
+    p = vec3_add(pos, vec3_sub(up, right));
+    glTexCoord2f(tx_max, ty_max);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(position, vec3_add(up, right));
-    glTexCoord2f(tx_max,ty_min);
+    p = vec3_add(pos, vec3_add(up, right));
+    glTexCoord2f(tx_max, ty_min);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(position, vec3_sub(right, up));
-    glTexCoord2f(tx_min,ty_min);
+    p = vec3_add(pos, vec3_sub(right, up));
+    glTexCoord2f(tx_min, ty_min);
     glVertex3f(p.x, p.y, p.z);
 }
 
-void drawBillboardSprite(Vec3 position, int texture_index, float texture_scale)
+void drawBillboardSprite(const Vec3& position, int texture_index,
+                         float texture_scale, int sprites_wide)
 {
-    position = quadrant_translate_position(current_camera_position, position);
-    position.z += texture_scale;    // draw from bottom
+    IF_ASSERT(sprites_wide <= 0) return;
+    Vec3 pos = quadrant_translate_position(current_camera_position, position);
+    pos.z += texture_scale;    // draw from bottom
 
     Vec3 up = vec3_init(model_view_matrix[0]*texture_scale,
                         model_view_matrix[4]*texture_scale,
@@ -65,37 +69,38 @@ void drawBillboardSprite(Vec3 position, int texture_index, float texture_scale)
                            model_view_matrix[5]*texture_scale,
                            model_view_matrix[9]*texture_scale);
 
-    float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(texture_index%16)* (1.0f/16.0f);   // TODO -- get dimensions from spritesheet lookup
-    tx_max = tx_min + (1.0f/16.0f);
-    ty_min = (float)(texture_index/16)* (1.0f/16.0f);
-    ty_max = ty_min + (1.0f/16.0f);
+    float factor = 1.0f / sprites_wide;
+    float tx_min = float(texture_index % sprites_wide) * factor;
+    float tx_max = tx_min + factor;
+    float ty_min = float(texture_index / sprites_wide) * factor;
+    float ty_max = ty_min + factor;
 
-    Vec3 p = vec3_sub(position, vec3_add(right, up));
-    glTexCoord2f(tx_min,ty_max);
+    Vec3 p = vec3_sub(pos, vec3_add(right, up));
+    glTexCoord2f(tx_min, ty_max);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(position, vec3_sub(up, right));
-    glTexCoord2f(tx_max,ty_max);
+    p = vec3_add(pos, vec3_sub(up, right));
+    glTexCoord2f(tx_max, ty_max);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(position, vec3_add(up, right));
-    glTexCoord2f(tx_max,ty_min);
+    p = vec3_add(pos, vec3_add(up, right));
+    glTexCoord2f(tx_max, ty_min);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(position, vec3_sub(right, up));
-    glTexCoord2f(tx_min,ty_min);
+    p = vec3_add(pos, vec3_sub(right, up));
+    glTexCoord2f(tx_min, ty_min);
     glVertex3f(p.x, p.y, p.z);
 }
 
-void drawColoredMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Color color)
+void drawColoredMinivox(const Vec3& position, const Vec3& forward,
+                        const Vec3& right, const Vec3& normal, Color color)
 {
-    position = quadrant_translate_position(current_camera_position, position);
-    const float x0 = position.x;
-    const float y0 = position.y;
-    const float z0 = position.z;
+    Vec3 p = quadrant_translate_position(current_camera_position, position);
+    if (!point_fulstrum_test(p)) return;
 
-    if (!point_fulstrum_test(x0,y0,z0)) return; // fulstrum check
+    const float x0 = p.x;
+    const float y0 = p.y;
+    const float z0 = p.z;
 
     glColor4ub(color.r, color.g, color.b, color.a);
 
@@ -123,9 +128,13 @@ void drawColoredMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Co
     }
 }
 
-void drawTexturedMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, float tx, float ty, float sprite_width)
+void drawTexturedMinivox(const Vec3& position, const Vec3& forward,
+                         const Vec3& right, const Vec3& normal,
+                         float tx, float ty, float sprite_width)
 {
-    position = quadrant_translate_position(current_camera_position, position);
+    Vec3 p = quadrant_translate_position(current_camera_position, position);
+    if (!point_fulstrum_test(p)) return;
+
     const float x0 = position.x;
     const float y0 = position.y;
     const float z0 = position.z;

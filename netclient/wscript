@@ -418,6 +418,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     else:
         conf.env.RPATH += ['/lib', '/usr/lib', '/usr/local/lib']
 
+    if x86_64:
+        conf.env.INCLUDES.append('/usr/include/x86_64-linux-gnu/c++/4.7/')
+
     if OS == 'Linux' and not windows:
         if production:
             lib_base_path = '$ORIGIN/./lib/lin{0}/'
@@ -873,4 +876,4 @@ def asan(ctx, add=[], rm=[]):
     link_flags = ['-fsanitize=address']
     os.environ['PATH'] = '{0}:{1}'.format(asan_path, os.environ['PATH'])
     configure(ctx, add_flags=add + flags, rm_flags=rm, link_flags=link_flags,
-              optlevel=3, use_clang=True, awesomium=True)
+              optlevel=3)

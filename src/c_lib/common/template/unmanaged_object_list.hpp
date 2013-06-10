@@ -62,12 +62,12 @@ class UnmanagedObjectList
     UnmanagedObjectList<Thing, ThingID>(size_t size, ThingID null_id) :
         _index(0), null_id(null_id), count(0), max(size)
     {
-        this->objects = new Thing*[size];
+        this->objects = (Thing**)calloc(size, sizeof(Thing*));
         GS_ASSERT(null_id >= size);
     }
 
     ~UnmanagedObjectList<Thing, ThingID>()
     {
-        delete[] this->objects;
+        free(this->objects);
     }
 };

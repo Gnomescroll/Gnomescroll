@@ -74,8 +74,7 @@ void draw_teardown()
 
 void begin_particle_draw()
 {
-    GS_ASSERT(particle_texture != 0);
-    if (particle_texture == 0) return;
+    IF_ASSERT(particle_texture == 0) return;
 
     glColor4ub(255,255,255,255);
 
@@ -86,8 +85,6 @@ void begin_particle_draw()
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
-
-
     glBegin(GL_QUADS);
 }
 

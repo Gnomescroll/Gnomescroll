@@ -176,6 +176,7 @@ bool TextureSheetLoader::blit_meta(size_t meta_index)
 //blit to sheet or return texture id
 int TextureSheetLoader::blit(SpriteSheet sheet_id, size_t source_x, size_t source_y)
 {
+    IF_ASSERT(sheet_id == NULL_SPRITE_SHEET) return NULL_SPRITE;
     IF_ASSERT(this->tile_num > 0xFF) return NULL_SPRITE;
     IF_ASSERT(source_x < 1) return NULL_SPRITE;
     IF_ASSERT(source_y < 1) return NULL_SPRITE;
@@ -186,10 +187,12 @@ int TextureSheetLoader::blit(SpriteSheet sheet_id, size_t source_x, size_t sourc
 
     //check to see if already loaded
     for (size_t i=0; i<this->tile_num; i++)
-        if (tile_meta[i].sheet_id == sheet_id
-         && tile_meta[i].xpos     == source_x
-         && tile_meta[i].ypos     == source_y)
+        if (tile_meta[i].sheet_id == sheet_id &&
+            tile_meta[i].xpos == source_x &&
+            tile_meta[i].ypos == source_y)
+        {
             return i;
+        }
 
     // record metadata
     size_t index = this->tile_num;
@@ -198,10 +201,10 @@ int TextureSheetLoader::blit(SpriteSheet sheet_id, size_t source_x, size_t sourc
     tile_meta[index].ypos = source_y;
     this->tile_num++;
 
-    // blit
-    if (!this->blit_meta(index)) return NULL_SPRITE;
-
-    return index;
+    if (this->blit_meta(index))
+        return index;
+    else
+        return NULL_SPRITE;
 }
 
 void TextureSheetLoader::generate_greyscale()
@@ -312,6 +315,19 @@ const Color* TextureSheetLoader::get_sprite_pixels(int sprite_id) const
     IF_ASSERT(sprite_id < 0 || sprite_id >= (int)this->tile_num) return NULL;
     size_t index = sprite_id * this->tile_size * this->tile_size;
     return &this->pixels[index];
+}
+
+void TextureSheetLoader::save_texture(const char* name)
+{
+    IF_ASSERT(name == NULL) return;
+    const char fmt[] = SCREENSHOT_PATH "%s.png";
+    const size_t len = sizeof(fmt) + strlen(name);
+    char* filename = (char*)malloc(len);
+    size_t could = snprintf(filename, len, fmt, name);
+    GS_ASSERT(could < len);
+    filename[len-1] = '\0';
+    save_surface_to_png(this->surface, filename);
+    free(filename);
 }
 
 class TextureSheetLoader* cube_texture_sheet_loader = NULL;
