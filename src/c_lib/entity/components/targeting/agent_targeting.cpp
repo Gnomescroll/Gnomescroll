@@ -112,7 +112,7 @@ void AgentTargetingComponent::move_on_surface()
         this->jump_cooldown_max = this->jump_cooldown_en_route;
 
     CSKey jump = CS_NULL;
-    if (on_ground(box.radius, position))
+    if (this->jump_near_player && on_ground(box.radius, position))
     {
         if (jump_cooldown_tick <= 0)
         {

@@ -55,7 +55,7 @@ class PositionPhysicsComponent: public PhysicsComponent
     {
     }
 
-    Vec3 get_position()
+    virtual Vec3 get_position()
     {
         #if DC_SERVER
         return this->position;
@@ -65,38 +65,38 @@ class PositionPhysicsComponent: public PhysicsComponent
         #endif
     }
 
-    bool set_position(Vec3 position)
+    virtual bool set_position(const Vec3& position)
     {
-        position = translate_position(position);
+        Vec3 p = translate_position(position);
         #if DC_CLIENT
         this->previous_position = this->position;
         this->previous_tick = this->tick;
         #endif
-        if (vec3_equal_approximate(this->position, position))
+        if (vec3_equal_approximate(this->position, p))
             return false;
-        this->position = position;
+        this->position = p;
         #if DC_SERVER
         this->position_changed = true;
         #endif
         return true;
     }
 
-    Vec3 get_momentum()
+    virtual Vec3 get_momentum()
     {
         return NULL_MOMENTUM;
     }
 
-    bool set_momentum(Vec3 momentum)
+    virtual bool set_momentum(const Vec3& momentum)
     {
         return false;
     }
 
-    Vec3 get_angles()
+    virtual Vec3 get_angles()
     {
         return this->angles;
     }
 
-    bool set_angles(Vec3 angles)
+    virtual bool set_angles(const Vec3& angles)
     {
         if (vec3_equal_approximate(this->angles, angles))
             return false;

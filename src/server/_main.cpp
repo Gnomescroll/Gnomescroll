@@ -318,6 +318,7 @@ void tick()
     //Entities::spawn_monsters(ENTITY_MONSTER_SPAWNER, 6);
     //Entities::spawn_monsters(ENTITY_MONSTER_SLIME, 100);
     Entities::spawn_slimes(100);
+    Entities::spawn_monsters(ENTITY_MONSTER_LIZARD_THIEF, 100);
 
     ItemContainer::update_smelters();
     Item::tick();

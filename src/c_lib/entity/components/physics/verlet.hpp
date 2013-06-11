@@ -45,7 +45,7 @@ class VerletPhysicsComponent: public PhysicsComponent
         return this->verlet.get_position();
     }
 
-    bool set_position(Vec3 position)
+    bool set_position(const Vec3& position)
     {
         return this->verlet.set_position(position);
     }
@@ -55,7 +55,7 @@ class VerletPhysicsComponent: public PhysicsComponent
         return this->verlet.get_momentum();
     }
 
-    bool set_momentum(Vec3 momentum)
+    bool set_momentum(const Vec3& momentum)
     {
         return this->verlet.set_momentum(momentum);
     }
@@ -65,7 +65,7 @@ class VerletPhysicsComponent: public PhysicsComponent
         return NULL_ANGLES;
     }
 
-    bool set_angles(Vec3 angles)
+    bool set_angles(const Vec3& angles)
     {
         return false;
     }

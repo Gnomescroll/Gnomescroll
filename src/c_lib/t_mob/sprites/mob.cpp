@@ -13,8 +13,6 @@ namespace t_mob
 
 SpriteMobList* sprite_mob_list = NULL;
 
-SpriteMob* _mob = NULL; // TODO - remove, debug only
-
 void init_sprite_mob_list()
 {
     GS_ASSERT(sprite_mob_list == NULL);
@@ -23,27 +21,12 @@ void init_sprite_mob_list()
 
 void teardown_sprite_mob_list()
 {
-    delete _mob;
     delete sprite_mob_list;
 }
 
 #if DC_CLIENT
 void draw_sprite_mobs()
 {
-    if (_mob == NULL)
-    {
-        _mob = new SpriteMob();
-        _mob->init("lizard_thief");
-    }
-
-    using ClientState::player_agent;
-    _mob->position = vec3_add(player_agent.camera_position(),
-                              vec3_scalar_mult(player_agent.forward_vector(), 5.0f));
-    _mob->position.z = t_map::get_nearest_surface_block(vec3i_init(_mob->position));
-
-    IF_ASSERT(animations->texture_loader.texture == 0)
-        return;
-
     glDisable(GL_BLEND);
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_ALPHA_TEST);

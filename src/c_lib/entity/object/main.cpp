@@ -108,10 +108,9 @@ Entity* create(EntityType type, int id)
 void ready_switch(Entity* object)
 {
     IF_ASSERT(object == NULL) return;
-
     entityReady ready = get_object_ready_method(object->type);
-    GS_ASSERT(ready != NULL);
-    if (ready != NULL) ready(object);
+    IF_ASSERT(ready == NULL) return;
+    ready(object);
 }
 
 void destroy_switch(Entity* object)

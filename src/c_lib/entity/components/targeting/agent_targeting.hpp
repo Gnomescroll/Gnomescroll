@@ -38,6 +38,7 @@ class AgentTargetingComponent: public TargetingComponent
         float jump_force;
         int attack_rate;
         int attack_damage;
+        bool jump_near_player;
 
         // state
         int ticks_locked;
@@ -71,7 +72,7 @@ class AgentTargetingComponent: public TargetingComponent
         jump_cooldown_en_route(ONE_SECOND), jump_cooldown_nearby(ONE_SECOND),
         attack_tick(0), speed(1.0f), proximity_radius(0.25f), max_z_diff(128),
         max_lock_ticks(0), jump_force(0.25f), attack_rate(ONE_SECOND),
-        attack_damage(10), ticks_locked(0)
+        attack_damage(10), jump_near_player(false), ticks_locked(0)
     {
         this->target_id = NULL_AGENT;
     }

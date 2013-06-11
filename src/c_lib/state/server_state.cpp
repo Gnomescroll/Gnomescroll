@@ -129,10 +129,10 @@ void damage_objects_within_sphere(const Vec3& p, float radius,
         a->status.apply_damage(dmg, owner, inflictor_type);
     }
 
-    const int n_types = 4;
+    const int n_types = 5;
     const EntityType types[n_types] = {
         ENTITY_MONSTER_BOMB, ENTITY_MONSTER_BOX, ENTITY_MONSTER_SPAWNER,
-        ENTITY_MONSTER_SLIME,
+        ENTITY_MONSTER_SLIME, ENTITY_MONSTER_LIZARD_THIEF,
     };
     Entities::damage_objects_within_sphere(types, n_types, p, radius, damage);
 }

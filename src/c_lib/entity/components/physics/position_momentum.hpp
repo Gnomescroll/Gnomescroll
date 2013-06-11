@@ -31,7 +31,7 @@ class PositionMomentumPhysicsComponent: public PositionPhysicsComponent
         return this->momentum;
     }
 
-    bool set_momentum(Vec3 momentum)
+    bool set_momentum(const Vec3& momentum)
     {
         IF_ASSERT(!vec3_is_valid(momentum))
             return false;

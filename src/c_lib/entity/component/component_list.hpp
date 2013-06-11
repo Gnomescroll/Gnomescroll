@@ -22,6 +22,7 @@ class ComponentList
             {
                 this->components[i] = new Component;
                 this->components[i]->id = i;
+                this->count++;
                 return this->components[i];
             }
         GS_ASSERT(false);
@@ -34,6 +35,7 @@ class ComponentList
         IF_ASSERT(component == NULL) return;
         GS_ASSERT(this->components != NULL);
         GS_ASSERT(this->components[component->id] != NULL);
+        this->count--;
         this->components[component->id] = NULL;
         delete component;
     }
@@ -41,7 +43,6 @@ class ComponentList
     void call()
     {
         IF_ASSERT(this->components == NULL) return;
-        if (!this->count) return;
         for (int i=0, j=0; i<this->max && j < this->count; i++)
             if (this->components[i] != NULL)
             {

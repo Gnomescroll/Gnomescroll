@@ -12,3 +12,4 @@
 #include <entity/objects/mobs/bomb.hpp>
 #include <entity/objects/mobs/box.hpp>
 #include <entity/objects/mobs/spawner.hpp>
+#include <entity/objects/mobs/lizard_thief.hpp>

@@ -11,11 +11,11 @@ class PhysicsComponent: public Component
     public:
 
     virtual Vec3 get_position() = 0;
-    virtual bool set_position(Vec3 position) = 0;
+    virtual bool set_position(const Vec3& position) = 0;
     virtual Vec3 get_momentum() = 0;
-    virtual bool set_momentum(Vec3 momentum) = 0;
+    virtual bool set_momentum(const Vec3& momentum) = 0;
     virtual Vec3 get_angles() = 0;
-    virtual bool set_angles(Vec3 angles) = 0;
+    virtual bool set_angles(const Vec3& angles) = 0;
 
     virtual void set_changed(bool changed)
     {

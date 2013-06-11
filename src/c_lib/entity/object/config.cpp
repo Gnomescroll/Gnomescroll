@@ -126,7 +126,14 @@ static void register_settings()
     c.die = &die_mob_slime;
     c.max = 512;
 
-    commit_object_config(); // finalize
+    set_object(ENTITY_MONSTER_LIZARD_THIEF);
+    c.loader = &load_mob_lizard_thief_data;
+    c.create = &create_mob_lizard_thief;
+    c.ready = &ready_mob_lizard_thief;
+    c.die = &die_mob_lizard_thief;
+    c.max = 128;
+
+    commit_object_config();
 }
 
 static void validate_settings()
