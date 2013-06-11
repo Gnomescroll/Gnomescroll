@@ -8,6 +8,8 @@ class Entity;
 typedef void (*tickObject)(class Entities::Entity*);      // for physics
 typedef void (*updateObject)(class Entities::Entity*);    // for draw prep
 
+const size_t MOBS_MAX = 1024;
+
 const int MAX_ENTITY_TYPES = 0xFF;
 
 typedef enum
@@ -71,6 +73,8 @@ typedef enum
 
     COMPONENT_RATE_LIMIT,
 
+    COMPONENT_SPRITE_MOB,
+
     #if DC_CLIENT
     COMPONENT_VOXEL_ANIMATION,
     #endif
@@ -106,6 +110,8 @@ typedef enum
     COMPONENT_INTERFACE_HEALING,
     COMPONENT_INTERFACE_STATE_MACHINE,
     COMPONENT_INTERFACE_WAITING,
+
+    COMPONENT_INTERFACE_SPRITE_MOB,
 
     #if DC_CLIENT
     COMPONENT_INTERFACE_DRAW,       // draw()

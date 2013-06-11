@@ -33,9 +33,15 @@ class SpriteMob
     void begin_default_animation();
     void stop_animation();
     void tick();
-    void draw();
 
-    explicit SpriteMob(SpriteMobType type);
+    #if DC_CLIENT
+    void draw();
+    #endif
+
+    void init(SpriteMobType type);
+    void init(const char* name);
+
+    SpriteMob();
     ~SpriteMob();
 };
 

@@ -12,8 +12,9 @@
 
 #include <t_mob/sprites/common.hpp>
 #include <t_mob/sprites/_interface.cpp>
-#include <t_mob/sprites/textures.cpp>
 #include <t_mob/sprites/mob.cpp>
 #include <t_mob/sprites/properties.cpp>
 #include <t_mob/sprites/config.cpp>
+#include <t_mob/sprites/textures.cpp>
+
 #include <t_mob/_interface.cpp>

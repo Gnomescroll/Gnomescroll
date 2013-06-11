@@ -1,5 +1,7 @@
 // X-Macro to be used by main.hpp
 
+// TODO -- compute component list sizes from needs of mob list sizes
+
 #define COMPONENTS \
     A(PositionPhysicsComponent, position_physics_component, POSITION, PHYSICS, MOBS_MAX) \
     A(PositionMomentumPhysicsComponent, position_momentum_physics_component, POSITION_MOMENTUM, PHYSICS, MOBS_MAX) \
@@ -18,6 +20,7 @@
     A(StateMachineComponent, state_machine_component, STATE_MACHINE, STATE_MACHINE, MOBS_MAX / 2) \
     A(WaitingComponent, waiting_component, WAITING, WAITING, MOBS_MAX / 2) \
     A(RateLimitComponent, rate_limit_component, RATE_LIMIT, RATE_LIMIT, MOBS_MAX) \
+    A(SpriteMobComponent, sprite_mob_component, SPRITE_MOB, SPRITE_MOB, MOBS_MAX) \
     C(AnimationComponent, animation_component, VOXEL_ANIMATION, ANIMATION, MOBS_MAX / 4) \
     S(AgentSpawnerComponent, agent_spawner_component, AGENT_SPAWNER, SPAWNER, MAX_SPAWNERS + 1) \
     S(ExplosionComponent, explosion_component, EXPLOSION, EXPLOSION, MOBS_MAX / 2) \

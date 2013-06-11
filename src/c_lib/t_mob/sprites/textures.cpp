@@ -10,8 +10,10 @@ void init_animation_repo()
     GS_ASSERT(animations == NULL);
     animations = new class SpriteAnimationRepo;
 
+    #if DC_CLIENT
     animations->load_texture("haltingstate");
     animations->load_texture("rdn");
+    #endif
 }
 
 void teardown_animation_repo()
@@ -22,7 +24,11 @@ void teardown_animation_repo()
 void SpriteAnimation::add_frame(size_t x, size_t y)
 {
     IF_ASSERT(this->count >= this->MAX_FRAMES) return;
+    #if DC_CLIENT
     int tex = this->group->repo->texture_loader.blit(this->sheet, x, y);
+    #else
+    int tex = this->count;
+    #endif
     GS_ASSERT(tex != NULL_SPRITE);
     this->frames[this->count++] = tex;
 }

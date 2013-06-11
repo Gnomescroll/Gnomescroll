@@ -1,5 +1,5 @@
-// TODO -- compute component list sizes from needs of mob list sizes
-#define MOBS_MAX 1024
+#include <entity/component/lists.hpp>
+#include <entity/constants.hpp>
 
 /*
  * A -- component macro for all builds
@@ -18,8 +18,6 @@
 #else
 # define C(...)
 #endif
-
-#include <entity/component/lists.hpp>
 
 namespace Components
 {
@@ -147,5 +145,4 @@ void teardown_components()
 
 } // Components
 
-#undef MOBS_MAX
 #undef COMPONENTS

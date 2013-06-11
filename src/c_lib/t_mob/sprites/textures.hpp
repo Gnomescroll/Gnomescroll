@@ -155,10 +155,14 @@ class SpriteAnimationRepo
     public:
         static const size_t ANIMATION_GROUPS_MAX = NULL_SPRITE_ANIMATION_GROUP - 1;
 
-        TextureSheetLoader::TextureSheetLoader texture_loader;
         SpriteAnimationGroup groups[ANIMATION_GROUPS_MAX];
         size_t count;
 
+        #if DC_CLIENT
+        TextureSheetLoader::TextureSheetLoader texture_loader;
+        #endif
+
+    #if DC_CLIENT
     SpriteSheet load_texture(const char* name)
     {
         const char fmt[] = MEDIA_PATH "sprites/mob/%s.png";
@@ -172,6 +176,7 @@ class SpriteAnimationRepo
         GS_ASSERT(sheet != NULL_SPRITE_SHEET);
         return sheet;
     }
+    #endif
 
     SpriteAnimationGroup* create(SpriteSheet sheet)
     {
@@ -186,7 +191,12 @@ class SpriteAnimationRepo
 
     SpriteAnimationGroup* create(const char* sheet_name)
     {
-        return this->create(this->load_texture(sheet_name));
+        #if DC_CLIENT
+        SpriteSheet sheet = this->load_texture(sheet_name);
+        #else
+        SpriteSheet sheet = SpriteSheet(this->count);
+        #endif
+        return this->create(sheet);
     }
 
     const SpriteAnimationGroup* get(SpriteAnimationGroupID id) const
@@ -203,7 +213,10 @@ class SpriteAnimationRepo
     }
 
     SpriteAnimationRepo() :
-        texture_loader(16), count(0)
+        count(0)
+        #if DC_CLIENT
+        , texture_loader(16)
+        #endif
     {
         GS_ASSERT(ANIMATION_GROUPS_MAX < size_t(NULL_SPRITE_ANIMATION_GROUP));
     }

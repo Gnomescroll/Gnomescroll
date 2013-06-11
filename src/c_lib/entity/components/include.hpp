@@ -21,6 +21,7 @@
 #include <entity/components/state_machine.hpp>
 #include <entity/components/waiting.hpp>
 #include <entity/components/rate_limit.hpp>
+#include <entity/components/sprite_mob.hpp>
 #if DC_CLIENT
 # include <entity/components/animation.hpp>
 #endif

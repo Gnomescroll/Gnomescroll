@@ -159,6 +159,9 @@
 /* Terrain Generator */
 #include <t_gen/_include.hpp>
 
+/* Mobs */
+#include <t_mob/_include.hpp>
+
 /* item */
 #include <item/_include.hpp>
 #include <item/toolbelt/_include.hpp>
@@ -351,6 +354,8 @@ int init_c_lib(int argc, const char* argv[])
     Agents::init_attributes();
     World::init_attributes();
 
+    t_mob::init();  // 2d sprite, assimp mobs
+
     Badges::init();
     Components::init();
     Entities::init_net_interfaces();
@@ -441,6 +446,8 @@ void close_c_lib()
     Badges::teardown();
 
     Auth::teardown();
+
+    t_mob::teardown();
 
     Agents::teardown_attributes();
     World::teardown_attributes();

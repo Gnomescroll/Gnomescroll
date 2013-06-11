@@ -45,8 +45,8 @@ static void apply_automatic_properties()
 }
 
 SpriteMobProperty* s = NULL;
-SpriteAnimationGroup* g = NULL;
 SpriteAnimation* a = NULL;
+SpriteAnimationGroup* g = NULL;
 
 static void add_mob(const char* name, const char* sheet_name)
 {
@@ -78,8 +78,10 @@ void load_sprite_mob_config()
     sprite_mob_properties->set_pretty_names();
     apply_automatic_properties();
     verify_sprite_mob_config();
+    #if DC_CLIENT
     animations->texture_loader.generate_texture();
     animations->texture_loader.save_texture("mobs");
+    #endif
     animations->verify();
 }
 
