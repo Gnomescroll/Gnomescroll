@@ -32,7 +32,7 @@ class SpriteMob
     void begin_animation(SpriteAnimationID id);
     void begin_default_animation();
     void stop_animation();
-    void update();
+    void tick();
     void draw();
 
     explicit SpriteMob(SpriteMobType type);
@@ -45,6 +45,7 @@ extern SpriteMobList* sprite_mob_list;
 void init_sprite_mob_list();
 void teardown_sprite_mob_list();
 
+void tick_mob_sprites();
 void draw_sprite_mobs();
 void hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float range);
 

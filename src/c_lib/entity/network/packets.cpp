@@ -18,7 +18,7 @@ inline void object_create_StoC::handle()
 {
     using Entities::Entity;
     using Components::PhysicsComponent;
-    IF_ASSERT(type >= MAX_OBJECT_TYPES) return;
+    IF_ASSERT(type >= MAX_ENTITY_TYPES) return;
     IF_ASSERT(id >= GAME_OBJECTS_MAX) return;
 
     Entity* obj = Entities::create((EntityType)type, id);
@@ -34,7 +34,7 @@ inline void object_create_owner_StoC::handle()
     using Entities::Entity;
     using Components::PhysicsComponent;
     using Components::OwnerComponent;
-    IF_ASSERT(type >= MAX_OBJECT_TYPES) return;
+    IF_ASSERT(type >= MAX_ENTITY_TYPES) return;
     IF_ASSERT(id >= GAME_OBJECTS_MAX) return;
 
     Entity* obj = Entities::create((EntityType)type, id);
@@ -175,7 +175,7 @@ inline void object_destroy_StoC::handle()
 
 inline void object_shot_object_StoC::handle()
 {
-    if (this->target_type != OBJECT_AGENT) return; // remove this once turret can attack other objects
+    if (this->target_type != ENTITY_AGENT) return; // remove this once turret can attack other objects
 
     // get firing object
     Entities::Entity* obj = Entities::get((EntityType)this->type, (int)this->id);

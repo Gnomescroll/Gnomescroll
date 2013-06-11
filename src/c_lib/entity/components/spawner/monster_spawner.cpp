@@ -35,7 +35,7 @@ struct Vec3 MonsterSpawnerComponent::get_spawn_point(
 
 class Entities::Entity* MonsterSpawnerComponent::spawn_child()
 {
-    IF_ASSERT(this->spawn_type == OBJECT_NONE) return NULL;
+    IF_ASSERT(this->spawn_type == ENTITY_NONE) return NULL;
     if (this->full()) return NULL;
     IF_ASSERT(this->children == NULL) return NULL;
     Entities::Entity* child = Entities::create(this->spawn_type);

@@ -15,7 +15,7 @@ namespace Entities
 
 void load_agent_spawner_data()
 {
-    EntityType type = OBJECT_AGENT_SPAWNER;
+    EntityType type = ENTITY_AGENT_SPAWNER;
 
     #if DC_SERVER
     int n_components = 7;
@@ -96,7 +96,7 @@ static void set_agent_spawner_properties(Entity* object)
 
 Entity* create_agent_spawner()
 {
-    EntityType type = OBJECT_AGENT_SPAWNER;
+    EntityType type = ENTITY_AGENT_SPAWNER;
     Entity* obj = entity_list->create(type);
     GS_ASSERT(obj != NULL);
     if (obj == NULL) return NULL;

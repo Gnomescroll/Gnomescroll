@@ -3,78 +3,40 @@
 namespace Components
 {
 
-static ComponentInterfaceType* component_interface_map = NULL;
-
-ComponentInterfaceType get_interface_for_component(ComponentType component)
-{
-    IF_ASSERT(component_interface_map == NULL) return COMPONENT_INTERFACE_NONE;
-    IF_ASSERT(component < 0) return COMPONENT_INTERFACE_NONE;
-    IF_ASSERT(component >= MAX_COMPONENT_TYPES) return COMPONENT_INTERFACE_NONE;
-    return component_interface_map[component];
-}
-
-static void set_interface_for_component(ComponentType component, ComponentInterfaceType interface)
-{
-    IF_ASSERT(component_interface_map == NULL) return;
-    IF_ASSERT(component < 0) return;
-    IF_ASSERT(component >= MAX_COMPONENT_TYPES) return;
-    component_interface_map[component] = interface;
-}
-
 void init()
 {
-    component_interface_map = (ComponentInterfaceType*)calloc(MAX_COMPONENT_TYPES, sizeof(ComponentInterfaceType));
-
-    set_interface_for_component(COMPONENT_NONE, COMPONENT_INTERFACE_NONE);
-
-    set_interface_for_component(COMPONENT_POSITION, COMPONENT_INTERFACE_PHYSICS);
-    set_interface_for_component(COMPONENT_POSITION_MOMENTUM, COMPONENT_INTERFACE_PHYSICS);
-    set_interface_for_component(COMPONENT_VERLET, COMPONENT_INTERFACE_PHYSICS);
-
-    set_interface_for_component(COMPONENT_TTL, COMPONENT_INTERFACE_HEALTH);
-    set_interface_for_component(COMPONENT_HIT_POINTS, COMPONENT_INTERFACE_HEALTH);
-
-    set_interface_for_component(COMPONENT_VOXEL_MODEL, COMPONENT_INTERFACE_VOXEL_MODEL);
-
-    set_interface_for_component(COMPONENT_OWNER, COMPONENT_INTERFACE_OWNER);
-
-    set_interface_for_component(COMPONENT_AGENT_SPAWNER, COMPONENT_INTERFACE_SPAWNER);
-    set_interface_for_component(COMPONENT_MONSTER_SPAWNER, COMPONENT_INTERFACE_SPAWNER);
-
-    set_interface_for_component(COMPONENT_SPAWN_CHILD, COMPONENT_INTERFACE_SPAWN_CHILD);
-
-    set_interface_for_component(COMPONENT_MOTION_TARGETING, COMPONENT_INTERFACE_TARGETING);
-    set_interface_for_component(COMPONENT_WEAPON_TARGETING, COMPONENT_INTERFACE_TARGETING);
-
-    set_interface_for_component(COMPONENT_HEALER, COMPONENT_INTERFACE_HEALING);
-
-    set_interface_for_component(COMPONENT_DESTINATION_TARGETING, COMPONENT_INTERFACE_TARGETING);
-    set_interface_for_component(COMPONENT_AGENT_TARGETING, COMPONENT_INTERFACE_TARGETING);
-
-    set_interface_for_component(COMPONENT_STATE_MACHINE, COMPONENT_INTERFACE_STATE_MACHINE);
-    set_interface_for_component(COMPONENT_WAITING, COMPONENT_INTERFACE_WAITING);
-
-    set_interface_for_component(COMPONENT_DIMENSION, COMPONENT_INTERFACE_DIMENSION);
-
-    set_interface_for_component(COMPONENT_RATE_LIMIT, COMPONENT_INTERFACE_RATE_LIMIT);
-
-    #if DC_CLIENT
-    set_interface_for_component(COMPONENT_VOXEL_ANIMATION, COMPONENT_INTERFACE_ANIMATION);
-    #endif
-
-    #if DC_SERVER
-    set_interface_for_component(COMPONENT_EXPLOSION, COMPONENT_INTERFACE_EXPLOSION);
-    set_interface_for_component(COMPONENT_ITEM_DROP, COMPONENT_INTERFACE_ITEM_DROP);
-    set_interface_for_component(COMPONENT_KNOCKBACK, COMPONENT_INTERFACE_KNOCKBACK);
-    #endif
-
+    init_interfaces();
     init_components();
 }
 
 void teardown()
 {
-    free(component_interface_map);
+    teardown_interfaces();
     teardown_components();
 }
+
+#if DC_SERVER
+int get_spawner_for_user(UserID user_id)
+{
+    AgentSpawnerComponentList* a = agent_spawner_component_list;
+    for (int i=0; i<a->max; i++)
+        if (a->components[i] != NULL)
+            for (size_t j=0; j<a->components[i]->users.count; j++)
+                if (a->components[i]->users.subscribers[j] == user_id)
+                    return a->components[i]->object->id;
+    return BASE_SPAWN_ID;
+}
+
+void revoke_owned_entities(AgentID owner_id)
+{
+    OwnerComponent* owner;
+    for (int i=0; i<owner_component_list->max; i++)
+    {
+        owner = (OwnerComponent*)owner_component_list->components[i];
+        if (owner != NULL &&owner->owner == owner_id)
+            owner->revoke();
+    }
+}
+#endif
 
 } // Components

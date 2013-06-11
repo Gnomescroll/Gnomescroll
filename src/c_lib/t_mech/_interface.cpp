@@ -176,9 +176,12 @@ static bool unpack_mech(struct Mech &m, const mech_create_StoC &p)
     m.subtype = p.subtype;
     m.side = p.side;
     m.position = p.position;
-    m.center = get_mech_center(m);
+    m.offset_x = 0;
+    m.offset_y = 0;
+    m.render_type = MECH_RENDER_TYPE_0;
     m.text = NULL;
     return update_mech(m);
+    m.center = get_mech_center(m);
 }
 
 //ray cast and draw outlines

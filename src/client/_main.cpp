@@ -486,6 +486,10 @@ int physics_tick()
         poll_mouse();
         ClientState::player_agent.update_sound();
 
+        // advance sprite mob animations
+        poll_mouse();
+        t_mob::tick_mob_sprites();
+
         poll_mouse();
         Entities::tick();    // update physics state
 

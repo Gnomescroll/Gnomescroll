@@ -52,7 +52,7 @@ class MonsterSpawnerComponent: public SpawnerComponent
 
     MonsterSpawnerComponent() :
         SpawnerComponent(COMPONENT_MONSTER_SPAWNER),
-        max_children(0), children(NULL), spawn_type(OBJECT_NONE),
+        max_children(0), children(NULL), spawn_type(ENTITY_NONE),
         radius(1.0f), children_ct(0)
     {}
 

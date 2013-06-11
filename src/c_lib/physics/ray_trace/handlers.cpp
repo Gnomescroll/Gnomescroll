@@ -80,7 +80,7 @@ void handle_hitscan_result(const WorldHitscanResult& result,
                                               p.terrain_modification_action);
             break;
         case HITSCAN_TARGET_VOXEL:
-            if (EntityType(result.voxel_target.entity_type) == OBJECT_AGENT)
+            if (EntityType(result.voxel_target.entity_type) == ENTITY_AGENT)
             {
                 Agents::Agent* agent = Agents::get_agent((AgentID)result.voxel_target.entity_id);
                 if (agent != NULL &&
@@ -162,7 +162,7 @@ void damage_target(const class Voxels::VoxelHitscanTarget* target,
 {
     switch (target->entity_type)
     {
-        case OBJECT_AGENT:
+        case ENTITY_AGENT:
             damage_agent((AgentID)target->entity_id, target->part_id, inflictor_type, dmg);
             break;
         default:

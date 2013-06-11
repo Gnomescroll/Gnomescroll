@@ -74,28 +74,28 @@ int get_grenade_damage(EntityType type)
 {
     switch (type)
     {
-        case OBJECT_AGENT_SPAWNER:
-        case OBJECT_MONSTER_SPAWNER:
+        case ENTITY_AGENT_SPAWNER:
+        case ENTITY_MONSTER_SPAWNER:
             return GRENADE_SPAWNER_DAMAGE();
 
-        case OBJECT_TURRET:
+        case ENTITY_TURRET:
             return GRENADE_TURRET_DAMAGE();
 
-        case OBJECT_MONSTER_BOMB:
-        case OBJECT_MONSTER_SLIME:
+        case ENTITY_MONSTER_BOMB:
+        case ENTITY_MONSTER_SLIME:
             return GRENADE_MONSTER_BOMB_DAMAGE();
 
-        case OBJECT_MONSTER_BOX:
+        case ENTITY_MONSTER_BOX:
             return GRENADE_MONSTER_BOX_DAMAGE();
 
-        case OBJECT_GRENADE:
-        case OBJECT_AGENT:
-        case OBJECT_CANNONBALL:
-        case OBJECT_PLASMAGEN:
-        case OBJECT_ENERGY_CORE:
-        case OBJECT_BASE:
-        case OBJECT_DESTINATION:
-        case OBJECT_NONE:
+        case ENTITY_GRENADE:
+        case ENTITY_AGENT:
+        case ENTITY_CANNONBALL:
+        case ENTITY_PLASMAGEN:
+        case ENTITY_ENERGY_CORE:
+        case ENTITY_BASE:
+        case ENTITY_DESTINATION:
+        case ENTITY_NONE:
             return 0;
         default:
             GS_ASSERT(false);

@@ -9,7 +9,7 @@ class DatNameMap* entity_name_map = NULL;
 void init_entity_dat()
 {
     GS_ASSERT(attributes == NULL);
-    attributes = new class EntityAttributes[MAX_OBJECT_TYPES];
+    attributes = new class EntityAttributes[MAX_ENTITY_TYPES];
     GS_ASSERT(entity_name_map == NULL);
     entity_name_map = new DatNameMap(256, DAT_NAME_MAX_LENGTH);
 }
@@ -36,8 +36,8 @@ void entity_def(const char* name, EntityType type)
 {
     if (e != NULL) finish_def();
 
-    GS_ASSERT_ABORT(type >= 0 && type < MAX_OBJECT_TYPES);
-    IF_INVALID_OBJECT_TYPE(type) return;
+    GS_ASSERT_ABORT(type >= 0 && type < MAX_ENTITY_TYPES);
+    IF_INVALID_ENTITY_TYPE(type) return;
 
     e = &attributes[type];
     GS_ASSERT_ABORT(!e->loaded);
@@ -50,18 +50,18 @@ void entity_def(const char* name, EntityType type)
 void verify_entity_dat()
 {
     // check attributes
-    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
         class EntityAttributes* e = &attributes[i];
         if (!e->loaded) continue;
 
-        GS_ASSERT_ABORT(e->type != OBJECT_NONE);
+        GS_ASSERT_ABORT(e->type != ENTITY_NONE);
         GS_ASSERT_ABORT(is_valid_entity_name(e->name));
     }
 
     // check no type used twice
-    for (int i=0; i<MAX_OBJECT_TYPES-1; i++)
-    for (int j=i+1; j<MAX_OBJECT_TYPES; j++)
+    for (int i=0; i<MAX_ENTITY_TYPES-1; i++)
+    for (int j=i+1; j<MAX_ENTITY_TYPES; j++)
     {
         class EntityAttributes* a = &attributes[i];
         class EntityAttributes* b = &attributes[j];
@@ -70,7 +70,7 @@ void verify_entity_dat()
     }
 
     // check inactive names against active
-    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
         if (attributes[i].loaded)
         {
             GS_ASSERT_ABORT(entity_name_map->get_mapped_name(e->name) == NULL);
@@ -79,7 +79,7 @@ void verify_entity_dat()
     // check inactive name destinations against active names
     for (size_t i=0; i<entity_name_map->size; i++)
     {
-        GS_ASSERT_ABORT(get_entity_type(entity_name_map->get_replacement(i)) != OBJECT_NONE);
+        GS_ASSERT_ABORT(get_entity_type(entity_name_map->get_replacement(i)) != ENTITY_NONE);
     }
 
     #if DC_SERVER || !PRODUCTION
@@ -89,7 +89,7 @@ void verify_entity_dat()
     if (active_dat && inactive_dat)
     {
         GS_ASSERT_ABORT(name_changes_valid(DATA_PATH ENTITY_NAME_FILE_ACTIVE, DATA_PATH ENTITY_NAME_FILE_INACTIVE,
-            DAT_NAME_MAX_LENGTH, attributes, MAX_OBJECT_TYPES, entity_name_map));
+            DAT_NAME_MAX_LENGTH, attributes, MAX_ENTITY_TYPES, entity_name_map));
     }
     #endif
 }
@@ -97,7 +97,7 @@ void verify_entity_dat()
 static void save_entity_names()
 {
     #if DC_SERVER || !PRODUCTION
-    bool saved = save_active_names(attributes, MAX_OBJECT_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH ENTITY_NAME_FILE_ACTIVE);
+    bool saved = save_active_names(attributes, MAX_ENTITY_TYPES, DAT_NAME_MAX_LENGTH, DATA_PATH ENTITY_NAME_FILE_ACTIVE);
     GS_ASSERT_ABORT(saved);
     saved = entity_name_map->save(DATA_PATH ENTITY_NAME_FILE_INACTIVE);
     GS_ASSERT_ABORT(saved);

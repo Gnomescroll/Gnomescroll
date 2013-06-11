@@ -14,7 +14,7 @@
 # include <sound/openal.hpp>
 #endif
 
-const int GAME_OBJECT_MAX = 4096 * 4;
+const int GAME_ENTITY_MAX = 4096 * 4;
 
 namespace ClientState
 {
@@ -169,7 +169,7 @@ void update_global_hitscan()
     Vec3 look = agent_camera->forward_vector();
     hitscan = Hitscan::hitscan_against_world(pos, look, range,
                                              player_agent.agent_id,
-                                             OBJECT_AGENT);
+                                             ENTITY_AGENT);
 }
 
 }   // ClientState

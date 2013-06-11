@@ -526,10 +526,10 @@ void ChatSystemMessage::object_destroyed(Entities::Entity* object)
     //char* msg = NULL;
     //switch (object->state()->type)
     //{
-        //case OBJECT_AGENT_SPAWNER:
+        //case ENTITY_AGENT_SPAWNER:
             //msg = SystemMessage::spawner_destroyed((Spawner*)object);
             //break;
-        //case OBJECT_TURRET:
+        //case ENTITY_TURRET:
             ////msg = SystemMessage::turret_destroyed((Turret*)object);
             //break;
         //default: return;
@@ -546,10 +546,10 @@ void ChatSystemMessage::object_created(Entities::Entity* object)
     //char* msg = NULL;
     //switch (object->state()->type)
     //{
-        //case OBJECT_AGENT_SPAWNER:
+        //case ENTITY_AGENT_SPAWNER:
             //msg = SystemMessage::spawner_created((Spawner*)object);
             //break;
-        //case OBJECT_TURRET:
+        //case ENTITY_TURRET:
             ////msg = SystemMessage::turret_created((Turret*)object);
             //break;
         //default: return;

@@ -17,7 +17,7 @@ namespace Entities
 
 void load_mob_robot_box_data()
 {
-    EntityType type = OBJECT_MONSTER_BOX;
+    EntityType type = ENTITY_MONSTER_BOX;
 
     #if DC_SERVER
     const int n_components = 10;
@@ -81,7 +81,7 @@ static void set_mob_robot_box_properties(Entity* object)
     target->sight_range = MONSTER_BOX_FIRING_SIGHT_RANGE;
     target->attack_at_random = MONSTER_BOX_ATTACK_AT_RANDOM;
     // we dont have ID yet, need to set that in the ready() call
-    target->attacker_properties.type = OBJECT_MONSTER_BOX;
+    target->attacker_properties.type = ENTITY_MONSTER_BOX;
     target->attacker_properties.block_damage = MONSTER_BOX_TERRAIN_DAMAGE;
     target->attacker_properties.agent_damage_min = MONSTER_BOX_AGENT_DAMAGE_MIN;
     target->attacker_properties.agent_damage_max = MONSTER_BOX_AGENT_DAMAGE_MAX;
@@ -137,7 +137,7 @@ static void set_mob_robot_box_properties(Entity* object)
 
 Entity* create_mob_robot_box()
 {
-    EntityType type = OBJECT_MONSTER_BOX;
+    EntityType type = ENTITY_MONSTER_BOX;
     Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
     set_mob_robot_box_properties(obj);
@@ -220,7 +220,7 @@ void server_tick_mob_robot_box(Entity* object)
     if (weapon->locked_on_target)
     {   // target locked
         // query agent
-        if (weapon->target_type == OBJECT_AGENT)
+        if (weapon->target_type == ENTITY_AGENT)
             agent = Agents::get_agent((AgentID)weapon->target_id);
         // check target still exists
         if (!weapon->target_is_visible(camera_position))
@@ -235,7 +235,7 @@ void server_tick_mob_robot_box(Entity* object)
             agent = Agents::get_agent((AgentID)weapon->target_id);
     }
 
-    if (weapon->target_type != OBJECT_NONE)
+    if (weapon->target_type != ENTITY_NONE)
     {   // target found
         // lock target
         weapon->locked_on_target = true;

@@ -354,7 +354,7 @@ inline void set_spawner_StoC::handle()
     // de-color old spawner
     if (you->status.spawner != BASE_SPAWN_ID)
     {
-        Entities::Entity* obj = Entities::get(OBJECT_AGENT_SPAWNER, you->status.spawner);
+        Entities::Entity* obj = Entities::get(ENTITY_AGENT_SPAWNER, you->status.spawner);
         if (obj != NULL)
         {
             using Components::VoxelModelComponent;
@@ -368,7 +368,7 @@ inline void set_spawner_StoC::handle()
     // color new spawner
     if (this->spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check, once base is removed (if it is)
     {
-        Entities::Entity* obj = Entities::get(OBJECT_AGENT_SPAWNER, this->spawner_id);
+        Entities::Entity* obj = Entities::get(ENTITY_AGENT_SPAWNER, this->spawner_id);
         GS_ASSERT(obj != NULL);
         if (obj != NULL)
         {
@@ -552,7 +552,7 @@ inline void hitscan_object_CtoS::handle()
         return;
     }
 
-    if (type == OBJECT_AGENT)
+    if (type == ENTITY_AGENT)
     {
         Agents::Agent* agent = Agents::get_agent((AgentID)this->id);
         if (agent == NULL || agent->vox == NULL) return;
@@ -578,8 +578,8 @@ inline void hitscan_object_CtoS::handle()
             obj->get_component(COMPONENT_MOTION_TARGETING);
         if (motion_targeting != NULL)
         {
-            if (motion_targeting->target_type == OBJECT_NONE)
-                motion_targeting->set_target(OBJECT_AGENT, a->id);
+            if (motion_targeting->target_type == ENTITY_NONE)
+                motion_targeting->set_target(ENTITY_AGENT, a->id);
         }
         else
         {
@@ -588,7 +588,7 @@ inline void hitscan_object_CtoS::handle()
                 obj->get_component(COMPONENT_AGENT_TARGETING);
             if (agent_targeting != NULL)
             {
-                if (agent_targeting->target_type == OBJECT_NONE)
+                if (agent_targeting->target_type == ENTITY_NONE)
                     agent_targeting->set_target(a->id);
                 else    // reset ticks locked
                     agent_targeting->ticks_locked = 0;
@@ -696,7 +696,7 @@ inline void melee_object_CtoS::handle()
     IF_ASSERT(this->charge_progress < 0 || this->charge_progress > 1)
         return;
 
-    if (type == OBJECT_AGENT)
+    if (type == ENTITY_AGENT)
     {
         class Agents::Agent* agent = Agents::get_agent((AgentID)this->id);
         if (agent == NULL) return;
@@ -857,8 +857,8 @@ inline void agent_set_block_CtoS::handle()
 
 static Entities::Entity* place_object_handler(EntityType type, Vec3i position, AgentID owner_id)
 {
-    if (Entities::point_occupied_by_type(OBJECT_TURRET, position)) return NULL;
-    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, position)) return NULL;
+    if (Entities::point_occupied_by_type(ENTITY_TURRET, position)) return NULL;
+    if (Entities::point_occupied_by_type(ENTITY_AGENT_SPAWNER, position)) return NULL;
 
     // zip down
     static const int ITEM_PLACEMENT_Z_DIFF_LIMIT = 3;
@@ -881,8 +881,8 @@ static Entities::Entity* place_object_handler(EntityType type, Vec3i position, A
     }
 
     position.z = z;
-    if (Entities::point_occupied_by_type(OBJECT_TURRET, position) ||
-        Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, position))
+    if (Entities::point_occupied_by_type(ENTITY_TURRET, position) ||
+        Entities::point_occupied_by_type(ENTITY_AGENT_SPAWNER, position))
     {
         Entities::destroy(object);
         return NULL;
@@ -905,7 +905,7 @@ static Entities::Entity* place_object_handler(EntityType type, Vec3i position, A
 
 inline void place_spawner_CtoS::handle()
 {
-    EntityType type = OBJECT_AGENT_SPAWNER;
+    EntityType type = ENTITY_AGENT_SPAWNER;
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
     IF_ASSERT(!is_valid_z(this->position)) return;
@@ -917,7 +917,7 @@ inline void place_spawner_CtoS::handle()
 
 inline void place_turret_CtoS::handle()
 {
-    EntityType type = OBJECT_TURRET;
+    EntityType type = ENTITY_TURRET;
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
     IF_ASSERT(!is_valid_z(this->position)) return;

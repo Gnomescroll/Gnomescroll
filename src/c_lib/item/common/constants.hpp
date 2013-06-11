@@ -53,7 +53,7 @@ const float AGENT_CONTAINER_REACH = 4.0f;
 const float NULL_FIRING_RANGE = 0.0f;
 const float DEFAULT_FIRING_RANGE = 4.0f;
 
-const float OBJECT_DEPTH_MAX = -128.0f;
+const float MAX_ENTITY_DEPTH = -128.0f;
 
 const int MAX_ITEM_PARTICLES = NULL_PARTICLE; // initial (just start maxed out)
 

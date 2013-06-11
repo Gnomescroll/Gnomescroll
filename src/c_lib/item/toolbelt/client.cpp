@@ -159,7 +159,7 @@ static bool beta_scan_world()
     switch (hitscan.type)
     {
         case HITSCAN_TARGET_VOXEL:
-            if (hitscan.voxel_target.entity_type == OBJECT_AGENT_SPAWNER)
+            if (hitscan.voxel_target.entity_type == ENTITY_AGENT_SPAWNER)
             {
                 choose_spawner_CtoS msg;
                 msg.spawner_id = hitscan.voxel_target.entity_id;

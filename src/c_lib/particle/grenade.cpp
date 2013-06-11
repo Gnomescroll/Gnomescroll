@@ -127,7 +127,7 @@ void Grenade::explode(int multiplier)
     // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
     ServerState::damage_objects_within_sphere(
         position, GRENADE_DAMAGE_RADIUS, GRENADE_SPLASH_DAMAGE,
-        this->owner, OBJECT_GRENADE, this->id);
+        this->owner, ENTITY_GRENADE, this->id);
 
     // apply block damage
     damage_blocks(multiplier);

@@ -14,7 +14,7 @@ void DestinationTargetingComponent::set_destination(Vec3 dest)
 {
     this->destination = translate_position(dest);
     this->at_destination = false;
-    this->target_type = OBJECT_DESTINATION;
+    this->target_type = ENTITY_DESTINATION;
 }
 
 Vec3 DestinationTargetingComponent::get_next_path_point()

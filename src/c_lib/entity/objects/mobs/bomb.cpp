@@ -19,7 +19,7 @@ static void bomb_state_router(class Entity*, EntityState state);
 
 void load_mob_bomb_data()
 {
-    EntityType type = OBJECT_MONSTER_BOMB;
+    EntityType type = ENTITY_MONSTER_BOMB;
 
     #if DC_SERVER
     const int n_components = 12;
@@ -150,7 +150,7 @@ static void set_mob_bomb_properties(Entity* object)
 
 Entity* create_mob_bomb()
 {
-    EntityType type = OBJECT_MONSTER_BOMB;
+    EntityType type = ENTITY_MONSTER_BOMB;
     Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
     set_mob_bomb_properties(obj);
@@ -288,7 +288,7 @@ void tick_mob_bomb(Entity* object)
         AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
         target->lock_target(position);
 
-        if (target->target_type == OBJECT_AGENT)
+        if (target->target_type == ENTITY_AGENT)
             machine->router(object, STATE_CHASE_AGENT);
     }
     #endif

@@ -28,19 +28,19 @@ void AgentTargetingComponent::set_target(AgentID agent_id)
     this->target_direction = quadrant_translate_position(position, dest);
     this->target_direction = vec3_normalize(this->target_direction);
 
-    this->target_type = OBJECT_AGENT;
+    this->target_type = ENTITY_AGENT;
     this->target_id = agent_id;
     this->locked_on_target = true;
 }
 
 void AgentTargetingComponent::check_target_alive()
 {
-    if (this->target_type != OBJECT_AGENT) return;
+    if (this->target_type != ENTITY_AGENT) return;
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL || target->status.dead)
     {
         this->target_id = NULL_AGENT;
-        this->target_type = OBJECT_NONE;
+        this->target_type = ENTITY_NONE;
     }
 }
 
@@ -50,21 +50,21 @@ void AgentTargetingComponent::lock_target(Vec3 camera_position)
         camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
-        this->target_type = OBJECT_NONE;
+        this->target_type = ENTITY_NONE;
         return;
     }
-    this->target_type = OBJECT_AGENT;
+    this->target_type = ENTITY_AGENT;
     this->target_id = target->id;
 }
 
 void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
 {
-    if (this->target_type == OBJECT_NONE)
+    if (this->target_type == ENTITY_NONE)
     {
         this->target_direction = vec3_init(1,0,0);
         return;
     }
-    if (this->target_type != OBJECT_AGENT)
+    if (this->target_type != ENTITY_AGENT)
     {
         this->target_direction = vec3_init(1,0,0);
         return;
@@ -163,7 +163,7 @@ void AgentTargetingComponent::move_on_surface()
 
 void AgentTargetingComponent::call()
 {
-    if (this->target_type == OBJECT_NONE)
+    if (this->target_type == ENTITY_NONE)
     {
         this->ticks_locked = 0;
         return;
@@ -171,7 +171,7 @@ void AgentTargetingComponent::call()
     this->ticks_locked++;
     if (this->max_lock_ticks && this->ticks_locked > this->max_lock_ticks)
     {   // reset
-        this->target_type = OBJECT_NONE;
+        this->target_type = ENTITY_NONE;
         this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
 

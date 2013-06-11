@@ -47,14 +47,18 @@ void draw_sprite_mobs()
 
     for (size_t i=0; i<sprite_mob_list->max; i++)
         if (sprite_mob_list->objects[i] != NULL)
-        {
-            sprite_mob_list->objects[i]->update();
             sprite_mob_list->objects[i]->draw();
-        }
 
     glEnd();
     glDisable(GL_ALPHA_TEST);
     CHECK_GL_ERROR();
+}
+
+void tick_mob_sprites()
+{
+    for (size_t i=0; i<sprite_mob_list->max; i++)
+        if (sprite_mob_list->objects[i] != NULL)
+            sprite_mob_list->objects[i]->tick();
 }
 
 void hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float range)
@@ -98,7 +102,7 @@ void SpriteMob::stop_animation()
     this->begin_default_animation();
 }
 
-void SpriteMob::update()
+void SpriteMob::tick()
 {
     if (this->current_animation == NULL)
         return;

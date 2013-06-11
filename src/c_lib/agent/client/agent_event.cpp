@@ -256,7 +256,7 @@ void AgentEvent::spray_blood(const struct Vec3& f, int body_part)
 void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
 {
     Vec3 f = this->a->forward_vector();
-    if (type == OBJECT_AGENT)
+    if (type == ENTITY_AGENT)
     {
         Agent* agent = Agents::get_agent((AgentID)id);
         if (agent != NULL)

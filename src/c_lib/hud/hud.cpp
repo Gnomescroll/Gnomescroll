@@ -364,7 +364,7 @@ static void draw_targeted_text()
     switch (hitscan.type)
     {
         case HITSCAN_TARGET_VOXEL:
-            if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
+            if (hitscan.voxel_target.entity_type == ENTITY_AGENT)
                 update_targeted_text("FRIEND");
             else
                 update_targeted_text("ENEMY");

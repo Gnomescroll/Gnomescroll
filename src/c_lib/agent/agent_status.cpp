@@ -68,7 +68,7 @@ void AgentStatus::set_spawner(int pt)
     using Components::AgentSpawnerComponent;
     if (pt != BASE_SPAWN_ID && this->spawner != BASE_SPAWN_ID)
     {   // transferring between spawners
-        class Entities::Entity* old_spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->spawner);
+        class Entities::Entity* old_spawner = Entities::get(ENTITY_AGENT_SPAWNER, this->spawner);
         GS_ASSERT(old_spawner != NULL);
         if (old_spawner != NULL)
         {
@@ -88,7 +88,7 @@ void AgentStatus::set_spawner(int pt)
 
     if (pt == BASE_SPAWN_ID) return;
 
-    class Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, pt);
+    class Entities::Entity* spawner = Entities::get(ENTITY_AGENT_SPAWNER, pt);
     IF_ASSERT(spawner == NULL) return;
 
     AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
@@ -174,7 +174,7 @@ void AgentStatus::quit()
     #if DC_SERVER
     if (this->spawner != BASE_SPAWN_ID)
     {
-        class Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->spawner);
+        class Entities::Entity* spawner = Entities::get(ENTITY_AGENT_SPAWNER, this->spawner);
         GS_ASSERT(spawner != NULL);
         if (spawner != NULL)
         {
@@ -221,31 +221,31 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
     //Turret* turret;
     switch (inflictor_type)
     {
-        case OBJECT_GRENADE:
-        case OBJECT_AGENT:
+        case ENTITY_GRENADE:
+        case ENTITY_AGENT:
             attacker = Agents::get_agent(inflictor_id);
             if (attacker != NULL)
                 attacker->status.kill(this->a->id);
             break;
-        //case OBJECT_TURRET:
+        //case ENTITY_TURRET:
             //turret = (Turret*)STATE::entity_list->get(inflictor_type, inflictor_id);
             //if (turret == NULL) break;
             //attacker = Agents::get_agent(turret->get_owner());
             //if (attacker != NULL)
                 //attacker->status.kill(this->a->id);
             //break;
-        case OBJECT_CANNONBALL:
-        case OBJECT_PLASMAGEN:
-        case OBJECT_MONSTER_SPAWNER:
-        case OBJECT_MONSTER_SLIME:
-        case OBJECT_MONSTER_BOX:
-        case OBJECT_MONSTER_BOMB:
-        case OBJECT_ENERGY_CORE:
-        case OBJECT_TURRET:
-        case OBJECT_AGENT_SPAWNER:
-        case OBJECT_BASE:
-        case OBJECT_DESTINATION:
-        case OBJECT_NONE:
+        case ENTITY_CANNONBALL:
+        case ENTITY_PLASMAGEN:
+        case ENTITY_MONSTER_SPAWNER:
+        case ENTITY_MONSTER_SLIME:
+        case ENTITY_MONSTER_BOX:
+        case ENTITY_MONSTER_BOMB:
+        case ENTITY_ENERGY_CORE:
+        case ENTITY_TURRET:
+        case ENTITY_AGENT_SPAWNER:
+        case ENTITY_BASE:
+        case ENTITY_DESTINATION:
+        case ENTITY_NONE:
             //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
             break;
     }
@@ -256,15 +256,15 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
     //Turret* turret;
     switch (inflictor_type)
     {
-        case OBJECT_GRENADE:
-        case OBJECT_AGENT:
+        case ENTITY_GRENADE:
+        case ENTITY_AGENT:
             msg.victim = this->a->id;
             msg.attacker = inflictor_id;
             msg.method = death_method;    // put headshot, grenades here
             msg.broadcast();
             break;
 
-        //case OBJECT_TURRET:
+        //case ENTITY_TURRET:
             //// lookup turret object, get owner, this will be the inflictor id
             //turret = (Turret*)ServerState::entity_list->get(inflictor_type, inflictor_id);
             //if (turret == NULL) break;
@@ -275,18 +275,18 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
             //msg.broadcast();
             //break;
 
-        case OBJECT_CANNONBALL:
-        case OBJECT_PLASMAGEN:
-        case OBJECT_MONSTER_SPAWNER:
-        case OBJECT_MONSTER_SLIME:
-        case OBJECT_MONSTER_BOX:
-        case OBJECT_MONSTER_BOMB:
-        case OBJECT_ENERGY_CORE:
-        case OBJECT_TURRET:
-        case OBJECT_AGENT_SPAWNER:
-        case OBJECT_BASE:
-        case OBJECT_DESTINATION:
-        case OBJECT_NONE:
+        case ENTITY_CANNONBALL:
+        case ENTITY_PLASMAGEN:
+        case ENTITY_MONSTER_SPAWNER:
+        case ENTITY_MONSTER_SLIME:
+        case ENTITY_MONSTER_BOX:
+        case ENTITY_MONSTER_BOMB:
+        case ENTITY_ENERGY_CORE:
+        case ENTITY_TURRET:
+        case ENTITY_AGENT_SPAWNER:
+        case ENTITY_BASE:
+        case ENTITY_DESTINATION:
+        case ENTITY_NONE:
             break;
     }
     #endif
@@ -459,7 +459,7 @@ void AgentStatus::tick_hunger()
         {
             this->hurt(HUNGER_DAMAGE_AMOUNT);
             if (this->should_die)
-                this->die(this->a->id, OBJECT_AGENT, DEATH_STARVATION);
+                this->die(this->a->id, ENTITY_AGENT, DEATH_STARVATION);
         }
     }
     else
@@ -494,8 +494,8 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
 {
     if (!Options::pvp)
     {   // dont allow player kills
-        if ((inflictor_type == OBJECT_AGENT ||
-             inflictor_type == OBJECT_GRENADE) &&
+        if ((inflictor_type == ENTITY_AGENT ||
+             inflictor_type == ENTITY_GRENADE) &&
             inflictor_id != this->a->id)
         {
             return get_attribute_int(this->a->id, "health");
@@ -503,11 +503,11 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
     }
 
     AgentDeathMethod death_method = DEATH_NORMAL;
-    if (inflictor_type == OBJECT_GRENADE)
+    if (inflictor_type == ENTITY_GRENADE)
         death_method = DEATH_GRENADE;
-    else if (inflictor_type == OBJECT_TURRET)
+    else if (inflictor_type == ENTITY_TURRET)
         death_method = DEATH_TURRET;
-    else if (inflictor_type == OBJECT_PLASMAGEN)
+    else if (inflictor_type == ENTITY_PLASMAGEN)
         death_method = DEATH_PLASMAGEN;
     else if (part_id == AGENT_PART_HEAD)
         death_method = DEATH_HEADSHOT;
@@ -535,7 +535,7 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
 
 int AgentStatus::apply_damage(int dmg, AgentDeathMethod death_method)
 {   // assumes self-inflicted wound
-    return this->apply_damage(dmg, this->a->id, OBJECT_AGENT, death_method);
+    return this->apply_damage(dmg, this->a->id, ENTITY_AGENT, death_method);
 }
 
 int AgentStatus::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)

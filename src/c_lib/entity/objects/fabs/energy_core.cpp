@@ -17,7 +17,7 @@ namespace Entities
 
 void load_energy_core_data()
 {
-    EntityType type = OBJECT_ENERGY_CORE;
+    EntityType type = ENTITY_ENERGY_CORE;
 
     #if DC_SERVER
     int n_components = 7;
@@ -104,7 +104,7 @@ static void set_energy_core_properties(Entity* object)
 
 Entity* create_energy_core()
 {
-    EntityType type = OBJECT_ENERGY_CORE;
+    EntityType type = ENTITY_ENERGY_CORE;
     Entity* obj = entity_list->create(type);
     GS_ASSERT(obj != NULL);
     if (obj == NULL) return NULL;

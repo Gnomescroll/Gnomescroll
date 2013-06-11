@@ -20,11 +20,11 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance,
 
     // TODO -- keep agents in their own hitscan list
     bool hit = STATE::voxel_hitscan_list->hitscan(position, direction,
-                                                  firing_agent_id, OBJECT_AGENT,
+                                                  firing_agent_id, ENTITY_AGENT,
                                                   collision_point, vox_distance,
                                                   target);
     if (!hit) return NULL_AGENT;
-    if (target.entity_type != OBJECT_AGENT) return NULL_AGENT;
+    if (target.entity_type != ENTITY_AGENT) return NULL_AGENT;
     if (vox_distance > max_distance) return NULL_AGENT;
     return (AgentID)target.entity_id;
 }

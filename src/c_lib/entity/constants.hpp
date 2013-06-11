@@ -8,44 +8,42 @@ class Entity;
 typedef void (*tickObject)(class Entities::Entity*);      // for physics
 typedef void (*updateObject)(class Entities::Entity*);    // for draw prep
 
-int MAX_OBJECT_TYPES = 0xFF;
+const int MAX_ENTITY_TYPES = 0xFF;
 
 typedef enum
 {
-    OBJECT_NONE = 0,    // null
-    OBJECT_DESTINATION,     // abstract object
+    ENTITY_DESTINATION,     // abstract object
 
-    OBJECT_AGENT,   // agent
+    ENTITY_AGENT,   // agent
 
     // projectiles
-    OBJECT_GRENADE,
+    ENTITY_GRENADE,
 
     // game items
-    OBJECT_BASE,
+    ENTITY_BASE,
 
     // fabs
-    OBJECT_AGENT_SPAWNER,
-    OBJECT_TURRET,
-    OBJECT_ENERGY_CORE,
+    ENTITY_AGENT_SPAWNER,
+    ENTITY_TURRET,
+    ENTITY_ENERGY_CORE,
 
     // mobs
-    OBJECT_MONSTER_BOMB,
-    OBJECT_MONSTER_BOX,
-    OBJECT_MONSTER_SPAWNER,
-    OBJECT_MONSTER_SLIME,
+    ENTITY_MONSTER_BOMB,
+    ENTITY_MONSTER_BOX,
+    ENTITY_MONSTER_SPAWNER,
+    ENTITY_MONSTER_SLIME,
 
     // misc
-    OBJECT_PLASMAGEN,
-    OBJECT_CANNONBALL,
+    ENTITY_PLASMAGEN,
+    ENTITY_CANNONBALL,
 
+    ENTITY_NONE = MAX_ENTITY_TYPES,
 } EntityType;
 
-int MAX_COMPONENT_TYPES = 0xFF;
+const int MAX_COMPONENT_TYPES = 0xFF;
 
 typedef enum
 {
-    COMPONENT_NONE = 0,
-
     COMPONENT_POSITION,
     COMPONENT_POSITION_MOMENTUM,
     COMPONENT_VERLET,
@@ -57,7 +55,6 @@ typedef enum
 
     COMPONENT_OWNER,
 
-    COMPONENT_AGENT_SPAWNER,
     COMPONENT_MONSTER_SPAWNER,
 
     COMPONENT_SPAWN_CHILD,
@@ -74,25 +71,25 @@ typedef enum
 
     COMPONENT_RATE_LIMIT,
 
-    COMPONENT_HEALER,
-
     #if DC_CLIENT
     COMPONENT_VOXEL_ANIMATION,
     #endif
 
     #if DC_SERVER
+    COMPONENT_HEALER,
+    COMPONENT_AGENT_SPAWNER,
     COMPONENT_EXPLOSION,
     COMPONENT_ITEM_DROP,
     COMPONENT_KNOCKBACK,
     #endif
 
+    COMPONENT_NONE = MAX_COMPONENT_TYPES,
 } ComponentType;
 
-int MAX_COMPONENT_INTERFACE_TYPES = 0xFF;
+const int MAX_COMPONENT_INTERFACE_TYPES = 0xFF;
 
 typedef enum
 {
-    COMPONENT_INTERFACE_NONE = 0,
     COMPONENT_INTERFACE_PHYSICS,    // physics state setters/getters
     COMPONENT_INTERFACE_STACKABLE,  // stackable setters/getters
     COMPONENT_INTERFACE_UPDATE,     // update()
@@ -120,7 +117,24 @@ typedef enum
     COMPONENT_INTERFACE_EXPLOSION,
     COMPONENT_INTERFACE_ITEM_DROP,
     #endif
+
+    COMPONENT_INTERFACE_NONE = MAX_COMPONENT_INTERFACE_TYPES,
 } ComponentInterfaceType;
+
+inline bool isValid(EntityType type)
+{
+    return (type >= 0 && type < MAX_ENTITY_TYPES);
+}
+
+inline bool isValid(ComponentType type)
+{
+    return (type >= 0 && type < MAX_COMPONENT_TYPES);
+}
+
+inline bool isValid(ComponentInterfaceType type)
+{
+    return (type >= 0 && type < MAX_COMPONENT_INTERFACE_TYPES);
+}
 
 typedef enum
 {

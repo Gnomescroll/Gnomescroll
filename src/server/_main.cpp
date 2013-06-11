@@ -30,7 +30,7 @@ void default_map_gen()
 
 void print_preceding_spaces(int start)
 {
-    for (int i = 0; i < start; i++) 
+    for (int i = 0; i < start; i++)
         printf(" ");
 }
 
@@ -50,16 +50,16 @@ void print_highlighted(const char* s, char c = '|', int num_chars = 1)
     // middle line
     print_preceding_spaces(start);
 
-    for (int i = 0; i < num_chars; i++) 
+    for (int i = 0; i < num_chars; i++)
         printf("%c", c); // surrounding (left/right) chars
 
     printf(" "); // margin
     printf("%s", s);
     printf(" "); // margin
 
-    for (int i = 0; i < num_chars; i++) 
+    for (int i = 0; i < num_chars; i++)
         printf("%c", c); // surrounding (left/right) chars
-    
+
     printf("\n");
 
 
@@ -206,7 +206,7 @@ void init(int argc, const char* argv[])
     ServerState::init_base();
 
     ServerState:: main_inited = true;
-    
+
     printf("\n");
     print_highlighted("Game started");
     printf("\n");
@@ -314,9 +314,9 @@ void tick()
     }
 
     //ServerState::spawn_items(2);
-    //Entities::spawn_monsters(OBJECT_MONSTER_BOMB, 50);
-    //Entities::spawn_monsters(OBJECT_MONSTER_SPAWNER, 6);
-    //Entities::spawn_monsters(OBJECT_MONSTER_SLIME, 100);
+    //Entities::spawn_monsters(ENTITY_MONSTER_BOMB, 50);
+    //Entities::spawn_monsters(ENTITY_MONSTER_SPAWNER, 6);
+    //Entities::spawn_monsters(ENTITY_MONSTER_SLIME, 100);
     Entities::spawn_slimes(100);
 
     ItemContainer::update_smelters();

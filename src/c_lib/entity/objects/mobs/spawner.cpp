@@ -13,7 +13,7 @@ namespace Entities
 
 void load_mob_spawner_data()
 {
-    EntityType type = OBJECT_MONSTER_SPAWNER;
+    EntityType type = ENTITY_MONSTER_SPAWNER;
 
     #if DC_SERVER
     const int n_components = 7;
@@ -62,7 +62,7 @@ static void set_mob_spawner_properties(Entity* object)
     MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)add_component_to_object(object, COMPONENT_MONSTER_SPAWNER);
     spawner->radius = MONSTER_SPAWNER_SPAWN_RADIUS;
     spawner->set_max_children(MONSTER_SPAWNER_MAX_CHILDREN);
-    spawner->spawn_type = OBJECT_MONSTER_BOX;
+    spawner->spawn_type = ENTITY_MONSTER_BOX;
 
     #if DC_SERVER
     using Components::ItemDropComponent;
@@ -104,7 +104,7 @@ static void set_mob_spawner_properties(Entity* object)
 Entity* create_mob_spawner()
 {
     // initialize object
-    EntityType type = OBJECT_MONSTER_SPAWNER;
+    EntityType type = ENTITY_MONSTER_SPAWNER;
     Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
     set_mob_spawner_properties(obj);

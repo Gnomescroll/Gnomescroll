@@ -18,7 +18,7 @@ static void slime_state_router(class Entity*, EntityState state);
 
 void load_mob_slime_data()
 {
-    EntityType type = OBJECT_MONSTER_SLIME;
+    EntityType type = ENTITY_MONSTER_SLIME;
 
     #if DC_SERVER
     const int n_components = 11;
@@ -143,7 +143,7 @@ static void set_mob_slime_properties(Entity* object)
 
 Entity* create_mob_slime()
 {
-    EntityType type = OBJECT_MONSTER_SLIME;
+    EntityType type = ENTITY_MONSTER_SLIME;
     Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
     set_mob_slime_properties(obj);
@@ -238,7 +238,7 @@ void relax_slimes(Entity* object)
     const float relax_force = 0.1f;
     int slime_count = 0;
     char* slimes_used = NULL;
-    class Entity** slimes = get_all(OBJECT_MONSTER_SLIME, slimes_used, slime_count);
+    class Entity** slimes = get_all(ENTITY_MONSTER_SLIME, slimes_used, slime_count);
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     Vec3 position = physics->get_position();
@@ -312,7 +312,7 @@ void tick_mob_slime(Entity* object)
         AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
         target->lock_target(position);
 
-        if (target->target_type == OBJECT_AGENT)
+        if (target->target_type == ENTITY_AGENT)
             machine->router(object, STATE_CHASE_AGENT);
     }
 

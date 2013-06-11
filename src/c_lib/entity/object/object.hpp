@@ -53,7 +53,7 @@ class Entity
 
     explicit Entity(int id) :
         n_components(0), components(NULL),
-        id(id), type(OBJECT_NONE),
+        id(id), type(ENTITY_NONE),
         tick(NULL), update(NULL),
         create(NULL), state(NULL)
     {}

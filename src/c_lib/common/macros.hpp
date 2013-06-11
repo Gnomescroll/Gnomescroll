@@ -26,8 +26,8 @@
 #define ASSERT_VALID_SPAWNER_ID(spawner_id) GS_ASSERT((spawner_id) == BASE_SPAWN_ID || ((spawner_id) >= 0 && (spawner_id) < MAX_SPAWNERS));
 #define IF_INVALID_SPAWNER_ID(spawner_id) if (unlikely((spawner_id) != BASE_SPAWN_ID && ((spawner_id) < 0 || (spawner_id) >= MAX_SPAWNERS)))
 
-#define ASSERT_VALID_OBJECT_TYPE(object_type) GS_ASSERT((object_type) >= 0 && (object_type) < MAX_OBJECT_TYPES);
-#define IF_INVALID_OBJECT_TYPE(object_type) if (unlikely((object_type) < 0 || (object_type) >= MAX_OBJECT_TYPES))
+#define ASSERT_VALID_ENTITY_TYPE(object_type) GS_ASSERT((object_type) >= 0 && (object_type) < MAX_ENTITY_TYPES);
+#define IF_INVALID_ENTITY_TYPE(object_type) if (unlikely((object_type) < 0 || (object_type) >= MAX_ENTITY_TYPES))
 
 #define GS_ABORT() \
     do \

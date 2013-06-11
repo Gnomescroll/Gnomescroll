@@ -335,9 +335,9 @@ bool block_can_be_placed(const Vec3i& position, CubeType cube_type)
 
     if (get(p) != EMPTY_CUBE) return false;
     // check against all spawners
-    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, p))
+    if (Entities::point_occupied_by_type(ENTITY_AGENT_SPAWNER, p))
         return false;
-    if (Entities::point_occupied_by_type(OBJECT_ENERGY_CORE, p))
+    if (Entities::point_occupied_by_type(ENTITY_ENERGY_CORE, p))
         return false;
     return true;
 }

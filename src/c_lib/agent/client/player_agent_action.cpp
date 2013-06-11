@@ -78,7 +78,7 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
             look = vec3_sub(quadrant_translate_position(origin, hitscan.voxel_collision_point), origin);
             look = vec3_normalize(look);
 
-            if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
+            if (hitscan.voxel_target.entity_type == ENTITY_AGENT)
                 Animations::blood_spray(hitscan.voxel_collision_point, look);
             break;
 
@@ -236,7 +236,7 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
             obj_msg.weapon_type = weapon_type;
             obj_msg.charge_progress = Toolbelt::get_charge_progress();
             obj_msg.send();
-            if (hitscan.voxel_target.entity_type == OBJECT_AGENT)
+            if (hitscan.voxel_target.entity_type == ENTITY_AGENT)
                 Animations::blood_spray(collision_point, look);
             sound_id = Sound::play_3d_sound("pick_hit_agent", collision_point);
             break;

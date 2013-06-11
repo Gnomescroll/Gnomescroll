@@ -21,7 +21,7 @@ class NetMessageArray
         class NetMessageArray* next;
         class NetMessage* net_message_array[NET_MESSAGE_ARRAY_SIZE];
 
-        OBJECT_POOL_OBJECT_MACRO
+        ENTITY_POOL_ENTITY_MACRO
 
     NetMessageArray()
     {
@@ -63,7 +63,7 @@ class NetMessage
     #endif
         NetMessage* next;
 
-        OBJECT_POOL_OBJECT_MACRO
+        ENTITY_POOL_ENTITY_MACRO
 
     static class NetMessage* acquire(size_t length);
 

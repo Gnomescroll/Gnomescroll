@@ -51,7 +51,7 @@ struct Vec3 get_base_spawn_position()
 
 void init_base()
 {
-    base = Entities::create(OBJECT_BASE);
+    base = Entities::create(ENTITY_BASE);
     IF_ASSERT(base == NULL) return;
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -87,7 +87,7 @@ void check_agents_at_base()
 {
     using Agents::agent_list;
 
-    Entities::Entity* base = Entities::get(OBJECT_BASE, 0);
+    Entities::Entity* base = Entities::get(ENTITY_BASE, 0);
     IF_ASSERT(base == NULL) return;
 
     using Components::PhysicsComponent;
@@ -131,8 +131,8 @@ void damage_objects_within_sphere(const Vec3& p, float radius,
 
     const int n_types = 4;
     const EntityType types[n_types] = {
-        OBJECT_MONSTER_BOMB, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
-        OBJECT_MONSTER_SLIME,
+        ENTITY_MONSTER_BOMB, ENTITY_MONSTER_BOX, ENTITY_MONSTER_SPAWNER,
+        ENTITY_MONSTER_SLIME,
     };
     Entities::damage_objects_within_sphere(types, n_types, p, radius, damage);
 }

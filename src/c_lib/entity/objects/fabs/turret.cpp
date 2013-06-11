@@ -17,7 +17,7 @@ namespace Entities
 
 void load_turret_data()
 {
-    EntityType type = OBJECT_TURRET;
+    EntityType type = ENTITY_TURRET;
 
     #if DC_SERVER
     int n_components = 8;
@@ -75,7 +75,7 @@ static void set_turret_properties(Entity* object)
     target->sight_range = TURRET_SIGHT_RANGE;
     target->attack_at_random = TURRET_ATTACK_AT_RANDOM;
     // we dont have ID yet, need to set that in the ready() call
-    target->attacker_properties.type = OBJECT_TURRET;
+    target->attacker_properties.type = ENTITY_TURRET;
     target->attacker_properties.block_damage = TURRET_TERRAIN_DAMAGE;
     target->attacker_properties.agent_damage_min = TURRET_AGENT_DAMAGE_MIN;
     target->attacker_properties.agent_damage_max = TURRET_AGENT_DAMAGE_MAX;
@@ -114,7 +114,7 @@ static void set_turret_properties(Entity* object)
 
 Entity* create_turret()
 {
-    EntityType type = OBJECT_TURRET;
+    EntityType type = ENTITY_TURRET;
     Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
     set_turret_properties(obj);

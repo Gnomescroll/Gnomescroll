@@ -113,7 +113,7 @@ void ItemParticle::tick()
     #if DC_SERVER
     this->verlet.bounce_box();
 
-    if (this->verlet.position.z < OBJECT_DEPTH_MAX) this->ttl = 0;
+    if (this->verlet.position.z < MAX_ENTITY_DEPTH) this->ttl = 0;
     this->pickup_prevention--;
     #endif
 }

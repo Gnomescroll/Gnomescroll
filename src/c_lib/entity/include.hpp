@@ -17,14 +17,9 @@
 #include <entity/component/component.hpp>
 #include <entity/component/component_list.hpp>
 #include <entity/component/lists.hpp>
-#include <entity/component/lists/owner_list.hpp>
 #include <entity/component/main.hpp>
 #include <entity/components.hpp>
 
 #include <entity/network/packets.hpp>
 #include <entity/network/interfaces.hpp>
 #include <entity/network/main.hpp>
-
-#if DC_SERVER
-#include <entity/component/lists/agent_spawner_list.hpp>
-#endif

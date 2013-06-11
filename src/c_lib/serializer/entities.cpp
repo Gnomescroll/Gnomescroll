@@ -141,7 +141,7 @@ bool process_entities_blob(const char* str, size_t filesize)
 
         // get type
         EntityType entity_type = Entities::get_entity_type(actual_name);
-        IF_ASSERT(entity_type == OBJECT_NONE) return false;
+        IF_ASSERT(entity_type == ENTITY_NONE) return false;
 
         // create entity
         class Entities::Entity* entity = Entities::create(entity_type);
@@ -149,14 +149,14 @@ bool process_entities_blob(const char* str, size_t filesize)
 
         bool err = false;
         struct Vec3i* position = NULL;
-        if (entity_type == OBJECT_ENERGY_CORE)
+        if (entity_type == ENTITY_ENERGY_CORE)
         {
             position = &energy_core_data.position;
             i += parse_block<class ParsedEnergyCoreData>(&parse_energy_core_token, ENTITY_SEPARATOR, &str[i], &energy_core_data);
             GS_ASSERT(energy_core_data.valid);
             err = (!energy_core_data.valid);
         }
-        else if (entity_type == OBJECT_AGENT_SPAWNER)
+        else if (entity_type == ENTITY_AGENT_SPAWNER)
         {
             position = &agent_spawner_data.position;
             i += parse_block<class ParsedAgentSpawnerData>(&parse_agent_spawner_token, ENTITY_SEPARATOR, &str[i], &agent_spawner_data);
@@ -343,7 +343,7 @@ bool save_entities()
 
     // collect the entities
     EntityType agent_spawner_type = Entities::get_entity_type("agent_spawner");
-    IF_ASSERT(agent_spawner_type == OBJECT_NONE) return false;
+    IF_ASSERT(agent_spawner_type == ENTITY_NONE) return false;
 
     char* used_agent_spawners = NULL;
     int agent_spawners_max = 0;
@@ -353,7 +353,7 @@ bool save_entities()
     IF_ASSERT(agent_spawners == NULL || used_agent_spawners == NULL) return false;
 
     EntityType energy_core_type = Entities::get_entity_type("energy_core");
-    IF_ASSERT(energy_core_type == OBJECT_NONE) return false;
+    IF_ASSERT(energy_core_type == ENTITY_NONE) return false;
 
     char* used_energy_cores = NULL;
     int energy_cores_max = 0;

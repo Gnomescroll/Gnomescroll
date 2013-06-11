@@ -119,7 +119,7 @@ class EntityAttributes
         // drops will have to be configured separately as usual
 
     EntityAttributes() : loaded(false),
-        type(OBJECT_NONE)
+        type(ENTITY_NONE)
     {
         memset(this->name, 0, sizeof(this->name));
     }
@@ -149,14 +149,14 @@ void finish_def();
 // Load
 void load_entity_dat()
 {
-    entity_def("base", OBJECT_BASE);
-    entity_def("agent_spawner", OBJECT_AGENT_SPAWNER);
-    entity_def("turret", OBJECT_TURRET);
-    entity_def("energy_core", OBJECT_ENERGY_CORE);
-    entity_def("blue_bomb", OBJECT_MONSTER_BOMB);
-    entity_def("red_fish", OBJECT_MONSTER_BOX);
-    entity_def("slime", OBJECT_MONSTER_SLIME);
-    entity_def("monster_spawner", OBJECT_MONSTER_SPAWNER);
+    entity_def("base", ENTITY_BASE);
+    entity_def("agent_spawner", ENTITY_AGENT_SPAWNER);
+    entity_def("turret", ENTITY_TURRET);
+    entity_def("energy_core", ENTITY_ENERGY_CORE);
+    entity_def("blue_bomb", ENTITY_MONSTER_BOMB);
+    entity_def("red_fish", ENTITY_MONSTER_BOX);
+    entity_def("slime", ENTITY_MONSTER_SLIME);
+    entity_def("monster_spawner", ENTITY_MONSTER_SPAWNER);
 
     finish_def();
 }
@@ -170,24 +170,24 @@ void apply_entity_dat_changes()
 
 EntityType get_entity_type(const char* name)
 {   // TODO -- use hash map
-    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
         if (attributes[i].loaded && strcmp(name, attributes[i].name) == 0)
             return (EntityType)i;
-    return OBJECT_NONE;
+    return ENTITY_NONE;
 }
 
 const char* get_compatible_entity_name(const char* name)
 {
     const char* mapname = entity_name_map->get_mapped_name(name);
     if (mapname != NULL) return mapname;
-    if (get_entity_type(name) != OBJECT_NONE) return name;
+    if (get_entity_type(name) != ENTITY_NONE) return name;
     return NULL;
 }
 
 const class EntityAttributes* get_entity_attributes(EntityType type)
 {
-    ASSERT_VALID_OBJECT_TYPE(type);
-    IF_INVALID_OBJECT_TYPE(type) return NULL;
+    ASSERT_VALID_ENTITY_TYPE(type);
+    IF_INVALID_ENTITY_TYPE(type) return NULL;
     GS_ASSERT(attributes[type].loaded);
     if (!attributes[type].loaded) return NULL;
     return &attributes[type];

@@ -27,7 +27,7 @@ void destroy(EntityType type, int id)
 
 void stress_test()
 {
-    EntityType type = OBJECT_MONSTER_BOMB;
+    EntityType type = ENTITY_MONSTER_BOMB;
     const int iters = 1000;
     printf("Begin object stress test, maxing out %d %d times\n", type, iters);
     int ttl = 0;
@@ -111,7 +111,7 @@ void spawn_monsters(EntityType type, int n)
 
 void spawn_slimes(int n)
 {
-    spawn_monsters(OBJECT_MONSTER_SLIME, n, &get_slime_spawn_position);
+    spawn_monsters(ENTITY_MONSTER_SLIME, n, &get_slime_spawn_position);
 }
 
 } // Entities

@@ -123,7 +123,7 @@ static void chase_agent(Entity* object)
 
     // check target
     target->check_target_alive();
-    if (target->target_type == OBJECT_NONE)
+    if (target->target_type == ENTITY_NONE)
     {
         chase_agent_to_waiting(object);
         return;

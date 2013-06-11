@@ -169,8 +169,7 @@ void NetPeerManager::was_deserialized()
             }
             serializer::create_player_container_items_from_data(agent->id, containers, n_containers);
         }
-        // find spawner
-        spawner_id = Components::agent_spawner_component_list->get_spawner_for_user(this->user_id);
+        spawner_id = Components::get_spawner_for_user(this->user_id);
     }
 
     // Register agent with subsystems and send state
@@ -220,7 +219,7 @@ void NetPeerManager::teardown()
         Item::agent_quit(a->id);    // unsubscribes agent from all item
         ItemContainer::agent_quit(a->id);
         Toolbelt::agent_quit(a->id);
-        Components::owner_component_list->revoke(a->id);
+        Components::revoke_owned_entities(a->id);
         Agents::destroy_agent(a->id);
         Agents::reset_attributes(this->agent_id);
     }

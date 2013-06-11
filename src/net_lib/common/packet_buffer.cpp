@@ -38,7 +38,7 @@ class NetMessageBuffer
         ssize_t reference_count;
         char buffer[NET_MESSAGE_BUFFER_SIZE];
         NetMessageBuffer* next;
-        OBJECT_POOL_OBJECT_MACRO
+        ENTITY_POOL_ENTITY_MACRO
 
     NetMessageBuffer() :
         reference_count(0), next(NULL)

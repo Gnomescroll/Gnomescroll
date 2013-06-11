@@ -17,7 +17,7 @@ EntityListFilter* filter = NULL;
 
 void load_object_data()
 {
-    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
         entityLoad load = get_object_load_method((EntityType)i);
         if (load != NULL) load();
@@ -39,7 +39,7 @@ void init()
     entity_list = new EntityList;
     entity_list->init();
 
-    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
         int max = get_object_max((EntityType)i);
         if (max > 0)
@@ -220,7 +220,7 @@ void damage_objects_within_sphere(const EntityType* types, int n_types, Vec3 pos
 
 void spawn_mobs()
 {   // fill all monster spawner capacity
-    const EntityType type = OBJECT_MONSTER_SPAWNER;
+    const EntityType type = ENTITY_MONSTER_SPAWNER;
     if (entity_list->empty(type)) return;
     Entity** objects = entity_list->get_objects(type);
     GS_ASSERT(objects != NULL);
@@ -245,15 +245,10 @@ void spawn_mobs()
 
 #if DC_SERVER
 void send_to_client(ClientID client_id)
-{   // TODO -- make these one function call
-    send_to_client(OBJECT_BASE, client_id);
-    send_to_client(OBJECT_TURRET, client_id);
-    send_to_client(OBJECT_AGENT_SPAWNER, client_id);
-    send_to_client(OBJECT_ENERGY_CORE, client_id);
-    send_to_client(OBJECT_MONSTER_BOMB, client_id);
-    send_to_client(OBJECT_MONSTER_BOX, client_id);
-    send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
-    send_to_client(OBJECT_MONSTER_SLIME, client_id);
+{
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
+        if (object_is_networked(EntityType(i)))
+            send_to_client(EntityType(i), client_id);
 }
 #endif
 

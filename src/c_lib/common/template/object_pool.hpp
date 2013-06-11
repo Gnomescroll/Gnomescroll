@@ -1,15 +1,15 @@
 #pragma once
 
 //keeps track of alloc and dealloc count for objects
-#define OBJECT_POOL_DEBUG 0
+#define ENTITY_POOL_DEBUG 0
 
 //enabling this will turn off object pools and use malloc and free
-#define OBJECT_POOL_DEBUG_BATCH 0
+#define ENTITY_POOL_DEBUG_BATCH 0
 
-#if OBJECT_POOL_DEBUG
-    #define OBJECT_POOL_OBJECT_MACRO int allocated;
+#if ENTITY_POOL_DEBUG
+    #define ENTITY_POOL_ENTITY_MACRO int allocated;
 #else
-    #define OBJECT_POOL_OBJECT_MACRO
+    #define ENTITY_POOL_ENTITY_MACRO
 #endif
 
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
@@ -84,7 +84,7 @@ void ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
         printf("%s: Batch Alloc  %i:NEW RETURNED NULL, MEMORY ERROR! \n", Base::name(), batch_num);
     }
 
-    #if OBJECT_POOL_DEBUG
+    #if ENTITY_POOL_DEBUG
         for (int i=0; i<BUFFER_POOL_SIZE; i++) ar[i].allocated = 0;
     #endif
 
@@ -118,7 +118,7 @@ void ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::batch_alloc()
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
 ALWAYS_INLINE Entity* ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
 {
-    #if OBJECT_POOL_DEBUG_BATCH
+    #if ENTITY_POOL_DEBUG_BATCH
         Entity* tmp2 = (Entity*) malloc(sizeof(Entity));
         tmp2->next = NULL; //debug
         return tmp2;
@@ -131,7 +131,7 @@ ALWAYS_INLINE Entity* ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
     Entity* tmp = first;
     first = first->next;
 
-    #if OBJECT_POOL_DEBUG
+    #if ENTITY_POOL_DEBUG
         if (tmp->allocated != 0)
         {
             //static const char* _name = name();
@@ -146,12 +146,12 @@ ALWAYS_INLINE Entity* ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::acquire()
 template <class Base, class Entity, int BUFFER_POOL_SIZE>
 ALWAYS_INLINE void ObjectPool<Base, Entity, BUFFER_POOL_SIZE>::retire(Entity* nmb)
 {
-    #if OBJECT_POOL_DEBUG_BATCH
+    #if ENTITY_POOL_DEBUG_BATCH
         free(nmb);
         return;
     #endif
 
-    #if OBJECT_POOL_DEBUG
+    #if ENTITY_POOL_DEBUG
         if (nmb->allocated != 1)
         {
             //static const char* _name = name();

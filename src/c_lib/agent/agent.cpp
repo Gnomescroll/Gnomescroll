@@ -106,7 +106,7 @@ void Agent::tick()
     this->s = tmp;
     const float Z_DEATH_ZONE = -200.0f;
     if (!this->status.dead && this->s.z < Z_DEATH_ZONE)
-        this->status.die(this->id, OBJECT_AGENT, DEATH_BELOW_MAP);
+        this->status.die(this->id, ENTITY_AGENT, DEATH_BELOW_MAP);
     else
         this->status.respawn();
     this->status.tick();
@@ -273,7 +273,7 @@ void Agent::get_spawn_point(struct Vec3* spawn)
     float fh = this->current_height();
     if (this->status.spawner == BASE_SPAWN_ID)
     {
-        Entities::Entity* base = Entities::get(OBJECT_BASE, 0);
+        Entities::Entity* base = Entities::get(ENTITY_BASE, 0);
         IF_ASSERT(base == NULL)
         {
             *spawn = default_spawn;
@@ -286,7 +286,7 @@ void Agent::get_spawn_point(struct Vec3* spawn)
     }
     else
     {   // spawner was found
-        Entities::Entity* spawner = Entities::get(OBJECT_AGENT_SPAWNER, this->status.spawner);
+        Entities::Entity* spawner = Entities::get(ENTITY_AGENT_SPAWNER, this->status.spawner);
         IF_ASSERT(spawner == NULL)
             *spawn = default_spawn;
         else
@@ -324,7 +324,7 @@ void Agent::init_vox()
 
 Agent::Agent(AgentID id) :
     id(id), client_id((ClientID)id), user_id(NULL_USER_ID),
-    type(OBJECT_AGENT), status(this)
+    type(ENTITY_AGENT), status(this)
     #if DC_CLIENT
     , event(this)
     , initial_teleport(false)
@@ -725,7 +725,7 @@ void Agent::update_model()
 
 bool Agent::near_base()
 {
-    Entities::Entity* b = Entities::get(OBJECT_BASE, 0);
+    Entities::Entity* b = Entities::get(ENTITY_BASE, 0);
     if (b == NULL) return false;
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);

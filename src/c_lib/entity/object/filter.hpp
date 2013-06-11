@@ -6,7 +6,7 @@
 namespace Entities
 {
 
-const int OBJECT_FILTER_SIZE = 256;
+const int ENTITY_FILTER_SIZE = 256;
 // reads an instance of EntityList, applies filters and stores the pointers
 class EntityListFilter
 {
@@ -22,8 +22,8 @@ class EntityListFilter
         void init();
 
     ~EntityListFilter();
-    EntityListFilter()
-    : objects(NULL), distances(NULL), count(0), max(OBJECT_FILTER_SIZE)
+    EntityListFilter() :
+        objects(NULL), distances(NULL), count(0), max(ENTITY_FILTER_SIZE)
     {}
 };
 

@@ -147,8 +147,8 @@ void create_explosion(const Vec3i& position)
 
     // do radial damage to all things nearby
     ServerState::damage_objects_within_sphere(
-        fp, PLASMAGEN_OBJECT_BLAST_RADIUS, PLASMAGEN_ENTITY_DAMAGE, NULL_AGENT,
-        OBJECT_PLASMAGEN, -1);
+        fp, PLASMAGEN_ENTITY_BLAST_RADIUS, PLASMAGEN_ENTITY_DAMAGE, NULL_AGENT,
+        ENTITY_PLASMAGEN, -1);
 
     //// hitscan all objects in paths
     //for (int i=0; i<3; i++)
@@ -159,7 +159,7 @@ void create_explosion(const Vec3i& position)
         //class Voxels::VoxelHitscanTarget* targets = ServerState::voxel_hitscan_list->hitscan_all(fp, end, &n_hit);
         //if (targets == NULL) continue;
         //for (size_t k=0; k<n_hit; k++)
-            //Hitscan::damage_target(&targets[k], OBJECT_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);
+            //Hitscan::damage_target(&targets[k], ENTITY_PLASMAGEN, PLASMAGEN_ENTITY_DAMAGE);
     //}
 }
 

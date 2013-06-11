@@ -13,7 +13,7 @@
 //#include <common/common.hpp>
 //#include <physics/common.hpp>
 
-#define OBJECT_LIST_DEBUG 0
+#define ENTITY_LIST_DEBUG 0
 
 template <class Object_interface>
 class MultiObjectList

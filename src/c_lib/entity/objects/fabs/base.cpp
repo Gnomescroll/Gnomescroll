@@ -14,7 +14,7 @@ namespace Entities
 
 void load_base_data()
 {
-    EntityType type = OBJECT_BASE;
+    EntityType type = ENTITY_BASE;
 
     #if DC_SERVER
     int n_components = 5;
@@ -69,7 +69,7 @@ static void set_base_properties(Entity* object)
 
 Entity* create_base()
 {
-    EntityType type = OBJECT_BASE;
+    EntityType type = ENTITY_BASE;
     Entity* obj = entity_list->create(type);
     IF_ASSERT(obj == NULL) return NULL;
     set_base_properties(obj);

@@ -13,7 +13,7 @@ namespace SkeletonEditor
 
 bool rotate = false;
 bool use_skeleton = false;
-EntityType type = OBJECT_AGENT;
+EntityType type = ENTITY_AGENT;
 int id = 0;
 int part = 0;
 Voxels::VoxDat* vox_dat = NULL;
@@ -126,20 +126,20 @@ void raycast_to_part()
     Voxels::VoxDat* old = vox_dat;
     switch (type)
     {
-        case OBJECT_AGENT:
+        case ENTITY_AGENT:
             vox_dat = &VoxDats::agent;
             obj = Agents::get_agent((AgentID)id);
             IF_ASSERT(obj == NULL) return;
             vox = ((Agents::Agent*)obj)->vox;
             break;
 
-        //case OBJECT_AGENT_SPAWNER:
+        //case ENTITY_AGENT_SPAWNER:
             //GET_VOX_STUFF(Spawner)
-        //case OBJECT_TURRET:
+        //case ENTITY_TURRET:
             //GET_VOX_STUFF(Turret)
-        //case OBJECT_MONSTER_BOMB:
+        //case ENTITY_MONSTER_BOMB:
             //GET_VOX_STUFF(Monsters::Slime)
-        //case OBJECT_MONSTER_BOX:
+        //case ENTITY_MONSTER_BOX:
             //GET_VOX_STUFF(Monsters::Box)
 
         default:

@@ -9,7 +9,7 @@
 //Entity* create_some_object()
 //{
     //// initialize object
-    //EntityType type = OBJECT_SOME_OBJECT;
+    //EntityType type = ENTITY_SOME_OBJECT;
     //int id = entity_list->get_free_id(type);
     //Entity* obj = entity_list->create(type, id);
     //if (obj == NULL) return NULL;
@@ -53,7 +53,7 @@ namespace Entities
 Entity* create_REPLACEME()
 {
     // initialize object
-    EntityType type = OBJECT_REPLACEME;
+    EntityType type = ENTITY_REPLACEME;
     Entity* obj = entity_list->create(type);
     if (obj == NULL) return NULL;
 

@@ -269,9 +269,9 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, It
             return NULL;
 
     // check against all known spawners & energy cores
-    if (Entities::point_occupied_by_type(OBJECT_AGENT_SPAWNER, b))
+    if (Entities::point_occupied_by_type(ENTITY_AGENT_SPAWNER, b))
         return NULL;
-    if (Entities::point_occupied_by_type(OBJECT_ENERGY_CORE, b))
+    if (Entities::point_occupied_by_type(ENTITY_ENERGY_CORE, b))
         return NULL;
 
     class Entities::Entity* obj = Entities::create(object_type);
@@ -298,7 +298,7 @@ void place_spawner(AgentID agent_id, ItemID item_id, ItemType item_type)
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
-    class Entities::Entity* obj = place_object(agent_id, item_id, item_type, OBJECT_AGENT_SPAWNER, Entities::AGENT_SPAWNER_HEIGHT);
+    class Entities::Entity* obj = place_object(agent_id, item_id, item_type, ENTITY_AGENT_SPAWNER, Entities::AGENT_SPAWNER_HEIGHT);
     if (obj == NULL) return;
     Entities::ready(obj);
 
@@ -315,7 +315,7 @@ void place_energy_core(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_ENERGY_CORE);
 
-    class Entities::Entity* obj = place_object(agent_id, item_id, item_type, OBJECT_ENERGY_CORE, Entities::ENERGY_CORE_HEIGHT);
+    class Entities::Entity* obj = place_object(agent_id, item_id, item_type, ENTITY_ENERGY_CORE, Entities::ENERGY_CORE_HEIGHT);
     if (obj == NULL) return;
     Entities::ready(obj);
 

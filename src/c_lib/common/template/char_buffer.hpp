@@ -13,7 +13,7 @@ class CharBuffer
         CharBuffer* next;
         char buffer[CHAR_BUFFER_SIZE];
 
-        OBJECT_POOL_OBJECT_MACRO
+        ENTITY_POOL_ENTITY_MACRO
 
     CharBuffer() {}
 };

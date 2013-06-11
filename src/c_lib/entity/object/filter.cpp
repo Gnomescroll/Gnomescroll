@@ -5,17 +5,14 @@ namespace Entities
 
 int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec3 position, float radius)
 {
-    GS_ASSERT(list != NULL);
-    if (list == NULL) return 0;
-
+    IF_ASSERT(list == NULL) return 0;
     if (list->empty(type)) return 0;
 
     Entity** objects = list->get_objects(type);
-    GS_ASSERT(objects != NULL);
-    if (objects == NULL) return 0;
+    IF_ASSERT(objects == NULL) return 0;
     char* used = list->get_used(type);
     GS_ASSERT(used != NULL);
-    if (used == NULL) return 0;
+    IF_ASSERT(used == NULL) return 0;
     int max = list->max(type);
     GS_ASSERT(max >= 0);
 
@@ -35,8 +32,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec
         object = objects[i];
 
         physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        GS_ASSERT(physics != NULL);
-        if (physics == NULL) continue;
+        IF_ASSERT(physics == NULL) continue;
         Vec3 p = quadrant_translate_position(position, physics->get_position());
         dist = vec3_distance_squared(position, p);
 
@@ -56,8 +52,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec
 // array of types to filter
 int EntityListFilter::within_sphere(EntityList* list, const EntityType* types, const int n_types, Vec3 position, float radius)
 {
-    GS_ASSERT(list != NULL);
-    if (list == NULL) return 0;
+    IF_ASSERT(list == NULL) return 0;
 
     const float radius_squared = radius*radius;
     EntityType type;
@@ -80,11 +75,9 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType* types, c
         type = types[j];
         if (list->empty(type)) continue;
         objects = list->get_objects(type);
-        GS_ASSERT(objects != NULL);
-        if (objects == NULL) continue;
+        IF_ASSERT(objects == NULL) continue;
         used = list->get_used(type);
-        GS_ASSERT(used != NULL);
-        if (used == NULL) continue;
+        IF_ASSERT(used == NULL) continue;
         max = list->max(type);
         GS_ASSERT(max > 0);
 
@@ -94,8 +87,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType* types, c
             object = objects[i];
 
             physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            GS_ASSERT(physics != NULL);
-            if (physics == NULL) continue;
+            IF_ASSERT(physics == NULL) continue;
             Vec3 p = quadrant_translate_position(position, physics->get_position());
             dist = vec3_distance_squared(position, p);
 
@@ -124,7 +116,5 @@ EntityListFilter::~EntityListFilter()
     free(this->objects);
     free(this->distances);
 }
-
-
 
 } // Entities

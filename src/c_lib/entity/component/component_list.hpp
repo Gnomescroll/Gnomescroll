@@ -8,14 +8,11 @@ namespace Components
 template <class Component, ComponentType TYPE, int SIZE>
 class ComponentList
 {
-    protected:
+    public:
         ComponentType type;
-        //Component* components;  // TODO -- dont malloc everything
         int count;
         int max;
         Component** components;
-
-    public:
 
     Component* subscribe()
     {   // return pointer to available component
@@ -41,6 +38,18 @@ class ComponentList
         delete component;
     }
 
+    void call()
+    {
+        IF_ASSERT(this->components == NULL) return;
+        if (!this->count) return;
+        for (int i=0, j=0; i<this->max && j < this->count; i++)
+            if (this->components[i] != NULL)
+            {
+                j++;
+                this->components[i]->call();
+            }
+    }
+
     void init()
     {
         IF_ASSERT(this->components != NULL) return;
@@ -61,19 +70,6 @@ class ComponentList
             if (this->components[i] != NULL)
                 delete this->components[i];
         free(this->components);
-    }
-};
-
-template <class Component, ComponentType TYPE, int SIZE>
-class CallableComponentList: public ComponentList<Component,TYPE,SIZE>
-{
-    public:
-    void call()
-    {
-        IF_ASSERT(this->components == NULL) return;
-        for (int i=0; i<this->max; i++)
-            if (this->components[i] != NULL)
-                this->components[i]->call();
     }
 };
 

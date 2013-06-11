@@ -7,10 +7,9 @@ namespace Entities
 
 void EntityDataList::set_components(EntityType type, int n_components)
 {
-    GS_ASSERT(type >= 0 && type < MAX_OBJECT_TYPES);
-    if (type < 0 || type >= MAX_OBJECT_TYPES) return;
-    GS_ASSERT(n_components >= 0);
-    if (n_components < 0) n_components = 0;
+    IF_ASSERT(!isValid(type)) return;
+    IF_ASSERT(n_components < 0)
+        n_components = 0;
     if (n_components > 0)
     {
         this->component_types[type] = (ComponentType*)malloc(n_components * sizeof(ComponentType));
@@ -52,10 +51,15 @@ inline int EntityDataList::get_component_interface_slot(EntityType type, Compone
 
 void EntityDataList::init()
 {
-    this->component_types = (ComponentType**)calloc(MAX_OBJECT_TYPES, sizeof(ComponentType*));
-    this->interface_types = (ComponentInterfaceType**)calloc(MAX_OBJECT_TYPES, sizeof(ComponentInterfaceType*));
-    this->expected_component_sizes = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
-    this->component_sizes = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
+    GS_ASSERT(this->component_types == NULL);
+    GS_ASSERT(this->interface_types == NULL);
+    GS_ASSERT(this->expected_component_sizes == NULL);
+    GS_ASSERT(this->component_sizes == NULL);
+
+    this->component_types = (ComponentType**)calloc(MAX_ENTITY_TYPES, sizeof(ComponentType*));
+    this->interface_types = (ComponentInterfaceType**)calloc(MAX_ENTITY_TYPES, sizeof(ComponentInterfaceType*));
+    this->expected_component_sizes = (int*)calloc(MAX_ENTITY_TYPES, sizeof(int));
+    this->component_sizes = (int*)calloc(MAX_ENTITY_TYPES, sizeof(int));
 
     GS_ASSERT(this->component_types != NULL);
     GS_ASSERT(this->interface_types != NULL);
@@ -65,19 +69,19 @@ void EntityDataList::init()
 
 void EntityDataList::sanity_check()
 {
-    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
         GS_ASSERT(this->expected_component_sizes[i] == this->component_sizes[i]);
 }
 
 EntityDataList::~EntityDataList()
 {
     if (this->component_types != NULL)
-        for (int i=0; i<MAX_OBJECT_TYPES; i++)
+        for (int i=0; i<MAX_ENTITY_TYPES; i++)
             free(this->component_types[i]);
     free(component_types);
 
     if (this->interface_types != NULL)
-        for (int i=0; i<MAX_OBJECT_TYPES; i++)
+        for (int i=0; i<MAX_ENTITY_TYPES; i++)
             free(this->interface_types[i]);
     free(interface_types);
 
