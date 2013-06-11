@@ -105,7 +105,8 @@ bool ray_cast_mech(const Vec3& position, const Vec3& direction, float range,
 
         // NOTE -- there is a bug
         // we check against rad * 2 because sphere_rad_sq is too large.
-        // The mech center may be wrong, or the radius is wrong
+        // the sphere_line_distance may be bugged, or
+        // the mech center may be wrong, or the radius is wrong
         // (although they are correct for the line box test, so they may only be misrepresented)
         if (sphere_rad_sq > rad * 2)
             continue;
