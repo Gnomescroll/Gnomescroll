@@ -52,12 +52,53 @@ void tick_mob_sprites()
             sprite_mob_list->objects[i]->tick();
 }
 
-void hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float range)
+bool hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float range,
+                         SpriteMobID& id, float& distance)
 {
-    for (size_t i=0; i<sprite_mob_list->max; i++)
+    SpriteMobID nearest_mob = NULL_SPRITE_MOB;
+    float nearest_distance = 100000.0f;
+    const float range_sq = range * range;
+    const Vec3 up = vec3_init(0, 0, 1);
+    Vec3 line_point = vec3_init(0);
+    for (size_t i=0, j=0; i<sprite_mob_list->max && j<sprite_mob_list->count; i++)
     {   // TODO
         // do a line-plane intersection test against the mob, if its in frustum
+        SpriteMob* m = sprite_mob_list->objects[i];
+        if (m == NULL) continue;
+        j++;
+
+        Vec3 p = m->get_center();
+        p = quadrant_translate_position(position, p);
+
+        if (vec3_distance_squared(position, p) > range_sq)
+            continue;
+
+        float rad_sq = 10000.0f;
+        if (!sphere_line_distance(position, direction, p, line_point, rad_sq))
+            continue;
+
+        Vec3 forward = vec3_sub(position, p);
+        forward.z = 0.0f;
+        forward = vec3_normalize(forward);
+        const Vec3 right = vec3_normalize(vec3_cross(forward, up));
+
+        float d = 1000000.0f;
+        float width = get_mob_width(m->type);
+        float height = get_mob_height(m->type);
+        if (!line_plane_intersection(position, direction, p, width, height,
+                                     forward, right, up, d))
+            continue;
+
+        if (d >= nearest_distance)
+            continue;
+
+        nearest_distance = d;
+        nearest_mob = m->id;
     }
+
+    id = nearest_mob;
+    distance = nearest_distance;
+    return (nearest_mob != NULL_SPRITE_MOB);
 }
 
 const SpriteAnimationGroup* SpriteMob::_begin_animation()

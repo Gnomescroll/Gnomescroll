@@ -12,47 +12,55 @@ bool VoxelHitscanList::hitscan(const struct Vec3& pos, const struct Vec3& forwar
                                Vec3& collision_point, float& distance,
                                class VoxelHitscanTarget& target)
 {
-    float r2 = 100000.0f;
-    struct Vec3 dest;
-    float radius;
-    class VoxelHitscanElement* vhe;
-    class VoxelHitscanElement* target_hit;
-    target_hit = NULL;
-    Vec3i voxel;
-    float min_dist = 1000000.0f;
-    float max_dist = range;
-    struct Vec3 tv = vec3_init(0);
+    const float range_sq = range * range;
+    Vec3 dest = vec3_init(0);
+    VoxelHitscanElement* target_hit = NULL;
+    Vec3i voxel_hit = vec3i_init(0);
+    float min_dist_sq = map_dim.x * map_dim.x + 10;
+
     for (int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
-        vhe = hitscan_list[i];
+        VoxelHitscanElement* vhe = hitscan_list[i];
         if (vhe == NULL) continue;
         if (!vhe->vv->hitscan) continue;
         // skip firing agent
-        if (vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
+        if (vhe->entity_id == skip_id && vhe->entity_type == skip_type)
+            continue;
 
         Vec3 p = quadrant_translate_position(pos, vhe->vv->world_matrix.c);
-        radius = vhe->vv->radius;
-        float dist = sphere_line_distance(pos, forward, p, &tv, &r2);
+        float distance_sq = vec3_distance_squared(pos, p);
+        if (distance > range_sq)
+            continue;
 
-        if (dist < 0.0f || dist > max_dist) continue;
-        if (r2 < radius*radius)
-        {
-            if (dist > min_dist) continue;
-            tv = translate_position(tv);
-            if (!vhe->vv->hitscan_test(tv, forward, r2, voxel))
-                continue; //test for voxel hit
-            min_dist = dist;
-            target_hit = vhe;
-            dest = tv;
-        }
+        Vec3 collision;
+        float rad_sq;
+        if (!sphere_line_distance(pos, forward, p, collision, rad_sq))
+            continue;
+
+        float radius = vhe->vv->radius;
+        if (rad_sq >= radius*radius)
+            continue;
+
+        collision = translate_position(collision);
+        Vec3i voxel;
+        if (!vhe->vv->hitscan_test(collision, forward, rad_sq, voxel))
+            continue;
+
+        min_dist_sq = distance_sq;
+        target_hit = vhe;
+        dest = collision;
+        voxel_hit = voxel;
     }
 
     if (target_hit != NULL)
     {
-        distance = min_dist;
+        if (min_dist_sq > 0)
+            distance = sqrtf(min_dist_sq);
+        else
+            distance = 0;
         collision_point = dest;
         target.copy_vhe(target_hit);
-        target.voxel = voxel;
+        target.voxel = voxel_hit;
         return true;
     }
     return false;
@@ -68,34 +76,39 @@ class VoxelHitscanTarget* VoxelHitscanList::hitscan_all(
     static VoxelHitscanTarget targets[MAX_TARGETS];
 
     struct Vec3 direction = vec3_sub(end, start);
-    float max_dist = vec3_length(direction);
+    float max_dist_sq = vec3_length_squared(direction);
     direction = vec3_normalize(direction);
     size_t n = 0;
     for (int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if (n >= MAX_TARGETS) break;
+
         class VoxelHitscanElement* vhe = hitscan_list[i];
         if (vhe == NULL) continue;
         if (!vhe->vv->hitscan) continue;
 
-        struct Vec3 p = quadrant_translate_position(start, vhe->vv->world_matrix.c);
-        struct Vec3 tpos = vec3_init(0);
-        float r2 = 0.0f;
-        float radius = vhe->vv->radius;
-        float dist = sphere_line_distance(start, direction, p, &tpos, &r2);
+        Vec3 p = quadrant_translate_position(start, vhe->vv->world_matrix.c);
+        float distance_sq = vec3_distance_squared(start, p);
+        if (distance_sq > max_dist_sq)
+            continue;
 
-        if (dist < 0.0f || dist > max_dist) continue;
-        if (r2 < radius*radius)
-        {
-            tpos = translate_position(tpos);
-            // test for voxel hit
-            Vec3i voxel = vec3i_init(0);
-            if (!vhe->vv->hitscan_test(tpos, direction, r2, voxel))
-                continue;
-            class VoxelHitscanTarget* target = &targets[n++];
-            target->copy_vhe(vhe);
-            target->voxel = voxel;
-        }
+        Vec3 collision;
+        float rad_sq;
+        if (!sphere_line_distance(start, direction, p, collision, rad_sq))
+            continue;
+
+        float radius = vhe->vv->radius;
+        if (rad_sq >= radius*radius)
+            continue;
+
+        collision = translate_position(collision);
+        Vec3i voxel;
+        if (!vhe->vv->hitscan_test(collision, direction, rad_sq, voxel))
+            continue;
+
+        class VoxelHitscanTarget* target = &targets[n++];
+        target->copy_vhe(vhe);
+        target->voxel = voxel;
     }
 
     *n_targets = n;

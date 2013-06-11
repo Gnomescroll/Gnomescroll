@@ -2,8 +2,11 @@
 
 #include <t_map/common/types.hpp>
 
-inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float pos[3], float* _rad2);
-inline float sphere_line_distance(const Vec3& p, const Vec3& o, const Vec3& t, Vec3* out, float* _rad2);
+//inline float sphere_line_distance(float px, float py, float pz, float ox,
+                                  //float oy, float oz, float tx, float ty,
+                                  //float tz, float pos[3], float* _rad2);
+inline bool sphere_line_distance(const Vec3& position, const Vec3& direction,
+                                 const Vec3& center, Vec3& intersection, float& rad_sq);
 
 int get_cube_side_from_sides(const Vec3i& sides);
 Vec3i get_sides_from_cube_side(int side_id);

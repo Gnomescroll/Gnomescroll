@@ -37,7 +37,7 @@ const SpriteAnimationGroup* get_mob_animation_group(SpriteMobType type);
 SpriteAnimationGroupID get_mob_animation_group_id(SpriteMobType type);
 float get_mob_radius(SpriteMobType type);
 float get_mob_height(SpriteMobType type);
-float get_mob_with(SpriteMobType type);
+float get_mob_width(SpriteMobType type);
 float get_mob_size(SpriteMobType type);
 SpriteMobType get_mob_type(const char* name);
 

@@ -20,44 +20,64 @@ static inline bool collision_check(int x, int y, int z)
     return collision_check(vec3i_init(x, y, z));
 }
 
-inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float pos[3], float* _rad2)
-{
-    if (unlikely(ox == 0.0f && oy == 0.0f && oz == 0.0f))
+//inline float sphere_line_distance(float px, float py, float pz, float ox,
+                                  //float oy, float oz, float tx, float ty,
+                                  //float tz, float pos[3], float* _rad2)
+//{
+    //if (unlikely(ox == 0.0f && oy == 0.0f && oz == 0.0f))
+    //{
+        //for (int i=0; i<3; i++) pos[i] = 0;
+        //float d = map_dim.x * 4;
+        //*_rad2 = d*d;
+        //return d;
+    //}
+
+    //tx -= px;
+    //ty -= py;
+    //tz -= pz;
+
+    //float t = tx*ox + ty*oy + tz*oz; // <tx|ox>
+
+    //float d = t/(ox*ox+oy*oy+oz*oz); //distance to collision
+
+    //float x = t*ox - tx;
+    //float y = t*oy - ty;
+    //float z = t*oz - tz;
+    //*_rad2 = x*x + y*y + z*z; // minimum distance squared between target and line
+
+    ////x,y,z is closest point
+    //x = t*ox + px;
+    //y = t*oy + py;
+    //z = t*oz + pz;
+
+    //pos[0] = x;
+    //pos[1] = y;
+    //pos[2] = z;
+
+    //return d;
+//}
+
+inline bool sphere_line_distance(const Vec3& position, const Vec3& direction,
+                                 const Vec3& center, Vec3& intersection, float& rad_sq)
+{   // NOTE -- direction MUST be normalized
+    // Reference: http://www.lighthouse3d.com/tutorials/maths/ray-sphere-intersection/
+    // calculate dot product of direction and line from position to sphere
+    Vec3 c = vec3_sub(center, position);
+    float t = vec3_dot(direction, c);
+    // if the dot product is <= 0, its behind us
+    if (t <= 0)
     {
-        for (int i=0; i<3; i++) pos[i] = 0;
-        float d = map_dim.x * 4;
-        *_rad2 = d*d;
-        return d;
+        intersection = vec3_init(0);
+        rad_sq = map_dim.x * map_dim.x + 10;
+        return false;
     }
-
-    tx -= px;
-    ty -= py;
-    tz -= pz;
-
-    float t = tx*ox + ty*oy + tz*oz; // <tx|ox>
-
-    float d = t/(ox*ox+oy*oy+oz*oz); //distance to collision
-
-    float x = t*ox - tx;
-    float y = t*oy - ty;
-    float z = t*oz - tz;
-    *_rad2 = x*x + y*y + z*z; // minimum distance squared between target and line
-
-    //x,y,z is closest point
-    x = t*ox + px;
-    y = t*oy + py;
-    z = t*oz + pz;
-
-    pos[0] = x;
-    pos[1] = y;
-    pos[2] = z;
-
-    return d;
-}
-
-inline float sphere_line_distance(const Vec3& p, const Vec3& o, const Vec3& t, Vec3* out, float* _rad2)
-{
-    return sphere_line_distance(p.x, p.y, p.z, o.x, o.y, o.z, t.x, t.y, t.z, out->f, _rad2);
+    else
+    {
+        float dot = vec3_dot(direction, c);
+        intersection = vec3_add(position, vec3_scalar_mult(direction, dot));
+        rad_sq = vec3_distance_squared(center, intersection);
+        return true;
+    }
 }
 
 int get_cube_side_from_sides(const Vec3i& side)

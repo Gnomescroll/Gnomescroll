@@ -32,6 +32,7 @@ GET_MOB_PROPERTY(float, height, 1.0f);
 GET_MOB_PROPERTY(float, width, 1.0f);
 GET_MOB_PROPERTY(float, size, 1.0f);
 
+
 const SpriteAnimationGroup* get_mob_animation_group(SpriteMobType type)
 {
     SpriteAnimationGroupID id = get_mob_animation_group_id(type);

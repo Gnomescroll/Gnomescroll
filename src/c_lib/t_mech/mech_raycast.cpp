@@ -49,11 +49,11 @@ void draw_selected_mech_bounding_box()
     visualize_bounding_box(w, size, f, r, u);
 }
 
-static bool ray_cast_mech_render_type_0(const struct Mech &m, const Vec3& position,
-                                        const Vec3& direction, float& distance)
-{
+static bool ray_cast_mech_render_type_0(const struct Mech &m, const Vec3& center,
+                                        const Vec3& position, const Vec3& direction,
+                                        float& distance)
+{   // center is a repeated argument, its should be pre-translated
     Vec3 w = m.center;
-    w = quadrant_translate_position(position, w);
     w.z += 0.01f;   // lift it off the ground a little, so it doesn't
                     // conflict with terrain
     float d = 1000000000.0f;
@@ -65,8 +65,7 @@ static bool ray_cast_mech_render_type_0(const struct Mech &m, const Vec3& positi
     Vec3 size = get_mech_box_dimensions(m.type);
     size.z *= 0.5f;
     w.z += size.z;
-    bool ret = line_box_test(position, direction, w, size,
-                             f, r, u, d);
+    bool ret = line_box_test(position, direction, w, size, f, r, u, d);
     if (ret)
         distance = d;
     return ret;
@@ -96,11 +95,19 @@ bool ray_cast_mech(const Vec3& position, const Vec3& direction, float range,
         //printf("Position: "); vec3i_print(mla[i].position);
         //printf("Center: "); vec3_print(mla[i].center);
         float rad = get_mech_radius(mla[i].type);
-        float rad_sq = rad * rad;
         //printf("Radius: %0.2f\n", rad);
-        if (vec3_distance_squared(center, position) > (range_squared - rad_sq - 2*range*rad))
+        if (vec3_distance_squared(center, position) > range_squared)
             continue;
-        if (!sphere_fulstrum_test(center, rad))
+        Vec3 collision;
+        float sphere_rad_sq;
+        if (!sphere_line_distance(position, direction, center, collision, sphere_rad_sq))
+            continue;
+
+        // NOTE -- there is a bug
+        // we check against rad * 2 because sphere_rad_sq is too large.
+        // The mech center may be wrong, or the radius is wrong
+        // (although they are correct for the line box test, so they may only be misrepresented)
+        if (sphere_rad_sq > rad * 2)
             continue;
 
         float d = 1000000.0f;
@@ -111,7 +118,8 @@ bool ray_cast_mech(const Vec3& position, const Vec3& direction, float range,
             case MECH_RENDER_TYPE_2:
             case MECH_RENDER_TYPE_3:
             case MECH_RENDER_TYPE_4:
-                if (ray_cast_mech_render_type_0(mla[i], position, direction, d) &&
+                if (ray_cast_mech_render_type_0(mla[i], center, position,
+                                                direction, d) &&
                     d < nearest_distance)
                 {
                     nearest_distance = d;

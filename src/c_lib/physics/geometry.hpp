@@ -188,33 +188,33 @@ static bool _line_plane_intersection(const Vec3& position,
 bool line_plane_intersection(const Vec3& position,
                              const Vec3& direction,
                              const Vec3& center,
-                             const Vec3& size,
+                             float width,
+                             float height,
                              const Vec3& n,      //normal
                              const Vec3& v1,     //direction 1 on surface
                              const Vec3& v2,     //direction 2 on surface
                              float& distance)
 {
     float a = 10000000.0f;
-    Vec3 adjpos = vec3_add(center, vec3_scalar_mult(n, size.x));
-    if (_line_plane_intersection(position, direction, adjpos, n, a))
+    if (_line_plane_intersection(position, direction, center, n, a))
     {
-        Vec3 p = vec3_add(vec3_sub(position, adjpos),
+        Vec3 p = vec3_add(vec3_sub(position, center),
                           vec3_scalar_mult(direction, a));
         float ta = vec3_dot(p, v1);
-        if (ta < size.y && ta > -size.y)
+        if (ta < width && ta > -width)
         {
             float tb = vec3_dot(p, v2);
-            if (tb < size.z && tb > -size.z)
+            if (tb < height && tb > -height)
             {
-                Vec3 collision_point = vec3_add(p, adjpos);
+                Vec3 collision_point = vec3_add(p, center);
                 distance = vec3_length(vec3_sub(collision_point, position));
                 #if DC_CLIENT
                 // set visualization flags
-                _pp = adjpos;
+                _pp = center;
                 _pl = position;
                 _pv = direction;
-                p0 = vec3_scalar_mult(v1, size.y);
-                p1 = vec3_scalar_mult(v2, size.z);
+                p0 = vec3_scalar_mult(v1, width);
+                p1 = vec3_scalar_mult(v2, height);
                 _i = collision_point;
                 #endif
                 return true;
@@ -222,6 +222,20 @@ bool line_plane_intersection(const Vec3& position,
         }
     }
     return false;
+}
+
+inline bool _line_box_line_plane_intersection(const Vec3& position,
+                                              const Vec3& direction,
+                                              const Vec3& center,
+                                              const Vec3& size,
+                                              const Vec3& n,      //normal
+                                              const Vec3& v1,     //direction 1 on surface
+                                              const Vec3& v2,     //direction 2 on surface
+                                              float& distance)
+{
+    Vec3 adjpos = vec3_add(center, vec3_scalar_mult(n, size.x));
+    return line_plane_intersection(position, direction, adjpos, size.y, size.z,
+                                   n, v1, v2, distance);
 }
 
 bool line_box_test(const Vec3& position,
@@ -237,7 +251,7 @@ bool line_box_test(const Vec3& position,
     bool hit = false;
     float d = 1000000000.0f;
     float closest_d = 1000000000.0f;
-    if (line_plane_intersection(position, direction, center, s, f, r, u, d))
+    if (_line_box_line_plane_intersection(position, direction, center, s, f, r, u, d))
     {
         hit = true;
         if (d < closest_d)
@@ -245,7 +259,7 @@ bool line_box_test(const Vec3& position,
     }
 
     s.x *= -1;
-    if (line_plane_intersection(position, direction, center, s,
+    if (_line_box_line_plane_intersection(position, direction, center, s,
                                 f, r, u, d))
     {
         hit = true;
@@ -254,7 +268,7 @@ bool line_box_test(const Vec3& position,
     }
 
     s = vec3_init(size.y, size.x, size.z);
-    if (line_plane_intersection(position, direction, center, s, r, u, f, d))
+    if (_line_box_line_plane_intersection(position, direction, center, s, r, u, f, d))
     {
         hit = true;
         if (d < closest_d)
@@ -262,7 +276,7 @@ bool line_box_test(const Vec3& position,
     }
 
     s.x *= -1;
-    if (line_plane_intersection(position, direction, center, s,
+    if (_line_box_line_plane_intersection(position, direction, center, s,
                                 r, u, f, d))
     {
         hit = true;
@@ -272,7 +286,7 @@ bool line_box_test(const Vec3& position,
 
     // top
     s = vec3_init(size.z, size.x, size.y);  // flip the size vector for whatever reason
-    if (line_plane_intersection(position, direction, center, s, u, f, r, d))
+    if (_line_box_line_plane_intersection(position, direction, center, s, u, f, r, d))
     {
         hit = true;
         if (d < closest_d)
@@ -281,7 +295,7 @@ bool line_box_test(const Vec3& position,
 
     // bottom
     s.x *= -1;
-    if (line_plane_intersection(position, direction, center, s,
+    if (_line_box_line_plane_intersection(position, direction, center, s,
                                 u, f, r, d))
     {
         hit = true;

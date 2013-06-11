@@ -53,6 +53,7 @@ void teardown_sprite_mob_list();
 
 void tick_mob_sprites();
 void draw_sprite_mobs();
-void hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float range);
+bool hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float range,
+                         SpriteMobID& id, float& distance);
 
 }   // t_mob
