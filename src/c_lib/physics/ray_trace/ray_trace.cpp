@@ -20,46 +20,10 @@ static inline bool collision_check(int x, int y, int z)
     return collision_check(vec3i_init(x, y, z));
 }
 
-//inline float sphere_line_distance(float px, float py, float pz, float ox,
-                                  //float oy, float oz, float tx, float ty,
-                                  //float tz, float pos[3], float* _rad2)
-//{
-    //if (unlikely(ox == 0.0f && oy == 0.0f && oz == 0.0f))
-    //{
-        //for (int i=0; i<3; i++) pos[i] = 0;
-        //float d = map_dim.x * 4;
-        //*_rad2 = d*d;
-        //return d;
-    //}
-
-    //tx -= px;
-    //ty -= py;
-    //tz -= pz;
-
-    //float t = tx*ox + ty*oy + tz*oz; // <tx|ox>
-
-    //float d = t/(ox*ox+oy*oy+oz*oz); //distance to collision
-
-    //float x = t*ox - tx;
-    //float y = t*oy - ty;
-    //float z = t*oz - tz;
-    //*_rad2 = x*x + y*y + z*z; // minimum distance squared between target and line
-
-    ////x,y,z is closest point
-    //x = t*ox + px;
-    //y = t*oy + py;
-    //z = t*oz + pz;
-
-    //pos[0] = x;
-    //pos[1] = y;
-    //pos[2] = z;
-
-    //return d;
-//}
-
 inline bool sphere_line_distance(const Vec3& position, const Vec3& direction,
                                  const Vec3& center, Vec3& intersection, float& rad_sq)
-{   // NOTE -- direction MUST be normalized
+{   // NOTE -- direction MUST be normalized.
+    // NOTE -- intersection output variable will NOT be translated automatically
     // Reference: http://www.lighthouse3d.com/tutorials/maths/ray-sphere-intersection/
     // calculate dot product of direction and line from position to sphere
     Vec3 c = vec3_sub(center, position);

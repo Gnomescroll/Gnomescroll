@@ -33,12 +33,15 @@ static SpriteMobProperties* sprite_mob_properties = NULL;
 void init_sprite_mob_properties();
 void teardown_sprite_mob_properties();
 
+SpriteMobType get_mob_type(const char* name);
+
 const SpriteAnimationGroup* get_mob_animation_group(SpriteMobType type);
 SpriteAnimationGroupID get_mob_animation_group_id(SpriteMobType type);
 float get_mob_radius(SpriteMobType type);
 float get_mob_height(SpriteMobType type);
 float get_mob_width(SpriteMobType type);
 float get_mob_size(SpriteMobType type);
-SpriteMobType get_mob_type(const char* name);
+const char* get_sprite_mob_name(SpriteMobType type);
+const char* get_sprite_mob_pretty_name(SpriteMobType type);
 
 }   // t_mob

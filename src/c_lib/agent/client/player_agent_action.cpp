@@ -132,6 +132,12 @@ void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
             }
             break;
 
+        case HITSCAN_TARGET_SPRITE_MOB:
+            collision_point = quadrant_translate_position(pos, hitscan.sprite_mob_collision_point);
+            // TODO -- network it
+            none_msg.send();
+            break;
+
         case HITSCAN_TARGET_NONE:
             collision_point = vec3_scalar_mult(look, range);
             collision_point = vec3_add(pos, collision_point);
@@ -294,6 +300,17 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
             }
             if (weapon_group != IG_MINING_LASER)
                 sound_id = Sound::play_2d_sound("pick_swung");
+            break;
+
+        case HITSCAN_TARGET_SPRITE_MOB:
+            // TODO -- network it
+            if (weapon_group != IG_MINING_LASER)
+                sound_id = Sound::play_2d_sound("pick_hit_agent");
+
+            {
+                melee_none_CtoS none_msg;
+                none_msg.send();
+            }
             break;
 
         case HITSCAN_TARGET_NONE:

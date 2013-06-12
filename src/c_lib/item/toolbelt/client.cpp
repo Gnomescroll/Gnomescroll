@@ -186,6 +186,7 @@ static bool beta_scan_world()
             // callback
             return false;
 
+        case HITSCAN_TARGET_SPRITE_MOB:
         case HITSCAN_TARGET_NONE:
             return false;
     }

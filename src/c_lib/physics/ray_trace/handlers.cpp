@@ -79,6 +79,7 @@ void handle_hitscan_result(const WorldHitscanResult& result,
                                               p.block_damage,
                                               p.terrain_modification_action);
             break;
+
         case HITSCAN_TARGET_VOXEL:
             if (EntityType(result.voxel_target.entity_type) == ENTITY_AGENT)
             {
@@ -92,9 +93,17 @@ void handle_hitscan_result(const WorldHitscanResult& result,
                 }
             }
             break;
+
         case HITSCAN_TARGET_MECH:
             t_mech::hit_mech(result.mech_id);
             break;
+
+        case HITSCAN_TARGET_SPRITE_MOB:
+            #if !PRODUCTION
+            printf("Hit a sprited mob\n");
+            #endif
+            break;
+
         case HITSCAN_TARGET_NONE:
             break;
     }
@@ -126,6 +135,7 @@ void broadcast_object_fired(int id, EntityType type, const WorldHitscanResult& r
             terrain_msg.broadcast();
             break;
 
+        case HITSCAN_TARGET_SPRITE_MOB:
         case HITSCAN_TARGET_MECH:
         case HITSCAN_TARGET_NONE:
             none_msg.id = id;

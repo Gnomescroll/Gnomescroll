@@ -1,8 +1,9 @@
 #pragma once
 
+#include <t_mob/sprites/common.hpp>
+#include <t_mob/sprites/textures.hpp>
 #include <physics/vec3.hpp>
 #include <common/template/unmanaged_object_list.hpp>
-#include <t_mob/sprites/common.hpp>
 
 namespace t_mob
 {
@@ -54,6 +55,6 @@ void teardown_sprite_mob_list();
 void tick_mob_sprites();
 void draw_sprite_mobs();
 bool hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float range,
-                         SpriteMobID& id, float& distance);
+                         SpriteMobID& id, float& distance, Vec3& collision_point);
 
 }   // t_mob

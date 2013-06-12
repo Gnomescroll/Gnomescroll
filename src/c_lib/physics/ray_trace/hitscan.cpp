@@ -52,6 +52,19 @@ static WorldHitscanResult _hitscan_against_terrain_and_mobs(const Vec3& p, const
         range = hitscan.block_distance + 1.5f; // cap the range for future calls
     }
 
+    // sprite mobs second
+    SpriteMobID sprite_mob_id;
+    float sprite_mob_dist;
+    Vec3 sprite_mob_collision_point;
+    if (t_mob::hitscan_sprite_mobs(p, v, range, sprite_mob_id, sprite_mob_dist,
+                                   sprite_mob_collision_point))
+    {
+        hitscan.set_sprite_collision(sprite_mob_id, sprite_mob_dist,
+                                     sprite_mob_collision_point);
+        range = hitscan.sprite_mob_distance + 1.5f;
+    }
+
+    // voxels last
     Vec3 voxel_collision_point;
     Voxels::VoxelHitscanTarget voxel_target;
     float voxel_distance;

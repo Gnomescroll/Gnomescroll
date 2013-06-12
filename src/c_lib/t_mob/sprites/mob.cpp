@@ -24,6 +24,11 @@ void teardown_sprite_mob_list()
     delete sprite_mob_list;
 }
 
+SpriteMob* get_sprite_mob(SpriteMobID id)
+{
+    return sprite_mob_list->get(id);
+}
+
 #if DC_CLIENT
 void draw_sprite_mobs()
 {
@@ -53,13 +58,13 @@ void tick_mob_sprites()
 }
 
 bool hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float range,
-                         SpriteMobID& id, float& distance)
+                         SpriteMobID& id, float& distance, Vec3& collision_point)
 {
     SpriteMobID nearest_mob = NULL_SPRITE_MOB;
     float nearest_distance = 100000.0f;
+    Vec3 nearest_collision_point = vec3_init(0);
     const float range_sq = range * range;
     const Vec3 up = vec3_init(0, 0, 1);
-    Vec3 line_point = vec3_init(0);
     for (size_t i=0, j=0; i<sprite_mob_list->max && j<sprite_mob_list->count; i++)
     {   // TODO
         // do a line-plane intersection test against the mob, if its in frustum
@@ -74,6 +79,7 @@ bool hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float rang
             continue;
 
         float rad_sq = 10000.0f;
+        Vec3 line_point = vec3_init(0);
         if (!sphere_line_distance(position, direction, p, line_point, rad_sq))
             continue;
 
@@ -94,10 +100,12 @@ bool hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float rang
 
         nearest_distance = d;
         nearest_mob = m->id;
+        nearest_collision_point = line_point;
     }
 
     id = nearest_mob;
     distance = nearest_distance;
+    collision_point = translate_position(nearest_collision_point);
     return (nearest_mob != NULL_SPRITE_MOB);
 }
 

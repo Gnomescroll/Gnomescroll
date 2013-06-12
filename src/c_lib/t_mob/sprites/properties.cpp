@@ -31,6 +31,8 @@ GET_MOB_PROPERTY(float, radius, 0.5f);
 GET_MOB_PROPERTY(float, height, 1.0f);
 GET_MOB_PROPERTY(float, width, 1.0f);
 GET_MOB_PROPERTY(float, size, 1.0f);
+GET_MOB_PROPERTY(const char*, name, "UNDEFINED");
+GET_MOB_PROPERTY(const char*, pretty_name, "UNDEFINED");
 
 
 const SpriteAnimationGroup* get_mob_animation_group(SpriteMobType type)

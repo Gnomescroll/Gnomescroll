@@ -240,6 +240,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
         case ENTITY_MONSTER_SLIME:
         case ENTITY_MONSTER_BOX:
         case ENTITY_MONSTER_BOMB:
+        case ENTITY_MONSTER_LIZARD_THIEF:
         case ENTITY_ENERGY_CORE:
         case ENTITY_TURRET:
         case ENTITY_AGENT_SPAWNER:
@@ -281,6 +282,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
         case ENTITY_MONSTER_SLIME:
         case ENTITY_MONSTER_BOX:
         case ENTITY_MONSTER_BOMB:
+        case ENTITY_MONSTER_LIZARD_THIEF:
         case ENTITY_ENERGY_CORE:
         case ENTITY_TURRET:
         case ENTITY_AGENT_SPAWNER:

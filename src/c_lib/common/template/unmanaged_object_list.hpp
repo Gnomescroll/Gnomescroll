@@ -59,6 +59,12 @@ class UnmanagedObjectList
         this->count--;
     }
 
+    Thing* get(ThingID id) const
+    {
+        if (!this->is_valid_id(id)) return NULL;
+        return this->objects[id];
+    }
+
     UnmanagedObjectList<Thing, ThingID>(size_t size, ThingID null_id) :
         _index(0), null_id(null_id), count(0), max(size)
     {

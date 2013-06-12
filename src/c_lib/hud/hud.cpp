@@ -276,19 +276,6 @@ void draw_hud_textures()
     draw_weapon_charge_meter();
     #endif
 
-    // health/energy
-    //Agents::Agent* a = ClientState::player_agent.you();
-    //if (a != NULL)
-    //{
-        //const unsigned char alpha = 175;
-        //int health_max = Agents::get_attribute_int(a->id, "health_max");
-        //int health = Agents::get_attribute_int(a->id, "health");
-        //float ratio = float(health_max - health) / float(health_max);
-        //set_color_from_ratio(ratio, alpha, true);
-        //meter_graphic.draw(0, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_LEFT, true);
-        //meter_graphic.draw(_xresf/2, _yresf-h, _xresf/2, h, ratio, MeterGraphic::METANCH_RIGHT, false);
-    //}
-
     if (!hud_draw_settings.draw) return;
 
     if (!has_error())
@@ -355,11 +342,9 @@ static void draw_targeted_text()
     using ClientState::hitscan;
     ItemType equipped_type = Toolbelt::get_selected_item_type();
     float range = Item::get_weapon_range(equipped_type);
+    update_targeted_text("");
     if (hitscan.distance > range || hitscan.type == HITSCAN_TARGET_NONE)
-    {
-        update_targeted_text("");
         return;
-    }
 
     switch (hitscan.type)
     {
@@ -387,6 +372,14 @@ static void draw_targeted_text()
                     else
                         update_targeted_text(t_mech::get_mech_pretty_name(mtype));
                 }
+            }
+            break;
+
+        case HITSCAN_TARGET_SPRITE_MOB:
+            {
+                t_mob::SpriteMob* mob = t_mob::get_sprite_mob(hitscan.sprite_mob_id);
+                if (mob != NULL)
+                    update_targeted_text(t_mob::get_mob_pretty_name(mob->type));
             }
             break;
 
