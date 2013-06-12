@@ -85,6 +85,8 @@ bool hitscan_sprite_mobs(const Vec3& position, const Vec3& direction, float rang
 
         Vec3 forward = vec3_sub(position, p);
         forward.z = 0.0f;
+        if (unlikely(vec3_length_squared(forward) == 0))
+            continue;
         forward = vec3_normalize(forward);
         const Vec3 right = vec3_normalize(vec3_cross(forward, up));
 
@@ -157,7 +159,7 @@ void SpriteMob::draw()
     if (this->current_animation == NULL) return;
     int tex = this->current_animation->get_frame(this->current_animation_frame);
     IF_ASSERT(tex == NULL_SPRITE) return;
-    Draw::drawAxialBillboardSprite(this->position, tex, get_mob_size(this->type));
+    Draw::draw_axial_billboard_sprite(this->position, tex, get_mob_size(this->type));
     // TODO -- shader, with lighting
 }
 #endif

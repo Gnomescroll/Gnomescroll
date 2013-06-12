@@ -15,22 +15,26 @@ namespace Draw
 static float v_buffer[3*8];
 static float s_buffer[6*(4*3)];
 
-void drawAxialBillboardSprite(const Vec3& position, int texture_index,
-                              float texture_scale, int sprites_wide)
+void draw_axial_billboard_sprite(const Vec3& position, int texture_index,
+                                 float texture_scale, int sprites_wide)
 {
     IF_ASSERT(sprites_wide <= 0) return;
     Vec3 pos = quadrant_translate_position(current_camera_position, position);
     pos.z += texture_scale;
 
-    if (!point_fulstrum_test(pos))
+    if (!sphere_fulstrum_test(pos, texture_scale * 0.5f))
         return;
 
-    Vec3 up = vec3_init(model_view_matrix[0]*texture_scale,
-                        model_view_matrix[4]*texture_scale,
-                        model_view_matrix[8]*texture_scale);
-    Vec3 right = vec3_init(model_view_matrix[1]*texture_scale,
-                           model_view_matrix[5]*texture_scale,
-                           model_view_matrix[9]*texture_scale);
+    Vec3 up = vec3_init(0, 0, 1);
+    Vec3 forward = vec3_sub(pos, current_camera_position);
+    forward.z = 0.0f;
+    if (unlikely(vec3_length_squared(forward) == 0))
+        return;
+    forward = vec3_normalize(forward);
+    Vec3 right = vec3_normalize(vec3_cross(forward, up));
+
+    up = vec3_scalar_mult(up, texture_scale);
+    right = vec3_scalar_mult(right, texture_scale);
 
     float factor = 1.0f / sprites_wide;
     float tx_min = float(texture_index % sprites_wide) * factor;
@@ -43,7 +47,7 @@ void drawAxialBillboardSprite(const Vec3& position, int texture_index,
     glVertex3f(p.x, p.y, p.z);
 
     p = vec3_add(pos, vec3_sub(up, right));
-    glTexCoord2f(tx_max, ty_max);
+    glTexCoord2f(tx_min, ty_min);
     glVertex3f(p.x, p.y, p.z);
 
     p = vec3_add(pos, vec3_add(up, right));
@@ -51,7 +55,7 @@ void drawAxialBillboardSprite(const Vec3& position, int texture_index,
     glVertex3f(p.x, p.y, p.z);
 
     p = vec3_add(pos, vec3_sub(right, up));
-    glTexCoord2f(tx_min, ty_min);
+    glTexCoord2f(tx_max, ty_max);
     glVertex3f(p.x, p.y, p.z);
 }
 

@@ -9,8 +9,8 @@ dont_include_this_file_on_server
 namespace Draw
 {
 
-void drawAxialBillboardSprite(const Vec3& position, int texture_index,
-                              float texture_scale, int sprites_wide=16);
+void draw_axial_billboard_sprite(const Vec3& position, int texture_index,
+                                 float texture_scale, int sprites_wide=16);
 
 void drawBillboardSprite(const Vec3& position, int texture_index,
                          float texture_scale);
