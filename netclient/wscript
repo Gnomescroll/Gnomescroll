@@ -853,6 +853,15 @@ def gcc(ctx):
     configure(ctx, use_clang=False)
 
 
+class i386_ctx(ConfigurationContext):
+    cmd = '32'
+    fun = 'i386'
+
+
+def i386(ctx):
+    configure(ctx, i386=True)
+
+
 class windows_ctx(ConfigurationContext):
     cmd = 'windows'
     fun = 'windows'
