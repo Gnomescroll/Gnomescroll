@@ -7,6 +7,7 @@
 #include <t_gen/noise_map2.hpp>
 #include <t_gen/explosives.hpp>
 #include <t_gen/city_generator.hpp>
+#include <t_gen/iceflame_noise.hpp>
 
 typedef unsigned char Uint8;
 
@@ -34,6 +35,7 @@ static void measure_noise_range(size_t size)
 
 void init()
 {
+    iceflame_noise_init();
     init_explosives();
     init_cities();
 
@@ -44,7 +46,7 @@ void init()
 
 void teardown()
 {
-
+    iceflame_noise_teardown();
 }
 
 void populate_2d_noise_array(float* _2d_noise_array, float persistence,
