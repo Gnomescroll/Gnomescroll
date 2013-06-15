@@ -17,6 +17,9 @@ class SpriteMob
         SpriteMobID id;
         SpriteMobType type;
 
+        EntityID entity_id;
+        EntityType entity_type;
+
         Vec3 position;
         Vec3 orientation;
 
@@ -28,6 +31,7 @@ class SpriteMob
     inline float get_radius();
 
     void set_type(const char* name);
+    void associate_entity(EntityID id, EntityType type);
 
     void begin_animation(const char* name);
     void begin_animation(SpriteAnimationID id);
@@ -51,6 +55,8 @@ extern SpriteMobList* sprite_mob_list;
 
 void init_sprite_mob_list();
 void teardown_sprite_mob_list();
+
+SpriteMob* get_sprite_mob(SpriteMobID id);
 
 void tick_mob_sprites();
 void draw_sprite_mobs();

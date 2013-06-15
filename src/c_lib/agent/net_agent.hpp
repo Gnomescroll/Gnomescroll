@@ -147,7 +147,7 @@ class agent_control_state_StoC: public FixedSizeNetPacketToClient<agent_control_
 };
 
 
-class agent_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<agent_shot_nothing_StoC>
+class agent_hitscan_nothing_StoC: public FixedSizeReliableNetPacketToClient<agent_hitscan_nothing_StoC>
 {   // hitscan StoC actions (for client to animate)
     public:
         uint8_t id;
@@ -160,48 +160,24 @@ class agent_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<agent_s
 };
 
 
-class agent_shot_object_StoC: public FixedSizeReliableNetPacketToClient<agent_shot_object_StoC>
+class agent_hitscan_object_StoC: public FixedSizeReliableNetPacketToClient<agent_hitscan_object_StoC>
 {
     public:
         uint8_t id;
         uint16_t target_id;
         uint8_t target_type;
-        uint8_t target_part;
-        Vec3i voxel;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u8(&id, buff, buff_n, pack);
         pack_u16(&target_id, buff, buff_n, pack);
         pack_u8(&target_type, buff, buff_n, pack);
-        pack_u8(&target_part, buff, buff_n, pack);
-        pack_vec3i_u8(&voxel, buff, buff_n, pack);
-
     }
     inline void handle();
 };
 
 
-class agent_shot_block_StoC: public FixedSizeReliableNetPacketToClient<agent_shot_block_StoC>
-{
-    public:
-        uint8_t id;
-        uint8_t cube;   // might not need this (infer from x,y,z)
-        uint8_t side;
-        Vec3 position;
-
-    inline void packet(char* buff, size_t* buff_n, bool pack)
-    {
-        pack_u8(&id, buff, buff_n, pack);
-        pack_u8(&cube, buff, buff_n, pack);
-        pack_u8(&side, buff, buff_n, pack);
-        pack_vec3(&position, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-
-class agent_hit_block_StoC: public FixedSizeReliableNetPacketToClient<agent_hit_block_StoC>
+class agent_hitscan_block_StoC: public FixedSizeReliableNetPacketToClient<agent_hitscan_block_StoC>
 {
     public:
         uint8_t id;
@@ -215,39 +191,6 @@ class agent_hit_block_StoC: public FixedSizeReliableNetPacketToClient<agent_hit_
     inline void handle();
 };
 
-/* Hitscan StoC actions (to be forwarded for other clients to animate) */
-
-class agent_melee_nothing_StoC: public FixedSizeReliableNetPacketToClient<agent_melee_nothing_StoC>
-{
-    public:
-        uint8_t id;
-
-    inline void packet(char* buff, size_t* buff_n, bool pack)
-    {
-        pack_u8(&id, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-class agent_melee_object_StoC: public FixedSizeReliableNetPacketToClient<agent_melee_object_StoC>
-{
-    public:
-        uint8_t id;
-        uint16_t target_id;
-        uint8_t target_type;
-        uint8_t target_part;
-        Vec3i voxel;
-
-    inline void packet(char* buff, size_t* buff_n, bool pack)
-    {
-        pack_u8(&id, buff, buff_n, pack);
-        pack_u16(&target_id, buff, buff_n, pack);
-        pack_u8(&target_type, buff, buff_n, pack);
-        pack_u8(&target_part, buff, buff_n, pack);
-        pack_vec3i_u8(&voxel, buff, buff_n, pack);
-    }
-    inline void handle();
-};
 
 class agent_launched_projectile_StoC: public FixedSizeReliableNetPacketToClient<agent_launched_projectile_StoC>
 {
@@ -299,36 +242,18 @@ class agent_control_state_CtoS: public FixedSizeReliableNetPacketToServer<agent_
     inline void handle();
 };
 
-// agent block hit action
-class hit_block_CtoS: public FixedSizeReliableNetPacketToServer<hit_block_CtoS>
-{
-    public:
-        Vec3i position;
-        uint16_t weapon_type;
-
-    inline void packet(char* buff, size_t* buff_n, bool pack)
-    {
-        pack_map_position(&position, buff, buff_n, pack);
-        pack_u16(&weapon_type, buff, buff_n, pack);
-    }
-
-    inline void handle();
-};
-
-class hitscan_object_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_object_CtoS>
+class hitscan_entity_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_entity_CtoS>
 {
     public:
         uint16_t id;
         uint8_t type;
-        uint8_t part;
-        Vec3i voxel;
+        float charge_progress;  // TODO -- move server-side
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
-        pack_u8(&part, buff, buff_n, pack);
-        pack_vec3i_u8(&voxel, buff, buff_n, pack);
+        pack_float(&charge_progress, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -338,10 +263,12 @@ class hitscan_block_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_bloc
 {
     public:
         Vec3i position;
+        float charge_progress;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
         pack_map_position(&position, buff, buff_n, pack);
+        pack_float(&charge_progress, buff, buff_n, pack);
     }
 
     inline void handle();
@@ -364,51 +291,6 @@ class hitscan_mech_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_mech_
 // hitscan: target = none
 // server will convert this to a fire packet for clients
 class hitscan_none_CtoS: public FixedSizeReliableNetPacketToServer<hitscan_none_CtoS>
-{
-    public:
-    inline void packet(char* buff, size_t* buff_n, bool pack) {}
-    inline void handle();
-};
-
-// melee: target = voxel object
-class melee_object_CtoS: public FixedSizeReliableNetPacketToServer<melee_object_CtoS>
-{
-    public:
-        uint16_t id;
-        uint8_t type;
-        uint8_t part;
-        Vec3i voxel;
-        uint16_t weapon_type;
-        float charge_progress;
-
-    inline void packet(char* buff, size_t* buff_n, bool pack)
-    {
-        pack_u16(&id, buff, buff_n, pack);
-        pack_u8(&type, buff, buff_n, pack);
-        pack_u8(&part, buff, buff_n, pack);
-        pack_vec3i_u8(&voxel, buff, buff_n, pack);
-        pack_u16(&weapon_type, buff, buff_n, pack);
-        pack_float(&charge_progress, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-// melee: target = mech
-class melee_mech_CtoS: public FixedSizeReliableNetPacketToServer<melee_mech_CtoS>
-{
-    public:
-        uint16_t mech_id;
-
-    inline void packet(char* buff, size_t* buff_n, bool pack)
-    {
-        pack_u16(&mech_id, buff, buff_n, pack);
-    }
-    inline void handle();
-};
-
-// melee: target = none
-// server will convert this to a fire packet for clients
-class melee_none_CtoS: public FixedSizeReliableNetPacketToServer<melee_none_CtoS>
 {
     public:
     inline void packet(char* buff, size_t* buff_n, bool pack) {}

@@ -194,10 +194,17 @@ void SpriteMob::init(const char* name)
     this->init(get_mob_type(name));
 }
 
+void SpriteMob::associate_entity(EntityID id, EntityType type)
+{
+    this->entity_id = id;
+    this->entity_type = type;
+}
+
 SpriteMob::SpriteMob() :
-    id(NULL_SPRITE_MOB), type(NULL_SPRITE_MOB_TYPE), position(vec3_init(0)),
-    orientation(vec3_init(0)), animation_tick(0), current_animation(NULL),
-    current_animation_frame(0)
+    id(NULL_SPRITE_MOB), type(NULL_SPRITE_MOB_TYPE),
+    entity_id(NULL_ENTITY), entity_type(NULL_ENTITY_TYPE),
+    position(vec3_init(0)), orientation(vec3_init(0)), animation_tick(0),
+    current_animation(NULL), current_animation_frame(0)
 {
 }
 

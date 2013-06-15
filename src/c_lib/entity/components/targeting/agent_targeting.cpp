@@ -40,7 +40,7 @@ void AgentTargetingComponent::check_target_alive()
     if (target == NULL || target->status.dead)
     {
         this->target_id = NULL_AGENT;
-        this->target_type = ENTITY_NONE;
+        this->target_type = NULL_ENTITY_TYPE;
     }
 }
 
@@ -50,7 +50,7 @@ void AgentTargetingComponent::lock_target(Vec3 camera_position)
         camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
-        this->target_type = ENTITY_NONE;
+        this->target_type = NULL_ENTITY_TYPE;
         return;
     }
     this->target_type = ENTITY_AGENT;
@@ -59,7 +59,7 @@ void AgentTargetingComponent::lock_target(Vec3 camera_position)
 
 void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
 {
-    if (this->target_type == ENTITY_NONE)
+    if (this->target_type == NULL_ENTITY_TYPE)
     {
         this->target_direction = vec3_init(1,0,0);
         return;
@@ -163,7 +163,7 @@ void AgentTargetingComponent::move_on_surface()
 
 void AgentTargetingComponent::call()
 {
-    if (this->target_type == ENTITY_NONE)
+    if (this->target_type == NULL_ENTITY_TYPE)
     {
         this->ticks_locked = 0;
         return;
@@ -171,7 +171,7 @@ void AgentTargetingComponent::call()
     this->ticks_locked++;
     if (this->max_lock_ticks && this->ticks_locked > this->max_lock_ticks)
     {   // reset
-        this->target_type = ENTITY_NONE;
+        this->target_type = NULL_ENTITY_TYPE;
         this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
 

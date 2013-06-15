@@ -21,7 +21,7 @@ inline void object_create_StoC::handle()
     IF_ASSERT(type >= MAX_ENTITY_TYPES) return;
     IF_ASSERT(id >= GAME_OBJECTS_MAX) return;
 
-    Entity* obj = Entities::create((EntityType)type, id);
+    Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -37,7 +37,7 @@ inline void object_create_owner_StoC::handle()
     IF_ASSERT(type >= MAX_ENTITY_TYPES) return;
     IF_ASSERT(id >= GAME_OBJECTS_MAX) return;
 
-    Entity* obj = Entities::create((EntityType)type, id);
+    Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -53,7 +53,7 @@ inline void object_create_momentum_StoC::handle()
     using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Entity* obj = Entities::create((EntityType)type, id);
+    Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -70,7 +70,7 @@ inline void object_create_momentum_angles_StoC::handle()
     using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Entity* obj = Entities::create((EntityType)type, id);
+    Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -89,7 +89,7 @@ inline void object_create_momentum_angles_health_StoC::handle()
     using Components::PhysicsComponent;
     using Components::HitPointsHealthComponent;
 
-    Entity* obj = Entities::create((EntityType)type, id);
+    Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     GS_ASSERT(physics != NULL);
@@ -116,7 +116,7 @@ inline void object_state_StoC::handle()
     using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Entity* obj = Entities::get((EntityType)type, id);
+    Entity* obj = Entities::get(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
@@ -128,7 +128,7 @@ inline void object_state_momentum_StoC::handle()
     using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Entity* obj = Entities::get((EntityType)type, id);
+    Entity* obj = Entities::get(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
@@ -141,7 +141,7 @@ inline void object_state_momentum_angles_StoC::handle()
     using Entities::Entity;
     using Components::PhysicsComponent;
 
-    Entity* obj = Entities::get((EntityType)type, id);
+    Entity* obj = Entities::get(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     IF_ASSERT(physics == NULL) return;
@@ -155,7 +155,7 @@ inline void object_state_health_StoC::handle()
 {
     using Entities::Entity;
     using Components::HitPointsHealthComponent;
-    Entity* obj = Entities::get((EntityType)type, id);
+    Entity* obj = Entities::get(EntityType(type), EntityID(id));
     if (obj == NULL) return;
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
     IF_ASSERT(health == NULL) return;
@@ -166,19 +166,19 @@ inline void object_state_health_StoC::handle()
 
 inline void object_destroy_StoC::handle()
 {
-    Entities::destroy((EntityType)type, id);
+    Entities::destroy(EntityType(type), EntityID(id));
 }
 
 /* Actions */
 
 /* Hitscan */
 
-inline void object_shot_object_StoC::handle()
+inline void object_hitscan_object_StoC::handle()
 {
     if (this->target_type != ENTITY_AGENT) return; // remove this once turret can attack other objects
 
     // get firing object
-    Entities::Entity* obj = Entities::get((EntityType)this->type, (int)this->id);
+    Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
     // get firing position of object
@@ -197,7 +197,7 @@ inline void object_shot_object_StoC::handle()
     // update the model, in case it is out of date.
     force_update_agent_vox(a);
 
-    Vec3 dest = a->vox->get_center(this->target_part);
+    Vec3 dest = a->get_center();
     dest = quadrant_translate_position(position, dest);
 
     // laser animation
@@ -209,9 +209,9 @@ inline void object_shot_object_StoC::handle()
     Sound::play_3d_sound("turret_shoot", position);
 }
 
-inline void object_shot_terrain_StoC::handle()
+inline void object_hitscan_terrain_StoC::handle()
 {
-    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
+    Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
     // get firing position of object
@@ -224,21 +224,24 @@ inline void object_shot_terrain_StoC::handle()
     DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
     if (dims != NULL) position.z += dims->get_camera_height();
 
-    Vec3 dest = quadrant_translate_position(position, this->destination);
-    Vec3 v = vec3_sub(dest, position);
+    Vec3 destination = vec3_scalar_add(vec3_init(this->position), 0.5f);
+    Vec3 trans_dest = quadrant_translate_position(position, destination);
+    Vec3 v = vec3_sub(trans_dest, position);
     v = vec3_normalize(v);
     const float hitscan_effect_speed = 200.0f;
     v = vec3_scalar_mult(v, hitscan_effect_speed);
     Animations::create_hitscan_effect(position, v);
-    Animations::block_damage(dest, position, (CubeType)this->cube, this->side);
-    Animations::particle_explode(dest);
+    CubeType cube = t_map::get(this->position);
+    int side = side_orientation(position, destination);
+    Animations::block_damage(destination, position, cube, side);
+    Animations::particle_explode(destination);
     //Sound::play_3d_sound("laser_hit_block", dest);
     Sound::play_3d_sound("turret_shoot", position);
 }
 
-inline void object_shot_nothing_StoC::handle()
+inline void object_hitscan_nothing_StoC::handle()
 {
-    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
+    Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
     // get firing position of object
@@ -267,7 +270,7 @@ inline void object_shot_nothing_StoC::handle()
 
 inline void object_took_damage_StoC::handle()
 {
-    Entities::Entity* obj = Entities::get((EntityType)this->type, this->id);
+    Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
     using Components::PhysicsComponent;
@@ -307,9 +310,9 @@ inline void object_destroy_StoC::handle() {}
 inline void object_state_StoC::handle() {}
 inline void object_state_momentum_StoC::handle() {}
 inline void object_state_momentum_angles_StoC::handle() {}
-inline void object_shot_object_StoC::handle() {}
-inline void object_shot_terrain_StoC::handle() {}
-inline void object_shot_nothing_StoC::handle() {}
+inline void object_hitscan_object_StoC::handle() {}
+inline void object_hitscan_terrain_StoC::handle() {}
+inline void object_hitscan_nothing_StoC::handle() {}
 inline void object_took_damage_StoC::handle() {}
 inline void object_state_health_StoC::handle() {}
 #endif

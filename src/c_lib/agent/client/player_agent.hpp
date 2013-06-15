@@ -96,7 +96,7 @@ class PlayerAgent
     struct Vec3 get_weapon_fire_animation_origin()
     {
         struct Vec3 origin = agent_camera->get_position();
-        origin.z -= 0.40f;
+        origin.z -= 0.35f;
         return origin;
     }
 

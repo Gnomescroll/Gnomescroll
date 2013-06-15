@@ -25,7 +25,7 @@ class ObjectConfig
 
     void init()
     {
-        this->type = ENTITY_NONE;
+        this->type = NULL_ENTITY_TYPE;
         this->max = 0;
         this->loader = NULL;
         this->create = NULL;
@@ -41,7 +41,7 @@ static bool started = false;
 
 static void commit_object_config()
 {
-    GS_ASSERT(c.type != ENTITY_NONE);
+    GS_ASSERT(c.type != NULL_ENTITY_TYPE);
 
     // no duplicate types
     GS_ASSERT(!object_conf[c.type].loaded);

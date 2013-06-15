@@ -335,7 +335,7 @@ void vec3_to_angles(Vec3 direction, float* theta, float* phi)
     direction = vec3_normalize(direction);
     float z = direction.z;
     direction.z = 0;
-    if (vec3_length_squared(direction) == 0.0f)
+    if (unlikely(vec3_length_squared(direction) == 0.0f))
     {
         *theta = 0.0f;
         *phi = 0.0f;

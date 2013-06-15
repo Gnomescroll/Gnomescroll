@@ -62,66 +62,39 @@ inline void agent_teleport_StoC::handle()
         a->vox->update(x,y,z,theta,phi);
 }
 
-//Agents::Agent control state, server to client
 inline void agent_control_state_StoC::handle()
 {
     Agents::Agent* a = Agents::get_agent((AgentID)id);
-    if (a == NULL)
-    {
-        //printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
-        return;
-    }
-    //printf("!!! control state= %i \n", cs);
+    if (a == NULL) return;
     a->handle_control_state(seq, cs, theta, phi);
     ClientState::player_agent.handle_net_control_state(seq, cs, theta, phi);
 }
 
-inline void agent_shot_object_StoC::handle()
+inline void agent_hitscan_object_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     IF_ASSERT(a == NULL) return;
-    a->event.fired_weapon_at_object(target_id, (EntityType)target_type, target_part);
+    a->event.fired_weapon_at_object(target_id, (EntityType)target_type);
 }
 
-inline void agent_shot_block_StoC::handle()
+inline void agent_hitscan_block_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     IF_ASSERT(a == NULL) return;
-    a->event.fired_weapon_at_block(this->position, (CubeType)cube, side);
+    CubeType cube = t_map::get(this->position);
+    const Vec3 pos = vec3_scalar_add(vec3_init(this->position), 0.5f);
+    int side = a->get_facing_side(pos);
+    a->event.fired_weapon_at_block(pos, cube, side);
 }
 
-inline void agent_shot_nothing_StoC::handle()
+inline void agent_hitscan_nothing_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
     IF_ASSERT(a == NULL) return;
     a->event.fired_weapon_at_nothing();
-}
-
-inline void agent_melee_object_StoC::handle()
-{
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
-    IF_ASSERT(a == NULL) return;
-    a->event.melee_attack_object(target_id, (EntityType)target_type, target_part);
-}
-
-inline void agent_melee_nothing_StoC::handle()
-{
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
-    IF_ASSERT(a == NULL) return;
-    a->event.melee_attack_nothing();
-}
-
-inline void agent_hit_block_StoC::handle()
-{
-    if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
-    Agents::Agent* a = Agents::get_agent((AgentID)this->id);
-    IF_ASSERT(a == NULL) return;
-    a->event.hit_block();
 }
 
 inline void agent_launched_projectile_StoC::handle()
@@ -348,8 +321,10 @@ inline void set_spawner_StoC::handle()
     class Agents::Agent* you = player_agent.you();
     if (you == NULL) return;
 
-    ASSERT_VALID_SPAWNER_ID(this->spawner_id);
-    IF_INVALID_SPAWNER_ID(this->spawner_id) return;
+    EntityID spawner_id = EntityID(this->spawner_id);
+
+    ASSERT_VALID_SPAWNER_ID(spawner_id);
+    IF_INVALID_SPAWNER_ID(spawner_id) return;
 
     // de-color old spawner
     if (you->status.spawner != BASE_SPAWN_ID)
@@ -366,9 +341,9 @@ inline void set_spawner_StoC::handle()
     }
 
     // color new spawner
-    if (this->spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check, once base is removed (if it is)
+    if (spawner_id != BASE_SPAWN_ID)    // TODO -- remove this check, once base is removed (if it is)
     {
-        Entities::Entity* obj = Entities::get(ENTITY_AGENT_SPAWNER, this->spawner_id);
+        Entities::Entity* obj = Entities::get(ENTITY_AGENT_SPAWNER, spawner_id);
         GS_ASSERT(obj != NULL);
         if (obj != NULL)
         {
@@ -380,7 +355,7 @@ inline void set_spawner_StoC::handle()
         }
     }
 
-    if (you != NULL) you->event.set_spawner(this->spawner_id);
+    if (you != NULL) you->event.set_spawner(spawner_id);
 }
 
 inline void agent_color_StoC::handle()
@@ -402,8 +377,7 @@ inline void agent_color_StoC::handle()
 }
 
 inline void agent_control_state_CtoS::handle() {}
-inline void hit_block_CtoS::handle() {}
-inline void hitscan_object_CtoS::handle() {}
+inline void hitscan_entity_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_mech_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
@@ -411,9 +385,6 @@ inline void launch_projectile_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
-inline void melee_object_CtoS::handle(){}
-inline void melee_mech_CtoS::handle(){}
-inline void melee_none_CtoS::handle(){}
 inline void ping_CtoS::handle(){}
 inline void ping_reliable_CtoS::handle(){}
 inline void choose_spawner_CtoS::handle(){}
@@ -435,12 +406,9 @@ inline void agent_suicides_StoC::handle() {}
 inline void agent_state_StoC::handle() {}
 inline void agent_teleport_StoC::handle() {}
 inline void agent_control_state_StoC::handle() {}
-inline void agent_shot_object_StoC::handle(){}
-inline void agent_shot_block_StoC::handle(){}
-inline void agent_shot_nothing_StoC::handle(){}
-inline void agent_melee_object_StoC::handle(){}
-inline void agent_melee_nothing_StoC::handle(){}
-inline void agent_hit_block_StoC::handle(){}
+inline void agent_hitscan_object_StoC::handle(){}
+inline void agent_hitscan_block_StoC::handle(){}
+inline void agent_hitscan_nothing_StoC::handle(){}
 inline void agent_launched_projectile_StoC::handle(){}
 inline void agent_placed_block_StoC::handle(){}
 inline void agent_dead_StoC::handle() {}
@@ -519,31 +487,7 @@ inline void agent_control_state_CtoS::handle()
 
 }
 
-// agent hit block action
-inline void hit_block_CtoS::handle()
-{
-    Agents::Agent* a = NetServer::agents[client_id];
-    IF_ASSERT(a == NULL) return;
-    if (!is_valid_z(this->position)) return;
-
-    Vec3i p = translate_position(this->position);
-    agent_hit_block_StoC msg;
-    msg.id = a->id;
-    msg.position = p;
-    msg.broadcast();
-
-    // TODO -- load this from dat
-    //TerrainModificationAction tma = Item::get_item_terrain_modification_enum((ItemType)weapon_type);
-
-    if (p.z <= 0) return; // dont damage floor
-    CubeType block = t_map::get(p);
-    if (block == EMPTY_CUBE) return;
-    int block_damage = Item::get_item_block_damage((ItemType)weapon_type, block);
-    if (block_damage <= 0) return;
-    t_map::apply_damage_broadcast(p, block_damage, TMA_PICK);
-}
-
-inline void hitscan_object_CtoS::handle()
+inline void hitscan_entity_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[client_id];
     if (a == NULL)
@@ -552,163 +496,24 @@ inline void hitscan_object_CtoS::handle()
         return;
     }
 
+    ItemType weapon_type = Toolbelt::get_agent_selected_item_type(a->id);
+
     if (type == ENTITY_AGENT)
     {
         Agents::Agent* agent = Agents::get_agent((AgentID)this->id);
         if (agent == NULL || agent->vox == NULL) return;
         force_update_agent_vox(a);
         // apply damage
-        agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
+        const int player_damage = 5;
+        agent->status.apply_damage(player_damage, a->id, a->type);
     }
     else
     {
-        class Entities::Entity* obj = Entities::get((EntityType)type, id);
+        class Entities::Entity* obj = Entities::get(EntityType(type), EntityID(id));
         if (obj == NULL) return;
 
         // apply damage
-        const int obj_dmg = randrange(10, 25);   // TODO -- weapon based
-
-        using Components::HealthComponent;
-        HealthComponent* health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
-        if (health != NULL) health->take_damage(obj_dmg);
-
-        // set target on person attacking
-        using Components::MotionTargetingComponent;
-        MotionTargetingComponent* motion_targeting = (MotionTargetingComponent*)
-            obj->get_component(COMPONENT_MOTION_TARGETING);
-        if (motion_targeting != NULL)
-        {
-            if (motion_targeting->target_type == ENTITY_NONE)
-                motion_targeting->set_target(ENTITY_AGENT, a->id);
-        }
-        else
-        {
-            using Components::AgentTargetingComponent;
-            AgentTargetingComponent* agent_targeting = (AgentTargetingComponent*)
-                obj->get_component(COMPONENT_AGENT_TARGETING);
-            if (agent_targeting != NULL)
-            {
-                if (agent_targeting->target_type == ENTITY_NONE)
-                    agent_targeting->set_target(a->id);
-                else    // reset ticks locked
-                    agent_targeting->ticks_locked = 0;
-
-                using Components::StateMachineComponent;
-                StateMachineComponent* state_machine = (StateMachineComponent*)
-                    obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
-                if (state_machine != NULL && state_machine->router != NULL)
-                    state_machine->router(obj, STATE_CHASE_AGENT);
-            }
-        }
-    }
-
-    agent_shot_object_StoC msg;
-    msg.id = a->id;
-    msg.target_id = this->id;
-    msg.target_type = this->type;
-    msg.target_part = this->part;
-    msg.voxel = this->voxel;
-    msg.broadcast();
-}
-
-// hitscan target:block
-inline void hitscan_block_CtoS::handle()
-{
-    Agents::Agent* a = NetServer::agents[client_id];
-    IF_ASSERT(a == NULL) return;
-
-    if (!is_valid_z(this->position)) return;
-    Vec3i position = translate_position(this->position);
-
-    // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
-    // send to clients
-
-    const float max_len = map_dim.x * 0.95f;
-    class RaytraceData data;
-
-    Vec3 f = a->forward_vector();
-    Vec3 p = a->get_camera_position();
-
-    bool collided = raytrace_terrain(p, f, max_len, &data);
-    if (!collided) return;
-
-    CubeType cube_type = data.get_cube_type();
-    if (!t_map::isValidCube(cube_type)) return;
-
-    float distance = max_len * data.interval;
-
-    // pt of collision
-    f = vec3_scalar_mult(f, distance);
-    p = vec3_add(p,f);
-    p = translate_position(p);
-
-    agent_shot_block_StoC msg;
-    msg.id = a->id;
-    msg.position = p;
-    msg.cube = cube_type;
-    msg.side = data.side;
-    msg.broadcast();
-
-    // damage block
-    // WARNING:
-    // *must* call this after raycasting, or you will be raycasting altered terrain
-    if (p.z <= 0) return; // dont damage floor
-    if (!t_map::isValidCube(cube_type)) return;
-
-    static ItemType laser_rifle_type = Item::get_item_type("laser_rifle");
-    IF_ASSERT(!isValid(laser_rifle_type)) return;
-
-    int weapon_block_damage = Item::get_item_block_damage(laser_rifle_type, cube_type);
-    if (weapon_block_damage <= 0) return;
-
-    t_map::apply_damage_broadcast(position, weapon_block_damage, TMA_LASER);
-}
-
-inline void hitscan_mech_CtoS::handle()
-{
-    Agents::Agent* a = NetServer::agents[client_id];
-    IF_ASSERT(a == NULL) return;
-
-    // send generic shoot packet
-    agent_shot_nothing_StoC msg;
-    msg.id = a->id;
-    msg.broadcast();
-
-    t_mech::hit_mech(mech_id);
-}
-
-inline void hitscan_none_CtoS::handle()
-{
-    Agents::Agent* a = NetServer::agents[client_id];
-    IF_ASSERT(a == NULL) return;
-
-    agent_shot_nothing_StoC msg;
-    msg.id = a->id;
-    msg.broadcast();
-}
-
-inline void melee_object_CtoS::handle()
-{
-    Agents::Agent* a = NetServer::agents[client_id];
-    IF_ASSERT(a == NULL) return;
-    // TODO - allow us to force disconnect the client based on bad values
-    // at this level. Possible already? Use it
-    IF_ASSERT(this->charge_progress < 0 || this->charge_progress > 1)
-        return;
-
-    if (type == ENTITY_AGENT)
-    {
-        class Agents::Agent* agent = Agents::get_agent((AgentID)this->id);
-        if (agent == NULL) return;
-        agent->status.apply_mining_laser_damage_to_part(part, a->id, a->type);
-    }
-    else
-    {
-        class Entities::Entity* obj = Entities::get((EntityType)type, id);
-        if (obj == NULL) return;
-
-        // apply damage
-        int obj_dmg = Item::get_item_object_damage((ItemType)weapon_type);
+        int obj_dmg = Item::get_item_object_damage(weapon_type);
         obj_dmg = obj_dmg + roundf(float(obj_dmg) * this->charge_progress);
         using Components::HealthComponent;
         HealthComponent* health = (HealthComponent*)
@@ -724,35 +529,91 @@ inline void melee_object_CtoS::handle()
             knockback->get_hit(a->forward_vector(),
                                Toolbelt::get_agent_selected_item_type(a->id),
                                this->charge_progress + 1.0f);
+
+        // set target on person attacking
+        using Components::MotionTargetingComponent;
+        MotionTargetingComponent* motion_targeting = (MotionTargetingComponent*)
+            obj->get_component(COMPONENT_MOTION_TARGETING);
+        if (motion_targeting != NULL)
+        {
+            if (motion_targeting->target_type == NULL_ENTITY_TYPE)
+                motion_targeting->set_target(ENTITY_AGENT, a->id);
+        }
+        else
+        {
+            using Components::AgentTargetingComponent;
+            AgentTargetingComponent* agent_targeting = (AgentTargetingComponent*)
+                obj->get_component(COMPONENT_AGENT_TARGETING);
+            if (agent_targeting != NULL)
+            {
+                if (agent_targeting->target_type == NULL_ENTITY_TYPE)
+                    agent_targeting->set_target(a->id);
+                else    // reset ticks locked
+                    agent_targeting->ticks_locked = 0;
+
+                using Components::StateMachineComponent;
+                StateMachineComponent* state_machine = (StateMachineComponent*)
+                    obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+                if (state_machine != NULL && state_machine->router != NULL)
+                    state_machine->router(obj, STATE_CHASE_AGENT);
+            }
+        }
     }
 
-    agent_melee_object_StoC msg;
+    agent_hitscan_object_StoC msg;
     msg.id = a->id;
     msg.target_id = this->id;
     msg.target_type = this->type;
-    msg.target_part = this->part;
-    msg.voxel = this->voxel;
     msg.broadcast();
 }
 
-inline void melee_mech_CtoS::handle()
+// hitscan target:block
+inline void hitscan_block_CtoS::handle()
+{
+    if (charge_progress < 0 || charge_progress > 1) return;
+    Agents::Agent* a = NetServer::agents[client_id];
+    IF_ASSERT(a == NULL) return;
+
+    if (!is_valid_z(this->position)) return;
+    Vec3i position = translate_position(this->position);
+
+    agent_hitscan_block_StoC msg;
+    msg.id = a->id;
+    msg.position = position;
+    msg.broadcast();
+
+    if (position.z <= 0) return; // dont damage floor
+    CubeType cube_type = t_map::get(position);
+
+    ItemType weapon_type = Toolbelt::get_agent_selected_item_type(a->id);
+    int weapon_block_damage = Item::get_item_block_damage(weapon_type, cube_type);
+    if (weapon_block_damage <= 0) return;
+    weapon_block_damage += int(float(weapon_block_damage) * this->charge_progress);
+
+    // TODO -- load this from dat
+    //TerrainModificationAction tma = Item::get_item_terrain_modification_enum((ItemType)weapon_type);
+    t_map::apply_damage_broadcast(position, weapon_block_damage, TMA_PICK);
+}
+
+inline void hitscan_mech_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
 
-    // send generic anim packet
-    agent_melee_nothing_StoC msg;
+    // send generic shoot packet
+    agent_hitscan_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();
 
-    t_mech::hit_mech(this->mech_id);
+    t_mech::hit_mech(mech_id);
 }
 
-inline void melee_none_CtoS::handle()
+inline void hitscan_none_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[client_id];
     IF_ASSERT(a == NULL) return;
-    agent_melee_nothing_StoC msg;
+
+    agent_hitscan_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();
 }
@@ -931,6 +792,8 @@ inline void choose_spawner_CtoS::handle()
 {
     Agents::Agent* a = NetServer::agents[this->client_id];
     IF_ASSERT(a == NULL) return;
+    EntityID spawner_id = EntityID(this->spawner_id);
+    IF_ASSERT(!isValid(spawner_id)) return;
     a->status.set_spawner(spawner_id);
 }
 

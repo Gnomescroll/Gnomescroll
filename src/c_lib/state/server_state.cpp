@@ -87,7 +87,7 @@ void check_agents_at_base()
 {
     using Agents::agent_list;
 
-    Entities::Entity* base = Entities::get(ENTITY_BASE, 0);
+    Entities::Entity* base = Entities::get(ENTITY_BASE, EntityID(0));
     IF_ASSERT(base == NULL) return;
 
     using Components::PhysicsComponent;

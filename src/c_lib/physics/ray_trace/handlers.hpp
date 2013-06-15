@@ -28,7 +28,7 @@ Agents::Agent* lock_agent_target(const Vec3& firing_position, Vec3* firing_direc
 
 void handle_hitscan_result(const WorldHitscanResult& result,
                            const struct AttackerProperties& p);
-void broadcast_object_fired(int id, EntityType type, const WorldHitscanResult& results);
+void broadcast_object_fired(EntityID id, EntityType type, const WorldHitscanResult& results);
 
 #if DC_SERVER
 void damage_target(const class Voxels::VoxelHitscanTarget* target,

@@ -23,135 +23,6 @@
 namespace Agents
 {
 
-void PlayerAgentAction::hitscan_laser(ItemType weapon_type)
-{
-    class Agent* you = p->you();
-    if (you == NULL) return;
-    if (you->status.dead) return;
-
-    Vec3 pos = agent_camera->get_position();
-    Vec3 look = agent_camera->forward_vector();
-
-    // for hitscan animation:
-    // readjust the vector so that the translated position points to target
-    // get the right vector for translating the hitscan laser anim
-    Vec3 up = vec3_init(0,0,1);
-    Vec3 right = vec3_cross(look, up);
-    right = vec3_normalize(right);
-
-    // magic offset numbers found by rotating the laser to the right spot
-    // fixed in the bottom right corner
-    const float dxy = 0.14f;
-    const float dz = -0.13f;
-
-    // animation origin
-    struct Vec3 origin;
-    origin.x = pos.x + dxy * right.x;
-    origin.y = pos.y + dxy * right.y;
-    origin.z = pos.z + dz;
-    origin = translate_position(origin);
-
-    // send packet
-    hitscan_block_CtoS block_msg;
-    hitscan_none_CtoS none_msg;
-    hitscan_object_CtoS obj_msg;
-
-    // This collision point will be overwritten if the hitscan did not hit a
-    // voxel model:
-    using ClientState::hitscan;
-    Vec3 collision_point = hitscan.voxel_collision_point;
-
-    float range = Item::get_weapon_range(weapon_type);
-    HitscanTargetType type = hitscan.type;
-    if (hitscan.distance > range)
-        type = HITSCAN_TARGET_NONE;
-    switch (type)
-    {
-        case HITSCAN_TARGET_VOXEL:
-            obj_msg.id = hitscan.voxel_target.entity_id;
-            obj_msg.type = hitscan.voxel_target.entity_type;
-            obj_msg.part = hitscan.voxel_target.part_id;
-            obj_msg.voxel = hitscan.voxel_target.voxel;
-            obj_msg.send();
-
-            // subtract the collision point from the origin to get the new vector for animation
-            look = vec3_sub(quadrant_translate_position(origin, hitscan.voxel_collision_point), origin);
-            look = vec3_normalize(look);
-
-            if (hitscan.voxel_target.entity_type == ENTITY_AGENT)
-                Animations::blood_spray(hitscan.voxel_collision_point, look);
-            break;
-
-        case HITSCAN_TARGET_BLOCK:
-            // update predicted dmg
-            // TODO -- all of this should be in the toolbelt callback probably
-            // get block dmg for selected weapon
-            // if block pos matched last requested block pos
-            // add it to hud draw settings predicted
-            // else, set it to hud draw settings predicted
-            GS_ASSERT(t_map::isValidCube(hitscan.cube_type));
-            if (t_map::is_last_requested_block(hitscan.block_position))
-            {
-                Animations::predicted_block_damage +=
-                    Item::get_item_block_damage(weapon_type, hitscan.cube_type);
-                Animations::damaging_block = true;
-            }
-            else
-            {
-                Animations::predicted_block_damage =
-                    Item::get_item_block_damage(weapon_type, hitscan.cube_type);
-                Animations::damaging_block = true;
-            }
-            // make & record dmg request
-            t_map::request_block_damage(hitscan.block_position);
-            block_msg.position = hitscan.block_position;
-            block_msg.send();
-
-            // multiply look vector by distance to collision
-            look = vec3_scalar_mult(look, hitscan.block_distance);
-            // add agent position, now we have collision point
-            look = vec3_add(look, pos);
-            // copy this to collision_point, for block damage animation
-            look = translate_position(look);
-            collision_point = quadrant_translate_position(pos, look);
-            // subtract translated animation origin from collision point (vec) to get new vector
-            look = vec3_sub(look, origin);
-            look = vec3_normalize(look);
-            Animations::block_damage(collision_point, look, hitscan.cube_type, hitscan.block_side);
-            Animations::particle_explode(collision_point);
-            //Sound::play_3d_sound("laser_hit_block", collision_point);
-            break;
-
-        case HITSCAN_TARGET_MECH:
-            collision_point = vec3_add(pos, vec3_scalar_mult(look, hitscan.mech_distance));
-            collision_point = quadrant_translate_position(pos, translate_position(collision_point));
-            {
-                hitscan_mech_CtoS msg;
-                msg.mech_id = hitscan.mech_id;
-                msg.send();
-            }
-            break;
-
-        case HITSCAN_TARGET_SPRITE_MOB:
-            collision_point = quadrant_translate_position(pos, hitscan.sprite_mob_collision_point);
-            // TODO -- network it
-            none_msg.send();
-            break;
-
-        case HITSCAN_TARGET_NONE:
-            collision_point = vec3_scalar_mult(look, range);
-            collision_point = vec3_add(pos, collision_point);
-            none_msg.send();    // server will know to forward a fire weapon packet
-            break;
-        default:
-            break;
-    }
-
-    Sound::play_2d_sound("fire_laser");
-    // play laser anim (client viewport)
-    Animations::create_railtrail_effect(origin, collision_point);
-}
-
 void PlayerAgentAction::update_mining_laser()
 {
     class Agent* you = p->you();
@@ -163,12 +34,14 @@ void PlayerAgentAction::update_mining_laser()
     Vec3 origin = this->p->get_weapon_fire_animation_origin();
     GS_ASSERT(is_boxed_position(origin));
 
-    struct Vec3 focal_point = vec3_add(agent_camera->get_position(), vec3_scalar_mult(agent_camera->forward_vector(), 50.0f));
+    const Vec3 position = agent_camera->get_position();
+    const Vec3 forward = agent_camera->forward_vector();
+    struct Vec3 focal_point = vec3_add(position, vec3_scalar_mult(forward, 50.0f));
     struct Vec3 direction = vec3_normalize(vec3_sub(focal_point, origin));
 
     you->event.mining_laser_emitter.h_mult = 0.75f;    // sprite scale offset
-    you->event.mining_laser_emitter.length_position = agent_camera->get_position();
-    you->event.mining_laser_emitter.length_direction = agent_camera->forward_vector();
+    you->event.mining_laser_emitter.length_position = position;
+    you->event.mining_laser_emitter.length_direction = forward;
     you->event.mining_laser_emitter.set_state(origin, direction);
     you->event.mining_laser_emitter.tick();
     you->event.mining_laser_emitter.prep_draw();
@@ -205,49 +78,70 @@ void PlayerAgentAction::end_mining_laser()
     this->mining_laser_sound_id = NULL_SOUND_ID;
 }
 
-void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
+void PlayerAgentAction::fire_weapon(ItemType weapon_type)
 {
+    IF_ASSERT(weapon_type == NULL_ITEM_TYPE) return;
     class Agent* you = p->you();
     if (you == NULL) return;
     if (you->status.dead) return;
 
-    IF_ASSERT(weapon_type == NULL_ITEM_TYPE) return;
-    ItemGroup weapon_group = Item::get_item_group_for_type(weapon_type);
-
-    float range = Item::get_weapon_range(weapon_type);
-
-    Vec3 pos = agent_camera->get_position();
-    Vec3 look = agent_camera->forward_vector();
-
     using ClientState::hitscan;
 
-    look = vec3_normalize(look);    // already normalized?
-    // send packet
-    hit_block_CtoS block_msg;
-    melee_object_CtoS obj_msg;
-
-    Vec3 collision_point = hitscan.voxel_collision_point;
+    const Vec3 pos = this->p->get_weapon_fire_animation_origin();
+    const Vec3 collision_point = hitscan.collision_point;
+    const Vec3 trans_collision_point = quadrant_translate_position(pos, collision_point);
+    Vec3 look;
+    if (unlikely(vec3_equal(trans_collision_point, pos)))
+        look = agent_camera->forward_vector();
+    else
+        look = vec3_normalize(vec3_sub(trans_collision_point, pos));
 
     SoundID sound_id = NULL_SOUND_ID;
+    bool sound_3d = false;
+    const char* sound_name = NULL;
+
+    ItemGroup weapon_group = Item::get_item_group_for_type(weapon_type);
+    float range = Item::get_weapon_range(weapon_type);
+    float charge_progress = Toolbelt::get_charge_progress();
+    int weapon_block_dmg = Item::get_item_block_damage(weapon_type, hitscan.cube_type);
+
+    hitscan_entity_CtoS entity_msg;
+    if (hitscan.type == HITSCAN_TARGET_VOXEL)
+    {
+        entity_msg.id = hitscan.voxel_target.entity_id;
+        entity_msg.type = hitscan.voxel_target.entity_type;
+    }
+    else
+    {
+        entity_msg.id = hitscan.sprite_mob_entity_id;
+        entity_msg.type = hitscan.sprite_mob_entity_type;
+    }
+    entity_msg.charge_progress = charge_progress;
+
+    hitscan_block_CtoS block_msg;
+    block_msg.position = hitscan.block_position;
+    block_msg.charge_progress = charge_progress;
+
+    hitscan_mech_CtoS mech_msg;
+    mech_msg.mech_id = hitscan.mech_id;
+
+    hitscan_none_CtoS none_msg;
 
     HitscanTargetType type = hitscan.type;
-    if (hitscan.distance > range) type = HITSCAN_TARGET_NONE;
+    if (hitscan.distance > range)
+        type = HITSCAN_TARGET_NONE;
+
     switch (type)
     {
         case HITSCAN_TARGET_VOXEL:
-            obj_msg.id = hitscan.voxel_target.entity_id;
-            obj_msg.type = hitscan.voxel_target.entity_type;
-            obj_msg.part = hitscan.voxel_target.part_id;
-            obj_msg.voxel = hitscan.voxel_target.voxel;
-            obj_msg.weapon_type = weapon_type;
-            obj_msg.charge_progress = Toolbelt::get_charge_progress();
-            obj_msg.send();
-            if (hitscan.voxel_target.entity_type == ENTITY_AGENT)
-                Animations::blood_spray(collision_point, look);
-            sound_id = Sound::play_3d_sound("pick_hit_agent", collision_point);
+            entity_msg.send();
+            Animations::blood_spray(collision_point, look);
+            sound_name = "pick_hit_agent";
+            sound_3d = true;
             break;
 
         case HITSCAN_TARGET_BLOCK:
+            block_msg.send();
             if (is_valid_z(hitscan.block_position))
             {   // update predicted dmg
                 // TODO -- all of this should be in the toolbelt callback probably
@@ -255,76 +149,57 @@ void PlayerAgentAction::fire_close_range_weapon(ItemType weapon_type)
                 // if block pos matched last requested block pos
                 // add it to hud draw settings predicted
                 // else, set it to hud draw settings predicted
-                int weapon_dmg = Item::get_item_block_damage(weapon_type, hitscan.cube_type);
+                Animations::damaging_block = true;
                 if (t_map::is_last_requested_block(hitscan.block_position))
-                {
-                    Animations::predicted_block_damage += weapon_dmg;
-                    Animations::damaging_block = true;
-                }
+                    Animations::predicted_block_damage += weapon_block_dmg;
                 else
-                {
-                    Animations::predicted_block_damage = weapon_dmg;
-                    Animations::damaging_block = true;
-                }
+                    Animations::predicted_block_damage = weapon_block_dmg;
                 // make & record dmg request
                 t_map::request_block_damage(hitscan.block_position);
-                block_msg.position = hitscan.block_position;
-                block_msg.weapon_type = weapon_type;
-                block_msg.send();
             }
 
-            // FOR SOME REASON COLLISION_POINT IS WORTHLESS AND WE HAVE TO CALCULATE IT HERE.
-
-            // multiply look vector by distance to collision
-            look = vec3_scalar_mult(look, hitscan.block_distance);
-            // add agent position, now we have collision point
-            look = vec3_add(look, pos);
-            // copy this to collision_point, for block damage animation
-            look = translate_position(look);
-            collision_point = quadrant_translate_position(current_camera_position, look);
-
-            // subtract translated animation origin from collision point (look) to get new vector
-            look = vec3_sub(collision_point, this->p->get_weapon_fire_animation_origin());
-            look = vec3_normalize(look);
-            Animations::block_damage(collision_point, look, hitscan.cube_type, hitscan.block_side);
-            //Sound::play_3d_sound("pick_hit_block", collision_point);
-            if (weapon_group != IG_MINING_LASER)
-                sound_id = Sound::play_3d_sound("block_took_damage", collision_point);
+            Animations::block_damage(collision_point, look, hitscan.cube_type,
+                                     hitscan.block_side);
+            if (weapon_group == IG_HITSCAN_WEAPON)
+                sound_name = "laser_hit_block";
+            else
+                sound_name = "block_took_damage";
+            sound_3d = true;
             break;
 
         case HITSCAN_TARGET_MECH:
-            {
-                melee_mech_CtoS msg;
-                msg.mech_id = hitscan.mech_id;
-                msg.send();
-            }
-            if (weapon_group != IG_MINING_LASER)
-                sound_id = Sound::play_2d_sound("pick_swung");
+            mech_msg.send();
+            sound_name = "pick_swung";
             break;
 
         case HITSCAN_TARGET_SPRITE_MOB:
-            // TODO -- network it
-            if (weapon_group != IG_MINING_LASER)
-                sound_id = Sound::play_2d_sound("pick_hit_agent");
-
-            {
-                melee_none_CtoS none_msg;
-                none_msg.send();
-            }
+            printf("Sending entity message\n");
+            entity_msg.send();
+            sound_name = "pick_hit_agent";
             break;
 
         case HITSCAN_TARGET_NONE:
-            {
-                melee_none_CtoS none_msg;
-                none_msg.send();
-            }
-            if (weapon_group != IG_MINING_LASER)
-                sound_id = Sound::play_2d_sound("pick_swung");
+            none_msg.send();
+            sound_name = "pick_swung";
             break;
     }
 
-    float sound_gain_mult = 1.0f + (Toolbelt::get_charge_progress());
-    Sound::set_gain_multiplier(sound_id, sound_gain_mult);
+    if (weapon_group == IG_HITSCAN_WEAPON)
+    {
+        Animations::create_railtrail_effect(pos, collision_point);
+        sound_name = "fire_laser";
+        sound_3d = false;
+    }
+
+    if (sound_name != NULL && weapon_group != IG_MINING_LASER)
+    {
+        if (sound_3d)
+            sound_id = Sound::play_3d_sound(sound_name, collision_point);
+        else
+            sound_id = Sound::play_2d_sound(sound_name);
+        float sound_gain_mult = 1.0f + charge_progress;
+        Sound::set_gain_multiplier(sound_id, sound_gain_mult);
+    }
 
     this->target_direction = look;
 }
@@ -341,7 +216,9 @@ bool PlayerAgentAction::set_block(ItemID placer_id)
     // get nearest empty block
     const float max_dist = 4.0f;
     class RaytraceData data;
-    bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
+    bool collided = raytrace_terrain(agent_camera->get_position(),
+                                     agent_camera->forward_vector(),
+                                     max_dist, &data);
     if (!collided) return false;
 
     Vec3i cube_point = data.get_pre_collision_point();
@@ -409,7 +286,9 @@ void PlayerAgentAction::place_spawner()
     const float max_dist = 4.0f;
 
     class RaytraceData data;
-    bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
+    bool collided = raytrace_terrain(agent_camera->get_position(),
+                                     agent_camera->forward_vector(),
+                                     max_dist, &data);
     if (!collided) return;
 
     place_spawner_CtoS msg;
@@ -427,7 +306,9 @@ void PlayerAgentAction::place_turret()
     const float max_dist = 4.0f;
 
     class RaytraceData data;
-    bool collided = raytrace_terrain(agent_camera->get_position(), agent_camera->forward_vector(), max_dist, &data);
+    bool collided = raytrace_terrain(agent_camera->get_position(),
+                                     agent_camera->forward_vector(),
+                                     max_dist, &data);
     if (!collided) return;
 
     place_turret_CtoS msg;

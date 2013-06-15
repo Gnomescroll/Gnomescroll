@@ -42,7 +42,7 @@ void MotionTargetingComponent::check_target_alive()
     if (target == NULL || target->status.dead)
     {
         this->target_id = NULL_AGENT;
-        this->target_type = ENTITY_NONE;
+        this->target_type = NULL_ENTITY_TYPE;
     }
 }
 
@@ -52,7 +52,7 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
     target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
-        this->target_type = ENTITY_NONE;
+        this->target_type = NULL_ENTITY_TYPE;
         return;
     }
     this->target_type = ENTITY_AGENT;
@@ -79,7 +79,7 @@ void MotionTargetingComponent::choose_destination()
 
 void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
 {
-    if (this->target_type == ENTITY_NONE) return;
+    if (this->target_type == NULL_ENTITY_TYPE) return;
     if (this->target_type != ENTITY_AGENT) return;  //  TODO -- target all types
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL) return;
@@ -124,7 +124,7 @@ void MotionTargetingComponent::move_on_surface()
 
 void MotionTargetingComponent::call()
 {
-    if (this->target_type == ENTITY_NONE)
+    if (this->target_type == NULL_ENTITY_TYPE)
     {
         this->ticks_locked = 0;
         return;
@@ -132,7 +132,7 @@ void MotionTargetingComponent::call()
     this->ticks_locked++;
     if (this->max_lock_ticks && this->ticks_locked > this->max_lock_ticks)
     {   // reset
-        this->target_type = ENTITY_NONE;
+        this->target_type = NULL_ENTITY_TYPE;
         this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
     }

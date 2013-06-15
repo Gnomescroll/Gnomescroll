@@ -57,9 +57,9 @@ void init_packets()
     object_state_momentum_StoC::register_client_packet();
     object_state_momentum_angles_StoC::register_client_packet();
     object_state_health_StoC::register_client_packet();
-    object_shot_object_StoC::register_client_packet();
-    object_shot_terrain_StoC::register_client_packet();
-    object_shot_nothing_StoC::register_client_packet();
+    object_hitscan_object_StoC::register_client_packet();
+    object_hitscan_terrain_StoC::register_client_packet();
+    object_hitscan_nothing_StoC::register_client_packet();
     object_took_damage_StoC::register_client_packet();
 }
 

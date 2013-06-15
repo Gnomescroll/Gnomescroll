@@ -19,8 +19,7 @@ void trigger_local_location_pointer(ItemID item_id, ItemType item_type);
 void trigger_local_beta_location_pointer(ItemID item_id, ItemType item_type);
 void trigger_local_admin_block_placer(ItemID item_id, ItemType item_type);
 void trigger_local_plasma_grenade(ItemID item_id, ItemType item_type);
-void trigger_local_hitscan_laser(ItemID item_id, ItemType item_type);
-void fire_close_range_weapon(ItemID item_id, ItemType item_type);
+void fire_weapon(ItemID item_id, ItemType item_type);
 
 void select_facing_block(ItemID item_id, ItemType item_type);
 void toggle_scope(ItemID item_id, ItemType item_type);

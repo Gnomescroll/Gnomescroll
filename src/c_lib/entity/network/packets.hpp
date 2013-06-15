@@ -201,14 +201,13 @@ class object_state_health_StoC: public FixedSizeReliableNetPacketToClient<object
 
 /* Shooting */
 
-class object_shot_object_StoC: public FixedSizeReliableNetPacketToClient<object_shot_object_StoC>
+class object_hitscan_object_StoC: public FixedSizeReliableNetPacketToClient<object_hitscan_object_StoC>
 {
     public:
         uint16_t id;
         uint8_t type;
         uint16_t target_id;
         uint8_t target_type;
-        uint8_t target_part;
 
     inline void packet(char* buff, size_t* buff_n, bool pack)
     {
@@ -216,32 +215,27 @@ class object_shot_object_StoC: public FixedSizeReliableNetPacketToClient<object_
         pack_u8(&type, buff, buff_n, pack);
         pack_u16(&target_id, buff, buff_n, pack);
         pack_u8(&target_type, buff, buff_n, pack);
-        pack_u8(&target_part, buff, buff_n, pack);
     }
     inline void handle();
 };
 
-class object_shot_terrain_StoC: public FixedSizeReliableNetPacketToClient<object_shot_terrain_StoC>
+class object_hitscan_terrain_StoC: public FixedSizeReliableNetPacketToClient<object_hitscan_terrain_StoC>
 {
     public:
         uint16_t id;
         uint8_t type;
-        uint8_t cube;
-        uint8_t side;
-        Vec3 destination;
+        Vec3i position;
 
     inline void packet(char* buffer, size_t* buff_n, bool pack)
     {
         pack_u16(&id, buffer, buff_n, pack);
         pack_u8(&type, buffer, buff_n, pack);
-        pack_u8(&cube, buffer, buff_n, pack);
-        pack_u8(&side, buffer, buff_n, pack);
-        pack_vec3(&destination, buffer, buff_n, pack);
+        pack_map_position(&position, buffer, buff_n, pack);
     }
     inline void handle();
 };
 
-class object_shot_nothing_StoC: public FixedSizeReliableNetPacketToClient<object_shot_nothing_StoC>
+class object_hitscan_nothing_StoC: public FixedSizeReliableNetPacketToClient<object_hitscan_nothing_StoC>
 {
     public:
         uint16_t id;

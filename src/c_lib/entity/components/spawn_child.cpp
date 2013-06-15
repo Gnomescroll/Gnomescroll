@@ -5,8 +5,8 @@ namespace Components
 
 void SpawnChildComponent::notify_parent_of_death()
 {
-    if (this->parent_id == NULL_ENTITY_ID) return;
-    
+    if (this->parent_id == NULL_ENTITY) return;
+
     Entities::Entity* obj = Entities::get(this->parent_type, this->parent_id);
     if (obj == NULL) return;
 
@@ -18,7 +18,7 @@ void SpawnChildComponent::notify_parent_of_death()
 
 void SpawnChildComponent::parent_died()
 {
-    this->parent_id = NULL_ENTITY_ID;
+    this->parent_id = NULL_ENTITY;
 }
 
 }; // Components

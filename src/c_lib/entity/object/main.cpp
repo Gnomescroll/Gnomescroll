@@ -96,7 +96,7 @@ Entity* create(EntityType type)
     return object;
 }
 
-Entity* create(EntityType type, int id)
+Entity* create(EntityType type, EntityID id)
 {
     if (entity_list->in_use(type, id)) return NULL;
     Entity* object = create_switch (type);
@@ -123,17 +123,17 @@ void destroy_switch(Entity* object)
     if (die != NULL) die(object);
 
     release_object_components(object);
-    int id = object->id;
+    EntityID id = object->id;
     entity_list->destroy(type, id);
 }
 
-void destroy_switch(EntityType type, int id)
+void destroy_switch(EntityType type, EntityID id)
 {
     Entity* object = get_object(type, id);
     if (object != NULL) destroy_switch(object);
 }
 
-Entity* get_object(EntityType type, int id)
+Entity* get_object(EntityType type, EntityID id)
 {
     return entity_list->get(type, id);
 }

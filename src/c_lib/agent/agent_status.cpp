@@ -57,7 +57,7 @@ AgentStatus::~AgentStatus()
     this->quit();
 }
 
-void AgentStatus::set_spawner(int pt)
+void AgentStatus::set_spawner(EntityID pt)
 {
     ASSERT_VALID_SPAWNER_ID(pt);
     IF_INVALID_SPAWNER_ID(pt) return;
@@ -246,7 +246,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
         case ENTITY_AGENT_SPAWNER:
         case ENTITY_BASE:
         case ENTITY_DESTINATION:
-        case ENTITY_NONE:
+        case NULL_ENTITY_TYPE:
             //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
             break;
     }
@@ -288,7 +288,7 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
         case ENTITY_AGENT_SPAWNER:
         case ENTITY_BASE:
         case ENTITY_DESTINATION:
-        case ENTITY_NONE:
+        case NULL_ENTITY_TYPE:
             break;
     }
     #endif
@@ -538,54 +538,6 @@ int AgentStatus::apply_damage(int dmg, AgentID inflictor_id, EntityType inflicto
 int AgentStatus::apply_damage(int dmg, AgentDeathMethod death_method)
 {   // assumes self-inflicted wound
     return this->apply_damage(dmg, this->a->id, ENTITY_AGENT, death_method);
-}
-
-int AgentStatus::apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
-{
-    int dmg = 0;
-    switch (part_id)
-    {
-        case AGENT_PART_HEAD:
-            dmg = randrange(8, 12);
-            break;
-        case AGENT_PART_TORSO:
-            dmg = randrange(5, 8);
-            break;
-        case AGENT_PART_RLEG:
-        case AGENT_PART_LLEG:
-        case AGENT_PART_RARM:
-        case AGENT_PART_LARM:
-            dmg = randrange(3, 5);
-            break;
-        default:
-            GS_ASSERT(false);
-            break;
-    }
-    return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
-}
-
-int AgentStatus::apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type)
-{
-    int dmg = 0;
-    switch (part_id)
-    {
-        case AGENT_PART_HEAD:
-            dmg = randrange(4, 6);
-            break;
-        case AGENT_PART_TORSO:
-            dmg = randrange(2, 4);
-            break;
-        case AGENT_PART_RLEG:
-        case AGENT_PART_LLEG:
-        case AGENT_PART_RARM:
-        case AGENT_PART_LARM:
-            dmg = randrange(1, 3);
-            break;
-        default:
-            GS_ASSERT(false);
-            break;
-    }
-    return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
 void AgentStatus::set_fresh_state()

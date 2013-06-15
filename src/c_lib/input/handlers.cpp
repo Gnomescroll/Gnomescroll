@@ -919,7 +919,7 @@ void print_mob_id()
     struct Vec3 p = current_camera->get_position();
     struct Vec3 v = current_camera->forward_vector();
     int ignore_id = -1;
-    EntityType ignore_type = ENTITY_NONE;
+    EntityType ignore_type = NULL_ENTITY_TYPE;
     class Voxels::VoxelHitscanTarget target;
     float vox_distance = 0.0f;
     Vec3 collision_point = vec3_init(0);

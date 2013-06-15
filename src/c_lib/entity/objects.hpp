@@ -16,12 +16,12 @@ void spawn_mobs();
 /* API */
 
 class Entity* create(EntityType type);
-class Entity* create(EntityType type, int id);
-class Entity* get(EntityType type, int id);
+class Entity* create(EntityType type, EntityID id);
+class Entity* get(EntityType type, EntityID id);
 class Entity** get_all(EntityType type, char*& used, int& count);
 void ready(class Entity* object);
 void destroy(class Entity* object);
-void destroy(EntityType type, int id);
+void destroy(EntityType type, EntityID id);
 
 void stress_test();
 

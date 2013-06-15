@@ -5,24 +5,24 @@
 namespace Entities
 {
 
-Entity* get(EntityType type, int id)
+Entity* get(EntityType type, EntityID id)
 {
     return get_object(type, id);
 }
 
 void ready(Entity* object)
 {
-    ready_switch (object);
+    ready_switch(object);
 }
 
 void destroy(Entity* object)
 {
-    destroy_switch (object);
+    destroy_switch(object);
 }
 
-void destroy(EntityType type, int id)
+void destroy(EntityType type, EntityID id)
 {
-    destroy_switch (type, id);
+    destroy_switch(type, id);
 }
 
 void stress_test()
@@ -44,7 +44,7 @@ void stress_test()
         //printf("Maxed out %d to %d\n", type, n);
         //printf("Destroy %d of %d\n", n, type);
         for (int j=0; j<n; j++)
-            destroy(type, j);
+            destroy(type, EntityID(j));
         //printf("Destroyed %d\n", n);
         ttl += n;
     }

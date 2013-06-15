@@ -245,7 +245,7 @@ void log_entity_save_error(const char* msg, const char* entity_name, int entity_
     if (entity_name != NULL)
         fprintf(entity_log, "Name: %s\n", entity_name);
 
-    if (entity_id != NULL_ENTITY_ID)
+    if (entity_id != NULL_ENTITY)
         fprintf(entity_log, "ID: %d\n", entity_id);
 
     fprintf(entity_log, LOG_LINE_SEPARATOR);
@@ -253,7 +253,7 @@ void log_entity_save_error(const char* msg, const char* entity_name, int entity_
 
 void log_entity_save_error(const char* msg)
 {
-    log_entity_save_error(msg, NULL, NULL_ENTITY_ID);
+    log_entity_save_error(msg, NULL, NULL_ENTITY);
 }
 
 void log_entity_load_error(const char* msg)

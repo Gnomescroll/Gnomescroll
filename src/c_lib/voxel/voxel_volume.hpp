@@ -79,7 +79,7 @@ class VoxelVolume
     int point_collision_test(const Vec3& p, Vec3i& voxel);
 
     void init(const Vec3i& dimensions, float scale);
-    void set_hitscan_properties(short entity_id, short entity_type, short part_id);
+    void set_hitscan_properties(EntityID entity_id, EntityType entity_type, short part_id);
 
     VoxelVolume(const Vec3i& dimensions, float scale);
     VoxelVolume();

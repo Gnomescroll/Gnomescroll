@@ -2,11 +2,6 @@
 
 #include <t_map/common/types.hpp>
 
-inline bool sphere_line_distance(const Vec3& position, const Vec3& direction,
-                                 const Vec3& center, Vec3& intersection, float& rad_sq);
-
-int get_cube_side_from_sides(const Vec3i& sides);
-Vec3i get_sides_from_cube_side(int side_id);
 
 class RaytraceData
 {

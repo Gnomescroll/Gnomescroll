@@ -10,9 +10,9 @@ class SpawnChildComponent: public Component
 {
     public:
         EntityType parent_type;
-        int parent_id;
+        EntityID parent_id;
 
-        void assign_parent(EntityType type, int id)
+        void assign_parent(EntityType type, EntityID id)
         {
             this->parent_type = type;
             this->parent_id = id;
@@ -22,9 +22,9 @@ class SpawnChildComponent: public Component
 
     ~SpawnChildComponent() {}
 
-    SpawnChildComponent()
-    : Component(COMPONENT_SPAWN_CHILD, COMPONENT_INTERFACE_SPAWN_CHILD),
-    parent_type(ENTITY_NONE), parent_id(-1)
+    SpawnChildComponent() :
+        Component(COMPONENT_SPAWN_CHILD, COMPONENT_INTERFACE_SPAWN_CHILD),
+        parent_type(NULL_ENTITY_TYPE), parent_id(NULL_ENTITY)
     {}
 };
 

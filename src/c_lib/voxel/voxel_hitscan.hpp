@@ -17,13 +17,13 @@ const int VOXEL_HITSCAN_LIST_SIZE = 1024;
 class VoxelHitscanElement
 {
     public:
-        short entity_id;
-        short entity_type;
+        EntityID entity_id;
+        EntityType entity_type;
         short part_id;
         class VoxelVolume* vv;
 
     VoxelHitscanElement() :
-        entity_id(-1), entity_type(-1), part_id(-1), vv(NULL)
+        entity_id(NULL_ENTITY), entity_type(NULL_ENTITY_TYPE), part_id(-1), vv(NULL)
     {}
 };
 

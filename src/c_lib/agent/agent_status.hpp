@@ -30,7 +30,7 @@ class AgentStatus
         bool should_die;
         bool dead;
         int respawn_countdown;
-        int spawner;
+        EntityID spawner;
 
         unsigned int kills;
         unsigned int deaths;
@@ -52,7 +52,7 @@ class AgentStatus
 
     void set_name(const char* name);
 
-    void set_spawner(int pt);
+    void set_spawner(EntityID pt);
 
     bool die();
     bool die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method);
@@ -85,8 +85,6 @@ class AgentStatus
     int apply_damage(int dmg, EntityType inflictor_type);
     int apply_damage(int dmg, AgentDeathMethod death_method);   // assumes self-inflicted wound
 
-    int apply_hitscan_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
-    int apply_mining_laser_damage_to_part(int part_id, AgentID inflictor_id, EntityType inflictor_type);
     void at_base();
 
     void send_color(ClientID client_id);

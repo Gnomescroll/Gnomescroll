@@ -223,7 +223,7 @@ static void register_click_and_hold_callbacks()
 {   // apply general callbacks to all items of a particular click_and_hold status
     set_callback_config_defaults(&c);
     #if DC_CLIENT
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     #endif
     apply_click_and_hold_settings_for(CLICK_HOLD_ALWAYS);
     apply_click_and_hold_settings_for(CLICK_HOLD_SOMETIMES);
@@ -243,42 +243,42 @@ static void register_item_group_callbacks()
     c.local_end = &end_local_mining_laser;
 
     set_group(IG_PLACER);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &trigger_local_block_placer;
 
     set_group(IG_GRENADE_LAUNCHER);
     c.local_trigger = &trigger_local_plasma_grenade;
 
     set_group(IG_HITSCAN_WEAPON);
-    c.local_trigger = &trigger_local_hitscan_laser;
+    c.local_trigger = &fire_weapon;
 
     // assist the client in predicting what the server will do
     set_group(IG_CONSUMABLE);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
 
     set_group(IG_SPECIAL);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
 
     set_group(IG_AGENT_SPAWNER);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     set_group(IG_ENERGY_CORE);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     set_group(IG_MECH_PLACER);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     set_group(IG_MECH_PLACER_ORIENTED);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     set_group(IG_PLANT_PLACER);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
 
     set_group(IG_TOOL);
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &local_trigger_dummy;
     #endif
 
@@ -336,11 +336,11 @@ static void register_item_type_callbacks()
     c.local_beta_trigger = &select_facing_block;
 
     set_type("scoped_laser_rifle");
-    c.local_trigger = &trigger_local_hitscan_laser;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &toggle_scope;
 
     set_type("glass_scope");
-    c.local_trigger = &fire_close_range_weapon;
+    c.local_trigger = &fire_weapon;
     c.local_beta_trigger = &toggle_scope;
     #endif
 

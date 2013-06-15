@@ -110,11 +110,11 @@ void handle_hitscan_result(const WorldHitscanResult& result,
     #endif
 }
 
-void broadcast_object_fired(int id, EntityType type, const WorldHitscanResult& result)
+void broadcast_object_fired(EntityID id, EntityType type, const WorldHitscanResult& result)
 {
-    object_shot_object_StoC obj_msg;
-    object_shot_terrain_StoC terrain_msg;
-    object_shot_nothing_StoC none_msg;
+    object_hitscan_object_StoC obj_msg;
+    object_hitscan_terrain_StoC terrain_msg;
+    object_hitscan_nothing_StoC none_msg;
     switch (result.type)
     {
         case HITSCAN_TARGET_VOXEL:
@@ -122,16 +122,13 @@ void broadcast_object_fired(int id, EntityType type, const WorldHitscanResult& r
             obj_msg.type = type;
             obj_msg.target_id = result.voxel_target.entity_id;
             obj_msg.target_type = result.voxel_target.entity_type;
-            obj_msg.target_part = result.voxel_target.part_id;
             obj_msg.broadcast();
             break;
 
         case HITSCAN_TARGET_BLOCK:
             terrain_msg.id = id;
             terrain_msg.type = type;
-            terrain_msg.destination = vec3_init(result.block_position);
-            terrain_msg.cube = result.cube_type;
-            terrain_msg.side = get_cube_side_from_sides(result.block_side);
+            terrain_msg.position = result.block_position;
             terrain_msg.broadcast();
             break;
 
@@ -140,7 +137,6 @@ void broadcast_object_fired(int id, EntityType type, const WorldHitscanResult& r
         case HITSCAN_TARGET_NONE:
             none_msg.id = id;
             none_msg.type = type;
-            none_msg.direction = result.direction;
             none_msg.broadcast();
             break;
     }
@@ -155,7 +151,7 @@ static void damage_agent(AgentID agent_id, int part_id,
     agent->status.apply_damage(dmg, NULL_AGENT, inflictor_type, part_id);
 }
 
-static void damage_entity(EntityType entity_type, int entity_id, int part_id,
+static void damage_entity(EntityType entity_type, EntityID entity_id, int part_id,
                           EntityType inflictor_type, int dmg)
 {
     class Entities::Entity* entity = Entities::get(entity_type, entity_id);
@@ -175,8 +171,26 @@ void damage_target(const class Voxels::VoxelHitscanTarget* target,
         case ENTITY_AGENT:
             damage_agent((AgentID)target->entity_id, target->part_id, inflictor_type, dmg);
             break;
+
+        case ENTITY_BASE:
+        case ENTITY_AGENT_SPAWNER:
+        case ENTITY_TURRET:
+        case ENTITY_ENERGY_CORE:
+        case ENTITY_MONSTER_BOMB:
+        case ENTITY_MONSTER_BOX:
+        case ENTITY_MONSTER_SPAWNER:
+        case ENTITY_MONSTER_SLIME:
+        case ENTITY_MONSTER_LIZARD_THIEF:
+        case ENTITY_PLASMAGEN:
+            damage_entity(target->entity_type, target->entity_id, target->part_id, inflictor_type, dmg);
+            break;
+
+        case NULL_ENTITY_TYPE:
+        case ENTITY_DESTINATION:
+        case ENTITY_GRENADE:
+        case ENTITY_CANNONBALL:
         default:
-            damage_entity((EntityType)target->entity_type, target->entity_id, target->part_id, inflictor_type, dmg);
+            GS_ASSERT(false);
             break;
     }
 }

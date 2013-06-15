@@ -147,6 +147,9 @@ Entity* create_mob_lizard_thief()
 
 void ready_mob_lizard_thief(Entity* object)
 {
+    using Components::SpriteMobComponent;
+    SpriteMobComponent* mob = (SpriteMobComponent*)object->get_component_interface(COMPONENT_INTERFACE_SPRITE_MOB);
+    mob->mob.associate_entity(object->id, object->type);
     #if DC_SERVER
     object->broadcastCreate();
     #endif

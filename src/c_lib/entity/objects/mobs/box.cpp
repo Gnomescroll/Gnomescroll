@@ -235,7 +235,7 @@ void server_tick_mob_robot_box(Entity* object)
             agent = Agents::get_agent((AgentID)weapon->target_id);
     }
 
-    if (weapon->target_type != ENTITY_NONE)
+    if (weapon->target_type != NULL_ENTITY_TYPE)
     {   // target found
         // lock target
         weapon->locked_on_target = true;

@@ -10,7 +10,7 @@ class MonsterSpawnerComponent: public SpawnerComponent
 {
     private:
         int max_children;
-        int* children;
+        EntityID* children;
 
     public:
         EntityType spawn_type;
@@ -31,28 +31,16 @@ class MonsterSpawnerComponent: public SpawnerComponent
     void set_max_children(int max_children)
     {
         if (this->max_children == max_children) return;
-
-        if (this->children != NULL)
-        {
-            int* tmp = (int*)realloc(this->children, max_children * sizeof(int));
-            GS_ASSERT(tmp != NULL);
-            if (tmp != NULL)
-                this->children = tmp;
-            else
-                max_children = this->max_children;  // cancel growth
-        }
-        else
-            this->children = (int*)malloc(max_children * sizeof(int));
-
+        IF_ASSERT(this->children != NULL) return;
+        this->children = (EntityID*)malloc(max_children * sizeof(*this->children));
         for (int i=0; i<max_children; i++)
-            this->children[i] = NULL_ENTITY_ID;
-
+            this->children[i] = NULL_ENTITY;
         this->max_children = max_children;
     }
 
     MonsterSpawnerComponent() :
         SpawnerComponent(COMPONENT_MONSTER_SPAWNER),
-        max_children(0), children(NULL), spawn_type(ENTITY_NONE),
+        max_children(0), children(NULL), spawn_type(NULL_ENTITY_TYPE),
         radius(1.0f), children_ct(0)
     {}
 

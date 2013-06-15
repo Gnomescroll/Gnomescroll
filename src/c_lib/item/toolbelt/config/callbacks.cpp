@@ -33,9 +33,9 @@ static void update_predicted_durability()
     ItemContainer::set_ui_slot_durability(toolbelt_id, selected_slot, durability);
 }
 
-void fire_close_range_weapon(ItemID item_id, ItemType item_type)
+void fire_weapon(ItemID item_id, ItemType item_type)
 {
-    ClientState::player_agent.action.fire_close_range_weapon(item_type);
+    ClientState::player_agent.action.fire_weapon(item_type);
     update_predicted_durability();
 }
 
@@ -44,7 +44,7 @@ void fire_close_range_weapon(ItemID item_id, ItemType item_type)
 void trigger_local_mining_laser(ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_MINING_LASER);
-    fire_close_range_weapon(item_id, item_type);
+    fire_weapon(item_id, item_type);
 }
 
 void begin_local_mining_laser(ItemType item_type)
@@ -158,14 +158,6 @@ void trigger_local_plasma_grenade(ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_GRENADE_LAUNCHER);
     ClientState::player_agent.action.throw_grenade();
-}
-
-// IG_HITSCAN_WEAPON
-
-void trigger_local_hitscan_laser(ItemID item_id, ItemType item_type)
-{
-    GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_HITSCAN_WEAPON);
-    ClientState::player_agent.action.hitscan_laser(item_type);
 }
 
 // block placer

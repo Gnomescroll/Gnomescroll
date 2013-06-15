@@ -258,7 +258,7 @@ void draw_text_icons(float z)
     if (you != NULL)
     {
         if (you->status.spawner == BASE_SPAWN_ID)
-            b = Entities::get(ENTITY_BASE, 0);   // TODO -- remove Base
+            b = Entities::get(ENTITY_BASE, EntityID(0));   // TODO -- remove Base
         else
             b = Entities::get(ENTITY_AGENT_SPAWNER, you->status.spawner);
     }

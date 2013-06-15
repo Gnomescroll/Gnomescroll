@@ -24,12 +24,12 @@ class Component* add_component_to_object(class Entity* object, ComponentType typ
 void release_object_components(Entity* object);
 
 class Entity* create(EntityType type);
-class Entity* create(EntityType type, int id);
+class Entity* create(EntityType type, EntityID id);
 void ready_switch(class Entity* object);
 void destroy_switch(class Entity* object);
-void destroy_switch(EntityType type, int id);
+void destroy_switch(EntityType type, EntityID id);
 
-class Entity* get_object(EntityType type, int id);
+class Entity* get_object(EntityType type, EntityID id);
 int count(EntityType type);
 bool full(EntityType type);
 void send_to_client(EntityType type, ClientID client_id);

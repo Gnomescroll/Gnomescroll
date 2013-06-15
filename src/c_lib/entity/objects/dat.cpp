@@ -37,7 +37,7 @@ void entity_def(const char* name, EntityType type)
     if (e != NULL) finish_def();
 
     GS_ASSERT_ABORT(type >= 0 && type < MAX_ENTITY_TYPES);
-    IF_INVALID_ENTITY_TYPE(type) return;
+    IF_ASSERT(!isValid(type)) return;
 
     e = &attributes[type];
     GS_ASSERT_ABORT(!e->loaded);
@@ -55,7 +55,7 @@ void verify_entity_dat()
         class EntityAttributes* e = &attributes[i];
         if (!e->loaded) continue;
 
-        GS_ASSERT_ABORT(e->type != ENTITY_NONE);
+        GS_ASSERT_ABORT(e->type != NULL_ENTITY_TYPE);
         GS_ASSERT_ABORT(is_valid_entity_name(e->name));
     }
 
@@ -79,7 +79,7 @@ void verify_entity_dat()
     // check inactive name destinations against active names
     for (size_t i=0; i<entity_name_map->size; i++)
     {
-        GS_ASSERT_ABORT(get_entity_type(entity_name_map->get_replacement(i)) != ENTITY_NONE);
+        GS_ASSERT_ABORT(get_entity_type(entity_name_map->get_replacement(i)) != NULL_ENTITY_TYPE);
     }
 
     #if DC_SERVER || !PRODUCTION

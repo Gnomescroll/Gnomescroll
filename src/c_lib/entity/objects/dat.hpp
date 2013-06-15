@@ -119,7 +119,7 @@ class EntityAttributes
         // drops will have to be configured separately as usual
 
     EntityAttributes() : loaded(false),
-        type(ENTITY_NONE)
+        type(NULL_ENTITY_TYPE)
     {
         memset(this->name, 0, sizeof(this->name));
     }
@@ -173,23 +173,21 @@ EntityType get_entity_type(const char* name)
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
         if (attributes[i].loaded && strcmp(name, attributes[i].name) == 0)
             return (EntityType)i;
-    return ENTITY_NONE;
+    return NULL_ENTITY_TYPE;
 }
 
 const char* get_compatible_entity_name(const char* name)
 {
     const char* mapname = entity_name_map->get_mapped_name(name);
     if (mapname != NULL) return mapname;
-    if (get_entity_type(name) != ENTITY_NONE) return name;
+    if (get_entity_type(name) != NULL_ENTITY_TYPE) return name;
     return NULL;
 }
 
 const class EntityAttributes* get_entity_attributes(EntityType type)
 {
-    ASSERT_VALID_ENTITY_TYPE(type);
-    IF_INVALID_ENTITY_TYPE(type) return NULL;
-    GS_ASSERT(attributes[type].loaded);
-    if (!attributes[type].loaded) return NULL;
+    IF_ASSERT(!isValid(type)) return NULL;
+    IF_ASSERT(!attributes[type].loaded) return NULL;
     return &attributes[type];
 }
 

@@ -273,7 +273,7 @@ void Agent::get_spawn_point(struct Vec3* spawn)
     float fh = this->current_height();
     if (this->status.spawner == BASE_SPAWN_ID)
     {
-        Entities::Entity* base = Entities::get(ENTITY_BASE, 0);
+        Entities::Entity* base = Entities::get(ENTITY_BASE, EntityID(0));
         IF_ASSERT(base == NULL)
         {
             *spawn = default_spawn;
@@ -317,7 +317,7 @@ void Agent::spawn_state(struct Vec3 p)
 
 void Agent::init_vox()
 {
-    this->vox = new Voxels::VoxelModel(&VoxDats::agent, this->id, this->type);
+    this->vox = new Voxels::VoxelModel(&VoxDats::agent, EntityID(this->id), this->type);
     this->vox->set_hitscan(true);
     this->vox->register_hitscan();
 }
@@ -725,7 +725,7 @@ void Agent::update_model()
 
 bool Agent::near_base()
 {
-    Entities::Entity* b = Entities::get(ENTITY_BASE, 0);
+    Entities::Entity* b = Entities::get(ENTITY_BASE, EntityID(0));
     if (b == NULL) return false;
     using Components::PhysicsComponent;
     PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -805,5 +805,11 @@ int Agent::get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, const float max_di
     GS_ASSERT(solid_pos.z >= 0); // agent should never be shooting from underground
     return data.side;
 }
+
+int Agent::get_facing_side(const Vec3& position)
+{   // returns integer side that agent is facing relative to position
+    return side_orientation(this->camera_position(), position);
+}
+
 
 }   // Agents

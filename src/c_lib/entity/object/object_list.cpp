@@ -8,34 +8,35 @@
 namespace Entities
 {
 
-int EntityList::get_free_id(EntityType type)
+EntityID EntityList::get_free_id(EntityType type)
 {
-    if (this->objects[type] == NULL) return -1;
+    if (this->objects[type] == NULL) return NULL_ENTITY;
     for (int i=0; i<this->maximums[type]; i++)
-        if (this->used[type][i] == 0) return i;
-    return -1;
+        if (!this->used[type][i])
+            return EntityID(i);
+    return NULL_ENTITY;
 }
 
 void EntityList::set_object_id(Entity* object)
 {
-    int id = this->get_free_id(object->type);
-    IF_ASSERT(id < 0)
+    EntityID id = this->get_free_id(object->type);
+    IF_ASSERT(id == NULL_ENTITY)
     {
-        printf("WARNING: no free ids\n");
+        printf("WARNING: no free entity ids for type %d\n", object->type);
         return;
     }
     this->set_object_id(object, id);
 }
 
-void EntityList::set_object_id(Entity* object, int id)
+void EntityList::set_object_id(Entity* object, EntityID id)
 {
     EntityType type = object->type;
     IF_ASSERT(this->used[type][id] != 0) return;
-    IF_ASSERT(id < 0 || id >= this->max(type)) return;
+    IF_ASSERT(!this->is_valid_id(id, type)) return;
 
     // swap from staging slot
     this->staging_objects[type] = this->objects[type][id];
-    this->staging_objects[type]->id = -1;
+    this->staging_objects[type]->id = NULL_ENTITY;
     this->objects[type][id] = object;
     object->id = id;
     this->used[type][id] = 1;
@@ -44,13 +45,13 @@ void EntityList::set_object_id(Entity* object, int id)
 
 inline int EntityList::count(EntityType type)
 {
-    IF_ASSERT(type < 0 || type >= MAX_ENTITY_TYPES) return 0;
+    IF_ASSERT(!isValid(type)) return 0;
     return this->indices[type];
 }
 
 inline int EntityList::max(EntityType type)
 {
-    IF_ASSERT(type < 0 || type >= MAX_ENTITY_TYPES) return 0;
+    IF_ASSERT(!isValid(type)) return 0;
     return this->maximums[type];
 }
 
@@ -64,17 +65,22 @@ inline bool EntityList::full(EntityType type)
     return (this->count(type) >= this->max(type));
 }
 
-inline bool EntityList::in_use(EntityType type, int id)
+inline bool EntityList::in_use(EntityType type, EntityID id)
 {
-    IF_ASSERT(type < 0 || type >= MAX_ENTITY_TYPES) return true;
+    IF_ASSERT(!isValid(type)) return true;
     IF_ASSERT(this->used == NULL) return true;
     IF_ASSERT(this->used[type] == NULL) return true;
     IF_ASSERT(this->maximums == NULL) return true;
-    IF_ASSERT(id < 0 || id >= this->maximums[type]) return true;
+    IF_ASSERT(!this->is_valid_id(id, type)) return true;
     return (this->used[type][id] == 1);
 }
 
-void EntityList::destroy(EntityType type, int id)
+inline bool EntityList::is_valid_id(EntityID id, EntityType type)
+{
+    return (id >= 0 && id < this->max(type));
+}
+
+void EntityList::destroy(EntityType type, EntityID id)
 {
     if (this->used[type] == NULL) return;
     GS_ASSERT(this->used[type][id]);
@@ -82,10 +88,10 @@ void EntityList::destroy(EntityType type, int id)
     this->indices[type] -= 1;
 }
 
-Entity* EntityList::get(EntityType type, int id)
+Entity* EntityList::get(EntityType type, EntityID id)
 {
-    IF_ASSERT(type < 0 || type >= MAX_ENTITY_TYPES) return NULL;
-    IF_ASSERT(id < 0 || id >= this->maximums[type]) return NULL;
+    IF_ASSERT(!isValid(type)) return NULL;
+    IF_ASSERT(!this->is_valid_id(id, type)) return NULL;
 
     if (this->objects[type] == NULL) return NULL;
     if (this->used[type] == NULL || this->used[type][id] == 0) return NULL;
@@ -94,16 +100,16 @@ Entity* EntityList::get(EntityType type, int id)
 
 Entity* EntityList::create(EntityType type)
 {
-    IF_ASSERT(type < 0 || type >= MAX_ENTITY_TYPES) return NULL;
+    IF_ASSERT(!isValid(type)) return NULL;
     if (this->full(type)) return NULL;
     return this->staging_objects[type];
 }
 
 // preemptively check against used ids
-Entity* EntityList::create(EntityType type, int id)
+Entity* EntityList::create(EntityType type, EntityID id)
 {
-    IF_ASSERT(type < 0 || type >= MAX_ENTITY_TYPES) return NULL;
-    IF_ASSERT(id < 0 || id >= this->maximums[type]) return NULL;
+    IF_ASSERT(!isValid(type)) return NULL;
+    IF_ASSERT(!this->is_valid_id(id, type)) return NULL;
     IF_ASSERT(this->used[type] == NULL || this->used[type][id] == 1) return NULL;
     return this->staging_objects[type];
 }
@@ -128,7 +134,7 @@ void EntityList::destroy_all()
         if (this->objects[i] != NULL)
             for (int j=0; j<this->maximums[j]; j++)
                 if (this->used[j])
-                    this->destroy((EntityType)i, j);
+                    this->destroy(EntityType(i), EntityID(j));
 }
 
 void EntityList::set_object_max(EntityType type, int max)
@@ -151,16 +157,16 @@ void EntityList::load_object_data(EntityDataList* data)
 {   // preallocate component pointer buffers
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
-        int n_components = data->get_component_count((EntityType)i);
+        int n_components = data->get_component_count(EntityType(i));
         for (int j=0; j<this->maximums[i]; j++)
         {
-            this->objects[i][j] = new Entity(j);
+            this->objects[i][j] = new Entity(EntityID(j));
             this->objects[i][j]->init(n_components);
-            this->objects[i][j]->type = (EntityType)i;
+            this->objects[i][j]->type = EntityType(i);
         }
-        this->staging_objects[i] = new Entity(-1);
+        this->staging_objects[i] = new Entity(NULL_ENTITY);
         this->staging_objects[i]->init(n_components);
-        this->staging_objects[i]->type = (EntityType)i;
+        this->staging_objects[i]->type = EntityType(i);
     }
 }
 

@@ -16,7 +16,7 @@ typedef enum
 {
     ENTITY_DESTINATION,     // abstract object
 
-    ENTITY_AGENT,   // agent
+    ENTITY_AGENT,
 
     // projectiles
     ENTITY_GRENADE,
@@ -40,7 +40,7 @@ typedef enum
     ENTITY_PLASMAGEN,
     ENTITY_CANNONBALL,
 
-    ENTITY_NONE = MAX_ENTITY_TYPES,
+    NULL_ENTITY_TYPE = MAX_ENTITY_TYPES,
 } EntityType;
 
 const int MAX_COMPONENT_TYPES = 0xFF;
@@ -128,6 +128,11 @@ typedef enum
     COMPONENT_INTERFACE_NONE = MAX_COMPONENT_INTERFACE_TYPES,
 } ComponentInterfaceType;
 
+typedef enum
+{
+    NULL_ENTITY = 0xFFFF
+} EntityID;
+
 inline bool isValid(EntityType type)
 {
     return (type >= 0 && type < MAX_ENTITY_TYPES);
@@ -143,6 +148,11 @@ inline bool isValid(ComponentInterfaceType type)
     return (type >= 0 && type < MAX_COMPONENT_INTERFACE_TYPES);
 }
 
+inline bool isValid(EntityID id)
+{
+    return (id >= 0 && id < NULL_ENTITY);
+}
+
 typedef enum
 {
     STATE_NONE = 0,
@@ -156,11 +166,9 @@ typedef void (*stateRouter) (class Entities::Entity*, EntityState);   // for sta
 #include <limits.h>
 #include <physics/vec3.hpp>
 
-//const int MOB_BROADCAST_RATE = ONE_SECOND / 10;
 const int MOB_BROADCAST_RATE = ONE_SECOND / 5;
 
-const int NULL_ENTITY_ID = -1;      // cant use a positive number because it imposes constraint on all object list's max. dont send this over the network
-const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
+const int NULL_OWNER = INT_MAX;          // owners are ids of agents. they will never be INT_MAX
 const int NULL_HEALTH = INT_MAX;
 const Vec3 NULL_POSITION = vec3_init(0);
 const Vec3 NULL_MOMENTUM = vec3_init(0);
@@ -168,4 +176,4 @@ const Vec3 NULL_ANGLES = vec3_init(0);
 const float NULL_HEIGHT = 1.0f;
 
 const int MAX_SPAWNERS = 1024;
-const int BASE_SPAWN_ID = 1024;
+const EntityID BASE_SPAWN_ID = EntityID(1024);

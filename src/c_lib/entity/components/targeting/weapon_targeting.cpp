@@ -19,7 +19,7 @@ void WeaponTargetingComponent::lock_target(Vec3 camera_position)
         this->attack_at_random);
     if (target == NULL)
     {
-        this->target_type = ENTITY_NONE;
+        this->target_type = NULL_ENTITY_TYPE;
         this->locked_on_target = false;
         return;
     }
@@ -33,7 +33,7 @@ void WeaponTargetingComponent::lock_target_part(Vec3 camera_position)
 {
     this->firing_direction_set = false;
 
-    if (this->target_type == ENTITY_NONE) return;
+    if (this->target_type == NULL_ENTITY_TYPE) return;
     if (this->target_type != ENTITY_AGENT) return;    // TODO -- target all types
 
     // get target
@@ -52,7 +52,7 @@ void WeaponTargetingComponent::lock_target_part(Vec3 camera_position)
 
 bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
 {
-    if (this->target_type == ENTITY_NONE) return false;
+    if (this->target_type == NULL_ENTITY_TYPE) return false;
     if (this->target_type != ENTITY_AGENT) return false;    // TODO -- target all types
 
     if (!this->firing_direction_set) return false;
@@ -96,7 +96,7 @@ bool WeaponTargetingComponent::target_is_visible(Vec3 firing_position)
 
 void WeaponTargetingComponent::orient_to_random_target_part(Vec3 camera_position)
 {
-    if (this->target_type == ENTITY_NONE) return;
+    if (this->target_type == NULL_ENTITY_TYPE) return;
     if (this->target_type != ENTITY_AGENT) return;  //  todo -- target all types
     Agents::Agent* target = Agents::get_agent((AgentID)this->target_id);
     if (target == NULL || target->vox == NULL) return;

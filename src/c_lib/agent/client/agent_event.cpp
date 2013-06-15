@@ -177,7 +177,7 @@ void AgentEvent::life_changing(bool dead)
     else born();
 }
 
-void AgentEvent::set_spawner(int pt)
+void AgentEvent::set_spawner(EntityID pt)
 {
     this->a->status.spawner = pt;
 }
@@ -253,14 +253,14 @@ void AgentEvent::spray_blood(const struct Vec3& f, int body_part)
     Animations::blood_spray(c, f);
 }
 
-void AgentEvent::fired_weapon_at_object(int id, EntityType type, int part)
+void AgentEvent::fired_weapon_at_object(int id, EntityType type)
 {
     Vec3 f = this->a->forward_vector();
     if (type == ENTITY_AGENT)
     {
         Agent* agent = Agents::get_agent((AgentID)id);
         if (agent != NULL)
-            agent->event.spray_blood(f, part);
+            agent->event.spray_blood(f, AGENT_PART_TORSO);
     }
     this->play_laser_rifle_fire_event(this->a->arm_center(), f);
 }

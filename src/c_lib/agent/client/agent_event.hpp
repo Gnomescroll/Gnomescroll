@@ -58,7 +58,7 @@ class AgentEvent
     // old style packet handler events
     // still used; triggers target specific animations/sounds
     // since that is required from server
-    void fired_weapon_at_object(int id, EntityType type, int part);
+    void fired_weapon_at_object(int id, EntityType type);
     void fired_weapon_at_block(const Vec3& position, CubeType cube, int side);
     void fired_weapon_at_nothing();
     void play_laser_rifle_fire_event(const struct Vec3& c, const struct Vec3& f);
@@ -70,7 +70,7 @@ class AgentEvent
     void placed_block();
     void threw_grenade();
 
-    void set_spawner(int pt);
+    void set_spawner(EntityID pt);
 
     explicit AgentEvent(Agent* owner);
     ~AgentEvent();

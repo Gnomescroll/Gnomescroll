@@ -16,7 +16,7 @@ void teardown()
 }
 
 #if DC_SERVER
-int get_spawner_for_user(UserID user_id)
+EntityID get_spawner_for_user(UserID user_id)
 {
     AgentSpawnerComponentList* a = agent_spawner_component_list;
     for (int i=0; i<a->max; i++)

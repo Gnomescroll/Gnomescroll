@@ -19,26 +19,29 @@ class EntityList
         Entity** staging_objects;
         Entity*** objects;
 
-        int get_free_id(EntityType type);
+        EntityID get_free_id(EntityType type);
 
     public:
 
         // misc
         void set_object_id(Entity* object);
-        void set_object_id(Entity* object, int id);
+        void set_object_id(Entity* object, EntityID id);
+
+        // sanity checks
+        inline bool is_valid_id(EntityID id, EntityType type);
 
         // count accessors
         inline int count(EntityType type);
         inline int max(EntityType type);
         inline bool empty(EntityType type);
         inline bool full(EntityType type);
-        inline bool in_use(EntityType type, int id);
+        inline bool in_use(EntityType type, EntityID id);
 
         // object accessors
-        Entity* get(EntityType type, int id);
-        void destroy(EntityType type, int id);
+        Entity* get(EntityType type, EntityID id);
+        void destroy(EntityType type, EntityID id);
         Entity* create(EntityType type);
-        Entity* create(EntityType type, int id);
+        Entity* create(EntityType type, EntityID id);
 
         // objects accessors
         Entity** get_objects(EntityType type);

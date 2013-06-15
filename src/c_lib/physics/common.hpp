@@ -1,6 +1,7 @@
 #pragma once
 
 struct Vec3; // forward decl
+struct Vec3i; // forward decl
 
 const float kE = 2.71828f;
 
@@ -34,20 +35,16 @@ typedef enum
     CS_MISC3 = 1024
 } CSKey;
 
-bool cube_intersects(
-    float x, float y, float z, float w, float h, float d,
-    float x2, float y2, float z2, float w2, float h2, float d2
-);
+bool cube_intersects(float x, float y, float z, float w, float h, float d,
+                     float x2, float y2, float z2, float w2, float h2, float d2);
 
-bool bounding_box_intersects(Vec3 posa, const BoundingBox& boxa,
-                             Vec3 posb, const BoundingBox& boxb);
+bool bounding_box_intersects(const Vec3& posa, const BoundingBox& boxa,
+                             const Vec3& posb, const BoundingBox& boxb);
 
-bool rect_intersects(
-    float x, float y, float w, float h,
-    float x2, float y2, float w2, float h2
-);
+bool rect_intersects(float x, float y, float w, float h,
+                     float x2, float y2, float w2, float h2);
 
-float interpolate(float a, float b, float f)
+inline float interpolate(float a, float b, float f)
 {
     return a + (b - a) * f;
 }
@@ -60,5 +57,12 @@ float distancef_squared(float x, float y, float z, float a, float b, float c);
 void rotate_point(float x, float y, float theta, float *x1, float *y1);
 float gaussian_value(const float mean, const float stddev, const float x);
 
-bool position_is_equal(Vec3 p, float x, float y, float z);
-int axis_orientation(Vec3 a, Vec3 b);
+bool position_is_equal(const Vec3& p, float x, float y, float z);
+int axis_orientation(const Vec3& a, const Vec3& b);
+
+inline bool sphere_line_distance(const Vec3& position, const Vec3& direction,
+                                 const Vec3& center, Vec3& intersection, float& rad_sq);
+
+int get_cube_side_from_sides(const Vec3i& sides);
+Vec3i get_sides_from_cube_side(int side_id);
+int side_orientation(const Vec3& a, const Vec3& b);

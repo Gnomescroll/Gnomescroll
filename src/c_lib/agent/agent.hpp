@@ -191,6 +191,7 @@ class Agent
     int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, Vec3i& side, float* distance);
     int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, float* distance);
     int get_facing_side(Vec3i& solid_pos, Vec3i& open_pos, const float max_distance);
+    int get_facing_side(const Vec3& position);
 
     bool nearest_open_block(const float max_dist, Vec3i& open_point);
 

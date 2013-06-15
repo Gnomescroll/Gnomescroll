@@ -11,7 +11,7 @@ namespace Hitscan
 
 // returns agent id of first agent found in hitscan path
 // returns NULL_AGENT if none found
-AgentID against_agents(Vec3 position, Vec3 direction, float max_distance,
+AgentID against_agents(const Vec3& position, const Vec3& direction, float max_distance,
                        AgentID firing_agent_id)
 {
     float vox_distance = 1000000.0f;
@@ -29,11 +29,6 @@ AgentID against_agents(Vec3 position, Vec3 direction, float max_distance,
     return (AgentID)target.entity_id;
 }
 
-AgentID against_agents(Vec3 position, Vec3 direction, float max_distance)
-{
-    return against_agents(position, direction, max_distance, NULL_AGENT);
-}
-
 #define HITSCAN_PROFILING 0
 
 static WorldHitscanResult _hitscan_against_terrain_and_mobs(const Vec3& p, const Vec3& v,
@@ -41,9 +36,7 @@ static WorldHitscanResult _hitscan_against_terrain_and_mobs(const Vec3& p, const
                                                             EntityType ignore_type)
 {
     WorldHitscanResult hitscan;
-    hitscan.start_position = p;
-    hitscan.direction = v;
-
+    hitscan.start(p, v, range);
     // terrain first
     class RaytraceData terrain_data;
     if (raytrace_terrain(p, v, range, &terrain_data))
@@ -59,9 +52,15 @@ static WorldHitscanResult _hitscan_against_terrain_and_mobs(const Vec3& p, const
     if (t_mob::hitscan_sprite_mobs(p, v, range, sprite_mob_id, sprite_mob_dist,
                                    sprite_mob_collision_point))
     {
-        hitscan.set_sprite_collision(sprite_mob_id, sprite_mob_dist,
-                                     sprite_mob_collision_point);
-        range = hitscan.sprite_mob_distance + 1.5f;
+        t_mob::SpriteMob* m = t_mob::get_sprite_mob(sprite_mob_id);
+        GS_ASSERT(m != NULL);
+        if (m != NULL)
+        {
+            hitscan.set_sprite_collision(sprite_mob_id, m->entity_id,
+                                         m->entity_type, sprite_mob_dist,
+                                         sprite_mob_collision_point);
+            range = hitscan.sprite_mob_distance + 1.5f;
+        }
     }
 
     // voxels last
@@ -99,7 +98,6 @@ WorldHitscanResult hitscan_against_world(const Vec3& p, const Vec3& v,
     #if HITSCAN_PROFILING
     long ta = _GET_MICROSECOND_TIME();
     #endif
-
     WorldHitscanResult hitscan = _hitscan_against_terrain_and_mobs(p, v, range,
                                                                    ignore_id,
                                                                    ignore_type);

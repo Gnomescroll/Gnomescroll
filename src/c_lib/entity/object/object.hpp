@@ -14,7 +14,7 @@ class Entity
         int n_components;
         class Components::Component** components;
 
-        int id;
+        EntityID id;
         EntityType type;
 
         tickObject tick;        // for physics
@@ -51,9 +51,9 @@ class Entity
 
     ~Entity();
 
-    explicit Entity(int id) :
+    explicit Entity(EntityID id) :
         n_components(0), components(NULL),
-        id(id), type(ENTITY_NONE),
+        id(id), type(NULL_ENTITY_TYPE),
         tick(NULL), update(NULL),
         create(NULL), state(NULL)
     {}

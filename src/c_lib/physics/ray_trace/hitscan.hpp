@@ -20,15 +20,50 @@ namespace Hitscan
 
 class WorldHitscanResult
 {
+    private:
+
+    void _set_collision_point()
+    {
+        if (this->type == HITSCAN_TARGET_NONE)
+        {
+            const Vec3 away = vec3_scalar_mult(this->direction, this->range);
+            this->collision_point = vec3_add(this->start_position, away);
+        }
+        else if (this->type == HITSCAN_TARGET_BLOCK)
+        {
+            const Vec3 away = vec3_scalar_mult(this->direction, this->block_distance);
+            this->collision_point = vec3_add(this->start_position, away);
+        }
+        else if (this->type == HITSCAN_TARGET_MECH)
+        {
+            const Vec3 away = vec3_scalar_mult(this->direction, this->mech_distance);
+            this->collision_point = vec3_add(this->start_position, away);
+        }
+        else if (this->type == HITSCAN_TARGET_SPRITE_MOB)
+        {
+            this->collision_point = this->sprite_mob_collision_point;
+        }
+        else if (this->type == HITSCAN_TARGET_VOXEL)
+        {
+            this->collision_point = this->voxel_collision_point;
+        }
+        else
+        {
+            GS_ASSERT(false);
+        }
+    }
+
     public:
 
         static const int FAR_AWAY = INT_MAX;
 
         HitscanTargetType type;     // type of nearest object
         float distance;             // distance of nearest object
+        Vec3 collision_point;       // collision point of whatever it hit
 
         Vec3 start_position;
         Vec3 direction;
+        float range;
 
         // block
         bool block_hit;
@@ -52,8 +87,17 @@ class WorldHitscanResult
         // sprite mob
         bool sprite_mob_hit;
         SpriteMobID sprite_mob_id;
+        EntityID sprite_mob_entity_id;
+        EntityType sprite_mob_entity_type;
         float sprite_mob_distance;
         Vec3 sprite_mob_collision_point;
+
+    void start(const Vec3& position, const Vec3& direction, float range)
+    {
+        this->start_position = position;
+        this->direction = direction;
+        this->range = range;
+    }
 
     void set_block_collision(const RaytraceData& data, float max_distance)
     {
@@ -81,12 +125,15 @@ class WorldHitscanResult
         this->mech_distance = mech_distance;
     }
 
-    void set_sprite_collision(SpriteMobID id, float distance,
+    void set_sprite_collision(SpriteMobID id, EntityID entity_id,
+                              EntityType entity_type, float distance,
                               const Vec3& collision_point)
     {
         this->sprite_mob_hit = true;
         this->sprite_mob_distance = distance;
         this->sprite_mob_id = id;
+        this->sprite_mob_entity_id = entity_id;
+        this->sprite_mob_entity_type = entity_type;
         this->sprite_mob_collision_point = collision_point;
     }
 
@@ -129,11 +176,12 @@ class WorldHitscanResult
                 GS_ASSERT(false);
                 return;
         }
+        this->_set_collision_point();
     }
 
     WorldHitscanResult() :
         type(HITSCAN_TARGET_NONE), distance(FAR_AWAY),
-        start_position(vec3_init(0)), direction(vec3_init(0, 0, 1)),
+        start_position(vec3_init(0)), direction(vec3_init(0, 0, 1)), range(128),
         block_hit(false), block_position(vec3i_init(0)),
         block_open_position(vec3i_init(0)),
         block_side(vec3i_init(0, 0, 1)), cube_type(ERROR_CUBE),
@@ -146,9 +194,8 @@ class WorldHitscanResult
 };
 
 // for agents hitscanning strictly agents:
-AgentID against_agents(Vec3 position, Vec3 direction, float max_distance, AgentID firing_agent_id);
-// for mobs hitscanning strictly agents:
-AgentID against_agents(Vec3 position, Vec3 direction, float max_distance);
+AgentID against_agents(const Vec3& position, const Vec3& direction,
+                       float max_distance, AgentID firing_agent_id=NULL_AGENT);
 
 
 #if DC_CLIENT

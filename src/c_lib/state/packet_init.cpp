@@ -48,31 +48,19 @@ void RegisterMessages()
     Particle::grenade_StoC::register_client_packet();
     Particle::plasmagen_explode_StoC::register_client_packet();
 
-    // agent hit block action
-    hit_block_CtoS::register_server_packet();
-
     //player agent
     player_agent_snapshot_StoC::register_client_packet();
 
     // hitscans
-    hitscan_object_CtoS::register_server_packet();
+    hitscan_entity_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();
     hitscan_mech_CtoS::register_server_packet();
     hitscan_none_CtoS::register_server_packet();
 
-    // melees
-    melee_object_CtoS::register_server_packet();
-    melee_mech_CtoS::register_server_packet();
-    melee_none_CtoS::register_server_packet();
-
     // hitscan StoC action (for animations etc)
-    agent_shot_object_StoC::register_client_packet();
-    agent_shot_block_StoC::register_client_packet();
-    agent_shot_nothing_StoC::register_client_packet();
-    agent_melee_object_StoC::register_client_packet();
-    agent_melee_nothing_StoC::register_client_packet();
-
-    agent_hit_block_StoC::register_client_packet();
+    agent_hitscan_object_StoC::register_client_packet();
+    agent_hitscan_block_StoC::register_client_packet();
+    agent_hitscan_nothing_StoC::register_client_packet();
     agent_launched_projectile_StoC::register_client_packet();
     agent_placed_block_StoC::register_client_packet();
 

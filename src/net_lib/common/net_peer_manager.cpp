@@ -155,7 +155,7 @@ void NetPeerManager::was_deserialized()
         return;
     }
 
-    int spawner_id = BASE_SPAWN_ID;
+    EntityID spawner_id = BASE_SPAWN_ID;
     if (Options::serializer)
     {
         if (Options::auth)
