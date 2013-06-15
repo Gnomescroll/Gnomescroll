@@ -317,7 +317,7 @@ void create_road(int x, int y, int z, int ox, int oy, int oz)
     CubeType RoadBlock[] = {steelA, steelB, steelC, stone, green, red, purple, gray};
     for(int LinesMade = 0; LinesMade < ROAD_SIZE; LinesMade++)
     {
-        generate_line(x + LinesMade, y, z, ox + LinesMade, oy, oz, RoadBlock[randrange(0, sizeof(RoadBlock) / sizeof(*RoadBlock) - 1)]);
+        generate_line(x + LinesMade, y, z, ox + LinesMade, oy, oz, RoadBlock[randrange(0, sizeof(RoadBlock) / sizeof(*RoadBlock) - 1)], 1);
     }
 }
 
@@ -347,7 +347,7 @@ void generate_bunker(int x, int y)
     int PrevX = x;
     int PrevY = y;
     int PrevZ = z;
-    generate_sphere(x + BUNKER_SPHERE_RADIUS / 2, y + BUNKER_SPHERE_RADIUS / 2, z, BUNKER_SPHERE_RADIUS, stone);
+    generate_sphere(vec3i_init(x + BUNKER_SPHERE_RADIUS / 2, y + BUNKER_SPHERE_RADIUS / 2, z), BUNKER_SPHERE_RADIUS, stone);
     for(int RoomsMade = 0; RoomsMade < BUNKER_ROOM_AMOUNT; RoomsMade++)
     {
         CurrentSizeX = randrange(BUNKER_ROOM_SIZE - BUNKER_RANDOMNESS, BUNKER_ROOM_SIZE + BUNKER_RANDOMNESS);
@@ -497,12 +497,12 @@ void generate_tunnel(int x, int y, int z, int otherx, int othery, int otherz)
     printf("Generating a subway tunnel between %d, %d, %d and %d, %d, %d\n", x, y, z, otherx, othery, otherz);
     for(int LinesMade = 0; LinesMade < SUBWAY_TUNNEL_SIZE; LinesMade++)
     {
-        generate_line(x + LinesMade, y, z, otherx + LinesMade, othery, otherz, steelA);
-        generate_line(x + LinesMade, y, z + SUBWAY_TUNNEL_SIZE, otherx + LinesMade, othery, otherz + SUBWAY_TUNNEL_SIZE, steelC);
-        generate_line(x, y, z + LinesMade, otherx, othery, otherz + LinesMade, steelB);
-        generate_line(x + SUBWAY_TUNNEL_SIZE, y, z + LinesMade, otherx + SUBWAY_TUNNEL_SIZE, othery, otherz + LinesMade, steelB);
+        generate_line(x + LinesMade, y, z, otherx + LinesMade, othery, otherz, steelA, 1);
+        generate_line(x + LinesMade, y, z + SUBWAY_TUNNEL_SIZE, otherx + LinesMade, othery, otherz + SUBWAY_TUNNEL_SIZE, steelC, 1);
+        generate_line(x, y, z + LinesMade, otherx, othery, otherz + LinesMade, steelB, 1);
+        generate_line(x + SUBWAY_TUNNEL_SIZE, y, z + LinesMade, otherx + SUBWAY_TUNNEL_SIZE, othery, otherz + LinesMade, steelB, 1);
     }
-    generate_line(x + SUBWAY_TUNNEL_SIZE / 2, y, z, otherx + SUBWAY_TUNNEL_SIZE / 2, othery, otherz, battery);
+    generate_line(x + SUBWAY_TUNNEL_SIZE / 2, y, z, otherx + SUBWAY_TUNNEL_SIZE / 2, othery, otherz, battery, 1);
 }
 
 void create_cryofreezer(int x, int y, int z)
@@ -617,61 +617,6 @@ void generate_room(CubeType material, int minx, int miny, int minz, int maxx, in
     if(fridge) create_cryofreezer(maxx - 1, maxy - 1, minz + 1);
     if(recycler) create_crusher(maxx - 2, maxy + 1, minz + 1);
     if(chest) generate_area(minx + randrange(2, 3), miny + 1, minz + 1, maxx - randrange(2, 3), miny + 1, maxz - randrange(1, 3), storage); //used mainly for shops, so large amounts needed
-}
-
-void generate_line(int startx, int starty, int startz, int endx, int endy, int endz, CubeType material)
-{
-    const int distance = sqrtf(powf(startx - endx, 2) + powf(starty - endy, 2) + powf(startz - endz, 2));
-    int minx;
-    int maxx;
-    int miny;
-    int maxy;
-    int minz;
-    int maxz;
-    if(startx < endx)
-    {
-        minx = startx;
-        maxx = endx;
-    }
-    else
-    {
-        minx = endx;
-        maxx = startx;
-    }
-    if(starty < endy)
-    {
-        miny = starty;
-        maxy = endy;
-    }
-    else
-    {
-        miny = endy;
-        maxy = starty;
-    }
-    if(startz < endz)
-    {
-        minz = startz;
-        maxz = endz;
-    }
-    else
-    {
-        minz = endz;
-        maxz = startz;
-    }
-    for(int x = minx; x <= maxx; x++)
-    for(int y = miny; y <= maxy; y++)
-    for(int z = minz; z <= maxz; z++)
-    {
-        if(sqrtf(powf(startx - x, 2) + powf(starty - y, 2) + powf(startz - z, 2)) + sqrtf(powf(endx - x, 2) + powf(endy - y, 2) + powf(endz - z, 2)) <= distance + 1) t_map::set(x, y, z, material);
-    }
-}
-
-void generate_sphere(int x, int y, int z, int radius, CubeType material)
-{
-    for(int cx = x - radius; cx <= x + radius; cx++)
-    for(int cy = y - radius; cy <= y + radius; cy++)
-    for(int cz = z - radius; cz <= z + radius; cz++)
-    if(sqrtf(powf(cx - x, 2) + powf(cy - y, 2) + powf(cz - z, 2)) <= radius) t_map::set(translate_point(x), translate_point(y), z, material);
 }
 
 void find_closest_road_spot(int x, int y)

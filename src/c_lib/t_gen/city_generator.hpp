@@ -10,6 +10,7 @@
 #include <item/container/_interface.hpp>
 #include <t_map/_interface.hpp>
 #include <t_map/config/block_dat.hpp>
+#include <t_gen/shapes.hpp>
 
 namespace t_gen
 {
@@ -93,9 +94,7 @@ void create_bench(int x, int y, int z);
 void create_crusher(int x, int y, int z);
 bool isGood(int x, int y, int maxx, int maxy);
 int get_highest_area_block(int x, int y, int maxx, int maxy);
-void generate_sphere(int x, int y, int z, int radius, CubeType material);
 void generate_room(CubeType material, int minx, int miny, int minz, int maxx, int maxy, int maxz, int minentrancex, int minentrancey, int minentrancez, int maxentrancex, int maxentrancey, int maxentracez, int minexitx, int minexity, int minexitz, int maxexitx, int maxexity, int maxexitz, bool windows, bool electric, bool crafting, bool furnace, bool computer, bool fridge, bool recycler, bool chest);
-void generate_line(int startx, int starty, int startz, int endx, int endy, int endz, CubeType material);
 void init_cities(void);
 void find_closest_road_spot(int x, int y);
 bool isArtificial(int x, int y);
