@@ -74,6 +74,10 @@ void load_sprite_mob_config()
     add_animation("walk");
     a->add_frame_strip(1, 1, 2);
 
+    add_mob("blue_blub", "rdn");
+    add_animation("walk");
+    a->add_frame_strip(1, 3, 2);
+
     sprite_mob_properties->done_loading();
     sprite_mob_properties->set_pretty_names();
     apply_automatic_properties();

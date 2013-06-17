@@ -522,13 +522,16 @@ inline void hitscan_entity_CtoS::handle()
             health->take_damage(obj_dmg);
 
         // knockback
-        using Components::KnockbackComponent;
-        KnockbackComponent* knockback = (KnockbackComponent*)
-            obj->get_component_interface(COMPONENT_INTERFACE_KNOCKBACK);
-        if (knockback != NULL)
-            knockback->get_hit(a->forward_vector(),
-                               Toolbelt::get_agent_selected_item_type(a->id),
-                               this->charge_progress + 1.0f);
+        if (Item::does_knockback(weapon_type))
+        {
+            using Components::KnockbackComponent;
+            KnockbackComponent* knockback = (KnockbackComponent*)
+                obj->get_component_interface(COMPONENT_INTERFACE_KNOCKBACK);
+            if (knockback != NULL)
+                knockback->get_hit(a->forward_vector(),
+                                   Toolbelt::get_agent_selected_item_type(a->id),
+                                   this->charge_progress + 1.0f);
+        }
 
         // set target on person attacking
         using Components::MotionTargetingComponent;

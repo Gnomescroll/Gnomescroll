@@ -123,6 +123,7 @@ const SpriteAnimationGroup* SpriteMob::_begin_animation()
 void SpriteMob::begin_animation(const char* name)
 {
     const SpriteAnimationGroup* g = this->_begin_animation();
+    IF_ASSERT(g == NULL) return;
     this->current_animation = g->get(name);
     GS_ASSERT(this->current_animation != NULL);
 }
@@ -130,6 +131,7 @@ void SpriteMob::begin_animation(const char* name)
 void SpriteMob::begin_animation(SpriteAnimationID id)
 {
     const SpriteAnimationGroup* g = this->_begin_animation();
+    IF_ASSERT(g == NULL) return;
     this->current_animation = g->get(id);
     GS_ASSERT(this->current_animation != NULL);
 }

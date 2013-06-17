@@ -194,25 +194,24 @@ static void blub_state_router(class Entity* object, EntityState state)
         case STATE_CHASE_AGENT:
             if (machine->state == STATE_WAITING)
                 waiting_to_chase_agent(object);
-            //else if (machine->state == STATE_IN_TRANSIT)
-                //in_transit_to_chase_agent(object);
+            else if (machine->state == STATE_IN_TRANSIT)
+                in_transit_to_chase_agent(object);
             break;
 
-        //case STATE_IN_TRANSIT:
-            //if (machine->state == STATE_WAITING)
-                //waiting_to_in_transit(object);
-            //else if (machine->state == STATE_CHASE_AGENT)
-                //chase_agent_to_in_transit(object);
-            //break;
+        case STATE_IN_TRANSIT:
+            if (machine->state == STATE_WAITING)
+                waiting_to_in_transit(object);
+            else if (machine->state == STATE_CHASE_AGENT)
+                chase_agent_to_in_transit(object);
+            break;
 
         case STATE_WAITING:
             if (machine->state == STATE_CHASE_AGENT)
                 chase_agent_to_waiting(object);
-            //else if (machine->state == STATE_IN_TRANSIT)
-                //in_transit_to_waiting(object);
+            else if (machine->state == STATE_IN_TRANSIT)
+                in_transit_to_waiting(object);
             break;
 
-        case STATE_IN_TRANSIT:
         case STATE_NONE:
             GS_ASSERT(false);
             break;
@@ -273,18 +272,17 @@ void tick_mob_blub(Entity* object)
     switch (machine->state)
     {
         case STATE_WAITING:
-            //waiting_for_agent(object);
+            waiting(object);
             break;
 
-        //case STATE_IN_TRANSIT:
-            //in_transit(object);
-            //break;
+        case STATE_IN_TRANSIT:
+            in_transit(object);
+            break;
 
         case STATE_CHASE_AGENT:
             chase_agent(object);
             break;
 
-        case STATE_IN_TRANSIT:
         case STATE_NONE:
             GS_ASSERT(false);
             break;

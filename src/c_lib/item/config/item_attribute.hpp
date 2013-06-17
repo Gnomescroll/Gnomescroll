@@ -72,6 +72,9 @@ class ItemAttribute: public Property<ItemType>
         // can be placed (this will be automatically detected from the item group
         bool placeable;
 
+        // does knockback to an enemy
+        bool knockback;
+
         // agent stat modifiers
         ModifierList modifiers;
 
@@ -130,6 +133,7 @@ class ItemAttribute: public Property<ItemType>
         this->equipment_type = NULL_EQUIPMENT_TYPE;
         this->boonable = true;
         this->placeable = false;
+        this->knockback = true;
     }
 };
 
