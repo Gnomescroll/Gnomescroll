@@ -161,11 +161,11 @@
 # ifndef __APPLE__
 // Not recognized by Apple implementation:
 #  pragma clang diagnostic warning "-Wc++0x-narrowing"
-#  pragma clang diagnostic warning "-Wc++11-compat"
+//#  pragma clang diagnostic warning "-Wc++11-compat"
 //#  pragma clang diagnostic warning "-Wc++11-extensions"
 //#  pragma clang diagnostic warning "-Wc++11-extra-semi"
 #  pragma clang diagnostic warning "-Wc++11-narrowing"
-#  pragma clang diagnostic warning "-Wc++98-compat-pedantic"
+//#  pragma clang diagnostic warning "-Wc++98-compat-pedantic"
 #  pragma clang diagnostic warning "-Wmalformed-warning-check"
 #  pragma clang diagnostic warning "-Wmissing-method-return-type"
 #  pragma clang diagnostic warning "-Woverriding-method-mismatch"
@@ -181,6 +181,7 @@
 # endif
 
 // Turn these off
+# pragma clang diagnostic ignored "-Wc++11-compat"
 # pragma clang diagnostic ignored "-Wunused-function"
 # pragma clang diagnostic ignored "-Wconversion"
 # pragma clang diagnostic ignored "-Wunused-parameter"

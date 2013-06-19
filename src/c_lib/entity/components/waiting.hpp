@@ -18,9 +18,9 @@ class WaitingComponent: public Component
 
     virtual ~WaitingComponent() {}
 
-    WaitingComponent()
-    : Component(COMPONENT_WAITING, COMPONENT_INTERFACE_WAITING),
-    tick(0), wait_time(0)
+    WaitingComponent() :
+        Component(COMPONENT_Waiting, COMPONENT_INTERFACE_Waiting),
+        tick(0), wait_time(0)
     {}
 };
 

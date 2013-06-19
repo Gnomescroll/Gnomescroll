@@ -13,26 +13,19 @@ namespace Components
 void HealerComponent::heal_agents_in_range()
 {
     using Agents::agent_list;
-    GS_ASSERT(agent_list != NULL);
-    if (agent_list == NULL) return;
+    IF_ASSERT(agent_list == NULL) return;
+    IF_ASSERT(this->radius <= 0.0f) return;
 
-    GS_ASSERT(this->radius > 0.0f);
-    if (this->radius <= 0.0f) return;
     float rad2 = this->radius * this->radius;
 
     Vec3 pos;
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)
-        this->object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->object);
     if (vox != NULL)
         pos = vox->get_center();
     else
     {   // use physics
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)
-            this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        GS_ASSERT(physics != NULL);
-        if (physics == NULL) return;
+        auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+        IF_ASSERT(physics == NULL) return;
         pos = physics->get_position();
     }
 

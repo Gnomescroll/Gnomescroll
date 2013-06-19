@@ -23,7 +23,7 @@ class SpawnChildComponent: public Component
     ~SpawnChildComponent() {}
 
     SpawnChildComponent() :
-        Component(COMPONENT_SPAWN_CHILD, COMPONENT_INTERFACE_SPAWN_CHILD),
+        Component(COMPONENT_SpawnChild, COMPONENT_INTERFACE_SpawnChild),
         parent_type(NULL_ENTITY_TYPE), parent_id(NULL_ENTITY)
     {}
 };

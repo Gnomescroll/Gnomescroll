@@ -217,7 +217,6 @@ void EntityList::update()
 
 void EntityList::harvest()
 {
-    using Components::HealthComponent;
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
         if (this->used[i] == NULL) continue;
@@ -225,7 +224,7 @@ void EntityList::harvest()
         {
             if (!this->used[i][j]) continue;
             Entity* obj = this->objects[i][j];
-            HealthComponent* health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+            auto health = GET_COMPONENT_INTERFACE(Health, obj);
             if (health != NULL && health->is_dead())
                 Entities::destroy(obj);
         }

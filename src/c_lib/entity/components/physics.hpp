@@ -39,7 +39,7 @@ class PhysicsComponent: public Component
     virtual bool get_angles_changed() = 0;
 
     explicit PhysicsComponent(ComponentType type) :
-        Component(type, COMPONENT_INTERFACE_PHYSICS)
+        Component(type, COMPONENT_INTERFACE_Physics)
     {}
 
     virtual ~PhysicsComponent() {}

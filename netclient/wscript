@@ -175,7 +175,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         if OS != 'Windows':
             conf.env.append_value('LINKFLAGS', '-rdynamic')  # 64 bit support
 
-    warning_sound_flag = '-DENABLE_WARNING_SOUND=1'
+    #warning_sound_flag = '-DENABLE_WARNING_SOUND=1'
+    warning_sound_flag = '-DENABLE_WARNING_SOUND=0'
     if production or OS != 'Windows':
         warning_sound_flag = '-DENABLE_WARNING_SOUND=0'
 
@@ -187,6 +188,7 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         '-Wvla',  # warns variable array
         '-DGNOMESCROLL_DSO_EXPORTS=1',
         '-DGNOMESCROLL_DSO=1',
+        '-std=c++0x',
         aweflag,
         assimpflag,
         prodflag,
@@ -196,6 +198,10 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         #'-fstrict-aliasing'
         #'-fno-default-inline'
     ]
+
+    if OS == 'Linux' and not windows:
+        # For some reason, this #define disappears... so put it here
+        extra_options.append('-Dlinux')
 
     if windows:
         extra_options.append('-DLINUX2WINDOWS')

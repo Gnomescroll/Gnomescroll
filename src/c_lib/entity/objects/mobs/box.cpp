@@ -28,52 +28,48 @@ void load_mob_robot_box_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION_MOMENTUM);
-    entity_data->attach_component(type, COMPONENT_DIMENSION);
-    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
-    entity_data->attach_component(type, COMPONENT_WEAPON_TARGETING);
-    entity_data->attach_component(type, COMPONENT_MOTION_TARGETING);
+    entity_data->attach_component(type, COMPONENT_PositionMomentum);
+    entity_data->attach_component(type, COMPONENT_Dimension);
+    entity_data->attach_component(type, COMPONENT_VoxelModel);
+    entity_data->attach_component(type, COMPONENT_HitPoints);
+    entity_data->attach_component(type, COMPONENT_WeaponTargeting);
+    entity_data->attach_component(type, COMPONENT_MotionTargeting);
 
     #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_SPAWN_CHILD);
-    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
-    entity_data->attach_component(type, COMPONENT_ITEM_DROP);
-    entity_data->attach_component(type, COMPONENT_KNOCKBACK);
+    entity_data->attach_component(type, COMPONENT_SpawnChild);
+    entity_data->attach_component(type, COMPONENT_RateLimit);
+    entity_data->attach_component(type, COMPONENT_ItemDrop);
+    entity_data->attach_component(type, COMPONENT_Knockback);
     #endif
     #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_Animation);
     #endif
 }
 
 static void set_mob_robot_box_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION_MOMENTUM);
+    ADD_COMPONENT(PositionMomentum, object);
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    auto dims = ADD_COMPONENT(Dimension, object);
     dims->height = MONSTER_BOX_HEIGHT;
     dims->camera_height = MONSTER_BOX_CAMERA_HEIGHT;
 
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    auto vox = ADD_COMPONENT(VoxelModel, object);
     vox->vox_dat = &VoxDats::robot_box;
     vox->init_hitscan = MONSTER_BOX_INIT_WITH_HITSCAN;
     vox->init_draw = MONSTER_BOX_INIT_WITH_DRAW;
 
-    using Components::HitPointsHealthComponent;
     #if DC_CLIENT
-    add_component_to_object(object, COMPONENT_HIT_POINTS);
+    ADD_COMPONENT(HitPoints, object);
     #endif
     #if DC_SERVER   // health will be set by packet initializer
-    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    auto health = ADD_COMPONENT(HitPoints, object);
     int health_amt = randrange(MONSTER_BOX_HEALTH_MIN, MONSTER_BOX_HEALTH_MAX);
     health->health = health_amt;
     health->health_max = health_amt;
     #endif
 
-    using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
+    auto target = ADD_COMPONENT(WeaponTargeting, object);
     target->target_acquisition_failure_rate = MONSTER_BOX_TARGET_ACQUISITION_FAILURE_RATE;
     target->fire_rate_limit = MONSTER_BOX_FIRE_RATE_LIMIT;
     target->uses_bias = MONSTER_BOX_USES_BIAS;
@@ -90,20 +86,17 @@ static void set_mob_robot_box_properties(Entity* object)
     target->attacker_properties.terrain_modification_action = TMA_MONSTER_BOX;
     target->fire_delay_max = MONSTER_BOX_FIRE_DELAY_MAX;
 
-    using Components::MotionTargetingComponent;
-    MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
+    auto motion = ADD_COMPONENT(MotionTargeting, object);
     motion->speed = MONSTER_BOX_SPEED;
     motion->max_z_diff = MONSTER_BOX_MOTION_MAX_Z_DIFF;
 
     #if DC_SERVER
-    add_component_to_object(object, COMPONENT_SPAWN_CHILD);
+    ADD_COMPONENT(SpawnChild, object);
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    auto limiter = ADD_COMPONENT(RateLimit, object);
     limiter->limit = MOB_BROADCAST_RATE;
 
-    using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+    auto item_drop = ADD_COMPONENT(ItemDrop, object);
     item_drop->drop.set_max_drop_types(2);
     item_drop->drop.set_max_drop_amounts("synthesizer_coin", 3);
     item_drop->drop.add_drop("synthesizer_coin", 1, 0.2f);
@@ -113,14 +106,12 @@ static void set_mob_robot_box_properties(Entity* object)
     item_drop->drop.set_max_drop_amounts("small_charge_pack", 1);
     item_drop->drop.add_drop("small_charge_pack", 1, 0.02f);
 
-    using Components::KnockbackComponent;
-    KnockbackComponent* knockback = (KnockbackComponent*)add_component_to_object(object, COMPONENT_KNOCKBACK);
+    auto knockback = ADD_COMPONENT(Knockback, object);
     knockback->weight = 1.5f;
     #endif
 
     #if DC_CLIENT
-    using Components::AnimationComponent;
-    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    auto anim = ADD_COMPONENT(Animation, object);
     anim->color = MONSTER_BOX_ANIMATION_COLOR;
     anim->count = MONSTER_BOX_ANIMATION_COUNT;
     //anim->count_max = MONSTER_BOX_ANIMATION_COUNT_MAX;
@@ -146,15 +137,12 @@ Entity* create_mob_robot_box()
 
 void ready_mob_robot_box(Entity* object)
 {
-    using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* target = (WeaponTargetingComponent*)object->get_component_interface(COMPONENT_INTERFACE_TARGETING);
+    auto target = GET_COMPONENT(WeaponTargeting, object);
     target->attacker_properties.id = object->id;
 
-    using Components::VoxelModelComponent;
-    using Components::PhysicsComponent;
 
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
@@ -170,26 +158,22 @@ void die_mob_robot_box(Entity* object)
 {
     #if DC_SERVER
     // drop item
-    using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, object);
     GS_ASSERT(item_drop != NULL);
     if (item_drop != NULL) item_drop->drop_item();
 
     object->broadcastDeath();
 
-    using Components::SpawnChildComponent;
-    SpawnChildComponent* child = (SpawnChildComponent*)object->get_component(COMPONENT_SPAWN_CHILD);
+    auto child = GET_COMPONENT(SpawnChild, object);
     if (child != NULL) child->notify_parent_of_death();
     #endif
 
     #if DC_CLIENT
     // explosion animation
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
     if (vox->vox != NULL)
     {
-        using Components::AnimationComponent;
-        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        auto anim = GET_COMPONENT_INTERFACE(Animation, object);
         anim->explode(vox->get_center());
     }
     #endif
@@ -202,19 +186,15 @@ void server_tick_mob_robot_box(Entity* object)
     // wander randomly (TODO: network model with destinations)
     // TODO -- aggro component
 
-    typedef Components::PositionMomentumPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
     const Vec3 position = physics->get_position();
     Vec3 camera_position = position;
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, object);
     camera_position.z += dims->get_camera_height();
 
-    using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
-    using Components::MotionTargetingComponent;
-    MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
+    auto weapon = GET_COMPONENT(WeaponTargeting, object);
+    auto motion = GET_COMPONENT(MotionTargeting, object);
 
     Agents::Agent* agent = NULL;
     if (weapon->locked_on_target)
@@ -319,8 +299,7 @@ void server_tick_mob_robot_box(Entity* object)
         physics->set_angles(vec3_init(theta, phi, 0));
     }
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, object);
     IF_ASSERT(limiter == NULL) return;
     if (limiter->allowed()) object->broadcastState();
 }
@@ -344,11 +323,8 @@ void tick_mob_robot_box(Entity* object)
 
 void update_mob_robot_box(Entity* object)
 {
-    typedef Components::PositionMomentumPhysicsComponent PCP;
-    using Components::VoxelModelComponent;
-
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM);
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
 
     Vec3 angles = physics->get_angles();
     vox->update(physics->get_position(), angles.x, angles.y, physics->get_changed());

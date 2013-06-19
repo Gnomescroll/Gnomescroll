@@ -98,9 +98,9 @@ bool c_lib_inited = false;
 
 /* Common headers */
 #include <common/version.h>
-#include <common/defines.h>
 #include <common/compat_gl.h>
 #include <common/compat_al.h>
+#include <common/defines.h>
 #include <common/macros.hpp>
 #include <common/crash_report/stack_trace.hpp>
 #include <common/gs_assert.cpp>

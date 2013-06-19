@@ -5,6 +5,7 @@
 #include <agent/_interface.hpp>
 #include <entity/objects.hpp>
 #include <entity/components/health.hpp>
+#include <entity/macros.hpp>
 
 namespace Hitscan
 {
@@ -157,8 +158,7 @@ static void damage_entity(EntityType entity_type, EntityID entity_id, int part_i
     class Entities::Entity* entity = Entities::get(entity_type, entity_id);
     IF_ASSERT(entity == NULL) return;
 
-    using Components::HealthComponent;
-    class HealthComponent* health = (class HealthComponent*)entity->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+    auto health = GET_COMPONENT_INTERFACE(Health, entity);
     if (health == NULL) return;
     health->take_damage(dmg);
 }
@@ -166,33 +166,10 @@ static void damage_entity(EntityType entity_type, EntityID entity_id, int part_i
 void damage_target(const class Voxels::VoxelHitscanTarget* target,
                    EntityType inflictor_type, int dmg)
 {
-    switch (target->entity_type)
-    {
-        case ENTITY_AGENT:
-            damage_agent((AgentID)target->entity_id, target->part_id, inflictor_type, dmg);
-            break;
-
-        case ENTITY_BASE:
-        case ENTITY_AGENT_SPAWNER:
-        case ENTITY_TURRET:
-        case ENTITY_ENERGY_CORE:
-        case ENTITY_MONSTER_BOMB:
-        case ENTITY_MONSTER_BOX:
-        case ENTITY_MONSTER_SPAWNER:
-        case ENTITY_MONSTER_SLIME:
-        case ENTITY_MONSTER_LIZARD_THIEF:
-        case ENTITY_PLASMAGEN:
-            damage_entity(target->entity_type, target->entity_id, target->part_id, inflictor_type, dmg);
-            break;
-
-        case NULL_ENTITY_TYPE:
-        case ENTITY_DESTINATION:
-        case ENTITY_GRENADE:
-        case ENTITY_CANNONBALL:
-        default:
-            GS_ASSERT(false);
-            break;
-    }
+    if (target->entity_type == ENTITY_AGENT)
+        damage_agent(AgentID(target->entity_id), target->part_id, inflictor_type, dmg);
+    else
+        damage_entity(target->entity_type, target->entity_id, target->part_id, inflictor_type, dmg);
 }
 #endif
 

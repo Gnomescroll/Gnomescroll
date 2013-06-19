@@ -13,3 +13,4 @@
 #include <entity/objects/mobs/box.hpp>
 #include <entity/objects/mobs/spawner.hpp>
 #include <entity/objects/mobs/lizard_thief.hpp>
+#include <entity/objects/mobs/blub.hpp>

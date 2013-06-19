@@ -279,8 +279,7 @@ void Agent::get_spawn_point(struct Vec3* spawn)
             *spawn = default_spawn;
             return;
         }
-        using Components::AgentSpawnerComponent;
-        AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)base->get_component(COMPONENT_AGENT_SPAWNER);
+        auto spawner = GET_COMPONENT(AgentSpawner, base);
         IF_ASSERT(spawner == NULL) *spawn = default_spawn;
         else *spawn = spawner->get_spawn_point(fh, box.radius);
     }
@@ -291,8 +290,7 @@ void Agent::get_spawn_point(struct Vec3* spawn)
             *spawn = default_spawn;
         else
         {
-            using Components::AgentSpawnerComponent;
-            AgentSpawnerComponent* spawner_comp = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            auto spawner_comp = GET_COMPONENT(AgentSpawner, spawner);
             IF_ASSERT(spawner_comp == NULL)
                 *spawn = default_spawn;
             else
@@ -727,8 +725,7 @@ bool Agent::near_base()
 {
     Entities::Entity* b = Entities::get(ENTITY_BASE, EntityID(0));
     if (b == NULL) return false;
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, b);
     IF_ASSERT(physics == NULL) return false;
     Vec3 bp = physics->get_position();
 

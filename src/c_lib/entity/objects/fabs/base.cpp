@@ -25,38 +25,34 @@ void load_base_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION);
-    entity_data->attach_component(type, COMPONENT_DIMENSION);
-    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    entity_data->attach_component(type, COMPONENT_Position);
+    entity_data->attach_component(type, COMPONENT_Dimension);
+    entity_data->attach_component(type, COMPONENT_VoxelModel);
 
     #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
-    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    entity_data->attach_component(type, COMPONENT_AgentSpawner);
+    entity_data->attach_component(type, COMPONENT_RateLimit);
     #endif
 }
 
 static void set_base_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION);
+    add_component_to_object(object, COMPONENT_Position);
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    auto dims = ADD_COMPONENT(Dimension, object);
     dims->height = BASE_HEIGHT;
 
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    auto vox = ADD_COMPONENT(VoxelModel, object);
     vox->vox_dat = &VoxDats::base;
     vox->init_hitscan = BASE_INIT_WITH_HITSCAN;
     vox->init_draw = BASE_INIT_WITH_DRAW;
     vox->should_hitscan = BASE_SHOULD_HITSCAN;
 
     #if DC_SERVER
-    using Components::AgentSpawnerComponent;
-    AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
+    auto spawner = ADD_COMPONENT(AgentSpawner, object);
     spawner->radius = BASE_SPAWN_RADIUS;
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    auto limiter = ADD_COMPONENT(RateLimit, object);
     limiter->limit = MOB_BROADCAST_RATE;
     #endif
 
@@ -78,11 +74,9 @@ Entity* create_base()
 
 void ready_base(Entity* object)
 {
-    using Components::VoxelModelComponent;
-    using Components::PhysicsComponent;
 
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
@@ -103,24 +97,20 @@ void die_base(Entity* object)
 void tick_base(Entity* object)
 {
     #if DC_SERVER
-    typedef Components::PositionPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
     IF_ASSERT(physics == NULL) return;
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     physics->set_position(position);
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, object);
     if (limiter->allowed()) object->broadcastState();
     #endif
 }
 
 void update_base(Entity* object)
 {
-    typedef Components::PositionPhysicsComponent PCP;
-    using Components::VoxelModelComponent;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
     Vec3 angles = physics->get_angles();
     vox->force_update(physics->get_position(), angles.x, angles.y, physics->get_changed());
     physics->set_changed(false);  // reset changed state

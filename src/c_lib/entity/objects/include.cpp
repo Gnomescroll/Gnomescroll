@@ -14,4 +14,5 @@
 #include <entity/objects/mobs/spawner.cpp>
 #include <entity/objects/mobs/slime.cpp>
 #include <entity/objects/mobs/lizard_thief.cpp>
+#include <entity/objects/mobs/blub.cpp>
 

@@ -19,7 +19,7 @@ static struct Vec3 get_dropped_item_position(Entities::Entity* object)
     float radius = 0.95f;
 
     // try to use center of voxel model
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
     if (vox != NULL)
     {
         position = vox->get_center();
@@ -27,13 +27,13 @@ static struct Vec3 get_dropped_item_position(Entities::Entity* object)
     }
     else
     {   // use physics position
-        PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, object);
         GS_ASSERT(physics != NULL);
         if (physics == NULL) return vec3_init(0.0f, 0.0f, 0.0f);
         position = physics->get_position();
 
         // try to center it by using height dimension, if available
-        DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+        auto dims = GET_COMPONENT_INTERFACE(Dimension, object);
         if (dims != NULL) position.z += dims->get_height() / 2.0f;
     }
 

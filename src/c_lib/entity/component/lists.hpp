@@ -3,27 +3,27 @@
 // TODO -- compute component list sizes from needs of mob list sizes
 
 #define COMPONENTS \
-    A(PositionPhysicsComponent, position_physics_component, POSITION, PHYSICS, MOBS_MAX) \
-    A(PositionMomentumPhysicsComponent, position_momentum_physics_component, POSITION_MOMENTUM, PHYSICS, MOBS_MAX) \
-    A(VerletPhysicsComponent, verlet_physics_component, VERLET, PHYSICS, MOBS_MAX) \
-    A(TTLHealthComponent, ttl_health_component, TTL, HEALTH, MOBS_MAX) \
-    A(HitPointsHealthComponent, hit_points_health_component, HIT_POINTS, HEALTH, MOBS_MAX) \
-    A(OwnerComponent, owner_component, OWNER, OWNER, MOBS_MAX / 8) \
-    A(VoxelModelComponent, voxel_model_component, VOXEL_MODEL, VOXEL_MODEL, MOBS_MAX) \
-    A(MonsterSpawnerComponent, monster_spawner_component, MONSTER_SPAWNER, SPAWNER, MOBS_MAX / 8) \
-    A(SpawnChildComponent, spawn_child_component, SPAWN_CHILD, SPAWN_CHILD, MOBS_MAX) \
-    A(DimensionComponent, dimension_component, DIMENSION, DIMENSION, MOBS_MAX) \
-    A(WeaponTargetingComponent, weapon_targeting_component, WEAPON_TARGETING, TARGETING, MOBS_MAX / 2) \
-    A(MotionTargetingComponent, motion_targeting_component, MOTION_TARGETING, TARGETING, MOBS_MAX / 2) \
-    A(DestinationTargetingComponent, destination_targeting_component, DESTINATION_TARGETING, TARGETING, MOBS_MAX / 2) \
-    A(AgentTargetingComponent, agent_targeting_component, AGENT_TARGETING, TARGETING, MOBS_MAX / 2) \
-    A(StateMachineComponent, state_machine_component, STATE_MACHINE, STATE_MACHINE, MOBS_MAX / 2) \
-    A(WaitingComponent, waiting_component, WAITING, WAITING, MOBS_MAX / 2) \
-    A(RateLimitComponent, rate_limit_component, RATE_LIMIT, RATE_LIMIT, MOBS_MAX) \
-    A(SpriteMobComponent, sprite_mob_component, SPRITE_MOB, SPRITE_MOB, MOBS_MAX) \
-    C(AnimationComponent, animation_component, VOXEL_ANIMATION, ANIMATION, MOBS_MAX / 4) \
-    S(AgentSpawnerComponent, agent_spawner_component, AGENT_SPAWNER, SPAWNER, MAX_SPAWNERS + 1) \
-    S(ExplosionComponent, explosion_component, EXPLOSION, EXPLOSION, MOBS_MAX / 2) \
-    S(ItemDropComponent, item_drop_component, ITEM_DROP, ITEM_DROP, MOBS_MAX) \
-    S(HealerComponent, healer_component, HEALER, HEALING, MOBS_MAX / 4) \
-    S(KnockbackComponent, knockback_component, KNOCKBACK, KNOCKBACK, MOBS_MAX)
+    A(PositionComponent, position_physics_component, Position, Physics, MOBS_MAX) \
+    A(PositionMomentumComponent, position_momentum_physics_component, PositionMomentum, Physics, MOBS_MAX) \
+    A(VerletComponent, verlet_physics_component, Verlet, Physics, MOBS_MAX) \
+    A(TTLComponent, ttl_component, TTL, Health, MOBS_MAX) \
+    A(HitPointsComponent, hit_points_component, HitPoints, Health, MOBS_MAX) \
+    A(OwnerComponent, owner_component, Owner, Owner, MOBS_MAX / 8) \
+    A(VoxelModelComponent, voxel_model_component, VoxelModel, VoxelModel, MOBS_MAX) \
+    A(MonsterSpawnerComponent, monster_spawner_component, MonsterSpawner, Spawner, MOBS_MAX / 8) \
+    A(SpawnChildComponent, spawn_child_component, SpawnChild, SpawnChild, MOBS_MAX) \
+    A(DimensionComponent, dimension_component, Dimension, Dimension, MOBS_MAX) \
+    A(WeaponTargetingComponent, weapon_targeting_component, WeaponTargeting, Targeting, MOBS_MAX / 2) \
+    A(MotionTargetingComponent, motion_targeting_component, MotionTargeting, Targeting, MOBS_MAX / 2) \
+    A(DestinationTargetingComponent, destination_targeting_component, DestinationTargeting, Targeting, MOBS_MAX / 2) \
+    A(AgentTargetingComponent, agent_targeting_component, AgentTargeting, Targeting, MOBS_MAX / 2) \
+    A(StateMachineComponent, state_machine_component, StateMachine, StateMachine, MOBS_MAX / 2) \
+    A(WaitingComponent, waiting_component, Waiting, Waiting, MOBS_MAX / 2) \
+    A(RateLimitComponent, rate_limit_component, RateLimit, RateLimit, MOBS_MAX) \
+    A(SpriteMobComponent, sprite_mob_component, SpriteMob, SpriteMob, MOBS_MAX) \
+    C(AnimationComponent, animation_component, Animation, Animation, MOBS_MAX / 4) \
+    S(AgentSpawnerComponent, agent_spawner_component, AgentSpawner, Spawner, MAX_SPAWNERS + 1) \
+    S(ExplosionComponent, explosion_component, Explosion, Explosion, MOBS_MAX / 2) \
+    S(ItemDropComponent, item_drop_component, ItemDrop, ItemDrop, MOBS_MAX) \
+    S(HealerComponent, healer_component, Healer, Healer, MOBS_MAX / 4) \
+    S(KnockbackComponent, knockback_component, Knockback, Knockback, MOBS_MAX)

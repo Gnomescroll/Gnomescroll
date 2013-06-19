@@ -82,6 +82,7 @@ void load_item_dat()
     s->object_damage_max = 25;
     s->firing_rate = (5 * ONE_SECOND) / 6;
     s->firing_range = RIFLE_FIRING_RANGE;
+    s->knockback = false;
     block_damage_def(2);
     block_damage_def(CUBE_MATERIAL_DIRT, 4);
     block_damage_def(CUBE_MATERIAL_STONE, 0);
@@ -97,6 +98,7 @@ void load_item_dat()
     block_damage_def(CUBE_MATERIAL_DIRT, 5);
     block_damage_def(CUBE_MATERIAL_STONE, 6);
     block_damage_def(CUBE_MATERIAL_DECORATION, 8);
+    s->knockback = false;
     s->object_damage_min = 15;
     s->object_damage_max = 20;
     s->animation_type = Animations::get_animation_type("blue_mining_laser");
@@ -112,6 +114,7 @@ void load_item_dat()
     block_damage_def(CUBE_MATERIAL_DIRT, 6);
     block_damage_def(CUBE_MATERIAL_STONE, 8);
     block_damage_def(CUBE_MATERIAL_DECORATION, 12);
+    s->knockback = false;
     s->object_damage_min = 20;
     s->object_damage_max = 25;
     s->animation_type = Animations::get_animation_type("red_mining_laser");
@@ -127,6 +130,7 @@ void load_item_dat()
     block_damage_def(CUBE_MATERIAL_DIRT, 7);
     block_damage_def(CUBE_MATERIAL_STONE, 10);
     block_damage_def(CUBE_MATERIAL_DECORATION, 16);
+    s->knockback = false;
     s->object_damage_min = 25;
     s->object_damage_max = 30;
     s->animation_type = Animations::get_animation_type("green_mining_laser");
@@ -297,6 +301,7 @@ void load_item_dat()
     s->object_damage_max = 25;
     s->firing_rate = (5 * ONE_SECOND) / 6;
     s->firing_range = RIFLE_FIRING_RANGE;
+    s->knockback = false;
     block_damage_def(2);
     block_damage_def(CUBE_MATERIAL_DIRT, 4);
     block_damage_def(CUBE_MATERIAL_STONE, 0);

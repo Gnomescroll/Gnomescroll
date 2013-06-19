@@ -23,9 +23,9 @@ class RateLimitComponent: public Component
             return false;
         }
 
-    RateLimitComponent()
-    : Component(COMPONENT_RATE_LIMIT, COMPONENT_INTERFACE_RATE_LIMIT),
-    tick(0), limit(1)
+    RateLimitComponent() :
+        Component(COMPONENT_RateLimit, COMPONENT_INTERFACE_RateLimit),
+        tick(0), limit(1)
     {}
 };
 

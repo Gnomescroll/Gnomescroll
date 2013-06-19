@@ -5,7 +5,7 @@
 namespace Components
 {
 
-void HitPointsHealthComponent::take_damage(int dmg)
+void HitPointsComponent::take_damage(int dmg)
 {
     if (this->health <= 0) return;
     this->health -= dmg;

@@ -38,8 +38,7 @@ struct Vec3 get_base_spawn_position()
     IF_ASSERT(base == NULL) return vec3_init(0);
 
     int h = 1;
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)base->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, base);
     GS_ASSERT(dims != NULL);
     if (dims != NULL) h = dims->get_integer_height();
     float x = randrange(0, map_dim.x-1);
@@ -53,8 +52,7 @@ void init_base()
 {
     base = Entities::create(ENTITY_BASE);
     IF_ASSERT(base == NULL) return;
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, base);
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
         physics->set_position(get_base_spawn_position());
@@ -67,8 +65,7 @@ void move_base()
     if (base == NULL) return;
     tick++;
     if (tick % Options::base_move_rate != 0) return;
-    typedef Components::PositionPhysicsComponent PCP;
-    PCP* physics = (PCP*)base->get_component(COMPONENT_POSITION);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, base);
     IF_ASSERT(physics == NULL) return;
 
     int tries = 0;
@@ -90,14 +87,12 @@ void check_agents_at_base()
     Entities::Entity* base = Entities::get(ENTITY_BASE, EntityID(0));
     IF_ASSERT(base == NULL) return;
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)base->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, base);
     IF_ASSERT(physics == NULL) return;
     Vec3 p = physics->get_position();
 
-    using Components::VoxelModelComponent;
     float r = 1.0f;
-    VoxelModelComponent* vox = (VoxelModelComponent*)base->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, base);
     GS_ASSERT(vox != NULL);
     if (vox != NULL) r = vox->get_radius();
 

@@ -92,6 +92,50 @@ const int MONSTER_SLIME_ANIMATION_COUNT_MAX = 40;
 const float MONSTER_SLIME_ANIMATION_SIZE = 0.2f;
 const float MONSTER_SLIME_ANIMATION_FORCE = 1.0f;
 
+/* Blub */
+
+/* Common/Defaults */
+
+// health
+//const int MONSTER_BLUB_HEALTH_MIN = 65;
+//const int MONSTER_BLUB_HEALTH_MAX = 85;
+const int MONSTER_BLUB_HEALTH_MIN = 1000;
+const int MONSTER_BLUB_HEALTH_MAX = 1000;
+
+// vox
+const bool MONSTER_BLUB_INIT_WITH_HITSCAN = true;
+const bool MONSTER_BLUB_INIT_WITH_DRAW = true;
+
+// dims
+const float MONSTER_BLUB_HEIGHT = 1.0f;
+
+// targeting
+const float MONSTER_BLUB_MOTION_PROXIMITY_RADIUS = 15.0f;
+const int MONSTER_BLUB_MAX_TARGET_LOCK_TICKS = ONE_SECOND * 10; // will lose target after 10 seconds
+const float MONSTER_BLUB_JUMP_FORCE = 0.38f;
+const float MONSTER_BLUB_AGENT_STOP_PROXIMITY_RADIUS = 2.1f;
+const int MONSTER_BLUB_JUMP_COOLDOWN_EN_ROUTE = (3 * ONE_SECOND) / 2;
+const int MONSTER_BLUB_JUMP_COOLDOWN_NEARBY = ONE_SECOND * 2;
+
+// motion
+const float MONSTER_BLUB_WALK_SPEED = 0.1f;
+//const float MONSTER_BLUB_WALK_SPEED = 1.0f;
+const float MONSTER_BLUB_CHASE_SPEED = 0.12f;
+const int MONSTER_BLUB_MOTION_MAX_Z_DIFF = 3;
+//const int MONSTER_BLUB_WALK_RANGE = 10;
+const int MONSTER_BLUB_WALK_RANGE = 20;
+
+// waiting
+//const unsigned int MONSTER_BLUB_IDLE_TIME = ONE_SECOND * 6;
+const unsigned int MONSTER_BLUB_IDLE_TIME = ONE_SECOND * 3;
+
+// animations
+const Color MONSTER_BLUB_ANIMATION_COLOR = Color(31,223,31);
+const int MONSTER_BLUB_ANIMATION_COUNT = 25;
+const int MONSTER_BLUB_ANIMATION_COUNT_MAX = 40;
+const float MONSTER_BLUB_ANIMATION_SIZE = 0.2f;
+const float MONSTER_BLUB_ANIMATION_FORCE = 1.0f;
+
 /* MONSTER_BOX */
 
 // health

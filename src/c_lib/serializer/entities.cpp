@@ -164,8 +164,7 @@ bool process_entities_blob(const char* str, size_t filesize)
             err = (!agent_spawner_data.valid);
             if (agent_spawner_data.user_count == agent_spawner_data.added_users)
             {
-                using Components::AgentSpawnerComponent;
-                AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)entity->get_component(COMPONENT_AGENT_SPAWNER);
+                auto spawner = GET_COMPONENT(AgentSpawner, entity);
                 GS_ASSERT(spawner != NULL);
                 err = (spawner == NULL);
                 if (spawner != NULL)
@@ -180,8 +179,7 @@ bool process_entities_blob(const char* str, size_t filesize)
             GS_ASSERT(false);
         }
 
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)entity->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
         GS_ASSERT(physics != NULL);
         err = (physics == NULL);
         if (position != NULL && physics != NULL)
@@ -279,12 +277,10 @@ static bool write_user_count_tag(FILE* f, size_t user_count)
 static bool save_agent_spawner(FILE* f, class Entities::Entity* entity, int id)
 {
     // unpack all component data we need
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)entity->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     IF_ASSERT(physics == NULL) return false;
 
-    using Components::AgentSpawnerComponent;
-    AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)entity->get_component(COMPONENT_AGENT_SPAWNER);
+    auto spawner = GET_COMPONENT(AgentSpawner, entity);
     IF_ASSERT(spawner == NULL) return false;
 
     if (!write_entity_header(f, entity, id)) return false;
@@ -305,8 +301,7 @@ static bool save_agent_spawner(FILE* f, class Entities::Entity* entity, int id)
 static bool save_energy_core(FILE* f, class Entities::Entity* entity, int id)
 {
     // unpack all component data we need
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)entity->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     IF_ASSERT(physics == NULL) return false;
 
     if (!write_entity_header(f, entity, id)) return false;

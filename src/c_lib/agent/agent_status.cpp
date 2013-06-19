@@ -65,14 +65,13 @@ void AgentStatus::set_spawner(EntityID pt)
     if (pt == this->spawner) return;
 
     #if DC_SERVER
-    using Components::AgentSpawnerComponent;
     if (pt != BASE_SPAWN_ID && this->spawner != BASE_SPAWN_ID)
     {   // transferring between spawners
         class Entities::Entity* old_spawner = Entities::get(ENTITY_AGENT_SPAWNER, this->spawner);
         GS_ASSERT(old_spawner != NULL);
         if (old_spawner != NULL)
         {
-            AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)old_spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            auto agent_spawner = GET_COMPONENT(AgentSpawner, old_spawner);
             GS_ASSERT(agent_spawner != NULL);
             if (agent_spawner != NULL) agent_spawner->remove_all(this->a->id);
         }
@@ -91,19 +90,17 @@ void AgentStatus::set_spawner(EntityID pt)
     class Entities::Entity* spawner = Entities::get(ENTITY_AGENT_SPAWNER, pt);
     IF_ASSERT(spawner == NULL) return;
 
-    AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+    auto agent_spawner = GET_COMPONENT(AgentSpawner, spawner);
     GS_ASSERT(agent_spawner != NULL);
     if (agent_spawner != NULL) agent_spawner->add_agent(this->a->id);
 
     // play sound
     // only send the sound if its not the base spawner set
     struct Vec3 pos;
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, spawner);
     IF_ASSERT(vox == NULL)
     {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, spawner);
         IF_ASSERT(physics == NULL) return;
         pos = physics->get_position();
     }
@@ -178,8 +175,7 @@ void AgentStatus::quit()
         GS_ASSERT(spawner != NULL);
         if (spawner != NULL)
         {
-            using Components::AgentSpawnerComponent;
-            AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            auto agent_spawner = GET_COMPONENT(AgentSpawner, spawner);
             GS_ASSERT(agent_spawner != NULL);
             if (agent_spawner != NULL) agent_spawner->remove(this->a->id);
         }
@@ -217,86 +213,25 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
     bool killed = this->die();
     if (!killed) return false;
 
-    Agent* attacker = NULL;
-    //Turret* turret;
-    switch (inflictor_type)
+    if (inflictor_id != NULL_AGENT)
     {
-        case ENTITY_GRENADE:
-        case ENTITY_AGENT:
-            attacker = Agents::get_agent(inflictor_id);
-            if (attacker != NULL)
-                attacker->status.kill(this->a->id);
-            break;
-        //case ENTITY_TURRET:
-            //turret = (Turret*)STATE::entity_list->get(inflictor_type, inflictor_id);
-            //if (turret == NULL) break;
-            //attacker = Agents::get_agent(turret->get_owner());
-            //if (attacker != NULL)
-                //attacker->status.kill(this->a->id);
-            //break;
-        case ENTITY_CANNONBALL:
-        case ENTITY_PLASMAGEN:
-        case ENTITY_MONSTER_SPAWNER:
-        case ENTITY_MONSTER_SLIME:
-        case ENTITY_MONSTER_BOX:
-        case ENTITY_MONSTER_BOMB:
-        case ENTITY_MONSTER_LIZARD_THIEF:
-        case ENTITY_ENERGY_CORE:
-        case ENTITY_TURRET:
-        case ENTITY_AGENT_SPAWNER:
-        case ENTITY_BASE:
-        case ENTITY_DESTINATION:
-        case NULL_ENTITY_TYPE:
-            //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
-            break;
+        Agent* attacker = Agents::get_agent(inflictor_id);
+        if (attacker != NULL)
+            attacker->status.kill(this->a->id);
+
+        #if DC_SERVER
+        agent_conflict_notification_StoC msg;
+        msg.victim = this->a->id;
+        msg.attacker = inflictor_id;
+        msg.method = death_method;    // put headshot, grenades here
+        msg.broadcast();
+        #endif
     }
-
-    #if DC_SERVER
-    // send conflict notification to clients
-    agent_conflict_notification_StoC msg;
-    //Turret* turret;
-    switch (inflictor_type)
-    {
-        case ENTITY_GRENADE:
-        case ENTITY_AGENT:
-            msg.victim = this->a->id;
-            msg.attacker = inflictor_id;
-            msg.method = death_method;    // put headshot, grenades here
-            msg.broadcast();
-            break;
-
-        //case ENTITY_TURRET:
-            //// lookup turret object, get owner, this will be the inflictor id
-            //turret = (Turret*)ServerState::entity_list->get(inflictor_type, inflictor_id);
-            //if (turret == NULL) break;
-            //inflictor_id = turret->get_owner();
-            //msg.victim = this->a->id;
-            //msg.attacker = inflictor_id;
-            //msg.method = death_method;    // put headshot, grenades here
-            //msg.broadcast();
-            //break;
-
-        case ENTITY_CANNONBALL:
-        case ENTITY_PLASMAGEN:
-        case ENTITY_MONSTER_SPAWNER:
-        case ENTITY_MONSTER_SLIME:
-        case ENTITY_MONSTER_BOX:
-        case ENTITY_MONSTER_BOMB:
-        case ENTITY_MONSTER_LIZARD_THIEF:
-        case ENTITY_ENERGY_CORE:
-        case ENTITY_TURRET:
-        case ENTITY_AGENT_SPAWNER:
-        case ENTITY_BASE:
-        case ENTITY_DESTINATION:
-        case NULL_ENTITY_TYPE:
-            break;
-    }
-    #endif
 
     return true;
 }
 
-void AgentStatus::kill(int victim_id)
+void AgentStatus::kill(AgentID victim_id)
 {
     if (victim_id == this->a->id)
     {

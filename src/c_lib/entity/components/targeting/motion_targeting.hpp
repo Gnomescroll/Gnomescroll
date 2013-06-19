@@ -35,7 +35,7 @@ class MotionTargetingComponent: public TargetingComponent
     virtual ~MotionTargetingComponent() {}
 
     MotionTargetingComponent() :
-        TargetingComponent(COMPONENT_MOTION_TARGETING),
+        TargetingComponent(COMPONENT_MotionTargeting),
         ticks_locked(0),
         speed(1.0f), max_z_diff(128), max_lock_ticks(0),
         destination_choice_x(1.0f), destination_choice_y(1.0f),

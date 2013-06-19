@@ -133,6 +133,13 @@ static void register_settings()
     c.die = &die_mob_lizard_thief;
     c.max = 128;
 
+    set_object(ENTITY_MONSTER_BLUE_BLUB);
+    c.loader = &load_mob_blub_data;
+    c.create = &create_mob_blub;
+    c.ready = &ready_mob_blub;
+    c.die = &die_mob_blub;
+    c.max = 128;
+
     commit_object_config();
 }
 

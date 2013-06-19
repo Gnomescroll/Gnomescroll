@@ -26,60 +26,53 @@ void load_agent_spawner_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION);
-    entity_data->attach_component(type, COMPONENT_DIMENSION);
-    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
+    entity_data->attach_component(type, COMPONENT_Position);
+    entity_data->attach_component(type, COMPONENT_Dimension);
+    entity_data->attach_component(type, COMPONENT_VoxelModel);
+    entity_data->attach_component(type, COMPONENT_HitPoints);
 
     #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
-    entity_data->attach_component(type, COMPONENT_ITEM_DROP);
-    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    entity_data->attach_component(type, COMPONENT_AgentSpawner);
+    entity_data->attach_component(type, COMPONENT_ItemDrop);
+    entity_data->attach_component(type, COMPONENT_RateLimit);
     #endif
 
     #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_Animation);
     #endif
 }
 
 static void set_agent_spawner_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION);
+    ADD_COMPONENT(Position, object);
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    auto dims = ADD_COMPONENT(Dimension, object);
     dims->height = AGENT_SPAWNER_HEIGHT;
 
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    auto vox = ADD_COMPONENT(VoxelModel, object);
     vox->vox_dat = &VoxDats::agent_spawner;
     vox->init_hitscan = AGENT_SPAWNER_INIT_WITH_HITSCAN;
     vox->init_draw = AGENT_SPAWNER_INIT_WITH_DRAW;
 
-    using Components::HitPointsHealthComponent;
-    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    auto health = ADD_COMPONENT(HitPoints, object);
     health->health = AGENT_SPAWNER_MAX_HEALTH;
     health->health_max = AGENT_SPAWNER_MAX_HEALTH;
 
     #if DC_SERVER
-    using Components::AgentSpawnerComponent;
-    AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
+    auto spawner = ADD_COMPONENT(AgentSpawner, object);
     spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    auto limiter = ADD_COMPONENT(RateLimit, object);
     limiter->limit = MOB_BROADCAST_RATE;
 
-    using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+    auto item_drop = ADD_COMPONENT(ItemDrop, object);
     item_drop->drop.set_max_drop_types(1);
     item_drop->drop.set_max_drop_amounts("agent_spawner", 1);
     item_drop->drop.add_drop("agent_spawner", 1, 1.0f);
     #endif
 
     #if DC_CLIENT
-    using Components::AnimationComponent;
-    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    auto anim = ADD_COMPONENT(Animation, object);
     anim->count = AGENT_SPAWNER_ANIMATION_COUNT;
     anim->count_max = AGENT_SPAWNER_ANIMATION_COUNT_MAX;
     anim->size = AGENT_SPAWNER_ANIMATION_SIZE;
@@ -106,11 +99,9 @@ Entity* create_agent_spawner()
 
 void ready_agent_spawner(Entity* object)
 {
-    using Components::VoxelModelComponent;
-    using Components::PhysicsComponent;
 
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
@@ -126,8 +117,7 @@ void ready_agent_spawner(Entity* object)
 void die_agent_spawner(Entity* object)
 {
     #if DC_SERVER
-    using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, object);
     GS_ASSERT(item_drop != NULL);
     item_drop->drop_item();
 
@@ -143,12 +133,10 @@ void die_agent_spawner(Entity* object)
 
     #if DC_CLIENT
     // explosion animation
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
     if (vox != NULL && vox->vox != NULL)
     {
-        using Components::AnimationComponent;
-        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        auto anim = GET_COMPONENT_INTERFACE(Animation, object);
         if (anim != NULL)
             anim->explode_random(vox->get_center());
     }
@@ -160,24 +148,19 @@ void die_agent_spawner(Entity* object)
 void tick_agent_spawner(Entity* object)
 {
     #if DC_SERVER
-    typedef Components::PositionPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     physics->set_position(position);
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, object);
     if (limiter->allowed()) object->broadcastState();
     #endif
 }
 
 void update_agent_spawner(Entity* object)
 {
-    typedef Components::PositionPhysicsComponent PCP;
-    using Components::VoxelModelComponent;
-
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
 
     Vec3 angles = physics->get_angles();
     Vec3 pos = physics->get_position();

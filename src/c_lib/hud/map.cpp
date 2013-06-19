@@ -265,8 +265,7 @@ void draw_text_icons(float z)
 
     if (b != NULL)
     {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)b->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, b);
         GS_ASSERT(physics != NULL);
         if (physics != NULL)
         {

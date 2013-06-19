@@ -332,8 +332,7 @@ inline void set_spawner_StoC::handle()
         Entities::Entity* obj = Entities::get(ENTITY_AGENT_SPAWNER, you->status.spawner);
         if (obj != NULL)
         {
-            using Components::VoxelModelComponent;
-            VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            auto vox = GET_COMPONENT_INTERFACE(VoxelModel, obj);
             GS_ASSERT(vox != NULL);
             if (vox != NULL && vox->vox != NULL)
                 vox->vox->fill_color(Entities::DEACTIVATED_SPAWNER_COLOR);
@@ -347,8 +346,7 @@ inline void set_spawner_StoC::handle()
         GS_ASSERT(obj != NULL);
         if (obj != NULL)
         {
-            using Components::VoxelModelComponent;
-            VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+            auto vox = GET_COMPONENT_INTERFACE(VoxelModel, obj);
             GS_ASSERT(vox != NULL);
             if (vox != NULL && vox->vox != NULL)
                 vox->vox->fill_color(Entities::ACTIVATED_SPAWNER_COLOR);
@@ -515,25 +513,22 @@ inline void hitscan_entity_CtoS::handle()
         // apply damage
         int obj_dmg = Item::get_item_object_damage(weapon_type);
         obj_dmg = obj_dmg + roundf(float(obj_dmg) * this->charge_progress);
-        using Components::HealthComponent;
-        HealthComponent* health = (HealthComponent*)
-            obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+        auto health = GET_COMPONENT_INTERFACE(Health, obj);
         if (health != NULL)
             health->take_damage(obj_dmg);
 
         // knockback
-        using Components::KnockbackComponent;
-        KnockbackComponent* knockback = (KnockbackComponent*)
-            obj->get_component_interface(COMPONENT_INTERFACE_KNOCKBACK);
-        if (knockback != NULL)
-            knockback->get_hit(a->forward_vector(),
-                               Toolbelt::get_agent_selected_item_type(a->id),
-                               this->charge_progress + 1.0f);
+        if (Item::does_knockback(weapon_type))
+        {
+            auto knockback = GET_COMPONENT_INTERFACE(Knockback, obj);
+            if (knockback != NULL)
+                knockback->get_hit(a->forward_vector(),
+                                   Toolbelt::get_agent_selected_item_type(a->id),
+                                   this->charge_progress + 1.0f);
+        }
 
         // set target on person attacking
-        using Components::MotionTargetingComponent;
-        MotionTargetingComponent* motion_targeting = (MotionTargetingComponent*)
-            obj->get_component(COMPONENT_MOTION_TARGETING);
+        auto motion_targeting = GET_COMPONENT(MotionTargeting, obj);
         if (motion_targeting != NULL)
         {
             if (motion_targeting->target_type == NULL_ENTITY_TYPE)
@@ -541,9 +536,7 @@ inline void hitscan_entity_CtoS::handle()
         }
         else
         {
-            using Components::AgentTargetingComponent;
-            AgentTargetingComponent* agent_targeting = (AgentTargetingComponent*)
-                obj->get_component(COMPONENT_AGENT_TARGETING);
+            auto agent_targeting = GET_COMPONENT(AgentTargeting, obj);
             if (agent_targeting != NULL)
             {
                 if (agent_targeting->target_type == NULL_ENTITY_TYPE)
@@ -551,9 +544,7 @@ inline void hitscan_entity_CtoS::handle()
                 else    // reset ticks locked
                     agent_targeting->ticks_locked = 0;
 
-                using Components::StateMachineComponent;
-                StateMachineComponent* state_machine = (StateMachineComponent*)
-                    obj->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+                auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, obj);
                 if (state_machine != NULL && state_machine->router != NULL)
                     state_machine->router(obj, STATE_CHASE_AGENT);
             }
@@ -729,8 +720,7 @@ static Entities::Entity* place_object_handler(EntityType type, Vec3i position, A
     if (object == NULL) return NULL;
 
     int height = 1;
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, object);
     if (dims != NULL)
         height = dims->get_integer_height();
 
@@ -749,16 +739,14 @@ static Entities::Entity* place_object_handler(EntityType type, Vec3i position, A
         return NULL;
     }
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
     if (physics != NULL)
     {
         Vec3 p = vec3_add(vec3_init(position), vec3_init(0.5, 0.5f, 0.0f));
         physics->set_position(p);
     }
 
-    using Components::OwnerComponent;
-    OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    auto owner = GET_COMPONENT_INTERFACE(Owner, object);
     if (owner != NULL) owner->set_owner(owner_id);
 
     return object;

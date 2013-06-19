@@ -24,49 +24,44 @@ void load_mob_spawner_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION);
-    entity_data->attach_component(type, COMPONENT_DIMENSION);
-    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
-    entity_data->attach_component(type, COMPONENT_MONSTER_SPAWNER);
+    entity_data->attach_component(type, COMPONENT_Position);
+    entity_data->attach_component(type, COMPONENT_Dimension);
+    entity_data->attach_component(type, COMPONENT_VoxelModel);
+    entity_data->attach_component(type, COMPONENT_HitPoints);
+    entity_data->attach_component(type, COMPONENT_MonsterSpawner);
 
     #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_ITEM_DROP);
-    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    entity_data->attach_component(type, COMPONENT_ItemDrop);
+    entity_data->attach_component(type, COMPONENT_RateLimit);
     #endif
     #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_Animation);
     #endif
 }
 
 static void set_mob_spawner_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION);
+    ADD_COMPONENT(Position, object);
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    auto dims = ADD_COMPONENT(Dimension, object);
     dims->height = MONSTER_SPAWNER_HEIGHT;
 
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    auto vox = ADD_COMPONENT(VoxelModel, object);
     vox->vox_dat = &VoxDats::monster_spawner;
     vox->init_hitscan = MONSTER_SPAWNER_INIT_WITH_HITSCAN;
     vox->init_draw = MONSTER_SPAWNER_INIT_WITH_DRAW;
 
-    using Components::HitPointsHealthComponent;
-    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    auto health = ADD_COMPONENT(HitPoints, object);
     health->health = MONSTER_SPAWNER_MAX_HEALTH;
     health->health_max = MONSTER_SPAWNER_MAX_HEALTH;
 
-    using Components::MonsterSpawnerComponent;
-    MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)add_component_to_object(object, COMPONENT_MONSTER_SPAWNER);
+    auto spawner = ADD_COMPONENT(MonsterSpawner, object);
     spawner->radius = MONSTER_SPAWNER_SPAWN_RADIUS;
     spawner->set_max_children(MONSTER_SPAWNER_MAX_CHILDREN);
     spawner->spawn_type = ENTITY_MONSTER_BOX;
 
     #if DC_SERVER
-    using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+    auto item_drop = ADD_COMPONENT(ItemDrop, object);
     GS_ASSERT(item_drop != NULL);
     item_drop->drop.set_max_drop_types(2);
     item_drop->drop.set_max_drop_amounts("synthesizer_coin", 3);
@@ -80,14 +75,12 @@ static void set_mob_spawner_properties(Entity* object)
     item_drop->drop.add_drop("small_charge_pack", 3, 0.15f);
     item_drop->drop.add_drop("small_charge_pack", 4, 0.05f);
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    auto limiter = ADD_COMPONENT(RateLimit, object);
     limiter->limit = MOB_BROADCAST_RATE;
     #endif
 
     #if DC_CLIENT
-    using Components::AnimationComponent;
-    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    auto anim = ADD_COMPONENT(Animation, object);
     anim->color = MONSTER_SPAWNER_ANIMATION_COLOR;
     anim->count = MONSTER_SPAWNER_ANIMATION_COUNT;
     //anim->count_max = MONSTER_SPAWNER_ANIMATION_COUNT_MAX;
@@ -113,11 +106,9 @@ Entity* create_mob_spawner()
 
 void ready_mob_spawner(Entity* object)
 {
-    using Components::VoxelModelComponent;
-    using Components::PhysicsComponent;
 
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
@@ -134,27 +125,23 @@ void die_mob_spawner(Entity* object)
 {
     #if DC_SERVER
     // drop item
-    using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, object);
     GS_ASSERT(item_drop != NULL);
     item_drop->drop_item();
 
     object->broadcastDeath();
 
-    using Components::MonsterSpawnerComponent;
-    MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)object->get_component(COMPONENT_MONSTER_SPAWNER);
+    auto spawner = GET_COMPONENT(MonsterSpawner, object);
     GS_ASSERT(spawner != NULL);
     spawner->notify_children_of_death();
     #endif
 
     #if DC_CLIENT
     // explosion animation
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
     if (vox->vox != NULL)
     {
-        using Components::AnimationComponent;
-        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        auto anim = GET_COMPONENT_INTERFACE(Animation, object);
         anim->explode(vox->get_center());
     }
     #endif
@@ -163,26 +150,20 @@ void die_mob_spawner(Entity* object)
 void tick_mob_spawner(Entity* object)
 {
     #if DC_SERVER
-    typedef Components::PositionPhysicsComponent PCP;
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     physics->set_position(position);
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, object);
     if (limiter->allowed()) object->broadcastState();
     #endif
 }
 
 void update_mob_spawner(Entity* object)
 {
-    typedef Components::PositionPhysicsComponent PCP;
-    using Components::VoxelModelComponent;
-
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION);
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
 
     Vec3 angles = physics->get_angles();
     vox->force_update(physics->get_position(), angles.x, angles.y, physics->get_changed());

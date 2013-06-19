@@ -81,7 +81,7 @@ class VoxelModelComponent: public Component
     }
 
     VoxelModelComponent() :
-        Component(COMPONENT_VOXEL_MODEL, COMPONENT_INTERFACE_VOXEL_MODEL),
+        Component(COMPONENT_VoxelModel, COMPONENT_INTERFACE_VoxelModel),
         vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
         should_hitscan(true), should_draw(true)
     {}

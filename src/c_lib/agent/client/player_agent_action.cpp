@@ -173,7 +173,6 @@ void PlayerAgentAction::fire_weapon(ItemType weapon_type)
             break;
 
         case HITSCAN_TARGET_SPRITE_MOB:
-            printf("Sending entity message\n");
             entity_msg.send();
             sound_name = "pick_hit_agent";
             break;

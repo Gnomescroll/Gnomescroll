@@ -71,7 +71,7 @@ class DestinationTargetingComponent: public TargetingComponent
     }
 
     DestinationTargetingComponent() :
-        TargetingComponent(COMPONENT_DESTINATION_TARGETING),
+        TargetingComponent(COMPONENT_DestinationTargeting),
         destination(vec3_init(0)),
         path(NULL), mpath(0), ipath(0),
         stop_proximity(0.1f),

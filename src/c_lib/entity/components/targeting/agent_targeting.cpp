@@ -19,8 +19,7 @@ void AgentTargetingComponent::set_target(AgentID agent_id)
     Agents::Agent* a = Agents::get_agent((AgentID)agent_id);
     IF_ASSERT(a == NULL) return;
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
     IF_ASSERT(physics == NULL) return;
     Vec3 position = physics->get_position();
 
@@ -86,8 +85,7 @@ void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
 
 void AgentTargetingComponent::move_on_surface()
 {   // adjusts position & momentum by moving over the terrain surface
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
     IF_ASSERT(physics == NULL) return;
 
     // TODO -- get box dimension from dimensions component
@@ -175,9 +173,7 @@ void AgentTargetingComponent::call()
         this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
 
-        using Components::StateMachineComponent;
-        StateMachineComponent* state_machine = (StateMachineComponent*)
-            this->object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+        auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, this->object);
         if (state_machine != NULL && state_machine->router != NULL)
             state_machine->router(this->object, STATE_WAITING);
     }

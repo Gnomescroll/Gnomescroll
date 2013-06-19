@@ -5,6 +5,10 @@
 #include <math.h>
 #include <stdio.h>
 
+#ifndef M_PI
+# define M_PI       3.14159265358979323846  /* pi */
+#endif
+
 #define RLUM    (0.3086)
 #define GLUM    (0.6094)
 #define BLUM    (0.0820)

@@ -6,7 +6,7 @@
 namespace Components
 {
 
-class HitPointsHealthComponent: public HealthComponent
+class HitPointsComponent: public HealthComponent
 {
     private:
         bool died;
@@ -35,8 +35,8 @@ class HitPointsHealthComponent: public HealthComponent
         this->health = 0;
     }
 
-    HitPointsHealthComponent() :
-        HealthComponent(COMPONENT_HIT_POINTS),
+    HitPointsComponent() :
+        HealthComponent(COMPONENT_HitPoints),
         died(false), health(100), health_max(100)
     {}
 };

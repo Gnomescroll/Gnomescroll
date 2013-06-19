@@ -24,8 +24,8 @@ class ItemDropComponent: public Component
     Item::ItemDrop drop;
     void drop_item();
 
-    ItemDropComponent()
-    : Component(COMPONENT_ITEM_DROP, COMPONENT_INTERFACE_ITEM_DROP)
+    ItemDropComponent() :
+        Component(COMPONENT_ItemDrop, COMPONENT_INTERFACE_ItemDrop)
     {
         this->drop.vx_func = &default_random_velocity;
         this->drop.vy_func = &default_random_velocity;

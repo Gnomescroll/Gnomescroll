@@ -322,6 +322,13 @@ bool can_be_placed(ItemType item_type)
     return attr->placeable;
 }
 
+bool does_knockback(ItemType item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    if (attr == NULL) return false;
+    return attr->knockback;
+}
+
 // total ticks to burn
 int get_fuel_burn_rate(ItemType item_type)
 {

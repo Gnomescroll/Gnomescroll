@@ -17,8 +17,8 @@
     //// attach components
     //const int n_components = 2;
     //object->init(n_components);
-    //add_component_to_object(object, COMPONENT_PICKUP);
-    //add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_PHYSICS);
+    //add_component_to_object(object, COMPONENT_Pickup);
+    //add_component_to_object(object, COMPONENT_PositionMomentum_PHYSICS);
 
     //return obj;
 //}
