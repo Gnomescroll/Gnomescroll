@@ -435,6 +435,26 @@ void load_block_dat()
     p->explosive = true;
     set_max_damage(2);
 
+    cube_def(SolidCube, "city_green");
+    iso_texture(iceflame, 3, 3);
+    push_texture();
+    set_max_damage(48);
+
+    cube_def(SolidCube, "city_red");
+    iso_texture(iceflame, 3, 4);
+    push_texture();
+    set_max_damage(48);
+
+    cube_def(SolidCube, "city_blue");
+    iso_texture(iceflame, 3, 5);
+    push_texture();
+    set_max_damage(48);
+
+    cube_def(SolidCube, "city_gray");
+    iso_texture(iceflame, 3, 6);
+    push_texture();
+    set_max_damage(48);
+
 /*
 
 */

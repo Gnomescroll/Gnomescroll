@@ -11,10 +11,10 @@ namespace t_gen
 void init_cities()
 {
     processor = t_map::get_cube_type("control_node");
-    green = t_map::get_cube_type("ruins_ceiling1");
-    red = t_map::get_cube_type("ruins_ceiling2");
-    purple = t_map::get_cube_type("ruins_ceiling3");
-    gray = t_map::get_cube_type("ruins_ceiling4");
+    green = t_map::get_cube_type("city_green");
+    red = t_map::get_cube_type("city_red");
+    purple = t_map::get_cube_type("city_blue");
+    gray = t_map::get_cube_type("city_gray");
     storage = t_map::get_cube_type("storage_block_small");
     cryofreezer = t_map::get_cube_type("cryofreezer_small");
     smelter = t_map::get_cube_type("smelter_basic");
@@ -314,6 +314,7 @@ void generate_transmission_tower(int x, int y)
 
 void create_road(int x, int y, int z, int ox, int oy, int oz)
 {
+    printf("Connecting %d, %d, %d with %d, %d, %d with a road...\n", x, y, z, ox, oy, oz);
     CubeType RoadBlock[] = {steelA, steelB, steelC, stone, green, red, purple, gray};
     for(int LinesMade = 0; LinesMade < ROAD_SIZE; LinesMade++)
     {
