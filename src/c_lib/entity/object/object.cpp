@@ -21,7 +21,7 @@ class Components::Component* Entity::get_component(ComponentType type)
 {
     int slot = entity_data->get_component_slot(this->type, type);
     if (slot < 0) return NULL;
-    GS_ASSERT(slot < this->n_components);
+    IF_ASSERT(slot >= this->n_components) return NULL;
     return this->components[slot];
 }
 
@@ -29,7 +29,7 @@ class Components::Component* Entity::get_component_interface(ComponentInterfaceT
 {
     int slot = entity_data->get_component_interface_slot(this->type, interface);
     if (slot < 0) return NULL;
-    GS_ASSERT(slot < this->n_components);
+    IF_ASSERT(slot >= this->n_components) return NULL;
     return this->components[slot];
 }
 
@@ -41,13 +41,11 @@ void Entity::broadcastDeath()
     msg.broadcast();
 }
 
-void Entity::init(int n_components)
+void Entity::init(size_t n_components)
 {
     GS_ASSERT(this->components == NULL);
     GS_ASSERT(this->n_components == 0);
-    IF_ASSERT(n_components < 0) n_components = 0;
     this->n_components = n_components;
-    if (n_components <= 0) return;
     this->components = (class Components::Component**)calloc(n_components, sizeof(*this->components));
 }
 

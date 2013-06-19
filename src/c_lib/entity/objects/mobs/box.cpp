@@ -19,14 +19,7 @@ void load_mob_robot_box_data()
 {
     EntityType type = ENTITY_MONSTER_BOX;
 
-    #if DC_SERVER
-    const int n_components = 10;
-    #endif
-    #if DC_CLIENT
-    const int n_components = 7;
-    #endif
-
-    entity_data->set_components(type, n_components);
+    entity_data->begin_attaching_to(type);
 
     entity_data->attach_component(type, COMPONENT_PositionMomentum);
     entity_data->attach_component(type, COMPONENT_Dimension);

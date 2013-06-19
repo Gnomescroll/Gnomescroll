@@ -64,7 +64,7 @@ Component* get_switch(ComponentType type)
         COMPONENTS
         #undef A
 
-        case COMPONENT_NONE:
+        case NULL_COMPONENT:
             printf("ERROR: %s -- unknown ComponentType %d\n", __FUNCTION__, type);
             return NULL;
     }
@@ -83,7 +83,7 @@ void release_switch(Component* component)
         COMPONENTS
         #undef A
 
-        case COMPONENT_NONE:
+        case NULL_COMPONENT:
             printf("ERROR: %s -- unknown ComponentType %d\n", __FUNCTION__, component->type);
             break;
     }
@@ -92,9 +92,9 @@ void release_switch(Component* component)
 ComponentInterfaceType get_interface_for_component(ComponentType component)
 {
     IF_ASSERT(component_interface_map == NULL)
-        return COMPONENT_INTERFACE_NONE;
-    IF_ASSERT(!isValid(component) && component != COMPONENT_NONE)
-        return COMPONENT_INTERFACE_NONE;
+        return NULL_COMPONENT_INTERFACE;
+    IF_ASSERT(!isValid(component) && component != NULL_COMPONENT)
+        return NULL_COMPONENT_INTERFACE;
     return component_interface_map[component];
 }
 
@@ -102,7 +102,7 @@ static void set_interface_for_component(ComponentType component, ComponentInterf
 {
     IF_ASSERT(component_interface_map == NULL)
         return;
-    IF_ASSERT(!isValid(component) && component != COMPONENT_NONE)
+    IF_ASSERT(!isValid(component) && component != NULL_COMPONENT)
         return;
     component_interface_map[component] = interface;
 }
@@ -111,7 +111,7 @@ void init_interfaces()
 {
     GS_ASSERT(component_interface_map == NULL);
     component_interface_map = (ComponentInterfaceType*)calloc(MAX_COMPONENT_TYPES + 1, sizeof(ComponentInterfaceType));
-    set_interface_for_component(COMPONENT_NONE, COMPONENT_INTERFACE_NONE);
+    set_interface_for_component(NULL_COMPONENT, NULL_COMPONENT_INTERFACE);
 
     #define A(NAME, LNAME, TYPE, INTERFACE, MAX) \
         set_interface_for_component(COMPONENT_##TYPE, COMPONENT_INTERFACE_##INTERFACE);

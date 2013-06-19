@@ -91,7 +91,7 @@ typedef enum
     COMPONENT_Knockback,
     #endif
 
-    COMPONENT_NONE = MAX_COMPONENT_TYPES,
+    NULL_COMPONENT = MAX_COMPONENT_TYPES,
 } ComponentType;
 
 const int MAX_COMPONENT_INTERFACE_TYPES = 0xFF;
@@ -128,7 +128,7 @@ typedef enum
     COMPONENT_INTERFACE_ItemDrop,
     #endif
 
-    COMPONENT_INTERFACE_NONE = MAX_COMPONENT_INTERFACE_TYPES,
+    NULL_COMPONENT_INTERFACE = MAX_COMPONENT_INTERFACE_TYPES,
 } ComponentInterfaceType;
 
 typedef enum

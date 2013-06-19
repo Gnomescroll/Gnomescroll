@@ -49,7 +49,6 @@ void init()
     entity_data = new EntityDataList;
     entity_data->init();
     load_object_data();
-    entity_data->sanity_check();
 
     entity_list->load_object_data(entity_data);
 }

@@ -126,6 +126,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         optflag,
     ]
 
+    if OS == 'Linux' and not windows:
+        extra_options.append('-Dlinux')
+
     if windows:
         extra_options.append('-DLINUX2WINDOWS')
 

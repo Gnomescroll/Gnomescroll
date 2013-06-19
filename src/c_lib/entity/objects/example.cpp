@@ -60,7 +60,7 @@ Entity* create_REPLACEME()
     // attach components
     const int n_components = 1;
     object->init(n_components);
-    add_component_to_object(object, COMPONENT_NONE);
+    add_component_to_object(object, NULL_COMPONENT);
 
     return obj;
 }

@@ -19,14 +19,7 @@ void load_turret_data()
 {
     EntityType type = ENTITY_TURRET;
 
-    #if DC_SERVER
-    int n_components = 8;
-    #endif
-    #if DC_CLIENT
-    int n_components = 7;
-    #endif
-
-    entity_data->set_components(type, n_components);
+    entity_data->begin_attaching_to(type);
 
     entity_data->attach_component(type, COMPONENT_Position);
     entity_data->attach_component(type, COMPONENT_Owner);

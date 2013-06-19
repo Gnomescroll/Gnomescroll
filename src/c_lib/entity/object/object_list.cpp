@@ -157,7 +157,7 @@ void EntityList::load_object_data(EntityDataList* data)
 {   // preallocate component pointer buffers
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
-        int n_components = data->get_component_count(EntityType(i));
+        size_t n_components = data->get_component_count(EntityType(i));
         for (int j=0; j<this->maximums[i]; j++)
         {
             this->objects[i][j] = new Entity(EntityID(j));

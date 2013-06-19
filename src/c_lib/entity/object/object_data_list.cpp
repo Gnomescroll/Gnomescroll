@@ -5,22 +5,52 @@
 namespace Entities
 {
 
-void EntityDataList::set_components(EntityType type, int n_components)
+void EntityDataList::grow_component_list(EntityType type)
 {
     IF_ASSERT(!isValid(type)) return;
-    IF_ASSERT(n_components < 0)
-        n_components = 0;
-    if (n_components > 0)
+    size_t size = this->component_maxes[type] * 2;
+    ComponentType* ct_tmp = (ComponentType*)realloc(this->component_types[type], size * sizeof(ComponentType));
+    IF_ASSERT(ct_tmp == NULL) return;
+    ComponentInterfaceType* cit_tmp = (ComponentInterfaceType*)realloc(this->interface_types[type], size * sizeof(ComponentInterfaceType));
+    IF_ASSERT(cit_tmp == NULL)
     {
-        this->component_types[type] = (ComponentType*)malloc(n_components * sizeof(ComponentType));
-        this->interface_types[type] = (ComponentInterfaceType*)malloc(n_components * sizeof(ComponentInterfaceType));
+        free(ct_tmp);
+        return;
     }
-    this->expected_component_sizes[type] = n_components;
+
+    this->component_types[type] = ct_tmp;
+    this->interface_types[type] = cit_tmp;
+
+    for (size_t i=this->component_sizes[type]; i<size; i++)
+    {
+        this->component_types[type][i] = NULL_COMPONENT;
+        this->interface_types[type][i] = NULL_COMPONENT_INTERFACE;
+    }
+
+    this->component_maxes[type] = size;
+}
+
+void EntityDataList::begin_attaching_to(EntityType type)
+{
+    IF_ASSERT(!isValid(type)) return;
+    this->current_type = type;
+    this->component_types[type] = (ComponentType*)malloc(this->component_maxes[type] * sizeof(ComponentType));
+    this->interface_types[type] = (ComponentInterfaceType*)malloc(this->component_maxes[type] * sizeof(ComponentInterfaceType));
+    for (size_t i=0; i<this->component_maxes[type]; i++)
+    {
+        this->component_types[type][i] = NULL_COMPONENT;
+        this->interface_types[type][i] = NULL_COMPONENT_INTERFACE;
+    }
 }
 
 void EntityDataList::attach_component(EntityType type, ComponentType component)
 {
-    int index = this->component_sizes[type];
+    IF_ASSERT(!isValid(type)) return;
+    size_t index = this->component_sizes[type];
+    if (index >= this->component_maxes[type])
+        this->grow_component_list(type);
+    IF_ASSERT(index >= this->component_maxes[type])
+        return;
     this->component_types[type][index] = component;
     ComponentInterfaceType interface = Components::get_interface_for_component(component);
     GS_ASSERT(isValid(interface));
@@ -30,12 +60,14 @@ void EntityDataList::attach_component(EntityType type, ComponentType component)
 
 inline int EntityDataList::get_component_count(EntityType type)
 {
+    IF_ASSERT(!isValid(type)) return 0;
     return this->component_sizes[type];
 }
 
 inline int EntityDataList::get_component_slot(EntityType type, ComponentType component)
 {
-    for (int i=0; i<this->component_sizes[type]; i++)
+    IF_ASSERT(!isValid(type)) return -1;
+    for (size_t i=0; i<this->component_sizes[type]; i++)
         if (this->component_types[type][i] == component)
             return i;
     return -1;
@@ -43,7 +75,8 @@ inline int EntityDataList::get_component_slot(EntityType type, ComponentType com
 
 inline int EntityDataList::get_component_interface_slot(EntityType type, ComponentInterfaceType interface)
 {
-    for (int i=0; i<this->component_sizes[type]; i++)
+    IF_ASSERT(!isValid(type)) return -1;
+    for (size_t i=0; i<this->component_sizes[type]; i++)
         if (this->interface_types[type][i] == interface)
             return i;
     return -1;
@@ -53,24 +86,21 @@ void EntityDataList::init()
 {
     GS_ASSERT(this->component_types == NULL);
     GS_ASSERT(this->interface_types == NULL);
-    GS_ASSERT(this->expected_component_sizes == NULL);
     GS_ASSERT(this->component_sizes == NULL);
+    GS_ASSERT(this->component_maxes == NULL);
 
     this->component_types = (ComponentType**)calloc(MAX_ENTITY_TYPES, sizeof(ComponentType*));
     this->interface_types = (ComponentInterfaceType**)calloc(MAX_ENTITY_TYPES, sizeof(ComponentInterfaceType*));
-    this->expected_component_sizes = (int*)calloc(MAX_ENTITY_TYPES, sizeof(int));
-    this->component_sizes = (int*)calloc(MAX_ENTITY_TYPES, sizeof(int));
+    this->component_sizes = (size_t*)calloc(MAX_ENTITY_TYPES, sizeof(size_t));
+    this->component_maxes = (size_t*)calloc(MAX_ENTITY_TYPES, sizeof(size_t));
+
+    for (int i=0; i<MAX_ENTITY_TYPES; i++)
+        this->component_maxes[i] = this->COMPONENTS_START_SIZE;
 
     GS_ASSERT(this->component_types != NULL);
     GS_ASSERT(this->interface_types != NULL);
-    GS_ASSERT(this->expected_component_sizes != NULL);
     GS_ASSERT(this->component_sizes != NULL);
-}
-
-void EntityDataList::sanity_check()
-{
-    for (int i=0; i<MAX_ENTITY_TYPES; i++)
-        GS_ASSERT(this->expected_component_sizes[i] == this->component_sizes[i]);
+    GS_ASSERT(this->component_maxes != NULL);
 }
 
 EntityDataList::~EntityDataList()
@@ -85,8 +115,8 @@ EntityDataList::~EntityDataList()
             free(this->interface_types[i]);
     free(interface_types);
 
-    free(this->expected_component_sizes);
     free(this->component_sizes);
+    free(this->component_maxes);
 }
 
 } // Entities

@@ -47,7 +47,7 @@ class Entity
     class Components::Component* get_component(ComponentType type);
     class Components::Component* get_component_interface(ComponentInterfaceType interface);
 
-    void init(int n_components);
+    void init(size_t n_components);
 
     ~Entity();
 

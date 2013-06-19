@@ -21,14 +21,7 @@ void load_mob_bomb_data()
 {
     EntityType type = ENTITY_MONSTER_BOMB;
 
-    #if DC_SERVER
-    const int n_components = 12;
-    #endif
-    #if DC_CLIENT
-    const int n_components = 8;
-    #endif
-
-    entity_data->set_components(type, n_components);
+    entity_data->begin_attaching_to(type);
 
     entity_data->attach_component(type, COMPONENT_PositionMomentum);
     entity_data->attach_component(type, COMPONENT_Dimension);

@@ -16,14 +16,7 @@ void load_base_data()
 {
     EntityType type = ENTITY_BASE;
 
-    #if DC_SERVER
-    int n_components = 5;
-    #endif
-    #if DC_CLIENT
-    int n_components = 3;
-    #endif
-
-    entity_data->set_components(type, n_components);
+    entity_data->begin_attaching_to(type);
 
     entity_data->attach_component(type, COMPONENT_Position);
     entity_data->attach_component(type, COMPONENT_Dimension);
