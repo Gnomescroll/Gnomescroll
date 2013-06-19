@@ -28,46 +28,42 @@ void load_turret_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION);
-    entity_data->attach_component(type, COMPONENT_OWNER);
-    entity_data->attach_component(type, COMPONENT_DIMENSION);
-    entity_data->attach_component(type, COMPONENT_VOXEL_MODEL);
-    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
-    entity_data->attach_component(type, COMPONENT_WEAPON_TARGETING);
+    entity_data->attach_component(type, COMPONENT_Position);
+    entity_data->attach_component(type, COMPONENT_Owner);
+    entity_data->attach_component(type, COMPONENT_Dimension);
+    entity_data->attach_component(type, COMPONENT_VoxelModel);
+    entity_data->attach_component(type, COMPONENT_HitPoints);
+    entity_data->attach_component(type, COMPONENT_WeaponTargeting);
 
     #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_EXPLOSION);
-    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
+    entity_data->attach_component(type, COMPONENT_Explosion);
+    entity_data->attach_component(type, COMPONENT_RateLimit);
     #endif
 
     #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_Animation);
     #endif
 }
 
 static void set_turret_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION);
-    add_component_to_object(object, COMPONENT_OWNER);
+    ADD_COMPONENT(Position, object);
+    ADD_COMPONENT(Owner, object);
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    auto dims = ADD_COMPONENT(Dimension, object);
     dims->height = TURRET_HEIGHT;
     dims->camera_height = TURRET_CAMERA_HEIGHT;
 
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    auto vox = ADD_COMPONENT(VoxelModel, object);
     vox->vox_dat = &VoxDats::turret;
     vox->init_hitscan = TURRET_INIT_WITH_HITSCAN;
     vox->init_draw = TURRET_INIT_WITH_DRAW;
 
-    using Components::HitPointsHealthComponent;
-    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    auto health = ADD_COMPONENT(HitPoints, object);
     health->health = TURRET_MAX_HEALTH;
     health->health_max = TURRET_MAX_HEALTH;
 
-    using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
+    auto target = ADD_COMPONENT(WeaponTargeting, object);
     target->target_acquisition_failure_rate = TURRET_TARGET_ACQUISITION_PROBABILITY;
     target->fire_rate_limit = TURRET_FIRE_RATE_LIMIT;
     target->uses_bias = TURRET_USES_BIAS;
@@ -84,21 +80,18 @@ static void set_turret_properties(Entity* object)
     target->attacker_properties.terrain_modification_action = TMA_TURRET;
 
     #if DC_SERVER
-    using Components::ExplosionComponent;
-    ExplosionComponent* explode = (ExplosionComponent*)add_component_to_object(object, COMPONENT_EXPLOSION);
+    auto explode = ADD_COMPONENT(Explosion, object);
     explode->radius = TURRET_EXPLOSION_RADIUS;
     explode->damage = TURRET_EXPLOSION_DAMAGE;
     explode->harms_owner = TURRET_EXPLOSION_HARMS_OWNER;
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    auto limiter = ADD_COMPONENT(RateLimit, object);
     limiter->limit = MOB_BROADCAST_RATE;
     #endif
 
 
     #if DC_CLIENT
-    using Components::AnimationComponent;
-    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    auto anim = ADD_COMPONENT(Animation, object);
     anim->count = TURRET_ANIMATION_COUNT;
     anim->count_max = TURRET_ANIMATION_COUNT_MAX;
     anim->size = TURRET_ANIMATION_SIZE;
@@ -124,15 +117,12 @@ Entity* create_turret()
 void ready_turret(Entity* object)
 {
     // we have id now, set it on attack properties
-    using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* target = (WeaponTargetingComponent*)object->get_component_interface(COMPONENT_INTERFACE_TARGETING);
+    auto target = GET_COMPONENT(WeaponTargeting, object);
     target->attacker_properties.id = object->id;
 
-    using Components::VoxelModelComponent;
-    using Components::PhysicsComponent;
 
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
 
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
@@ -148,10 +138,8 @@ void ready_turret(Entity* object)
 void die_turret(Entity* object)
 {
     #if DC_SERVER
-    using Components::ExplosionComponent;
-    ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
-    using Components::OwnerComponent;
-    OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    auto explode = GET_COMPONENT_INTERFACE(Explosion, object);
+    auto owner = GET_COMPONENT_INTERFACE(Owner, object);
 
     explode->explode();
     owner->revoke();
@@ -160,12 +148,10 @@ void die_turret(Entity* object)
 
     #if DC_CLIENT
     // explosion animation
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
     if (vox->vox != NULL)
     {
-        using Components::AnimationComponent;
-        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        auto anim = GET_COMPONENT_INTERFACE(Animation, object);
         anim->explode_random(vox->get_center());
     }
 
@@ -176,37 +162,29 @@ void die_turret(Entity* object)
 void tick_turret(Entity* object)
 {
     #if DC_SERVER
-    using Components::WeaponTargetingComponent;
-    using Components::DimensionComponent;
-    typedef Components::PositionPhysicsComponent PCP;
-
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
 
     // adjust to terrain changes
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);
     physics->set_position(position);
-    DimensionComponent* dimension = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dimension = GET_COMPONENT_INTERFACE(Dimension, object);
     position.z += dimension->get_camera_height();
 
     // shoot at enemy
-    WeaponTargetingComponent* targeting = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
+    auto targeting = GET_COMPONENT(WeaponTargeting, object);
     targeting->lock_target(position);
     if (targeting->can_fire()) targeting->fire_on_target(position);
 
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, object);
     if (limiter->allowed()) object->broadcastState();
     #endif
 }
 
 void update_turret(Entity* object)
 {
-    typedef Components::PositionPhysicsComponent PCP;
-    using Components::VoxelModelComponent;
-
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION);
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
 
     Vec3 angles = physics->get_angles();
     vox->force_update(physics->get_position(), angles.x, angles.y, physics->get_changed());

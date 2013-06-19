@@ -3,7 +3,7 @@
 namespace Components
 {
 
-class TTLHealthComponent: public HealthComponent
+class TTLComponent: public HealthComponent
 {
     public:
         int ttl;
@@ -36,9 +36,9 @@ class TTLHealthComponent: public HealthComponent
                 this->ttl++;
         }
 
-    TTLHealthComponent()
-    : HealthComponent(COMPONENT_TTL),
-    ttl(0), ttl_max(30*5)
+    TTLComponent() :
+        HealthComponent(COMPONENT_TTL),
+        ttl(0), ttl_max(30*5)
     {}
 };
 

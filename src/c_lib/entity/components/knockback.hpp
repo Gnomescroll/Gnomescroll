@@ -28,8 +28,7 @@ class KnockbackComponent: public Component
                                          // WARNING -- physics code doesn't like
                                          // high values of this (4.0 is too high)
         const float FORCE_MAX = 2.0f;    // cap the force so as not to disturb the physics
-        PhysicsComponent* physics = (PhysicsComponent*)
-            this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, object);
         IF_ASSERT(physics == NULL) return;  // how are you getting knocked back if you dont have physics
         Vec3 v = physics->get_momentum();
         float force = (FORCE_BASE * force_multiplier) / this->weight;
@@ -47,7 +46,7 @@ class KnockbackComponent: public Component
     }
 
     KnockbackComponent() :
-        Component(COMPONENT_KNOCKBACK, COMPONENT_INTERFACE_KNOCKBACK),
+        Component(COMPONENT_Knockback, COMPONENT_INTERFACE_Knockback),
         weight(1.0f), knockback_cooldown(ONE_SECOND), knockback_tick(0)
     {}
 };

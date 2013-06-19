@@ -65,14 +65,13 @@ void AgentStatus::set_spawner(EntityID pt)
     if (pt == this->spawner) return;
 
     #if DC_SERVER
-    using Components::AgentSpawnerComponent;
     if (pt != BASE_SPAWN_ID && this->spawner != BASE_SPAWN_ID)
     {   // transferring between spawners
         class Entities::Entity* old_spawner = Entities::get(ENTITY_AGENT_SPAWNER, this->spawner);
         GS_ASSERT(old_spawner != NULL);
         if (old_spawner != NULL)
         {
-            AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)old_spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            auto agent_spawner = GET_COMPONENT(AgentSpawner, old_spawner);
             GS_ASSERT(agent_spawner != NULL);
             if (agent_spawner != NULL) agent_spawner->remove_all(this->a->id);
         }
@@ -91,19 +90,17 @@ void AgentStatus::set_spawner(EntityID pt)
     class Entities::Entity* spawner = Entities::get(ENTITY_AGENT_SPAWNER, pt);
     IF_ASSERT(spawner == NULL) return;
 
-    AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+    auto agent_spawner = GET_COMPONENT(AgentSpawner, spawner);
     GS_ASSERT(agent_spawner != NULL);
     if (agent_spawner != NULL) agent_spawner->add_agent(this->a->id);
 
     // play sound
     // only send the sound if its not the base spawner set
     struct Vec3 pos;
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, spawner);
     IF_ASSERT(vox == NULL)
     {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)spawner->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, spawner);
         IF_ASSERT(physics == NULL) return;
         pos = physics->get_position();
     }
@@ -178,8 +175,7 @@ void AgentStatus::quit()
         GS_ASSERT(spawner != NULL);
         if (spawner != NULL)
         {
-            using Components::AgentSpawnerComponent;
-            AgentSpawnerComponent* agent_spawner = (AgentSpawnerComponent*)spawner->get_component(COMPONENT_AGENT_SPAWNER);
+            auto agent_spawner = GET_COMPONENT(AgentSpawner, spawner);
             GS_ASSERT(agent_spawner != NULL);
             if (agent_spawner != NULL) agent_spawner->remove(this->a->id);
         }

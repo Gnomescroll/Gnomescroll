@@ -176,25 +176,20 @@ bool point_occupied_by_type(EntityType type, const Vec3i& position)
     int max = entity_list->max(type);
     GS_ASSERT(max > 0);
 
-    using Components::PhysicsComponent;
-    using Components::DimensionComponent;
-
-    Entity *obj;
+    Entity* obj;
     Vec3i p = vec3i_init(0);
     int height = 1;
-    PhysicsComponent* physics;
-    DimensionComponent* dims;
 
     for (int i=0; i<max; i++)
     {
         if (!used[i]) continue;
         obj = objects[i];
 
-        physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
         IF_ASSERT(physics == NULL) continue;
         p = vec3i_init(physics->get_position());
         if (p.x != position.x || p.y != position.y) continue;
-        dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+        auto dims = GET_COMPONENT_INTERFACE(Dimension, obj);
         if (dims != NULL) height = dims->get_integer_height();
         else height = 1;
 
@@ -211,8 +206,7 @@ void damage_objects_within_sphere(const EntityType* types, int n_types, Vec3 pos
     for (int i=0; i<count; i++)
     {
         Entity* object = filter->objects[i];
-        using Components::HealthComponent;
-        HealthComponent* health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+        auto health = GET_COMPONENT_INTERFACE(Health, object);
         if (health != NULL) health->take_damage(damage);
     }
 }
@@ -229,13 +223,11 @@ void spawn_mobs()
     GS_ASSERT(max > 0);
     Entity* obj;
     Entity* child;
-    using Components::MonsterSpawnerComponent;
-    MonsterSpawnerComponent* spawner;
     for (int i=0; i<max; i++)
     {
         if (!used[i]) continue;
         obj = objects[i];
-        spawner = (MonsterSpawnerComponent*)obj->get_component(COMPONENT_MONSTER_SPAWNER);
+        auto spawner = GET_COMPONENT(MonsterSpawner, obj);
         IF_ASSERT(spawner == NULL) continue;
         child = spawner->spawn_child();
         if (child != NULL) ready(child);

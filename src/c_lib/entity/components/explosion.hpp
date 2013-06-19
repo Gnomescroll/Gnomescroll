@@ -31,7 +31,7 @@ class ExplosionComponent: public Component
     void damage_blocks();
 
     ExplosionComponent() :
-        Component(COMPONENT_EXPLOSION, COMPONENT_INTERFACE_EXPLOSION),
+        Component(COMPONENT_Explosion, COMPONENT_INTERFACE_Explosion),
         radius(1.0f), damage(0), proximity_radius(1.0f), harms_owner(false),
         delay(0), delay_tick(0), block_destruction_radius(1.0f),
         block_damage(32), terrain_modification_action(TMA_NONE)

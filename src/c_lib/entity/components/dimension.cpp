@@ -8,7 +8,7 @@ namespace Components
 
 Vec3 DimensionComponent::get_camera_position()
 {
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
     if (physics == NULL) return NULL_POSITION;
     Vec3 position = physics->get_position();
     position.z += this->camera_height;

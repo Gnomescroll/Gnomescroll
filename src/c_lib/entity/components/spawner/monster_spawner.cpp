@@ -13,7 +13,7 @@ struct Vec3 MonsterSpawnerComponent::get_spawn_point(
 {
     Vec3 spawn_point = vec3_init(0);
 
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
     if (physics == NULL) return spawn_point;
 
     Vec3 position = physics->get_position();
@@ -43,27 +43,23 @@ class Entities::Entity* MonsterSpawnerComponent::spawn_child()
 
     this->children[this->children_ct++] = child->id;
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)child->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, child);
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
         float height = 1.0f;
-        using Components::DimensionComponent;
-        DimensionComponent* dims = (DimensionComponent*)child->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+        auto dims = GET_COMPONENT_INTERFACE(Dimension, child);
         if (dims != NULL) height = dims->get_height();
 
         float radius = 1.0f;
-        using Components::VoxelModelComponent;
-        VoxelModelComponent* vox = (VoxelModelComponent*)child->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+        auto vox = GET_COMPONENT_INTERFACE(VoxelModel, child);
         if (vox != NULL) radius = vox->get_radius();
 
         Vec3 position = this->get_spawn_point(height, radius);
         physics->set_position(position);
     }
 
-    using Components::SpawnChildComponent;
-    SpawnChildComponent* spawn = (SpawnChildComponent*)child->get_component(COMPONENT_SPAWN_CHILD);
+    auto spawn = GET_COMPONENT(SpawnChild, child);
     GS_ASSERT(spawn != NULL);
     if (spawn != NULL)
         spawn->assign_parent(this->object->type, this->object->id);
@@ -84,7 +80,7 @@ void MonsterSpawnerComponent::notify_children_of_death()
     {
         class Entities::Entity* child = Entities::get(this->spawn_type, this->children[i]);
         IF_ASSERT(child == NULL) continue;
-        SpawnChildComponent* spawn = (SpawnChildComponent*)child->get_component(COMPONENT_SPAWN_CHILD);
+        auto spawn = GET_COMPONENT(SpawnChild, child);
         IF_ASSERT(spawn == NULL) continue;
         GS_ASSERT(spawn->parent_type == this->object->type);
         GS_ASSERT(spawn->parent_id == this->object->id);

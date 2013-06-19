@@ -8,7 +8,7 @@
 namespace Components
 {
 
-class PositionMomentumPhysicsComponent: public PositionPhysicsComponent
+class PositionMomentumComponent: public PositionComponent
 {
     protected:
         Vec3 momentum;
@@ -44,8 +44,8 @@ class PositionMomentumPhysicsComponent: public PositionPhysicsComponent
         return true;
     }
 
-    PositionMomentumPhysicsComponent() :
-        PositionPhysicsComponent(COMPONENT_POSITION_MOMENTUM),
+    PositionMomentumComponent() :
+        PositionComponent(COMPONENT_PositionMomentum),
         momentum(NULL_MOMENTUM)
     {}
 

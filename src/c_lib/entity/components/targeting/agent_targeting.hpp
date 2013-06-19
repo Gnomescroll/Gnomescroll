@@ -67,7 +67,7 @@ class AgentTargetingComponent: public TargetingComponent
     virtual ~AgentTargetingComponent() {}
 
     AgentTargetingComponent() :
-        TargetingComponent(COMPONENT_AGENT_TARGETING),
+        TargetingComponent(COMPONENT_AgentTargeting),
         jump_cooldown_tick(0), jump_cooldown_max(ONE_SECOND),
         jump_cooldown_en_route(ONE_SECOND), jump_cooldown_nearby(ONE_SECOND),
         attack_tick(0), speed(1.0f), proximity_radius(0.25f), max_z_diff(128),

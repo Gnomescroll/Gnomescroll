@@ -8,7 +8,7 @@
 namespace Components
 {
 
-class PositionPhysicsComponent: public PhysicsComponent
+class PositionComponent: public PhysicsComponent
 {
     protected:
         Vec3 position;
@@ -125,13 +125,13 @@ class PositionPhysicsComponent: public PhysicsComponent
     }
     #endif
 
-    PositionPhysicsComponent() :
-        PhysicsComponent(COMPONENT_POSITION)
+    PositionComponent() :
+        PhysicsComponent(COMPONENT_Position)
     {
         this->_init();
     }
 
-    explicit PositionPhysicsComponent(ComponentType type) :
+    explicit PositionComponent(ComponentType type) :
         PhysicsComponent(type)
     {
         this->_init();

@@ -268,8 +268,7 @@ static class Entities::Entity* place_object(AgentID agent_id, ItemID item_id, It
 
     class Entities::Entity* obj = Entities::create(object_type);
     IF_ASSERT(obj == NULL) return NULL;
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
@@ -290,7 +289,9 @@ void place_spawner(AgentID agent_id, ItemID item_id, ItemType item_type)
     Agents::Agent* a = Agents::get_agent(agent_id);
     IF_ASSERT(a == NULL) return;
 
-    class Entities::Entity* obj = place_object(agent_id, item_id, item_type, ENTITY_AGENT_SPAWNER, Entities::AGENT_SPAWNER_HEIGHT);
+    class Entities::Entity* obj = place_object(agent_id, item_id, item_type,
+                                               ENTITY_AGENT_SPAWNER,
+                                               Entities::AGENT_SPAWNER_HEIGHT);
     if (obj == NULL) return;
     Entities::ready(obj);
 
@@ -307,7 +308,9 @@ void place_energy_core(AgentID agent_id, ItemID item_id, ItemType item_type)
 {
     GS_ASSERT(Item::get_item_group_for_type(item_type) == IG_ENERGY_CORE);
 
-    class Entities::Entity* obj = place_object(agent_id, item_id, item_type, ENTITY_ENERGY_CORE, Entities::ENERGY_CORE_HEIGHT);
+    class Entities::Entity* obj = place_object(agent_id, item_id, item_type,
+                                               ENTITY_ENERGY_CORE,
+                                               Entities::ENERGY_CORE_HEIGHT);
     if (obj == NULL) return;
     Entities::ready(obj);
 

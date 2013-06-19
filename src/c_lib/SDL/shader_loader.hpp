@@ -1,5 +1,6 @@
 #pragma once
 
+#include <common/compat_gl.h>
 #include <SDL/SDL_functions.hpp>
 
 //info log print

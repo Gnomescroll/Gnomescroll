@@ -23,7 +23,7 @@ void EntityDataList::attach_component(EntityType type, ComponentType component)
     int index = this->component_sizes[type];
     this->component_types[type][index] = component;
     ComponentInterfaceType interface = Components::get_interface_for_component(component);
-    GS_ASSERT(interface != COMPONENT_INTERFACE_NONE);
+    GS_ASSERT(isValid(interface));
     this->interface_types[type][index] = interface;
     this->component_sizes[type] += 1;
 }

@@ -21,17 +21,12 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType type, Vec
     float dist;
     float min_dist = 10000000.0f;
 
-    Entity* object;
-
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics;
-
     for (int i=0; i<max; i++)
     {
         if (!used[i]) continue;
-        object = objects[i];
+        Entity* object = objects[i];
 
-        physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, object);
         IF_ASSERT(physics == NULL) continue;
         Vec3 p = quadrant_translate_position(position, physics->get_position());
         dist = vec3_distance_squared(position, p);
@@ -65,9 +60,6 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType* types, c
     Entity** objects;
     Entity* object;
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics;
-
     for (int j=0; j<n_types; j++)
     {
         if (ct >= this->max) break;
@@ -86,7 +78,7 @@ int EntityListFilter::within_sphere(EntityList* list, const EntityType* types, c
             if (!used[i]) continue;
             object = objects[i];
 
-            physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            auto physics = GET_COMPONENT_INTERFACE(Physics, object);
             IF_ASSERT(physics == NULL) continue;
             Vec3 p = quadrant_translate_position(position, physics->get_position());
             dist = vec3_distance_squared(position, p);

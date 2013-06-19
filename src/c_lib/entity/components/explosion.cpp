@@ -26,14 +26,12 @@ void ExplosionComponent::damage_blocks()
 {
     // acquire position from voxel model center if available, else use position
     Vec3 position;
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->object);
     if (vox != NULL)
         position = vox->get_center();
     else
     {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
         IF_ASSERT(physics == NULL) return;
         position = physics->get_position();
     }
@@ -83,12 +81,10 @@ void ExplosionComponent::damage_blocks()
 
 void ExplosionComponent::explode()
 {
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
     Vec3 position = physics->get_position();
 
-    using Components::OwnerComponent;
-    OwnerComponent* owner = (OwnerComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    auto owner = GET_COMPONENT_INTERFACE(Owner, this->object);
     AgentID owner_id = NULL_AGENT;
     if (owner != NULL) owner_id = owner->get_owner();
 
@@ -101,14 +97,12 @@ void ExplosionComponent::explode()
 bool ExplosionComponent::proximity_check()
 {
     struct Vec3 position;
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->object);
     if (vox != NULL)
         position = vox->get_center();
     else
     {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
         IF_ASSERT(physics == NULL) return false;
         position = physics->get_position();
     }
@@ -116,8 +110,7 @@ bool ExplosionComponent::proximity_check()
     Agents::Agent* agent = Agents::nearest_living_agent_model_in_range(position, this->proximity_radius);
     if (agent != NULL)
     {
-        using Components::HealthComponent;
-        HealthComponent* health = (HealthComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+        auto health = GET_COMPONENT_INTERFACE(Health, this->object);
         if (health != NULL) health->die();
         return true;
     }

@@ -17,13 +17,12 @@
 inline void object_create_StoC::handle()
 {
     using Entities::Entity;
-    using Components::PhysicsComponent;
     IF_ASSERT(type >= MAX_ENTITY_TYPES) return;
     IF_ASSERT(id >= GAME_OBJECTS_MAX) return;
 
     Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     GS_ASSERT(physics != NULL);
     if (physics != NULL) physics->set_position(this->position);
     Entities::ready(obj);
@@ -32,17 +31,15 @@ inline void object_create_StoC::handle()
 inline void object_create_owner_StoC::handle()
 {
     using Entities::Entity;
-    using Components::PhysicsComponent;
-    using Components::OwnerComponent;
     IF_ASSERT(type >= MAX_ENTITY_TYPES) return;
     IF_ASSERT(id >= GAME_OBJECTS_MAX) return;
 
     Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     GS_ASSERT(physics != NULL);
     if (physics != NULL) physics->set_position(this->position);
-    OwnerComponent* owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    auto owner = GET_COMPONENT_INTERFACE(Owner, obj);
     GS_ASSERT(owner != NULL);
     if (owner != NULL) owner->set_owner((AgentID)this->owner);
     Entities::ready(obj);
@@ -51,11 +48,10 @@ inline void object_create_owner_StoC::handle()
 inline void object_create_momentum_StoC::handle()
 {
     using Entities::Entity;
-    using Components::PhysicsComponent;
 
     Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
@@ -68,11 +64,10 @@ inline void object_create_momentum_StoC::handle()
 inline void object_create_momentum_angles_StoC::handle()
 {
     using Entities::Entity;
-    using Components::PhysicsComponent;
 
     Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
@@ -86,12 +81,10 @@ inline void object_create_momentum_angles_StoC::handle()
 inline void object_create_momentum_angles_health_StoC::handle()
 {
     using Entities::Entity;
-    using Components::PhysicsComponent;
-    using Components::HitPointsHealthComponent;
 
     Entity* obj = Entities::create(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     GS_ASSERT(physics != NULL);
     if (physics != NULL)
     {
@@ -99,7 +92,7 @@ inline void object_create_momentum_angles_health_StoC::handle()
         physics->set_momentum(this->momentum);
         physics->set_angles(vec3_init(theta, phi, 0));
     }
-    HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
+    auto health = GET_COMPONENT(HitPoints, obj);
     GS_ASSERT(health != NULL);
     if (health != NULL)
     {
@@ -114,11 +107,10 @@ inline void object_create_momentum_angles_health_StoC::handle()
 inline void object_state_StoC::handle()
 {
     using Entities::Entity;
-    using Components::PhysicsComponent;
 
     Entity* obj = Entities::get(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     IF_ASSERT(physics == NULL) return;
     physics->set_position(this->position);
 }
@@ -126,11 +118,10 @@ inline void object_state_StoC::handle()
 inline void object_state_momentum_StoC::handle()
 {
     using Entities::Entity;
-    using Components::PhysicsComponent;
 
     Entity* obj = Entities::get(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     IF_ASSERT(physics == NULL) return;
     physics->set_position(this->position);
     physics->set_momentum(this->momentum);
@@ -139,11 +130,10 @@ inline void object_state_momentum_StoC::handle()
 inline void object_state_momentum_angles_StoC::handle()
 {
     using Entities::Entity;
-    using Components::PhysicsComponent;
 
     Entity* obj = Entities::get(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     IF_ASSERT(physics == NULL) return;
 
     physics->set_position(this->position);
@@ -154,10 +144,9 @@ inline void object_state_momentum_angles_StoC::handle()
 inline void object_state_health_StoC::handle()
 {
     using Entities::Entity;
-    using Components::HitPointsHealthComponent;
     Entity* obj = Entities::get(EntityType(type), EntityID(id));
     if (obj == NULL) return;
-    HitPointsHealthComponent* health = (HitPointsHealthComponent*)obj->get_component(COMPONENT_HIT_POINTS);
+    auto health = GET_COMPONENT(HitPoints, obj);
     IF_ASSERT(health == NULL) return;
     health->health = this->health;
 }
@@ -182,13 +171,11 @@ inline void object_hitscan_object_StoC::handle()
     if (obj == NULL) return;
 
     // get firing position of object
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, obj);
     if (dims != NULL) position.z += dims->get_camera_height();
 
     // get target
@@ -215,13 +202,11 @@ inline void object_hitscan_terrain_StoC::handle()
     if (obj == NULL) return;
 
     // get firing position of object
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, obj);
     if (dims != NULL) position.z += dims->get_camera_height();
 
     Vec3 destination = vec3_scalar_add(vec3_init(this->position), 0.5f);
@@ -245,13 +230,11 @@ inline void object_hitscan_nothing_StoC::handle()
     if (obj == NULL) return;
 
     // get firing position of object
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, obj);
     if (dims != NULL) position.z += dims->get_camera_height();
 
     struct Vec3 v = vec3_normalize(this->direction);
@@ -261,25 +244,16 @@ inline void object_hitscan_nothing_StoC::handle()
     Sound::play_3d_sound("turret_shoot", position);
 }
 
-//#define GET_COMPONENT_INTERFACE(type, object)
-    //(type##Component*)object->get_component_interface(COMPONENT_INTERFACE_##type);
-
-//#define GET_COMPONENT(type, object)
-    //(type##Component*)object->get_component(COMPONENT_##type);
-
-
 inline void object_took_damage_StoC::handle()
 {
     Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, obj);
     float height = 1.0f;
     if (dims != NULL)
     {
@@ -288,8 +262,7 @@ inline void object_took_damage_StoC::handle()
     }
 
     float radius = 0.0f;
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)obj->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, obj);
     if (vox != NULL) radius = vox->get_radius();
 
     BoundingBox box;

@@ -18,9 +18,9 @@ class HealerComponent: public Component
         void heal_agents_in_range();
         void call() { this->heal_agents_in_range(); }
 
-    HealerComponent()
-    : Component(COMPONENT_HEALER, COMPONENT_INTERFACE_HEALING),
-    radius(1.0f)
+    HealerComponent() :
+        Component(COMPONENT_Healer, COMPONENT_INTERFACE_Healer),
+        radius(1.0f)
     {}
 
     virtual ~HealerComponent() {}

@@ -54,8 +54,7 @@ void stress_test()
 static Vec3 get_default_spawn_position(Entity* object)
 {
     int h = 1;
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, object);
     if (dims != NULL) h = dims->get_integer_height();
     Vec3i position = vec3i_init(0);
     int tries = 0;
@@ -91,8 +90,7 @@ static void spawn_monsters(EntityType type, int n, Vec3 (*get_spawn_position)(En
     {
         Entities::Entity* obj = Entities::create(type);
         if (obj == NULL) break;
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
         IF_ASSERT(physics == NULL)
         {
             Entities::destroy(obj);

@@ -13,7 +13,7 @@ class SpriteMobComponent: public Component
 
     virtual ~SpriteMobComponent() {}
     SpriteMobComponent() :
-        Component(COMPONENT_SPRITE_MOB, COMPONENT_INTERFACE_SPRITE_MOB)
+        Component(COMPONENT_SpriteMob, COMPONENT_INTERFACE_SpriteMob)
     {}
 };
 

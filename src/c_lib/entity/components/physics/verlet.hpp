@@ -8,7 +8,7 @@
 namespace Components
 {
 
-class VerletPhysicsComponent: public PhysicsComponent
+class VerletComponent: public PhysicsComponent
 {
     public:
         Verlet::VerletComponent verlet;
@@ -70,8 +70,8 @@ class VerletPhysicsComponent: public PhysicsComponent
         return false;
     }
 
-    VerletPhysicsComponent() :
-        PhysicsComponent(COMPONENT_VERLET)
+    VerletComponent() :
+        PhysicsComponent(COMPONENT_Verlet)
     {}
 };
 

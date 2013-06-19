@@ -5,20 +5,18 @@
 #include <entity/components/targeting/agent_targeting.hpp>
 #include <entity/components/state_machine.hpp>
 #include <entity/components/waiting.hpp>
+#include <entity/macros.hpp>
 
 namespace Entities
 {
 
 static void go_to_next_destination(Entity* object)
 {
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
     Vec3 position = physics->get_position();
 
     // choose new position destination
-    using Components::DestinationTargetingComponent;
-    DestinationTargetingComponent* dest = (DestinationTargetingComponent*)
-        object->get_component(COMPONENT_DESTINATION_TARGETING);
+    auto dest = GET_COMPONENT(DestinationTargeting, object);
 
     dest->choose_destination();
 
@@ -32,44 +30,37 @@ static void go_to_next_destination(Entity* object)
 static void waiting_to_in_transit(Entity* object)
 {
     go_to_next_destination(object);
-    using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    auto state = GET_COMPONENT_INTERFACE(StateMachine, object);
     state->state = STATE_IN_TRANSIT;
 }
 
 static void waiting_to_chase_agent(Entity* object)
 {   // assumes target already locked
-    using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    auto state = GET_COMPONENT_INTERFACE(StateMachine, object);
     state->state = STATE_CHASE_AGENT;
 }
 
 static void in_transit_to_waiting(Entity* object)
 {
-    using Components::WaitingComponent;
-    WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
-    wait->tick = 0;
+    auto waiting = GET_COMPONENT_INTERFACE(Waiting, object);
+    waiting->tick = 0;
 
-    using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    auto state = GET_COMPONENT_INTERFACE(StateMachine, object);
     state->state = STATE_WAITING;
 }
 
 static void in_transit_to_chase_agent(Entity* object)
 {   // assumes target already locked
-    using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    auto state = GET_COMPONENT_INTERFACE(StateMachine, object);
     state->state = STATE_CHASE_AGENT;
 }
 
 static void chase_agent_to_waiting(Entity* object)
 {
-    using Components::WaitingComponent;
-    WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
-    wait->tick = 0;
+    auto waiting = GET_COMPONENT_INTERFACE(Waiting, object);
+    waiting->tick = 0;
 
-    using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    auto state = GET_COMPONENT_INTERFACE(StateMachine, object);
     state->state = STATE_WAITING;
 }
 
@@ -80,20 +71,17 @@ static void chase_agent_to_in_transit(Entity* object)
 
 static void waiting(Entity* object)
 {
-    using Components::WaitingComponent;
-    WaitingComponent* wait = (WaitingComponent*)object->get_component_interface(COMPONENT_INTERFACE_WAITING);
-    wait->tick++;
-    if (wait->ready())
+    auto waiting = GET_COMPONENT_INTERFACE(Waiting, object);
+    waiting->tick++;
+    if (waiting->ready())
         waiting_to_in_transit(object);
 }
 
 static void in_transit(Entity* object)
 {
-    using Components::DestinationTargetingComponent;
-    DestinationTargetingComponent* dest_target = (DestinationTargetingComponent*)object->get_component(COMPONENT_DESTINATION_TARGETING);
+    auto dest_target = GET_COMPONENT(DestinationTargeting, object);
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
 
     // move towards target
     dest_target->move_on_surface();
@@ -118,8 +106,7 @@ static void in_transit(Entity* object)
 static void chase_agent(Entity* object)
 {   // TODO -- write a method that switches to STATE_WAITING under certain conditions
     // for slimes, this would be if we travelled too far from our original spawn location
-    using Components::AgentTargetingComponent;
-    AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
+    auto target = GET_COMPONENT(AgentTargeting, object);
 
     // check target
     target->check_target_alive();
@@ -129,9 +116,7 @@ static void chase_agent(Entity* object)
         return;
     }
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)
-        object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
     Vec3 position = physics->get_position();
     // face the target
     target->orient_to_target(position);

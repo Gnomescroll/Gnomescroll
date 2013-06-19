@@ -5,6 +5,7 @@
 #include <agent/_interface.hpp>
 #include <entity/objects.hpp>
 #include <entity/components/health.hpp>
+#include <entity/macros.hpp>
 
 namespace Hitscan
 {
@@ -157,8 +158,7 @@ static void damage_entity(EntityType entity_type, EntityID entity_id, int part_i
     class Entities::Entity* entity = Entities::get(entity_type, entity_id);
     IF_ASSERT(entity == NULL) return;
 
-    using Components::HealthComponent;
-    class HealthComponent* health = (class HealthComponent*)entity->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+    auto health = GET_COMPONENT_INTERFACE(Health, entity);
     if (health == NULL) return;
     health->take_damage(dmg);
 }

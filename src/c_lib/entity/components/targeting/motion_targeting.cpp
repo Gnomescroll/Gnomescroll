@@ -20,8 +20,7 @@ void MotionTargetingComponent::set_target(EntityType target_type, int target_id)
     Agents::Agent* a = Agents::get_agent((AgentID)target_id);
     IF_ASSERT(a == NULL) return;
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
     GS_ASSERT(physics != NULL);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
@@ -64,8 +63,7 @@ void MotionTargetingComponent::choose_destination()
     float x = 2*(randf()-0.5f) * this->destination_choice_x;
     float y = 2*(randf()-0.5f) * this->destination_choice_y;
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
     IF_ASSERT(physics == NULL) return;
 
     Vec3 position = physics->get_position();
@@ -92,13 +90,11 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
 // adjusts position & momentum by moving over the terrain surface
 void MotionTargetingComponent::move_on_surface()
 {
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
     IF_ASSERT(physics == NULL) return;
 
     int h = 1;
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, this->object);
     if (dims != NULL) h = dims->get_integer_height();
 
     // adjust position/momentum by moving along terrain surface

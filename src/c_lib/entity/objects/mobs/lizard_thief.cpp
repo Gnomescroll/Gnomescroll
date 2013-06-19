@@ -29,59 +29,54 @@ void load_mob_lizard_thief_data()
 
     entity_data->set_components(type, n_components);
 
-    entity_data->attach_component(type, COMPONENT_POSITION_MOMENTUM);
-    entity_data->attach_component(type, COMPONENT_DIMENSION);
-    entity_data->attach_component(type, COMPONENT_SPRITE_MOB);
-    entity_data->attach_component(type, COMPONENT_HIT_POINTS);
-    entity_data->attach_component(type, COMPONENT_WAITING);
-    entity_data->attach_component(type, COMPONENT_DESTINATION_TARGETING);
-    entity_data->attach_component(type, COMPONENT_AGENT_TARGETING);
+    entity_data->attach_component(type, COMPONENT_PositionMomentum);
+    entity_data->attach_component(type, COMPONENT_Dimension);
+    entity_data->attach_component(type, COMPONENT_SpriteMob);
+    entity_data->attach_component(type, COMPONENT_HitPoints);
+    entity_data->attach_component(type, COMPONENT_Waiting);
+    entity_data->attach_component(type, COMPONENT_DestinationTargeting);
+    entity_data->attach_component(type, COMPONENT_AgentTargeting);
 
     #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_STATE_MACHINE);
-    entity_data->attach_component(type, COMPONENT_RATE_LIMIT);
-    entity_data->attach_component(type, COMPONENT_ITEM_DROP);
-    entity_data->attach_component(type, COMPONENT_KNOCKBACK);
+    entity_data->attach_component(type, COMPONENT_StateMachine);
+    entity_data->attach_component(type, COMPONENT_RateLimit);
+    entity_data->attach_component(type, COMPONENT_ItemDrop);
+    entity_data->attach_component(type, COMPONENT_Knockback);
     #endif
 
     #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    entity_data->attach_component(type, COMPONENT_Animation);
     #endif
 }
 
 static void set_mob_lizard_thief_properties(Entity* object)
 {
-    add_component_to_object(object, COMPONENT_POSITION_MOMENTUM);
+    ADD_COMPONENT(PositionMomentum, object);
 
-    using Components::DimensionComponent;
-    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    auto dims = ADD_COMPONENT(Dimension, object);
     dims->height = MONSTER_BOMB_HEIGHT;
 
-    using Components::SpriteMobComponent;
-    SpriteMobComponent* mob = (SpriteMobComponent*)add_component_to_object(object, COMPONENT_SPRITE_MOB);
+    auto mob = ADD_COMPONENT(SpriteMob, object);
     mob->mob.init("lizard_thief");
 
-    using Components::HitPointsHealthComponent;
     #if DC_CLIENT
-    add_component_to_object(object, COMPONENT_HIT_POINTS);
+    ADD_COMPONENT(HitPoints, object);
     #endif
     #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
-    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    auto health = ADD_COMPONENT(HitPoints, object);
     int health_amt = randrange(MONSTER_BOMB_HEALTH_MIN, MONSTER_BOMB_HEALTH_MAX);
     health->health = health_amt;
     health->health_max = health_amt;
     #endif
 
-    using Components::DestinationTargetingComponent;
-    DestinationTargetingComponent* dest = (DestinationTargetingComponent*)add_component_to_object(object, COMPONENT_DESTINATION_TARGETING);
+    auto dest = ADD_COMPONENT(DestinationTargeting, object);
     dest->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
     dest->destination_choice_x = MONSTER_BOMB_WALK_RANGE;
     dest->destination_choice_y = MONSTER_BOMB_WALK_RANGE;
     dest->speed = MONSTER_BOMB_WALK_SPEED;
     dest->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
 
-    using Components::AgentTargetingComponent;
-    AgentTargetingComponent* agent = (AgentTargetingComponent*)add_component_to_object(object, COMPONENT_AGENT_TARGETING);
+    auto agent = ADD_COMPONENT(AgentTargeting, object);
     agent->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
     agent->speed = MONSTER_BOMB_CHASE_SPEED;
     agent->max_z_diff = MONSTER_BOMB_MOTION_MAX_Z_DIFF;
@@ -90,17 +85,14 @@ static void set_mob_lizard_thief_properties(Entity* object)
     agent->attack_rate = (3 * ONE_SECOND) / 2;
     agent->attack_damage = 2;
 
-    using Components::WaitingComponent;
-    WaitingComponent* waiting = (WaitingComponent*)add_component_to_object(object, COMPONENT_WAITING);
+    auto waiting = ADD_COMPONENT(Waiting, object);
     waiting->wait_time = MONSTER_BOMB_IDLE_TIME;
 
     #if DC_SERVER
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    auto limiter = ADD_COMPONENT(RateLimit, object);
     limiter->limit = MOB_BROADCAST_RATE;
 
-    using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)add_component_to_object(object, COMPONENT_ITEM_DROP);
+    auto item_drop = ADD_COMPONENT(ItemDrop, object);
     item_drop->drop.set_max_drop_types(2);
     item_drop->drop.set_max_drop_amounts("synthesizer_coin", 3);
     item_drop->drop.add_drop("synthesizer_coin", 1, 0.3f);
@@ -109,19 +101,16 @@ static void set_mob_lizard_thief_properties(Entity* object)
     item_drop->drop.set_max_drop_amounts("plasma_grenade", 10);
     item_drop->drop.add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
-    using Components::StateMachineComponent;
-    StateMachineComponent* state = (StateMachineComponent*)add_component_to_object(object, COMPONENT_STATE_MACHINE);
+    auto state = ADD_COMPONENT(StateMachine, object);
     state->state = STATE_WAITING;
     state->router = &lizard_thief_state_router;
 
-    using Components::KnockbackComponent;
-    KnockbackComponent* knockback = (KnockbackComponent*)add_component_to_object(object, COMPONENT_KNOCKBACK);
+    auto knockback = ADD_COMPONENT(Knockback, object);
     knockback->weight = 1.0f;
     #endif
 
     #if DC_CLIENT
-    using Components::AnimationComponent;
-    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    auto anim = ADD_COMPONENT(Animation, object);
     anim->color = MONSTER_BOMB_ANIMATION_COLOR;
     anim->count = MONSTER_BOMB_ANIMATION_COUNT;
     anim->count_max = MONSTER_BOMB_ANIMATION_COUNT_MAX;
@@ -147,8 +136,7 @@ Entity* create_mob_lizard_thief()
 
 void ready_mob_lizard_thief(Entity* object)
 {
-    using Components::SpriteMobComponent;
-    SpriteMobComponent* mob = (SpriteMobComponent*)object->get_component_interface(COMPONENT_INTERFACE_SPRITE_MOB);
+    auto mob = GET_COMPONENT_INTERFACE(SpriteMob, object);
     mob->mob.associate_entity(object->id, object->type);
     #if DC_SERVER
     object->broadcastCreate();
@@ -159,8 +147,7 @@ void die_mob_lizard_thief(Entity* object)
 {
     #if DC_SERVER
     // drop item
-    using Components::ItemDropComponent;
-    ItemDropComponent* item_drop = (ItemDropComponent*)object->get_component_interface(COMPONENT_INTERFACE_ITEM_DROP);
+    auto item_drop = GET_COMPONENT_INTERFACE(ItemDrop, object);
     IF_ASSERT(item_drop == NULL) return;
     item_drop->drop_item();
 
@@ -170,10 +157,8 @@ void die_mob_lizard_thief(Entity* object)
 
     #if DC_CLIENT
     // explosion animation
-    using Components::SpriteMobComponent;
-    SpriteMobComponent* mob = (SpriteMobComponent*)object->get_component_interface(COMPONENT_INTERFACE_SPRITE_MOB);
-    using Components::AnimationComponent;
-    AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+    auto mob = GET_COMPONENT_INTERFACE(SpriteMob, object);
+    auto anim = GET_COMPONENT_INTERFACE(Animation, object);
     anim->explode_random(mob->mob.get_center());
     #endif
 }
@@ -181,8 +166,7 @@ void die_mob_lizard_thief(Entity* object)
 #if DC_SERVER
 static void lizard_thief_state_router(class Entity* object, EntityState state)
 {
-    using Components::StateMachineComponent;
-    StateMachineComponent* machine = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    auto machine = GET_COMPONENT_INTERFACE(StateMachine, object);
 
     switch (state)
     {
@@ -224,8 +208,7 @@ void relax_lizard_thiefs(Entity* object)
     int lizard_thief_count = 0;
     char* lizard_thiefs_used = NULL;
     class Entity** lizard_thiefs = get_all(ENTITY_MONSTER_LIZARD_THIEF, lizard_thiefs_used, lizard_thief_count);
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
     Vec3 position = physics->get_position();
     Vec3 momentum = physics->get_momentum();
     for (int i=0; i<lizard_thief_count; i++)
@@ -233,7 +216,7 @@ void relax_lizard_thiefs(Entity* object)
         if (!lizard_thiefs_used[i]) continue;
         Entity* lizard_thief = lizard_thiefs[i];
         if (lizard_thief->id == object->id) continue;
-        PhysicsComponent* lizard_thief_physics = (PhysicsComponent*)lizard_thief->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto lizard_thief_physics = GET_COMPONENT_INTERFACE(Physics, lizard_thief);
         Vec3 p = lizard_thief_physics->get_position();
         float dist_sq = vec3_distance_squared(position, p);
         if (dist_sq > relax_distance_sq)
@@ -257,12 +240,10 @@ void relax_lizard_thiefs(Entity* object)
 void tick_mob_lizard_thief(Entity* object)
 {
     #if DC_SERVER
-    using Components::RateLimitComponent;
-    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    auto limiter = GET_COMPONENT_INTERFACE(RateLimit, object);
     if (limiter->allowed()) object->broadcastState();
 
-    using Components::StateMachineComponent;
-    StateMachineComponent* machine = (StateMachineComponent*)object->get_component_interface(COMPONENT_INTERFACE_STATE_MACHINE);
+    auto machine = GET_COMPONENT_INTERFACE(StateMachine, object);
 
     switch (machine->state)
     {
@@ -285,13 +266,10 @@ void tick_mob_lizard_thief(Entity* object)
 
     if (machine->state != STATE_CHASE_AGENT)
     {   // aggro nearby agent
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)
-            object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, object);
         Vec3 position = physics->get_position();
 
-        using Components::AgentTargetingComponent;
-        AgentTargetingComponent* target = (AgentTargetingComponent*)object->get_component(COMPONENT_AGENT_TARGETING);
+        auto target = GET_COMPONENT(AgentTargeting, object);
         target->lock_target(position);
 
         if (target->target_type == ENTITY_AGENT)
@@ -306,11 +284,8 @@ void tick_mob_lizard_thief(Entity* object)
 
 void update_mob_lizard_thief(Entity* object)
 {
-    typedef Components::PositionMomentumPhysicsComponent PCP;
-    using Components::SpriteMobComponent;
-
-    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM);
-    SpriteMobComponent* mob = (SpriteMobComponent*)object->get_component_interface(COMPONENT_INTERFACE_SPRITE_MOB);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    auto mob = GET_COMPONENT_INTERFACE(SpriteMob, object);
 
     mob->mob.position = physics->get_position();
     physics->set_changed(false);  // reset changed state

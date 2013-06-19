@@ -59,7 +59,7 @@ class WeaponTargetingComponent: public TargetingComponent
     virtual ~WeaponTargetingComponent() {}
 
     WeaponTargetingComponent() :
-        TargetingComponent(COMPONENT_WEAPON_TARGETING),
+        TargetingComponent(COMPONENT_WeaponTargeting),
         fire_tick(0), fire_rate_limit(1), uses_bias(false),
         accuracy_bias(0.0f), attack_at_random(true), locked_on_target(false),
         fire_delay(0), fire_delay_max(0),
