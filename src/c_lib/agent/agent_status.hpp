@@ -56,7 +56,7 @@ class AgentStatus
 
     bool die();
     bool die(AgentID inflictor_id, EntityType inflictor_type, AgentDeathMethod death_method);
-    void kill(int victim_id);
+    void kill(AgentID victim_id);
     void kill_slime();
 
     void quit();

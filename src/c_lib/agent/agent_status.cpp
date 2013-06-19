@@ -217,86 +217,25 @@ bool AgentStatus::die(AgentID inflictor_id, EntityType inflictor_type, AgentDeat
     bool killed = this->die();
     if (!killed) return false;
 
-    Agent* attacker = NULL;
-    //Turret* turret;
-    switch (inflictor_type)
+    if (inflictor_id != NULL_AGENT)
     {
-        case ENTITY_GRENADE:
-        case ENTITY_AGENT:
-            attacker = Agents::get_agent(inflictor_id);
-            if (attacker != NULL)
-                attacker->status.kill(this->a->id);
-            break;
-        //case ENTITY_TURRET:
-            //turret = (Turret*)STATE::entity_list->get(inflictor_type, inflictor_id);
-            //if (turret == NULL) break;
-            //attacker = Agents::get_agent(turret->get_owner());
-            //if (attacker != NULL)
-                //attacker->status.kill(this->a->id);
-            //break;
-        case ENTITY_CANNONBALL:
-        case ENTITY_PLASMAGEN:
-        case ENTITY_MONSTER_SPAWNER:
-        case ENTITY_MONSTER_SLIME:
-        case ENTITY_MONSTER_BOX:
-        case ENTITY_MONSTER_BOMB:
-        case ENTITY_MONSTER_LIZARD_THIEF:
-        case ENTITY_ENERGY_CORE:
-        case ENTITY_TURRET:
-        case ENTITY_AGENT_SPAWNER:
-        case ENTITY_BASE:
-        case ENTITY_DESTINATION:
-        case NULL_ENTITY_TYPE:
-            //printf("Agent::die -- OBJECT %d not handled\n", inflictor_type);
-            break;
+        Agent* attacker = Agents::get_agent(inflictor_id);
+        if (attacker != NULL)
+            attacker->status.kill(this->a->id);
+
+        #if DC_SERVER
+        agent_conflict_notification_StoC msg;
+        msg.victim = this->a->id;
+        msg.attacker = inflictor_id;
+        msg.method = death_method;    // put headshot, grenades here
+        msg.broadcast();
+        #endif
     }
-
-    #if DC_SERVER
-    // send conflict notification to clients
-    agent_conflict_notification_StoC msg;
-    //Turret* turret;
-    switch (inflictor_type)
-    {
-        case ENTITY_GRENADE:
-        case ENTITY_AGENT:
-            msg.victim = this->a->id;
-            msg.attacker = inflictor_id;
-            msg.method = death_method;    // put headshot, grenades here
-            msg.broadcast();
-            break;
-
-        //case ENTITY_TURRET:
-            //// lookup turret object, get owner, this will be the inflictor id
-            //turret = (Turret*)ServerState::entity_list->get(inflictor_type, inflictor_id);
-            //if (turret == NULL) break;
-            //inflictor_id = turret->get_owner();
-            //msg.victim = this->a->id;
-            //msg.attacker = inflictor_id;
-            //msg.method = death_method;    // put headshot, grenades here
-            //msg.broadcast();
-            //break;
-
-        case ENTITY_CANNONBALL:
-        case ENTITY_PLASMAGEN:
-        case ENTITY_MONSTER_SPAWNER:
-        case ENTITY_MONSTER_SLIME:
-        case ENTITY_MONSTER_BOX:
-        case ENTITY_MONSTER_BOMB:
-        case ENTITY_MONSTER_LIZARD_THIEF:
-        case ENTITY_ENERGY_CORE:
-        case ENTITY_TURRET:
-        case ENTITY_AGENT_SPAWNER:
-        case ENTITY_BASE:
-        case ENTITY_DESTINATION:
-        case NULL_ENTITY_TYPE:
-            break;
-    }
-    #endif
 
     return true;
 }
 
-void AgentStatus::kill(int victim_id)
+void AgentStatus::kill(AgentID victim_id)
 {
     if (victim_id == this->a->id)
     {
