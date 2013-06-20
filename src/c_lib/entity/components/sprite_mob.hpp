@@ -11,6 +11,12 @@ class SpriteMobComponent: public Component
     public:
         t_mob::SpriteMob mob;
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(RateLimitComponent);
+        COPY(mob);
+    }
+
     virtual ~SpriteMobComponent() {}
     SpriteMobComponent() :
         Component(COMPONENT_SpriteMob, COMPONENT_INTERFACE_SpriteMob)

@@ -25,12 +25,12 @@ class AnimationComponent: public Component
 
     void load_settings_from(const Component* component)
     {
-        BEGIN_COPY(AnimationComponent)
-        COPY(count)
-        COPY(count_max)
-        COPY(color)
-        COPY(size)
-        COPY(force)
+        BEGIN_COPY(AnimationComponent);
+        COPY(count);
+        COPY(count_max);
+        COPY(color);
+        COPY(size);
+        COPY(force);
     }
 
     AnimationComponent() :

@@ -1,6 +1,8 @@
 #pragma once
 
-#if DC_SERVER
+#if DC_CLIENT
+#error do not include this file in client
+#endif
 
 #include <entity/component/component.hpp>
 #include <t_map/t_map.hpp>
@@ -30,6 +32,19 @@ class ExplosionComponent: public Component
 
     void damage_blocks();
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(ExplosionComponent);
+        COPY(radius);
+        COPY(proximity_radius);
+        COPY(block_destruction_radius);
+        COPY(block_damage);
+        COPY(terrain_modification_action);
+        COPY(damage);
+        COPY(harms_owner);
+        COPY(delay);
+    }
+
     ExplosionComponent() :
         Component(COMPONENT_Explosion, COMPONENT_INTERFACE_Explosion),
         radius(1.0f), damage(0), proximity_radius(1.0f), harms_owner(false),
@@ -39,5 +54,3 @@ class ExplosionComponent: public Component
 };
 
 } // Components
-
-#endif

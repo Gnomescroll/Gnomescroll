@@ -33,6 +33,13 @@ class DimensionComponent: public Component
 
     Vec3 get_camera_position();
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(DimensionComponent);
+        COPY(height);
+        COPY(camera_height);
+    }
+
     DimensionComponent() :
         Component(COMPONENT_Dimension, COMPONENT_INTERFACE_Dimension),
         height(1.0f), camera_height(0.0f)

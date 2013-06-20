@@ -20,9 +20,15 @@ float default_random_velocity()
 class ItemDropComponent: public Component
 {
     public:
+        Item::ItemDrop drop;
 
-    Item::ItemDrop drop;
     void drop_item();
+
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(ItemDropComponent);
+        COPY(drop);
+    }
 
     ItemDropComponent() :
         Component(COMPONENT_ItemDrop, COMPONENT_INTERFACE_ItemDrop)

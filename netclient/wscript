@@ -208,7 +208,8 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
             '-DWIN32',
             '-D_WIN32',
             '-D_WIN32',
-            '-D__MINGW32__'
+            '-D__MINGW32__',
+            '-D__MSVCRT__',
         ]
 
     if windows:
