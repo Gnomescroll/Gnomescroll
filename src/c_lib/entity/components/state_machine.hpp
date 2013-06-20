@@ -14,9 +14,9 @@ class StateMachineComponent: public Component
 
     virtual ~StateMachineComponent() {}
 
-    StateMachineComponent()
-    : Component(COMPONENT_StateMachine, COMPONENT_INTERFACE_StateMachine),
-    state(STATE_NONE), router(NULL)
+    StateMachineComponent() :
+        Component(COMPONENT_StateMachine, COMPONENT_INTERFACE_StateMachine),
+        state(STATE_NONE), router(NULL)
     {}
 };
 

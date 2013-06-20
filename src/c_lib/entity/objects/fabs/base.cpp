@@ -18,51 +18,24 @@ void load_base_data()
 
     entity_data->begin_attaching_to(type);
 
-    entity_data->attach_component(type, COMPONENT_Position);
-    entity_data->attach_component(type, COMPONENT_Dimension);
-    entity_data->attach_component(type, COMPONENT_VoxelModel);
+    ADD_COMPONENT(Position);
 
-    #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_AgentSpawner);
-    entity_data->attach_component(type, COMPONENT_RateLimit);
-    #endif
-}
-
-static void set_base_properties(Entity* object)
-{
-    add_component_to_object(object, COMPONENT_Position);
-
-    auto dims = ADD_COMPONENT(Dimension, object);
+    auto dims = ADD_COMPONENT(Dimension);
     dims->height = BASE_HEIGHT;
 
-    auto vox = ADD_COMPONENT(VoxelModel, object);
+    auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::base;
     vox->init_hitscan = BASE_INIT_WITH_HITSCAN;
     vox->init_draw = BASE_INIT_WITH_DRAW;
     vox->should_hitscan = BASE_SHOULD_HITSCAN;
 
     #if DC_SERVER
-    auto spawner = ADD_COMPONENT(AgentSpawner, object);
+    auto spawner = ADD_COMPONENT(AgentSpawner);
     spawner->radius = BASE_SPAWN_RADIUS;
 
-    auto limiter = ADD_COMPONENT(RateLimit, object);
+    auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
     #endif
-
-    object->tick = &tick_base;
-    object->update = &update_base;
-
-    object->create = create_packet;
-    object->state = state_packet;
-}
-
-Entity* create_base()
-{
-    EntityType type = ENTITY_BASE;
-    Entity* obj = entity_list->create(type);
-    IF_ASSERT(obj == NULL) return NULL;
-    set_base_properties(obj);
-    return obj;
 }
 
 void ready_base(Entity* object)

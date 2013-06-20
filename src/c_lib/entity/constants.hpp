@@ -5,8 +5,8 @@ namespace Entities
 class Entity;
 }   // Entities
 
-typedef void (*tickObject)(class Entities::Entity*);      // for physics
-typedef void (*updateObject)(class Entities::Entity*);    // for draw prep
+typedef void (*tickEntity)(class Entities::Entity*);      // for physics
+typedef void (*updateEntity)(class Entities::Entity*);    // for draw prep
 
 const size_t MOBS_MAX = 1024;
 

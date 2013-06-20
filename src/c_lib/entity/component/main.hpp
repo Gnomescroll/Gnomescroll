@@ -25,6 +25,7 @@ namespace Components
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type);
+Component* create_unmanaged(ComponentType type);
 void release_switch(Component* component);
 
 ComponentInterfaceType get_interface_for_component(ComponentType component);
@@ -65,6 +66,7 @@ Component* get_switch(ComponentType type)
         #undef A
 
         case NULL_COMPONENT:
+        default:
             printf("ERROR: %s -- unknown ComponentType %d\n", __FUNCTION__, type);
             return NULL;
     }
@@ -87,6 +89,24 @@ void release_switch(Component* component)
             printf("ERROR: %s -- unknown ComponentType %d\n", __FUNCTION__, component->type);
             break;
     }
+}
+
+Component* create_unmanaged(ComponentType type)
+{
+    switch (type)
+    {
+        #define A(NAME, LNAME, TYPE, ...) \
+            case COMPONENT_##TYPE: \
+                return new TYPE##Component;
+        COMPONENTS
+        #undef A
+
+        case NULL_COMPONENT:
+        default:
+            GS_ASSERT(false);
+            return NULL;
+    }
+    return NULL;
 }
 
 ComponentInterfaceType get_interface_for_component(ComponentType component)

@@ -4,8 +4,9 @@ namespace Entities
 {
 
 typedef void (*entityLoad) (void);
-typedef class Entity* (*entityCreate) (void);
 typedef void (*entityReady) (class Entity*);
 typedef void (*entityDie) (class Entity* object);
+typedef void (*entityTick) (class Entity* object);
+typedef void (*entityUpdate) (class Entity* object);
 
 }   // Entities

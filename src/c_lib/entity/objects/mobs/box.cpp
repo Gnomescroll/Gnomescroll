@@ -21,48 +21,28 @@ void load_mob_robot_box_data()
 
     entity_data->begin_attaching_to(type);
 
-    entity_data->attach_component(type, COMPONENT_PositionMomentum);
-    entity_data->attach_component(type, COMPONENT_Dimension);
-    entity_data->attach_component(type, COMPONENT_VoxelModel);
-    entity_data->attach_component(type, COMPONENT_HitPoints);
-    entity_data->attach_component(type, COMPONENT_WeaponTargeting);
-    entity_data->attach_component(type, COMPONENT_MotionTargeting);
+    ADD_COMPONENT(PositionMomentum);
 
-    #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_SpawnChild);
-    entity_data->attach_component(type, COMPONENT_RateLimit);
-    entity_data->attach_component(type, COMPONENT_ItemDrop);
-    entity_data->attach_component(type, COMPONENT_Knockback);
-    #endif
-    #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_Animation);
-    #endif
-}
-
-static void set_mob_robot_box_properties(Entity* object)
-{
-    ADD_COMPONENT(PositionMomentum, object);
-
-    auto dims = ADD_COMPONENT(Dimension, object);
+    auto dims = ADD_COMPONENT(Dimension);
     dims->height = MONSTER_BOX_HEIGHT;
     dims->camera_height = MONSTER_BOX_CAMERA_HEIGHT;
 
-    auto vox = ADD_COMPONENT(VoxelModel, object);
+    auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::robot_box;
     vox->init_hitscan = MONSTER_BOX_INIT_WITH_HITSCAN;
     vox->init_draw = MONSTER_BOX_INIT_WITH_DRAW;
 
     #if DC_CLIENT
-    ADD_COMPONENT(HitPoints, object);
+    ADD_COMPONENT(HitPoints);
     #endif
     #if DC_SERVER   // health will be set by packet initializer
-    auto health = ADD_COMPONENT(HitPoints, object);
+    auto health = ADD_COMPONENT(HitPoints);
     int health_amt = randrange(MONSTER_BOX_HEALTH_MIN, MONSTER_BOX_HEALTH_MAX);
     health->health = health_amt;
     health->health_max = health_amt;
     #endif
 
-    auto target = ADD_COMPONENT(WeaponTargeting, object);
+    auto target = ADD_COMPONENT(WeaponTargeting);
     target->target_acquisition_failure_rate = MONSTER_BOX_TARGET_ACQUISITION_FAILURE_RATE;
     target->fire_rate_limit = MONSTER_BOX_FIRE_RATE_LIMIT;
     target->uses_bias = MONSTER_BOX_USES_BIAS;
@@ -79,17 +59,17 @@ static void set_mob_robot_box_properties(Entity* object)
     target->attacker_properties.terrain_modification_action = TMA_MONSTER_BOX;
     target->fire_delay_max = MONSTER_BOX_FIRE_DELAY_MAX;
 
-    auto motion = ADD_COMPONENT(MotionTargeting, object);
+    auto motion = ADD_COMPONENT(MotionTargeting);
     motion->speed = MONSTER_BOX_SPEED;
     motion->max_z_diff = MONSTER_BOX_MOTION_MAX_Z_DIFF;
 
     #if DC_SERVER
-    ADD_COMPONENT(SpawnChild, object);
+    ADD_COMPONENT(SpawnChild);
 
-    auto limiter = ADD_COMPONENT(RateLimit, object);
+    auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
 
-    auto item_drop = ADD_COMPONENT(ItemDrop, object);
+    auto item_drop = ADD_COMPONENT(ItemDrop);
     item_drop->drop.set_max_drop_types(2);
     item_drop->drop.set_max_drop_amounts("synthesizer_coin", 3);
     item_drop->drop.add_drop("synthesizer_coin", 1, 0.2f);
@@ -99,33 +79,18 @@ static void set_mob_robot_box_properties(Entity* object)
     item_drop->drop.set_max_drop_amounts("small_charge_pack", 1);
     item_drop->drop.add_drop("small_charge_pack", 1, 0.02f);
 
-    auto knockback = ADD_COMPONENT(Knockback, object);
+    auto knockback = ADD_COMPONENT(Knockback);
     knockback->weight = 1.5f;
     #endif
 
     #if DC_CLIENT
-    auto anim = ADD_COMPONENT(Animation, object);
+    auto anim = ADD_COMPONENT(Animation);
     anim->color = MONSTER_BOX_ANIMATION_COLOR;
     anim->count = MONSTER_BOX_ANIMATION_COUNT;
     //anim->count_max = MONSTER_BOX_ANIMATION_COUNT_MAX;
     anim->size = MONSTER_BOX_ANIMATION_SIZE;
     anim->force = MONSTER_BOX_ANIMATION_FORCE;
     #endif
-
-    object->tick = &tick_mob_robot_box;
-    object->update = &update_mob_robot_box;
-
-    object->create = create_packet_momentum_angles_health;
-    object->state = state_packet_momentum_angles;
-}
-
-Entity* create_mob_robot_box()
-{
-    EntityType type = ENTITY_MONSTER_BOX;
-    Entity* obj = entity_list->create(type);
-    if (obj == NULL) return NULL;
-    set_mob_robot_box_properties(obj);
-    return obj;
 }
 
 void ready_mob_robot_box(Entity* object)

@@ -10,7 +10,8 @@
 
 // auto c = GET_COMPONENT_INTERFACE(Physics, object);
 
-#define ADD_COMPONENT(COMPONENT, OBJECT) \
-    (Components::COMPONENT##Component*)add_component_to_object(OBJECT, COMPONENT_##COMPONENT);
+#define ADD_COMPONENT(COMPONENT) \
+    (Components::COMPONENT##Component*)entity_data->attach_component(type, COMPONENT_##COMPONENT);
 
-// auto c = ADD_COMPONENT(SpawnChild, object);
+// auto c = ADD_COMPONENT(SpawnChild);
+// Note: expects to be calling in load_data() initializer function. variable "EntityType type" should be in scope

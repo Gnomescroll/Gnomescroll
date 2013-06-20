@@ -24,6 +24,17 @@ class WeaponTargetingComponent: public TargetingComponent
         struct Vec3 firing_direction;
         bool firing_direction_set;
 
+    virtual void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(WeaponTargetingComponent);
+        COPY(fire_rate_limit);
+        COPY(attacker_properties);
+        COPY(uses_bias);
+        COPY(accuracy_bias);
+        COPY(attack_at_random);
+        COPY(fire_delay_max);
+    }
+
     void tick()
     {
         this->fire_tick++;

@@ -15,6 +15,7 @@ class EntityDataList
         // keep track of component type buffers for
         ComponentInterfaceType** interface_types;
         ComponentType** component_types;
+        Components::Component*** components;
         size_t* component_sizes;
         size_t* component_maxes;
         EntityType current_type;
@@ -24,7 +25,8 @@ class EntityDataList
     public:
 
     void begin_attaching_to(EntityType type);
-    void attach_component(EntityType type, ComponentType component);
+    Components::Component* attach_component(EntityType type, ComponentType component);
+    inline Components::Component const* const* get_components(EntityType type);
     inline int get_component_count(EntityType type);
     inline int get_component_slot(EntityType type, ComponentType component);
     inline int get_component_interface_slot(EntityType type, ComponentInterfaceType interface);
@@ -34,7 +36,7 @@ class EntityDataList
     ~EntityDataList();
 
     EntityDataList() :
-        interface_types(NULL), component_types(NULL),
+        interface_types(NULL), component_types(NULL), components(NULL),
         component_sizes(NULL), current_type(NULL_ENTITY_TYPE)
     {}
 };

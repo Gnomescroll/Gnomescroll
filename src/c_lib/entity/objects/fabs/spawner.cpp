@@ -19,75 +19,41 @@ void load_agent_spawner_data()
 
     entity_data->begin_attaching_to(type);
 
-    entity_data->attach_component(type, COMPONENT_Position);
-    entity_data->attach_component(type, COMPONENT_Dimension);
-    entity_data->attach_component(type, COMPONENT_VoxelModel);
-    entity_data->attach_component(type, COMPONENT_HitPoints);
+    ADD_COMPONENT(Position);
 
-    #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_AgentSpawner);
-    entity_data->attach_component(type, COMPONENT_ItemDrop);
-    entity_data->attach_component(type, COMPONENT_RateLimit);
-    #endif
-
-    #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_Animation);
-    #endif
-}
-
-static void set_agent_spawner_properties(Entity* object)
-{
-    ADD_COMPONENT(Position, object);
-
-    auto dims = ADD_COMPONENT(Dimension, object);
+    auto dims = ADD_COMPONENT(Dimension);
     dims->height = AGENT_SPAWNER_HEIGHT;
 
-    auto vox = ADD_COMPONENT(VoxelModel, object);
+    auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::agent_spawner;
     vox->init_hitscan = AGENT_SPAWNER_INIT_WITH_HITSCAN;
     vox->init_draw = AGENT_SPAWNER_INIT_WITH_DRAW;
 
-    auto health = ADD_COMPONENT(HitPoints, object);
+    auto health = ADD_COMPONENT(HitPoints);
     health->health = AGENT_SPAWNER_MAX_HEALTH;
     health->health_max = AGENT_SPAWNER_MAX_HEALTH;
 
     #if DC_SERVER
-    auto spawner = ADD_COMPONENT(AgentSpawner, object);
+    auto spawner = ADD_COMPONENT(AgentSpawner);
     spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
 
-    auto limiter = ADD_COMPONENT(RateLimit, object);
+    auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
 
-    auto item_drop = ADD_COMPONENT(ItemDrop, object);
+    auto item_drop = ADD_COMPONENT(ItemDrop);
     item_drop->drop.set_max_drop_types(1);
     item_drop->drop.set_max_drop_amounts("agent_spawner", 1);
     item_drop->drop.add_drop("agent_spawner", 1, 1.0f);
     #endif
 
     #if DC_CLIENT
-    auto anim = ADD_COMPONENT(Animation, object);
+    auto anim = ADD_COMPONENT(Animation);
     anim->count = AGENT_SPAWNER_ANIMATION_COUNT;
     anim->count_max = AGENT_SPAWNER_ANIMATION_COUNT_MAX;
     anim->size = AGENT_SPAWNER_ANIMATION_SIZE;
     anim->force = AGENT_SPAWNER_ANIMATION_FORCE;
     anim->color = AGENT_SPAWNER_ANIMATION_COLOR;
     #endif
-
-    object->tick = &tick_agent_spawner;
-    object->update = &update_agent_spawner;
-
-    object->create = create_packet;
-    object->state = state_packet;
-}
-
-Entity* create_agent_spawner()
-{
-    EntityType type = ENTITY_AGENT_SPAWNER;
-    Entity* obj = entity_list->create(type);
-    GS_ASSERT(obj != NULL);
-    if (obj == NULL) return NULL;
-    set_agent_spawner_properties(obj);
-    return obj;
 }
 
 void ready_agent_spawner(Entity* object)

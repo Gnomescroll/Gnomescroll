@@ -21,42 +21,23 @@ void load_turret_data()
 
     entity_data->begin_attaching_to(type);
 
-    entity_data->attach_component(type, COMPONENT_Position);
-    entity_data->attach_component(type, COMPONENT_Owner);
-    entity_data->attach_component(type, COMPONENT_Dimension);
-    entity_data->attach_component(type, COMPONENT_VoxelModel);
-    entity_data->attach_component(type, COMPONENT_HitPoints);
-    entity_data->attach_component(type, COMPONENT_WeaponTargeting);
+    ADD_COMPONENT(Position);
+    ADD_COMPONENT(Owner);
 
-    #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_Explosion);
-    entity_data->attach_component(type, COMPONENT_RateLimit);
-    #endif
-
-    #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_Animation);
-    #endif
-}
-
-static void set_turret_properties(Entity* object)
-{
-    ADD_COMPONENT(Position, object);
-    ADD_COMPONENT(Owner, object);
-
-    auto dims = ADD_COMPONENT(Dimension, object);
+    auto dims = ADD_COMPONENT(Dimension);
     dims->height = TURRET_HEIGHT;
     dims->camera_height = TURRET_CAMERA_HEIGHT;
 
-    auto vox = ADD_COMPONENT(VoxelModel, object);
+    auto vox = ADD_COMPONENT(VoxelModel);
     vox->vox_dat = &VoxDats::turret;
     vox->init_hitscan = TURRET_INIT_WITH_HITSCAN;
     vox->init_draw = TURRET_INIT_WITH_DRAW;
 
-    auto health = ADD_COMPONENT(HitPoints, object);
+    auto health = ADD_COMPONENT(HitPoints);
     health->health = TURRET_MAX_HEALTH;
     health->health_max = TURRET_MAX_HEALTH;
 
-    auto target = ADD_COMPONENT(WeaponTargeting, object);
+    auto target = ADD_COMPONENT(WeaponTargeting);
     target->target_acquisition_failure_rate = TURRET_TARGET_ACQUISITION_PROBABILITY;
     target->fire_rate_limit = TURRET_FIRE_RATE_LIMIT;
     target->uses_bias = TURRET_USES_BIAS;
@@ -73,38 +54,23 @@ static void set_turret_properties(Entity* object)
     target->attacker_properties.terrain_modification_action = TMA_TURRET;
 
     #if DC_SERVER
-    auto explode = ADD_COMPONENT(Explosion, object);
+    auto explode = ADD_COMPONENT(Explosion);
     explode->radius = TURRET_EXPLOSION_RADIUS;
     explode->damage = TURRET_EXPLOSION_DAMAGE;
     explode->harms_owner = TURRET_EXPLOSION_HARMS_OWNER;
 
-    auto limiter = ADD_COMPONENT(RateLimit, object);
+    auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
     #endif
 
 
     #if DC_CLIENT
-    auto anim = ADD_COMPONENT(Animation, object);
+    auto anim = ADD_COMPONENT(Animation);
     anim->count = TURRET_ANIMATION_COUNT;
     anim->count_max = TURRET_ANIMATION_COUNT_MAX;
     anim->size = TURRET_ANIMATION_SIZE;
     anim->force = TURRET_ANIMATION_FORCE;
     #endif
-
-    object->tick = &tick_turret;
-    object->update = &update_turret;
-
-    object->create = create_packet_owner;
-    object->state = state_packet;
-}
-
-Entity* create_turret()
-{
-    EntityType type = ENTITY_TURRET;
-    Entity* obj = entity_list->create(type);
-    if (obj == NULL) return NULL;
-    set_turret_properties(obj);
-    return obj;
 }
 
 void ready_turret(Entity* object)

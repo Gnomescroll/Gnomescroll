@@ -16,8 +16,12 @@ class Component
         ComponentInterfaceType interface;
         class Entities::Entity* object;
 
+    virtual void load_settings_from(const Component* component) {}
+
+    virtual ~Component() {}
+
     Component(ComponentType type, ComponentInterfaceType interface) :
-        id(-1), type(type), interface(interface), object(NULL)
+        id(NULL_ENTITY), type(type), interface(interface), object(NULL)
     {}
 };
 

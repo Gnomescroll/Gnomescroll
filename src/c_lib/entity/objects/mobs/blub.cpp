@@ -21,54 +21,32 @@ void load_mob_blub_data()
 
     entity_data->begin_attaching_to(type);
 
-    entity_data->attach_component(type, COMPONENT_PositionMomentum);
-    entity_data->attach_component(type, COMPONENT_Dimension);
-    entity_data->attach_component(type, COMPONENT_SpriteMob);
-    entity_data->attach_component(type, COMPONENT_HitPoints);
-    entity_data->attach_component(type, COMPONENT_Waiting);
-    entity_data->attach_component(type, COMPONENT_DestinationTargeting);
-    entity_data->attach_component(type, COMPONENT_AgentTargeting);
+    ADD_COMPONENT(PositionMomentum);
 
-    #if DC_SERVER
-    entity_data->attach_component(type, COMPONENT_StateMachine);
-    entity_data->attach_component(type, COMPONENT_RateLimit);
-    entity_data->attach_component(type, COMPONENT_ItemDrop);
-    entity_data->attach_component(type, COMPONENT_Knockback);
-    #endif
-
-    #if DC_CLIENT
-    entity_data->attach_component(type, COMPONENT_Animation);
-    #endif
-}
-
-static void set_mob_blub_properties(Entity* object)
-{
-    ADD_COMPONENT(PositionMomentum, object);
-
-    auto dims = ADD_COMPONENT(Dimension, object);
+    auto dims = ADD_COMPONENT(Dimension);
     dims->height = MONSTER_BLUB_HEIGHT;
 
-    auto mob = ADD_COMPONENT(SpriteMob, object);
+    auto mob = ADD_COMPONENT(SpriteMob);
     mob->mob.init("blue_blub");
 
     #if DC_CLIENT
-    ADD_COMPONENT(HitPoints, object);
+    ADD_COMPONENT(HitPoints);
     #endif
     #if DC_SERVER   // health will be set by packet initializer in client, so dont initialize it here
-    auto health = ADD_COMPONENT(HitPoints, object);
+    auto health = ADD_COMPONENT(HitPoints);
     int health_amt = randrange(MONSTER_BLUB_HEALTH_MIN, MONSTER_BLUB_HEALTH_MAX);
     health->health = health_amt;
     health->health_max = health_amt;
     #endif
 
-    auto dest = ADD_COMPONENT(DestinationTargeting, object);
+    auto dest = ADD_COMPONENT(DestinationTargeting);
     dest->sight_range = MONSTER_BLUB_MOTION_PROXIMITY_RADIUS;
     dest->destination_choice_x = MONSTER_BLUB_WALK_RANGE;
     dest->destination_choice_y = MONSTER_BLUB_WALK_RANGE;
     dest->speed = MONSTER_BLUB_WALK_SPEED;
     dest->max_z_diff = MONSTER_BLUB_MOTION_MAX_Z_DIFF;
 
-    auto agent = ADD_COMPONENT(AgentTargeting, object);
+    auto agent = ADD_COMPONENT(AgentTargeting);
     agent->sight_range = MONSTER_BLUB_MOTION_PROXIMITY_RADIUS;
     agent->speed = MONSTER_BLUB_CHASE_SPEED;
     agent->max_z_diff = MONSTER_BLUB_MOTION_MAX_Z_DIFF;
@@ -81,14 +59,14 @@ static void set_mob_blub_properties(Entity* object)
     agent->attack_damage = 2;
     agent->jump_near_player = true;
 
-    auto waiting = ADD_COMPONENT(Waiting, object);
+    auto waiting = ADD_COMPONENT(Waiting);
     waiting->wait_time = MONSTER_BLUB_IDLE_TIME;
 
     #if DC_SERVER
-    auto limiter = ADD_COMPONENT(RateLimit, object);
+    auto limiter = ADD_COMPONENT(RateLimit);
     limiter->limit = MOB_BROADCAST_RATE;
 
-    auto item_drop = ADD_COMPONENT(ItemDrop, object);
+    auto item_drop = ADD_COMPONENT(ItemDrop);
     item_drop->drop.set_max_drop_types(2);
     item_drop->drop.set_max_drop_amounts("synthesizer_coin", 3);
     item_drop->drop.add_drop("synthesizer_coin", 1, 0.3f);
@@ -97,37 +75,22 @@ static void set_mob_blub_properties(Entity* object)
     item_drop->drop.set_max_drop_amounts("plasma_grenade", 10);
     item_drop->drop.add_drop_range("plasma_grenade", 1, 10, 0.8f);
 
-    auto state = ADD_COMPONENT(StateMachine, object);
+    auto state = ADD_COMPONENT(StateMachine);
     state->state = STATE_WAITING;
     state->router = &blub_state_router;
 
-    auto knockback = ADD_COMPONENT(Knockback, object);
+    auto knockback = ADD_COMPONENT(Knockback);
     knockback->weight = 1.0f;
     #endif
 
     #if DC_CLIENT
-    auto anim = ADD_COMPONENT(Animation, object);
+    auto anim = ADD_COMPONENT(Animation);
     anim->color = MONSTER_BLUB_ANIMATION_COLOR;
     anim->count = MONSTER_BLUB_ANIMATION_COUNT;
     anim->count_max = MONSTER_BLUB_ANIMATION_COUNT_MAX;
     anim->size = MONSTER_BLUB_ANIMATION_SIZE;
     anim->force = MONSTER_BLUB_ANIMATION_FORCE;
     #endif
-
-    object->tick = &tick_mob_blub;
-    object->update = &update_mob_blub;
-
-    object->create = create_packet_momentum_angles_health;
-    object->state = state_packet_momentum_angles;
-}
-
-Entity* create_mob_blub()
-{
-    EntityType type = ENTITY_MONSTER_BLUE_BLUB;
-    Entity* obj = entity_list->create(type);
-    if (obj == NULL) return NULL;
-    set_mob_blub_properties(obj);
-    return obj;
 }
 
 void ready_mob_blub(Entity* object)

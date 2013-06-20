@@ -181,22 +181,17 @@ void EntityList::init()
 
 void EntityList::tick()
 {
-    char* used;
-    int max;
-    Entity** objects;
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
-        used = this->used[i];
+        char* used = this->used[i];
         if (used == NULL) continue;
-        max = this->maximums[i];
-        objects = this->objects[i];
+        int max = this->maximums[i];
+        Entity** objects = this->objects[i];
+        entityTick tick = get_entity_tick_method(EntityType(i));
+        if (tick == NULL) continue;
         for (int j=0; j<max; j++)
-        {
-            if (!used[j]) continue;
-            Entity* obj = objects[j];
-            if (obj->tick == NULL) break;   // none of these objects will have tick()
-            obj->tick(obj);
-        }
+            if (used[j])
+                tick(objects[j]);
     }
 }
 
@@ -204,14 +199,15 @@ void EntityList::update()
 {
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
-        if (this->used[i] == NULL) continue;
-        for (int j=0; j<this->maximums[i]; j++)
-        {
-            if (!this->used[i][j]) continue;
-            Entity* obj = this->objects[i][j];
-            if (obj->update == NULL) break;
-            obj->update(obj);
-        }
+        char* used = this->used[i];
+        if (used == NULL) continue;
+        int max = this->maximums[i];
+        Entity** objects = this->objects[i];
+        entityUpdate update = get_entity_update_method(EntityType(i));
+        if (update == NULL) continue;
+        for (int j=0; j<max; j++)
+            if (used[j])
+                update(objects[j]);
     }
 }
 

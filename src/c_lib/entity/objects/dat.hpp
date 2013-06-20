@@ -17,8 +17,8 @@ class EntityAttributes
         char name[DAT_NAME_MAX_LENGTH+1];
 
         //// Controllers
-        //tickObject* tick;
-        //updateObject* update;
+        //tickEntity* tick;
+        //updateEntity* update;
 
         //// Network
         //class CreatePacketDelegate* create;

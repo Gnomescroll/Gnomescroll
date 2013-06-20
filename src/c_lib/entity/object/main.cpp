@@ -19,7 +19,7 @@ void load_object_data()
 {
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
-        entityLoad load = get_object_load_method((EntityType)i);
+        entityLoad load = get_entity_load_method((EntityType)i);
         if (load != NULL) load();
     }
 }
@@ -41,7 +41,7 @@ void init()
 
     for (int i=0; i<MAX_ENTITY_TYPES; i++)
     {
-        int max = get_object_max((EntityType)i);
+        int max = get_entity_max((EntityType)i);
         if (max > 0)
             entity_list->set_object_max((EntityType)i, max);
     }
@@ -80,16 +80,31 @@ void harvest()
 
 /* Underlying API handlers */
 
-static Entity* create_switch (EntityType type)
+static void load_entity_properties(Entity* entity)
 {
-    entityCreate create = get_object_create_method(type);
-    IF_ASSERT(create == NULL) return NULL;
-    return create();
+    if (entity == NULL) return;
+    size_t n_components = entity_data->get_component_count(entity->type);
+    Components::Component const* const* components = entity_data->get_components(entity->type);
+    IF_ASSERT(components == NULL) return;
+    for (size_t i=0; i<n_components; i++)
+    {
+        const Components::Component* c = components[i];
+        IF_ASSERT(c == NULL) continue;
+        Components::Component* d = add_component_to_object(entity, c->type);
+        d->load_settings_from(c);
+    }
+}
+
+static Entity* _create(EntityType type)
+{
+    Entity* obj = entity_list->create(type);
+    load_entity_properties(obj);
+    return obj;
 }
 
 Entity* create(EntityType type)
 {
-    Entity* object = create_switch (type);
+    Entity* object = _create(type);
     if (object == NULL) return NULL;
     entity_list->set_object_id(object);
     return object;
@@ -98,7 +113,7 @@ Entity* create(EntityType type)
 Entity* create(EntityType type, EntityID id)
 {
     if (entity_list->in_use(type, id)) return NULL;
-    Entity* object = create_switch (type);
+    Entity* object = _create(type);
     if (object == NULL) return NULL;
     entity_list->set_object_id(object, id);
     return object;
@@ -107,7 +122,7 @@ Entity* create(EntityType type, EntityID id)
 void ready_switch(Entity* object)
 {
     IF_ASSERT(object == NULL) return;
-    entityReady ready = get_object_ready_method(object->type);
+    entityReady ready = get_entity_ready_method(object->type);
     IF_ASSERT(ready == NULL) return;
     ready(object);
 }
@@ -117,7 +132,7 @@ void destroy_switch(Entity* object)
     IF_ASSERT(object == NULL) return;
     EntityType type = object->type;
 
-    entityDie die = get_object_die_method(type);
+    entityDie die = get_entity_die_method(type);
     GS_ASSERT(die != NULL);
     if (die != NULL) die(object);
 

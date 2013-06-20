@@ -1,5 +1,8 @@
 #pragma once
 
+#define BEGIN_COPY(CLASS) const CLASS* _component = static_cast<const CLASS*>(component);
+#define COPY(PROP) this->PROP = _component->PROP;
+
 #include <entity/macros.hpp>
 #include <entity/constants.hpp>
 
@@ -24,3 +27,6 @@
 #include <entity/network/packets.hpp>
 #include <entity/network/interfaces.hpp>
 #include <entity/network/main.hpp>
+
+#undef BEGIN_COPY
+#undef COPY

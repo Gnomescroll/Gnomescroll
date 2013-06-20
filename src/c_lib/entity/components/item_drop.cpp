@@ -29,12 +29,12 @@ static struct Vec3 get_dropped_item_position(Entities::Entity* object)
     {   // use physics position
         auto physics = GET_COMPONENT_INTERFACE(Physics, object);
         GS_ASSERT(physics != NULL);
-        if (physics == NULL) return vec3_init(0.0f, 0.0f, 0.0f);
+        if (physics == NULL) return vec3_init(0);
         position = physics->get_position();
 
         // try to center it by using height dimension, if available
         auto dims = GET_COMPONENT_INTERFACE(Dimension, object);
-        if (dims != NULL) position.z += dims->get_height() / 2.0f;
+        if (dims != NULL) position.z += dims->get_height() * 0.5f;
     }
 
     // assume item is centered
