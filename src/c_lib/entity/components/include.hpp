@@ -1,5 +1,8 @@
 #pragma once
 
+#define BEGIN_COPY(CLASS) const CLASS* _component = static_cast<const CLASS*>(component);
+#define COPY(PROP) this->PROP = _component->PROP;
+
 #include <entity/components/physics.hpp>
 #include <entity/components/physics/position.hpp>
 #include <entity/components/physics/position_momentum.hpp>
@@ -32,3 +35,6 @@
 # include <entity/components/healer.hpp>
 # include <entity/components/knockback.hpp>
 #endif
+
+#undef BEGIN_COPY
+#undef COPY

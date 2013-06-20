@@ -39,7 +39,7 @@ class EntityConfig
         this->update = NULL;
         this->create_packet = NULL;
         this->state_packet = NULL;
-        this->networked = true;
+        this->networked = false;
         this->loaded = false;
     }
 };
@@ -65,6 +65,7 @@ static void set_object(EntityType type)
     started = true;
 
     c.type = type;
+    c.networked = true;  // everything defined should be networked by default
 }
 
 static void register_settings()

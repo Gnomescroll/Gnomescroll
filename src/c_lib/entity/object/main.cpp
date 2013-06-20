@@ -26,7 +26,6 @@ void load_object_data()
 
 void init()
 {   // must specify maximum values for objects here
-
     init_config();
 
     GS_ASSERT(entity_list == NULL);
@@ -49,7 +48,6 @@ void init()
     entity_data = new EntityDataList;
     entity_data->init();
     load_object_data();
-
     entity_list->load_object_data(entity_data);
 }
 

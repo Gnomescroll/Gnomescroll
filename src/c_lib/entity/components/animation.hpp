@@ -1,6 +1,8 @@
 #pragma once
 
-#if DC_CLIENT
+#if DC_SERVER
+#error do not include this file in server
+#endif
 
 #include <common/common.hpp>
 #include <entity/constants.hpp>
@@ -21,6 +23,16 @@ class AnimationComponent: public Component
     void explode(Vec3 position);
     void explode_random(Vec3 position);
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(AnimationComponent)
+        COPY(count)
+        COPY(count_max)
+        COPY(color)
+        COPY(size)
+        COPY(force)
+    }
+
     AnimationComponent() :
         Component(COMPONENT_Animation, COMPONENT_INTERFACE_Animation),
         count(10), count_max(10), size(0.5f), force(20.0f)
@@ -28,6 +40,4 @@ class AnimationComponent: public Component
     }
 };
 
-}; // Entities
-
-#endif
+} // Entities

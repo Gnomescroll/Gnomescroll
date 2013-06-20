@@ -1,6 +1,8 @@
-#include "spawner.hpp"
+#include "animation.hpp"
 
-#if DC_CLIENT
+#if DC_SERVER
+#error do not include this file in server
+#endif
 
 #include <animations/animations.hpp>
 
@@ -17,6 +19,4 @@ void AnimationComponent::explode_random(Vec3 position)
     Animations::voxel_explode(position, this->count, this->count_max, this->size, this->force, this->color);
 }
 
-}; // Entities
-
-#endif
+} // Entities

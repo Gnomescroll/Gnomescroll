@@ -203,6 +203,14 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         # For some reason, this #define disappears... so put it here
         extra_options.append('-Dlinux')
 
+    if OS == 'Windows' or windows:
+        extra_options += [
+            '-DWIN32',
+            '-D_WIN32',
+            '-D_WIN32',
+            '-D__MINGW32__'
+        ]
+
     if windows:
         extra_options.append('-DLINUX2WINDOWS')
 
