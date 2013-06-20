@@ -13,7 +13,7 @@ class SpriteMobComponent: public Component
 
     void load_settings_from(const Component* component)
     {
-        BEGIN_COPY(RateLimitComponent);
+        BEGIN_COPY(SpriteMobComponent);
         COPY(mob);
     }
 
