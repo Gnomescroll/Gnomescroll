@@ -8,7 +8,6 @@ void init_sprites()
     init_sprite_mob_properties();
     init_animation_repo();
     init_sprite_mob_list();
-    load_sprite_mob_config();
 }
 
 void teardown_sprites()

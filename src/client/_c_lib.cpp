@@ -163,6 +163,9 @@ bool c_lib_inited = false;
 #include <common/draw/colored_voxel.cpp>
 #include <common/draw/textured_voxel.cpp>
 
+/* Entity system */
+#include <entity/include.cpp>
+
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>
 #include <voxel/voxel_render.cpp>
@@ -171,9 +174,6 @@ bool c_lib_inited = false;
 #include <voxel/voxel_model.cpp>
 #include <voxel/voxel_loader.cpp>
 #include <voxel/vox_dat_init.cpp>
-
-/* Entity system */
-#include <entity/include.cpp>
 
 /* particles */
 #include <particle/_include.hpp>
@@ -356,8 +356,6 @@ void init_configs()
     t_map::init_for_draw();
     t_map::blit_block_item_sheet();
     t_mech::load_mech_dat();
-    Entities::load_entity_dat();
-    Entities::end_entity_dat();
     ItemContainer::load_config();
     ItemContainer::end_config();
     Item::init_properties();
@@ -372,6 +370,10 @@ void init_configs()
     Item::load_synthesizer();
     Item::load_crafting_dat();
     Item::load_smelting_dat();
+
+    t_mob::load_config();
+
+    Entities::init();
 
     Attributes::verify();
 }
@@ -427,7 +429,6 @@ int init_c_lib(int argc, const char* argv[])
     Badges::init();
     Components::init();
     Entities::init_net_interfaces();
-    Entities::init();    // Entity system
     Chat::init_chat_client();
 
     init_network();
@@ -457,6 +458,8 @@ int init_c_lib(int argc, const char* argv[])
 
     t_map::init_t_map();
     t_map::generate_light_texture();
+
+    t_mob::init();
 
     init_configs();
 
@@ -492,8 +495,6 @@ int init_c_lib(int argc, const char* argv[])
     Hud::init();
 
     Voxels::init_voxel_render_list_shader1();   //used to be called from ClientState::init
-
-    t_mob::init();
 
     Path::init();
 

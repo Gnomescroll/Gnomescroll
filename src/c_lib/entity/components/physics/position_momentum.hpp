@@ -44,6 +44,13 @@ class PositionMomentumComponent: public PositionComponent
         return true;
     }
 
+    void load_settings_from(const Component* component)
+    {
+        // no settings
+    }
+
+    virtual ~PositionMomentumComponent() {}
+
     PositionMomentumComponent() :
         PositionComponent(COMPONENT_PositionMomentum),
         momentum(NULL_MOMENTUM)

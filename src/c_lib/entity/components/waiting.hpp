@@ -11,10 +11,16 @@ class WaitingComponent: public Component
         unsigned int tick;
         unsigned int wait_time;
 
-        bool ready()
-        {
-            return this->tick >= this->wait_time;
-        }
+    bool ready()
+    {
+        return this->tick >= this->wait_time;
+    }
+
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(WaitingComponent);
+        COPY(wait_time);
+    }
 
     virtual ~WaitingComponent() {}
 

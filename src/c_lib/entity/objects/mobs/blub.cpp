@@ -27,7 +27,7 @@ void load_mob_blub_data()
     dims->height = MONSTER_BLUB_HEIGHT;
 
     auto mob = ADD_COMPONENT(SpriteMob);
-    mob->mob.init("blue_blub");
+    mob->mob.set_type("blue_blub");
 
     #if DC_CLIENT
     ADD_COMPONENT(HitPoints);
@@ -95,9 +95,9 @@ void load_mob_blub_data()
 
 void ready_mob_blub(Entity* object)
 {
-
     auto mob = GET_COMPONENT_INTERFACE(SpriteMob, object);
     mob->mob.associate_entity(object->id, object->type);
+    mob->mob.init();
 
     #if DC_SERVER
     object->broadcastCreate();

@@ -142,6 +142,9 @@
 /* Physics */
 #include <physics/_include.hpp>
 
+/* Entity system */
+#include <entity/include.cpp>
+
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>
 #include <voxel/voxel_hitscan.cpp>
@@ -149,9 +152,6 @@
 #include <voxel/voxel_model.cpp>
 #include <voxel/voxel_loader.cpp>
 #include <voxel/vox_dat_init.cpp>
-
-/* Entity system */
-#include <entity/include.cpp>
 
 /* Particles */
 #include <particle/_include.hpp>
@@ -283,8 +283,6 @@ void init_configs()
     t_map::load_block_dat();
     t_mech::load_mech_dat();
     // TODO -- deprecate
-    //Entities::load_entity_dat();
-    //Entities::end_entity_dat();
     ItemContainer::load_config();
     ItemContainer::end_config();
     Item::init_properties();
@@ -306,6 +304,8 @@ void init_configs()
     Item::load_crafting_dat();
     Item::load_smelting_dat();
     ItemContainer::load_crusher_dat();
+
+    t_mob::load_config();
 
     Entities::init();
 
@@ -357,7 +357,7 @@ int init_c_lib(int argc, const char* argv[])
     Agents::init_attributes();
     World::init_attributes();
 
-    t_mob::init();  // 2d sprite, assimp mobs
+    t_mob::init();
 
     Badges::init();
     Components::init();

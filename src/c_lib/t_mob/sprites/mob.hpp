@@ -39,12 +39,22 @@ class SpriteMob
     void stop_animation();
     void tick();
 
+    void register_with_manager();
+
     #if DC_CLIENT
     void draw();
     #endif
 
+    void init();
     void init(SpriteMobType type);
     void init(const char* name);
+
+    void load_settings_from(const SpriteMob* mob)
+    {
+        this->type = mob->type;
+        this->current_animation = mob->current_animation;
+        this->entity_type = mob->entity_type;
+    }
 
     SpriteMob();
     ~SpriteMob();

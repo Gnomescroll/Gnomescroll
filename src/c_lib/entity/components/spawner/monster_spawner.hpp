@@ -28,6 +28,11 @@ class MonsterSpawnerComponent: public SpawnerComponent
 
     void notify_children_of_death();
 
+    inline int get_max_children() const
+    {
+        return this->max_children;
+    }
+
     void set_max_children(int max_children)
     {
         if (this->max_children == max_children) return;
@@ -38,13 +43,21 @@ class MonsterSpawnerComponent: public SpawnerComponent
         this->max_children = max_children;
     }
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(MonsterSpawnerComponent);
+        COPY(radius);
+        COPY(spawn_type);
+        this->set_max_children(_component->get_max_children());
+    }
+
     MonsterSpawnerComponent() :
         SpawnerComponent(COMPONENT_MonsterSpawner),
         max_children(0), children(NULL), spawn_type(NULL_ENTITY_TYPE),
         radius(1.0f), children_ct(0)
     {}
 
-    ~MonsterSpawnerComponent()
+    virtual ~MonsterSpawnerComponent()
     {
         free(this->children);
     }

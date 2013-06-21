@@ -47,6 +47,14 @@ class AgentSpawnerComponent: public SpawnerComponent
         this->agents.remove(agent_id);
     }
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(AgentSpawnerComponent);
+        COPY(radius);
+    }
+
+    virtual ~AgentSpawnerComponent() {}
+
     AgentSpawnerComponent() :
         SpawnerComponent(COMPONENT_AgentSpawner),
         radius(0),

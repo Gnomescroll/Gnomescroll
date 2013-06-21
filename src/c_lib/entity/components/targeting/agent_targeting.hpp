@@ -64,6 +64,19 @@ class AgentTargetingComponent: public TargetingComponent
 
     void call();
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(AgentTargetingComponent);
+        COPY(speed);
+        COPY(proximity_radius);
+        COPY(max_z_diff);
+        COPY(max_lock_ticks);
+        COPY(jump_force);
+        COPY(attack_rate);
+        COPY(attack_damage);
+        COPY(jump_near_player);
+    }
+
     virtual ~AgentTargetingComponent() {}
 
     AgentTargetingComponent() :

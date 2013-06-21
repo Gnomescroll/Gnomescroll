@@ -8,5 +8,6 @@ namespace t_mob
 
 void init();
 void teardown();
+void load_config();
 
 }   // t_mob

@@ -65,6 +65,16 @@ class DestinationTargetingComponent: public TargetingComponent
         this->speed = len / float(this->ticks_to_destination);
     }
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(DestinationTargetingComponent);
+        COPY(stop_proximity);
+        COPY(speed);
+        COPY(max_z_diff);
+        COPY(destination_choice_x);
+        COPY(destination_choice_y);
+    }
+
     virtual ~DestinationTargetingComponent()
     {
         free(this->path);

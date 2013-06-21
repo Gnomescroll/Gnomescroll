@@ -40,6 +40,8 @@ class DimensionComponent: public Component
         COPY(camera_height);
     }
 
+    virtual ~DimensionComponent() {}
+
     DimensionComponent() :
         Component(COMPONENT_Dimension, COMPONENT_INTERFACE_Dimension),
         height(1.0f), camera_height(0.0f)

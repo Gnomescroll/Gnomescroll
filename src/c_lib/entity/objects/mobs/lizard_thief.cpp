@@ -28,7 +28,7 @@ void load_mob_lizard_thief_data()
     dims->height = MONSTER_BOMB_HEIGHT;
 
     auto mob = ADD_COMPONENT(SpriteMob);
-    mob->mob.init("lizard_thief");
+    mob->mob.set_type("lizard_thief");
 
     #if DC_CLIENT
     ADD_COMPONENT(HitPoints);
@@ -94,6 +94,8 @@ void ready_mob_lizard_thief(Entity* object)
 {
     auto mob = GET_COMPONENT_INTERFACE(SpriteMob, object);
     mob->mob.associate_entity(object->id, object->type);
+    mob->mob.init();
+
     #if DC_SERVER
     object->broadcastCreate();
     #endif

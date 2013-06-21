@@ -12,6 +12,13 @@ class StateMachineComponent: public Component
         EntityState state;
         stateRouter router;
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(StateMachineComponent);
+        COPY(state);
+        COPY(router);
+    }
+
     virtual ~StateMachineComponent() {}
 
     StateMachineComponent() :

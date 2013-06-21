@@ -33,6 +33,8 @@ class AnimationComponent: public Component
         COPY(force);
     }
 
+    virtual ~AnimationComponent() {}
+
     AnimationComponent() :
         Component(COMPONENT_Animation, COMPONENT_INTERFACE_Animation),
         count(10), count_max(10), size(0.5f), force(20.0f)

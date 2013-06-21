@@ -183,12 +183,18 @@ void SpriteMob::set_type(const char* name)
     this->type = get_mob_type(name);
 }
 
+void SpriteMob::init()
+{
+    IF_ASSERT(this->type == NULL_SPRITE_MOB_TYPE) return;
+    sprite_mob_list->add(this);
+    this->begin_default_animation();
+}
+
 void SpriteMob::init(SpriteMobType type)
 {
     GS_ASSERT(this->id == NULL_SPRITE_MOB && this->type == NULL_SPRITE_MOB_TYPE);
     this->type = type;
-    sprite_mob_list->add(this);
-    this->begin_default_animation();
+    this->init();
 }
 
 void SpriteMob::init(const char* name)

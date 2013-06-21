@@ -45,6 +45,8 @@ class ExplosionComponent: public Component
         COPY(delay);
     }
 
+    virtual ~ExplosionComponent() {}
+
     ExplosionComponent() :
         Component(COMPONENT_Explosion, COMPONENT_INTERFACE_Explosion),
         radius(1.0f), damage(0), proximity_radius(1.0f), harms_owner(false),

@@ -30,6 +30,8 @@ class OwnerComponent: public Component
         // no settings
     }
 
+    virtual ~OwnerComponent() {}
+
     OwnerComponent() :
         Component(COMPONENT_Owner, COMPONENT_INTERFACE_Owner),
         owner(NULL_AGENT)

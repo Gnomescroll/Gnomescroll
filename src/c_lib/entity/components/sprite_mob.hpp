@@ -14,7 +14,7 @@ class SpriteMobComponent: public Component
     void load_settings_from(const Component* component)
     {
         BEGIN_COPY(SpriteMobComponent);
-        COPY(mob);
+        this->mob.load_settings_from(&_component->mob);
     }
 
     virtual ~SpriteMobComponent() {}

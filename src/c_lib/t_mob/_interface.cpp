@@ -9,6 +9,11 @@ void init()
     init_models();
 }
 
+void load_config()
+{
+    load_sprite_mob_config();
+}
+
 void teardown()
 {
     teardown_sprites();

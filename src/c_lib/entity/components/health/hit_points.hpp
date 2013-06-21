@@ -35,6 +35,15 @@ class HitPointsComponent: public HealthComponent
         this->health = 0;
     }
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(HitPointsComponent);
+        COPY(health);
+        COPY(health_max);
+    }
+
+    virtual ~HitPointsComponent() {}
+
     HitPointsComponent() :
         HealthComponent(COMPONENT_HitPoints),
         died(false), health(100), health_max(100)

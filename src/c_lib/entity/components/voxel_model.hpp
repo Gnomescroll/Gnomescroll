@@ -28,54 +28,64 @@ class VoxelModelComponent: public Component
         bool should_hitscan;
         bool should_draw;
 
-        float get_radius()
-        {
-            return this->get_radius(0);
-        }
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(VoxelModelComponent);
+        COPY(vox_dat);
+        COPY(init_hitscan);
+        COPY(init_draw);
+        COPY(should_hitscan);
+        COPY(should_draw);
+    }
 
-        float get_radius(int part)
-        {
-            if (this->vox == NULL) return 1.0f;
-            Voxels::VoxelVolume* vv = vox->get_part(part);
-            if (vv == NULL) return 1.0f;
-            return vv->radius;
-        }
+    float get_radius()
+    {
+        return this->get_radius(0);
+    }
 
-        struct Vec3 get_center()
-        {
-            if (this->vox == NULL) return vec3_init(0);
-            return this->vox->get_center();
-        }
+    float get_radius(int part)
+    {
+        if (this->vox == NULL) return 1.0f;
+        Voxels::VoxelVolume* vv = vox->get_part(part);
+        if (vv == NULL) return 1.0f;
+        return vv->radius;
+    }
 
-        struct Vec3 get_center(int part)
-        {
-            if (this->vox == NULL) return vec3_init(0);
-            Voxels::VoxelVolume* vv = vox->get_part(part);
-            if (vv == NULL) return vec3_init(0);
-            return vv->get_center();
-        }
+    struct Vec3 get_center()
+    {
+        if (this->vox == NULL) return vec3_init(0);
+        return this->vox->get_center();
+    }
 
-        void ready(Vec3 position, float theta, float phi)
-        {
-            IF_ASSERT(this->vox != NULL) return;
-            IF_ASSERT(this->vox_dat == NULL) return;
-            this->vox = new Voxels::VoxelModel(this->vox_dat, this->object->id, this->object->type);
-            this->set_properties();
-            vox->update(position.x, position.y, position.z, theta, phi);
-            vox->set_hitscan(this->init_hitscan);
-            vox->set_draw(this->init_draw);
-        }
+    struct Vec3 get_center(int part)
+    {
+        if (this->vox == NULL) return vec3_init(0);
+        Voxels::VoxelVolume* vv = vox->get_part(part);
+        if (vv == NULL) return vec3_init(0);
+        return vv->get_center();
+    }
 
-        void freeze()
-        {
-            if (this->vox != NULL)
-                this->vox->freeze();
-        }
+    void ready(Vec3 position, float theta, float phi)
+    {
+        IF_ASSERT(this->vox != NULL) return;
+        IF_ASSERT(this->vox_dat == NULL) return;
+        this->vox = new Voxels::VoxelModel(this->vox_dat, this->object->id, this->object->type);
+        this->set_properties();
+        vox->update(position.x, position.y, position.z, theta, phi);
+        vox->set_hitscan(this->init_hitscan);
+        vox->set_draw(this->init_draw);
+    }
 
-        void update(Vec3 position, float theta, float phi, bool state_changed);
-        void force_update(Vec3 position, float theta, float phi, bool state_changed);
+    void freeze()
+    {
+        if (this->vox != NULL)
+            this->vox->freeze();
+    }
 
-    ~VoxelModelComponent()
+    void update(Vec3 position, float theta, float phi, bool state_changed);
+    void force_update(Vec3 position, float theta, float phi, bool state_changed);
+
+    virtual ~VoxelModelComponent()
     {
         delete this->vox;
     }

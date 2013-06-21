@@ -125,6 +125,12 @@ class PositionComponent: public PhysicsComponent
     }
     #endif
 
+    void load_settings_from(const Component* component)
+    {
+        // no settings
+    }
+
+
     PositionComponent() :
         PhysicsComponent(COMPONENT_Position)
     {
@@ -136,6 +142,8 @@ class PositionComponent: public PhysicsComponent
     {
         this->_init();
     }
+
+    virtual ~PositionComponent() {}
 
     private:
     void _init()

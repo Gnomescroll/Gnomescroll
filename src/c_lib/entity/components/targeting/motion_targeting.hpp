@@ -32,6 +32,16 @@ class MotionTargetingComponent: public TargetingComponent
     void move_on_surface();
     void call();
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(MotionTargetingComponent);
+        COPY(speed);
+        COPY(max_z_diff);
+        COPY(max_lock_ticks);
+        COPY(destination_choice_x);
+        COPY(destination_choice_y);
+    }
+
     virtual ~MotionTargetingComponent() {}
 
     MotionTargetingComponent() :

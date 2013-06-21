@@ -30,6 +30,8 @@ class ItemDropComponent: public Component
         COPY(drop);
     }
 
+    virtual ~ItemDropComponent() {}
+
     ItemDropComponent() :
         Component(COMPONENT_ItemDrop, COMPONENT_INTERFACE_ItemDrop)
     {

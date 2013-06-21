@@ -29,6 +29,8 @@ class RateLimitComponent: public Component
         COPY(limit);
     }
 
+    virtual ~RateLimitComponent() {}
+
     RateLimitComponent() :
         Component(COMPONENT_RateLimit, COMPONENT_INTERFACE_RateLimit),
         tick(0), limit(1)

@@ -70,6 +70,14 @@ class VerletComponent: public PhysicsComponent
         return false;
     }
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(VerletComponent);
+        this->verlet.load_settings_from(&_component->verlet);
+    }
+
+    virtual ~VerletComponent() {}
+
     VerletComponent() :
         PhysicsComponent(COMPONENT_Verlet)
     {}

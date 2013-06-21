@@ -18,6 +18,13 @@ class TargetingComponent: public Component
         Vec3 target_direction;
         bool locked_on_target;
 
+    void load_settings_from(const Component* component)
+    {
+        BEGIN_COPY(TargetingComponent);
+        COPY(target_acquisition_failure_rate);
+        COPY(sight_range);
+    }
+
     virtual ~TargetingComponent() {}
 
     explicit TargetingComponent(ComponentType type) :
