@@ -77,6 +77,20 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     OS = platform.system()
     conf.env.os = OS
 
+    ''' NOTE:
+    If compiling a 32bit library from 64bit ubuntu, you need to install
+    ia32-libs-multiarch gcc-multilib g++-multilib libgl1-mesa:i386
+    You also need to manually symlink to the libraries in the
+    /usr/lib/i386-linux-gnu folder.  The libraries should be installed,
+    but the final *.so symlink will be missing.  If you don't have the 32bit
+    library for some package, just do apt-get install libfoo:i386, then
+    symlink manually within that i386 folder.  This is all because
+    some packages e.g. libgl1-mesa-dev:i386 are misconfigured.
+    Technically its one of its dependencies (e.g. libdrm). Eventually this
+    will get fixed but it might take a few years for someone to show up and
+    do it.
+    '''
+
     arch = platform.architecture()[0]
     if i386 is None:
         i386 = (arch == '32bit')
@@ -224,6 +238,9 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     else:
         extra_options.append('-Winline')
 
+    #if OS == 'Linux' and i386:
+        #extra_options.append('-L/usr/lib/i386-linux-gnu')
+
     cxxflags += extra_options
 
     if OS == 'Darwin':
@@ -244,6 +261,13 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
     glew_inc_path = ['../../../lib/win32/glew']
     conf.check(header_name='GL/glew.h', mandatory=True, includes=glew_inc_path)
 
+    sys_libpath = ''
+    if OS == 'Linux':
+        if i386:
+            sys_libpath = '/usr/lib/i386-linux-gnu'
+        else:
+            sys_libpath = '/usr/lib/x86_64-linux-gnu'
+
     libpath = os.path.abspath('../lib/')
     if OS == 'Windows' or windows:
         print 'Current directory:', os.path.abspath(os.curdir)
@@ -263,9 +287,11 @@ def configure(conf, add_flags=[], rm_flags=[], link_flags=[], optlevel=0,
         conf.check(lib=['glu32'], uselib_store='GL')
         conf.check(lib=['glew32'], libpath=glew_lib_path, uselib_store='GL')
     elif OS == 'Linux':
-        conf.check(lib=['GL'], libpath=libpath, uselib_store='GL')
-        conf.check(lib=['GLU'], libpath=libpath, uselib_store='GL')
-        conf.check(lib=['GLEW'], libpath=libpath, uselib_store='GL')
+        mesa_libpath = [libpath, sys_libpath,
+                        os.path.join(sys_libpath, 'mesa')]
+        conf.check(lib=['GL'], libpath=mesa_libpath, uselib_store='GL')
+        conf.check(lib=['GLU'], libpath=mesa_libpath, uselib_store='GL')
+        conf.check(lib=['GLEW'], libpath=mesa_libpath, uselib_store='GL')
     elif OS == 'Darwin':
         conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'],
                    uselib_store='GL')
