@@ -140,6 +140,17 @@ bool full(EntityType type)
     return entity_list->full(type);
 }
 
+size_t get_components_needed(ComponentType type)
+{
+    size_t ct = 0;
+    for (size_t i=0; i<MAX_ENTITY_TYPES; i++)
+    {
+        size_t uses = entity_data->get_components_needed(EntityType(i), type);
+        ct += get_entity_max(EntityType(i)) * uses;
+    }
+    return ct;
+}
+
 bool point_occupied_by_type(EntityType type, const Vec3i& position)
 {
     if (entity_list->empty(type)) return false;

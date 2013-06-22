@@ -493,7 +493,8 @@ int physics_tick()
         poll_mouse();
         Entities::tick();    // update physics state
 
-        if (ClientState::tick_id % (ONE_SECOND/2) == 0) ClientState::send_camera_state();
+        if (ClientState::tick_id % (ONE_SECOND/2) == 0)
+            ClientState::send_camera_state();
 
         poll_mouse();
         ItemContainer::update_smelter_ui(); // advances predictions of progress/fuel state
@@ -504,8 +505,7 @@ int physics_tick()
         poll_mouse();
         Skybox::tick_rayleigh_scattering(); //update skybox time and update physics
 
-        Components::position_physics_component_list->call();
-        Components::position_momentum_physics_component_list->call();
+        Components::call_lists();
         poll_mouse();
 
         ClientState::update_global_hitscan();

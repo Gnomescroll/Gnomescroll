@@ -14,4 +14,9 @@
     (Components::COMPONENT##Component*)entity_data->attach_component(type, COMPONENT_##COMPONENT);
 
 // auto c = ADD_COMPONENT(SpawnChild);
-// Note: expects to be calling in load_data() initializer function. variable "EntityType type" should be in scope
+// Note: expects to be called in load_data() initializer function. variable "EntityType type" should be in scope
+
+#define GET_COMPONENT_LIST(COMPONENT) \
+    (Components::COMPONENT##ComponentList*)Components::get_component_list(COMPONENT_##COMPONENT);
+
+// auto list = GET_COMPONENT_LIST(AgentSpawner);

@@ -128,6 +128,16 @@ inline int EntityDataList::get_component_interface_slot(EntityType type, Compone
     return -1;
 }
 
+size_t EntityDataList::get_components_needed(EntityType entity, ComponentType component)
+{
+    IF_ASSERT(!isValid(entity)) return 0;
+    size_t ct = 0;
+    for (size_t i=0; i<this->component_sizes[entity]; i++)
+        if (this->component_types[entity][i] == component)
+            ct++;
+    return ct;
+}
+
 void EntityDataList::init()
 {
     GS_ASSERT(this->component_types == NULL);

@@ -13,6 +13,8 @@ bool full(EntityType type);
 bool point_occupied_by_type(EntityType type, const Vec3i& position);
 void spawn_mobs();
 
+size_t get_components_needed(ComponentType type);
+
 /* API */
 
 class Entity* create(EntityType type);

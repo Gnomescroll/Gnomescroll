@@ -33,6 +33,7 @@ class EntityDataList
     inline int get_component_count(EntityType type) const;
     inline int get_component_slot(EntityType type, ComponentType component) const;
     inline int get_component_interface_slot(EntityType type, ComponentInterfaceType interface) const;
+    size_t get_components_needed(EntityType entity, ComponentType component);
 
     void init();
 

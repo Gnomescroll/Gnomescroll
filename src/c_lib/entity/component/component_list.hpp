@@ -5,22 +5,51 @@
 namespace Components
 {
 
-template <class Component, ComponentType TYPE, int SIZE>
 class ComponentList
 {
     public:
         ComponentType type;
-        int count;
-        int max;
-        Component** components;
+        size_t count;
+        size_t max;
+        size_t call_tick;
+        size_t call_rate;
+        bool autocall;
 
-    Component* subscribe()
+    void set_autocall(size_t rate=1)
+    {
+        IF_ASSERT(rate <= 0) rate = 1;
+        GS_ASSERT(!this->autocall);
+        this->autocall = true;
+        this->call_rate = rate;
+    }
+
+    virtual Component* subscribe() = 0;
+    virtual void unsubscribe(Component* component) = 0;
+    virtual void call() = 0;
+    virtual void init(size_t max) = 0;
+
+    virtual ~ComponentList() {}
+
+    ComponentList(ComponentType type) :
+        type(type), count(0), max(0), call_tick(0), call_rate(1),
+        autocall(false)
+    {
+    }
+};
+
+template <class COMPONENT, ComponentType TYPE>
+class ComponentListChild: public ComponentList
+{
+    public:
+        COMPONENT** components;
+
+    COMPONENT* subscribe()
     {   // return pointer to available component
         IF_ASSERT(this->components == NULL) return NULL;
-        for (int i=0; i<this->max; i++)
+        for (size_t i=0; i<this->max; i++)
             if (this->components[i] == NULL)
             {
-                this->components[i] = new Component;
+                this->components[i] = new COMPONENT;
                 this->components[i]->id = i;
                 this->count++;
                 return this->components[i];
@@ -42,8 +71,10 @@ class ComponentList
 
     void call()
     {
+        if ((++this->call_tick) % this->call_rate != 0)
+            return;
         IF_ASSERT(this->components == NULL) return;
-        for (int i=0, j=0; i<this->max && j < this->count; i++)
+        for (size_t i=0, j=0; i<this->max && j < this->count; i++)
             if (this->components[i] != NULL)
             {
                 j++;
@@ -51,23 +82,24 @@ class ComponentList
             }
     }
 
-    void init()
+    void init(size_t max)
     {
         IF_ASSERT(this->components != NULL) return;
-        IF_ASSERT(this->max <= 0) return;
-        this->components = (Component**)calloc(this->max, sizeof(Component*));
+        IF_ASSERT(max <= 0) return;
+        this->max = max;
+        this->components = (COMPONENT**)calloc(this->max, sizeof(*this->components));
     }
 
-    ComponentList<Component,TYPE,SIZE>() :
-        type(TYPE), count(0), max(SIZE), components(NULL)
+    ComponentListChild<COMPONENT, TYPE>() :
+        ComponentList(TYPE),
+        components(NULL)
     {
-        this->init();
     }
 
-    ~ComponentList<Component,TYPE,SIZE>()
+    ~ComponentListChild<COMPONENT, TYPE>()
     {
         if (this->components == NULL) return;
-        for (int i=0; i<this->max; i++)
+        for (size_t i=0; i<this->max; i++)
             if (this->components[i] != NULL)
                 delete this->components[i];
         free(this->components);
