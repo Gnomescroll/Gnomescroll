@@ -11,10 +11,12 @@ class Component;
 
 Component* get(ComponentType type);
 void release(Component* component);
+void call_lists();
 
 ComponentInterfaceType get_interface_for_component(ComponentType component);
 
 void init();
+void init_config();
 void teardown();
 
 #if DC_SERVER

@@ -20,6 +20,8 @@ void tick();
 void update();
 void harvest();
 
+size_t get_components_needed(ComponentType type);
+
 class Entity* create(EntityType type);
 class Entity* create(EntityType type, EntityID id);
 void ready(class Entity* entity);

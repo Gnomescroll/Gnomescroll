@@ -374,6 +374,7 @@ void init_configs()
     t_mob::load_config();
 
     Entities::init();
+    Components::init_config();
 
     Attributes::verify();
 }

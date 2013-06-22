@@ -261,16 +261,12 @@ void tick()
 
     ServerState::move_base();
 
-    Components::rate_limit_component_list->call(); // advance rate limiter ticks
-    Components::motion_targeting_component_list->call(); // update target lock ticks
-    Components::agent_targeting_component_list->call(); // update target lock ticks
-    Components::knockback_component_list->call(); // update target lock ticks
+    Components::call_lists();
 
     if (counter % 10 == 0) ItemParticle::check_item_pickups();
     if (counter % 6  == 0)
     {
         ItemContainer::check_agents_in_container_range();
-        Components::healer_component_list->call();
         ServerState::check_agents_at_base();
     }
 

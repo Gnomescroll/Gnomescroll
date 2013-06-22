@@ -29,18 +29,19 @@ Component* create_unmanaged(ComponentType type);
 void release(Component* component);
 
 ComponentInterfaceType get_interface_for_component(ComponentType component);
+ComponentList* get_component_list(ComponentType type);
 
 void init_interfaces();
 void teardown_interfaces();
 void init_components();
+void init_components_config();
 void teardown_components();
 
 #ifndef COMPONENT_MAIN_INCLUDE
 #ifndef _COMPONENT_MAIN_HPP
 #define _COMPONENT_MAIN_HPP
-# define A(NAME, LNAME, TYPE, INTERFACE, MAX) \
-    typedef ComponentList<NAME, COMPONENT_##TYPE, MAX> NAME##List; \
-    extern NAME##List* LNAME##_list;
+# define A(TYPE, INTERFACE) \
+    typedef ComponentListChild<TYPE##Component, COMPONENT_##TYPE> TYPE##ComponentList;
 COMPONENTS
 #undef A
 #endif
@@ -48,54 +49,30 @@ COMPONENTS
 #ifndef _COMPONENT_MAIN_CPP
 #define _COMPONENT_MAIN_CPP
 
-#define A(NAME, LNAME, ...) \
-    NAME##List* LNAME##_list = NULL;
-COMPONENTS
-#undef A
-
 static ComponentInterfaceType* component_interface_map = NULL;
+static ComponentList** component_lists = NULL;
 
 Component* get(ComponentType type)
 {
-    switch (type)
-    {
-        #define A(NAME, LNAME, TYPE, ...) \
-            case COMPONENT_##TYPE: \
-                return LNAME##_list->subscribe();
-        COMPONENTS
-        #undef A
-
-        case NULL_COMPONENT:
-        default:
-            printf("ERROR: %s -- unknown ComponentType %d\n", __FUNCTION__, type);
-            return NULL;
-    }
-    return NULL;
+    IF_ASSERT(!isValid(type)) return NULL;
+    IF_ASSERT(component_lists[type] == NULL) return NULL;
+    return component_lists[type]->subscribe();
 }
 
 void release(Component* component)
 {
     IF_ASSERT(component == NULL) return;
-    switch (component->type)
-    {
-        #define A(NAME, LNAME, TYPE, ...) \
-            case COMPONENT_##TYPE: \
-                LNAME##_list->unsubscribe((NAME*)component); \
-                break;
-        COMPONENTS
-        #undef A
-
-        case NULL_COMPONENT:
-            printf("ERROR: %s -- unknown ComponentType %d\n", __FUNCTION__, component->type);
-            break;
-    }
+    ComponentType type = component->type;
+    IF_ASSERT(!isValid(type)) return;
+    IF_ASSERT(component_lists[type] == NULL) return;
+    component_lists[type]->unsubscribe(component);
 }
 
 Component* create_unmanaged(ComponentType type)
 {
     switch (type)
     {
-        #define A(NAME, LNAME, TYPE, ...) \
+        #define A(TYPE, ...) \
             case COMPONENT_##TYPE: \
                 return new TYPE##Component;
         COMPONENTS
@@ -133,7 +110,7 @@ void init_interfaces()
     component_interface_map = (ComponentInterfaceType*)calloc(MAX_COMPONENT_TYPES + 1, sizeof(ComponentInterfaceType));
     set_interface_for_component(NULL_COMPONENT, NULL_COMPONENT_INTERFACE);
 
-    #define A(NAME, LNAME, TYPE, INTERFACE, MAX) \
+    #define A(TYPE, INTERFACE) \
         set_interface_for_component(COMPONENT_##TYPE, COMPONENT_INTERFACE_##INTERFACE);
     COMPONENTS
     #undef A
@@ -144,20 +121,72 @@ void teardown_interfaces()
     free(component_interface_map);
 }
 
+static void set_component_list_max(ComponentType type, size_t max)
+{
+    IF_ASSERT(!isValid(type)) return;
+    IF_ASSERT(component_lists[type] == NULL) return;
+    component_lists[type]->init(max);
+}
+
+void init_components_config()
+{
+    IF_ASSERT(component_lists == NULL) return;
+
+    #define A(TYPE, RATE...) \
+        GS_ASSERT(isValid(COMPONENT_##TYPE)); \
+        if (isValid(COMPONENT_##TYPE)) { \
+            GS_ASSERT(component_lists[COMPONENT_##TYPE] != NULL); \
+            if (component_lists[COMPONENT_##TYPE] != NULL) \
+                component_lists[COMPONENT_##TYPE]->set_autocall(RATE); \
+        }
+    CALL_LIST
+    #undef A
+
+    for (size_t i=0; i<MAX_COMPONENT_TYPES; i++)
+    {
+        if (component_lists[i] == NULL) continue;
+        ComponentType type = ComponentType(i);
+        size_t max = Entities::get_components_needed(type);
+        if (max == 0) continue;
+        set_component_list_max(type, max);
+    }
+
+}
+
 void init_components()
 {
-    #define A(NAME, LNAME, ...) \
-        LNAME##_list = new NAME##List;
+    GS_ASSERT(component_lists == NULL);
+    component_lists = (ComponentList**)calloc(MAX_COMPONENT_TYPES, sizeof(*component_lists));
+    #define A(TYPE, ...) \
+        GS_ASSERT(isValid(COMPONENT_##TYPE)); \
+        if (isValid(COMPONENT_##TYPE)) \
+            component_lists[COMPONENT_##TYPE] = new TYPE##ComponentList;
     COMPONENTS
     #undef A
 }
 
 void teardown_components()
 {
-    #define A(NAME, LNAME, ...) \
-        delete LNAME##_list;
-    COMPONENTS
-    #undef A
+    if (component_lists != NULL)
+        for (size_t i=0; i<MAX_COMPONENT_TYPES; i++)
+            delete component_lists[i];
+    free(component_lists);
+}
+
+ComponentList* get_component_list(ComponentType type)
+{
+    IF_ASSERT(!isValid(type)) return NULL;
+    return component_lists[type];
+}
+
+void call_lists()
+{
+    for (size_t i=0; i<MAX_COMPONENT_TYPES; i++)
+    {
+        ComponentList* list = component_lists[i];
+        if (list != NULL && list->autocall)
+            list->call();
+    }
 }
 
 # endif
@@ -166,3 +195,4 @@ void teardown_components()
 } // Components
 
 #undef COMPONENTS
+#undef AUTOCALL_LIST

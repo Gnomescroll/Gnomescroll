@@ -15,26 +15,38 @@ void teardown()
     teardown_components();
 }
 
+void init_config()
+{
+    init_components_config();
+}
+
 #if DC_SERVER
 EntityID get_spawner_for_user(UserID user_id)
 {
-    AgentSpawnerComponentList* a = agent_spawner_component_list;
-    for (int i=0; i<a->max; i++)
+    auto a = GET_COMPONENT_LIST(AgentSpawner);
+    for (size_t i=0, j=0; i<a->max && j<a->count; i++)
         if (a->components[i] != NULL)
+        {
+            j++;
             for (size_t j=0; j<a->components[i]->users.count; j++)
                 if (a->components[i]->users.subscribers[j] == user_id)
                     return a->components[i]->entity->id;
+        }
     return BASE_SPAWN_ID;
 }
 
 void revoke_owned_entities(AgentID owner_id)
 {
-    OwnerComponent* owner;
-    for (int i=0; i<owner_component_list->max; i++)
+    auto a = GET_COMPONENT_LIST(Owner);
+    for (size_t i=0, j=0; i<a->max && j<a->count; i++)
     {
-        owner = (OwnerComponent*)owner_component_list->components[i];
-        if (owner != NULL &&owner->owner == owner_id)
-            owner->revoke();
+        OwnerComponent* owner = a->components[i];
+        if (owner != NULL)
+        {
+            j++;
+            if (owner->owner == owner_id)
+                owner->revoke();
+        }
     }
 }
 #endif

@@ -18,6 +18,7 @@ class Component
 
     virtual void load_settings_from(const Component* component) = 0;
     virtual void use_as_default() {}
+    virtual void call() {}
 
     virtual ~Component() {}
 
