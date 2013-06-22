@@ -19,7 +19,7 @@ void AgentTargetingComponent::set_target(AgentID agent_id)
     Agents::Agent* a = Agents::get_agent((AgentID)agent_id);
     IF_ASSERT(a == NULL) return;
 
-    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
     IF_ASSERT(physics == NULL) return;
     Vec3 position = physics->get_position();
 
@@ -85,7 +85,7 @@ void AgentTargetingComponent::orient_to_target(Vec3 camera_position)
 
 void AgentTargetingComponent::move_on_surface()
 {   // adjusts position & momentum by moving over the terrain surface
-    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
     IF_ASSERT(physics == NULL) return;
 
     // TODO -- get box dimension from dimensions component
@@ -150,7 +150,7 @@ void AgentTargetingComponent::move_on_surface()
     #if DC_SERVER
     if (collided_agent != NULL && attack_tick <= 0)
     {
-        collided_agent->status.apply_damage(this->attack_damage, this->object->type);
+        collided_agent->status.apply_damage(this->attack_damage, this->entity->type);
         this->attack_tick = this->attack_rate;
     }
     #endif
@@ -173,9 +173,9 @@ void AgentTargetingComponent::call()
         this->target_id = NULL_AGENT;
         this->ticks_locked = 0;
 
-        auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, this->object);
+        auto state_machine = GET_COMPONENT_INTERFACE(StateMachine, this->entity);
         if (state_machine != NULL && state_machine->router != NULL)
-            state_machine->router(this->object, STATE_WAITING);
+            state_machine->router(this->entity, STATE_WAITING);
     }
     this->jump_cooldown_tick = GS_MAX(this->jump_cooldown_tick - 1, 0);
     this->attack_tick = GS_MAX(this->attack_tick - 1, 0);

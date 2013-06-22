@@ -12,14 +12,14 @@
 namespace Components
 {
 
-static struct Vec3 get_dropped_item_position(Entities::Entity* object)
+static struct Vec3 get_dropped_item_position(Entities::Entity* entity)
 {
-    // get object state
+    // get entity state
     Vec3 position;
     float radius = 0.95f;
 
     // try to use center of voxel model
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, entity);
     if (vox != NULL)
     {
         position = vox->get_center();
@@ -27,13 +27,13 @@ static struct Vec3 get_dropped_item_position(Entities::Entity* object)
     }
     else
     {   // use physics position
-        auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
         GS_ASSERT(physics != NULL);
         if (physics == NULL) return vec3_init(0);
         position = physics->get_position();
 
         // try to center it by using height dimension, if available
-        auto dims = GET_COMPONENT_INTERFACE(Dimension, object);
+        auto dims = GET_COMPONENT_INTERFACE(Dimension, entity);
         if (dims != NULL) position.z += dims->get_height() * 0.5f;
     }
 
@@ -48,8 +48,8 @@ static struct Vec3 get_dropped_item_position(Entities::Entity* object)
 
 void ItemDropComponent::drop_item()
 {
-    Vec3 position = get_dropped_item_position(this->object);
-    this->drop.drop_item(position);
+    Vec3 position = get_dropped_item_position(this->entity);
+    this->drop->drop_item(position);
 }
 
 

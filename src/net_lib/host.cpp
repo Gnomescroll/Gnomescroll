@@ -30,7 +30,7 @@ static bool enet_inited = false;
 void init_network()
 {
     init_message_handler();
-    PacketInit::RegisterMessages();
+    PacketInit::register_messages();
 
     if (enet_initialize() != 0)
     {

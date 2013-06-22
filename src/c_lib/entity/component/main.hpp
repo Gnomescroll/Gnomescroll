@@ -24,9 +24,9 @@ namespace Components
 
 /* ComponentList handler switches */
 
-Component* get_switch(ComponentType type);
+Component* get(ComponentType type);
 Component* create_unmanaged(ComponentType type);
-void release_switch(Component* component);
+void release(Component* component);
 
 ComponentInterfaceType get_interface_for_component(ComponentType component);
 
@@ -55,7 +55,7 @@ COMPONENTS
 
 static ComponentInterfaceType* component_interface_map = NULL;
 
-Component* get_switch(ComponentType type)
+Component* get(ComponentType type)
 {
     switch (type)
     {
@@ -73,7 +73,7 @@ Component* get_switch(ComponentType type)
     return NULL;
 }
 
-void release_switch(Component* component)
+void release(Component* component)
 {
     IF_ASSERT(component == NULL) return;
     switch (component->type)

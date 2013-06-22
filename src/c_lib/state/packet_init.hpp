@@ -3,6 +3,6 @@
 namespace PacketInit
 {
 
-void RegisterMessages();
+void register_messages();
 
 }

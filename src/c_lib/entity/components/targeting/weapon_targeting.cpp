@@ -63,13 +63,13 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
 
     Hitscan::WorldHitscanResult result = Hitscan::hitscan_against_terrain_and_mobs(
         camera_position, this->firing_direction, this->sight_range,
-        this->object->id, this->object->type);
+        this->entity->id, this->entity->type);
 
     // let handle target hit based on attacker properties
     Hitscan::handle_hitscan_result(result, this->attacker_properties);
 
     // send firing packet
-    Hitscan::broadcast_object_fired(this->object->id, this->object->type, result);
+    Hitscan::broadcast_object_fired(this->entity->id, this->entity->type, result);
 
     // apply custom handling
     // play sounds

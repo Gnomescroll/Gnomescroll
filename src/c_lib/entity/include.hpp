@@ -3,16 +3,15 @@
 #include <entity/macros.hpp>
 #include <entity/constants.hpp>
 
-#include <entity/objects/include.hpp>
-#include <entity/object/types.hpp>
-#include <entity/object/object.hpp>
-#include <entity/object/config.hpp>
-#include <entity/object/object_list.hpp>
-#include <entity/object/object_data_list.hpp>
-#include <entity/object/filter.hpp>
-#include <entity/object/helpers.hpp>
-#include <entity/object/main.hpp>
-#include <entity/objects.hpp>
+#include <entity/entities/include.hpp>
+#include <entity/entity/types.hpp>
+#include <entity/entity/entity.hpp>
+#include <entity/entity/config.hpp>
+#include <entity/entity/entity_list.hpp>
+#include <entity/entity/entity_data_list.hpp>
+#include <entity/entity/filter.hpp>
+#include <entity/entity/main.hpp>
+#include <entity/entities.hpp>
 
 #include <entity/components/include.hpp>
 #include <entity/component/component.hpp>

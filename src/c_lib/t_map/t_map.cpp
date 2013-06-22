@@ -24,7 +24,7 @@
 # include <t_map/server/env_process.hpp>
 # include <particle/_interface.hpp>
 # include <item/_interface.hpp>
-# include <entity/object/main.hpp>
+# include <entity/entity/main.hpp>
 # include <t_map/config/drop_dat.hpp>
 # include <t_gen/explosives.hpp>
 #endif

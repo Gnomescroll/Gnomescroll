@@ -12,7 +12,7 @@ struct Vec3 AgentSpawnerComponent::get_spawn_point(float spawned_object_height, 
 {
     GS_ASSERT(spawned_object_radius * 2 < 1.0f);
     Vec3 spawn_point = vec3_init(0,0,0);
-    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
     IF_ASSERT(physics == NULL) return spawn_point;
     Vec3 position = physics->get_position();
 

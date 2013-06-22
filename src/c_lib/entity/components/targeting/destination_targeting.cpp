@@ -27,7 +27,7 @@ Vec3 DestinationTargetingComponent::get_next_path_point()
 
 void DestinationTargetingComponent::choose_destination()
 {
-    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
     IF_ASSERT(physics == NULL) return;
     struct Vec3 position = physics->get_position();
 
@@ -49,7 +49,7 @@ void DestinationTargetingComponent::choose_destination()
             this->path = Path::get_path_3d_jump(current, end, this->mpath);
         }
         //int height = 1;
-        //auto dims = GET_COMPONENT_INTERFACE(Dimension, this->object);
+        //auto dims = GET_COMPONENT_INTERFACE(Dimension, this->entity);
         //if (dims != NULL)
         //    height = dims->get_integer_height();
     }
@@ -79,7 +79,7 @@ void DestinationTargetingComponent::orient_to_target(Vec3 camera_position)
 
 void DestinationTargetingComponent::move_on_surface()
 {   // adjusts position & momentum by moving over the terrain surface
-    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
     IF_ASSERT(physics == NULL) return;
 
     IF_ASSERT(this->speed == 0.0f)
@@ -115,7 +115,7 @@ bool DestinationTargetingComponent::check_at_destination()
 {
     if (this->at_destination) return true;
 
-    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
     IF_ASSERT(physics == NULL)
     {
         this->at_destination = true;

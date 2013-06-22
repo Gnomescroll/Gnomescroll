@@ -5,7 +5,7 @@
 #endif
 
 #include <agent/constants.hpp>
-#include <entity/objects.hpp>
+#include <entity/entities.hpp>
 #include <physics/vec3.hpp>
 #include <agent/client/player_agent.hpp>
 #include <voxel/voxel_hitscan.hpp>

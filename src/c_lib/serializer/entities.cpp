@@ -1,6 +1,6 @@
 #include "entities.hpp"
 
-#include <entity/objects.hpp>
+#include <entity/entities.hpp>
 #include <serializer/logger.hpp>
 
 namespace serializer
@@ -342,9 +342,10 @@ bool save_entities()
 
     char* used_agent_spawners = NULL;
     int agent_spawners_max = 0;
-    Entities::Entity** agent_spawners = Entities::get_all(agent_spawner_type,
-                                                          used_agent_spawners,
-                                                          agent_spawners_max);
+    int agent_spawners_count = 0;
+    Entities::Entity* agent_spawners = Entities::get_all(agent_spawner_type,
+                                                         agent_spawners_max,
+                                                         agent_spawners_count);
     IF_ASSERT(agent_spawners == NULL || used_agent_spawners == NULL) return false;
 
     EntityType energy_core_type = Entities::get_entity_type("energy_core");
@@ -352,9 +353,10 @@ bool save_entities()
 
     char* used_energy_cores = NULL;
     int energy_cores_max = 0;
-    Entities::Entity** energy_cores = Entities::get_all(energy_core_type,
-                                                        used_energy_cores,
-                                                        energy_cores_max);
+    int energy_cores_count = 0;
+    Entities::Entity* energy_cores = Entities::get_all(energy_core_type,
+                                                       energy_cores_max,
+                                                       energy_cores_count);
     IF_ASSERT(energy_cores == NULL || used_energy_cores == NULL) return false;
 
     FILE* f = fopen(entity_path_tmp, "w");
@@ -365,10 +367,11 @@ bool save_entities()
     IF_ASSERT(err) goto Error;
 
     // save the entities
-    for (int i=0; i<agent_spawners_max; i++)
-        if (used_agent_spawners[i])
+    for (int i=0, j=0; i<agent_spawners_max && j<agent_spawners_count; i++)
+        if (agent_spawners[i].id != Entities::EntityList::null_id)
         {
-            if (save_agent_spawner(f, agent_spawners[i], i+ct+1))
+            j++;
+            if (save_agent_spawner(f, &agent_spawners[i], i+ct+1))
                 agent_spawner_ct++;
             else
             {
@@ -378,10 +381,11 @@ bool save_entities()
 
     ct += agent_spawner_ct;
 
-    for (int i=0; i<energy_cores_max; i++)
-        if (used_energy_cores[i])
+    for (int i=0, j=0; i<energy_cores_max && j<energy_cores_count; i++)
+        if (energy_cores[i].id != Entities::EntityList::null_id)
         {
-            if (save_energy_core(f, energy_cores[i], i+ct+1))
+            j++;
+            if (save_energy_core(f, &energy_cores[i], i+ct+1))
                 energy_core_ct++;
             else
             {

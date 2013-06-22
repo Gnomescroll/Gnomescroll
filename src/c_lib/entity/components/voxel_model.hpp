@@ -69,7 +69,7 @@ class VoxelModelComponent: public Component
     {
         IF_ASSERT(this->vox != NULL) return;
         IF_ASSERT(this->vox_dat == NULL) return;
-        this->vox = new Voxels::VoxelModel(this->vox_dat, this->object->id, this->object->type);
+        this->vox = new Voxels::VoxelModel(this->vox_dat, this->entity->id, this->entity->type);
         this->set_properties();
         vox->update(position.x, position.y, position.z, theta, phi);
         vox->set_hitscan(this->init_hitscan);

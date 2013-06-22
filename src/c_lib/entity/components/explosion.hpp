@@ -19,7 +19,7 @@ class ExplosionComponent: public Component
         float radius;
         int damage;
         float proximity_radius;
-        bool harms_owner; // if true, owner of exploding object will take damage
+        bool harms_owner; // if true, owner of exploding entity will take damage
         int delay;
         int delay_tick;
 

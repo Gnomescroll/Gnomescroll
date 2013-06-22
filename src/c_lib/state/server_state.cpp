@@ -8,7 +8,7 @@
 #include <agent/agent.hpp>
 #include <agent/_interface.hpp>
 #include <chat/_interface.hpp>
-#include <entity/objects.hpp>
+#include <entity/entities.hpp>
 #include <entity/components.hpp>
 
 namespace ServerState
@@ -129,7 +129,7 @@ void damage_objects_within_sphere(const Vec3& p, float radius,
         ENTITY_MONSTER_BOMB, ENTITY_MONSTER_BOX, ENTITY_MONSTER_SPAWNER,
         ENTITY_MONSTER_SLIME, ENTITY_MONSTER_LIZARD_THIEF,
     };
-    Entities::damage_objects_within_sphere(types, n_types, p, radius, damage);
+    Entities::damage_entities_within_sphere(types, n_types, p, radius, damage);
 }
 
 // TODO -- move this test/convenince method

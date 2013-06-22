@@ -1,6 +1,6 @@
 #include "interfaces.hpp"
 
-#include <entity/object/object.hpp>
+#include <entity/entity/entity.hpp>
 #include <entity/components/physics.hpp>
 
 namespace Entities
@@ -8,22 +8,22 @@ namespace Entities
 
 /* Create */
 
-void CreatePacket::message(Entity* object, object_create_StoC* msg)
+void CreatePacket::message(const Entity* entity, entity_create_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     msg->position = physics->get_position();
     GS_ASSERT(is_boxed_position(msg->position));
 }
 
-void CreatePacketOwner::message(Entity* object, object_create_owner_StoC* msg)
+void CreatePacketOwner::message(const Entity* entity, entity_create_owner_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     msg->position = physics->get_position();
-    auto owner = GET_COMPONENT_INTERFACE(Owner, object);
+    auto owner = GET_COMPONENT_INTERFACE(Owner, entity);
     IF_ASSERT(owner == NULL)
         msg->owner = NULL_AGENT;
     else
@@ -31,21 +31,21 @@ void CreatePacketOwner::message(Entity* object, object_create_owner_StoC* msg)
     GS_ASSERT(is_boxed_position(msg->position));
 }
 
-void CreatePacketMomentum::message(Entity* object, object_create_momentum_StoC* msg)
+void CreatePacketMomentum::message(const Entity* entity, entity_create_momentum_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     msg->position = physics->get_position();
     msg->momentum = physics->get_momentum();
     GS_ASSERT(is_boxed_position(msg->position));
 }
 
-void CreatePacketMomentumAngles::message(Entity* object, object_create_momentum_angles_StoC* msg)
+void CreatePacketMomentumAngles::message(const Entity* entity, entity_create_momentum_angles_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     msg->position = physics->get_position();
     msg->momentum = physics->get_momentum();
     Vec3 angles = physics->get_angles();
@@ -54,18 +54,18 @@ void CreatePacketMomentumAngles::message(Entity* object, object_create_momentum_
     GS_ASSERT(is_boxed_position(msg->position));
 }
 
-void CreatePacketMomentumAnglesHealth::message(Entity* object, object_create_momentum_angles_health_StoC* msg)
+void CreatePacketMomentumAnglesHealth::message(const Entity* entity, entity_create_momentum_angles_health_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     IF_ASSERT(physics == NULL) return;
     msg->position = physics->get_position();
     msg->momentum = physics->get_momentum();
     Vec3 angles = physics->get_angles();
     msg->theta = angles.x;
     msg->phi = angles.y;
-    auto health = GET_COMPONENT(HitPoints, object);
+    auto health = GET_COMPONENT(HitPoints, entity);
     IF_ASSERT(health == NULL || health->health_max < 0)
         msg->health_max = 0; // should be dead
     else
@@ -73,44 +73,43 @@ void CreatePacketMomentumAnglesHealth::message(Entity* object, object_create_mom
     GS_ASSERT(is_boxed_position(msg->position));
 }
 
-void CreatePacketMomentumAnglesHealth::health_message(Entity* object, object_state_health_StoC* msg)
+void CreatePacketMomentumAnglesHealth::health_message(const Entity* entity, entity_state_health_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto health = GET_COMPONENT(HitPoints, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto health = GET_COMPONENT(HitPoints, entity);
     IF_ASSERT(health == NULL || health->health < 0)
         msg->health = 0;
     else
         msg->health = health->health;
 }
 
-
 /* State */
 
-void StatePacket::message(Entity* object, object_state_StoC* msg)
+void StatePacket::message(const Entity* entity, entity_state_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     msg->position = physics->get_position();
     GS_ASSERT(is_boxed_position(msg->position));
 }
 
-void StatePacketMomentum::message(Entity* object, object_state_momentum_StoC* msg)
+void StatePacketMomentum::message(const Entity* entity, entity_state_momentum_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     msg->position = physics->get_position();
     msg->momentum = physics->get_momentum();
     GS_ASSERT(is_boxed_position(msg->position));
 }
 
-void StatePacketMomentumAngles::message(Entity* object, object_state_momentum_angles_StoC* msg)
+void StatePacketMomentumAngles::message(const Entity* entity, entity_state_momentum_angles_StoC* msg) const
 {
-    msg->id = object->id;
-    msg->type = object->type;
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    msg->id = entity->id;
+    msg->type = entity->type;
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     msg->position = physics->get_position();
     msg->momentum = physics->get_momentum();
     Vec3 angles = physics->get_angles();

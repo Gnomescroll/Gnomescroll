@@ -13,7 +13,7 @@ struct Vec3 MonsterSpawnerComponent::get_spawn_point(
 {
     Vec3 spawn_point = vec3_init(0);
 
-    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
     if (physics == NULL) return spawn_point;
 
     Vec3 position = physics->get_position();
@@ -62,7 +62,7 @@ class Entities::Entity* MonsterSpawnerComponent::spawn_child()
     auto spawn = GET_COMPONENT(SpawnChild, child);
     GS_ASSERT(spawn != NULL);
     if (spawn != NULL)
-        spawn->assign_parent(this->object->type, this->object->id);
+        spawn->assign_parent(this->entity->type, this->entity->id);
 
     return child;
 }
@@ -82,8 +82,8 @@ void MonsterSpawnerComponent::notify_children_of_death()
         IF_ASSERT(child == NULL) continue;
         auto spawn = GET_COMPONENT(SpawnChild, child);
         IF_ASSERT(spawn == NULL) continue;
-        GS_ASSERT(spawn->parent_type == this->object->type);
-        GS_ASSERT(spawn->parent_id == this->object->id);
+        GS_ASSERT(spawn->parent_type == this->entity->type);
+        GS_ASSERT(spawn->parent_id == this->entity->id);
         spawn->parent_died();
     }
 }

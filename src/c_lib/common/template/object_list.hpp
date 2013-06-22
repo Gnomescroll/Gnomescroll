@@ -32,7 +32,7 @@ class ObjectList
 
         for (size_t i=0; i<this->max; i++)
         {
-            size_t index = (i+this->start+1)%this->max;
+            size_t index = (i + this->start + 1) % this->max;
             if (this->objects[index].id == this->null_id)
             {
                 this->ct++;

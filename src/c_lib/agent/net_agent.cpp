@@ -8,7 +8,7 @@
 #if DC_CLIENT
 # include <common/time/physics_timer.hpp>
 # include <chat/_interface.hpp>
-# include <entity/objects/fabs/constants.hpp>
+# include <entity/entities/fabs/constants.hpp>
 # include <SDL/SDL_functions.hpp>
 #endif
 
@@ -70,7 +70,7 @@ inline void agent_control_state_StoC::handle()
     ClientState::player_agent.handle_net_control_state(seq, cs, theta, phi);
 }
 
-inline void agent_hitscan_object_StoC::handle()
+inline void agent_hitscan_entity_StoC::handle()
 {
     if (id == ClientState::player_agent.agent_id) return;   // ignore you, should have played locally before transmission
     Agents::Agent* a = Agents::get_agent((AgentID)this->id);
@@ -404,7 +404,7 @@ inline void agent_suicides_StoC::handle() {}
 inline void agent_state_StoC::handle() {}
 inline void agent_teleport_StoC::handle() {}
 inline void agent_control_state_StoC::handle() {}
-inline void agent_hitscan_object_StoC::handle(){}
+inline void agent_hitscan_entity_StoC::handle(){}
 inline void agent_hitscan_block_StoC::handle(){}
 inline void agent_hitscan_nothing_StoC::handle(){}
 inline void agent_launched_projectile_StoC::handle(){}
@@ -551,7 +551,7 @@ inline void hitscan_entity_CtoS::handle()
         }
     }
 
-    agent_hitscan_object_StoC msg;
+    agent_hitscan_entity_StoC msg;
     msg.id = a->id;
     msg.target_id = this->id;
     msg.target_type = this->type;
@@ -716,18 +716,18 @@ static Entities::Entity* place_object_handler(EntityType type, Vec3i position, A
     static const int ITEM_PLACEMENT_Z_DIFF_LIMIT = 3;
 
     using Entities::Entity;
-    Entity* object = Entities::create(type);
-    if (object == NULL) return NULL;
+    Entity* entity = Entities::create(type);
+    if (entity == NULL) return NULL;
 
     int height = 1;
-    auto dims = GET_COMPONENT_INTERFACE(Dimension, object);
+    auto dims = GET_COMPONENT_INTERFACE(Dimension, entity);
     if (dims != NULL)
         height = dims->get_integer_height();
 
     int z = t_map::get_highest_open_block(position, height);
     if (position.z - z > ITEM_PLACEMENT_Z_DIFF_LIMIT || position.z - z < 0)
     {
-        Entities::destroy(object);
+        Entities::destroy(entity);
         return NULL;
     }
 
@@ -735,21 +735,21 @@ static Entities::Entity* place_object_handler(EntityType type, Vec3i position, A
     if (Entities::point_occupied_by_type(ENTITY_TURRET, position) ||
         Entities::point_occupied_by_type(ENTITY_AGENT_SPAWNER, position))
     {
-        Entities::destroy(object);
+        Entities::destroy(entity);
         return NULL;
     }
 
-    auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
     if (physics != NULL)
     {
         Vec3 p = vec3_add(vec3_init(position), vec3_init(0.5, 0.5f, 0.0f));
         physics->set_position(p);
     }
 
-    auto owner = GET_COMPONENT_INTERFACE(Owner, object);
+    auto owner = GET_COMPONENT_INTERFACE(Owner, entity);
     if (owner != NULL) owner->set_owner(owner_id);
 
-    return object;
+    return entity;
 }
 
 inline void place_spawner_CtoS::handle()

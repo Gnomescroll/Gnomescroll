@@ -15,7 +15,7 @@ const int CHAT_CLIENT_CHANNELS_MAX = 3; // pm, global, system
 class ChatMessage
 {
     public:
-        int id; // only used by object list
+        int id; // only used by entity list
         char* payload;
         ClientID sender;
         int channel;
@@ -163,8 +163,8 @@ class ChatMessageList: public ObjectList<ChatMessage>
 class ChatSystemMessage
 {
     public:
-    void object_destroyed(Entities::Entity* object);
-    void object_created(Entities::Entity* object);
+    void object_destroyed(Entities::Entity* entity);
+    void object_created(Entities::Entity* entity);
 };
 
 }   // Chat

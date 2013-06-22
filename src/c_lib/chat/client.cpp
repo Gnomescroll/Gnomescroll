@@ -521,16 +521,16 @@ char* spawner_destroyed(Entities::Entity* s)
 
 }   // SystemMessage
 
-void ChatSystemMessage::object_destroyed(Entities::Entity* object)
+void ChatSystemMessage::object_destroyed(Entities::Entity* entity)
 {
     //char* msg = NULL;
-    //switch (object->state()->type)
+    //switch (entity->state()->type)
     //{
         //case ENTITY_AGENT_SPAWNER:
-            //msg = SystemMessage::spawner_destroyed((Spawner*)object);
+            //msg = SystemMessage::spawner_destroyed((Spawner*)entity);
             //break;
         //case ENTITY_TURRET:
-            ////msg = SystemMessage::turret_destroyed((Turret*)object);
+            ////msg = SystemMessage::turret_destroyed((Turret*)entity);
             //break;
         //default: return;
     //}
@@ -541,16 +541,16 @@ void ChatSystemMessage::object_destroyed(Entities::Entity* object)
     //free(msg);
 }
 
-void ChatSystemMessage::object_created(Entities::Entity* object)
+void ChatSystemMessage::object_created(Entities::Entity* entity)
 {
     //char* msg = NULL;
-    //switch (object->state()->type)
+    //switch (entity->state()->type)
     //{
         //case ENTITY_AGENT_SPAWNER:
-            //msg = SystemMessage::spawner_created((Spawner*)object);
+            //msg = SystemMessage::spawner_created((Spawner*)entity);
             //break;
         //case ENTITY_TURRET:
-            ////msg = SystemMessage::turret_created((Turret*)object);
+            ////msg = SystemMessage::turret_created((Turret*)entity);
             //break;
         //default: return;
     //}

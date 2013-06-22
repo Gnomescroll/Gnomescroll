@@ -16,7 +16,7 @@
 #include <common/common.hpp>
 #include <item/particle/_interface.hpp>
 #include <voxel/voxel_render.hpp>
-#include <entity/objects.hpp>
+#include <entity/entities.hpp>
 #include <common/profiling/frame_graph.hpp>
 #include <physics/quadrant.hpp>
 #include <physics/pathfinding.hpp>

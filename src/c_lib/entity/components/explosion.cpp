@@ -26,12 +26,12 @@ void ExplosionComponent::damage_blocks()
 {
     // acquire position from voxel model center if available, else use position
     Vec3 position;
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->entity);
     if (vox != NULL)
         position = vox->get_center();
     else
     {
-            auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+            auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
         IF_ASSERT(physics == NULL) return;
         position = physics->get_position();
     }
@@ -81,28 +81,28 @@ void ExplosionComponent::damage_blocks()
 
 void ExplosionComponent::explode()
 {
-    auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+    auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
     Vec3 position = physics->get_position();
 
-    auto owner = GET_COMPONENT_INTERFACE(Owner, this->object);
+    auto owner = GET_COMPONENT_INTERFACE(Owner, this->entity);
     AgentID owner_id = NULL_AGENT;
     if (owner != NULL) owner_id = owner->get_owner();
 
     ServerState::damage_objects_within_sphere(
         position, this->radius, this->damage, owner_id,
-        this->object->type, this->object->id, this->harms_owner);
+        this->entity->type, this->entity->id, this->harms_owner);
 }
 
 // returns true if within proximity explosion range
 bool ExplosionComponent::proximity_check()
 {
     struct Vec3 position;
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->entity);
     if (vox != NULL)
         position = vox->get_center();
     else
     {
-            auto physics = GET_COMPONENT_INTERFACE(Physics, this->object);
+            auto physics = GET_COMPONENT_INTERFACE(Physics, this->entity);
         IF_ASSERT(physics == NULL) return false;
         position = physics->get_position();
     }
@@ -110,7 +110,7 @@ bool ExplosionComponent::proximity_check()
     Agents::Agent* agent = Agents::nearest_living_agent_model_in_range(position, this->proximity_radius);
     if (agent != NULL)
     {
-        auto health = GET_COMPONENT_INTERFACE(Health, this->object);
+        auto health = GET_COMPONENT_INTERFACE(Health, this->entity);
         if (health != NULL) health->die();
         return true;
     }

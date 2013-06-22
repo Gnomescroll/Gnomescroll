@@ -547,7 +547,7 @@ void close_c_lib()
     Entities::teardown();    // Entity system
     if (TEARDOWN_DEBUG) printf("components teardown\n");
     Components::teardown();
-    if (TEARDOWN_DEBUG) printf("object net interfaces teardown\n");
+    if (TEARDOWN_DEBUG) printf("entity net interfaces teardown\n");
     Entities::teardown_net_interfaces();
     if (TEARDOWN_DEBUG) printf("entity dat teardown\n");
     Entities::teardown_entity_dat();

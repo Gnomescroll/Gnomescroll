@@ -14,7 +14,7 @@ const int MAX_ENTITY_TYPES = 0xFF;
 
 typedef enum
 {
-    ENTITY_DESTINATION,     // abstract object
+    ENTITY_DESTINATION,     // abstract entity
 
     ENTITY_AGENT,
 

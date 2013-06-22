@@ -47,20 +47,20 @@ void teardown_net_interfaces()
 
 void init_packets()
 {
-    object_create_StoC::register_client_packet();
-    object_create_owner_StoC::register_client_packet();
-    object_create_momentum_StoC::register_client_packet();
-    object_create_momentum_angles_StoC::register_client_packet();
-    object_create_momentum_angles_health_StoC::register_client_packet();
-    object_destroy_StoC::register_client_packet();
-    object_state_StoC::register_client_packet();
-    object_state_momentum_StoC::register_client_packet();
-    object_state_momentum_angles_StoC::register_client_packet();
-    object_state_health_StoC::register_client_packet();
-    object_hitscan_object_StoC::register_client_packet();
-    object_hitscan_terrain_StoC::register_client_packet();
-    object_hitscan_nothing_StoC::register_client_packet();
-    object_took_damage_StoC::register_client_packet();
+    entity_create_StoC::register_client_packet();
+    entity_create_owner_StoC::register_client_packet();
+    entity_create_momentum_StoC::register_client_packet();
+    entity_create_momentum_angles_StoC::register_client_packet();
+    entity_create_momentum_angles_health_StoC::register_client_packet();
+    entity_destroy_StoC::register_client_packet();
+    entity_state_StoC::register_client_packet();
+    entity_state_momentum_StoC::register_client_packet();
+    entity_state_momentum_angles_StoC::register_client_packet();
+    entity_state_health_StoC::register_client_packet();
+    entity_hitscan_entity_StoC::register_client_packet();
+    entity_hitscan_terrain_StoC::register_client_packet();
+    entity_hitscan_nothing_StoC::register_client_packet();
+    entity_took_damage_StoC::register_client_packet();
 }
 
 } // Entities

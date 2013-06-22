@@ -23,7 +23,7 @@ EntityID get_spawner_for_user(UserID user_id)
         if (a->components[i] != NULL)
             for (size_t j=0; j<a->components[i]->users.count; j++)
                 if (a->components[i]->users.subscribers[j] == user_id)
-                    return a->components[i]->object->id;
+                    return a->components[i]->entity->id;
     return BASE_SPAWN_ID;
 }
 

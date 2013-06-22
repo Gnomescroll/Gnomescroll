@@ -4,15 +4,14 @@
 
 #include <entity/constants.hpp>
 
-#include <entity/objects/include.cpp>
-#include <entity/object/object.cpp>
-#include <entity/object/config.cpp>
-#include <entity/object/object_list.cpp>
-#include <entity/object/object_data_list.cpp>
-#include <entity/object/filter.cpp>
-#include <entity/object/helpers.cpp>
-#include <entity/object/main.cpp>
-#include <entity/objects.cpp>
+#include <entity/entities/include.cpp>
+#include <entity/entity/entity.cpp>
+#include <entity/entity/config.cpp>
+#include <entity/entity/entity_list.cpp>
+#include <entity/entity/entity_data_list.cpp>
+#include <entity/entity/filter.cpp>
+#include <entity/entity/main.cpp>
+#include <entity/entities.cpp>
 
 #include <entity/components/include.cpp>
 #include <entity/component/component.hpp>

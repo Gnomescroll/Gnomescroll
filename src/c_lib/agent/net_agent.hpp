@@ -160,7 +160,7 @@ class agent_hitscan_nothing_StoC: public FixedSizeReliableNetPacketToClient<agen
 };
 
 
-class agent_hitscan_object_StoC: public FixedSizeReliableNetPacketToClient<agent_hitscan_object_StoC>
+class agent_hitscan_entity_StoC: public FixedSizeReliableNetPacketToClient<agent_hitscan_entity_StoC>
 {
     public:
         uint8_t id;

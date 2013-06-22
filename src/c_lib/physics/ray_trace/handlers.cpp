@@ -3,7 +3,7 @@
 #include <agent/agent.hpp>
 #include <entity/network/packets.hpp>
 #include <agent/_interface.hpp>
-#include <entity/objects.hpp>
+#include <entity/entities.hpp>
 #include <entity/components/health.hpp>
 #include <entity/macros.hpp>
 
@@ -113,9 +113,9 @@ void handle_hitscan_result(const WorldHitscanResult& result,
 
 void broadcast_object_fired(EntityID id, EntityType type, const WorldHitscanResult& result)
 {
-    object_hitscan_object_StoC obj_msg;
-    object_hitscan_terrain_StoC terrain_msg;
-    object_hitscan_nothing_StoC none_msg;
+    entity_hitscan_entity_StoC obj_msg;
+    entity_hitscan_terrain_StoC terrain_msg;
+    entity_hitscan_nothing_StoC none_msg;
     switch (result.type)
     {
         case HITSCAN_TARGET_VOXEL:

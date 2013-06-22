@@ -6,8 +6,8 @@
 
 #include <state/state.hpp>
 #include <voxel/constants.hpp>
-#include <entity/object/object.hpp>
-#include <entity/objects.hpp>
+#include <entity/entity/entity.hpp>
+#include <entity/entities.hpp>
 #include <entity/components/voxel_model.hpp>
 
 namespace Voxels

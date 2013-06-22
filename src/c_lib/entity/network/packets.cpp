@@ -7,14 +7,14 @@
 #include <agent/client/player_agent.hpp>
 #include <physics/vec3.hpp>
 #include <entity/constants.hpp>
-#include <entity/objects.hpp>
+#include <entity/entities.hpp>
 #include <particle/_interface.hpp>
 #include <particle/text/billboard_text.hpp>
 #include <particle/constants.hpp>
 
 /* Construction */
 
-inline void object_create_StoC::handle()
+inline void entity_create_StoC::handle()
 {
     using Entities::Entity;
     IF_ASSERT(type >= MAX_ENTITY_TYPES) return;
@@ -28,7 +28,7 @@ inline void object_create_StoC::handle()
     Entities::ready(obj);
 }
 
-inline void object_create_owner_StoC::handle()
+inline void entity_create_owner_StoC::handle()
 {
     using Entities::Entity;
     IF_ASSERT(type >= MAX_ENTITY_TYPES) return;
@@ -45,7 +45,7 @@ inline void object_create_owner_StoC::handle()
     Entities::ready(obj);
 }
 
-inline void object_create_momentum_StoC::handle()
+inline void entity_create_momentum_StoC::handle()
 {
     using Entities::Entity;
 
@@ -61,7 +61,7 @@ inline void object_create_momentum_StoC::handle()
     Entities::ready(obj);
 }
 
-inline void object_create_momentum_angles_StoC::handle()
+inline void entity_create_momentum_angles_StoC::handle()
 {
     using Entities::Entity;
 
@@ -78,7 +78,7 @@ inline void object_create_momentum_angles_StoC::handle()
     Entities::ready(obj);
 }
 
-inline void object_create_momentum_angles_health_StoC::handle()
+inline void entity_create_momentum_angles_health_StoC::handle()
 {
     using Entities::Entity;
 
@@ -104,7 +104,7 @@ inline void object_create_momentum_angles_health_StoC::handle()
 
 /* State */
 
-inline void object_state_StoC::handle()
+inline void entity_state_StoC::handle()
 {
     using Entities::Entity;
 
@@ -115,7 +115,7 @@ inline void object_state_StoC::handle()
     physics->set_position(this->position);
 }
 
-inline void object_state_momentum_StoC::handle()
+inline void entity_state_momentum_StoC::handle()
 {
     using Entities::Entity;
 
@@ -127,7 +127,7 @@ inline void object_state_momentum_StoC::handle()
     physics->set_momentum(this->momentum);
 }
 
-inline void object_state_momentum_angles_StoC::handle()
+inline void entity_state_momentum_angles_StoC::handle()
 {
     using Entities::Entity;
 
@@ -141,7 +141,7 @@ inline void object_state_momentum_angles_StoC::handle()
     physics->set_angles(vec3_init(theta, phi, 0));
 }
 
-inline void object_state_health_StoC::handle()
+inline void entity_state_health_StoC::handle()
 {
     using Entities::Entity;
     Entity* obj = Entities::get(EntityType(type), EntityID(id));
@@ -153,7 +153,7 @@ inline void object_state_health_StoC::handle()
 
 /* Destruction */
 
-inline void object_destroy_StoC::handle()
+inline void entity_destroy_StoC::handle()
 {
     Entities::destroy(EntityType(type), EntityID(id));
 }
@@ -162,15 +162,15 @@ inline void object_destroy_StoC::handle()
 
 /* Hitscan */
 
-inline void object_hitscan_object_StoC::handle()
+inline void entity_hitscan_entity_StoC::handle()
 {
-    if (this->target_type != ENTITY_AGENT) return; // remove this once turret can attack other objects
+    if (this->target_type != ENTITY_AGENT) return; // remove this once turret can attack other entities
 
-    // get firing object
+    // get firing entity
     Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
-    // get firing position of object
+    // get firing position of entity
     auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
@@ -196,12 +196,12 @@ inline void object_hitscan_object_StoC::handle()
     Sound::play_3d_sound("turret_shoot", position);
 }
 
-inline void object_hitscan_terrain_StoC::handle()
+inline void entity_hitscan_terrain_StoC::handle()
 {
     Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
-    // get firing position of object
+    // get firing position of entity
     auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
@@ -224,12 +224,12 @@ inline void object_hitscan_terrain_StoC::handle()
     Sound::play_3d_sound("turret_shoot", position);
 }
 
-inline void object_hitscan_nothing_StoC::handle()
+inline void entity_hitscan_nothing_StoC::handle()
 {
     Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
 
-    // get firing position of object
+    // get firing position of entity
     auto physics = GET_COMPONENT_INTERFACE(Physics, obj);
     if (physics == NULL) return;
     Vec3 position = physics->get_position();
@@ -244,7 +244,7 @@ inline void object_hitscan_nothing_StoC::handle()
     Sound::play_3d_sound("turret_shoot", position);
 }
 
-inline void object_took_damage_StoC::handle()
+inline void entity_took_damage_StoC::handle()
 {
     Entities::Entity* obj = Entities::get(EntityType(this->type), EntityID(this->id));
     if (obj == NULL) return;
@@ -274,18 +274,18 @@ inline void object_took_damage_StoC::handle()
 #endif
 
 #if DC_SERVER
-inline void object_create_StoC::handle() {}
-inline void object_create_owner_StoC::handle() {}
-inline void object_create_momentum_StoC::handle() {}
-inline void object_create_momentum_angles_StoC::handle() {}
-inline void object_create_momentum_angles_health_StoC::handle() {}
-inline void object_destroy_StoC::handle() {}
-inline void object_state_StoC::handle() {}
-inline void object_state_momentum_StoC::handle() {}
-inline void object_state_momentum_angles_StoC::handle() {}
-inline void object_hitscan_object_StoC::handle() {}
-inline void object_hitscan_terrain_StoC::handle() {}
-inline void object_hitscan_nothing_StoC::handle() {}
-inline void object_took_damage_StoC::handle() {}
-inline void object_state_health_StoC::handle() {}
+inline void entity_create_StoC::handle() {}
+inline void entity_create_owner_StoC::handle() {}
+inline void entity_create_momentum_StoC::handle() {}
+inline void entity_create_momentum_angles_StoC::handle() {}
+inline void entity_create_momentum_angles_health_StoC::handle() {}
+inline void entity_destroy_StoC::handle() {}
+inline void entity_state_StoC::handle() {}
+inline void entity_state_momentum_StoC::handle() {}
+inline void entity_state_momentum_angles_StoC::handle() {}
+inline void entity_hitscan_entity_StoC::handle() {}
+inline void entity_hitscan_terrain_StoC::handle() {}
+inline void entity_hitscan_nothing_StoC::handle() {}
+inline void entity_took_damage_StoC::handle() {}
+inline void entity_state_health_StoC::handle() {}
 #endif

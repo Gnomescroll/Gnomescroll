@@ -22,7 +22,6 @@ class ItemDropEntry
     }
 
     public:
-
         int n_drops;
         ItemType item_type;
         int* amount;
@@ -30,8 +29,7 @@ class ItemDropEntry
 
     void set_drops(int n)
     {
-        GS_ASSERT(n > 0);
-        if (n < 0) return;
+        IF_ASSERT(n < 0) return;
         GS_ASSERT(this->amount == NULL);
         GS_ASSERT(this->probability == NULL);
         this->n_drops = n;
@@ -41,8 +39,7 @@ class ItemDropEntry
 
     void add_drop(int amount, float probability)
     {
-        GS_ASSERT(amount > 0);
-        if (amount <= 0) return;
+        IF_ASSERT(amount <= 0) return;
         GS_ASSERT(probability > 0.0f && probability < 1.001f);
 
         GS_ASSERT(this->get_cumulative_probability() + probability < 1.001f);
@@ -72,6 +69,8 @@ class ItemDropEntry
     {
         free(this->amount);
         free(this->probability);
+        this->amount = NULL;
+        this->probability = NULL;
     }
 };
 
@@ -84,8 +83,7 @@ class ItemDrop
 
     int get_or_create_drop_enty(ItemType item_type)
     {
-        GS_ASSERT(item_type != NULL_ITEM_TYPE);
-        if (item_type == NULL_ITEM_TYPE) return -1;
+        IF_ASSERT(item_type == NULL_ITEM_TYPE) return -1;
 
         for (int i=0; i<this->max_drops; i++)
         {
@@ -105,11 +103,8 @@ class ItemDrop
 
     class ItemDropEntry* get_or_create_drop_entry(ItemType item_type)
     {
-        GS_ASSERT(this->drop != NULL);
-        if (this->drop == NULL) return NULL;
-
-        GS_ASSERT(item_type != NULL_ITEM_TYPE);
-        if (item_type == NULL_ITEM_TYPE) return NULL;
+        IF_ASSERT(this->drop == NULL) return NULL;
+        IF_ASSERT(item_type == NULL_ITEM_TYPE) return NULL;
 
         int i = 0;
         for (; i<this->max_drops; i++)
@@ -124,8 +119,7 @@ class ItemDrop
                 break;
             }
         }
-        GS_ASSERT(i < this->max_drops);
-        if (i >= this->max_drops) return NULL;
+        IF_ASSERT(i >= this->max_drops) return NULL;
         return &this->drop[i];
     }
 
@@ -141,8 +135,7 @@ class ItemDrop
     // config
     void set_max_drop_types(int n)
     {
-        GS_ASSERT(n > 0);
-        if (n <= 0) return;
+        IF_ASSERT(n <= 0) return;
         GS_ASSERT(this->drop == NULL);
         GS_ASSERT(this->max_drops == 0)
         this->max_drops = n;
@@ -153,30 +146,24 @@ class ItemDrop
     void set_max_drop_amounts(const char* item_name, int n)
     {
         ItemType item_type = get_item_type(item_name);
-        GS_ASSERT(item_type != NULL_ITEM_TYPE);
-        if (item_type == NULL_ITEM_TYPE) return;
+        IF_ASSERT(item_type == NULL_ITEM_TYPE) return;
         class ItemDropEntry* drop = this->get_or_create_drop_entry(item_type);
-        GS_ASSERT(drop != NULL);
-        if (drop == NULL) return;
-
+        IF_ASSERT(drop == NULL) return;
         drop->set_drops(n);
     }
 
     void add_drop(const char* item_name, int amount, float probability)
     {
         ItemType item_type = get_item_type(item_name);
-        GS_ASSERT(item_type != NULL_ITEM_TYPE);
-        if (item_type == NULL_ITEM_TYPE) return;
+        IF_ASSERT(item_type == NULL_ITEM_TYPE) return;
         class ItemDropEntry* drop = this->get_or_create_drop_entry(item_type);
-        GS_ASSERT(drop != NULL);
-        if (drop == NULL) return;
+        IF_ASSERT(drop == NULL) return;
         drop->add_drop(amount, probability);
     }
 
     void add_drop_range(const char* item_name, int lower_amount, int higher_amount, float probability)
     {    // gives all drop amounts in a range equal probability
-        GS_ASSERT(lower_amount < higher_amount);
-        if (lower_amount >= higher_amount) return;
+        IF_ASSERT(lower_amount >= higher_amount) return;
         float each_probability = probability / (higher_amount - lower_amount);
         for (int i=lower_amount; i<higher_amount; i++)
             this->add_drop(item_name, i, each_probability);
@@ -200,8 +187,9 @@ class ItemDrop
     {
         delete[] this->drop;
         free(this->dropped_items);
+        this->drop = NULL;
+        this->dropped_items = NULL;
     }
-
 };
 
 }   // Item

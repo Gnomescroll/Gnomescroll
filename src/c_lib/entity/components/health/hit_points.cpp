@@ -9,12 +9,12 @@ void HitPointsComponent::take_damage(int dmg)
 {
     if (this->health <= 0) return;
     this->health -= dmg;
-    this->health = (this->health < 0) ? 0 : this->health; // floor at 0
-    if (this->health <= 0) this->died = true;
+    this->health = GS_MAX(0, this->health);
+    this->died = (this->health <= 0);
     #if DC_SERVER
-    object_took_damage_StoC msg;
-    msg.id = this->object->id;
-    msg.type = this->object->type;
+    entity_took_damage_StoC msg;
+    msg.id = this->entity->id;
+    msg.type = this->entity->type;
     msg.damage = dmg;
     msg.broadcast();
     #endif

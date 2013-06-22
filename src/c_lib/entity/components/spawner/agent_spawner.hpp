@@ -6,7 +6,7 @@
 
 #include <entity/constants.hpp>
 #include <entity/components/spawner.hpp>
-#include <entity/objects/fabs/constants.hpp>
+#include <entity/entities/fabs/constants.hpp>
 
 namespace Components
 {

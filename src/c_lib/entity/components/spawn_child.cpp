@@ -12,7 +12,7 @@ void SpawnChildComponent::notify_parent_of_death()
 
     auto spawner = GET_COMPONENT(MonsterSpawner, obj);
     if (spawner == NULL) return;
-    spawner->lose_child(this->object->type, this->object->id);
+    spawner->lose_child(this->entity->type, this->entity->id);
 }
 
 void SpawnChildComponent::parent_died()

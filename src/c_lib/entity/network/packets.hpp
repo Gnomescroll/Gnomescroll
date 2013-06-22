@@ -4,7 +4,7 @@
 #include <net_lib/net_CtoS.hpp>
 
 // Position
-class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_create_StoC>
+class entity_create_StoC: public FixedSizeReliableNetPacketToClient<entity_create_StoC>
 {
     public:
         uint8_t type;
@@ -21,7 +21,7 @@ class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_creat
 };
 
 // Owner
-class object_create_owner_StoC: public FixedSizeReliableNetPacketToClient<object_create_owner_StoC>
+class entity_create_owner_StoC: public FixedSizeReliableNetPacketToClient<entity_create_owner_StoC>
 {
     public:
         uint8_t type;
@@ -41,7 +41,7 @@ class object_create_owner_StoC: public FixedSizeReliableNetPacketToClient<object
 
 /* Position + Momentum */
 
-class object_create_momentum_StoC: public FixedSizeReliableNetPacketToClient<object_create_momentum_StoC>
+class entity_create_momentum_StoC: public FixedSizeReliableNetPacketToClient<entity_create_momentum_StoC>
 {
     public:
         uint8_t type;
@@ -63,7 +63,7 @@ class object_create_momentum_StoC: public FixedSizeReliableNetPacketToClient<obj
 /* Position + Momentum + Theta */
 
 // NOTE: only packs theta/phi for now
-class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToClient<object_create_momentum_angles_StoC>
+class entity_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToClient<entity_create_momentum_angles_StoC>
 {
     public:
         uint8_t type;
@@ -84,7 +84,7 @@ class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToCli
     inline void handle();
 };
 
-class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPacketToClient<object_create_momentum_angles_health_StoC>
+class entity_create_momentum_angles_health_StoC: public FixedSizeReliableNetPacketToClient<entity_create_momentum_angles_health_StoC>
 {
     public:
         uint8_t type;
@@ -109,7 +109,7 @@ class object_create_momentum_angles_health_StoC: public FixedSizeReliableNetPack
 
 /* Destruction */
 
-class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_destroy_StoC>
+class entity_destroy_StoC: public FixedSizeReliableNetPacketToClient<entity_destroy_StoC>
 {
     public:
         uint8_t type;
@@ -125,7 +125,7 @@ class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_dest
 
 /* State */
 
-class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_StoC>
+class entity_state_StoC: public FixedSizeReliableNetPacketToClient<entity_state_StoC>
 {
     public:
         uint16_t id;
@@ -141,7 +141,7 @@ class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_
     inline void handle();
 };
 
-class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<object_state_momentum_StoC>
+class entity_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<entity_state_momentum_StoC>
 {
     public:
         uint16_t id;
@@ -160,7 +160,7 @@ class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<obje
 };
 
 // NOTE: only packs theta/phi for now
-class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClient<object_state_momentum_angles_StoC>
+class entity_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClient<entity_state_momentum_angles_StoC>
 {
     public:
         uint16_t id;
@@ -181,7 +181,7 @@ class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClie
     inline void handle();
 };
 
-class object_state_health_StoC: public FixedSizeReliableNetPacketToClient<object_state_health_StoC>
+class entity_state_health_StoC: public FixedSizeReliableNetPacketToClient<entity_state_health_StoC>
 {
     public:
         uint16_t id;
@@ -201,7 +201,7 @@ class object_state_health_StoC: public FixedSizeReliableNetPacketToClient<object
 
 /* Shooting */
 
-class object_hitscan_object_StoC: public FixedSizeReliableNetPacketToClient<object_hitscan_object_StoC>
+class entity_hitscan_entity_StoC: public FixedSizeReliableNetPacketToClient<entity_hitscan_entity_StoC>
 {
     public:
         uint16_t id;
@@ -219,7 +219,7 @@ class object_hitscan_object_StoC: public FixedSizeReliableNetPacketToClient<obje
     inline void handle();
 };
 
-class object_hitscan_terrain_StoC: public FixedSizeReliableNetPacketToClient<object_hitscan_terrain_StoC>
+class entity_hitscan_terrain_StoC: public FixedSizeReliableNetPacketToClient<entity_hitscan_terrain_StoC>
 {
     public:
         uint16_t id;
@@ -235,7 +235,7 @@ class object_hitscan_terrain_StoC: public FixedSizeReliableNetPacketToClient<obj
     inline void handle();
 };
 
-class object_hitscan_nothing_StoC: public FixedSizeReliableNetPacketToClient<object_hitscan_nothing_StoC>
+class entity_hitscan_nothing_StoC: public FixedSizeReliableNetPacketToClient<entity_hitscan_nothing_StoC>
 {
     public:
         uint16_t id;
@@ -253,7 +253,7 @@ class object_hitscan_nothing_StoC: public FixedSizeReliableNetPacketToClient<obj
 
 // redundant? health state overrides?
 // leave it separate for now, in case the packets are no longer 1:1 (may want to batch send health etc)
-class object_took_damage_StoC: public FixedSizeReliableNetPacketToClient<object_took_damage_StoC>
+class entity_took_damage_StoC: public FixedSizeReliableNetPacketToClient<entity_took_damage_StoC>
 {
     public:
         uint16_t id;

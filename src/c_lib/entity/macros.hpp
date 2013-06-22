@@ -3,12 +3,12 @@
 #define GET_COMPONENT(COMPONENT, OBJECT) \
     (Components::COMPONENT##Component*)OBJECT->get_component(COMPONENT_##COMPONENT);
 
-// auto c = GET_COMPONENT(VoxelModel, object);
+// auto c = GET_COMPONENT(VoxelModel, entity);
 
 #define GET_COMPONENT_INTERFACE(COMPONENT, OBJECT) \
     (Components::COMPONENT##Component*)OBJECT->get_component_interface(COMPONENT_INTERFACE_##COMPONENT);
 
-// auto c = GET_COMPONENT_INTERFACE(Physics, object);
+// auto c = GET_COMPONENT_INTERFACE(Physics, entity);
 
 #define ADD_COMPONENT(COMPONENT) \
     (Components::COMPONENT##Component*)entity_data->attach_component(type, COMPONENT_##COMPONENT);

@@ -19,12 +19,12 @@ void HealerComponent::heal_agents_in_range()
     float rad2 = this->radius * this->radius;
 
     Vec3 pos;
-    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->object);
+    auto vox = GET_COMPONENT_INTERFACE(VoxelModel, this->entity);
     if (vox != NULL)
         pos = vox->get_center();
     else
     {   // use physics
-        auto physics = GET_COMPONENT_INTERFACE(Physics, object);
+        auto physics = GET_COMPONENT_INTERFACE(Physics, entity);
         IF_ASSERT(physics == NULL) return;
         pos = physics->get_position();
     }

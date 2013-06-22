@@ -14,14 +14,15 @@ class Component
         int id;
         ComponentType type;
         ComponentInterfaceType interface;
-        class Entities::Entity* object;
+        class Entities::Entity* entity;
 
-    virtual void load_settings_from(const Component* component) {}
+    virtual void load_settings_from(const Component* component) = 0;
+    virtual void use_as_default() {}
 
     virtual ~Component() {}
 
     Component(ComponentType type, ComponentInterfaceType interface) :
-        id(NULL_ENTITY), type(type), interface(interface), object(NULL)
+        id(NULL_ENTITY), type(type), interface(interface), entity(NULL)
     {}
 };
 

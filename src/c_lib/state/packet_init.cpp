@@ -14,7 +14,7 @@
 namespace PacketInit
 {
 
-void RegisterMessages()
+void register_messages()
 {
     //version (keep these first in the list)
     version_CtoS::register_server_packet();
@@ -58,7 +58,7 @@ void RegisterMessages()
     hitscan_none_CtoS::register_server_packet();
 
     // hitscan StoC action (for animations etc)
-    agent_hitscan_object_StoC::register_client_packet();
+    agent_hitscan_entity_StoC::register_client_packet();
     agent_hitscan_block_StoC::register_client_packet();
     agent_hitscan_nothing_StoC::register_client_packet();
     agent_launched_projectile_StoC::register_client_packet();
