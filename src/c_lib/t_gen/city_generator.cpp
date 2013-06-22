@@ -316,9 +316,10 @@ void create_road(int x, int y, int z, int ox, int oy, int oz)
 {
     printf("Connecting %d, %d, %d with %d, %d, %d with a road...\n", x, y, z, ox, oy, oz);
     CubeType RoadBlock[] = {steelA, steelB, steelC, stone, green, red, purple, gray};
+    CubeType ActualBlock = RoadBlock[randrange(0, sizeof(RoadBlock) / sizeof(*RoadBlock) - 1)];
     for(int LinesMade = 0; LinesMade < ROAD_SIZE; LinesMade++)
     {
-        generate_line(x + LinesMade, y, z, ox + LinesMade, oy, oz, RoadBlock[randrange(0, sizeof(RoadBlock) / sizeof(*RoadBlock) - 1)], 1);
+        generate_line(x + LinesMade, y, z, ox + LinesMade, oy, oz, ActualBlock, 1);
     }
 }
 
